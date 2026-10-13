@@ -4,3 +4,7 @@ _site/
 
 # 本地原始材料归档（PPT/讲义/教材），不发布
 _sources/
+# python 运行时缓存与日志
+__pycache__/
+*.pyc
+*.log
