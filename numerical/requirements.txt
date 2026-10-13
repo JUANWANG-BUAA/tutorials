@@ -1,0 +1,5 @@
+# 《矩阵论》教程构建依赖
+#
+# mdBook 与 mdbook-katex 是外部可执行文件，见 docs/ARCHITECTURE.md；
+# 这里只列出预处理器所需的 Python 包（Python ≥ 3.9）。
+markdown-it-py>=3.0
