@@ -1,0 +1,47 @@
+# 《数值分析》定制教程（第一章 · 第二章）
+#
+# 唯一的构建配置。日常操作：
+#   mdbook serve --open     本地预览（含全文搜索）
+#   mdbook build            生成静态站点到 book/
+#
+# 内容源在 src/，全部为 Markdown；不要手工编辑 book/ 下的产物。
+
+[book]
+title = "数值分析 · 定制教程"
+description = "第一章 绪论：误差、算法与范数 · 第二章 数值线性代数基础：内积、正交、投影与 SVD —— 依据颜庆津《数值分析》（第4版）整理扩充的定制教程"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+# 视觉层：只此一份，构建时复制进产物。设计语言沿用《矩阵论》第一章教程。
+additional-css = ["theme/css/na.css", "theme/css/katex.css"]
+additional-js = ["theme/js/na.js", "theme/js/search-cjk.js"]
+# 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
+no-section-label = true
+site-url = "/tutorials/numerical/"
+[output.html.search]
+enable = true
+limit-results = 30
+teaser-word-count = 30
+use-boolean-and = true
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子：自写预处理器（见 docs/ARCHITECTURE.md）
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式：构建期渲染为 HTML（不依赖运行时 JS）。
+# no-css = true → 不注入 KaTeX 的 CDN 样式表；改用随仓库分发的
+# theme/css/katex.css + src/fonts/katex/（离线可用，无第三方请求）。
+# command 用包装器：KaTeX 渲染 \tilde 会输出字面 `~`，被 mdBook 误解析为
+# GFM 删除线（单个 ~ 即可配对！），破坏标签结构；包装器在 pulldown 解析
+# 之前把它们改写成 &#126; 实体（见 tools/katex_wrapper.py）。
+[preprocessor.katex]
+command = "python3 tools/katex_wrapper.py"
+no-css = true
+after = ["mathbook"]

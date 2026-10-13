@@ -1,0 +1,983 @@
+/*
+ * 矩阵论 · 第一章教程 — mdBook 主题
+ * ---------------------------------------------------------------------------
+ * 设计规范：Academy / ink-warm / standard density / Ayu dark preset。
+ * 侧栏以 RustWiki/mdBook 的连续目录流为基准：300px 宽、10px 内边距、
+ * 1.5em 行高、0.6em 行间距、20px 子级缩进，hover 仅换色。
+ * 字体角色：display serif = 章节层级；text serif = 长文阅读；
+ *           sans = 导航与控件；mono = 编号、标签与证据。
+ *
+ * 本文件是唯一的视觉源。mdBook 变量映射在 §1，组件在 §2 之后。
+ * 不要在这里写与内容相关的样式；内容语义由 tools/mathbook.py 生成的类名承载
+ * （.box.def / .box.thm / .box.ex / .box.think / .box.errata / .box.method /
+ *   .proof / details.sol-box / a.crossref / .meta-strip）。
+ */
+
+/* ======================================================================== *
+ * §1  设计令牌 → mdBook 变量映射
+ * ======================================================================== */
+:root,
+html.light,
+html.rust{
+  /* —— Academy 基本色板（亮色）—— */
+  --page:#f8f4ec;
+  --sidebar:#f0e9dd;
+  --paper:#fefaf2;
+  --paper-soft:#f4eee4;
+  --ink:#171513;
+  --ink-2:#5d564c;
+  --muted:#6f675b;          /* 正文次级灰：在 page/sidebar 上均 ≥4.5:1 */
+  --line:#d9cfbf;
+  --line-strong:#b8a995;
+  --control-line:#8f806d;
+  --accent:#b96543;         /* 仅作线条、底色、进度条等装饰 */
+  --accent-strong:#9f5033;
+  --accent-text:#9f5033;    /* 小字号彩色文字：在 page(5.2)/sidebar(4.7) 上达标 */
+  --sage:#6f8f82;
+  --shadow-ink:rgba(50,40,29,.86);
+  --accent-soft:rgba(185,101,67,.10);
+  --surface-card:rgba(254,250,242,.92);
+  --surface-soft:rgba(244,238,228,.68);
+  --radius:18px;
+  --radius-sm:12px;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
+  --space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;
+  --space-12:48px;--space-16:64px;--space-20:80px;
+  --grid-gap:24px;--card-padding:24px;--section-gap:48px;--text-margin:16px;
+
+  /* 语义盒子 */
+  --def-bg:#eef3f5;--def-line:#456f7c;--def-ink:#284f5b;
+  --thm-bg:#f3f0f5;--thm-line:#705d79;--thm-ink:#55425f;
+  --ex-bg:#f1f5ef;--ex-line:#58735b;--ex-ink:#3c5740;
+  --think-bg:#f7f2e8;--think-line:#967331;--think-ink:#73551f;
+  --err-bg:#f8eeeb;--err-line:#a7473d;--err-ink:#87342d;
+  --method-bg:#edf4f3;--method-line:#447a75;--method-ink:#2e615d;
+  --intuition-bg:#eef3fc;--intuition-line:#3f6bb0;--intuition-ink:#2c4d80;
+
+  /* 插图配色令牌：迁移自旧版插图的固定十六进制色值，按语义归类。
+     亮色用深色以在暖纸色上可读；暗色在下方同名覆盖。 */
+  --fig-blue:#2456a6;
+  --fig-purple:#4c3d99;
+  --fig-green:#1f6b3a;
+  --fig-gold:#8a5a00;
+  --fig-red:#9c2b25;
+  --fig-neutral:#5b544a;
+
+  /* 字体 */
+  --serif-display:"Iowan Old Style","Baskerville","Songti SC","STSong","Noto Serif SC",Georgia,serif;
+  --serif-text:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
+  --serif:var(--serif-text);
+  --sans:"Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+  --mono:"SFMono-Regular","Roboto Mono",Consolas,"Liberation Mono",monospace;
+
+  /* —— 覆盖 mdBook 主题变量 —— */
+  --bg:var(--page);
+  --fg:var(--ink);
+  --sidebar-bg:var(--sidebar);
+  --sidebar-fg:var(--ink-2);
+  --sidebar-non-existant:var(--muted);
+  /* 侧栏当前项/悬停用 --accent-text 而非 --accent：后者是装饰色，
+     13.5px 正文级文字压在 sidebar 上只有 3.5:1，不到 AA。 */
+  --sidebar-active:var(--accent-text);
+  --sidebar-spacer:var(--line);
+  --scrollbar:var(--line-strong);
+  --icons:var(--muted);
+  --icons-hover:var(--ink);
+  --links:var(--accent-strong);
+  --inline-code-color:var(--accent-strong);
+  --theme-popup-bg:var(--paper);
+  --theme-popup-border:var(--line-strong);
+  --theme-hover:rgba(17,17,15,.05);
+  --quote-bg:var(--paper-soft);
+  --quote-border:var(--line);
+  --table-border-color:var(--line);
+  --table-header-bg:var(--paper-soft);
+  --table-alternate-bg:rgba(0,0,0,.012);
+  --searchbar-border-color:var(--line-strong);
+  --searchbar-bg:var(--paper);
+  --searchbar-fg:var(--ink);
+  --searchbar-shadow-color:var(--line);
+  --searchresults-header-fg:var(--muted);
+  --searchresults-border-color:var(--line);
+  --searchresults-li-bg:var(--paper);
+  --search-mark-bg:#f0c9a8;
+  --color-scheme:light;
+  --sidebar-header-border-color:var(--line);
+  --overlay-bg:rgba(23,21,19,.46);
+}
+
+html.navy,
+html.coal,
+html.ayu{
+  /* Ink dark 预设 + 两个 Ayu 调整（琲珀强调、青绿支持）。 */
+  --page:#0f1419;
+  --sidebar:#141a20;
+  --paper:#1a1f26;
+  --paper-soft:#242a32;
+  --ink:#e8e8e8;
+  --ink-2:#b8b8b8;
+  --muted:#8f9398;
+  --line:#3a414a;
+  --line-strong:#4e5661;
+  --control-line:#687382;
+  --accent:#d6a15c;
+  --accent-strong:#edb96f;
+  --accent-text:#e1ad66;
+  --accent-soft:rgba(214,161,92,.12);
+  --sage:#86a89b;
+  --shadow-ink:rgba(0,0,0,.9);
+  --surface-card:rgba(26,31,38,.94);
+  --surface-soft:rgba(36,42,50,.70);
+
+  --def-bg:#19262c;--def-line:#70a0ae;--def-ink:#a4c7d0;
+  --thm-bg:#25242d;--thm-line:#9a8ba5;--thm-ink:#c8bdd0;
+  --ex-bg:#1d2924;--ex-line:#87aa89;--ex-ink:#afd0b0;
+  --think-bg:#2d291f;--think-line:#c39a51;--think-ink:#ddbf87;
+  --err-bg:#31231f;--err-line:#d57769;--err-ink:#e7a097;
+  --method-bg:#1d2b2a;--method-line:#70aaa4;--method-ink:#9acbc6;
+  --intuition-bg:#1b2437;--intuition-line:#7fa1d8;--intuition-ink:#b3c8ec;
+
+  /* 插图配色（暗色）：提高亮度，保证线条、填充与标注在深底上可读 */
+  --fig-blue:#7ba4e6;
+  --fig-purple:#a99ff0;
+  --fig-green:#6fbf87;
+  --fig-gold:#d4ad5e;
+  --fig-red:#e08a80;
+  --fig-neutral:#c5beb0;
+
+  --bg:var(--page);
+  --fg:var(--ink);
+  --sidebar-bg:var(--sidebar);
+  --sidebar-fg:var(--ink-2);
+  --sidebar-non-existant:var(--muted);
+  --sidebar-active:var(--accent-text);
+  --sidebar-spacer:var(--line);
+  --scrollbar:var(--line-strong);
+  --icons:var(--muted);
+  --icons-hover:var(--ink);
+  --links:var(--accent);
+  --inline-code-color:var(--accent);
+  --theme-popup-bg:var(--paper);
+  --theme-popup-border:var(--line-strong);
+  --theme-hover:rgba(255,255,255,.05);
+  --quote-bg:var(--paper-soft);
+  --quote-border:var(--line);
+  --table-border-color:var(--line);
+  --table-header-bg:var(--paper-soft);
+  --table-alternate-bg:rgba(255,255,255,.02);
+  --searchbar-border-color:var(--line-strong);
+  --searchbar-bg:var(--paper);
+  --searchbar-fg:var(--ink);
+  --searchbar-shadow-color:var(--line);
+  --searchresults-header-fg:var(--muted);
+  --searchresults-border-color:var(--line);
+  --searchresults-li-bg:var(--paper);
+  --search-mark-bg:#5a4a2e;
+  --color-scheme:dark;
+  --sidebar-header-border-color:var(--line);
+  --overlay-bg:rgba(0,0,0,.55);
+}
+
+/* 版心与导航尺寸 */
+:root{
+  --content-max-width:820px;
+  --page-padding:26px;
+  --sidebar-width:300px;
+  --sidebar-target-width:300px;
+  --menu-bar-height:58px;
+  --reading-w:820px;
+}
+
+/* ======================================================================== *
+ * §2  mdBook 框架适配
+ * ======================================================================== */
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(185,101,67,.07),transparent 24%),
+    radial-gradient(circle at 96% 100%,rgba(111,143,130,.06),transparent 26%),
+    linear-gradient(90deg,rgba(24,21,19,.02) 1px,transparent 1px),
+    linear-gradient(rgba(24,21,19,.02) 1px,transparent 1px),
+    var(--page);
+  background-size:auto,auto,28px 28px,28px 28px,auto;
+  font-family:var(--serif-text);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+html.navy body,html.coal body,html.ayu body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(214,161,92,.055),transparent 24%),
+    radial-gradient(circle at 96% 100%,rgba(134,168,155,.035),transparent 26%),
+    var(--page);
+}
+::selection{background:color-mix(in srgb,var(--accent) 26%,transparent)}
+a{color:var(--accent-strong)}
+html.navy a,html.coal a,html.ayu a{color:var(--accent)}
+a:hover{color:var(--accent-text)}
+
+/* 冷启动期禁用过渡：避免主题、侧栏状态与后注入控件在首帧闪动。 */
+html:not(.matrix-ready) *,
+html:not(.matrix-ready) *::before,
+html:not(.matrix-ready) *::after{
+  animation:none!important;
+  scroll-behavior:auto!important;
+  transition:none!important;
+}
+
+/* 侧栏 —— 完全参照 rustwiki（Rust Book 中文版，mdBook 官方书目的侧栏定制）：
+ * 行内 flex、编号粗体、hover 只变色、右侧 ❱ 折叠钮（opacity .68、展开旋 90°）、
+ * 组间距 .6em、子级 20px 缩进、part-title 仅粗体。
+ * 本段只留骨架；**权威规则在 §6.5**（编号分列、当前位置标记、本页大纲的
+ * 次级化都在那里），改侧栏请改 §6.5，不要在这里叠加。 */
+#mdbook-sidebar{
+  font-family:var(--sans);
+  border-right:1px solid var(--line);
+  padding-top:10px;
+  /* 显式声明，避免依赖 mdBook chrome 的变量解析链 */
+  background:var(--sidebar);
+  color:var(--ink-2);
+}
+#mdbook-sidebar .sidebar-scrollbox{padding:10px 10px 40px}
+#mdbook-sidebar::-webkit-scrollbar{width:4px}
+#mdbook-sidebar::-webkit-scrollbar-thumb{background:var(--line-strong)}
+.menu-title{
+  font-family:var(--serif-display)!important;
+  font-weight:600;font-size:15px;line-height:1.3;
+  letter-spacing:.02em;
+}
+#mdbook-menu-bar{font-family:var(--sans)}
+#mdbook-menu-bar{
+  border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent);
+  /* 不透明：半透明底会让滚动时正文从顶栏后透出（截图与低性能浏览器无
+     backdrop-filter，模糊层失效后尤其明显） */
+  background:var(--page);
+}
+#mdbook-menu-bar .icon-button,#mdbook-menu-bar .right-buttons a{
+  border:1px solid transparent;border-radius:10px;
+  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
+}
+#mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
+#mdbook-menu-bar .icon-button:active,#mdbook-menu-bar .right-buttons a:active{transform:translateY(1px) scale(.975)}
+#mdbook-menu-bar .menu-title{color:var(--ink)}
+#mdbook-searchbar{
+  font-family:var(--sans);font-size:13px;
+  border-radius:0;
+}
+/* rustwiki: .chapter{line-height:2.2em} / li.chapter-item{1.5em; margin-top:.6em} */
+#mdbook-sidebar .chapter{line-height:2.2em}
+#mdbook-sidebar .chapter li.chapter-item{line-height:1.5em;margin-top:.6em}
+/* toc.js 的字符串模板有嵌套 <li> 笔误，浏览器修复后会留下空壳条目 */
+#mdbook-sidebar .chapter li.chapter-item:empty{display:none;margin:0}
+/* rustwiki: 链接 display:block、无背景 hover，只变色。
+ * 链接 flex:1 铺满整行（命中区域 = 整行，反馈仍是 rustwiki 的变色） */
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper{display:flex}
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a{
+  display:block;flex:1 1 auto;min-width:0;padding:2px 0;
+  font-size:13.5px;color:var(--sidebar-fg);
+}
+#mdbook-sidebar .chapter li a:hover{color:var(--sidebar-active)}
+#mdbook-sidebar .chapter li a.active{color:var(--sidebar-active)}
+/* rustwiki: 编号 <strong>1.1.</strong> 粗体、同色（na.js 包 .sec-no） */
+#mdbook-sidebar .sec-no{
+  font-weight:700;color:inherit;font-family:inherit;font-size:inherit;
+  margin-right:.35em;
+}
+/* rustwiki: .chapter li.part-title{color:var(--sidebar-fg);margin:5px 0;font-weight:bold} */
+#mdbook-sidebar .chapter li.part-title{
+  color:var(--ink-2);margin:5px 0;
+  font-weight:700;font-size:13px;letter-spacing:0;text-transform:none;
+}
+#mdbook-sidebar .chapter .spacer{background:none;height:14px}
+
+/* 页脚翻页（mdBook 原生 .nav-wrapper / .nav-wide-wrapper）。
+ * 规范：导航与控件一律无衬线 —— mdBook 默认让它们从 body 继承衬线，故显式覆盖。 */
+.nav-wrapper,.nav-wide-wrapper{font-family:var(--sans)}
+.nav-wrapper a,.nav-wide-wrapper a{font-family:var(--sans)}
+.nav-chapters .title,.mobile-nav-chapters .title{font-weight:600}
+.nav-chapters.previous:hover,.nav-chapters.next:hover,
+.mobile-nav-chapters.previous:hover,.mobile-nav-chapters.next:hover{color:var(--accent-text)}
+
+/* 正文容器 */
+.content{
+  font-family:var(--serif-text);
+  font-size:16.5px;line-height:1.82;
+  color:var(--ink);
+  padding:34px var(--page-padding) 120px;
+  overflow-wrap:break-word;
+}
+.content p{margin:12px 0;text-align:left;font-family:var(--serif);text-wrap:pretty}
+.content b,.content strong{font-weight:700;color:var(--ink)}
+
+/* 标题层级 */
+.content h1,
+.content h2,
+.content h3,
+.content h4{font-family:var(--serif-display);color:var(--ink);letter-spacing:.01em}
+/* balance 让长标题折行时两行长度接近，避免末行只剩一两个字（不支持则忽略） */
+.content h1,.content h2,.content h3{text-wrap:balance}
+.content h1{
+  margin:0 0 20px;padding:0 0 16px;
+  border-bottom:1px solid var(--ink);
+  font-size:34px;line-height:1.22;font-weight:600;
+}
+.content h2{
+  margin:64px 0 20px;padding:0 0 14px;
+  border-bottom:1px solid var(--line-strong);
+  font-size:27px;line-height:1.3;font-weight:600;
+}
+.content h3{margin:44px 0 12px;font-size:21px;line-height:1.35;font-weight:600}
+.content h4{
+  display:flex;align-items:center;gap:8px;
+  margin:30px 0 6px;font-size:15px;font-weight:600;
+}
+.content h4::before{content:"";width:14px;border-top:1px solid var(--accent)}
+/* mdBook 把标题文字整体包在 <a class="header"> 里（不是旧版的附加 # 符号），
+ * 因此这里必须继承颜色并保持可见；锚点提示改用 ::after 悬停出现。 */
+.content .header{color:inherit;text-decoration:none}
+.content .header:hover{color:var(--accent-text)}
+.content h1 .header::after,
+.content h2 .header::after,
+.content h3 .header::after,
+.content h4 .header::after{
+  content:"#";margin-left:8px;color:var(--muted);
+  font:400 12px/1 var(--mono);opacity:0;
+}
+.content h1:hover .header::after,
+.content h2:hover .header::after,
+.content h3:hover .header::after,
+.content h4:hover .header::after{opacity:1}
+
+/* 列表 / 引用 */
+.content ul,.content ol{padding-left:1.5em}
+.content li{margin:5px 0}
+.content blockquote{
+  margin:16px 0;padding:12px 18px;
+  border-left:3px solid var(--line-strong);
+  background:var(--paper-soft);color:var(--ink-2);
+  font-size:15px;
+}
+.content hr{margin:42px 0;border:0;border-top:1px dashed var(--line-strong)}
+.content code{
+  font-family:var(--mono);font-size:.88em;
+  background:var(--paper-soft);color:var(--accent-strong);
+  padding:1px 5px;
+}
+.content pre{
+  background:var(--paper-soft);border:1px solid var(--line);
+  padding:14px 16px;overflow-x:auto;
+}
+.content pre code{background:none;color:var(--ink);padding:0}
+
+/* 键帽：正文里的 <kbd>（搜索快捷键、翻页键）此前没有任何样式，
+   与普通等宽文字无法区分。做成实体键帽，让「这是要按的键」一眼可辨。 */
+.content kbd{
+  display:inline-block;margin:0 2px;padding:1px 6px 2px;
+  border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;
+  background:var(--paper);color:var(--ink-2);
+  font:600 .78em/1.5 var(--mono);
+  box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--line-strong) 35%,transparent);
+}
+/* 操作提示条：首页「本教材怎么读」末尾的一段提示，此前与正文无区别 */
+.content .kbd-hint{
+  margin:18px 0;padding:12px 16px;
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:var(--paper-soft);color:var(--ink-2);
+  font:13.5px/1.75 var(--sans);
+}
+.content .kbd-hint b{color:var(--ink)}
+
+/* ======================================================================== *
+ * §3  语义盒子（由 mathbook 预处理器生成）
+ * ======================================================================== */
+.box{
+  position:relative;margin:20px 0;padding:18px 22px 14px;
+  border:1px solid var(--line);border-left:3px solid var(--line-strong);
+  background:var(--paper);
+}
+.box.def{border-left-color:var(--def-line);background:var(--def-bg)}
+.box.thm{border-left-color:var(--thm-line);background:var(--thm-bg)}
+.box.ex{border-left-color:var(--ex-line);background:var(--ex-bg)}
+.box.think{border-left-color:var(--think-line);background:var(--think-bg)}
+.box.errata{border-left-color:var(--err-line);background:var(--err-bg)}
+.box.method{border-left-color:var(--method-line);background:var(--method-bg)}
+.box.intuition{border-left-color:var(--intuition-line);background:var(--intuition-bg)}
+.box .box-tag{
+  display:block;width:max-content;max-width:100%;margin:0 0 8px;
+  font:700 10px/1.55 var(--mono);letter-spacing:.055em;
+}
+.def .box-tag{color:var(--def-ink)}
+.thm .box-tag{color:var(--thm-ink)}
+.ex .box-tag{color:var(--ex-ink)}
+.think .box-tag{color:var(--think-ink)}
+.errata .box-tag{color:var(--err-ink)}
+.method .box-tag{color:var(--method-ink)}
+.intuition .box-tag{color:var(--intuition-ink)}
+.box p:first-of-type,
+.box > p:first-child{margin-top:2px}
+.box>:last-child{margin-bottom:0}
+
+/* —— 阅读分层（类名由 tools/mathbook.py 的盒子优先级生成）——
+   全书约 400 个盒子，若视觉权重完全相同，读者无法判断「哪些必记、哪些可跳」。
+   p-core = 必记骨架（定义、定理族、速查表、错误清单）：加重；
+   p-main = 主体：正常样式；
+   p-skip = 第一遍可跳（证明、课程预告）：减弱。
+   skip 只是降低权重、不隐藏——要折叠请用页面的「只看核心」开关。 */
+.box.p-core{border-left-width:4px}
+.box.p-core>.box-tag{font-size:11px;letter-spacing:.07em}
+.proof.p-core{
+  border-left:3px solid var(--thm-line);background:var(--thm-bg);
+  color:var(--ink);
+}
+.proof.p-skip{color:var(--muted);font-size:14px;border-top-style:dashed}
+.proof.p-skip .pf-label{color:var(--muted)}
+.box.p-skip{
+  border-left-color:var(--line);background:transparent;color:var(--ink-2);
+}
+.box.p-skip>.box-tag{color:var(--muted);font-weight:600}
+.note.p-skip,.preview.p-skip{background:transparent;color:var(--muted)}
+/* 「只看核心」：折叠全部可跳层（证明、预告、拓展思考） */
+html.core-only .p-skip{display:none}
+/* 打印时一律展开：纸面上没有开关可点，缺内容比多内容更糟 */
+@media print{html.core-only .p-skip{display:block}}
+
+/* 阅读分层图例（由 na.js 注入到正文开头）。
+   此前是「标题 + 三条说明 + 开关」挤成一段的小字，折行后层级读不出来。
+   改成：标题与开关占一行，下面三条各自成行（色块 / 名称 / 适用内容）。 */
+.layer-legend{
+  margin:16px 0 22px;padding:13px 16px 12px;
+  border:1px solid var(--line);background:var(--paper-soft);
+  font:13px/1.6 var(--sans);color:var(--ink-2);
+}
+.layer-legend-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:9px;
+}
+.layer-legend-title{color:var(--ink);font-weight:700}
+.layer-legend ul{display:grid;gap:4px;margin:0;padding:0;list-style:none}
+.layer-legend ul li{
+  display:grid;grid-template-columns:16px max-content 1fr;
+  align-items:center;gap:0 8px;margin:0;padding:0;border:0;
+}
+.layer-legend ul li b{color:var(--ink-2);font-weight:600}
+.layer-legend ul li .desc{color:var(--muted);font-size:12px}
+.layer-legend .swatch{
+  width:10px;height:10px;
+  border:1px solid var(--line-strong);border-left:3px solid var(--line-strong);
+}
+.layer-legend .swatch.core{border-left-color:var(--thm-line);border-left-width:4px}
+.layer-legend .swatch.skip{border-left-color:var(--line);background:transparent}
+.layer-legend button{
+  flex:0 0 auto;padding:3px 10px;border:1px solid var(--line-strong);
+  background:var(--paper);color:var(--ink-2);
+  font:600 11px/1.4 var(--sans);cursor:pointer;
+}
+.layer-legend button:hover{border-color:var(--ink);color:var(--ink)}
+.layer-legend button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* 证明块 */
+.proof{
+  margin:16px 0 4px;padding:12px 17px 6px;
+  border-top:1px solid var(--line);color:var(--ink-2);
+}
+.proof .pf-label{
+  display:inline-block;margin-right:8px;color:var(--ink);
+  font:700 10px/1.4 var(--mono);letter-spacing:.12em;
+}
+.proof .qed{float:right;color:var(--muted);font-weight:700}
+
+/* 提示条 / 课程预告 */
+.note,.preview{
+  margin:16px 0;padding:12px 17px;
+  border:1px solid var(--line);background:var(--paper-soft);
+  color:var(--ink-2);font-size:14.5px;
+}
+.preview{border-style:dashed}
+.preview .box-tag{
+  display:block;margin-bottom:5px;color:var(--muted);
+  font:700 10px/1.4 var(--mono);letter-spacing:.1em;
+}
+.meta-strip{
+  margin:14px 0;padding:11px 16px;border-left:3px solid var(--accent);
+  background:var(--paper-soft);color:var(--ink-2);
+  font:13.5px/1.7 var(--sans);
+}
+
+/* 例题解答（可折叠） */
+details.sol-box{
+  margin:13px 0;border:1px solid var(--line);background:var(--paper);
+}
+details.sol-box>summary{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 17px;color:var(--ex-ink);
+  background:var(--ex-bg);
+  font:700 11px/1.5 var(--sans);letter-spacing:.06em;
+  cursor:pointer;list-style:none;user-select:none;
+  transition:background 140ms ease;
+}
+details.sol-box>summary::-webkit-details-marker{display:none}
+details.sol-box>summary::before{
+  content:"";width:6px;height:6px;
+  border-right:1px solid currentColor;border-bottom:1px solid currentColor;
+  transform:rotate(-45deg);transition:transform .16s;
+}
+/* 折叠态此前只有「> 解答」五个字，整条横栏看起来像空占位。
+   补一个右对齐的动作提示，把「这里可以点」说清楚。 */
+details.sol-box>summary::after{
+  content:"展开";margin-left:auto;color:var(--muted);
+  font:600 10px/1 var(--mono);letter-spacing:.09em;
+}
+details.sol-box[open]>summary::after{content:"收起"}
+details.sol-box>summary:hover{background:color-mix(in srgb,var(--ex-line) 13%,var(--ex-bg))}
+details.sol-box[open]{border-color:var(--ex-line)}
+details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
+details.sol-box[open]>summary::before{transform:rotate(45deg)}
+.sol-inner{padding:8px 19px 12px}
+
+/* 解答工具条 */
+.sol-toolbar{margin:26px 0 8px;text-align:right}
+.sol-toolbar button{
+  padding:6px 13px;border:1px solid var(--line-strong);background:var(--paper);
+  color:var(--ink-2);font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+}
+.sol-toolbar button:hover{border-color:var(--ink);color:var(--ink)}
+.sol-toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* 交叉引用（[@id]） */
+a.crossref{
+  color:var(--accent-strong);
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
+  text-decoration:none;white-space:nowrap;
+}
+a.crossref:hover{background:color-mix(in srgb,var(--accent) 11%,transparent)}
+html.navy a.crossref,html.coal a.crossref,html.ayu a.crossref{color:var(--accent)}
+
+
+/* ======================================================================== *
+ * §4  表格 / 图 / 公式
+ * ======================================================================== */
+.content table{
+  width:100%;margin:19px 0;border-collapse:collapse;
+  background:var(--paper);font:14px/1.72 var(--serif-text);
+}
+.content th,.content td{
+  padding:9px 12px;border:1px solid var(--line);
+  text-align:left;vertical-align:top;
+  /* 中文没有词间空格，默认会在任意两字之间断行；keep-all 保证词组完整 */
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+/* 首列多为短编号或类别名，整列不换行，避免「线性空/间」这类断词 */
+.content th:first-child,.content td:first-child{white-space:nowrap}
+.content th{
+  background:var(--paper-soft);color:var(--ink-2);
+  font:700 10px/1.5 var(--mono);letter-spacing:.06em;
+}
+.content tbody tr:nth-child(even) td{background:var(--table-alternate-bg)}
+.content figure{
+  margin:28px 0;padding:20px 18px 12px;
+  border:1px solid var(--line);background:var(--paper);text-align:center;
+}
+/* 插图占满版心宽度：SVG 是矢量，放大不损失清晰度；
+ * 小尺寸插图（如 330px 宽的手绘坐标系）若按原尺寸显示，标注会小到看不清。
+ * 宽插图（viewBox 920）会等比略缩，与原设计在 820px 栏内的观感一致。
+ *
+ * 但「占满版心」只对宽图成立：窄图（viewBox 宽 ≈360）在 820px 栏内被拉伸
+ * 2.2 倍，标注字号随之涨到正文的两倍多，且固定坐标的标注会互相压叠。
+ * 这类图在源文件里加 class="fig-sm"，图版限宽到与标注相称的尺寸并居中；
+ * 缩放比 ≈1.2，12px 标注落到 14px 左右，与正文、图注同一量级。 */
+.content figure svg{display:block;width:100%;height:auto;margin:2px auto}
+.content figure.fig-sm{max-width:470px;margin-left:auto;margin-right:auto}
+.content figcaption{
+  max-width:580px;margin:10px auto 0;color:var(--muted);
+  font:13px/1.65 var(--serif-text);
+}
+/* 迁移自旧版的插图类（.diagram-*）：原来定义在旧站样式里，
+ * 移植主题时必须一并带回，否则 SVG 只有类名没有样式，会被浏览器
+ * 用默认黑色填充画成实心块。 */
+.content figure svg{color:var(--ink)}
+.content figure .diagram-grid{stroke:var(--line);stroke-width:1;fill:none}
+.content figure .diagram-axis{stroke:var(--line-strong);stroke-width:1.25;fill:none}
+.content figure .diagram-accent{stroke:var(--accent);fill:none;stroke-width:3}
+.content figure .diagram-sage{stroke:var(--sage);fill:none;stroke-width:3}
+.content figure .diagram-muted{stroke:var(--muted);fill:none;stroke-width:1.5;stroke-dasharray:5 5}
+.content figure .diagram-fill-accent{fill:var(--accent);fill-opacity:.10;stroke:var(--accent);stroke-width:1}
+.content figure .diagram-fill-sage{fill:var(--sage);fill-opacity:.11;stroke:var(--sage);stroke-width:1}
+.content figure .diagram-node{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+.content figure .diagram-text{fill:var(--ink);font-weight:600;font-size:13px;font-family:var(--sans)}
+.content figure .diagram-note{fill:var(--ink-2);font-size:13px;font-family:var(--serif-text)}
+.content figure .diagram-mono{fill:var(--accent-text);font-weight:700;font-size:11px;font-family:var(--mono)}
+.content figure .diagram-accent,
+.content figure .diagram-sage,
+.content figure .diagram-muted,
+.content figure .diagram-grid,
+.content figure .diagram-axis{fill:none}
+
+/* 正文 SVG 图形：文字用主题字体与颜色；具体颜色由 --fig-* 令牌给出 */
+.content figure svg text{font-family:var(--sans)}
+.content figure svg .fg-axis{stroke:var(--ink-2)}
+/* 正文 SVG 图形：用主题令牌着色，暗色下自动适配 */
+.content figure svg.figure-svg{margin:2px auto}
+.content figure .fg-axis{stroke:var(--ink-2);stroke-width:1.3}
+.content figure .fg-vec{stroke:var(--accent-text);stroke-width:2.2}
+.content figure .fg-dash{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:4 3}
+.content figure .fg-label{fill:var(--ink-2);font:12px var(--sans)}
+.content figure .fg-label-a{fill:var(--accent-text);font:12px var(--sans)}
+.content figure .fg-label-v{fill:var(--accent-text);font:italic 13px var(--serif)}
+.content figure .fg-muted{fill:var(--muted);font:12px var(--sans)}
+.content figure .fg-point{fill:var(--accent-text)}
+.content figure .mk-axis{fill:var(--ink-2)}
+.content figure .mk-vec{fill:var(--accent-text)}
+.katex-display{margin:15px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden}
+.katex-display>.katex{font-size:1.02em}
+
+/* ======================================================================== *
+ * §5  首页封面 / 导览卡片 / 目标 / 自检表
+ * ======================================================================== */
+.chapter-cover{
+  position:relative;margin:0 0 34px;padding:46px 0 40px;
+  overflow:hidden;border-bottom:1px solid var(--ink);
+}
+.chapter-cover::before{
+  content:"";position:absolute;top:0;left:0;width:64px;
+  border-top:1px solid var(--ink);
+}
+.chapter-cover::after{
+  content:"λ";position:absolute;top:6px;right:3px;
+  color:color-mix(in srgb,var(--accent) 9%,transparent);font-style:italic;font-family:var(--serif-display);font-size:220px;line-height:1;pointer-events:none;
+}
+html.navy .chapter-cover::after,
+html.coal .chapter-cover::after,
+html.ayu .chapter-cover::after{color:rgba(138,167,157,.09)}
+.chapter-cover>*{position:relative;z-index:1}
+.chapter-cover .kicker{
+  margin:0 0 62px;color:var(--muted);
+  font:10px/1.4 var(--mono);letter-spacing:.17em;
+}
+.chapter-cover h1{
+  max-width:690px;margin:0 0 17px;padding:0;border:0;
+  font-family:var(--serif-display);font-weight:600;
+  font-size:clamp(46px,5.5vw,68px);line-height:1.05;letter-spacing:.01em;
+  text-wrap:balance;
+}
+.chapter-cover .subtitle{
+  max-width:650px;margin:0;color:var(--ink-2);
+  font:18px/1.75 var(--serif-text);
+}
+.cover-chips{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  margin:48px 0 24px;border-top:1px solid var(--line);
+}
+.cover-chips span{
+  padding:10px 9px 10px 0;border-bottom:1px solid var(--line);
+  color:var(--muted);font:10px/1.55 var(--mono);
+}
+.cover-chips span:nth-child(odd){border-right:1px solid var(--line)}
+.cover-chips span:nth-child(even){padding-left:12px}
+.chapter-cover .meta{color:var(--muted);font:10px/1.8 var(--mono)}
+.chapter-cover .meta b{font-weight:600;color:var(--ink-2)}
+
+.index-cards{
+  position:relative;display:block;margin:25px 0 12px;
+  padding-left:32px;border-left:1px solid var(--line);
+}
+.index-cards a{
+  position:relative;display:grid;grid-template-columns:54px 1fr auto;
+  gap:3px 12px;margin:0 0 12px;padding:13px 12px;
+  border:1px solid transparent;color:inherit;text-decoration:none;
+}
+.index-cards a::before{
+  content:"";position:absolute;top:22px;left:-36px;
+  width:7px;height:7px;background:var(--ink);
+}
+.index-cards a:hover{border-color:var(--ink);background:var(--paper);box-shadow:3px 3px 0 var(--shadow-ink)}
+.index-cards .no{grid-row:1/3;color:var(--accent-text);font:700 10px/1.4 var(--mono)}
+.index-cards .t{font-family:var(--serif-display);font-weight:700;font-size:17px;line-height:1.3}
+.index-cards .d{grid-column:2/4;color:var(--muted);font:12px/1.55 var(--mono)}
+.index-cards .go{grid-column:3;grid-row:1;color:var(--muted);font:10px/1.4 var(--mono)}
+
+.study-paths{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);
+  margin:var(--space-6) 0 var(--space-10);
+}
+.study-path{
+  display:flex;flex-direction:column;min-height:154px;padding:18px;
+  border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-card);
+}
+.study-path .path-kicker{color:var(--accent-text);font:700 10px/1.4 var(--mono);letter-spacing:.09em}
+.study-path strong{margin:12px 0 6px;font:600 18px/1.3 var(--serif-display)}
+.study-path p{margin:0;color:var(--muted);font:12.5px/1.65 var(--sans)}
+.study-path a{margin-top:auto;padding-top:13px;color:var(--ink-2);font:700 11px/1 var(--sans);text-decoration:none}
+.study-path a:hover{color:var(--accent-text)}
+
+.lesson-brief{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  margin:24px 0 34px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  background:var(--surface-card);box-shadow:0 18px 36px rgba(50,40,29,.06);
+}
+html.navy .lesson-brief,html.coal .lesson-brief,html.ayu .lesson-brief{box-shadow:0 24px 48px rgba(0,0,0,.28)}
+.lesson-brief>div{padding:18px 20px;border-right:1px solid var(--line)}
+.lesson-brief>div:last-child{border-right:0}
+.lesson-brief .brief-label{display:block;margin-bottom:8px;color:var(--accent-text);font:700 10px/1.4 var(--mono);letter-spacing:.1em}
+.lesson-brief strong{display:block;margin-bottom:5px;font:600 15px/1.45 var(--sans)}
+.lesson-brief p{margin:0;color:var(--muted);font:12.5px/1.62 var(--sans)}
+
+ul.objlist{margin:7px 0;padding:0;list-style:none}
+ul.objlist li{
+  margin:0;padding:10px 13px;border-top:1px solid var(--line);
+  font-size:14.5px;
+}
+ul.objlist li:last-child{border-bottom:1px solid var(--line)}
+.obj-id{margin-right:7px;color:var(--accent-text);font:700 11px/1.4 var(--mono)}
+.obj-lv{margin-left:7px;color:var(--muted);font:10px/1.4 var(--mono);white-space:nowrap}
+
+/* ======================================================================== *
+ * §6  页内目录（theme/js/na.js 在 H2 ≥ 3 的页面注入）与阅读进度条
+ * ======================================================================== */
+.page-toc{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
+  margin:26px 0 30px;padding:13px 17px 11px;
+  border:1px solid var(--line);background:var(--paper-soft);
+}
+.page-toc-title{
+  grid-column:1/-1;color:var(--muted);
+  font:700 10px/1.5 var(--mono);letter-spacing:.12em;
+}
+.page-toc a{
+  color:var(--ink-2);text-decoration:none;
+  font:12.5px/1.65 var(--sans);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.page-toc a::before{
+  content:"→";margin-right:7px;color:var(--accent);
+  font:600 11px/1 var(--mono);
+}
+.page-toc a:hover{color:var(--accent-text)}
+
+/* 锚点跳转别被固定菜单栏遮住 */
+.content h1,.content h2,.content h3,.content h4{scroll-margin-top:66px}
+.content .box,.content .proof{scroll-margin-top:66px}
+
+#progress{
+  position:fixed;top:0;left:0;z-index:150;
+  width:0;height:2px;background:var(--accent);
+}
+
+/* ======================================================================== *
+ * §6.5  侧栏（权威规则；§2 只留骨架）
+ *   连续目录流对齐 RustWiki；另加三处可读性处理：
+ *   ① 编号独立成列 → 长标题折行与首行标题对齐
+ *   ② 当前页标记 → 强调色竖条 + 淡底，滚动中可定位
+ *   ③ 「本页大纲」次级化 → 与页面导航区分开（换页 vs 页内跳转）
+ * ======================================================================== */
+#mdbook-sidebar{padding:0;background:var(--sidebar);border-right:1px solid var(--line)}
+#mdbook-sidebar .sidebar-scrollbox{
+  position:absolute!important;inset:0!important;overflow-y:auto;
+  padding:10px 10px 40px;scrollbar-width:thin;
+  scrollbar-color:var(--scrollbar) var(--sidebar-bg);
+}
+#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar{width:4px}
+#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-track{background:var(--sidebar-bg)}
+#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:0}
+#mdbook-sidebar .chapter{list-style:none outside none;padding-left:0;line-height:2.2em}
+#mdbook-sidebar .chapter ol{width:auto}
+#mdbook-sidebar .chapter li.chapter-item{line-height:1.5em;margin-top:.6em}
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper{display:flex;width:100%;align-items:flex-start}
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a{
+  display:block;flex:1 1 auto;min-width:0;padding:0;border:0;border-radius:0;
+  color:var(--sidebar-fg);font:13.5px/1.5 var(--sans);text-decoration:none;
+  transition:color 140ms ease;
+}
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a:hover,
+#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a.active{color:var(--sidebar-active)}
+#mdbook-sidebar .sec-no{margin-right:.35em;color:inherit;font-family:inherit;font-size:inherit;font-weight:700;line-height:inherit}
+#mdbook-sidebar .sec-label{min-width:0}
+#mdbook-sidebar .chapter-fold-toggle{
+  display:grid;place-items:center;flex:0 0 auto;margin-left:auto;padding:2px 10px;
+  border:0;border-radius:0;background:transparent;color:var(--sidebar-fg);cursor:pointer;opacity:.68;
+  transition:color 140ms ease,opacity 140ms ease;
+}
+#mdbook-sidebar .chapter-fold-toggle:hover{color:var(--sidebar-active);opacity:1}
+#mdbook-sidebar .chapter-fold-toggle svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform 500ms ease}
+#mdbook-sidebar li.expanded>.chapter-link-wrapper>.chapter-fold-toggle svg{transform:rotate(90deg)}
+#mdbook-sidebar .chapter li.part-title{margin:5px 0;padding:0;border:0;color:var(--sidebar-fg);font:700 13.5px/1.5 var(--sans);letter-spacing:0;text-transform:none}
+#mdbook-sidebar .chapter .spacer{width:100%;height:3px;margin:5px 0;background:var(--sidebar-spacer)}
+/* width:auto（而非 100%）：100% + padding-left 在 content-box 下会溢出父容器，
+   嵌套每层多出 20px，最深层标题被侧栏右缘裁字 */
+#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.9em}
+/* header-item 是 flex 行：标题链接占一行，其嵌套的小节列表（ol.section）
+   必须换行占满整行——否则会被挤到标题右侧的第二列里逐字截断 */
+#mdbook-sidebar .chapter li.header-item{display:flex;flex-wrap:wrap;margin-top:.6em;line-height:1.5em}
+/* 注意：链接是 li > span.chapter-link-wrapper > a，不是 li > a；
+   下面这几条原先写成 li.header-item>a，选择器落空，「本页大纲」的
+   字号/颜色全靠继承（比页面导航还大一号）。 */
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper>a{flex:1 1 auto;min-width:0;display:block;padding:0;color:var(--sidebar-fg);font:13.5px/1.5 var(--sans);text-decoration:none;transition:color 140ms ease}
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper{display:flex;width:100%;align-items:flex-start}
+#mdbook-sidebar .chapter li.header-item>ol.section{flex:0 0 100%;box-sizing:border-box;padding-left:12px}
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper>a,
+#mdbook-sidebar .chapter li.chapter-item>.chapter-link-wrapper>a{overflow-wrap:break-word}
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper>a:hover,
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper>a.current-header{color:var(--sidebar-active)}
+
+/* —— 侧栏可读性 ①：编号独立成列，长标题折行对齐 ——
+   条目是「编号 + 标题」一个行内流，中文标题在 300px 栏内折行后第二行顶回
+   最左，出现「…第三种研究方 / 法」这种孤立字。编号固定成一列、标题自成一列
+   后，折行文本一律与首行标题左对齐。编号由 na.js 包成 .sec-no / .sec-label。 */
+#mdbook-sidebar .chapter li.chapter-item>.chapter-link-wrapper>a,
+#mdbook-sidebar .chapter li.header-item>.chapter-link-wrapper>a{
+  display:flex;align-items:baseline;gap:.4em;
+}
+#mdbook-sidebar .sec-no{flex:0 0 auto;margin-right:0}
+#mdbook-sidebar .sec-label{flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+
+/* —— 侧栏可读性 ②：当前位置 ——
+   全书 60 余个条目，只靠变色很难在滚动中定位当前页。当前页加一道强调色
+   竖条（与正文 .box / .meta-strip 同一语言）与淡底；负外边距让底色铺进
+   左侧留白，文字位置不动。 */
+#mdbook-sidebar .chapter li a.active{
+  color:var(--sidebar-active);
+  background:var(--accent-soft);
+  box-shadow:inset 2px 0 0 var(--accent);
+  padding-left:8px;margin-left:-8px;padding-right:6px;
+}
+
+/* —— 侧栏可读性 ③：本页大纲 ——
+   mdBook 把当前页的 h2/h3 树插在活动条目下方。它默认与页面导航同字号同色，
+   读者分不清「换页」还是「页内跳转」，而且比导航还大一号、竖线 4px 比正文
+   里任何分隔都重。这里降为次级：小一号字、弱色、细竖线、更紧行距、更深一级
+   缩进；标题「本页大纲」与折叠箭头由 na.js 补上。 */
+#mdbook-sidebar .on-this-page{
+  margin-left:20px;padding-left:9px;
+  border-inline-start:2px solid var(--line-strong);
+}
+#mdbook-sidebar .on-this-page>ol{padding-left:0}
+#mdbook-sidebar .on-this-page .otp-label{
+  margin:7px 0 3px;color:var(--muted);
+  font:700 9.5px/1.4 var(--mono);letter-spacing:.12em;
+}
+#mdbook-sidebar .on-this-page li.header-item{margin-top:.3em;line-height:1.45em}
+#mdbook-sidebar .on-this-page li.header-item>.chapter-link-wrapper>a{
+  color:var(--muted);font:12.5px/1.45 var(--sans);
+}
+#mdbook-sidebar .on-this-page li.header-item>.chapter-link-wrapper>a:hover{color:var(--accent-text)}
+#mdbook-sidebar .on-this-page li.header-item>.chapter-link-wrapper>a.current-header{
+  color:var(--accent-text);font-weight:700;
+}
+#mdbook-sidebar-resize-handle{width:5px;right:0}
+#mdbook-sidebar-resize-handle:hover .sidebar-resize-indicator{background:var(--accent)}
+:where(a,button,input,summary):focus-visible{outline:none;box-shadow:0 0 0 2px var(--accent-text),0 0 0 4px var(--page)!important}
+
+/* ======================================================================== *
+ * §6.6  搜索面板与主题弹层（mdBook 框架 UI）
+ *   这两块是 mdBook 自带的前端，样式与文案都不归本书管，但读者每天在用。
+ *   关键结构事实：#mdbook-search-wrapper 是文档流里的一块，没有定位、没有
+ *   背景、结果区没有高度上限——30 条结果会把正文顶下去 2600px，且条目之间
+ *   没有分隔、摘要与标题同样黑。这里把它收成一个有边界的面板。
+ * ======================================================================== */
+/* 面板边界：读者才知道「这里是搜索态」、正文从哪里重新开始 */
+#mdbook-search-wrapper{background:var(--page);border-bottom:1px solid var(--line)}
+.searchresults-outer{border-block-end:0}
+.searchresults-header{
+  color:var(--muted);font:700 10.5px/1.5 var(--mono);letter-spacing:.06em;
+}
+/* 结果区：限高内滚，条目之间加分隔线；摘要降到次级灰，标题才读得出来 */
+ul#mdbook-searchresults{
+  max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;
+  margin:10px 0 20px;padding:0;scrollbar-width:thin;
+}
+ul#mdbook-searchresults li{margin:0;padding:0;border-bottom:1px solid var(--line)}
+ul#mdbook-searchresults li:first-child{border-top:1px solid var(--line)}
+ul#mdbook-searchresults li>a{
+  display:block;padding:11px 14px 3px;
+  color:var(--accent-text);font:600 14.5px/1.5 var(--sans);
+}
+ul#mdbook-searchresults li:hover{background:var(--paper-soft)}
+ul#mdbook-searchresults li.focus{background:var(--paper-soft);box-shadow:inset 2px 0 0 var(--accent)}
+ul#mdbook-searchresults span.teaser{
+  display:block;margin:0 14px 12px;
+  color:var(--muted);font-size:12.5px;line-height:1.7;
+}
+/* 命中词：mdBook 在摘要里用 <em> 标出，默认只是加粗，混在正文里看不出来 */
+ul#mdbook-searchresults span.teaser em{
+  padding:0 2px;border-radius:2px;
+  background:var(--search-mark-bg);color:var(--ink);
+  font-weight:700;font-style:normal;
+}
+
+/* 主题弹层：mdBook 默认 0.7em 且条目没有内边距，字号偏小、点击目标也小 */
+.theme-popup{
+  min-width:158px;padding:5px;border-radius:10px;
+  font:13px/1.4 var(--sans);
+  box-shadow:0 12px 26px rgba(0,0,0,.16);
+}
+.theme-popup .theme{
+  display:block;width:100%;padding:6px 12px 6px 24px;border:0;border-radius:6px;
+  background:transparent;color:var(--ink-2);text-align:left;
+  font:400 13px/1.4 var(--sans);cursor:pointer;
+}
+.theme-popup .theme:hover{background:var(--theme-hover);color:var(--ink)}
+.theme-popup .theme.theme-selected{color:var(--accent-text);font-weight:700}
+.theme-selected::before{color:var(--accent-text)}
+
+/* ======================================================================== *
+ * §7  响应式
+ * ======================================================================== */
+@media(max-width:900px) and (min-width:701px){
+  :root{--page-padding:20px;--sidebar-width:250px;--sidebar-target-width:250px}
+  .content h1{font-size:30px}
+  .chapter-cover h1{font-size:42px}
+  .chapter-cover::after{font-size:160px}
+  .lesson-brief>div{padding:16px 14px}
+  .box{padding:18px 16px 14px}
+}
+
+@media(max-width:700px){
+  :root{--page-padding:16px}
+  #mdbook-sidebar .sidebar-scrollbox{padding-top:68px}
+  .content h1{font-size:27px}
+  .chapter-cover{padding:34px 0 30px}
+  .chapter-cover::after{font-size:140px}
+  .chapter-cover .kicker{margin-bottom:48px}
+  .chapter-cover h1{font-size:38px}
+  .cover-chips{grid-template-columns:1fr;margin-top:34px}
+  .cover-chips span:nth-child(odd){border-right:0}
+  .cover-chips span:nth-child(even){padding-left:0}
+  .index-cards{padding-left:25px}
+  .index-cards a{display:block;padding:12px 9px}
+  .index-cards .no,.index-cards .t,.index-cards .d,.index-cards .go{display:block;margin-bottom:5px}
+  .study-paths{grid-template-columns:1fr;gap:12px}
+  .study-path{min-height:0}
+  .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
+  .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .lesson-brief>div:last-child{border-bottom:0}
+  .page-toc{grid-template-columns:1fr}
+  .box{padding:16px 15px 12px}
+  .content table{display:block;overflow-x:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+/* ======================================================================== *
+ * §8  打印
+ * ======================================================================== */
+@media print{
+  :root,html.light,html.rust,html.navy,html.coal,html.ayu{
+    --page:#fefefe;--paper:#fefefe;--paper-soft:#f6f6f4;
+    --ink:#000;--ink-2:#333;--muted:#666;--line:#ccc;--line-strong:#999;
+    --def-bg:#f4f6f7;--thm-bg:#f6f4f7;--ex-bg:#f4f7f4;
+    --think-bg:#f8f5ee;--err-bg:#faf1ef;--method-bg:#f2f6f6;
+    --intuition-bg:#eef3fc;
+    /* 插图配色必须一并回落到亮色值：从暗色主题打印时，若沿用暗色令牌，
+       浅色线条会印在白纸上，等于消失。 */
+    --fig-blue:#2456a6;--fig-purple:#4c3d99;--fig-green:#1f6b3a;
+    --fig-gold:#8a5a00;--fig-red:#9c2b25;--fig-neutral:#5b544a;
+  }
+  body{background:#fefefe;font-size:11.5pt}
+  #mdbook-sidebar,#mdbook-menu-bar,#progress,.nav-wrapper,#mdbook-search-wrapper{display:none!important}
+  /* 纸面上点不动：隐藏「只看核心」开关与折叠解答的展开/收起提示 */
+  .layer-legend button,details.sol-box>summary::after{display:none}
+  .content{padding:0;max-width:none}
+  .chapter-cover::after{display:none}
+  .box,details.sol-box,table,figure,ul.objlist li{break-inside:avoid}
+  a.crossref{border:0;color:#000;text-decoration:underline}
+}

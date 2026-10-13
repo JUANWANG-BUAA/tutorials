@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教程库 · Tutorials</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "SF Pro SC", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #faf9f7; color: #2c2c2c;
+  }
+  @media (prefers-color-scheme: dark) { body { background: #1a1a1a; color: #e6e4e0; } }
+  main { max-width: 860px; padding: 48px 24px; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: 0.02em; }
+  .sub { margin: 10px 0 40px; font-size: 15px; opacity: 0.55; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  a.card {
+    display: block; padding: 22px 24px; border-radius: 12px; text-decoration: none;
+    color: inherit; border: 1px solid rgba(128,128,128,0.22);
+    background: rgba(255,255,255,0.6); transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  @media (prefers-color-scheme: dark) { a.card { background: rgba(255,255,255,0.04); } }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+  .emoji { font-size: 26px; }
+  .card h2 { font-size: 17px; margin: 10px 0 6px; font-weight: 650; }
+  .card p { font-size: 13px; line-height: 1.65; opacity: 0.6; }
+  footer { margin-top: 40px; font-size: 13px; opacity: 0.45; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>教程库 · Tutorials</h1>
+  <p class="sub">研究生课程定制教程合集 · mdBook 构建 · GitHub Pages 托管</p>
+  <div class="grid">
+    <a class="card" href="/tutorials/robot/">
+      <span class="emoji">🤖</span>
+      <h2>机器人控制技术</h2>
+      <p>第一章 引言 · 第二章 运动学 · 第三章 微分运动学和静力学 · 第四章 轨迹规划</p>
+    </a>
+    <a class="card" href="/tutorials/matrix/">
+      <span class="emoji">📐</span>
+      <h2>矩阵论</h2>
+      <p>第一章 线性空间引论 · 第二章 线性映射与矩阵 · 第三章 矩阵分解</p>
+    </a>
+    <a class="card" href="/tutorials/numerical/">
+      <span class="emoji">📊</span>
+      <h2>数值分析</h2>
+      <p>第一章 绪论：误差、算法与范数 · 第二章 数值线性代数基础：内积、正交、投影与 SVD</p>
+    </a>
+  </div>
+  <footer>源码：<a href="https://github.com/JUANWANG-BUAA/tutorials">JUANWANG-BUAA/tutorials</a></footer>
+</main>
+</body>
+</html>
