@@ -1,3 +1,6 @@
 book/
 _site/
 .DS_Store
+
+# 本地原始材料归档（PPT/讲义/教材），不发布
+_sources/
