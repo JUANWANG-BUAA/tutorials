@@ -55,7 +55,7 @@
 
 ## 本教程怎么读
 
-全书按「卷首 → 学前准备 → 三章正文 → 章末」组织（第一章六节、第二章五节、第三章两节）。左侧目录是唯一的导航入口，页面顶部有全文搜索（或按 <kbd>/</kbd>），页脚与键盘 <kbd>←</kbd> <kbd>→</kbd> 可翻页。下面按阅读顺序列出各页：
+全书按「卷首 → 学前准备 → 三章正文 → 章末 → 附录」组织（第一章六节、第二章五节、第三章两节，另有两个附录：正文悬置结论的完整推导与跨学科联系）。左侧目录是唯一的导航入口，页面顶部有全文搜索（或按 <kbd>/</kbd>），页脚与键盘 <kbd>←</kbd> <kbd>→</kbd> 可翻页。下面按阅读顺序列出各页：
 
 <div class="index-cards">
 <a href="entry-test.md">
@@ -188,6 +188,18 @@
   <span class="no">三末</span>
   <span class="t">第三章总结（3.1–3.2）</span>
   <span class="d">两节一览 · 主线与四句话 · 母题 · 勘误与补注（E3.1–E3.4）· 习题 38 题 · 自测卷 · 自检表 26 条</span>
+  <span class="go">进入 →</span>
+</a>
+<a href="appendix/appendix-a.md">
+  <span class="no">附 A</span>
+  <span class="t">附录 A · 延伸证明与推导</span>
+  <span class="d">极化恒等式 · Gram 行列式与 Hadamard 不等式 · 迹与行列式 · 几何重数 ≤ 代数重数 · Cayley–Hamilton · 正定矩阵开方 · Bessel 与 Parseval · Moore–Penrose 伪逆（超出考核范围）</span>
+  <span class="go">进入 →</span>
+</a>
+<a href="appendix/appendix-b.md">
+  <span class="no">附 B</span>
+  <span class="t">附录 B · 走向其他学科</span>
+  <span class="d">量子力学（C–S 即概率合法）· 信号处理（DFT 酉性）· 最小二乘与 PCA · 数值分析（QR 路线）· 微分方程（$\mathrm e^{At}$）· 低秩近似与推荐系统（超出考核范围）</span>
   <span class="go">进入 →</span>
 </a>
 </div>

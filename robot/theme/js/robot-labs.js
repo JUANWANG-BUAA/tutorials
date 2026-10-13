@@ -492,11 +492,236 @@
     window.addEventListener("resize", draw);
   }
 
+  /* ---------------- 实验 4：拟人臂 DH 建系（分步构造 + 可旋转视角） ---------------- */
+  function labDHFrames(host) {
+    var c = palette();
+    var state = { stage: 0, q: [0, 30, -110], az: -28 };
+    var L = [1.0, 0.85];
+    var BASE = 0.45;
+
+    /* --- 3D 小工具 --- */
+    function addv(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+    function sclv(a, s) { return [a[0] * s, a[1] * s, a[2] * s]; }
+    function crs(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+    function rotAxis(k, v, ang) {
+      var cs = Math.cos(ang), sn = Math.sin(ang), kxv = crs(k, v), kd = k[0] * v[0] + k[1] * v[1] + k[2] * v[2];
+      return [cs * v[0] + sn * kxv[0] + kd * (1 - cs) * k[0], cs * v[1] + sn * kxv[1] + kd * (1 - cs) * k[1], cs * v[2] + sn * kxv[2] + kd * (1 - cs) * k[2]];
+    }
+
+    /* --- 几何（与 2.8 节分镜图同一套约定：z1 = -y0，α1 = +π/2） --- */
+    function model() {
+      var t1 = state.q[0] * DEG, t2 = state.q[1] * DEG, t3 = state.q[2] * DEG;
+      var S = [0, 0, 0];
+      var x0 = [1, 0, 0], y0 = [0, 1, 0], z0 = [0, 0, 1];
+      var x1 = [Math.cos(t1), Math.sin(t1), 0];
+      var z1 = [-Math.sin(t1), Math.cos(t1), 0];
+      var y1 = crs(z1, x1);
+      var x2 = addv(sclv(x1, Math.cos(t2)), sclv(y1, Math.sin(t2)));
+      var z2 = z1, y2 = crs(z2, x2);
+      var x3 = addv(sclv(x2, Math.cos(t3)), sclv(y2, Math.sin(t3)));
+      var z3 = z2, y3 = crs(z3, x3);
+      return {
+        S: S, B: [0, 0, -BASE],
+        E: sclv(x2, L[0]), W: addv(sclv(x2, L[0]), sclv(x3, L[1])),
+        z0: z0, x0: x0, y0: y0, x1: x1, y1: y1, z1: z1, x2: x2, y2: y2, z2: z2, x3: x3, y3: y3, z3: z3
+      };
+    }
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验"));
+    head.appendChild(el("b", null, "拟人臂 DH 建系：四个坐标系亲手拖出来"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "与 2.8 节四格分镜同一台拟人臂。按 ①→④ 分步构造，再拖动 θ₁、θ₂、θ₃ 与视角：关节 i 转动只带动它下游的坐标系；无论姿态怎样变，α₁ = 90°、a₂ = 杆长等几何量纹丝不动——「3 常 1 变」。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "构造步骤", [
+      { value: "0", text: "① 轴线" }, { value: "1", text: "② 系0" }, { value: "2", text: "③ 系1" }, { value: "3", text: "④ 系2·3" }
+    ], "0", function (v) { state.stage = parseFloat(v); draw(); });
+    slider(controls, "视角", -180, 180, 1, state.az, function (v) { state.az = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+    ["θ₁", "θ₂", "θ₃"].forEach(function (label, i) {
+      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+    });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "拟人臂随分步构造显示的关节轴线与 DH 坐标系");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var ISO_CX = Math.cos(30 * DEG), ISO_SY = Math.sin(30 * DEG);
+    function projector() {
+      var az = state.az * DEG, ca = Math.cos(az), sa = Math.sin(az);
+      return function (v) {
+        var x = ca * v[0] - sa * v[1], y = sa * v[0] + ca * v[1];
+        return { x: (x - y) * ISO_CX, y: (x + y) * ISO_SY - v[2] };
+      };
+    }
+
+    function draw() {
+      var s = fit(canvas, 0.56);
+      var ctx = s.ctx, w = s.w, h = s.h;
+      var m = model();
+      var P = projector();
+
+      // 收集所有可见点 → 自适应缩放
+      var pts = [m.B, m.S, m.E, m.W];
+      var AX = 0.48, TR = 0.40;
+      var axLines = [
+        { p: m.S, d: [0, 0, 1], ext: [BASE + 0.12, 0.52] },
+        { p: m.S, d: m.z1, ext: [AX, AX] },
+        { p: m.E, d: m.z2, ext: [AX, AX] }
+      ];
+      axLines.forEach(function (a) {
+        pts.push(addv(a.p, sclv(a.d, -a.ext[0])), addv(a.p, sclv(a.d, a.ext[1])));
+      });
+      var frames = [];
+      if (state.stage >= 1) frames.push({ o: m.S, axes: [[m.x0, "x₀"], [m.y0, "y₀"], [m.z0, "z₀"]], dim: state.stage >= 3 });
+      if (state.stage >= 2) frames.push({ o: m.S, axes: [[m.x1, "x₁"], [m.y1, "y₁"], [m.z1, "z₁"]], dim: state.stage >= 3 });
+      if (state.stage >= 3) {
+        frames.push({ o: m.E, axes: [[m.x2, "x₂"], [m.y2, "y₂"], [m.z2, "z₂"]] });
+        frames.push({ o: m.W, axes: [[m.x3, "x₃"], [m.y3, "y₃"], [m.z3, "z₃"]] });
+      }
+      frames.forEach(function (f) { f.axes.forEach(function (a) { pts.push(addv(f.o, sclv(a[0], TR))); }); });
+
+      var lo = { x: 1e9, y: 1e9 }, hi = { x: -1e9, y: -1e9 };
+      pts.forEach(function (v) {
+        var p = P(v);
+        lo.x = Math.min(lo.x, p.x); lo.y = Math.min(lo.y, p.y);
+        hi.x = Math.max(hi.x, p.x); hi.y = Math.max(hi.y, p.y);
+      });
+      var scale = Math.min((w - 90) / (hi.x - lo.x + 0.001), (h - 60) / (hi.y - lo.y + 0.001));
+      var mid = { x: (lo.x + hi.x) / 2, y: (lo.y + hi.y) / 2 };
+      function pt(v) {
+        var p = P(v);
+        return { x: w / 2 + (p.x - mid.x) * scale, y: h / 2 + (p.y - mid.y) * scale };
+      }
+      function line3(a, b, color, width, dash) {
+        var pa = pt(a), pb = pt(b);
+        ctx.setLineDash(dash || []);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        return { a: pa, b: pb };
+      }
+      function label(pos, text, color, dx, dy) {
+        ctx.fillStyle = color;
+        ctx.font = "bold 12px " + cssVar("--sans");
+        ctx.fillText(text, pos.x + (dx || 5), pos.y + (dy || -4));
+      }
+      function triad(f, colors, width) {
+        f.axes.forEach(function (a, j) {
+          var tip = addv(f.o, sclv(a[0], TR));
+          var pa = pt(f.o), pb = pt(tip);
+          arrow(ctx, pa.x, pa.y, pb.x, pb.y, f.dim ? c.muted : colors[j], f.dim ? 1.1 : width);
+          if (!f.dim || state.stage < 3) label(pb, a[1], f.dim ? c.muted : colors[j], 6, 4);
+        });
+        var po = pt(f.o);
+        if (!f.dim || state.stage < 3) label(po, "o" + (f.axes[0][1] || "").slice(1), c.ink2, -12, 12);
+      }
+
+      // 1) 关节轴线（虚线）
+      var axisColor = state.stage === 0 ? c.muted : (state.stage <= 2 ? c.ink2 : c.muted);
+      axLines.forEach(function (a, i) {
+        var seg = line3(addv(a.p, sclv(a.d, -a.ext[0])), addv(a.p, sclv(a.d, a.ext[1])), axisColor, state.stage === 0 || (state.stage === 2 && i < 2) ? 1.6 : 1.1, [6, 4]);
+        if (state.stage === 0) label(seg.b, "关节" + (i + 1) + "轴", c.muted, 6, 0);
+      });
+      if (state.stage === 2) {
+        label(pt(addv(m.S, sclv([0, 0, 1], BASE + 0.52))), "z₀", c.ink2, 6, 0);
+        label(pt(addv(m.S, sclv(m.z1, AX))), "z₁", c.ink2, 8, 0);
+      }
+
+      // 2) 机械本体
+      line3(m.B, m.S, c.line, 6);
+      line3(m.S, m.E, c.accent, 6);
+      line3(m.E, m.W, c.accent, 5);
+      [m.S, m.E].forEach(function (p) {
+        var pp = pt(p);
+        ctx.fillStyle = c.paper;
+        ctx.strokeStyle = c.line;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(pp.x, pp.y, 6, 0, 6.2832);
+        ctx.fill();
+        ctx.stroke();
+      });
+      var pw = pt(m.W);
+      ctx.fillStyle = c.accent;
+      ctx.beginPath();
+      ctx.arc(pw.x, pw.y, 4.5, 0, 6.2832);
+      ctx.fill();
+
+      // 3) 分步附加内容
+      var frameColors = [c.blue, c.green, c.gold];
+      if (state.stage >= 2) {
+        // α₁ 弧 + a₁ = 0
+        ctx.strokeStyle = c.purple;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        var first = true;
+        for (var t = 0; t <= 10; t++) {
+          var vv = sclv(rotAxis(m.x1, m.z0, (Math.PI / 2) * t / 10), 0.24);
+          var pp = pt(addv(m.S, vv));
+          if (first) { ctx.moveTo(pp.x, pp.y); first = false; } else ctx.lineTo(pp.x, pp.y);
+        }
+        ctx.stroke();
+        label(pt(addv(m.S, sclv(rotAxis(m.x1, m.z0, Math.PI / 2), 0.26))), "α₁ = 90°", c.purple, 8, 4);
+        label(pt(addv(m.S, [0.1, 0.1, 0.1])), "a₁ = 0", c.red, -34, 14);
+      }
+      if (state.stage >= 3) {
+        // 公垂线（红色平移线）：SE 与 EW
+        var seOff = sclv(m.y2, -0.16), ewOff = sclv(m.y3, -0.15);
+        var seA = addv(m.S, seOff), seB = addv(m.E, seOff);
+        var ewA = addv(m.E, ewOff), ewB = addv(m.W, ewOff);
+        line3(seA, seB, c.red, 1.8);
+        line3(ewA, ewB, c.red, 1.8);
+        label(pt(sclv(addv(seA, seB), 0.5)), "公垂线 = a₂", c.red, -30, 22);
+        label(pt(sclv(addv(ewA, ewB), 0.5)), "a₃", c.red, 10, 0);
+      }
+      frames.forEach(function (f, i) {
+        // 先画淡的再画加粗的，后构造的系覆盖在前面的系上
+        if (f.dim) triad(f, frameColors, 2.4);
+      });
+      for (var fi = frames.length - 1; fi >= 0; fi--) {
+        if (!frames[fi].dim) triad(frames[fi], frameColors, 2.6);
+      }
+
+      ctx.fillStyle = c.muted;
+      ctx.font = "11.5px " + cssVar("--sans");
+      ctx.fillText("等轴测投影（拖「视角」绕竖直轴旋转观察）", 10, h - 8);
+
+      // 4) 读数：步骤说明 + 实时 DH 表
+      var stageNotes = [
+        "第①步：先画三根关节轴线（不建任何坐标系）。关节1竖直过肩点；关节2水平过肩点；关节3过肘点、与关节2平行。轴线的「两两关系」——轴1⊥轴2 相交、轴2∥轴3——已经决定了整张参数表。",
+        "第②步：放系 0。z₀ = 关节1轴（看守模型：系 0 看守关节 1）；o₀ 取在轴1∩轴2（肩心）⇒ d₁ = 0；x₀ 水平任选。系 0 固连基座，任何关节都动不了它。",
+        "第③步：放系 1。z₁ = 关节2轴。两轴相交 ⇒ a₁ = 0；从 z₀ 绕 x₁ 转到 z₁ 为 +90° ⇒ α₁ = π/2（y₁ 恰与 z₀ 同向）。θ₁ 是 x₀ 与 x₁ 绕 z₀ 的夹角——拖动 θ₁ 试试：整条臂带着系 1、2、3 一起绕 z₀ 转。",
+        "第④步：放系 2、3。z₂ = 关节3轴 ∥ z₁ ⇒ α₂ = 0；公垂线就是上臂 ⇒ a₂；d₂ = 0。系 3 同理（a₃ = 前臂长）。拖 θ₂、θ₃：每个关节只带动它下游的坐标系；参数表里的常数纹丝不动。"
+      ];
+      var html = "<p>" + stageNotes[state.stage] + "</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>i</th><th>αᵢ</th><th>aᵢ</th><th>dᵢ</th><th>θᵢ</th></tr></thead><tbody>" +
+        "<tr><td>1</td><td>π/2</td><td>0</td><td>0</td><td>" + state.q[0].toFixed(0) + "°</td></tr>" +
+        "<tr><td>2</td><td>0</td><td>" + L[0].toFixed(2) + "</td><td>0</td><td>" + state.q[1].toFixed(0) + "°</td></tr>" +
+        "<tr><td>3</td><td>0</td><td>" + L[1].toFixed(2) + "</td><td>0</td><td>" + state.q[2].toFixed(0) + "°</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>与 2.9.4 拟人臂的 DH 表逐字相同；连乘结果 T₃⁰ 见 2.9.4。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+  }
+
   /* ---------------- 引导 ---------------- */
   function boot() {
     var hosts = document.querySelectorAll("[data-lab]");
     if (hosts.length === 0) return;
-    var registry = { euler: labEuler, arm: labArm, traj: labTraj };
+    var registry = { euler: labEuler, arm: labArm, traj: labTraj, dhframes: labDHFrames };
     Array.prototype.forEach.call(hosts, function (host) {
       var name = host.getAttribute("data-lab");
       var builder = registry[name];

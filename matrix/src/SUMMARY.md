@@ -60,6 +60,11 @@
   - [综合自测卷](ch03/mock-exam.md)
   - [学习目标自检表](ch03/checklist.md)
 
+# 附录 · 拓展与联系
+
+- [附录 A · 延伸证明与推导](appendix/appendix-a.md)
+- [附录 B · 走向其他学科：线性代数的六个出口](appendix/appendix-b.md)
+
 # 查阅页
 
 - [学习目标（K / S / A）](preface-objectives.md)

@@ -1,6 +1,6 @@
 # 2.6 奇异值分解与低秩逼近
 
-本节把前面所有工具收拢到一个分解里。**奇异值分解（SVD）是现代数值线性代数的中心**：它同时给出四个基本子空间的标准正交基（2.2）、矩阵的 2-范数与条件数（2.4）、对称谱理论向任意矩阵的推广（2.5）、低秩逼近的最优答案（2.6.5）、伪逆与秩亏最小二乘（2.6.4），也是 PCA、推荐系统、图像压缩的方法基础。本节的线索是：先看 SVD 怎样从对称矩阵的谱里长出来，再用两种几何读法把它看明白，然后依次回答四个基本子空间、伪逆与数值秩、最优低秩逼近三个问题，最后落到压缩与 PCA 两个应用。一句话：**如果只能带一件工具走，就带 SVD。**
+本节把前面所有工具收拢到一个分解里。**SVD 是现代数值线性代数的中心**：它同时给出四个基本子空间的标准正交基（2.2）、2-范数与条件数（2.4）、对称谱理论向任意矩阵的推广（2.5）、低秩逼近的最优答案（2.6.5）、伪逆与秩亏最小二乘（2.6.4），也是 PCA、推荐系统、图像压缩的方法基础。线索是：SVD 怎样从对称矩阵的谱里长出来 → 两种几何读法 → 四个基本子空间、伪逆与数值秩、最优低秩逼近 → 压缩与 PCA 两个应用。一句话：**如果只能带一件工具走，就带 SVD。**
 
 <aside class="lesson-brief" aria-label="2.6 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>对称矩阵的谱定理与 Courant–Fischer（2.5.4）；四个基本子空间（2.2.1）；正交矩阵与正交不变性（2.1.3）；投影与最小二乘（2.2.4）。</p></div>
@@ -59,7 +59,7 @@ $$\boldsymbol{u}_i^{\mathrm T}\boldsymbol{u}_j=\frac{\boldsymbol{v}_i^{\mathrm T
 
 $$\lVert A\boldsymbol{v}_i\rVert_2^2=\boldsymbol{v}_i^{\mathrm T}A^{\mathrm T}A\boldsymbol{v}_i=0\ \Longrightarrow\ A\boldsymbol{v}_i=\boldsymbol{0}=\sigma_i\boldsymbol{u}_i .$$
 
-于是对**所有** $i=1,\dots,n$ 都有 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$，写成矩阵形式即 $AV=U\Sigma$，两边右乘 $V^{\mathrm T}$ 得（2.29）。∎
+于是对**所有** $i=1,\dots,n$ 都有 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$，写成矩阵形式即 $AV=U\Sigma$，两边右乘 $V^{\mathrm T}$ 得（2.29）。
 
 **关键观察：构造 $U$ 的方式是「被动」的。** 我们**没有**去解 $AA^{\mathrm T}$ 的特征值问题，而是从 $A^{\mathrm T}A$ 的特征向量 $\boldsymbol{v}_i$ 出发，用 $\boldsymbol{u}_i=A\boldsymbol{v}_i/\sigma_i$ 把 $\boldsymbol{u}_i$ 顺手算出来。这比分别解两个特征值问题省事得多，数值上也更稳——$\boldsymbol{u}_i$ 和 $\sigma_i$ 都来自 $A^{\mathrm T}A$ 的信息，不必另起炉灶。
 :::
@@ -113,7 +113,7 @@ $$U\Sigma V^{\mathrm T}=\frac{1}{\sqrt{10}}\begin{pmatrix}1&3\\3&-1\end{pmatrix}
 
 $$A=\sigma_1\boldsymbol{u}_1\boldsymbol{v}_1^{\mathrm T}+\sigma_2\boldsymbol{u}_2\boldsymbol{v}_2^{\mathrm T}=6.7082\,\boldsymbol{u}_1\boldsymbol{v}_1^{\mathrm T}+2.2361\,\boldsymbol{u}_2\boldsymbol{v}_2^{\mathrm T}.$$
 
-截去第二项后，误差 $\lVert A-A_1\rVert_2=\sigma_2=2.2361$ **恰好等于被丢掉的奇异值**——见 [@thm-2.6.4]。∎
+截去第二项后，误差 $\lVert A-A_1\rVert_2=\sigma_2=2.2361$ **恰好等于被丢掉的奇异值**——见 [@thm-2.6.4]。
 :::
 
 :::
@@ -191,7 +191,7 @@ $$\boldsymbol{u}_1=\frac{A\boldsymbol{v}_1}{\sigma_1}=\frac{1}{\sqrt{70}}\cdot\f
 
 **验证：** $\operatorname{rank}A=1$（恰有一个非零奇异值）；$\det A$ 无从谈起（$A$ 不是方阵），但 $AA^{\mathrm T}$ 的秩也是 1 ✓。$\lVert A\rVert_2=8.3666$，$\lVert A\rVert_F=\sqrt{70}=8.3666$（**秩 1 时两者相等**，因为 $\lVert A\rVert_F^2=\sum\sigma_i^2=\sigma_1^2$）。
 
-**数据含义：** 这个矩阵的两列完全相关（第 2 列是第 1 列的 2 倍），所以它携带的信息**本质上只有 1 维**——SVD 只用一个非零奇异值就把这件事精确说了出来。**「有效维度 = 非零奇异值的个数」**，这就是 SVD 在数据分析里的核心读法。∎
+**数据含义：** 这个矩阵的两列完全相关（第 2 列是第 1 列的 2 倍），所以它携带的信息**本质上只有 1 维**——SVD 只用一个非零奇异值就把这件事精确说了出来。**「有效维度 = 非零奇异值的个数」**，这就是 SVD 在数据分析里的核心读法。
 :::
 
 :::
@@ -225,7 +225,7 @@ $$\lVert A\rVert_2=\sigma_1,\qquad \lVert A\rVert_F=\sqrt{\sigma_1^2+\cdots+\sig
 
 **左零空间：** $A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i=\boldsymbol{0}$（$i\gt r$），同法。
 
-**（2.30）：** $\lVert A\rVert_2=\sigma_1$ 由 [@thm-1.3.5] 与 $\lambda_{\max}(A^{\mathrm T}A)=\sigma_1^2$（课堂[第 3 讲](../lectures/lec03.md)讲矩阵范数时把 2-范数留作自学——这一式就是那处留白的兑现）；$\lVert A\rVert_F^2=\operatorname{tr}(A^{\mathrm T}A)=\sum_i\lambda_i(A^{\mathrm T}A)=\sum_i\sigma_i^2$；条件数由 [@thm-2.4.1] 第 4 条。∎
+**（2.30）：** $\lVert A\rVert_2=\sigma_1$ 由 [@thm-1.3.5] 与 $\lambda_{\max}(A^{\mathrm T}A)=\sigma_1^2$（课堂[第 3 讲](../lectures/lec03.md)讲矩阵范数时把 2-范数留作自学——这一式就是那处留白的兑现）；$\lVert A\rVert_F^2=\operatorname{tr}(A^{\mathrm T}A)=\sum_i\lambda_i(A^{\mathrm T}A)=\sum_i\sigma_i^2$；条件数由 [@thm-2.4.1] 第 4 条。
 
 **这张表就是 2.2 节「四个基本子空间」问题的完整答案**——而且它比手算行简化**稳定得多**（行简化在病态矩阵上会丢有效数字，SVD 不会）。**实践判据：要四个基本子空间，用 SVD；只想知道秩，用列主元 QR 省点代价即可。**
 :::
@@ -272,7 +272,7 @@ V^{\mathrm T}=\begin{pmatrix}-0.2479&-0.4958&-0.7437&-0.3738\\-0.0999&-0.1998&-0
 
 **这正是 SVD 优于手算的实质：** 它不仅告诉你「哪些向量张成子空间」，还直接把一组**标准正交**的坐标轴送到手上——可以直接拿来做投影（[2.2.3](sec22.md#sec-2.2.3)）、判正交、算距离，不必再补一次 Gram–Schmidt。
 
-**顺带核对几个范数关系：** $\lVert A\rVert_2=\sigma_1=9.8777$（**大于** $\lVert A\rVert_F/\sqrt2=7.0$，因为 $\lVert A\rVert_2$ 量的是最大拉伸、$\lVert A\rVert_F$ 量的是全部奇异值的平方和开方）；$\lVert A\rVert_2\le\lVert A\rVert_F$ ✓（[1.3.4](../ch01/sec13.md#sec-1.3.4) 的结论）。∎
+**顺带核对几个范数关系：** $\lVert A\rVert_2=\sigma_1=9.8777$（**大于** $\lVert A\rVert_F/\sqrt2=7.0$，因为 $\lVert A\rVert_2$ 量的是最大拉伸、$\lVert A\rVert_F$ 量的是全部奇异值的平方和开方）；$\lVert A\rVert_2\le\lVert A\rVert_F$ ✓（[1.3.4](../ch01/sec13.md#sec-1.3.4) 的结论）。
 :::
 
 :::
@@ -284,20 +284,14 @@ $$\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert\le\sum_{i=1}^{\min(m,n)}\sigma_i
 
 **用途：** 它是许多扰动界证明的起点（信号处理里的匹配滤波、矩阵近似理论都会用到它），而且很容易做数值验证。
 
-::: proof 证明
-设 $A,B$ 的 SVD 为 $A=U_A\Sigma_AV_A^{\mathrm T}$、$B=U_B\Sigma_BV_B^{\mathrm T}$。则
+::: proof 证明（归约到「对称情形 + 奇异子空间的对齐」；完整推导见附录）
+核心是三条工具链，全部细节在[附录 A.2.3–A.2.4](../appendix/derivations.md#app-a-2-3)：
 
-$$\operatorname{tr}(A^{\mathrm T}B)=\operatorname{tr}(V_A\Sigma_A U_A^{\mathrm T}U_B\Sigma_BV_B^{\mathrm T})=\operatorname{tr}(\Sigma_A\underbrace{U_A^{\mathrm T}U_B}_{=:W}\Sigma_B\underbrace{V_B^{\mathrm T}V_A}_{=:Z})$$
+1. **对称迹不等式**（附录引理 A.3.3）：对称阵 $S,T$ 满足 $\operatorname{tr}(ST)\le\sum_i\lambda_i(S)\lambda_i(T)$（特征值降序配对）。它由「特征基展开 ⟹ 系数方阵 $(\boldsymbol{u}_i^{\mathrm T}\boldsymbol{v}_j)^2$ 双随机 ⟹ Birkhoff 定理拆成置换的凸组合 ⟹ 逐个置换用标量重排不等式」四步组成；
+2. **对称化膨胀**：把矩形问题化为对称问题——令 $S=\begin{pmatrix}O&A\\A^{\mathrm T}&O\end{pmatrix}$、$T=\begin{pmatrix}O&B\\B^{\mathrm T}&O\end{pmatrix}$，则 $S,T$ 对称，$S$ 的特征值恰为 $\pm\sigma_i(A)$，且 $\operatorname{tr}(ST)=2\operatorname{tr}(A^{\mathrm T}B)$；
+3. 对 $S,T$ 套用第 1 步（特征值降序逐项相乘，两块恰好各贡献一个 $\sum\sigma_i(A)\sigma_i(B)$），除以 $2$ 即得（2.31）；对 $-B$ 再用一次得绝对值版本。
 
-（这里用了迹的循环性 $\operatorname{tr}(XYZ)=\operatorname{tr}(ZXY)$。）$W=U_A^{\mathrm T}U_B$ 与 $Z=V_B^{\mathrm T}V_A$ 是什么矩阵？它们都是**正交矩阵的乘积**：$W$ 的行是 $U_B$ 的列在 $U_A$ 坐标下的表示，于是 $W$ 的各列范数 $\le1$、各 **行**范数 $\le1$（正交矩阵的子矩阵性质）；$Z$ 同理。
-
-于是 $\operatorname{tr}(\Sigma_AW\Sigma_BZ)=\sum_{i,j}\sigma_i(A)w_{ij}\sigma_j(B)z_{ji}$，**每一项的绝对值被 $\sigma_i(A)\sigma_j(B)\lvert w_{ij}z_{ji}\rvert$ 控制**，而 $\lvert w_{ij}\rvert\le1,\lvert z_{ji}\rvert\le1$。把重排不等式型的逐项论证用上去，可得 $\sum_{i,j}\sigma_i(A)\sigma_j(B)\lvert w_{ij}z_{ji}\rvert\le\sum_k\sigma_k(A)\sigma_k(B)$（完整证明见 Horn & Johnson _Topics in Matrix Analysis_ §3.3，本教程从略——**这一步是整个证明的核心引理**，其余步骤都是初等的迹运算）。这一步的标准做法是对 $\Sigma_AW\Sigma_B$ 用
-
-$$\operatorname{tr}(\Sigma_AW\Sigma_BZ)\le\lVert\Sigma_AW\Sigma_B\rVert_*\lVert Z\rVert_2=\lVert\Sigma_AW\Sigma_B\rVert_*\cdot1,$$
-
-其中 $\lVert\cdot\rVert_*$ 是**核范数**（奇异值之和）。再对 $\lVert\Sigma_AW\Sigma_B\rVert_*=\lVert\Sigma_A^{1/2}(\Sigma_A^{1/2}W\Sigma_B^{1/2})\Sigma_B^{1/2}\rVert_*$ 用迹的 Cauchy–Schwarz 型放缩得 $\le\sum_k\sigma_k(A)\sigma_k(B)$。取绝对值即得（2.31）。
-
-（完整的标准证明见 Horn & Johnson《Topics in Matrix Analysis》§3.3。**下面做个数值验证：**）
+**数值验证：**
 
 ```python
 import numpy as np
@@ -314,7 +308,7 @@ for m, n in [(5, 4), (4, 5)]:
 |tr(A^T B)| = 0.839841  ≤  Σσ_i(A)σ_i(B) = 19.541253
 ```
 
-**注意两者的差距很大**（$7.0$ 对 $26.3$）：随机矩阵的 $\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert$ 通常远小于这个上界，因为取等要求 $A,B$ 的奇异向量**完全对齐**（$W,Z$ 为单位阵）。**取等的情形正是「$A,B$ 的奇异子空间重合」**——这也说明（2.31）是**紧界**（取 $B=A^{\mathrm T}$ 时，$\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum\sigma_i^2$ 恰好取等）。∎
+**注意两者的差距很大**（$7.0$ 对 $26.3$）：随机矩阵的 $\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert$ 通常远小于这个上界，因为取等要求 $A,B$ 的**左右奇异子空间完全对齐**（取等条件的讨论见[附录 A.2.4](../appendix/derivations.md#app-a-2-4)）。特例 $B=A^{\mathrm T}$：$\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum\sigma_i^2$ 恰好取等——（2.31）是**紧界**。
 :::
 
 :::
@@ -361,7 +355,7 @@ $$(\sigma_iy_i-c_i)^2\qquad(i=1,\dots,n) .$$
 - 若 $\sigma_i=0$：该项为 $c_i^2$，与 $y_i$ 无关，最小范数要求取 $y_i=0$；
 - 若 $i\gt n$（$m\gt n$ 时的多余行）：不影响。
 
-故最优解 $\boldsymbol{y}=\Sigma^{+}\boldsymbol{c}$，即 $\boldsymbol{x}=V\Sigma^{+}U^{\mathrm T}\boldsymbol{b}=A^{+}\boldsymbol{b}$，且在每个「自由」分量上都取了零（**这正是最小范数条件**）。∎
+故最优解 $\boldsymbol{y}=\Sigma^{+}\boldsymbol{c}$，即 $\boldsymbol{x}=V\Sigma^{+}U^{\mathrm T}\boldsymbol{b}=A^{+}\boldsymbol{b}$，且在每个「自由」分量上都取了零（**这正是最小范数条件**）。
 
 **（1）的唯一性**：满足 Penrose 四条件的矩阵唯一（标准事实，见 [习题 B4](exercises.md)）。
 :::
@@ -402,7 +396,7 @@ $$\begin{pmatrix}14&28\\28&56\end{pmatrix}\boldsymbol{x}=\begin{pmatrix}6\\12\en
 
 **一条直线**——最小二乘解不唯一。取此直线上的另一点 $x_2=0\Rightarrow x_1=3/7$，得 $\boldsymbol{x}'=(3/7,0)^{\mathrm T}$：残差同样是 $3/7$（**同为最小二乘解**），但 $\lVert\boldsymbol{x}'\rVert_2=0.4286\gt\lVert\hat{\boldsymbol{x}}\rVert_2=0.1917$。**伪逆给出的是这条直线上离原点最近的点** ✓（$\hat{\boldsymbol{x}}$ 沿 $(1,2)$ 方向，正是直线的法方向）。
 
-**这个例子重要在哪里：** $A$ 的列相关（第 2 列 $=2\times$第 1 列），最小二乘解因此成为**一条直线**。`np.linalg.lstsq` 与 `np.linalg.pinv` 默认返回这条直线上**最小范数**的那一点；而直接消元解正态方程，得到的是直线上**任意**一点（取到哪一点取决于主元选择）——**这就是伪逆与正态方程在秩亏问题上的本质区别**。∎
+**这个例子重要在哪里：** $A$ 的列相关（第 2 列 $=2\times$第 1 列），最小二乘解因此成为**一条直线**。`np.linalg.lstsq` 与 `np.linalg.pinv` 默认返回这条直线上**最小范数**的那一点；而直接消元解正态方程，得到的是直线上**任意**一点（取到哪一点取决于主元选择）——**这就是伪逆与正态方程在秩亏问题上的本质区别**。
 :::
 
 :::
@@ -458,7 +452,7 @@ $$\lVert A-B\rVert_2^2\ge\lVert(A-B)\boldsymbol{x}\rVert_2^2=\lVert A\boldsymbol
 
 （最后一步用了 $\sigma_i\ge\sigma_{k+1}$（$i\le k+1$），以及 $\lVert\boldsymbol{x}\rVert_2^2=\sum c_i^2=1$。）故 $\lVert A-B\rVert_2\ge\sigma_{k+1}$。上下界合起来即得（2.34）。
 
-**Frobenius 情形**（（2.35））的证法类似但更细致（用 Weyl 不等式逐项控制奇异值），见 [习题 B6](exercises.md)。∎
+**Frobenius 情形**（（2.35））的证法走另一条路（对称化膨胀 + Hoffman–Wielandt 不等式），见 [习题 B6](exercises.md) 与[附录 A.2.5](../appendix/derivations.md#app-a-2-5)。
 
 **这个证明值得记住：** 只用一次「维数计数」，加上一个 Courant–Fischer 型的二次型估计，就把「最优低秩逼近」这件看起来非用优化理论不可的事彻底解决了。**这是线性代数结构力量的又一次展示。**
 :::
@@ -508,7 +502,7 @@ for k in [3, 5]:
     print(f"k={k}: 200 个随机秩 {k} 阵的最小误差 = {best:.6e}  ≥  σ{k+1} = {S[k]:.6e}")
 ```
 
-**结论：** 随机秩 $k$ 矩阵的误差都**严格大于**（通常是远大于）$\sigma_{k+1}$，从没有更小的——**Eckart–Young 保证 $A_k$ 的误差最小**。∎
+**结论：** 随机秩 $k$ 矩阵的误差都**严格大于**（通常是远大于）$\sigma_{k+1}$，从没有更小的——**Eckart–Young 保证 $A_k$ 的误差最小**。
 :::
 
 :::

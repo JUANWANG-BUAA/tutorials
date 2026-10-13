@@ -1,6 +1,6 @@
 # 2.4 条件数与扰动分析
 
-第一章的 [1.2.6](../ch01/sec12.md#sec-1.2.6) 引入了条件数的**函数版** $\mathrm{cond}(f,x)=\lvert xf'(x)/f(x)\rvert$，并在 [1.3.6](../ch01/sec13.md#sec-1.3.6) 预告了**矩阵版**。这一节把它兑现，路线是：条件数为什么这样定义，右端扰动会被放大多少，系数扰动又会被放大多少，以及**为什么「残差小」不等于「解准」**。走完这几步，「这个方程组还能保住几位有效数字」就能用一个数预测出来。本节结论都能直接指导工程实践，是第二章最实用的一节。
+第一章的 [1.2.6](../ch01/sec12.md#sec-1.2.6) 引入了条件数的**函数版** $\mathrm{cond}(f,x)=\lvert xf'(x)/f(x)\rvert$，并在 [1.3.6](../ch01/sec13.md#sec-1.3.6) 预告了**矩阵版**。这一节把它兑现：条件数为什么这样定义，右端与系数扰动各被放大多少，以及**为什么「残差小」不等于「解准」**——走完这几步，「这个方程组还能保住几位有效数字」就能用一个数预测出来。
 
 <aside class="lesson-brief" aria-label="2.4 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>矩阵范数与从属范数、相容性（1.3.3）；矩阵-1 范数与 ∞-范数公式（1.3.4）；有效数字与相对误差的换算（1.2.2）；单位舍入误差 $u$（1.2.5）。</p></div>
@@ -48,7 +48,7 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
 **5：** 由 [@thm-2.1.5] 第 10 条，正交阵奇异值全为 $1$。
 
-**7：** $(AB)^{-1}=B^{-1}A^{-1}$，故 $\mathrm{cond}(AB)=\lVert AB\rVert\lVert B^{-1}A^{-1}\rVert\le\lVert A\rVert\lVert B\rVert\lVert B^{-1}\rVert\lVert A^{-1}\rVert=\mathrm{cond}(A)\mathrm{cond}(B)$。取 $A=\operatorname{diag}(1,10)$、$B=\operatorname{diag}(10,1)$ 时 $\mathrm{cond}_2(A)=\mathrm{cond}_2(B)=10$、$AB=I$、$\mathrm{cond}_2(AB)=1\lt100$，故一般不是等式。∎
+**7：** $(AB)^{-1}=B^{-1}A^{-1}$，故 $\mathrm{cond}(AB)=\lVert AB\rVert\lVert B^{-1}A^{-1}\rVert\le\lVert A\rVert\lVert B\rVert\lVert B^{-1}\rVert\lVert A^{-1}\rVert=\mathrm{cond}(A)\mathrm{cond}(B)$。取 $A=\operatorname{diag}(1,10)$、$B=\operatorname{diag}(10,1)$ 时 $\mathrm{cond}_2(A)=\mathrm{cond}_2(B)=10$、$AB=I$、$\mathrm{cond}_2(AB)=1\lt100$，故一般不是等式。
 
 **性质 4 是工程上最常用的识别手段：$\mathrm{cond}_2$ 就是「最大奇异值 / 最小奇异值」**，因此第 2.6 节用 SVD 算条件数是标准做法（`np.linalg.cond(A, 2)` 内部就用 SVD）。
 :::
@@ -66,7 +66,7 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
 **为什么差这么多？** 条件数**不是**在量「矩阵元素有多大」，而是在量**行（列）向量之间的接近程度**。$B$ 的两列 $(2,2)^{\mathrm T}$ 与 $(2,4)^{\mathrm T}$ 夹角约 $18^{\circ}$，比 $A$ 的两列（相互正交）更「接近平行」，于是 $B$ 更接近奇异——**条件数度量的是「离奇异有多远」**。这一点在 [2.6.5](sec26.md#sec-2.6.5) 用最小奇异值讲会更清楚：$\mathrm{cond}_2(A)=1/(\text{相对距离})$。
 
-**（2）** 取 $c=-3$、$A=B$：$cA$ 的行和是原来 $3$ 倍，$(cA)^{-1}$ 的行和是原来 $1/3$ 倍，乘积不变，故 $\mathrm{cond}_\infty(cA)=\mathrm{cond}_\infty(B)=9$ ✓。**条件数对整体缩放免疫**——把方程组每行都乘以 $10^{6}$ 不会改变病态程度。∎
+**（2）** 取 $c=-3$、$A=B$：$cA$ 的行和是原来 $3$ 倍，$(cA)^{-1}$ 的行和是原来 $1/3$ 倍，乘积不变，故 $\mathrm{cond}_\infty(cA)=\mathrm{cond}_\infty(B)=9$ ✓。**条件数对整体缩放免疫**——把方程组每行都乘以 $10^{6}$ 不会改变病态程度。
 :::
 
 :::
@@ -100,7 +100,7 @@ $$\lVert\delta\boldsymbol{x}\rVert\le\lVert A^{-1}\rVert\lVert\delta\boldsymbol{
 
 **紧性：** 关键在于 $\boldsymbol{x}$ 与 $\delta\boldsymbol{b}$ 可以独立选取。把 $\boldsymbol{x}$ 取成使 $\lVert A\boldsymbol{x}\rVert/\lVert\boldsymbol{x}\rVert=\lVert A\rVert$ 的向量、把 $\delta\boldsymbol{b}$ 取成使 $\lVert A^{-1}\delta\boldsymbol{b}\rVert/\lVert\delta\boldsymbol{b}\rVert=\lVert A^{-1}\rVert$ 的向量，两条链就各自取到等号。
 
-但这两个方向一般不重合，所以**界在具体某对向量上未必达到**。不过总能构造出使比值趋于 $\mathrm{cond}$ 的实例（例如 $A$ 对称时，$\boldsymbol{x}$ 取最小特征值方向、$\delta\boldsymbol{b}$ 取最大特征值方向）。因此（2.18）是**最优的一般界**，没法再改进；具体问题的实际放大倍数则可能小于它。∎
+但这两个方向一般不重合，所以**界在具体某对向量上未必达到**。不过总能构造出使比值趋于 $\mathrm{cond}$ 的实例（例如 $A$ 对称时，$\boldsymbol{x}$ 取最小特征值方向、$\delta\boldsymbol{b}$ 取最大特征值方向）。因此（2.18）是**最优的一般界**，没法再改进；具体问题的实际放大倍数则可能小于它。
 :::
 
 :::
@@ -154,7 +154,7 @@ n=12 cond=1.719e+16 log10(cond)= 16.2 实测最大误差=2.2e-01 cond*u=1.9e+00
 2. **$n=12$ 时解已完全失效**（误差 $0.22$，而真值全是 $1$）：$\mathrm{cond}\cdot u=1.9\gt1$，相对误差可以超过 $100\%$。**用双精度解 12 阶 Hilbert 系统，在这个意义上是没有意义的**——尽管 `np.linalg.solve` 返回了一堆看起来很正常的数。
 3. **Hilbert 矩阵的条件数大致按 $10^{1.5n}$ 增长**：每增加一阶，就多丢约 $1.5$ 位。$n=14$ 时 $\mathrm{cond}\approx4\times10^{17}\gt1/u$，双精度彻底失效。
 
-**验收标准：** 你机器上算出的 $\mathrm{cond}$ 应与上表一致（相对差别在 $10^{-3}$ 量级内），误差随 BLAS 实现略有不同但同量级；把 `np.linalg.solve` 换成手写 Cholesky，误差量级不变——**因为病态是问题的属性，不是算法的**（[1.2.6](../ch01/sec12.md#sec-1.2.6) 的核心区分）。∎
+**验收标准：** 你机器上算出的 $\mathrm{cond}$ 应与上表一致（相对差别在 $10^{-3}$ 量级内），误差随 BLAS 实现略有不同但同量级；把 `np.linalg.solve` 换成手写 Cholesky，误差量级不变——**因为病态是问题的属性，不是算法的**（[1.2.6](../ch01/sec12.md#sec-1.2.6) 的核心区分）。
 :::
 
 :::
@@ -203,7 +203,7 @@ $$\delta\boldsymbol{x}=(A+\delta A)^{-1}\boldsymbol{b}-A^{-1}\boldsymbol{b}
 $$\delta\boldsymbol{x}=-(I+A^{-1}\delta A)^{-1}A^{-1}\delta A\,\boldsymbol{x},\qquad
 \lVert\delta\boldsymbol{x}\rVert\le\frac{\lVert A^{-1}\rVert\lVert\delta A\rVert\lVert\boldsymbol{x}\rVert}{1-\varepsilon}=\frac{\varepsilon\lVert\boldsymbol{x}\rVert}{1-\varepsilon} .$$
 
-两边除以 $\lVert\boldsymbol{x}\rVert$、把 $\varepsilon$ 展开即得（2.21）。同时扰动时把 $\delta\boldsymbol{b}$ 的贡献加上（与右端扰动同法）即得（2.22）。∎
+两边除以 $\lVert\boldsymbol{x}\rVert$、把 $\varepsilon$ 展开即得（2.21）。同时扰动时把 $\delta\boldsymbol{b}$ 的贡献加上（与右端扰动同法）即得（2.22）。
 
 **这里有两点值得注意。** ① 上面用到了第一章的定理 1.3.6（Neumann 界），**这是它在第二章的第一次实战**：课堂上老师用反证法证过这条定理，还演示了 $\lVert A\rVert_1=0.7<1$ 判 $I+A$ 可逆的数值例（见[第 3 讲精编](../lectures/lec03.md)）；本节反复使用的「∞-范数 = 行和」也出自那一讲。② 条件（2.20）并非可有可无的技术性假设——它恰好刻画了「$\delta A$ 还没把 $A$ 推过奇异点」这件事。
 :::
@@ -230,7 +230,7 @@ $$\text{界}=\frac{3.6\times10^{5}}{1-0.060}\times1.67\times10^{-7}\approx0.064 
 
 **实测：** 消元得 $(10^{-4}+t)x_2=10^{-4}$，即 $x_2=\dfrac{10^{-4}}{10^{-4}+t}\approx0.9901$、$x_1=3-2x_2\approx1.0198$，相对误差 $\approx2\%$。**界 $0.064$ 只比实测大 $3$ 倍**，对「只扰动一个元素」这种良性扰动已经相当紧；当然界仍是**最坏情形**（最坏扰动方向能让 $\lVert A^{-1}\delta A\rVert$ 达到 $\mathrm{cond}\cdot\rho_A$，本例远没有达到）。**界的方向和量级都对。**
 
-**真正的结论：** 两个尺度必须拼起来看。$\varepsilon=\mathrm{cond}\cdot\rho_A\lt1$ 时，界可用且方向正确（本例实测只是它的若干分之一）；$\varepsilon\gt1$ 时定理失效，解可以完全失控（$t=10^{-4}$ 那段就是）。当 $\rho_A=u\approx10^{-16}$、$\mathrm{cond}=10^{5}$ 时，$\mathrm{cond}\cdot u\approx10^{-11}$，即**最多丢 11 位**。这与（2.19）完全一致。∎
+**真正的结论：** 两个尺度必须拼起来看。$\varepsilon=\mathrm{cond}\cdot\rho_A\lt1$ 时，界可用且方向正确（本例实测只是它的若干分之一）；$\varepsilon\gt1$ 时定理失效，解可以完全失控（$t=10^{-4}$ 那段就是）。当 $\rho_A=u\approx10^{-16}$、$\mathrm{cond}=10^{5}$ 时，$\mathrm{cond}\cdot u\approx10^{-11}$，即**最多丢 11 位**。这与（2.19）完全一致。
 :::
 
 :::
@@ -264,7 +264,7 @@ $$\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\ \le\ \mathrm{co
 ::: proof 证明
 由 $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}=A\boldsymbol{x}-A\hat{\boldsymbol{x}}=-A\boldsymbol{e}$ 得 $\boldsymbol{e}=-A^{-1}\boldsymbol{r}$，取范数并用相容性得第一式。再用 $\lVert\boldsymbol{b}\rVert\le\lVert A\rVert\lVert\boldsymbol{x}\rVert$ 得 $\dfrac{1}{\lVert\boldsymbol{x}\rVert}\le\dfrac{\lVert A\rVert}{\lVert\boldsymbol{b}\rVert}$，相乘即得（2.23）。
 
-**向下界的证明**留作[习题 B5](exercises.md) 的补充（提示：$\boldsymbol{b}=\boldsymbol{r}+A\hat{\boldsymbol{x}}-A\boldsymbol{e}$ 与 $\lVert\hat{\boldsymbol{x}}\rVert\le\lVert\boldsymbol{x}\rVert+\lVert\boldsymbol{e}\rVert$ 双向放缩）。∎
+**向下界的证明**留作[习题 B5](exercises.md) 的补充（提示：$\boldsymbol{b}=\boldsymbol{r}+A\hat{\boldsymbol{x}}-A\boldsymbol{e}$ 与 $\lVert\hat{\boldsymbol{x}}\rVert\le\lVert\boldsymbol{x}\rVert+\lVert\boldsymbol{e}\rVert$ 双向放缩）；完整推导见[附录 A.2.2](../appendix/derivations.md#app-a-2-2)。
 
 **（2.23）回答了「求解器到底报告了什么」：** 求解器能保证的是**残差**（后向误差，[1.2.6](../ch01/sec12.md#sec-1.2.6)），用户想要的却是**误差**（前向误差）——两者之间恰好隔着一个 $\mathrm{cond}(A)$。**这正是 [1.2.6](../ch01/sec12.md#sec-1.2.6) 那张 conditioning/stability 表格的矩阵版。**
 :::
@@ -314,7 +314,7 @@ cond_inf(A) = 4.000e+11
 $$x_1+x_2\approx2,\qquad x_1+x_2\approx2$$
 实际上是**同一个方程**：两个未知数只有一个有效约束，解可以沿着直线 $x_1+x_2=2$ 滑动。$(1.5,0.5)$ 与 $(1,1)$ 都近似落在这条线上，所以**残差都很小**；但两点相距 $0.5$，所以**误差很大**。
 
-**工程含义：** 不要把残差当作误差的代理指标。**判据是 $\mathrm{cond}(A)\cdot\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$，不是 $\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$。** ∎
+**工程含义：** 不要把残差当作误差的代理指标。**判据是 $\mathrm{cond}(A)\cdot\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$，不是 $\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$。**
 :::
 
 :::
@@ -376,7 +376,7 @@ print(np.linalg.cond(A, np.inf))          # ≈2.0e20
 B = A / A.max(axis=1, keepdims=True)      # 行均衡化
 print(np.linalg.cond(B, np.inf))          # ≈4.0e10
 ```
-∎
+
 :::
 
 :::

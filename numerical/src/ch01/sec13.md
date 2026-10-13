@@ -47,7 +47,7 @@
 ::: proof 解
 **(1) 不是**：正定、齐次满足，但三角不等式失效——$\boldsymbol{x}=\boldsymbol{y}=(1,0)^{\mathrm T}$：$N_1(\boldsymbol{x}+\boldsymbol{y})=N_1(2,0)=4\gt1+1=2$。平方会「压扁」和向量。
 **(2) 不是**：正定性失效——$\boldsymbol{x}=(0,5)$ 非零但 $N_2(\boldsymbol{x})=0$。只看一个分量就丢掉了其他方向的信息。
-**(3) 是**：正是下文的 $\lVert\cdot\rVert_1$，见[@thm-1.3.1] 的证明。∎
+**(3) 是**：正是下文的 $\lVert\cdot\rVert_1$，见[@thm-1.3.1] 的证明。
 :::
 
 :::
@@ -66,7 +66,7 @@ $$0\le\lVert\boldsymbol{x}-t\boldsymbol{y}\rVert_2^2=\lVert\boldsymbol{x}\rVert_
 
 $$0\le\lVert\boldsymbol{x}\rVert_2^2-\frac{(\boldsymbol{x}^{\mathrm T}\boldsymbol{y})^2}{\lVert\boldsymbol{y}\rVert_2^2},$$
 
-移项即得。等号成立当且仅当 $\boldsymbol{x}-t\boldsymbol{y}=\boldsymbol{0}$，即二者线性相关。∎
+移项即得。等号成立当且仅当 $\boldsymbol{x}-t\boldsymbol{y}=\boldsymbol{0}$，即二者线性相关。
 :::
 
 :::
@@ -96,7 +96,7 @@ $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_2^2=(\boldsymbol{x}+\boldsymbol{y})^
 
 $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_2^2\le\lVert\boldsymbol{x}\rVert_2^2+2\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2+\lVert\boldsymbol{y}\rVert_2^2=\bigl(\lVert\boldsymbol{x}\rVert_2+\lVert\boldsymbol{y}\rVert_2\bigr)^2 .$$
 
-开方即得。∎
+开方即得。
 :::
 
 :::
@@ -144,7 +144,7 @@ $$\lVert\boldsymbol{x}\rVert_p=\left(\sum_{i=1}^{n}\lvert x_i\rvert^p\right)^{1/
 
 $$\lVert\boldsymbol{x}\rVert_p=\left(\sum_i\lvert x_i\rvert^p\right)^{1/p}\le\left(n\,M^p\right)^{1/p}=n^{1/p}M .$$
 
-由夹逼与 $n^{1/p}\to1\ (p\to\infty)$ 得证。∎
+由夹逼与 $n^{1/p}\to1\ (p\to\infty)$ 得证。
 :::
 
 :::
@@ -185,11 +185,11 @@ $$m\lVert\boldsymbol{x}\rVert_\beta\le\lVert\boldsymbol{x}\rVert_\alpha\le M\lVe
 
 | 不等式 | 证明 |
 |:--|:--|
-| $\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_1\le n\lVert\boldsymbol{x}\rVert_\infty$ | 左：最大值不超过和；右：$n$ 项每个不超过最大值 |
-| $\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\sqrt n\,\lVert\boldsymbol{x}\rVert_\infty$ | 左：$\max^2\le\sum x_i^2$；右：$\sum x_i^2\le n\max^2$ |
-| $\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1\le\sqrt n\,\lVert\boldsymbol{x}\rVert_2$ | 左：平方展开多出非负交叉项；右：Cauchy–Schwarz 取 $\boldsymbol{y}=(1,\cdots,1)^{\mathrm T}$ |
+| $\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_1\le n\lVert\boldsymbol{x}\rVert_\infty$ | 左：和 $\sum_i\lvert x_i\rvert$ 不小于其中任何一项；右：$n$ 项每项 $\le\max_j\lvert x_j\rvert$，求和即得 |
+| $\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\sqrt n\,\lVert\boldsymbol{x}\rVert_\infty$ | 左：$\max_i x_i^2\le\sum_i x_i^2$ 后开方；右：$\sum_i x_i^2\le n\max_i x_i^2$ 后开方 |
+| $\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1\le\sqrt n\,\lVert\boldsymbol{x}\rVert_2$ | 左：$\bigl(\sum_i\lvert x_i\rvert\bigr)^2=\sum_i x_i^2+2\sum_{i\lt j}\lvert x_i x_j\rvert\ge\sum_i x_i^2$；右：取 $\boldsymbol{y}=(1,\cdots,1)^{\mathrm T}$ 用 Cauchy–Schwarz，$\sum_i\lvert x_i\rvert=\lvert\boldsymbol{x}^{\mathrm T}\boldsymbol{y}\rvert\le\lVert\boldsymbol{x}\rVert_2\sqrt n$ |
 
-右列三条推导都只有一到两行，请逐条亲手补出——这是[习题 B4](exercises.md) 的热身。
+三条右端的常数（$n$、$\sqrt n$）都不可再改进——取 $\boldsymbol{x}=(1,\cdots,1)^{\mathrm T}$ 或单分量向量即取等，无穷维情形的对照见[附录 A.1.4](../appendix/derivations.md#app-a-1-4)；应用的演练见[习题 B4](exercises.md)。
 
 **第二步：一般情形——任何范数都与 $\lVert\cdot\rVert_2$ 双向控制。**
 
@@ -215,7 +215,7 @@ $$\frac{m_\alpha}{M_\beta}\lVert\boldsymbol{x}\rVert_\beta\le\lVert\boldsymbol{x
 ::: proof 解
 $\lVert\boldsymbol{x}\rVert_1=3+5+1=9$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{9+25+1}=\sqrt{35}\approx5.916$，$\lVert\boldsymbol{x}\rVert_\infty=\max(3,5,1)=5$。
 
-逐条核对：$\lVert\boldsymbol{x}\rVert_\infty=5\le\lVert\boldsymbol{x}\rVert_2=5.916\le\sqrt3\times5=8.660$ ✓；$\lVert\boldsymbol{x}\rVert_2=5.916\le\lVert\boldsymbol{x}\rVert_1=9\le\sqrt3\times5.916=10.247$ ✓；$\lVert\boldsymbol{x}\rVert_\infty=5\le\lVert\boldsymbol{x}\rVert_1=9\le3\times5=15$ ✓。三个范数读数不同，但若把 $\boldsymbol{x}$ 缩小 1000 倍，三个范数同时缩小 1000 倍——「趋于零」的行为一致。∎
+逐条核对：$\lVert\boldsymbol{x}\rVert_\infty=5\le\lVert\boldsymbol{x}\rVert_2=5.916\le\sqrt3\times5=8.660$ ✓；$\lVert\boldsymbol{x}\rVert_2=5.916\le\lVert\boldsymbol{x}\rVert_1=9\le\sqrt3\times5.916=10.247$ ✓；$\lVert\boldsymbol{x}\rVert_\infty=5\le\lVert\boldsymbol{x}\rVert_1=9\le3\times5=15$ ✓。三个范数读数不同，但若把 $\boldsymbol{x}$ 缩小 1000 倍，三个范数同时缩小 1000 倍——「趋于零」的行为一致。
 :::
 
 :::
@@ -285,7 +285,7 @@ $$\lVert A+B\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert(A+B)\boldsymbol{x}\
 
 $$\lVert AB\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert A(B\boldsymbol{x})\rVert\le\max_{\lVert\boldsymbol{x}\rVert=1}\lVert A\rVert\,\lVert B\boldsymbol{x}\rVert=\lVert A\rVert\max_{\lVert\boldsymbol{x}\rVert=1}\lVert B\boldsymbol{x}\rVert=\lVert A\rVert\,\lVert B\rVert .$$
 
-∎
+
 :::
 
 :::
@@ -354,7 +354,7 @@ $$\lVert A\boldsymbol{x}\rVert_\infty=\max_{1\le i\le n}\left\lvert\sum_{j=1}^{n
 
 $$\lVert A\boldsymbol{x}\rVert_\infty\ge\left\lvert\sum_{j=1}^{n}a_{rj}\operatorname{sgn}(a_{rj})\right\rvert=\sum_{j=1}^{n}\lvert a_{rj}\rvert=w .$$
 
-∎
+
 :::
 
 :::
@@ -387,7 +387,7 @@ $$\lVert AB\rVert_F^2=\sum_{j=1}^{n}\lVert A\boldsymbol{b}_j\rVert_2^2\le\lVert 
 
 $$\lVert A\boldsymbol{x}\rVert_2^2=\sum_{i=1}^{n}\left(\sum_{j=1}^{n}a_{ij}x_j\right)^2\le\sum_{i=1}^{n}\left(\sum_{j=1}^{n}a_{ij}^2\right)\left(\sum_{j=1}^{n}x_j^2\right)=\lVert A\rVert_F^2\,\lVert\boldsymbol{x}\rVert_2^2 .$$
 
-**(c) $\lVert\cdot\rVert_F$ 不从属于任何向量范数（不是算子范数）**：任何算子范数都满足 $\lVert I\rVert=1$（见 1.3.3 的推论），而对 $n\ge2$，$\lVert I\rVert_F=\sqrt{n}\neq1$。∎
+**(c) $\lVert\cdot\rVert_F$ 不从属于任何向量范数（不是算子范数）**：任何算子范数都满足 $\lVert I\rVert=1$（见 1.3.3 的推论），而对 $n\ge2$，$\lVert I\rVert_F=\sqrt{n}\neq1$。
 
 :::
 
@@ -423,7 +423,7 @@ $$\det(A^{\mathrm T}A-\lambda I)=-\lambda^3+112\lambda^2-959\lambda+16=0$$
 
 $$\lVert A\rVert_2=\sqrt{\lambda_1}\approx10.132 .$$
 
-**验算的捷径（本教程补注）：**特征多项式的三个系数不必硬展开——$\lambda$ 的一次项系数是全部二阶主子式之和 $44+96+819=959$，常数项是 $\det(A^{\mathrm T}A)=(\det A)^2=(-4)^2=16$，二次项系数是迹 $14+90+8=112$。数值复核（NumPy）：$\lambda_1=102.66000272\cdots$，$\lVert A\rVert_2=10.13212726\cdots$，与原书一致。∎
+**验算的捷径（本教程补注）：**特征多项式的三个系数不必硬展开——$\lambda$ 的一次项系数是全部二阶主子式之和 $44+96+819=959$，常数项是 $\det(A^{\mathrm T}A)=(\det A)^2=(-4)^2=16$，二次项系数是迹 $14+90+8=112$。数值复核（NumPy）：$\lambda_1=102.66000272\cdots$，$\lVert A\rVert_2=10.13212726\cdots$，与原书一致。
 :::
 
 :::
@@ -473,7 +473,7 @@ $$\bigl\lVert(I-A)^{-1}\bigr\rVert\le\lVert I\rVert+\lVert A\rVert\,\bigl\lVert(
 
 $$\bigl\lVert(I-A)^{-1}\bigr\rVert\le\frac{1}{1-\lVert A\rVert} .$$
 
-同理可证 $\bigl\lVert(I+A)^{-1}\bigr\rVert\le\dfrac{1}{1-\lVert A\rVert}$。∎
+同理可证 $\bigl\lVert(I+A)^{-1}\bigr\rVert\le\dfrac{1}{1-\lVert A\rVert}$。
 :::
 
 定理 1.3.6 给出了逆的界，还有一个更强的「无穷版」——把 $(I-A)^{-1}$ 本身写成级数：
@@ -494,7 +494,7 @@ $$\lim_{N\to\infty}S_N=(I-A)^{-1},\qquad\text{且有余项估计}\quad\left\lVer
 
 （余项估计中用到 $\lVert I\rVert=1$，故该估计要求该范数为**算子范数**；级数收敛与求和公式本身对任一矩阵范数都成立。）
 
-∎
+
 :::
 
 :::
@@ -511,7 +511,7 @@ $\lVert A\rVert_\infty=\max(0.15,\,0.15,\,0.15)=0.15\lt1$，定理给出
 
 $$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty\le\frac{1}{1-0.15}=\frac{1}{0.85}\approx1.17647 .$$
 
-实际计算（NumPy）$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty=1.176470588\cdots$——**恰好等于界**。原因：$A$ 的每行、每列元素之和都是 $0.15$，故 $\boldsymbol{1}=(1,1,1)^{\mathrm T}$ 是 $A$ 的特征向量（特征值 $0.15$），也是 $(I-A)^{-1}$ 的特征向量（特征值 $1/0.85$），从而 $(I-A)^{-1}\boldsymbol{1}=\dfrac{1}{0.85}\boldsymbol{1}$，其 ∞-范数正是 $1/0.85$。**结论：定理 1.3.6 的常数不可再改进。**∎
+实际计算（NumPy）$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty=1.176470588\cdots$——**恰好等于界**。原因：$A$ 的每行、每列元素之和都是 $0.15$，故 $\boldsymbol{1}=(1,1,1)^{\mathrm T}$ 是 $A$ 的特征向量（特征值 $0.15$），也是 $(I-A)^{-1}$ 的特征向量（特征值 $1/0.85$），从而 $(I-A)^{-1}\boldsymbol{1}=\dfrac{1}{0.85}\boldsymbol{1}$，其 ∞-范数正是 $1/0.85$。**结论：定理 1.3.6 的常数不可再改进。**
 :::
 
 :::

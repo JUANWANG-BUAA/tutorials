@@ -59,6 +59,12 @@
 - [术语索引（中英对照）](review/glossary.md)
 - [最小必读路径](review/study-paths.md)
 
+# 附录 · 拓展与推导
+
+- [附录 A · 补充推导](appendix/derivations.md)
+- [附录 B · 浮点算术的进一步推导](appendix/float.md)
+- [附录 C · 跨学科联系与应用拓展](appendix/connections.md)
+
 # 查阅页
 
 - [延伸阅读](reading.md)

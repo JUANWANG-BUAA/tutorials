@@ -42,7 +42,7 @@ $$\|\boldsymbol{x}-\boldsymbol{y}\|^2=\|\boldsymbol{x}\|^2+\|\boldsymbol{y}\|^2-
 
 两式相减，得 $4\operatorname{Re}(\boldsymbol{x},\boldsymbol{y})$。再把 $\boldsymbol{y}$ 换成 $i\boldsymbol{y}$（注意 $(\boldsymbol{x},i\boldsymbol{y})=\overline{i}\,(\boldsymbol{x},\boldsymbol{y})=-i(\boldsymbol{x},\boldsymbol{y})$，$(i\boldsymbol{y},\boldsymbol{x})=i(\boldsymbol{y},\boldsymbol{x})=i\,\overline{(\boldsymbol{x},\boldsymbol{y})}$）：
 
-$$\|\boldsymbol{x}+i\boldsymbol{y}\|^2-\|\boldsymbol{x}-i\boldsymbol{y}\|^2=-2i(\boldsymbol{x},\boldsymbol{y})+2i\,\overline{(\boldsymbol{x},\boldsymbol{y})}=-4i\cdot\operatorname{Im}(\boldsymbol{x},\boldsymbol{y})\cdot\frac{1}{1}=4\,\operatorname{Im}(\boldsymbol{x},\boldsymbol{y}).$$
+$$\|\boldsymbol{x}+i\boldsymbol{y}\|^2-\|\boldsymbol{x}-i\boldsymbol{y}\|^2=-2i(\boldsymbol{x},\boldsymbol{y})+2i\,\overline{(\boldsymbol{x},\boldsymbol{y})}=4\,\operatorname{Im}(\boldsymbol{x},\boldsymbol{y})$$
 
 （设 $(\boldsymbol{x},\boldsymbol{y})=a+b\,i$：$-2i(a+bi)+2i(a-bi)=(-2ia+2b)+(2ia+2b)=4b$。）两式合并即得
 
@@ -100,7 +100,7 @@ $$P(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n)=\Big\{t_1\boldsymbol{x}_1+\cdots+t
 
 ::: thm 命题 A.3 · 体积公式 {#thm-A.3}
 
-$$\operatorname{Vol}_n\big(P(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n)\big)^2=\det G(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n}),$$
+$$\operatorname{Vol}_n\big(P(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n)\big)^2=\det G(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n),$$
 
 且体积可按「底面积 × 高」逐层递推：每层的高是下一个向量到前面向量所张成子空间的距离。
 :::
@@ -109,7 +109,7 @@ $$\operatorname{Vol}_n\big(P(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n)\big)^2=\d
 
 $n=1$：$P(\boldsymbol{x}_1)$ 是线段，$\operatorname{Vol}_1=\|\boldsymbol{x}_1\|=\sqrt{(\boldsymbol{x}_1,\boldsymbol{x}_1)}=\sqrt{\det G}$ ✓。
 
-设结论对 $n-1$ 成立。记 $W=\operatorname{span}(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_{n-1})$，维数 $n-1$（设 $\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n$ 线性无关；相关时两侧同为零，归纳论证同样关闭）。由正交分解定理（[1.6.6](../ch01/sec16.md#thm-1.6.4)）：
+设结论对 $n-1$ 成立。记 $W=\operatorname{span}(\boldsymbol{x}_1,\cdots,\boldsymbol{x}_{n-1})$，维数 $n-1$（设 $\boldsymbol{x}_1,\cdots,\boldsymbol{x}_n$ 线性无关；相关时两侧同为零，归纳论证同样关闭）。由正交分解定理（[1.6.6](../ch01/sec16.md#sec-1.6.6)）：
 
 $$\boldsymbol{x}_n=\boldsymbol{w}+\boldsymbol{r},\qquad \boldsymbol{w}\in W,\ \boldsymbol{r}\in W^{\perp},\qquad \boldsymbol{w}\perp\boldsymbol{r},$$
 
@@ -157,7 +157,7 @@ $$|\det A|^2=\det(A^{\mathrm H}A)=\det G=\operatorname{Vol}_n^2\leq\prod_i\|\bol
 
 ::: note 与正文的两个接口
 
-① 「$\det G>0\iff$ 线性无关」在高维同样成立：体积非零 ⟺ 平行多面体不塌扁 ⟺ 无关（$G$ 正定，[1.4.7](../ch01/sec14.md#prop-1.4.2)）。② Hadamard 不等式给出「正交基是最稳的基」的定量版本：同样长度的棱，互相垂直时撑起的体积最大——这是数值分析中偏好正交基（[1.6.8](../ch01/sec16.md#sec-1.6.8) 的 QR、[2.5](../ch02/sec25.md) 的 Givens / Householder）的几何根源之一，见[附录 B.5](appendix-b.md#sec-B.5)。
+① 「$\det G>0\iff$ 线性无关」在高维同样成立：体积非零 ⟺ 平行多面体不塌扁 ⟺ 无关（$G$ 正定，[1.4.7](../ch01/sec14.md#sec-1.4.7)）。② Hadamard 不等式给出「正交基是最稳的基」的定量版本：同样长度的棱，互相垂直时撑起的体积最大——这是数值分析中偏好正交基（[1.6.8](../ch01/sec16.md#sec-1.6.8) 的 QR、[2.5](../ch02/sec25.md) 的 Givens / Householder）的几何根源之一，见[附录 B.5](appendix-b.md#sec-B.5)。
 :::
 
 <a id="sec-A.3"></a>
@@ -265,20 +265,20 @@ $$\text{左边}=-AB_0+\sum_{j=1}^{n-1}\big(B_{j-1}-AB_j\big)\lambda^{j}+B_{n-1}\
 
 $$-AB_0=c_0I,\qquad B_{j-1}-AB_j=c_jI\ (j=1,\cdots,n-1),\qquad B_{n-1}=I.$$
 
-**关键一步（伸缩求和）**：把第 $j$ 个恒等式左右各乘 $A^j$，再对 $j=0,\cdots,n$ 求和。右边成为 $\sum_j c_jA^j=f(A)$；左边各项 $B_{j-1}A^j$ 与 $AB_jA^j$ 随 $j$ 错开一层，逐项相消：
+**关键一步（左乘求和、逐项伸缩相消）**：把第 $j$ 个恒等式 $c_jI=B_{j-1}-AB_j$ 的两边**左乘** $A^j$，得
 
-$$-AB_0+\sum_{j=1}^{n-1}\big(B_{j-1}A^j-AB_jA^j\big)+A^n=\big(-AB_0+AB_0\big)+\sum_{j=1}^{n-2}\Big(B_jA^{j+1}-AB_jA^{j+1}\Big)-AB_{n-1}A^{n-1}+A^n .$$
+$$c_jA^j=A^jB_{j-1}-A^{j+1}B_j .$$
 
-前两个括号逐对相消（同一下标 $B_j$ 左乘右乘同为相邻幂次，差为零），只剩
+把 $j=0,\cdots,n$ 的全部恒等式（$c_0I=-AB_0=-A^1B_0$ 与 $c_nA^n=A^n=A^nB_{n-1}$ 计入两端）相加：左边是 $f(A)$；右边每一项都形如 $\pm A^kB_l$，且按 $k$ 错开一层**成对相消**——$-A^1B_0$（$j=0$）与 $+A^1B_0$（$j=1$ 的正部）抵消；中间每个 $-A^{j+1}B_j$（第 $j$ 式负部，$1\leq j\leq n-2$）与第 $j+1$ 式的正部 $+A^{j+1}B_j$ 抵消；末尾 $-A^{n}B_{n-1}$（$j=n-1$ 负部）与 $+A^{n}B_{n-1}$ 抵消。故
 
-$$-A\,B_{n-1}\,A^{n-1}+A^n=-A\cdot I\cdot A^{n-1}+A^n=O.$$
+$$f(A)=O .$$
 
-故 $f(A)=O$。∎
+（矩阵乘法不可交换，因此恒等式两边必须**同侧**左乘 $A^j$——若右乘，$B_{j-1}$ 与 $A$ 的相对位置无法对齐，成对项不再出现。）∎
 :::
 
 ::: ex 例 A.1 · 在 1.1 节的老朋友上验证 {#ex-A.1}
 
-取 $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$（[1.1.6](../ch01/sec11.md#ex-1.1.5) 的矩阵）。特征多项式 $f(\lambda)=(\lambda-1)^2=\lambda^2-2\lambda+1$，于是 Cayley–Hamilton 断言 $A^2-2A+I=O$。逐项验算：
+取 $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$（[1.1.6](../ch01/sec11.md#sec-1.1.6) 的矩阵）。特征多项式 $f(\lambda)=(\lambda-1)^2=\lambda^2-2\lambda+1$，于是 Cayley–Hamilton 断言 $A^2-2A+I=O$。逐项验算：
 
 $$A^2-2A+I=\begin{pmatrix}1&2\\0&1\end{pmatrix}-\begin{pmatrix}2&2\\0&2\end{pmatrix}+\begin{pmatrix}1&0\\0&1\end{pmatrix}=\begin{pmatrix}0&0\\0&0\end{pmatrix}\ \checkmark$$
 
@@ -286,7 +286,7 @@ $$A^2-2A+I=\begin{pmatrix}1&2\\0&1\end{pmatrix}-\begin{pmatrix}2&2\\0&2\end{pmat
 
 $$A^{k+1}=A\cdot A^k=A\big(kA-(k-1)I\big)=kA^2-(k-1)A=(k+1)A-kI,$$
 
-归纳即得 [1.1.6](../ch01/sec11.md#ex-1.1.5) 用归纳法证过的公式 $A^k=kA-(k-1)I$——当时手推的结论，现在成了定理的免费赠品。
+归纳即得 [1.1.6](../ch01/sec11.md#sec-1.1.6) 用归纳法证过的公式 $A^k=kA-(k-1)I$——当时手推的结论，现在成了定理的免费赠品。
 :::
 
 ::: note 它为什么重要
@@ -298,7 +298,7 @@ $$A^{k+1}=A\cdot A^k=A\big(kA-(k-1)I\big)=kA^2-(k-1)A=(k+1)A-kI,$$
 
 ## A.6 正定矩阵的「开方」：$A=C^{\mathrm H}C$
 
-[1.4.3](../ch01/sec14.md#ex-1.4.4) 证明了「$\boldsymbol{y}^{\mathrm H}A\boldsymbol{x}$ 是内积 $\iff$ $A$ 正定 Hermite」；[1.4.5](../ch01/sec14.md#ex-1.4.E) 又展示了「换一个正定 $A$ 就是换一把尺子」。本节回答一个自然的问题：**这些尺子有没有统一的来历？** 答案：每把尺子都是「把空间拉伸后按标准尺子量」。
+[1.4.3](../ch01/sec14.md#sec-1.4.3) 证明了「$\boldsymbol{y}^{\mathrm H}A\boldsymbol{x}$ 是内积 $\iff$ $A$ 正定 Hermite」；[1.4.5](../ch01/sec14.md#sec-1.4.5) 又展示了「换一个正定 $A$ 就是换一把尺子」。本节回答一个自然的问题：**这些尺子有没有统一的来历？** 答案：每把尺子都是「把空间拉伸后按标准尺子量」。
 
 ::: thm 命题 A.8 · 正定的刻画 {#thm-A.8}
 
@@ -326,8 +326,8 @@ $$A=I^{\mathrm H}AI=(QR)^{\mathrm H}A(QR)=R^{\mathrm H}\big(Q^{\mathrm H}AQ\big)
 
 ::: note 三个立刻的读法
 
-1. **加权内积 = 拉伸后的标准内积**：$(\boldsymbol{x},\boldsymbol{y})_A=\boldsymbol{y}^{\mathrm H}R^{\mathrm H}R\boldsymbol{x}=(R\boldsymbol{x},R\boldsymbol{y})$。换尺子量出的全部几何（长度、正交、投影），等于先用 $R$ 拉伸空间再用标准尺子量。[1.4.5](../ch01/sec14.md#ex-1.4.E) 中 $A=\operatorname{diag}(4,1)$ 的椭圆单位圆，正是 $R=\operatorname{diag}(2,1)$ 把单位圆沿 $x$ 轴拉伸 2 倍的结果。
-2. **正定 ⟺ 合同于 $I$**：$A=R^{\mathrm H}IR$ 说明 $A$ 与 $I$ 合同（[1.4.7](../ch01/sec14.md#prop-1.4.2)）；逆命题即本命题。这是「合同变换保持正定性」（同处）的构造性证明。
+1. **加权内积 = 拉伸后的标准内积**：$(\boldsymbol{x},\boldsymbol{y})_A=\boldsymbol{y}^{\mathrm H}R^{\mathrm H}R\boldsymbol{x}=(R\boldsymbol{x},R\boldsymbol{y})$。换尺子量出的全部几何（长度、正交、投影），等于先用 $R$ 拉伸空间再用标准尺子量。[1.4.5](../ch01/sec14.md#sec-1.4.5) 中 $A=\operatorname{diag}(4,1)$ 的椭圆单位圆，正是 $R=\operatorname{diag}(2,1)$ 把单位圆沿 $x$ 轴拉伸 2 倍的结果。
+2. **正定 ⟺ 合同于 $I$**：$A=R^{\mathrm H}IR$ 说明 $A$ 与 $I$ 合同（[1.4.7](../ch01/sec14.md#sec-1.4.7)）；逆命题即本命题。这是「合同变换保持正定性」（同处）的构造性证明。
 3. **$A^{\mathrm H}A$ 家族**：对任意 $A\in\mathbb C^{m\times n}$，$A^{\mathrm H}A=C^{\mathrm H}C$ 形式自动 Hermite 半正定；[3.1](../ch03/sec31.md#prop-3.1.1) 证明了它与 $A$ 同秩。把它与 (3) 结合：列满秩的 $A$ 恰好是某个正定矩阵的「Cholesky 因子」（至多差一个酉因子）——这是奇异值分解（后续章节）的先声。
 :::
 
@@ -372,7 +372,7 @@ $$\|\boldsymbol{x}\|^2=\sum_{i=1}^n\big|(\boldsymbol{x},\boldsymbol{q}_i)\big|^2
 
 ::: note 无穷的接口：傅里叶级数
 
-在 $L^2[-\pi,\pi]$ 中取三角函数系（[1.5.7](../ch01/sec15.md#ex-1.5.2)），Bessel 不等式变成：**傅里叶系数的平方和不超过函数的能量** $\int_{-\pi}^{\pi}|f|^2$——这保证了系数平方级数收敛，傅里叶级数「不越界」。当三角函数系取满（完备）时，不等式升格为 Parseval 等式：
+在 $L^2[-\pi,\pi]$ 中取三角函数系（[1.5.7](../ch01/sec15.md#sec-1.5.7)），Bessel 不等式变成：**傅里叶系数的平方和不超过函数的能量** $\int_{-\pi}^{\pi}|f|^2$——这保证了系数平方级数收敛，傅里叶级数「不越界」。当三角函数系取满（完备）时，不等式升格为 Parseval 等式：
 
 $$\frac{a_0^2}{2}+\sum_{n\geq1}\big(a_n^2+b_n^2\big)=\frac1\pi\int_{-\pi}^{\pi}f(t)^2\,\mathrm dt,$$
 
@@ -383,7 +383,7 @@ $$\frac{a_0^2}{2}+\sum_{n\geq1}\big(a_n^2+b_n^2\big)=\frac1\pi\int_{-\pi}^{\pi}f
 
 ## A.8 Moore–Penrose 伪逆：四条条件、良定义与唯一性
 
-[3.2.4](../ch03/sec32.md#ex-3.2.2) 从满秩分解造出 $X=C^{\mathrm H}(CC^{\mathrm H})^{-1}(B^{\mathrm H}B)^{-1}B^{\mathrm H}$ 并验证了 $AXA=A$。本节补全剩下的三件事：$X$ 满足**全部四条** Penrose 条件、$X$ 与满秩分解的选法无关、满足四条的 $X$ 唯一。
+[3.2.4](../ch03/sec32.md#sec-3.2.4) 从满秩分解造出 $X=C^{\mathrm H}(CC^{\mathrm H})^{-1}(B^{\mathrm H}B)^{-1}B^{\mathrm H}$ 并验证了 $AXA=A$。本节补全剩下的三件事：$X$ 满足**全部四条** Penrose 条件、$X$ 与满秩分解的选法无关、满足四条的 $X$ 唯一。
 
 ::: thm 定理 A.10 · Penrose 四条件 {#thm-A.10}
 
@@ -480,7 +480,7 @@ $$A^{+}\boldsymbol{b}=\text{方程组 }A\boldsymbol{x}=\boldsymbol{b}\text{ 的�
 2. 各列两两正交。每层「高 = 棱长」必须逐层取等，即每个向量与前面全部向量正交。
 3. 基扩充后，前 $k$ 个基向量满足 $A\boldsymbol{x}_j=\lambda\boldsymbol{x}_j$，其坐标列是 $\lambda\boldsymbol{e}_j$——前 $k$ 列就是 $\lambda I_k$ 与零块的竖排；按分块读出即得。
 4. $\operatorname{adj}$ 的元素是 $\lambda I-A$ 的 $n-1$ 阶子式；每个子式的每行至多含一个 $\lambda$，故次数 $\leq n-1$。
-5. 对 $(\boldsymbol{x},\boldsymbol{y})_A=\boldsymbol{y}^{\mathrm H}A\boldsymbol{x}$ 用 Gram–Schmidt；$R$ 是标准基到 $A$-标准正交基的过渡矩阵，上三角、对角元全正（可逆）。
+5. 对 $(\boldsymbol{x},\boldsymbol{y})_A=\boldsymbol{y}^{\mathrm H}A\boldsymbol{x}$ 用 Gram–Schmidt；$R$ 是由 $\boldsymbol{q}$ 组（$A$-标准正交基）到标准基的过渡矩阵，上三角、对角元全正（可逆）。
 6. 第一步得 $X=XAY$，两边左乘 $A$：$AX=A(XAY)=(AXA)Y=AY$（用了条件 (1)）。
 :::
 :::

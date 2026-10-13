@@ -1,6 +1,6 @@
 # 2.1 内积、正交性与正交矩阵
 
-第一章把「向量有多长」公理化为范数。但长度不是几何的全部：**两块木板一样长，夹角不同，结构强度天差地别**。要谈角度、要谈「垂直」，光有范数不够——还需要一个能同时给出长度与角度的装置，这就是**内积**。有了内积，才有「垂直」（正交），才有互相垂直且长度归一的一组坐标轴（标准正交基）；把这样一组坐标轴按列排成方阵，就得到**正交矩阵**——它是「不改变长度与角度的坐标系变换」，也是后面 QR 分解、SVD 与全部稳定算法的基石。本节沿这条线索走三步：把内积公理化（2.1.1）；定义正交与标准正交基，并证明正交组自动线性无关（2.1.2）；刻画正交矩阵（2.1.3）。
+第一章把「向量有多长」公理化为范数，但长度不是几何的全部：要谈角度与「垂直」，还需要一个能同时给出长度与角度的装置——**内积**。有了内积才有正交、标准正交基，把它们按列排成方阵就得到**正交矩阵**：「不改变长度与角度的坐标变换」，也是 QR 分解、SVD 与全部稳定算法的基石。本节三步：内积公理化（2.1.1）；正交与标准正交基（2.1.2）；刻画正交矩阵（2.1.3）。
 
 <aside class="lesson-brief" aria-label="2.1 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>第一章的范数三公理与 Cauchy–Schwarz（1.3.1）；线性相关、基与维数；矩阵乘法与转置。</p></div>
@@ -15,12 +15,7 @@
 在 $\mathbb{R}^n$ 里，我们早就会算 $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，并用它定义长度与夹角。但数值计算中有时需要**别的**内积：加权最小二乘要给不同观测不同的权重，有限元要在函数空间里做同一套几何，统计里要按协方差结构度量距离。这些内积都给不出 $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}$ 这个具体公式，却都服从同一套规则。把规则抽出来，就得到内积空间。
 
 ::: intuition 直觉 · 内积是「长度 + 角度」的共同来源
-内积是一台「吃进两个向量、吐出一个数」的机器，它要同时管两件事：
-
-- 让 $\langle\boldsymbol{x},\boldsymbol{x}\rangle$ 能当**长度的平方**——所以要**非负，而且只有零向量才给零**；
-- 让 $\langle\boldsymbol{x},\boldsymbol{y}\rangle$ 能当**投影 / 角度**的来源——所以要**对称**，对加法和数乘还要**线性**。
-
-只要满足这四条，这个空间里就自动长出「长度」「距离」「垂直」「投影」「勾股定理」——**同一套几何，换一把尺子**。下面就是这四条规则。
+内积要同时管两件事：让 $\langle\boldsymbol{x},\boldsymbol{x}\rangle$ 当**长度的平方**（非负，且只有零向量给零）；让 $\langle\boldsymbol{x},\boldsymbol{y}\rangle$ 当**投影 / 角度**的来源（对称 + 对加法、数乘线性）。满足这几条，「长度、距离、垂直、投影、勾股定理」就自动长出来——**同一套几何，换一把尺子**。
 :::
 
 ::: def 定义 2.1.1 · 内积与内积空间 {#def-2.1.1}
@@ -51,7 +46,7 @@ $$\langle\boldsymbol{x},\boldsymbol{y}\rangle_D=\boldsymbol{x}^{\mathrm T}D\bold
 
 诱导范数 $\lVert\boldsymbol{x}\rVert_D=\sqrt{\sum_id_ix_i^2}$——**给每个坐标轴不同的「刻度」**：一旦某个 $d_i\gt1$，对应的坐标方向就更「贵」。更一般地，只要 $D$ 对称正定，$\boldsymbol{x}^{\mathrm T}D\boldsymbol{y}$ 就是内积（证明：令 $D=LD_0L^{\mathrm T}$，则 $\boldsymbol{x}^{\mathrm T}D\boldsymbol{y}=(L^{\mathrm T}\boldsymbol{x})^{\mathrm T}D_0(L^{\mathrm T}\boldsymbol{y})$，化归对角情形）。
 
-**用途：** [2.2.5](sec22.md#sec-2.2.5) 的加权最小二乘、加权内积下的 Rayleigh 商（[2.5.4](sec25.md#sec-2.5.4)）、[第五章](../ch01/sec11.md#roadmap)的预条件都建立在它上面。∎
+**用途：** [2.2.5](sec22.md#sec-2.2.5) 的加权最小二乘、加权内积下的 Rayleigh 商（[2.5.4](sec25.md#sec-2.5.4)）、[第五章](../ch01/sec11.md#roadmap)的预条件都建立在它上面。
 :::
 
 :::
@@ -75,7 +70,7 @@ $$4\langle\boldsymbol{x},\boldsymbol{y}\rangle^2-4\lVert\boldsymbol{x}\rVert^2\l
 
 **（ii）** 展开后放缩：
 $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2+2\langle\boldsymbol{x},\boldsymbol{y}\rangle+\lVert\boldsymbol{y}\rVert^2\le\lVert\boldsymbol{x}\rVert^2+2\lVert\boldsymbol{x}\rVert\lVert\boldsymbol{y}\rVert+\lVert\boldsymbol{y}\rVert^2=\bigl(\lVert\boldsymbol{x}\rVert+\lVert\boldsymbol{y}\rVert\bigr)^2 .$$
-开方即得。**正定性**与**齐次性**直接来自内积公理：$\lVert k\boldsymbol{x}\rVert^2=\langle k\boldsymbol{x},k\boldsymbol{x}\rangle=k^2\lVert\boldsymbol{x}\rVert^2$（先对第一变元、再对第二变元用线性）。∎
+开方即得。**正定性**与**齐次性**直接来自内积公理：$\lVert k\boldsymbol{x}\rVert^2=\langle k\boldsymbol{x},k\boldsymbol{x}\rangle=k^2\lVert\boldsymbol{x}\rVert^2$（先对第一变元、再对第二变元用线性）。
 :::
 
 :::
@@ -103,11 +98,9 @@ $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2+2\lan
 \lVert\boldsymbol{x}-\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2-2\langle\boldsymbol{x},\boldsymbol{y}\rangle+\lVert\boldsymbol{y}\rVert^2 .$$
 两式相加即得（2.2）；相减即得（2.3）。
 
-**逆方向**（Jordan–von Neumann 定理的有限维版）：由（2.3）定义 $\langle\cdot,\cdot\rangle$，对称性显然（交换 $\boldsymbol{x},\boldsymbol{y}$，只把 $\lVert\boldsymbol{x}-\boldsymbol{y}\rVert$ 与 $\lVert\boldsymbol{y}-\boldsymbol{x}\rVert$ 互换），正定性则来自范数的正定性。
+**逆方向**（Jordan–von Neumann 定理的有限维版）：由（2.3）定义 $\langle\cdot,\cdot\rangle$，对称性显然（交换 $\boldsymbol{x},\boldsymbol{y}$ 只对调两个平方项），正定性来自范数的正定性（$\boldsymbol{y}=\boldsymbol{x}$ 代入（2.3）即得诱导范数还原：$\langle\boldsymbol{x},\boldsymbol{x}\rangle=\lVert\boldsymbol{x}\rVert^2$）。
 
-线性性要分两步验证：先证 $\langle\boldsymbol{x}+\boldsymbol{z},\boldsymbol{y}\rangle=\langle\boldsymbol{x},\boldsymbol{y}\rangle+\langle\boldsymbol{z},\boldsymbol{y}\rangle$（把（2.3）代入，再用（2.2）把四个平方和配对，反复使用平行四边形恒等式）；再证 $\langle k\boldsymbol{x},\boldsymbol{y}\rangle=k\langle\boldsymbol{x},\boldsymbol{y}\rangle$（先对整数 $k$ 归纳，再取 $\boldsymbol{x}/m$ 得到有理数，最后由范数的连续性过渡到实数——$f(\boldsymbol{h})=\lVert\boldsymbol{h}\rVert$ 对 $\lVert\cdot\rVert_2$ Lipschitz 连续，见 [@thm-1.3.3] 证明第二步）。
-
-诱导范数：把 $\boldsymbol{y}=\boldsymbol{x}$ 代入（2.3），得 $\langle\boldsymbol{x},\boldsymbol{x}\rangle=\lVert\boldsymbol{x}\rVert^2$。∎
+线性性是真正的难关：加法要靠一条关键恒等式 $\langle\boldsymbol{x}+\boldsymbol{z},\boldsymbol{y}\rangle+\langle\boldsymbol{x}-\boldsymbol{z},\boldsymbol{y}\rangle=2\langle\boldsymbol{x},\boldsymbol{y}\rangle$（把（2.3）代入、四个平方和用（2.2）两两配对）；齐次性则按「整数归纳 → 有理数 → 实数（用范数连续性）」三段推进。完整证明见[附录 A.2.1](../appendix/derivations.md#app-a-2-1)。
 :::
 
 :::
@@ -122,7 +115,7 @@ $\boldsymbol{x}+\boldsymbol{y}=(1,1)^{\mathrm T}$，$\boldsymbol{x}-\boldsymbol{
 
 **1-范数：** $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_1^2=4$，$\lVert\boldsymbol{x}-\boldsymbol{y}\rVert_1^2=4$，左端 $=8$；右端 $=2\times1+2\times1=4$。$8\neq4$，失败。
 
-**几何读法：** 内积空间里，任意两个向量张成的「平面切片」上的单位球必是椭圆（没有棱角）。$\lVert\cdot\rVert_1$ 的单位球是菱形、$\lVert\cdot\rVert_\infty$ 是正方形——**有棱角，就不是内积空间**。这也解释了为什么最小二乘、投影、SVD 这些工具天然属于 2-范数：只有 2-范数来自内积。∎
+**几何读法：** 内积空间里，任意两个向量张成的「平面切片」上的单位球必是椭圆（没有棱角）。$\lVert\cdot\rVert_1$ 的单位球是菱形、$\lVert\cdot\rVert_\infty$ 是正方形——**有棱角，就不是内积空间**。这也解释了为什么最小二乘、投影、SVD 这些工具天然属于 2-范数：只有 2-范数来自内积。
 :::
 
 :::
@@ -160,7 +153,7 @@ $\boldsymbol{x}+\boldsymbol{y}=(1,1)^{\mathrm T}$，$\boldsymbol{x}-\boldsymbol{
 
 $$0=\Bigl\langle\sum_ic_i\boldsymbol{v}_i,\ \boldsymbol{v}_j\Bigr\rangle=\sum_ic_i\langle\boldsymbol{v}_i,\boldsymbol{v}_j\rangle=c_j\langle\boldsymbol{v}_j,\boldsymbol{v}_j\rangle=c_j\lVert\boldsymbol{v}_j\rVert^2 .$$
 
-由 $\boldsymbol{v}_j\neq\boldsymbol{0}$ 得 $\lVert\boldsymbol{v}_j\rVert^2\gt0$，故 $c_j=0$。$j$ 任意，故所有系数为零，线性无关。∎
+由 $\boldsymbol{v}_j\neq\boldsymbol{0}$ 得 $\lVert\boldsymbol{v}_j\rVert^2\gt0$，故 $c_j=0$。$j$ 任意，故所有系数为零，线性无关。
 
 **证明里透出的「正交投影」味道：** 用内积把第 $j$ 个系数单独「筛」出来，其余各项一概不受影响——这正是正交基下「坐标 = 内积」的雏形。
 :::
@@ -184,14 +177,12 @@ $$\langle\boldsymbol{x},\boldsymbol{q}_j\rangle=\sum_i\alpha_i\langle\boldsymbol
 **（3）** 用（2）的展开直接算：
 $$\lVert\boldsymbol{x}\rVert^2=\Bigl\langle\sum_i\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\boldsymbol{q}_i,\ \sum_j\langle\boldsymbol{x},\boldsymbol{q}_j\rangle\boldsymbol{q}_j\Bigr\rangle=\sum_i\lvert\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\rvert^2 .$$
 
-∎
-:::
 
 :::
 
-**（2）是最值钱的公式。** 在标准正交基下，求坐标不需要解方程组——每个坐标就是一次内积。这相当于「求解 $O(n^3)$ → 求内积 $O(n^2)$」。2.3 节的 QR 分解，本质就是**制造**一组标准正交基，从而把各种求解问题变廉价。
+:::
 
-由此也带出下一个问题：把一组标准正交基按列排成方阵，会得到什么样的矩阵？答案是**正交矩阵**——这正是 2.1.3 的主题。
+**（2）是最值钱的公式**：标准正交基下求坐标不需要解方程组，每个坐标就是一次内积（$O(n^3)$ 的求解退化为 $O(n^2)$ 的内积）。2.3 节的 QR 分解，本质就是**制造**这样一组基，把求解变廉价。把标准正交基按列排成方阵会得到什么？答案是**正交矩阵**——2.1.3 的主题。
 
 ::: ex 例 2.1.3（新增） · 标准正交基下的坐标与 Parseval 核对 {#ex-2.1.3}
 （1）验证
@@ -251,7 +242,7 @@ $$\boldsymbol{q}_3'=\frac{1}{\sqrt6}\begin{pmatrix}1\\-1\\-2\end{pmatrix},\qquad
 
 此时坐标变为 $\alpha_1=4\sqrt2,\ \alpha_2=\frac{5}{\sqrt3},\ \alpha_3'=\frac{6-2-2}{\sqrt6}=\sqrt{\frac23}$，Parseval 给出 $32+\frac{25}{3}+\frac{2}{3}=41=\lVert\boldsymbol{x}\rVert_2^2$ ✓。
 
-**本题的收获：** 判定一组向量是否标准正交，**必须逐个验证全部两两内积**——只看范数、或只看一部分内积，都会漏掉那对不正交的向量，后果是坐标公式与 Parseval **同时静默失效**（见 2.1.4 常见错误 1）。上面「修一个方向」的做法，正是 [2.3.1](sec23.md#sec-2.3.1) 的 Gram–Schmidt 正交化。∎
+**本题的收获：** 判定一组向量是否标准正交，**必须逐个验证全部两两内积**——只看范数、或只看一部分内积，都会漏掉那对不正交的向量，后果是坐标公式与 Parseval **同时静默失效**（见 2.1.4 常见错误 1）。上面「修一个方向」的做法，正是 [2.3.1](sec23.md#sec-2.3.1) 的 Gram–Schmidt 正交化。
 :::
 
 :::
@@ -310,7 +301,7 @@ $$Q^{\mathrm T}Q=I, \tag{2.4}$$
 
 **10：** $Q^{\mathrm T}Q=I$ 的特征值全是 $1$，故奇异值全为 $1$，$\lVert Q\rVert_2=\sigma_{\max}=1$、$\mathrm{cond}_2(Q)=\sigma_1/\sigma_n=1$。（用 [@thm-1.3.5] 与 [2.6.2](sec26.md#sec-2.6.2) 的奇异值刻画。）
 
-**11：** 设 $Q\boldsymbol{v}=\lambda\boldsymbol{v}$（$\boldsymbol{v}\neq\boldsymbol{0}$），取 2-范数并用 7：$\lVert\boldsymbol{v}\rVert_2=\lVert Q\boldsymbol{v}\rVert_2=\lvert\lambda\rvert\lVert\boldsymbol{v}\rVert_2$，故 $\lvert\lambda\rvert=1$。∎
+**11：** 设 $Q\boldsymbol{v}=\lambda\boldsymbol{v}$（$\boldsymbol{v}\neq\boldsymbol{0}$），取 2-范数并用 7：$\lVert\boldsymbol{v}\rVert_2=\lVert Q\boldsymbol{v}\rVert_2=\lvert\lambda\rvert\lVert\boldsymbol{v}\rVert_2$，故 $\lvert\lambda\rvert=1$。
 :::
 
 :::
@@ -332,7 +323,7 @@ F=\begin{pmatrix}\cos2\theta&\sin2\theta\\ \sin2\theta&-\cos2\theta\end{pmatrix}
 - $R_{30^{\circ}}\boldsymbol{x}=(\cos30^{\circ},\sin30^{\circ})^{\mathrm T}\approx(0.8660,0.5)^{\mathrm T}$，长度 $1$ 不变，方向转了 $30^{\circ}$；
 - $F\boldsymbol{x}=(\cos60^{\circ},\sin60^{\circ})^{\mathrm T}\approx(0.5,0.8660)^{\mathrm T}$，长度不变，方向关于 $30^{\circ}$ 方向镜像（入射角 = 反射角）。
 
-**任何正交矩阵都是「若干旋转 × 若干反射」的复合**（这是正交群的几何分类）；此外 $Q$ 的复特征值成对出现在单位圆上（$e^{\pm i\theta}$，对应旋转角 $\theta$），实特征值只能是 $\pm1$。∎
+**任何正交矩阵都是「若干旋转 × 若干反射」的复合**（这是正交群的几何分类）；此外 $Q$ 的复特征值成对出现在单位圆上（$e^{\pm i\theta}$，对应旋转角 $\theta$），实特征值只能是 $\pm1$。
 :::
 
 :::
@@ -351,7 +342,7 @@ $$\lVert QA\rVert_2=\lVert A\rVert_2,\qquad \lVert QA\rVert_F=\lVert A\rVert_F,\
 $$\lVert QA\rVert_F^2=\operatorname{tr}\bigl((QA)^{\mathrm T}QA\bigr)=\operatorname{tr}(A^{\mathrm T}Q^{\mathrm T}QA)=\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2 .$$
 （用了 $\operatorname{tr}(XY)=\operatorname{tr}(YX)$ 与 $Q^{\mathrm T}Q=I$。）同理 $\lVert AP\rVert_F^2=\operatorname{tr}(P^{\mathrm T}A^{\mathrm T}AP)$——注意 $\operatorname{tr}(PY)=\operatorname{tr}(YP)$ 且这里 $P^{\mathrm T}=P^{-1}$，故 $\operatorname{tr}(P^{\mathrm T}A^{\mathrm T}AP)=\operatorname{tr}(A^{\mathrm T}AP P^{\mathrm T})=\operatorname{tr}(A^{\mathrm T}A)$。
 
-**谱范数：** 用 [@thm-1.3.5] 的 $\lVert A\rVert_2=\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$。令 $B=A^{\mathrm T}A$ 与 $B'=(QA)^{\mathrm T}(QA)=A^{\mathrm T}Q^{\mathrm T}QA=A^{\mathrm T}A=B$——**完全相同**，故特征值相同、$\lVert QA\rVert_2=\lVert A\rVert_2$。∎
+**谱范数：** 用 [@thm-1.3.5] 的 $\lVert A\rVert_2=\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$。令 $B=A^{\mathrm T}A$ 与 $B'=(QA)^{\mathrm T}(QA)=A^{\mathrm T}Q^{\mathrm T}QA=A^{\mathrm T}A=B$——**完全相同**，故特征值相同、$\lVert QA\rVert_2=\lVert A\rVert_2$。
 
 **注意：** 上文只直接验证了 $\lVert\cdot\rVert_2$ 在**左乘**正交矩阵时不变；**右乘同样成立**（$\lVert AP\rVert_2=\lVert A\rVert_2$，因为 $(AP)^{\mathrm T}(AP)=P^{\mathrm T}A^{\mathrm T}AP$ 与 $A^{\mathrm T}A$ 相似）；而 $\lVert\cdot\rVert_F$ 左右乘都不变。**这就是「正交变换不改变矩阵的大小」的精确含义**——它是 QR 分解与 SVD 中「用正交变换把矩阵化简、又不失真」的依据。
 :::

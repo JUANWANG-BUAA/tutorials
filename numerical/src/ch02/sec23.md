@@ -1,6 +1,6 @@
 # 2.3 正交化与 QR 分解
 
-2.1 说「标准正交基下求解退化成做内积」，2.2 说「投影与最小二乘的关键是找到列空间的正交结构」。两句话指向同一个技术需求：**给定一组线性无关的向量，怎样造出一组标准正交基？** 答案是正交化，而它最有用的产物是 **QR 分解** $A=QR$——把任意列满秩矩阵拆成「（列）正交矩阵 × 上三角矩阵」（$m\gt n$ 时 $Q$ 是列正交的长方阵，见 [@def-2.1.3]），使最小二乘、特征值、SVD 这些看似不相干的任务共用一个稳定内核。本节给出四种正交化方法（经典与修正 Gram–Schmidt、Householder 反射、Givens 旋转），并**用实测数据说明：四种方法的取舍并不是随意的**。
+2.1 说「标准正交基下求解退化成做内积」，2.2 说「投影与最小二乘的关键是列空间的正交结构」——两句话指向同一个技术需求：**把一组线性无关的向量造成标准正交基**。最有用的产物是 **QR 分解** $A=QR$（$m\gt n$ 时 $Q$ 为列正交的长方阵，见 [@def-2.1.3]）：最小二乘、特征值、SVD 共用一个稳定内核。本节给出四种正交化方法（经典与修正 Gram–Schmidt、Householder 反射、Givens 旋转），并用实测数据说明取舍标准。
 
 <aside class="lesson-brief" aria-label="2.3 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>投影公式（2.2.3）；正交矩阵的性质（2.1.3）；浮点公理与单位舍入误差 $u$（1.2.5）；条件数（1.3.6）。</p></div>
@@ -57,7 +57,7 @@ $$\boldsymbol{q}_k^{\mathrm T}\boldsymbol{v}=\boldsymbol{q}_k^{\mathrm T}\boldsy
 
 $$\boldsymbol{a}_j=r_{jj}\boldsymbol{q}_j+r_{ij}\boldsymbol{q}_i+\cdots+r_{j-1,j}\boldsymbol{q}_{j-1},$$
 
-即 $A$ 的第 $j$ 列是 $Q$ 前 $j$ 列的线性组合，系数正好是 $R$ 的第 $j$ 列——这正是 $A=QR$。又 $r_{jj}=\lVert\boldsymbol{v}\rVert_2\gt0$。∎
+即 $A$ 的第 $j$ 列是 $Q$ 前 $j$ 列的线性组合，系数正好是 $R$ 的第 $j$ 列——这正是 $A=QR$。又 $r_{jj}=\lVert\boldsymbol{v}\rVert_2\gt0$。
 
 **几何含义：** $Q$ 与 $A$ 逐列张成同一个子空间，即 $C(Q)=C(A)$，但 $Q$ 的列标准正交；$R$ 记录的是「正交坐标 → 原坐标」的换算。由上面的证明还能看出更强的结构：
 
@@ -106,7 +106,7 @@ R=\begin{pmatrix}\sqrt2&\frac{1}{\sqrt2}&\frac{1}{\sqrt2}\\[2pt]0&\frac{\sqrt6}{
 
 **注意 $R$ 的对角元都为正**——这是 [@thm-2.3.2] 唯一性条款的来源。
 
-**手算口诀：** 每一列先算它与已有各轴的内积（即 $r_{ij}$），逐个扣掉；剩余向量的长度就是 $r_{jj}$。**全程只需要「内积」和「减法」。**∎
+**手算口诀：** 每一列先算它与已有各轴的内积（即 $r_{ij}$），逐个扣掉；剩余向量的长度就是 $r_{jj}$。**全程只需要「内积」和「减法」。**
 :::
 
 :::
@@ -137,7 +137,7 @@ $$I=Q_1^{\mathrm T}Q_1=S^{\mathrm T}Q_2^{\mathrm T}Q_2S=S^{\mathrm T}S,$$
 
 故 $S$ **也是正交矩阵**。**上三角且正交的矩阵必为对角阵，对角元为 $\pm1$**：正交性要求 $S$ 的各列是单位向量且两两正交；看 $S$ 的第 1 列，它的第 $2,\dots,n$ 个分量为零，于是只剩 $s_{11}=\pm1$；归纳地看第 $k$ 列，它的第 $k+1,\dots,n$ 个分量为零，又要与前 $k-1$ 列正交（那些列都只有第 $i$ 个分量非零），于是也只剩 $s_{kk}=\pm1$。
 
-最后由 $S=R_2R_1^{-1}$ 得 $s_{ii}=r_{ii}^{(2)}/r_{ii}^{(1)}\gt0$（对角元都为正），结合 $\lvert s_{ii}\rvert=1$ 得 $s_{ii}=1$。故 $S=I$，于是 $Q_1=Q_2$、$R_1=R_2$。∎
+最后由 $S=R_2R_1^{-1}$ 得 $s_{ii}=r_{ii}^{(2)}/r_{ii}^{(1)}\gt0$（对角元都为正），结合 $\lvert s_{ii}\rvert=1$ 得 $s_{ii}=1$。故 $S=I$，于是 $Q_1=Q_2$、$R_1=R_2$。
 :::
 
 :::
@@ -256,7 +256,7 @@ for n in [6, 8, 10, 12, 14, 16]:
 
 $n=10$ 时理论值 $\mathrm{cond}^2u=0.35$ 尚小于 $1$，实测 $1.19$ 已饱和；$n\ge12$ 时理论值远大于 $1$，实测停在 $2.5\sim6.6$。所以**「不再增长」恰恰是最坏的情形**。
 
-**验收标准：** 输出应与上表同量级（逐位因平台的 BLAS 实现而异）；把 $x$ 换成更病态的分布（如几何分布 $x_i=0.5^{\,i-1}$），观察 $\mathrm{cond}$ 与表中 CGS、MGS 两列误差是否同步增大。∎
+**验收标准：** 输出应与上表同量级（逐位因平台的 BLAS 实现而异）；把 $x$ 换成更病态的分布（如几何分布 $x_i=0.5^{\,i-1}$），观察 $\mathrm{cond}$ 与表中 CGS、MGS 两列误差是否同步增大。
 :::
 
 :::
@@ -307,7 +307,7 @@ $$H^{\mathrm T}H=H^2=I-2\beta\boldsymbol{v}\boldsymbol{v}^{\mathrm T}+\beta^2\bo
 $$H\boldsymbol{x}=\boldsymbol{x}-\frac{2\boldsymbol{v}^{\mathrm T}\boldsymbol{x}}{\boldsymbol{v}^{\mathrm T}\boldsymbol{v}}\boldsymbol{v}=\boldsymbol{x}-2\boldsymbol{x}_{\parallel}=-\boldsymbol{x}_{\parallel}+\boldsymbol{x}_{\perp},$$
 即 $\boldsymbol{v}$ 方向翻转、$\boldsymbol{v}^{\perp}$ 方向不动——正是镜像。
 
-**4、5：** 由 3，$H\boldsymbol{v}=-\boldsymbol{v}$；$\boldsymbol{u}\perp\boldsymbol{v}\Rightarrow H\boldsymbol{u}=\boldsymbol{u}$，而 $\dim\boldsymbol{v}^{\perp}=k-1$。故特征值为 $-1$（一重）与 $1$（$k-1$ 重），$\det H=(-1)\cdot1^{k-1}=-1$。∎
+**4、5：** 由 3，$H\boldsymbol{v}=-\boldsymbol{v}$；$\boldsymbol{u}\perp\boldsymbol{v}\Rightarrow H\boldsymbol{u}=\boldsymbol{u}$，而 $\dim\boldsymbol{v}^{\perp}=k-1$。故特征值为 $-1$（一重）与 $1$（$k-1$ 重），$\det H=(-1)\cdot1^{k-1}=-1$。
 :::
 
 :::
@@ -344,7 +344,7 @@ H=I-\frac{2}{80}\begin{pmatrix}64&32\\32&16\end{pmatrix}=\begin{pmatrix}1&0\\0&1
 
 **几何：** $H$ 是以 $\boldsymbol{v}=(8,4)^{\mathrm T}$（斜率 $1/2$）为法线的镜面反射，把 $(3,4)^{\mathrm T}$ 映成 $(-5,0)^{\mathrm T}$——长度不变，方向关于镜面对称。
 
-**规范化形式：** 令 $\boldsymbol{u}=\boldsymbol{v}/\lVert\boldsymbol{v}\rVert=(2/\sqrt5,\ 1/\sqrt5)^{\mathrm T}$，则 $H=I-2\boldsymbol{u}\boldsymbol{u}^{\mathrm T}=\begin{pmatrix}1-8/5&-4/5\\-4/5&1-2/5\end{pmatrix}$，与上面的结果相同 ✓。**代码里用规范化形式更稳**（避免 $\boldsymbol{v}^{\mathrm T}\boldsymbol{v}$ 上溢 / 下溢）。∎
+**规范化形式：** 令 $\boldsymbol{u}=\boldsymbol{v}/\lVert\boldsymbol{v}\rVert=(2/\sqrt5,\ 1/\sqrt5)^{\mathrm T}$，则 $H=I-2\boldsymbol{u}\boldsymbol{u}^{\mathrm T}=\begin{pmatrix}1-8/5&-4/5\\-4/5&1-2/5\end{pmatrix}$，与上面的结果相同 ✓。**代码里用规范化形式更稳**（避免 $\boldsymbol{v}^{\mathrm T}\boldsymbol{v}$ 上溢 / 下溢）。
 :::
 
 :::
@@ -383,7 +383,7 @@ $2\times2$ 情形第 1 步即完成：$R=\begin{pmatrix}-5&-2.2\\0&0.4\end{pmatr
 
 **验证 $A=QR$：** $H_1R=\begin{pmatrix}3&-0.6(-2.2)-0.8(0.4)\\4&-0.8(-2.2)+0.6(0.4)\end{pmatrix}=\begin{pmatrix}3&1.32-0.32\\4&1.76+0.24\end{pmatrix}=\begin{pmatrix}3&1\\4&2\end{pmatrix}$ ✓。
 
-**注意 $R$ 的对角元是负的**（$r_{11}=-5$）。要化成「对角元为正」的规范形式，把 $Q$ 的第 1 列与 $R$ 的第 1 行同时变号（$R\to\operatorname{diag}(-1,1)R$、$Q\to Q\operatorname{diag}(-1,1)$，$QR$ 不变）。**工程上常直接允许负对角元**（LAPACK 不保证正号），因为唯一性只在规范形式下成立。∎
+**注意 $R$ 的对角元是负的**（$r_{11}=-5$）。要化成「对角元为正」的规范形式，把 $Q$ 的第 1 列与 $R$ 的第 1 行同时变号（$R\to\operatorname{diag}(-1,1)R$、$Q\to Q\operatorname{diag}(-1,1)$，$QR$ 不变）。**工程上常直接允许负对角元**（LAPACK 不保证正号），因为唯一性只在规范形式下成立。
 :::
 
 :::
@@ -414,7 +414,7 @@ $$r=\sqrt{x_1^2+x_2^2}\ (\text{实际用}\ \texttt{hypot}),\qquad c=\frac{x_1}{r
 则 $\begin{pmatrix}c&s\\-s&c\end{pmatrix}\begin{pmatrix}x_1\\x_2\end{pmatrix}=\begin{pmatrix}r\\0\end{pmatrix}$。若 $x_2=0$，取 $c=1,\ s=0$。
 
 ::: proof 证明
-直接代入：$cx_1+sx_2=\dfrac{x_1^2+x_2^2}{r}=r$，$-sx_1+cx_2=\dfrac{-x_2x_1+x_1x_2}{r}=0$。正交性：$c^2+s^2=(x_1^2+x_2^2)/r^2=1$。∎
+直接代入：$cx_1+sx_2=\dfrac{x_1^2+x_2^2}{r}=r$，$-sx_1+cx_2=\dfrac{-x_2x_1+x_1x_2}{r}=0$。正交性：$c^2+s^2=(x_1^2+x_2^2)/r^2=1$。
 :::
 
 :::
@@ -440,7 +440,7 @@ $2\times2$ 已上三角：$R=\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}$，$Q=G^{
 
 **验证 $A=QR$：** $QR=\begin{pmatrix}0.6&-0.8\\0.8&0.6\end{pmatrix}\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}=\begin{pmatrix}3&2.88+1.12\\4&3.84-0.84\end{pmatrix}=\begin{pmatrix}3&4\\4&3\end{pmatrix}$ ✓。
 
-**与 Householder 对比：** 同一个矩阵，Householder 给出的 $Q$ 满足 $\det Q=-1$（含反射），Givens 给出 $\det Q=+1$（纯旋转）。两者都能完成 QR，选哪个取决于**要消多少元素**：本例 $2\times2$ 只需一次旋转，成本相同；但若是 $1000\times1000$ 的三对角矩阵，**「只动两行」的局部性**才是 Givens 的杀手锏。∎
+**与 Householder 对比：** 同一个矩阵，Householder 给出的 $Q$ 满足 $\det Q=-1$（含反射），Givens 给出 $\det Q=+1$（纯旋转）。两者都能完成 QR，选哪个取决于**要消多少元素**：本例 $2\times2$ 只需一次旋转，成本相同；但若是 $1000\times1000$ 的三对角矩阵，**「只动两行」的局部性**才是 Givens 的杀手锏。
 :::
 
 :::
@@ -492,7 +492,7 @@ $$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2=\lVert\bar Q^{\mathrm T}(A\bolds
 
 取平方即得。第二项与 $\boldsymbol{x}$ 无关，故只能令第一项为零；$R$ 非奇异（$A$ 列满秩）故解唯一，最小值 $\lVert\boldsymbol{d}\rVert_2^2$。
 
-**误差量级（要点）：** 正态方程显式形成并求解一个条件数为 $\mathrm{cond}(A)^2$ 的问题，任何后向稳定的解法（如 Cholesky）只能保证相对误差 $\sim\mathrm{cond}(A)^2u$；QR 路径中所有变换都是正交的（[@thm-2.1.6]：不放大误差），误差只经过 $\mathrm{cond}(R)=\mathrm{cond}(A)$ 一次。严格的后向误差分析见 Higham《Accuracy and Stability of Numerical Algorithms》§20.3–20.5。∎
+**误差量级（要点）：** 正态方程显式形成并求解一个条件数为 $\mathrm{cond}(A)^2$ 的问题，任何后向稳定的解法（如 Cholesky）只能保证相对误差 $\sim\mathrm{cond}(A)^2u$；QR 路径中所有变换都是正交的（[@thm-2.1.6]：不放大误差），误差只经过 $\mathrm{cond}(R)=\mathrm{cond}(A)$ 一次。严格的后向误差分析见 Higham《Accuracy and Stability of Numerical Algorithms》§20.3–20.5。
 :::
 
 :::
@@ -529,7 +529,7 @@ $$\hat{\boldsymbol{x}}=(1,1)^{\mathrm T}.$$
 
 **核对：** $A\hat{\boldsymbol{x}}=(1,1,0)^{\mathrm T}+(1,0,1)^{\mathrm T}=(2,1,1)^{\mathrm T}=\boldsymbol{b}$——**残差为零**，这说明 $\boldsymbol{b}\in C(A)$，最小二乘解恰好就是精确解。
 
-**换一个右端：** 取 $\boldsymbol{b}=(1,1,1)^{\mathrm T}$，此时 $\boldsymbol{b}\notin C(A)$。$Q^{\mathrm T}\boldsymbol{b}=(-1.4142,\ 0.8165)^{\mathrm T}$，解得 $x_2=0.6667$、$x_1=0.6667$，即 $\hat{\boldsymbol{x}}=(0.6667,0.6667)^{\mathrm T}=\bigl(\tfrac23,\tfrac23\bigr)^{\mathrm T}$（正态方程 $\begin{pmatrix}2&1\\1&2\end{pmatrix}\boldsymbol{x}=(2,2)^{\mathrm T}$ 的解），残差 $\lVert A\hat{\boldsymbol{x}}-\boldsymbol{b}\rVert_2=0.5774=1/\sqrt3$ ✓，且 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$ 成立。∎
+**换一个右端：** 取 $\boldsymbol{b}=(1,1,1)^{\mathrm T}$，此时 $\boldsymbol{b}\notin C(A)$。$Q^{\mathrm T}\boldsymbol{b}=(-1.4142,\ 0.8165)^{\mathrm T}$，解得 $x_2=0.6667$、$x_1=0.6667$，即 $\hat{\boldsymbol{x}}=(0.6667,0.6667)^{\mathrm T}=\bigl(\tfrac23,\tfrac23\bigr)^{\mathrm T}$（正态方程 $\begin{pmatrix}2&1\\1&2\end{pmatrix}\boldsymbol{x}=(2,2)^{\mathrm T}$ 的解），残差 $\lVert A\hat{\boldsymbol{x}}-\boldsymbol{b}\rVert_2=0.5774=1/\sqrt3$ ✓，且 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$ 成立。
 :::
 
 :::

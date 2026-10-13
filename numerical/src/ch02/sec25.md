@@ -1,6 +1,6 @@
 # 2.5 特征值、谱半径与对称谱理论
 
-前四节把矩阵当作「算子」「方程组」「投影工具」。这一节换一个视角：**矩阵的谱（特征值集合）刻画了它的本质行为**。为什么这个视角重要？因为 2.4 节的条件数只回答「解会被放大多少」，而谱半径 $\rho(A)$ 回答的是另一个问题——「迭代会不会收敛、收敛得多快」；再往后，SVD（2.6）完全建立在谱上，QR 迭代求特征值也是在谱上做文章。本节的重点是特征值的**扰动敏感性**，它正是 [1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在特征值问题上的重演，结论还相当**反直觉**——对称矩阵温和，非正规矩阵却可能「开方敏感」。行进路线是：先认识谱半径并给它一个上界，再学一个不用算特征值就能定位它们的工具（Gerschgorin 圆盘），然后转向对称情形，用 Rayleigh 商与 Courant–Fischer 定理讲清「对称矩阵为什么格外好」，最后对非正规情形给出定量警告。
+前四节把矩阵当作「算子」「方程组」「投影工具」，这一节换视角：**矩阵的谱（特征值集合）刻画它的本质行为**——条件数回答「解被放大多少」（2.4），谱半径 $\rho(A)$ 回答「迭代收不收敛、多快」，SVD（2.6）与 QR 迭代也都建立在谱上。本节重点是特征值的**扰动敏感性**：[1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在此重演，且结论反直觉——对称矩阵温和，非正规矩阵「开方敏感」。路线：谱半径及其上界 → Gerschgorin 圆盘（不算特征值也能定位它们）→ 对称情形（Rayleigh 商与 Courant–Fischer）→ 非正规情形的定量警告。
 
 <aside class="lesson-brief" aria-label="2.5 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>特征值、特征向量的定义与计算；对称矩阵可正交对角化（1.3.4 已用过）；矩阵范数（1.3）；2.1 节的正交与内积。</p></div>
@@ -49,7 +49,7 @@ $\lambda$ 是特征值 $\iff$ $\det(A-\lambda I)=0$（**特征多项式**为 0�
 
 **5：** 见 [1.3.4](../ch01/sec13.md#sec-1.3.4) 已用到的谱定理；完整证明见[习题 B2](exercises.md)（要点：实对称矩阵的任一特征值必为实数——在 $A\boldsymbol{v}=\lambda\boldsymbol{v}$ 两边左乘 $\overline{\boldsymbol{v}}^{\mathrm T}$ 得 $\lambda\lVert\boldsymbol{v}\rVert^2=\overline{\boldsymbol{v}}^{\mathrm T}A\boldsymbol{v}$，其共轭转置给出 $\overline{\lambda}\lVert\boldsymbol{v}\rVert^2=\boldsymbol{v}^{\mathrm T}A^{\mathrm T}\overline{\boldsymbol{v}}$，由 $A=A^{\mathrm T}$ 得 $\lambda=\overline{\lambda}$）。
 
-**6：** $\det(B-\lambda I)=\det(P^{-1}AP-\lambda I)=\det(P^{-1}(A-\lambda I)P)=\det(A-\lambda I)$。∎
+**6：** $\det(B-\lambda I)=\det(P^{-1}AP-\lambda I)=\det(P^{-1}(A-\lambda I)P)=\det(A-\lambda I)$。
 :::
 
 :::
@@ -82,7 +82,7 @@ rho=1.3385  ||A||2=2.8698  ||A||inf=3.7301  ||A||1=4.4696  ||A||F=3.3676
 
 三行里 $\rho(A)$ 都严格小于每一个范数，而且 $\rho(A)\le\lVert A\rVert_2\le\lVert A\rVert_F$ 与 $\lVert A\rVert_2\le\sqrt{\lVert A\rVert_1\lVert A\rVert_\infty}$ 也都成立（[习题 B6](../ch01/exercises.md) 已证）✓。
 
-**为什么拿 $\rho\le\lVert A\rVert_2$ 当最快的估计？** 因为 $\lVert A\rVert_2$ 能**直接算出来**（靠 SVD 或幂法迭代），而 $\rho(A)$ 原则上要算出全部特征值；反过来，只要 $\lVert A\rVert_2\lt1$，立刻就能断定 $\rho\lt1$、迭代收敛——**根本不用算特征值**。这就是「用范数做收敛判据」最大的便利。∎
+**为什么拿 $\rho\le\lVert A\rVert_2$ 当最快的估计？** 因为 $\lVert A\rVert_2$ 能**直接算出来**（靠 SVD 或幂法迭代），而 $\rho(A)$ 原则上要算出全部特征值；反过来，只要 $\lVert A\rVert_2\lt1$，立刻就能断定 $\rho\lt1$、迭代收敛——**根本不用算特征值**。这就是「用范数做收敛判据」最大的便利。
 :::
 
 :::
@@ -129,7 +129,7 @@ $$\lvert\lambda-a_{kk}\rvert\,\lvert v_k\rvert=\Bigl\lvert\sum_{j\neq k}a_{kj}v_
 
 **（2）** 这是圆盘定理的「加强版」，标准证法用连续性。考虑 $A_t=D+t(A-D)$（$D=\operatorname{diag}(a_{ii})$ 是对角部分）。$A_0=D$ 的特征值就是各个 $a_{ii}$，即第 $i$ 个圆盘的**圆心**；$A_1=A$ 的特征值按（1）落在各圆盘内。$t$ 从 $0$ 连续增加到 $1$ 时，特征值也随 $t$ 连续变化（特征值是特征多项式系数的连续函数，而多项式的根对系数连续）。既然某个连通区域与其他圆盘不相交，特征值在连续移动中就没有办法跳过中间的空白地带，因此进入该区域的特征值个数始终不变——而 $t=0$ 时该区域恰好含 $k$ 个圆心，也就是 $k$ 个特征值。所以 $t=1$ 时它仍含 $k$ 个。
 
-**（3）** 对 $A^{\mathrm T}$ 应用（1）。$A^{\mathrm T}$ 与 $A$ 有相同的特征值（[@thm-2.5.1] 第 2 条），故结论对「列和」也成立。两个版本同时成立时，取交集即可。∎
+**（3）** 对 $A^{\mathrm T}$ 应用（1）。$A^{\mathrm T}$ 与 $A$ 有相同的特征值（[@thm-2.5.1] 第 2 条），故结论对「列和」也成立。两个版本同时成立时，取交集即可。
 :::
 
 :::
@@ -167,13 +167,13 @@ $$A=\begin{pmatrix}10&-1&2\\0&4&1\\-2&1&5\end{pmatrix}$$
 
 **收紧后的围栏：** 定理严格给出的是**两个并集的交**：$\sigma(A)\subseteq\bigl(\text{行圆盘的并}\bigr)\cap\bigl(\text{列圆盘的并}\bigr)=[2,13]\cap[2,12]=[2,12]$。至于逐盘配对取交（$[8,12]$、$[3,5]$、$[2,8]$），那只是**启发式收紧**，并不是定理的结论——用的时候要当心：$[8,12]$ 与 $[2,8]$ 在 $8$ 处**相切**，按连通性条款它们其实连成了一块（连通性只对**同一版本**的 $n$ 个圆盘适用）。
 
-**老实说：** 列版本的三个圆盘连成一条链，严格讲并不存在孤立分量；不过相切是「刀锋」情形——任何微小扰动都会把链断开，所以不妨把它当作一种极限情形下的直觉。数值验证（NumPy）：特征值为 $9.0687$、$6.2778$、$3.6535$——$9.0687$ **确实独占** $[8,12]$，另两个落在 $[2,8]$ 内，与直觉一致。∎
+**老实说：** 列版本的三个圆盘连成一条链，严格讲并不存在孤立分量；不过相切是「刀锋」情形——任何微小扰动都会把链断开，所以不妨把它当作一种极限情形下的直觉。数值验证（NumPy）：特征值为 $9.0687$、$6.2778$、$3.6535$——$9.0687$ **确实独占** $[8,12]$，另两个落在 $[2,8]$ 内，与直觉一致。
 
 **非奇异性：** 原点 $0$ 不在任何行圆盘内（最靠左的区间是 $[2,8]$），故 $A$ 非奇异。
 
 **真值（NumPy）：** $\sigma(A)=\{3.6535,\ 6.2778,\ 9.0687\}$。逐条核对：$9.0687\in[8,12]$ ✓；$6.2778\in[2,8]$ ✓；$3.6535\in[3,5]$ ✓；一个特征值落在孤立圆盘、两个落在连通区域 ✓。
 
-**顺带一提：** $A$ 其实还是**严格对角占优**的——第 1 行 $\lvert10\rvert\gt3$ ✓，第 2 行 $\lvert4\rvert\gt1$ ✓，第 3 行 $\lvert5\rvert\gt3$ ✓，三行都满足 $\lvert a_{ii}\rvert\gt r_i$，所以「$A$ 非奇异」这个结论直接由此也能得到。∎
+**顺带一提：** $A$ 其实还是**严格对角占优**的——第 1 行 $\lvert10\rvert\gt3$ ✓，第 2 行 $\lvert4\rvert\gt1$ ✓，第 3 行 $\lvert5\rvert\gt3$ ✓，三行都满足 $\lvert a_{ii}\rvert\gt r_i$，所以「$A$ 非奇异」这个结论直接由此也能得到。
 :::
 
 :::
@@ -235,7 +235,7 @@ $$\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}=(\boldsymbol{u}_1+\boldsymbol{\delta
 
 $$R(\boldsymbol{x})=\frac{\lambda_1+\boldsymbol{\delta}^{\mathrm T}A\boldsymbol{\delta}}{1+O(\lVert\boldsymbol{\delta}\rVert^2)}=\lambda_1+O(\lVert\boldsymbol{\delta}\rVert^2).$$
 
-**关键就在这一点：特征向量的误差是一阶量，Rayleigh 商的误差是它的平方**——因为 $\lambda_1$ 正是 Rayleigh 商在 $\boldsymbol{u}_1$ 处取到的**驻点**，一阶项自动消失（这也是 [@thm-2.5.5] 的 Courant–Fischer 定理所刻画的极值性质）。∎
+**关键就在这一点：特征向量的误差是一阶量，Rayleigh 商的误差是它的平方**——因为 $\lambda_1$ 正是 Rayleigh 商在 $\boldsymbol{u}_1$ 处取到的**驻点**，一阶项自动消失（这也是 [@thm-2.5.5] 的 Courant–Fischer 定理所刻画的极值性质）。
 :::
 
 :::
@@ -279,7 +279,7 @@ k=12 Rayleigh=6.6690789932 误差=9.509e-08
 
 **对比一下：** 如果不用 Rayleigh 商，而用 $\lVert A\boldsymbol{x}_k\rVert$ 当估计，比值会是 $0.5212$（一阶），达到同样精度需要**大约两倍的步数**。这正是 [@thm-2.5.3] 的实用价值。
 
-**反幂法（预告）：** 把 $A$ 换成 $(A-\mu I)^{-1}$，主特征值就变成 $1/(\lambda^{*}-\mu)$——**迭代会收敛到最接近 $\mu$ 的那个特征值**，速度由 $\lvert(\lambda_i-\mu)/(\lambda_j-\mu)\rvert$ 决定。这既是「已知近似值、反过来求精确特征值」的标准技巧（$\mu$ 取 Rayleigh 商时，精度还能再升到三阶），也是[第三章](../ch01/sec11.md#roadmap) 3.1.2 的内容。∎
+**反幂法（预告）：** 把 $A$ 换成 $(A-\mu I)^{-1}$，主特征值就变成 $1/(\lambda^{*}-\mu)$——**迭代会收敛到最接近 $\mu$ 的那个特征值**，速度由 $\lvert(\lambda_i-\mu)/(\lambda_j-\mu)\rvert$ 决定。这既是「已知近似值、反过来求精确特征值」的标准技巧（$\mu$ 取 Rayleigh 商时，精度还能再升到三阶），也是[第三章](../ch01/sec11.md#roadmap) 3.1.2 的内容。
 :::
 
 :::
@@ -319,7 +319,7 @@ $$\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}=\sum_{i,j}k_ik_j\boldsymbol{u}_i^{\m
 
 $$R(\boldsymbol{x})=\frac{\sum_i\lambda_ik_i^2}{\sum_ik_i^2} .$$
 
-**一旦看出它是加权平均，结论就自动出来了：** $R(\boldsymbol{x})$ 是以 $k_i^2/(\sum_jk_j^2)$ 为权的 $\lambda_i$ 的加权平均，必然落在 $[\lambda_1,\lambda_n]$ 内。等号出现在下界，当且仅当全部权重都集中到 $\lambda_1$ 上，即 $\boldsymbol{x}\in\operatorname{span}\{\boldsymbol{u}_1\}$；上界的情形同理。∎
+**一旦看出它是加权平均，结论就自动出来了：** $R(\boldsymbol{x})$ 是以 $k_i^2/(\sum_jk_j^2)$ 为权的 $\lambda_i$ 的加权平均，必然落在 $[\lambda_1,\lambda_n]$ 内。等号出现在下界，当且仅当全部权重都集中到 $\lambda_1$ 上，即 $\boldsymbol{x}\in\operatorname{span}\{\boldsymbol{u}_1\}$；上界的情形同理。
 :::
 
 :::
@@ -344,7 +344,7 @@ $$\dim(\mathcal{S}\cap\mathcal{T})\ge\dim\mathcal{S}+\dim\mathcal{T}-n=k+(n-k+1)
 
 故存在 $\boldsymbol{0}\neq\boldsymbol{x}\in\mathcal{S}\cap\mathcal{T}$。写 $\boldsymbol{x}=\sum_{i\ge k}k_i\boldsymbol{u}_i$，则 $R(\boldsymbol{x})\ge\lambda_k$（权只落在 $\lambda_k,\dots,\lambda_n$ 上）。于是在这个 $\mathcal{S}$ 上 $\max R\ge\lambda_k$；$\mathcal{S}$ 是任意的，对 $\mathcal{S}$ 取下确界后仍 $\ge\lambda_k$。
 
-两个方向合起来就是第一等式。至于第二等式，对 $-A$ 套用第一等式即可（$(-A)$ 的特征值是 $-\lambda_n\le\cdots\le-\lambda_1$，其中第 $k$ 大 $=-\lambda_{n-k+1}$，再用 $\min\max$ 与 $\max\min$ 的互换）。∎
+两个方向合起来就是第一等式。至于第二等式，对 $-A$ 套用第一等式即可（$(-A)$ 的特征值是 $-\lambda_n\le\cdots\le-\lambda_1$，其中第 $k$ 大 $=-\lambda_{n-k+1}$，再用 $\min\max$ 与 $\max\min$ 的互换）。
 :::
 
 :::
@@ -390,7 +390,7 @@ max over 2-dim subspaces of min R = 3.00000000  (理论 λ2=3.00000000)
 
 1. 随机方向上的极值只是**逼近** $\lambda_{\min},\lambda_{\max}$（差 $\sim10^{-5}$）：20 万次随机采样并没有命中精确的特征方向——变分原理的本质是**优化**，随机撒点只不过是一种近似的优化方式。
 2. 第二项**精确等于** $\lambda_2=3$：取等的子空间是 $\mathcal{S}=\operatorname{span}\{\boldsymbol{u}_2,\boldsymbol{u}_3\}$（其上 $\min R=\lambda_2$）；而任何 2 维子空间都与 $\operatorname{span}\{\boldsymbol{u}_1,\boldsymbol{u}_2\}$ 有非零交（维数公式 $2+2\gt3$），在该交集上 $R\le\lambda_2$，故 $\max$ 不可能超过 $\lambda_2$。**这就是 Courant–Fischer 的取等构造在起作用。**
-3. **实用含义：** 求 $\lambda_2$ 可以「在 2 维子空间上做 Rayleigh 商最小化」——这就是 **Lanczos 算法 / 子空间迭代**的基本思想，也是 [习题 C6](exercises.md) 的动手内容。∎
+3. **实用含义：** 求 $\lambda_2$ 可以「在 2 维子空间上做 Rayleigh 商最小化」——这就是 **Lanczos 算法 / 子空间迭代**的基本思想，也是 [习题 C6](exercises.md) 的动手内容。
 :::
 
 :::
@@ -451,7 +451,7 @@ $$\lVert(A-\mu I)^{-1}\rVert_2=\lVert V(\Lambda-\mu I)^{-1}V^{-1}\rVert_2\le\lVe
 
 代入上式得 $1\le\dfrac{\mathrm{cond}_2(V)\lVert E\rVert_2}{\min_i\lvert\lambda_i-\mu\rvert}$，整理后就是待证的结论。
 
-**（三）** 用一个 Jordan 块把现象显式摆出来：$A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$（$k=2$ 重特征值 $1$），$E=\begin{pmatrix}0&0\\t&0\end{pmatrix}$，则 $A+E$ 的特征方程 $(1-\lambda)^2=t$ 给出 $\lambda=1\pm\sqrt{t}$，移动量就是 $\sqrt{t}=\varepsilon^{1/2}$（取 $\varepsilon=t$）。∎
+**（三）** 用一个 Jordan 块把现象显式摆出来：$A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$（$k=2$ 重特征值 $1$），$E=\begin{pmatrix}0&0\\t&0\end{pmatrix}$，则 $A+E$ 的特征方程 $(1-\lambda)^2=t$ 给出 $\lambda=1\pm\sqrt{t}$，移动量就是 $\sqrt{t}=\varepsilon^{1/2}$（取 $\varepsilon=t$）。
 :::
 
 :::
@@ -494,7 +494,7 @@ for t in [1e-2,1e-8,1e-16]:
 
 **（2）的读法：** 特征值精确为 $1.5\pm\sqrt{0.25+t^2}$，移动量约 $t^2$——**比 $t$ 还小一个数量级**（$t=10^{-2}$ 时只移动 $10^{-4}$，见表中 $0.99990001$）。$t=10^{-8}$ 与 $10^{-16}$ 时，移动量（$\sim10^{-16}$ 与 $\sim10^{-32}$）已经低于机器精度，**完全测不出来**——**对称矩阵的特征值对扰动极其稳健**。
 
-**工程结论：** ① 对称特征值问题（结构力学、协方差矩阵、量子力学）总能算得很准；② **非对称 / 非正规矩阵的重特征值问题（如流体稳定性、某些控制问题）在数值上极难处理**——这不是算法不行，是问题本身病态；③ 实践中应**尽量避免**让矩阵既非正规又带重特征值，或者改用 Schur 形式 / 奇异值（$\sigma_i=\sqrt{\lambda_i(A^{\mathrm T}A)}$ 总在**对称**矩阵上算，原理上更稳）。∎
+**工程结论：** ① 对称特征值问题（结构力学、协方差矩阵、量子力学）总能算得很准；② **非对称 / 非正规矩阵的重特征值问题（如流体稳定性、某些控制问题）在数值上极难处理**——这不是算法不行，是问题本身病态；③ 实践中应**尽量避免**让矩阵既非正规又带重特征值，或者改用 Schur 形式 / 奇异值（$\sigma_i=\sqrt{\lambda_i(A^{\mathrm T}A)}$ 总在**对称**矩阵上算，原理上更稳）。
 :::
 
 :::
@@ -505,7 +505,7 @@ for t in [1e-2,1e-8,1e-16]:
 ::: proof 解
 $\rho(N)=1$（特征值 $1,1$），$\lVert N\rVert_2\approx1000$。**谱半径远小于范数**。
 
-**问题出在「迭代 $N^k$ 到底衰不衰减」上。** 对正规矩阵，$\lVert A^k\rVert_2=\rho(A)^k=\lvert\lambda_{\max}\rvert^k$，所以 $\rho\lt1$ 立刻给出几何衰减。对非正规矩阵，只能保证 $\rho(A)=\lim_k\lVert A^k\rVert^{1/k}$——**这个极限式子固然成立，但有限步内的 $\lVert N^k\rVert$ 可以要多大有多大**。本例：
+**问题出在「迭代 $N^k$ 到底衰不衰减」上。** 对正规矩阵，$\lVert A^k\rVert_2=\rho(A)^k=\lvert\lambda_{\max}\rvert^k$，所以 $\rho\lt1$ 立刻给出几何衰减。对非正规矩阵，只能保证 $\rho(A)=\lim_k\lVert A^k\rVert^{1/k}$（Gelfand 公式，证明与瞬态增长的定量分析见[附录 A.2.7](../appendix/derivations.md#app-a-2-7)）——**这个极限式子固然成立，但有限步内的 $\lVert N^k\rVert$ 可以要多大有多大**。本例：
 
 $$N^k=\begin{pmatrix}1&k\cdot1000\\0&1\end{pmatrix},\qquad \lVert N^k\rVert_2\approx1000k\ (\text{线性增长！})$$
 
@@ -513,7 +513,7 @@ $$N^k=\begin{pmatrix}1&k\cdot1000\\0&1\end{pmatrix},\qquad \lVert N^k\rVert_2\ap
 
 **工程含义：** [第五章](../ch01/sec11.md#roadmap)的迭代法收敛性判据如果只写「$\rho(H)\lt1$」，在非正规情形下就是**理论上成立、实践中可能失效**（有限步内误差先涨后落，甚至溢出）。更稳妥的判据是 $\lVert H\rVert\lt1$（[1.3.5](../ch01/sec13.md#sec-1.3.5) 定理 1.3.6），它给出**每一步都在收缩**的保证。**这就是「用范数，不用谱半径」的实用理由。**
 
-（这类现象在流体力学与数值天气预报里尤其常见，有专门的工具对付它——**伪谱（pseudospectrum）**，见 [延伸阅读](../reading.md)。）∎
+（这类现象在流体力学与数值天气预报里尤其常见，有专门的工具对付它——**伪谱（pseudospectrum）**，见 [延伸阅读](../reading.md)。）
 :::
 
 :::

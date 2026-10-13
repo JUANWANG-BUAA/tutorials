@@ -1,6 +1,6 @@
 # 2.2 四个基本子空间与投影
 
-2.1 建立了正交的语言，本节把它用到**矩阵**上，回答一个看似简单、却撑起半本数值线性代数的问题：**矩阵 $A$ 把空间分成哪几块？它们的维数与正交关系是什么？** 答案由四个基本子空间给出（2.2.1–2.2.2）：四个空间分成两对，每对互为正交补，输入与输出空间因此各被唯一地拆开。有了这种拆法，「求一个不相容方程组的最优解」「把向量投影到子空间」就有了统一的几何图像（2.2.3–2.2.5），最小二乘也随之落地。
+2.1 建立了正交的语言，本节把它用到**矩阵**上：**矩阵 $A$ 把输入、输出空间各拆成两块互为正交补的子空间**（2.2.1–2.2.2）——四个基本子空间。有了这种拆法，「不相容方程组的最优解」「向量到子空间的投影」就有了统一的几何图像（2.2.3–2.2.5），最小二乘随之落地。
 
 <aside class="lesson-brief" aria-label="2.2 学习简报">
 <div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>矩阵乘法与转置；线性相关与秩；齐次方程组解空间的结构；2.1 的正交与正交基坐标公式。</p></div>
@@ -41,7 +41,7 @@ $$\dim N(A)=n-r,\qquad \dim N(A^{\mathrm T})=m-r . \tag{2.6}$$
 ::: proof 证明
 **（2.6）：** 零空间就是齐次方程组 $A\boldsymbol{x}=\boldsymbol{0}$ 的解空间。对 $A$ 做行变换（不改变解空间，见[第三章](../ch01/sec11.md#roadmap)）化为行简化阶梯形，设主元个数为 $r$，则自由未知量有 $n-r$ 个，每个自由未知量给一个基向量，故 $\dim N(A)=n-r$。同法作用于 $A^{\mathrm T}$ 得 $\dim N(A^{\mathrm T})=m-r$。**且主元个数 = 线性无关的行数 = 行秩**。
 
-**（2.5）：** 行简化阶梯形的主元个数既等于行秩（主元所在行给出极大无关行组）也等于列秩（主元所在列给出极大无关列组）。也可以换个角度看：对 $A$ 做**初等行变换** $A\to PA$（$P$ 可逆）不改变列向量间的线性关系（$\sum c_i\boldsymbol{a}_i=\boldsymbol{0}\iff\sum c_i(P\boldsymbol{a}_i)=\boldsymbol{0}$），故 $\operatorname{rank}$ 在行变换下不变；化到阶梯形后非零行数即秩。∎
+**（2.5）：** 行简化阶梯形的主元个数既等于行秩（主元所在行给出极大无关行组）也等于列秩（主元所在列给出极大无关列组）。也可以换个角度看：对 $A$ 做**初等行变换** $A\to PA$（$P$ 可逆）不改变列向量间的线性关系（$\sum c_i\boldsymbol{a}_i=\boldsymbol{0}\iff\sum c_i(P\boldsymbol{a}_i)=\boldsymbol{0}$），故 $\operatorname{rank}$ 在行变换下不变；化到阶梯形后非零行数即秩。
 
 **四个数的速记法：** 输入空间 $\mathbb{R}^n$ 被 $r$ 与 $n-r$ 分完，输出空间 $\mathbb{R}^m$ 被 $r$ 与 $m-r$ 分完。**两个 $r$ 一样大**——这正是行秩 = 列秩的内容，也是「$A$ 与 $A^{\mathrm T}$ 秩相同」的依据。
 :::
@@ -66,7 +66,7 @@ $$\boldsymbol{v}^{\mathrm T}\boldsymbol{x}=(A^{\mathrm T}\boldsymbol{y})^{\mathr
 
 **再用维数夹逼证相等。** 一个子空间的正交补的维数是 $\dim \mathcal{S}^{\perp}=n-\dim\mathcal{S}$（因为「与 $\mathcal{S}$ 的每个基向量内积为零」是 $\dim\mathcal{S}$ 个独立线性约束）。由（2.6），$\dim N(A)^{\perp}=n-(n-r)=r$。而 $\dim C(A^{\mathrm T})=r$（行秩）。**子空间包含 + 维数相等 ⟹ 相等**，故（2.7）成立。
 
-**（2.8）：** 把 $A$ 换成 $A^{\mathrm T}$ 代入（2.7）：$C(A)=N(A^{\mathrm T})^{\perp}$。∎
+**（2.8）：** 把 $A$ 换成 $A^{\mathrm T}$ 代入（2.7）：$C(A)=N(A^{\mathrm T})^{\perp}$。
 :::
 
 :::
@@ -111,7 +111,7 @@ $$N(A)=\operatorname{span}\bigl\{(-2,1,0,0)^{\mathrm T},\ (-3,0,1,0)^{\mathrm T}
 
 $$N(A^{\mathrm T})=\operatorname{span}\bigl\{(1,-1,1)^{\mathrm T}\bigr\}.$$
 
-**正交性核对：** $(1,-1,1)^{\mathrm T}$ 与 $C(A)$ 的每个基向量内积为零：$(1,-1,1)\cdot(1,2,1)=1-2+1=0$ ✓；$(1,-1,1)\cdot(1,3,2)=1-3+2=0$ ✓——正是（2.8）。$(-2,1,0,0)$ 与行空间基向量内积：$-2+2+0+0=0$ ✓；$(-3,0,1,0)\cdot(1,2,3,0)=-3+0+3+0=0$ ✓——正是（2.7）。∎
+**正交性核对：** $(1,-1,1)^{\mathrm T}$ 与 $C(A)$ 的每个基向量内积为零：$(1,-1,1)\cdot(1,2,1)=1-2+1=0$ ✓；$(1,-1,1)\cdot(1,3,2)=1-3+2=0$ ✓——正是（2.8）。$(-2,1,0,0)$ 与行空间基向量内积：$-2+2+0+0=0$ ✓；$(-3,0,1,0)\cdot(1,2,3,0)=-3+0+3+0=0$ ✓——正是（2.7）。
 :::
 
 :::
@@ -158,7 +158,7 @@ $$0=\lVert\boldsymbol{p}_1-\boldsymbol{p}_2\rVert^2+\langle\boldsymbol{e}_1-\bol
 
 故 $\boldsymbol{p}_1=\boldsymbol{p}_2$，进而 $\boldsymbol{e}_1=\boldsymbol{e}_2$。（**「子空间与它的正交补只交于零向量」，这就是唯一性的本质**：$\mathcal{S}\cap\mathcal{S}^{\perp}=\{\boldsymbol{0}\}$。）
 
-**勾股：** $\boldsymbol{p}\perp\boldsymbol{e}$，故 $\lVert\boldsymbol{x}\rVert^2=\lVert\boldsymbol{p}+\boldsymbol{e}\rVert^2=\lVert\boldsymbol{p}\rVert^2+2\langle\boldsymbol{p},\boldsymbol{e}\rangle+\lVert\boldsymbol{e}\rVert^2=\lVert\boldsymbol{p}\rVert^2+\lVert\boldsymbol{e}\rVert^2$。∎
+**勾股：** $\boldsymbol{p}\perp\boldsymbol{e}$，故 $\lVert\boldsymbol{x}\rVert^2=\lVert\boldsymbol{p}+\boldsymbol{e}\rVert^2=\lVert\boldsymbol{p}\rVert^2+2\langle\boldsymbol{p},\boldsymbol{e}\rangle+\lVert\boldsymbol{e}\rVert^2=\lVert\boldsymbol{p}\rVert^2+\lVert\boldsymbol{e}\rVert^2$。
 :::
 
 :::
@@ -179,7 +179,7 @@ $$\lVert\boldsymbol{x}-\boldsymbol{p}\rVert\lt\lVert\boldsymbol{x}-\boldsymbol{s
 
 $$\lVert\boldsymbol{x}-\boldsymbol{s}\rVert^2=\lVert(\boldsymbol{x}-\boldsymbol{p})+(\boldsymbol{p}-\boldsymbol{s})\rVert^2=\lVert\boldsymbol{e}\rVert^2+\lVert\boldsymbol{p}-\boldsymbol{s}\rVert^2\ge\lVert\boldsymbol{e}\rVert^2=\lVert\boldsymbol{x}-\boldsymbol{p}\rVert^2,$$
 
-等号成立当且仅当 $\boldsymbol{p}=\boldsymbol{s}$。∎
+等号成立当且仅当 $\boldsymbol{p}=\boldsymbol{s}$。
 :::
 
 :::
@@ -200,7 +200,7 @@ $$\boldsymbol{e}=\boldsymbol{x}-\boldsymbol{p}=\begin{pmatrix}0\\0\\1\end{pmatri
 
 $$\lVert\boldsymbol{x}-\boldsymbol{s}\rVert^2=(1-t)^2+(1-t)^2+1=2(1-t)^2+1\ \ge1=\lVert\boldsymbol{e}\rVert^2,$$
 
-等号仅在 $t=1$（即 $\boldsymbol{s}=\boldsymbol{p}$）取到。**「最近」等价于「余项垂直于 $\mathcal{S}$」**——这一点在最小二乘里会变成可解的方程（正态方程）。∎
+等号仅在 $t=1$（即 $\boldsymbol{s}=\boldsymbol{p}$）取到。**「最近」等价于「余项垂直于 $\mathcal{S}$」**——这一点在最小二乘里会变成可解的方程（正态方程）。
 :::
 
 :::
@@ -245,7 +245,7 @@ $$P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}\in\mathbb{R}^{m\times m}, \tag{2.11}$$
 
 **性质 3：** 由 $P^2=P$，$P(\boldsymbol{v})=\lambda\boldsymbol{v}\Rightarrow\lambda^2=\lambda\Rightarrow\lambda\in\{0,1\}$。$P$ 可对角化（对称），故 $\operatorname{tr}P=\operatorname{rank}P=$ 非零特征值个数 $=\ \dim C(A)=n$。范数：对任意 $\boldsymbol{b}$，$\lVert P\boldsymbol{b}\rVert\le\lVert\boldsymbol{b}\rVert$（因为 $\lVert\boldsymbol{b}\rVert^2=\lVert P\boldsymbol{b}\rVert^2+\lVert\boldsymbol{b}-P\boldsymbol{b}\rVert^2$，勾股），且取 $\boldsymbol{b}\in C(A)$ 时 $\lVert P\boldsymbol{b}\rVert=\lVert\boldsymbol{b}\rVert$，故 $\lVert P\rVert_2=1$（$P\neq O$）。
 
-**反之：** 若实矩阵 $S$ 满足 $S^{\mathrm T}=S=S^2$，记它的列空间为 $\mathcal{S}=C(S)$，则 $S$ 在 $\mathcal{S}$ 上恒等（$S\boldsymbol{s}=\boldsymbol{s}$）、在 $\mathcal{S}^{\perp}$ 上为零（由对称性，$\boldsymbol{y}\perp C(S)\Rightarrow S\boldsymbol{y}\in C(S)$ 且 $\boldsymbol{y}^{\mathrm T}S\boldsymbol{y}=0\Rightarrow S\boldsymbol{y}=\boldsymbol{0}$），故 $S$ 正是 $\mathcal{S}$ 上的正交投影。∎
+**反之：** 若实矩阵 $S$ 满足 $S^{\mathrm T}=S=S^2$，记它的列空间为 $\mathcal{S}=C(S)$，则 $S$ 在 $\mathcal{S}$ 上恒等（$S\boldsymbol{s}=\boldsymbol{s}$）、在 $\mathcal{S}^{\perp}$ 上为零（由对称性，$\boldsymbol{y}\perp C(S)\Rightarrow S\boldsymbol{y}\in C(S)$ 且 $\boldsymbol{y}^{\mathrm T}S\boldsymbol{y}=0\Rightarrow S\boldsymbol{y}=\boldsymbol{0}$），故 $S$ 正是 $\mathcal{S}$ 上的正交投影。
 :::
 
 :::
@@ -273,7 +273,7 @@ $$\boldsymbol{p}=P\boldsymbol{b}=\frac13\begin{pmatrix}2-2+4\\-1+4+4\\1+2+8\end{
 
 $$\boldsymbol{e}=\boldsymbol{b}-\boldsymbol{p}=\Bigl(-\frac13,-\frac13,\frac13\Bigr)^{\mathrm T},\qquad A^{\mathrm T}\boldsymbol{e}=\begin{pmatrix}1&0&1\\0&1&1\end{pmatrix}\boldsymbol{e}=\begin{pmatrix}-\frac13+\frac13\\-\frac13+\frac13\end{pmatrix}=\begin{pmatrix}0\\0\end{pmatrix}\ \checkmark .$$
 
-**核对最小二乘解：** $\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}=\frac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}\begin{pmatrix}5\\6\end{pmatrix}=\frac13\begin{pmatrix}4\\7\end{pmatrix}=\bigl(\frac43,\frac73\bigr)^{\mathrm T}$，而 $A\hat{\boldsymbol{x}}=\frac13(4,7,11)^{\mathrm T}=\boldsymbol{p}$ ✓。**投影完全等价于最小二乘。**∎
+**核对最小二乘解：** $\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}=\frac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}\begin{pmatrix}5\\6\end{pmatrix}=\frac13\begin{pmatrix}4\\7\end{pmatrix}=\bigl(\frac43,\frac73\bigr)^{\mathrm T}$，而 $A\hat{\boldsymbol{x}}=\frac13(4,7,11)^{\mathrm T}=\boldsymbol{p}$ ✓。**投影完全等价于最小二乘。**
 :::
 
 :::
@@ -332,7 +332,7 @@ $$\operatorname{rank}(A^{\mathrm T}A)=\operatorname{rank}A\qquad\text{（两个�
 
 **唯一性：** $A$ 列满秩 $\Rightarrow A^{\mathrm T}A$ 非奇异（[@thm-2.2.5] 证明第一段）$\Rightarrow$ 解唯一。
 
-**（3）** 由 $\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{r}$、$\boldsymbol{p}\perp\boldsymbol{r}$ 的勾股分解与 $\boldsymbol{p}=P\boldsymbol{b}$。∎
+**（3）** 由 $\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{r}$、$\boldsymbol{p}\perp\boldsymbol{r}$ 的勾股分解与 $\boldsymbol{p}=P\boldsymbol{b}$。
 :::
 
 :::
@@ -372,7 +372,7 @@ $$A^{\mathrm T}\boldsymbol{r}=\begin{pmatrix}1&1&1&1\\0&1&2&3\end{pmatrix}\begin
 
 残差平方和 $\lVert\boldsymbol{r}\rVert_2^2=0.01+0.04+0.49+0.16=0.70$。
 
-**本题的两个收获：** ① 计算 $A^{\mathrm T}\boldsymbol{b}$ 时，第二个分量极易算错，而 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$ 是一个免费**自检**——只要它不成立，前面就一定算错了；② 拟合结果对数据敏感：把最后一个点从 $4$ 改成 $5$，$\hat{\boldsymbol{x}}$ 就会明显移动——这正是 [2.4](sec24.md) 要量化的敏感性。∎
+**本题的两个收获：** ① 计算 $A^{\mathrm T}\boldsymbol{b}$ 时，第二个分量极易算错，而 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$ 是一个免费**自检**——只要它不成立，前面就一定算错了；② 拟合结果对数据敏感：把最后一个点从 $4$ 改成 $5$，$\hat{\boldsymbol{x}}$ 就会明显移动——这正是 [2.4](sec24.md) 要量化的敏感性。
 :::
 
 :::
@@ -405,7 +405,7 @@ $$\hat{\boldsymbol{x}}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol{b}, \tag{
 ::: proof 证明
 令 $f(\boldsymbol{x})=(A\boldsymbol{x}-\boldsymbol{b})^{\mathrm T}W(A\boldsymbol{x}-\boldsymbol{b})$。由 $W$ 对称，$\nabla f(\boldsymbol{x})=2A^{\mathrm T}W(A\boldsymbol{x}-\boldsymbol{b})$，令其为零得加权正态方程。$A^{\mathrm T}WA$ 非奇异：若 $A^{\mathrm T}WA\boldsymbol{x}=\boldsymbol{0}$，左乘 $\boldsymbol{x}^{\mathrm T}$：$(\boldsymbol{x}^{\mathrm T}A^{\mathrm T})W(A\boldsymbol{x})=(A\boldsymbol{x})^{\mathrm T}W(A\boldsymbol{x})=0$，由 $W$ 正定得 $A\boldsymbol{x}=\boldsymbol{0}$，再由 $A$ 列满秩得 $\boldsymbol{x}=\boldsymbol{0}$。
 
-**与一般内积的联系：** 令 $W=L^{\mathrm T}L$（例如 Cholesky），则 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_W=\lVert L(A\boldsymbol{x}-\boldsymbol{b})\rVert_2=\lVert (LA)\boldsymbol{x}-L\boldsymbol{b}\rVert_2$——**加权最小二乘，等价于先把方程两边乘上 $L$，再做普通最小二乘**。∎
+**与一般内积的联系：** 令 $W=L^{\mathrm T}L$（例如 Cholesky），则 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_W=\lVert L(A\boldsymbol{x}-\boldsymbol{b})\rVert_2=\lVert (LA)\boldsymbol{x}-L\boldsymbol{b}\rVert_2$——**加权最小二乘，等价于先把方程两边乘上 $L$，再做普通最小二乘**。
 :::
 
 :::
@@ -434,7 +434,7 @@ $$A^{\mathrm T}W\boldsymbol{r}=\begin{pmatrix}\sum_iw_ir_i\\\sum_iw_ix_ir_i\end{
 
 （数值上用 NumPy 复核：$A^{\mathrm T}W\boldsymbol{r}$ 的两个分量均 $\sim10^{-16}$，即机器精度。）
 
-**结论：** 加权最小二乘**不改公式结构，只改内积**——这正是「内积是几何的源头」这一直觉的兑现。[第五章](../ch01/sec11.md#roadmap)的预条件迭代法、加权内积下的 Rayleigh 商（[2.5.4](sec25.md#sec-2.5.4)）走的也都是这条路。∎
+**结论：** 加权最小二乘**不改公式结构，只改内积**——这正是「内积是几何的源头」这一直觉的兑现。[第五章](../ch01/sec11.md#roadmap)的预条件迭代法、加权内积下的 Rayleigh 商（[2.5.4](sec25.md#sec-2.5.4)）走的也都是这条路。
 :::
 
 :::
