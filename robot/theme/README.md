@@ -9,7 +9,7 @@ standard density，八段式单一权威样式表）。本目录为该设计语�
 |:--|:--|
 | `css/robot.css` | **唯一权威样式**：设计令牌 → mdBook 变量映射 → 框架适配 → 语义盒子 → 表格/图/公式 → 首页 → 响应式 → 打印 |
 | `css/katex.css` | KaTeX 布局规则 + 字体声明（仅 woff2，离线） |
-| `js/robot.js` | 进度条、展开全部解答、打印前展开（渐进增强） |
+| `js/robot.js` | 进度条、本页目录、展开全部解答、打印前展开、宽公式滚动提示、返回教程库（渐进增强） |
 | `js/search-cjk.js` | 中文搜索分词（见 docs/ARCHITECTURE.md §2.1） |
 
 字体文件在 `src/fonts/katex/`（mdBook 会整体复制 `src/`）。
@@ -34,29 +34,26 @@ standard density，八段式单一权威样式表）。本目录为该设计语�
 
 ## 三本书共用层（2026-10 起）
 
-以下两份文件在 `robot` / `numerical` / `matrix` 三本书里**逐字相同**（改动请同步三处，
+以下文件在 `robot` / `numerical` / `matrix` 三本书里**逐字相同**（改动请同步三处，
 内容用 `shasum` 校验）：
 
 | 文件 | 作用 |
 |:--|:--|
-| `css/prefs.css` | **阅读偏好层**：字体（衬线/黑体/系统）、字号（小/中/大）、行距间距（紧凑/标准/宽松）、版心宽度（窄/标准/宽）、配色主题（暖纸/冷灰/苔绿/高对比）。由 `<html>` 上的 `data-*` 属性驱动，属性由 `js/prefs.js` 写入、`head.hbs` 在首屏前预置。默认档（serif / m / standard / standard / warm）不写任何属性，外观与本层出现之前一致。 |
 | 侧栏 | **一比一交还原生**（连续目录、编号加粗、hover/当前项仅变色、本页大纲折叠）。无自建脚本与自加样式。 |
-| `head.hbs` | 首屏防闪：在 `<head>` 阶段把读者的偏好读成 `data-*` 属性，避免先按默认外观画一帧再跳。 |
-
-`book.toml` 的加载顺序有约束：`prefs.css` 必须排在权威样式表**之后**（同特异性靠
-后加载覆盖）。
-
-配色主题只改「中性面 + 强调色」，语义盒子（定义/定理/例题…）的配色不动；四套主题的
-`--muted` 与 `--accent-text` 都按 WCAG AA（≥4.5:1）在 `--page` 与 `--sidebar` 上验算过。
-
-### 共用层补充（framework.css / framework.js）
-
-| 文件 | 作用 |
-|:--|:--|
-| `css/framework.css` | mdBook 框架 UI 的修补：搜索面板限高与分隔、主题弹层、键帽 `<kbd>`、回到顶部、焦点环；以及列表 `ol/ul` 的行高（框架把它们钉在 1.45em，同 `.content p` 一并接管）。 |
+| `css/framework.css` | mdBook 框架 UI 的修补：搜索面板限高与分隔、键帽 `<kbd>`、回到顶部、焦点环；以及 `.content` 里 p / li / ol / ul 的行高（框架把它们钉在 1.45em，中文正文发挤）。主题弹层不做皮肤，走 mdBook 原生。 |
 | `js/framework.js` | 框架文案汉化（菜单栏、搜索框、主题名、帮助弹窗、复制按钮、翻页箭头）、搜索结果统计行汉化与键盘滚动、回到顶部、折叠状态记忆（解答/提示，按页存 localStorage）。 |
 
-这两份与 `prefs.css` / `prefs.js` / `head.hbs` 一样三本逐字相同。
+侧栏逻辑已从各书的 `matrix.js` / `na.js` / `robot.js` 移出，那几个文件不再处理侧栏。
+
+### 外观设置：一比一还原 rustwiki（2026-10）
+
+外观设置**只保留菜单栏的原生入口**：主题切换 = 画笔图标弹层（跟随系统 / 浅色 /
+浅色 · Rust / 深色 · Coal / 深色 · Navy / 深色 · Ayu），操作与 rustwiki、mdBook 官方
+手册一致。此前的自建「阅读偏好」面板（`prefs.css` + `prefs.js` + `head.hbs`：字体 /
+字号 / 间距 / 版心 / 配色主题）已整体移除——它与原生主题弹层各自都能改明暗与配色，
+是两个入口、两套状态，读者看到的设置不统一。主题弹层的样式也一并还原 mdBook 原生
+（4px 圆角、1px 边框、0.7em 字号、2px 20px 内边距、条目内「✓」选中标记），不再自加皮肤。
+
 CI 里中文搜索依赖 `node tools/build_search_js.mjs <book>/book`（**构建后**执行），
 `.github/workflows/deploy.yml` 已含该步；`book.toml` 的 `use-boolean-and` 必须为
 `false`——n-gram 索引下 AND 会把「线性空间」切出的伪二元组「性空」也当作必需项。
