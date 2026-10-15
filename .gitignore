@@ -8,3 +8,6 @@ _sources/
 __pycache__/
 *.pyc
 *.log
+
+# Anki 导出产物（tools/export_cards.py 的输出）
+output/

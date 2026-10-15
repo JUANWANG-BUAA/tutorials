@@ -948,6 +948,66 @@ html{scroll-behavior:smooth}
 }
 
 /* ======================================================================== *
+ * §7.5  考场竞技场（arena-clock 部件 + 竞技页样式）
+ * ------------------------------------------------------------------------
+ * 计时数字用等宽字体的 tabular-nums，跳动时不抖版式；紧急态取 --fig-red，
+ * 归零态加深底色。全部颜色走令牌，明暗主题与打印由 §1/§8 统一负责。
+ * ======================================================================== */
+.arena-presets{
+  display:flex;flex-wrap:wrap;gap:8px;margin:0;
+}
+.arena-chip{padding:5px 11px;font-size:12.5px}
+.arena-chip.is-selected{
+  border-color:var(--accent-strong);color:var(--accent-text);
+  box-shadow:inset 0 -2px 0 var(--accent-strong);
+}
+.arena-display{
+  margin-top:14px;display:flex;align-items:baseline;gap:12px;
+}
+.arena-time{
+  font:700 44px/1 var(--mono);color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+}
+.arena-display.is-urgent .arena-time{color:var(--fig-red,#9c2b25)}
+.arena-display.is-over .arena-time{
+  color:var(--paper);background:var(--fig-red,#9c2b25);
+  padding:2px 10px;border-radius:8px;
+}
+.arena-bar{
+  margin-top:10px;height:6px;border-radius:3px;overflow:hidden;
+  background:var(--surface-soft);
+}
+.arena-bar-fill{
+  height:100%;width:100%;border-radius:3px;
+  background:var(--accent-strong);
+  transition:width .25s linear;
+}
+.arena-display.is-urgent ~ .arena-bar .arena-bar-fill{background:var(--fig-red,#9c2b25)}
+.arena-live{display:block;margin-top:6px;color:var(--muted);font:12px/1.4 var(--sans)}
+.arena-controls{margin-top:12px;display:flex;gap:8px}
+.arena-tally{
+  margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+}
+.arena-tally-btn{padding:5px 11px;font-size:12.5px}
+.arena-score{
+  width:100%;color:var(--ink-2);
+  font:600 13px/1.5 var(--mono);font-variant-numeric:tabular-nums;
+}
+/* 竞技页的段位徽标（纯文字徽章，不引图片） */
+.arena-rank{
+  display:inline-block;padding:1px 8px;border-radius:999px;
+  border:1px solid var(--line-strong);
+  font:700 11.5px/1.7 var(--mono);letter-spacing:.06em;color:var(--ink-2);
+  white-space:nowrap;
+}
+.arena-rank.is-s{border-color:var(--accent-strong);color:var(--accent-text)}
+.arena-rank.is-hot{border-color:var(--fig-red,#9c2b25);color:var(--fig-red,#9c2b25)}
+@media only screen and (max-width:619.98px){
+  .arena-time{font-size:34px}
+}
+
+/* ======================================================================== *
  * §8  打印
  * ------------------------------------------------------------------------
  * 打印必须**重设全部颜色令牌**，不能只改看起来相关的几个。原因：默认主题是

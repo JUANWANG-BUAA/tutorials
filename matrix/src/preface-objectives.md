@@ -4,7 +4,7 @@
 
 > **第二章（2.1–2.5）的目标**：2.1–2.2 随第 3 周录播追加、2.3 随官方课件追加、2.4–2.5 随第 5 周录播追加，见「K2 / S2 / A2」三组，与[第二章自检表](ch02/checklist.md)对应；2.6–2.7 到位后继续补充。
 >
-> **第三章（3.1–3.2）的目标**：3.1、3.2 随官方课件追加（两节均无录播），见本节末尾「K3 / S3 / A3」三组，与[第三章自检表](ch03/checklist.md)对应；3.3 及以后到位后继续补充。
+> **第三章（3.1–3.5）的目标**：四节随官方课件追加（均无录播），见本节末尾「K3 / S3 / A3」三组——K3.1–K3.16、S3.1–S3.5、A3.1–A3.5 覆盖 3.1–3.2，K3.17–K3.30、S3.6–S3.10、A3.6–A3.8 覆盖 3.4–3.5，与[第三章自检表](ch03/checklist.md)、[考场竞技场](ch03/arena.md)的必考点清单同一编号；3.3 及以后到位后继续补充。
 
 ## K · 知识目标（概念与理论）
 
@@ -83,20 +83,41 @@
 <li><span class="obj-id">A2.4</span>书写矩阵与换基公式前先核对形状（$m\times n$）与基的对应关系；能区分「相抵 / 相似」「等势 / 同构」「同一个矩阵 / 同一个映射」三对概念。<span class="obj-lv">分析 / 评价</span></li>
 </ul>
 
-## 第三章 · 矩阵分解（3.1–3.2）
+## 第三章 · 矩阵分解（3.1–3.5）
 
 ### K · 知识目标
 
 <ul class="objlist">
 <li><span class="obj-id">K3.1</span>能陈述相抵分解式 $A=P^{-1}\Gamma Q$ 与相抵标准形 $\Gamma=\begin{bmatrix}I_r&0\\0&0\end{bmatrix}$，说明「分解式不唯一、标准形唯一」各自的含义。<span class="obj-lv">记忆 / 理解</span></li>
-<li><span class="obj-id">K3.2</span>能证明「同型矩阵相抵 $\iff$ 秩相等」，并说明相抵标准形存在性证明的选基路线（零空间的基排前、值域的基接后）。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.3</span>能用分块矩阵法求 $P$、$Q$：说清读出的 $E$、$F$ 与 $A=P^{-1}\Gamma Q$ 中 $P$、$Q$ 的对应关系，并用 $EAF=\Gamma$ 回代验证。<span class="obj-lv">理解 / 应用</span></li>
-<li><span class="obj-id">K3.4</span>能用相抵标准形解线性方程组：写出 $\Gamma\boldsymbol y=P\boldsymbol b$ 的解法、可解判据（$P\boldsymbol b$ 后 $m-r$ 个分量）与自由度数 $n-r$。<span class="obj-lv">理解 / 应用</span></li>
-<li><span class="obj-id">K3.5</span>能陈述并应用右逆 / 左逆的存在判别（行满秩 $\iff$ 右逆，列满秩 $\iff$ 左逆），说明方阵情形为何合一，给出两条充分性证明（相抵构造与闭式公式）。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.6</span>能陈述并证明 $\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)=\operatorname{rank}(AA^{\mathrm H})=\operatorname{rank}(A^{\mathrm H})$，指出证明中内积正定性的作用，并用作「可逆性转换器」。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.7</span>能陈述满秩分解定理 $A=BC$ 与 $B$、$C$ 的形状、秩与几何含义，给出两条构造路线并补全 $\operatorname{rank}C=r$ 的理由。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.8</span>能陈述并证明满秩分解的唯一性刻画（$B_1=B_2D$、$C_1=D^{-1}C_2$，$D$ 可逆且是过渡矩阵），说明「一个分解生成全部」。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.9</span>能写出矩阵方程 $AXA=A$ 的一个解（经满秩分解构造），并陈述 $AXA=A\iff CXB=I_r$ 的等价刻画。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.2</span>能写出分解不唯一的构造（吸收矩阵 $\begin{bmatrix}I_r&*\\0&I\end{bmatrix}$），并说明相抵标准形为何由秩唯一决定。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.3</span>能双向证明「同型矩阵相抵 $\iff$ 秩相等」，并说出它在「秩相关命题」中的用法。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.4</span>能复述引理 3.1.1 存在性证明的选基路线（零空间的基排前、值域的基接后），并指出用到了哪些先修结论。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.5</span>能用分块矩阵法求 $P$、$Q$：读对 $E$、$F$ 并写对 $A=E^{-1}\Gamma F^{-1}$，用 $EAF=\Gamma$ 回代验证。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.6</span>能用相抵标准形解线性方程组：写出可解判据（$P\boldsymbol b$ 后 $m-r$ 个分量）与自由度数 $n-r$。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.7</span>能陈述并应用右逆 / 左逆的存在判别（行满秩 $\iff$ 右逆，列满秩 $\iff$ 左逆），方向不写反。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.8</span>能给出单侧逆存在性的两条充分性证明（法 1 相抵构造、法 2 闭式公式）并各自验算。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.9</span>能复述注 1 的三条存在性小结（可逆 / 满秩非方阵 / 其他），并说出「方阵前提」的必要性。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.10</span>能说清单侧逆的映射含义（左逆 $\leftrightarrow$ 单射、右逆 $\leftrightarrow$ 满射），并解释为什么单侧逆不唯一。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.11</span>能背四项秩等式链，并复述证明主线（同解 $+$ 正定性），指出正定性用在哪一步。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.12</span>能说清 $A^{\mathrm H}A$（$AA^{\mathrm H}$）可逆 $\iff$ 列（行）满秩，并解释为什么不能换成 $A^2$。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.13</span>能说出满秩分解 $A=BC$ 中 $B$、$C$ 的形状、秩与几何含义（基 / 坐标），并背写定理。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.14</span>能写出满秩分解的两条构造（相抵法：$B=P^{-1}$ 前 $r$ 列、$C=Q$ 前 $r$ 行；列空间基法），并补全 $\operatorname{rank}C=r$ 的夹逼。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.15</span>能用 RREF 批量取 $B$（主元列）与 $C$（非零行），并解释为什么成立。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.16</span>能陈述并证明满秩分解的唯一性刻画（$B_1=B_2D$、$C_1=D^{-1}C_2$，$D$ 是过渡矩阵），说明「一个分解生成全部」。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.17</span>能背写 QR 分解的两种版本（酉三角 / 正交三角）与「正线」约定，说出 $Q$、$R$ 各自的身份。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.18</span>能陈述 QR 分解定理（满秩方阵存在且正线下唯一），并用「$R$ 是 $\boldsymbol z$ 基到 $\boldsymbol a$ 基的过渡矩阵」解释 GS 读法。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.19</span>能复述唯一性证明（上三角 $+$ 酉 $+$ 正对角 $\Rightarrow I$），说出不唯一的精确程度（对角酉阵；实方阵 $2^n$ 种）。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.20</span>能讲例 3.4.2（不满秩：零对角元、唯一性失效）与推论 3.4.1（长方阵完全分解，GS $+$ 基扩充）。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.21</span>能背写 QR 算法迭代格式、证明每步酉相似（$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$），说明收敛条件「模互异」是充分非必要，并给出等模卡死反例。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.22</span>能分别陈述并证明两个 Schur 引理（归纳吃特征向量；对 $P$ 作 QR 升级为酉相似）。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.23</span>能用旋转阵反例说明实阵未必正交三角化，并陈述实 Schur 引理的前提（特征值全实）与注 3 的警告。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.24</span>能证谱映射（$\varphi(A)$ 的特征值为 $\varphi(\lambda_i)$），说出特征向量继承的**单向性**与黏合现象。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.25</span>能陈述并证明 Hamilton–Cayley 定理（含「按次序乘因子、逐列清零」的证明心脏），说明只验对角元为零为什么不够。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.26</span>能背写逆矩阵公式并证明 $a_0=f_A(0)\ne0\iff A$ 可逆。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.27</span>能给出零化 / 最小多项式的定义（首 1、次数最小、唯一），说出零化多项式族为何无穷。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.28</span>能证明最小多项式的两条性质（整除一切零化多项式、与 $f_A$ 同根，不计重数）。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.29</span>能按候选法三步（$f_A$ 因式分解 → 列候选 → 从低到高试）求 $m_A$，并解释次序不能反。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.30</span>能按题选路完成三套计算流程：带余除法算 $g(A)$、递推 / 定系数算 $A^m$、逆公式求 $A^{-1}$，并知道「先求 $m_A$ 再除」最省。<span class="obj-lv">应用 / 分析</span></li>
 </ul>
 
 ### S · 技能目标
@@ -107,13 +128,22 @@
 <li><span class="obj-id">S3.3</span>能用公式 $A^{\mathrm H}(AA^{\mathrm H})^{-1}$、$(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 构造单侧逆并验算；能写出「全部右（左）逆」的参数形式。<span class="obj-lv">应用</span></li>
 <li><span class="obj-id">S3.4</span>能用三种算法求满秩分解（取列 / RREF / 从相抵分解读），并由分解读出 $R(A)$ 的基、列关系与 $N(A)$。<span class="obj-lv">应用 / 分析</span></li>
 <li><span class="obj-id">S3.5</span>能在两种满秩分解之间用过渡矩阵 $D$ 换算，并在具体矩阵上验证定理 3.2.2。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.6</span>能逐步完成 Gram–Schmidt 手算 QR（对角元取残差范数）、补齐长方阵的完全分解，并全部回代验证。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.7</span>能对具体矩阵手推两三轮 QR 迭代，读出对角元的收敛位置与非对角元的衰减率。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.8</span>能用候选法（从低次到高次试算）求最小多项式，并识别低次候选被淘汰的情形（几何重数不足）。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.9</span>能用 H–C 降次计算 $g(A)$ 与 $A^m$（在特征值处定系数）、用逆矩阵公式求 $A^{-1}$，并全部回代验算。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.10</span>能按限时流程完成[考场竞技场](ch03/arena.md)的三轮赛制（概念抢答 / 计算擂台 / 证明对决），并按评分细则核对步骤分。<span class="obj-lv">应用 / 评价</span></li>
 </ul>
 
 ### A · 素养目标
 
 <ul class="objlist">
-<li><span class="obj-id">A3.1</span>用任何结论前先核对前提：方阵还是长方阵、$r>0$、实还是复（共轭转置的适用范围）。<span class="obj-lv">分析 / 评价</span></li>
-<li><span class="obj-id">A3.2</span>书写分解式前先核对记号角色：谁左乘谁右乘、谁取逆、$E$、$F$ 与 $P$、$Q$ 的对应（勘误 E3.1、E3.3 的教训）。<span class="obj-lv">评价</span></li>
-<li><span class="obj-id">A3.3</span>养成「算完必回代」的习惯：相抵分解验 $EAF=\Gamma$，满秩分解验 $BC=A$，单侧逆验 $AB=I$ 或 $BA=I$。<span class="obj-lv">评价</span></li>
-<li><span class="obj-id">A3.4</span>能辨析三对易混：「相抵 / 相似」「分解式不唯一 / 标准形唯一」「充分条件 / 充要条件」，并各举一例说明差别。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.1</span>用任何结论前先核对前提：方阵还是长方阵、满秩还是秩亏、$r>0$、实还是复（共轭转置的适用范围）、特征值是否全实。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.2</span>书写分解式前先核对记号角色：谁左乘谁右乘、谁取逆、$E$、$F$ 与 $P$、$Q$ 的对应、QR 迭代的方向（勘误 E3.1、E3.3、E3.7 的教训）。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A3.3</span>养成「算完必回代」的习惯：相抵验 $EAF=\Gamma$，满秩验 $BC=A$，QR 验 $QR=A$，逆验 $AA^{-1}=I$；能指出验算如何一秒穿帮课件笔误（E3.5–E3.7）。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A3.4</span>能辨析四对易混：「相抵 / 相似」「分解式不唯一 / 标准形唯一」「充分 / 充要条件」「收敛条件的充分 / 必要」，并各举一例说明差别。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.5</span>$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 依赖共轭转置与正定性——不能推广到任意数域。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.6</span>用结论前先核对：方阵还是长方阵、满秩还是秩亏、实还是复、特征值是否全实——四个雷达词扫一遍再动笔。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.7</span>记号纪律延伸到 3.4/3.5：$Q$ 与 $R$ 的角色、QR 迭代方向（$Q_k^{\mathrm H}A_kQ_k$）、逆公式中 $a_i$ 与 $A$ 幂的配对不写错。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A3.8</span>边界意识：收敛条件是充分非必要（等模可能卡死）；数值中间量随实现与舍入而异；「对角元全零 $\ne$ 零矩阵」。<span class="obj-lv">评价</span></li>
 </ul>

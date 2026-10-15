@@ -1,27 +1,27 @@
-# 习题集 · 第三章（3.1–3.2）
+# 习题集 · 第三章（3.1–3.2 与 3.4–3.5）
 
-三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md) 的概念与第一、二章先修知识。
+三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md)、[3.4](sec34.md)、[3.5](sec35.md) 的概念与第一、二章先修知识。
 
-本页 A、B、C 三组 38 题：A 组（12 题）、B 组（10 题）、C 组（16 题）。
+本页 A、B、C 三组 61 题：A 组（20 题）、B 组（17 题）、C 组（24 题）。
 
 | 组 | 定位 | 建议时长 | 卡壳时怎么办 |
 |:--|:--|:--|:--|
-| **A 组**（12 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
-| **B 组**（10 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
-| **C 组**（16 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
+| **A 组**（20 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
+| **B 组**（17 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
+| **C 组**（24 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
 
 ::: note 关于「提示」层
 
-B5、B7、B8、C4、C13、C14 这 6 题提供了折叠的「提示」——它只给**从哪里下手**，不给完整过程。先看提示、自己推完，再对照解答，学习效果远好于直接读解答。
+B5、B7、B8、B11、B15、C4、C13、C14、C17 这 9 题提供了折叠的「提示」——它只给**从哪里下手**，不给完整过程。先看提示、自己推完，再对照解答，学习效果远好于直接读解答。
 :::
 
 ::: note 关于难度分布
 
-A 组覆盖本节全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解。
+A 组覆盖全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解（A1–A12）；QR 分解的存在 / 唯一 / 正线、列正交规范与酉矩阵的分野、QR 算法的相似性与收敛条件（A13–A16）；Schur 引理的适用范围、实数域边界、谱映射与特征向量继承的单向性、最小多项式的四条事实、逆矩阵公式（A17–A20）。
 
-B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心；B9 把 3.1 的结论接回第一章的正定矩阵。
+B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心（B1–B10，B9 把 3.1 的结论接回第一章的正定矩阵）；B11–B13 补 QR 的两条主干（对角酉阵刻画、迭代相似链与等模卡死），B14–B17 补 Schur / 谱映射 / 最小多项式的证明重做（B15 给出不依赖定理 3.5.1 的直接构造路线）。
 
-C 组训练四件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）。3.3 及以后素材到位后，本页按同样的三组结构续写。
+C 组训练六件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）、**GS 手算 QR 与长方阵补齐**（C17、C18、C22）、**H–C 与最小多项式驱动的三套计算**（C19–C21、C23、C24）。3.3 及以后素材到位后，本页按同样的三组结构续写。
 :::
 
 ## A 组 · 概念判断
@@ -200,6 +200,112 @@ $$B_1=B_2D,\qquad C_1=D^{-1}C_2$$
 (b) 应说：「行满秩矩阵有**右**逆；**列**满秩矩阵有**左**逆」（[@thm-3.1.1]）。方向由 $AB=I$（右）与 $BA=I$（左）决定：行满秩 $A$ 是「宽」的，可以右乘一个「高」的 $B$ 凑出 $I$。
 (c) 二者秩相等**对**，但理由不对：理由不是「同一个二次型」（$A^{\mathrm H}A$ 与 $A$ 甚至不同型），而是 [@prop-3.1.1] 的同解方程组证明（$N(A)=N(A^{\mathrm H}A)$，再用亏加秩）。
 (d) 不够：还要 $B$ **列满秩**、$C$ **行满秩**（[@thm-3.2.1]）；否则如 $\begin{bmatrix}1&2\\3&4\end{bmatrix}=\begin{bmatrix}1\\2\end{bmatrix}[1\ \ 2]$ 之类根本不成立，或退化成「秩不足」的分解（$B$ 的列不满秩 $\Rightarrow$ $B$ 的列不是 $R(A)$ 的基）。
+:::
+:::
+
+::: ex A13 · QR 分解的四个基本事实 {#ex-A13}
+
+判断对错并说明理由：
+
+(a) 任何满秩复方阵都有唯一的 QR 分解；(b) 不满秩的方阵一定没有 QR 分解；(c) 列满秩的长方阵 $A\in\mathbb C^{m\times n}_n$（$n\le m$）可分解为 $A=U\begin{bmatrix}R_1\\O\end{bmatrix}$；(d) $n$ 阶实满秩方阵在不要求「正线」时恰有 $2^n$ 种正交三角分解。
+
+::: sol 解答
+
+(a) **对**（[@thm-3.4.1]：满秩保证存在；「正线」约定保证唯一）。(b) **错**——[@ex-3.4.2] 的 $A=\begin{bmatrix}1&1\\0&0\end{bmatrix}$ 有 $A=I_2\begin{bmatrix}1&1\\0&0\end{bmatrix}$，丢掉的只是**唯一性**（$R$ 不可逆）。(c) **对**（[@cor-3.4.1]：GS $+$ 基扩充）。(d) **对**——任意两种分解相差对角正交阵 $D=\operatorname{diag}(\pm1,\cdots,\pm1)$（$2^n$ 个），见 [3.4.1](sec34.md#sec-3.4.1) 的本编补注。
+
+**要点**：存在性的保底比想象中宽（不满秩、长方阵都常有分解），唯一性的门槛比想象中高（要满秩**加**正线）。
+:::
+:::
+
+::: ex A14 · 数清一个矩阵的全部 QR 分解 {#ex-A14}
+
+写出 $A=\begin{bmatrix}0&1\\ 1&0\end{bmatrix}$ 的**全部**正交三角分解（$Q$ 正交、$R$ 可逆上三角，不要求正线），指出其中正线的版本，并说明为什么没有第五种。
+
+::: sol 解答
+
+$A$ 本身是正交矩阵（置换阵，且 $A^2=I$），两列 $\boldsymbol{e}_2,\boldsymbol{e}_1$ 已标准正交。GS 直接给出正线版本 $Q=A$、$R=I$（第一列 $r_{11}=\|\boldsymbol{e}_2\|=1$，$r_{12}=(\boldsymbol{e}_1,\boldsymbol{e}_2)=0$，$r_{22}=1$）。由对角正交阵生成全部 $2^2=4$ 种，形如 $\big(A\cdot D,\ D\big)$（$R=I$ 被 $D$ 左乘后仍是上三角）：
+
+$$(A,\ I),\qquad\big(A\operatorname{diag}(-1,1),\ \operatorname{diag}(-1,1)\big),\qquad\big(A\operatorname{diag}(1,-1),\ \operatorname{diag}(1,-1)\big),\qquad\big(A\operatorname{diag}(-1,-1),\ \operatorname{diag}(-1,-1)\big).$$
+
+（验算其一：$A\operatorname{diag}(-1,1)=\begin{bmatrix}0&1\\-1&0\end{bmatrix}$ 正交 ✓，$\operatorname{diag}(-1,1)$ 上三角 ✓，乘积 $=\begin{bmatrix}0&1\\1&0\end{bmatrix}=A$ ✓。）**正线版本**：只有 $(A,I)$（对角全 $1>0$）。**没有第五种**：若 $A=Q'R'$ 是任一分解，则 $W=R'R^{-1}=Q'^{\mathrm T}Q$ 既酉又上三角，故为对角阵且 $|w_{ii}|=1$（[3.4.1](sec34.md#sec-3.4.1) 的归纳），实数情形 $w_i=\pm1$——恰好穷尽。∎
+:::
+:::
+
+::: ex A15 · 列正交规范矩阵辨析 {#ex-A15}
+
+设 $Q\in\mathbb C^{m\times n}$（$m>n$）满足 $Q^{\mathrm H}Q=I_n$。判断：
+
+(a) $Q$ 是酉矩阵；(b) 对一切 $\boldsymbol{x}\in\mathbb C^n$ 有 $\|Q\boldsymbol{x}\|=\|\boldsymbol{x}\|$；(c) $Q$ 列满秩，$Q^{\mathrm H}$ 是它的一个左逆；(d) $QQ^{\mathrm H}=I_m$。
+
+::: sol 解答
+
+(a) **错**——酉矩阵必须是方阵（[@def-orth-matrix]）；$Q$ 只是**列正交规范矩阵**（[@def-3.4.2]）。(b) **对**：$\|Q\boldsymbol{x}\|^2=\boldsymbol{x}^{\mathrm H}Q^{\mathrm H}Q\boldsymbol{x}=\|\boldsymbol{x}\|^2$。(c) **对**：$Q^{\mathrm H}Q=I_n$ 本身就是「列满秩 $+$ 给出左逆」（[@thm-3.1.1]）。(d) **错**：$QQ^{\mathrm H}$ 是把 $\mathbb C^m$ 先投影到 $n$ 维再放回的算子，与 $I_m$ 差一个 $m-n$ 维的正交补——例如 $Q=\begin{bmatrix}1\\0\\0\end{bmatrix}$ 时 $QQ^{\mathrm H}=\operatorname{diag}(1,0,0)$。
+
+**要点**：$Q^{\mathrm H}Q=I_n$ 与 $QQ^{\mathrm H}=I_m$ 只在 $m=n$（方阵）时可能同时成立——**形状就是命题的一部分**。
+:::
+:::
+
+::: ex A16 · QR 算法四问 {#ex-A16}
+
+判断对错：
+
+(a) 迭代的每个 $A_k$ 都与 $A$ 相似；(b)「各特征值模值互不相同」是 QR 算法收敛的必要条件；(c) 模互异时，收敛所得上三角阵的对角元按模从大到小排定；(d) 特征值等模时 QR 迭代一定不收敛。
+
+::: sol 解答
+
+(a) **对**：$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$，链起来 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$（[@method-qr-algo]）。(b) **错**——是**充分**条件，不是必要（例如 $A$ 已经是对角元全正的上三角阵时迭代一步不动、天然「收敛」，无论对角元模是否互异）。(c) **对**（正文的本编注；[@ex-3.4.4] 中 $4.7321>3>1.2679$ 即此序）。(d) **错**：等模时**可能**卡死（旋转阵：$A=A\cdot I\Rightarrow A_2=A$），但「一定不收敛」过强——见 (b) 的三角阵例子，特征值 $\lambda_1=\lambda_2$（等模）迭代照样稳定。
+
+**要点**：背结论要背成「模互异 $\Rightarrow$ 收敛」，别擅自加强成 $\Longleftrightarrow$。
+:::
+:::
+
+::: ex A17 · Schur 引理辨析 {#ex-A17}
+
+判断对错：
+
+(a) 任意复方阵都酉相似于上三角阵；(b) 任意实方阵都正交相似于上三角阵；(c) 特征值全实的实方阵正交相似于上三角阵；(d) 任意复方阵都相似于对角阵。
+
+::: sol 解答
+
+(a) **对**（[@thm-3.5.2]）。(b) **错**——旋转阵 $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ 特征值 $\pm\mathrm i$：正交相似保持实性，实上三角阵特征值全实，矛盾（[3.5.1](sec35.md#sec-3.5.1) 的反例分析）。(c) **对**（[@thm-3.5.3]，前提正是「特征值均为实数」）。(d) **错**（注 1：三角化人人有份，对角化不是——[@ex-jordan-three]）。
+
+**要点**：(a) 与 (d) 的差别就是「对角化」与「三角化」的差别；(b) 与 (c) 的差别就是复结论进入实数域时要补的门票。
+:::
+:::
+
+::: ex A18 · 谱映射与特征向量继承 {#ex-A18}
+
+设 $A$ 的特征值为 $1,-1$（各一重，$A$ 为二阶）。判断：
+
+(a) $A^2+I$ 的特征值为 $2,2$；(b) $A$ 的特征向量都是 $A^2+I$ 的特征向量；(c) $A^2+I$ 的特征向量都是 $A$ 的特征向量；(d) $A^{2026}$ 的特征值为 $1,1$。
+
+::: sol 解答
+
+(a) **对**（[@cor-3.5.1]：$\varphi(\lambda)=\lambda^2+1$，$\varphi(\pm1)=2$）。(b) **对**（注 4 继承：$A\boldsymbol{\alpha}=\lambda\boldsymbol{\alpha}\Rightarrow\varphi(A)\boldsymbol{\alpha}=\varphi(\lambda)\boldsymbol{\alpha}$）。(c) **错**：$A=\operatorname{diag}(1,-1)$ 时 $A^2+I=2I$，一切非零向量都是它的特征向量，而 $\boldsymbol{e}_1+\boldsymbol{e}_2$ 不是 $A$ 的特征向量——$\varphi$ 把两个特征值黏在一起了。(d) **对**：$\varphi(\lambda)=\lambda^{2026}$，$\varphi(\pm1)=1$（偶次幂把 $\pm1$ 黏成 $1$，与 (c) 同源）。
+:::
+:::
+
+::: ex A19 · 最小多项式四问 {#ex-A19}
+
+判断对错：
+
+(a) 任何复方阵的最小多项式存在且唯一；(b) 最小多项式恒等于特征多项式；(c) $m_A(\lambda)$ 整除 $f_A(\lambda)$；(d) $m_A$ 与 $f_A$ 的根相同（不计重数）。
+
+::: sol 解答
+
+(a) **对**（存在：$f_A$ 本身零化（H–C），次数取最小；唯一：互相整除 $+$ 同次首一，[@thm-3.5.5]（1））。(b) **错**：$A=I_2$ 时 $f_A=(\lambda-1)^2$ 而 $m_A=\lambda-1$；一般 $m_A=f_A$ 当且仅当每个特征值的「最大块」都顶到代数重数（例 3.5.B 的情形）。(c) **对**（$f_A$ 是零化多项式，$m_A$ 整除一切零化多项式）。(d) **对**（[@thm-3.5.5]（2）：正向由整除，反向由特征向量继承）。
+:::
+:::
+
+::: ex A20 · 逆矩阵公式辨析 {#ex-A20}
+
+设 $f_A(\lambda)=\lambda^n+a_{n-1}\lambda^{n-1}+\cdots+a_1\lambda+a_0$。判断：
+
+(a) $a_0=0\iff A$ 不可逆；(b) $A$ 可逆时，$A^{-1}$ 可以写成 $A$ 的多项式；(c) 推论 3.5.2 的公式是 $A^{-1}=\frac{1}{a_0}(A^{n-1}+a_{n-1}A^{n-2}+\cdots+a_1I)$；(d) 例 3.5.3 课件把答案 $(1,3)$ 元印成 $0$，与它前面的特征多项式符号错无关，是独立的抄写错误。
+
+::: sol 解答
+
+(a) **对**：$a_0=f_A(0)=\det(-A)=(-1)^n\det A$（[@cor-3.5.2] 证明）。(b) **对**——推论 3.5.2 的公式就是一个这样的多项式（这补上了谱映射讨论里「$1/\lambda$ 不是多项式」的口子）。(c) **错**——差一个负号：正确为 $-\frac{1}{a_0}(\cdots)$（由 $A(\cdots)=-a_0I$ 移项而来）。(d) **错**——三处错误同源连锁：特征多项式符号错（$(\lambda-1)^3$ 印成 $(\lambda+1)^3$）$\Rightarrow$ 公式行系数全错 $\Rightarrow$ 答案矩阵错；即使按印错的公式行计算，答案也不是印出的那个矩阵（见 E3.5 的逐条核算）。
 :::
 :::
 
@@ -401,6 +507,158 @@ $$\begin{bmatrix}I_r&0\\0&0\end{bmatrix}\begin{bmatrix}I_r&0\\*&I\end{bmatrix}=\
 **可逆性**：两块都是「单位块 + 严格三角块」，行列式为 $1\cdot\det I=1\neq0$，可逆。
 
 **用法**：由两式得 $P^{-1}\Gamma Q=\big(P^{-1}\begin{bmatrix}I_r&*\\0&I\end{bmatrix}\big)\Gamma\big(\begin{bmatrix}I_r&0\\*&I\end{bmatrix}Q\big)$，右边仍是合法的相抵分解式——取不同的 $*$ 即得不同的 $P$、$Q$。∎
+:::
+:::
+
+::: ex B11 · 两种 QR 分解恰好相差一个对角酉阵 {#ex-B11}
+
+设 $A$ 为 $n$ 阶满秩复方阵，$A=Q_1R_1=Q_2R_2$ 是两种 QR 分解（$Q_i$ 酉、$R_i$ 可逆上三角，不要求正线）。证明：存在对角酉阵 $W=\operatorname{diag}(w_1,\cdots,w_n)$（$|w_i|=1$）使 $Q_2=Q_1W$、$R_2=W^{\mathrm H}R_1$。
+
+::: hint 提示
+
+考虑 $W=R_2R_1^{-1}=Q_2^{\mathrm H}Q_1$，证它「既酉又上三角」；再对列归纳证上三角酉阵必为对角。
+:::
+
+::: sol 解答
+
+**$W$ 良定且两种身份**：$R_1$ 可逆（$A$ 满秩 $\Rightarrow\operatorname{rank}R_1=n$，上三角满秩 $\iff$ 对角全非零）。由 $Q_1R_1=Q_2R_2$ 左乘 $Q_1^{\mathrm H}$、右乘 $R_1^{-1}$：
+
+$$W:=Q_1^{\mathrm H}Q_2=R_1R_2^{-1} .$$
+
+左边是酉阵之积，酉（[@thm-orth-algebra]）；右边是上三角阵之积再求逆，上三角。**上三角且酉 $\Rightarrow$ 对角、$|w_{ii}|=1$**（对列归纳：第 $1$ 列只有 $w_{11}$ 非零而范数为 $1$；设前 $j-1$ 列已是 $w_{ii}\boldsymbol{e}_i$，第 $j$ 列与它们的内积为 $\overline{w_{ii}}w_{ij}=0$，逐个逼出 $w_{ij}=0$（$i<j$），范数给出 $|w_{jj}|=1$）。于是 $W$ 是对角酉阵。
+
+**收尾**：$W=Q_1^{\mathrm H}Q_2\Rightarrow Q_2=Q_1W$（两边左乘 $Q_1$）；$W=R_1R_2^{-1}\Rightarrow R_2=W^{-1}R_1=W^{\mathrm H}R_1$（酉阵 $W^{-1}=W^{\mathrm H}$），其第 $i$ 个对角元为 $\overline{w_i}\,r_{ii}^{(1)}$。∎
+
+**推论**：实数情形 $w_i=\pm1$，恰 $2^n$ 种；再要求两个分解都正线（$r_{ii}^{(1)}>0$、$\overline{w_i}r_{ii}^{(1)}>0$）则逼出 $w_i=1$——唯一性（[@thm-3.4.1]）。
+:::
+:::
+
+::: ex B12 · 上三角酉阵必为对角阵 {#ex-B12}
+
+证明：若 $W=(w_{ij})$ 既是 $n$ 阶上三角阵（$w_{ij}=0,\ i>j$）又是酉矩阵，则 $w_{ij}=0$（$i<j$）且 $|w_{ii}|=1$。
+
+::: sol 解答
+
+对列 $j$ 归纳，断言「第 $j$ 列 $=w_{jj}\boldsymbol{e}_j$ 且 $|w_{jj}|=1$」。
+
+$j=1$：上三角使第一列只有 $w_{11}$ 可能非零；酉矩阵各列范数为 $1$（$W^{\mathrm H}W=I$ 的 $(1,1)$ 元），故 $|w_{11}|=1$，第 $1$ 列 $=w_{11}\boldsymbol{e}_1$。
+
+$j\Rightarrow j+1$：第 $j+1$ 列的非零分量只在行 $1\cdots j+1$。对每个 $i\le j$，酉矩阵不同列正交（$W^{\mathrm H}W=I$ 的 $(i,j+1)$ 元）：
+
+$$0=\sum_{k\le i}\overline{w_{ki}}\,w_{k,j+1}=\overline{w_{ii}}\,w_{i,j+1}\quad(\text{归纳假设：第 }i\text{ 列 }=w_{ii}\boldsymbol{e}_i,\ k>i\text{ 项为零}),$$
+
+而 $\overline{w_{ii}}\neq0$，故 $w_{i,j+1}=0$。于是第 $j+1$ 列只剩 $w_{j+1,j+1}$，范数 $1$ 给出 $|w_{j+1,j+1}|=1$。∎
+
+（这条小事实是 [@thm-3.4.1] 唯一性与 B11 的共同引擎；它对「行满 $+$ 酉」版本（下三角）同样成立，对 $A^{\mathrm H}$ 说一遍即可。）
+:::
+:::
+
+::: ex B13 · QR 迭代的相似链与「卡死」分析 {#ex-B13}
+
+(a) 证明 QR 迭代满足 $A_k=(Q_1Q_2\cdots Q_{k-1})^{\mathrm H}A(Q_1Q_2\cdots Q_{k-1})$，从而每个 $A_k$ 与 $A$ 相似；
+(b) 证明：旋转阵 $A=\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ 的迭代序列恒为 $A_k=A$，永不收敛到上三角阵。
+
+::: sol 解答
+
+**(a)** 归纳。$k=1$：空积为 $I$，$A_1=A$ ✓。设 $A_k=W_{k-1}^{\mathrm H}AW_{k-1}$，$W_{k-1}=Q_1\cdots Q_{k-1}$。由迭代式与 $R_k=Q_k^{\mathrm H}A_k$：
+
+$$A_{k+1}=R_kQ_k=Q_k^{\mathrm H}A_kQ_k=Q_k^{\mathrm H}W_{k-1}^{\mathrm H}AW_{k-1}Q_k=(W_{k-1}Q_k)^{\mathrm H}A(W_{k-1}Q_k)=W_k^{\mathrm H}AW_k,$$
+
+其中 $W_k=W_{k-1}Q_k=Q_1\cdots Q_k$（酉阵之积仍酉）。故 $A_k\sim A$，特征值全程不变（[@thm-sim-invariants]）。
+
+**(b)** $A$ 是正交矩阵，其正线 QR 分解是 $A=A\cdot I$：唯一性（[@thm-3.4.1]）保证 GS 只能给出这一组——事实上 GS 对 $A$ 的两列 $\boldsymbol{e}_2,\boldsymbol{e}_1$ 原样通过（已标准正交），$Q_1=A$、$R_1=I$。于是
+
+$$A_2=R_1Q_1=I\cdot A=A,$$
+
+归纳得 $A_k=A$ 对一切 $k$ 成立；而 $A$ 不是上三角阵，序列不收敛于上三角阵。根源：特征值 $\pm\mathrm i$ **等模**，违反收敛的充分条件（[@method-qr-algo]）。∎
+:::
+:::
+
+::: ex B14 · 重写定理 3.5.1 的归纳证明（不看正文）{#ex-B14}
+
+不翻正文，独立写出 Schur 引理（复数域版本）的完整证明：任意 $n$ 阶复方阵相似于上三角阵，且对角元为其特征值。
+
+::: sol 解答
+
+**对 $n$ 归纳**。$n=1$ 平凡。设对 $n-1$ 成立。$A$ 的特征多项式在 $\mathbb C$ 上有根 $\lambda_1$（代数基本定理），取特征向量 $\boldsymbol{x}_1\neq\boldsymbol{0}$（$A\boldsymbol{x}_1=\lambda_1\boldsymbol{x}_1$），扩充为 $\mathbb C^n$ 的基（[@cor-1.3.1]）并拼成可逆阵 $P_1=[\boldsymbol{x}_1,\cdots]$。则 $P_1^{-1}AP_1$ 的第一列为 $P_1^{-1}A\boldsymbol{x}_1=\lambda_1\boldsymbol{e}_1$：
+
+$$P_1^{-1}AP_1=\begin{bmatrix}\lambda_1&\boldsymbol{\beta}\\\boldsymbol{0}&A_1\end{bmatrix}.$$
+
+对 $A_1$（$n-1$ 阶）用归纳假设：存在可逆 $Q$ 使 $Q^{-1}A_1Q=\Lambda_1$ 上三角。令 $P=P_1\operatorname{diag}(1,Q)$，则
+
+$$P^{-1}AP=\begin{bmatrix}\lambda_1&\boldsymbol{\beta}Q\\\boldsymbol{0}&\Lambda_1\end{bmatrix}$$
+
+上三角。对角元：分块三角行列式给 $f_A(\lambda)=(\lambda-\lambda_1)f_{A_1}(\lambda)$，故对角元全体（计重数）$=\lambda_1$ 加 $A_1$ 的特征值 $=A$ 的特征值。∎
+
+**自查两处**：① 第一步为什么必能取到特征向量？（复数域上特征多项式必有根——这是「复」字在定理里干的活。）② 收尾为什么对角元恰是 $A$ 的特征值？（相似不改特征多项式 $+$ 分块三角行列式。）
+:::
+:::
+
+::: ex B15 · 直接构造酉矩阵（不走定理 3.5.1 的路）{#ex-B15}
+
+不经过定理 3.5.1，直接用「单位特征向量 $+$ Gram–Schmidt 扩充」归纳证明定理 3.5.2：任意复方阵酉相似于上三角阵。
+
+::: hint 提示
+
+取**单位**特征向量 $\boldsymbol{u}_1$，用基扩充 $+$ GS 把它扩成标准正交基；$[\boldsymbol{u}_1,\cdots]$ 拼成的矩阵是酉矩阵，算出它的第一列象。
+:::
+
+::: sol 解答
+
+**对 $n$ 归纳**。$n=1$ 平凡。设对 $n-1$ 成立。取 $A$ 的特征值 $\lambda_1$ 与**单位**特征向量 $\boldsymbol{u}_1$（$\|\boldsymbol{u}_1\|=1$；特征向量除以范数仍是特征向量）。把 $\boldsymbol{u}_1$ 扩充为 $\mathbb C^n$ 的基（[@cor-1.3.1]），再 GS 并单位化（[@method-gs]；「张成不变」保证 $\boldsymbol{u}_1$ 原样保留），得标准正交基 $\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_n$。令 $U_1=[\boldsymbol{u}_1,\cdots,\boldsymbol{u}_n]$：列标准正交的方阵，酉（[@thm-orth-columns]）。计算 $U_1^{\mathrm H}AU_1$ 的第一列：
+
+$$U_1^{\mathrm H}A\boldsymbol{u}_1=\lambda_1U_1^{\mathrm H}\boldsymbol{u}_1=\lambda_1\boldsymbol{e}_1,$$
+
+故 $U_1^{\mathrm H}AU_1=\begin{bmatrix}\lambda_1&\boldsymbol{\beta}\\\boldsymbol{0}&A_1\end{bmatrix}$。对 $A_1$ 用归纳假设：存在酉阵 $V$ 使 $V^{\mathrm H}A_1V=\Lambda_1$ 上三角。令 $U=U_1\operatorname{diag}(1,V)$（酉阵之积，酉），则
+
+$$U^{\mathrm H}AU=\operatorname{diag}(1,V^{\mathrm H})\begin{bmatrix}\lambda_1&\boldsymbol{\beta}\\\boldsymbol{0}&A_1\end{bmatrix}\operatorname{diag}(1,V)=\begin{bmatrix}\lambda_1&\boldsymbol{\beta}V\\\boldsymbol{0}&\Lambda_1\end{bmatrix}$$
+
+上三角。∎
+
+**与正文路线的对照**：正文（[@thm-3.5.2]）「先相似再 QR 升级」是一步到位的代数戏法；本题是「边归纳边正交化」的施工图。两条路在二阶情形的差别值得一眼：前者需要先有可逆 $P$，后者从第一个特征向量起就全程保范。
+:::
+:::
+
+::: ex B16 · 谱映射的一半与反例的另一半 {#ex-B16}
+
+(a) 不用 Schur 分解，证明：若 $\boldsymbol{\alpha}$ 是 $A$ 的属于 $\lambda$ 的特征向量，则 $\boldsymbol{\alpha}$ 是 $\varphi(A)$ 的属于 $\varphi(\lambda)$ 的特征向量（注 4），且 $\varphi(\lambda_1),\cdots,\varphi(\lambda_n)$（计重数）都是 $\varphi(A)$ 的特征值；
+(b) 举反例说明 $\varphi(A)$ 的特征向量不必是 $A$ 的特征向量。
+
+::: sol 解答
+
+**(a)** 由 $A\boldsymbol{\alpha}=\lambda\boldsymbol{\alpha}$ 归纳得 $A^k\boldsymbol{\alpha}=\lambda^k\boldsymbol{\alpha}$（$k\ge0$，含 $A^0=I$）。线性组合：
+
+$$\varphi(A)\boldsymbol{\alpha}=\sum_ia_iA^i\boldsymbol{\alpha}=\Big(\sum_ia_i\lambda^i\Big)\boldsymbol{\alpha}=\varphi(\lambda)\boldsymbol{\alpha},$$
+
+即 $\boldsymbol{\alpha}$ 是 $\varphi(A)$ 的特征向量（特征值 $\varphi(\lambda)$）。于是对每个特征值 $\lambda_i$ 取一个特征向量 $\boldsymbol{\alpha}_i$，$\varphi(\lambda_i)$ 就**有证人**地成为 $\varphi(A)$ 的特征值；重数叙述「计重数」的完整版需数齐 $n$ 个，那一步用三角化最省（[@cor-3.5.1] 的证明）。
+
+**(b)** $A=\operatorname{diag}(1,-1)$、$\varphi(\lambda)=\lambda^2$：$\varphi(A)=A^2=I$，任何非零向量都是 $I$ 的特征向量（特征值 $1$），但 $\boldsymbol{e}_1+\boldsymbol{e}_2$ 不是 $A$ 的特征向量。∎
+
+**要点**：继承是单向的——$\varphi$ 可以把不同的特征值黏到同一个值上，信息只减不增（这正是最小多项式要「计账」的对象）。
+:::
+:::
+
+::: ex B17 · 重写定理 3.5.5（不看正文）{#ex-B17}
+
+独立证明最小多项式的两条性质：(1) $m_A$ 唯一、整除 $A$ 的任一零化多项式（特别地 $m_A\mid f_A$）；(2) $f_A$ 与 $m_A$ 同根（不计重数）。
+
+::: sol 解答
+
+**(1) 存在性**（备查）：$f_A$ 零化 $A$（H–C，[@thm-3.5.4]），故零化多项式之族非空，取次数最小者再除以首项系数（仍零化、次数不变）得首一的最小者 $m_A$。
+
+**整除**：设 $g$ 任一零化多项式。带余除法（[@thm-2.1.3]）：$g=qm_A+r$，$\deg r<\deg m_A$ 或 $r=0$。代入矩阵并注意同一矩阵的多项式可交换：
+
+$$O=g(A)=q(A)\underbrace{m_A(A)}_{=O}+r(A)\ \Longrightarrow\ r(A)=O .$$
+
+若 $r\neq0$，则 $r$（除以首项系数后首一）是次数**更低**的零化多项式，与最小性矛盾。故 $r=0$，$m_A\mid g$；取 $g=f_A$ 得 $m_A\mid f_A$。
+
+**唯一**：若 $m_1,m_2$ 都是最小的首一零化多项式，则 $m_1\mid m_2$ 且 $m_2\mid m_1$；两者同次（都最小）且首一，故 $m_1=m_2$（互相整除的同次首一多项式只能相差 $1$ 倍）。
+
+**(2) 同根**：「$m_A$ 的根 $\subseteq f_A$ 的根」：$m_A\mid f_A$，根只会少不会多。「$f_A$ 的根 $\subseteq m_A$ 的根」：设 $\lambda_0$ 是 $A$ 的特征值，取特征向量 $\boldsymbol{\alpha}\neq\boldsymbol{0}$。由注 4（B16 的 (a)）：
+
+$$\boldsymbol{0}=m_A(A)\boldsymbol{\alpha}=m_A(\lambda_0)\boldsymbol{\alpha}\ \Longrightarrow\ m_A(\lambda_0)=0 .\qquad\blacksquare$$
+
+**一处易错**：不能用「$f_A(A)=O\Rightarrow f_A=m_A$」——零化多项式有无数个（注 5），$f_A$ 只是其中之一；同根但重数可以差（$I_2$：$f_A=(\lambda-1)^2$，$m_A=\lambda-1$）。
 :::
 :::
 
@@ -748,6 +1006,175 @@ $$BC=\begin{bmatrix}1&0\\2&1\\3&1\end{bmatrix}\begin{bmatrix}1&2&3\\0&1&1\end{bm
 :::
 :::
 
+::: ex C17 · GS 手算 QR 分解（$2\times2$）{#ex-C17}
+
+求 $A=\begin{bmatrix}2&1\\ 1&2\end{bmatrix}$ 的 QR 分解（$Q$ 正交、$R$ 正线上三角），并回代验证。
+
+::: hint 提示
+
+照 [@thm-3.4.1] 存在性证明的流程：先正交化得 $\boldsymbol{y}_k$，对角元取 $\|\boldsymbol{y}_k\|$（残差的范数，不是 $\|\boldsymbol{a}_k\|$），非对角元取 $(\boldsymbol{a}_k,\boldsymbol{z}_i)$。
+:::
+
+::: sol 解答
+
+$\det A=3\neq0$，满秩 ✓。$\boldsymbol{a}_1=(2,1)^{\mathrm T}$、$\boldsymbol{a}_2=(1,2)^{\mathrm T}$。
+
+**GS**：$\|\boldsymbol{y}_1\|=\|\boldsymbol{a}_1\|=\sqrt5$，$\boldsymbol{z}_1=\tfrac{1}{\sqrt5}(2,1)^{\mathrm T}$；$(\boldsymbol{a}_2,\boldsymbol{z}_1)=\tfrac{4}{\sqrt5}$，
+
+$$\boldsymbol{y}_2=\boldsymbol{a}_2-\tfrac{4}{\sqrt5}\boldsymbol{z}_1=(1,2)^{\mathrm T}-\tfrac45(2,1)^{\mathrm T}=\left(-\tfrac35,\ \tfrac65\right)^{\mathrm T},\qquad
+\|\boldsymbol{y}_2\|=\frac{3}{\sqrt5},\quad \boldsymbol{z}_2=\frac{1}{\sqrt5}(-1,2)^{\mathrm T}.$$
+
+**拼装**：
+
+$$Q=\frac{1}{\sqrt5}\begin{bmatrix}2&-1\\ 1&2\end{bmatrix},\qquad R=\begin{bmatrix}\sqrt5&\tfrac{4}{\sqrt5}\\ 0&\tfrac{3}{\sqrt5}\end{bmatrix}.$$
+
+**验算**：$QR=\begin{bmatrix}2&\tfrac85-\tfrac35\\ 1&\tfrac45+\tfrac65\end{bmatrix}=\begin{bmatrix}2&1\\ 1&2\end{bmatrix}=A$ ✓；$Q^{\mathrm T}Q=I$ ✓、$\det Q=\tfrac{4+1}{5}=1$（这又是一个 Givens 旋转，$Q=\begin{bmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{bmatrix}$，$\cos\theta=\tfrac2{\sqrt5}$——对称矩阵的 QR 因子常常「长得好看」）。∎
+:::
+:::
+
+::: ex C18 · 长方阵的完全 QR 分解（推论 3.4.1 实操）{#ex-C18}
+
+设 $B=\begin{bmatrix}1&0\\ 0&1\\ 1&1\end{bmatrix}$。(a) 求 $B=Q_1R_1$（$Q_1$ 列正交规范、$R_1$ 正线上三角）；(b) 补齐 $\mathbb C^3$ 的标准正交基，写出 $B=QR$（$Q$ 酉、$R=\begin{bmatrix}R_1\\O\end{bmatrix}$），并验证 $Q^{\mathrm H}Q=I_3$。
+
+::: sol 解答
+
+**(a)** $\boldsymbol{a}_1=(1,0,1)^{\mathrm T}$：$\|\boldsymbol{a}_1\|=\sqrt2$，$\boldsymbol{z}_1=\tfrac{1}{\sqrt2}(1,0,1)^{\mathrm T}$。$(\boldsymbol{a}_2,\boldsymbol{z}_1)=\tfrac{1}{\sqrt2}$（$\boldsymbol{a}_2=(0,1,1)^{\mathrm T}$）：
+
+$$\boldsymbol{y}_2=\boldsymbol{a}_2-\tfrac12(1,0,1)^{\mathrm T}=\left(-\tfrac12,\ 1,\ \tfrac12\right)^{\mathrm T},\qquad
+\|\boldsymbol{y}_2\|=\frac{\sqrt6}{2},\quad \boldsymbol{z}_2=\frac{1}{\sqrt6}(-1,2,1)^{\mathrm T}.$$
+
+$$Q_1=\begin{bmatrix}\tfrac{1}{\sqrt2}&-\tfrac{1}{\sqrt6}\\ 0&\tfrac{2}{\sqrt6}\\ \tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt6}\end{bmatrix},\qquad
+R_1=\begin{bmatrix}\sqrt2&\tfrac{1}{\sqrt2}\\ 0&\tfrac{\sqrt6}{2}\end{bmatrix},\qquad
+Q_1^{\mathrm H}Q_1=I_2\ \checkmark$$
+
+验算 $Q_1R_1$：第一列 $\sqrt2\boldsymbol{z}_1=(1,0,1)^{\mathrm T}$ ✓；第二列 $\tfrac{1}{\sqrt2}\boldsymbol{z}_1+\tfrac{\sqrt6}2\boldsymbol{z}_2=(\tfrac12,0,\tfrac12)^{\mathrm T}+(-\tfrac12,1,\tfrac12)^{\mathrm T}=(0,1,1)^{\mathrm T}$ ✓。
+
+**(b)** 取 $\boldsymbol{z}_3$ 同时垂直于 $\boldsymbol{z}_1\parallel(1,0,1)$ 与 $\boldsymbol{z}_2\parallel(-1,2,1)$：叉积 $(1,0,1)\times(-1,2,1)=(-2,-2,2)$，单位化得 $\boldsymbol{z}_3=\tfrac{1}{\sqrt3}(1,1,-1)^{\mathrm T}$（两两内积为零 ✓）。于是
+
+$$Q=\begin{bmatrix}\tfrac{1}{\sqrt2}&-\tfrac{1}{\sqrt6}&\tfrac{1}{\sqrt3}\\ 0&\tfrac{2}{\sqrt6}&\tfrac{1}{\sqrt3}\\ \tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt6}&-\tfrac{1}{\sqrt3}\end{bmatrix}\ (\text{酉})，\qquad
+B=Q\begin{bmatrix}\sqrt2&\tfrac{1}{\sqrt2}\\ 0&\tfrac{\sqrt6}{2}\\ 0&0\end{bmatrix}\ \checkmark$$
+
+$Q^{\mathrm H}Q=I_3$ 逐列验算 ✓。∎
+:::
+:::
+
+::: ex C19 · 高次幂的两条路 {#ex-C19}
+
+设 $A=\begin{bmatrix}4&-1\\ 2&1\end{bmatrix}$。(a) 求 $f_A(\lambda)$；(b) 用 H–C 定理把 $A^{10}$ 写成 $A$ 的**一次**多项式并算出显式结果；(c) 该矩阵可对角化吗？用对角化路复核 (b) 的系数。
+
+::: sol 解答
+
+**(a)** $\operatorname{tr}A=5$、$\det A=6$，$f_A(\lambda)=\lambda^2-5\lambda+6=(\lambda-2)(\lambda-3)$。
+
+**(b)** H–C：$A^2=5A-6I$，故 $A^{10}=\alpha A+\beta I$。在特征值处定系数（$h(\lambda)=\lambda^{10}-\alpha\lambda-\beta$ 在 $2,3$ 处为零 $\Rightarrow f_A\mid h\Rightarrow h(A)=O$）：
+
+$$2^{10}=2\alpha+\beta,\qquad 3^{10}=3\alpha+\beta\ \Longrightarrow\ \alpha=3^{10}-2^{10}=58025,\quad \beta=2^{11}-3^{10}=-115026 .$$
+
+$$A^{10}=58025\,A-115026\,I=\begin{bmatrix}4\times58025-115026&-58025\\ 2\times58025&58025-115026\end{bmatrix}
+=\begin{bmatrix}117074&-58025\\ 116050&-57001\end{bmatrix}.$$
+
+（本编数值复核：与双精度 $A^{10}$ 逐位一致 ✓。）
+
+**(c)** $f_A$ 无重根 $\Rightarrow$ 可对角化（[@thm-eig-independent]）：$\lambda=2$ 时 $(A-2I)\boldsymbol{x}=\boldsymbol{0}$ 给 $\boldsymbol{p}_1=(1,2)^{\mathrm T}$；$\lambda=3$ 给 $\boldsymbol{p}_2=(1,1)^{\mathrm T}$。$P=[\boldsymbol{p}_1,\boldsymbol{p}_2]$，$P^{-1}AP=\operatorname{diag}(2,3)$，$A^{10}=P\operatorname{diag}(2^{10},3^{10})P^{-1}$。系数复核：$\alpha,\beta$ 满足的方程组正是「$\lambda^m=\alpha\lambda+\beta$ 在 $\lambda=2,3$ 处成立」，两条路的定系数步骤相同——对角化路把 $P$ 显式算出来，H–C 路根本不需要 $P$（且对不可对角化的矩阵照用，见 [@ex-3.5.2]）。∎
+:::
+:::
+
+::: ex C20 · 带余除法与最小多项式算 $A^4$ {#ex-C20}
+
+设 $A=\begin{bmatrix}1&1&0\\ 0&1&0\\ 0&0&-1\end{bmatrix}$。(a) 求 $f_A$ 与 $m_A$；(b) 用「除以 $m_A$」计算 $A^4$；(c) 直接计算 $A^4$ 核对。
+
+::: sol 解答
+
+**(a)** 分块三角：$f_A(\lambda)=(\lambda-1)^2(\lambda+1)$。候选 $(\lambda-1)(\lambda+1)$、$(\lambda-1)^2(\lambda+1)$。试低次：$(A-I)(A+I)=\begin{bmatrix}0&2&0\\0&0&0\\0&0&0\end{bmatrix}\neq O$，落选；故 $m_A=(\lambda-1)^2(\lambda+1)=f_A$。
+
+**(b)** $\lambda^4=m_A\cdot(\lambda+1)+\big(2\lambda^2-1\big)$（验算：$(\lambda-1)^2(\lambda+1)^2+2\lambda^2-1=(\lambda^2-1)^2+2\lambda^2-1=\lambda^4$ ✓）。故
+
+$$A^4=m_A(A)(A+I)+2A^2-I=2A^2-I .$$
+
+**(c)** $A^2=\begin{bmatrix}1&2&0\\0&1&0\\0&0&1\end{bmatrix}$（$(-1)^2=1$），故 $A^4=2A^2-I=\begin{bmatrix}1&4&0\\0&1&0\\0&0&1\end{bmatrix}$。直接核对：$A^4=(A^2)^2$，上三角块 $\begin{bmatrix}1&2\\0&1\end{bmatrix}^2=\begin{bmatrix}1&4\\0&1\end{bmatrix}$ ✓，右下 $(−1)^4=1$ ✓。∎
+:::
+:::
+
+::: ex C21 · 候选法求最小多项式（低次落选型）{#ex-C21}
+
+求 $A=\begin{bmatrix}2&1&0\\ 0&2&1\\ 0&0&4\end{bmatrix}$ 的最小多项式。
+
+::: sol 解答
+
+$f_A(\lambda)=(\lambda-2)^2(\lambda-4)$（上三角，对角 $2,2,4$）。候选：$(\lambda-2)(\lambda-4)$ 与 $(\lambda-2)^2(\lambda-4)$。
+
+**试低次**：$A-2I=\begin{bmatrix}0&1&0\\0&0&1\\0&0&2\end{bmatrix}$，$A-4I=\begin{bmatrix}-2&1&0\\0&-2&1\\0&0&0\end{bmatrix}$。乘积第一行 $=A-2I$ 第一行 $(0,1,0)$ 乘开 $=A-4I$ 的第二行 $=(0,-2,1)\neq\boldsymbol{0}$——落选。
+
+**试高次**：$(A-2I)^2=\begin{bmatrix}0&0&1\\0&0&2\\0&0&4\end{bmatrix}$，$(A-2I)^2(A-4I)$ 的每一行都是 $(0,0,*)$ 乘 $A-4I$（第三行为零行），故 $=O$ ✓。
+
+$$m_A(\lambda)=(\lambda-2)^2(\lambda-4).$$
+
+**读法**：$\lambda=2$ 的特征子空间 $N(A-2I)$ 由 $\boldsymbol{e}_1$ 张成（解方程得 $x_2=x_3=0$），几何重数 $1<$ 代数重数 $2$（[@thm-geom-mult]）——最小多项式里 $(\lambda-2)$ 必须带平方，与 [@ex-3.5.B] 同型。∎
+:::
+:::
+
+::: ex C22 · QR 迭代手算三轮（分数精确）{#ex-C22}
+
+对 $A=\begin{bmatrix}2&1\\ 1&2\end{bmatrix}$（即 [@ex-C17]）执行 QR 算法三轮：写出 $A_2$、$A_3$（精确分数）与 $A_4$（四位小数），观察对角元向何值收敛、非对角元衰减多快。
+
+::: sol 解答
+
+**第一轮**：$A_1=Q_1R_1$ 用 [@ex-C17] 的结果，$A_2=R_1Q_1$：
+
+$$A_2=\begin{bmatrix}\sqrt5&\tfrac{4}{\sqrt5}\\0&\tfrac{3}{\sqrt5}\end{bmatrix}\cdot\frac{1}{\sqrt5}\begin{bmatrix}2&-1\\1&2\end{bmatrix}
+=\begin{bmatrix}\tfrac{14}{5}&\tfrac35\\ \tfrac35&\tfrac65\end{bmatrix}
+=\begin{bmatrix}2.8&0.6\\ 0.6&1.2\end{bmatrix}.$$
+
+**第二轮**：对 $A_2$ 再 GS（$\boldsymbol{z}_1=\tfrac1{\sqrt{205}}(14,3)^{\mathrm T}$，$(\boldsymbol{a}_2,\boldsymbol{z}_1)=\tfrac{12}{\sqrt{205}}$，$\boldsymbol{y}_2\parallel(-3,14)^{\mathrm T}$、$\|\boldsymbol{y}_2\|=\tfrac{3\sqrt{205}}{41}$）：
+
+$$Q_2=\frac{1}{\sqrt{205}}\begin{bmatrix}14&-3\\ 3&14\end{bmatrix},\qquad
+R_2=\begin{bmatrix}\tfrac{\sqrt{205}}{5}&\tfrac{12}{\sqrt{205}}\\ 0&\tfrac{3\sqrt{205}}{41}\end{bmatrix},\qquad
+A_3=R_2Q_2=\begin{bmatrix}\tfrac{122}{41}&\tfrac9{41}\\ \tfrac9{41}&\tfrac{42}{41}\end{bmatrix}
+\approx\begin{bmatrix}2.9756&0.2195\\ 0.2195&1.0244\end{bmatrix}.$$
+
+**第三轮**（数值）：$A_4\approx\begin{bmatrix}2.9973&-0.0740\\ -0.0740&1.0027\end{bmatrix}$。
+
+**观察**：特征值精确解 $3,1$（$f_A=(\lambda-3)(\lambda-1)$，模不同 $\Rightarrow$ 收敛条件满足）。对角元 $2.8\to2.976\to2.997\to3$、$1.2\to1.024\to1.003\to1$（按模从大到小排定 ✓）；非对角元 $0.6\to0.22\to0.074$——每轮约缩小到三分之一（收敛率由相邻特征值模比 $\tfrac{|\lambda_2|}{|\lambda_1|}=\tfrac13$ 决定，本编注）。∎
+:::
+:::
+
+::: ex C23 · 用推论 3.5.2 求逆 {#ex-C23}
+
+设 $A=\begin{bmatrix}1&2&0\\ 0&1&0\\ 0&0&2\end{bmatrix}$。(a) 求 $f_A(\lambda)$；(b) 用逆矩阵公式求 $A^{-1}$；(c) 回代验证。
+
+::: sol 解答
+
+**(a)** 上三角：$f_A(\lambda)=(\lambda-1)^2(\lambda-2)=\lambda^3-4\lambda^2+5\lambda-2$。
+
+**(b)** $n=3$，$a_2=-4$、$a_1=5$、$a_0=-2\neq0$（$\det A=2$，$(-1)^3\det A=-2$ ✓）：
+
+$$A^{-1}=-\frac{1}{a_0}\big(A^2+a_2A+a_1I\big)=\frac12\big(A^2-4A+5I\big).$$
+
+$A^2=\begin{bmatrix}1&4&0\\0&1&0\\0&0&4\end{bmatrix}$，故
+
+$$A^2-4A+5I=\begin{bmatrix}2&-4&0\\0&2&0\\0&0&1\end{bmatrix},\qquad
+A^{-1}=\begin{bmatrix}1&-2&0\\ 0&1&0\\ 0&0&\tfrac12\end{bmatrix}.$$
+
+**(c)** $AA^{-1}=\begin{bmatrix}1&2&0\\0&1&0\\0&0&2\end{bmatrix}\begin{bmatrix}1&-2&0\\0&1&0\\0&0&\frac12\end{bmatrix}=\begin{bmatrix}1&-2+2&0\\0&1&0\\0&0&1\end{bmatrix}=I$ ✓。∎
+:::
+:::
+
+::: ex C24 · 最小多项式与矩阵多项式综合 {#ex-C24}
+
+设 $A=\begin{bmatrix}4&1&0\\ 0&4&0\\ 0&0&2\end{bmatrix}$。(a) 求 $f_A$ 与 $m_A$；(b) 用 $m_A$ 计算 $A^3$；(c) 直接乘 $A^3$ 核对。
+
+::: sol 解答
+
+**(a)** $f_A(\lambda)=(\lambda-4)^2(\lambda-2)$。试低次 $(\lambda-4)(\lambda-2)$：$(A-4I)(A-2I)$ 的第一行 $=A-4I$ 第一行 $(0,1,0)$ 乘开 $=A-2I$ 第二行 $=(0,2,0)\neq\boldsymbol{0}$，落选（$\lambda=4$ 的几何重数 $1<2$，同 [@ex-3.5.B] 型）。故 $m_A=(\lambda-4)^2(\lambda-2)=f_A$。
+
+**(b)** $\lambda^3=m_A\cdot1+\big(10\lambda^2-32\lambda+32\big)$（验算：$(\lambda-4)^2(\lambda-2)=\lambda^3-10\lambda^2+32\lambda-32$，$\lambda^3-(\lambda^3-10\lambda^2+32\lambda-32)=10\lambda^2-32\lambda+32$ ✓）。故
+
+$$A^3=10A^2-32A+32I .$$
+
+**(c)** $A^2=\begin{bmatrix}16&8&0\\0&16&0\\0&0&4\end{bmatrix}$，$10A^2-32A+32I=\begin{bmatrix}160-128+32&80-32&0\\0&160-128+32&0\\0&0&40-64+32\end{bmatrix}=\begin{bmatrix}64&48&0\\0&64&0\\0&0&8\end{bmatrix}$。直接核对：$\begin{bmatrix}4&1\\0&4\end{bmatrix}^3=\begin{bmatrix}64&48\\0&64\end{bmatrix}$（超对角元 $3\times4^2=48$ ✓）、$2^3=8$ ✓。∎
+:::
+:::
+
 ---
 
-**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页，存于 `raw/decks/`）整理 · 两节均无录播 · 整理日期 2026-10-13 · 3.3 及以后素材到位后本页续写。
+**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页）、3.4 QR 分解（16 页）、3.5 Schur 分解（22 页，后两份存于 `_sources/matrix/`）整理 · 四节均无录播 · 整理日期 2026-10-15 · 新增例题与全部计算题均经回代验算（C19、C22 另做双精度复核）· 3.3 及以后素材到位后本页续写。

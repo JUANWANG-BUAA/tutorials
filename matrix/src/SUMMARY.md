@@ -12,6 +12,7 @@
 - [先修工具箱](prerequisite.md)
 - [全章知识地图](preface-map.md)
 - [证明怎么下笔：六种骨架](proof-workshop.md)
+- [解题工具箱：题型流程 · 二级结论 · 反例弹药](toolbox.md)
 
 # 正文
 
@@ -43,21 +44,26 @@
   - [2.5 正交变换与酉变换](ch02/sec25.md)
 
 - [第二章章末（2.1–2.5）](ch02/summary.md)
+  - [闭卷回忆卡：定义、定理与第一行](ch02/recall-cards.md)
   - [勘误与补注（对照课件与口述）](ch02/errata.md)
   - [习题集](ch02/exercises.md)
   - [综合自测卷](ch02/mock-exam.md)
   - [学习目标自检表](ch02/checklist.md)
 
-# 第三章 · 矩阵分解（课件 3.1–3.2，续写中）
+# 第三章 · 矩阵分解（课件 3.1–3.2、3.4–3.5，续写中）
 
 - [第三章 · 矩阵分解](ch03/overview.md)
   - [3.1 相抵分解](ch03/sec31.md)
   - [3.2 满秩分解](ch03/sec32.md)
+  - [3.4 QR 分解](ch03/sec34.md)
+  - [3.5 Schur 分解](ch03/sec35.md)
 
-- [第三章章末（3.1–3.2）](ch03/summary.md)
+- [第三章章末（3.1–3.2 与 3.4–3.5）](ch03/summary.md)
+  - [闭卷回忆卡：定义、定理与第一行](ch03/recall-cards.md)
   - [勘误与补注（对照课件）](ch03/errata.md)
   - [习题集](ch03/exercises.md)
   - [综合自测卷](ch03/mock-exam.md)
+  - [考场竞技场：必考点三轮计时特训](ch03/arena.md)
   - [学习目标自检表](ch03/checklist.md)
 
 # 附录 · 拓展与联系

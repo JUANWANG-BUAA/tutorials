@@ -1207,6 +1207,169 @@
   }
 
   /* ----------------------------------------------------------------------- *
+   * data-widget="arena-clock"
+   * 考场竞技场：倒计时 + 记分牌（第三章特训页用）。
+   *   - 计时用 deadline 时间戳（setInterval 只做采样），切后台不亏秒数；
+   *   - 不发声：超时以颜色 + 文案提示，aria-live 播报，尊重铃音静音习惯；
+   *   - 记分牌只在本次会话内计数，不写任何存储——关页即清零，
+   *     成绩请誊回页面的「个人记录表」。
+   * ----------------------------------------------------------------------- */
+  function widgetArenaClock(root) {
+    var PRESETS = [
+      ["抢答 30 秒", 30],
+      ["止损 90 秒", 90],
+      ["概念轮 5 分", 300],
+      ["计算轮 25 分", 1500],
+      ["证明轮 20 分", 1200]
+    ];
+
+    /* 状态机：idle（停在 remain，未计时）→ running（endAt 倒数）→ …
+       暂停回到 idle 并保留 remain；归零进入 over，直到换档或复位。 */
+    var total = 300, remain = 300, running = false, over = false;
+    var endAt = 0, ticker = null;
+    var hit = 0, miss = 0, streak = 0, best = 0;
+
+    function fmt(sec) {
+      sec = Math.max(0, Math.round(sec));
+      var m = Math.floor(sec / 60), r = sec % 60;
+      return m + ":" + (r < 10 ? "0" : "") + r;
+    }
+
+    /* --- 计时区 --- */
+    var chips = document.createElement("div");
+    chips.className = "arena-presets";
+    var chipBtns = PRESETS.map(function (p) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "arena-chip widget-btn";
+      b.textContent = p[0];
+      b.addEventListener("click", function () {
+        total = p[1]; remain = total; running = false; over = false;
+        clearInterval_();
+        render();
+      });
+      chips.appendChild(b);
+      return b;
+    });
+
+    var display = document.createElement("div");
+    display.className = "arena-display";
+    display.setAttribute("role", "timer");
+    var timeText = document.createElement("span");
+    timeText.className = "arena-time";
+    display.appendChild(timeText);
+
+    var bar = document.createElement("div");
+    bar.className = "arena-bar";
+    var barFill = document.createElement("div");
+    barFill.className = "arena-bar-fill";
+    bar.appendChild(barFill);
+
+    var live = document.createElement("span");
+    live.className = "arena-live";
+    live.setAttribute("aria-live", "polite");
+
+    var startBtn = document.createElement("button");
+    startBtn.type = "button";
+    startBtn.className = "widget-btn arena-start";
+    var resetBtn = document.createElement("button");
+    resetBtn.type = "button";
+    resetBtn.className = "widget-btn";
+    resetBtn.textContent = "复位";
+
+    function clearInterval_() {
+      if (ticker) { window.clearInterval(ticker); ticker = null; }
+    }
+    function tick() {
+      remain = (endAt - Date.now()) / 1000;
+      if (remain <= 0) {
+        remain = 0; running = false; over = true;
+        clearInterval_();
+        live.textContent = "时间到";
+      }
+      render();
+    }
+    startBtn.addEventListener("click", function () {
+      if (running) {                    /* 暂停：保留剩余时间 */
+        running = false; clearInterval_(); live.textContent = "已暂停";
+      } else if (!over && remain > 0) { /* 开始 / 继续 */
+        running = true; over = false;
+        endAt = Date.now() + remain * 1000;
+        clearInterval_();
+        ticker = window.setInterval(tick, 250);
+        live.textContent = "计时开始";
+      }
+      render();
+    });
+    resetBtn.addEventListener("click", function () {
+      running = false; over = false; remain = total; clearInterval_();
+      render();
+    });
+
+    /* --- 记分牌（仅会话内计数；成绩请誊回页面记录表） --- */
+    var tally = document.createElement("div");
+    tally.className = "arena-tally";
+    var scoreLine = document.createElement("span");
+    scoreLine.className = "arena-score";
+
+    function mkTallyBtn(label) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "widget-btn arena-tally-btn";
+      b.textContent = label;
+      return b;
+    }
+    var hitBtn = mkTallyBtn("答对 +1");
+    var missBtn = mkTallyBtn("答错归零");
+    var tallyReset = mkTallyBtn("清空");
+    hitBtn.addEventListener("click", function () {
+      hit++; streak++; if (streak > best) best = streak; renderScore();
+    });
+    missBtn.addEventListener("click", function () {
+      miss++; streak = 0; renderScore();
+    });
+    tallyReset.addEventListener("click", function () {
+      hit = miss = streak = best = 0; renderScore();
+    });
+
+    function renderScore() {
+      scoreLine.textContent = "对 " + hit + " · 错 " + miss +
+        " · 连击 " + streak + "（本页最佳 " + best + "）";
+    }
+
+    function render() {
+      timeText.textContent = (over ? "时间到 " : "") + fmt(remain);
+      barFill.style.width = (Math.max(0, Math.min(1, remain / (total || 1))) * 100).toFixed(2) + "%";
+      display.classList.toggle("is-urgent", !over && remain <= 30);
+      display.classList.toggle("is-over", over);
+      startBtn.textContent = running ? "暂停" : (over ? "时间已到" : (remain < total ? "继续" : "开始"));
+      startBtn.disabled = over;
+      chipBtns.forEach(function (b, i) {
+        b.classList.toggle("is-selected", PRESETS[i][1] === total);
+      });
+      renderScore();
+    }
+
+    tally.appendChild(hitBtn);
+    tally.appendChild(missBtn);
+    tally.appendChild(tallyReset);
+    tally.appendChild(scoreLine);
+
+    var controls = document.createElement("div");
+    controls.className = "arena-controls";
+    controls.appendChild(startBtn);
+    controls.appendChild(resetBtn);
+
+    root.appendChild(chips);
+    root.appendChild(display);
+    root.appendChild(bar);
+    root.appendChild(live);
+    root.appendChild(controls);
+    root.appendChild(tally);
+    render();
+  }
+
+  /* ----------------------------------------------------------------------- *
    * 注册与启动
    * ----------------------------------------------------------------------- */
 
@@ -1216,7 +1379,8 @@
     "gram-schmidt": widgetGramSchmidt,
     "change-basis": widgetChangeBasis,
     "linear-map": widgetLinearMap,
-    "eigen": widgetEigen
+    "eigen": widgetEigen,
+    "arena-clock": widgetArenaClock
   };
 
   function boot() {
