@@ -334,6 +334,31 @@
 
 
   /* ------------------------------------------------------------------ *
+   * 深链搜索兜底（?search=）
+   *
+   * mdBook 的 searcher.js 在 initSearchInteractions() 里只调用**一次**
+   * doSearchOrMarkFromUrl()：那一刻搜索索引（每本 5–7 MB 的 searchindex-*.js）若尚未
+   * 就绪，这次深链查询就静默落空——页面上什么都搜不出来，而手动在搜索框里再打一遍
+   * 却是好的。这里兜底：URL 带 ?search= 且结果为空时，每隔 500ms 重放一次查询
+   * （把词写回搜索框并派发 keyup，走 searcher 自己的处理链），最多 60 次（约 30s：
+   * 索引 5–7 MB，慢网络下解析要几十秒，宁可多等也别让读者以为「搜不到」。
+   * ------------------------------------------------------------------ */
+  function patchDeepLinkSearch() {
+    var params;
+    try { params = new URLSearchParams(location.search); } catch (e) { return; }
+    var term = params.get("search");
+    if (!term) return;
+    var tries = 0;
+    var timer = setInterval(function () {
+      if (document.querySelectorAll("#mdbook-searchresults li").length > 0) { clearInterval(timer); return; }
+      var bar = document.getElementById("mdbook-searchbar");
+      if (bar && bar.value !== term) bar.value = term;
+      if (bar) bar.dispatchEvent(new KeyboardEvent("keyup", { key: "a", bubbles: true }));
+      if (++tries > 60) clearInterval(timer);
+    }, 500);
+  }
+
+  /* ------------------------------------------------------------------ *
    * 启动注册表：各模块用 CORE.register 注册自己的启动钩子，
    * 由这里在 DOMContentLoaded（或已就绪时立刻）依次执行，单个模块出错不影响其余。
    * ------------------------------------------------------------------ */
@@ -351,6 +376,7 @@
     try { watchSearchResults(); } catch (e) { /* 同上 */ }
     try { buildBackToTop(); } catch (e) { /* 纯增益 */ }
     try { wireFoldMemory(); } catch (e) { /* 纯增益 */ }
+    try { patchDeepLinkSearch(); } catch (e) { /* 纯增益 */ }
     runBoots();
   }
 
