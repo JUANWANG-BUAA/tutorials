@@ -3,6 +3,7 @@
 ```
 shared/theme/            浏览器侧资源（各书的 theme/ 里放符号链接指向这里）
   head.hbs               首帧防闪：把 localStorage 里的阅读偏好落到 <html data-*>
+  css/base.css           **§1 设计令牌层**（主题调色板 / 语义调色板 / 派生量 / 尺寸令牌）
   css/framework.css      mdBook 框架 UI 修补 + 附加操作外观 + 插图/阅读进度/微动效
   css/prefs.css          阅读偏好层（六个轴，属性驱动）
   js/framework.js        框架文案汉化、回到顶部、侧栏折叠、灯箱、术语、右栏大纲、
@@ -35,7 +36,7 @@ tools/                   构建脚本（三本一份）
 
 | 文件 | 归属 |
 |:--|:--|
-| `theme/css/<robot\|na\|matrix>.css` | 各书的权威样式表（设计令牌、组件、打印、响应式） |
+| `theme/css/<robot\|na\|matrix>.css` | 各书的权威样式表**组件与版式部分**；开头有一小段「§1 本书对 base.css 令牌层的覆盖」（只写与共用层不同的块，如数值分析/机器人的公式直觉盒与竞技场段位色） |
 | `theme/js/<robot\|na\|matrix>.js` | 各书页面的**配置**：`TUTORIALS_EXTRAS.boot({ slug, pageTocLevels, toolbarPlacement, formulaHint })`，外加本书专属增强（数值分析的「阅读分层」图例） |
 | `theme/js/robot-labs.js` / `arena.js` / `matrix-interactive.js` | 各书的专属交互组件 |
 | `tools/mathbook.py` | 各书的编号 / 交叉引用 / 语义盒子预处理器（三本规则确有差异，暂未合并） |
@@ -63,3 +64,20 @@ tools/                   构建脚本（三本一份）
 > 与 `tools/mathbook.py`（632 行，两两差异 275–368 行）尚未合并**——两者都属于「按书
 > 定制」的部分，合并前需要先把「共用骨架」与「本书覆盖」分干净，改完要用像素比对
 > 证明零视觉变化。见仓库根 README 的改造清单。
+
+## 样式层怎么改、怎么验
+
+| 想改什么 | 改哪里 |
+|:--|:--|
+| 五套主题配色、语义盒、派生量（底纹/选区/悬停/斑马线）、尺寸令牌 | `shared/theme/css/base.css`（一份，三本同时生效） |
+| 本书特有的令牌（公式直觉盒、竞技场段位色…） | `<book>/theme/css/<book>.css` 开头的「§1 本书覆盖」段 |
+| 组件与版式（盒、表、图、打印、响应式） | `<book>/theme/css/<book>.css` |
+| 框架 UI 与附加操作外观、插图与阅读进度 | `shared/theme/css/framework.css` |
+| 读者可调的字体/字号/间距/版心/纸张配色/背景纹理 | `shared/theme/css/prefs.css` |
+
+**验证方法（样式层改动必做）**：把改动前的版本用 `git worktree add /tmp/old HEAD` 检出并
+`./build.sh`，起在另一个端口（如 8010），再用「归一状态后的 A/B 计算样式比对」逐页比：
+同主题、侧栏隐藏、清空 `tutorials-*` 偏好与进度、等术语数据加载完，然后对整页每个元素比
+18 项关键计算属性——要求**逐页逐元素零差异**。本次 §1 抽取就是这样验证的（9 页、含
+36k 元素的公式长页，全部一致）。只比肉眼与截图是不够的：状态不同（侧栏是否展开、
+术语数据是否加载）会伪装成大量差异。

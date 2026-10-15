@@ -23,7 +23,7 @@ preferred-dark-theme = "ayu"
 # 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
 # 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
 # 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
-additional-css = ["theme/css/na.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-css = ["theme/css/base.css", "theme/css/na.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
 # arena.js：必考点竞技场的可降级增强（题库在页面里是普通 HTML，脚本只在
 # #arena-mount 里另起交互舞台；关 JS / 打印 / 搜索都不受影响）。
 additional-js = ["theme/js/page-extras.js", "theme/js/na.js", "theme/js/arena.js", "theme/js/search-cjk.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js"]
