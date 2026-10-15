@@ -48,3 +48,15 @@ standard density，八段式单一权威样式表）。本目录为该设计语�
 
 配色主题只改「中性面 + 强调色」，语义盒子（定义/定理/例题…）的配色不动；四套主题的
 `--muted` 与 `--accent-text` 都按 WCAG AA（≥4.5:1）在 `--page` 与 `--sidebar` 上验算过。
+
+### 共用层补充（framework.css / framework.js）
+
+| 文件 | 作用 |
+|:--|:--|
+| `css/framework.css` | mdBook 框架 UI 的修补：搜索面板限高与分隔、主题弹层、键帽 `<kbd>`、回到顶部、焦点环；以及列表 `ol/ul` 的行高（框架把它们钉在 1.45em，同 `.content p` 一并接管）。 |
+| `js/framework.js` | 框架文案汉化（菜单栏、搜索框、主题名、帮助弹窗、复制按钮、翻页箭头）、搜索结果统计行汉化与键盘滚动、回到顶部、折叠状态记忆（解答/提示，按页存 localStorage）。 |
+
+这两份与 `prefs.css` / `prefs.js` / `sidebar.js` / `head.hbs` 一样三本逐字相同。
+CI 里中文搜索依赖 `node tools/build_search_js.mjs <book>/book`（**构建后**执行），
+`.github/workflows/deploy.yml` 已含该步；`book.toml` 的 `use-boolean-and` 必须为
+`false`——n-gram 索引下 AND 会把「线性空间」切出的伪二元组「性空」也当作必需项。

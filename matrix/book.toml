@@ -19,8 +19,8 @@ default-theme = "ayu"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用原站（Academy / warm / Rust Wiki 版式）。
 # prefs.css 必须排在最后：读者偏好靠「同特异性 + 后加载」覆盖权威样式表。
-additional-css = ["theme/css/matrix.css", "theme/css/katex.css", "theme/css/prefs.css"]
-additional-js = ["theme/js/matrix.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js", "theme/js/prefs.js"]
+additional-css = ["theme/css/matrix.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/matrix.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js", "theme/js/framework.js", "theme/js/prefs.js"]
 # 页内小节锚点在右侧 → 由 mdbook-pagetoc 之类的插件承担；v1 用侧栏目录 + 顶部小节条
 # 标题里已含「1.1.3」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true
@@ -29,7 +29,11 @@ site-url = "/tutorials/matrix/"
 enable = true
 limit-results = 30
 teaser-word-count = 30
-use-boolean-and = true
+# 中文检索用「一元 + 二元字符 n-gram」建索引（见 tools/build_search_js.mjs）。
+# AND 语义会要求查询的**每一个** n-gram 都出现，而「线性空间」这类词切分后会
+# 产生「性空」这种跨词边的伪二元组，AND 下必然零命中。故中文场景必须用 OR，
+# 由相关性排序把最匹配的排在前面。
+use-boolean-and = false
 boost-hierarchy = 4
 boost-paragraph = 1
 expand = true

@@ -4,7 +4,6 @@
 
   var root = document.documentElement;
   var framePending = false;
-  var printSolutionState = null;
 
 
   function getStoredValue(key) {
@@ -102,22 +101,10 @@
     solutions[0].parentNode.insertBefore(toolbar, solutions[0]);
   }
 
-  window.addEventListener("beforeprint", function () {
-    printSolutionState = Array.prototype.map.call(document.querySelectorAll("details.sol-box"), function (details) {
-      return details.open;
-    });
-    document.querySelectorAll("details.sol-box").forEach(function (details) { details.open = true; });
-  });
+  /* 打印前展开 / 打印后复原、界面文案汉化、搜索面板、回到顶部、折叠记忆与侧栏：
+     自 2026-10 起统一收进 theme/js/framework.js 与 theme/js/sidebar.js（三本书共用）。
 
-  window.addEventListener("afterprint", function () {
-    if (!printSolutionState) return;
-    document.querySelectorAll("details.sol-box").forEach(function (details, index) {
-      details.open = Boolean(printSolutionState[index]);
-    });
-    printSolutionState = null;
-  });
-
-  /* 这里**不再**自建 ←/→ 护栏，也不再处理侧栏。
+     这里**不再**自建 ←/→ 护栏，也不再处理侧栏。
    *
    * ① 方向键：mdBook 的 chapterNavigation 已内置等价保护（判断事件目标与当前
    *    焦点是否在 input/select/textarea 等交互元素里），且随版本维护。此前本文件

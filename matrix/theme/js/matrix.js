@@ -4,108 +4,7 @@
 
   var root = document.documentElement;
   var framePending = false;
-  var printSolutionState = null;
 
-
-  /* ------------------------------------------------------------------ *
-   * 界面文案中文化：mdBook 自带的 chrome 文案（搜索框、帮助弹窗、翻页
-   * 按钮等）没有本地化配置，且会随版本升级改变，因此在这里运行时替换。
-   * 所有定位都按元素存在性防御：升级后 id 或结构变了只是不翻译，不报错。
-   * ------------------------------------------------------------------ */
-  function setAttrs(id, attrs) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    for (var key in attrs) {
-      if (attrs.hasOwnProperty(key)) el.setAttribute(key, attrs[key]);
-    }
-  }
-
-  function localizeChrome() {
-    setAttrs("mdbook-searchbar", { placeholder: "搜索本教程…", "aria-label": "搜索本教程" });
-    setAttrs("mdbook-search-toggle", { title: "搜索（按 /）", "aria-label": "打开搜索" });
-    setAttrs("mdbook-sidebar-toggle", { title: "展开或收起目录", "aria-label": "展开或收起目录" });
-    setAttrs("mdbook-theme-toggle", { title: "切换主题", "aria-label": "切换主题" });
-    setAttrs("mdbook-theme-list", { "aria-label": "主题" });
-    setAttrs("mdbook-sidebar", { "aria-label": "目录" });
-
-    var printLink = document.querySelector('a[href="print.html"]');
-    if (printLink) {
-      printLink.setAttribute("title", "打印全书（自动展开全部解答）");
-      printLink.setAttribute("aria-label", "打印全书");
-    }
-
-    // 翻页箭头：桌面 .nav-chapters 与移动 .mobile-nav-chapters 各一对
-    var NAV_TEXT = { previous: "上一页", next: "下一页" };
-    document.querySelectorAll(".nav-chapters, .mobile-nav-chapters").forEach(function (a) {
-      var kind = a.classList.contains("previous") ? "previous" : "next";
-      a.setAttribute("title", NAV_TEXT[kind]);
-      a.setAttribute("aria-label", NAV_TEXT[kind]);
-    });
-
-    // 帮助弹窗（按 ? 呼出）：保留 <kbd> 视觉，整体换成中文句子
-    var helpPopup = document.getElementById("mdbook-help-popup");
-    if (helpPopup && /Keyboard shortcuts/.test(helpPopup.textContent)) {
-      var helpTitle = helpPopup.querySelector(".mdbook-help-title");
-      if (helpTitle) helpTitle.textContent = "键盘快捷键";
-      var helpBody = helpPopup.querySelector("div");
-      if (helpBody) {
-        // 每行是 (文本, 是否加 kbd 样式) 的序列，如 ["按 ",0],["←",1]
-        var HELP_LINES = [
-          [["按 ", 0], ["←", 1], [" / ", 0], ["→", 1], [" 在章节间翻页", 0]],
-          [["按 ", 0], ["S", 1], [" 或 ", 0], ["/", 1], [" 搜索全书", 0]],
-          [["按 ", 0], ["?", 1], [" 显示本帮助", 0]],
-          [["按 ", 0], ["Esc", 1], [" 关闭本帮助", 0]]
-        ];
-        helpBody.textContent = "";
-        HELP_LINES.forEach(function (line) {
-          var p = document.createElement("p");
-          line.forEach(function (seg) {
-            if (seg[1]) {
-              var kbd = document.createElement("kbd");
-              kbd.textContent = seg[0];
-              p.appendChild(kbd);
-            } else {
-              p.appendChild(document.createTextNode(seg[0]));
-            }
-          });
-          helpBody.appendChild(p);
-        });
-      }
-    }
-
-    // 主题菜单第一项 Auto → 自动（其余 Light/Rust/… 是专有名词，保留）
-    var autoTheme = document.getElementById("mdbook-theme-default_theme");
-    if (autoTheme && autoTheme.textContent.trim() === "Auto") autoTheme.textContent = "自动";
-
-    // 搜索结果统计行由 searcher.js 在每次查询后写回英文，用观察器接力翻译
-    var resultsHeader = document.getElementById("mdbook-searchresults-header");
-    if (resultsHeader && !resultsHeader.dataset.matrixLocalized) {
-      resultsHeader.dataset.matrixLocalized = "1";
-      var translateMetric = function () {
-        var text = resultsHeader.textContent || "";
-        var m = text.match(/^(?:(\d+) search results? for '(.*)'|No search results for '(.*)')[:.]$/);
-        if (!m) return;
-        resultsHeader.textContent = m[3] !== undefined
-          ? "没有与「" + m[3] + "」匹配的内容"
-          : "「" + m[2] + "」· " + m[1] + " 条结果";
-      };
-      translateMetric();
-      new MutationObserver(translateMetric).observe(resultsHeader, { childList: true, characterData: true, subtree: true });
-    }
-
-    // 中文输入法加固：mdBook 的搜索只在 keyup 上触发，而 IME「点击候选词
-    // 提交」不产生 keyup，输入内容会静默不搜索。input/compositionend 事件
-    // 上补发一次 keyup；doSearch 对相同词有去重，正常敲键不会重复查询。
-    var searchbar = document.getElementById("mdbook-searchbar");
-    if (searchbar && !searchbar.dataset.matrixImeHardened) {
-      searchbar.dataset.matrixImeHardened = "1";
-      ["input", "compositionend"].forEach(function (type) {
-        searchbar.addEventListener(type, function () {
-          searchbar.dispatchEvent(new KeyboardEvent("keyup"));
-        });
-      });
-    }
-  }
 
   function getStoredValue(key) {
     try { return localStorage.getItem(key); } catch (error) { return null; }
@@ -152,36 +51,6 @@
     var scrollable = el.scrollWidth > el.clientWidth + 4;
     el.classList.toggle("can-scroll", scrollable && el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
     el.classList.toggle("scrolled-start", scrollable && el.scrollLeft > 4);
-  }
-
-  /* 回到顶部：正文页普遍超过一万像素高，菜单栏滚动后又隐藏，
-   * 长读之后回页首的成本高。滚过约一屏半后出现，右下角小圆钮。 */
-  function buildBackToTop() {
-    if (document.getElementById("back-to-top")) return;
-    var button = document.createElement("button");
-    var visible = false;
-    button.id = "back-to-top";
-    button.type = "button";
-    button.setAttribute("aria-label", "回到顶部");
-    button.setAttribute("title", "回到顶部");
-    button.textContent = "↑";
-    button.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-    });
-    document.body.appendChild(button);
-
-    function sync() {
-      var shouldShow = root.scrollTop > root.clientHeight * 1.5;
-      if (shouldShow === visible) return;
-      visible = shouldShow;
-      button.classList.toggle("visible", visible);
-    }
-    window.addEventListener("scroll", sync, { passive: true });
-    sync();
-  }
-
-  function prefersReducedMotion() {
-    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   function buildPageToc() {
@@ -260,103 +129,6 @@
   }
 
   // 打印时把「提示」与「解答」全部展开，免得纸面上只剩下一排折叠标题。
-  /* ------------------------------------------------------------------ *
-   * 记住「哪些解答已经展开」
-   *
-   * 习题集一页 63 个折叠块、自测卷 40 多个，学生是**分批做**的：做几题、
-   * 展开核对、再回来做后面的。此前一刷新或翻页再回来，展开状态全丢，
-   * 得重新找自己做到哪一题——这是使用中最实际的摩擦之一。
-   *
-   * 用 localStorage 按「页面路径 + 组序号 + 组内下标」记录**已展开**的那些，
-   * 不记折叠的：默认就是折叠，只存开着的可以让记录尽量小。
-   * 任何存储异常都静默降级（隐私模式下 localStorage 会抛错），
-   * 退化成「不记忆」而不是报错。
-   * ------------------------------------------------------------------ */
-  var OPEN_FOLDS_KEY = "matrix-open-folds";
-
-  function foldKey() {
-    // 路径 + 组序号，保证不同页、不同折叠组互不干扰
-    return location.pathname;
-  }
-
-  function readOpenFolds() {
-    var raw = getStoredValue(OPEN_FOLDS_KEY);
-    if (!raw) return {};
-    try {
-      var parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : {};
-    } catch (error) {
-      return {};
-    }
-  }
-
-  function writeOpenFolds(map) {
-    try { setStoredValue(OPEN_FOLDS_KEY, JSON.stringify(map)); } catch (error) { /* 忽略 */ }
-  }
-
-  function saveFoldState(details) {
-    var groups = PRINT_FOLDS.map(function (sel) {
-      return Array.prototype.slice.call(document.querySelectorAll(sel));
-    });
-    var page = foldKey();
-    var map = readOpenFolds();
-    var entry = map[page] || {};
-    groups.forEach(function (items, group) {
-      items.forEach(function (item, index) {
-        if (!item.open) return;
-        var bucket = entry[group] || (entry[group] = []);
-        if (bucket.indexOf(index) === -1) bucket.push(index);
-      });
-    });
-    // 清掉已经不存在的下标，避免记录无限增长
-    Object.keys(entry).forEach(function (group) {
-      var items = groups[Number(group)] || [];
-      entry[group] = entry[group].filter(function (i) { return i < items.length; });
-      if (!entry[group].length) delete entry[group];
-    });
-    if (Object.keys(entry).length) map[page] = entry; else delete map[page];
-    writeOpenFolds(map);
-  }
-
-  function restoreFoldState() {
-    var page = foldKey();
-    var entry = readOpenFolds()[page];
-    if (!entry) return 0;
-    var groups = PRINT_FOLDS.map(function (sel) {
-      return Array.prototype.slice.call(document.querySelectorAll(sel));
-    });
-    var restored = 0;
-    Object.keys(entry).forEach(function (group) {
-      var items = groups[Number(group)] || [];
-      entry[group].forEach(function (index) {
-        if (items[index]) { items[index].open = true; restored++; }
-      });
-    });
-    return restored;
-  }
-
-  var PRINT_FOLDS = ["details.sol-box", "details.hint-box"];
-  window.addEventListener("beforeprint", function () {
-    printSolutionState = PRINT_FOLDS.map(function (selector) {
-      return Array.prototype.map.call(document.querySelectorAll(selector), function (details) {
-        return details.open;
-      });
-    });
-    PRINT_FOLDS.forEach(function (selector) {
-      document.querySelectorAll(selector).forEach(function (details) { details.open = true; });
-    });
-  });
-
-  window.addEventListener("afterprint", function () {
-    if (!printSolutionState) return;
-    PRINT_FOLDS.forEach(function (selector, group) {
-      document.querySelectorAll(selector).forEach(function (details, index) {
-        details.open = Boolean(printSolutionState[group][index]);
-      });
-    });
-    printSolutionState = null;
-  });
-
   /* 这里**不再**自建 ←/→ 护栏。原因值得记下来，因为曾经写错过：
    *
    * mdBook 的 chapterNavigation 已经内置了等价保护——
@@ -430,11 +202,8 @@
   function boot() {
     if (root.dataset.matrixBooted) return;
     root.dataset.matrixBooted = "true";
-    // 本地化是纯增益层：自身出错不能拖垮进度条、目录等核心增强
-    try { localizeChrome(); } catch (error) { /* 升级后 id 变了等情形，静默降级 */ }
     buildPageToc();
     buildSolutionToolbar();
-    buildBackToTop();
     buildPortalHome();
     updateProgress();
     markScrollableDisplays();
@@ -443,15 +212,11 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () { markScrollableDisplays(); });
     }
-    // 先恢复上次展开过的解答，再挂监听——顺序反了会把恢复动作也当成用户操作
-    try { restoreFoldState(); } catch (error) { /* 记忆功能可降级 */ }
+    // 折叠状态记忆在 framework.js；这里只负责展开后重测公式宽度
     document.addEventListener("toggle", function (event) {
-      var details = event.target;
-      if (details.tagName === "DETAILS") {
+      if (event.target && event.target.tagName === "DETAILS") {
         setTimeout(markScrollableDisplays, 0);
-        // expanded 标志用于让工具条知道「当前有内容展开」
-        details.dataset.matrixOpen = details.open ? "1" : "0";
-        try { saveFoldState(details); } catch (error) { /* 记忆功能可降级 */ }
+        event.target.dataset.matrixOpen = event.target.open ? "1" : "0";
       }
     }, true);
     document.addEventListener("scroll", watchDisplayScroll, { passive: true, capture: true });

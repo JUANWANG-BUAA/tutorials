@@ -4,7 +4,6 @@
 
   var root = document.documentElement;
   var framePending = false;
-  var printSolutionState = null;
 
 
   function getStoredValue(key) {
@@ -150,20 +149,8 @@
     solutions[0].parentNode.insertBefore(toolbar, solutions[0]);
   }
 
-  window.addEventListener("beforeprint", function () {
-    printSolutionState = Array.prototype.map.call(document.querySelectorAll("details.sol-box"), function (details) {
-      return details.open;
-    });
-    document.querySelectorAll("details.sol-box").forEach(function (details) { details.open = true; });
-  });
-
-  window.addEventListener("afterprint", function () {
-    if (!printSolutionState) return;
-    document.querySelectorAll("details.sol-box").forEach(function (details, index) {
-      details.open = Boolean(printSolutionState[index]);
-    });
-    printSolutionState = null;
-  });
+  /* 打印前展开 / 打印后复原、界面文案汉化、搜索面板、回到顶部、折叠记忆：
+     自 2026-10 起统一收进 theme/js/framework.js（三本书共用）。 */
 
   /* 这里**不再**自建 ←/→ 护栏（详见 robot.js 同处注释）：mdBook 的
      chapterNavigation 已内置「焦点在交互元素里就不翻页」的保护，此前本文件
@@ -180,113 +167,7 @@
      「只展开、折不动」）。本文件不再处理侧栏。 */
 
 
-  /* ======================================================================== *
-   * 界面文案汉化
-   *   mdBook 的框架文案（菜单栏提示、搜索框占位符、搜索结果统计、主题名）都写
-   *   死在模板与 searcher.js 里，没有配置项，只能运行时改写。正文一个字不改。
-   * ======================================================================== */
-
-  var CHROME_LABELS = [
-    ["#mdbook-sidebar-toggle", "切换目录"],
-    ["#mdbook-theme-toggle", "切换主题"],
-    ["#mdbook-search-toggle", "搜索（按 / 键）"],
-    ["#mdbook-menu-bar a[aria-label='Print this book']", "打印本书"],
-  ];
-
-  /* 主题名：mdBook 给的是 Auto / Light / Rust / Coal / Navy / Ayu。
-     本书只有两套外观（浅色一套、深色一套），三个深色主题的区别仅在代码高亮
-     配色，所以按「浅色 / 深色 · 代码配色名」标注，读者才知道该怎么选。 */
-  var THEME_LABELS = {
-    "mdbook-theme-default_theme": ["跟随系统", "按系统外观自动选择"],
-    "mdbook-theme-light": ["浅色", "浅色外观"],
-    "mdbook-theme-rust": ["浅色 · Rust", "浅色外观，Rust 代码高亮"],
-    "mdbook-theme-coal": ["深色 · Coal", "深色外观，Coal 代码高亮"],
-    "mdbook-theme-navy": ["深色 · Navy", "深色外观，Navy 代码高亮"],
-    "mdbook-theme-ayu": ["深色 · Ayu", "深色外观，Ayu 代码高亮"],
-  };
-
-  /* searcher.js 的 formatSearchMetric() 生成的结果统计行 */
-  var METRIC_PATTERNS = [
-    [/^(\d+) search results? for ['‘’"「]?(.*?)['‘’"」]?:?$/, function (m) { return "「" + m[2] + "」· 命中 " + m[1] + " 条"; }],
-    [/^No search results for ['‘’"「]?(.*?)['‘’"」]?\.?$/, function (m) { return "「" + m[1] + "」· 没有命中"; }],
-  ];
-
-  function localizeChrome() {
-    CHROME_LABELS.forEach(function (pair) {
-      var el = document.querySelector(pair[0]);
-      if (!el) return;
-      el.setAttribute("title", pair[1]);
-      el.setAttribute("aria-label", pair[1]);
-    });
-
-    var bar = document.getElementById("mdbook-searchbar");
-    if (bar) {
-      bar.setAttribute("placeholder", "搜索本书内容…");
-      bar.setAttribute("aria-label", "搜索本书内容");
-    }
-
-    // 目录开关本体是个隐藏 checkbox，只靠外面那个 label 关联，本身没有可读名字
-    var sidebarAnchor = document.getElementById("mdbook-sidebar-toggle-anchor");
-    if (sidebarAnchor) sidebarAnchor.setAttribute("aria-label", "切换目录");
-
-    // 代码块右上角的复制按钮（book.js 运行时插入，title 写死为 Copy to clipboard）
-    document.querySelectorAll(".clip-button").forEach(function (button) {
-      button.setAttribute("title", "复制代码");
-      button.setAttribute("aria-label", "复制代码");
-    });
-
-    Object.keys(THEME_LABELS).forEach(function (id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = THEME_LABELS[id][0];
-      el.setAttribute("title", THEME_LABELS[id][1]);
-    });
-  }
-
-  function translateMetric(text) {
-    for (var i = 0; i < METRIC_PATTERNS.length; i++) {
-      var match = text.match(METRIC_PATTERNS[i][0]);
-      if (match) return METRIC_PATTERNS[i][1](match);
-    }
-    return null;
-  }
-
-  /* 搜索结果面板：统计行汉化 + 结果区限高后补齐键盘导航的滚动。
-     结果列表每次搜索都被整体重建，所以用 MutationObserver 而不是一次性改写。 */
-  function watchSearchResults() {
-    var header = document.getElementById("mdbook-searchresults-header");
-    if (header && !header.dataset.naLocalized) {
-      header.dataset.naLocalized = "1";
-      var translateHeader = function () {
-        var translated = translateMetric(header.textContent.trim());
-        if (translated !== null) header.textContent = translated;
-      };
-      new MutationObserver(translateHeader).observe(header, { childList: true, characterData: true, subtree: true });
-      translateHeader();
-    }
-
-    var list = document.getElementById("mdbook-searchresults");
-    if (!list || list.dataset.naWatched) return;
-    list.dataset.naWatched = "1";
-    new MutationObserver(function (records) {
-      records.forEach(function (record) {
-        if (record.type === "childList") {
-          // 摘要的无障碍标签也是英文的
-          list.querySelectorAll("span.teaser[aria-label]").forEach(function (teaser) {
-            teaser.setAttribute("aria-label", "结果摘要");
-          });
-          return;
-        }
-        // 结果区限高内滚后，上下键移动高亮要把条目带进视野（mdBook 自己不做）
-        var item = record.target;
-        if (!item.classList || !item.classList.contains("focus")) return;
-        var box = list.getBoundingClientRect();
-        var bounds = item.getBoundingClientRect();
-        if (bounds.top < box.top) list.scrollTop -= box.top - bounds.top;
-        else if (bounds.bottom > box.bottom) list.scrollTop += bounds.bottom - box.bottom;
-      });
-    }).observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-  }
+  /* 界面文案汉化、搜索面板、回到顶部、折叠记忆统一收进 theme/js/framework.js。 */
 
   /* ------------------------------------------------------------------ *
    * 返回教程库
@@ -343,8 +224,6 @@
     buildPageToc();
     buildLayerToggle();
     buildSolutionToolbar();
-    localizeChrome();
-    watchSearchResults();
     buildPortalHome();
     updateProgress();
 

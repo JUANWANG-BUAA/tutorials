@@ -41,6 +41,10 @@ jobs:
           mkdir -p _site
           for book in robot numerical matrix; do
             mdbook build "$book"
+            # mdBook 自带分词器不处理中文，「数域」「过渡矩阵」这类词进不了索引，
+            # 中文全文搜索会形同虚设。构建后用字符 n-gram 重建索引（这一步曾在
+            # CI 里缺失，导致线上中文搜索一直搜不到——见各书 README）。
+            node "$book/tools/build_search_js.mjs" "$book/book"
             mv "$book/book" "_site/$book"
           done
           cp site-index.html _site/index.html

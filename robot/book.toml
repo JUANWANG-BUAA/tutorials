@@ -17,8 +17,8 @@ default-theme = "ayu"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用《矩阵论》《数值分析》教程。
 # prefs.css 必须排在最后：读者偏好靠「同特异性 + 后加载」覆盖权威样式表。
-additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/prefs.css"]
-additional-js = ["theme/js/robot.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/prefs.js"]
+additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/robot.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework.js", "theme/js/prefs.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true
 site-url = "/tutorials/robot/"
@@ -26,7 +26,11 @@ site-url = "/tutorials/robot/"
 enable = true
 limit-results = 30
 teaser-word-count = 30
-use-boolean-and = true
+# 中文检索用「一元 + 二元字符 n-gram」建索引（见 tools/build_search_js.mjs）。
+# AND 语义会要求查询的**每一个** n-gram 都出现，而「线性空间」这类词切分后会
+# 产生「性空」这种跨词边的伪二元组，AND 下必然零命中。故中文场景必须用 OR，
+# 由相关性排序把最匹配的排在前面。
+use-boolean-and = false
 boost-hierarchy = 4
 boost-paragraph = 1
 expand = true

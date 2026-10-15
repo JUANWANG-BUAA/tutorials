@@ -1,0 +1,131 @@
+/*
+ * 框架界面层样式 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
+ * ---------------------------------------------------------------------------
+ * 与权威样式表（robot.css / na.css / matrix.css）分工：
+ *   · 权威样式表：这本书长什么样（设计令牌、正文、盒子、首页…）；
+ *   · 本文件：**mdBook 框架自带 UI** 的修补（搜索面板、主题弹层、键帽、回到顶部）
+ *     与两处框架样式覆盖我们令牌的真实缺陷（段落以外，列表行高也被 mdBook 钉死）。
+ *   与 prefs.css 一样属于「跨书一致」的层，不含任何正文/组件结构样式。
+ *
+ * 加载顺序：排在权威样式表之后（book.toml 的 additional-css 里 prefs.css 之前），
+ * 同特异性的声明由本文件胜出。
+ */
+
+/* ======================================================================== *
+ * §1  框架样式覆盖我们令牌的两处缺陷
+ *   mdBook chrome 给 .content 的 p / ol / ul 都写了 line-height:1.45em，
+ *   选择器比 `.content` 更细，会把权威样式表设定的行高顶掉——中文正文被压到
+ *   1.45，读起来发挤。段落在 prefs.css 里接管（与字号偏好联动），列表在这里
+ *   接管，保证「正文—列表」行距同源。列表项 li 不再单独声明：让它从 ol/ul
+ *   继承，既统一又不会与 prefs.css 的密度档位打架。
+ * ======================================================================== */
+.content ol,.content ul{line-height:1.82}
+
+/* ======================================================================== *
+ * §2  键帽与操作提示条
+ *   正文里的 <kbd>（搜索与翻页快捷键）此前没有任何样式，与普通等宽文字无法
+ *   区分。做成实体键帽，让「这是要按的键」一眼可辨。三本书共用一套。
+ * ======================================================================== */
+.content kbd{
+  display:inline-block;margin:0 2px;padding:1px 6px 2px;
+  border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;
+  background:var(--paper);color:var(--ink-2);
+  font:600 .78em/1.5 var(--mono);
+  box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--line-strong) 35%,transparent);
+}
+.content .kbd-hint{
+  margin:18px 0;padding:12px 16px;
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:var(--paper-soft);color:var(--ink-2);
+  font:13.5px/1.75 var(--sans);
+}
+.content .kbd-hint b{color:var(--ink)}
+
+/* ======================================================================== *
+ * §3  搜索面板与主题弹层（mdBook 框架 UI）
+ *   这两块是 mdBook 自带的前端，样式与文案都不归本书管，但读者每天在用。
+ *   关键结构事实：#mdbook-search-wrapper 是文档流里的一块，没有定位、没有背景、
+ *   结果区没有高度上限——30 条结果会把正文顶下去约 2600px，且条目之间没有分隔、
+ *   摘要与标题同样黑。这里把它收成一个有边界的面板。
+ * ======================================================================== */
+#mdbook-search-wrapper{background:var(--page);border-bottom:1px solid var(--line)}
+.searchresults-outer{border-block-end:0}
+.searchresults-header{
+  color:var(--muted);font:700 10.5px/1.5 var(--mono);letter-spacing:.06em;
+}
+ul#mdbook-searchresults{
+  max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;
+  margin:10px 0 20px;padding:0;scrollbar-width:thin;
+}
+ul#mdbook-searchresults li{margin:0;padding:0;border-bottom:1px solid var(--line)}
+ul#mdbook-searchresults li:first-child{border-top:1px solid var(--line)}
+ul#mdbook-searchresults li>a{
+  display:block;padding:11px 14px 3px;
+  color:var(--accent-text);font:600 14.5px/1.5 var(--sans);
+}
+ul#mdbook-searchresults li:hover{background:var(--paper-soft)}
+ul#mdbook-searchresults li.focus{background:var(--paper-soft);box-shadow:inset 2px 0 0 var(--accent)}
+ul#mdbook-searchresults span.teaser{
+  display:block;margin:0 14px 12px;
+  color:var(--muted);font-size:12.5px;line-height:1.7;
+}
+/* 命中词：mdBook 在摘要里用 <em> 标出，默认只是加粗，混在正文里看不出来 */
+ul#mdbook-searchresults span.teaser em{
+  padding:0 2px;border-radius:2px;
+  background:var(--search-mark-bg);color:var(--ink);
+  font-weight:700;font-style:normal;
+}
+
+.theme-popup{
+  min-width:158px;padding:5px;border-radius:10px;
+  font:13px/1.4 var(--sans);
+  box-shadow:0 12px 26px rgba(0,0,0,.16);
+}
+.theme-popup .theme{
+  display:block;width:100%;padding:6px 12px 6px 24px;border:0;border-radius:6px;
+  background:transparent;color:var(--ink-2);text-align:left;
+  font:400 13px/1.4 var(--sans);cursor:pointer;
+}
+.theme-popup .theme:hover{background:var(--theme-hover);color:var(--ink)}
+.theme-popup .theme.theme-selected{color:var(--accent-text);font-weight:700}
+.theme-selected::before{color:var(--accent-text)}
+
+/* ======================================================================== *
+ * §4  回到顶部（结构与行为见 theme/js/framework.js）
+ * ======================================================================== */
+#back-to-top{
+  position:fixed;right:26px;bottom:26px;z-index:60;
+  width:38px;height:38px;padding:0;
+  display:grid;place-items:center;
+  border:1px solid var(--line-strong);border-radius:50%;
+  background:var(--surface-card);color:var(--ink-2);
+  font:600 16px/1 var(--sans);cursor:pointer;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s;
+  box-shadow:0 4px 14px var(--shadow-ink);
+}
+#back-to-top.visible{opacity:1;visibility:visible;transform:none}
+#back-to-top:hover{border-color:var(--ink);color:var(--ink)}
+#back-to-top:active{transform:scale(.94)}
+
+/* ======================================================================== *
+ * §5  焦点环（键盘可达性）：统一到强调色，覆盖 mdBook 默认样式
+ * ======================================================================== */
+:where(a,button,input,summary,select,textarea,[tabindex]):focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px var(--accent-text),0 0 0 4px var(--page)!important;
+  border-radius:2px;
+}
+
+/* ======================================================================== *
+ * §6  响应式与打印
+ * ======================================================================== */
+@media only screen and (max-width:700px){
+  #back-to-top{right:14px;bottom:18px;width:40px;height:40px}
+  /* 窄屏表格：横向滚动而不是压扁列 */
+  .content table{display:block;overflow-x:auto}
+}
+
+@media print{
+  #back-to-top,#mdbook-search-wrapper{display:none!important}
+}

@@ -55,7 +55,7 @@ html[data-size="l"] .content{font-size:18.5px}
  *   压到 1.45，读起来发挤。这里显式接管段落与列表项，既修正该问题，也让
  *   下面的 density 档位真正生效（1.82 是三本书权威样式表的既定值）。
  * ======================================================================== */
-.content p,.content li{line-height:1.82}
+.content p,.content li,.content ol,.content ul{line-height:1.82}
 
 /* 只调桌面端的页面留白：窄屏的 --page-padding 由权威样式表的响应式段
    接管（≤700px 收到 16px），这里若不加宽度条件会把它顶掉，导致手机上
@@ -67,7 +67,9 @@ html[data-size="l"] .content{font-size:18.5px}
 
 html[data-density="compact"] .content{line-height:1.72}
 html[data-density="compact"] .content p,
-html[data-density="compact"] .content li{line-height:1.72}
+html[data-density="compact"] .content li,
+html[data-density="compact"] .content ol,
+html[data-density="compact"] .content ul{line-height:1.72}
 html[data-density="compact"] .content p{margin:8px 0}
 html[data-density="compact"] .content h2{margin:46px 0 14px}
 html[data-density="compact"] .content h3{margin:32px 0 9px}
@@ -82,7 +84,9 @@ html[data-density="compact"] .content blockquote{margin:12px 0;padding:10px 15px
 
 html[data-density="loose"] .content{line-height:2}
 html[data-density="loose"] .content p,
-html[data-density="loose"] .content li{line-height:2}
+html[data-density="loose"] .content li,
+html[data-density="loose"] .content ol,
+html[data-density="loose"] .content ul{line-height:2}
 html[data-density="loose"] .content p{margin:16px 0}
 html[data-density="loose"] .content h2{margin:78px 0 24px}
 html[data-density="loose"] .content h3{margin:54px 0 16px}
