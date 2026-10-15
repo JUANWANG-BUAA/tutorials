@@ -40,8 +40,7 @@ html.coal, html.navy, html.ayu{
  * §2  mdBook 框架适配
  * ======================================================================== */
 body{
-  background:
-    radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
+  background:radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
     radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 26%),
     linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
     linear-gradient(var(--grid-line) 1px,transparent 1px),
@@ -63,7 +62,7 @@ body{
   #mdbook-menu-bar .portal-home-label{display:none}
 }
 
-.content p{margin:12px 0;text-align:left;font-family:var(--serif);text-wrap:pretty}
+.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--serif);text-wrap:pretty}
 
 /* balance 让长标题折行时两行长度接近，避免末行只剩一两个字（不支持则忽略） */
 .content h1,.content h2,.content h3{text-wrap:balance}
@@ -80,7 +79,7 @@ body{
 
 /* 操作提示条：首页「本教材怎么读」末尾的一段提示，此前与正文无区别 */
 .content .kbd-hint{
-  margin:18px 0;padding:12px 16px;
+  margin:18px 0;padding:var(--space-3) var(--space-4);
   border:1px solid var(--line);border-left:3px solid var(--accent);
   background:var(--paper-soft);color:var(--ink-2);
   font:13.5px/1.75 var(--sans);
@@ -100,14 +99,14 @@ body{
    skip 只是降低权重、不隐藏——要折叠请用页面的「只看核心」开关。 */
 .box.p-core{border-left-width:4px}
 
-.box.p-core>.box-tag{font-size:11px;letter-spacing:.07em}
+.box.p-core>.box-tag{font-size:var(--fs-xs);letter-spacing:.07em}
 
 .proof.p-core{
   border-left:3px solid var(--thm-line);background:var(--thm-bg);
   color:var(--ink);
 }
 
-.proof.p-skip{color:var(--muted);font-size:14px;border-top-style:dashed}
+.proof.p-skip{color:var(--muted);font-size:var(--fs-lg);border-top-style:dashed}
 
 .proof.p-skip .pf-label{color:var(--muted)}
 
@@ -129,23 +128,23 @@ html.core-only .p-skip{display:none}
    此前是「标题 + 三条说明 + 开关」挤成一段的小字，折行后层级读不出来。
    改成：标题与开关占一行，下面三条各自成行（色块 / 名称 / 适用内容）。 */
 .layer-legend{
-  margin:16px 0 22px;padding:13px 16px 12px;
+  margin:var(--space-4) 0 22px;padding:13px var(--space-4) var(--space-3);
   border:1px solid var(--line);background:var(--paper-soft);
-  font:13px/1.6 var(--sans);color:var(--ink-2);
+  font:var(--fs-md)/1.6 var(--sans);color:var(--ink-2);
 }
 
 .layer-legend-head{
   display:flex;align-items:center;justify-content:space-between;
-  gap:12px;margin-bottom:9px;
+  gap:var(--space-3);margin-bottom:9px;
 }
 
 .layer-legend-title{color:var(--ink);font-weight:700}
 
-.layer-legend ul{display:grid;gap:4px;margin:0;padding:0;list-style:none}
+.layer-legend ul{display:grid;gap:var(--space-1);margin:0;padding:0;list-style:none}
 
 .layer-legend ul li{
-  display:grid;grid-template-columns:16px max-content 1fr;
-  align-items:center;gap:0 8px;margin:0;padding:0;border:0;
+  display:grid;grid-template-columns:var(--space-4) max-content 1fr;
+  align-items:center;gap:0 var(--space-2);margin:0;padding:0;border:0;
 }
 
 .layer-legend ul li b{color:var(--ink-2);font-weight:600}
@@ -164,7 +163,7 @@ html.core-only .p-skip{display:none}
 .layer-legend button{
   flex:0 0 auto;padding:3px 10px;border:1px solid var(--line-strong);
   background:var(--paper);color:var(--ink-2);
-  font:600 11px/1.4 var(--sans);cursor:pointer;
+  font:600 var(--fs-xs)/1.4 var(--sans);cursor:pointer;
 }
 
 .layer-legend button:hover{border-color:var(--ink);color:var(--ink)}
@@ -180,7 +179,7 @@ details.sol-box{
    补一个右对齐的动作提示，把「这里可以点」说清楚。 */
 details.sol-box>summary::after{
   content:"展开";margin-left:auto;color:var(--muted);
-  font:600 10px/1 var(--mono);letter-spacing:.09em;
+  font:600 var(--fs-2xs)/1 var(--mono);letter-spacing:.09em;
 }
 
 /* 插图占满版心宽度：SVG 是矢量，放大不损失清晰度；
@@ -219,7 +218,7 @@ details.sol-box>summary::after{
  * ======================================================================== */
 @media(max-width:900px) and (min-width:701px){
   /* 同上：不写 --sidebar-width，只改 target，否则窄屏下把手同样拖不动 */
-  :root{--page-padding:20px;--sidebar-target-width:250px}
+  :root{--page-padding:var(--space-5);--sidebar-target-width:250px}
   .content h1{font-size:30px}
   .chapter-cover h1{font-size:42px}
   .chapter-cover::after{font-size:160px}
@@ -244,7 +243,7 @@ details.sol-box>summary::after{
   .study-paths{grid-template-columns:1fr;gap:12px}
   .study-path{min-height:0}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
-  .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .lesson-brief>div{padding:15px var(--space-4);border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
   .page-toc{grid-template-columns:1fr}
   .box{padding:16px 15px 12px}
@@ -305,15 +304,15 @@ details.sol-box>summary::after{
  *   做限时答题。因此所有交互态类名都只加在克隆体上，原始题库不受影响。
  * ======================================================================== */
 .arena-shell{
-  margin:24px 0 8px;border:1px solid var(--line-strong);border-radius:var(--radius);
+  margin:var(--space-6) 0 var(--space-2);border:1px solid var(--line-strong);border-radius:var(--radius);
   background:var(--surface-card);overflow:hidden;
 }
 
 html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0 24px 48px var(--shadow-deep)}
 
 .arena-head{
-  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
-  padding:16px 20px;border-bottom:1px solid var(--line);
+  display:flex;align-items:baseline;gap:var(--space-3);flex-wrap:wrap;
+  padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--line);
   background:var(--paper-soft);
 }
 
@@ -333,7 +332,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-hud.is-on{display:grid}
 
-.arena-stat{padding:11px 16px;border-right:1px solid var(--line)}
+.arena-stat{padding:11px var(--space-4);border-right:1px solid var(--line)}
 
 .arena-stat:last-child{border-right:0}
 
@@ -341,7 +340,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-stat .v{font:700 20px/1.25 var(--mono);color:var(--ink)}
 
-.arena-stat .v small{font:600 11px/1 var(--mono);color:var(--muted);margin-left:3px}
+.arena-stat .v small{font:600 var(--fs-xs)/1 var(--mono);color:var(--muted);margin-left:3px}
 
 .arena-stat.is-hot .v{color:var(--accent-text)}
 
@@ -362,7 +361,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-level{
   position:relative;display:flex;flex-direction:column;gap:6px;
-  padding:15px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:15px var(--space-4);border:1px solid var(--line);border-radius:var(--radius-sm);
   background:var(--paper);cursor:pointer;text-align:left;color:inherit;
   font:inherit;transition:border-color .15s,box-shadow .15s,transform .15s;
 }
@@ -371,17 +370,17 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-level:disabled{cursor:not-allowed;opacity:.55}
 
-.arena-level .lv-no{color:var(--accent-text);font:700 10px/1.4 var(--mono);letter-spacing:.1em}
+.arena-level .lv-no{color:var(--accent-text);font:700 var(--fs-2xs)/1.4 var(--mono);letter-spacing:.1em}
 
 .arena-level .lv-name{font:700 16px/1.3 var(--serif-display)}
 
 .arena-level .lv-desc{color:var(--muted);font:12px/1.6 var(--sans)}
 
-.arena-level .lv-meta{margin-top:auto;padding-top:8px;color:var(--muted);font:10.5px/1.5 var(--mono);display:flex;gap:10px;flex-wrap:wrap}
+.arena-level .lv-meta{margin-top:auto;padding-top:var(--space-2);color:var(--muted);font:10.5px/1.5 var(--mono);display:flex;gap:10px;flex-wrap:wrap}
 
 .arena-level .lv-best{color:var(--accent-text);font-weight:700}
 
-.arena-level .lv-flag{position:absolute;top:12px;right:13px;font:700 10px/1 var(--mono);letter-spacing:.06em}
+.arena-level .lv-flag{position:absolute;top:var(--space-3);right:13px;font:700 var(--fs-2xs)/1 var(--mono);letter-spacing:.06em}
 
 .arena-level.is-cleared{border-color:var(--sage)}
 
@@ -408,7 +407,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 }
 
 .arena-opts li .opt-key{
-  color:var(--muted);font:700 12px/1.7 var(--mono);
+  color:var(--muted);font:700 var(--fs-sm)/1.7 var(--mono);
 }
 
 .arena-opts li:hover:not(.is-locked){border-color:var(--ink);background:var(--paper-soft)}
@@ -434,7 +433,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 .arena-opts li.is-dim{opacity:.6}
 
 .arena-feedback{
-  margin-top:14px;padding:12px 15px;border-left:3px solid var(--line);
+  margin-top:14px;padding:var(--space-3) 15px;border-left:3px solid var(--line);
   background:var(--paper-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
   font:13.5px/1.75 var(--sans);
 }
@@ -443,7 +442,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-feedback.is-wrong{border-left-color:var(--err-line);background:var(--err-bg)}
 
-.arena-feedback .fb-verdict{display:block;margin-bottom:4px;font:700 12px/1.4 var(--mono);letter-spacing:.05em}
+.arena-feedback .fb-verdict{display:block;margin-bottom:var(--space-1);font:700 var(--fs-sm)/1.4 var(--mono);letter-spacing:.05em}
 
 .arena-feedback.is-correct .fb-verdict{color:var(--ex-ink)}
 
@@ -451,12 +450,12 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-feedback .fb-src{display:block;margin-top:7px;color:var(--muted);font:11px/1.5 var(--mono)}
 
-.arena-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.arena-actions{margin-top:var(--space-4);display:flex;gap:10px;flex-wrap:wrap}
 
 .arena-btn{
   padding:9px 18px;border:1px solid var(--ink);border-radius:999px;
   background:var(--ink);color:var(--paper);cursor:pointer;
-  font:700 13px/1 var(--sans);letter-spacing:.02em;
+  font:700 var(--fs-md)/1 var(--sans);letter-spacing:.02em;
 }
 
 .arena-btn:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
@@ -470,7 +469,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-result .rs-score{font:700 46px/1 var(--mono);color:var(--accent-text)}
 
-.arena-result .rs-tier{margin:6px 0 16px;font:600 17px/1.4 var(--serif-display)}
+.arena-result .rs-tier{margin:6px 0 var(--space-4);font:600 17px/1.4 var(--serif-display)}
 
 .arena-tally{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
 
@@ -482,15 +481,15 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 
 .arena-tally .v{font:700 18px/1.3 var(--mono)}
 
-.arena-newbest{margin-top:12px;color:var(--accent-text);font:700 12px/1.5 var(--mono)}
+.arena-newbest{margin-top:var(--space-3);color:var(--accent-text);font:700 12px/1.5 var(--mono)}
 
 /* —— 段位徽章 —— */
 .rank-badge{
-  display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 10px;
-  border-radius:999px;border:1px solid currentColor;font:700 12px/1 var(--sans);
+  display:inline-flex;align-items:center;gap:7px;padding:var(--space-1) var(--space-3) var(--space-1) 10px;
+  border-radius:999px;border:1px solid currentColor;font:700 var(--fs-sm)/1 var(--sans);
 }
 
-.rank-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.rank-badge::before{content:"";width:var(--space-2);height:var(--space-2);border-radius:50%;background:currentColor}
 
 .rank-bronze{color:var(--rank-bronze)}
 
@@ -524,7 +523,7 @@ html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0
 .arena-wrongbook .wb-empty{color:var(--muted);font:12px/1.6 var(--sans)}
 
 /* —— 题库底色与打印 —— */
-.arena-bank-note{margin:34px 0 4px;color:var(--muted);font:12px/1.7 var(--sans)}
+.arena-bank-note{margin:34px 0 var(--space-1);color:var(--muted);font:12px/1.7 var(--sans)}
 
 .arena-bank .arena-q{
   margin:0 0 14px;padding:15px 18px 14px;border:1px solid var(--line);

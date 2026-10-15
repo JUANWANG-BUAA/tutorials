@@ -35,8 +35,7 @@ html.coal, html.navy, html.ayu{
  * §2  mdBook 框架适配
  * ======================================================================== */
 body{
-  background:
-    radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
+  background:radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
     radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 26%),
     linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
     linear-gradient(var(--grid-line) 1px,transparent 1px),
@@ -58,7 +57,7 @@ body{
   #mdbook-menu-bar .portal-home-label{display:none}
 }
 
-.content p{margin:12px 0;text-align:left;font-family:var(--serif)}
+.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--serif)}
 
 .box.intuition{border-left-color:var(--intuition-line);background:var(--intuition-bg)}
 
@@ -74,7 +73,7 @@ details.sol-box{
 
 details.sol-box>summary::after{
   content:"展开";margin-left:auto;color:var(--muted);
-  font:600 10px/1 var(--mono);letter-spacing:.09em;
+  font:600 var(--fs-2xs)/1 var(--mono);letter-spacing:.09em;
 }
 
 /* 插图占满版心宽度：SVG 是矢量，放大不损失清晰度；
@@ -92,8 +91,8 @@ details.sol-box>summary::after{
  * 逻辑全部在本页内联 <script>（无依赖、无构建步骤）；
  * 颜色沿用 --fig-* 令牌，暗色主题自动适配。 */
 .arm-controls{
-  display:flex;flex-wrap:wrap;gap:12px 30px;justify-content:center;align-items:center;
-  margin:14px 0 2px;font:13px/1.6 var(--sans);color:var(--ink-2);
+  display:flex;flex-wrap:wrap;gap:var(--space-3) 30px;justify-content:center;align-items:center;
+  margin:14px 0 2px;font:var(--fs-md)/1.6 var(--sans);color:var(--ink-2);
 }
 
 .arm-controls label{display:flex;align-items:center;gap:10px}
@@ -158,7 +157,7 @@ details.sol-box>summary::after{
   .study-paths{grid-template-columns:1fr;gap:12px}
   .study-path{min-height:0}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
-  .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .lesson-brief>div{padding:15px var(--space-4);border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
   .page-toc{grid-template-columns:1fr}
   .box{padding:16px 15px 12px}
@@ -231,7 +230,7 @@ details.sol-box>summary::after{
 
 .lab-note{font-size:.88rem;color:var(--muted);line-height:1.65;margin:6px 0}
 
-.lab-controls{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;margin:10px 0 6px}
+.lab-controls{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5);align-items:center;margin:10px 0 6px}
 
 .lab-ctl{font-size:.86rem;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
 
@@ -244,7 +243,7 @@ details.sol-box>summary::after{
 .lab-group-label{font-size:.86rem;color:var(--ink-2)}
 
 .lab-btn{
-  font:inherit;font-size:.84rem;padding:3px 12px;border-radius:999px;
+  font:inherit;font-size:.84rem;padding:3px var(--space-3);border-radius:999px;
   border:1px solid var(--control-line);background:transparent;color:var(--ink-2);cursor:pointer;
 }
 
@@ -254,7 +253,7 @@ details.sol-box>summary::after{
 
 .lab canvas{width:100%;display:block;border-radius:var(--radius-sm);background:var(--surface-soft)}
 
-.lab-readout{font-size:.88rem;color:var(--ink-2);line-height:1.7;margin-top:8px;font-variant-numeric:tabular-nums}
+.lab-readout{font-size:.88rem;color:var(--ink-2);line-height:1.7;margin-top:var(--space-2);font-variant-numeric:tabular-nums}
 
 .lab-readout p{margin:6px 0}
 
@@ -263,7 +262,7 @@ details.sol-box>summary::after{
 .lab-matrix{border-collapse:collapse;display:inline-table;vertical-align:middle;margin:0 10px 0 4px}
 
 .lab-matrix td,.lab-matrix th{
-  border:1px solid var(--line);padding:2px 8px;text-align:right;
+  border:1px solid var(--line);padding:2px var(--space-2);text-align:right;
   font-variant-numeric:tabular-nums;font-size:.84rem;font-weight:400;
 }
 
