@@ -15,18 +15,25 @@ src = "src"
 # 不写 multi-page 以外的后端；PDF/EPUB 由 CI 单独生成（见 docs/ARCHITECTURE.md）
 
 [output.html]
-default-theme = "ayu"
+# 亮色默认用 Rust·暖纸（品牌亮色），暗色用 Ayu·琥珀。两者必须一个是亮色主题：
+# 跟随系统时 mdBook 取 default-theme 作亮色侧、preferred-dark-theme 作暗色侧，
+# 此前两者都写 ayu，浅色系统下也被强制成暗色（产物里 default_light_theme = "ayu"）。
+default-theme = "rust"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用原站（Academy / warm / Rust Wiki 版式）。
-# 外观设置只保留 mdBook 原生入口（菜单栏主题弹层），与 rustwiki 一致；不再有自建
-# 的阅读偏好面板（字体 / 字号 / 间距 / 版心 / 配色）。
-additional-css = ["theme/css/matrix.css", "theme/css/katex.css", "theme/css/framework.css"]
-# 脚本：matrix.js 只声明本书配置（window.TUTORIALS.slug）；附加操作与框架 UI 全在
-# framework.js（三本共用）；search-cjk.js 的查询分词与 tools/build_search_js.mjs
-# 的索引分词逐字对应。
-additional-js = ["theme/js/matrix.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js", "theme/js/framework.js"]
+# 外观设置两处、各管一件事：配色 = mdBook 原生主题弹层（同 rustwiki）；
+# 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
+# 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
+# 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
+additional-css = ["theme/css/matrix.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/page-extras.js", "theme/js/matrix.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js"]
 # 页内小节锚点在右侧 → 由 mdbook-pagetoc 之类的插件承担；v1 用侧栏目录 + 顶部小节条
 # 标题里已含「1.1.3」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
+# 仓库与「编辑此页」：读者发现笔误可直接改（mdBook 原生的两处入口，见菜单栏右侧）。
+# edit-url-template 里的 {path} 是相对本书根目录的路径（含 src/），故前缀只写到子目录。
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"  # FA6：GitHub 属 brand 图标，前缀为 fab-
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/matrix/{path}"
 no-section-label = true
 site-url = "/tutorials/matrix/"
 [output.html.search]
@@ -51,6 +58,14 @@ command = "python3 tools/mathbook.py"
 # no-css = true → 不注入 KaTeX 的 CDN 样式表；改用随仓库分发的
 # theme/css/katex.css + theme/css/fonts/（离线可用，无第三方请求）。
 [preprocessor.katex]
-command = "mdbook-katex"
+# 走包装器：KaTeX 产物会被 pulldown 再解析一遍，字面 `~`（GFM 删除线）与
+# <annotation> 里的原始 TeX（强调/链接/表格定界符）都要先中和成实体，
+# 否则整页刷出 unclosed HTML tag 告警、公式结构被打散。见 tools/katex_wrapper.py。
+# 共享脚本（三本一份）：仓库根的 tools/katex_wrapper.py ✓ 路径相对本书根
+command = "python3 ../tools/katex_wrapper.py"
 no-css = true
+# output = htmlAndMathml → 除视觉 HTML 外再产出一份 MathML，里面带
+# <annotation encoding="application/x-tex"> 原始 TeX：读屏可用（此前 .katex-html
+# 是 aria-hidden，公式对读屏等于空白），也让我们能给公式加「复制 LaTeX」。
+output = "htmlAndMathml"
 after = ["mathbook"]

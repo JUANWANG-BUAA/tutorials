@@ -1,0 +1,423 @@
+/*
+ * 框架界面层样式 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
+ * ---------------------------------------------------------------------------
+ * 与权威样式表（robot.css / na.css / matrix.css）分工：
+ *   · 权威样式表：这本书长什么样（设计令牌、正文、盒子、首页…）；
+ *   · 本文件：**mdBook 框架自带 UI** 的修补（搜索面板、键帽、回到顶部）与框架
+ *     样式覆盖我们令牌的真实缺陷（段落与列表行高被 mdBook 钉死）。
+ *   属于「跨书一致」的层，不含任何正文/组件结构样式。
+ *
+ * 加载顺序：排在权威样式表之后（book.toml 的 additional-css 最后一份），
+ * 同特异性的声明由本文件胜出。
+ */
+
+/* ======================================================================== *
+ * §1  框架样式覆盖我们令牌的真实缺陷
+ *   mdBook chrome 给 .content 的 p / ol / ul 都写了 line-height:1.45em，
+ *   选择器比 `.content` 更细，会把权威样式表设定的行高顶掉——中文正文被压到
+ *   1.45，读起来发挤。这里显式接管段落、列表项与列表容器，保证「正文—列表」
+ *   行距同源（原在 prefs.css，阅读偏好层移除后收进本文件）。
+ * ======================================================================== */
+.content p,.content li,.content ol,.content ul{line-height:1.82}
+
+/* ======================================================================== *
+ * §2  键帽与操作提示条
+ *   正文里的 <kbd>（搜索与翻页快捷键）此前没有任何样式，与普通等宽文字无法
+ *   区分。做成实体键帽，让「这是要按的键」一眼可辨。三本书共用一套。
+ * ======================================================================== */
+.content kbd{
+  display:inline-block;margin:0 2px;padding:1px 6px 2px;
+  border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;
+  background:var(--paper);color:var(--ink-2);
+  font:600 .78em/1.5 var(--mono);
+  box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--line-strong) 35%,transparent);
+}
+.content .kbd-hint{
+  margin:18px 0;padding:12px 16px;
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:var(--paper-soft);color:var(--ink-2);
+  font:13.5px/1.75 var(--sans);
+}
+.content .kbd-hint b{color:var(--ink)}
+
+/* ======================================================================== *
+ * §3  搜索面板（mdBook 框架 UI）
+ *   搜索是 mdBook 自带的前端，样式与文案都不归本书管，但读者每天在用。
+ *   关键结构事实：#mdbook-search-wrapper 是文档流里的一块，没有定位、没有背景、
+ *   结果区没有高度上限——30 条结果会把正文顶下去约 2600px，且条目之间没有分隔、
+ *   摘要与标题同样黑。这里把它收成一个有边界的面板。
+ * ======================================================================== */
+#mdbook-search-wrapper{background:var(--page);border-bottom:1px solid var(--line)}
+.searchresults-outer{border-block-end:0}
+.searchresults-header{
+  color:var(--muted);font:700 10.5px/1.5 var(--mono);letter-spacing:.06em;
+}
+ul#mdbook-searchresults{
+  max-height:min(62vh,560px);overflow-y:auto;overscroll-behavior:contain;
+  margin:10px 0 20px;padding:0;scrollbar-width:thin;
+}
+ul#mdbook-searchresults li{margin:0;padding:0;border-bottom:1px solid var(--line)}
+ul#mdbook-searchresults li:first-child{border-top:1px solid var(--line)}
+ul#mdbook-searchresults li>a{
+  display:block;padding:11px 14px 3px;
+  color:var(--accent-text);font:600 14.5px/1.5 var(--sans);
+}
+ul#mdbook-searchresults li:hover{background:var(--paper-soft)}
+ul#mdbook-searchresults li.focus{background:var(--paper-soft);box-shadow:inset 2px 0 0 var(--accent)}
+ul#mdbook-searchresults span.teaser{
+  display:block;margin:0 14px 12px;
+  color:var(--muted);font-size:12.5px;line-height:1.7;
+}
+/* 命中词：mdBook 在摘要里用 <em> 标出，默认只是加粗，混在正文里看不出来 */
+ul#mdbook-searchresults span.teaser em{
+  padding:0 2px;border-radius:2px;
+  background:var(--search-mark-bg);color:var(--ink);
+  font-weight:700;font-style:normal;
+}
+
+/* 主题弹层保持 mdBook 原生，不做皮肤：4px 圆角、1px 边框、0.7em 字号、条目
+   2px 20px 内边距与「✓」选中标记，与 rustwiki / mdBook 官方手册逐项一致。
+   此前为放大点击目标自加过一套 10px 圆角 + 13px 字号的皮肤，随阅读偏好面板
+   一并移除——外观设置只保留菜单栏这一处原生入口。底色与边框仍取本书令牌
+   （--theme-popup-bg / --theme-popup-border），因此跟随本书主题。 */
+
+/* ======================================================================== *
+ * §4  回到顶部（结构与行为见 theme/js/framework.js）
+ * ======================================================================== */
+#back-to-top{
+  position:fixed;right:26px;bottom:26px;z-index:60;
+  width:38px;height:38px;padding:0;
+  display:grid;place-items:center;
+  border:1px solid var(--line-strong);border-radius:50%;
+  background:var(--surface-card);color:var(--ink-2);
+  font:600 16px/1 var(--sans);cursor:pointer;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s;
+  box-shadow:0 4px 14px var(--shadow-ink);
+}
+#back-to-top.visible{opacity:1;visibility:visible;transform:none}
+#back-to-top:hover{border-color:var(--ink);color:var(--ink)}
+#back-to-top:active{transform:scale(.94)}
+
+/* ======================================================================== *
+ * §5  焦点环（键盘可达性）：统一到强调色，覆盖 mdBook 默认样式
+ * ======================================================================== */
+:where(a,button,input,summary,select,textarea,[tabindex]):focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px var(--accent-text),0 0 0 4px var(--page)!important;
+  border-radius:2px;
+}
+
+/* ======================================================================== *
+ * §6  响应式与打印
+ * ======================================================================== */
+/* 宽表格：**任何宽度**下都在自己的盒子里横向滚动，而不是把整页撑宽。
+   此前只有窄屏（≤700px）才这么做，于是桌面上遇到 1000px 以上的表（复习页、
+   核对清单里常见）整页就出现横向滚动条——读者看到的是「内容被屏幕截断」。 */
+.content table{
+  display:block;overflow-x:auto;max-width:100%;
+  /* position:relative 是必需的：KaTeX 的 MathML 副本（.katex-mathml）是
+     position:absolute，而它只被 clip:rect() 视觉隐藏——clip 不裁剪「布局溢出」。
+     表格若还是 static，就不是绝对定位子元素的包含块，这些 1px 的副本会按最近的
+     定位祖先（正文/body）落位，跑到视口之外把文档 scrollWidth 撑大，窄屏于是能左右滚。
+     让表格成为包含块后，副本落在表格内、被 overflow-x:auto 一起裁掉。 */
+  position:relative;
+}
+
+/* 插图里的 SVG：内容超出 viewBox 的部分要裁掉。SVG 默认就裁，但图里的路径
+   若延伸到 viewBox 之外（几何作图常见），未裁剪时会把文档的 scrollWidth 撑大，
+   页面在窄屏出现横向滚动。 */
+.content figure svg{overflow:hidden}
+
+@media only screen and (max-width:700px){
+  #back-to-top{right:14px;bottom:18px;width:40px;height:40px}
+}
+
+@media print{
+  #back-to-top,#mdbook-search-wrapper{display:none!important}
+}
+
+/* ======================================================================== *
+ * §7  插图灯箱与进场（结构与行为见 theme/js/framework.js）
+ * ------------------------------------------------------------------------
+ * 本书的图是内联 SVG：点击放大走克隆进 <dialog>，不另存大图。
+ * 视觉语言沿用站内既有控件（细边框、纸色底、直角预设按钮），颜色全部走令牌。
+ * ======================================================================== */
+.content figure[data-zoomable="1"]{cursor:zoom-in}
+.content figure[data-zoomable="1"]:hover,
+.content figure[data-zoomable="1"]:focus-visible{border-color:var(--line-strong)}
+/* 悬停时角落浮出「点击放大」提示：mono 小字 + 纸色底，与图注同一语言 */
+.content figure[data-zoomable="1"]::after{
+  content:"点击放大";
+  position:absolute;top:10px;right:10px;
+  padding:3px 8px;
+  font:700 10px/1.4 var(--mono);letter-spacing:.08em;
+  color:var(--ink-2);background:var(--paper);border:1px solid var(--line);
+  opacity:0;transform:translateY(-3px);
+  transition:opacity 160ms ease,transform 160ms ease;
+  pointer-events:none;
+}
+.content figure[data-zoomable="1"]:hover::after,
+.content figure[data-zoomable="1"]:focus-visible::after{opacity:1;transform:none}
+
+.figure-zoom{
+  padding:0;max-width:96vw;max-height:94vh;
+  border:1px solid var(--line-strong);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--ink);
+  box-shadow:0 28px 70px var(--shadow-deep);
+  font-family:var(--sans);
+}
+.figure-zoom::backdrop{background:var(--overlay-bg)}
+.figure-zoom-stage{
+  display:grid;place-items:center;
+  padding:var(--space-5,20px) var(--space-5,20px) var(--space-3,12px);
+}
+.figure-zoom-stage svg,
+.figure-zoom-stage img{width:min(88vw,1080px);height:auto;max-height:76vh;display:block}
+.figure-zoom-close{
+  display:block;margin:0 auto var(--space-4,16px);
+  padding:6px 13px;border:1px solid var(--line-strong);border-radius:0;
+  background:var(--paper);color:var(--ink-2);
+  font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+}
+.figure-zoom-close:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+
+/* 进场：只在 JS 就绪时启用（html.figure-reveal），从 0.5 不透明度 / 6px 上浮到位，
+   无 JS、打印、prefers-reduced-motion 三种情形下都是静止可见的。 */
+html.figure-reveal .content figure:not(.figure-in){opacity:.5;transform:translateY(6px)}
+html.figure-reveal .content figure.figure-in{
+  opacity:1;transform:none;
+  transition:opacity 420ms ease,transform 420ms ease;
+}
+
+/* ======================================================================== *
+ * §8  阅读进度：侧栏已读点 + 导览页「继续阅读」卡
+ * ======================================================================== */
+.chapter-item > .chapter-link-wrapper{position:relative}
+/* 已读标记：缩进槽里的一颗小圆点（不占位、不参与换行，长标题也不会被挤） */
+.chapter-item.is-read > .chapter-link-wrapper::before{
+  content:"";
+  position:absolute;left:-8px;top:.62em;
+  width:4px;height:4px;border-radius:50%;
+  background:color-mix(in srgb,var(--accent) 60%,transparent);
+}
+/* 导览页入口卡片的「已读」标记：绝对定位在右上角，不参与卡片网格布局 */
+.index-cards a.is-read{position:relative}
+.index-cards a.is-read::after{
+  content:"已读";
+  position:absolute;top:9px;right:11px;
+  padding:2px 7px;border:1px solid var(--line);
+  background:var(--paper);color:var(--muted);
+  font:700 10px/1.4 var(--mono);letter-spacing:.08em;
+}
+.continue-card{
+  position:relative;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;
+  gap:6px 14px;
+  margin:var(--space-6,24px) 0 var(--space-8,32px);
+  padding:15px 18px 14px;
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--radius-sm);
+  background:var(--surface-card);
+  box-shadow:0 12px 28px var(--shadow-soft);
+}
+.continue-kicker{
+  grid-column:1;color:var(--accent-text);
+  font:700 10px/1.6 var(--mono);letter-spacing:.12em;
+}
+.continue-link{
+  grid-column:2;color:var(--ink);text-decoration:none;
+  font:600 15px/1.5 var(--serif-display);
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
+}
+.continue-link:hover{color:var(--accent-text);border-bottom-color:var(--accent)}
+.continue-meta{grid-column:3;color:var(--muted);font:11px/1.6 var(--mono)}
+.continue-bar{
+  grid-column:1 / -1;height:3px;border-radius:2px;
+  background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden;
+}
+.continue-bar>i{display:block;height:100%;background:var(--accent)}
+
+/* ======================================================================== *
+ * §9  微动效：折叠块展开、表格行、主题切换
+ * ------------------------------------------------------------------------
+ * 三条都只作用于「状态变化」，并且都由 prefers-reduced-motion 关闭；
+ * 折叠块高度动画依赖 ::details-content（新内核才有），旧内核自动回落为瞬时展开。
+ * ======================================================================== */
+.content table tbody tr:hover{background:var(--row-hover)}
+
+@supports (interpolate-size: allow-keywords){
+  @media (prefers-reduced-motion: no-preference){
+    details::details-content{
+      block-size:0;overflow:clip;
+      transition:block-size 240ms ease,content-visibility 240ms;
+      transition-behavior:allow-discrete;
+    }
+    details[open]::details-content{block-size:auto}
+  }
+}
+
+@media (prefers-reduced-motion: no-preference){
+  /* 主题切换：只让几个大面（页面、侧栏、菜单栏、正文、盒子）跟着过渡，
+     不给全站元素挂 transition——那会拖慢滚动与重排。 */
+  body,#mdbook-sidebar,#mdbook-menu-bar,.content,
+  .box,details.sol-box,.proof,.lesson-brief,.continue-card,#back-to-top{
+    transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease;
+  }
+}
+
+@media print{
+  .figure-zoom,.continue-card{display:none!important}
+  .content figure[data-zoomable="1"]::after{content:none}
+  html.figure-reveal .content figure:not(.figure-in){opacity:1;transform:none}
+}
+
+/* ======================================================================== *
+ * §10  公式复制与吐司（结构与行为见 theme/js/framework.js）
+ * ------------------------------------------------------------------------
+ * 按钮挂在行间公式所在的 <p> 上（:has 选不到时退回到公式容器），因此宽公式
+ * 横向滚动时按钮不会跟着跑。隐藏态用 pointer-events 而不是 visibility：
+ * 不可见时鼠标点不到，但仍可用 Tab 聚焦（键盘可达不能靠可见性换）。
+ * ======================================================================== */
+.content p:has(> .katex-display){position:relative}
+.content .katex-display.katex-copy-host{position:relative}
+.katex-copy{
+  position:absolute;top:2px;right:2px;z-index:2;
+  padding:4px 10px;border:1px solid var(--line-strong);border-radius:0;
+  background:var(--paper);color:var(--ink-2);
+  font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+  opacity:0;pointer-events:none;
+}
+.content p:hover > .katex-copy,
+.content p:focus-within > .katex-copy,
+.content .katex-display.katex-copy-host:hover > .katex-copy,
+.katex-copy:focus-visible{opacity:1;pointer-events:auto}
+.katex-copy:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+@media (prefers-reduced-motion: no-preference){
+  .katex-copy{transition:opacity 150ms ease,background-color 120ms ease,border-color 120ms ease,color 120ms ease}
+}
+
+.tutorials-toast{
+  position:fixed;left:50%;bottom:26px;z-index:120;
+  padding:8px 16px;border:1px solid var(--line-strong);border-radius:0;
+  background:var(--paper);color:var(--ink);
+  font:600 12px/1.4 var(--sans);letter-spacing:.02em;
+  box-shadow:0 10px 30px var(--shadow-deep);
+  opacity:0;pointer-events:none;transform:translate(-50%,8px);
+}
+.tutorials-toast.is-visible{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion: no-preference){
+  .tutorials-toast{transition:opacity 180ms ease,transform 180ms ease}
+}
+
+@media print{
+  .katex-copy,.tutorials-toast{display:none!important}
+}
+
+/* ======================================================================== *
+ * §11  右侧粘性「本页大纲」（结构与行为见 theme/js/framework.js）
+ * ------------------------------------------------------------------------
+ * 只在正文右侧真有空余时显示（判定在 JS 里，按正文右缘算，不用媒体查询猜），
+ * 出现时正文顶部的「本页内容」让位——同一信息不摆两处。
+ * ======================================================================== */
+:root{
+  /* 右栏宽度是「布局参数」：CSS 用它排栏，framework.js 用它算「右侧够不够」。
+     这两个数字必须同源——否则会出现「按 200px 判够、实际占 258px」的遮挡。 */
+  --rail-width:212px;
+  --rail-right-gap:22px;
+  --rail-text-gap:24px;
+}
+#page-rail{
+  position:fixed;right:var(--rail-right-gap);top:calc(var(--menu-bar-height,58px) + 22px);z-index:40;
+  /* border-box：宽度就是「占屏幕多少」，不然 padding 会额外撑出去（JS 按占屏宽度判余量） */
+  box-sizing:border-box;
+  width:var(--rail-width);max-height:calc(100vh - var(--menu-bar-height,58px) - 60px);
+  padding-left:14px;
+  overflow-y:auto;overscroll-behavior:contain;
+  border-left:4px solid var(--sidebar-header-border-color,var(--accent));
+  font-family:var(--sans);
+  display:none;
+}
+html.has-page-rail #page-rail{display:block}
+html.has-page-rail .page-toc{display:none}
+.page-rail-title{
+  display:block;margin:0 0 9px;color:var(--muted);
+  font:700 10px/1.4 var(--mono);letter-spacing:.12em;
+}
+#page-rail a{
+  display:block;margin:0 0 7px;
+  color:var(--ink-2);text-decoration:none;
+  font:12.5px/1.5 var(--sans);
+  /* anywhere：长英文词（Householder…）也要能断，否则条目会横向溢出被右缘裁掉 */
+  overflow-wrap:anywhere;
+}
+#page-rail a.page-rail-h3{padding-left:12px;font-size:12px;color:var(--muted)}
+#page-rail a:hover{color:var(--ink)}
+#page-rail a.is-current{color:var(--accent-text);font-weight:600}
+#page-rail::-webkit-scrollbar{width:4px}
+#page-rail::-webkit-scrollbar-thumb{background:var(--line-strong)}
+
+@media print{
+  #page-rail{display:none!important}
+}
+
+/* ======================================================================== *
+ * §12  术语悬挂提示（数据由 tools/build_glossary.py 生成，行为见 framework.js）
+ * ------------------------------------------------------------------------
+ * 术语只挂一处、只画一条虚线；提示里给一句话 + 最容易漏 + 跳定义。
+ * 打印时既无提示也无虚线（纸面上没有悬浮），正文仍是原来的字。
+ * ======================================================================== */
+.term{
+  border-bottom:1px dashed color-mix(in srgb,var(--ink-2) 42%,transparent);
+  cursor:help;
+}
+.term:hover,.term:focus-visible{
+  color:var(--accent-text);
+  border-bottom-color:var(--accent);
+}
+.term-popover{
+  position:fixed;z-index:130;
+  box-sizing:border-box;
+  width:min(360px,calc(100vw - 24px));
+  padding:12px 14px 11px;
+  border:1px solid var(--line-strong);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--ink);
+  box-shadow:0 18px 44px var(--shadow-deep);
+  font-family:var(--sans);font-size:13px;line-height:1.6;
+}
+.term-popover[hidden]{display:none}
+.term-popover-head{display:flex;align-items:baseline;gap:8px;margin:0 0 6px}
+.term-popover-head b{font:700 13.5px/1.4 var(--serif-display);letter-spacing:.01em}
+.term-popover-en{color:var(--muted);font:11px/1.4 var(--mono)}
+.term-popover-def .katex{font-size:1em}
+.term-popover-def{color:var(--ink-2)}
+.term-popover-extra{
+  margin:8px 0 0;padding:7px 10px;
+  border-left:3px solid var(--accent);
+  background:var(--paper-soft);color:var(--ink-2);
+  font-size:12.5px;
+}
+.term-popover-extra>span{
+  display:block;margin:0 0 3px;color:var(--accent-text);
+  font:700 10px/1.4 var(--mono);letter-spacing:.1em;
+}
+.term-popover-link{
+  display:inline-block;margin:9px 0 0;
+  color:var(--accent-text);text-decoration:none;
+  font:600 11.5px/1.4 var(--sans);letter-spacing:.02em;
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
+}
+.term-popover-link:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+@media print{
+  .term{border-bottom:0}
+  .term-popover{display:none!important}
+}
+
+/* 按住 Alt/Option 时，行内公式淡出底色作为提示（见 framework.js 的 Alt+点击复制）。
+   只在按住修饰键时出现，不打扰正常阅读，也不改变任何默认观感。 */
+html.katex-alt .content .katex:not(.katex-display .katex){cursor:copy}
+html.katex-alt .content .katex:not(.katex-display .katex):hover{
+  background:color-mix(in srgb,var(--accent) 12%,transparent);
+  border-radius:3px;
+}

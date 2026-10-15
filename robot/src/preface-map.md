@@ -230,7 +230,7 @@
 <figure>
 <svg height="470" viewBox="0 0 920 470" width="920" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<marker id="arr5" markerHeight="9" markerWidth="9" orient="arrow" refX="7" refY="3"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"></path></marker>
+<marker id="arr5" markerHeight="9" markerWidth="9" orient="auto" refX="7" refY="3"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"></path></marker>
 </defs>
 <g font-size="13.5" text-anchor="middle">
 <!-- 顶行：功率链 -->

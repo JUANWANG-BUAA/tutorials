@@ -15,29 +15,196 @@
 
 /* ======================================================================== *
  * §1  设计令牌 → mdBook 变量映射
+ * ------------------------------------------------------------------------
+ * 分四层，改配置只落在该落的那一层：
+ *
+ *   §1.1 主题调色板  rust / light / coal / navy / ayu **各一份独立配色**。
+ *        这五个名字必须对应五种观感：此前 light≡rust、coal≡navy≡ayu，
+ *        弹层里六项实际只有两套外观（逐项实测 page/ink/accent 完全相同）。
+ *   §1.2 语义调色板  定义/定理/例题等语义盒与插图色，只分亮、暗两套，
+ *        与具体主题解耦——新增一套主题不必重配语义色。
+ *   §1.3 派生量      把调色板映射成 mdBook 变量，并用 color-mix 算出正文
+ *        底纹、选区、悬停、表格斑马线这些装饰量（**只写一次**）。
+ *        组件（§2 起）永远只引令牌，不写颜色字面量。
+ *   §1.4 尺寸令牌    版心、侧栏、菜单栏高度与圆角/间距刻度。
+ *
+ * 于是「加一套配色」= 只在 §1.1 加一块；「改版式」只动 §1.4 与组件；
+ * 「调某个语义盒」只动 §1.2。三者互不牵连。
  * ======================================================================== */
+
+/* ---- §1.1 主题调色板 --------------------------------------------------- *
+ * 每个主题给全同一组键。两个键专供 §1.3：
+ *   --link-color  链接与侧栏激活色（亮色主题取 accent-strong：13.5px 小字号
+ *                 要过 AA；暗色主题取 accent，本身已达标）
+ *   --scheme      明暗标记，映射到 mdBook 的 --color-scheme
+ * ------------------------------------------------------------------------ */
 :root,
-html.light,
 html.rust{
-  /* —— Academy 基本色板（亮色）—— */
-  --page:#f8f4ec;
-  --sidebar:#f0e9dd;
-  --paper:#fefaf2;
-  --paper-soft:#f4eee4;
-  --ink:#171513;
-  --ink-2:#5d564c;
-  --muted:#6f675b;          /* 正文次级灰：在 page/sidebar 上均 ≥4.5:1 */
-  --line:#d9cfbf;
-  --line-strong:#b8a995;
-  --control-line:#8f806d;
-  --accent:#b96543;         /* 仅作线条、底色、进度条等装饰 */
-  --accent-strong:#9f5033;
-  --accent-text:#9f5033;    /* 小字号彩色文字：在 page(5.2)/sidebar(4.7) 上达标 */
-  --sage:#6f8f82;
+  /* Rust · 暖纸（品牌亮色） */
+  --page:#f8f4ec;--sidebar:#f0e9dd;--paper:#fefaf2;--paper-soft:#f4eee4;
+  --ink:#171513;--ink-2:#5d564c;--muted:#6f675b;
+  --line:#d9cfbf;--line-strong:#b8a995;--control-line:#8f806d;
+  --accent:#b96543;--accent-strong:#9f5033;--accent-text:#9f5033;
+  --accent-soft:rgba(185,101,67,.10);--sage:#6f8f82;
   --shadow-ink:rgba(50,40,29,.86);
-  --accent-soft:rgba(185,101,67,.10);
-  --surface-card:rgba(254,250,242,.92);
-  --surface-soft:rgba(244,238,228,.68);
+  --surface-card:rgba(254,250,242,.92);--surface-soft:rgba(244,238,228,.68);
+  --mark-bg:#f0c9a8;
+  --link-color:var(--accent-strong);
+  --scheme:light;
+}
+
+html.light{
+  /* Light · 中性白纸（不带暖调，蓝灰强调） */
+  --page:#ffffff;--sidebar:#f4f5f6;--paper:#ffffff;--paper-soft:#f3f4f6;
+  --ink:#131313;--ink-2:#4b4f54;--muted:#666b71;
+  --line:#e2e4e7;--line-strong:#c3c7cc;--control-line:#9aa0a6;
+  --accent:#2f6fb0;--accent-strong:#245a91;--accent-text:#245a91;
+  --accent-soft:rgba(47,111,176,.10);--sage:#4f7a6a;
+  --shadow-ink:rgba(15,17,20,.86);
+  --surface-card:rgba(255,255,255,.94);--surface-soft:rgba(243,244,246,.72);
+  --mark-bg:#cfe0f3;
+  --link-color:var(--accent-strong);
+  --scheme:light;
+}
+
+html.coal{
+  /* Coal · 中性深灰（冷灰蓝强调） */
+  --page:#15171a;--sidebar:#1a1c20;--paper:#1f2125;--paper-soft:#26292e;
+  --ink:#e6e7e8;--ink-2:#b7b9bc;--muted:#8b8e92;
+  --line:#383c41;--line-strong:#4c5157;--control-line:#666c73;
+  --accent:#7ba7d4;--accent-strong:#9dc0e4;--accent-text:#9dc0e4;
+  --accent-soft:rgba(123,167,212,.12);--sage:#8aa79b;
+  --shadow-ink:rgba(0,0,0,.90);
+  --surface-card:rgba(31,33,37,.94);--surface-soft:rgba(38,41,46,.70);
+  --mark-bg:#3c4653;
+  --link-color:var(--accent);
+  --scheme:dark;
+}
+
+html.navy{
+  /* Navy · 蓝黑（青蓝强调） */
+  --page:#101522;--sidebar:#141a2a;--paper:#1a2032;--paper-soft:#222a3d;
+  --ink:#e2e7f2;--ink-2:#b2bbd0;--muted:#8892a8;
+  --line:#2f3a52;--line-strong:#43506e;--control-line:#5d6b8c;
+  --accent:#5fa8d8;--accent-strong:#86c2e8;--accent-text:#86c2e8;
+  --accent-soft:rgba(95,168,216,.12);--sage:#7fb3a6;
+  --shadow-ink:rgba(0,0,0,.92);
+  --surface-card:rgba(26,32,50,.94);--surface-soft:rgba(34,42,61,.70);
+  --mark-bg:#33445c;
+  --link-color:var(--accent);
+  --scheme:dark;
+}
+
+html.ayu{
+  /* Ayu · 琥珀深色（**默认主题**：book.toml 的 preferred-dark-theme） */
+  --page:#0f1419;--sidebar:#141a20;--paper:#1a1f26;--paper-soft:#242a32;
+  --ink:#e8e8e8;--ink-2:#b8b8b8;--muted:#8f9398;
+  --line:#3a414a;--line-strong:#4e5661;--control-line:#687382;
+  --accent:#d6a15c;--accent-strong:#edb96f;--accent-text:#e1ad66;
+  --accent-soft:rgba(214,161,92,.12);--sage:#86a89b;
+  --shadow-ink:rgba(0,0,0,.90);
+  --surface-card:rgba(26,31,38,.94);--surface-soft:rgba(36,42,50,.70);
+  --mark-bg:#5a4a2e;
+  --link-color:var(--accent);
+  --scheme:dark;
+}
+
+/* ---- §1.2 语义调色板（只分亮/暗）------------------------------------- */
+:root,
+html.rust,
+html.light{
+  /* 语义盒子：底色 + 标签文字色 + 边框色三者成对 */
+  --def-bg:#eef3f5;--def-line:#456f7c;--def-ink:#284f5b;
+  --thm-bg:#f3f0f5;--thm-line:#705d79;--thm-ink:#55425f;
+  --ex-bg:#f1f5ef;--ex-line:#58735b;--ex-ink:#3c5740;
+  --think-bg:#f7f2e8;--think-line:#967331;--think-ink:#73551f;
+  --err-bg:#f8eeeb;--err-line:#a7473d;--err-ink:#87342d;
+  --method-bg:#edf4f3;--method-line:#447a75;--method-ink:#2e615d;
+  /* 语义锚色：只声明「这个语义是什么色相」。默认不参与渲染；一旦读者选了纸张配色，
+     prefs.css 会用它与该配色的面/墨算出盒子的底色、边框与标签文字色，
+     避免出现「苔绿纸 + 蓝盒子」这种两套颜色系统。 */
+  --sem-def:#456f7c;--sem-thm:#705d79;--sem-ex:#58735b;--sem-think:#967331;
+  --sem-err:#a7473d;--sem-method:#447a75;--sem-intuition:#3f6bb0;
+  /* 插图配色：亮色用深色，保证在浅底上可读 */
+  --fig-blue:#2456a6;--fig-purple:#4c3d99;--fig-green:#1f6b3a;
+  --fig-gold:#8a5a00;--fig-red:#9c2b25;--fig-neutral:#5b544a;
+
+  /* 明暗派生的装饰量：阴影与封面水印 */
+  --shadow-soft:color-mix(in srgb,var(--shadow-ink) 6%,transparent);
+  --shadow-deep:color-mix(in srgb,var(--shadow-ink) 12%,transparent);
+  --cover-mark:color-mix(in srgb,var(--accent) 8%,transparent);
+}
+html.coal,
+html.navy,
+html.ayu{
+  /* 同上，暗色一套 */
+  --def-bg:#19262c;--def-line:#70a0ae;--def-ink:#a4c7d0;
+  --thm-bg:#25242d;--thm-line:#9a8ba5;--thm-ink:#c8bdd0;
+  --ex-bg:#1d2924;--ex-line:#87aa89;--ex-ink:#afd0b0;
+  --think-bg:#2d291f;--think-line:#c39a51;--think-ink:#ddbf87;
+  --err-bg:#31231f;--err-line:#d57769;--err-ink:#e7a097;
+  --method-bg:#1d2b2a;--method-line:#70aaa4;--method-ink:#9acbc6;
+  --sem-def:#70a0ae;--sem-thm:#9a8ba5;--sem-ex:#87aa89;--sem-think:#c39a51;
+  --sem-err:#d57769;--sem-method:#70aaa4;--sem-intuition:#7fa1d8;
+  /* 插图配色：暗色提高亮度，线条/填充/标注在深底上才可读 */
+  --fig-blue:#7ba4e6;--fig-purple:#a99ff0;--fig-green:#6fbf87;
+  --fig-gold:#d4ad5e;--fig-red:#e08a80;--fig-neutral:#c5beb0;
+
+  --shadow-soft:color-mix(in srgb,var(--shadow-ink) 18%,transparent);
+  --shadow-deep:color-mix(in srgb,var(--shadow-ink) 31%,transparent);
+  --cover-mark:color-mix(in srgb,var(--sage) 9%,transparent);
+}
+
+/* ---- §1.3 派生量：调色板 → mdBook 变量 + 装饰量（只写一次）----------- */
+:root{
+  --bg:var(--page);
+  --fg:var(--ink);
+  --sidebar-bg:var(--sidebar);
+  --sidebar-fg:var(--ink-2);
+  --sidebar-non-existant:var(--muted);
+  --sidebar-active:var(--link-color);
+  --sidebar-spacer:var(--line);
+  --scrollbar:var(--line-strong);
+  --icons:var(--muted);
+  --icons-hover:var(--ink);
+  --links:var(--link-color);
+  --inline-code-color:var(--link-color);
+  --theme-popup-bg:var(--paper);
+  --theme-popup-border:var(--line-strong);
+  --theme-hover:color-mix(in srgb,var(--ink) 5%,transparent);
+  --quote-bg:var(--paper-soft);
+  --quote-border:var(--line);
+  --table-border-color:var(--line);
+  --table-header-bg:var(--paper-soft);
+  --table-alternate-bg:color-mix(in srgb,var(--ink) 2%,transparent);
+  --searchbar-border-color:var(--line-strong);
+  --searchbar-bg:var(--paper);
+  --searchbar-fg:var(--ink);
+  --searchbar-shadow-color:var(--line);
+  --searchresults-header-fg:var(--muted);
+  --searchresults-border-color:var(--line);
+  --searchresults-li-bg:var(--paper);
+  --search-mark-bg:var(--mark-bg);
+  --color-scheme:var(--scheme);
+  --sidebar-header-border-color:var(--sidebar-active);
+  --overlay-bg:color-mix(in srgb,var(--shadow-ink) 55%,transparent);
+
+  /* 装饰量：全部由调色板算出，换主题自动跟随，组件不写颜色字面量 */
+  --wash-accent:color-mix(in srgb,var(--accent) 7%,transparent);
+  --wash-sage:color-mix(in srgb,var(--sage) 6%,transparent);
+  --grid-line:color-mix(in srgb,var(--ink) 2%,transparent);
+  --row-hover:color-mix(in srgb,var(--ink) 4%,transparent);
+  /* 背景纹理（prefs.css §5.6）用的派生量：网格 / 方格粗线 / 点阵 / 纸张纤维。
+     全部由墨色算出，因此随明暗主题与纸张配色自动变化，不需要逐档配色值。 */
+  --grid-mid:color-mix(in srgb,var(--ink) 4%,transparent);
+  --grid-strong:color-mix(in srgb,var(--ink) 8%,transparent);
+  --dot:color-mix(in srgb,var(--ink) 15%,transparent);
+  --fiber:color-mix(in srgb,var(--ink) 4.5%,transparent);
+  --selection-bg:color-mix(in srgb,var(--accent) 22%,transparent);
+}
+
+/* ---- §1.4 尺寸令牌（与配色无关）-------------------------------------- */
+:root{
   --radius:18px;
   --radius-sm:12px;
   --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
@@ -45,170 +212,46 @@ html.rust{
   --space-12:48px;--space-16:64px;--space-20:80px;
   --grid-gap:24px;--card-padding:24px;--section-gap:48px;--text-margin:16px;
 
-  /* 语义盒子 */
-  --def-bg:#eef3f5;--def-line:#456f7c;--def-ink:#284f5b;
-  --thm-bg:#f3f0f5;--thm-line:#705d79;--thm-ink:#55425f;
-  --ex-bg:#f1f5ef;--ex-line:#58735b;--ex-ink:#3c5740;
-  --think-bg:#f7f2e8;--think-line:#967331;--think-ink:#73551f;
-  --err-bg:#f8eeeb;--err-line:#a7473d;--err-ink:#87342d;
-  --method-bg:#edf4f3;--method-line:#447a75;--method-ink:#2e615d;
+  --content-max-width:820px;
+  --page-padding:26px;
+  /* 只声明 target。mdBook 0.5 的 --sidebar-width 是派生值
+     （min(--sidebar-target-width, 80vw)，见框架 variables.css），在这里再写死
+     一份会盖住派生值：拖拽把手改的是 target，宽度却永远不动（把手拖不动）。 */
+  --sidebar-target-width:300px;
+  --menu-bar-height:58px;
 
-  /* 插图配色令牌：迁移自旧版插图的固定十六进制色值，按语义归类。
-     亮色用深色以在暖纸色上可读；暗色在下方同名覆盖。 */
-  --fig-blue:#2456a6;
-  --fig-purple:#4c3d99;
-  --fig-green:#1f6b3a;
-  --fig-gold:#8a5a00;
-  --fig-red:#9c2b25;
-  --fig-neutral:#5b544a;
-
-  /* 字体 */
+  /* 字体角色：display serif = 章节层级；text serif = 长文阅读；
+     sans = 导航与控件；mono = 编号、标签与证据 */
   --serif-display:"Iowan Old Style","Baskerville","Songti SC","STSong","Noto Serif SC",Georgia,serif;
   --serif-text:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
   --serif:var(--serif-text);
   --sans:"Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
   --mono:"SFMono-Regular","Roboto Mono",Consolas,"Liberation Mono",monospace;
-
-  /* —— 覆盖 mdBook 主题变量 —— */
-  --bg:var(--page);
-  --fg:var(--ink);
-  --sidebar-bg:var(--sidebar);
-  --sidebar-fg:var(--ink-2);
-  --sidebar-non-existant:var(--muted);
-  /* accent-strong(4.7:1) 而非 accent(≈3.5:1)：侧栏链接 13.5px 属小字号，
-     hover/激活色也要过 AA */
-  --sidebar-active:var(--accent-strong);
-  --sidebar-spacer:var(--line);
-  --scrollbar:var(--line-strong);
-  --icons:var(--muted);
-  --icons-hover:var(--ink);
-  --links:var(--accent-strong);
-  --inline-code-color:var(--accent-strong);
-  --theme-popup-bg:var(--paper);
-  --theme-popup-border:var(--line-strong);
-  --theme-hover:rgba(17,17,15,.05);
-  --quote-bg:var(--paper-soft);
-  --quote-border:var(--line);
-  --table-border-color:var(--line);
-  --table-header-bg:var(--paper-soft);
-  --table-alternate-bg:rgba(0,0,0,.012);
-  --searchbar-border-color:var(--line-strong);
-  --searchbar-bg:var(--paper);
-  --searchbar-fg:var(--ink);
-  --searchbar-shadow-color:var(--line);
-  --searchresults-header-fg:var(--muted);
-  --searchresults-border-color:var(--line);
-  --searchresults-li-bg:var(--paper);
-  --search-mark-bg:#f0c9a8;
-  --color-scheme:light;
-  --sidebar-header-border-color:var(--sidebar-active);
-  --overlay-bg:rgba(23,21,19,.46);
 }
-
-html.navy,
-html.coal,
-html.ayu{
-  /* Ink dark 预设 + 两个 Ayu 调整（琲珀强调、青绿支持）。 */
-  --page:#0f1419;
-  --sidebar:#141a20;
-  --paper:#1a1f26;
-  --paper-soft:#242a32;
-  --ink:#e8e8e8;
-  --ink-2:#b8b8b8;
-  --muted:#8f9398;
-  --line:#3a414a;
-  --line-strong:#4e5661;
-  --control-line:#687382;
-  --accent:#d6a15c;
-  --accent-strong:#edb96f;
-  --accent-text:#e1ad66;
-  --accent-soft:rgba(214,161,92,.12);
-  --sage:#86a89b;
-  --shadow-ink:rgba(0,0,0,.9);
-  --surface-card:rgba(26,31,38,.94);
-  --surface-soft:rgba(36,42,50,.70);
-
-  --def-bg:#19262c;--def-line:#70a0ae;--def-ink:#a4c7d0;
-  --thm-bg:#25242d;--thm-line:#9a8ba5;--thm-ink:#c8bdd0;
-  --ex-bg:#1d2924;--ex-line:#87aa89;--ex-ink:#afd0b0;
-  --think-bg:#2d291f;--think-line:#c39a51;--think-ink:#ddbf87;
-  --err-bg:#31231f;--err-line:#d57769;--err-ink:#e7a097;
-  --method-bg:#1d2b2a;--method-line:#70aaa4;--method-ink:#9acbc6;
-
-  /* 插图配色（暗色）：提高亮度，保证线条、填充与标注在深底上可读 */
-  --fig-blue:#7ba4e6;
-  --fig-purple:#a99ff0;
-  --fig-green:#6fbf87;
-  --fig-gold:#d4ad5e;
-  --fig-red:#e08a80;
-  --fig-neutral:#c5beb0;
-
-  --bg:var(--page);
-  --fg:var(--ink);
-  --sidebar-bg:var(--sidebar);
-  --sidebar-fg:var(--ink-2);
-  --sidebar-non-existant:var(--muted);
-  --sidebar-active:var(--accent);
-  --sidebar-spacer:var(--line);
-  --scrollbar:var(--line-strong);
-  --icons:var(--muted);
-  --icons-hover:var(--ink);
-  --links:var(--accent);
-  --inline-code-color:var(--accent);
-  --theme-popup-bg:var(--paper);
-  --theme-popup-border:var(--line-strong);
-  --theme-hover:rgba(255,255,255,.05);
-  --quote-bg:var(--paper-soft);
-  --quote-border:var(--line);
-  --table-border-color:var(--line);
-  --table-header-bg:var(--paper-soft);
-  --table-alternate-bg:rgba(255,255,255,.02);
-  --searchbar-border-color:var(--line-strong);
-  --searchbar-bg:var(--paper);
-  --searchbar-fg:var(--ink);
-  --searchbar-shadow-color:var(--line);
-  --searchresults-header-fg:var(--muted);
-  --searchresults-border-color:var(--line);
-  --searchresults-li-bg:var(--paper);
-  --search-mark-bg:#5a4a2e;
-  --color-scheme:dark;
-  --sidebar-header-border-color:var(--sidebar-active);
-  --overlay-bg:rgba(0,0,0,.55);
-}
-
-/* 版心与导航尺寸 */
-:root{
-  --content-max-width:820px;
-  --page-padding:26px;
-  --sidebar-width:300px;
-  --sidebar-target-width:300px;
-  --menu-bar-height:58px;
-  --reading-w:820px;
-}
-
 /* ======================================================================== *
  * §2  mdBook 框架适配
  * ======================================================================== */
 body{
   background:
-    radial-gradient(circle at 8% 0%,rgba(185,101,67,.07),transparent 24%),
-    radial-gradient(circle at 96% 100%,rgba(111,143,130,.06),transparent 26%),
-    linear-gradient(90deg,rgba(24,21,19,.02) 1px,transparent 1px),
-    linear-gradient(rgba(24,21,19,.02) 1px,transparent 1px),
+    radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
+    radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 26%),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
     var(--page);
   background-size:auto,auto,28px 28px,28px 28px,auto;
   font-family:var(--serif-text);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
-html.navy body,html.coal body,html.ayu body{
-  background:
-    radial-gradient(circle at 8% 0%,rgba(214,161,92,.055),transparent 24%),
-    radial-gradient(circle at 96% 100%,rgba(134,168,155,.035),transparent 26%),
-    var(--page);
-}
-::selection{background:rgba(197,74,38,.22)}
-a{color:var(--accent-strong)}
-html.navy a,html.coal a,html.ayu a{color:var(--accent)}
+/* 底纹不再按主题各写一份：--wash-accent / --wash-sage / --grid-line 由
+   §1.3 从调色板算出，换主题（含新增主题）自动跟随。 */
+::selection{background:var(--selection-bg)}
+/* 链接配色只有一个来源：--links 令牌（浅色 = accent-strong、暗色 = accent，见 §1）。
+   这里曾另有一条 `html.navy a,…{color:var(--accent)}` 兜底，它与 mdBook 自带的
+   `.chapter li a{color:var(--sidebar-fg)}` 特异性打平（同为 0,1,2）而靠后加载胜出，
+   把侧栏链接的 hover 与 .active 一并压成同色——暗色主题下侧栏没有悬停反馈、当前项
+   也认不出来。正文链接由 mdBook 的 `.content a:link{color:var(--links)}` 覆盖，
+   故兜底删掉，只留令牌与悬停两行。 */
+a{color:var(--links)}
 a:hover{color:var(--accent-text)}
 
 /* 冷启动期禁用过渡：避免主题、侧栏状态与后注入控件在首帧闪动。 */
@@ -250,7 +293,24 @@ html:not(.tutorials-ready) *::after{
 #mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
 #mdbook-menu-bar .icon-button:active,#mdbook-menu-bar .right-buttons a:active{transform:translateY(1px) scale(.975)}
 #mdbook-menu-bar .menu-title{color:var(--ink)}
-/* 「返回教程库」（theme/js/framework.js 注入）的样式随共用层移入 framework.css §6。 */
+/* 「返回教程库」（theme/js 注入）：书内没有任何回导览首页的入口，菜单栏右侧补一个。
+   窄屏收起文案只留图标；悬停/按下的反馈与相邻图标按钮保持同一套。 */
+#mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
+#mdbook-menu-bar .portal-home{
+  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
+  font-size:13px;font-weight:500;letter-spacing:.01em;text-decoration:none;
+  color:var(--ink-2);
+  border:1px solid transparent;border-radius:10px;
+  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
+}
+#mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
+#mdbook-menu-bar .portal-home:active{transform:translateY(1px) scale(.975)}
+#mdbook-menu-bar .portal-home svg{display:block;width:15px;height:15px;fill:currentColor}
+#mdbook-menu-bar .portal-home-label{white-space:nowrap}
+@media (max-width:900px){
+  #mdbook-menu-bar .portal-home{padding:0 8px}
+  #mdbook-menu-bar .portal-home-label{display:none}
+}
 #mdbook-searchbar{
   font-family:var(--sans);font-size:13px;
   border-radius:0;
@@ -453,16 +513,22 @@ details.hint-box[open]>summary::before{transform:rotate(45deg)}
 .hint-inner p:first-child{margin-top:0}
 .hint-inner p:last-child{margin-bottom:0}
 
-/* 解答工具条（framework.js 注入）的样式随共用层移入 framework.css §5。 */
+/* 解答工具条 */
+.sol-toolbar{margin:26px 0 8px;text-align:right}
+.sol-toolbar button{
+  padding:6px 13px;border:1px solid var(--line-strong);background:var(--paper);
+  color:var(--ink-2);font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+}
+.sol-toolbar button:hover{border-color:var(--ink);color:var(--ink)}
+.sol-toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
 /* 交叉引用（[@id]） */
 a.crossref{
-  color:var(--accent-strong);
+  color:var(--links);
   border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
   text-decoration:none;white-space:nowrap;
 }
-a.crossref:hover{background:rgba(197,74,38,.1)}
-html.navy a.crossref,html.coal a.crossref,html.ayu a.crossref{color:var(--accent)}
+a.crossref:hover{background:var(--accent-soft)}
 
 
 /* ======================================================================== *
@@ -536,7 +602,43 @@ html.navy a.crossref,html.coal a.crossref,html.ayu a.crossref{color:var(--accent
 .content figure .mk-vec{fill:var(--accent-text)}
 .katex-display{margin:15px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden}
 .katex-display>.katex{font-size:1.02em}
-/* 宽公式横向滚动提示的样式随共用层移入 framework.css §5。 */
+/* 宽公式可横向滚动的视觉提示（matrix.js 标注 can-scroll / scrolled-start）：
+ * 右缘 / 左缘 28px 渐隐指向被裁掉的继续部分；滚到尽头时 JS 撤下提示。
+ * 渐隐取 --page 而非透明，避免文字从两层渐隐中透出重影。 */
+.katex-display{position:relative;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.katex-display.can-scroll::after,
+.katex-display.scrolled-start::before{
+  content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none;
+}
+.katex-display.can-scroll::after{
+  right:0;
+  background:linear-gradient(to left,var(--page),transparent);
+}
+.katex-display.scrolled-start::before{
+  left:0;
+  background:linear-gradient(to right,var(--page),transparent);
+}
+
+/* 回到顶部（theme/js/matrix.js 注入）：默认隐藏，滚过约一屏半后 .visible。
+ * right 取 112px：避开 mdBook 右缘 90px 宽的「下一页」悬停热区，
+ * 免得箭头钮与回顶钮在同一角落竖着叠成一串。 */
+#back-to-top{
+  position:fixed;right:112px;bottom:26px;z-index:60;
+  width:38px;height:38px;padding:0;
+  display:grid;place-items:center;
+  border:1px solid var(--line-strong);border-radius:50%;
+  background:var(--surface-card);color:var(--ink-2);
+  font:600 16px/1 var(--sans);cursor:pointer;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s;
+  box-shadow:0 4px 14px var(--shadow-ink);
+}
+#back-to-top.visible{opacity:1;visibility:visible;transform:none}
+#back-to-top:hover{border-color:var(--ink);color:var(--ink)}
+#back-to-top:active{transform:scale(.94)}
+@media only screen and (max-width:700px){
+  #back-to-top{right:14px;bottom:18px;width:40px;height:40px}
+}
 
 /* ======================================================================== *
  * §5  首页封面 / 导览卡片 / 目标 / 自检表
@@ -551,11 +653,8 @@ html.navy a.crossref,html.coal a.crossref,html.ayu a.crossref{color:var(--accent
 }
 .chapter-cover::after{
   content:"λ";position:absolute;top:6px;right:3px;
-  color:rgba(197,74,38,.075);font-style:italic;font-family:var(--serif-display);font-size:220px;line-height:1;pointer-events:none;
+  color:var(--cover-mark);font-style:italic;font-family:var(--serif-display);font-size:220px;line-height:1;pointer-events:none;
 }
-html.navy .chapter-cover::after,
-html.coal .chapter-cover::after,
-html.ayu .chapter-cover::after{color:rgba(138,167,157,.09)}
 .chapter-cover>*{position:relative;z-index:1}
 .chapter-cover .kicker{
   margin:0 0 36px;color:var(--muted);
@@ -622,9 +721,9 @@ html.ayu .chapter-cover::after{color:rgba(138,167,157,.09)}
 .lesson-brief{
   display:grid;grid-template-columns:repeat(3,1fr);gap:0;
   margin:24px 0 34px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-  background:var(--surface-card);box-shadow:0 18px 36px rgba(50,40,29,.06);
+  background:var(--surface-card);box-shadow:0 18px 36px var(--shadow-soft);
 }
-html.navy .lesson-brief,html.coal .lesson-brief,html.ayu .lesson-brief{box-shadow:0 24px 48px rgba(0,0,0,.28)}
+html.navy .lesson-brief,html.coal .lesson-brief,html.ayu .lesson-brief{box-shadow:0 24px 48px var(--shadow-deep)}
 .lesson-brief>div{padding:18px 20px;border-right:1px solid var(--line)}
 .lesson-brief>div:last-child{border-right:0}
 .lesson-brief .brief-label{display:block;margin-bottom:8px;color:var(--accent-text);font:700 10px/1.4 var(--mono);letter-spacing:.1em}
@@ -640,8 +739,39 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
 .obj-id{margin-right:7px;color:var(--accent-text);font:700 11px/1.4 var(--mono)}
 .obj-lv{margin-left:7px;color:var(--muted);font:10px/1.4 var(--mono);white-space:nowrap}
 
-/* §6  页内目录 / 阅读进度条 / 回到顶部 / 锚点滚动（theme/js/framework.js 注入）
- *   的样式随共用层移入 theme/css/framework.css §4–§5，三本书一套。 */
+/* ======================================================================== *
+ * §6  页内目录（theme/js/matrix.js 在 H2 ≥ 3 的页面注入）与阅读进度条
+ * ======================================================================== */
+.page-toc{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
+  margin:26px 0 30px;padding:13px 17px 11px;
+  border:1px solid var(--line);background:var(--paper-soft);
+}
+.page-toc-title{
+  grid-column:1/-1;color:var(--muted);
+  font:700 10px/1.5 var(--mono);letter-spacing:.12em;
+}
+.page-toc a{
+  color:var(--ink-2);text-decoration:none;
+  font:12.5px/1.65 var(--sans);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.page-toc a::before{
+  content:"→";margin-right:7px;color:var(--accent);
+  font:600 11px/1 var(--mono);
+}
+.page-toc a:hover{color:var(--accent-text)}
+
+/* 锚点跳转别被固定菜单栏遮住 */
+.content h1,.content h2,.content h3,.content h4{scroll-margin-top:66px}
+.content .box,.content .proof{scroll-margin-top:66px}
+/* 页内锚点平滑滚动（prefers-reduced-motion 下方的全局规则会关掉） */
+html{scroll-behavior:smooth}
+
+#progress{
+  position:fixed;top:0;left:0;z-index:150;
+  width:0;height:2px;background:var(--accent);
+}
 
 /* ======================================================================== *
  * §6.5  侧栏
@@ -678,6 +808,7 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
   .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
+  .page-toc{grid-template-columns:1fr}
   .box{padding:16px 15px 12px}
   .content table{display:block;overflow-x:auto}
 }
@@ -789,9 +920,9 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   font:700 44px/1 var(--mono);color:var(--ink);
   font-variant-numeric:tabular-nums;letter-spacing:.02em;
 }
-.arena-display.is-urgent .arena-time{color:var(--fig-red,#9c2b25)}
+.arena-display.is-urgent .arena-time{color:var(--fig-red)}
 .arena-display.is-over .arena-time{
-  color:var(--paper);background:var(--fig-red,#9c2b25);
+  color:var(--paper);background:var(--fig-red);
   padding:2px 10px;border-radius:8px;
 }
 .arena-bar{
@@ -803,7 +934,7 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   background:var(--accent-strong);
   transition:width .25s linear;
 }
-.arena-display.is-urgent ~ .arena-bar .arena-bar-fill{background:var(--fig-red,#9c2b25)}
+.arena-display.is-urgent ~ .arena-bar .arena-bar-fill{background:var(--fig-red)}
 .arena-live{display:block;margin-top:6px;color:var(--muted);font:12px/1.4 var(--sans)}
 .arena-controls{margin-top:12px;display:flex;gap:8px}
 .arena-tally{
@@ -823,7 +954,7 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   white-space:nowrap;
 }
 .arena-rank.is-s{border-color:var(--accent-strong);color:var(--accent-text)}
-.arena-rank.is-hot{border-color:var(--fig-red,#9c2b25);color:var(--fig-red,#9c2b25)}
+.arena-rank.is-hot{border-color:var(--fig-red);color:var(--fig-red)}
 @media only screen and (max-width:619.98px){
   .arena-time{font-size:34px}
 }
@@ -848,6 +979,9 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
     --control-line:#8f806d;
     /* 强调色家族：暗色下是高亮琥珀，白纸上几乎看不见 */
     --accent:#b96543;--accent-strong:#9f5033;--accent-text:#9f5033;
+    /* --links / --inline-code-color 默认继承当前主题（暗色下 = --accent），
+       打印时必须显式回落，否则正文链接与行内代码印成 4.2:1 的浅琥珀色。 */
+    --links:var(--accent-strong);--inline-code-color:var(--accent-strong);
     --accent-soft:rgba(185,101,67,.10);
     --sage:#4f6f62;--shadow-ink:rgba(50,40,29,.86);
     --surface-card:#ffffff;--surface-soft:#f6f6f4;
@@ -864,8 +998,12 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
     --table-alternate-bg:#f6f6f4;
   }
   body{background:#fefefe;font-size:11.5pt}
-  #mdbook-sidebar,#mdbook-menu-bar,.nav-wrapper,#mdbook-search-wrapper,#back-to-top{display:none!important}
-  /* 工具条与宽公式提示的打印规则随共用层移入 framework.css §8（三本一套）。 */
+  #mdbook-sidebar,#mdbook-menu-bar,#progress,.nav-wrapper,#mdbook-search-wrapper,#back-to-top{display:none!important}
+  /* 工具条只对屏幕有意义；不隐藏会印出一个「已按下」的按钮，而浏览器默认
+     不打印背景色 → 白底白字。matrix.js 的 beforeprint 恰好会把它切成按下态。 */
+  .sol-toolbar{display:none!important}
+  .katex-display.can-scroll::after,.katex-display.scrolled-start::before{content:none}
+  .katex-display.can-scroll{overflow:visible!important}
   .content{padding:0;max-width:none}
   .chapter-cover::after{display:none}
   /* 分页：整个 .box 或整张长表设 avoid 反而制造大片空白（最长盒 57 行、

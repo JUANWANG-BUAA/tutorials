@@ -11,3 +11,9 @@ __pycache__/
 
 # Anki 导出产物（tools/export_cards.py 的输出）
 output/
+
+# 本地 QA 探针脚本（.qa/，通过 playwright 运行，不进版本库）
+.qa/
+
+# playwright MCP 的临时产物
+.playwright-mcp/

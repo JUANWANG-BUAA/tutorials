@@ -13,17 +13,24 @@ language = "zh-CN"
 src = "src"
 
 [output.html]
-default-theme = "ayu"
+# 亮色默认用 Rust·暖纸（品牌亮色），暗色用 Ayu·琥珀。两者必须一个是亮色主题：
+# 跟随系统时 mdBook 取 default-theme 作亮色侧、preferred-dark-theme 作暗色侧，
+# 此前两者都写 ayu，浅色系统下也被强制成暗色（产物里 default_light_theme = "ayu"）。
+default-theme = "rust"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用《矩阵论》《数值分析》教程。
-# 外观设置只保留 mdBook 原生入口（菜单栏主题弹层），与 rustwiki 一致；不再有自建
-# 的阅读偏好面板（字体 / 字号 / 间距 / 版心 / 配色）。
-additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css"]
-# 脚本：robot.js 只声明本书配置（window.TUTORIALS.slug）；附加操作与框架 UI 全在
-# framework.js（三本共用）；search-cjk.js 的查询分词与 tools/build_search_js.mjs
-# 的索引分词逐字对应。robot-labs.js 是本书专属的交互实验。
-additional-js = ["theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework.js"]
+# 外观设置两处、各管一件事：配色 = mdBook 原生主题弹层（同 rustwiki）；
+# 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
+# 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
+# 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
+additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/page-extras.js", "theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
+# 仓库与「编辑此页」：读者发现笔误可直接改（mdBook 原生的两处入口，见菜单栏右侧）。
+# edit-url-template 里的 {path} 是相对本书根目录的路径（含 src/），故前缀只写到子目录。
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"  # FA6：GitHub 属 brand 图标，前缀为 fab-
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/robot/{path}"
 no-section-label = true
 site-url = "/tutorials/robot/"
 [output.html.search]
@@ -51,6 +58,11 @@ command = "python3 tools/mathbook.py"
 # GFM 删除线（单个 ~ 即可配对！），破坏标签结构；包装器在 pulldown 解析
 # 之前把它们改写成 &#126; 实体（见 tools/katex_wrapper.py）。
 [preprocessor.katex]
-command = "python3 tools/katex_wrapper.py"
+# 共享脚本（三本一份）：仓库根的 tools/katex_wrapper.py ✓ 路径相对本书根
+command = "python3 ../tools/katex_wrapper.py"
 no-css = true
+# output = htmlAndMathml → 除视觉 HTML 外再产出一份 MathML，里面带
+# <annotation encoding="application/x-tex"> 原始 TeX：读屏可用（此前 .katex-html
+# 是 aria-hidden，公式对读屏等于空白），也让我们能给公式加「复制 LaTeX」。
+output = "htmlAndMathml"
 after = ["mathbook"]

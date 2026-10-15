@@ -1,0 +1,457 @@
+/*
+ * 阅读偏好层 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
+ * ---------------------------------------------------------------------------
+ * 与各书的权威样式表（robot.css / na.css / matrix.css）**分工明确**：
+ *   · 权威样式表定义「这本书长什么样」——设计令牌、组件、版式基线；
+ *   · 本文件只定义「读者想把这本书调成什么样」，全部由 <html> 上的 data-* 属性驱动，
+ *     由 theme/js/prefs.js 写入。
+ *
+ * 五个轴，各管一件事：
+ *   data-font     字体（衬线 / 黑体 / 楷体 / 系统）
+ *   data-size     字号（小 / 中 / 大 / 特大）
+ *   data-density  行距与间距（紧凑 / 标准 / 宽松 / 超宽）——整套间距由令牌驱动
+ *   data-width    版心宽度（窄 / 标准 / 宽 / 超宽）
+ *   data-palette  纸张配色（随主题 / 中性 / 冷灰 / 苔绿 / 高对比）
+ *
+ * **与菜单栏主题弹层的关系**（两处入口，两个正交的轴，别混）：
+ *   主题弹层 = 明暗与代码高亮（mdBook 框架行为，写 html.<theme> 类）；
+ *   纸张配色 = 中性面与强调色的色相（本文件，写 html[data-palette]），
+ *   在任意明暗上都成立——故每套配色都给了亮、暗两份取值
+ *   （亮色：:not(.coal):not(.navy):not(.ayu)；暗色：.coal/.navy/.ayu）。
+ *
+ * 为什么是「属性驱动」而不是内联 style：
+ *   1. 偏好要能覆盖权威样式里的自定义属性（如 --content-max-width），而自定义属性
+ *      的覆盖靠选择器特异性 + 源顺序；属性选择器特异性高于 :root，本文件又最后加载。
+ *   2. 默认档（serif / m / standard / standard / theme）不写任何属性，外观与设置面板
+ *      出现之前逐像素一致——升级不改变任何读者的现有观感。
+ *
+ * 加载顺序：book.toml 的 additional-css 里排在权威样式表与 framework.css **之后**
+ * （framework.css 也接管了 .content p / li / ol / ul 的行高），这样同特异性的声明
+ * 由本文件胜出。head.hbs 在首帧前写好属性，避免先按默认外观画一帧再跳。
+ */
+
+/* ======================================================================== *
+ * §1  字体族
+ *   只换「正文/长文」的字体；章节标题仍用 display serif（标题是层级标识，
+ *   不是阅读对象），导航与控件仍用 sans（沿用权威样式表的字体角色纪律）。
+ * ======================================================================== */
+html[data-font="sans"] body,
+html[data-font="sans"] .content,
+html[data-font="sans"] .content p,
+html[data-font="sans"] .content li{font-family:var(--sans)}
+/* 无衬线正文略收紧行高与字距：黑体在同样行高下显得比衬线更松 */
+html[data-font="sans"] .content{letter-spacing:.002em}
+html[data-font="sans"] .content p,
+html[data-font="sans"] .content li{font-family:var(--sans);line-height:calc(var(--reading-lh) - .04)}
+
+html[data-font="kai"] body,
+html[data-font="kai"] .content,
+html[data-font="kai"] .content p,
+html[data-font="kai"] .content li{
+  font-family:"Kaiti SC","STKaiti","KaiTi","AR PL UKai CN","Noto Serif CJK SC",serif;
+}
+/* 楷体骨架细、字形宽，行距略放宽一点才不显得挤 */
+html[data-font="kai"] .content{letter-spacing:.012em}
+html[data-font="kai"] .content p,
+html[data-font="kai"] .content li{line-height:calc(var(--reading-lh) + .06)}
+
+html[data-font="system"] body,
+html[data-font="system"] .content,
+html[data-font="system"] .content p,
+html[data-font="system"] .content li{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;
+}
+
+/* ======================================================================== *
+ * §2  字号（s / m / l / xl；m 为基线 16.5px，不写属性）
+ * ======================================================================== */
+html[data-size="s"] .content{font-size:15px}
+html[data-size="l"] .content{font-size:17.5px}
+html[data-size="xl"] .content{font-size:19px}
+
+/* ======================================================================== *
+ * §3  行距与间距（density）
+ * ------------------------------------------------------------------------
+ * 一次调整四处：正文行高、段间距、块级（盒子/折叠/图）内边距与间距、整页留白。
+ * 实现方式是**令牌驱动**：先声明一套基线值（= 权威样式表的现值），四档只改令牌，
+ * 组件规则只写一遍。这样加一档只需加 12 个数字，不必复制一整套组件规则。
+ *
+ * 行高必须写在 .content p / li / ol / ul 上：mdBook 的 chrome 样式自带
+ * `.content p{line-height:1.45em}`，比 `.content` 更细，会把权威样式表顶掉。
+ * ======================================================================== */
+:root{
+  --reading-lh:1.82;
+  --reading-para-gap:12px;
+  --reading-h2-gap:64px;
+  --reading-h3-gap:44px;
+  --reading-h4-gap:30px;
+  --reading-box-gap:20px;
+  --reading-box-pad:18px 22px 14px;
+  --reading-proof-gap:16px;
+  --reading-proof-pad:12px 17px 6px;
+  --reading-detail-gap:13px;
+  --reading-detail-pad:10px 17px;
+  --reading-sol-pad:8px 19px 12px;
+  --reading-fig-gap:28px;
+  --reading-fig-pad:20px 18px 12px;
+  --reading-quote-gap:16px;
+  --reading-quote-pad:12px 18px;
+}
+html[data-density="compact"]{
+  --reading-lh:1.72;--reading-para-gap:8px;
+  --reading-h2-gap:46px;--reading-h3-gap:32px;--reading-h4-gap:22px;
+  --reading-box-gap:14px;--reading-box-pad:14px 18px 10px;
+  --reading-proof-gap:12px;--reading-proof-pad:10px 15px 5px;
+  --reading-detail-gap:9px;--reading-detail-pad:8px 15px;
+  --reading-sol-pad:6px 17px 10px;
+  --reading-fig-gap:20px;--reading-fig-pad:15px 14px 9px;
+  --reading-quote-gap:12px;--reading-quote-pad:10px 15px;
+}
+html[data-density="loose"]{
+  --reading-lh:2;--reading-para-gap:16px;
+  --reading-h2-gap:78px;--reading-h3-gap:54px;--reading-h4-gap:36px;
+  --reading-box-gap:26px;--reading-box-pad:22px 26px 17px;
+  --reading-proof-gap:20px;--reading-proof-pad:15px 20px 8px;
+  --reading-detail-gap:17px;--reading-detail-pad:13px 20px;
+  --reading-sol-pad:11px 22px 16px;
+  --reading-fig-gap:34px;--reading-fig-pad:24px 22px 15px;
+  --reading-quote-gap:20px;--reading-quote-pad:14px 21px;
+}
+html[data-density="roomy"]{
+  --reading-lh:2.15;--reading-para-gap:20px;
+  --reading-h2-gap:92px;--reading-h3-gap:64px;--reading-h4-gap:42px;
+  --reading-box-gap:32px;--reading-box-pad:26px 30px 20px;
+  --reading-proof-gap:24px;--reading-proof-pad:18px 24px 10px;
+  --reading-detail-gap:21px;--reading-detail-pad:16px 24px;
+  --reading-sol-pad:14px 26px 19px;
+  --reading-fig-gap:40px;--reading-fig-pad:28px 26px 18px;
+  --reading-quote-gap:24px;--reading-quote-pad:17px 25px;
+}
+
+/* 只调桌面端的页面留白：≤900px 的 --page-padding 由权威样式表的响应式段接管
+   （701–900px 收 20px，≤700px 收 16px），这里若不加宽度条件会把它顶掉。 */
+@media (min-width:901px){
+  html[data-density="compact"]{--page-padding:18px}
+  html[data-density="loose"]{--page-padding:34px}
+  html[data-density="roomy"]{--page-padding:40px}
+}
+
+.content p,.content li,.content ol,.content ul{line-height:var(--reading-lh)}
+.content p{margin:var(--reading-para-gap) 0}
+.content h2{margin:var(--reading-h2-gap) 0 20px}
+.content h3{margin:var(--reading-h3-gap) 0 12px}
+.content h4{margin:var(--reading-h4-gap) 0 6px}
+.box{margin:var(--reading-box-gap) 0;padding:var(--reading-box-pad)}
+.proof{margin:var(--reading-proof-gap) 0 4px;padding:var(--reading-proof-pad)}
+details.sol-box{margin:var(--reading-detail-gap) 0}
+details.sol-box>summary{padding:var(--reading-detail-pad)}
+.sol-inner{padding:var(--reading-sol-pad)}
+.content figure{margin:var(--reading-fig-gap) 0;padding:var(--reading-fig-pad)}
+.content blockquote{margin:var(--reading-quote-gap) 0;padding:var(--reading-quote-pad)}
+
+/* ======================================================================== *
+ * §4  版心宽度（narrow / standard / wide / full；standard 为 820px）
+ *   mdBook 把阅读列宽度放在 --content-max-width 上，改写它即可。
+ *   正文栏变宽后，右侧粘性大纲（framework.js）会因空间不足自动让位，见 §5。
+ * ======================================================================== */
+html[data-width="narrow"]{--content-max-width:680px}
+html[data-width="wide"]{--content-max-width:1000px}
+html[data-width="full"]{--content-max-width:1180px}
+
+/* ======================================================================== *
+ * §5  纸张配色（palette）
+ * ------------------------------------------------------------------------
+ * 只改「中性面 + 文字 + 线 + 强调色」这一组令牌，语义盒与插图色**不动**
+ * （它们是内容语义，不是皮肤）。派生量（底纹、选区、悬停、阴影、斑马线）由
+ * 权威样式表 §1.3 从这些令牌算出，故这里改一处，全站跟着变。
+ * 每套配色亮暗各一份，可叠加在任意明暗主题上。
+ * ======================================================================== */
+/* —— 中性 · 白纸与灰面（默认主题的观感之一，方便只想关掉暖调的人）—— */
+html[data-palette="neutral"]:not(.coal):not(.navy):not(.ayu){
+  --page:#ffffff;--sidebar:#f4f5f6;--paper:#ffffff;--paper-soft:#f3f4f6;
+  --ink:#131313;--ink-2:#4b4f54;--muted:#666b71;
+  --line:#e2e4e7;--line-strong:#c3c7cc;--control-line:#9aa0a6;
+  --accent:#2f6fb0;--accent-strong:#245a91;--accent-text:#245a91;
+  --accent-soft:rgba(47,111,176,.10);--sage:#4f7a6a;--mark-bg:#cfe0f3;
+  --link-color:var(--accent-strong);
+  --surface-card:rgba(255,255,255,.94);--surface-soft:rgba(243,244,246,.72);
+}
+html[data-palette="neutral"].coal,
+html[data-palette="neutral"].navy,
+html[data-palette="neutral"].ayu{
+  --page:#15171a;--sidebar:#1a1c20;--paper:#1f2125;--paper-soft:#26292e;
+  --ink:#e6e7e8;--ink-2:#b7b9bc;--muted:#8b8e92;
+  --line:#383c41;--line-strong:#4c5157;--control-line:#666c73;
+  --accent:#7ba7d4;--accent-strong:#9dc0e4;--accent-text:#9dc0e4;
+  --accent-soft:rgba(123,167,212,.12);--sage:#8aa79b;--mark-bg:#3c4653;
+  --link-color:var(--accent);
+  --surface-card:rgba(31,33,37,.94);--surface-soft:rgba(38,41,46,.70);
+}
+
+/* —— 冷灰 · 石板蓝 —— */
+html[data-palette="cool"]:not(.coal):not(.navy):not(.ayu){
+  --page:#f2f5f8;--sidebar:#e8edf3;--paper:#ffffff;--paper-soft:#edf1f6;
+  --ink:#14181d;--ink-2:#495260;--muted:#616a78;
+  --line:#d3dae3;--line-strong:#aab4c2;--control-line:#8791a0;
+  --accent:#4a6f96;--accent-strong:#3a5878;--accent-text:#3a5878;
+  --accent-soft:rgba(74,111,150,.10);--sage:#4f8378;--mark-bg:#cfe0f3;
+  --link-color:var(--accent-strong);
+  --surface-card:rgba(255,255,255,.93);--surface-soft:rgba(237,241,246,.70);
+}
+html[data-palette="cool"].coal,
+html[data-palette="cool"].navy,
+html[data-palette="cool"].ayu{
+  --page:#101622;--sidebar:#151d2c;--paper:#1b2334;--paper-soft:#232c3f;
+  --ink:#e4e9f3;--ink-2:#b3bccb;--muted:#8a93a3;
+  --line:#323d51;--line-strong:#47536d;--control-line:#616e8a;
+  --accent:#6f9fd0;--accent-strong:#93bce6;--accent-text:#93bce6;
+  --accent-soft:rgba(111,159,208,.14);--sage:#7fb3a6;--mark-bg:#33445c;
+  --link-color:var(--accent);
+  --surface-card:rgba(27,35,52,.94);--surface-soft:rgba(35,44,63,.70);
+}
+
+/* —— 苔绿 · 纸绿 —— */
+html[data-palette="sage"]:not(.coal):not(.navy):not(.ayu){
+  --page:#f3f6f1;--sidebar:#e9eee3;--paper:#fcfdf9;--paper-soft:#eef2e8;
+  --ink:#151a13;--ink-2:#4d5548;--muted:#616b57;
+  --line:#d6ddca;--line-strong:#b0bb9f;--control-line:#8b9578;
+  --accent:#4f7a52;--accent-strong:#3d6340;--accent-text:#3d6340;
+  --accent-soft:rgba(79,122,82,.10);--sage:#6f8f82;--mark-bg:#d3e6c8;
+  --link-color:var(--accent-strong);
+  --surface-card:rgba(252,253,249,.93);--surface-soft:rgba(238,242,232,.70);
+}
+html[data-palette="sage"].coal,
+html[data-palette="sage"].navy,
+html[data-palette="sage"].ayu{
+  --page:#101511;--sidebar:#151c16;--paper:#1b231c;--paper-soft:#252e25;
+  --ink:#e9ece6;--ink-2:#b8bfb1;--muted:#8f9683;
+  --line:#374232;--line-strong:#4b5844;--control-line:#65735c;
+  --accent:#93c08f;--accent-strong:#aed0aa;--accent-text:#aed0aa;
+  --accent-soft:rgba(147,192,143,.14);--sage:#86a89b;--mark-bg:#3b4e34;
+  --link-color:var(--accent);
+  --surface-card:rgba(27,35,28,.94);--surface-soft:rgba(37,46,37,.70);
+}
+
+/* —— 高对比 · 无障碍（把对比度推到 12:1 以上）—— */
+html[data-palette="contrast"]:not(.coal):not(.navy):not(.ayu){
+  --page:#ffffff;--sidebar:#f2f2f2;--paper:#ffffff;--paper-soft:#f2f2f2;
+  --ink:#000000;--ink-2:#1a1a1a;--muted:#3d3d3d;
+  --line:#8a8a8a;--line-strong:#4d4d4d;--control-line:#333333;
+  --accent:#a3370f;--accent-strong:#8a2c0b;--accent-text:#8a2c0b;
+  --accent-soft:rgba(163,55,15,.12);--sage:#1f6b3a;--mark-bg:#ffd479;
+  --link-color:var(--accent-strong);
+  --surface-card:#ffffff;--surface-soft:#f2f2f2;
+}
+html[data-palette="contrast"].coal,
+html[data-palette="contrast"].navy,
+html[data-palette="contrast"].ayu{
+  --page:#000000;--sidebar:#0a0a0a;--paper:#111111;--paper-soft:#1c1c1c;
+  --ink:#ffffff;--ink-2:#e0e0e0;--muted:#bdbdbd;
+  --line:#6e6e6e;--line-strong:#8f8f8f;--control-line:#a6a6a6;
+  --accent:#ffb066;--accent-strong:#ffc98f;--accent-text:#ffc98f;
+  --accent-soft:rgba(255,176,102,.16);--sage:#7fd6a0;--mark-bg:#6b4a1f;
+  --link-color:var(--accent);
+  --surface-card:rgba(17,17,17,.96);--surface-soft:rgba(28,28,28,.72);
+}
+
+/* ======================================================================== *
+ * §5.5  语义色随纸张配色协调
+ * ------------------------------------------------------------------------
+ * 语义盒（定义 / 定理 / 例题 / 思考 / 勘误 / 方法 · 公式直觉）的配色是**语义**，
+ * 不随主题换；但纸张配色换掉中性面与强调色之后，盒子若仍是原来那套色，就会出现
+ * 「苔绿纸 + 蓝盒子」「冷灰纸 + 暖金盒子」——看起来是两套颜色系统。
+ *
+ * 做法：权威样式表 §1.2 里为每个语义声明一枚**锚色**（--sem-*，只表达色相）。
+ * 这里用「锚色 + 当前配色的面 / 墨 / 线」算出三件套，每条只写一遍，因而对任意
+ * 纸张配色（含以后新增的）都成立：
+ *     底 = 锚色 13% + 卡片面      → 浅淡染色，亮暗自动适配
+ *     框 = 锚色 62% + 线色        → 有存在感但不刺眼
+ *     字 = 锚色 55% + 正文墨色    → 亮色下压暗、暗色下提亮，始终可读
+ * 插图配色（--fig-*）刻意不动：它是插图的语义色，跨主题一致更有用。
+ * ======================================================================== */
+html[data-palette]{
+  --def-bg:color-mix(in srgb,var(--sem-def) 13%,var(--surface-card));
+  --def-line:color-mix(in srgb,var(--sem-def) 62%,var(--line-strong));
+  --def-ink:color-mix(in srgb,var(--sem-def) 55%,var(--ink));
+
+  --thm-bg:color-mix(in srgb,var(--sem-thm) 13%,var(--surface-card));
+  --thm-line:color-mix(in srgb,var(--sem-thm) 62%,var(--line-strong));
+  --thm-ink:color-mix(in srgb,var(--sem-thm) 55%,var(--ink));
+
+  --ex-bg:color-mix(in srgb,var(--sem-ex) 13%,var(--surface-card));
+  --ex-line:color-mix(in srgb,var(--sem-ex) 62%,var(--line-strong));
+  --ex-ink:color-mix(in srgb,var(--sem-ex) 55%,var(--ink));
+
+  --think-bg:color-mix(in srgb,var(--sem-think) 13%,var(--surface-card));
+  --think-line:color-mix(in srgb,var(--sem-think) 62%,var(--line-strong));
+  --think-ink:color-mix(in srgb,var(--sem-think) 55%,var(--ink));
+
+  --err-bg:color-mix(in srgb,var(--sem-err) 13%,var(--surface-card));
+  --err-line:color-mix(in srgb,var(--sem-err) 62%,var(--line-strong));
+  --err-ink:color-mix(in srgb,var(--sem-err) 55%,var(--ink));
+
+  --method-bg:color-mix(in srgb,var(--sem-method) 13%,var(--surface-card));
+  --method-line:color-mix(in srgb,var(--sem-method) 62%,var(--line-strong));
+  --method-ink:color-mix(in srgb,var(--sem-method) 55%,var(--ink));
+
+  --intuition-bg:color-mix(in srgb,var(--sem-intuition) 13%,var(--surface-card));
+  --intuition-line:color-mix(in srgb,var(--sem-intuition) 62%,var(--line-strong));
+  --intuition-ink:color-mix(in srgb,var(--sem-intuition) 55%,var(--ink));
+
+  /* 阴影去暖：暖纸的阴影是棕调，落在冷 / 绿配色上会发脏（暗色档保持纯黑） */
+}
+html[data-palette]:not(.coal):not(.navy):not(.ayu){--shadow-ink:color-mix(in srgb,var(--ink) 88%,transparent)}
+html[data-palette].coal,
+html[data-palette].navy,
+html[data-palette].ayu{--shadow-ink:rgba(0,0,0,.90)}
+
+/* ======================================================================== *
+ * §5.6  背景纹理（bg）
+ * ------------------------------------------------------------------------
+ * 七个档：随主题（默认，= 权威样式表的径向暖光 + 28px 细网格）/ 纯净 / 细网格 /
+ * 方格纸 / 横线稿纸 / 点阵 / 纸张纤维。全部由令牌算出（--grid-line、--grid-strong、
+ * --dot、--fiber、--wash-*），因此与明暗主题、纸张配色都正交，不必逐档配色值。
+ * 不透明度压在 2–14%：只做「纸感」，不与正文抢注意力；打印一律回到纯色。
+ * ======================================================================== */
+/* 每个档位只声明「图案 + 重复尺寸」两个自定义属性，再统一落到两层上：
+   · body            —— 页面外侧（侧栏之外）的底；
+   · .page-wrapper   —— mdBook 自己会给它画一层不透明底（background:var(--bg)），
+                        正文区的底纹其实一直被它挡住，所以必须同时画在这里。 */
+html[data-bg="plain"]{--bg-stack:none;--bg-size:auto}
+
+/* 随主题 · 底纹：把权威样式表那套「径向暖光 + 28px 细网格」也铺到正文区。
+   默认档（随主题）保持原样——它的底纹被 mdBook 的 .page-wrapper 挡在正文之外，
+   只有页面外围看得见；想整页都有纸感就选这一档。 */
+html[data-bg="wash"]{
+  --bg-stack:
+    radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
+    radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 26%),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    var(--page);
+  --bg-size:auto,auto,28px 28px,28px 28px,auto;
+}
+
+html[data-bg="grid"]{
+  --bg-stack:
+    linear-gradient(90deg,var(--grid-mid) 1px,transparent 1px),
+    linear-gradient(var(--grid-mid) 1px,transparent 1px),
+    var(--page);
+  --bg-size:28px 28px,28px 28px,auto;
+}
+
+/* 方格纸：28px 细格 + 140px 粗格（数学草稿纸的比例） */
+html[data-bg="graph"]{
+  --bg-stack:
+    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-mid) 1px,transparent 1px),
+    linear-gradient(var(--grid-mid) 1px,transparent 1px),
+    var(--page);
+  --bg-size:140px 140px,140px 140px,28px 28px,28px 28px,auto;
+}
+
+/* 横线稿纸：只画横线，28px 一行 */
+html[data-bg="ruled"]{
+  --bg-stack:repeating-linear-gradient(to bottom,var(--grid-mid) 0 1px,transparent 1px 28px),var(--page);
+  --bg-size:auto,auto;
+}
+
+/* 点阵：20px 一个点 */
+html[data-bg="dots"]{
+  --bg-stack:radial-gradient(circle at 1px 1px,var(--dot) 1.1px,transparent 1.8px),var(--page);
+  --bg-size:20px 20px,auto;
+}
+
+/* 纸张纤维：三组极淡的斜向帘纹，模拟手工纸的织理 */
+html[data-bg="paper"]{
+  --bg-stack:
+    repeating-linear-gradient(115deg,var(--fiber) 0 1px,transparent 1px 5px),
+    repeating-linear-gradient(25deg,var(--fiber) 0 1px,transparent 1px 7px),
+    repeating-linear-gradient(to bottom,var(--fiber) 0 1px,transparent 1px 3px),
+    var(--page);
+  --bg-size:auto,auto,auto,auto;
+}
+
+html[data-bg] body,
+html[data-bg] .page-wrapper{
+  background:var(--bg-stack);
+  background-size:var(--bg-size);
+}
+
+/* ======================================================================== *
+ * §6  设置面板（结构由 theme/js/prefs.js 注入）
+ *   按钮挨着原生主题钮放在菜单栏左侧（同属「外观」），面板由 JS 定位到按钮下方。
+ * ======================================================================== */
+/* 按钮的盒子与 hover / 按下反馈全部交给 .icon-button（框架 + 权威样式表），
+   这里只补「展开时」比原生多出来的一档状态与 Aa 字形本身。 */
+#mdbook-menu-bar .prefs-toggle[aria-expanded="true"]{color:var(--ink);background:var(--paper);border-color:var(--line-strong)}
+#mdbook-menu-bar .prefs-toggle .prefs-aa{font:700 15px/1 var(--serif-display);letter-spacing:.02em}
+
+.prefs-panel{
+  position:absolute;top:100%;left:10px;z-index:1000;
+  box-sizing:border-box;
+  width:min(360px,calc(100vw - 20px));
+  /* 五个轴后面板变高：矮屏（笔记本半屏、横放手机）给一个上限并内部滚动，
+     否则最后两行会被顶出视口，读者以为没有这些选项。 */
+  max-height:calc(100vh - var(--menu-bar-height, 58px) - 16px);
+  overflow-y:auto;overscroll-behavior:contain;
+  padding:13px 15px 11px;
+  border:1px solid var(--line-strong);border-radius:14px;
+  background:var(--paper);
+  box-shadow:0 18px 40px var(--shadow-ink);
+  font-family:var(--sans);color:var(--ink);
+}
+.prefs-panel[hidden]{display:none}
+.prefs-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin:0 0 10px;
+}
+.prefs-head b{font:700 13px/1.3 var(--sans);letter-spacing:.02em}
+.prefs-head span{color:var(--muted);font:10px/1.4 var(--mono)}
+.prefs-row{margin:0 0 11px}
+.prefs-row:last-of-type{margin-bottom:4px}
+.prefs-label{
+  display:block;margin:0 0 6px;color:var(--muted);
+  font:700 10px/1.4 var(--mono);letter-spacing:.1em;
+}
+.prefs-opts{display:flex;flex-wrap:wrap;gap:6px}
+/* 预设按钮：与站内既有的同族控件（权威样式表里的 .sol-toolbar button）同一套语言 */
+.prefs-opt{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 13px;border:1px solid var(--line-strong);border-radius:0;
+  background:var(--paper);color:var(--ink-2);
+  font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+  transition:border-color 120ms ease,background 120ms ease,color 120ms ease,box-shadow 120ms ease;
+}
+.prefs-opt:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+.prefs-opt[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.prefs-opt[aria-pressed="true"]:hover{box-shadow:0 0 0 2px var(--accent-soft)}
+.prefs-swatch{
+  width:10px;height:10px;flex:0 0 auto;
+  border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);
+  background:var(--swatch,transparent);
+}
+.prefs-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+}
+.prefs-note{color:var(--muted);font:10.5px/1.5 var(--sans)}
+.prefs-reset{
+  padding:5px 11px;border:1px solid var(--line-strong);border-radius:0;
+  background:transparent;color:var(--ink-2);
+  font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+}
+.prefs-reset:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+
+/* 窄屏：面板贴到视口两侧，避免超出右缘被裁 */
+@media (max-width:560px){
+  .prefs-panel{left:8px;width:calc(100vw - 16px)}
+}
+
+/* 打印：偏好面板属屏幕阅读；字体 / 字号 / 密度 / 配色仍尊重读者选择（见上） */
+@media print{
+  .prefs-toggle,.prefs-panel{display:none!important}
+  /* 纸面上不要纹理：属性选择器的特异性高于打印块里的 body 规则，这里显式压回 */
+  html[data-bg] body,html[data-bg] .page-wrapper{background:var(--page)!important}
+}

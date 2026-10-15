@@ -131,8 +131,9 @@
       host.hidden = true;
       return;
     }
-    build(host);
+    var draw = build(host);
     host.classList.add("lab-ready");
+    return draw;
   }
 
   /* ---------------- 实验 1：欧拉角（ZYZ / RPY） ---------------- */
@@ -211,6 +212,9 @@
     }
 
     function draw() {
+      /* 每次重绘都重新取色：调色板在 lab 创建时被缓存过，不刷新的话换了主题或
+         纸张配色，画布仍是旧颜色（画布不跟着走，正是「两套系统」的观感来源）。 */
+      c = palette();
       var s = fit(canvas, 0.52);
       var ctx = s.ctx, w = s.w, h = s.h;
       var R = state.mode === "zyz" ? zyzMatrix(state.phi, state.theta, state.psi) : rpyMatrix(state.phi, state.theta, state.psi);
@@ -264,6 +268,7 @@
 
     draw();
     window.addEventListener("resize", draw);
+    return draw;
   }
 
 
@@ -302,6 +307,9 @@
     }
 
     function draw() {
+      /* 每次重绘都重新取色：调色板在 lab 创建时被缓存过，不刷新的话换了主题或
+         纸张配色，画布仍是旧颜色（画布不跟着走，正是「两套系统」的观感来源）。 */
+      c = palette();
       var s = fit(canvas, 0.5);
       var ctx = s.ctx, w = s.w, h = s.h;
       var reach = state.L[0] + state.L[1] + state.L[2];
@@ -382,6 +390,7 @@
 
     draw();
     window.addEventListener("resize", draw);
+    return draw;
   }
 
   /* ---------------- 实验 3：点对点轨迹规划（三次 / 五次 / LSPB） ---------------- */
@@ -434,6 +443,8 @@
     }
 
     function draw() {
+      /* 同上：每次重绘重新取色（本实验的 c 声明在 398 行） */
+      c = palette();
       lam.input.disabled = state.kind !== "lspb";
       var s = fit(canvas, 0.62);
       var ctx = s.ctx, w = s.w, h = s.h;
@@ -490,6 +501,7 @@
 
     draw();
     window.addEventListener("resize", draw);
+    return draw;
   }
 
   /* ---------------- 实验 4：拟人臂 DH 建系（分步构造 + 可旋转视角） ---------------- */
@@ -561,6 +573,9 @@
     }
 
     function draw() {
+      /* 每次重绘都重新取色：调色板在 lab 创建时被缓存过，不刷新的话换了主题或
+         纸张配色，画布仍是旧颜色（画布不跟着走，正是「两套系统」的观感来源）。 */
+      c = palette();
       var s = fit(canvas, 0.56);
       var ctx = s.ctx, w = s.w, h = s.h;
       var m = model();
@@ -715,6 +730,23 @@
 
     draw();
     window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ---------------- 主题 / 纸张配色变化 → 全部重绘 ----------------
+   * 四个实验的取色都发生在 draw() 里（fit() 会调 palette()），所以换主题或换纸张
+   * 配色后必须重画一次，否则画布会停在旧配色上——那是「两套系统」的观感来源之一。
+   * mdBook 换主题改写 <html class>，纸张配色改写 <html data-palette>，两者都盯。
+   */
+  var redraws = [];
+  function watchRepaint() {
+    if (!window.MutationObserver) return;
+    new MutationObserver(function () {
+      redraws.forEach(function (fn) { try { fn(); } catch (error) { /* 单个实验出错不影响其余 */ } });
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "style", "data-palette"]
+    });
   }
 
   /* ---------------- 引导 ---------------- */
@@ -727,7 +759,8 @@
       var builder = registry[name];
       if (builder === undefined) return;
       try {
-        mount(host, builder);
+        var draw = mount(host, builder);
+        if (typeof draw === "function") redraws.push(draw);
       } catch (error) {
         host.hidden = true;
       }
@@ -736,4 +769,5 @@
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+  watchRepaint();
 })();

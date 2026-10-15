@@ -363,7 +363,7 @@
   if (window.MutationObserver) {
     new MutationObserver(restage).observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class", "style"]
+      attributeFilter: ["class", "style", "data-palette"]   /* 纸张配色也会改调色板 */
     });
   }
 

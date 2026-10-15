@@ -44,7 +44,10 @@ jobs:
             # mdBook 自带分词器不处理中文，「数域」「过渡矩阵」这类词进不了索引，
             # 中文全文搜索会形同虚设。构建后用字符 n-gram 重建索引（这一步曾在
             # CI 里缺失，导致线上中文搜索一直搜不到——见各书 README）。
-            node "$book/tools/build_search_js.mjs" "$book/book"
+            node tools/build_search_js.mjs "$book"
+            # 术语悬挂提示的数据：从各书已有的索引页（速查背记卡 / 术语索引）
+            # 抽成 book/glossary.json，前端按需取用（缺失时自动不增强）。
+            python3 tools/build_glossary.py "$book"
             mv "$book/book" "_site/$book"
           done
           cp site-index.html _site/index.html
