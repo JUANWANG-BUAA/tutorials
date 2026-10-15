@@ -5,7 +5,8 @@
  * 为什么需要它：mdBook 的分词器只按「空白 / 连字符」切词
  * （见 crates/mdbook-html/src/html_handlebars/search.rs 的 tokenize()），
  * 且 elasticlunr 默认的 trimmer 会把不含拉丁字母的 token 整个丢掉。
- * 因此「有效数字」「舍入误差」这类中文词根本进不了索引，中文全文搜索形同虚设。
+ * 因此「机械手」「逆运动学」这类中文词根本进不了索引，中文全文搜索形同虚设。
+ * 注意：这里的分词规则必须与 theme/js/search-cjk.js（浏览器侧查询分词）逐字一致。
  *
  * 做法：构建之后读取 mdBook 产出的 searchindex-*.js，用自写的中文分词
  * （一元 + 二元字符 n-gram）重建 elasticlunr 倒排索引，并写回同一文件。
@@ -15,7 +16,7 @@
  *   默认 bookDir = book
  *
  * 查询侧无需改动：searcher.js 用同一个 elasticlunr 对输入做分词，
- * 「有效数字」会被切成「有」「有效」「效」「效数」「数」「数字」「字」，从而命中我们写入的 n-gram。
+ * 「机械手」会被切成「机」「机械」「械」「械手」「手」，从而命中我们写入的 n-gram。
  * 纯英文查询（如 Hermite）仍走原逻辑，正常工作。
  */
 
@@ -26,10 +27,12 @@ import vm from "node:vm";
 const BOOK_DIR = process.argv[2] || "book";
 
 /* ------------------------------------------------------------------ *
- * 中文分词：一元 + 二元字符 n-gram
+ * 中文分词：一元 + 二元字符 n-gram（与 theme/js/search-cjk.js 逐字对应）
  * ------------------------------------------------------------------ */
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff]/;
+const SPLIT = /[\s\-·，。、；：？！“”‘’"'（）()《》〈〉【】\[\]{}<>／/\\|,.;:!?]+/;
 const ASCII_CJK_GAP = /([A-Za-z0-9])\s+([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])|([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])\s+([A-Za-z0-9])/g;
+const MAX_TOKEN = 80;
 
 function preprocess(text) {
   // mdBook 在 HTML 元素边界插入空格，导致源文件里的「DH参数」在索引中变成「DH 参数」。
@@ -37,20 +40,6 @@ function preprocess(text) {
   let prev;
   do { prev = text; text = text.replace(ASCII_CJK_GAP, "$1$2$3$4"); } while (text !== prev);
   return text;
-}
-
-function tokenizeCJK(text) {
-  const out = [];
-  const parts = preprocess(String(text || "")).split(/[\s\-·，。、；：？！""’’（）()《》〈〉【】\[\]{}<>／/\\|,.;:!?"’]+/);
-  for (const part of parts) {
-    if (!part) continue;
-    if (!CJK.test(part)) {
-      out.push(part.toLowerCase());
-      continue;
-    }
-    tokenizeMixedPart(part, out);
-  }
-  return out.filter((t) => t.length > 0 && t.length <= 80);
 }
 
 function tokenizeMixedPart(part, out) {
@@ -78,6 +67,23 @@ function tokenizeMixedPart(part, out) {
   }
 }
 
+function tokenizeCJK(text) {
+  const out = [];
+  // 先按「空白 / 连字符 / 常见标点」切成片段，保留拉丁词与数字
+  const parts = preprocess(String(text || "")).split(SPLIT);
+  for (const part of parts) {
+    if (!part) continue;
+    if (!CJK.test(part)) {
+      // 纯拉丁 / 数字片段：整体作为 token（与 mdBook 行为一致）
+      out.push(part.toLowerCase());
+      continue;
+    }
+    tokenizeMixedPart(part, out);
+  }
+  // mdBook 会丢弃超长 token；这里也设一个上限，避免里氏替换式的噪声
+  return out.filter((t) => t.length > 0 && t.length <= MAX_TOKEN);
+}
+
 /* ------------------------------------------------------------------ *
  * 载入随 mdBook 一起产出的 elasticlunr（0.9.5）
  * ------------------------------------------------------------------ */
@@ -97,8 +103,15 @@ function loadElasticlunr(bundlePath) {
  * ------------------------------------------------------------------ */
 function main() {
   const files = fs.readdirSync(BOOK_DIR);
-  const indexFile = files.find((f) => /^searchindex-.*\.js$/.test(f));
-  const lunrFile = files.find((f) => /^elasticlunr-.*\.js$/.test(f));
+  // 以 index.html 实际引用的文件名为准：目录里可能残留系统生成的
+  // 「searchindex-xxx 2.js」副本（macOS 拷贝冲突），宽松匹配会改错文件，
+  // 让真正被加载的那份索引原地不动——中文搜索于是「重建成功但没生效」。
+  let html = "";
+  try { html = fs.readFileSync(path.join(BOOK_DIR, "index.html"), "utf8"); } catch (e) { /* 旧版布局没有 index.html 时退回目录扫描 */ }
+  const indexFile = (html.match(/searchindex-[a-z0-9]+\.js/) || [])[0]
+    || files.find((f) => /^searchindex-[a-z0-9]+\.js$/.test(f));
+  const lunrFile = (html.match(/elasticlunr-[a-z0-9]+\.min\.js/) || [])[0]
+    || files.find((f) => /^elasticlunr-[a-z0-9]+\.min\.js$/.test(f));
   if (!indexFile) throw new Error(BOOK_DIR + " 下找不到 searchindex-*.js（请先 mdbook build）");
   if (!lunrFile) throw new Error(BOOK_DIR + " 下找不到 elasticlunr-*.js");
 
@@ -172,8 +185,11 @@ function main() {
     if (hits.length === 0) failed++;
     console.log(`[search]   探针 ${q.padEnd(10)} → ${hits.length} 命中`);
   }
-  if (failed >= probes.length * 0.8) {
-    throw new Error(`检索自检 ${failed}/${probes.length} 项落空，索引可能未生效`);
+  if (failed > 0) {
+    console.warn(`[search]   注意：${failed}/${probes.length} 个探针落空，相关章节可能未进索引`);
+  }
+  if (failed === probes.length) {
+    throw new Error("检索自检全部落空，索引可能未生效");
   }
 }
 

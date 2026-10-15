@@ -19,6 +19,9 @@ preferred-dark-theme = "ayu"
 # 外观设置只保留 mdBook 原生入口（菜单栏主题弹层），与 rustwiki 一致；不再有自建
 # 的阅读偏好面板（字体 / 字号 / 间距 / 版心 / 配色）。
 additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css"]
+# 脚本：robot.js 只声明本书配置（window.TUTORIALS.slug）；附加操作与框架 UI 全在
+# framework.js（三本共用）；search-cjk.js 的查询分词与 tools/build_search_js.mjs
+# 的索引分词逐字对应。robot-labs.js 是本书专属的交互实验。
 additional-js = ["theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true

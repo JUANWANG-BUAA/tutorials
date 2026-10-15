@@ -212,9 +212,9 @@ html.navy a,html.coal a,html.ayu a{color:var(--accent)}
 a:hover{color:var(--accent-text)}
 
 /* 冷启动期禁用过渡：避免主题、侧栏状态与后注入控件在首帧闪动。 */
-html:not(.matrix-ready) *,
-html:not(.matrix-ready) *::before,
-html:not(.matrix-ready) *::after{
+html:not(.tutorials-ready) *,
+html:not(.tutorials-ready) *::before,
+html:not(.tutorials-ready) *::after{
   animation:none!important;
   scroll-behavior:auto!important;
   transition:none!important;
@@ -250,24 +250,7 @@ html:not(.matrix-ready) *::after{
 #mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
 #mdbook-menu-bar .icon-button:active,#mdbook-menu-bar .right-buttons a:active{transform:translateY(1px) scale(.975)}
 #mdbook-menu-bar .menu-title{color:var(--ink)}
-/* 「返回教程库」（theme/js 注入）：书内没有任何回导览首页的入口，菜单栏右侧补一个。
-   窄屏收起文案只留图标；悬停/按下的反馈与相邻图标按钮保持同一套。 */
-#mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
-#mdbook-menu-bar .portal-home{
-  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
-  font-size:13px;font-weight:500;letter-spacing:.01em;text-decoration:none;
-  color:var(--ink-2);
-  border:1px solid transparent;border-radius:10px;
-  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
-}
-#mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
-#mdbook-menu-bar .portal-home:active{transform:translateY(1px) scale(.975)}
-#mdbook-menu-bar .portal-home svg{display:block;width:15px;height:15px;fill:currentColor}
-#mdbook-menu-bar .portal-home-label{white-space:nowrap}
-@media (max-width:900px){
-  #mdbook-menu-bar .portal-home{padding:0 8px}
-  #mdbook-menu-bar .portal-home-label{display:none}
-}
+/* 「返回教程库」（theme/js/framework.js 注入）的样式随共用层移入 framework.css §6。 */
 #mdbook-searchbar{
   font-family:var(--sans);font-size:13px;
   border-radius:0;
@@ -470,14 +453,7 @@ details.hint-box[open]>summary::before{transform:rotate(45deg)}
 .hint-inner p:first-child{margin-top:0}
 .hint-inner p:last-child{margin-bottom:0}
 
-/* 解答工具条 */
-.sol-toolbar{margin:26px 0 8px;text-align:right}
-.sol-toolbar button{
-  padding:6px 13px;border:1px solid var(--line-strong);background:var(--paper);
-  color:var(--ink-2);font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
-}
-.sol-toolbar button:hover{border-color:var(--ink);color:var(--ink)}
-.sol-toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* 解答工具条（framework.js 注入）的样式随共用层移入 framework.css §5。 */
 
 /* 交叉引用（[@id]） */
 a.crossref{
@@ -560,43 +536,7 @@ html.navy a.crossref,html.coal a.crossref,html.ayu a.crossref{color:var(--accent
 .content figure .mk-vec{fill:var(--accent-text)}
 .katex-display{margin:15px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden}
 .katex-display>.katex{font-size:1.02em}
-/* 宽公式可横向滚动的视觉提示（matrix.js 标注 can-scroll / scrolled-start）：
- * 右缘 / 左缘 28px 渐隐指向被裁掉的继续部分；滚到尽头时 JS 撤下提示。
- * 渐隐取 --page 而非透明，避免文字从两层渐隐中透出重影。 */
-.katex-display{position:relative;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
-.katex-display.can-scroll::after,
-.katex-display.scrolled-start::before{
-  content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none;
-}
-.katex-display.can-scroll::after{
-  right:0;
-  background:linear-gradient(to left,var(--page),transparent);
-}
-.katex-display.scrolled-start::before{
-  left:0;
-  background:linear-gradient(to right,var(--page),transparent);
-}
-
-/* 回到顶部（theme/js/matrix.js 注入）：默认隐藏，滚过约一屏半后 .visible。
- * right 取 112px：避开 mdBook 右缘 90px 宽的「下一页」悬停热区，
- * 免得箭头钮与回顶钮在同一角落竖着叠成一串。 */
-#back-to-top{
-  position:fixed;right:112px;bottom:26px;z-index:60;
-  width:38px;height:38px;padding:0;
-  display:grid;place-items:center;
-  border:1px solid var(--line-strong);border-radius:50%;
-  background:var(--surface-card);color:var(--ink-2);
-  font:600 16px/1 var(--sans);cursor:pointer;
-  opacity:0;visibility:hidden;transform:translateY(8px);
-  transition:opacity .18s ease,transform .18s ease,visibility .18s;
-  box-shadow:0 4px 14px var(--shadow-ink);
-}
-#back-to-top.visible{opacity:1;visibility:visible;transform:none}
-#back-to-top:hover{border-color:var(--ink);color:var(--ink)}
-#back-to-top:active{transform:scale(.94)}
-@media only screen and (max-width:700px){
-  #back-to-top{right:14px;bottom:18px;width:40px;height:40px}
-}
+/* 宽公式横向滚动提示的样式随共用层移入 framework.css §5。 */
 
 /* ======================================================================== *
  * §5  首页封面 / 导览卡片 / 目标 / 自检表
@@ -700,39 +640,8 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
 .obj-id{margin-right:7px;color:var(--accent-text);font:700 11px/1.4 var(--mono)}
 .obj-lv{margin-left:7px;color:var(--muted);font:10px/1.4 var(--mono);white-space:nowrap}
 
-/* ======================================================================== *
- * §6  页内目录（theme/js/matrix.js 在 H2 ≥ 3 的页面注入）与阅读进度条
- * ======================================================================== */
-.page-toc{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
-  margin:26px 0 30px;padding:13px 17px 11px;
-  border:1px solid var(--line);background:var(--paper-soft);
-}
-.page-toc-title{
-  grid-column:1/-1;color:var(--muted);
-  font:700 10px/1.5 var(--mono);letter-spacing:.12em;
-}
-.page-toc a{
-  color:var(--ink-2);text-decoration:none;
-  font:12.5px/1.65 var(--sans);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.page-toc a::before{
-  content:"→";margin-right:7px;color:var(--accent);
-  font:600 11px/1 var(--mono);
-}
-.page-toc a:hover{color:var(--accent-text)}
-
-/* 锚点跳转别被固定菜单栏遮住 */
-.content h1,.content h2,.content h3,.content h4{scroll-margin-top:66px}
-.content .box,.content .proof{scroll-margin-top:66px}
-/* 页内锚点平滑滚动（prefers-reduced-motion 下方的全局规则会关掉） */
-html{scroll-behavior:smooth}
-
-#progress{
-  position:fixed;top:0;left:0;z-index:150;
-  width:0;height:2px;background:var(--accent);
-}
+/* §6  页内目录 / 阅读进度条 / 回到顶部 / 锚点滚动（theme/js/framework.js 注入）
+ *   的样式随共用层移入 theme/css/framework.css §4–§5，三本书一套。 */
 
 /* ======================================================================== *
  * §6.5  侧栏
@@ -769,7 +678,6 @@ html{scroll-behavior:smooth}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
   .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
-  .page-toc{grid-template-columns:1fr}
   .box{padding:16px 15px 12px}
   .content table{display:block;overflow-x:auto}
 }
@@ -956,12 +864,8 @@ html{scroll-behavior:smooth}
     --table-alternate-bg:#f6f6f4;
   }
   body{background:#fefefe;font-size:11.5pt}
-  #mdbook-sidebar,#mdbook-menu-bar,#progress,.nav-wrapper,#mdbook-search-wrapper,#back-to-top{display:none!important}
-  /* 工具条只对屏幕有意义；不隐藏会印出一个「已按下」的按钮，而浏览器默认
-     不打印背景色 → 白底白字。matrix.js 的 beforeprint 恰好会把它切成按下态。 */
-  .sol-toolbar{display:none!important}
-  .katex-display.can-scroll::after,.katex-display.scrolled-start::before{content:none}
-  .katex-display.can-scroll{overflow:visible!important}
+  #mdbook-sidebar,#mdbook-menu-bar,.nav-wrapper,#mdbook-search-wrapper,#back-to-top{display:none!important}
+  /* 工具条与宽公式提示的打印规则随共用层移入 framework.css §8（三本一套）。 */
   .content{padding:0;max-width:none}
   .chapter-cover::after{display:none}
   /* 分页：整个 .box 或整张长表设 avoid 反而制造大片空白（最长盒 57 行、

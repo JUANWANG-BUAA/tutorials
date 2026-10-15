@@ -1,11 +1,19 @@
 /*
  * 框架界面层 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
  * ---------------------------------------------------------------------------
- * mdBook 自带的界面（菜单栏提示、搜索框、搜索结果、帮助弹窗）文案写死在模板与
- * searcher.js / book.js 里，没有本地化配置；另有几处交互缺失（结果区无高度上限、
- * 长页无回顶部入口、折叠状态一刷新就丢）。这些与「这本书讲什么」无关、三本书
- * 完全一致，此前分散在三个 book.js 里、覆盖还各不相同（例如只有数值分析汉化了
- * 搜索面板、只有矩阵论有回到顶部），因此统一到这里一份实现。
+ * 职责两层：
+ *   ① 修补 mdBook 自带界面：菜单栏 / 搜索 / 帮助弹窗文案汉化、搜索结果面板、
+ *      回到顶部、折叠状态记忆、打印前展开；
+ *   ② 附加操作：阅读进度条、页内目录、解答工具条、宽公式滚动提示、返回教程库。
+ *      这五项此前分散在三本书各自的书名脚本里，行为与位置各不相同（解答工具条
+ *      在矩阵论固定在页首、在另两本埋在第一个解答框旁；页内目录只有机器人控制
+ *      技术收 H3；公式滚动提示只有矩阵论有），现在统一到这里一份实现。
+ *
+ * 每本书只在自己的脚本（matrix.js / na.js / robot.js）里声明本书配置：
+ *   window.TUTORIALS = { slug: "matrix", onReady: function () { … } };
+ * 本文件读取它——没有声明时按「无本书 slug」降级（例如本地预览不插返回教程库
+ * 按钮）。onReady 在共用部件全部插入后调用，书内专属部件（如数值分析的「只看
+ * 核心」图例）需要排在它们之后就写在那里。
  *
  * 本文件只做「框架 UI 的修补与增强」，不碰正文、不碰侧栏。全部按元素存在性
  * 防御：升级后 id/结构变了只是这一项不生效，不报错、不影响其余部分。
@@ -13,6 +21,8 @@
 (function () {
   "use strict";
 
+  var root = document.documentElement;
+  var CONFIG = window.TUTORIALS || {};
   var OPEN_FOLDS_KEY = "tutorials-open-folds";
 
   function store(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
@@ -187,11 +197,10 @@
   /* ======================================================================== *
    * 3  回到顶部
    *   正文页普遍超过一万像素高，菜单栏滚动后又隐藏，长读之后回页首的成本高。
-   *   滚过约一屏半后出现，右下角小圆钮。
+   *   滚过约一屏半后出现，右下角小圆钮；位置在 framework.css §4。
    * ======================================================================== */
   function buildBackToTop() {
     if (document.getElementById("back-to-top")) return;
-    var root = document.documentElement;
     var button = document.createElement("button");
     var visible = false;
     button.id = "back-to-top";
@@ -288,11 +297,212 @@
     printFoldState = null;
   });
 
+  /* ======================================================================== *
+   * 5  附加操作
+   *   进度条 / 页内目录 / 解答工具条 / 公式滚动提示 / 返回教程库。此前三本书各
+   *   写各的，行为与位置不一致；这里一份实现，三本行为逐项相同。
+   * ======================================================================== */
+
+  /* —— 5.1 阅读进度条：页顶 2px 随滚动推进，rAF 节流；从 bfcache 返回补算 —— */
+  function buildProgressBar() {
+    if (document.getElementById("progress")) return;
+    var bar = document.createElement("div");
+    var pending = false;
+    bar.id = "progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+
+    function update() {
+      pending = false;
+      var maximum = root.scrollHeight - root.clientHeight;
+      bar.style.width = (maximum > 0 ? root.scrollTop / maximum * 100 : 0) + "%";
+    }
+    function schedule() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(update);
+    }
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("pageshow", schedule);
+    update();
+  }
+
+  /* —— 5.2 页内目录：H2 / H3 ≥ 3 个的页面在 H1 之后插入一张两列目录。
+     标题里的 KaTeX 会带一份给屏幕阅读器的 MathML 副本，取值前先剔掉，
+     否则同一条目录会把公式读两遍。 —— */
+  function headingText(heading) {
+    var clone = heading.cloneNode(true);
+    Array.prototype.forEach.call(clone.querySelectorAll(".katex-mathml"), function (el) {
+      el.parentNode.removeChild(el);
+    });
+    return clone.textContent.replace(/\s+/g, " ").trim();
+  }
+
+  function buildPageToc() {
+    var main = document.querySelector("main");
+    if (!main || main.querySelector(":scope > .page-toc")) return;
+    var headings = Array.prototype.filter.call(main.querySelectorAll("h2, h3"), function (heading) {
+      return !heading.closest("details, .box") && heading.querySelector("a.header");
+    });
+    if (headings.length < 3) return;
+
+    var nav = document.createElement("nav");
+    var title = document.createElement("span");
+    nav.className = "page-toc";
+    nav.setAttribute("aria-label", "本页内容");
+    title.className = "page-toc-title";
+    title.textContent = "本页内容";
+    nav.appendChild(title);
+
+    headings.forEach(function (heading) {
+      var anchor = heading.querySelector("a.header");
+      var link = document.createElement("a");
+      link.href = anchor.getAttribute("href");
+      link.textContent = headingText(heading);
+      if (heading.tagName === "H3") link.classList.add("page-toc-h3");
+      nav.appendChild(link);
+    });
+
+    var first = main.firstElementChild;
+    if (first && first.tagName === "H1") first.insertAdjacentElement("afterend", nav);
+    else main.insertBefore(nav, first);
+  }
+
+  /* —— 5.3 解答工具条：固定在页首（页内目录 / H1 之后），进入页面即可见，
+     不埋在第一个解答框旁边。按钮文案跟随实际开合状态。 —— */
+  function buildSolutionToolbar() {
+    var main = document.querySelector("main");
+    var solutions = document.querySelectorAll("details.sol-box");
+    if (!main || !solutions.length || document.querySelector(".sol-toolbar")) return;
+
+    var toolbar = document.createElement("div");
+    var button = document.createElement("button");
+    var solutionSyncPending = false;
+    toolbar.className = "sol-toolbar";
+    button.type = "button";
+    button.textContent = "展开全部解答";
+    button.setAttribute("aria-pressed", "false");
+
+    function syncButton() {
+      var allOpen = Array.prototype.every.call(solutions, function (details) { return details.open; });
+      button.textContent = allOpen ? "折叠全部解答" : "展开全部解答";
+      button.setAttribute("aria-pressed", allOpen ? "true" : "false");
+      solutionSyncPending = false;
+    }
+    function scheduleButtonSync() {
+      if (solutionSyncPending) return;
+      solutionSyncPending = true;
+      requestAnimationFrame(syncButton);
+    }
+    button.addEventListener("click", function () {
+      var shouldOpen = Array.prototype.some.call(solutions, function (details) { return !details.open; });
+      solutions.forEach(function (details) { details.open = shouldOpen; });
+      syncButton();
+    });
+    solutions.forEach(function (details) { details.addEventListener("toggle", scheduleButtonSync); });
+
+    toolbar.appendChild(button);
+    var pageToc = main.querySelector(":scope > .page-toc");
+    if (pageToc) pageToc.insertAdjacentElement("afterend", toolbar);
+    else {
+      var first = main.firstElementChild;
+      if (first && first.tagName === "H1") first.insertAdjacentElement("afterend", toolbar);
+      else main.insertBefore(toolbar, first);
+    }
+  }
+
+  /* —— 5.4 宽公式滚动提示：窄窗口里 .katex-display 可横向滚动但没有视觉线索，
+     给它加 can-scroll / scrolled-start，CSS 画左右缘渐隐；滚到尽头撤下提示。
+     字体就绪、折叠展开、窗口缩放都会改变公式宽度，三处都重测。 —— */
+  function syncDisplayScrollState(el) {
+    var scrollable = el.scrollWidth > el.clientWidth + 4;
+    el.classList.toggle("can-scroll", scrollable && el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    el.classList.toggle("scrolled-start", scrollable && el.scrollLeft > 4);
+  }
+  function markScrollableDisplays() {
+    Array.prototype.forEach.call(document.querySelectorAll(".katex-display"), syncDisplayScrollState);
+  }
+  function onDisplayScroll(event) {
+    var el = event.target;
+    if (!el || !el.closest) return;
+    var display = el.classList && el.classList.contains("katex-display") ? el : el.closest(".katex-display");
+    if (display) syncDisplayScrollState(display);
+  }
+  function wireFormulaHints() {
+    markScrollableDisplays();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(markScrollableDisplays);
+    document.addEventListener("toggle", function (event) {
+      if (event.target && event.target.tagName === "DETAILS") setTimeout(markScrollableDisplays, 0);
+    }, true);
+    document.addEventListener("scroll", onDisplayScroll, { passive: true, capture: true });
+    var pending = false;
+    window.addEventListener("resize", function () {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () { pending = false; markScrollableDisplays(); });
+    }, { passive: true });
+  }
+
+  /* —— 5.5 返回教程库：三本书各自是独立站点，书内没有回导览首页的入口。
+     地址由本书 slug 推出，不写死域名：gh-pages 的 /tutorials/matrix/ 与自定义
+     域名下的 /matrix/ 都成立。本地 mdbook serve 路径里没有 slug，此时不插按钮，
+     免得点出一个 404。 —— */
+  var HOME_ICON = '<svg viewBox="0 0 576 512" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 16c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>';
+
+  function portalUrl() {
+    if (!CONFIG.slug) return null;
+    var segments = location.pathname.split("/").filter(Boolean);
+    var index = segments.lastIndexOf(CONFIG.slug);
+    if (index < 0) return null;
+    return "/" + segments.slice(0, index).join("/") + (index > 0 ? "/" : "");
+  }
+
+  function buildPortalHome() {
+    var bar = document.getElementById("mdbook-menu-bar");
+    var right = bar && bar.querySelector(".right-buttons");
+    if (!right || right.querySelector(".portal-home")) return;
+    var url = portalUrl();
+    if (!url) return;
+
+    var link = document.createElement("a");
+    link.className = "portal-home";
+    link.href = url;
+    link.setAttribute("title", "返回教程库");
+    link.setAttribute("aria-label", "返回教程库");
+
+    var icon = document.createElement("span");
+    icon.className = "portal-home-icon";
+    icon.innerHTML = HOME_ICON;
+    var label = document.createElement("span");
+    label.className = "portal-home-label";
+    label.textContent = "教程库";
+
+    link.appendChild(icon);
+    link.appendChild(label);
+    right.insertBefore(link, right.firstChild);
+  }
+
   function boot() {
+    if (root.dataset.tutorialsBooted) return;
+    root.dataset.tutorialsBooted = "true";
     try { localizeChrome(); } catch (e) { /* 升级后 id 变了等情形，静默降级 */ }
     try { watchSearchResults(); } catch (e) { /* 同上 */ }
+    try { buildProgressBar(); } catch (e) { /* 纯增益 */ }
+    try { buildPageToc(); } catch (e) { /* 纯增益 */ }
+    try { buildSolutionToolbar(); } catch (e) { /* 纯增益 */ }
+    try { buildPortalHome(); } catch (e) { /* 纯增益 */ }
     try { buildBackToTop(); } catch (e) { /* 纯增益 */ }
     try { wireFoldMemory(); } catch (e) { /* 纯增益 */ }
+    try { wireFormulaHints(); } catch (e) { /* 纯增益 */ }
+    // 书内专属部件：数值分析的「只看核心」图例要挂在页内目录之后
+    if (typeof CONFIG.onReady === "function") {
+      try { CONFIG.onReady(); } catch (e) { /* 单本书的增强出错不拖垮共用层 */ }
+    }
+    // 冷启动期禁过渡（各书 CSS 的 html:not(.tutorials-ready) 段）到此解除
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { root.classList.add("tutorials-ready"); });
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

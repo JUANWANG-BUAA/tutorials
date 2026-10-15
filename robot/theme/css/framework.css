@@ -4,7 +4,8 @@
  * 与权威样式表（robot.css / na.css / matrix.css）分工：
  *   · 权威样式表：这本书长什么样（设计令牌、正文、盒子、首页…）；
  *   · 本文件：**mdBook 框架自带 UI** 的修补（搜索面板、键帽、回到顶部）与框架
- *     样式覆盖我们令牌的真实缺陷（段落与列表行高被 mdBook 钉死）。
+ *     样式覆盖我们令牌的真实缺陷（段落与列表行高被 mdBook 钉死）；以及三本共用
+ *     的附加操作（进度条、页内目录、解答工具条、宽公式滚动提示、返回教程库）。
  *   属于「跨书一致」的层，不含任何正文/组件结构样式。
  *
  * 加载顺序：排在权威样式表之后（book.toml 的 additional-css 最后一份），
@@ -83,9 +84,11 @@ ul#mdbook-searchresults span.teaser em{
 
 /* ======================================================================== *
  * §4  回到顶部（结构与行为见 theme/js/framework.js）
+ *   right 取 112px：mdBook 的「下一页」悬停热区固定在右缘 90px 宽，回顶钮若
+ *   贴着右缘会落在热区里——悬停时整条边高亮、按钮像长在箭头上。
  * ======================================================================== */
 #back-to-top{
-  position:fixed;right:26px;bottom:26px;z-index:60;
+  position:fixed;right:112px;bottom:26px;z-index:60;
   width:38px;height:38px;padding:0;
   display:grid;place-items:center;
   border:1px solid var(--line-strong);border-radius:50%;
@@ -100,7 +103,92 @@ ul#mdbook-searchresults span.teaser em{
 #back-to-top:active{transform:scale(.94)}
 
 /* ======================================================================== *
- * §5  焦点环（键盘可达性）：统一到强调色，覆盖 mdBook 默认样式
+ * §5  附加操作（结构与行为见 theme/js/framework.js）
+ *   进度条 / 页内目录 / 解答工具条 / 宽公式滚动提示。三本书共用一套：位置与
+ *   阈值由 JS 决定，这里只负责外观。
+ * ======================================================================== */
+
+/* 阅读进度条：页顶 2px，随滚动推进。 */
+#progress{
+  position:fixed;top:0;left:0;z-index:150;
+  width:0;height:2px;background:var(--accent);
+}
+
+/* 页内目录：H2/H3 ≥ 3 个的页面在标题后插入，两列；窄屏单列。 */
+.page-toc{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
+  margin:26px 0 30px;padding:13px 17px 11px;
+  border:1px solid var(--line);background:var(--paper-soft);
+}
+.page-toc-title{
+  grid-column:1/-1;color:var(--muted);
+  font:700 10px/1.5 var(--mono);letter-spacing:.12em;
+}
+.page-toc a{
+  color:var(--ink-2);text-decoration:none;
+  font:12.5px/1.65 var(--sans);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.page-toc a::before{
+  content:"→";margin-right:7px;color:var(--accent);
+  font:600 11px/1 var(--mono);
+}
+.page-toc a:hover{color:var(--accent-text)}
+.page-toc a.page-toc-h3{padding-left:18px;font-size:12px}
+.page-toc a.page-toc-h3::before{content:"–";font-size:10px}
+
+/* 锚点跳转别被固定菜单栏遮住；页内锚点平滑滚动
+   （prefers-reduced-motion 的全局 !important 规则会关掉）。 */
+.content h1,.content h2,.content h3,.content h4{scroll-margin-top:66px}
+.content .box,.content .proof{scroll-margin-top:66px}
+html{scroll-behavior:smooth}
+
+/* 解答工具条：固定在页首（页内目录或 H1 之后），进入页面即可见。 */
+.sol-toolbar{margin:26px 0 8px;text-align:right}
+.sol-toolbar button{
+  padding:6px 13px;border:1px solid var(--line-strong);background:var(--paper);
+  color:var(--ink-2);font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
+}
+.sol-toolbar button:hover{border-color:var(--ink);color:var(--ink)}
+.sol-toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* 宽公式横向滚动提示（framework.js 标注 can-scroll / scrolled-start）：
+   右缘 / 左缘 28px 渐隐指向被裁掉的继续部分；滚到尽头时 JS 撤下提示。
+   渐隐取 --page 而非透明，避免文字从两层渐隐中透出重影。 */
+.katex-display{position:relative;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.katex-display.can-scroll::after,
+.katex-display.scrolled-start::before{
+  content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none;
+}
+.katex-display.can-scroll::after{
+  right:0;
+  background:linear-gradient(to left,var(--page),transparent);
+}
+.katex-display.scrolled-start::before{
+  left:0;
+  background:linear-gradient(to right,var(--page),transparent);
+}
+
+/* ======================================================================== *
+ * §6  返回教程库（结构与行为见 theme/js/framework.js）
+ *   书内没有回导览首页的入口，菜单栏右侧补一个。窄屏收起文案只留图标；
+ *   悬停 / 按下反馈与相邻图标按钮保持同一套。
+ * ======================================================================== */
+#mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
+#mdbook-menu-bar .portal-home{
+  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
+  font-size:13px;font-weight:500;letter-spacing:.01em;text-decoration:none;
+  color:var(--ink-2);
+  border:1px solid transparent;border-radius:10px;
+  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
+}
+#mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
+#mdbook-menu-bar .portal-home:active{transform:translateY(1px) scale(.975)}
+#mdbook-menu-bar .portal-home svg{display:block;width:15px;height:15px;fill:currentColor}
+#mdbook-menu-bar .portal-home-label{white-space:nowrap}
+
+/* ======================================================================== *
+ * §7  焦点环（键盘可达性）：统一到强调色，覆盖 mdBook 默认样式
  * ======================================================================== */
 :where(a,button,input,summary,select,textarea,[tabindex]):focus-visible{
   outline:none;
@@ -109,14 +197,26 @@ ul#mdbook-searchresults span.teaser em{
 }
 
 /* ======================================================================== *
- * §6  响应式与打印
+ * §8  响应式与打印
  * ======================================================================== */
+@media only screen and (max-width:900px){
+  /* 菜单栏放不下「教程库」三字时只留图标 */
+  #mdbook-menu-bar .portal-home{padding:0 8px}
+  #mdbook-menu-bar .portal-home-label{display:none}
+}
+
 @media only screen and (max-width:700px){
   #back-to-top{right:14px;bottom:18px;width:40px;height:40px}
+  /* 窄屏页内目录单列，条目不再挤成两列截断 */
+  .page-toc{grid-template-columns:1fr}
   /* 窄屏表格：横向滚动而不是压扁列 */
   .content table{display:block;overflow-x:auto}
 }
 
 @media print{
-  #back-to-top,#mdbook-search-wrapper{display:none!important}
+  /* 屏幕上的操作件与导航件一律不上纸。工具条不隐藏会印出一个「已按下」的
+     按钮（beforeprint 恰好会把它切成按下态），而浏览器默认不打印背景色。 */
+  #back-to-top,#mdbook-search-wrapper,#progress,.page-toc,.sol-toolbar{display:none!important}
+  .katex-display.can-scroll::after,.katex-display.scrolled-start::before{content:none}
+  .katex-display.can-scroll{overflow:visible!important}
 }

@@ -214,9 +214,9 @@ html.navy a,html.coal a,html.ayu a{color:var(--accent)}
 a:hover{color:var(--accent-text)}
 
 /* 冷启动期禁用过渡：避免主题、侧栏状态与后注入控件在首帧闪动。 */
-html:not(.matrix-ready) *,
-html:not(.matrix-ready) *::before,
-html:not(.matrix-ready) *::after{
+html:not(.tutorials-ready) *,
+html:not(.tutorials-ready) *::before,
+html:not(.tutorials-ready) *::after{
   animation:none!important;
   scroll-behavior:auto!important;
   transition:none!important;
@@ -253,24 +253,7 @@ html:not(.matrix-ready) *::after{
 #mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
 #mdbook-menu-bar .icon-button:active,#mdbook-menu-bar .right-buttons a:active{transform:translateY(1px) scale(.975)}
 #mdbook-menu-bar .menu-title{color:var(--ink)}
-/* 「返回教程库」（theme/js 注入）：书内没有任何回导览首页的入口，菜单栏右侧补一个。
-   窄屏收起文案只留图标；悬停/按下的反馈与相邻图标按钮保持同一套。 */
-#mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
-#mdbook-menu-bar .portal-home{
-  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
-  font-size:13px;font-weight:500;letter-spacing:.01em;text-decoration:none;
-  color:var(--ink-2);
-  border:1px solid transparent;border-radius:10px;
-  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
-}
-#mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
-#mdbook-menu-bar .portal-home:active{transform:translateY(1px) scale(.975)}
-#mdbook-menu-bar .portal-home svg{display:block;width:15px;height:15px;fill:currentColor}
-#mdbook-menu-bar .portal-home-label{white-space:nowrap}
-@media (max-width:900px){
-  #mdbook-menu-bar .portal-home{padding:0 8px}
-  #mdbook-menu-bar .portal-home-label{display:none}
-}
+/* 「返回教程库」（theme/js/framework.js 注入）的样式随共用层移入 framework.css §6。 */
 #mdbook-searchbar{
   font-family:var(--sans);font-size:13px;
   border-radius:0;
@@ -528,14 +511,7 @@ details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
 details.sol-box[open]>summary::before{transform:rotate(45deg)}
 .sol-inner{padding:8px 19px 12px}
 
-/* 解答工具条 */
-.sol-toolbar{margin:26px 0 8px;text-align:right}
-.sol-toolbar button{
-  padding:6px 13px;border:1px solid var(--line-strong);background:var(--paper);
-  color:var(--ink-2);font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
-}
-.sol-toolbar button:hover{border-color:var(--ink);color:var(--ink)}
-.sol-toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* 解答工具条（framework.js 注入）的样式随共用层移入 framework.css §5。 */
 
 /* 交叉引用（[@id]） */
 a.crossref{
@@ -728,37 +704,8 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
 .obj-id{margin-right:7px;color:var(--accent-text);font:700 11px/1.4 var(--mono)}
 .obj-lv{margin-left:7px;color:var(--muted);font:10px/1.4 var(--mono);white-space:nowrap}
 
-/* ======================================================================== *
- * §6  页内目录（theme/js/na.js 在 H2 ≥ 3 的页面注入）与阅读进度条
- * ======================================================================== */
-.page-toc{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
-  margin:26px 0 30px;padding:13px 17px 11px;
-  border:1px solid var(--line);background:var(--paper-soft);
-}
-.page-toc-title{
-  grid-column:1/-1;color:var(--muted);
-  font:700 10px/1.5 var(--mono);letter-spacing:.12em;
-}
-.page-toc a{
-  color:var(--ink-2);text-decoration:none;
-  font:12.5px/1.65 var(--sans);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.page-toc a::before{
-  content:"→";margin-right:7px;color:var(--accent);
-  font:600 11px/1 var(--mono);
-}
-.page-toc a:hover{color:var(--accent-text)}
-
-/* 锚点跳转别被固定菜单栏遮住 */
-.content h1,.content h2,.content h3,.content h4{scroll-margin-top:66px}
-.content .box,.content .proof{scroll-margin-top:66px}
-
-#progress{
-  position:fixed;top:0;left:0;z-index:150;
-  width:0;height:2px;background:var(--accent);
-}
+/* §6  页内目录 / 阅读进度条 / 回到顶部 / 锚点滚动（theme/js/framework.js 注入）
+ *   的样式随共用层移入 theme/css/framework.css §4–§5，三本书一套。 */
 
 /* ======================================================================== *
  * §6.5  侧栏
@@ -806,7 +753,6 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
   .lesson-brief>div{padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
-  .page-toc{grid-template-columns:1fr}
   .box{padding:16px 15px 12px}
   .content table{display:block;overflow-x:auto}
 }
@@ -832,7 +778,7 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
     --fig-gold:#8a5a00;--fig-red:#9c2b25;--fig-neutral:#5b544a;
   }
   body{background:#fefefe;font-size:11.5pt}
-  #mdbook-sidebar,#mdbook-menu-bar,#progress,.nav-wrapper,#mdbook-search-wrapper{display:none!important}
+  #mdbook-sidebar,#mdbook-menu-bar,.nav-wrapper,#mdbook-search-wrapper{display:none!important}
   /* 纸面上点不动：隐藏「只看核心」开关与折叠解答的展开/收起提示 */
   .layer-legend button,details.sol-box>summary::after{display:none}
   .content{padding:0;max-width:none}

@@ -19,6 +19,9 @@ preferred-dark-theme = "ayu"
 # 外观设置只保留 mdBook 原生入口（菜单栏主题弹层），与 rustwiki 一致；不再有自建
 # 的阅读偏好面板（字体 / 字号 / 间距 / 版心 / 配色）。
 additional-css = ["theme/css/na.css", "theme/css/katex.css", "theme/css/framework.css"]
+# 脚本：na.js 只声明本书配置 + 数值分析专属的「阅读分层」开关；附加操作与框架 UI
+# 全在 framework.js（三本共用）；search-cjk.js 的查询分词与 tools/build_search_js.mjs
+# 的索引分词逐字对应。
 # arena.js：必考点竞技场的可降级增强（题库在页面里是普通 HTML，脚本只在
 # #arena-mount 里另起交互舞台；关 JS / 打印 / 搜索都不受影响）。
 additional-js = ["theme/js/na.js", "theme/js/arena.js", "theme/js/search-cjk.js", "theme/js/framework.js"]

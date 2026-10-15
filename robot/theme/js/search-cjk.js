@@ -1,5 +1,5 @@
 /*
- * search-cjk.js — 让 mdBook 的全文搜索支持中文
+ * search-cjk.js — 让 mdBook 的全文搜索支持中文（三本书共用，内容逐字相同）
  * ---------------------------------------------------------------------------
  * 背景：mdBook 的分词器只按空白/连字符切词，且 elasticlunr 默认的 trimmer 会
  * 丢掉不含拉丁字母的 token，因此中文内容根本进不了索引、也搜不到。
@@ -8,17 +8,22 @@
  *   1) 构建后由 tools/build_search_js.mjs 用「一元 + 二元字符 n-gram」重建索引；
  *   2) 本脚本在浏览器侧把 elasticlunr 的分词器换成同一套 n-gram 规则，
  *      使「查询」与「索引」使用完全相同的切分，召回才稳定可靠。
+ *   两者必须逐字一致——只改一边就会出现「索引里有、查询切不出来」的静默漏检。
  *
  * 例：「数域」→ 数 / 数域 / 域；「过渡矩阵」→ 过/过渡/渡/渡矩/矩/矩阵/阵。
- * 由于两者一致，任意长度（≤ 词长上限）的中文短语都能命中。
+ * mdBook 在 HTML 元素边界会插入空格，源文件里的「DH参数」进索引前变成「DH 参数」，
+ * 所以切词前先去掉 ASCII ↔ 中文之间的空格（preprocess），两侧才能切出同一批 token。
  *
- * elasticlunr 是搜索打开时才懒加载的，所以这里轮询等待它出现再改写。
+ * 改写时机：mdBook 0.5 把 elasticlunr 与本脚本同页加载（本脚本在后），所以这里
+ * **同步**改写；`?search=` 深链在 DOMContentLoaded 就会发一次查询，晚一步改写
+ * 会让深链中文查询误报「没有命中」。更早的 mdBook 版本才在搜索打开时懒加载
+ * elasticlunr，故保留轮询兜底。
  */
 (function () {
   "use strict";
 
   var CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff]/;
-  var SPLIT = /[\s\-·，。、；：？！""’’（）()《》〈〉【】\[\]{}<>／/\\|,.;:!?"’]+/;
+  var SPLIT = /[\s\-·，。、；：？！“”‘’"'（）()《》〈〉【】\[\]{}<>／/\\|,.;:!?]+/;
   var ASCII_CJK_GAP = /([A-Za-z0-9])\s+([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])|([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])\s+([A-Za-z0-9])/g;
   var MAX = 80;
 
@@ -60,7 +65,7 @@
       var part = parts[i];
       if (!part) continue;
       if (!CJK.test(part)) {
-        out.push(part.toLowerCase());
+        out.push(part.toLowerCase());          // 纯拉丁/数字：整体保留
         continue;
       }
       tokenizeMixedPart(part, out);
@@ -68,21 +73,24 @@
     return out.filter(function (t) { return t.length > 0 && t.length <= MAX; });
   }
 
+  var applied = false;
+  function apply(el) {
+    if (!el || applied) return Boolean(el);
+    applied = true;
+    el.tokenizer = tokenizeCJK;
+    // 索引侧没有用默认 trimmer/stemmer；查询侧也必须一致。
+    if (el.Pipeline && el.Pipeline.getRegisteredFunction) {
+      try { el.Pipeline.registerFunction(function (t) { return t; }, "cjk_identity"); } catch (e) {}
+    }
+    return true;
+  }
+
+  if (apply(window.elasticlunr)) return;
+
+  // 兜底：老版本 mdBook 在搜索打开时才注入 elasticlunr。
   var tries = 0;
   var timer = setInterval(function () {
-    var el = window.elasticlunr;
-    if (el) {
-      el.tokenizer = tokenizeCJK;
-      // 索引侧没有用默认 trimmer/stemmer；查询侧也必须一致。
-      if (el.Pipeline && el.Pipeline.getRegisteredFunction) {
-        try { el.Pipeline.registerFunction(function (t) { return t; }, "cjk_identity"); } catch (e) {}
-      }
-      if (el.Index) {
-        // 保证 load 出来的索引沿用空 pipeline（索引里已写明 pipeline: []）
-      }
-      clearInterval(timer);
-      return;
-    }
-    if (++tries > 150) clearInterval(timer);   // ~30s 后放弃
-  }, 200);
+    if (apply(window.elasticlunr)) { clearInterval(timer); return; }
+    if (++tries > 500) clearInterval(timer);   // ~30s 后放弃
+  }, 60);
 })();
