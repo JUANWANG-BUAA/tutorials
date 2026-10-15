@@ -101,7 +101,7 @@ html.rust{
   --searchresults-li-bg:var(--paper);
   --search-mark-bg:#f0c9a8;
   --color-scheme:light;
-  --sidebar-header-border-color:var(--line);
+  --sidebar-header-border-color:var(--sidebar-active);
   --overlay-bg:rgba(23,21,19,.46);
 }
 
@@ -172,7 +172,7 @@ html.ayu{
   --searchresults-li-bg:var(--paper);
   --search-mark-bg:#5a4a2e;
   --color-scheme:dark;
-  --sidebar-header-border-color:var(--line);
+  --sidebar-header-border-color:var(--sidebar-active);
   --overlay-bg:rgba(0,0,0,.55);
 }
 
@@ -220,20 +220,16 @@ html:not(.matrix-ready) *::after{
   transition:none!important;
 }
 
-/* 侧栏 —— 完全参照 rustwiki（Rust Book 中文版，mdBook 官方书目的侧栏定制）：
- * 行内 flex、编号粗体、hover 只变色、右侧 ❱ 折叠钮（opacity .68、展开旋 90°）、
- * 组间距 .6em、子级 20px 缩进、part-title 仅粗体。折叠钮的样式与旋转动画
- * 直接用 mdBook 0.5 自带的 .chapter-fold-toggle 规则（与 rustwiki 版逐字相同），
- * 此处不再覆盖。 */
+/* 侧栏 —— 一比一还原 mdBook / rustwiki 原生侧栏。
+ * 结构与交互（连续目录、编号加粗、hover 与当前项仅变色、本页大纲折叠、滚动到
+ * 当前项）全部由 mdBook 自带 chrome 样式与 toc.js 提供；本文件不再自建。此前
+ * 自加的章节折叠钮、当前项底色与色条、吸顶分组标题、编号分列脚本均已移除。
+ * 这里只保留本主题必需的重着色。 */
 #mdbook-sidebar{
   font-family:var(--sans);
   border-right:1px solid var(--line);
-  padding-top:10px;
-  /* 显式声明，避免依赖 mdBook chrome 的变量解析链 */
   background:var(--sidebar);
-  color:var(--ink-2);
 }
-#mdbook-sidebar .sidebar-scrollbox{padding:10px 10px 40px}
 #mdbook-sidebar::-webkit-scrollbar{width:4px}
 #mdbook-sidebar::-webkit-scrollbar-thumb{background:var(--line-strong)}
 .menu-title{
@@ -276,31 +272,14 @@ html:not(.matrix-ready) *::after{
   font-family:var(--sans);font-size:13px;
   border-radius:0;
 }
-/* rustwiki: .chapter{line-height:2.2em} / li.chapter-item{1.5em; margin-top:.6em} */
-#mdbook-sidebar .chapter{line-height:2.2em}
-#mdbook-sidebar .chapter li.chapter-item{line-height:1.5em;margin-top:.6em}
-/* toc.js 的字符串模板有嵌套 <li> 笔误，浏览器修复后会留下空壳条目 */
+/* 侧栏条目尺寸与间距全部交给 mdBook 原生规则（.chapter 2.2em、li.chapter-item
+   1.5em 与 .6em 组距、.section 20px 缩进、链接 hover 与当前项仅变色）。此处
+   只补原生两处显示缺陷：
+   ① toc.js 的字符串模板有嵌套 <li>，被 HTML 解析器拆开后留下空壳条目，原生
+      会渲染成空行——隐藏之；
+   ② 嵌套小节树用 width:auto（而非 100%）避免逐层外溢。 */
 #mdbook-sidebar .chapter li.chapter-item:empty{display:none;margin:0}
-/* rustwiki: 链接 display:block、无背景 hover，只变色。
- * 链接 flex:1 铺满整行（命中区域 = 整行，反馈仍是 rustwiki 的变色） */
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper{display:flex}
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a{
-  display:block;flex:1 1 auto;min-width:0;padding:2px 0;
-  font-size:13.5px;color:var(--sidebar-fg);
-}
-#mdbook-sidebar .chapter li a:hover{color:var(--sidebar-active)}
-#mdbook-sidebar .chapter li a.active{color:var(--sidebar-active)}
-/* rustwiki: 编号 <strong>1.1.</strong> 粗体、同色（matrix.js 包 .sec-no） */
-#mdbook-sidebar .sec-no{
-  font-weight:700;color:inherit;font-family:inherit;font-size:inherit;
-  margin-right:.35em;
-}
-/* rustwiki: .chapter li.part-title{color:var(--sidebar-fg);margin:5px 0;font-weight:bold} */
-#mdbook-sidebar .chapter li.part-title{
-  color:var(--ink-2);margin:5px 0;
-  font-weight:700;font-size:13px;letter-spacing:0;text-transform:none;
-}
-#mdbook-sidebar .chapter .spacer{background:none;height:14px}
+#mdbook-sidebar .chapter ol{width:auto}
 
 /* 页脚翻页（mdBook 原生 .nav-wrapper / .nav-wide-wrapper）。
  * 规范：导航与控件一律无衬线 —— mdBook 默认让它们从 body 继承衬线，故显式覆盖。 */
@@ -753,113 +732,23 @@ html{scroll-behavior:smooth}
 }
 
 /* ======================================================================== *
- * §6.5  侧栏：对齐 RustWiki 的连续目录流（300px / 10px 内边距 / 1.5em 行高 /
- *       0.6em 组间距 / 20px 子级缩进 / hover 只换色）。
- *       在这套骨架上叠加纯 CSS 的体验增强（不改 DOM、不改脚本逻辑）：
- *       ① 分组标题吸顶，长目录滚动时保持「我在哪一组」的方位感；
- *       ② 底部渐隐阴影提示「下面还有条目」；
- *       ③ 当前页 / 当前小节的行级指示（软底 + 3px 色条，无圆角无描边）；
- *       ④ 折叠钮命中区域拉伸到整行高。
+ * §6.5  侧栏
+ *   全部交还原生（详见 §2）。这里只保留与主题相关的滚动条与焦点环收尾；
+ *   折叠钮、吸顶分组标题、当前项底色/色条等自建样式已移除。
  * ======================================================================== */
-#mdbook-sidebar{padding:0;background:var(--sidebar);border-right:1px solid var(--line)}
-#mdbook-sidebar .sidebar-scrollbox{
-  position:absolute!important;inset:0!important;overflow-y:auto;
-  /* 顶部留白用 .chapter 的 margin-top 提供：滚动容器自身的 padding-top
-     会被 Chromium 当作 sticky 的定位原点，吸顶标题会钉在 10px 而非 0 */
-  padding:0 10px 40px;scrollbar-width:thin;
-  scrollbar-color:var(--scrollbar) var(--sidebar-bg);
-  /* 侧栏滚到头不再把滚动链传给正文 */
-  overscroll-behavior:contain;
-  /* 底部渐隐：阴影层钉在滚动视口底，遮盖层钉在内容底。只有当内容底边
-     还压在视口之外（下面还有条目）时，遮盖层才盖不到阴影，渐隐露出来。 */
-  background:
-    linear-gradient(to top,color-mix(in srgb,var(--shadow-ink) 20%,transparent),transparent) bottom/100% 26px no-repeat,
-    linear-gradient(var(--sidebar),var(--sidebar)) local bottom/100% 26px no-repeat;
-}
+#mdbook-sidebar .sidebar-scrollbox{scrollbar-width:thin;scrollbar-color:var(--scrollbar) var(--sidebar)}
 #mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar{width:4px}
-#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-track{background:var(--sidebar-bg)}
-#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:0}
-#mdbook-sidebar .chapter{list-style:none outside none;padding-left:0;line-height:2.2em;font-variant-numeric:tabular-nums;margin-top:10px}
-/* width:auto（而非 100%）：100% + padding-left 在 content-box 下逐层外溢，
-   会在侧栏右缘裁出横向滚动条（实测每页溢出 10–30px，嵌套小节树更甚） */
-#mdbook-sidebar .chapter ol{width:auto}
-#mdbook-sidebar .chapter li.chapter-item{line-height:1.5em;margin-top:.6em}
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper{display:flex;width:100%;align-items:flex-start}
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a{
-  display:block;flex:1 1 auto;min-width:0;padding:0;border:0;border-radius:0;
-  color:var(--sidebar-fg);font:13.5px/1.5 var(--sans);text-decoration:none;overflow-wrap:break-word;
-  transition:color 140ms ease;
-}
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a:hover,
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a.active{color:var(--sidebar-active)}
-/* 当前页行级指示：软底 + 左侧 3px 色条用 inset 阴影实现（零位移），
-   负外边距让色块向两侧各探出 8px，按树形缩进对齐而不是全出血 */
-#mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a.active{
-  /* 软底只做「很淡的一层」。它叠在侧栏底色上会抬高背景亮度，
-     从而吃掉文字对比度（实测 --accent-soft 全量叠底后只剩 4.26:1，
-     低于 13.5px 小字所需的 4.5:1），故减半使用。 */
-  background:color-mix(in srgb,var(--accent) 5%,transparent);
-  color:var(--accent-strong);
-  box-shadow:inset 3px 0 0 var(--accent);
-  margin-inline:-8px;
-  padding-inline:8px 5px;
-}
-#mdbook-sidebar .sec-no{margin-right:.35em;color:inherit;font-family:inherit;font-size:inherit;font-weight:700;line-height:inherit}
-#mdbook-sidebar .sec-label{min-width:0}
-#mdbook-sidebar .chapter-fold-toggle{
-  display:grid;place-items:center;flex:0 0 auto;align-self:stretch;margin-left:auto;padding:2px 10px;
-  border:0;border-radius:0;background:transparent;color:var(--sidebar-fg);cursor:pointer;opacity:.68;
-  transition:color 140ms ease,opacity 140ms ease;
-}
-#mdbook-sidebar .chapter-fold-toggle:hover{color:var(--sidebar-active);opacity:1}
-#mdbook-sidebar .chapter-fold-toggle svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform 500ms ease}
-#mdbook-sidebar li.expanded>.chapter-link-wrapper>.chapter-fold-toggle svg{transform:rotate(90deg)}
-/* 分组标题吸顶：负外边距抵消滚动盒 10px 内边距使横条全宽；
-   背景必须不透明，否则滚过的条目会从标题下透出来 */
-#mdbook-sidebar .chapter > li.part-title{
-  position:sticky;top:0;z-index:2;
-  margin:14px -10px 5px;padding:6px 10px 5px;
-  background:var(--sidebar);
-  box-shadow:0 1px 0 var(--line);
-  color:var(--muted);font:700 11.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:none;
-}
-#mdbook-sidebar .chapter .spacer{width:100%;height:3px;margin:5px 0;background:var(--sidebar-spacer)}
-/* 行高与条目统一为 1.5：mdBook 默认给 ol.section 1.9em，导致子级
-   条目之间的行距明显大于顶级条目，整栏节奏忽紧忽松。 */
-#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.5em}
-/* 页内小节树（toc.js 运行时注入的 .on-this-page）：header-item 是 flex 行，
-   标题链接占一行；嵌套的 ol.section 必须换行占满整行，否则会被挤到
-   标题右侧的第二列并溢出裁字 */
-#mdbook-sidebar .chapter li.header-item{display:flex;flex-wrap:wrap;margin-top:.6em;line-height:1.5em}
-#mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper{display:flex;flex:1 1 auto;min-width:0}
-#mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper > a{
-  display:block;flex:1 1 auto;min-width:0;padding:0;
-  color:var(--sidebar-fg);font:13.5px/1.5 var(--sans);text-decoration:none;overflow-wrap:break-word;
-  transition:color 140ms ease;
-}
-#mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper > a:hover,
-#mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper > a.current-header{color:var(--sidebar-active)}
-#mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper > a.current-header{
-  background:color-mix(in srgb,var(--accent) 5%,transparent);
-  color:var(--accent-strong);
-  box-shadow:inset 3px 0 0 var(--accent);
-  margin-inline:-8px;
-  padding-inline:8px 5px;
-}
-#mdbook-sidebar .chapter li.header-item > ol.section{flex:0 0 100%;padding-left:10px}
-#mdbook-sidebar .on-this-page{margin-top:.45em}
-/* 键盘焦点环在侧栏里用侧栏底色收边（全局规则用的是正文底色） */
+#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-track{background:var(--sidebar)}
+#mdbook-sidebar .sidebar-scrollbox::-webkit-scrollbar-thumb{background:var(--scrollbar)}
 #mdbook-sidebar :where(a,button):focus-visible{outline:none;box-shadow:0 0 0 2px var(--accent-text),0 0 0 4px var(--sidebar)!important}
 #mdbook-sidebar-resize-handle{width:5px;right:0}
 #mdbook-sidebar-resize-handle:hover .sidebar-resize-indicator{background:var(--accent)}
-:where(a,button,input,summary):focus-visible{outline:none;box-shadow:0 0 0 2px var(--accent-text),0 0 0 4px var(--page)!important}
-
 /* ======================================================================== *
  * §7  响应式
  * ======================================================================== */
 @media only screen and (max-width:700px){
   :root{--page-padding:16px}
-  /* 抽屉顶部的呼吸空间用列表 margin 提供（原因同上：padding-top 会挪动 sticky 原点） */
+  /* 移动端抽屉顶部留白：让首个条目不被悬浮的目录开关按钮压住 */
   #mdbook-sidebar .chapter{margin-top:68px}
   .content h1{font-size:27px}
   .chapter-cover{padding:34px 0 30px}
@@ -884,20 +773,10 @@ html{scroll-behavior:smooth}
 
 /* 触屏：mdBook 给 .chapter li a 加的 5px 纵向内边距被上面 specificity 更高的
    padding:0 覆盖了，这里补回，保证手指可点的行高 */
-@media (-moz-touch-enabled:1),(pointer:coarse){
-  #mdbook-sidebar .chapter li.chapter-item > .chapter-link-wrapper > a,
-  #mdbook-sidebar .chapter li.header-item > .chapter-link-wrapper > a{padding-block:5px}
-}
 
 /* 移动端抽屉打开时压暗正文：复用 mdBook 的 checkbox 兄弟选择器，
    断点 620px 与 mdBook 的桌面/移动分界一致。pointer-events:none——
    暗层不挡点击，关闭仍走左上角按钮 */
-@media only screen and (max-width:619.98px){
-  #mdbook-sidebar-toggle-anchor:checked ~ .page-wrapper::after{
-    content:"";position:fixed;inset:0;z-index:5;pointer-events:none;
-    background:var(--overlay-bg);
-  }
-}
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}

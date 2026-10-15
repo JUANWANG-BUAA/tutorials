@@ -93,11 +93,11 @@ mdBook 的框架文案（菜单栏提示、搜索框占位符、搜索结果统�
 | 文件 | 作用 |
 |:--|:--|
 | `css/prefs.css` | **阅读偏好层**：字体 / 字号 / 行距间距 / 版心宽度 / 配色主题，由 `<html>` 的 `data-*` 属性驱动。默认档不写属性，外观与本层出现之前一致。 |
-| `js/sidebar.js` | **侧栏**（折叠、编号分列、本页大纲、跟随当前小节）。用一个捕获阶段监听器统一接管折叠，避免与 mdBook 自带的大纲折叠钮互相打架；默认只展开通向当前页的路径。 |
+| 侧栏 | **一比一交还原生**（连续目录、编号加粗、hover/当前项仅变色、本页大纲折叠）。无自建脚本与自加样式。 |
 | `head.hbs` | 首屏防闪：在 `<head>` 阶段把偏好读成 `data-*` 属性。 |
 
 侧栏逻辑已从本书的 `na.js` / `matrix.js` 移出，那两个文件不再处理侧栏。
-`book.toml`：`prefs.css` 排在权威样式表之后加载，`sidebar.js` 排在 `toc.js` 之后。
+`book.toml`：`prefs.css` 排在权威样式表之后加载。
 
 ### 共用层补充（framework.css / framework.js）
 
@@ -106,7 +106,7 @@ mdBook 的框架文案（菜单栏提示、搜索框占位符、搜索结果统�
 | `css/framework.css` | mdBook 框架 UI 的修补：搜索面板限高与分隔、主题弹层、键帽 `<kbd>`、回到顶部、焦点环；以及列表 `ol/ul` 的行高（框架把它们钉在 1.45em，同 `.content p` 一并接管）。 |
 | `js/framework.js` | 框架文案汉化（菜单栏、搜索框、主题名、帮助弹窗、复制按钮、翻页箭头）、搜索结果统计行汉化与键盘滚动、回到顶部、折叠状态记忆（解答/提示，按页存 localStorage）。 |
 
-这两份与 `prefs.css` / `prefs.js` / `sidebar.js` / `head.hbs` 一样三本逐字相同。
+这两份与 `prefs.css` / `prefs.js` / `head.hbs` 一样三本逐字相同。
 CI 里中文搜索依赖 `node tools/build_search_js.mjs <book>/book`（**构建后**执行），
 `.github/workflows/deploy.yml` 已含该步；`book.toml` 的 `use-boolean-and` 必须为
 `false`——n-gram 索引下 AND 会把「线性空间」切出的伪二元组「性空」也当作必需项。

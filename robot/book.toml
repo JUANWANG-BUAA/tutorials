@@ -18,7 +18,7 @@ preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用《矩阵论》《数值分析》教程。
 # prefs.css 必须排在最后：读者偏好靠「同特异性 + 后加载」覆盖权威样式表。
 additional-css = ["theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
-additional-js = ["theme/js/robot.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework.js", "theme/js/prefs.js"]
+additional-js = ["theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework.js", "theme/js/prefs.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true
 site-url = "/tutorials/robot/"
