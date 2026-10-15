@@ -1,21 +1,19 @@
 <section class="chapter-cover">
 <div class="kicker">数 值 分 析 · 定 制 教 程</div>
 <h1>从误差到谱：数值方法的语言</h1>
-<div class="subtitle">第一章 绪论：误差、算法与范数 · 第二章 数值线性代数基础：内积、正交、投影与 SVD —— 依据颜庆津《数值分析》（第 4 版）整理扩充的定制教程</div>
+<div class="subtitle">从误差与算法出发，学习范数、正交、投影、条件数、谱理论与奇异值分解。</div>
 <div class="cover-chips">
-<span>2 章 · 11 节正文 + 课堂精编 8 讲 + 复习层 4 页 + 特训 2 页</span>
-<span>第一卷：原书 p.1–13 全收录 · 0 勘误 · 4 处证明补全</span>
-<span>第二卷：内积 / 投影 / QR / 条件数 / 谱 / SVD</span>
-<span>课堂精编：2026 秋《数值分析 I》庞刚 · 逐讲实录归纳</span>
+<span>2 章正文 · 11 节</span>
+<span>课堂精编 8 页（第 8 讲待补）</span>
 <span>40 道习题 · 全部附解</span>
-<span>7 组可复现数值实验</span>
-<span>阅读分层：定义 / 定理 / 速查表标为「必记骨架」，一键切到「只看核心」</span>
+<span>复习材料与考场特训</span>
 </div>
+<details class="cover-details">
+<summary>查看教材范围与资料说明</summary>
 <div class="meta">
-依据 <b>颜庆津《数值分析》（第 4 版）</b>整理扩充：第一章对应原书第 1 章，原书定理 1.1–1.5、例 1–6、习题 1–15 全部收录，括注中保留原编号，可逐条对照<br>
-第二章对标原书 1.3 节并大幅扩充（内积与正交、四个基本子空间与投影、QR 分解、条件数与扰动、谱理论、SVD）——现代数值线性代数的最小完备工具箱<br>
-所有例题与实验数值均经 Python 逐条复算，书中输出都是真实运行结果 · 整理日期：2026 年 9 月
+依据 <b>颜庆津《数值分析》（第 4 版）</b>整理扩充。第一章对应原书第 1 章；第二章围绕数值线性代数工具展开。课堂精编已整理第 1–7、9 讲，第 8 讲页面待补。例题与实验数值均经 Python 复算。
 </div>
+</details>
 </section>
 
 <section class="study-paths" aria-label="建议学习路径">
@@ -58,7 +56,7 @@
 <article class="study-path">
 <span class="path-kicker">COURSE · 跟课堂</span>
 <strong>对照老师讲的逐讲复习</strong>
-<p>2026 秋《数值分析 I》七讲精编：每讲页首是「10 分钟复习版」（结论 + 公式 + 考点），页身是板书例题、推导细节与 AI 转写订正。</p>
+<p>已整理第 1–7、9 讲；第 8 讲页面待补。每讲页首是「10 分钟复习版」，页身收录板书例题、推导细节与转写订正。</p>
 <a href="lectures/overview.md">进入课堂精编 →</a>
 </article>
 </section>
