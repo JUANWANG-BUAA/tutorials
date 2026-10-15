@@ -130,7 +130,7 @@ ul#mdbook-searchresults span.teaser em{
 .content figure svg{overflow:hidden}
 
 @media only screen and (max-width:700px){
-  #back-to-top{right:14px;bottom:18px;width:var(--space-10);height:40px}
+  #back-to-top{right:14px;bottom:18px;width:var(--space-10);height:var(--space-10)}
 }
 
 @media print{
@@ -231,7 +231,7 @@ html.figure-reveal .content figure.figure-in{
   border-bottom:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
 }
 .continue-link:hover{color:var(--accent-text);border-bottom-color:var(--accent)}
-.continue-meta{grid-column:3;color:var(--muted);font:11px/1.6 var(--mono)}
+.continue-meta{grid-column:3;color:var(--muted);font:var(--fs-xs)/1.6 var(--mono)}
 .continue-bar{
   grid-column:1 / -1;height:3px;border-radius:2px;
   background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden;
@@ -354,7 +354,7 @@ html.has-page-rail .page-toc{display:none}
 #page-rail a.page-rail-h3{padding-left:var(--space-3);font-size:var(--fs-sm);color:var(--muted)}
 #page-rail a:hover{color:var(--ink)}
 #page-rail a.is-current{color:var(--accent-text);font-weight:600}
-#page-rail::-webkit-scrollbar{width:4px}
+#page-rail::-webkit-scrollbar{width:var(--space-1)}
 #page-rail::-webkit-scrollbar-thumb{background:var(--line-strong)}
 
 @media print{
@@ -388,7 +388,7 @@ html.has-page-rail .page-toc{display:none}
 .term-popover[hidden]{display:none}
 .term-popover-head{display:flex;align-items:baseline;gap:var(--space-2);margin:0 0 6px}
 .term-popover-head b{font:700 13.5px/1.4 var(--serif-display);letter-spacing:.01em}
-.term-popover-en{color:var(--muted);font:11px/1.4 var(--mono)}
+.term-popover-en{color:var(--muted);font:var(--fs-xs)/1.4 var(--mono)}
 .term-popover-def .katex{font-size:1em}
 .term-popover-def{color:var(--ink-2)}
 .term-popover-extra{

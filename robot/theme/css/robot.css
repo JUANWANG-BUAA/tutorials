@@ -53,7 +53,7 @@ body{
 }
 
 @media (max-width:900px){
-  #mdbook-menu-bar .portal-home{padding:0 8px}
+  #mdbook-menu-bar .portal-home{padding:0 var(--space-2)}
   #mdbook-menu-bar .portal-home-label{display:none}
 }
 
@@ -121,9 +121,9 @@ details.sol-box>summary::after{
   border:1px solid var(--line);background:var(--paper-soft);
 }
 
-.page-toc a.page-toc-h3{padding-left:18px;font-size:12px}
+.page-toc a.page-toc-h3{padding-left:18px;font-size:var(--fs-sm)}
 
-.page-toc a.page-toc-h3::before{content:"–";font-size:10px}
+.page-toc a.page-toc-h3::before{content:"–";font-size:var(--fs-2xs)}
 
 /* ======================================================================== *
  * §7  响应式
@@ -141,26 +141,26 @@ details.sol-box>summary::after{
 .content img{max-width:100%;height:auto}
 
 @media(max-width:700px){
-  :root{--page-padding:16px}
+  :root{--page-padding:var(--space-4)}
   #mdbook-sidebar .sidebar-scrollbox{padding-top:68px}
-  .content h1{font-size:27px}
+  .content h1{font-size:var(--fs-h2)}
   .chapter-cover{padding:34px 0 30px}
   .chapter-cover::after{font-size:140px}
   .chapter-cover .kicker{margin-bottom:30px}
   .chapter-cover h1{font-size:36px}
-  .cover-chips{grid-template-columns:1fr;margin-top:24px}
+  .cover-chips{grid-template-columns:1fr;margin-top:var(--space-6)}
   .cover-chips span:nth-child(odd){border-right:0}
   .cover-chips span:nth-child(even){padding-left:0}
   .index-cards{padding-left:25px}
-  .index-cards a{display:block;padding:12px 9px}
+  .index-cards a{display:block;padding:var(--space-3) 9px}
   .index-cards .no,.index-cards .t,.index-cards .d,.index-cards .go{display:block;margin-bottom:5px}
-  .study-paths{grid-template-columns:1fr;gap:12px}
+  .study-paths{grid-template-columns:1fr;gap:var(--space-3)}
   .study-path{min-height:0}
   .lesson-brief{grid-template-columns:1fr;border-radius:var(--radius-sm)}
   .lesson-brief>div{padding:15px var(--space-4);border-right:0;border-bottom:1px solid var(--line)}
   .lesson-brief>div:last-child{border-bottom:0}
   .page-toc{grid-template-columns:1fr}
-  .box{padding:16px 15px 12px}
+  .box{padding:var(--space-4) 15px var(--space-3)}
   .content table{display:block;overflow-x:auto}
 }
 
@@ -219,7 +219,7 @@ details.sol-box>summary::after{
 
 .lab[hidden]{display:none}
 
-.lab-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.lab-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:var(--space-1)}
 
 .lab-head b{font-size:1.02rem}
 
@@ -257,9 +257,9 @@ details.sol-box>summary::after{
 
 .lab-readout p{margin:6px 0}
 
-.lab-warn{color:var(--err-ink);background:var(--err-bg);border-left:3px solid var(--err-line);padding:6px 10px;border-radius:0 8px 8px 0}
+.lab-warn{color:var(--err-ink);background:var(--err-bg);border-left:3px solid var(--err-line);padding:6px 10px;border-radius:0 var(--space-2) var(--space-2) 0}
 
-.lab-matrix{border-collapse:collapse;display:inline-table;vertical-align:middle;margin:0 10px 0 4px}
+.lab-matrix{border-collapse:collapse;display:inline-table;vertical-align:middle;margin:0 10px 0 var(--space-1)}
 
 .lab-matrix td,.lab-matrix th{
   border:1px solid var(--line);padding:2px var(--space-2);text-align:right;
