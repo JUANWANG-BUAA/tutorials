@@ -3,7 +3,7 @@
 ```
 shared/theme/            浏览器侧资源（各书的 theme/ 里放符号链接指向这里）
   head.hbs               首帧防闪：把 localStorage 里的阅读偏好落到 <html data-*>
-  css/base.css           **§1 设计令牌层**（主题调色板 / 语义调色板 / 派生量 / 尺寸令牌）
+  css/base.css           共用样式：**§1 设计令牌层** + **§2 三本逐字相同的组件规则**（177 块）
   css/framework.css      mdBook 框架 UI 修补 + 附加操作外观 + 插图/阅读进度/微动效
   css/prefs.css          阅读偏好层（六个轴，属性驱动）
   js/framework.js        框架文案汉化、回到顶部、侧栏折叠、灯箱、术语、右栏大纲、
