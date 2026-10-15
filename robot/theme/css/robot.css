@@ -438,15 +438,20 @@ html:not(.matrix-ready) *::after{
   font:13.5px/1.7 var(--sans);
 }
 
-/* 例题解答（可折叠） */
+/* 例题解答（可折叠）
+   折叠态此前只是一行文字，看不出「这里可以点、点开有什么」。改为一条有底色的
+   横栏 + 右对齐的「展开 / 收起」提示 + 悬停反馈，与《数值分析》《矩阵论》
+   同一套处理，三本书的同一交互外观一致。 */
 details.sol-box{
   margin:13px 0;border:1px solid var(--line);background:var(--paper);
 }
 details.sol-box>summary{
   display:flex;align-items:center;gap:9px;
-  padding:11px 17px;color:var(--ex-ink);
+  padding:10px 17px;color:var(--ex-ink);
+  background:var(--ex-bg);
   font:700 11px/1.5 var(--sans);letter-spacing:.06em;
   cursor:pointer;list-style:none;user-select:none;
+  transition:background 140ms ease;
 }
 details.sol-box>summary::-webkit-details-marker{display:none}
 details.sol-box>summary::before{
@@ -454,6 +459,12 @@ details.sol-box>summary::before{
   border-right:1px solid currentColor;border-bottom:1px solid currentColor;
   transform:rotate(-45deg);transition:transform .16s;
 }
+details.sol-box>summary::after{
+  content:"展开";margin-left:auto;color:var(--muted);
+  font:600 10px/1 var(--mono);letter-spacing:.09em;
+}
+details.sol-box[open]>summary::after{content:"收起"}
+details.sol-box>summary:hover{background:color-mix(in srgb,var(--ex-line) 13%,var(--ex-bg))}
 details.sol-box[open]{border-color:var(--ex-line)}
 details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
 details.sol-box[open]>summary::before{transform:rotate(45deg)}
@@ -736,11 +747,15 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
 #mdbook-sidebar .chapter-fold-toggle:hover{color:var(--sidebar-active);opacity:1}
 #mdbook-sidebar .chapter-fold-toggle svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform 500ms ease}
 #mdbook-sidebar li.expanded>.chapter-link-wrapper>.chapter-fold-toggle svg{transform:rotate(90deg)}
-#mdbook-sidebar .chapter li.part-title{margin:5px 0;padding:0;border:0;color:var(--sidebar-fg);font:700 13.5px/1.5 var(--sans);letter-spacing:0;text-transform:none}
+/* 分节标签（卷首 / 正文 / 各章章末…）：此前与普通条目同字号同色，读者
+   分不出「分组标题」与「可点页面」。降为小一号、次级灰、拉开上间距。 */
+#mdbook-sidebar .chapter li.part-title{margin:16px 0 6px;padding:0;border:0;color:var(--muted);font:700 11.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:none}
 #mdbook-sidebar .chapter .spacer{width:100%;height:3px;margin:5px 0;background:var(--sidebar-spacer)}
 /* width:auto（而非 100%）：100% + padding-left 在 content-box 下会溢出父容器，
    嵌套每层多出 20px，最深层标题被侧栏右缘裁字 */
-#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.9em}
+/* 行高与条目统一为 1.5：mdBook 默认给 ol.section 1.9em，导致子级
+   条目之间的行距明显大于顶级条目，整栏节奏忽紧忽松。 */
+#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.5em}
 /* header-item 是 flex 行：标题链接占一行，其嵌套的小节列表（ol.section）
    必须换行占满整行——否则会被挤到标题右侧的第二列里逐字截断 */
 #mdbook-sidebar .chapter li.header-item{display:flex;flex-wrap:wrap;margin-top:.6em;line-height:1.5em}
@@ -809,6 +824,8 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
   .content{padding:0;max-width:none}
   .chapter-cover::after{display:none}
   .box,details.sol-box,table,figure,ul.objlist li{break-inside:avoid}
+  /* 纸面上点不动：折叠解答的「展开 / 收起」提示去掉 */
+  details.sol-box>summary::after{display:none}
   a.crossref{border:0;color:#000;text-decoration:underline}
 }
 

@@ -815,11 +815,15 @@ ul.objlist li:last-child{border-bottom:1px solid var(--line)}
 #mdbook-sidebar .chapter-fold-toggle:hover{color:var(--sidebar-active);opacity:1}
 #mdbook-sidebar .chapter-fold-toggle svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform 500ms ease}
 #mdbook-sidebar li.expanded>.chapter-link-wrapper>.chapter-fold-toggle svg{transform:rotate(90deg)}
-#mdbook-sidebar .chapter li.part-title{margin:5px 0;padding:0;border:0;color:var(--sidebar-fg);font:700 13.5px/1.5 var(--sans);letter-spacing:0;text-transform:none}
+/* 分节标签（卷首 / 正文 / 各章章末…）：此前与普通条目同字号同色，读者
+   分不出「分组标题」与「可点页面」。降为小一号、次级灰、拉开上间距。 */
+#mdbook-sidebar .chapter li.part-title{margin:16px 0 6px;padding:0;border:0;color:var(--muted);font:700 11.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:none}
 #mdbook-sidebar .chapter .spacer{width:100%;height:3px;margin:5px 0;background:var(--sidebar-spacer)}
 /* width:auto（而非 100%）：100% + padding-left 在 content-box 下会溢出父容器，
    嵌套每层多出 20px，最深层标题被侧栏右缘裁字 */
-#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.9em}
+/* 行高与条目统一为 1.5：mdBook 默认给 ol.section 1.9em，导致子级
+   条目之间的行距明显大于顶级条目，整栏节奏忽紧忽松。 */
+#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.5em}
 /* header-item 是 flex 行：标题链接占一行，其嵌套的小节列表（ol.section）
    必须换行占满整行——否则会被挤到标题右侧的第二列里逐字截断 */
 #mdbook-sidebar .chapter li.header-item{display:flex;flex-wrap:wrap;margin-top:.6em;line-height:1.5em}

@@ -6,8 +6,6 @@
   var framePending = false;
   var printSolutionState = null;
 
-  root.setAttribute("data-theme-style", "ink");
-  root.setAttribute("data-density", "standard");
 
   /* ------------------------------------------------------------------ *
    * 界面文案中文化：mdBook 自带的 chrome 文案（搜索框、帮助弹窗、翻页
@@ -376,84 +374,10 @@
    * 教训：**不要重复实现框架已有的可访问性行为**。少一层拦截，少一处 bug。
    */
 
-  var sidebarBox = document.querySelector("mdbook-sidebar-scrollbox");
-
-  function makeChevron() {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    svg.setAttribute("viewBox", "0 0 12 12");
-    svg.setAttribute("aria-hidden", "true");
-    path.setAttribute("d", "M4 2.5 7.5 6 4 9.5");
-    svg.appendChild(path);
-    return svg;
-  }
-
-  function enhanceSidebar() {
-    if (!sidebarBox || sidebarBox.dataset.enhanced) return;
-
-    sidebarBox.querySelectorAll("li.chapter-item").forEach(function (item, index) {
-      var wrapper = item.querySelector(":scope > .chapter-link-wrapper");
-      var section = item.querySelector(":scope > ol.section");
-      if (!wrapper || !section || wrapper.querySelector(".chapter-fold-toggle")) return;
-
-      var toggle = document.createElement("button");
-      var groupLink = wrapper.querySelector(":scope > a[href]");
-      var groupIdentity = groupLink ? new URL(groupLink.getAttribute("href"), location.href).pathname : "group-" + index;
-      var storageKey = "matrix-sidebar-group:" + groupIdentity;
-      var sectionId = "matrix-sidebar-section-" + index;
-      var savedState = getStoredValue(storageKey);
-      if (savedState === "open") item.classList.add("expanded");
-      if (savedState === "closed" && !item.querySelector("a.active")) item.classList.remove("expanded");
-
-      section.id = section.id || sectionId;
-      toggle.type = "button";
-      toggle.className = "chapter-fold-toggle";
-      toggle.setAttribute("aria-label", "展开或折叠本章小节");
-      toggle.setAttribute("aria-expanded", item.classList.contains("expanded"));
-      toggle.setAttribute("aria-controls", section.id);
-      toggle.dataset.storageKey = storageKey;
-      toggle.appendChild(makeChevron());
-      wrapper.appendChild(toggle);
-    });
-
-    sidebarBox.querySelectorAll(".chapter-link-wrapper > a").forEach(function (link) {
-      var match = link.textContent.trim().match(/^(\d+(?:\.\d+)*)\s+(.+)$/);
-      if (match && !link.querySelector(".sec-no")) {
-        var number = document.createElement("strong");
-        var label = document.createElement("span");
-        number.className = "sec-no";
-        number.setAttribute("aria-hidden", "true");
-        number.textContent = match[1];
-        label.className = "sec-label";
-        label.textContent = match[2];
-        link.replaceChildren(number, label);
-      }
-      if (link.classList.contains("active")) link.setAttribute("aria-current", "page");
-    });
-
-    var activeLink = sidebarBox.querySelector("a.active");
-    sidebarBox.dataset.enhanced = "1";
-
-    if (activeLink) {
-      var viewport = sidebarBox.getBoundingClientRect();
-      var activeBounds = activeLink.getBoundingClientRect();
-      if (activeBounds.top < viewport.top + 10) sidebarBox.scrollTop -= viewport.top + 10 - activeBounds.top;
-      else if (activeBounds.bottom > viewport.bottom - 10) sidebarBox.scrollTop += activeBounds.bottom - viewport.bottom + 10;
-    }
-  }
-
-  if (sidebarBox) {
-    sidebarBox.addEventListener("click", function (event) {
-      var toggle = event.target.closest(".chapter-fold-toggle");
-      if (!toggle || !sidebarBox.contains(toggle)) return;
-      var item = toggle.closest("li.chapter-item");
-      if (!item) return;
-      var isOpen = item.classList.toggle("expanded");
-      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      setStoredValue(toggle.dataset.storageKey, isOpen ? "open" : "closed");
-    });
-  }
-
+  /* 侧栏（折叠、编号分列）自 2026-10 起收进 theme/js/sidebar.js，三本书共用
+     同一份实现——此前各书一份、行为不一致，且与 mdBook 自带的大纲折叠钮互相
+     打架（同一 chevron 改两个 li，点击看起来「只展开、折不动」）。本文件不再
+     处理侧栏。 */
 
   /* ------------------------------------------------------------------ *
    * 返回教程库
@@ -512,7 +436,6 @@
     buildSolutionToolbar();
     buildBackToTop();
     buildPortalHome();
-    enhanceSidebar();
     updateProgress();
     markScrollableDisplays();
 

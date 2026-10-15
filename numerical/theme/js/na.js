@@ -5,10 +5,7 @@
   var root = document.documentElement;
   var framePending = false;
   var printSolutionState = null;
-  var pageNavigationLocked = false;
 
-  root.setAttribute("data-theme-style", "ink");
-  root.setAttribute("data-density", "standard");
 
   function getStoredValue(key) {
     try { return localStorage.getItem(key); } catch (error) { return null; }
@@ -168,153 +165,20 @@
     printSolutionState = null;
   });
 
-  window.addEventListener("keydown", function (event) {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    var target = event.target;
-    var activeElement = document.activeElement;
-    var interactiveSelector = "input, textarea, select, button, summary, [contenteditable='true'], [role='textbox']";
-    var targetIsInteractive = Boolean(target && target.closest && target.closest(interactiveSelector));
-    var focusIsInteractive = Boolean(activeElement && activeElement.closest && activeElement.closest(interactiveSelector));
-    if (!targetIsInteractive && !focusIsInteractive && !pageNavigationLocked) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-  }, true);
+  /* 这里**不再**自建 ←/→ 护栏（详见 robot.js 同处注释）：mdBook 的
+     chapterNavigation 已内置「焦点在交互元素里就不翻页」的保护，此前本文件
+     额外加的一层会吞掉方向键、让页面翻不动。 */
 
-  var sidebarBox = document.querySelector("mdbook-sidebar-scrollbox");
+  /* 侧栏（折叠、编号分列、本页大纲、跟随当前小节）自 2026-10 起收进
+     theme/js/sidebar.js，三本书共用同一份实现——此前各书一份、行为不一致，
+     且与 mdBook 自带的大纲折叠钮互相打架（同一 chevron 改两个 li，点击看起来
+     「只展开、折不动」）。本文件不再处理侧栏。 */
 
-  function makeChevron() {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    svg.setAttribute("viewBox", "0 0 12 12");
-    svg.setAttribute("aria-hidden", "true");
-    path.setAttribute("d", "M4 2.5 7.5 6 4 9.5");
-    svg.appendChild(path);
-    return svg;
-  }
+  /* 侧栏（折叠、编号分列、本页大纲、跟随当前小节）自 2026-10 起收进
+     theme/js/sidebar.js，三本书共用同一份实现——此前各书一份、行为不一致，
+     且与 mdBook 自带的大纲折叠钮互相打架（同一 chevron 改两个 li，点击看起来
+     「只展开、折不动」）。本文件不再处理侧栏。 */
 
-  /* 编号与标题分成两列（样式见 na.css §6.5）：
-     中文标题在 300px 栏内常折行，若与编号同处一个行内流，第二行会顶回最左，
-     出现「…第三种研究方 / 法」这种孤立字。toc.js 要到 DOMContentLoaded 才插入
-     「本页大纲」，所以这个函数会跑两次（幂等）。 */
-  function decorateSidebarLabels() {
-    if (!sidebarBox) return;
-    sidebarBox.querySelectorAll(".chapter-link-wrapper > a").forEach(function (link) {
-      if (link.classList.contains("active")) link.setAttribute("aria-current", "page");
-      if (link.querySelector(".sec-no, .sec-label")) return;
-      var match = link.textContent.trim().match(/^(\d+(?:\.\d+)*)\s+(.+)$/);
-      if (!match) return;
-      var number = document.createElement("strong");
-      var label = document.createElement("span");
-      number.className = "sec-no";
-      number.setAttribute("aria-hidden", "true");
-      number.textContent = match[1];
-      label.className = "sec-label";
-      label.textContent = match[2];
-      link.replaceChildren(number, label);
-    });
-  }
-
-  /* 「本页大纲」是 mdBook 0.5 的行为：把当前页的 h2/h3 树插到活动条目下方。
-     它默认与页面导航同字号同色，读者分不清点击是换页还是页内跳转；折叠钮
-     也用的是 mdBook 的 ❱ 字符，与页面导航注入的 SVG 箭头不一致。这里补一个
-     标题、把 ❱ 换成同一枚箭头（展开旋转沿用页面导航的规则）。 */
-  function decorateSidebarOutline() {
-    if (!sidebarBox) return;
-    sidebarBox.querySelectorAll(".on-this-page").forEach(function (block) {
-      if (!block.querySelector(".otp-label")) {
-        var label = document.createElement("div");
-        label.className = "otp-label";
-        label.textContent = "本页大纲";
-        block.insertBefore(label, block.firstChild);
-      }
-      block.querySelectorAll(".header-toggle").forEach(function (toggle) {
-        if (!toggle.querySelector("svg")) toggle.replaceChildren(makeChevron());
-      });
-    });
-    decorateSidebarLabels();
-  }
-
-  /* 阅读时跟随当前小节：大纲比侧栏视口长时，当前小节会滚出视野，大纲就失去
-     「我在哪」的作用。只在当前小节完全离开视野时补滚，并在读者手动滚动侧栏
-     后暂停 2.5 秒，避免和读者抢滚动条。 */
-  var manualSidebarScrollAt = 0;
-  var followPending = false;
-
-  function followCurrentHeader() {
-    if (followPending || !sidebarBox) return;
-    followPending = true;
-    requestAnimationFrame(function () {
-      followPending = false;
-      if (Date.now() - manualSidebarScrollAt < 2500) return;
-      var current = sidebarBox.querySelector("a.current-header");
-      if (!current) return;
-      var viewport = sidebarBox.getBoundingClientRect();
-      var bounds = current.getBoundingClientRect();
-      var margin = 28;
-      if (bounds.top < viewport.top + margin) sidebarBox.scrollTop -= viewport.top + margin - bounds.top;
-      else if (bounds.bottom > viewport.bottom - margin) sidebarBox.scrollTop += bounds.bottom - viewport.bottom + margin;
-    });
-  }
-
-  function enhanceSidebar() {
-    if (!sidebarBox || sidebarBox.dataset.enhanced) return;
-
-    sidebarBox.querySelectorAll("li.chapter-item").forEach(function (item, index) {
-      var wrapper = item.querySelector(":scope > .chapter-link-wrapper");
-      var section = item.querySelector(":scope > ol.section");
-      if (!wrapper || !section || wrapper.querySelector(".chapter-fold-toggle")) return;
-
-      var toggle = document.createElement("button");
-      var groupLink = wrapper.querySelector(":scope > a[href]");
-      var groupIdentity = groupLink ? new URL(groupLink.getAttribute("href"), location.href).pathname : "group-" + index;
-      var storageKey = "matrix-sidebar-group:" + groupIdentity;
-      var sectionId = "matrix-sidebar-section-" + index;
-      var savedState = getStoredValue(storageKey);
-      if (savedState === "open") item.classList.add("expanded");
-      if (savedState === "closed" && !item.querySelector("a.active")) item.classList.remove("expanded");
-
-      section.id = section.id || sectionId;
-      toggle.type = "button";
-      toggle.className = "chapter-fold-toggle";
-      toggle.setAttribute("aria-label", "展开或折叠本章小节");
-      toggle.setAttribute("aria-expanded", item.classList.contains("expanded"));
-      toggle.setAttribute("aria-controls", section.id);
-      toggle.dataset.storageKey = storageKey;
-      toggle.appendChild(makeChevron());
-      wrapper.appendChild(toggle);
-    });
-
-    decorateSidebarLabels();
-
-    var activeLink = sidebarBox.querySelector("a.active");
-    sidebarBox.dataset.enhanced = "1";
-
-    if (activeLink) {
-      var viewport = sidebarBox.getBoundingClientRect();
-      var activeBounds = activeLink.getBoundingClientRect();
-      if (activeBounds.top < viewport.top + 10) sidebarBox.scrollTop -= viewport.top + 10 - activeBounds.top;
-      else if (activeBounds.bottom > viewport.bottom - 10) sidebarBox.scrollTop += activeBounds.bottom - viewport.bottom + 10;
-    }
-  }
-
-  if (sidebarBox) {
-    sidebarBox.addEventListener("click", function (event) {
-      var toggle = event.target.closest(".chapter-fold-toggle");
-      if (!toggle || !sidebarBox.contains(toggle)) return;
-      var item = toggle.closest("li.chapter-item");
-      if (!item) return;
-      var isOpen = item.classList.toggle("expanded");
-      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      setStoredValue(toggle.dataset.storageKey, isOpen ? "open" : "closed");
-    });
-  }
-
-  document.addEventListener("pointerup", function (event) {
-    pageNavigationLocked = Boolean(
-      event.target && event.target.closest &&
-      event.target.closest("button, summary, input, textarea, select, [contenteditable='true'], [role='textbox']")
-    );
-  }, { passive: true });
 
   /* ======================================================================== *
    * 界面文案汉化
@@ -479,25 +343,10 @@
     buildPageToc();
     buildLayerToggle();
     buildSolutionToolbar();
-    enhanceSidebar();
     localizeChrome();
     watchSearchResults();
     buildPortalHome();
     updateProgress();
-
-    // 「本页大纲」由 toc.js 在 DOMContentLoaded 里插入，而 toc.js 的监听器
-    // 注册在本文件之前，所以这个回调一定跑在它之后。
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", decorateSidebarOutline);
-    } else {
-      decorateSidebarOutline();
-    }
-    window.addEventListener("scroll", followCurrentHeader, { passive: true });
-    if (sidebarBox) {
-      ["wheel", "touchstart", "pointerdown"].forEach(function (type) {
-        sidebarBox.addEventListener(type, function () { manualSidebarScrollAt = Date.now(); }, { passive: true });
-      });
-    }
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { root.classList.add("matrix-ready"); });

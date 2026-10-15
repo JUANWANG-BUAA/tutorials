@@ -435,15 +435,20 @@ html:not(.matrix-ready) *::after{
   font:13.5px/1.7 var(--sans);
 }
 
-/* 例题解答（可折叠） */
+/* 例题解答（可折叠）
+   折叠态此前只是一行文字，看不出「这里可以点、点开有什么」。改为一条有底色的
+   横栏 + 右对齐的「展开 / 收起」提示 + 悬停反馈，与《数值分析》《机器人控制技术》
+   同一套处理，三本书的同一交互外观一致。 */
 details.sol-box{
   margin:13px 0;border:1px solid var(--line);background:var(--paper);
 }
 details.sol-box>summary{
   display:flex;align-items:center;gap:9px;
-  padding:11px 17px;color:var(--ex-ink);
+  padding:10px 17px;color:var(--ex-ink);
+  background:var(--ex-bg);
   font:700 11px/1.5 var(--sans);letter-spacing:.06em;
   cursor:pointer;list-style:none;user-select:none;
+  transition:background 140ms ease;
 }
 details.sol-box>summary::-webkit-details-marker{display:none}
 details.sol-box>summary::before{
@@ -451,6 +456,12 @@ details.sol-box>summary::before{
   border-right:1px solid currentColor;border-bottom:1px solid currentColor;
   transform:rotate(-45deg);transition:transform .16s;
 }
+details.sol-box>summary::after{
+  content:"展开";margin-left:auto;color:var(--muted);
+  font:600 10px/1 var(--mono);letter-spacing:.09em;
+}
+details.sol-box[open]>summary::after{content:"收起"}
+details.sol-box>summary:hover{background:color-mix(in srgb,var(--ex-line) 13%,var(--ex-bg))}
 details.sol-box[open]{border-color:var(--ex-line)}
 details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
 details.sol-box[open]>summary::before{transform:rotate(45deg)}
@@ -810,10 +821,12 @@ html{scroll-behavior:smooth}
   margin:14px -10px 5px;padding:6px 10px 5px;
   background:var(--sidebar);
   box-shadow:0 1px 0 var(--line);
-  color:var(--sidebar-fg);font:700 13.5px/1.5 var(--sans);letter-spacing:0;text-transform:none;
+  color:var(--muted);font:700 11.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:none;
 }
 #mdbook-sidebar .chapter .spacer{width:100%;height:3px;margin:5px 0;background:var(--sidebar-spacer)}
-#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.9em}
+/* 行高与条目统一为 1.5：mdBook 默认给 ol.section 1.9em，导致子级
+   条目之间的行距明显大于顶级条目，整栏节奏忽紧忽松。 */
+#mdbook-sidebar ol.section{width:auto;margin:0;padding-left:20px;border:0;line-height:1.5em}
 /* 页内小节树（toc.js 运行时注入的 .on-this-page）：header-item 是 flex 行，
    标题链接占一行；嵌套的 ol.section 必须换行占满整行，否则会被挤到
    标题右侧的第二列并溢出裁字 */
@@ -1072,6 +1085,8 @@ html{scroll-behavior:smooth}
   /* 分页：整个 .box 或整张长表设 avoid 反而制造大片空白（最长盒 57 行、
      最长表 42 行，一页放不下），所以只保证「行内不断」并让表头每页重复。 */
   .box,details.sol-box,figure,ul.objlist li{break-inside:avoid}
+  /* 纸面上点不动：折叠解答的「展开 / 收起」提示去掉 */
+  details.sol-box>summary::after{display:none}
   table{break-inside:auto}
   tr,td,th{break-inside:avoid}
   thead{display:table-header-group}

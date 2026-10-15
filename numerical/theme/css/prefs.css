@@ -1,0 +1,268 @@
+/*
+ * 阅读偏好层 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
+ * ---------------------------------------------------------------------------
+ * 与各书的权威样式表（robot.css / na.css / matrix.css）**分工明确**：
+ *   · 权威样式表定义「这本书长什么样」——设计令牌、组件、版式基线；
+ *   · 本文件只定义「读者想把这本书调成什么样」——字体 / 字号 / 行距间距 /
+ *     版心宽度 / 配色，全部由 <html> 上的 data-* 属性驱动，由 prefs.js 写入。
+ * 因此本文件不含任何组件结构样式，日后改版式仍只改权威样式表。
+ *
+ * 为什么是「属性驱动」而不是内联 style：
+ *   1. 偏好要能覆盖权威样式里的自定义属性（如 --content-max-width），而自定义属性
+ *      的覆盖靠选择器特异性 + 源顺序；属性选择器特异性高于 :root，本文件又最后加载。
+ *   2. 默认值（standard / warm / serif）不写任何属性，外观与设置面板出现之前
+ *      逐像素一致——升级不改变任何读者的现有观感。
+ *
+ * 加载顺序：book.toml 的 additional-css 里排在权威样式表**之后**（含 katex.css 之后），
+ * 这样同特异性的声明由本文件胜出。
+ */
+
+/* ======================================================================== *
+ * §1  字体族切换
+ *   只换「正文/长文」的字体；章节标题仍用 display serif（标题是层级标识，
+ *   不是阅读对象），导航与控件仍用 sans（沿用权威样式表的字体角色纪律）。
+ * ======================================================================== */
+html[data-font="sans"] body,
+html[data-font="sans"] .content,
+html[data-font="sans"] .content p,
+html[data-font="sans"] .content li{font-family:var(--sans)}
+/* 无衬线正文略收紧行高与字距：黑体在同样行高下显得比衬线更松 */
+html[data-font="sans"] .content{letter-spacing:.002em}
+html[data-font="sans"] .content p,
+html[data-font="sans"] .content li{font-family:var(--sans);line-height:1.78}
+
+html[data-font="system"] body,
+html[data-font="system"] .content,
+html[data-font="system"] .content p,
+html[data-font="system"] .content li{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;
+}
+
+/* ======================================================================== *
+ * §2  字号（s / m / l；m 为基线 16.5px，不写属性）
+ * ======================================================================== */
+html[data-size="s"] .content{font-size:15px}
+html[data-size="l"] .content{font-size:18.5px}
+
+/* ======================================================================== *
+ * §3  行距与间距（密度）
+ *   一次调整四处：正文行高、段间距、块级（盒子/折叠/图）内边距与间距、
+ *   以及整页左右留白。避免只改行高时「行松了但段落还很挤」的错位感。
+ *
+ *   段落行高必须写在 .content p / .content li 上，不能只写在 .content 上：
+ *   mdBook 的 chrome 样式自带 `.content p { line-height:1.45em }`，选择器比
+ *   `.content` 更细，会把权威样式表写在 .content 上的行高顶掉——中文正文被
+ *   压到 1.45，读起来发挤。这里显式接管段落与列表项，既修正该问题，也让
+ *   下面的 density 档位真正生效（1.82 是三本书权威样式表的既定值）。
+ * ======================================================================== */
+.content p,.content li{line-height:1.82}
+
+/* 只调桌面端的页面留白：窄屏的 --page-padding 由权威样式表的响应式段
+   接管（≤700px 收到 16px），这里若不加宽度条件会把它顶掉，导致手机上
+   「宽松」模式挤掉半屏宽度。 */
+@media (min-width:701px){
+  html[data-density="compact"]{--page-padding:18px}
+  html[data-density="loose"]{--page-padding:34px}
+}
+
+html[data-density="compact"] .content{line-height:1.72}
+html[data-density="compact"] .content p,
+html[data-density="compact"] .content li{line-height:1.72}
+html[data-density="compact"] .content p{margin:8px 0}
+html[data-density="compact"] .content h2{margin:46px 0 14px}
+html[data-density="compact"] .content h3{margin:32px 0 9px}
+html[data-density="compact"] .content h4{margin:22px 0 5px}
+html[data-density="compact"] .box{margin:14px 0;padding:14px 18px 10px}
+html[data-density="compact"] .proof{margin:12px 0 3px;padding:10px 15px 5px}
+html[data-density="compact"] details.sol-box{margin:9px 0}
+html[data-density="compact"] details.sol-box>summary{padding:8px 15px}
+html[data-density="compact"] .sol-inner{padding:6px 17px 10px}
+html[data-density="compact"] .content figure{margin:20px 0;padding:15px 14px 9px}
+html[data-density="compact"] .content blockquote{margin:12px 0;padding:10px 15px}
+
+html[data-density="loose"] .content{line-height:2}
+html[data-density="loose"] .content p,
+html[data-density="loose"] .content li{line-height:2}
+html[data-density="loose"] .content p{margin:16px 0}
+html[data-density="loose"] .content h2{margin:78px 0 24px}
+html[data-density="loose"] .content h3{margin:54px 0 16px}
+html[data-density="loose"] .content h4{margin:36px 0 9px}
+html[data-density="loose"] .box{margin:26px 0;padding:22px 26px 17px}
+html[data-density="loose"] .proof{margin:20px 0 5px;padding:15px 20px 8px}
+html[data-density="loose"] details.sol-box{margin:17px 0}
+html[data-density="loose"] details.sol-box>summary{padding:13px 20px}
+html[data-density="loose"] .sol-inner{padding:11px 22px 16px}
+html[data-density="loose"] .content figure{margin:34px 0;padding:24px 22px 15px}
+html[data-density="loose"] .content blockquote{margin:20px 0;padding:14px 21px}
+
+/* ======================================================================== *
+ * §4  版心宽度（narrow / standard / wide；standard 为 820px）
+ *   mdBook 把阅读列宽度放在 --content-max-width（.content main 上）；
+ *   --reading-w 是各书自留的同义令牌，一并改写以免两者不一致。
+ * ======================================================================== */
+html[data-width="narrow"]{--content-max-width:680px;--reading-w:680px}
+html[data-width="wide"]{--content-max-width:1000px;--reading-w:1000px}
+
+/* ======================================================================== *
+ * §5  配色主题
+ *   warm 为默认（权威样式表自身的暖纸色），不写属性。其余三套只改写
+ *   「中性面 + 强调色」这些读者感知得到、且与语义无关的令牌；定义/定理/例题等
+ *   语义盒子的配色不动——它们是内容语义，不是皮肤。
+ *   每套都给了亮色与暗色两版（暗色复用权威样式表的深色盒子配色）。
+ * ======================================================================== */
+
+/* —— 冷灰 · 石板蓝 —— */
+html[data-palette="cool"]:not(.navy):not(.coal):not(.ayu){
+  --page:#f4f6f9;--sidebar:#e9edf2;--paper:#ffffff;--paper-soft:#eef1f5;
+  --ink:#14171c;--ink-2:#4c535e;--muted:#616873;
+  --line:#d5dae1;--line-strong:#aeb6c1;--control-line:#8b93a0;
+  --accent:#43648f;--accent-strong:#35506f;--accent-text:#35506f;--sage:#4f8378;
+  --accent-soft:rgba(67,100,143,.10);
+  --surface-card:rgba(255,255,255,.92);--surface-soft:rgba(238,241,245,.68);
+  --shadow-ink:rgba(20,23,28,.84);--search-mark-bg:#cfe0f3;
+  --sidebar-active:var(--accent-strong);--links:var(--accent-strong);--inline-code-color:var(--accent-strong);
+}
+html[data-palette="cool"].navy,
+html[data-palette="cool"].coal,
+html[data-palette="cool"].ayu{
+  --page:#0e1218;--sidebar:#131822;--paper:#191f29;--paper-soft:#232a35;
+  --ink:#e8ebf0;--ink-2:#b6bcc7;--muted:#8d93a0;
+  --line:#384050;--line-strong:#4c5566;--control-line:#647085;
+  --accent:#7da0d6;--accent-strong:#9bb8e6;--accent-text:#9bb8e6;--sage:#7fb3a6;
+  --accent-soft:rgba(125,160,214,.14);
+  --surface-card:rgba(25,31,41,.94);--surface-soft:rgba(35,42,53,.70);
+  --shadow-ink:rgba(0,0,0,.9);--search-mark-bg:#33445c;
+  --sidebar-active:var(--accent);--links:var(--accent);--inline-code-color:var(--accent);
+}
+
+/* —— 苔绿 · 纸绿 —— */
+html[data-palette="sage"]:not(.navy):not(.coal):not(.ayu){
+  --page:#f4f6f1;--sidebar:#e9eee3;--paper:#fcfdf9;--paper-soft:#eef2e8;
+  --ink:#151a13;--ink-2:#4d5548;--muted:#616b57;
+  --line:#d6ddca;--line-strong:#b0bb9f;--control-line:#8b9578;
+  --accent:#4f7a52;--accent-strong:#3d6340;--accent-text:#3d6340;--sage:#6f8f82;
+  --accent-soft:rgba(79,122,82,.10);
+  --surface-card:rgba(252,253,249,.92);--surface-soft:rgba(238,242,232,.68);
+  --shadow-ink:rgba(21,26,19,.84);--search-mark-bg:#d3e6c8;
+  --sidebar-active:var(--accent-strong);--links:var(--accent-strong);--inline-code-color:var(--accent-strong);
+}
+html[data-palette="sage"].navy,
+html[data-palette="sage"].coal,
+html[data-palette="sage"].ayu{
+  --page:#0f1410;--sidebar:#151b15;--paper:#1b211b;--paper-soft:#252d24;
+  --ink:#e9ece6;--ink-2:#b8bfb1;--muted:#8f9683;
+  --line:#374232;--line-strong:#4b5844;--control-line:#65735c;
+  --accent:#93c08f;--accent-strong:#aed0aa;--accent-text:#aed0aa;--sage:#86a89b;
+  --accent-soft:rgba(147,192,143,.14);
+  --surface-card:rgba(27,33,27,.94);--surface-soft:rgba(37,45,36,.70);
+  --shadow-ink:rgba(0,0,0,.9);--search-mark-bg:#3b4e34;
+  --sidebar-active:var(--accent);--links:var(--accent);--inline-code-color:var(--accent);
+}
+
+/* —— 高对比 · 无障碍 —— */
+html[data-palette="contrast"]:not(.navy):not(.coal):not(.ayu){
+  --page:#ffffff;--sidebar:#f2f2f2;--paper:#ffffff;--paper-soft:#f2f2f2;
+  --ink:#000000;--ink-2:#1a1a1a;--muted:#3d3d3d;
+  --line:#8a8a8a;--line-strong:#4d4d4d;--control-line:#333333;
+  --accent:#a3370f;--accent-strong:#8a2c0b;--accent-text:#8a2c0b;--sage:#1f6b3a;
+  --accent-soft:rgba(163,55,15,.12);
+  --surface-card:#ffffff;--surface-soft:#f2f2f2;
+  --shadow-ink:rgba(0,0,0,.92);--search-mark-bg:#ffd479;
+  --sidebar-active:var(--accent-strong);--links:var(--accent-strong);--inline-code-color:var(--accent-strong);
+}
+html[data-palette="contrast"].navy,
+html[data-palette="contrast"].coal,
+html[data-palette="contrast"].ayu{
+  --page:#000000;--sidebar:#0a0a0a;--paper:#111111;--paper-soft:#1c1c1c;
+  --ink:#ffffff;--ink-2:#e0e0e0;--muted:#bdbdbd;
+  --line:#6e6e6e;--line-strong:#8f8f8f;--control-line:#a6a6a6;
+  --accent:#ffb066;--accent-strong:#ffc98f;--accent-text:#ffc98f;--sage:#7fd6a0;
+  --accent-soft:rgba(255,176,102,.16);
+  --surface-card:rgba(17,17,17,.96);--surface-soft:rgba(28,28,28,.72);
+  --shadow-ink:rgba(0,0,0,.95);--search-mark-bg:#6b4a1f;
+  --sidebar-active:var(--accent);--links:var(--accent);--inline-code-color:var(--accent);
+}
+
+/* 非默认配色不保留暖纸的径向渐变底——它与冷/绿/高对比的中性面不搭。
+   权威样式表里 body 的渐变在 `html.navy body` 等选择器上，与下面同特异性，
+   靠本文件后加载胜出。 */
+html[data-palette="cool"] body,
+html[data-palette="sage"] body,
+html[data-palette="contrast"] body{background:var(--page)}
+
+/* ======================================================================== *
+ * §6  设置面板（结构由 theme/js/prefs.js 注入）
+ *   视觉语言沿用本书既有控件：细边框、纸色底、圆角与「返回教程库」同族。
+ * ======================================================================== */
+#mdbook-menu-bar .prefs-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:34px;padding:0 10px;
+  border:1px solid transparent;border-radius:10px;
+  background:transparent;color:var(--ink-2);
+  cursor:pointer;
+  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
+}
+#mdbook-menu-bar .prefs-toggle:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
+#mdbook-menu-bar .prefs-toggle:active{transform:translateY(1px) scale(.975)}
+#mdbook-menu-bar .prefs-toggle[aria-expanded="true"]{border-color:var(--line-strong);background:var(--paper);color:var(--ink)}
+#mdbook-menu-bar .prefs-toggle .prefs-aa{
+  font:700 14px/1 var(--serif-display);letter-spacing:.02em;
+}
+
+.prefs-panel{
+  position:absolute;top:calc(var(--menu-bar-height) - 4px);right:14px;z-index:130;
+  width:min(336px,calc(100vw - 20px));
+  padding:13px 15px 11px;
+  border:1px solid var(--line-strong);border-radius:14px;
+  background:var(--paper);
+  box-shadow:0 18px 40px rgba(0,0,0,.20);
+  font-family:var(--sans);color:var(--ink);
+}
+.prefs-panel[hidden]{display:none}
+.prefs-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin:0 0 10px;
+}
+.prefs-head b{font:700 13px/1.3 var(--sans);letter-spacing:.02em}
+.prefs-head span{color:var(--muted);font:10px/1.4 var(--mono)}
+.prefs-row{margin:0 0 11px}
+.prefs-row:last-of-type{margin-bottom:4px}
+.prefs-label{
+  display:block;margin:0 0 6px;color:var(--muted);
+  font:700 10px/1.4 var(--mono);letter-spacing:.1em;
+}
+.prefs-opts{display:flex;flex-wrap:wrap;gap:6px}
+.prefs-opt{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 11px;border:1px solid var(--line);border-radius:999px;
+  background:var(--paper-soft);color:var(--ink-2);
+  font:500 12.5px/1.4 var(--sans);cursor:pointer;
+  transition:border-color 120ms ease,background 120ms ease,color 120ms ease;
+}
+.prefs-opt:hover{border-color:var(--ink);color:var(--ink)}
+.prefs-opt[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.prefs-opt .prefs-swatch{
+  width:11px;height:11px;border-radius:3px;
+  border:1px solid rgba(0,0,0,.22);flex:0 0 auto;
+}
+.prefs-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+}
+.prefs-note{color:var(--muted);font:10.5px/1.5 var(--sans)}
+.prefs-reset{
+  padding:4px 12px;border:1px solid var(--line-strong);border-radius:999px;
+  background:transparent;color:var(--ink-2);
+  font:600 11.5px/1.4 var(--sans);cursor:pointer;
+}
+.prefs-reset:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+
+/* 窄屏：面板贴到视口两侧，避免超出菜单栏右缘被裁 */
+@media (max-width:560px){
+  .prefs-panel{right:8px;left:8px;width:auto;top:calc(var(--menu-bar-height) - 6px)}
+}
+
+/* 打印：偏好里的纸张配色与面板都属屏幕阅读，纸面上回落（字体/字号/密度仍尊重读者选择） */
+@media print{
+  .prefs-toggle,.prefs-panel{display:none!important}
+}

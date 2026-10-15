@@ -1,0 +1,25 @@
+<!--
+  阅读偏好的首屏防闪（配合 theme/css/prefs.css 与 theme/js/prefs.js）
+  属性必须在首次绘制之前落到 <html> 上，否则先按默认外观画一帧、脚本执行后
+  再跳成读者选过的外观，会闪一下。这里的内联脚本是唯一的早期写入点（该阶段
+  还没有任何本书脚本在跑）。
+  ※ 只做「读 localStorage → 落 data-* 属性」，取值与默认集合必须与
+    theme/js/prefs.js 的 OPTIONS / DEFAULT_PREFS 保持一致；面板 UI 由 prefs.js 建。
+-->
+<script>
+(function () {
+  var KEYS = [
+    ["font", "data-font", ["serif", "sans", "system"]],
+    ["size", "data-size", ["s", "m", "l"]],
+    ["density", "data-density", ["compact", "standard", "loose"]],
+    ["width", "data-width", ["narrow", "standard", "wide"]],
+    ["palette", "data-palette", ["warm", "cool", "sage", "contrast"]]
+  ];
+  var root = document.documentElement;
+  for (var i = 0; i < KEYS.length; i++) {
+    var value = null;
+    try { value = localStorage.getItem("tutorials-prefs:" + KEYS[i][0]); } catch (error) { value = null; }
+    if (value && KEYS[i][2].indexOf(value) !== -1) root.setAttribute(KEYS[i][1], value);
+  }
+})();
+</script>

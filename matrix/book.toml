@@ -18,8 +18,9 @@ src = "src"
 default-theme = "ayu"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用原站（Academy / warm / Rust Wiki 版式）。
-additional-css = ["theme/css/matrix.css", "theme/css/katex.css"]
-additional-js = ["theme/js/matrix.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js"]
+# prefs.css 必须排在最后：读者偏好靠「同特异性 + 后加载」覆盖权威样式表。
+additional-css = ["theme/css/matrix.css", "theme/css/katex.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/matrix.js", "theme/js/sidebar.js", "theme/js/search-cjk.js", "theme/js/matrix-interactive.js", "theme/js/prefs.js"]
 # 页内小节锚点在右侧 → 由 mdbook-pagetoc 之类的插件承担；v1 用侧栏目录 + 顶部小节条
 # 标题里已含「1.1.3」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true
