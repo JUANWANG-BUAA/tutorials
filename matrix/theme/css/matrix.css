@@ -254,6 +254,24 @@ html:not(.matrix-ready) *::after{
 #mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
 #mdbook-menu-bar .icon-button:active,#mdbook-menu-bar .right-buttons a:active{transform:translateY(1px) scale(.975)}
 #mdbook-menu-bar .menu-title{color:var(--ink)}
+/* 「返回教程库」（theme/js 注入）：书内没有任何回导览首页的入口，菜单栏右侧补一个。
+   窄屏收起文案只留图标；悬停/按下的反馈与相邻图标按钮保持同一套。 */
+#mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
+#mdbook-menu-bar .portal-home{
+  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
+  font-size:13px;font-weight:500;letter-spacing:.01em;text-decoration:none;
+  color:var(--ink-2);
+  border:1px solid transparent;border-radius:10px;
+  transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
+}
+#mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
+#mdbook-menu-bar .portal-home:active{transform:translateY(1px) scale(.975)}
+#mdbook-menu-bar .portal-home svg{display:block;width:15px;height:15px;fill:currentColor}
+#mdbook-menu-bar .portal-home-label{white-space:nowrap}
+@media (max-width:900px){
+  #mdbook-menu-bar .portal-home{padding:0 8px}
+  #mdbook-menu-bar .portal-home-label{display:none}
+}
 #mdbook-searchbar{
   font-family:var(--sans);font-size:13px;
   border-radius:0;

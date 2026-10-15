@@ -455,6 +455,54 @@
   }
 
 
+  /* ------------------------------------------------------------------ *
+   * 返回教程库
+   *
+   * 三本书各自是独立站点：读者从导览首页（/tutorials/）点进来后，书里只有本书
+   * 目录，翻到最后一章也没有回首页的入口，只能改地址栏或依赖浏览器后退。
+   * 菜单栏右侧补一个「教程库」按钮，回到本书所在目录的上一级。
+   *
+   * 首页地址由当前路径推出，不写死域名：mdBook 把每本书发布在 /<slug>/ 之下，
+   * 去掉本书 slug 及其后的所有片段，剩下的就是导览首页。于是 gh-pages 的
+   * /tutorials/matrix/ 与自定义域名根目录下的 /matrix/ 都成立。
+   * 本地 `mdbook serve` 预览时服务在站点根、路径里没有 slug，此时不插入按钮，
+   * 免得点出一个 404。
+   * ------------------------------------------------------------------ */
+  var BOOK_SLUG = "matrix";
+  var HOME_ICON = '<svg viewBox="0 0 576 512" aria-hidden="true"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 16c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>';
+
+  function portalUrl() {
+    var segments = location.pathname.split("/").filter(Boolean);
+    var index = segments.lastIndexOf(BOOK_SLUG);
+    if (index < 0) return null;
+    return "/" + segments.slice(0, index).join("/") + (index > 0 ? "/" : "");
+  }
+
+  function buildPortalHome() {
+    var bar = document.getElementById("mdbook-menu-bar");
+    var right = bar && bar.querySelector(".right-buttons");
+    if (!right || right.querySelector(".portal-home")) return;
+    var url = portalUrl();
+    if (!url) return;
+
+    var link = document.createElement("a");
+    link.className = "portal-home";
+    link.href = url;
+    link.setAttribute("title", "返回教程库");
+    link.setAttribute("aria-label", "返回教程库");
+
+    var icon = document.createElement("span");
+    icon.className = "portal-home-icon";
+    icon.innerHTML = HOME_ICON;
+    var label = document.createElement("span");
+    label.className = "portal-home-label";
+    label.textContent = "教程库";
+
+    link.appendChild(icon);
+    link.appendChild(label);
+    right.insertBefore(link, right.firstChild);
+  }
+
   function boot() {
     if (root.dataset.matrixBooted) return;
     root.dataset.matrixBooted = "true";
@@ -463,6 +511,7 @@
     buildPageToc();
     buildSolutionToolbar();
     buildBackToTop();
+    buildPortalHome();
     enhanceSidebar();
     updateProgress();
     markScrollableDisplays();
