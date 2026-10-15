@@ -10,7 +10,7 @@
  * 本文件是唯一的视觉源。mdBook 变量映射在 §1，组件在 §2 之后。
  * 不要在这里写与内容相关的样式；内容语义由 tools/mathbook.py 生成的类名承载
  * （.box.def / .box.thm / .box.ex / .box.think / .box.errata / .box.method /
- *   .proof / details.sol-box / a.crossref / .meta-strip）。
+ *   .proof / details.sol-box / a.crossref / .meta-strip / .arena-*）。
  */
 
 /* ======================================================================== *
@@ -980,4 +980,185 @@ ul#mdbook-searchresults span.teaser em{
   .chapter-cover::after{display:none}
   .box,details.sol-box,table,figure,ul.objlist li{break-inside:avoid}
   a.crossref{border:0;color:#000;text-decoration:underline}
+}
+
+/* ======================================================================== *
+ * §9  特训 · 竞技与考场（theme/js/arena.js）
+ *   竞技场是「可降级增强」：题库（.arena-bank）默认就是一份普通的问答清单，
+ *   打印、搜索、关 JS 都能读；脚本在它上方另起一块交互舞台，把题目克隆进去
+ *   做限时答题。因此所有交互态类名都只加在克隆体上，原始题库不受影响。
+ * ======================================================================== */
+.arena-shell{
+  margin:24px 0 8px;border:1px solid var(--line-strong);border-radius:var(--radius);
+  background:var(--surface-card);overflow:hidden;
+}
+html.navy .arena-shell,html.coal .arena-shell,html.ayu .arena-shell{box-shadow:0 24px 48px rgba(0,0,0,.28)}
+.arena-head{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:16px 20px;border-bottom:1px solid var(--line);
+  background:var(--paper-soft);
+}
+.arena-head .arena-title{font:700 15px/1.3 var(--serif-display)}
+.arena-head .arena-sub{color:var(--muted);font:11px/1.4 var(--mono)}
+.arena-head .arena-spacer{margin-left:auto}
+.arena-a11y-help{color:var(--muted);font:10.5px/1.5 var(--mono)}
+
+/* —— HUD —— */
+.arena-hud{
+  display:none;grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--line);
+}
+.arena-hud.is-on{display:grid}
+.arena-stat{padding:11px 16px;border-right:1px solid var(--line)}
+.arena-stat:last-child{border-right:0}
+.arena-stat .k{display:block;color:var(--muted);font:700 9.5px/1.5 var(--mono);letter-spacing:.09em}
+.arena-stat .v{font:700 20px/1.25 var(--mono);color:var(--ink)}
+.arena-stat .v small{font:600 11px/1 var(--mono);color:var(--muted);margin-left:3px}
+.arena-stat.is-hot .v{color:var(--accent-text)}
+.arena-bar{
+  grid-column:1/-1;height:3px;background:var(--line);
+}
+.arena-bar>i{display:block;height:100%;width:100%;background:var(--accent);transition:width .25s linear}
+.arena-bar.is-danger>i{background:var(--err-line)}
+
+/* —— 开始面板 / 关卡 —— */
+.arena-panel{padding:20px}
+.arena-panel[hidden]{display:none}
+.arena-levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:12px}
+.arena-level{
+  position:relative;display:flex;flex-direction:column;gap:6px;
+  padding:15px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);cursor:pointer;text-align:left;color:inherit;
+  font:inherit;transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.arena-level:hover:not(:disabled){border-color:var(--ink);box-shadow:3px 3px 0 var(--shadow-ink);transform:translateY(-1px)}
+.arena-level:disabled{cursor:not-allowed;opacity:.55}
+.arena-level .lv-no{color:var(--accent-text);font:700 10px/1.4 var(--mono);letter-spacing:.1em}
+.arena-level .lv-name{font:700 16px/1.3 var(--serif-display)}
+.arena-level .lv-desc{color:var(--muted);font:12px/1.6 var(--sans)}
+.arena-level .lv-meta{margin-top:auto;padding-top:8px;color:var(--muted);font:10.5px/1.5 var(--mono);display:flex;gap:10px;flex-wrap:wrap}
+.arena-level .lv-best{color:var(--accent-text);font-weight:700}
+.arena-level .lv-flag{position:absolute;top:12px;right:13px;font:700 10px/1 var(--mono);letter-spacing:.06em}
+.arena-level.is-cleared{border-color:var(--sage)}
+.arena-level.is-cleared .lv-flag{color:var(--sage)}
+
+/* —— 舞台 —— */
+.arena-stage{padding:20px}
+.arena-stage[hidden]{display:none}
+.arena-progress{color:var(--muted);font:700 10.5px/1.5 var(--mono);letter-spacing:.08em;margin-bottom:10px}
+.arena-qview .aq-prompt{margin:0 0 14px;font:16px/1.75 var(--serif-text)}
+.arena-qview .aq-prompt p:first-child{margin-top:0}
+.arena-opts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.arena-opts li{
+  display:grid;grid-template-columns:22px 1fr;gap:11px;align-items:start;
+  padding:11px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);cursor:pointer;font:14.5px/1.65 var(--sans);
+  transition:border-color .12s,background .12s;
+}
+.arena-opts li .opt-key{
+  color:var(--muted);font:700 12px/1.7 var(--mono);
+}
+.arena-opts li:hover:not(.is-locked){border-color:var(--ink);background:var(--paper-soft)}
+.arena-opts li .katex{font-size:1em}
+.arena-opts li.is-picked{border-color:var(--accent-strong)}
+.arena-opts li.is-correct{
+  border-color:var(--ex-line);background:var(--ex-bg);
+}
+.arena-opts li.is-correct .opt-key{color:var(--ex-ink)}
+.arena-opts li.is-wrong{
+  border-color:var(--err-line);background:var(--err-bg);
+}
+.arena-opts li.is-wrong .opt-key{color:var(--err-ink)}
+.arena-opts li.is-locked{cursor:default}
+.arena-opts li.is-dim{opacity:.6}
+.arena-feedback{
+  margin-top:14px;padding:12px 15px;border-left:3px solid var(--line);
+  background:var(--paper-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font:13.5px/1.75 var(--sans);
+}
+.arena-feedback.is-correct{border-left-color:var(--ex-line);background:var(--ex-bg)}
+.arena-feedback.is-wrong{border-left-color:var(--err-line);background:var(--err-bg)}
+.arena-feedback .fb-verdict{display:block;margin-bottom:4px;font:700 12px/1.4 var(--mono);letter-spacing:.05em}
+.arena-feedback.is-correct .fb-verdict{color:var(--ex-ink)}
+.arena-feedback.is-wrong .fb-verdict{color:var(--err-ink)}
+.arena-feedback .fb-src{display:block;margin-top:7px;color:var(--muted);font:11px/1.5 var(--mono)}
+.arena-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.arena-btn{
+  padding:9px 18px;border:1px solid var(--ink);border-radius:999px;
+  background:var(--ink);color:var(--paper);cursor:pointer;
+  font:700 13px/1 var(--sans);letter-spacing:.02em;
+}
+.arena-btn:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+.arena-btn.ghost{background:transparent;color:var(--ink)}
+.arena-btn.ghost:hover{background:var(--paper-soft);color:var(--ink);border-color:var(--ink)}
+
+/* —— 结算 —— */
+.arena-result{padding:24px 22px}
+.arena-result .rs-score{font:700 46px/1 var(--mono);color:var(--accent-text)}
+.arena-result .rs-tier{margin:6px 0 16px;font:600 17px/1.4 var(--serif-display)}
+.arena-tally{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
+.arena-tally>div{padding:11px 14px;border-right:1px solid var(--line)}
+.arena-tally>div:last-child{border-right:0}
+.arena-tally .k{display:block;color:var(--muted);font:700 9.5px/1.5 var(--mono);letter-spacing:.08em}
+.arena-tally .v{font:700 18px/1.3 var(--mono)}
+.arena-newbest{margin-top:12px;color:var(--accent-text);font:700 12px/1.5 var(--mono)}
+
+/* —— 段位徽章 —— */
+.rank-badge{
+  display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 10px;
+  border-radius:999px;border:1px solid currentColor;font:700 12px/1 var(--sans);
+}
+.rank-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.rank-bronze{color:#9c6b3f}
+.rank-silver{color:#7d8794}
+.rank-gold{color:#a9852c}
+.rank-platinum{color:#3f8f8a}
+.rank-diamond{color:#3f6bb0}
+.rank-king{color:var(--accent-strong)}
+
+/* —— 错题本 —— */
+.arena-wrongbook{margin-top:18px;border-top:1px dashed var(--line-strong);padding-top:14px}
+.arena-wrongbook .wb-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.arena-wrongbook .wb-head b{font:700 13px/1.4 var(--sans)}
+.arena-wrongbook .wb-head span{color:var(--muted);font:11px/1.4 var(--mono)}
+.arena-wrongbook ol{margin:0;padding-left:20px}
+.arena-wrongbook li{margin:0 0 7px;font:12.5px/1.6 var(--sans)}
+.arena-wrongbook li .wb-tag{color:var(--accent-text);font:700 10.5px/1.4 var(--mono);margin-right:7px}
+.arena-wrongbook li a{color:var(--ink-2)}
+.arena-wrongbook .wb-empty{color:var(--muted);font:12px/1.6 var(--sans)}
+
+/* —— 题库底色与打印 —— */
+.arena-bank-note{margin:34px 0 4px;color:var(--muted);font:12px/1.7 var(--sans)}
+.arena-bank .arena-q{
+  margin:0 0 14px;padding:15px 18px 14px;border:1px solid var(--line);
+  border-left:3px solid var(--ex-line);border-radius:var(--radius-sm);
+  background:var(--surface-card);
+}
+.arena-bank .aq-hd{display:flex;gap:9px;flex-wrap:wrap;align-items:baseline;margin-bottom:8px}
+.arena-bank .aq-id{color:var(--accent-text);font:700 10.5px/1.5 var(--mono);letter-spacing:.06em}
+.arena-bank .aq-tag{color:var(--muted);font:10.5px/1.5 var(--mono)}
+.arena-bank .aq-prompt{font:14.5px/1.7 var(--serif-text)}
+.arena-bank .aq-prompt p:first-child{margin-top:0}
+.arena-bank .aq-opts{margin:9px 0 0;padding-left:1.35em;font:13.5px/1.7 var(--sans)}
+.arena-bank .aq-opts li{margin:2px 0}
+.arena-bank .aq-exp{margin-top:9px;border-top:1px dashed var(--line);padding-top:7px}
+.arena-bank .aq-exp>summary{cursor:pointer;color:var(--muted);font:700 11px/1.6 var(--mono)}
+.arena-bank .aq-exp[open]>summary{color:var(--ink-2)}
+.arena-bank .aq-exp .exp-body{padding:5px 2px 2px;font:13px/1.7 var(--sans)}
+.arena-bank .aq-exp .exp-body p:first-child{margin-top:0}
+.arena-bank .aq-src{display:block;margin-top:6px;color:var(--muted);font:11px/1.5 var(--mono)}
+.arena-bank .aq-key{color:var(--ex-ink);font-weight:700}
+
+@media(max-width:700px){
+  .arena-hud.is-on{grid-template-columns:repeat(2,1fr)}
+  .arena-stat{border-bottom:1px solid var(--line)}
+  .arena-stat:nth-child(2n){border-right:0}
+  .arena-tally{grid-template-columns:1fr}
+  .arena-tally>div{border-right:0;border-bottom:1px solid var(--line)}
+  .arena-tally>div:last-child{border-bottom:0}
+}
+@media print{
+  .arena-shell,.arena-wrongbook,.arena-a11y-help{display:none!important}
+  .arena-bank .aq-exp>summary{color:#000}
+  .arena-bank .arena-q{break-inside:avoid}
 }

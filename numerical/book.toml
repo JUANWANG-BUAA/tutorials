@@ -17,7 +17,9 @@ default-theme = "ayu"
 preferred-dark-theme = "ayu"
 # 视觉层：只此一份，构建时复制进产物。设计语言沿用《矩阵论》第一章教程。
 additional-css = ["theme/css/na.css", "theme/css/katex.css"]
-additional-js = ["theme/js/na.js", "theme/js/search-cjk.js"]
+# arena.js：必考点竞技场的可降级增强（题库在页面里是普通 HTML，脚本只在
+# #arena-mount 里另起交互舞台；关 JS / 打印 / 搜索都不受影响）。
+additional-js = ["theme/js/na.js", "theme/js/arena.js", "theme/js/search-cjk.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 no-section-label = true
 site-url = "/tutorials/numerical/"

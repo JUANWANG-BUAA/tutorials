@@ -51,6 +51,7 @@
   - [第 5 讲（09-21）：迭代法的收敛理论、误差估计与 Jacobi / Gauss–Seidel](lectures/lec05.md)
   - [第 6 讲（09-23）：逐次超松弛法（SOR）——构造、收敛性与特征值问题开篇](lectures/lec06.md)
   - [第 7 讲（09-28）：幂法——规范化、特征值的算法与反幂法；非线性方程迭代法开篇](lectures/lec07.md)
+  - [第 9 讲（10-14）：牛顿法全局收敛定理、割线法与单点割线法；插值法引论](lectures/lec09.md)
 
 # 复习与查阅
 
@@ -58,6 +59,11 @@
 - [易混对照卡](review/contrast-cards.md)
 - [术语索引（中英对照）](review/glossary.md)
 - [最小必读路径](review/study-paths.md)
+
+# 特训 · 竞技与考场
+
+- [必考点竞技场](training/arena.md)
+- [考场模拟卷 · 100 分制](training/exam-sprint.md)
 
 # 附录 · 拓展与推导
 
