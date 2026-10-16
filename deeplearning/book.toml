@@ -1,0 +1,67 @@
+# 《深度学习导论》定制教程（第 1–9 讲 + 三个实验）
+#
+# 唯一的构建配置。日常操作：
+#   mdbook serve --open     本地预览（含全文搜索）
+#   mdbook build            生成静态站点到 book/
+#
+# 内容源在 src/，全部为 Markdown；不要手工编辑 book/ 下的产物。
+
+[book]
+title = "深度学习导论 · 定制教程"
+description = "第 1–9 讲：导论 · 序列建模 · 计算机视觉 · 生成建模 · 强化学习 · 新前沿 · AI 三法则 · AI for Science · 大规模并行训练 —— 依据 MIT 6.S191《Introduction to Deep Learning》与公开讲义整理扩充的定制教程"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+# 亮色默认用 Rust·暖纸（品牌亮色），暗色用 Ayu·琥珀。两者必须一个是亮色主题：
+# 跟随系统时 mdBook 取 default-theme 作亮色侧、preferred-dark-theme 作暗色侧。
+default-theme = "rust"
+preferred-dark-theme = "ayu"
+# 视觉层：只此一份，构建时复制进产物。设计语言沿用《机器人控制技术》《矩阵论》《数值分析》教程。
+# 外观设置两处、各管一件事：配色 = mdBook 原生主题弹层（同 rustwiki）；
+# 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
+# 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
+# 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
+additional-css = ["theme/css/base.css", "theme/css/deeplearning.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/page-extras.js", "theme/js/deeplearning.js", "theme/js/search-cjk.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js"]
+# 标题里已含「1.2」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
+# 仓库与「编辑此页」：读者发现笔误可直接改（mdBook 原生的两处入口，见菜单栏右侧）。
+# edit-url-template 里的 {path} 是相对本书根目录的路径（含 src/），故前缀只写到子目录。
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"  # FA6：GitHub 属 brand 图标，前缀为 fab-
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/deeplearning/{path}"
+no-section-label = true
+site-url = "/tutorials/deeplearning/"
+[output.html.search]
+enable = true
+limit-results = 30
+teaser-word-count = 30
+# 中文检索用「一元 + 二元字符 n-gram」建索引（见 tools/build_search_js.mjs）。
+# AND 语义会要求查询的**每一个** n-gram 都出现，而「卷积网络」这类词切分后会
+# 产生「积网」这种跨词边的伪二元组，AND 下必然零命中。故中文场景必须用 OR，
+# 由相关性排序把最匹配的排在前面。
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子：自写预处理器（与其余三本同一份实现）。
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式：构建期渲染为 HTML（不依赖运行时 JS）。
+# no-css = true → 不注入 KaTeX 的 CDN 样式表；改用随仓库分发的
+# theme/css/katex.css + src/fonts/katex/（离线可用，无第三方请求）。
+# command 用包装器：KaTeX 渲染 \tilde 会输出字面 `~`，被 mdBook 误解析为
+# GFM 删除线（单个 ~ 即可配对！），破坏标签结构；包装器在 pulldown 解析
+# 之前把它们改写成 &#126; 实体（见 ../tools/katex_wrapper.py）。
+[preprocessor.katex]
+# 共享脚本（三本一份）：仓库根的 tools/katex_wrapper.py ✓ 路径相对本书根
+command = "python3 ../tools/katex_wrapper.py"
+no-css = true
+# output = htmlAndMathml → 除视觉 HTML 外再产出一份 MathML，里面带
+# <annotation encoding="application/x-tex"> 原始 TeX：读屏可用，也让我们能给
+# 公式加「复制 LaTeX」。
+output = "htmlAndMathml"
+after = ["mathbook"]

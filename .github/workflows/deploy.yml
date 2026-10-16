@@ -39,7 +39,7 @@ jobs:
         run: |
           set -e
           mkdir -p _site
-          for book in robot numerical matrix; do
+          for book in robot numerical matrix deeplearning; do
             mdbook build "$book"
             # mdBook 自带分词器不处理中文，「数域」「过渡矩阵」这类词进不了索引，
             # 中文全文搜索会形同虚设。构建后用字符 n-gram 重建索引（这一步曾在

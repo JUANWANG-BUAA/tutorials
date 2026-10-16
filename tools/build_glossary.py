@@ -37,6 +37,10 @@ SOURCES = {
         "page": "preface-index.html",
         "columns": {"term": ["术语"], "en": ["英文"], "def": ["一句话含义"], "origin": ["出处"]},
     },
+    "deeplearning": {
+        "page": "review/glossary.html",
+        "columns": {"term": ["中文"], "en": ["English"], "def": ["一句话"], "origin": ["出处"]},
+    },
 }
 
 TAG = re.compile(r"<[^>]+>")

@@ -17,3 +17,6 @@ output/
 
 # playwright MCP 的临时产物
 .playwright-mcp/
+
+# 插图生成的中间产物（脚本 tools/make_figures.py · make_diagrams.py 可随时重建）
+deeplearning/tools/figs_out/

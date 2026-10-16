@@ -1,0 +1,114 @@
+/*
+ * 深度学习导论 · 定制教程 — mdBook 主题
+ * ---------------------------------------------------------------------------
+ * 设计规范：Academy / ink-warm / standard density / Ayu dark preset（与其余三本同一套）。
+ *
+ * 本文件是本书的视觉源。令牌层在 base.css（三本共用），组件与版式在此。
+ * 不要在这里写与内容相关的样式；内容语义由 tools/mathbook.py 生成的类名承载
+ * （.box.def / .box.thm / .box.ex / .box.think / .box.errata / .box.method /
+ *   .proof / details.sol-box / a.crossref / .meta-strip）。
+ *
+ * 本书与其余三本的差异只在组件层：深度学习教材大量使用「网络结构 / 张量形状」
+ * 表格与「训练流程」代码块，这里给它们补两条本书专属的版式规则；其余组件
+ * （语义盒、折叠解答、页内目录、打印）完全沿用共用实现。
+ */
+
+/* ======================================================================== *
+ * §2  mdBook 框架适配（与其余三本同一处理）
+ * ======================================================================== */
+body{
+  font-family:var(--serif-text);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+
+#mdbook-menu-bar{
+  border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent);
+  background:var(--page);
+}
+
+.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--serif)}
+
+/* 例题解答（可折叠）：与其余三本同一套外观。 */
+details.sol-box{
+  margin:13px 0;border:1px solid var(--line);background:var(--paper);
+}
+
+details.sol-box>summary::after{
+  content:"展开";margin-left:auto;color:var(--muted);
+  font:600 var(--fs-2xs)/1 var(--mono);letter-spacing:.09em;
+}
+
+.chapter-cover h1{
+  max-width:760px;margin:0 0 14px;padding:0;border:0;
+  font-family:var(--serif-display);font-weight:600;
+  font-size:clamp(40px,4.7vw,58px);line-height:1.08;letter-spacing:.01em;
+}
+
+/* ======================================================================== *
+ * §3  本书专属：张量形状表与网络结构表
+ * ------------------------------------------------------------------------
+ * 深度学习教材里「维度 / 形状 / 参数量」三列的表极多，按等宽字体右对齐更像
+ * 论文里的结构表；首列（层名）用正文衬线，左对齐。不加这条也不出错，加了更
+ * 统一。表格其余部分仍走 base.css 的通用表格样式。 */
+.content table.shape-table th,
+.content table.shape-table td{
+  font-variant-numeric:tabular-nums;
+}
+
+.content table.shape-table td:first-child{text-align:left;font-family:var(--serif)}
+
+/* ======================================================================== *
+ * §4  响应式（与其余三本一致：表格 / 代码块横向滚动，不撑破版心）
+ * ======================================================================== */
+.content, .content main{min-width:0}
+
+.table-wrapper{overflow-x:auto;max-width:100%}
+
+.content pre{max-width:100%}
+
+.content img{max-width:100%;height:auto}
+
+@media(max-width:700px){
+  :root{--page-padding:var(--space-4)}
+  .content h1{font-size:var(--fs-h2)}
+  .chapter-cover{padding:34px 0 30px}
+  .chapter-cover h1{font-size:36px}
+  .content table{display:block;overflow-x:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+
+/* ======================================================================== *
+ * §5  打印（与其余三本同一套纪律：重设全部颜色令牌，白纸上保证对比度）
+ * ======================================================================== */
+@media print{
+  :root,html.light,html.rust,html.navy,html.coal,html.ayu{
+    --page:#fefefe;--paper:#fefefe;--paper-soft:#f6f6f4;
+    --ink:#000;--ink-2:#333;--muted:#666;--line:#ccc;--line-strong:#999;
+    --def-bg:#f4f6f7;--thm-bg:#f6f4f7;--ex-bg:#f4f7f4;
+    --think-bg:#f8f5ee;--err-bg:#faf1ef;--method-bg:#f2f6f6;
+    --control-line:#8f806d;
+    --accent:#b96543;--accent-strong:#9f5033;--accent-text:#9f5033;
+    --links:var(--accent-strong);--inline-code-color:var(--accent-strong);
+    --accent-soft:rgba(185,101,67,.10);
+    --sage:#4f6f62;--shadow-ink:rgba(50,40,29,.86);
+    --surface-card:#ffffff;--surface-soft:#f6f6f4;
+    --def-ink:#284f5b;--def-line:#456f7c;
+    --thm-ink:#55425f;--thm-line:#705d79;
+    --ex-ink:#3c5740;--ex-line:#58735b;
+    --think-ink:#73551f;--think-line:#967331;
+    --err-ink:#87342d;--err-line:#a7473d;
+    --method-ink:#2e615d;--method-line:#447a75;
+    --table-alternate-bg:#f6f6f4;
+  }
+  body{background:#fefefe;font-size:11.5pt}
+  #mdbook-sidebar,#mdbook-menu-bar,#progress,.nav-wrapper,#mdbook-search-wrapper{display:none!important}
+  .content{padding:0;max-width:none}
+  .chapter-cover::after{display:none}
+  .box,details.sol-box,table,figure{break-inside:avoid}
+  details.sol-box>summary::after{display:none}
+  a.crossref{border:0;color:#000;text-decoration:underline}
+}

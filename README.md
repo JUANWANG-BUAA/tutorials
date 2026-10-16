@@ -7,22 +7,24 @@
 | 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–5 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器 |
 | 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.5。其余小节待素材补齐 |
 | 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 第 1–2 章及课堂精编；第 8 讲页面待补，后续章节逐步整理 |
+| 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文（导论 · 序列 · 视觉 · 生成 · 决策 · 新前沿 · AI 三法则 · AI for Science · 大规模并行训练）+ 三个 Lab；依据 MIT 6.S191 整理扩充 |
 
 ## 仓库结构
 
 ```
-robot/       机器人控制技术 · mdBook 源（src/ 为 Markdown 本体，theme/ 为本书样式与脚本）
-matrix/      矩阵论 · mdBook 源
-numerical/   数值分析 · mdBook 源
-shared/      三本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）
+robot/         机器人控制技术 · mdBook 源（src/ 为 Markdown 本体，theme/ 为本书样式与脚本）
+matrix/        矩阵论 · mdBook 源
+numerical/     数值分析 · mdBook 源
+deeplearning/  深度学习导论 · mdBook 源
+shared/        四本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）
   theme/       head.hbs、framework/prefs 的 css+js、search-cjk.js
-  README.md   共用层说明与本地构建方式
-tools/       仓库级构建脚本（三本一份）：
+  README.md    共用层说明与本地构建方式
+tools/         仓库级构建脚本（四本一份）：
   build_search_js.mjs  构建后重建中文搜索索引（分词与查询同源）
   build_glossary.py    构建后抽术语数据 + 给页面打标记
   katex_wrapper.py     包装 mdbook-katex，中和会被 Markdown 误读的字符
-build.sh     一键构建三本 + 后置步骤 → _site/（与 CI 步骤一致）
-.github/     Pages 自动部署工作流
+build.sh       一键构建四本 + 后置步骤 → _site/（与 CI 步骤一致）
+.github/       Pages 自动部署工作流
 ```
 
 书与书的边界很清楚：**共用行为**在 `shared/`（一份），**本书样式**在各书 `theme/css/<书>.css`
@@ -34,7 +36,7 @@ build.sh     一键构建三本 + 后置步骤 → _site/（与 CI 步骤一致�
 
 ```bash
 brew install mdbook        # 如未安装
-./build.sh serve           # 构建三本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
+./build.sh serve           # 构建四本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
 ```
 
 ⚠️ 不要只跑 `mdbook serve`：搜索索引与术语数据都是**构建后产物**，而 mdBook 每次构建会先清空
@@ -57,4 +59,4 @@ brew install mdbook        # 如未安装
 
 ## 部署
 
-推送到 `main` 分支后，GitHub Actions 自动构建三本书并发布到 Pages，无需手工操作。各书首页会说明正文范围与待补内容。
+推送到 `main` 分支后，GitHub Actions 自动构建四本书并发布到 Pages，无需手工操作。各书首页会说明正文范围与待补内容。
