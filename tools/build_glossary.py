@@ -27,7 +27,15 @@ import sys
 SOURCES = {
     "matrix": {
         "page": "memory-sheet.html",
-        "columns": {"term": ["概念"], "def": ["一句话"], "extra": ["最容易漏"]},
+        # 本页有两套表头：背记卡的「概念 / 一句话 / 最容易漏」与文末术语索引的
+        # 「中文 / English / 一句话 / 出处」——locate() 支持候选名，两种都收。
+        "columns": {
+            "term": ["概念", "中文"],
+            "en": ["English", "英文"],
+            "def": ["一句话", "一句话含义"],
+            "extra": ["最容易漏"],
+            "origin": ["出处"],
+        },
     },
     "numerical": {
         "page": "review/glossary.html",
