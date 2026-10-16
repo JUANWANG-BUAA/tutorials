@@ -3,7 +3,7 @@
 本实验对应第 6、9 讲：加载一个**预训练**语言模型，用**参数高效微调（LoRA）**在受限显存下把它适配到一个下游任务，并用自回归采样评估输出。它是「小算力撬动大模型」的标准流程。
 
 <aside class="lesson-brief" aria-label="Lab 3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>[第 2 讲](../lectures/lec02.md)的 Transformer 与自回归生成；[第 6 讲](../lectures/lec06.md)的预训练/微调/提示三段式；[第 9 讲](../lectures/lec09.md)的显存构成与 LoRA。</p></div>
+<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>[第 2 讲](../lectures/lec02/overview.md)的 Transformer 与自回归生成；[第 6 讲](../lectures/lec06/overview.md)的预训练/微调/提示三段式；[第 9 讲](../lectures/lec09/overview.md)的显存构成与 LoRA。</p></div>
 <div><span class="brief-label">TARGET</span><strong>你将做出</strong><p>一个在你的数据上微调过、会按你的格式作答的模型；一份「全参数微调 vs LoRA」的显存/效果对比。</p></div>
 <div><span class="brief-label">CHECKPOINT</span><strong>验收标准</strong><p>微调后模型在你的任务上明显优于微调前；训练只更新极少比例的参数；能解释为什么 LoRA 能在**冻结主干**的前提下工作。</p></div>
 </aside>
@@ -60,7 +60,7 @@ model.print_trainable_parameters()   # 例：trainable 0.1% | total 100%
 
 ## 4. 训练
 
-与[第 1 讲](../lectures/lec01.md)的循环完全一致，只是模型大：
+与[第 1 讲](../lectures/lec01/overview.md)的循环完全一致，只是模型大：
 
 ```python
 out  = model(**batch)          # 前向
@@ -98,3 +98,23 @@ opt.step(); opt.zero_grad()    # 更新（定义 1.3）
 - 一句结论：在你这个任务上，LoRA 用多少可训参数达到了怎样的效果。
 
 **自检**：能解释 LoRA 为何只训练极少参数却有效（低秩假设 + 冻结主干）；能说清指令微调为何只对 response 算损失；能为 OOM 给出三条具体的缓解手段。
+
+## 8. 代码 ↔ 讲次对照表
+
+| 代码 / 步骤 | 对应结论 |
+|:--|:--|
+| 加载 tokenizer 与 `input_ids` | [6.1 大语言模型](../lectures/lec06/sec61.md)：BPE 分词决定 token 边界与序列长度 |
+| 只在 response 上算损失（mask prompt） | [6.1](../lectures/lec06/sec61.md)：监督微调的目标是「学会回答」而非「复述问题」 |
+| `LoraConfig(r=..., target_modules=...)` | [9.5 PEFT](../lectures/lec09/sec95.md)：低秩增量 $W=W_0+BA$ |
+| 4-bit 量化基座 + LoRA（QLoRA） | [9.5](../lectures/lec09/sec95.md)：显存降到 $10N$ 量级 |
+| 梯度累积达到有效批大小 | [1.6 优化器](../lectures/lec01/sec16.md)、[9.2 数据并行](../lectures/lec09/sec92.md) |
+| 微调前后对比 + 留出集评测 | [6.7 评估](../lectures/lec06/sec67.md)：口径要对齐，且要防污染 |
+| 若继续做偏好优化 | [5.6 RLHF 与 DPO](../lectures/lec05/sec56.md)：成对偏好 → DPO 损失 |
+
+## 9. 扩展任务（选做 1–2 项）
+
+1. **LoRA vs 全参**：在你能拿到的硬件上对比两者的显存、吞吐与效果，并给出「什么条件下值得全参」的判据（[9.5](../lectures/lec09/sec95.md)）。
+2. **秩与模块扫描**：固定基座，扫 $r\in\{4,8,16,32,64\}$ 与不同 `target_modules`，画「可训参数—指标」曲线，找性价比拐点（[附录 A 选题 4](../appendix/roadmap.md)）。
+3. **偏好优化**：用 200–500 对偏好数据做一次 DPO，与 SFT 结果对照；特别观察**风格与格式**的变化和「过度优化」的迹象（[5.6](../lectures/lec05/sec56.md)）。
+4. **量化部署**：把模型导出并在 `llama.cpp` 或 `vLLM` 上跑，报告吞吐（tokens/s）与首 token 延迟，解释瓶颈在哪（[6.7](../lectures/lec06/sec67.md)、[工具箱](../toolbox.md)）。
+5. **污染自查**：自建 30 道题，做「同义改写 / 选项打乱」对照，比较分数落差并讨论证据的局限（[6.7](../lectures/lec06/sec67.md)）。

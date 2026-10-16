@@ -3,7 +3,7 @@
 本实验对应第 1、2 讲：先用**一层网络**把「前向 → 损失 → 反向 → 更新」跑通，建立张量与自动微分的手感；再用**字符级 RNN** 学习一段旋律的序列规律，并**从初始片段续写**出新乐句。全程不需要大数据集。
 
 <aside class="lesson-brief" aria-label="Lab 1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>Python 基础；[第 1 讲](../lectures/lec01.md)的 MLP 前向与反向传播；[第 2 讲](../lectures/lec02.md)的 RNN 隐状态递推。</p></div>
+<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>Python 基础；[第 1 讲](../lectures/lec01/overview.md)的 MLP 前向与反向传播；[第 2 讲](../lectures/lec02/overview.md)的 RNN 隐状态递推。</p></div>
 <div><span class="brief-label">TARGET</span><strong>你将做出</strong><p>一个用梯度下降拟合的简单函数；一个字符级 RNN 音乐模型；一段由模型续写的旋律，并观察**温度**如何改变生成风格。</p></div>
 <div><span class="brief-label">CHECKPOINT</span><strong>验收标准</strong><p>损失曲线单调下降（非发散）；模型能从给定片段续写出语法上「像」训练数据的乐句；能解释温度趋近 0 与趋近 1 时生成结果的差异。</p></div>
 </aside>
@@ -11,7 +11,7 @@
 ## 1. 环境与数据
 
 - **运行环境**：Python 3.9+，TensorFlow 或 PyTorch 任选其一（本书示例给出 PyTorch 版本，思路与框架无关）。
-- **数据**：一小段符号化的旋律（如 ABC 记谱或 MIDI 转成的音符事件序列）。把它当作**一串 token**——这正是[第 2 讲](../lectures/lec02.md)把序列当作离散符号序列的翻版。
+- **数据**：一小段符号化的旋律（如 ABC 记谱或 MIDI 转成的音符事件序列）。把它当作**一串 token**——这正是[第 2 讲](../lectures/lec02/overview.md)把序列当作离散符号序列的翻版。
 
 ::: note 数据很小，所以别期待"作曲"
 本实验的目的是**看清训练循环与序列模型的行为**，不是训练一个能谱曲的模型。数据集只有几 KB 时，模型能学会**局部**的音符搭配与节奏模式就已经达到目标。判断标准是"续写像训练数据"，不是"续写好不好听"。
@@ -37,11 +37,11 @@ for step in range(2000):
 ```
 
 ::: note 逐行对应的讲次
-`model(x)` = [定义 1.1](../lectures/lec01.md) 的前向；`loss_fn` = [定义 1.2](../lectures/lec01.md) 的 MSE；`loss.backward()` = [定理 1.2](../lectures/lec01.md) 的反向传播；`opt.step()` = [定义 1.3](../lectures/lec01.md) 的梯度下降。**把这条对应关系记住，你就掌握了所有深度学习的骨架。**
+`model(x)` = [定义 1.1](../lectures/lec01/overview.md) 的前向；`loss_fn` = [定义 1.2](../lectures/lec01/overview.md) 的 MSE；`loss.backward()` = [定理 1.2](../lectures/lec01/overview.md) 的反向传播；`opt.step()` = [定义 1.3](../lectures/lec01/overview.md) 的梯度下降。**把这条对应关系记住，你就掌握了所有深度学习的骨架。**
 :::
 
 ::: ex 观察题 · 去掉激活会怎样 {#lab1-q1}
-把 `nn.ReLU()` 删掉再训一次，拟合效果如何？为什么？（提示：见[第 1 讲 1.2](../lectures/lec01.md)的"线性变换 + 非线性"。）
+把 `nn.ReLU()` 删掉再训一次，拟合效果如何？为什么？（提示：见[第 1 讲 1.2](../lectures/lec01/overview.md)的"线性变换 + 非线性"。）
 
 ::: proof 参考结论
 拟合会退化——两层线性等价于一层线性，无法表达 $\sin$ 的弯曲。损失停留在一个较高的平台，加大训练步数也无济于事。这从反面印证了激活函数的作用。
@@ -184,3 +184,23 @@ $$\hat p_i=\frac{\exp(z_i/\tau)}{\sum_j\exp(z_j/\tau)}.$$
 - 一段**温度对比**（$\tau=0.5$ 与 $\tau=1.5$ 各生成一段），并用一两句话解释差异。
 
 **自检**：能说清「前向 / 损失 / 反向 / 更新」在代码的哪几行；能解释为什么回归用 MSE、分类用交叉熵；能说明温度如何改变采样分布。做到这三条，本实验达标。
+
+## 7. 代码 ↔ 讲次对照表
+
+| 代码 | 对应结论 |
+|:--|:--|
+| `nn.Linear(1,64) → ReLU → Linear(64,1)` | [1.2 多层感知机与通用逼近](../lectures/lec01/sec12.md)：非线性让深度有意义 |
+| `loss_fn = nn.MSELoss()` | [1.4 损失函数](../lectures/lec01/sec14.md)：回归用 MSE、分类用交叉熵 |
+| `loss.backward()` | [1.5 反向传播](../lectures/lec01/sec15.md)：链式法则的线性时间实现 |
+| `opt.step()` + `zero_grad()` | [1.6 优化器](../lectures/lec01/sec16.md)：Adam 的自适应步长；梯度默认累积 |
+| `nn.GRU(32, 128)` | [2.3 门控](../lectures/lec02/sec23.md)：门控与细胞/隐状态的作用 |
+| `logits[:, :-1]` 对 `tokens[:, 1:]` | [2.2 BPTT 与教师强制](../lectures/lec02/sec22.md)：用 $x_t$ 预测 $x_{t+1}$ |
+| 温度采样 | [2.8 应用导读](../lectures/lec02/sec28.md)：$\tau$ 是风格旋钮 |
+
+## 8. 扩展任务（选做 1–2 项）
+
+1. **换结构对比**：把 GRU 换成 LSTM、纯 RNN 与单层 Transformer（[2.5](../lectures/lec02/sec25.md)），在**同参数量**下比收敛速度与生成质量——你会发现「结构选择」不是免费的。
+2. **采样策略对比**：实现 top-k 与 top-p（核采样），与温度采样对照（[2.8](../lectures/lec02/sec28.md)）：哪种策略在「保持音乐性」上更稳？
+3. **序列长度实验**：把 BPTT 的截断长度从 16 改到 64，观察损失与生成质量；再打开梯度裁剪（[2.2](../lectures/lec02/sec22.md)），记录梯度范数曲线。
+4. **困惑度报告**：计算验证集困惑度 $\mathrm{PPL}=\exp(\text{cross-entropy})$（[6.1](../lectures/lec06/sec61.md)），并解释它与损失的关系；对比不同温度的 PPL。
+5. **从零写一遍反向传播**：用 numpy 手写这一层网络的 forward/backward，与 PyTorch 的 `x.grad` 逐元素对照（误差 < 1e-6）——这是最有效的一次「[1.5](../lectures/lec01/sec15.md) 验收测试」。
