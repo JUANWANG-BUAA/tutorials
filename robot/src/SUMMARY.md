@@ -10,6 +10,10 @@
 - [符号与缩略语表](preface-notation.md)
 - [全书知识地图](preface-map.md)
 
+# 学前准备
+
+- [入学诊断：你该从哪一章开始](entry-test.md)
+
 # 复习层
 
 - [公式速查卡](preface-formulas.md)
@@ -29,6 +33,8 @@
   - [勘误与补注（对照原书）](ch01/errata.md)
   - [习题集](ch01/exercises.md)
   - [学习目标自检表](ch01/checklist.md)
+  - [闭卷回忆卡（36 张检索练习卡）](ch01/recall-cards.md)
+  - [综合自测卷（90 分钟 · 满分 100）](ch01/mock-exam.md)
 
 # 第二章 · 运动学（第 1–2 周录播）
 
@@ -52,6 +58,8 @@
   - [勘误与补注（对照原书与课件）](ch02/errata.md)
   - [习题集](ch02/exercises.md)
   - [学习目标自检表](ch02/checklist.md)
+  - [闭卷回忆卡（33 张检索练习卡）](ch02/recall-cards.md)
+  - [综合自测卷（120 分钟 · 满分 100）](ch02/mock-exam.md)
 
 # 第三章 · 微分运动学和静力学（第 3 周录播）
 
@@ -71,6 +79,8 @@
   - [勘误与补注（对照原书与课件）](ch03/errata.md)
   - [习题集](ch03/exercises.md)
   - [学习目标自检表](ch03/checklist.md)
+  - [闭卷回忆卡（30 张检索练习卡）](ch03/recall-cards.md)
+  - [综合自测卷（110 分钟 · 满分 100）](ch03/mock-exam.md)
 
 # 第四章 · 轨迹规划（第 4 周录播）
 
@@ -88,6 +98,8 @@
   - [勘误与补注（对照原书、课件与板书）](ch04/errata.md)
   - [习题集](ch04/exercises.md)
   - [学习目标自检表](ch04/checklist.md)
+  - [闭卷回忆卡（28 张检索练习卡）](ch04/recall-cards.md)
+  - [综合自测卷（90 分钟 · 满分 100）](ch04/mock-exam.md)
 
 # 第五章 · 执行器与传感器（第 6 周录播）
 
@@ -116,3 +128,10 @@
   - [勘误与补注（对照原书、课件与板书）](ch05/errata.md)
   - [习题集](ch05/exercises.md)
   - [学习目标自检表](ch05/checklist.md)
+  - [闭卷回忆卡（27 张检索练习卡）](ch05/recall-cards.md)
+  - [综合自测卷（90 分钟 · 满分 100）](ch05/mock-exam.md)
+
+# 特训 · 竞技与考场
+
+- [必考点竞技场](training/arena.md)
+- [考场冲刺 · 综合自测卷](training/exam-sprint.md)

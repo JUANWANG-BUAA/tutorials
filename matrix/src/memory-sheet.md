@@ -305,6 +305,147 @@ python3 tools/export_cards.py --tags          # 第三列写章标签（Anki tag
 python3 tools/export_cards.py --only ch03     # 只导出第三章
 ```
 
-脚本会把三章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md)，共 72 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（`[@id]` 引用降级为 `(id)`，方便回教程查证）。复习日程以三章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
+脚本会把三章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md)，共 72 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以三章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
 
 > 与[解题工具箱](toolbox.md)的分工：本页（与回忆卡）解决「记不记得住」，工具箱解决「做题时怎么下手、怎么验算」——考前两页各过一遍，再把[考场竞技场](ch03/arena.md)跑一轮计时赛，三件套齐活。
+
+## 术语索引（中英对照）
+
+本表供检索与英文文献对照；一句话释义与上方背记卡一致，术语中列出的是全书正文里出现过的标准叫法，读到英文教材对不上名字时先来这里查。
+
+**一 · 第一章（线性空间、子空间、基与坐标、内积、长度与夹角、直和与投影）**
+
+| 中文 | English | 一句话 | 出处 |
+|:--|:--|:--|:--|
+| 向量 | vector | n 元有序数组，分量取自同一个数域 $F$ | [1.1.2](ch01/sec11.md#sec-1.1.2) |
+| 向量空间 | vector space | 对加法与数乘封闭的 n 维向量全体 | [1.1.2](ch01/sec11.md#sec-1.1.2) |
+| 数域 | field | 含 $0,1$、对四则运算封闭的数集，是数乘中「数」的资格 | [1.1.3](ch01/sec11.md#sec-1.1.3) |
+| 加群 | additive group | 集合配加法：封闭、结合、有零元、有负元、交换 | [1.1.4](ch01/sec11.md#sec-1.1.4) |
+| 线性空间 | linear space | 加群再加数乘，且八条公理（含单位律）全成立 | [1.1.4](ch01/sec11.md#sec-1.1.4) |
+| 零向量 | zero vector | 加法零元，记 $\boldsymbol{\theta}$；与数 $0$ 不是一回事 | [1.1.5](ch01/sec11.md#sec-1.1.5) |
+| 负向量 | negative vector | 使 $\boldsymbol{\alpha}+(-\boldsymbol{\alpha})=\boldsymbol{\theta}$ 的那个向量 | [1.1.5](ch01/sec11.md#sec-1.1.5) |
+| 线性组合 | linear combination | $k_1\boldsymbol{\alpha}_1+\cdots+k_m\boldsymbol{\alpha}_m$ 形式的和 | [1.1.6](ch01/sec11.md#sec-1.1.6) |
+| 线性表示 | linear representation | 某向量写成一组的线性组合，系数称为表示系数 | [1.1.6](ch01/sec11.md#sec-1.1.6) |
+| 子空间 | subspace | 非空子集且对线性组合封闭（判定压缩成两条） | [1.2.1](ch01/sec12.md#sec-1.2.1) |
+| 平凡子空间 | trivial subspace | 零子空间 $\{\boldsymbol{\theta}\}$ 与整个空间 $V$ 两个极端 | [1.2.1](ch01/sec12.md#sec-1.2.1) |
+| 真子空间 | proper subspace | 不等于 $V$ 的子空间；「平凡」与「真」是两套划分 | [1.2.1](ch01/sec12.md#sec-1.2.1) |
+| 零空间 | null space | $A\boldsymbol{x}=\boldsymbol{0}$ 的解集 $N(A)$，也叫核空间 kernel | [1.2.7](ch01/sec12.md#sec-1.2.7) |
+| 列空间 | column space | $A$ 的列的全部线性组合，也叫值空间 range | [1.2.7](ch01/sec12.md#sec-1.2.7) |
+| 张成子空间 | span | 由一组向量的一切线性组合构成的子空间 | [1.2.7](ch01/sec12.md#sec-1.2.7) |
+| 和空间 | sum of subspaces | $W_1+W_2=\{w_1+w_2\}$，一定是子空间 | [1.2.5](ch01/sec12.md#sec-1.2.5) |
+| 线性相关 | linear dependence | 存在不全为零的系数使线性组合等于零向量 | [1.3.1](ch01/sec13.md#sec-1.3.1) |
+| 线性无关 | linear independence | 只有系数全零才能使组合为零向量 | [1.3.1](ch01/sec13.md#sec-1.3.1) |
+| 极大无关组 | maximal linearly independent subset | 无关且能表示组内每个向量；个数唯一 | [1.3.4](ch01/sec13.md#sec-1.3.4) |
+| 唯一表示定理 | uniqueness of representation | 用基表示向量时，表示系数唯一 | [1.3.5](ch01/sec13.md#sec-1.3.5) |
+| 过渡矩阵的性质 | properties of transition matrix | 过渡矩阵必可逆，且两组基的地位对称 | [1.3.7](ch01/sec13.md#sec-1.3.7) |
+| 坐标 | coordinates | 向量在指定基下的唯一系数列，依赖基而非固有 | [1.3.5](ch01/sec13.md#sec-1.3.5) |
+| 过渡矩阵 | transition matrix | 新基 = 旧基 × $P$ 中的 $P$，必可逆 | [1.3.7](ch01/sec13.md#sec-1.3.7) |
+| 维数 | dimension | 基所含向量的个数；依赖数域 | [1.3.8](ch01/sec13.md#sec-1.3.8) |
+| 基扩充 | basis extension | 无关组可以逐个添向量扩成整个空间的一组基 | [1.3.9](ch01/sec13.md#sec-1.3.9) |
+| 维数公式 | dimension formula | $\dim(W_1+W_2)=\dim W_1+\dim W_2-\dim(W_1\cap W_2)$ | [1.3.9](ch01/sec13.md#sec-1.3.9) |
+| 内积 | inner product | 共轭对称、对第一变元线性、正定的二元函数 | [1.4.1](ch01/sec14.md#sec-1.4.1) |
+| 内积空间 | inner product space | 线性空间配上一个内积，能谈长度与正交 | [1.4.1](ch01/sec14.md#sec-1.4.1) |
+| 标准内积 | standard inner product | 实空间用转置、复空间必须共轭转置的那个内积 | [1.4.2](ch01/sec14.md#sec-1.4.2) |
+| Hermite·矩阵 | Hermitian matrix | 满足 $A^{\mathrm H}=A$ 的复方阵；$x^{\mathrm H}Ax$ 必为实数 | [1.4.4](ch01/sec14.md#sec-1.4.4) |
+| 正定矩阵 | positive definite matrix | Hermite 且对一切非零 $x$ 有 $x^{\mathrm H}Ax>0$ | [1.4.4](ch01/sec14.md#sec-1.4.4) |
+| 半正定矩阵 | positive semidefinite matrix | 把正定条件放宽成 $x^{\mathrm H}Ax\ge0$ | [1.4.4](ch01/sec14.md#sec-1.4.4) |
+| 度量矩阵 | metric matrix | 固定基后记录两两内积的矩阵 $g_{ij}=(\varepsilon_j,\varepsilon_i)$，也叫 Gram 矩阵 | [1.4.6](ch01/sec14.md#sec-1.4.6) |
+| 合同变换 | congruent transformation | 换基时度量矩阵按 $G_{\mathcal F}=P^{\mathrm H}G_{\mathcal E}P$ 变 | [1.4.7](ch01/sec14.md#sec-1.4.7) |
+| 内积诱导的范数 | norm induced by inner product | 由 $\lVert x\rVert=\sqrt{(x,x)}$ 得到的长度 | [1.5.1](ch01/sec15.md#sec-1.5.1) |
+| 长度 | length | 内积开平方 $\lVert x\rVert=\sqrt{(x,x)}$，即模 norm | [1.5.1](ch01/sec15.md#sec-1.5.1) |
+| Schwarz-不等式 | Cauchy–Schwarz inequality | $\lvert(x,y)\rvert\le\lVert x\rVert\lVert y\rVert$，等号恰在线性相关时 | [1.5.2](ch01/sec15.md#sec-1.5.2) |
+| 夹角 | angle | 由 $\cos\theta=(x,y)/(\lVert x\rVert\lVert y\rVert)$ 定义；复空间无定义 | [1.5.3](ch01/sec15.md#sec-1.5.3) |
+| Gram·行列式 | Gram determinant | 一组向量两两内积构成的行列式，等于体积的平方 | [1.5.4](ch01/sec15.md#sec-1.5.4) |
+| 正交 | orthogonal | $(x,y)=0$；复空间不能用夹角判断 | [1.5.5](ch01/sec15.md#sec-1.5.5) |
+| 勾股定理 | Pythagorean theorem | 正交时 $\lVert x+y\rVert^2=\lVert x\rVert^2+\lVert y\rVert^2$ 且反向不成立 | [1.5.5](ch01/sec15.md#sec-1.5.5) |
+| Gram·Schmidt | Gram–Schmidt orthogonalization | 逐个减掉已有方向上的分量，得到正交组 | [1.5.6](ch01/sec15.md#sec-1.5.6) |
+| 标准正交基 | orthonormal basis | 两两正交且每个向量长度为 $1$ 的基 | [1.5.7](ch01/sec15.md#sec-1.5.7) |
+| 直和 | direct sum | 和空间中每个向量拆法唯一，记 $W_1\dotplus W_2$ | [1.6.1](ch01/sec16.md#sec-1.6.1) |
+| 补空间 | complementary subspace | 使 $V=W_1\dotplus W_2$ 成立的那个 $W_2$，一般不唯一 | [1.6.1](ch01/sec16.md#sec-1.6.1) |
+| 投影 | projection | 直和分解 $x=y+z$ 中落在指定分量的 $y$，必须说清沿哪个补 | [1.6.3](ch01/sec16.md#sec-1.6.3) |
+| 幂等矩阵 | idempotent matrix | 满足 $A^2=A$ 的方阵，自动给出 $\mathbb C^n=N(A)\dotplus R(A)$ | [1.6.4](ch01/sec16.md#sec-1.6.4) |
+| 子空间正交 | orthogonal subspaces | 每一个对每一个都正交，比「墙角式垂直」强得多 | [1.6.5](ch01/sec16.md#sec-1.6.5) |
+| 正交直和 | orthogonal direct sum | 拆法唯一且两个分量互相垂直，记 $\oplus$ | [1.6.5](ch01/sec16.md#sec-1.6.5) |
+| 正交补 | orthogonal complement | 与 $W$ 中每个向量都正交的向量全体 $W^{\perp}$ | [1.6.6](ch01/sec16.md#sec-1.6.6) |
+| 正交分解 | orthogonal decomposition | $V=W\oplus W^{\perp}$，补空间没有选择余地 | [1.6.6](ch01/sec16.md#sec-1.6.6) |
+| 正交投影 | orthogonal projection | 沿正交补落下的投影，由 $W$ 与内积唯一确定 | [1.6.7](ch01/sec16.md#sec-1.6.7) |
+
+**二 · 第二章（映射与多项式、线性映射、矩阵与同构、特征值、正交与酉变换）**
+
+| 中文 | English | 一句话 | 出处 |
+|:--|:--|:--|:--|
+| 映射 | mapping | 按规则给每个原像指定唯一像 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 单射 | injection | 不同原像有不同像；看原像是否打架 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 满射 | surjection | 值域等于陪域；看陪域是否被铺满 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 双射 | bijection | 既单又满，两个方向上都能反推 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 复合映射 | composition | 先 $f$ 后 $g$ 的映射乘积，总按作用顺序反写 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 可逆映射 | invertible mapping | 存在逆使两个复合都是恒等，等价于双射 | [2.1.1](ch02/sec21.md#sec-2.1.1) |
+| 等势 | equipotent | 存在双射即两个集合「元素一样多」，只谈集合不论结构 | [2.1.1](ch02/sec21.md#sec-2.1.1prime) |
+| 可数集 | countable set | 与自然数集等势的集合 | [2.1.1](ch02/sec21.md#sec-2.1.1prime) |
+| 带余除法 | division algorithm | $f=sg+r$ 且 $\deg r\lt\deg g$，商与余式唯一 | [2.1.2](ch02/sec21.md#sec-2.1.2) |
+| 公因式 | common divisor | 同时整除两个多项式的多项式 | [2.1.2](ch02/sec21.md#sec-2.1.2) |
+| 公倍式 | common multiple | 同时被两个多项式整除的多项式 | [2.1.2](ch02/sec21.md#sec-2.1.2) |
+| 友矩阵 | companion matrix | 把微分或差分方程的系数整整齐齐摆成的矩阵 | [2.1.2](ch02/sec21.md#sec-2.1.2) |
+| 线性映射 | linear mapping | 可加且齐次的映射 $T\in L(V,W)$，两条缺一不可 | [2.2.1](ch02/sec22.md#sec-2.2.1) |
+| 线性变换 | linear transformation | 定义域与陪域相同的线性映射 $V\to V$ | [2.2.1](ch02/sec22.md#sec-2.2.1) |
+| 核空间 | kernel / null space | 被映成零向量的原像全体 $N(T)$，是 $V$ 的子空间 | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 值域 | range | 全体像构成的集合 $R(T)$，是 $W$ 的子空间 | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 零度 | nullity | 核空间的维数 $\dim N(T)$ | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 映射的秩 | rank of a linear map | 值域的维数 $\dim R(T)$，与基的选择无关 | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 幂等变换 | idempotent transformation | 满足 $T^2=T$ 的线性变换 | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 零变换 | zero transformation | 把每个向量都映成零向量的线性变换 | [2.2.2](ch02/sec22.md#sec-2.2.2) |
+| 亏加秩定理 | rank–nullity theorem | $\dim N(T)+\dim R(T)=\dim V$，死掉的部分加活着的等于全部 | [2.2.5](ch02/sec22.md#sec-2.2.5) |
+| 线性映射空间 | space of linear maps | 一切 $V\to W$ 的线性映射按点式运算构成的线性空间 $L(V,W)$ | [2.2.4](ch02/sec22.md#sec-2.2.4) |
+| 矩阵的伴随 | transpose of a linear map | 取定两组基后把 $T$ 写成 $F^{m\times n}$ 中的数表 | [2.3.1](ch02/sec23.md#sec-2.3.1) |
+| 同构 | isomorphism | 双射且保运算；有限维同数域下等价于维数相等 | [2.3.2](ch02/sec23.md#sec-2.3.2) |
+| 坐标公式 | coordinate formula | $\beta=A\alpha$：像的坐标等于矩阵乘原像的坐标 | [2.3.3](ch02/sec23.md#sec-2.3.3) |
+| 换基 | change of basis | 两端各自换基后矩阵按 $B=P^{-1}AQ$ 变 | [2.3.4](ch02/sec23.md#sec-2.3.4) |
+| 换基公式 | change-of-basis formula | $B=P^{-1}AQ$；同一空间换基时 $Q=P$ 得相似 | [2.3.4](ch02/sec23.md#sec-2.3.4) |
+| 矩阵的秩 | rank of a matrix | 把 $A$ 看成某个映射的矩阵，则秩等于映射的秩 | [2.3.5](ch02/sec23.md#sec-2.3.5) |
+| 特征值 | eigenvalue | 存在非零向量使 $T\boldsymbol{x}=\lambda\boldsymbol{x}$ 的那个 $\lambda$ | [2.4.1](ch02/sec24.md#sec-2.4.1) |
+| 特征向量 | eigenvector | 被 $T$ 作用后只变长度的非零向量 | [2.4.1](ch02/sec24.md#sec-2.4.1) |
+| 特征多项式 | characteristic polynomial | $f_A(\lambda)=\lvert\lambda I-A\rvert$，根就是特征值 | [2.4.1](ch02/sec24.md#sec-2.4.1) |
+| 迹与行列式 | trace and determinant | 迹是对角线之和，等于全部特征值之和；行列式等于全部特征值之积 | [2.4.2](ch02/sec24.md#sec-2.4.2) |
+| 几何重数 | geometric multiplicity | 特征子空间的维数 $\dim V_\lambda$ | [2.4.3](ch02/sec24.md#sec-2.4.3) |
+| 代数重数 | algebraic multiplicity | 特征值作为特征多项式根的重数 | [2.4.3](ch02/sec24.md#sec-2.4.3) |
+| 特征子空间 | eigenspace | $V_\lambda=N(T-\lambda I)$，包含零向量 | [2.4.3](ch02/sec24.md#sec-2.4.3) |
+| 可对角化 | diagonalizable | 两种重数处处相等；等价于有 $n$ 个线性无关的特征向量 | [2.4.3](ch02/sec24.md#sec-2.4.3) |
+| 相似矩阵 | similar matrices | 同一个线性变换在不同基下的两个矩阵，$B=P^{-1}AP$ | [2.4.4](ch02/sec24.md#sec-2.4.4) |
+| 相似不变量 | similarity invariant | 特征值、迹、行列式、秩在相似下都不变 | [2.4.2](ch02/sec24.md#sec-2.4.2) |
+| 正交矩阵 | orthogonal matrix | 实方阵满足 $A^{\mathrm T}A=I$，列向量构成标准正交基 | [2.5.1](ch02/sec25.md#sec-2.5.1) |
+| 酉矩阵 | unitary matrix | 复方阵满足 $A^{\mathrm H}A=I$，正交矩阵是它的实特例 | [2.5.1](ch02/sec25.md#sec-2.5.1) |
+| 正交变换 | orthogonal transformation | 保持内积的实线性变换，等价于把标准正交基映到标准正交基 | [2.5.2](ch02/sec25.md#sec-2.5.2) |
+| 酉变换 | unitary transformation | 复空间上保内积的线性变换 | [2.5.2](ch02/sec25.md#sec-2.5.2) |
+| Givens·旋转 | Givens rotation | 在坐标平面 $(i,j)$ 内旋转、每次清零一个分量的正交矩阵 | [2.5.3](ch02/sec25.md#sec-2.5.3) |
+| Householder | Householder reflection and transformation | $H=I-2\omega\omega^{\mathrm T}$，关于 $\omega^{\perp}$ 照镜子的正交矩阵 | [2.5.4](ch02/sec25.md#sec-2.5.4) |
+
+**三 · 第三章（相抵分解、满秩分解、QR 分解、Schur 分解）**
+
+| 中文 | English | 一句话 | 出处 |
+|:--|:--|:--|:--|
+| 相抵 | equivalence of matrices | 经有限次初等变换化为另一个矩阵，等价于 $B=P^{-1}AQ$ | [3.1.1](ch03/sec31.md#sec-3.1.1) |
+| 相抵标准形 | equivalence normal form | 秩为 $r$ 的矩阵都相抵于 $\Gamma=\operatorname{diag}(I_r,O)$ | [3.1.1](ch03/sec31.md#sec-3.1.1) |
+| 相抵分解 | equivalence decomposition | $A=P^{-1}\Gamma Q$：分解式不唯一，标准形由秩唯一决定 | [3.1.1](ch03/sec31.md#sec-3.1.1) |
+| 单侧逆 | one-sided inverse | 右逆 $AB=I$ 要求行满秩，左逆 $BA=I$ 要求列满秩 | [3.1.3](ch03/sec31.md#sec-3.1.3) |
+| 秩等式 | rank identity | $\operatorname{rank}A=\operatorname{rank}(A^{\mathrm H}A)=\operatorname{rank}(AA^{\mathrm H})$ | [3.1.4](ch03/sec31.md#sec-3.1.4) |
+| 满秩分解 | full-rank factorization | $A=BC$：$B$ 列满秩、$C$ 行满秩，把列空间的骨架亮出来 | [3.2.1](ch03/sec32.md#sec-3.2.1) |
+| 满秩分解不唯一 | non-uniqueness | 两种满秩分解只差一个可逆因子：$B_1=B_2D$、$C_1=D^{-1}C_2$ | [3.2.3](ch03/sec32.md#sec-3.2.3) |
+| 伪逆 | pseudoinverse | $X=C^{\mathrm H}(CC^{\mathrm H})^{-1}(B^{\mathrm H}B)^{-1}B^{\mathrm H}$，是 $AXA=A$ 的一个解 | [3.2.4](ch03/sec32.md#sec-3.2.4) |
+| QR·分解 | QR decomposition | $A=QR$：$Q$ 酉、$R$ 上三角，也叫正交三角分解 | [3.4.1](ch03/sec34.md#sec-3.4.1) |
+| 正线条件 | positive diagonal condition | 要求 $R$ 的对角元全为正实数，唯一性就锁在这里 | [3.4.1](ch03/sec34.md#sec-3.4.1) |
+| 列正交规范矩阵 | column-orthonormal matrix | 长方阵满足 $Q^{\mathrm H}Q=I_n$，自动列满秩且保范 | [3.4.2](ch03/sec34.md#sec-3.4.2) |
+| Schur-引理 | Schur's lemma | 每个复方阵都酉相似于上三角阵：三角化人人有份 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| Schur-型 | Schur form | $A=UTU^{\mathrm H}$ 中的上三角阵 $T$，对角元就是全部特征值 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| 完全-QR | complete QR | 长方阵补零块后的完全分解 $A=U\begin{bmatrix}R_1\\O\end{bmatrix}$ | [3.4.2](ch03/sec34.md#sec-3.4.2) |
+| Schur-分解 | Schur decomposition | $A=UTU^{\mathrm H}$，酉相似地把方阵化成 Schur 型 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| 正交三角分解 | orthogonal triangular decomposition | 实矩阵的 QR 分解：$Q$ 正交、$R$ 上三角 | [3.4.1](ch03/sec34.md#sec-3.4.1) |
+| 矩阵多项式 | matrix polynomial | $\varphi(A)=\sum a_iA^i$，常数项自动补成 $a_0I$ | [3.5.2](ch03/sec35.md#sec-3.5.2) |
+| 谱映射 | spectral mapping | $f(A)$ 的特征值恰是 $f(\lambda)$，且特征向量可以继承 | [3.5.2](ch03/sec35.md#sec-3.5.2) |
+| Hamilton-定理 | Cayley–Hamilton theorem | 特征多项式零化自己：$f_A(A)=O$ | [3.5.3](ch03/sec35.md#sec-3.5.3) |
+| 零化多项式 | annihilating polynomial | 使 $g(A)=O$ 的多项式；有无穷多个 | [3.5.4](ch03/sec35.md#sec-3.5.4) |
+| 最小多项式 | minimal polynomial | 次数最小的首一零化多项式 $m_A$：唯一、整除一切零化多项式 | [3.5.4](ch03/sec35.md#sec-3.5.4) |
+| 候选法 | candidate method | 由 $f_A$ 的因式从低往高试，找次数最小的那个零化多项式 | [3.5.4](ch03/sec35.md#sec-3.5.4) |
+| 逆矩阵的多项式公式 | polynomial formula for inverse | $A^{-1}$ 可由 $m_A$ 或 $f_A$ 的系数写成 $A$ 的多项式 | [3.5.4](ch03/sec35.md#sec-3.5.4) |
+| 酉相似 | unitary similarity | 换基矩阵取酉矩阵的相似，额外保住长度与内积 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| 正交相似 | orthogonal similarity | 换基矩阵取实正交矩阵的相似；对称阵可正交对角化 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| 上三角阵 | upper triangular matrix | 对角线以下元素全为零的方阵，对角元就是全部特征值 | [3.5.1](ch03/sec35.md#sec-3.5.1) |

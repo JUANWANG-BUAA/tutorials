@@ -66,6 +66,11 @@
   - [考场竞技场：必考点三轮计时特训](ch03/arena.md)
   - [学习目标自检表](ch03/checklist.md)
 
+# 特训 · 竞技与考场
+
+- [必考点竞技场 · 跨三章](training/arena.md)
+- [考场冲刺 · 综合自测卷](training/exam-sprint.md)
+
 # 附录 · 拓展与联系
 
 - [附录 A · 延伸证明与推导](appendix/appendix-a.md)
@@ -76,3 +81,4 @@
 - [学习目标（K / S / A）](preface-objectives.md)
 - [符号表](preface-notation.md)
 - [范围声明与使用方法](preface-scope.md)
+- [延伸阅读](reading.md)

@@ -370,7 +370,7 @@ a_0+a_1x_1+a_2x_1^2+\cdots+a_nx_1^n=f(x_1)\\[2pt]
 a_0+a_1x_n+a_2x_n^2+\cdots+a_nx_n^n=f(x_n)
 \end{cases}$$
 
-## 十一、范德蒙德矩阵：存在唯一，但病态（80:00–85:00）
+## 十一、范德蒙德矩阵：存在唯一，但病态（80:00–85:00） {#sec-lec09-11}
 
 上一节的方程组写成矩阵形式 $A\boldsymbol a=\boldsymbol f$，其中
 

@@ -8,6 +8,8 @@
 - [范围声明与使用方法](preface-scope.md)
 - [学习目标（K / S / A）](preface-objectives.md)
 - [符号表](preface-notation.md)
+- [先修与自测：线性代数 · 微积分 · 编程 · 记号](prerequisite.md)
+- [工程工具箱：误差诊断 · 算法选型 · 停止准则 · 函数地图](toolbox.md)
 
 # 学前准备
 
@@ -25,6 +27,8 @@
 - [习题集](ch01/exercises.md)
 - [真实应用案例：GPS 定位的误差预算](ch01/application.md)
 - [学习目标自检表](ch01/checklist.md)
+- [闭卷回忆卡（第一章）](ch01/recall-cards.md)
+- [综合自测卷（第一章 · 100 分）](ch01/mock-exam.md)
 
 # 第二章 · 数值线性代数基础
 
@@ -38,8 +42,11 @@
   - [2.7 数值实验：亲手看见正交与谱](ch02/sec27.md)
   - [2.8 小结与常见陷阱](ch02/sec28.md)
 - [全章总结](ch02/summary.md)
+- [勘误与补注（对应原书）](ch02/errata.md)
 - [习题集](ch02/exercises.md)
 - [学习目标自检表](ch02/checklist.md)
+- [闭卷回忆卡（第二章）](ch02/recall-cards.md)
+- [综合自测卷（第二章 · 100 分）](ch02/mock-exam.md)
 
 # 课堂精编 · 2026 秋《数值分析 I》（庞刚）
 
@@ -52,6 +59,8 @@
   - [第 6 讲（09-23）：逐次超松弛法（SOR）——构造、收敛性与特征值问题开篇](lectures/lec06.md)
   - [第 7 讲（09-28）：幂法——规范化、特征值的算法与反幂法；非线性方程迭代法开篇](lectures/lec07.md)
   - [第 9 讲（10-14）：牛顿法全局收敛定理、割线法与单点割线法；插值法引论](lectures/lec09.md)
+- [课堂精编 · 复习页](lectures/review.md)
+- [课堂精编 · 练习与自测](lectures/practice.md)
 
 # 复习与查阅
 
