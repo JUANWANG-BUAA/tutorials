@@ -20,10 +20,10 @@
    * 三本书的 H4 一共 4 个（章节树一个也用不上），于是侧栏永远是摊开的一整墙，
    * 读者点第二下也无处可点。
    *
-   * 这里给带子目录的章节条目补一枚与原生同款的 chevron：直接复用 mdBook 自己
-   * 的 .chapter-fold-toggle 外观（颜色走 --sidebar-fg）与
-   * `.chapter li:not(.expanded) > ol{display:none}` 折叠机制，不自造样式；
-   * 状态按条目链接存 localStorage，默认展开（不改动现有观感）。
+   * 这里给带子目录的章节条目补一枚 chevron，复用 mdBook 的
+   * `.chapter li:not(.expanded) > ol{display:none}` 折叠机制。按钮用原生 button，
+   * 由 base.css 清掉浏览器默认控件皮肤，再沿用 mdBook 的箭头旋转与右对齐。
+   * 状态按本书与章节的规范化 URL 存 localStorage，默认展开。
    *
    * 与原生大纲钮的关系：mdBook 自己的处理器用 ev.currentTarget.parentElement
    * .parentElement 找目标，且在侧栏元素升级时就一次性绑好（那时我们的钮还不
@@ -43,7 +43,11 @@
   function chapterFoldKey(li) {
     var a = li.querySelector(":scope > .chapter-link-wrapper > a[href]");
     var href = a ? a.getAttribute("href") : "";
-    return SIDEBAR_FOLD_PREFIX + (href || "index:" + chapterGroups().indexOf(li));
+    var path = href;
+    try { path = new URL(href || ".", location.href).pathname; } catch (e) { /* 用相对路径回落 */ }
+    var root = bookRoot();
+    var relative = path.indexOf(root) === 0 ? path.slice(root.length) : path;
+    return SIDEBAR_FOLD_PREFIX + root + relative;
   }
 
   function chapterChevron() {
@@ -68,13 +72,27 @@
     chapterGroups().forEach(function (li) {
       var wrapper = li.querySelector(":scope > .chapter-link-wrapper");
       if (!wrapper) return;
+      var section = li.querySelector(":scope > ol.section");
       var toggle = wrapper.querySelector(":scope > .chapter-fold-toggle");
       if (!toggle) {
         toggle = chapterChevron();
         wrapper.appendChild(toggle);
-        var saved = CORE.store(chapterFoldKey(li));
-        if (saved === "0") li.classList.remove("expanded");
       }
+      if (section) {
+        if (!section.id) {
+          var sectionId = chapterFoldKey(li).replace(/[^a-z0-9_-]+/gi, "-").replace(/^-+|-+$/g, "");
+          section.id = "sidebar-section-" + sectionId;
+        }
+        toggle.setAttribute("aria-controls", section.id);
+      }
+      var saved = CORE.store(chapterFoldKey(li));
+      var currentPage = Boolean(li.querySelector("a.active"));
+      /* mdBook expands the active page's ancestors before this module runs. Keep that
+         guarantee even when an older saved state says "closed", so the active entry
+         cannot disappear from the sidebar after navigation. */
+      if (currentPage) li.classList.add("expanded");
+      else if (saved === "0") li.classList.remove("expanded");
+      else if (saved === "1") li.classList.add("expanded");
       syncChevron(li, toggle);
     });
   }
@@ -226,15 +244,14 @@
    * mdBook 的大纲在侧栏里（跟着整本书的树），长文往下滚时看不见；VitePress、
    * bevy-cheatbook、官方 rust-book 都是右栏跟随。这里补一条右栏：
    *   · 条目取自正文 h2 / h3（跳过折叠块与语义盒里的标题，与「本页内容」同规则）；
-   *   · **只在正文右侧真有空余时出现**（≥200px，且视口高 ≥600px）——版心调宽、
-   *     侧栏展开、窗口变窄都会重算，不够就整条让位，不挤正文；
+   *   · **仅在左侧目录收起、且正文右侧真有空余时出现**（≥600px 视口高）——版心调宽、
+   *     侧栏切换、窗口变窄都会重算，不够就整条让位，不挤正文；
    *   · 出现时正文顶部的「本页内容」隐藏（同一个信息不要两处），收起时回来；
    *   · 滚动跟随高亮用 rAF 节流，不用 IntersectionObserver 的多次触发（长页更稳）。
    * ------------------------------------------------------------------ */
   /* 右栏的「实际占地」= 自身宽度 + 距视口右缘的距离 + 与正文之间的间距。
-     必须按实际占地判断余量：此前写的是 200px，而右栏实际占 234px（212 宽 + 22 右距，
-     且 padding 还在 content-box 之外），余量落在 200–234 之间时右栏会压住正文、
-     并顶到屏幕边缘（读者看到的就是「遮住正文 + 右端被截断」）。
+     必须按实际占地判断余量；CSS 采用 border-box，避免 padding 额外撑开右栏，
+     余量不足时整栏隐藏，避免压住正文或贴到屏幕边缘。
      宽度的唯一来源是 CSS 里的 #page-rail（--rail-width），这里只读它，不再硬编码。 */
   var RAIL_MIN_HEIGHT = 600;
 
@@ -248,23 +265,30 @@
       var raw = parseFloat(cs.getPropertyValue(name));
       return isNaN(raw) ? fallback : raw;
     };
-    return px("--rail-width", 212) + px("--rail-right-gap", 22) + px("--rail-text-gap", 24);
+    return px("--rail-width", 228) + px("--rail-right-gap", 20) + px("--rail-text-gap", 24);
   }
   var railFrame = false;
+  var railLayoutTimer = 0;
 
   function railHeadings() {
     var main = document.querySelector("main");
     if (!main) return [];
     return Array.prototype.filter.call(main.querySelectorAll("h2, h3"), function (heading) {
       if (heading.closest("details, .box")) return false;
-      if (!heading.querySelector("a.header")) return false;
-      return Boolean(heading.getAttribute("id") || (heading.querySelector("a.header") || {}).getAttribute);
+      var anchor = heading.querySelector("a.header");
+      if (!anchor) return false;
+      return Boolean(heading.id || anchor.getAttribute("href"));
     });
+  }
+
+  function sidebarIsCollapsed() {
+    var toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+    return Boolean(toggle && !toggle.checked);
   }
 
   function railHasRoom() {
     var main = document.querySelector("main");
-    if (!main) return false;
+    if (!main || !sidebarIsCollapsed()) return false;
     if (window.innerHeight < RAIL_MIN_HEIGHT) return false;
     return window.innerWidth - main.getBoundingClientRect().right >= railFootprint();
   }
@@ -287,11 +311,12 @@
     Array.prototype.forEach.call(rail.querySelectorAll("a"), function (a) { a.remove(); });
     headings.forEach(function (heading) {
       var anchor = heading.querySelector("a.header");
+      var target = heading.id || (anchor.getAttribute("href") || "").replace(/^#/, "");
       var link = document.createElement("a");
       link.href = anchor.getAttribute("href");
       link.textContent = heading.textContent.trim();
       if (heading.tagName === "H3") link.className = "page-rail-h3";
-      link.dataset.railTarget = heading.id || "";
+      link.dataset.railTarget = target;
       rail.appendChild(link);
     });
     syncPageRail();
@@ -334,6 +359,14 @@
     window.addEventListener("resize", syncPageRail, { passive: true });
     // 版心宽度等偏好变化后重新算余量（prefs.js 在应用后派发该事件）
     document.addEventListener("tutorials:prefs", syncPageRail);
+    // mdBook 的侧栏由隐藏 checkbox 驱动。监听 change 修复「收起后本页大纲仍不出现」；
+    // 动画结束后再测一次，避免按过渡中的正文右缘作出错误空间判断。
+    var sidebarToggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+    if (sidebarToggle) sidebarToggle.addEventListener("change", function () {
+      window.clearTimeout(railLayoutTimer);
+      syncPageRail();
+      railLayoutTimer = window.setTimeout(syncPageRail, 360);
+    });
   }
 
   CORE.register(function () {

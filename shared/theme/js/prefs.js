@@ -1,13 +1,13 @@
 /*
  * 阅读偏好层 — 三本书共用（robot / numerical / matrix 三份内容逐字相同）
  * ---------------------------------------------------------------------------
- * 面板给读者四项可调：字体 / 字号 / 行距间距 / 版心宽度。状态存 localStorage，
- * 并写到 <html> 的 data-* 属性上；真正的样式规则在 theme/css/prefs.css（本文件
+ * 面板给读者调整字体、字号、间距、版心、强调色与背景纹理。状态存 localStorage，
+ * 并写到根元素的 data-* 属性上；真正的样式规则在 theme/css/prefs.css（本文件
  * 只负责取值、落属性与面板 UI），这样「看」与「控」分离，关掉 JS 时页面就是
  * 默认外观，不会缺内容。
  *
- * 配色**不在**本层：明暗与配色只有菜单栏的 mdBook 原生主题弹层一个入口，
- * 避免同一件事出现两套状态。
+ * 明暗主题由 mdBook 原生主题弹层管理；本面板的强调色只覆盖链接与状态提示，
+ * 不碰页面/侧栏底色，避免两个入口互相打架。
  *
  * 首屏防闪：属性由 theme/head.hbs 里的内联脚本在 <head> 阶段就写好（早于首次
  * 绘制），本文件只在末尾补面板。因此这里的 apply() 对首屏是「幂等重放」。
@@ -25,7 +25,7 @@
   /* 默认值刻意都是「不写属性」的那一档：设置层出现之前的样子就是默认外观，
      升级不会改变任何老读者的观感。 */
   var DEFAULT_PREFS = {
-    font: "serif",
+    font: "sans",
     size: "m",
     density: "standard",
     width: "standard",
@@ -40,7 +40,7 @@
       key: "font", label: "字体", attr: "data-font",
       choices: [
         { value: "serif", label: "衬线" },
-        { value: "sans", label: "黑体" },
+        { value: "sans", label: "无衬线" },
         { value: "kai", label: "楷体" },
         { value: "system", label: "系统" }
       ]
@@ -73,20 +73,21 @@
       ]
     },
     {
-      key: "palette", label: "纸张配色", attr: "data-palette",
+      key: "palette", label: "强调色", attr: "data-palette",
       choices: [
         { value: "theme", label: "随主题" },
-        { value: "neutral", label: "中性", swatch: "#9aa0a6" },
-        { value: "cool", label: "冷灰", swatch: "#4a6f96" },
-        { value: "sage", label: "苔绿", swatch: "#4f7a52" },
-        { value: "contrast", label: "高对比", swatch: "#111111" }
+        { value: "blue", label: "海蓝", swatch: "#2f74b8" },
+        { value: "teal", label: "青绿", swatch: "#287d82" },
+        { value: "green", label: "松绿", swatch: "#4f7a52" },
+        { value: "amber", label: "琥珀", swatch: "#a65d2c" },
+        { value: "contrast", label: "高对比", swatch: "#8a2c0b" }
       ]
     },
     {
       key: "bg", label: "背景纹理", attr: "data-bg",
       choices: [
         { value: "theme", label: "随主题" },
-        { value: "wash", label: "暖光网格" },
+        { value: "wash", label: "柔和光感" },
         { value: "plain", label: "纯净" },
         { value: "grid", label: "细网格" },
         { value: "graph", label: "方格纸" },
@@ -248,10 +249,29 @@
     if (toggle) toggle.setAttribute("aria-expanded", "false");
   }
 
+  /* mdBook 切换成功后仍让主题弹层停留在页面上。
+     选择后收起，并把焦点送回触发按钮，避免弹层遮住正文或键盘焦点留在隐藏项。 */
+  function wireThemePopup() {
+    var list = document.getElementById("mdbook-theme-list");
+    var toggle = document.getElementById("mdbook-theme-toggle");
+    if (!list || !toggle || list.dataset.closeOnSelect === "1") return;
+    list.dataset.closeOnSelect = "1";
+    list.addEventListener("click", function (event) {
+      var choice = event.target.closest ? event.target.closest("button.theme") : null;
+      if (!choice) return;
+      window.setTimeout(function () {
+        list.style.display = "none";
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.focus();
+      }, 0);
+    });
+  }
+
   function bootPrefs() {
     var bar = document.getElementById(MENU_BAR_ID);
     if (!bar || document.getElementById("prefs-toggle")) return;
 
+    wireThemePopup();
     var prefs = currentPrefs();
     applyPrefs(prefs);
 

@@ -16,6 +16,12 @@
  * 验证：抽取后用「整页计算样式指纹」逐页比对（21 页），要求与抽取前逐页一致。
  */
 
+/* Frontend design spec (2026-10): Academy / Cool blue-gray / standard density.
+ * Default dark anchor: Coal's cool slate; Rust, Navy and Ayu remain explicit reader choices.
+ * Chinese reading and controls stay Sans to match technical-document conventions (RustWiki);
+ * Mono is reserved for code and compact metadata, with Serif kept as an optional reading preference.
+ */
+
 /* ======================================================================== *
  * §1  设计令牌 → mdBook 变量映射
  * ------------------------------------------------------------------------
@@ -43,10 +49,10 @@
  * ------------------------------------------------------------------------ */
 :root,
 html.rust{
-  /* Rust · 暖纸（品牌亮色） */
-  --page:#f8f4ec;--sidebar:#f0e9dd;--paper:#fefaf2;--paper-soft:#f4eee4;
-  --ink:#171513;--ink-2:#5d564c;--muted:#6f675b;
-  --line:#d9cfbf;--line-strong:#b8a995;--control-line:#8f806d;
+  /* Rust · 温和暖纸（与侧栏、弹层同一色温） */
+  --page:#fbf8f2;--sidebar:#f5f1e9;--paper:#fffdf9;--paper-soft:#f6f2eb;
+  --ink:#201b17;--ink-2:#5d554d;--muted:#756d64;
+  --line:#e4dbcf;--line-strong:#c9bcad;--control-line:#998b7b;
   --accent:#b96543;--accent-strong:#9f5033;--accent-text:#9f5033;
   --accent-soft:rgba(185,101,67,.10);--sage:#6f8f82;
   --shadow-ink:rgba(50,40,29,.86);
@@ -58,14 +64,14 @@ html.rust{
 
 html.light{
   /* Light · 中性白纸（不带暖调，蓝灰强调） */
-  --page:#ffffff;--sidebar:#f4f5f6;--paper:#ffffff;--paper-soft:#f3f4f6;
-  --ink:#131313;--ink-2:#4b4f54;--muted:#666b71;
-  --line:#e2e4e7;--line-strong:#c3c7cc;--control-line:#9aa0a6;
-  --accent:#2f6fb0;--accent-strong:#245a91;--accent-text:#245a91;
-  --accent-soft:rgba(47,111,176,.10);--sage:#4f7a6a;
+  --page:#ffffff;--sidebar:#f6f7f8;--paper:#ffffff;--paper-soft:#f5f7f9;
+  --ink:#171b20;--ink-2:#46505a;--muted:#68737f;
+  --line:#e3e7eb;--line-strong:#cbd3dc;--control-line:#9aa5b0;
+  --accent:#2f74b8;--accent-strong:#205f9e;--accent-text:#205f9e;
+  --accent-soft:rgba(47,116,184,.10);--sage:#4f7a6a;
   --shadow-ink:rgba(15,17,20,.86);
   --surface-card:rgba(255,255,255,.94);--surface-soft:rgba(243,244,246,.72);
-  --mark-bg:#cfe0f3;
+  --mark-bg:#d8e8f7;
   --link-color:var(--accent-strong);
   --scheme:light;
 }
@@ -99,7 +105,7 @@ html.navy{
 }
 
 html.ayu{
-  /* Ayu · 琥珀深色（**默认主题**：book.toml 的 preferred-dark-theme） */
+  /* Ayu · 琥珀深色（暖色系独立选项；默认深色为 Coal） */
   --page:#0f1419;--sidebar:#141a20;--paper:#1a1f26;--paper-soft:#242a32;
   --ink:#e8e8e8;--ink-2:#b8b8b8;--muted:#8f9398;
   --line:#3a414a;--line-strong:#4e5661;--control-line:#687382;
@@ -117,15 +123,20 @@ html.ayu{
 html.rust,
 html.light{
   /* 语义盒子：底色 + 标签文字色 + 边框色三者成对 */
-  --def-bg:#eef3f5;--def-line:#456f7c;--def-ink:#284f5b;
-  --thm-bg:#f3f0f5;--thm-line:#705d79;--thm-ink:#55425f;
-  --ex-bg:#f1f5ef;--ex-line:#58735b;--ex-ink:#3c5740;
-  --think-bg:#f7f2e8;--think-line:#967331;--think-ink:#73551f;
-  --err-bg:#f8eeeb;--err-line:#a7473d;--err-ink:#87342d;
-  --method-bg:#edf4f3;--method-line:#447a75;--method-ink:#2e615d;
-  /* 语义锚色：只声明「这个语义是什么色相」。默认不参与渲染；一旦读者选了纸张配色，
-     prefs.css 会用它与该配色的面/墨算出盒子的底色、边框与标签文字色，
-     避免出现「苔绿纸 + 蓝盒子」这种两套颜色系统。 */
+  --def-line:#456f7c;--def-ink:#284f5b;
+  --thm-line:#705d79;--thm-ink:#55425f;
+  --ex-line:#58735b;--ex-ink:#3c5740;
+  --think-line:#967331;--think-ink:#73551f;
+  --err-line:#a7473d;--err-ink:#87342d;
+  --method-line:#447a75;--method-ink:#2e615d;
+  --def-bg:color-mix(in srgb,var(--surface-card) 96%,var(--def-line));
+  --thm-bg:color-mix(in srgb,var(--surface-card) 96%,var(--thm-line));
+  --ex-bg:color-mix(in srgb,var(--surface-card) 96%,var(--ex-line));
+  --think-bg:color-mix(in srgb,var(--surface-card) 96%,var(--think-line));
+  --err-bg:color-mix(in srgb,var(--surface-card) 96%,var(--err-line));
+  --method-bg:color-mix(in srgb,var(--surface-card) 96%,var(--method-line));
+  /* 语义锚色：只声明「这个语义是什么色相」。prefs.css 用锚色与当前主题表面混合出
+     低饱和盒底；强调色切换时语义盒不变，避免内容层级跟着装饰色漂移。 */
   --sem-def:#456f7c;--sem-thm:#705d79;--sem-ex:#58735b;--sem-think:#967331;
   --sem-err:#a7473d;--sem-method:#447a75;--sem-intuition:#3f6bb0;
   /* 插图配色：亮色用深色，保证在浅底上可读 */
@@ -141,12 +152,18 @@ html.coal,
 html.navy,
 html.ayu{
   /* 同上，暗色一套 */
-  --def-bg:#19262c;--def-line:#70a0ae;--def-ink:#a4c7d0;
-  --thm-bg:#25242d;--thm-line:#9a8ba5;--thm-ink:#c8bdd0;
-  --ex-bg:#1d2924;--ex-line:#87aa89;--ex-ink:#afd0b0;
-  --think-bg:#2d291f;--think-line:#c39a51;--think-ink:#ddbf87;
-  --err-bg:#31231f;--err-line:#d57769;--err-ink:#e7a097;
-  --method-bg:#1d2b2a;--method-line:#70aaa4;--method-ink:#9acbc6;
+  --def-line:#70a0ae;--def-ink:#a4c7d0;
+  --thm-line:#9a8ba5;--thm-ink:#c8bdd0;
+  --ex-line:#87aa89;--ex-ink:#afd0b0;
+  --think-line:#c39a51;--think-ink:#ddbf87;
+  --err-line:#d57769;--err-ink:#e7a097;
+  --method-line:#70aaa4;--method-ink:#9acbc6;
+  --def-bg:color-mix(in srgb,var(--surface-card) 92%,var(--def-line));
+  --thm-bg:color-mix(in srgb,var(--surface-card) 92%,var(--thm-line));
+  --ex-bg:color-mix(in srgb,var(--surface-card) 92%,var(--ex-line));
+  --think-bg:color-mix(in srgb,var(--surface-card) 92%,var(--think-line));
+  --err-bg:color-mix(in srgb,var(--surface-card) 92%,var(--err-line));
+  --method-bg:color-mix(in srgb,var(--surface-card) 92%,var(--method-line));
   --sem-def:#70a0ae;--sem-thm:#9a8ba5;--sem-ex:#87aa89;--sem-think:#c39a51;
   --sem-err:#d57769;--sem-method:#70aaa4;--sem-intuition:#7fa1d8;
   /* 插图配色：暗色提高亮度，线条/填充/标注在深底上才可读 */
@@ -198,7 +215,7 @@ html.ayu{
   --grid-line:color-mix(in srgb,var(--ink) 2%,transparent);
   --row-hover:color-mix(in srgb,var(--ink) 4%,transparent);
   /* 背景纹理（prefs.css §5.6）用的派生量：网格 / 方格粗线 / 点阵 / 纸张纤维。
-     全部由墨色算出，因此随明暗主题与纸张配色自动变化，不需要逐档配色值。 */
+     全部由墨色算出，因此随明暗主题与强调色自动变化，不需要逐档配色值。 */
   --grid-mid:color-mix(in srgb,var(--ink) 4%,transparent);
   --grid-strong:color-mix(in srgb,var(--ink) 8%,transparent);
   --dot:color-mix(in srgb,var(--ink) 15%,transparent);
@@ -208,30 +225,29 @@ html.ayu{
 
 /* ---- §1.4 尺寸令牌（与配色无关）-------------------------------------- */
 :root{
-  --radius:18px;
-  --radius-sm:var(--space-3);
-  /* 字号刻度：正文基线 16.5px，其余按角色命名（标签/图注/次级/控件/标题/封面）。
+  --radius:12px;
+  --radius-sm:8px;
+  /* 字号刻度：正文基线 16px，其余按角色命名（标签/图注/次级/控件/标题/封面）。
      组件里凡**正好等于**这些值的 font-size 一律改引令牌；不等于的字面量保持原样——
      刻度只做「同值换名」，不做取整，因此不会改变任何观感。 */
   --fs-2xs:10px;--fs-xs:11px;--fs-sm:var(--space-3);--fs-md:13px;--fs-lg:14px;
-  --fs-body:16.5px;--fs-h4:17px;--fs-h3:21px;--fs-h2:27px;--fs-h1:38px;--fs-display:52px;
+  --fs-body:16px;--fs-h4:17px;--fs-h3:20px;--fs-h2:27px;--fs-h1:36px;--fs-display:48px;
 
   --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
   --space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;
   --space-12:48px;--space-16:64px;--space-20:80px;
   --grid-gap:var(--space-6);--card-padding:var(--space-6);--section-gap:var(--space-12);--text-margin:var(--space-4);
 
-  --content-max-width:820px;
+  --content-max-width:780px;
   --page-padding:26px;
   /* 只声明 target。mdBook 0.5 的 --sidebar-width 是派生值
      （min(--sidebar-target-width, 80vw)，见框架 variables.css），在这里再写死
      一份会盖住派生值：拖拽把手改的是 target，宽度却永远不动（把手拖不动）。 */
-  --sidebar-target-width:300px;
+  --sidebar-target-width:286px;
   --menu-bar-height:58px;
 
-  /* 字体角色：display serif = 章节层级；text serif = 长文阅读；
-     sans = 导航与控件；mono = 编号、标签与证据 */
-  --serif-display:"Iowan Old Style","Baskerville","Songti SC","STSong","Noto Serif SC",Georgia,serif;
+  /* 默认采用清晰的无衬线屏幕阅读；衬线保留为可选正文风格。 */
+  --serif-display:var(--sans);
   --serif-text:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
   --serif:var(--serif-text);
   --sans:"Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
@@ -268,11 +284,7 @@ html:not(.tutorials-ready) *::after{
   scroll-behavior:auto!important;
   transition:none!important;
 }
-/* 侧栏 —— 一比一还原 mdBook / rustwiki 原生侧栏。
- * 结构与交互（连续目录、编号加粗、hover 与当前项仅变色、本页大纲折叠、滚动到
- * 当前项）全部由 mdBook 自带 chrome 样式与 toc.js 提供；本文件不再自建。此前
- * 自加的章节折叠钮、当前项底色与色条、吸顶分组标题、编号分列脚本均已移除。
- * 这里只保留本主题必需的重着色。 */
+/* 侧栏 —— 轻量、连续的目录流：保留编号与层级，当前页只做克制的颜色/字重强调。 */
 #mdbook-sidebar{
   font-family:var(--sans);
   border-right:1px solid var(--line);
@@ -281,13 +293,13 @@ html:not(.tutorials-ready) *::after{
 #mdbook-sidebar::-webkit-scrollbar{width:var(--space-1)}
 #mdbook-sidebar::-webkit-scrollbar-thumb{background:var(--line-strong)}
 .menu-title{
-  font-family:var(--serif-display)!important;
-  font-weight:600;font-size:15px;line-height:1.3;
+  font-family:var(--sans)!important;
+  font-weight:600;font-size:14px;line-height:1.3;
   letter-spacing:.02em;
 }
 #mdbook-menu-bar{font-family:var(--sans)}
 #mdbook-menu-bar .icon-button,#mdbook-menu-bar .right-buttons a{
-  border:1px solid transparent;border-radius:10px;
+  border:1px solid transparent;border-radius:7px;
   transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
 }
 #mdbook-menu-bar .icon-button:hover,#mdbook-menu-bar .right-buttons a:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper)}
@@ -297,10 +309,10 @@ html:not(.tutorials-ready) *::after{
    窄屏收起文案只留图标；悬停/按下的反馈与相邻图标按钮保持同一套。 */
 #mdbook-menu-bar .right-buttons{display:flex;align-items:center;gap:2px}
 #mdbook-menu-bar .portal-home{
-  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;
+  display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 10px;
   font-size:var(--fs-md);font-weight:500;letter-spacing:.01em;text-decoration:none;
   color:var(--ink-2);
-  border:1px solid transparent;border-radius:10px;
+  border:1px solid transparent;border-radius:7px;
   transition:transform 140ms ease,border-color 140ms ease,background 140ms ease,color 140ms ease;
 }
 #mdbook-menu-bar .portal-home:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
@@ -311,14 +323,50 @@ html:not(.tutorials-ready) *::after{
   font-family:var(--sans);font-size:var(--fs-md);
   border-radius:0;
 }
-/* 侧栏条目尺寸与间距全部交给 mdBook 原生规则（.chapter 2.2em、li.chapter-item
-   1.5em 与 .6em 组距、.section 20px 缩进、链接 hover 与当前项仅变色）。此处
-   只补原生两处显示缺陷：
+/* 侧栏以章节为主层级，沿用 mdBook 的缩进与节奏，弱化当前页内的标题层级避免重复目录。
+   另补原生两处显示缺陷：
    ① toc.js 的字符串模板有嵌套 <li>，被 HTML 解析器拆开后留下空壳条目，原生
       会渲染成空行——隐藏之；
    ② 嵌套小节树用 width:auto（而非 100%）避免逐层外溢。 */
 #mdbook-sidebar .chapter li.chapter-item:empty{display:none;margin:0}
 #mdbook-sidebar .chapter ol{width:auto}
+#mdbook-sidebar .chapter-link-wrapper{display:flex;align-items:center;min-width:0;gap:4px}
+#mdbook-sidebar .chapter-link-wrapper>a{flex:1;min-width:0;border-radius:5px;transition:color 140ms ease,background-color 140ms ease}
+#mdbook-sidebar .chapter-link-wrapper>a:hover:not(.active):not(.current-header){background:var(--theme-hover)}
+#mdbook-sidebar .chapter .on-this-page{display:none}
+#mdbook-sidebar .chapter a.active,
+#mdbook-sidebar .chapter a.current-header{
+  border-radius:5px;background:var(--accent-soft);color:var(--accent-text);font-weight:600;
+}
+#mdbook-sidebar .chapter li.part-title{
+  margin:14px 0 3px;padding-top:9px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font:700 var(--fs-xs)/1.5 var(--sans);
+  letter-spacing:.04em;
+}
+#mdbook-sidebar .chapter li a.active{font-weight:600}
+/* mdBook 的原生折叠箭头样式服务于 <a>；我们的可键盘操作按钮需要清除浏览器
+   默认边框与底色，同时保留同一 chevron、旋转和右侧对齐。 */
+#mdbook-sidebar .chapter-link-wrapper > button.chapter-fold-toggle{
+  appearance:none;-webkit-appearance:none;
+  display:grid;flex:0 0 30px;place-items:center;
+  width:30px;height:30px;margin:0 0 0 auto;padding:0;
+  border:0;border-radius:4px;background:transparent;
+  color:var(--sidebar-fg);font:inherit;line-height:1;
+  opacity:.68;cursor:pointer;
+  transition:background-color 140ms ease,color 140ms ease,opacity 140ms ease;
+}
+#mdbook-sidebar .chapter-link-wrapper > button.chapter-fold-toggle:hover{
+  background:var(--theme-hover);color:var(--sidebar-active);opacity:1;
+}
+#mdbook-sidebar .chapter-link-wrapper > button.chapter-fold-toggle:active{
+  background:var(--accent-soft);
+}
+#mdbook-sidebar .chapter-link-wrapper > button.chapter-fold-toggle div{
+  font:500 15px/1 var(--sans);
+  transition:transform 180ms ease;
+}
 /* 页脚翻页（mdBook 原生 .nav-wrapper / .nav-wide-wrapper）。
  * 规范：导航与控件一律无衬线 —— mdBook 默认让它们从 body 继承衬线，故显式覆盖。 */
 .nav-wrapper,.nav-wide-wrapper{font-family:var(--sans)}
@@ -328,11 +376,14 @@ html:not(.tutorials-ready) *::after{
 .mobile-nav-chapters.previous:hover,.mobile-nav-chapters.next:hover{color:var(--accent-text)}
 /* 正文容器 */
 .content{
-  font-family:var(--serif-text);
-  font-size:var(--fs-body);line-height:1.82;
+  font-family:var(--sans);
+  font-size:var(--fs-body);line-height:1.72;
   color:var(--ink);
-  padding:34px var(--page-padding) 120px;
+  padding:12px calc(var(--page-padding) + 15px) 120px calc(var(--page-padding) + 20px);
   overflow-wrap:break-word;
+}
+@media (max-width:900px){
+  .content{padding-left:var(--page-padding);padding-right:var(--page-padding)}
 }
 .content b,.content strong{font-weight:700;color:var(--ink)}
 /* 标题层级 */
@@ -341,16 +392,16 @@ html:not(.tutorials-ready) *::after{
 .content h3,
 .content h4{font-family:var(--serif-display);color:var(--ink);letter-spacing:.01em}
 .content h1{
-  margin:0 0 var(--space-5);padding:0 0 var(--space-4);
-  border-bottom:1px solid var(--ink);
-  font-size:34px;line-height:1.22;font-weight:600;
+  margin:0 0 var(--space-5);padding:0;
+  border:0;
+  font-size:32px;line-height:1.28;font-weight:700;
 }
 .content h2{
-  margin:var(--space-16) 0 var(--space-5);padding:0 0 14px;
-  border-bottom:1px solid var(--line-strong);
-  font-size:var(--fs-h2);line-height:1.3;font-weight:600;
+  margin:var(--space-16) 0 var(--space-5);padding:0 0 10px;
+  border-bottom:1px solid var(--line);
+  font-size:24px;line-height:1.35;font-weight:700;
 }
-.content h3{margin:44px 0 var(--space-3);font-size:var(--fs-h3);line-height:1.35;font-weight:600}
+.content h3{margin:40px 0 var(--space-3);font-size:19px;line-height:1.4;font-weight:650}
 .content h4{
   display:flex;align-items:center;gap:var(--space-2);
   margin:30px 0 6px;font-size:15px;font-weight:600;
@@ -377,7 +428,7 @@ html:not(.tutorials-ready) *::after{
 .content blockquote{
   margin:var(--space-4) 0;padding:var(--space-3) 18px;
   border-left:3px solid var(--line-strong);
-  background:var(--paper-soft);color:var(--ink-2);
+  background:var(--paper-soft);color:var(--ink-2);border-radius:0 6px 6px 0;
   font-size:15px;
 }
 .content hr{margin:42px 0;border:0;border-top:1px dashed var(--line-strong)}
@@ -397,7 +448,7 @@ html:not(.tutorials-ready) *::after{
 .box{
   position:relative;margin:var(--space-5) 0;padding:18px 22px 14px;
   border:1px solid var(--line);border-left:3px solid var(--line-strong);
-  background:var(--paper);
+  border-radius:7px;background:var(--paper);
 }
 .box.def{border-left-color:var(--def-line);background:var(--def-bg)}
 .box.thm{border-left-color:var(--thm-line);background:var(--thm-bg)}
@@ -484,7 +535,9 @@ a.crossref:hover{background:var(--accent-soft)}
  * ======================================================================== */
 .content table{
   width:100%;margin:19px 0;border-collapse:collapse;
-  background:var(--paper);font:var(--fs-lg)/1.72 var(--serif-text);
+  /* framework.css 为窄表提供横向滚动时将 table 设为 block；若整张表铺满背景，
+     短表内容之后会在暗色主题留下大片空表面。单元格/表头各自承载表面色即可。 */
+  background:transparent;font:var(--fs-lg)/1.72 var(--sans);
 }
 .content th,.content td{
   padding:9px var(--space-3);border:1px solid var(--line);
@@ -506,7 +559,7 @@ a.crossref:hover{background:var(--accent-soft)}
 }
 .content figcaption{
   max-width:580px;margin:10px auto 0;color:var(--muted);
-  font:var(--fs-md)/1.65 var(--serif-text);
+  font:var(--fs-md)/1.65 var(--sans);
 }
 /* 迁移自旧版的插图类（.diagram-*）：原来定义在旧站样式里，
  * 移植主题时必须一并带回，否则 SVG 只有类名没有样式，会被浏览器
@@ -521,7 +574,7 @@ a.crossref:hover{background:var(--accent-soft)}
 .content figure .diagram-fill-sage{fill:var(--sage);fill-opacity:.11;stroke:var(--sage);stroke-width:1}
 .content figure .diagram-node{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
 .content figure .diagram-text{fill:var(--ink);font-weight:600;font-size:var(--fs-md);font-family:var(--sans)}
-.content figure .diagram-note{fill:var(--ink-2);font-size:var(--fs-md);font-family:var(--serif-text)}
+.content figure .diagram-note{fill:var(--ink-2);font-size:var(--fs-md);font-family:var(--sans)}
 .content figure .diagram-mono{fill:var(--accent-text);font-weight:700;font-size:var(--fs-xs);font-family:var(--mono)}
 .content figure .diagram-accent,
 .content figure .diagram-sage,
@@ -549,25 +602,23 @@ a.crossref:hover{background:var(--accent-soft)}
  * §5  首页封面 / 导览卡片 / 目标 / 自检表
  * ======================================================================== */
 .chapter-cover{
-  position:relative;margin:0 0 34px;padding:46px 0 var(--space-10);
-  overflow:hidden;border-bottom:1px solid var(--ink);
+  position:relative;margin:0 0 30px;padding:28px 0 30px;
+  overflow:hidden;border-bottom:1px solid var(--line);
 }
 .chapter-cover::before{
-  content:"";position:absolute;top:0;left:0;width:var(--space-16);
-  border-top:1px solid var(--ink);
+  content:none;
 }
 .chapter-cover::after{
-  content:"λ";position:absolute;top:6px;right:3px;
-  color:var(--cover-mark);font-style:italic;font-family:var(--serif-display);font-size:220px;line-height:1;pointer-events:none;
+  content:none;
 }
 .chapter-cover>*{position:relative;z-index:1}
 .chapter-cover .kicker{
-  margin:0 0 36px;color:var(--muted);
-  font:var(--fs-2xs)/1.4 var(--mono);letter-spacing:.17em;
+  margin:0 0 14px;color:var(--accent-text);
+  font:700 var(--fs-xs)/1.4 var(--sans);letter-spacing:.1em;
 }
 .chapter-cover .subtitle{
   max-width:760px;margin:0;color:var(--ink-2);
-  font:16px/1.7 var(--serif-text);
+  font:16px/1.7 var(--sans);
 }
 .cover-chips{
   display:grid;grid-template-columns:repeat(2,1fr);
@@ -586,18 +637,18 @@ a.crossref:hover{background:var(--accent-soft)}
 .cover-details[open] .meta{margin-top:10px}
 .index-cards{
   position:relative;display:block;margin:25px 0 var(--space-3);
-  padding-left:var(--space-8);border-left:1px solid var(--line);
+  padding-left:0;border-left:0;
 }
 .index-cards a{
   position:relative;display:grid;grid-template-columns:54px 1fr auto;
-  gap:3px var(--space-3);margin:0 0 var(--space-3);padding:13px var(--space-3);
-  border:1px solid transparent;color:inherit;text-decoration:none;
+  gap:3px var(--space-3);margin:0;padding:13px 10px 13px 0;
+  border:0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;
 }
 .index-cards a::before{
-  content:"";position:absolute;top:22px;left:-36px;
-  width:7px;height:7px;background:var(--ink);
+  content:"";position:absolute;top:20px;left:0;
+  width:4px;height:4px;border-radius:50%;background:var(--accent);
 }
-.index-cards a:hover{border-color:var(--ink);background:var(--paper);box-shadow:3px 3px 0 var(--shadow-ink)}
+.index-cards a:hover{background:var(--paper-soft);box-shadow:none}
 .index-cards .no{grid-row:1/3;color:var(--accent-text);font:700 var(--fs-2xs)/1.4 var(--mono)}
 .index-cards .t{font-family:var(--serif-display);font-weight:700;font-size:var(--fs-h4);line-height:1.3}
 .index-cards .d{grid-column:2/4;color:var(--muted);font:var(--fs-sm)/1.55 var(--mono)}
@@ -617,8 +668,8 @@ a.crossref:hover{background:var(--accent-soft)}
 .study-path a:hover{color:var(--accent-text)}
 .lesson-brief{
   display:grid;grid-template-columns:repeat(3,1fr);gap:0;
-  margin:var(--space-6) 0 34px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-  background:var(--surface-card);box-shadow:0 18px 36px var(--shadow-soft);
+  margin:var(--space-6) 0 34px;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;
+  background:var(--surface-card);box-shadow:none;
 }
 html.navy .lesson-brief,html.coal .lesson-brief,html.ayu .lesson-brief{box-shadow:0 var(--space-6) var(--space-12) var(--shadow-deep)}
 .lesson-brief>div{padding:18px var(--space-5);border-right:1px solid var(--line)}

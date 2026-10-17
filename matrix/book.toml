@@ -15,12 +15,11 @@ src = "src"
 # 不写 multi-page 以外的后端；PDF/EPUB 由 CI 单独生成（见 docs/ARCHITECTURE.md）
 
 [output.html]
-# 亮色默认用 Rust·暖纸（品牌亮色），暗色用 Ayu·琥珀。两者必须一个是亮色主题：
-# 跟随系统时 mdBook 取 default-theme 作亮色侧、preferred-dark-theme 作暗色侧，
-# 此前两者都写 ayu，浅色系统下也被强制成暗色（产物里 default_light_theme = "ayu"）。
-default-theme = "rust"
-preferred-dark-theme = "ayu"
-# 视觉层：只此一份，构建时复制进产物。设计语言沿用原站（Academy / warm / Rust Wiki 版式）。
+# 亮色默认用 Light·中性白纸，暗色默认用 Coal·冷灰蓝；其余主题仍可由读者切换。
+default-theme = "light"
+# 深色默认对齐冷静蓝灰的技术文档基调；Ayu 琥珀仍保留为独立选项。
+preferred-dark-theme = "coal"
+# 视觉层：只此一份，构建时复制进产物。设计语言为 Academy / Cool，版式纪律参照 Rust Wiki。
 # 外观设置两处、各管一件事：配色 = mdBook 原生主题弹层（同 rustwiki）；
 # 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
 # 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +

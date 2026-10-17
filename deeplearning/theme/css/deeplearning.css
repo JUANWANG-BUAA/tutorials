@@ -17,7 +17,7 @@
  * §2  mdBook 框架适配（与其余三本同一处理）
  * ======================================================================== */
 body{
-  font-family:var(--serif-text);
+  font-family:var(--sans);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
 
@@ -26,7 +26,7 @@ body{
   background:var(--page);
 }
 
-.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--serif)}
+.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--sans)}
 
 /* 例题解答（可折叠）：与其余三本同一套外观。 */
 details.sol-box{
@@ -40,8 +40,8 @@ details.sol-box>summary::after{
 
 .chapter-cover h1{
   max-width:760px;margin:0 0 14px;padding:0;border:0;
-  font-family:var(--serif-display);font-weight:600;
-  font-size:clamp(40px,4.7vw,58px);line-height:1.08;letter-spacing:.01em;
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(36px,4vw,48px);line-height:1.16;letter-spacing:0;
 }
 
 /* ======================================================================== *
@@ -55,7 +55,7 @@ details.sol-box>summary::after{
   font-variant-numeric:tabular-nums;
 }
 
-.content table.shape-table td:first-child{text-align:left;font-family:var(--serif)}
+.content table.shape-table td:first-child{text-align:left;font-family:var(--sans)}
 
 /* ======================================================================== *
  * §4  响应式（与其余三本一致：表格 / 代码块横向滚动，不撑破版心）

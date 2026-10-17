@@ -25,13 +25,8 @@
  * §2  mdBook 框架适配
  * ======================================================================== */
 body{
-  background:radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 24%),
-    radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 26%),
-    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
-    linear-gradient(var(--grid-line) 1px,transparent 1px),
-    var(--page);
-  background-size:auto,auto,28px 28px,28px 28px,auto;
-  font-family:var(--serif-text);
+  background:var(--page);
+  font-family:var(--sans);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
 
@@ -46,7 +41,7 @@ body{
   #mdbook-menu-bar .portal-home-label{display:none}
 }
 
-.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--serif)}
+.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--sans)}
 
 /* 例题解答（可折叠）
    折叠态此前只是一行文字，看不出「这里可以点、点开有什么」。改为一条有底色的
@@ -145,8 +140,8 @@ details.hint-box[open]>summary::before{transform:rotate(45deg)}
 
 .chapter-cover h1{
   max-width:760px;margin:0 0 14px;padding:0;border:0;
-  font-family:var(--serif-display);font-weight:600;
-  font-size:clamp(40px,4.7vw,58px);line-height:1.08;letter-spacing:.01em;
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(36px,4vw,48px);line-height:1.16;letter-spacing:0;
 }
 
 /* ======================================================================== *
@@ -226,7 +221,7 @@ html{scroll-behavior:smooth}
 
 .widget-title{font:600 15px/1.4 var(--serif-display);color:var(--ink);margin:0}
 
-.widget-hint{margin:10px 0 0;color:var(--muted);font:var(--fs-md)/1.65 var(--serif-text)}
+.widget-hint{margin:10px 0 0;color:var(--muted);font:var(--fs-md)/1.65 var(--sans)}
 
 .widget-body{margin-top:var(--space-3)}
 
@@ -284,7 +279,7 @@ html{scroll-behavior:smooth}
 .widget-readout{
   margin:var(--space-3) 0 0;padding:10px var(--space-3);border-radius:9px;
   background:var(--surface-soft);color:var(--ink-2);
-  font:var(--fs-md)/1.7 var(--serif-text);
+  font:var(--fs-md)/1.7 var(--sans);
   font-variant-numeric:tabular-nums;
 }
 

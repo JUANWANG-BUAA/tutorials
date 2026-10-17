@@ -5,63 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>教程库 · Tutorials</title>
 <style>
-  :root { color-scheme: light dark; }
+  :root {
+    color-scheme: light;
+    --page: #ffffff; --surface: #ffffff; --ink: #171b20; --ink-soft: #46505a;
+    --muted: #68737f; --line: #e3e7eb; --line-strong: #cbd3dc;
+    --accent: #2f74b8; --accent-soft: #f3f7fb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --page: #0f1419; --surface: #171d24; --ink: #e8ebef; --ink-soft: #c2c9d1;
+      --muted: #929ba6; --line: #303943; --line-strong: #48535f;
+      --accent: #91bee7; --accent-soft: #1c2732;
+    }
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, "SF Pro SC", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: #faf9f7; color: #2c2c2c;
+    min-height: 100vh; background: var(--page); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  @media (prefers-color-scheme: dark) { body { background: #1a1a1a; color: #e6e4e0; } }
-  main { width: min(100%, 920px); padding: 56px 24px; }
-  h1 { font-size: 28px; font-weight: 700; letter-spacing: 0.02em; }
-  .sub { margin: 10px 0 32px; font-size: 15px; line-height: 1.7; opacity: 0.65; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  main { width: min(100%, 1080px); margin: 0 auto; padding: 64px 30px 40px; }
+  .eyebrow { margin-bottom: 14px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+  h1 { font-size: clamp(32px, 4vw, 42px); line-height: 1.2; font-weight: 720; letter-spacing: -.035em; }
+  h1 span { padding: 0 5px; color: var(--muted); font-weight: 400; }
+  .sub { max-width: 700px; margin: 14px 0 18px; color: var(--ink-soft); font-size: 15px; line-height: 1.75; }
+  .meta { margin-bottom: 34px; color: var(--muted); font-size: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   a.card {
-    display: block; padding: 22px 24px; border-radius: 12px; text-decoration: none;
-    color: inherit; border: 1px solid rgba(128,128,128,0.22);
-    background: rgba(255,255,255,0.6); transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative; display: flex; min-height: 180px; flex-direction: column;
+    padding: 22px 24px 19px; border: 1px solid var(--line); border-radius: 9px;
+    color: inherit; text-decoration: none; background: var(--surface);
+    transition: border-color .16s ease, background-color .16s ease, transform .16s ease;
   }
-  @media (prefers-color-scheme: dark) { a.card { background: rgba(255,255,255,0.04); } }
-  a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
-  .emoji { font-size: 26px; }
-  .card h2 { font-size: 17px; margin: 10px 0 6px; font-weight: 650; }
-  .card p { font-size: 13px; line-height: 1.65; opacity: 0.6; }
-  .card .scope { margin-top: 10px; opacity: 0.78; }
-  .card .status { display: inline-block; margin-top: 16px; font-size: 11px; letter-spacing: .04em; opacity: .72; }
+  a.card:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--accent-soft); }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .card-index { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .1em; }
+  .card h2 { margin: 13px 0 7px; font-size: 19px; line-height: 1.4; font-weight: 680; }
+  .card p { color: var(--ink-soft); font-size: 13px; line-height: 1.7; }
+  .card .status { margin-top: auto; padding-top: 16px; color: var(--muted); font-size: 11px; letter-spacing: .015em; }
   @media (prefers-reduced-motion: reduce) { a.card { transition: none; } a.card:hover { transform: none; } }
-  @media (max-width: 560px) { main { padding: 36px 18px; } .grid { grid-template-columns: 1fr; } }
-  footer { margin-top: 40px; font-size: 13px; opacity: 0.45; }
-  footer a { color: inherit; }
+  @media (max-width: 700px) { main { padding: 42px 20px 30px; } .grid { grid-template-columns: 1fr; } }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <main>
-  <h1>教程库 · Tutorials</h1>
-  <p class="sub">研究生课程定制教程合集 · mdBook 构建 · GitHub Pages 托管</p>
+  <p class="eyebrow">BUAA · TEACHING LIBRARY</p>
+  <h1>教程库<span>·</span> Tutorials</h1>
+  <p class="sub">面向研究生课程的定制教程与学习工具。按章节组织讲义、例题、练习与复习材料，支持全文检索与离线阅读。</p>
+  <p class="meta">4 门课程 <span aria-hidden="true">·</span> mdBook 构建 <span aria-hidden="true">·</span> 持续更新</p>
   <div class="grid">
     <a class="card" href="robot/">
-      <span class="emoji">🤖</span>
+      <span class="card-index">01 / ROBOTICS</span>
       <h2>机器人控制技术</h2>
-      <p class="scope">第 1–5 章：从机器人基础与运动学，到轨迹规划、执行器和传感器。</p>
+      <p>第 1–5 章：从机器人基础与运动学，到轨迹规划、执行器和传感器。</p>
       <span class="status">五章正文 · 章末六件套 · 入学诊断与考场特训</span>
     </a>
     <a class="card" href="matrix/">
-      <span class="emoji">📐</span>
+      <span class="card-index">02 / LINEAR ALGEBRA</span>
       <h2>矩阵论</h2>
-      <p class="scope">第 1–3 章：线性空间 · 线性映射与矩阵 · 矩阵分解（3.3 及后续待素材）。</p>
+      <p>第 1–3 章：线性空间 · 线性映射与矩阵 · 矩阵分解（3.3 及后续待素材）。</p>
       <span class="status">章末七件套 · 证明工坊 · 跨章竞技场与冲刺卷</span>
     </a>
     <a class="card" href="numerical/">
-      <span class="emoji">📊</span>
+      <span class="card-index">03 / NUMERICAL METHODS</span>
       <h2>数值分析</h2>
-      <p class="scope">第 1–2 章 + 课堂精编 8 讲（第 8 讲待补）。</p>
+      <p>第 1–2 章 + 课堂精编 8 讲（第 8 讲待补）。</p>
       <span class="status">先修自测 · 工程工具箱 · 竞技场与冲刺卷</span>
     </a>
     <a class="card" href="deeplearning/">
-      <span class="emoji">🧠</span>
+      <span class="card-index">04 / DEEP LEARNING</span>
       <h2>深度学习导论</h2>
-      <p class="scope">九讲正文（导论 → 序列 / 视觉 / 生成 / 决策 → 前沿、安全、科学、并行）+ 三个 Lab，按「讲导览 + 节页 + 讲末六件套」组织。</p>
+      <p>九讲正文（导论、序列、视觉、生成、决策与前沿）和三个 Lab，按「讲导览 + 节页 + 讲末六件套」组织。</p>
       <span class="status">依据 MIT 6.S191 整理扩充 · 含复习层与面试特训层</span>
     </a>
   </div>

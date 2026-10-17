@@ -1,6 +1,6 @@
 # 视觉层
 
-设计规范：**Academy / warm / standard density**，版式纪律参照 Rust Wiki，
+设计规范：**Academy / Cool / standard density**，版式纪律参照 Rust Wiki，
 表面语言参照 Physical Intelligence（pi.website）。风格由 serif-editorial-console
 技能的 Academy 预设约束。
 
@@ -78,7 +78,7 @@
 
 - **弹层里五个名字必须是五种观感。** 曾经 `light`≡`rust`、`coal`≡`navy`≡`ayu`（逐项实测 page/ink/accent
   完全相同），弹层六项里实际只有两套外观；现在每个主题独占一份调色板。"跟随系统" 取
-  `default-theme`（Rust · 暖纸）作亮色侧、`preferred-dark-theme`（Ayu · 琥珀）作暗色侧——
+  `default-theme`（Light · 中性白纸）作亮色侧、`preferred-dark-theme`（Coal · 冷灰蓝）作暗色侧——
   此前两者都写 `ayu`，浅色系统下也被强制成暗色。
 
 - **一件事只有一个入口。** 自建偏好面板曾经也带「配色主题」，与原生弹层各存一套状态，

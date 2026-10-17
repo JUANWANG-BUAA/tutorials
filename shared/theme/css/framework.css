@@ -18,7 +18,7 @@
  *   1.45，读起来发挤。这里显式接管段落、列表项与列表容器，保证「正文—列表」
  *   行距同源（原在 prefs.css，阅读偏好层移除后收进本文件）。
  * ======================================================================== */
-.content p,.content li,.content ol,.content ul{line-height:1.82}
+.content p,.content li,.content ol,.content ul{line-height:1.72}
 
 /* ======================================================================== *
  * §2  键帽与操作提示条
@@ -323,8 +323,8 @@ html.figure-reveal .content figure.figure-in{
 :root{
   /* 右栏宽度是「布局参数」：CSS 用它排栏，framework.js 用它算「右侧够不够」。
      这两个数字必须同源——否则会出现「按 200px 判够、实际占 258px」的遮挡。 */
-  --rail-width:212px;
-  --rail-right-gap:22px;
+  --rail-width:228px;
+  --rail-right-gap:20px;
   --rail-text-gap:var(--space-6);
 }
 #page-rail{
@@ -332,30 +332,40 @@ html.figure-reveal .content figure.figure-in{
   /* border-box：宽度就是「占屏幕多少」，不然 padding 会额外撑出去（JS 按占屏宽度判余量） */
   box-sizing:border-box;
   width:var(--rail-width);max-height:calc(100vh - var(--menu-bar-height,58px) - 60px);
-  padding-left:14px;
+  padding:12px 10px 12px 13px;
   overflow-y:auto;overscroll-behavior:contain;
-  border-left:var(--space-1) solid var(--sidebar-header-border-color,var(--accent));
+  border:1px solid var(--line);border-left:3px solid var(--sidebar-header-border-color,var(--accent));
+  border-radius:var(--radius-sm);
+  background:var(--surface-card);
+  box-shadow:0 8px 24px var(--shadow-soft);
   font-family:var(--sans);
   display:none;
 }
 html.has-page-rail #page-rail{display:block}
 html.has-page-rail .page-toc{display:none}
 .page-rail-title{
-  display:block;margin:0 0 9px;color:var(--muted);
-  font:700 var(--fs-2xs)/1.4 var(--mono);letter-spacing:.12em;
+  display:block;margin:0 0 10px;color:var(--muted);
+  font:700 var(--fs-xs)/1.4 var(--sans);letter-spacing:.04em;
 }
 #page-rail a{
-  display:block;margin:0 0 7px;
+  display:block;margin:0 0 7px;padding:2px 4px;
   color:var(--ink-2);text-decoration:none;
-  font:12.5px/1.5 var(--sans);
+  font:13px/1.55 var(--sans);
+  border-radius:4px;
+  transition:color 140ms ease,background-color 140ms ease;
   /* anywhere：长英文词（Householder…）也要能断，否则条目会横向溢出被右缘裁掉 */
   overflow-wrap:anywhere;
 }
-#page-rail a.page-rail-h3{padding-left:var(--space-3);font-size:var(--fs-sm);color:var(--muted)}
-#page-rail a:hover{color:var(--ink)}
-#page-rail a.is-current{color:var(--accent-text);font-weight:600}
+html.has-page-rail #page-rail a.page-rail-h3{padding-left:var(--space-4);font-size:var(--fs-sm);color:var(--muted)}
+#page-rail a:hover{background:var(--theme-hover);color:var(--ink)}
+#page-rail a.is-current{background:var(--accent-soft);color:var(--accent-text);font-weight:600}
+#page-rail a:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
 #page-rail::-webkit-scrollbar{width:var(--space-1)}
 #page-rail::-webkit-scrollbar-thumb{background:var(--line-strong)}
+
+@media (prefers-reduced-motion:reduce){
+  #page-rail a{transition:none}
+}
 
 @media print{
   #page-rail{display:none!important}

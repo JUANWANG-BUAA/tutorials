@@ -736,7 +736,7 @@
   /* ---------------- 主题 / 纸张配色变化 → 全部重绘 ----------------
    * 四个实验的取色都发生在 draw() 里（fit() 会调 palette()），所以换主题或换纸张
    * 配色后必须重画一次，否则画布会停在旧配色上——那是「两套系统」的观感来源之一。
-   * mdBook 换主题改写 <html class>，纸张配色改写 <html data-palette>，两者都盯。
+   * mdBook 换主题改写根元素 class，纸张配色改写根元素 data-palette，两者都盯。
    */
   var redraws = [];
   function watchRepaint() {

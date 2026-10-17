@@ -1,11 +1,11 @@
 <!--
   阅读偏好的首屏防闪（配合 theme/css/prefs.css 与 theme/js/prefs.js）
-  属性必须在首次绘制之前落到 <html> 上，否则先按默认外观画一帧、脚本执行后
+  属性必须在首次绘制之前落到根元素上，否则先按默认外观画一帧、脚本执行后
   再跳成读者选过的外观，会闪一下。这里的内联脚本是唯一的早期写入点（该阶段
   还没有任何本书脚本在跑）。
   ※ 只做「读 localStorage → 落 data-* 属性」，取值与默认集合必须与
     theme/js/prefs.js 的 OPTIONS / DEFAULT_PREFS 保持一致；面板 UI 由 prefs.js 建。
-  ※ 两个正交的轴：data-palette（纸张配色）会落属性；明暗仍只走 mdBook 原生主题弹层。
+  ※ 两个正交的轴：data-palette（强调色）只覆盖链接与状态提示；明暗仍走 mdBook 原生主题弹层。
 -->
 <script>
 (function () {
@@ -14,7 +14,7 @@
     ["size", "data-size", ["s", "m", "l", "xl"]],
     ["density", "data-density", ["compact", "standard", "loose", "roomy"]],
     ["width", "data-width", ["narrow", "standard", "wide", "full"]],
-    ["palette", "data-palette", ["theme", "neutral", "cool", "sage", "contrast"]],
+  ["palette", "data-palette", ["theme", "blue", "teal", "green", "amber", "contrast"]],
     ["bg", "data-bg", ["theme", "wash", "plain", "grid", "graph", "ruled", "dots", "paper"]]
   ];
   var root = document.documentElement;

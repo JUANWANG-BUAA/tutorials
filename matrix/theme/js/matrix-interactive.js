@@ -352,7 +352,7 @@
     return state;
   }
 
-  /* 全局主题切换：mdBook 通过改写 <html class> 换主题。 */
+  /* 全局主题切换：mdBook 通过改写根元素的 class 换主题。 */
   var stages = [];
   function registerStage(stage) {
     stages.push(stage);

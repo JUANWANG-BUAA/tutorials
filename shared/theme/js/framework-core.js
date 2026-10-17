@@ -43,12 +43,12 @@
      注意与代码高亮无关——代码配色由 highlight.js 自己的一套主题决定，不要写成
      「只差代码配色」（那是 2026-10 之前五个主题只有两套外观时的说法）。*/
   var THEME_LABELS = {
-    "mdbook-theme-default_theme": ["跟随系统", "按系统外观自动选择：浅色用暖纸，深色用琥珀"],
+    "mdbook-theme-default_theme": ["跟随系统", "按系统外观自动选择：浅色用 Light，深色用 Coal"],
     "mdbook-theme-light": ["浅色 · Light", "中性白纸，蓝灰强调"],
     "mdbook-theme-rust": ["浅色 · Rust", "暖纸底色，赭红强调"],
     "mdbook-theme-coal": ["深色 · Coal", "中性深灰，冷灰蓝强调"],
     "mdbook-theme-navy": ["深色 · Navy", "蓝黑底色，青蓝强调"],
-    "mdbook-theme-ayu": ["深色 · Ayu（默认）", "琥珀强调的深色"]
+    "mdbook-theme-ayu": ["深色 · Ayu", "琥珀强调的深色"]
   };
 
   function setAttrs(id, attrs) {
