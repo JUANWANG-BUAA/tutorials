@@ -33,7 +33,7 @@ jobs:
         run: cargo install --locked mdbook-katex --version 0.10.0
 
       - name: Install python deps
-        run: pip3 install markdown-it-py
+        run: pip3 install markdown-it-py pillow
 
       - name: Build all books
         run: |
@@ -51,6 +51,7 @@ jobs:
             mv "$book/book" "_site/$book"
           done
           cp site-index.html _site/index.html
+          python3 tools/optimize_site.py _site
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

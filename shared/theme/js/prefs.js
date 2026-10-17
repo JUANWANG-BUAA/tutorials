@@ -6,8 +6,8 @@
  * 只负责取值、落属性与面板 UI），这样「看」与「控」分离，关掉 JS 时页面就是
  * 默认外观，不会缺内容。
  *
- * 明暗主题由 mdBook 原生主题弹层管理；本面板的强调色只覆盖链接与状态提示，
- * 不碰页面/侧栏底色，避免两个入口互相打架。
+ * 明暗主题由 mdBook 原生主题弹层管理；本面板的主题色同时调整强调色与纸张/卡片
+ * 底色，但明暗与代码高亮仍交给原生主题弹层，两个入口不抢同一件事。
  *
  * 首屏防闪：属性由 theme/head.hbs 里的内联脚本在 <head> 阶段就写好（早于首次
  * 绘制），本文件只在末尾补面板。因此这里的 apply() 对首屏是「幂等重放」。
@@ -73,14 +73,17 @@
       ]
     },
     {
-      key: "palette", label: "强调色", attr: "data-palette",
+      key: "palette", label: "主题色", attr: "data-palette",
       choices: [
         { value: "theme", label: "随主题" },
         { value: "blue", label: "海蓝", swatch: "#2f74b8" },
         { value: "teal", label: "青绿", swatch: "#287d82" },
         { value: "green", label: "松绿", swatch: "#4f7a52" },
         { value: "amber", label: "琥珀", swatch: "#a65d2c" },
-        { value: "contrast", label: "高对比", swatch: "#8a2c0b" }
+        { value: "contrast", label: "高对比", swatch: "#8a2c0b" },
+        { value: "archive", label: "档案红", swatch: "#8b3a2a" },
+        { value: "blueprint", label: "工程蓝", swatch: "#2f6f8f" },
+        { value: "endfield", label: "酸性黄", swatch: "#8a9b00" }
       ]
     },
     {
@@ -93,7 +96,9 @@
         { value: "graph", label: "方格纸" },
         { value: "ruled", label: "横线稿纸" },
         { value: "dots", label: "点阵" },
-        { value: "paper", label: "纸张纤维" }
+        { value: "paper", label: "纸张纤维" },
+        { value: "blueprint", label: "蓝图网格" },
+        { value: "laid", label: "帘纹纸" }
       ]
     }
   ];
@@ -173,6 +178,7 @@
     OPTIONS.forEach(function (group) {
       var row = document.createElement("div");
       row.className = "prefs-row";
+      row.dataset.pref = group.key;
 
       var label = document.createElement("span");
       label.className = "prefs-label";
@@ -189,6 +195,13 @@
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "prefs-opt";
+        if (group.key === "bg") {
+          var paper = document.createElement("span");
+          paper.className = "prefs-paper";
+          paper.dataset.paper = choice.value;
+          paper.setAttribute("aria-hidden", "true");
+          btn.appendChild(paper);
+        }
         if (choice.swatch) {
           var swatch = document.createElement("span");
           swatch.className = "prefs-swatch";
@@ -280,6 +293,7 @@
 
     function closePanel() {
       panel.hidden = true;
+      root.classList.remove("prefs-open");
       toggle.setAttribute("aria-expanded", "false");
       document.removeEventListener("click", onDocumentClick, true);
       document.removeEventListener("keydown", onKeydown, true);
@@ -302,6 +316,7 @@
     function openPanel() {
       closeThemePopup();
       panel.hidden = false;
+      root.classList.add("prefs-open");
       positionPanel();
       toggle.setAttribute("aria-expanded", "true");
       // 捕获阶段：点面板内不关，点外面才关；先挂监听再让它收到本次点击

@@ -2,12 +2,6 @@
 
 前四节把矩阵当作「算子」「方程组」「投影工具」，这一节换视角：**矩阵的谱（特征值集合）刻画它的本质行为**——条件数回答「解被放大多少」（2.4），谱半径 $\rho(A)$ 回答「迭代收不收敛、多快」，SVD（2.6）与 QR 迭代也都建立在谱上。本节重点是特征值的**扰动敏感性**：[1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在此重演，且结论反直觉——对称矩阵温和，非正规矩阵「开方敏感」。路线：谱半径及其上界 → Gerschgorin 圆盘（不算特征值也能定位它们）→ 对称情形（Rayleigh 商与 Courant–Fischer）→ 非正规情形的定量警告。
 
-<aside class="lesson-brief" aria-label="2.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>特征值、特征向量的定义与计算；对称矩阵可正交对角化（1.3.4 已用过）；矩阵范数（1.3）；2.1 节的正交与内积。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>特征值、谱、谱半径 $\rho(A)$ 与 $\rho\le\lVert A\rVert$；Gerschgorin 圆盘定理；Rayleigh 商与 Courant–Fischer 极小极大原理；特征值扰动：对称情形 $O(\varepsilon)$，非正规情形 $O(\sqrt[k]{\varepsilon})$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能用 Gerschgorin 圆盘给出特征值的包含区间；能手算小矩阵的 Rayleigh 商；能用幂法配合 Rayleigh 商估算主特征值，并说明收敛速度为什么由 $\lvert\lambda_2/\lambda_1\rvert$ 决定；能解释为什么 Jordan 块的特征值对扰动开方敏感。</p></div>
-</aside>
-
 <a id="sec-2.5.1"></a>
 
 ## 2.5.1 特征值、谱与谱半径

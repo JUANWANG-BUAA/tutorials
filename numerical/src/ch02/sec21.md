@@ -2,12 +2,6 @@
 
 第一章把「向量有多长」公理化为范数，但长度不是几何的全部：要谈角度与「垂直」，还需要一个能同时给出长度与角度的装置——**内积**。有了内积才有正交、标准正交基，把它们按列排成方阵就得到**正交矩阵**：「不改变长度与角度的坐标变换」，也是 QR 分解、SVD 与全部稳定算法的基石。本节三步：内积公理化（2.1.1）；正交与标准正交基（2.1.2）；刻画正交矩阵（2.1.3）。
 
-<aside class="lesson-brief" aria-label="2.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>第一章的范数三公理与 Cauchy–Schwarz（1.3.1）；线性相关、基与维数；矩阵乘法与转置。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>内积四条公理与内积诱导的范数；正交、标准正交基、正交矩阵的定义与等价刻画；「正交 ⇔ 保长度保角度」这条核心直觉。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能验证一个候选函数是否为内积；能判断一个方阵是否正交并说出至少六条等价条件；能解释为什么正交变换在数值计算里「不放大误差」。</p></div>
-</aside>
-
 <a id="sec-2.1.1"></a>
 
 ## 2.1.1 内积的公理化

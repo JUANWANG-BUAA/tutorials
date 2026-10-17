@@ -2,13 +2,10 @@
 
 本节把前面所有工具收拢到一个分解里。**SVD 是现代数值线性代数的中心**：它同时给出四个基本子空间的标准正交基（2.2）、2-范数与条件数（2.4）、对称谱理论向任意矩阵的推广（2.5）、低秩逼近的最优答案（2.6.5）、伪逆与秩亏最小二乘（2.6.4），也是 PCA、推荐系统、图像压缩的方法基础。线索是：SVD 怎样从对称矩阵的谱里长出来 → 两种几何读法 → 四个基本子空间、伪逆与数值秩、最优低秩逼近 → 压缩与 PCA 两个应用。一句话：**如果只能带一件工具走，就带 SVD。**
 
-<aside class="lesson-brief" aria-label="2.6 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>对称矩阵的谱定理与 Courant–Fischer（2.5.4）；四个基本子空间（2.2.1）；正交矩阵与正交不变性（2.1.3）；投影与最小二乘（2.2.4）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>SVD 的存在性与两种几何读法；SVD 与四个基本子空间的关系；$\lVert A\rVert_2,\lVert A\rVert_F,\mathrm{cond}_2$ 的奇异值表达；Eckart–Young 最佳低秩逼近；数值秩、伪逆与秩亏最小二乘；PCA 与低秩压缩。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能对小矩阵手算 SVD；能借助 SVD 写出四个基本子空间的标准正交基；能解释 Eckart–Young 定理为何让截断 SVD 成为「最优压缩」；能用奇异值判定数值秩，并为伪逆选好截断参数。</p></div>
-</aside>
-
 <a id="sec-2.6.1"></a>
+
+
+{{#include ../assets/figures/numerical-svd.md}}
 
 ## 2.6.1 奇异值的来源：把长方形矩阵「对称化」
 
@@ -119,6 +116,8 @@ $$A=\sigma_1\boldsymbol{u}_1\boldsymbol{v}_1^{\mathrm T}+\sigma_2\boldsymbol{u}_
 :::
 
 <a id="sec-2.6.2"></a>
+
+<aside class="margin-note"><span class="mn-label">NOTE / SVD</span>奇异值是单位球像的椭圆半轴长度；只保留前 k 个奇异值，就是秩 k 的最优逼近。</aside>
 
 ## 2.6.2 SVD 的两种几何读法
 

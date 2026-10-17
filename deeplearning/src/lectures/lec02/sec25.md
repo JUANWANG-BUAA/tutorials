@@ -4,6 +4,11 @@
 
 Transformer 的回答是「**只靠注意力 + 前馈层，把工程件补齐**」：多头注意力负责在多个子空间里并行检索，位置前馈层负责位置内的非线性，残差连接与层归一化负责让几十层能训得动。这一节的顺序就按这四个部件展开，然后做三件工程上最要紧的账：**前向形状表、参数量估算、KV cache 显存**。最后讨论一个经常被混淆的区别：**训练时可以一次算完全部位置，推理时却只能逐 token 生成**——这不是实现水平问题，而是自回归目标的结构性后果。
 
+
+<aside class="margin-note"><span class="mn-label">NOTE / SCALE</span>缩放因子 1/√d_k 控制点积的方差，避免 softmax 进入饱和区。</aside>
+
+{{#include ../../assets/figures/dl-transformer.md}}
+
 ## 2.5.1 多头注意力：并行看多个子空间 {#sec-2.5.1}
 
 ::: def 定义 2.5.1 · 多头自注意力（multi-head self-attention） {#def-2.5.1}

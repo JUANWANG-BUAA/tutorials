@@ -1,21 +1,27 @@
-# shared —— 三本书共用的一份实现
+# shared —— 四本书共用的一份实现
 
 ```
 shared/theme/            浏览器侧资源（各书的 theme/ 里放符号链接指向这里）
   head.hbs               首帧防闪：把 localStorage 里的阅读偏好落到 <html data-*>
-  css/base.css           共用样式：**§1 设计令牌层** + **§2 三本逐字相同的组件规则**（177 块）
+  css/base.css           共用样式：**§1 设计令牌层** + **§2 四本逐字相同的组件规则**
+  css/atlas.css          图鉴视觉层：页首标题、插图卡片/图注、图鉴画廊、书封、窄屏宽图平移
   css/framework.css      mdBook 框架 UI 修补 + 附加操作外观 + 插图/阅读进度/微动效
   css/prefs.css          阅读偏好层（六个轴，属性驱动）
-  js/framework.js        框架文案汉化、回到顶部、侧栏折叠、灯箱、术语、右栏大纲、
-                         公式复制、已读进度…
+  js/framework-core.js   共享工具 / 文案汉化 / 回到顶部 / 折叠状态记忆 / 启动注册表
+  js/framework-nav.js    侧栏章节折叠 / 右栏大纲 / 已读标记 / 继续阅读
+  js/framework-media.js  插图灯箱（含图注）/ 进场
+  js/framework-text.js   公式复制 / 术语悬挂提示
+  js/atlas.js            原生图片自动图注 / 页首阅读元信息 / 图鉴画廊 / 宽图平移
   js/prefs.js            阅读偏好面板与持久化
   js/search-cjk.js       中文分词（浏览器侧）；与 tools/build_search_js.mjs 的分词逐字对应
   js/page-extras.js      **附加操作的一份实现**：阅读进度条 / 页内目录 / 解答工具条 /
                          返回教程库 / 宽公式滚动提示。各书的 <book>.js 只声明配置：
-tools/                   构建脚本（三本一份）
+tools/                   构建脚本（四本一份）
   katex_wrapper.py       mdbook-katex 包装器：中和会被 Markdown 误读的字符
   build_search_js.mjs    构建后重建中文搜索索引（探针表按书配置在脚本里）
   build_glossary.py      构建后从各书索引页抽术语数据，并给页面打 data-glossary 标记
+  build_covers.py        生成四本平装书封 SVG
+  build_atlas_figures.py 生成教学图鉴（SVG + 图注 Markdown 片段）
 ```
 
 ## 为什么是符号链接
@@ -57,7 +63,9 @@ tools/                   构建脚本（三本一份）
 |:--|:--|
 | `shared/theme/js/page-extras.js` | 附加操作**怎么做**（一份实现） |
 | 各书 `<book>.js` | 本书**要哪些、什么形态**（配置）+ 本书专属增强 |
-| `shared/theme/js/framework.js` | 框架层行为（汉化、侧栏折叠、灯箱、术语、右栏大纲、公式复制、已读进度） |
+| `shared/theme/js/framework-*.js` | 框架层行为（汉化、侧栏折叠、灯箱、术语、右栏大纲、公式复制、已读进度） |
+| `shared/theme/js/atlas.js` | 图鉴层行为（图片图注、页首元信息、章节描边编号、书首页目录、图鉴画廊、宽图平移） |
+| `shared/theme/css/atlas.css` | 图鉴层的视觉语汇（排在 framework 之后、prefs 之前） |
 | 各书 `theme/css/<book>.css` | 本书**长什么样**（设计令牌、组件、打印、响应式） |
 
 > 2026-10 的状态：附加操作已收成一份；**权威样式表（各书 ~880 行，两两差异约 400 行）

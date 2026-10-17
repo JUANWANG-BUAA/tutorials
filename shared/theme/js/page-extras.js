@@ -55,6 +55,16 @@
   /* ------------------------------------------------------------------ *
    * 页内目录（H2 / H3，跳过折叠块与语义盒里的标题；少于 3 条不建）
    * ------------------------------------------------------------------ */
+  function headingText(heading) {
+    if (!heading) return "";
+    var clone = heading.cloneNode(true);
+    var mathml = clone.querySelectorAll(".katex-mathml");
+    for (var i = 0; i < mathml.length; i++) {
+      if (mathml[i].parentNode) mathml[i].parentNode.removeChild(mathml[i]);
+    }
+    return (clone.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
   function buildPageToc(levels) {
     var main = document.querySelector("main");
     if (!main || main.querySelector(":scope > .page-toc")) return;
@@ -77,7 +87,7 @@
       var anchor = heading.querySelector("a.header");
       var link = document.createElement("a");
       link.href = anchor.getAttribute("href");
-      link.textContent = heading.textContent.trim();
+      link.textContent = headingText(heading);
       if (heading.tagName === "H3") link.classList.add("page-toc-h3");
       nav.appendChild(link);
     });

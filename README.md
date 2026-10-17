@@ -7,7 +7,7 @@
 | 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–5 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器 |
 | 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.5。其余小节待素材补齐 |
 | 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 第 1–2 章及课堂精编；第 8 讲页面待补，后续章节逐步整理 |
-| 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 47 节 + 讲末脚手架」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
+| 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 66 节 + 讲末材料」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
 
 ## 仓库结构
 
@@ -17,13 +17,19 @@ matrix/        矩阵论 · mdBook 源
 numerical/     数值分析 · mdBook 源
 deeplearning/  深度学习导论 · mdBook 源
 shared/        四本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）
-  theme/       head.hbs、framework/prefs 的 css+js、search-cjk.js
+  theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式
+<book>/src/assets/
+  covers/      四张平装书封（tools/build_covers.py 生成，首页与导览页共用）
+  figures/     内联 SVG 图鉴片段（tools/build_atlas_figures.py 生成，页面里 include）
 tools/         仓库级构建脚本（四本一份）：
-  build_search_js.mjs  构建后重建中文搜索索引（分词与查询同源）
-  build_glossary.py    构建后抽术语数据 + 给页面打标记
-  katex_wrapper.py     包装 mdbook-katex，中和会被 Markdown 误读的字符
+  build_search_js.mjs     构建后重建中文搜索索引（分词与查询同源）
+  build_glossary.py       构建后抽术语数据 + 给页面打标记
+  katex_wrapper.py        包装 mdbook-katex，中和会被 Markdown 误读的字符
+  build_covers.py         生成四本平装书封 SVG
+  build_atlas_figures.py  生成教学图鉴（SVG + 图注 Markdown 片段）
 build.sh       一键构建四本 + 后置步骤 → _site/（与 CI 步骤一致）
+site-index.html 教程库首页（课程目录，构建时拷为 _site/index.html）
 .github/       Pages 自动部署工作流
 ```
 
@@ -31,6 +37,36 @@ build.sh       一键构建四本 + 后置步骤 → _site/（与 CI 步骤一�
 （权威样式表），**本书预处理规则**在各书 `tools/mathbook.py`。
 
 仓库只包含教程本体（`book.toml` + `src/` + `theme/`）。课程录播、转录稿、PPT 原料等中间产物不纳入版本管理。
+
+## 视觉层与图鉴（2026-10）
+
+这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。四本书共用同一套样式，但每本书保留自己的封面。
+
+| 层 | 文件 | 作用 |
+|:--|:--|:--|
+| 设计底座 | `shared/theme/css/base.css` | 五套主题、语义盒、尺寸/字号令牌（原有） |
+| 图鉴视觉层 | `shared/theme/css/atlas.css` | 页首标题与章节描边编号、书首页事实章节索引、插图卡片、图注、平装书封、图表排版语汇、图鉴画廊、窄屏宽图平移 |
+| 图鉴交互层 | `shared/theme/js/atlas.js` | 原生图片自动图注、页首阅读元信息、菜单栏「图鉴」总览、宽图平移包装 |
+| 插图生成 | `tools/build_atlas_figures.py` | 输出 `<book>/src/assets/figures/*.md`：统一 900 宽的 SVG 展示台 + KaTeX 图注 |
+| 书封生成 | `tools/build_covers.py` | 输出 `<book>/src/assets/covers/*.svg`：机械臂 / 线性映射 / 三维曲面 / 神经网络四张封面 |
+| 导览页 | `site-index.html` | 主视觉课程封面 + 教学图鉴 feature + 课程索引；竖排标签、平装封面、hover 反相课程行、浅/深色切换 |
+
+**加载顺序**：`base → <book> → katex → framework → atlas → prefs`。atlas 只用令牌与组件级
+特异性，不覆盖读者在 prefs 里的字体 / 字号 / 行距 / 版心选择。
+
+**新增一张图鉴图**：
+
+1. 在 `tools/build_atlas_figures.py` 里加一个 `fig_xxx()`，用 `plate()` / `flow_plate()` /
+   `plot_plate()` / `network_plate()` 等原语；图注用 `<b>读图：</b>` 开头，可含 `$...$`。
+2. 运行 `python3 tools/build_atlas_figures.py --only xxx`，生成 `<book>/src/assets/figures/xxx.md`。
+3. 在目标页面的第一个 `##` 标题前加一行 `{{#include ../assets/figures/xxx.md}}`
+   （`lectures/lecNN/` 下用 `../../assets/figures/...`），然后 `./build.sh`。
+
+生成物本身已提交，CI 不需要运行生成脚本；修改生成脚本后记得重跑并提交对应片段。
+插图全部是内联 SVG，颜色走 `--accent` / `--atlas-cyan` / `--fig-*` 等令牌，明暗主题与强调色自动跟随；
+窄屏下 900 宽的图会进入「可左右平移的图版」，不会把 15px 图内文字压成 5px。
+
+完整排版语汇、原语清单与验收清单见 [tools/ATLAS_FIGURES.md](tools/ATLAS_FIGURES.md)。
 
 ## 本地开发
 
@@ -56,8 +92,11 @@ brew install mdbook        # 如未安装
 | 6 | `mathbook.py` 去重 | ❌ 不做 | 实测三本同名函数 19 个、**逐字相同的只有 7 个（≈10%）**；编号规则、盒类型、校验逻辑各书不同是真实需求（矩阵论有 `lazy_images`/`label_folds`，数值分析有 `box_priority`，机器人有 `_check_number`/`label_number`）。抽共用的收益低于抽象成本与内容回归风险，**保持各书独立** |
 | 7 | `framework.js` 拆分 | ✅ | 原为单文件 1050 行、职责十项；现按内聚拆成四份，四本书的 `additional-js` 全部改接新模块：`framework-core.js`（共享工具 / 界面文案汉化 / 回到顶部 / 折叠状态记忆 / 启动注册表）+ `framework-nav.js`（侧栏章节折叠 / 右栏大纲 / 已读标记 / 继续阅读）+ `framework-media.js`（插图灯箱 / 进场）+ `framework-text.js`（公式复制 / 术语悬挂提示）。模块之间只依赖 `TUTORIALS_CORE` 小接口，不互相依赖；三本书里残留的 `theme/js/framework.js` 死符号链接已清理 |
 | 8 | 尺寸令牌化 | ✅ | §1.4 补**字号刻度**（`--fs-2xs…--fs-display`，11 档，按角色命名）；随后把组件里**正好等于刻度值**的字面量机械换成令牌（间距 111 处 + 字号 69 处 = **180 处**）。规则：只做「同值换名」，不做取整——不在刻度上的值（如 `18px 22px 14px`、`13.5px`）保留原样，因此**可证明零视觉变化**（A/B 计算样式比对 9 页逐元素零差异）。审计脚本确认「仍在用字面量但正好等于刻度」为 0 处 |
-| 9 | 深度学习教程结构化重构 | ✅ | 九讲从「一讲一页」升为「讲导览 + 节页 + 讲末六件套」（`lectures/lecNN/{overview,secNN,summary,errata,exercises,checklist,recall-cards,mock-exam}.md`），对齐其余三本的组织方式；新增工程工具箱、复习层（公式卡/易混对照卡/术语表/速查背记卡）、特训层（面试竞技场/综合自测卷）、延伸阅读地图、附录（选题路线/工具地图/补充推导）；写作规范与页面模板落在 `deeplearning/写作规范/`（5 份），并统一为「讲号.节号」编号与 `{#type-N.M.K}` 锚点体系。规模：`src` 由约 3.5k 行 → 36.4k 行（157 页 / 66 节 / 54 个讲末页 / 662 个锚点）；9 个旧 `lecNN.md` 单文件已删除（内容并入节页） |
-| 10 | 盒子配平工具 | ✅ | 新增 `tools/boxfix.py`（`--check` 只查、默认修复）：盒子漏写外层闭合会让 `mathbook.py` 中止构建，本工具按同一判据补齐并复验。配套约定写入 `deeplearning/写作规范/05-讲末六件套规范.md`：**平铺闭合**（先关内层 `proof`/`sol`，再关外层 `ex`/`method`），「即时自测」的锚点取节内最大序号 +1 以避免撞号 |
+| 9 | 深度学习教程结构化重构 | ✅ | 九讲从「一讲一页」升为「讲导览 + 节页 + 讲末六页」（`lectures/lecNN/{overview,secNN,summary,errata,exercises,checklist,recall-cards,mock-exam}.md`），对齐其余三本的组织方式；新增工程工具箱、复习层（公式卡/易混对照卡/术语表/速查背记卡）、特训层（面试竞技场/综合自测卷）、延伸阅读地图、附录（选题路线/工具地图/补充推导）；写作规范与页面模板落在 `deeplearning/写作规范/`（5 份），并统一为「讲号.节号」编号与 `{#type-N.M.K}` 锚点体系。规模：`src` 由约 3.5k 行 → 36.4k 行（157 页 / 66 节 / 54 个讲末页 / 662 个锚点）；9 个旧 `lecNN.md` 单文件已删除（内容并入节页） |
+| 10 | 盒子配平工具 | ✅ | 新增 `tools/boxfix.py`（`--check` 只查、默认修复）：盒子漏写外层闭合会让 `mathbook.py` 中止构建，本工具按同一判据补齐并复验。配套约定写入 `deeplearning/写作规范/05-讲末六页规范.md`：**平铺闭合**（先关内层 `proof`/`sol`，再关外层 `ex`/`method`），「即时自测」的锚点取节内最大序号 +1 以避免撞号 |
+| 11 | 图鉴视觉层 | ✅ | 新增 `shared/theme/css/atlas.css` + `shared/theme/js/atlas.js`：页首标题与阅读元信息、插图卡片与图注、页内「图鉴」画廊、原生图片自动图注、平装书封。菜单栏新增「图鉴」入口；窄屏宽图改为横向平移版，不压缩图内文字 |
+| 12 | 书封与导览页 | ✅ | `tools/build_covers.py` 生成四张平装书封（机械臂 / 线性映射 / 三维曲面 / 神经网络）；四本书首页改为「文字 + 平装书封」双栏封面；`site-index.html` 重做为编辑式课程索引（大字号宋体、竖排标签、封面网格、课程行、深浅色切换） |
+| 13 | 定制教学插图 | ✅ | `tools/build_atlas_figures.py` 生成 20 张内联 SVG 图鉴（流程 / 对比 / 矩阵分解 / 网络 / 关系图五类原语），覆盖机器人、矩阵、数值、深度学习四本书；图注以「读图」提示收束，数学公式由 KaTeX 构建期渲染 |
 
 ## 部署
 

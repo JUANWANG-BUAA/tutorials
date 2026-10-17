@@ -2,12 +2,6 @@
 
 2.2 结尾留下两个悬而未决的问题：线性映射空间 $L(V,W)$ 的**维数**是多少？抽象的线性映射能不能**算**？本节一并回答，而这两个问题的答案出自同一个动作——取定基。基一旦固定，**线性映射与矩阵就一一对应**（[@thm-2.3.1]），而且这个对应还保持线性运算（[@thm-2.3.2]）——于是 $L(V,W)$ 与矩阵空间同构，「在哪个空间里算」不再重要。同构顺带补上了 2.2 里只有几何直觉的「两个空间长得一样」：**同构 ⟺ 维数相等**（[@thm-2.3.3]）。有了这套语言，最后两节把它落到实处——坐标公式 $\beta=A\alpha$（[@thm-2.3.4]）说明矩阵怎么算像，换基公式 $B=P^{-1}AQ$ 与相似（[@thm-2.3.5]、[@cor-2.3.4]）说明同一个映射为什么会有不同的矩阵，而「矩阵的秩 / 零空间」与「映射的秩 / 零空间」的同一性（[@thm-2.3.6]）则把先修知识里的秩接回 2.2 的映射图像。
 
-<aside class="lesson-brief" aria-label="2.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>基、坐标与过渡矩阵（[@def-1.3.4]、[@def-1.3.5]、[@prop-1.3.1]）；线性映射、$L(V,W)$、单射判据与亏加秩定理（[@def-2.2.1]、[@thm-2.2.3]、[@thm-2.2.2]、[@thm-2.2.5]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>矩阵的定义（[@def-2.3.1]：矩阵的列就是基像的坐标）；存在唯一性 [@thm-2.3.1]；同构映射与 $L(V,W)\cong F^{m\times n}$（[@def-2.3.2]、[@thm-2.3.2]）；同构的判别与维数（[@prop-2.3.1]、[@thm-2.3.3]）；坐标公式 $\beta=A\alpha$；换基公式 $B=P^{-1}AQ$、相抵与相似；[@thm-2.3.6] 把矩阵的秩接回映射的秩。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定映射与两对基能逐列写出矩阵；能复述「$A$ 的第 $j$ 列 $=$ $T(\varepsilon_j)$ 的坐标」并倒推映射；能说清同构为什么必须要求双射、而不能只要求「元素一样多」；能用 $B=P^{-1}AQ$ 判断两个矩阵是否是同一个映射在不同基下的样子；能解释为什么可以放心把 $\operatorname{rank}A$ 当作映射的秩。</p></div>
-</aside>
-
 ::: note 素材与说明（与 2.1、2.2 两节的差别）
 
 本页依据课程第二章课件 **2.3 矩阵与同构**（25 页，现存 `_sources/matrix/`）整理，并与 2.1、2.2 课件（同一批次入库）交叉核对。**本节的 2.3 尚无对应录播**，故本页不引用课堂口述与时间戳：课件给出的定义、定理、命题、推论、例题与思考题**照录并保留原编号**；课件省略的证明、未给答案的例题，由本编补出并逐处标注「本编补」。相关编号与表述问题见[勘误与补注](errata.md#errata-2.5)。
@@ -41,7 +35,6 @@ $$T(\varepsilon_1,\cdots,\varepsilon_n)\triangleq\big[T(\varepsilon_1),\cdots,T(
 矩阵 $A$ 称为**线性变换** $T$ 在 $V$ 的基 $\varepsilon_1,\cdots,\varepsilon_n$ 下的矩阵。
 :::
 
-![课件 · 定义 2.3.1：线性映射在两组基下的矩阵](../assets/ch02/matrix-def.jpg)
 
 把定义反过来念，就是下面这条读法：写矩阵时它是一道工序，读矩阵时它是还原公式。
 
@@ -80,7 +73,6 @@ $$T(e_1,e_2)=(e_1,e_2)\begin{bmatrix}\cos\varphi&-\sin\varphi\\ \sin\varphi&\cos
 :::
 :::
 
-![课件 · 例 2.3.1：平面旋转变换的矩阵](../assets/ch02/rot-matrix.jpg)
 
 旋转的例子过于规整：标准基下的坐标就是分量，矩阵几乎可以照抄。换一个「基不再是坐标轴」的空间，读法才真正出力。
 
@@ -110,7 +102,6 @@ $$A=\begin{bmatrix}0&1&0&\cdots&0\\ 0&0&2&\cdots&0\\ \vdots&\vdots&\vdots&\ddots
 :::
 :::
 
-![课件 · 例 2.3.2：微分变换的矩阵](../assets/ch02/diff-matrix.jpg)
 
 ::: ex 例 2.3.3（课件原文）· 两组基给出的变换在 $\varepsilon$ 下的矩阵 {#ex-2.3.3}
 
@@ -138,7 +129,6 @@ $$T(\varepsilon_1,\cdots,\varepsilon_n)=(\varepsilon_1,\cdots,\varepsilon_n)P\ \
 :::
 :::
 
-![课件 · 例 2.3.3：两组基定义的变换，求其在 $\varepsilon$ 下的矩阵](../assets/ch02/ex-three-bases.jpg)
 
 前面三个例子做的都是同一件事：把一个给定的映射翻译成矩阵。真正重要的是反过来——**随便给一个矩阵，都恰好对应一个线性映射**。下面这条定理把它写成命题，而本节其余结论全都建立在它之上。
 
@@ -147,7 +137,6 @@ $$T(\varepsilon_1,\cdots,\varepsilon_n)=(\varepsilon_1,\cdots,\varepsilon_n)P\ \
 设 $V$ 和 $W$ 是数域 $F$ 上的线性空间，取定 $\varepsilon_1,\cdots,\varepsilon_n$ 和 $\eta_1,\cdots,\eta_m$ 分别是 $V$ 和 $W$ 的一组基。任取 $A=(a_{ij})\in F^{m\times n}$，则有且仅有一个线性映射 $T\in L(V,W)$ 使其在 $V$ 的基 $\varepsilon_1,\cdots,\varepsilon_n$ 和 $W$ 的基 $\eta_1,\cdots,\eta_m$ 下的矩阵恰为 $A$。
 :::
 
-![课件 · 定理 2.3.1：矩阵的存在唯一性与构造思路](../assets/ch02/matrix-unique.jpg)
 
 ::: proof 证明（课件只列了构造线索，此处补全两半）
 
@@ -190,7 +179,6 @@ $$T_1(\varepsilon_j)=\sum_i a_{ij}\eta_i=T_2(\varepsilon_j).$$
 式中 $x,y$ 是 $V$ 中任意向量、$\lambda$ 是数域 $F$ 的任意数，则称 $f$ 是 $V$ 到 $W$ 的**同构映射**，并称线性空间 $V$ 与 $W$ **同构**。
 :::
 
-![课件 · 定义 2.3.2：同构映射](../assets/ch02/iso-def.jpg)
 
 ::: note 课件注记「整数集与偶数集同构」辨析（本编补注）
 
@@ -240,7 +228,6 @@ $$(T_1+T_2)(\varepsilon_j)=T_1(\varepsilon_j)+T_2(\varepsilon_j)=\sum_i\big(a^{(
 6. $T$ 的逆映射 $T^{-1}:W\to V$ 存在且是同构映射。
 :::
 
-![课件 · 命题 2.3.1：同构映射的六条性质](../assets/ch02/iso-props.jpg)
 
 ::: proof 证明（逐条，其中一半是 2.2 的现成结论）
 
@@ -264,7 +251,6 @@ $$T^{-1}(y_1+y_2)=T^{-1}\big(T(x_1)+T(x_2)\big)=T^{-1}\big(T(x_1+x_2)\big)=x_1+x
 **同一数域 $F$ 上**的两个**有限维**线性空间同构**当且仅当**它们的维数相等。
 :::
 
-![课件 · 定理 2.3.3 与推论 2.3.1–2.3.3：同构与维数](../assets/ch02/iso-dim.jpg)
 
 ::: proof 证明（课件未给，本编补全）
 
@@ -333,7 +319,6 @@ $$\beta=A\alpha,$$
 式中 $\beta\in F^m$ 是像 $T(x)$ 在 $W$ 的基 $\eta_1,\cdots,\eta_m$ 下的坐标，$\alpha\in F^n$ 是原像 $x$ 在 $V$ 的基 $\varepsilon_1,\cdots,\varepsilon_n$ 下的坐标。
 :::
 
-![课件 · 定理 2.3.4：坐标公式 β = Aα](../assets/ch02/beta-alpha.jpg)
 
 ::: proof 证明（三行，全靠读法）
 
@@ -396,7 +381,6 @@ $$\beta=A\alpha=\begin{bmatrix}1&1&0\\ 0&1&-1\end{bmatrix}\begin{bmatrix}1\\2\\3
 $$B=P^{-1}AQ .$$
 :::
 
-![课件 · 定理 2.3.5：换基公式 B = P⁻¹AQ](../assets/ch02/change-basis.jpg)
 
 ::: proof 证明（用过渡矩阵的定义两边夹）
 
@@ -432,7 +416,6 @@ $$T(\varepsilon'_1,\cdots,\varepsilon'_n)=(\eta'_1,\cdots,\eta'_m)\,P^{-1}AQ .$$
 $$B=P^{-1}AP .$$
 :::
 
-![课件 · 注 1、推论 2.3.4 与注 2：相抵、相似](../assets/ch02/similar.jpg)
 
 ::: note 注 2 · 相似矩阵的几何含义
 
@@ -475,7 +458,6 @@ $$B=P^{-1}AP=\begin{bmatrix}1&-1\\ 0&1\end{bmatrix}\begin{bmatrix}1&1\\ 0&2\end{
 3. $\dim N(A)+\dim R(A)=n$（亏加秩）。
 :::
 
-![课件 · 定理 2.3.6：零空间、列空间与秩](../assets/ch02/rank-via-matrix.jpg)
 
 ::: proof 证明（(1)(2) 的完整论证——课件只给了 (2) 的思路且有笔误，本编补全）
 
@@ -561,7 +543,6 @@ $$T:\tilde S\longrightarrow\mathbb R^n,\qquad T(\{u_k\})=x_0 .$$
 :::
 :::
 
-![课件 · 例 2.3.5：差分方程、状态向量与友矩阵](../assets/ch02/difference-eq.jpg)
 
 ::: errata 课件的一处前提（本编补注）
 

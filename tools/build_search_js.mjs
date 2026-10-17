@@ -102,6 +102,18 @@ const SLUG = fs.existsSync(path.join(RAW_DIR, "book")) ? path.basename(path.reso
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff]/;
 const ASCII_CJK_GAP = /([A-Za-z0-9])\s+([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])|([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3040-\u30ff])\s+([A-Za-z0-9])/g;
 
+/* mdBook 的 searchindex body 直接来自 HTML 文本，KaTeX 的 annotation
+   会把 \\operatorname{rank}、z_{i-1} 这类 raw TeX 一起带进摘要。索引里
+   保留命令没有检索价值，但会把搜索结果弄得很脏；这里只清掉命令和花括号，
+   可见数学/正文保持不变。 */
+function cleanIndexText(value) {
+  return String(value || "")
+    .replace(/\\[a-zA-Z]+/g, " ")
+    .replace(/[{}]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function preprocess(text) {
   // mdBook 在 HTML 元素边界插入空格，导致源文件里的「DH参数」在索引中变成「DH 参数」。
   // 去掉 ASCII ↔ CJK 之间的空格，使两侧始终相邻，索引与查询才能产生相同的 token。
@@ -209,7 +221,10 @@ function main() {
     const doc = docs[id];
     if (!doc) continue;
     const rec = { [ref]: doc[ref] };
-    for (const f of fields) rec[f] = doc[f] == null ? "" : String(doc[f]);
+    for (const f of fields) {
+      const value = doc[f] == null ? "" : String(doc[f]);
+      rec[f] = (f === "body" || f === "title") ? cleanIndexText(value) : value;
+    }
     builder.addDoc(rec);
   }
 

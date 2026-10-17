@@ -1,11 +1,5 @@
 # 第 5 讲导览 · 深度强化学习
 
-<aside class="lesson-brief" aria-label="第 5 讲学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>期望与条件期望、全期望公式；递推与「不动点」的直观（[1.2](../lec01/sec12.md) 的迭代视角）；梯度下降与链式法则、反向传播（[1.5](../lec01/sec15.md)）；用神经网络做函数逼近与损失最小化（[1.4](../lec01/sec14.md)）；softmax 与交叉熵（[1.4](../lec01/sec14.md)、[2.5](../lec02/sec25.md)）；KL 散度与对数似然（[4.3](../lec04/sec43.md)）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本讲要建立</strong><p>监督 / 无监督 / 强化学习的三分法与适用边界；智能体—环境交互循环；探索与利用；MDP 五元组、回报、值函数、贝尔曼期望与最优方程；策略迭代与值迭代；时序差分与 Q-learning（含收敛条件）；DQN 的经验回放、目标网络与 Double / Dueling / PER / 多步；策略梯度定理与 REINFORCE；基线与优势、因果性；Actor–Critic、GAE、TRPO 与 PPO 裁剪目标；离线 RL 的分布偏移；RLHF 三步、Bradley–Terry 模型与 DPO 推导；GRPO 组内相对优势；reward hacking；训练循环与调试协议。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能把一个真实任务写成 MDP 并说清「奖励写的是什么、不是你要的什么」；能独立推导贝尔曼期望方程、策略梯度定理、GAE 与 DPO 损失；能写出 Q-learning 更新式并解释每一项的收敛前提；能说清 DQN 的两个技巧各自治什么病；能分 $A\gt0$ / $A\lt0$ 两种情形解释 PPO 裁剪何时把梯度归零；能判断一个任务该用值方法、策略方法还是偏好优化，并给出失败判据与多种子评估计划。</p></div>
-</aside>
-
 ## 这一讲要解决的真实问题
 
 前四讲的模型都在同一个范式里工作：**有标签，最大化似然或最小化误差**。分类有正确类别、检测有框的坐标、生成有「这张图属于数据分布」的对数似然。这一讲把范式整体换掉：**没有标签，只有一个标量奖励**。下棋时没有哪一步被标注为「对」，只有最后输赢；机器人迈步时没有老师告诉你「这一脚该迈多大」；推荐系统也只看到用户点没点。我们能拿到的，是**一串既稀疏又延迟的奖励**——大部分时刻为 0，赢了才见到 +1。

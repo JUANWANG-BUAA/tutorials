@@ -4,18 +4,15 @@
 
 分解要从最简单的一种开始。任给一个矩阵，无论它多大多怪，总有一件事一定能做到：用可逆矩阵从两边夹它，把它压成一个「前面一块单位矩阵、其余全零」的标准形——**相抵标准形** $\Gamma$。这条结论写下来只有一行（[@lem-3.1.1]），却把「秩」这个数彻底说清了：任何矩阵都相抵于且只相抵于由秩决定的标准形（[@note-3.1-rank]）。本节随后把这条分解用到两个地方，都是考试与后续章节反复出现的老朋友：**解线性方程组**（[@ex-3.1.1]：相抵标准形把「有解没解、有几个自由度」变成看几个分量是否为零）与**长方阵的单侧逆**（[@thm-3.1.1]：行满秩就有右逆、列满秩就有左逆）。最后给出本节最重要的一条秩等式 $\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$（[@prop-3.1.1]），它给出的右逆公式 $A^{\mathrm H}(AA^{\mathrm H})^{-1}$ 是「最小二乘」等一大类应用的起点。
 
-<aside class="lesson-brief" aria-label="3.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>基、坐标与过渡矩阵（[@def-1.3.5]、[@prop-1.3.1]）；基扩充定理（[@cor-1.3.1]）；内积与正定性（[@def-1.4.1]）；线性映射、单射判据与亏加秩定理（[@thm-2.2.2]、[@thm-2.2.5]）；矩阵的读法与换基公式 $B=P^{-1}AQ$、矩阵的秩（[@def-2.3.1]、[@thm-2.3.5]、[@thm-2.3.6]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>相抵分解式 $A=P^{-1}\Gamma Q$ 与相抵标准形（[@lem-3.1.1]）及其不唯一性；用相抵标准形解方程组的结构（可解判据 $+$ 自由度数）；相抵变换与分块矩阵求 $P$、$Q$ 的方法；右逆 / 左逆的存在判别（[@thm-3.1.1]）与两条充分性证明路线；秩等式 $\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$（[@prop-3.1.1]）与两个单侧逆公式 $A^{\mathrm H}(AA^{\mathrm H})^{-1}$、$(A^{\mathrm H}A)^{-1}A^{\mathrm H}$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定矩阵能用分块矩阵法求出 $P^{-1}$、$Q$ 并回代验证；能说出「相抵分解不唯一、相抵标准形唯一」各自的含义；能把 $A\boldsymbol{x}=\boldsymbol{b}$ 化成 $\Gamma\boldsymbol{y}=P^{-1}\boldsymbol{b}$ 并读出可解判据与自由度个数；能背写 [@thm-3.1.1] 并构造 $A^{\mathrm H}(AA^{\mathrm H})^{-1}$；能复述 [@prop-3.1.1] 的证明用了正定性在哪一步。</p></div>
-</aside>
-
 ::: note 素材与说明（本节无录播）
 
 本页依据课程第三章课件 **3.1 相抵分解**（15 页）整理。**本节无对应录播**，故不引用课堂口述与时间戳：课件给出的引理、定理、命题、注记与例题**照录并保留原编号**（引理 3.1.1、例 3.1.1、定理 3.1.1、注 1、命题 3.1.1）；课件省略的证明、只写一半的推导、未给出答案的练习，由本编补出并逐处标注「本编补」。编号与表述问题见[勘误与补注](errata.md)。
 :::
 
 <a id="sec-3.1.1"></a>
+
+
+{{#include ../assets/figures/matrix-equiv.md}}
 
 ## 3.1.1 相抵标准形：任何矩阵都能压成同一副模样
 
@@ -32,7 +29,6 @@ $$A=P^{-1}\Gamma Q,\qquad \Gamma=\begin{bmatrix}I_r&0\\0&0\end{bmatrix}_{m\times
 上式称为 $A$ 的**相抵分解式**，式中 $\Gamma$ 称为 $A$ 的**相抵标准形**。
 :::
 
-![课件 · 引理 3.1.1：相抵分解式与相抵标准形](../assets/ch03/equiv-lemma.jpg)
 
 课件把这条结论列为引理、只述不证——它正是 [2.3](../ch02/sec23.md) 留下的一句承诺（「相抵的标准形只由秩决定，将在讨论矩阵的秩时给出」，见 [2.3.4](../ch02/sec23.md#sec-2.3.4) 的注 1）。本编用「选基 $+$ 换基公式」把证明补出；你会看到它把前三章各一件工具串在了一起。
 
@@ -88,7 +84,6 @@ $$\begin{bmatrix}I_r&*\\0&I\end{bmatrix}\Gamma=\Gamma=\Gamma\begin{bmatrix}I_r&0
 
 （直接按分块乘法核对：$\Gamma$ 的后 $n-r$ 列全零、后 $m-r$ 行全零，$*$ 乘上去也归零）。而 $\begin{bmatrix}I_r&*\\0&I\end{bmatrix}$ 与 $\begin{bmatrix}I_r&0\\*&I\end{bmatrix}$ 都是可逆矩阵（对角块为单位阵的三角块，行列式为 $1$），乘到 $P^{-1}$、$Q$ 上仍是可逆矩阵。**因此矩阵 $A$ 的相抵分解是不唯一的**——$\Gamma$ 两边的可逆矩阵可以有无穷多种取法。
 
-![课件 · 相抵分解不唯一的推导](../assets/ch03/equiv-nonunique.jpg)
 
 **不唯一的是「分解式」，唯一的是「标准形」**：无论怎么写分解式，中间那个 $\Gamma$ 只由 $r$ 决定（因为秩在相抵下不变，$\operatorname{rank}\Gamma=\operatorname{rank}A=r$）。这一对「式不唯一、标准形唯一」后面还会以同样的面貌出现（[3.2](sec32.md) 的满秩分解不唯一，但相差一个可逆矩阵 $D$）。
 :::
@@ -118,7 +113,6 @@ $$\Gamma\,(Q\boldsymbol{x})=P\boldsymbol{b}.$$
 
 $$\Gamma\boldsymbol{y}=P\boldsymbol{b},\qquad \Gamma=\begin{bmatrix}I_r&0\\0&0\end{bmatrix}_{m\times n}.$$
 
-![课件 · 例 3.1.1：把方程组化成相抵标准形](../assets/ch03/ex-system.jpg)
 
 **第二步（读出全部信息）**：把 $P\boldsymbol{b}$ 按前 $r$ 个、后 $m-r$ 个分量分块，写成 $P\boldsymbol{b}=\begin{bmatrix}\boldsymbol{c}\\ \boldsymbol{d}\end{bmatrix}$，$\boldsymbol{c}\in F^r$、$\boldsymbol{d}\in F^{m-r}$；把 $\boldsymbol{y}$ 按前 $r$ 个、后 $n-r$ 个分量分块为 $\boldsymbol{y}=\begin{bmatrix}\boldsymbol{y}_1\\ \boldsymbol{y}_2\end{bmatrix}$。方程 $\Gamma\boldsymbol{y}=P\boldsymbol{b}$ 逐分量读出来是
 
@@ -159,7 +153,6 @@ $$\begin{bmatrix}E&0\\0&I\end{bmatrix}\begin{bmatrix}A&I_m\\ I_n&*\end{bmatrix}\
 **记忆**：$A$ 左边的行变换记录在**右上**，右边的列变换记录在**左下**——「变换乘在哪侧，就积在哪个对角块的对面」。算完务必回代验算 $EAF=\Gamma$（比验 $P^{-1}\Gamma Q$ 更省事，也不容易弄错栏目）。
 :::
 
-![课件 · 例 3.1.1 续：相抵变换求 P⁻¹、Q⁻¹](../assets/ch03/equiv-augmented.jpg)
 
 ::: errata 课件第 7 页的记号与引理 3.1.1 不同调（本编勘误 · E3.1）
 
@@ -261,7 +254,6 @@ $$AA^{\mathrm H}=[1\ \ 0]\begin{bmatrix}1\\0\end{bmatrix}=1 .$$
 **问题 2**：何种**长方阵**乘积为单位阵？——这就是下文定理 3.1.1 回答的问题。
 :::
 
-![课件 · 问题 1：乘积为单位阵的长方阵反例](../assets/ch03/identity-product.jpg)
 
 ::: thm 定理 3.1.1 · 右逆与左逆 {#thm-3.1.1}
 
@@ -271,7 +263,6 @@ $$AA^{\mathrm H}=[1\ \ 0]\begin{bmatrix}1\\0\end{bmatrix}=1 .$$
 - $A$ 有**左逆**（即存在矩阵 $B$ 使得 $BA=I$）的**充分必要条件**是 $A$ 为**列满秩**矩阵（$r=n$）。
 :::
 
-![课件 · 定理 3.1.1：右逆与左逆](../assets/ch03/one-sided-inverse.jpg)
 
 **记号说明**（本编）：$\mathbb C^{m\times n}_r$ 表示全体「$m\times n$、秩恰为 $r$」的复矩阵；$AB=I$ 中的 $I$ 按上下文分别是 $I_m$（右逆）、$I_n$（左逆）。下面先证必要性（课件给出右逆情形），再给出两条独立的充分性路线。
 
@@ -307,7 +298,6 @@ $$AB=P^{-1}[I_m,\ 0]\,Q\cdot Q^{-1}\begin{bmatrix}I_m\\ 0\end{bmatrix}P=P^{-1}\,
 **方法的要点**：相抵标准形把「求右逆」变成了「求 $\Gamma$ 的右逆」——而 $\Gamma=[I_m,0]$ 的右逆就摆在眼前：$\begin{bmatrix}I_m\\0\end{bmatrix}$。两端的可逆矩阵只需原样搬运过去。**法 1 只用相抵分解（加、乘、求逆），所以对任意数域 $F$ 都成立**，不依赖内积。
 :::
 
-![课件 · 右逆充分性证明法 1（相抵分解）](../assets/ch03/right-inv-proof1.jpg)
 
 ::: note 注 1 · 矩阵 $A$ 右（左）逆存在性小结（课件原文）
 
@@ -316,7 +306,6 @@ $$AB=P^{-1}[I_m,\ 0]\,Q\cdot Q^{-1}\begin{bmatrix}I_m\\ 0\end{bmatrix}P=P^{-1}\,
 - 当 $A$ 为**其他情况**（既不方阵满秩、也不相应满秩）时，其右（左）逆**不存在**。
 :::
 
-![课件 · 注 1：右（左）逆存在性小结](../assets/ch03/one-sided-summary.jpg)
 
 ::: note 本编补注 · 左逆 / 右逆在映射语言里是什么？
 
@@ -362,6 +351,8 @@ $$B_0=\begin{bmatrix}1&0&0\\ 0&1&0\end{bmatrix},\qquad \text{以及}\ \begin{bma
 
 ## 3.1.4 两个秩的等式：$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$
 
+<aside class="margin-note"><span class="mn-label">NOTE / KERNEL</span>证明主线：先证 N(A) = N(A^H A)，再用亏加秩得到 rank(A) = rank(A^H A)。</aside>
+
 法 1 用相抵分解造右逆，好处是不挑数域，代价是要先算相抵分解。还有一条更短的路线：直接写出一个**公式**当作右逆——比如 $A^{\mathrm H}(AA^{\mathrm H})^{-1}$——只需验证 $AA^{\mathrm H}$ 可逆。而「可逆」是一个秩问题，于是问题归结为下面这条秩等式。课件把它列为命题，并用方程组给出证明，它是本节最重要的结论。
 
 ::: prop 命题 3.1.1 · 秩的等式 {#prop-3.1.1}
@@ -375,8 +366,6 @@ $$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)=\operatorname{rank}
 这是一个与矩阵秩相关的重要结论。
 :::
 
-![课件 · 命题 3.1.1 与证明前半：同解方程组](../assets/ch03/rank-ah-a.jpg)
-![课件 · 命题 3.1.1 证明后半与同解结论](../assets/ch03/rank-ah-a-2.jpg)
 
 ::: proof 证明（课件两半，本编整理为「同解 $\Longrightarrow$ 同秩」三步）
 
@@ -435,7 +424,6 @@ $$B=A^{\mathrm H}(AA^{\mathrm H})^{-1}$$
 **与法 1 的分工**（本编）：法 1（相抵）给出「存在、且可机械地算出」，用不着内积，对数域 $F$ 通用；法 2（本节）给出**闭式公式**，只需求逆一次，但依赖 $A^{\mathrm H}$（用于实/复内积空间）。考试时**能写出来就是好办法**：法 2 的公式短、验证快，是首选；法 1 是「万一忘了公式」时的保底路线。对称地，列满秩时 $B=(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 是 $A$ 的一个左逆。
 :::
 
-![课件 · 右逆充分性证明法 2（用命题 3.1.1）](../assets/ch03/right-inv-proof2.jpg)
 
 ::: preview 课程预告 · 这两个公式后面会一直出现
 

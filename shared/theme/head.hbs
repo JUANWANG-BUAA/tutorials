@@ -5,7 +5,7 @@
   还没有任何本书脚本在跑）。
   ※ 只做「读 localStorage → 落 data-* 属性」，取值与默认集合必须与
     theme/js/prefs.js 的 OPTIONS / DEFAULT_PREFS 保持一致；面板 UI 由 prefs.js 建。
-  ※ 两个正交的轴：data-palette（强调色）只覆盖链接与状态提示；明暗仍走 mdBook 原生主题弹层。
+  ※ 两个正交的轴：data-palette 只管主题色/纸色，明暗仍走 mdBook 原生主题弹层。
 -->
 <script>
 (function () {
@@ -14,8 +14,8 @@
     ["size", "data-size", ["s", "m", "l", "xl"]],
     ["density", "data-density", ["compact", "standard", "loose", "roomy"]],
     ["width", "data-width", ["narrow", "standard", "wide", "full"]],
-  ["palette", "data-palette", ["theme", "blue", "teal", "green", "amber", "contrast"]],
-    ["bg", "data-bg", ["theme", "wash", "plain", "grid", "graph", "ruled", "dots", "paper"]]
+    ["palette", "data-palette", ["theme", "blue", "teal", "green", "amber", "contrast", "archive", "blueprint", "endfield"]],
+    ["bg", "data-bg", ["theme", "wash", "plain", "grid", "graph", "ruled", "dots", "paper", "blueprint", "laid"]]
   ];
   var root = document.documentElement;
   for (var i = 0; i < KEYS.length; i++) {

@@ -8,12 +8,6 @@ $$A=BC,$$
 
 和相抵分解一样，满秩分解也不唯一；但本节会把它不唯一的程度**精确**说清：任意两种分解之间只差一个可逆矩阵 $D$（[@thm-3.2.2]）。最后用它解一个矩阵方程 $AXA=A$（[@ex-3.2.2]）——那是 [3.1](sec31.md) 结尾预告过的伪逆的第一次露面。
 
-<aside class="lesson-brief" aria-label="3.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>相抵分解与相抵标准形（[@lem-3.1.1]）；子空间、张成与列空间（[@def-1.2.4]、[@def-1.2.3]、[@prop-1.2.1]）；基与坐标的唯一表示（[@thm-1.3.2]）、基扩充（[@cor-1.3.1]）；过渡矩阵（[@def-1.3.5]、[@prop-1.3.1]）；亏加秩定理（[@thm-2.2.5]）；行 / 列满秩与单侧逆、秩等式 $\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$（[@thm-3.1.1]、[@prop-3.1.1]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>满秩分解定理 $A=BC$（[@thm-3.2.1]）及两条构造路线（相抵分解法、列空间基法）；「满秩分解 $=$ 列空间的基 $\times$ 坐标」这一读法；不唯一的精确刻画（[@thm-3.2.2]：相差一个可逆因子 $D$，$D$ 是两组基之间的过渡矩阵）；矩阵方程 $AXA=A$ 的一个解（[@ex-3.2.2]）与伪逆的雏形。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定矩阵能求出满秩分解并回代验证；能说出 $B$、$C$ 的形状、秩与几何含义（$B$ 的列是 $R(A)$ 的基，$C$ 的列是坐标）；能用行简化阶梯形（RREF）批量地取 $B$ 与 $C$；能复述 [@thm-3.2.2] 的证明主线（$R(B_1)=R(A)=R(B_2)$ $\Rightarrow$ 过渡矩阵 $\Rightarrow$ $B$ 的单射）并解释 $D$ 为什么必可逆；能用满秩分解写出 $AXA=A$ 的一个解。</p></div>
-</aside>
-
 ::: note 素材与说明（本节无录播）
 
 本页依据课程第三章课件 **3.2 满秩分解**（9 页）整理。**本节无对应录播**，故不引用课堂口述与时间戳：课件的定理、注记与例题**照录并保留原编号**（定理 3.2.1、注 1–注 3、例 3.2.1、定理 3.2.2、例 3.2.2）；课件省略的证明（定理 3.2.2 的证明、方法 2 中 $\operatorname{rank}C=r$ 的理由）、只给结论没给过程的地方，由本编补出并逐处标注「本编补」。相关编号与表述问题见[勘误与补注](errata.md)。
@@ -56,7 +50,6 @@ $$B=P^{-1}\begin{bmatrix}I_r\\0\end{bmatrix}\in\mathbb C^{m\times r},\qquad C=\b
 （这两句是课件「其中 $B$ 和 $C$ 分别是列满秩矩阵和行满秩矩阵」的展开。）∎
 :::
 
-![课件 · 定理 3.2.1 与方法 1：用相抵分解造满秩分解](../assets/ch03/fullrank-method1.jpg)
 
 ::: proof 构造法 2（列空间的基与坐标；课件路线，本编补全 $\operatorname{rank}C=r$ 的理由）
 
@@ -88,8 +81,6 @@ $$\operatorname{rank}C=n-\dim N(C)\ \ge\ n-\dim N(A)=\operatorname{rank}A=r .$$
 故 $\operatorname{rank}C=r$，$C$ 行满秩。∎
 :::
 
-![课件 · 构造法 2：列空间的基与坐标](../assets/ch03/fullrank-method2.jpg)
-![课件 · 构造法 2 收尾与注 1（不唯一）](../assets/ch03/fullrank-note1.jpg)
 
 ::: note 读法（本编提炼）· 满秩分解把 $A$ 拆成了「基 $\times$ 坐标」
 
@@ -150,7 +141,6 @@ BC=\begin{bmatrix}\mathrm i&1\\ 1&1\end{bmatrix}\begin{bmatrix}1&-\mathrm i&0\\ 
 （验算由本编补：逐行列乘可得。另外这里的 $B$ 恰好取成了 $A$ 的第 $1$、$3$ 列——**取 A 自己的列做基是最顺手的选法**，但只是选法之一，见 [@note-3.2-columns]。）∎
 :::
 
-![课件 · 例 3.2.1：求满秩分解](../assets/ch03/ex-fullrank.jpg)
 
 ::: note 注 2（课件原文）· 挑 $R(A)$ 的基时，不一定从 $A$ 的列向量中选取 {#note-3.2-columns}
 
@@ -163,7 +153,6 @@ $$A=I_2\,A$$
 也是 $A$ 的满秩分解：式中 $I_2$ 是列满秩矩阵，$A$（$2\times3$、秩 $2$，行数 $=2=r$）是行满秩矩阵。
 :::
 
-![课件 · 注 2：B 可以取单位阵](../assets/ch03/ex-fullrank-note2.jpg)
 
 **注 2 的份量**（本编）：$A=I_2A$ 这样的分解看似「什么都没做」，却说明了 $B$、$C$ 的角色可以互相转嫁——**同一个 $A$，左边多一点、右边就少一点，只要乘积不变、两边满秩**。它同时是最好的反例素材：谁若声称「满秩分解唯一」，$A=[\boldsymbol{a}_1,\boldsymbol{a}_3]\cdot C$ 与 $A=I_2\cdot A$ 就把他驳倒了。
 
@@ -238,7 +227,6 @@ $$B=A\,C^{\mathrm H}(CC^{\mathrm H})^{-1}.$$
 $$B_1=B_2D,\qquad C_1=D^{-1}C_2 .$$
 :::
 
-![课件 · 定理 3.2.2 与注 3：过渡矩阵 D](../assets/ch03/fullrank-unique.jpg)
 
 ::: proof 证明（课件未给，本编补：两组基之间的过渡矩阵）
 
@@ -348,7 +336,6 @@ $$CXB=\underbrace{CC^{\mathrm H}(CC^{\mathrm H})^{-1}}_{I_r}\ \underbrace{(B^{\m
 ∎
 :::
 
-![课件 · 例 3.2.2：AXA = A 的一个解](../assets/ch03/ex-axa.jpg)
 
 ::: note 本编补注 · 课件的「充分条件」其实是充要条件 {#note-3.2-axa-iff}
 

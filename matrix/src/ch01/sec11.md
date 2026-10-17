@@ -7,12 +7,6 @@
 本节的核心判断是：**一套运算规则是否足够稳定，使加法、数乘的结果始终留在同一个集合内。**肯定一个空间要检查全部结构；否定它通常只需找到一条被破坏的规则。
 :::
 
-<aside class="lesson-brief" aria-label="1.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>集合记号、向量加法与数乘、基本的逻辑量词。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>数域、线性空间八条公理、线性组合与表示。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能用「封闭 → 公理 → 反例」判定新运算下的线性空间。</p></div>
-</aside>
-
 <a id="sec-1.1.1"></a>
 
 ## 1.1.1 集合与空间：从「一堆东西」到「有结构的集合」

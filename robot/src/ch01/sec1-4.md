@@ -4,12 +4,6 @@
 
 原书 §1.3（工业机器人学）与 §1.4（先进机器人学）在此合并为一节——两者共享同一套机械结构（见 1.2、1.3），区别则要从**环境先验、变化速度、风险后果与所需自治水平**四个维度去看，而不要把「工业 / 先进」误读成非黑即白的标签。
 
-<aside class="lesson-brief" aria-label="1.4 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec1-2.html">1.2</a> 五种构形与 <a href="sec1-3.html">1.3</a> 底盘布局——本节实例全部是这两节结构的组合。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>自动化三层次与工业机器人的定位；三种基本能力与典型应用清单；七款工业实例的「构形 ↔ 参数 ↔ 应用」对应；先进机器人的驱动力与应用版图。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能按任务（弧焊 / 码垛 / 装 PCB / 抓取 150 件每分钟）反选构形；能说出结构化与非结构化环境的分界对自治性的要求差异；引用行业数据时能注明其年份口径。</p></div>
-</aside>
-
 <a id="sec-1.4.1"></a>
 
 ## 1.4.1 工业机器人学：定义、三层次与三能力

@@ -2,12 +2,6 @@
 
 本实验对应第 6、9 讲：加载一个**预训练**语言模型，用**参数高效微调（LoRA）**在受限显存下把它适配到一个下游任务，并用自回归采样评估输出。它是「小算力撬动大模型」的标准流程。
 
-<aside class="lesson-brief" aria-label="Lab 3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>[第 2 讲](../lectures/lec02/overview.md)的 Transformer 与自回归生成；[第 6 讲](../lectures/lec06/overview.md)的预训练/微调/提示三段式；[第 9 讲](../lectures/lec09/overview.md)的显存构成与 LoRA。</p></div>
-<div><span class="brief-label">TARGET</span><strong>你将做出</strong><p>一个在你的数据上微调过、会按你的格式作答的模型；一份「全参数微调 vs LoRA」的显存/效果对比。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>验收标准</strong><p>微调后模型在你的任务上明显优于微调前；训练只更新极少比例的参数；能解释为什么 LoRA 能在**冻结主干**的前提下工作。</p></div>
-</aside>
-
 ## 1. 环境与模型
 
 - **库**：`transformers` + `peft`（HuggingFace 生态），或等价的 LoRA 实现。

@@ -9,12 +9,6 @@
 普通的「和」只保证能拆，直和还保证**拆法唯一**。一旦分量唯一，投影才成为确定的运算；再把补空间取成正交补，投影还成为「垂直落下」的法定运算——不依赖任何选择。判断直和不必逐个验证向量的表法唯一；检查两个子空间是否只共享零向量，通常更快。
 :::
 
-<aside class="lesson-brief" aria-label="1.6 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>先回顾</strong><p>[1.2] 和空间与交空间、[1.3] 维数公式与基扩充、[1.4] 内积与 Gram 矩阵、[1.5] 正交向量组与 Gram–Schmidt。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>直和的定义与四条等价判定、投影的概念与求法、幂等矩阵诱导的直和分解；正交子空间、正交补与正交分解定理、正交投影与投影公式、Gram–Schmidt 的正线上三角过渡矩阵。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能任选一条判据判定直和，能把向量沿给定分解拆成投影，能用两种方法求正交投影，能证明 $A^2=A$ 的值域分解与 $\mathbb C^n=N(A)\oplus R(A^{\mathrm H})$。</p></div>
-</aside>
-
 <a id="sec-1.6.1"></a>
 
 ## 1.6.1 直和：拆法唯一的和

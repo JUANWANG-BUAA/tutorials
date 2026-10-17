@@ -2,12 +2,6 @@
 
 2.1 说「标准正交基下求解退化成做内积」，2.2 说「投影与最小二乘的关键是列空间的正交结构」——两句话指向同一个技术需求：**把一组线性无关的向量造成标准正交基**。最有用的产物是 **QR 分解** $A=QR$（$m\gt n$ 时 $Q$ 为列正交的长方阵，见 [@def-2.1.3]）：最小二乘、特征值、SVD 共用一个稳定内核。本节给出四种正交化方法（经典与修正 Gram–Schmidt、Householder 反射、Givens 旋转），并用实测数据说明取舍标准。
 
-<aside class="lesson-brief" aria-label="2.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>投影公式（2.2.3）；正交矩阵的性质（2.1.3）；浮点公理与单位舍入误差 $u$（1.2.5）；条件数（1.3.6）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>Gram–Schmidt（经典 / 修正）的推导与差别；Householder 反射与 Givens 旋转的构造；QR 分解的存在性与唯一性；四种方法的复杂度与正交性损失量级。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能手算三个向量的 Gram–Schmidt 与 $3\times2$ 矩阵的 Householder QR；能说清「为什么必须用修正 Gram–Schmidt 或 Householder，而经典 Gram–Schmidt 不够」；能用 QR 稳定地解最小二乘。</p></div>
-</aside>
-
 <a id="sec-2.3.1"></a>
 
 ## 2.3.1 Gram–Schmidt 正交化

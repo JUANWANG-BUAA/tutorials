@@ -1,14 +1,12 @@
 <section class="chapter-cover">
-<div class="kicker">矩 阵 论 · 第 一 章 · 第 二 章（2.1–2.5）· 第 三 章（3.1–3.2、3.4–3.5）</div>
-<h1>线性空间引论 · 线性映射与矩阵 · 矩阵分解</h1>
-<div class="subtitle">从线性空间与坐标出发，建立线性映射和矩阵的联系，再学习相抵、满秩、QR 与 Schur 分解。</div>
+<div class="kicker">矩阵论 · 定制教程</div>
+<h1>矩阵论</h1>
+<div class="subtitle">线性空间与坐标、线性映射与矩阵、相抵 / 满秩 / QR / Schur 分解。</div>
 <div class="cover-chips">
-<span>先讲问题，再给定义</span>
-<span>例子与反例成对出现</span>
-<span>证明解释「为什么这样想」</span>
-<span>提示、解答、验算分层</span>
-<span>读完即可自测与反查</span>
-<span>部分章节待补：2.6–2.7、3.3 及后续</span>
+<span>3 章 · 15 节</span>
+<span>证明工坊 · 习题与自测</span>
+<span>复习卡 · 考场冲刺</span>
+<span>部分章节待补：2.6–2.7、3.3</span>
 </div>
 <details class="cover-details">
 <summary>查看课程范围与资料说明</summary>
@@ -20,242 +18,24 @@
 新增例题与习题均不超出本课程所讲授的概念范围 · 整理日期：2026 年 9–10 月
 </div>
 </details>
-</section>
 
-<section class="study-paths" aria-label="建议学习路径">
-<article class="study-path">
-<span class="path-kicker">15 MIN · 先定位</span>
-<strong>入学诊断</strong>
-<p>14 道小题测一测先修与本章预诊，据此决定从哪一节开始读。</p>
-<a href="entry-test.md">开始诊断 →</a>
-</article>
-<article class="study-path">
-<span class="path-kicker">25 MIN · QUICK START</span>
-<strong>先看懂主线</strong>
-<p>读知识地图与六节总结，先建立「空间 → 子空间 → 基 → 内积 → 度量与正交 → 直和」的全局图。</p>
-<a href="preface-map.md">开始快速预习 →</a>
-</article>
-<article class="study-path">
-<span class="path-kicker">90 MIN · STANDARD</span>
-<strong>按概念链通读</strong>
-<p>每节先看学习简报，再读定义、定理与例题，节末做「即时自测」回忆一遍。</p>
-<a href="ch01/sec11.md">从 1.1 开始 →</a>
-</article>
-<article class="study-path">
-<span class="path-kicker">90 MIN · MASTERY</span>
-<strong>自测卷验收</strong>
-<p>闭卷计时做完综合自测卷（100 分制），按评分标准反查薄弱概念。</p>
-<a href="ch01/mock-exam.md">进入自测卷 →</a>
-</article>
-<article class="study-path">
-<span class="path-kicker">60 MIN · REVIEW</span>
-<strong>复习三件套</strong>
-<p>速查背记卡压缩记忆 → 三章闭卷回忆卡检索输出（可导出 Anki）→ 解题工具箱查流程与验算。</p>
-<a href="memory-sheet.md">开始复习 →</a>
-</article>
-<article class="study-path">
-<span class="path-kicker">90 MIN · EXAM</span>
-<strong>考前特训</strong>
-<p>第三章考场竞技场：必考点清单 + 三轮限时赛（概念 / 计算 / 证明），附计时器与段位表。</p>
-<a href="ch03/arena.md">进入竞技场 →</a>
-</article>
-</section>
-
-## 第一章的三条主线
-
-1. **规定规则。**线性空间回答「哪些对象、按什么运算，可以稳定地做加法与数乘」；子空间回答「哪些局部仍守同一套规则」。
-2. **压缩信息。**基挑出一组不冗余的生成元，坐标把抽象向量压缩成一列数，维数记录需要多少个独立方向。
-3. **加入几何并学会分解。**内积带来长度、夹角与正交；直和保证拆法唯一，投影把「取出某个分量」变成可计算的操作。
-
-读到任何一节感到名词变多时，回到这三件事，问一句：**眼前这个定义究竟在解决规则、表示，还是分解的问题？**
-
-
-
-## 本教程怎么读
-
-全书按「卷首 → 学前准备 → 三章正文 → 章末 → 附录」组织（第一章六节、第二章五节、第三章四节，另有两个附录：正文悬置结论的完整推导与跨学科联系）。复习体系贯全书：**速查背记卡**（压缩）→ **三章闭卷回忆卡**（检索，可导出 Anki）→ **解题工具箱**（流程 / 二级结论 / 验算）。左侧目录是唯一的导航入口，页面顶部有全文搜索（或按 <kbd>/</kbd>），页脚与键盘 <kbd>←</kbd> <kbd>→</kbd> 可翻页。下面按阅读顺序列出各页：
-
-<div class="index-cards">
-<a href="entry-test.md">
-  <span class="no">测</span>
-  <span class="t">入学诊断 · 先修工具箱</span>
-  <span class="d">14 道小题定位起点 · 矩阵乘法列观点、可逆等价、秩与自由未知量等先修事实集中复习</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="preface.md">
-  <span class="no">0</span>
-  <span class="t">先读这一页 · 学习方法</span>
-  <span class="d">三条阅读路线 · 六个概念问题 · 三遍阅读法 · 怎样读证明与使用查阅页</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="proof-workshop.md">
-  <span class="no">证</span>
-  <span class="t">证明怎么下笔 · 六种骨架</span>
-  <span class="d">已知—要证—桥梁—收口 · 子空间、唯一性、无关性、集合相等、等价命题与维数证明的固定入口</span>
-  <span class="go">开始练 →</span>
-</a>
-<a href="toolbox.md">
-  <span class="no">箱</span>
-  <span class="t">解题工具箱 · 流程与二级结论</span>
-  <span class="d">10 张题型流程卡（相抵 → 满秩 → QR → Schur 全链）· 23 条二级结论（附前提与出处）· 13 颗反例弹药 · 验算清单 · 做题前 10 秒前提雷达</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec11.md">
-  <span class="no">1.1</span>
-  <span class="t">线性空间</span>
-  <span class="d">数域 · 加群与八条公理 · 基本性质四条 · 线性组合与表示（含勘误 E1）· 常见空间例库</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec12.md">
-  <span class="no">1.2</span>
-  <span class="t">线性子空间</span>
-  <span class="d">子空间判定定理 · 交空间与和空间 · 对称/反对称分解 · 零空间 N(A) 与列空间 R(A)</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec13.md">
-  <span class="no">1.3</span>
-  <span class="t">基与坐标</span>
-  <span class="d">线性相关性（Casorati）· 唯一表示定理 · 基与坐标 · 过渡矩阵 · 维数公式（含勘误 E2）</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec14.md">
-  <span class="no">1.4</span>
-  <span class="t">内积空间</span>
-  <span class="d">内积公理 · 标准内积 · Hermite 与正定矩阵 · Gram 矩阵 · 换基与矩阵合同（含勘误 E3 / E4）</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec15.md">
-  <span class="no">1.5</span>
-  <span class="t">向量长度与夹角</span>
-  <span class="d">长度与四条性质 · Cauchy–Schwarz 不等式 · 夹角与正交 · Gram 行列式 = 面积² · Gram–Schmidt 正交化 · 代数基与完备正交系的边界（含勘误 E5–E8、E10）</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/sec16.md">
-  <span class="no">1.6</span>
-  <span class="t">直和与投影</span>
-  <span class="d">直和与直和分解 · 判定定理四条等价 · 投影与求法 · 幂等矩阵 $A^2=A$ 的值域 $\dotplus$ 零空间分解 · 正交子空间与正交补 · 正交投影两法与投影公式 · Gram–Schmidt 正线上三角过渡矩阵 · $\mathbb C^n=N(A)\oplus R(A^{\mathrm H})$（含勘误 E9、E11–E13）</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/summary.md">
-  <span class="no">末</span>
-  <span class="t">全章总结 · 勘误表</span>
-  <span class="d">六节一览与概念主线 · 解题决策表 · 原课件十五处问题（E1–E15）及理由</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/recall-cards.md">
-  <span class="no">忆</span>
-  <span class="t">闭卷回忆卡 · 定义与定理</span>
-  <span class="d">11 张定义卡 · 12 张定理卡 · 条件、结论、证明第一行 · 当天 / 1 / 3 / 7 天间隔复习</span>
-  <span class="go">开始回忆 →</span>
-</a>
-<a href="ch01/exercises.md">
-  <span class="no">练</span>
-  <span class="t">习题集 · 自检表</span>
-  <span class="d">A 概念 16 题 · B 证明 14 题 · C 计算 17 题，全部附解答（默认折叠，难题另给提示）· 学习目标自检表</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch01/mock-exam.md">
-  <span class="no">考</span>
-  <span class="t">综合自测卷 · 100 分</span>
-  <span class="d">概念 10 题 · 计算 5 题 · 证明 2 题（共 17 题、90 分钟、100 分），全部新增且附评分标准与复盘方法</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/sec21.md">
-  <span class="no">2.1</span>
-  <span class="t">映射与多项式</span>
-  <span class="d">映射 → 单 / 满 / 双射 → 复合与逆 → 变换与置换 · 等势与可数性 · 带余除法、公因式、友矩阵 · 第 3 周录播</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/sec22.md">
-  <span class="no">2.2</span>
-  <span class="t">线性映射</span>
-  <span class="d">定义与十二例 · 保持线性组合 · 单射判据（去年考题）· $L(V,W)$ · 零空间与值域 · 亏加秩定理（基扩充证明）· 第 3 周录播</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/sec23.md">
-  <span class="no">2.3</span>
-  <span class="t">矩阵与同构</span>
-  <span class="d">矩阵的读法（第 $j$ 列 $=$ 基像的坐标）· 存在唯一性 · 同构 ⟺ 维数相等 · $\beta=A\alpha$ · 换基 $B=P^{-1}AQ$ 与相似 · 矩阵的秩 $=$ 映射的秩 · 官方课件</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/sec24.md">
-  <span class="no">2.4</span>
-  <span class="t">特征值与特征向量</span>
-  <span class="d">特征值与特征向量的翻译 · 特征子空间 · 几何重数与代数重数 · 相似不变量 · 设计基使矩阵为指定形式 · 依第 5 周录播整理</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/sec25.md">
-  <span class="no">2.5</span>
-  <span class="t">正交变换与酉变换</span>
-  <span class="d">正交矩阵与酉矩阵 · 四条等价刻画 · 特征值的模为 1 · Givens 旋转 · Householder 反射 · 依第 5 周录播整理</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/summary.md">
-  <span class="no">二末</span>
-  <span class="t">第二章总结（2.1–2.5）</span>
-  <span class="d">五节一览 · 主线与四句话 · 母题 · 回忆卡 · 素材状态与后续 · 勘误与口述订正 · 习题 · 自检表</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch02/recall-cards.md">
-  <span class="no">忆</span>
-  <span class="t">闭卷回忆卡 · 第二章</span>
-  <span class="d">12 张定义卡 · 13 张定理卡 · 映射 → 线性映射 → 矩阵 → 特征值 → 正交 / 酉 全链检索</span>
-  <span class="go">开始回忆 →</span>
-</a>
-<a href="ch03/sec31.md">
-  <span class="no">3.1</span>
-  <span class="t">相抵分解</span>
-  <span class="d">相抵分解式 $A=P^{-1}\Gamma Q$ 与标准形 · 分解不唯一 / 标准形唯一 · 分块矩阵法求 $P$、$Q$ · 用标准形解方程组 · 右逆与左逆 · $\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ · 官方课件</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch03/sec32.md">
-  <span class="no">3.2</span>
-  <span class="t">满秩分解</span>
-  <span class="d">满秩分解定理 $A=BC$（基 $\times$ 坐标）· 两条构造与 RREF 算法 · 不唯一 $=$ 相差可逆因子 $D$ · 矩阵方程 $AXA=A$ · 伪逆预告 · 官方课件</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch03/sec34.md">
-  <span class="no">3.4</span>
-  <span class="t">QR 分解</span>
-  <span class="d">定义与正线约定 · QR 分解定理（GS 即算法、唯一性与对角酉阵刻画）· 列正交规范与长方阵完全分解 · QR 算法与特征值 · 官方课件</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch03/sec35.md">
-  <span class="no">3.5</span>
-  <span class="t">Schur 分解</span>
-  <span class="d">两个 Schur 引理（相似 / 酉相似于上三角）· 实阵边界（旋转阵反例）· 谱映射 · Hamilton–Cayley · 逆矩阵公式 · 最小多项式与候选法 · 官方课件</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch03/summary.md">
-  <span class="no">三末</span>
-  <span class="t">第三章总结（3.1–3.5）</span>
-  <span class="d">四节一览 · 主线与六句话 · 母题 · 回忆卡 · 勘误与补注（E3.1–E3.7）· 习题 61 题 · 双分卷自测 · 竞技场 · 自检表 45 条</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="ch03/recall-cards.md">
-  <span class="no">忆</span>
-  <span class="t">闭卷回忆卡 · 第三章</span>
-  <span class="d">8 张定义卡 · 16 张定理卡 · 相抵 → 满秩 → QR → Schur 全景图检索 + 三问加试</span>
-  <span class="go">开始回忆 →</span>
-</a>
-<a href="ch03/arena.md">
-  <span class="no">竞</span>
-  <span class="t">考场竞技场 · 计时特训</span>
-  <span class="d">必考点清单（课件小结亲排 / 思考题链 / 课堂考情）· 三轮限时赛 · 步骤分引擎与抢救室 · 段位表与重训日程</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="appendix/appendix-a.md">
-  <span class="no">附 A</span>
-  <span class="t">附录 A · 延伸证明与推导</span>
-  <span class="d">极化恒等式 · Gram 行列式与 Hadamard 不等式 · 迹与行列式 · 几何重数 ≤ 代数重数 · Cayley–Hamilton · 正定矩阵开方 · Bessel 与 Parseval · Moore–Penrose 伪逆（超出考核范围）</span>
-  <span class="go">进入 →</span>
-</a>
-<a href="appendix/appendix-b.md">
-  <span class="no">附 B</span>
-  <span class="t">附录 B · 走向其他学科</span>
-  <span class="d">量子力学（C–S 即概率合法）· 信号处理（DFT 酉性）· 最小二乘与 PCA · 数值分析（QR 路线）· 微分方程（$\mathrm e^{At}$）· 低秩近似与推荐系统（超出考核范围）</span>
-  <span class="go">进入 →</span>
-</a>
+<div class="cover-object" aria-hidden="true">
+  <div class="book-3d"><div class="book"><div class="face face-front">{{#include assets/covers/matrix.svg}}</div></div></div>
 </div>
+</section>
 
-<p class="kbd-hint">提示：解答默认折叠，点击「解答」展开；难题另有「提示」层，先看提示再自己推；习题页有「展开全部解答」按钮；打印时会自动展开全部折叠内容。</p>
+<section class="book-contents" aria-label="目录">
+<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">3 章 · 15 节</span></div>
+<div class="bc-list">
+<a class="bc-row" href="ch01/overview.md"><span class="bc-no">01</span><span class="bc-title">第一章 · 线性空间引论</span><span class="bc-count">6 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch02/overview.md"><span class="bc-no">02</span><span class="bc-title">第二章 · 线性映射与矩阵</span><span class="bc-count">5 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch03/overview.md"><span class="bc-no">03</span><span class="bc-title">第三章 · 矩阵分解</span><span class="bc-count">4 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+</div>
+<p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。</p>
+</section>
+
+<footer class="book-colophon">
+  <span class="colophon-kicker">COLOPHON / 题记</span>
+  <span class="colophon-main">依据课程课件与课堂录播整理；图版与公式由 SVG / KaTeX 生成。</span>
+  <span class="colophon-meta">MDBOOK · 2026-10</span>
+</footer>

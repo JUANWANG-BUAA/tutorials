@@ -2,13 +2,10 @@
 
 旋转、合成、角度表示、齐次变换——这些积木已经备齐，本节就来回答运动学的第一个主问题：**给定关节变量，求末端位姿**。两连杆的情形靠几何直觉就能算出来（原书例 2.4）；可一旦面对真实机械手，我们需要的是一套系统化、参数最少的算法，这就是 **Denavit–Hartenberg（DH）法**。本节对应录播 0:39:43–1:13:00（其中 0:47:16–0:52:47 为课间）。
 
-<aside class="lesson-brief" aria-label="2.8 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>齐次变换及其连乘（[@thm-2.7.A]）；开链 / 关节自由度语言（[@def-1.2.1]、[@def-1.2.2]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>连杆 / 关节编号约定；正运动学方程 $T_e^b(q)$（式 2.48）与末端执行器坐标系 $(\boldsymbol n_e,\boldsymbol s_e,\boldsymbol a_e)$；看守模型（系挂在哪根杆、看哪个关节）；DH 建系四规则、不唯一情形与拟人臂四步例解；四参数 $(a_i,\alpha_i,d_i,\vartheta_i)$「3 常 1 变」；$A_i^{i-1}$ 的两步分解与逐列验算（式 2.52）；DH 十步操作流程。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>拿到任意开链结构图能独立建出 DH 坐标系、填出 4n 参数表并写出 $T_n^0(q)$；能背出看守模型（$z_{i-1}$ = 关节 $i$ 的轴）；能说出每条建系规则「为哪个参数服务」（[@method-2.8.map]）。</p></div>
-</aside>
-
 <a id="sec-2.8.1"></a>
+
+
+{{#include ../assets/figures/robot-dh.md}}
 
 ## 2.8.1 开链：编号约定、正运动学方程与递归
 

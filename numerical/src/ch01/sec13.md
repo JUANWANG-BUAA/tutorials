@@ -2,12 +2,6 @@
 
 前两节反复说「误差大小」，但误差常常不是单个数：真值 $\boldsymbol{x}\in\mathbb{R}^n$ 与近似解 $\boldsymbol{a}$ 之差 $\boldsymbol{x}-\boldsymbol{a}$ 就是一个**向量**。要比较误差大小、陈述收敛与稳定，必须先给「向量的长度」和「矩阵的大小」立规矩——这就是范数。本节先建立范数的公理，再算出五个最常用范数的公式，然后证明等价性与相容性，最后以 Neumann 级数和条件数预告范数的用途。原书定理 1.1–1.5 完整保留（按全书统一的**节级编号**排为 [@thm-1.3.1]、[@thm-1.3.3]–[@thm-1.3.6]，逐条对照表见下）；**原书省略的证明全部补全**（[@thm-1.3.1] 的 1-范数与 ∞-范数、[@thm-1.3.3] 的等价性、F-范数的全部性质）。
 
-<aside class="lesson-brief" aria-label="1.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>向量内积与 Cauchy–Schwarz 不等式的陈述；对称矩阵的实特征值与标准正交特征基；齐次线性方程组非零解的存在条件。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>向量范数三公理与矩阵范数四公理；$\lVert\boldsymbol{x}\rVert_p$ 与 $\lVert A\rVert_{1,2,\infty,F}$ 的计算公式；从属范数与相容性；等价定理；定理 1.3.6（Neumann 界）与 Neumann 级数。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>拿到矩阵能立刻写出 $\lVert A\rVert_1,\lVert A\rVert_\infty,\lVert A\rVert_F$，能走完 $\lVert A\rVert_2=\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$ 的完整流程；能判断一个候选函数是不是范数；能用 $\lVert A\rVert\lt1$ 判断 $I\pm A$ 可逆并给出逆的界。</p></div>
-</aside>
-
 ::: note 编号对照 · 原书 ⇄ 本教程
 本节完整保留原书 1.3 节的全部定理，但按全书统一的**节级编号**重排；原书编号只出现在盒子标题的括注里。两套编号的对照关系如下，不必自己记：
 

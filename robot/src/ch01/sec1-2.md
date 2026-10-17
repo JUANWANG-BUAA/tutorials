@@ -2,12 +2,6 @@
 
 本节回答三个问题：**机械手由什么构成、自由度怎么数？五种经典构形各有什么脾气？腕和末端执行器解决什么问题？**机械结构是机器人的关键特征，而本节梳理的「构形谱系」正是[第二章运动学](../ch02/overview.md)（五种构形的正逆运动学将逐一推导）的物理预备。
 
-<aside class="lesson-brief" aria-label="1.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec1-1.html#sec-1.1.3">1.1.3</a> 的机械系统概念；空间直角坐标 / 圆柱坐标 / 球坐标三种描述方式（高中数学）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>连杆—关节—自由度—工作空间的概念链；开链与闭链的拓扑区分；五种构形的对比表；球形腕的解耦原理。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定任一构形（或实物照片）能说出关节序列、自由度数、工作空间形状与两三项典型应用；能解释为什么 3D 任意定位定向任务需要 6 个自由度。</p></div>
-</aside>
-
 <a id="sec-1.2.1"></a>
 
 ## 1.2.1 运动链、关节与自由度

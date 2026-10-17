@@ -2,13 +2,10 @@
 
 本节回答三个问题：**「机器人」这个词从哪里来、科学定义是什么？一台机器人由哪些子系统构成？这门学科为什么是交叉学科？** 它同时是全章的总纲：1.2、1.3 讲「身体」（两类机械结构），1.4 讲「用武之地」，1.5 讲「方法论」——后面这些内容，全部挂靠在本节给出的系统构成框架上。
 
-<aside class="lesson-brief" aria-label="1.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>高中物理（力、运动、传感器的常识）；无需编程与数学准备。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>机器人学的文化源流与科学定义；机器人系统的四子系统构成；「机械—控制—计算机—电子」交叉学科观。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能不看书写出四子系统及其功能分工；能解释为什么「长得像人」不是机器人的定义要件；能复述三定律并说明它属于科幻设定而非工程规范。</p></div>
-</aside>
-
 <a id="sec-1.1.1"></a>
+
+
+{{#include ../assets/figures/robot-system.md}}
 
 ## 1.1.1 从神话到科幻：词源与三定律
 

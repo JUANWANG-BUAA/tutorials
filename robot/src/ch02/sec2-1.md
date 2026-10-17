@@ -2,13 +2,12 @@
 
 要描述机器人，第一步是学会描述**一个刚体**。刚体在空间中的完整描述 = **位置**（参考点坐标）+ **姿态**（固连坐标系三根轴的指向），二者合称**位姿**。本节给出这两半的数学写法——其中姿态那一半，正是 2.2 节旋转矩阵的定义来源。录播对应第 1 周 1:56–2:01（幻灯片 07016 / 07208）。
 
-<aside class="lesson-brief" aria-label="2.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>空间直角坐标系与向量表示；单位向量、投影（点积）的几何含义。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>位姿的两半概念；位置向量 $\boldsymbol o'$ 的写法；用**方向余弦**完整描述姿态（原书式 2.1–2.2）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能说清「为什么只有位置不足以确定刚体」；能写出固连系三轴在参考系中的展开式并指出每个系数是什么。</p></div>
-</aside>
+<aside class="margin-note"><span class="mn-label">NOTE / 6 DOF</span>位置给 3 个坐标；姿态给 3 个独立角。两者合起来才是刚体的 6 个自由度。</aside>
 
 <a id="sec-2.1.1"></a>
+
+
+{{#include ../assets/figures/robot-pose.md}}
 
 ## 2.1.1 位姿与位置的描述
 

@@ -7,12 +7,6 @@
 贯穿本节的一对要求是：**既要能表示全部向量，又不要携带冗余。**「张成」保证够用，「线性无关」排除多余；两者同时成立就是基，唯一表示由此而来，坐标就是那组唯一系数。
 :::
 
-<aside class="lesson-brief" aria-label="1.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>先回顾 1.2</strong><p>生成子空间、线性方程组和交空间与和空间。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>相关性 → 基 → 坐标 → 维数 → 换基的完整概念链。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能解释坐标为何依赖基，并正确写出过渡矩阵与坐标变换。</p></div>
-</aside>
-
 <a id="sec-1.3.1"></a>
 
 ## 1.3.1 线性相关与线性无关

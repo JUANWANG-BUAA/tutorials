@@ -2,13 +2,10 @@
 
 把 9 量的姿态矩阵压缩成 **3 个角度**，就得到两种最常用的欧拉角：机器人学惯用的 **ZYZ** 与航空航海惯用的 **RPY**。本节还收录了课堂的编外数值分析——**为什么反解一律用 `Atan2`**（录播 0:11:00–0:15:36）。全节对应录播 0:05:30–0:21:53。
 
-<aside class="lesson-brief" aria-label="2.4 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>基本旋转矩阵与右乘规则（[@thm-2.3.A]）；「9 量 3 独立」账本（[@note-2.2.2]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>ZYZ / RPY 的旋转序列与合成矩阵（原书式 2.18、2.21）；由 $R$ 反解两组角度的完整公式（式 2.19–2.20、2.22–2.23）；奇点结构（$s_\vartheta=0$、$c_\vartheta=0$）；<code>Atan2</code> 的使用理由。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定 $R$ 的元素能在 2 分钟内写出两组欧拉角的两支解；能解释 27 种组合为何只剩 12 种；能说出 ZYZ 与 RPY 在「绕哪套轴转、乘法方向」上的对偶。</p></div>
-</aside>
-
 <a id="sec-2.4.1"></a>
+
+
+{{#include ../assets/figures/robot-euler.md}}
 
 ## 2.4.1 最简表示与 12 种可行序列
 

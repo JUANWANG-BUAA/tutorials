@@ -4,12 +4,6 @@
 
 **怎么读这一节**：九张参数表都是 [2.8.2](sec2-8.md#sec-2.8.2) 四步流水线（定轴线 → 放系 → 判关系 → 填表）在不同骨架上的重复。建议对每个结构先遮住表格，问三个问题——**轴线两两什么关系？原点放在哪？$\alpha$ 怎么判号？**——再对表验证；发现自己填出的符号与书上一致时，DH 法才算真正学会。
 
-<aside class="lesson-brief" aria-label="2.9 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>DH 全流程（[@def-2.8.3]、[@method-2.8.A]）；ZYZ 合成矩阵（<a href="sec2-4.html#sec-2.4.2">2.4.2</a>）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>九种结构的 DH 表与正运动学；「零位约定 vs 编程零位」；球形腕旋转块 = ZYZ 矩阵的解耦预兆；斯坦福 = 球臂 $\oplus$ 球腕的直接连乘条件；闭链化归开链（平行四边形臂）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>遮住参数表能独立重建任意一臂；能说出每臂「哪些参数为零、为什么」；能解释斯坦福可以连乘而带腕拟人臂必须插常值变换的原因。</p></div>
-</aside>
-
 ::: note 零位约定（原书开篇） {#note-2.9.zero}
 各结构的正运动学，都以「DH 建图下关节变量全为零」的那个**位姿**作为参考。它与机器人实际编程中使用的零参考值（零位标定值）可以不同；要让两者对上，就得对传感器读数加一个**常值漂移**。录播 1:12:51，老师结合「每个关节转多少、它会到哪」强调了这一点。
 :::

@@ -7,12 +7,6 @@
 子空间的关键不在形状，而在**对线性组合封闭**。齐次约束通常给出子空间；平移、常数项与不等式则常把零向量挡在门外。这是比记忆例子更可靠的辨别线索。
 :::
 
-<aside class="lesson-brief" aria-label="1.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>先回顾 1.1</strong><p>线性空间八条公理，特别是加法与数乘的封闭性。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>子空间判定流程，交、和、生成、零空间与列空间。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>看到一个子集时，能先查零元，再用一条线性组合检验封闭。</p></div>
-</aside>
-
 <a id="sec-1.2.1"></a>
 
 ## 1.2.1 子空间的定义与平凡子空间

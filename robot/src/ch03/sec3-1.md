@@ -2,13 +2,10 @@
 
 位姿运动学 $x_e=k(q)$ 是高度非线性的；但对时间求导之后，非线性问题就在**速度层面**线性化了——线性化后的映射正是雅可比矩阵。本节从几何角度（矢量传递）把它推出来：先解决「旋转矩阵怎么求导」（3.1.1），再沿关节链递推连杆速度（3.1.2），最后把每个关节的贡献拼成矩阵（3.1.3）。录播 0:27:00–1:12:12。
 
-<aside class="lesson-brief" aria-label="3.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>DH 法与正运动学 $T_i^0=A_1^0\cdots A_i^{i-1}$（[@def-2.8.3]）；旋转矩阵的正交性 $RR^{\mathrm T}=I$（[@def-2.2.2]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>微分运动学方程 $v_e=J(q)\dot q$；$\dot R=S(\omega)R$ 的完整推导链；连杆线速度 / 角速度递推；逐列构造公式（绿框）与坐标变换 $J^u$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立重推 $RR^{\mathrm T}=I\Rightarrow\dot R=SR$；能说出每一列 $J_i$ 的物理含义（其余关节锁死时单关节的速度贡献）；给定 $T_i^0$ 能直接写出全部 $z_{i-1},p_{i-1}$ 并组装 $J$。</p></div>
-</aside>
-
 <a id="sec-3.1.1"></a>
+
+
+{{#include ../assets/figures/robot-jacobian.md}}
 
 ## 3.1.1 旋转矩阵求导：反对称算子登场
 

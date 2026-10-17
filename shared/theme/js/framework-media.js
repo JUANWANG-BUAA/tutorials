@@ -64,9 +64,17 @@
     var art = figure.querySelector("svg, img");
     if (!art) return;
     var clone = art.cloneNode(true);
-    clone.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
+    /* 只摘掉根节点 id。SVG 内部的 gradient / marker / clipPath 都被
+       fill="url(#…)" 引用，逐个删除会让放大后的图失去底色与箭头。 */
     clone.removeAttribute("id");
-    stage.replaceChildren(clone);
+    var caption = figure.querySelector("figcaption");
+    if (caption) {
+      var captionClone = caption.cloneNode(true);
+      captionClone.className = "figure-zoom-caption";
+      stage.replaceChildren(clone, captionClone);
+    } else {
+      stage.replaceChildren(clone);
+    }
     lastZoomTrigger = figure;
     dialog.showModal();
   }
@@ -84,6 +92,7 @@
       figure.setAttribute("aria-label", "放大查看插图");
       figure.addEventListener("click", function (event) {
         if (event.target.closest("a, button")) return;
+        event.preventDefault();
         openZoom(figure);
       });
       figure.addEventListener("keydown", function (event) {

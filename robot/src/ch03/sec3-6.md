@@ -2,12 +2,6 @@
 
 同一个角速度，既可以投影到基坐标系的三根正交轴（几何雅可比），也可以「投影」到欧拉角的三根**非正交**瞬时轴（分析雅可比）。两者之间只差一个由欧拉角决定的 $\;6\times6$ 变换矩阵 $T_A$。本节就把这个差别的物理来源讲清楚——它正是上一章 ZYZ 欧拉角（[2.4](../ch02/sec2-4.md)）与本章几何雅可比的接缝。录播 2:17:32–2:24:12。
 
-<aside class="lesson-brief" aria-label="3.6 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>ZYZ 欧拉角与奇点（[@thm-2.4.B]）；角速度的物理意义（[@def-3.1.2]）；「数学准备」中的叉积与反对称矩阵。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>分析雅可比的定义（把正运动学直接对关节变量求导）；$\omega_e=T(\varphi_e)\dot\varphi_e$ 与 $T(\varphi)$ 的 ZYZ 显式（三根瞬时轴方向的直接推导）；$J_A=T_A^{-1}J$；欧拉角歧义与两种速度的可积分性。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能说明「前三个分量一致、后三个不一致」；能写出 $T_A$ 的分块结构并解释左上角为何是单位阵；能指出 $J_A$ 在哪里失效及原因。</p></div>
-</aside>
-
 <a id="sec-3.6.1"></a>
 
 ## 3.6.1 定义与对比

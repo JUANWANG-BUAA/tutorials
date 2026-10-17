@@ -2,13 +2,10 @@
 
 2.1 建立了正交的语言，本节把它用到**矩阵**上：**矩阵 $A$ 把输入、输出空间各拆成两块互为正交补的子空间**（2.2.1–2.2.2）——四个基本子空间。有了这种拆法，「不相容方程组的最优解」「向量到子空间的投影」就有了统一的几何图像（2.2.3–2.2.5），最小二乘随之落地。
 
-<aside class="lesson-brief" aria-label="2.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>矩阵乘法与转置；线性相关与秩；齐次方程组解空间的结构；2.1 的正交与正交基坐标公式。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>四个基本子空间 + 两对正交补 + 秩定理；正交分解定理；投影矩阵 $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 的三条性质；最小二乘的正交条件 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定一个具体矩阵，能写出四个子空间的一组基与维数；能画出/说出「$\boldsymbol{b}$ 分解为列空间分量 + 左零空间分量」的几何图；能自己推导正态方程，并说清它为什么就是「余项垂直」的代数翻译。</p></div>
-</aside>
-
 <a id="sec-2.2.1"></a>
+
+
+{{#include ../assets/figures/numerical-subspaces.md}}
 
 ## 2.2.1 四个基本子空间
 

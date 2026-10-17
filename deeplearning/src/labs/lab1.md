@@ -2,12 +2,6 @@
 
 本实验对应第 1、2 讲：先用**一层网络**把「前向 → 损失 → 反向 → 更新」跑通，建立张量与自动微分的手感；再用**字符级 RNN** 学习一段旋律的序列规律，并**从初始片段续写**出新乐句。全程不需要大数据集。
 
-<aside class="lesson-brief" aria-label="Lab 1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>Python 基础；[第 1 讲](../lectures/lec01/overview.md)的 MLP 前向与反向传播；[第 2 讲](../lectures/lec02/overview.md)的 RNN 隐状态递推。</p></div>
-<div><span class="brief-label">TARGET</span><strong>你将做出</strong><p>一个用梯度下降拟合的简单函数；一个字符级 RNN 音乐模型；一段由模型续写的旋律，并观察**温度**如何改变生成风格。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>验收标准</strong><p>损失曲线单调下降（非发散）；模型能从给定片段续写出语法上「像」训练数据的乐句；能解释温度趋近 0 与趋近 1 时生成结果的差异。</p></div>
-</aside>
-
 ## 1. 环境与数据
 
 - **运行环境**：Python 3.9+，TensorFlow 或 PyTorch 任选其一（本书示例给出 PyTorch 版本，思路与框架无关）。

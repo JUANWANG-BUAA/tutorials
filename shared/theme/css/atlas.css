@@ -1,0 +1,1371 @@
+/*
+ * atlas — 教程库的「图鉴」视觉层（四本书共用一份）
+ * ---------------------------------------------------------------------------
+ * 目标：把「可读的技术文档」升级为「可看、可逛、可记的教学图鉴」。
+ *   §1  设计令牌补充（图鉴色板 / 圆角 / 显示字体 / 网格与光晕）
+ *   §2  页面底色与框架（菜单栏、侧栏、滚动条）
+ *   §3  页首 H1 图鉴封面（书脊光带 + 书名印记 + 阅读元信息）
+ *   §4  正文层级（H2 / H3 / 链接 / 首段）
+ *   §5  语义盒与练习题（图标、渐变、微交互）
+ *   §6  插图系统（图鉴卡片、原始幻灯片、图注、全宽图）
+ *   §7  表格 / 代码 / 引用 / 公式
+ *   §8  导览组件（学习路径、简报、页内目录、继续阅读）
+ *   §9  书封 3D 组件（书首页）
+ *   §10 图鉴总览（全页插图画廊，atlas.js 构建）
+ *   §11 响应式 / 打印 / 动效降级
+ *
+ * 加载顺序：base.css → <book>.css → katex.css → framework.css → atlas.css → prefs.css
+ * 阅读偏好层必须最后加载；本文件只用令牌与更高的组件特异性，不覆盖读者的
+ * 字体 / 字号 / 行距 / 版心选择。
+ */
+
+/* ======================================================================== *
+ * §1  设计令牌
+ * ======================================================================== */
+:root{
+  /* 展示字体：标题与封面用宋体骨架，正文保持清晰的无衬线。 */
+  --display:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
+  --atlas-radius:22px;
+  --atlas-radius-sm:14px;
+  --atlas-cyan:#0e8f8a;
+  --atlas-gold:#b7791f;
+  --atlas-plum:#7b4bc4;
+  --atlas-blue:#2457d6;
+  --atlas-glow:color-mix(in srgb,var(--accent) 24%,transparent);
+  --atlas-cyan-soft:color-mix(in srgb,var(--atlas-cyan) 10%,transparent);
+  --atlas-gold-soft:color-mix(in srgb,var(--atlas-gold) 12%,transparent);
+  --atlas-grid:color-mix(in srgb,var(--ink) 4.5%,transparent);
+  --atlas-grid-strong:color-mix(in srgb,var(--ink) 8%,transparent);
+  --atlas-sheen:color-mix(in srgb,#fff 32%,transparent);
+  --atlas-ink-shadow:0 1px 2px color-mix(in srgb,var(--shadow-ink) 8%,transparent);
+  --atlas-shadow:0 26px 60px -34px color-mix(in srgb,var(--shadow-ink) 32%,transparent);
+  --atlas-grad:linear-gradient(115deg,var(--accent) 0%,var(--atlas-cyan) 58%,var(--atlas-gold) 100%);
+  --atlas-grad-soft:linear-gradient(115deg,color-mix(in srgb,var(--accent) 14%,transparent),color-mix(in srgb,var(--atlas-cyan) 10%,transparent) 58%,color-mix(in srgb,var(--atlas-gold) 10%,transparent));
+}
+html.coal,html.navy,html.ayu{
+  --atlas-cyan:#5fd4c6;
+  --atlas-gold:#e8b260;
+  --atlas-plum:#bda1f0;
+  --atlas-blue:#8fb4ff;
+  --atlas-grid:color-mix(in srgb,var(--ink) 5.5%,transparent);
+  --atlas-grid-strong:color-mix(in srgb,var(--ink) 10%,transparent);
+  --atlas-sheen:color-mix(in srgb,#fff 13%,transparent);
+  --atlas-ink-shadow:0 1px 2px color-mix(in srgb,#000 28%,transparent);
+  --atlas-shadow:0 30px 70px -34px color-mix(in srgb,#000 62%,transparent);
+}
+html.rust{
+  --atlas-cyan:#4f847c;
+  --atlas-gold:#a9742b;
+  --atlas-blue:#8a5a3a;
+}
+@media (prefers-color-scheme:dark){
+  /* 首页 3D 书墙自身有独立主题，不依赖这里；此段只留空以防止外部样式误判。 */
+}
+
+/* ======================================================================== *
+ * §2  页面底色与框架
+ * ------------------------------------------------------------------------
+ * 不做「整页卡片」：长文阅读需要连续纸面。只在页面顶部铺一层极淡的
+ * 冷色光晕与纸纹，让正文从「纯白画布」变成有空间感的页面。
+ * ======================================================================== */
+html.light body,html.rust body,html.navy body,html.coal body,html.ayu body{
+  background:var(--page);
+}
+.page{
+  background:
+    radial-gradient(1100px 520px at 76% -8%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 62%),
+    radial-gradient(900px 460px at 12% -12%,color-mix(in srgb,var(--atlas-cyan) 5%,transparent),transparent 58%),
+    var(--page);
+  background-attachment:fixed,fixed,scroll;
+}
+#mdbook-page-wrapper{isolation:isolate}
+
+/* 菜单栏：半透明玻璃 + 极细高光；窄屏仍保持可读的覆盖度。 */
+#mdbook-menu-bar{
+  background:color-mix(in srgb,var(--page) 88%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--page) 70%,transparent),0 10px 30px -28px var(--shadow-ink);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  #mdbook-menu-bar{
+    background:color-mix(in srgb,var(--page) 76%,transparent);
+    -webkit-backdrop-filter:blur(16px) saturate(1.25);
+    backdrop-filter:blur(16px) saturate(1.25);
+  }
+}
+#mdbook-menu-bar .menu-title{
+  font-family:var(--display);
+  font-weight:700;letter-spacing:.06em;
+}
+#mdbook-menu-bar .menu-title::before{
+  content:"";
+  display:inline-block;width:7px;height:7px;margin-right:9px;
+  border-radius:2px;transform:rotate(45deg) translateY(-1px);
+  background:var(--atlas-grad);
+  box-shadow:0 0 12px var(--accent-glow,var(--atlas-glow));
+}
+#mdbook-menu-bar .right-buttons{gap:4px}
+
+/* 侧栏：纸色 + 顶部渐隐；当前项用「左侧光条 + 染色」而不是整行反白。 */
+#mdbook-sidebar{
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--accent) 4%,var(--sidebar)) 0%,var(--sidebar) 280px),
+    var(--sidebar);
+  border-right:1px solid color-mix(in srgb,var(--line) 85%,transparent);
+}
+#mdbook-sidebar .chapter a.active,
+#mdbook-sidebar .chapter a.current-header{
+  position:relative;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 12%,transparent),color-mix(in srgb,var(--accent) 4%,transparent));
+  box-shadow:inset 3px 0 0 var(--accent);
+  border-radius:6px;
+}
+#mdbook-sidebar .chapter a.active::after{
+  content:"";position:absolute;right:8px;top:50%;width:4px;height:4px;margin-top:-2px;
+  border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+#mdbook-sidebar .chapter-item.is-read > .chapter-link-wrapper:has(> a.active)::before{display:none}
+#mdbook-sidebar .chapter li.part-title{
+  border-top:1px solid color-mix(in srgb,var(--line) 85%,transparent);
+  color:var(--muted);
+}
+#mdbook-sidebar .chapter li.part-title::before{
+  content:"";
+  display:inline-block;width:13px;height:2px;margin-right:8px;vertical-align:3px;
+  background:var(--atlas-grad);border-radius:1px;
+}
+#mdbook-sidebar .sidebar-scrollbox{padding-top:6px}
+#mdbook-sidebar-resize-handle:hover .sidebar-resize-indicator{background:var(--accent)}
+
+/* 滚动条：细、低对比，悬停才显色。 */
+*{scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--line-strong) 80%,transparent);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--accent) 55%,var(--line-strong));border:2px solid transparent;background-clip:padding-box}
+
+/* 顶部阅读进度：渐变细线，带一点辉光。 */
+#progress{
+  height:3px;
+  background:var(--atlas-grad);
+  box-shadow:0 0 14px color-mix(in srgb,var(--accent) 45%,transparent);
+  border-radius:0 2px 2px 0;
+}
+
+/* ======================================================================== *
+ * §3  页首 H1 图鉴封面
+ * ------------------------------------------------------------------------
+ * 每个正文页的第一屏标题都变成一块「章节铭牌」：
+ *   顶部书系眉标（atlas.js 注入）· 大字号宋体标题 · 底栏阅读元信息（atlas.js 注入）
+ *   背景：纸面渐变 + 细网格 + 右侧书系印记（用 mask 上色，随主题/强调色变化）
+ * JS 不可用时，眉标与元信息自动缺席，版式仍成立。
+ * ======================================================================== */
+.content main > h1{
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:0 0 26px;
+  padding:38px 36px 34px;
+  border:1px solid color-mix(in srgb,var(--line) 92%,var(--accent));
+  border-radius:var(--atlas-radius);
+  background:
+    radial-gradient(90% 160% at 100% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 58%),
+    linear-gradient(155deg,color-mix(in srgb,var(--paper) 94%,var(--accent)) 0%,var(--paper) 46%,color-mix(in srgb,var(--paper-soft) 70%,var(--paper)) 100%);
+  box-shadow:var(--atlas-ink-shadow),var(--atlas-shadow);
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(30px,3.5vw,42px);
+  line-height:1.22;
+  letter-spacing:-.005em;
+}
+.content main > h1::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(to right,var(--atlas-grid) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--atlas-grid) 1px,transparent 1px);
+  background-size:30px 30px;
+  -webkit-mask-image:radial-gradient(125% 110% at 100% 0%,#000 0%,transparent 62%);
+  mask-image:radial-gradient(125% 110% at 100% 0%,#000 0%,transparent 62%);
+  opacity:.85;
+}
+.content main > h1::after{
+  content:"";position:absolute;right:-26px;bottom:-34px;z-index:0;pointer-events:none;
+  width:270px;height:270px;
+  background:linear-gradient(155deg,var(--accent),var(--atlas-cyan) 55%,var(--atlas-gold));
+  -webkit-mask:var(--hero-mark,var(--hero-mark-default)) center/contain no-repeat;
+  mask:var(--hero-mark,var(--hero-mark-default)) center/contain no-repeat;
+  opacity:.13;
+  transform:rotate(-4deg);
+}
+.content main > h1 .header{
+  position:relative;z-index:1;
+  display:inline;
+  color:var(--ink);
+  background:none;
+}
+.content main > h1 .header:hover{color:var(--ink)}
+.content main > h1 .header::after{display:none}
+.content main > h1 .h1-kicker{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:9px;
+  margin:0 0 10px;
+  color:var(--accent-text);
+  font:700 10.5px/1.5 var(--mono);
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.content main > h1 .h1-kicker::before{
+  content:"";width:20px;height:2px;border-radius:1px;background:var(--atlas-grad);
+}
+.content main > h1 .h1-kicker .h1-kicker-book{color:var(--ink-2)}
+.content main > h1 .h1-meta{
+  position:relative;z-index:1;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;
+  margin-top:16px;
+  color:var(--muted);
+  font:600 10.5px/1.5 var(--mono);
+  letter-spacing:.06em;
+}
+.content main > h1 .h1-meta span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.content main > h1 .h1-meta span::before{
+  content:"";width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:.8;
+}
+.content main > h1 .h1-meta span:first-child::before{display:none}
+.content main > h1 .h1-meta .h1-meta-fig{color:var(--accent-text)}
+
+/* 页首 H1 里的锚点 # 提示不再需要（标题本身就是封面）；保留键盘可读。 */
+.content main > h1:hover .header::after{opacity:0}
+
+/* ======================================================================== *
+ * §4  正文层级
+ * ======================================================================== */
+.content h1, .content h2, .content h3, .content h4{font-family:var(--display)}
+
+.content h2{
+  position:relative;
+  display:flex;align-items:center;gap:13px;
+  margin:var(--reading-h2-gap) 0 22px;
+  padding:0 0 14px;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 90%,var(--accent));
+  font-size:clamp(23px,2.35vw,27px);
+  line-height:1.38;font-weight:700;
+  letter-spacing:.005em;
+}
+.content h2::before{
+  content:"";flex:0 0 auto;
+  width:22px;height:4px;border-radius:3px;
+  background:var(--atlas-grad);
+  box-shadow:0 2px 10px -2px var(--accent-glow,var(--atlas-glow));
+}
+.content h2 .header{display:inline;min-width:0;color:inherit}
+.content h2 .header:hover{color:var(--accent-text)}
+
+.content h3{
+  position:relative;
+  margin:var(--reading-h3-gap) 0 13px;
+  padding-left:14px;
+  border-left:3px solid color-mix(in srgb,var(--accent) 45%,var(--line));
+  font-size:20px;line-height:1.45;font-weight:700;
+}
+.content h3 .header{color:inherit}
+.content h3:hover{border-left-color:var(--accent)}
+.content h4{font-family:var(--display);color:var(--ink);font-size:16px}
+.content h4::before{border-top-color:var(--accent)}
+
+.content p{text-wrap:pretty}
+.content p a,.content li a,.content td a,.content figcaption a,.content .box a{
+  text-decoration-line:underline;
+  text-decoration-color:color-mix(in srgb,var(--accent) 30%,transparent);
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  transition:text-decoration-color 140ms ease,color 140ms ease,background-color 140ms ease;
+}
+.content p a:hover,.content li a:hover,.content td a:hover,.content figcaption a:hover,.content .box a:hover{
+  text-decoration-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 7%,transparent);
+  border-radius:2px;
+}
+
+/* ======================================================================== *
+ * §5  语义盒：从「灰盒子」升级为「带图标的彩色纸条」
+ * ------------------------------------------------------------------------
+ * 图标用 mask + currentColor 上色，暗色主题自动适配；图标只是装饰，
+ * 盒子的语义仍由 box-tag 文本承担（读屏不会只读到图标）。
+ * ======================================================================== */
+:root{
+  --ico-def:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5v-13Zm2.5-.5a.5.5 0 0 0-.5.5v13c0 .28.22.5.5.5H18V5H6.5Z'/%3E%3Cpath d='M8 8h7v1.6H8V8Zm0 3.5h7V13H8v-1.5Zm0 3.5h4.6v1.6H8V15Z'/%3E%3C/svg%3E");
+  --ico-thm:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5 21.5 20h-19L12 2.5Zm0 4.1L5.9 17.3h12.2L12 6.6Zm-.9 3.2h1.8v4.4h-1.8V9.9Zm0 5.8h1.8v1.8h-1.8v-1.8Z'/%3E%3C/svg%3E");
+  --ico-ex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 2h6v2h-1v5.2l4.6 8.2A2.5 2.5 0 0 1 16.4 21H7.6a2.5 2.5 0 0 1-2.2-3.6L10 9.2V4H9V2Zm3 2v3.2c0 .4-.1.8-.3 1.2l-4.6 8.2a.5.5 0 0 0 .5.7h8.8a.5.5 0 0 0 .5-.7l-4.6-8.2a2.6 2.6 0 0 1-.3-1.2V4h-1.4Zm-2.1 9h4.2l1.5 2.7H8.4L9.9 13Z'/%3E%3C/svg%3E");
+  --ico-think:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5a7.5 7.5 0 0 0-4.4 13.6V19c0 .8.7 1.5 1.5 1.5h5.8c.8 0 1.5-.7 1.5-1.5v-2.9A7.5 7.5 0 0 0 12 2.5Zm3.9 12.1-.7.5V19h-1.5v-2h-1.6v2H9.9v-2H8.9v2H8.4v-3.9l-.7-.5a5.5 5.5 0 1 1 8.2 0ZM8.6 7.4h2.1v2.1H8.6V7.4Zm4.7 0h2.1v2.1h-2.1V7.4Zm-3.7 5h4.8v1.7H9.6v-1.7Z'/%3E%3C/svg%3E");
+  --ico-err:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.3 2.9a2 2 0 0 1 3.4 0l8 13.6a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3l8-13.6ZM12 5.4 4 19h16L12 5.4Zm-.9 4.2h1.8v4.6h-1.8V9.6Zm0 6h1.8v1.8h-1.8v-1.8Z'/%3E%3C/svg%3E");
+  --ico-method:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 5h10v2H4V5Zm0 6h16v2H4v-2Zm0 6h7v2H4v-2Z'/%3E%3Ccircle cx='17' cy='6' r='2.6'/%3E%3Ccircle cx='14' cy='18' r='2.6'/%3E%3C/svg%3E");
+  --ico-intuition:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3 13.9 9.1 20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3Zm7 11 .9 2.6L22.5 18l-2.6.9L19 21.5l-.9-2.6L15.5 18l2.6-.9L19 14ZM5 14l.7 1.8L7.5 16.5l-1.8.7L5 19l-.7-1.8L2.5 16.5l1.8-.7L5 14Z'/%3E%3C/svg%3E");
+  --hero-mark-default:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 10 190 100 100 190 10 100Z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.content .box{
+  position:relative;
+  border-radius:var(--atlas-radius-sm);
+  border:1px solid color-mix(in srgb,var(--line) 94%,var(--box-line,var(--line-strong)));
+  border-left:4px solid var(--box-line,var(--line-strong));
+  background:
+    linear-gradient(105deg,color-mix(in srgb,var(--box-line,var(--line-strong)) 5%,transparent),transparent 42%),
+    var(--box-bg,var(--paper));
+  box-shadow:var(--atlas-ink-shadow),0 14px 34px -30px var(--shadow-ink);
+  transition:border-color 160ms ease,box-shadow 160ms ease,transform 160ms ease;
+}
+.content .box:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--atlas-ink-shadow),0 20px 42px -30px color-mix(in srgb,var(--shadow-ink) 42%,transparent);
+}
+.content .box.def{--box-line:var(--def-line);--box-bg:var(--def-bg)}
+.content .box.thm{--box-line:var(--thm-line);--box-bg:var(--thm-bg)}
+.content .box.ex{--box-line:var(--ex-line);--box-bg:var(--ex-bg)}
+.content .box.think{--box-line:var(--think-line);--box-bg:var(--think-bg)}
+.content .box.errata{--box-line:var(--err-line);--box-bg:var(--err-bg)}
+.content .box.method{--box-line:var(--method-line);--box-bg:var(--method-bg)}
+.content .box.intuition{--box-line:var(--intuition-line);--box-bg:var(--intuition-bg)}
+
+.content .box .box-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  width:auto;max-width:100%;
+  margin:0 0 11px;padding:4px 10px 4px 8px;
+  border:1px solid color-mix(in srgb,var(--box-line) 26%,transparent);
+  border-radius:999px;
+  background:color-mix(in srgb,var(--box-line) 8%,var(--paper));
+  font:700 10px/1.5 var(--mono);
+  letter-spacing:.08em;
+}
+.content .box .box-tag::before{
+  content:"";flex:0 0 auto;width:14px;height:14px;
+  background:currentColor;
+  -webkit-mask:var(--box-ico) center/contain no-repeat;
+  mask:var(--box-ico) center/contain no-repeat;
+}
+.content .box.def .box-tag{--box-ico:var(--ico-def)}
+.content .box.thm .box-tag{--box-ico:var(--ico-thm)}
+.content .box.ex .box-tag{--box-ico:var(--ico-ex)}
+.content .box.think .box-tag{--box-ico:var(--ico-think)}
+.content .box.errata .box-tag{--box-ico:var(--ico-err)}
+.content .box.method .box-tag{--box-ico:var(--ico-method)}
+.content .box.intuition .box-tag{--box-ico:var(--ico-intuition)}
+
+.content .box p:first-of-type,
+.content .box > p:first-child{margin-top:2px}
+.content .box>:last-child{margin-bottom:0}
+
+/* 证明块：上下细线之间的「推导工作台」，弱化背景、强掉左侧节奏。 */
+.content .proof{
+  position:relative;
+  margin:var(--reading-proof-gap) 0 4px;
+  padding:var(--reading-proof-pad);
+  border-top:1px dashed color-mix(in srgb,var(--line-strong) 70%,transparent);
+  border-radius:0;
+  color:var(--ink-2);
+}
+.content .proof::before{
+  content:"";position:absolute;left:0;top:14px;bottom:8px;width:2px;
+  border-radius:2px;background:color-mix(in srgb,var(--accent) 26%,transparent);
+}
+
+/* 可折叠解答：一条明确的「可展开」横栏。 */
+.content details.sol-box{
+  border:1px solid color-mix(in srgb,var(--ex-line) 32%,var(--line));
+  border-radius:12px;
+  background:color-mix(in srgb,var(--ex-bg) 38%,var(--paper));
+  overflow:hidden;
+  box-shadow:var(--atlas-ink-shadow);
+}
+.content details.sol-box>summary{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--ex-line) 9%,transparent),transparent 55%),var(--ex-bg);
+  border-radius:0;
+}
+.content details.sol-box[open]>summary{border-bottom:1px dashed color-mix(in srgb,var(--ex-line) 30%,var(--line))}
+.content details.sol-box>summary::before{
+  width:7px;height:7px;border-width:2px;
+}
+.content details.sol-box>summary::after{
+  content:"展开解答";color:var(--ex-ink);
+}
+.content details.sol-box[open]>summary::after{content:"收起解答"}
+.content .sol-inner{padding:var(--space-2) 20px var(--space-4)}
+
+/* 提示条 / 课程预告 / 元信息条 */
+.content .note,.content .preview{
+  border-radius:10px;
+  border-left:3px solid color-mix(in srgb,var(--accent) 55%,var(--line));
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 5%,transparent),transparent 55%),var(--paper-soft);
+}
+.content .meta-strip{
+  position:relative;
+  border-radius:0 10px 10px 0;
+  border-left:3px solid transparent;
+  border-image:var(--atlas-grad) 1;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 5%,transparent),transparent 50%),var(--paper-soft);
+}
+
+/* ======================================================================== *
+ * §6  插图系统
+ * ------------------------------------------------------------------------
+ * 所有图（内联 SVG、课堂原片、生成图鉴）共用一套卡片语法：
+ *   · 纸面渐变 + 极细网格 + 内阴影，图本身放在「展示台」上
+ *   · 图注左对齐、带彩色菱形标记；图号 / 类型由 atlas.js 注入
+ *   · 悬停轻抬升，点击放大（framework-media 已实现）
+ * ======================================================================== */
+.content figure{
+  position:relative;
+  border:1px solid color-mix(in srgb,var(--line) 92%,var(--accent));
+  border-radius:18px;
+  background:
+    radial-gradient(120% 100% at 50% -30%,color-mix(in srgb,var(--accent) 6%,transparent),transparent 60%),
+    linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper-soft) 55%,var(--paper)));
+  box-shadow:var(--atlas-ink-shadow),0 24px 54px -42px var(--shadow-ink);
+  overflow:hidden;
+  transition:border-color 160ms ease,box-shadow 160ms ease,transform 160ms ease;
+}
+.content figure::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--atlas-grad);
+  opacity:.7;
+  pointer-events:none;
+}
+.content figure:hover{
+  border-color:color-mix(in srgb,var(--accent) 32%,var(--line));
+  box-shadow:var(--atlas-ink-shadow),0 30px 64px -40px color-mix(in srgb,var(--shadow-ink) 38%,transparent);
+}
+.content figure:has(svg){
+  background:
+    linear-gradient(to right,var(--atlas-grid) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--atlas-grid) 1px,transparent 1px),
+    radial-gradient(120% 100% at 50% -30%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 60%),
+    linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper-soft) 55%,var(--paper)));
+  background-size:26px 26px,26px 26px,auto,auto;
+}
+.content figure:has(img){
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--paper-soft) 55%,var(--paper)),var(--paper));
+}
+.content figure svg,
+.content figure img{
+  position:relative;z-index:1;
+  border-radius:10px;
+}
+.content figure img{
+  display:block;max-width:100%;height:auto;margin:0 auto;
+  background:#fff;
+  box-shadow:0 1px 0 rgba(0,0,0,.04),0 18px 40px -30px rgba(13,20,33,.45);
+}
+.content figure svg{display:block;width:100%;height:auto;margin:2px auto}
+.content figure svg.figure-svg{max-width:100%;height:auto}
+
+/* 图鉴插图的排版语汇：所有生成图共用这一套字号与角色，避免每张图各写一套。 */
+svg .pl-kicker{fill:var(--muted);font:700 9.5px var(--mono);letter-spacing:.13em}
+svg .pl-title{fill:var(--ink);font:700 24px var(--display);letter-spacing:.005em}
+svg .pl-sub{fill:var(--muted);font:12.5px var(--sans)}
+svg .pl-label{fill:var(--ink-2);font:600 15px var(--sans)}
+svg .pl-small{fill:var(--muted);font:12.5px var(--sans)}
+svg .pl-mono{fill:var(--accent-text);font:700 11px var(--mono);letter-spacing:.04em}
+svg .pl-note{fill:var(--ink-2);font:italic 12.5px var(--sans)}
+svg .pl-node-title{fill:var(--ink);font:700 16px var(--display)}
+svg .pl-node-sub{fill:var(--muted);font:12.5px var(--sans)}
+svg .pl-axis-label{fill:var(--muted);font:11.5px var(--sans)}
+svg .pl-white{fill:var(--paper)}
+
+.content figure figcaption{
+  position:relative;z-index:1;
+  max-width:none;
+  margin:16px 2px 0;
+  padding:13px 2px 2px 20px;
+  border-top:1px dashed color-mix(in srgb,var(--line-strong) 55%,transparent);
+  color:var(--ink-2);
+  font:13px/1.72 var(--sans);
+  text-align:left;
+}
+.content figure figcaption::before{
+  content:"";position:absolute;left:1px;top:19px;
+  width:8px;height:8px;border-radius:2px;
+  background:var(--atlas-grad);
+  transform:rotate(45deg);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 8%,transparent);
+}
+.content figure figcaption:has(.fig-index)::before{display:none}
+.content figure figcaption:has(.fig-index){padding-left:2px}
+.content figure figcaption .fig-index{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-right:8px;padding:1px 7px;
+  border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);
+  border-radius:999px;
+  background:color-mix(in srgb,var(--accent) 7%,var(--paper));
+  color:var(--accent-text);
+  font:700 9.5px/1.6 var(--mono);letter-spacing:.08em;
+  vertical-align:1px;
+  white-space:nowrap;
+}
+.content figure figcaption .fig-index::before{
+  content:"";width:4px;height:4px;border-radius:50%;background:currentColor;
+}
+.content figure figcaption .fig-kind{color:var(--muted)}
+
+/* 原始幻灯片：外框更轻，图片本身承担视觉；加一层纸张反光。 */
+.content figure.fig-slide{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--paper-soft) 62%,var(--paper)),var(--paper));
+}
+.content figure.fig-slide figcaption{font-size:12.5px;color:var(--muted)}
+.content figure.fig-slide img{box-shadow:0 2px 0 color-mix(in srgb,var(--line) 70%,transparent),0 22px 46px -32px var(--shadow-ink)}
+/* mdBook 原生图片灯箱（label.checkbox-label）：放大层是 position:fixed，
+   外层 figure 必须放行溢出；点击缩略图的放大仍由 mdBook 自己处理。 */
+.content figure.fig-lightbox{overflow:visible}
+.content figure.fig-lightbox .checkbox-label{display:block;max-width:100%}
+.content figure.fig-lightbox .checkbox-label>img{display:block;width:100%;height:auto;border-radius:8px}
+.content figure.fig-lightbox .img-wrapper{z-index:1001}
+/* 原生灯箱的放大层是 position:fixed；外层 figure 的进场 transition 只要还带
+   transform/opacity，就会成为 fixed 的包含块/层叠上下文，灯箱会被侧栏和菜单
+   压住。打开灯箱时把外层压平，关闭后恢复。 */
+.content figure.fig-lightbox:has(.checkbox-img:checked){opacity:1!important;transform:none!important;transition:none!important}
+html:has(.checkbox-img:checked){overflow:hidden}
+
+/* 全宽图：在宽屏上把图从版心「探出去」，给复杂示意图更多像素。 */
+@media (min-width:1180px){
+  .content figure.fig-wide{
+    box-sizing:border-box;
+    width:calc(100% + 88px);
+    margin-left:-44px;margin-right:-44px;
+  }
+}
+/* 右侧大纲出现时，给固定大纲留出安全区，不再向外探出。 */
+html.has-page-rail .content figure.fig-wide{width:100%;margin-left:0;margin-right:0}
+/* 宽图在窄屏上改为「可平移的图版」：不把 900 宽的 SVG 压成 326 宽，
+   否则图内 15px 字只剩 5px。图注仍保持整宽，横滑只发生在图内。 */
+.fig-scroll{position:relative;z-index:1;border-radius:10px}
+@media(max-width:700px){
+  .content figure .fig-scroll{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;padding-bottom:6px}
+  .content figure .fig-scroll svg{width:720px;min-width:720px;max-width:none;margin:0 auto}
+  .content figure.has-fig-scroll::after{
+    content:"↔ 左右滑动看图";
+    position:absolute;top:10px;right:12px;z-index:3;
+    padding:3px 8px;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));
+    border-radius:999px;background:color-mix(in srgb,var(--paper) 92%,transparent);
+    color:var(--accent-text);
+    font:700 8.5px/1.5 var(--mono);letter-spacing:.08em;white-space:nowrap;
+    pointer-events:none;
+  }
+}
+/* 小图：不强行拉满，保留原比例。 */
+.content figure.fig-sm{max-width:560px;margin-left:auto;margin-right:auto}
+.content figure.fig-xs{max-width:380px;margin-left:auto;margin-right:auto}
+
+/* 图鉴标签（atlas.js 注入的左上角角标不再使用，改由图注承担；保留类以便未来扩展） */
+.fig-ribbon{display:none}
+
+/* ======================================================================== *
+ * §7  表格 / 代码 / 引用 / 公式
+ * ======================================================================== */
+.content table{
+  border-collapse:separate;border-spacing:0;
+  border-top:1px solid color-mix(in srgb,var(--accent) 26%,var(--line));
+  border-bottom:1px solid var(--line);
+  font-size:13.5px;
+}
+.content th,.content td{
+  border:0;border-bottom:1px solid color-mix(in srgb,var(--line) 84%,transparent);
+  padding:10px 13px;
+}
+.content th{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 6%,var(--paper-soft)),var(--paper-soft));
+  color:var(--ink);
+  font:700 10.5px/1.5 var(--mono);letter-spacing:.07em;
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));
+}
+.content th:first-child{border-top-left-radius:10px}
+.content th:last-child{border-top-right-radius:10px}
+.content tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--ink) 1.7%,transparent)}
+.content tbody tr:hover td{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.content tbody tr:last-child td{border-bottom:0}
+
+.content pre{
+  position:relative;
+  border:1px solid color-mix(in srgb,var(--line) 88%,var(--accent));
+  border-radius:12px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--paper-soft) 76%,var(--paper)),var(--paper-soft));
+  box-shadow:var(--atlas-ink-shadow);
+  padding:16px 18px;
+}
+.content code{background:color-mix(in srgb,var(--accent) 6%,var(--paper-soft));border-radius:5px;padding:1px 5px}
+.content pre code{background:none;border-radius:0;padding:0}
+
+.content blockquote{
+  position:relative;
+  border-left:3px solid color-mix(in srgb,var(--accent) 50%,var(--line-strong));
+  border-radius:0 10px 10px 0;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 5%,transparent),transparent 55%),var(--paper-soft);
+}
+.content blockquote::before{
+  content:"“";position:absolute;right:16px;top:-10px;
+  color:color-mix(in srgb,var(--accent) 20%,transparent);
+  font:700 54px/1 var(--display);
+}
+.katex-display{position:relative}
+.content p:has(> .katex-display) .katex-display{padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--paper-soft) 58%,var(--paper));border:1px solid color-mix(in srgb,var(--line) 65%,transparent)}
+.content .katex-copy{border-radius:7px}
+
+/* ======================================================================== *
+ * §8  导览组件
+ * ======================================================================== */
+.content .lesson-brief{
+  border:1px solid color-mix(in srgb,var(--line) 84%,var(--accent));
+  border-radius:16px;
+  background:
+    linear-gradient(120deg,color-mix(in srgb,var(--accent) 5%,transparent),transparent 40%),
+    var(--surface-card);
+  box-shadow:var(--atlas-ink-shadow),0 22px 50px -42px var(--shadow-ink);
+  overflow:hidden;
+}
+.content .lesson-brief>div{position:relative}
+.content .lesson-brief>div::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;
+  background:var(--atlas-grad);opacity:.55;
+}
+.content .lesson-brief .brief-label{font-size:9.5px;letter-spacing:.13em}
+
+.content .page-toc{
+  position:relative;
+  border:1px solid color-mix(in srgb,var(--line) 88%,var(--accent));
+  border-radius:14px;
+  background:
+    linear-gradient(110deg,color-mix(in srgb,var(--accent) 4.5%,transparent),transparent 55%),
+    var(--paper-soft);
+  box-shadow:var(--atlas-ink-shadow);
+  padding:15px 18px 14px;
+}
+.content .page-toc a{border-radius:5px;padding:2px 5px}
+.content .page-toc a:hover{background:color-mix(in srgb,var(--accent) 8%,transparent);color:var(--accent-text)}
+.content .page-toc .page-toc-title{font-size:9.5px;letter-spacing:.16em}
+
+.study-paths{gap:14px}
+.study-path{
+  position:relative;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--line) 88%,var(--accent));
+  border-radius:15px;
+  background:
+    radial-gradient(120% 120% at 100% 0%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 55%),
+    var(--surface-card);
+  box-shadow:var(--atlas-ink-shadow);
+  transition:transform 180ms ease,border-color 180ms ease,box-shadow 180ms ease;
+}
+.study-path::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--atlas-grad);opacity:.6;
+}
+.study-path:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 34%,var(--line));box-shadow:var(--atlas-ink-shadow),0 24px 44px -34px color-mix(in srgb,var(--shadow-ink) 46%,transparent)}
+.study-path strong{font-family:var(--display);font-size:18.5px}
+.study-path a::after{content:" →";display:inline-block;transition:transform 160ms ease}
+.study-path a:hover::after{transform:translateX(3px)}
+.study-path .path-kicker{font-size:9.5px;letter-spacing:.13em}
+
+.content .index-cards a{
+  border-radius:10px;
+  padding:13px 12px;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 80%,transparent);
+  transition:background-color 150ms ease,transform 150ms ease;
+}
+.content .index-cards a:hover{background:color-mix(in srgb,var(--accent) 5%,var(--paper-soft));transform:translateX(2px)}
+.content .index-cards .no{color:var(--accent-text)}
+.content .index-cards .t{font-family:var(--display);font-size:16.5px}
+
+.content .continue-card{
+  border-radius:14px;
+  background:
+    radial-gradient(120% 150% at 100% 0%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 55%),
+    var(--surface-card);
+  box-shadow:var(--atlas-ink-shadow),0 22px 48px -38px var(--shadow-ink);
+}
+.content .continue-kicker{font-size:9.5px}
+.content .continue-link{font-family:var(--display)}
+
+.chapter-cover{
+  position:relative;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 80%,var(--accent));
+}
+.chapter-cover .kicker{
+  justify-self:start;width:max-content;max-width:100%;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:5px 11px 5px 9px;
+  border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line));
+  border-radius:999px;
+  background:color-mix(in srgb,var(--accent) 6%,var(--paper));
+  font-size:10px;letter-spacing:.13em;
+}
+.chapter-cover .kicker::before{
+  content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+.chapter-cover h1{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(34px,3.2vw,44px);
+  line-height:1.24;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  background:linear-gradient(120deg,var(--ink) 25%,color-mix(in srgb,var(--ink) 72%,var(--accent)) 70%,var(--accent-text));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.chapter-cover .cover-chips{
+  border-top:1px solid color-mix(in srgb,var(--line) 85%,transparent);
+  margin-top:30px;
+}
+.chapter-cover .cover-chips span{
+  display:flex;align-items:center;gap:8px;
+  font-size:10.5px;letter-spacing:.04em;
+}
+.chapter-cover .cover-chips span::before{
+  content:"";width:5px;height:5px;border-radius:1px;transform:rotate(45deg);
+  background:color-mix(in srgb,var(--accent) 70%,var(--line));flex:0 0 auto;
+}
+.chapter-cover .subtitle{font-size:15.5px;line-height:1.75}
+
+/* ======================================================================== *
+ * §9  书封 3D 组件（书首页）
+ * ------------------------------------------------------------------------
+ * 纯 CSS 3D：前封面 + 书脊 + 页芯 + 阴影。SVG 封面由各书 assets 提供。
+ * 结构：
+ *   <div class="cover-object"><div class="book-3d"><div class="book">…</div></div></div>
+ * ======================================================================== */
+.content .chapter-cover{
+  isolation:isolate;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 260px;
+  gap:32px 36px;
+  align-items:center;
+  margin:0 0 30px;
+  padding:46px 4px 48px;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 78%,var(--accent));
+  overflow:visible;
+}
+.content .chapter-cover::before{
+  content:"";position:absolute;inset:-40px -10vw -30px;z-index:-1;
+  background:
+    radial-gradient(760px 380px at 74% 34%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 62%),
+    radial-gradient(560px 320px at 18% 0%,color-mix(in srgb,var(--atlas-cyan) 7%,transparent),transparent 60%);
+  pointer-events:none;
+}
+.content .chapter-cover > :not(.cover-object){grid-column:1}
+.content .chapter-cover > .cover-object{grid-column:2;grid-row:1 / span 5;align-self:center;justify-self:center}
+
+.cover-object{
+  position:relative;
+  width:100%;max-width:360px;
+  padding:18px 0;
+  display:grid;place-items:center;
+  perspective:1300px;
+}
+.cover-object::before{
+  content:"";position:absolute;left:50%;bottom:2%;width:72%;height:26px;transform:translateX(-50%);
+  background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--shadow-ink) 30%,transparent),transparent 70%);
+  filter:blur(6px);
+}
+.cover-object .orbit{
+  position:absolute;left:50%;top:50%;z-index:0;pointer-events:none;
+  width:112%;aspect-ratio:1;border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--accent) 20%,transparent);
+  transform:translate(-50%,-50%) rotate(-16deg) scaleY(.72);
+  opacity:.8;
+}
+.cover-object .orbit::before{
+  content:"";position:absolute;inset:8%;border-radius:50%;
+  border:1px dashed color-mix(in srgb,var(--accent) 16%,transparent);
+}
+.cover-object .orbit::after{
+  content:"";position:absolute;right:11%;top:12%;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent),0 0 18px var(--accent);
+}
+.book-3d{position:relative;z-index:1;width:min(276px,72vw);aspect-ratio:3/4;transform-style:preserve-3d}
+.book-3d .book{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+  transform:rotateY(calc(-20deg + var(--tilt-x,0deg))) rotateX(calc(7deg + var(--tilt-y,0deg))) rotateZ(-2deg);
+  animation:atlas-book-float 9s ease-in-out infinite;
+  transition:transform 240ms ease;
+}
+.book-3d .book::before{ /* 书页厚度 */
+  content:"";position:absolute;inset:6px -13px 6px 8px;z-index:-1;
+  border-radius:3px 8px 8px 3px;
+  background:
+    repeating-linear-gradient(90deg,color-mix(in srgb,var(--paper) 90%,var(--line)) 0 2px,color-mix(in srgb,var(--line) 55%,transparent) 2px 3px),
+    color-mix(in srgb,var(--paper) 92%,var(--line));
+  box-shadow:2px 0 0 color-mix(in srgb,var(--line) 80%,transparent),0 20px 40px -24px var(--shadow-ink);
+  transform:translateZ(-8px);
+}
+.book-3d .face{
+  position:absolute;inset:0;
+  border-radius:4px 12px 12px 4px;
+  overflow:hidden;
+  backface-visibility:hidden;
+}
+.book-3d .face-front{
+  background:var(--cover-bg,var(--paper));
+  transform:translateZ(10px);
+  box-shadow:0 2px 0 color-mix(in srgb,var(--line) 50%,transparent),0 34px 60px -34px color-mix(in srgb,var(--shadow-ink) 55%,transparent);
+}
+.book-3d .face-front::after{ /* 书脊压痕 + 高光 */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(90deg,color-mix(in srgb,#000 13%,transparent) 0,transparent 7%,transparent 93%,color-mix(in srgb,#000 6%,transparent) 100%),
+    linear-gradient(118deg,color-mix(in srgb,#fff 22%,transparent) 0,transparent 26%,transparent 70%,color-mix(in srgb,#fff 6%,transparent) 100%);
+  mix-blend-mode:soft-light;
+}
+.book-3d .face-front svg{display:block;width:100%;height:100%}
+.book-3d .spine{
+  position:absolute;left:0;top:0;bottom:0;width:18px;
+  transform-origin:left center;transform:rotateY(-90deg) translateZ(0);
+  background:linear-gradient(180deg,var(--cover-spine,var(--accent)),color-mix(in srgb,var(--cover-spine,var(--accent)) 72%,#000));
+  border-radius:3px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,#fff 12%,transparent);
+}
+.book-3d .spine span{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg);
+  color:color-mix(in srgb,#fff 82%,var(--cover-spine,var(--accent)));
+  font:700 8px/1 var(--mono);letter-spacing:.18em;white-space:nowrap;
+}
+@keyframes atlas-book-float{
+  0%,100%{transform:rotateY(calc(-20deg + var(--tilt-x,0deg))) rotateX(calc(7deg + var(--tilt-y,0deg))) rotateZ(-2deg) translateY(0)}
+  50%{transform:rotateY(calc(-20deg + var(--tilt-x,0deg))) rotateX(calc(7deg + var(--tilt-y,0deg))) rotateZ(-2deg) translateY(-9px)}
+}
+.cover-object .cover-caption{
+  margin-top:18px;color:var(--muted);
+  font:600 9.5px/1.6 var(--mono);letter-spacing:.15em;text-transform:uppercase;
+}
+
+/* 四本书的封面底色（具体封面画面由 SVG 提供） */
+html[data-book="robot"]{--cover-spine:#1d4ed8}
+html[data-book="matrix"]{--cover-spine:#5b21b6}
+html[data-book="numerical"]{--cover-spine:#0f766e}
+html[data-book="deeplearning"]{--cover-spine:#b45309}
+
+/* 各书页首印记：遮罩图形（只用形状，颜色交给渐变）。 */
+html[data-book="robot"]{--hero-mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M56 170 74 100 112 74 138 46'/%3E%3Cpath d='M74 100 44 82'/%3E%3Cpath d='M112 74 140 96'/%3E%3Cpath d='M138 46 174 62'/%3E%3Ccircle cx='56' cy='170' r='13'/%3E%3Ccircle cx='74' cy='100' r='12'/%3E%3Ccircle cx='112' cy='74' r='12'/%3E%3Ccircle cx='138' cy='46' r='12'/%3E%3Ccircle cx='140' cy='96' r='9'/%3E%3Ccircle cx='174' cy='62' r='8'/%3E%3C/g%3E%3C/svg%3E")}
+html[data-book="matrix"]{--hero-mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='6'%3E%3Crect x='18' y='18' width='164' height='164' rx='10'/%3E%3Cpath d='M72 18v164M128 18v164M18 72h164M18 128h164'/%3E%3C/g%3E%3Ccircle cx='72' cy='72' r='9' fill='%23000'/%3E%3Ccircle cx='128' cy='128' r='9' fill='%23000'/%3E%3C/svg%3E")}
+html[data-book="numerical"]{--hero-mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='6' stroke-linecap='round'%3E%3Cpath d='M20 150h160M20 150V26'/%3E%3Cpath d='M26 142C48 60 76 60 96 110s44 38 78-54'/%3E%3Cpath d='M26 162h160' stroke-dasharray='3 10'/%3E%3Ccircle cx='96' cy='110' r='7' fill='%23000'/%3E%3C/g%3E%3C/svg%3E")}
+html[data-book="deeplearning"]{--hero-mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='%23000'%3E%3Ccircle cx='35' cy='100' r='9'/%3E%3Ccircle cx='78' cy='55' r='9'/%3E%3Ccircle cx='78' cy='145' r='9'/%3E%3Ccircle cx='122' cy='55' r='9'/%3E%3Ccircle cx='122' cy='145' r='9'/%3E%3Ccircle cx='165' cy='100' r='9'/%3E%3C/g%3E%3Cg fill='none' stroke='%23000' stroke-width='3' opacity='.7'%3E%3Cpath d='M35 100 78 55 122 55 165 100 122 145 78 145Z'/%3E%3Cpath d='M35 100 122 55M35 100 122 145M78 55 165 100M78 145 165 100M78 55 78 145M122 55 122 145'/%3E%3C/g%3E%3C/svg%3E")}
+
+
+/* 插图灯箱：缩放后的图需要保留图注，且不能把 caption 拉成一行。 */
+.figure-zoom{overflow:auto}
+.figure-zoom-caption{
+  width:min(90vw,900px);max-width:100%;margin:16px auto 0;padding:12px 6px 2px;
+  border-top:1px dashed var(--line);color:var(--ink-2);
+  font:12.5px/1.75 var(--sans);text-align:left;white-space:normal;
+}
+.figure-zoom-caption .fig-index{
+  display:inline-flex;align-items:center;gap:5px;margin-right:8px;padding:1px 7px;
+  border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:999px;
+  background:color-mix(in srgb,var(--accent) 7%,var(--paper));color:var(--accent-text);
+  font:700 9.5px/1.6 var(--mono);letter-spacing:.08em;vertical-align:1px;
+}
+.figure-zoom-caption .fig-index::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor}
+
+/* ======================================================================== *
+ * §10  图鉴总览（全页插图画廊）
+ * ======================================================================== */
+.atlas-toggle{
+  display:inline-flex;align-items:center;gap:7px;
+  height:34px;padding:0 11px;
+  border:1px solid transparent;border-radius:8px;
+  background:transparent;color:var(--ink-2);
+  font:600 11px/1 var(--sans);letter-spacing:.02em;cursor:pointer;
+  transition:border-color 140ms ease,background 140ms ease,color 140ms ease,transform 140ms ease;
+}
+.atlas-toggle:hover{transform:translateY(-1px);border-color:var(--line);background:var(--paper);color:var(--ink)}
+.atlas-toggle:active{transform:translateY(1px) scale(.975)}
+.atlas-toggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}
+.atlas-toggle .atlas-count{
+  min-width:18px;height:18px;padding:0 4px;border-radius:999px;
+  display:inline-grid;place-items:center;
+  background:var(--accent-soft);color:var(--accent-text);
+  font:700 9.5px/1 var(--mono);
+}
+.atlas-dialog{
+  width:min(960px,94vw);max-height:92vh;padding:0;
+  border:1px solid var(--line-strong);border-radius:22px;
+  background:var(--paper);color:var(--ink);
+  box-shadow:0 40px 100px -30px color-mix(in srgb,#000 55%,transparent);
+  overflow:hidden;
+}
+.atlas-dialog::backdrop{background:color-mix(in srgb,#05080f 66%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.atlas-shell{display:flex;flex-direction:column;max-height:92vh}
+.atlas-head{
+  display:flex;align-items:center;gap:14px;
+  padding:20px 24px 17px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 7%,transparent),transparent 55%),var(--paper-soft);
+}
+.atlas-head .atlas-eyebrow{color:var(--accent-text);font:700 9.5px/1.4 var(--mono);letter-spacing:.16em}
+.atlas-head h2{margin:0;padding:0;border:0;font-family:var(--display);font-size:23px;line-height:1.3;display:block}
+.atlas-head h2::before{display:none}
+.atlas-head .atlas-sub{color:var(--muted);font:11.5px/1.6 var(--sans)}
+.atlas-head .atlas-close{
+  margin-left:auto;flex:0 0 auto;
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);
+  font:400 18px/1 var(--sans);cursor:pointer;
+}
+.atlas-head .atlas-close:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+.atlas-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:16px;padding:22px 24px 28px;overflow-y:auto;
+}
+.atlas-card{
+  display:flex;flex-direction:column;
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  background:var(--paper);
+  color:inherit;text-align:left;cursor:pointer;
+  box-shadow:var(--atlas-ink-shadow);
+  transition:transform 160ms ease,border-color 160ms ease,box-shadow 160ms ease;
+}
+.atlas-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 36%,var(--line));box-shadow:0 22px 44px -30px color-mix(in srgb,var(--shadow-ink) 44%,transparent)}
+.atlas-card .atlas-art{
+  position:relative;display:grid;place-items:center;
+  aspect-ratio:16/10;padding:14px;overflow:hidden;
+  background:
+    linear-gradient(to right,var(--atlas-grid) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--atlas-grid) 1px,transparent 1px),
+    linear-gradient(180deg,color-mix(in srgb,var(--paper-soft) 55%,var(--paper)),var(--paper));
+  background-size:22px 22px,22px 22px,auto;
+}
+.atlas-card .atlas-art svg,
+.atlas-card .atlas-art img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.atlas-card .atlas-art img{border-radius:6px;box-shadow:0 10px 24px -18px var(--shadow-ink)}
+.atlas-card .atlas-art .atlas-no{
+  position:absolute;left:10px;top:10px;
+  padding:2px 7px;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line));
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  color:var(--accent-text);font:700 9px/1.5 var(--mono);letter-spacing:.08em;
+}
+.atlas-card .atlas-cap{
+  padding:11px 13px 13px;border-top:1px solid var(--line);
+  color:var(--ink-2);font:11.5px/1.65 var(--sans);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.content figure.atlas-flash{
+  animation:atlas-flash 1.2s ease;
+}
+@keyframes atlas-flash{
+  0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent),0 24px 54px -42px var(--shadow-ink)}
+  35%{box-shadow:0 0 0 7px color-mix(in srgb,var(--accent) 8%,transparent),0 24px 54px -42px var(--shadow-ink)}
+  100%{box-shadow:0 0 0 0 transparent,0 24px 54px -42px var(--shadow-ink)}
+}
+@media (prefers-reduced-motion:reduce){
+  .content figure.atlas-flash{animation:none}
+}
+.atlas-empty{padding:40px;text-align:center;color:var(--muted)}
+
+@media(max-width:700px){
+  .atlas-toggle .atlas-label{display:none}
+  .atlas-head{padding:16px 16px 13px}
+  .atlas-grid{padding:16px;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .atlas-head h2{font-size:20px}
+}
+
+/* ======================================================================== *
+ * §11  响应式 / 打印 / 动效
+ * ======================================================================== */
+@media(max-width:1000px){
+  .content .chapter-cover{grid-template-columns:1fr;gap:26px;padding:36px 0 38px}
+  .content .chapter-cover > .cover-object{grid-column:1;grid-row:auto;justify-self:start;max-width:300px}
+  .book-3d{width:min(260px,70vw)}
+}
+@media(max-width:700px){
+  .content main > h1{padding:28px 22px 26px;border-radius:16px;font-size:29px}
+  .content main > h1::after{width:190px;height:190px;right:-40px;bottom:-40px}
+  .content main > h1 .h1-meta{gap:6px 12px;font-size:9.5px}
+  .content h2{font-size:22px;gap:10px}
+  .content h2::before{width:16px;height:3px}
+  .content h3{font-size:18.5px}
+  .content .lesson-brief{grid-template-columns:1fr}
+  .content .lesson-brief>div{border-right:0;border-bottom:1px solid var(--line)}
+  .content .lesson-brief>div:last-child{border-bottom:0}
+  .content .study-paths{grid-template-columns:1fr}
+  .content figure{border-radius:14px}
+  .content figure figcaption{font-size:12.5px}
+  .content .chapter-cover h1{font-size:clamp(34px,8vw,42px)}
+  .cover-object{justify-self:center}
+}
+@media(max-width:420px){
+  .content main > h1{padding:24px 18px 22px;font-size:26px}
+  .content main > h1 .h1-meta{display:none}
+  .book-3d{width:min(230px,76vw)}
+}
+
+
+/* ======================================================================== *
+ * §12  克制层：向 rustwiki / mdBook 文档外观靠拢
+ * ------------------------------------------------------------------------
+ * 只保留排版、细边框与一处强调色；去掉大面积渐变、光晕、悬浮抬升、
+ * 3D 书封与装饰性角标。图鉴功能（画廊、放大、移动端平移）保留。
+ * ======================================================================== */
+.page{background:transparent}
+#mdbook-menu-bar{
+  background:var(--page);border-bottom:1px solid var(--line);box-shadow:none;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+#mdbook-menu-bar-hover-placeholder{pointer-events:none}
+#mdbook-menu-bar .menu-title{font-family:var(--sans);font-weight:600;letter-spacing:.01em}
+#mdbook-menu-bar .menu-title::before{display:none}
+#mdbook-sidebar{background:var(--sidebar);border-right:1px solid var(--line)}
+#mdbook-sidebar .chapter a.active,
+#mdbook-sidebar .chapter a.current-header{
+  background:var(--accent-soft);box-shadow:none;border-radius:4px;color:var(--accent-text);font-weight:600;
+}
+#mdbook-sidebar .chapter a.active::after{display:none}
+#mdbook-sidebar .chapter li.part-title{border-top:1px solid var(--line);color:var(--muted)}
+#mdbook-sidebar .chapter li.part-title::before{display:none}
+#mdbook-sidebar .chapter-item.is-read > .chapter-link-wrapper::before{display:none}
+#progress{height:2px;background:var(--accent);box-shadow:none;border-radius:0}
+
+.content main > h1{
+  margin:0 0 26px;padding:0 0 16px;
+  border:0;border-bottom:1px solid var(--line);border-radius:0;
+  background:none;box-shadow:none;overflow:visible;isolation:auto;
+  font-family:var(--display);font-size:clamp(30px,3.2vw,38px);font-weight:700;
+  line-height:1.3;letter-spacing:-.01em;
+}
+.content main > h1::before,.content main > h1::after{display:none}
+.content main > h1 .header{color:var(--ink);background:none}
+.content main > h1 .h1-kicker{
+  display:flex;margin:0 0 8px;color:var(--muted);
+  font:700 9.5px/1.5 var(--mono);letter-spacing:.12em;
+}
+.content main > h1 .h1-kicker::before{display:none}
+.content main > h1 .h1-meta{
+  margin-top:10px;color:var(--muted);font:500 10px/1.5 var(--mono);letter-spacing:.03em;gap:4px 12px;
+}
+.content main > h1 .h1-meta span::before{display:none}
+.content main > h1 .h1-meta span{gap:0}
+
+.content h2{
+  display:block;margin:var(--reading-h2-gap) 0 16px;padding:0 0 8px;
+  border-bottom:1px solid var(--line);font-size:22px;line-height:1.4;font-weight:700;letter-spacing:0;
+}
+.content h2::before{display:none}
+.content h2 .header{color:inherit}
+.content h3{
+  margin:var(--reading-h3-gap) 0 10px;padding-left:0;border-left:0;
+  font-size:18px;line-height:1.5;font-weight:650;letter-spacing:0;
+}
+.content h4{padding-left:0;font-size:15px;font-weight:600}
+.content h4::before{display:none}
+
+.content .box{
+  border:1px solid var(--line);border-left:3px solid var(--box-line,var(--line-strong));
+  border-radius:4px;background:var(--box-bg,var(--paper));box-shadow:none;
+  transition:none;
+}
+.content .box:hover{transform:none;box-shadow:none}
+.content .box .box-tag{
+  display:block;width:auto;max-width:100%;margin:0 0 6px;padding:0;
+  border:0;border-radius:0;background:none;
+  font:700 10px/1.5 var(--mono);letter-spacing:.08em;
+}
+.content .box .box-tag::before{display:none}
+.content .proof{padding:var(--reading-proof-pad);border-top:1px solid var(--line);border-radius:0}
+.content .proof::before{display:none}
+.content details.sol-box{border:1px solid var(--line);border-radius:4px;background:var(--paper);box-shadow:none}
+.content details.sol-box>summary{background:var(--paper-soft);border-radius:0;font-weight:600}
+.content details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
+
+.content figure{
+  margin:var(--reading-fig-gap) 0;padding:var(--reading-fig-pad);
+  border:1px solid var(--line);border-radius:4px;background:var(--paper);
+  box-shadow:none;transition:none;
+}
+.content figure::before{display:none}
+.content figure:hover{border-color:var(--line-strong);box-shadow:none;transform:none}
+.content figure:has(svg),.content figure:has(img){background:var(--paper);background-image:none}
+.content figure svg,.content figure img{border-radius:0}
+.content figure img{box-shadow:none;border:1px solid var(--line)}
+.content figure.fig-slide{background:var(--paper)}
+.content figure.fig-slide img{box-shadow:none}
+.content figure figcaption{
+  margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);
+  color:var(--muted);font:12px/1.72 var(--sans);text-align:left;
+}
+.content figure figcaption::before{display:none}
+.content figure figcaption .fig-index{
+  display:inline;margin-right:6px;padding:0;border:0;border-radius:0;background:none;
+  color:var(--accent-text);font:700 9.5px/1.6 var(--mono);letter-spacing:.08em;
+}
+.content figure figcaption .fig-index::before{display:none}
+
+.content table{border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px}
+.content th{background:var(--paper-soft);border-bottom:1px solid var(--line);color:var(--ink-2);font:600 10.5px/1.5 var(--mono)}
+.content tbody tr:nth-child(even) td{background:transparent}
+.content tbody tr:hover td{background:transparent}
+.content pre{border:1px solid var(--line);border-radius:4px;background:var(--paper-soft);box-shadow:none}
+.content blockquote{border-left:3px solid var(--line-strong);border-radius:0;background:var(--paper-soft)}
+.content blockquote::before{display:none}
+.content p:has(> .katex-display) .katex-display{border:1px solid var(--line);border-radius:4px;background:var(--paper-soft)}
+
+.content .page-toc{
+  border:1px solid var(--line);border-radius:4px;background:var(--paper-soft);box-shadow:none;padding:12px 16px;
+}
+.content .page-toc a:hover{background:transparent;color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+.content .lesson-brief{border:1px solid var(--line);border-radius:4px;background:var(--paper);box-shadow:none}
+.content .lesson-brief>div::before{display:none}
+.content .study-path{border:1px solid var(--line);border-radius:4px;background:var(--paper);box-shadow:none;transition:none}
+.content .study-path::before{display:none}
+.content .study-path:hover{transform:none;border-color:var(--line-strong);box-shadow:none}
+.content .continue-card{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;background:var(--paper);box-shadow:none}
+
+.content .chapter-cover{
+  display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:36px;align-items:start;
+  margin:0 0 32px;padding:28px 0 32px;border-bottom:1px solid var(--line);isolation:auto;overflow:visible;
+}
+.content .chapter-cover::before{display:none}
+.chapter-cover .kicker{
+  display:flex;align-items:center;gap:8px;width:auto;max-width:100%;padding:0;border:0;border-radius:0;background:none;
+  color:var(--muted);font:700 9.5px/1.5 var(--mono);letter-spacing:.12em;
+}
+.chapter-cover .kicker::before{content:"";width:8px;height:8px;flex:0 0 auto;background:var(--accent)}
+.chapter-cover h1{
+  background:none;-webkit-text-fill-color:currentColor;color:var(--ink);
+  font-family:var(--display);font-size:clamp(30px,3.4vw,38px);font-weight:700;
+  line-height:1.3;letter-spacing:-.01em;margin:0 0 14px;
+}
+.chapter-cover .subtitle{max-width:620px;font-size:14px;line-height:1.8;color:var(--ink-2)}
+.chapter-cover .cover-chips{border-top:1px solid var(--line);margin-top:22px;gap:0}
+.chapter-cover .cover-chips span{font-size:11px;color:var(--muted);padding:8px 8px 8px 0}
+.chapter-cover .cover-chips span::before{display:none}
+.cover-object{display:block;max-width:260px;padding:0;perspective:none}
+.cover-object::before{display:none}
+.cover-object .orbit{display:none}
+.cover-object .cover-caption{display:none}
+.book-3d{width:260px;aspect-ratio:3/4;perspective:none}
+.book-3d .book{position:absolute;inset:0;transform:none;animation:none;transition:none}
+.book-3d .book::before{display:none}
+.book-3d .face-front{
+  position:absolute;inset:0;transform:none;border:1px solid var(--line);border-radius:2px;
+  box-shadow:none;overflow:hidden;
+}
+.book-3d .face-front::after{display:none}
+.book-3d .spine,.book-3d .pages{display:none}
+
+.atlas-toggle{border-radius:4px}
+.atlas-toggle:hover{transform:none}
+.atlas-dialog{border-radius:6px;box-shadow:0 20px 60px -30px color-mix(in srgb,#000 45%,transparent)}
+.atlas-head{background:var(--paper-soft);border-bottom:1px solid var(--line)}
+.atlas-card{border-radius:4px;box-shadow:none;transition:none}
+.atlas-card:hover{transform:none;border-color:var(--line-strong);box-shadow:none}
+.atlas-card .atlas-art{background:var(--paper-soft);background-image:none}
+.atlas-head .atlas-close{border-radius:4px}
+
+
+.content main > h1 .h1-kicker::before{
+  content:"";display:inline-block;width:8px;height:8px;flex:0 0 auto;
+  background:var(--accent);margin-right:8px;
+}
+@media(max-width:700px){
+  .content main > h1{font-size:26px;line-height:1.36;padding-bottom:14px;margin-bottom:22px}
+  .content main > h1 .h1-kicker{font-size:9px;letter-spacing:.1em}
+  .content main > h1 .h1-meta{font-size:9.5px;margin-top:9px}
+  .content .chapter-cover{grid-template-columns:1fr;padding:24px 0 26px;gap:24px}
+  .content .chapter-cover > .cover-object{grid-column:1;grid-row:auto;justify-self:start;max-width:160px}
+  .book-3d{width:160px}
+  .chapter-cover h1{font-size:27px;line-height:1.36}
+  .chapter-cover .subtitle{font-size:13.5px;line-height:1.8}
+  .content h2{font-size:20px}
+  .content h3{font-size:17px}
+}
+
+
+.content main > h1{position:relative;overflow:visible}
+.content main > h1 .h1-index{
+  position:absolute;right:0;top:-20px;z-index:0;pointer-events:none;user-select:none;
+  color:color-mix(in srgb,var(--ink) 9%,transparent);-webkit-text-stroke:0;
+  font:700 clamp(64px,6.2vw,86px)/1 var(--serif);letter-spacing:-.08em;opacity:1;
+}
+.content main > h1 .header,
+.content main > h1 .h1-kicker,
+.content main > h1 .h1-meta{position:relative;z-index:1}
+@media(max-width:700px){.content main > h1 .h1-index{display:none}}
+
+
+/* 书首页：事实章节索引，替代学习路径卡片 */
+.book-contents{margin:24px 0 4px;border-top:1px solid var(--ink)}
+.bc-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:11px 0 10px;border-bottom:1px solid var(--line);color:var(--muted);font:500 9.5px/1.5 var(--mono);letter-spacing:.08em}
+.bc-kicker{color:var(--accent);font-weight:700;letter-spacing:.14em}
+.content a.bc-row{color:var(--ink);text-decoration:none}
+.content a.bc-row:hover{color:var(--paper)}
+.bc-row{display:grid;grid-template-columns:44px minmax(0,1fr) 70px 18px;gap:14px;align-items:center;padding:12px 8px 12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);transition:background-color .16s ease,color .16s ease}
+.bc-row:hover{background:var(--ink);color:var(--paper)}
+.bc-no{color:var(--muted);font:700 10px/1.4 var(--mono);letter-spacing:.04em}
+.bc-title{font:600 14px/1.5 var(--sans);min-width:0}
+.bc-count{color:var(--muted);font:500 9.5px/1.4 var(--mono);text-align:right;white-space:nowrap}
+.bc-arrow{color:var(--ink-2);font:500 14px/1 var(--sans);text-align:right}
+.bc-row:hover .bc-no{color:var(--accent)}
+.bc-row:hover .bc-count{color:color-mix(in srgb,var(--paper) 65%,transparent)}
+.bc-row:hover .bc-arrow{color:var(--accent)}
+.bc-note{margin:10px 0 0;color:var(--muted);font:500 9.5px/1.6 var(--mono);letter-spacing:.03em}
+@media(max-width:700px){
+  .book-contents{margin-top:24px}
+  .bc-head{font-size:9px}
+  .bc-row{grid-template-columns:30px minmax(0,1fr) 18px;gap:10px;padding:10px 6px 10px 8px}
+  .bc-title{font-size:13px;line-height:1.5}
+  .bc-count{grid-column:2;margin-top:2px;text-align:left}
+  .bc-no{grid-column:1;grid-row:1 / span 2;align-self:start;padding-top:2px}
+  .bc-arrow{grid-column:3;grid-row:1 / span 2;align-self:center}
+}
+
+
+/* 菜单栏当前小节：滚动后以真实 H2/H3 替换静态书名；不新增悬浮面板。
+   mdBook 原生 JS 会在上滚时把 inline top 写成 690px 之类来“拉下菜单”，
+   我们的 sticky 菜单与这个 top 冲突，会让 Aa/主题按钮突然掉到正文上；
+   这里用 !important 抵掉 inline top，菜单始终固定在视口顶端。 */
+#mdbook-menu-bar{top:0!important}
+#mdbook-menu-bar .menu-title{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#mdbook-menu-bar .menu-book,
+#mdbook-menu-bar .menu-current{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+#mdbook-menu-bar .menu-current{display:none}
+html.has-menu-current #mdbook-menu-bar .menu-book{display:none}
+html.has-menu-current #mdbook-menu-bar .menu-current{display:inline-block}
+.mc-no{font:700 9.5px/1 var(--mono);letter-spacing:.06em;color:var(--accent);margin-right:8px}
+.mc-text{font:600 12.5px/1.3 var(--sans);color:var(--ink)}
+@media(min-width:701px){
+  #mdbook-menu-bar{position:sticky;top:0;z-index:50}
+  #mdbook-menu-bar-hover-placeholder{pointer-events:none}
+  .content h2,.content h3{scroll-margin-top:80px}
+}
+@media(max-width:700px){
+  html.has-menu-current #mdbook-menu-bar .menu-current{display:none}
+  html.has-menu-current #mdbook-menu-bar .menu-book{display:inline-block}
+}
+
+
+/* ======================================================================== *
+ * 图鉴：从卡片画廊改为「图版索引」——编号、缩略图、标题、跳转
+ * ======================================================================== */
+.atlas-dialog{
+  border-radius:2px;border:1px solid var(--line-strong);
+  background:var(--paper);box-shadow:none;
+}
+.atlas-dialog::backdrop{
+  background:color-mix(in srgb,#05080f 58%,transparent);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+.atlas-shell{min-height:0}
+.atlas-head{
+  flex:0 0 auto;background:var(--paper);
+  padding:18px 22px 15px;
+}
+.atlas-head .atlas-close{
+  border-radius:0;width:30px;height:30px;
+}
+.atlas-list{
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:0 22px 18px;border-top:1px solid var(--ink);
+}
+.atlas-entry{
+  box-sizing:border-box;min-width:0;overflow:hidden;
+  display:grid;grid-template-columns:58px 92px minmax(0,1fr) 18px;
+  gap:14px;align-items:center;width:100%;
+  padding:10px 8px 10px 0;border:0;border-bottom:1px solid var(--line);
+  background:transparent;color:var(--ink);text-align:left;
+  cursor:pointer;transition:background-color .14s ease,color .14s ease;
+}
+.atlas-entry:hover{background:var(--ink);color:var(--paper)}
+.atlas-entry-no{
+  color:var(--muted);font:700 9px/1.4 var(--mono);letter-spacing:.08em;
+  white-space:nowrap;
+}
+.atlas-entry-art{
+  display:grid;place-items:center;width:92px;height:58px;
+  border:1px solid var(--line);background:var(--paper-soft);overflow:hidden;
+}
+.atlas-entry-art svg,
+.atlas-entry-art img{
+  display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+}
+.atlas-entry-main{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;max-width:100%;overflow:hidden;text-align:left}
+.atlas-entry-title{
+  display:block;width:100%;min-width:0;
+  font:600 12.5px/1.5 var(--sans);letter-spacing:.01em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.atlas-entry-meta{
+  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--muted);font:600 8.5px/1.4 var(--mono);letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.atlas-entry-arrow{color:var(--ink-2);font:500 14px/1 var(--sans);text-align:right}
+.atlas-entry:hover .atlas-entry-no{color:var(--accent)}
+.atlas-entry:hover .atlas-entry-meta{color:color-mix(in srgb,var(--paper) 65%,transparent)}
+.atlas-entry:hover .atlas-entry-arrow{color:var(--accent)}
+@media(max-width:700px){
+  .atlas-head{padding:14px 14px 12px}
+  .atlas-head h2{font-size:20px}
+  .atlas-list{padding:0 14px 14px}
+  .atlas-entry{grid-template-columns:38px 62px minmax(0,1fr) 14px;gap:8px;padding:8px 4px 8px 0}
+  .atlas-entry-art{width:62px;height:42px}
+  .atlas-entry-no{font-size:8px}
+  .atlas-entry-title{font-size:11.5px}
+  .atlas-entry-meta{font-size:8px}
+}
+
+
+/* 书首页题记：少量、真实、可核对 */
+.book-colophon{
+  display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:18px;align-items:start;
+  margin:36px 0 0;padding:14px 0 2px;border-top:1px solid var(--ink);
+  color:var(--muted);font:500 9px/1.7 var(--mono);letter-spacing:.03em;
+}
+.book-colophon .colophon-kicker{color:var(--accent);font-weight:700;letter-spacing:.12em}
+.book-colophon .colophon-main{max-width:520px}
+.book-colophon .colophon-meta{white-space:nowrap;text-align:right}
+@media(max-width:700px){
+  .book-colophon{grid-template-columns:1fr;gap:4px;margin-top:26px}
+  .book-colophon .colophon-meta{text-align:left}
+}
+
+
+/* 页边注：默认在正文流里；只有宽屏 + 侧栏收起 + 标准/窄版心时浮到右页边 */
+.content .margin-note{
+  display:block;margin:14px 0;padding:10px 0 0;
+  border-top:1px solid var(--line);
+  color:var(--muted);font:10.5px/1.7 var(--sans);letter-spacing:.01em;
+}
+.content .margin-note .mn-label{
+  display:block;margin-bottom:4px;color:var(--accent-text);
+  font:700 8.5px/1.4 var(--mono);letter-spacing:.12em;
+}
+@media(min-width:1380px){
+  html:has(#mdbook-sidebar-toggle-anchor:not(:checked)):not([data-width="wide"]):not([data-width="full"]) .content .margin-note{
+    float:right;clear:right;width:150px;
+    margin:6px -176px 18px 28px;padding:0 0 0 10px;
+    border-top:0;border-left:1px solid var(--line-strong);
+  }
+  html:has(#mdbook-sidebar-toggle-anchor:not(:checked)) .content figure,
+  html:has(#mdbook-sidebar-toggle-anchor:not(:checked)) .content .box{clear:both}
+}
+@media print{
+  .content .margin-note{float:none;width:auto;margin:14px 0;padding:10px 0 0;border-left:0;border-top:1px solid var(--line)}
+}
+
+@media print{
+  .content main > h1{box-shadow:none;background:#fff;border-color:#ccc}
+  .content .chapter-cover h1{-webkit-text-fill-color:#000;background:none;color:#000}
+  .content main > h1::after{display:none}
+  .content main > h1 .h1-kicker,.content main > h1 .h1-meta,.content main > h1 .h1-index{display:none}
+  .content .chapter-cover{display:block}
+  .content .chapter-cover > .cover-object{display:none}
+  .content figure{box-shadow:none;background:#fff;break-inside:avoid}
+  .content figure::before{display:none}
+  .content .fig-scroll{overflow:visible!important}
+  .content .fig-scroll svg{width:100%!important;min-width:0!important}
+  .content figure.has-fig-scroll::after{display:none}
+  .content .box{box-shadow:none;transform:none}
+  .atlas-toggle,.atlas-dialog{display:none!important}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .book-3d .book{animation:none}
+  .content .box:hover,.content figure:hover,.study-path:hover{transform:none}
+  .atlas-card:hover{transform:none}
+}

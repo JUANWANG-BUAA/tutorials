@@ -2,12 +2,6 @@
 
 本实验对应第 3 讲：搭建一条**检测**数据管线，训练一个能在一张图里**定位并识别**人脸的模型，再用**对抗样本**检验它的鲁棒性，并讨论隐私与偏见。检测比[Lab 1](lab1.md)的分类多了「在哪儿」这一维。
 
-<aside class="lesson-brief" aria-label="Lab 2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>[第 3 讲](../lectures/lec03/overview.md)的卷积、感受野、步幅与填充；[第 1 讲](../lectures/lec01/overview.md)的损失与训练循环。</p></div>
-<div><span class="brief-label">TARGET</span><strong>你将做出</strong><p>一个滑动窗口 / 全卷积的检测器；一张带**候选框**的可视化结果；一个对抗样本演示。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>验收标准</strong><p>检测器能在验证图上框出人脸；能解释为什么"检测"不能简单看作"逐像素分类"；能量化一个对抗扰动如何让检测失败。</p></div>
-</aside>
-
 ## 1. 从分类到检测
 
 分类回答「这张图是什么」，检测回答「图里**哪里有**什么」。第 3 讲的 CNN 给出**一张图的整体标签**；检测要给出**一组框 + 类**：$\{(x,y,w,h,\text{score})\}_i$。

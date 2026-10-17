@@ -4,12 +4,6 @@
 
 「人人都能三角化」这一兜底结论立刻变成一台引擎。本节后半程全部由它驱动：矩阵多项式的特征值（谱映射，推论 3.5.1）、Hamilton–Cayley 定理（$f_A(A)=O$，定理 3.5.4）、逆矩阵的多项式公式（推论 3.5.2），最后收束到**最小多项式**——给「$A$ 到底被哪个多项式清零」记账，并用它把 $g(A)$、$A^{100}$ 这类计算压到最短。另一条暗线同样值得盯住：定理 3.5.2 的证明只有一行，但对的那一行恰是「**对相似变换矩阵 $P$ 作 QR 分解**」——[3.4](sec34.md) 刚造好的工具马上回厂上班。
 
-<aside class="lesson-brief" aria-label="3.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>相似与相似不变量（特征值、迹、行列式、秩，[@cor-2.3.4]、[@thm-sim-invariants]）；特征值与特征向量、特征多项式（[@def-eig-matrix]）；不同特征值的特征向量线性无关（[@thm-eig-independent]）；幂与逆的特征值（[@thm-eig-power]）；酉 / 正交矩阵及其列刻画（[@def-orth-matrix]、[@thm-orth-columns]）；基扩充（[@cor-1.3.1]）；带余除法（[@thm-2.1.3]）；QR 分解定理（[@thm-3.4.1]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>两个 Schur 引理（[@thm-3.5.1]：相似于上三角；[@thm-3.5.2]：酉相似于上三角）及「对 $P$ 作 QR」的证明；实方阵 Schur 引理（[@thm-3.5.3]，前提：特征值全实）与旋转阵反例；矩阵多项式（[@def-3.5.1]）与谱映射（[@cor-3.5.1]：$\varphi(A)$ 的特征值为 $\varphi(\lambda_i)$，特征向量继承）；Hamilton–Cayley 定理（[@thm-3.5.4]）与「按次序乘因子」证明；逆矩阵公式（[@cor-3.5.2]）；零化多项式、最小多项式（[@def-3.5.2]、[@def-3.5.3]）与性质定理（[@thm-3.5.5]：唯一、整除一切零化多项式、与 $f_A$ 同根）；三套计算流程：带余除法算 $g(A)$、公式求 $A^{-1}$、递推算 $A^m$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立写出 [@thm-3.5.1] 的归纳证明与 [@thm-3.5.2] 的 QR 证明；能说清实旋转阵为何不能正交三角化；能用 Schur 型证谱映射并指出特征向量继承只有一个方向；能完整走通 Hamilton–Cayley 的「逐列清零」证明；会用候选法（$f_A$ 的因式 $+$ 从低到高试算）求最小多项式，并用它或带余除法完成 $g(A)$、$A^{-1}$、$A^m$ 的全部计算与回代验算。</p></div>
-</aside>
-
 ::: note 素材与说明（本节无录播）
 
 本页依据课程第三章课件 **3.5 Schur 分解**（22 页，存于 `_sources/matrix/3.5-Schur分解.pdf`）整理。**本节无对应录播**，故不引用课堂口述与时间戳：课件的定理、定义、推论、注记与例题**照录并保留原编号**（定理 3.5.1–3.5.5、注 1–注 5、定义 3.5.1–3.5.3、推论 3.5.1–3.5.2、例 3.5.1–3.5.5 及例 3.5.2 续）；课件省略的证明（定理 3.5.1、3.5.3、3.5.4、3.5.5 的证明）由本编补出并逐处标注「本编补」；例 3.5.3 的连锁笔误见[勘误与补注](errata.md)（E3.5），正文按重算后的正确版本演算。本编新增例题用字母编号（[@ex-3.5.A]、[@ex-3.5.B]）。
@@ -30,7 +24,6 @@ $$P^{-1}AP=\Lambda$$
 为上三角阵，其中 $\Lambda$ 的对角元素是矩阵 $A$ 的特征值。
 :::
 
-![课件 · 定理 3.5.1 与注 1](../assets/ch03/schur-lem1.jpg)
 
 ::: note 注 1（课件原文）· 三角化人人有份，对角化不是 {#note-3.5-diag}
 
@@ -74,7 +67,6 @@ $$U^{\mathrm H}AU=\Lambda$$
 为上三角阵。
 :::
 
-![课件 · 定理 3.5.2 与注 2](../assets/ch03/schur-lem2.jpg)
 
 ::: note 注 2（课件原文）· 酉版本更便利 {#note-3.5-unitary-why}
 
@@ -98,7 +90,6 @@ $$R^{-1}U^{\mathrm H}AU R=\Lambda\quad\Longrightarrow\quad U^{\mathrm H}AU=R\Lam
 **读法**：普通相似 $P^{-1}AP$ 换成 $P=UR$ 后，$R$ 从两侧把 $\Lambda$ **夹**住——「夹」不破三角性。于是「相似于上三角」免费升级为「**酉**相似于上三角」。（不经 3.5.1、直接用「单位特征向量 $+$ Gram–Schmidt 扩充」归纳构造 $U$ 也行，见习题 B15。）
 :::
 
-![课件 · 定理 3.5.2 的分析：对 P 作 QR 分解](../assets/ch03/schur-qr.jpg)
 
 ### 实矩阵的边界
 
@@ -115,9 +106,7 @@ $$f_A(\lambda)=\lambda^2+1=0$$
 （换个角度读：若存在 $Q$，则 $Q^{\mathrm T}AQ$ 必为实阵；而 $\Lambda$ 为非实矩阵时，不存在正交阵 $Q$。）∎
 :::
 
-![课件 · 思考：实阵的正交三角化与旋转阵反例](../assets/ch03/schur-real-counter.jpg)
 
-![课件 · 思考的收尾与注 3](../assets/ch03/schur-real-note.jpg)
 
 ::: note 注 3（课件原文）· 实阵警告 {#note-3.5-real-warn}
 
@@ -137,7 +126,6 @@ $$Q^{\mathrm T}AQ=Q^{-1}AQ=\begin{bmatrix}\lambda_1&&\ast\\ &\ddots&\\ \boldsymb
 为上三角阵。
 :::
 
-![课件 · 定理 3.5.3：实方阵 Schur 引理](../assets/ch03/schur-real.jpg)
 
 ::: proof 证明（课件未给，本编补：归纳全程在实数域内运行）
 
@@ -167,7 +155,6 @@ $$\varphi(A)=a_nA^n+a_{n-1}A^{n-1}+\cdots+a_1A+a_0I$$
 称为**矩阵多项式**。
 :::
 
-![课件 · 定义 3.5.1：矩阵多项式](../assets/ch03/schur-polydef.jpg)
 
 （本编注两件事：① 常数项必须补成 $a_0I$——多项式里的「$1$」在矩阵世界是单位阵，漏写 $I$ 是新手高频错误；② $\varphi(A)$ 是 $A$ 的多项式，自然与 $A$ 可交换（$A\cdot A^k=A^k\cdot A$），这条不起眼的性质在后面「按次序乘因子」的证明里是背景前提。）
 
@@ -176,7 +163,6 @@ $$\varphi(A)=a_nA^n+a_{n-1}A^{n-1}+\cdots+a_1A+a_0I$$
 设复方阵 $A$ 的 $n$ 个特征值为 $\lambda_1,\cdots,\lambda_n$，$\varphi(\lambda)$ 为任一多项式，则 $\varphi(A)$ 的 $n$ 个特征值为 $\varphi(\lambda_1),\cdots,\varphi(\lambda_n)$；特别地，$A^m$ 的 $n$ 个特征值为 $\lambda_1^m,\cdots,\lambda_n^m$，$m\in\mathbb N$。
 :::
 
-![课件 · 推论 3.5.1 与注 4](../assets/ch03/schur-spectral.jpg)
 
 ::: proof 证明（课件路线：Schur 型上一算）
 
@@ -216,7 +202,6 @@ $f_A(A)$ 的特征值全为零——这与「$f_A(A)=O$（零矩阵，特征值�
 :::
 :::
 
-![课件 · 例 3.5.1：f_A(A) 的特征值](../assets/ch03/schur-ex1.jpg)
 
 ::: thm 定理 3.5.4 · Hamilton–Cayley 定理 {#thm-3.5.4}
 
@@ -225,7 +210,6 @@ $f_A(A)$ 的特征值全为零——这与「$f_A(A)=O$（零矩阵，特征值�
 $$f_A(A)=O .$$
 :::
 
-![课件 · 定理 3.5.4 与分析：特征多项式的等价表达式](../assets/ch03/schur-hc.jpg)
 
 课件在「分析」里列出了特征多项式的几副面孔——$\det(\lambda I-A)=\lambda^n+a_{n-1}\lambda^{n-1}+\cdots+a_0=\prod_{i=1}^{n}(\lambda-\lambda_i)=\prod_{j=1}^{s}(\lambda-\lambda_j)^{d_j}$——但没给证明。关键在于**乘因子的次序**：
 
@@ -276,7 +260,6 @@ $$g(A)=A^4-2A^2+I=O .$$
 :::
 :::
 
-![课件 · 例 3.5.2：带余除法算 A⁴ − 2A² + I](../assets/ch03/schur-ex2.jpg)
 
 第二个用途把「求逆」变成「算多项式」：
 
@@ -287,7 +270,6 @@ $$g(A)=A^4-2A^2+I=O .$$
 $$A^{-1}=-\frac{1}{a_0}\Big(A^{n-1}+a_{n-1}A^{n-2}+\cdots+a_1I\Big).$$
 :::
 
-![课件 · 推论 3.5.2：逆矩阵公式](../assets/ch03/schur-inv.jpg)
 
 ::: proof 证明（课件未给，本编补）
 
@@ -336,7 +318,6 @@ $$A^{-1}=I-N+N^2=\begin{bmatrix}1&-1&1\\ 0&1&-1\\ 0&0&1\end{bmatrix}\ \checkmark
 :::
 :::
 
-![课件 · 例 3.5.3：求逆（课件此页三处连锁笔误，见 E3.5）](../assets/ch03/schur-ex3.jpg)
 
 <a id="sec-3.5.4"></a>
 
@@ -358,7 +339,6 @@ $$g(A)=O,$$
 复方阵 $A$ 的零化多项式中**最小次数**的**首 $1$** 多项式（最高次项系数为 $1$）称为矩阵 $A$ 的**最小多项式**，记为 $m_A(\lambda)$。
 :::
 
-![课件 · 定义 3.5.2 / 3.5.3 与注 5](../assets/ch03/schur-mindef.jpg)
 
 ::: note 注 5（课件原文）· 零化多项式有无数个 {#note-3.5-annihil-many}
 
@@ -371,7 +351,6 @@ $$g(A)=O,$$
 
 > 存在：零化多项式一族里至少有 $f_A$（H–C 定理），次数是非负整数、有最小值，再取首 $1$ 规约即得 $m_A$。**但不一定是 $f_A$**——反例：$A=I_2$，特征多项式 $f_A(\lambda)=(\lambda-1)^2$，而 $g(A)=A-I_2=O$，故最小多项式是 $m_A(\lambda)=\lambda-1$，比 $f_A$ 低一次。
 
-![课件 · 思考：最小多项式存在吗](../assets/ch03/schur-minexist.jpg)
 
 最小多项式的两条基本性质：
 
@@ -384,7 +363,6 @@ $$g(A)=O,$$
 （2）矩阵 $A$ 的特征多项式 $f_A(\lambda)$ 与最小多项式 $m_A(\lambda)$ 具有**相同的根**（不计重数）。
 :::
 
-![课件 · 定理 3.5.5：最小多项式的性质](../assets/ch03/schur-minprop.jpg)
 
 ::: proof 证明（课件未给，本编补：带余除法 $+$ 特征向量继承）
 
@@ -434,7 +412,6 @@ $$m_A(\lambda)=(\lambda-3)(\lambda+6).$$
 :::
 :::
 
-![课件 · 例 3.5.4：求最小多项式](../assets/ch03/schur-ex4.jpg)
 
 （对比一下「赢在低次」的反面教材——几何重数不足时，低次候选会被淘汰，最小多项式被迫带重因子。看 [@ex-3.5.B]。）
 
@@ -489,7 +466,6 @@ $$g(A)=m_A(A)\,(A+I)^2=O\cdot(A+I)^2=O .$$
 :::
 :::
 
-![课件 · 例 3.5.2 续：用最小多项式重做](../assets/ch03/schur-ex2b.jpg)
 
 最后一类计算：**高次幂**。
 
@@ -521,9 +497,7 @@ $$A^{100}=\begin{bmatrix}\dfrac{4^{100}+2}{3}&\dfrac{4^{100}-1}{3}\\[8pt] \dfrac
 :::
 :::
 
-![课件 · 例 3.5.5：降次关系与迭代归纳](../assets/ch03/schur-ex5.jpg)
 
-![课件 · 例 3.5.5：代入 m = 100](../assets/ch03/schur-ex5b.jpg)
 
 ::: ex 例 3.5.A（新增）· 高次幂的两条路并排走一遍 {#ex-3.5.A}
 

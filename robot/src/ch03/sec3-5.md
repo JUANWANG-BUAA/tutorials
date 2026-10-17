@@ -2,12 +2,6 @@
 
 正问题「给 $\dot q$ 求 $v_e$」一次矩阵乘法就能解决；逆问题「给 $v_e$ 求 $\dot q$」却要解线性方程组，麻烦全在 $J$ 的形状上：方阵满秩（求逆）、长方矮胖（冗余）、退化（奇异）。本节按这三种情形给出三套答案——直接逆、伪逆 + 零空间、阻尼最小二乘——三套合起来，就是**数值逆运动学的发动机**。录播 1:56:39–2:19:53。
 
-<aside class="lesson-brief" aria-label="3.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>线性方程组可解性（$v_e\in\mathcal R(J)$）；零空间投影（[@thm-3.4.B]）；加权最小二乘的拉格朗日乘子法。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>方阵情形与数值积分离散格式；约束二次优化 ⇒ 右伪逆 $J^\dagger$ 与最小范数解；指定 $\dot q_0$ 的通解；$\dot q_0$ 三种取法；奇点邻域的阻尼最小二乘（DLS）与 $J^*$。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立完成拉格朗日乘子推导（含 $JW^{-1}J^{\mathrm T}$ 可逆性论证）；能解释通解两项各自的含义；能说出 $K$ 在奇点邻域与远离奇点的取法及其理由。</p></div>
-</aside>
-
 ::: preview 先修补 · 拉格朗日乘子法（本节推导只用到这一条）
 
 在进入具体情形之前，先把一件工具补好：「带等式约束的二次型最小化」有一个固定的三步套路，本节 3.5.1 与 3.5.2 会各用一次。

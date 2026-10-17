@@ -6,12 +6,6 @@
 第 2 周录播未展开本节，仅在讲 RPY 奇点时提及「卫星等全姿态机动飞行器改用四元数」（录播 0:21:26）。为使本编完整覆盖原书 §2.1–§2.12，这里按原书 §2.6 收录本节；**考试不作要求**，但理解它与 [2.5](sec2-5.md) 的关系，能解释「为什么工程上会放弃直观的欧拉角」。
 :::
 
-<aside class="lesson-brief" aria-label="2.6 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec2-5.md">2.5</a> 角和轴表示（[@def-2.5.1]）、式 2.25 的 Rodrigues 矩阵；单位向量与向量叉积。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>四元数定义 $Q=\{\eta,\boldsymbol\epsilon\}$ 与单位约束；由四元数构造 $R$（式 2.33）、由 $R$ 反解四元数（式 2.34–2.35）；逆与乘积（式 2.36–2.37）——这几组公式都附直接推导，并把半角打包解读为「半角指数」。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能写出 $\eta,\boldsymbol\epsilon$ 与 $(\vartheta,\boldsymbol r)$ 的换算；能说清四元数为何同时解决「不唯一」与「逆解奇点」两个问题。</p></div>
-</aside>
-
 <a id="sec-2.6.1"></a>
 
 ## 2.6.1 定义与单位约束

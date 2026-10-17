@@ -2,12 +2,6 @@
 
 本节是全书的地基，只讲一件事：**误差是怎么走路的**。具体分四步：误差从哪里来（1.2.1）；怎么度量一个近似值好不好（1.2.2）；它如何跟着运算一步步传下去、被放大（1.2.3–1.2.4）；以及怎么设计算法把它管住（1.2.4–1.2.6）。原书例 1–例 5 与全部经典论证完整保留，证明与推导全部展开。
 
-<aside class="lesson-brief" aria-label="1.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>Taylor 公式（一元与多元一阶展开）；极限与 $O$ 记号的直觉。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>误差四分类；$\varepsilon$ / $\varepsilon_{\mathrm r}$ / 有效数字三件套；误差传播公式；稳定性与复杂性两大算法标准；浮点算术的基本公理。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>拿到任意一个计算公式，能估计结果的误差限、指出可靠的有效数字位数，并识别「相近数相减、小除数、大数吃小数」三类危险结构后改写。</p></div>
-</aside>
-
 <a id="sec-1.2.1"></a>
 
 ## 1.2.1 误差的来源与分类

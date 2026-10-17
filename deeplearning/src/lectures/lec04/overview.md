@@ -1,11 +1,5 @@
 # 第 4 讲导览 · 深度生成建模
 
-<aside class="lesson-brief" aria-label="第 4 讲学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>概率论：条件概率、期望与全期望公式、高斯分布、KL 散度与 Jensen 不等式；最大似然估计的直觉；[第 1 讲](../lec01/sec15.md)的「结构 + 损失 + 梯度下降」三步范式与反向传播；[第 2 讲](../lec02/sec24.md)的注意力（4.6 的 DiT 会用到）；[第 3 讲](../lec03/sec31.md)的卷积与下采样（4.6 的 VAE 编码器会用到）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本讲要建立</strong><p>判别式与生成式的分野；生成模型的分类学（显式似然 / 隐式 / 得分—能量）；自编码器为什么不是生成模型；VAE 的先验—后验—ELBO—重参数化四件套与 KL 闭式；GAN 的极小极大目标、最优判别器与 JS 散度、WGAN 与模式坍塌；扩散的前向闭式、简化目标、DDIM 与 CFG 引导；潜空间扩散（LDM / DiT）、一致性模型、整流流与流匹配；VQ-VAE / VQGAN / FSQ / VAR 与离散生成；应用谱系与选型。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立写出 ELBO 并说明缺口是哪个 KL；能说明重参数化为什么让采样可导；能推出最优判别器并写出它与 JS 散度的关系；能写出扩散前向闭式并用它手算某一时刻的信号/噪声权重；能写出整流流的速度场回归目标；能针对一个具体任务（图像生成 / 动作生成 / 离散序列生成）在 VAE / GAN / 扩散 / 流匹配 / 自回归之间做出取舍，并给出代价与失败判据。</p></div>
-</aside>
-
 ## 这一讲要解决的真实问题
 
 前三讲的模型都在回答同一个问题：**给定 $\boldsymbol x$，预测 $y$**。分类、回归、序列标注、目标检测，学的都是条件分布 $p(y\mid\boldsymbol x)$。这一讲把方向掉转 180°——**只给数据，不给标签**，让模型学数据自身的分布 $p(\boldsymbol x)$，并且能从中**采样**出训练集里没有、却又像真的图像、音频、动作序列与离散符号。

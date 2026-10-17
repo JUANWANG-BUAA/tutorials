@@ -11,10 +11,11 @@
  *   data-size     字号（小 / 中 / 大 / 特大）
  *   data-density  行距与间距（紧凑 / 标准 / 宽松 / 超宽）——整套间距由令牌驱动
  *   data-width    版心宽度（窄 / 标准 / 宽 / 超宽）
- *   data-palette  强调色（随主题 / 海蓝 / 青绿 / 松绿 / 琥珀）
+ *   data-palette  主题色（随主题 / 海蓝 / 青绿 / 松绿 / 琥珀 / 高对比 / 档案红 / 工程蓝 / 酸性黄）
+ *   data-bg       背景纹理（随主题 / 柔和光感 / 纯净 / 细网格 / 方格纸 / 横线稿纸 / 点阵 / 纸张纤维 / 蓝图网格 / 帘纹纸）
  *
- * **与菜单栏主题弹层的关系**：主题弹层负责明暗与代码高亮；本面板的「强调色」
- * 只改变链接与状态提示的色相，不再覆盖纸张、侧栏与文字底色。两者叠加始终协调。
+ * **与菜单栏主题弹层的关系**：主题弹层负责明暗与代码高亮；本面板的主题色同时
+ * 调整强调色与纸张/卡片底色，明暗仍交给原生主题弹层，两个入口不抢同一件事。
  *
  * 为什么是「属性驱动」而不是内联 style：
  *   1. 偏好要能覆盖权威样式里的自定义属性（如 --content-max-width），而自定义属性
@@ -197,8 +198,48 @@ html[data-palette="amber"].coal,html[data-palette="amber"].navy,html[data-palett
 html[data-palette="contrast"].coal,html[data-palette="contrast"].navy,html[data-palette="contrast"].ayu{
   --accent:#ffd080;--accent-strong:#ffe0a6;--accent-text:#ffe0a6;--link-color:var(--accent);
 }
+
+html[data-palette="archive"]:not(.coal):not(.navy):not(.ayu){
+  --accent:#8b3a2a;--accent-strong:#6f2c20;--accent-text:#6f2c20;--link-color:var(--accent-strong);
+}
+html[data-palette="blueprint"]:not(.coal):not(.navy):not(.ayu){
+  --accent:#2f6f8f;--accent-strong:#235a75;--accent-text:#235a75;--link-color:var(--accent-strong);
+}
+html[data-palette="endfield"]:not(.coal):not(.navy):not(.ayu){
+  --accent:#7c8a12;--accent-strong:#5f6b00;--accent-text:#5f6b00;--link-color:var(--accent-strong);
+}
+html[data-palette="archive"].coal,html[data-palette="archive"].navy,html[data-palette="archive"].ayu{
+  --accent:#d79a89;--accent-strong:#e8b5a8;--accent-text:#e8b5a8;--link-color:var(--accent);
+}
+html[data-palette="blueprint"].coal,html[data-palette="blueprint"].navy,html[data-palette="blueprint"].ayu{
+  --accent:#7fb7d9;--accent-strong:#a9d4ee;--accent-text:#a9d4ee;--link-color:var(--accent);
+}
+html[data-palette="endfield"].coal,html[data-palette="endfield"].navy,html[data-palette="endfield"].ayu{
+  --accent:#d6ff3f;--accent-strong:#e6ff86;--accent-text:#e6ff86;--link-color:var(--accent);
+}
+
+/* 新主题的纸色：只改纸张/卡片，不改变文字与语义色 */
+
+html[data-palette="blueprint"]:not(.coal):not(.navy):not(.ayu){
+  --page:#eef3f7;--sidebar:#e7edf1;--paper:#f9fbfc;--paper-soft:#eef3f7;
+  --surface-card:rgba(249,251,252,.94);--surface-soft:rgba(238,243,247,.72);
+}
+
+html[data-palette="archive"]:not(.coal):not(.navy):not(.ayu){
+  --page:#f2ecdf;--sidebar:#ebe3d4;--paper:#fbf6ea;--paper-soft:#f3ecdf;
+  --surface-card:rgba(251,246,234,.94);--surface-soft:rgba(243,236,223,.72);
+}
+html[data-palette="endfield"]:not(.coal):not(.navy):not(.ayu){
+  --page:#e8e6df;--sidebar:#dedcd4;--paper:#f3f1ea;--paper-soft:#e9e7df;
+  --surface-card:rgba(243,241,234,.94);--surface-soft:rgba(233,231,223,.72);
+}
+html[data-palette="blueprint"].coal,html[data-palette="blueprint"].navy,html[data-palette="blueprint"].ayu{
+  --page:#0d1b27;--sidebar:#112333;--paper:#142838;--paper-soft:#1b3142;
+  --surface-card:rgba(20,40,56,.94);--surface-soft:rgba(27,49,66,.72);
+}
 html[data-palette="blue"],html[data-palette="teal"],
-html[data-palette="green"],html[data-palette="amber"],html[data-palette="contrast"]{
+html[data-palette="green"],html[data-palette="amber"],html[data-palette="contrast"],
+html[data-palette="archive"],html[data-palette="blueprint"],html[data-palette="endfield"]{
   --accent-soft:color-mix(in srgb,var(--accent) 12%,transparent);
   --mark-bg:color-mix(in srgb,var(--accent) 24%,var(--page));
 }
@@ -301,6 +342,27 @@ html[data-bg="dots"]{
 }
 
 /* 纸张纤维：三组极淡的斜向帘纹，模拟手工纸的织理 */
+
+html[data-bg="blueprint"]{
+  --bp-line:color-mix(in srgb,var(--accent) 13%,transparent);
+  --bp-line-soft:color-mix(in srgb,var(--accent) 7%,transparent);
+  --bg-stack:
+    linear-gradient(90deg,var(--bp-line) 1px,transparent 1px),
+    linear-gradient(var(--bp-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--bp-line-soft) 1px,transparent 1px),
+    linear-gradient(var(--bp-line-soft) 1px,transparent 1px),
+    var(--page);
+  --bg-size:80px 80px,80px 80px,20px 20px,20px 20px,auto;
+}
+html[data-bg="laid"]{
+  --laid-line:color-mix(in srgb,var(--ink) 4.5%,transparent);
+  --laid-chain:color-mix(in srgb,var(--ink) 2.5%,transparent);
+  --bg-stack:
+    repeating-linear-gradient(to bottom,var(--laid-line) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(to right,var(--laid-chain) 0 1px,transparent 1px 120px),
+    var(--page);
+  --bg-size:auto,auto,auto;
+}
 html[data-bg="paper"]{
   --bg-stack:
     repeating-linear-gradient(115deg,var(--fiber) 0 1px,transparent 1px 5px),
@@ -390,6 +452,74 @@ html[data-bg] .page-wrapper{
   font:600 11px/1.4 var(--sans);letter-spacing:.04em;cursor:pointer;
 }
 .prefs-reset:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-soft)}
+
+
+/* 背景纹理：文字 chip → 真实纸样 */
+.prefs-row[data-pref="bg"] .prefs-opts{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;
+}
+.prefs-row[data-pref="bg"] .prefs-opt{
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  min-width:0;padding:4px;border-radius:4px;
+  font:600 9.5px/1.3 var(--sans);letter-spacing:.02em;text-align:left;
+}
+.prefs-paper{
+  display:block;height:31px;border:1px solid var(--line);border-radius:2px;
+  background-color:var(--paper);background-repeat:repeat;
+}
+.prefs-paper[data-paper="theme"]{
+  background-image:radial-gradient(circle at 9px 9px,color-mix(in srgb,var(--accent) 20%,transparent) 0 1.5px,transparent 2px);
+  background-size:18px 18px;
+}
+.prefs-paper[data-paper="plain"]{background-image:none}
+.prefs-paper[data-paper="wash"]{
+  background-image:
+    radial-gradient(circle at 8% 0%,var(--wash-accent),transparent 48%),
+    radial-gradient(circle at 96% 100%,var(--wash-sage),transparent 52%);
+}
+.prefs-paper[data-paper="grid"]{
+  background-image:
+    linear-gradient(90deg,var(--grid-mid) 1px,transparent 1px),
+    linear-gradient(var(--grid-mid) 1px,transparent 1px);
+  background-size:9px 9px;
+}
+.prefs-paper[data-paper="graph"]{
+  background-image:
+    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-mid) 1px,transparent 1px),
+    linear-gradient(var(--grid-mid) 1px,transparent 1px);
+  background-size:18px 18px,18px 18px,9px 9px,9px 9px;
+}
+.prefs-paper[data-paper="ruled"]{
+  background-image:repeating-linear-gradient(to bottom,var(--grid-mid) 0 1px,transparent 1px 7px);
+}
+.prefs-paper[data-paper="dots"]{
+  background-image:radial-gradient(circle at 1px 1px,var(--dot) 1.1px,transparent 1.8px);
+  background-size:8px 8px;
+}
+
+.prefs-paper[data-paper="blueprint"]{
+  background-image:
+    linear-gradient(90deg,color-mix(in srgb,var(--accent) 16%,transparent) 1px,transparent 1px),
+    linear-gradient(color-mix(in srgb,var(--accent) 16%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,var(--accent) 8%,transparent) 1px,transparent 1px),
+    linear-gradient(color-mix(in srgb,var(--accent) 8%,transparent) 1px,transparent 1px);
+  background-size:20px 20px,20px 20px,5px 5px,5px 5px;
+}
+.prefs-paper[data-paper="laid"]{
+  background-image:
+    repeating-linear-gradient(to bottom,var(--grid-mid) 0 1px,transparent 1px 5px),
+    repeating-linear-gradient(to right,var(--grid-line) 0 1px,transparent 1px 28px);
+}
+.prefs-paper[data-paper="paper"]{
+  background-image:
+    repeating-linear-gradient(115deg,var(--fiber) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(25deg,var(--fiber) 0 1px,transparent 1px 6px);
+}
+@media(max-width:420px){
+  .prefs-row[data-pref="bg"] .prefs-opts{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 
 /* 窄屏：面板贴到视口两侧，避免超出右缘被裁 */
 @media (max-width:560px){

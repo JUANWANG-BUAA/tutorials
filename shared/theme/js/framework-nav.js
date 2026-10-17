@@ -1,10 +1,10 @@
 /*
- * framework-nav — 导航与进度：侧栏折叠 / 右栏大纲 / 已读与继续阅读
+ * framework-nav — 导航与进度：侧栏折叠 / 左侧幽灵大纲 / 已读与继续阅读
  * ---------------------------------------------------------------------------
  * 本文件是 shared/theme/js/framework-*.js 之一：framework.js 原先 1050 行、十项职责
  * 挤在一个 IIFE 里，现按内聚拆为四份（core / nav / media / text），共享工具由 core 通过
  * window.TUTORIALS_CORE 暴露，各模块用 CORE.register(boot) 注册自己的启动钩子。
- * 导航与进度：侧栏折叠 / 右栏大纲 / 已读与继续阅读
+ * 导航与进度：侧栏折叠 / 左侧幽灵大纲 / 已读与继续阅读
  */
 (function () {
   "use strict";
@@ -242,21 +242,21 @@
    * 右侧粘性「本页大纲」
    *
    * mdBook 的大纲在侧栏里（跟着整本书的树），长文往下滚时看不见；VitePress、
-   * bevy-cheatbook、官方 rust-book 都是右栏跟随。这里补一条右栏：
+   * bevy-cheatbook、官方 rust-book 都是右栏跟随。这里补一条左栏：
    *   · 条目取自正文 h2 / h3（跳过折叠块与语义盒里的标题，与「本页内容」同规则）；
-   *   · **仅在左侧目录收起、且正文右侧真有空余时出现**（≥600px 视口高）——版心调宽、
+   *   · **仅在左侧目录收起、且正文左侧真有空余时出现**（≥600px 视口高）——版心调宽、
    *     侧栏切换、窗口变窄都会重算，不够就整条让位，不挤正文；
    *   · 出现时正文顶部的「本页内容」隐藏（同一个信息不要两处），收起时回来；
    *   · 滚动跟随高亮用 rAF 节流，不用 IntersectionObserver 的多次触发（长页更稳）。
    * ------------------------------------------------------------------ */
-  /* 右栏的「实际占地」= 自身宽度 + 距视口右缘的距离 + 与正文之间的间距。
-     必须按实际占地判断余量；CSS 采用 border-box，避免 padding 额外撑开右栏，
+  /* 左栏的「实际占地」= 自身宽度 + 距视口左缘的距离 + 与正文之间的间距。
+     必须按实际占地判断余量；CSS 采用 border-box，避免 padding 额外撑开左栏，
      余量不足时整栏隐藏，避免压住正文或贴到屏幕边缘。
      宽度的唯一来源是 CSS 里的 #page-rail（--rail-width），这里只读它，不再硬编码。 */
   var RAIL_MIN_HEIGHT = 600;
 
-  /* 右栏的「实际占地」= --rail-width + --rail-right-gap + --rail-text-gap，三个值都由
-     framework.css 声明（唯一来源）。**不能**去量元素宽度：右栏隐藏时 display:none，
+  /* 左栏的「实际占地」= --rail-width + --rail-left-gap + --rail-text-gap，三个值都由
+     framework.css 声明（唯一来源）。**不能**去量元素宽度：左栏隐藏时 display:none，
      量出来是 0，余量判定会退化成 46px，于是在 1280px 这种「差一点点」的宽度上
      照样显示、压住正文——这正是「大纲遮挡正文、右端顶到屏幕」的成因。 */
   function railFootprint() {
@@ -265,7 +265,7 @@
       var raw = parseFloat(cs.getPropertyValue(name));
       return isNaN(raw) ? fallback : raw;
     };
-    return px("--rail-width", 228) + px("--rail-right-gap", 20) + px("--rail-text-gap", 24);
+    return px("--rail-width", 190) + px("--rail-left-gap", 24) + px("--rail-text-gap", 24);
   }
   var railFrame = false;
   var railLayoutTimer = 0;
@@ -290,7 +290,17 @@
     var main = document.querySelector("main");
     if (!main || !sidebarIsCollapsed()) return false;
     if (window.innerHeight < RAIL_MIN_HEIGHT) return false;
-    return window.innerWidth - main.getBoundingClientRect().right >= railFootprint();
+    return main.getBoundingClientRect().left >= railFootprint();
+  }
+
+  function headingText(heading) {
+    if (!heading) return "";
+    var clone = heading.cloneNode(true);
+    var mathml = clone.querySelectorAll(".katex-mathml");
+    for (var i = 0; i < mathml.length; i++) {
+      if (mathml[i].parentNode) mathml[i].parentNode.removeChild(mathml[i]);
+    }
+    return (clone.textContent || "").replace(/\s+/g, " ").trim();
   }
 
   function buildPageRail() {
@@ -304,7 +314,7 @@
       rail.setAttribute("aria-label", "本页大纲");
       var title = document.createElement("span");
       title.className = "page-rail-title";
-      title.textContent = "本页大纲";
+      title.textContent = "ON THIS PAGE / 本节";
       rail.appendChild(title);
       document.body.appendChild(rail);
     }
@@ -314,12 +324,23 @@
       var target = heading.id || (anchor.getAttribute("href") || "").replace(/^#/, "");
       var link = document.createElement("a");
       link.href = anchor.getAttribute("href");
-      link.textContent = heading.textContent.trim();
+      link.textContent = headingText(heading);
       if (heading.tagName === "H3") link.className = "page-rail-h3";
       link.dataset.railTarget = target;
       rail.appendChild(link);
     });
     syncPageRail();
+  }
+
+  function railTrigger() {
+    var toc = document.querySelector(".page-toc");
+    if (!toc) return 240;
+    var rect = toc.getBoundingClientRect();
+    return window.scrollY + rect.bottom - 80;
+  }
+
+  function syncRailVisibility() {
+    document.documentElement.classList.toggle("rail-visible", window.scrollY > railTrigger());
   }
 
   function paintRailCurrent() {
@@ -340,8 +361,20 @@
     var rail = document.getElementById("page-rail");
     if (!rail) return;
     var room = railHasRoom();
-    document.documentElement.classList.toggle("has-page-rail", room);
-    if (room) paintRailCurrent();
+    if (room) {
+      var main = document.querySelector("main");
+      var cs = getComputedStyle(document.documentElement);
+      var width = parseFloat(cs.getPropertyValue("--rail-width")) || 190;
+      var gap = parseFloat(cs.getPropertyValue("--rail-left-gap")) || 24;
+      var left = Math.max(gap, main.getBoundingClientRect().left - width - gap);
+      document.documentElement.style.setProperty("--rail-left", left + "px");
+      document.documentElement.classList.add("has-page-rail");
+      syncRailVisibility();
+      paintRailCurrent();
+    } else {
+      document.documentElement.classList.remove("has-page-rail");
+      document.documentElement.classList.remove("rail-visible");
+    }
   }
 
   function bootPageRail() {
@@ -354,7 +387,7 @@
       if (!document.documentElement.classList.contains("has-page-rail")) return;
       if (railFrame) return;
       railFrame = true;
-      requestAnimationFrame(function () { railFrame = false; paintRailCurrent(); });
+      requestAnimationFrame(function () { railFrame = false; syncRailVisibility(); paintRailCurrent(); });
     }, { passive: true });
     window.addEventListener("resize", syncPageRail, { passive: true });
     // 版心宽度等偏好变化后重新算余量（prefs.js 在应用后派发该事件）
@@ -369,9 +402,164 @@
     });
   }
 
+  function bootMenuCurrent() {
+    var title = document.querySelector("#mdbook-menu-bar .menu-title");
+    if (!title || title.querySelector(".menu-book")) return;
+    var headings = railHeadings();
+    if (!headings.length) return;
+
+    var bookText = (title.textContent || "").replace(/\s+/g, " ").trim();
+    title.textContent = "";
+    var book = document.createElement("span");
+    book.className = "menu-book";
+    book.textContent = bookText;
+    var current = document.createElement("span");
+    current.className = "menu-current";
+    var no = document.createElement("span");
+    no.className = "mc-no";
+    var txt = document.createElement("span");
+    txt.className = "mc-text";
+    current.appendChild(no);
+    current.appendChild(txt);
+    title.appendChild(book);
+    title.appendChild(current);
+
+    var last = "";
+    function paint() {
+      var active = null;
+      headings.forEach(function (heading) {
+        if (heading.getBoundingClientRect().top <= 140) active = heading;
+      });
+      if (!active) {
+        if (last !== "") {
+          document.documentElement.classList.remove("has-menu-current");
+          last = "";
+        }
+        return;
+      }
+      var label = headingText(active);
+      if (!label || label === last) return;
+      last = label;
+      var m = label.match(/^(\d+(?:\.\d+)+)\s+(.*)$/);
+      no.textContent = m ? "§ " + m[1] : "";
+      txt.textContent = m ? m[2] : label;
+      document.documentElement.classList.add("has-menu-current");
+    }
+
+    var frame = false;
+    function schedule() {
+      if (frame) return;
+      frame = true;
+      requestAnimationFrame(function () { frame = false; paint(); });
+    }
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    document.addEventListener("tutorials:prefs", schedule);
+    var toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+    if (toggle) toggle.addEventListener("change", function () {
+      window.setTimeout(schedule, 360);
+    });
+    paint();
+  }
+
+  function bootForeEdgeTabs() {
+    var sidebar = document.getElementById("mdbook-sidebar");
+    if (!sidebar) return;
+    var links = Array.prototype.filter.call(
+      sidebar.querySelectorAll("ol.chapter > li.chapter-item > .chapter-link-wrapper > a"),
+      function (a) {
+        var t = (a.textContent || "").replace(/\s+/g, " ").trim();
+        return /^第/.test(t) && !/章末|讲末/.test(t);
+      }
+    );
+    if (links.length < 2) return;
+    var nav = document.createElement("nav");
+    nav.className = "fore-edge-tabs";
+    nav.setAttribute("aria-label", "章目录");
+    var active = sidebar.querySelector("a.active");
+    links.forEach(function (a, i) {
+      var tab = document.createElement("a");
+      tab.className = "fore-edge-tab";
+      tab.href = a.getAttribute("href");
+      var label = (a.textContent || "").replace(/\s+/g, " ").trim();
+      tab.textContent = ("0" + (i + 1)).slice(-2);
+      tab.title = label;
+      tab.setAttribute("aria-label", label);
+      var holder = a.closest("li");
+      if (active && holder && holder.contains(active)) tab.classList.add("is-current");
+      nav.appendChild(tab);
+    });
+    document.body.appendChild(nav);
+    function sync() {
+      var show = sidebarIsCollapsed() && window.innerWidth >= 1200;
+      document.documentElement.classList.toggle("has-fore-edge-tabs", show);
+    }
+    window.addEventListener("resize", sync, { passive: true });
+    var toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+    if (toggle) toggle.addEventListener("change", function () {
+      window.setTimeout(sync, 360);
+    });
+    sync();
+  }
+
+  function bootThemeOverlay() {
+    var list = document.getElementById("mdbook-theme-list");
+    if (!list) return;
+    function sync() {
+      var open = getComputedStyle(list).display !== "none";
+      document.documentElement.classList.toggle("theme-popup-open", open);
+      if (!open || !toggle) return;
+      var bar = document.getElementById("mdbook-menu-bar");
+      var rect = toggle.getBoundingClientRect();
+      var width = list.offsetWidth || 100;
+      var left = Math.max(8, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 8));
+      list.style.position = "fixed";
+      list.style.right = "auto";
+      list.style.left = Math.round(left) + "px";
+      list.style.top = Math.round((bar ? bar.getBoundingClientRect().bottom : 58) + 2) + "px";
+    }
+    var toggle = document.getElementById("mdbook-theme-toggle");
+    if (toggle) toggle.addEventListener("click", function () { window.setTimeout(sync, 0); });
+    window.addEventListener("resize", function () { if (getComputedStyle(list).display !== "none") sync(); }, { passive: true });
+    if (window.MutationObserver) new MutationObserver(sync).observe(list, { attributes: true, attributeFilter: ["style", "class", "hidden"] });
+    document.addEventListener("click", function (event) {
+      window.setTimeout(sync, 0);
+      if (getComputedStyle(list).display === "none") return;
+      if (list.contains(event.target) || (toggle && toggle.contains(event.target))) return;
+      list.style.display = "none";
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    }, true);
+    sync();
+  }
+
+  function bootUiSuppression() {
+    var root = document.documentElement;
+    var prefs = document.getElementById("prefs-toggle");
+    var search = document.getElementById("mdbook-searchbar");
+    function sync() {
+      var open = false;
+      var currentPrefs = document.getElementById("prefs-toggle");
+      var currentSearch = document.getElementById("mdbook-searchbar");
+      if (currentPrefs && currentPrefs.getAttribute("aria-expanded") === "true") open = true;
+      if (document.querySelector("dialog[open]")) open = true;
+      if (currentSearch && currentSearch.contains(document.activeElement)) open = true;
+      root.classList.toggle("ui-suppressed", open);
+    }
+    document.addEventListener("click", function () { window.setTimeout(sync, 0); });
+    document.addEventListener("focusin", function () { window.setTimeout(sync, 0); });
+    document.addEventListener("focusout", function () { window.setTimeout(sync, 0); });
+    document.addEventListener("toggle", sync, true);
+    if (window.MutationObserver && prefs) new MutationObserver(sync).observe(prefs, { attributes: true, attributeFilter: ["aria-expanded"] });
+    sync();
+  }
+
   CORE.register(function () {
     try { bootChapterFold(); } catch (e) { /* 纯增益 */ }
     try { bootReadingProgress(); } catch (e) { /* 纯增益 */ }
     try { bootPageRail(); } catch (e) { /* 纯增益 */ }
+    try { bootMenuCurrent(); } catch (e) { /* 纯增益 */ }
+    try { bootForeEdgeTabs(); } catch (e) { /* 纯增益 */ }
+    try { bootThemeOverlay(); } catch (e) { /* 纯增益 */ }
+    try { bootUiSuppression(); } catch (e) { /* 纯增益 */ }
   });
 })();

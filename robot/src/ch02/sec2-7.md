@@ -2,12 +2,6 @@
 
 位姿 = 位置 + 指向，而「先加平移、再乘旋转」的写法在链式变换中会越写越长。本节用**齐次坐标**把两者打包进一个 4×4 矩阵，为 DH 法的连乘打好地基。录播 0:30:54–0:39:43。
 
-<aside class="lesson-brief" aria-label="2.7 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>旋转矩阵及其合成（[@thm-2.3.A]）；分块乘法。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>齐次坐标 $\tilde{\boldsymbol p}$；齐次变换矩阵 $A$ 与 $SE(3)$；逆变换的分块公式（原书式 2.45，附直接验证）；「连乘代替展开式」的工程动机；末注：李代数 $se(3)$ 与螺旋运动。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能写出 $A_1^0$ 的分块结构并说明每块含义；能手算 $A_1^0$ 的逆；能解释「$A$ 不再正交、$A^{-1}\neq A^T$」。</p></div>
-</aside>
-
 <a id="sec-2.7.1"></a>
 
 ## 2.7.1 动机：平移 + 旋转的写法太长

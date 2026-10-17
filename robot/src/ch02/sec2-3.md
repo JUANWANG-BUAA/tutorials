@@ -2,12 +2,6 @@
 
 [2.1](sec2-1.md)–[2.2](sec2-2.md) 已建立单个旋转矩阵及其三重身份。接下来自然要问：把**多个**旋转接在一起时，它们该如何合成？本节回答这个问题，给出两条规则——绕当前轴**右乘**、绕固定轴**左乘**——并建立贯穿全章的性质：合成**不可交换**。本节内容对应录播第 1 周 2:18–2:24（链式合成与不可交换），以及第 2 周 0:02:47–0:08:54 的回顾与 0:30:07–0:30:54 的收束。
 
-<aside class="lesson-brief" aria-label="2.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>旋转矩阵定义与三重身份（[@def-2.2.1]、[@thm-2.2.B]）；正交矩阵乘法。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>$R_j^i$ 上下标记号；右乘 / 左乘两条合成规则及各自的「参照系」语义；逆关系 $R_i^j=(R_j^i)^T$；旋转不可交换的几何图像。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定旋转序列能立刻写出乘积顺序并说明理由；能说清「右乘 = 当前轴」「左乘 = 固定轴」为何互为镜像。</p></div>
-</aside>
-
 <a id="sec-2.3.1"></a>
 
 ## 2.3.1 记号与合成规则

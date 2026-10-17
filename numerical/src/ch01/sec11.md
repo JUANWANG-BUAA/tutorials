@@ -2,13 +2,10 @@
 
 本节回答三个问题：**科学计算在科学研究里扮演什么角色？数值分析研究什么？这门课的路线图长什么样？**主线是一条链：实际问题 → 数学模型 → 数值问题 → 数值解——误差在链条的每一环溜进来，而数值分析专管其中能靠算法控制的两环。
 
-<aside class="lesson-brief" aria-label="1.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>微积分与线性代数的基本概念；会用一种编程语言做四则运算（不作硬性要求，实验章节会现教）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>科学计算的问题链条；数值分析的四个关键词：收敛性、稳定性、误差估计、计算复杂性。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能对任意一个数值计算任务说出「误差可能从哪几环进入」；能说出全书十二章在主线上的位置。</p></div>
-</aside>
-
 <a id="sec-1.1.1"></a>
+
+
+{{#include ../assets/figures/numerical-pipeline.md}}
 
 ## 1.1.1 科学计算：第三种研究方法
 

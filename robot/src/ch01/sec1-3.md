@@ -2,12 +2,6 @@
 
 本节围绕三个问题展开：**移动机器人靠什么移动？三类常规车轮怎样组合成五种底盘布局？为什么轮式机器人的「自由度」可能比位形变量少？** 之所以要先从车轮讲起，是因为移动机器人大多承担服务性工作，需要广泛而自主的移动能力；本节梳理的轮系与布局分类，正是第 11 章（移动机器人建模与控制）的物理预备。
 
-<aside class="lesson-brief" aria-label="1.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec1-2.html#sec-1.2.1">1.2.1</a> 的自由度概念；刚体平面运动的直觉（平移 + 旋转）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>三类车轮的机构差异；五种底盘布局与「能否原地转 / 能否即时横移」的对应；支撑三角形平衡条件；机动性与位形之辨。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>对任一轮式底盘（实物或照片）能识别轮型与布局，指出其不能即时移动的方向；能解释为什么三轮机器人最终仍能到达任意位形。</p></div>
-</aside>
-
 <a id="sec-1.3.1"></a>
 
 ## 1.3.1 两类移动与三类车轮

@@ -2,12 +2,6 @@
 
 本节回答一个问题：**机器人学究竟研究什么？**答案的骨架是三个动词——**建模、规划、控制**。本节把原书 §1.5 的叙述整理为「问题 → 工具 → 章节」的三列映射表；这张表既是全书十二章的总目录，也是读完第一章必须带走的一页纸。
 
-<aside class="lesson-brief" aria-label="1.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec1-1.html#sec-1.1.3">1.1.3</a> 的控制系统职责（「或许需要利用对系统组成的描述」＝建模）；<a href="sec1-2.html">1.2</a>、<a href="sec1-3.html">1.3</a> 的结构词汇。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>运动学 / 微分运动学 / 动力学的分工；正问题与逆问题的方向感；轨迹规划与运动规划的分界；反馈控制为何不可替代。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能默画「建模 / 规划 / 控制」三列映射表（含章节号）；能对「让机械手沿直线从 A 移到 B 并避开工件」这句话拆出涉及的章节。</p></div>
-</aside>
-
 <a id="sec-1.5.1"></a>
 
 ## 1.5.1 建模（Modelling）

@@ -2,12 +2,6 @@
 
 把 [2.1](sec2-1.md) 得到的 9 个方向余弦组织成一个矩阵，就得到机器人学最核心的工具——**旋转矩阵**。本节先给出它的定义与两条代数性质，再推导三个**基本旋转**（全章积木），最后用两个小例子兑现它的**三重几何身份**。本节内容对应第 1 周录播 2:05–2:18（幻灯片 07208 / 07715 / 08239）；第 2 周开篇 0:02:47–0:05:21 另有一段复习（下方两处「第 2 周」时间点即出自该段）。
 
-<aside class="lesson-brief" aria-label="2.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p><a href="sec2-1.md">2.1</a> 的方向余弦展开（[@thm-2.1.A]）；正交矩阵、行列式。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>旋转矩阵定义（式 2.3）与正交性 $R^TR=I$、$R^{-1}=R^T$（式 2.4–2.5，直接推导）；$SO(3)$ 与群公理（李群 / 李代数预告）；三个基本旋转（式 2.6–2.9）；坐标变换 $\boldsymbol p=R\boldsymbol p'$（式 2.10–2.11，例 2.1）；旋转算子与三大几何意义（例 2.2）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能不查表写出 $R_x,R_y,R_z$ 并说明每个元素是哪个余弦；能说出 $R^{-1}=R^T$ 为何成立、$\det R=+1$ 意味着什么；能对同一个 $R$ 给出三种解读。</p></div>
-</aside>
-
 <a id="sec-2.2.1"></a>
 
 ## 2.2.1 定义与两条代数性质

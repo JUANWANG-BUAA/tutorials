@@ -2,12 +2,6 @@
 
 雅可比把「速度层面」的问题变成了线性代数，而线性代数最典型的病症——**矩阵退化**——也随之显形：某些位形下 $J$ 不满秩，末端在特定方向上「给不出速度」、「解不出关节速度」，甚至「解出无穷多」。这些位形就是**运动学奇点**。本节对应录播 1:23:42–1:48:42（含四段工业机器人奇异规避视频）。
 
-<aside class="lesson-brief" aria-label="3.3 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>逐列构造（[@thm-3.1.C]）；秩与线性相关的几何含义；球形腕解耦（[@thm-2.12.B]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>奇点定义与三类后果；边界 / 内部奇点分类；两连杆平面臂的完整判据（原书例 3.2）；球腕解耦 $\det J=\det J_{11}\det J_{22}$；腕奇点 $s_5=0$ 与臂奇点（肘 / 肩）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能说出奇点的三类后果并各举一例；能独立完成两连杆判据推导；能解释「解耦建系为什么只能用于奇点分析」。</p></div>
-</aside>
-
 <a id="sec-3.3.1"></a>
 
 ## 3.3.1 定义、后果与分类

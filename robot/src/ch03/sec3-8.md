@@ -2,12 +2,6 @@
 
 末端执行器顶住工件时，力和力矩会沿着运动学链一路「传」回关节，变成电机需要输出的力矩。这里起作用的桥梁不是 $J$ 本身，而是 $J$ 的**转置**——因为功率守恒要求「速度变换的对偶就是力变换」。别小看这条 $\tau=J^{\mathrm T}F_e$：它是全章最短、也最有用的一条公式。录播 0:03:02–0:19:28（开课即讲）+ 2:27:09–2:27:52（末段）。
 
-<aside class="lesson-brief" aria-label="3.8 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>虚功原理（理论力学）；几何雅可比 $v_e=J\dot q$（[@def-3.1.1]）；$S(\tilde p)$ 与旋转矩阵（[3.1](sec3-1.md)、[2.2](../ch02/sec2-2.md)）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>末端广义力 $F_e$；虚功原理 ⇒ $\tau=J^{\mathrm T}F_e$；速度 / 力变换矩阵互为转置对偶；闭链静力学（了解）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能用虚功原理独立推出 $\tau=J^{\mathrm T}F_e$；能写出两坐标系间的速度 / 力变换矩阵并说明「为什么是转置关系」；能解释 $\tau$ 的物理含义（每个关节电机要出多大力矩）。</p></div>
-</aside>
-
 <a id="sec-3.8.1"></a>
 
 ## 3.8.1 运动静力学对偶与 $\tau=J^{\mathrm T}F_e$

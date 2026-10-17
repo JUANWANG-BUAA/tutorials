@@ -2,18 +2,15 @@
 
 第二章的知识「相比第一章来说**会更加抽象**一些，同学们上课和课后一定要多花时间复习……学习的时候先接受它，然后再求理解」（00:24:58）。2.1 节备好了映射的语言，抽象的起点就是本节：给映射加上与线性运算相容的要求——**可加性 + 齐次性 = 线性映射**（[@def-2.2.1]）。定义之后清点十二个例子（从零变换到微分、积分、投影、坐标与转置），再从例子里提炼三条核心性质（保持线性组合 [@thm-2.2.1]、$T(\boldsymbol{\theta})=\boldsymbol{\theta}'$ 与像的相关性 [@cor-2.2.1]）与**单射判据**（[@thm-2.2.2]）及其推论。最后把「所有线性映射」装进一个线性空间 $L(V,W)$（[@thm-2.2.3]），并以零空间 / 值域与**亏加秩定理**（[@thm-2.2.5]）收束本讲。
 
-<aside class="lesson-brief" aria-label="2.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>映射的术语（[@def-2.1.1]–[@def-2.1.6]）；线性空间与子空间（[1.1](../ch01/sec11.md)、[1.2](../ch01/sec12.md)）；基与坐标、基扩充（[1.3](../ch01/sec13.md)）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>线性映射定义与十二个例子；两条注记（同一数域、两套运算）；保持线性组合；单射判据与两个推论；$L(V,W)$ 的线性结构与维数；$N(T)$、$R(T)$、零度与秩、亏加秩定理。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能背写定义 2.2.1 的两条并知道为什么两条缺一不可；能默写单射判据的三个等价说法；能独立完成亏加秩定理的基扩充证明；能判断「平移为什么不是线性变换」。</p></div>
-</aside>
-
 <a id="sec-2.2.1"></a>
 
 <div class="widget" data-widget="linear-map">
 <p class="widget-head"><span class="widget-kicker">动手</span><strong class="widget-title">线性映射把网格变成了什么</strong></p>
 <p class="widget-hint">调整矩阵 $A$ 的四个元素。左边是原像平面上的单位网格，右边是它被 $A$ 作用后的样子。注意：**原点始终不动**、**直线仍是直线**、**平行线仍平行**——这三条正是「线性」在图形上的样子。</p>
 </div>
+
+
+{{#include ../assets/figures/matrix-kernel.md}}
 
 ## 2.2.1 定义与两条注记
 
@@ -33,7 +30,6 @@
 则称 $T$ 为 $V$ 到 $W$ 的一个**线性映射**。特别地，当 $V=W$ 时，映射 $T$ 为 $V$ 到自身的线性映射，称 $T$ 为 $V$ 上的**线性变换（或线性算子）**。
 :::
 
-![课件 · 定义 2.2.1：线性映射的两条要求](../assets/ch02/linmap-def.jpg)
 
 上面两条要求还可以合并成一条等价形式，实际判定时几乎都直接用它（课件给出）：
 
@@ -60,7 +56,6 @@ $$T(ax+by)=aT(x)+bT(y),\qquad \forall x,y\in V,\ \forall a,b\in F .$$
 
 $$T(x)=\boldsymbol{\theta}\ (\text{零变换});\qquad T(x)=x\ (\text{恒等变换});\qquad T(x)=-x\ (\text{负变换})$$
 
-![课件 · 例 2.2.1：零变换、恒等变换、负变换](../assets/ch02/ex-zero-identity.jpg)
 
 **（2）平面上的三种几何变换**（例 2.2.2，$T:\mathbb R^2\to\mathbb R^2$）：
 
@@ -68,7 +63,6 @@ $$T(x)=\begin{bmatrix}k_1&0\\0&k_2\end{bmatrix}x\ (\text{伸缩},\ k_1,k_2>0);\q
 T(x)=\begin{bmatrix}x_1\\-x_2\end{bmatrix}\ (\text{反射});\qquad
 T(x)=\begin{bmatrix}\cos\varphi&-\sin\varphi\\ \sin\varphi&\cos\varphi\end{bmatrix}x\ (\text{旋转})$$
 
-![课件 · 例 2.2.2：伸缩、反射与旋转](../assets/ch02/ex-plane.jpg)
 
 ::: think 平移为什么不是线性变换（老师借 推论 2.2.1 专门辨析，00:57:04–00:58:30）
 
@@ -98,7 +92,6 @@ $$T(x)=\operatorname{Proj}_W x=(x,\alpha_1)\alpha_1+\cdots+(x,\alpha_n)\alpha_n 
 「明明 $V$ 和 $W$ 不是同一个空间，为什么还能叫**变换**？——因为 $W\subset V$，投影的像既属于 $W$ 又属于 $V$，所以它仍可看作 $V$ 到自身的映射。」（定义 2.2.1 的「$V=W$」是形式条件，投影满足它的方式是「值域落在 $V$ 内」。）
 :::
 
-![课件 · 例 2.2.5：正交投影变换与投影公式](../assets/ch02/ex-projection.jpg)
 
 接着的两个例子换一批原料——第一章的「基」与矩阵运算。
 
@@ -113,7 +106,6 @@ $$T(x)=[\eta_1,\cdots,\eta_n]\,[x_1,\cdots,x_n]^{\mathrm T},\qquad \forall x\in 
 $T$ 把 $x$ **在旧基 $\varepsilon$ 下的坐标数组**当作**新基 $\eta$ 下的坐标**，重新组装出一个向量 $T(x)$。它线性（组装动作对坐标是线性的），并且在基 $\eta$ 下 $T(x)$ 的坐标**恰好是** $x$ 在基 $\varepsilon$ 下的坐标——这正是板书 43:59 记录的 $T(x)=[\eta_1\cdots\eta_n]\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}$ 与 45:09 的「坐标不能直接搬用」（在两处坐标列间打叉）所讲的要点：**同一个坐标数组配不同基，得到的是不同向量**。
 :::
 
-![课件 · 例 2.2.6：两组基定义的线性变换与 T(A)=A^{ᵀ} 思考题](../assets/ch02/ex-two-bases.jpg)
 
 **（7）转置与矩阵左乘**（课件思考题与课堂补充）。$\forall A\in\mathbb R^{m\times n}$，定义 $T(A)=A^{\mathrm T}$（$T:\mathbb R^{m\times n}\to\mathbb R^{n\times m}$），则 $T$ 是线性映射——判定套路（00:45:56–00:48:19）：「**先证它是映射**（定义域、值域对不对），**再验证可加性与齐次性**」：
 
@@ -151,14 +143,12 @@ $$T(\beta_0)=(2+1+3)\alpha_1+(1+3)\alpha_2+3\alpha_3=6\alpha_1+4\alpha_2+3\alpha
 :::
 :::
 
-![课件 · 例 2.2.7：去年考题原文](../assets/ch02/ex-exam.jpg)
 
 ::: note 例 2.2.3 / 2.2.4 的验证套路
 
 以后遇到「微分变换 / 积分变换」，直接称呼、不再逐一验证（00:34:15 老师语）。要验证也不难：这两条要求落到微分与积分上，都只是微积分里的基本运算律。
 :::
 
-![课件 · 例 2.2.3 / 2.2.4：微分变换与积分变换](../assets/ch02/ex-calculus.jpg)
 
 <a id="sec-2.2.3"></a>
 
@@ -184,7 +174,6 @@ $$\overset{\text{归纳}}{=}(k_1T(\alpha_1)+\cdots+k_{p-1}T(\alpha_{p-1}))+k_pT(
 
 老师强调（00:53:05–00:53:15）：「**不管 $\alpha_1,\cdots,\alpha_p$ 是线性无关还是线性相关**，上式均成立。」不要求 $\alpha$ 组无关，这正是后面两个性质证明的引擎。老师还口述了一个推论：线性映射由它在**一组基**上的作用完全确定；因为任何向量都是基的线性组合，用 [@thm-2.2.1] 一算即得。
 
-![课件 · 定理 2.2.1：保持线性组合](../assets/ch02/thm-preserve.jpg)
 
 ::: cor 推论 2.2.1 · 四条常用性质 {#cor-2.2.1}
 
@@ -210,7 +199,6 @@ $$k_1T(\alpha_1)+\cdots+k_pT(\alpha_p)=T(\boldsymbol{\theta})=\boldsymbol{\theta
 (4) 是 (3) 的**逆否命题**（课件把两者并列写出，考试常考「哪个方向成立」）。∎
 :::
 
-![课件 · 推论 2.2.1 前两条：零元映零元与奇对称性](../assets/ch02/cor-theta.jpg)
 
 ::: think 注 1：线性映射必须保持原点不动（00:57:04）
 
@@ -222,7 +210,6 @@ $$k_1T(\alpha_1)+\cdots+k_pT(\alpha_p)=T(\boldsymbol{\theta})=\boldsymbol{\theta
 性质 (3) 说的是「**相关组的像仍相关**」；反过来「像相关 ⟹ 原像组相关」**不成立**——零映射把任何组（包括无关组）都映成零组。这引出下一问：「什么条件下**线性无关组的像也线性无关**？」
 :::
 
-![课件 · 推论 2.2.1 后两条与思考题](../assets/ch02/cor-related.jpg)
 
 ::: thm 定理 2.2.2 · 单射判据（当且仅当）{#thm-2.2.2}
 
@@ -232,7 +219,6 @@ $$k_1T(\alpha_1)+\cdots+k_pT(\alpha_p)=T(\boldsymbol{\theta})=\boldsymbol{\theta
 **注 2**：$\alpha_1,\cdots,\alpha_p$ 是 $V$ 中线性无关向量，$p<n$，像 $T(\alpha_1),\cdots,T(\alpha_p)$ 线性无关，**不一定**说明 $T$ 是单射。
 :::
 
-![课件 · 定理 2.2.2 与两条注](../assets/ch02/thm-injective.jpg)
 
 ::: proof 证明（两个方向，01:04:17–01:11:01）
 
@@ -272,7 +258,6 @@ $$\boldsymbol{\theta}'=T(x)-T(y)=T(x-y)=(x_1-y_1)T(\alpha_1)+\cdots+(x_n-y_n)T(\
 
 定义、例子、性质与判据都有了，接下来换个角度「数」线性映射：把 $V\to W$ 的线性映射全体收集起来，会得到什么？
 
-![课件 · 定理 2.2.3：L(V,W) 是线性空间](../assets/ch02/l-vw-space.jpg)
 
 ::: def 定义 2.2.2 / 2.2.3 · 线性映射的加法与数乘 {#def-2.2.2}
 
@@ -339,7 +324,6 @@ $$N(T)=\{x\in V\mid T(x)=\boldsymbol{\theta}'\},\qquad R(T)=\{y\in W\mid \exists
 先看 $N(T)\subset V$：$\boldsymbol{\theta}\in N(T)$（因 $T(\boldsymbol{\theta})=\boldsymbol{\theta}'$）；任取 $x,y\in N(T)$、$\lambda,\mu\in F$，则 $T(\lambda x+\mu y)=\lambda T(x)+\mu T(y)=\boldsymbol{\theta}'$，故 $\lambda x+\mu y\in N(T)$——对线性组合封闭。同理 $R(T)\subset W$ 且对线性组合封闭（任取像 $T(x),T(y)$，$T(\lambda x+\mu y)=\lambda T(x)+\mu T(y)$ 仍是像）。∎
 :::
 
-![课件 · 定理 2.2.4：核空间、像空间、零度与秩](../assets/ch02/kernel-range.jpg)
 
 ::: think 命名由来（01:25:49–01:26:26）
 
@@ -355,7 +339,6 @@ $$\dim N(T)+\dim R(T)=\dim V,$$
 即线性映射 $T$ 的亏加秩等于其定义域 $V$ 空间的维数。
 :::
 
-![课件 · 定理 2.2.5：亏加秩定理](../assets/ch02/rank-nullity.jpg)
 
 ::: proof 证明（基扩充——课堂上证到一半下课，此处按老师的路线补完）
 

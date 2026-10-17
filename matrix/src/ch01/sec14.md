@@ -7,12 +7,6 @@
 内积不是随便一个「像点积」的公式，它必须满足四条公理。**Hermite 性保证交换两个输入时结果自洽**，**正定性保证非零向量不会被量成零长度**；Gram 矩阵则是内积在某组基下的记录。
 :::
 
-<aside class="lesson-brief" aria-label="1.4 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>先回顾 1.3</strong><p>基、坐标、换基，以及转置、共轭转置和正定矩阵。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>内积四公理、Hermite 正定性、Gram 矩阵与合同变换。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能辨认线性变元，并证明一个矩阵公式确实定义内积。</p></div>
-</aside>
-
 <a id="sec-1.4.1"></a>
 
 ## 1.4.1 内积的四条公理

@@ -2,12 +2,6 @@
 
 几何雅可比的构造是一条**流水线**；这一节把这条流水线放到三种结构上试跑：三连杆平面臂（全转动、平面）、拟人臂（三转动、空间）和斯坦福机械手（五转一移、六自由度）。结构越复杂，越能显出「从 $T$ 矩阵读取 $z,p$」的威力——斯坦福机械手的雅可比没有人愿意手推，实际全部由符号计算完成。录播 1:12:12–1:23:42（1:23:39「**以上是重点中的重点**」）。
 
-<aside class="lesson-brief" aria-label="3.2 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>绿框逐列公式（[@thm-3.1.C]）；三种结构的 DH 参数表与正运动学（[2.9](../ch02/sec2-9.md)）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>五步计算流程；三个结构的 $z_{i-1}$、$p_{i-1}$ 读取与雅可比组装；平面臂如何取「有效行」，以及拟人臂六行中只有三行线性无关的秩分析。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立写出三连杆与拟人臂的雅可比；能解释斯坦福为何第 3 列取移动列、其余各列取转动列；并体会「正运动学到手，雅可比是查表活」。</p></div>
-</aside>
-
 ::: method 方法 3.2.A · 雅可比计算的五步流程（三种结构共用）{#method-3.2.A}
 1. 按 DH 规则建立各连杆坐标系（第 2 章已练）；
 2. 求解 DH 参数 $a_i,\alpha_i,d_i,\vartheta_i$（每行 3 常 1 变，[@def-2.8.3]）；

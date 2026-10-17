@@ -2,13 +2,10 @@
 
 第一章的 [1.2.6](../ch01/sec12.md#sec-1.2.6) 引入了条件数的**函数版** $\mathrm{cond}(f,x)=\lvert xf'(x)/f(x)\rvert$，并在 [1.3.6](../ch01/sec13.md#sec-1.3.6) 预告了**矩阵版**。这一节把它兑现：条件数为什么这样定义，右端与系数扰动各被放大多少，以及**为什么「残差小」不等于「解准」**——走完这几步，「这个方程组还能保住几位有效数字」就能用一个数预测出来。
 
-<aside class="lesson-brief" aria-label="2.4 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>矩阵范数与从属范数、相容性（1.3.3）；矩阵-1 范数与 ∞-范数公式（1.3.4）；有效数字与相对误差的换算（1.2.2）；单位舍入误差 $u$（1.2.5）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>$\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$ 与右端 / 系数扰动界；成分条件数与 Skeel 条件数；「残差 ≠ 误差」的定量说明；用 $\log_{10}\mathrm{cond}$ 预测有效数字损失。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>给定矩阵能估算 $\mathrm{cond}$ 并预测解的可靠位数；能解释为什么病态是「问题的属性」而残差小不能救它；能用 Hilbert 矩阵的数值实验验证 $k\approx\log_{10}\mathrm{cond}$。</p></div>
-</aside>
-
 <a id="sec-2.4.1"></a>
+
+
+{{#include ../assets/figures/numerical-condition.md}}
 
 ## 2.4.1 条件数的定义与它量的东西
 

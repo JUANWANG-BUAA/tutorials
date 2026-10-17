@@ -2,12 +2,6 @@
 
 奇异是「列不够」，冗余是「列太多」：关节数一旦超过任务所需维数，同一个末端速度就有无穷多种关节速度实现。这些「多余」的自由度不是浪费——它们是避障、回避奇异、优化姿态的资本。本节先给出任务相关的冗余判据，再说明怎样把这份「多余」用起来。录播 1:47:01–1:56:39。
 
-<aside class="lesson-brief" aria-label="3.4 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>关节空间 / 操作空间与 $(n,m,r)$ 的含义；[@def-2.10.1]、[@def-2.10.3] 中的本质 / 功能冗余；值域空间 $\mathcal R(J)$ 与零空间 $\mathcal N(J)$。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>任务相关的冗余判据 $n>r$；零空间矩阵 $N$ 与零空间投影 $P=NN^{\mathrm T}$；解族定理 $\dot q^*+P\dot q_0$；以及内部运动的三个用途。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能判定给定机械手对给定任务是否冗余（含功能冗余）；能证明 $\dot q^*+P\dot q_0$ 仍是解；能说出 $\dot q_0$ 的三种典型设计目标。</p></div>
-</aside>
-
 ::: def 定义 3.4.1 · 冗余（任务相关）{#def-3.4.1}
 当机械手自由度个数 $n$ **大于**描述给定任务所必需的变量个数 $r$ 时，就称该机械手对给定任务**冗余**。操作空间维度 $m<n$ 时一定冗余（如 7 关节在三维空间操作，$7>6$）；而任务维度恒有 $r\le m\le6$——一个任务可能只用得上其中两个、三个分量。
 

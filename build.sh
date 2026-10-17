@@ -20,6 +20,7 @@ done
 rm -rf _site && mkdir -p _site
 cp site-index.html _site/index.html
 for book in "${books[@]}"; do cp -R "$book/book" "_site/$book"; done
+python3 tools/optimize_site.py _site
 echo "构建完成：_site/（四本 + 导览页）"
 
 if [ "${1:-}" = "serve" ]; then

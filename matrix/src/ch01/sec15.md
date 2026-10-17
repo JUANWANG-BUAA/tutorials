@@ -7,12 +7,6 @@
 本节公式虽多，核心动作只有一个：**从向量中减去已有方向上的成分，留下正交残差。**Cauchy–Schwarz 的证明、Gram–Schmidt 算法与下一节的投影都围绕这个动作展开。
 :::
 
-<aside class="lesson-brief" aria-label="1.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>先回顾 1.4</strong><p>内积四公理、「第一变元线性」约定、正定性与度量矩阵 $G_{\mathcal E}$。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>长度四条性质、Cauchy–Schwarz 不等式、夹角与正交、Gram–Schmidt 正交化、标准正交基。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能独立证明 Cauchy–Schwarz 不等式，并对一组给定的基执行 Gram–Schmidt 正交化。</p></div>
-</aside>
-
 <a id="sec-1.5.1"></a>
 
 ## 1.5.1 长度：从内积中提取「大小」

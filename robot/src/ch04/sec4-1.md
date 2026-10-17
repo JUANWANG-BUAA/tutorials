@@ -2,13 +2,10 @@
 
 前三章解决的是「**到哪去**」：位姿运动学与雅可比把末端的位形和速度映射到关节。这一章解决「**怎么去**」：在时间轴上把起点和终点连成一条底层伺服跟得住的曲线。本节要做的第一步，是把三个常被混用的词分清楚——路径（纯几何）、轨迹（带时间律）、运动规划（再加避障与优化）。录播 0:08:47–0:39:00。
 
-<aside class="lesson-brief" aria-label="4.1 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>关节空间与操作空间的划分（[@def-2.10.1]）；正运动学 $x_e=k(q)$ 的非线性（[@def-2.8.3]）；关节速度与末端速度的线性映射 $v_e=J(q)\dot q$（[@def-3.1.1]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>路径 / 轨迹 / 运动规划三概念的分界；运动律的两条硬约束（力矩饱和、结构谐振）；轨迹规划器的输入输出接口与用户可指定的四类参量；关节空间与操作空间两条路线的取舍。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能一句话说出路径与轨迹差在哪（时间律）；能说出为什么工业上宁可让用户给「最大速度的百分比」而不是「总时间」；能解释为什么避障必须在操作空间做、而控制必须在关节空间做。</p></div>
-</aside>
-
 <a id="sec-4.1.1"></a>
+
+
+{{#include ../assets/figures/robot-trajectory.md}}
 
 ## 4.1.1 三个概念：路径、轨迹、运动规划
 

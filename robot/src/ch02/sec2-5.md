@@ -2,12 +2,6 @@
 
 欧拉角的代价是奇点与多支解。本节换一种 4 参数表示——**角和轴**：绕任意单位轴 $\boldsymbol r$ 转 $\vartheta$。它没有解析奇点（除 $\sin\vartheta=0$），而且对姿态轨迹规划很友好：轴固定、角单调，插值直观（[@ex-2.5.C]）。录播 0:21:53–0:30:07。
 
-<aside class="lesson-brief" aria-label="2.5 学习简报">
-<div><span class="brief-label">PREREQUISITE</span><strong>你需要先会</strong><p>绕固定轴左乘规则（[@thm-2.3.B]）。</p></div>
-<div><span class="brief-label">TARGET</span><strong>本节要建立</strong><p>$(\vartheta,\boldsymbol r)$ 四参数表示；五步变换消去 $\alpha,\beta$ 的**完整推导**（含叉乘算子 $S(\cdot)$ 与共轭恒等式）；Rodrigues 型矩阵（原书式 2.25）及其紧凑形式；表示不唯一性（式 2.26）与逆解（式 2.27–2.28）及其失效条件；李代数 $so(3)$ 与指数 / 对数映射（2.5.3，本编补充）。</p></div>
-<div><span class="brief-label">CHECKPOINT</span><strong>学完的标准</strong><p>能不看书写出五步合成序列；能由 $R$ 的迹求 $\cos\vartheta$、由反对称部分求 $\boldsymbol r$；能解释「绕 $-\boldsymbol r$ 转 $-\vartheta$ 与绕 $\boldsymbol r$ 转 $\vartheta$ 是同一个旋转」为何使表示不唯一。</p></div>
-</aside>
-
 <a id="sec-2.5.1"></a>
 
 ## 2.5.1 定义与五步合成
