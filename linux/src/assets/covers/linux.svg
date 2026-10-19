@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="Linux 系统与内核书封：用户态、内核态与硬件的分层结构，终端提示符与网络包">
+<defs>
+  <linearGradient id="lx-bg" x1="0" y1="0" x2="0.85" y2="1">
+    <stop offset="0" stop-color="#081311"/><stop offset=".55" stop-color="#10241f"/><stop offset="1" stop-color="#173a31"/>
+  </linearGradient>
+  <linearGradient id="lx-accent" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#8fe6c8"/><stop offset="1" stop-color="#4fb99c"/>
+  </linearGradient>
+  <radialGradient id="lx-glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#5fd3b0" stop-opacity=".42"/><stop offset="1" stop-color="#5fd3b0" stop-opacity="0"/>
+  </radialGradient>
+  <pattern id="lx-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+    <path d="M24 0H0V24" fill="none" stroke="#cfe9df" stroke-width="1"/>
+  </pattern>
+  <pattern id="lx-dots" width="18" height="18" patternUnits="userSpaceOnUse">
+    <circle cx="1.3" cy="1.3" r=".9" fill="#cfe9df"/>
+  </pattern>
+  <linearGradient id="lx-sheen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset=".45" stop-color="#fff" stop-opacity=".02"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </linearGradient>
+  <marker id="lx-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 10 5 0 10Z" fill="#8fe6c8"/>
+  </marker>
+  <marker id="lx-arrow-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M0 0 10 5 0 10Z" fill="#6f9c8d"/>
+  </marker>
+  <filter id="lx-soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+
+<rect width="600" height="800" fill="url(#lx-bg)"/>
+<rect width="600" height="800" fill="url(#lx-dots)" opacity=".34"/>
+<circle cx="452" cy="236" r="250" fill="url(#lx-glow)" opacity=".66"/>
+<rect width="600" height="800" fill="url(#lx-sheen)"/>
+<rect x="24" y="24" width="552" height="752" rx="8" fill="none" stroke="#d8efe6" stroke-opacity=".16"/>
+<path d="M24 76h552M24 714h552" stroke="#d8efe6" stroke-opacity=".1"/>
+<rect x="0" y="0" width="16" height="800" fill="#000" opacity=".28"/>
+<rect x="16" y="0" width="2" height="800" fill="#8fe6c8" opacity=".26"/>
+
+<text x="50" y="62" fill="#bfe9da" font-size="10" font-weight="700" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" letter-spacing="2.1">BUAA · TEACHING ATLAS</text>
+<text x="550" y="62" fill="#bfe9da" font-size="10" font-weight="700" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" text-anchor="end" letter-spacing="1.1">VOL. 05 / LINUX</text>
+
+<!-- 终端窗 -->
+<rect x="50" y="102" width="500" height="126" rx="6" fill="#06100d" stroke="#8fe6c8" stroke-opacity=".28"/>
+<rect x="50" y="102" width="500" height="24" rx="6" fill="#8fe6c8" fill-opacity=".06"/>
+<circle cx="66" cy="114" r="3" fill="#f08a80"/><circle cx="78" cy="114" r="3" fill="#e8c27a"/><circle cx="90" cy="114" r="3" fill="#8fd694"/>
+<text x="108" y="118" fill="#7fa99a" font-size="8.5" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" letter-spacing="1">bash — 80×24</text>
+<text x="68" y="154" fill="#8fe6c8" font-size="13" font-weight="700" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace">$</text>
+<text x="84" y="154" fill="#e7f6f0" font-size="12.5" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace">strace -T -e trace=file ./server</text>
+<text x="68" y="178" fill="#91b8aa" font-size="10.5" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace">openat(AT_FDCWD, "/etc/nginx/nginx.conf", O_RDONLY) = 3 &lt;0.000021&gt;</text>
+<text x="68" y="198" fill="#91b8aa" font-size="10.5" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace">epoll_wait(4, [{EPOLLIN, {u32=7}}], 1024, -1) = 1 &lt;0.913&gt;</text>
+<text x="68" y="218" fill="#7fd6b8" font-size="10.5" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace">accept4(3, ..., SOCK_NONBLOCK|SOCK_CLOEXEC) = 8</text>
+
+<!-- 分层结构 -->
+<g font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="8.5" letter-spacing=".9">
+  <rect x="50" y="262" width="500" height="86" rx="4" fill="#8fe6c8" fill-opacity=".045" stroke="#8fe6c8" stroke-opacity=".28"/>
+  <text x="64" y="280" fill="#a9d8c8">USER SPACE</text>
+  <text x="64" y="302" fill="#e7f6f0" font-size="11" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif">应用 · Shell · libc · 线程库</text>
+  <text x="64" y="322" fill="#7fa99a" font-size="9.5">fork / exec / pthread / mmap / socket</text>
+  <rect x="280" y="276" width="120" height="24" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".5"/>
+  <text x="340" y="292" fill="#bfe9da" text-anchor="middle" font-size="8.5">syscall ABI</text>
+  <rect x="418" y="276" width="116" height="24" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".5"/>
+  <text x="476" y="292" fill="#bfe9da" text-anchor="middle" font-size="8.5">/proc · /sys</text>
+
+  <rect x="50" y="360" width="500" height="112" rx="4" fill="#4fb99c" fill-opacity=".07" stroke="#8fe6c8" stroke-opacity=".38"/>
+  <text x="64" y="378" fill="#a9d8c8">KERNEL SPACE</text>
+  <text x="64" y="400" fill="#e7f6f0" font-size="11" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif">进程调度 · 虚拟内存 · VFS · 网络栈</text>
+  <g fill="#bfe9da" font-size="8.5">
+    <rect x="64" y="414" width="74" height="20" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".55"/><text x="101" y="428" text-anchor="middle">scheduler</text>
+    <rect x="146" y="414" width="74" height="20" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".55"/><text x="183" y="428" text-anchor="middle">mm / page</text>
+    <rect x="228" y="414" width="74" height="20" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".55"/><text x="265" y="428" text-anchor="middle">VFS</text>
+    <rect x="310" y="414" width="86" height="20" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".55"/><text x="353" y="428" text-anchor="middle">netfilter</text>
+    <rect x="404" y="414" width="130" height="20" rx="2" fill="#0a1713" stroke="#6f9c8d" stroke-opacity=".55"/><text x="469" y="428" text-anchor="middle">TCP/IP · epoll · io_uring</text>
+  </g>
+  <text x="64" y="456" fill="#7fa99a" font-size="9.5">系统调用入口 · 中断上半部/下半部 · 内核线程 · RCU</text>
+
+  <rect x="50" y="484" width="500" height="64" rx="4" fill="#8fe6c8" fill-opacity=".035" stroke="#8fe6c8" stroke-opacity=".22"/>
+  <text x="64" y="502" fill="#a9d8c8">HARDWARE</text>
+  <text x="64" y="524" fill="#e7f6f0" font-size="11" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif">CPU · Cache · DRAM · NVMe · NIC</text>
+  <text x="64" y="540" fill="#7fa99a" font-size="9.5">MMU / TLB · DMA ring · interrupt controller</text>
+</g>
+
+<!-- 层间箭头 -->
+<path d="M300 348v10" stroke="#8fe6c8" stroke-width="1.4" marker-end="url(#lx-arrow)"/>
+<path d="M300 472v10" stroke="#6f9c8d" stroke-width="1.2" marker-end="url(#lx-arrow-dim)"/>
+
+<!-- 右侧网络包轨迹 -->
+<g opacity=".8">
+  <path d="M518 250 C 560 280, 560 420, 518 470" fill="none" stroke="#8fe6c8" stroke-opacity=".28" stroke-width="1.2" stroke-dasharray="3 5"/>
+  <circle cx="548" cy="318" r="3" fill="#8fe6c8"/><circle cx="552" cy="356" r="2.2" fill="#8fe6c8" opacity=".7"/>
+  <circle cx="550" cy="398" r="2.8" fill="#e8c27a"/><circle cx="542" cy="436" r="2" fill="#e8c27a" opacity=".65"/>
+</g>
+
+<!-- 标题 -->
+<text x="50" y="612" fill="#f2fbf7" font-size="48" font-weight="700" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" letter-spacing=".6">Linux 系统与内核</text>
+<text x="52" y="646" fill="#8fe6c8" font-size="12" font-weight="700" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" letter-spacing="1.4">FROM COMMAND LINE TO CLOUD-NATIVE</text>
+<path d="M52 666h196" stroke="url(#lx-accent)" stroke-width="3"/>
+<text x="52" y="694" fill="#d6ece3" font-size="12.5" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif">命令行 · Shell · 系统编程 · 内核 · 网络 · 云原生</text>
+
+<text x="550" y="694" fill="#e8c27a" font-size="10" font-weight="700" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" text-anchor="end" letter-spacing="1.1">6 PARTS · 79 CHAPTERS</text>
+<text x="550" y="713" fill="#bfe9da" font-size="10" font-weight="700" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" text-anchor="end" letter-spacing="1.1">11 PROJECTS</text>
+<text x="50" y="744" fill="#7fa99a" font-size="9.5" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif" letter-spacing=".5">北京航空航天大学 · 研究生课程定制教程 · 依据 10 部经典教材整理</text>
+
+<g transform="translate(526 746)" opacity=".9">
+  <circle r="18" fill="none" stroke="#8fe6c8" stroke-opacity=".55"/>
+  <path d="M-8 0h16M0 -8v16" stroke="#8fe6c8" stroke-width="1.1"/>
+  <circle r="4" fill="none" stroke="#8fe6c8"/>
+</g>
+</svg>

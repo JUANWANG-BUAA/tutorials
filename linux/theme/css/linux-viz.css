@@ -1,0 +1,31 @@
+/* linux-viz.css — canvas 教学动画的外观；无 JS 时 .viz-fallback 仍可读 */
+.viz{
+  margin:1.1em 0 1.4em;
+  border:1px solid var(--control-line);
+  border-radius:10px;
+  background:var(--bg);
+  overflow:hidden;
+}
+.viz-card{display:flex;flex-direction:column}
+.viz canvas{display:block;width:100%;height:auto;background:var(--bg)}
+.viz-controls{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:8px 10px;border-top:1px solid var(--control-line);
+  background:color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);
+}
+.viz-controls button{
+  border:1px solid var(--control-line);border-radius:6px;
+  background:var(--bg);color:var(--fg);cursor:pointer;
+  font:inherit;font-size:12px;line-height:1.5;padding:3px 10px;
+}
+.viz-controls button:hover{border-color:var(--accent);color:var(--accent)}
+.viz-controls button:disabled{opacity:.4;cursor:not-allowed}
+.viz-status{margin-left:auto;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+.viz-fallback{margin:0;padding:10px 12px;color:var(--muted);font-size:12.5px}
+@media(max-width:700px){
+  .viz-controls{gap:6px;padding:7px 8px}
+  .viz-controls button{font-size:11.5px;padding:3px 8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .viz-controls button{transition:none}
+}

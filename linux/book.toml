@@ -1,0 +1,47 @@
+# 《Linux 系统与内核 · 从命令行到云原生》定制教程
+#
+# 唯一的构建配置。日常操作：
+#   ./build.sh          （仓库根，一键构建全部教程）
+#   mdbook serve --open （仅本书预览；搜索索引与术语数据需用根目录 build.sh 生成）
+#
+# 内容源在 src/，全部为 Markdown；不要手工编辑 book/ 下的产物。
+
+[book]
+title = "Linux 系统与内核 · 从命令行到云原生"
+description = "六篇 · 85 章 + 四条项目主线：命令行与 Shell、计算机系统（CSAPP/OSTEP）、Unix/Linux 系统编程（Kerrisk）、Linux 内核、网络协议栈、云原生；附 11 个真实大规模项目的从零复现"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+additional-css = ["theme/css/base.css", "theme/css/linux.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/prefs.css", "theme/css/linux-viz.css"]
+additional-js = ["theme/js/page-extras.js", "theme/js/linux.js", "theme/js/search-cjk.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js", "theme/js/variants.js", "theme/js/linux-viz.js"]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/linux/{path}"
+no-section-label = true
+site-url = "/tutorials/linux/"
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+# 中文检索用「一元 + 二元字符 n-gram」建索引（见 tools/build_search_js.mjs）。
+# AND 语义会要求查询的每一个 n-gram 都出现，中文跨词边伪二元组会零命中，故用 OR。
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子：与其余四本同一份实现。
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式：构建期渲染为 HTML（不依赖运行时 JS）。
+# 包装器处理 KaTeX 输出里的字面 ~ 被 GFM 误判删除线的问题。
+[preprocessor.katex]
+command = "python3 tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

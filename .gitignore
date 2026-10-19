@@ -23,3 +23,6 @@ output/
 
 # 插图生成的中间产物（脚本 tools/make_figures.py · make_diagrams.py 可随时重建）
 deeplearning/tools/figs_out/
+
+# 本次写作的母本目录/OCR 中间产物（不发布）
+.work/

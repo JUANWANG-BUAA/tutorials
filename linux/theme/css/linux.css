@@ -1,0 +1,252 @@
+/*
+ * 《Linux 系统与内核》— 本书视觉层
+ * ---------------------------------------------------------------------------
+ * 设计语言与其余四本同源：令牌层在 shared/theme/css/base.css，图鉴层在 atlas.css。
+ * 本文件只做三件事：
+ *   1. 本书的强调色（终端青绿，而非暖陶土），五个主题各一份；
+ *   2. 系统类教材特有的组件：终端会话、调用轨迹、地址/内存布局、文件树、
+ *      章节速览卡、包journey条；
+ *   3. 打印与窄屏的少量回落。
+ * 语义盒、折叠解答、页首封面、图版等一律沿用共用实现，不在这里重写。
+ */
+
+/* ======================================================================== *
+ * §1  本书强调色：终端青绿
+ * ------------------------------------------------------------------------
+ * 只覆盖强调色与链接色；纸张、墨色、语义盒仍用 base.css 的令牌。
+ * 亮色主题取深青绿保证 13.5px 小字过 AA；暗色主题取浅青绿。
+ * ======================================================================== */
+:root,
+html.rust{
+  --accent:#2f7a68;--accent-strong:#236152;--accent-text:#236152;
+  --accent-soft:rgba(47,122,104,.10);--mark-bg:#cfe8df;
+}
+html.light{
+  --accent:#2b7a66;--accent-strong:#1f6252;--accent-text:#1f6252;
+  --accent-soft:rgba(43,122,102,.10);--mark-bg:#cfe8df;
+}
+html.coal{
+  --accent:#79c9b2;--accent-strong:#9ddcc9;--accent-text:#9ddcc9;
+  --accent-soft:rgba(121,201,178,.12);--mark-bg:#2c4a42;
+}
+html.navy{
+  --accent:#63c6b0;--accent-strong:#8bddcb;--accent-text:#8bddcb;
+  --accent-soft:rgba(99,198,176,.12);--mark-bg:#26443e;
+}
+html.ayu{
+  --accent:#8fceb8;--accent-strong:#b0e2d1;--accent-text:#a5dcc9;
+  --accent-soft:rgba(143,206,184,.12);--mark-bg:#314a43;
+}
+html[data-book="linux"]{--cover-spine:#1f6f5c}
+
+/* ======================================================================== *
+ * §2  终端会话
+ * ------------------------------------------------------------------------
+ * <div class="terminal" data-title="bash · ubuntu">…</div>
+ * 行首用 <span class="p">$</span> 标提示符；输出行不标。等宽、深底、细边框。
+ * ======================================================================== */
+.content .terminal{
+  margin:16px 0;border:1px solid var(--line-strong);border-radius:3px;
+  background:color-mix(in srgb,var(--ink) 94%,#000);
+  color:color-mix(in srgb,var(--paper) 92%,#fff);
+  box-shadow:0 1px 0 color-mix(in srgb,var(--ink) 8%,transparent);
+  overflow:hidden;font:12.5px/1.72 var(--mono);
+}
+.content .terminal::before{
+  content:attr(data-title);display:block;padding:5px 12px;
+  border-bottom:1px solid color-mix(in srgb,#fff 14%,transparent);
+  color:color-mix(in srgb,#fff 62%,transparent);
+  font:600 10.5px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+}
+.content .terminal pre,
+.content .terminal .term-body{
+  margin:0;padding:11px 14px;background:transparent;border:0;
+  color:inherit;font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.content .terminal .p{color:#7fd6b8;font-weight:700;user-select:none}
+.content .terminal .c{color:color-mix(in srgb,#fff 52%,transparent)}
+.content .terminal .ok{color:#8fd694}
+.content .terminal .err{color:#f0a3a0}
+.content .terminal .hi{color:#e8c27a}
+
+/* 行内命令：比普通 code 更紧凑，避免在中文行里撑高行距 */
+.content code.cmd{
+  padding:1px 5px;border:1px solid color-mix(in srgb,var(--line) 80%,transparent);
+  border-radius:3px;background:var(--paper-soft);font-size:.92em;
+}
+
+/* ======================================================================== *
+ * §3  调用轨迹 / 路径条
+ * ------------------------------------------------------------------------
+ * <div class="trace"><span class="node">read()</span><span class="arrow">→</span>…</div>
+ * 用于系统调用链、收包路径、启动阶段。窄屏自动换行。
+ * ======================================================================== */
+.content .trace{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
+  margin:14px 0;padding:10px 12px;border:1px solid var(--line);
+  background:var(--paper-soft);font:12px/1.6 var(--mono);
+}
+.content .trace .node{
+  padding:2px 7px;border:1px solid var(--line-strong);border-radius:2px;
+  background:var(--paper);white-space:nowrap;
+}
+.content .trace .node.hot{border-color:var(--accent);color:var(--accent-strong);font-weight:600}
+.content .trace .arrow{color:var(--muted);user-select:none}
+.content .trace .note{color:var(--muted);font-size:11px}
+
+/* ======================================================================== *
+ * §4  布局图：地址空间、内存、文件树、页表
+ * ------------------------------------------------------------------------
+ * 统一用 <pre class="layout">，等宽、带刻度线；不要用图片替代可复制的数字。
+ * ======================================================================== */
+.content pre.layout{
+  margin:14px 0;padding:12px 14px;border:1px solid var(--line);
+  border-left:3px solid var(--accent);background:var(--paper-soft);
+  font:12px/1.7 var(--mono);overflow-x:auto;
+}
+.content pre.layout b{color:var(--accent-strong);font-weight:700}
+
+/* 文件树：细线连接，目录名加粗 */
+.content pre.tree{
+  margin:14px 0;padding:12px 16px;border:1px solid var(--line);
+  background:var(--paper);font:12px/1.75 var(--mono);overflow-x:auto;
+}
+.content pre.tree .dir{color:var(--accent-strong);font-weight:700}
+
+/* ======================================================================== *
+ * §5  章节速览卡
+ * ------------------------------------------------------------------------
+ * 每章开头一张：左侧「本章回答」，右侧「读完你会」。只用边框与底色，
+ * 不做阴影卡片瀑布。
+ * ======================================================================== */
+.content .chapter-index{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  margin:18px 0 24px;border:1px solid var(--line-strong);background:var(--paper);
+}
+.content .chapter-index > div{padding:11px 14px}
+.content .chapter-index > div + div{border-left:1px solid var(--line)}
+.content .chapter-index .ci-label{
+  display:block;margin-bottom:3px;color:var(--muted);
+  font:600 10px/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+}
+.content .chapter-index p{margin:0;font-size:13.5px;line-height:1.7}
+@media(max-width:700px){
+  .content .chapter-index{grid-template-columns:1fr}
+  .content .chapter-index > div + div{border-left:0;border-top:1px solid var(--line)}
+}
+
+/* ======================================================================== *
+ * §6  表格与证据
+ * ======================================================================== */
+.content table.syscall th,
+.content table.syscall td{font-family:var(--mono);font-size:12px;vertical-align:top}
+.content table.syscall td:first-child{color:var(--accent-strong);font-weight:600;white-space:nowrap}
+.content table.compare td:first-child{white-space:nowrap;font-weight:600}
+.content .table-caption{
+  margin:-6px 0 16px;color:var(--muted);font-size:12px;line-height:1.6;text-align:center;
+}
+
+/* 状态标签：核心 / 选读 / 历史 */
+.content .tag{
+  display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--line-strong);
+  border-radius:2px;color:var(--muted);font:600 10px/1.6 var(--mono);letter-spacing:.04em;
+  vertical-align:1px;
+}
+.content .tag.core{border-color:var(--accent);color:var(--accent-strong)}
+.content .tag.legacy{border-color:var(--muted);color:var(--muted);text-decoration:line-through}
+.content .tag.opt{border-color:var(--think-line);color:var(--think-ink)}
+
+/* 图注：所有 SVG 图必须有 <figcaption>，读图提示以「读图：」开头 */
+.content figure.fig-plate{margin:20px 0 22px}
+.content figure.fig-plate figcaption{
+  margin-top:8px;color:var(--muted);font-size:12.5px;line-height:1.7;text-align:center;
+}
+.content figure.fig-plate figcaption b{color:var(--ink-2)}
+
+/* ======================================================================== *
+ * §7  窄屏与打印
+ * ======================================================================== */
+@media(max-width:700px){
+  .content .terminal{font-size:11.5px}
+  .content .terminal pre,.content .terminal .term-body{padding:9px 10px}
+  .content pre.layout,.content pre.tree{font-size:11px}
+}
+@media print{
+  .content .terminal{
+    background:#f7f7f7;color:#111;border-color:#999;
+  }
+  .content .terminal::before{color:#333;border-color:#bbb}
+  .content .terminal .p{color:#0b5c4a}
+  .content pre.layout,.content pre.tree{background:#fafafa}
+}
+
+/* 窄屏：宽表允许横向滚动，避免术语表/系统调用表被裁掉右列 */
+@media(max-width:700px){
+  .content table{display:block;overflow-x:auto;max-width:100%}
+  .content table.syscall{font-size:11px}
+}
+
+/* ======================================================================== *
+ * §12  架构 × 语言切换器（多版本代码块）
+ * ------------------------------------------------------------------------
+ * 作者在 Markdown 里用：
+ *   <div class="variant" data-arch="x86-64" data-lang="asm"> ... </div>
+ * 外层 .variant-switcher 由 theme/js/variants.js 注入。
+ * ======================================================================== */
+.variant-switcher{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  margin:0 0 20px;padding:9px 11px;
+  border:1px solid var(--control-line);border-radius:9px;
+  background:var(--accent-soft);
+  font-size:13px;line-height:1.5;
+}
+.variant-kicker{
+  color:var(--fg);opacity:.62;font-size:11.5px;
+  letter-spacing:.08em;text-transform:uppercase;margin-right:2px;
+}
+.variant-switcher button{
+  appearance:none;border:1px solid var(--control-line);border-radius:6px;
+  background:var(--bg);color:var(--fg);
+  padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer;
+  transition:background .12s ease,border-color .12s ease,color .12s ease;
+}
+.variant-switcher button:hover{border-color:var(--accent);color:var(--accent-text)}
+.variant-switcher button.is-active{
+  background:var(--accent);border-color:var(--accent);color:#fff;
+}
+html.coal .variant-switcher button.is-active,
+html.navy .variant-switcher button.is-active,
+html.ayu .variant-switcher button.is-active{color:#10211d}
+.variant-sep{
+  width:1px;height:17px;background:var(--control-line);margin:0 5px;
+}
+.variant-note{color:var(--err-ink);font-size:12px;margin-left:4px}
+.variant{
+  margin:15px 0;padding:2px 0 2px 12px;
+  border-left:3px solid var(--accent);
+}
+.variant::before{
+  content:attr(data-arch) " · " attr(data-lang);
+  display:block;margin:0 0 2px;
+  color:var(--accent-text);font-size:11.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.variant[hidden]{display:none!important}
+.variant pre{margin-top:.35em}
+@media print{
+  .variant-switcher{display:none}
+  .variant[hidden]{display:block!important}
+  .variant::before{content:attr(data-arch) " · " attr(data-lang)}
+}
+
+/* 代码复制按钮：所有 pre 都有，variant 里也有 */
+.content pre{position:relative}
+.content pre .copy-code{
+  position:absolute;top:6px;right:6px;z-index:2;
+  border:1px solid var(--control-line);border-radius:5px;
+  background:var(--bg);color:var(--fg);opacity:.72;
+  font:inherit;font-size:11px;line-height:1.4;padding:2px 7px;cursor:pointer;
+}
+.content pre:hover .copy-code,.content pre .copy-code:focus{opacity:1}
+.content pre .copy-code.is-copied{background:var(--accent);border-color:var(--accent);color:#fff}
+@media(max-width:700px){.content pre .copy-code{opacity:.9;font-size:10.5px;padding:2px 6px}}

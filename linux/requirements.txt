@@ -1,0 +1,2 @@
+markdown-it-py>=4.0
+# tools/mathbook.py 需要；构建时由 mdBook 预处理链调用

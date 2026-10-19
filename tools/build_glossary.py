@@ -49,6 +49,10 @@ SOURCES = {
         "page": "review/glossary.html",
         "columns": {"term": ["中文"], "en": ["English"], "def": ["一句话"], "origin": ["出处"]},
     },
+    "linux": {
+        "page": "review/glossary.html",
+        "columns": {"term": ["中文"], "en": ["English"], "def": ["一句话"], "origin": ["出处"]},
+    },
 }
 
 TAG = re.compile(r"<[^>]+>")

@@ -80,12 +80,22 @@ def optimize_html() -> None:
     pages = 0
     for html in ROOT.rglob("*.html"):
         text = html.read_text(encoding="utf-8")
+        seen = 0
         def repl(match: re.Match[str]) -> str:
+            nonlocal seen
             raw = match.group(1)
             attrs = attrs_of(raw)
             src = attrs.get("src", "")
+            first = seen == 0
+            seen += 1
             additions = []
-            if "loading" not in attrs:
+            if first:
+                # 首图通常是首屏封面/主图：不要 lazy，否则会拖慢 LCP。
+                if "loading" not in attrs:
+                    additions.append('loading="eager"')
+                if "fetchpriority" not in attrs:
+                    additions.append('fetchpriority="high"')
+            elif "loading" not in attrs:
                 additions.append('loading="lazy"')
             if "decoding" not in attrs:
                 additions.append('decoding="async"')
