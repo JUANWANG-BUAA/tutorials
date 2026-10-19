@@ -82,7 +82,7 @@
 
 设 $A$ 奇异，则存在 $\boldsymbol{v}\neq\boldsymbol{0}$ 使 $A\boldsymbol{v}=\boldsymbol{0}$，于是 $\lVert\boldsymbol{v}\rVert_A=\lVert\boldsymbol{0}\rVert=0$，正定性被破坏，不是范数。∎
 
-（应用：加权残差 $\lVert\boldsymbol{r}\rVert_{D^{-1/2}}$、椭圆范数 $\lVert\boldsymbol{x}\rVert_{A^{1/2}}$ 都是本题特例，[第五章](sec11.md#roadmap)迭代法用它们度量误差。）
+（应用：加权残差 $\lVert\boldsymbol{r}\rVert_{D^{-1/2}}$、椭圆范数 $\lVert\boldsymbol{x}\rVert_{A^{1/2}}$ 都是本题特例，[第 2 章](../course/ch02/overview.md)迭代法用它们度量误差。）
 
 :::
 
@@ -187,7 +187,7 @@ $$\lVert A\boldsymbol{x}\rVert_2=56.18\ \le\ \sqrt3\times9\times9.165=142.87\ \c
 
 $$\lVert A\rVert_2=7.281\le\sqrt{\lVert A\rVert_1\lVert A\rVert_\infty}=\sqrt{99}\approx9.950,\qquad \lVert A\rVert_2=7.281\le\lVert A\rVert_F=8.888\ \checkmark .$$
 
-（第二个界的一行来历：$\lVert A\rVert_2^2=\lambda_{\max}(A^{\mathrm T}A)\le\lVert A^{\mathrm T}A\rVert_\infty\le\lVert A^{\mathrm T}\rVert_\infty\lVert A\rVert_\infty=\lVert A\rVert_1\lVert A\rVert_\infty$，其中 $\lVert A^{\mathrm T}\rVert_\infty=\lVert A\rVert_1$，且 $\lambda_{\max}\le$ 谱半径（spectral radius）$\le$ 任一算子范数——后者[第三章](sec11.md#roadmap)证明，此处可当引理用。）这两个界与 $\lVert A\rVert_F$ 互不控制，本题中 $9.950\gt8.888$。所有实测值与理论一致。
+（第二个界的一行来历：$\lVert A\rVert_2^2=\lambda_{\max}(A^{\mathrm T}A)\le\lVert A^{\mathrm T}A\rVert_\infty\le\lVert A^{\mathrm T}\rVert_\infty\lVert A\rVert_\infty=\lVert A\rVert_1\lVert A\rVert_\infty$，其中 $\lVert A^{\mathrm T}\rVert_\infty=\lVert A\rVert_1$，且 $\lambda_{\max}\le$ 谱半径（spectral radius）$\le$ 任一算子范数——后者见[补充篇 2.5](../ch02/sec25.md)，此处可当引理用。）这两个界与 $\lVert A\rVert_F$ 互不控制，本题中 $9.950\gt8.888$。所有实测值与理论一致。
 
 :::
 
@@ -368,7 +368,7 @@ $$y_0=\int_0^1\frac{dx}{1+4x}=\frac{\ln 5}{4}\approx0.4024 .$$
 
 ::: sol 提示与参考
 
-内存：float32 减半（$10^5$ 阶三对角存 3 条带约 $3\times10^5$ 个数 → 1.2 MB vs 2.4 MB）；速度：纯算术下 float32 可快 1~2 倍，但带宽受限时收益缩小（用 NumPy 实测 `np.dot` / `np.linalg.solvebanded`）；精度：float32 的 $u\approx6\times10^{-8}$ 对应约 7 位有效数字，而追赶法的舍入误差按 $O(n)$ 放大（$10^5$ 步 → 最坏丢掉 4~5 位，只剩 2~3 位有效数字），float64 放大后仍剩 11 位以上。**判据：保留位数 $\approx15.9-\log_{10}(\text{cond}\times n)$；小于任务要求位数就不能降精度。**（完整的条件数分析在[第三章](sec11.md#roadmap)，此处先按 $n$ 的量级估计。）
+内存：float32 减半（$10^5$ 阶三对角存 3 条带约 $3\times10^5$ 个数 → 1.2 MB vs 2.4 MB）；速度：纯算术下 float32 可快 1~2 倍，但带宽受限时收益缩小（用 NumPy 实测 `np.dot` / `np.linalg.solvebanded`）；精度：float32 的 $u\approx6\times10^{-8}$ 对应约 7 位有效数字，而追赶法的舍入误差按 $O(n)$ 放大（$10^5$ 步 → 最坏丢掉 4~5 位，只剩 2~3 位有效数字），float64 放大后仍剩 11 位以上。**判据：保留位数 $\approx15.9-\log_{10}(\text{cond}\times n)$；小于任务要求位数就不能降精度。**（完整的条件数分析见[补充篇 2.4](../ch02/sec24.md)，此处先按 $n$ 的量级估计。）
 
 :::
 

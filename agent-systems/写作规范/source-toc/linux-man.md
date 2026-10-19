@@ -1,0 +1,16 @@
+- 1 wait(2) 与 waitpid(2)
+- 2 WIFEXITED 与 WEXITSTATUS
+- 3 clone(2) 的可变参数顺序
+- 4 mq_open(3) 的可变参数原型
+- 5 sem_open(3) 的可变参数原型
+- 6 tzset(3) 与 TZ 空值
+- 7 bash pipefail 与 PIPESTATUS
+- 8 ulimit 软限制与硬限制
+- 9 jobs 作业表与作业控制
+- 10 seccomp(2)
+- 11 landlock(7)
+- 12 user_namespaces(7)
+- 13 openat2(2)
+- 14 cgroup v2
+- 15 capabilities(7)
+- 16 pidfd_open(2)

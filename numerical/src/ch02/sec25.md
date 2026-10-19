@@ -1,5 +1,7 @@
 # 2.5 特征值、谱半径与对称谱理论
 
+> **本节属“补充篇 · 数值线性代数工具箱”**：2.x 是补充篇内部编号，不是课堂第 2 章的节号。课堂第 2 章是[线性方程组的解法](../course/ch02/overview.md)。
+
 前四节把矩阵当作「算子」「方程组」「投影工具」，这一节换视角：**矩阵的谱（特征值集合）刻画它的本质行为**——条件数回答「解被放大多少」（2.4），谱半径 $\rho(A)$ 回答「迭代收不收敛、多快」，SVD（2.6）与 QR 迭代也都建立在谱上。本节重点是特征值的**扰动敏感性**：[1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在此重演，且结论反直觉——对称矩阵温和，非正规矩阵「开方敏感」。路线：谱半径及其上界 → Gerschgorin 圆盘（不算特征值也能定位它们）→ 对称情形（Rayleigh 商与 Courant–Fischer）→ 非正规情形的定量警告。
 
 <a id="sec-2.5.1"></a>
@@ -547,6 +549,6 @@ $$N^k=\begin{pmatrix}1&k\cdot1000\\0&1\end{pmatrix},\qquad \lVert N^k\rVert_2\ap
 ::: preview 课程预告 · 本节之后
 - **SVD 就是对称谱定理在长方形矩阵上的推广**：$\sigma_i(A)=\sqrt{\lambda_i(A^{\mathrm T}A)}$ 在**对称半正定**矩阵上算，因此总是良态的——[2.6](sec26.md)；
 - **幂法 / 反幂法 / QR 方法 / Jacobi 方法求特征值**：原书第 3 章 3.1–3.3 节（课堂已于[第 6 讲](../lectures/lec06.md)开篇，并在[第 7 讲](../lectures/lec07.md)展开规范化幂法、反幂法与位移反幂法；本节的 Rayleigh 商正是幂法提取特征值的工具）；
-- **谱半径决定迭代收敛速度**：原书第 2 章 2.4 节与[第五章](../ch01/sec11.md#roadmap)（$\rho(H)\lt1$ 是 Jacobi / Gauss–Seidel / SOR 收敛的判据，课堂实录见[第 5 讲](../lectures/lec05.md)、[第 6 讲](../lectures/lec06.md)）；
+- **谱半径决定迭代收敛速度**：原书第 2 章 2.4 节与[第 2 章](../course/ch02/overview.md)（$\rho(H)\lt1$ 是 Jacobi / Gauss–Seidel / SOR 收敛的判据，课堂实录见[第 5 讲](../lectures/lec05.md)、[第 6 讲](../lectures/lec06.md)）；
 - **条件数与谱的关系**：$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$（[2.4](sec24.md)），而 $\sigma$ 来自对称矩阵的谱——两节在这里汇合。
 :::

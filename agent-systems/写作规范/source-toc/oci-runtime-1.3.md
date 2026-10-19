@@ -1,0 +1,15 @@
+- 1 bundle 布局
+- 2 config.json 顶层字段
+- 3 process：args、env、cwd
+- 4 user 与 uid/gid 映射
+- 5 capabilities 五集合
+- 6 rlimits
+- 7 noNewPrivileges
+- 8 seccomp
+- 9 mounts 与 rootfs
+- 10 namespaces
+- 11 hooks
+- 12 生命周期：create/start/kill/delete
+- 13 annotations
+- 14 cgroup 资源
+- 15 AppArmor/SELinux

@@ -109,7 +109,7 @@ $$\boldsymbol{x}=\Bigl(1,\ \tfrac12,\ \tfrac13,\ \cdots\Bigr):\qquad
 
 <a id="app-a-2"></a>
 
-## A.2 第二章
+## A.2 补充篇
 
 <a id="app-a-2-1"></a>
 

@@ -14,7 +14,7 @@
 | 定理 1.5 | [@thm-1.3.6] | Neumann 界（$\lVert A\rVert\lt1\Rightarrow I\pm A$ 可逆） |
 | 例 6 | [@ex-1.3.3] | 五种范数全算一遍 |
 
-**阅读规则：**正文一律用本教程编号；只有明确讨论「原书是怎么写的」时才出现原书编号，且一定带「原书」二字。第二章及以后不再有原书编号问题（原书未覆盖）。
+**阅读规则：**正文一律用本教程编号；只有明确讨论「原书是怎么写的」时才出现原书编号，且一定带「原书」二字。补充篇及以后不再有原书编号问题（原书未覆盖）。
 :::
 
 <a id="sec-1.3.1"></a>
@@ -356,7 +356,7 @@ $$\lVert A\boldsymbol{x}\rVert_\infty\ge\left\lvert\sum_{j=1}^{n}a_{rj}\operator
 **记忆法**：矩阵 1-范数是**列**和的最大值，∞-范数是**行**和的最大值——「1 竖着像一根列」。二者一般不相等（转置恰好交换它们：$\lVert A\rVert_1=\lVert A^{\mathrm T}\rVert_\infty$）。谱范数没有手算捷径，流程固定：算 $A^{\mathrm T}A$ → 求最大特征值 → 开方，完整算例见 [@ex-1.3.3]。
 
 ::: note[skip] 与奇异值的联系（课程预告）
-$\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$ 正是 $A$ 的**最大奇异值** $\sigma_{\max}(A)$。第二章引入 SVD 后会看到：$\lVert A\rVert_2=\sigma_{\max}(A)$ 是「矩阵把单位球压扁成椭球的最大半轴」，几何含义远比「$A^{\mathrm T}A$ 特征值的平方根」直观。奇异值分解的完整讨论见原书配套的现役教材第二、六章。
+$\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$ 正是 $A$ 的**最大奇异值** $\sigma_{\max}(A)$。补充篇引入 SVD 后会看到：$\lVert A\rVert_2=\sigma_{\max}(A)$ 是「矩阵把单位球压扁成椭球的最大半轴」，几何含义远比「$A^{\mathrm T}A$ 特征值的平方根」直观。奇异值分解的完整讨论见原书配套的现役教材第二、六章。
 :::
 
 ### Frobenius 范数
@@ -435,7 +435,7 @@ $$\lVert A\rVert_2=\sqrt{\lambda_1}\approx10.132 .$$
 - $I-A$ 不会把任何非零向量压成零（所以可逆）——就像 $1-r$ 离 $0$ 有明确的距离；
 - $(I-A)^{-1}=I+A+A^2+\cdots$，且「总放大率」不超过 $\dfrac{1}{1-\lVert A\rVert}$。
 
-[第五章](sec11.md#roadmap)迭代法的收敛性证明，用的正是这一套。
+[第 2 章](../course/ch02/overview.md)迭代法的收敛性证明，用的正是这一套。
 :::
 
 ::: thm 定理 1.3.6（原书） · Neumann 界 {#thm-1.3.6}
@@ -511,7 +511,7 @@ $$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty\le\frac{1}{1-0.15}=\frac{1}{0.85}\appr
 :::
 
 ::: preview 课程预告 · 这个定理通向迭代法
-[第五章](sec11.md#roadmap)的迭代法把 $A\boldsymbol{x}=\boldsymbol{b}$ 改写为 $\boldsymbol{x}=H\boldsymbol{x}+\boldsymbol{d}$，产生序列 $\boldsymbol{x}_{k+1}=H\boldsymbol{x}_k+\boldsymbol{d}$。令 $\boldsymbol{e}_k=\boldsymbol{x}_k-\boldsymbol{x}^{*}$（$\boldsymbol{x}^{*}$ 为精确解），立得 $\boldsymbol{e}_{k+1}=H\boldsymbol{e}_k$，故 $\boldsymbol{e}_k=H^k\boldsymbol{e}_0$：**只要 $\lVert H\rVert\lt1$（定理 1.3.6 的条件），任何初值都收敛到 $\boldsymbol{x}^{*}=(I-H)^{-1}\boldsymbol{d}$，且误差满足 $\lVert\boldsymbol{e}_k\rVert\le\lVert H\rVert^{k}\lVert\boldsymbol{e}_0\rVert$（若只用相邻差估计初值，则 $\lVert\boldsymbol{e}_0\rVert\le\lVert\boldsymbol{x}_1-\boldsymbol{x}_0\rVert/(1-\lVert H\rVert)$）。**1.2.4 的递推误差分析 $\delta_n=\beta^n\delta_0$ 正是它的一维特例。老师在课堂上已经讲到了这一步的入口——分裂 $A=N-P$ 与迭代格式 $\boldsymbol{x}^{(k+1)}=G\boldsymbol{x}^{(k)}+\boldsymbol{d}$、收敛定理「存在矩阵范数使 $\lVert G\rVert\lt1$ 则迭代收敛」，见[第 4 讲精编](../lectures/lec04.md)；收敛理论的完整展开（$\rho(G)<1$ 充要条件、误差估计与 Jacobi / Gauss–Seidel / SOR）见[第 5 讲](../lectures/lec05.md)与[第 6 讲](../lectures/lec06.md)。
+[第 2 章](../course/ch02/overview.md)的迭代法把 $A\boldsymbol{x}=\boldsymbol{b}$ 改写为 $\boldsymbol{x}=H\boldsymbol{x}+\boldsymbol{d}$，产生序列 $\boldsymbol{x}_{k+1}=H\boldsymbol{x}_k+\boldsymbol{d}$。令 $\boldsymbol{e}_k=\boldsymbol{x}_k-\boldsymbol{x}^{*}$（$\boldsymbol{x}^{*}$ 为精确解），立得 $\boldsymbol{e}_{k+1}=H\boldsymbol{e}_k$，故 $\boldsymbol{e}_k=H^k\boldsymbol{e}_0$：**只要 $\lVert H\rVert\lt1$（定理 1.3.6 的条件），任何初值都收敛到 $\boldsymbol{x}^{*}=(I-H)^{-1}\boldsymbol{d}$，且误差满足 $\lVert\boldsymbol{e}_k\rVert\le\lVert H\rVert^{k}\lVert\boldsymbol{e}_0\rVert$（若只用相邻差估计初值，则 $\lVert\boldsymbol{e}_0\rVert\le\lVert\boldsymbol{x}_1-\boldsymbol{x}_0\rVert/(1-\lVert H\rVert)$）。**1.2.4 的递推误差分析 $\delta_n=\beta^n\delta_0$ 正是它的一维特例。老师在课堂上已经讲到了这一步的入口——分裂 $A=N-P$ 与迭代格式 $\boldsymbol{x}^{(k+1)}=G\boldsymbol{x}^{(k)}+\boldsymbol{d}$、收敛定理「存在矩阵范数使 $\lVert G\rVert\lt1$ 则迭代收敛」，见[第 4 讲精编](../lectures/lec04.md)；收敛理论的完整展开（$\rho(G)<1$ 充要条件、误差估计与 Jacobi / Gauss–Seidel / SOR）见[第 5 讲](../lectures/lec05.md)与[第 6 讲](../lectures/lec06.md)。
 :::
 
 <a id="sec-1.3.6"></a>
@@ -522,7 +522,7 @@ $$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty\le\frac{1}{1-0.15}=\frac{1}{0.85}\appr
 
 ::: method 范数的三种用法
 1. **给误差定大小**：近似解 $\boldsymbol{a}$ 与真值 $\boldsymbol{x}$ 的距离就是一个数 $\lVert\boldsymbol{x}-\boldsymbol{a}\rVert$——1.2 节所有「误差」的话术从此对向量生效。
-2. **当停机判据**：迭代算法里「$\lVert\boldsymbol{x}_{k+1}-\boldsymbol{x}_k\rVert\le\varepsilon$ 就停」是几乎所有求解器（[第五章](sec11.md#roadmap)起）的出口条件；选哪把尺子直接决定「停得对不对」。
+2. **当停机判据**：迭代算法里「$\lVert\boldsymbol{x}_{k+1}-\boldsymbol{x}_k\rVert\le\varepsilon$ 就停」是几乎所有求解器（[第 2 章](../course/ch02/overview.md)起）的出口条件；选哪把尺子直接决定「停得对不对」。
 3. **陈述稳定性**：$\lVert A\rVert\lt1$ ⟹ 扰动不放大（定理 1.3.6）；误差界、收敛率全部用范数书写。
 :::
 
@@ -531,8 +531,8 @@ $$\bigl\lVert(I-A)^{-1}\bigr\rVert_\infty\le\frac{1}{1-0.15}=\frac{1}{0.85}\appr
 | 范数 | 读数的含义 | 优点 | 典型场合 |
 |:--|:--|:--|:--|
 | $\lVert\cdot\rVert_\infty$ | 最大的那个分量误差 | 手算最快；「最坏分量」语义 | 误差上界、逐分量保证 |
-| $\lVert\cdot\rVert_1$ | 各分量误差之和 | 与稀疏性、列结构配合好 | 稀疏误差、稀疏解诱导（[第 12 章](sec11.md#roadmap)） |
-| $\lVert\cdot\rVert_2$ | 欧氏长度 | 几何直观；旋转不变；与内积 / 正交理论配套 | 最小二乘（[第 4 章](sec11.md#roadmap)）、谱分析 |
+| $\lVert\cdot\rVert_1$ | 各分量误差之和 | 与稀疏性、列结构配合好 | 稀疏误差、稀疏解诱导（[补充篇 2.4](../ch02/sec24.md)、[2.6](../ch02/sec26.md)） |
+| $\lVert\cdot\rVert_2$ | 欧氏长度 | 几何直观；旋转不变；与内积 / 正交理论配套 | 最小二乘（[补充篇 2.2](../ch02/sec22.md)）、谱分析（[补充篇 2.5](../ch02/sec25.md)） |
 | $\lVert\cdot\rVert_F$ | 全部元素的平方和 | 不依赖特征值，手算即得 | 差分近似、正交迭代的分析 |
 
 由等价定理，**收敛性结论与选择无关**；但**界的大小**与选择有关——报误差时注明范数，是数值报告的基本礼仪。
@@ -556,7 +556,7 @@ $$\lVert\delta\boldsymbol{x}\rVert=\lVert A^{-1}\delta\boldsymbol{b}\rVert\le\lV
 
 $$\boxed{\ \frac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\lVert A\rVert\,\lVert A^{-1}\rVert\cdot\frac{\lVert\delta\boldsymbol{b}\rVert}{\lVert\boldsymbol{b}\rVert}\ }$$
 
-这个放大倍数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 就是矩阵问题的**条件数**——右端的相对扰动最多被放大 $\mathrm{cond}(A)$ 倍。从推导里还能顺带读出三件事：$\mathrm{cond}(A)\ge1$（因 $1=\lVert I\rVert=\lVert AA^{-1}\rVert\le\lVert A\rVert\lVert A^{-1}\rVert$）；换算到相对误差界只用到了相容性与次可乘性（任何相容范数对都行）；$\mathrm{cond}$ 的值依赖范数（但各范数下相差不超过与 $n$ 有关的双向常数——范数等价性）。病态方程组的完整故事（含 $2.3$ 节的原书处理）在第三章展开。
+这个放大倍数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 就是矩阵问题的**条件数**——右端的相对扰动最多被放大 $\mathrm{cond}(A)$ 倍。从推导里还能顺带读出三件事：$\mathrm{cond}(A)\ge1$（因 $1=\lVert I\rVert=\lVert AA^{-1}\rVert\le\lVert A\rVert\lVert A^{-1}\rVert$）；换算到相对误差界只用到了相容性与次可乘性（任何相容范数对都行）；$\mathrm{cond}$ 的值依赖范数（但各范数下相差不超过与 $n$ 有关的双向常数——范数等价性）。病态方程组的完整故事（含 $2.3$ 节的原书处理）在第 2 章与补充篇 2.4 展开。
 
 ### 实验四 · 用 NumPy 检验本节公式
 
@@ -611,5 +611,5 @@ True
 :::
 
 ::: note 课堂对照（2026 秋·庞刚）
-本节在课堂上的讲法见[第 2 讲精编](../lectures/lec02.md)（向量范数三公理逐条验证、从属范数的球面/八面体/盒子几何直观、相容关系 $\lVert A\boldsymbol{x}\rVert\le\lVert A\rVert\lVert\boldsymbol{x}\rVert$ 的完整板书证明）与[第 3 讲精编](../lectures/lec03.md)（$\lVert A\rVert_1$=最大列和的逐步推导、定理 1.3.6 的课堂应用：用 $\lVert A\rVert_1=0.7<1$ 判 $I+A$ 可逆免算行列式，以及高斯消去与列主元——正文[第三章](sec11.md#roadmap)的先导）。
+本节在课堂上的讲法见[第 2 讲精编](../lectures/lec02.md)（向量范数三公理逐条验证、从属范数的球面/八面体/盒子几何直观、相容关系 $\lVert A\boldsymbol{x}\rVert\le\lVert A\rVert\lVert\boldsymbol{x}\rVert$ 的完整板书证明）与[第 3 讲精编](../lectures/lec03.md)（$\lVert A\rVert_1$=最大列和的逐步推导、定理 1.3.6 的课堂应用：用 $\lVert A\rVert_1=0.7<1$ 判 $I+A$ 可逆免算行列式，以及高斯消去与列主元——正文[第 2 章](../course/ch02/overview.md)的先导）。
 :::

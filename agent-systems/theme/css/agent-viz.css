@@ -1,0 +1,7 @@
+/* agent-viz.css — 循环画布的少量样式；主体在 agent-systems.css §6。 */
+.content .loop-stage canvas {
+  touch-action: pan-y;
+}
+@media (prefers-reduced-motion: reduce) {
+  .content .loop-stage canvas { transition: none; }
+}

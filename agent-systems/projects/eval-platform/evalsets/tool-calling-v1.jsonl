@@ -1,0 +1,30 @@
+{"args": {"query": "alpha"}, "difficulty": "medium", "expected": {"hits": ["doc-alpha-1", "doc-alpha-2"]}, "failure_mode": "transient", "id": "flaky-001", "tags": ["flaky", "search"], "tool": "flaky.search"}
+{"args": {"query": "beta"}, "difficulty": "medium", "expected": {"hits": ["doc-beta-1", "doc-beta-2"]}, "failure_mode": "transient", "id": "flaky-002", "tags": ["flaky", "search"], "tool": "flaky.search"}
+{"args": {"query": "gamma"}, "difficulty": "medium", "expected": {"hits": ["doc-gamma-1", "doc-gamma-2"]}, "failure_mode": "transient", "id": "flaky-003", "tags": ["flaky", "search"], "tool": "flaky.search"}
+{"args": {"a": 2, "b": 3}, "difficulty": "easy", "expected": {"sum": 5}, "failure_mode": "none", "id": "math-001", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 10, "b": 20}, "difficulty": "easy", "expected": {"sum": 30}, "failure_mode": "none", "id": "math-002", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": -5, "b": 5}, "difficulty": "easy", "expected": {"sum": 0}, "failure_mode": "none", "id": "math-003", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 100, "b": 200}, "difficulty": "medium", "expected": {"sum": 300}, "failure_mode": "none", "id": "math-004", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 7, "b": 8}, "difficulty": "medium", "expected": {"sum": 15}, "failure_mode": "none", "id": "math-005", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 0, "b": 0}, "difficulty": "medium", "expected": {"sum": 0}, "failure_mode": "none", "id": "math-006", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 1, "b": 2}, "difficulty": "easy", "expected": {"sum": 3}, "failure_mode": "none", "id": "math-extra-001", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 3, "b": 4}, "difficulty": "easy", "expected": {"sum": 7}, "failure_mode": "none", "id": "math-extra-002", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 5, "b": 6}, "difficulty": "easy", "expected": {"sum": 11}, "failure_mode": "none", "id": "math-extra-003", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 7, "b": -7}, "difficulty": "easy", "expected": {"sum": 0}, "failure_mode": "none", "id": "math-extra-004", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 9, "b": 10}, "difficulty": "easy", "expected": {"sum": 19}, "failure_mode": "none", "id": "math-extra-005", "tags": ["math"], "tool": "math.add"}
+{"args": {"a": 11, "b": 12}, "difficulty": "easy", "expected": {"sum": 23}, "failure_mode": "none", "id": "math-extra-006", "tags": ["math"], "tool": "math.add"}
+{"args": {"order_id": "ord_00011"}, "difficulty": "easy", "expected": {"status": "paid"}, "failure_mode": "none", "id": "order-001", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"order_id": "ord_00022"}, "difficulty": "easy", "expected": {"status": "paid"}, "failure_mode": "none", "id": "order-002", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"order_id": "ord_00033"}, "difficulty": "easy", "expected": {"status": "paid"}, "failure_mode": "none", "id": "order-003", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"order_id": "ord_00044"}, "difficulty": "easy", "expected": {"status": "paid"}, "failure_mode": "none", "id": "order-004", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"order_id": "ord_00055"}, "difficulty": "hard", "expected": {"status": "cancelled"}, "failure_mode": "none", "id": "order-005", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"order_id": "ord_00066"}, "difficulty": "hard", "expected": {"status": "cancelled"}, "failure_mode": "none", "id": "order-006", "tags": ["order", "permission"], "tool": "lookup.order"}
+{"args": {"amount_cents": 1000, "idempotency_key": "idem-0001", "order_id": "ord_90011"}, "difficulty": "medium", "expected": {"refunded_cents": 1000}, "failure_mode": "none", "id": "refund-001", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"amount_cents": 2500, "idempotency_key": "idem-0002", "order_id": "ord_90021"}, "difficulty": "medium", "expected": {"refunded_cents": 2500}, "failure_mode": "none", "id": "refund-002", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"amount_cents": 5000, "idempotency_key": "idem-0003", "order_id": "ord_90031"}, "difficulty": "medium", "expected": {"refunded_cents": 5000}, "failure_mode": "none", "id": "refund-003", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"amount_cents": 9000, "idempotency_key": "idem-0004", "order_id": "ord_90041"}, "difficulty": "medium", "expected": {"refunded_cents": 9000}, "failure_mode": "none", "id": "refund-004", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"amount_cents": 12000, "idempotency_key": "idem-0005", "order_id": "ord_90051"}, "difficulty": "hard", "expected": {"refunded_cents": 12000}, "failure_mode": "none", "id": "refund-005", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"amount_cents": 20000, "idempotency_key": "idem-0006", "order_id": "ord_90061"}, "difficulty": "hard", "expected": {"refunded_cents": 20000}, "failure_mode": "none", "id": "refund-006", "tags": ["refund", "money"], "tool": "billing.refund"}
+{"args": {"query": "delta"}, "difficulty": "medium", "expected": {"hits": ["doc-delta-1", "doc-delta-2"]}, "failure_mode": "transient", "id": "flaky-004", "tags": ["flaky", "search"], "tool": "flaky.search"}
+{"args": {"query": "epsilon"}, "difficulty": "medium", "expected": {"hits": ["doc-epsilon-1", "doc-epsilon-2"]}, "failure_mode": "transient", "id": "flaky-005", "tags": ["flaky", "search"], "tool": "flaky.search"}
+{"args": {"query": "zeta"}, "difficulty": "medium", "expected": {"hits": ["doc-zeta-1", "doc-zeta-2"]}, "failure_mode": "transient", "id": "flaky-006", "tags": ["flaky", "search"], "tool": "flaky.search"}

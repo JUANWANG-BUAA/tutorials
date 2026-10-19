@@ -1,0 +1,26 @@
+- 1 ReAct：推理与行动交错
+- 2 Reflexion：语言化反思
+- 3 Tree of Thoughts：思维树搜索
+- 4 Toolformer：自监督工具学习
+- 5 RAG：检索增强生成
+- 6 Lost in the Middle：长上下文位置偏差
+- 7 MemGPT：分层记忆管理
+- 8 Self-Refine：迭代自我改进
+- 9 CoALA：认知架构式 agent
+- 10 ToolLLM：大规模工具调用
+- 11 Gorilla：API 调用与检索
+- 12 τ-bench：工具-用户交互评测
+- 13 SWE-bench：真实仓库修复
+- 14 AgentBench：多环境 agent 评测
+- 15 WebArena：网页任务评测
+- 16 GAIA：通用助手基准
+- 17 Voyager：开放世界技能积累
+- 18 AutoGen：多 agent 对话框架
+- 19 ChatDev：角色化软件开发
+- 20 CAMEL：角色扮演协作
+- 21 LLM-as-a-judge：模型评审
+- 22 Self-consistency：自洽投票
+- 23 CaMeL：能力隔离防注入
+- 24 AgentDojo：注入攻击评测
+- 25 InjecAgent：间接注入基准
+- 26 PromptInject：提示注入系统化

@@ -1,0 +1,70 @@
+# 《Agent 系统工程 · 循环、协议、沙箱与评估》定制教程
+#
+# 唯一的构建配置。日常操作：
+#   mdbook build agent-systems      （仓库根）
+#   ./build.sh                      （仓库根，一键构建全部教程）
+#   mdbook serve agent-systems      （仅本书预览）
+#
+# 内容源在 src/，全部为 Markdown；不要手工编辑 book/ 下的产物。
+
+[book]
+title = "Agent 系统工程 · 循环、协议、沙箱与评估"
+description = "14 章 + 2 个项目：把 agent 当成一个有状态、有工具、有预算、可审计的系统来造。覆盖循环与状态、工具协议（JSON Schema / function calling / MCP）、沙箱与权限、上下文与记忆、规划与多智能体、评估与可观测性、安全与治理。与《Linux 系统与内核》《深度学习导论》交叉引用，不重写 OS / TCP / 模型基础。"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+# 加载顺序：底座 → 本书 → 公式 → 框架 → 图鉴 → 阅读偏好 → 本书动画。
+# prefs 必须在权威样式之后；agent-viz 只做 canvas，不覆盖阅读偏好。
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/agent-systems.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/prefs.css",
+  "theme/css/agent-viz.css",
+]
+additional-js = [
+  "theme/js/page-extras.js",
+  "theme/js/agent-systems.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/atlas.js",
+  "theme/js/agent-viz.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/agent-systems/{path}"
+no-section-label = true
+site-url = "/tutorials/agent-systems/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+# 中文检索用「一元 + 二元字符 n-gram」建索引（见 tools/build_search_js.mjs）。
+# 中文跨词边的伪二元组在 AND 语义下会零命中，故用 OR。
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子：与其余各本同一份契约的实现。
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式：构建期渲染为 HTML（不依赖运行时 JS）。
+# 包装器中和会被 Markdown 误读的字面 ~（见仓库根 tools/katex_wrapper.py）。
+[preprocessor.katex]
+command = "python3 ../tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

@@ -1,0 +1,16 @@
+- 1 OpenTelemetry GenAI spans
+- 2 OpenTelemetry MCP attributes
+- 3 W3C Trace Context
+- 4 NIST AI RMF 1.0
+- 5 NIST 生成式 AI Profile
+- 6 ISO/IEC 42001
+- 7 EU AI Act
+- 8 OWASP LLM Top 10
+- 9 SLSA
+- 10 Sigstore
+- 11 SPDX 与 CycloneDX
+- 12 OAuth 2.1
+- 13 RFC 8707 Resource Indicators
+- 14 RFC 9728 Protected Resource Metadata
+- 15 JSON Schema 2020-12
+- 16 MCP Security Best Practices

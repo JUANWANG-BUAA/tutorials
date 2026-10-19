@@ -267,7 +267,7 @@ $$\boldsymbol x_{k+1}-\boldsymbol x_k=\boldsymbol e_{k+1}-\boldsymbol e_k=(H-I)\
 当 $\lVert H\rVert=:q\lt1$ 时（[@thm-1.3.6] 保证 $I-H$ 可逆）取范数放缩得
 $$\lVert\boldsymbol e_k\rVert\le\frac{q}{1-q}\lVert\boldsymbol x_{k+1}-\boldsymbol x_k\rVert\quad\text{以及}\quad\lVert\boldsymbol e_0\rVert\le\frac{\lVert\boldsymbol x_1-\boldsymbol x_0\rVert}{1-q},$$
 $$\lVert\boldsymbol e_k\rVert\le q^k\lVert\boldsymbol e_0\rVert\le\frac{q^k}{1-q}\lVert\boldsymbol x_1-\boldsymbol x_0\rVert .$$
-**什么时候推不出误差小**：放大因子 $\dfrac{q}{1-q}$ 在 $q\to1$ 时爆炸（$q=0.99$ 时约 $99$、$q=0.9999$ 时约 $10^4$）：相邻差可以小到 $10^{-12}$，而真实误差仍在 $10^{-8}$ 量级甚至更大；若 $\lVert H\rVert\ge1$ 则上式根本给不出界（此时才需要第二章的谱半径与 $\rho\lt1$ 的渐近结论）。
+**什么时候推不出误差小**：放大因子 $\dfrac{q}{1-q}$ 在 $q\to1$ 时爆炸（$q=0.99$ 时约 $99$、$q=0.9999$ 时约 $10^4$）：相邻差可以小到 $10^{-12}$，而真实误差仍在 $10^{-8}$ 量级甚至更大；若 $\lVert H\rVert\ge1$ 则上式根本给不出界（此时才需要补充篇的谱半径与 $\rho\lt1$ 的渐近结论）。
 
 **(2) 三条改进方案与它治的病**
 
@@ -279,7 +279,7 @@ $$\lVert\boldsymbol e_k\rVert\le q^k\lVert\boldsymbol e_0\rVert\le\frac{q^k}{1-q
 
 （补充：若 $q$ 接近 $1$、步数不可预测，正确做法是换更好的预条件 / 换算法，而不是继续调阈值。）
 
-**(3) 为什么它不能当误差估计。** 停机判据度量的是**算法是否稳定下来**（增量信息 / 后向信息），误差度量的是**解离真值多远**（前向信息）；两者的桥梁恰好是**问题的条件数或迭代矩阵的 $q/(1-q)$**。这与 [1.2.6](sec12.md#sec-1.2.6) 的「conditioning 与 stability 必须分开谈」、[1.2.6](sec12.md#sec-1.2.6) 的「求解器只能保证残差、用户要的是误差」同一句话；矩阵版 $\boldsymbol e=A^{-1}\boldsymbol r$ 的完整推导在[第二章 2.4.4](../ch02/sec24.md#sec-2.4.4)。**是同一件事的两面**：残差对应 $A\boldsymbol x=\boldsymbol b$ 的「相邻/后向」信息，相邻差对应迭代格式的增量信息，二者都要乘上放大因子才能变成误差。
+**(3) 为什么它不能当误差估计。** 停机判据度量的是**算法是否稳定下来**（增量信息 / 后向信息），误差度量的是**解离真值多远**（前向信息）；两者的桥梁恰好是**问题的条件数或迭代矩阵的 $q/(1-q)$**。这与 [1.2.6](sec12.md#sec-1.2.6) 的「conditioning 与 stability 必须分开谈」、[1.2.6](sec12.md#sec-1.2.6) 的「求解器只能保证残差、用户要的是误差」同一句话；矩阵版 $\boldsymbol e=A^{-1}\boldsymbol r$ 的完整推导在[补充篇 2.4.4](../ch02/sec24.md#sec-2.4.4)。**是同一件事的两面**：残差对应 $A\boldsymbol x=\boldsymbol b$ 的「相邻/后向」信息，相邻差对应迭代格式的增量信息，二者都要乘上放大因子才能变成误差。
 
 **(4) 失败判据（≥2 条，可测量）**
 ① 停机后用一个**高精度参考解**（或第二种算法/更高精度重算）对照，实测相对误差 $>10^{-6}$——说明 $q/(1-q)$ 被低估，判据过松；

@@ -1,0 +1,175 @@
+/*
+ * 《Agent 系统工程》— 本书视觉层
+ * ---------------------------------------------------------------------------
+ * 令牌层在 shared/theme/css/base.css，图鉴层在 atlas.css，阅读偏好在 prefs.css。
+ * 本文件只做三件事：
+ *   1. 本书强调色（电路靛蓝，区别于 Linux 卷的终端青绿）；
+ *   2. agent 教材特有的组件：章节速览、轨迹条、循环画布、陷阱表、指标卡；
+ *   3. 打印与窄屏的少量回落。
+ * 语义盒、折叠解答、封面、图版一律沿用共用实现，不在这里重写。
+ */
+
+/* ======================================================================== *
+ * §1  强调色：电路靛蓝
+ * ======================================================================== */
+:root,
+html.rust{
+  --accent:#4c58c8;--accent-strong:#3944a8;--accent-text:#3944a8;
+  --accent-soft:rgba(76,88,200,.10);--mark-bg:#d8dcff;
+}
+html.light{
+  --accent:#4652c4;--accent-strong:#333da0;--accent-text:#333da0;
+  --accent-soft:rgba(70,82,196,.10);--mark-bg:#d8dcff;
+}
+html.coal{
+  --accent:#9aa6ff;--accent-strong:#bdc5ff;--accent-text:#bdc5ff;
+  --accent-soft:rgba(154,166,255,.13);--mark-bg:#333a63;
+}
+html.navy{
+  --accent:#8fa0ff;--accent-strong:#b3bfff;--accent-text:#b3bfff;
+  --accent-soft:rgba(143,160,255,.13);--mark-bg:#2c3260;
+}
+html.ayu{
+  --accent:#a9b4ff;--accent-strong:#c9d0ff;--accent-text:#c2caff;
+  --accent-soft:rgba(169,180,255,.13);--mark-bg:#353a58;
+}
+html[data-book="agent-systems"]{--cover-spine:#3b46ae}
+
+/* ======================================================================== *
+ * §2  章节速览卡
+ * ======================================================================== */
+.content .chapter-index{
+  display:grid;grid-template-columns:1.35fr 1fr;gap:0;
+  margin:18px 0 26px;border:1px solid var(--line-strong);border-radius:3px;
+  background:var(--paper-soft);overflow:hidden;
+}
+.content .chapter-index > div{padding:12px 15px}
+.content .chapter-index > div + div{border-left:1px solid var(--line)}
+.content .chapter-index .ci-label{
+  display:block;margin-bottom:6px;color:var(--accent-text);
+  font:700 10.5px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+}
+.content .chapter-index p{margin:0;font-size:13.5px;line-height:1.72}
+@media (max-width:720px){
+  .content .chapter-index{grid-template-columns:1fr}
+  .content .chapter-index > div + div{border-left:0;border-top:1px solid var(--line)}
+}
+
+/* ======================================================================== *
+ * §3  终端会话
+ * ======================================================================== */
+.content .terminal{
+  margin:16px 0;border:1px solid var(--line-strong);border-radius:3px;
+  background:color-mix(in srgb,var(--ink) 94%,#000);
+  color:color-mix(in srgb,var(--paper) 92%,#fff);
+  overflow:hidden;font:12.5px/1.72 var(--mono);
+}
+.content .terminal::before{
+  content:attr(data-title);display:block;padding:5px 12px;
+  border-bottom:1px solid color-mix(in srgb,#fff 14%,transparent);
+  color:color-mix(in srgb,#fff 62%,transparent);
+  font:600 10.5px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+}
+.content .terminal pre{
+  margin:0;padding:11px 14px;background:transparent;border:0;
+  color:inherit;font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.content .terminal .p{color:#aeb8ff;font-weight:700;user-select:none}
+.content .terminal .ok{color:#8fd694}
+.content .terminal .err{color:#f0a3a0}
+.content .terminal .hi{color:#e8c27a}
+
+/* ======================================================================== *
+ * §4  机制布局图、文件树、轨迹条
+ * ======================================================================== */
+.content pre.layout{
+  margin:14px 0;padding:12px 14px;border:1px solid var(--line);
+  border-left:3px solid var(--accent);background:var(--paper-soft);
+  font:12px/1.7 var(--mono);overflow-x:auto;
+}
+.content pre.layout b{color:var(--accent-strong);font-weight:700}
+.content pre.tree{
+  margin:14px 0;padding:12px 16px;border:1px solid var(--line);
+  background:var(--paper);font:12px/1.75 var(--mono);overflow-x:auto;
+}
+.content pre.tree .dir{color:var(--accent-strong);font-weight:700}
+
+.content .trace{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
+  margin:14px 0;padding:10px 12px;border:1px solid var(--line);
+  background:var(--paper-soft);font:12px/1.6 var(--mono);
+}
+.content .trace .node{
+  padding:2px 7px;border:1px solid var(--line-strong);border-radius:2px;
+  background:var(--paper);white-space:nowrap;
+}
+.content .trace .node.hot{border-color:var(--accent);color:var(--accent-strong);font-weight:600}
+.content .trace .node.bad{border-color:#b4483f;color:#a53d35}
+html.coal .content .trace .node.bad,
+html.navy .content .trace .node.bad{border-color:#e08a82;color:#efa9a2}
+.content .trace .arrow{color:var(--muted);user-select:none}
+
+/* ======================================================================== *
+ * §5  陷阱表与指标卡
+ * ======================================================================== */
+.content table.traps{font-size:12.5px;line-height:1.65}
+.content table.traps td:first-child{font-weight:600;color:var(--accent-strong)}
+.content .metric-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px;margin:16px 0;background:var(--line);border:1px solid var(--line);
+}
+.content .metric-grid > div{background:var(--paper);padding:10px 13px}
+.content .metric-grid .m-label{
+  display:block;color:var(--muted);font:600 10px/1.4 var(--mono);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.content .metric-grid .m-value{
+  display:block;margin-top:3px;color:var(--accent-strong);
+  font:700 17px/1.3 var(--mono);
+}
+.content .metric-grid .m-note{display:block;margin-top:2px;color:var(--muted);font-size:11.5px}
+
+/* ======================================================================== *
+ * §6  循环画布（ch01）
+ * ======================================================================== */
+.content .loop-stage{
+  position:relative;margin:18px 0;border:1px solid var(--line-strong);
+  border-radius:3px;background:
+    linear-gradient(var(--line) 1px,transparent 1px) 0 0/22px 22px,
+    linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/22px 22px,
+    var(--paper-soft);
+  padding:8px;
+}
+.content .loop-stage canvas{display:block;width:100%;height:auto;aspect-ratio:760/300}
+.content .loop-stage .stage-caption{
+  margin:0;padding:6px 8px 2px;color:var(--muted);
+  font:11.5px/1.5 var(--mono);
+}
+.content .loop-stage .stage-caption b{color:var(--accent-strong)}
+
+/* ======================================================================== *
+ * §7  项目页：Stage 条
+ * ======================================================================== */
+.content .stage-list{counter-reset:stage;margin:16px 0;padding:0;list-style:none}
+.content .stage-list > li{
+  position:relative;margin:0 0 10px;padding:10px 14px 10px 46px;
+  border:1px solid var(--line);background:var(--paper);
+}
+.content .stage-list > li::before{
+  counter-increment:stage;content:counter(stage,decimal-leading-zero);
+  position:absolute;left:12px;top:10px;color:var(--accent-text);
+  font:700 13px/1.6 var(--mono);
+}
+.content .stage-list > li b{color:var(--accent-strong)}
+
+/* ======================================================================== *
+ * §8  打印与窄屏
+ * ======================================================================== */
+@media print{
+  .content .chapter-index,.content .loop-stage{break-inside:avoid}
+  .content pre.layout{white-space:pre-wrap}
+}
+@media (max-width:720px){
+  .content pre.layout,.content pre.tree{font-size:11px}
+  .content .terminal{font-size:11.5px}
+}

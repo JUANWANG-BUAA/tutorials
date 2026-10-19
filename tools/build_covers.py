@@ -264,11 +264,11 @@ def cover_numerical() -> str:
     body += f'<circle cx="92" cy="178" r="3.5" fill="{accent}"/><circle cx="286" cy="364" r="3.5" fill="{accent}"/>'
     # 标题
     body += txt(52, 584, "数值分析", 56, "#eefffb", 700, spacing="4")
-    body += txt(54, 616, "ERRORS · NORMS · ORTHOGONALITY · SPECTRA", 12, "#a9e8dd", 700, spacing="1.1")
+    body += txt(54, 616, "ERRORS · LINEAR SYSTEMS · EIGENVALUES · INTERPOLATION", 12, "#a9e8dd", 700, spacing="1.1")
     body += f'<path d="M54 644h172" stroke="url(#{uid}-accent)" stroke-width="3"/>'
-    body += txt(54, 678, "误差与算法 · 范数与条件数", 12.5, "#c9f4ec")
-    body += txt(54, 702, "正交 · 投影 · 谱 · 奇异值", 12.5, "#c9f4ec")
-    body += txt(548, 678, "2 CHAPTERS", 10.5, gold, 700, "end", MONO, spacing="1.2")
+    body += txt(54, 678, "误差与算法 · 线性方程组 · 特征值", 12.5, "#c9f4ec")
+    body += txt(54, 702, "非线性方程 · 插值 · 数值积分 · ODE", 12.5, "#c9f4ec")
+    body += txt(548, 678, "7 CHAPTERS + SUPPLEMENT", 10.5, gold, 700, "end", MONO, spacing="1.2")
     body += txt(548, 702, "PYTHON VERIFIED", 10.5, "#a9e8dd", 700, "end", MONO, spacing="1.2")
     body += txt(52, 750, "北京航空航天大学 · 研究生课程定制教程", 10, "#8bc9bf", spacing=".6")
     body += f'<g transform="translate(512 738)"><circle r="19" fill="none" stroke="{gold}" stroke-opacity=".7"/><path d="M-9 1h18M0 -8v18" stroke="{gold}" stroke-width="1.2"/><circle r="4" fill="none" stroke="{gold}"/></g>'

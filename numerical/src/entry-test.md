@@ -5,7 +5,7 @@
 ::: note 怎么用这份自测
 - **闭卷**作答：先写答案，再看解析；看解析时重点核对「我错在哪一步」，而不是「猜对了几个」。
 - 得分只决定路线，**不决定能力**：诊断是为了省时间，不是贴标签。
-- 若你打算直接读第二章，请确保 A 组（第 1–4 题）与 B 组（第 5–8 题）全对；错哪一题，就先补对应的小节（对照表见下）。
+- 若你打算直接读补充篇，请确保 A 组（第 1–4 题）与 B 组（第 5–8 题）全对；错哪一题，就先补对应的小节（对照表见下）。
 :::
 
 ## A 组 · 先修地基（每题 1 分）
@@ -19,7 +19,7 @@ $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=1\times2+2\times0+2\times1=4$；$\lVer
 
 $$\cos\theta=\frac{4}{3\sqrt5}\approx0.596285,\qquad\theta\approx53.40^{\circ}.$$
 
-**错因提示：** 若算出 $\cos\theta\gt1$，通常是忘了开根号，或把 $\lVert\boldsymbol{y}\rVert_2$ 写成了 $\lVert\boldsymbol{y}\rVert_1$。第二章 [2.1](ch02/sec21.md) 就从内积与长度讲起。
+**错因提示：** 若算出 $\cos\theta\gt1$，通常是忘了开根号，或把 $\lVert\boldsymbol{y}\rVert_2$ 写成了 $\lVert\boldsymbol{y}\rVert_1$。补充篇 [2.1](ch02/sec21.md) 就从内积与长度讲起。
 :::
 
 :::
@@ -118,7 +118,7 @@ $\lVert A\rVert_F$ **不**从属于任何向量范数：任何算子范数满足
 
 :::
 
-## C 组 · 面向第二章的预备检查（每题 1 分）
+## C 组 · 面向补充篇的预备检查（每题 1 分）
 
 ::: ex C1 · 正交性
 
@@ -165,7 +165,7 @@ $A=U\Sigma V^{\mathrm T}$，其中 $U\in\mathbb{R}^{m\times m}$、$V\in\mathbb{R
 
 $$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\ (\text{可逆时}).$$
 
-**若这两问答不出**，说明第二章最大的新工具你还没建立起来，务必按顺序读完 [2.6](ch02/sec26.md) 之前的全部小节。
+**若这两问答不出**，说明补充篇最大的新工具你还没建立起来，务必按顺序读完 [2.6](ch02/sec26.md) 之前的全部小节。
 :::
 
 :::
@@ -174,9 +174,9 @@ $$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\
 
 | 得分 | 路线 | 说明 |
 |:--:|:--|:--|
-| **10–12 分** | 快速通道 | 先读[知识地图](preface-map.md)与[第二章导览](ch02/overview.md)，然后直接进 [2.1](ch02/sec21.md)；第一章只在遇到具体工具时回查（例如 B3 答错就回 [1.3](ch01/sec13.md)）。 |
-| **7–9 分** | 标准路线 | 按目录顺序读：先把第一章的 [1.2](ch01/sec12.md)、[1.3](ch01/sec13.md) 两节速读一遍，并做习题集的 A、B 组，再进第二章。 |
-| **4–6 分** | 夯实路线 | 从 [1.1](ch01/sec11.md) 起逐节通读，每节末的「小结与常见错误」全做一遍，第一章习题集的 A、B 组全刷一遍，再进第二章。 |
+| **10–12 分** | 快速通道 | 先读[知识地图](preface-map.md)与[补充篇导览](ch02/overview.md)，然后直接进 [2.1](ch02/sec21.md)；第一章只在遇到具体工具时回查（例如 B3 答错就回 [1.3](ch01/sec13.md)）。 |
+| **7–9 分** | 标准路线 | 按目录顺序读：先把第一章的 [1.2](ch01/sec12.md)、[1.3](ch01/sec13.md) 两节速读一遍，并做习题集的 A、B 组，再进补充篇。 |
+| **4–6 分** | 夯实路线 | 从 [1.1](ch01/sec11.md) 起逐节通读，每节末的「小结与常见错误」全做一遍，第一章习题集的 A、B 组全刷一遍，再进补充篇。 |
 | **0–3 分** | 先补先修 | 先过一遍下面的[先修工具箱](entry-test.md#先修工具箱)，对照《高等代数》《数学分析》复习线性相关、特征值与 Taylor 展开，然后回本教程。 |
 
 ::: note 答错题的去向对照
@@ -189,7 +189,7 @@ C1–C3 → [2.1](ch02/sec21.md)、[2.2](ch02/sec22.md)；C4 → [2.6](ch02/sec2
 
 ## 先修工具箱
 
-下面六条是**两章正文反复引用、却不再重复推导**的预备事实。若不熟，先花 30 分钟扫一遍；每条都标了回查坐标。
+下面六条是**第一章 + 补充篇正文反复引用、却不再重复推导**的预备事实。若不熟，先花 30 分钟扫一遍；每条都标了回查坐标。
 
 ::: method 六条先修事实
 
@@ -201,7 +201,7 @@ $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}(
 
 **② 极限与 $O$ 记号。** $T(n)=O(g(n))$ 表示存在常数 $C$ 使 $T(n)\le Cg(n)$（$n$ 足够大）。它只刻画**增长的阶**、忽略常数因子。用法与陷阱见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
 
-**③ 内积与正交（为第二章预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。多一个视角：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta$，所以「正交」就是夹角 $90^{\circ}$。[2.1](ch02/sec21.md) 把内积公理化。
+**③ 内积与正交（为补充篇预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。多一个视角：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta$，所以「正交」就是夹角 $90^{\circ}$。[2.1](ch02/sec21.md) 把内积公理化。
 
 **④ 线性相关、基与秩。** 一组向量线性无关，指 $\sum k_i\boldsymbol{v}_i=\boldsymbol{0}$ 只有零解；$\operatorname{rank}A$ 是 $A$ 的极大线性无关列数，它与 $A\boldsymbol{x}=\boldsymbol{0}$ 的解空间维数互补：$\operatorname{rank}A+\dim N(A)=n$。这条**秩定理**是 [2.2](ch02/sec22.md) 的主角。
 
@@ -211,6 +211,6 @@ $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}(
 
 :::
 
-::: think[skip] 一条贯穿两章的提醒
+::: think[skip] 一条贯穿第一章 + 补充篇的提醒
 上面六条都是**大一/大二就学过**的内容，本教程不会重讲。但请注意它们在本教程里的**新角色**：Taylor 展开从「近似公式」变成「误差界工具」；内积从「算长度」变成「定义正交、造投影、导出 SVD」；特征值从「解方程」变成「衡量敏感性」。**工具没变，看工具的角度变了**——这就是数值分析。
 :::

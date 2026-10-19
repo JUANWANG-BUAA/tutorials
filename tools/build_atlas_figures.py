@@ -1012,6 +1012,179 @@ def fig_numerical_condition():
                  "".join(body), "red", "N-20", caption)
 
 
+def fig_num_linear_systems():
+    uid = "num-linear-systems"
+    steps = [
+        ("01", "看结构", "稠密 / 稀疏 / 病态", "gold"),
+        ("02", "直接法", "Gauss · 列主元 · LU", "accent"),
+        ("03", "三角求解", "Ly=b → Ux=y", "cyan"),
+        ("04", "迭代法", "x_{k+1}=Gx_k+d", "plum"),
+        ("05", "收敛判据", "ρ(G)<1 / ‖G‖<1", "green"),
+    ]
+    caption = ("<b>读图：</b>先判断矩阵结构，再选算法。稠密小规模用列主元/LU；三对角用追赶法 O(n)；"
+               "大规模稀疏用迭代法，但先要过 <b>ρ(G)&lt;1</b> 或 <b>‖G‖&lt;1</b> 这一关。直接法与迭代法不是二选一，"
+               "而是同一张决策图上的两条分支。")
+    return flow_plate(uid, "NUMERICAL · LINEAR SYSTEMS / 02", "先看结构，再选算法",
+                      "直接法与迭代法不是二选一，而是同一张决策图上的两条分支。",
+                      steps, caption, tone="cyan", atlas_no="N-21",
+                      feedback=("病态？先看 cond(A)", 300, 16),
+                      note="稀疏三对角 → 追赶法 O(n)；稠密小规模 → 列主元 LU。",
+                      height=380)
+
+
+def fig_num_power():
+    uid = "num-power"
+
+    def draw(x, y, w, h):
+        def X(k):
+            return x + k / 20 * w
+
+        def Y(v):
+            return y + h - (v + 6) / 6 * h
+
+        out = [plot_axes(x, y, w, h, xlabel="", ylabel="log10 误差",
+                         xticks=[("0", X(0)), ("5", X(5)), ("10", X(10)), ("15", X(15)), ("20", X(20))],
+                         yticks=[("0", Y(0)), ("-2", Y(-2)), ("-4", Y(-4)), ("-6", Y(-6))])]
+        out.append(t(x + w / 2, y + h + 36, "迭代步 k", cls="pl-axis-label", anchor="middle"))
+        for q, color, label in [(0.9, TONES["red"], "q=0.9"),
+                                (0.6, TONES["gold"], "q=0.6"),
+                                (0.3, TONES["cyan"], "q=0.3")]:
+            pts = []
+            for k in range(21):
+                lv = max(-6.0, k * math.log10(q))
+                pts.append((X(k), Y(lv)))
+            out.append(poly_path(pts, color, 2.2))
+            last = max(-6.0, 19 * math.log10(q))
+            out.append(t(X(19), Y(last) - 8, label, cls="pl-mono", fill=color, anchor="end", size="10.5"))
+        out.append(t(X(10), Y(-5.35), "半对数坐标：斜率 = log10 q", cls="pl-small", anchor="middle", fill=TONES["muted"]))
+        return "".join(out)
+
+    caption = ("<b>读图：</b>幂法误差按 <b>q^k</b> 几何下降，q = |λ₂|/|λ₁|。三条线在半对数坐标下都是直线，"
+               "斜率就是 log10 q：q 越接近 1，谱间隙越小，收敛越慢；q=0.3 时十几步就到机器精度，q=0.9 时"
+               "二十步才降一个量级。")
+    return plot_plate(uid, "NUMERICAL · POWER METHOD / 03", "幂法：误差按 q^k 缩",
+                      "q = |λ₂| / |λ₁|；谱间隙越小，收敛越慢。", draw, caption,
+                      tone="plum", atlas_no="N-22",
+                      note="q=0.9：20 步只降约 1 个量级|q=0.6：20 步降约 4 个量级|q 由谱间隙决定|q 越接近 1 越慢")
+
+
+def fig_num_newton():
+    uid = "num-newton"
+
+    def draw(x, y, w, h):
+        xmin, xmax = 1.0, 2.0
+        ymin, ymax = -1.2, 2.2
+
+        def X(v):
+            return x + (v - xmin) / (xmax - xmin) * w
+
+        def Y(v):
+            return y + h - (v - ymin) / (ymax - ymin) * h
+
+        out = [plot_axes(x, y, w, h, xlabel="", ylabel="f(x)",
+                         xticks=[("1.0", X(1.0)), ("1.5", X(1.5)), ("2.0", X(2.0))],
+                         yticks=[("-1", Y(-1)), ("0", Y(0)), ("1", Y(1)), ("2", Y(2))])]
+        out.append(t(x + w / 2, y + h + 36, "x", cls="pl-axis-label", anchor="middle"))
+        out.append(f'<path d="M{X(xmin)} {Y(0)} H{X(xmax)}" stroke="var(--line-strong)" stroke-opacity=".55" stroke-width="1.2"/>')
+        pts = []
+        for i in range(121):
+            xv = xmin + i * (xmax - xmin) / 120
+            pts.append((X(xv), Y(xv * xv - 2)))
+        out.append(poly_path(pts, TONES["accent"], 2.4))
+        x0, f0, fp = 1.8, 1.8 * 1.8 - 2, 2 * 1.8
+        xt = x0 - f0 / fp
+        x1, f1 = 1.2, 1.2 * 1.2 - 2
+        xs = x1 - f1 * (x1 - x0) / (f1 - f0)
+        out.append(poly_path([(X(x0), Y(f0)), (X(xt), Y(0))], TONES["cyan"], 1.9))
+        out.append(poly_path([(X(x0), Y(f0)), (X(x1), Y(f1))], TONES["gold"], 1.9))
+        out.append(dot(X(x0), Y(f0), TONES["cyan"], 5, "x0", "end"))
+        out.append(dot(X(x1), Y(f1), TONES["gold"], 5, "x1", "end"))
+        out.append(dot(X(xt), Y(0), TONES["cyan"], 4))
+        out.append(dot(X(xs), Y(0), TONES["gold"], 4))
+        out.append(dot(X(math.sqrt(2)), Y(0), TONES["red"], 4, "s"))
+        out.append(t(X(1.62), Y(1.35), "切线", cls="pl-mono", fill=TONES["cyan"], size="10.5"))
+        out.append(t(X(1.46), Y(-0.75), "割线", cls="pl-mono", fill=TONES["gold"], size="10.5"))
+        out.append(t(X(1.88), Y(0.25), "f(x)=x²−2", cls="pl-small", fill=TONES["accent"], size="10"))
+        return "".join(out)
+
+    caption = ("<b>读图：</b>牛顿法在 x_k 处作切线，切线与 x 轴的交点就是下一步；割线法用过两点的割线替代切线。"
+               "前者需要 f′(x_k)、二阶收敛；后者不需要导数、但需要两个初值，收敛阶降为 1.618。")
+    return plot_plate(uid, "NUMERICAL · NEWTON / 04", "切线 vs 割线：一步之差",
+                      "牛顿用一点加导数，割线用两点加差商。", draw, caption,
+                      tone="cyan", atlas_no="N-23",
+                      note="切线：一点 + f′(x_k)|割线：两点 + 差商|牛顿：二阶，需导数|割线：1.618，需两初值")
+
+
+def fig_num_vandermonde():
+    uid = "num-vandermonde"
+    data = [(2, 0.42), (3, 1.18), (4, 2.00), (5, 2.84), (6, 3.69),
+            (7, 4.56), (8, 5.43), (9, 6.30), (10, 7.18), (11, 8.06), (12, 8.95)]
+
+    def draw(x, y, w, h):
+        def X(n):
+            return x + (n - 2) / 10 * w
+
+        def Y(v):
+            return y + h - v / 9 * h
+
+        out = [plot_axes(x, y, w, h, xlabel="", ylabel="log10 cond(V)",
+                         xticks=[("2", X(2)), ("4", X(4)), ("6", X(6)), ("8", X(8)), ("10", X(10)), ("12", X(12))],
+                         yticks=[("0", Y(0)), ("3", Y(3)), ("6", Y(6)), ("9", Y(9))])]
+        out.append(t(x + w / 2, y + h + 36, "节点数 n", cls="pl-axis-label", anchor="middle"))
+        out.append(poly_path([(X(n), Y(v)) for n, v in data], TONES["red"], 2.4))
+        for n, v in data:
+            out.append(dot(X(n), Y(v), TONES["red"], 3.2))
+        out.append(t(X(6.2), Y(2.0), "等距节点：每加几个点，条件数涨一个量级", cls="pl-small", fill=TONES["muted"], size="10"))
+        out.append(t(X(12), Y(8.95) - 10, "n=12：κ≈8.8×10⁸", cls="pl-mono", fill=TONES["red"], anchor="end", size="10.5"))
+        return "".join(out)
+
+    caption = ("<b>读图：</b>等距节点上，范德蒙德矩阵的条件数随 n 近似指数增长：n=8 时约 10⁵，n=12 时约 10⁹。"
+               "这意味着用 1,x,…,xⁿ 这组基直接解系数，会丢掉约 9 位有效数字——“存在唯一”不等于“能算出来”。")
+    return plot_plate(uid, "NUMERICAL · INTERPOLATION / 05", "范德蒙德：存在唯一，但病态",
+                      "节点越多，系数方程越难解；换基（拉格朗日）才是出路。", draw, caption,
+                      tone="gold", atlas_no="N-24",
+                      note="n=2：κ≈2.6|n=8：κ≈2.7×10⁵|n=12：κ≈8.8×10⁸|每加几个点涨一个量级")
+
+
+
+
+def fig_num_quadrature():
+    uid = "num-quadrature"
+    steps = [
+        ("01", "分割", "把 [a,b] 切成小段", "gold"),
+        ("02", "低阶公式", "梯形 / Simpson", "accent"),
+        ("03", "复化累加", "T_n / S_n", "cyan"),
+        ("04", "外推", "Romberg · Richardson", "plum"),
+        ("05", "Gauss", "节点也自由", "green"),
+    ]
+    caption = ("<b>读图：</b>先分割，再用低阶公式；复化把误差降到 O(h²)/O(h⁴)，"
+               "Romberg 用外推再抬阶，Gauss 让节点也参与优化。精度不是免费的："
+               "Gauss 节点不固定、权重需预计算，适合光滑函数。")
+    return flow_plate(uid, "NUMERICAL · QUADRATURE / 06", "从梯形到 Gauss：精度是怎么抬上去的",
+                      "同一张图上看清复化、外推、Gauss 三条加速路线。",
+                      steps, caption, tone="cyan", atlas_no="N-25",
+                      note="复化 Simpson O(h⁴)；Romberg 每列再抬 2 阶；n 点 Gauss 精确到 2n-1 次。",
+                      height=380)
+
+
+def fig_num_ode():
+    uid = "num-ode"
+    steps = [
+        ("01", "初值问题", "y'=f(t,y), y(t0)=y0", "gold"),
+        ("02", "Euler", "沿切线走一步", "accent"),
+        ("03", "RK", "多取几个斜率", "cyan"),
+        ("04", "多步法", "用历史值", "plum"),
+        ("05", "刚性", "隐式 / A-稳定", "green"),
+    ]
+    caption = ("<b>读图：</b>Euler 只用一个斜率，RK 用多个斜率加权，多步法用历史点；"
+               "刚性方程的限制不在精度，而在绝对稳定区域——显式方法被迫用小步长，"
+               "隐式方法才能走大步。")
+    return flow_plate(uid, "NUMERICAL · ODE / 07", "单步、RK、多步：三条路线",
+                      "精度看阶，稳定看测试方程；刚性方程优先隐式。",
+                      steps, caption, tone="plum", atlas_no="N-26",
+                      note="Euler O(h)；RK4 O(h⁴)；Adams 每步一次函数值但要启动。",
+                      height=380)
+
 FIGURES = {
     "robot-system": ("robot", fig_robot_system),
     "robot-pose": ("robot", fig_robot_pose),
@@ -1033,6 +1206,12 @@ FIGURES = {
     "dl-neuron": ("deeplearning", fig_dl_neuron),
     "robot-jacobian": ("robot", fig_robot_jacobian),
     "numerical-condition": ("numerical", fig_numerical_condition),
+    "num-linear-systems": ("numerical", fig_num_linear_systems),
+    "num-power": ("numerical", fig_num_power),
+    "num-newton": ("numerical", fig_num_newton),
+    "num-vandermonde": ("numerical", fig_num_vandermonde),
+    "num-quadrature": ("numerical", fig_num_quadrature),
+    "num-ode": ("numerical", fig_num_ode),
 }
 
 

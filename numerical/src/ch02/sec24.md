@@ -1,5 +1,7 @@
 # 2.4 条件数与扰动分析
 
+> **本节属“补充篇 · 数值线性代数工具箱”**：2.x 是补充篇内部编号，不是课堂第 2 章的节号。课堂第 2 章是[线性方程组的解法](../course/ch02/overview.md)。
+
 第一章的 [1.2.6](../ch01/sec12.md#sec-1.2.6) 引入了条件数的**函数版** $\mathrm{cond}(f,x)=\lvert xf'(x)/f(x)\rvert$，并在 [1.3.6](../ch01/sec13.md#sec-1.3.6) 预告了**矩阵版**。这一节把它兑现：条件数为什么这样定义，右端与系数扰动各被放大多少，以及**为什么「残差小」不等于「解准」**——走完这几步，「这个方程组还能保住几位有效数字」就能用一个数预测出来。
 
 <a id="sec-2.4.1"></a>
@@ -409,7 +411,7 @@ print(np.linalg.cond(B, np.inf))          # ≈4.0e10
 
 ::: preview 课程预告 · 本节之后
 - **怎么不算逆就估出 $\mathrm{cond}$？** [2.6](sec26.md) 用 SVD 的 $\sigma_1/\sigma_r$；LAPACK 的 `gecon` 用 LU 的对角元做估计（原书第 2 章 2.3.2「关于病态线性方程组的求解问题」）；
-- **$\mathrm{cond}\gtrsim10^{16}$ 时怎么办？** 正则化（[第四章](../ch01/sec11.md#roadmap) 4.3 的 Tikhonov）、迭代精化、混合精度——[习题 D2](exercises.md)；
-- **近似解的迭代精化**：原书第 2 章 2.1 节末尾与[第三章](../ch01/sec11.md#roadmap)习题；
-- **$\mathrm{cond}$ 与收敛速度**：[2.5](sec25.md) 的谱半径与[第五章](../ch01/sec11.md#roadmap)迭代法，$\rho(A)$ 决定迭代快慢，$\mathrm{cond}$ 决定结果好坏——两个数各管一头。
+- **$\mathrm{cond}\gtrsim10^{16}$ 时怎么办？** 正则化（Tikhonov，见原书第 2 章 2.3.2）、迭代精化、混合精度——[习题 D2](exercises.md)；
+- **近似解的迭代精化**：原书第 2 章 2.1 节末尾与[第 2 章](../course/ch02/overview.md)习题；
+- **$\mathrm{cond}$ 与收敛速度**：[2.5](sec25.md) 的谱半径与[第 2 章](../course/ch02/overview.md)迭代法，$\rho(A)$ 决定迭代快慢，$\mathrm{cond}$ 决定结果好坏——两个数各管一头。
 :::

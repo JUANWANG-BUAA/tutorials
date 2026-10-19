@@ -37,7 +37,7 @@
 | $\det A$，$\operatorname{tr}A$ | 行列式 / 迹 | 迹 $=\sum_i a_{ii}=\sum_i\lambda_i$ |
 | $I$，$O$ | 单位矩阵 / 零矩阵 | 阶数由上下文确定 |
 
-## 子空间、投影与正交分解（第二章）
+## 子空间、投影与正交分解（补充篇）
 
 | 符号 | 名称 | 含义 |
 |:--|:--|:--|
@@ -52,7 +52,7 @@
 | $H$，$G$ | Householder 反射 / Givens 旋转 | $H=I-2\boldsymbol v\boldsymbol v^{\mathrm T}/\boldsymbol{v}^{\mathrm T}\boldsymbol v$ |
 | $r$，$\boldsymbol r$ | 秩 / 残差向量 | $\boldsymbol r=\boldsymbol b-A\boldsymbol x$ |
 
-## 谱与奇异值（第二章）
+## 谱与奇异值（补充篇）
 
 | 符号 | 名称 | 含义 |
 |:--|:--|:--|

@@ -1,0 +1,11 @@
+- 1 Responses API 与 Chat Completions 的工具形态差异
+- 2 函数定义：name、description、parameters
+- 3 strict 模式的约束与代价
+- 4 tool_choice：none/auto/required/named
+- 5 parallel_tool_calls 与并发结果
+- 6 流式 tool_call 增量与 index
+- 7 工具结果消息与 tool_call_id
+- 8 finish_reason 与截断
+- 9 结构化输出 json_schema
+- 10 参数校验失败与重试
+- 11 token 计量与工具描述成本

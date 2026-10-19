@@ -50,7 +50,7 @@
 | 范数 | **范数等价性只在有限维成立**（无穷维不成立） | 第 2 讲 |
 | 范数 | 判 $I\pm A$ 可逆，**找到一个范数使 $\lVert A\rVert<1$ 即可，不碰行列式** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
 | 范数 | $\lVert A\rVert_1=$ 列和最大，$\lVert A\rVert_\infty=$ 行和最大；$\lVert A\rVert_F$ **不从属** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
-| 条件数 | $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小 $\ne$ 误差小 | [2.4](../ch02/sec24.md) |
+| 条件数 | $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小 $\ne$ 误差小 | [补充篇 2.4](../ch02/sec24.md) |
 | 线代 | 列主元的作用是**避免小主元放大舍入误差** | 第 3 讲 |
 | 线代 | Doolittle（LU）需要**各阶顺序主子式非零** | 第 4 讲 |
 | 线代 | 稀疏 / 三对角用 $O(n)$ 追赶法，**实际没人用朴素高斯消去** | 第 4 讲 |
@@ -196,7 +196,7 @@
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\lVert A\rVert<1\Rightarrow I\pm A$ 可逆且 $(I-A)^{-1}=\sum A^k$。**判可逆只需找到一个范数使 $\lVert A\rVert<1$，完全不用算行列式**——这正是老师强调的考点。<b>答案 B</b>。</p></div></details>
 </div>
-<div class="arena-q" data-id="e12" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="条件数下界" data-src="2.4 · 第 2–3 讲" data-href="../ch02/sec24.html">
+<div class="arena-q" data-id="e12" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="条件数下界" data-src="补充 2.4 · 第 2–3 讲" data-href="../ch02/sec24.html">
 <p class="aq-hd"><span class="aq-id">e12</span><span class="aq-tag">范数与条件数 · 条件数下界</span></p>
 <p class="aq-prompt">对可逆矩阵 $A$，条件数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 的下界是</p>
 <ol class="aq-opts">
@@ -372,7 +372,7 @@
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>位移法：$A-pI$ 的特征值是 $\lambda_i-p$，其中 $\lvert\lambda_k-p\rvert$ 最小。对 $A-pI$ 用反幂法求出 $\lambda_k-p$，再加回 $p$ 得 $\lambda_k$。这是量子力学能级「精修」的标准手段。<b>答案 B</b>。</p></div></details>
 </div>
-<div class="arena-q" data-id="e28" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="谱半径与范数" data-src="2.5 · 第 6–7 讲" data-href="../ch02/sec25.html">
+<div class="arena-q" data-id="e28" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="谱半径与范数" data-src="补充 2.5 · 第 6–7 讲" data-href="../ch02/sec25.html">
 <p class="aq-hd"><span class="aq-id">e28</span><span class="aq-tag">特征值与幂法 · 谱半径与范数</span></p>
 <p class="aq-prompt">对任意矩阵 $A$ 与任意**算子**范数，谱半径满足</p>
 <ol class="aq-opts">
@@ -422,10 +422,10 @@
 <ol class="aq-opts">
 <li>$f(a)f(b)<0$</li>
 <li>$f''(x_0)\neq0$ 且 $f''$ 在 $[a,b]$ 上变号</li>
-<li>$f'(x)$ 在 $[a,b]$ 上不变号</li>
+<li>$f'(x)$ 在 $[a,b]$ 上不为零</li>
 <li>$f(x_0)f''(x_0)>0$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>四条件是：(1) 端点异号；(2) $f'$ 不变号（单调）；(3) $f''$ 不变号（凸性不变）；(4) $f(x_0)f''(x_0)>0$。选项 B 说 $f''$ **变号**，与条件 (3) 相反，**不属于**四条件——注意题目问的是「不属于」。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>四条件是：(1) 端点异号；(2) $f''$ 不变号（凸性不变）；(3) $f'$ 在 $[a,b]$ 上不为零（严格单调，且牛顿步分母非零）；(4) $f(x_0)f''(x_0)>0$。选项 B 说 $f''$ **变号**，与条件 (2) 相反，**不属于**四条件——注意题目问的是「不属于」。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e33" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="割线法两初值" data-src="第 9 讲" data-href="../lectures/lec09.html">
 <p class="aq-hd"><span class="aq-id">e33</span><span class="aq-tag">非线性方程与插值 · 割线法两初值</span></p>

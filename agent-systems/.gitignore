@@ -1,0 +1,5 @@
+# 实验临时输出
+.out/
+# Python 缓存
+__pycache__/
+*.pyc

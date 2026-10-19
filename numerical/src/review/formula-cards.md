@@ -1,6 +1,6 @@
 # 一页速览 · 公式与结论卡
 
-这一页把两章的**必记**公式与结论压成一页，按主题排列，每条都链到正文权威版本（推导与例子在那里）。用途有二：**考前一小时过一遍**、**做题时忘了公式就跳过来**。
+这一页把**第一章 + 补充篇（数值线性代数工具箱）**的必记公式与结论压成一页，按主题排列，每条都链到正文权威版本（推导与例子在那里）。老师主线第 2–5 章以讲座页为准；本页只收与主线交叉的公式。用途有二：**考前一小时过一遍**、**做题时忘了公式就跳过来**。
 
 ::: note 怎么用这一页
 - **不是替代正文**：只有结论，没有推导与适用条件。第一次学别从这一页开始。
@@ -96,7 +96,7 @@
 
 **中学类比的矩阵版**：$\lVert A\rVert\lt1$ 即 $\lvert r\rvert\lt1$，$I-A$ 即 $1-r$，$(I-A)^{-1}=\sum A^k$ 即 $\dfrac{1}{1-r}$——迭代法收敛性全靠这一套。
 
-## 八 · 内积与正交（[2.1](../ch02/sec21.md)）
+## 八 · 内积与正交（补充篇 [2.1](../ch02/sec21.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
@@ -108,7 +108,7 @@
 | 正交矩阵 | $Q^{\mathrm T}Q=I$、$Q^{-1}=Q^{\mathrm T}$、$\lvert\det Q\rvert=1$、$\mathrm{cond}_2(Q)=1$、保内积保范数（[@def-2.1.3]、[@thm-2.1.5]） |
 | 正交不变性 | $\lVert QA\rVert_2=\lVert A\rVert_2$，$\lVert QA\rVert_F=\lVert A\rVert_F$（[@thm-2.1.6]）——**数值算法偏爱正交变换的全部理由** |
 
-## 九 · 四个子空间与投影（[2.2](../ch02/sec22.md)）
+## 九 · 四个子空间与投影（补充篇 [2.2](../ch02/sec22.md)）
 
 | 概念 | 公式 |
 |:--|:--|
@@ -123,7 +123,7 @@
 | 残差自检 | $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$（残差落在左零空间）——算完顺手验一下 |
 | 加权版 | $\hat{\boldsymbol{x}}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol{b}$（[@thm-2.2.7]） |
 
-## 十 · 正交化与 QR（[2.3](../ch02/sec23.md)）
+## 十 · 正交化与 QR（补充篇 [2.3](../ch02/sec23.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
@@ -139,7 +139,7 @@
 | 选型口诀 | **稠密用 Householder，稀疏用 Givens**；MGS 在条件数温和且需要显式 $Q$ 时可用 |
 | QR 解最小二乘 | $R\hat{\boldsymbol{x}}=(Q^{\mathrm T}\boldsymbol{b})_{1:n}$，$\lVert\boldsymbol{r}\rVert_2=\lVert\boldsymbol{d}\rVert_2$；误差 $\sim\mathrm{cond}(A)u$ vs 正态方程 $\sim\mathrm{cond}(A)^2u$（[@thm-2.3.5]） |
 
-## 十一 · 条件数与扰动（[2.4](../ch02/sec24.md)）
+## 十一 · 条件数与扰动（补充篇 [2.4](../ch02/sec24.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
@@ -151,7 +151,7 @@
 | 残差 ≠ 误差 | $\boldsymbol{e}=A^{-1}\boldsymbol{r}$，$\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-2.4.4]） |
 | 两个阈值 | $\mathrm{cond}\gtrsim10^{8}\approx u^{-1/2}$：弃正态方程；$\mathrm{cond}\gtrsim10^{16}\approx u^{-1}$：双精度无解 |
 
-## 十二 · 谱理论（[2.5](../ch02/sec25.md)）
+## 十二 · 谱理论（补充篇 [2.5](../ch02/sec25.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
@@ -166,7 +166,7 @@
 | 一般扰动 | $\le\mathrm{cond}_2(V)\lVert E\rVert_2$（Bauer–Fike） |
 | 重特征值 | 非正规 $k$ 重根：移动 $O(\lVert E\rVert^{1/k})$——**固有病态，换算法无效** |
 
-## 十三 · SVD 与低秩逼近（[2.6](../ch02/sec26.md)）
+## 十三 · SVD 与低秩逼近（补充篇 [2.6](../ch02/sec26.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
@@ -196,4 +196,4 @@
 
 1. **先问病态，再问算法。** 条件数是问题的属性，稳定性是算法的属性；诊断顺序一错，努力全白费（[1.2.6](../ch01/sec12.md#sec-1.2.6) 的表）。
 2. **有效数字是最诚实的货币。** 一次相近数相减、一个小除数、一次大小悬殊的求和，都能让打印出的 17 位只剩 1~2 位真话。
-3. **$\lVert A\rVert\lt1$ 是一张万能保票。** 同时给出 $I\pm A$ 可逆、逆有界、Neumann 级数收敛、迭代误差几何衰减——[第五章](../ch01/sec11.md#roadmap)的迭代法全靠它起步。
+3. **$\lVert A\rVert\lt1$ 是一张万能保票。** 同时给出 $I\pm A$ 可逆、逆有界、Neumann 级数收敛、迭代误差几何衰减——[第 2 章](../course/ch02/overview.md)的迭代法全靠它起步。
