@@ -26,7 +26,7 @@ shared/        七本书**共用一份**的浏览器侧资源与构建工具（�
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式
 <book>/src/assets/
-  covers/      六张平装书封（tools/build_covers.py 生成；agent-systems 单独提供，首页与导览页共用）
+  covers/      七张平装书封（首页与导览页共用；其中四张由 tools/build_covers.py 生成）
   figures/     内联 SVG 图鉴片段（tools/build_atlas_figures.py 生成，页面里 include）
 tools/         仓库级构建脚本（七本一份）：
   build_search_js.mjs     构建后重建中文搜索索引（分词与查询同源）
@@ -46,7 +46,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 
 ## 视觉层与图鉴（2026-10）
 
-这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。六本书共用同一套样式，但每本书保留自己的封面。
+这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。七本书共用同一套样式，但每本书保留自己的封面。
 
 | 层 | 文件 | 作用 |
 |:--|:--|:--|
@@ -55,7 +55,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 | 图鉴交互层 | `shared/theme/js/atlas.js` | 原生图片自动图注、页首阅读元信息、菜单栏「图鉴」总览、宽图平移包装 |
 | 插图生成 | `tools/build_atlas_figures.py` | 输出 `<book>/src/assets/figures/*.md`：统一 900 宽的 SVG 展示台 + KaTeX 图注 |
 | 书封生成 | `tools/build_covers.py` | 输出 `<book>/src/assets/covers/*.svg`：机械臂 / 线性映射 / 三维曲面 / 神经网络四张封面 |
-| 导览页 | `site-index.html` | 主视觉课程封面 + 教学图鉴 feature + 课程索引；竖排标签、平装封面、hover 反相课程行、浅/深色切换 |
+| 导览页 | `site-index.html` | 主视觉七本书封 + 教学图鉴 feature + 七本书目（带封面）+ 三条学习路线；竖排标签、平装封面、hover 反相书目行、浅/深色切换 |
 
 **加载顺序**：`base → <book> → katex → framework → atlas → prefs`。atlas 只用令牌与组件级
 特异性，不覆盖读者在 prefs 里的字体 / 字号 / 行距 / 版心选择。
@@ -78,7 +78,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 
 ```bash
 brew install mdbook        # 如未安装
-./build.sh serve           # 构建六本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
+./build.sh serve           # 构建七本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
 ```
 
 ⚠️ 不要只跑 `mdbook serve`：搜索索引与术语数据都是**构建后产物**，而 mdBook 每次构建会先清空
@@ -106,4 +106,4 @@ brew install mdbook        # 如未安装
 
 ## 部署
 
-推送到 `main` 分支后，GitHub Actions 自动构建六本书并发布到 Pages，无需手工操作。各书首页会说明正文范围与待补内容。
+推送到 `main` 分支后，GitHub Actions 自动构建七本书并发布到 Pages，无需手工操作。各书首页会说明正文范围与待补内容。

@@ -23,13 +23,13 @@
 
 | 已覆盖内容 | Linux 书位置 | 本书的处理 |
 |:--|:--|:--|
-| 网络分层、IP、路由、分片 | [4.1–4.3](/tutorials/linux/part4/ch01.html) | 只在解释「请求走哪条路」时引用 |
-| UDP/TCP、可靠传输、拥塞控制 | [4.4–4.6](/tutorials/linux/part4/ch04.html) | 超时章节只讲应用层 deadline，不重讲 RTO |
-| TCP 建立/关闭、TIME_WAIT | [4.5](/tutorials/linux/part4/ch05.html) | 连接池与重试章引用，不重画状态机 |
-| socket、epoll、连接队列 | [4.8–4.11](/tutorials/linux/part4/ch08.html) | 项目章只用 Python 标准库的 HTTP server |
-| HTTP、DNS、TLS | [4.7](/tutorials/linux/part4/ch07.html) | 不解释报文；只讲 HTTP 语义对重试的影响 |
-| 容器、namespace、cgroups | [5.1–5.5](/tutorials/linux/part5/ch01.html) | 项目不依赖容器，最多用进程隔离 |
-| Kubernetes 基础 | [5.6](/tutorials/linux/part5/ch06.html) | 只在「发布与容量」处引用 |
+| 网络分层、IP、路由、分片 | [4.1–4.3](../linux/part4/ch01.html) | 只在解释「请求走哪条路」时引用 |
+| UDP/TCP、可靠传输、拥塞控制 | [4.4–4.6](../linux/part4/ch04.html) | 超时章节只讲应用层 deadline，不重讲 RTO |
+| TCP 建立/关闭、TIME_WAIT | [4.5](../linux/part4/ch05.html) | 连接池与重试章引用，不重画状态机 |
+| socket、epoll、连接队列 | [4.8–4.11](../linux/part4/ch08.html) | 项目章只用 Python 标准库的 HTTP server |
+| HTTP、DNS、TLS | [4.7](../linux/part4/ch07.html) | 不解释报文；只讲 HTTP 语义对重试的影响 |
+| 容器、namespace、cgroups | [5.1–5.5](../linux/part5/ch01.html) | 项目不依赖容器，最多用进程隔离 |
+| Kubernetes 基础 | [5.6](../linux/part5/ch06.html) | 只在「发布与容量」处引用 |
 
 ::: errata 三个常见越界
 1. **把「TCP 超时」当成本书的「请求超时」**。TCP 的 RTO 是传输层重传计时器；本书的 deadline 是应用层「我最多等到什么时候」，两者可以差一个数量级。

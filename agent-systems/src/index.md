@@ -37,21 +37,21 @@ Tree of Thoughts、RAG、Lost in the Middle、MemGPT、τ-bench、SWE-bench、Ca
 </section>
 
 <section class="study-paths" aria-label="学习路线">
-<div class="path-card">
-<span class="path-no">ROUTE 01</span>
-<h3>平台工程路线</h3>
+<div class="study-path">
+<span class="path-kicker">ROUTE 01</span>
+<strong>平台工程路线</strong>
 <p>先读 1–4 章建立执行与边界，再读 9–12 章建立评估与治理，最后做项目二。</p>
 <a href="roadmap.md">展开路线 →</a>
 </div>
-<div class="path-card">
-<span class="path-no">ROUTE 02</span>
-<h3>应用开发路线</h3>
+<div class="study-path">
+<span class="path-kicker">ROUTE 02</span>
+<strong>应用开发路线</strong>
 <p>从 1、2、5、6、7 章入手，先做出可控的 agent，再补沙箱与评估。</p>
 <a href="roadmap.md">展开路线 →</a>
 </div>
-<div class="path-card">
-<span class="path-no">ROUTE 03</span>
-<h3>安全与合规路线</h3>
+<div class="study-path">
+<span class="path-kicker">ROUTE 03</span>
+<strong>安全与合规路线</strong>
 <p>1、2、3、4、11、12 章连读，项目一做红队，项目二做回归门禁。</p>
 <a href="roadmap.md">展开路线 →</a>
 </div>

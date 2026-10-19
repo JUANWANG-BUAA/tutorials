@@ -1,4 +1,58 @@
-# 分布式系统与数据面
+<section class="chapter-cover">
+<div class="kicker">分布式系统与数据面 · 定制教程</div>
+<h1>分布式系统与数据面</h1>
+<div class="subtitle">从一次工具调用出发，沿请求、复制、事务、消息、缓存与观测一路走到可验证的一致性。</div>
+<div class="cover-chips">
+<span>5 篇 · 13 章</span>
+<span>2 个可运行项目</span>
+<span>只用 Python 标准库</span>
+<span>章末陷阱清单与出口检查</span>
+</div>
+<details class="cover-details">
+<summary>查看范围、前置与边界</summary>
+<div class="meta">
+前置：TCP 三次握手、socket、epoll、HTTP、DNS、TLS 读《Linux 系统与内核》第 4 篇；容器与 Kubernetes 基础读第 5 篇。本书只写数据面，不重写 TCP/HTTP/K8s 基础。<br>
+两个项目都只用 Python 标准库，不依赖 Docker 或云账号；协议事实以 2026 年仍有效的规范与实现为准，依赖版本的结论都标了版本。
+</div>
+</details>
+
+<div class="cover-object" aria-hidden="true">
+  <div class="book-3d"><div class="book"><div class="face face-front">{{#include assets/covers/distributed.svg}}</div></div></div>
+</div>
+</section>
+
+<section class="book-contents" aria-label="目录">
+<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">5 篇 · 13 章 · 2 个项目</span></div>
+<div class="bc-list">
+<a class="bc-row" href="part1/ch01.md"><span class="bc-no">01</span><span class="bc-title">请求与失败：超时、重试、幂等、背压</span><span class="bc-count">2 章</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="part2/ch03.md"><span class="bc-no">02</span><span class="bc-title">复制与一致：复制拓扑、一致性模型、共识</span><span class="bc-count">3 章</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="part3/ch06.md"><span class="bc-no">03</span><span class="bc-title">数据与消息：事务、队列与流、缓存与对象存储</span><span class="bc-count">3 章</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="part4/ch09.md"><span class="bc-no">04</span><span class="bc-title">运行与治理：租约与选主、观测、容量与演练</span><span class="bc-count">3 章</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="part5/ch12.md"><span class="bc-no">05</span><span class="bc-title">项目：幂等工具调用后端、小型复制 KV</span><span class="bc-count">2 项目</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+</div>
+<p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。第一次来，先读 <a href="roadmap.md">三条阅读路线</a>，再从 <a href="part1/ch01.md">第 1 章</a> 开始。</p>
+</section>
+
+<section class="study-paths" aria-label="学习路线">
+<div class="study-path">
+<span class="path-kicker">ROUTE 01 · 后端工程师</span>
+<strong>把一次调用写对</strong>
+<p>第 1、2 章精读远程调用的状态与重试预算；第 6 章精读 MVCC，第 7、8 章选读；第 12 章做项目一，注入丢响应故障，证明副作用只发生一次。约 12–16 小时。</p>
+<a href="roadmap.md">展开路线 →</a>
+</div>
+<div class="study-path">
+<span class="path-kicker">ROUTE 02 · SRE / 平台</span>
+<strong>把故障看清楚</strong>
+<p>先快读第 1 章的失败分类，再精读第 3、9、10 章的分区、租约与观测；第 11 章写一份爆炸半径受控的演练剧本。约 10–14 小时。</p>
+<a href="roadmap.md">展开路线 →</a>
+</div>
+<div class="study-path">
+<span class="path-kicker">ROUTE 03 · 存储 / 基础设施</span>
+<strong>把一致性讲清楚</strong>
+<p>精读第 3、4、5 章的复制拓扑、线性一致判定与 Raft，用第 6 章的 MVCC 解释可见性；第 13 章做项目二。约 16–20 小时。</p>
+<a href="roadmap.md">展开路线 →</a>
+</div>
+</section>
 
 <div class="chapter-index">
 <div><span class="ci-label">这本书回答</span><p>一次工具调用离开本机之后，为什么会出现「超时了但已经成功」「重试一次扣了两次钱」「主库切换后刚写的记录不见了」「扩容之后 p99 反而更高」？这些问题不是名词不够多，而是失败模型、一致性契约和容量边界没有写清楚。</p></div>
@@ -13,7 +67,7 @@
 
 ## 这本书的位置
 
-它不是《Linux 系统与内核》的续集，也不是微服务名词表。它假设你已经知道 TCP 三次握手、socket、epoll、HTTP、DNS、TLS 的基本工作方式；这些内容在 [Linux 书第 4 篇](/tutorials/linux/part4/ch01.html) 已经讲过，本书只引用、不重写。容器与 Kubernetes 的基础同理，见 [Linux 书第 5 篇](/tutorials/linux/part5/ch01.html)。
+它不是《Linux 系统与内核》的续集，也不是微服务名词表。它假设你已经知道 TCP 三次握手、socket、epoll、HTTP、DNS、TLS 的基本工作方式；这些内容在 [Linux 书第 4 篇](../linux/part4/ch01.html) 已经讲过，本书只引用、不重写。容器与 Kubernetes 的基础同理，见 [Linux 书第 5 篇](../linux/part5/ch01.html)。
 
 本书只写**数据面**：请求怎么发、失败怎么判、状态怎么复制、事务怎么提交、消息怎么投递、缓存怎么失效、锁怎么过期、指标怎么解释、容量怎么估。控制面（调度、编排、服务发现、配置下发）只在必要时出现，而且从不展开成产品手册。
 
@@ -55,13 +109,6 @@
 
 两个项目都只用 Python 标准库，`python3 -m unittest` 可跑，故障注入脚本 `bash -n` 通过，且不依赖 Docker 或云账号。它们不是玩具：每个不变量都有对应的测试，每个测试都对应正文的一节。
 
-## 怎么读
-
-- **第一次读**：按 1 → 2 → 3 → 4 → 5 的顺序，先把「失败、复制、共识」三件事连起来；第 6–8 章可以按兴趣跳读；第 9–11 章在你要上线时回来精读。
-- **做项目**：直接读第 12、13 章，遇到不懂的协议再回查第 2、5、6 章。项目章里的每个 Stage 都有验收命令，不建议只看代码。
-- **做 SRE**：从第 10、11 章开始，再回读第 1、2 章的失败分类；第 9 章的 fencing 和第 3 章的分区是故障演练的题库。
-- **做存储**：第 3、4、5、6 章是主线，第 13 章是压缩版实现；第 7 章的日志与第 8 章的对象存储是相邻问题。
-
 ## 不做什么
 
 - 不重写 TCP/IP、socket、epoll、HTTP/DNS/TLS；这些在 Linux 书第 4 篇。
@@ -75,3 +122,9 @@
 :::
 
 > **下一站**：如果你想知道这本书为什么值得单独写，读 [为什么写这本书](preface.md)；如果你要先确认自己是否准备好了，做 [入学诊断](entry-test.md)。
+
+<footer class="book-colophon">
+  <span class="colophon-kicker">COLOPHON / 题记</span>
+  <span class="colophon-main">分布式系统与数据面 · 定制教程；协议与产品行为以公开规范和实现为准，依赖版本的结论都标了版本。</span>
+  <span class="colophon-meta">MDBOOK · 2026-10</span>
+</footer>

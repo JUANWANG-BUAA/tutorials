@@ -35,7 +35,7 @@
 | 6 | 项目二测试 | `python3 -m unittest -v projects/replicated-kv/test_kv.py` | 全通过 |
 | 7 | 故障注入 | `bash projects/*/fault_inject.sh --dry-run` | 退出码 0 |
 | 8 | 重试案例覆盖 | `grep -c 重复副作用 src/part*/ch*.md` | 每章 ≥ 1 |
-| 9 | 跨书链接 | 抽查 `/tutorials/linux/...` | 目标页面存在 |
+| 9 | 跨书链接 | 抽查 `../linux/...` 等相对链接 | 目标页面存在 |
 | 10 | 禁止项 | 搜索占位标记、未完成提示句 | 0 处 |
 | 11 | 图 id | `grep -o 'id="[^"]*"' src/assets/figures/*.md` | 跨文件唯一 |
 | 12 | 覆盖矩阵与正文一致 | 抽查 10 个锚点 | 全部能跳转 |

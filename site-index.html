@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
-<title>教程库 · 研究生课程</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='12' height='12' fill='%23c2482f'/%3E%3C/svg%3E">
+<title>教程库 · 研究生课程讲义</title>
 <style>
   :root{
     color-scheme:light;
@@ -68,7 +69,6 @@
   h1{max-width:720px;font:700 clamp(50px,5.6vw,76px)/1.08 var(--serif);letter-spacing:-.035em;text-wrap:balance}
   h1 em{font-style:normal;color:var(--accent)}
   .lead{max-width:620px;margin:24px 0 0;color:var(--ink-2);font-size:14px;line-height:1.95}
-  .lead b{color:var(--ink);font-weight:600}
   .hero-meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);max-width:620px;color:var(--muted);font:500 10px/1.6 var(--mono);letter-spacing:.04em}
   .hero-meta span+span::before{content:"/";margin-right:22px;color:var(--line-2)}
   .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-top:30px}
@@ -78,7 +78,6 @@
   .text-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
   .hero-visual{position:relative;padding-top:10px;min-height:524px}
-  .hero-number{position:absolute;right:-16px;bottom:-34px;color:transparent;-webkit-text-stroke:1px var(--line-2);font:700 210px/1 var(--serif);letter-spacing:-.08em;opacity:.5;pointer-events:none;user-select:none}
   .feature-strip{position:absolute;left:0;top:96px;z-index:2;display:flex;flex-direction:column;gap:8px}
   .feature-strip-7{display:grid;grid-template-columns:repeat(2,46px);gap:8px}
   .strip-item{display:block;width:46px;padding:3px;border:1px solid var(--line-2);background:var(--paper-2);text-decoration:none}
@@ -111,6 +110,7 @@
   .feature-art-head{display:flex;justify-content:space-between;padding:0 2px 8px;color:#4d535a;font:500 8.5px/1.4 var(--mono);letter-spacing:.12em}
   .feature-art img{display:block;width:100%;height:auto;border:1px solid #d3d1c9}
 
+  /* 七本书目：每行 = 序号 + 封面缩略 + 书名组 + 简介 + 规模 + 箭头 */
   .index{border-bottom:1px solid var(--line)}
   .index-grid{display:grid;grid-template-columns:140px minmax(0,1fr);gap:40px;padding:46px 0 54px}
   .index-side{padding-top:5px}
@@ -118,18 +118,39 @@
   .index-side .label{display:block;margin-top:6px;color:var(--muted);font:500 10px/1.6 var(--mono);letter-spacing:.08em}
   .index-side .count{display:block;margin-top:22px;color:var(--line-2);font:700 44px/1 var(--serif);letter-spacing:-.05em}
   .index-list{border-top:1px solid var(--ink)}
-  .index-row{display:grid;grid-template-columns:44px 110px minmax(0,1fr) minmax(0,1.25fr) 150px 22px;gap:18px;align-items:center;padding:18px 14px 18px 10px;border-bottom:1px solid var(--line);text-decoration:none;transition:background-color .16s ease,color .16s ease}
+  .index-row{display:grid;grid-template-columns:44px 40px minmax(0,1fr) minmax(0,1.2fr) 176px 22px;grid-template-areas:"no cover head desc meta arrow";gap:18px;align-items:center;padding:16px 14px 16px 10px;border-bottom:1px solid var(--line);text-decoration:none;transition:background-color .16s ease,color .16s ease}
   .index-row:hover{background:var(--ink);color:var(--paper)}
   .index-row:hover .row-en,.index-row:hover .row-desc,.index-row:hover .row-meta{color:color-mix(in srgb,var(--paper) 65%,transparent)}
   .index-row:hover .row-no{color:var(--accent)}
+  .index-row:hover .row-flag{color:var(--accent)}
+  .index-row:hover .row-cover{border-color:color-mix(in srgb,var(--paper) 45%,transparent)}
   .index-row:hover .row-arrow{color:var(--accent);transform:translate(3px,-3px)}
-  .row-no{color:var(--muted);font:700 12px/1 var(--mono);letter-spacing:.06em}
-  .row-en{color:var(--muted);font:500 9px/1.4 var(--mono);letter-spacing:.12em;white-space:nowrap}
-  .row-title{font:700 20px/1.35 var(--serif);letter-spacing:-.005em}
-  .row-desc{color:var(--ink-2);font-size:12px;line-height:1.7;min-width:0}
-  .row-meta{color:var(--muted);font:500 9.5px/1.6 var(--mono);letter-spacing:.04em;white-space:nowrap}
-  .row-arrow{color:var(--ink-2);font:500 16px/1 var(--sans);transition:transform .16s ease,color .16s ease}
-  .index-note{grid-column:2;margin-top:12px;color:var(--muted);font:500 9.5px/1.6 var(--mono);letter-spacing:.04em}
+  .row-no{grid-area:no;color:var(--muted);font:700 12px/1 var(--mono);letter-spacing:.06em}
+  .row-cover{grid-area:cover;display:block;width:40px;height:53px;object-fit:cover;border:1px solid var(--line-2);background:#0b1018}
+  .row-head{grid-area:head;display:flex;flex-direction:column;gap:5px;min-width:0}
+  .row-en{color:var(--muted);font:500 9px/1.4 var(--mono);letter-spacing:.12em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row-title{font:700 20px/1.3 var(--serif);letter-spacing:-.005em}
+  .row-desc{grid-area:desc;min-width:0;color:var(--ink-2);font-size:12px;line-height:1.7}
+  .row-meta{grid-area:meta;display:flex;flex-direction:column;gap:3px;color:var(--muted);font:500 9.5px/1.6 var(--mono);letter-spacing:.04em}
+  .row-flag{color:var(--accent-ink)}
+  .row-arrow{grid-area:arrow;color:var(--ink-2);font:500 16px/1 var(--sans);transition:transform .16s ease,color .16s ease}
+  .index-note{margin-top:14px;color:var(--muted);font:500 9.5px/1.6 var(--mono);letter-spacing:.04em}
+
+  /* 学习路线：三条建议顺序，依据写在卡片里 */
+  .paths{border-bottom:1px solid var(--line)}
+  .paths-grid{display:grid;grid-template-columns:140px minmax(0,1fr);gap:40px;padding:46px 0 54px}
+  .paths-title{margin:0 0 10px;font:700 clamp(24px,2.6vw,30px)/1.3 var(--serif);letter-spacing:-.01em}
+  .paths-intro{max-width:640px;margin:0 0 26px;color:var(--ink-2);font-size:13px;line-height:1.85}
+  .path-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .path-card{display:flex;flex-direction:column;gap:12px;padding:20px 20px 18px;border:1px solid var(--line-2);background:var(--paper-2);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+  .path-tag{color:var(--accent-ink);font:700 9.5px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+  .path-card h3{font:700 19px/1.35 var(--serif);letter-spacing:-.005em}
+  .path-card p{color:var(--ink-2);font-size:12.5px;line-height:1.8}
+  .path-basis{color:var(--muted);font:500 10px/1.7 var(--mono);letter-spacing:.03em}
+  .path-chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+  .path-chain a{color:var(--ink);text-decoration:none;font:600 10.5px/1.4 var(--mono);letter-spacing:.04em;border-bottom:1px solid var(--line-2)}
+  .path-chain a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .path-chain > span{color:var(--muted);font:500 10px/1 var(--mono)}
 
   .about-grid{display:grid;grid-template-columns:140px minmax(0,1fr) 240px;gap:40px;padding:38px 0 50px}
   .about-side{color:var(--accent);font:700 9.5px/1.5 var(--mono);letter-spacing:.18em}
@@ -149,7 +170,9 @@
     .strip-item{width:40px}
     .feature-grid{grid-template-columns:minmax(0,1fr) 540px;gap:30px}
     .index-grid{grid-template-columns:120px minmax(0,1fr);gap:26px}
-    .index-row{grid-template-columns:36px 90px minmax(0,1fr) minmax(0,1.1fr) 130px 18px;gap:12px}
+    .index-row{grid-template-columns:36px 36px minmax(0,1fr) minmax(0,1.1fr) 132px 18px;gap:12px}
+    .paths-grid{grid-template-columns:120px minmax(0,1fr);gap:26px}
+    .path-cards{gap:12px}
     .about-grid{grid-template-columns:120px minmax(0,1fr);gap:26px}
     .about-links{grid-column:2;flex-direction:row;gap:16px;margin-top:12px}
   }
@@ -163,19 +186,15 @@
     .feature-frame{max-width:340px;margin:0 auto}
     .feature-grid{grid-template-columns:1fr;gap:24px;padding:36px 0}
     .feature-copy h2{font-size:28px}
-    .hero-number{display:none}
     h1{font-size:clamp(42px,10vw,58px)}
     .index-grid{grid-template-columns:1fr;gap:18px;padding:32px 0 38px}
     .index-side .count{display:none}
-    .index-list{grid-column:1}
-    .index-row{grid-template-columns:32px minmax(0,1fr) 18px;gap:10px;padding:15px 6px 15px 8px}
-    .row-en{display:none}
-    .row-title{grid-column:2;grid-row:1;font-size:17px}
-    .row-desc{grid-column:2;grid-row:2;font-size:11.5px;margin-top:2px}
-    .row-meta{grid-column:2;grid-row:3;margin-top:4px;white-space:normal}
-    .row-no{grid-column:1;grid-row:1 / span 3;align-self:start}
-    .row-arrow{grid-column:3;grid-row:1 / span 3;align-self:center}
-    .index-note{grid-column:1}
+    .index-row{grid-template-columns:30px 30px minmax(0,1fr) 16px;grid-template-areas:"no cover head arrow" "no cover desc arrow" "no cover meta arrow";gap:6px 10px;padding:14px 6px 14px 8px}
+    .row-cover{width:30px;height:40px}
+    .row-title{font-size:18px}
+    .row-desc{font-size:11.5px}
+    .paths-grid{grid-template-columns:1fr;gap:18px;padding:32px 0 38px}
+    .path-cards{grid-template-columns:1fr}
     .about-grid{grid-template-columns:1fr;gap:10px;padding:28px 0 36px}
     .about-links{grid-column:1;flex-direction:row;gap:16px}
     .footer-inner{flex-direction:column;align-items:flex-start;gap:6px}
@@ -200,7 +219,8 @@
   <div class="wrap topbar-inner">
     <a class="brand" href="./" aria-label="教程库首页"><span class="brand-mark" aria-hidden="true"></span><b>ATLAS</b><span>教程库</span></a>
     <nav class="topnav" aria-label="主导航">
-      <a href="#courses">Courses</a>
+      <a href="#books">Books</a>
+      <a href="#paths">Paths</a>
       <a href="#about">Build</a>
       <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">Source</a>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深浅色" title="切换深浅色">
@@ -215,20 +235,20 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <aside class="hero-side" aria-hidden="true">
-        <span class="index">01—04</span>
+        <span class="index">01—07</span>
         <span class="line"></span>
         <span class="vertical">BUAA / GRADUATE TEACHING LIBRARY / 2026</span>
       </aside>
       <div class="hero-copy">
         <div class="hero-kicker">Graduate teaching library</div>
-        <h1>五门研究生<br><em>课程讲义</em></h1>
-        <p class="lead">按章组织讲义、例题、练习与复习材料。每节配有结构图与读图提示；公式、术语、全文搜索与离线阅读均在本地可用。</p>
+        <h1>七本研究生<br><em>课程讲义</em></h1>
+        <p class="lead">七本书各自按章组织讲义与例题，每本都有导览页，章末附练习或检查。每节配结构图与读图提示；公式、插图与全文搜索随站分发，阅读时不请求第三方资源。</p>
         <div class="hero-meta">
-          <span>5 门课程</span><span>85 章</span><span>11 个项目</span><span>覆盖 10 部母本</span>
+          <span>7 本书</span><span>3 条学习路线</span><span>每本一份导览页</span><span>全文搜索在浏览器内完成</span>
         </div>
         <div class="hero-actions">
-          <a class="btn" href="#courses">课程目录 <span aria-hidden="true">↓</span></a>
-          <a class="text-link" href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">源码与构建说明 ↗</a>
+          <a class="btn" href="#books">七本书目 <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#paths">学习路线 ↓</a>
         </div>
       </div>
       <div class="hero-visual">
@@ -269,71 +289,108 @@
     </div>
   </section>
 
-  <section class="index" id="courses">
+  <section class="index" id="books">
     <div class="wrap index-grid">
       <aside class="index-side">
         <span class="kicker">INDEX / 01</span>
-        <span class="label">课程目录</span>
-        <span class="count">05</span>
+        <span class="label">七本书目</span>
+        <span class="count">07</span>
       </aside>
       <div class="index-list">
         <a class="index-row" href="robot/">
           <span class="row-no">01</span>
-          <span class="row-en">ROBOTICS</span>
-          <span class="row-title">机器人控制技术</span>
-          <span class="row-desc">刚体位姿、正逆运动学、雅可比、奇点、轨迹规划与执行器。</span>
-          <span class="row-meta">5 章 · 48 节 · 101 题</span>
+          <img class="row-cover" src="robot/assets/covers/robot.svg" alt="">
+          <span class="row-head"><span class="row-en">ROBOTICS</span><span class="row-title">机器人控制技术</span></span>
+          <span class="row-desc">刚体位姿、正逆运动学、雅可比、奇异性、轨迹规划与执行器。</span>
+          <span class="row-meta"><span>5 章 · 48 节</span><span>101 道习题 · 全部附解</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="matrix/">
           <span class="row-no">02</span>
-          <span class="row-en">LINEAR ALGEBRA</span>
-          <span class="row-title">矩阵论</span>
-          <span class="row-desc">线性空间、线性映射与矩阵分解；含证明、反例、习题与自测。</span>
-          <span class="row-meta">3 章 · 证明工坊 · 冲刺卷</span>
+          <img class="row-cover" src="matrix/assets/covers/matrix.svg" alt="">
+          <span class="row-head"><span class="row-en">LINEAR ALGEBRA</span><span class="row-title">矩阵论</span></span>
+          <span class="row-desc">线性空间、线性映射与矩阵分解；含证明、习题与自测。</span>
+          <span class="row-meta"><span>3 章 · 15 节</span><span class="row-flag">2.6–2.7、3.3 待补</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="numerical/">
           <span class="row-no">03</span>
-          <span class="row-en">NUMERICAL METHODS</span>
-          <span class="row-title">数值分析</span>
-          <span class="row-desc">误差、范数、线性方程组、特征值、非线性方程与插值；附数值线性代数工具箱。实验经 Python 复算。</span>
-          <span class="row-meta">课堂主线 7 章 · 补充篇 · 课堂精编</span>
+          <img class="row-cover" src="numerical/assets/covers/numerical.svg" alt="">
+          <span class="row-head"><span class="row-en">NUMERICAL METHODS</span><span class="row-title">数值分析</span></span>
+          <span class="row-desc">误差、范数、线性方程组、特征值、非线性方程与插值；附数值线性代数工具箱，实验经 Python 复算。</span>
+          <span class="row-meta"><span>课堂主线 7 章 · 补充篇 8 节</span><span>40 道习题 · <span class="row-flag">第 8 讲占位</span></span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="deeplearning/">
           <span class="row-no">04</span>
-          <span class="row-en">DEEP LEARNING</span>
-          <span class="row-title">深度学习导论</span>
+          <img class="row-cover" src="deeplearning/assets/covers/deeplearning.svg" alt="">
+          <span class="row-head"><span class="row-en">DEEP LEARNING</span><span class="row-title">深度学习导论</span></span>
           <span class="row-desc">神经网络、序列建模、视觉、生成模型、强化学习与前沿主题。</span>
-          <span class="row-meta">9 讲 · 66 节 · 3 个 Lab</span>
+          <span class="row-meta"><span>9 讲 · 66 节</span><span>习题 · 自测 · 3 个 Lab</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="linux/">
           <span class="row-no">05</span>
-          <span class="row-en">LINUX &amp; KERNEL</span>
-          <span class="row-title">Linux 系统与内核</span>
-          <span class="row-desc">命令行、Shell、CSAPP、系统编程、内核、网络与云原生；四条项目主线从零复现。</span>
-          <span class="row-meta">6 篇 · 85 章 · 11 个项目</span>
+          <img class="row-cover" src="linux/assets/covers/linux.svg" alt="">
+          <span class="row-head"><span class="row-en">LINUX &amp; KERNEL</span><span class="row-title">Linux 系统与内核</span></span>
+          <span class="row-desc">命令行、Shell、CSAPP、系统编程、内核、网络与云原生；附 11 个真实项目的从零复现。</span>
+          <span class="row-meta"><span>6 篇 · 85 章</span><span>11 个真实项目 · 自测卷</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="agent-systems/">
           <span class="row-no">06</span>
-          <span class="row-en">AGENT SYSTEMS</span>
-          <span class="row-title">Agent 系统工程</span>
-          <span class="row-desc">循环、工具协议、沙箱与权限、上下文与记忆、规划与多智能体、评估、可观测性、安全与治理；两个可运行项目。</span>
-          <span class="row-meta">4 篇 · 14 章 · 2 个项目</span>
+          <img class="row-cover" src="agent-systems/assets/covers/agent-systems.svg" alt="">
+          <span class="row-head"><span class="row-en">AGENT SYSTEMS</span><span class="row-title">Agent 系统工程</span></span>
+          <span class="row-desc">循环与状态、工具协议、沙箱与权限、上下文与记忆、规划与多智能体、评估、观测与治理。</span>
+          <span class="row-meta"><span>4 篇 · 14 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="distributed/">
           <span class="row-no">07</span>
-          <span class="row-en">DISTRIBUTED SYSTEMS</span>
-          <span class="row-title">分布式系统与数据面</span>
-          <span class="row-desc">请求与失败、复制与共识、事务与消息、缓存与观测、容量与演练；从一次工具调用走到可验证的一致性，两个可运行项目。</span>
-          <span class="row-meta">5 篇 · 13 章 · 2 个项目</span>
+          <img class="row-cover" src="distributed/assets/covers/distributed.svg" alt="">
+          <span class="row-head"><span class="row-en">DISTRIBUTED SYSTEMS</span><span class="row-title">分布式系统与数据面</span></span>
+          <span class="row-desc">远程调用与失败、复制与共识、事务与消息、缓存与观测、容量与演练；从一次工具调用走到可验证的一致性。</span>
+          <span class="row-meta"><span>5 篇 · 13 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <p class="index-note">每本书包含导览、正文与章末复习材料；可从入学诊断、知识地图或任一节开始读。</p>
+        <p class="index-note">每本书都有导览页与章末练习或检查；标注为待补或占位的内容，以各书导览页的最新说明为准。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="paths" id="paths" aria-labelledby="paths-title">
+    <div class="wrap paths-grid">
+      <aside class="index-side">
+        <span class="kicker">PATHS / 02</span>
+        <span class="label">学习路线</span>
+        <span class="count">03</span>
+      </aside>
+      <div>
+        <h2 class="paths-title" id="paths-title">从哪里开始</h2>
+        <p class="paths-intro">每本书都可以独立开始。下面三条是按学科与前置关系整理的建议顺序，依据来自各书的导览页与入学诊断。</p>
+        <div class="path-cards">
+          <article class="path-card">
+            <span class="path-tag">ROUTE A · 系统线</span>
+            <h3>Linux → Agent 与分布式</h3>
+            <p>进程、网络与容器的基础在 Linux 卷里已经讲过；Agent 的沙箱与权限、分布式的 TCP 与容器基础都建立在它上面，两本书都不重讲。</p>
+            <span class="path-basis">依据：Agent 卷导览写明前置 Linux 第 2、3、5 篇；分布式卷引用 Linux 第 4、5 篇。</span>
+            <span class="path-chain"><a href="linux/">05 Linux</a><span>→</span><a href="agent-systems/">06 Agent</a><span>/</span><a href="distributed/">07 分布式</a></span>
+          </article>
+          <article class="path-card">
+            <span class="path-tag">ROUTE B · 智能线</span>
+            <h3>深度学习 → Agent</h3>
+            <p>模型基础读深度学习导论；Agent 卷只写新增的系统层：循环、工具、沙箱、上下文与评估，不重讲神经网络与训练。</p>
+            <span class="path-basis">依据：Agent 卷导览写明「模型基础读《深度学习导论》」。</span>
+            <span class="path-chain"><a href="deeplearning/">04 深度学习</a><span>→</span><a href="agent-systems/">06 Agent</a></span>
+          </article>
+          <article class="path-card">
+            <span class="path-tag">ROUTE C · 数学线</span>
+            <h3>矩阵论 → 数值分析 → 机器人</h3>
+            <p>线性映射与矩阵分解是雅可比、广义逆与奇异性的语言；数值分析补上误差控制与数值求解。</p>
+            <span class="path-basis">依据：机器人卷的入学诊断要求线性代数（正交矩阵、特征值）；第 3 章讲雅可比与广义逆。</span>
+            <span class="path-chain"><a href="matrix/">02 矩阵论</a><span>→</span><a href="numerical/">03 数值分析</a><span>→</span><a href="robot/">01 机器人</a></span>
+          </article>
+        </div>
       </div>
     </div>
   </section>
@@ -343,11 +400,12 @@
       <div class="about-side">BUILD / SOURCE</div>
       <div class="about-main">
         <h2>构建与源码</h2>
-        <p>站点由 mdBook 构建，图、公式、搜索索引与术语数据随站分发，运行时无第三方请求。共用视觉层、各书样式与构建脚本分开放置，便于继续增补。</p>
+        <p>站点由 mdBook 构建。七本书共用一套视觉层与浏览器脚本（shared/），各书只保留自己的样式与构建配置；搜索索引、公式与插图随站分发，页面运行时不请求第三方资源。</p>
       </div>
       <div class="about-links">
         <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">GitHub 仓库 ↗</a>
         <a href="https://github.com/JUANWANG-BUAA/tutorials#readme" target="_blank" rel="noopener">README ↗</a>
+        <a href="https://github.com/JUANWANG-BUAA/tutorials/blob/main/build.sh" target="_blank" rel="noopener">构建脚本 build.sh ↗</a>
       </div>
     </div>
   </section>
