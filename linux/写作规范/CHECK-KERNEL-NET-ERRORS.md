@@ -258,13 +258,20 @@
 - **正确说法**：RFC 792 的 Destination Unreachable 头 4 字节在多数 code 下 unused=0，但 **type 3 code 4（Fragmentation Needed and DF Set）** 按 RFC 1191 把这 4 字节的低 16 位用作 **Next-Hop MTU**；这正是 PMTUD 能工作的字段。Linux `__icmp_send()` 在发 type 3 code 4 时把调用方给的 MTU 放进 ICMP 头的 `un` 字段（`icmp_param.data.icmph.un.gateway = info`；该 union 在 Frag Needed 下就是 next-hop MTU）。说「固定为 0」会让读者在抓包时忽略 PMTUD 的关键字段。
 - **证据**：RFC 792（Destination Unreachable 格式）、RFC 1191 §4（Next-Hop MTU 放在 unused 的低 16 位）；Linux `net/ipv4/icmp.c:726`（`icmph.un.gateway = info`）与 `:904`（接收侧 `ntohs(icmph->un.frag.mtu)`）。
 
-### A.24 「IPv4 选项长度必须是 4 的倍数」不准确：每个选项长度不必是 4 的倍数，是整个首部按 4 字节对齐
+### A.24 `neigh_resolve_output()` 的简化代码把 `neigh_event_send()` 的返回语义写反了
 
-- **位置**：`src/part4/ch03.md:481`
+- **位置**：`src/part4/ch03.md:596-610`
 - **原文**：
-  > `ip_options_compile()` 负责解析和校验，选项长度必须是 4 的倍数，不足时用 `IPOPT_END`（0）填充。
-- **正确说法**：IPv4 的 IHL 以 4 字节为单位，因此**整个首部（20 + 选项）长度必须是 4 的倍数**；单个选项的 length 字段只要求 ≥2 且不越界，不要求是 4 的倍数（例如 Timestamp 选项长度 4/8/12…、Record Route 3+4n，单个选项可能不是 4 的倍数，靠 NOP/EOL 补到 4 字节边界）。把「首部对齐」说成「每个选项长度必须 4 的倍数」，会让读者误判合法选项为畸形。
-- **证据**：RFC 791 §3.1（IHL 单位 4 字节；option length 包含 type/length）；`net/ipv4/ip_options.c` 的 `ip_options_compile()` 按 `optlen` 逐项解析，最后检查 `optlen` 总长与 `IPOPT_END` 填充。
+  > `if (!(neigh->nud_state & NUD_CONNECTED)) {`
+  > `    if (neigh_event_send(neigh, skb) != 0) { kfree_skb(skb); return -EINVAL; }`
+  > `    return 0;  /* skb 已挂进 arp_queue */`
+  > `}`
+  > `neigh->ops->output(neigh, skb);`
+- **正确说法**：`neigh_event_send()` 的返回值不是「失败/成功」：
+  - `neigh_event_send_probe()` 在 `NUD_CONNECTED|NUD_DELAY|NUD_PROBE` 时**直接返回 0**（表示「已经可用，调用者应立即发送」）；
+  - 否则调用 `__neigh_event_send()`，后者在**把 skb 挂进 arp_queue 后返回 1**（成功排队），失败路径则已自行 `kfree_skb` 并返回 1。
+  6.8 的 `neigh_resolve_output()` 实际写法是 `if (!neigh_event_send(neigh, skb)) { … dev_hard_header(); dev_queue_xmit(skb); }`：`neigh_event_send()` 返回 0 表示邻居当前可用（CONNECTED/DELAY/PROBE），调用者立即发送；返回 1 表示已排队或失败，调用者不再发送，也**不需要**自己 `kfree_skb()`（失败路径已在 `__neigh_event_send()` 里释放）。原文按 `!=0` 去 `kfree_skb()`，会在成功排队时释放 skb（或在失败时二次释放），并且永远不会走 `neigh->ops->output()`。这段虽然标了「简化」，但语义反转，不能作为教学代码。
+- **证据**：`net/core/neighbour.c:1543-1573`（`if (!neigh_event_send(...)) { ... dev_queue_xmit(skb); }`）、`include/net/neighbour.h:457-473`（`neigh_event_send_probe` 对 CONNECTED/DELAY/PROBE 返回 0）、`net/core/neighbour.c:1236-1244`（排队后 `rc = 1`）。
 
 ### A.25 NAT 钩子表里的 `nf_nat_ipv4_local_out` 在 6.8 不存在，实际是 `nf_nat_ipv4_local_fn`
 
@@ -365,3 +372,10 @@
 2. **A.1（MAX_ORDER）与 A.2（__ksize）是「按 6.8 写却用了 5.x 名字/结构」的典型**；同类风险还有 `mm/slub.c` vs `mm/slab_common.c` 的文件路径，建议全篇做一次「6.8 符号名」grep。
 3. **B 表没有整节缺失，最大缺口是「设备侧协议/故障模型/VSFS 心智模型」三组**；补的时候优先补机制图，不要把 part1 的内容整段复制过来。
 4. 发布前请以本报告 A 表的 `文件:行` 重跑一遍；正文 08:46–08:48 的并行增补已修掉 8 条，说明**行号漂移是常态**，建议把本报告当作「待修清单」而不是「最终判决」。
+
+### C.6 可疑但未进 A 表的边界项（供下一轮定夺）
+
+- **`src/part3/ch11.md:471`**：`mmap_lock` 的「能否睡眠」写成「可以（写侧）」。严格说 `mmap_read_lock()` 也是 `down_read()`，读侧同样可能睡眠；这是「偏窄」而非硬错，未进 A 表。
+- **`src/part3/ch10.md:404/1337`**：`PageAnonExclusive` 标注「5.17+」。该 page flag 是 5.18 前后引入的（不同 stable 分支 backport 时间不同），版本号可能有 ±1 的偏差；未拿到 6.8 git 历史前不判错。
+- **`src/part3/ch09.md:711-726`**：`kmalloc_index()` 代码块标了「简化」，但漏掉 `size>64 && <=96 → 1`、`>128 && <=192 → 2` 两个特例，与同节大小类表（96/192 桶）不一致；属教学简化边界，未进 A 表。
+- **`src/part4/ch03.md:481`**：`ip_options_compile()` 前一句「选项长度必须是 4 的倍数」若指「整个选项区/首部按 4 字节对齐」则成立，若指「每个选项」则不成立；措辞歧义，未进 A 表（A.24 已换成更硬的 `neigh_resolve_output` 语义错误）。
