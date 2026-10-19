@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+book/
+.run/
+*.db
+*.db-wal
+*.db-shm

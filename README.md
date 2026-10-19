@@ -6,10 +6,11 @@
 |---|---|---|
 | 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–5 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器 |
 | 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.5。其余小节待素材补齐 |
-| 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 课堂主线七章（第 2–5 章由讲座页承载）+ 补充篇 + 课堂精编；第 8 讲占位页已建，内容待补 |
+| 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 课堂主线七章完整正文（覆盖矩阵 + 定理/例题/习题 + 六张章节图）+ 补充篇 + 课堂精编；第 8 讲课堂实录占位页已建 |
 | 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 66 节 + 讲末材料」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
 | 🐧 Linux 系统与内核 | [开始阅读](https://juanwang-buaa.github.io/tutorials/linux/) | 六篇 85 章 + 项目篇：命令行与 Shell、计算机系统（CSAPP/OSTEP）、系统编程（Kerrisk）、Linux 内核、网络协议栈、云原生；附 11 个真实项目的从零复现；逐章覆盖 10 部母本 |
 | 🧭 Agent 系统工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/agent-systems/) | 4 篇 14 章 + 2 个项目：循环与状态、工具协议（JSON Schema/function calling/MCP）、沙箱与权限、上下文与记忆、规划与多智能体、评估/观测/安全/治理；与 Linux 卷、DL 卷交叉引用 |
+| 🌐 分布式系统与数据面 | [开始阅读](https://juanwang-buaa.github.io/tutorials/distributed/) | 5 篇 13 章 + 2 个项目：请求与失败、复制与共识、事务与消息、缓存与观测、容量与演练；从一次工具调用走到可验证的一致性 |
 
 ## 仓库结构
 
@@ -20,19 +21,20 @@ numerical/     数值分析 · mdBook 源
 deeplearning/  深度学习导论 · mdBook 源
 linux/         Linux 系统与内核 · mdBook 源（六篇 + 项目篇；独立图版脚本）
 agent-systems/ Agent 系统工程 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme）
-shared/        六本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）
+distributed/   分布式系统与数据面 · mdBook 源（5 篇 13 章 + 2 个项目）
+shared/        七本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式
 <book>/src/assets/
-  covers/      五张平装书封（tools/build_covers.py 生成，首页与导览页共用）
+  covers/      六张平装书封（tools/build_covers.py 生成；agent-systems 单独提供，首页与导览页共用）
   figures/     内联 SVG 图鉴片段（tools/build_atlas_figures.py 生成，页面里 include）
-tools/         仓库级构建脚本（六本一份）：
+tools/         仓库级构建脚本（七本一份）：
   build_search_js.mjs     构建后重建中文搜索索引（分词与查询同源）
   build_glossary.py       构建后抽术语数据 + 给页面打标记
   katex_wrapper.py        包装 mdbook-katex，中和会被 Markdown 误读的字符
   build_covers.py         生成四本平装书封 SVG
   build_atlas_figures.py  生成教学图鉴（SVG + 图注 Markdown 片段）
-build.sh       一键构建六本 + 后置步骤 → _site/（与 CI 步骤一致）
+build.sh       一键构建七本 + 后置步骤 → _site/（与 CI 步骤一致）
 site-index.html 教程库首页（课程目录，构建时拷为 _site/index.html）
 .github/       Pages 自动部署工作流
 ```

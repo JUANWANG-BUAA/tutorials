@@ -80,6 +80,7 @@
   .hero-visual{position:relative;padding-top:10px;min-height:524px}
   .hero-number{position:absolute;right:-16px;bottom:-34px;color:transparent;-webkit-text-stroke:1px var(--line-2);font:700 210px/1 var(--serif);letter-spacing:-.08em;opacity:.5;pointer-events:none;user-select:none}
   .feature-strip{position:absolute;left:0;top:96px;z-index:2;display:flex;flex-direction:column;gap:8px}
+  .feature-strip-7{display:grid;grid-template-columns:repeat(2,46px);gap:8px}
   .strip-item{display:block;width:46px;padding:3px;border:1px solid var(--line-2);background:var(--paper-2);text-decoration:none}
   .strip-item img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#0b1018}
   .strip-item span{display:block;padding:3px 0 1px;color:var(--muted);font:700 8px/1 var(--mono);letter-spacing:.06em;text-align:center}
@@ -231,16 +232,17 @@
         </div>
       </div>
       <div class="hero-visual">
-        <div class="feature-strip" aria-label="六本书">
+        <div class="feature-strip feature-strip-7" aria-label="七本书">
           <a class="strip-item active" href="robot/" aria-label="机器人控制技术"><span>01</span><img src="robot/assets/covers/robot.svg" alt=""></a>
           <a class="strip-item" href="matrix/" aria-label="矩阵论"><span>02</span><img src="matrix/assets/covers/matrix.svg" alt=""></a>
           <a class="strip-item" href="numerical/" aria-label="数值分析"><span>03</span><img src="numerical/assets/covers/numerical.svg" alt=""></a>
           <a class="strip-item" href="deeplearning/" aria-label="深度学习导论"><span>04</span><img src="deeplearning/assets/covers/deeplearning.svg" alt=""></a>
           <a class="strip-item" href="linux/" aria-label="Linux 系统与内核"><span>05</span><img src="linux/assets/covers/linux.svg" alt=""></a>
           <a class="strip-item" href="agent-systems/" aria-label="Agent 系统工程"><span>06</span><img src="agent-systems/assets/covers/agent-systems.svg" alt=""></a>
+          <a class="strip-item" href="distributed/" aria-label="分布式系统与数据面"><span>07</span><img src="distributed/assets/covers/distributed.svg" alt=""></a>
         </div>
         <div class="feature-frame">
-          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / 06</span></div>
+          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / 07</span></div>
           <a class="feature-cover" href="robot/"><img src="robot/assets/covers/robot.svg" alt="机器人控制技术书封"></a>
           <div class="feature-foot"><span>机器人控制技术</span><span>5 章 · 48 节</span></div>
         </div>
@@ -321,6 +323,14 @@
           <span class="row-title">Agent 系统工程</span>
           <span class="row-desc">循环、工具协议、沙箱与权限、上下文与记忆、规划与多智能体、评估、可观测性、安全与治理；两个可运行项目。</span>
           <span class="row-meta">4 篇 · 14 章 · 2 个项目</span>
+          <span class="row-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="index-row" href="distributed/">
+          <span class="row-no">07</span>
+          <span class="row-en">DISTRIBUTED SYSTEMS</span>
+          <span class="row-title">分布式系统与数据面</span>
+          <span class="row-desc">请求与失败、复制与共识、事务与消息、缓存与观测、容量与演练；从一次工具调用走到可验证的一致性，两个可运行项目。</span>
+          <span class="row-meta">5 篇 · 13 章 · 2 个项目</span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <p class="index-note">每本书包含导览、正文与章末复习材料；可从入学诊断、知识地图或任一节开始读。</p>

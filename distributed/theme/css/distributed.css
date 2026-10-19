@@ -1,0 +1,129 @@
+/* ==========================================================================
+ * 分布式系统与数据面 · 本书样式
+ * --------------------------------------------------------------------------
+ * 依赖 shared/theme/css/base.css 的令牌层（--paper/--ink/--accent/--sage…）。
+ * 本文件只补本书需要的组件：章节速览、终端、布局图、状态机、时序表、
+ * 证据条、失败标签。所有颜色走变量，跟随六套主题与阅读偏好。
+ * ========================================================================== */
+
+/* §1 章节速览：左「本章回答」右「读完你会」 */
+.content .chapter-index{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  margin:18px 0 24px;border:1px solid var(--line-strong);background:var(--paper);
+}
+.content .chapter-index > div{padding:11px 14px}
+.content .chapter-index > div + div{border-left:1px solid var(--line)}
+.content .chapter-index .ci-label{
+  display:block;margin-bottom:3px;color:var(--muted);
+  font:600 10px/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+}
+.content .chapter-index p{margin:0;font-size:13.5px;line-height:1.7}
+@media(max-width:700px){
+  .content .chapter-index{grid-template-columns:1fr}
+  .content .chapter-index > div + div{border-left:0;border-top:1px solid var(--line)}
+}
+
+/* §2 终端会话：纯文本 + .p 提示符；内容不参与 Markdown 解析 */
+.content .terminal{
+  margin:16px 0;border:1px solid var(--line-strong);background:var(--paper-soft);
+  font:12px/1.7 var(--mono);overflow:hidden;
+}
+.content .terminal::before{
+  content:attr(data-title);display:block;padding:5px 11px;
+  border-bottom:1px solid var(--line);color:var(--muted);
+  font:600 10px/1.6 var(--mono);letter-spacing:.06em;
+}
+.content .terminal pre{margin:0;padding:11px 13px;overflow-x:auto;background:transparent}
+.content .terminal .p{color:var(--sage);font-weight:700}
+.content .terminal .ok{color:var(--sage)}
+.content .terminal .bad{color:var(--fig-red,#9c2b25)}
+
+/* §3 ASCII 布局图：等宽、可复制、带左侧强调线 */
+.content pre.layout{
+  margin:14px 0;padding:12px 14px;border:1px solid var(--line);
+  border-left:3px solid var(--accent);background:var(--paper-soft);
+  font:12px/1.7 var(--mono);overflow-x:auto;
+}
+.content pre.layout b{color:var(--accent-strong);font-weight:700}
+.content pre.tree{
+  margin:14px 0;padding:12px 16px;border:1px solid var(--line);
+  background:var(--paper);font:12px/1.75 var(--mono);overflow-x:auto;
+}
+.content pre.tree .dir{color:var(--accent-strong);font-weight:700}
+
+/* §4 图版：SVG 卡片 + 读图图注 */
+.content figure.fig-plate{
+  margin:20px 0 22px;padding:10px 12px 8px;
+  border:1px solid var(--line);background:var(--paper);
+}
+.content figure.fig-wide{overflow-x:auto}
+.content figure.fig-plate svg{display:block;width:100%;height:auto;min-width:620px}
+.content figure.fig-plate figcaption{
+  margin-top:8px;color:var(--muted);font-size:12.5px;line-height:1.7;
+}
+.content figure.fig-plate figcaption b{color:var(--ink-2)}
+@media(max-width:700px){
+  .content figure.fig-plate svg{min-width:560px}
+}
+
+/* §5 表格：对比、证据、检查清单 */
+.content table.compare td:first-child{white-space:nowrap;font-weight:600}
+.content table.evidence th{font-family:var(--mono);font-size:11px}
+.content table.evidence td{font-size:12.5px;vertical-align:top}
+.content table.checklist td:first-child{white-space:nowrap}
+.content .table-caption{
+  margin:-6px 0 16px;color:var(--muted);font-size:12px;line-height:1.6;text-align:center;
+}
+
+/* §6 状态与判据标签 */
+.content .tag{
+  display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--line-strong);
+  border-radius:2px;color:var(--muted);font:600 10px/1.6 var(--mono);letter-spacing:.04em;
+  vertical-align:1px;
+}
+.content .tag.core{border-color:var(--accent);color:var(--accent-strong)}
+.content .tag.fail{border-color:var(--fig-red,#9c2b25);color:var(--fig-red,#9c2b25)}
+.content .tag.ok{border-color:var(--sage);color:var(--sage)}
+
+/* §7 证据条：观测命令的「读什么 / 正常 / 异常」三列 */
+.content .evidence-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:14px 0;
+  border:1px solid var(--line);
+}
+.content .evidence-strip > div{padding:9px 12px;font-size:12.5px;line-height:1.65}
+.content .evidence-strip > div + div{border-left:1px solid var(--line)}
+.content .evidence-strip .ev-label{
+  display:block;color:var(--muted);font:600 10px/1.5 var(--mono);letter-spacing:.08em;
+}
+@media(max-width:700px){
+  .content .evidence-strip{grid-template-columns:1fr}
+  .content .evidence-strip > div + div{border-left:0;border-top:1px solid var(--line)}
+}
+
+/* §8 时间轴：时序图的 HTML 退化形态 */
+.content .timeline{
+  margin:16px 0;padding:0;list-style:none;border-left:2px solid var(--line-strong);
+}
+.content .timeline li{position:relative;margin:0 0 12px;padding:0 0 0 18px;font-size:13.5px;line-height:1.7}
+.content .timeline li::before{
+  content:"";position:absolute;left:-5px;top:6px;width:8px;height:8px;
+  border:2px solid var(--accent);border-radius:50%;background:var(--paper);
+}
+.content .timeline li b{color:var(--accent-strong)}
+
+/* §9 两栏对照：概念 vs 实现 */
+.content .two-col{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;
+}
+.content .two-col > div{border:1px solid var(--line);padding:10px 13px;background:var(--paper)}
+.content .two-col h4{margin:0 0 6px;font-size:13px;color:var(--accent-strong)}
+.content .two-col p,.content .two-col li{font-size:12.8px;line-height:1.7}
+@media(max-width:700px){.content .two-col{grid-template-columns:1fr}}
+
+/* §10 打印 */
+@media print{
+  .content .terminal{background:#f7f7f7;color:#111;border-color:#999}
+  .content .terminal::before{color:#333;border-color:#bbb}
+  .content pre.layout{background:#fafafa}
+  .content figure.fig-plate{break-inside:avoid}
+}

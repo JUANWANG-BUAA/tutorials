@@ -1,0 +1,60 @@
+# 《分布式系统与数据面 · 从一次工具调用到可验证的一致性》定制教程
+#
+# 唯一的构建配置。日常操作：
+#   mdbook build .          （本书独立构建；不需要仓库根 build.sh）
+#   mdbook serve --open     （http://127.0.0.1:3000/）
+#
+# 内容源在 src/；book/ 是构建产物，不要手工编辑。
+
+[book]
+title = "分布式系统与数据面 · 从一次工具调用到可验证的一致性"
+description = "五篇 13 章 + 两个可运行项目：远程调用与失败、复制与共识、事务与消息、缓存与观测、容量与演练；只讲数据面，不重写 TCP/HTTP/K8s 基础"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/distributed.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/prefs.css",
+]
+additional-js = [
+  "theme/js/page-extras.js",
+  "theme/js/distributed.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/atlas.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/distributed/{path}"
+no-section-label = true
+site-url = "/tutorials/distributed/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+[preprocessor.katex]
+command = "python3 tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

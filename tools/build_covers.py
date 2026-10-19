@@ -335,12 +335,64 @@ def cover_dl() -> str:
     return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="深度学习导论书封：三维神经网络与损失曲面">\n{body}\n</svg>\n'
 
 
+
+
+def cover_distributed() -> str:
+    uid = "ds"
+    top, bottom = "#07111f", "#12233f"
+    accent, gold = "#6ee7f0", "#f3c26b"
+    grid = "#8fb3d9"
+    body = frame(uid, top, bottom, grid, accent, gold)
+    body += txt(52, 66, "BUAA · TEACHING ATLAS", 10.5, "#c3dcf7", 700, spacing="2.2")
+    body += txt(548, 66, "VOL. 07 / DISTRIBUTED SYSTEMS", 10.5, "#c3dcf7", 700, "end", spacing=".9")
+    body += '<rect x="52" y="104" width="496" height="382" rx="20" fill="#ffffff" fill-opacity=".03" stroke="#ffffff" stroke-opacity=".1"/>'
+    body += f'<rect x="52" y="104" width="496" height="382" rx="20" fill="url(#{uid}-grid)" opacity=".22"/>'
+    # Client
+    body += f'<rect x="86" y="182" width="112" height="58" rx="10" fill="#0a1a2c" stroke="{gold}" stroke-opacity=".75"/>'
+    body += txt(142, 207, "CLIENT", 12, gold, 700, "middle", MONO, spacing="1.4")
+    body += txt(142, 226, "timeout · retry · idem", 6.8, "#cfe3f7", 400, "middle", MONO)
+    # Three replicas
+    reps = [(326, 168), (438, 258), (326, 348)]
+    for i, (x, y) in enumerate(reps):
+        body += f'<circle cx="{x}" cy="{y}" r="32" fill="#0a1a2c" stroke="{accent}" stroke-width="1.8"/>'
+        body += f'<circle cx="{x}" cy="{y}" r="22" fill="{accent}" fill-opacity=".08"/>'
+        body += txt(x, y + 4, f"R{i+1}", 14, "#e9fbff", 700, "middle", MONO)
+    # links
+    for a, b in [(0, 1), (1, 2), (2, 0)]:
+        x1, y1 = reps[a]; x2, y2 = reps[b]
+        body += f'<path d="M{x1} {y1} L{x2} {y2}" stroke="{accent}" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="4 5"/>'
+    # client to replicas
+    body += f'<path d="M198 211 C 244 211, 266 180, 294 174" fill="none" stroke="{gold}" stroke-width="1.8" marker-end="url(#{uid}-arrow)"/>'
+    body += f'<path d="M198 226 C 252 258, 272 262, 294 258" fill="none" stroke="{gold}" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="4 5"/>'
+    body += f'<path d="M198 240 C 244 290, 272 330, 294 344" fill="none" stroke="{gold}" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="3 6"/>'
+    # log entries
+    body += f'<rect x="250" y="126" width="210" height="34" rx="7" fill="#06101d" stroke="{accent}" stroke-opacity=".35"/>'
+    for j, label in enumerate(["term", "index", "commit"]):
+        xx = 264 + j * 66
+        body += f'<rect x="{xx}" y="134" width="54" height="18" rx="4" fill="{accent}" fill-opacity="{0.06 + j*0.04}" stroke="{accent}" stroke-opacity=".25"/>'
+        body += txt(xx + 27, 147, label, 7.2, "#dffaff", 600, "middle", MONO)
+    # split-brain / quorum annotation
+    body += f'<g transform="translate(388 300)"><rect width="142" height="58" rx="9" fill="#06101d" fill-opacity=".7" stroke="{gold}" stroke-opacity=".45"/><text x="12" y="19" fill="#cfe3f7" font-size="8" font-family="{MONO}" letter-spacing="1">QUORUM</text><text x="12" y="42" fill="{gold}" font-size="15" font-weight="700" font-family="{MONO}">2 / 3</text></g>'
+    # title
+    body += txt(52, 572, "分布式系统与数据面", 42, "#f2fbff", 700, spacing="1.6")
+    body += txt(54, 608, "FROM ONE RPC TO VERIFIABLE CONSISTENCY", 10.5, "#bfe6f5", 700, spacing="1.1")
+    body += f'<path d="M54 636h172" stroke="url(#{uid}-accent)" stroke-width="3"/>'
+    body += txt(54, 670, "请求与失败 · 复制与共识 · 事务与消息", 12, "#d8eef8")
+    body += txt(54, 694, "缓存与观测 · 容量与演练 · 两个项目", 12, "#d8eef8")
+    body += txt(548, 670, "5 PARTS · 13 CHAPTERS", 10, gold, 700, "end", MONO, spacing="1.1")
+    body += txt(548, 694, "2 PROJECTS", 10, "#bfe6f5", 700, "end", MONO, spacing="1.2")
+    body += txt(52, 744, "北京航空航天大学 · 研究生课程定制教程", 10, "#8fb3d9", spacing=".6")
+    body += f'<g transform="translate(512 732)"><circle r="19" fill="none" stroke="{gold}" stroke-opacity=".7"/><path d="M-9 1h18M0 -8v18" stroke="{gold}" stroke-width="1.2"/><circle r="4" fill="none" stroke="{gold}"/></g>'
+    body += f'<marker id="{uid}-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="{gold}"/></marker>'
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="分布式系统与数据面书封：客户端、三副本、法定人数">\n{body}\n</svg>\n'
+
 def main():
     covers = {
         "robot": ("robot.svg", cover_robot()),
         "matrix": ("matrix.svg", cover_matrix()),
         "numerical": ("numerical.svg", cover_numerical()),
         "deeplearning": ("deeplearning.svg", cover_dl()),
+        "distributed": ("distributed.svg", cover_distributed()),
     }
     for book, (name, svg) in covers.items():
         out = ROOT / book / "src" / "assets" / "covers" / name
