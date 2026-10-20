@@ -6,6 +6,7 @@
   "use strict";
   if (window.TUTORIALS_PREFS) return;
   var DEFAULT_PREFS = {
+    // 首次访问始终使用原有图鉴；莱茵档案仅在用户主动选择后恢复。
     skin: "classic",
     font: "sans",
     size: "m",

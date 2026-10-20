@@ -18,6 +18,12 @@ test('existing preferences and the independent skin restore together',()=>{
  const {attrs}=load({'tutorials-prefs:skin':'rhine','tutorials-prefs:font':'serif','tutorials-prefs:palette':'blueprint','tutorials-prefs:bg':'dots','tutorials-prefs:width':'wide'});
  assert.deepEqual(Object.fromEntries(attrs),{'data-skin':'rhine','data-font':'serif','data-width':'wide','data-palette':'blueprint','data-bg':'dots'});
 });
+test('explicit classic selection restores the original skin while retaining reading choices',()=>{
+ const {attrs,config}=load({'tutorials-prefs:skin':'classic','tutorials-prefs:size':'l'});
+ assert.equal(config.defaults.skin,'classic');
+ assert.equal(attrs.has('data-skin'),false);
+ assert.equal(attrs.get('data-size'),'l');
+});
 test('invalid stored choices are ignored rather than emitted into the DOM',()=>{const {attrs}=load({'tutorials-prefs:skin':'unknown','tutorials-prefs:font':'<script>','tutorials-prefs:size':'huge'});assert.equal(attrs.size,0);});
 test('blocked localStorage keeps the default site usable',()=>{assert.equal(load({},true).attrs.size,0);});
 test('mdBook resource registration does not run the early script twice',()=>{const {context,config}=load();vm.runInContext(source,context);assert.equal(context.window.TUTORIALS_PREFS,config);});
