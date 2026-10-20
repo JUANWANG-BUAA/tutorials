@@ -14,7 +14,7 @@
   /* ====================================================================== *
    * §1  令牌：暖灰纸、炭墨、黄铜、鼠尾草；一套方角、细线、等宽的语汇
    * ====================================================================== */
-  :where(html[data-skin="rhine"]) {
+  html[data-skin="rhine"] {
     color-scheme:light;
     --page:#eeece7;--sidebar:#e8e6df;--paper:#f8f7f3;--paper-soft:#e8e6df;
     --ink:#252823;--ink-2:#5c6159;--muted:#666b61;
@@ -35,7 +35,7 @@
     --terminal:#b79361;--terminal-ink:#76562e;
     --paper-2:var(--paper-soft);--line-2:var(--line-strong);
   }
-  :where(html[data-skin="rhine"]):is(.coal,.navy,.ayu,[data-theme="dark"]) {
+  html[data-skin="rhine"]:where(.coal,.navy,.ayu,[data-theme="dark"]) {
     color-scheme:dark;
     --page:#191a18;--sidebar:#20211e;--paper:#252622;--paper-soft:#2d2f29;
     --ink:#eeeee5;--ink-2:#bdc0b3;--muted:#93a096;
@@ -498,3 +498,85 @@
   html[data-skin="rhine"] .content main > h1 { font-size:28px;line-height:1.4; }
  }
 }
+
+/* Complete archive surfaces: course landing, reader, navigation and dialogs. */
+@media screen {
+ html[data-skin="rhine"] #mdbook-sidebar{background:var(--sidebar);border-right:1px solid var(--line)}
+ html[data-skin="rhine"] #mdbook-sidebar .chapter a{padding-block:7px;font-size:13px;line-height:1.6}
+ html[data-skin="rhine"] #mdbook-sidebar .chapter li.part-title{padding-top:20px;margin-top:20px;color:var(--accent-text)}
+ html[data-skin="rhine"] #mdbook-menu-bar{border-bottom:1px solid var(--line);background:var(--paper)}
+ html[data-skin="rhine"] .content main{padding-bottom:40px}
+ html[data-skin="rhine"] .content .chapter-cover{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px 36px;padding:36px;margin:28px 0 40px;border:1px solid var(--line);background:var(--paper);box-shadow:8px 8px 0 var(--paper-soft)}
+ html[data-skin="rhine"] .chapter-cover > :not(.rhine-cover-plate){grid-column:1}
+ html[data-skin="rhine"] .chapter-cover .cover-object[hidden]{display:none}
+ html[data-skin="rhine"] .chapter-cover h1{margin:0;font-size:36px;line-height:1.4;color:var(--ink);background:none;-webkit-text-fill-color:currentColor}
+ html[data-skin="rhine"] .chapter-cover .kicker{font:11px/1.6 var(--mono);letter-spacing:.06em}
+ html[data-skin="rhine"] .chapter-cover .kicker::before{border-radius:0;box-shadow:none}
+ html[data-skin="rhine"] .chapter-cover .subtitle{font-size:15px;line-height:1.9}
+ html[data-skin="rhine"] .chapter-cover .cover-chips{display:grid;grid-template-columns:1fr 1fr;margin:0;border-block:1px solid var(--line);gap:0}
+ html[data-skin="rhine"] .chapter-cover .cover-chips span{padding:10px 8px;font:12px/1.7 var(--sans);background:none;border:0;border-radius:0}
+ html[data-skin="rhine"] .cover-details{font-size:12px;color:var(--ink-2)}
+ html[data-skin="rhine"] .cover-details summary{min-height:44px;padding-block:10px}
+ html[data-skin="rhine"] .rhine-cover-plate{grid-column:2;grid-row:1/6;align-self:center;padding:12px;border:1px solid var(--line);background:var(--page);transform:rotate(3deg)}
+ html[data-skin="rhine"] .rhine-cover-plate img{display:block;width:100%;height:auto}
+ html[data-skin="rhine"] .book-contents{border:0;background:none;margin-top:40px}
+ html[data-skin="rhine"] .bc-head{padding:16px 0;border-bottom:1px solid var(--ink);font-size:11px}
+ html[data-skin="rhine"] .bc-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+ html[data-skin="rhine"] .content .bc-row{position:relative;display:grid;grid-template-columns:32px 1fr auto;gap:10px;padding:22px 18px;min-height:100px;background:var(--paper);border:1px solid var(--line);text-decoration:none;color:var(--ink)}
+ html[data-skin="rhine"] .bc-row:hover{border-color:var(--accent);background:var(--paper-soft)}
+ html[data-skin="rhine"] .bc-title{font:550 15px/1.7 var(--sans)}
+ html[data-skin="rhine"] .bc-no{font:20px/1.4 var(--mono);color:var(--accent-text)}
+ html[data-skin="rhine"] .bc-count{grid-column:2;font-size:11px;color:var(--muted)}
+ html[data-skin="rhine"] .bc-arrow{grid-column:3;grid-row:1;color:var(--muted)}
+ html[data-skin="rhine"] .content main > h1{padding:26px 24px 22px;border:1px solid var(--line);border-top:3px solid var(--accent);background:var(--paper);margin-bottom:24px}
+ html[data-skin="rhine"] .content main > h1 .h1-meta{font:11px/1.7 var(--sans);letter-spacing:0}
+ html[data-skin="rhine"] .rhine-document-head{border:0;margin-top:28px;font-size:10px}
+ html[data-skin="rhine"] .content .page-toc{padding:20px 0;border:0;border-block:1px solid var(--line);background:none;gap:6px 24px}
+ html[data-skin="rhine"] .content .page-toc .page-toc-title{font:600 12px/1.6 var(--sans);letter-spacing:.03em}
+ html[data-skin="rhine"] .content .page-toc a{white-space:normal;overflow:visible;font-size:13px;padding-block:5px}
+ html[data-skin="rhine"] .content .box{border:1px solid var(--line);border-top:2px solid var(--box-line,var(--accent));background:var(--paper);box-shadow:none}
+ html[data-skin="rhine"] .content .box .box-tag{display:flex;width:fit-content;border:0;border-radius:0;padding:0 0 10px;margin-bottom:14px;border-bottom:1px solid var(--line);background:none;font:650 13px/1.6 var(--sans);color:var(--box-line,var(--accent-text));letter-spacing:.02em}
+ html[data-skin="rhine"] .content .proof{background:var(--paper-soft);border:0;border-left:1px solid var(--line-strong)}
+ html[data-skin="rhine"] .content details.sol-box{border:1px solid var(--line);background:var(--paper)}
+ html[data-skin="rhine"] .content details.sol-box > summary{font:550 13px/1.7 var(--sans);min-height:44px;background:var(--paper-soft)}
+ html[data-skin="rhine"] .content :is(.note,.preview){background:var(--paper-soft);border:0;border-left:2px solid var(--accent)}
+ html[data-skin="rhine"] .content figure{background:var(--paper);border:1px solid var(--line);box-shadow:5px 5px 0 var(--paper-soft)}
+ html[data-skin="rhine"] .content figure figcaption{font-size:12px;color:var(--ink-2)}
+ html[data-skin="rhine"] .content pre{background:var(--paper-soft);border:1px solid var(--line);border-top:3px solid var(--line-strong);padding:18px;font-size:13px}
+ html[data-skin="rhine"] .content table{background:var(--paper);border-top:2px solid var(--accent);border-bottom:1px solid var(--line)}
+ html[data-skin="rhine"] .content th{background:var(--paper-soft);font:650 13px/1.7 var(--sans)}
+ html[data-skin="rhine"] :is(.atlas-dialog,.figure-zoom){background:var(--paper);color:var(--ink);border:1px solid var(--line-strong);border-radius:0;box-shadow:0 24px 80px #0003}
+ html[data-skin="rhine"] :is(.atlas-head,.atlas-entry){background:var(--paper);border-color:var(--line)}
+ html[data-skin="rhine"] :is(.atlas-entry,.atlas-entry-art,.atlas-close,.figure-zoom-close,.atlas-toggle,.atlas-count){border-radius:0}
+ html[data-skin="rhine"] .atlas-entry:hover{border-color:var(--accent);background:var(--paper-soft)}
+ html[data-skin="rhine"] .page-rail{border-left:1px solid var(--line);padding-left:14px;background:var(--page)}
+ html[data-skin="rhine"] .content :is(.study-path,.lesson-brief,.continue-card){border-radius:0;border:1px solid var(--line);background:var(--paper);box-shadow:none}
+ html[data-skin="rhine"] .prefs-panel{border-top:2px solid var(--accent);padding:20px}
+ html[data-skin="rhine"] .prefs-label{font:600 12px/1.6 var(--sans);letter-spacing:.02em}
+ html[data-skin="rhine"] .prefs-opt{min-height:36px;font-size:12px}
+ @media(max-width:800px){
+  html[data-skin="rhine"] .content .chapter-cover{padding:24px;grid-template-columns:minmax(0,1fr) 130px;gap:16px}
+  html[data-skin="rhine"] .chapter-cover h1{font-size:28px}
+  html[data-skin="rhine"] .chapter-cover .cover-chips{grid-template-columns:1fr}
+  html[data-skin="rhine"] .bc-list{grid-template-columns:1fr}
+ }
+ @media(max-width:520px){
+  html[data-skin="rhine"] .content .chapter-cover{grid-template-columns:1fr;padding:22px 18px;margin-top:20px}
+  html[data-skin="rhine"] .rhine-cover-plate{grid-column:1;grid-row:2;max-width:150px;justify-self:center;transform:rotate(2deg);margin:8px 0}
+  html[data-skin="rhine"] .content main > h1{padding:22px 18px;font-size:27px}
+  html[data-skin="rhine"] .content .page-toc{grid-template-columns:1fr}
+  html[data-skin="rhine"] .bc-row{min-height:80px}
+ }
+}
+@media screen {
+ html[data-skin="rhine"] .content .chapter-cover > .rhine-cover-plate{grid-column:2;grid-row:1/6;max-width:220px;width:100%;box-sizing:border-box}
+ @media(max-width:800px){html[data-skin="rhine"] .content .chapter-cover > .rhine-cover-plate{max-width:130px}}
+ @media(max-width:520px){html[data-skin="rhine"] .content .chapter-cover > .rhine-cover-plate{grid-column:1;grid-row:2;max-width:150px}}
+}
+@media screen {
+ html[data-skin="rhine"] .content .chapter-index{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0;background:none;border:0;box-shadow:none}
+ html[data-skin="rhine"] .content .chapter-index > div{padding:22px;background:var(--paper);border:1px solid var(--line);border-top:2px solid var(--accent)}
+ html[data-skin="rhine"] .content .chapter-index .ci-label{font:650 13px/1.6 var(--sans);color:var(--accent-text);letter-spacing:.02em}
+ @media(max-width:700px){html[data-skin="rhine"] .content .chapter-index{grid-template-columns:1fr}}
+}
+@media print{.rhine-cover-plate{display:none}}
