@@ -12,3 +12,11 @@
 验证：八本全量构建、14 项测试通过。八本首页 390px 无整页横向溢出与破图；经典往返封面恢复；浅色默认 #eeece7、深色 #191a18。桌面课程首页、定理/宽表、目录与路线，手机夜间阅读与目录已截图复核。图片懒加载可能在刚滚入时短暂出现占位；不据此声称全设备性能已验证。
 
 本地截图：`output/playwright/full-design-book-fixed.png`、`full-design-body.png`、`full-design-reader-dark-mobile.png`、`full-design-catalogue.png`、`full-design-routes.png`。Safari/iPhone 实机未验证。
+
+## 交互与窄屏复核
+
+延续 Apple [Motion](https://developer.apple.com/design/human-interface-guidelines/motion) 指南中的简短反馈、可中断与可选动效原则：局部控件 120ms 按压反馈，偏好面板 180ms 入场，档案标题 160ms 淡入。时长为本项目设计选择。关闭立即生效；连续档案选择取消旧动画，重复选择不播放，移除 offsetWidth 强制重排；减少动态效果下取消位移动效与标题动画。
+
+320px 课程封面改为标题、说明、装饰、元数据顺序；偏好面板键盘进入当前选项、Escape 返回触发钮、焦点离开自动关闭。术语浮层限制屏内高度并允许滚动，保留内部焦点；封面异步失败增加代次检查，防止旧主题回调恢复错误封面。
+
+验证：八本课程全量构建与 14 项现有测试通过。Chromium 中八本首页 320px 无整页横向溢出；正常模式检测到 rh-panel-enter，减少动态效果下为 none，档案标题活动动画为 0；连续选择后仅一个按钮 aria-pressed=true。320px 封面、偏好面板与 1440px 门户截图已人工查看。截图位于 output/playwright/interaction-*.png。未验证 Safari/iPhone 实机。

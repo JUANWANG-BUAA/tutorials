@@ -222,6 +222,7 @@
       toggle.setAttribute("aria-expanded", "false");
       document.removeEventListener("click", onDocumentClick, true);
       document.removeEventListener("keydown", onKeydown, true);
+      document.removeEventListener("focusin", onFocusIn);
       window.removeEventListener("resize", positionPanel);
     }
 
@@ -247,6 +248,9 @@
       // 捕获阶段：点面板内不关，点外面才关；先挂监听再让它收到本次点击
       document.addEventListener("click", onDocumentClick, true);
       document.addEventListener("keydown", onKeydown, true);
+      document.addEventListener("focusin", onFocusIn);
+      var active = panel.querySelector('[aria-pressed="true"]');
+      if (active) active.focus({ preventScroll: true });
       window.addEventListener("resize", positionPanel);
     }
 
@@ -255,8 +259,12 @@
       closePanel();
     }
 
+    function onFocusIn(event) {
+      if (!panel.contains(event.target) && event.target !== toggle) closePanel();
+    }
+
     function onKeydown(event) {
-      if (event.key === "Escape") { closePanel(); toggle.focus(); }
+      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); closePanel(); toggle.focus(); }
     }
 
     toggle.addEventListener("click", function () {

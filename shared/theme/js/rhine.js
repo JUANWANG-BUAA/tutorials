@@ -7,10 +7,12 @@
   var mounted = [];
   var hiddenCover = null;
   var lastSkin;
+  var generation = 0;
   function decorate() {
     var skin = root.getAttribute("data-skin");
     if (skin === lastSkin) return;
     lastSkin = skin;
+    var ownGeneration = ++generation;
     mounted.forEach(function (node) { node.remove(); });
     mounted = [];
     if (hiddenCover) { hiddenCover.hidden = false; hiddenCover = null; }
@@ -31,7 +33,10 @@
         var bookRoot = location.pathname.slice(0, location.pathname.indexOf("/" + slug + "/"));
         image.src = bookRoot + "/shared/theme/assets/rhine-" + slug + ".svg";
         image.alt = "";
-        image.addEventListener("error", function () { plate.remove(); cover.hidden = false; });
+        image.addEventListener("error", function () {
+          if (ownGeneration !== generation || !plate.isConnected) return;
+          plate.remove(); cover.hidden = false;
+        });
         plate.appendChild(image);
         cover.insertAdjacentElement("afterend", plate);
         cover.hidden = true; hiddenCover = cover; mounted.push(plate);

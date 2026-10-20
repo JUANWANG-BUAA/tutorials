@@ -580,3 +580,28 @@
  @media(max-width:700px){html[data-skin="rhine"] .content .chapter-index{grid-template-columns:1fr}}
 }
 @media print{.rhine-cover-plate{display:none}}
+/* Small-screen reading order: identify the course before its decorative plate. */
+@media screen and (max-width:520px){
+ html[data-skin="rhine"] .content .chapter-cover > .kicker{grid-row:1}
+ html[data-skin="rhine"] .content .chapter-cover > h1{grid-row:2}
+ html[data-skin="rhine"] .content .chapter-cover > .subtitle{grid-row:3}
+ html[data-skin="rhine"] .content .chapter-cover > .rhine-cover-plate{grid-row:4;max-width:110px;margin:0}
+ html[data-skin="rhine"] .content .chapter-cover > .cover-chips{grid-row:5}
+ html[data-skin="rhine"] .content .chapter-cover > .cover-details{grid-row:6}
+ html[data-skin="rhine"] .content main > h1{font-size:clamp(23px,6vw,27px);padding:18px 16px}
+ html[data-skin="rhine"] .content main > h1 .h1-kicker{font-size:10px;letter-spacing:.04em}
+ html[data-skin="rhine"] .content .page-toc a{font-size:13px;line-height:1.65}
+}
+
+/* Feedback stays local to controls; content never waits for a transition. */
+@media screen {
+ html[data-skin="rhine"]{--rh-motion-fast:120ms;--rh-motion-enter:180ms;--rh-motion-ease:cubic-bezier(.2,.7,.2,1)}
+ html[data-skin="rhine"] :is(.prefs-opt,.prefs-toggle,.atlas-toggle,.atlas-close,.figure-zoom-close,.rh-access,.rh-index-list button){transition:background-color var(--rh-motion-fast),border-color var(--rh-motion-fast),color var(--rh-motion-fast),transform var(--rh-motion-fast) var(--rh-motion-ease)}
+ html[data-skin="rhine"] :is(.prefs-opt,.prefs-toggle,.atlas-toggle,.atlas-close,.figure-zoom-close,.rh-access,.rh-index-list button):active{transform:scale(.98)}
+ html[data-skin="rhine"] :is(button,a,summary):focus-visible{outline:2px solid var(--accent-text);outline-offset:3px}
+ html[data-skin="rhine"] .prefs-panel:not([hidden]){transform-origin:top right;animation:rh-panel-enter var(--rh-motion-enter) var(--rh-motion-ease)}
+ @keyframes rh-panel-enter{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+}
+@media screen and (prefers-reduced-motion:reduce){
+ html[data-skin="rhine"] :is(.prefs-opt,.prefs-toggle,.atlas-toggle,.atlas-close,.figure-zoom-close,.rh-access,.rh-index-list button):active{transform:none}
+}

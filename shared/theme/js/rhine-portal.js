@@ -198,11 +198,14 @@
     });
     var selected=0;
     var engaged=false;
+    var titleMotion=null;
 
     var scene=null;
     var buttons=Array.from(main.querySelectorAll("[data-book]"));
     function select(index) {
-      selected=(index+books.length)%books.length;
+      var next=(index+books.length)%books.length;
+      if(engaged && next===selected)return;
+      selected=next;
       var book=books[selected];
       main.querySelectorAll("[data-selected-no]").forEach(function(node){node.textContent=book.no;});
       main.querySelectorAll("[data-selected-en]").forEach(function(node){node.textContent=book.en;});
@@ -211,11 +214,10 @@
       main.querySelector("[data-selected-meta]").textContent=book.meta;
       main.querySelector("[data-access]").setAttribute("href",book.href);
       main.querySelector("[data-access]").setAttribute("aria-label","读取档案："+book.title);
-      var filePanel=main.querySelector('.rh-file');
-      if(filePanel && engaged){
-        filePanel.classList.remove('rh-swap');
-        void filePanel.offsetWidth;
-        filePanel.classList.add('rh-swap');
+      if(titleMotion){titleMotion.cancel();titleMotion=null;}
+      var title=main.querySelector('.rh-file h2');
+      if(title && title.animate && engaged && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        titleMotion=title.animate([{opacity:.65},{opacity:1}],{duration:160,easing:'ease-out'});
       }
       var fallbackImage=main.querySelector(".rh-scene-fallback img");
       fallbackImage.src=book.cover;
@@ -248,6 +250,7 @@
       }
     }).catch(function(){ if(main.isConnected)main.classList.add("rh-scene-unavailable"); });
     dispose=function(){
+      if(titleMotion)titleMotion.cancel();
       if(boot){boot.dispose();boot=null;}
       if(scene)scene.dispose();
       navLinks.forEach(function(pair){pair[0].setAttribute("href",pair[1]);});

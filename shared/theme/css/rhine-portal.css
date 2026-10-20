@@ -101,8 +101,6 @@ html[data-skin="rhine"] :is(.theme-toggle,#skinSelect){height:44px;min-width:44p
 .rh-about-links{display:flex;gap:24px;margin:20px 0;font-size:13px;color:var(--accent-text)}
 .rh-about-mark{display:flex;align-items:center;gap:24px;margin-top:36px;font:700 20px var(--sans)}
 .rh-about-mark span{font:9px var(--mono);letter-spacing:.08em;color:var(--muted)}
-.rh-swap h2{animation:rh-text-in .24s ease-out}
-@keyframes rh-text-in{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
 /* Short, non-blocking arrival cue. Navigation stays available during loading. */
 .rh-boot{position:fixed;bottom:24px;left:24px;z-index:100;background:var(--paper);border:1px solid var(--line);padding:16px 20px;box-shadow:0 8px 30px #0000000a;pointer-events:none;font:11px var(--mono);color:var(--ink);transition:opacity .3s}
 .rh-boot-out{opacity:0}

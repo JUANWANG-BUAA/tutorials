@@ -505,3 +505,6 @@ html.katex-alt .content .katex:not(.katex-display .katex):hover{
   background:color-mix(in srgb,var(--accent) 12%,transparent);
   border-radius:3px;
 }
+
+/* Definition cards stay readable on short screens and browser zoom. */
+.term-popover{max-height:calc(100dvh - 16px);overflow-y:auto;overscroll-behavior:contain}

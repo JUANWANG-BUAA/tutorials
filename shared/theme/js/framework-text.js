@@ -139,12 +139,19 @@
     termPopover.setAttribute("role", "tooltip");
     termPopover.hidden = true;
     termPopover.addEventListener("mouseenter", function () { window.clearTimeout(termHideTimer); });
-    termPopover.addEventListener("mouseleave", hideTermPopover);
+    termPopover.addEventListener("mouseleave", function () {
+      if (!termPopover.contains(document.activeElement)) hideTermPopover();
+    });
+    termPopover.addEventListener("focusin", function () { window.clearTimeout(termHideTimer); });
+    termPopover.addEventListener("focusout", function (event) {
+      if (!termPopover.contains(event.relatedTarget)) hideTermPopover();
+    });
     document.body.appendChild(termPopover);
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") hideTermPopover();
     });
     window.addEventListener("scroll", hideTermPopover, { passive: true });
+    window.addEventListener("resize", hideTermPopover, { passive: true });
     return termPopover;
   }
 
@@ -199,7 +206,7 @@
     var height = popover.offsetHeight;
     var left = Math.max(12, Math.min(spanBox.left + spanBox.width / 2 - width / 2, window.innerWidth - width - 12));
     var above = spanBox.top - height - 10;
-    var top = above > 8 ? above : spanBox.bottom + 10;
+    var top = above > 8 ? above : Math.max(8, Math.min(spanBox.bottom + 10, window.innerHeight - height - 8));
     popover.style.left = Math.round(left) + "px";
     popover.style.top = Math.round(top) + "px";
   }
