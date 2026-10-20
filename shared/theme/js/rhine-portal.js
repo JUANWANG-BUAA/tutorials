@@ -46,7 +46,7 @@
     function cleanup() {
       cancelAnimationFrame(raf);
       clearTimeout(timer);
-      document.removeEventListener("keydown", onKey, true);
+      overlay.removeEventListener("keydown", onKey);
       overlay.removeEventListener("click", onClick);
       document.documentElement.classList.remove("rhine-booting");
       if (overlay.parentNode) overlay.remove();
@@ -59,7 +59,7 @@
       document.documentElement.classList.remove("rhine-booting");
       try { sessionStorage.setItem("rhine-booted", "1"); } catch (error) { /* storage optional */ }
       overlay.classList.add("rh-boot-out");
-      document.removeEventListener("keydown", onKey, true);
+      overlay.removeEventListener("keydown", onKey);
       timer = window.setTimeout(cleanup, 620);
     }
     function tick(now) {
@@ -78,7 +78,7 @@
     }
     function onClick() { finish(); }
     overlay.addEventListener("click", onClick);
-    document.addEventListener("keydown", onKey, true);
+    overlay.addEventListener("keydown", onKey);
     raf = requestAnimationFrame(tick);
     return {
       dispose: function () {
@@ -198,11 +198,8 @@
     });
     var selected=0;
     var engaged=false;
-    var stage=main.querySelector('.rh-stage');
-    var stageRaf=0;
 
     var scene=null;
-    var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var buttons=Array.from(main.querySelectorAll("[data-book]"));
     function select(index) {
       selected=(index+books.length)%books.length;
@@ -240,30 +237,6 @@
     });
     select(0);
     engaged=true;
-    function onStageMove(event){
-      if(event.pointerType==='touch' || !stage || reduceMotion)return;
-      var r=stage.getBoundingClientRect();
-      var px=((event.clientX-r.left)/r.width-.5)*2;
-      var py=((event.clientY-r.top)/r.height-.5)*2;
-      if(stageRaf)return;
-      stageRaf=requestAnimationFrame(function(){
-        stage.style.setProperty('--rh-px',px.toFixed(3));
-        stage.style.setProperty('--rh-py',py.toFixed(3));
-        stageRaf=0;
-      });
-    }
-    function onStageLeave(){
-      if(!stage)return;
-      if(stageRaf){cancelAnimationFrame(stageRaf);stageRaf=0;}
-      stage.style.setProperty('--rh-px','0');
-      stage.style.setProperty('--rh-py','0');
-    }
-    if(stage){stage.addEventListener('pointermove',onStageMove,{passive:true});stage.addEventListener('pointerleave',onStageLeave);}
-    var observer=null;
-    if("IntersectionObserver" in window) {
-      observer=new IntersectionObserver(function(entries){ entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("rh-visible");observer.unobserve(entry.target);}}); },{threshold:.08});
-      main.querySelectorAll(".rh-course,.rh-route,.rh-atlas-layout,.rh-section-head").forEach(function(el){el.classList.add("rh-reveal");observer.observe(el);});
-    }
     var ownGeneration=generation;
     loadScene().then(function(create){
       if(ownGeneration!==generation || !main.isConnected || !create)return;
@@ -277,8 +250,6 @@
     dispose=function(){
       if(boot){boot.dispose();boot=null;}
       if(scene)scene.dispose();
-      if(observer)observer.disconnect();
-      if(stage){stage.removeEventListener('pointermove',onStageMove);stage.removeEventListener('pointerleave',onStageLeave);if(stageRaf)cancelAnimationFrame(stageRaf);}
       navLinks.forEach(function(pair){pair[0].setAttribute("href",pair[1]);});
       main.remove();
       root.removeAttribute("data-rhine-portal-ready");

@@ -5,7 +5,11 @@
   "use strict";
   var root = document.documentElement;
   var mounted = [];
+  var lastSkin;
   function decorate() {
+    var skin = root.getAttribute("data-skin");
+    if (skin === lastSkin) return;
+    lastSkin = skin;
     mounted.forEach(function (node) { node.remove(); });
     mounted = [];
     if (root.getAttribute("data-skin") !== "rhine") return;

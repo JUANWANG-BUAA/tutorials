@@ -14,7 +14,7 @@
   /* ====================================================================== *
    * §1  令牌：暖灰纸、炭墨、黄铜、鼠尾草；一套方角、细线、等宽的语汇
    * ====================================================================== */
-  html[data-skin="rhine"] {
+  :where(html[data-skin="rhine"]) {
     color-scheme:light;
     --page:#eeece7;--sidebar:#e8e6df;--paper:#f8f7f3;--paper-soft:#e8e6df;
     --ink:#252823;--ink-2:#5c6159;--muted:#666b61;
@@ -35,7 +35,7 @@
     --terminal:#b79361;--terminal-ink:#76562e;
     --paper-2:var(--paper-soft);--line-2:var(--line-strong);
   }
-  html[data-skin="rhine"]:is(.coal,.navy,.ayu,[data-theme="dark"]) {
+  :where(html[data-skin="rhine"]):is(.coal,.navy,.ayu,[data-theme="dark"]) {
     color-scheme:dark;
     --page:#191a18;--sidebar:#20211e;--paper:#252622;--paper-soft:#2d2f29;
     --ink:#eeeee5;--ink-2:#bdc0b3;--muted:#93a096;
@@ -256,7 +256,7 @@
   html[data-skin="rhine"] .content h3:hover { border-left-color:var(--accent); }
   html[data-skin="rhine"] .content h4 {
     display:flex;align-items:center;gap:10px;
-    margin:30px 0 8px;padding-left:0;font-size:15px;font-weight:600;
+    margin:var(--reading-h4-gap,30px) 0 8px;padding-left:0;font-size:15px;font-weight:600;
   }
   html[data-skin="rhine"] .content h4::before {
     content:"";display:block;width:14px;border-top:2px solid var(--accent);
@@ -304,7 +304,7 @@
    * §6  语义盒 / 证明 / 解答 / 提示条
    * ====================================================================== */
   html[data-skin="rhine"] .content .box {
-    position:relative;margin:var(--space-5) 0;padding:18px 22px 15px;
+    position:relative;margin:var(--reading-box-gap,var(--space-5)) 0;padding:var(--reading-box-pad,18px 22px 15px);
     border:1px solid var(--line-strong);
     border-left:3px solid var(--box-line,var(--line-strong));
     border-radius:0;background:var(--box-bg,var(--paper));
@@ -321,7 +321,7 @@
   }
   html[data-skin="rhine"] .content .box .box-tag::before { display:none; }
   html[data-skin="rhine"] .content .proof {
-    margin:var(--reading-proof-gap,24px) 0 4px;padding:14px 17px 8px;
+    margin:var(--reading-proof-gap,24px) 0 4px;padding:var(--reading-proof-pad,14px 17px 8px);
     border-top:1px solid var(--line-strong);border-left:2px solid var(--line-strong);
     border-radius:0;color:var(--ink-2);
   }
@@ -331,7 +331,7 @@
     border:1px solid var(--line-strong);border-radius:0;background:var(--paper);box-shadow:none;
   }
   html[data-skin="rhine"] .content details.sol-box > summary {
-    padding:11px 16px;border-radius:0;background:var(--paper-soft);
+    padding:var(--reading-detail-pad,11px 16px);border-radius:0;background:var(--paper-soft);
     color:var(--ex-ink);font:600 12px/1.5 var(--sans);letter-spacing:.02em;
   }
   html[data-skin="rhine"] .content details.sol-box[open] > summary {
@@ -492,7 +492,7 @@
  html[data-skin="rhine"] .content .box { border-left-width:2px; }
  html[data-skin="rhine"] .content .note .box-tag,html[data-skin="rhine"] .content .preview .box-tag { font-size:12px;letter-spacing:.02em; }
  @media(max-width:600px) {
-  html[data-skin="rhine"] .content .box { padding:16px 14px; }
+  html[data-skin="rhine"] .content .box { padding:var(--reading-box-pad,16px 14px); }
   html[data-skin="rhine"] .content :is(th,td) { padding:9px 10px; }
   html[data-skin="rhine"] .content details.sol-box > summary { min-height:44px; }
   html[data-skin="rhine"] .content main > h1 { font-size:28px;line-height:1.4; }

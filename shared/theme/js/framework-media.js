@@ -46,7 +46,7 @@
     /* Esc 自己接管：mdBook 的全局键位处理会对 Escape 调 preventDefault，
        而「Esc 关闭模态」是 keydown 的默认动作，一旦被拦就不会发生。 */
     dialog.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") { event.preventDefault(); dialog.close(); }
+      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); dialog.close(); }
     });
     dialog.addEventListener("cancel", function (event) { event.preventDefault(); dialog.close(); });
     /* 关闭后焦点回到触发的那张图：监听挂在创建处（对话框是首次打开时才建的，
@@ -96,7 +96,7 @@
         openZoom(figure);
       });
       figure.addEventListener("keydown", function (event) {
-        if (event.key !== "Enter" && event.key !== " ") return;
+        if (event.target !== figure || (event.key !== "Enter" && event.key !== " ")) return;
         event.preventDefault();
         openZoom(figure);
       });
@@ -114,7 +114,7 @@
    * 因此无 JS、打印、reduced-motion 三种情形下页面就是静止可见的。
    * ------------------------------------------------------------------ */
   function bootFigureReveal() {
-    if (!"IntersectionObserver" in window || CORE.prefersReducedMotion()) return;
+    if (!("IntersectionObserver" in window) || CORE.prefersReducedMotion()) return;
     var figures = document.querySelectorAll(".content figure");
     if (!figures.length) return;
     document.documentElement.classList.add("figure-reveal");

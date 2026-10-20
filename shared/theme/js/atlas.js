@@ -389,10 +389,10 @@
       plate.addEventListener("click", function () {
         dialog.close();
         var target = figure;
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
         target.classList.add("atlas-flash");
         window.setTimeout(function () { target.classList.remove("atlas-flash"); }, 1400);
-        target.setAttribute("tabindex", "-1");
+        if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
         target.focus({ preventScroll: true });
       });
       list.appendChild(plate);
@@ -406,7 +406,7 @@
       if (event.target === dialog) dialog.close();
     });
     dialog.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") { event.preventDefault(); dialog.close(); }
+      if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); dialog.close(); }
     });
     document.body.appendChild(dialog);
     button.addEventListener("click", function () {

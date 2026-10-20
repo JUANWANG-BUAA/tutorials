@@ -513,10 +513,12 @@
       var rect = toggle.getBoundingClientRect();
       var width = list.offsetWidth || 100;
       var left = Math.max(8, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 8));
-      list.style.position = "fixed";
-      list.style.right = "auto";
-      list.style.left = Math.round(left) + "px";
-      list.style.top = Math.round((bar ? bar.getBoundingClientRect().bottom : 58) + 2) + "px";
+      // This function observes style mutations: only write actual changes.
+      var placement = { position: "fixed", right: "auto", left: Math.round(left) + "px",
+        top: Math.round((bar ? bar.getBoundingClientRect().bottom : 58) + 2) + "px" };
+      Object.keys(placement).forEach(function (key) {
+        if (list.style[key] !== placement[key]) list.style[key] = placement[key];
+      });
     }
     var toggle = document.getElementById("mdbook-theme-toggle");
     if (toggle) toggle.addEventListener("click", function () { window.setTimeout(sync, 0); });

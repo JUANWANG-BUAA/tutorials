@@ -79,7 +79,7 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
   for(const x of [-4.05,4.05])for(let i=0;i<books.length+2;i++){
     const object=dossier(books[i%books.length],false);object.position.set(x,1.35,(i-(books.length+1)/2)*.64);array.add(object);
   }
-  let selected=0,disposed=false,visible=true,raf=0,last=0;
+  let selected=0,disposed=false,contextLost=false,visible=true,raf=0,last=0;
   const reducedQuery=matchMedia('(prefers-reduced-motion: reduce)');
   let reduced=reducedQuery.matches;
   const raycaster=new THREE.Raycaster();
@@ -87,7 +87,7 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
   function bookAt(event){
     const rect=host.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
     raycaster.setFromCamera(pointer,camera);
-    const hits=raycaster.intersectObjects(bookGroups,true);
+    const hits=raycaster.intersectObjects(array.children,true);
     if(!hits.length)return -1;
     let object=hits[0].object;while(object.parent!==array && object.parent)object=object.parent;
     return bookGroups.indexOf(object);
@@ -95,7 +95,7 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
   function onClick(event){const index=bookAt(event);if(index>=0)onSelect(index);}
   host.addEventListener('click',onClick);
   function render(now){
-    raf=0;if(disposed || !visible || document.hidden)return;
+    raf=0;if(disposed || contextLost || !visible || document.hidden)return;
     const dt=Math.min((now-(last || now))/1000,.05);last=now;
     let moving=false;
     bookGroups.forEach((book,i)=>{
@@ -106,7 +106,7 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
     renderer.render(scene,camera);host.dataset.ready='true';
     if(moving&&!reduced)raf=requestAnimationFrame(render);
   }
-  function wake(){if(!disposed&&!raf&&visible&&!document.hidden){last=0;raf=requestAnimationFrame(render);}}
+  function wake(){if(!disposed&&!contextLost&&!raf&&visible&&!document.hidden){last=0;raf=requestAnimationFrame(render);}}
   function resize(){
     const {width,height}=host.getBoundingClientRect();if(!width||!height)return;
     renderer.setSize(width,height,false);camera.aspect=width/height;
@@ -119,6 +119,12 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
     shell.color.set(dark?0x999e91:0xe8e4db);edge.color.set(dark?0x929685:0xe5dfd1);
     paper.color.set(dark?0xb9bbae:0xf1eee5);renderer.toneMappingExposure=dark?.75:.85;wake();
   }
+  function onContextLost(event){
+    event.preventDefault();contextLost=true;cancelAnimationFrame(raf);raf=0;delete host.dataset.ready;
+  }
+  function onContextRestored(){contextLost=false;resize();wake();}
+  renderer.domElement.addEventListener('webglcontextlost',onContextLost);
+  renderer.domElement.addEventListener('webglcontextrestored',onContextRestored);
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(host);
   const themeObserver=new MutationObserver(theme);themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   const visibilityObserver=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{cancelAnimationFrame(raf);raf=0;}},{rootMargin:'100px'});visibilityObserver.observe(host);
@@ -128,6 +134,6 @@ window.TUTORIALS_RHINE_SCENE = function createScene(host, books, onSelect) {
   theme();resize();
   return {
     select(index){selected=THREE.MathUtils.clamp(index,0,books.length-1);wake();},
-    dispose(){disposed=true;cancelAnimationFrame(raf);resizeObserver.disconnect();themeObserver.disconnect();visibilityObserver.disconnect();document.removeEventListener('visibilitychange',onVisibility);reducedQuery.removeEventListener('change',onMotion);host.removeEventListener('click',onClick);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());environment.dispose();renderer.dispose();renderer.domElement.remove();delete host.dataset.ready;}
+    dispose(){disposed=true;cancelAnimationFrame(raf);resizeObserver.disconnect();themeObserver.disconnect();visibilityObserver.disconnect();document.removeEventListener('visibilitychange',onVisibility);reducedQuery.removeEventListener('change',onMotion);host.removeEventListener('click',onClick);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());environment.dispose();light.shadow.dispose();renderer.domElement.removeEventListener('webglcontextlost',onContextLost);renderer.domElement.removeEventListener('webglcontextrestored',onContextRestored);renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();delete host.dataset.ready;}
   };
 };

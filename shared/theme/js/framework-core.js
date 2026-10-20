@@ -349,12 +349,22 @@
     var term = params.get("search");
     if (!term) return;
     var tries = 0;
+    function cancelRetry() {
+      clearInterval(timer);
+      document.removeEventListener("input", onInput, true);
+      window.removeEventListener("pagehide", cancelRetry);
+    }
+    function onInput(event) {
+      if (event.target.id === "mdbook-searchbar") cancelRetry();
+    }
+    document.addEventListener("input", onInput, true);
+    window.addEventListener("pagehide", cancelRetry);
     var timer = setInterval(function () {
-      if (document.querySelectorAll("#mdbook-searchresults li").length > 0) { clearInterval(timer); return; }
+      if (document.querySelectorAll("#mdbook-searchresults li").length > 0) { cancelRetry(); return; }
       var bar = document.getElementById("mdbook-searchbar");
       if (bar && bar.value !== term) bar.value = term;
       if (bar) bar.dispatchEvent(new KeyboardEvent("keyup", { key: "a", bubbles: true }));
-      if (++tries > 60) clearInterval(timer);
+      if (++tries > 60) cancelRetry();
     }, 500);
   }
 
