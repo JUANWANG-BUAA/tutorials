@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 600 800">
+<defs>
+  <linearGradient id="plate" x2="1" y2="1"><stop stop-color="#eeece5"/><stop offset=".58" stop-color="#f6f4ef"/><stop offset="1" stop-color="#e2dfd5"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#d8c08d" stop-opacity=".2"/><stop offset="1" stop-color="#d8c08d" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#717766" stroke-opacity=".075" stroke-width=".7"/></pattern>
+  <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V8" stroke="#d5bb87" stroke-opacity=".28" stroke-width="1"/></pattern>
+</defs>
+<rect x="5" y="5" width="590" height="790" rx="8" fill="url(#plate)" stroke="#9eaa9a" stroke-opacity=".7"/>
+<rect x="24" y="24" width="552" height="752" rx="3" fill="url(#grid)" stroke="#d6dfd4" stroke-opacity=".23"/>
+<path d="M42 84H558M42 746H558" stroke="#d7dfd2" stroke-opacity=".24"/>
+<path d="M40 145V643L88 681M48 145V637L94 675M56 145V631L100 669" stroke="#d3dbce" stroke-opacity=".24" fill="none"/>
+<rect x="35" y="34" width="15" height="15" fill="#d6b37e"/>
+<text x="65" y="47" font-family="sans-serif" font-size="11" letter-spacing="2.2" fill="#33382f">ATLAS / COURSE ARCHIVE</text>
+<text x="65" y="72" font-family="monospace" font-size="8" letter-spacing="1.5" fill="#686e61">BUAA / GRADUATE STUDIES / 2026</text>
+<text x="58" y="128" font-family="sans-serif" font-size="42" font-weight="300" fill="#34392f">NO.001</text>
+<text x="390" y="113" text-anchor="end" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#686e61">INTERNAL DATABASE</text>
+<text x="390" y="129" text-anchor="end" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#8b7049">ACCESS / GRANTED</text>
+<circle cx="278" cy="348" r="150" fill="url(#halo)"/>
+<circle cx="278" cy="348" r="135" fill="none" stroke="#898d7e" stroke-opacity=".72" stroke-width="2"/>
+<circle cx="278" cy="348" r="126" fill="none" stroke="#b8b9ac" stroke-opacity=".24" stroke-width="8"/>
+<circle cx="278" cy="348" r="111" fill="none" stroke="#8b7049" stroke-opacity=".5" stroke-width="1"/>
+<path d="M278 213A135 135 0 0 1 398 415" fill="none" stroke="#d7b47d" stroke-width="3"/>
+<path d="M278 213A135 135 0 0 0 158 415" fill="none" stroke="#d7b47d" stroke-opacity=".28" stroke-width="1"/>
+<circle cx="435" cy="224" r="57" fill="#e7e4da" stroke="#999c8d" stroke-opacity=".7" stroke-width="6"/>
+<circle cx="435" cy="224" r="47" fill="none" stroke="#d5b37e" stroke-width="2"/>
+<circle cx="435" cy="224" r="19" fill="none" stroke="#d5b37e" stroke-opacity=".5"/>
+<path d="M160 425L192 348L283 320L320 250L393 223" fill="none" stroke="#535b4c" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M278 483V540H435V575" fill="none" stroke="#d2dbd0" stroke-opacity=".5" stroke-width="1.2"/>
+<path d="M268 483V549H425V575" fill="none" stroke="#d7b47d" stroke-opacity=".8" stroke-width="1"/>
+<path d="M65 604H535" stroke="#d9e0d5" stroke-opacity=".34"/>
+<text x="65" y="628" font-family="monospace" font-size="9" letter-spacing="1.6" fill="#806943">ROBOTICS</text>
+<text x="63" y="688" font-family="sans-serif" font-size="33.0" font-weight="500" fill="#2d3329">机器人控制技术</text>
+<text x="65" y="718" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#686e61">STRUCTURE / THEORY / PRACTICE</text>
+<rect x="65" y="735" width="152" height="11" fill="url(#hatch)"/>
+<g fill="#c5d0c2"><rect x="441" y="627" width="2" height="17"/><rect x="444" y="627" width="1" height="17"/><rect x="447" y="627" width="1" height="17"/><rect x="450" y="627" width="2" height="17"/><rect x="453" y="627" width="1" height="17"/><rect x="456" y="627" width="1" height="17"/><rect x="459" y="627" width="2" height="17"/><rect x="462" y="627" width="1" height="17"/><rect x="465" y="627" width="1" height="17"/><rect x="468" y="627" width="2" height="17"/><rect x="471" y="627" width="1" height="17"/><rect x="474" y="627" width="1" height="17"/><rect x="477" y="627" width="2" height="17"/><rect x="480" y="627" width="1" height="17"/><rect x="483" y="627" width="1" height="17"/><rect x="486" y="627" width="2" height="17"/><rect x="489" y="627" width="1" height="17"/><rect x="492" y="627" width="1" height="17"/><rect x="495" y="627" width="2" height="17"/><rect x="498" y="627" width="1" height="17"/><rect x="501" y="627" width="1" height="17"/><rect x="504" y="627" width="2" height="17"/><rect x="507" y="627" width="1" height="17"/><rect x="510" y="627" width="1" height="17"/><rect x="513" y="627" width="2" height="17"/><rect x="516" y="627" width="1" height="17"/><rect x="519" y="627" width="1" height="17"/><rect x="522" y="627" width="2" height="17"/></g>
+<g fill="#d5b37e"><rect x="512" y="735" width="24" height="3"/><rect x="512" y="744" width="13" height="3"/></g>
+<g fill="#b8c4b6" fill-opacity=".8"><circle cx="35" cy="35" r="2"/><circle cx="565" cy="35" r="2"/><circle cx="35" cy="765" r="2"/><circle cx="565" cy="765" r="2"/></g>
+</svg>

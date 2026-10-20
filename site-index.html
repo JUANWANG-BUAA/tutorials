@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='12' height='12' fill='%23c2482f'/%3E%3C/svg%3E">
+<script src="shared/theme/js/prefs-config.js"></script>
+<script>
+try {
+  var savedPortalTheme = localStorage.getItem("atlas-portal-theme");
+  if (savedPortalTheme === "light" || savedPortalTheme === "dark") document.documentElement.setAttribute("data-theme", savedPortalTheme);
+} catch (error) { /* Storage optional. */ }
+</script>
 <title>教程库 · 研究生课程讲义</title>
 <style>
   :root{
@@ -212,17 +219,21 @@
     html{scroll-behavior:auto}
     *{transition:none!important}
   }
+  .skin-select{max-width:120px;min-height:30px;border:1px solid var(--line-2);padding:4px 6px;background:var(--paper);color:var(--ink-2);font:11px var(--sans)}
 </style>
+<link rel="stylesheet" href="shared/theme/css/rhine.css">
+<link rel="stylesheet" href="shared/theme/css/rhine-portal.css">
 </head>
 <body>
 <header class="topbar">
   <div class="wrap topbar-inner">
     <a class="brand" href="./" aria-label="教程库首页"><span class="brand-mark" aria-hidden="true"></span><b>ATLAS</b><span>教程库</span></a>
     <nav class="topnav" aria-label="主导航">
-      <a href="#books">Books</a>
-      <a href="#paths">Paths</a>
-      <a href="#about">Build</a>
+      <a href="#books" data-zh="书目">Books</a>
+      <a href="#paths" data-zh="路线">Paths</a>
+      <a href="#about" data-zh="构建">Build</a>
       <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">Source</a>
+      <select class="skin-select" id="skinSelect" aria-label="界面外观"></select>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深浅色" title="切换深浅色">
         <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
         <svg class="icon-moon" viewBox="0 0 24 24"><path d="M20.3 14.2A8.4 8.4 0 0 1 9.8 3.7 8.6 8.6 0 1 0 20.3 14.2Z"/></svg>
@@ -418,22 +429,7 @@
   </div>
 </footer>
 
-<script>
-(function () {
-  "use strict";
-  var root = document.documentElement;
-  var KEY = "atlas-portal-theme";
-  try {
-    var saved = localStorage.getItem(KEY);
-    if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
-  } catch (e) {}
-  var toggle = document.getElementById("themeToggle");
-  if (toggle) toggle.addEventListener("click", function () {
-    var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
-    root.setAttribute("data-theme", next);
-    try { localStorage.setItem(KEY, next); } catch (e) {}
-  });
-})();
-</script>
+<script src="shared/theme/js/portal.js"></script>
+<script src="shared/theme/js/rhine-portal.js" data-scene="shared/theme/js/rhine-scene.js"></script>
 </body>
 </html>

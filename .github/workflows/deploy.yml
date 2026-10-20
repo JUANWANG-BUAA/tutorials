@@ -51,6 +51,8 @@ jobs:
             mv "$book/book" "_site/$book"
           done
           cp site-index.html _site/index.html
+          mkdir -p _site/shared/theme
+          cp -R shared/theme/. _site/shared/theme/
           python3 tools/optimize_site.py _site
 
       - uses: actions/configure-pages@v5

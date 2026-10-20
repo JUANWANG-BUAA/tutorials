@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+"""Original course archive plates; no third-party media.
+
+The dark insert reads as a technical document behind a pale frosted shell. It
+keeps the selected archive legible while the case and hardware stay neutral.
+"""
+from pathlib import Path
+from html import escape
+ROOT=Path(__file__).resolve().parents[2]/'shared/theme/assets'
+DATA=[('robot','机器人控制技术','ROBOTICS','M160 425L192 348L283 320L320 250L393 223'),('matrix','矩阵论','MATRIX THEORY','M155 415L400 352M175 425L280 205M220 437L330 217M265 448L380 230M163 371L382 317M187 321L360 278M213 270L337 239'),('numerical','数值分析','NUMERICAL METHODS','M150 424C170 424 200 420 225 380S265 260 300 264S335 360 395 222'),('deeplearning','深度学习导论','DEEP LEARNING','M176 280L270 240L364 280L270 330L176 280L176 380L270 330L364 380L270 430L176 380M270 240V430M176 280L364 380M176 380L364 280M364 280V380'),('linux','Linux 系统与内核','SYSTEMS & KERNEL','M155 260H270V310H390M270 260V235M270 310V365H155M270 365V425H390M270 365H390M155 315H205V365'),('agent-systems','Agent 系统工程','AGENT SYSTEMS','M160 285H240V245H340V325H240V285M240 325V395H340V365M340 285H400M160 395H240'),('distributed','分布式系统与数据面','DISTRIBUTED SYSTEMS','M170 260L370 280L280 420L170 260M170 260L150 380L280 420L400 390L370 280M150 380L370 280M170 260L400 390'),('compilers','编译器与程序分析','COMPILERS & ANALYSIS','M150 330H240V250H330V430H420M240 330V430H330M330 250V160M240 250H150')]
+for i,(slug,title,en,path) in enumerate(DATA,1):
+ title_size=min(33,450/max(len(title),1))
+ svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 600 800">
+<defs>
+  <linearGradient id="plate" x2="1" y2="1"><stop stop-color="#eeece5"/><stop offset=".58" stop-color="#f6f4ef"/><stop offset="1" stop-color="#e2dfd5"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#d8c08d" stop-opacity=".2"/><stop offset="1" stop-color="#d8c08d" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#717766" stroke-opacity=".075" stroke-width=".7"/></pattern>
+  <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V8" stroke="#d5bb87" stroke-opacity=".28" stroke-width="1"/></pattern>
+</defs>
+<rect x="5" y="5" width="590" height="790" rx="8" fill="url(#plate)" stroke="#9eaa9a" stroke-opacity=".7"/>
+<rect x="24" y="24" width="552" height="752" rx="3" fill="url(#grid)" stroke="#d6dfd4" stroke-opacity=".23"/>
+<path d="M42 84H558M42 746H558" stroke="#d7dfd2" stroke-opacity=".24"/>
+<path d="M40 145V643L88 681M48 145V637L94 675M56 145V631L100 669" stroke="#d3dbce" stroke-opacity=".24" fill="none"/>
+<rect x="35" y="34" width="15" height="15" fill="#d6b37e"/>
+<text x="65" y="47" font-family="sans-serif" font-size="11" letter-spacing="2.2" fill="#33382f">ATLAS / COURSE ARCHIVE</text>
+<text x="65" y="72" font-family="monospace" font-size="8" letter-spacing="1.5" fill="#686e61">BUAA / GRADUATE STUDIES / 2026</text>
+<text x="58" y="128" font-family="sans-serif" font-size="42" font-weight="300" fill="#34392f">NO.{i:03d}</text>
+<text x="390" y="113" text-anchor="end" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#686e61">INTERNAL DATABASE</text>
+<text x="390" y="129" text-anchor="end" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#8b7049">ACCESS / GRANTED</text>
+<circle cx="278" cy="348" r="150" fill="url(#halo)"/>
+<circle cx="278" cy="348" r="135" fill="none" stroke="#898d7e" stroke-opacity=".72" stroke-width="2"/>
+<circle cx="278" cy="348" r="126" fill="none" stroke="#b8b9ac" stroke-opacity=".24" stroke-width="8"/>
+<circle cx="278" cy="348" r="111" fill="none" stroke="#8b7049" stroke-opacity=".5" stroke-width="1"/>
+<path d="M278 213A135 135 0 0 1 398 415" fill="none" stroke="#d7b47d" stroke-width="3"/>
+<path d="M278 213A135 135 0 0 0 158 415" fill="none" stroke="#d7b47d" stroke-opacity=".28" stroke-width="1"/>
+<circle cx="435" cy="224" r="57" fill="#e7e4da" stroke="#999c8d" stroke-opacity=".7" stroke-width="6"/>
+<circle cx="435" cy="224" r="47" fill="none" stroke="#d5b37e" stroke-width="2"/>
+<circle cx="435" cy="224" r="19" fill="none" stroke="#d5b37e" stroke-opacity=".5"/>
+<path d="{path}" fill="none" stroke="#535b4c" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M278 483V540H435V575" fill="none" stroke="#d2dbd0" stroke-opacity=".5" stroke-width="1.2"/>
+<path d="M268 483V549H425V575" fill="none" stroke="#d7b47d" stroke-opacity=".8" stroke-width="1"/>
+<path d="M65 604H535" stroke="#d9e0d5" stroke-opacity=".34"/>
+<text x="65" y="628" font-family="monospace" font-size="9" letter-spacing="1.6" fill="#806943">{escape(en)}</text>
+<text x="63" y="688" font-family="sans-serif" font-size="{title_size:.1f}" font-weight="500" fill="#2d3329">{escape(title)}</text>
+<text x="65" y="718" font-family="monospace" font-size="8" letter-spacing="1.3" fill="#686e61">STRUCTURE / THEORY / PRACTICE</text>
+<rect x="65" y="735" width="152" height="11" fill="url(#hatch)"/>
+<g fill="#c5d0c2">{''.join(f'<rect x="{441+j*3}" y="627" width="{1 if j%3 else 2}" height="17"/>' for j in range(28))}</g>
+<g fill="#d5b37e"><rect x="512" y="735" width="24" height="3"/><rect x="512" y="744" width="13" height="3"/></g>
+<g fill="#b8c4b6" fill-opacity=".8"><circle cx="35" cy="35" r="2"/><circle cx="565" cy="35" r="2"/><circle cx="35" cy="765" r="2"/><circle cx="565" cy="765" r="2"/></g>
+</svg>'''
+ (ROOT/f'rhine-{slug}.svg').write_text(svg)

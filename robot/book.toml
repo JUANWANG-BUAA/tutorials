@@ -22,8 +22,8 @@ preferred-dark-theme = "coal"
 # 排版 = 阅读偏好层（theme/css/prefs.css + theme/js/prefs.js + theme/head.hbs：
 # 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
 # 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
-additional-css = ["theme/css/base.css", "theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/prefs.css"]
-additional-js = ["theme/js/page-extras.js", "theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js"]
+additional-css = ["theme/css/base.css", "theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/rhine.css", "theme/css/prefs.css"]
+additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js", "theme/js/page-extras.js", "theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 # 仓库与「编辑此页」：读者发现笔误可直接改（mdBook 原生的两处入口，见菜单栏右侧）。
 # edit-url-template 里的 {path} 是相对本书根目录的路径（含 src/），故前缀只写到子目录。

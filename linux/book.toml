@@ -15,8 +15,8 @@ src = "src"
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "coal"
-additional-css = ["theme/css/base.css", "theme/css/linux.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/prefs.css", "theme/css/linux-viz.css"]
-additional-js = ["theme/js/page-extras.js", "theme/js/linux.js", "theme/js/search-cjk.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js", "theme/js/variants.js", "theme/js/linux-viz.js"]
+additional-css = ["theme/css/base.css", "theme/css/linux.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/rhine.css", "theme/css/prefs.css", "theme/css/linux-viz.css"]
+additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js", "theme/js/page-extras.js", "theme/js/linux.js", "theme/js/search-cjk.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js", "theme/js/variants.js", "theme/js/linux-viz.js"]
 git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
 git-repository-icon = "fab-github"
 edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/linux/{path}"
