@@ -49,6 +49,10 @@
 
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
+    document.addEventListener("toggle", schedule, true);
+    document.addEventListener("tutorials:prefs", schedule);
+    window.addEventListener("load", schedule);
+    if (window.ResizeObserver) new ResizeObserver(schedule).observe(document.querySelector("main") || document.body);
     update();
   }
 
@@ -134,6 +138,7 @@
     });
 
     solutions.forEach(function (details) { details.addEventListener("toggle", schedule); });
+    sync();
     toolbar.appendChild(button);
 
     if (placement === "top") {

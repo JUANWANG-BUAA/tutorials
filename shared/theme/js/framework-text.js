@@ -71,6 +71,7 @@
       if (!tex) return;
       display.dataset.copyReady = "1";
       var host = display.parentElement && display.parentElement.tagName === "P" ? display.parentElement : display;
+      if (host !== display && host.querySelectorAll(".katex-display").length > 1) host = display;
       if (host === display) display.classList.add("katex-copy-host");
       var button = document.createElement("button");
       button.type = "button";
@@ -102,8 +103,12 @@
   var TERM_SKIP_SELECTOR = "pre, code, a, h1, h2, h3, h4, h5, h6, script, style, .katex, .term, .box-tag, .page-toc, #page-rail, #term-popover, summary, button";
   var termPopover = null;
   var termHideTimer = 0;
+  var activeTerm = null;
+  var suppressTermFocus = false;
 
   function glossaryUrl() {
+    var versioned = document.documentElement.getAttribute("data-glossary");
+    if (versioned && versioned !== "1") return new URL(versioned, location.href).href;
     var base = "./";
     try { if (typeof path_to_root === "string") base = path_to_root || "./"; } catch (e) { /* 同上 */ }
     return new URL(base + "glossary.json", location.href).href;
@@ -136,7 +141,8 @@
     termPopover = document.createElement("div");
     termPopover.id = "term-popover";
     termPopover.className = "term-popover";
-    termPopover.setAttribute("role", "tooltip");
+    termPopover.setAttribute("role", "dialog");
+    termPopover.setAttribute("aria-label", "术语释义");
     termPopover.hidden = true;
     termPopover.addEventListener("mouseenter", function () { window.clearTimeout(termHideTimer); });
     termPopover.addEventListener("mouseleave", function () {
@@ -148,7 +154,18 @@
     });
     document.body.appendChild(termPopover);
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") hideTermPopover();
+      if (event.key !== "Escape" || termPopover.hidden) return;
+      var trigger = activeTerm;
+      var returnFocus = termPopover.contains(document.activeElement);
+      hideTermPopover();
+      if (returnFocus && trigger) {
+        suppressTermFocus = true;
+        trigger.focus({ preventScroll: true });
+        suppressTermFocus = false;
+      }
+    });
+    document.addEventListener("pointerdown", function (event) {
+      if (activeTerm && !activeTerm.contains(event.target) && !termPopover.contains(event.target)) hideTermPopover();
     });
     window.addEventListener("scroll", hideTermPopover, { passive: true });
     window.addEventListener("resize", hideTermPopover, { passive: true });
@@ -157,10 +174,16 @@
 
   function hideTermPopover() {
     if (termPopover) termPopover.hidden = true;
+    if (activeTerm) activeTerm.setAttribute("aria-expanded", "false");
+    activeTerm = null;
   }
 
   function showTermPopover(span, entry) {
     var popover = ensureTermPopover();
+    if (activeTerm === span && !popover.hidden) return;
+    if (activeTerm) activeTerm.setAttribute("aria-expanded", "false");
+    activeTerm = span;
+    span.setAttribute("aria-expanded", "true");
     popover.replaceChildren();
     var head = document.createElement("div");
     head.className = "term-popover-head";
@@ -212,16 +235,25 @@
   }
 
   function bindTerm(span, entry) {
+    span.setAttribute("aria-haspopup", "dialog");
+    span.setAttribute("aria-controls", "term-popover");
+    span.setAttribute("aria-expanded", "false");
     var open = function () { window.clearTimeout(termHideTimer); showTermPopover(span, entry); };
-    var close = function () { termHideTimer = window.setTimeout(hideTermPopover, 160); };
+    var close = function () { termHideTimer = window.setTimeout(function () {
+      if (!termPopover || !termPopover.contains(document.activeElement)) hideTermPopover();
+    }, 160); };
     span.addEventListener("mouseenter", open);
     span.addEventListener("mouseleave", close);
-    span.addEventListener("focus", open);
+    span.addEventListener("focus", function () { if (!suppressTermFocus) open(); });
     span.addEventListener("blur", close);
     span.addEventListener("click", function (event) { event.preventDefault(); open(); });
     span.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); }
-      if (event.key === "Escape") hideTermPopover();
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault(); event.stopPropagation(); open();
+        var link = termPopover.querySelector("a");
+        if (link) link.focus({ preventScroll: true });
+      }
+      if (event.key === "Escape") { event.stopPropagation(); hideTermPopover(); }
     });
   }
 

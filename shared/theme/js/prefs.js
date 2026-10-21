@@ -234,9 +234,12 @@
       var barRect = bar.getBoundingClientRect();
       var toggleRect = toggle.getBoundingClientRect();
       var width = panel.offsetWidth || 336;
-      var maxLeft = Math.max(8, bar.clientWidth - width - 8);
-      var left = Math.max(8, Math.min(toggleRect.left - barRect.left, maxLeft));
+      var maxLeft = Math.max(8, window.innerWidth - width - 8);
+      var left = Math.max(8, Math.min(toggleRect.left, maxLeft));
       panel.style.left = Math.round(left) + "px";
+      var top = Math.max(8, Math.min(barRect.bottom, window.innerHeight - 100));
+      panel.style.top = Math.round(top) + "px";
+      panel.style.maxHeight = Math.max(60, window.innerHeight - top - 14) + "px";
     }
 
     function openPanel() {
@@ -281,7 +284,8 @@
     } else {
       bar.insertBefore(toggle, bar.firstChild);
     }
-    bar.appendChild(panel);
+    // The mobile sidebar translates the menu; a viewport panel belongs outside it.
+    document.body.appendChild(panel);
   }
 
   function boot() {

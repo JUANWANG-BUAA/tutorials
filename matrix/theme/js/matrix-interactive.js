@@ -401,8 +401,9 @@
 
     function toMath(event) {
       var rect = canvas.getBoundingClientRect();
-      var sx = event.clientX - rect.left;
-      var sy = event.clientY - rect.top;
+      if (!rect.width || !rect.height) return null;
+      var sx = (event.clientX - rect.left) * stage.w / rect.width;
+      var sy = (event.clientY - rect.top) * stage.h / rect.height;
       return stage.plane.toMath(sx, sy);
     }
 
@@ -413,6 +414,7 @@
     }
 
     canvas.addEventListener("pointerdown", function (event) {
+      if (event.button !== 0 || event.isPrimary === false) return;
       dragging = true;
       canvas.setPointerCapture && canvas.setPointerCapture(event.pointerId);
       canvas.classList.add("is-dragging");
@@ -432,6 +434,7 @@
     }
     canvas.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
+    canvas.addEventListener("lostpointercapture", stop);
 
     /* 键盘：方向键微调，替代鼠标拖动（画布本身可聚焦）。
        Enter / 空格对「分步」型部件等价于「下一步」。
@@ -441,6 +444,7 @@
        所以方向键会一路冒泡到 document，被 chapterNavigation 当成「翻到下一章」，
        页面直接跳走。用户看到的现象是「在图上按方向键，整页翻走了」。 */
     canvas.addEventListener("keydown", function (event) {
+      if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
       var step = event.shiftKey ? 0.25 : 0.05;
       var dx = 0;
       var dy = 0;

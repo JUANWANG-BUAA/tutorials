@@ -21,7 +21,11 @@
     robot: "机器人控制技术",
     matrix: "矩阵论",
     numerical: "数值分析",
-    deeplearning: "深度学习导论"
+    deeplearning: "深度学习导论",
+    linux: "Linux 系统与内核",
+    "agent-systems": "Agent 系统工程",
+    distributed: "分布式系统与数据面",
+    compilers: "编译器与程序分析"
   };
   var book = detectBook();
   if (book) root.setAttribute("data-book", book);
@@ -82,6 +86,25 @@
    * 1  图注 & 卡片
    * ------------------------------------------------------------------ */
   var figureCount = 0;
+
+  function wrapWideSvgs() {
+    document.querySelectorAll("main figure > svg").forEach(function (svg) {
+      var width = svg.viewBox && svg.viewBox.baseVal.width;
+      if (width < 600 || !width) return;
+      var figure = svg.parentElement;
+      var scroll = document.createElement("div");
+      scroll.className = "fig-scroll";
+      scroll.tabIndex = 0;
+      scroll.setAttribute("role", "region");
+      scroll.setAttribute("aria-label", "插图，可左右滚动查看");
+      scroll.addEventListener("keydown", function (event) {
+        if (/^Arrow/.test(event.key)) event.stopPropagation();
+      });
+      figure.insertBefore(scroll, svg);
+      scroll.appendChild(svg);
+      figure.classList.add("has-fig-scroll");
+    });
+  }
 
   function imageBlock(img) {
     /* mdBook 0.5 把 Markdown 图片包成原生灯箱：
@@ -279,8 +302,7 @@
   function cloneArt(figure) {
     var svg = figure.querySelector("svg");
     if (svg) {
-      var clone = svg.cloneNode(true);
-      clone.removeAttribute("id");
+      var clone = window.TUTORIALS_CORE.cloneForDisplay(svg);
       return clone;
     }
     var img = figure.querySelector("img");
@@ -315,7 +337,7 @@
   function buildAtlas() {
     var main = document.querySelector("main");
     var figures = main ? Array.prototype.slice.call(main.querySelectorAll("figure")) : [];
-    if (figures.length < 1) return;
+    if (figures.length < 1 || !document.createElement("dialog").showModal) return;
     var bar = document.querySelector("#mdbook-menu-bar .right-buttons");
     if (!bar || bar.querySelector(".atlas-toggle")) return;
 
@@ -335,12 +357,13 @@
       '<div class="atlas-shell">' +
       '<header class="atlas-head">' +
       '<div><div class="atlas-eyebrow">FIGURE ATLAS · 本页图鉴</div>' +
-      '<h2>' + (text(main.querySelector(":scope > h1 .header")) || document.title.split(" - ")[0] || "插图总览") + "</h2>" +
+      '<h2></h2>' +
       '<div class="atlas-sub">共 ' + figures.length + ' 张 · 点击图版跳回正文位置</div></div>' +
       '<button type="button" class="atlas-close" aria-label="关闭图鉴">×</button>' +
       "</header>" +
       '<div class="atlas-list"></div>' +
       "</div>";
+    dialog.querySelector("h2").textContent = text(main.querySelector(":scope > h1 .header")) || document.title.split(" - ")[0] || "插图总览";
 
     var list = dialog.querySelector(".atlas-list");
     var built = false;
@@ -387,8 +410,11 @@
       plate.appendChild(main);
       plate.appendChild(arrow);
       plate.addEventListener("click", function () {
-        dialog.close();
         var target = figure;
+        for (var parent = target.parentElement; parent; parent = parent.parentElement) {
+          if (parent.tagName === "DETAILS") parent.open = true;
+        }
+        dialog.close();
         target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
         target.classList.add("atlas-flash");
         window.setTimeout(function () { target.classList.remove("atlas-flash"); }, 1400);
@@ -457,6 +483,10 @@
   // toc.html 是 mdBook 构建出的静态目录；比等侧栏 DOM 更可靠（也不受 UI 版本影响）。
   function chapterFromToc() {
     if (!book) return;
+    // The rendered sidebar already contains the chapter in normal builds.
+    // Avoid downloading and parsing a second copy of the complete TOC.
+    ensureChapterKicker();
+    if (!document.querySelector(".h1-kicker") || document.querySelector(".h1-kicker-book, #mdbook-sidebar .chapter-item")) return;
     var marker = "/" + book + "/";
     var at = location.pathname.indexOf(marker);
     if (at < 0) return;

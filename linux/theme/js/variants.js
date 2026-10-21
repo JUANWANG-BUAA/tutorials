@@ -32,7 +32,9 @@
 
   function read(key, fallback) {
     try {
-      return localStorage.getItem(key) || fallback;
+      var value = localStorage.getItem(key);
+      var choices = key === ARCH_KEY ? ARCHES : LANGS;
+      return choices.some(function (choice) { return choice[0] === value; }) ? value : fallback;
     } catch (e) {
       return fallback;
     }
@@ -110,33 +112,12 @@
   }
 
 
-  function copyText(text, done) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
-    } else {
-      fallbackCopy(text, done);
-    }
-  }
-
-  function fallbackCopy(text, done) {
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.setAttribute("readonly", "");
-    ta.style.position = "fixed";
-    ta.style.opacity = "0";
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand("copy"); } catch (e) { /* ignore */ }
-    document.body.removeChild(ta);
-    done();
-  }
-
   function addCopyButtons() {
     var blocks = document.querySelectorAll("pre > code");
     for (var i = 0; i < blocks.length; i++) {
       var code = blocks[i];
       var pre = code.parentNode;
-      if (!pre || pre.querySelector(".copy-code")) continue;
+      if (!pre || pre.querySelector(".copy-code, .clip-button")) continue;
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "copy-code";
@@ -146,9 +127,13 @@
         var b = ev.currentTarget;
         var c = b.parentNode.querySelector("code");
         if (!c) return;
-        copyText(c.innerText, function () {
+        var core = window.TUTORIALS_CORE;
+        if (!core) return;
+        core.copyText(c.textContent).then(function () {
           b.textContent = "已复制";
           b.classList.add("is-copied");
+          core.toast("已复制代码");
+        }, function () { b.textContent = "复制失败"; core.toast("复制失败，请手动选中代码"); }).finally(function () {
           setTimeout(function () { b.textContent = "复制"; b.classList.remove("is-copied"); }, 1400);
         });
       });
@@ -192,6 +177,7 @@
 
     var note = document.createElement("span");
     note.className = "variant-note";
+    note.setAttribute("role", "status");
     box.appendChild(note);
 
     host.insertBefore(box, host.firstChild);

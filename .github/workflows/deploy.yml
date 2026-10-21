@@ -39,7 +39,7 @@ jobs:
         run: |
           set -e
           mkdir -p _site
-          for book in robot numerical matrix deeplearning linux agent-systems distributed; do
+          for book in robot numerical matrix deeplearning linux agent-systems distributed compilers; do
             mdbook build "$book"
             # mdBook 自带分词器不处理中文，「数域」「过渡矩阵」这类词进不了索引，
             # 中文全文搜索会形同虚设。构建后用字符 n-gram 重建索引（这一步曾在
@@ -54,6 +54,8 @@ jobs:
           mkdir -p _site/shared/theme
           cp -R shared/theme/. _site/shared/theme/
           python3 tools/optimize_site.py _site
+          python3 tools/optimize_assets.py _site
+          python3 tools/audit_site_assets.py _site
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

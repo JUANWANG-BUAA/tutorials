@@ -399,7 +399,7 @@ html[data-bg] .page-wrapper{
 .theme-popup .theme-selected{color:var(--accent-text);font-weight:650}
 
 .prefs-panel{
-  position:absolute;top:100%;left:10px;z-index:1000;
+  position:fixed;top:var(--menu-bar-height, 58px);left:10px;z-index:1000;
   box-sizing:border-box;
   width:min(380px,calc(100vw - 20px));
   /* 多个设置组会使面板变高：矮屏（笔记本半屏、横放手机）给一个上限并内部滚动，

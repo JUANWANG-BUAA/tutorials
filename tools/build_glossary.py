@@ -57,6 +57,10 @@ SOURCES = {
         "page": "appendix/references.html",
         "columns": {"term": ["术语"], "en": ["英文"], "def": ["本书定义"], "origin": ["首次出现"]},
     },
+    "compilers": {
+        "page": "appendix/references.html",
+        "columns": {"term": ["术语"], "en": ["英文"], "def": ["一句话"]},
+    },
 }
 
 TAG = re.compile(r"<[^>]+>")

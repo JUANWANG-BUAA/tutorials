@@ -63,13 +63,11 @@
     var stage = dialog.querySelector(".figure-zoom-stage");
     var art = figure.querySelector("svg, img");
     if (!art) return;
-    var clone = art.cloneNode(true);
-    /* 只摘掉根节点 id。SVG 内部的 gradient / marker / clipPath 都被
-       fill="url(#…)" 引用，逐个删除会让放大后的图失去底色与箭头。 */
-    clone.removeAttribute("id");
+    var clone = CORE.cloneForDisplay(art);
+    if (clone.tagName.toLowerCase() === "img") clone.loading = "eager";
     var caption = figure.querySelector("figcaption");
     if (caption) {
-      var captionClone = caption.cloneNode(true);
+      var captionClone = CORE.cloneForDisplay(caption);
       captionClone.className = "figure-zoom-caption";
       stage.replaceChildren(clone, captionClone);
     } else {
@@ -77,21 +75,28 @@
     }
     lastZoomTrigger = figure;
     dialog.showModal();
+    dialog.querySelector(".figure-zoom-close").focus({ preventScroll: true });
   }
 
   function bootFigureZoom() {
     var main = document.querySelector("main");
     if (!main || !document.createElement("dialog").showModal) return;
-    main.querySelectorAll("figure").forEach(function (figure) {
+    function enhance(figure) {
       if (figure.dataset.zoomable === "1") return;
       var art = figure.querySelector("svg, img");
       if (!art || art.getBoundingClientRect().width < ZOOM_MIN_WIDTH) return;
       figure.dataset.zoomable = "1";
       figure.setAttribute("tabindex", "0");
       figure.setAttribute("role", "button");
-      figure.setAttribute("aria-label", "放大查看插图");
+      var title = figure.querySelector("svg title, figcaption");
+      figure.setAttribute("aria-label", "放大查看插图" + (title ? "：" + title.textContent.trim() : ""));
+      var startX = 0, startY = 0, moved = false;
+      figure.addEventListener("pointerdown", function (event) { startX = event.clientX; startY = event.clientY; moved = false; }, { passive: true });
+      figure.addEventListener("pointermove", function (event) {
+        if (Math.abs(event.clientX - startX) + Math.abs(event.clientY - startY) > 8) moved = true;
+      }, { passive: true });
       figure.addEventListener("click", function (event) {
-        if (event.target.closest("a, button")) return;
+        if ((event.detail && moved) || event.target.closest("a, button, input, select, textarea, summary, [contenteditable]")) return;
         event.preventDefault();
         openZoom(figure);
       });
@@ -100,11 +105,19 @@
         event.preventDefault();
         openZoom(figure);
       });
-    });
-    var dialog = document.getElementById("figure-zoom");
-    if (dialog) dialog.addEventListener("close", function () {
-      if (lastZoomTrigger && document.contains(lastZoomTrigger)) lastZoomTrigger.focus();
-      lastZoomTrigger = null;
+    }
+    var observer = window.ResizeObserver ? new ResizeObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var figure = entry.target.closest("figure");
+        if (figure) enhance(figure);
+      });
+    }) : null;
+    main.querySelectorAll("figure").forEach(function (figure) {
+      enhance(figure);
+      var art = figure.querySelector("svg, img");
+      if (!art || figure.dataset.zoomable === "1") return;
+      if (observer) observer.observe(art);
+      if (art.tagName.toLowerCase() === "img") art.addEventListener("load", function () { enhance(figure); }, { once: true });
     });
   }
 

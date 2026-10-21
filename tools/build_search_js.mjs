@@ -22,6 +22,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
+import { compactSearchIndex, expandSearchIndex } from './search-codec.mjs';
 
 /* ------------------------------------------------------------------ *
  * 本书配置：探针查询（自检用）
@@ -245,8 +246,9 @@ function main() {
   // 写回：保持 mdBook 的 window.search = Object.assign(...) 形式
   payload.index = JSON.parse(JSON.stringify(builder.toJSON()));
   payload.index.lang = "CJK";
-  const json = JSON.stringify(payload).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-  const out = "window.search = Object.assign(window.search, JSON.parse('" + json + "'));\n";
+  const packed = compactSearchIndex(structuredClone(payload));
+  const json = JSON.stringify(packed).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const out = "window.search = Object.assign(window.search, (" + expandSearchIndex.toString() + ")(JSON.parse('" + json + "')));\n";
   fs.writeFileSync(indexPath, out, "utf8");
   console.log(
     `[search] 重建完成：${refs.length} 篇文档，字段 ${fields.join("/")}，` +
@@ -263,7 +265,7 @@ function main() {
     expand: true,
   };
   let failed = 0;
-  const probes = (BOOKS[SLUG] && BOOKS[SLUG].probes) || [];
+  const probes = BOOKS[SLUG] || [];
   for (const q of probes) {
     const hits = check.search(q, opts);
     if (hits.length === 0) failed++;

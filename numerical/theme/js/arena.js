@@ -38,7 +38,6 @@
   ];
   var CLEAR_RATIO = 0.7;   // 正确率 ≥ 70% 判定通关，解锁下一关
   var SECONDS_PER_Q = 30;  // 单关限时 = 题数 × 该值（再设下限）
-  var NEXT_DELAY = 900;    // 答对后自动进入下一题的延时（ms）；答错需手动「下一题」
 
   function tierOf(ratio) {
     for (var i = 0; i < TIERS.length; i++) if (ratio >= TIERS[i].min) return TIERS[i];
@@ -48,11 +47,12 @@
   function loadState() {
     try {
       var raw = JSON.parse(localStorage.getItem(KEY));
-      if (raw && typeof raw === "object") {
-        raw.best = raw.best || {};
-        raw.cleared = raw.cleared || {};
-        raw.wrong = raw.wrong || {};
-        raw.maxCombo = raw.maxCombo || 0;
+      if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+        ["best", "cleared", "wrong"].forEach(function (key) {
+          if (!raw[key] || typeof raw[key] !== "object" || Array.isArray(raw[key])) raw[key] = {};
+        });
+        raw.maxCombo = Number.isFinite(raw.maxCombo) && raw.maxCombo >= 0 ? raw.maxCombo : 0;
+        Object.keys(raw.best).forEach(function (key) { if (!Number.isFinite(raw.best[key]) || raw.best[key] < 0) delete raw.best[key]; });
         return raw;
       }
     } catch (e) { /* 隐私模式 / 存储被禁：当作空状态。 */ }
@@ -154,7 +154,7 @@
   /* ------------------------------------------------------------ 关卡界面 */
 
   function remainingWrong() {
-    return Object.keys(state.wrong);
+    return Object.keys(state.wrong).filter(function (id) { return items.some(function (item) { return item.id === id; }); });
   }
 
   function renderWrongbook() {
@@ -179,10 +179,15 @@
     }
     var ol = el("ol");
     ids.forEach(function (id) {
-      var w = state.wrong[id];
+      var w = items.find(function (item) { return item.id === id; });
       var li = el("li");
-      li.innerHTML = '<span class="wb-tag">' + w.tag + "</span>" +
-        (w.href ? '<a href="' + w.href + '">' + w.point + "</a>" : w.point);
+      var tag = el("span", "wb-tag");
+      tag.textContent = w.tag;
+      li.appendChild(tag);
+      var point = el(w.href ? "a" : "span");
+      if (w.href) point.setAttribute("href", w.href);
+      point.textContent = w.point;
+      li.appendChild(point);
       ol.appendChild(li);
     });
     wrongbook.appendChild(ol);
@@ -215,12 +220,17 @@
   function levelTime(lv) { return Math.max(90, byLevel[lv].length * SECONDS_PER_Q); }
 
   function showPanel() {
+    var hadRound = Boolean(round);
+    stopTimer();
+    round = null;
     panel.hidden = false;
     stage.hidden = true;
     result.hidden = true;
     hud.classList.remove("is-on");
     renderLevels();
     renderWrongbook();
+    var first = levelsGrid.querySelector("button:not(:disabled)");
+    if (first && hadRound) first.focus({ preventScroll: true });
   }
 
   /* ------------------------------------------------------------ 一轮作答 */
@@ -240,6 +250,7 @@
   function startRound(lv) {
     var pool = shuffle(byLevel[lv]);
     round = {
+      active: true,
       lv: lv,
       pool: pool,
       i: 0,
@@ -265,11 +276,17 @@
 
   function runTimer() {
     stopTimer();
+    round.deadline = Date.now() + round.left * 100;
     timerId = setInterval(function () {
-      round.left -= 1;
-      if (round.left <= 0) { round.left = 0; updateHud(); endRound("timeout"); return; }
-      updateHud();
+      syncTime();
     }, 100);
+  }
+  function syncTime() {
+    if (!round || !round.active) return false;
+    round.left = Math.max(0, Math.ceil((round.deadline - Date.now()) / 100));
+    updateHud();
+    if (round.left <= 0) { endRound("timeout"); return false; }
+    return true;
   }
   function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
 
@@ -313,7 +330,7 @@
       li.appendChild(body);
       li.addEventListener("click", function () { answer(idx); });
       li.addEventListener("keydown", function (ev) {
-        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); answer(idx); }
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); ev.stopPropagation(); answer(idx); }
       });
       opts.appendChild(li);
     });
@@ -321,6 +338,7 @@
     stage.appendChild(view);
 
     var fb = el("div", "arena-feedback");
+    fb.setAttribute("role", "status");
     fb.hidden = true;
     stage.appendChild(fb);
 
@@ -341,7 +359,7 @@
   }
 
   function answer(idx) {
-    if (!round || round.waiting) return;
+    if (!round || round.waiting || !syncTime()) return;
     round.waiting = true;
     var q = round.pool[round.i];
     var opts = stage.querySelectorAll(".arena-opts li");
@@ -366,6 +384,7 @@
       var i = Number(li.dataset.i);
       li.classList.add("is-locked");
       li.setAttribute("tabindex", "-1");
+      li.setAttribute("aria-disabled", "true");
       if (i === q.a) li.classList.add("is-correct");
       else if (i === idx) li.classList.add("is-wrong");
       else li.classList.add("is-dim");
@@ -385,23 +404,19 @@
     updateHud();
     renderWrongbook();
 
-    // 答对且还有时间 → 短暂停顿后自动前进，保持节奏；答错或最后题交由手动。
-    if (correct && round.i < round.total - 1) {
-      var myI = round.i;
-      setTimeout(function () {
-        if (round && round.i === myI && round.waiting) advance();
-      }, NEXT_DELAY);
-    }
+    // 解析保留到读者明确选择下一题，不用延迟任务抢走阅读位置。
   }
 
   function advance() {
-    if (!round) return;
+    if (!round || !round.waiting || !syncTime()) return;
     round.i += 1;
     if (round.i >= round.total) { endRound("done"); return; }
     renderQuestion();
   }
 
   function endRound(reason) {
+    if (!round || !round.active) return;
+    round.active = false;
     stopTimer();
     var ratio = round.total ? round.correct / round.total : 0;
     var tier = tierOf(ratio);
@@ -451,6 +466,7 @@
     back.addEventListener("click", showPanel);
     acts.appendChild(back);
     result.appendChild(acts);
+    again.focus({ preventScroll: true });
 
     if (round.missIds.length) {
       var miss = el("div", "arena-wrongbook");
@@ -462,7 +478,8 @@
   /* ------------------------------------------------------- 键盘（全局） */
 
   document.addEventListener("keydown", function (ev) {
-    if (!round || stage.hidden) return;
+    if (!round || stage.hidden || ev.defaultPrevented || ev.isComposing || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    if (!stage.contains(ev.target) || ev.target.isContentEditable || ev.target.closest("input, textarea, select, button, a, summary")) return;
     if (ev.key >= "1" && ev.key <= "9") {
       var idx = Number(ev.key) - 1;
       if (!round.waiting && idx < round.pool[round.i].optsHTML.length) { ev.preventDefault(); answer(idx); }
@@ -471,6 +488,7 @@
       if (next && !next.hidden) { ev.preventDefault(); advance(); }
     }
   });
+  document.addEventListener("visibilitychange", function () { if (timerId) syncTime(); });
 
   showPanel();
 })();
@@ -483,11 +501,13 @@
   var host = document.getElementById("exam-timer");
   if (!host) return;
 
-  var minutes = parseFloat(host.getAttribute("data-minutes")) || 60;
+  var minutes = parseFloat(host.getAttribute("data-minutes"));
+  if (!Number.isFinite(minutes) || minutes <= 0) minutes = 60;
   var total = Math.round(minutes * 60);
   var left = total;
   var tickId = null;
   var running = false;
+  var deadline = 0;
 
   function fmt(s) {
     var m = Math.floor(s / 60), ss = s % 60;
@@ -547,22 +567,25 @@
   }
 
   function stop() { if (tickId) { clearInterval(tickId); tickId = null; } running = false; start.textContent = "继续"; }
+  function tick() {
+    left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    if (left <= 0) { stop(); start.textContent = "时间到"; start.disabled = true; }
+    paint();
+  }
 
   start.addEventListener("click", function () {
-    if (running) { stop(); return; }
+    if (running) { tick(); stop(); if (left <= 0) start.textContent = "时间到"; return; }
     if (left <= 0) return;
     running = true;
+    deadline = Date.now() + left * 1000;
     start.textContent = "暂停";
-    tickId = setInterval(function () {
-      left -= 1;
-      if (left <= 0) { left = 0; paint(); stop(); start.textContent = "时间到"; start.disabled = true; return; }
-      paint();
-    }, 1000);
+    tickId = setInterval(tick, 250);
   });
   reset.addEventListener("click", function () {
     stop(); left = total; start.disabled = false; start.textContent = "开始计时"; paint();
   });
 
   host.appendChild(box);
+  document.addEventListener("visibilitychange", function () { if (running) tick(); });
   paint();
 })();

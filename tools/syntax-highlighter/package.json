@@ -1,0 +1,12 @@
+{
+  "name": "tutorials-syntax-highlighter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild index.js --bundle --format=iife --target=es2020 --minify --legal-comments=eof --outfile=../../shared/theme/vendor/highlight.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "highlight.js": "11.12.0"
+  }
+}

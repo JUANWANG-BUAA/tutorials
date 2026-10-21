@@ -65,7 +65,7 @@
       el.setAttribute("aria-label", pair[1]);
     });
 
-    setAttrs("mdbook-searchbar", { placeholder: "搜索本书内容…", "aria-label": "搜索本书内容" });
+    setAttrs("mdbook-searchbar", { placeholder: "搜索本书内容…", "aria-label": "搜索本书内容", "aria-describedby": "mdbook-searchresults-header" });
     setAttrs("mdbook-theme-list", { "aria-label": "主题" });
     setAttrs("mdbook-sidebar", { "aria-label": "目录" });
 
@@ -129,8 +129,15 @@
     var searchbar = document.getElementById("mdbook-searchbar");
     if (searchbar && !searchbar.dataset.chromeIme) {
       searchbar.dataset.chromeIme = "1";
+      var composing = false;
+      searchbar.addEventListener("compositionstart", function () { composing = true; });
+      searchbar.addEventListener("keyup", function (event) {
+        if (composing || event.isComposing || event.keyCode === 229) event.stopImmediatePropagation();
+      }, true);
       ["input", "compositionend"].forEach(function (type) {
-        searchbar.addEventListener(type, function () {
+        searchbar.addEventListener(type, function (event) {
+          if (type === "compositionend") composing = false;
+          if (composing || event.isComposing) return;
           searchbar.dispatchEvent(new KeyboardEvent("keyup"));
         });
       });
@@ -159,6 +166,7 @@
 
   function watchSearchResults() {
     var header = document.getElementById("mdbook-searchresults-header");
+    if (header) header.setAttribute("role", "status");
     if (header && !header.dataset.chromeLocalized) {
       header.dataset.chromeLocalized = "1";
       var translateHeader = function () {
@@ -189,6 +197,56 @@
         else if (bounds.bottom > box.bottom) list.scrollTop += bounds.bottom - box.bottom;
       });
     }).observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  }
+
+  function wireSearchLoading() {
+    var form = document.getElementById("mdbook-searchbar-outer");
+    if (!form) return;
+    var status = document.createElement("div");
+    status.className = "search-load-status";
+    status.setAttribute("role", "status");
+    status.hidden = true;
+    var message = document.createElement("span");
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "重试";
+    retry.hidden = true;
+    status.appendChild(message);
+    status.appendChild(retry);
+    form.appendChild(status);
+    var failed = false;
+    function sync() {
+      var busy = form.classList.contains("searching");
+      form.setAttribute("aria-busy", String(busy && !failed));
+      status.hidden = !busy && !failed;
+      retry.hidden = !failed;
+      message.textContent = failed ? "搜索暂时无法加载，请重试。" : "正在准备本书搜索…";
+    }
+    document.addEventListener("error", function (event) {
+      if (!event.target || event.target.id !== "mdbook-search-index") return;
+      failed = true;
+      sync();
+    }, true);
+    document.addEventListener("load", function (event) {
+      if (!event.target || event.target.id !== "mdbook-search-index") return;
+      failed = false;
+      sync();
+    }, true);
+    retry.addEventListener("click", function () {
+      var old = document.getElementById("mdbook-search-index");
+      if (!old) return;
+      var script = document.createElement("script");
+      script.id = old.id;
+      script.src = old.src;
+      script.onload = old.onload;
+      script.onerror = old.onerror;
+      old.remove();
+      failed = false;
+      sync();
+      document.head.appendChild(script);
+    });
+    new MutationObserver(sync).observe(form, { attributes: true, attributeFilter: ["class"] });
+    sync();
   }
 
   /* ======================================================================== *
@@ -229,6 +287,7 @@
    * ======================================================================== */
   var PRINT_FOLDS = ["details.sol-box", "details.hint-box"];
   var printFoldState = null;
+  var printingFolds = false;
 
   function foldGroups() {
     return PRINT_FOLDS.map(function (sel) {
@@ -237,6 +296,7 @@
   }
 
   function saveFoldState() {
+    if (printingFolds) return;
     var groups = foldGroups();
     var page = location.pathname;
     var map = {};
@@ -270,15 +330,21 @@
   function wireFoldMemory() {
     // 先恢复上次展开过的解答，再挂监听——顺序反了会把恢复动作也当成用户操作
     try { restoreFoldState(); } catch (e) { /* 记忆功能可降级 */ }
+    var saveTimer;
     document.addEventListener("toggle", function (event) {
-      if (event.target && event.target.tagName === "DETAILS") {
-        try { saveFoldState(); } catch (e) { /* 记忆功能可降级 */ }
+      if (!printingFolds && event.target && event.target.matches(PRINT_FOLDS.join(","))) {
+        window.clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(function () {
+          try { saveFoldState(); } catch (e) { /* 记忆功能可降级 */ }
+        }, 0);
       }
     }, true);
   }
 
   // 打印时把「提示」与「解答」全部展开，免得纸面上只剩一排折叠标题。
   window.addEventListener("beforeprint", function () {
+    if (printingFolds) return;
+    printingFolds = true;
     printFoldState = foldGroups().map(function (items) {
       return items.map(function (d) { return d.open; });
     });
@@ -293,9 +359,15 @@
       });
     });
     printFoldState = null;
+    // toggle is queued by the browser; ignore the restoration events too.
+    window.setTimeout(function () { printingFolds = false; }, 0);
   });
 
   function legacyCopy(text) {
+    var focused = document.activeElement;
+    var selection = window.getSelection();
+    var ranges = [];
+    if (selection) for (var i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i).cloneRange());
     var area = document.createElement("textarea");
     area.value = text;
     area.setAttribute("readonly", "readonly");
@@ -306,6 +378,11 @@
     var ok = false;
     try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
     area.remove();
+    if (focused && focused.isConnected) focused.focus({ preventScroll: true });
+    if (selection) {
+      selection.removeAllRanges();
+      ranges.forEach(function (range) { selection.addRange(range); });
+    }
     return ok ? Promise.resolve() : Promise.reject(new Error("copy failed"));
   }
 
@@ -330,6 +407,32 @@
     el.classList.add("is-visible");
     window.clearTimeout(toast.timer);
     toast.timer = window.setTimeout(function () { el.classList.remove("is-visible"); }, 1800);
+  }
+
+  var cloneSequence = 0;
+  function cloneForDisplay(node) {
+    var clone = node.cloneNode(true);
+    var prefix = "tutorials-clone-" + (++cloneSequence) + "-";
+    var ids = new Map();
+    var elements = [clone].concat(Array.prototype.slice.call(clone.querySelectorAll("*")));
+    elements.forEach(function (el) {
+      if (!el.id) return;
+      ids.set(el.id, prefix + el.id);
+      el.id = prefix + el.id;
+    });
+    elements.forEach(function (el) {
+      Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+        var value = attr.value.replace(/url\(\s*(['"]?)#([^)'"\s]+)\1\s*\)/g, function (match, quote, id) {
+          return ids.has(id) ? "url(#" + ids.get(id) + ")" : match;
+        });
+        if ((attr.name === "href" || attr.name === "xlink:href") && ids.has(value.slice(1)) && value[0] === "#") value = "#" + ids.get(value.slice(1));
+        if (/^(aria-labelledby|aria-describedby|aria-controls|for)$/.test(attr.name)) {
+          value = value.split(/\s+/).map(function (id) { return ids.get(id) || id; }).join(" ");
+        }
+        if (value !== attr.value) el.setAttribute(attr.name, value);
+      });
+    });
+    return clone;
   }
 
 
@@ -360,7 +463,11 @@
     document.addEventListener("input", onInput, true);
     window.addEventListener("pagehide", cancelRetry);
     var timer = setInterval(function () {
+      if (new URLSearchParams(location.search).get("search") !== term) { cancelRetry(); return; }
       if (document.querySelectorAll("#mdbook-searchresults li").length > 0) { cancelRetry(); return; }
+      var form = document.getElementById("mdbook-searchbar-outer");
+      var header = document.getElementById("mdbook-searchresults-header");
+      if (form && form.classList && !form.classList.contains("searching") && header && header.textContent.trim()) { cancelRetry(); return; }
       var bar = document.getElementById("mdbook-searchbar");
       if (bar && bar.value !== term) bar.value = term;
       if (bar) bar.dispatchEvent(new KeyboardEvent("keyup", { key: "a", bubbles: true }));
@@ -373,19 +480,51 @@
    * 由这里在 DOMContentLoaded（或已就绪时立刻）依次执行，单个模块出错不影响其余。
    * ------------------------------------------------------------------ */
   var boots = [];
-  function register(fn) { if (typeof fn === "function") boots.push(fn); }
+  var booted = false;
+  function register(fn) {
+    if (typeof fn !== "function") return;
+    if (booted) { try { fn(); } catch (error) { /* 渐进增强 */ } }
+    else boots.push(fn);
+  }
 
   function runBoots() {
+    booted = true;
     for (var i = 0; i < boots.length; i++) {
       try { boots[i](); } catch (error) { /* 纯增益模块，出错静默降级 */ }
     }
+    boots.length = 0;
+  }
+
+  function wireShortcuts() {
+    var nativeGuard = window.mdbook_something_else_has_focus;
+    if (typeof nativeGuard === "function") {
+      window.mdbook_something_else_has_focus = function (event) {
+        var target = event.composedPath ? event.composedPath()[0] : event.target;
+        return event.isComposing || (target && (target.isContentEditable ||
+          (target.closest && Boolean(target.closest('button, summary, [role="button"], [role="slider"], dialog[open], #prefs-panel, #term-popover'))))) ||
+          Boolean(document.querySelector("dialog[open]")) || nativeGuard(event);
+      };
+    }
+    document.addEventListener("keydown", function (event) {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey || event.key.toLowerCase() !== "k" || event.isComposing) return;
+      if (document.querySelector("dialog[open]")) return;
+      var toggle = document.getElementById("mdbook-search-toggle");
+      var bar = document.getElementById("mdbook-searchbar");
+      if (!toggle || !bar) return;
+      event.preventDefault();
+      if (toggle.getAttribute("aria-expanded") !== "true") toggle.click();
+      bar.focus();
+      bar.select();
+    });
   }
 
   function boot() {
     try { localizeChrome(); } catch (e) { /* 升级后 id 变了等情形，静默降级 */ }
     try { watchSearchResults(); } catch (e) { /* 同上 */ }
+    try { wireSearchLoading(); } catch (e) { /* 纯增益 */ }
     try { buildBackToTop(); } catch (e) { /* 纯增益 */ }
     try { wireFoldMemory(); } catch (e) { /* 纯增益 */ }
+    try { wireShortcuts(); } catch (e) { /* 纯增益 */ }
     try { patchDeepLinkSearch(); } catch (e) { /* 纯增益 */ }
     runBoots();
   }
@@ -397,6 +536,7 @@
     toast: toast,
     copyText: copyText,      /* 名字必须与各模块里的调用一致（CORE.copyText） */
     copy: copyText,
+    cloneForDisplay: cloneForDisplay,
     register: register
   };
 

@@ -48,6 +48,9 @@
  *   摘要与标题同样黑。这里把它收成一个有边界的面板。
  * ======================================================================== */
 #mdbook-search-wrapper{background:var(--page);border-bottom:1px solid var(--line)}
+.search-load-status{padding:8px 0;color:var(--muted);font:13px/1.6 var(--sans)}
+.search-load-status[hidden]{display:none}
+.search-load-status button{margin-left:12px;color:var(--accent-text);background:var(--paper);border:1px solid var(--line-strong);padding:4px 12px;cursor:pointer;font:inherit}
 .searchresults-outer{border-block-end:0}
 .searchresults-header{
   color:var(--muted);font:700 10.5px/1.5 var(--mono);letter-spacing:.06em;

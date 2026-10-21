@@ -143,12 +143,15 @@
   }
 
   function readStore(key) {
-    try { return JSON.parse(CORE.store(key) || "{}") || {}; } catch (e) { return {}; }
+    try {
+      var value = JSON.parse(CORE.store(key) || "{}");
+      return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    } catch (e) { return {}; }
   }
 
   function pageTitle() {
     var h1 = document.querySelector(".content h1");
-    if (h1) return h1.textContent.trim();
+    if (h1) return (h1.querySelector("a.header") || h1).textContent.trim();
     var active = document.querySelector("#mdbook-sidebar a.active");
     return active ? active.textContent.trim() : document.title;
   }
@@ -185,11 +188,16 @@
     var here = location.pathname;
     if (!/(\/|index\.html)$/.test(here)) return;      /* 只在本书导览页出现 */
     var last = readStore("tutorials-last:" + bookRoot());
-    if (!last.path || last.path === here) return;
+    if (typeof last.path !== "string" || last.path === here) return;
     var seen = readStore("tutorials-read:" + bookRoot());
-    var readCount = Object.keys(seen).length;
     var box = document.getElementById("mdbook-sidebar");
-    var total = box ? box.querySelectorAll("li.chapter-item > .chapter-link-wrapper > a[href]").length : 0;
+    var paths = new Set();
+    if (box) box.querySelectorAll("li.chapter-item > .chapter-link-wrapper > a[href]").forEach(function (a) {
+      paths.add(new URL(a.getAttribute("href"), location.href).pathname);
+    });
+    if (!paths.has(last.path)) return;
+    var total = paths.size;
+    var readCount = Array.from(paths).filter(function (path) { return seen[path] === 1; }).length;
 
     var card = document.createElement("aside");
     card.className = "continue-card";
@@ -198,7 +206,7 @@
     kicker.textContent = "继续阅读";
     var link = document.createElement("a");
     link.className = "continue-link";
-    link.href = last.path;
+    link.href = last.path + (typeof last.hash === "string" && last.hash[0] === "#" ? last.hash : "");
     link.textContent = last.title || "上次读到的那一节";
     card.appendChild(kicker);
     card.appendChild(link);
@@ -232,10 +240,22 @@
   }
 
   function bootReadingProgress() {
+    if (/\/(print|404)\.html$/.test(location.pathname)) return;
     markVisited();
     paintReadDots();
     paintReadBadges();
     buildContinueCard();
+    if (!/(\/|index\.html)$/.test(location.pathname)) {
+      var remember = function () {
+        var hash = location.hash;
+        document.querySelectorAll("main h2[id], main h3[id]").forEach(function (heading) {
+          if (heading.getBoundingClientRect().top <= 120 && !heading.closest("details:not([open])")) hash = "#" + encodeURIComponent(heading.id);
+        });
+        CORE.save("tutorials-last:" + bookRoot(), JSON.stringify({ path: location.pathname, title: pageTitle(), hash: hash }));
+      };
+      window.addEventListener("pagehide", remember);
+      document.addEventListener("visibilitychange", function () { if (document.hidden) remember(); });
+    }
   }
 
   /* ------------------------------------------------------------------ *
