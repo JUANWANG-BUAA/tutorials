@@ -1,10 +1,10 @@
 # 学习目标
 
-按「能……」句式给出可检验的目标；每条目标后括注认知层级，并在[章末自检表](ch01/checklist.md)中对应到正文小节与习题。
+按「能……」句式给出可检验的目标；每条目标后括注认知层级，并在[第一章](ch01/checklist.md)、[第二章](ch02/checklist.md)、[第三章](ch03/checklist.md)的自检表中对应到正文小节与习题。
 
 > **第二章（2.1–2.5）的目标**：2.1–2.2 随第 3 周录播追加、2.3 随官方课件追加、2.4–2.5 随第 5 周录播追加，见「K2 / S2 / A2」三组，与[第二章自检表](ch02/checklist.md)对应；2.6–2.7 到位后继续补充。
 >
-> **第三章（3.1–3.5）的目标**：四节随官方课件追加（均无录播），见本节末尾「K3 / S3 / A3」三组——K3.1–K3.16、S3.1–S3.5、A3.1–A3.5 覆盖 3.1–3.2，K3.17–K3.30、S3.6–S3.10、A3.6–A3.8 覆盖 3.4–3.5，与[第三章自检表](ch03/checklist.md)、[考场竞技场](ch03/arena.md)的必考点清单同一编号；3.3 及以后到位后继续补充。
+> **第三章（3.1–3.2、3.4–3.7）的目标**：六节随官方课件追加（均无录播），见本节末尾「K3 / S3 / A3」三组——K3.1–K3.16、S3.1–S3.5、A3.1–A3.5 覆盖 3.1–3.2；K3.17–K3.30、S3.6–S3.10、A3.6–A3.8 覆盖 3.4–3.5；K3.31–K3.44、S3.11–S3.16、A3.9–A3.12 覆盖 3.6–3.7，共 72 条，与[第三章自检表](ch03/checklist.md)、[考场竞技场](ch03/arena.md)的必考点清单同一编号；3.3 与 3.8 及以后到位后继续补充。
 
 ## K · 知识目标（概念与理论）
 
@@ -83,7 +83,7 @@
 <li><span class="obj-id">A2.4</span>书写矩阵与换基公式前先核对形状（$m\times n$）与基的对应关系；能区分「相抵 / 相似」「等势 / 同构」「同一个矩阵 / 同一个映射」三对概念。<span class="obj-lv">分析 / 评价</span></li>
 </ul>
 
-## 第三章 · 矩阵分解（3.1–3.5）
+## 第三章 · 矩阵分解（3.1–3.2、3.4–3.7）
 
 ### K · 知识目标
 
@@ -118,6 +118,20 @@
 <li><span class="obj-id">K3.28</span>能证明最小多项式的两条性质（整除一切零化多项式、与 $f_A$ 同根，不计重数）。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.29</span>能按候选法三步（$f_A$ 因式分解 → 列候选 → 从低到高试）求 $m_A$，并解释次序不能反。<span class="obj-lv">理解 / 应用</span></li>
 <li><span class="obj-id">K3.30</span>能按题选路完成三套计算流程：带余除法算 $g(A)$、递推 / 定系数算 $A^m$、逆公式求 $A^{-1}$，并知道「先求 $m_A$ 再除」最省。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">K3.31</span>能陈述单纯矩阵（可对角化矩阵）的定义，并说明「对角化分解式」是 Schur 分解当上方 $\ast$ 全消时的退化特例。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.32</span>能完整陈述并证明定理 3.6.1 的五条等价：（1）$P^{-1}AP=\Lambda$；（2）$n$ 个线性无关特征向量；（3）$d_i=g_i$；（4）$\sum\dim E(\lambda_i)=n$；（5）$m_A$ 无重根。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.33</span>能说明「互异特征值」只是充分条件，而「存在无重根零化多项式」按字面是充要条件；能辨析注 3 的三条判据层次。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.34</span>能复述例 3.6.1 的两条判断路线（最小多项式 / 重数比对），并写出 $P$、$\Lambda$ 验证。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.35</span>能用对角化分解算 $A^m$、解 $\dot{\boldsymbol x}=A\boldsymbol x$，并写出矩阵指数 $e^{At}=Pe^{\Lambda t}P^{-1}$。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.36</span>能陈述酉相似对角化的定义，并把它等价翻译为「存在标准正交特征向量基」。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.37</span>能陈述并证明 Hermite / 实对称谱定理的两个方向，说明「特征值全实」与「正交对角化」各自的位置。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.38</span>能背写正规矩阵定义 $A^{\mathrm H}A=AA^{\mathrm H}$，举出 Hermite / 反 Hermite / 酉 / 正交四个例子，并区分正规与单纯。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.39</span>能陈述并证明正规矩阵谱定理（正规 $\iff$ 酉相似于对角阵），说明 Schur 型与「上三角正规阵必对角」各自的作用。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.40</span>能陈述酉 / 正交矩阵的谱刻画，并说明注 4：变换矩阵是酉矩阵，一般不是实正交矩阵。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.41</span>能背写谱分解 $A=\sum_j\lambda_jE_j$ 与谱阵三步读法（$P$ 列、$P^{-1}$ 行、按特征值分组）。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.42</span>能陈述并证明谱阵五性质（幂等、两两正交、与 $A$ 交换、求和为 $I$、唯一），尤其（5）的 Lagrange 证明。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.43</span>能区分幂等 $E^2=E$ 与正交投影 $E^2=E=E^{\mathrm H}$，说出「幂等 $=$ 投影、Hermite 幂等 $=$ 正交投影」。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.44</span>能陈述函数演算 $f(A)=\sum_jf(\lambda_j)E_j$ 与 Lagrange 公式 $E_i=f_i(A)/f_i(\lambda_i)$，并用它们算 $A^k$、$A^{-1}$、$e^{At}$。<span class="obj-lv">理解 / 应用</span></li>
 </ul>
 
 ### S · 技能目标
@@ -133,6 +147,12 @@
 <li><span class="obj-id">S3.8</span>能用候选法（从低次到高次试算）求最小多项式，并识别低次候选被淘汰的情形（几何重数不足）。<span class="obj-lv">应用 / 分析</span></li>
 <li><span class="obj-id">S3.9</span>能用 H–C 降次计算 $g(A)$ 与 $A^m$（在特征值处定系数）、用逆矩阵公式求 $A^{-1}$，并全部回代验算。<span class="obj-lv">应用</span></li>
 <li><span class="obj-id">S3.10</span>能按限时流程完成[考场竞技场](ch03/arena.md)的三轮赛制（概念抢答 / 计算擂台 / 证明对决），并按评分细则核对步骤分。<span class="obj-lv">应用 / 评价</span></li>
+<li><span class="obj-id">S3.11</span>能按五条判据判断任意方阵是否可对角化，求出 $P$、$\Lambda$ 并用 $AP=P\Lambda$ 回代。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.12</span>能对实对称 / 正规矩阵求正交（酉）对角化：只在重特征值内部做 Gram–Schmidt，列序对齐 $\Lambda$。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.13</span>能由特征值、部分特征向量与对称性反推出完整矩阵，并用正交补求缺失的特征向量。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.14</span>能从 $P\Lambda P^{-1}$ 读出谱分解：$P$ 按列读、$P^{-1}$ 按行读、按特征值分组，并验 $\sum E_j=I$、$E_iE_j=0$。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.15</span>能不求 $P^{-1}$，直接用 Lagrange 公式 $E_i=f_i(A)/f_i(\lambda_i)$ 算谱阵。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.16</span>能用谱分解算 $A^k$、$f(A)$、$e^{At}$、$A^{-1}$，并回代验算。<span class="obj-lv">应用 / 分析</span></li>
 </ul>
 
 ### A · 素养目标
@@ -146,4 +166,8 @@
 <li><span class="obj-id">A3.6</span>用结论前先核对：方阵还是长方阵、满秩还是秩亏、实还是复、特征值是否全实——四个雷达词扫一遍再动笔。<span class="obj-lv">分析 / 评价</span></li>
 <li><span class="obj-id">A3.7</span>记号纪律延伸到 3.4/3.5：$Q$ 与 $R$ 的角色、QR 迭代方向（$Q_k^{\mathrm H}A_kQ_k$）、逆公式中 $a_i$ 与 $A$ 幂的配对不写错。<span class="obj-lv">评价</span></li>
 <li><span class="obj-id">A3.8</span>边界意识：收敛条件是充分非必要（等模可能卡死）；数值中间量随实现与舍入而异；「对角元全零 $\ne$ 零矩阵」。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A3.9</span>能分辨「$n$ 个互异特征值」「存在无重根零化多项式」「$m_A$ 无重根」三者的逻辑地位，并各举一反例。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.10</span>能举出「单纯但不正规」与「正规但不 Hermite」的例子，并说出差别在特征向量是否正交。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.11</span>能保持列序与行读纪律：$P$ 的列对应 $\Lambda$ 的对角元，$P^{-1}$ 按行读成 $\boldsymbol\beta_i^{\mathrm H}$，$E_j$ 的下标与 $\lambda_j$ 配对。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A3.12</span>能辨析实 / 复边界：实正规矩阵酉对角化中的 $U$ 一般不是实正交阵；要求实正交 $Q$ 时前提是实对称（特征值全实）。<span class="obj-lv">分析 / 评价</span></li>
 </ul>

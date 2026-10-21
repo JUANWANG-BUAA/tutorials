@@ -1,0 +1,43 @@
+/* 《编译器与程序分析》只新增这一层视觉语义；不改共用主题。 */
+:root {
+  --cc-ir: #2f6f73;
+  --cc-ir-soft: rgba(47, 111, 115, 0.10);
+  --cc-warn: #9a4a2f;
+  --cc-ok: #3d6b46;
+}
+
+pre.layout {
+  line-height: 1.35;
+  overflow-x: auto;
+  padding: 1rem 1.1rem;
+  border-left: 3px solid var(--cc-ir);
+  background: var(--cc-ir-soft);
+  border-radius: 0.25rem;
+  font-size: 0.86em;
+}
+
+.chapter-index {
+  border-top: 2px solid var(--cc-ir);
+  border-bottom: 1px solid var(--table-border-color);
+  padding: 0.7rem 0;
+  margin: 1.2rem 0 1.6rem;
+}
+
+.chapter-index p { margin: 0.25rem 0 0.6rem; }
+.chapter-index .ci-label {
+  display: inline-block;
+  font-size: 0.74em;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--cc-ir);
+}
+
+.cc-check td:first-child { white-space: nowrap; }
+.cc-caption {
+  font-size: 0.82em;
+  color: var(--fg-muted);
+  margin-top: -0.4rem;
+}
+
+/* 章末出口检查的紧凑表 */
+table.cc-gate th, table.cc-gate td { padding: 0.35rem 0.55rem; }

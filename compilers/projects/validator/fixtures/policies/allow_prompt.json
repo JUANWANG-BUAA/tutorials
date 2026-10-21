@@ -1,0 +1,4 @@
+{
+  "name": "allow-prompt",
+  "allow_rules": ["PY-PROMPT-INJECTION", "PY-INFINITE-LOOP"]
+}

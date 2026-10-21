@@ -1,0 +1,5 @@
+{
+  "name": "strict",
+  "quarantine_at": "low",
+  "reject_at": "medium"
+}

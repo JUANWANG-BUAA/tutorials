@@ -1,0 +1,4 @@
+{
+  "name": "allow-fs-write",
+  "allow_rules": ["PY-FS-WRITE"]
+}

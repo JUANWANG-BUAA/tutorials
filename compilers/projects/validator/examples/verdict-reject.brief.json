@@ -1,0 +1,54 @@
+{
+  "target": "fixtures/c/warn_unused.c",
+  "language": "c",
+  "verdict": "reject",
+  "findings": [
+    {
+      "rule": "C-SYNTAX",
+      "severity": "high",
+      "message": "编译门禁失败：candidate.c:2:9: error: unused variable 'unused' [-Werror,-Wunused-variable]",
+      "file": "fixtures/c/warn_unused.c",
+      "line": 2,
+      "snippet": ""
+    }
+  ],
+  "checks": [
+    {
+      "name": "static",
+      "status": "pass",
+      "findings": 0
+    },
+    {
+      "name": "compile",
+      "status": "fail",
+      "exit_code": 1,
+      "elapsed_ms": 44
+    },
+    {
+      "name": "behavior",
+      "status": "skip",
+      "reason": "not requested"
+    }
+  ],
+  "evidence": {
+    "code_sha256": "4763ac2e6bb10e4dead85d0e91fb448c0347bedaf89189696adfbe6f56d1aab0",
+    "policy_sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64",
+    "tests_sha256": null,
+    "commands": [
+      {
+        "kind": "compile",
+        "exit_code": 1,
+        "elapsed_ms": 44
+      }
+    ],
+    "elapsed_ms": 46
+  },
+  "human_review": {
+    "required": false,
+    "status": "not_required",
+    "reason": "硬门禁失败；可申诉，但不应直接合并",
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  }
+}

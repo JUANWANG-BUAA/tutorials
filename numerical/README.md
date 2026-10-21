@@ -108,7 +108,7 @@ src/       内容源（Markdown），SUMMARY.md 是唯一的目录树
                       教材位置与补充阅读
   ch02/              补充篇：overview、sec21–sec28、summary、
                       exercises、checklist（原第二章，后移）
-  lectures/           课堂精编：overview、lec01–lec09（2026 秋实录，lec08 为占位页，
+  lectures/           课堂精编：overview、lec01–lec10（2026 秋实录，lec08 为占位页，
                       每讲页首为「10 分钟复习版」，页身为实录）
   review/             复习与查阅：formula-cards（公式结论卡）、
                       contrast-cards（易混对照）、glossary（术语索引）、

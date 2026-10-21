@@ -1,0 +1,19 @@
+{
+  "name": "default",
+  "reject_at": "high",
+  "quarantine_at": "medium",
+  "execute_below": "high",
+  "require_tests": true,
+  "allow_rules": [],
+  "severity_overrides": {},
+  "max_file_bytes": 262144,
+  "sandbox": {
+    "timeout_s": 5.0,
+    "cpu_s": 2,
+    "address_space_mb": 512,
+    "file_size_mb": 1,
+    "nofile": 64,
+    "max_output_bytes": 65536,
+    "max_cases": 20
+  }
+}

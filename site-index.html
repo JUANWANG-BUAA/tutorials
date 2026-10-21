@@ -117,7 +117,7 @@ try {
   .feature-art-head{display:flex;justify-content:space-between;padding:0 2px 8px;color:#4d535a;font:500 8.5px/1.4 var(--mono);letter-spacing:.12em}
   .feature-art img{display:block;width:100%;height:auto;border:1px solid #d3d1c9}
 
-  /* 七本书目：每行 = 序号 + 封面缩略 + 书名组 + 简介 + 规模 + 箭头 */
+  /* 八本书目：每行 = 序号 + 封面缩略 + 书名组 + 简介 + 规模 + 箭头 */
   .index{border-bottom:1px solid var(--line)}
   .index-grid{display:grid;grid-template-columns:140px minmax(0,1fr);gap:40px;padding:46px 0 54px}
   .index-side{padding-top:5px}
@@ -148,7 +148,7 @@ try {
   .paths-grid{display:grid;grid-template-columns:140px minmax(0,1fr);gap:40px;padding:46px 0 54px}
   .paths-title{margin:0 0 10px;font:700 clamp(24px,2.6vw,30px)/1.3 var(--serif);letter-spacing:-.01em}
   .paths-intro{max-width:640px;margin:0 0 26px;color:var(--ink-2);font-size:13px;line-height:1.85}
-  .path-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .path-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
   .path-card{display:flex;flex-direction:column;gap:12px;padding:20px 20px 18px;border:1px solid var(--line-2);background:var(--paper-2);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
   .path-tag{color:var(--accent-ink);font:700 9.5px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase}
   .path-card h3{font:700 19px/1.35 var(--serif);letter-spacing:-.005em}
@@ -219,7 +219,8 @@ try {
     html{scroll-behavior:auto}
     *{transition:none!important}
   }
-  .skin-select{max-width:120px;min-height:30px;border:1px solid var(--line-2);padding:4px 6px;background:var(--paper);color:var(--ink-2);font:11px var(--sans)}
+  .skin-select{max-width:120px;min-height:30px;border:1px solid var(--line-2);border-radius:0;padding:4px 6px;background:var(--paper);color:var(--ink-2);font:11px var(--sans);cursor:pointer}
+  @media(max-width:600px){.topbar-inner{height:auto;min-height:62px;flex-wrap:wrap;gap:14px;padding:14px 0}.topnav{flex-wrap:wrap;gap:16px}}
 </style>
 <link rel="stylesheet" href="shared/theme/css/rhine.css">
 <link rel="stylesheet" href="shared/theme/css/rhine-portal.css">
@@ -232,7 +233,7 @@ try {
       <a href="#books" data-zh="书目">Books</a>
       <a href="#paths" data-zh="路线">Paths</a>
       <a href="#about" data-zh="构建">Build</a>
-      <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">Source</a>
+      <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener" data-zh="源码">Source</a>
       <select class="skin-select" id="skinSelect" aria-label="界面外观"></select>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深浅色" title="切换深浅色">
         <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
@@ -246,24 +247,24 @@ try {
   <section class="hero">
     <div class="wrap hero-grid">
       <aside class="hero-side" aria-hidden="true">
-        <span class="index">01—07</span>
+        <span class="index">01—08</span>
         <span class="line"></span>
         <span class="vertical">BUAA / GRADUATE TEACHING LIBRARY / 2026</span>
       </aside>
       <div class="hero-copy">
         <div class="hero-kicker">Graduate teaching library</div>
-        <h1>七本研究生<br><em>课程讲义</em></h1>
-        <p class="lead">七本书各自按章组织讲义与例题，每本都有导览页，章末附练习或检查。每节配结构图与读图提示；公式、插图与全文搜索随站分发，阅读时不请求第三方资源。</p>
+        <h1>八本研究生<br><em>课程讲义</em></h1>
+        <p class="lead">八本书各自按章组织讲义与例题，每本都有导览页，章末附练习或检查。每节配结构图与读图提示；公式、插图与全文搜索随站分发，阅读时不请求第三方资源。</p>
         <div class="hero-meta">
-          <span>7 本书</span><span>3 条学习路线</span><span>每本一份导览页</span><span>全文搜索在浏览器内完成</span>
+          <span>8 本书</span><span>4 条学习路线</span><span>每本一份导览页</span><span>全文搜索在浏览器内完成</span>
         </div>
         <div class="hero-actions">
-          <a class="btn" href="#books">七本书目 <span aria-hidden="true">↓</span></a>
+          <a class="btn" href="#books">八本书目 <span aria-hidden="true">↓</span></a>
           <a class="text-link" href="#paths">学习路线 ↓</a>
         </div>
       </div>
       <div class="hero-visual">
-        <div class="feature-strip feature-strip-7" aria-label="七本书">
+        <div class="feature-strip feature-strip-7" aria-label="八本书">
           <a class="strip-item active" href="robot/" aria-label="机器人控制技术"><span>01</span><img src="robot/assets/covers/robot.svg" alt=""></a>
           <a class="strip-item" href="matrix/" aria-label="矩阵论"><span>02</span><img src="matrix/assets/covers/matrix.svg" alt=""></a>
           <a class="strip-item" href="numerical/" aria-label="数值分析"><span>03</span><img src="numerical/assets/covers/numerical.svg" alt=""></a>
@@ -271,11 +272,12 @@ try {
           <a class="strip-item" href="linux/" aria-label="Linux 系统与内核"><span>05</span><img src="linux/assets/covers/linux.svg" alt=""></a>
           <a class="strip-item" href="agent-systems/" aria-label="Agent 系统工程"><span>06</span><img src="agent-systems/assets/covers/agent-systems.svg" alt=""></a>
           <a class="strip-item" href="distributed/" aria-label="分布式系统与数据面"><span>07</span><img src="distributed/assets/covers/distributed.svg" alt=""></a>
+          <a class="strip-item" href="compilers/" aria-label="编译器与程序分析"><span>08</span><img src="compilers/assets/covers/compilers.svg" alt=""></a>
         </div>
         <div class="feature-frame">
-          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / 07</span></div>
+          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / 08</span></div>
           <a class="feature-cover" href="robot/"><img src="robot/assets/covers/robot.svg" alt="机器人控制技术书封"></a>
-          <div class="feature-foot"><span>机器人控制技术</span><span>5 章 · 48 节</span></div>
+          <div class="feature-foot"><span>机器人控制技术</span><span>6 章 · 56 节</span></div>
         </div>
       </div>
     </div>
@@ -304,16 +306,16 @@ try {
     <div class="wrap index-grid">
       <aside class="index-side">
         <span class="kicker">INDEX / 01</span>
-        <span class="label">七本书目</span>
-        <span class="count">07</span>
+        <span class="label">八本书目</span>
+        <span class="count">08</span>
       </aside>
       <div class="index-list">
         <a class="index-row" href="robot/">
           <span class="row-no">01</span>
           <img class="row-cover" src="robot/assets/covers/robot.svg" alt="">
           <span class="row-head"><span class="row-en">ROBOTICS</span><span class="row-title">机器人控制技术</span></span>
-          <span class="row-desc">刚体位姿、正逆运动学、雅可比、奇异性、轨迹规划与执行器。</span>
-          <span class="row-meta"><span>5 章 · 48 节</span><span>101 道习题 · 全部附解</span></span>
+          <span class="row-desc">刚体位姿、正逆运动学、雅可比、奇异性、轨迹规划、执行器与动力学。</span>
+          <span class="row-meta"><span>6 章 · 56 节</span><span>104 道习题 · 全部附解</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="matrix/">
@@ -329,7 +331,7 @@ try {
           <img class="row-cover" src="numerical/assets/covers/numerical.svg" alt="">
           <span class="row-head"><span class="row-en">NUMERICAL METHODS</span><span class="row-title">数值分析</span></span>
           <span class="row-desc">误差、范数、线性方程组、特征值、非线性方程与插值；附数值线性代数工具箱，实验经 Python 复算。</span>
-          <span class="row-meta"><span>课堂主线 7 章 · 补充篇 8 节</span><span>40 道习题 · <span class="row-flag">第 8 讲占位</span></span></span>
+          <span class="row-meta"><span>课堂主线 7 章 · 补充篇 8 节</span><span>40 道习题 · <span class="row-flag">第 8 讲占位 · 第 10 讲已补</span></span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="index-row" href="deeplearning/">
@@ -364,6 +366,14 @@ try {
           <span class="row-meta"><span>5 篇 · 13 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
+        <a class="index-row" href="compilers/">
+          <span class="row-no">08</span>
+          <img class="row-cover" src="compilers/assets/covers/compilers.svg" alt="">
+          <span class="row-head"><span class="row-en">COMPILERS &amp; ANALYSIS</span><span class="row-title">编译器与程序分析</span></span>
+          <span class="row-desc">词法、AST、IR/SSA、数据流与优化、寄存器分配、ABI 代码生成、UB/sanitizer、fuzzing、形式化验证与 JIT 沙箱；附迷你 C 编译器与 agent 代码验证器。</span>
+          <span class="row-meta"><span>4 篇 · 14 章</span><span>2 个可运行项目</span></span>
+          <span class="row-arrow" aria-hidden="true">↗</span>
+        </a>
         <p class="index-note">每本书都有导览页与章末练习或检查；标注为待补或占位的内容，以各书导览页的最新说明为准。</p>
       </div>
     </div>
@@ -374,11 +384,11 @@ try {
       <aside class="index-side">
         <span class="kicker">PATHS / 02</span>
         <span class="label">学习路线</span>
-        <span class="count">03</span>
+        <span class="count">04</span>
       </aside>
       <div>
         <h2 class="paths-title" id="paths-title">从哪里开始</h2>
-        <p class="paths-intro">每本书都可以独立开始。下面三条是按学科与前置关系整理的建议顺序，依据来自各书的导览页与入学诊断。</p>
+        <p class="paths-intro">每本书都可以独立开始。下面四条是按学科与前置关系整理的建议顺序，依据来自各书的导览页与入学诊断。</p>
         <div class="path-cards">
           <article class="path-card">
             <span class="path-tag">ROUTE A · 系统线</span>
@@ -401,6 +411,13 @@ try {
             <span class="path-basis">依据：机器人卷的入学诊断要求线性代数（正交矩阵、特征值）；第 3 章讲雅可比与广义逆。</span>
             <span class="path-chain"><a href="matrix/">02 矩阵论</a><span>→</span><a href="numerical/">03 数值分析</a><span>→</span><a href="robot/">01 机器人</a></span>
           </article>
+          <article class="path-card">
+            <span class="path-tag">ROUTE D · 编译线</span>
+            <h3>Linux → 编译器与程序分析</h3>
+            <p>先在 Linux 卷补齐三套 ISA、ABI 与 ELF；再走词法、AST、IR/SSA、优化与后端。项目一实现完整编译器，项目二把静态规则、编译门禁与受限执行接到 agent 代码审查。</p>
+            <span class="path-basis">依据：编译器卷把汇编/ABI/ELF 基础交叉引用到 Linux 1.14–1.16 与 1.7，不重写。</span>
+            <span class="path-chain"><a href="linux/">05 Linux</a><span>→</span><a href="compilers/">08 编译器</a></span>
+          </article>
         </div>
       </div>
     </div>
@@ -411,7 +428,7 @@ try {
       <div class="about-side">BUILD / SOURCE</div>
       <div class="about-main">
         <h2>构建与源码</h2>
-        <p>站点由 mdBook 构建。七本书共用一套视觉层与浏览器脚本（shared/），各书只保留自己的样式与构建配置；搜索索引、公式与插图随站分发，页面运行时不请求第三方资源。</p>
+        <p>站点由 mdBook 构建。八本书共用一套视觉层与浏览器脚本（shared/），各书只保留自己的样式与构建配置；搜索索引、公式与插图随站分发，页面运行时不请求第三方资源。</p>
       </div>
       <div class="about-links">
         <a href="https://github.com/JUANWANG-BUAA/tutorials" target="_blank" rel="noopener">GitHub 仓库 ↗</a>

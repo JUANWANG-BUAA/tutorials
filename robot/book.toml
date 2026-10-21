@@ -1,4 +1,4 @@
-# 《机器人控制技术》定制教程（第一章 引言 · 第二章 运动学 · 第三章 微分运动学和静力学 · 第四章 轨迹规划）
+# 《机器人控制技术》定制教程（第一章 引言 · 第二章 运动学 · 第三章 微分运动学和静力学 · 第四章 轨迹规划 · 第五章 执行器与传感器 · 第六章 动力学）
 #
 # 唯一的构建配置。日常操作：
 #   mdbook serve --open     本地预览（含全文搜索）
@@ -8,7 +8,7 @@
 
 [book]
 title = "机器人控制技术 · 定制教程"
-description = "第一章 引言 · 第二章 运动学 · 第三章 微分运动学和静力学 · 第四章 轨迹规划 —— 依据 Siciliano 等《机器人学：建模、规划与控制》与课程录播（智学北航）整理扩充的定制教程"
+description = "第一章 引言 · 第二章 运动学 · 第三章 微分运动学和静力学 · 第四章 轨迹规划 · 第五章 执行器与传感器 · 第六章 动力学 —— 依据 Siciliano 等《机器人学：建模、规划与控制》与课程录播（智学北航）整理扩充的定制教程"
 language = "zh-CN"
 src = "src"
 
@@ -23,7 +23,7 @@ preferred-dark-theme = "coal"
 # 字体 / 字号 / 间距 / 版心）。prefs.css 必须排在最后：读者偏好靠「同特异性 +
 # 后加载」覆盖权威样式表；head.hbs 在首帧前落 data-* 属性，避免首屏闪烁。
 additional-css = ["theme/css/base.css", "theme/css/robot.css", "theme/css/katex.css", "theme/css/framework.css", "theme/css/atlas.css", "theme/css/rhine.css", "theme/css/prefs.css"]
-additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js", "theme/js/page-extras.js", "theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/atlas.js"]
+additional-js = ["theme/js/prefs-config.js", "theme/js/page-extras.js", "theme/js/robot.js", "theme/js/search-cjk.js", "theme/js/robot-labs.js", "theme/js/framework-core.js", "theme/js/framework-nav.js", "theme/js/framework-media.js", "theme/js/framework-text.js", "theme/js/prefs.js", "theme/js/rhine.js", "theme/js/atlas.js"]
 # 标题里已含「1.2.1」这类编号，隐藏 mdBook 自己的位置编号，避免出现重复数字。
 # 仓库与「编辑此页」：读者发现笔误可直接改（mdBook 原生的两处入口，见菜单栏右侧）。
 # edit-url-template 里的 {path} 是相对本书根目录的路径（含 src/），故前缀只写到子目录。

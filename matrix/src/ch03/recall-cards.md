@@ -84,6 +84,55 @@ $g(A)=O$ 则 $g$ 是 $A$ 的零化多项式（[@def-3.5.2]）。有无穷多个�
 零化多项式中**次数最小**的**首 1**（最高次项系数为 $1$）多项式，记 $m_A$（[@def-3.5.3]）。两项关系（[@thm-3.5.5]）：① $m_A$ **唯一**，且**整除**任何零化多项式——特别地 $m_A\mid f_A$；② $m_A$ 与 $f_A$ **根相同**（不计重数）。$m_A$ 的重数记「必要重数」：$I_2$ 的 $f_A=(\lambda-1)^2$ 而 $m_A=\lambda-1$。
 :::
 
+### D9 · 单纯矩阵
+
+写出定义；它与 Schur 分解是什么关系？「单纯」是否等价于「有 $n$ 个互异特征值」？
+
+::: sol D9 核对
+
+$A$ 相似于对角阵：存在可逆 $P$ 使 $P^{-1}AP=\Lambda$（[@def-3.6.1]）。它是 Schur 分解 $U^{\mathrm H}AU=\Lambda_{\text{上三角}}$ 当上方 $\ast$ 全为零时的特例（[@note-3.6-schur-special]）。**不等价**：互异特征值只是充分条件（[@cor-3.6.1]），$I_n$ 只有一重特征值却已是对角阵。准确的充要条件是 [@thm-3.6.1] 的五条。
+:::
+
+### D10 · 酉相似对角化
+
+写出定义；它等价于什么样的一组特征向量？与「相似对角化」差在哪？
+
+::: sol D10 核对
+
+存在**酉矩阵** $U$ 使 $U^{\mathrm H}AU=\Lambda$（[@def-3.6.2]）。等价说法：$A$ 有 $n$ 个特征向量构成 $\mathbb C^n$ 的**标准正交基**（把 $U$ 按列读出即得；反之拼起来即得 $U$）。与普通相似对角化的差别只在「$P$ 可逆」升级为「$U$ 酉」——几何上是从「任意基」升级为「标准正交基」，代价是 $A$ 必须正规（[@thm-3.6.2]）。
+:::
+
+### D11 · 正规矩阵
+
+写出定义；举四个例子与一个反例；它与单纯矩阵的关系是什么？
+
+::: sol D11 核对
+
+$A^{\mathrm H}A=AA^{\mathrm H}$（[@def-3.6.3]）。四个例子：Hermite（$A^{\mathrm H}=A$）、反 Hermite（$A^{\mathrm H}=-A$）、酉矩阵（$A^{\mathrm H}A=I$）、正交矩阵（实酉矩阵）。反例：$\begin{bmatrix}1&1\\0&2\end{bmatrix}$ 可对角化但不正规（[@ex-3.6.C]）。关系：**正规 $\subset$ 单纯**；正规 $\iff$ 酉相似于对角阵（[@thm-3.6.2]），单纯只保证相似于对角阵。
+:::
+
+### D12 · 谱分解与谱阵
+
+写出定义式；谱阵 $E_j$ 怎么从 $P$、$P^{-1}$ 读出来？它的几何意义是什么？
+
+::: sol D12 核对
+
+$A=\sum_{j=1}^{m}\lambda_jE_j$（[@def-3.7.1]）。把 $P$ 按**列**读成 $\boldsymbol\alpha_1,\cdots,\boldsymbol\alpha_n$、把 $P^{-1}$ 按**行**读成 $\boldsymbol\beta_1^{\mathrm H},\cdots,\boldsymbol\beta_n^{\mathrm H}$，则
+
+$$E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H};$$
+
+等价地 $E_j=P\operatorname{diag}(0,\cdots,1,\cdots,0)P^{-1}$（[@note-3.7-projector-identity]）。几何上 $E_j$ 是到特征子空间 $E(\lambda_j)$ 的投影（沿其余特征子空间的直和）；正规时还是**正交**投影（[@prop-3.7.2]）。
+:::
+
+### D13 · 幂等矩阵与正交投影
+
+分别写出定义；两者差在哪？$E^2=E$ 时 $R(E)$ 与 $N(E)$ 有什么关系？
+
+::: sol D13 核对
+
+幂等：$E^2=E$（[@def-3.7.2]）；正交投影：$E^2=E=E^{\mathrm H}$（[@def-3.7.3]）。差别在 $E^{\mathrm H}=E$：幂等只保证 $\mathbb C^n=R(E)\oplus N(E)$、$E$ 沿 $N(E)$ 投到 $R(E)$；Hermite 再保证 $R(E)\perp N(E)$。幂等阵的特征值只能是 $0,1$，且 $\operatorname{rank}E=\operatorname{tr}E$（[@note-3.7-idempotent]）。
+:::
+
 ## B. 定理卡
 
 ### T1 · 引理 3.1.1（相抵标准形存在性）
@@ -230,6 +279,82 @@ $A^{-1}=-\dfrac{1}{a_0}\big(A^{n-1}+a_{n-1}A^{n-2}+\cdots+a_1I\big)$（[@cor-3.5
 （1）$m_A$ 唯一、整除一切零化多项式（特别地 $m_A\mid f_A$）；（2）$f_A$ 与 $m_A$ 同根（不计重数）（[@thm-3.5.5]）。整除证明：带余除法 $g=qm_A+r$，代入得 $r(A)=O$，若 $r\ne0$ 违反最小性。同根反方向：$m_A(A)\boldsymbol\alpha=m_A(\lambda_0)\boldsymbol\alpha=\boldsymbol 0$，用**特征向量继承**（注 4）。候选法（[@method-minpoly]）：① 求 $f_A$ 并因式分解；② 列候选（每个根取重数 1 到 $d_j$，共 $\prod d_j$ 个）；③ **从低次到高次**逐个试 $g(A)=O$，第一个通过的即 $m_A$——次序不能反（低次通过则高次必通过）。
 :::
 
+### T17 · 定理 3.6.1（单纯矩阵的五条等价）
+
+完整陈述五条；证明的「两条主干」分别是什么？（1）$\iff$（2）与（5）$\Rightarrow$（1）各用了什么构造？
+
+::: sol T17 核对
+
+（1）$A$ 单纯；（2）$A$ 有 $n$ 个线性无关特征向量；（3）$d_i=g_i$；（4）$\sum\dim E(\lambda_i)=n$；（5）$m_A$ 无重根（[@thm-3.6.1]）。第一条主干：（1）$\iff$（2）把 $P$ 按列读出特征向量；（2）$\iff$（4）用「不同特征值特征向量无关」数 $\sum g_i$；（3）$\iff$（4）用 $\sum d_i=n$ 与 $g_i\le d_i$。第二条主干：（1）$\Rightarrow$（5）在 $P\Lambda P^{-1}$ 上算 $g(A)$，得 $m_A=\prod_j(\lambda-\lambda_j)$；（5）$\Rightarrow$（1）构造 Lagrange 投影 $f_j=m_A/(\lambda-\lambda_j)$、$E_j=f_j(A)/f_j(\lambda_j)$，验证 $\sum E_j=I$、$E_iE_j=O$、$(A-\lambda_jI)E_j=O$，于是 $\mathbb C^n=\oplus E(\lambda_j)$。
+:::
+
+### T18 · 推论 3.6.1 / 3.6.2（两条判别口诀）
+
+陈述两条推论；它们各自的反例是什么？「存在无重根零化多项式」到底是充分还是充要？
+
+::: sol T18 核对
+
+（a）$n$ 个互异特征值 $\Rightarrow$ 单纯；反之不然（$I_n$）（[@cor-3.6.1]）。（b）若**存在**无重根零化多项式 $g$，则单纯（[@cor-3.6.2]）。反例要分清：推论 3.6.2 若读成「单纯 $\Rightarrow$ 每个零化多项式无重根」，$I_2$ 的 $f_A=(\lambda-1)^2$ 是反例；但「存在」无重根零化多项式其实是**充要**的——取 $g=m_A$。注 3 的准确意思是：这两条是**便于验证的判别口诀**——3.6.1 只是充分，3.6.2 按字面是充要；真正要背的充要条件仍是 [@thm-3.6.1]（5）（[@note-3.6-sufficient]）。
+:::
+
+### T19 · Hermite / 实对称谱定理
+
+陈述推论 3.6.3 与 3.6.4；证明的第一行（Schur 路线）是什么？反方向为什么只有一行？
+
+::: sol T19 核对
+
+Hermite $\iff$ 特征值全实且存在酉 $U$ 使 $U^{\mathrm H}AU=\operatorname{diag}(\lambda_i)$（[@cor-3.6.3]）；实对称 $\iff$ 特征值全实且存在实正交 $Q$ 使 $Q^{\mathrm T}AQ=\operatorname{diag}(\lambda_i)$（[@cor-3.6.4]）。证明第一行：Schur 给 $U^{\mathrm H}AU=\Lambda$ 上三角，取共轭转置得 $U^{\mathrm H}A^{\mathrm H}U=\Lambda^{\mathrm H}$，$A=A^{\mathrm H}$ 推出 $\Lambda=\Lambda^{\mathrm H}$，故 $\Lambda$ 是实对角阵（[@ex-3.6.5]）。反方向：若 $A=U\Lambda U^{\mathrm H}$ 且 $\lambda_i$ 全实，则 $A^{\mathrm H}=U\Lambda^{\mathrm H}U^{\mathrm H}=U\Lambda U^{\mathrm H}=A$；实情形取转置即得对称。
+:::
+
+### T20 · 定理 3.6.2（正规 $\iff$ 酉对角化）
+
+陈述；证明的两步各是什么？「上三角正规阵必为对角阵」怎么证？
+
+::: sol T20 核对
+
+$A^{\mathrm H}A=AA^{\mathrm H}$ $\iff$ 存在酉 $U$ 使 $U^{\mathrm H}AU=\operatorname{diag}(\lambda_i)$（[@thm-3.6.2]）。两步：① 对 $A$ 作 Schur 分解 $T=U^{\mathrm H}AU$ 上三角；正规性在酉相似下不变（$T^{\mathrm H}T=U^{\mathrm H}A^{\mathrm H}AU=U^{\mathrm H}AA^{\mathrm H}U=TT^{\mathrm H}$），故 $T$ 正规。② 上三角正规阵必对角（[@lem-3.6.A]）：比较 $T^{\mathrm H}T$ 与 $TT^{\mathrm H}$ 的 $(1,1)$ 元，得 $|t_{11}|^2=\sum_k|t_{1k}|^2$，故第一行非对角元全零；对右下块归纳。反方向：$A=U\Lambda U^{\mathrm H}$ 时 $A^{\mathrm H}A=U|\Lambda|^2U^{\mathrm H}=AA^{\mathrm H}$。
+:::
+
+### T21 · 谱分解的存在与三步法
+
+写出谱分解式；从 $P\Lambda P^{-1}$ 到 $\sum_j\lambda_jE_j$ 的三步是什么？$E_j$ 的秩是多少？
+
+::: sol T21 核对
+
+$A=\sum_{j=1}^{m}\lambda_jE_j$（[@def-3.7.1]）。三步（[@method-spectral]）：① 对角化 $A=P\Lambda P^{-1}$，$P$ 按列读 $\boldsymbol\alpha_i$、$P^{-1}$ 按行读 $\boldsymbol\beta_i^{\mathrm H}$；② 拆成 $A=\sum_i\lambda_i\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$；③ 按特征值分组 $E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$。关键恒等式 $\boldsymbol\beta_i^{\mathrm H}\boldsymbol\alpha_k=\delta_{ik}$（来自 $P^{-1}P=I$）。$\operatorname{rank}E_j=d_j$（[@note-3.7-rank]）。
+:::
+
+### T22 · 命题 3.7.1（谱阵五性质）
+
+列出五条；唯一性怎么证？这五条为什么能刻画「投影」？
+
+::: sol T22 核对
+
+（1）$E_j^2=E_j$；（2）$E_iE_j=0$；（3）$E_iA=AE_i=\lambda_iE_i$；（4）$\sum E_k=I$；（5）谱阵集唯一（[@prop-3.7.1]）。唯一性：若另有 $F_j$ 满足（1）–（4），对 $f_i=\prod_{l\ne i}(\lambda-\lambda_l)$ 有 $f_i(A)=f_i(\lambda_i)F_i$；对 $E$ 族同样有 $f_i(A)=f_i(\lambda_i)E_i$，故 $F_i=E_i$。五条合起来说：$E_j$ 是一组两两正交的幂等元、和为 $I$、与 $A$ 交换且给出特征值 $\lambda_j$——这正是「沿其余特征子空间投到第 $j$ 个特征子空间」的代数刻画。
+:::
+
+### T23 · 定理 3.7.1 / 3.7.2（函数演算与 Lagrange 公式）
+
+写出两个公式；各怎么证？为什么 $E_i$ 与 $P$ 的选取无关？
+
+::: sol T23 核对
+
+$f(A)=\sum_jf(\lambda_j)E_j$（[@thm-3.7.1]）；$E_i=f_i(A)/f_i(\lambda_i)$，$f_i=\prod_{l\ne i}(\lambda-\lambda_l)$（[@thm-3.7.2]）。前者：对单项式归纳 $A^k=\sum\lambda_j^kE_j$（用 $E_iE_j=\delta_{ij}E_i$、$\sum E_j=I$），再线性组合。后者：把 $f_i$ 代入前者，$f_i(\lambda_j)=0$（$j\ne i$），只剩 $f_i(\lambda_i)E_i$。$E_i$ 只由 $\lambda_j$ 与 $A$ 决定（公式里没有 $P$），故与 $P$ 的选取无关；这与命题 3.7.1（5）的唯一性一致。
+:::
+
+### T24 · 正规谱阵与正交投影
+
+正规矩阵的谱阵为什么是正交投影？预解式 $(\lambda I-A)^{-1}$ 与 $E_j$ 有什么关系？
+
+::: sol T24 核对
+
+正规时 $A=U\Lambda U^{\mathrm H}$，按特征值分组得 $E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol u_i\boldsymbol u_i^{\mathrm H}$；每项 Hermite，求和仍 Hermite，故 $E_j^{\mathrm H}=E_j$；结合 $E_j^2=E_j$ 即正交投影（[@prop-3.7.2]）。几何：$E_j$ 是到 $E(\lambda_j)$ 的正交投影，$\mathbb C^n$ 被正交地拆成各特征子空间。预解式（[@note-3.7-resolvent]）：
+
+$$(\lambda I-A)^{-1}=\sum_j\frac{E_j}{\lambda-\lambda_j},$$
+
+它是部分分式分解，极点 $\lambda_j$、留数 $E_j$；令 $\lambda=0$ 得 $A^{-1}=-\sum_jE_j/\lambda_j$（$0\notin\sigma(A)$）。
+:::
+
 ## C. 一张白纸的最终测试
 
 在白纸中央写「矩阵分解」，闭卷画出下面这张全景图，并在每条箭头上写出「工具」与「唯一性」两个标注：
@@ -238,9 +363,20 @@ $$
 \text{相抵}\ (A=P^{-1}\Gamma Q)
 \longrightarrow \text{满秩}\ (A=BC)
 \longrightarrow \text{QR}\ (A=QR/UR)
-\longrightarrow \text{Schur}\ (U^{\mathrm H}AU=\Lambda).
+\longrightarrow \text{Schur}\ (U^{\mathrm H}AU=\Lambda)
+\longrightarrow \text{对角化}\ (P^{-1}AP=\Lambda)
+\longrightarrow \text{谱分解}\ (A=\textstyle\sum_j\lambda_jE_j).
 $$
 
-「工具」依次是：分块消元 → 选列空间基（RREF）→ GS 正交化（$+$ 基扩充）→ 对相似阵作 QR。「唯一性」依次是：分解不唯一 / 标准形唯一 → 差可逆因子 $D$ → 正线唯一（去正线差对角酉阵）→ 对角元为特征值、顺序由 $U$ 定。
+「工具」依次是：分块消元 → 选列空间基（RREF）→ GS 正交化（$+$ 基扩充）→ 对相似阵作 QR → 五条判据（求 $P$ / 正交化）→ 按特征值分组（读谱阵）。「唯一性」依次是：分解不唯一 / 标准形唯一 → 差可逆因子 $D$ → 正线唯一（去正线差对角酉阵）→ 对角元为特征值、顺序由 $U$ 定 → $P$ 可换、$\Lambda$ 的次序随 $P$ 换 → 谱阵 $E_j$ **唯一**（[@prop-3.7.1]（5））。
 
-然后默写 T2、T4、T6、T9、T14、T16 六条定理。它们分别负责本章最常见的六类动作：**构造、分解、掰直、迭代、降次、记账**。最后加试三问（对着[竞技场](arena.md)的必考点清单自评）：① $r_{kk}$ 何时等于 $\|\boldsymbol a_k\|$？② 去掉「正线」两个字，$I_2$ 有几种 QR 分解、复方阵有几种？③ $f_A$ 与 $m_A$ 各自「记」什么——用 $I_2$ 和旋转阵各说一句。三问全答对，本章才算「可以调用」。
+然后默写 T2、T4、T6、T9、T14、T16、T17、T20、T22、T24 十条定理。它们分别负责本章最常见的十类动作：**构造、分解、掰直、迭代、降次、记账、判定、升级、拆投影、算函数**。最后加试六问（对着[竞技场](arena.md)的必考点清单自评）：
+
+① $r_{kk}$ 何时等于 $\|\boldsymbol a_k\|$？
+② 去掉「正线」两个字，$I_2$ 有几种 QR 分解、复方阵有几种？
+③ $f_A$ 与 $m_A$ 各自「记」什么——用 $I_2$ 和旋转阵各说一句？
+④ 五条判据里哪条是充要？两条判别口诀各是什么逻辑地位（哪条只是充分、哪条按字面是充要）？各举一个反例说明「反过来不成立」。
+⑤ 正规矩阵与单纯矩阵差在哪？举出「单纯但不正规」与「正规但不 Hermite」各一例。
+⑥ 谱阵的 Lagrange 公式为什么与 $P$ 的选取无关？用一句话说清「谱阵唯一、$P$ 不唯一」。
+
+六问全答对，本章才算「可以调用」。

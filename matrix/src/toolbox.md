@@ -107,6 +107,28 @@
 **验算**：残差与基向量逐个内积为零；投影的幂等性 $P^2=P$。**易错**：对**非正交**基直接套投影公式（[勘误 E12](ch01/errata.md)）；Householder 是镜像不是投影。
 :::
 
+::: method 流程 11 · 对角化分解：判断、求 $P$、算 $A^m$ {#flow-311}
+
+**入口**：「判断 $A$ 能否对角化」「求可逆 $P$ 使 $P^{-1}AP=\Lambda$」「用对角化算 $A^{100}$ / 解 $\dot{\boldsymbol x}=A\boldsymbol x$」。
+
+**步骤**：① 求 $f_A(\lambda)$，因式分解出互异根 $\lambda_i$ 与代数重数 $d_i$；用 $\operatorname{tr}A=\sum d_i\lambda_i$、$\det A=\prod\lambda_i^{d_i}$ 验根（[@thm-eig-trace]）；② 算 $g_i=n-\operatorname{rank}(A-\lambda_iI)$（[@thm-geom-mult]）；只要有一个 $g_i<d_i$，**立刻停**：不可对角化（[@thm-3.6.1]）；③ 对每个 $\lambda_i$ 解 $(A-\lambda_iI)\boldsymbol x=\boldsymbol 0$，取 $g_i$ 个独立特征向量；④ 拼 $P$，**列序与 $\Lambda$ 对角元逐列配对**；⑤ 验 $AP=P\Lambda$（或 $P^{-1}AP=\Lambda$）；⑥ 算 $A^m=P\Lambda^mP^{-1}$，或解 $\boldsymbol y'=\Lambda\boldsymbol y$ 再乘回 $\boldsymbol x=P\boldsymbol y$。
+
+**验算**：$\operatorname{tr}\Lambda=\operatorname{tr}A$、$\det\Lambda=\det A$；$AP=P\Lambda$ 抽查一列；$A^m$ 的迹 $=\sum\lambda_i^m$。
+
+**易错**：把「互异特征值」当必要条件（$I_n$ 反例）；重特征值只找到一个向量就宣布可对角化；$P$ 与 $\Lambda$ 列序错配；把 $P^{-1}AP$ 写成 $PAP^{-1}$。
+:::
+
+::: method 流程 12 · 谱分解：求 $E_j$、算 $f(A)$ {#flow-312}
+
+**入口**：「求 $A$ 的谱分解」「用谱分解算 $A^{100}$ / $e^{At}$ / $A^{-1}$」「证明谱阵是正交投影」。
+
+**步骤**：① 先对角化（流程 11），得 $A=P\Lambda P^{-1}$；② 把 $P$ 按**列**读成 $\boldsymbol\alpha_1,\cdots,\boldsymbol\alpha_n$，把 $P^{-1}$ 按**行**读成 $\boldsymbol\beta_1^{\mathrm H},\cdots,\boldsymbol\beta_n^{\mathrm H}$（关键：$\boldsymbol\beta_i^{\mathrm H}\boldsymbol\alpha_k=\delta_{ik}$）；③ 按特征值分组 $E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$；④ 若只想求某个 $E_i$，用 Lagrange 公式 $E_i=f_i(A)/f_i(\lambda_i)$，$f_i=\prod_{l\ne i}(\lambda-\lambda_l)$（[@thm-3.7.2]）；⑤ 算 $f(A)=\sum_jf(\lambda_j)E_j$（[@thm-3.7.1]）；⑥ 若是正规矩阵，可改用 $E_j=\sum\boldsymbol u_i\boldsymbol u_i^{\mathrm H}$，此时 $E_j^{\mathrm H}=E_j$（[@prop-3.7.2]）。
+
+**验算**：$\sum_jE_j=I$；$E_iE_j=0$；$E_j^2=E_j$；$AE_j=\lambda_jE_j$；$\operatorname{tr}E_j=d_j$。正规时再加 $E_j^{\mathrm H}=E_j$。
+
+**易错**：把 $P^{-1}$ 的**列**当 $\boldsymbol\beta_i$（应读**行**）；$E_j$ 下标与 $\lambda_j$ 错配；把幂等当正交投影（只有正规矩阵才有 $E_j^{\mathrm H}=E_j$）；对非单纯矩阵硬写谱分解。
+:::
+
 ## 二、二级结论速查（可直接引用）
 
 「二级结论」= 正文已证结论的一次性推论，做题时可以直接引用（引用请写出它来自哪条正定理，或现场一行验证——本表列出两样都给你）。每条都标**前提**：前提不满足时结论作废，这是判断题最爱设的坑。

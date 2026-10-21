@@ -23,11 +23,13 @@ additional-css = [
   "theme/css/agent-systems.css",
   "theme/css/katex.css",
   "theme/css/framework.css",
-  "theme/css/atlas.css", "theme/css/rhine.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
   "theme/css/prefs.css",
   "theme/css/agent-viz.css",
 ]
-additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js",
+additional-js = [
+  "theme/js/prefs-config.js",
   "theme/js/page-extras.js",
   "theme/js/agent-systems.js",
   "theme/js/search-cjk.js",
@@ -36,6 +38,7 @@ additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js",
   "theme/js/framework-media.js",
   "theme/js/framework-text.js",
   "theme/js/prefs.js",
+  "theme/js/rhine.js",
   "theme/js/atlas.js",
   "theme/js/agent-viz.js",
 ]

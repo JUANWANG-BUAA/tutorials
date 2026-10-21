@@ -1,0 +1,129 @@
+{
+  "tool": "guard.py",
+  "schema": 1,
+  "target": "fixtures/good/sum.py",
+  "language": "python",
+  "verdict": "accept",
+  "gates": [
+    "static",
+    "compile",
+    "behavior"
+  ],
+  "policy": {
+    "name": "default",
+    "path": "policy.json",
+    "sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64"
+  },
+  "findings": [],
+  "suppressed": [],
+  "checks": [
+    {
+      "name": "static",
+      "status": "pass",
+      "findings": 0,
+      "suppressed": 0
+    },
+    {
+      "name": "compile",
+      "status": "pass",
+      "reason": null,
+      "exit_code": 0,
+      "elapsed_ms": 45
+    },
+    {
+      "name": "behavior",
+      "status": "pass",
+      "reason": null,
+      "cases": [
+        {
+          "name": "sum",
+          "status": "pass",
+          "exit_code": 0,
+          "elapsed_ms": 24
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "code_sha256": "9b76b467d70482e8b3369072e310856e1279359c65f1ac6c30a1283fee1c75d1",
+    "code_bytes": 274,
+    "tests_sha256": "dd768beb0373db508f99550a0b582f1396996b12349df2a7438ec66891ff0371",
+    "commands": [
+      {
+        "kind": "compile",
+        "argv": [
+          "/Users/juanwang/miniconda3/bin/python3",
+          "-I",
+          "-m",
+          "py_compile",
+          "candidate.py"
+        ],
+        "cwd": "tempdir",
+        "exit_code": 0,
+        "elapsed_ms": 45
+      },
+      {
+        "kind": "run",
+        "argv": [
+          "/Users/juanwang/miniconda3/bin/python3",
+          "-I",
+          "-B",
+          "../candidate.py"
+        ],
+        "cwd": "case-N",
+        "exit_code": 0,
+        "elapsed_ms": 24,
+        "timeout_s": 2.0
+      }
+    ],
+    "started_at": "2026-10-20T07:50:16+00:00",
+    "elapsed_ms": 76
+  },
+  "human_review": {
+    "required": false,
+    "status": "not_required",
+    "reason": null,
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  },
+  "limits": [
+    "进程级 RLIMIT + 超时，不是命名空间/虚拟机隔离",
+    "没有文件系统、网络或系统调用隔离",
+    "静态规则是模式匹配，不是语义证明",
+    "行为门禁只覆盖提供的测试用例"
+  ],
+  "behavior": {
+    "status": "pass",
+    "cases": [
+      {
+        "name": "sum",
+        "status": "pass",
+        "exit_code": 0,
+        "signal": null,
+        "timed_out": false,
+        "resource": null,
+        "elapsed_ms": 24,
+        "timeout_s": 2.0,
+        "stdout_bytes": 2,
+        "stdout_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58",
+        "stdout_truncated": false,
+        "limits": {
+          "applied": {
+            "cpu_s": 2,
+            "address_space_mb": 524288,
+            "file_size_mb": 1,
+            "nofile": 64
+          },
+          "skipped": []
+        },
+        "stderr_bytes": 0,
+        "stderr_truncated": false,
+        "expected_stdout_matches": "match",
+        "workspace_created": []
+      }
+    ],
+    "elapsed_ms": 25,
+    "compile": null
+  }
+}

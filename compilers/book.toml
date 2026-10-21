@@ -1,0 +1,64 @@
+# 《编译器与程序分析 · 从词法到可验证执行》定制教程
+#
+# 独立构建配置。只改本书；不修改仓库中已有五本的 book.toml / SUMMARY.md。
+#
+#   cd compilers && mdbook build .
+#   cd compilers && python3 tools/verify_all.py
+
+[book]
+title = "编译器与程序分析 · 从词法到可验证执行"
+description = "14 章 + 2 个项目：从前端、IR/SSA、数据流与优化，到寄存器分配、ABI 代码生成、UB/sanitizer、fuzzing、形式化验证与 JIT 沙箱。附一个可运行的迷你 C 编译器与一个 agent 代码验证器；汇编/ABI/ELF 基础只交叉引用《Linux 系统与内核》，不重写。"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+# 共用层由 shared/theme 通过符号链接复用；只新增本书的 compilers.css。
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/compilers.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
+  "theme/css/prefs.css",
+]
+additional-js = [
+  "theme/js/prefs-config.js",
+  "theme/js/page-extras.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/rhine.js",
+  "theme/js/atlas.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/compilers/{path}"
+no-section-label = true
+site-url = "/tutorials/compilers/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子：与仓库其他书同一份实现。
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式在构建期渲染；no-css 由 theme/css/katex.css 提供。
+[preprocessor.katex]
+command = "python3 tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

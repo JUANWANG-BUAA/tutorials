@@ -20,10 +20,12 @@ additional-css = [
   "theme/css/distributed.css",
   "theme/css/katex.css",
   "theme/css/framework.css",
-  "theme/css/atlas.css", "theme/css/rhine.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
   "theme/css/prefs.css",
 ]
-additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js",
+additional-js = [
+  "theme/js/prefs-config.js",
   "theme/js/page-extras.js",
   "theme/js/distributed.js",
   "theme/js/search-cjk.js",
@@ -32,6 +34,7 @@ additional-js = ["theme/js/prefs-config.js", "theme/js/rhine.js",
   "theme/js/framework-media.js",
   "theme/js/framework-text.js",
   "theme/js/prefs.js",
+  "theme/js/rhine.js",
   "theme/js/atlas.js",
 ]
 git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"

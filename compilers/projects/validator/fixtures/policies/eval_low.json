@@ -1,0 +1,4 @@
+{
+  "name": "eval-low",
+  "severity_overrides": {"PY-EVAL": "low"}
+}

@@ -79,6 +79,12 @@
 | **矩阵多项式** | $\varphi(A)=\sum a_iA^i$ | 常数项补成 $a_0I$；$\varphi(A)$ 与 $A$ 可交换 |
 | **零化多项式** | $g(A)=O$ | 有无穷多个（$g$ 零化则 $gh$ 也零化）；$f_A$ 与 $m_A$ 都是成员 |
 | **最小多项式** | 零化多项式中**次数最小**的**首 $1$** 多项式 $m_A$ | 唯一；**整除**一切零化多项式（$m_A\mid f_A$）；与 $f_A$ **根相同**（不计重数） |
+| **单纯矩阵** | 可对角化：存在可逆 $P$ 使 $P^{-1}AP=\Lambda$ | Schur 型上方 $\ast$ 全消的特例；**不等于**「有 $n$ 个互异特征值」 |
+| **五条判据** | （1）$P^{-1}AP=\Lambda$；（2）$n$ 个独立特征向量；（3）$d_i=g_i$；（4）$\sum\dim E=n$；（5）$m_A$ 无重根 | 充要的是（3）（4）（5）；互异特征值、无重根零化多项式只是**充分** |
+| **酉相似对角化** | 存在酉 $U$ 使 $U^{\mathrm H}AU=\Lambda$ | 等价于「有标准正交特征向量基」；$P$ 升级为 $U$，条件是正规 |
+| **正规矩阵** | $A^{\mathrm H}A=AA^{\mathrm H}$ | Hermite / 反 Hermite / 酉 / 正交都是；正规 $\subset$ 单纯，反之不然 |
+| **谱分解** | $A=\sum_j\lambda_jE_j$，$E_j$ 为谱阵 | $E_j=\sum_{\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$；谱阵**唯一**，$P$ 不唯一 |
+| **幂等 / 正交投影** | $E^2=E$ / $E^2=E=E^{\mathrm H}$ | 幂等 $=$ 投影（$R(E)\oplus N(E)$）；Hermite 幂等才是正交投影（$R(E)\perp N(E)$） |
 
 ## B. 定理：触发词 → 第一动作
 
@@ -151,6 +157,13 @@
 | 「求最小多项式」 | 候选法 | $f_A$ 因式分解 → 列候选（各根重数 $1$ 到 $d_j$）→ **从低往高**试 $g(A)=O$；第一个通过即 $m_A$ |
 | 「算 $g(A)$ / $A^m$ / $A^{-1}$」 | H–C 降次三件套 | $g(A)$ 除 $m_A$ 最省；$A^m$ 在特征值处定系数；$A^{-1}=-\frac{1}{a_0}(\cdots)$，$a_0=(-1)^n\det A$ |
 | 「为什么对角元是特征值」 | QR 算法 + 相似 | 迭代链 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$ 保持相似；极限上三角阵对角元即特征值 |
+| 「能不能对角化」 | 定理 3.6.1（五条判据） | 先算 $g_i=n-\operatorname{rank}(A-\lambda_iI)$，与 $d_i$ 比；有一个 $g_i<d_i$ 就停；也可用 $m_A$ 是否无重根 |
+| 「求 $P$ 使 $P^{-1}AP=\Lambda$」 | 特征向量拼列 | 每个 $\lambda_i$ 取 $g_i$ 个独立特征向量；**列序与 $\Lambda$ 对角元逐列配对**；验 $AP=P\Lambda$ |
+| 「实对称 / Hermite 求正交 / 酉 $Q$」 | 推论 3.6.3 / 3.6.4 | 跨特征值自动正交；**只在重特征值内部 GS**；$Q=[\boldsymbol u_1,\cdots]$，验 $Q^{\mathrm H}AQ=\Lambda$ |
+| 「这矩阵正规吗」 | 定理 3.6.2 | 算 $A^{\mathrm H}A$ 与 $AA^{\mathrm H}$ 是否相等；相等则一定可酉对角化，不等则只能普通对角化或不可 |
+| 「求谱分解」 | 三步法 / 定理 3.7.2 | $P$ 按列读 $\boldsymbol\alpha_i$、$P^{-1}$ 按行读 $\boldsymbol\beta_i^{\mathrm H}$，按特征值分组；或 $E_i=f_i(A)/f_i(\lambda_i)$ |
+| 「用谱分解算 $A^k$ / $f(A)$ / $e^{At}$」 | 定理 3.7.1 | $f(A)=\sum_jf(\lambda_j)E_j$；先验 $\sum E_j=I$、$E_iE_j=0$，再逐项代 |
+| 「谱阵是不是正交投影」 | 命题 3.7.2 | 正规 $\Rightarrow$ $E_j^{\mathrm H}=E_j$；非正规单纯矩阵只有 $E_j^2=E_j$（斜投影） |
 
 ## C. 八条公理：怎么记才不丢
 
@@ -419,7 +432,7 @@ python3 tools/export_cards.py --only ch03     # 只导出第三章
 | Givens·旋转 | Givens rotation | 在坐标平面 $(i,j)$ 内旋转、每次清零一个分量的正交矩阵 | [2.5.3](ch02/sec25.md#sec-2.5.3) |
 | Householder | Householder reflection and transformation | $H=I-2\omega\omega^{\mathrm T}$，关于 $\omega^{\perp}$ 照镜子的正交矩阵 | [2.5.4](ch02/sec25.md#sec-2.5.4) |
 
-**三 · 第三章（相抵分解、满秩分解、QR 分解、Schur 分解）**
+**三 · 第三章（相抵分解、满秩分解、QR 分解、Schur 分解、对角化分解、谱分解）**
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
@@ -449,3 +462,13 @@ python3 tools/export_cards.py --only ch03     # 只导出第三章
 | 酉相似 | unitary similarity | 换基矩阵取酉矩阵的相似，额外保住长度与内积 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
 | 正交相似 | orthogonal similarity | 换基矩阵取实正交矩阵的相似；对称阵可正交对角化 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
 | 上三角阵 | upper triangular matrix | 对角线以下元素全为零的方阵，对角元就是全部特征值 | [3.5.1](ch03/sec35.md#sec-3.5.1) |
+| 单纯矩阵 | diagonalizable (semisimple) matrix | 相似于对角阵 $P^{-1}AP=\Lambda$；五条等价判据见 [@thm-3.6.1] | [3.6.1](ch03/sec36.md#sec-3.6.1) |
+| 对角化分解 | diagonalization decomposition | $A=P\Lambda P^{-1}$：$P$ 的列是特征向量，列序与 $\Lambda$ 对角元逐列配对 | [3.6.1](ch03/sec36.md#sec-3.6.1) |
+| 酉相似对角化 | unitary diagonalization | 存在酉 $U$ 使 $U^{\mathrm H}AU=\Lambda$；等价于存在标准正交特征向量基 | [3.6.3](ch03/sec36.md#sec-3.6.3) |
+| 正规矩阵 | normal matrix | $A^{\mathrm H}A=AA^{\mathrm H}$；酉相似于对角阵的充要条件 | [3.6.4](ch03/sec36.md#sec-3.6.4) |
+| 谱分解 | spectral decomposition | $A=\sum_j\lambda_jE_j$：按特征值把对角化拆成「系数 $\times$ 投影」 | [3.7.1](ch03/sec37.md#sec-3.7.1) |
+| 谱阵 | spectral matrix | $E_j=\sum_{\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$，投到 $E(\lambda_j)$ 的投影（正规时正交） | [3.7.1](ch03/sec37.md#sec-3.7.1) |
+| 幂等矩阵 | idempotent matrix | $E^2=E$；投影的代数刻画，特征值只能是 $0,1$ | [3.7.2](ch03/sec37.md#sec-3.7.2) |
+| 正交投影矩阵 | orthogonal projection matrix | $E^2=E=E^{\mathrm H}$；$\mathbb C^n=R(E)\oplus N(E)$ 且 $R(E)\perp N(E)$ | [3.7.4](ch03/sec37.md#sec-3.7.4) |
+| Lagrange 谱阵公式 | Lagrange formula for spectral matrices | $E_i=f_i(A)/f_i(\lambda_i)$，$f_i=\prod_{l\ne i}(\lambda-\lambda_l)$ | [3.7.3](ch03/sec37.md#sec-3.7.3) |
+| 预解式 | resolvent | $(\lambda I-A)^{-1}=\sum_jE_j/(\lambda-\lambda_j)$；谱分解的部分分式形式 | [3.7.3](ch03/sec37.md#sec-3.7.3) |

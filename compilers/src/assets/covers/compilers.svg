@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 560" role="img" aria-labelledby="cc-cover-title cc-cover-desc">
+  <title id="cc-cover-title">编译器与程序分析 · 从词法到可验证执行</title>
+  <desc id="cc-cover-desc">封面以四条纵向轨道表示源码、IR、机器码与验证，节点依次连接，强调可运行与可验证。</desc>
+  <defs>
+    <linearGradient id="cc-cover-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#122126"/>
+      <stop offset="1" stop-color="#28494c"/>
+    </linearGradient>
+    <linearGradient id="cc-cover-line" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9dd7cf"/>
+      <stop offset="1" stop-color="#d8b26a"/>
+    </linearGradient>
+    <pattern id="cc-cover-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#7fb8b0" stroke-opacity="0.10" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="420" height="560" rx="8" fill="url(#cc-cover-bg)"/>
+  <rect width="420" height="560" rx="8" fill="url(#cc-cover-grid)"/>
+  <path d="M34 34h352v492H34z" fill="none" stroke="#d8b26a" stroke-opacity="0.45"/>
+  <text x="58" y="78" fill="#9dd7cf" font-family="ui-monospace, monospace" font-size="11" letter-spacing="3">COMPILERS / PROGRAM ANALYSIS</text>
+  <text x="58" y="142" fill="#f2ead9" font-family="Georgia, serif" font-size="34">编译器</text>
+  <text x="58" y="184" fill="#f2ead9" font-family="Georgia, serif" font-size="34">与程序分析</text>
+  <text x="58" y="218" fill="#d8b26a" font-family="ui-monospace, monospace" font-size="12">FROM LEXING TO VERIFIED EXECUTION</text>
+  <g stroke="url(#cc-cover-line)" stroke-width="2" fill="none" opacity="0.9">
+    <path d="M78 292h264"/>
+    <path d="M78 356h264"/>
+    <path d="M78 420h264"/>
+    <path d="M120 270v192"/>
+    <path d="M210 270v192"/>
+    <path d="M300 270v192"/>
+  </g>
+  <g fill="#122126" stroke="#9dd7cf" stroke-width="2">
+    <circle cx="120" cy="292" r="15"/><circle cx="210" cy="292" r="15"/><circle cx="300" cy="292" r="15"/>
+    <circle cx="120" cy="356" r="15"/><circle cx="210" cy="356" r="15"/><circle cx="300" cy="356" r="15"/>
+    <circle cx="120" cy="420" r="15"/><circle cx="210" cy="420" r="15"/><circle cx="300" cy="420" r="15"/>
+  </g>
+  <g fill="#f2ead9" font-family="ui-monospace, monospace" font-size="10" text-anchor="middle">
+    <text x="120" y="296">tok</text><text x="210" y="296">AST</text><text x="300" y="296">IR</text>
+    <text x="120" y="360">SSA</text><text x="210" y="360">opt</text><text x="300" y="360">asm</text>
+    <text x="120" y="424">ABI</text><text x="210" y="424">UB</text><text x="300" y="424">proof</text>
+  </g>
+  <text x="58" y="506" fill="#9dd7cf" font-family="ui-monospace, monospace" font-size="10">14 CHAPTERS / 2 PROJECTS / RUNNABLE EVIDENCE</text>
+  <text x="58" y="524" fill="#d8b26a" font-family="ui-monospace, monospace" font-size="10">MNEMOSYNE · COMPILER ARCHIVE</text>
+</svg>

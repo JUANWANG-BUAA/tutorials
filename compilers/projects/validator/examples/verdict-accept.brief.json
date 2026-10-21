@@ -1,0 +1,72 @@
+{
+  "target": "fixtures/good/sum.py",
+  "language": "python",
+  "verdict": "accept",
+  "findings": [],
+  "checks": [
+    {
+      "name": "static",
+      "status": "pass",
+      "findings": 0
+    },
+    {
+      "name": "compile",
+      "status": "pass",
+      "exit_code": 0,
+      "elapsed_ms": 37
+    },
+    {
+      "name": "behavior",
+      "status": "pass"
+    }
+  ],
+  "evidence": {
+    "code_sha256": "9b76b467d70482e8b3369072e310856e1279359c65f1ac6c30a1283fee1c75d1",
+    "policy_sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64",
+    "tests_sha256": "dd768beb0373db508f99550a0b582f1396996b12349df2a7438ec66891ff0371",
+    "commands": [
+      {
+        "kind": "compile",
+        "exit_code": 0,
+        "elapsed_ms": 37
+      },
+      {
+        "kind": "run",
+        "exit_code": 0,
+        "elapsed_ms": 23
+      }
+    ],
+    "elapsed_ms": 65
+  },
+  "human_review": {
+    "required": false,
+    "status": "not_required",
+    "reason": null,
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  },
+  "behavior": {
+    "status": "pass",
+    "cases": [
+      {
+        "name": "sum",
+        "status": "pass",
+        "exit_code": 0,
+        "timed_out": false,
+        "resource": null,
+        "stdout_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58",
+        "expected_stdout_matches": "match",
+        "limits": {
+          "applied": {
+            "cpu_s": 2,
+            "address_space_mb": 524288,
+            "file_size_mb": 1,
+            "nofile": 64
+          },
+          "skipped": []
+        }
+      }
+    ]
+  }
+}

@@ -26,3 +26,8 @@ deeplearning/tools/figs_out/
 
 # 本次写作的母本目录/OCR 中间产物（不发布）
 .work/
+
+# Browser review sessions
+.playwright-cli/
+# Optional theme renderer build dependencies
+node_modules/

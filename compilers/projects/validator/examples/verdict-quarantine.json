@@ -1,0 +1,146 @@
+{
+  "tool": "guard.py",
+  "schema": 1,
+  "target": "fixtures/quarantine/timeout_loop.py",
+  "language": "python",
+  "verdict": "quarantine",
+  "gates": [
+    "static",
+    "compile",
+    "behavior"
+  ],
+  "policy": {
+    "name": "default",
+    "path": "policy.json",
+    "sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64"
+  },
+  "findings": [
+    {
+      "rule": "RUN-TIMEOUT",
+      "severity": "medium",
+      "message": "case timeout 超时 1.0s",
+      "file": "fixtures/quarantine/timeout_loop.py",
+      "line": 0,
+      "snippet": ""
+    },
+    {
+      "rule": "PY-INFINITE-LOOP",
+      "severity": "low",
+      "message": "while True 且无 break：行为门禁只能靠超时兜底",
+      "file": "fixtures/quarantine/timeout_loop.py",
+      "line": 1,
+      "snippet": "while True:"
+    }
+  ],
+  "suppressed": [],
+  "checks": [
+    {
+      "name": "static",
+      "status": "warn",
+      "findings": 1,
+      "suppressed": 0
+    },
+    {
+      "name": "compile",
+      "status": "pass",
+      "reason": null,
+      "exit_code": 0,
+      "elapsed_ms": 31
+    },
+    {
+      "name": "behavior",
+      "status": "quarantine",
+      "reason": null,
+      "cases": [
+        {
+          "name": "timeout",
+          "status": "timeout",
+          "exit_code": -9,
+          "elapsed_ms": 1004
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "code_sha256": "d8b5c4b6751d495e5ffef53e4af21891adb500da0df28dc19727ca0cda213d8b",
+    "code_bytes": 21,
+    "tests_sha256": "f51af94fb95c61be9fa918e8373780f20ab4dc3a542f3f25c7d12b0ab2937bb8",
+    "commands": [
+      {
+        "kind": "compile",
+        "argv": [
+          "/Users/juanwang/miniconda3/bin/python3",
+          "-I",
+          "-m",
+          "py_compile",
+          "candidate.py"
+        ],
+        "cwd": "tempdir",
+        "exit_code": 0,
+        "elapsed_ms": 31
+      },
+      {
+        "kind": "run",
+        "argv": [
+          "/Users/juanwang/miniconda3/bin/python3",
+          "-I",
+          "-B",
+          "../candidate.py"
+        ],
+        "cwd": "case-N",
+        "exit_code": -9,
+        "elapsed_ms": 1004,
+        "timeout_s": 1.0
+      }
+    ],
+    "started_at": "2026-10-20T07:50:17+00:00",
+    "elapsed_ms": 1039
+  },
+  "human_review": {
+    "required": true,
+    "status": "pending",
+    "reason": "存在需要人工判断的中危发现",
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  },
+  "limits": [
+    "进程级 RLIMIT + 超时，不是命名空间/虚拟机隔离",
+    "没有文件系统、网络或系统调用隔离",
+    "静态规则是模式匹配，不是语义证明",
+    "行为门禁只覆盖提供的测试用例"
+  ],
+  "behavior": {
+    "status": "quarantine",
+    "cases": [
+      {
+        "name": "timeout",
+        "status": "timeout",
+        "exit_code": -9,
+        "signal": 9,
+        "timed_out": true,
+        "resource": null,
+        "elapsed_ms": 1004,
+        "timeout_s": 1.0,
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_truncated": false,
+        "limits": {
+          "applied": {
+            "cpu_s": 2,
+            "address_space_mb": 524288,
+            "file_size_mb": 1,
+            "nofile": 64
+          },
+          "skipped": []
+        },
+        "stderr_bytes": 0,
+        "stderr_truncated": false,
+        "expected_stdout_matches": "match",
+        "workspace_created": []
+      }
+    ],
+    "elapsed_ms": 1005,
+    "compile": null
+  }
+}

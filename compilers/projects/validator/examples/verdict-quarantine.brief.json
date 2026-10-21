@@ -1,0 +1,89 @@
+{
+  "target": "fixtures/quarantine/timeout_loop.py",
+  "language": "python",
+  "verdict": "quarantine",
+  "findings": [
+    {
+      "rule": "RUN-TIMEOUT",
+      "severity": "medium",
+      "message": "case timeout 超时 1.0s",
+      "file": "fixtures/quarantine/timeout_loop.py",
+      "line": 0,
+      "snippet": ""
+    },
+    {
+      "rule": "PY-INFINITE-LOOP",
+      "severity": "low",
+      "message": "while True 且无 break：行为门禁只能靠超时兜底",
+      "file": "fixtures/quarantine/timeout_loop.py",
+      "line": 1,
+      "snippet": "while True:"
+    }
+  ],
+  "checks": [
+    {
+      "name": "static",
+      "status": "warn",
+      "findings": 1
+    },
+    {
+      "name": "compile",
+      "status": "pass",
+      "exit_code": 0,
+      "elapsed_ms": 41
+    },
+    {
+      "name": "behavior",
+      "status": "quarantine"
+    }
+  ],
+  "evidence": {
+    "code_sha256": "d8b5c4b6751d495e5ffef53e4af21891adb500da0df28dc19727ca0cda213d8b",
+    "policy_sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64",
+    "tests_sha256": "f51af94fb95c61be9fa918e8373780f20ab4dc3a542f3f25c7d12b0ab2937bb8",
+    "commands": [
+      {
+        "kind": "compile",
+        "exit_code": 0,
+        "elapsed_ms": 41
+      },
+      {
+        "kind": "run",
+        "exit_code": -9,
+        "elapsed_ms": 1008
+      }
+    ],
+    "elapsed_ms": 1053
+  },
+  "human_review": {
+    "required": true,
+    "status": "pending",
+    "reason": "存在需要人工判断的中危发现",
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  },
+  "behavior": {
+    "status": "quarantine",
+    "cases": [
+      {
+        "name": "timeout",
+        "status": "timeout",
+        "exit_code": -9,
+        "timed_out": true,
+        "resource": null,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "expected_stdout_matches": "match",
+        "limits": {
+          "applied": {
+            "cpu_s": 2,
+            "address_space_mb": 524288,
+            "file_size_mb": 1,
+            "nofile": 64
+          },
+          "skipped": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "tool": "guard.py",
+  "schema": 1,
+  "target": "fixtures/bad/agent_alias.py",
+  "language": "python",
+  "verdict": "reject",
+  "gates": [
+    "static",
+    "compile",
+    "behavior"
+  ],
+  "policy": {
+    "name": "default",
+    "path": "policy.json",
+    "sha256": "14e6f396b059520fab6b1fe89ac70c703f9ad15e2cc92cd1cfd10ae2a3850c64"
+  },
+  "findings": [
+    {
+      "rule": "PY-OS-SYSTEM",
+      "severity": "high",
+      "message": "os.system()：os.system() 启动 shell",
+      "file": "fixtures/bad/agent_alias.py",
+      "line": 3,
+      "snippet": "run(\"echo aliased\")"
+    }
+  ],
+  "suppressed": [],
+  "checks": [
+    {
+      "name": "static",
+      "status": "fail",
+      "findings": 1,
+      "suppressed": 0
+    },
+    {
+      "name": "compile",
+      "status": "pass",
+      "reason": null,
+      "exit_code": 0,
+      "elapsed_ms": 37
+    },
+    {
+      "name": "behavior",
+      "status": "skip",
+      "reason": "静态严重度达到 high，拒绝执行"
+    }
+  ],
+  "evidence": {
+    "code_sha256": "7ecae62c223db5672c0e72ef64e498b2dbd6b6f891bb7ffdf829991d3ba3c77e",
+    "code_bytes": 50,
+    "tests_sha256": "dd768beb0373db508f99550a0b582f1396996b12349df2a7438ec66891ff0371",
+    "commands": [
+      {
+        "kind": "compile",
+        "argv": [
+          "/Users/juanwang/miniconda3/bin/python3",
+          "-I",
+          "-m",
+          "py_compile",
+          "candidate.py"
+        ],
+        "cwd": "tempdir",
+        "exit_code": 0,
+        "elapsed_ms": 37
+      }
+    ],
+    "started_at": "2026-10-20T07:50:16+00:00",
+    "elapsed_ms": 39
+  },
+  "human_review": {
+    "required": false,
+    "status": "not_required",
+    "reason": "硬门禁失败；可申诉，但不应直接合并",
+    "reviewer": null,
+    "decision": null,
+    "notes": null
+  },
+  "limits": [
+    "进程级 RLIMIT + 超时，不是命名空间/虚拟机隔离",
+    "没有文件系统、网络或系统调用隔离",
+    "静态规则是模式匹配，不是语义证明",
+    "行为门禁只覆盖提供的测试用例"
+  ]
+}

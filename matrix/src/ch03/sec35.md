@@ -562,3 +562,8 @@ $$A^{10}=Q\operatorname{diag}(3^{10},1)Q^{\mathrm T}=\frac12\begin{bmatrix}3^{10
 5. 因为 $\Lambda$ **上三角**：$\Lambda\boldsymbol{e}_k\in\operatorname{span}\{\boldsymbol{e}_1,\cdots,\boldsymbol{e}_k\}$，减去 $\lambda_k\boldsymbol{e}_k$ 后 $\boldsymbol{e}_k$ 分量系数 $\lambda_k-\lambda_k=0$，残差落进前 $k-1$ 个基向量张成的空间——已被前 $k-1$ 个因子的乘积清零。若 $\Lambda$ 不是三角（比如满的），$\Lambda\boldsymbol{e}_k$ 会漏到后面的分量上，「逐列清零」的归纳就断了。
 :::
 :::
+
+::: preview 下一节 · 从「三角化」到「对角化」
+
+[3.6](sec36.md) 接着追问：Schur 型上方的 $\ast$ 什么时候能全部消掉？答案由五条等价判据给出；其中「$m_A$ 无重根」一条，正是本节最小多项式的直接应用。若再把换基矩阵升级为酉矩阵，就得到 Hermite / 实对称 / 正规矩阵的谱定理；[3.7](sec37.md) 的谱分解则把同一件事按特征值拆成投影之和。
+:::

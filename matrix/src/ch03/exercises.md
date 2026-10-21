@@ -1,27 +1,27 @@
-# 习题集 · 第三章（3.1–3.2 与 3.4–3.5）
+# 习题集 · 第三章（3.1–3.2 与 3.4–3.7）
 
-三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md)、[3.4](sec34.md)、[3.5](sec35.md) 的概念与第一、二章先修知识。
+三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md)、[3.4](sec34.md)、[3.5](sec35.md)、[3.6](sec36.md)、[3.7](sec37.md) 的概念与第一、二章先修知识。
 
-本页 A、B、C 三组 61 题：A 组（20 题）、B 组（17 题）、C 组（24 题）。
+本页 A、B、C 三组 72 题：A 组（24 题）、B 组（20 题）、C 组（28 题）。
 
 | 组 | 定位 | 建议时长 | 卡壳时怎么办 |
 |:--|:--|:--|:--|
-| **A 组**（20 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
-| **B 组**（17 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
-| **C 组**（24 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
+| **A 组**（24 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
+| **B 组**（20 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
+| **C 组**（28 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
 
 ::: note 关于「提示」层
 
-B5、B7、B8、B11、B15、C4、C13、C14、C17 这 9 题提供了折叠的「提示」——它只给**从哪里下手**，不给完整过程。先看提示、自己推完，再对照解答，学习效果远好于直接读解答。
+B5、B7、B8、B11、B15、B18、C4、C13、C14、C17 这 10 题提供了折叠的「提示」——它只给**从哪里下手**，不给完整过程。先看提示、自己推完，再对照解答，学习效果远好于直接读解答。
 :::
 
 ::: note 关于难度分布
 
-A 组覆盖全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解（A1–A12）；QR 分解的存在 / 唯一 / 正线、列正交规范与酉矩阵的分野、QR 算法的相似性与收敛条件（A13–A16）；Schur 引理的适用范围、实数域边界、谱映射与特征向量继承的单向性、最小多项式的四条事实、逆矩阵公式（A17–A20）。
+A 组覆盖全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解（A1–A12）；QR 分解的存在 / 唯一 / 正线、列正交规范与酉矩阵的分野、QR 算法的相似性与收敛条件（A13–A16）；Schur 引理的适用范围、实数域边界、谱映射与特征向量继承的单向性、最小多项式的四条事实、逆矩阵公式（A17–A20）；对角化五判据、正规 / 单纯 / Hermite 的包含关系、实对称正交对角化、谱分解与谱阵（A21–A24）。
 
-B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心（B1–B10，B9 把 3.1 的结论接回第一章的正定矩阵）；B11–B13 补 QR 的两条主干（对角酉阵刻画、迭代相似链与等模卡死），B14–B17 补 Schur / 谱映射 / 最小多项式的证明重做（B15 给出不依赖定理 3.5.1 的直接构造路线）。
+B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心（B1–B10，B9 把 3.1 的结论接回第一章的正定矩阵）；B11–B13 补 QR 的两条主干（对角酉阵刻画、迭代相似链与等模卡死），B14–B17 补 Schur / 谱映射 / 最小多项式的证明重做（B15 给出不依赖定理 3.5.1 的直接构造路线）；B18–B20 补正规谱定理、实正规矩阵的对称判别与谱分解驱动的逆 / 指数 / 酉性（B18 给出上三角正规阵必对角的完整归纳）。
 
-C 组训练六件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）、**GS 手算 QR 与长方阵补齐**（C17、C18、C22）、**H–C 与最小多项式驱动的三套计算**（C19–C21、C23、C24）。3.3 及以后素材到位后，本页按同样的三组结构续写。
+C 组训练八件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）、**GS 手算 QR 与长方阵补齐**（C17、C18、C22）、**H–C 与最小多项式驱动的三套计算**（C19–C21、C23、C24）、**对角化的判定与正交化**（C25、C26、C27）、**谱分解与 Lagrange 公式**（C28）。3.3 与 3.8 及以后素材到位后，本页按同样的三组结构续写。
 :::
 
 ## A 组 · 概念判断
@@ -306,6 +306,54 @@ $$(A,\ I),\qquad\big(A\operatorname{diag}(-1,1),\ \operatorname{diag}(-1,1)\big)
 ::: sol 解答
 
 (a) **对**：$a_0=f_A(0)=\det(-A)=(-1)^n\det A$（[@cor-3.5.2] 证明）。(b) **对**——推论 3.5.2 的公式就是一个这样的多项式（这补上了谱映射讨论里「$1/\lambda$ 不是多项式」的口子）。(c) **错**——差一个负号：正确为 $-\frac{1}{a_0}(\cdots)$（由 $A(\cdots)=-a_0I$ 移项而来）。(d) **错**——三处错误同源连锁：特征多项式符号错（$(\lambda-1)^3$ 印成 $(\lambda+1)^3$）$\Rightarrow$ 公式行系数全错 $\Rightarrow$ 答案矩阵错；即使按印错的公式行计算，答案也不是印出的那个矩阵（见 E3.5 的逐条核算）。
+:::
+:::
+
+::: ex A21 · 单纯矩阵五问 {#ex-A21}
+
+判断对错并说明理由：
+
+(a) 任意复方阵都相似于对角阵；(b) $A$ 有 $n$ 个互异特征值，则 $A$ 可对角化，反之亦然；(c) $A$ 可对角化 $\iff$ 最小多项式 $m_A$ 无重根；(d) $A$ 可对角化 $\Rightarrow$ $A$ 存在一个无重根的零化多项式；(e) $A$ 有重特征值 $\Rightarrow$ $A$ 不可对角化。
+
+::: sol 解答
+
+(a) **错**——只有 Schur 保底：任意复方阵酉相似于上三角，但不一定对角（[@thm-3.5.2]、[@note-3.5-diag]）。(b) **前半对、后半错**：互异 $\Rightarrow$ 可对角化（[@cor-3.6.1]），但 $I_n$ 只有一重特征值却可对角化——反之不然。(c) **对**（[@thm-3.6.1]（5）$\iff$（1））。(d) **对**——取 $g=m_A$ 即可；注意不能加强成「每个零化多项式都无重根」（$I_2$ 的 $f_A=(\lambda-1)^2$ 是反例，[@note-3.6-sufficient]）。(e) **错**——$I_n$、$\operatorname{diag}(1,1,2)$ 都有重特征值且可对角化；重特征值只说明「可能不够」，是否够要看 $g_i=d_i$。
+:::
+:::
+
+::: ex A22 · 正规、单纯与 Hermite 的辨析 {#ex-A22}
+
+判断对错：
+
+(a) Hermite 矩阵一定是正规矩阵；(b) 正规矩阵一定是 Hermite 矩阵；(c) 可对角化矩阵一定是正规矩阵；(d) 实对称矩阵一定可以正交对角化；(e) 实正交矩阵一定可以用实正交矩阵对角化；(f) 正规矩阵若特征值全实，则它是 Hermite 矩阵；(g) 酉矩阵的特征值模为 $1$，且一定可以酉对角化。
+
+::: sol 解答
+
+(a) **对**：$A^{\mathrm H}=A\Rightarrow A^{\mathrm H}A=A^2=AA^{\mathrm H}$。(b) **错**：$\begin{bmatrix}1&1\\-1&1\end{bmatrix}$ 正规但 $B^{\mathrm T}\ne B$（[@ex-3.6.C]）。(c) **错**：$\begin{bmatrix}1&1\\0&2\end{bmatrix}$ 可对角化但不正规（[@ex-3.6.C]）。(d) **对**（[@cor-3.6.4]）。(e) **错**：旋转阵 $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ 的特征值是 $\pm\mathrm i$，不存在实正交 $Q$ 把它对角化（[@note-3.6-rotation]）；只能用酉 $U$ 在 $\mathbb C$ 上对角化。(f) **对**：正规 $\Rightarrow$ 酉对角化，$A=U\Lambda U^{\mathrm H}$，$\lambda_i$ 全实 $\Rightarrow A^{\mathrm H}=U\Lambda^{\mathrm H}U^{\mathrm H}=U\Lambda U^{\mathrm H}=A$。(g) **对**：酉矩阵正规，故可酉对角化；模为 $1$ 由 [@thm-orth-eig]。
+:::
+:::
+
+::: ex A23 · 实对称正交对角化的四个判断 {#ex-A23}
+
+判断对错：
+
+(a) 实对称矩阵属于不同特征值的特征向量必正交；(b) 实对称矩阵属于同一特征值的任意两个特征向量必正交；(c) 若 $Q$ 是正交矩阵且 $Q^{\mathrm T}AQ$ 为对角阵，则 $A$ 必为实对称矩阵；(d) 实对称矩阵的特征值全为实数。
+
+::: sol 解答
+
+(a) **对**（[@cor-3.6.4] 或 [@note-3.6-why-gs-inside] 的一行证明）。(b) **错**——同一特征子空间内可以取到不正交的基（例 3.6.6 的 $\boldsymbol x_2,\boldsymbol x_3,\boldsymbol x_4$），需要 Gram–Schmidt。(c) **对**：$A=Q\Lambda Q^{\mathrm T}$，$\Lambda$ 实对角，故 $A^{\mathrm T}=Q\Lambda Q^{\mathrm T}=A$。(d) **对**（[@cor-3.6.4]；也可由特征多项式为实系数且根成共轭对、对称性逼出实根）。
+:::
+:::
+
+::: ex A24 · 谱分解五问 {#ex-A24}
+
+判断对错：
+
+(a) 单纯矩阵的谱分解总存在；(b) 谱阵一定是幂等阵；(c) 谱阵一定是正交投影；(d) 对任意多项式 $f$，$f(A)=\sum_jf(\lambda_j)E_j$；(e) 不可对角化的矩阵也可以写成 $A=\sum_j\lambda_jE_j$，其中 $E_j$ 是幂等阵。
+
+::: sol 解答
+
+(a) **对**（[@note-3.7-existence]、[@method-spectral]）。(b) **对**（[@prop-3.7.1]（1））。(c) **错**——只有正规矩阵的谱阵才是正交投影；非正规单纯矩阵的谱阵是斜投影（[@ex-3.7.A]、[@prop-3.7.2]）。(d) **对**（[@thm-3.7.1]）。(e) **错**——谱分解的门票是单纯；不可对角化时只能退到 Schur 型 / Jordan 型，$E_j$ 不再是幂等的（会出现 Jordan 块的多项式项）。
 :::
 :::
 
@@ -659,6 +707,89 @@ $$O=g(A)=q(A)\underbrace{m_A(A)}_{=O}+r(A)\ \Longrightarrow\ r(A)=O .$$
 $$\boldsymbol{0}=m_A(A)\boldsymbol{\alpha}=m_A(\lambda_0)\boldsymbol{\alpha}\ \Longrightarrow\ m_A(\lambda_0)=0 .\qquad\blacksquare$$
 
 **一处易错**：不能用「$f_A(A)=O\Rightarrow f_A=m_A$」——零化多项式有无数个（注 5），$f_A$ 只是其中之一；同根但重数可以差（$I_2$：$f_A=(\lambda-1)^2$，$m_A=\lambda-1$）。
+:::
+:::
+
+::: ex B18 · 重写定理 3.6.2（正规 $\iff$ 酉对角化）{#ex-B18}
+
+证明：复方阵 $A$ 正规（$A^{\mathrm H}A=AA^{\mathrm H}$）当且仅当存在酉矩阵 $U$ 使 $U^{\mathrm H}AU$ 为对角阵。
+
+::: hint 提示
+
+（$\Rightarrow$）对 $A$ 作 Schur 分解，证明上三角正规阵必为对角阵（比较第一行与第一列的长度）；（$\Leftarrow$）直接把 $A=U\Lambda U^{\mathrm H}$ 代进 $A^{\mathrm H}A$ 与 $AA^{\mathrm H}$。
+:::
+
+::: sol 解答
+
+**（$\Rightarrow$）** 由 [@thm-3.5.2]，存在酉 $U$ 使 $T=U^{\mathrm H}AU$ 上三角。正规性在酉相似下不变：
+
+$$T^{\mathrm H}T=U^{\mathrm H}A^{\mathrm H}UU^{\mathrm H}AU=U^{\mathrm H}A^{\mathrm H}AU,\qquad
+TT^{\mathrm H}=U^{\mathrm H}AA^{\mathrm H}U,$$
+
+故 $T^{\mathrm H}T=TT^{\mathrm H}$。下面证明上三角正规阵 $T$ 必对角：比较 $(1,1)$ 元，
+
+$$(T^{\mathrm H}T)_{11}=|t_{11}|^2,\qquad (TT^{\mathrm H})_{11}=\sum_{k=1}^{n}|t_{1k}|^2,$$
+
+故 $t_{12}=\cdots=t_{1n}=0$。于是 $T=\operatorname{diag}(t_{11},T')$，$T'$ 为上三角正规阵；对 $T'$ 归纳，得 $T$ 对角。
+
+**（$\Leftarrow$）** 若 $A=U\operatorname{diag}(\lambda_1,\cdots,\lambda_n)U^{\mathrm H}$，则
+
+$$A^{\mathrm H}A=U\operatorname{diag}(|\lambda_1|^2,\cdots,|\lambda_n|^2)U^{\mathrm H}=AA^{\mathrm H}.$$
+
+故 $A$ 正规。∎
+:::
+:::
+
+::: ex B19 · 实正规矩阵：实特征值 $\Rightarrow$ 对称 {#ex-B19}
+
+(a) 设 $A$ 是实正规矩阵，且全部特征值为实数，证明 $A$ 是实对称矩阵。(b) 用旋转阵说明：实正规矩阵不一定对称。
+
+::: sol 解答
+
+**(a)** 由 [@thm-3.6.2]，存在酉 $U$ 使 $A=U\Lambda U^{\mathrm H}$，$\Lambda=\operatorname{diag}(\lambda_1,\cdots,\lambda_n)$ 且 $\lambda_i\in\mathbb R$。于是
+
+$$A^{\mathrm H}=U\Lambda^{\mathrm H}U^{\mathrm H}=U\Lambda U^{\mathrm H}=A.$$
+
+又 $A$ 实，$A^{\mathrm H}=A^{\mathrm T}$，故 $A^{\mathrm T}=A$，即 $A$ 实对称。
+
+**(b)** $R=\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ 实正规（$R^{\mathrm T}R=I=RR^{\mathrm T}$），特征值 $\pm\mathrm i$ 不是实数，故不能由 (a) 推出对称；事实上 $R^{\mathrm T}=-R\ne R$。它的酉对角化需要复矩阵 $U$（[@note-3.6-rotation]），不存在实正交 $Q$ 使 $Q^{\mathrm T}RQ$ 为实对角阵。∎
+
+**要点**：实正规矩阵在正交相似下的基本块只有两类——实特征值给出 $1\times1$ 块（特征值全实时整体对称），共轭复特征值给出 $2\times2$ 的「旋转–缩放」块（如 $\begin{bmatrix}a&-b\\b&a\end{bmatrix}$，特征值 $a\pm\mathrm ib$）。这正是 [@ex-3.6.C] 的几何读法；$2\times2$ 时就是「分两类」，$n>2$ 时要按块分解来读。
+:::
+:::
+
+::: ex B20 · 谱分解驱动的逆、指数与酉性 {#ex-B20}
+
+设单纯矩阵 $A$ 的谱分解为 $A=\sum_{j=1}^{m}\lambda_jE_j$。证明：
+
+(a) $A$ 可逆 $\iff$ $0$ 不是特征值；此时 $A^{-1}=\sum_j\lambda_j^{-1}E_j$；
+
+(b) $e^{At}=\sum_j e^{\lambda_jt}E_j$ 满足 $\frac{d}{dt}e^{At}=Ae^{At}$ 且 $e^{A\cdot0}=I$；
+
+(c) 若 $A$ 正规且所有特征值都是纯虚数，则对一切 $t\in\mathbb R$，$e^{At}$ 是酉矩阵。
+
+::: sol 解答
+
+**(a)** $\det A=\prod_j\lambda_j^{d_j}$（[@thm-eig-trace]），故 $A$ 可逆 $\iff$ 每个 $\lambda_j\ne0$。此时令 $B=\sum_j\lambda_j^{-1}E_j$，用 $E_iE_j=\delta_{ij}E_i$：
+
+$$AB=\Big(\sum_i\lambda_iE_i\Big)\Big(\sum_j\lambda_j^{-1}E_j\Big)=\sum_jE_j=I.$$
+
+方阵单侧逆即逆，故 $B=A^{-1}$。
+
+**(b)** 逐项求导（有限和）：
+
+$$\frac{d}{dt}e^{At}=\sum_j\lambda_je^{\lambda_jt}E_j
+=A\sum_je^{\lambda_jt}E_j=Ae^{At},$$
+
+且 $t=0$ 时 $\sum_jE_j=I$。由一阶线性 ODE 解的唯一性，这就是 $e^{At}$（也说明 $e^{At}$ 与 $A$ 可交换）。
+
+**(c)** 正规时 $E_j^{\mathrm H}=E_j$（[@prop-3.7.2]）；$\lambda_j=\mathrm i\omega_j$（$\omega_j\in\mathbb R$），故 $\overline{e^{\lambda_jt}}=e^{-\mathrm i\omega_jt}=e^{-\lambda_jt}$。于是
+
+$$(e^{At})^{\mathrm H}e^{At}=\Big(\sum_i e^{-\lambda_it}E_i\Big)\Big(\sum_j e^{\lambda_jt}E_j\Big)=\sum_jE_j=I,$$
+
+故 $e^{At}$ 是酉矩阵。∎
+
+**读法**：这条把 [3.6.4](sec36.md#ex-3.6.4) 的「对角化解耦」升级成「谱分解演算」；也解释了为什么纯虚谱的线性系统（如无阻尼振动、量子演化）保持能量 / 范数。
 :::
 :::
 
@@ -1175,6 +1306,158 @@ $$A^3=10A^2-32A+32I .$$
 :::
 :::
 
+::: ex C25 · 两个矩阵：一个不可对角化，一个可 {#ex-C25}
+
+判断下列矩阵是否可对角化；可对角化的求出 $P$ 与 $\Lambda$，并回代验算。
+
+(a) $A_1=\begin{bmatrix}2&1&0\\ 0&2&0\\ 0&0&3\end{bmatrix}$；
+
+(b) $A_2=\begin{bmatrix}1&1&0\\ 0&2&0\\ 0&0&2\end{bmatrix}$。
+
+::: sol 解答
+
+**(a)** $f_{A_1}(\lambda)=(\lambda-2)^2(\lambda-3)$。对 $\lambda=2$：
+
+$$A_1-2I=\begin{bmatrix}0&1&0\\ 0&0&0\\ 0&0&1\end{bmatrix},\qquad \operatorname{rank}(A_1-2I)=2,$$
+
+故几何重数 $g_2=3-2=1<d_2=2$——由 [@thm-3.6.1]（3），$A_1$ **不可对角化**。直观：$\lambda=2$ 只有一个特征向量 $(1,0,0)^{\mathrm T}$，Jordan 块长度 $2$。
+
+**(b)** $f_{A_2}(\lambda)=(\lambda-1)(\lambda-2)^2$。对 $\lambda=2$：
+
+$$A_2-2I=\begin{bmatrix}-1&1&0\\ 0&0&0\\ 0&0&0\end{bmatrix},\qquad \operatorname{rank}(A_2-2I)=1,$$
+
+故 $g_2=3-1=2=d_2$；$\lambda=1$ 单重，$g_1=1$。所有 $g_i=d_i$，$A_2$ **可对角化**。
+
+**求 $P$**：$\lambda=1$ 的特征向量 $(1,0,0)^{\mathrm T}$；$\lambda=2$ 的特征向量取 $(1,1,0)^{\mathrm T}$、$(0,0,1)^{\mathrm T}$。令
+
+$$P=\begin{bmatrix}1&1&0\\ 0&1&0\\ 0&0&1\end{bmatrix},\qquad
+P^{-1}=\begin{bmatrix}1&-1&0\\ 0&1&0\\ 0&0&1\end{bmatrix},\qquad
+\Lambda=\operatorname{diag}(1,2,2).$$
+
+**验算**：
+
+$$P^{-1}A_2P=\begin{bmatrix}1&-1&0\\0&1&0\\0&0&1\end{bmatrix}\begin{bmatrix}1&1&0\\0&2&0\\0&0&2\end{bmatrix}\begin{bmatrix}1&1&0\\0&1&0\\0&0&1\end{bmatrix}
+=\begin{bmatrix}1&0&0\\0&2&0\\0&0&2\end{bmatrix}=\Lambda\ \checkmark$$
+
+（也可直接验 $A_2\boldsymbol p_i=\lambda_i\boldsymbol p_i$。）∎
+:::
+:::
+
+::: ex C26 · 实对称矩阵的正交对角化与高次幂 {#ex-C26}
+
+设 $A=\begin{bmatrix}2&1&1\\ 1&2&1\\ 1&1&2\end{bmatrix}$。
+
+(a) 求正交矩阵 $Q$ 使 $Q^{\mathrm T}AQ=\Lambda$；
+
+(b) 用 (a) 求 $A^{10}$。
+
+::: sol 解答
+
+**(a)** $A=I_3+J$，其中 $J$ 是元素全为 $1$ 的矩阵。$J$ 的特征值为 $3$（特征向量 $(1,1,1)^{\mathrm T}$）与 $0$（二重，特征子空间 $x_1+x_2+x_3=0$），故 $A$ 的特征值为
+
+$$\lambda_1=4,\qquad \lambda_2=\lambda_3=1.$$
+
+$\lambda=4$ 的单位特征向量 $\boldsymbol u_1=\tfrac{1}{\sqrt3}(1,1,1)^{\mathrm T}$；$\lambda=1$ 的特征子空间内取正交基
+
+$$\boldsymbol u_2=\tfrac{1}{\sqrt2}(1,-1,0)^{\mathrm T},\qquad
+\boldsymbol u_3=\tfrac{1}{\sqrt6}(1,1,-2)^{\mathrm T}.$$
+
+（验算：$\boldsymbol u_2^{\mathrm T}\boldsymbol u_3=\tfrac{1}{\sqrt{12}}(1-1+0)=0$ ✓。）令 $Q=[\boldsymbol u_1,\boldsymbol u_2,\boldsymbol u_3]$，则 $Q^{\mathrm T}Q=I_3$ 且
+
+$$Q^{\mathrm T}AQ=\operatorname{diag}(4,1,1).$$
+
+**(b)** 由 $A=I+J$ 与 $J^2=3J$，归纳得
+
+$$(I+J)^m=I+\frac{4^m-1}{3}J.$$
+
+（验算：$m=1$ 时右边 $=I+J$ ✓；$(I+\alpha J)(I+J)=I+(1+\alpha)J+\alpha J^2=I+(1+4\alpha)J$，系数递推 $\alpha_{m+1}=1+4\alpha_m$，解出 $\alpha_m=(4^m-1)/3$ ✓。）当 $m=10$：
+
+$$A^{10}=I+\frac{4^{10}-1}{3}J=I+349525\,J
+=\begin{bmatrix}349526&349525&349525\\ 349525&349526&349525\\ 349525&349525&349526\end{bmatrix}.$$
+
+（$4^{10}=1048576$，$(1048576-1)/3=349525$。也可由 $A^{10}=Q\operatorname{diag}(4^{10},1,1)Q^{\mathrm T}$ 得到同一结果；本编双精度复核一致。）∎
+:::
+:::
+
+::: ex C27 · 由特征值与部分特征向量反求实对称矩阵 {#ex-C27}
+
+设 $A$ 是 $3$ 阶实对称矩阵，特征值为 $2,5,5$。已知 $\boldsymbol x_1=(1,1,0)^{\mathrm T}$ 是属于 $2$ 的特征向量，$\boldsymbol x_2=(1,-1,2)^{\mathrm T}$ 是属于 $5$ 的特征向量。求 $A$。
+
+::: sol 解答
+
+**第一步：补第三个特征向量。** $A$ 实对称，属于 $5$ 的特征子空间是 $\boldsymbol x_1$ 的正交补（因为不同特征值的特征向量正交），且是二维的；$\boldsymbol x_2$ 已在其中。取 $\boldsymbol x_3$ 与 $\boldsymbol x_1,\boldsymbol x_2$ 都正交：
+
+$$\boldsymbol x_3=\boldsymbol x_1\times\boldsymbol x_2=(1\cdot2-0\cdot(-1),\ 0\cdot1-1\cdot2,\ 1\cdot(-1)-1\cdot1)^{\mathrm T}=(2,-2,-2)^{\mathrm T}\sim(1,-1,-1)^{\mathrm T}.$$
+
+（验算：$\boldsymbol x_3^{\mathrm T}\boldsymbol x_1=1-1+0=0$、$\boldsymbol x_3^{\mathrm T}\boldsymbol x_2=1+1-2=0$ ✓。）
+
+**第二步：拼 $P$ 与 $\Lambda$。** 取
+
+$$P=[\boldsymbol x_1,\boldsymbol x_2,\boldsymbol x_3]=\begin{bmatrix}1&1&1\\ 1&-1&-1\\ 0&2&-1\end{bmatrix},\qquad
+\Lambda=\operatorname{diag}(2,5,5).$$
+
+（列序 $\boldsymbol x_1,\boldsymbol x_2,\boldsymbol x_3$ 对应 $2,5,5$。）
+
+**第三步：求逆并乘开。**
+
+$$P^{-1}=\begin{bmatrix}\tfrac12&\tfrac12&0\\[2pt] \tfrac16&-\tfrac16&\tfrac13\\[2pt] \tfrac13&-\tfrac13&-\tfrac13\end{bmatrix},$$
+
+$$A=P\Lambda P^{-1}=\begin{bmatrix}\tfrac72&-\tfrac32&0\\[2pt] -\tfrac32&\tfrac72&0\\[2pt] 0&0&5\end{bmatrix}.$$
+
+**验算**：$A\boldsymbol x_1=(2,2,0)^{\mathrm T}=2\boldsymbol x_1$ ✓；$A\boldsymbol x_2=(5,-5,10)^{\mathrm T}=5\boldsymbol x_2$ ✓；$A\boldsymbol x_3=(5,-5,-5)^{\mathrm T}=5\boldsymbol x_3$ ✓；$A^{\mathrm T}=A$ ✓。∎
+
+**要点**：$\boldsymbol x_2$ 属于 $5$、$\boldsymbol x_1$ 属于 $2$，两者自动正交（$1-1+0=0$）——这是实对称性的「免费正交」。第三个向量不能随便取，必须在 $\boldsymbol x_1$ 的正交补里再与 $\boldsymbol x_2$ 正交，否则 $P^{-1}AP$ 不是对角阵。
+:::
+:::
+
+::: ex C28 · 非正规单纯矩阵的谱分解与高次幂 {#ex-C28}
+
+设 $A=\begin{bmatrix}1&1&0\\ 0&2&0\\ 0&0&2\end{bmatrix}$（[@ex-C25]（b））。
+
+(a) 求 $A$ 的谱分解 $A=\lambda_1E_1+\lambda_2E_2$；
+
+(b) 验算谱阵五性质；
+
+(c) 用谱分解求 $A^{10}$，并与直接计算核对。
+
+::: sol 解答
+
+**(a) 对角化**：由 [@ex-C25]（b），
+
+$$P=\begin{bmatrix}1&1&0\\ 0&1&0\\ 0&0&1\end{bmatrix},\qquad
+P^{-1}=\begin{bmatrix}1&-1&0\\ 0&1&0\\ 0&0&1\end{bmatrix},\qquad
+\Lambda=\operatorname{diag}(1,2,2).$$
+
+把 $P$ 按列读成 $\boldsymbol\alpha_1=(1,0,0)^{\mathrm T}$、$\boldsymbol\alpha_2=(1,1,0)^{\mathrm T}$、$\boldsymbol\alpha_3=(0,0,1)^{\mathrm T}$；把 $P^{-1}$ 按行读成 $\boldsymbol\beta_1^{\mathrm H}=(1,-1,0)$、$\boldsymbol\beta_2^{\mathrm H}=(0,1,0)$、$\boldsymbol\beta_3^{\mathrm H}=(0,0,1)$。按特征值分组：$\lambda_1=1$ 只有一项，$\lambda_2=2$ 有两项：
+
+$$E_1=\boldsymbol\alpha_1\boldsymbol\beta_1^{\mathrm H}
+=\begin{bmatrix}1&-1&0\\ 0&0&0\\ 0&0&0\end{bmatrix},$$
+
+$$E_2=\boldsymbol\alpha_2\boldsymbol\beta_2^{\mathrm H}+\boldsymbol\alpha_3\boldsymbol\beta_3^{\mathrm H}
+=\begin{bmatrix}0&1&0\\ 0&1&0\\ 0&0&0\end{bmatrix}+\begin{bmatrix}0&0&0\\ 0&0&0\\ 0&0&1\end{bmatrix}
+=\begin{bmatrix}0&1&0\\ 0&1&0\\ 0&0&1\end{bmatrix}.$$
+
+故
+
+$$A=1\cdot E_1+2\cdot E_2.$$
+
+**(b) 验算**：
+
+$$E_1+E_2=I_3,\qquad E_1E_2=O,\qquad E_1^2=E_1,\ E_2^2=E_2,$$
+
+$$AE_1=E_1,\qquad AE_2=2E_2.$$
+
+（逐项：$E_1+E_2=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}$ ✓；$E_1E_2$ 的第一行 $(1,-1,0)$ 乘 $E_2$ 的三列分别得 $0$ ✓；$E_1^2=E_1$ 因 $\boldsymbol\beta_1^{\mathrm H}\boldsymbol\alpha_1=1$ ✓。）注意 $E_1,E_2$ **不是**对称阵（$E_1^{\mathrm T}\ne E_1$），因为 $A$ 不是正规矩阵——这是 [@prop-3.7.1] 而非 [@prop-3.7.2] 的情形。
+
+**(c) 求幂**：由 [@thm-3.7.1]，
+
+$$A^{10}=1^{10}E_1+2^{10}E_2=E_1+1024E_2
+=\begin{bmatrix}1&1023&0\\ 0&1024&0\\ 0&0&1024\end{bmatrix}.$$
+
+**直接核对**：$A$ 是上三角，$A^{10}$ 的对角元为 $1^{10},2^{10},2^{10}$；超对角元 $(1,2)$ 为 $\sum_{k=0}^{9}1^k\cdot1\cdot2^{9-k}=2^{10}-1=1023$（等比级数），其余超对角元为 $0$。逐位一致 ✓。∎
+:::
+:::
+
 ---
 
-**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页）、3.4 QR 分解（16 页）、3.5 Schur 分解（22 页，后两份存于 `_sources/matrix/`）整理 · 四节均无录播 · 整理日期 2026-10-15 · 新增例题与全部计算题均经回代验算（C19、C22 另做双精度复核）· 3.3 及以后素材到位后本页续写。
+**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页）、3.4 QR 分解（16 页）、3.5 Schur 分解（22 页）、3.6 对角化分解（13 + 14 页）、3.7 谱分解（22 页，后五份 PDF 存于 `_sources/matrix/`）整理 · 六节均无录播 · 整理日期 2026-10-15 · 新增例题与全部计算题均经回代验算（C19、C22 另做双精度复核；C25–C28 另用 SymPy 复核）· 3.3 与 3.8 及以后素材到位后本页续写。
