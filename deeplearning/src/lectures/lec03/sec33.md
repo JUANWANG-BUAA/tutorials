@@ -298,6 +298,8 @@ $$\text{GN 输出}=\begin{pmatrix}(-1,+1)&(-1,+1)\\(-1,+1)&(-1,+1)\end{pmatrix}.
 **Q4** `nn.Dropout(0.5)` 对每个元素独立采样掩码（逐像素丢弃），`nn.Dropout2d(0.5)` 对每个 $(B,C)$ 采样一个掩码并广播到整张 $H\times W$（整通道丢弃）。卷积特征图上相邻像素来自重叠感受野、携带同一模式的冗余副本，逐元素丢弃会被邻近像素「补上」，正则化被稀释；整通道丢弃抹掉的是一个完整特征，才算真正「逼网络不用某个特征」。
 :::
 
+:::
+
 ## 3.3.5 数据预处理与归一化 {#sec-3.3.5}
 
 归一化层的输入是**数据**。数据本身的尺度处理不当，任何层内归一化都救不回来。
@@ -385,8 +387,6 @@ d_spat = nn.Dropout2d(0.5).train()
 print("逐元素丢弃后的通道内取值：\n", d_elem(x)[0, 0])
 print("通道级丢弃后的通道内取值（应为整通道 0 或整通道放大）：\n", d_spat(x)[0, 0])
 ```
-
-:::
 
 ::: note[skip] 延伸阅读
 - Ioffe & Szegedy, *Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift*（2015，arXiv:1502.03167）——BN 原始论文（训练/推理两套统计量的设计也在这里）。

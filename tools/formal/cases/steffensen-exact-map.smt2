@@ -1,0 +1,13 @@
+; phi=x+x^2: Aitken/Steffensen map equals x*(1+x)/(2+x), and its error ratio approaches 1/2 with difference x/(2*(2+x))
+; Source: numerical/src/course/ch04/sec41.md#sec-4.1.4
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const x Real)
+(assert (> x 0))
+(define-fun phi ((z Real)) Real (+ z (* z z)))
+(define-fun den () Real (+ (phi (phi x)) (- (* 2 (phi x))) x))
+(check-sat)
+(push 1)
+(assert (not (and (> den 0) (= (- x (/ (* (- (phi x) x) (- (phi x) x)) den)) (/ (* x (+ 1 x)) (+ 2 x))) (= (- (/ (+ 1 x) (+ 2 x)) (/ 1 2)) (/ x (* 2 (+ 2 x)))))))
+(check-sat)
+(pop 1)

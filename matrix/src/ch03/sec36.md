@@ -26,9 +26,13 @@ $$P^{-1}AP=\Lambda,$$
 
 ::: note 注 1（课件原文）· 定义式就是分解式 {#note-3.6-schur-special}
 
-单纯矩阵的定义式就是单纯矩阵的**对角化分解式**，它实际上是 **Schur 分解的一种特殊表达**。
+单纯矩阵的定义式给出一般的**相似对角化分解** $A=P\Lambda P^{-1}$。这里 $P$ 只要求可逆，不能据此称它为 Schur 分解的特殊情形。
 
-（本编补一句对照：[3.5](sec35.md) 的 Schur 引理说 $U^{\mathrm H}AU=\Lambda$ 中的 $\Lambda$ 只能是上三角；当上三角阵的非对角元恰好全为零时，它就退化成对角阵——这正是「对角化」与「三角化」的差别。所以对角化不是另一套理论，而是 Schur 型的一个**退化特例**（上方的 $\ast$ 恰好全消）：Schur 保证「总可以三角化」，本节追问「什么时候上方的 $\ast$ 能全部消掉」。）
+Schur 分解要求变换矩阵**酉**：$A=UTU^{\mathrm H}$，其中 $T$ 上三角。只有 $A$ 正规时，才可让 Schur 型成为对角阵；这一条件比一般可对角化更强（见 [@thm-3.6.2]）。反例
+
+$$A=\begin{bmatrix}1&1\\0&2\end{bmatrix},\qquad P=\begin{bmatrix}1&1\\0&1\end{bmatrix},\qquad P^{-1}AP=\operatorname{diag}(1,2)$$
+
+有两个互异特征值，故可对角化；但 $A^{\mathrm T}A=\begin{bmatrix}1&1\\1&5\end{bmatrix}\ne\begin{bmatrix}2&2\\2&4\end{bmatrix}=AA^{\mathrm T}$，不正规，不能酉对角化。课件原注混用了这两个层次，此处按条件补正。
 :::
 
 课件的主题目把「能对角化」拆成五条，并宣布它们等价：
@@ -617,7 +621,7 @@ $$\lambda(\boldsymbol u,\boldsymbol v)=(A\boldsymbol u,\boldsymbol v)=(\boldsymb
 
 故 $(\lambda-\mu)(\boldsymbol u,\boldsymbol v)=0$；$\lambda\ne\mu$ 时 $\boldsymbol u\perp\boldsymbol v$。
 
-（注意最后一步用了全书「第一变元线性」的内积约定（[1.4](ch01/sec14.md)）：$(\boldsymbol u,\overline{\mu}\boldsymbol v)=\mu(\boldsymbol u,\boldsymbol v)$。若你的教材用第二变元线性，公式要相应改写，但结论不变。）
+（注意最后一步用了全书「第一变元线性」的内积约定（[1.4](../ch01/sec14.md)）：$(\boldsymbol u,\overline{\mu}\boldsymbol v)=\mu(\boldsymbol u,\boldsymbol v)$。若你的教材用第二变元线性，公式要相应改写，但结论不变。）
 :::
 :::
 
@@ -716,7 +720,7 @@ $$U^{\mathrm H}AU=\operatorname{diag}(\lambda_1,\cdots,\lambda_n),$$
 
 ::: proof 证明（课件未给，本编补：两个方向都用定理 3.6.2）
 
-**（$\Rightarrow$）** 酉矩阵满足 $A^{\mathrm H}A=I=AA^{\mathrm H}$，故正规；由 [@thm-3.6.2] 存在酉 $U$ 使 $U^{\mathrm H}AU=\operatorname{diag}(\lambda_i)$。又由 [2.5](ch02/sec25.md) 的 [@thm-orth-eig]，酉（正交）矩阵的每个特征值模为 $1$。
+**（$\Rightarrow$）** 酉矩阵满足 $A^{\mathrm H}A=I=AA^{\mathrm H}$，故正规；由 [@thm-3.6.2] 存在酉 $U$ 使 $U^{\mathrm H}AU=\operatorname{diag}(\lambda_i)$。又由 [2.5](../ch02/sec25.md) 的 [@thm-orth-eig]，酉（正交）矩阵的每个特征值模为 $1$。
 
 **（$\Leftarrow$）** 若 $A=U\operatorname{diag}(\lambda_1,\cdots,\lambda_n)U^{\mathrm H}$ 且 $|\lambda_i|=1$，则
 
@@ -729,7 +733,7 @@ $$A^{\mathrm H}A=U\operatorname{diag}(|\lambda_1|^2,\cdots,|\lambda_n|^2)U^{\mat
 
 **正交阵酉相似对角化时的变换阵是酉矩阵。**
 
-（本编补一句关键的辨析：这里的 $U$ 一般**不是实正交阵**。实正交矩阵的特征值可以是复数（[2.5](ch02/sec25.md) 的旋转阵 $\pm\mathrm i$），其特征向量也是复向量，所以对角化只能在 $\mathbb C$ 上、用酉矩阵完成。若硬要求 $Q$ 是实正交阵且 $Q^{\mathrm T}AQ$ 为实对角阵，则对角元（特征值）必须全实——旋转阵做不到。这正是 [3.5](sec35.md) 注 3「实阵警告」在谱分解里的回声。）
+（本编补一句关键的辨析：这里的 $U$ 一般**不是实正交阵**。实正交矩阵的特征值可以是复数（[2.5](../ch02/sec25.md) 的旋转阵 $\pm\mathrm i$），其特征向量也是复向量，所以对角化只能在 $\mathbb C$ 上、用酉矩阵完成。若硬要求 $Q$ 是实正交阵且 $Q^{\mathrm T}AQ$ 为实对角阵，则对角元（特征值）必须全实——旋转阵做不到。这正是 [3.5](sec35.md) 注 3「实阵警告」在谱分解里的回声。）
 :::
 
 ::: note 本编补 · 注 4 的最小反例：旋转阵的酉对角化 {#note-3.6-rotation}

@@ -108,7 +108,7 @@
 <li><span class="obj-id">K3.18</span>能陈述 QR 分解定理（满秩方阵存在且正线下唯一），并用「$R$ 是 $\boldsymbol z$ 基到 $\boldsymbol a$ 基的过渡矩阵」解释 GS 读法。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.19</span>能复述唯一性证明（上三角 $+$ 酉 $+$ 正对角 $\Rightarrow I$），说出不唯一的精确程度（对角酉阵；实方阵 $2^n$ 种）。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.20</span>能讲例 3.4.2（不满秩：零对角元、唯一性失效）与推论 3.4.1（长方阵完全分解，GS $+$ 基扩充）。<span class="obj-lv">理解 / 证明</span></li>
-<li><span class="obj-id">K3.21</span>能背写 QR 算法迭代格式、证明每步酉相似（$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$），说明收敛条件「模互异」是充分非必要，并给出等模卡死反例。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.21</span>能背写 QR 算法迭代格式、证明每步酉相似（$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$），区分相似保谱与收敛条件，给出异模仍两周期和等模不三角化的反例。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.22</span>能分别陈述并证明两个 Schur 引理（归纳吃特征向量；对 $P$ 作 QR 升级为酉相似）。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.23</span>能用旋转阵反例说明实阵未必正交三角化，并陈述实 Schur 引理的前提（特征值全实）与注 3 的警告。<span class="obj-lv">理解 / 分析</span></li>
 <li><span class="obj-id">K3.24</span>能证谱映射（$\varphi(A)$ 的特征值为 $\varphi(\lambda_i)$），说出特征向量继承的**单向性**与黏合现象。<span class="obj-lv">理解 / 证明</span></li>
@@ -118,7 +118,7 @@
 <li><span class="obj-id">K3.28</span>能证明最小多项式的两条性质（整除一切零化多项式、与 $f_A$ 同根，不计重数）。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.29</span>能按候选法三步（$f_A$ 因式分解 → 列候选 → 从低到高试）求 $m_A$，并解释次序不能反。<span class="obj-lv">理解 / 应用</span></li>
 <li><span class="obj-id">K3.30</span>能按题选路完成三套计算流程：带余除法算 $g(A)$、递推 / 定系数算 $A^m$、逆公式求 $A^{-1}$，并知道「先求 $m_A$ 再除」最省。<span class="obj-lv">应用 / 分析</span></li>
-<li><span class="obj-id">K3.31</span>能陈述单纯矩阵（可对角化矩阵）的定义，并说明「对角化分解式」是 Schur 分解当上方 $\ast$ 全消时的退化特例。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K3.31</span>能陈述单纯矩阵的定义，区分一般相似对角化与酉对角化；说明只有正规矩阵才可使 Schur 型成为对角阵。<span class="obj-lv">记忆 / 理解</span></li>
 <li><span class="obj-id">K3.32</span>能完整陈述并证明定理 3.6.1 的五条等价：（1）$P^{-1}AP=\Lambda$；（2）$n$ 个线性无关特征向量；（3）$d_i=g_i$；（4）$\sum\dim E(\lambda_i)=n$；（5）$m_A$ 无重根。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.33</span>能说明「互异特征值」只是充分条件，而「存在无重根零化多项式」按字面是充要条件；能辨析注 3 的三条判据层次。<span class="obj-lv">理解 / 分析</span></li>
 <li><span class="obj-id">K3.34</span>能复述例 3.6.1 的两条判断路线（最小多项式 / 重数比对），并写出 $P$、$\Lambda$ 验证。<span class="obj-lv">理解 / 应用</span></li>

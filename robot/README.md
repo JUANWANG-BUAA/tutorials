@@ -78,24 +78,17 @@ Siciliano、Sciavicco、Villani、Oriolo《机器人学：建模、规划与控�
 
 ## 本地构建
 
-依赖：mdbook ≥ 0.5、mdbook-katex 0.10（`cargo install mdbook-katex --version 0.10.0 --locked`）、
-Python ≥ 3.9（`pip install -r requirements.txt`）、Node ≥ 18。
+依赖：mdBook 0.5.4、mdbook-katex 0.10.0、Python 3.11+、Node.js 24，以及 `markdown-it-py`、`pillow`。
 
 ```sh
-make serve    # 构建并打开本地预览（推荐）
-make chars    # 字形覆盖率审计（拦住会渲染成豆腐块的字符）
-make check    # 字符审计 + 单元测试 + 数值回归 + 构建 + 中文搜索索引 + 死链与宏泄漏检查
+# 从仓库根运行
+bash build.sh serve  # 完整构建并预览 http://127.0.0.1:8000/
+bash check.sh        # 与 CI 相同的质量检查
 ```
 
-`make check` 里的 `tools/check_links.py` 除死链与死锚点外，还会检查**未展开的 `[@宏]`**：
-交叉引用漏进产物时它不是链接、死链检查看不见，却会把 `[@ex-2.4.C]` 原文印给读者。
+仅预览本书时可在本目录运行 `mdbook build .` 或 `mdbook serve --open`。中文搜索和术语数据是构建后产物，完整预览须用根目录 `build.sh`。共用脚本在仓库根 `tools/`，本书目录不再提供 Makefile。
 
-中文全文搜索依赖构建后处理：`tools/build_search_js.mjs` 用字符 n-gram 重建索引
-（mdBook 自带分词器不处理中文），查询侧由 `theme/js/search-cjk.js` 保持一致切分。
-内容正确性另有数值回归层：`tools/verify_ch02_fk.py` 把第二章各结构闭式与 DH 连乘
-逐一比对（`make verify`），防止「照抄原书闭式」环节的转录错误——本教程初版的
-三处 P0 勘误全部由这类比对拦截；第六章新增 `tools/verify_homework06.py`，
-复算作业 7-2 / 7-6 / 7-7 的关键数值（$C$ 的两种选法、绝对角坐标、$J^{\mathrm T}f$ 力矩表）。
+本书另保留 `python3 tools/verify_homework06.py`，复算作业 7-2 / 7-6 / 7-7 的关键数值，需要额外安装 NumPy；该复算脚本不在根质量检查入口内。全部检查范围见 [质量检查与内容审校](../docs/quality-gates.md)。
 
 ## 目录约定
 
@@ -106,13 +99,12 @@ make check    # 字符审计 + 单元测试 + 数值回归 + 构建 + 中文搜�
 - 插图两类：课堂幻灯片截图（标注「课堂幻灯片 · mm:ss」，可对照原片）与自制示意图
   （标注「本教程绘」，用 `theme/css/robot.css` 的 `--fig-*` 令牌与 `diagram-*` 类）。
   自制图**不使用 `图 N.N` 编号**——该编号体系在本教程中专指原书图号，避免混淆。
-- 视觉层只有一份 `theme/css/robot.css`；改样式只改它，不新增覆盖层。
+- 本书差异样式在 `theme/css/robot.css`，共用令牌与组件在 `../shared/theme/`；归属见 [共享层说明](../shared/README.md)。
 - 交互实验两种写法：**一次性小实验**在正文里内联 `<svg>` + `<script>`（如 §2.4、§2.12、§3.3）；
   **需要复用控件/画布的实验**只写一个 `<div class="lab" data-lab="euler|arm|traj"></div>`，
   由 `theme/js/robot-labs.js` 生成控件与绘图（样式 `.lab-*`）。两者都无外部依赖、可离线运行，
   打印时自动隐藏控件。
-- 母本素材（录播视频、原始幻灯片帧、转写稿）在 `raw/`，约 3 GB，**不入库**（见 `.gitignore`），
-  重新获取方式见 `raw/README.md`；来源与授权说明见 `docs/ARCHITECTURE.md` §6。
+- 母本素材（录播视频、原始幻灯片帧、转写稿）集中在仓库根的本地 `_sources/robot/`，不纳入版本管理，也不随教程发布；正文按页标注来源。
 
 ## 母本材料（`~/Downloads/1 机器人控制技术课程资料/`）
 

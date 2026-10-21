@@ -166,7 +166,7 @@
     /* 导览页（本书根）不当「上次读到哪」：它是入口，进本页就会把记录覆盖成自己，
        于是「继续阅读」永远指向导览页。 */
     if (!/(\/|index\.html)$/.test(location.pathname)) {
-      CORE.save("tutorials-last:" + bookRoot(), JSON.stringify({ path: location.pathname, title: pageTitle() }));
+      CORE.save("tutorials-last:" + bookRoot(), JSON.stringify({ path: location.pathname, title: pageTitle(), hash: location.hash, updatedAt: Date.now() }));
     }
   }
 
@@ -207,13 +207,13 @@
     var link = document.createElement("a");
     link.className = "continue-link";
     link.href = last.path + (typeof last.hash === "string" && last.hash[0] === "#" ? last.hash : "");
-    link.textContent = last.title || "上次读到的那一节";
+    link.textContent = typeof last.title === "string" && last.title ? last.title : "上次浏览的页面";
     card.appendChild(kicker);
     card.appendChild(link);
     if (total > 0) {
       var meta = document.createElement("span");
       meta.className = "continue-meta";
-      meta.textContent = "已读 " + readCount + " / " + total + " 节";
+      meta.textContent = "已浏览 " + readCount + " / " + total + " 页 · 仅保存在此浏览器";
       var bar = document.createElement("span");
       bar.className = "continue-bar";
       var fill = document.createElement("i");
@@ -251,7 +251,7 @@
         document.querySelectorAll("main h2[id], main h3[id]").forEach(function (heading) {
           if (heading.getBoundingClientRect().top <= 120 && !heading.closest("details:not([open])")) hash = "#" + encodeURIComponent(heading.id);
         });
-        CORE.save("tutorials-last:" + bookRoot(), JSON.stringify({ path: location.pathname, title: pageTitle(), hash: hash }));
+        CORE.save("tutorials-last:" + bookRoot(), JSON.stringify({ path: location.pathname, title: pageTitle(), hash: hash, updatedAt: Date.now() }));
       };
       window.addEventListener("pagehide", remember);
       document.addEventListener("visibilitychange", function () { if (document.hidden) remember(); });
@@ -334,7 +334,7 @@
       rail.setAttribute("aria-label", "本页大纲");
       var title = document.createElement("span");
       title.className = "page-rail-title";
-      title.textContent = "ON THIS PAGE / 本节";
+      title.textContent = "本页大纲";
       rail.appendChild(title);
       document.body.appendChild(rail);
     }

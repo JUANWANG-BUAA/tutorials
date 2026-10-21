@@ -76,25 +76,22 @@
 
 - **正文一律用节级编号**（`定理 1.3.6`、`定义 1.2.1`、`例 1.2.1`）；原书编号只写在盒子标题的括注里（`定理 1.3.6（原书）`），两套编号的对照表放在该节开头；
 - **章号必须可跳转**：未成章的章号一律链到[全书路线图](src/ch01/sec11.md#roadmap)（表里有「已成章 / 讲座页承载 / 待写」状态列）；原书章号必须带「原书」二字——两套章号是**错位**的（原书第 2 章是线性方程组，本书第 3、5 章才是）；
-- 以上两条由 `make numbering` 强制，`make check` 与 CI 都会跑。
+- 编号与章号在内容审校时核对；`mathbook.py` 在构建时校验语义盒和交叉引用。仓库不再提供单独的 `make numbering` 目标。
 
 ## 快速开始
 
 ```bash
-brew install mdbook            # 构建器
-cargo install mdbook-katex     # 公式预处理器
-pip3 install -r requirements.txt
-
-make serve                     # 本地预览 http://localhost:3000
-make build                     # 生成静态站点到 book/
-make check                     # 测试 + 编号检查 + 构建 + 波浪号修复 + 搜索索引 + 死链检查
+# 从仓库根运行
+brew install mdbook
+cargo install mdbook-katex --version 0.10.0 --locked
+pip3 install markdown-it-py pillow
+bash build.sh serve            # 完整站点预览 http://127.0.0.1:8000/
+bash check.sh                  # 与 CI 相同的质量检查
 ```
 
-> **构建分三步**：`mdbook build` 之后依次
-> ① `python3 tools/fix_tilde.py book`（中和 KaTeX `\tilde` 输出的字面 `~`，
-> 否则 GFM 删除线会把相邻公式之间的内容吞进 `<del>`，标签错配、版式崩坏）；
-> ② `node tools/build_search_js.mjs book`（中文搜索索引，mdBook 分词器不处理中文）。
-> `make` 已封装，手工操作时别漏。
+仅预览本书时可在本目录运行 `mdbook build .` 或 `mdbook serve --open`；中文搜索与术语数据需由根目录 `build.sh` 生成。KaTeX 包装器在预处理阶段保护波浪号，无需另跑已移除的 `fix_tilde.py`。
+
+完整检查范围与浏览器依赖见 [质量检查与内容审校](../docs/quality-gates.md)。
 
 ## 仓库结构
 
@@ -119,13 +116,9 @@ theme/     视觉层：css/na.css（唯一权威样式，含阅读分层与「�
            §9 特训竞技组件）、css/katex.css、js/na.js（进度条、本页内容目录、
            解答折叠、阅读分层开关）、js/arena.js（必考点竞技场：限时/计分/
            连击/段位/错题本 + 考场计时器，可降级增强）、js/search-cjk.js
-tools/     mathbook.py（语义盒子/交叉引用/优先级预处理器）、
-           katex_wrapper.py（mdbook-katex 包装器：渲染后立即中和字面波浪号）、
-           fix_tilde.py（构建后兜底扫描）、build_search_js.mjs（中文搜索）、
-           check_links.py（产物死链与死锚点）、
-           check_numbering.py（正文编号 → 语义盒子，构建前跑）、
-           test_mathbook.py（42 项单测）
-docs/      架构与写作约定（先读这个）
+tools/     mathbook.py（本书语义盒子/交叉引用/优先级预处理器）
+../tools/  共用 KaTeX 包装器、中文搜索、术语生成与构建后资源检查
+../shared/ 共用主题、阅读交互和偏好设置（本书 theme/ 通过符号链接复用）
 ```
 
 ## 写作要点
@@ -140,7 +133,7 @@ docs/      架构与写作约定（先读这个）
 ……即 [@def-2.1.1] 定义的内积。
 ```
 
-`[@def-2.1.1]` 自动渲染成「定义 2.1.1」并链接过去；**引用不存在的锚点会让构建失败**。正文一律用**节级编号**（定理 1.3.6、例 1.2.1、定义 2.1.1）；原书编号只写在盒子标题的括注里（`::: thm 定理 1.3.6（原书） · …`），可逐条对照。字母编号（定义 1.2.A 之类）是已废弃的历史方案，`tools/check_numbering.py` 会在 `make check` 时拦截悬空编号。
+`[@def-2.1.1]` 自动渲染成「定义 2.1.1」并链接过去；**引用不存在的锚点会让构建失败**。正文一律用**节级编号**（定理 1.3.6、例 1.2.1、定义 2.1.1）；原书编号只写在盒子标题的括注里（`::: thm 定理 1.3.6（原书） · …`），可逐条对照。字母编号（定义 1.2.A 之类）是已废弃的历史方案；增删内容时需人工复核编号与原书对照。
 
 **盒子的优先级**（决定阅读分层，可省略）：
 
@@ -149,4 +142,4 @@ docs/      架构与写作约定（先读这个）
 ::: thm[skip]        ← 这个定理只作背景，第一遍可跳
 ```
 
-取值 `core` / `main` / `skip`，不写则按类型取默认值（定义、定理族默认 `core`；例题、方法、直觉、边注默认 `main`；证明、课程预告默认 `skip`）。锚点 ID 约定见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+取值 `core` / `main` / `skip`，不写则按类型取默认值（定义、定理族默认 `core`；例题、方法、直觉、边注默认 `main`；证明、课程预告默认 `skip`）。锚点 ID 保持稳定且全书唯一，写法参照上面的语义盒示例；检查范围见 [质量检查与内容审校](../docs/quality-gates.md)。

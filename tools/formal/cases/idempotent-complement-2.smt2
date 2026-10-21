@@ -1,0 +1,15 @@
+; An idempotent splits identity into disjoint complementary projectors (2x2)
+; Source: matrix/src/ch03/sec36.md#ex-3.6.2
+; Real arithmetic is exact. No floating-point values are used.
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const p00 Real)
+(declare-const p01 Real)
+(declare-const p10 Real)
+(declare-const p11 Real)
+(assert (and (= (+ (* p00 p00) (* p01 p10)) p00) (= (+ (* p00 p01) (* p01 p11)) p01) (= (+ (* p10 p00) (* p11 p10)) p10) (= (+ (* p10 p01) (* p11 p11)) p11)))
+(check-sat)
+(push 1)
+(assert (not (and (and (= (+ (* (- 1 p00) (- 1 p00)) (* (- 0 p01) (- 0 p10))) (- 1 p00)) (= (+ (* (- 1 p00) (- 0 p01)) (* (- 0 p01) (- 1 p11))) (- 0 p01)) (= (+ (* (- 0 p10) (- 1 p00)) (* (- 1 p11) (- 0 p10))) (- 0 p10)) (= (+ (* (- 0 p10) (- 0 p01)) (* (- 1 p11) (- 1 p11))) (- 1 p11))) (and (= (+ (* p00 (- 1 p00)) (* p01 (- 0 p10))) 0) (= (+ (* p00 (- 0 p01)) (* p01 (- 1 p11))) 0) (= (+ (* p10 (- 1 p00)) (* p11 (- 0 p10))) 0) (= (+ (* p10 (- 0 p01)) (* p11 (- 1 p11))) 0)) (and (= (+ (* (- 1 p00) p00) (* (- 0 p01) p10)) 0) (= (+ (* (- 1 p00) p01) (* (- 0 p01) p11)) 0) (= (+ (* (- 0 p10) p00) (* (- 1 p11) p10)) 0) (= (+ (* (- 0 p10) p01) (* (- 1 p11) p11)) 0)))))
+(check-sat)
+(pop 1)

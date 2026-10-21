@@ -86,7 +86,7 @@
 | 只要**主特征值**、矩阵–向量乘足够便宜 | 幂法 + Rayleigh 商 | 手写循环（[算法 2.5.1](ch02/sec25.md#sec-2.5.3)） | 速度由 $\lvert\lambda_2/\lambda_1\rvert$ 决定，估计值用 Rayleigh 商（二阶精度） |
 | 大规模稀疏、要最大的几个（对称） | Lanczos | `scipy.sparse.linalg.eigsh` | 只做矩阵–向量乘，$O(\mathrm{nnz})$ 每步 |
 | 大规模稀疏、**非对称** | **Arnoldi** | `scipy.sparse.linalg.eigs` | 需要多大的 $k$、`ncv` 取多少，见函数文档 |
-| 全部特征值、还想看中间过程 | QR 迭代 | 手写（[2.3 预告](ch02/sec23.md#sec-2.3.7)） | $A'=RQ=Q^{\mathrm T}AQ$ 相似，对角元趋于特征值；**模互异**才保证收敛 |
+| 全部特征值、还想看中间过程 | QR 迭代 | 手写（[2.3 预告](ch02/sec23.md#sec-2.3.7)） | $A'=RQ=Q^{\mathrm T}AQ$ 相似，对角元趋于特征值；收敛还须核对结构、初始分量与相位；模互异本身不足以保证整个矩阵收敛 |
 | 只想知道特征值「被困在哪」 | Gerschgorin 圆盘 | 读一遍矩阵即可（[2.5.2](ch02/sec25.md#sec-2.5.2)） | $O(n^{2})$ 的围栏；对角占优时圆心就是良好近似 |
 | 稀疏 / 只要前几个最大奇异值 | 迭代 SVD | `scipy.sparse.linalg.svds` | 稠密的完整 SVD 用 `np.linalg.svd` |
 

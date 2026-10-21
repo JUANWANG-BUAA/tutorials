@@ -3,22 +3,34 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install compiler test tools
+        run: sudo apt-get update && sudo apt-get install -y clang llvm
 
       - name: Install mdbook
         run: |
@@ -33,41 +45,41 @@ jobs:
         run: cargo install --locked mdbook-katex --version 0.10.0
 
       - name: Install python deps
-        run: pip3 install markdown-it-py pillow
+        run: pip3 install markdown-it-py pillow -r tools/formal/requirements.txt
 
-      - name: Build all books
-        run: |
-          set -e
-          mkdir -p _site
-          for book in robot numerical matrix deeplearning linux agent-systems distributed compilers; do
-            mdbook build "$book"
-            # mdBook 自带分词器不处理中文，「数域」「过渡矩阵」这类词进不了索引，
-            # 中文全文搜索会形同虚设。构建后用字符 n-gram 重建索引（这一步曾在
-            # CI 里缺失，导致线上中文搜索一直搜不到——见各书 README）。
-            node tools/build_search_js.mjs "$book"
-            # 术语悬挂提示的数据：从各书已有的索引页（速查背记卡 / 术语索引）
-            # 抽成 book/glossary.json，前端按需取用（缺失时自动不增强）。
-            python3 tools/build_glossary.py "$book"
-            mv "$book/book" "_site/$book"
-          done
-          cp site-index.html _site/index.html
-          mkdir -p _site/shared/theme
-          cp -R shared/theme/. _site/shared/theme/
-          python3 tools/optimize_site.py _site
-          python3 tools/optimize_assets.py _site
-          python3 tools/audit_site_assets.py _site
+      - name: Install browser
+        run: npx --yes --package @playwright/cli@0.1.22 playwright-cli install-browser chrome --with-deps
 
-      - uses: actions/configure-pages@v5
+      - name: Check and build all books
+        run: bash check.sh
+
+      - name: Save browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-diagnostics
+          path: |
+            .playwright-cli/
+            output/playwright/
+            output/formal/
+          if-no-files-found: ignore
+
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         with:
           path: _site
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/configure-pages@v5
       - id: deployment
         uses: actions/deploy-pages@v4

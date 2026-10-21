@@ -25,6 +25,7 @@ for book in "${books[@]}"; do cp -R "$book/book" "_site/$book"; done
 python3 tools/optimize_site.py _site
 python3 tools/optimize_assets.py _site
 python3 tools/audit_site_assets.py _site
+python3 tools/check_site_links.py _site
 echo "构建完成：_site/（八本 + 导览页）"
 
 if [ "${1:-}" = "serve" ]; then

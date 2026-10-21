@@ -1,0 +1,299 @@
+[
+  {
+    "id": "cauchy-schwarz-r2",
+    "source": "matrix/src/ch01/sec15.md#thm-1.5.1",
+    "description": "Cauchy-Schwarz squared inequality over R^2",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "cauchy-schwarz-r3",
+    "source": "matrix/src/ch01/sec15.md#thm-1.5.1",
+    "description": "Cauchy-Schwarz squared inequality over R^3",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "det-product-2",
+    "source": "matrix/src/ch02/sec24.md#thm-sim-invariants",
+    "description": "2x2 determinant multiplication identity",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "qr-similarity-2",
+    "source": "matrix/src/ch03/sec34.md#method-qr-algo",
+    "description": "QR step preserves similarity for a real orthogonal 2x2 Q",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "orthogonal-diagonalization-2",
+    "source": "matrix/src/ch03/sec36.md#cor-3.6.4",
+    "description": "Real orthogonal diagonalization implies symmetry in dimension two",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "idempotent-complement-2",
+    "source": "matrix/src/ch03/sec36.md#ex-3.6.2",
+    "description": "An idempotent splits identity into disjoint complementary projectors (2x2)",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "gram-kernel-r2",
+    "source": "matrix/src/ch03/sec31.md#prop-3.1.1",
+    "description": "The real 2x2 Gram kernel implication A^T A x=0 implies Ax=0",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "perturbation-resolvent-scalar",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.1",
+    "description": "Scalar norm inequality underlying the perturbation estimate; e<=v*r+v*d*x+v*d*e",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "relative-perturbation-bound",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.1",
+    "description": "Perturbation relative bound from explicitly assumed norm inequalities",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "relative-residual-bound",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.3",
+    "description": "Residual relative bound after norm axioms: e<=v*r and b<=a*x",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "contraction-posterior-bound",
+    "source": "numerical/src/course/ch02/sec24.md#sec-2.4.2",
+    "description": "Posterior contraction estimate from e<=q*(d+e)",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "bisection-midpoint-bound",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.1",
+    "description": "Midpoint error bounded by half bracket length",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "linear-interpolation-factor-bound",
+    "source": "numerical/src/lectures/lec10.md",
+    "description": "On [a,b], (x-a)*(b-x)<=h^2/4, giving the M2*h^2/8 remainder bound",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "halley-sqrt-error",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.5",
+    "description": "Halley sqrt exact error identity with positive target s and iterate x",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "halley-sqrt-contraction",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.5",
+    "description": "Positive sqrt Halley step reduces absolute error; squared ratio is <1",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "newton-cubic-leading-error",
+    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "description": "For f=e+a*e^3 the exact Newton error is 2*a*e^3/(1+3*a*e^2)",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "symmetric-condition-counterexample",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.1",
+    "description": "Counterexample: diag(-10,1) has condition number 10, not abs(lambda_max)/abs(lambda_min)=1/10",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "ill-conditioned-solvable",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.2",
+    "description": "Counterexample: a nonsingular condition-10^20 diagonal system still has an exact unique solution",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "infinity-rayleigh-counterexample",
+    "source": "numerical/src/course/ch03/sec31.md#sec-3.1.1",
+    "description": "A=diag(2,1), y=(1,1/2): missing Rayleigh denominator changes 9/5 to 9/4",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "equal-modulus-power-cycle",
+    "source": "numerical/src/course/ch03/sec31.md#sec-3.1.1",
+    "description": "A=diag(1,-1), initial (1,1): normalized direction alternates; Rayleigh quotient is 0",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "steffensen-missing-hypothesis",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.4",
+    "description": "phi(x)=x+x^2: phi prime at root is 1, Steffensen map x*(1+x)/(2+x) has linear factor 1/2",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "newton-order-four-counterexample",
+    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "description": "f=e+e^4: f second derivative at root is 0 but Newton error is order four",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "squared-infinity-homogeneity",
+    "source": "numerical/src/ch01/sec13.md#ex-1.3.1",
+    "description": "Squared infinity norm fails degree-one homogeneity: N(2,0)=4 != 2*N(1,0)",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "basis-order-counterexample",
+    "source": "matrix/src/ch03/sec31.md#lem-3.1.1",
+    "description": "T=[1,0], kernel-first basis [(0,1),(1,0)] produces [0,1], not [1,0]",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "diagonalizable-not-normal",
+    "source": "matrix/src/ch03/sec36.md#note-3.6-schur-special",
+    "description": "A=[[1,1],[0,2]] is diagonalizable via P=[[1,1],[0,1]] but not normal",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "matrix-example-361-annihilator",
+    "source": "matrix/src/ch03/sec36.md#ex-3.6.1",
+    "description": "Exact 3x3 example A*(A-5I)=0 on arbitrary vectors",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "matrix-example-361-eigenbasis",
+    "source": "matrix/src/ch03/sec36.md#ex-3.6.1",
+    "description": "Exact 3x3 eigenbasis identity A*P=P*diag(0,0,5)",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "qr-period-two",
+    "source": "matrix/src/ch03/sec34.md#method-qr-algo",
+    "description": "For A(t)=[[-1,t],[0,2]], positive-diagonal QR has Q=diag(-1,1) and maps t to -t; two applications return t",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "qr-no-automatic-sort",
+    "source": "matrix/src/ch03/sec34.md#method-qr-algo",
+    "description": "A=diag(1,2) has Q=I,R=A and remains unsorted by decreasing magnitude",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "algebraic-vs-magnitude",
+    "source": "numerical/src/course/ch03/sec31.md#sec-3.1.3",
+    "description": "Ordered eigenvalues -40,-20,1: lambda_n is not largest magnitude; shift -10 is closer to 1 than -20",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  },
+  {
+    "id": "steffensen-exact-map",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.4",
+    "description": "phi=x+x^2: Aitken/Steffensen map equals x*(1+x)/(2+x), and its error ratio approaches 1/2 with difference x/(2*(2+x))",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "newton-fourth-exact-map",
+    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "description": "f=x+x^4: Newton error is 3*x^4/(1+4*x^3), so vanishing second derivative alone does not force exact order three",
+    "expected": [
+      "sat",
+      "unsat"
+    ]
+  },
+  {
+    "id": "fixed-secant-repelling",
+    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.8",
+    "description": "Fixed chord f=x^3-1,c=0 gives derivative -2 at root 1; monotonic f and a sign bracket do not imply local convergence",
+    "expected": [
+      "sat",
+      "sat"
+    ]
+  }
+]

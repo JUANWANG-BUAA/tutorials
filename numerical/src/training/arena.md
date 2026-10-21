@@ -1,5 +1,10 @@
 # 必考点竞技场
 
+::: note 本编数学核验补注 · Rayleigh 商的适用条件
+课堂中的“算特征值必须取 2-范数”专指省略分母的 $y^{\mathrm T}Ay$ 写法。一般的 Rayleigh 商是 $y^{\mathrm T}Ay/(y^{\mathrm T}y)$，对任意非零 $y$ 都可用，与采用哪种范数归一化无关；仅当 $\lVert y\rVert_2=1$ 才可省略分母。不能把课堂简写当成对其他提取方式的否定。主特征值为负时，归一化向量还可能正负交替，应说方向收敛。完整公式与复算表见[幂法正文](../course/ch03/sec31.md)。
+:::
+
+
 > **练和赛的地方。** 复习层解决「记和查」，这里解决「**在压力下还答得对**」——把老师
 > 反复强调的必考点做成**限时、计分、连击、分关解锁**的答题场，答错的题自动进错题本，
 > 直到你把它清空。目标很直白：**把这些题做到条件反射，考场才不会临时卡壳。**
@@ -59,7 +64,7 @@
 | 迭代 | $\lVert G\rVert$ 接近 1 时，**相邻迭代值差小不能断定接近真解** | 第 5 讲 |
 | 迭代 | SOR **必要**条件 $\omega\in(0,2)$：区间外一定不收敛，区间内不保证 | 第 6 讲 |
 | 特征值 | 幂法**先单位化、再乘 $A$**，顺序不能反 | 第 7 讲 |
-| 特征值 | 求**特征向量**范数任取；求**特征值必须取 2-范数**（$y_k^{\mathrm T}Ay_k\to\lambda_1$） | 第 7 讲 |
+| 特征值 | 求**特征向量**范数任取；省略 Rayleigh 分母须作 **2-范数**单位化；保留分母则可任取范数 | 第 7 讲 |
 | 特征值 | 「**严格**按模最大」这个前提缺不得；实矩阵的它**必为实数** | 第 7 讲 |
 | 特征值 | 反幂法**不构造 $A^{-1}$**，每步解 $Au_{k+1}=y_k$；位移 $A-pI$ 求最接近 $p$ 的特征值 | 第 7 讲 |
 | 非线性 | **必要 / 充分分清**：牛顿一般定理只**局部**；四条件给**全局** | 第 9 讲 |
@@ -319,25 +324,25 @@
 </div>
 <div class="arena-q" data-id="e23" data-lv="4" data-a="2" data-tag="特征值与幂法" data-point="幂法顺序" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e23</span><span class="aq-tag">特征值与幂法 · 幂法顺序</span></p>
-<p class="aq-prompt">规范化幂法（power method）每步的正确操作顺序是</p>
+<p class="aq-prompt">按课堂记号 $y_k=u_k/\lVert u_k\rVert$、$u_{k+1}=Ay_k$，每步的操作顺序是</p>
 <ol class="aq-opts">
 <li>先乘 $A$，再单位化</li>
 <li>只乘 $A$，不需要单位化</li>
 <li>先单位化，再乘 $A$</li>
 <li>顺序无所谓，结果一样</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>**先单位化、再乘 $A$**：$y_k=u_k/\lVert u_k\rVert$，$u_{k+1}=Ay_k$。顺序反了就会溢出（$\lambda_1^k$ 增长过快）。老师原话：「你要记住是先单位化，单位化之后的那个东西我再给它乘 $A$。」<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>**先单位化、再乘 $A$**：$y_k=u_k/\lVert u_k\rVert$，$u_{k+1}=Ay_k$。不及时单位化可能溢出；每步先乘再单位化也是可行写法，只是索引与估计式须配套。老师原话：「你要记住是先单位化，单位化之后的那个东西我再给它乘 $A$。」<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e24" data-lv="4" data-a="1" data-tag="特征值与幂法" data-point="特征值的 2-范数提取" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e24</span><span class="aq-tag">特征值与幂法 · 特征值的 2-范数提取</span></p>
-<p class="aq-prompt">用幂法求特征值时，$y_k^{\mathrm T}Ay_k\to\lambda_1$ 这一公式**必须**在什么范数下才成立？</p>
+<p class="aq-prompt">用哪种范数把 $y_k$ 单位化，能普遍保证 $y_k^{\mathrm T}y_k=1$，从而省略 Rayleigh 商的分母？</p>
 <ol class="aq-opts">
 <li>任何范数都行</li>
 <li>2-范数（此时 $\lVert y_k\rVert_2=1$，故比值化简为 $y_k^{\mathrm T}Ay_k$）</li>
 <li>必须 $\infty$-范数</li>
 <li>必须 1-范数</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>计算**特征向量**时范数任取；计算**特征值**时必须取 **2-范数**：只有 2-范数下 $y_k^{\mathrm T}y_k=\lVert y_k\rVert_2^2=1$，$y_k^{\mathrm T}Ay_k$ 才恰好趋于 $\lambda_1$。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>保留 Rayleigh 商分母时，单位化范数可以任取。用 **2-范数**单位化可保证 $y_k^{\mathrm T}y_k=\lVert y_k\rVert_2^2=1$，$y_k^{\mathrm T}Ay_k$ 才恰好趋于 $\lambda_1$。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e25" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="严格按模最大" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e25</span><span class="aq-tag">特征值与幂法 · 严格按模最大</span></p>

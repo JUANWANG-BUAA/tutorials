@@ -50,7 +50,7 @@ pip3 install -r requirements.txt   # markdown-it-py
 cargo install mdbook mdbook-katex  # 若未安装
 ```
 
-本书只复用 `shared/theme`、根目录 `tools/` 的 KaTeX 包装器与仓库既有预处理器；不修改其他五本的 `book.toml`/`SUMMARY.md`。
+本书通过符号链接复用 `shared/theme` 与根目录 `tools/` 的 KaTeX 包装器，保留本书预处理器。完整预览在仓库根运行 `bash build.sh serve`；`bash check.sh` 执行与 CI 相同的质量检查。单独的 `mdbook build` 不包含中文搜索、术语数据与共享资源后处理。
 
 ## 自检
 

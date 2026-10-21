@@ -16,7 +16,7 @@ $$
 =\sqrt{\frac{\lambda_{\max}(A^{\mathrm T}A)}{\lambda_{\min}(A^{\mathrm T}A)}}.
 $$
 
-**性质**：$\mathrm{cond}(A)\ge1$；$\mathrm{cond}(kA)=\mathrm{cond}(A)\ (k\ne0)$；正交矩阵 $\mathrm{cond}_2(Q)=1$；实对称矩阵 $\mathrm{cond}_2(A)=|\lambda_{\max}|/|\lambda_{\min}|$。
+**性质**：$\mathrm{cond}(A)\ge1$；$\mathrm{cond}(kA)=\mathrm{cond}(A)\ (k\ne0)$；正交矩阵 $\mathrm{cond}_2(Q)=1$；实对称非奇异矩阵 $\mathrm{cond}_2(A)=\max_i|\lambda_i|/\min_i|\lambda_i|$。这里要先取绝对值再取极值；只有正定时才能直接写成代数最大、最小特征值之比。例如 $\operatorname{diag}(-10,1)$ 的条件数为 $10$，不是 $|1|/|-10|=0.1$。
 
 **定理 2.6（扰动界）**：设 $A$ 非奇异，$\boldsymbol x$ 是 $A\boldsymbol x=\boldsymbol b$ 的解，$\boldsymbol b\ne0$。若 $\lVert A^{-1}\rVert\lVert\Delta A\rVert\lt1$，则 $A+\Delta A$ 非奇异，且
 $$
@@ -50,7 +50,7 @@ $$
 
 教材 2.3.2 给出四条常用办法：
 
-1. **提高精度**：双精度/多精度能减轻舍入，但不能改变条件数；条件数 $10^{20}$ 时仍然无解。
+1. **提高精度**：双精度/多精度能减轻舍入，但不能改变条件数；条件数很大并不意味着方程无解；例如 $A=\operatorname{diag}(1,10^{-20})$、$\boldsymbol b=(1,10^{-20})^{\mathrm T}$ 仍有唯一解 $(1,1)^{\mathrm T}$。是否能算准取决于输入误差、工作精度与算法，不能只按条件数断言“无解”。
 2. **行（列）均衡化**：把每行/列缩放到同一量级，降低人为病态。
 3. **残差校正（迭代精化）**：用当前解算残差 $\boldsymbol r=\boldsymbol b-A\hat{\boldsymbol x}$，解 $A\Delta\boldsymbol x=\boldsymbol r$，令 $\hat{\boldsymbol x}\leftarrow\hat{\boldsymbol x}+\Delta\boldsymbol x$；在条件数不太大且残差计算足够精确时有效。
 4. **换提法**：正则化（Tikhonov）、换基（如插值从范德蒙德基换到拉格朗日基）、增广方程等。
@@ -82,7 +82,7 @@ $$
 :::
 
 ::: ex 2.11 · 残差与误差界（教材习题 11）
-设 $A$ 非奇异，$\tilde{\boldsymbol x}$ 是 $A\boldsymbol x=\boldsymbol b$ 的近似解，$\boldsymbol r=\boldsymbol b-A\tilde{\boldsymbol x}$。证明
+设 $A$ 非奇异、$\boldsymbol b\ne0$，$\tilde{\boldsymbol x}$ 是 $A\boldsymbol x=\boldsymbol b$ 的近似解，$\boldsymbol r=\boldsymbol b-A\tilde{\boldsymbol x}$。证明
 $$
 \frac{\lVert\boldsymbol x^{*}-\tilde{\boldsymbol x}\rVert}{\lVert\boldsymbol x^{*}\rVert}
 \le \mathrm{cond}(A)\frac{\lVert\boldsymbol r\rVert}{\lVert\boldsymbol b\rVert}.

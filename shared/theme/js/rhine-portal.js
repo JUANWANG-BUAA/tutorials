@@ -106,7 +106,7 @@
         no: String(index + 1).padStart(2, "0"), title: text(row, ".row-title"), en: text(row, ".row-en"),
         description: text(row, ".row-desc"),
         meta: Array.from(row.querySelectorAll(".row-meta > span")).map(function (node) { return node.textContent.trim(); }).join(" · "),
-        href: row.getAttribute("href"), fallbackCover: fallbackCover,
+        topics: row.dataset.topics || "", href: row.getAttribute("href"), fallbackCover: fallbackCover,
         cover: "shared/theme/assets/rhine-" + slug + ".svg"
       };
     });
@@ -128,19 +128,19 @@
       '<div class="rh-hero rh-shell">' +
         '<div class="rh-hero-copy"><div class="rh-eyebrow"><i></i>GRADUATE COURSE ARCHIVE / 课程档案</div>' +
         '<h1 class="rh-brandmark">课程档案<span>COURSE ARCHIVE</span></h1>' +
-        '<p class="rh-lede">研究生课程，一套可检索的知识档案。<br>数学 / 系统 / 智能，在讲义与图版之间建立坐标。</p></div>' +
+        '<p class="rh-lede">数学、系统与人工智能，八门课程按章展开。<br>选择课程后，从导览了解前置知识与学习安排。</p></div>' +
         '<aside class="rh-file" aria-live="polite" aria-atomic="true"><div class="rh-file-top"><span data-selected-en></span><span>FILE <b data-selected-no>01</b> / '+total+'</span></div>' +
         '<h2 data-selected-title></h2><p data-selected-description></p><div class="rh-file-meta" data-selected-meta></div>' +
-        '<a class="rh-access" data-access><span>读取档案</span><b>↗</b></a></aside>' +
+        '<a class="rh-access" data-access><span>进入课程</span><b>↗</b></a></aside>' +
       '</div>' +
       '<div class="rh-index rh-shell"><span class="rh-index-label">ARCHIVE / 01—'+total+'</span>' +
         '<div class="rh-index-list" role="group" aria-label="选择课程档案">'+books.map(function (book, index) {
           return '<button type="button" data-book="'+index+'" aria-pressed="'+(index===0)+'"><span>'+book.no+'</span><b>'+escape(book.title)+'</b></button>';
-        }).join("")+'</div><a class="rh-scroll" href="#rhine-books">SCROLL <span>↓</span></a></div>' +
-      '<div class="rh-stage-bottom rh-shell"><span>ATLAS / 研究生课程资料库</span><span>SELECT A FILE / 读取档案</span></div></section>' +
+        }).join("")+'</div><a class="rh-scroll" href="#rhine-books">课程目录 <span>↓</span></a></div>' +
+      '<div class="rh-stage-bottom rh-shell"><span>ATLAS / 研究生课程资料库</span><span>SELECT A COURSE / 选择课程</span></div></section>' +
       '<section id="rhine-books" class="rh-collection rh-shell"><div class="rh-section-head"><div><div class="rh-eyebrow">01 / COURSE COLLECTION</div><h2>知识，分门归档。</h2></div><p>选择一门课程，<br>从导览、正文到章末练习逐步展开。</p></div>' +
       '<div class="rh-catalogue">'+books.map(function (book) {
-        return '<a class="rh-course" href="'+escape(book.href)+'" data-no="'+book.no+'"><div class="rh-course-top"><span>ARCHIVE / '+book.no+'</span><span>↗</span></div>' +
+        return '<a class="rh-course" href="'+escape(book.href)+'" data-no="'+book.no+'" data-topics="'+escape(book.topics)+'"><div class="rh-course-top"><span>ARCHIVE / '+book.no+'</span><span>↗</span></div>' +
           '<div class="rh-course-body"><div class="rh-course-cover"><img loading="lazy" src="'+escape(book.cover)+'" data-fallback="'+escape(book.fallbackCover)+'" alt=""></div><div class="rh-course-copy"><span>'+escape(book.en)+'</span><h3>'+escape(book.title)+'</h3><p>'+escape(book.description)+'</p></div></div>' +
           '<div class="rh-course-foot"><span>'+escape(book.meta)+'</span><b>进入课程 →</b></div></a>';
       }).join("")+'</div><p class="rh-catalogue-note">'+escape(text(original,".index-note"))+'</p></section>' +
@@ -157,6 +157,7 @@
     }, true);
     original.insertAdjacentElement("afterend", main);
     root.setAttribute("data-rhine-portal-ready", "true");
+    if (window.TUTORIALS_PORTAL) window.TUTORIALS_PORTAL.enhanceCatalogue(main.querySelector(".rh-catalogue"), ".rh-course");
     var boot = startBoot();
     main.querySelector("[data-atlas-art]").innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-label="刚体位姿图解：从参考系 O 到本体系 O′ 的位置向量，以及两套坐标轴的姿态关系">
@@ -213,7 +214,7 @@
       main.querySelectorAll("[data-selected-description]").forEach(function(node){node.textContent=book.description;});
       main.querySelector("[data-selected-meta]").textContent=book.meta;
       main.querySelector("[data-access]").setAttribute("href",book.href);
-      main.querySelector("[data-access]").setAttribute("aria-label","读取档案："+book.title);
+      main.querySelector("[data-access]").setAttribute("aria-label","进入课程："+book.title);
       if(titleMotion){titleMotion.cancel();titleMotion=null;}
       var title=main.querySelector('.rh-file h2');
       if(title && title.animate && engaged && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){

@@ -27,7 +27,7 @@ $$c=\operatorname*{arg\,min}_{k\in\{1,\dots,K\}}\ \lVert z_e-e_k\rVert_2,\qquad 
 **代价也要说清**：量化是**有损**的，且损失不可微——这带来两个技术麻烦：梯度怎么穿过去（直通估计量），以及代码本怎么不塌（commitment loss，以及后来的 FSQ 干脆绕开它）。
 :::
 
-## 4.7.2 VQ-VAE：量化、直通估计量与 commitment loss
+## 4.7.2 VQ-VAE：量化、直通估计量与 commitment loss {#sec-4.7.2}
 
 ::: def 定义 4.7.2 · VQ-VAE 的损失与直通估计量 {#def-4.7.2}
 VQ-VAE = 编码器 $\mathcal E$ + 代码本 $\{e_k\}_{k=1}^{K}$ + 解码器 $\mathcal D$。总损失由三项组成
@@ -74,7 +74,7 @@ $$N\log_2 K=256\times9=2304\ \text{bit}=288\ \text{字节}.$$
 :::
 :::
 
-## 4.7.3 VQGAN：给解码器加感知与对抗
+## 4.7.3 VQGAN：给解码器加感知与对抗 {#sec-4.7.3}
 
 ::: prop 命题 4.7.1 · 纯重建损失为什么让离散编码器变糊 {#prop-4.7.1}
 设解码器逐像素以高斯建模 $p(\boldsymbol x\mid \boldsymbol z)=\prod_i\mathcal N(x_i;g_i(\boldsymbol z),\sigma^2)$。则对数似然最大化的最优解是**条件均值**
@@ -103,7 +103,7 @@ VQ-VAE 的重建项是 MSE，按 [命题 4.7.1](#prop-4.7.1) 会把细节平均�
 3. **「VQ-VAE 是生成模型」**：VQ-VAE 本身**只是一套离散自编码器**（和 [4.2](sec42.md) 的 AE 一样只有编码—解码能力）。要能生成，还需要在 token 序列上再训一个**先验模型**（自回归 Transformer 或掩码扩散模型）——这才是「一半」的另一半。把 VQ-VAE 单独称作生成模型是常见误称。
 :::
 
-## 4.7.4 FSQ：去掉代码本，用标量量化
+## 4.7.4 FSQ：去掉代码本，用标量量化 {#sec-4.7.4}
 
 ::: def 定义 4.7.3 · 有限标量量化（finite scalar quantization, FSQ） {#def-4.7.3}
 FSQ 放弃「学习代码本 + 最近邻搜索」，改为在**每一维上独立**地把实数四舍五入到有限个格子：
@@ -136,7 +136,7 @@ FSQ 的观察是：**「离散」这件事不一定需要「一个可学的有�
 **它和 VQ 与 FSQ 的关系**：Gumbel-Softmax 是「可微的类别选择」，VQ+STE 是「不可微的类别选择 + 有偏梯度」，FSQ 是「不需要选择的量化」。三条路线都在解决同一个矛盾——**离散化与可微性不相容**——只是妥协的位置不同。
 :::
 
-## 4.7.5 自回归视觉生成：从光栅扫描到 next-scale prediction
+## 4.7.5 自回归视觉生成：从光栅扫描到 next-scale prediction {#sec-4.7.5}
 
 ::: def 定义 4.7.4 · next-scale prediction（VAR） {#def-4.7.4}
 **VAR**（visual autoregressive modeling）把图像表示成**多尺度 token 金字塔**，并改变自回归的分解顺序：不是「按光栅顺序预测下一个 token」，而是**按尺度**预测——先整体生成最粗的一张小图，再依次生成更高分辨率的残差图：

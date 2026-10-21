@@ -1,0 +1,17 @@
+; For A(t)=[[-1,t],[0,2]], positive-diagonal QR has Q=diag(-1,1) and maps t to -t; two applications return t
+; Source: matrix/src/ch03/sec34.md#method-qr-algo
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const t Real)
+(declare-const next Real)
+(declare-const again Real)
+(assert (= t 1))
+; R=[[1,-t],[0,2]]: Q*R=A(t), R*Q=A(-t)
+(assert (= next (- t)))
+(assert (= again (- next)))
+(check-sat)
+(push 1)
+(assert (not (= next t)))
+(check-sat)
+(get-model)
+(pop 1)

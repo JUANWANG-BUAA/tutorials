@@ -36,7 +36,7 @@ requirements.txt     mathbook 依赖（markdown-it-py）
 
 ## 2. 构建
 
-完整站点（五本一起）：
+完整站点（八本一起）：
 
 ```bash
 cd ..            # 仓库根

@@ -16,7 +16,7 @@
 | 矩阵乘 | $(AB)_{ij}=\sum_k A_{ik}B_{kj}$；形状规则：$(m\times n)(n\times p)=(m\times p)$ | [1.1](lectures/lec01/sec11.md) 前向传播 |
 | 转置 | $(AB)^{\mathrm T}=B^{\mathrm T}A^{\mathrm T}$——**顺序反转**，这是反传公式里转置出现的原因 | [1.5](lectures/lec01/sec15.md) |
 | 逐元素乘 | $\odot$（Hadamard 积）；反传里 $\boldsymbol\delta\odot\phi'(\boldsymbol z)$ 就是它 | [1.5](lectures/lec01/sec15.md) |
-| 范数 | $\lVert\boldsymbol x\rVert_2=\sqrt{\sum x_i^2}$；矩阵范数见[数值分析教程](../../numerical/book/index.html) 1.3 节 | 正则化、梯度裁剪 |
+| 范数 | $\lVert\boldsymbol x\rVert_2=\sqrt{\sum x_i^2}$；矩阵范数见[数值分析教程](../numerical/index.html) 1.3 节 | 正则化、梯度裁剪 |
 | 内积与相似度 | $\boldsymbol x\cdot\boldsymbol y=\boldsymbol x^{\mathrm T}\boldsymbol y$；cos 相似度 = 归一化内积 | [2.4](lectures/lec02/sec24.md) 注意力的 $QK^{\mathrm T}$ |
 | 特征值/特征向量 | $A\boldsymbol v=\lambda\boldsymbol v$；对称矩阵可正交对角化 | 谱半径→梯度稳定性（[2.2](lectures/lec02/sec22.md)） |
 | 奇异值分解 | $A=U\Sigma V^{\mathrm T}$；$\sigma_i$ 度量各方向的伸缩 | 低秩视角（LoRA 的动机，[9.5](lectures/lec09/sec95.md)） |

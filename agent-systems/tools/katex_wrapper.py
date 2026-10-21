@@ -1,1 +1,1 @@
-../../../tools/katex_wrapper.py
+../../tools/katex_wrapper.py

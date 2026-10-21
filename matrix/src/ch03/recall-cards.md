@@ -213,7 +213,7 @@ $A\in\mathbb C^{m\times n}_n$（列满秩，$n\le m$）可分解为 $A=UR$，$U$
 
 ::: sol T9 核对
 
-$A_1=A$，$A_k=Q_kR_k$，$A_{k+1}=R_kQ_k$（[@method-qr-algo]）。关键恒等式：$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$——**每步都是酉相似**，特征值全程不变；链式 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$。收敛条件：「各特征值**模值互不相同**」——**充分**不必要；模互异时收敛于上三角阵、对角元即特征值（按模从大到小排定）。等模可卡死：旋转阵 $A=\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ 的正线 QR 是 $A=A\cdot I$，故 $A_2=A$ 原地不动（[@ex-3.4.4] 的本编注）。
+$A_1=A$，$A_k=Q_kR_k$，$A_{k+1}=R_kQ_k$（[@method-qr-algo]）。关键恒等式：$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$——**每步都是酉相似**，特征值全程不变；链式 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$。仅“特征值模互异”不保证整个矩阵收敛：$\begin{bmatrix}-1&1\\0&2\end{bmatrix}$ 的正线 QR 上三角元在 $1,-1$ 间交替。排序还取决于初始坐标旗标；$\operatorname{diag}(1,2)$ 不会自行交换顺序。实对称正定、简单正谱及适当初始分量可给出更强收敛结论，见 [@method-qr-algo]。等模也可能使子对角元不消失，例如正交旋转阵原地不动。
 :::
 
 ### T10 · 定理 3.5.1（Schur 引理，相似版）

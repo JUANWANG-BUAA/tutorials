@@ -1,0 +1,16 @@
+; Ordered eigenvalues -40,-20,1: lambda_n is not largest magnitude; shift -10 is closer to 1 than -20
+; Source: numerical/src/course/ch03/sec31.md#sec-3.1.3
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const a Real)
+(declare-const b Real)
+(declare-const c Real)
+(assert (= a (- 40)))
+(assert (= b (- 20)))
+(assert (= c 1))
+(check-sat)
+(push 1)
+(assert (not (and (>= (* c c) (* a a)) (< (* (+ b 10) (+ b 10)) (* (+ c 10) (+ c 10))))))
+(check-sat)
+(get-model)
+(pop 1)

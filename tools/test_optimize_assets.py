@@ -1,10 +1,13 @@
 """Build-time regression checks, independent of mdBook or network access."""
+import contextlib
 import hashlib
+import io
 import re
 import tempfile
 import unittest
 from pathlib import Path
 
+from audit_site_assets import audit
 from optimize_assets import optimize
 
 REPO = Path(__file__).resolve().parent.parent
@@ -58,6 +61,32 @@ class AssetBuildTests(unittest.TestCase):
                 self.assertTrue((root / "matrix" / fallback).exists())
             self.assertIn("globalThis.sessionStorage", next(pool.glob('toc-*.js')).read_text())
             self.assertIn("try { localStorage.removeItem", next(pool.glob('book-*.js')).read_text())
+
+
+class PrepaintAuditTests(unittest.TestCase):
+    def test_only_one_blocking_head_script_passes(self):
+        cases = [
+            ('<head><script src="prefs-config-1234.js"></script></head>', False),
+            ('<head></head><script src="prefs-config-1234.js"></script>', True),
+            ('<head><script defer src="prefs-config-1234.js"></script></head>', True),
+            ('<head><script async src="prefs-config-1234.js"></script></head>', True),
+            ('<head><script type="module" src="prefs-config-1234.js"></script></head>', True),
+            ('<head><script src="prefs-config-1234.js"></script></head><script src="prefs-config-1234.js"></script>', True),
+            ('<head></head>', True),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'prefs-config-1234.js').write_text('window.prefs = 1;')
+            for markup, expected in cases:
+                with self.subTest(markup=markup):
+                    (root / 'index.html').write_text(markup)
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        self.assertEqual(audit(root), expected)
+
+    def test_an_empty_site_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertTrue(audit(Path(directory)))
 
 
 if __name__ == '__main__':

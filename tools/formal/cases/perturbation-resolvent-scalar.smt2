@@ -1,0 +1,22 @@
+; Scalar norm inequality underlying the perturbation estimate; e<=v*r+v*d*x+v*d*e
+; Source: numerical/src/course/ch02/sec23.md#sec-2.3.1
+; Real arithmetic is exact. No floating-point values are used.
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const e Real)
+(declare-const v Real)
+(declare-const r Real)
+(declare-const d Real)
+(declare-const x Real)
+(assert (>= e 0))
+(assert (>= v 0))
+(assert (>= r 0))
+(assert (>= d 0))
+(assert (> x 0))
+(assert (< (* v d) 1))
+(assert (<= e (+ (* v r) (* v d x) (* v d e))))
+(check-sat)
+(push 1)
+(assert (not (<= (* (- 1 (* v d)) e) (+ (* v r) (* v d x)))))
+(check-sat)
+(pop 1)

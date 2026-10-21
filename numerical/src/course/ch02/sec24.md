@@ -79,7 +79,7 @@ $$
 :::
 
 ::: sol 参考答案
-写出各自的迭代矩阵 $G$，算 $\rho(G)$：$\rho(G)\lt1$ 则对任意初值收敛；$\rho(G)\ge1$ 则不保证（若 $=1$ 且有非零初值误差不被消掉，则发散）。不要只看某个范数 $\ge1$ 就判发散——范数只是充分条件。
+写出各自的迭代矩阵 $G$，算 $\rho(G)$：$\rho(G)\lt1$ 则对任意初值收敛；$\rho(G)\ge1$ 则不保证（若 $=1$，须区分“收敛到指定解”与“序列本身有极限”：$G=I$ 的误差保持常数，序列可收敛却不到指定解；$G=-I$ 的非零误差则振荡）。不要只看某个范数 $\ge1$ 就判发散——范数只是充分条件。
 :::
 
 ::: ex 2.14 · 必收敛的迭代（教材习题 14）
@@ -87,7 +87,7 @@ $$
 :::
 
 ::: sol 参考答案
-把迭代写成 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$，验证 $\lVert G\rVert_\infty\lt1$（或 $\lVert G\rVert_1\lt1$），由定理 2.9 得对任意初值收敛；极限满足 $\boldsymbol x^*=G\boldsymbol x^*+\boldsymbol d$，即 $(I-G)\boldsymbol x^*=\boldsymbol d$，对应方程组 $(I-G)\boldsymbol x=\boldsymbol d$。
+把迭代写成 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$，先算 $\rho(G)$；本题已算得 $\rho(G)\approx0.6236\lt1$，由定理 2.8 得对任意初值收敛。这里 $\lVert G\rVert_\infty=1.55\gt1$，不能声称用这个范数通过定理 2.9；极限满足 $\boldsymbol x^*=G\boldsymbol x^*+\boldsymbol d$，即 $(I-G)\boldsymbol x^*=\boldsymbol d$，对应方程组 $(I-G)\boldsymbol x=\boldsymbol d$。
 :::
 
 ::: note 覆盖核对

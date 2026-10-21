@@ -1,0 +1,22 @@
+; QR step preserves similarity for a real orthogonal 2x2 Q
+; Source: matrix/src/ch03/sec34.md#method-qr-algo
+; Real arithmetic is exact. No floating-point values are used.
+(set-logic QF_NRA)
+(set-option :timeout 15000)
+(declare-const q00 Real)
+(declare-const q01 Real)
+(declare-const q10 Real)
+(declare-const q11 Real)
+(declare-const r00 Real)
+(declare-const r01 Real)
+(declare-const r10 Real)
+(declare-const r11 Real)
+(assert (and (= (+ (* q00 q00) (* q10 q10)) 1) (= (+ (* q00 q01) (* q10 q11)) 0) (= (+ (* q01 q00) (* q11 q10)) 0) (= (+ (* q01 q01) (* q11 q11)) 1)))
+(assert (= (+ (* q00 q00) (* q01 q01)) 1))
+(assert (= (+ (* q10 q10) (* q11 q11)) 1))
+(assert (= (+ (* q00 q10) (* q01 q11)) 0))
+(check-sat-using qfnra-nlsat)
+(push 1)
+(assert (not (and (= (+ (* (+ (* q00 (+ (* q00 r00) (* q01 r10))) (* q10 (+ (* q10 r00) (* q11 r10)))) q00) (* (+ (* q00 (+ (* q00 r01) (* q01 r11))) (* q10 (+ (* q10 r01) (* q11 r11)))) q10)) (+ (* r00 q00) (* r01 q10))) (= (+ (* (+ (* q00 (+ (* q00 r00) (* q01 r10))) (* q10 (+ (* q10 r00) (* q11 r10)))) q01) (* (+ (* q00 (+ (* q00 r01) (* q01 r11))) (* q10 (+ (* q10 r01) (* q11 r11)))) q11)) (+ (* r00 q01) (* r01 q11))) (= (+ (* (+ (* q01 (+ (* q00 r00) (* q01 r10))) (* q11 (+ (* q10 r00) (* q11 r10)))) q00) (* (+ (* q01 (+ (* q00 r01) (* q01 r11))) (* q11 (+ (* q10 r01) (* q11 r11)))) q10)) (+ (* r10 q00) (* r11 q10))) (= (+ (* (+ (* q01 (+ (* q00 r00) (* q01 r10))) (* q11 (+ (* q10 r00) (* q11 r10)))) q01) (* (+ (* q01 (+ (* q00 r01) (* q01 r11))) (* q11 (+ (* q10 r01) (* q11 r11)))) q11)) (+ (* r10 q01) (* r11 q11))))))
+(check-sat-using qfnra-nlsat)
+(pop 1)

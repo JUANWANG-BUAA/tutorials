@@ -39,7 +39,7 @@
 判断下列 $\mathbb{R}^n$ 上的函数是否为向量范数：(1) $N_1(\boldsymbol{x})=\max_i\lvert x_i\rvert$ 的**平方**；(2) $N_2(\boldsymbol{x})=\lvert x_1\rvert$；(3) $N_3(\boldsymbol{x})=\sum_{i=1}^n \lvert x_i\rvert$。
 
 ::: proof 解
-**(1) 不是**：正定、齐次满足，但三角不等式失效——$\boldsymbol{x}=\boldsymbol{y}=(1,0)^{\mathrm T}$：$N_1(\boldsymbol{x}+\boldsymbol{y})=N_1(2,0)=4\gt1+1=2$。平方会「压扁」和向量。
+**(1) 不是**：正定性满足，但一次齐次性不成立：$N_1(2\boldsymbol x)=4N_1(\boldsymbol x)\ne2N_1(\boldsymbol x)$（$\boldsymbol x\ne0$）。三角不等式也失效——$\boldsymbol{x}=\boldsymbol{y}=(1,0)^{\mathrm T}$：$N_1(\boldsymbol{x}+\boldsymbol{y})=N_1(2,0)=4\gt1+1=2$。平方会「压扁」和向量。
 **(2) 不是**：正定性失效——$\boldsymbol{x}=(0,5)$ 非零但 $N_2(\boldsymbol{x})=0$。只看一个分量就丢掉了其他方向的信息。
 **(3) 是**：正是下文的 $\lVert\cdot\rVert_1$，见[@thm-1.3.1] 的证明。
 :::

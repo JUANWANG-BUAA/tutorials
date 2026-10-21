@@ -1,6 +1,6 @@
 # 《分布式系统与数据面 · 从一次工具调用到可验证的一致性》
 
-本目录是这本书的独立 mdBook 源，slug 为 `distributed`。它不复用也不修改仓库里已有的五本书，只复用 `shared/theme/` 与 `tools/` 的通用构建思路。
+本目录是这本书的独立 mdBook 源，slug 为 `distributed`。它是仓库八卷之一，复用 `shared/theme/` 与根目录 `tools/` 的共用资源。
 
 ## 1 这本书写什么
 
@@ -61,7 +61,7 @@ pip3 install -r requirements.txt       # markdown-it-py
 cargo install mdbook-katex --version 0.10.0
 ```
 
-本书是独立站点，不需要改仓库根的 `build.sh`。若要并入总站，在根 `build.sh` 的 `books` 数组里追加 `distributed` 即可（本次不改，避免影响五本现有书）。
+本书已接入总站。完整预览请在仓库根运行 `bash build.sh serve`，生成中文搜索、术语数据与共享资源；根目录 `bash check.sh` 执行与 CI 相同的质量检查。单独的 `mdbook serve` 仅供正文预览。
 
 ## 4 质检
 

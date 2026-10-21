@@ -223,7 +223,7 @@ html.figure-reveal .content figure.figure-in{
 /* 导览页入口卡片的「已读」标记：绝对定位在右上角，不参与卡片网格布局 */
 .index-cards a.is-read{position:relative}
 .index-cards a.is-read::after{
-  content:"已读";
+  content:"已浏览";
   position:absolute;top:9px;right:11px;
   padding:2px 7px;border:1px solid var(--line);
   background:var(--paper);color:var(--muted);
@@ -511,3 +511,24 @@ html.katex-alt .content .katex:not(.katex-display .katex):hover{
 
 /* Definition cards stay readable on short screens and browser zoom. */
 .term-popover{max-height:calc(100dvh - 16px);overflow-y:auto;overscroll-behavior:contain}
+
+/* Reading actions expose their destination before readers leave the page. */
+.reader-skip-link{position:fixed;top:8px;left:16px;z-index:10000;padding:10px 16px;background:var(--ink);color:var(--paper);transform:translateY(-160%);font:14px/1.6 var(--sans)}
+.reader-skip-link:focus{transform:none}
+#mdbook-content .nav-wrapper{display:flex!important;gap:16px;margin-top:32px;clear:both;max-width:none}
+.nav-wrapper .mobile-nav-chapters{display:flex!important;align-items:center;gap:12px;flex:1;float:none;width:auto;min-width:0;max-width:none;min-height:76px;height:auto;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);color:var(--ink);text-align:left;text-decoration:none;line-height:1.5}
+.nav-wrapper .mobile-nav-chapters:hover{border-color:var(--accent);background:var(--paper-soft)}
+.chapter-nav-copy{display:flex;flex-direction:column;min-width:0;gap:4px;font:13px/1.5 var(--sans)}
+.chapter-nav-copy>span{font-size:12px;color:var(--muted)}
+.chapter-nav-copy b{font-weight:600;overflow-wrap:anywhere}
+.nav-wrapper .next{flex-direction:row-reverse;text-align:right}
+.nav-wrapper .next .chapter-nav-copy{margin-right:auto}
+.nav-wrapper .previous .chapter-nav-copy{margin-left:auto}
+.nav-wrapper .fa-svg{flex-shrink:0;font-size:16px}
+@media(max-width:600px){
+  #mdbook-content .nav-wrapper{gap:10px;flex-wrap:wrap}
+  .nav-wrapper .mobile-nav-chapters{flex-basis:100%;padding:12px;min-height:68px}
+  .continue-card{grid-template-columns:1fr;gap:8px}
+  .continue-card :is(.continue-kicker,.continue-link,.continue-meta,.continue-bar){grid-column:1;min-width:0;overflow-wrap:anywhere}
+}
+@media print{.reader-skip-link,#mdbook-content .nav-wrapper{display:none!important}}

@@ -169,3 +169,11 @@ html[data-skin="rhine"] .topnav{gap:16px;flex-wrap:wrap}
  @media(max-width:480px){.rh-catalogue{gap:24px}.rh-course{padding:20px 16px}.rh-course-body{grid-template-columns:70px minmax(0,1fr);gap:16px}.rh-course h3{font-size:21px;margin:6px 0 12px}.rh-course p{font-size:13px}.rh-course-copy>span{font-size:8px}.rh-section-head h2{font-size:30px}.rh-course-foot{margin-top:18px}.rh-atlas-art{padding:12px;box-shadow:5px 5px 0 var(--line);transform:none}.rh-route,.rh-route:nth-child(even){padding:24px 18px 24px 58px}.rh-route-number,.rh-route:nth-child(even) .rh-route-number{left:18px;top:24px}.rh-atlas-section{padding:52px 0}}
 }
 @media screen{.rh-course::before{z-index:1;grid-column:auto;grid-row:auto;top:-10px;left:24px}.rh-course-body{grid-row:auto}}
+
+@media screen {
+  .rh-catalogue > .course-tools,.rh-catalogue > .course-empty{grid-column:1/-1}
+  html[data-skin="rhine"] .portal-recent{background:var(--page);color:var(--ink)}
+  html[data-skin="rhine"] .portal-resume{background:var(--paper)}
+  html[data-skin="rhine"] .topnav a[href="#rhine-books"],html[data-skin="rhine"] .topnav a[href="#rhine-paths"]{display:flex}
+  #rhine-books,#rhine-paths,#rhine-about{scroll-margin-top:24px}
+}

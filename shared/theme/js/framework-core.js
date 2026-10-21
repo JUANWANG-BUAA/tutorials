@@ -29,7 +29,7 @@
   var CHROME_LABELS = [
     ["#mdbook-sidebar-toggle", "切换目录"],
     ["#mdbook-theme-toggle", "切换主题"],
-    ["#mdbook-search-toggle", "搜索（按 / 键）"],
+    ["#mdbook-search-toggle", "搜索本书（/ 或 Ctrl / ⌘ + K）"],
     ["#mdbook-menu-bar a[aria-label='Print this book']", "打印本书"],
     ["#mdbook-menu-bar a[href='print.html']", "打印本书"],
     /* 仓库与「编辑此页」是 mdBook 原生入口（book.toml 的 git-repository-url /
@@ -72,12 +72,43 @@
     // 目录开关本体是隐藏 checkbox，靠外层 label 关联，自身没有可读名字
     setAttrs("mdbook-sidebar-toggle-anchor", { "aria-label": "切换目录" });
 
+    document.querySelectorAll("nav.nav-wrapper, nav.nav-wide-wrapper").forEach(function (nav) {
+      nav.setAttribute("aria-label", "章节翻页");
+    });
+    var main = document.querySelector("main");
+    if (main && !document.querySelector(".reader-skip-link")) {
+      if (!main.id) main.id = "reader-main";
+      main.tabIndex = -1;
+      var skip = document.createElement("a");
+      skip.className = "reader-skip-link";
+      skip.href = "#" + main.id;
+      skip.textContent = "跳到正文";
+      document.body.insertBefore(skip, document.body.firstChild);
+    }
+
     // 翻页箭头：桌面 .nav-chapters 与移动 .mobile-nav-chapters 各一对
     var NAV_TEXT = { previous: "上一页", next: "下一页" };
     document.querySelectorAll(".nav-chapters, .mobile-nav-chapters").forEach(function (a) {
       var kind = a.classList.contains("previous") ? "previous" : "next";
-      a.setAttribute("title", NAV_TEXT[kind]);
-      a.setAttribute("aria-label", NAV_TEXT[kind]);
+      var destination = new URL(a.getAttribute("href"), location.href).pathname;
+      var chapter = Array.from(document.querySelectorAll("#mdbook-sidebar .chapter-link-wrapper > a[href]")).find(function (link) {
+        return new URL(link.getAttribute("href"), location.href).pathname === destination;
+      });
+      var label = chapter ? chapter.textContent.replace(/\s+/g, " ").trim() : "";
+      var description = NAV_TEXT[kind] + (label ? "：" + label : "");
+      a.setAttribute("title", description);
+      a.setAttribute("aria-label", description);
+      if (a.classList.contains("mobile-nav-chapters") && !a.querySelector(".chapter-nav-copy")) {
+        var copy = document.createElement("span");
+        copy.className = "chapter-nav-copy";
+        var direction = document.createElement("span");
+        direction.textContent = NAV_TEXT[kind];
+        var title = document.createElement("b");
+        title.textContent = label || NAV_TEXT[kind];
+        copy.appendChild(direction);
+        copy.appendChild(title);
+        a.appendChild(copy);
+      }
     });
 
     // 代码块右上角的复制按钮（book.js 运行时插入，title 写死为 Copy to clipboard）
@@ -150,9 +181,9 @@
    *   · 结果区限高内滚后，上下键移动高亮要把条目带进视野（mdBook 自己不做）
    * ======================================================================== */
   var METRIC_PATTERNS = [
-    [/^(\d+) search results? for ['‘’"「]?(.*?)['‘’"」]?:?$/, function (m) { return "「" + m[2] + "」· 命中 " + m[1] + " 条"; }],
+    [/^(\d+) search results? for ['‘’"「]?(.*?)['‘’"」]?:?$/, function (m) { return "「" + m[2] + "」· 找到 " + m[1] + " 条结果"; }],
     [/^(?:No search results for ['‘’"「]?(.*?)['‘’"」]?\.?|No results found\.?)$/, function (m) {
-      return m[1] ? "「" + m[1] + "」· 没有命中" : "没有命中";
+      return (m[1] ? "「" + m[1] + "」· 没有命中。" : "没有命中。") + "试试更短的关键词、中文术语或英文缩写；当前仅搜索本书。";
     }]
   ];
 
@@ -220,7 +251,7 @@
       form.setAttribute("aria-busy", String(busy && !failed));
       status.hidden = !busy && !failed;
       retry.hidden = !failed;
-      message.textContent = failed ? "搜索暂时无法加载，请重试。" : "正在准备本书搜索…";
+      message.textContent = failed ? "搜索暂时无法加载，请重试。" : "正在加载本书搜索索引，首次使用可能需要几秒…";
     }
     document.addEventListener("error", function (event) {
       if (!event.target || event.target.id !== "mdbook-search-index") return;

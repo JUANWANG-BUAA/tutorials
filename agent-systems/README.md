@@ -43,9 +43,9 @@ agent-systems/
 mdbook build .
 
 # 本地预览
-mdbook serve --open
+mdbook serve --open  # 仅正文预览，不生成中文搜索索引和术语数据
 
-# 在仓库根构建全部六本（含搜索索引与术语数据）
+# 在仓库根构建全部八本（含搜索索引与术语数据）
 cd .. && ./build.sh
 ```
 

@@ -38,12 +38,25 @@ test('all available books resolve to one implementation and register fingerprint
  assert.ok(books.length>=7);
  for(const book of books){
   const toml=readFileSync(resolve(root,book,'book.toml'),'utf8');
-  for(const file of ['js/prefs-config.js','js/rhine.js','css/rhine.css']){
+  for(const file of ['head.hbs','js/prefs-config.js','js/rhine.js','css/rhine.css']){
    assert.equal(realpathSync(resolve(root,book,'theme',file)),realpathSync(resolve(root,'shared/theme',file)));
-   assert.ok(toml.includes('"theme/'+file+'"'));
+   if(file !== 'head.hbs') assert.ok(toml.includes('"theme/'+file+'"'));
   }
   const css=toml.match(/additional-css\s*=\s*\[([\s\S]*?)\]/)[1];
   assert.ok(css.indexOf('theme/css/rhine.css')<css.indexOf('theme/css/prefs.css'));
+ }
+});
+
+test('book theme and tool symlinks all resolve to existing files', () => {
+ function visit(directory) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+   const path = resolve(directory, entry.name);
+   if (entry.isSymbolicLink()) assert.ok(existsSync(path), `broken symlink: ${path}`);
+   else if (entry.isDirectory()) visit(path);
+  }
+ }
+ for (const book of readdirSync(root).filter(book => existsSync(resolve(root, book, 'book.toml')))) {
+  for (const directory of ['theme', 'tools']) visit(resolve(root, book, directory));
  }
 });
 
