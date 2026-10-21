@@ -237,7 +237,10 @@ def main() -> int:
             _, error, _ = parse_case(path)
             if error:
                 continue
-            asm_darwin = run([str(path), "--emit=asm"]).stdout
+            darwin_proc = run([str(path), "--emit=asm", "--target=darwin"])
+            asm_darwin = darwin_proc.stdout
+            if darwin_proc.returncode != 0:
+                failures.append(f"{path.name}: darwin asm generation failed")
             linux_proc = run([str(path), "--emit=asm", "--target=linux"])
             asm_linux = linux_proc.stdout
             if linux_proc.returncode != 0:
