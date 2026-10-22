@@ -1,0 +1,2 @@
+    Checking foundations-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s

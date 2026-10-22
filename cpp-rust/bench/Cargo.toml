@@ -1,0 +1,30 @@
+[package]
+name = "performance-lab"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+debug = 1
+codegen-units = 1
+lto = false
+
+[[bin]]
+name = "atomic-contention"
+path = "src/bin/atomic_contention.rs"
+
+[[bin]]
+name = "handoff"
+path = "src/bin/handoff.rs"
+
+[[bin]]
+name = "async-poll"
+path = "src/bin/async_poll.rs"
+
+[[bin]]
+name = "future-allocation"
+path = "src/bin/future_allocation.rs"

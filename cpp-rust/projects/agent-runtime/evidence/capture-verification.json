@@ -1,0 +1,12 @@
+{
+  "test_executions": 360,
+  "stress_reports": 800,
+  "adversarial_cases": 8,
+  "final_source_files": 19,
+  "final_raw_observations": 84,
+  "retained_pilot_raw_observations": 84,
+  "run02_snapshots": 12,
+  "run01_available_snapshots": 8,
+  "run01_unavailable_historical_sources": 3,
+  "status": "mechanical verification only, not independent audit"
+}

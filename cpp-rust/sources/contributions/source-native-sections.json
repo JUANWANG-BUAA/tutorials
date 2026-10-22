@@ -1,0 +1,767 @@
+[
+  {
+    "id": "NAT-S01-0016",
+    "source": "S01",
+    "section": "1.7 Pointers, Arrays, and References",
+    "pages": "PDF 35",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0016"
+  },
+  {
+    "id": "NAT-S01-0050",
+    "source": "S01",
+    "section": "6.3 Resource Management",
+    "pages": "PDF 130",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0050"
+  },
+  {
+    "id": "NAT-S01-0115",
+    "source": "S01",
+    "section": "15 Pointers and Containers",
+    "pages": "PDF 297",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0115"
+  },
+  {
+    "id": "NAT-S01-0117",
+    "source": "S01",
+    "section": "15.2 Pointers",
+    "pages": "PDF 298",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0117"
+  },
+  {
+    "id": "NAT-S01-0142",
+    "source": "S01",
+    "section": "18 Concurrency",
+    "pages": "PDF 358",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0142"
+  },
+  {
+    "id": "NAT-S01-0144",
+    "source": "S01",
+    "section": "18.2 Tasks and threads",
+    "pages": "PDF 360",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S01.md#review-s01-u0144"
+  },
+  {
+    "id": "NAT-S02-0294",
+    "source": "S02",
+    "section": "11: Smart Pointers",
+    "pages": "PDF 399",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S02.md#review-s02-u0294"
+  },
+  {
+    "id": "NAT-S02-0513",
+    "source": "S02",
+    "section": "19: Concurrency and Parallelism",
+    "pages": "PDF 697",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S02.md#review-s02-u0513"
+  },
+  {
+    "id": "NAT-S03-0222",
+    "source": "S03",
+    "section": "第41章  并发",
+    "pages": "PDF 297",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S03.md#review-s03-u0222"
+  },
+  {
+    "id": "NAT-S04-0032",
+    "source": "S04",
+    "section": "第19章:函数指针，函数对象，lambda表达式",
+    "pages": "PDF 606",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S04.md#review-s04-u0032"
+  },
+  {
+    "id": "NAT-S05-0091",
+    "source": "S05",
+    "section": "第5章 C++概览：并发与实用功能",
+    "pages": "PDF 119",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0091"
+  },
+  {
+    "id": "NAT-S05-0093",
+    "source": "S05",
+    "section": "5.2 资源管理",
+    "pages": "PDF 119",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0093"
+  },
+  {
+    "id": "NAT-S05-0095",
+    "source": "S05",
+    "section": "5.3 并发",
+    "pages": "PDF 122",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0095"
+  },
+  {
+    "id": "NAT-S05-0139",
+    "source": "S05",
+    "section": "第7章 指针、数组与引用",
+    "pages": "PDF 171",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0139"
+  },
+  {
+    "id": "NAT-S05-0141",
+    "source": "S05",
+    "section": "7.2 指针",
+    "pages": "PDF 171",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0141"
+  },
+  {
+    "id": "NAT-S05-0144",
+    "source": "S05",
+    "section": "7.3 数组",
+    "pages": "PDF 173",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0144"
+  },
+  {
+    "id": "NAT-S05-0147",
+    "source": "S05",
+    "section": "7.4 数组中的指针",
+    "pages": "PDF 178",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0147"
+  },
+  {
+    "id": "NAT-S05-0151",
+    "source": "S05",
+    "section": "7.5 指针与const",
+    "pages": "PDF 184",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0151"
+  },
+  {
+    "id": "NAT-S05-0152",
+    "source": "S05",
+    "section": "7.6 指针与所有权",
+    "pages": "PDF 186",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0152"
+  },
+  {
+    "id": "NAT-S05-0271",
+    "source": "S05",
+    "section": "12.5 函数指针",
+    "pages": "PDF 311",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0271"
+  },
+  {
+    "id": "NAT-S05-0287",
+    "source": "S05",
+    "section": "13.3 资源管理",
+    "pages": "PDF 330",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0287"
+  },
+  {
+    "id": "NAT-S05-0325",
+    "source": "S05",
+    "section": "15.2 链接",
+    "pages": "PDF 386",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S05.md#review-s05-u0325"
+  },
+  {
+    "id": "NAT-S05-0365",
+    "source": "S05",
+    "section": "17.2 构造函数和析构函数",
+    "pages": "PDF 438",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0365"
+  },
+  {
+    "id": "NAT-S05-0448",
+    "source": "S05",
+    "section": "20.6 成员指针",
+    "pages": "PDF 543",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0448"
+  },
+  {
+    "id": "NAT-S05-0478",
+    "source": "S05",
+    "section": "22.4 构造和析构",
+    "pages": "PDF 584",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S05.md#review-s05-u0478"
+  },
+  {
+    "id": "NAT-S06-0015",
+    "source": "S06",
+    "section": "2．构造／析构／赋值运算",
+    "pages": "PDF 63",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0015"
+  },
+  {
+    "id": "NAT-S06-0018",
+    "source": "S06",
+    "section": "条款07：为多态基类声明virtual析构函数",
+    "pages": "PDF 69",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0018"
+  },
+  {
+    "id": "NAT-S06-0019",
+    "source": "S06",
+    "section": "条款08：别让异常逃离析构函数",
+    "pages": "PDF 73",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0019"
+  },
+  {
+    "id": "NAT-S06-0020",
+    "source": "S06",
+    "section": "条款09：绝不在构造和析构过程中调用virtual函数",
+    "pages": "PDF 77",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0020"
+  },
+  {
+    "id": "NAT-S06-0024",
+    "source": "S06",
+    "section": "3．资源管理",
+    "pages": "PDF 90",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0024"
+  },
+  {
+    "id": "NAT-S06-0026",
+    "source": "S06",
+    "section": "条款14：在资源管理类中小心copying行为",
+    "pages": "PDF 95",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0026"
+  },
+  {
+    "id": "NAT-S06-0027",
+    "source": "S06",
+    "section": "条款15：在资源管理类中提供对原始资源的访问",
+    "pages": "PDF 98",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0027"
+  },
+  {
+    "id": "NAT-S06-0029",
+    "source": "S06",
+    "section": "条款17：以独立语句将newed对象置入智能指针",
+    "pages": "PDF 104",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S06.md#review-s06-u0029"
+  },
+  {
+    "id": "NAT-S07-0036",
+    "source": "S07",
+    "section": "Item 16: Make const member functions thread safe.",
+    "pages": "PDF 121",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0036"
+  },
+  {
+    "id": "NAT-S07-0038",
+    "source": "S07",
+    "section": "Chapter 4. Smart Pointers",
+    "pages": "PDF 135",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0038"
+  },
+  {
+    "id": "NAT-S07-0039",
+    "source": "S07",
+    "section": "Item 18: Use std::unique_ptr for exclusive-ownership resource management.",
+    "pages": "PDF 136",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0039"
+  },
+  {
+    "id": "NAT-S07-0040",
+    "source": "S07",
+    "section": "Item 19: Use std::shared_ptr for shared-ownership resource management.",
+    "pages": "PDF 143",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0040"
+  },
+  {
+    "id": "NAT-S07-0041",
+    "source": "S07",
+    "section": "Item 20: Use std::weak_ptr for std::shared_ptr-like pointers that can dangle.",
+    "pages": "PDF 152",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0041"
+  },
+  {
+    "id": "NAT-S07-0044",
+    "source": "S07",
+    "section": "Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding",
+    "pages": "PDF 175",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0044"
+  },
+  {
+    "id": "NAT-S07-0046",
+    "source": "S07",
+    "section": "Item 24: Distinguish universal references from rvalue references.",
+    "pages": "PDF 182",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0046"
+  },
+  {
+    "id": "NAT-S07-0047",
+    "source": "S07",
+    "section": "Item 25: Use std::move on rvalue references, std::forward on universal references.",
+    "pages": "PDF 186",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0047"
+  },
+  {
+    "id": "NAT-S07-0070",
+    "source": "S07",
+    "section": "Chapter 7. The Concurrency API",
+    "pages": "PDF 259",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0070"
+  },
+  {
+    "id": "NAT-S07-0071",
+    "source": "S07",
+    "section": "Item 35: Prefer task-based programming to thread-based.",
+    "pages": "PDF 259",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0071"
+  },
+  {
+    "id": "NAT-S07-0073",
+    "source": "S07",
+    "section": "Item 37: Make std::threads unjoinable on all paths.",
+    "pages": "PDF 268",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0073"
+  },
+  {
+    "id": "NAT-S07-0074",
+    "source": "S07",
+    "section": "Item 38: Be aware of varying thread handle destructor behavior.",
+    "pages": "PDF 276",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0074"
+  },
+  {
+    "id": "NAT-S07-0076",
+    "source": "S07",
+    "section": "Item 40: Use std::atomic for concurrency, volatile for special memory.",
+    "pages": "PDF 289",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S07.md#review-s07-u0076"
+  },
+  {
+    "id": "NAT-S15-0134",
+    "source": "S15",
+    "section": "第8章　数组",
+    "pages": "PDF 145",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0134"
+  },
+  {
+    "id": "NAT-S15-0135",
+    "source": "S15",
+    "section": "8.1　一维数组",
+    "pages": "PDF 145",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0135"
+  },
+  {
+    "id": "NAT-S15-0140",
+    "source": "S15",
+    "section": "8.2　多维数组",
+    "pages": "PDF 151",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0140"
+  },
+  {
+    "id": "NAT-S15-0143",
+    "source": "S15",
+    "section": "8.3　C99中的变长数组",
+    "pages": "PDF 155",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0143"
+  },
+  {
+    "id": "NAT-S15-0176",
+    "source": "S15",
+    "section": "10.5　构建C程序",
+    "pages": "PDF 200",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S15.md#review-s15-u0176"
+  },
+  {
+    "id": "NAT-S15-0180",
+    "source": "S15",
+    "section": "第11章　指针",
+    "pages": "PDF 209",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0180"
+  },
+  {
+    "id": "NAT-S15-0181",
+    "source": "S15",
+    "section": "11.1　指针变量",
+    "pages": "PDF 209",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0181"
+  },
+  {
+    "id": "NAT-S15-0186",
+    "source": "S15",
+    "section": "11.3　指针赋值",
+    "pages": "PDF 212",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0186"
+  },
+  {
+    "id": "NAT-S15-0187",
+    "source": "S15",
+    "section": "11.4　指针作为参数",
+    "pages": "PDF 213",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0187"
+  },
+  {
+    "id": "NAT-S15-0189",
+    "source": "S15",
+    "section": "11.5　指针作为返回值",
+    "pages": "PDF 216",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0189"
+  },
+  {
+    "id": "NAT-S15-0193",
+    "source": "S15",
+    "section": "第12章　指针和数组",
+    "pages": "PDF 222",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0193"
+  },
+  {
+    "id": "NAT-S15-0194",
+    "source": "S15",
+    "section": "12.1　指针的算术运算",
+    "pages": "PDF 222",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0194"
+  },
+  {
+    "id": "NAT-S15-0200",
+    "source": "S15",
+    "section": "12.2　指针用于数组处理",
+    "pages": "PDF 225",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0200"
+  },
+  {
+    "id": "NAT-S15-0202",
+    "source": "S15",
+    "section": "12.3　用数组名作为指针",
+    "pages": "PDF 227",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0202"
+  },
+  {
+    "id": "NAT-S15-0205",
+    "source": "S15",
+    "section": "12.4　指针和多维数组",
+    "pages": "PDF 230",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0205"
+  },
+  {
+    "id": "NAT-S15-0210",
+    "source": "S15",
+    "section": "12.5　C99中的指针和变长数组",
+    "pages": "PDF 232",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0210"
+  },
+  {
+    "id": "NAT-S15-0237",
+    "source": "S15",
+    "section": "13.7　字符串数组",
+    "pages": "PDF 256",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0237"
+  },
+  {
+    "id": "NAT-S15-0282",
+    "source": "S15",
+    "section": "15.4　构建多文件程序",
+    "pages": "PDF 306",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S15.md#review-s15-u0282"
+  },
+  {
+    "id": "NAT-S15-0302",
+    "source": "S15",
+    "section": "16.3　嵌套的数组和结构",
+    "pages": "PDF 322",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0302"
+  },
+  {
+    "id": "NAT-S15-0318",
+    "source": "S15",
+    "section": "第17章　指针的高级应用",
+    "pages": "PDF 345",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0318"
+  },
+  {
+    "id": "NAT-S15-0326",
+    "source": "S15",
+    "section": "17.3　动态分配数组",
+    "pages": "PDF 350",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0326"
+  },
+  {
+    "id": "NAT-S15-0341",
+    "source": "S15",
+    "section": "17.6　指向指针的指针",
+    "pages": "PDF 365",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0341"
+  },
+  {
+    "id": "NAT-S15-0342",
+    "source": "S15",
+    "section": "17.7　指向函数的指针",
+    "pages": "PDF 366",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0342"
+  },
+  {
+    "id": "NAT-S15-0347",
+    "source": "S15",
+    "section": "17.9　弹性数组成员",
+    "pages": "PDF 372",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0347"
+  },
+  {
+    "id": "NAT-S15-0411",
+    "source": "S15",
+    "section": "20.4　对象的对齐",
+    "pages": "PDF 431",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0411"
+  },
+  {
+    "id": "NAT-S15-0426",
+    "source": "S15",
+    "section": "21.7　<stdalign.h>:地址的对齐",
+    "pages": "PDF 441",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0426"
+  },
+  {
+    "id": "NAT-S15-0612",
+    "source": "S15",
+    "section": "第28章　C1X新增的多线程和原子操作支持",
+    "pages": "PDF 597",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0612"
+  },
+  {
+    "id": "NAT-S15-0613",
+    "source": "S15",
+    "section": "28.1　<threads.h>：多线程执行支持",
+    "pages": "PDF 598",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0613"
+  },
+  {
+    "id": "NAT-S15-0625",
+    "source": "S15",
+    "section": "28.2　_Atomic、<stdatomic.h>：原子类型和原子操作支持",
+    "pages": "PDF 620",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0625"
+  },
+  {
+    "id": "NAT-S15-0650",
+    "source": "S15",
+    "section": "第28章　C1X新增的多线程和原子操作支持",
+    "pages": "PDF 644",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0650"
+  },
+  {
+    "id": "NAT-S15-0657",
+    "source": "S15",
+    "section": "第8章　数组",
+    "pages": "PDF 646",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0657"
+  },
+  {
+    "id": "NAT-S15-0661",
+    "source": "S15",
+    "section": "第17章　指针的高级应用",
+    "pages": "PDF 647",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0661"
+  },
+  {
+    "id": "NAT-S15-0676",
+    "source": "S15",
+    "section": "第12章　指针和数组",
+    "pages": "PDF 650",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0676"
+  },
+  {
+    "id": "NAT-S15-0680",
+    "source": "S15",
+    "section": "第17章　指针的高级应用",
+    "pages": "PDF 651",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S15.md#review-s15-u0680"
+  },
+  {
+    "id": "NAT-S16-0005",
+    "source": "S16",
+    "section": "第1章 构建之旅",
+    "pages": "None",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S16.md#review-s16-u0005"
+  },
+  {
+    "id": "NAT-S16-0006",
+    "source": "S16",
+    "section": "第2章 CMake简介",
+    "pages": "None",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S16.md#review-s16-u0006"
+  },
+  {
+    "id": "NAT-S16-0009",
+    "source": "S16",
+    "section": "第5章 实践：CMake快速排序",
+    "pages": "None",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S16.md#review-s16-u0009"
+  },
+  {
+    "id": "NAT-S16-0010",
+    "source": "S16",
+    "section": "第6章 CMake构建初探",
+    "pages": "None",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S16.md#review-s16-u0010"
+  },
+  {
+    "id": "NAT-S16-0011",
+    "source": "S16",
+    "section": "第7章 构建目标和属性",
+    "pages": "None",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S16.md#review-s16-u0011"
+  }
+]

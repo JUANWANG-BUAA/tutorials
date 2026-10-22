@@ -1,0 +1,45 @@
+gate: api=pipe pid=94871 read_fd=10 flags=0 write_fd=11 flags=0
+
+unrelated inheritor pid=94882
+Report {
+    exit_code: Some(
+        0,
+    ),
+    timed_out: false,
+    elapsed: 1.34133075s,
+    stdout: Capture {
+        prefix: [
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+        ],
+        total: 2097152,
+        eof: false,
+    },
+    stderr: Capture {
+        prefix: [
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+        ],
+        total: 2097152,
+        eof: true,
+    },
+    reader_errors: [
+        "drain grace expired: a writer may still own a pipe",
+    ],
+}
+
+thread 'main' (1230047) panicked at examples/descriptor_race.rs:73:9:
+unrelated process retained writer: Report { exit_code: Some(0), timed_out: false, elapsed: 1.34133075s, stdout: Capture { prefix: [120, 120, 120, 120, 120, 120, 120, 120], total: 2097152, eof: false }, stderr: Capture { prefix: [120, 120, 120, 120, 120, 120, 120, 120], total: 2097152, eof: true }, reader_errors: ["drain grace expired: a writer may still own a pipe"] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

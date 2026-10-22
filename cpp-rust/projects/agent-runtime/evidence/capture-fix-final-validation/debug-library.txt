@@ -1,0 +1,3 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `cpp-rust/projects/agent-runtime/target/debug/examples/library /Users/juanwang/Desktop/tutorials/cpp-rust/projects/agent-runtime/target/debug/tool-helper`
+ToolResult { outcome: Success, pid: Some(35908), exit_code: Some(0), reaped: true, stdout: Log { prefix: [97, 103, 101, 110, 116, 32, 114, 101, 113, 117, 101, 115, 116, 58, 32, 108, 105, 116, 101, 114, 97, 108, 32, 97, 114, 103, 117, 109, 101, 110, 116, 115], total: 32, checksum: 8004666416066505488, eof: true, error: None }, stderr: Log { prefix: [], total: 0, checksum: 0, eof: true, error: None }, queue_time: 21.542µs, work_time: 1.894166ms, cleanup_error: None }

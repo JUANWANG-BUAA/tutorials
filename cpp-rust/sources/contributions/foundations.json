@@ -1,0 +1,173 @@
+[
+  {
+    "id": "S08",
+    "source": "Effective Rust.pdf",
+    "section": "第30条：单元、集成、文档测试与基准的优化风险",
+    "pages": "PDF 227–233（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.3",
+    "evidence": "bench/foundations-lab/src/bin/dce.rs"
+  },
+  {
+    "id": "S08",
+    "source": "Effective Rust.pdf",
+    "section": "第30条：基准、black_box与观察机器码",
+    "pages": "PDF 229–231（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.5",
+    "evidence": "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s"
+  },
+  {
+    "id": "S08",
+    "source": "Effective Rust.pdf",
+    "section": "第30条：回归测试与配置覆盖建议",
+    "pages": "PDF 233（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.7",
+    "evidence": "bench/foundations-lab/gate.py"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "13.4 性能对比：循环VS迭代器",
+    "pages": "PDF 314–315（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.6",
+    "evidence": "bench/foundations-lab/src/bin/paired.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "类型布局：尺寸、对齐、数组与指针、表示形式",
+    "pages": "PDF 267–270（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "bench/foundations-lab/examples/layout.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "类型布局：repr(C)结构算法与溢出警告",
+    "pages": "PDF 271–272（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.8",
+    "evidence": "bench/foundations-lab/examples/storage_plan.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "未定义行为：非法值与引用有效性",
+    "pages": "PDF 344–345（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
+    "evidence": "bench/foundations-lab/examples/layout.rs"
+  },
+  {
+    "id": "S08",
+    "source": "Effective Rust.pdf",
+    "section": "第20条末：复制可见性、可用性与共享所有权",
+    "pages": "PDF 174–175（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "bench/foundations-lab/src/lib.rs"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "4.1 什么是所有权：移动、克隆与函数转移",
+    "pages": "PDF 73–81（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "bench/foundations-lab/src/lib.rs"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "4.2 引用与借用：可变性、独占与悬垂",
+    "pages": "PDF 83–87（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "bench/foundations-lab/src/lib.rs"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "15.3 Drop Trait与std::mem::drop",
+    "pages": "PDF 356–358（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "bench/foundations-lab/tests/contracts_more.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "析构函数：初始化、部分移动、字段销毁顺序",
+    "pages": "PDF 294–295（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "bench/foundations-lab/src/lib.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "销毁作用域与临时值：旧版本规则的适用边界",
+    "pages": "PDF 296–297（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "src/part1/ch03.md"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "非安全块及未定义行为责任",
+    "pages": "PDF 343–345（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.7",
+    "evidence": "bench/foundations-lab/src/lib.rs"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "不被认为是非安全的行为：泄漏、无析构退出与溢出",
+    "pages": "PDF 347（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "src/part1/ch03.md"
+  },
+  {
+    "id": "S08",
+    "source": "Effective Rust.pdf",
+    "section": "第20条末：不要为了消除复制牺牲接口可用性",
+    "pages": "PDF 174–175（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.5",
+    "evidence": "bench/foundations-lab/src/bin/borrow.rs"
+  },
+  {
+    "id": "FOUNDATIONS-PTR",
+    "source": "https://doc.rust-lang.org/std/ptr/index.html",
+    "section": "Safety; Alignment; Pointer to reference conversion; Allocation; Provenance; Pointers Vs Integers; Strict Provenance; Using Strict Provenance; Exposed Provenance",
+    "pages": "HTML具名节；无固定页码",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.7",
+    "evidence": "src/part1/ch03.md"
+  },
+  {
+    "id": "FOUNDATIONS-OPTION",
+    "source": "https://doc.rust-lang.org/std/option/index.html",
+    "section": "Representation段及类型/条件表；非全篇API审计",
+    "pages": "HTML具名节；无固定页码",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
+    "evidence": "src/part1/ch02.md"
+  },
+  {
+    "id": "FOUNDATIONS-BLACK_BOX",
+    "source": "https://doc.rust-lang.org/std/hint/fn.black_box.html",
+    "section": "完整Expand description、When is this useful、How to use this与全部示例",
+    "pages": "HTML具名节；无固定页码",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.3",
+    "evidence": "src/part1/ch01.md"
+  }
+]

@@ -1,0 +1,61 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (cpp-rust/projects/agent-runtime/target/debug/deps/agent_runtime-fedc285638872783)
+
+running 2 tests
+test process_macos::tests::both_pipe_ends_are_cloexec_at_return ... ok
+test process_macos::tests::command_reuse_and_spawn_failure_release_parent_writers ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (cpp-rust/projects/agent-runtime/target/debug/deps/agent_runtime-ea8f556d4451a896)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/runtime-bench.rs (cpp-rust/projects/agent-runtime/target/debug/deps/runtime_bench-8837192c37f3ce71)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/tool-helper.rs (cpp-rust/projects/agent-runtime/target/debug/deps/tool_helper-1678ade332ee02b9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (cpp-rust/projects/agent-runtime/target/debug/deps/contracts-799635ff09dff8cf)
+
+running 14 tests
+test registry_and_configuration_fail_closed ... ok
+test input_budgets_reject_before_spawn ... ok
+test missing_executable_at_spawn_is_structured ... ok
+test bounded_before_spawn_and_queued_cancel_never_spawns ... ok
+test dropped_ticket_still_has_joined_cleanup ... ok
+test queue_residence_consumes_request_deadline ... ok
+test fixed_command_accepts_no_request_arguments ... ok
+test concurrency_slot_is_not_released_on_cancel_request ... ok
+test echo_is_literal_even_with_shell_metacharacters ... ok
+test nonzero_is_not_a_join_failure ... ok
+test normal_shutdown_closes_clones_and_joins_accepted_work ... ok
+test dual_stream_drain_discards_only_retention_not_work ... ok
+test timeout_reaps_actual_child_and_closes_both_streams ... ok
+test intended_standard_stream_inheritance_still_hits_drain_grace ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.08s
+
+     Running tests/regressions.rs (cpp-rust/projects/agent-runtime/target/debug/deps/regressions-d55db881dc6cc04c)
+
+running 2 tests
+test sequential_drain_regresses_then_explicitly_recovers ... ok
+test cli_reports_outcomes_and_exit_codes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+   Doc-tests agent_runtime
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

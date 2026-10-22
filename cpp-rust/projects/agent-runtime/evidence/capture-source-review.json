@@ -1,0 +1,69 @@
+{
+  "implementation_sources": [
+    {
+      "source": "/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/pipe/unix.rs",
+      "sha256": "58768a98842b356a37aaf8b0d61b52ffdf66d325f090f70f8eb60b8a4ca919d7",
+      "actual_review_scope": "1–44: macOS pipe then set_cloexec path",
+      "local_copy": ".work/cpp-rust-agents/drain-debug/reference/std-pipe-unix.rs",
+      "status": "targeted-source-review-not-full-file-audit",
+      "review_by": "runtime-capture-fix: actual targeted reading in this follow-up"
+    },
+    {
+      "source": "/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/process/unix/unix.rs",
+      "sha256": "1c0f874f1835e5befa6e8bdd65450903f475248b525d3b7b5e1ce861311a21d0",
+      "actual_review_scope": "685–780: posix_spawn file actions and flags",
+      "local_copy": ".work/cpp-rust-agents/drain-debug/reference/std-process-unix.rs",
+      "status": "targeted-source-review-not-full-file-audit",
+      "review_by": "runtime-capture-fix: actual targeted reading in this follow-up"
+    },
+    {
+      "source": "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/process/unix/mod.rs",
+      "sha256": "a63d3f4d25abe92d7821b22f3737b017486c9db2cbc474fb419d71fbe1195eec",
+      "actual_review_scope": "1–300: build_child, pipe conversion, ownership and nonblocking",
+      "local_copy": ".work/cpp-rust-agents/drain-debug/reference/tokio-process-unix.rs",
+      "status": "targeted-source-review-not-full-file-audit",
+      "review_by": "runtime-capture-fix: actual targeted reading in this follow-up"
+    },
+    {
+      "source": "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/process/mod.rs",
+      "sha256": "1ec90c89879ecf786a279ff733448cfd8109857dc28d756adb54d86762d0eeac",
+      "actual_review_scope": "830–984: spawn and cfg(tokio_unstable) spawn_with",
+      "local_copy": ".work/cpp-rust-agents/drain-debug/reference/tokio-process.rs",
+      "status": "targeted-source-review-not-full-file-audit",
+      "review_by": "runtime-capture-fix: actual targeted reading in this follow-up"
+    },
+    {
+      "source": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/unistd.h",
+      "sha256": "4f0463cea7c466850593f10341e9d57757f8570f610cfa748b5c6a3925842b76",
+      "actual_review_scope": "195–230: pipe2 availability macOS 27.0",
+      "local_copy": ".work/cpp-rust-agents/drain-debug/reference/sdk-unistd.h",
+      "status": "targeted-source-review-not-full-file-audit",
+      "review_by": "runtime-capture-fix: actual targeted reading in this follow-up"
+    }
+  ],
+  "adapted_from": {
+    "source": "bench/runtime-lab/src/process_macos.rs",
+    "sha256": "1233a0832ae6cdb5ead73e40430f7276351e3d2a17c4036621f1ca9917074fbc",
+    "scope": "complete 77-line module read; project adds Command reuse/failure test; no shared dependency"
+  },
+  "proof_review": [
+    "bench/runtime-lab/diagnostics/pipe_gate.c: complete",
+    "bench/runtime-lab/diagnostics/reproduce_descriptor_race.sh: complete",
+    "bench/runtime-lab/examples/descriptor_race.rs: complete",
+    "bench/results/runtime-fixed/baseline-debug/flood-pipe1/ready and lsof.txt",
+    "bench/results/runtime-fixed/fixed-debug/flood-pipe1/ready",
+    ".work/cpp-rust-agents/drain-debug-done.md: complete"
+  ],
+  "current_codegen_review": {
+    "source": "run-04/native/agent_runtime.mir",
+    "ranges": [
+      "456-605 spawn_captured ownership declarations",
+      "6770-6879 record declarations",
+      "8397-8496 try_submit declarations"
+    ],
+    "llvm_ir": "run-04/native/agent_runtime.ll: 16358-16472 record; 20950-21049 pipe_cloexec",
+    "native_asm": "run-04/native/agent_runtime.s: 28046-28145 record; 35957-36056 pipe_cloexec",
+    "sample": "run-04/macos-sample.txt: parent Log::record, posix_spawn, wait and kevent call paths"
+  },
+  "status": "implementation targeted review and regression, not independent audit; no newly claimed PDF or web reading"
+}

@@ -1,0 +1,48 @@
+   Compiling performance-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/performance_lab-818262494f73fa62)
+
+running 10 tests
+test park::tests::notification_survives_a_consumed_park_token ... ok
+test park::tests::pre_park_notification_is_not_lost ... ok
+test slot::tests::unread_payload_is_dropped_once ... ok
+test tests::flat_distribution ... ok
+test tests::nearest_rank_and_sample_variance ... ok
+test slot::tests::received_payload_is_not_dropped_again ... ok
+test slot::tests::capacity_one_and_reuse ... ok
+test park::tests::nested_call_is_rejected_and_guard_recovers ... ok
+test park::tests::another_thread_can_complete_future ... ok
+test slot::tests::non_copy_payload_crosses_threads ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/async_poll.rs (target/debug/deps/async_poll-015d271edd70beaf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/atomic_contention.rs (target/debug/deps/atomic_contention-a318581d948d6aae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/future_allocation.rs (target/debug/deps/future_allocation-3ae057fb02ca7429)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/handoff.rs (target/debug/deps/handoff-be176b188cc5c529)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests performance_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,8 @@
+COMMAND     PID     USER   FD   TYPE DEVICE SIZE/OFF                NODE NAME
+lab-worke 94964 juanwang  cwd    DIR   1,16      544            19357208 /Users/juanwang/Desktop/tutorials/cpp-rust
+lab-worke 94964 juanwang  txt    REG   1,16   740968            20164702 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/runtime-lab/target/debug/lab-worker
+lab-worke 94964 juanwang  txt    REG   1,16    34208            20164707 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/results/runtime-fixed/fixed-debug/pipe_gate.dylib
+lab-worke 94964 juanwang  txt    REG   1,16  4129840 1152921500312609216 /usr/lib/dyld
+lab-worke 94964 juanwang    0r   CHR    3,2      0t0                 336 /dev/null
+lab-worke 94964 juanwang    1w   CHR    3,2     0t17                 336 /dev/null
+lab-worke 94964 juanwang    2w   CHR    3,2      0t0                 336 /dev/null

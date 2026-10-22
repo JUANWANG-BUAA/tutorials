@@ -1,0 +1,68 @@
++ /Users/juanwang/miniconda3/bin/python3 tools/build_coverage.py
+ledger links valid: 17; full-book coverage INCOMPLETE
++ /Users/juanwang/miniconda3/bin/python3 tools/check_book.py
+check_book 通过！共检查 4 个页面，0 错误。
++ /Users/juanwang/miniconda3/bin/python3 tools/verify_evidence.py
+evidence checks passed: 357 raw batches, 10 recorded tests; source hashes match
+Not a correctness proof, independent audit, or full-book completion check.
++ cargo fmt --manifest-path bench/Cargo.toml --check
++ cargo clippy --offline --manifest-path bench/Cargo.toml --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
++ cargo test --offline --manifest-path bench/Cargo.toml
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (bench/target/debug/deps/performance_lab-818262494f73fa62)
+
+running 10 tests
+test park::tests::notification_survives_a_consumed_park_token ... ok
+test park::tests::pre_park_notification_is_not_lost ... ok
+test slot::tests::capacity_one_and_reuse ... ok
+test slot::tests::received_payload_is_not_dropped_again ... ok
+test slot::tests::unread_payload_is_dropped_once ... ok
+test park::tests::nested_call_is_rejected_and_guard_recovers ... ok
+test tests::flat_distribution ... ok
+test tests::nearest_rank_and_sample_variance ... ok
+test slot::tests::non_copy_payload_crosses_threads ... ok
+test park::tests::another_thread_can_complete_future ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/async_poll.rs (bench/target/debug/deps/async_poll-015d271edd70beaf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/atomic_contention.rs (bench/target/debug/deps/atomic_contention-a318581d948d6aae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/future_allocation.rs (bench/target/debug/deps/future_allocation-3ae057fb02ca7429)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/handoff.rs (bench/target/debug/deps/handoff-be176b188cc5c529)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests performance_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ mdbook build
+ INFO Book building has started
+mathbook: 提示 — 4 个锚点未被任何 [@ref] 引用（def-cpp-rust.2.7.1, def-cpp-rust.2.8.1, method-cpp-rust.2.7.1, method-cpp-rust.2.8.1）
+ INFO Running the html backend
+ INFO HTML book written to `/Users/juanwang/Desktop/tutorials/cpp-rust/book`
++ /Users/juanwang/miniconda3/bin/python3 tools/check_rendered.py
+html pages: 7
+
+OK
+Incremental preview passed. Full book, two projects, coverage and independent audit are NOT complete.

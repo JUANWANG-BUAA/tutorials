@@ -1,0 +1,5 @@
+use_after_move	E0382
+maybe_uninitialized	E0381
+alias_conflict	E0502
+const_bounds	E0080
+dyn_generic	E0038

@@ -1,0 +1,63 @@
+   Compiling crossbeam-utils v0.8.23
+   Compiling crossbeam-queue v0.3.14
+   Compiling crossbeam-epoch v0.9.21
+   Compiling systems-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/systems-lab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.93s
+     Running unittests src/lib.rs (target/debug/deps/systems_lab-d3274de6bf521097)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/epoch.rs (target/debug/deps/epoch-f10d68666604b7f1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/layout.rs (target/debug/deps/layout-680820cf9161b5ab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/queue.rs (target/debug/deps/queue-a89a3254912dd935)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/simd.rs (target/debug/deps/simd-f384833bbf2a7f4f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/views.rs (target/debug/deps/views-3a2e5289eab7f9d5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (target/debug/deps/contracts-9ac867c94c7fd132)
+
+running 10 tests
+test safe_logic_aba_is_not_a_data_race ... ok
+test malformed_frames_fail_safely ... ok
+test queue_full_returns_ownership_and_fifo ... ok
+test epoch_both_paths_drop_all ... ok
+test mismatched_lengths_fail_before_unsafe_access - should panic ... ok
+test nested_guard_is_not_quiescence ... ok
+test stalled_participant_prevents_reclamation_without_ub ... ok
+test owned_and_borrowed_frame_results_match ... ok
+test mpmc_exactly_once_multiset ... ok
+test simd_all_tails_offsets_and_wrapping_match ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests systems_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,1 @@
+$ /Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-profdata merge -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-data/merged.profdata /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-data/default_4638409862445482177_0.profraw

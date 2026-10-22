@@ -1,0 +1,14 @@
+[package]
+name = "compiler-lab"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = false
+debug = 1
+panic = "unwind"

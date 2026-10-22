@@ -1,0 +1,286 @@
+[
+  {
+    "id": "stanford",
+    "url": "https://web.stanford.edu/class/cs110l/",
+    "final_url": "https://web.stanford.edu/class/cs110l/",
+    "sha256": "14b5bac610caac31ccacaa02ce175ef4ef64e2c295d51243fb8b241e6400362b",
+    "bytes": 12540,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "mit",
+    "url": "https://pdos.csail.mit.edu/6.S081/2020/schedule.html",
+    "final_url": "https://pdos.csail.mit.edu/6.S081/2020/schedule.html",
+    "sha256": "51dba52b81500e5be2b6619ec33d8aad74fc7994caacd680dc8206e0d7a17d5b",
+    "bytes": 25508,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "rcore",
+    "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/index.html",
+    "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/index.html",
+    "sha256": "0f096f6dffde9b08380b5b62dc91bff7a89258203ae785a07b814a381021df18",
+    "bytes": 52270,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "atomic",
+    "url": "https://doc.rust-lang.org/std/sync/atomic/",
+    "final_url": "https://doc.rust-lang.org/std/sync/atomic/",
+    "sha256": "334049770f651566ff55fe943fc1343423c5df17c309b82ebabeb76128febc3a",
+    "bytes": 29607,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "future",
+    "url": "https://doc.rust-lang.org/std/future/trait.Future.html",
+    "final_url": "https://doc.rust-lang.org/std/future/trait.Future.html",
+    "sha256": "5c623888192b21805435e31151ecbf442f35db51e75848f3e8377b32cc53018d",
+    "bytes": 23396,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "wake",
+    "url": "https://doc.rust-lang.org/std/task/trait.Wake.html",
+    "final_url": "https://doc.rust-lang.org/std/task/trait.Wake.html",
+    "sha256": "c4b372e6e2a51d158d9595dee1a65df6f6913cb84b8b1cfbb4597ce620a143e7",
+    "bytes": 12789,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "stanford-thread-notes",
+    "url": "https://web.stanford.edu/class/cs110l/lecture-notes/lecture-13-2022",
+    "final_url": "https://web.stanford.edu/class/cs110l/lecture-notes/lecture-13-2022/",
+    "sha256": "4a3b8a1a095ecbc646b0e6d47b26e95b26fae58fa1021410a305b7701d329077",
+    "bytes": 46356,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "mit-lock-notes",
+    "url": "https://pdos.csail.mit.edu/6.S081/2020/lec/l-lockv2.txt",
+    "final_url": "https://pdos.csail.mit.edu/6.S081/2020/lec/l-lockv2.txt",
+    "sha256": "f4e6ede492bb98a8fa93706175143cd1edf6333a0519d27a2c7f604f51f0d894",
+    "bytes": 8352,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "rcore-lock",
+    "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/2lock.html",
+    "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/2lock.html",
+    "sha256": "7684f01f14641ba6e243ec99b0812a8f28c62334e1b3934d4dc81c9fb8cba468",
+    "bytes": 263340,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "stanford-process-slides",
+    "url": "https://web.stanford.edu/class/cs110l/slides/lecture-10-2022.pdf",
+    "final_url": "https://web.stanford.edu/class/cs110l/slides/lecture-10-2022.pdf",
+    "sha256": "7f327718206c5dbf7dcfa3c22aa3c5189c7c88483cf555741eea967d0847962a",
+    "bytes": 1033004,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "mit-scheduling",
+    "url": "https://pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt",
+    "final_url": "https://pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt",
+    "sha256": "46a326635714fd1c23bd76a2c77a4ca3a8df85c15735ee431452a50870665af3",
+    "bytes": 12296,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "tokio-runtime",
+    "url": "https://docs.rs/tokio/1.54.0/tokio/runtime/index.html",
+    "final_url": "https://docs.rs/tokio/1.54.0/tokio/runtime/index.html",
+    "sha256": "81287ea29e21449548dbb6d2625bc9ca6445e91bf46538ddbdd24dc188425473",
+    "bytes": 60811,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "tokio-blocking",
+    "url": "https://docs.rs/tokio/1.54.0/tokio/task/fn.spawn_blocking.html",
+    "final_url": "https://docs.rs/tokio/1.54.0/tokio/task/fn.spawn_blocking.html",
+    "sha256": "411f779f1b7760b3b61e29998c53ee82279b9c3294cfd77e5c029aa7c8f8982b",
+    "bytes": 37975,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "tokio-process",
+    "url": "https://docs.rs/tokio/1.54.0/tokio/process/index.html",
+    "final_url": "https://docs.rs/tokio/1.54.0/tokio/process/index.html",
+    "sha256": "1f5e86b178fabd15d36c36da263e06f5a2c7dac5cb4cace3a62640fb6e190a9f",
+    "bytes": 41897,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "std-child",
+    "url": "https://doc.rust-lang.org/1.99.0/std/process/struct.Child.html",
+    "final_url": "https://doc.rust-lang.org/1.99.0/std/process/struct.Child.html",
+    "sha256": "df350e4b16e6a22897da447eaabee8f94e24120c6d5196e1c912cb8dcf6b5442",
+    "bytes": 55291,
+    "status": "fetched-not-reviewed"
+  },
+  {
+    "id": "compiler-web-thir",
+    "url": "https://rustc-dev-guide.rust-lang.org/thir.html",
+    "sha256": "8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db",
+    "review_scope": "main article, excluding navigation",
+    "evidence": ".work/cpp-rust-sources/compiler/thir.html"
+  },
+  {
+    "id": "compiler-web-drop-elaboration",
+    "url": "https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html",
+    "sha256": "1b8044c6015a398cbc5829a7dfde97f02e1334d3d0bb3b20fb46ebd67f701221",
+    "review_scope": "main article, excluding navigation",
+    "evidence": ".work/cpp-rust-sources/compiler/drop-elaboration.html"
+  },
+  {
+    "id": "compiler-web-aliasing",
+    "url": "https://doc.rust-lang.org/nomicon/aliasing.html",
+    "sha256": "cbbfc595f863dd608be9e095b3a6efb70c2f54e9b413f1494b5a9e75667463e0",
+    "review_scope": "main article, excluding navigation",
+    "evidence": ".work/cpp-rust-sources/compiler/aliasing.html"
+  },
+  {
+    "id": "compiler-web-pgo",
+    "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
+    "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
+    "review_scope": "main article, excluding navigation",
+    "evidence": ".work/cpp-rust-sources/compiler/pgo.html"
+  },
+  {
+    "id": "EVID-cargo-features",
+    "url": "https://doc.rust-lang.org/cargo/reference/features.html",
+    "sha256": "78c663fe82a9c62d4f7b7c9ebebfd8a736ee81b2e601f2b07fdf316aa68e0700",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-features.html",
+    "review_scope": "完整Features正文；重点default、optional dependencies、feature unification、resolver v2和组合测试；未跟读外链",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cargo-profiles",
+    "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+    "sha256": "2178bd9b63c5be9e3546b765d1ed6aad92efefee50923e4f54dc292b50954773",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-profiles.html",
+    "review_scope": "完整Profiles正文；重点lto=false/off、codegen-units、incremental、overrides、泛型实例化",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-rustc-pgo",
+    "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
+    "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
+    "archive": ".work/cpp-rust-sources/evidence/rustc-pgo.html",
+    "review_scope": "完整Profile-guided Optimization正文；四阶段与Cargo流程、绝对路径、missing-function警告",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cachegrind",
+    "url": "https://valgrind.org/docs/manual/cg-manual.html",
+    "sha256": "40fd719bcc25649892cf5ada0d9ed87a8bf8f6efd01cabe71792877b50153955",
+    "archive": ".work/cpp-rust-sources/evidence/cachegrind.html",
+    "review_scope": "Overview与5.2.1–5.2.8；5.8.1–5.8.3到ASLR段；非完整手册",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-perf-event",
+    "url": "https://man7.org/linux/man-pages/man2/perf_event_open.2.html",
+    "sha256": "03b609628cc896b110cc98dfc8b39fd169c39dc129bb47d62b918995066cd3ae",
+    "archive": ".work/cpp-rust-sources/evidence/perf-event.html",
+    "review_scope": "read_format与TOTAL_TIME_ENABLED/RUNNING、precise_ip、read返回布局及复用缩放解释；非完整系统调用手册",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cargo-resolver",
+    "url": "https://doc.rust-lang.org/cargo/reference/resolver.html",
+    "sha256": "dd1d061ca25ca5570df0ee0f4840e6b7ee12d7e0d9c633396520e9d3402e2d50",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-resolver.html",
+    "review_scope": "Resolver versions与Rust version指定段；非完整resolver文档",
+    "status": "read-mapped"
+  },
+  {
+    "id": "FFI-CATCH",
+    "url": "https://doc.rust-lang.org/std/panic/fn.catch_unwind.html",
+    "sha256": "535eb1e0371946ca50fd476944eaf0411ba5ff393a53702c3d46587804a3b873",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-CATCH.html",
+    "review_scope": "catch_unwind documentation including Notes"
+  },
+  {
+    "id": "FFI-SLICE",
+    "url": "https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html",
+    "sha256": "c6afe18f51c844c7d48fb732865c4a4c18a15443c9d9277c7e30f93645c3a7ce",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-SLICE.html",
+    "review_scope": "from_raw_parts Safety and Caveat: Lifetimes"
+  },
+  {
+    "id": "FFI-REPR",
+    "url": "https://doc.rust-lang.org/reference/type-layout.html",
+    "sha256": "d407581c2d5516e63df34253f7029c2c90f7bb6c238ecccf89a5c17ba5b1b564",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-REPR.html",
+    "review_scope": "repr(C) struct alignment, padding and layout algorithm"
+  },
+  {
+    "id": "FOUNDATIONS-PTR",
+    "url": "https://doc.rust-lang.org/std/ptr/index.html",
+    "sha256": "14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db",
+    "review_scope": "Safety; Alignment; Pointer to reference conversion; Allocation; Provenance; Pointers Vs Integers; Strict Provenance; Using Strict Provenance; Exposed Provenance",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/ptr.html",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.7"
+  },
+  {
+    "id": "FOUNDATIONS-OPTION",
+    "url": "https://doc.rust-lang.org/std/option/index.html",
+    "sha256": "08969609f3591ba394bbe6b2b9f3dca1c96b25c7dcfa9c8f83b62c63803d99ea",
+    "review_scope": "Representation段及类型/条件表；非全篇API审计",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/option.html",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.2"
+  },
+  {
+    "id": "FOUNDATIONS-BLACK_BOX",
+    "url": "https://doc.rust-lang.org/std/hint/fn.black_box.html",
+    "sha256": "4343593cafcaf72edc25626a0c256afe2c334d3fcebe7f56db13bd6013dc86f9",
+    "review_scope": "完整Expand description、When is this useful、How to use this与全部示例",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/black_box.html",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.3"
+  },
+  {
+    "id": "systems-mit-rcu",
+    "url": "https://pdos.csail.mit.edu/6.828/2024/lec/l-rcu.txt",
+    "sha256": "34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6",
+    "archive": ".work/cpp-rust-sources/systems/mit-rcu.txt",
+    "review_scope": "Quiescent State, Grace Period, Read-Copy Update core mechanisms",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-target-feature",
+    "url": "https://doc.rust-lang.org/reference/attributes/codegen.html",
+    "sha256": "18becca8e376dd8bc0bc8ee557ece8a2bb9053fbff23bc572c5351fbf42062c7",
+    "archive": ".work/cpp-rust-sources/systems/target-feature.html",
+    "review_scope": "target_feature attribute and SIMD intrinsic safety contracts",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-uring",
+    "url": "https://man7.org/linux/man-pages/man7/io_uring.7.html",
+    "sha256": "1ed71f55954959fc551915363b054c62fb28ba57ede487303d4cb2de0057feb9",
+    "archive": ".work/cpp-rust-sources/systems/uring.html",
+    "review_scope": "SQE/CQE ring buffers, shared memory mapping and registered buffers",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-uring-cancel",
+    "url": "https://man7.org/linux/man-pages/man3/io_uring_prep_cancel.3.html",
+    "sha256": "0f9c226cb76cc8df73dbd6399e4cbe83e0db82ac62f925780968677da241e32b",
+    "archive": ".work/cpp-rust-sources/systems/uring-cancel.html",
+    "review_scope": "io_uring async request cancelation lifecycle",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-rcore-io",
+    "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/1fs-interface.html",
+    "sha256": "55ff0cac446a27bc0485d3c65e664193dd8dba6819a4112f4531c33a0a70fb97",
+    "archive": ".work/cpp-rust-sources/systems/rcore-io.html",
+    "review_scope": "Block cache management and zero-copy device abstraction",
+    "status": "reviewed"
+  }
+]

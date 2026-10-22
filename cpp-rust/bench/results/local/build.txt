@@ -1,0 +1,2 @@
+   Compiling performance-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.61s

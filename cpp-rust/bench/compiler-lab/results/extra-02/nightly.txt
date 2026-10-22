@@ -1,0 +1,4 @@
+$ rustc +nightly -vV
+error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'
+help: this may happen if the toolchain installation was interrupted
+help: try reinstalling or updating the toolchain

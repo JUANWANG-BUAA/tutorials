@@ -1,0 +1,6 @@
+Sampling process 92389 for 1 second with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 92389 written to file /Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/sample-locality.txt
+Sampling process 92392 for 1 second with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 92392 written to file /Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/sample-borrow.txt

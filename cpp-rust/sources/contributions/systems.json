@@ -1,0 +1,92 @@
+[
+  {
+    "id": "SYS-S08-17",
+    "source": "S08",
+    "section": "第17条：数据竞争、锁与状态一致性",
+    "pages": "PDF 146–160",
+    "status": "read-mapped",
+    "target": "part3/ch11.md#sec-cpp-rust.3.11.1",
+    "evidence": "bench/systems-lab/src/lib.rs"
+  },
+  {
+    "id": "SYS-S08-28",
+    "source": "S08",
+    "section": "第28条：利用类型系统表达不变量",
+    "pages": "PDF 205–210",
+    "status": "read-mapped",
+    "target": "part3/ch11.md#sec-cpp-rust.3.11.4",
+    "evidence": "bench/systems-lab/src/lib.rs"
+  },
+  {
+    "id": "SYS-MIT-RCU",
+    "source": "systems-mit-rcu",
+    "section": "Lecture Notes: Read-Copy Update (RCU)",
+    "pages": "在线讲义（SHA: 34201a6f...）",
+    "status": "read-mapped",
+    "target": "part3/ch11.md#sec-cpp-rust.3.11.8",
+    "evidence": "src/part3/ch11.md"
+  },
+  {
+    "id": "SYS-RCORE-LOCK",
+    "source": "rcore-lock",
+    "section": "第8章：并发与互斥机制对比",
+    "pages": "在线文档（SHA: 7684f01f...）",
+    "status": "read-mapped",
+    "target": "part3/ch11.md#sec-cpp-rust.3.11.1",
+    "evidence": "src/part3/ch11.md"
+  },
+  {
+    "id": "SYS-TARGET-FEATURE",
+    "source": "systems-target-feature",
+    "section": "Codegen Attributes: target_feature",
+    "pages": "在线规范（SHA: 18becca8...）",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.3",
+    "evidence": "bench/systems-lab/src/lib.rs"
+  },
+  {
+    "id": "SYS-IO-URING",
+    "source": "systems-uring",
+    "section": "io_uring(7): 异步I/O环形缓冲区架构",
+    "pages": "在线手册（SHA: 1ed71f55...）",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
+    "evidence": "src/part3/ch12.md"
+  },
+  {
+    "id": "SYS-IO-URING-CANCEL",
+    "source": "systems-uring-cancel",
+    "section": "io_uring_prep_cancel(3): 异步请求取消时序",
+    "pages": "在线手册（SHA: 0f9c226c...）",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
+    "evidence": "src/part3/ch12.md"
+  },
+  {
+    "id": "SYS-RCORE-IO",
+    "source": "systems-rcore-io",
+    "section": "第6章：文件系统与块设备接口设计",
+    "pages": "在线文档（SHA: 55ff0cac...）",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.4",
+    "evidence": "src/part3/ch12.md"
+  },
+  {
+    "id": "SYS-S11-ITER",
+    "source": "S11",
+    "section": "13.4 性能对比：循环 VS 迭代器",
+    "pages": "PDF 314–315",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.2",
+    "evidence": "bench/systems-lab/src/bin/simd.rs"
+  },
+  {
+    "id": "SYS-S08-OPT",
+    "source": "S08",
+    "section": "第20条末：优化不应以牺牲可用性为代价",
+    "pages": "PDF 174–175",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.7",
+    "evidence": "bench/systems-lab/src/bin/views.rs"
+  }
+]

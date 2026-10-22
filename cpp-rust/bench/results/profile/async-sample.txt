@@ -1,0 +1,117 @@
+Analysis of sampling async-poll (pid 69988) every 1 millisecond
+Process:         async-poll [69988]
+Path:            /Users/USER/Desktop/*/async-poll
+Load Address:    0x10219c000
+Identifier:      async-poll
+Version:         ???
+Code Type:       ARM64
+Parent Process:  bash [69987]
+Target Type:     live task
+
+Date/Time:       2026-10-22 19:07:05.590 +0800
+Launch Time:     2026-10-22 19:07:05.558 +0800
+OS Version:      macOS 27.0.1 (26A434)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         1392K
+Physical footprint (peak):  1408K
+Idle exit:                  untracked
+----
+
+Call graph:
+    349 Thread_1005314: Main Thread
+    + 339 _dyld_start  (in dyld) + 0  [0x1024f4bf0]
+    + 9 start  (in dyld) + 6596  [0x19e807e24]
+    + ! 9 dyld4::start(dyld4::KernelArgs*, void*, void*, unsigned long long)::$_1::operator()() const  (in dyld) + 320  [0x19e808a84]
+    + !   8 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 4500  [0x19e809c34]
+    + !   : 8 dyld4::RuntimeState::notifyDebuggerLoad(std::span<dyld4::Loader const*, 18446744073709551615ul> const&)  (in dyld) + 592  [0x19e81a4cc]
+    + !   :   8 dyld4::ExternallyViewableState::addImages(lsl::Allocator&, lsl::Allocator&, std::span<dyld4::ExternallyViewableState::ImageInfo, 18446744073709551615ul> const&)  (in dyld) + 1280  [0x19e825ef8]
+    + !   :     8 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 304  [0x19e825704]
+    + !   :       8 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x19e84a20c]
+    + !   :         8 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 244  [0x19e849e54]
+    + !   :           8 mach_msg_overwrite  (in dyld) + 244  [0x19e8567e8]
+    + !   :             8 mach_msg2_internal  (in dyld) + 76  [0x19e856640]
+    + !   :               8 mach_msg2_trap  (in dyld) + 8  [0x19e7d772c]
+    + !   1 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 2508  [0x19e80946c]
+    + !     1 dyld4::JustInTimeLoader::applyFixups(Diagnostics&, dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, bool, lsl::Vector<std::pair<dyld4::Loader const*, char const*>>*) const  (in dyld) + 616  [0x19e82b8cc]
+    + !       1 dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 308  [0x19e835014]
+    + !         1 mach_o::Image::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer, void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 112  [0x19e86bc98]
+    + !           1 mach_o::BindOpcodes::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 196  [0x19e85b0a4]
+    + !             1 mach_o::BindOpcodes::forEachBind(void (CString, int, bool, unsigned char, unsigned long long, bool, int, CString, bool, long long, bool, bool&) block_pointer) const  (in dyld) + 1656  [0x19e85abf8]
+    + !               1 invocation function for block in mach_o::BindOpcodes::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 264  [0x19e85b1ec]
+    + !                 1 invocation function for block in dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 180  [0x19e8350e4]
+    + !                   1 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 552  [0x19e8334ec]
+    + !                     1 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, bool, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 644  [0x19e835c6c]
+    + !                       1 mach_o::ExportsTrie::hasExportedSymbol(CString, mach_o::Symbol&, bool) const  (in dyld) + 48  [0x19e85f20c]
+    + !                         1 mach_o::GenericTrie::find(CString, bool) const  (in dyld) + 368  [0x19e85ec28]
+    + 1 start  (in dyld) + 6112  [0x102521c40]
+    +   1 dyld4::ExternallyViewableState::createMinimalInfo(lsl::Allocator&, unsigned long long, char const*, unsigned long long, char const*, DyldSharedCache const*)  (in dyld) + 1528  [0x10253ee70]
+    +     1 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 304  [0x10253f704]
+    +       1 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x10256420c]
+    +         1 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 244  [0x102563e54]
+    +           1 mach_msg_overwrite  (in dyld) + 244  [0x1025707e8]
+    +             1 mach_msg2_internal  (in dyld) + 76  [0x102570640]
+    +               1 mach_msg2_trap  (in dyld) + 8  [0x1024f172c]
+    490 Thread_1005314   DispatchQueue_1: com.apple.main-thread  (serial)
+      490 start  (in dyld) + 6688  [0x19e807e80]
+        490 main  (in async-poll) + 52  [0x10219da9c]
+          490 _RNvNtCs1SSuMAdGM58_3std2rt19lang_start_internal  (in async-poll) + 936  [0x1021b76f0]
+            490 _RNCINvNtCs1SSuMAdGM58_3std2rt10lang_startuE0CsfzSBd769elb_10async_poll  (in async-poll) + 16  [0x10219ccb0]  rt.rs:206
+              490 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceFEuuECsfzSBd769elb_10async_poll  (in async-poll) + 12  [0x10219cc98]  backtrace.rs:166
+                143 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 2108  [0x10219d514]  async_poll.rs:68
+                ! 87 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 240,220,...  [0x10219c9b0,0x10219c99c,...]  park.rs:50
+                ! 32 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 348  [0x10219ca1c]  park.rs:53
+                ! 24 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 256  [0x10219c9c0]  park.rs:50
+                !   24 _RNvMs0_NtNtNtNtCs1SSuMAdGM58_3std3sys4sync14thread_parking6darwinNtB5_6Parker6unpark  (in async-poll) + 20,12  [0x1021ab4ec,0x1021ab4e4]
+                139 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1772  [0x10219d3c4]  async_poll.rs:68
+                ! 85 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 240,220,...  [0x10219c9b0,0x10219c99c,...]  park.rs:50
+                ! 31 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 348  [0x10219ca1c]  park.rs:53
+                ! 23 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 256  [0x10219c9c0]  park.rs:50
+                !   23 _RNvMs0_NtNtNtNtCs1SSuMAdGM58_3std3sys4sync14thread_parking6darwinNtB5_6Parker6unpark  (in async-poll) + 12,20,...  [0x1021ab4e4,0x1021ab4ec,...]
+                138 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1436  [0x10219d274]  async_poll.rs:68
+                ! 93 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 240,220,...  [0x10219c9b0,0x10219c99c,...]  park.rs:50
+                ! 33 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 348  [0x10219ca1c]  park.rs:53
+                ! 12 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 256  [0x10219c9c0]  park.rs:50
+                !   12 _RNvMs0_NtNtNtNtCs1SSuMAdGM58_3std3sys4sync14thread_parking6darwinNtB5_6Parker6unpark  (in async-poll) + 12,20  [0x1021ab4e4,0x1021ab4ec]
+                14 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1708  [0x10219d384]  async_poll.rs:67
+                ! 14 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 212,296  [0x10219c994,0x10219c9e8]  park.rs:50
+                13 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1372  [0x10219d234]  async_poll.rs:67
+                ! 13 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 296,212  [0x10219c9e8,0x10219c994]  park.rs:50
+                13 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 2044  [0x10219d4d4]  async_poll.rs:67
+                ! 13 _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 212,296  [0x10219c994,0x10219c9e8]  park.rs:50
+                10 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1396  [0x10219d24c]  async_poll.rs:66
+                ! 10 _RNvCsfzSBd769elb_10async_poll8sync_sum  (in async-poll) + 32,24  [0x10219d9d8,0x10219d9d0]  async_poll.rs:26
+                10 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 2068  [0x10219d4ec]  async_poll.rs:66
+                ! 10 _RNvCsfzSBd769elb_10async_poll8sync_sum  (in async-poll) + 32,24  [0x10219d9d8,0x10219d9d0]  async_poll.rs:26
+                8 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1732  [0x10219d39c]  async_poll.rs:66
+                ! 8 _RNvCsfzSBd769elb_10async_poll8sync_sum  (in async-poll) + 24,32  [0x10219d9d0,0x10219d9d8]  async_poll.rs:26
+                1 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1128  [0x10219d140]  async_poll.rs:53
+                ! 1 _RNvNtNtCs1SSuMAdGM58_3std2io5stdio6__print  (in async-poll) + 100  [0x1021b8990]
+                !   1 _RNvXse_NtNtCs1SSuMAdGM58_3std2io5stdioRNtB5_6StdoutNtNtNtCsjIpoRzUjyHQ_4core2io5write5Write9write_fmt  (in async-poll) + 68  [0x1021beaf8]
+                !     1 _RNvNtCsjIpoRzUjyHQ_4core3fmt5write  (in async-poll) + 144  [0x1021cd7b8]
+                !       1 _RNvXNvNtNtCsjIpoRzUjyHQ_4core2io5write17default_write_fmtINtB2_7AdapterNtNtNtCs1SSuMAdGM58_3std2io5stdio10StdoutLockENtNtB8_3fmt5Write9write_strB1d_  (in async-poll) + 28  [0x1021bd5c8]
+                !         1 _RNvXsh_NtNtCs1SSuMAdGM58_3std2io5stdioNtB5_10StdoutLockNtNtNtCsjIpoRzUjyHQ_4core2io5write5Write9write_all  (in async-poll) + 128  [0x1021bec90]
+                !           1 _RNvMs_NtNtNtCs6zY7rJBZy9D_5alloc2io8buffered9bufwriterINtB4_9BufWriterNtNtNtCs1SSuMAdGM58_3std2io5stdio9StdoutRawE9flush_bufB1c_  (in async-poll) + 144  [0x1021b26f8]
+                !             1 write  (in libsystem_kernel.dylib) + 8  [0x19eb9c838]
+                1 _RNvCsfzSBd769elb_10async_poll4main  (in async-poll) + 1888  [0x10219d438]  async_poll.rs:73
+                  1 _RNvNtNtCs1SSuMAdGM58_3std2io5stdio6__print  (in async-poll) + 100  [0x1021b8990]
+                    1 _RNvXse_NtNtCs1SSuMAdGM58_3std2io5stdioRNtB5_6StdoutNtNtNtCsjIpoRzUjyHQ_4core2io5write5Write9write_fmt  (in async-poll) + 68  [0x1021beaf8]
+                      1 _RNvNtCsjIpoRzUjyHQ_4core3fmt5write  (in async-poll) + 144  [0x1021cd7b8]
+                        1 _RNvXNvNtNtCsjIpoRzUjyHQ_4core2io5write17default_write_fmtINtB2_7AdapterNtNtNtCs1SSuMAdGM58_3std2io5stdio10StdoutLockENtNtB8_3fmt5Write9write_strB1d_  (in async-poll) + 28  [0x1021bd5c8]
+                          1 _RNvXsh_NtNtCs1SSuMAdGM58_3std2io5stdioNtB5_10StdoutLockNtNtNtCsjIpoRzUjyHQ_4core2io5write5Write9write_all  (in async-poll) + 128  [0x1021bec90]
+                            1 _RNvMs_NtNtNtCs6zY7rJBZy9D_5alloc2io8buffered9bufwriterINtB4_9BufWriterNtNtNtCs1SSuMAdGM58_3std2io5stdio9StdoutRawE9flush_bufB1c_  (in async-poll) + 144  [0x1021b26f8]
+                              1 write  (in libsystem_kernel.dylib) + 8  [0x19eb9c838]
+
+Total number in stack (recursive counted multiple, when >=5):
+        6       _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll) + 0  [0x10219c8c0]  park.rs:50
+
+Sort by top of stack, same collapsed (when >= 5):
+        _RINvNtCsi2Oj9QrH7Qt_15performance_lab4park8block_onNCNvCsfzSBd769elb_10async_poll9async_sum0EBR_  (in async-poll)        401
+        _dyld_start  (in dyld)        339
+        _RNvMs0_NtNtNtNtCs1SSuMAdGM58_3std3sys4sync14thread_parking6darwinNtB5_6Parker6unpark  (in async-poll)        59
+        _RNvCsfzSBd769elb_10async_poll8sync_sum  (in async-poll)        28
+        mach_msg2_trap  (in dyld)        9
+
+Binary images description not available
+

@@ -1,0 +1,5 @@
+   Compiling foundations-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.25s
+     Running `cpp-rust/bench/foundations-lab/target/release/examples/storage_plan`
+value_offset=8 size=16 align=8
+overflow=rejected zst_size=0 zst_align=1

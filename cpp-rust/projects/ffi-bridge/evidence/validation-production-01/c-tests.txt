@@ -1,0 +1,13 @@
+Test project /Users/juanwang/Desktop/tutorials/cpp-rust/projects/ffi-bridge/evidence/validation-production-01/build
+    Start 1: c11_contracts
+1/4 Test #1: c11_contracts ....................   Passed    0.37 sec
+    Start 2: cli_demo
+2/4 Test #2: cli_demo .........................   Passed    0.29 sec
+    Start 3: cli_bad_length
+3/4 Test #3: cli_bad_length ...................   Passed    0.00 sec
+    Start 4: cli_bad_number
+4/4 Test #4: cli_bad_number ...................   Passed    0.00 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =   0.67 sec

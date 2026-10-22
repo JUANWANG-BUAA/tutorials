@@ -1,0 +1,67 @@
+   Compiling foundations-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running unittests src/lib.rs (cpp-rust/bench/foundations-lab/target/debug/deps/foundations_lab-559635480f21daa9)
+
+running 6 tests
+test tests::dynamic_borrow_conflict_is_safe_failure ... ok
+test tests::disjoint_borrow_updates_only_destination ... ok
+test tests::failure_drops_initialized_prefix ... ok
+test tests::region_capacity_failure_is_transactional ... ok
+test tests::unwind_drops_initialized_prefix ... ok
+test tests::sums_and_representations_agree ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/allocation.rs (cpp-rust/bench/foundations-lab/target/debug/deps/allocation-e845bf560a19455a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/borrow.rs (cpp-rust/bench/foundations-lab/target/debug/deps/borrow-8d41033df5519226)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/dce.rs (cpp-rust/bench/foundations-lab/target/debug/deps/dce-61638fff59f19e54)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/initialization.rs (cpp-rust/bench/foundations-lab/target/debug/deps/initialization-394abad7aa0206d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/locality.rs (cpp-rust/bench/foundations-lab/target/debug/deps/locality-f8465f05d70ecc9b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/paired.rs (cpp-rust/bench/foundations-lab/target/debug/deps/paired-8f2b2c9a43681aac)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts_more.rs (cpp-rust/bench/foundations-lab/target/debug/deps/contracts_more-a31fa20c907e5d61)
+
+running 4 tests
+test partial_move_drops_each_resource_once ... ok
+test fields_and_locals_have_different_drop_order ... ok
+test taking_ownership_leaves_valid_empty_container ... ok
+test successful_return_transfers_cleanup ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests foundations_lab
+
+running 1 test
+test src/lib.rs - ByteRegion (line 94) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

@@ -1,0 +1,746 @@
+Analysis of sampling scheduling (pid 79283) every 1 millisecond
+Process:         scheduling [79283]
+Path:            /Users/USER/Desktop/*/scheduling
+Load Address:    0x10041c000
+Identifier:      scheduling
+Version:         ???
+Code Type:       ARM64
+Parent Process:  bash [79260]
+Target Type:     live task
+
+Date/Time:       2026-10-22 19:49:03.160 +0800
+Launch Time:     2026-10-22 19:49:03.133 +0800
+OS Version:      macOS 27.0.1 (26A434)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         1776K
+Physical footprint (peak):  1776K
+Idle exit:                  untracked
+----
+
+Call graph:
+    217 Thread_1090203: Main Thread
+    + 203 _dyld_start  (in dyld) + 0  [0x1007b0bf0]
+    + 10 start  (in dyld) + 6596  [0x19e807e24]
+    + ! 10 dyld4::start(dyld4::KernelArgs*, void*, void*, unsigned long long)::$_1::operator()() const  (in dyld) + 320  [0x19e808a84]
+    + !   9 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 4500  [0x19e809c34]
+    + !   : 9 dyld4::RuntimeState::notifyDebuggerLoad(std::span<dyld4::Loader const*, 18446744073709551615ul> const&)  (in dyld) + 592  [0x19e81a4cc]
+    + !   :   9 dyld4::ExternallyViewableState::addImages(lsl::Allocator&, lsl::Allocator&, std::span<dyld4::ExternallyViewableState::ImageInfo, 18446744073709551615ul> const&)  (in dyld) + 1280  [0x19e825ef8]
+    + !   :     9 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 304  [0x19e825704]
+    + !   :       9 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x19e84a20c]
+    + !   :         9 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 244  [0x19e849e54]
+    + !   :           9 mach_msg_overwrite  (in dyld) + 244  [0x19e8567e8]
+    + !   :             9 mach_msg2_internal  (in dyld) + 76  [0x19e856640]
+    + !   :               9 mach_msg2_trap  (in dyld) + 8  [0x19e7d772c]
+    + !   1 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 2508  [0x19e80946c]
+    + !     1 dyld4::JustInTimeLoader::applyFixups(Diagnostics&, dyld4::RuntimeState&, dyld4::DyldCacheDataConstLazyScopedWriter&, bool, lsl::Vector<std::pair<dyld4::Loader const*, char const*>>*) const  (in dyld) + 616  [0x19e82b8cc]
+    + !       1 dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 308  [0x19e835014]
+    + !         1 mach_o::Image::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer, void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 148  [0x19e86bcbc]
+    + !           1 mach_o::BindOpcodes::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 196  [0x19e85b0a4]
+    + !             1 mach_o::BindOpcodes::forEachBind(void (CString, int, bool, unsigned char, unsigned long long, bool, int, CString, bool, long long, bool, bool&) block_pointer) const  (in dyld) + 656  [0x19e85a810]
+    + !               1 invocation function for block in mach_o::BindOpcodes::forEachBindTarget(void (mach_o::Fixup::BindTarget const&, bool&) block_pointer) const  (in dyld) + 264  [0x19e85b1ec]
+    + !                 1 invocation function for block in dyld4::Loader::forEachBindTarget(Diagnostics&, dyld4::RuntimeState&, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer, void (dyld4::Loader::ResolvedSymbol const&, bool&) block_pointer) const  (in dyld) + 180  [0x19e8350e4]
+    + !                   1 dyld4::Loader::resolveSymbol(Diagnostics&, dyld4::RuntimeState&, int, char const*, bool, bool, void (unsigned int, unsigned int, dyld4::Loader::ResolvedSymbol const&) block_pointer, bool) const  (in dyld) + 552  [0x19e8334ec]
+    + !                     1 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, bool, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 1672  [0x19e836070]
+    + !                       1 dyld4::Loader::hasExportedSymbol(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::ExportedSymbolMode, dyld4::Loader::ResolverMode, dyld4::Loader::ResolvedSymbol*, bool, dyld3::Array<dyld4::Loader const*>*) const  (in dyld) + 644  [0x19e835c6c]
+    + !                         1 mach_o::ExportsTrie::hasExportedSymbol(CString, mach_o::Symbol&, bool) const  (in dyld) + 48  [0x19e85f20c]
+    + !                           1 mach_o::GenericTrie::find(CString, bool) const  (in dyld) + 332  [0x19e85ec04]
+    + 2 start  (in dyld) + 6112  [0x1007ddc40]
+    + ! 2 dyld4::ExternallyViewableState::createMinimalInfo(lsl::Allocator&, unsigned long long, char const*, unsigned long long, char const*, DyldSharedCache const*)  (in dyld) + 1528  [0x1007fae70]
+    + !   2 dyld4::ExternallyViewableState::triggerNotifications(dyld_image_mode, unsigned int, dyld_image_info const*)  (in dyld) + 304  [0x1007fb704]
+    + !     2 dyld4::RemoteNotificationResponder::blockOnSynchronousEvent(unsigned int)  (in dyld) + 48  [0x10082020c]
+    + !       2 dyld4::RemoteNotificationResponder::sendMessage(int, unsigned int, mach_msg_header_t*)  (in dyld) + 244  [0x10081fe54]
+    + !         2 mach_msg_overwrite  (in dyld) + 244  [0x10082c7e8]
+    + !           2 mach_msg2_internal  (in dyld) + 76  [0x10082c640]
+    + !             2 mach_msg2_trap  (in dyld) + 8  [0x1007ad72c]
+    + 1 start  (in dyld) + 1592  [0x1007dca98]
+    + ! 1 dyld4::SyscallDelegate::hasExistingDyldCache(unsigned long long&, FileIdTuple&) const  (in dyld) + 32  [0x1007daa90]
+    + !   1 __shared_region_check_np  (in dyld) + 8  [0x1007b2450]
+    + 1 start  (in dyld) + 1496  [0x19e806a38]
+    +   1 FileIdTuple::getPath(char*) const  (in dyld) + 32  [0x19e7e3694]
+    +     1 fsgetpath  (in dyld) + 8  [0x19e7dc73c]
+    531 Thread_1090203   DispatchQueue_1: com.apple.main-thread  (serial)
+    + 530 start  (in dyld) + 6688  [0x19e807e80]
+    + ! 530 main  (in scheduling) + 52  [0x100422afc]
+    + !   530 _RNvNtCs1SSuMAdGM58_3std2rt19lang_start_internal  (in scheduling) + 936  [0x100459ff0]
+    + !     530 _RNCINvNtCs1SSuMAdGM58_3std2rt10lang_startINtNtCsjIpoRzUjyHQ_4core6result6ResultuINtNtCs6zY7rJBZy9D_5alloc5boxed3BoxDNtNtBI_5error5ErrorEL_EEE0CshJpD9cETttE_10scheduling  (in scheduling) + 24  [0x100420040]  rt.rs:206
+    + !       530 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceFEINtNtCsjIpoRzUjyHQ_4core6result6ResultuINtNtCs6zY7rJBZy9D_5alloc5boxed3BoxDNtNtB1e_5error5ErrorEL_EEB19_ECshJpD9cETttE_10scheduling  (in scheduling) + 12  [0x10041f384]  backtrace.rs:166
+    + !         319 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 496  [0x100421868]  scheduling.rs:57
+    + !         : 252 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 252 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   228 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |   + 219 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |   + ! 218 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |   + ! : 217 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |   + ! : | 217 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : |   + ! : 1 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |   + ! 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 544  [0x10042fd90]
+    + !         : |   + 5 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+    + !         : |   + ! 5 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    + !         : |   + !   5 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    + !         : |   + !     3 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    + !         : |   + !     : 3 mach_absolute_time  (in libsystem_kernel.dylib) + 108,104  [0x19eb990f8,0x19eb990f4]
+    + !         : |   + !     2 ???  (in <unknown binary>)  [0x1a642e780]
+    + !         : |   + 2 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 772  [0x10042bd44]
+    + !         : |   + ! 2 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime6signalNtB2_6Driver7process  (in scheduling) + 32,500  [0x10042cb6c,0x10042cd40]
+    + !         : |   + 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 780  [0x10042bd4c]
+    + !         : |   + ! 1 _RNvMs1_NtNtCs3EIJ1qnJmKW_5tokio7process3impNtB5_17GlobalOrphanQueue12reap_orphans  (in scheduling) + 48  [0x100431880]
+    + !         : |   + !   1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex8try_lock  (in scheduling) + 0  [0x10044ce20]
+    + !         : |   + 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |   22 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+    + !         : |   + 16 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    + !         : |   + ! 15 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 596,600,...  [0x10043b954,0x10043b958,...]
+    + !         : |   + ! 1 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 48  [0x10043b730]
+    + !         : |   + !   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    + !         : |   + 4 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 420,424  [0x10043b8a4,0x10043b8a8]
+    + !         : |   + 2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 32,144  [0x1004385d8,0x100438648]
+    + !         : |   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 164  [0x100431e90]
+    + !         : 42 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         : | 42 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   40 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |   + 39 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |   + ! 39 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |   + !   39 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |   + !     39 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : |   + 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+    + !         : |   +   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    + !         : |   +     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    + !         : |   +       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    + !         : |   +         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    + !         : |   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+    + !         : |     1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    + !         : |     ! 1 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 20  [0x10043b714]
+    + !         : |     1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 0  [0x1004385b8]
+    + !         : 21 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1580  [0x10041ceec]  runtime.rs:348
+    + !         : | 19 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context8run_task  (in scheduling) + 128  [0x10043245c]
+    + !         : | + 14 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 92  [0x10041f8e4]  raw.rs:337
+    + !         : | + ! 5 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         : | + ! : 5 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    + !         : | + ! 4 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         : | + ! 4 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+    + !         : | + ! : 3 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 0,36,...  [0x100430d14,0x100430d38,...]
+    + !         : | + ! : 1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime7context5defer  (in scheduling) + 32  [0x100437d20]
+    + !         : | + ! :   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    + !         : | + ! 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 160  [0x100430db4]
+    + !         : | + 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 72  [0x10041f8d0]  raw.rs:337
+    + !         : | + ! 1 _RNvMs2_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuard5enter  (in scheduling) + 32  [0x1004326b8]
+    + !         : | + !   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    + !         : | + 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 100  [0x10041f8ec]  raw.rs:337
+    + !         : | + ! 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 32  [0x10043b3ac]
+    + !         : | + !   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    + !         : | + 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 116  [0x10041f8fc]  raw.rs:337
+    + !         : | + ! 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State18transition_to_idle  (in scheduling) + 128  [0x100430048]
+    + !         : | + 1 _RNvMs2_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuard5enter  (in scheduling) + 60  [0x1004326d4]
+    + !         : | + 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 48  [0x10043b3bc]
+    + !         : | 2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context8run_task  (in scheduling) + 28,128  [0x1004323f8,0x10043245c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1524,1592  [0x10041ceb4,0x10041cef8]  runtime.rs:348
+    + !         : 1 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1632  [0x10041cf20]  runtime.rs:348
+    + !         : | 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime7metrics5batchNtB2_12MetricsBatch32start_processing_scheduled_tasks  (in scheduling) + 20  [0x1004304ac]
+    + !         : |   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    + !         : |     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    + !         : |       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    + !         : |         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    + !         : 1 _RNvMs0_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_4Core9next_task  (in scheduling) + 188  [0x100431414]
+    + !         50 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 532  [0x10042188c]  scheduling.rs:57
+    + !         : 33 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 33 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   29 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |   + 28 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |   + ! 28 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |   + !   28 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |   + !     28 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : |   + 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+    + !         : |   +   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    + !         : |   +     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    + !         : |   +       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 0  [0x19ea6602c]
+    + !         : |   4 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+    + !         : |     3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    + !         : |     ! 3 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 20,596,...  [0x10043b714,0x10043b954,...]
+    + !         : |     1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 144  [0x100438648]
+    + !         : 15 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1580  [0x10041ceec]  runtime.rs:348
+    + !         : | 15 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context8run_task  (in scheduling) + 128  [0x10043245c]
+    + !         : |   15 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 92  [0x10041f8e4]  raw.rs:337
+    + !         : |     12 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         : |     + 11 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    + !         : |     + 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 36  [0x1004220e0]  scheduling.rs:15
+    + !         : |     3 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112,108  [0x100420150,0x10042014c]  scheduling.rs:25
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         :   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         :     1 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         :     + 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         :     +   1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         :     +     1 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         :     +       1 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         :     1 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+    + !         :       1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    + !         :         1 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 596  [0x10043b954]
+    + !         40 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 568  [0x1004218b0]  scheduling.rs:57
+    + !         : 40 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         :   40 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         :     40 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         :       40 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         38 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 792  [0x100421990]  scheduling.rs:68
+    + !         : 25 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 25 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   25 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |     25 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |       25 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |         25 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |           25 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : 5 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1580  [0x10041ceec]  runtime.rs:348
+    + !         : | 5 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context8run_task  (in scheduling) + 128  [0x10043245c]
+    + !         : |   4 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 92  [0x10041f8e4]  raw.rs:337
+    + !         : |   + 2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         : |   + ! 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    + !         : |   + ! 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 40  [0x1004220e4]  scheduling.rs:16
+    + !         : |   + 2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         : |   1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 308  [0x100420214]  scheduling.rs:0
+    + !         : 5 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         : | 5 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   5 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |     5 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |       5 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |         5 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |           5 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : 3 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         :   3 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         :     3 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         :       3 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         22 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 1284  [0x100421b7c]  scheduling.rs:68
+    + !         : 17 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 17 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   17 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |     17 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |       16 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |       + 16 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |       +   16 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : |       1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : 3 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         : | 3 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         : |   3 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         : |     3 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         :   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         :     2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         :       2 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         :         2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         :           2 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         :             2 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         20 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 1036  [0x100421a84]  scheduling.rs:68
+    + !         : 16 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 16 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   15 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |   + 15 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |   +   15 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |   +     15 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |   +       15 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : |   1 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+    + !         : |     1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    + !         : |       1 _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 540  [0x10043b91c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         : | 2 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         : |   2 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         : |     2 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         :   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         :     2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         :       2 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         :         2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         :           2 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         :             2 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         20 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 1524  [0x100421c6c]  scheduling.rs:68
+    + !         : 15 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+    + !         : | 15 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   15 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |     15 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |       15 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |         15 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    + !         : |           15 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         : | 2 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         : |   2 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         : |     2 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+    + !         : | 2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+    + !         : |   2 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+    + !         : |     1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    + !         : |     + 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    + !         : |     1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+    + !         : |       1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    + !         : |         1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    + !         : |           1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    + !         : |             1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    + !         : 1 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1580  [0x10041ceec]  runtime.rs:348
+    + !         :   1 _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context8run_task  (in scheduling) + 128  [0x10043245c]
+    + !         :     1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtB6_9scheduler14current_thread6HandleEEBU_  (in scheduling) + 92  [0x10041f8e4]  raw.rs:337
+    + !         :       1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    + !         :         1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    + !         18 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 604  [0x1004218d4]  scheduling.rs:57
+    + !         : 16 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+    + !         : | 16 _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+    + !         : |   16 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    + !         : |     16 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    + !         : 2 _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 568  [0x10041caf8]  runtime.rs:348
+    + !         :   1 _RNCNvCshJpD9cETttE_10scheduling5batch0B3_  (in scheduling) + 3396  [0x100420fd8]  scheduling.rs:35
+    + !         :   + 1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+    + !         :   +   1 _pthread_mutex_firstfit_lock_slow  (in libsystem_pthread.dylib) + 216  [0x19ebd89b8]
+    + !         :   +     1 _pthread_mutex_firstfit_lock_wait  (in libsystem_pthread.dylib) + 84  [0x19ebdaf7c]
+    + !         :   +       1 __psynch_mutexwait  (in libsystem_kernel.dylib) + 8  [0x19eb9b9dc]
+    + !         :   1 _RNCNvCshJpD9cETttE_10scheduling5batch0B3_  (in scheduling) + 4144  [0x1004212c4]  scheduling.rs:35
+    + !         :     1 _pthread_mutex_firstfit_unlock_slow  (in libsystem_pthread.dylib) + 220  [0x19ebd8c6c]
+    + !         :       1 _pthread_mutex_firstfit_wake  (in libsystem_pthread.dylib) + 28  [0x19ebdafec]
+    + !         :         1 __psynch_mutexdrop  (in libsystem_kernel.dylib) + 8  [0x19eb9bba8]
+    + !         2 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 56  [0x1004216b0]  scheduling.rs:44
+    + !         1 _RNvCshJpD9cETttE_10scheduling4main  (in scheduling) + 56  [0x1004216b0]  scheduling.rs:44
+    + !           1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    + 1 start  (in dyld) + 6596  [0x19e807e24]
+    +   1 dyld4::start(dyld4::KernelArgs*, void*, void*, unsigned long long)::$_1::operator()() const  (in dyld) + 320  [0x19e808a84]
+    +     1 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 4724  [0x19e809d14]
+    +       1 dyld4::APIs::runAllInitializersForMain()  (in dyld) + 100  [0x19e7fce30]
+    +         1 dyld4::PrebuiltLoader::runInitializers(dyld4::RuntimeState&) const  (in dyld) + 44  [0x19e83c5a8]
+    +           1 dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const  (in dyld) + 680  [0x19e834614]
+    +             1 mach_o::Image::forEachInitializer(void (unsigned int) block_pointer) const  (in dyld) + 244  [0x19e86cf9c]
+    +               1 mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 128  [0x19e86707c]
+    +                 1 mach_o::Header::forEachLoadCommand(void (mach_o::Header::LoadCommandInfo const&, bool&) block_pointer, mach_o::Error*) const  (in dyld) + 228  [0x19e863004]
+    +                   1 invocation function for block in mach_o::Header::forEachSection(void (mach_o::Header::SectionInfo const&, bool&) block_pointer) const  (in dyld) + 156  [0x19e869974]
+    +                     1 mach_o::Header::parse_segment_command<true>(mach_o::Header::LoadCommandInfo const&, unsigned short, void (mach_o::Header::SegmentInfo const&, mach_o::Header::SectionInfo const&) block_pointer, mach_o::Error*) const  (in dyld) + 580  [0x19e864508]
+    +                       1 invocation function for block in mach_o::Image::forEachInitializer(void (unsigned int) block_pointer) const  (in dyld) + 84  [0x19e86d06c]
+    +                         1 invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const  (in dyld) + 360  [0x19e839758]
+    +                           1 libSystem_initializer  (in libSystem.B.dylib) + 256  [0x1af7ef364]
+    +                             1 _libxpc_initializer  (in libxpc.dylib) + 188  [0x19e89b41c]
+    +                               1 sysctlbyname  (in libsystem_c.dylib) + 156  [0x19ea6ad64]
+    +                                 1 __sysctl  (in libsystem_kernel.dylib) + 8  [0x19eb9a458]
+    527 Thread_1090229: tokio-rt-worker
+    + 527 thread_start  (in libsystem_pthread.dylib) + 8  [0x19ebd8cec]
+    +   527 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x19ebddd00]
+    +     527 _RNvNvMs0_NtNtNtCs1SSuMAdGM58_3std3sys6thread4unixNtB7_6Thread3new12thread_start  (in scheduling) + 392  [0x10045fd88]
+    +       527 _RNSNvYNCINvNtNtCs1SSuMAdGM58_3std6thread9lifecycle15spawn_uncheckedNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1b_7Spawner12spawn_thread0uEs_0INtNtNtCsjIpoRzUjyHQ_4core3ops8function6FnOnceuE9call_once6vtableB1h_  (in scheduling) + 72  [0x10042b6b4]
+    +         527 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1f_7Spawner12spawn_thread0uEB1l_  (in scheduling) + 888  [0x100429088]
+    +           527 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollINtNtNtB6_8blocking4task12BlockingTaskNCNCNvNtNtNtB6_9scheduler12multi_thread6worker18maybe_move_runtime00ENtNtBT_8schedule16BlockingScheduleEB8_  (in scheduling) + 212  [0x10042a318]
+    +             460 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3960  [0x100439c48]
+    +             ! 351 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 472  [0x100435918]
+    +             ! : 351 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    +             ! :   351 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    +             ! 109 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 308  [0x100435874]
+    +             !   109 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             !     109 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             !       109 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             !         109 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             31 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2580  [0x1004396e4]
+    +             ! 28 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+    +             ! : 21 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+    +             ! : | 14 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    +             ! : | + 13 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    +             ! : | + 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 36  [0x1004220e0]  scheduling.rs:15
+    +             ! : | 4 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112,108  [0x100420150,0x10042014c]  scheduling.rs:25
+    +             ! : | 3 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+    +             ! : |   2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 80  [0x100430d64]
+    +             ! : |   ! 2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11clone_waker  (in scheduling) + 8  [0x1004384ac]
+    +             ! : |   1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime7context5defer  (in scheduling) + 32  [0x100437d20]
+    +             ! : |     1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    +             ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 100  [0x10041fb54]  raw.rs:337
+    +             ! : | 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 32  [0x10043b3ac]
+    +             ! : | + 1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    +             ! : | 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 4  [0x10043b390]
+    +             ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 328  [0x10041fc38]  raw.rs:337
+    +             ! : | 2 _RNvMs0_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task7harnessINtB5_7HarnessNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB9_9scheduler12multi_thread6handle6HandleEE8completeB1a_  (in scheduling) + 68  [0x100422340]  harness.rs:338
+    +             ! : |   2 _RINvNtNtCs3EIJ1qnJmKW_5tokio4util4wake19wake_by_ref_arc_rawINtNtB4_17idle_notified_set9ListEntryINtNtNtNtB6_7runtime4task4join10JoinHandleTyyEEEECshJpD9cETttE_10scheduling  (in scheduling) + 28  [0x10041f484]  wake.rs:72
+    +             ! : |     1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime4park4wake  (in scheduling) + 28  [0x100437c80]
+    +             ! : |     + 1 pthread_cond_signal  (in libsystem_pthread.dylib) + 712  [0x19ebdd048]
+    +             ! : |     +   1 __psynch_cvsignal  (in libsystem_kernel.dylib) + 8  [0x19eb9da70]
+    +             ! : |     1 _RNvXs5_NtNtCs3EIJ1qnJmKW_5tokio4util17idle_notified_setINtB5_9ListEntryINtNtNtNtB9_7runtime4task4join10JoinHandleTyyEEENtNtB7_4wake4Wake11wake_by_refCshJpD9cETttE_10scheduling  (in scheduling) + 48  [0x10042271c]  idle_notified_set.rs:442
+    +             ! : |       1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+    +             ! : |         1 _pthread_mutex_firstfit_lock_slow  (in libsystem_pthread.dylib) + 216  [0x19ebd89b8]
+    +             ! : |           1 _pthread_mutex_firstfit_lock_wait  (in libsystem_pthread.dylib) + 84  [0x19ebdaf7c]
+    +             ! : |             1 __psynch_mutexwait  (in libsystem_kernel.dylib) + 8  [0x19eb9b9dc]
+    +             ! : 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 28  [0x10041fb0c]  raw.rs:337
+    +             ! : | 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State21transition_to_running  (in scheduling) + 40  [0x1004300fc]
+    +             ! : 1 _RNvMs2_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuard5enter  (in scheduling) + 56  [0x1004326d0]
+    +             ! : 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 48  [0x10043b3bc]
+    +             ! 3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1832,2420,...  [0x1004393f8,0x100439644,...]
+    +             17 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3292  [0x1004399ac]
+    +             ! 12 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+    +             ! : 12 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             ! :   11 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! :   | 11 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! :   |   11 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             ! :   1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! 5 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             !   3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             !   | 3 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 40,420,...  [0x100433348,0x1004334c4,...]
+    +             !   2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 32,168  [0x1004385d8,0x100438660]
+    +             10 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1720  [0x100439388]
+    +             ! 8 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+    +             ! : 8 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             ! :   8 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! :     7 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! :     | 7 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             ! :     1 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! 2 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             !   2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             !     2 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 172,360  [0x1004333cc,0x100433488]
+    +             3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2728  [0x100439778]
+    +             ! 3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2960,3012,...  [0x100439860,0x100439894,...]
+    +             2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3248  [0x100439980]
+    +             ! 2 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+    +             !   2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+    +             !     2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 108,112  [0x10042014c,0x100420150]  scheduling.rs:25
+    +             1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 672  [0x100435ff4]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1740  [0x10043939c]
+    +             ! 1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !   1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !     1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !       1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2632  [0x100439718]
+    +             ! 1 _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+    +             !   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3412  [0x100439a24]
+    +               1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +                 1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +                   1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +                     1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    527 Thread_1090230: tokio-rt-worker
+    + 527 thread_start  (in libsystem_pthread.dylib) + 8  [0x19ebd8cec]
+    +   527 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x19ebddd00]
+    +     527 _RNvNvMs0_NtNtNtCs1SSuMAdGM58_3std3sys6thread4unixNtB7_6Thread3new12thread_start  (in scheduling) + 392  [0x10045fd88]
+    +       527 _RNSNvYNCINvNtNtCs1SSuMAdGM58_3std6thread9lifecycle15spawn_uncheckedNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1b_7Spawner12spawn_thread0uEs_0INtNtNtCsjIpoRzUjyHQ_4core3ops8function6FnOnceuE9call_once6vtableB1h_  (in scheduling) + 72  [0x10042b6b4]
+    +         527 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1f_7Spawner12spawn_thread0uEB1l_  (in scheduling) + 888  [0x100429088]
+    +           527 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollINtNtNtB6_8blocking4task12BlockingTaskNCNCNvNtNtNtB6_9scheduler12multi_thread6worker18maybe_move_runtime00ENtNtBT_8schedule16BlockingScheduleEB8_  (in scheduling) + 212  [0x10042a318]
+    +             460 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3960  [0x100439c48]
+    +             ! 349 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 472  [0x100435918]
+    +             ! : 349 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    +             ! :   349 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    +             ! 111 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 308  [0x100435874]
+    +             !   111 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             !     111 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             !       111 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             !         111 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             28 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2580  [0x1004396e4]
+    +             ! 27 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+    +             ! : 21 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+    +             ! : | 10 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    +             ! : | + 9 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    +             ! : | + 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 36  [0x1004220e0]  scheduling.rs:15
+    +             ! : | 8 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 108,112  [0x10042014c,0x100420150]  scheduling.rs:25
+    +             ! : | 2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+    +             ! : | + 2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 68  [0x100430d58]
+    +             ! : | 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 32  [0x100420100]  scheduling.rs:21
+    +             ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 28  [0x10041fb0c]  raw.rs:337
+    +             ! : | 2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State21transition_to_running  (in scheduling) + 16,40  [0x1004300e4,0x1004300fc]
+    +             ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 328  [0x10041fc38]  raw.rs:337
+    +             ! : | 2 _RNvMs0_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task7harnessINtB5_7HarnessNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB9_9scheduler12multi_thread6handle6HandleEE8completeB1a_  (in scheduling) + 68  [0x100422340]  harness.rs:338
+    +             ! : |   2 _RINvNtNtCs3EIJ1qnJmKW_5tokio4util4wake19wake_by_ref_arc_rawINtNtB4_17idle_notified_set9ListEntryINtNtNtNtB6_7runtime4task4join10JoinHandleTyyEEEECshJpD9cETttE_10scheduling  (in scheduling) + 28  [0x10041f484]  wake.rs:72
+    +             ! : |     1 _RNvXs5_NtNtCs3EIJ1qnJmKW_5tokio4util17idle_notified_setINtB5_9ListEntryINtNtNtNtB9_7runtime4task4join10JoinHandleTyyEEENtNtB7_4wake4Wake11wake_by_refCshJpD9cETttE_10scheduling  (in scheduling) + 48  [0x10042271c]  idle_notified_set.rs:442
+    +             ! : |     + 1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+    +             ! : |     +   1 _pthread_mutex_firstfit_lock_slow  (in libsystem_pthread.dylib) + 216  [0x19ebd89b8]
+    +             ! : |     +     1 _pthread_mutex_firstfit_lock_wait  (in libsystem_pthread.dylib) + 84  [0x19ebdaf7c]
+    +             ! : |     +       1 __psynch_mutexwait  (in libsystem_kernel.dylib) + 8  [0x19eb9b9dc]
+    +             ! : |     1 _RNvXs5_NtNtCs3EIJ1qnJmKW_5tokio4util17idle_notified_setINtB5_9ListEntryINtNtNtNtB9_7runtime4task4join10JoinHandleTyyEEENtNtB7_4wake4Wake11wake_by_refCshJpD9cETttE_10scheduling  (in scheduling) + 308  [0x100422820]  idle_notified_set.rs:463
+    +             ! : |       1 _pthread_mutex_firstfit_unlock_slow  (in libsystem_pthread.dylib) + 220  [0x19ebd8c6c]
+    +             ! : |         1 _pthread_mutex_firstfit_wake  (in libsystem_pthread.dylib) + 28  [0x19ebdafec]
+    +             ! : |           1 __psynch_mutexdrop  (in libsystem_kernel.dylib) + 8  [0x19eb9bba8]
+    +             ! : 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 116  [0x10041fb64]  raw.rs:337
+    +             ! : | 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State18transition_to_idle  (in scheduling) + 140  [0x100430054]
+    +             ! : 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 304  [0x100420210]  scheduling.rs:0
+    +             ! 1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2420  [0x100439644]
+    +             14 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3292  [0x1004399ac]
+    +             ! 8 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+    +             ! : 8 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             ! :   8 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! :     8 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! :       8 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             ! 6 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             !   4 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             !   | 4 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 388,40  [0x1004334a4,0x100433348]
+    +             !   2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 32,44  [0x1004385d8,0x1004385e4]
+    +             13 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1720  [0x100439388]
+    +             ! 7 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+    +             ! : 6 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             ! : | 6 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! : |   6 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! : |     6 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             ! : 1 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+    +             ! :   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             ! :     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             ! :       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             ! :         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             ! 5 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             ! : 3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             ! : | 3 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 388,604  [0x1004334a4,0x10043357c]
+    +             ! : 2 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 32  [0x1004385d8]
+    +             ! 1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 152  [0x1004357d8]
+    +             4 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2632  [0x100439718]
+    +             ! 3 _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+    +             ! : 3 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             ! :   3 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             ! :     3 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             ! :       3 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             ! 1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2668  [0x10043973c]
+    +             3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3248  [0x100439980]
+    +             ! 3 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+    +             !   3 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+    +             !     2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    +             !     1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    +             !       1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    +             2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2728  [0x100439778]
+    +             ! 2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2804,3012  [0x1004397c4,0x100439894]
+    +             2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3208  [0x100439958]
+    +             ! 2 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !   2 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !     2 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !       2 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3412  [0x100439a24]
+    +               1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +                 1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +                   1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +                     1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    527 Thread_1090231: tokio-rt-worker
+    + 527 thread_start  (in libsystem_pthread.dylib) + 8  [0x19ebd8cec]
+    +   527 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x19ebddd00]
+    +     527 _RNvNvMs0_NtNtNtCs1SSuMAdGM58_3std3sys6thread4unixNtB7_6Thread3new12thread_start  (in scheduling) + 392  [0x10045fd88]
+    +       527 _RNSNvYNCINvNtNtCs1SSuMAdGM58_3std6thread9lifecycle15spawn_uncheckedNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1b_7Spawner12spawn_thread0uEs_0INtNtNtCsjIpoRzUjyHQ_4core3ops8function6FnOnceuE9call_once6vtableB1h_  (in scheduling) + 72  [0x10042b6b4]
+    +         527 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1f_7Spawner12spawn_thread0uEB1l_  (in scheduling) + 888  [0x100429088]
+    +           527 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollINtNtNtB6_8blocking4task12BlockingTaskNCNCNvNtNtNtB6_9scheduler12multi_thread6worker18maybe_move_runtime00ENtNtBT_8schedule16BlockingScheduleEB8_  (in scheduling) + 212  [0x10042a318]
+    +             460 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3960  [0x100439c48]
+    +             ! 423 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 472  [0x100435918]
+    +             ! : 423 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+    +             ! :   423 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+    +             ! 37 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 308  [0x100435874]
+    +             !   37 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             !     37 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             !       37 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             !         37 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             43 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2580  [0x1004396e4]
+    +             ! 40 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+    +             ! : 31 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+    +             ! : | 14 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+    +             ! : | + 11 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+    +             ! : | + 2 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 36  [0x1004220e0]  scheduling.rs:15
+    +             ! : | + 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 40  [0x1004220e4]  scheduling.rs:16
+    +             ! : | 13 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112,108  [0x100420150,0x10042014c]  scheduling.rs:25
+    +             ! : | 2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+    +             ! : | + 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 80  [0x100430d64]
+    +             ! : | + ! 1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11clone_waker  (in scheduling) + 8  [0x1004384ac]
+    +             ! : | + 1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime7context5defer  (in scheduling) + 144  [0x100437d90]
+    +             ! : | 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 256  [0x1004201e0]  scheduling.rs:23
+    +             ! : | 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 124  [0x10042015c]  scheduling.rs:27
+    +             ! : 3 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 100  [0x10041fb54]  raw.rs:337
+    +             ! : | 2 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 8  [0x10043b394]
+    +             ! : | 1 _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling) + 32  [0x10043b3ac]
+    +             ! : |   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+    +             ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 328  [0x10041fc38]  raw.rs:337
+    +             ! : | 2 _RNvMs0_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task7harnessINtB5_7HarnessNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB9_9scheduler12multi_thread6handle6HandleEE8completeB1a_  (in scheduling) + 68  [0x100422340]  harness.rs:338
+    +             ! : |   2 _RINvNtNtCs3EIJ1qnJmKW_5tokio4util4wake19wake_by_ref_arc_rawINtNtB4_17idle_notified_set9ListEntryINtNtNtNtB6_7runtime4task4join10JoinHandleTyyEEEECshJpD9cETttE_10scheduling  (in scheduling) + 28  [0x10041f484]  wake.rs:72
+    +             ! : |     1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime4park4wake  (in scheduling) + 28  [0x100437c80]
+    +             ! : |     + 1 pthread_cond_signal  (in libsystem_pthread.dylib) + 712  [0x19ebdd048]
+    +             ! : |     +   1 __psynch_cvsignal  (in libsystem_kernel.dylib) + 8  [0x19eb9da70]
+    +             ! : |     1 _RNvXs5_NtNtCs3EIJ1qnJmKW_5tokio4util17idle_notified_setINtB5_9ListEntryINtNtNtNtB9_7runtime4task4join10JoinHandleTyyEEENtNtB7_4wake4Wake11wake_by_refCshJpD9cETttE_10scheduling  (in scheduling) + 48  [0x10042271c]  idle_notified_set.rs:442
+    +             ! : |       1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+    +             ! : |         1 _pthread_mutex_firstfit_lock_slow  (in libsystem_pthread.dylib) + 216  [0x19ebd89b8]
+    +             ! : |           1 _pthread_mutex_firstfit_lock_wait  (in libsystem_pthread.dylib) + 84  [0x19ebdaf7c]
+    +             ! : |             1 __psynch_mutexwait  (in libsystem_kernel.dylib) + 8  [0x19eb9b9dc]
+    +             ! : 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 12  [0x10041fafc]  raw.rs:335
+    +             ! : 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 28  [0x10041fb0c]  raw.rs:337
+    +             ! : | 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State21transition_to_running  (in scheduling) + 52  [0x100430108]
+    +             ! : 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 116  [0x10041fb64]  raw.rs:337
+    +             ! : | 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State18transition_to_idle  (in scheduling) + 16  [0x10042ffd8]
+    +             ! : 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 308  [0x100420214]  scheduling.rs:0
+    +             ! 2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1812,2496  [0x1004393e4,0x100439690]
+    +             ! 1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 72  [0x100435d9c]
+    +             8 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1720  [0x100439388]
+    +             ! 7 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+    +             ! : 7 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+    +             ! :   7 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+    +             ! :     7 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+    +             ! :       7 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+    +             ! 1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             !   1 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             !     1 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 420  [0x1004334c4]
+    +             6 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3292  [0x1004399ac]
+    +             ! 6 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+    +             !   3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+    +             !   : 3 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 40,388  [0x100433348,0x1004334a4]
+    +             !   3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 32  [0x1004385d8]
+    +             3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2728  [0x100439778]
+    +             ! 3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2804,2984,...  [0x1004397c4,0x100439878,...]
+    +             2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1740  [0x10043939c]
+    +             ! 2 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !   2 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !     2 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !       2 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             2 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3208  [0x100439958]
+    +             ! 2 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !   2 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !     2 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !       2 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1736  [0x100439398]
+    +             ! 1 _RNvMs0_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB5_4Core11maintenance  (in scheduling) + 92  [0x100431628]
+    +             !   1 _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+    +             !     1 pthread_mutex_lock  (in libsystem_pthread.dylib) + 112  [0x19ebd8548]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2632  [0x100439718]
+    +             ! 1 _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+    +             !   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +             !     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +             !       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +             !         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    +             1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3220  [0x100439964]
+    +               1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+    +                 1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+    +                   1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+    +                     1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+    527 Thread_1090232: tokio-rt-worker
+      527 thread_start  (in libsystem_pthread.dylib) + 8  [0x19ebd8cec]
+        527 _pthread_start  (in libsystem_pthread.dylib) + 136  [0x19ebddd00]
+          527 _RNvNvMs0_NtNtNtCs1SSuMAdGM58_3std3sys6thread4unixNtB7_6Thread3new12thread_start  (in scheduling) + 392  [0x10045fd88]
+            527 _RNSNvYNCINvNtNtCs1SSuMAdGM58_3std6thread9lifecycle15spawn_uncheckedNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1b_7Spawner12spawn_thread0uEs_0INtNtNtCsjIpoRzUjyHQ_4core3ops8function6FnOnceuE9call_once6vtableB1h_  (in scheduling) + 72  [0x10042b6b4]
+              527 _RINvNtNtCs1SSuMAdGM58_3std3sys9backtrace28___rust_begin_short_backtraceNCNvMs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime8blocking4poolNtB1f_7Spawner12spawn_thread0uEB1l_  (in scheduling) + 888  [0x100429088]
+                527 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollINtNtNtB6_8blocking4task12BlockingTaskNCNCNvNtNtNtB6_9scheduler12multi_thread6worker18maybe_move_runtime00ENtNtBT_8schedule16BlockingScheduleEB8_  (in scheduling) + 212  [0x10042a318]
+                  460 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3960  [0x100439c48]
+                  ! 258 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 472  [0x100435918]
+                  ! : 258 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+                  ! :   258 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x19eb9c50c]
+                  ! 202 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 308  [0x100435874]
+                  !   202 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+                  !     202 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+                  !       202 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+                  !         202 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+                  39 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2580  [0x1004396e4]
+                  ! 33 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+                  ! : 27 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+                  ! : | 15 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+                  ! : | + 14 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 12  [0x1004220c8]  scheduling.rs:14
+                  ! : | + 1 _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 36  [0x1004220e0]  scheduling.rs:15
+                  ! : | 9 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112,108  [0x100420150,0x10042014c]  scheduling.rs:25
+                  ! : | 2 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+                  ! : | + 1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling) + 112  [0x100430d84]
+                  ! : | + 1 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime7context5defer  (in scheduling) + 112  [0x100437d70]
+                  ! : | 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+                  ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 28  [0x10041fb0c]  raw.rs:337
+                  ! : | 2 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State21transition_to_running  (in scheduling) + 40,52  [0x1004300fc,0x100430108]
+                  ! : 2 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 328  [0x10041fc38]  raw.rs:337
+                  ! : | 2 _RNvMs0_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task7harnessINtB5_7HarnessNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB9_9scheduler12multi_thread6handle6HandleEE8completeB1a_  (in scheduling) + 68  [0x100422340]  harness.rs:338
+                  ! : |   2 _RINvNtNtCs3EIJ1qnJmKW_5tokio4util4wake19wake_by_ref_arc_rawINtNtB4_17idle_notified_set9ListEntryINtNtNtNtB6_7runtime4task4join10JoinHandleTyyEEEECshJpD9cETttE_10scheduling  (in scheduling) + 28  [0x10041f484]  wake.rs:72
+                  ! : |     2 _RNvNtNtCs3EIJ1qnJmKW_5tokio7runtime4park4wake  (in scheduling) + 28  [0x100437c80]
+                  ! : |       2 pthread_cond_signal  (in libsystem_pthread.dylib) + 712  [0x19ebdd048]
+                  ! : |         2 __psynch_cvsignal  (in libsystem_kernel.dylib) + 8  [0x19eb9da70]
+                  ! : 1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 308  [0x100420214]  scheduling.rs:0
+                  ! : 1 _RNvMs2_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuard5enter  (in scheduling) + 56  [0x1004326d0]
+                  ! 3 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 40,164,...  [0x100435d7c,0x100435df8,...]
+                  ! 1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 336  [0x10041fc40]  raw.rs:338
+                  ! 1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 232  [0x100435e3c]
+                  ! : 1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x19e7b6e54]
+                  ! 1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1548  [0x1004392dc]
+                  9 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1720  [0x100439388]
+                  ! 5 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+                  ! : 5 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+                  ! :   4 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+                  ! :   | 4 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+                  ! :   |   4 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+                  ! :   1 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+                  ! 4 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+                  !   4 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+                  !     4 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 388,48,...  [0x1004334a4,0x100433350,...]
+                  7 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3292  [0x1004399ac]
+                  ! 3 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+                  ! : 3 _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+                  ! :   3 _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+                  ! :     3 _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+                  ! :       3 kevent  (in libsystem_kernel.dylib) + 8  [0x19eb9efcc]
+                  ! 3 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+                  ! : 3 _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+                  ! :   3 _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 388,40  [0x1004334a4,0x100433348]
+                  ! 1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 980  [0x100435b14]
+                  !   1 _RNvMNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread4idleNtB2_4Idle16worker_to_notify  (in scheduling) + 28  [0x100430f0c]
+                  5 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2632  [0x100439718]
+                  ! 5 _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+                  !   5 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+                  !     5 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+                  !       5 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+                  !         5 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+                  3 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2680  [0x100439748]
+                  ! 2 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+                  ! : 2 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+                  ! :   2 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+                  ! :     2 mach_absolute_time  (in libsystem_kernel.dylib) + 108,112  [0x19eb990f8,0x19eb990fc]
+                  ! 1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 72  [0x10044c9ac]
+                  1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1580  [0x1004392fc]
+                  ! 1 _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+                  !   1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+                  !     1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+                  !       1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+                  !         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+                  1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 1740  [0x10043939c]
+                  ! 1 _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+                  !   1 clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+                  !     1 clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+                  !       1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x19eb990f8]
+                  1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 2728  [0x100439778]
+                  ! 1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3112  [0x1004398f8]
+                  1 _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 3248  [0x100439980]
+                    1 _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+                      1 _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+                        1 _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+
+Total number in stack (recursive counted multiple, when >=5):
+        23       _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 764  [0x10042bd3c]
+        22       _RNvMNtCsiDZg47dpzEY_3mio4pollNtB2_4Poll4poll  (in scheduling) + 108  [0x10043e168]
+        22       _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 436  [0x10042fd24]
+        22       kevent  (in libsystem_kernel.dylib) + 0  [0x19eb9efc4]
+        20       _RNvMNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4timeNtB2_8Timespec3now  (in scheduling) + 24  [0x10044c97c]
+        20       clock_gettime  (in libsystem_c.dylib) + 60  [0x19ea74100]
+        19       clock_gettime_nsec_np  (in libsystem_c.dylib) + 384  [0x19ea661ac]
+        19       mach_absolute_time  (in libsystem_kernel.dylib) + 0  [0x19eb9908c]
+        13       _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 156  [0x100438654]
+        12       _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context10park_yield  (in scheduling) + 112  [0x100431cd8]
+        12       _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 104  [0x100431e54]
+        10       _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 0  [0x1004200e0]  scheduling.rs:25
+        10       _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 0  [0x1004220bc]  scheduling.rs:14
+        10       __psynch_cvwait  (in libsystem_kernel.dylib) + 0  [0x19eb9c504]
+        10       _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x19ebde1d0]
+        9       _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 112  [0x100420150]  scheduling.rs:25
+        9       _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling) + 0  [0x100438cd0]
+        8       _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling) + 0  [0x100433320]
+        8       _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 804  [0x100435a64]
+        8       _tlv_get_addr  (in libdyld.dylib) + 0  [0x19e7b6e48]
+        7       _RINvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task3raw4pollNCNCNvCshJpD9cETttE_10scheduling5batch00INtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtNtNtNtB6_9scheduler12multi_thread6handle6HandleEEBU_  (in scheduling) + 92  [0x10041fb4c]  raw.rs:337
+        7       _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context13park_internal  (in scheduling) + 184  [0x1004357f8]
+        7       _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling) + 276  [0x100435e68]
+        7       _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling) + 0  [0x1004385b8]
+        6       _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1620  [0x10041cf14]  runtime.rs:348
+        6       _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 1680  [0x10041cf50]  runtime.rs:348
+        6       _RINvMNtNtCs3EIJ1qnJmKW_5tokio7runtime7runtimeNtB3_7Runtime8block_onNCNvCshJpD9cETttE_10scheduling5batch0EB17_  (in scheduling) + 612  [0x10041cb24]  runtime.rs:348
+        6       _RNvMs_NtNtCs3EIJ1qnJmKW_5tokio7runtime4parkNtB4_5Inner4park  (in scheduling) + 180  [0x10043465c]
+        6       _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling) + 0  [0x10043b700]
+        5       _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling) + 212  [0x1004201b4]  scheduling.rs:28
+        5       _RNvCshJpD9cETttE_10scheduling4step  (in scheduling) + 0  [0x1004220bc]  scheduling.rs:15
+        5       _RNvMNtCs1SSuMAdGM58_3std4timeNtB2_7Instant7elapsed  (in scheduling) + 28  [0x10044be9c]
+        5       _RNvMNtNtCs3EIJ1qnJmKW_5tokio7runtime4timeNtB2_6Driver13park_internal  (in scheduling) + 792  [0x10042bd58]
+        5       _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling) + 0  [0x10042fb70]
+        5       _RNvMNtNtNtNtNtCs1SSuMAdGM58_3std3sys3pal4unix4sync5mutexNtB2_5Mutex4lock  (in scheduling) + 12  [0x10044ce0c]
+        5       _RNvMs1_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadNtB5_7Context13park_internal  (in scheduling) + 172  [0x100431e98]
+
+Sort by top of stack, same collapsed (when >= 5):
+        __psynch_cvwait  (in libsystem_kernel.dylib)        1447
+        kevent  (in libsystem_kernel.dylib)        870
+        _dyld_start  (in dyld)        203
+        _RNvCshJpD9cETttE_10scheduling4step  (in scheduling)        75
+        _RNCNCNvCshJpD9cETttE_10scheduling5batch00B5_  (in scheduling)        56
+        mach_absolute_time  (in libsystem_kernel.dylib)        31
+        _RNvXs5_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler14current_threadINtNtCs6zY7rJBZy9D_5alloc4sync3ArcNtB5_6HandleENtNtB9_4task8Schedule8schedule  (in scheduling)        25
+        _RNvMs2_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtNtB7_6handle6Handle13schedule_task  (in scheduling)        23
+        _RNvNtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6worker3run  (in scheduling)        17
+        _RNvNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5waker11wake_by_val  (in scheduling)        13
+        mach_msg2_trap  (in dyld)        11
+        _tlv_get_addr  (in libdyld.dylib)        8
+        _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler5deferNtB2_5Defer5defer  (in scheduling)        7
+        _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task5stateNtB2_5State21transition_to_running  (in scheduling)        6
+        _RNvMNtNtNtCs3EIJ1qnJmKW_5tokio7runtime2io6driverNtB2_6Driver4turn  (in scheduling)        5
+        _RNvMs_NtNtNtNtCs3EIJ1qnJmKW_5tokio7runtime9scheduler12multi_thread6workerNtB4_7Context8run_task  (in scheduling)        5
+        _RNvXs3_NtNtNtCs3EIJ1qnJmKW_5tokio7runtime4task4coreNtB5_11TaskIdGuardNtNtNtCsjIpoRzUjyHQ_4core3ops4drop4Drop4drop  (in scheduling)        5
+
+Binary images description not available
+

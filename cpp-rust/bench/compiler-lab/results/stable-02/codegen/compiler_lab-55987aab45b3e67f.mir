@@ -1,0 +1,4264 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+fn measure(_1: &mut [Case<'_>], _2: usize) -> () {
+    debug cases => _1;
+    debug units => _2;
+    let mut _0: ();
+    let mut _3: bool;
+    let mut _4: !;
+    let mut _5: std::vec::Vec<usize>;
+    let mut _6: std::slice::IterMut<'_, Case<'_>>;
+    let mut _7: std::option::Option<&mut Case<'_>>;
+    let mut _11: bool;
+    let _12: std::time::Duration;
+    let mut _13: &std::time::Instant;
+    let mut _14: &u64;
+    let _15: u64;
+    let mut _16: u64;
+    let mut _17: &u64;
+    let mut _18: bool;
+    let mut _19: u64;
+    let _20: !;
+    let mut _22: f64;
+    let mut _23: f64;
+    let _24: std::time::Duration;
+    let mut _25: &std::time::Instant;
+    let mut _26: f64;
+    let mut _27: &mut std::vec::Vec<usize>;
+    let mut _28: usize;
+    let mut _29: f64;
+    let mut _30: f64;
+    let mut _31: f64;
+    let _32: ();
+    let mut _33: std::fmt::Arguments<'_>;
+    let mut _35: std::vec::Vec<f64>;
+    let mut _36: std::option::Option<usize>;
+    let mut _38: std::option::Option<usize>;
+    let mut _41: usize;
+    let mut _42: bool;
+    let mut _44: bool;
+    let mut _46: &usize;
+    let mut _49: u64;
+    let mut _50: u64;
+    let mut _51: u64;
+    let mut _52: u64;
+    let _54: std::time::Duration;
+    let mut _55: &std::time::Instant;
+    let mut _56: &u64;
+    let mut _57: &u64;
+    let _58: u64;
+    let mut _59: u64;
+    let mut _60: u64;
+    let mut _61: bool;
+    let mut _62: u64;
+    let _63: !;
+    let mut _65: f64;
+    let mut _66: f64;
+    let mut _67: usize;
+    let mut _68: &mut std::vec::Vec<f64>;
+    let _69: ();
+    let mut _70: std::fmt::Arguments<'_>;
+    let mut _71: &&str;
+    let mut _72: &usize;
+    let mut _73: &usize;
+    let mut _74: &usize;
+    let mut _75: &u128;
+    let mut _76: &f64;
+    let mut _77: &u64;
+    let mut _79: core::fmt::rt::Argument<'_>;
+    let mut _80: core::fmt::rt::Argument<'_>;
+    let mut _81: core::fmt::rt::Argument<'_>;
+    let mut _82: core::fmt::rt::Argument<'_>;
+    let mut _83: core::fmt::rt::Argument<'_>;
+    let mut _84: core::fmt::rt::Argument<'_>;
+    let mut _85: core::fmt::rt::Argument<'_>;
+    let _86: &[core::fmt::rt::Argument<'_>; 7];
+    let mut _87: std::iter::Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, std::vec::Vec<f64>>>;
+    let mut _88: std::slice::Iter<'_, Case<'_>>;
+    let mut _89: std::slice::IterMut<'_, std::vec::Vec<f64>>;
+    let mut _90: &mut [std::vec::Vec<f64>];
+    let mut _92: std::option::Option<(&Case<'_>, &mut std::vec::Vec<f64>)>;
+    let mut _93: &mut std::iter::Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, std::vec::Vec<f64>>>;
+    let mut _94: isize;
+    let mut _98: f64;
+    let mut _99: std::slice::Iter<'_, f64>;
+    let mut _100: f64;
+    let mut _101: usize;
+    let mut _103: f64;
+    let mut _104: f64;
+    let mut _105: std::slice::Iter<'_, f64>;
+    let mut _106: {closure@src/lib.rs:50:37: 50:40};
+    let mut _107: &f64;
+    let mut _108: f64;
+    let mut _109: usize;
+    let mut _110: usize;
+    let _111: ();
+    let mut _112: &mut [f64];
+    let _113: ();
+    let mut _114: std::fmt::Arguments<'_>;
+    let mut _115: &&str;
+    let _116: &f64;
+    let _117: &f64;
+    let mut _118: &f64;
+    let mut _119: &f64;
+    let mut _121: core::fmt::rt::Argument<'_>;
+    let mut _122: core::fmt::rt::Argument<'_>;
+    let mut _123: core::fmt::rt::Argument<'_>;
+    let mut _124: core::fmt::rt::Argument<'_>;
+    let mut _125: core::fmt::rt::Argument<'_>;
+    let _126: &[core::fmt::rt::Argument<'_>; 5];
+    let mut _144: &str;
+    scope 1 {
+        debug repeats => _5;
+        let mut _34: std::vec::Vec<std::vec::Vec<f64>>;
+        scope 2 {
+            debug iter => _6;
+            let _8: &mut Case<'_>;
+            scope 3 {
+                debug case => _8;
+                let _9: std::time::Instant;
+                scope 4 {
+                    debug start => _9;
+                    let mut _10: i32;
+                    scope 5 {
+                        debug n => _10;
+                        let _21: f64;
+                        scope 6 {
+                            debug left_val => _14;
+                            debug right_val => _17;
+                            scope 7 {
+                                debug kind => const core::panicking::AssertKind::Eq;
+                            }
+                        }
+                        scope 8 {
+                            debug ns => _21;
+                            scope 97 (inlined f64::<impl f64>::ceil) {
+                                scope 98 (inlined core::f64::math::ceil) {
+                                }
+                            }
+                            scope 99 (inlined core::f64::<impl f64>::max) {
+                            }
+                            scope 100 (inlined Vec::<usize>::push) {
+                                let mut _170: &mut usize;
+                                scope 101 {
+                                }
+                            }
+                        }
+                        scope 74 (inlined Duration::from_millis) {
+                            scope 75 {
+                                scope 76 {
+                                    scope 77 {
+                                    }
+                                    scope 78 (inlined core::num::niche_types::Nanoseconds::new_unchecked) {
+                                    }
+                                }
+                            }
+                        }
+                        scope 79 (inlined <Duration as PartialOrd>::lt) {
+                            let mut _153: std::option::Option<std::cmp::Ordering>;
+                            scope 80 (inlined Option::<std::cmp::Ordering>::is_some_and::<fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt}>) {
+                                let _154: std::cmp::Ordering;
+                                scope 81 {
+                                    scope 82 (inlined <fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt} as FnOnce<(std::cmp::Ordering,)>>::call_once - shim(fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt})) {
+                                        scope 83 (inlined std::cmp::Ordering::is_lt) {
+                                            let mut _155: i8;
+                                            scope 84 (inlined std::cmp::Ordering::as_raw) {
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            scope 85 (inlined <Duration as PartialOrd>::partial_cmp) {
+                                let mut _156: std::cmp::Ordering;
+                                scope 86 (inlined <Duration as Ord>::cmp) {
+                                    let mut _157: i8;
+                                    scope 87 {
+                                    }
+                                    scope 88 (inlined std::cmp::impls::<impl Ord for u64>::cmp) {
+                                        let mut _158: u64;
+                                    }
+                                    scope 89 (inlined <core::num::niche_types::Nanoseconds as Ord>::cmp) {
+                                        let _159: u32;
+                                        let mut _160: core::num::niche_types::Nanoseconds;
+                                        scope 90 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                                        }
+                                        scope 91 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                                        }
+                                        scope 92 (inlined std::cmp::impls::<impl Ord for u32>::cmp) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 93 (inlined <Box<dyn FnMut() -> u64> as FnMut<()>>::call_mut) {
+                            let mut _161: &mut dyn std::ops::FnMut() -> u64;
+                            let mut _162: *const dyn std::ops::FnMut() -> u64;
+                            let mut _163: std::ptr::Unique<dyn std::ops::FnMut() -> u64>;
+                        }
+                        scope 94 (inlined std::hint::black_box::<u64>) {
+                        }
+                        scope 95 (inlined Duration::as_secs_f64) {
+                            let mut _164: f64;
+                            let mut _165: u64;
+                            let mut _166: f64;
+                            let mut _167: f64;
+                            let mut _168: u32;
+                            let mut _169: core::num::niche_types::Nanoseconds;
+                            scope 96 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                            }
+                        }
+                    }
+                }
+            }
+            scope 53 (inlined <std::slice::IterMut<'_, Case<'_>> as Iterator>::next) {
+                let _135: std::ptr::NonNull<Case<'_>>;
+                let mut _137: bool;
+                let _138: std::ptr::NonNull<Case<'_>>;
+                let mut _139: std::ptr::NonNull<Case<'_>>;
+                let mut _140: &mut Case<'_>;
+                scope 54 {
+                    let _136: *mut Case<'_>;
+                    scope 55 {
+                        scope 56 {
+                            scope 59 (inlined #[track_caller] core::num::<impl usize>::unchecked_sub) {
+                                scope 60 (inlined core::ub_checks::check_language_ub) {
+                                    scope 61 (inlined core::ub_checks::check_language_ub::runtime) {
+                                    }
+                                }
+                            }
+                            scope 62 (inlined std::ptr::without_provenance_mut::<Case<'_>>) {
+                            }
+                        }
+                        scope 57 (inlined std::ptr::mut_ptr::<impl *mut Case<'_>>::addr) {
+                            scope 58 (inlined std::ptr::mut_ptr::<impl *mut Case<'_>>::cast::<()>) {
+                            }
+                        }
+                        scope 63 (inlined <NonNull<Case<'_>> as PartialEq>::eq) {
+                            let mut _141: *mut Case<'_>;
+                            let mut _142: *mut Case<'_>;
+                            scope 64 (inlined NonNull::<Case<'_>>::as_ptr) {
+                            }
+                            scope 65 (inlined NonNull::<Case<'_>>::as_ptr) {
+                            }
+                        }
+                        scope 66 (inlined NonNull::<Case<'_>>::add) {
+                            let mut _143: *mut Case<'_>;
+                            scope 67 (inlined NonNull::<Case<'_>>::as_ptr) {
+                            }
+                        }
+                        scope 68 (inlined NonNull::<Case<'_>>::as_mut::<'_>) {
+                            scope 69 (inlined NonNull::<Case<'_>>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scope 9 {
+            debug samples => _34;
+            let mut _91: std::iter::Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, std::vec::Vec<f64>>>;
+            scope 10 {
+                debug ((iter: std::ops::Range<usize>).0: usize) => _173;
+                debug ((iter: std::ops::Range<usize>).1: usize) => const 21_usize;
+                let _37: usize;
+                scope 11 {
+                    debug round => _37;
+                    scope 12 {
+                        debug ((iter: std::ops::Range<usize>).0: usize) => _185;
+                        debug ((iter: std::ops::Range<usize>).1: usize) => _127;
+                        let _39: usize;
+                        scope 13 {
+                            debug offset => _39;
+                            let _40: usize;
+                            scope 14 {
+                                debug index => _40;
+                                let _43: &mut Case<'_>;
+                                scope 15 {
+                                    debug case => _43;
+                                    let _45: usize;
+                                    scope 16 {
+                                        debug n => _45;
+                                        let _47: std::time::Instant;
+                                        scope 17 {
+                                            debug start => _47;
+                                            let mut _48: u64;
+                                            scope 18 {
+                                                debug checksum => _48;
+                                                let _53: u128;
+                                                let mut _327: usize;
+                                                scope 19 {
+                                                    debug ((iter: std::ops::Range<usize>).0: usize) => _327;
+                                                    debug ((iter: std::ops::Range<usize>).1: usize) => _45;
+                                                    scope 157 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                                                        scope 158 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                                                            let mut _192: bool;
+                                                            let mut _193: usize;
+                                                            scope 159 {
+                                                                scope 161 (inlined <usize as Step>::forward_unchecked) {
+                                                                    scope 162 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                                                        scope 163 (inlined core::ub_checks::check_language_ub) {
+                                                                            scope 164 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 160 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                                                                let mut _194: usize;
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 165 (inlined <Box<dyn FnMut() -> u64> as FnMut<()>>::call_mut) {
+                                                        let mut _195: &mut dyn std::ops::FnMut() -> u64;
+                                                        let mut _196: *const dyn std::ops::FnMut() -> u64;
+                                                        let mut _197: std::ptr::Unique<dyn std::ops::FnMut() -> u64>;
+                                                    }
+                                                    scope 166 (inlined std::hint::black_box::<u64>) {
+                                                    }
+                                                    scope 167 (inlined core::num::<impl u64>::wrapping_add) {
+                                                    }
+                                                }
+                                                scope 20 {
+                                                    debug elapsed => _53;
+                                                    let _64: f64;
+                                                    scope 21 {
+                                                        debug left_val => _56;
+                                                        debug right_val => _57;
+                                                        scope 22 {
+                                                            debug kind => const core::panicking::AssertKind::Eq;
+                                                        }
+                                                    }
+                                                    scope 23 {
+                                                        debug value => _64;
+                                                        scope 24 {
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).0: &&str) => _71;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).1: &usize) => _72;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).2: &usize) => _73;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).3: &usize) => _74;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).4: &u128) => _75;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).5: &f64) => _76;
+                                                            debug ((args: (&&str, &usize, &usize, &usize, &u128, &f64, &u64)).6: &u64) => _77;
+                                                            let _78: [core::fmt::rt::Argument<'_>; 7];
+                                                            scope 25 {
+                                                                debug args => _78;
+                                                                scope 222 (inlined Arguments::<'_>::new::<28, 7>) {
+                                                                    let mut _246: std::ptr::NonNull<u8>;
+                                                                    let mut _247: std::ptr::NonNull<core::fmt::rt::Argument<'_>>;
+                                                                }
+                                                            }
+                                                            scope 187 (inlined core::fmt::rt::Argument::<'_>::new_display::<&str>) {
+                                                                let mut _211: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _212: std::ptr::NonNull<()>;
+                                                                let mut _213: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _214: for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 188 {
+                                                                }
+                                                                scope 189 (inlined NonNull::<&str>::from_ref) {
+                                                                    let mut _215: *const &str;
+                                                                }
+                                                                scope 190 (inlined NonNull::<&str>::cast::<()>) {
+                                                                    scope 191 (inlined NonNull::<&str>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 192 (inlined core::fmt::rt::Argument::<'_>::new_display::<usize>) {
+                                                                let mut _216: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _217: std::ptr::NonNull<()>;
+                                                                let mut _218: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _219: for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 193 {
+                                                                }
+                                                                scope 194 (inlined NonNull::<usize>::from_ref) {
+                                                                    let mut _220: *const usize;
+                                                                }
+                                                                scope 195 (inlined NonNull::<usize>::cast::<()>) {
+                                                                    scope 196 (inlined NonNull::<usize>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 197 (inlined core::fmt::rt::Argument::<'_>::new_display::<usize>) {
+                                                                let mut _221: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _222: std::ptr::NonNull<()>;
+                                                                let mut _223: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _224: for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 198 {
+                                                                }
+                                                                scope 199 (inlined NonNull::<usize>::from_ref) {
+                                                                    let mut _225: *const usize;
+                                                                }
+                                                                scope 200 (inlined NonNull::<usize>::cast::<()>) {
+                                                                    scope 201 (inlined NonNull::<usize>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 202 (inlined core::fmt::rt::Argument::<'_>::new_display::<usize>) {
+                                                                let mut _226: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _227: std::ptr::NonNull<()>;
+                                                                let mut _228: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _229: for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 203 {
+                                                                }
+                                                                scope 204 (inlined NonNull::<usize>::from_ref) {
+                                                                    let mut _230: *const usize;
+                                                                }
+                                                                scope 205 (inlined NonNull::<usize>::cast::<()>) {
+                                                                    scope 206 (inlined NonNull::<usize>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 207 (inlined core::fmt::rt::Argument::<'_>::new_display::<u128>) {
+                                                                let mut _231: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _232: std::ptr::NonNull<()>;
+                                                                let mut _233: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _234: for<'a, 'b, 'c> fn(&'a u128, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 208 {
+                                                                }
+                                                                scope 209 (inlined NonNull::<u128>::from_ref) {
+                                                                    let mut _235: *const u128;
+                                                                }
+                                                                scope 210 (inlined NonNull::<u128>::cast::<()>) {
+                                                                    scope 211 (inlined NonNull::<u128>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 212 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                                                let mut _236: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _237: std::ptr::NonNull<()>;
+                                                                let mut _238: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _239: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 213 {
+                                                                }
+                                                                scope 214 (inlined NonNull::<f64>::from_ref) {
+                                                                    let mut _240: *const f64;
+                                                                }
+                                                                scope 215 (inlined NonNull::<f64>::cast::<()>) {
+                                                                    scope 216 (inlined NonNull::<f64>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 217 (inlined core::fmt::rt::Argument::<'_>::new_display::<u64>) {
+                                                                let mut _241: core::fmt::rt::ArgumentType<'_>;
+                                                                let mut _242: std::ptr::NonNull<()>;
+                                                                let mut _243: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                let _244: for<'a, 'b, 'c> fn(&'a u64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                scope 218 {
+                                                                }
+                                                                scope 219 (inlined NonNull::<u64>::from_ref) {
+                                                                    let mut _245: *const u64;
+                                                                }
+                                                                scope 220 (inlined NonNull::<u64>::cast::<()>) {
+                                                                    scope 221 (inlined NonNull::<u64>::as_ptr) {
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 171 (inlined #[track_caller] <Vec<Vec<f64>> as IndexMut<usize>>::index_mut) {
+                                                            let mut _204: &mut [std::vec::Vec<f64>];
+                                                            scope 172 (inlined <Vec<Vec<f64>> as DerefMut>::deref_mut) {
+                                                                scope 173 (inlined Vec::<Vec<f64>>::as_mut_slice) {
+                                                                    let mut _205: *mut [std::vec::Vec<f64>];
+                                                                    let mut _206: *mut std::vec::Vec<f64>;
+                                                                    let mut _207: usize;
+                                                                    scope 174 (inlined Vec::<Vec<f64>>::as_mut_ptr) {
+                                                                        scope 175 (inlined alloc::raw_vec::RawVec::<Vec<f64>>::ptr) {
+                                                                            scope 176 (inlined alloc::raw_vec::RawVecInner::ptr::<Vec<f64>>) {
+                                                                                scope 177 (inlined alloc::raw_vec::RawVecInner::non_null::<Vec<f64>>) {
+                                                                                    let mut _208: std::ptr::NonNull<u8>;
+                                                                                    scope 178 (inlined std::ptr::Unique::<u8>::cast::<Vec<f64>>) {
+                                                                                        scope 179 (inlined NonNull::<u8>::cast::<Vec<f64>>) {
+                                                                                            scope 180 (inlined NonNull::<u8>::as_ptr) {
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    scope 181 (inlined std::ptr::Unique::<Vec<f64>>::as_non_null_ptr) {
+                                                                                    }
+                                                                                }
+                                                                                scope 182 (inlined NonNull::<Vec<f64>>::as_ptr) {
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 183 (inlined #[track_caller] core::slice::index::<impl IndexMut<usize> for [Vec<f64>]>::index_mut) {
+                                                                scope 184 (inlined #[track_caller] <usize as SliceIndex<[Vec<f64>]>>::index_mut) {
+                                                                    let mut _209: bool;
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 185 (inlined Vec::<f64>::push) {
+                                                            let mut _210: &mut f64;
+                                                            scope 186 {
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 170 (inlined core::num::<impl u64>::wrapping_mul) {
+                                                    }
+                                                }
+                                                scope 156 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+                                                }
+                                                scope 168 (inlined Duration::as_nanos) {
+                                                    let mut _198: u128;
+                                                    let mut _199: u128;
+                                                    let mut _200: u64;
+                                                    let mut _201: u128;
+                                                    let mut _202: u32;
+                                                    let mut _203: core::num::niche_types::Nanoseconds;
+                                                    scope 169 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    scope 142 (inlined #[track_caller] <Vec<usize> as Index<usize>>::index) {
+                                        scope 143 (inlined <Vec<usize> as Deref>::deref) {
+                                            scope 144 (inlined Vec::<usize>::as_slice) {
+                                                let _187: *const [usize];
+                                                let mut _188: *const usize;
+                                                let mut _189: usize;
+                                                scope 145 (inlined Vec::<usize>::as_ptr) {
+                                                    scope 146 (inlined alloc::raw_vec::RawVec::<usize>::ptr) {
+                                                        scope 147 (inlined alloc::raw_vec::RawVecInner::ptr::<usize>) {
+                                                            scope 148 (inlined alloc::raw_vec::RawVecInner::non_null::<usize>) {
+                                                                let mut _190: std::ptr::NonNull<u8>;
+                                                                scope 149 (inlined std::ptr::Unique::<u8>::cast::<usize>) {
+                                                                    scope 150 (inlined NonNull::<u8>::cast::<usize>) {
+                                                                        scope 151 (inlined NonNull::<u8>::as_ptr) {
+                                                                        }
+                                                                    }
+                                                                }
+                                                                scope 152 (inlined std::ptr::Unique::<usize>::as_non_null_ptr) {
+                                                                }
+                                                            }
+                                                            scope 153 (inlined NonNull::<usize>::as_ptr) {
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        scope 154 (inlined #[track_caller] core::slice::index::<impl Index<usize> for [usize]>::index) {
+                                            scope 155 (inlined #[track_caller] <usize as SliceIndex<[usize]>>::index) {
+                                                let mut _191: bool;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 134 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                            scope 135 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                                let mut _183: bool;
+                                let _184: usize;
+                                let mut _185: usize;
+                                scope 136 {
+                                    scope 138 (inlined <usize as Step>::forward_unchecked) {
+                                        scope 139 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                            scope 140 (inlined core::ub_checks::check_language_ub) {
+                                                scope 141 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 137 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                                    let mut _186: usize;
+                                }
+                            }
+                        }
+                    }
+                    scope 133 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+                    }
+                }
+                scope 113 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                    scope 114 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                        let mut _171: bool;
+                        let _172: usize;
+                        let mut _173: usize;
+                        scope 115 {
+                            scope 117 (inlined <usize as Step>::forward_unchecked) {
+                                scope 118 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                    scope 119 (inlined core::ub_checks::check_language_ub) {
+                                        scope 120 (inlined core::ub_checks::check_language_ub::runtime) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 116 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                            let mut _174: usize;
+                        }
+                    }
+                }
+            }
+            scope 26 {
+                debug iter => _91;
+                let _95: &Case<'_>;
+                let _96: &mut std::vec::Vec<f64>;
+                scope 27 {
+                    debug case => _95;
+                    debug values => _96;
+                    let _97: f64;
+                    scope 28 {
+                        debug mean => _97;
+                        let _102: f64;
+                        scope 29 {
+                            debug sd => _102;
+                            scope 30 {
+                                debug ((args: (&&str, &f64, &f64, &f64, &f64)).0: &&str) => _115;
+                                debug ((args: (&&str, &f64, &f64, &f64, &f64)).1: &f64) => _116;
+                                debug ((args: (&&str, &f64, &f64, &f64, &f64)).2: &f64) => _117;
+                                debug ((args: (&&str, &f64, &f64, &f64, &f64)).3: &f64) => _118;
+                                debug ((args: (&&str, &f64, &f64, &f64, &f64)).4: &f64) => _119;
+                                let _120: [core::fmt::rt::Argument<'_>; 5];
+                                scope 31 {
+                                    debug args => _120;
+                                    scope 371 (inlined Arguments::<'_>::new::<49, 5>) {
+                                        let mut _325: std::ptr::NonNull<u8>;
+                                        let mut _326: std::ptr::NonNull<core::fmt::rt::Argument<'_>>;
+                                    }
+                                }
+                                scope 346 (inlined core::fmt::rt::Argument::<'_>::new_display::<&str>) {
+                                    let mut _300: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _301: std::ptr::NonNull<()>;
+                                    let mut _302: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _303: for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 347 {
+                                    }
+                                    scope 348 (inlined NonNull::<&str>::from_ref) {
+                                        let mut _304: *const &str;
+                                    }
+                                    scope 349 (inlined NonNull::<&str>::cast::<()>) {
+                                        scope 350 (inlined NonNull::<&str>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 351 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                    let mut _305: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _306: std::ptr::NonNull<()>;
+                                    let mut _307: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _308: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 352 {
+                                    }
+                                    scope 353 (inlined NonNull::<f64>::from_ref) {
+                                        let mut _309: *const f64;
+                                    }
+                                    scope 354 (inlined NonNull::<f64>::cast::<()>) {
+                                        scope 355 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 356 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                    let mut _310: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _311: std::ptr::NonNull<()>;
+                                    let mut _312: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _313: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 357 {
+                                    }
+                                    scope 358 (inlined NonNull::<f64>::from_ref) {
+                                        let mut _314: *const f64;
+                                    }
+                                    scope 359 (inlined NonNull::<f64>::cast::<()>) {
+                                        scope 360 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 361 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                    let mut _315: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _316: std::ptr::NonNull<()>;
+                                    let mut _317: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _318: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 362 {
+                                    }
+                                    scope 363 (inlined NonNull::<f64>::from_ref) {
+                                        let mut _319: *const f64;
+                                    }
+                                    scope 364 (inlined NonNull::<f64>::cast::<()>) {
+                                        scope 365 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 366 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                    let mut _320: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _321: std::ptr::NonNull<()>;
+                                    let mut _322: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _323: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 367 {
+                                    }
+                                    scope 368 (inlined NonNull::<f64>::from_ref) {
+                                        let mut _324: *const f64;
+                                    }
+                                    scope 369 (inlined NonNull::<f64>::cast::<()>) {
+                                        scope 370 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                    }
+                                }
+                            }
+                            scope 307 (inlined <Vec<f64> as DerefMut>::deref_mut) {
+                                scope 308 (inlined Vec::<f64>::as_mut_slice) {
+                                    let mut _286: *mut [f64];
+                                    let mut _287: *mut f64;
+                                    let mut _288: usize;
+                                    scope 309 (inlined Vec::<f64>::as_mut_ptr) {
+                                        scope 310 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                            scope 311 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                                scope 312 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                                    let mut _289: std::ptr::NonNull<u8>;
+                                                    scope 313 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                        scope 314 (inlined NonNull::<u8>::cast::<f64>) {
+                                                            scope 315 (inlined NonNull::<u8>::as_ptr) {
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 316 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                                    }
+                                                }
+                                                scope 317 (inlined NonNull::<f64>::as_ptr) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            scope 318 (inlined #[track_caller] <Vec<f64> as Index<usize>>::index) {
+                                scope 319 (inlined <Vec<f64> as Deref>::deref) {
+                                    scope 320 (inlined Vec::<f64>::as_slice) {
+                                        let _290: *const [f64];
+                                        let mut _291: *const f64;
+                                        let mut _292: usize;
+                                        scope 321 (inlined Vec::<f64>::as_ptr) {
+                                            scope 322 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                                scope 323 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                                    scope 324 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                                        let mut _293: std::ptr::NonNull<u8>;
+                                                        scope 325 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                            scope 326 (inlined NonNull::<u8>::cast::<f64>) {
+                                                                scope 327 (inlined NonNull::<u8>::as_ptr) {
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 328 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                                        }
+                                                    }
+                                                    scope 329 (inlined NonNull::<f64>::as_ptr) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 330 (inlined #[track_caller] core::slice::index::<impl Index<usize> for [f64]>::index) {
+                                    scope 331 (inlined #[track_caller] <usize as SliceIndex<[f64]>>::index) {
+                                        let mut _294: bool;
+                                    }
+                                }
+                            }
+                            scope 332 (inlined #[track_caller] <Vec<f64> as Index<usize>>::index) {
+                                scope 333 (inlined <Vec<f64> as Deref>::deref) {
+                                    scope 334 (inlined Vec::<f64>::as_slice) {
+                                        let _295: *const [f64];
+                                        let mut _296: *const f64;
+                                        let mut _297: usize;
+                                        scope 335 (inlined Vec::<f64>::as_ptr) {
+                                            scope 336 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                                scope 337 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                                    scope 338 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                                        let mut _298: std::ptr::NonNull<u8>;
+                                                        scope 339 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                            scope 340 (inlined NonNull::<u8>::cast::<f64>) {
+                                                                scope 341 (inlined NonNull::<u8>::as_ptr) {
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 342 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                                        }
+                                                    }
+                                                    scope 343 (inlined NonNull::<f64>::as_ptr) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 344 (inlined #[track_caller] core::slice::index::<impl Index<usize> for [f64]>::index) {
+                                    scope 345 (inlined #[track_caller] <usize as SliceIndex<[f64]>>::index) {
+                                        let mut _299: bool;
+                                    }
+                                }
+                            }
+                        }
+                        scope 274 (inlined <Vec<f64> as Deref>::deref) {
+                            scope 275 (inlined Vec::<f64>::as_slice) {
+                                let _272: *const [f64];
+                                let mut _273: *const f64;
+                                let mut _274: usize;
+                                scope 276 (inlined Vec::<f64>::as_ptr) {
+                                    scope 277 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                        scope 278 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                            scope 279 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                                let mut _275: std::ptr::NonNull<u8>;
+                                                scope 280 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                    scope 281 (inlined NonNull::<u8>::cast::<f64>) {
+                                                        scope 282 (inlined NonNull::<u8>::as_ptr) {
+                                                        }
+                                                    }
+                                                }
+                                                scope 283 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                                }
+                                            }
+                                            scope 284 (inlined NonNull::<f64>::as_ptr) {
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 285 (inlined core::slice::<impl [f64]>::iter) {
+                            scope 286 (inlined std::slice::Iter::<'_, f64>::new) {
+                                let mut _277: std::ptr::NonNull<[f64]>;
+                                let mut _279: *mut f64;
+                                let mut _280: *mut f64;
+                                scope 287 {
+                                    let _276: std::ptr::NonNull<f64>;
+                                    scope 288 {
+                                        let _278: *const f64;
+                                        scope 289 {
+                                        }
+                                        scope 293 (inlined std::ptr::without_provenance::<f64>) {
+                                            scope 294 (inlined std::ptr::without_provenance_mut::<f64>) {
+                                            }
+                                        }
+                                        scope 295 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                        scope 296 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut f64>::add) {
+                                        }
+                                    }
+                                    scope 290 (inlined NonNull::<[f64]>::from_ref) {
+                                        let mut _281: *const [f64];
+                                    }
+                                    scope 291 (inlined NonNull::<[f64]>::cast::<f64>) {
+                                        let mut _282: *mut f64;
+                                        let mut _283: *mut [f64];
+                                        scope 292 (inlined NonNull::<[f64]>::as_ptr) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 297 (inlined <std::slice::Iter<'_, f64> as Iterator>::map::<f64, {closure@src/lib.rs:50:37: 50:40}>) {
+                            scope 298 (inlined Map::<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>::new) {
+                            }
+                        }
+                        scope 299 (inlined <Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}> as Iterator>::sum::<f64>) {
+                            scope 300 (inlined <f64 as Sum>::sum::<Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>) {
+                                scope 301 (inlined <Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}> as Iterator>::fold::<f64, {closure@<f64 as Sum>::sum<Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>::{closure#0}}>) {
+                                    let mut _284: {closure@std::iter::adapters::map::map_fold<&f64, f64, f64, {closure@src/lib.rs:50:37: 50:40}, {closure@<f64 as std::iter::Sum>::sum<std::iter::Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>::{closure#0}}>::{closure#0}};
+                                    scope 302 (inlined iter::adapters::map::map_fold::<&f64, f64, f64, {closure@src/lib.rs:50:37: 50:40}, {closure@<f64 as Sum>::sum<Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>::{closure#0}}>) {
+                                    }
+                                }
+                            }
+                        }
+                        scope 303 (inlined Vec::<f64>::len) {
+                            let mut _285: bool;
+                            scope 304 {
+                            }
+                        }
+                        scope 305 (inlined f64::<impl f64>::sqrt) {
+                            scope 306 (inlined core::f64::math::sqrt) {
+                            }
+                        }
+                    }
+                    scope 247 (inlined <Vec<f64> as Deref>::deref) {
+                        scope 248 (inlined Vec::<f64>::as_slice) {
+                            let _259: *const [f64];
+                            let mut _260: *const f64;
+                            let mut _261: usize;
+                            scope 249 (inlined Vec::<f64>::as_ptr) {
+                                scope 250 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                    scope 251 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                        scope 252 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                            let mut _262: std::ptr::NonNull<u8>;
+                                            scope 253 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                scope 254 (inlined NonNull::<u8>::cast::<f64>) {
+                                                    scope 255 (inlined NonNull::<u8>::as_ptr) {
+                                                    }
+                                                }
+                                            }
+                                            scope 256 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                            }
+                                        }
+                                        scope 257 (inlined NonNull::<f64>::as_ptr) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 258 (inlined core::slice::<impl [f64]>::iter) {
+                        scope 259 (inlined std::slice::Iter::<'_, f64>::new) {
+                            let mut _264: std::ptr::NonNull<[f64]>;
+                            let mut _266: *mut f64;
+                            let mut _267: *mut f64;
+                            scope 260 {
+                                let _263: std::ptr::NonNull<f64>;
+                                scope 261 {
+                                    let _265: *const f64;
+                                    scope 262 {
+                                    }
+                                    scope 266 (inlined std::ptr::without_provenance::<f64>) {
+                                        scope 267 (inlined std::ptr::without_provenance_mut::<f64>) {
+                                        }
+                                    }
+                                    scope 268 (inlined NonNull::<f64>::as_ptr) {
+                                    }
+                                    scope 269 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut f64>::add) {
+                                    }
+                                }
+                                scope 263 (inlined NonNull::<[f64]>::from_ref) {
+                                    let mut _268: *const [f64];
+                                }
+                                scope 264 (inlined NonNull::<[f64]>::cast::<f64>) {
+                                    let mut _269: *mut f64;
+                                    let mut _270: *mut [f64];
+                                    scope 265 (inlined NonNull::<[f64]>::as_ptr) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 270 (inlined <std::slice::Iter<'_, f64> as Iterator>::sum::<f64>) {
+                        scope 271 (inlined <f64 as Sum<&f64>>::sum::<std::slice::Iter<'_, f64>>) {
+                        }
+                    }
+                    scope 272 (inlined Vec::<f64>::len) {
+                        let mut _271: bool;
+                        scope 273 {
+                        }
+                    }
+                }
+                scope 246 (inlined <Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, Vec<f64>>> as Iterator>::next) {
+                }
+            }
+            scope 112 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+            }
+            scope 121 (inlined core::slice::<impl [Case<'_>]>::iter) {
+                scope 122 (inlined std::slice::Iter::<'_, Case<'_>>::new) {
+                    let mut _176: std::ptr::NonNull<[Case<'_>]>;
+                    let mut _178: *mut Case<'_>;
+                    let mut _179: *mut Case<'_>;
+                    scope 123 {
+                        let _175: std::ptr::NonNull<Case<'_>>;
+                        scope 124 {
+                            let _177: *const Case<'_>;
+                            scope 125 {
+                            }
+                            scope 129 (inlined std::ptr::without_provenance::<Case<'_>>) {
+                                scope 130 (inlined std::ptr::without_provenance_mut::<Case<'_>>) {
+                                }
+                            }
+                            scope 131 (inlined NonNull::<Case<'_>>::as_ptr) {
+                            }
+                            scope 132 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut Case<'_>>::add) {
+                            }
+                        }
+                        scope 126 (inlined NonNull::<[Case<'_>]>::from_ref) {
+                            let mut _180: *const [Case<'_>];
+                        }
+                        scope 127 (inlined NonNull::<[Case<'_>]>::cast::<Case<'_>>) {
+                            let mut _181: *mut Case<'_>;
+                            let mut _182: *mut [Case<'_>];
+                            scope 128 (inlined NonNull::<[Case<'_>]>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+            scope 223 (inlined <Vec<Vec<f64>> as DerefMut>::deref_mut) {
+                scope 224 (inlined Vec::<Vec<f64>>::as_mut_slice) {
+                    let mut _248: *mut [std::vec::Vec<f64>];
+                    let mut _249: *mut std::vec::Vec<f64>;
+                    let mut _250: usize;
+                    scope 225 (inlined Vec::<Vec<f64>>::as_mut_ptr) {
+                        scope 226 (inlined alloc::raw_vec::RawVec::<Vec<f64>>::ptr) {
+                            scope 227 (inlined alloc::raw_vec::RawVecInner::ptr::<Vec<f64>>) {
+                                scope 228 (inlined alloc::raw_vec::RawVecInner::non_null::<Vec<f64>>) {
+                                    let mut _251: std::ptr::NonNull<u8>;
+                                    scope 229 (inlined std::ptr::Unique::<u8>::cast::<Vec<f64>>) {
+                                        scope 230 (inlined NonNull::<u8>::cast::<Vec<f64>>) {
+                                            scope 231 (inlined NonNull::<u8>::as_ptr) {
+                                            }
+                                        }
+                                    }
+                                    scope 232 (inlined std::ptr::Unique::<Vec<f64>>::as_non_null_ptr) {
+                                    }
+                                }
+                                scope 233 (inlined NonNull::<Vec<f64>>::as_ptr) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            scope 234 (inlined core::slice::<impl [Vec<f64>]>::iter_mut) {
+                scope 235 (inlined std::slice::IterMut::<'_, Vec<f64>>::new) {
+                    let mut _253: std::ptr::NonNull<[std::vec::Vec<f64>]>;
+                    let mut _255: *mut std::vec::Vec<f64>;
+                    scope 236 {
+                        let _252: std::ptr::NonNull<std::vec::Vec<f64>>;
+                        scope 237 {
+                            let _254: *mut std::vec::Vec<f64>;
+                            scope 238 {
+                            }
+                            scope 242 (inlined std::ptr::without_provenance_mut::<Vec<f64>>) {
+                            }
+                            scope 243 (inlined NonNull::<Vec<f64>>::as_ptr) {
+                            }
+                            scope 244 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut Vec<f64>>::add) {
+                            }
+                        }
+                        scope 239 (inlined NonNull::<[Vec<f64>]>::from_mut) {
+                            let mut _256: *mut [std::vec::Vec<f64>];
+                        }
+                        scope 240 (inlined NonNull::<[Vec<f64>]>::cast::<Vec<f64>>) {
+                            let mut _257: *mut std::vec::Vec<f64>;
+                            let mut _258: *mut [std::vec::Vec<f64>];
+                            scope 241 (inlined NonNull::<[Vec<f64>]>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+            scope 245 (inlined <Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, Vec<f64>>> as IntoIterator>::into_iter) {
+            }
+        }
+        scope 41 (inlined core::slice::<impl [Case<'_>]>::iter_mut) {
+            scope 42 (inlined std::slice::IterMut::<'_, Case<'_>>::new) {
+                let _127: usize;
+                let mut _129: std::ptr::NonNull<[Case<'_>]>;
+                let mut _131: *mut Case<'_>;
+                scope 43 {
+                    let _128: std::ptr::NonNull<Case<'_>>;
+                    scope 44 {
+                        let _130: *mut Case<'_>;
+                        scope 45 {
+                        }
+                        scope 49 (inlined std::ptr::without_provenance_mut::<Case<'_>>) {
+                        }
+                        scope 50 (inlined NonNull::<Case<'_>>::as_ptr) {
+                        }
+                        scope 51 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut Case<'_>>::add) {
+                        }
+                    }
+                    scope 46 (inlined NonNull::<[Case<'_>]>::from_mut) {
+                        let mut _132: *mut [Case<'_>];
+                    }
+                    scope 47 (inlined NonNull::<[Case<'_>]>::cast::<Case<'_>>) {
+                        let mut _133: *mut Case<'_>;
+                        let mut _134: *mut [Case<'_>];
+                        scope 48 (inlined NonNull::<[Case<'_>]>::as_ptr) {
+                        }
+                    }
+                }
+            }
+        }
+        scope 52 (inlined <std::slice::IterMut<'_, Case<'_>> as IntoIterator>::into_iter) {
+        }
+        scope 70 (inlined Arguments::<'_>::from_str) {
+            let mut _145: std::ptr::NonNull<u8>;
+            let mut _146: *const u8;
+            let mut _147: std::ptr::NonNull<core::fmt::rt::Argument<'_>>;
+            let mut _148: usize;
+            let mut _149: usize;
+            let mut _150: usize;
+            scope 71 (inlined core::str::<impl str>::as_ptr) {
+                let mut _151: *const str;
+            }
+            scope 72 (inlined core::str::<impl str>::len) {
+                let _152: &[u8];
+                scope 73 (inlined core::str::<impl str>::as_bytes) {
+                }
+            }
+        }
+        scope 102 (inlined Vec::<f64>::new) {
+            scope 103 (inlined alloc::raw_vec::RawVec::<f64>::new) {
+                scope 104 (inlined alloc::raw_vec::RawVec::<f64>::new_in) {
+                    scope 105 (inlined std::mem::Alignment::of::<f64>) {
+                    }
+                    scope 106 (inlined alloc::raw_vec::RawVecInner::new_in) {
+                        scope 107 {
+                        }
+                        scope 108 (inlined std::mem::Alignment::as_nonzero_usize) {
+                        }
+                        scope 109 (inlined NonNull::<u8>::without_provenance) {
+                        }
+                        scope 110 (inlined std::ptr::Unique::<u8>::from_non_null) {
+                        }
+                    }
+                }
+            }
+        }
+        scope 111 (inlined std::vec::from_elem::<Vec<f64>>) {
+        }
+    }
+    scope 32 (inlined Vec::<usize>::new) {
+        scope 33 (inlined alloc::raw_vec::RawVec::<usize>::new) {
+            scope 34 (inlined alloc::raw_vec::RawVec::<usize>::new_in) {
+                scope 35 (inlined std::mem::Alignment::of::<usize>) {
+                }
+                scope 36 (inlined alloc::raw_vec::RawVecInner::new_in) {
+                    scope 37 {
+                    }
+                    scope 38 (inlined std::mem::Alignment::as_nonzero_usize) {
+                    }
+                    scope 39 (inlined NonNull::<u8>::without_provenance) {
+                    }
+                    scope 40 (inlined std::ptr::Unique::<u8>::from_non_null) {
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = Gt(copy _2, const 0_usize);
+        switchInt(move _3) -> [0: bb2, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        StorageLive(_5);
+        _5 = Vec::<usize> { buf: const alloc::raw_vec::RawVec::<usize> {{ inner: alloc::raw_vec::RawVecInner {{ ptr: std::ptr::Unique::<u8> {{ pointer: NonNull::<u8> {{ pointer: {0x8 as *const u8} is !null }}, _marker: PhantomData::<u8> }}, cap: core::num::niche_types::UsizeNoHighBit(0_usize is 0..=9223372036854775807), alloc: std::alloc::Global }}, _marker: PhantomData::<usize> }}, len: const 0_usize };
+        StorageLive(_130);
+        _127 = PtrMetadata(copy _1);
+        StorageLive(_128);
+        StorageLive(_129);
+        StorageLive(_132);
+        _132 = &raw mut (*_1);
+        _129 = copy _132 as std::ptr::NonNull<[Case<'_>]> (Transmute);
+        StorageDead(_132);
+        StorageLive(_133);
+        StorageLive(_134);
+        _134 = copy _129 as *mut [Case<'_>] (Transmute);
+        _133 = copy _134 as *mut Case<'_> (PtrToPtr);
+        StorageDead(_134);
+        _128 = copy _133 as std::ptr::NonNull<Case<'_>> (Transmute);
+        StorageDead(_133);
+        StorageDead(_129);
+        StorageLive(_131);
+        _131 = copy _128 as *mut Case<'_> (Transmute);
+        _130 = Offset(copy _131, copy _127);
+        StorageDead(_131);
+        _6 = std::slice::IterMut::<'_, Case<'_>> { ptr: copy _128, end_or_len: copy _130, _marker: const PhantomData::<&mut Case<'_>> };
+        StorageDead(_128);
+        StorageDead(_130);
+        goto -> bb3;
+    }
+
+    bb2: {
+        _4 = core::panicking::panic(const "assertion failed: units > 0") -> unwind continue;
+    }
+
+    bb3: {
+        StorageLive(_7);
+        StorageLive(_141);
+        StorageLive(_135);
+        _135 = copy (_6.0: std::ptr::NonNull<Case<'_>>);
+        StorageLive(_136);
+        _136 = copy (_6.1: *mut Case<'_>);
+        StorageLive(_137);
+        StorageLive(_138);
+        _138 = copy _136 as std::ptr::NonNull<Case<'_>> (Transmute);
+        _141 = copy _135 as *mut Case<'_> (Transmute);
+        StorageLive(_142);
+        _142 = copy _138 as *mut Case<'_> (Transmute);
+        _137 = Eq(copy _141, copy _142);
+        StorageDead(_142);
+        switchInt(move _137) -> [0: bb36, otherwise: bb35];
+    }
+
+    bb4: {
+        unreachable;
+    }
+
+    bb5: {
+        _10 = const 0_i32;
+        goto -> bb6;
+    }
+
+    bb6: {
+        StorageLive(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = &_9;
+        _12 = Instant::elapsed(move _13) -> [return: bb7, unwind: bb33];
+    }
+
+    bb7: {
+        StorageDead(_13);
+        StorageLive(_153);
+        StorageLive(_156);
+        StorageLive(_157);
+        StorageLive(_158);
+        _158 = copy (_12.0: u64);
+        _156 = Cmp(move _158, const 0_u64);
+        StorageDead(_158);
+        _157 = discriminant(_156);
+        switchInt(move _157) -> [0: bb38, otherwise: bb37];
+    }
+
+    bb8: {
+        StorageDead(_12);
+        StorageLive(_15);
+        StorageLive(_16);
+        StorageLive(_162);
+        StorageLive(_163);
+        StorageLive(_161);
+        _163 = no_retag copy (((*_8).1: std::boxed::Box<dyn std::ops::FnMut() -> u64>).0: std::ptr::Unique<dyn std::ops::FnMut() -> u64>);
+        _162 = copy _163 as *const dyn std::ops::FnMut() -> u64 (BoxDerefTransmute);
+        _161 = &mut (*_162);
+        _16 = <dyn FnMut() -> u64 as FnMut<()>>::call_mut(move _161, const ()) -> [return: bb39, unwind: bb33];
+    }
+
+    bb9: {
+        StorageDead(_19);
+        StorageDead(_18);
+        StorageDead(_15);
+        _10 = Add(copy _10, const 1_i32);
+        StorageDead(_11);
+        goto -> bb6;
+    }
+
+    bb10: {
+        StorageDead(_19);
+        _20 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _14, move _17, const Option::<Arguments<'_>>::None) -> bb33;
+    }
+
+    bb11: {
+        StorageDead(_12);
+        StorageDead(_11);
+        StorageLive(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        StorageLive(_24);
+        StorageLive(_25);
+        _25 = &_9;
+        _24 = Instant::elapsed(move _25) -> [return: bb12, unwind: bb33];
+    }
+
+    bb12: {
+        StorageDead(_25);
+        StorageLive(_164);
+        StorageLive(_165);
+        _165 = copy (_24.0: u64);
+        _164 = move _165 as f64 (IntToFloat);
+        StorageDead(_165);
+        StorageLive(_166);
+        StorageLive(_167);
+        StorageLive(_168);
+        StorageLive(_169);
+        _169 = copy (_24.1: core::num::niche_types::Nanoseconds);
+        _168 = copy _169 as u32 (Transmute);
+        StorageDead(_169);
+        _167 = move _168 as f64 (IntToFloat);
+        StorageDead(_168);
+        _166 = Div(move _167, const 1.0E+9f64);
+        StorageDead(_167);
+        _23 = Add(move _164, move _166);
+        StorageDead(_166);
+        StorageDead(_164);
+        _22 = Mul(move _23, const 1.0E+9f64);
+        StorageDead(_23);
+        StorageLive(_26);
+        _26 = move _10 as f64 (IntToFloat);
+        _21 = Div(move _22, move _26);
+        StorageDead(_26);
+        StorageDead(_22);
+        StorageDead(_24);
+        StorageLive(_27);
+        _27 = &mut _5;
+        StorageLive(_28);
+        StorageLive(_29);
+        StorageLive(_30);
+        StorageLive(_31);
+        _31 = Div(const 1.0E+7f64, copy _21);
+        _30 = ceilf64(move _31) -> [return: bb41, unwind unreachable];
+    }
+
+    bb13: {
+        StorageDead(_33);
+        StorageLive(_34);
+        StorageLive(_35);
+        _35 = Vec::<f64> { buf: const alloc::raw_vec::RawVec::<f64> {{ inner: alloc::raw_vec::RawVecInner {{ ptr: std::ptr::Unique::<u8> {{ pointer: NonNull::<u8> {{ pointer: {0x8 as *const u8} is !null }}, _marker: PhantomData::<u8> }}, cap: core::num::niche_types::UsizeNoHighBit(0_usize is 0..=9223372036854775807), alloc: std::alloc::Global }}, _marker: PhantomData::<f64> }}, len: const 0_usize };
+        _34 = <Vec<f64> as vec::spec_from_elem::SpecFromElem>::from_elem::<std::alloc::Global>(move _35, copy _127, const std::alloc::Global) -> [return: bb44, unwind: bb33];
+    }
+
+    bb14: {
+        StorageLive(_36);
+        StorageLive(_171);
+        StorageLive(_174);
+        _174 = copy _173;
+        _171 = Lt(move _174, const 21_usize);
+        StorageDead(_174);
+        switchInt(move _171) -> [0: bb46, otherwise: bb45];
+    }
+
+    bb15: {
+        StorageLive(_38);
+        StorageLive(_183);
+        StorageLive(_186);
+        _186 = copy _185;
+        _183 = Lt(move _186, copy _127);
+        StorageDead(_186);
+        switchInt(move _183) -> [0: bb48, otherwise: bb47];
+    }
+
+    bb16: {
+        _40 = Rem(move _41, copy _127);
+        StorageDead(_41);
+        _44 = Lt(copy _40, copy _127);
+        assert(move _44, "index out of bounds: the length is {} but the index is {}", copy _127, copy _40) -> [success: bb17, unwind: bb32];
+    }
+
+    bb17: {
+        _43 = &mut (*_1)[_40];
+        StorageLive(_45);
+        StorageLive(_46);
+        StorageLive(_188);
+        StorageLive(_190);
+        _190 = copy ((((_5.0: alloc::raw_vec::RawVec<usize>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _188 = copy _190 as *const usize (Transmute);
+        StorageDead(_190);
+        _189 = copy (_5.1: usize);
+        _187 = *const [usize] from (copy _188, copy _189);
+        StorageDead(_188);
+        StorageLive(_191);
+        _191 = Lt(copy _40, copy _189);
+        assert(move _191, "index out of bounds: the length is {} but the index is {}", copy _189, copy _40) -> [success: bb49, unwind: bb32];
+    }
+
+    bb18: {
+        StorageLive(_48);
+        _48 = const 0_u64;
+        _327 = const 0_usize;
+        goto -> bb19;
+    }
+
+    bb19: {
+        StorageLive(_192);
+        StorageLive(_194);
+        _194 = copy _327;
+        _192 = Lt(move _194, copy _45);
+        StorageDead(_194);
+        switchInt(move _192) -> [0: bb51, otherwise: bb50];
+    }
+
+    bb20: {
+        StorageDead(_55);
+        StorageLive(_198);
+        StorageLive(_199);
+        StorageLive(_200);
+        _200 = copy (_54.0: u64);
+        _199 = move _200 as u128 (IntToInt);
+        StorageDead(_200);
+        _198 = Mul(move _199, const 1000000000_u128);
+        StorageDead(_199);
+        StorageLive(_201);
+        StorageLive(_202);
+        StorageLive(_203);
+        _203 = copy (_54.1: core::num::niche_types::Nanoseconds);
+        _202 = copy _203 as u32 (Transmute);
+        StorageDead(_203);
+        _201 = move _202 as u128 (IntToInt);
+        StorageDead(_202);
+        _53 = Add(move _198, move _201);
+        StorageDead(_201);
+        StorageDead(_198);
+        StorageDead(_54);
+        _56 = &_48;
+        StorageLive(_58);
+        StorageLive(_59);
+        _59 = copy ((*_43).2: u64);
+        StorageLive(_60);
+        _60 = copy _45 as u64 (IntToInt);
+        _58 = Mul(copy _59, copy _60);
+        StorageDead(_60);
+        StorageDead(_59);
+        _57 = &_58;
+        StorageLive(_61);
+        StorageLive(_62);
+        _62 = copy (*_56);
+        _61 = Eq(move _62, copy _58);
+        switchInt(move _61) -> [0: bb22, otherwise: bb21];
+    }
+
+    bb21: {
+        StorageDead(_62);
+        StorageDead(_61);
+        StorageDead(_58);
+        StorageLive(_64);
+        StorageLive(_65);
+        _65 = copy _53 as f64 (IntToFloat);
+        StorageLive(_66);
+        StorageLive(_67);
+        _67 = Mul(copy _45, copy _2);
+        _66 = move _67 as f64 (IntToFloat);
+        StorageDead(_67);
+        _64 = Div(move _65, move _66);
+        StorageDead(_66);
+        StorageDead(_65);
+        StorageLive(_68);
+        StorageLive(_204);
+        StorageLive(_205);
+        StorageLive(_206);
+        StorageLive(_208);
+        _208 = copy ((((_34.0: alloc::raw_vec::RawVec<std::vec::Vec<f64>>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _206 = copy _208 as *mut std::vec::Vec<f64> (Transmute);
+        StorageDead(_208);
+        _207 = copy (_34.1: usize);
+        _205 = *mut [std::vec::Vec<f64>] from (copy _206, copy _207);
+        StorageDead(_206);
+        _204 = &mut (*_205);
+        StorageDead(_205);
+        StorageLive(_209);
+        _209 = Lt(copy _40, copy _207);
+        assert(move _209, "index out of bounds: the length is {} but the index is {}", copy _207, copy _40) -> [success: bb54, unwind: bb32];
+    }
+
+    bb22: {
+        StorageDead(_62);
+        _63 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _56, move _57, const Option::<Arguments<'_>>::None) -> bb32;
+    }
+
+    bb23: {
+        StorageDead(_70);
+        StorageDead(_78);
+        StorageDead(_64);
+        StorageDead(_53);
+        StorageDead(_48);
+        StorageDead(_47);
+        StorageDead(_45);
+        StorageDead(_40);
+        StorageDead(_39);
+        StorageDead(_38);
+        goto -> bb15;
+    }
+
+    bb24: {
+        StorageDead(_89);
+        StorageDead(_88);
+        StorageLive(_91);
+        _91 = copy _87;
+        goto -> bb25;
+    }
+
+    bb25: {
+        StorageLive(_92);
+        StorageLive(_93);
+        _93 = &mut _91;
+        _92 = <Zip<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, Vec<f64>>> as iter::adapters::zip::ZipImpl<std::slice::Iter<'_, Case<'_>>, std::slice::IterMut<'_, Vec<f64>>>>::next(move _93) -> [return: bb56, unwind: bb32];
+    }
+
+    bb26: {
+        StorageLive(_95);
+        _95 = copy (((_92 as Some).0: (&Case<'_>, &mut std::vec::Vec<f64>)).0: &Case<'_>);
+        _96 = copy (((_92 as Some).0: (&Case<'_>, &mut std::vec::Vec<f64>)).1: &mut std::vec::Vec<f64>);
+        StorageLive(_97);
+        StorageLive(_98);
+        StorageLive(_99);
+        StorageLive(_260);
+        StorageLive(_262);
+        _262 = copy (((((*_96).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _260 = copy _262 as *const f64 (Transmute);
+        StorageDead(_262);
+        _261 = copy ((*_96).1: usize);
+        _259 = *const [f64] from (copy _260, copy _261);
+        StorageDead(_260);
+        StorageLive(_265);
+        StorageLive(_263);
+        StorageLive(_264);
+        StorageLive(_268);
+        _268 = &raw const (*_259);
+        _264 = copy _268 as std::ptr::NonNull<[f64]> (Transmute);
+        StorageDead(_268);
+        StorageLive(_269);
+        StorageLive(_270);
+        _270 = copy _264 as *mut [f64] (Transmute);
+        _269 = copy _270 as *mut f64 (PtrToPtr);
+        StorageDead(_270);
+        _263 = copy _269 as std::ptr::NonNull<f64> (Transmute);
+        StorageDead(_269);
+        StorageDead(_264);
+        StorageLive(_266);
+        StorageLive(_267);
+        _267 = copy _263 as *mut f64 (Transmute);
+        _266 = Offset(copy _267, copy _261);
+        StorageDead(_267);
+        _265 = copy _266 as *const f64 (PtrToPtr);
+        StorageDead(_266);
+        _99 = std::slice::Iter::<'_, f64> { ptr: copy _263, end_or_len: copy _265, _marker: const PhantomData::<&f64> };
+        StorageDead(_263);
+        StorageDead(_265);
+        _98 = <std::slice::Iter<'_, f64> as Iterator>::fold::<f64, {closure@<f64 as Sum<&f64>>::sum<std::slice::Iter<'_, f64>>::{closure#0}}>(move _99, const -0f64, const ZeroSized: {closure@<f64 as Sum<&f64>>::sum<std::slice::Iter<'_, f64>>::{closure#0}}) -> [return: bb57, unwind: bb32];
+    }
+
+    bb27: {
+        StorageDead(_93);
+        StorageDead(_92);
+        StorageDead(_91);
+        StorageDead(_90);
+        drop(_34) -> [return: bb30, unwind: bb33];
+    }
+
+    bb28: {
+        StorageDead(_112);
+        StorageLive(_114);
+        _115 = &((*_95).0: &str);
+        StorageLive(_116);
+        StorageLive(_291);
+        StorageLive(_293);
+        _293 = copy (((((*_96).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _291 = copy _293 as *const f64 (Transmute);
+        StorageDead(_293);
+        _292 = copy ((*_96).1: usize);
+        _290 = *const [f64] from (copy _291, copy _292);
+        StorageDead(_291);
+        StorageLive(_294);
+        _294 = Lt(const 10_usize, copy _292);
+        assert(move _294, "index out of bounds: the length is {} but the index is {}", copy _292, const 10_usize) -> [success: bb60, unwind: bb32];
+    }
+
+    bb29: {
+        StorageDead(_114);
+        StorageDead(_120);
+        StorageDead(_117);
+        StorageDead(_116);
+        StorageDead(_102);
+        StorageDead(_97);
+        StorageDead(_95);
+        StorageDead(_93);
+        StorageDead(_92);
+        goto -> bb25;
+    }
+
+    bb30: {
+        StorageDead(_34);
+        drop(_5) -> [return: bb31, unwind continue];
+    }
+
+    bb31: {
+        StorageDead(_5);
+        return;
+    }
+
+    bb32 (cleanup): {
+        drop(_34) -> [return: bb33, unwind terminate(cleanup)];
+    }
+
+    bb33 (cleanup): {
+        drop(_5) -> [return: bb34, unwind terminate(cleanup)];
+    }
+
+    bb34 (cleanup): {
+        resume;
+    }
+
+    bb35: {
+        StorageDead(_138);
+        StorageDead(_137);
+        StorageDead(_136);
+        StorageDead(_135);
+        StorageDead(_141);
+        StorageDead(_7);
+        StorageLive(_33);
+        StorageLive(_144);
+        _144 = const "case,round,repeats,units,elapsed_ns,ns_per_unit,checksum\n";
+        StorageLive(_145);
+        StorageLive(_146);
+        StorageLive(_151);
+        _151 = &raw const (*_144);
+        _146 = copy _151 as *const u8 (PtrToPtr);
+        StorageDead(_151);
+        _145 = copy _146 as std::ptr::NonNull<u8> (Transmute);
+        StorageDead(_146);
+        StorageLive(_147);
+        StorageLive(_148);
+        StorageLive(_149);
+        StorageLive(_150);
+        StorageLive(_152);
+        _152 = const "case,round,repeats,units,elapsed_ns,ns_per_unit,checksum\n" as &[u8] (Transmute);
+        _150 = PtrMetadata(copy _152);
+        StorageDead(_152);
+        _149 = Shl(move _150, const 1_i32);
+        StorageDead(_150);
+        _148 = BitOr(move _149, const 1_usize);
+        StorageDead(_149);
+        _147 = move _148 as std::ptr::NonNull<core::fmt::rt::Argument<'_>> (Transmute);
+        StorageDead(_148);
+        _33 = Arguments::<'_> { template: move _145, args: move _147 };
+        StorageDead(_147);
+        StorageDead(_145);
+        StorageDead(_144);
+        _32 = std::io::_print(move _33) -> [return: bb13, unwind: bb33];
+    }
+
+    bb36: {
+        StorageDead(_138);
+        StorageDead(_137);
+        StorageLive(_139);
+        StorageLive(_143);
+        _143 = Offset(copy _141, const 1_usize);
+        _139 = copy _143 as std::ptr::NonNull<Case<'_>> (Transmute);
+        StorageDead(_143);
+        (_6.0: std::ptr::NonNull<Case<'_>>) = move _139;
+        StorageDead(_139);
+        StorageLive(_140);
+        _140 = &mut (*_141);
+        _7 = Option::<&mut Case<'_>>::Some(copy _140);
+        StorageDead(_140);
+        StorageDead(_136);
+        StorageDead(_135);
+        StorageDead(_141);
+        _8 = copy ((_7 as Some).0: &mut Case<'_>);
+        StorageLive(_9);
+        _9 = Instant::now() -> [return: bb5, unwind: bb33];
+    }
+
+    bb37: {
+        StorageDead(_157);
+        _153 = Option::<std::cmp::Ordering>::Some(move _156);
+        StorageDead(_156);
+        StorageLive(_154);
+        _154 = move ((_153 as Some).0: std::cmp::Ordering);
+        StorageLive(_155);
+        _155 = discriminant(_154);
+        _11 = Lt(move _155, const 0_i8);
+        StorageDead(_155);
+        StorageDead(_154);
+        StorageDead(_153);
+        switchInt(move _11) -> [0: bb11, otherwise: bb8];
+    }
+
+    bb38: {
+        StorageLive(_159);
+        StorageLive(_160);
+        _160 = copy (_12.1: core::num::niche_types::Nanoseconds);
+        _159 = copy _160 as u32 (Transmute);
+        StorageDead(_160);
+        _156 = Cmp(copy _159, const 500000000_u32);
+        StorageDead(_159);
+        goto -> bb37;
+    }
+
+    bb39: {
+        StorageDead(_161);
+        StorageDead(_163);
+        StorageDead(_162);
+        _15 = std::intrinsics::black_box::<u64>(move _16) -> [return: bb40, unwind unreachable];
+    }
+
+    bb40: {
+        StorageDead(_16);
+        _14 = &_15;
+        _17 = &((*_8).2: u64);
+        StorageLive(_18);
+        StorageLive(_19);
+        _19 = copy (*_17);
+        _18 = Eq(copy _15, move _19);
+        switchInt(move _18) -> [0: bb10, otherwise: bb9];
+    }
+
+    bb41: {
+        StorageDead(_31);
+        _29 = maximum_number_nsz_f64(move _30, const 1f64) -> [return: bb42, unwind unreachable];
+    }
+
+    bb42: {
+        StorageDead(_30);
+        _28 = move _29 as usize (FloatToInt);
+        StorageDead(_29);
+        StorageLive(_170);
+        _170 = Vec::<usize>::push_mut(move _27, move _28) -> [return: bb43, unwind: bb33];
+    }
+
+    bb43: {
+        StorageDead(_170);
+        StorageDead(_28);
+        StorageDead(_27);
+        StorageDead(_21);
+        StorageDead(_9);
+        StorageDead(_7);
+        goto -> bb3;
+    }
+
+    bb44: {
+        StorageDead(_35);
+        _173 = const 0_usize;
+        goto -> bb14;
+    }
+
+    bb45: {
+        StorageLive(_172);
+        _172 = copy _173;
+        _173 = AddUnchecked(copy _172, const 1_usize);
+        _36 = Option::<usize>::Some(copy _172);
+        StorageDead(_172);
+        StorageDead(_171);
+        StorageLive(_37);
+        _37 = copy ((_36 as Some).0: usize);
+        _185 = const 0_usize;
+        goto -> bb15;
+    }
+
+    bb46: {
+        StorageDead(_171);
+        StorageDead(_36);
+        StorageLive(_88);
+        StorageLive(_177);
+        StorageLive(_175);
+        StorageLive(_176);
+        StorageLive(_180);
+        _180 = &raw const (*_1);
+        _176 = copy _180 as std::ptr::NonNull<[Case<'_>]> (Transmute);
+        StorageDead(_180);
+        StorageLive(_181);
+        StorageLive(_182);
+        _182 = copy _176 as *mut [Case<'_>] (Transmute);
+        _181 = copy _182 as *mut Case<'_> (PtrToPtr);
+        StorageDead(_182);
+        _175 = copy _181 as std::ptr::NonNull<Case<'_>> (Transmute);
+        StorageDead(_181);
+        StorageDead(_176);
+        StorageLive(_178);
+        StorageLive(_179);
+        _179 = copy _175 as *mut Case<'_> (Transmute);
+        _178 = Offset(copy _179, copy _127);
+        StorageDead(_179);
+        _177 = copy _178 as *const Case<'_> (PtrToPtr);
+        StorageDead(_178);
+        _88 = std::slice::Iter::<'_, Case<'_>> { ptr: copy _175, end_or_len: copy _177, _marker: const PhantomData::<&Case<'_>> };
+        StorageDead(_175);
+        StorageDead(_177);
+        StorageLive(_89);
+        StorageLive(_90);
+        StorageLive(_248);
+        StorageLive(_249);
+        StorageLive(_251);
+        _251 = copy ((((_34.0: alloc::raw_vec::RawVec<std::vec::Vec<f64>>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _249 = copy _251 as *mut std::vec::Vec<f64> (Transmute);
+        StorageDead(_251);
+        _250 = copy (_34.1: usize);
+        _248 = *mut [std::vec::Vec<f64>] from (copy _249, copy _250);
+        StorageDead(_249);
+        _90 = &mut (*_248);
+        StorageDead(_248);
+        StorageLive(_254);
+        StorageLive(_252);
+        StorageLive(_253);
+        StorageLive(_256);
+        _256 = &raw mut (*_90);
+        _253 = copy _256 as std::ptr::NonNull<[std::vec::Vec<f64>]> (Transmute);
+        StorageDead(_256);
+        StorageLive(_257);
+        StorageLive(_258);
+        _258 = copy _253 as *mut [std::vec::Vec<f64>] (Transmute);
+        _257 = copy _258 as *mut std::vec::Vec<f64> (PtrToPtr);
+        StorageDead(_258);
+        _252 = copy _257 as std::ptr::NonNull<std::vec::Vec<f64>> (Transmute);
+        StorageDead(_257);
+        StorageDead(_253);
+        StorageLive(_255);
+        _255 = copy _252 as *mut std::vec::Vec<f64> (Transmute);
+        _254 = Offset(copy _255, copy _250);
+        StorageDead(_255);
+        _89 = std::slice::IterMut::<'_, Vec<f64>> { ptr: copy _252, end_or_len: copy _254, _marker: const PhantomData::<&mut Vec<f64>> };
+        StorageDead(_252);
+        StorageDead(_254);
+        _87 = <std::slice::Iter<'_, Case<'_>> as Iterator>::zip::<std::slice::IterMut<'_, Vec<f64>>>(move _88, move _89) -> [return: bb24, unwind: bb32];
+    }
+
+    bb47: {
+        StorageLive(_184);
+        _184 = copy _185;
+        _185 = AddUnchecked(copy _184, const 1_usize);
+        _38 = Option::<usize>::Some(copy _184);
+        StorageDead(_184);
+        StorageDead(_183);
+        StorageLive(_39);
+        _39 = copy ((_38 as Some).0: usize);
+        StorageLive(_40);
+        StorageLive(_41);
+        _41 = Add(copy _37, copy _39);
+        _42 = Eq(copy _127, const 0_usize);
+        assert(!move _42, "attempt to calculate the remainder of `{}` with a divisor of zero", copy _41) -> [success: bb16, unwind: bb32];
+    }
+
+    bb48: {
+        StorageDead(_183);
+        StorageDead(_38);
+        StorageDead(_37);
+        StorageDead(_36);
+        goto -> bb14;
+    }
+
+    bb49: {
+        _46 = &(*_187)[_40];
+        StorageDead(_191);
+        _45 = copy (*_46);
+        StorageDead(_46);
+        StorageLive(_47);
+        _47 = Instant::now() -> [return: bb18, unwind: bb32];
+    }
+
+    bb50: {
+        StorageLive(_193);
+        _193 = AddUnchecked(copy _327, const 1_usize);
+        _327 = move _193;
+        StorageDead(_193);
+        StorageDead(_192);
+        StorageLive(_49);
+        StorageLive(_50);
+        _50 = copy _48;
+        StorageLive(_51);
+        StorageLive(_52);
+        StorageLive(_196);
+        StorageLive(_197);
+        StorageLive(_195);
+        _197 = no_retag copy (((*_43).1: std::boxed::Box<dyn std::ops::FnMut() -> u64>).0: std::ptr::Unique<dyn std::ops::FnMut() -> u64>);
+        _196 = copy _197 as *const dyn std::ops::FnMut() -> u64 (BoxDerefTransmute);
+        _195 = &mut (*_196);
+        _52 = <dyn FnMut() -> u64 as FnMut<()>>::call_mut(move _195, const ()) -> [return: bb52, unwind: bb32];
+    }
+
+    bb51: {
+        StorageDead(_192);
+        StorageLive(_53);
+        StorageLive(_54);
+        StorageLive(_55);
+        _55 = &_47;
+        _54 = Instant::elapsed(move _55) -> [return: bb20, unwind: bb32];
+    }
+
+    bb52: {
+        StorageDead(_195);
+        StorageDead(_197);
+        StorageDead(_196);
+        _51 = std::intrinsics::black_box::<u64>(move _52) -> [return: bb53, unwind unreachable];
+    }
+
+    bb53: {
+        StorageDead(_52);
+        _49 = Add(copy _50, copy _51);
+        StorageDead(_51);
+        StorageDead(_50);
+        _48 = move _49;
+        StorageDead(_49);
+        goto -> bb19;
+    }
+
+    bb54: {
+        _68 = &mut (*_204)[_40];
+        StorageDead(_209);
+        StorageDead(_204);
+        StorageLive(_210);
+        _210 = Vec::<f64>::push_mut(move _68, copy _64) -> [return: bb55, unwind: bb32];
+    }
+
+    bb55: {
+        StorageDead(_210);
+        StorageDead(_68);
+        StorageLive(_70);
+        _71 = &((*_43).0: &str);
+        _72 = &_37;
+        _73 = &_45;
+        _74 = &_2;
+        _75 = &_53;
+        _76 = &_64;
+        _77 = &_48;
+        StorageLive(_78);
+        StorageLive(_79);
+        StorageLive(_215);
+        StorageLive(_211);
+        StorageLive(_212);
+        _215 = &raw const (*_71);
+        _212 = copy _215 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_213);
+        StorageLive(_214);
+        _214 = <&str as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _213 = copy _214 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_214);
+        _211 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _212, formatter: copy _213, _lifetime: const PhantomData::<&()> };
+        StorageDead(_213);
+        StorageDead(_212);
+        _79 = core::fmt::rt::Argument::<'_> { ty: move _211 };
+        StorageDead(_211);
+        StorageDead(_215);
+        StorageLive(_80);
+        StorageLive(_220);
+        StorageLive(_216);
+        StorageLive(_217);
+        _220 = &raw const (*_72);
+        _217 = copy _220 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_218);
+        StorageLive(_219);
+        _219 = <usize as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _218 = copy _219 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_219);
+        _216 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _217, formatter: copy _218, _lifetime: const PhantomData::<&()> };
+        StorageDead(_218);
+        StorageDead(_217);
+        _80 = core::fmt::rt::Argument::<'_> { ty: move _216 };
+        StorageDead(_216);
+        StorageDead(_220);
+        StorageLive(_81);
+        StorageLive(_225);
+        StorageLive(_221);
+        StorageLive(_222);
+        _225 = &raw const (*_73);
+        _222 = copy _225 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_223);
+        StorageLive(_224);
+        _224 = <usize as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _223 = copy _224 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_224);
+        _221 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _222, formatter: copy _223, _lifetime: const PhantomData::<&()> };
+        StorageDead(_223);
+        StorageDead(_222);
+        _81 = core::fmt::rt::Argument::<'_> { ty: move _221 };
+        StorageDead(_221);
+        StorageDead(_225);
+        StorageLive(_82);
+        StorageLive(_230);
+        StorageLive(_226);
+        StorageLive(_227);
+        _230 = &raw const (*_74);
+        _227 = copy _230 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_228);
+        StorageLive(_229);
+        _229 = <usize as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _228 = copy _229 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_229);
+        _226 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _227, formatter: copy _228, _lifetime: const PhantomData::<&()> };
+        StorageDead(_228);
+        StorageDead(_227);
+        _82 = core::fmt::rt::Argument::<'_> { ty: move _226 };
+        StorageDead(_226);
+        StorageDead(_230);
+        StorageLive(_83);
+        StorageLive(_235);
+        StorageLive(_231);
+        StorageLive(_232);
+        _235 = &raw const (*_75);
+        _232 = copy _235 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_233);
+        StorageLive(_234);
+        _234 = <u128 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a u128, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _233 = copy _234 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_234);
+        _231 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _232, formatter: copy _233, _lifetime: const PhantomData::<&()> };
+        StorageDead(_233);
+        StorageDead(_232);
+        _83 = core::fmt::rt::Argument::<'_> { ty: move _231 };
+        StorageDead(_231);
+        StorageDead(_235);
+        StorageLive(_84);
+        StorageLive(_240);
+        StorageLive(_236);
+        StorageLive(_237);
+        _240 = &raw const (*_76);
+        _237 = copy _240 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_238);
+        StorageLive(_239);
+        _239 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _238 = copy _239 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_239);
+        _236 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _237, formatter: copy _238, _lifetime: const PhantomData::<&()> };
+        StorageDead(_238);
+        StorageDead(_237);
+        _84 = core::fmt::rt::Argument::<'_> { ty: move _236 };
+        StorageDead(_236);
+        StorageDead(_240);
+        StorageLive(_85);
+        StorageLive(_245);
+        StorageLive(_241);
+        StorageLive(_242);
+        _245 = &raw const (*_77);
+        _242 = copy _245 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_243);
+        StorageLive(_244);
+        _244 = <u64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a u64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _243 = copy _244 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_244);
+        _241 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _242, formatter: copy _243, _lifetime: const PhantomData::<&()> };
+        StorageDead(_243);
+        StorageDead(_242);
+        _85 = core::fmt::rt::Argument::<'_> { ty: move _241 };
+        StorageDead(_241);
+        StorageDead(_245);
+        _78 = [move _79, move _80, move _81, move _82, move _83, move _84, move _85];
+        StorageDead(_85);
+        StorageDead(_84);
+        StorageDead(_83);
+        StorageDead(_82);
+        StorageDead(_81);
+        StorageDead(_80);
+        StorageDead(_79);
+        StorageLive(_86);
+        _86 = &_78;
+        StorageLive(_246);
+        _246 = const b"\xc0\x01,\xc0\x01,\xc0\x01,\xc0\x01,\xc0\x01,\xc5 \x00\x00p\t\x00\x01,\xc0\x01\n\x00" as std::ptr::NonNull<u8> (Transmute);
+        StorageLive(_247);
+        _247 = copy _86 as std::ptr::NonNull<core::fmt::rt::Argument<'_>> (Transmute);
+        _70 = Arguments::<'_> { template: move _246, args: move _247 };
+        StorageDead(_247);
+        StorageDead(_246);
+        StorageDead(_86);
+        _69 = std::io::_print(move _70) -> [return: bb23, unwind: bb32];
+    }
+
+    bb56: {
+        _94 = discriminant(_92);
+        switchInt(move _94) -> [0: bb27, 1: bb26, otherwise: bb4];
+    }
+
+    bb57: {
+        StorageDead(_99);
+        StorageLive(_100);
+        StorageLive(_101);
+        _101 = copy ((*_96).1: usize);
+        StorageLive(_271);
+        _271 = Le(copy _101, const 1152921504606846975_usize);
+        assume(move _271);
+        StorageDead(_271);
+        _100 = move _101 as f64 (IntToFloat);
+        StorageDead(_101);
+        _97 = Div(move _98, move _100);
+        StorageDead(_100);
+        StorageDead(_98);
+        StorageLive(_102);
+        StorageLive(_103);
+        StorageLive(_104);
+        StorageLive(_273);
+        StorageLive(_275);
+        _275 = copy (((((*_96).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _273 = copy _275 as *const f64 (Transmute);
+        StorageDead(_275);
+        _274 = copy ((*_96).1: usize);
+        _272 = *const [f64] from (copy _273, copy _274);
+        StorageDead(_273);
+        StorageLive(_278);
+        StorageLive(_276);
+        StorageLive(_277);
+        StorageLive(_281);
+        _281 = &raw const (*_272);
+        _277 = copy _281 as std::ptr::NonNull<[f64]> (Transmute);
+        StorageDead(_281);
+        StorageLive(_282);
+        StorageLive(_283);
+        _283 = copy _277 as *mut [f64] (Transmute);
+        _282 = copy _283 as *mut f64 (PtrToPtr);
+        StorageDead(_283);
+        _276 = copy _282 as std::ptr::NonNull<f64> (Transmute);
+        StorageDead(_282);
+        StorageDead(_277);
+        StorageLive(_279);
+        StorageLive(_280);
+        _280 = copy _276 as *mut f64 (Transmute);
+        _279 = Offset(copy _280, copy _274);
+        StorageDead(_280);
+        _278 = copy _279 as *const f64 (PtrToPtr);
+        StorageDead(_279);
+        _105 = std::slice::Iter::<'_, f64> { ptr: copy _276, end_or_len: copy _278, _marker: const PhantomData::<&f64> };
+        StorageDead(_276);
+        StorageDead(_278);
+        StorageLive(_107);
+        _107 = &_97;
+        _106 = {closure@src/lib.rs:50:37: 50:40} { mean: copy _107 };
+        StorageDead(_107);
+        StorageLive(_284);
+        _284 = {closure@/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/adapters/map.rs:88:5: 88:20} { 0: const ZeroSized: {closure@<f64 as Sum>::sum<Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>::{closure#0}}, 1: copy _106 };
+        _104 = <std::slice::Iter<'_, f64> as Iterator>::fold::<f64, {closure@iter::adapters::map::map_fold<&f64, f64, f64, {closure@src/lib.rs:50:37: 50:40}, {closure@<f64 as Sum>::sum<Map<std::slice::Iter<'_, f64>, {closure@src/lib.rs:50:37: 50:40}>>::{closure#0}}>::{closure#0}}>(move _105, const -0f64, move _284) -> [return: bb58, unwind: bb32];
+    }
+
+    bb58: {
+        StorageDead(_284);
+        StorageLive(_108);
+        StorageLive(_109);
+        StorageLive(_110);
+        _110 = copy ((*_96).1: usize);
+        StorageLive(_285);
+        _285 = Le(copy _110, const 1152921504606846975_usize);
+        assume(move _285);
+        StorageDead(_285);
+        _109 = Sub(move _110, const 1_usize);
+        StorageDead(_110);
+        _108 = move _109 as f64 (IntToFloat);
+        StorageDead(_109);
+        _103 = Div(move _104, move _108);
+        StorageDead(_108);
+        StorageDead(_104);
+        _102 = sqrtf64(move _103) -> [return: bb59, unwind unreachable];
+    }
+
+    bb59: {
+        StorageDead(_103);
+        StorageLive(_112);
+        StorageLive(_286);
+        StorageLive(_287);
+        StorageLive(_289);
+        _289 = copy (((((*_96).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _287 = copy _289 as *mut f64 (Transmute);
+        StorageDead(_289);
+        StorageLive(_288);
+        _288 = copy ((*_96).1: usize);
+        _286 = *mut [f64] from (copy _287, move _288);
+        StorageDead(_288);
+        StorageDead(_287);
+        _112 = &mut (*_286);
+        StorageDead(_286);
+        _111 = slice::<impl [f64]>::sort_by::<for<'a, 'b> fn(&'a f64, &'b f64) -> std::cmp::Ordering {core::f64::<impl f64>::total_cmp}>(move _112, core::f64::<impl f64>::total_cmp) -> [return: bb28, unwind: bb32];
+    }
+
+    bb60: {
+        _116 = &(*_290)[10 of 11];
+        StorageDead(_294);
+        StorageLive(_117);
+        StorageLive(_296);
+        StorageLive(_298);
+        _298 = copy (((((*_96).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _296 = copy _298 as *const f64 (Transmute);
+        StorageDead(_298);
+        _297 = copy ((*_96).1: usize);
+        _295 = *const [f64] from (copy _296, copy _297);
+        StorageDead(_296);
+        StorageLive(_299);
+        _299 = Lt(const 20_usize, copy _297);
+        assert(move _299, "index out of bounds: the length is {} but the index is {}", copy _297, const 20_usize) -> [success: bb61, unwind: bb32];
+    }
+
+    bb61: {
+        _117 = &(*_295)[20 of 21];
+        StorageDead(_299);
+        _118 = &_97;
+        _119 = &_102;
+        StorageLive(_120);
+        StorageLive(_121);
+        StorageLive(_304);
+        StorageLive(_300);
+        StorageLive(_301);
+        _304 = &raw const (*_115);
+        _301 = copy _304 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_302);
+        StorageLive(_303);
+        _303 = <&str as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _302 = copy _303 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_303);
+        _300 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _301, formatter: copy _302, _lifetime: const PhantomData::<&()> };
+        StorageDead(_302);
+        StorageDead(_301);
+        _121 = core::fmt::rt::Argument::<'_> { ty: move _300 };
+        StorageDead(_300);
+        StorageDead(_304);
+        StorageLive(_122);
+        StorageLive(_309);
+        StorageLive(_305);
+        StorageLive(_306);
+        _309 = &raw const (*_118);
+        _306 = copy _309 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_307);
+        StorageLive(_308);
+        _308 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _307 = copy _308 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_308);
+        _305 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _306, formatter: copy _307, _lifetime: const PhantomData::<&()> };
+        StorageDead(_307);
+        StorageDead(_306);
+        _122 = core::fmt::rt::Argument::<'_> { ty: move _305 };
+        StorageDead(_305);
+        StorageDead(_309);
+        StorageLive(_123);
+        StorageLive(_314);
+        StorageLive(_310);
+        StorageLive(_311);
+        _314 = &raw const (*_119);
+        _311 = copy _314 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_312);
+        StorageLive(_313);
+        _313 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _312 = copy _313 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_313);
+        _310 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _311, formatter: copy _312, _lifetime: const PhantomData::<&()> };
+        StorageDead(_312);
+        StorageDead(_311);
+        _123 = core::fmt::rt::Argument::<'_> { ty: move _310 };
+        StorageDead(_310);
+        StorageDead(_314);
+        StorageLive(_124);
+        StorageLive(_319);
+        StorageLive(_315);
+        StorageLive(_316);
+        _319 = &raw const (*_116);
+        _316 = copy _319 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_317);
+        StorageLive(_318);
+        _318 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _317 = copy _318 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_318);
+        _315 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _316, formatter: copy _317, _lifetime: const PhantomData::<&()> };
+        StorageDead(_317);
+        StorageDead(_316);
+        _124 = core::fmt::rt::Argument::<'_> { ty: move _315 };
+        StorageDead(_315);
+        StorageDead(_319);
+        StorageLive(_125);
+        StorageLive(_324);
+        StorageLive(_320);
+        StorageLive(_321);
+        _324 = &raw const (*_117);
+        _321 = copy _324 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_322);
+        StorageLive(_323);
+        _323 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _322 = copy _323 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_323);
+        _320 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _321, formatter: copy _322, _lifetime: const PhantomData::<&()> };
+        StorageDead(_322);
+        StorageDead(_321);
+        _125 = core::fmt::rt::Argument::<'_> { ty: move _320 };
+        StorageDead(_320);
+        StorageDead(_324);
+        _120 = [move _121, move _122, move _123, move _124, move _125];
+        StorageDead(_125);
+        StorageDead(_124);
+        StorageDead(_123);
+        StorageDead(_122);
+        StorageDead(_121);
+        StorageLive(_126);
+        _126 = &_120;
+        StorageLive(_325);
+        _325 = const b"\x08summary,\xc0\x01,\xc5 \x00\x00p\t\x00\x01,\xc5 \x00\x00p\t\x00\x01,\xc5 \x00\x00p\t\x00\x01,\xc5 \x00\x00p\t\x00\x01\n\x00" as std::ptr::NonNull<u8> (Transmute);
+        StorageLive(_326);
+        _326 = copy _126 as std::ptr::NonNull<core::fmt::rt::Argument<'_>> (Transmute);
+        _114 = Arguments::<'_> { template: move _325, args: move _326 };
+        StorageDead(_326);
+        StorageDead(_325);
+        StorageDead(_126);
+        _113 = std::io::_print(move _114) -> [return: bb29, unwind: bb32];
+    }
+}
+
+alloc103 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc98 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 │ ................
+}
+
+alloc89 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 │ ................
+}
+
+alloc8 (size: 49, align: 1) {
+    0x00 │ 08 73 75 6d 6d 61 72 79 2c c0 01 2c c5 20 00 00 │ .summary,..,. ..
+    0x10 │ 70 09 00 01 2c c5 20 00 00 70 09 00 01 2c c5 20 │ p...,. ..p...,. 
+    0x20 │ 00 00 70 09 00 01 2c c5 20 00 00 70 09 00 01 0a │ ..p...,. ..p....
+    0x30 │ 00                                              │ .
+}
+
+alloc7 (size: 28, align: 1) {
+    0x00 │ c0 01 2c c0 01 2c c0 01 2c c0 01 2c c0 01 2c c5 │ ..,..,..,..,..,.
+    0x10 │ 20 00 00 70 09 00 01 2c c0 01 0a 00             │  ..p...,....
+}
+
+alloc6 (size: 57, align: 1) {
+    0x00 │ 63 61 73 65 2c 72 6f 75 6e 64 2c 72 65 70 65 61 │ case,round,repea
+    0x10 │ 74 73 2c 75 6e 69 74 73 2c 65 6c 61 70 73 65 64 │ ts,units,elapsed
+    0x20 │ 5f 6e 73 2c 6e 73 5f 70 65 72 5f 75 6e 69 74 2c │ _ns,ns_per_unit,
+    0x30 │ 63 68 65 63 6b 73 75 6d 0a                      │ checksum.
+}
+
+alloc5 (size: 27, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 75 6e 69 74 73 20 3e 20 30                │ : units > 0
+}
+
+fn measure::{closure#0}(_1: &mut {closure@src/lib.rs:50:37: 50:40}, _2: &f64) -> f64 {
+    debug v => _2;
+    debug mean => (*((*_1).0: &f64));
+    let mut _0: f64;
+    let mut _3: f64;
+    let mut _4: f64;
+    let mut _5: &f64;
+    scope 1 (inlined #[track_caller] <&f64 as Sub<f64>>::sub) {
+        let mut _6: f64;
+        scope 2 (inlined #[track_caller] <f64 as Sub>::sub) {
+        }
+    }
+    scope 3 (inlined f64::<impl f64>::powi) {
+        scope 4 (inlined core::f64::math::powi) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        StorageLive(_4);
+        _5 = no_retag copy ((*_1).0: &f64);
+        _4 = copy (*_5);
+        StorageLive(_6);
+        _6 = copy (*_2);
+        _3 = Sub(copy _6, copy _4);
+        StorageDead(_6);
+        StorageDead(_4);
+        _0 = powif64(move _3, const 2_i32) -> [return: bb1, unwind unreachable];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn borrowed_sum(_1: &[u64]) -> u64 {
+    debug input => _1;
+    let mut _0: u64;
+    let mut _2: std::slice::Iter<'_, u64>;
+    scope 1 (inlined core::slice::<impl [u64]>::iter) {
+        scope 2 (inlined std::slice::Iter::<'_, u64>::new) {
+            let _3: usize;
+            let mut _5: std::ptr::NonNull<[u64]>;
+            let mut _7: *mut u64;
+            let mut _8: *mut u64;
+            scope 3 {
+                let _4: std::ptr::NonNull<u64>;
+                scope 4 {
+                    let _6: *const u64;
+                    scope 5 {
+                    }
+                    scope 9 (inlined std::ptr::without_provenance::<u64>) {
+                        scope 10 (inlined std::ptr::without_provenance_mut::<u64>) {
+                        }
+                    }
+                    scope 11 (inlined NonNull::<u64>::as_ptr) {
+                    }
+                    scope 12 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u64>::add) {
+                    }
+                }
+                scope 6 (inlined NonNull::<[u64]>::from_ref) {
+                    let mut _9: *const [u64];
+                }
+                scope 7 (inlined NonNull::<[u64]>::cast::<u64>) {
+                    let mut _10: *mut u64;
+                    let mut _11: *mut [u64];
+                    scope 8 (inlined NonNull::<[u64]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 13 (inlined <std::slice::Iter<'_, u64> as Iterator>::copied::<'_, u64>) {
+        scope 14 (inlined Copied::<std::slice::Iter<'_, u64>>::new) {
+        }
+    }
+    scope 15 (inlined <Copied<std::slice::Iter<'_, u64>> as Iterator>::fold::<u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        scope 16 (inlined iter::adapters::copied::copy_fold::<u64, u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_6);
+        StorageLive(_3);
+        _3 = PtrMetadata(copy _1);
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_9);
+        _9 = &raw const (*_1);
+        _5 = copy _9 as std::ptr::NonNull<[u64]> (Transmute);
+        StorageDead(_9);
+        StorageLive(_10);
+        StorageLive(_11);
+        _11 = copy _5 as *mut [u64] (Transmute);
+        _10 = copy _11 as *mut u64 (PtrToPtr);
+        StorageDead(_11);
+        _4 = copy _10 as std::ptr::NonNull<u64> (Transmute);
+        StorageDead(_10);
+        StorageDead(_5);
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = copy _4 as *mut u64 (Transmute);
+        _7 = Offset(copy _8, copy _3);
+        StorageDead(_8);
+        _6 = copy _7 as *const u64 (PtrToPtr);
+        StorageDead(_7);
+        _2 = std::slice::Iter::<'_, u64> { ptr: copy _4, end_or_len: copy _6, _marker: const PhantomData::<&u64> };
+        StorageDead(_4);
+        StorageDead(_3);
+        StorageDead(_6);
+        _0 = <std::slice::Iter<'_, u64> as Iterator>::fold::<u64, {closure@iter::adapters::copied::copy_fold<u64, u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}}>(move _2, const 0_u64, const ZeroSized: {closure@iter::adapters::copied::copy_fold<u64, u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}}) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        return;
+    }
+}
+
+fn cloned_sum(_1: &[u64]) -> u64 {
+    debug input => _1;
+    let mut _0: u64;
+    let _2: std::vec::Vec<u64>;
+    let mut _3: std::vec::Vec<u64>;
+    let _4: &[u64];
+    scope 1 {
+        debug owned => _2;
+        scope 43 (inlined <Vec<u64> as Deref>::deref) {
+            scope 44 (inlined Vec::<u64>::as_slice) {
+                let _22: *const [u64];
+                let mut _23: *const u64;
+                let mut _24: usize;
+                scope 45 (inlined Vec::<u64>::as_ptr) {
+                    scope 46 (inlined alloc::raw_vec::RawVec::<u64>::ptr) {
+                        scope 47 (inlined alloc::raw_vec::RawVecInner::ptr::<u64>) {
+                            scope 48 (inlined alloc::raw_vec::RawVecInner::non_null::<u64>) {
+                                let mut _25: std::ptr::NonNull<u8>;
+                                scope 49 (inlined std::ptr::Unique::<u8>::cast::<u64>) {
+                                    scope 50 (inlined NonNull::<u8>::cast::<u64>) {
+                                        scope 51 (inlined NonNull::<u8>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 52 (inlined std::ptr::Unique::<u64>::as_non_null_ptr) {
+                                }
+                            }
+                            scope 53 (inlined NonNull::<u64>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    scope 2 (inlined slice::<impl [u64]>::to_vec) {
+        scope 3 (inlined slice::<impl [u64]>::to_vec_in::<std::alloc::Global>) {
+            scope 4 (inlined <u64 as slice::<impl [T]>::to_vec_in::ConvertVec>::to_vec::<std::alloc::Global>) {
+                let _5: usize;
+                let mut _6: bool;
+                let mut _7: *const u64;
+                let mut _8: *mut u64;
+                scope 5 {
+                    scope 6 {
+                        scope 9 (inlined core::slice::<impl [u64]>::as_ptr) {
+                            let mut _11: *const [u64];
+                        }
+                        scope 10 (inlined Vec::<u64>::as_mut_ptr) {
+                            scope 11 (inlined alloc::raw_vec::RawVec::<u64>::ptr) {
+                                scope 12 (inlined alloc::raw_vec::RawVecInner::ptr::<u64>) {
+                                    scope 13 (inlined alloc::raw_vec::RawVecInner::non_null::<u64>) {
+                                        let mut _12: std::ptr::NonNull<u8>;
+                                        scope 14 (inlined std::ptr::Unique::<u8>::cast::<u64>) {
+                                            scope 15 (inlined NonNull::<u8>::cast::<u64>) {
+                                                scope 16 (inlined NonNull::<u8>::as_ptr) {
+                                                }
+                                            }
+                                        }
+                                        scope 17 (inlined std::ptr::Unique::<u64>::as_non_null_ptr) {
+                                        }
+                                    }
+                                    scope 18 (inlined NonNull::<u64>::as_ptr) {
+                                    }
+                                }
+                            }
+                        }
+                        scope 19 (inlined #[track_caller] std::ptr::const_ptr::<impl *const u64>::copy_to_nonoverlapping) {
+                            scope 20 (inlined std::ptr::copy_nonoverlapping::<u64>) {
+                                scope 21 (inlined core::ub_checks::check_language_ub) {
+                                    scope 22 (inlined core::ub_checks::check_language_ub::runtime) {
+                                    }
+                                }
+                                scope 23 (inlined std::mem::size_of::<u64>) {
+                                }
+                                scope 24 (inlined std::mem::align_of::<u64>) {
+                                }
+                            }
+                        }
+                        scope 25 (inlined Vec::<u64>::set_len) {
+                            scope 26 (inlined Vec::<u64>::capacity) {
+                                scope 27 (inlined alloc::raw_vec::RawVec::<u64>::capacity) {
+                                    scope 28 (inlined std::mem::size_of::<u64>) {
+                                    }
+                                    scope 29 (inlined alloc::raw_vec::RawVecInner::capacity) {
+                                        scope 30 (inlined core::num::niche_types::UsizeNoHighBit::as_inner) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 7 (inlined Vec::<u64>::with_capacity_in) {
+                        let mut _9: alloc::raw_vec::RawVec<u64>;
+                        scope 8 (inlined alloc::raw_vec::RawVec::<u64>::with_capacity_in) {
+                            let mut _10: alloc::raw_vec::RawVecInner;
+                            scope 31 (inlined alloc::raw_vec::RawVecInner::with_capacity_in) {
+                                let mut _13: std::result::Result<alloc::raw_vec::RawVecInner, std::collections::TryReserveError>;
+                                let mut _14: isize;
+                                let mut _15: bool;
+                                let mut _16: bool;
+                                let _17: std::collections::TryReserveError;
+                                let mut _18: !;
+                                scope 32 {
+                                    scope 34 (inlined alloc::raw_vec::RawVecInner::needs_to_grow) {
+                                        let mut _19: usize;
+                                        let mut _20: usize;
+                                        scope 35 (inlined Layout::size) {
+                                        }
+                                        scope 36 (inlined alloc::raw_vec::RawVecInner::capacity) {
+                                            let mut _21: core::num::niche_types::UsizeNoHighBit;
+                                            scope 37 (inlined core::num::niche_types::UsizeNoHighBit::as_inner) {
+                                            }
+                                        }
+                                        scope 38 (inlined core::num::<impl usize>::wrapping_sub) {
+                                        }
+                                    }
+                                    scope 39 (inlined #[track_caller] assert_unchecked) {
+                                        scope 40 (inlined core::ub_checks::check_language_ub) {
+                                            scope 41 (inlined core::ub_checks::check_language_ub::runtime) {
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 33 {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    scope 42 (inlined std::hint::black_box::<Vec<u64>>) {
+    }
+
+    bb0: {
+        StorageLive(_2);
+        StorageLive(_3);
+        StorageLive(_11);
+        StorageLive(_12);
+        StorageLive(_5);
+        _5 = PtrMetadata(copy _1);
+        StorageLive(_9);
+        StorageLive(_10);
+        StorageLive(_14);
+        StorageLive(_13);
+        _13 = alloc::raw_vec::RawVecInner::try_allocate_in(copy _5, const alloc::raw_vec::AllocInit::Uninitialized, const std::alloc::Global, const Layout {{ size: 8_usize, align: std::mem::Alignment {{ _inner_repr_trick: mem::alignment::AlignmentEnum::_Align1Shl3 }} }}) -> [return: bb7, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_4);
+        drop(_2) -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        StorageDead(_2);
+        return;
+    }
+
+    bb3 (cleanup): {
+        drop(_2) -> [return: bb4, unwind terminate(cleanup)];
+    }
+
+    bb4 (cleanup): {
+        resume;
+    }
+
+    bb5: {
+        StorageLive(_7);
+        _11 = &raw const (*_1);
+        _7 = copy _11 as *const u64 (PtrToPtr);
+        StorageLive(_8);
+        _12 = copy ((((_3.0: alloc::raw_vec::RawVec<u64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _8 = copy _12 as *mut u64 (Transmute);
+        copy_nonoverlapping(dst = copy _8, src = copy _7, count = copy _5);
+        StorageDead(_8);
+        StorageDead(_7);
+        (_3.1: usize) = copy _5;
+        goto -> bb6;
+    }
+
+    bb6: {
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_12);
+        StorageDead(_11);
+        _2 = std::intrinsics::black_box::<Vec<u64>>(move _3) -> [return: bb11, unwind unreachable];
+    }
+
+    bb7: {
+        _14 = discriminant(_13);
+        switchInt(move _14) -> [0: bb10, 1: bb9, otherwise: bb8];
+    }
+
+    bb8: {
+        unreachable;
+    }
+
+    bb9: {
+        StorageLive(_17);
+        _17 = move ((_13 as Err).0: std::collections::TryReserveError);
+        _18 = alloc::raw_vec::handle_error(move _17) -> unwind continue;
+    }
+
+    bb10: {
+        _10 = move ((_13 as Ok).0: alloc::raw_vec::RawVecInner);
+        StorageLive(_15);
+        StorageLive(_16);
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_21);
+        _21 = copy (_10.1: core::num::niche_types::UsizeNoHighBit);
+        _20 = copy _21 as usize (Transmute);
+        StorageDead(_21);
+        _19 = Sub(copy _20, const 0_usize);
+        StorageDead(_20);
+        _16 = Gt(copy _5, move _19);
+        StorageDead(_19);
+        _15 = Not(move _16);
+        StorageDead(_16);
+        assume(copy _15);
+        StorageDead(_15);
+        StorageDead(_13);
+        StorageDead(_14);
+        _9 = alloc::raw_vec::RawVec::<u64> { inner: move _10, _marker: const PhantomData::<u64> };
+        StorageDead(_10);
+        _3 = Vec::<u64> { buf: move _9, len: const 0_usize };
+        StorageDead(_9);
+        StorageLive(_6);
+        _6 = Gt(copy _5, const 0_usize);
+        switchInt(move _6) -> [0: bb6, otherwise: bb5];
+    }
+
+    bb11: {
+        StorageDead(_3);
+        StorageLive(_4);
+        StorageLive(_22);
+        StorageLive(_23);
+        StorageLive(_25);
+        _25 = copy ((((_2.0: alloc::raw_vec::RawVec<u64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _23 = copy _25 as *const u64 (Transmute);
+        StorageDead(_25);
+        StorageLive(_24);
+        _24 = copy (_2.1: usize);
+        _22 = *const [u64] from (copy _23, move _24);
+        StorageDead(_24);
+        StorageDead(_23);
+        _4 = &(*_22);
+        StorageDead(_22);
+        _0 = borrowed_sum(move _4) -> [return: bb1, unwind: bb3];
+    }
+}
+
+alloc123 (size: 16, align: 8) {
+    08 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 │ ................
+}
+
+fn <impl at src/lib.rs:73:1: 73:28>::drop(_1: &mut DropProbe<'_>) -> () {
+    debug self => _1;
+    let mut _0: ();
+    let mut _2: u64;
+    let mut _3: u64;
+    let mut _4: &std::cell::Cell<u64>;
+    let mut _5: &std::cell::Cell<u64>;
+    scope 1 (inlined Cell::<u64>::get) {
+        let mut _6: *mut u64;
+        scope 2 (inlined UnsafeCell::<u64>::get) {
+            let mut _7: *const std::cell::UnsafeCell<u64>;
+        }
+    }
+    scope 3 (inlined core::num::<impl u64>::wrapping_add) {
+    }
+    scope 4 (inlined Cell::<u64>::set) {
+        scope 5 (inlined Cell::<u64>::replace) {
+            let mut _8: *mut u64;
+            scope 6 (inlined UnsafeCell::<u64>::get) {
+                let mut _9: *const std::cell::UnsafeCell<u64>;
+            }
+            scope 7 (inlined std::mem::replace::<u64>) {
+                scope 8 {
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _4 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        StorageLive(_2);
+        StorageLive(_3);
+        _5 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &raw const ((*_5).0: std::cell::UnsafeCell<u64>);
+        _6 = copy _7 as *mut u64 (PtrToPtr);
+        StorageDead(_7);
+        _3 = copy (*_6);
+        StorageDead(_6);
+        _2 = Add(copy _3, const 1_u64);
+        StorageDead(_3);
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = &raw const ((*_4).0: std::cell::UnsafeCell<u64>);
+        _8 = copy _9 as *mut u64 (PtrToPtr);
+        StorageDead(_9);
+        (*_8) = copy _2;
+        StorageDead(_8);
+        StorageDead(_2);
+        return;
+    }
+}
+
+fn conditional_drop(_1: bool, _2: &Cell<u64>) -> () {
+    debug flag => _1;
+    debug count => _2;
+    let mut _0: ();
+    let _3: DropProbe<'_>;
+    let mut _5: DropProbe<'_>;
+    let _6: &DropProbe<'_>;
+    let mut _7: &DropProbe<'_>;
+    let mut _8: bool;
+    scope 1 {
+        debug first => _3;
+        let _4: DropProbe<'_>;
+        scope 2 {
+            debug second => _4;
+            scope 3 (inlined std::mem::drop::<DropProbe<'_>>) {
+            }
+            scope 4 (inlined std::hint::black_box::<&DropProbe<'_>>) {
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _8 = const true;
+        _3 = DropProbe::<'_>(copy _2);
+        StorageLive(_4);
+        _4 = DropProbe::<'_>(copy _2);
+        switchInt(copy _1) -> [0: bb8, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageLive(_5);
+        _8 = const false;
+        _5 = move _3;
+        drop(_5) -> [return: bb7, unwind: bb3];
+    }
+
+    bb2: {
+        StorageDead(_3);
+        return;
+    }
+
+    bb3 (cleanup): {
+        drop(_4) -> [return: bb6, unwind terminate(cleanup)];
+    }
+
+    bb4 (cleanup): {
+        resume;
+    }
+
+    bb5 (cleanup): {
+        drop(_3) -> [return: bb4, unwind terminate(cleanup)];
+    }
+
+    bb6 (cleanup): {
+        switchInt(copy _8) -> [0: bb4, otherwise: bb5];
+    }
+
+    bb7: {
+        StorageDead(_5);
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &_4;
+        _6 = std::intrinsics::black_box::<&DropProbe<'_>>(move _7) -> [return: bb9, unwind unreachable];
+    }
+
+    bb8: {
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &_4;
+        _6 = std::intrinsics::black_box::<&DropProbe<'_>>(move _7) -> [return: bb11, unwind unreachable];
+    }
+
+    bb9: {
+        StorageDead(_7);
+        StorageDead(_6);
+        drop(_4) -> [return: bb10, unwind: bb6];
+    }
+
+    bb10: {
+        StorageDead(_4);
+        goto -> bb2;
+    }
+
+    bb11: {
+        StorageDead(_7);
+        StorageDead(_6);
+        drop(_4) -> [return: bb12, unwind: bb6];
+    }
+
+    bb12: {
+        StorageDead(_4);
+        drop(_3) -> [return: bb2, unwind continue];
+    }
+}
+
+fn option_drop(_1: bool, _2: &Cell<u64>) -> () {
+    debug flag => _1;
+    debug count => _2;
+    let mut _0: ();
+    let mut _3: std::option::Option<DropProbe<'_>>;
+    let mut _4: DropProbe<'_>;
+    let mut _6: std::option::Option<DropProbe<'_>>;
+    let _7: &DropProbe<'_>;
+    let mut _8: &DropProbe<'_>;
+    scope 1 {
+        debug first => _3;
+        let _5: DropProbe<'_>;
+        scope 2 {
+            debug second => _5;
+            scope 3 (inlined Option::<DropProbe<'_>>::take) {
+                scope 4 (inlined std::mem::replace::<Option<DropProbe<'_>>>) {
+                    scope 5 {
+                    }
+                }
+            }
+            scope 6 (inlined std::mem::drop::<Option<DropProbe<'_>>>) {
+            }
+            scope 7 (inlined std::hint::black_box::<&DropProbe<'_>>) {
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _4 = DropProbe::<'_>(copy _2);
+        _3 = Option::<DropProbe<'_>>::Some(copy _4);
+        StorageLive(_5);
+        _5 = copy _4;
+        switchInt(copy _1) -> [0: bb2, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageLive(_6);
+        _6 = copy _3;
+        _3 = const Option::<DropProbe<'_>>::None;
+        drop(_6) -> [return: bb8, unwind: bb5];
+    }
+
+    bb2: {
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = &_5;
+        _7 = std::intrinsics::black_box::<&DropProbe<'_>>(move _8) -> [return: bb9, unwind unreachable];
+    }
+
+    bb3: {
+        StorageDead(_5);
+        drop(_3) -> [return: bb4, unwind continue];
+    }
+
+    bb4: {
+        StorageDead(_3);
+        return;
+    }
+
+    bb5 (cleanup): {
+        drop(_5) -> [return: bb6, unwind terminate(cleanup)];
+    }
+
+    bb6 (cleanup): {
+        drop(_3) -> [return: bb7, unwind terminate(cleanup)];
+    }
+
+    bb7 (cleanup): {
+        resume;
+    }
+
+    bb8: {
+        StorageDead(_6);
+        goto -> bb2;
+    }
+
+    bb9: {
+        StorageDead(_8);
+        StorageDead(_7);
+        drop(_5) -> [return: bb3, unwind: bb6];
+    }
+}
+
+fn Kernel::batch(_1: &Self, _2: &[u64]) -> u64 {
+    debug self => _1;
+    debug input => _2;
+    let mut _0: u64;
+    let mut _3: std::slice::Iter<'_, u64>;
+    let mut _4: {closure@src/lib.rs:104:18: 104:22};
+    scope 1 (inlined core::slice::<impl [u64]>::iter) {
+        scope 2 (inlined std::slice::Iter::<'_, u64>::new) {
+            let _5: usize;
+            let mut _7: std::ptr::NonNull<[u64]>;
+            let mut _9: *mut u64;
+            let mut _10: *mut u64;
+            scope 3 {
+                let _6: std::ptr::NonNull<u64>;
+                scope 4 {
+                    let _8: *const u64;
+                    scope 5 {
+                    }
+                    scope 9 (inlined std::ptr::without_provenance::<u64>) {
+                        scope 10 (inlined std::ptr::without_provenance_mut::<u64>) {
+                        }
+                    }
+                    scope 11 (inlined NonNull::<u64>::as_ptr) {
+                    }
+                    scope 12 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u64>::add) {
+                    }
+                }
+                scope 6 (inlined NonNull::<[u64]>::from_ref) {
+                    let mut _11: *const [u64];
+                }
+                scope 7 (inlined NonNull::<[u64]>::cast::<u64>) {
+                    let mut _12: *mut u64;
+                    let mut _13: *mut [u64];
+                    scope 8 (inlined NonNull::<[u64]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 13 (inlined <std::slice::Iter<'_, u64> as Iterator>::map::<u64, {closure@src/lib.rs:104:18: 104:22}>) {
+        scope 14 (inlined Map::<std::slice::Iter<'_, u64>, {closure@src/lib.rs:104:18: 104:22}>::new) {
+        }
+    }
+    scope 15 (inlined <Map<std::slice::Iter<'_, u64>, {closure@src/lib.rs:104:18: 104:22}> as Iterator>::fold::<u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        let mut _14: {closure@std::iter::adapters::map::map_fold<&u64, u64, u64, {closure@src/lib.rs:104:18: 104:22}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}};
+        scope 16 (inlined iter::adapters::map::map_fold::<&u64, u64, u64, {closure@src/lib.rs:104:18: 104:22}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_8);
+        StorageLive(_5);
+        _5 = PtrMetadata(copy _2);
+        StorageLive(_6);
+        StorageLive(_7);
+        StorageLive(_11);
+        _11 = &raw const (*_2);
+        _7 = copy _11 as std::ptr::NonNull<[u64]> (Transmute);
+        StorageDead(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = copy _7 as *mut [u64] (Transmute);
+        _12 = copy _13 as *mut u64 (PtrToPtr);
+        StorageDead(_13);
+        _6 = copy _12 as std::ptr::NonNull<u64> (Transmute);
+        StorageDead(_12);
+        StorageDead(_7);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = copy _6 as *mut u64 (Transmute);
+        _9 = Offset(copy _10, copy _5);
+        StorageDead(_10);
+        _8 = copy _9 as *const u64 (PtrToPtr);
+        StorageDead(_9);
+        _3 = std::slice::Iter::<'_, u64> { ptr: copy _6, end_or_len: copy _8, _marker: const PhantomData::<&u64> };
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_8);
+        _4 = {closure@src/lib.rs:104:18: 104:22} { self: copy _1 };
+        StorageLive(_14);
+        _14 = {closure@/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/adapters/map.rs:88:5: 88:20} { 0: core::num::<impl u64>::wrapping_add, 1: copy _4 };
+        _0 = <std::slice::Iter<'_, u64> as Iterator>::fold::<u64, {closure@iter::adapters::map::map_fold<&u64, u64, u64, {closure@src/lib.rs:104:18: 104:22}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}}>(move _3, const 0_u64, move _14) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_14);
+        return;
+    }
+}
+
+fn Kernel::batch::{closure#0}(_1: &mut {closure@src/lib.rs:104:18: 104:22}, _2: &u64) -> u64 {
+    debug self => (*((*_1).0: &Self));
+    let mut _0: u64;
+    let _3: u64;
+    let mut _4: &Self;
+    scope 1 {
+        debug v => _3;
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = copy (*_2);
+        _4 = no_retag copy ((*_1).0: &Self);
+        _0 = <Self as Kernel>::step(move _4, move _3) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn <impl at src/lib.rs:109:10: 109:15>::clone(_1: &Affine) -> Affine {
+    debug self => _1;
+    let mut _0: Affine;
+    scope 1 {
+    }
+
+    bb0: {
+        _0 = copy (*_1);
+        return;
+    }
+}
+
+fn <impl at src/lib.rs:114:1: 114:23>::step(_1: &Affine, _2: u64) -> u64 {
+    debug self => _1;
+    debug value => _2;
+    let mut _0: u64;
+    let mut _3: u64;
+    let mut _4: u64;
+    let mut _5: u64;
+    let mut _6: u64;
+    scope 1 (inlined core::num::<impl u64>::wrapping_mul) {
+    }
+    scope 2 (inlined core::num::<impl u64>::wrapping_add) {
+    }
+    scope 3 (inlined core::num::<impl u64>::rotate_left) {
+    }
+
+    bb0: {
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        _5 = copy ((*_1).0: u64);
+        _4 = Mul(copy _2, copy _5);
+        StorageDead(_5);
+        StorageLive(_6);
+        _6 = copy ((*_1).1: u64);
+        _3 = Add(copy _4, copy _6);
+        StorageDead(_6);
+        StorageDead(_4);
+        _0 = rotate_left::<u64>(move _3, const 7_u32) -> [return: bb1, unwind unreachable];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn generic_batch(_1: &T, _2: &[u64]) -> u64 {
+    debug kernel => _1;
+    debug input => _2;
+    let mut _0: u64;
+
+    bb0: {
+        _0 = <T as Kernel>::batch(move _1, move _2) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        return;
+    }
+}
+
+fn dynamic_items(_1: &dyn Kernel, _2: &[u64]) -> u64 {
+    debug kernel => _1;
+    debug input => _2;
+    let mut _0: u64;
+    let mut _3: std::slice::Iter<'_, u64>;
+    let mut _4: {closure@src/lib.rs:132:14: 132:18};
+    scope 1 (inlined core::slice::<impl [u64]>::iter) {
+        scope 2 (inlined std::slice::Iter::<'_, u64>::new) {
+            let _5: usize;
+            let mut _7: std::ptr::NonNull<[u64]>;
+            let mut _9: *mut u64;
+            let mut _10: *mut u64;
+            scope 3 {
+                let _6: std::ptr::NonNull<u64>;
+                scope 4 {
+                    let _8: *const u64;
+                    scope 5 {
+                    }
+                    scope 9 (inlined std::ptr::without_provenance::<u64>) {
+                        scope 10 (inlined std::ptr::without_provenance_mut::<u64>) {
+                        }
+                    }
+                    scope 11 (inlined NonNull::<u64>::as_ptr) {
+                    }
+                    scope 12 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u64>::add) {
+                    }
+                }
+                scope 6 (inlined NonNull::<[u64]>::from_ref) {
+                    let mut _11: *const [u64];
+                }
+                scope 7 (inlined NonNull::<[u64]>::cast::<u64>) {
+                    let mut _12: *mut u64;
+                    let mut _13: *mut [u64];
+                    scope 8 (inlined NonNull::<[u64]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 13 (inlined <std::slice::Iter<'_, u64> as Iterator>::map::<u64, {closure@src/lib.rs:132:14: 132:18}>) {
+        scope 14 (inlined Map::<std::slice::Iter<'_, u64>, {closure@src/lib.rs:132:14: 132:18}>::new) {
+        }
+    }
+    scope 15 (inlined <Map<std::slice::Iter<'_, u64>, {closure@src/lib.rs:132:14: 132:18}> as Iterator>::fold::<u64, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        let mut _14: {closure@std::iter::adapters::map::map_fold<&u64, u64, u64, {closure@src/lib.rs:132:14: 132:18}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}};
+        scope 16 (inlined iter::adapters::map::map_fold::<&u64, u64, u64, {closure@src/lib.rs:132:14: 132:18}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_8);
+        StorageLive(_5);
+        _5 = PtrMetadata(copy _2);
+        StorageLive(_6);
+        StorageLive(_7);
+        StorageLive(_11);
+        _11 = &raw const (*_2);
+        _7 = copy _11 as std::ptr::NonNull<[u64]> (Transmute);
+        StorageDead(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = copy _7 as *mut [u64] (Transmute);
+        _12 = copy _13 as *mut u64 (PtrToPtr);
+        StorageDead(_13);
+        _6 = copy _12 as std::ptr::NonNull<u64> (Transmute);
+        StorageDead(_12);
+        StorageDead(_7);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = copy _6 as *mut u64 (Transmute);
+        _9 = Offset(copy _10, copy _5);
+        StorageDead(_10);
+        _8 = copy _9 as *const u64 (PtrToPtr);
+        StorageDead(_9);
+        _3 = std::slice::Iter::<'_, u64> { ptr: copy _6, end_or_len: copy _8, _marker: const PhantomData::<&u64> };
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_8);
+        _4 = {closure@src/lib.rs:132:14: 132:18} { kernel: copy _1 };
+        StorageLive(_14);
+        _14 = {closure@/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/adapters/map.rs:88:5: 88:20} { 0: core::num::<impl u64>::wrapping_add, 1: copy _4 };
+        _0 = <std::slice::Iter<'_, u64> as Iterator>::fold::<u64, {closure@iter::adapters::map::map_fold<&u64, u64, u64, {closure@src/lib.rs:132:14: 132:18}, fn(u64, u64) -> u64 {core::num::<impl u64>::wrapping_add}>::{closure#0}}>(move _3, const 0_u64, move _14) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_14);
+        return;
+    }
+}
+
+fn dynamic_items::{closure#0}(_1: &mut {closure@src/lib.rs:132:14: 132:18}, _2: &u64) -> u64 {
+    debug kernel => (*((*_1).0: &dyn Kernel));
+    let mut _0: u64;
+    let _3: u64;
+    let mut _4: &dyn Kernel;
+    scope 1 {
+        debug v => _3;
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = copy (*_2);
+        _4 = no_retag copy ((*_1).0: &dyn Kernel);
+        _0 = <dyn Kernel as Kernel>::step(move _4, move _3) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn dynamic_batch(_1: &dyn Kernel, _2: &[u64]) -> u64 {
+    debug kernel => _1;
+    debug input => _2;
+    let mut _0: u64;
+
+    bb0: {
+        _0 = <dyn Kernel as Kernel>::batch(move _1, move _2) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        return;
+    }
+}
+
+fn visible_dynamic(_1: &Affine, _2: &[u64]) -> u64 {
+    debug kernel => _1;
+    debug input => _2;
+    let mut _0: u64;
+    let _3: &dyn Kernel;
+    scope 1 {
+        debug erased => _3;
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = copy _1 as &dyn Kernel (PointerCoercion(Unsize, Implicit));
+        _0 = <dyn Kernel as Kernel>::batch(move _3, move _2) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn add_slices(_1: &mut [u64], _2: &[u64]) -> () {
+    debug output => _1;
+    debug input => _2;
+    let mut _0: ();
+    let mut _3: &usize;
+    let _4: usize;
+    let mut _5: &usize;
+    let _6: usize;
+    let mut _7: bool;
+    let _8: !;
+    let mut _9: std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _10: std::slice::IterMut<'_, u64>;
+    let mut _11: std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _12: std::option::Option<(&mut u64, &u64)>;
+    let mut _13: &mut std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _14: isize;
+    let mut _17: u64;
+    let mut _18: u64;
+    let mut _19: &u64;
+    scope 1 {
+        debug left_val => _3;
+        debug right_val => _5;
+        scope 2 {
+            debug kind => const core::panicking::AssertKind::Eq;
+        }
+    }
+    scope 3 {
+        debug iter => _11;
+        let _15: &mut u64;
+        let _16: u64;
+        scope 4 {
+            debug out => _15;
+            debug value => _16;
+            scope 18 (inlined core::num::<impl u64>::wrapping_add) {
+            }
+        }
+        scope 17 (inlined <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as Iterator>::next) {
+        }
+    }
+    scope 5 (inlined core::slice::<impl [u64]>::iter_mut) {
+        scope 6 (inlined std::slice::IterMut::<'_, u64>::new) {
+            let mut _21: std::ptr::NonNull<[u64]>;
+            let mut _23: *mut u64;
+            scope 7 {
+                let _20: std::ptr::NonNull<u64>;
+                scope 8 {
+                    let _22: *mut u64;
+                    scope 9 {
+                    }
+                    scope 13 (inlined std::ptr::without_provenance_mut::<u64>) {
+                    }
+                    scope 14 (inlined NonNull::<u64>::as_ptr) {
+                    }
+                    scope 15 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u64>::add) {
+                    }
+                }
+                scope 10 (inlined NonNull::<[u64]>::from_mut) {
+                    let mut _24: *mut [u64];
+                }
+                scope 11 (inlined NonNull::<[u64]>::cast::<u64>) {
+                    let mut _25: *mut u64;
+                    let mut _26: *mut [u64];
+                    scope 12 (inlined NonNull::<[u64]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 16 (inlined <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as IntoIterator>::into_iter) {
+    }
+
+    bb0: {
+        _4 = PtrMetadata(copy _1);
+        _3 = &_4;
+        StorageLive(_6);
+        _6 = PtrMetadata(copy _2);
+        _5 = &_6;
+        StorageLive(_7);
+        _7 = Eq(copy _4, copy _6);
+        switchInt(move _7) -> [0: bb2, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageLive(_10);
+        StorageLive(_22);
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_24);
+        _24 = &raw mut (*_1);
+        _21 = copy _24 as std::ptr::NonNull<[u64]> (Transmute);
+        StorageDead(_24);
+        StorageLive(_25);
+        StorageLive(_26);
+        _26 = copy _21 as *mut [u64] (Transmute);
+        _25 = copy _26 as *mut u64 (PtrToPtr);
+        StorageDead(_26);
+        _20 = copy _25 as std::ptr::NonNull<u64> (Transmute);
+        StorageDead(_25);
+        StorageDead(_21);
+        StorageLive(_23);
+        _23 = copy _20 as *mut u64 (Transmute);
+        _22 = Offset(copy _23, copy _4);
+        StorageDead(_23);
+        _10 = std::slice::IterMut::<'_, u64> { ptr: copy _20, end_or_len: copy _22, _marker: const PhantomData::<&mut u64> };
+        StorageDead(_20);
+        StorageDead(_22);
+        _9 = <std::slice::IterMut<'_, u64> as Iterator>::zip::<&[u64]>(move _10, move _2) -> [return: bb3, unwind continue];
+    }
+
+    bb2: {
+        _8 = core::panicking::assert_failed::<usize, usize>(const core::panicking::AssertKind::Eq, move _3, move _5, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb3: {
+        StorageDead(_10);
+        StorageLive(_11);
+        _11 = copy _9;
+        goto -> bb4;
+    }
+
+    bb4: {
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = &mut _11;
+        _12 = <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as iter::adapters::zip::ZipImpl<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>>::next(move _13) -> [return: bb8, unwind continue];
+    }
+
+    bb5: {
+        unreachable;
+    }
+
+    bb6: {
+        StorageLive(_15);
+        _15 = copy (((_12 as Some).0: (&mut u64, &u64)).0: &mut u64);
+        StorageLive(_16);
+        _19 = no_retag copy (((_12 as Some).0: (&mut u64, &u64)).1: &u64);
+        _16 = copy (*_19);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = copy (*_15);
+        _17 = Add(copy _18, copy _16);
+        StorageDead(_18);
+        (*_15) = move _17;
+        StorageDead(_17);
+        StorageDead(_16);
+        StorageDead(_15);
+        StorageDead(_13);
+        StorageDead(_12);
+        goto -> bb4;
+    }
+
+    bb7: {
+        StorageDead(_13);
+        StorageDead(_12);
+        StorageDead(_11);
+        return;
+    }
+
+    bb8: {
+        _14 = discriminant(_12);
+        switchInt(move _14) -> [0: bb7, 1: bb6, otherwise: bb5];
+    }
+}
+
+alloc138 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+fn scalar_add(_1: u64, _2: u64) -> u64 {
+    debug left => _1;
+    debug right => _2;
+    let mut _0: u64;
+    scope 1 (inlined core::num::<impl u64>::wrapping_add) {
+    }
+
+    bb0: {
+        _0 = Add(copy _1, copy _2);
+        return;
+    }
+}
+
+fn add_with_calls(_1: &mut [u64], _2: &[u64]) -> () {
+    debug output => _1;
+    debug input => _2;
+    let mut _0: ();
+    let mut _3: &usize;
+    let _4: usize;
+    let mut _5: &usize;
+    let _6: usize;
+    let mut _7: bool;
+    let _8: !;
+    let mut _9: std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _10: std::slice::IterMut<'_, u64>;
+    let mut _11: std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _12: std::option::Option<(&mut u64, &u64)>;
+    let mut _13: &mut std::iter::Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>;
+    let mut _14: isize;
+    let mut _17: u64;
+    let mut _18: u64;
+    let mut _19: &u64;
+    scope 1 {
+        debug left_val => _3;
+        debug right_val => _5;
+        scope 2 {
+            debug kind => const core::panicking::AssertKind::Eq;
+        }
+    }
+    scope 3 {
+        debug iter => _11;
+        let _15: &mut u64;
+        let _16: u64;
+        scope 4 {
+            debug out => _15;
+            debug value => _16;
+        }
+        scope 17 (inlined <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as Iterator>::next) {
+        }
+    }
+    scope 5 (inlined core::slice::<impl [u64]>::iter_mut) {
+        scope 6 (inlined std::slice::IterMut::<'_, u64>::new) {
+            let mut _21: std::ptr::NonNull<[u64]>;
+            let mut _23: *mut u64;
+            scope 7 {
+                let _20: std::ptr::NonNull<u64>;
+                scope 8 {
+                    let _22: *mut u64;
+                    scope 9 {
+                    }
+                    scope 13 (inlined std::ptr::without_provenance_mut::<u64>) {
+                    }
+                    scope 14 (inlined NonNull::<u64>::as_ptr) {
+                    }
+                    scope 15 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u64>::add) {
+                    }
+                }
+                scope 10 (inlined NonNull::<[u64]>::from_mut) {
+                    let mut _24: *mut [u64];
+                }
+                scope 11 (inlined NonNull::<[u64]>::cast::<u64>) {
+                    let mut _25: *mut u64;
+                    let mut _26: *mut [u64];
+                    scope 12 (inlined NonNull::<[u64]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 16 (inlined <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as IntoIterator>::into_iter) {
+    }
+
+    bb0: {
+        _4 = PtrMetadata(copy _1);
+        _3 = &_4;
+        StorageLive(_6);
+        _6 = PtrMetadata(copy _2);
+        _5 = &_6;
+        StorageLive(_7);
+        _7 = Eq(copy _4, copy _6);
+        switchInt(move _7) -> [0: bb2, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageLive(_10);
+        StorageLive(_22);
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_24);
+        _24 = &raw mut (*_1);
+        _21 = copy _24 as std::ptr::NonNull<[u64]> (Transmute);
+        StorageDead(_24);
+        StorageLive(_25);
+        StorageLive(_26);
+        _26 = copy _21 as *mut [u64] (Transmute);
+        _25 = copy _26 as *mut u64 (PtrToPtr);
+        StorageDead(_26);
+        _20 = copy _25 as std::ptr::NonNull<u64> (Transmute);
+        StorageDead(_25);
+        StorageDead(_21);
+        StorageLive(_23);
+        _23 = copy _20 as *mut u64 (Transmute);
+        _22 = Offset(copy _23, copy _4);
+        StorageDead(_23);
+        _10 = std::slice::IterMut::<'_, u64> { ptr: copy _20, end_or_len: copy _22, _marker: const PhantomData::<&mut u64> };
+        StorageDead(_20);
+        StorageDead(_22);
+        _9 = <std::slice::IterMut<'_, u64> as Iterator>::zip::<&[u64]>(move _10, move _2) -> [return: bb3, unwind continue];
+    }
+
+    bb2: {
+        _8 = core::panicking::assert_failed::<usize, usize>(const core::panicking::AssertKind::Eq, move _3, move _5, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb3: {
+        StorageDead(_10);
+        StorageLive(_11);
+        _11 = copy _9;
+        goto -> bb4;
+    }
+
+    bb4: {
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = &mut _11;
+        _12 = <Zip<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>> as iter::adapters::zip::ZipImpl<std::slice::IterMut<'_, u64>, std::slice::Iter<'_, u64>>>::next(move _13) -> [return: bb9, unwind continue];
+    }
+
+    bb5: {
+        unreachable;
+    }
+
+    bb6: {
+        StorageLive(_15);
+        _15 = copy (((_12 as Some).0: (&mut u64, &u64)).0: &mut u64);
+        StorageLive(_16);
+        _19 = no_retag copy (((_12 as Some).0: (&mut u64, &u64)).1: &u64);
+        _16 = copy (*_19);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = copy (*_15);
+        _17 = scalar_add(move _18, move _16) -> [return: bb8, unwind continue];
+    }
+
+    bb7: {
+        StorageDead(_13);
+        StorageDead(_12);
+        StorageDead(_11);
+        return;
+    }
+
+    bb8: {
+        StorageDead(_18);
+        (*_15) = move _17;
+        StorageDead(_17);
+        StorageDead(_16);
+        StorageDead(_15);
+        StorageDead(_13);
+        StorageDead(_12);
+        goto -> bb4;
+    }
+
+    bb9: {
+        _14 = discriminant(_12);
+        switchInt(move _14) -> [0: bb7, 1: bb6, otherwise: bb5];
+    }
+}
+
+alloc140 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+fn bit_table() -> [u8; 256] {
+    let mut _0: [u8; 256];
+    let mut _2: bool;
+    let mut _3: usize;
+    let mut _6: usize;
+    let mut _7: u8;
+    let mut _8: usize;
+    let mut _9: usize;
+    let _10: usize;
+    let mut _11: bool;
+    scope 1 {
+        debug table => _0;
+        let mut _1: usize;
+        scope 2 {
+            debug index => _1;
+            let mut _4: usize;
+            scope 3 {
+                debug bits => _4;
+                let mut _5: u8;
+                scope 4 {
+                    debug count => _5;
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _0 = [const 0_u8; 256];
+        StorageLive(_1);
+        _1 = const 0_usize;
+        goto -> bb1;
+    }
+
+    bb1: {
+        StorageLive(_2);
+        StorageLive(_3);
+        _3 = copy _1;
+        _2 = Lt(move _3, const 256_usize);
+        switchInt(move _2) -> [0: bb7, otherwise: bb2];
+    }
+
+    bb2: {
+        StorageDead(_3);
+        StorageLive(_4);
+        _4 = copy _1;
+        _5 = const 0_u8;
+        goto -> bb3;
+    }
+
+    bb3: {
+        StorageLive(_6);
+        _6 = copy _4;
+        switchInt(copy _6) -> [0: bb5, otherwise: bb4];
+    }
+
+    bb4: {
+        StorageDead(_6);
+        StorageLive(_7);
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = copy _4;
+        _8 = BitAnd(move _9, const 1_usize);
+        StorageDead(_9);
+        _7 = move _8 as u8 (IntToInt);
+        StorageDead(_8);
+        _5 = Add(copy _5, move _7);
+        StorageDead(_7);
+        _4 = Shr(copy _4, const 1_i32);
+        goto -> bb3;
+    }
+
+    bb5: {
+        StorageDead(_6);
+        StorageLive(_10);
+        _10 = copy _1;
+        _11 = Lt(copy _10, const 256_usize);
+        assert(move _11, "index out of bounds: the length is {} but the index is {}", const 256_usize, copy _10) -> [success: bb6, unwind continue];
+    }
+
+    bb6: {
+        _0[_10] = move _5;
+        StorageDead(_10);
+        _1 = Add(copy _1, const 1_usize);
+        StorageDead(_4);
+        StorageDead(_2);
+        goto -> bb1;
+    }
+
+    bb7: {
+        StorageDead(_3);
+        StorageDead(_2);
+        StorageDead(_1);
+        return;
+    }
+}
+
+// MIR FOR CTFE
+fn bit_table() -> [u8; 256] {
+    let mut _0: [u8; 256];
+    let mut _1: [u8; 256];
+    let _3: ();
+    let mut _4: ();
+    let mut _5: bool;
+    let mut _6: usize;
+    let mut _7: usize;
+    let mut _8: &[u8];
+    let mut _9: &[u8; 256];
+    let _12: ();
+    let mut _13: bool;
+    let mut _14: usize;
+    let mut _15: u8;
+    let mut _16: usize;
+    let mut _17: usize;
+    let mut _18: !;
+    let _19: ();
+    let mut _20: !;
+    let mut _21: u8;
+    let _22: usize;
+    let mut _23: bool;
+    let mut _24: !;
+    let _25: ();
+    let mut _26: !;
+    scope 1 {
+        debug table => _1;
+        let mut _2: usize;
+        scope 2 {
+            debug index => _2;
+            let mut _10: usize;
+            scope 3 {
+                debug bits => _10;
+                let mut _11: u8;
+                scope 4 {
+                    debug count => _11;
+                }
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_1);
+        _1 = [const 0_u8; 256];
+        StorageLive(_2);
+        _2 = const 0_usize;
+        StorageLive(_3);
+        goto -> bb1;
+    }
+
+    bb1: {
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = copy _2;
+        StorageLive(_7);
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = &_1;
+        _8 = move _9 as &[u8] (PointerCoercion(Unsize, Implicit));
+        StorageDead(_9);
+        ConstEvalCounter;
+        _7 = core::slice::<impl [u8]>::len(move _8) -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        StorageDead(_8);
+        _5 = Lt(move _6, move _7);
+        switchInt(move _5) -> [0: bb8, otherwise: bb3];
+    }
+
+    bb3: {
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageLive(_10);
+        _10 = copy _2;
+        StorageLive(_11);
+        _11 = const 0_u8;
+        StorageLive(_12);
+        goto -> bb4;
+    }
+
+    bb4: {
+        StorageLive(_13);
+        StorageLive(_14);
+        _14 = copy _10;
+        _13 = Ne(move _14, const 0_usize);
+        switchInt(move _13) -> [0: bb6, otherwise: bb5];
+    }
+
+    bb5: {
+        StorageDead(_14);
+        StorageLive(_15);
+        StorageLive(_16);
+        StorageLive(_17);
+        _17 = copy _10;
+        _16 = BitAnd(move _17, const 1_usize);
+        StorageDead(_17);
+        _15 = move _16 as u8 (IntToInt);
+        StorageDead(_16);
+        _11 = Add(copy _11, move _15);
+        StorageDead(_15);
+        _10 = Shr(copy _10, const 1_i32);
+        _4 = const ();
+        StorageDead(_13);
+        ConstEvalCounter;
+        goto -> bb4;
+    }
+
+    bb6: {
+        StorageDead(_14);
+        StorageLive(_19);
+        _12 = const ();
+        StorageDead(_19);
+        StorageDead(_13);
+        StorageDead(_12);
+        StorageLive(_21);
+        _21 = copy _11;
+        StorageLive(_22);
+        _22 = copy _2;
+        _23 = Lt(copy _22, const 256_usize);
+        assert(move _23, "index out of bounds: the length is {} but the index is {}", const 256_usize, copy _22) -> [success: bb7, unwind continue];
+    }
+
+    bb7: {
+        _1[_22] = move _21;
+        StorageDead(_21);
+        StorageDead(_22);
+        _2 = Add(copy _2, const 1_usize);
+        _4 = const ();
+        StorageDead(_11);
+        StorageDead(_10);
+        StorageDead(_5);
+        ConstEvalCounter;
+        goto -> bb1;
+    }
+
+    bb8: {
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageLive(_25);
+        _3 = const ();
+        StorageDead(_25);
+        StorageDead(_5);
+        StorageDead(_3);
+        _0 = copy _1;
+        StorageDead(_2);
+        StorageDead(_1);
+        return;
+    }
+}
+
+const bit_table::{constant#0}: usize = const 256_usize;
+
+const bit_table::{constant#1}: usize = const 256_usize;
+
+static BIT_TABLE: [u8; 256] = {
+    let mut _0: [u8; 256];
+
+    bb0: {
+        ConstEvalCounter;
+        _0 = bit_table() -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        return;
+    }
+}
+
+const BIT_TABLE::{constant#0}: usize = const 256_usize;
+
+fn runtime_table() -> [u8; 256] {
+    let mut _0: [u8; 256];
+    let _1: usize;
+    let mut _3: std::iter::Enumerate<std::slice::IterMut<'_, u8>>;
+    let mut _4: std::slice::IterMut<'_, u8>;
+    let mut _5: &mut [u8];
+    let mut _6: &mut [u8; 256];
+    let mut _8: std::option::Option<(usize, &mut u8)>;
+    let mut _9: &mut std::iter::Enumerate<std::slice::IterMut<'_, u8>>;
+    let mut _10: isize;
+    let mut _15: usize;
+    let mut _16: u8;
+    let mut _17: usize;
+    let mut _18: usize;
+    scope 1 {
+        debug seed => _1;
+        let mut _2: [u8; 256];
+        scope 2 {
+            debug table => _2;
+            let mut _7: std::iter::Enumerate<std::slice::IterMut<'_, u8>>;
+            scope 3 {
+                debug iter => _7;
+                let _11: usize;
+                let _12: &mut u8;
+                scope 4 {
+                    debug index => _11;
+                    debug slot => _12;
+                    let mut _13: usize;
+                    scope 5 {
+                        debug bits => _13;
+                        let mut _14: u8;
+                        scope 6 {
+                            debug count => _14;
+                        }
+                    }
+                }
+            }
+            scope 8 (inlined core::slice::<impl [u8]>::iter_mut) {
+                scope 9 (inlined std::slice::IterMut::<'_, u8>::new) {
+                    let mut _20: std::ptr::NonNull<[u8]>;
+                    let mut _22: *mut u8;
+                    scope 10 {
+                        let _19: std::ptr::NonNull<u8>;
+                        scope 11 {
+                            let _21: *mut u8;
+                            scope 12 {
+                            }
+                            scope 16 (inlined std::ptr::without_provenance_mut::<u8>) {
+                            }
+                            scope 17 (inlined NonNull::<u8>::as_ptr) {
+                            }
+                            scope 18 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u8>::add) {
+                            }
+                        }
+                        scope 13 (inlined NonNull::<[u8]>::from_mut) {
+                            let mut _23: *mut [u8];
+                        }
+                        scope 14 (inlined NonNull::<[u8]>::cast::<u8>) {
+                            let mut _24: *mut u8;
+                            let mut _25: *mut [u8];
+                            scope 15 (inlined NonNull::<[u8]>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+            scope 19 (inlined <std::slice::IterMut<'_, u8> as Iterator>::enumerate) {
+                scope 20 (inlined Enumerate::<std::slice::IterMut<'_, u8>>::new) {
+                }
+            }
+            scope 21 (inlined <Enumerate<std::slice::IterMut<'_, u8>> as IntoIterator>::into_iter) {
+            }
+        }
+    }
+    scope 7 (inlined std::hint::black_box::<usize>) {
+    }
+
+    bb0: {
+        StorageLive(_1);
+        _1 = std::intrinsics::black_box::<usize>(const 0_usize) -> [return: bb9, unwind unreachable];
+    }
+
+    bb1: {
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = &mut _7;
+        _8 = <Enumerate<std::slice::IterMut<'_, u8>> as Iterator>::next(move _9) -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        _10 = discriminant(_8);
+        switchInt(move _10) -> [0: bb5, 1: bb4, otherwise: bb3];
+    }
+
+    bb3: {
+        unreachable;
+    }
+
+    bb4: {
+        StorageLive(_11);
+        _11 = copy (((_8 as Some).0: (usize, &mut u8)).0: usize);
+        StorageLive(_12);
+        _12 = copy (((_8 as Some).0: (usize, &mut u8)).1: &mut u8);
+        StorageLive(_13);
+        _13 = Add(copy _11, copy _1);
+        _14 = const 0_u8;
+        goto -> bb6;
+    }
+
+    bb5: {
+        StorageDead(_9);
+        StorageDead(_8);
+        StorageDead(_7);
+        _0 = copy _2;
+        StorageDead(_2);
+        StorageDead(_1);
+        return;
+    }
+
+    bb6: {
+        StorageLive(_15);
+        _15 = copy _13;
+        switchInt(copy _15) -> [0: bb8, otherwise: bb7];
+    }
+
+    bb7: {
+        StorageDead(_15);
+        StorageLive(_16);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = copy _13;
+        _17 = BitAnd(move _18, const 1_usize);
+        StorageDead(_18);
+        _16 = move _17 as u8 (IntToInt);
+        StorageDead(_17);
+        _14 = Add(copy _14, move _16);
+        StorageDead(_16);
+        _13 = Shr(copy _13, const 1_i32);
+        goto -> bb6;
+    }
+
+    bb8: {
+        StorageDead(_15);
+        (*_12) = move _14;
+        StorageDead(_13);
+        StorageDead(_12);
+        StorageDead(_11);
+        StorageDead(_9);
+        StorageDead(_8);
+        goto -> bb1;
+    }
+
+    bb9: {
+        StorageLive(_2);
+        _2 = [const 0_u8; 256];
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = &mut _2;
+        _5 = copy _6 as &mut [u8] (PointerCoercion(Unsize, Implicit));
+        StorageDead(_6);
+        StorageLive(_21);
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_23);
+        _23 = &raw mut (*_5);
+        _20 = copy _23 as std::ptr::NonNull<[u8]> (Transmute);
+        StorageDead(_23);
+        StorageLive(_24);
+        StorageLive(_25);
+        _25 = copy _20 as *mut [u8] (Transmute);
+        _24 = copy _25 as *mut u8 (PtrToPtr);
+        StorageDead(_25);
+        _19 = copy _24 as std::ptr::NonNull<u8> (Transmute);
+        StorageDead(_24);
+        StorageDead(_20);
+        StorageLive(_22);
+        _22 = copy _19 as *mut u8 (Transmute);
+        _21 = Offset(copy _22, const 256_usize);
+        StorageDead(_22);
+        _4 = std::slice::IterMut::<'_, u8> { ptr: copy _19, end_or_len: copy _21, _marker: const PhantomData::<&mut u8> };
+        StorageDead(_19);
+        StorageDead(_21);
+        StorageDead(_5);
+        _3 = Enumerate::<std::slice::IterMut<'_, u8>> { iter: copy _4, count: const 0_usize };
+        StorageDead(_4);
+        StorageLive(_7);
+        _7 = copy _3;
+        goto -> bb1;
+    }
+}
+
+const runtime_table::{constant#0}: usize = const 256_usize;
+
+const runtime_table::{constant#1}: usize = const 256_usize;
+
+fn lookup_bits(_1: &[u8; 256], _2: &[u8]) -> u64 {
+    debug table => _1;
+    debug input => _2;
+    let mut _0: u64;
+    let mut _3: std::slice::Iter<'_, u8>;
+    let mut _4: {closure@src/lib.rs:207:14: 207:18};
+    scope 1 (inlined core::slice::<impl [u8]>::iter) {
+        scope 2 (inlined std::slice::Iter::<'_, u8>::new) {
+            let _5: usize;
+            let mut _7: std::ptr::NonNull<[u8]>;
+            let mut _9: *mut u8;
+            let mut _10: *mut u8;
+            scope 3 {
+                let _6: std::ptr::NonNull<u8>;
+                scope 4 {
+                    let _8: *const u8;
+                    scope 5 {
+                    }
+                    scope 9 (inlined std::ptr::without_provenance::<u8>) {
+                        scope 10 (inlined std::ptr::without_provenance_mut::<u8>) {
+                        }
+                    }
+                    scope 11 (inlined NonNull::<u8>::as_ptr) {
+                    }
+                    scope 12 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut u8>::add) {
+                    }
+                }
+                scope 6 (inlined NonNull::<[u8]>::from_ref) {
+                    let mut _11: *const [u8];
+                }
+                scope 7 (inlined NonNull::<[u8]>::cast::<u8>) {
+                    let mut _12: *mut u8;
+                    let mut _13: *mut [u8];
+                    scope 8 (inlined NonNull::<[u8]>::as_ptr) {
+                    }
+                }
+            }
+        }
+    }
+    scope 13 (inlined <std::slice::Iter<'_, u8> as Iterator>::map::<u64, {closure@src/lib.rs:207:14: 207:18}>) {
+        scope 14 (inlined Map::<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>::new) {
+        }
+    }
+    scope 15 (inlined <Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}> as Iterator>::sum::<u64>) {
+        scope 16 (inlined <u64 as Sum>::sum::<Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>) {
+            scope 17 (inlined <Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}> as Iterator>::fold::<u64, {closure@<u64 as Sum>::sum<Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>::{closure#0}}>) {
+                let mut _14: {closure@std::iter::adapters::map::map_fold<&u8, u64, u64, {closure@src/lib.rs:207:14: 207:18}, {closure@<u64 as std::iter::Sum>::sum<std::iter::Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>::{closure#0}}>::{closure#0}};
+                scope 18 (inlined iter::adapters::map::map_fold::<&u8, u64, u64, {closure@src/lib.rs:207:14: 207:18}, {closure@<u64 as Sum>::sum<Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>::{closure#0}}>) {
+                }
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_8);
+        StorageLive(_5);
+        _5 = PtrMetadata(copy _2);
+        StorageLive(_6);
+        StorageLive(_7);
+        StorageLive(_11);
+        _11 = &raw const (*_2);
+        _7 = copy _11 as std::ptr::NonNull<[u8]> (Transmute);
+        StorageDead(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = copy _7 as *mut [u8] (Transmute);
+        _12 = copy _13 as *mut u8 (PtrToPtr);
+        StorageDead(_13);
+        _6 = copy _12 as std::ptr::NonNull<u8> (Transmute);
+        StorageDead(_12);
+        StorageDead(_7);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = copy _6 as *mut u8 (Transmute);
+        _9 = Offset(copy _10, copy _5);
+        StorageDead(_10);
+        _8 = copy _9 as *const u8 (PtrToPtr);
+        StorageDead(_9);
+        _3 = std::slice::Iter::<'_, u8> { ptr: copy _6, end_or_len: copy _8, _marker: const PhantomData::<&u8> };
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_8);
+        _4 = {closure@src/lib.rs:207:14: 207:18} { table: copy _1 };
+        StorageLive(_14);
+        _14 = {closure@/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/adapters/map.rs:88:5: 88:20} { 0: const ZeroSized: {closure@<u64 as Sum>::sum<Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>::{closure#0}}, 1: copy _4 };
+        _0 = <std::slice::Iter<'_, u8> as Iterator>::fold::<u64, {closure@iter::adapters::map::map_fold<&u8, u64, u64, {closure@src/lib.rs:207:14: 207:18}, {closure@<u64 as Sum>::sum<Map<std::slice::Iter<'_, u8>, {closure@src/lib.rs:207:14: 207:18}>>::{closure#0}}>::{closure#0}}>(move _3, const 0_u64, move _14) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_14);
+        return;
+    }
+}
+
+const lookup_bits::{constant#0}: usize = const 256_usize;
+
+fn lookup_bits::{closure#0}(_1: &mut {closure@src/lib.rs:207:14: 207:18}, _2: &u8) -> u64 {
+    debug table => (*((*_1).0: &[u8; 256]));
+    let mut _0: u64;
+    let _3: u8;
+    let mut _4: u8;
+    let _5: usize;
+    let mut _6: bool;
+    let mut _7: &[u8; 256];
+    scope 1 {
+        debug v => _3;
+        scope 2 (inlined convert::num::<impl From<u8> for usize>::from) {
+        }
+        scope 3 (inlined convert::num::<impl From<u8> for u64>::from) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = copy (*_2);
+        StorageLive(_4);
+        StorageLive(_5);
+        _5 = copy _3 as usize (IntToInt);
+        _6 = Lt(copy _5, const 256_usize);
+        assert(move _6, "index out of bounds: the length is {} but the index is {}", const 256_usize, copy _5) -> [success: bb1, unwind continue];
+    }
+
+    bb1: {
+        _7 = no_retag copy ((*_1).0: &[u8; 256]);
+        _4 = copy (*_7)[_5];
+        _0 = copy _4 as u64 (IntToInt);
+        StorageDead(_5);
+        StorageDead(_4);
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn input_data(_1: usize) -> Vec<u64> {
+    debug len => _1;
+    let mut _0: std::vec::Vec<u64>;
+    let mut _2: std::iter::Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}>;
+    let mut _3: std::ops::Range<u64>;
+    let mut _4: u64;
+    scope 1 (inlined <std::ops::Range<u64> as Iterator>::map::<u64, {closure@src/lib.rs:213:14: 213:17}>) {
+        scope 2 (inlined Map::<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}>::new) {
+        }
+    }
+    scope 3 (inlined <Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}> as Iterator>::collect::<Vec<u64>>) {
+        scope 4 {
+            scope 5 {
+                scope 6 {
+                    scope 15 (inlined Arguments::<'_>::new::<23, 1>) {
+                    }
+                }
+                scope 10 (inlined core::fmt::rt::Argument::<'_>::new_debug::<(usize, Option<usize>)>) {
+                    scope 11 {
+                    }
+                    scope 12 (inlined NonNull::<(usize, Option<usize>)>::from_ref) {
+                    }
+                    scope 13 (inlined NonNull::<(usize, Option<usize>)>::cast::<()>) {
+                        scope 14 (inlined NonNull::<(usize, Option<usize>)>::as_ptr) {
+                        }
+                    }
+                }
+            }
+            scope 7 (inlined Option::<usize>::is_none_or::<{closure@<Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}> as Iterator>::collect<Vec<u64>>::{closure#0}}>) {
+                scope 8 {
+                    scope 9 (inlined <Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}> as Iterator>::collect::<Vec<u64>>::{closure#0}) {
+                    }
+                }
+            }
+        }
+        scope 16 (inlined <Vec<u64> as FromIterator<u64>>::from_iter::<Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}>>) {
+            scope 17 (inlined <Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}> as IntoIterator>::into_iter) {
+            }
+            scope 18 (inlined <Vec<u64> as vec::spec_from_iter::SpecFromIter<u64, Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}>>>::from_iter) {
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_2);
+        StorageLive(_3);
+        StorageLive(_4);
+        _4 = copy _1 as u64 (IntToInt);
+        _3 = std::ops::Range::<u64> { start: const 0_u64, end: move _4 };
+        StorageDead(_4);
+        _2 = Map::<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}> { iter: copy _3, f: const ZeroSized: {closure@src/lib.rs:213:14: 213:17} };
+        StorageDead(_3);
+        _0 = <Vec<u64> as vec::spec_from_iter_nested::SpecFromIterNested<u64, Map<std::ops::Range<u64>, {closure@src/lib.rs:213:14: 213:17}>>>::from_iter(move _2) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_2);
+        return;
+    }
+}
+
+fn input_data::{closure#0}(_1: &mut {closure@src/lib.rs:213:14: 213:17}, _2: u64) -> u64 {
+    debug i => _2;
+    let mut _0: u64;
+    let mut _3: u64;
+    scope 1 (inlined core::num::<impl u64>::wrapping_mul) {
+    }
+    scope 2 (inlined core::num::<impl u64>::wrapping_add) {
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _3 = Mul(copy _2, const 6364136223846793005_u64);
+        _0 = Add(copy _3, const 1_u64);
+        StorageDead(_3);
+        return;
+    }
+}
+
+fn DropProbe(_1: &Cell<u64>) -> DropProbe<'_> {
+    let mut _0: DropProbe<'_>;
+
+    bb0: {
+        _0 = DropProbe::<'_>(move _1);
+        return;
+    }
+}
+
+// MIR FOR CTFE
+fn DropProbe(_1: &Cell<u64>) -> DropProbe<'_> {
+    let mut _0: DropProbe<'_>;
+
+    bb0: {
+        _0 = DropProbe::<'_>(move _1);
+        return;
+    }
+}

@@ -1,0 +1,5 @@
+Sampling process 29381 for 1 second with 1 millisecond of run time between samples
+Couldn't find _sigtramp symbol in expected dylibs
+Found _sigtramp symbol after 3 tries
+Sampling completed, processing symbols...
+Sample analysis of process 29381 written to file cpp-rust/bench/results/runtime-fixed/measurements-final/scheduling-sample.txt

@@ -1,0 +1,2 @@
+       Fresh evidence-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/evidence-lab)
+    Finished `thin` profile [optimized + debuginfo] target(s) in 0.00s

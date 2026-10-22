@@ -1,0 +1,22 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/contracts.rs (bench/runtime-lab/target/debug/deps/contracts-62570126166b9bb6)
+
+running 11 tests
+
+thread 'joinset_observes_panic_and_completes_other_task' (1136976) panicked at tests/contracts.rs:77:13:
+intentional test panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test invalid_limit_is_rejected_before_spawn ... ok
+test bounded_channel_and_close_preserve_messages ... ok
+test abort_observed_and_drop_executed ... ok
+test missing_executable_is_spawn_error ... ok
+test blocking_permit_is_held_inside_closure ... ok
+test joinset_observes_panic_and_completes_other_task ... ok
+test timeout_kills_and_waits_direct_child ... ok
+test nonzero_exit_is_a_report_not_spawn_error ... ok
+test concurrently_drains_and_caps_both_streams ... ok
+test wait_before_drain_is_a_reproduced_stall ... ok
+test inherited_writer_does_not_hang_drainers_forever ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.21s
+

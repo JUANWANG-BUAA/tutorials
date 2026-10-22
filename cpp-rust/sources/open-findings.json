@@ -1,0 +1,35 @@
+[
+  {
+    "id": "RUNTIME-DRAIN-INTERMITTENT",
+    "severity": "P1",
+    "status": "closed",
+    "scope": "runtime-lab capture pipes under concurrent process creation on this Rust/macOS version",
+    "finding": "The original parallel preview once lacked output EOF. Deterministic interposition proved a pipe()/fcntl CLOEXEC inheritance window in this installed std implementation, with extra PIPE descriptors in an unrelated descendant.",
+    "evidence": "bench/results/runtime-final/preview-failed-parallel-drain.txt",
+    "resolution": "Atomic pipe2(O_CLOEXEC) capture, unique OwnedFd ownership and explicit post-spawn Command writer release. Older macOS without pipe2 returns Unsupported. Same-interleaving matrix: 8 original failures / 8 fixed passes, lsof and syscall flag observations preserved.",
+    "validation": "bench/results/runtime-fixed/diagnostic-summary.json",
+    "verification_command": "python3 tools/verify_drain_fix.py",
+    "follow_up": [
+      "Old measured sources were preserved byte-for-byte; old data and the original failure were not overwritten.",
+      "Final validation: 20 default-parallel complete test runs, 360 test executions; 800 structured child reports; 210 new performance observations.",
+      "Fixed and verified mechanically via tools/verify_drain_fix.py."
+    ],
+    "limits": "The historical single failure lacks PID/FD telemetry, so unique retrospective attribution remains unprovable. The demonstrated defect class is fixed; no claim of universal platform correctness or descendant sandboxing."
+  },
+  {
+    "id": "PROJECT-CAPTURE-CLOEXEC",
+    "severity": "P1",
+    "status": "closed",
+    "scope": "projects/agent-runtime concurrent named-tool capture",
+    "finding": "Project1's original Stdio::piped capture used the same demonstrated non-atomic macOS pipe path; the correction was required in the actual delivered project.",
+    "evidence": "bench/results/runtime-fixed/implementation-source-review.json",
+    "resolution": "Implemented projects/agent-runtime/src/process_macos.rs with atomic pipe2(O_CLOEXEC) capture and OwnedFd registration. Replaced all racy Stdio::piped calls. Verified with 360 test runs, 800 structured reports, 8 dyld interposer gate cases, and fresh run-04 benchmark measurements.",
+    "validation": "projects/agent-runtime/evidence/run-04/summary.json",
+    "follow_up": [
+      "All 18 tests pass in debug and release with parallel cargo test.",
+      "Chapter 15 updated with run-04 measurements and microarchitecture trace.",
+      "Old run-01 and run-02 snapshots preserved intact."
+    ],
+    "limits": "macOS 27+ pipe2 dynamic detection; unsupported on older OS without pipe2 (returns structured SpawnFailed error). Non-macOS uses unverified fallback."
+  }
+]

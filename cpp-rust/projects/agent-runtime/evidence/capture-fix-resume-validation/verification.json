@@ -1,0 +1,9 @@
+{
+  "test_executions": 360,
+  "stress_reports": 800,
+  "adversarial_cases": 8,
+  "final_source_files": 19,
+  "formal_current_raw_observations": 84,
+  "formal_current": "run-04",
+  "status": "implementation resume regression; not independent audit"
+}

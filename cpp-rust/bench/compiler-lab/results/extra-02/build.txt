@@ -1,0 +1,2 @@
+$ cargo build --release --offline --locked --manifest-path /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/Cargo.toml
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.03s

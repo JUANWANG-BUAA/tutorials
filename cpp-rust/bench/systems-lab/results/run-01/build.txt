@@ -1,0 +1,5 @@
+   Compiling crossbeam-utils v0.8.23
+   Compiling crossbeam-epoch v0.9.21
+   Compiling crossbeam-queue v0.3.14
+   Compiling systems-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/systems-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.46s

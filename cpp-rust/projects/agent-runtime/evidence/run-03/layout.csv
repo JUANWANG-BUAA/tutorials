@@ -1,0 +1,11 @@
+type,size,align
+Input,24,8
+Config,40,8
+Log,72,8
+ToolResult,224,8
+Client,24,8
+Ticket,32,8
+Outcome,1,1
+SubmitError,1,1
+Stage,8,4
+OwnedSemaphorePermit,16,8

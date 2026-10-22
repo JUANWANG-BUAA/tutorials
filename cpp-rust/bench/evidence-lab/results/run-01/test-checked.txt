@@ -1,0 +1,38 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (cpp-rust/bench/evidence-lab/target/debug/deps/evidence_lab-58597b5c89d58d05)
+
+running 5 tests
+test tests::batch_counter_loses_distribution_not_count ... ok
+test tests::small_sample_p99_is_maximum ... ok
+test tests::reject_missing_or_invalid_samples ... ok
+test tests::observation_does_not_change_business_result ... ok
+test tests::feature_result_matches_reference ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/cpu_wait.rs (cpp-rust/bench/evidence-lab/target/debug/deps/cpu_wait-28385b1a1141cc8c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/feature_work.rs (cpp-rust/bench/evidence-lab/target/debug/deps/feature_work-36b3bc11c9c16e3f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/instrumentation.rs (cpp-rust/bench/evidence-lab/target/debug/deps/instrumentation-b464f5acf2c2078b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests evidence_lab
+
+running 1 test
+test src/lib.rs - sum_bytes (line 68) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.43s; merged doctests compilation took 0.14s

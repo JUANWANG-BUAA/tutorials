@@ -1,0 +1,258 @@
+{
+  "scope": "local diagnostic verification, not independent audit; original incident uniquely unprovable from old log",
+  "source_snapshots": [
+    {
+      "manifest": "bench/results/runtime-final/source-hashes.json",
+      "entries": 13,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/before-diagnostic-source-hashes.json",
+      "entries": 14,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/baseline-debug/source-hashes.json",
+      "entries": 15,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/baseline-release/source-hashes.json",
+      "entries": 15,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/fixed-debug/source-hashes.json",
+      "entries": 17,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/fixed-release/source-hashes.json",
+      "entries": 17,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/repeated-validation/source-hashes.json",
+      "entries": 20,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/final-validation/source-hashes.json",
+      "entries": 20,
+      "snapshot_verified": true,
+      "current_verified": true
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/measurements/source-hashes.json",
+      "entries": 16,
+      "snapshot_verified": true,
+      "current_verified": false
+    },
+    {
+      "manifest": "bench/results/runtime-fixed/measurements-final/source-hashes.json",
+      "entries": 16,
+      "snapshot_verified": true,
+      "current_verified": true
+    }
+  ],
+  "adversarial": {
+    "old_expected_failures": 8,
+    "fixed_passes": 8
+  },
+  "validation": {
+    "repeated-validation": {
+      "complete_parallel_test_runs": 20,
+      "tests_per_run": 18,
+      "stress_reports": {
+        "flood": 600,
+        "sleep": 100,
+        "inherit": 100
+      }
+    },
+    "final-validation": {
+      "complete_parallel_test_runs": 20,
+      "tests_per_run": 18,
+      "stress_reports": {
+        "flood": 600,
+        "sleep": 100,
+        "inherit": 100
+      }
+    }
+  },
+  "benchmarks": {
+    "measurements": {
+      "raw_observations": 210,
+      "cases": {
+        "scheduling": {
+          "current-q16": {
+            "n": 21,
+            "mean": 16.005113192952383,
+            "sd_n_minus_1": 0.4424008659083292,
+            "nearest_rank_p50": 15.963196754,
+            "nearest_rank_p99": 16.667326927
+          },
+          "current-q1024": {
+            "n": 21,
+            "mean": 2.6300746826190475,
+            "sd_n_minus_1": 0.0580695170920556,
+            "nearest_rank_p50": 2.6185112,
+            "nearest_rank_p99": 2.708712578
+          },
+          "multi4-q16": {
+            "n": 21,
+            "mean": 2.071787470809524,
+            "sd_n_minus_1": 0.12971489114364218,
+            "nearest_rank_p50": 2.047857285,
+            "nearest_rank_p99": 2.416133881
+          },
+          "multi4-q1024": {
+            "n": 21,
+            "mean": 0.7497641699047619,
+            "sd_n_minus_1": 0.013646057011245102,
+            "nearest_rank_p50": 0.747680664,
+            "nearest_rank_p99": 0.797907829
+          }
+        },
+        "blocking-poll": {
+          "inline": {
+            "n": 21,
+            "mean": 23361603.095238097,
+            "sd_n_minus_1": 1999053.5614304813,
+            "nearest_rank_p50": 24434666.0,
+            "nearest_rank_p99": 25053583.0
+          },
+          "offload": {
+            "n": 21,
+            "mean": 10694.42857142857,
+            "sd_n_minus_1": 2704.486098530155,
+            "nearest_rank_p50": 10125.0,
+            "nearest_rank_p99": 15500.0
+          }
+        },
+        "process-rpc": {
+          "spawn": {
+            "n": 21,
+            "mean": 1295907.113095238,
+            "sd_n_minus_1": 54635.15464116766,
+            "nearest_rank_p50": 1297619.8125,
+            "nearest_rank_p99": 1396065.125
+          },
+          "persistent": {
+            "n": 21,
+            "mean": 5310.639880952381,
+            "sd_n_minus_1": 564.4238755500361,
+            "nearest_rank_p50": 5362.0,
+            "nearest_rank_p99": 6669.25
+          }
+        },
+        "pipe-drain": {
+          "retain-all": {
+            "n": 21,
+            "mean": 0.5521211397619048,
+            "sd_n_minus_1": 0.071873331738204,
+            "nearest_rank_p50": 0.529487848,
+            "nearest_rank_p99": 0.764667988
+          },
+          "prefix128": {
+            "n": 21,
+            "mean": 0.5382975735714286,
+            "sd_n_minus_1": 0.05916967804120994,
+            "nearest_rank_p50": 0.513623238,
+            "nearest_rank_p99": 0.701536655
+          }
+        }
+      }
+    },
+    "measurements-final": {
+      "raw_observations": 210,
+      "cases": {
+        "scheduling": {
+          "current-q16": {
+            "n": 21,
+            "mean": 16.359580857333334,
+            "sd_n_minus_1": 0.36469833381274347,
+            "nearest_rank_p50": 16.426125526,
+            "nearest_rank_p99": 16.91623497
+          },
+          "current-q1024": {
+            "n": 21,
+            "mean": 2.6024654479047618,
+            "sd_n_minus_1": 0.04939158153565832,
+            "nearest_rank_p50": 2.604086876,
+            "nearest_rank_p99": 2.683719635
+          },
+          "multi4-q16": {
+            "n": 21,
+            "mean": 2.032681147142857,
+            "sd_n_minus_1": 0.11127574295430927,
+            "nearest_rank_p50": 2.036213875,
+            "nearest_rank_p99": 2.290725708
+          },
+          "multi4-q1024": {
+            "n": 21,
+            "mean": 0.7504469554761904,
+            "sd_n_minus_1": 0.015331965767838712,
+            "nearest_rank_p50": 0.74855423,
+            "nearest_rank_p99": 0.78280735
+          }
+        },
+        "blocking-poll": {
+          "inline": {
+            "n": 21,
+            "mean": 23658343.285714287,
+            "sd_n_minus_1": 1302021.9998817279,
+            "nearest_rank_p50": 23604084.0,
+            "nearest_rank_p99": 25060042.0
+          },
+          "offload": {
+            "n": 21,
+            "mean": 13632.857142857143,
+            "sd_n_minus_1": 3494.454024389422,
+            "nearest_rank_p50": 14125.0,
+            "nearest_rank_p99": 18541.0
+          }
+        },
+        "process-rpc": {
+          "spawn": {
+            "n": 21,
+            "mean": 1219110.005952381,
+            "sd_n_minus_1": 77376.42869373616,
+            "nearest_rank_p50": 1208367.1875,
+            "nearest_rank_p99": 1531747.4375
+          },
+          "persistent": {
+            "n": 21,
+            "mean": 5484.127976190476,
+            "sd_n_minus_1": 532.399926217136,
+            "nearest_rank_p50": 5372.375,
+            "nearest_rank_p99": 7346.375
+          }
+        },
+        "pipe-drain": {
+          "prefix128": {
+            "n": 21,
+            "mean": 0.5139793896190477,
+            "sd_n_minus_1": 0.031143773437075153,
+            "nearest_rank_p50": 0.507315159,
+            "nearest_rank_p99": 0.582933426
+          },
+          "retain-all": {
+            "n": 21,
+            "mean": 0.515498377,
+            "sd_n_minus_1": 0.02689528577175171,
+            "nearest_rank_p50": 0.507414341,
+            "nearest_rank_p99": 0.583420277
+          }
+        }
+      }
+    }
+  },
+  "timing_scope": "desktop; 168 batch means and 42 single-notification observations per measurement archive, no production request-tail claim"
+}

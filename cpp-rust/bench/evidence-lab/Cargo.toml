@@ -1,0 +1,27 @@
+[package]
+name = "evidence-lab"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+resolver = "3"
+
+[features]
+default = []
+checked = []
+
+[profile.release]
+debug = 1
+incremental = false
+codegen-units = 16
+lto = false
+
+[profile.one]
+inherits = "release"
+codegen-units = 1
+
+[profile.thin]
+inherits = "release"
+codegen-units = 1
+lto = "thin"

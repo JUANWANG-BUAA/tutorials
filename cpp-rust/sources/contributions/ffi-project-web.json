@@ -1,0 +1,23 @@
+[
+  {
+    "id": "FFI-CATCH",
+    "url": "https://doc.rust-lang.org/std/panic/fn.catch_unwind.html",
+    "sha256": "535eb1e0371946ca50fd476944eaf0411ba5ff393a53702c3d46587804a3b873",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-CATCH.html",
+    "review_scope": "catch_unwind documentation including Notes"
+  },
+  {
+    "id": "FFI-SLICE",
+    "url": "https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html",
+    "sha256": "c6afe18f51c844c7d48fb732865c4a4c18a15443c9d9277c7e30f93645c3a7ce",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-SLICE.html",
+    "review_scope": "from_raw_parts Safety and Caveat: Lifetimes"
+  },
+  {
+    "id": "FFI-REPR",
+    "url": "https://doc.rust-lang.org/reference/type-layout.html",
+    "sha256": "d407581c2d5516e63df34253f7029c2c90f7bb6c238ecccf89a5c17ba5b1b564",
+    "archive": ".work/cpp-rust-sources/ffi-project/FFI-REPR.html",
+    "review_scope": "repr(C) struct alignment, padding and layout algorithm"
+  }
+]

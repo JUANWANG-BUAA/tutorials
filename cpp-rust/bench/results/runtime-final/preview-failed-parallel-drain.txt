@@ -1,0 +1,139 @@
++ /Users/juanwang/miniconda3/bin/python3 tools/build_coverage.py
+ledger links valid: 29; full-book coverage INCOMPLETE
++ /Users/juanwang/miniconda3/bin/python3 tools/check_book.py
+check_book 通过！共检查 6 个页面，0 错误。
++ /Users/juanwang/miniconda3/bin/python3 tools/verify_evidence.py
+evidence checks passed: 567 raw observations; 10 + 14 recorded tests; both source snapshots match
+525 batch means + 42 single-notification observations; not 567 production request-tail samples.
+Not a correctness proof, independent audit, or full-book completion check.
++ cargo fmt --manifest-path bench/Cargo.toml --check
++ cargo clippy --offline --manifest-path bench/Cargo.toml --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
++ cargo test --offline --manifest-path bench/Cargo.toml
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (bench/target/debug/deps/performance_lab-818262494f73fa62)
+
+running 10 tests
+test park::tests::notification_survives_a_consumed_park_token ... ok
+test park::tests::pre_park_notification_is_not_lost ... ok
+test slot::tests::received_payload_is_not_dropped_again ... ok
+test slot::tests::unread_payload_is_dropped_once ... ok
+test slot::tests::capacity_one_and_reuse ... ok
+test tests::flat_distribution ... ok
+test tests::nearest_rank_and_sample_variance ... ok
+test park::tests::nested_call_is_rejected_and_guard_recovers ... ok
+test park::tests::another_thread_can_complete_future ... ok
+test slot::tests::non_copy_payload_crosses_threads ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/async_poll.rs (bench/target/debug/deps/async_poll-015d271edd70beaf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/atomic_contention.rs (bench/target/debug/deps/atomic_contention-a318581d948d6aae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/future_allocation.rs (bench/target/debug/deps/future_allocation-3ae057fb02ca7429)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/handoff.rs (bench/target/debug/deps/handoff-be176b188cc5c529)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests performance_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ cargo fmt --manifest-path bench/runtime-lab/Cargo.toml --check
++ cargo clippy --offline --locked --manifest-path bench/runtime-lab/Cargo.toml --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
++ cargo test --offline --locked --manifest-path bench/runtime-lab/Cargo.toml
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (bench/runtime-lab/target/debug/deps/runtime_lab-09362aa3cac8dbbf)
+
+running 3 tests
+test wire::tests::eof_is_not_truncated_frame ... ok
+test wire::tests::explicit_roundtrip_and_byte_order ... ok
+test wire::tests::rejects_each_header_field ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/blocking_poll.rs (bench/runtime-lab/target/debug/deps/blocking_poll-42993460a62fd0f5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/worker.rs (bench/runtime-lab/target/debug/deps/lab_worker-df50b13607d1c806)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/pipe_drain.rs (bench/runtime-lab/target/debug/deps/pipe_drain-aeb495da5b085ffc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/process_rpc.rs (bench/runtime-lab/target/debug/deps/process_rpc-c78ae7dfdaa5a7fa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/scheduling.rs (bench/runtime-lab/target/debug/deps/scheduling-5535765908fa8290)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (bench/runtime-lab/target/debug/deps/contracts-62570126166b9bb6)
+
+running 11 tests
+test bounded_channel_and_close_preserve_messages ... ok
+test blocking_permit_is_held_inside_closure ... ok
+test invalid_limit_is_rejected_before_spawn ... ok
+test abort_observed_and_drop_executed ... ok
+test missing_executable_is_spawn_error ... ok
+test joinset_observes_panic_and_completes_other_task ... ok
+test nonzero_exit_is_a_report_not_spawn_error ... ok
+test wait_before_drain_is_a_reproduced_stall ... ok
+test timeout_kills_and_waits_direct_child ... FAILED
+test concurrently_drains_and_caps_both_streams ... FAILED
+test inherited_writer_does_not_hang_drainers_forever ... ok
+
+failures:
+
+---- timeout_kills_and_waits_direct_child stdout ----
+
+thread 'timeout_kills_and_waits_direct_child' (1134634) panicked at tests/contracts.rs:132:9:
+assertion failed: report.stdout.eof && report.stderr.eof
+
+---- concurrently_drains_and_caps_both_streams stdout ----
+
+thread 'concurrently_drains_and_caps_both_streams' (1134628) panicked at tests/contracts.rs:111:9:
+assertion failed: report.reader_errors.is_empty()
+
+
+failures:
+    concurrently_drains_and_caps_both_streams
+    timeout_kills_and_waits_direct_child
+
+test result: FAILED. 9 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.53s
+
+error: test failed, to rerun pass `--test contracts`
+VALIDATION FAILED: Command '['cargo', 'test', '--offline', '--locked', '--manifest-path', 'bench/runtime-lab/Cargo.toml']' returned non-zero exit status 101.

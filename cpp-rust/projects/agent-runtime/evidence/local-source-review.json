@@ -1,0 +1,17 @@
+{
+  "version": "tokio=1.54.0",
+  "source": "cached crate src/process/mod.rs",
+  "sha256": "1ec90c89879ecf786a279ff733448cfd8109857dc28d756adb54d86762d0eeac",
+  "reviewed_lines": [
+    [
+      199,
+      226
+    ],
+    [
+      1215,
+      1410
+    ]
+  ],
+  "scope": "drop/start_kill/kill/wait/reaping; not a full crate audit",
+  "evidence": "src/lib.rs"
+}

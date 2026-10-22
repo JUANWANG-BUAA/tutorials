@@ -1,0 +1,2 @@
+   Compiling compiler-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.24s

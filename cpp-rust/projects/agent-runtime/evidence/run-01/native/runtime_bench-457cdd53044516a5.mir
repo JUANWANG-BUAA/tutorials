@@ -1,0 +1,5770 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+const REJECTS: usize = const 100000_usize;
+
+const TOOLS: usize = const 8_usize;
+
+const BYTES: usize = const 262144_usize;
+
+fn runtime(_1: usize, _2: usize) -> agent_runtime::Runtime {
+    debug concurrency => _1;
+    debug retain => _2;
+    let mut _0: agent_runtime::Runtime;
+    let mut _3: agent_runtime::Registry;
+    let _4: ();
+    let mut _5: std::result::Result<(), std::string::String>;
+    let mut _6: &mut agent_runtime::Registry;
+    let mut _7: std::path::PathBuf;
+    let _8: &std::path::Path;
+    let _9: std::path::PathBuf;
+    let mut _10: std::result::Result<std::path::PathBuf, std::io::Error>;
+    let mut _11: std::result::Result<agent_runtime::Runtime, std::string::String>;
+    let mut _12: agent_runtime::Registry;
+    let mut _13: agent_runtime::Config;
+    let mut _14: bool;
+    scope 1 {
+        debug registry => _3;
+        scope 7 (inlined <PathBuf as Deref>::deref) {
+            scope 8 (inlined Path::new::<OsString>) {
+                let _16: *const std::path::Path;
+                let mut _17: *const std::ffi::OsStr;
+                scope 9 (inlined <OsString as AsRef<OsStr>>::as_ref) {
+                    scope 10 (inlined <OsString as Deref>::deref) {
+                        scope 11 (inlined #[track_caller] <OsString as Index<RangeFull>>::index) {
+                            let _18: &std::sys::os_str::bytes::Slice;
+                            scope 12 (inlined std::sys::os_str::bytes::Buf::as_slice) {
+                                let mut _19: &[u8];
+                                scope 13 (inlined Vec::<u8>::as_slice) {
+                                    let _20: *const [u8];
+                                    let mut _21: *const u8;
+                                    let mut _22: usize;
+                                    scope 14 (inlined Vec::<u8>::as_ptr) {
+                                        scope 15 (inlined alloc::raw_vec::RawVec::<u8>::ptr) {
+                                            scope 16 (inlined alloc::raw_vec::RawVecInner::ptr::<u8>) {
+                                                scope 17 (inlined alloc::raw_vec::RawVecInner::non_null::<u8>) {
+                                                    let mut _23: std::ptr::NonNull<u8>;
+                                                    scope 18 (inlined std::ptr::Unique::<u8>::cast::<u8>) {
+                                                        scope 19 (inlined NonNull::<u8>::cast::<u8>) {
+                                                            scope 20 (inlined NonNull::<u8>::as_ptr) {
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 21 (inlined std::ptr::Unique::<u8>::as_non_null_ptr) {
+                                                    }
+                                                }
+                                                scope 22 (inlined NonNull::<u8>::as_ptr) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            scope 23 (inlined OsStr::from_inner) {
+                                let _24: *const std::ffi::OsStr;
+                                let mut _25: *const std::sys::os_str::bytes::Slice;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scope 24 (inlined <Config as Default>::default) {
+            scope 25 (inlined Duration::from_secs) {
+            }
+        }
+    }
+    scope 2 (inlined <Registry as Default>::default) {
+        let mut _15: std::collections::BTreeMap<std::string::String, agent_runtime::Tool>;
+        scope 3 (inlined <BTreeMap<String, agent_runtime::Tool> as Default>::default) {
+            scope 4 (inlined BTreeMap::<String, agent_runtime::Tool>::new) {
+                scope 5 (inlined ManuallyDrop::<std::alloc::Global>::new) {
+                    scope 6 (inlined MaybeDangling::<std::alloc::Global>::new) {
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _14 = const true;
+        StorageLive(_15);
+        _15 = BTreeMap::<String, agent_runtime::Tool> { root: const Option::<alloc::collections::btree::node::NodeRef<alloc::collections::btree::node::marker::Owned, String, agent_runtime::Tool, alloc::collections::btree::node::marker::LeafOrInternal>>::None, length: const 0_usize, alloc: const ManuallyDrop::<std::alloc::Global> {{ value: MaybeDangling::<std::alloc::Global>(std::alloc::Global) }}, _marker: const PhantomData::<Box<(String, agent_runtime::Tool)>> };
+        _3 = Registry(move _15);
+        StorageDead(_15);
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = &mut _3;
+        StorageLive(_7);
+        StorageLive(_8);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = current_exe() -> [return: bb1, unwind: bb12];
+    }
+
+    bb1: {
+        _9 = Result::<PathBuf, std::io::Error>::expect(move _10, const "current executable") -> [return: bb2, unwind: bb12];
+    }
+
+    bb2: {
+        StorageLive(_16);
+        StorageLive(_17);
+        StorageLive(_18);
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_23);
+        _23 = copy (((((((_9.0: std::ffi::OsString).0: std::sys::os_str::bytes::Buf).0: std::vec::Vec<u8>).0: alloc::raw_vec::RawVec<u8>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _21 = copy _23 as *const u8 (Transmute);
+        StorageDead(_23);
+        StorageLive(_22);
+        _22 = copy ((((_9.0: std::ffi::OsString).0: std::sys::os_str::bytes::Buf).0: std::vec::Vec<u8>).1: usize);
+        _20 = *const [u8] from (copy _21, move _22);
+        StorageDead(_22);
+        StorageDead(_21);
+        _19 = &(*_20);
+        StorageDead(_20);
+        _18 = copy _19 as &std::sys::os_str::bytes::Slice (Transmute);
+        StorageDead(_19);
+        StorageLive(_25);
+        _25 = &raw const (*_18);
+        _24 = copy _25 as *const std::ffi::OsStr (PtrToPtr);
+        StorageDead(_25);
+        StorageDead(_18);
+        _17 = &raw const (*_24);
+        _16 = copy _17 as *const std::path::Path (PtrToPtr);
+        StorageDead(_17);
+        _8 = &(*_16);
+        StorageDead(_16);
+        StorageDead(_10);
+        _7 = Path::with_file_name::<&str>(move _8, const "tool-helper") -> [return: bb3, unwind: bb9];
+    }
+
+    bb3: {
+        _5 = Registry::helper::<PathBuf>(move _6, const "demo", move _7) -> [return: bb4, unwind: bb9];
+    }
+
+    bb4: {
+        StorageDead(_7);
+        StorageDead(_6);
+        _4 = Result::<(), String>::expect(move _5, const "helper present") -> [return: bb5, unwind: bb9];
+    }
+
+    bb5: {
+        StorageDead(_5);
+        drop(_9) -> [return: bb6, unwind: bb12];
+    }
+
+    bb6: {
+        StorageDead(_9);
+        StorageDead(_8);
+        StorageLive(_11);
+        StorageLive(_12);
+        _14 = const false;
+        _12 = move _3;
+        StorageLive(_13);
+        _13 = Config { queue: const 16_usize, concurrency: copy _1, retain: copy _2, drain_grace: const Duration {{ secs: 1_u64, nanos: core::num::niche_types::Nanoseconds(0_u32 is 0..=999999999) }} };
+        _11 = agent_runtime::Runtime::start(move _12, move _13) -> [return: bb7, unwind: bb12];
+    }
+
+    bb7: {
+        StorageDead(_13);
+        StorageDead(_12);
+        _0 = Result::<agent_runtime::Runtime, String>::expect(move _11, const "configuration") -> [return: bb8, unwind: bb12];
+    }
+
+    bb8: {
+        StorageDead(_11);
+        StorageDead(_3);
+        return;
+    }
+
+    bb9 (cleanup): {
+        drop(_9) -> [return: bb12, unwind terminate(cleanup)];
+    }
+
+    bb10 (cleanup): {
+        resume;
+    }
+
+    bb11 (cleanup): {
+        drop(_3) -> [return: bb10, unwind terminate(cleanup)];
+    }
+
+    bb12 (cleanup): {
+        switchInt(copy _14) -> [0: bb10, otherwise: bb11];
+    }
+}
+
+alloc47 (size: 16, align: 8) {
+    01 00 00 00 00 00 00 00 00 00 00 00 __ __ __ __ │ ............░░░░
+}
+
+alloc46 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc25 (size: 13, align: 1) {
+    63 6f 6e 66 69 67 75 72 61 74 69 6f 6e          │ configuration
+}
+
+alloc24 (size: 14, align: 1) {
+    68 65 6c 70 65 72 20 70 72 65 73 65 6e 74       │ helper present
+}
+
+alloc23 (size: 18, align: 1) {
+    0x00 │ 63 75 72 72 65 6e 74 20 65 78 65 63 75 74 61 62 │ current executab
+    0x10 │ 6c 65                                           │ le
+}
+
+alloc3 (size: 11, align: 1) {
+    74 6f 6f 6c 2d 68 65 6c 70 65 72                │ tool-helper
+}
+
+alloc1 (size: 4, align: 1) {
+    64 65 6d 6f                                     │ demo
+}
+
+fn rejected_batch(_1: &Client) -> (u128, usize) {
+    debug client => _1;
+    let mut _0: (u128, usize);
+    let _2: std::time::Instant;
+    let mut _5: agent_runtime::Input;
+    let mut _6: std::string::String;
+    let mut _7: bool;
+    let mut _8: std::result::Result<agent_runtime::Ticket, agent_runtime::SubmitError>;
+    let mut _9: isize;
+    let mut _10: isize;
+    let mut _11: u128;
+    let _12: std::time::Duration;
+    let mut _13: &std::time::Instant;
+    scope 1 {
+        debug begin => _2;
+        let mut _3: usize;
+        scope 2 {
+            debug rejected => _3;
+            let mut _24: usize;
+            scope 3 {
+                debug ((iter: std::ops::Range<usize>).0: usize) => _24;
+                debug ((iter: std::ops::Range<usize>).1: usize) => const 100000_usize;
+                let _4: std::result::Result<agent_runtime::Ticket, agent_runtime::SubmitError>;
+                scope 4 {
+                    debug result => _4;
+                    scope 5 {
+                        scope 26 (inlined std::hint::black_box::<Result<Ticket, SubmitError>>) {
+                        }
+                    }
+                }
+                scope 7 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                    scope 8 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                        let mut _14: bool;
+                        let mut _15: usize;
+                        scope 9 {
+                            scope 11 (inlined <usize as Step>::forward_unchecked) {
+                                scope 12 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                    scope 13 (inlined ub_checks::check_language_ub) {
+                                        scope 14 (inlined ub_checks::check_language_ub::runtime) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 10 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                            let mut _16: usize;
+                        }
+                    }
+                }
+                scope 15 (inlined String::new) {
+                    let mut _17: std::vec::Vec<u8>;
+                    scope 16 (inlined Vec::<u8>::new) {
+                        scope 17 (inlined alloc::raw_vec::RawVec::<u8>::new) {
+                            scope 18 (inlined alloc::raw_vec::RawVec::<u8>::new_in) {
+                                scope 19 (inlined std::mem::Alignment::of::<u8>) {
+                                }
+                                scope 20 (inlined alloc::raw_vec::RawVecInner::new_in) {
+                                    scope 21 {
+                                    }
+                                    scope 22 (inlined std::mem::Alignment::as_nonzero_usize) {
+                                    }
+                                    scope 23 (inlined NonNull::<u8>::without_provenance) {
+                                    }
+                                    scope 24 (inlined std::ptr::Unique::<u8>::from_non_null) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                scope 25 (inlined Duration::from_secs) {
+                }
+            }
+            scope 6 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+            }
+            scope 27 (inlined Duration::as_nanos) {
+                let mut _18: u128;
+                let mut _19: u128;
+                let mut _20: u64;
+                let mut _21: u128;
+                let mut _22: u32;
+                let mut _23: core::num::niche_types::Nanoseconds;
+                scope 28 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                }
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_2);
+        _2 = std::time::Instant::now() -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        _3 = const 0_usize;
+        _24 = const 0_usize;
+        goto -> bb2;
+    }
+
+    bb2: {
+        StorageLive(_14);
+        StorageLive(_16);
+        _16 = copy _24;
+        _14 = Lt(move _16, const 100000_usize);
+        StorageDead(_16);
+        switchInt(move _14) -> [0: bb14, otherwise: bb13];
+    }
+
+    bb3: {
+        unreachable;
+    }
+
+    bb4: {
+        StorageDead(_5);
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = std::intrinsics::black_box::<Result<Ticket, SubmitError>>(move _4) -> [return: bb15, unwind unreachable];
+    }
+
+    bb5: {
+        goto -> bb9;
+    }
+
+    bb6: {
+        _9 = discriminant(((_8 as Err).0: agent_runtime::SubmitError));
+        _7 = Eq(copy _9, const 2_isize);
+        switchInt(move _7) -> [0: bb9, otherwise: bb7];
+    }
+
+    bb7: {
+        drop(_8) -> [return: bb8, unwind continue];
+    }
+
+    bb8: {
+        StorageDead(_8);
+        _3 = Add(copy _3, const 1_usize);
+        goto -> bb11;
+    }
+
+    bb9: {
+        drop(_8) -> [return: bb10, unwind continue];
+    }
+
+    bb10: {
+        StorageDead(_8);
+        goto -> bb11;
+    }
+
+    bb11: {
+        StorageDead(_7);
+        StorageDead(_4);
+        goto -> bb2;
+    }
+
+    bb12: {
+        StorageDead(_13);
+        StorageLive(_18);
+        StorageLive(_19);
+        StorageLive(_20);
+        _20 = copy (_12.0: u64);
+        _19 = move _20 as u128 (IntToInt);
+        StorageDead(_20);
+        _18 = Mul(move _19, const 1000000000_u128);
+        StorageDead(_19);
+        StorageLive(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        _23 = copy (_12.1: core::num::niche_types::Nanoseconds);
+        _22 = copy _23 as u32 (Transmute);
+        StorageDead(_23);
+        _21 = move _22 as u128 (IntToInt);
+        StorageDead(_22);
+        _11 = Add(move _18, move _21);
+        StorageDead(_21);
+        StorageDead(_18);
+        _0 = (move _11, move _3);
+        StorageDead(_12);
+        StorageDead(_11);
+        StorageDead(_2);
+        return;
+    }
+
+    bb13: {
+        StorageLive(_15);
+        _15 = AddUnchecked(copy _24, const 1_usize);
+        _24 = move _15;
+        StorageDead(_15);
+        StorageDead(_14);
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_6);
+        StorageLive(_17);
+        _17 = Vec::<u8> { buf: const alloc::raw_vec::RawVec::<u8> {{ inner: alloc::raw_vec::RawVecInner {{ ptr: std::ptr::Unique::<u8> {{ pointer: NonNull::<u8> {{ pointer: {0x1 as *const u8} is !null }}, _marker: PhantomData::<u8> }}, cap: core::num::niche_types::UsizeNoHighBit(0_usize is 0..=9223372036854775807), alloc: std::alloc::Global }}, _marker: PhantomData::<u8> }}, len: const 0_usize };
+        _6 = String { vec: move _17 };
+        StorageDead(_17);
+        _5 = Echo(move _6);
+        StorageDead(_6);
+        _4 = Client::try_submit(copy _1, const "demo", move _5, const Duration {{ secs: 1_u64, nanos: core::num::niche_types::Nanoseconds(0_u32 is 0..=999999999) }}) -> [return: bb4, unwind continue];
+    }
+
+    bb14: {
+        StorageDead(_14);
+        StorageLive(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = &_2;
+        _12 = std::time::Instant::elapsed(move _13) -> [return: bb12, unwind continue];
+    }
+
+    bb15: {
+        _10 = discriminant(_8);
+        switchInt(move _10) -> [1: bb6, 0: bb5, otherwise: bb3];
+    }
+}
+
+alloc51 (size: 16, align: 8) {
+    01 00 00 00 00 00 00 00 00 00 00 00 __ __ __ __ │ ............░░░░
+}
+
+alloc49 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 │ ................
+}
+
+alloc1 (size: 4, align: 1) {
+    64 65 6d 6f                                     │ demo
+}
+
+fn admission() -> {async fn body of admission()} {
+    let mut _0: {async fn body of admission()};
+
+    bb0: {
+        _0 = {coroutine@src/bin/runtime-bench.rs:44:22: 101:2 (#0)};
+        return;
+    }
+}
+
+fn admission::{closure#0}(_1: Pin<&mut {async fn body of admission()}>, _2: &mut Context<'_>) -> Poll<()> {
+    coroutine layout {
+        field _s0: Registry;
+        field _s1: agent_runtime::Runtime;
+        field _s2: Client;
+        field _s3: Ticket;
+        field _s4: {async fn body of Ticket::started()};
+        field _s5: Ticket;
+        field _s6: std::time::Instant;
+        field _s7: {async fn body of Ticket::wait()};
+        field _s8: {async fn body of Ticket::wait()};
+        field _s9: {async fn body of agent_runtime::Runtime::shutdown()};
+        field _s10: bool;
+        field _s11: bool;
+        field _s12: bool;
+        field _s13: bool;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2, _s3, _s4, _s11, _s12, _s13],
+            Suspend1 (4): [_s0, _s1, _s2, _s3, _s5, _s6, _s7, _s10, _s11, _s12, _s13],
+            Suspend2 (5): [_s0, _s1, _s2, _s3, _s5, _s6, _s8, _s10, _s11, _s12, _s13],
+            Suspend3 (6): [_s0, _s1, _s2, _s3, _s5, _s6, _s9, _s10, _s11, _s12, _s13],
+        }
+        storage_conflicts = BitMatrix(14x14) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s0, _s3), (_s0, _s4), (_s0, _s5), (_s0, _s6), (_s0, _s7), (_s0, _s8), (_s0, _s9), (_s0, _s10), (_s0, _s11), (_s0, _s12), (_s0, _s13), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s1, _s3), (_s1, _s4), (_s1, _s5), (_s1, _s6), (_s1, _s7), (_s1, _s8), (_s1, _s9), (_s1, _s10), (_s1, _s11), (_s1, _s12), (_s1, _s13), (_s2, _s0), (_s2, _s1), (_s2, _s2), (_s2, _s3), (_s2, _s4), (_s2, _s5), (_s2, _s6), (_s2, _s7), (_s2, _s8), (_s2, _s9), (_s2, _s10), (_s2, _s11), (_s2, _s12), (_s2, _s13), (_s3, _s0), (_s3, _s1), (_s3, _s2), (_s3, _s3), (_s3, _s4), (_s3, _s5), (_s3, _s6), (_s3, _s7), (_s3, _s8), (_s3, _s9), (_s3, _s10), (_s3, _s11), (_s3, _s12), (_s3, _s13), (_s4, _s0), (_s4, _s1), (_s4, _s2), (_s4, _s3), (_s4, _s4), (_s4, _s10), (_s4, _s11), (_s4, _s12), (_s4, _s13), (_s5, _s0), (_s5, _s1), (_s5, _s2), (_s5, _s3), (_s5, _s5), (_s5, _s6), (_s5, _s7), (_s5, _s8), (_s5, _s9), (_s5, _s10), (_s5, _s11), (_s5, _s12), (_s5, _s13), (_s6, _s0), (_s6, _s1), (_s6, _s2), (_s6, _s3), (_s6, _s5), (_s6, _s6), (_s6, _s7), (_s6, _s8), (_s6, _s9), (_s6, _s10), (_s6, _s11), (_s6, _s12), (_s6, _s13), (_s7, _s0), (_s7, _s1), (_s7, _s2), (_s7, _s3), (_s7, _s5), (_s7, _s6), (_s7, _s7), (_s7, _s10), (_s7, _s11), (_s7, _s12), (_s7, _s13), (_s8, _s0), (_s8, _s1), (_s8, _s2), (_s8, _s3), (_s8, _s5), (_s8, _s6), (_s8, _s8), (_s8, _s10), (_s8, _s11), (_s8, _s12), (_s8, _s13), (_s9, _s0), (_s9, _s1), (_s9, _s2), (_s9, _s3), (_s9, _s5), (_s9, _s6), (_s9, _s9), (_s9, _s10), (_s9, _s11), (_s9, _s12), (_s9, _s13), (_s10, _s0), (_s10, _s1), (_s10, _s2), (_s10, _s3), (_s10, _s4), (_s10, _s5), (_s10, _s6), (_s10, _s7), (_s10, _s8), (_s10, _s9), (_s10, _s10), (_s10, _s11), (_s10, _s12), (_s10, _s13), (_s11, _s0), (_s11, _s1), (_s11, _s2), (_s11, _s3), (_s11, _s4), (_s11, _s5), (_s11, _s6), (_s11, _s7), (_s11, _s8), (_s11, _s9), (_s11, _s10), (_s11, _s11), (_s11, _s12), (_s11, _s13), (_s12, _s0), (_s12, _s1), (_s12, _s2), (_s12, _s3), (_s12, _s4), (_s12, _s5), (_s12, _s6), (_s12, _s7), (_s12, _s8), (_s12, _s9), (_s12, _s10), (_s12, _s11), (_s12, _s12), (_s12, _s13), (_s13, _s0), (_s13, _s1), (_s13, _s2), (_s13, _s3), (_s13, _s4), (_s13, _s5), (_s13, _s6), (_s13, _s7), (_s13, _s8), (_s13, _s9), (_s13, _s10), (_s13, _s11), (_s13, _s12), (_s13, _s13)}
+    }
+    debug _task_context => _139;
+    coroutine debug registry => _s0;
+    let mut _0: std::task::Poll<()>;
+    let _3: ();
+    let mut _4: std::result::Result<(), std::string::String>;
+    let mut _5: &mut agent_runtime::Registry;
+    let mut _6: std::path::PathBuf;
+    let _7: &std::path::Path;
+    let mut _8: &std::path::PathBuf;
+    let _9: std::path::PathBuf;
+    let mut _10: std::result::Result<std::path::PathBuf, std::io::Error>;
+    let mut _11: std::result::Result<agent_runtime::Runtime, std::string::String>;
+    let mut _12: agent_runtime::Registry;
+    let mut _13: agent_runtime::Config;
+    let mut _14: agent_runtime::Config;
+    let mut _15: &agent_runtime::Runtime;
+    let mut _16: std::result::Result<agent_runtime::Ticket, agent_runtime::SubmitError>;
+    let mut _17: &agent_runtime::Client;
+    let mut _18: agent_runtime::Input;
+    let mut _19: std::time::Duration;
+    let mut _20: bool;
+    let mut _21: &std::option::Option<u32>;
+    let _22: std::option::Option<u32>;
+    let mut _23: {async fn body of agent_runtime::Ticket::started()};
+    let mut _24: {async fn body of agent_runtime::Ticket::started()};
+    let mut _25: &mut agent_runtime::Ticket;
+    let mut _26: std::task::Poll<std::option::Option<u32>>;
+    let mut _27: std::pin::Pin<&mut {async fn body of agent_runtime::Ticket::started()}>;
+    let mut _28: &mut {async fn body of agent_runtime::Ticket::started()};
+    let mut _29: &mut std::task::Context<'_>;
+    let mut _30: std::future::ResumeTy;
+    let mut _31: isize;
+    let mut _33: !;
+    let mut _34: std::result::Result<agent_runtime::Ticket, agent_runtime::SubmitError>;
+    let mut _35: &agent_runtime::Client;
+    let mut _36: agent_runtime::Input;
+    let mut _37: std::time::Duration;
+    let mut _38: bool;
+    let mut _39: &std::time::Duration;
+    let _40: std::time::Duration;
+    let mut _41: &std::time::Instant;
+    let mut _42: &std::time::Duration;
+    let _43: std::time::Duration;
+    let mut _44: &usize;
+    let _45: (u128, usize);
+    let _46: &agent_runtime::Client;
+    let mut _47: bool;
+    let mut _48: usize;
+    let mut _49: usize;
+    let _51: !;
+    let mut _52: std::option::Option<std::fmt::Arguments<'_>>;
+    let _53: ();
+    let mut _54: std::fmt::Arguments<'_>;
+    let mut _55: std::ops::Range<i32>;
+    let mut _56: std::ops::Range<i32>;
+    let mut _58: std::option::Option<i32>;
+    let mut _59: &mut std::ops::Range<i32>;
+    let mut _60: isize;
+    let mut _64: (u128, usize);
+    let _65: &agent_runtime::Client;
+    let mut _66: &usize;
+    let mut _67: bool;
+    let mut _68: usize;
+    let _70: !;
+    let mut _71: std::option::Option<std::fmt::Arguments<'_>>;
+    let _72: ();
+    let mut _73: std::fmt::Arguments<'_>;
+    let mut _75: &i32;
+    let mut _76: &u128;
+    let mut _77: &usize;
+    let mut _79: core::fmt::rt::Argument<'_>;
+    let mut _80: core::fmt::rt::Argument<'_>;
+    let mut _81: core::fmt::rt::Argument<'_>;
+    let mut _82: core::fmt::rt::Argument<'_>;
+    let _83: &[core::fmt::rt::Argument<'_>; 4];
+    let _84: ();
+    let mut _85: &agent_runtime::Ticket;
+    let _86: ();
+    let mut _87: &agent_runtime::Ticket;
+    let mut _88: bool;
+    let mut _89: agent_runtime::ToolResult;
+    let mut _90: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _91: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _92: agent_runtime::Ticket;
+    let mut _93: std::task::Poll<std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>>;
+    let mut _94: std::pin::Pin<&mut {async fn body of agent_runtime::Ticket::wait()}>;
+    let mut _95: &mut {async fn body of agent_runtime::Ticket::wait()};
+    let mut _96: &mut std::task::Context<'_>;
+    let mut _97: std::future::ResumeTy;
+    let mut _98: isize;
+    let mut _100: !;
+    let mut _101: &std::option::Option<u32>;
+    let _102: agent_runtime::ToolResult;
+    let mut _103: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _104: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _105: agent_runtime::Ticket;
+    let mut _106: std::task::Poll<std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>>;
+    let mut _107: std::pin::Pin<&mut {async fn body of agent_runtime::Ticket::wait()}>;
+    let mut _108: &mut {async fn body of agent_runtime::Ticket::wait()};
+    let mut _109: &mut std::task::Context<'_>;
+    let mut _110: std::future::ResumeTy;
+    let mut _111: isize;
+    let mut _113: bool;
+    let _115: !;
+    let mut _116: std::option::Option<std::fmt::Arguments<'_>>;
+    let mut _117: bool;
+    let mut _118: &std::vec::Vec<std::string::String>;
+    let _119: agent_runtime::Shutdown;
+    let mut _120: {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _121: {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _122: agent_runtime::Runtime;
+    let mut _123: std::task::Poll<std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>>;
+    let mut _124: std::pin::Pin<&mut {async fn body of agent_runtime::Runtime::shutdown()}>;
+    let mut _125: &mut {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _126: &mut std::task::Context<'_>;
+    let mut _127: isize;
+    let mut _129: !;
+    let mut _134: bool;
+    let mut _135: bool;
+    let mut _136: bool;
+    let mut _137: u32;
+    let mut _138: &mut {async fn body of admission()};
+    let mut _139: std::future::ResumeTy;
+    let mut _140: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug registry => (((*_138) as variant#6).0: agent_runtime::Registry);
+        coroutine debug runtime => _s1;
+        scope 2 {
+            debug runtime => (((*_138) as variant#6).1: agent_runtime::Runtime);
+            coroutine debug client => _s2;
+            scope 3 {
+                debug client => (((*_138) as variant#6).2: agent_runtime::Client);
+                coroutine debug active => _s3;
+                scope 4 {
+                    debug active => (((*_138) as variant#6).3: agent_runtime::Ticket);
+                    coroutine debug __awaitee => _s4;
+                    coroutine debug queued => _s5;
+                    scope 5 {
+                        debug __awaitee => (((*_138) as variant#3).4: {async fn body of agent_runtime::Ticket::started()});
+                        let _32: std::option::Option<u32>;
+                        scope 6 {
+                            debug result => _32;
+                        }
+                    }
+                    scope 7 {
+                        debug queued => (((*_138) as variant#6).4: agent_runtime::Ticket);
+                        coroutine debug warm => _s6;
+                        scope 8 {
+                            debug warm => (((*_138) as variant#6).5: std::time::Instant);
+                            coroutine debug __awaitee => _s7;
+                            coroutine debug __awaitee => _s8;
+                            coroutine debug __awaitee => _s9;
+                            let mut _57: std::ops::Range<i32>;
+                            let mut _130: &usize;
+                            let mut _133: &std::option::Option<u32>;
+                            scope 9 {
+                                debug left_val => _44;
+                                debug right_val => _130;
+                                let _50: core::panicking::AssertKind;
+                                scope 10 {
+                                    debug kind => _50;
+                                }
+                            }
+                            scope 11 {
+                                debug iter => _57;
+                                let _61: i32;
+                                scope 12 {
+                                    debug index => _61;
+                                    let _62: u128;
+                                    let _63: usize;
+                                    scope 13 {
+                                        debug elapsed => _62;
+                                        debug rejected => _63;
+                                        let _74: (&i32, &u128, &usize, &usize);
+                                        let mut _131: &usize;
+                                        let mut _132: &usize;
+                                        scope 14 {
+                                            debug left_val => _66;
+                                            debug right_val => _132;
+                                            let _69: core::panicking::AssertKind;
+                                            scope 15 {
+                                                debug kind => _69;
+                                            }
+                                        }
+                                        scope 16 {
+                                            debug args => _74;
+                                            let _78: [core::fmt::rt::Argument<'_>; 4];
+                                            scope 17 {
+                                                debug args => _78;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            scope 18 {
+                                debug __awaitee => (((*_138) as variant#4).6: {async fn body of agent_runtime::Ticket::wait()});
+                                let _99: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>;
+                                scope 19 {
+                                    debug result => _99;
+                                }
+                            }
+                            scope 20 {
+                                debug __awaitee => (((*_138) as variant#5).6: {async fn body of agent_runtime::Ticket::wait()});
+                                let _112: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>;
+                                scope 21 {
+                                    debug result => _112;
+                                }
+                            }
+                            scope 22 {
+                                debug left_val => _101;
+                                debug right_val => _133;
+                                let _114: core::panicking::AssertKind;
+                                scope 23 {
+                                    debug kind => _114;
+                                }
+                            }
+                            scope 24 {
+                                debug __awaitee => (((*_138) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()});
+                                let _128: std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>;
+                                scope 25 {
+                                    debug result => _128;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _140 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _139 = std::future::ResumeTy(move _140);
+        _138 = copy (_1.0: &mut {async fn body of admission()});
+        _137 = discriminant((*_138));
+        switchInt(move _137) -> [0: bb192, 1: bb191, 2: bb190, 3: bb186, 4: bb187, 5: bb188, 6: bb189, otherwise: bb21];
+    }
+
+    bb1: {
+        (((*_138) as variant#6).10: bool) = const true;
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        _5 = &mut (((*_138) as variant#6).0: agent_runtime::Registry);
+        StorageLive(_6);
+        StorageLive(_7);
+        StorageLive(_8);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = current_exe() -> [return: bb2, unwind: bb172];
+    }
+
+    bb2: {
+        _9 = Result::<PathBuf, std::io::Error>::expect(move _10, const "exe") -> [return: bb3, unwind: bb171];
+    }
+
+    bb3: {
+        _8 = &_9;
+        _7 = <PathBuf as Deref>::deref(move _8) -> [return: bb4, unwind: bb168];
+    }
+
+    bb4: {
+        StorageDead(_10);
+        StorageDead(_8);
+        _6 = Path::with_file_name::<&str>(move _7, const "tool-helper") -> [return: bb5, unwind: bb169];
+    }
+
+    bb5: {
+        _4 = Registry::helper::<PathBuf>(move _5, const "demo", move _6) -> [return: bb6, unwind: bb169];
+    }
+
+    bb6: {
+        StorageDead(_6);
+        StorageDead(_5);
+        _3 = Result::<(), String>::expect(move _4, const "helper") -> [return: bb7, unwind: bb167];
+    }
+
+    bb7: {
+        StorageDead(_4);
+        drop(_9) -> [return: bb8, unwind: bb173];
+    }
+
+    bb8: {
+        StorageDead(_9);
+        StorageDead(_7);
+        StorageDead(_3);
+        StorageLive(_11);
+        StorageLive(_12);
+        (((*_138) as variant#6).10: bool) = const false;
+        _136 = const true;
+        _12 = move (((*_138) as variant#6).0: agent_runtime::Registry);
+        StorageLive(_13);
+        StorageLive(_14);
+        _14 = <Config as Default>::default() -> [return: bb9, unwind: bb163];
+    }
+
+    bb9: {
+        _13 = Config { queue: const 1_usize, concurrency: const 1_usize, retain: copy (_14.2: usize), drain_grace: copy (_14.3: std::time::Duration) };
+        _136 = const false;
+        _11 = agent_runtime::Runtime::start(move _12, move _13) -> [return: bb10, unwind: bb163];
+    }
+
+    bb10: {
+        StorageDead(_13);
+        StorageDead(_12);
+        (((*_138) as variant#6).1: agent_runtime::Runtime) = Result::<agent_runtime::Runtime, String>::expect(move _11, const "runtime") -> [return: bb11, unwind: bb162];
+    }
+
+    bb11: {
+        (((*_138) as variant#6).9: bool) = const true;
+        StorageDead(_11);
+        StorageDead(_14);
+        StorageLive(_15);
+        _15 = &(((*_138) as variant#6).1: agent_runtime::Runtime);
+        (((*_138) as variant#6).2: agent_runtime::Client) = agent_runtime::Runtime::client(move _15) -> [return: bb12, unwind: bb161];
+    }
+
+    bb12: {
+        StorageDead(_15);
+        StorageLive(_16);
+        StorageLive(_17);
+        _17 = &(((*_138) as variant#6).2: agent_runtime::Client);
+        StorageLive(_18);
+        _135 = const true;
+        _18 = agent_runtime::Input::Sleep { millis: const 60000_u64 };
+        StorageLive(_19);
+        _19 = Duration::from_secs(const 60_u64) -> [return: bb13, unwind: bb158];
+    }
+
+    bb13: {
+        _135 = const false;
+        _16 = Client::try_submit(move _17, const "demo", move _18, move _19) -> [return: bb14, unwind: bb158];
+    }
+
+    bb14: {
+        StorageDead(_19);
+        StorageDead(_18);
+        StorageDead(_17);
+        (((*_138) as variant#6).3: agent_runtime::Ticket) = Result::<Ticket, SubmitError>::expect(move _16, const "active") -> [return: bb15, unwind: bb157];
+    }
+
+    bb15: {
+        (((*_138) as variant#6).8: bool) = const true;
+        StorageDead(_16);
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        StorageLive(_24);
+        StorageLive(_25);
+        _25 = &mut (((*_138) as variant#6).3: agent_runtime::Ticket);
+        _24 = Ticket::started(move _25) -> [return: bb16, unwind: bb153];
+    }
+
+    bb16: {
+        StorageDead(_25);
+        _23 = <{async fn body of Ticket::started()} as IntoFuture>::into_future(move _24) -> [return: bb17, unwind: bb154];
+    }
+
+    bb17: {
+        StorageDead(_24);
+        (((*_138) as variant#3).4: {async fn body of agent_runtime::Ticket::started()}) = move _23;
+        goto -> bb18;
+    }
+
+    bb18: {
+        StorageLive(_26);
+        StorageLive(_27);
+        StorageLive(_28);
+        _28 = &mut (((*_138) as variant#3).4: {async fn body of agent_runtime::Ticket::started()});
+        _27 = Pin::<&mut {async fn body of Ticket::started()}>::new_unchecked(move _28) -> [return: bb19, unwind: bb151];
+    }
+
+    bb19: {
+        StorageLive(_29);
+        StorageLive(_30);
+        _30 = copy _139;
+        _29 = copy (_30.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_30);
+        _26 = <{async fn body of Ticket::started()} as Future>::poll(move _27, move _29) -> [return: bb20, unwind: bb150];
+    }
+
+    bb20: {
+        StorageDead(_29);
+        StorageDead(_28);
+        StorageDead(_27);
+        _31 = discriminant(_26);
+        switchInt(move _31) -> [0: bb23, 1: bb22, otherwise: bb21];
+    }
+
+    bb21: {
+        unreachable;
+    }
+
+    bb22: {
+        StorageDead(_26);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_20);
+        StorageDead(_21);
+        StorageDead(_22);
+        StorageDead(_23);
+        discriminant((*_138)) = 3;
+        return;
+    }
+
+    bb23: {
+        StorageLive(_32);
+        _32 = copy ((_26 as Ready).0: std::option::Option<u32>);
+        _22 = copy _32;
+        StorageDead(_32);
+        StorageDead(_26);
+        drop((((*_138) as variant#3).4: {async fn body of agent_runtime::Ticket::started()})) -> [return: bb24, unwind: bb152];
+    }
+
+    bb24: {
+        _21 = &_22;
+        _20 = Option::<u32>::is_some(move _21) -> [return: bb25, unwind: bb152];
+    }
+
+    bb25: {
+        switchInt(move _20) -> [0: bb27, otherwise: bb26];
+    }
+
+    bb26: {
+        StorageDead(_21);
+        StorageDead(_23);
+        StorageDead(_22);
+        StorageDead(_20);
+        StorageLive(_34);
+        StorageLive(_35);
+        _35 = &(((*_138) as variant#6).2: agent_runtime::Client);
+        StorageLive(_36);
+        _134 = const true;
+        _36 = agent_runtime::Input::Sleep { millis: const 60000_u64 };
+        StorageLive(_37);
+        _37 = Duration::from_secs(const 60_u64) -> [return: bb28, unwind: bb146];
+    }
+
+    bb27: {
+        StorageDead(_21);
+        StorageDead(_23);
+        StorageDead(_22);
+        StorageLive(_33);
+        _33 = panic(const "assertion failed: active.started().await.is_some()") -> bb149;
+    }
+
+    bb28: {
+        _134 = const false;
+        _34 = Client::try_submit(move _35, const "demo", move _36, move _37) -> [return: bb29, unwind: bb146];
+    }
+
+    bb29: {
+        StorageDead(_37);
+        StorageDead(_36);
+        StorageDead(_35);
+        (((*_138) as variant#6).4: agent_runtime::Ticket) = Result::<Ticket, SubmitError>::expect(move _34, const "queue") -> [return: bb30, unwind: bb145];
+    }
+
+    bb30: {
+        (((*_138) as variant#6).7: bool) = const true;
+        StorageDead(_34);
+        (((*_138) as variant#6).5: std::time::Instant) = std::time::Instant::now() -> [return: bb193, unwind: bb176];
+    }
+
+    bb31: {
+        StorageLive(_38);
+        StorageLive(_39);
+        StorageLive(_40);
+        StorageLive(_41);
+        _41 = &(((*_138) as variant#6).5: std::time::Instant);
+        _40 = std::time::Instant::elapsed(move _41) -> [return: bb32, unwind: bb142];
+    }
+
+    bb32: {
+        _39 = &_40;
+        StorageDead(_41);
+        StorageLive(_42);
+        StorageLive(_43);
+        _43 = Duration::from_millis(const 500_u64) -> [return: bb33, unwind: bb141];
+    }
+
+    bb33: {
+        _42 = &_43;
+        _38 = <Duration as PartialOrd>::lt(move _39, move _42) -> [return: bb34, unwind: bb141];
+    }
+
+    bb34: {
+        switchInt(move _38) -> [0: bb39, otherwise: bb35];
+    }
+
+    bb35: {
+        StorageDead(_43);
+        StorageDead(_42);
+        StorageDead(_40);
+        StorageDead(_39);
+        StorageLive(_45);
+        StorageLive(_46);
+        _46 = &(((*_138) as variant#6).2: agent_runtime::Client);
+        _45 = rejected_batch(move _46) -> [return: bb36, unwind: bb140];
+    }
+
+    bb36: {
+        _44 = &(_45.1: usize);
+        _130 = const admission::{closure#0}::promoted[0];
+        StorageLive(_47);
+        StorageLive(_48);
+        _48 = copy (_45.1: usize);
+        StorageLive(_49);
+        _49 = copy (*_130);
+        _47 = Eq(move _48, move _49);
+        switchInt(move _47) -> [0: bb38, otherwise: bb37];
+    }
+
+    bb37: {
+        StorageDead(_49);
+        StorageDead(_48);
+        StorageDead(_47);
+        StorageDead(_46);
+        StorageDead(_45);
+        StorageDead(_38);
+        goto -> bb31;
+    }
+
+    bb38: {
+        StorageDead(_49);
+        StorageDead(_48);
+        StorageLive(_50);
+        _50 = core::panicking::AssertKind::Eq;
+        StorageLive(_51);
+        StorageLive(_52);
+        _52 = Option::<Arguments<'_>>::None;
+        _51 = core::panicking::assert_failed::<usize, usize>(move _50, move _44, move _130, move _52) -> bb139;
+    }
+
+    bb39: {
+        StorageDead(_43);
+        StorageDead(_42);
+        StorageDead(_40);
+        StorageDead(_39);
+        StorageDead(_38);
+        StorageLive(_53);
+        StorageLive(_54);
+        _54 = Arguments::<'_>::from_str(const "case,index,batch_ns,operations,checksum\n") -> [return: bb40, unwind: bb138];
+    }
+
+    bb40: {
+        _53 = std::io::_print(move _54) -> [return: bb41, unwind: bb138];
+    }
+
+    bb41: {
+        StorageDead(_54);
+        StorageDead(_53);
+        StorageLive(_55);
+        StorageLive(_56);
+        _56 = std::ops::Range::<i32> { start: const 0_i32, end: const 21_i32 };
+        _55 = <std::ops::Range<i32> as IntoIterator>::into_iter(move _56) -> [return: bb42, unwind: bb136];
+    }
+
+    bb42: {
+        StorageDead(_56);
+        StorageLive(_57);
+        _57 = move _55;
+        goto -> bb43;
+    }
+
+    bb43: {
+        StorageLive(_58);
+        StorageLive(_59);
+        _59 = &mut _57;
+        _58 = <std::ops::Range<i32> as Iterator>::next(move _59) -> [return: bb44, unwind: bb135];
+    }
+
+    bb44: {
+        _60 = discriminant(_58);
+        switchInt(move _60) -> [0: bb46, 1: bb45, otherwise: bb21];
+    }
+
+    bb45: {
+        StorageLive(_61);
+        _61 = copy ((_58 as Some).0: i32);
+        StorageLive(_64);
+        StorageLive(_65);
+        _65 = &(((*_138) as variant#6).2: agent_runtime::Client);
+        _64 = rejected_batch(move _65) -> [return: bb47, unwind: bb133];
+    }
+
+    bb46: {
+        StorageDead(_59);
+        StorageDead(_58);
+        StorageDead(_57);
+        StorageDead(_55);
+        StorageLive(_84);
+        StorageLive(_85);
+        _85 = &(((*_138) as variant#6).4: agent_runtime::Ticket);
+        _84 = Ticket::cancel(move _85) -> [return: bb56, unwind: bb124];
+    }
+
+    bb47: {
+        StorageLive(_62);
+        _62 = copy (_64.0: u128);
+        StorageLive(_63);
+        _63 = copy (_64.1: usize);
+        StorageDead(_65);
+        StorageDead(_64);
+        _66 = &_63;
+        _132 = const admission::{closure#0}::promoted[2];
+        StorageLive(_67);
+        StorageLive(_68);
+        _68 = copy (*_132);
+        _67 = Eq(copy _63, move _68);
+        switchInt(move _67) -> [0: bb49, otherwise: bb48];
+    }
+
+    bb48: {
+        StorageDead(_68);
+        StorageDead(_67);
+        StorageLive(_72);
+        StorageLive(_73);
+        StorageLive(_74);
+        _75 = &_61;
+        _76 = &_62;
+        _131 = const admission::{closure#0}::promoted[1];
+        _77 = &_63;
+        _74 = (copy _75, copy _76, copy _131, copy _77);
+        StorageLive(_78);
+        StorageLive(_79);
+        _79 = core::fmt::rt::Argument::<'_>::new_display::<i32>(move _75) -> [return: bb50, unwind: bb129];
+    }
+
+    bb49: {
+        StorageDead(_68);
+        StorageLive(_69);
+        _69 = core::panicking::AssertKind::Eq;
+        StorageLive(_70);
+        StorageLive(_71);
+        _71 = Option::<Arguments<'_>>::None;
+        _70 = core::panicking::assert_failed::<usize, usize>(move _69, move _66, move _132, move _71) -> bb131;
+    }
+
+    bb50: {
+        StorageLive(_80);
+        _80 = core::fmt::rt::Argument::<'_>::new_display::<u128>(move _76) -> [return: bb51, unwind: bb128];
+    }
+
+    bb51: {
+        StorageLive(_81);
+        _81 = core::fmt::rt::Argument::<'_>::new_display::<usize>(move _131) -> [return: bb52, unwind: bb127];
+    }
+
+    bb52: {
+        StorageLive(_82);
+        _82 = core::fmt::rt::Argument::<'_>::new_display::<usize>(move _77) -> [return: bb53, unwind: bb126];
+    }
+
+    bb53: {
+        _78 = [move _79, move _80, move _81, move _82];
+        StorageDead(_82);
+        StorageDead(_81);
+        StorageDead(_80);
+        StorageDead(_79);
+        StorageLive(_83);
+        _83 = &_78;
+        _73 = Arguments::<'_>::new::<29, 4>(const b"\x0fadmission-full,\xc0\x01,\xc0\x01,\xc0\x01,\xc0\x01\n\x00", move _83) -> [return: bb54, unwind: bb125];
+    }
+
+    bb54: {
+        StorageDead(_83);
+        _72 = std::io::_print(move _73) -> [return: bb55, unwind: bb130];
+    }
+
+    bb55: {
+        StorageDead(_73);
+        StorageDead(_78);
+        StorageDead(_74);
+        StorageDead(_72);
+        StorageDead(_63);
+        StorageDead(_62);
+        StorageDead(_61);
+        StorageDead(_59);
+        StorageDead(_58);
+        goto -> bb43;
+    }
+
+    bb56: {
+        StorageDead(_85);
+        StorageDead(_84);
+        StorageLive(_86);
+        StorageLive(_87);
+        _87 = &(((*_138) as variant#6).3: agent_runtime::Ticket);
+        _86 = Ticket::cancel(move _87) -> [return: bb57, unwind: bb123];
+    }
+
+    bb57: {
+        StorageDead(_87);
+        StorageDead(_86);
+        StorageLive(_88);
+        StorageLive(_89);
+        StorageLive(_90);
+        StorageLive(_91);
+        StorageLive(_92);
+        (((*_138) as variant#6).8: bool) = const false;
+        _92 = move (((*_138) as variant#6).3: agent_runtime::Ticket);
+        _91 = Ticket::wait(move _92) -> [return: bb58, unwind: bb119];
+    }
+
+    bb58: {
+        StorageDead(_92);
+        _90 = <{async fn body of Ticket::wait()} as IntoFuture>::into_future(move _91) -> [return: bb59, unwind: bb120];
+    }
+
+    bb59: {
+        StorageDead(_91);
+        (((*_138) as variant#4).6: {async fn body of agent_runtime::Ticket::wait()}) = move _90;
+        goto -> bb60;
+    }
+
+    bb60: {
+        StorageLive(_93);
+        StorageLive(_94);
+        StorageLive(_95);
+        _95 = &mut (((*_138) as variant#4).6: {async fn body of agent_runtime::Ticket::wait()});
+        _94 = Pin::<&mut {async fn body of Ticket::wait()}>::new_unchecked(move _95) -> [return: bb61, unwind: bb118];
+    }
+
+    bb61: {
+        StorageLive(_96);
+        StorageLive(_97);
+        _97 = copy _139;
+        _96 = copy (_97.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_97);
+        _93 = <{async fn body of Ticket::wait()} as Future>::poll(move _94, move _96) -> [return: bb62, unwind: bb117];
+    }
+
+    bb62: {
+        StorageDead(_96);
+        StorageDead(_95);
+        StorageDead(_94);
+        _98 = discriminant(_93);
+        switchInt(move _98) -> [0: bb64, 1: bb63, otherwise: bb21];
+    }
+
+    bb63: {
+        StorageDead(_93);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_88);
+        StorageDead(_89);
+        StorageDead(_90);
+        discriminant((*_138)) = 4;
+        return;
+    }
+
+    bb64: {
+        _99 = move ((_93 as Ready).0: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>);
+        StorageDead(_93);
+        drop((((*_138) as variant#4).6: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb65, unwind: bb121];
+    }
+
+    bb65: {
+        _89 = Result::<ToolResult, tokio::sync::oneshot::error::RecvError>::expect(move _99, const "active cleanup") -> [return: bb66, unwind: bb121];
+    }
+
+    bb66: {
+        _88 = copy (_89.3: bool);
+        switchInt(move _88) -> [0: bb67, otherwise: bb69];
+    }
+
+    bb67: {
+        drop(_89) -> [return: bb68, unwind: bb121];
+    }
+
+    bb68: {
+        StorageDead(_90);
+        StorageDead(_89);
+        StorageLive(_100);
+        _100 = panic(const "assertion failed: active.wait().await.expect(\"active cleanup\").reaped") -> bb116;
+    }
+
+    bb69: {
+        drop(_89) -> [return: bb70, unwind: bb121];
+    }
+
+    bb70: {
+        StorageDead(_90);
+        StorageDead(_89);
+        StorageDead(_88);
+        StorageLive(_102);
+        StorageLive(_103);
+        StorageLive(_104);
+        StorageLive(_105);
+        (((*_138) as variant#6).7: bool) = const false;
+        _105 = move (((*_138) as variant#6).4: agent_runtime::Ticket);
+        _104 = Ticket::wait(move _105) -> [return: bb71, unwind: bb113];
+    }
+
+    bb71: {
+        StorageDead(_105);
+        _103 = <{async fn body of Ticket::wait()} as IntoFuture>::into_future(move _104) -> [return: bb72, unwind: bb114];
+    }
+
+    bb72: {
+        StorageDead(_104);
+        (((*_138) as variant#5).6: {async fn body of agent_runtime::Ticket::wait()}) = move _103;
+        goto -> bb73;
+    }
+
+    bb73: {
+        StorageLive(_106);
+        StorageLive(_107);
+        StorageLive(_108);
+        _108 = &mut (((*_138) as variant#5).6: {async fn body of agent_runtime::Ticket::wait()});
+        _107 = Pin::<&mut {async fn body of Ticket::wait()}>::new_unchecked(move _108) -> [return: bb74, unwind: bb112];
+    }
+
+    bb74: {
+        StorageLive(_109);
+        StorageLive(_110);
+        _110 = copy _139;
+        _109 = copy (_110.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_110);
+        _106 = <{async fn body of Ticket::wait()} as Future>::poll(move _107, move _109) -> [return: bb75, unwind: bb111];
+    }
+
+    bb75: {
+        StorageDead(_109);
+        StorageDead(_108);
+        StorageDead(_107);
+        _111 = discriminant(_106);
+        switchInt(move _111) -> [0: bb77, 1: bb76, otherwise: bb21];
+    }
+
+    bb76: {
+        StorageDead(_106);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_102);
+        StorageDead(_103);
+        discriminant((*_138)) = 5;
+        return;
+    }
+
+    bb77: {
+        _112 = move ((_106 as Ready).0: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>);
+        StorageDead(_106);
+        drop((((*_138) as variant#5).6: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb78, unwind: bb115];
+    }
+
+    bb78: {
+        _102 = Result::<ToolResult, tokio::sync::oneshot::error::RecvError>::expect(move _112, const "queued result") -> [return: bb79, unwind: bb115];
+    }
+
+    bb79: {
+        _101 = &(_102.1: std::option::Option<u32>);
+        _133 = const admission::{closure#0}::promoted[3];
+        StorageLive(_113);
+        _113 = <Option<u32> as PartialEq>::eq(copy _101, copy _133) -> [return: bb80, unwind: bb110];
+    }
+
+    bb80: {
+        switchInt(move _113) -> [0: bb82, otherwise: bb81];
+    }
+
+    bb81: {
+        StorageDead(_113);
+        drop(_102) -> [return: bb83, unwind: bb115];
+    }
+
+    bb82: {
+        StorageLive(_114);
+        _114 = core::panicking::AssertKind::Eq;
+        StorageLive(_115);
+        StorageLive(_116);
+        _116 = Option::<Arguments<'_>>::None;
+        _115 = core::panicking::assert_failed::<Option<u32>, Option<u32>>(move _114, move _101, move _133, move _116) -> bb109;
+    }
+
+    bb83: {
+        StorageDead(_103);
+        StorageDead(_102);
+        StorageLive(_117);
+        StorageLive(_118);
+        StorageLive(_119);
+        StorageLive(_120);
+        StorageLive(_121);
+        StorageLive(_122);
+        (((*_138) as variant#6).9: bool) = const false;
+        _122 = move (((*_138) as variant#6).1: agent_runtime::Runtime);
+        _121 = agent_runtime::Runtime::shutdown(move _122) -> [return: bb84, unwind: bb105];
+    }
+
+    bb84: {
+        StorageDead(_122);
+        _120 = <{async fn body of agent_runtime::Runtime::shutdown()} as IntoFuture>::into_future(move _121) -> [return: bb85, unwind: bb106];
+    }
+
+    bb85: {
+        StorageDead(_121);
+        (((*_138) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()}) = move _120;
+        goto -> bb86;
+    }
+
+    bb86: {
+        StorageLive(_123);
+        StorageLive(_124);
+        StorageLive(_125);
+        _125 = &mut (((*_138) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()});
+        _124 = Pin::<&mut {async fn body of agent_runtime::Runtime::shutdown()}>::new_unchecked(move _125) -> [return: bb87, unwind: bb103];
+    }
+
+    bb87: {
+        StorageLive(_126);
+        _126 = copy (_139.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _123 = <{async fn body of agent_runtime::Runtime::shutdown()} as Future>::poll(move _124, move _126) -> [return: bb88, unwind: bb102];
+    }
+
+    bb88: {
+        StorageDead(_126);
+        StorageDead(_125);
+        StorageDead(_124);
+        _127 = discriminant(_123);
+        switchInt(move _127) -> [0: bb90, 1: bb89, otherwise: bb21];
+    }
+
+    bb89: {
+        StorageDead(_123);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_117);
+        StorageDead(_118);
+        StorageDead(_119);
+        StorageDead(_120);
+        discriminant((*_138)) = 6;
+        return;
+    }
+
+    bb90: {
+        _128 = move ((_123 as Ready).0: std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>);
+        StorageDead(_123);
+        drop((((*_138) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()})) -> [return: bb91, unwind: bb104];
+    }
+
+    bb91: {
+        _119 = Result::<agent_runtime::Shutdown, JoinError>::expect(move _128, const "join") -> [return: bb92, unwind: bb101];
+    }
+
+    bb92: {
+        _118 = &(_119.1: std::vec::Vec<std::string::String>);
+        _117 = Vec::<String>::is_empty(move _118) -> [return: bb93, unwind: bb100];
+    }
+
+    bb93: {
+        switchInt(move _117) -> [0: bb95, otherwise: bb94];
+    }
+
+    bb94: {
+        StorageDead(_118);
+        drop(_119) -> [return: bb97, unwind: bb107];
+    }
+
+    bb95: {
+        StorageDead(_118);
+        drop(_119) -> [return: bb96, unwind: bb107];
+    }
+
+    bb96: {
+        StorageDead(_120);
+        StorageDead(_119);
+        StorageLive(_129);
+        _129 = panic(const "assertion failed: runtime.shutdown().await.expect(\"join\").task_failures.is_empty()") -> bb99;
+    }
+
+    bb97: {
+        StorageDead(_120);
+        StorageDead(_119);
+        StorageDead(_117);
+        (((*_138) as variant#6).7: bool) = const false;
+        (((*_138) as variant#6).8: bool) = const false;
+        drop((((*_138) as variant#6).2: agent_runtime::Client)) -> [return: bb98, unwind: bb182];
+    }
+
+    bb98: {
+        (((*_138) as variant#6).9: bool) = const false;
+        (((*_138) as variant#6).10: bool) = const false;
+        _0 = Poll::<()>::Ready(const ());
+        discriminant((*_138)) = 1;
+        return;
+    }
+
+    bb99 (cleanup): {
+        StorageDead(_129);
+        goto -> bb108;
+    }
+
+    bb100 (cleanup): {
+        StorageDead(_118);
+        drop(_119) -> [return: bb107, unwind terminate(cleanup)];
+    }
+
+    bb101 (cleanup): {
+        StorageDead(_118);
+        goto -> bb107;
+    }
+
+    bb102 (cleanup): {
+        StorageDead(_126);
+        goto -> bb103;
+    }
+
+    bb103 (cleanup): {
+        StorageDead(_125);
+        StorageDead(_124);
+        StorageDead(_123);
+        drop((((*_138) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()})) -> [return: bb104, unwind terminate(cleanup)];
+    }
+
+    bb104 (cleanup): {
+        StorageDead(_118);
+        goto -> bb107;
+    }
+
+    bb105 (cleanup): {
+        StorageDead(_122);
+        goto -> bb106;
+    }
+
+    bb106 (cleanup): {
+        StorageDead(_121);
+        StorageDead(_118);
+        goto -> bb107;
+    }
+
+    bb107 (cleanup): {
+        StorageDead(_120);
+        StorageDead(_119);
+        goto -> bb108;
+    }
+
+    bb108 (cleanup): {
+        StorageDead(_117);
+        goto -> bb176;
+    }
+
+    bb109 (cleanup): {
+        StorageDead(_116);
+        StorageDead(_115);
+        StorageDead(_114);
+        goto -> bb110;
+    }
+
+    bb110 (cleanup): {
+        StorageDead(_113);
+        drop(_102) -> [return: bb115, unwind terminate(cleanup)];
+    }
+
+    bb111 (cleanup): {
+        StorageDead(_109);
+        goto -> bb112;
+    }
+
+    bb112 (cleanup): {
+        StorageDead(_108);
+        StorageDead(_107);
+        StorageDead(_106);
+        drop((((*_138) as variant#5).6: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb115, unwind terminate(cleanup)];
+    }
+
+    bb113 (cleanup): {
+        StorageDead(_105);
+        goto -> bb114;
+    }
+
+    bb114 (cleanup): {
+        StorageDead(_104);
+        goto -> bb115;
+    }
+
+    bb115 (cleanup): {
+        StorageDead(_103);
+        StorageDead(_102);
+        goto -> bb176;
+    }
+
+    bb116 (cleanup): {
+        StorageDead(_100);
+        goto -> bb122;
+    }
+
+    bb117 (cleanup): {
+        StorageDead(_96);
+        goto -> bb118;
+    }
+
+    bb118 (cleanup): {
+        StorageDead(_95);
+        StorageDead(_94);
+        StorageDead(_93);
+        drop((((*_138) as variant#4).6: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb121, unwind terminate(cleanup)];
+    }
+
+    bb119 (cleanup): {
+        StorageDead(_92);
+        goto -> bb120;
+    }
+
+    bb120 (cleanup): {
+        StorageDead(_91);
+        goto -> bb121;
+    }
+
+    bb121 (cleanup): {
+        StorageDead(_90);
+        StorageDead(_89);
+        goto -> bb122;
+    }
+
+    bb122 (cleanup): {
+        StorageDead(_88);
+        goto -> bb176;
+    }
+
+    bb123 (cleanup): {
+        StorageDead(_87);
+        StorageDead(_86);
+        goto -> bb176;
+    }
+
+    bb124 (cleanup): {
+        StorageDead(_85);
+        StorageDead(_84);
+        goto -> bb176;
+    }
+
+    bb125 (cleanup): {
+        StorageDead(_83);
+        goto -> bb130;
+    }
+
+    bb126 (cleanup): {
+        StorageDead(_82);
+        goto -> bb127;
+    }
+
+    bb127 (cleanup): {
+        StorageDead(_81);
+        goto -> bb128;
+    }
+
+    bb128 (cleanup): {
+        StorageDead(_80);
+        goto -> bb129;
+    }
+
+    bb129 (cleanup): {
+        StorageDead(_79);
+        goto -> bb130;
+    }
+
+    bb130 (cleanup): {
+        StorageDead(_73);
+        StorageDead(_78);
+        StorageDead(_74);
+        StorageDead(_72);
+        goto -> bb132;
+    }
+
+    bb131 (cleanup): {
+        StorageDead(_71);
+        StorageDead(_70);
+        StorageDead(_69);
+        StorageDead(_67);
+        goto -> bb132;
+    }
+
+    bb132 (cleanup): {
+        StorageDead(_63);
+        StorageDead(_62);
+        goto -> bb134;
+    }
+
+    bb133 (cleanup): {
+        StorageDead(_65);
+        StorageDead(_64);
+        goto -> bb134;
+    }
+
+    bb134 (cleanup): {
+        StorageDead(_61);
+        goto -> bb135;
+    }
+
+    bb135 (cleanup): {
+        StorageDead(_59);
+        StorageDead(_58);
+        StorageDead(_57);
+        goto -> bb137;
+    }
+
+    bb136 (cleanup): {
+        StorageDead(_56);
+        goto -> bb137;
+    }
+
+    bb137 (cleanup): {
+        StorageDead(_55);
+        goto -> bb176;
+    }
+
+    bb138 (cleanup): {
+        StorageDead(_54);
+        StorageDead(_53);
+        goto -> bb176;
+    }
+
+    bb139 (cleanup): {
+        StorageDead(_52);
+        StorageDead(_51);
+        StorageDead(_50);
+        StorageDead(_47);
+        goto -> bb140;
+    }
+
+    bb140 (cleanup): {
+        StorageDead(_46);
+        StorageDead(_45);
+        goto -> bb144;
+    }
+
+    bb141 (cleanup): {
+        StorageDead(_43);
+        StorageDead(_42);
+        goto -> bb143;
+    }
+
+    bb142 (cleanup): {
+        StorageDead(_41);
+        goto -> bb143;
+    }
+
+    bb143 (cleanup): {
+        StorageDead(_40);
+        StorageDead(_39);
+        goto -> bb144;
+    }
+
+    bb144 (cleanup): {
+        StorageDead(_38);
+        goto -> bb176;
+    }
+
+    bb145 (cleanup): {
+        StorageDead(_34);
+        goto -> bb148;
+    }
+
+    bb146 (cleanup): {
+        StorageDead(_37);
+        switchInt(copy _134) -> [0: bb147, otherwise: bb177];
+    }
+
+    bb147 (cleanup): {
+        StorageDead(_36);
+        StorageDead(_35);
+        StorageDead(_34);
+        goto -> bb148;
+    }
+
+    bb148 (cleanup): {
+        (((*_138) as variant#6).7: bool) = const false;
+        goto -> bb179;
+    }
+
+    bb149 (cleanup): {
+        StorageDead(_33);
+        goto -> bb156;
+    }
+
+    bb150 (cleanup): {
+        StorageDead(_29);
+        goto -> bb151;
+    }
+
+    bb151 (cleanup): {
+        StorageDead(_28);
+        StorageDead(_27);
+        StorageDead(_26);
+        drop((((*_138) as variant#3).4: {async fn body of agent_runtime::Ticket::started()})) -> [return: bb152, unwind terminate(cleanup)];
+    }
+
+    bb152 (cleanup): {
+        StorageDead(_21);
+        goto -> bb155;
+    }
+
+    bb153 (cleanup): {
+        StorageDead(_25);
+        goto -> bb154;
+    }
+
+    bb154 (cleanup): {
+        StorageDead(_24);
+        StorageDead(_21);
+        goto -> bb155;
+    }
+
+    bb155 (cleanup): {
+        StorageDead(_23);
+        StorageDead(_22);
+        goto -> bb156;
+    }
+
+    bb156 (cleanup): {
+        StorageDead(_20);
+        goto -> bb179;
+    }
+
+    bb157 (cleanup): {
+        StorageDead(_16);
+        goto -> bb160;
+    }
+
+    bb158 (cleanup): {
+        StorageDead(_19);
+        switchInt(copy _135) -> [0: bb159, otherwise: bb180];
+    }
+
+    bb159 (cleanup): {
+        StorageDead(_18);
+        StorageDead(_17);
+        StorageDead(_16);
+        goto -> bb160;
+    }
+
+    bb160 (cleanup): {
+        (((*_138) as variant#6).8: bool) = const false;
+        drop((((*_138) as variant#6).2: agent_runtime::Client)) -> [return: bb182, unwind terminate(cleanup)];
+    }
+
+    bb161 (cleanup): {
+        StorageDead(_15);
+        goto -> bb182;
+    }
+
+    bb162 (cleanup): {
+        StorageDead(_11);
+        goto -> bb165;
+    }
+
+    bb163 (cleanup): {
+        StorageDead(_13);
+        switchInt(copy _136) -> [0: bb164, otherwise: bb183];
+    }
+
+    bb164 (cleanup): {
+        StorageDead(_12);
+        StorageDead(_11);
+        goto -> bb165;
+    }
+
+    bb165 (cleanup): {
+        StorageDead(_14);
+        goto -> bb166;
+    }
+
+    bb166 (cleanup): {
+        (((*_138) as variant#6).9: bool) = const false;
+        goto -> bb185;
+    }
+
+    bb167 (cleanup): {
+        StorageDead(_4);
+        goto -> bb170;
+    }
+
+    bb168 (cleanup): {
+        StorageDead(_10);
+        StorageDead(_8);
+        goto -> bb169;
+    }
+
+    bb169 (cleanup): {
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_4);
+        goto -> bb170;
+    }
+
+    bb170 (cleanup): {
+        drop(_9) -> [return: bb173, unwind terminate(cleanup)];
+    }
+
+    bb171 (cleanup): {
+        StorageDead(_10);
+        StorageDead(_8);
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_4);
+        goto -> bb173;
+    }
+
+    bb172 (cleanup): {
+        StorageDead(_10);
+        StorageDead(_8);
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_4);
+        goto -> bb173;
+    }
+
+    bb173 (cleanup): {
+        StorageDead(_9);
+        StorageDead(_7);
+        StorageDead(_3);
+        goto -> bb185;
+    }
+
+    bb174 (cleanup): {
+        (((*_138) as variant#6).10: bool) = const false;
+        discriminant((*_138)) = 2;
+        resume;
+    }
+
+    bb175 (cleanup): {
+        drop((((*_138) as variant#6).4: agent_runtime::Ticket)) -> [return: bb148, unwind terminate(cleanup)];
+    }
+
+    bb176 (cleanup): {
+        switchInt(copy (((*_138) as variant#6).7: bool)) -> [0: bb148, otherwise: bb175];
+    }
+
+    bb177 (cleanup): {
+        drop(_36) -> [return: bb147, unwind terminate(cleanup)];
+    }
+
+    bb178 (cleanup): {
+        drop((((*_138) as variant#6).3: agent_runtime::Ticket)) -> [return: bb160, unwind terminate(cleanup)];
+    }
+
+    bb179 (cleanup): {
+        switchInt(copy (((*_138) as variant#6).8: bool)) -> [0: bb160, otherwise: bb178];
+    }
+
+    bb180 (cleanup): {
+        drop(_18) -> [return: bb159, unwind terminate(cleanup)];
+    }
+
+    bb181 (cleanup): {
+        drop((((*_138) as variant#6).1: agent_runtime::Runtime)) -> [return: bb166, unwind terminate(cleanup)];
+    }
+
+    bb182 (cleanup): {
+        switchInt(copy (((*_138) as variant#6).9: bool)) -> [0: bb166, otherwise: bb181];
+    }
+
+    bb183 (cleanup): {
+        drop(_12) -> [return: bb164, unwind terminate(cleanup)];
+    }
+
+    bb184 (cleanup): {
+        drop((((*_138) as variant#6).0: agent_runtime::Registry)) -> [return: bb174, unwind terminate(cleanup)];
+    }
+
+    bb185 (cleanup): {
+        switchInt(copy (((*_138) as variant#6).10: bool)) -> [0: bb174, otherwise: bb184];
+    }
+
+    bb186: {
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        goto -> bb18;
+    }
+
+    bb187: {
+        StorageLive(_88);
+        StorageLive(_89);
+        StorageLive(_90);
+        goto -> bb60;
+    }
+
+    bb188: {
+        StorageLive(_102);
+        StorageLive(_103);
+        goto -> bb73;
+    }
+
+    bb189: {
+        StorageLive(_117);
+        StorageLive(_118);
+        StorageLive(_119);
+        StorageLive(_120);
+        goto -> bb86;
+    }
+
+    bb190: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb190, unwind continue];
+    }
+
+    bb191: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb191, unwind continue];
+    }
+
+    bb192: {
+        (((*_138) as variant#6).10: bool) = const false;
+        (((*_138) as variant#6).9: bool) = const false;
+        (((*_138) as variant#6).8: bool) = const false;
+        (((*_138) as variant#6).7: bool) = const false;
+        (((*_138) as variant#6).0: agent_runtime::Registry) = <Registry as Default>::default() -> [return: bb1, unwind: bb174];
+    }
+
+    bb193: {
+        goto -> bb31;
+    }
+}
+
+alloc15 (size: 82, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 72 75 6e 74 69 6d 65 2e 73 68 75 74 64 6f │ : runtime.shutdo
+    0x20 │ 77 6e 28 29 2e 61 77 61 69 74 2e 65 78 70 65 63 │ wn().await.expec
+    0x30 │ 74 28 22 6a 6f 69 6e 22 29 2e 74 61 73 6b 5f 66 │ t("join").task_f
+    0x40 │ 61 69 6c 75 72 65 73 2e 69 73 5f 65 6d 70 74 79 │ ailures.is_empty
+    0x50 │ 28 29                                           │ ()
+}
+
+alloc14 (size: 4, align: 1) {
+    6a 6f 69 6e                                     │ join
+}
+
+alloc13 (size: 13, align: 1) {
+    71 75 65 75 65 64 20 72 65 73 75 6c 74          │ queued result
+}
+
+alloc12 (size: 69, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 61 63 74 69 76 65 2e 77 61 69 74 28 29 2e │ : active.wait().
+    0x20 │ 61 77 61 69 74 2e 65 78 70 65 63 74 28 22 61 63 │ await.expect("ac
+    0x30 │ 74 69 76 65 20 63 6c 65 61 6e 75 70 22 29 2e 72 │ tive cleanup").r
+    0x40 │ 65 61 70 65 64                                  │ eaped
+}
+
+alloc11 (size: 14, align: 1) {
+    61 63 74 69 76 65 20 63 6c 65 61 6e 75 70       │ active cleanup
+}
+
+alloc10 (size: 29, align: 1) {
+    0x00 │ 0f 61 64 6d 69 73 73 69 6f 6e 2d 66 75 6c 6c 2c │ .admission-full,
+    0x10 │ c0 01 2c c0 01 2c c0 01 2c c0 01 0a 00          │ ..,..,..,....
+}
+
+alloc9 (size: 40, align: 1) {
+    0x00 │ 63 61 73 65 2c 69 6e 64 65 78 2c 62 61 74 63 68 │ case,index,batch
+    0x10 │ 5f 6e 73 2c 6f 70 65 72 61 74 69 6f 6e 73 2c 63 │ _ns,operations,c
+    0x20 │ 68 65 63 6b 73 75 6d 0a                         │ hecksum.
+}
+
+alloc8 (size: 5, align: 1) {
+    71 75 65 75 65                                  │ queue
+}
+
+alloc7 (size: 50, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 61 63 74 69 76 65 2e 73 74 61 72 74 65 64 │ : active.started
+    0x20 │ 28 29 2e 61 77 61 69 74 2e 69 73 5f 73 6f 6d 65 │ ().await.is_some
+    0x30 │ 28 29                                           │ ()
+}
+
+alloc6 (size: 6, align: 1) {
+    61 63 74 69 76 65                               │ active
+}
+
+alloc5 (size: 7, align: 1) {
+    72 75 6e 74 69 6d 65                            │ runtime
+}
+
+alloc4 (size: 6, align: 1) {
+    68 65 6c 70 65 72                               │ helper
+}
+
+alloc3 (size: 11, align: 1) {
+    74 6f 6f 6c 2d 68 65 6c 70 65 72                │ tool-helper
+}
+
+alloc2 (size: 3, align: 1) {
+    65 78 65                                        │ exe
+}
+
+alloc1 (size: 4, align: 1) {
+    64 65 6d 6f                                     │ demo
+}
+
+const admission::{closure#0}::promoted[0]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const REJECTS;
+        _0 = &_1;
+        return;
+    }
+}
+
+const admission::{closure#0}::promoted[1]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const REJECTS;
+        _0 = &_1;
+        return;
+    }
+}
+
+const admission::{closure#0}::promoted[2]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const REJECTS;
+        _0 = &_1;
+        return;
+    }
+}
+
+const admission::{closure#0}::promoted[3]: &Option<u32> = {
+    let mut _0: &std::option::Option<u32>;
+    let mut _1: std::option::Option<u32>;
+
+    bb0: {
+        _1 = Option::<u32>::None;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn lifecycle_batch(_1: &agent_runtime::Runtime) -> {async fn body of lifecycle_batch()} {
+    debug runtime => _1;
+    let mut _0: {async fn body of lifecycle_batch()};
+
+    bb0: {
+        _0 = {coroutine@src/bin/runtime-bench.rs:103:72: 118:2 (#0)} { runtime: copy _1 };
+        return;
+    }
+}
+
+fn lifecycle_batch::{closure#0}(_1: Pin<&mut {async fn body of lifecycle_batch()}>, _2: &mut Context<'_>) -> Poll<(u128, Vec<ToolResult>)> {
+    coroutine layout {
+        field _s0: Client;
+        field _s1: std::time::Instant;
+        field _s2: Vec<ToolResult>;
+        field _s3: std::vec::IntoIter<Ticket>;
+        field _s4: &mut Vec<ToolResult>;
+        field _s5: {async fn body of Ticket::wait()};
+        field _s6: bool;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2, _s3, _s4, _s5, _s6],
+        }
+        storage_conflicts = BitMatrix(7x7) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s0, _s3), (_s0, _s4), (_s0, _s5), (_s0, _s6), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s1, _s3), (_s1, _s4), (_s1, _s5), (_s1, _s6), (_s2, _s0), (_s2, _s1), (_s2, _s2), (_s2, _s3), (_s2, _s4), (_s2, _s5), (_s2, _s6), (_s3, _s0), (_s3, _s1), (_s3, _s2), (_s3, _s3), (_s3, _s4), (_s3, _s5), (_s3, _s6), (_s4, _s0), (_s4, _s1), (_s4, _s2), (_s4, _s3), (_s4, _s4), (_s4, _s5), (_s4, _s6), (_s5, _s0), (_s5, _s1), (_s5, _s2), (_s5, _s3), (_s5, _s4), (_s5, _s5), (_s5, _s6), (_s6, _s0), (_s6, _s1), (_s6, _s2), (_s6, _s3), (_s6, _s4), (_s6, _s5), (_s6, _s6)}
+    }
+    debug _task_context => _34;
+    debug runtime => ((*_33).0: &agent_runtime::Runtime);
+    let mut _0: std::task::Poll<(u128, std::vec::Vec<agent_runtime::ToolResult>)>;
+    let _3: &agent_runtime::Runtime;
+    let mut _5: std::iter::Map<std::ops::Range<usize>, {closure@src/bin/runtime-bench.rs:107:14: 107:17}>;
+    let mut _6: std::ops::Range<usize>;
+    let mut _7: {closure@src/bin/runtime-bench.rs:107:14: 107:17};
+    let mut _8: &agent_runtime::Client;
+    let mut _9: std::vec::IntoIter<agent_runtime::Ticket>;
+    let mut _10: std::vec::Vec<agent_runtime::Ticket>;
+    let mut _11: std::option::Option<agent_runtime::Ticket>;
+    let mut _12: &mut std::vec::IntoIter<agent_runtime::Ticket>;
+    let mut _13: isize;
+    let _15: ();
+    let mut _16: agent_runtime::ToolResult;
+    let mut _17: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _18: {async fn body of agent_runtime::Ticket::wait()};
+    let mut _19: std::task::Poll<std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>>;
+    let mut _20: std::pin::Pin<&mut {async fn body of agent_runtime::Ticket::wait()}>;
+    let mut _21: &mut {async fn body of agent_runtime::Ticket::wait()};
+    let mut _22: &mut std::task::Context<'_>;
+    let mut _23: std::future::ResumeTy;
+    let mut _24: isize;
+    let mut _26: u128;
+    let mut _27: &std::time::Duration;
+    let _28: std::time::Duration;
+    let mut _29: &std::time::Instant;
+    let mut _30: std::vec::Vec<agent_runtime::ToolResult>;
+    let mut _31: (u128, std::vec::Vec<agent_runtime::ToolResult>);
+    let mut _32: u32;
+    let mut _33: &mut {async fn body of lifecycle_batch()};
+    let mut _34: std::future::ResumeTy;
+    let mut _35: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug runtime => _3;
+        coroutine debug client => _s0;
+        scope 2 {
+            debug client => (((*_33) as variant#3).0: agent_runtime::Client);
+            coroutine debug start => _s1;
+            scope 3 {
+                debug start => (((*_33) as variant#3).1: std::time::Instant);
+                let _4: std::vec::Vec<agent_runtime::Ticket>;
+                scope 4 {
+                    debug tickets => _4;
+                    coroutine debug results => _s2;
+                    scope 5 {
+                        debug results => (((*_33) as variant#3).2: std::vec::Vec<agent_runtime::ToolResult>);
+                        coroutine debug iter => _s3;
+                        scope 6 {
+                            debug iter => (((*_33) as variant#3).3: std::vec::IntoIter<agent_runtime::Ticket>);
+                            let _14: agent_runtime::Ticket;
+                            scope 7 {
+                                debug ticket => _14;
+                                coroutine debug __awaitee => _s5;
+                                scope 8 {
+                                    debug __awaitee => (((*_33) as variant#3).5: {async fn body of agent_runtime::Ticket::wait()});
+                                    let _25: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>;
+                                    scope 9 {
+                                        debug result => _25;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _35 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _34 = std::future::ResumeTy(move _35);
+        _33 = copy (_1.0: &mut {async fn body of lifecycle_batch()});
+        _32 = discriminant((*_33));
+        switchInt(move _32) -> [0: bb48, 1: bb47, 2: bb46, 3: bb45, otherwise: bb9];
+    }
+
+    bb1: {
+        (((*_33) as variant#3).1: std::time::Instant) = std::time::Instant::now() -> [return: bb2, unwind: bb41];
+    }
+
+    bb2: {
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = std::ops::Range::<usize> { start: const 0_usize, end: const 8_usize };
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = &(((*_33) as variant#3).0: agent_runtime::Client);
+        _7 = {closure@src/bin/runtime-bench.rs:107:14: 107:17} { client: copy _8 };
+        StorageDead(_8);
+        _5 = <std::ops::Range<usize> as Iterator>::map::<Ticket, {closure@src/bin/runtime-bench.rs:107:14: 107:17}>(move _6, move _7) -> [return: bb3, unwind: bb38];
+    }
+
+    bb3: {
+        StorageDead(_7);
+        StorageDead(_6);
+        _4 = <Map<std::ops::Range<usize>, {closure@src/bin/runtime-bench.rs:107:14: 107:17}> as Iterator>::collect::<Vec<Ticket>>(move _5) -> [return: bb4, unwind: bb39];
+    }
+
+    bb4: {
+        (((*_33) as variant#3).6: bool) = const true;
+        StorageDead(_5);
+        (((*_33) as variant#3).2: std::vec::Vec<agent_runtime::ToolResult>) = Vec::<ToolResult>::with_capacity(const 8_usize) -> [return: bb5, unwind: bb44];
+    }
+
+    bb5: {
+        StorageLive(_9);
+        StorageLive(_10);
+        (((*_33) as variant#3).6: bool) = const false;
+        _10 = move _4;
+        _9 = <Vec<Ticket> as IntoIterator>::into_iter(move _10) -> [return: bb6, unwind: bb35];
+    }
+
+    bb6: {
+        StorageDead(_10);
+        (((*_33) as variant#3).3: std::vec::IntoIter<agent_runtime::Ticket>) = move _9;
+        goto -> bb7;
+    }
+
+    bb7: {
+        StorageLive(_11);
+        StorageLive(_12);
+        _12 = &mut (((*_33) as variant#3).3: std::vec::IntoIter<agent_runtime::Ticket>);
+        _11 = <std::vec::IntoIter<Ticket> as Iterator>::next(move _12) -> [return: bb8, unwind: bb34];
+    }
+
+    bb8: {
+        _13 = discriminant(_11);
+        switchInt(move _13) -> [0: bb11, 1: bb10, otherwise: bb9];
+    }
+
+    bb9: {
+        unreachable;
+    }
+
+    bb10: {
+        StorageLive(_14);
+        _14 = move ((_11 as Some).0: agent_runtime::Ticket);
+        StorageLive(_15);
+        (((*_33) as variant#3).4: &mut std::vec::Vec<agent_runtime::ToolResult>) = &mut (((*_33) as variant#3).2: std::vec::Vec<agent_runtime::ToolResult>);
+        StorageLive(_16);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = Ticket::wait(move _14) -> [return: bb12, unwind: bb32];
+    }
+
+    bb11: {
+        StorageDead(_12);
+        StorageDead(_11);
+        drop((((*_33) as variant#3).3: std::vec::IntoIter<agent_runtime::Ticket>)) -> [return: bb22, unwind: bb36];
+    }
+
+    bb12: {
+        _17 = <{async fn body of Ticket::wait()} as IntoFuture>::into_future(move _18) -> [return: bb13, unwind: bb32];
+    }
+
+    bb13: {
+        StorageDead(_18);
+        (((*_33) as variant#3).5: {async fn body of agent_runtime::Ticket::wait()}) = move _17;
+        goto -> bb14;
+    }
+
+    bb14: {
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_21);
+        _21 = &mut (((*_33) as variant#3).5: {async fn body of agent_runtime::Ticket::wait()});
+        _20 = Pin::<&mut {async fn body of Ticket::wait()}>::new_unchecked(move _21) -> [return: bb15, unwind: bb30];
+    }
+
+    bb15: {
+        StorageLive(_22);
+        StorageLive(_23);
+        _23 = copy _34;
+        _22 = copy (_23.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_23);
+        _19 = <{async fn body of Ticket::wait()} as Future>::poll(move _20, move _22) -> [return: bb16, unwind: bb29];
+    }
+
+    bb16: {
+        StorageDead(_22);
+        StorageDead(_21);
+        StorageDead(_20);
+        _24 = discriminant(_19);
+        switchInt(move _24) -> [0: bb18, 1: bb17, otherwise: bb9];
+    }
+
+    bb17: {
+        StorageDead(_19);
+        _0 = Poll::<(u128, Vec<ToolResult>)>::Pending;
+        StorageDead(_3);
+        StorageDead(_4);
+        StorageDead(_9);
+        StorageDead(_11);
+        StorageDead(_12);
+        StorageDead(_14);
+        StorageDead(_15);
+        StorageDead(_16);
+        StorageDead(_17);
+        discriminant((*_33)) = 3;
+        return;
+    }
+
+    bb18: {
+        _25 = move ((_19 as Ready).0: std::result::Result<agent_runtime::ToolResult, tokio::sync::oneshot::error::RecvError>);
+        StorageDead(_19);
+        drop((((*_33) as variant#3).5: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb19, unwind: bb31];
+    }
+
+    bb19: {
+        _16 = Result::<ToolResult, tokio::sync::oneshot::error::RecvError>::expect(move _25, const "result") -> [return: bb20, unwind: bb28];
+    }
+
+    bb20: {
+        _15 = Vec::<ToolResult>::push(copy (((*_33) as variant#3).4: &mut std::vec::Vec<agent_runtime::ToolResult>), move _16) -> [return: bb21, unwind: bb28];
+    }
+
+    bb21: {
+        StorageDead(_16);
+        StorageDead(_17);
+        StorageDead(_15);
+        StorageDead(_14);
+        StorageDead(_12);
+        StorageDead(_11);
+        goto -> bb7;
+    }
+
+    bb22: {
+        StorageDead(_9);
+        StorageLive(_26);
+        StorageLive(_27);
+        StorageLive(_28);
+        StorageLive(_29);
+        _29 = &(((*_33) as variant#3).1: std::time::Instant);
+        _28 = std::time::Instant::elapsed(move _29) -> [return: bb23, unwind: bb26];
+    }
+
+    bb23: {
+        _27 = &_28;
+        StorageDead(_29);
+        _26 = Duration::as_nanos(move _27) -> [return: bb24, unwind: bb27];
+    }
+
+    bb24: {
+        StorageDead(_27);
+        StorageLive(_30);
+        _30 = move (((*_33) as variant#3).2: std::vec::Vec<agent_runtime::ToolResult>);
+        _31 = (move _26, move _30);
+        StorageDead(_30);
+        StorageDead(_28);
+        StorageDead(_26);
+        (((*_33) as variant#3).6: bool) = const false;
+        StorageDead(_4);
+        drop((((*_33) as variant#3).0: agent_runtime::Client)) -> [return: bb25, unwind: bb42];
+    }
+
+    bb25: {
+        StorageDead(_3);
+        _0 = Poll::<(u128, Vec<ToolResult>)>::Ready(move _31);
+        discriminant((*_33)) = 1;
+        return;
+    }
+
+    bb26 (cleanup): {
+        StorageDead(_29);
+        goto -> bb27;
+    }
+
+    bb27 (cleanup): {
+        StorageDead(_27);
+        StorageDead(_28);
+        StorageDead(_26);
+        goto -> bb37;
+    }
+
+    bb28 (cleanup): {
+        StorageDead(_16);
+        goto -> bb33;
+    }
+
+    bb29 (cleanup): {
+        StorageDead(_22);
+        goto -> bb30;
+    }
+
+    bb30 (cleanup): {
+        StorageDead(_21);
+        StorageDead(_20);
+        StorageDead(_19);
+        drop((((*_33) as variant#3).5: {async fn body of agent_runtime::Ticket::wait()})) -> [return: bb31, unwind terminate(cleanup)];
+    }
+
+    bb31 (cleanup): {
+        StorageDead(_16);
+        goto -> bb33;
+    }
+
+    bb32 (cleanup): {
+        StorageDead(_18);
+        StorageDead(_16);
+        goto -> bb33;
+    }
+
+    bb33 (cleanup): {
+        StorageDead(_17);
+        StorageDead(_15);
+        StorageDead(_14);
+        goto -> bb34;
+    }
+
+    bb34 (cleanup): {
+        StorageDead(_12);
+        StorageDead(_11);
+        drop((((*_33) as variant#3).3: std::vec::IntoIter<agent_runtime::Ticket>)) -> [return: bb36, unwind terminate(cleanup)];
+    }
+
+    bb35 (cleanup): {
+        StorageDead(_10);
+        goto -> bb36;
+    }
+
+    bb36 (cleanup): {
+        StorageDead(_9);
+        goto -> bb37;
+    }
+
+    bb37 (cleanup): {
+        drop((((*_33) as variant#3).2: std::vec::Vec<agent_runtime::ToolResult>)) -> [return: bb44, unwind terminate(cleanup)];
+    }
+
+    bb38 (cleanup): {
+        StorageDead(_7);
+        StorageDead(_6);
+        goto -> bb39;
+    }
+
+    bb39 (cleanup): {
+        StorageDead(_5);
+        goto -> bb40;
+    }
+
+    bb40 (cleanup): {
+        (((*_33) as variant#3).6: bool) = const false;
+        StorageDead(_4);
+        goto -> bb41;
+    }
+
+    bb41 (cleanup): {
+        drop((((*_33) as variant#3).0: agent_runtime::Client)) -> [return: bb42, unwind terminate(cleanup)];
+    }
+
+    bb42 (cleanup): {
+        StorageDead(_3);
+        discriminant((*_33)) = 2;
+        resume;
+    }
+
+    bb43 (cleanup): {
+        drop(_4) -> [return: bb40, unwind terminate(cleanup)];
+    }
+
+    bb44 (cleanup): {
+        switchInt(copy (((*_33) as variant#3).6: bool)) -> [0: bb40, otherwise: bb43];
+    }
+
+    bb45: {
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_9);
+        StorageLive(_11);
+        StorageLive(_12);
+        StorageLive(_14);
+        StorageLive(_15);
+        StorageLive(_16);
+        StorageLive(_17);
+        goto -> bb14;
+    }
+
+    bb46: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb46, unwind continue];
+    }
+
+    bb47: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb47, unwind continue];
+    }
+
+    bb48: {
+        (((*_33) as variant#3).6: bool) = const false;
+        StorageLive(_3);
+        _3 = copy ((*_33).0: &agent_runtime::Runtime);
+        (((*_33) as variant#3).0: agent_runtime::Client) = agent_runtime::Runtime::client(move _3) -> [return: bb1, unwind: bb42];
+    }
+}
+
+alloc17 (size: 6, align: 1) {
+    72 65 73 75 6c 74                               │ result
+}
+
+fn lifecycle_batch::{closure#0}::{closure#0}(_1: &mut {closure@src/bin/runtime-bench.rs:107:14: 107:17}, _2: usize) -> Ticket {
+    debug client => (*((*_1).0: &agent_runtime::Client));
+    let mut _0: agent_runtime::Ticket;
+    let mut _3: std::result::Result<agent_runtime::Ticket, agent_runtime::SubmitError>;
+    let mut _4: agent_runtime::Input;
+    let mut _5: &agent_runtime::Client;
+    scope 1 (inlined Duration::from_secs) {
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _5 = no_retag copy ((*_1).0: &agent_runtime::Client);
+        StorageLive(_4);
+        _4 = Logs { bytes: const 262144_usize };
+        _3 = Client::try_submit(move _5, const "demo", move _4, const Duration {{ secs: 5_u64, nanos: core::num::niche_types::Nanoseconds(0_u32 is 0..=999999999) }}) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_4);
+        _0 = Result::<Ticket, SubmitError>::expect(move _3, const "bounded admission") -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        StorageDead(_3);
+        return;
+    }
+}
+
+alloc55 (size: 16, align: 8) {
+    05 00 00 00 00 00 00 00 00 00 00 00 __ __ __ __ │ ............░░░░
+}
+
+alloc16 (size: 17, align: 1) {
+    0x00 │ 62 6f 75 6e 64 65 64 20 61 64 6d 69 73 73 69 6f │ bounded admissio
+    0x10 │ 6e                                              │ n
+}
+
+alloc1 (size: 4, align: 1) {
+    64 65 6d 6f                                     │ demo
+}
+
+fn validate(_1: &[ToolResult], _2: &[u64; 2], _3: usize) -> u64 {
+    debug results => _1;
+    debug expected => _2;
+    debug retain => _3;
+    let mut _0: u64;
+    let mut _4: &usize;
+    let _5: usize;
+    let _6: !;
+    let mut _7: u64;
+    let mut _8: std::slice::Iter<'_, agent_runtime::ToolResult>;
+    let mut _9: std::option::Option<&agent_runtime::ToolResult>;
+    let mut _11: &agent_runtime::Outcome;
+    let mut _12: bool;
+    let _13: !;
+    let mut _14: bool;
+    let mut _15: !;
+    let mut _16: bool;
+    let mut _17: !;
+    let mut _18: std::iter::Enumerate<std::slice::Iter<'_, &agent_runtime::Log>>;
+    let mut _19: std::slice::Iter<'_, &agent_runtime::Log>;
+    let mut _20: &[&agent_runtime::Log];
+    let mut _21: &[&agent_runtime::Log; 2];
+    let _22: [&agent_runtime::Log; 2];
+    let mut _23: &agent_runtime::Log;
+    let _24: &agent_runtime::Log;
+    let mut _26: std::option::Option<(usize, &&agent_runtime::Log)>;
+    let mut _27: &mut std::iter::Enumerate<std::slice::Iter<'_, &agent_runtime::Log>>;
+    let mut _28: isize;
+    let mut _31: bool;
+    let mut _32: bool;
+    let mut _33: !;
+    let mut _34: &u64;
+    let mut _35: u64;
+    let _36: !;
+    let mut _37: &usize;
+    let _38: usize;
+    let mut _39: &usize;
+    let _40: usize;
+    let mut _41: bool;
+    let _42: !;
+    let mut _43: &u64;
+    let mut _44: &u64;
+    let mut _45: bool;
+    let mut _46: bool;
+    let mut _47: u64;
+    let mut _48: u64;
+    let _49: !;
+    let mut _50: u64;
+    let mut _51: u64;
+    let mut _54: &usize;
+    let mut _55: &agent_runtime::Log;
+    let mut _56: &agent_runtime::Log;
+    let mut _57: &agent_runtime::Log;
+    let mut _58: &agent_runtime::Log;
+    let mut _59: &agent_runtime::Log;
+    let mut _60: &agent_runtime::Log;
+    scope 1 {
+        debug left_val => _4;
+        debug right_val => _54;
+        scope 2 {
+            debug kind => const core::panicking::AssertKind::Eq;
+        }
+    }
+    scope 3 {
+        debug checksum => _7;
+        scope 4 {
+            debug iter => _8;
+            let _10: &agent_runtime::ToolResult;
+            scope 5 {
+                debug result => _10;
+                let mut _25: std::iter::Enumerate<std::slice::Iter<'_, &agent_runtime::Log>>;
+                let mut _53: &agent_runtime::Outcome;
+                scope 6 {
+                    debug left_val => _11;
+                    debug right_val => _53;
+                    scope 7 {
+                        debug kind => const core::panicking::AssertKind::Eq;
+                    }
+                    scope 47 (inlined <Outcome as PartialEq>::eq) {
+                        let _79: isize;
+                        scope 48 {
+                            scope 49 {
+                            }
+                        }
+                    }
+                }
+                scope 8 {
+                    debug iter => _25;
+                    let _29: usize;
+                    let _30: &&agent_runtime::Log;
+                    scope 9 {
+                        debug i => _29;
+                        debug log => _30;
+                        let mut _52: &u64;
+                        scope 10 {
+                            debug left_val => _34;
+                            debug right_val => _52;
+                            scope 11 {
+                                debug kind => const core::panicking::AssertKind::Eq;
+                            }
+                        }
+                        scope 12 {
+                            debug left_val => _37;
+                            debug right_val => _39;
+                            scope 13 {
+                                debug kind => const core::panicking::AssertKind::Eq;
+                            }
+                        }
+                        scope 14 {
+                            debug left_val => _43;
+                            debug right_val => _44;
+                            scope 15 {
+                                debug kind => const core::panicking::AssertKind::Eq;
+                            }
+                        }
+                        scope 69 (inlined Option::<String>::is_none) {
+                            let mut _90: bool;
+                            scope 70 (inlined Option::<String>::is_some) {
+                                let mut _91: isize;
+                                scope 71 {
+                                }
+                            }
+                        }
+                        scope 72 (inlined Vec::<u8>::len) {
+                            let mut _92: bool;
+                            scope 73 {
+                            }
+                        }
+                        scope 74 (inlined core::num::<impl u64>::wrapping_add) {
+                        }
+                    }
+                }
+                scope 51 (inlined Option::<String>::is_none) {
+                    let mut _80: bool;
+                    scope 52 (inlined Option::<String>::is_some) {
+                        let mut _81: isize;
+                        scope 53 {
+                        }
+                    }
+                }
+                scope 54 (inlined core::slice::<impl [&Log]>::iter) {
+                    scope 55 (inlined std::slice::Iter::<'_, &Log>::new) {
+                        let mut _83: std::ptr::NonNull<[&agent_runtime::Log]>;
+                        let mut _85: *mut &agent_runtime::Log;
+                        let mut _86: *mut &agent_runtime::Log;
+                        scope 56 {
+                            let _82: std::ptr::NonNull<&agent_runtime::Log>;
+                            scope 57 {
+                                let _84: *const &agent_runtime::Log;
+                                scope 58 {
+                                }
+                                scope 62 (inlined std::ptr::without_provenance::<&Log>) {
+                                    scope 63 (inlined std::ptr::without_provenance_mut::<&Log>) {
+                                    }
+                                }
+                                scope 64 (inlined NonNull::<&Log>::as_ptr) {
+                                }
+                                scope 65 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut &Log>::add) {
+                                }
+                            }
+                            scope 59 (inlined NonNull::<[&Log]>::from_ref) {
+                                let mut _87: *const [&agent_runtime::Log];
+                            }
+                            scope 60 (inlined NonNull::<[&Log]>::cast::<&Log>) {
+                                let mut _88: *mut &agent_runtime::Log;
+                                let mut _89: *mut [&agent_runtime::Log];
+                                scope 61 (inlined NonNull::<[&Log]>::as_ptr) {
+                                }
+                            }
+                        }
+                    }
+                }
+                scope 66 (inlined <std::slice::Iter<'_, &Log> as Iterator>::enumerate) {
+                    scope 67 (inlined Enumerate::<std::slice::Iter<'_, &Log>>::new) {
+                    }
+                }
+                scope 68 (inlined <Enumerate<std::slice::Iter<'_, &Log>> as IntoIterator>::into_iter) {
+                }
+            }
+            scope 29 (inlined <std::slice::Iter<'_, ToolResult> as Iterator>::next) {
+                let _69: std::ptr::NonNull<agent_runtime::ToolResult>;
+                let mut _71: bool;
+                let _72: std::ptr::NonNull<agent_runtime::ToolResult>;
+                let mut _73: std::ptr::NonNull<agent_runtime::ToolResult>;
+                let _74: &agent_runtime::ToolResult;
+                scope 30 {
+                    let _70: *const agent_runtime::ToolResult;
+                    scope 31 {
+                        scope 32 {
+                            scope 35 (inlined #[track_caller] core::num::<impl usize>::unchecked_sub) {
+                                scope 36 (inlined ub_checks::check_language_ub) {
+                                    scope 37 (inlined ub_checks::check_language_ub::runtime) {
+                                    }
+                                }
+                            }
+                            scope 38 (inlined std::ptr::without_provenance_mut::<ToolResult>) {
+                            }
+                        }
+                        scope 33 (inlined std::ptr::const_ptr::<impl *const ToolResult>::addr) {
+                            scope 34 (inlined std::ptr::const_ptr::<impl *const ToolResult>::cast::<()>) {
+                            }
+                        }
+                        scope 39 (inlined <NonNull<ToolResult> as PartialEq>::eq) {
+                            let mut _75: *mut agent_runtime::ToolResult;
+                            let mut _76: *mut agent_runtime::ToolResult;
+                            scope 40 (inlined NonNull::<ToolResult>::as_ptr) {
+                            }
+                            scope 41 (inlined NonNull::<ToolResult>::as_ptr) {
+                            }
+                        }
+                        scope 42 (inlined NonNull::<ToolResult>::add) {
+                            let mut _77: *mut agent_runtime::ToolResult;
+                            scope 43 (inlined NonNull::<ToolResult>::as_ptr) {
+                            }
+                        }
+                        scope 44 (inlined NonNull::<ToolResult>::as_ref::<'_>) {
+                            let _78: *const agent_runtime::ToolResult;
+                            scope 45 (inlined NonNull::<ToolResult>::as_ptr) {
+                            }
+                            scope 46 (inlined std::ptr::mut_ptr::<impl *mut ToolResult>::cast_const) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scope 16 (inlined core::slice::iter::<impl IntoIterator for &[ToolResult]>::into_iter) {
+            scope 17 (inlined core::slice::<impl [ToolResult]>::iter) {
+                scope 18 (inlined std::slice::Iter::<'_, ToolResult>::new) {
+                    let mut _62: std::ptr::NonNull<[agent_runtime::ToolResult]>;
+                    let mut _64: *mut agent_runtime::ToolResult;
+                    let mut _65: *mut agent_runtime::ToolResult;
+                    scope 19 {
+                        let _61: std::ptr::NonNull<agent_runtime::ToolResult>;
+                        scope 20 {
+                            let _63: *const agent_runtime::ToolResult;
+                            scope 21 {
+                            }
+                            scope 25 (inlined std::ptr::without_provenance::<ToolResult>) {
+                                scope 26 (inlined std::ptr::without_provenance_mut::<ToolResult>) {
+                                }
+                            }
+                            scope 27 (inlined NonNull::<ToolResult>::as_ptr) {
+                            }
+                            scope 28 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut ToolResult>::add) {
+                            }
+                        }
+                        scope 22 (inlined NonNull::<[ToolResult]>::from_ref) {
+                            let mut _66: *const [agent_runtime::ToolResult];
+                        }
+                        scope 23 (inlined NonNull::<[ToolResult]>::cast::<ToolResult>) {
+                            let mut _67: *mut agent_runtime::ToolResult;
+                            let mut _68: *mut [agent_runtime::ToolResult];
+                            scope 24 (inlined NonNull::<[ToolResult]>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scope 50 (inlined std::hint::black_box::<u64>) {
+        }
+    }
+
+    bb0: {
+        _5 = PtrMetadata(copy _1);
+        _4 = &_5;
+        _54 = const validate::promoted[2];
+        switchInt(copy _5) -> [8: bb1, otherwise: bb2];
+    }
+
+    bb1: {
+        _7 = const 0_u64;
+        StorageLive(_63);
+        StorageLive(_61);
+        StorageLive(_62);
+        StorageLive(_66);
+        _66 = &raw const (*_1);
+        _62 = copy _66 as std::ptr::NonNull<[agent_runtime::ToolResult]> (Transmute);
+        StorageDead(_66);
+        StorageLive(_67);
+        StorageLive(_68);
+        _68 = copy _62 as *mut [agent_runtime::ToolResult] (Transmute);
+        _67 = copy _68 as *mut agent_runtime::ToolResult (PtrToPtr);
+        StorageDead(_68);
+        _61 = copy _67 as std::ptr::NonNull<agent_runtime::ToolResult> (Transmute);
+        StorageDead(_67);
+        StorageDead(_62);
+        StorageLive(_64);
+        StorageLive(_65);
+        _65 = copy _61 as *mut agent_runtime::ToolResult (Transmute);
+        _64 = Offset(copy _65, copy _5);
+        StorageDead(_65);
+        _63 = copy _64 as *const agent_runtime::ToolResult (PtrToPtr);
+        StorageDead(_64);
+        _8 = std::slice::Iter::<'_, ToolResult> { ptr: copy _61, end_or_len: copy _63, _marker: const PhantomData::<&ToolResult> };
+        StorageDead(_61);
+        StorageDead(_63);
+        goto -> bb3;
+    }
+
+    bb2: {
+        _6 = core::panicking::assert_failed::<usize, usize>(const core::panicking::AssertKind::Eq, move _4, move _54, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb3: {
+        StorageLive(_9);
+        StorageLive(_75);
+        StorageLive(_69);
+        _69 = copy (_8.0: std::ptr::NonNull<agent_runtime::ToolResult>);
+        StorageLive(_70);
+        _70 = copy (_8.1: *const agent_runtime::ToolResult);
+        StorageLive(_71);
+        StorageLive(_72);
+        _72 = copy _70 as std::ptr::NonNull<agent_runtime::ToolResult> (Transmute);
+        _75 = copy _69 as *mut agent_runtime::ToolResult (Transmute);
+        StorageLive(_76);
+        _76 = copy _72 as *mut agent_runtime::ToolResult (Transmute);
+        _71 = Eq(copy _75, copy _76);
+        StorageDead(_76);
+        switchInt(move _71) -> [0: bb27, otherwise: bb26];
+    }
+
+    bb4: {
+        unreachable;
+    }
+
+    bb5: {
+        StorageDead(_12);
+        StorageLive(_14);
+        _14 = copy ((*_10).3: bool);
+        switchInt(move _14) -> [0: bb8, otherwise: bb7];
+    }
+
+    bb6: {
+        _13 = core::panicking::assert_failed::<Outcome, Outcome>(const core::panicking::AssertKind::Eq, move _11, move _53, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb7: {
+        StorageDead(_14);
+        StorageLive(_16);
+        StorageLive(_80);
+        StorageLive(_81);
+        _81 = discriminant(((*_10).8: std::option::Option<std::string::String>));
+        _80 = Eq(copy _81, const 1_isize);
+        StorageDead(_81);
+        _16 = Not(move _80);
+        StorageDead(_80);
+        switchInt(move _16) -> [0: bb10, otherwise: bb9];
+    }
+
+    bb8: {
+        _15 = panic(const "assertion failed: result.reaped") -> unwind continue;
+    }
+
+    bb9: {
+        StorageDead(_16);
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        _23 = &((*_10).4: agent_runtime::Log);
+        StorageLive(_24);
+        _24 = &((*_10).5: agent_runtime::Log);
+        _22 = [copy _23, copy _24];
+        _21 = &_22;
+        _20 = copy _21 as &[&agent_runtime::Log] (PointerCoercion(Unsize, Implicit));
+        StorageDead(_23);
+        StorageDead(_21);
+        StorageLive(_84);
+        StorageLive(_82);
+        StorageLive(_83);
+        StorageLive(_87);
+        _87 = &raw const (*_20);
+        _83 = copy _87 as std::ptr::NonNull<[&agent_runtime::Log]> (Transmute);
+        StorageDead(_87);
+        StorageLive(_88);
+        StorageLive(_89);
+        _89 = copy _83 as *mut [&agent_runtime::Log] (Transmute);
+        _88 = copy _89 as *mut &agent_runtime::Log (PtrToPtr);
+        StorageDead(_89);
+        _82 = copy _88 as std::ptr::NonNull<&agent_runtime::Log> (Transmute);
+        StorageDead(_88);
+        StorageDead(_83);
+        StorageLive(_85);
+        StorageLive(_86);
+        _86 = copy _82 as *mut &agent_runtime::Log (Transmute);
+        _85 = Offset(copy _86, const 2_usize);
+        StorageDead(_86);
+        _84 = copy _85 as *const &agent_runtime::Log (PtrToPtr);
+        StorageDead(_85);
+        _19 = std::slice::Iter::<'_, &Log> { ptr: copy _82, end_or_len: copy _84, _marker: const PhantomData::<&&Log> };
+        StorageDead(_82);
+        StorageDead(_84);
+        StorageDead(_20);
+        _18 = Enumerate::<std::slice::Iter<'_, &Log>> { iter: copy _19, count: const 0_usize };
+        StorageDead(_19);
+        StorageLive(_25);
+        _25 = copy _18;
+        goto -> bb11;
+    }
+
+    bb10: {
+        _17 = panic(const "assertion failed: result.cleanup_error.is_none()") -> unwind continue;
+    }
+
+    bb11: {
+        StorageLive(_26);
+        StorageLive(_27);
+        _27 = &mut _25;
+        _26 = <Enumerate<std::slice::Iter<'_, &Log>> as Iterator>::next(move _27) -> [return: bb12, unwind continue];
+    }
+
+    bb12: {
+        _28 = discriminant(_26);
+        switchInt(move _28) -> [0: bb14, 1: bb13, otherwise: bb4];
+    }
+
+    bb13: {
+        StorageLive(_29);
+        _29 = copy (((_26 as Some).0: (usize, &&agent_runtime::Log)).0: usize);
+        StorageLive(_30);
+        _30 = copy (((_26 as Some).0: (usize, &&agent_runtime::Log)).1: &&agent_runtime::Log);
+        StorageLive(_31);
+        _55 = no_retag copy (*_30);
+        _31 = copy ((*_55).3: bool);
+        switchInt(move _31) -> [0: bb17, otherwise: bb15];
+    }
+
+    bb14: {
+        StorageDead(_27);
+        StorageDead(_26);
+        StorageDead(_25);
+        StorageDead(_24);
+        StorageDead(_22);
+        StorageDead(_9);
+        goto -> bb3;
+    }
+
+    bb15: {
+        StorageLive(_32);
+        _56 = no_retag copy (*_30);
+        StorageLive(_90);
+        StorageLive(_91);
+        _91 = discriminant(((*_56).4: std::option::Option<std::string::String>));
+        _90 = Eq(copy _91, const 1_isize);
+        StorageDead(_91);
+        _32 = Not(move _90);
+        StorageDead(_90);
+        switchInt(move _32) -> [0: bb17, otherwise: bb16];
+    }
+
+    bb16: {
+        StorageDead(_32);
+        StorageDead(_31);
+        _57 = no_retag copy (*_30);
+        _34 = &((*_57).1: u64);
+        _52 = const validate::promoted[0];
+        StorageLive(_35);
+        _35 = copy (*_34);
+        switchInt(copy _35) -> [262144: bb18, otherwise: bb19];
+    }
+
+    bb17: {
+        _33 = panic(const "assertion failed: log.eof && log.error.is_none()") -> unwind continue;
+    }
+
+    bb18: {
+        StorageDead(_35);
+        StorageLive(_38);
+        _58 = no_retag copy (*_30);
+        _38 = copy (((*_58).0: std::vec::Vec<u8>).1: usize);
+        StorageLive(_92);
+        _92 = Le(copy _38, const 9223372036854775807_usize);
+        assume(move _92);
+        StorageDead(_92);
+        _37 = &_38;
+        StorageLive(_40);
+        _40 = <usize as Ord>::min(copy _3, const 262144_usize) -> [return: bb20, unwind continue];
+    }
+
+    bb19: {
+        StorageDead(_35);
+        _36 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _34, move _52, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb20: {
+        _39 = &_40;
+        StorageLive(_41);
+        _41 = Eq(copy _38, copy _40);
+        switchInt(move _41) -> [0: bb22, otherwise: bb21];
+    }
+
+    bb21: {
+        StorageDead(_41);
+        StorageDead(_40);
+        StorageDead(_38);
+        _59 = no_retag copy (*_30);
+        _43 = &((*_59).2: u64);
+        _45 = Lt(copy _29, const 2_usize);
+        assert(move _45, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _29) -> [success: bb23, unwind continue];
+    }
+
+    bb22: {
+        _42 = core::panicking::assert_failed::<usize, usize>(const core::panicking::AssertKind::Eq, move _37, move _39, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb23: {
+        _44 = &(*_2)[_29];
+        StorageLive(_46);
+        StorageLive(_47);
+        _47 = copy (*_43);
+        StorageLive(_48);
+        _48 = copy (*_2)[_29];
+        _46 = Eq(move _47, move _48);
+        switchInt(move _46) -> [0: bb25, otherwise: bb24];
+    }
+
+    bb24: {
+        StorageDead(_48);
+        StorageDead(_47);
+        StorageDead(_46);
+        StorageLive(_50);
+        StorageLive(_51);
+        _60 = no_retag copy (*_30);
+        _51 = copy ((*_60).2: u64);
+        _50 = Add(copy _7, copy _51);
+        StorageDead(_51);
+        _7 = move _50;
+        StorageDead(_50);
+        StorageDead(_30);
+        StorageDead(_29);
+        StorageDead(_27);
+        StorageDead(_26);
+        goto -> bb11;
+    }
+
+    bb25: {
+        StorageDead(_48);
+        StorageDead(_47);
+        _49 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _43, move _44, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb26: {
+        StorageDead(_72);
+        StorageDead(_71);
+        StorageDead(_70);
+        StorageDead(_69);
+        StorageDead(_75);
+        StorageDead(_9);
+        _0 = std::intrinsics::black_box::<u64>(move _7) -> [return: bb28, unwind unreachable];
+    }
+
+    bb27: {
+        StorageDead(_72);
+        StorageDead(_71);
+        StorageLive(_73);
+        StorageLive(_77);
+        _77 = Offset(copy _75, const 1_usize);
+        _73 = copy _77 as std::ptr::NonNull<agent_runtime::ToolResult> (Transmute);
+        StorageDead(_77);
+        (_8.0: std::ptr::NonNull<agent_runtime::ToolResult>) = move _73;
+        StorageDead(_73);
+        StorageLive(_74);
+        StorageLive(_78);
+        _78 = copy _69 as *const agent_runtime::ToolResult (Transmute);
+        _74 = &(*_78);
+        StorageDead(_78);
+        _9 = Option::<&ToolResult>::Some(copy _74);
+        StorageDead(_74);
+        StorageDead(_70);
+        StorageDead(_69);
+        StorageDead(_75);
+        _10 = copy ((_9 as Some).0: &agent_runtime::ToolResult);
+        _11 = &((*_10).0: agent_runtime::Outcome);
+        _53 = const validate::promoted[1];
+        StorageLive(_12);
+        StorageLive(_79);
+        _79 = discriminant((*_11));
+        _12 = Eq(copy _79, const 0_isize);
+        StorageDead(_79);
+        switchInt(move _12) -> [0: bb6, otherwise: bb5];
+    }
+
+    bb28: {
+        return;
+    }
+}
+
+alloc62 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc35 (size: 48, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 6c 6f 67 2e 65 6f 66 20 26 26 20 6c 6f 67 │ : log.eof && log
+    0x20 │ 2e 65 72 72 6f 72 2e 69 73 5f 6e 6f 6e 65 28 29 │ .error.is_none()
+}
+
+alloc34 (size: 48, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 72 65 73 75 6c 74 2e 63 6c 65 61 6e 75 70 │ : result.cleanup
+    0x20 │ 5f 65 72 72 6f 72 2e 69 73 5f 6e 6f 6e 65 28 29 │ _error.is_none()
+}
+
+alloc33 (size: 31, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 72 65 73 75 6c 74 2e 72 65 61 70 65 64    │ : result.reaped
+}
+
+const validate::promoted[0]: &u64 = {
+    let mut _0: &u64;
+    let mut _1: u64;
+
+    bb0: {
+        _1 = const BYTES as u64 (IntToInt);
+        _0 = &_1;
+        return;
+    }
+}
+
+const validate::promoted[1]: &Outcome = {
+    let mut _0: &agent_runtime::Outcome;
+    let mut _1: agent_runtime::Outcome;
+
+    bb0: {
+        _1 = Success;
+        _0 = &_1;
+        return;
+    }
+}
+
+const validate::promoted[2]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const TOOLS;
+        _0 = &_1;
+        return;
+    }
+}
+
+const validate::{constant#0}: usize = const 2_usize;
+
+fn lifecycle(_1: Option<u64>) -> {async fn body of lifecycle()} {
+    debug profile_seconds => _1;
+    let mut _0: {async fn body of lifecycle()};
+
+    bb0: {
+        _0 = {coroutine@src/bin/runtime-bench.rs:138:50: 185:2 (#0)} { profile_seconds: copy _1 };
+        return;
+    }
+}
+
+fn lifecycle::{closure#0}(_1: Pin<&mut {async fn body of lifecycle()}>, _2: &mut Context<'_>) -> Poll<()> {
+    coroutine layout {
+        field _s0: Option<u64>;
+        field _s1: [u64; 2];
+        field _s2: [(&str, usize, usize); 2];
+        field _s3: Vec<agent_runtime::Runtime>;
+        field _s4: Duration;
+        field _s5: Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>;
+        field _s6: usize;
+        field _s7: &agent_runtime::Runtime;
+        field _s8: std::time::Instant;
+        field _s9: {async fn body of lifecycle_batch()};
+        field _s10: u64;
+        field _s11: std::time::Instant;
+        field _s12: usize;
+        field _s13: {async fn body of lifecycle_batch()};
+        field _s14: std::ops::Range<usize>;
+        field _s15: usize;
+        field _s16: std::ops::Range<usize>;
+        field _s17: usize;
+        field _s18: {async fn body of lifecycle_batch()};
+        field _s19: std::vec::IntoIter<agent_runtime::Runtime>;
+        field _s20: {async fn body of agent_runtime::Runtime::shutdown()};
+        field _s21: bool;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2, _s3, _s4, _s5, _s6, _s7, _s8, _s9, _s21],
+            Suspend1 (4): [_s0, _s1, _s2, _s3, _s4, _s10, _s11, _s12, _s13, _s21],
+            Suspend2 (5): [_s0, _s1, _s2, _s3, _s4, _s14, _s15, _s16, _s17, _s18, _s21],
+            Suspend3 (6): [_s0, _s1, _s2, _s3, _s4, _s19, _s20, _s21],
+        }
+        storage_conflicts = BitMatrix(22x22) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s0, _s3), (_s0, _s4), (_s0, _s5), (_s0, _s6), (_s0, _s7), (_s0, _s8), (_s0, _s9), (_s0, _s10), (_s0, _s11), (_s0, _s12), (_s0, _s13), (_s0, _s14), (_s0, _s15), (_s0, _s16), (_s0, _s17), (_s0, _s18), (_s0, _s19), (_s0, _s20), (_s0, _s21), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s1, _s3), (_s1, _s4), (_s1, _s5), (_s1, _s6), (_s1, _s7), (_s1, _s8), (_s1, _s9), (_s1, _s10), (_s1, _s11), (_s1, _s12), (_s1, _s13), (_s1, _s14), (_s1, _s15), (_s1, _s16), (_s1, _s17), (_s1, _s18), (_s1, _s19), (_s1, _s20), (_s1, _s21), (_s2, _s0), (_s2, _s1), (_s2, _s2), (_s2, _s3), (_s2, _s4), (_s2, _s5), (_s2, _s6), (_s2, _s7), (_s2, _s8), (_s2, _s9), (_s2, _s10), (_s2, _s11), (_s2, _s12), (_s2, _s13), (_s2, _s14), (_s2, _s15), (_s2, _s16), (_s2, _s17), (_s2, _s18), (_s2, _s19), (_s2, _s20), (_s2, _s21), (_s3, _s0), (_s3, _s1), (_s3, _s2), (_s3, _s3), (_s3, _s4), (_s3, _s5), (_s3, _s6), (_s3, _s7), (_s3, _s8), (_s3, _s9), (_s3, _s10), (_s3, _s11), (_s3, _s12), (_s3, _s13), (_s3, _s14), (_s3, _s15), (_s3, _s16), (_s3, _s17), (_s3, _s18), (_s3, _s19), (_s3, _s20), (_s3, _s21), (_s4, _s0), (_s4, _s1), (_s4, _s2), (_s4, _s3), (_s4, _s4), (_s4, _s5), (_s4, _s6), (_s4, _s7), (_s4, _s8), (_s4, _s9), (_s4, _s10), (_s4, _s11), (_s4, _s12), (_s4, _s13), (_s4, _s14), (_s4, _s15), (_s4, _s16), (_s4, _s17), (_s4, _s18), (_s4, _s19), (_s4, _s20), (_s4, _s21), (_s5, _s0), (_s5, _s1), (_s5, _s2), (_s5, _s3), (_s5, _s4), (_s5, _s5), (_s5, _s6), (_s5, _s7), (_s5, _s8), (_s5, _s9), (_s5, _s21), (_s6, _s0), (_s6, _s1), (_s6, _s2), (_s6, _s3), (_s6, _s4), (_s6, _s5), (_s6, _s6), (_s6, _s7), (_s6, _s8), (_s6, _s9), (_s6, _s21), (_s7, _s0), (_s7, _s1), (_s7, _s2), (_s7, _s3), (_s7, _s4), (_s7, _s5), (_s7, _s6), (_s7, _s7), (_s7, _s8), (_s7, _s9), (_s7, _s21), (_s8, _s0), (_s8, _s1), (_s8, _s2), (_s8, _s3), (_s8, _s4), (_s8, _s5), (_s8, _s6), (_s8, _s7), (_s8, _s8), (_s8, _s9), (_s8, _s21), (_s9, _s0), (_s9, _s1), (_s9, _s2), (_s9, _s3), (_s9, _s4), (_s9, _s5), (_s9, _s6), (_s9, _s7), (_s9, _s8), (_s9, _s9), (_s9, _s21), (_s10, _s0), (_s10, _s1), (_s10, _s2), (_s10, _s3), (_s10, _s4), (_s10, _s10), (_s10, _s11), (_s10, _s12), (_s10, _s13), (_s10, _s21), (_s11, _s0), (_s11, _s1), (_s11, _s2), (_s11, _s3), (_s11, _s4), (_s11, _s10), (_s11, _s11), (_s11, _s12), (_s11, _s13), (_s11, _s21), (_s12, _s0), (_s12, _s1), (_s12, _s2), (_s12, _s3), (_s12, _s4), (_s12, _s10), (_s12, _s11), (_s12, _s12), (_s12, _s13), (_s12, _s21), (_s13, _s0), (_s13, _s1), (_s13, _s2), (_s13, _s3), (_s13, _s4), (_s13, _s10), (_s13, _s11), (_s13, _s12), (_s13, _s13), (_s13, _s21), (_s14, _s0), (_s14, _s1), (_s14, _s2), (_s14, _s3), (_s14, _s4), (_s14, _s14), (_s14, _s15), (_s14, _s16), (_s14, _s17), (_s14, _s18), (_s14, _s21), (_s15, _s0), (_s15, _s1), (_s15, _s2), (_s15, _s3), (_s15, _s4), (_s15, _s14), (_s15, _s15), (_s15, _s16), (_s15, _s17), (_s15, _s18), (_s15, _s21), (_s16, _s0), (_s16, _s1), (_s16, _s2), (_s16, _s3), (_s16, _s4), (_s16, _s14), (_s16, _s15), (_s16, _s16), (_s16, _s17), (_s16, _s18), (_s16, _s21), (_s17, _s0), (_s17, _s1), (_s17, _s2), (_s17, _s3), (_s17, _s4), (_s17, _s14), (_s17, _s15), (_s17, _s16), (_s17, _s17), (_s17, _s18), (_s17, _s21), (_s18, _s0), (_s18, _s1), (_s18, _s2), (_s18, _s3), (_s18, _s4), (_s18, _s14), (_s18, _s15), (_s18, _s16), (_s18, _s17), (_s18, _s18), (_s18, _s21), (_s19, _s0), (_s19, _s1), (_s19, _s2), (_s19, _s3), (_s19, _s4), (_s19, _s19), (_s19, _s20), (_s19, _s21), (_s20, _s0), (_s20, _s1), (_s20, _s2), (_s20, _s3), (_s20, _s4), (_s20, _s19), (_s20, _s20), (_s20, _s21), (_s21, _s0), (_s21, _s1), (_s21, _s2), (_s21, _s3), (_s21, _s4), (_s21, _s5), (_s21, _s6), (_s21, _s7), (_s21, _s8), (_s21, _s9), (_s21, _s10), (_s21, _s11), (_s21, _s12), (_s21, _s13), (_s21, _s14), (_s21, _s15), (_s21, _s16), (_s21, _s17), (_s21, _s18), (_s21, _s19), (_s21, _s20), (_s21, _s21)}
+    }
+    debug _task_context => _151;
+    debug profile_seconds => ((*_149).0: std::option::Option<u64>);
+    coroutine debug profile_seconds => _s0;
+    let mut _0: std::task::Poll<()>;
+    let mut _3: [u8; 2];
+    let mut _4: &[u8; 2];
+    let mut _5: (&str, usize, usize);
+    let mut _6: (&str, usize, usize);
+    let mut _7: std::iter::Map<std::slice::Iter<'_, (&str, usize, usize)>, {closure@src/bin/runtime-bench.rs:145:45: 145:56}>;
+    let mut _8: std::slice::Iter<'_, (&str, usize, usize)>;
+    let mut _9: &[(&str, usize, usize)];
+    let mut _10: &[(&str, usize, usize); 2];
+    let mut _11: u64;
+    let mut _12: bool;
+    let mut _13: &std::option::Option<u64>;
+    let mut _14: std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>;
+    let mut _15: std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>;
+    let mut _16: std::slice::Iter<'_, agent_runtime::Runtime>;
+    let _17: &[agent_runtime::Runtime];
+    let mut _18: &std::vec::Vec<agent_runtime::Runtime>;
+    let mut _19: std::option::Option<(usize, &agent_runtime::Runtime)>;
+    let mut _20: &mut std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>;
+    let mut _21: isize;
+    let mut _22: bool;
+    let mut _23: &std::time::Duration;
+    let _24: std::time::Duration;
+    let mut _25: &std::time::Instant;
+    let mut _26: &std::time::Duration;
+    let mut _28: {async fn body of lifecycle_batch()};
+    let mut _29: {async fn body of lifecycle_batch()};
+    let mut _30: std::task::Poll<(u128, std::vec::Vec<agent_runtime::ToolResult>)>;
+    let mut _31: std::pin::Pin<&mut {async fn body of lifecycle_batch()}>;
+    let mut _32: &mut {async fn body of lifecycle_batch()};
+    let mut _33: &mut std::task::Context<'_>;
+    let mut _34: std::future::ResumeTy;
+    let mut _35: isize;
+    let _37: u64;
+    let _38: &[agent_runtime::ToolResult];
+    let _39: &std::vec::Vec<agent_runtime::ToolResult>;
+    let _40: &[u64; 2];
+    let mut _41: usize;
+    let _42: usize;
+    let mut _43: bool;
+    let mut _44: isize;
+    let mut _45: bool;
+    let mut _46: &std::time::Duration;
+    let _47: std::time::Duration;
+    let mut _48: &std::time::Instant;
+    let mut _49: &std::time::Duration;
+    let _50: std::time::Duration;
+    let mut _51: u64;
+    let mut _53: {async fn body of lifecycle_batch()};
+    let mut _54: {async fn body of lifecycle_batch()};
+    let _55: &agent_runtime::Runtime;
+    let mut _56: &std::vec::Vec<agent_runtime::Runtime>;
+    let mut _57: std::task::Poll<(u128, std::vec::Vec<agent_runtime::ToolResult>)>;
+    let mut _58: std::pin::Pin<&mut {async fn body of lifecycle_batch()}>;
+    let mut _59: &mut {async fn body of lifecycle_batch()};
+    let mut _60: &mut std::task::Context<'_>;
+    let mut _61: std::future::ResumeTy;
+    let mut _62: isize;
+    let _64: u64;
+    let _65: &[agent_runtime::ToolResult];
+    let _66: &std::vec::Vec<agent_runtime::ToolResult>;
+    let _67: &[u64; 2];
+    let mut _68: usize;
+    let _69: ();
+    let mut _70: std::fmt::Arguments<'_>;
+    let mut _72: &usize;
+    let mut _74: core::fmt::rt::Argument<'_>;
+    let _75: &[core::fmt::rt::Argument<'_>; 1];
+    let _76: ();
+    let mut _77: std::fmt::Arguments<'_>;
+    let mut _78: std::ops::Range<usize>;
+    let mut _79: std::ops::Range<usize>;
+    let mut _80: std::option::Option<usize>;
+    let mut _81: &mut std::ops::Range<usize>;
+    let mut _82: isize;
+    let mut _83: std::ops::Range<usize>;
+    let mut _84: std::ops::Range<usize>;
+    let mut _85: std::option::Option<usize>;
+    let mut _86: &mut std::ops::Range<usize>;
+    let mut _87: isize;
+    let mut _89: usize;
+    let mut _90: usize;
+    let mut _93: {async fn body of lifecycle_batch()};
+    let mut _94: {async fn body of lifecycle_batch()};
+    let _95: &agent_runtime::Runtime;
+    let mut _96: &std::vec::Vec<agent_runtime::Runtime>;
+    let mut _97: usize;
+    let mut _98: std::task::Poll<(u128, std::vec::Vec<agent_runtime::ToolResult>)>;
+    let mut _99: std::pin::Pin<&mut {async fn body of lifecycle_batch()}>;
+    let mut _100: &mut {async fn body of lifecycle_batch()};
+    let mut _101: &mut std::task::Context<'_>;
+    let mut _102: std::future::ResumeTy;
+    let mut _103: isize;
+    let _106: &[agent_runtime::ToolResult];
+    let _107: &std::vec::Vec<agent_runtime::ToolResult>;
+    let _108: &[u64; 2];
+    let mut _109: usize;
+    let _110: usize;
+    let mut _111: bool;
+    let _112: ();
+    let mut _113: std::fmt::Arguments<'_>;
+    let mut _115: &&str;
+    let _116: usize;
+    let mut _117: bool;
+    let mut _118: &usize;
+    let mut _119: &u128;
+    let mut _120: &u64;
+    let mut _122: core::fmt::rt::Argument<'_>;
+    let mut _123: core::fmt::rt::Argument<'_>;
+    let mut _124: core::fmt::rt::Argument<'_>;
+    let mut _125: core::fmt::rt::Argument<'_>;
+    let mut _126: core::fmt::rt::Argument<'_>;
+    let _127: &[core::fmt::rt::Argument<'_>; 5];
+    let mut _128: std::vec::IntoIter<agent_runtime::Runtime>;
+    let mut _129: std::vec::Vec<agent_runtime::Runtime>;
+    let mut _130: std::option::Option<agent_runtime::Runtime>;
+    let mut _131: &mut std::vec::IntoIter<agent_runtime::Runtime>;
+    let mut _132: isize;
+    let mut _134: bool;
+    let mut _135: &std::vec::Vec<std::string::String>;
+    let _136: agent_runtime::Shutdown;
+    let mut _137: {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _138: {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _139: std::task::Poll<std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>>;
+    let mut _140: std::pin::Pin<&mut {async fn body of agent_runtime::Runtime::shutdown()}>;
+    let mut _141: &mut {async fn body of agent_runtime::Runtime::shutdown()};
+    let mut _142: &mut std::task::Context<'_>;
+    let mut _143: std::future::ResumeTy;
+    let mut _144: isize;
+    let mut _146: !;
+    let mut _148: u32;
+    let mut _149: &mut {async fn body of lifecycle()};
+    let mut _150: &agent_runtime::Runtime;
+    let mut _151: std::future::ResumeTy;
+    let mut _152: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug profile_seconds => (((*_149) as variant#6).0: std::option::Option<u64>);
+        coroutine debug expected => _s1;
+        scope 2 {
+            debug expected => (((*_149) as variant#6).1: [u64; 2]);
+            coroutine debug cases => _s2;
+            scope 3 {
+                debug cases => (((*_149) as variant#6).2: [(&str, usize, usize); 2]);
+                coroutine debug runtimes => _s3;
+                scope 4 {
+                    debug runtimes => (((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>);
+                    coroutine debug warm_duration => _s4;
+                    scope 5 {
+                        debug warm_duration => (((*_149) as variant#6).4: std::time::Duration);
+                        coroutine debug iter => _s5;
+                        coroutine debug iter => _s14;
+                        coroutine debug iter => _s19;
+                        scope 6 {
+                            debug iter => (((*_149) as variant#3).5: std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>);
+                            coroutine debug i => _s6;
+                            coroutine debug runtime => _s7;
+                            scope 7 {
+                                debug i => (((*_149) as variant#3).6: usize);
+                                debug runtime => (((*_149) as variant#3).7: &agent_runtime::Runtime);
+                                coroutine debug warm => _s8;
+                                scope 8 {
+                                    debug warm => (((*_149) as variant#3).8: std::time::Instant);
+                                    coroutine debug __awaitee => _s9;
+                                    let _27: std::vec::Vec<agent_runtime::ToolResult>;
+                                    scope 9 {
+                                        debug results => _27;
+                                    }
+                                    scope 10 {
+                                        debug __awaitee => (((*_149) as variant#3).9: {async fn body of lifecycle_batch()});
+                                        let _36: (u128, std::vec::Vec<agent_runtime::ToolResult>);
+                                        scope 11 {
+                                            debug result => _36;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 12 {
+                            debug seconds => (((*_149) as variant#4).5: u64);
+                            coroutine debug seconds => _s10;
+                            coroutine debug start => _s11;
+                            scope 13 {
+                                debug start => (((*_149) as variant#4).6: std::time::Instant);
+                                coroutine debug count => _s12;
+                                scope 14 {
+                                    debug count => (((*_149) as variant#4).7: usize);
+                                    coroutine debug __awaitee => _s13;
+                                    let _52: std::vec::Vec<agent_runtime::ToolResult>;
+                                    let _71: (&usize,);
+                                    scope 15 {
+                                        debug results => _52;
+                                    }
+                                    scope 16 {
+                                        debug __awaitee => (((*_149) as variant#4).8: {async fn body of lifecycle_batch()});
+                                        let _63: (u128, std::vec::Vec<agent_runtime::ToolResult>);
+                                        scope 17 {
+                                            debug result => _63;
+                                        }
+                                    }
+                                    scope 18 {
+                                        debug args => _71;
+                                        let _73: [core::fmt::rt::Argument<'_>; 1];
+                                        scope 19 {
+                                            debug args => _73;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 20 {
+                            debug iter => (((*_149) as variant#5).5: std::ops::Range<usize>);
+                            coroutine debug index => _s15;
+                            scope 21 {
+                                debug index => (((*_149) as variant#5).6: usize);
+                                coroutine debug iter => _s16;
+                                scope 22 {
+                                    debug iter => (((*_149) as variant#5).7: std::ops::Range<usize>);
+                                    let _88: usize;
+                                    scope 23 {
+                                        debug offset => _88;
+                                        coroutine debug i => _s17;
+                                        scope 24 {
+                                            debug i => (((*_149) as variant#5).8: usize);
+                                            coroutine debug __awaitee => _s18;
+                                            let _91: u128;
+                                            let _92: std::vec::Vec<agent_runtime::ToolResult>;
+                                            scope 25 {
+                                                debug elapsed => _91;
+                                                debug results => _92;
+                                                let _105: u64;
+                                                scope 28 {
+                                                    debug checksum => _105;
+                                                    let _114: (&&str, &usize, &u128, &usize, &u64);
+                                                    let mut _147: &usize;
+                                                    scope 29 {
+                                                        debug args => _114;
+                                                        let _121: [core::fmt::rt::Argument<'_>; 5];
+                                                        scope 30 {
+                                                            debug args => _121;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            scope 26 {
+                                                debug __awaitee => (((*_149) as variant#5).9: {async fn body of lifecycle_batch()});
+                                                let _104: (u128, std::vec::Vec<agent_runtime::ToolResult>);
+                                                scope 27 {
+                                                    debug result => _104;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 31 {
+                            debug iter => (((*_149) as variant#6).5: std::vec::IntoIter<agent_runtime::Runtime>);
+                            let _133: agent_runtime::Runtime;
+                            scope 32 {
+                                debug runtime => _133;
+                                coroutine debug __awaitee => _s20;
+                                scope 33 {
+                                    debug __awaitee => (((*_149) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()});
+                                    let _145: std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>;
+                                    scope 34 {
+                                        debug result => _145;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _152 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _151 = std::future::ResumeTy(move _152);
+        _149 = copy (_1.0: &mut {async fn body of lifecycle()});
+        _148 = discriminant((*_149));
+        switchInt(move _148) -> [0: bb200, 1: bb199, 2: bb198, 3: bb194, 4: bb195, 5: bb196, 6: bb197, otherwise: bb16];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        StorageDead(_4);
+        StorageLive(_5);
+        _5 = (const "logs-c1-r0", const 1_usize, const 0_usize);
+        StorageLive(_6);
+        _6 = (const "logs-c4-r4096", const 4_usize, const 4096_usize);
+        (((*_149) as variant#6).2: [(&str, usize, usize); 2]) = [move _5, move _6];
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageLive(_7);
+        StorageLive(_8);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = &(((*_149) as variant#6).2: [(&str, usize, usize); 2]);
+        _9 = copy _10 as &[(&str, usize, usize)] (PointerCoercion(Unsize, Implicit));
+        StorageDead(_10);
+        _8 = core::slice::<impl [(&str, usize, usize)]>::iter(move _9) -> [return: bb2, unwind: bb186];
+    }
+
+    bb2: {
+        StorageDead(_9);
+        _7 = <std::slice::Iter<'_, (&str, usize, usize)> as Iterator>::map::<agent_runtime::Runtime, {closure@src/bin/runtime-bench.rs:145:45: 145:56}>(move _8, const ZeroSized: {closure@src/bin/runtime-bench.rs:145:45: 145:56}) -> [return: bb3, unwind: bb187];
+    }
+
+    bb3: {
+        StorageDead(_8);
+        (((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>) = <Map<std::slice::Iter<'_, (&str, usize, usize)>, {closure@src/bin/runtime-bench.rs:145:45: 145:56}> as Iterator>::collect::<Vec<agent_runtime::Runtime>>(move _7) -> [return: bb4, unwind: bb188];
+    }
+
+    bb4: {
+        (((*_149) as variant#6).7: bool) = const true;
+        StorageDead(_7);
+        StorageLive(_11);
+        StorageLive(_12);
+        StorageLive(_13);
+        _13 = &(((*_149) as variant#6).0: std::option::Option<u64>);
+        _12 = Option::<u64>::is_some(move _13) -> [return: bb5, unwind: bb184];
+    }
+
+    bb5: {
+        switchInt(move _12) -> [0: bb7, otherwise: bb6];
+    }
+
+    bb6: {
+        StorageDead(_13);
+        _11 = const 10_u64;
+        goto -> bb8;
+    }
+
+    bb7: {
+        StorageDead(_13);
+        _11 = const 500_u64;
+        goto -> bb8;
+    }
+
+    bb8: {
+        StorageDead(_12);
+        (((*_149) as variant#6).4: std::time::Duration) = Duration::from_millis(move _11) -> [return: bb9, unwind: bb185];
+    }
+
+    bb9: {
+        StorageDead(_11);
+        StorageLive(_14);
+        StorageLive(_15);
+        StorageLive(_16);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = &(((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>);
+        _17 = <Vec<agent_runtime::Runtime> as Deref>::deref(move _18) -> [return: bb10, unwind: bb180];
+    }
+
+    bb10: {
+        StorageDead(_18);
+        _16 = core::slice::<impl [agent_runtime::Runtime]>::iter(move _17) -> [return: bb11, unwind: bb181];
+    }
+
+    bb11: {
+        _15 = <std::slice::Iter<'_, agent_runtime::Runtime> as Iterator>::enumerate(move _16) -> [return: bb12, unwind: bb181];
+    }
+
+    bb12: {
+        StorageDead(_16);
+        _14 = <Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>> as IntoIterator>::into_iter(move _15) -> [return: bb13, unwind: bb182];
+    }
+
+    bb13: {
+        StorageDead(_15);
+        (((*_149) as variant#3).5: std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>) = move _14;
+        goto -> bb14;
+    }
+
+    bb14: {
+        StorageLive(_19);
+        StorageLive(_20);
+        _20 = &mut (((*_149) as variant#3).5: std::iter::Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>>);
+        _19 = <Enumerate<std::slice::Iter<'_, agent_runtime::Runtime>> as Iterator>::next(move _20) -> [return: bb15, unwind: bb179];
+    }
+
+    bb15: {
+        _21 = discriminant(_19);
+        switchInt(move _21) -> [0: bb18, 1: bb17, otherwise: bb16];
+    }
+
+    bb16: {
+        unreachable;
+    }
+
+    bb17: {
+        (((*_149) as variant#3).6: usize) = copy (((_19 as Some).0: (usize, &agent_runtime::Runtime)).0: usize);
+        (((*_149) as variant#3).7: &agent_runtime::Runtime) = copy (((_19 as Some).0: (usize, &agent_runtime::Runtime)).1: &agent_runtime::Runtime);
+        (((*_149) as variant#3).8: std::time::Instant) = std::time::Instant::now() -> [return: bb201, unwind: bb179];
+    }
+
+    bb18: {
+        StorageDead(_20);
+        StorageDead(_19);
+        StorageDead(_17);
+        StorageDead(_14);
+        _44 = discriminant((((*_149) as variant#6).0: std::option::Option<u64>));
+        switchInt(move _44) -> [1: bb37, 0: bb36, otherwise: bb16];
+    }
+
+    bb19: {
+        StorageLive(_22);
+        StorageLive(_23);
+        StorageLive(_24);
+        StorageLive(_25);
+        _25 = &(((*_149) as variant#3).8: std::time::Instant);
+        _24 = std::time::Instant::elapsed(move _25) -> [return: bb20, unwind: bb176];
+    }
+
+    bb20: {
+        _23 = &_24;
+        StorageDead(_25);
+        StorageLive(_26);
+        _26 = &(((*_149) as variant#6).4: std::time::Duration);
+        _22 = <Duration as PartialOrd>::lt(move _23, move _26) -> [return: bb21, unwind: bb175];
+    }
+
+    bb21: {
+        switchInt(move _22) -> [0: bb35, otherwise: bb22];
+    }
+
+    bb22: {
+        StorageDead(_26);
+        StorageDead(_24);
+        StorageDead(_23);
+        StorageLive(_28);
+        StorageLive(_29);
+        _150 = no_retag copy (((*_149) as variant#3).7: &agent_runtime::Runtime);
+        _29 = lifecycle_batch(move _150) -> [return: bb23, unwind: bb173];
+    }
+
+    bb23: {
+        _28 = <{async fn body of lifecycle_batch()} as IntoFuture>::into_future(move _29) -> [return: bb24, unwind: bb173];
+    }
+
+    bb24: {
+        StorageDead(_29);
+        (((*_149) as variant#3).9: {async fn body of lifecycle_batch()}) = move _28;
+        goto -> bb25;
+    }
+
+    bb25: {
+        StorageLive(_30);
+        StorageLive(_31);
+        StorageLive(_32);
+        _32 = &mut (((*_149) as variant#3).9: {async fn body of lifecycle_batch()});
+        _31 = Pin::<&mut {async fn body of lifecycle_batch()}>::new_unchecked(move _32) -> [return: bb26, unwind: bb172];
+    }
+
+    bb26: {
+        StorageLive(_33);
+        StorageLive(_34);
+        _34 = copy _151;
+        _33 = copy (_34.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_34);
+        _30 = <{async fn body of lifecycle_batch()} as Future>::poll(move _31, move _33) -> [return: bb27, unwind: bb171];
+    }
+
+    bb27: {
+        StorageDead(_33);
+        StorageDead(_32);
+        StorageDead(_31);
+        _35 = discriminant(_30);
+        switchInt(move _35) -> [0: bb29, 1: bb28, otherwise: bb16];
+    }
+
+    bb28: {
+        StorageDead(_30);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_14);
+        StorageDead(_17);
+        StorageDead(_19);
+        StorageDead(_20);
+        StorageDead(_22);
+        StorageDead(_28);
+        discriminant((*_149)) = 3;
+        return;
+    }
+
+    bb29: {
+        _36 = move ((_30 as Ready).0: (u128, std::vec::Vec<agent_runtime::ToolResult>));
+        StorageDead(_30);
+        drop((((*_149) as variant#3).9: {async fn body of lifecycle_batch()})) -> [return: bb30, unwind: bb174];
+    }
+
+    bb30: {
+        StorageLive(_27);
+        _27 = copy (_36.1: std::vec::Vec<agent_runtime::ToolResult>);
+        StorageDead(_28);
+        StorageLive(_37);
+        StorageLive(_38);
+        StorageLive(_39);
+        _39 = &_27;
+        _38 = <Vec<ToolResult> as Deref>::deref(move _39) -> [return: bb31, unwind: bb169];
+    }
+
+    bb31: {
+        StorageLive(_40);
+        _40 = &(((*_149) as variant#6).1: [u64; 2]);
+        StorageLive(_41);
+        StorageLive(_42);
+        _42 = copy (((*_149) as variant#3).6: usize);
+        _43 = Lt(copy _42, const 2_usize);
+        assert(move _43, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _42) -> [success: bb32, unwind: bb168];
+    }
+
+    bb32: {
+        _41 = copy ((((*_149) as variant#6).2: [(&str, usize, usize); 2])[_42].2: usize);
+        _37 = validate(move _38, move _40, move _41) -> [return: bb33, unwind: bb168];
+    }
+
+    bb33: {
+        StorageDead(_41);
+        StorageDead(_42);
+        StorageDead(_40);
+        StorageDead(_39);
+        StorageDead(_38);
+        StorageDead(_37);
+        drop(_27) -> [return: bb34, unwind: bb170];
+    }
+
+    bb34: {
+        StorageDead(_27);
+        StorageDead(_22);
+        goto -> bb19;
+    }
+
+    bb35: {
+        StorageDead(_26);
+        StorageDead(_24);
+        StorageDead(_23);
+        StorageDead(_22);
+        StorageDead(_20);
+        StorageDead(_19);
+        goto -> bb14;
+    }
+
+    bb36: {
+        StorageLive(_76);
+        StorageLive(_77);
+        _77 = Arguments::<'_>::from_str(const "case,index,batch_ns,operations,checksum\n") -> [return: bb60, unwind: bb151];
+    }
+
+    bb37: {
+        (((*_149) as variant#4).5: u64) = copy (((((*_149) as variant#6).0: std::option::Option<u64>) as Some).0: u64);
+        (((*_149) as variant#4).6: std::time::Instant) = std::time::Instant::now() -> [return: bb38, unwind: bb192];
+    }
+
+    bb38: {
+        (((*_149) as variant#4).7: usize) = const 0_usize;
+        goto -> bb39;
+    }
+
+    bb39: {
+        StorageLive(_45);
+        StorageLive(_46);
+        StorageLive(_47);
+        StorageLive(_48);
+        _48 = &(((*_149) as variant#4).6: std::time::Instant);
+        _47 = std::time::Instant::elapsed(move _48) -> [return: bb40, unwind: bb165];
+    }
+
+    bb40: {
+        _46 = &_47;
+        StorageDead(_48);
+        StorageLive(_49);
+        StorageLive(_50);
+        StorageLive(_51);
+        _51 = copy (((*_149) as variant#4).5: u64);
+        _50 = Duration::from_secs(move _51) -> [return: bb41, unwind: bb163];
+    }
+
+    bb41: {
+        _49 = &_50;
+        StorageDead(_51);
+        _45 = <Duration as PartialOrd>::lt(move _46, move _49) -> [return: bb42, unwind: bb164];
+    }
+
+    bb42: {
+        switchInt(move _45) -> [0: bb56, otherwise: bb43];
+    }
+
+    bb43: {
+        StorageDead(_50);
+        StorageDead(_49);
+        StorageDead(_47);
+        StorageDead(_46);
+        StorageLive(_53);
+        StorageLive(_54);
+        StorageLive(_55);
+        StorageLive(_56);
+        _56 = &(((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>);
+        _55 = <Vec<agent_runtime::Runtime> as Index<usize>>::index(move _56, const 1_usize) -> [return: bb44, unwind: bb160];
+    }
+
+    bb44: {
+        StorageDead(_56);
+        _54 = lifecycle_batch(move _55) -> [return: bb45, unwind: bb161];
+    }
+
+    bb45: {
+        _53 = <{async fn body of lifecycle_batch()} as IntoFuture>::into_future(move _54) -> [return: bb46, unwind: bb161];
+    }
+
+    bb46: {
+        StorageDead(_54);
+        (((*_149) as variant#4).8: {async fn body of lifecycle_batch()}) = move _53;
+        goto -> bb47;
+    }
+
+    bb47: {
+        StorageLive(_57);
+        StorageLive(_58);
+        StorageLive(_59);
+        _59 = &mut (((*_149) as variant#4).8: {async fn body of lifecycle_batch()});
+        _58 = Pin::<&mut {async fn body of lifecycle_batch()}>::new_unchecked(move _59) -> [return: bb48, unwind: bb159];
+    }
+
+    bb48: {
+        StorageLive(_60);
+        StorageLive(_61);
+        _61 = copy _151;
+        _60 = copy (_61.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_61);
+        _57 = <{async fn body of lifecycle_batch()} as Future>::poll(move _58, move _60) -> [return: bb49, unwind: bb158];
+    }
+
+    bb49: {
+        StorageDead(_60);
+        StorageDead(_59);
+        StorageDead(_58);
+        _62 = discriminant(_57);
+        switchInt(move _62) -> [0: bb51, 1: bb50, otherwise: bb16];
+    }
+
+    bb50: {
+        StorageDead(_57);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_45);
+        StorageDead(_53);
+        StorageDead(_55);
+        discriminant((*_149)) = 4;
+        return;
+    }
+
+    bb51: {
+        _63 = move ((_57 as Ready).0: (u128, std::vec::Vec<agent_runtime::ToolResult>));
+        StorageDead(_57);
+        drop((((*_149) as variant#4).8: {async fn body of lifecycle_batch()})) -> [return: bb52, unwind: bb162];
+    }
+
+    bb52: {
+        StorageLive(_52);
+        _52 = copy (_63.1: std::vec::Vec<agent_runtime::ToolResult>);
+        StorageDead(_55);
+        StorageDead(_53);
+        StorageLive(_64);
+        StorageLive(_65);
+        StorageLive(_66);
+        _66 = &_52;
+        _65 = <Vec<ToolResult> as Deref>::deref(move _66) -> [return: bb53, unwind: bb156];
+    }
+
+    bb53: {
+        StorageLive(_67);
+        _67 = &(((*_149) as variant#6).1: [u64; 2]);
+        StorageLive(_68);
+        _68 = copy ((((*_149) as variant#6).2: [(&str, usize, usize); 2])[1 of 2].2: usize);
+        _64 = validate(move _65, move _67, move _68) -> [return: bb54, unwind: bb155];
+    }
+
+    bb54: {
+        StorageDead(_68);
+        StorageDead(_67);
+        StorageDead(_66);
+        StorageDead(_65);
+        StorageDead(_64);
+        (((*_149) as variant#4).7: usize) = Add(copy (((*_149) as variant#4).7: usize), const 8_usize);
+        drop(_52) -> [return: bb55, unwind: bb157];
+    }
+
+    bb55: {
+        StorageDead(_52);
+        StorageDead(_45);
+        goto -> bb39;
+    }
+
+    bb56: {
+        StorageDead(_50);
+        StorageDead(_49);
+        StorageDead(_47);
+        StorageDead(_46);
+        StorageDead(_45);
+        StorageLive(_69);
+        StorageLive(_70);
+        StorageLive(_71);
+        _72 = &(((*_149) as variant#4).7: usize);
+        _71 = (copy _72,);
+        StorageLive(_73);
+        StorageLive(_74);
+        _74 = core::fmt::rt::Argument::<'_>::new_display::<usize>(move _72) -> [return: bb57, unwind: bb153];
+    }
+
+    bb57: {
+        _73 = [move _74];
+        StorageDead(_74);
+        StorageLive(_75);
+        _75 = &_73;
+        _70 = Arguments::<'_>::new::<19, 1>(const b"\x0eprofile_tools=\xc0\x01\n\x00", move _75) -> [return: bb58, unwind: bb152];
+    }
+
+    bb58: {
+        StorageDead(_75);
+        _69 = std::io::_print(move _70) -> [return: bb59, unwind: bb154];
+    }
+
+    bb59: {
+        StorageDead(_70);
+        StorageDead(_73);
+        StorageDead(_71);
+        StorageDead(_69);
+        goto -> bb93;
+    }
+
+    bb60: {
+        _76 = std::io::_print(move _77) -> [return: bb61, unwind: bb151];
+    }
+
+    bb61: {
+        StorageDead(_77);
+        StorageDead(_76);
+        StorageLive(_78);
+        StorageLive(_79);
+        _79 = std::ops::Range::<usize> { start: const 0_usize, end: const 21_usize };
+        _78 = <std::ops::Range<usize> as IntoIterator>::into_iter(move _79) -> [return: bb62, unwind: bb149];
+    }
+
+    bb62: {
+        StorageDead(_79);
+        (((*_149) as variant#5).5: std::ops::Range<usize>) = move _78;
+        goto -> bb63;
+    }
+
+    bb63: {
+        StorageLive(_80);
+        StorageLive(_81);
+        _81 = &mut (((*_149) as variant#5).5: std::ops::Range<usize>);
+        _80 = <std::ops::Range<usize> as Iterator>::next(move _81) -> [return: bb64, unwind: bb148];
+    }
+
+    bb64: {
+        _82 = discriminant(_80);
+        switchInt(move _82) -> [0: bb66, 1: bb65, otherwise: bb16];
+    }
+
+    bb65: {
+        (((*_149) as variant#5).6: usize) = copy ((_80 as Some).0: usize);
+        StorageLive(_83);
+        StorageLive(_84);
+        _84 = std::ops::Range::<usize> { start: const 0_usize, end: const 2_usize };
+        _83 = <std::ops::Range<usize> as IntoIterator>::into_iter(move _84) -> [return: bb67, unwind: bb146];
+    }
+
+    bb66: {
+        StorageDead(_81);
+        StorageDead(_80);
+        StorageDead(_78);
+        goto -> bb93;
+    }
+
+    bb67: {
+        StorageDead(_84);
+        (((*_149) as variant#5).7: std::ops::Range<usize>) = move _83;
+        goto -> bb68;
+    }
+
+    bb68: {
+        StorageLive(_85);
+        StorageLive(_86);
+        _86 = &mut (((*_149) as variant#5).7: std::ops::Range<usize>);
+        _85 = <std::ops::Range<usize> as Iterator>::next(move _86) -> [return: bb69, unwind: bb145];
+    }
+
+    bb69: {
+        _87 = discriminant(_85);
+        switchInt(move _87) -> [0: bb71, 1: bb70, otherwise: bb16];
+    }
+
+    bb70: {
+        StorageLive(_88);
+        _88 = copy ((_85 as Some).0: usize);
+        StorageLive(_89);
+        StorageLive(_90);
+        _90 = copy (((*_149) as variant#5).6: usize);
+        _89 = Add(move _90, copy _88);
+        StorageDead(_90);
+        (((*_149) as variant#5).8: usize) = Rem(move _89, const 2_usize);
+        StorageDead(_89);
+        StorageLive(_93);
+        StorageLive(_94);
+        StorageLive(_95);
+        StorageLive(_96);
+        _96 = &(((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>);
+        StorageLive(_97);
+        _97 = copy (((*_149) as variant#5).8: usize);
+        _95 = <Vec<agent_runtime::Runtime> as Index<usize>>::index(move _96, move _97) -> [return: bb72, unwind: bb141];
+    }
+
+    bb71: {
+        StorageDead(_86);
+        StorageDead(_85);
+        StorageDead(_83);
+        StorageDead(_81);
+        StorageDead(_80);
+        goto -> bb63;
+    }
+
+    bb72: {
+        StorageDead(_97);
+        StorageDead(_96);
+        _94 = lifecycle_batch(move _95) -> [return: bb73, unwind: bb142];
+    }
+
+    bb73: {
+        _93 = <{async fn body of lifecycle_batch()} as IntoFuture>::into_future(move _94) -> [return: bb74, unwind: bb142];
+    }
+
+    bb74: {
+        StorageDead(_94);
+        (((*_149) as variant#5).9: {async fn body of lifecycle_batch()}) = move _93;
+        goto -> bb75;
+    }
+
+    bb75: {
+        StorageLive(_98);
+        StorageLive(_99);
+        StorageLive(_100);
+        _100 = &mut (((*_149) as variant#5).9: {async fn body of lifecycle_batch()});
+        _99 = Pin::<&mut {async fn body of lifecycle_batch()}>::new_unchecked(move _100) -> [return: bb76, unwind: bb140];
+    }
+
+    bb76: {
+        StorageLive(_101);
+        StorageLive(_102);
+        _102 = copy _151;
+        _101 = copy (_102.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_102);
+        _98 = <{async fn body of lifecycle_batch()} as Future>::poll(move _99, move _101) -> [return: bb77, unwind: bb139];
+    }
+
+    bb77: {
+        StorageDead(_101);
+        StorageDead(_100);
+        StorageDead(_99);
+        _103 = discriminant(_98);
+        switchInt(move _103) -> [0: bb79, 1: bb78, otherwise: bb16];
+    }
+
+    bb78: {
+        StorageDead(_98);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_78);
+        StorageDead(_80);
+        StorageDead(_81);
+        StorageDead(_83);
+        StorageDead(_85);
+        StorageDead(_86);
+        StorageDead(_88);
+        StorageDead(_93);
+        StorageDead(_95);
+        discriminant((*_149)) = 5;
+        return;
+    }
+
+    bb79: {
+        _104 = move ((_98 as Ready).0: (u128, std::vec::Vec<agent_runtime::ToolResult>));
+        StorageDead(_98);
+        drop((((*_149) as variant#5).9: {async fn body of lifecycle_batch()})) -> [return: bb80, unwind: bb143];
+    }
+
+    bb80: {
+        StorageLive(_91);
+        _91 = copy (_104.0: u128);
+        StorageLive(_92);
+        _92 = copy (_104.1: std::vec::Vec<agent_runtime::ToolResult>);
+        StorageDead(_95);
+        StorageDead(_93);
+        StorageLive(_105);
+        StorageLive(_106);
+        StorageLive(_107);
+        _107 = &_92;
+        _106 = <Vec<ToolResult> as Deref>::deref(move _107) -> [return: bb81, unwind: bb136];
+    }
+
+    bb81: {
+        StorageLive(_108);
+        _108 = &(((*_149) as variant#6).1: [u64; 2]);
+        StorageLive(_109);
+        StorageLive(_110);
+        _110 = copy (((*_149) as variant#5).8: usize);
+        _111 = Lt(copy _110, const 2_usize);
+        assert(move _111, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _110) -> [success: bb82, unwind: bb135];
+    }
+
+    bb82: {
+        _109 = copy ((((*_149) as variant#6).2: [(&str, usize, usize); 2])[_110].2: usize);
+        _105 = validate(move _106, move _108, move _109) -> [return: bb83, unwind: bb135];
+    }
+
+    bb83: {
+        StorageDead(_109);
+        StorageDead(_110);
+        StorageDead(_108);
+        StorageDead(_107);
+        StorageDead(_106);
+        StorageLive(_112);
+        StorageLive(_113);
+        StorageLive(_114);
+        StorageLive(_116);
+        _116 = copy (((*_149) as variant#5).8: usize);
+        _117 = Lt(copy _116, const 2_usize);
+        assert(move _117, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _116) -> [success: bb84, unwind: bb133];
+    }
+
+    bb84: {
+        _115 = &((((*_149) as variant#6).2: [(&str, usize, usize); 2])[_116].0: &str);
+        _118 = &(((*_149) as variant#5).6: usize);
+        _119 = &_91;
+        _147 = const lifecycle::{closure#0}::promoted[0];
+        _120 = &_105;
+        _114 = (copy _115, copy _118, copy _119, copy _147, copy _120);
+        StorageLive(_121);
+        StorageLive(_122);
+        _122 = core::fmt::rt::Argument::<'_>::new_display::<&str>(move _115) -> [return: bb85, unwind: bb131];
+    }
+
+    bb85: {
+        StorageLive(_123);
+        _123 = core::fmt::rt::Argument::<'_>::new_display::<usize>(move _118) -> [return: bb86, unwind: bb130];
+    }
+
+    bb86: {
+        StorageLive(_124);
+        _124 = core::fmt::rt::Argument::<'_>::new_display::<u128>(move _119) -> [return: bb87, unwind: bb129];
+    }
+
+    bb87: {
+        StorageLive(_125);
+        _125 = core::fmt::rt::Argument::<'_>::new_display::<usize>(move _147) -> [return: bb88, unwind: bb128];
+    }
+
+    bb88: {
+        StorageLive(_126);
+        _126 = core::fmt::rt::Argument::<'_>::new_display::<u64>(move _120) -> [return: bb89, unwind: bb127];
+    }
+
+    bb89: {
+        _121 = [move _122, move _123, move _124, move _125, move _126];
+        StorageDead(_126);
+        StorageDead(_125);
+        StorageDead(_124);
+        StorageDead(_123);
+        StorageDead(_122);
+        StorageLive(_127);
+        _127 = &_121;
+        _113 = Arguments::<'_>::new::<16, 5>(const b"\xc0\x01,\xc0\x01,\xc0\x01,\xc0\x01,\xc0\x01\n\x00", move _127) -> [return: bb90, unwind: bb126];
+    }
+
+    bb90: {
+        StorageDead(_127);
+        _112 = std::io::_print(move _113) -> [return: bb91, unwind: bb132];
+    }
+
+    bb91: {
+        StorageDead(_113);
+        StorageDead(_121);
+        StorageDead(_116);
+        StorageDead(_114);
+        StorageDead(_112);
+        StorageDead(_105);
+        drop(_92) -> [return: bb92, unwind: bb138];
+    }
+
+    bb92: {
+        StorageDead(_92);
+        StorageDead(_91);
+        StorageDead(_88);
+        StorageDead(_86);
+        StorageDead(_85);
+        goto -> bb68;
+    }
+
+    bb93: {
+        StorageLive(_128);
+        StorageLive(_129);
+        (((*_149) as variant#6).7: bool) = const false;
+        _129 = move (((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>);
+        _128 = <Vec<agent_runtime::Runtime> as IntoIterator>::into_iter(move _129) -> [return: bb94, unwind: bb124];
+    }
+
+    bb94: {
+        StorageDead(_129);
+        (((*_149) as variant#6).5: std::vec::IntoIter<agent_runtime::Runtime>) = move _128;
+        goto -> bb95;
+    }
+
+    bb95: {
+        StorageLive(_130);
+        StorageLive(_131);
+        _131 = &mut (((*_149) as variant#6).5: std::vec::IntoIter<agent_runtime::Runtime>);
+        _130 = <std::vec::IntoIter<agent_runtime::Runtime> as Iterator>::next(move _131) -> [return: bb96, unwind: bb123];
+    }
+
+    bb96: {
+        _132 = discriminant(_130);
+        switchInt(move _132) -> [0: bb98, 1: bb97, otherwise: bb16];
+    }
+
+    bb97: {
+        StorageLive(_133);
+        _133 = move ((_130 as Some).0: agent_runtime::Runtime);
+        StorageLive(_134);
+        StorageLive(_135);
+        StorageLive(_136);
+        StorageLive(_137);
+        StorageLive(_138);
+        _138 = agent_runtime::Runtime::shutdown(move _133) -> [return: bb99, unwind: bb120];
+    }
+
+    bb98: {
+        StorageDead(_131);
+        StorageDead(_130);
+        drop((((*_149) as variant#6).5: std::vec::IntoIter<agent_runtime::Runtime>)) -> [return: bb113, unwind: bb125];
+    }
+
+    bb99: {
+        _137 = <{async fn body of agent_runtime::Runtime::shutdown()} as IntoFuture>::into_future(move _138) -> [return: bb100, unwind: bb120];
+    }
+
+    bb100: {
+        StorageDead(_138);
+        (((*_149) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()}) = move _137;
+        goto -> bb101;
+    }
+
+    bb101: {
+        StorageLive(_139);
+        StorageLive(_140);
+        StorageLive(_141);
+        _141 = &mut (((*_149) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()});
+        _140 = Pin::<&mut {async fn body of agent_runtime::Runtime::shutdown()}>::new_unchecked(move _141) -> [return: bb102, unwind: bb118];
+    }
+
+    bb102: {
+        StorageLive(_142);
+        StorageLive(_143);
+        _143 = copy _151;
+        _142 = copy (_143.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_143);
+        _139 = <{async fn body of agent_runtime::Runtime::shutdown()} as Future>::poll(move _140, move _142) -> [return: bb103, unwind: bb117];
+    }
+
+    bb103: {
+        StorageDead(_142);
+        StorageDead(_141);
+        StorageDead(_140);
+        _144 = discriminant(_139);
+        switchInt(move _144) -> [0: bb105, 1: bb104, otherwise: bb16];
+    }
+
+    bb104: {
+        StorageDead(_139);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_128);
+        StorageDead(_130);
+        StorageDead(_131);
+        StorageDead(_133);
+        StorageDead(_134);
+        StorageDead(_135);
+        StorageDead(_136);
+        StorageDead(_137);
+        discriminant((*_149)) = 6;
+        return;
+    }
+
+    bb105: {
+        _145 = move ((_139 as Ready).0: std::result::Result<agent_runtime::Shutdown, tokio::task::JoinError>);
+        StorageDead(_139);
+        drop((((*_149) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()})) -> [return: bb106, unwind: bb119];
+    }
+
+    bb106: {
+        _136 = Result::<agent_runtime::Shutdown, JoinError>::expect(move _145, const "join") -> [return: bb107, unwind: bb116];
+    }
+
+    bb107: {
+        _135 = &(_136.1: std::vec::Vec<std::string::String>);
+        _134 = Vec::<String>::is_empty(move _135) -> [return: bb108, unwind: bb115];
+    }
+
+    bb108: {
+        switchInt(move _134) -> [0: bb110, otherwise: bb109];
+    }
+
+    bb109: {
+        StorageDead(_135);
+        drop(_136) -> [return: bb112, unwind: bb121];
+    }
+
+    bb110: {
+        StorageDead(_135);
+        drop(_136) -> [return: bb111, unwind: bb121];
+    }
+
+    bb111: {
+        StorageDead(_137);
+        StorageDead(_136);
+        StorageLive(_146);
+        _146 = panic(const "assertion failed: runtime.shutdown().await.expect(\"join\").task_failures.is_empty()") -> bb114;
+    }
+
+    bb112: {
+        StorageDead(_137);
+        StorageDead(_136);
+        StorageDead(_134);
+        StorageDead(_133);
+        StorageDead(_131);
+        StorageDead(_130);
+        goto -> bb95;
+    }
+
+    bb113: {
+        StorageDead(_128);
+        (((*_149) as variant#6).7: bool) = const false;
+        _0 = Poll::<()>::Ready(const ());
+        discriminant((*_149)) = 1;
+        return;
+    }
+
+    bb114 (cleanup): {
+        StorageDead(_146);
+        goto -> bb122;
+    }
+
+    bb115 (cleanup): {
+        StorageDead(_135);
+        drop(_136) -> [return: bb121, unwind terminate(cleanup)];
+    }
+
+    bb116 (cleanup): {
+        StorageDead(_135);
+        goto -> bb121;
+    }
+
+    bb117 (cleanup): {
+        StorageDead(_142);
+        goto -> bb118;
+    }
+
+    bb118 (cleanup): {
+        StorageDead(_141);
+        StorageDead(_140);
+        StorageDead(_139);
+        drop((((*_149) as variant#6).6: {async fn body of agent_runtime::Runtime::shutdown()})) -> [return: bb119, unwind terminate(cleanup)];
+    }
+
+    bb119 (cleanup): {
+        StorageDead(_135);
+        goto -> bb121;
+    }
+
+    bb120 (cleanup): {
+        StorageDead(_138);
+        StorageDead(_135);
+        goto -> bb121;
+    }
+
+    bb121 (cleanup): {
+        StorageDead(_137);
+        StorageDead(_136);
+        goto -> bb122;
+    }
+
+    bb122 (cleanup): {
+        StorageDead(_134);
+        StorageDead(_133);
+        goto -> bb123;
+    }
+
+    bb123 (cleanup): {
+        StorageDead(_131);
+        StorageDead(_130);
+        drop((((*_149) as variant#6).5: std::vec::IntoIter<agent_runtime::Runtime>)) -> [return: bb125, unwind terminate(cleanup)];
+    }
+
+    bb124 (cleanup): {
+        StorageDead(_129);
+        goto -> bb125;
+    }
+
+    bb125 (cleanup): {
+        StorageDead(_128);
+        goto -> bb192;
+    }
+
+    bb126 (cleanup): {
+        StorageDead(_127);
+        goto -> bb132;
+    }
+
+    bb127 (cleanup): {
+        StorageDead(_126);
+        goto -> bb128;
+    }
+
+    bb128 (cleanup): {
+        StorageDead(_125);
+        goto -> bb129;
+    }
+
+    bb129 (cleanup): {
+        StorageDead(_124);
+        goto -> bb130;
+    }
+
+    bb130 (cleanup): {
+        StorageDead(_123);
+        goto -> bb131;
+    }
+
+    bb131 (cleanup): {
+        StorageDead(_122);
+        goto -> bb132;
+    }
+
+    bb132 (cleanup): {
+        StorageDead(_113);
+        StorageDead(_121);
+        goto -> bb134;
+    }
+
+    bb133 (cleanup): {
+        StorageDead(_113);
+        goto -> bb134;
+    }
+
+    bb134 (cleanup): {
+        StorageDead(_116);
+        StorageDead(_114);
+        StorageDead(_112);
+        goto -> bb137;
+    }
+
+    bb135 (cleanup): {
+        StorageDead(_109);
+        StorageDead(_110);
+        StorageDead(_108);
+        goto -> bb136;
+    }
+
+    bb136 (cleanup): {
+        StorageDead(_107);
+        StorageDead(_106);
+        goto -> bb137;
+    }
+
+    bb137 (cleanup): {
+        StorageDead(_105);
+        drop(_92) -> [return: bb138, unwind terminate(cleanup)];
+    }
+
+    bb138 (cleanup): {
+        StorageDead(_92);
+        StorageDead(_91);
+        goto -> bb144;
+    }
+
+    bb139 (cleanup): {
+        StorageDead(_101);
+        goto -> bb140;
+    }
+
+    bb140 (cleanup): {
+        StorageDead(_100);
+        StorageDead(_99);
+        StorageDead(_98);
+        drop((((*_149) as variant#5).9: {async fn body of lifecycle_batch()})) -> [return: bb143, unwind terminate(cleanup)];
+    }
+
+    bb141 (cleanup): {
+        StorageDead(_97);
+        StorageDead(_96);
+        goto -> bb142;
+    }
+
+    bb142 (cleanup): {
+        StorageDead(_94);
+        goto -> bb143;
+    }
+
+    bb143 (cleanup): {
+        StorageDead(_95);
+        StorageDead(_93);
+        goto -> bb144;
+    }
+
+    bb144 (cleanup): {
+        StorageDead(_88);
+        goto -> bb145;
+    }
+
+    bb145 (cleanup): {
+        StorageDead(_86);
+        StorageDead(_85);
+        goto -> bb147;
+    }
+
+    bb146 (cleanup): {
+        StorageDead(_84);
+        goto -> bb147;
+    }
+
+    bb147 (cleanup): {
+        StorageDead(_83);
+        goto -> bb148;
+    }
+
+    bb148 (cleanup): {
+        StorageDead(_81);
+        StorageDead(_80);
+        goto -> bb150;
+    }
+
+    bb149 (cleanup): {
+        StorageDead(_79);
+        goto -> bb150;
+    }
+
+    bb150 (cleanup): {
+        StorageDead(_78);
+        goto -> bb192;
+    }
+
+    bb151 (cleanup): {
+        StorageDead(_77);
+        StorageDead(_76);
+        goto -> bb192;
+    }
+
+    bb152 (cleanup): {
+        StorageDead(_75);
+        goto -> bb154;
+    }
+
+    bb153 (cleanup): {
+        StorageDead(_74);
+        goto -> bb154;
+    }
+
+    bb154 (cleanup): {
+        StorageDead(_70);
+        StorageDead(_73);
+        StorageDead(_71);
+        StorageDead(_69);
+        goto -> bb192;
+    }
+
+    bb155 (cleanup): {
+        StorageDead(_68);
+        StorageDead(_67);
+        goto -> bb156;
+    }
+
+    bb156 (cleanup): {
+        StorageDead(_66);
+        StorageDead(_65);
+        StorageDead(_64);
+        drop(_52) -> [return: bb157, unwind terminate(cleanup)];
+    }
+
+    bb157 (cleanup): {
+        StorageDead(_52);
+        goto -> bb167;
+    }
+
+    bb158 (cleanup): {
+        StorageDead(_60);
+        goto -> bb159;
+    }
+
+    bb159 (cleanup): {
+        StorageDead(_59);
+        StorageDead(_58);
+        StorageDead(_57);
+        drop((((*_149) as variant#4).8: {async fn body of lifecycle_batch()})) -> [return: bb162, unwind terminate(cleanup)];
+    }
+
+    bb160 (cleanup): {
+        StorageDead(_56);
+        goto -> bb161;
+    }
+
+    bb161 (cleanup): {
+        StorageDead(_54);
+        goto -> bb162;
+    }
+
+    bb162 (cleanup): {
+        StorageDead(_55);
+        StorageDead(_53);
+        goto -> bb167;
+    }
+
+    bb163 (cleanup): {
+        StorageDead(_51);
+        goto -> bb164;
+    }
+
+    bb164 (cleanup): {
+        StorageDead(_50);
+        StorageDead(_49);
+        goto -> bb166;
+    }
+
+    bb165 (cleanup): {
+        StorageDead(_48);
+        goto -> bb166;
+    }
+
+    bb166 (cleanup): {
+        StorageDead(_47);
+        StorageDead(_46);
+        goto -> bb167;
+    }
+
+    bb167 (cleanup): {
+        StorageDead(_45);
+        goto -> bb192;
+    }
+
+    bb168 (cleanup): {
+        StorageDead(_41);
+        StorageDead(_42);
+        StorageDead(_40);
+        goto -> bb169;
+    }
+
+    bb169 (cleanup): {
+        StorageDead(_39);
+        StorageDead(_38);
+        StorageDead(_37);
+        drop(_27) -> [return: bb170, unwind terminate(cleanup)];
+    }
+
+    bb170 (cleanup): {
+        StorageDead(_27);
+        goto -> bb178;
+    }
+
+    bb171 (cleanup): {
+        StorageDead(_33);
+        goto -> bb172;
+    }
+
+    bb172 (cleanup): {
+        StorageDead(_32);
+        StorageDead(_31);
+        StorageDead(_30);
+        drop((((*_149) as variant#3).9: {async fn body of lifecycle_batch()})) -> [return: bb174, unwind terminate(cleanup)];
+    }
+
+    bb173 (cleanup): {
+        StorageDead(_29);
+        goto -> bb174;
+    }
+
+    bb174 (cleanup): {
+        StorageDead(_28);
+        goto -> bb178;
+    }
+
+    bb175 (cleanup): {
+        StorageDead(_26);
+        goto -> bb177;
+    }
+
+    bb176 (cleanup): {
+        StorageDead(_25);
+        goto -> bb177;
+    }
+
+    bb177 (cleanup): {
+        StorageDead(_24);
+        StorageDead(_23);
+        goto -> bb178;
+    }
+
+    bb178 (cleanup): {
+        StorageDead(_22);
+        goto -> bb179;
+    }
+
+    bb179 (cleanup): {
+        StorageDead(_20);
+        StorageDead(_19);
+        goto -> bb183;
+    }
+
+    bb180 (cleanup): {
+        StorageDead(_18);
+        goto -> bb181;
+    }
+
+    bb181 (cleanup): {
+        StorageDead(_16);
+        goto -> bb182;
+    }
+
+    bb182 (cleanup): {
+        StorageDead(_15);
+        goto -> bb183;
+    }
+
+    bb183 (cleanup): {
+        StorageDead(_17);
+        StorageDead(_14);
+        goto -> bb192;
+    }
+
+    bb184 (cleanup): {
+        StorageDead(_13);
+        StorageDead(_12);
+        goto -> bb185;
+    }
+
+    bb185 (cleanup): {
+        StorageDead(_11);
+        goto -> bb192;
+    }
+
+    bb186 (cleanup): {
+        StorageDead(_9);
+        goto -> bb187;
+    }
+
+    bb187 (cleanup): {
+        StorageDead(_8);
+        goto -> bb188;
+    }
+
+    bb188 (cleanup): {
+        StorageDead(_7);
+        goto -> bb189;
+    }
+
+    bb189 (cleanup): {
+        (((*_149) as variant#6).7: bool) = const false;
+        goto -> bb193;
+    }
+
+    bb190 (cleanup): {
+        StorageDead(_3);
+        StorageDead(_4);
+        goto -> bb193;
+    }
+
+    bb191 (cleanup): {
+        drop((((*_149) as variant#6).3: std::vec::Vec<agent_runtime::Runtime>)) -> [return: bb189, unwind terminate(cleanup)];
+    }
+
+    bb192 (cleanup): {
+        switchInt(copy (((*_149) as variant#6).7: bool)) -> [0: bb189, otherwise: bb191];
+    }
+
+    bb193 (cleanup): {
+        discriminant((*_149)) = 2;
+        resume;
+    }
+
+    bb194: {
+        StorageLive(_14);
+        StorageLive(_17);
+        StorageLive(_19);
+        StorageLive(_20);
+        StorageLive(_22);
+        StorageLive(_28);
+        goto -> bb25;
+    }
+
+    bb195: {
+        StorageLive(_45);
+        StorageLive(_53);
+        StorageLive(_55);
+        goto -> bb47;
+    }
+
+    bb196: {
+        StorageLive(_78);
+        StorageLive(_80);
+        StorageLive(_81);
+        StorageLive(_83);
+        StorageLive(_85);
+        StorageLive(_86);
+        StorageLive(_88);
+        StorageLive(_93);
+        StorageLive(_95);
+        goto -> bb75;
+    }
+
+    bb197: {
+        StorageLive(_128);
+        StorageLive(_130);
+        StorageLive(_131);
+        StorageLive(_133);
+        StorageLive(_134);
+        StorageLive(_135);
+        StorageLive(_136);
+        StorageLive(_137);
+        goto -> bb101;
+    }
+
+    bb198: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb198, unwind continue];
+    }
+
+    bb199: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb199, unwind continue];
+    }
+
+    bb200: {
+        (((*_149) as variant#6).7: bool) = const false;
+        (((*_149) as variant#6).0: std::option::Option<u64>) = copy ((*_149).0: std::option::Option<u64>);
+        StorageLive(_3);
+        StorageLive(_4);
+        _4 = const b"OE";
+        _3 = copy (*_4);
+        (((*_149) as variant#6).1: [u64; 2]) = array::<impl [u8; 2]>::map::<{closure@src/bin/runtime-bench.rs:139:33: 139:36}, u64>(move _3, const ZeroSized: {closure@src/bin/runtime-bench.rs:139:33: 139:36}) -> [return: bb1, unwind: bb190];
+    }
+
+    bb201: {
+        goto -> bb19;
+    }
+}
+
+alloc22 (size: 16, align: 1) {
+    c0 01 2c c0 01 2c c0 01 2c c0 01 2c c0 01 0a 00 │ ..,..,..,..,....
+}
+
+alloc21 (size: 19, align: 1) {
+    0x00 │ 0e 70 72 6f 66 69 6c 65 5f 74 6f 6f 6c 73 3d c0 │ .profile_tools=.
+    0x10 │ 01 0a 00                                        │ ...
+}
+
+alloc20 (size: 13, align: 1) {
+    6c 6f 67 73 2d 63 34 2d 72 34 30 39 36          │ logs-c4-r4096
+}
+
+alloc19 (size: 10, align: 1) {
+    6c 6f 67 73 2d 63 31 2d 72 30                   │ logs-c1-r0
+}
+
+alloc18 (size: 2, align: 1) {
+    4f 45                                           │ OE
+}
+
+alloc15 (size: 82, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 72 75 6e 74 69 6d 65 2e 73 68 75 74 64 6f │ : runtime.shutdo
+    0x20 │ 77 6e 28 29 2e 61 77 61 69 74 2e 65 78 70 65 63 │ wn().await.expec
+    0x30 │ 74 28 22 6a 6f 69 6e 22 29 2e 74 61 73 6b 5f 66 │ t("join").task_f
+    0x40 │ 61 69 6c 75 72 65 73 2e 69 73 5f 65 6d 70 74 79 │ ailures.is_empty
+    0x50 │ 28 29                                           │ ()
+}
+
+alloc14 (size: 4, align: 1) {
+    6a 6f 69 6e                                     │ join
+}
+
+alloc9 (size: 40, align: 1) {
+    0x00 │ 63 61 73 65 2c 69 6e 64 65 78 2c 62 61 74 63 68 │ case,index,batch
+    0x10 │ 5f 6e 73 2c 6f 70 65 72 61 74 69 6f 6e 73 2c 63 │ _ns,operations,c
+    0x20 │ 68 65 63 6b 73 75 6d 0a                         │ hecksum.
+}
+
+const lifecycle::{closure#0}::promoted[0]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const TOOLS;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn lifecycle::{closure#0}::{closure#0}(_1: &mut {closure@src/bin/runtime-bench.rs:139:33: 139:36}, _2: u8) -> u64 {
+    debug b => _2;
+    let mut _0: u64;
+    let mut _3: agent_runtime::Log;
+    let _4: ();
+    let mut _5: &mut agent_runtime::Log;
+    let _6: &[u8];
+    let _7: std::vec::Vec<u8>;
+    scope 1 {
+        debug log => _3;
+        scope 17 (inlined std::vec::from_elem::<u8>) {
+        }
+        scope 18 (inlined <Vec<u8> as Deref>::deref) {
+            scope 19 (inlined Vec::<u8>::as_slice) {
+                let _10: *const [u8];
+                let mut _11: *const u8;
+                let mut _12: usize;
+                scope 20 (inlined Vec::<u8>::as_ptr) {
+                    scope 21 (inlined alloc::raw_vec::RawVec::<u8>::ptr) {
+                        scope 22 (inlined alloc::raw_vec::RawVecInner::ptr::<u8>) {
+                            scope 23 (inlined alloc::raw_vec::RawVecInner::non_null::<u8>) {
+                                let mut _13: std::ptr::NonNull<u8>;
+                                scope 24 (inlined std::ptr::Unique::<u8>::cast::<u8>) {
+                                    scope 25 (inlined NonNull::<u8>::cast::<u8>) {
+                                        scope 26 (inlined NonNull::<u8>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 27 (inlined std::ptr::Unique::<u8>::as_non_null_ptr) {
+                                }
+                            }
+                            scope 28 (inlined NonNull::<u8>::as_ptr) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    scope 2 (inlined <Log as Default>::default) {
+        let mut _8: std::vec::Vec<u8>;
+        let mut _9: std::option::Option<std::string::String>;
+        scope 3 (inlined <Vec<u8> as Default>::default) {
+            scope 4 (inlined Vec::<u8>::new) {
+                scope 5 (inlined alloc::raw_vec::RawVec::<u8>::new) {
+                    scope 6 (inlined alloc::raw_vec::RawVec::<u8>::new_in) {
+                        scope 7 (inlined std::mem::Alignment::of::<u8>) {
+                        }
+                        scope 8 (inlined alloc::raw_vec::RawVecInner::new_in) {
+                            scope 9 {
+                            }
+                            scope 10 (inlined std::mem::Alignment::as_nonzero_usize) {
+                            }
+                            scope 11 (inlined NonNull::<u8>::without_provenance) {
+                            }
+                            scope 12 (inlined std::ptr::Unique::<u8>::from_non_null) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scope 13 (inlined <u64 as Default>::default) {
+        }
+        scope 14 (inlined <u64 as Default>::default) {
+        }
+        scope 15 (inlined <bool as Default>::default) {
+        }
+        scope 16 (inlined <Option<String> as Default>::default) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        StorageLive(_8);
+        _8 = Vec::<u8> { buf: const alloc::raw_vec::RawVec::<u8> {{ inner: alloc::raw_vec::RawVecInner {{ ptr: std::ptr::Unique::<u8> {{ pointer: NonNull::<u8> {{ pointer: {0x1 as *const u8} is !null }}, _marker: PhantomData::<u8> }}, cap: core::num::niche_types::UsizeNoHighBit(0_usize is 0..=9223372036854775807), alloc: std::alloc::Global }}, _marker: PhantomData::<u8> }}, len: const 0_usize };
+        StorageLive(_9);
+        _9 = Option::<String>::None;
+        _3 = Log { prefix: move _8, total: const 0_u64, checksum: const 0_u64, eof: const false, error: move _9 };
+        StorageDead(_9);
+        StorageDead(_8);
+        StorageLive(_5);
+        _5 = &mut _3;
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = <u8 as vec::spec_from_elem::SpecFromElem>::from_elem::<std::alloc::Global>(move _2, const 262144_usize, const std::alloc::Global) -> [return: bb7, unwind: bb5];
+    }
+
+    bb1: {
+        StorageDead(_5);
+        drop(_7) -> [return: bb2, unwind: bb5];
+    }
+
+    bb2: {
+        StorageDead(_7);
+        StorageDead(_6);
+        _0 = copy (_3.2: u64);
+        drop(_3) -> [return: bb3, unwind continue];
+    }
+
+    bb3: {
+        StorageDead(_3);
+        return;
+    }
+
+    bb4 (cleanup): {
+        drop(_7) -> [return: bb5, unwind terminate(cleanup)];
+    }
+
+    bb5 (cleanup): {
+        drop(_3) -> [return: bb6, unwind terminate(cleanup)];
+    }
+
+    bb6 (cleanup): {
+        resume;
+    }
+
+    bb7: {
+        StorageLive(_10);
+        StorageLive(_11);
+        StorageLive(_13);
+        _13 = copy ((((_7.0: alloc::raw_vec::RawVec<u8>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _11 = copy _13 as *const u8 (Transmute);
+        StorageDead(_13);
+        StorageLive(_12);
+        _12 = copy (_7.1: usize);
+        _10 = *const [u8] from (copy _11, move _12);
+        StorageDead(_12);
+        StorageDead(_11);
+        _6 = &(*_10);
+        StorageDead(_10);
+        _4 = Log::record(move _5, move _6, const 0_usize) -> [return: bb1, unwind: bb4];
+    }
+}
+
+alloc66 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 │ ................
+}
+
+fn lifecycle::{closure#0}::{closure#1}(_1: &mut {closure@src/bin/runtime-bench.rs:145:45: 145:56}, _2: &(&str, usize, usize)) -> agent_runtime::Runtime {
+    let mut _0: agent_runtime::Runtime;
+    let _3: &usize;
+    let _4: &usize;
+    let mut _5: usize;
+    let mut _6: usize;
+    scope 1 {
+        debug c => _3;
+        debug r => _4;
+    }
+
+    bb0: {
+        // DBG: _3 = &((*_2).1: usize);
+        // DBG: _4 = &((*_2).2: usize);
+        StorageLive(_5);
+        _5 = copy ((*_2).1: usize);
+        StorageLive(_6);
+        _6 = copy ((*_2).2: usize);
+        _0 = runtime(move _5, move _6) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageDead(_6);
+        StorageDead(_5);
+        return;
+    }
+}
+
+fn main() -> () {
+    let mut _0: ();
+    let _1: {async block@src/bin/runtime-bench.rs:187:1: 187:60};
+    let mut _3: &tokio::runtime::Runtime;
+    let _4: tokio::runtime::Runtime;
+    let mut _5: std::result::Result<tokio::runtime::Runtime, std::io::Error>;
+    let mut _6: &mut tokio::runtime::Builder;
+    let mut _7: &mut tokio::runtime::Builder;
+    let mut _8: tokio::runtime::Builder;
+    let mut _9: {async block@src/bin/runtime-bench.rs:187:1: 187:60};
+    let mut _10: bool;
+    scope 1 {
+        debug body => _1;
+        let _2: {async block@src/bin/runtime-bench.rs:187:1: 187:60};
+        scope 2 {
+            debug body => _2;
+            scope 4 {
+                scope 5 (inlined tokio::runtime::Builder::enable_all) {
+                    scope 6 (inlined tokio::runtime::Builder::enable_io) {
+                    }
+                    scope 7 (inlined tokio::runtime::Builder::enable_time) {
+                    }
+                }
+            }
+        }
+        scope 3 {
+        }
+    }
+
+    bb0: {
+        StorageLive(_1);
+        _1 = {coroutine@src/bin/runtime-bench.rs:187:1: 187:60 (#41)};
+        StorageLive(_2);
+        _10 = const true;
+        _2 = move _1;
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_6);
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = tokio::runtime::Builder::new_multi_thread() -> [return: bb1, unwind: bb12];
+    }
+
+    bb1: {
+        _7 = &mut _8;
+        _6 = tokio::runtime::Builder::worker_threads(move _7, const 2_usize) -> [return: bb2, unwind: bb9];
+    }
+
+    bb2: {
+        StorageDead(_7);
+        ((*_6).2: bool) = const true;
+        ((*_6).5: bool) = const true;
+        _5 = tokio::runtime::Builder::build(move _6) -> [return: bb3, unwind: bb9];
+    }
+
+    bb3: {
+        _4 = Result::<tokio::runtime::Runtime, std::io::Error>::expect(move _5, const "Failed building the Runtime") -> [return: bb4, unwind: bb9];
+    }
+
+    bb4: {
+        _3 = &_4;
+        StorageDead(_5);
+        StorageLive(_9);
+        _10 = const false;
+        _9 = move _2;
+        _0 = tokio::runtime::Runtime::block_on::<{async block@src/bin/runtime-bench.rs:187:1: 187:60}>(move _3, move _9) -> [return: bb5, unwind: bb8];
+    }
+
+    bb5: {
+        StorageDead(_9);
+        StorageDead(_3);
+        drop(_4) -> [return: bb6, unwind: bb9];
+    }
+
+    bb6: {
+        drop(_8) -> [return: bb7, unwind: bb12];
+    }
+
+    bb7: {
+        StorageDead(_8);
+        StorageDead(_6);
+        StorageDead(_4);
+        StorageDead(_2);
+        StorageDead(_1);
+        return;
+    }
+
+    bb8 (cleanup): {
+        drop(_4) -> [return: bb9, unwind terminate(cleanup)];
+    }
+
+    bb9 (cleanup): {
+        drop(_8) -> [return: bb12, unwind terminate(cleanup)];
+    }
+
+    bb10 (cleanup): {
+        resume;
+    }
+
+    bb11 (cleanup): {
+        drop(_2) -> [return: bb10, unwind terminate(cleanup)];
+    }
+
+    bb12 (cleanup): {
+        switchInt(copy _10) -> [0: bb10, otherwise: bb11];
+    }
+}
+
+alloc42 (size: 27, align: 1) {
+    0x00 │ 46 61 69 6c 65 64 20 62 75 69 6c 64 69 6e 67 20 │ Failed building 
+    0x10 │ 74 68 65 20 52 75 6e 74 69 6d 65                │ the Runtime
+}
+
+fn main::{closure#0}(_1: Pin<&mut {async block@src/bin/runtime-bench.rs:187:1: 187:60}>, _2: &mut Context<'_>) -> Poll<()> {
+    coroutine layout {
+        field _s0: Option<String>;
+        field _s1: Args;
+        field _s2: {async fn body of admission()};
+        field _s3: {async fn body of lifecycle()};
+        field _s4: {async fn body of lifecycle()};
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2],
+            Suspend1 (4): [_s0, _s1, _s3],
+            Suspend2 (5): [_s0, _s1, _s4],
+        }
+        storage_conflicts = BitMatrix(5x5) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s0, _s3), (_s0, _s4), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s1, _s3), (_s1, _s4), (_s2, _s0), (_s2, _s1), (_s2, _s2), (_s3, _s0), (_s3, _s1), (_s3, _s3), (_s4, _s0), (_s4, _s1), (_s4, _s4)}
+    }
+    debug _task_context => _40;
+    coroutine debug __awaitee => _s2;
+    coroutine debug __awaitee => _s3;
+    coroutine debug __awaitee => _s4;
+    let mut _0: std::task::Poll<()>;
+    let mut _3: std::option::Option<&str>;
+    let mut _4: &std::option::Option<std::string::String>;
+    let mut _5: &mut std::env::Args;
+    let mut _6: bool;
+    let mut _7: bool;
+    let mut _8: bool;
+    let mut _9: isize;
+    let mut _10: {async fn body of admission()};
+    let mut _11: {async fn body of admission()};
+    let mut _12: std::task::Poll<()>;
+    let mut _13: std::pin::Pin<&mut {async fn body of admission()}>;
+    let mut _14: &mut {async fn body of admission()};
+    let mut _15: &mut std::task::Context<'_>;
+    let mut _16: isize;
+    let mut _17: {async fn body of lifecycle()};
+    let mut _18: {async fn body of lifecycle()};
+    let mut _19: std::option::Option<u64>;
+    let mut _20: std::task::Poll<()>;
+    let mut _21: std::pin::Pin<&mut {async fn body of lifecycle()}>;
+    let mut _22: &mut {async fn body of lifecycle()};
+    let mut _23: &mut std::task::Context<'_>;
+    let mut _24: isize;
+    let mut _25: {async fn body of lifecycle()};
+    let mut _26: {async fn body of lifecycle()};
+    let mut _27: std::option::Option<u64>;
+    let mut _28: std::task::Poll<()>;
+    let mut _29: std::pin::Pin<&mut {async fn body of lifecycle()}>;
+    let mut _30: &mut {async fn body of lifecycle()};
+    let mut _31: &mut std::task::Context<'_>;
+    let mut _32: isize;
+    let _34: ();
+    let mut _35: std::fmt::Arguments<'_>;
+    let _36: !;
+    let mut _37: &str;
+    let mut _38: u32;
+    let mut _39: &mut {async block@src/bin/runtime-bench.rs:187:1: 187:60};
+    let mut _40: std::future::ResumeTy;
+    let mut _41: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug __awaitee => (((*_39) as variant#3).2: {async fn body of admission()});
+        scope 2 {
+            debug result => _33;
+        }
+    }
+    scope 3 {
+        debug __awaitee => (((*_39) as variant#4).2: {async fn body of lifecycle()});
+        scope 4 {
+            debug result => _33;
+        }
+    }
+    scope 5 {
+        debug __awaitee => (((*_39) as variant#5).2: {async fn body of lifecycle()});
+        let _33: ();
+        scope 6 {
+            debug result => _33;
+        }
+    }
+
+    bb0: {
+        _41 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _40 = std::future::ResumeTy(move _41);
+        _39 = copy (_1.0: &mut {async block@src/bin/runtime-bench.rs:187:1: 187:60});
+        _38 = discriminant((*_39));
+        switchInt(move _38) -> [0: bb71, 1: bb70, 2: bb69, 3: bb66, 4: bb67, 5: bb68, otherwise: bb19];
+    }
+
+    bb1: {
+        _5 = &mut (((*_39) as variant#5).1: std::env::Args);
+        (((*_39) as variant#5).0: std::option::Option<std::string::String>) = <Args as Iterator>::nth(move _5, const 1_usize) -> [return: bb2, unwind: bb62];
+    }
+
+    bb2: {
+        _4 = &(((*_39) as variant#5).0: std::option::Option<std::string::String>);
+        StorageDead(_5);
+        _3 = Option::<String>::as_deref(move _4) -> [return: bb3, unwind: bb60];
+    }
+
+    bb3: {
+        StorageDead(_4);
+        _9 = discriminant(_3);
+        switchInt(move _9) -> [1: bb5, 0: bb4, otherwise: bb19];
+    }
+
+    bb4: {
+        StorageLive(_34);
+        StorageLive(_35);
+        _35 = Arguments::<'_>::from_str(const "usage: runtime-bench admission | lifecycle | profile\n") -> [return: bb39, unwind: bb45];
+    }
+
+    bb5: {
+        _37 = no_retag copy ((_3 as Some).0: &str);
+        _8 = <str as PartialEq>::eq(copy _37, const "admission") -> [return: bb13, unwind: bb61];
+    }
+
+    bb6: {
+        StorageLive(_10);
+        StorageLive(_11);
+        _11 = admission() -> [return: bb14, unwind: bb58];
+    }
+
+    bb7: {
+        _7 = <str as PartialEq>::eq(copy _37, const "lifecycle") -> [return: bb12, unwind: bb61];
+    }
+
+    bb8: {
+        StorageLive(_17);
+        StorageLive(_18);
+        StorageLive(_19);
+        _19 = Option::<u64>::None;
+        _18 = lifecycle(move _19) -> [return: bb23, unwind: bb53];
+    }
+
+    bb9: {
+        _6 = <str as PartialEq>::eq(move _37, const "profile") -> [return: bb11, unwind: bb61];
+    }
+
+    bb10: {
+        StorageLive(_25);
+        StorageLive(_26);
+        StorageLive(_27);
+        _27 = Option::<u64>::Some(const 8_u64);
+        _26 = lifecycle(move _27) -> [return: bb31, unwind: bb48];
+    }
+
+    bb11: {
+        switchInt(move _6) -> [0: bb4, otherwise: bb10];
+    }
+
+    bb12: {
+        switchInt(move _7) -> [0: bb9, otherwise: bb8];
+    }
+
+    bb13: {
+        switchInt(move _8) -> [0: bb7, otherwise: bb6];
+    }
+
+    bb14: {
+        _10 = <{async fn body of admission()} as IntoFuture>::into_future(move _11) -> [return: bb15, unwind: bb58];
+    }
+
+    bb15: {
+        StorageDead(_11);
+        (((*_39) as variant#3).2: {async fn body of admission()}) = move _10;
+        goto -> bb16;
+    }
+
+    bb16: {
+        StorageLive(_12);
+        StorageLive(_13);
+        StorageLive(_14);
+        _14 = &mut (((*_39) as variant#3).2: {async fn body of admission()});
+        _13 = Pin::<&mut {async fn body of admission()}>::new_unchecked(move _14) -> [return: bb17, unwind: bb57];
+    }
+
+    bb17: {
+        StorageLive(_15);
+        _15 = copy (_40.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _12 = <{async fn body of admission()} as Future>::poll(move _13, move _15) -> [return: bb18, unwind: bb56];
+    }
+
+    bb18: {
+        StorageDead(_15);
+        StorageDead(_14);
+        StorageDead(_13);
+        _16 = discriminant(_12);
+        switchInt(move _16) -> [0: bb21, 1: bb20, otherwise: bb19];
+    }
+
+    bb19: {
+        unreachable;
+    }
+
+    bb20: {
+        StorageDead(_12);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_3);
+        StorageDead(_10);
+        discriminant((*_39)) = 3;
+        return;
+    }
+
+    bb21: {
+        _33 = copy ((_12 as Ready).0: ());
+        StorageDead(_12);
+        drop((((*_39) as variant#3).2: {async fn body of admission()})) -> [return: bb22, unwind: bb59];
+    }
+
+    bb22: {
+        StorageDead(_10);
+        goto -> bb41;
+    }
+
+    bb23: {
+        StorageDead(_19);
+        _17 = <{async fn body of lifecycle()} as IntoFuture>::into_future(move _18) -> [return: bb24, unwind: bb54];
+    }
+
+    bb24: {
+        StorageDead(_18);
+        (((*_39) as variant#4).2: {async fn body of lifecycle()}) = move _17;
+        goto -> bb25;
+    }
+
+    bb25: {
+        StorageLive(_20);
+        StorageLive(_21);
+        StorageLive(_22);
+        _22 = &mut (((*_39) as variant#4).2: {async fn body of lifecycle()});
+        _21 = Pin::<&mut {async fn body of lifecycle()}>::new_unchecked(move _22) -> [return: bb26, unwind: bb52];
+    }
+
+    bb26: {
+        StorageLive(_23);
+        _23 = copy (_40.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _20 = <{async fn body of lifecycle()} as Future>::poll(move _21, move _23) -> [return: bb27, unwind: bb51];
+    }
+
+    bb27: {
+        StorageDead(_23);
+        StorageDead(_22);
+        StorageDead(_21);
+        _24 = discriminant(_20);
+        switchInt(move _24) -> [0: bb29, 1: bb28, otherwise: bb19];
+    }
+
+    bb28: {
+        StorageDead(_20);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_3);
+        StorageDead(_17);
+        discriminant((*_39)) = 4;
+        return;
+    }
+
+    bb29: {
+        _33 = copy ((_20 as Ready).0: ());
+        StorageDead(_20);
+        drop((((*_39) as variant#4).2: {async fn body of lifecycle()})) -> [return: bb30, unwind: bb55];
+    }
+
+    bb30: {
+        StorageDead(_17);
+        goto -> bb41;
+    }
+
+    bb31: {
+        StorageDead(_27);
+        _25 = <{async fn body of lifecycle()} as IntoFuture>::into_future(move _26) -> [return: bb32, unwind: bb49];
+    }
+
+    bb32: {
+        StorageDead(_26);
+        (((*_39) as variant#5).2: {async fn body of lifecycle()}) = move _25;
+        goto -> bb33;
+    }
+
+    bb33: {
+        StorageLive(_28);
+        StorageLive(_29);
+        StorageLive(_30);
+        _30 = &mut (((*_39) as variant#5).2: {async fn body of lifecycle()});
+        _29 = Pin::<&mut {async fn body of lifecycle()}>::new_unchecked(move _30) -> [return: bb34, unwind: bb47];
+    }
+
+    bb34: {
+        StorageLive(_31);
+        _31 = copy (_40.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _28 = <{async fn body of lifecycle()} as Future>::poll(move _29, move _31) -> [return: bb35, unwind: bb46];
+    }
+
+    bb35: {
+        StorageDead(_31);
+        StorageDead(_30);
+        StorageDead(_29);
+        _32 = discriminant(_28);
+        switchInt(move _32) -> [0: bb37, 1: bb36, otherwise: bb19];
+    }
+
+    bb36: {
+        StorageDead(_28);
+        _0 = Poll::<()>::Pending;
+        StorageDead(_3);
+        StorageDead(_25);
+        discriminant((*_39)) = 5;
+        return;
+    }
+
+    bb37: {
+        _33 = copy ((_28 as Ready).0: ());
+        StorageDead(_28);
+        drop((((*_39) as variant#5).2: {async fn body of lifecycle()})) -> [return: bb38, unwind: bb50];
+    }
+
+    bb38: {
+        StorageDead(_25);
+        goto -> bb41;
+    }
+
+    bb39: {
+        _34 = std::io::_eprint(move _35) -> [return: bb40, unwind: bb45];
+    }
+
+    bb40: {
+        StorageDead(_35);
+        StorageDead(_34);
+        StorageLive(_36);
+        _36 = exit(const 2_i32) -> bb44;
+    }
+
+    bb41: {
+        drop((((*_39) as variant#5).0: std::option::Option<std::string::String>)) -> [return: bb42, unwind: bb63];
+    }
+
+    bb42: {
+        drop((((*_39) as variant#5).1: std::env::Args)) -> [return: bb43, unwind: bb65];
+    }
+
+    bb43: {
+        StorageDead(_3);
+        _0 = Poll::<()>::Ready(move _33);
+        discriminant((*_39)) = 1;
+        return;
+    }
+
+    bb44 (cleanup): {
+        StorageDead(_36);
+        goto -> bb61;
+    }
+
+    bb45 (cleanup): {
+        StorageDead(_35);
+        StorageDead(_34);
+        goto -> bb61;
+    }
+
+    bb46 (cleanup): {
+        StorageDead(_31);
+        goto -> bb47;
+    }
+
+    bb47 (cleanup): {
+        StorageDead(_30);
+        StorageDead(_29);
+        StorageDead(_28);
+        drop((((*_39) as variant#5).2: {async fn body of lifecycle()})) -> [return: bb50, unwind terminate(cleanup)];
+    }
+
+    bb48 (cleanup): {
+        StorageDead(_27);
+        goto -> bb49;
+    }
+
+    bb49 (cleanup): {
+        StorageDead(_26);
+        goto -> bb50;
+    }
+
+    bb50 (cleanup): {
+        StorageDead(_25);
+        goto -> bb61;
+    }
+
+    bb51 (cleanup): {
+        StorageDead(_23);
+        goto -> bb52;
+    }
+
+    bb52 (cleanup): {
+        StorageDead(_22);
+        StorageDead(_21);
+        StorageDead(_20);
+        drop((((*_39) as variant#4).2: {async fn body of lifecycle()})) -> [return: bb55, unwind terminate(cleanup)];
+    }
+
+    bb53 (cleanup): {
+        StorageDead(_19);
+        goto -> bb54;
+    }
+
+    bb54 (cleanup): {
+        StorageDead(_18);
+        goto -> bb55;
+    }
+
+    bb55 (cleanup): {
+        StorageDead(_17);
+        goto -> bb61;
+    }
+
+    bb56 (cleanup): {
+        StorageDead(_15);
+        goto -> bb57;
+    }
+
+    bb57 (cleanup): {
+        StorageDead(_14);
+        StorageDead(_13);
+        StorageDead(_12);
+        drop((((*_39) as variant#3).2: {async fn body of admission()})) -> [return: bb59, unwind terminate(cleanup)];
+    }
+
+    bb58 (cleanup): {
+        StorageDead(_11);
+        goto -> bb59;
+    }
+
+    bb59 (cleanup): {
+        StorageDead(_10);
+        goto -> bb61;
+    }
+
+    bb60 (cleanup): {
+        StorageDead(_4);
+        goto -> bb61;
+    }
+
+    bb61 (cleanup): {
+        drop((((*_39) as variant#5).0: std::option::Option<std::string::String>)) -> [return: bb63, unwind terminate(cleanup)];
+    }
+
+    bb62 (cleanup): {
+        StorageDead(_5);
+        StorageDead(_4);
+        goto -> bb63;
+    }
+
+    bb63 (cleanup): {
+        drop((((*_39) as variant#5).1: std::env::Args)) -> [return: bb65, unwind terminate(cleanup)];
+    }
+
+    bb64 (cleanup): {
+        StorageDead(_5);
+        StorageDead(_4);
+        goto -> bb65;
+    }
+
+    bb65 (cleanup): {
+        StorageDead(_3);
+        discriminant((*_39)) = 2;
+        resume;
+    }
+
+    bb66: {
+        StorageLive(_3);
+        StorageLive(_10);
+        goto -> bb16;
+    }
+
+    bb67: {
+        StorageLive(_3);
+        StorageLive(_17);
+        goto -> bb25;
+    }
+
+    bb68: {
+        StorageLive(_3);
+        StorageLive(_25);
+        goto -> bb33;
+    }
+
+    bb69: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb69, unwind continue];
+    }
+
+    bb70: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb70, unwind continue];
+    }
+
+    bb71: {
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        (((*_39) as variant#5).1: std::env::Args) = args() -> [return: bb1, unwind: bb64];
+    }
+}
+
+alloc43 (size: 53, align: 1) {
+    0x00 │ 75 73 61 67 65 3a 20 72 75 6e 74 69 6d 65 2d 62 │ usage: runtime-b
+    0x10 │ 65 6e 63 68 20 61 64 6d 69 73 73 69 6f 6e 20 7c │ ench admission |
+    0x20 │ 20 6c 69 66 65 63 79 63 6c 65 20 7c 20 70 72 6f │  lifecycle | pro
+    0x30 │ 66 69 6c 65 0a                                  │ file.
+}

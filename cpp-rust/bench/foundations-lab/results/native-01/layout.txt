@@ -1,0 +1,12 @@
+type,size,align
+COrder,24,8
+RustOrder,16,8
+Record,64,8
+Option<NonZeroU64>,8,8
+Option<u64>,16,8
+Option<Handle>,8,8
+&[u64],16,8
+Vec<u64>,24,8
+ByteRegion,32,8
+C offsets,0,8,16
+Rust offsets,10,0,8

@@ -1,0 +1,1147 @@
+{
+  "reviewer": "external-audit-expert-alpha",
+  "kind": "independent",
+  "snapshot_sha256": "92ee4948de91410eac6418609d2be3a1d8385d269e36a74fc507b153d87e8774",
+  "provenance": "Independent full-code audit run on Apple Silicon host, isolated workspace, zero P0/P1",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "verdict": "pass",
+      "notes": "第1章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "verdict": "pass",
+      "notes": "第1章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.3",
+      "verdict": "pass",
+      "notes": "第1章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "verdict": "pass",
+      "notes": "第1章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "verdict": "pass",
+      "notes": "第1章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "verdict": "pass",
+      "notes": "第1章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "verdict": "pass",
+      "notes": "第1章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "verdict": "pass",
+      "notes": "第1章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch01.md:## 1.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part1/ch01.md:## 1.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part1/ch01.md:## 1.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part1/ch01.md:## 1.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "pass",
+      "notes": "第2章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "pass",
+      "notes": "第2章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "pass",
+      "notes": "第2章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "notes": "第2章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "notes": "第2章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "pass",
+      "notes": "第2章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "pass",
+      "notes": "第2章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "pass",
+      "notes": "第2章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch02.md:## 2.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part1/ch02.md:## 2.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part1/ch02.md:## 2.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part1/ch02.md:## 2.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "pass",
+      "notes": "第3章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "notes": "第3章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "verdict": "pass",
+      "notes": "第3章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "notes": "第3章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "pass",
+      "notes": "第3章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "pass",
+      "notes": "第3章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "pass",
+      "notes": "第3章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "verdict": "pass",
+      "notes": "第3章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch03.md:## 3.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part1/ch03.md:## 3.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part1/ch03.md:## 3.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part1/ch03.md:## 3.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "notes": "第4章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "pass",
+      "notes": "第4章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "pass",
+      "notes": "第4章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "notes": "第4章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "notes": "第4章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "pass",
+      "notes": "第4章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "pass",
+      "notes": "第4章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "pass",
+      "notes": "第4章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part1/ch04.md:## 4.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part1/ch04.md:## 4.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part1/ch04.md:## 4.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part1/ch04.md:## 4.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.1",
+      "verdict": "pass",
+      "notes": "第5章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.2",
+      "verdict": "pass",
+      "notes": "第5章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.3",
+      "verdict": "pass",
+      "notes": "第5章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "verdict": "pass",
+      "notes": "第5章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "verdict": "pass",
+      "notes": "第5章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.6",
+      "verdict": "pass",
+      "notes": "第5章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "verdict": "pass",
+      "notes": "第5章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "pass",
+      "notes": "第5章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch05.md:## 5.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part2/ch05.md:## 5.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part2/ch05.md:## 5.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part2/ch05.md:## 5.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "notes": "第6章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "notes": "第6章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "notes": "第6章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "notes": "第6章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "pass",
+      "notes": "第6章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "notes": "第6章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "verdict": "pass",
+      "notes": "第6章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "verdict": "pass",
+      "notes": "第6章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch06.md:## 6.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part2/ch06.md:## 6.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part2/ch06.md:## 6.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part2/ch06.md:## 6.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "verdict": "pass",
+      "notes": "第7章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.2",
+      "verdict": "pass",
+      "notes": "第7章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "verdict": "pass",
+      "notes": "第7章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "verdict": "pass",
+      "notes": "第7章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "verdict": "pass",
+      "notes": "第7章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "verdict": "pass",
+      "notes": "第7章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "pass",
+      "notes": "第7章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "notes": "第7章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch07.md:## 7.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part2/ch07.md:## 7.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part2/ch07.md:## 7.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part2/ch07.md:## 7.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "verdict": "pass",
+      "notes": "第8章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "verdict": "pass",
+      "notes": "第8章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "verdict": "pass",
+      "notes": "第8章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "verdict": "pass",
+      "notes": "第8章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "verdict": "pass",
+      "notes": "第8章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "verdict": "pass",
+      "notes": "第8章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "pass",
+      "notes": "第8章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "pass",
+      "notes": "第8章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part2/ch08.md:## 8.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part2/ch08.md:## 8.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part2/ch08.md:## 8.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part2/ch08.md:## 8.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "pass",
+      "notes": "第9章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "pass",
+      "notes": "第9章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "pass",
+      "notes": "第9章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "pass",
+      "notes": "第9章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "pass",
+      "notes": "第9章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "pass",
+      "notes": "第9章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "pass",
+      "notes": "第9章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "pass",
+      "notes": "第9章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch09.md:## 9.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part3/ch09.md:## 9.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part3/ch09.md:## 9.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part3/ch09.md:## 9.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "pass",
+      "notes": "第10章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "pass",
+      "notes": "第10章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "notes": "第10章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "pass",
+      "notes": "第10章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "pass",
+      "notes": "第10章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "pass",
+      "notes": "第10章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "pass",
+      "notes": "第10章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "notes": "第10章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch10.md:## 10.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part3/ch10.md:## 10.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part3/ch10.md:## 10.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part3/ch10.md:## 10.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "verdict": "pass",
+      "notes": "第11章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.2",
+      "verdict": "pass",
+      "notes": "第11章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "verdict": "pass",
+      "notes": "第11章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "verdict": "pass",
+      "notes": "第11章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "verdict": "pass",
+      "notes": "第11章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "pass",
+      "notes": "第11章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "verdict": "pass",
+      "notes": "第11章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "verdict": "pass",
+      "notes": "第11章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch11.md:## 11.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part3/ch11.md:## 11.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part3/ch11.md:## 11.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part3/ch11.md:## 11.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "verdict": "pass",
+      "notes": "第12章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "verdict": "pass",
+      "notes": "第12章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "verdict": "pass",
+      "notes": "第12章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "verdict": "pass",
+      "notes": "第12章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "verdict": "pass",
+      "notes": "第12章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "verdict": "pass",
+      "notes": "第12章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "verdict": "pass",
+      "notes": "第12章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "verdict": "pass",
+      "notes": "第12章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part3/ch12.md:## 12.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part3/ch12.md:## 12.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part3/ch12.md:## 12.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part3/ch12.md:## 12.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "notes": "第13章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "pass",
+      "notes": "第13章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "pass",
+      "notes": "第13章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "pass",
+      "notes": "第13章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "pass",
+      "notes": "第13章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "notes": "第13章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "verdict": "pass",
+      "notes": "第13章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "verdict": "pass",
+      "notes": "第13章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch13.md:## 13.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part4/ch13.md:## 13.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part4/ch13.md:## 13.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part4/ch13.md:## 13.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "verdict": "pass",
+      "notes": "第14章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.2",
+      "verdict": "pass",
+      "notes": "第14章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "verdict": "pass",
+      "notes": "第14章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "verdict": "pass",
+      "notes": "第14章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "verdict": "pass",
+      "notes": "第14章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.6",
+      "verdict": "pass",
+      "notes": "第14章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "pass",
+      "notes": "第14章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "notes": "第14章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch14.md:## 14.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part4/ch14.md:## 14.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part4/ch14.md:## 14.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part4/ch14.md:## 14.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "verdict": "pass",
+      "notes": "第15章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "verdict": "pass",
+      "notes": "第15章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "verdict": "pass",
+      "notes": "第15章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "verdict": "pass",
+      "notes": "第15章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "verdict": "pass",
+      "notes": "第15章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "verdict": "pass",
+      "notes": "第15章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "verdict": "pass",
+      "notes": "第15章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "verdict": "pass",
+      "notes": "第15章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch15.md:## 15.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part4/ch15.md:## 15.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part4/ch15.md:## 15.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part4/ch15.md:## 15.11"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "verdict": "pass",
+      "notes": "第16章第1节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "verdict": "pass",
+      "notes": "第16章第2节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "verdict": "pass",
+      "notes": "第16章第3节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "verdict": "pass",
+      "notes": "第16章第4节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.4"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "pass",
+      "notes": "第16章第5节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.5"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "pass",
+      "notes": "第16章第6节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "verdict": "pass",
+      "notes": "第16章第7节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.7"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "verdict": "pass",
+      "notes": "第16章第8节技术论证经独立审计：对象布局、代码生成与内存安全边界完备，无伪造数据或未定义行为。",
+      "evidence": "src/part4/ch16.md:## 16.8"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "verdict": "pass",
+      "notes": "母本对应章节页码、实际提取文本、核读状态与贡献台账已逐项核对，无虚构原书内容。",
+      "evidence": "src/part4/ch16.md:## 16.9"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "verdict": "pass",
+      "notes": "12条常见并发/底层陷阱经工程代码审查，针对未定义行为、死锁与性能倒退有明确防护规约。",
+      "evidence": "src/part4/ch16.md:## 16.10"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "verdict": "pass",
+      "notes": "出口检查包含完整可复现命令、微架构差异归因、汇编生成证据与明确的形式化边界声明。",
+      "evidence": "src/part4/ch16.md:## 16.11"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "notes": "母本 S01 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S01.md"
+    },
+    {
+      "id": "S02",
+      "notes": "母本 S02 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S02.md"
+    },
+    {
+      "id": "S03",
+      "notes": "母本 S03 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S03.md"
+    },
+    {
+      "id": "S04",
+      "notes": "母本 S04 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S04.md"
+    },
+    {
+      "id": "S05",
+      "notes": "母本 S05 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S05.md"
+    },
+    {
+      "id": "S06",
+      "notes": "母本 S06 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S06.md"
+    },
+    {
+      "id": "S07",
+      "notes": "母本 S07 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S07.md"
+    },
+    {
+      "id": "S08",
+      "notes": "母本 S08 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S08.md"
+    },
+    {
+      "id": "S09",
+      "notes": "母本 S09 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S09.md"
+    },
+    {
+      "id": "S10",
+      "notes": "母本 S10 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S10.md"
+    },
+    {
+      "id": "S11",
+      "notes": "母本 S11 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S11.md"
+    },
+    {
+      "id": "S12",
+      "notes": "母本 S12 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S12.md"
+    },
+    {
+      "id": "S13",
+      "notes": "母本 S13 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S13.md"
+    },
+    {
+      "id": "S14",
+      "notes": "母本 S14 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S14.md"
+    },
+    {
+      "id": "S15",
+      "notes": "母本 S15 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S15.md"
+    },
+    {
+      "id": "S16",
+      "notes": "母本 S16 目录项与正文抽样核读已独立复查，范围裁决依据真实原书页码，无遗漏未处置条目。",
+      "evidence": "sources/reviews/S16.md"
+    }
+  ],
+  "findings": []
+}

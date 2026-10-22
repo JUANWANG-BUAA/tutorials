@@ -1,0 +1,3 @@
+part4/ch13.md: 1235 lines; 1 H1; 11 H2; unique anchors; checker=[]
+part4/ch14.md: 1289 lines; 1 H1; 11 H2; unique anchors; checker=[]
+Target chapter links=[]; structure check is not independent technical audit.

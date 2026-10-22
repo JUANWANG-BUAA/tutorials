@@ -1,0 +1,26 @@
+[
+  {
+    "chapter": "part1/ch04.md",
+    "lines": 1256,
+    "nonempty_lines": 1020,
+    "h2": 11,
+    "problems": [],
+    "sha256": "daf93855be19565f5ccc4f9307a9ef5444f5216eea96e5dd294fb96d21fa91b9"
+  },
+  {
+    "chapter": "part2/ch05.md",
+    "lines": 1238,
+    "nonempty_lines": 1006,
+    "h2": 11,
+    "problems": [],
+    "sha256": "16a5a587549a9d3a6a8ab5dbdd5323f8a1a80cc127c8135242a25e241ad89acf"
+  },
+  {
+    "chapter": "part2/ch06.md",
+    "lines": 1262,
+    "nonempty_lines": 1016,
+    "h2": 11,
+    "problems": [],
+    "sha256": "d66b3d6fd6a65f30431f582952c575308d2f0d86d84575f5409dc248b5736c68"
+  }
+]

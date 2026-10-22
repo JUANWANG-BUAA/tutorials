@@ -1,0 +1,14 @@
+   Compiling libc v0.2.191
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling bytes v1.12.1
+   Compiling pin-project-lite v0.2.17
+   Compiling syn v3.0.9
+   Compiling errno v0.3.14
+   Compiling mio v1.2.4
+   Compiling signal-hook-registry v1.4.8
+   Compiling tokio-macros v2.7.2
+   Compiling tokio v1.54.0
+   Compiling agent-runtime v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/projects/agent-runtime)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.83s

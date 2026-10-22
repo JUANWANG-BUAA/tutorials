@@ -1,0 +1,46 @@
+iterations=5000 samples=21 payload_size=64 payload_align=8
+case,sample,ns_per_message
+slot,0,127.900000
+sync_channel,0,2849.608400
+sync_channel,1,2610.800000
+slot,1,112.875000
+slot,2,114.716800
+sync_channel,2,3485.550000
+sync_channel,3,2634.325000
+slot,3,115.241600
+slot,4,113.850000
+sync_channel,4,2935.650000
+sync_channel,5,3103.541600
+slot,5,110.408400
+slot,6,109.058400
+sync_channel,6,2924.458200
+sync_channel,7,2617.391600
+slot,7,109.041600
+slot,8,108.175000
+sync_channel,8,3117.450000
+sync_channel,9,2637.891600
+slot,9,113.708200
+slot,10,109.258400
+sync_channel,10,3608.550000
+sync_channel,11,3088.383400
+slot,11,112.516800
+slot,12,113.400000
+sync_channel,12,3190.475000
+sync_channel,13,3424.800000
+slot,13,114.025000
+slot,14,109.158200
+sync_channel,14,3083.316800
+sync_channel,15,3256.225000
+slot,15,108.833400
+slot,16,118.591600
+sync_channel,16,3281.833200
+sync_channel,17,3479.650000
+slot,17,109.150000
+slot,18,109.141800
+sync_channel,18,3329.766600
+sync_channel,19,2670.941800
+slot,19,108.966800
+slot,20,109.008200
+sync_channel,20,3156.666600
+slot: mean=112.239 sd=4.588 batch_p50=110.408 batch_p99=127.900 ns/op n=21
+sync_channel: mean=3070.823 sd=313.740 batch_p50=3103.542 batch_p99=3608.550 ns/op n=21

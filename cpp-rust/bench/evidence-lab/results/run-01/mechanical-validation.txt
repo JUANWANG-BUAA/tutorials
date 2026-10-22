@@ -1,0 +1,16 @@
+measured source snapshot fingerprints verified
+cpu-wait.txt cpu n=21, summary verified
+cpu-wait.txt wait n=21, summary verified
+instrumentation.txt none n=21, summary verified
+instrumentation.txt batch n=21, summary verified
+instrumentation.txt each n=21, summary verified
+feature-default.txt default n=21, summary verified
+feature-checked.txt checked n=21, summary verified
+sample cpu exclusive total 1698
+sample wait exclusive total 1648
+binary feature_work b16c7951c5adba9a2a1b0257770cbb1d7bdb7e8e1dace0cb33c4eb701360730a
+binary cpu_wait 9fa68cb3f1489144732f4cf6732d1188d8514b872aaff609af0e79b9b396b1bb
+binary instrumentation af71606b9c6676e2b46eacf8abada695659fa2fd72bf84956576f3ef1a629bef
+binary feature_work_checked 510a198fba6025f2b64b7fec8aff2fadee1b97db119978c25be3a886cc94c564
+formal observations: 273
+mechanical validation only; no isolation or independent-audit claim

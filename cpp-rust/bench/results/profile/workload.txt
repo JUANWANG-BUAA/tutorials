@@ -1,0 +1,18 @@
+threads=4 iterations_per_thread=10000000 samples=2
+AtomicU64 size=8 align=8 padded_size=128 padded_align=128
+case,sample,ns_per_aggregate_op
+Shared-Relaxed,0,6.371667
+Shared-SeqCst,0,6.023549
+Adjacent-Relaxed,0,5.949836
+Padded-Relaxed,0,0.409694
+Batched-Relaxed,0,0.062520
+Shared-SeqCst,1,5.958837
+Adjacent-Relaxed,1,2.195841
+Padded-Relaxed,1,0.410065
+Batched-Relaxed,1,0.062689
+Shared-Relaxed,1,5.940028
+Shared-Relaxed: mean=6.156 sd=0.305 batch_p50=5.940 batch_p99=6.372 ns/op n=2
+Shared-SeqCst: mean=5.991 sd=0.046 batch_p50=5.959 batch_p99=6.024 ns/op n=2
+Adjacent-Relaxed: mean=4.073 sd=2.654 batch_p50=2.196 batch_p99=5.950 ns/op n=2
+Padded-Relaxed: mean=0.410 sd=0.000 batch_p50=0.410 batch_p99=0.410 ns/op n=2
+Batched-Relaxed: mean=0.063 sd=0.000 batch_p50=0.063 batch_p99=0.063 ns/op n=2

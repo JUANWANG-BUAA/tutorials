@@ -1,0 +1,14 @@
+{
+  "bench/src/bin/async_poll.rs": "53969b92a81fae248b2eef6453ca7970d35d8d3a09ebdc2aed35ca6e4e9e8fe2",
+  "bench/src/bin/atomic_contention.rs": "1ebf62dc454fb07111bb0a15e0d440395c1f3765029d2ba247eba50b751d5de6",
+  "bench/src/bin/future_allocation.rs": "2271f8f7c05abb664e738a37aa8fd459c6befd7393ecae3b439ca1da00dfcb76",
+  "bench/src/bin/handoff.rs": "303c089059e66ddda5eda08bb286ef36577d62b12e39b2495fc37c3f3fefd4bc",
+  "bench/src/lib.rs": "0563259623ebe093a052584e36c537702c3717e00f456a10ec2f60556e365605",
+  "bench/src/park.rs": "ec4e047a200cbfc70a5e394d15878f9c049b20384d12ae0e035356c79686cd08",
+  "bench/src/slot.rs": "d9a15e7674a4d0b8c229a091aa0871e4064094d1722fef6fe18b675f24c279bf",
+  "bench/examples/future_layout.rs": "3ee824797800adea35150628a4d635722205131a89e7e9c3dc17f406e884f0ef",
+  "bench/examples/publication.rs": "efea6c8b39442c2fb4815d44780b68a9db2fb68a56de0ba31b83a6df6f831ea4",
+  "bench/probes/atomics.rs": "2004aaef2bc24e16551970428cb20c3d80c5ef6b254e8e977e0988706c9dd8a5",
+  "bench/Cargo.toml": "7ac5b216562588fe1218905490e9eb523f750e2c243c254fc093d3bd94d20cc5",
+  "bench/Cargo.lock": "03c85e8c255b7e82f3ed89bfb87ebeed7604bacde540da2da84bdc22c45763ce"
+}

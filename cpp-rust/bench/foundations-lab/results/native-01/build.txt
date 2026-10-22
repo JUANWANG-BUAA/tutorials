@@ -1,0 +1,4 @@
+   Compiling foundations-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.29s
+   Compiling foundations-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.11s

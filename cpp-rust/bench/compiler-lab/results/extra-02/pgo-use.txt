@@ -1,0 +1,5 @@
+$ rustc --edition=2024 -O -Ccodegen-units=1 --cfg=many /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/code_size.rs -Cprofile-use=/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-data/merged.profdata -Cllvm-args=-pgo-warn-missing-function -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-use
+warning: code_size.3cc0425be044db21-cgu.0: no profile data available for function _RINvNtCs1SSuMAdGM58_3std2rt10lang_startuECs5dnkap7e9vp_9code_size Hash = 742261418966908927 up to 0 count discarded
+
+warning: 1 warning emitted
+

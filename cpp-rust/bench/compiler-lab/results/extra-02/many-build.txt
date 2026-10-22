@@ -1,0 +1,1 @@
+$ rustc --edition=2024 -O -Ccodegen-units=1 -Cdebuginfo=1 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/code_size.rs --cfg=many -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/many

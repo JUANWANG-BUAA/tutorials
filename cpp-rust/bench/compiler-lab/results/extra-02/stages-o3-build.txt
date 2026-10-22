@@ -1,0 +1,5 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/stages.rs -Copt-level=3 --emit=mir,llvm-ir,asm,link -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/stages-o3
+warning: due to multiple output types requested, the explicitly specified output file name will be adapted for each output type
+
+warning: 1 warning emitted
+

@@ -1,0 +1,13 @@
+[ 14%] Generating cargo-target/release/libffi_bridge.a
+   Compiling ffi-bridge v1.0.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/projects/ffi-bridge)
+    Finished `release` profile [optimized] target(s) in 0.35s
+[ 14%] Built target rust_component
+[ 42%] Building C object CMakeFiles/bridge_demo.dir/c/demo.c.o
+[ 42%] Building C object CMakeFiles/bridge_tests.dir/c/tests.c.o
+[ 57%] Linking C executable bridge_demo
+[ 71%] Linking C executable bridge_tests
+[ 71%] Built target bridge_tests
+[ 71%] Built target bridge_demo
+[ 85%] Building C object CMakeFiles/bridge_benchmark.dir/c/benchmark.c.o
+[100%] Linking C executable bridge_benchmark
+[100%] Built target bridge_benchmark

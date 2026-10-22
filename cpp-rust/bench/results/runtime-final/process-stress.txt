@@ -1,0 +1,4 @@
+   Compiling runtime-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/runtime-lab)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.76s
+     Running `bench/runtime-lab/target/release/examples/process_stress`
+stress: 80 direct child reports, 70 flood cases, unexpected_failures=0

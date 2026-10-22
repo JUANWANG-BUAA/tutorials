@@ -1,0 +1,1820 @@
+[
+  {
+    "id": "SRC-S08-004",
+    "source": "S08",
+    "section": "第 1 条：使用类型系统表达数据结构",
+    "pages": "PDF 7",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0004"
+  },
+  {
+    "id": "SRC-S08-005",
+    "source": "S08",
+    "section": "第 2 条：使用类型系统表达常见行为",
+    "pages": "PDF 14",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0005"
+  },
+  {
+    "id": "SRC-S08-007",
+    "source": "S08",
+    "section": "第 4 条：优先使用惯用的错误类型",
+    "pages": "PDF 29",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0007"
+  },
+  {
+    "id": "SRC-S08-008",
+    "source": "S08",
+    "section": "第 5 条：理解类型转换",
+    "pages": "PDF 37",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0008"
+  },
+  {
+    "id": "SRC-S08-009",
+    "source": "S08",
+    "section": "第 6 条：拥抱 newtype 模式",
+    "pages": "PDF 43",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0009"
+  },
+  {
+    "id": "SRC-S08-011",
+    "source": "S08",
+    "section": "第 8 条：熟悉引用和指针类型",
+    "pages": "PDF 55",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0011"
+  },
+  {
+    "id": "SRC-S08-012",
+    "source": "S08",
+    "section": "第 9 条：考虑使用迭代器转换代替显式循环",
+    "pages": "PDF 68",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0012"
+  },
+  {
+    "id": "SRC-S08-014",
+    "source": "S08",
+    "section": "第 10 条：熟悉标准库的 traits",
+    "pages": "PDF 81",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0014"
+  },
+  {
+    "id": "SRC-S08-015",
+    "source": "S08",
+    "section": "第 11 条：为 RAII 模式实现 Drop trait",
+    "pages": "PDF 93",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.8",
+    "evidence": "sources/reviews/S08.md#review-s08-u0015"
+  },
+  {
+    "id": "SRC-S08-016",
+    "source": "S08",
+    "section": "第 12 条：理解泛型和 trait 对象之间的权衡",
+    "pages": "PDF 97",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0016"
+  },
+  {
+    "id": "SRC-S08-017",
+    "source": "S08",
+    "section": "第 13 条：使用默认实现来减少必需实现的 trait 方法",
+    "pages": "PDF 106",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0017"
+  },
+  {
+    "id": "SRC-S08-019",
+    "source": "S08",
+    "section": "第 14 条：理解生命周期",
+    "pages": "PDF 109",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0019"
+  },
+  {
+    "id": "SRC-S08-020",
+    "source": "S08",
+    "section": "第 15 条：理解借用检查器",
+    "pages": "PDF 126",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0020"
+  },
+  {
+    "id": "SRC-S08-021",
+    "source": "S08",
+    "section": "第 16 条：避免写 unsafe 代码",
+    "pages": "PDF 144",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.5",
+    "evidence": "sources/reviews/S08.md#review-s08-u0021"
+  },
+  {
+    "id": "SRC-S08-022",
+    "source": "S08",
+    "section": "第 17 条：对共享状态的并行性保持警惕",
+    "pages": "PDF 146",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0022"
+  },
+  {
+    "id": "SRC-S08-023",
+    "source": "S08",
+    "section": "第 18 条：不要 panic",
+    "pages": "PDF 161",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0023"
+  },
+  {
+    "id": "SRC-S08-024",
+    "source": "S08",
+    "section": "第 19 条：避免反射",
+    "pages": "PDF 164",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0024"
+  },
+  {
+    "id": "SRC-S08-025",
+    "source": "S08",
+    "section": "第 20 条：避免过度优化的诱惑",
+    "pages": "PDF 170",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.6",
+    "evidence": "sources/reviews/S08.md#review-s08-u0025"
+  },
+  {
+    "id": "SRC-S08-027",
+    "source": "S08",
+    "section": "第 21 条：理解语义化版本",
+    "pages": "PDF 177",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0027"
+  },
+  {
+    "id": "SRC-S08-028",
+    "source": "S08",
+    "section": "第 22 条：最小化可见性",
+    "pages": "PDF 182",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0028"
+  },
+  {
+    "id": "SRC-S08-030",
+    "source": "S08",
+    "section": "第 24 条：重新导出在 API 中所用的依赖项类型",
+    "pages": "PDF 189",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0030"
+  },
+  {
+    "id": "SRC-S08-031",
+    "source": "S08",
+    "section": "第 25 条：管理依赖项关系图",
+    "pages": "PDF 192",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0031"
+  },
+  {
+    "id": "SRC-S08-032",
+    "source": "S08",
+    "section": "第 26 条：警惕 feature 蔓延",
+    "pages": "PDF 197",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "sources/reviews/S08.md#review-s08-u0032"
+  },
+  {
+    "id": "SRC-S08-034",
+    "source": "S08",
+    "section": "第 27 条：为公共接口撰写文档",
+    "pages": "PDF 203",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0034"
+  },
+  {
+    "id": "SRC-S08-035",
+    "source": "S08",
+    "section": "第 28 条：在合适的时候使用宏",
+    "pages": "PDF 208",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0035"
+  },
+  {
+    "id": "SRC-S08-036",
+    "source": "S08",
+    "section": "第 29 条：遵循 Clippy 的建议",
+    "pages": "PDF 224",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0036"
+  },
+  {
+    "id": "SRC-S08-037",
+    "source": "S08",
+    "section": "第 30 条：不仅仅是单元测试",
+    "pages": "PDF 227",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0037"
+  },
+  {
+    "id": "SRC-S08-038",
+    "source": "S08",
+    "section": "第 31 条：使用生态系统工具",
+    "pages": "PDF 234",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.3",
+    "evidence": "sources/reviews/S08.md#review-s08-u0038"
+  },
+  {
+    "id": "SRC-S08-039",
+    "source": "S08",
+    "section": "第 32 条：搭建持续集成（CI）系统",
+    "pages": "PDF 236",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0039"
+  },
+  {
+    "id": "SRC-S08-041",
+    "source": "S08",
+    "section": "第 33 条：考虑使库代码与 no_std 兼容",
+    "pages": "PDF 241",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "sources/reviews/S08.md#review-s08-u0041"
+  },
+  {
+    "id": "SRC-S08-042",
+    "source": "S08",
+    "section": "第 34 条：控制跨越 FFI 边界的内容",
+    "pages": "PDF 246",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S08.md#review-s08-u0042"
+  },
+  {
+    "id": "SRC-S08-043",
+    "source": "S08",
+    "section": "第 35 条：优先使用 bindgen 而不是手动 FFI 映射",
+    "pages": "PDF 258",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.4",
+    "evidence": "sources/reviews/S08.md#review-s08-u0043"
+  },
+  {
+    "id": "SRC-S09-004",
+    "source": "S09",
+    "section": "如何构建并运行编译器",
+    "pages": "PDF 4",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0004"
+  },
+  {
+    "id": "SRC-S09-005",
+    "source": "S09",
+    "section": "推荐的工作流程",
+    "pages": "PDF 9",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0005"
+  },
+  {
+    "id": "SRC-S09-006",
+    "source": "S09",
+    "section": "编译器自举",
+    "pages": "PDF 10",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0006"
+  },
+  {
+    "id": "SRC-S09-011",
+    "source": "S09",
+    "section": "The compiler testing framework",
+    "pages": "PDF 17",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0011"
+  },
+  {
+    "id": "SRC-S09-012",
+    "source": "S09",
+    "section": "Running tests",
+    "pages": "PDF 22",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0012"
+  },
+  {
+    "id": "SRC-S09-013",
+    "source": "S09",
+    "section": "Adding new tests",
+    "pages": "PDF 25",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0013"
+  },
+  {
+    "id": "SRC-S09-014",
+    "source": "S09",
+    "section": "compiletest",
+    "pages": "PDF 31",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0014"
+  },
+  {
+    "id": "SRC-S09-020",
+    "source": "S09",
+    "section": "Stability attributes",
+    "pages": "PDF 51",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0020"
+  },
+  {
+    "id": "SRC-S09-022",
+    "source": "S09",
+    "section": "Debugging the compiler",
+    "pages": "PDF 57",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.8",
+    "evidence": "sources/reviews/S09.md#review-s09-u0022"
+  },
+  {
+    "id": "SRC-S09-023",
+    "source": "S09",
+    "section": "Profiling the compiler",
+    "pages": "PDF 63",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0023"
+  },
+  {
+    "id": "SRC-S09-024",
+    "source": "S09",
+    "section": "Profiling with perf",
+    "pages": "PDF 64",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0024"
+  },
+  {
+    "id": "SRC-S09-031",
+    "source": "S09",
+    "section": "Emitting Errors and other Diagnostics",
+    "pages": "PDF 73",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0031"
+  },
+  {
+    "id": "SRC-S09-035",
+    "source": "S09",
+    "section": "Cleanup Crew",
+    "pages": "PDF 89",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.8",
+    "evidence": "sources/reviews/S09.md#review-s09-u0035"
+  },
+  {
+    "id": "SRC-S09-036",
+    "source": "S09",
+    "section": "LLVM ICE-breakers",
+    "pages": "PDF 91",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.8",
+    "evidence": "sources/reviews/S09.md#review-s09-u0036"
+  },
+  {
+    "id": "SRC-S09-040",
+    "source": "S09",
+    "section": "编译器源代码的高层次概观",
+    "pages": "PDF 92",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0040"
+  },
+  {
+    "id": "SRC-S09-041",
+    "source": "S09",
+    "section": "查询: 需求驱动的编译",
+    "pages": "PDF 94",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0041"
+  },
+  {
+    "id": "SRC-S09-042",
+    "source": "S09",
+    "section": "查询求值模型的详细介绍",
+    "pages": "PDF 99",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0042"
+  },
+  {
+    "id": "SRC-S09-043",
+    "source": "S09",
+    "section": "Incremental compilation",
+    "pages": "PDF 102",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0043"
+  },
+  {
+    "id": "SRC-S09-045",
+    "source": "S09",
+    "section": "Incremental Compilation In Detail",
+    "pages": "PDF 105",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0045"
+  },
+  {
+    "id": "SRC-S09-046",
+    "source": "S09",
+    "section": "Incremental Compilation and the Compiler Backend",
+    "pages": "PDF 113",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0046"
+  },
+  {
+    "id": "SRC-S09-047",
+    "source": "S09",
+    "section": "Shortcomings of the Current System",
+    "pages": "PDF 113",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0047"
+  },
+  {
+    "id": "SRC-S09-048",
+    "source": "S09",
+    "section": "Debugging and Testing Dependencies",
+    "pages": "PDF 114",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0048"
+  },
+  {
+    "id": "SRC-S09-049",
+    "source": "S09",
+    "section": "Profiling Queries",
+    "pages": "PDF 116",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0049"
+  },
+  {
+    "id": "SRC-S09-050",
+    "source": "S09",
+    "section": "Background",
+    "pages": "PDF 122",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0050"
+  },
+  {
+    "id": "SRC-S09-051",
+    "source": "S09",
+    "section": "How Salsa works",
+    "pages": "PDF 124",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0051"
+  },
+  {
+    "id": "SRC-S09-052",
+    "source": "S09",
+    "section": "Memory Management in Rustc",
+    "pages": "PDF 129",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0052"
+  },
+  {
+    "id": "SRC-S09-054",
+    "source": "S09",
+    "section": "The Rustc Driver and Interface",
+    "pages": "PDF 131",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0054"
+  },
+  {
+    "id": "SRC-S09-056",
+    "source": "S09",
+    "section": "Example: Type checking through rustc_interface",
+    "pages": "PDF 136",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0056"
+  },
+  {
+    "id": "SRC-S09-057",
+    "source": "S09",
+    "section": "符号与AST",
+    "pages": "PDF 137",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0057"
+  },
+  {
+    "id": "SRC-S09-058",
+    "source": "S09",
+    "section": "词法分析与语法分析",
+    "pages": "PDF 138",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0058"
+  },
+  {
+    "id": "SRC-S09-059",
+    "source": "S09",
+    "section": "Macro expansion",
+    "pages": "PDF 144",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0059"
+  },
+  {
+    "id": "SRC-S09-061",
+    "source": "S09",
+    "section": "Name resolution",
+    "pages": "PDF 161",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0061"
+  },
+  {
+    "id": "SRC-S09-062",
+    "source": "S09",
+    "section": "AST Validation",
+    "pages": "PDF 164",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0062"
+  },
+  {
+    "id": "SRC-S09-063",
+    "source": "S09",
+    "section": "Feature Gate Checking",
+    "pages": "PDF 164",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0063"
+  },
+  {
+    "id": "SRC-S09-064",
+    "source": "S09",
+    "section": "HIR",
+    "pages": "PDF 164",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0064"
+  },
+  {
+    "id": "SRC-S09-065",
+    "source": "S09",
+    "section": "Lowering",
+    "pages": "PDF 166",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0065"
+  },
+  {
+    "id": "SRC-S09-066",
+    "source": "S09",
+    "section": "HIR Debugging",
+    "pages": "PDF 167",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.8",
+    "evidence": "sources/reviews/S09.md#review-s09-u0066"
+  },
+  {
+    "id": "SRC-S09-067",
+    "source": "S09",
+    "section": "MIR （中层IR）",
+    "pages": "PDF 167",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0067"
+  },
+  {
+    "id": "SRC-S09-068",
+    "source": "S09",
+    "section": "HAIR 和 MIR 的构建",
+    "pages": "PDF 171",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0068"
+  },
+  {
+    "id": "SRC-S09-069",
+    "source": "S09",
+    "section": "MIR 访问者",
+    "pages": "PDF 175",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0069"
+  },
+  {
+    "id": "SRC-S09-070",
+    "source": "S09",
+    "section": "MIR passes",
+    "pages": "PDF 176",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0070"
+  },
+  {
+    "id": "SRC-S09-071",
+    "source": "S09",
+    "section": "Closure Expansion in rustc",
+    "pages": "PDF 177",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0071"
+  },
+  {
+    "id": "SRC-S09-073",
+    "source": "S09",
+    "section": "ty 模块：类型的表示",
+    "pages": "PDF 181",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0073"
+  },
+  {
+    "id": "SRC-S09-074",
+    "source": "S09",
+    "section": "范型和替换",
+    "pages": "PDF 187",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0074"
+  },
+  {
+    "id": "SRC-S09-075",
+    "source": "S09",
+    "section": "TypeFoldable and TypeFolder",
+    "pages": "PDF 189",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0075"
+  },
+  {
+    "id": "SRC-S09-076",
+    "source": "S09",
+    "section": "Generic arguments",
+    "pages": "PDF 191",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0076"
+  },
+  {
+    "id": "SRC-S09-077",
+    "source": "S09",
+    "section": "Type inference",
+    "pages": "PDF 192",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0077"
+  },
+  {
+    "id": "SRC-S09-078",
+    "source": "S09",
+    "section": "Trait resolution (old-style)",
+    "pages": "PDF 197",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0078"
+  },
+  {
+    "id": "SRC-S09-079",
+    "source": "S09",
+    "section": "Higher-ranked trait bounds",
+    "pages": "PDF 203",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0079"
+  },
+  {
+    "id": "SRC-S09-080",
+    "source": "S09",
+    "section": "Caching and subtle considerations therewith",
+    "pages": "PDF 205",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0080"
+  },
+  {
+    "id": "SRC-S09-081",
+    "source": "S09",
+    "section": "Specialization",
+    "pages": "PDF 206",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0081"
+  },
+  {
+    "id": "SRC-S09-082",
+    "source": "S09",
+    "section": "Trait solving (new-style)",
+    "pages": "PDF 207",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0082"
+  },
+  {
+    "id": "SRC-S09-083",
+    "source": "S09",
+    "section": "Lowering to logic",
+    "pages": "PDF 208",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0083"
+  },
+  {
+    "id": "SRC-S09-084",
+    "source": "S09",
+    "section": "Goals and clauses",
+    "pages": "PDF 212",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0084"
+  },
+  {
+    "id": "SRC-S09-085",
+    "source": "S09",
+    "section": "Equality and associated types",
+    "pages": "PDF 217",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0085"
+  },
+  {
+    "id": "SRC-S09-086",
+    "source": "S09",
+    "section": "Implied Bounds",
+    "pages": "PDF 220",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0086"
+  },
+  {
+    "id": "SRC-S09-087",
+    "source": "S09",
+    "section": "Region constraints",
+    "pages": "PDF 229",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0087"
+  },
+  {
+    "id": "SRC-S09-088",
+    "source": "S09",
+    "section": "The lowering module in rustc",
+    "pages": "PDF 230",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0088"
+  },
+  {
+    "id": "SRC-S09-090",
+    "source": "S09",
+    "section": "Well-formedness checking",
+    "pages": "PDF 238",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0090"
+  },
+  {
+    "id": "SRC-S09-094",
+    "source": "S09",
+    "section": "Canonical queries",
+    "pages": "PDF 249",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0094"
+  },
+  {
+    "id": "SRC-S09-095",
+    "source": "S09",
+    "section": "Canonicalization",
+    "pages": "PDF 253",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0095"
+  },
+  {
+    "id": "SRC-S09-096",
+    "source": "S09",
+    "section": "The On-Demand SLG solver",
+    "pages": "PDF 257",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.6",
+    "evidence": "sources/reviews/S09.md#review-s09-u0096"
+  },
+  {
+    "id": "SRC-S09-097",
+    "source": "S09",
+    "section": "An Overview of Chalk",
+    "pages": "PDF 262",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0097"
+  },
+  {
+    "id": "SRC-S09-099",
+    "source": "S09",
+    "section": "Type checking",
+    "pages": "PDF 267",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0099"
+  },
+  {
+    "id": "SRC-S09-100",
+    "source": "S09",
+    "section": "Method lookup",
+    "pages": "PDF 268",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0100"
+  },
+  {
+    "id": "SRC-S09-101",
+    "source": "S09",
+    "section": "Variance of type and lifetime parameters",
+    "pages": "PDF 270",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0101"
+  },
+  {
+    "id": "SRC-S09-102",
+    "source": "S09",
+    "section": "Opaque types (type alias impl Trait)",
+    "pages": "PDF 276",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0102"
+  },
+  {
+    "id": "SRC-S09-103",
+    "source": "S09",
+    "section": "Pattern and Exhaustiveness Checking",
+    "pages": "PDF 277",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0103"
+  },
+  {
+    "id": "SRC-S09-104",
+    "source": "S09",
+    "section": "MIR borrow check",
+    "pages": "PDF 277",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0104"
+  },
+  {
+    "id": "SRC-S09-105",
+    "source": "S09",
+    "section": "Tracking moves and initialization",
+    "pages": "PDF 278",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0105"
+  },
+  {
+    "id": "SRC-S09-106",
+    "source": "S09",
+    "section": "Move paths",
+    "pages": "PDF 279",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0106"
+  },
+  {
+    "id": "SRC-S09-107",
+    "source": "S09",
+    "section": "The MIR type-check",
+    "pages": "PDF 281",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0107"
+  },
+  {
+    "id": "SRC-S09-108",
+    "source": "S09",
+    "section": "Region inference (NLL)",
+    "pages": "PDF 281",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0108"
+  },
+  {
+    "id": "SRC-S09-109",
+    "source": "S09",
+    "section": "Constraint propagation",
+    "pages": "PDF 286",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0109"
+  },
+  {
+    "id": "SRC-S09-110",
+    "source": "S09",
+    "section": "Universal regions",
+    "pages": "PDF 289",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0110"
+  },
+  {
+    "id": "SRC-S09-111",
+    "source": "S09",
+    "section": "Member constraints",
+    "pages": "PDF 292",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0111"
+  },
+  {
+    "id": "SRC-S09-112",
+    "source": "S09",
+    "section": "Placeholders and universes",
+    "pages": "PDF 295",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0112"
+  },
+  {
+    "id": "SRC-S09-113",
+    "source": "S09",
+    "section": "Propagating closure constraints",
+    "pages": "PDF 303",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0113"
+  },
+  {
+    "id": "SRC-S09-114",
+    "source": "S09",
+    "section": "Reporting region errors",
+    "pages": "PDF 303",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.8",
+    "evidence": "sources/reviews/S09.md#review-s09-u0114"
+  },
+  {
+    "id": "SRC-S09-115",
+    "source": "S09",
+    "section": "Two-phase borrows",
+    "pages": "PDF 303",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0115"
+  },
+  {
+    "id": "SRC-S09-116",
+    "source": "S09",
+    "section": "Parameter Environment",
+    "pages": "PDF 305",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0116"
+  },
+  {
+    "id": "SRC-S09-118",
+    "source": "S09",
+    "section": "MIR （中层IR）",
+    "pages": "PDF 307",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0118"
+  },
+  {
+    "id": "SRC-S09-119",
+    "source": "S09",
+    "section": "MIR optimizations",
+    "pages": "PDF 311",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0119"
+  },
+  {
+    "id": "SRC-S09-120",
+    "source": "S09",
+    "section": "MIR Debugging",
+    "pages": "PDF 312",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
+    "evidence": "sources/reviews/S09.md#review-s09-u0120"
+  },
+  {
+    "id": "SRC-S09-121",
+    "source": "S09",
+    "section": "Constant Evaluation",
+    "pages": "PDF 314",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
+    "evidence": "sources/reviews/S09.md#review-s09-u0121"
+  },
+  {
+    "id": "SRC-S09-122",
+    "source": "S09",
+    "section": "Miri",
+    "pages": "PDF 314",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
+    "evidence": "sources/reviews/S09.md#review-s09-u0122"
+  },
+  {
+    "id": "SRC-S09-123",
+    "source": "S09",
+    "section": "Monomorphization",
+    "pages": "PDF 319",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0123"
+  },
+  {
+    "id": "SRC-S09-124",
+    "source": "S09",
+    "section": "Lowering MIR to a Codegen IR",
+    "pages": "PDF 321",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0124"
+  },
+  {
+    "id": "SRC-S09-125",
+    "source": "S09",
+    "section": "Code generation",
+    "pages": "PDF 321",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0125"
+  },
+  {
+    "id": "SRC-S09-127",
+    "source": "S09",
+    "section": "Backend Agnostic Codegen",
+    "pages": "PDF 330",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0127"
+  },
+  {
+    "id": "SRC-S09-128",
+    "source": "S09",
+    "section": "Refactoring of rustc_codegen_llvm",
+    "pages": "PDF 330",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.1",
+    "evidence": "sources/reviews/S09.md#review-s09-u0128"
+  },
+  {
+    "id": "SRC-S09-129",
+    "source": "S09",
+    "section": "Implicit Caller Location",
+    "pages": "PDF 334",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0129"
+  },
+  {
+    "id": "SRC-S09-130",
+    "source": "S09",
+    "section": "Profile Guided Optimization",
+    "pages": "PDF 340",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.7",
+    "evidence": "sources/reviews/S09.md#review-s09-u0130"
+  },
+  {
+    "id": "SRC-S09-131",
+    "source": "S09",
+    "section": "Sanitizers Support",
+    "pages": "PDF 343",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.5",
+    "evidence": "sources/reviews/S09.md#review-s09-u0131"
+  },
+  {
+    "id": "SRC-S09-132",
+    "source": "S09",
+    "section": "Debugging support in the Rust compiler",
+    "pages": "PDF 344",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.4",
+    "evidence": "sources/reviews/S09.md#review-s09-u0132"
+  },
+  {
+    "id": "SRC-S09-133",
+    "source": "S09",
+    "section": "Appendix B: Background topics",
+    "pages": "PDF 353",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
+    "evidence": "sources/reviews/S09.md#review-s09-u0133"
+  },
+  {
+    "id": "SRC-S10-010",
+    "source": "S10",
+    "section": "宏",
+    "pages": "PDF 32",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0010"
+  },
+  {
+    "id": "SRC-S10-011",
+    "source": "S10",
+    "section": "声明宏",
+    "pages": "PDF 34",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0011"
+  },
+  {
+    "id": "SRC-S10-012",
+    "source": "S10",
+    "section": "crate 和源文件",
+    "pages": "PDF 49",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0012"
+  },
+  {
+    "id": "SRC-S10-013",
+    "source": "S10",
+    "section": "条件编译",
+    "pages": "PDF 52",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0013"
+  },
+  {
+    "id": "SRC-S10-018",
+    "source": "S10",
+    "section": "函数",
+    "pages": "PDF 71",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0018"
+  },
+  {
+    "id": "SRC-S10-020",
+    "source": "S10",
+    "section": "结构体",
+    "pages": "PDF 79",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0020"
+  },
+  {
+    "id": "SRC-S10-021",
+    "source": "S10",
+    "section": "枚举",
+    "pages": "PDF 81",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0021"
+  },
+  {
+    "id": "SRC-S10-022",
+    "source": "S10",
+    "section": "联合体",
+    "pages": "PDF 85",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0022"
+  },
+  {
+    "id": "SRC-S10-023",
+    "source": "S10",
+    "section": "常量项",
+    "pages": "PDF 89",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
+    "evidence": "sources/reviews/S10.md#review-s10-u0023"
+  },
+  {
+    "id": "SRC-S10-024",
+    "source": "S10",
+    "section": "静态项",
+    "pages": "PDF 92",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0024"
+  },
+  {
+    "id": "SRC-S10-025",
+    "source": "S10",
+    "section": "Trait",
+    "pages": "PDF 94",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0025"
+  },
+  {
+    "id": "SRC-S10-026",
+    "source": "S10",
+    "section": "实现",
+    "pages": "PDF 101",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0026"
+  },
+  {
+    "id": "SRC-S10-027",
+    "source": "S10",
+    "section": "外部块",
+    "pages": "PDF 107",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0027"
+  },
+  {
+    "id": "SRC-S10-028",
+    "source": "S10",
+    "section": "类型参数和生存期参数",
+    "pages": "PDF 111",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0028"
+  },
+  {
+    "id": "SRC-S10-029",
+    "source": "S10",
+    "section": "关联项",
+    "pages": "PDF 117",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0029"
+  },
+  {
+    "id": "SRC-S10-031",
+    "source": "S10",
+    "section": "测试类属性",
+    "pages": "PDF 130",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0031"
+  },
+  {
+    "id": "SRC-S10-032",
+    "source": "S10",
+    "section": "派生",
+    "pages": "PDF 132",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0032"
+  },
+  {
+    "id": "SRC-S10-033",
+    "source": "S10",
+    "section": "诊断属性",
+    "pages": "PDF 133",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0033"
+  },
+  {
+    "id": "SRC-S10-034",
+    "source": "S10",
+    "section": "代码生成属性",
+    "pages": "PDF 140",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0034"
+  },
+  {
+    "id": "SRC-S10-035",
+    "source": "S10",
+    "section": "极值设置",
+    "pages": "PDF 146",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.5",
+    "evidence": "sources/reviews/S10.md#review-s10-u0035"
+  },
+  {
+    "id": "SRC-S10-036",
+    "source": "S10",
+    "section": "类型系统属性",
+    "pages": "PDF 148",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0036"
+  },
+  {
+    "id": "SRC-S10-038",
+    "source": "S10",
+    "section": "语句",
+    "pages": "PDF 153",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0038"
+  },
+  {
+    "id": "SRC-S10-039",
+    "source": "S10",
+    "section": "表达式",
+    "pages": "PDF 156",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0039"
+  },
+  {
+    "id": "SRC-S10-042",
+    "source": "S10",
+    "section": "块表达式",
+    "pages": "PDF 165",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0042"
+  },
+  {
+    "id": "SRC-S10-043",
+    "source": "S10",
+    "section": "操作符/运算符表达式",
+    "pages": "PDF 169",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0043"
+  },
+  {
+    "id": "SRC-S10-045",
+    "source": "S10",
+    "section": "数组和数组索引表达式",
+    "pages": "PDF 183",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0045"
+  },
+  {
+    "id": "SRC-S10-047",
+    "source": "S10",
+    "section": "结构体表达式",
+    "pages": "PDF 189",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0047"
+  },
+  {
+    "id": "SRC-S10-048",
+    "source": "S10",
+    "section": "调用表达式",
+    "pages": "PDF 192",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0048"
+  },
+  {
+    "id": "SRC-S10-049",
+    "source": "S10",
+    "section": "方法调用表达式",
+    "pages": "PDF 194",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0049"
+  },
+  {
+    "id": "SRC-S10-050",
+    "source": "S10",
+    "section": "字段访问表达式",
+    "pages": "PDF 196",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0050"
+  },
+  {
+    "id": "SRC-S10-051",
+    "source": "S10",
+    "section": "闭包表达式",
+    "pages": "PDF 198",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0051"
+  },
+  {
+    "id": "SRC-S10-052",
+    "source": "S10",
+    "section": "循环",
+    "pages": "PDF 200",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0052"
+  },
+  {
+    "id": "SRC-S10-053",
+    "source": "S10",
+    "section": "区间表达式",
+    "pages": "PDF 206",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0053"
+  },
+  {
+    "id": "SRC-S10-055",
+    "source": "S10",
+    "section": "匹配(match)表达式",
+    "pages": "PDF 211",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0055"
+  },
+  {
+    "id": "SRC-S10-056",
+    "source": "S10",
+    "section": "返回(return)表达式",
+    "pages": "PDF 214",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0056"
+  },
+  {
+    "id": "SRC-S10-057",
+    "source": "S10",
+    "section": "等待(await)表达式",
+    "pages": "PDF 215",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0057"
+  },
+  {
+    "id": "SRC-S10-058",
+    "source": "S10",
+    "section": "模式",
+    "pages": "PDF 217",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0058"
+  },
+  {
+    "id": "SRC-S10-060",
+    "source": "S10",
+    "section": "类型",
+    "pages": "PDF 234",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0060"
+  },
+  {
+    "id": "SRC-S10-061",
+    "source": "S10",
+    "section": "布尔型",
+    "pages": "PDF 237",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0061"
+  },
+  {
+    "id": "SRC-S10-062",
+    "source": "S10",
+    "section": "数字型",
+    "pages": "PDF 240",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.6",
+    "evidence": "sources/reviews/S10.md#review-s10-u0062"
+  },
+  {
+    "id": "SRC-S10-063",
+    "source": "S10",
+    "section": "文本类类型",
+    "pages": "PDF 242",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0063"
+  },
+  {
+    "id": "SRC-S10-065",
+    "source": "S10",
+    "section": "元组类型",
+    "pages": "PDF 244",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0065"
+  },
+  {
+    "id": "SRC-S10-066",
+    "source": "S10",
+    "section": "数组类型",
+    "pages": "PDF 245",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0066"
+  },
+  {
+    "id": "SRC-S10-067",
+    "source": "S10",
+    "section": "切片类型",
+    "pages": "PDF 246",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0067"
+  },
+  {
+    "id": "SRC-S10-068",
+    "source": "S10",
+    "section": "结构体类型",
+    "pages": "PDF 247",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0068"
+  },
+  {
+    "id": "SRC-S10-069",
+    "source": "S10",
+    "section": "枚举类型",
+    "pages": "PDF 248",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0069"
+  },
+  {
+    "id": "SRC-S10-070",
+    "source": "S10",
+    "section": "联合体类型",
+    "pages": "PDF 249",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0070"
+  },
+  {
+    "id": "SRC-S10-071",
+    "source": "S10",
+    "section": "函数项类型",
+    "pages": "PDF 250",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0071"
+  },
+  {
+    "id": "SRC-S10-072",
+    "source": "S10",
+    "section": "闭包类型",
+    "pages": "PDF 251",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0072"
+  },
+  {
+    "id": "SRC-S10-073",
+    "source": "S10",
+    "section": "指针类型",
+    "pages": "PDF 255",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0073"
+  },
+  {
+    "id": "SRC-S10-074",
+    "source": "S10",
+    "section": "函数指针类型",
+    "pages": "PDF 257",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0074"
+  },
+  {
+    "id": "SRC-S10-075",
+    "source": "S10",
+    "section": "trait对象",
+    "pages": "PDF 259",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0075"
+  },
+  {
+    "id": "SRC-S10-076",
+    "source": "S10",
+    "section": "实现trait",
+    "pages": "PDF 262",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0076"
+  },
+  {
+    "id": "SRC-S10-077",
+    "source": "S10",
+    "section": "类型参数",
+    "pages": "PDF 264",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0077"
+  },
+  {
+    "id": "SRC-S10-079",
+    "source": "S10",
+    "section": "动态尺寸类型",
+    "pages": "PDF 266",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0079"
+  },
+  {
+    "id": "SRC-S10-080",
+    "source": "S10",
+    "section": "类型布局",
+    "pages": "PDF 267",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0080"
+  },
+  {
+    "id": "SRC-S10-081",
+    "source": "S10",
+    "section": "内部可变性",
+    "pages": "PDF 280",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0081"
+  },
+  {
+    "id": "SRC-S10-082",
+    "source": "S10",
+    "section": "子类型化和型变",
+    "pages": "PDF 281",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0082"
+  },
+  {
+    "id": "SRC-S10-083",
+    "source": "S10",
+    "section": "trait 约束和生命周期约束",
+    "pages": "PDF 283",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0083"
+  },
+  {
+    "id": "SRC-S10-084",
+    "source": "S10",
+    "section": "类型自动强转",
+    "pages": "PDF 287",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0084"
+  },
+  {
+    "id": "SRC-S10-085",
+    "source": "S10",
+    "section": "析构函数",
+    "pages": "PDF 294",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.8",
+    "evidence": "sources/reviews/S10.md#review-s10-u0085"
+  },
+  {
+    "id": "SRC-S10-086",
+    "source": "S10",
+    "section": "生命周期(类型参数)省略",
+    "pages": "PDF 301",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "sources/reviews/S10.md#review-s10-u0086"
+  },
+  {
+    "id": "SRC-S10-087",
+    "source": "S10",
+    "section": "特殊类型和 trait",
+    "pages": "PDF 306",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0087"
+  },
+  {
+    "id": "SRC-S10-094",
+    "source": "S10",
+    "section": "可见性与隐私权",
+    "pages": "PDF 328",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0094"
+  },
+  {
+    "id": "SRC-S10-095",
+    "source": "S10",
+    "section": "内存模型",
+    "pages": "PDF 334",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.5",
+    "evidence": "sources/reviews/S10.md#review-s10-u0095"
+  },
+  {
+    "id": "SRC-S10-096",
+    "source": "S10",
+    "section": "内存分配和生存期",
+    "pages": "PDF 335",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.7",
+    "evidence": "sources/reviews/S10.md#review-s10-u0096"
+  },
+  {
+    "id": "SRC-S10-097",
+    "source": "S10",
+    "section": "变量",
+    "pages": "PDF 336",
+    "status": "read-mapped",
+    "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0097"
+  },
+  {
+    "id": "SRC-S10-098",
+    "source": "S10",
+    "section": "链接",
+    "pages": "PDF 337",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0098"
+  },
+  {
+    "id": "SRC-S10-099",
+    "source": "S10",
+    "section": "非安全性",
+    "pages": "PDF 341",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0099"
+  },
+  {
+    "id": "SRC-S10-100",
+    "source": "S10",
+    "section": "非安全函数",
+    "pages": "PDF 342",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
+    "evidence": "sources/reviews/S10.md#review-s10-u0100"
+  },
+  {
+    "id": "SRC-S10-101",
+    "source": "S10",
+    "section": "非安全块",
+    "pages": "PDF 343",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0101"
+  },
+  {
+    "id": "SRC-S10-102",
+    "source": "S10",
+    "section": "常量求值",
+    "pages": "PDF 349",
+    "status": "read-mapped",
+    "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
+    "evidence": "sources/reviews/S10.md#review-s10-u0102"
+  },
+  {
+    "id": "SRC-S10-103",
+    "source": "S10",
+    "section": "应用程序二进制接口(ABI)",
+    "pages": "PDF 352",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.1",
+    "evidence": "sources/reviews/S10.md#review-s10-u0103"
+  },
+  {
+    "id": "SRC-S10-104",
+    "source": "S10",
+    "section": "Rust 运行时",
+    "pages": "PDF 355",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "sources/reviews/S10.md#review-s10-u0104"
+  }
+]

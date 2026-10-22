@@ -1,0 +1,25 @@
+[package]
+name = "agent-runtime"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+tokio = { version = "=1.54.0", features = ["rt-multi-thread", "macros", "process", "io-util", "sync", "time"] }
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "agent-runtime"
+path = "src/main.rs"
+
+[[bin]]
+name = "tool-helper"
+path = "src/bin/tool-helper.rs"
+
+[[bin]]
+name = "runtime-bench"
+path = "src/bin/runtime-bench.rs"

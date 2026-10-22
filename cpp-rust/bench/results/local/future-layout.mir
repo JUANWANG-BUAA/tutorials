@@ -1,0 +1,945 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+fn <impl at examples/future_layout.rs:12:1: 12:20>::drop(_1: &mut Guard) -> () {
+    debug self => _1;
+    let mut _0: ();
+    let _2: usize;
+    let _3: &std::sync::atomic::Atomic<usize>;
+    let mut _4: &std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _5: std::sync::atomic::Ordering;
+
+    bb0: {
+        _4 = &((*_1).0: std::sync::Arc<std::sync::atomic::Atomic<usize>>);
+        _3 = <Arc<Atomic<usize>> as Deref>::deref(move _4) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        _5 = std::sync::atomic::Ordering::Relaxed;
+        _2 = Atomic::<usize>::fetch_add(copy _3, const 1_usize, move _5) -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        return;
+    }
+}
+
+fn cancellation_probe(_1: Arc<Atomic<usize>>) -> {async fn body of cancellation_probe()} {
+    debug count => _1;
+    let mut _0: {async fn body of cancellation_probe()};
+
+    bb0: {
+        _0 = {coroutine@examples/future_layout.rs:18:54: 21:2 (#0)} { count: move _1 };
+        return;
+    }
+}
+
+fn cancellation_probe::{closure#0}(_1: Pin<&mut {async fn body of cancellation_probe()}>, _2: &mut Context<'_>) -> Poll<()> {
+    coroutine layout {
+        field _s0: Guard;
+        field _s1: std::future::Pending<()>;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1],
+        }
+        storage_conflicts = BitMatrix(2x2) {(_s0, _s0), (_s0, _s1), (_s1, _s0), (_s1, _s1)}
+    }
+    debug _task_context => _16;
+    debug count => ((*_15).0: std::sync::Arc<std::sync::atomic::Atomic<usize>>);
+    let mut _0: std::task::Poll<()>;
+    let _3: std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _4: std::future::Pending<()>;
+    let mut _5: std::future::Pending<()>;
+    let mut _6: std::task::Poll<()>;
+    let mut _7: std::pin::Pin<&mut std::future::Pending<()>>;
+    let mut _8: &mut std::future::Pending<()>;
+    let mut _9: &mut std::task::Context<'_>;
+    let mut _10: std::future::ResumeTy;
+    let mut _11: isize;
+    let mut _13: std::future::ResumeTy;
+    let mut _14: u32;
+    let mut _15: &mut {async fn body of cancellation_probe()};
+    let mut _16: std::future::ResumeTy;
+    let mut _17: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug count => _3;
+        coroutine debug _guard => _s0;
+        scope 2 {
+            debug _guard => (((*_15) as variant#3).0: Guard);
+            coroutine debug __awaitee => _s1;
+            scope 3 {
+                debug __awaitee => (((*_15) as variant#3).1: std::future::Pending<()>);
+                let _12: ();
+                scope 4 {
+                    debug result => _12;
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _17 = move _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _16 = std::future::ResumeTy(move _17);
+        _15 = copy (_1.0: &mut {async fn body of cancellation_probe()});
+        _14 = discriminant((*_15));
+        switchInt(move _14) -> [0: bb15, 1: bb14, 2: bb13, 3: bb12, otherwise: bb6];
+    }
+
+    bb1: {
+        _4 = <std::future::Pending<()> as IntoFuture>::into_future(move _5) -> [return: bb2, unwind: bb10];
+    }
+
+    bb2: {
+        (((*_15) as variant#3).1: std::future::Pending<()>) = move _4;
+        goto -> bb3;
+    }
+
+    bb3: {
+        _8 = &mut (((*_15) as variant#3).1: std::future::Pending<()>);
+        _7 = Pin::<&mut std::future::Pending<()>>::new_unchecked(copy _8) -> [return: bb4, unwind: bb10];
+    }
+
+    bb4: {
+        _10 = copy _16;
+        _9 = copy (_10.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _6 = <std::future::Pending<()> as Future>::poll(move _7, copy _9) -> [return: bb5, unwind: bb10];
+    }
+
+    bb5: {
+        _11 = discriminant(_6);
+        switchInt(move _11) -> [0: bb8, 1: bb7, otherwise: bb6];
+    }
+
+    bb6: {
+        unreachable;
+    }
+
+    bb7: {
+        _0 = Poll::<()>::Pending;
+        discriminant((*_15)) = 3;
+        return;
+    }
+
+    bb8: {
+        _12 = copy ((_6 as Ready).0: ());
+        drop((((*_15) as variant#3).0: Guard)) -> [return: bb9, unwind: bb11];
+    }
+
+    bb9: {
+        _0 = Poll::<()>::Ready(const ());
+        discriminant((*_15)) = 1;
+        return;
+    }
+
+    bb10 (cleanup): {
+        drop((((*_15) as variant#3).0: Guard)) -> [return: bb11, unwind terminate(cleanup)];
+    }
+
+    bb11 (cleanup): {
+        discriminant((*_15)) = 2;
+        resume;
+    }
+
+    bb12: {
+        _13 = move _16;
+        _16 = move _13;
+        goto -> bb3;
+    }
+
+    bb13: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb13, unwind continue];
+    }
+
+    bb14: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb14, unwind continue];
+    }
+
+    bb15: {
+        _3 = move ((*_15).0: std::sync::Arc<std::sync::atomic::Atomic<usize>>);
+        (((*_15) as variant#3).0: Guard) = Guard(copy _3);
+        _5 = pending::<()>() -> [return: bb1, unwind: bb10];
+    }
+}
+
+fn large_across_await() -> {async fn body of large_across_await()} {
+    let mut _0: {async fn body of large_across_await()};
+
+    bb0: {
+        _0 = {coroutine@examples/future_layout.rs:23:37: 27:2 (#0)};
+        return;
+    }
+}
+
+fn large_across_await::{closure#0}(_1: Pin<&mut {async fn body of large_across_await()}>, _2: &mut Context<'_>) -> Poll<u8> {
+    coroutine layout {
+        field _s0: [u8; 4096];
+        field _s1: std::future::Pending<()>;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1],
+        }
+        storage_conflicts = BitMatrix(2x2) {(_s0, _s0), (_s0, _s1), (_s1, _s0), (_s1, _s1)}
+    }
+    debug _task_context => _20;
+    coroutine debug bytes => _s0;
+    let mut _0: std::task::Poll<u8>;
+    let mut _3: [u8; 4096];
+    let mut _4: std::future::Pending<()>;
+    let mut _5: std::future::Pending<()>;
+    let mut _6: std::task::Poll<()>;
+    let mut _7: std::pin::Pin<&mut std::future::Pending<()>>;
+    let mut _8: &mut std::future::Pending<()>;
+    let mut _9: &mut std::task::Context<'_>;
+    let mut _10: std::future::ResumeTy;
+    let mut _11: isize;
+    let mut _13: std::future::ResumeTy;
+    let mut _14: u8;
+    let _15: usize;
+    let mut _16: bool;
+    let mut _17: u8;
+    let mut _18: u32;
+    let mut _19: &mut {async fn body of large_across_await()};
+    let mut _20: std::future::ResumeTy;
+    let mut _21: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug bytes => (((*_19) as variant#3).0: [u8; 4096]);
+        coroutine debug __awaitee => _s1;
+        scope 2 {
+            debug __awaitee => (((*_19) as variant#3).1: std::future::Pending<()>);
+            let _12: ();
+            scope 3 {
+                debug result => _12;
+            }
+        }
+    }
+
+    bb0: {
+        _21 = move _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _20 = std::future::ResumeTy(move _21);
+        _19 = copy (_1.0: &mut {async fn body of large_across_await()});
+        _18 = discriminant((*_19));
+        switchInt(move _18) -> [0: bb16, 1: bb15, 2: bb14, 3: bb13, otherwise: bb7];
+    }
+
+    bb1: {
+        _5 = pending::<()>() -> [return: bb2, unwind: bb12];
+    }
+
+    bb2: {
+        _4 = <std::future::Pending<()> as IntoFuture>::into_future(move _5) -> [return: bb3, unwind: bb12];
+    }
+
+    bb3: {
+        (((*_19) as variant#3).1: std::future::Pending<()>) = move _4;
+        goto -> bb4;
+    }
+
+    bb4: {
+        _8 = &mut (((*_19) as variant#3).1: std::future::Pending<()>);
+        _7 = Pin::<&mut std::future::Pending<()>>::new_unchecked(copy _8) -> [return: bb5, unwind: bb12];
+    }
+
+    bb5: {
+        _10 = copy _20;
+        _9 = copy (_10.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _6 = <std::future::Pending<()> as Future>::poll(move _7, copy _9) -> [return: bb6, unwind: bb12];
+    }
+
+    bb6: {
+        _11 = discriminant(_6);
+        switchInt(move _11) -> [0: bb9, 1: bb8, otherwise: bb7];
+    }
+
+    bb7: {
+        unreachable;
+    }
+
+    bb8: {
+        _0 = Poll::<u8>::Pending;
+        discriminant((*_19)) = 3;
+        return;
+    }
+
+    bb9: {
+        _12 = copy ((_6 as Ready).0: ());
+        _15 = const 0_usize;
+        _16 = Lt(copy _15, const 4096_usize);
+        assert(move _16, "index out of bounds: the length is {} but the index is {}", const 4096_usize, copy _15) -> [success: bb10, unwind: bb12];
+    }
+
+    bb10: {
+        _14 = copy (((*_19) as variant#3).0: [u8; 4096])[_15];
+        _17 = std::hint::black_box::<u8>(move _14) -> [return: bb11, unwind: bb12];
+    }
+
+    bb11: {
+        _0 = Poll::<u8>::Ready(move _17);
+        discriminant((*_19)) = 1;
+        return;
+    }
+
+    bb12 (cleanup): {
+        discriminant((*_19)) = 2;
+        resume;
+    }
+
+    bb13: {
+        _13 = move _20;
+        _20 = move _13;
+        goto -> bb4;
+    }
+
+    bb14: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb14, unwind continue];
+    }
+
+    bb15: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb15, unwind continue];
+    }
+
+    bb16: {
+        _3 = [const 7_u8; 4096];
+        (((*_19) as variant#3).0: [u8; 4096]) = std::hint::black_box::<[u8; 4096]>(move _3) -> [return: bb1, unwind: bb12];
+    }
+}
+
+const large_across_await::{closure#0}::{constant#0}: usize = const 4096_usize;
+
+fn large_before_await() -> {async fn body of large_before_await()} {
+    let mut _0: {async fn body of large_before_await()};
+
+    bb0: {
+        _0 = {coroutine@examples/future_layout.rs:29:37: 36:2 (#0)};
+        return;
+    }
+}
+
+fn large_before_await::{closure#0}(_1: Pin<&mut {async fn body of large_before_await()}>, _2: &mut Context<'_>) -> Poll<u8> {
+    coroutine layout {
+        field _s0: u8;
+        field _s1: std::future::Pending<()>;
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1],
+        }
+        storage_conflicts = BitMatrix(2x2) {(_s0, _s0), (_s0, _s1), (_s1, _s0), (_s1, _s1)}
+    }
+    debug _task_context => _21;
+    coroutine debug first => _s0;
+    let mut _0: std::task::Poll<u8>;
+    let _3: [u8; 4096];
+    let mut _4: [u8; 4096];
+    let mut _5: u8;
+    let _6: usize;
+    let mut _7: bool;
+    let mut _8: std::future::Pending<()>;
+    let mut _9: std::future::Pending<()>;
+    let mut _10: std::task::Poll<()>;
+    let mut _11: std::pin::Pin<&mut std::future::Pending<()>>;
+    let mut _12: &mut std::future::Pending<()>;
+    let mut _13: &mut std::task::Context<'_>;
+    let mut _14: std::future::ResumeTy;
+    let mut _15: isize;
+    let mut _17: std::future::ResumeTy;
+    let mut _18: u8;
+    let mut _19: u32;
+    let mut _20: &mut {async fn body of large_before_await()};
+    let mut _21: std::future::ResumeTy;
+    let mut _22: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug first => (((*_20) as variant#3).0: u8);
+        coroutine debug __awaitee => _s1;
+        scope 3 {
+            debug __awaitee => (((*_20) as variant#3).1: std::future::Pending<()>);
+            let _16: ();
+            scope 4 {
+                debug result => _16;
+            }
+        }
+    }
+    scope 2 {
+        debug bytes => _3;
+    }
+
+    bb0: {
+        _22 = move _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _21 = std::future::ResumeTy(move _22);
+        _20 = copy (_1.0: &mut {async fn body of large_before_await()});
+        _19 = discriminant((*_20));
+        switchInt(move _19) -> [0: bb16, 1: bb15, 2: bb14, 3: bb13, otherwise: bb9];
+    }
+
+    bb1: {
+        _6 = const 0_usize;
+        _7 = Lt(copy _6, const 4096_usize);
+        assert(move _7, "index out of bounds: the length is {} but the index is {}", const 4096_usize, copy _6) -> [success: bb2, unwind: bb12];
+    }
+
+    bb2: {
+        _5 = copy _3[_6];
+        (((*_20) as variant#3).0: u8) = std::hint::black_box::<u8>(move _5) -> [return: bb3, unwind: bb12];
+    }
+
+    bb3: {
+        _9 = pending::<()>() -> [return: bb4, unwind: bb12];
+    }
+
+    bb4: {
+        _8 = <std::future::Pending<()> as IntoFuture>::into_future(move _9) -> [return: bb5, unwind: bb12];
+    }
+
+    bb5: {
+        (((*_20) as variant#3).1: std::future::Pending<()>) = move _8;
+        goto -> bb6;
+    }
+
+    bb6: {
+        _12 = &mut (((*_20) as variant#3).1: std::future::Pending<()>);
+        _11 = Pin::<&mut std::future::Pending<()>>::new_unchecked(copy _12) -> [return: bb7, unwind: bb12];
+    }
+
+    bb7: {
+        _14 = copy _21;
+        _13 = copy (_14.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        _10 = <std::future::Pending<()> as Future>::poll(move _11, copy _13) -> [return: bb8, unwind: bb12];
+    }
+
+    bb8: {
+        _15 = discriminant(_10);
+        switchInt(move _15) -> [0: bb11, 1: bb10, otherwise: bb9];
+    }
+
+    bb9: {
+        unreachable;
+    }
+
+    bb10: {
+        _0 = Poll::<u8>::Pending;
+        discriminant((*_20)) = 3;
+        return;
+    }
+
+    bb11: {
+        _16 = copy ((_10 as Ready).0: ());
+        _18 = copy (((*_20) as variant#3).0: u8);
+        _0 = Poll::<u8>::Ready(move _18);
+        discriminant((*_20)) = 1;
+        return;
+    }
+
+    bb12 (cleanup): {
+        discriminant((*_20)) = 2;
+        resume;
+    }
+
+    bb13: {
+        _17 = move _21;
+        _21 = move _17;
+        goto -> bb6;
+    }
+
+    bb14: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb14, unwind continue];
+    }
+
+    bb15: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb15, unwind continue];
+    }
+
+    bb16: {
+        _4 = [const 7_u8; 4096];
+        _3 = std::hint::black_box::<[u8; 4096]>(move _4) -> [return: bb1, unwind: bb12];
+    }
+}
+
+const large_before_await::{closure#0}::{constant#0}: usize = const 4096_usize;
+
+fn main() -> () {
+    let mut _0: ();
+    let _1: ();
+    let mut _2: std::fmt::Arguments<'_>;
+    let _3: (&usize, &usize);
+    let mut _4: &usize;
+    let _5: usize;
+    let _6: &{async fn body of large_across_await()};
+    let _7: {async fn body of large_across_await()};
+    let mut _8: &usize;
+    let _9: usize;
+    let _10: &{async fn body of large_across_await()};
+    let _11: {async fn body of large_across_await()};
+    let mut _13: core::fmt::rt::Argument<'_>;
+    let mut _14: core::fmt::rt::Argument<'_>;
+    let mut _15: &[u8; 32];
+    let _16: &[core::fmt::rt::Argument<'_>; 2];
+    let _17: ();
+    let mut _18: std::fmt::Arguments<'_>;
+    let _19: (&usize, &usize);
+    let mut _20: &usize;
+    let _21: usize;
+    let _22: &{async fn body of large_before_await()};
+    let _23: {async fn body of large_before_await()};
+    let mut _24: &usize;
+    let _25: usize;
+    let _26: &{async fn body of large_before_await()};
+    let _27: {async fn body of large_before_await()};
+    let mut _29: core::fmt::rt::Argument<'_>;
+    let mut _30: core::fmt::rt::Argument<'_>;
+    let mut _31: &[u8; 32];
+    let _32: &[core::fmt::rt::Argument<'_>; 2];
+    let _33: std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _34: std::sync::atomic::Atomic<usize>;
+    let _35: ();
+    let mut _36: {async fn body of cancellation_probe()};
+    let mut _37: std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let _38: &std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _39: (&usize, &usize);
+    let mut _40: &usize;
+    let _41: usize;
+    let _42: &std::sync::atomic::Atomic<usize>;
+    let mut _43: &std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _44: std::sync::atomic::Ordering;
+    let mut _45: &usize;
+    let mut _48: bool;
+    let mut _49: usize;
+    let mut _50: usize;
+    let _52: !;
+    let mut _53: std::option::Option<std::fmt::Arguments<'_>>;
+    let mut _56: {async fn body of cancellation_probe()};
+    let mut _57: std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let _58: &std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _59: &mut std::pin::PinMacroHelper<{async fn body of cancellation_probe()}>;
+    let _61: &std::task::Waker;
+    let mut _62: bool;
+    let mut _63: std::task::Poll<()>;
+    let mut _64: std::pin::Pin<&mut {async fn body of cancellation_probe()}>;
+    let mut _65: &mut std::pin::Pin<&mut {async fn body of cancellation_probe()}>;
+    let mut _66: &mut std::task::Context<'_>;
+    let mut _67: isize;
+    let mut _68: !;
+    let mut _69: (&usize, &usize);
+    let mut _70: &usize;
+    let _71: usize;
+    let _72: &std::sync::atomic::Atomic<usize>;
+    let mut _73: &std::sync::Arc<std::sync::atomic::Atomic<usize>>;
+    let mut _74: std::sync::atomic::Ordering;
+    let mut _75: &usize;
+    let mut _78: bool;
+    let mut _79: usize;
+    let mut _80: usize;
+    let _82: !;
+    let mut _83: std::option::Option<std::fmt::Arguments<'_>>;
+    let _84: ();
+    let mut _85: std::fmt::Arguments<'_>;
+    let mut _86: &usize;
+    let mut _87: &usize;
+    let mut _88: &usize;
+    let mut _89: &usize;
+    scope 1 {
+        debug args => _3;
+        let _12: [core::fmt::rt::Argument<'_>; 2];
+        scope 2 {
+            debug args => _12;
+        }
+    }
+    scope 3 {
+        debug args => _19;
+        let _28: [core::fmt::rt::Argument<'_>; 2];
+        scope 4 {
+            debug args => _28;
+        }
+    }
+    scope 5 {
+        debug dropped => _33;
+        let _46: &usize;
+        let _47: &usize;
+        let mut _54: std::pin::Pin<&mut {async fn body of cancellation_probe()}>;
+        let mut _55: std::pin::PinMacroHelper<{async fn body of cancellation_probe()}>;
+        let _76: &usize;
+        let _77: &usize;
+        scope 6 {
+            debug left_val => _46;
+            debug right_val => _47;
+            let _51: core::panicking::AssertKind;
+            scope 7 {
+                debug kind => _51;
+            }
+        }
+        scope 8 {
+            debug future => _54;
+            let mut _60: std::task::Context<'_>;
+            scope 10 {
+                debug cx => _60;
+                scope 11 {
+                }
+            }
+        }
+        scope 9 {
+            debug pinned => _55;
+        }
+        scope 12 {
+            debug left_val => _76;
+            debug right_val => _77;
+            let _81: core::panicking::AssertKind;
+            scope 13 {
+                debug kind => _81;
+            }
+        }
+    }
+
+    bb0: {
+        _7 = large_across_await() -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        _6 = &_7;
+        _5 = std::mem::size_of_val::<{async fn body of large_across_await()}>(copy _6) -> [return: bb2, unwind: bb55];
+    }
+
+    bb2: {
+        _4 = &_5;
+        _11 = large_across_await() -> [return: bb3, unwind: bb55];
+    }
+
+    bb3: {
+        _10 = &_11;
+        _9 = std::mem::align_of_val::<{async fn body of large_across_await()}>(copy _10) -> [return: bb4, unwind: bb54];
+    }
+
+    bb4: {
+        _8 = &_9;
+        _3 = (move _4, move _8);
+        _86 = no_retag copy (_3.0: &usize);
+        _13 = core::fmt::rt::Argument::<'_>::new_display::<usize>(copy _86) -> [return: bb5, unwind: bb54];
+    }
+
+    bb5: {
+        _87 = no_retag copy (_3.1: &usize);
+        _14 = core::fmt::rt::Argument::<'_>::new_display::<usize>(copy _87) -> [return: bb6, unwind: bb54];
+    }
+
+    bb6: {
+        _12 = [move _13, move _14];
+        _15 = const b"\x12across_await size=\xc0\x07 align=\xc0\x01\n\x00";
+        _16 = &_12;
+        _2 = Arguments::<'_>::new::<32, 2>(move _15, copy _16) -> [return: bb7, unwind: bb54];
+    }
+
+    bb7: {
+        _1 = std::io::_print(move _2) -> [return: bb8, unwind: bb54];
+    }
+
+    bb8: {
+        drop(_11) -> [return: bb9, unwind: bb55];
+    }
+
+    bb9: {
+        drop(_7) -> [return: bb10, unwind continue];
+    }
+
+    bb10: {
+        _23 = large_before_await() -> [return: bb11, unwind continue];
+    }
+
+    bb11: {
+        _22 = &_23;
+        _21 = std::mem::size_of_val::<{async fn body of large_before_await()}>(copy _22) -> [return: bb12, unwind: bb53];
+    }
+
+    bb12: {
+        _20 = &_21;
+        _27 = large_before_await() -> [return: bb13, unwind: bb53];
+    }
+
+    bb13: {
+        _26 = &_27;
+        _25 = std::mem::align_of_val::<{async fn body of large_before_await()}>(copy _26) -> [return: bb14, unwind: bb52];
+    }
+
+    bb14: {
+        _24 = &_25;
+        _19 = (move _20, move _24);
+        _88 = no_retag copy (_19.0: &usize);
+        _29 = core::fmt::rt::Argument::<'_>::new_display::<usize>(copy _88) -> [return: bb15, unwind: bb52];
+    }
+
+    bb15: {
+        _89 = no_retag copy (_19.1: &usize);
+        _30 = core::fmt::rt::Argument::<'_>::new_display::<usize>(copy _89) -> [return: bb16, unwind: bb52];
+    }
+
+    bb16: {
+        _28 = [move _29, move _30];
+        _31 = const b"\x12before_await size=\xc0\x07 align=\xc0\x01\n\x00";
+        _32 = &_28;
+        _18 = Arguments::<'_>::new::<32, 2>(move _31, copy _32) -> [return: bb17, unwind: bb52];
+    }
+
+    bb17: {
+        _17 = std::io::_print(move _18) -> [return: bb18, unwind: bb52];
+    }
+
+    bb18: {
+        drop(_27) -> [return: bb19, unwind: bb53];
+    }
+
+    bb19: {
+        drop(_23) -> [return: bb20, unwind continue];
+    }
+
+    bb20: {
+        _34 = Atomic::<usize>::new(const 0_usize) -> [return: bb21, unwind continue];
+    }
+
+    bb21: {
+        _33 = Arc::<Atomic<usize>>::new(move _34) -> [return: bb22, unwind continue];
+    }
+
+    bb22: {
+        _38 = &_33;
+        _37 = <Arc<Atomic<usize>> as Clone>::clone(copy _38) -> [return: bb23, unwind: bb51];
+    }
+
+    bb23: {
+        _36 = cancellation_probe(move _37) -> [return: bb24, unwind: bb51];
+    }
+
+    bb24: {
+        _35 = std::mem::drop::<{async fn body of cancellation_probe()}>(move _36) -> [return: bb25, unwind: bb51];
+    }
+
+    bb25: {
+        _43 = &_33;
+        _42 = <Arc<Atomic<usize>> as Deref>::deref(move _43) -> [return: bb26, unwind: bb51];
+    }
+
+    bb26: {
+        _44 = std::sync::atomic::Ordering::Relaxed;
+        _41 = Atomic::<usize>::load(copy _42, move _44) -> [return: bb27, unwind: bb51];
+    }
+
+    bb27: {
+        _40 = &_41;
+        _45 = const main::promoted[1];
+        _39 = (move _40, move _45);
+        _46 = copy (_39.0: &usize);
+        _47 = copy (_39.1: &usize);
+        _49 = copy (*_46);
+        _50 = copy (*_47);
+        _48 = Eq(move _49, move _50);
+        switchInt(move _48) -> [0: bb29, otherwise: bb28];
+    }
+
+    bb28: {
+        _58 = &_33;
+        _57 = <Arc<Atomic<usize>> as Clone>::clone(copy _58) -> [return: bb30, unwind: bb51];
+    }
+
+    bb29: {
+        _51 = core::panicking::AssertKind::Eq;
+        _53 = Option::<Arguments<'_>>::None;
+        _52 = core::panicking::assert_failed::<usize, usize>(copy _51, copy _46, copy _47, move _53) -> bb51;
+    }
+
+    bb30: {
+        _56 = cancellation_probe(move _57) -> [return: bb31, unwind: bb51];
+    }
+
+    bb31: {
+        _55 = std::pin::PinMacroHelper::<{async fn body of cancellation_probe()}> { value: move _56 };
+        _59 = &mut _55;
+        _54 = std::pin::pin_new_unchecked_in_helper::<{async fn body of cancellation_probe()}>(copy _59) -> [return: bb32, unwind: bb50];
+    }
+
+    bb32: {
+        _61 = Waker::noop() -> [return: bb33, unwind: bb50];
+    }
+
+    bb33: {
+        _60 = Context::<'_>::from_waker(copy _61) -> [return: bb34, unwind: bb50];
+    }
+
+    bb34: {
+        _65 = &mut _54;
+        _64 = Pin::<&mut {async fn body of cancellation_probe()}>::as_mut(move _65) -> [return: bb35, unwind: bb50];
+    }
+
+    bb35: {
+        _66 = &mut _60;
+        _63 = <{async fn body of cancellation_probe()} as Future>::poll(move _64, copy _66) -> [return: bb36, unwind: bb50];
+    }
+
+    bb36: {
+        _67 = discriminant(_63);
+        switchInt(move _67) -> [1: bb38, 0: bb37, otherwise: bb57];
+    }
+
+    bb37: {
+        _62 = const false;
+        goto -> bb39;
+    }
+
+    bb38: {
+        _62 = const true;
+        goto -> bb39;
+    }
+
+    bb39: {
+        switchInt(move _62) -> [0: bb40, otherwise: bb41];
+    }
+
+    bb40: {
+        _68 = core::panicking::panic(const "assertion failed: matches!(future.as_mut().poll(&mut cx), Poll::Pending)") -> bb50;
+    }
+
+    bb41: {
+        drop(_55) -> [return: bb42, unwind: bb51];
+    }
+
+    bb42: {
+        _73 = &_33;
+        _72 = <Arc<Atomic<usize>> as Deref>::deref(move _73) -> [return: bb43, unwind: bb51];
+    }
+
+    bb43: {
+        _74 = std::sync::atomic::Ordering::Relaxed;
+        _71 = Atomic::<usize>::load(copy _72, move _74) -> [return: bb44, unwind: bb51];
+    }
+
+    bb44: {
+        _70 = &_71;
+        _75 = const main::promoted[0];
+        _69 = (move _70, move _75);
+        _76 = copy (_69.0: &usize);
+        _77 = copy (_69.1: &usize);
+        _79 = copy (*_76);
+        _80 = copy (*_77);
+        _78 = Eq(move _79, move _80);
+        switchInt(move _78) -> [0: bb46, otherwise: bb45];
+    }
+
+    bb45: {
+        _85 = Arguments::<'_>::from_str(const "drop before first poll: 0 guards; drop after Pending: 1 guard\n") -> [return: bb47, unwind: bb51];
+    }
+
+    bb46: {
+        _81 = core::panicking::AssertKind::Eq;
+        _83 = Option::<Arguments<'_>>::None;
+        _82 = core::panicking::assert_failed::<usize, usize>(copy _81, copy _76, copy _77, move _83) -> bb51;
+    }
+
+    bb47: {
+        _84 = std::io::_print(move _85) -> [return: bb48, unwind: bb51];
+    }
+
+    bb48: {
+        drop(_33) -> [return: bb49, unwind continue];
+    }
+
+    bb49: {
+        return;
+    }
+
+    bb50 (cleanup): {
+        drop(_55) -> [return: bb51, unwind terminate(cleanup)];
+    }
+
+    bb51 (cleanup): {
+        drop(_33) -> [return: bb56, unwind terminate(cleanup)];
+    }
+
+    bb52 (cleanup): {
+        drop(_27) -> [return: bb53, unwind terminate(cleanup)];
+    }
+
+    bb53 (cleanup): {
+        drop(_23) -> [return: bb56, unwind terminate(cleanup)];
+    }
+
+    bb54 (cleanup): {
+        drop(_11) -> [return: bb55, unwind terminate(cleanup)];
+    }
+
+    bb55 (cleanup): {
+        drop(_7) -> [return: bb56, unwind terminate(cleanup)];
+    }
+
+    bb56 (cleanup): {
+        resume;
+    }
+
+    bb57: {
+        unreachable;
+    }
+}
+
+alloc4 (size: 62, align: 1) {
+    0x00 │ 64 72 6f 70 20 62 65 66 6f 72 65 20 66 69 72 73 │ drop before firs
+    0x10 │ 74 20 70 6f 6c 6c 3a 20 30 20 67 75 61 72 64 73 │ t poll: 0 guards
+    0x20 │ 3b 20 64 72 6f 70 20 61 66 74 65 72 20 50 65 6e │ ; drop after Pen
+    0x30 │ 64 69 6e 67 3a 20 31 20 67 75 61 72 64 0a       │ ding: 1 guard.
+}
+
+alloc3 (size: 72, align: 1) {
+    0x00 │ 61 73 73 65 72 74 69 6f 6e 20 66 61 69 6c 65 64 │ assertion failed
+    0x10 │ 3a 20 6d 61 74 63 68 65 73 21 28 66 75 74 75 72 │ : matches!(futur
+    0x20 │ 65 2e 61 73 5f 6d 75 74 28 29 2e 70 6f 6c 6c 28 │ e.as_mut().poll(
+    0x30 │ 26 6d 75 74 20 63 78 29 2c 20 50 6f 6c 6c 3a 3a │ &mut cx), Poll::
+    0x40 │ 50 65 6e 64 69 6e 67 29                         │ Pending)
+}
+
+alloc2 (size: 32, align: 1) {
+    0x00 │ 12 62 65 66 6f 72 65 5f 61 77 61 69 74 20 73 69 │ .before_await si
+    0x10 │ 7a 65 3d c0 07 20 61 6c 69 67 6e 3d c0 01 0a 00 │ ze=.. align=....
+}
+
+alloc1 (size: 32, align: 1) {
+    0x00 │ 12 61 63 72 6f 73 73 5f 61 77 61 69 74 20 73 69 │ .across_await si
+    0x10 │ 7a 65 3d c0 07 20 61 6c 69 67 6e 3d c0 01 0a 00 │ ze=.. align=....
+}
+
+const main::promoted[0]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const 1_usize;
+        _0 = &_1;
+        return;
+    }
+}
+
+const main::promoted[1]: &usize = {
+    let mut _0: &usize;
+    let mut _1: usize;
+
+    bb0: {
+        _1 = const 0_usize;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn Guard(_1: Arc<Atomic<usize>>) -> Guard {
+    let mut _0: Guard;
+
+    bb0: {
+        _0 = Guard(move _1);
+        return;
+    }
+}
+
+// MIR FOR CTFE
+fn Guard(_1: Arc<Atomic<usize>>) -> Guard {
+    let mut _0: Guard;
+
+    bb0: {
+        _0 = Guard(move _1);
+        return;
+    }
+}

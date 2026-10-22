@@ -1,0 +1,37 @@
+[
+  {
+    "source": "/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/pipe/unix.rs",
+    "sha256": "58768a98842b356a37aaf8b0d61b52ffdf66d325f090f70f8eb60b8a4ca919d7",
+    "actual_review_scope": "1–44: macOS pipe then set_cloexec path",
+    "local_copy": ".work/cpp-rust-agents/drain-debug/reference/std-pipe-unix.rs",
+    "status": "targeted-source-review-not-full-file-audit"
+  },
+  {
+    "source": "/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/process/unix/unix.rs",
+    "sha256": "1c0f874f1835e5befa6e8bdd65450903f475248b525d3b7b5e1ce861311a21d0",
+    "actual_review_scope": "685–780: posix_spawn file actions and flags",
+    "local_copy": ".work/cpp-rust-agents/drain-debug/reference/std-process-unix.rs",
+    "status": "targeted-source-review-not-full-file-audit"
+  },
+  {
+    "source": "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/process/unix/mod.rs",
+    "sha256": "a63d3f4d25abe92d7821b22f3737b017486c9db2cbc474fb419d71fbe1195eec",
+    "actual_review_scope": "1–300: build_child, pipe conversion, ownership and nonblocking",
+    "local_copy": ".work/cpp-rust-agents/drain-debug/reference/tokio-process-unix.rs",
+    "status": "targeted-source-review-not-full-file-audit"
+  },
+  {
+    "source": "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/process/mod.rs",
+    "sha256": "1ec90c89879ecf786a279ff733448cfd8109857dc28d756adb54d86762d0eeac",
+    "actual_review_scope": "830–984: spawn and cfg(tokio_unstable) spawn_with",
+    "local_copy": ".work/cpp-rust-agents/drain-debug/reference/tokio-process.rs",
+    "status": "targeted-source-review-not-full-file-audit"
+  },
+  {
+    "source": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/unistd.h",
+    "sha256": "4f0463cea7c466850593f10341e9d57757f8570f610cfa748b5c6a3925842b76",
+    "actual_review_scope": "195–230: pipe2 availability macOS 27.0",
+    "local_copy": ".work/cpp-rust-agents/drain-debug/reference/sdk-unistd.h",
+    "status": "targeted-source-review-not-full-file-audit"
+  }
+]

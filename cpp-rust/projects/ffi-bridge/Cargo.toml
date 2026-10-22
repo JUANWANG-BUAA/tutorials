@@ -1,0 +1,18 @@
+[package]
+name = "ffi-bridge"
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "ffi_bridge"
+crate-type = ["rlib", "staticlib", "cdylib"]
+
+[features]
+test-hooks = []
+
+[profile.release]
+opt-level = 3
+lto = false
+codegen-units = 1
+panic = "unwind"

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "16.2 使用消息传递在线程间传送数据：通道关闭、所有权转移与多个生产者",
+    "pages": "PDF 390–394（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch15.md#sec-cpp-rust.4.15.2",
+    "evidence": "projects/agent-runtime/tests/contracts.rs"
+  }
+]

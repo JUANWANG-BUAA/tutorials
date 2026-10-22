@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img" aria-labelledby="cr-slot-title cr-slot-desc">
+  <title id="cr-slot-title">单槽SPSC载荷与复用权的双向交接</title>
+  <desc id="cr-slot-desc">生产者先写载荷并Release发布true，消费者Acquire观察后移出载荷，再Release发布false；下一轮生产者Acquire观察false才可复用槽位。两条同步边缺一不可。</desc>
+  <defs><marker id="cr-slot-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#205c6e"/></marker></defs>
+  <rect width="800" height="320" rx="10" fill="#f7f5f0"/>
+  <g font-family="system-ui,sans-serif" fill="#24343c" font-size="16">
+    <text x="30" y="35" font-size="20" font-weight="600">载荷发布与槽位复用：两条 happens-before 链</text>
+    <rect x="35" y="70" width="225" height="150" rx="8" fill="#e7eff0" stroke="#205c6e"/>
+    <text x="55" y="99" font-weight="600">生产者（唯一端点）</text>
+    <text x="55" y="132">Acquire 观察 empty</text>
+    <text x="55" y="164">写入并初始化 T</text>
+    <text x="55" y="196">Release 发布 full</text>
+    <rect x="540" y="70" width="225" height="150" rx="8" fill="#e7eff0" stroke="#205c6e"/>
+    <text x="560" y="99" font-weight="600">消费者（唯一端点）</text>
+    <text x="560" y="132">Acquire 观察 full</text>
+    <text x="560" y="164">按值移出 T</text>
+    <text x="560" y="196">Release 发布 empty</text>
+    <text x="312" y="122">载荷可见性</text>
+    <path d="M260 145 H530" stroke="#205c6e" stroke-width="3" marker-end="url(#cr-slot-arrow)"/>
+    <text x="315" y="245">下一代复用权</text>
+    <path d="M650 225 V265 H145 V225" fill="none" stroke="#205c6e" stroke-width="3" marker-end="url(#cr-slot-arrow)"/>
+    <text x="35" y="302" font-size="14">固定存储寿命由借用保证；动态节点回收、断开与取消不在本实验协议内。</text>
+  </g>
+</svg>

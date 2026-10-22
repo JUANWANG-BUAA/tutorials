@@ -1,0 +1,4 @@
+ Documenting evidence-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/evidence-lab)
+    Checking evidence-lab v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/bench/evidence-lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s
+   Generated /Users/juanwang/Desktop/tutorials/cpp-rust/bench/evidence-lab/target/doc/evidence_lab/index.html and 3 other files

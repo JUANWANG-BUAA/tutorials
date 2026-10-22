@@ -1,0 +1,38 @@
+[package]
+name = "runtime-lab"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+performance-lab = { path = ".." }
+tokio = { version = "=1.54.0", features = ["rt", "rt-multi-thread", "sync", "time", "process", "io-util", "macros"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "=0.2.191"
+
+[profile.release]
+opt-level = 3
+debug = 1
+codegen-units = 1
+lto = false
+
+[[bin]]
+name = "lab-worker"
+path = "src/bin/worker.rs"
+
+[[bin]]
+name = "scheduling"
+path = "src/bin/scheduling.rs"
+
+[[bin]]
+name = "blocking-poll"
+path = "src/bin/blocking_poll.rs"
+
+[[bin]]
+name = "process-rpc"
+path = "src/bin/process_rpc.rs"
+
+[[bin]]
+name = "pipe-drain"
+path = "src/bin/pipe_drain.rs"

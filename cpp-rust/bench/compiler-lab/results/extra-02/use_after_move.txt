@@ -1,0 +1,18 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/use_after_move.rs --emit=metadata -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/use_after_move.rmeta
+error[E0382]: borrow of moved value: `data`
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/use_after_move.rs:1:62
+  |
+1 | fn main() { let data = vec![1u8]; drop(data); println!("{}", data.len()); }
+  |                 ----                   ----                  ^^^^ value borrowed here after move
+  |                 |                      |
+  |                 |                      value moved here
+  |                 move occurs because `data` has type `Vec<u8>`, which does not implement the `Copy` trait
+  |
+help: consider cloning the value if the performance cost is acceptable
+  |
+1 | fn main() { let data = vec![1u8]; drop(data.clone()); println!("{}", data.len()); }
+  |                                            ++++++++
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0382`.

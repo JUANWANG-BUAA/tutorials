@@ -1,0 +1,142 @@
+[
+  {
+    "file": "artifact-sha256.txt",
+    "sha256": "48baa5b1aeb04748da652f2fd71209967ffc9964c763a49b75c4f224b574be3e",
+    "bytes": 1568
+  },
+  {
+    "file": "binaries/ctfe_table",
+    "sha256": "0c0328cc52bf5cd7b22e7190b7ca368760be0ccdb707e61fd8e3105ea31852d8",
+    "bytes": 514328
+  },
+  {
+    "file": "binaries/dispatch_grain",
+    "sha256": "bc60b657b9b1fa4d37aff6f489eba32b152a779ca5cb8372e5651314c4f63740",
+    "bytes": 515120
+  },
+  {
+    "file": "binaries/dispatch_visibility",
+    "sha256": "465f8fd1199c9c1654de79dada61cc9d5469e4be5a5dd11841c8a40fff189df8",
+    "bytes": 514888
+  },
+  {
+    "file": "binaries/drop_paths",
+    "sha256": "2f09a8594d68b207944e2bdcecb00a1c3358ee155eb005f73048341198354e60",
+    "bytes": 514232
+  },
+  {
+    "file": "binaries/move_cost",
+    "sha256": "0866fa795674fd363be4224e56b6d1d9c34a20ebad5eef266d2040dc63619994",
+    "bytes": 514360
+  },
+  {
+    "file": "binaries/vectorize",
+    "sha256": "525c6d663421b5c49d2ebc4648d1bbda3a22c29ef1a51062687ba46f46256b6d",
+    "bytes": 514664
+  },
+  {
+    "file": "build-processes-before.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "file": "build.txt",
+    "sha256": "087fcc95dbcd41f42e59840ec46185a7f28ec395743128e64144cd986cd9be16",
+    "bytes": 74
+  },
+  {
+    "file": "clippy.txt",
+    "sha256": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+    "bytes": 72
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.ll",
+    "sha256": "d177ca37a45db1272831c53a0d7504ba817d8677b46c27ea84e1e232dd6801fa",
+    "bytes": 707530
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.mir",
+    "sha256": "9f9c7559cbd218530104700629091e19ba1541ee545d082d888d9721239cd576",
+    "bytes": 182638
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.s",
+    "sha256": "2ef49ad378691327a3df080857c41968d68a77f84a175d03da7e60fe8880cadb",
+    "bytes": 440830
+  },
+  {
+    "file": "codegen-build.txt",
+    "sha256": "3f97680bc0e1828f14cc82e8b13f631812b32d7927bde73f521f023656194e84",
+    "bytes": 171
+  },
+  {
+    "file": "ctfe_table.csv",
+    "sha256": "256afaef31699638982b9c16a5b7cf81be5033de7dc4ea5d33fbce17aecce10a",
+    "bytes": 2554
+  },
+  {
+    "file": "dispatch_grain.csv",
+    "sha256": "c36725da17db1c709bc0c40d2f4f90f5ca29de3596dc0489dc1899cee8624c53",
+    "bytes": 4233
+  },
+  {
+    "file": "dispatch_visibility.csv",
+    "sha256": "bed543746a26598b803abdd0969e81a1a6a76cfa53d4fe450f5d4ca36e5875cc",
+    "bytes": 2902
+  },
+  {
+    "file": "drop_paths.csv",
+    "sha256": "03021562057634fc714bdb8741bb35aee2dacc516a86d405dc3a5e85138f0b61",
+    "bytes": 2209
+  },
+  {
+    "file": "environment.txt",
+    "sha256": "537429fac6fca291983e50ac277ced60b5ff71ec89ba09f4e8f673a07efeb8f7",
+    "bytes": 793
+  },
+  {
+    "file": "fmt.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "file": "macos-sample.txt",
+    "sha256": "4995af8e6e188707a2c46217cea425c60ba40948f47376788ccaa4e942b6cb96",
+    "bytes": 16488
+  },
+  {
+    "file": "move_cost.csv",
+    "sha256": "742c9501aab362b485a80d521515a6004f356f3167e341131f64eb5227b9054b",
+    "bytes": 2708
+  },
+  {
+    "file": "run-used.sh",
+    "sha256": "cb470d06792a0b1ca875d521f39a9c68dccd0d0ba794acd75837a5e1200726ca",
+    "bytes": 2496
+  },
+  {
+    "file": "sample-command.txt",
+    "sha256": "57cf92cdd8b05936d8b814865132775aa534fc733e5802553c41ca5a2d3497a0",
+    "bytes": 271
+  },
+  {
+    "file": "sample-run.csv",
+    "sha256": "14ca3c61e542a485508006de4efc55a4c96e672fe79f493286dd1188cdadfd8a",
+    "bytes": 4208
+  },
+  {
+    "file": "source-sha256.txt",
+    "sha256": "9f4f807bb66e0ad3cdf845380704160e5a7dcaa3e18039460e7cd0c0f518c1d6",
+    "bytes": 1755
+  },
+  {
+    "file": "tests.txt",
+    "sha256": "c61b20a9182bf62428672d15578c2bda93e66dfe5eea21ecc1715b065d658471",
+    "bytes": 2447
+  },
+  {
+    "file": "vectorize.csv",
+    "sha256": "f8bb7de4b2731dfab5b59713551a6300b0963c497ca980960bb62c3bb03c6a06",
+    "bytes": 2665
+  }
+]

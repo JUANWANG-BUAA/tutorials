@@ -1,0 +1,63 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (cpp-rust/bench/compiler-lab/target/debug/deps/compiler_lab-3ea6fbf7b3b1bbb2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/ctfe_table.rs (cpp-rust/bench/compiler-lab/target/debug/deps/ctfe_table-78237b15da19d237)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/dispatch_grain.rs (cpp-rust/bench/compiler-lab/target/debug/deps/dispatch_grain-4dc9adbd529eba16)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/dispatch_visibility.rs (cpp-rust/bench/compiler-lab/target/debug/deps/dispatch_visibility-34d69b1de7b10bb4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/drop_paths.rs (cpp-rust/bench/compiler-lab/target/debug/deps/drop_paths-ecce6e7c0a6e5a03)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/move_cost.rs (cpp-rust/bench/compiler-lab/target/debug/deps/move_cost-9d3b08ee81f4b625)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/vectorize.rs (cpp-rust/bench/compiler-lab/target/debug/deps/vectorize-6baab919c76797c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (cpp-rust/bench/compiler-lab/target/debug/deps/contracts-1ebcfac254dec812)
+
+running 8 tests
+test current_stable_supports_trait_upcast ... ok
+test ctfe_exhaustive_domain ... ok
+test partial_move_drops_exactly_once ... ok
+test dispatch_preserves_integer_semantics ... ok
+test vector_tails_and_max_values ... ok
+test panic_unwinds_initialized_guards ... ok
+test sums_match_for_tails_and_overflow ... ok
+test unequal_lengths_are_rejected - should panic ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests compiler_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

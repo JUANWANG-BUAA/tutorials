@@ -5,13 +5,15 @@
 | 教程 | 在线阅读 | 当前范围 |
 |---|---|---|
 | 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–6 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器、动力学（对应原书第 7 章） |
-| 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.7（相抵 / 满秩 / QR / Schur / 对角化 / 谱分解）。其余小节待素材补齐 |
+| 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.8（相抵 / 满秩 / QR / Schur / 对角化 / 谱分解与幂等阵 / Jordan 分解上·λ 矩阵）。其余小节待素材补齐 |
 | 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 课堂主线七章完整正文（覆盖矩阵 + 定理/例题/习题 + 六张章节图）+ 补充篇 + 课堂精编（第 1–7、9、10 讲；第 8 讲占位）；第 10 讲补拉格朗日余项、牛顿差商与埃尔米特插值，并附重心公式、Runge 现象、数值实验与分层练习 |
 | 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 66 节 + 讲末材料」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
 | 🐧 Linux 系统与内核 | [开始阅读](https://juanwang-buaa.github.io/tutorials/linux/) | 六篇 85 章 + 项目篇：命令行与 Shell、计算机系统（CSAPP/OSTEP）、系统编程（Kerrisk）、Linux 内核、网络协议栈、云原生；附 11 个真实项目的从零复现；逐章覆盖 10 部母本 |
 | 🧭 Agent 系统工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/agent-systems/) | 4 篇 14 章 + 2 个项目：循环与状态、工具协议（JSON Schema/function calling/MCP）、沙箱与权限、上下文与记忆、规划与多智能体、评估/观测/安全/治理；与 Linux 卷、DL 卷交叉引用 |
 | 🌐 分布式系统与数据面 | [开始阅读](https://juanwang-buaa.github.io/tutorials/distributed/) | 5 篇 13 章 + 2 个项目：请求与失败、复制与共识、事务与消息、缓存与观测、容量与演练；从一次工具调用走到可验证的一致性 |
 | 🧱 编译器与程序分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/compilers/) | 4 篇 14 章 + 2 个项目：词法/AST、类型/作用域、IR/SSA、数据流与优化、寄存器分配、ABI 代码生成、UB/sanitizer、fuzzing、形式化验证、JIT 沙箱；附迷你 C 编译器和 agent 代码验证器 |
+| ⚡ 算法、评估与因果推断 | [开始阅读](https://juanwang-buaa.github.io/tutorials/algorithms/) | 4 篇 14 章 + 2 个项目：渐进分析、分治、图算法、平摊分析、贪心与反例、动态规划、NP难与近似、在线算法、评估指标、假设检验、模型评估与选择、准实验因果推断；附算法评测系统与 A/B 测试分析流水线 |
+| 🦀 Rust 底层性能工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/cpp-rust/) | 4 篇 16 章 + 2 个项目：rustc 编译流水线、内存布局与 niche、所有权与 unsafe 证明、原子与 128B 伪共享消除、Tokio 调度器与管道背压、无锁队列与 EBR 代际回收、ARM NEON 向量化与零拷贝、系统采样与 CI 门禁；附 Agent 工具执行器与跨语言 C ABI 组件 |
 
 ## 仓库结构
 
@@ -24,20 +26,23 @@ linux/         Linux 系统与内核 · mdBook 源（六篇 + 项目篇；独立
 agent-systems/ Agent 系统工程 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme）
 distributed/   分布式系统与数据面 · mdBook 源（5 篇 13 章 + 2 个项目）
 compilers/     编译器与程序分析 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
-shared/        八本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
+algorithms/    算法、评估与因果推断 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
+embodied/      具身感知：SLAM、状态估计与传感器融合 · mdBook 源（4 篇 14 章 + 2 个项目；机器人卷 II）
+cpp-rust/      Rust 底层性能工程 · mdBook 源（4 篇 16 章 + 2 个项目；复用 shared/theme 与 tools）
+shared/        十一本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
                RHINE.md 记录可选的「莱茵档案」皮肤
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式
 <book>/src/assets/
-  covers/      八张平装书封（首页与导览页共用；其中四张由 tools/build_covers.py 生成）
+  covers/      十一张平装书封（首页与导览页共用；其中四张由 tools/build_covers.py 生成）
   figures/     内联 SVG 图鉴片段（tools/build_atlas_figures.py 生成，页面里 include）
-tools/         仓库级构建脚本（八本一份）+ theme-renderer/（莱茵档案 3D 场景与封面源）：
+tools/         仓库级构建脚本（十本一份）+ theme-renderer/（莱茵档案 3D 场景与封面源）：
   build_search_js.mjs     构建后重建中文搜索索引（分词与查询同源）
   build_glossary.py       构建后抽术语数据 + 给页面打标记
   katex_wrapper.py        包装 mdbook-katex，中和会被 Markdown 误读的字符
   build_covers.py         生成四本平装书封 SVG
   build_atlas_figures.py  生成教学图鉴（SVG + 图注 Markdown 片段）
-build.sh       一键构建八本 + 后置步骤 → _site/（与 CI 步骤一致）
+build.sh       一键构建十本 + 后置步骤 → _site/（与 CI 步骤一致）
 site-index.html 教程库首页（课程目录，构建时拷为 _site/index.html）
 .github/       Pages 自动部署工作流
 ```
@@ -49,7 +54,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 
 ## 视觉层与图鉴（2026-10）
 
-这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。八本书共用同一套样式，但每本书保留自己的封面。
+这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。十本书共用同一套样式，但每本书保留自己的封面。
 
 | 层 | 文件 | 作用 |
 |:--|:--|:--|
@@ -58,7 +63,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 | 图鉴交互层 | `shared/theme/js/atlas.js` | 原生图片自动图注、页首阅读元信息、菜单栏「图鉴」总览、宽图平移包装 |
 | 插图生成 | `tools/build_atlas_figures.py` | 输出 `<book>/src/assets/figures/*.md`：统一 900 宽的 SVG 展示台 + KaTeX 图注 |
 | 书封生成 | `tools/build_covers.py` | 输出 `<book>/src/assets/covers/*.svg`：机械臂 / 线性映射 / 三维曲面 / 神经网络四张封面 |
-| 导览页 | `site-index.html` | 主视觉八本书封 + 教学图鉴 feature + 八本书目（带封面）+ 四条学习路线；竖排标签、平装封面、hover 反相书目行、浅/深色切换 |
+| 导览页 | `site-index.html` | 主视觉十本书封 + 教学图鉴 feature + 十本书目（带封面）+ 五条学习路线；竖排标签、平装封面、hover 反相书目行、浅/深色切换 |
 
 **加载顺序**：`base → <book> → katex → framework → atlas → prefs`。atlas 只用令牌与组件级
 特异性，不覆盖读者在 prefs 里的字体 / 字号 / 行距 / 版心选择。
@@ -104,7 +109,7 @@ pnpm --dir tools/theme-renderer install
 pnpm --dir tools/theme-renderer build
 python3 tools/theme-renderer/build_art.py
 
-# 八本书 + 搜索 + 术语 + 导览页
+# 十本书 + 搜索 + 术语 + 导览页
 ./build.sh
 node --test tools/test_theme_config.mjs
 ```
@@ -118,7 +123,7 @@ node --test tools/test_theme_config.mjs
 
 ```bash
 brew install mdbook        # 如未安装
-./build.sh serve           # 构建八本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
+./build.sh serve           # 构建十本（含搜索索引与术语数据）并起预览 http://127.0.0.1:8000/
 ```
 
 ⚠️ 不要只跑 `mdbook serve`：搜索索引与术语数据都是**构建后产物**，而 mdBook 每次构建会先清空
@@ -163,6 +168,6 @@ bash check.sh --no-browser    # 不运行浏览器，其余检查照常执行
 
 ## 部署
 
-推送到 `main` 分支后，GitHub Actions 执行质量检查、构建八本书，全部成功后发布到 Pages。面向 `main` 的 PR 执行同一检查但不发布。各书首页会说明正文范围与待补内容。
+推送到 `main` 分支后，GitHub Actions 执行质量检查、构建十本书，全部成功后发布到 Pages。面向 `main` 的 PR 执行同一检查但不发布。各书首页会说明正文范围与待补内容。
 
 数学内容核验优先覆盖矩阵论与数值分析，采用可重复运行的 SMT-LIB 2/Z3 义务和数值复算。范围、已修正问题与未证明部分见[形式化核验记录](docs/formal-verification.md)。

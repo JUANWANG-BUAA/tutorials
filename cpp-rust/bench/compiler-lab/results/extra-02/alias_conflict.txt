@@ -1,0 +1,13 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/alias_conflict.rs --emit=metadata -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/alias_conflict.rmeta
+error[E0502]: cannot borrow `data` as mutable because it is also borrowed as immutable
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/alias_conflict.rs:1:67
+  |
+1 | fn main() { let mut data = 7u64; let reader = &data; let writer = &mut data; *writer = 9; println!("{reader}"); }
+  |                                               -----               ^^^^^^^^^                          ------ immutable borrow later used here
+  |                                               |                   |
+  |                                               |                   mutable borrow occurs here
+  |                                               immutable borrow occurs here
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0502`.

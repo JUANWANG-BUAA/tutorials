@@ -1,0 +1,40 @@
+gate: api=pipe2 pid=51631 read_fd=9 flags=1 write_fd=10 flags=1
+
+ToolResult {
+    outcome: TimedOut,
+    pid: Some(
+        51636,
+    ),
+    exit_code: None,
+    reaped: true,
+    stdout: Log {
+        prefix: [
+            82,
+            69,
+            65,
+            68,
+            89,
+            32,
+            53,
+            49,
+            54,
+            51,
+            54,
+            10,
+        ],
+        total: 12,
+        checksum: 10110058343556950285,
+        eof: true,
+        error: None,
+    },
+    stderr: Log {
+        prefix: [],
+        total: 0,
+        checksum: 0,
+        eof: true,
+        error: None,
+    },
+    queue_time: 11.167µs,
+    work_time: 202.905208ms,
+    cleanup_error: None,
+}

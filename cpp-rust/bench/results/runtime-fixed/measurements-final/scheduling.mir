@@ -1,0 +1,2630 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+const TASKS: u64 = const 128_u64;
+
+const STEPS: u64 = const 8192_u64;
+
+fn step(_1: u64) -> u64 {
+    debug x => _1;
+    let mut _0: u64;
+    let mut _2: u64;
+    let mut _3: u64;
+    scope 1 (inlined std::hint::black_box::<u64>) {
+    }
+    scope 2 (inlined core::num::<impl u64>::wrapping_mul) {
+    }
+    scope 3 (inlined core::num::<impl u64>::wrapping_add) {
+    }
+
+    bb0: {
+        StorageLive(_2);
+        StorageLive(_3);
+        _3 = std::intrinsics::black_box::<u64>(move _1) -> [return: bb1, unwind unreachable];
+    }
+
+    bb1: {
+        _2 = Mul(copy _3, const 6364136223846793005_u64);
+        StorageDead(_3);
+        _0 = Add(copy _2, const 1_u64);
+        StorageDead(_2);
+        return;
+    }
+}
+
+fn batch(_1: u64) -> {async fn body of batch()} {
+    debug quantum => _1;
+    let mut _0: {async fn body of batch()};
+
+    bb0: {
+        _0 = {coroutine@src/bin/scheduling.rs:18:37: 42:2 (#0)} { quantum: copy _1 };
+        return;
+    }
+}
+
+fn batch::{closure#0}(_1: Pin<&mut {async fn body of batch()}>, _2: &mut Context<'_>) -> Poll<u64> {
+    coroutine layout {
+        field _s0: JoinSet<(u64, u64)>;
+        field _s1: u64;
+        field _s2: u64;
+        field _s3: {async fn body of JoinSet<(u64, u64)>::join_next()};
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2, _s3],
+        }
+        storage_conflicts = BitMatrix(4x4) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s0, _s3), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s1, _s3), (_s2, _s0), (_s2, _s1), (_s2, _s2), (_s2, _s3), (_s3, _s0), (_s3, _s1), (_s3, _s2), (_s3, _s3)}
+    }
+    debug _task_context => _43;
+    debug quantum => ((*_42).0: u64);
+    let mut _0: std::task::Poll<u64>;
+    let _3: u64;
+    let mut _4: std::ops::Range<u64>;
+    let mut _5: std::ops::Range<u64>;
+    let mut _7: std::option::Option<u64>;
+    let mut _8: &mut std::ops::Range<u64>;
+    let mut _9: isize;
+    let _11: tokio::task::AbortHandle;
+    let mut _12: &mut tokio::task::JoinSet<(u64, u64)>;
+    let mut _13: {async block@src/bin/scheduling.rs:21:21: 21:31};
+    let mut _14: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()};
+    let mut _15: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()};
+    let mut _16: &mut tokio::task::JoinSet<(u64, u64)>;
+    let mut _17: std::task::Poll<std::option::Option<std::result::Result<(u64, u64), tokio::task::JoinError>>>;
+    let mut _18: std::pin::Pin<&mut {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()}>;
+    let mut _19: &mut {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()};
+    let mut _20: &mut std::task::Context<'_>;
+    let mut _21: std::future::ResumeTy;
+    let mut _22: isize;
+    let mut _24: isize;
+    let mut _28: (u64, u64);
+    let mut _29: u64;
+    let mut _30: u32;
+    let mut _31: &u64;
+    let mut _32: bool;
+    let mut _33: u64;
+    let mut _34: u64;
+    let _36: !;
+    let mut _37: std::option::Option<std::fmt::Arguments<'_>>;
+    let mut _38: u64;
+    let mut _40: u64;
+    let mut _41: u32;
+    let mut _42: &mut {async fn body of batch()};
+    let mut _43: std::future::ResumeTy;
+    let mut _44: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug quantum => _3;
+        coroutine debug tasks => _s0;
+        scope 2 {
+            debug tasks => (((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>);
+            coroutine debug count => _s1;
+            let mut _6: std::ops::Range<u64>;
+            scope 3 {
+                debug iter => _6;
+                let _10: u64;
+                scope 4 {
+                    debug id => _10;
+                }
+            }
+            scope 5 {
+                debug count => (((*_42) as variant#3).1: u64);
+                coroutine debug checksum => _s2;
+                scope 6 {
+                    debug checksum => (((*_42) as variant#3).2: u64);
+                    let mut _39: &u64;
+                    scope 7 {
+                        debug result => _25;
+                        coroutine debug __awaitee => _s3;
+                        let _25: std::result::Result<(u64, u64), tokio::task::JoinError>;
+                        let _26: u64;
+                        let _27: u64;
+                        scope 8 {
+                            debug __awaitee => (((*_42) as variant#3).3: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()});
+                            let _23: std::option::Option<std::result::Result<(u64, u64), tokio::task::JoinError>>;
+                            scope 9 {
+                                debug result => _23;
+                            }
+                        }
+                        scope 10 {
+                            debug id => _26;
+                            debug value => _27;
+                        }
+                    }
+                    scope 11 {
+                        debug left_val => _31;
+                        debug right_val => _39;
+                        let _35: core::panicking::AssertKind;
+                        scope 12 {
+                            debug kind => _35;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _44 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _43 = std::future::ResumeTy(move _44);
+        _42 = copy (_1.0: &mut {async fn body of batch()});
+        _41 = discriminant((*_42));
+        switchInt(move _41) -> [0: bb48, 1: bb47, 2: bb46, 3: bb45, otherwise: bb5];
+    }
+
+    bb1: {
+        StorageLive(_4);
+        StorageLive(_5);
+        _5 = std::ops::Range::<u64> { start: const 0_u64, end: const 128_u64 };
+        _4 = <std::ops::Range<u64> as IntoIterator>::into_iter(move _5) -> [return: bb2, unwind: bb41];
+    }
+
+    bb2: {
+        StorageDead(_5);
+        StorageLive(_6);
+        _6 = move _4;
+        goto -> bb3;
+    }
+
+    bb3: {
+        StorageLive(_7);
+        StorageLive(_8);
+        _8 = &mut _6;
+        _7 = <std::ops::Range<u64> as Iterator>::next(move _8) -> [return: bb4, unwind: bb40];
+    }
+
+    bb4: {
+        _9 = discriminant(_7);
+        switchInt(move _9) -> [0: bb7, 1: bb6, otherwise: bb5];
+    }
+
+    bb5: {
+        unreachable;
+    }
+
+    bb6: {
+        StorageLive(_10);
+        _10 = copy ((_7 as Some).0: u64);
+        StorageLive(_11);
+        StorageLive(_12);
+        _12 = &mut (((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>);
+        StorageLive(_13);
+        _13 = {coroutine@src/bin/scheduling.rs:21:21: 21:31 (#0)} { id: copy _10, quantum: copy _3 };
+        _11 = JoinSet::<(u64, u64)>::spawn::<{async block@src/bin/scheduling.rs:21:21: 21:31}>(move _12, move _13) -> [return: bb8, unwind: bb38];
+    }
+
+    bb7: {
+        StorageDead(_8);
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageDead(_4);
+        (((*_42) as variant#3).1: u64) = const 0_u64;
+        (((*_42) as variant#3).2: u64) = const 0_u64;
+        goto -> bb10;
+    }
+
+    bb8: {
+        StorageDead(_13);
+        StorageDead(_12);
+        drop(_11) -> [return: bb9, unwind: bb39];
+    }
+
+    bb9: {
+        StorageDead(_11);
+        StorageDead(_10);
+        StorageDead(_8);
+        StorageDead(_7);
+        goto -> bb3;
+    }
+
+    bb10: {
+        StorageLive(_14);
+        StorageLive(_15);
+        StorageLive(_16);
+        _16 = &mut (((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>);
+        _15 = JoinSet::<(u64, u64)>::join_next(move _16) -> [return: bb11, unwind: bb35];
+    }
+
+    bb11: {
+        StorageDead(_16);
+        _14 = <{async fn body of JoinSet<(u64, u64)>::join_next()} as IntoFuture>::into_future(move _15) -> [return: bb12, unwind: bb36];
+    }
+
+    bb12: {
+        StorageDead(_15);
+        (((*_42) as variant#3).3: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()}) = move _14;
+        goto -> bb13;
+    }
+
+    bb13: {
+        StorageLive(_17);
+        StorageLive(_18);
+        StorageLive(_19);
+        _19 = &mut (((*_42) as variant#3).3: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()});
+        _18 = Pin::<&mut {async fn body of JoinSet<(u64, u64)>::join_next()}>::new_unchecked(move _19) -> [return: bb14, unwind: bb33];
+    }
+
+    bb14: {
+        StorageLive(_20);
+        StorageLive(_21);
+        _21 = copy _43;
+        _20 = copy (_21.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_21);
+        _17 = <{async fn body of JoinSet<(u64, u64)>::join_next()} as Future>::poll(move _18, move _20) -> [return: bb15, unwind: bb32];
+    }
+
+    bb15: {
+        StorageDead(_18);
+        _22 = discriminant(_17);
+        switchInt(move _22) -> [0: bb17, 1: bb16, otherwise: bb5];
+    }
+
+    bb16: {
+        StorageDead(_20);
+        StorageDead(_19);
+        StorageDead(_17);
+        _0 = Poll::<u64>::Pending;
+        StorageDead(_3);
+        StorageDead(_14);
+        discriminant((*_42)) = 3;
+        return;
+    }
+
+    bb17: {
+        _23 = move ((_17 as Ready).0: std::option::Option<std::result::Result<(u64, u64), tokio::task::JoinError>>);
+        StorageDead(_20);
+        StorageDead(_19);
+        StorageDead(_17);
+        drop((((*_42) as variant#3).3: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()})) -> [return: bb18, unwind: bb37];
+    }
+
+    bb18: {
+        _24 = discriminant(_23);
+        switchInt(move _24) -> [1: bb20, 0: bb19, otherwise: bb5];
+    }
+
+    bb19: {
+        StorageDead(_14);
+        _31 = &(((*_42) as variant#3).1: u64);
+        _39 = const batch::{closure#0}::promoted[0];
+        StorageLive(_32);
+        StorageLive(_33);
+        _33 = copy (*_31);
+        StorageLive(_34);
+        _34 = copy (*_39);
+        _32 = Eq(move _33, move _34);
+        switchInt(move _32) -> [0: bb24, otherwise: bb23];
+    }
+
+    bb20: {
+        StorageLive(_25);
+        _25 = copy ((_23 as Some).0: std::result::Result<(u64, u64), tokio::task::JoinError>);
+        StorageLive(_28);
+        _28 = Result::<(u64, u64), JoinError>::expect(move _25, const "benchmark task panicked") -> [return: bb21, unwind: bb30];
+    }
+
+    bb21: {
+        StorageLive(_26);
+        _26 = copy (_28.0: u64);
+        StorageLive(_27);
+        _27 = copy (_28.1: u64);
+        StorageDead(_28);
+        (((*_42) as variant#3).1: u64) = Add(copy (((*_42) as variant#3).1: u64), const 1_u64);
+        StorageLive(_29);
+        StorageLive(_30);
+        _30 = copy _26 as u32 (IntToInt);
+        _29 = core::num::<impl u64>::rotate_left(move _27, move _30) -> [return: bb22, unwind: bb29];
+    }
+
+    bb22: {
+        StorageDead(_30);
+        (((*_42) as variant#3).2: u64) = BitXor(copy (((*_42) as variant#3).2: u64), move _29);
+        StorageDead(_29);
+        StorageDead(_27);
+        StorageDead(_26);
+        StorageDead(_25);
+        StorageDead(_14);
+        goto -> bb10;
+    }
+
+    bb23: {
+        StorageDead(_34);
+        StorageDead(_33);
+        StorageDead(_32);
+        StorageLive(_38);
+        _38 = copy (((*_42) as variant#3).2: u64);
+        _40 = std::hint::black_box::<u64>(move _38) -> [return: bb25, unwind: bb27];
+    }
+
+    bb24: {
+        StorageDead(_34);
+        StorageDead(_33);
+        StorageLive(_35);
+        _35 = core::panicking::AssertKind::Eq;
+        StorageLive(_36);
+        StorageLive(_37);
+        _37 = Option::<Arguments<'_>>::None;
+        _36 = core::panicking::assert_failed::<u64, u64>(move _35, move _31, move _39, move _37) -> bb28;
+    }
+
+    bb25: {
+        StorageDead(_38);
+        drop((((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>)) -> [return: bb26, unwind: bb44];
+    }
+
+    bb26: {
+        StorageDead(_3);
+        _0 = Poll::<u64>::Ready(move _40);
+        discriminant((*_42)) = 1;
+        return;
+    }
+
+    bb27 (cleanup): {
+        StorageDead(_38);
+        goto -> bb43;
+    }
+
+    bb28 (cleanup): {
+        StorageDead(_37);
+        StorageDead(_36);
+        StorageDead(_35);
+        StorageDead(_32);
+        goto -> bb43;
+    }
+
+    bb29 (cleanup): {
+        StorageDead(_30);
+        StorageDead(_29);
+        StorageDead(_27);
+        StorageDead(_26);
+        goto -> bb31;
+    }
+
+    bb30 (cleanup): {
+        StorageDead(_28);
+        goto -> bb31;
+    }
+
+    bb31 (cleanup): {
+        StorageDead(_25);
+        goto -> bb37;
+    }
+
+    bb32 (cleanup): {
+        StorageDead(_18);
+        StorageDead(_20);
+        goto -> bb34;
+    }
+
+    bb33 (cleanup): {
+        StorageDead(_18);
+        goto -> bb34;
+    }
+
+    bb34 (cleanup): {
+        StorageDead(_19);
+        StorageDead(_17);
+        drop((((*_42) as variant#3).3: {async fn body of tokio::task::JoinSet<(u64, u64)>::join_next()})) -> [return: bb37, unwind terminate(cleanup)];
+    }
+
+    bb35 (cleanup): {
+        StorageDead(_16);
+        goto -> bb36;
+    }
+
+    bb36 (cleanup): {
+        StorageDead(_15);
+        goto -> bb37;
+    }
+
+    bb37 (cleanup): {
+        StorageDead(_14);
+        goto -> bb43;
+    }
+
+    bb38 (cleanup): {
+        StorageDead(_13);
+        StorageDead(_12);
+        goto -> bb39;
+    }
+
+    bb39 (cleanup): {
+        StorageDead(_11);
+        StorageDead(_10);
+        goto -> bb40;
+    }
+
+    bb40 (cleanup): {
+        StorageDead(_8);
+        StorageDead(_7);
+        StorageDead(_6);
+        goto -> bb42;
+    }
+
+    bb41 (cleanup): {
+        StorageDead(_5);
+        goto -> bb42;
+    }
+
+    bb42 (cleanup): {
+        StorageDead(_4);
+        goto -> bb43;
+    }
+
+    bb43 (cleanup): {
+        drop((((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>)) -> [return: bb44, unwind terminate(cleanup)];
+    }
+
+    bb44 (cleanup): {
+        StorageDead(_3);
+        discriminant((*_42)) = 2;
+        resume;
+    }
+
+    bb45: {
+        StorageLive(_3);
+        StorageLive(_14);
+        goto -> bb13;
+    }
+
+    bb46: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb46, unwind continue];
+    }
+
+    bb47: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb47, unwind continue];
+    }
+
+    bb48: {
+        StorageLive(_3);
+        _3 = copy ((*_42).0: u64);
+        (((*_42) as variant#3).0: tokio::task::JoinSet<(u64, u64)>) = JoinSet::<(u64, u64)>::new() -> [return: bb1, unwind: bb44];
+    }
+}
+
+alloc1 (size: 23, align: 1) {
+    0x00 │ 62 65 6e 63 68 6d 61 72 6b 20 74 61 73 6b 20 70 │ benchmark task p
+    0x10 │ 61 6e 69 63 6b 65 64                            │ anicked
+}
+
+const batch::{closure#0}::promoted[0]: &u64 = {
+    let mut _0: &u64;
+    let mut _1: u64;
+
+    bb0: {
+        _1 = const TASKS;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn batch::{closure#0}::{closure#0}(_1: Pin<&mut {async block@src/bin/scheduling.rs:21:21: 21:31}>, _2: &mut Context<'_>) -> Poll<(u64, u64)> {
+    coroutine layout {
+        field _s0: u64;
+        field _s1: std::ops::Range<u64>;
+        field _s2: {async fn body of tokio::task::yield_now::yield_now()};
+        variant_fields = {
+            Unresumed(0): [],
+            Returned (1): [],
+            Panicked (2): [],
+            Suspend0 (3): [_s0, _s1, _s2],
+        }
+        storage_conflicts = BitMatrix(3x3) {(_s0, _s0), (_s0, _s1), (_s0, _s2), (_s1, _s0), (_s1, _s1), (_s1, _s2), (_s2, _s0), (_s2, _s1), (_s2, _s2)}
+    }
+    debug _task_context => _36;
+    debug id => ((*_35).0: u64);
+    debug quantum => ((*_35).1: u64);
+    coroutine debug value => _s0;
+    let mut _0: std::task::Poll<(u64, u64)>;
+    let mut _3: std::ops::Range<u64>;
+    let mut _4: std::ops::Range<u64>;
+    let mut _5: u64;
+    let mut _6: u64;
+    let mut _7: bool;
+    let mut _8: std::option::Option<u64>;
+    let mut _9: &mut std::ops::Range<u64>;
+    let mut _10: isize;
+    let mut _12: std::ops::Range<u64>;
+    let mut _13: std::ops::Range<u64>;
+    let mut _14: u64;
+    let mut _16: std::option::Option<u64>;
+    let mut _17: &mut std::ops::Range<u64>;
+    let mut _18: isize;
+    let mut _19: u64;
+    let mut _20: u64;
+    let _21: u64;
+    let mut _22: {async fn body of tokio::task::yield_now::yield_now()};
+    let mut _23: {async fn body of tokio::task::yield_now::yield_now()};
+    let mut _24: std::task::Poll<()>;
+    let mut _25: std::pin::Pin<&mut {async fn body of tokio::task::yield_now::yield_now()}>;
+    let mut _26: &mut {async fn body of tokio::task::yield_now::yield_now()};
+    let mut _27: &mut std::task::Context<'_>;
+    let mut _28: std::future::ResumeTy;
+    let mut _29: isize;
+    let mut _31: u64;
+    let mut _32: u64;
+    let mut _33: (u64, u64);
+    let mut _34: u32;
+    let mut _35: &mut {async block@src/bin/scheduling.rs:21:21: 21:31};
+    let mut _36: std::future::ResumeTy;
+    let mut _37: std::ptr::NonNull<std::task::Context<'_>>;
+    scope 1 {
+        debug value => (((*_35) as variant#3).0: u64);
+        coroutine debug iter => _s1;
+        scope 2 {
+            debug iter => (((*_35) as variant#3).1: std::ops::Range<u64>);
+            let _11: u64;
+            scope 3 {
+                debug chunk => _11;
+                coroutine debug __awaitee => _s2;
+                let mut _15: std::ops::Range<u64>;
+                scope 4 {
+                    debug iter => _15;
+                }
+                scope 5 {
+                    debug __awaitee => (((*_35) as variant#3).2: {async fn body of tokio::task::yield_now::yield_now()});
+                    let _30: ();
+                    scope 6 {
+                        debug result => _30;
+                    }
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _37 = copy _2 as std::ptr::NonNull<std::task::Context<'_>> (Transmute);
+        _36 = std::future::ResumeTy(move _37);
+        _35 = copy (_1.0: &mut {async block@src/bin/scheduling.rs:21:21: 21:31});
+        _34 = discriminant((*_35));
+        switchInt(move _34) -> [0: bb41, 1: bb40, 2: bb39, 3: bb38, otherwise: bb5];
+    }
+
+    bb1: {
+        _5 = Div(const 8192_u64, move _6);
+        StorageDead(_6);
+        _4 = std::ops::Range::<u64> { start: const 0_u64, end: move _5 };
+        StorageDead(_5);
+        _3 = <std::ops::Range<u64> as IntoIterator>::into_iter(move _4) -> [return: bb2, unwind: bb36];
+    }
+
+    bb2: {
+        StorageDead(_4);
+        (((*_35) as variant#3).1: std::ops::Range<u64>) = move _3;
+        goto -> bb3;
+    }
+
+    bb3: {
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = &mut (((*_35) as variant#3).1: std::ops::Range<u64>);
+        _8 = <std::ops::Range<u64> as Iterator>::next(move _9) -> [return: bb4, unwind: bb34];
+    }
+
+    bb4: {
+        _10 = discriminant(_8);
+        switchInt(move _10) -> [0: bb7, 1: bb6, otherwise: bb5];
+    }
+
+    bb5: {
+        unreachable;
+    }
+
+    bb6: {
+        StorageLive(_11);
+        _11 = copy ((_8 as Some).0: u64);
+        StorageLive(_12);
+        StorageLive(_13);
+        StorageLive(_14);
+        _14 = copy ((*_35).1: u64);
+        _13 = std::ops::Range::<u64> { start: const 0_u64, end: move _14 };
+        StorageDead(_14);
+        _12 = <std::ops::Range<u64> as IntoIterator>::into_iter(move _13) -> [return: bb8, unwind: bb31];
+    }
+
+    bb7: {
+        StorageDead(_9);
+        StorageDead(_8);
+        StorageDead(_3);
+        StorageLive(_31);
+        _31 = copy ((*_35).0: u64);
+        StorageLive(_32);
+        _32 = copy (((*_35) as variant#3).0: u64);
+        _33 = (move _31, move _32);
+        StorageDead(_32);
+        StorageDead(_31);
+        _0 = Poll::<(u64, u64)>::Ready(move _33);
+        discriminant((*_35)) = 1;
+        return;
+    }
+
+    bb8: {
+        StorageDead(_13);
+        StorageLive(_15);
+        _15 = move _12;
+        goto -> bb9;
+    }
+
+    bb9: {
+        StorageLive(_16);
+        StorageLive(_17);
+        _17 = &mut _15;
+        _16 = <std::ops::Range<u64> as Iterator>::next(move _17) -> [return: bb10, unwind: bb30];
+    }
+
+    bb10: {
+        _18 = discriminant(_16);
+        switchInt(move _18) -> [0: bb12, 1: bb11, otherwise: bb5];
+    }
+
+    bb11: {
+        StorageLive(_19);
+        StorageLive(_20);
+        _20 = copy (((*_35) as variant#3).0: u64);
+        _19 = step(move _20) -> [return: bb13, unwind: bb29];
+    }
+
+    bb12: {
+        StorageDead(_17);
+        StorageDead(_16);
+        StorageDead(_15);
+        StorageDead(_12);
+        StorageLive(_21);
+        _21 = std::hint::black_box::<u64>(move _11) -> [return: bb14, unwind: bb28];
+    }
+
+    bb13: {
+        StorageDead(_20);
+        (((*_35) as variant#3).0: u64) = move _19;
+        StorageDead(_19);
+        StorageDead(_17);
+        StorageDead(_16);
+        goto -> bb9;
+    }
+
+    bb14: {
+        StorageDead(_21);
+        StorageLive(_22);
+        StorageLive(_23);
+        _23 = tokio::task::yield_now() -> [return: bb15, unwind: bb26];
+    }
+
+    bb15: {
+        _22 = <{async fn body of tokio::task::yield_now::yield_now()} as IntoFuture>::into_future(move _23) -> [return: bb16, unwind: bb26];
+    }
+
+    bb16: {
+        StorageDead(_23);
+        (((*_35) as variant#3).2: {async fn body of tokio::task::yield_now::yield_now()}) = move _22;
+        goto -> bb17;
+    }
+
+    bb17: {
+        StorageLive(_24);
+        StorageLive(_25);
+        StorageLive(_26);
+        _26 = &mut (((*_35) as variant#3).2: {async fn body of tokio::task::yield_now::yield_now()});
+        _25 = Pin::<&mut {async fn body of tokio::task::yield_now::yield_now()}>::new_unchecked(move _26) -> [return: bb18, unwind: bb24];
+    }
+
+    bb18: {
+        StorageLive(_27);
+        StorageLive(_28);
+        _28 = copy _36;
+        _27 = copy (_28.0: std::ptr::NonNull<std::task::Context<'_>>) as &mut std::task::Context<'_> (Transmute);
+        StorageDead(_28);
+        _24 = <{async fn body of tokio::task::yield_now::yield_now()} as Future>::poll(move _25, move _27) -> [return: bb19, unwind: bb23];
+    }
+
+    bb19: {
+        StorageDead(_25);
+        _29 = discriminant(_24);
+        switchInt(move _29) -> [0: bb21, 1: bb20, otherwise: bb5];
+    }
+
+    bb20: {
+        StorageDead(_27);
+        StorageDead(_26);
+        StorageDead(_24);
+        _0 = Poll::<(u64, u64)>::Pending;
+        StorageDead(_3);
+        StorageDead(_8);
+        StorageDead(_9);
+        StorageDead(_11);
+        StorageDead(_22);
+        discriminant((*_35)) = 3;
+        return;
+    }
+
+    bb21: {
+        StorageLive(_30);
+        _30 = copy ((_24 as Ready).0: ());
+        StorageDead(_30);
+        StorageDead(_27);
+        StorageDead(_26);
+        StorageDead(_24);
+        drop((((*_35) as variant#3).2: {async fn body of tokio::task::yield_now::yield_now()})) -> [return: bb22, unwind: bb27];
+    }
+
+    bb22: {
+        StorageDead(_22);
+        StorageDead(_11);
+        StorageDead(_9);
+        StorageDead(_8);
+        goto -> bb3;
+    }
+
+    bb23 (cleanup): {
+        StorageDead(_25);
+        StorageDead(_27);
+        goto -> bb25;
+    }
+
+    bb24 (cleanup): {
+        StorageDead(_25);
+        goto -> bb25;
+    }
+
+    bb25 (cleanup): {
+        StorageDead(_26);
+        StorageDead(_24);
+        drop((((*_35) as variant#3).2: {async fn body of tokio::task::yield_now::yield_now()})) -> [return: bb27, unwind terminate(cleanup)];
+    }
+
+    bb26 (cleanup): {
+        StorageDead(_23);
+        goto -> bb27;
+    }
+
+    bb27 (cleanup): {
+        StorageDead(_22);
+        goto -> bb33;
+    }
+
+    bb28 (cleanup): {
+        StorageDead(_21);
+        goto -> bb33;
+    }
+
+    bb29 (cleanup): {
+        StorageDead(_20);
+        StorageDead(_19);
+        goto -> bb30;
+    }
+
+    bb30 (cleanup): {
+        StorageDead(_17);
+        StorageDead(_16);
+        StorageDead(_15);
+        goto -> bb32;
+    }
+
+    bb31 (cleanup): {
+        StorageDead(_13);
+        goto -> bb32;
+    }
+
+    bb32 (cleanup): {
+        StorageDead(_12);
+        goto -> bb33;
+    }
+
+    bb33 (cleanup): {
+        StorageDead(_11);
+        goto -> bb34;
+    }
+
+    bb34 (cleanup): {
+        StorageDead(_9);
+        StorageDead(_8);
+        goto -> bb37;
+    }
+
+    bb35 (cleanup): {
+        StorageDead(_6);
+        StorageDead(_5);
+        goto -> bb36;
+    }
+
+    bb36 (cleanup): {
+        StorageDead(_4);
+        goto -> bb37;
+    }
+
+    bb37 (cleanup): {
+        StorageDead(_3);
+        discriminant((*_35)) = 2;
+        resume;
+    }
+
+    bb38: {
+        StorageLive(_3);
+        StorageLive(_8);
+        StorageLive(_9);
+        StorageLive(_11);
+        StorageLive(_22);
+        goto -> bb17;
+    }
+
+    bb39: {
+        assert(const false, "`async fn` resumed after panicking") -> [success: bb39, unwind continue];
+    }
+
+    bb40: {
+        assert(const false, "`async fn` resumed after completion") -> [success: bb40, unwind continue];
+    }
+
+    bb41: {
+        (((*_35) as variant#3).0: u64) = copy ((*_35).0: u64);
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = copy ((*_35).1: u64);
+        _7 = Eq(copy _6, const 0_u64);
+        assert(!move _7, "attempt to divide `{}` by zero", const 8192_u64) -> [success: bb1, unwind: bb35];
+    }
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut _0: std::result::Result<(), std::boxed::Box<dyn std::error::Error>>;
+    let _1: u64;
+    let mut _3: (&str, tokio::runtime::Runtime);
+    let mut _4: std::ops::ControlFlow<std::result::Result<std::convert::Infallible, std::io::Error>, tokio::runtime::Runtime>;
+    let mut _5: std::result::Result<tokio::runtime::Runtime, std::io::Error>;
+    let mut _8: (&str, tokio::runtime::Runtime);
+    let mut _9: std::ops::ControlFlow<std::result::Result<std::convert::Infallible, std::io::Error>, tokio::runtime::Runtime>;
+    let mut _10: std::result::Result<tokio::runtime::Runtime, std::io::Error>;
+    let mut _14: std::vec::Vec<f64>;
+    let mut _16: bool;
+    let _17: std::time::Duration;
+    let mut _18: &std::time::Instant;
+    let mut _19: std::slice::Iter<'_, (&str, tokio::runtime::Runtime)>;
+    let mut _20: &[(&str, tokio::runtime::Runtime); 2];
+    let mut _21: std::option::Option<&(&str, tokio::runtime::Runtime)>;
+    let mut _23: std::array::IntoIter<u64, 2>;
+    let mut _24: [u64; 2];
+    let mut _26: std::option::Option<u64>;
+    let mut _27: isize;
+    let mut _29: &u64;
+    let _30: u64;
+    let mut _31: {async fn body of batch()};
+    let mut _32: &u64;
+    let mut _33: bool;
+    let _34: !;
+    let mut _35: std::option::Option<usize>;
+    let mut _37: std::option::Option<usize>;
+    let mut _40: usize;
+    let mut _43: &(&str, tokio::runtime::Runtime);
+    let _44: usize;
+    let mut _45: bool;
+    let mut _47: [u64; 2];
+    let _48: usize;
+    let mut _49: bool;
+    let mut _52: {async fn body of batch()};
+    let mut _54: std::time::Duration;
+    let mut _55: &std::time::Instant;
+    let mut _56: &u64;
+    let mut _57: &u64;
+    let mut _58: bool;
+    let _59: !;
+    let mut _60: &mut std::vec::Vec<f64>;
+    let _61: ();
+    let mut _62: std::fmt::Arguments<'_>;
+    let mut _63: &&&str;
+    let mut _64: &u64;
+    let mut _65: &usize;
+    let mut _66: &f64;
+    let mut _68: core::fmt::rt::Argument<'_>;
+    let mut _69: core::fmt::rt::Argument<'_>;
+    let mut _70: core::fmt::rt::Argument<'_>;
+    let mut _71: core::fmt::rt::Argument<'_>;
+    let _72: &[core::fmt::rt::Argument<'_>; 4];
+    let mut _73: std::option::Option<usize>;
+    let _75: ();
+    let _76: &str;
+    let _77: std::string::String;
+    let mut _78: std::string::String;
+    let mut _79: std::fmt::Arguments<'_>;
+    let mut _80: &&str;
+    let _81: usize;
+    let mut _82: bool;
+    let mut _83: &i32;
+    let _84: usize;
+    let mut _85: bool;
+    let mut _87: core::fmt::rt::Argument<'_>;
+    let mut _88: core::fmt::rt::Argument<'_>;
+    let _89: &[core::fmt::rt::Argument<'_>; 2];
+    let _90: &[f64];
+    let _91: &std::vec::Vec<f64>;
+    let mut _93: &(&str, tokio::runtime::Runtime);
+    scope 1 {
+        debug expected => _1;
+        let _2: [(&str, tokio::runtime::Runtime); 2];
+        let _6: std::result::Result<std::convert::Infallible, std::io::Error>;
+        let _7: tokio::runtime::Runtime;
+        let _11: std::result::Result<std::convert::Infallible, std::io::Error>;
+        let _12: tokio::runtime::Runtime;
+        scope 2 {
+            debug runtimes => _2;
+            let mut _13: std::vec::Vec<std::vec::Vec<f64>>;
+            scope 11 {
+                debug cases => _13;
+                let _15: std::time::Instant;
+                scope 12 {
+                    debug warm => _15;
+                    scope 13 {
+                        debug iter => _19;
+                        let _22: &tokio::runtime::Runtime;
+                        scope 14 {
+                            debug runtime => _22;
+                            let mut _25: std::array::IntoIter<u64, 2>;
+                            scope 15 {
+                                debug iter => _25;
+                                let _28: u64;
+                                scope 16 {
+                                    debug q => _28;
+                                    scope 17 {
+                                        debug left_val => _29;
+                                        debug right_val => _32;
+                                        scope 18 {
+                                            debug kind => const core::panicking::AssertKind::Eq;
+                                        }
+                                    }
+                                    scope 120 (inlined batch) {
+                                    }
+                                }
+                                scope 116 (inlined <std::array::IntoIter<u64, 2> as Iterator>::next) {
+                                    let mut _143: &mut std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>]>;
+                                    scope 117 (inlined std::array::IntoIter::<u64, 2>::unsize_mut) {
+                                        let mut _144: &mut std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>;
+                                        scope 118 (inlined <ManuallyDrop<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>> as DerefMut>::deref_mut) {
+                                            scope 119 (inlined MaybeDangling::<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>>::as_mut) {
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            scope 109 (inlined array::iter::<impl IntoIterator for [u64; 2]>::into_iter) {
+                                let _139: [std::mem::MaybeUninit<u64>; 2];
+                                let mut _141: std::mem::ManuallyDrop<std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>>;
+                                scope 110 {
+                                    let _140: std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>;
+                                    scope 111 {
+                                        scope 114 (inlined ManuallyDrop::<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>>::new) {
+                                            let mut _142: std::mem::MaybeDangling<std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>>;
+                                            scope 115 (inlined MaybeDangling::<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>>::new) {
+                                            }
+                                        }
+                                    }
+                                    scope 112 (inlined ops::index_range::IndexRange::zero_to) {
+                                    }
+                                    scope 113 (inlined array::iter::iter_inner::PolymorphicIter::<[MaybeUninit<u64>; 2]>::new_unchecked) {
+                                    }
+                                }
+                            }
+                        }
+                        scope 91 (inlined <std::slice::Iter<'_, (&str, Runtime)> as Iterator>::next) {
+                            let _129: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>;
+                            let mut _131: bool;
+                            let _132: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>;
+                            let mut _133: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>;
+                            let _134: &(&str, tokio::runtime::Runtime);
+                            scope 92 {
+                                let _130: *const (&str, tokio::runtime::Runtime);
+                                scope 93 {
+                                    scope 94 {
+                                        scope 97 (inlined #[track_caller] core::num::<impl usize>::unchecked_sub) {
+                                            scope 98 (inlined core::ub_checks::check_language_ub) {
+                                                scope 99 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                }
+                                            }
+                                        }
+                                        scope 100 (inlined std::ptr::without_provenance_mut::<(&str, Runtime)>) {
+                                        }
+                                    }
+                                    scope 95 (inlined std::ptr::const_ptr::<impl *const (&str, Runtime)>::addr) {
+                                        scope 96 (inlined std::ptr::const_ptr::<impl *const (&str, Runtime)>::cast::<()>) {
+                                        }
+                                    }
+                                    scope 101 (inlined <NonNull<(&str, Runtime)> as PartialEq>::eq) {
+                                        let mut _135: *mut (&str, tokio::runtime::Runtime);
+                                        let mut _136: *mut (&str, tokio::runtime::Runtime);
+                                        scope 102 (inlined NonNull::<(&str, Runtime)>::as_ptr) {
+                                        }
+                                        scope 103 (inlined NonNull::<(&str, Runtime)>::as_ptr) {
+                                        }
+                                    }
+                                    scope 104 (inlined NonNull::<(&str, Runtime)>::add) {
+                                        let mut _137: *mut (&str, tokio::runtime::Runtime);
+                                        scope 105 (inlined NonNull::<(&str, Runtime)>::as_ptr) {
+                                        }
+                                    }
+                                    scope 106 (inlined NonNull::<(&str, Runtime)>::as_ref::<'_>) {
+                                        let _138: *const (&str, tokio::runtime::Runtime);
+                                        scope 107 (inlined NonNull::<(&str, Runtime)>::as_ptr) {
+                                        }
+                                        scope 108 (inlined std::ptr::mut_ptr::<impl *mut (&str, Runtime)>::cast_const) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 19 {
+                        debug ((iter: std::ops::Range<usize>).0: usize) => _147;
+                        debug ((iter: std::ops::Range<usize>).1: usize) => const 21_usize;
+                        let _36: usize;
+                        scope 20 {
+                            debug index => _36;
+                            scope 21 {
+                                debug ((iter: std::ops::Range<usize>).0: usize) => _151;
+                                debug ((iter: std::ops::Range<usize>).1: usize) => const 4_usize;
+                                let _38: usize;
+                                scope 22 {
+                                    debug offset => _38;
+                                    let _39: usize;
+                                    scope 23 {
+                                        debug case => _39;
+                                        let _41: &&str;
+                                        let _42: &tokio::runtime::Runtime;
+                                        scope 24 {
+                                            debug name => _41;
+                                            debug runtime => _42;
+                                            let _46: u64;
+                                            scope 25 {
+                                                debug quantum => _46;
+                                                let _50: std::time::Instant;
+                                                scope 26 {
+                                                    debug start => _50;
+                                                    let _51: u64;
+                                                    scope 27 {
+                                                        debug actual => _51;
+                                                        let _53: f64;
+                                                        scope 28 {
+                                                            debug value => _53;
+                                                            scope 29 {
+                                                                debug left_val => _56;
+                                                                debug right_val => _57;
+                                                                scope 30 {
+                                                                    debug kind => const core::panicking::AssertKind::Eq;
+                                                                }
+                                                            }
+                                                            scope 31 {
+                                                                debug ((args: (&&&str, &u64, &usize, &f64)).0: &&&str) => _63;
+                                                                debug ((args: (&&&str, &u64, &usize, &f64)).1: &u64) => _64;
+                                                                debug ((args: (&&&str, &u64, &usize, &f64)).2: &usize) => _65;
+                                                                debug ((args: (&&&str, &u64, &usize, &f64)).3: &f64) => _66;
+                                                                let _67: [core::fmt::rt::Argument<'_>; 4];
+                                                                scope 32 {
+                                                                    debug args => _67;
+                                                                    scope 177 (inlined Arguments::<'_>::new::<20, 4>) {
+                                                                        let mut _180: std::ptr::NonNull<u8>;
+                                                                        let mut _181: std::ptr::NonNull<core::fmt::rt::Argument<'_>>;
+                                                                    }
+                                                                }
+                                                                scope 157 (inlined core::fmt::rt::Argument::<'_>::new_display::<&&str>) {
+                                                                    let mut _160: core::fmt::rt::ArgumentType<'_>;
+                                                                    let mut _161: std::ptr::NonNull<()>;
+                                                                    let mut _162: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    let _163: for<'a, 'b, 'c> fn(&'a &&str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    scope 158 {
+                                                                    }
+                                                                    scope 159 (inlined NonNull::<&&str>::from_ref) {
+                                                                        let mut _164: *const &&str;
+                                                                    }
+                                                                    scope 160 (inlined NonNull::<&&str>::cast::<()>) {
+                                                                        scope 161 (inlined NonNull::<&&str>::as_ptr) {
+                                                                        }
+                                                                    }
+                                                                }
+                                                                scope 162 (inlined core::fmt::rt::Argument::<'_>::new_display::<u64>) {
+                                                                    let mut _165: core::fmt::rt::ArgumentType<'_>;
+                                                                    let mut _166: std::ptr::NonNull<()>;
+                                                                    let mut _167: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    let _168: for<'a, 'b, 'c> fn(&'a u64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    scope 163 {
+                                                                    }
+                                                                    scope 164 (inlined NonNull::<u64>::from_ref) {
+                                                                        let mut _169: *const u64;
+                                                                    }
+                                                                    scope 165 (inlined NonNull::<u64>::cast::<()>) {
+                                                                        scope 166 (inlined NonNull::<u64>::as_ptr) {
+                                                                        }
+                                                                    }
+                                                                }
+                                                                scope 167 (inlined core::fmt::rt::Argument::<'_>::new_display::<usize>) {
+                                                                    let mut _170: core::fmt::rt::ArgumentType<'_>;
+                                                                    let mut _171: std::ptr::NonNull<()>;
+                                                                    let mut _172: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    let _173: for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    scope 168 {
+                                                                    }
+                                                                    scope 169 (inlined NonNull::<usize>::from_ref) {
+                                                                        let mut _174: *const usize;
+                                                                    }
+                                                                    scope 170 (inlined NonNull::<usize>::cast::<()>) {
+                                                                        scope 171 (inlined NonNull::<usize>::as_ptr) {
+                                                                        }
+                                                                    }
+                                                                }
+                                                                scope 172 (inlined core::fmt::rt::Argument::<'_>::new_display::<f64>) {
+                                                                    let mut _175: core::fmt::rt::ArgumentType<'_>;
+                                                                    let mut _176: std::ptr::NonNull<()>;
+                                                                    let mut _177: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    let _178: for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                                                    scope 173 {
+                                                                    }
+                                                                    scope 174 (inlined NonNull::<f64>::from_ref) {
+                                                                        let mut _179: *const f64;
+                                                                    }
+                                                                    scope 175 (inlined NonNull::<f64>::cast::<()>) {
+                                                                        scope 176 (inlined NonNull::<f64>::as_ptr) {
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 141 (inlined #[track_caller] <Vec<Vec<f64>> as IndexMut<usize>>::index_mut) {
+                                                                let mut _153: &mut [std::vec::Vec<f64>];
+                                                                scope 142 (inlined <Vec<Vec<f64>> as DerefMut>::deref_mut) {
+                                                                    scope 143 (inlined Vec::<Vec<f64>>::as_mut_slice) {
+                                                                        let mut _154: *mut [std::vec::Vec<f64>];
+                                                                        let mut _155: *mut std::vec::Vec<f64>;
+                                                                        let mut _156: usize;
+                                                                        scope 144 (inlined Vec::<Vec<f64>>::as_mut_ptr) {
+                                                                            scope 145 (inlined alloc::raw_vec::RawVec::<Vec<f64>>::ptr) {
+                                                                                scope 146 (inlined alloc::raw_vec::RawVecInner::ptr::<Vec<f64>>) {
+                                                                                    scope 147 (inlined alloc::raw_vec::RawVecInner::non_null::<Vec<f64>>) {
+                                                                                        let mut _157: std::ptr::NonNull<u8>;
+                                                                                        scope 148 (inlined std::ptr::Unique::<u8>::cast::<Vec<f64>>) {
+                                                                                            scope 149 (inlined NonNull::<u8>::cast::<Vec<f64>>) {
+                                                                                                scope 150 (inlined NonNull::<u8>::as_ptr) {
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        scope 151 (inlined std::ptr::Unique::<Vec<f64>>::as_non_null_ptr) {
+                                                                                        }
+                                                                                    }
+                                                                                    scope 152 (inlined NonNull::<Vec<f64>>::as_ptr) {
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                                scope 153 (inlined #[track_caller] core::slice::index::<impl IndexMut<usize> for [Vec<f64>]>::index_mut) {
+                                                                    scope 154 (inlined #[track_caller] <usize as SliceIndex<[Vec<f64>]>>::index_mut) {
+                                                                        let mut _158: bool;
+                                                                    }
+                                                                }
+                                                            }
+                                                            scope 155 (inlined Vec::<f64>::push) {
+                                                                let mut _159: &mut f64;
+                                                                scope 156 {
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 140 (inlined batch) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 132 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                                    scope 133 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                                        let mut _149: bool;
+                                        let _150: usize;
+                                        let mut _151: usize;
+                                        scope 134 {
+                                            scope 136 (inlined <usize as Step>::forward_unchecked) {
+                                                scope 137 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                                    scope 138 (inlined core::ub_checks::check_language_ub) {
+                                                        scope 139 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        scope 135 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                                            let mut _152: usize;
+                                        }
+                                    }
+                                }
+                            }
+                            scope 130 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+                            }
+                        }
+                        scope 122 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                            scope 123 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                                let mut _145: bool;
+                                let _146: usize;
+                                let mut _147: usize;
+                                scope 124 {
+                                    scope 126 (inlined <usize as Step>::forward_unchecked) {
+                                        scope 127 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                            scope 128 (inlined core::ub_checks::check_language_ub) {
+                                                scope 129 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 125 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                                    let mut _148: usize;
+                                }
+                            }
+                        }
+                    }
+                    scope 33 {
+                        debug ((iter: std::ops::Range<usize>).0: usize) => _184;
+                        debug ((iter: std::ops::Range<usize>).1: usize) => const 4_usize;
+                        let _74: usize;
+                        scope 34 {
+                            debug case => _74;
+                            let mut _92: &[i32; 2];
+                            scope 35 {
+                                debug ((args: (&&str, &i32)).0: &&str) => _80;
+                                debug ((args: (&&str, &i32)).1: &i32) => _83;
+                                let _86: [core::fmt::rt::Argument<'_>; 2];
+                                scope 36 {
+                                    debug args => _86;
+                                    scope 196 (inlined Arguments::<'_>::new::<6, 2>) {
+                                        let mut _196: std::ptr::NonNull<u8>;
+                                        let mut _197: std::ptr::NonNull<core::fmt::rt::Argument<'_>>;
+                                    }
+                                }
+                                scope 186 (inlined core::fmt::rt::Argument::<'_>::new_display::<&str>) {
+                                    let mut _186: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _187: std::ptr::NonNull<()>;
+                                    let mut _188: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _189: for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 187 {
+                                    }
+                                    scope 188 (inlined NonNull::<&str>::from_ref) {
+                                        let mut _190: *const &str;
+                                    }
+                                    scope 189 (inlined NonNull::<&str>::cast::<()>) {
+                                        scope 190 (inlined NonNull::<&str>::as_ptr) {
+                                        }
+                                    }
+                                }
+                                scope 191 (inlined core::fmt::rt::Argument::<'_>::new_display::<i32>) {
+                                    let mut _191: core::fmt::rt::ArgumentType<'_>;
+                                    let mut _192: std::ptr::NonNull<()>;
+                                    let mut _193: for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error>;
+                                    let _194: for<'a, 'b, 'c> fn(&'a i32, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error>;
+                                    scope 192 {
+                                    }
+                                    scope 193 (inlined NonNull::<i32>::from_ref) {
+                                        let mut _195: *const i32;
+                                    }
+                                    scope 194 (inlined NonNull::<i32>::cast::<()>) {
+                                        scope 195 (inlined NonNull::<i32>::as_ptr) {
+                                        }
+                                    }
+                                }
+                            }
+                            scope 197 (inlined format) {
+                                let mut _198: std::option::Option<&str>;
+                                let mut _199: {closure@std::fmt::format::{closure#0}};
+                                let mut _200: &std::fmt::Arguments<'_>;
+                                scope 198 (inlined Arguments::<'_>::as_str) {
+                                    let _201: usize;
+                                    let mut _202: usize;
+                                    let _203: &str;
+                                    let _204: &[u8];
+                                    let mut _205: *const u8;
+                                    let mut _206: usize;
+                                    scope 199 {
+                                        scope 200 (inlined NonNull::<u8>::as_ptr) {
+                                        }
+                                        scope 201 (inlined #[track_caller] std::slice::from_raw_parts::<'_, u8>) {
+                                            let _207: *const [u8];
+                                            scope 202 (inlined core::ub_checks::check_language_ub) {
+                                                scope 203 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                }
+                                            }
+                                            scope 204 (inlined std::mem::size_of::<u8>) {
+                                            }
+                                            scope 205 (inlined std::mem::align_of::<u8>) {
+                                            }
+                                            scope 206 (inlined slice_from_raw_parts::<u8>) {
+                                                scope 207 (inlined std::ptr::from_raw_parts::<[u8], u8>) {
+                                                }
+                                            }
+                                        }
+                                        scope 208 (inlined from_utf8_unchecked) {
+                                        }
+                                    }
+                                }
+                            }
+                            scope 209 (inlined must_use::<String>) {
+                            }
+                            scope 210 (inlined <String as Deref>::deref) {
+                                scope 211 (inlined String::as_str) {
+                                    let _208: &[u8];
+                                    scope 212 (inlined Vec::<u8>::as_slice) {
+                                        let _209: *const [u8];
+                                        let mut _210: *const u8;
+                                        let mut _211: usize;
+                                        scope 213 (inlined Vec::<u8>::as_ptr) {
+                                            scope 214 (inlined alloc::raw_vec::RawVec::<u8>::ptr) {
+                                                scope 215 (inlined alloc::raw_vec::RawVecInner::ptr::<u8>) {
+                                                    scope 216 (inlined alloc::raw_vec::RawVecInner::non_null::<u8>) {
+                                                        let mut _212: std::ptr::NonNull<u8>;
+                                                        scope 217 (inlined std::ptr::Unique::<u8>::cast::<u8>) {
+                                                            scope 218 (inlined NonNull::<u8>::cast::<u8>) {
+                                                                scope 219 (inlined NonNull::<u8>::as_ptr) {
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 220 (inlined std::ptr::Unique::<u8>::as_non_null_ptr) {
+                                                        }
+                                                    }
+                                                    scope 221 (inlined NonNull::<u8>::as_ptr) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    scope 222 (inlined from_utf8_unchecked) {
+                                    }
+                                }
+                            }
+                            scope 223 (inlined #[track_caller] <Vec<Vec<f64>> as Index<usize>>::index) {
+                                scope 224 (inlined <Vec<Vec<f64>> as Deref>::deref) {
+                                    scope 225 (inlined Vec::<Vec<f64>>::as_slice) {
+                                        let _213: *const [std::vec::Vec<f64>];
+                                        let mut _214: *const std::vec::Vec<f64>;
+                                        let mut _215: usize;
+                                        scope 226 (inlined Vec::<Vec<f64>>::as_ptr) {
+                                            scope 227 (inlined alloc::raw_vec::RawVec::<Vec<f64>>::ptr) {
+                                                scope 228 (inlined alloc::raw_vec::RawVecInner::ptr::<Vec<f64>>) {
+                                                    scope 229 (inlined alloc::raw_vec::RawVecInner::non_null::<Vec<f64>>) {
+                                                        let mut _216: std::ptr::NonNull<u8>;
+                                                        scope 230 (inlined std::ptr::Unique::<u8>::cast::<Vec<f64>>) {
+                                                            scope 231 (inlined NonNull::<u8>::cast::<Vec<f64>>) {
+                                                                scope 232 (inlined NonNull::<u8>::as_ptr) {
+                                                                }
+                                                            }
+                                                        }
+                                                        scope 233 (inlined std::ptr::Unique::<Vec<f64>>::as_non_null_ptr) {
+                                                        }
+                                                    }
+                                                    scope 234 (inlined NonNull::<Vec<f64>>::as_ptr) {
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 235 (inlined #[track_caller] core::slice::index::<impl Index<usize> for [Vec<f64>]>::index) {
+                                    scope 236 (inlined #[track_caller] <usize as SliceIndex<[Vec<f64>]>>::index) {
+                                        let mut _217: bool;
+                                    }
+                                }
+                            }
+                            scope 237 (inlined <Vec<f64> as Deref>::deref) {
+                                scope 238 (inlined Vec::<f64>::as_slice) {
+                                    let _218: *const [f64];
+                                    let mut _219: *const f64;
+                                    let mut _220: usize;
+                                    scope 239 (inlined Vec::<f64>::as_ptr) {
+                                        scope 240 (inlined alloc::raw_vec::RawVec::<f64>::ptr) {
+                                            scope 241 (inlined alloc::raw_vec::RawVecInner::ptr::<f64>) {
+                                                scope 242 (inlined alloc::raw_vec::RawVecInner::non_null::<f64>) {
+                                                    let mut _221: std::ptr::NonNull<u8>;
+                                                    scope 243 (inlined std::ptr::Unique::<u8>::cast::<f64>) {
+                                                        scope 244 (inlined NonNull::<u8>::cast::<f64>) {
+                                                            scope 245 (inlined NonNull::<u8>::as_ptr) {
+                                                            }
+                                                        }
+                                                    }
+                                                    scope 246 (inlined std::ptr::Unique::<f64>::as_non_null_ptr) {
+                                                    }
+                                                }
+                                                scope 247 (inlined NonNull::<f64>::as_ptr) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 178 (inlined iter::range::<impl Iterator for std::ops::Range<usize>>::next) {
+                            scope 179 (inlined <std::ops::Range<usize> as iter::range::RangeIteratorImpl>::spec_next) {
+                                let mut _182: bool;
+                                let _183: usize;
+                                let mut _184: usize;
+                                scope 180 {
+                                    scope 182 (inlined <usize as Step>::forward_unchecked) {
+                                        scope 183 (inlined #[track_caller] core::num::<impl usize>::unchecked_add) {
+                                            scope 184 (inlined core::ub_checks::check_language_ub) {
+                                                scope 185 (inlined core::ub_checks::check_language_ub::runtime) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                scope 181 (inlined std::cmp::impls::<impl PartialOrd for usize>::lt) {
+                                    let mut _185: usize;
+                                }
+                            }
+                        }
+                    }
+                    scope 59 (inlined Duration::from_millis) {
+                        scope 60 {
+                            scope 61 {
+                                scope 62 {
+                                }
+                                scope 63 (inlined core::num::niche_types::Nanoseconds::new_unchecked) {
+                                }
+                            }
+                        }
+                    }
+                    scope 64 (inlined <Duration as PartialOrd>::lt) {
+                        let mut _112: std::option::Option<std::cmp::Ordering>;
+                        scope 65 (inlined Option::<std::cmp::Ordering>::is_some_and::<fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt}>) {
+                            let _113: std::cmp::Ordering;
+                            scope 66 {
+                                scope 67 (inlined <fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt} as FnOnce<(std::cmp::Ordering,)>>::call_once - shim(fn(std::cmp::Ordering) -> bool {std::cmp::Ordering::is_lt})) {
+                                    scope 68 (inlined std::cmp::Ordering::is_lt) {
+                                        let mut _114: i8;
+                                        scope 69 (inlined std::cmp::Ordering::as_raw) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        scope 70 (inlined <Duration as PartialOrd>::partial_cmp) {
+                            let mut _115: std::cmp::Ordering;
+                            scope 71 (inlined <Duration as Ord>::cmp) {
+                                let mut _116: i8;
+                                scope 72 {
+                                }
+                                scope 73 (inlined std::cmp::impls::<impl Ord for u64>::cmp) {
+                                    let mut _117: u64;
+                                }
+                                scope 74 (inlined <core::num::niche_types::Nanoseconds as Ord>::cmp) {
+                                    let _118: u32;
+                                    let mut _119: core::num::niche_types::Nanoseconds;
+                                    scope 75 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                                    }
+                                    scope 76 (inlined core::num::niche_types::Nanoseconds::as_inner) {
+                                    }
+                                    scope 77 (inlined std::cmp::impls::<impl Ord for u32>::cmp) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 78 (inlined array::<impl IntoIterator for &[(&str, Runtime); 2]>::into_iter) {
+                        let mut _120: &[(&str, tokio::runtime::Runtime)];
+                        scope 79 (inlined core::slice::<impl [(&str, Runtime)]>::iter) {
+                            scope 80 (inlined std::slice::Iter::<'_, (&str, Runtime)>::new) {
+                                let mut _122: std::ptr::NonNull<[(&str, tokio::runtime::Runtime)]>;
+                                let mut _124: *mut (&str, tokio::runtime::Runtime);
+                                let mut _125: *mut (&str, tokio::runtime::Runtime);
+                                scope 81 {
+                                    let _121: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>;
+                                    scope 82 {
+                                        let _123: *const (&str, tokio::runtime::Runtime);
+                                        scope 83 {
+                                        }
+                                        scope 87 (inlined std::ptr::without_provenance::<(&str, Runtime)>) {
+                                            scope 88 (inlined std::ptr::without_provenance_mut::<(&str, Runtime)>) {
+                                            }
+                                        }
+                                        scope 89 (inlined NonNull::<(&str, Runtime)>::as_ptr) {
+                                        }
+                                        scope 90 (inlined #[track_caller] std::ptr::mut_ptr::<impl *mut (&str, Runtime)>::add) {
+                                        }
+                                    }
+                                    scope 84 (inlined NonNull::<[(&str, Runtime)]>::from_ref) {
+                                        let mut _126: *const [(&str, tokio::runtime::Runtime)];
+                                    }
+                                    scope 85 (inlined NonNull::<[(&str, Runtime)]>::cast::<(&str, Runtime)>) {
+                                        let mut _127: *mut (&str, tokio::runtime::Runtime);
+                                        let mut _128: *mut [(&str, tokio::runtime::Runtime)];
+                                        scope 86 (inlined NonNull::<[(&str, Runtime)]>::as_ptr) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope 121 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+                    }
+                    scope 131 (inlined <std::ops::Range<usize> as IntoIterator>::into_iter) {
+                    }
+                }
+            }
+            scope 46 (inlined Vec::<f64>::new) {
+                scope 47 (inlined alloc::raw_vec::RawVec::<f64>::new) {
+                    scope 48 (inlined alloc::raw_vec::RawVec::<f64>::new_in) {
+                        scope 49 (inlined std::mem::Alignment::of::<f64>) {
+                        }
+                        scope 50 (inlined alloc::raw_vec::RawVecInner::new_in) {
+                            scope 51 {
+                            }
+                            scope 52 (inlined std::mem::Alignment::as_nonzero_usize) {
+                            }
+                            scope 53 (inlined NonNull::<u8>::without_provenance) {
+                            }
+                            scope 54 (inlined std::ptr::Unique::<u8>::from_non_null) {
+                            }
+                        }
+                    }
+                }
+            }
+            scope 58 (inlined std::vec::from_elem::<Vec<f64>>) {
+            }
+        }
+        scope 3 {
+            debug residual => _6;
+            scope 4 {
+                scope 40 (inlined #[track_caller] <Result<(), Box<dyn std::error::Error>> as FromResidual<Result<Infallible, std::io::Error>>>::from_residual) {
+                    let mut _98: isize;
+                    let _99: std::io::Error;
+                    let mut _100: std::boxed::Box<dyn std::error::Error>;
+                    let mut _101: bool;
+                    scope 41 {
+                        scope 42 (inlined boxed::convert::<impl From<std::io::Error> for Box<dyn std::error::Error>>::from) {
+                            let mut _102: std::boxed::Box<std::io::Error>;
+                        }
+                    }
+                }
+            }
+        }
+        scope 5 {
+            debug val => _7;
+            scope 6 {
+            }
+        }
+        scope 7 {
+            debug residual => _11;
+            scope 8 {
+                scope 55 (inlined #[track_caller] <Result<(), Box<dyn std::error::Error>> as FromResidual<Result<Infallible, std::io::Error>>>::from_residual) {
+                    let mut _107: isize;
+                    let _108: std::io::Error;
+                    let mut _109: std::boxed::Box<dyn std::error::Error>;
+                    let mut _110: bool;
+                    scope 56 {
+                        scope 57 (inlined boxed::convert::<impl From<std::io::Error> for Box<dyn std::error::Error>>::from) {
+                            let mut _111: std::boxed::Box<std::io::Error>;
+                        }
+                    }
+                }
+            }
+        }
+        scope 9 {
+            debug val => _12;
+            scope 10 {
+            }
+        }
+        scope 37 (inlined <Result<Runtime, std::io::Error> as Try>::branch) {
+            let mut _94: isize;
+            let _95: tokio::runtime::Runtime;
+            let _96: std::io::Error;
+            let mut _97: std::result::Result<std::convert::Infallible, std::io::Error>;
+            scope 38 {
+            }
+            scope 39 {
+            }
+        }
+        scope 43 (inlined <Result<Runtime, std::io::Error> as Try>::branch) {
+            let mut _103: isize;
+            let _104: tokio::runtime::Runtime;
+            let _105: std::io::Error;
+            let mut _106: std::result::Result<std::convert::Infallible, std::io::Error>;
+            scope 44 {
+            }
+            scope 45 {
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_1);
+        _1 = <std::ops::Range<u64> as Iterator>::fold::<u64, {closure@src/bin/scheduling.rs:44:42: 44:51}>(const std::ops::Range::<u64> {{ start: 0_u64, end: 128_u64 }}, const 0_u64, const ZeroSized: {closure@src/bin/scheduling.rs:44:42: 44:51}) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageLive(_2);
+        StorageLive(_3);
+        StorageLive(_4);
+        StorageLive(_5);
+        _5 = current_runtime() -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        StorageLive(_94);
+        _94 = discriminant(_5);
+        switchInt(move _94) -> [0: bb46, 1: bb45, otherwise: bb3];
+    }
+
+    bb3: {
+        unreachable;
+    }
+
+    bb4: {
+        StorageLive(_103);
+        _103 = discriminant(_10);
+        switchInt(move _103) -> [0: bb49, 1: bb48, otherwise: bb3];
+    }
+
+    bb5: {
+        StorageLive(_16);
+        StorageLive(_17);
+        StorageLive(_18);
+        _18 = &_15;
+        _17 = std::time::Instant::elapsed(move _18) -> [return: bb6, unwind: bb40];
+    }
+
+    bb6: {
+        StorageDead(_18);
+        StorageLive(_112);
+        StorageLive(_115);
+        StorageLive(_116);
+        StorageLive(_117);
+        _117 = copy (_17.0: u64);
+        _115 = Cmp(move _117, const 0_u64);
+        StorageDead(_117);
+        _116 = discriminant(_115);
+        switchInt(move _116) -> [0: bb53, otherwise: bb52];
+    }
+
+    bb7: {
+        StorageDead(_17);
+        StorageLive(_20);
+        _20 = &_2;
+        StorageLive(_120);
+        _120 = copy _20 as &[(&str, tokio::runtime::Runtime)] (PointerCoercion(Unsize, Implicit));
+        StorageLive(_123);
+        StorageLive(_121);
+        StorageLive(_122);
+        StorageLive(_126);
+        _126 = &raw const (*_120);
+        _122 = copy _126 as std::ptr::NonNull<[(&str, tokio::runtime::Runtime)]> (Transmute);
+        StorageDead(_126);
+        StorageLive(_127);
+        StorageLive(_128);
+        _128 = copy _122 as *mut [(&str, tokio::runtime::Runtime)] (Transmute);
+        _127 = copy _128 as *mut (&str, tokio::runtime::Runtime) (PtrToPtr);
+        StorageDead(_128);
+        _121 = copy _127 as std::ptr::NonNull<(&str, tokio::runtime::Runtime)> (Transmute);
+        StorageDead(_127);
+        StorageDead(_122);
+        StorageLive(_124);
+        StorageLive(_125);
+        _125 = copy _121 as *mut (&str, tokio::runtime::Runtime) (Transmute);
+        _124 = Offset(copy _125, const 2_usize);
+        StorageDead(_125);
+        _123 = copy _124 as *const (&str, tokio::runtime::Runtime) (PtrToPtr);
+        StorageDead(_124);
+        _19 = std::slice::Iter::<'_, (&str, Runtime)> { ptr: copy _121, end_or_len: copy _123, _marker: const PhantomData::<&(&str, Runtime)> };
+        StorageDead(_121);
+        StorageDead(_123);
+        StorageDead(_120);
+        StorageDead(_20);
+        goto -> bb8;
+    }
+
+    bb8: {
+        StorageLive(_21);
+        StorageLive(_135);
+        StorageLive(_129);
+        _129 = copy (_19.0: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>);
+        StorageLive(_130);
+        _130 = copy (_19.1: *const (&str, tokio::runtime::Runtime));
+        StorageLive(_131);
+        StorageLive(_132);
+        _132 = copy _130 as std::ptr::NonNull<(&str, tokio::runtime::Runtime)> (Transmute);
+        _135 = copy _129 as *mut (&str, tokio::runtime::Runtime) (Transmute);
+        StorageLive(_136);
+        _136 = copy _132 as *mut (&str, tokio::runtime::Runtime) (Transmute);
+        _131 = Eq(copy _135, copy _136);
+        StorageDead(_136);
+        switchInt(move _131) -> [0: bb55, otherwise: bb54];
+    }
+
+    bb9: {
+        StorageLive(_26);
+        StorageLive(_143);
+        StorageLive(_144);
+        _144 = &mut (((_25.0: std::mem::ManuallyDrop<std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>>).0: std::mem::MaybeDangling<std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>>).0: std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>; 2]>);
+        _143 = copy _144 as &mut std::array::iter::iter_inner::PolymorphicIter<[std::mem::MaybeUninit<u64>]> (PointerCoercion(Unsize, Implicit));
+        StorageDead(_144);
+        _26 = array::iter::iter_inner::PolymorphicIter::<[MaybeUninit<u64>]>::next(move _143) -> [return: bb56, unwind: bb39];
+    }
+
+    bb10: {
+        StorageLive(_28);
+        _28 = copy ((_26 as Some).0: u64);
+        StorageLive(_30);
+        StorageLive(_31);
+        _31 = {coroutine@src/bin/scheduling.rs:18:37: 42:2 (#0)} { quantum: copy _28 };
+        _30 = Runtime::block_on::<{async fn body of batch()}>(copy _22, move _31) -> [return: bb12, unwind: bb39];
+    }
+
+    bb11: {
+        StorageDead(_26);
+        drop(_25) -> [return: bb15, unwind: bb40];
+    }
+
+    bb12: {
+        StorageDead(_31);
+        _29 = &_30;
+        _32 = &_1;
+        StorageLive(_33);
+        _33 = Eq(copy _30, copy _1);
+        switchInt(move _33) -> [0: bb14, otherwise: bb13];
+    }
+
+    bb13: {
+        StorageDead(_33);
+        StorageDead(_30);
+        StorageDead(_28);
+        StorageDead(_26);
+        goto -> bb9;
+    }
+
+    bb14: {
+        _34 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _29, move _32, const Option::<Arguments<'_>>::None) -> bb39;
+    }
+
+    bb15: {
+        StorageDead(_25);
+        StorageDead(_23);
+        StorageDead(_22);
+        StorageDead(_21);
+        goto -> bb8;
+    }
+
+    bb16: {
+        StorageDead(_17);
+        StorageDead(_16);
+        _147 = const 0_usize;
+        goto -> bb17;
+    }
+
+    bb17: {
+        StorageLive(_35);
+        StorageLive(_145);
+        StorageLive(_148);
+        _148 = copy _147;
+        _145 = Lt(move _148, const 21_usize);
+        StorageDead(_148);
+        switchInt(move _145) -> [0: bb58, otherwise: bb57];
+    }
+
+    bb18: {
+        StorageLive(_37);
+        StorageLive(_149);
+        StorageLive(_152);
+        _152 = copy _151;
+        _149 = Lt(move _152, const 4_usize);
+        StorageDead(_152);
+        switchInt(move _149) -> [0: bb60, otherwise: bb59];
+    }
+
+    bb19: {
+        _43 = &_2[_44];
+        StorageLive(_41);
+        _41 = &((*_43).0: &str);
+        StorageLive(_42);
+        _42 = &((*_43).1: tokio::runtime::Runtime);
+        StorageDead(_44);
+        StorageDead(_43);
+        StorageLive(_46);
+        StorageLive(_47);
+        _47 = [const 16_u64, const 1024_u64];
+        StorageLive(_48);
+        _48 = Rem(copy _39, const 2_usize);
+        _49 = Lt(copy _48, const 2_usize);
+        assert(move _49, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _48) -> [success: bb20, unwind: bb40];
+    }
+
+    bb20: {
+        _46 = copy _47[_48];
+        StorageDead(_48);
+        StorageDead(_47);
+        StorageLive(_50);
+        _50 = std::time::Instant::now() -> [return: bb21, unwind: bb40];
+    }
+
+    bb21: {
+        StorageLive(_51);
+        StorageLive(_52);
+        _52 = {coroutine@src/bin/scheduling.rs:18:37: 42:2 (#0)} { quantum: copy _46 };
+        _51 = Runtime::block_on::<{async fn body of batch()}>(move _42, move _52) -> [return: bb22, unwind: bb40];
+    }
+
+    bb22: {
+        StorageDead(_52);
+        StorageLive(_53);
+        StorageLive(_54);
+        StorageLive(_55);
+        _55 = &_50;
+        _54 = std::time::Instant::elapsed(move _55) -> [return: bb23, unwind: bb40];
+    }
+
+    bb23: {
+        StorageDead(_55);
+        _53 = ns_per_op(move _54, const 1048576_u64) -> [return: bb24, unwind: bb40];
+    }
+
+    bb24: {
+        StorageDead(_54);
+        _56 = &_51;
+        _57 = &_1;
+        StorageLive(_58);
+        _58 = Eq(copy _51, copy _1);
+        switchInt(move _58) -> [0: bb26, otherwise: bb25];
+    }
+
+    bb25: {
+        StorageDead(_58);
+        StorageLive(_60);
+        StorageLive(_153);
+        StorageLive(_154);
+        StorageLive(_155);
+        StorageLive(_157);
+        _157 = copy ((((_13.0: alloc::raw_vec::RawVec<std::vec::Vec<f64>>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _155 = copy _157 as *mut std::vec::Vec<f64> (Transmute);
+        StorageDead(_157);
+        _156 = copy (_13.1: usize);
+        _154 = *mut [std::vec::Vec<f64>] from (copy _155, copy _156);
+        StorageDead(_155);
+        _153 = &mut (*_154);
+        StorageDead(_154);
+        StorageLive(_158);
+        _158 = Lt(copy _39, copy _156);
+        assert(move _158, "index out of bounds: the length is {} but the index is {}", copy _156, copy _39) -> [success: bb61, unwind: bb40];
+    }
+
+    bb26: {
+        _59 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _56, move _57, const Option::<Arguments<'_>>::None) -> bb40;
+    }
+
+    bb27: {
+        StorageDead(_62);
+        StorageDead(_67);
+        StorageDead(_53);
+        StorageDead(_51);
+        StorageDead(_50);
+        StorageDead(_46);
+        StorageDead(_42);
+        StorageDead(_41);
+        StorageDead(_39);
+        StorageDead(_38);
+        StorageDead(_37);
+        goto -> bb18;
+    }
+
+    bb28: {
+        StorageLive(_73);
+        StorageLive(_182);
+        StorageLive(_185);
+        _185 = copy _184;
+        _182 = Lt(move _185, const 4_usize);
+        StorageDead(_185);
+        switchInt(move _182) -> [0: bb64, otherwise: bb63];
+    }
+
+    bb29: {
+        _80 = &(_2[_81].0: &str);
+        StorageLive(_84);
+        _84 = Rem(copy _74, const 2_usize);
+        _85 = Lt(copy _84, const 2_usize);
+        assert(move _85, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _84) -> [success: bb30, unwind: bb40];
+    }
+
+    bb30: {
+        _92 = const main::promoted[0];
+        _83 = &(*_92)[_84];
+        StorageLive(_86);
+        StorageLive(_87);
+        StorageLive(_190);
+        StorageLive(_186);
+        StorageLive(_187);
+        _190 = &raw const (*_80);
+        _187 = copy _190 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_188);
+        StorageLive(_189);
+        _189 = <&str as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a &str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _188 = copy _189 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_189);
+        _186 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _187, formatter: copy _188, _lifetime: const PhantomData::<&()> };
+        StorageDead(_188);
+        StorageDead(_187);
+        _87 = core::fmt::rt::Argument::<'_> { ty: move _186 };
+        StorageDead(_186);
+        StorageDead(_190);
+        StorageLive(_88);
+        StorageLive(_195);
+        StorageLive(_191);
+        StorageLive(_192);
+        _195 = &raw const (*_83);
+        _192 = copy _195 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_193);
+        StorageLive(_194);
+        _194 = <i32 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a i32, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _193 = copy _194 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_194);
+        _191 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _192, formatter: copy _193, _lifetime: const PhantomData::<&()> };
+        StorageDead(_193);
+        StorageDead(_192);
+        _88 = core::fmt::rt::Argument::<'_> { ty: move _191 };
+        StorageDead(_191);
+        StorageDead(_195);
+        _86 = [move _87, move _88];
+        StorageDead(_88);
+        StorageDead(_87);
+        _89 = &_86;
+        _196 = const b"\xc0\x02-q\xc0\x00" as std::ptr::NonNull<u8> (Transmute);
+        _197 = copy _89 as std::ptr::NonNull<core::fmt::rt::Argument<'_>> (Transmute);
+        _79 = Arguments::<'_> { template: copy _196, args: copy _197 };
+        StorageLive(_198);
+        StorageLive(_203);
+        StorageLive(_201);
+        _201 = copy _89 as usize (Transmute);
+        StorageLive(_202);
+        _202 = BitAnd(copy _201, const 1_usize);
+        switchInt(copy _202) -> [1: bb66, otherwise: bb67];
+    }
+
+    bb31: {
+        StorageDead(_90);
+        drop(_77) -> [return: bb32, unwind: bb40];
+    }
+
+    bb32: {
+        StorageDead(_77);
+        StorageDead(_76);
+        StorageDead(_74);
+        StorageDead(_73);
+        goto -> bb28;
+    }
+
+    bb33: {
+        StorageDead(_13);
+        drop(_2) -> [return: bb34, unwind continue];
+    }
+
+    bb34: {
+        StorageDead(_2);
+        StorageDead(_1);
+        goto -> bb37;
+    }
+
+    bb35: {
+        StorageDead(_3);
+        StorageDead(_9);
+        goto -> bb36;
+    }
+
+    bb36: {
+        StorageDead(_4);
+        StorageDead(_2);
+        StorageDead(_1);
+        goto -> bb37;
+    }
+
+    bb37: {
+        return;
+    }
+
+    bb38 (cleanup): {
+        drop(_77) -> [return: bb40, unwind terminate(cleanup)];
+    }
+
+    bb39 (cleanup): {
+        drop(_25) -> [return: bb40, unwind terminate(cleanup)];
+    }
+
+    bb40 (cleanup): {
+        drop(_13) -> [return: bb41, unwind terminate(cleanup)];
+    }
+
+    bb41 (cleanup): {
+        drop(_2) -> [return: bb44, unwind terminate(cleanup)];
+    }
+
+    bb42 (cleanup): {
+        drop(_3) -> [return: bb44, unwind terminate(cleanup)];
+    }
+
+    bb43 (cleanup): {
+        drop(_3) -> [return: bb44, unwind terminate(cleanup)];
+    }
+
+    bb44 (cleanup): {
+        resume;
+    }
+
+    bb45: {
+        StorageLive(_96);
+        _96 = move ((_5 as Err).0: std::io::Error);
+        StorageLive(_97);
+        _97 = Result::<Infallible, std::io::Error>::Err(copy _96);
+        _4 = ControlFlow::<Result<Infallible, std::io::Error>, Runtime>::Break(move _97);
+        StorageDead(_97);
+        StorageDead(_96);
+        StorageDead(_94);
+        StorageDead(_5);
+        StorageLive(_6);
+        _6 = move ((_4 as Break).0: std::result::Result<std::convert::Infallible, std::io::Error>);
+        StorageLive(_98);
+        StorageLive(_101);
+        _98 = discriminant(_6);
+        _101 = Eq(copy _98, const 1_isize);
+        assume(move _101);
+        StorageLive(_99);
+        _99 = copy ((_6 as Err).0: std::io::Error);
+        StorageLive(_100);
+        StorageLive(_102);
+        _102 = Box::<std::io::Error>::new(move _99) -> [return: bb47, unwind continue];
+    }
+
+    bb46: {
+        StorageLive(_95);
+        _95 = move ((_5 as Ok).0: tokio::runtime::Runtime);
+        _4 = ControlFlow::<Result<Infallible, std::io::Error>, Runtime>::Continue(copy _95);
+        StorageDead(_95);
+        StorageDead(_94);
+        StorageDead(_5);
+        _7 = move ((_4 as Continue).0: tokio::runtime::Runtime);
+        _3 = (const "current", copy _7);
+        StorageLive(_8);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = multi_runtime(const 4_usize) -> [return: bb4, unwind: bb43];
+    }
+
+    bb47: {
+        _100 = move _102 as std::boxed::Box<dyn std::error::Error> (PointerCoercion(Unsize, Implicit));
+        StorageDead(_102);
+        _0 = Result::<(), Box<dyn std::error::Error>>::Err(move _100);
+        StorageDead(_100);
+        StorageDead(_99);
+        StorageDead(_101);
+        StorageDead(_98);
+        StorageDead(_6);
+        StorageDead(_3);
+        goto -> bb36;
+    }
+
+    bb48: {
+        StorageLive(_105);
+        _105 = move ((_10 as Err).0: std::io::Error);
+        StorageLive(_106);
+        _106 = Result::<Infallible, std::io::Error>::Err(copy _105);
+        _9 = ControlFlow::<Result<Infallible, std::io::Error>, Runtime>::Break(move _106);
+        StorageDead(_106);
+        StorageDead(_105);
+        StorageDead(_103);
+        StorageDead(_10);
+        StorageLive(_11);
+        _11 = move ((_9 as Break).0: std::result::Result<std::convert::Infallible, std::io::Error>);
+        StorageLive(_107);
+        StorageLive(_110);
+        _107 = discriminant(_11);
+        _110 = Eq(copy _107, const 1_isize);
+        assume(move _110);
+        StorageLive(_108);
+        _108 = copy ((_11 as Err).0: std::io::Error);
+        StorageLive(_109);
+        StorageLive(_111);
+        _111 = Box::<std::io::Error>::new(move _108) -> [return: bb50, unwind: bb42];
+    }
+
+    bb49: {
+        StorageLive(_104);
+        _104 = move ((_10 as Ok).0: tokio::runtime::Runtime);
+        _9 = ControlFlow::<Result<Infallible, std::io::Error>, Runtime>::Continue(copy _104);
+        StorageDead(_104);
+        StorageDead(_103);
+        StorageDead(_10);
+        _12 = move ((_9 as Continue).0: tokio::runtime::Runtime);
+        _8 = (const "multi4", copy _12);
+        _2 = [move _3, move _8];
+        StorageDead(_8);
+        StorageDead(_3);
+        StorageDead(_9);
+        StorageDead(_4);
+        StorageLive(_13);
+        StorageLive(_14);
+        _14 = Vec::<f64> { buf: const alloc::raw_vec::RawVec::<f64> {{ inner: alloc::raw_vec::RawVecInner {{ ptr: std::ptr::Unique::<u8> {{ pointer: NonNull::<u8> {{ pointer: {0x8 as *const u8} is !null }}, _marker: PhantomData::<u8> }}, cap: core::num::niche_types::UsizeNoHighBit(0_usize is 0..=9223372036854775807), alloc: std::alloc::Global }}, _marker: PhantomData::<f64> }}, len: const 0_usize };
+        _13 = <Vec<f64> as vec::spec_from_elem::SpecFromElem>::from_elem::<std::alloc::Global>(move _14, const 4_usize, const std::alloc::Global) -> [return: bb51, unwind: bb41];
+    }
+
+    bb50: {
+        _109 = move _111 as std::boxed::Box<dyn std::error::Error> (PointerCoercion(Unsize, Implicit));
+        StorageDead(_111);
+        _0 = Result::<(), Box<dyn std::error::Error>>::Err(move _109);
+        StorageDead(_109);
+        StorageDead(_108);
+        StorageDead(_110);
+        StorageDead(_107);
+        StorageDead(_11);
+        StorageDead(_8);
+        drop(_3) -> [return: bb35, unwind continue];
+    }
+
+    bb51: {
+        StorageDead(_14);
+        StorageLive(_15);
+        _15 = std::time::Instant::now() -> [return: bb70, unwind: bb40];
+    }
+
+    bb52: {
+        StorageDead(_116);
+        _112 = Option::<std::cmp::Ordering>::Some(move _115);
+        StorageDead(_115);
+        StorageLive(_113);
+        _113 = move ((_112 as Some).0: std::cmp::Ordering);
+        StorageLive(_114);
+        _114 = discriminant(_113);
+        _16 = Lt(move _114, const 0_i8);
+        StorageDead(_114);
+        StorageDead(_113);
+        StorageDead(_112);
+        switchInt(move _16) -> [0: bb16, otherwise: bb7];
+    }
+
+    bb53: {
+        StorageLive(_118);
+        StorageLive(_119);
+        _119 = copy (_17.1: core::num::niche_types::Nanoseconds);
+        _118 = copy _119 as u32 (Transmute);
+        StorageDead(_119);
+        _115 = Cmp(copy _118, const 500000000_u32);
+        StorageDead(_118);
+        goto -> bb52;
+    }
+
+    bb54: {
+        StorageDead(_132);
+        StorageDead(_131);
+        StorageDead(_130);
+        StorageDead(_129);
+        StorageDead(_135);
+        StorageDead(_21);
+        StorageDead(_16);
+        goto -> bb5;
+    }
+
+    bb55: {
+        StorageDead(_132);
+        StorageDead(_131);
+        StorageLive(_133);
+        StorageLive(_137);
+        _137 = Offset(copy _135, const 1_usize);
+        _133 = copy _137 as std::ptr::NonNull<(&str, tokio::runtime::Runtime)> (Transmute);
+        StorageDead(_137);
+        (_19.0: std::ptr::NonNull<(&str, tokio::runtime::Runtime)>) = move _133;
+        StorageDead(_133);
+        StorageLive(_134);
+        StorageLive(_138);
+        _138 = copy _129 as *const (&str, tokio::runtime::Runtime) (Transmute);
+        _134 = &(*_138);
+        StorageDead(_138);
+        _21 = Option::<&(&str, Runtime)>::Some(copy _134);
+        StorageDead(_134);
+        StorageDead(_130);
+        StorageDead(_129);
+        StorageDead(_135);
+        StorageLive(_22);
+        _93 = no_retag copy ((_21 as Some).0: &(&str, tokio::runtime::Runtime));
+        _22 = &((*_93).1: tokio::runtime::Runtime);
+        StorageLive(_23);
+        StorageLive(_24);
+        _24 = [const 16_u64, const 1024_u64];
+        StorageLive(_139);
+        _139 = copy _24 as [std::mem::MaybeUninit<u64>; 2] (Transmute);
+        StorageLive(_140);
+        _140 = array::iter::iter_inner::PolymorphicIter::<[MaybeUninit<u64>; 2]> { alive: const ops::index_range::IndexRange {{ start: 0_usize, end: 2_usize }}, data: copy _139 };
+        StorageLive(_141);
+        StorageLive(_142);
+        _142 = MaybeDangling::<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>>(copy _140);
+        _141 = ManuallyDrop::<array::iter::iter_inner::PolymorphicIter<[MaybeUninit<u64>; 2]>> { value: move _142 };
+        StorageDead(_142);
+        _23 = std::array::IntoIter::<u64, 2> { inner: move _141 };
+        StorageDead(_141);
+        StorageDead(_140);
+        StorageDead(_139);
+        StorageDead(_24);
+        StorageLive(_25);
+        _25 = move _23;
+        goto -> bb9;
+    }
+
+    bb56: {
+        StorageDead(_143);
+        _27 = discriminant(_26);
+        switchInt(move _27) -> [0: bb11, 1: bb10, otherwise: bb3];
+    }
+
+    bb57: {
+        StorageLive(_146);
+        _146 = copy _147;
+        _147 = AddUnchecked(copy _146, const 1_usize);
+        _35 = Option::<usize>::Some(copy _146);
+        StorageDead(_146);
+        StorageDead(_145);
+        StorageLive(_36);
+        _36 = copy ((_35 as Some).0: usize);
+        _151 = const 0_usize;
+        goto -> bb18;
+    }
+
+    bb58: {
+        StorageDead(_145);
+        StorageDead(_35);
+        _184 = const 0_usize;
+        goto -> bb28;
+    }
+
+    bb59: {
+        StorageLive(_150);
+        _150 = copy _151;
+        _151 = AddUnchecked(copy _150, const 1_usize);
+        _37 = Option::<usize>::Some(copy _150);
+        StorageDead(_150);
+        StorageDead(_149);
+        StorageLive(_38);
+        _38 = copy ((_37 as Some).0: usize);
+        StorageLive(_39);
+        StorageLive(_40);
+        _40 = Add(copy _36, copy _38);
+        _39 = Rem(move _40, const 4_usize);
+        StorageDead(_40);
+        StorageLive(_43);
+        StorageLive(_44);
+        _44 = Div(copy _39, const 2_usize);
+        _45 = Lt(copy _44, const 2_usize);
+        assert(move _45, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _44) -> [success: bb19, unwind: bb40];
+    }
+
+    bb60: {
+        StorageDead(_149);
+        StorageDead(_37);
+        StorageDead(_36);
+        StorageDead(_35);
+        goto -> bb17;
+    }
+
+    bb61: {
+        _60 = &mut (*_153)[_39];
+        StorageDead(_158);
+        StorageDead(_153);
+        StorageLive(_159);
+        _159 = Vec::<f64>::push_mut(move _60, copy _53) -> [return: bb62, unwind: bb40];
+    }
+
+    bb62: {
+        StorageDead(_159);
+        StorageDead(_60);
+        StorageLive(_62);
+        _63 = &_41;
+        _64 = &_46;
+        _65 = &_36;
+        _66 = &_53;
+        StorageLive(_67);
+        StorageLive(_68);
+        StorageLive(_164);
+        StorageLive(_160);
+        StorageLive(_161);
+        _164 = &raw const (*_63);
+        _161 = copy _164 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_162);
+        StorageLive(_163);
+        _163 = <&&str as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a &&str, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _162 = copy _163 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_163);
+        _160 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _161, formatter: copy _162, _lifetime: const PhantomData::<&()> };
+        StorageDead(_162);
+        StorageDead(_161);
+        _68 = core::fmt::rt::Argument::<'_> { ty: move _160 };
+        StorageDead(_160);
+        StorageDead(_164);
+        StorageLive(_69);
+        StorageLive(_169);
+        StorageLive(_165);
+        StorageLive(_166);
+        _169 = &raw const (*_64);
+        _166 = copy _169 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_167);
+        StorageLive(_168);
+        _168 = <u64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a u64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _167 = copy _168 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_168);
+        _165 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _166, formatter: copy _167, _lifetime: const PhantomData::<&()> };
+        StorageDead(_167);
+        StorageDead(_166);
+        _69 = core::fmt::rt::Argument::<'_> { ty: move _165 };
+        StorageDead(_165);
+        StorageDead(_169);
+        StorageLive(_70);
+        StorageLive(_174);
+        StorageLive(_170);
+        StorageLive(_171);
+        _174 = &raw const (*_65);
+        _171 = copy _174 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_172);
+        StorageLive(_173);
+        _173 = <usize as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a usize, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _172 = copy _173 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_173);
+        _170 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _171, formatter: copy _172, _lifetime: const PhantomData::<&()> };
+        StorageDead(_172);
+        StorageDead(_171);
+        _70 = core::fmt::rt::Argument::<'_> { ty: move _170 };
+        StorageDead(_170);
+        StorageDead(_174);
+        StorageLive(_71);
+        StorageLive(_179);
+        StorageLive(_175);
+        StorageLive(_176);
+        _179 = &raw const (*_66);
+        _176 = copy _179 as std::ptr::NonNull<()> (Transmute);
+        StorageLive(_177);
+        StorageLive(_178);
+        _178 = <f64 as std::fmt::Display>::fmt as for<'a, 'b, 'c> fn(&'a f64, &'b mut std::fmt::Formatter<'c>) -> std::result::Result<(), std::fmt::Error> (PointerCoercion(ReifyFnPointer(Safe), Implicit));
+        _177 = copy _178 as for<'a, 'b> unsafe fn(std::ptr::NonNull<()>, &'a mut std::fmt::Formatter<'b>) -> std::result::Result<(), std::fmt::Error> (Transmute);
+        StorageDead(_178);
+        _175 = core::fmt::rt::ArgumentType::<'_>::Placeholder { value: move _176, formatter: copy _177, _lifetime: const PhantomData::<&()> };
+        StorageDead(_177);
+        StorageDead(_176);
+        _71 = core::fmt::rt::Argument::<'_> { ty: move _175 };
+        StorageDead(_175);
+        StorageDead(_179);
+        _67 = [move _68, move _69, move _70, move _71];
+        StorageDead(_71);
+        StorageDead(_70);
+        StorageDead(_69);
+        StorageDead(_68);
+        StorageLive(_72);
+        _72 = &_67;
+        StorageLive(_180);
+        _180 = const b"\xc0\x02-q\xc0\x01,\xc0\x01,\xc5 \x00\x00p\t\x00\x01\n\x00" as std::ptr::NonNull<u8> (Transmute);
+        StorageLive(_181);
+        _181 = copy _72 as std::ptr::NonNull<core::fmt::rt::Argument<'_>> (Transmute);
+        _62 = Arguments::<'_> { template: move _180, args: move _181 };
+        StorageDead(_181);
+        StorageDead(_180);
+        StorageDead(_72);
+        _61 = std::io::_print(move _62) -> [return: bb27, unwind: bb40];
+    }
+
+    bb63: {
+        StorageLive(_183);
+        _183 = copy _184;
+        _184 = AddUnchecked(copy _183, const 1_usize);
+        _73 = Option::<usize>::Some(copy _183);
+        StorageDead(_183);
+        StorageDead(_182);
+        StorageLive(_74);
+        _74 = copy ((_73 as Some).0: usize);
+        StorageLive(_76);
+        StorageLive(_77);
+        StorageLive(_78);
+        StorageLive(_79);
+        StorageLive(_81);
+        _81 = Div(copy _74, const 2_usize);
+        _82 = Lt(copy _81, const 2_usize);
+        assert(move _82, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _81) -> [success: bb29, unwind: bb40];
+    }
+
+    bb64: {
+        StorageDead(_182);
+        StorageDead(_73);
+        _0 = const Result::<(), Box<dyn std::error::Error>>::Ok(());
+        StorageDead(_15);
+        drop(_13) -> [return: bb33, unwind: bb41];
+    }
+
+    bb65: {
+        StorageDead(_199);
+        StorageDead(_198);
+        StorageDead(_86);
+        StorageDead(_84);
+        StorageDead(_81);
+        StorageDead(_79);
+        _77 = move _78;
+        StorageDead(_78);
+        StorageLive(_208);
+        StorageLive(_209);
+        StorageLive(_210);
+        StorageLive(_212);
+        _212 = copy (((((_77.0: std::vec::Vec<u8>).0: alloc::raw_vec::RawVec<u8>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _210 = copy _212 as *const u8 (Transmute);
+        StorageDead(_212);
+        StorageLive(_211);
+        _211 = copy ((_77.0: std::vec::Vec<u8>).1: usize);
+        _209 = *const [u8] from (copy _210, move _211);
+        StorageDead(_211);
+        StorageDead(_210);
+        _208 = &(*_209);
+        StorageDead(_209);
+        _76 = copy _208 as &str (Transmute);
+        StorageDead(_208);
+        StorageLive(_90);
+        StorageLive(_214);
+        StorageLive(_216);
+        _216 = copy ((((_13.0: alloc::raw_vec::RawVec<std::vec::Vec<f64>>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _214 = copy _216 as *const std::vec::Vec<f64> (Transmute);
+        StorageDead(_216);
+        _215 = copy (_13.1: usize);
+        _213 = *const [std::vec::Vec<f64>] from (copy _214, copy _215);
+        StorageDead(_214);
+        StorageLive(_217);
+        _217 = Lt(copy _74, copy _215);
+        assert(move _217, "index out of bounds: the length is {} but the index is {}", copy _215, copy _74) -> [success: bb69, unwind: bb38];
+    }
+
+    bb66: {
+        StorageDead(_202);
+        StorageLive(_204);
+        StorageLive(_205);
+        _205 = const b"\xc0\x02-q\xc0\x00" as *const u8 (Transmute);
+        StorageLive(_206);
+        _206 = Shr(copy _201, const 1_i32);
+        StorageLive(_207);
+        _207 = *const [u8] from (copy _205, copy _206);
+        _204 = &(*_207);
+        StorageDead(_207);
+        StorageDead(_206);
+        StorageDead(_205);
+        _203 = copy _204 as &str (Transmute);
+        StorageDead(_204);
+        _198 = Option::<&str>::Some(copy _203);
+        goto -> bb68;
+    }
+
+    bb67: {
+        StorageDead(_202);
+        _198 = const Option::<&str>::None;
+        goto -> bb68;
+    }
+
+    bb68: {
+        StorageDead(_201);
+        StorageDead(_203);
+        StorageLive(_199);
+        StorageLive(_200);
+        _200 = &_79;
+        _199 = {closure@/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/fmt.rs:661:31: 661:33} { 0: copy _200 };
+        StorageDead(_200);
+        _78 = Option::<&str>::map_or_else::<String, {closure@format::{closure#0}}, for<'a> fn(&'a str) -> <str as ToOwned>::Owned {<str as ToOwned>::to_owned}>(move _198, move _199, <str as ToOwned>::to_owned) -> [return: bb65, unwind: bb40];
+    }
+
+    bb69: {
+        _91 = &(*_213)[_74];
+        StorageDead(_217);
+        StorageLive(_218);
+        StorageLive(_219);
+        StorageLive(_221);
+        _221 = copy (((((*_91).0: alloc::raw_vec::RawVec<f64>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
+        _219 = copy _221 as *const f64 (Transmute);
+        StorageDead(_221);
+        StorageLive(_220);
+        _220 = copy ((*_91).1: usize);
+        _218 = *const [f64] from (copy _219, move _220);
+        StorageDead(_220);
+        StorageDead(_219);
+        _90 = &(*_218);
+        StorageDead(_218);
+        _75 = print_stats(move _76, move _90) -> [return: bb31, unwind: bb38];
+    }
+
+    bb70: {
+        goto -> bb5;
+    }
+}
+
+alloc151 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 │ ................
+}
+
+alloc150 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc148 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc146 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 │ ................
+}
+
+alloc75 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 80 00 00 00 00 00 00 00 │ ................
+}
+
+alloc71 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+alloc8 (size: 6, align: 1) {
+    c0 02 2d 71 c0 00                               │ ..-q..
+}
+
+alloc7 (size: 20, align: 1) {
+    0x00 │ c0 02 2d 71 c0 01 2c c0 01 2c c5 20 00 00 70 09 │ ..-q..,..,. ..p.
+    0x10 │ 00 01 0a 00                                     │ ....
+}
+
+alloc6 (size: 6, align: 1) {
+    6d 75 6c 74 69 34                               │ multi4
+}
+
+alloc5 (size: 7, align: 1) {
+    63 75 72 72 65 6e 74                            │ current
+}
+
+const main::promoted[0]: &[i32; 2] = {
+    let mut _0: &[i32; 2];
+    let mut _1: [i32; 2];
+
+    bb0: {
+        _1 = [const 16_i32, const 1024_i32];
+        _0 = &_1;
+        return;
+    }
+}
+
+fn main::{closure#0}(_1: &mut {closure@src/bin/scheduling.rs:44:42: 44:51}, _2: u64, _3: u64) -> u64 {
+    debug sum => _2;
+    debug id => _3;
+    let mut _0: u64;
+    let _4: u64;
+    let mut _5: u64;
+    let mut _6: u32;
+    scope 1 {
+        debug value => _4;
+        scope 2 (inlined core::num::<impl u64>::rotate_left) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_4);
+        _4 = <std::ops::Range<u64> as Iterator>::fold::<u64, {closure@src/bin/scheduling.rs:45:41: 45:47}>(const std::ops::Range::<u64> {{ start: 0_u64, end: 8192_u64 }}, copy _3, const ZeroSized: {closure@src/bin/scheduling.rs:45:41: 45:47}) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        StorageLive(_5);
+        StorageLive(_6);
+        _6 = copy _3 as u32 (IntToInt);
+        _5 = rotate_left::<u64>(move _4, move _6) -> [return: bb2, unwind unreachable];
+    }
+
+    bb2: {
+        StorageDead(_6);
+        _0 = BitXor(copy _2, move _5);
+        StorageDead(_5);
+        StorageDead(_4);
+        return;
+    }
+}
+
+alloc154 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 00 20 00 00 00 00 00 00 │ ......... ......
+}
+
+fn main::{closure#0}::{closure#0}(_1: &mut {closure@src/bin/scheduling.rs:45:41: 45:47}, _2: u64, _3: u64) -> u64 {
+    debug x => _2;
+    let mut _0: u64;
+
+    bb0: {
+        _0 = step(move _2) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        return;
+    }
+}

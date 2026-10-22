@@ -1,0 +1,10 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/const_bounds.rs --emit=metadata -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/const_bounds.rmeta
+error[E0080]: index out of bounds: the length is 2 but the index is 3
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/const_bounds.rs:1:17
+  |
+1 | const BAD: u8 = [1u8; 2][3]; fn main() { println!("{BAD}"); }
+  |                 ^^^^^^^^^^^ evaluation of `BAD` failed here
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0080`.

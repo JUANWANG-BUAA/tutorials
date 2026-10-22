@@ -1,0 +1,10 @@
+/book/
+**/target/
+**/*-target/
+**/target-*/
+**/build/
+**/native-build/
+**/cmake-build*/
+**/.pytest_cache/
+**/__pycache__/
+*.pyc

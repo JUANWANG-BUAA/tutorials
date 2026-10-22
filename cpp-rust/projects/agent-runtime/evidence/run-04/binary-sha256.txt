@@ -1,0 +1,2 @@
+b7c89a84db9baf38f0fccfb31499cf164a6855f0190ca3f626333487133c09e4  /Users/juanwang/Desktop/tutorials/cpp-rust/projects/agent-runtime/target/release/runtime-bench
+bef68b02a8b6d11a114cdb025fdb927b3be21fec516b7c09116edaf554110a47  /Users/juanwang/Desktop/tutorials/cpp-rust/projects/agent-runtime/target/release/tool-helper

@@ -1,0 +1,3 @@
+Sampling process 92307 for 1 second with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 92307 written to file /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-01/macos-sample.txt

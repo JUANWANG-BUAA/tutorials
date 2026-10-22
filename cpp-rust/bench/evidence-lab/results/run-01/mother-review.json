@@ -1,0 +1,57 @@
+[
+  {
+    "id": "S09",
+    "source": "Guide to Rustc Development.pdf",
+    "sha256": "db9052af22587d57b0d80e127f903e35728603afc7e9384ddbe106dcc81cfb9b",
+    "physical_pdf_pages_read": [
+      64,
+      65,
+      66,
+      67
+    ],
+    "extraction_tool": "fitz",
+    "scope": "仅所列核读与映射；不声明全书覆盖",
+    "private_extracts": ".work/cpp-rust-sources/evidence/"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "sha256": "609a7e0edc00c1a89e502297fe7b09d62e194a29ff45a563eb70f1a75dca6c60",
+    "physical_pdf_pages_read": [
+      320,
+      332,
+      333,
+      334,
+      335,
+      336
+    ],
+    "extraction_tool": "fitz",
+    "scope": "仅所列核读与映射；不声明全书覆盖",
+    "private_extracts": ".work/cpp-rust-sources/evidence/"
+  },
+  {
+    "id": "S14",
+    "source": "rustdoc 手册.pdf",
+    "sha256": "5f91555fecf234b9971116bbd691d84b82cbebdbf134bacc853b90b8e4029af7",
+    "physical_pdf_pages_read": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "extraction_tool": "fitz",
+    "scope": "仅所列核读与映射；不声明全书覆盖",
+    "private_extracts": ".work/cpp-rust-sources/evidence/"
+  }
+]

@@ -1,0 +1,67 @@
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (bench/runtime-lab/target/release/deps/runtime_lab-92b61f6ab4a3d8d8)
+
+running 6 tests
+test process::macos::tests::both_pipe_ends_are_cloexec_at_return ... ok
+test wire::tests::eof_is_not_truncated_frame ... ok
+test wire::tests::explicit_roundtrip_and_byte_order ... ok
+test wire::tests::rejects_each_header_field ... ok
+test process::tests::dropping_reader_task_aborts_instead_of_detaching ... ok
+test process::tests::abort_observes_reader_owner_drop_without_inventing_eof ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/blocking_poll.rs (bench/runtime-lab/target/release/deps/blocking_poll-f3f1dae7aee8057c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/worker.rs (bench/runtime-lab/target/release/deps/lab_worker-6d631e0eff76f989)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/pipe_drain.rs (bench/runtime-lab/target/release/deps/pipe_drain-d0e8c677a9fe3e75)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/process_rpc.rs (bench/runtime-lab/target/release/deps/process_rpc-46e8c4f7dad8deab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/scheduling.rs (bench/runtime-lab/target/release/deps/scheduling-c3130710ad7d969d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contracts.rs (bench/runtime-lab/target/release/deps/contracts-5122df37c3940b35)
+
+running 12 tests
+test invalid_limit_is_rejected_before_spawn ... ok
+test bounded_channel_and_close_preserve_messages ... ok
+test joinset_observes_panic_and_completes_other_task ... ok
+test abort_observed_and_drop_executed ... ok
+test blocking_permit_is_held_inside_closure ... ok
+test missing_executable_is_spawn_error ... ok
+test timeout_kills_and_waits_direct_child ... ok
+test nonzero_exit_is_a_report_not_spawn_error ... ok
+test concurrently_drains_and_caps_both_streams ... ok
+test reused_command_releases_parent_writers_on_each_spawn ... ok
+test wait_before_drain_is_a_reproduced_stall ... ok
+test inherited_writer_does_not_hang_drainers_forever ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.20s
+
+   Doc-tests runtime_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,27 @@
+$ size -m /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/thin
+Segment __PAGEZERO: 4294967296 (zero fill) 
+Segment __TEXT: 278528
+	Section __text: 214768
+	Section __stubs: 792
+	Section __stub_helper: 816
+	Section __cstring: 5963
+	Section __gcc_except_tab: 4284
+	Section __const: 11400
+	Section __unwind_info: 4512
+	Section __eh_frame: 25288
+	total 267823
+Segment __DATA_CONST: 16384
+	Section __const: 6800
+	Section __got: 16
+	total 6816
+Segment __DATA: 16384
+	Section __la_symbol_ptr: 528
+	Section __data: 2632
+	Section __thread_vars: 144
+	Section __thread_data: 48
+	Section __thread_bss: 40 (zerofill)
+	Section __common: 40 (zerofill)
+	Section __bss: 120 (zerofill)
+	total 3552
+Segment __LINKEDIT: 163840
+total 4295442432

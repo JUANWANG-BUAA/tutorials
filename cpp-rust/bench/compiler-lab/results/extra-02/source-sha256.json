@@ -1,0 +1,38 @@
+[
+  {
+    "source": "probes/layout.rs",
+    "sha256": "f8ed533b4f2a15596260011b06184c39146d906f44a8f1985bfe4ad692279555"
+  },
+  {
+    "source": "probes/code_size.rs",
+    "sha256": "1037127d7cfb1f64a710fa5f7075a76a9afa7f9f7689b67cae0bf0eaa2b2ae6e"
+  },
+  {
+    "source": "probes/stages.rs",
+    "sha256": "e13dbcf6c6ec7226d917812cdf0c53a98e47f40200300081c0a2792cc6522276"
+  },
+  {
+    "source": "probes/rejected/use_after_move.rs",
+    "sha256": "29f4293b6be73d51f6748bee8964582073547d0d0d797c4b8d90ca1585b9e70d"
+  },
+  {
+    "source": "probes/rejected/maybe_uninitialized.rs",
+    "sha256": "e92c8881e0431f0ba67df551a8f70e34311d1bde89417ac21732ced0847d5f9a"
+  },
+  {
+    "source": "probes/rejected/dyn_generic.rs",
+    "sha256": "186bc841a75163b40e3dba0b4d5da8bd9647366e1fddcb5c69beb53e6a08295f"
+  },
+  {
+    "source": "probes/rejected/const_bounds.rs",
+    "sha256": "1ba21518375b16e8bb352bc254315ad0823cfc43025b980b0054be4ac41ca6f4"
+  },
+  {
+    "source": "probes/rejected/alias_conflict.rs",
+    "sha256": "bb2733cbb60bbe7012c8a0c0089cb84fe004fbc84a69eca48d5e3f4a2a1c3991"
+  },
+  {
+    "source": "extra.py",
+    "sha256": "037c8e98368d278161e3f8ba7e6e8fb8b31afd3e7da194f9bdc65fc1151a05de"
+  }
+]

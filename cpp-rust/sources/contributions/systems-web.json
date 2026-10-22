@@ -1,0 +1,42 @@
+[
+  {
+    "id": "systems-mit-rcu",
+    "url": "https://pdos.csail.mit.edu/6.828/2024/lec/l-rcu.txt",
+    "sha256": "34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6",
+    "archive": ".work/cpp-rust-sources/systems/mit-rcu.txt",
+    "review_scope": "Quiescent State, Grace Period, Read-Copy Update core mechanisms",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-target-feature",
+    "url": "https://doc.rust-lang.org/reference/attributes/codegen.html",
+    "sha256": "18becca8e376dd8bc0bc8ee557ece8a2bb9053fbff23bc572c5351fbf42062c7",
+    "archive": ".work/cpp-rust-sources/systems/target-feature.html",
+    "review_scope": "target_feature attribute and SIMD intrinsic safety contracts",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-uring",
+    "url": "https://man7.org/linux/man-pages/man7/io_uring.7.html",
+    "sha256": "1ed71f55954959fc551915363b054c62fb28ba57ede487303d4cb2de0057feb9",
+    "archive": ".work/cpp-rust-sources/systems/uring.html",
+    "review_scope": "SQE/CQE ring buffers, shared memory mapping and registered buffers",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-uring-cancel",
+    "url": "https://man7.org/linux/man-pages/man3/io_uring_prep_cancel.3.html",
+    "sha256": "0f9c226cb76cc8df73dbd6399e4cbe83e0db82ac62f925780968677da241e32b",
+    "archive": ".work/cpp-rust-sources/systems/uring-cancel.html",
+    "review_scope": "io_uring async request cancelation lifecycle",
+    "status": "reviewed"
+  },
+  {
+    "id": "systems-rcore-io",
+    "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/1fs-interface.html",
+    "sha256": "55ff0cac446a27bc0485d3c65e664193dd8dba6819a4112f4531c33a0a70fb97",
+    "archive": ".work/cpp-rust-sources/systems/rcore-io.html",
+    "review_scope": "Block cache management and zero-copy device abstraction",
+    "status": "reviewed"
+  }
+]

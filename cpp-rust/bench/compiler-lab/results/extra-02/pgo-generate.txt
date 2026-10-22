@@ -1,0 +1,1 @@
+$ rustc --edition=2024 -O -Ccodegen-units=1 --cfg=many /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/code_size.rs -Cprofile-generate=/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-data -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/pgo-train

@@ -1,0 +1,21 @@
+2026年10月22日 星期四 13时25分53秒 UTC
+rustc 1.99.0 (b940084d7 2026-09-28)
+binary: rustc
+commit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4
+commit-date: 2026-09-28
+host: aarch64-apple-darwin
+release: 1.99.0
+LLVM version: 23.1.1
+cargo 1.99.0 (5f94df478 2026-08-27)
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434
+hw.model: Mac17,9
+hw.memsize: 25769803776
+hw.cachelinesize: 128
+hw.perflevel0.physicalcpu: 6
+hw.perflevel1.physicalcpu: 12
+RUSTFLAGS=-C target-cpu=native
+profile=release opt3 codegen-units1 lto=false debug1
+unit=ns/item except allocation ns/64-byte allocation+fill+read
+warmup=500ms/case rounds=21 order=rotating

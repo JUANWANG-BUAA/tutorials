@@ -1,0 +1,209 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+fn <impl at /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/stages.rs:4:1: 4:24>::drop(_1: &mut Guard<'_>) -> () {
+    debug self => _1;
+    let mut _0: ();
+    let _2: ();
+    let mut _3: u64;
+    let mut _4: u64;
+    let mut _5: (u64, bool);
+    let mut _6: &std::cell::Cell<u64>;
+    let mut _7: &std::cell::Cell<u64>;
+
+    bb0: {
+        _6 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        _7 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        _4 = Cell::<u64>::get(copy _7) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        _5 = AddWithOverflow(copy _4, const 1_u64);
+        assert(!move (_5.1: bool), "attempt to compute `{} + {}`, which would overflow", move _4, const 1_u64) -> [success: bb2, unwind continue];
+    }
+
+    bb2: {
+        _3 = move (_5.0: u64);
+        _2 = Cell::<u64>::set(copy _6, move _3) -> [return: bb3, unwind continue];
+    }
+
+    bb3: {
+        return;
+    }
+}
+
+fn conditional(_1: bool, _2: &Cell<u64>) -> () {
+    debug flag => _1;
+    debug count => _2;
+    let mut _0: ();
+    let _3: Guard<'_>;
+    let _5: ();
+    let mut _6: Guard<'_>;
+    let _7: &Guard<'_>;
+    let mut _8: &Guard<'_>;
+    let mut _9: bool;
+    scope 1 {
+        debug a => _3;
+        let _4: Guard<'_>;
+        scope 2 {
+            debug b => _4;
+        }
+    }
+
+    bb0: {
+        _9 = const false;
+        _9 = const true;
+        _3 = Guard::<'_>(copy _2);
+        _4 = Guard::<'_>(copy _2);
+        switchInt(copy _1) -> [0: bb2, otherwise: bb1];
+    }
+
+    bb1: {
+        _9 = const false;
+        _6 = move _3;
+        _5 = std::mem::drop::<Guard<'_>>(move _6) -> [return: bb11, unwind: bb6];
+    }
+
+    bb2: {
+        _8 = &_4;
+        _7 = std::hint::black_box::<&Guard<'_>>(move _8) -> [return: bb3, unwind: bb6];
+    }
+
+    bb3: {
+        drop(_4) -> [return: bb4, unwind: bb10];
+    }
+
+    bb4: {
+        switchInt(copy _9) -> [0: bb5, otherwise: bb8];
+    }
+
+    bb5: {
+        _9 = const false;
+        return;
+    }
+
+    bb6 (cleanup): {
+        drop(_4) -> [return: bb10, unwind terminate(cleanup)];
+    }
+
+    bb7 (cleanup): {
+        resume;
+    }
+
+    bb8: {
+        drop(_3) -> [return: bb5, unwind continue];
+    }
+
+    bb9 (cleanup): {
+        drop(_3) -> [return: bb7, unwind terminate(cleanup)];
+    }
+
+    bb10 (cleanup): {
+        switchInt(copy _9) -> [0: bb7, otherwise: bb9];
+    }
+
+    bb11: {
+        goto -> bb2;
+    }
+}
+
+fn main() -> () {
+    let mut _0: ();
+    let _1: std::cell::Cell<u64>;
+    let _2: ();
+    let mut _3: bool;
+    let _4: &std::cell::Cell<u64>;
+    let mut _5: (&u64, &u64);
+    let mut _6: &u64;
+    let _7: u64;
+    let mut _8: &std::cell::Cell<u64>;
+    let mut _9: &u64;
+    let mut _12: bool;
+    let mut _13: u64;
+    let mut _14: u64;
+    let _16: !;
+    let mut _17: std::option::Option<std::fmt::Arguments<'_>>;
+    scope 1 {
+        debug count => _1;
+        let _10: &u64;
+        let _11: &u64;
+        scope 2 {
+            debug left_val => _10;
+            debug right_val => _11;
+            let _15: core::panicking::AssertKind;
+            scope 3 {
+                debug kind => _15;
+            }
+        }
+    }
+
+    bb0: {
+        _1 = Cell::<u64>::new(const 0_u64) -> [return: bb1, unwind continue];
+    }
+
+    bb1: {
+        _3 = std::hint::black_box::<bool>(const true) -> [return: bb2, unwind continue];
+    }
+
+    bb2: {
+        _4 = &_1;
+        _2 = conditional(move _3, copy _4) -> [return: bb3, unwind continue];
+    }
+
+    bb3: {
+        _8 = &_1;
+        _7 = Cell::<u64>::get(move _8) -> [return: bb4, unwind continue];
+    }
+
+    bb4: {
+        _6 = &_7;
+        _9 = const main::promoted[0];
+        _5 = (move _6, move _9);
+        _10 = copy (_5.0: &u64);
+        _11 = copy (_5.1: &u64);
+        _13 = copy (*_10);
+        _14 = copy (*_11);
+        _12 = Eq(move _13, move _14);
+        switchInt(move _12) -> [0: bb6, otherwise: bb5];
+    }
+
+    bb5: {
+        return;
+    }
+
+    bb6: {
+        _15 = core::panicking::AssertKind::Eq;
+        _17 = Option::<Arguments<'_>>::None;
+        _16 = core::panicking::assert_failed::<u64, u64>(copy _15, copy _10, copy _11, move _17) -> unwind continue;
+    }
+}
+
+const main::promoted[0]: &u64 = {
+    let mut _0: &u64;
+    let mut _1: u64;
+
+    bb0: {
+        _1 = const 2_u64;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn Guard(_1: &Cell<u64>) -> Guard<'_> {
+    let mut _0: Guard<'_>;
+
+    bb0: {
+        _0 = Guard::<'_>(move _1);
+        return;
+    }
+}
+
+// MIR FOR CTFE
+fn Guard(_1: &Cell<u64>) -> Guard<'_> {
+    let mut _0: Guard<'_>;
+
+    bb0: {
+        _0 = Guard::<'_>(move _1);
+        return;
+    }
+}

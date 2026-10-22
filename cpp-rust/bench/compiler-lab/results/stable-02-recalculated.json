@@ -1,0 +1,137 @@
+{
+  "archive": "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02",
+  "cases": [
+    {
+      "entry": "move_cost",
+      "case": "borrow",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.05909146627630924,
+      "sd_n_minus_1": 0.001232533937566008,
+      "p50": 0.05863989014678792,
+      "p99": 0.06333781051367128
+    },
+    {
+      "entry": "move_cost",
+      "case": "clone",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.20273944257668738,
+      "sd_n_minus_1": 0.006948621048128975,
+      "p50": 0.201626641501698,
+      "p99": 0.22570184867928408
+    },
+    {
+      "entry": "drop_paths",
+      "case": "implicit",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 2.3722959214423476,
+      "sd_n_minus_1": 0.0980435393045766,
+      "p50": 2.354228506207811,
+      "p99": 2.7572352263138864
+    },
+    {
+      "entry": "drop_paths",
+      "case": "option",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 2.5879513011442827,
+      "sd_n_minus_1": 0.24697020889729024,
+      "p50": 2.6693648882250267,
+      "p99": 2.9808560708411656
+    },
+    {
+      "entry": "dispatch_grain",
+      "case": "generic",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.15833449284025947,
+      "sd_n_minus_1": 0.008247820535888718,
+      "p50": 0.15640862698919855,
+      "p99": 0.1942140443343915
+    },
+    {
+      "entry": "dispatch_grain",
+      "case": "dyn_item",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.6476178850446429,
+      "sd_n_minus_1": 0.08834479311726365,
+      "p50": 0.6947902729857861,
+      "p99": 0.7093740454854419
+    },
+    {
+      "entry": "dispatch_grain",
+      "case": "dyn_batch",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.1564280467694005,
+      "sd_n_minus_1": 0.004677402439832639,
+      "p50": 0.15525361232938456,
+      "p99": 0.17657880712736268
+    },
+    {
+      "entry": "dispatch_visibility",
+      "case": "known_dyn",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.1561329671541135,
+      "sd_n_minus_1": 0.004064547715885855,
+      "p50": 0.15465668140903724,
+      "p99": 0.16734898378065977
+    },
+    {
+      "entry": "dispatch_visibility",
+      "case": "opaque_dyn",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.15830313143323735,
+      "sd_n_minus_1": 0.004386582265827419,
+      "p50": 0.15622227131819524,
+      "p99": 0.1710703392990497
+    },
+    {
+      "entry": "vectorize",
+      "case": "zip",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.34710379096473715,
+      "sd_n_minus_1": 0.016887184573369324,
+      "p50": 0.3464874570482126,
+      "p99": 0.37885403692278613
+    },
+    {
+      "entry": "vectorize",
+      "case": "calls",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.7236437605414199,
+      "sd_n_minus_1": 0.0595938959515705,
+      "p50": 0.7188840279212365,
+      "p99": 0.8330895350529597
+    },
+    {
+      "entry": "ctfe_table",
+      "case": "static_table",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 0.16941277279636854,
+      "sd_n_minus_1": 0.0015261279017610054,
+      "p50": 0.1693653737125579,
+      "p99": 0.17259608570348672
+    },
+    {
+      "entry": "ctfe_table",
+      "case": "rebuild_table",
+      "n": 21,
+      "unit": "ns/input-unit",
+      "mean": 1.9538178414011236,
+      "sd_n_minus_1": 0.017489923201299655,
+      "p50": 1.949261029317915,
+      "p99": 1.9975980561086435
+    }
+  ],
+  "raw_observations": 273,
+  "checksum_validation": true
+}

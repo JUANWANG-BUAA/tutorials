@@ -1,0 +1,5 @@
+Sampling process 79283 for 1 second with 1 millisecond of run time between samples
+Couldn't find _sigtramp symbol in expected dylibs
+Found _sigtramp symbol after 6 tries
+Sampling completed, processing symbols...
+Sample analysis of process 79283 written to file bench/results/runtime-local/scheduling-sample.txt

@@ -1,0 +1,16 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/maybe_uninitialized.rs --emit=metadata -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/maybe_uninitialized.rmeta
+error[E0381]: used binding `value` is possibly-uninitialized
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/maybe_uninitialized.rs:1:85
+  |
+1 | fn main() { let value: u64; if std::hint::black_box(true) { value = 7; } println!("{value}"); }
+  |                 -----          --------------------------               -           ^^^^^ `value` used here but it is possibly-uninitialized
+  |                 |              |                                        |
+  |                 |              |                                        an `else` arm might be missing here, initializing `value`
+  |                 |              if this `if` condition is `false`, `value` is not initialized
+  |                 binding declared here but left uninitialized
+  |
+  = note: when checking initialization, the compiler describes possible control-flow paths without evaluating whether branch conditions can actually have the values shown
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0381`.

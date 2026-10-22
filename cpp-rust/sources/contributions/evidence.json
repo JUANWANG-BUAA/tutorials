@@ -1,0 +1,128 @@
+[
+  {
+    "id": "S09",
+    "source": "Guide to Rustc Development.pdf",
+    "section": "Profiling with perf：采集范围、依赖构建边界、incremental与调用栈匹配",
+    "pages": "PDF 64–67（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.3",
+    "evidence": "bench/evidence-lab/results/run-01/sample-cpu.txt"
+  },
+  {
+    "id": "S09",
+    "source": "Guide to Rustc Development.pdf",
+    "section": "Profiling with perf：限定构建工作量与禁用增量的实验责任",
+    "pages": "PDF 64–67（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "bench/evidence-lab/tools/build_matrix.py"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "采用发布配置自定义构建：dev/release和opt-level覆盖",
+    "pages": "PDF 320（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.8",
+    "evidence": "bench/evidence-lab/Cargo.toml"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "采用发布配置自定义构建：profile的身份和优化边界",
+    "pages": "PDF 320（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "bench/evidence-lab/Cargo.toml"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "Cargo工作空间：共享target/lock、显式包依赖与包选择测试；旧版示例不外推唯一构建单元",
+    "pages": "PDF 332–336（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "bench/evidence-lab/results/run-01/metadata.json"
+  },
+  {
+    "id": "S14",
+    "source": "rustdoc 手册.pdf",
+    "section": "如何写文档：完整可运行示例、公共契约、panic和错误处理",
+    "pages": "PDF 6–8、11–12（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.6",
+    "evidence": "bench/evidence-lab/src/lib.rs"
+  },
+  {
+    "id": "S14",
+    "source": "rustdoc 手册.pdf",
+    "section": "基本使用、Cargo整合、输出导航、写作与命令参数；只采用当前工具链接受的检查",
+    "pages": "PDF 1–15（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.8",
+    "evidence": "bench/evidence-lab/results/run-01/rustdoc-check.txt"
+  },
+  {
+    "id": "EVID-cargo-features",
+    "source": "https://doc.rust-lang.org/cargo/reference/features.html",
+    "section": "Features全文：default、可选依赖、feature统一、resolver2和组合测试",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "bench/evidence-lab/results/run-01/feature-tree.txt"
+  },
+  {
+    "id": "EVID-cargo-profiles",
+    "source": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+    "section": "Profiles全文：CGU、incremental、lto=false/off、profile覆盖和泛型实例化",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
+    "evidence": "bench/evidence-lab/results/run-01/build-summary.json"
+  },
+  {
+    "id": "EVID-cargo-profiles",
+    "source": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+    "section": "Profiles：debug与真实产物、优化模式边界",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.2",
+    "evidence": "bench/evidence-lab/results/run-01/environment.txt"
+  },
+  {
+    "id": "EVID-rustc-pgo",
+    "source": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
+    "section": "Profile-guided Optimization全文：四阶段、Cargo target隔离、绝对路径与missing-function警告；本轮未执行PGO",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.6",
+    "evidence": "src/part4/ch14.md"
+  },
+  {
+    "id": "EVID-cachegrind",
+    "source": "https://valgrind.org/docs/manual/cg-manual.html",
+    "section": "Overview、5.2.1–5.2.8与5.8.1–5.8.3：计数、内联归因与模拟限制；本轮未执行Cachegrind",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.7",
+    "evidence": "src/part4/ch13.md"
+  },
+  {
+    "id": "EVID-perf-event",
+    "source": "https://man7.org/linux/man-pages/man2/perf_event_open.2.html",
+    "section": "read_format、time_enabled/time_running、precise_ip与read返回布局：复用估计和skid；本轮未执行perf",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch13.md#sec-cpp-rust.4.13.3",
+    "evidence": "src/part4/ch13.md"
+  },
+  {
+    "id": "EVID-cargo-resolver",
+    "source": "https://doc.rust-lang.org/cargo/reference/resolver.html",
+    "section": "Rust version与Resolver versions：resolver3的fallback默认和workspace边界",
+    "pages": "HTML（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
+    "evidence": "bench/evidence-lab/Cargo.toml"
+  }
+]

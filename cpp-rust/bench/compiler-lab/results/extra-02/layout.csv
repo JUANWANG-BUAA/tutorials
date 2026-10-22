@@ -1,0 +1,12 @@
+$ /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/layout
+type,size,align
+Vec<u64>,24,8
+&[u64],16,8
+&u64,8,8
+&dyn Operation,16,8
+Box<dyn Operation>,16,8
+Option<&u64>,8,8
+[u8;256],256,1
+Affine,16,8
+DropProbe,8,8
+Option<DropProbe>,8,8

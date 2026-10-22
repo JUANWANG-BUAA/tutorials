@@ -1,0 +1,4 @@
+logs pipe=1 exit=0
+logs pipe=2 exit=0
+sleep pipe=1 exit=0
+sleep pipe=2 exit=0

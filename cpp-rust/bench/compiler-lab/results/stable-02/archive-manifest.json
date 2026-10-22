@@ -1,0 +1,147 @@
+[
+  {
+    "file": "artifact-sha256.txt",
+    "sha256": "c27e20f2581017dc1c4e38898cac5094e76edef7f15e9aa792ae52a2d3947386",
+    "bytes": 1568
+  },
+  {
+    "file": "binaries/ctfe_table",
+    "sha256": "0c0328cc52bf5cd7b22e7190b7ca368760be0ccdb707e61fd8e3105ea31852d8",
+    "bytes": 514328
+  },
+  {
+    "file": "binaries/dispatch_grain",
+    "sha256": "bc60b657b9b1fa4d37aff6f489eba32b152a779ca5cb8372e5651314c4f63740",
+    "bytes": 515120
+  },
+  {
+    "file": "binaries/dispatch_visibility",
+    "sha256": "465f8fd1199c9c1654de79dada61cc9d5469e4be5a5dd11841c8a40fff189df8",
+    "bytes": 514888
+  },
+  {
+    "file": "binaries/drop_paths",
+    "sha256": "2f09a8594d68b207944e2bdcecb00a1c3358ee155eb005f73048341198354e60",
+    "bytes": 514232
+  },
+  {
+    "file": "binaries/move_cost",
+    "sha256": "0866fa795674fd363be4224e56b6d1d9c34a20ebad5eef266d2040dc63619994",
+    "bytes": 514360
+  },
+  {
+    "file": "binaries/vectorize",
+    "sha256": "525c6d663421b5c49d2ebc4648d1bbda3a22c29ef1a51062687ba46f46256b6d",
+    "bytes": 514664
+  },
+  {
+    "file": "build-processes-before.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "file": "build.txt",
+    "sha256": "087fcc95dbcd41f42e59840ec46185a7f28ec395743128e64144cd986cd9be16",
+    "bytes": 74
+  },
+  {
+    "file": "clippy.txt",
+    "sha256": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549",
+    "bytes": 72
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.ll",
+    "sha256": "d177ca37a45db1272831c53a0d7504ba817d8677b46c27ea84e1e232dd6801fa",
+    "bytes": 707530
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.mir",
+    "sha256": "9f9c7559cbd218530104700629091e19ba1541ee545d082d888d9721239cd576",
+    "bytes": 182638
+  },
+  {
+    "file": "codegen/compiler_lab-55987aab45b3e67f.s",
+    "sha256": "2ef49ad378691327a3df080857c41968d68a77f84a175d03da7e60fe8880cadb",
+    "bytes": 440830
+  },
+  {
+    "file": "codegen-build.txt",
+    "sha256": "087fcc95dbcd41f42e59840ec46185a7f28ec395743128e64144cd986cd9be16",
+    "bytes": 74
+  },
+  {
+    "file": "ctfe_table.csv",
+    "sha256": "d963be272b4870cc9eac3f301400b297044fcc33edc45ad14843a20351b98ebc",
+    "bytes": 2550
+  },
+  {
+    "file": "dispatch_grain.csv",
+    "sha256": "e054076f227674ff93464e50863d59148dbea1ed34d8e53fb39e464fd50928f4",
+    "bytes": 4207
+  },
+  {
+    "file": "dispatch_visibility.csv",
+    "sha256": "0716895824bdec82cba3cab0993619b59d27d30f01e4e789957b33411c01588d",
+    "bytes": 2908
+  },
+  {
+    "file": "drop_paths.csv",
+    "sha256": "fd6d4e3c3c0c087327755a334a0e604917040e65816ed9287c83e14f683f340f",
+    "bytes": 2224
+  },
+  {
+    "file": "environment.txt",
+    "sha256": "cbd1893e2d3421a48f1a1484095519f0ef88ab812c41420d2559285a508824d3",
+    "bytes": 793
+  },
+  {
+    "file": "fmt.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "file": "macos-sample.txt",
+    "sha256": "c3bd1b260de07785bcfdc3721ab6f981717473197f7af7885d48fff5459e6a5f",
+    "bytes": 16109
+  },
+  {
+    "file": "move_cost.csv",
+    "sha256": "86c1ea853ebb765c741e89c70e1daa8791f8695f8e67b63424fdd0bae9e62f3b",
+    "bytes": 2751
+  },
+  {
+    "file": "run-used.sh",
+    "sha256": "545b6c278dac68b0fe561a51879fe1922606edb611640f493b699d1c7e586247",
+    "bytes": 2688
+  },
+  {
+    "file": "sample-command.txt",
+    "sha256": "74f5fd8a3ec141b963d17dbe5346cc6c7866f5bff1d556b9aedc2801a21fea30",
+    "bytes": 271
+  },
+  {
+    "file": "sample-run.csv",
+    "sha256": "0567f178c357a2b4e0f560f66cf849f746f8e81d4fb41ce3c46b5f9344f0bdd1",
+    "bytes": 4255
+  },
+  {
+    "file": "source-sha256.txt",
+    "sha256": "e3308a44b9fa841428bb1a4eb75cd8ec3b61f6641a8ec72b592d021de3bf7da0",
+    "bytes": 2858
+  },
+  {
+    "file": "source-snapshot.tar.gz",
+    "sha256": "d399eae2a4b1cecdbe38d9a6404e8d5156cb5e082f5b1f20bd34856b63adf96e",
+    "bytes": 9701
+  },
+  {
+    "file": "tests.txt",
+    "sha256": "f23943c061a2804b5adac5e2026ed618a7c2644dfe149e4acfb00e432378b689",
+    "bytes": 2447
+  },
+  {
+    "file": "vectorize.csv",
+    "sha256": "eb4df5c60547b3759400b2a7ab2b6f026d1e8e05085c448c4aabea8782cc5dfe",
+    "bytes": 2647
+  }
+]

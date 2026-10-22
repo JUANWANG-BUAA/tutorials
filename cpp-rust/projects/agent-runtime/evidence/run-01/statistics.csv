@@ -1,0 +1,4 @@
+case,n,unit,mean,sd_n_minus_1,p50_nearest_rank,p99_nearest_rank,checksum
+admission-full,21,ns/rejected-attempt,3.628,0.032,3.625,3.695,100000
+logs-c1-r0,21,ns/tool-batch-mean,1804839.786,112084.509,1785708.375,2073567.625,7596343361303360080
+logs-c4-r4096,21,ns/tool-batch-mean,643317.458,30835.713,640812.500,692390.625,7596343361303360080

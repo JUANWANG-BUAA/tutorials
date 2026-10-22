@@ -1,0 +1,7 @@
+ArrayQueue<u64>,size=384,align=128
+Guard,size=8,align=8
+Collector,size=8,align=8
+Arc<[u8]>,size=16,align=8
+&[u8],size=16,align=8
+Vec<u8>,size=24,align=8
+AtomicPtr<u64>,size=8,align=8

@@ -1,0 +1,257 @@
+// WARNING: This output format is intended for human consumers only
+// and is subject to change without notice. Knock yourself out.
+// HINT: See also -Z dump-mir for MIR at specific points during compilation.
+fn <impl at /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/stages.rs:4:1: 4:24>::drop(_1: &mut Guard<'_>) -> () {
+    debug self => _1;
+    let mut _0: ();
+    let mut _2: u64;
+    let mut _3: u64;
+    let mut _4: &std::cell::Cell<u64>;
+    let mut _5: &std::cell::Cell<u64>;
+    scope 1 (inlined Cell::<u64>::get) {
+        let mut _6: *mut u64;
+        scope 2 (inlined UnsafeCell::<u64>::get) {
+            let mut _7: *const std::cell::UnsafeCell<u64>;
+        }
+    }
+    scope 3 (inlined Cell::<u64>::set) {
+        scope 4 (inlined Cell::<u64>::replace) {
+            let mut _8: *mut u64;
+            scope 5 (inlined UnsafeCell::<u64>::get) {
+                let mut _9: *const std::cell::UnsafeCell<u64>;
+            }
+            scope 6 (inlined std::mem::replace::<u64>) {
+                scope 7 {
+                }
+            }
+        }
+    }
+
+    bb0: {
+        _4 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        StorageLive(_2);
+        StorageLive(_3);
+        _5 = no_retag copy ((*_1).0: &std::cell::Cell<u64>);
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &raw const ((*_5).0: std::cell::UnsafeCell<u64>);
+        _6 = copy _7 as *mut u64 (PtrToPtr);
+        StorageDead(_7);
+        _3 = copy (*_6);
+        StorageDead(_6);
+        _2 = Add(move _3, const 1_u64);
+        StorageDead(_3);
+        StorageLive(_8);
+        StorageLive(_9);
+        _9 = &raw const ((*_4).0: std::cell::UnsafeCell<u64>);
+        _8 = copy _9 as *mut u64 (PtrToPtr);
+        StorageDead(_9);
+        (*_8) = copy _2;
+        StorageDead(_8);
+        StorageDead(_2);
+        return;
+    }
+}
+
+fn conditional(_1: bool, _2: &Cell<u64>) -> () {
+    debug flag => _1;
+    debug count => _2;
+    let mut _0: ();
+    let _3: Guard<'_>;
+    let mut _5: Guard<'_>;
+    let _6: &Guard<'_>;
+    let mut _7: &Guard<'_>;
+    let mut _8: bool;
+    scope 1 {
+        debug a => _3;
+        let _4: Guard<'_>;
+        scope 2 {
+            debug b => _4;
+            scope 3 (inlined std::mem::drop::<Guard<'_>>) {
+            }
+            scope 4 (inlined std::hint::black_box::<&Guard<'_>>) {
+            }
+        }
+    }
+
+    bb0: {
+        StorageLive(_3);
+        _8 = const true;
+        _3 = Guard::<'_>(copy _2);
+        StorageLive(_4);
+        _4 = Guard::<'_>(copy _2);
+        switchInt(copy _1) -> [0: bb8, otherwise: bb1];
+    }
+
+    bb1: {
+        StorageLive(_5);
+        _8 = const false;
+        _5 = move _3;
+        drop(_5) -> [return: bb7, unwind: bb3];
+    }
+
+    bb2: {
+        StorageDead(_3);
+        return;
+    }
+
+    bb3 (cleanup): {
+        drop(_4) -> [return: bb6, unwind terminate(cleanup)];
+    }
+
+    bb4 (cleanup): {
+        resume;
+    }
+
+    bb5 (cleanup): {
+        drop(_3) -> [return: bb4, unwind terminate(cleanup)];
+    }
+
+    bb6 (cleanup): {
+        switchInt(copy _8) -> [0: bb4, otherwise: bb5];
+    }
+
+    bb7: {
+        StorageDead(_5);
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &_4;
+        _6 = std::intrinsics::black_box::<&Guard<'_>>(move _7) -> [return: bb9, unwind unreachable];
+    }
+
+    bb8: {
+        StorageLive(_6);
+        StorageLive(_7);
+        _7 = &_4;
+        _6 = std::intrinsics::black_box::<&Guard<'_>>(move _7) -> [return: bb11, unwind unreachable];
+    }
+
+    bb9: {
+        StorageDead(_7);
+        StorageDead(_6);
+        drop(_4) -> [return: bb10, unwind: bb6];
+    }
+
+    bb10: {
+        StorageDead(_4);
+        goto -> bb2;
+    }
+
+    bb11: {
+        StorageDead(_7);
+        StorageDead(_6);
+        drop(_4) -> [return: bb12, unwind: bb6];
+    }
+
+    bb12: {
+        StorageDead(_4);
+        drop(_3) -> [return: bb2, unwind continue];
+    }
+}
+
+fn main() -> () {
+    let mut _0: ();
+    let _1: std::cell::Cell<u64>;
+    let _2: ();
+    let mut _3: bool;
+    let _4: &std::cell::Cell<u64>;
+    let mut _5: &u64;
+    let _6: u64;
+    let _7: !;
+    scope 1 {
+        debug count => _1;
+        let mut _8: &u64;
+        scope 2 {
+            debug left_val => _5;
+            debug right_val => _8;
+            scope 3 {
+                debug kind => const core::panicking::AssertKind::Eq;
+            }
+        }
+        scope 6 (inlined std::hint::black_box::<bool>) {
+        }
+        scope 7 (inlined Cell::<u64>::get) {
+            let mut _9: *mut u64;
+            scope 8 (inlined UnsafeCell::<u64>::get) {
+                let mut _10: *const std::cell::UnsafeCell<u64>;
+            }
+        }
+    }
+    scope 4 (inlined Cell::<u64>::new) {
+        scope 5 (inlined UnsafeCell::<u64>::new) {
+        }
+    }
+
+    bb0: {
+        StorageLive(_1);
+        _1 = const Cell::<u64> {{ value: UnsafeCell::<u64> {{ value: 0_u64 }} }};
+        StorageLive(_3);
+        _3 = std::intrinsics::black_box::<bool>(const true) -> [return: bb4, unwind unreachable];
+    }
+
+    bb1: {
+        StorageDead(_3);
+        StorageDead(_4);
+        StorageLive(_6);
+        StorageLive(_9);
+        StorageLive(_10);
+        _10 = &raw const (_1.0: std::cell::UnsafeCell<u64>);
+        _9 = copy _10 as *mut u64 (PtrToPtr);
+        StorageDead(_10);
+        _6 = copy (*_9);
+        StorageDead(_9);
+        _5 = &_6;
+        _8 = const main::promoted[0];
+        switchInt(copy _6) -> [2: bb2, otherwise: bb3];
+    }
+
+    bb2: {
+        StorageDead(_6);
+        StorageDead(_1);
+        return;
+    }
+
+    bb3: {
+        _7 = core::panicking::assert_failed::<u64, u64>(const core::panicking::AssertKind::Eq, move _5, move _8, const Option::<Arguments<'_>>::None) -> unwind continue;
+    }
+
+    bb4: {
+        StorageLive(_4);
+        _4 = &_1;
+        _2 = conditional(move _3, move _4) -> [return: bb1, unwind continue];
+    }
+}
+
+alloc6 (size: 16, align: 8) {
+    00 00 00 00 00 00 00 00 __ __ __ __ __ __ __ __ │ ........░░░░░░░░
+}
+
+const main::promoted[0]: &u64 = {
+    let mut _0: &u64;
+    let mut _1: u64;
+
+    bb0: {
+        _1 = const 2_u64;
+        _0 = &_1;
+        return;
+    }
+}
+
+fn Guard(_1: &Cell<u64>) -> Guard<'_> {
+    let mut _0: Guard<'_>;
+
+    bb0: {
+        _0 = Guard::<'_>(move _1);
+        return;
+    }
+}
+
+// MIR FOR CTFE
+fn Guard(_1: &Cell<u64>) -> Guard<'_> {
+    let mut _0: Guard<'_>;
+
+    bb0: {
+        _0 = Guard::<'_>(move _1);
+        return;
+    }
+}

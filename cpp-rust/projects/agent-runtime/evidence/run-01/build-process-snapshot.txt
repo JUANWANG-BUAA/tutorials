@@ -1,0 +1,1 @@
+95130 /bin/bash        /bin/bash -c cargo fmt --manifest-path cpp-rust/projects/agent-runtime/Cargo.toml && mkdir -p cpp-rust/projects/agent-runtime/evidence && bash cpp-rust/projects/agent-runtime/scripts/measure.sh cpp-rust/projects/agent-runtime/evidence/run-01

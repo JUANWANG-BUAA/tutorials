@@ -1,0 +1,3 @@
+verified old 13-entry snapshot; 8 deterministic baseline failures / 8 fixed passes
+verified two validation archives: each 20 parallel full runs, 800 structured stress reports
+verified two timing archives: each 10 cases x 21 raw observations; final sources match

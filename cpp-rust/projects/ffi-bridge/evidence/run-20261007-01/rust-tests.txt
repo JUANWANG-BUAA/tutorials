@@ -1,0 +1,29 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/ffi_bridge-a7bb197b20bb772d)
+
+running 4 tests
+test tests::retirement_never_wraps_generation ... ok
+test tests::snapshot_keeps_data_after_release ... ok
+test tests::panic_boundary_and_poison_policy ... ok
+test tests::bounded_registry_and_reuse ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/contracts.rs (target/debug/deps/contracts-755ee1e6d52c6f9e)
+
+running 6 tests
+test layout_matches_c_v1 ... ok
+test cleanup_capacity_stale_and_version ... ok
+test rust_kernel_matches_ffi_and_errors_are_transactional ... ok
+test empty_owned_object_and_bounds ... ok
+test concurrent_release_is_exactly_once ... ok
+test concurrent_readers_and_release_have_defined_outcomes ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ffi_bridge
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

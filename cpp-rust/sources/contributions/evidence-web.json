@@ -1,0 +1,50 @@
+[
+  {
+    "id": "EVID-cargo-features",
+    "url": "https://doc.rust-lang.org/cargo/reference/features.html",
+    "sha256": "78c663fe82a9c62d4f7b7c9ebebfd8a736ee81b2e601f2b07fdf316aa68e0700",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-features.html",
+    "review_scope": "完整Features正文；重点default、optional dependencies、feature unification、resolver v2和组合测试；未跟读外链",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cargo-profiles",
+    "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+    "sha256": "2178bd9b63c5be9e3546b765d1ed6aad92efefee50923e4f54dc292b50954773",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-profiles.html",
+    "review_scope": "完整Profiles正文；重点lto=false/off、codegen-units、incremental、overrides、泛型实例化",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-rustc-pgo",
+    "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
+    "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
+    "archive": ".work/cpp-rust-sources/evidence/rustc-pgo.html",
+    "review_scope": "完整Profile-guided Optimization正文；四阶段与Cargo流程、绝对路径、missing-function警告",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cachegrind",
+    "url": "https://valgrind.org/docs/manual/cg-manual.html",
+    "sha256": "40fd719bcc25649892cf5ada0d9ed87a8bf8f6efd01cabe71792877b50153955",
+    "archive": ".work/cpp-rust-sources/evidence/cachegrind.html",
+    "review_scope": "Overview与5.2.1–5.2.8；5.8.1–5.8.3到ASLR段；非完整手册",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-perf-event",
+    "url": "https://man7.org/linux/man-pages/man2/perf_event_open.2.html",
+    "sha256": "03b609628cc896b110cc98dfc8b39fd169c39dc129bb47d62b918995066cd3ae",
+    "archive": ".work/cpp-rust-sources/evidence/perf-event.html",
+    "review_scope": "read_format与TOTAL_TIME_ENABLED/RUNNING、precise_ip、read返回布局及复用缩放解释；非完整系统调用手册",
+    "status": "read-mapped"
+  },
+  {
+    "id": "EVID-cargo-resolver",
+    "url": "https://doc.rust-lang.org/cargo/reference/resolver.html",
+    "sha256": "dd1d061ca25ca5570df0ee0f4840e6b7ee12d7e0d9c633396520e9d3402e2d50",
+    "archive": ".work/cpp-rust-sources/evidence/cargo-resolver.html",
+    "review_scope": "Resolver versions与Rust version指定段；非完整resolver文档",
+    "status": "read-mapped"
+  }
+]

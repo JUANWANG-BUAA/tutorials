@@ -1,0 +1,21 @@
+2026-10-22T14:14:34Z
+rustc 1.99.0 (b940084d7 2026-09-28)
+binary: rustc
+commit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4
+commit-date: 2026-09-28
+host: aarch64-apple-darwin
+release: 1.99.0
+LLVM version: 23.1.1
+cargo 1.99.0 (5f94df478 2026-08-27)
+Darwin macbook-pro 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:06:40 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6050 arm64
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434
+machdep.cpu.brand_string: Apple M5 Pro
+hw.cachelinesize: 128
+hw.ncpu: 18
+release: opt-level=3 debug=1 default codegen-units, no explicit LTO/target-cpu
+RUSTFLAGS=<unset>
+CARGO_ENCODED_RUSTFLAGS=<unset>
+warmup >=500ms per case; 21 observations; process driver Tokio multi_thread workers=2
+desktop machine; no CPU pinning or frequency control; direct children only

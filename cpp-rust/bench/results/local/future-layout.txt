@@ -1,0 +1,3 @@
+across_await size=4097 align=1
+before_await size=2 align=1
+drop before first poll: 0 guards; drop after Pending: 1 guard

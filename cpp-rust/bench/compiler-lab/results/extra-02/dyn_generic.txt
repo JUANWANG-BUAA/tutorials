@@ -1,0 +1,20 @@
+$ rustc --edition=2024 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/dyn_generic.rs --emit=metadata -o /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/dyn_generic.rmeta
+error[E0038]: the trait `Bad` is not dyn compatible
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/dyn_generic.rs:1:59
+  |
+1 | trait Bad { fn apply<T>(&self, value: T); } fn accept(_: &dyn Bad) {} fn main() {}
+  |                                                           ^^^^^^^ `Bad` is not dyn compatible
+  |
+note: for a trait to be dyn compatible it needs to allow building a vtable
+      for more information, visit <https://doc.rust-lang.org/reference/items/traits.html#dyn-compatibility>
+ --> /Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/dyn_generic.rs:1:16
+  |
+1 | trait Bad { fn apply<T>(&self, value: T); } fn accept(_: &dyn Bad) {} fn main() {}
+  |       ---      ^^^^^ ...because method `apply` has generic type parameters
+  |       |
+  |       this trait is not dyn compatible...
+  = help: consider moving `apply` to another trait
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0038`.

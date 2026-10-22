@@ -1,0 +1,85 @@
+gate: api=pipe2 pid=94962 read_fd=11 flags=1 write_fd=12 flags=1
+
+unrelated inheritor pid=94963
+Report {
+    child_pid: 94967,
+    child_reaped_after: 75.472333ms,
+    read_descriptors: [
+        Some(
+            9,
+        ),
+        Some(
+            11,
+        ),
+    ],
+    exit_code: Some(
+        0,
+    ),
+    timed_out: false,
+    elapsed: 75.477375ms,
+    stdout: Capture {
+        prefix: [
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+        ],
+        total: 2097152,
+        eof: true,
+        diagnostics: ReaderDiagnostics {
+            started_after: Some(
+                71.596625ms,
+            ),
+            last_progress_after: Some(
+                74.729625ms,
+            ),
+            eof_after: Some(
+                75.438792ms,
+            ),
+            dropped_after: Some(
+                75.439ms,
+            ),
+            polls: 278,
+            pending_polls: 21,
+            reads: 257,
+            failure: None,
+        },
+    },
+    stderr: Capture {
+        prefix: [
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+        ],
+        total: 2097152,
+        eof: true,
+        diagnostics: ReaderDiagnostics {
+            started_after: Some(
+                71.600708ms,
+            ),
+            last_progress_after: Some(
+                75.16075ms,
+            ),
+            eof_after: Some(
+                75.400292ms,
+            ),
+            dropped_after: Some(
+                75.400542ms,
+            ),
+            polls: 277,
+            pending_polls: 20,
+            reads: 257,
+            failure: None,
+        },
+    },
+    reader_errors: [],
+}

@@ -1,0 +1,8 @@
+exit=0
+STDOUT
+C11 integration: layout, kernel, errors, cleanup, threads, panic passed
+STDERR
+
+thread '<unnamed>' (1281846) panicked at src/lib.rs:308:17:
+intentional FFI boundary probe
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

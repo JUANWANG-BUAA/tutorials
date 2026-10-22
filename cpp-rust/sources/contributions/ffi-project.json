@@ -1,0 +1,65 @@
+[
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "19.1 不安全Rust：裸指针、初始化和别名义务",
+    "pages": "PDF 455–456（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "projects/ffi-bridge/src/lib.rs"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "19.1 不安全函数、安全抽象与from_raw_parts的有效性前提",
+    "pages": "PDF 457–459（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "projects/ffi-bridge/tests/contracts.rs"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "19.1 extern及通过其他语言调用Rust函数",
+    "pages": "PDF 459–460（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.2",
+    "evidence": "projects/ffi-bridge/include/bridge.h"
+  },
+  {
+    "id": "S11",
+    "source": "Rust 程序设计语言 简体中文版.pdf",
+    "section": "19.1 共享静态状态与不安全trait的线程安全责任",
+    "pages": "PDF 460–461（一基物理页）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.4",
+    "evidence": "projects/ffi-bridge/src/lib.rs"
+  },
+  {
+    "id": "FFI-CATCH",
+    "source": "https://doc.rust-lang.org/std/panic/fn.catch_unwind.html",
+    "section": "catch_unwind主体及Notes：unwind边界、panic hook、payload析构风险",
+    "pages": "HTML：主体和Notes（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.5",
+    "evidence": "projects/ffi-bridge/src/lib.rs"
+  },
+  {
+    "id": "FFI-SLICE",
+    "source": "https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html",
+    "section": "Safety和Caveat：单分配、初始化、长度界限、空指针与推断寿命",
+    "pages": "HTML：Safety、Caveat及FFI空指针示例（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
+    "evidence": "projects/ffi-bridge/tests/contracts.rs"
+  },
+  {
+    "id": "FFI-REPR",
+    "source": "https://doc.rust-lang.org/reference/type-layout.html",
+    "section": "The C representation：repr(C)结构的对齐、字段偏移与整体尺寸算法",
+    "pages": "HTML：repr(C) Structs（无固定页码）",
+    "status": "read-mapped",
+    "target": "part4/ch16.md#sec-cpp-rust.4.16.2",
+    "evidence": "projects/ffi-bridge/include/bridge.h"
+  }
+]
