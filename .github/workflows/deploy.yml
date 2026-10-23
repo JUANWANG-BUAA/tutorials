@@ -45,7 +45,7 @@ jobs:
         run: cargo install --locked mdbook-katex --version 0.10.0
 
       - name: Install python deps
-        run: pip3 install markdown-it-py pillow -r tools/formal/requirements.txt
+        run: pip3 install markdown-it-py pillow pytest -r tools/formal/requirements.txt -r embodied/requirements.txt
 
       - name: Install browser
         run: npx --yes --package @playwright/cli@0.1.22 playwright-cli install-browser chrome --with-deps
