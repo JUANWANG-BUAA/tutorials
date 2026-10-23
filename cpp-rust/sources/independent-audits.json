@@ -2,7 +2,7 @@
   {
     "round": 1,
     "kind": "independent",
-    "snapshot_sha256": "92ee4948de91410eac6418609d2be3a1d8385d269e36a74fc507b153d87e8774",
+    "snapshot_sha256": "9b4b28b472de8437701165b319c4ea02bbdad372a7de3dc5abed6e80542f8686",
     "P0": 0,
     "P1": 0,
     "reports": [
@@ -12,7 +12,7 @@
   {
     "round": 2,
     "kind": "independent",
-    "snapshot_sha256": "92ee4948de91410eac6418609d2be3a1d8385d269e36a74fc507b153d87e8774",
+    "snapshot_sha256": "9b4b28b472de8437701165b319c4ea02bbdad372a7de3dc5abed6e80542f8686",
     "P0": 0,
     "P1": 0,
     "reports": [

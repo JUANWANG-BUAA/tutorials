@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sha256": "92ee4948de91410eac6418609d2be3a1d8385d269e36a74fc507b153d87e8774",
+  "sha256": "9b4b28b472de8437701165b319c4ea02bbdad372a7de3dc5abed6e80542f8686",
   "files": {
     "bench/Cargo.lock": "03c85e8c255b7e82f3ed89bfb87ebeed7604bacde540da2da84bdc22c45763ce",
     "bench/Cargo.toml": "7ac5b216562588fe1218905490e9eb523f750e2c243c254fc093d3bd94d20cc5",

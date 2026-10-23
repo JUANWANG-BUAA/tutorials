@@ -38,6 +38,7 @@ def review_files(root: Path) -> list[Path]:
                 in {
                     "target",
                     "build",
+                    "builds",
                     "native-build",
                     "__pycache__",
                     ".git",
