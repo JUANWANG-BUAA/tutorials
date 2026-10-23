@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="emb-cover-title emb-cover-desc">
+  <title id="emb-cover-title">具身感知：SLAM、状态估计与传感器融合</title>
+  <desc id="emb-cover-desc">书封以位姿图闭环、激光扫描扇面与相机视锥展示具身智能体的空间感知链路。</desc>
+  <defs>
+    <linearGradient id="emb-bg" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#04121a"/>
+      <stop offset="1" stop-color="#0a2f3c"/>
+    </linearGradient>
+    <linearGradient id="emb-accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <radialGradient id="emb-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#5eead4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emb-glow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fbbf24" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="emb-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#7dd3c0" stroke-opacity=".09" stroke-width="1"/>
+    </pattern>
+    <pattern id="emb-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.8" cy="1.8" r="1.1" fill="#7dd3c0" fill-opacity=".5"/>
+    </pattern>
+    <filter id="emb-glowf" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="emb-sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".16"/>
+      <stop offset=".42" stop-color="#ffffff" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <marker id="emb-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#fbbf24"/>
+    </marker>
+    <clipPath id="emb-clip"><rect width="600" height="800"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#emb-clip)">
+    <rect width="600" height="800" fill="url(#emb-bg)"/>
+    <rect width="600" height="800" fill="url(#emb-dots)" opacity=".45"/>
+    <circle cx="470" cy="210" r="270" fill="url(#emb-glow)" opacity=".6"/>
+    <circle cx="110" cy="650" r="240" fill="url(#emb-glow2)" opacity=".45"/>
+    <rect width="600" height="800" fill="url(#emb-sheen)"/>
+    <rect x="24" y="24" width="552" height="752" rx="9" fill="none" stroke="#ffffff" stroke-opacity=".15"/>
+    <path d="M24 78h552" stroke="#ffffff" stroke-opacity=".1"/>
+    <path d="M24 722h552" stroke="#ffffff" stroke-opacity=".1"/>
+    <rect x="0" y="0" width="18" height="800" fill="#000000" opacity=".25"/>
+    <rect x="18" y="0" width="2" height="800" fill="#ffffff" opacity=".1"/>
+
+    <text x="52" y="64" fill="#b7d8d2" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.2">BUAA · TEACHING ATLAS</text>
+    <text x="548" y="64" fill="#b7d8d2" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.6" text-anchor="end">VOL. 02 / ROBOTICS</text>
+
+    <!-- 主视觉面板：位姿图 + 激光扇面 + 相机视锥 -->
+    <rect x="52" y="102" width="496" height="386" rx="20" fill="#ffffff" fill-opacity=".035" stroke="#ffffff" stroke-opacity=".1"/>
+    <rect x="52" y="102" width="496" height="386" rx="20" fill="url(#emb-grid)" opacity=".55"/>
+
+    <!-- 激光扫描扇面 -->
+    <g opacity=".55">
+      <path d="M300 372 L140 190" stroke="#5eead4" stroke-opacity=".18"/>
+      <path d="M300 372 L184 168" stroke="#5eead4" stroke-opacity=".18"/>
+      <path d="M300 372 L236 156" stroke="#5eead4" stroke-opacity=".22"/>
+      <path d="M300 372 L292 152" stroke="#5eead4" stroke-opacity=".24"/>
+      <path d="M300 372 L348 158" stroke="#5eead4" stroke-opacity=".22"/>
+      <path d="M300 372 L400 172" stroke="#5eead4" stroke-opacity=".18"/>
+      <path d="M300 372 L446 196" stroke="#5eead4" stroke-opacity=".16"/>
+      <path d="M236 156 L292 152 L348 158 L400 172" fill="none" stroke="#5eead4" stroke-opacity=".3" stroke-dasharray="3 5"/>
+    </g>
+
+    <!-- 位姿图节点与边（闭环） -->
+    <g fill="none" stroke="#5eead4" stroke-width="2" opacity=".9">
+      <path d="M180 330 L232 292 L300 372 L368 300 L420 332"/>
+      <path d="M180 330 L232 292 L300 372 L368 300 L420 332" stroke="#fbbf24" stroke-opacity=".35" stroke-dasharray="4 6" transform="translate(0 -74)"/>
+      <path d="M180 330 L132 268 L186 214 L262 196 L344 204 L412 232 L448 288" stroke="#5eead4" stroke-opacity=".35" stroke-dasharray="5 7"/>
+    </g>
+    <g fill="#04121a" stroke="#5eead4" stroke-width="2.2">
+      <circle cx="180" cy="330" r="9"/>
+      <circle cx="232" cy="292" r="9"/>
+      <circle cx="300" cy="372" r="11" stroke="#fbbf24"/>
+      <circle cx="368" cy="300" r="9"/>
+      <circle cx="420" cy="332" r="9"/>
+      <circle cx="132" cy="268" r="7"/>
+      <circle cx="186" cy="214" r="7"/>
+      <circle cx="262" cy="196" r="7"/>
+      <circle cx="344" cy="204" r="7"/>
+      <circle cx="412" cy="232" r="7"/>
+      <circle cx="448" cy="288" r="7"/>
+    </g>
+
+    <!-- 回环边高亮 -->
+    <path d="M420 332 C 470 300, 470 220, 420 186 C 370 154, 250 150, 186 214" fill="none" stroke="url(#emb-accent)" stroke-width="2" stroke-dasharray="6 6" opacity=".8"/>
+    <text x="452" y="196" fill="#fbbf24" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="9" letter-spacing="1">LOOP Z_ij</text>
+
+    <!-- 相机视锥 -->
+    <g opacity=".85">
+      <path d="M300 372 L250 268 L350 268 Z" fill="#5eead4" fill-opacity=".06" stroke="#5eead4" stroke-opacity=".5"/>
+      <path d="M300 372 L250 268 M300 372 L350 268" stroke="#5eead4" stroke-opacity=".35"/>
+      <path d="M250 268 L350 268" stroke="#5eead4" stroke-opacity=".35" stroke-dasharray="3 4"/>
+    </g>
+
+    <!-- 坐标架 -->
+    <g stroke-linecap="round">
+      <path d="M300 372 L354 392" stroke="#fbbf24" stroke-width="2.2" marker-end="url(#emb-arrow)"/>
+      <path d="M300 372 L296 316" stroke="#5eead4" stroke-width="2.2"/>
+      <path d="M300 372 L246 400" stroke="#fb7185" stroke-width="2.2"/>
+    </g>
+    <text x="360" y="398" fill="#fbbf24" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="9.5" font-weight="700">x</text>
+    <text x="290" y="310" fill="#5eead4" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="9.5" font-weight="700">z</text>
+    <text x="236" y="410" fill="#fb7185" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="9.5" font-weight="700">y</text>
+
+    <!-- 标尺与刻度 -->
+    <g stroke="#7dd3c0" stroke-opacity=".45">
+      <path d="M92 452h80"/>
+      <path d="M92 447v10M132 449v6M172 447v10"/>
+    </g>
+    <text x="92" y="470" fill="#8fc7bf" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="8.5">0</text>
+    <text x="164" y="470" fill="#8fc7bf" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="8.5">10 m</text>
+    <text x="456" y="470" fill="#8fc7bf" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="8.5" text-anchor="end">SE(2) · SE(3)</text>
+
+    <!-- 标题区 -->
+    <text x="52" y="574" fill="#f2fbf9" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="52" font-weight="700" letter-spacing="2">具身感知</text>
+    <text x="54" y="606" fill="#9fd8cd" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="700" letter-spacing="1.2">SLAM · 状态估计与传感器融合</text>
+    <path d="M54 634h172" stroke="url(#emb-accent)" stroke-width="3"/>
+    <text x="54" y="664" fill="#c3e6df" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="12.5">贝叶斯滤波 · IMU/GNSS 组合导航 · 视觉与激光里程计</text>
+    <text x="54" y="690" fill="#c3e6df" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="12.5">回环与位姿图 · Bundle Adjustment · 建图与视觉伺服</text>
+    <text x="548" y="664" fill="#fbbf24" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="10.5" font-weight="700" letter-spacing="1.2" text-anchor="end">14 CHAPTERS</text>
+    <text x="548" y="690" fill="#9fd8cd" font-family="'SFMono-Regular','Roboto Mono',Consolas,monospace" font-size="10.5" font-weight="700" letter-spacing="1.2" text-anchor="end">2 PROJECTS</text>
+
+    <text x="54" y="748" fill="#8fb8b2" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif" font-size="10" letter-spacing=".6">北京航空航天大学 · 研究生课程定制教程</text>
+    <g transform="translate(520 738)">
+      <circle r="19" fill="none" stroke="#fbbf24" stroke-opacity=".7"/>
+      <path d="M-9 1h18M0 -8v18" stroke="#fbbf24" stroke-width="1.2"/>
+      <circle r="4" fill="none" stroke="#fbbf24"/>
+    </g>
+  </g>
+</svg>

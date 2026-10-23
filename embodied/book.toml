@@ -1,0 +1,67 @@
+# 《具身感知：SLAM、状态估计与传感器融合》
+# 机器人书卷 II（slug: embodied）
+#
+# 构建配置：
+#   mdbook build embodied           （仓库根执行）
+#   mdbook serve embodied           （本地预览）
+#
+# 内容源位于 src/，全部为 Markdown 格式；勿手工编辑 book/ 下的生成产物。
+
+[book]
+title = "具身感知：SLAM、状态估计与传感器融合 · 机器人卷 II"
+description = "机器人书卷 II：具身智能体的空间感知、状态估计与传感器融合。从零推导并实现贝叶斯滤波、EKF/ESKF/UKF、粒子滤波、IMU/轮速/GNSS组合导航、相机模型与标定、特征法与直接法视觉里程计、多线激光雷达配准（ICP/NDT/LOAM）、回环检测与位姿图优化、Bundle Adjustment与因子图、多分辨率占据栅格与三维语义建图、定位评估与失效恢复，至小车SLAM闭环与机械臂视觉伺服两大工程实战。"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+# 加载顺序：底座 -> 本书 -> 公式 -> 框架 -> 图鉴 -> 阅读偏好
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/embodied.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
+  "theme/css/prefs.css",
+]
+additional-js = [
+  "theme/js/prefs-config.js",
+  "theme/js/page-extras.js",
+  "theme/js/embodied.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/rhine.js",
+  "theme/js/atlas.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/embodied/{path}"
+no-section-label = true
+site-url = "/tutorials/embodied/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 编号 / 交叉引用 / 语义盒子
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+# 公式构建期渲染
+[preprocessor.katex]
+command = "python3 ../tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

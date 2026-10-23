@@ -16,17 +16,17 @@ async (hostPage) => {
     check(await page.locator('#main-content').evaluate(el => el === document.activeElement), 'skip link moves focus into course content');
     const tools = () => page.locator('.course-tools:visible');
     const rows = () => page.locator('.index-row:visible, .rh-course:visible');
-    check(await rows().count() === 8, 'all eight courses are available initially');
+    check(await rows().count() === 12, 'all twelve courses are available initially');
     await tools().getByRole('searchbox').fill('ＬＩＮＵＸ');
     check(await rows().count() === 1 && (await rows().textContent()).includes('Linux 系统与内核'), 'full-width mixed-case course keywords normalize correctly');
     await tools().getByRole('searchbox').press('Escape');
-    check(await rows().count() === 8, 'Escape clears the course query');
+    check(await rows().count() === 12, 'Escape clears the course query');
     await tools().getByRole('button', { name: '人工智能', exact: true }).click();
-    check(await rows().count() === 2, 'direction filters select deep learning and Agent courses');
+    check(await rows().count() === 3, 'direction filters select deep learning, Agent and algorithms courses');
     await tools().getByRole('searchbox').fill('不存在的课程xyz');
     check(await rows().count() === 0 && await page.locator('.course-empty:visible').count() === 1, 'an empty catalogue explains how to recover');
     await tools().getByRole('button', { name: '重置筛选' }).click();
-    check(await rows().count() === 8 && await tools().getByRole('searchbox').evaluate(el => el === document.activeElement), 'reset restores the full catalogue and input focus');
+    check(await rows().count() === 12 && await tools().getByRole('searchbox').evaluate(el => el === document.activeElement), 'reset restores the full catalogue and input focus');
     await tools().getByRole('searchbox').fill('矩阵 分解');
     check(await rows().count() === 1, 'multiple keywords match across course copy');
     await page.getByLabel('界面外观').selectOption('rhine');
@@ -34,9 +34,9 @@ async (hostPage) => {
     check(await page.locator('.skip-link').getAttribute('href') === '#rhine-main-content', 'the skip link targets the active portal composition');
     await tools().getByRole('button', { name: '重置筛选' }).click();
     await tools().getByRole('button', { name: '系统工程', exact: true }).click();
-    check(await rows().count() === 4, 'Rhine filters the same system courses');
+    check(await rows().count() === 8, 'Rhine filters the same system courses');
     await page.getByLabel('界面外观').selectOption('classic');
-    check(await rows().count() === 4 && await tools().getByRole('button', { name: '系统工程', exact: true }).getAttribute('aria-pressed') === 'true', 'returning to classic synchronizes filter controls and results');
+    check(await rows().count() === 8 && await tools().getByRole('button', { name: '系统工程', exact: true }).getAttribute('aria-pressed') === 'true', 'returning to classic synchronizes filter controls and results');
     await page.getByRole('button', { name: '切换为深色', exact: true }).click();
     check(await page.getByRole('button', { name: '切换为浅色', exact: true }).count() === 1, 'brightness control names the next action');
 
@@ -90,7 +90,7 @@ async (hostPage) => {
   try {
     const fallback = await plain.newPage();
     await fallback.goto(base);
-    check(await fallback.locator('.index-row').count() === 8 && await fallback.locator('.index-row').first().isVisible(), 'all course links remain accessible without JavaScript');
+    check(await fallback.locator('.index-row').count() === 12 && await fallback.locator('.index-row').first().isVisible(), 'all course links remain accessible without JavaScript');
   } finally { await plain.close(); }
   return { passed: checks.length, checks };
 }

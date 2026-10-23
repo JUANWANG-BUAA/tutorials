@@ -19,7 +19,7 @@ node --test tools/test_*.mjs
 python3 -m unittest discover -s tools -p 'test_*.py'
 python3 tools/check_book_boundaries.py
 
-for book in linux agent-systems distributed compilers algorithms embodied cpp-rust; do
+for book in linux agent-systems distributed compilers algorithms embodied cpp-rust edge; do
   python3 "$book/tools/check_book.py"
 done
 python3 linux/tools/build_coverage.py
@@ -42,6 +42,8 @@ done
 for project in embodied/projects/car-slam embodied/projects/arm-servoing; do
   (cd "$project" && PYTHONPATH=. python3 -m pytest -q tests)
 done
+bash edge/projects/edge-rtos-infer/run_tests.sh
+bash edge/projects/edge-daq-monitor/run_tests.sh
 
 if "$build"; then
   bash build.sh
@@ -49,7 +51,7 @@ else
   python3 tools/audit_site_assets.py _site
   python3 tools/check_site_links.py _site
 fi
-for book in agent-systems compilers algorithms cpp-rust; do
+for book in agent-systems compilers algorithms cpp-rust edge; do
   python3 compilers/tools/check_html.py "_site/$book"
 done
 if "$browser"; then node tools/check_browser.mjs; fi

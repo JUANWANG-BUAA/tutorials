@@ -1,0 +1,61 @@
+# 《算法、评估与因果》定制教程
+#
+# 独立构建配置。只改本书；不修改仓库中已有教程的配置。
+#
+#   cd algorithms && mdbook build .
+#   cd algorithms && python3 tools/verify_all.py
+
+[book]
+title = "算法、评估与因果"
+description = "14 章 + 2 个项目：从渐进分析、分治、图算法、动态规划，到基准测试、假设检验、因果推断与 A/B 测试。附算法竞赛评测系统与实验分析流水线；统计方法与工程实践并重。"
+language = "zh-CN"
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+# 暂时使用最小 CSS，等待符号链接配置完成
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/algorithms.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
+  "theme/css/prefs.css",
+]
+additional-js = [
+  "theme/js/prefs-config.js",
+  "theme/js/page-extras.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/rhine.js",
+  "theme/js/atlas.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/algorithms/{path}"
+no-section-label = true
+site-url = "/tutorials/algorithms/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+# 暂时禁用预处理器，等待复用 shared/tools 实现
+# [preprocessor.mathbook]
+# command = "python3 tools/mathbook.py"
+
+# [preprocessor.katex]
+# command = "python3 tools/katex_wrapper.py"
+# after = ["mathbook"]
