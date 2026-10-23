@@ -14,6 +14,7 @@
 | 🧱 编译器与程序分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/compilers/) | 4 篇 14 章 + 2 个项目：词法/AST、类型/作用域、IR/SSA、数据流与优化、寄存器分配、ABI 代码生成、UB/sanitizer、fuzzing、形式化验证、JIT 沙箱；附迷你 C 编译器和 agent 代码验证器 |
 | ⚡ 算法、评估与因果推断 | [开始阅读](https://juanwang-buaa.github.io/tutorials/algorithms/) | 4 篇 14 章 + 2 个项目：渐进分析、分治、图算法、平摊分析、贪心与反例、动态规划、NP难与近似、在线算法、评估指标、假设检验、模型评估与选择、准实验因果推断；附算法评测系统与 A/B 测试分析流水线 |
 | 🦀 Rust 底层性能工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/cpp-rust/) | 4 篇 16 章 + 2 个项目：rustc 编译流水线、内存布局与 niche、所有权与 unsafe 证明、原子与 128B 伪共享消除、Tokio 调度器与管道背压、无锁队列与 EBR 代际回收、ARM NEON 向量化与零拷贝、系统采样与 CI 门禁；附 Agent 工具执行器与跨语言 C ABI 组件 |
+| 🔌 边缘嵌入式与实时系统 | [开始阅读](https://juanwang-buaa.github.io/tutorials/edge/) | 4 篇 14 章 + 2 个项目：x86/ARM/RISC-V 架构、汇编、ABI、启动、中断、抢占式 RTOS、总线 MMIO/DMA、CAN 协议栈、定点滤波、流式 DAQ、芯片低功耗、看门狗容错、INT8 张量推理与双区 OTA；附工业 CAN 诊断节点与高速 DAQ 自愈两个可运行项目 |
 
 ## 仓库结构
 
@@ -29,7 +30,8 @@ compilers/     编译器与程序分析 · mdBook 源（4 篇 14 章 + 2 个项�
 algorithms/    算法、评估与因果推断 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
 embodied/      具身感知：SLAM、状态估计与传感器融合 · mdBook 源（4 篇 14 章 + 2 个项目；机器人卷 II）
 cpp-rust/      Rust 底层性能工程 · mdBook 源（4 篇 16 章 + 2 个项目；复用 shared/theme 与 tools）
-shared/        十一本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
+edge/          边缘嵌入式与实时系统 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
+shared/        十二本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
                RHINE.md 记录可选的「莱茵档案」皮肤
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式

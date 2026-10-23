@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Isolated preview of chapters 1 through 11 only. Does not certify the full book.
+set -euo pipefail
+root="$(cd "$(dirname "$0")/.." && pwd)"
+preview="$root/.build/preview"
+mkdir -p "$preview/src"
+cp "$root/book.toml" "$preview/book.toml"
+cp "$root/src/part1/ch01.md" "$preview/src/ch01.md"
+cp "$root/src/part1/ch02.md" "$preview/src/ch02.md"
+cp "$root/src/part1/ch03.md" "$preview/src/ch03.md"
+cp "$root/src/part1/ch04.md" "$preview/src/ch04.md"
+cp "$root/src/part2/ch05.md" "$preview/src/ch05.md"
+cp "$root/src/part2/ch06.md" "$preview/src/ch06.md"
+cp "$root/src/part2/ch07.md" "$preview/src/ch07.md"
+cp "$root/src/part2/ch08.md" "$preview/src/ch08.md"
+cp "$root/src/part3/ch09.md" "$preview/src/ch09.md"
+cp "$root/src/part3/ch10.md" "$preview/src/ch10.md"
+cp "$root/src/part3/ch11.md" "$preview/src/ch11.md"
+cp "$root/src/part3/ch12.md" "$preview/src/ch12.md"
+cp "$root/src/part4/ch13.md" "$preview/src/ch13.md"
+cp "$root/src/part4/ch14.md" "$preview/src/ch14.md"
+ln -sfn "$root/theme" "$preview/theme"
+ln -sfn "$root/tools" "$preview/tools"
+printf '# Summary\n\n- [1 Linux 与 MCU 实时性 · 局部预览](ch01.md)\n- [2 MCU 架构与启动流 · 局部预览](ch02.md)\n- [3 中断系统与异常架构 · 局部预览](ch03.md)\n- [4 RTOS 任务切换与同步 · 局部预览](ch04.md)\n- [5 MMIO 与外设总线 · 局部预览](ch05.md)\n- [6 CAN 控制器与长模式 · 局部预览](ch06.md)\n- [7 ADC 与定点处理 · 局部预览](ch07.md)\n- [8 DAQ 与存储流式管道 · 局部预览](ch08.md)\n- [9 芯片功耗与低功耗模式 · 局部预览](ch09.md)\n- [10 功能安全与看门狗容错 · 局部预览](ch10.md)\n- [11 边缘张量推理与 INT8 量化 · 局部预览](ch11.md)\n- [12 双区 OTA 与原子回滚 · 局部预览](ch12.md)\n- [13 项目一：CAN 节点与 INT8 诊断 · 局部预览](ch13.md)\n- [14 项目二：高速 DAQ 与自愈系统 · 局部预览](ch14.md)\n' > "$preview/src/SUMMARY.md"
+mdbook build "$preview"
+python3 "$root/../tools/check_site_links.py" "$preview/book" --site-url https://juanwang-buaa.github.io/tutorials/edge/
+printf 'Chapters 1–14 previewed: %s\n' "$preview/book/index.html"

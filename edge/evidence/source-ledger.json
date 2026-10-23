@@ -1,0 +1,1117 @@
+{
+  "sources": [
+    {
+      "id": "ARM64",
+      "filename": "ARM64体系结构编程与实践 (奔跑吧linux社区) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+      "pages": 454,
+      "sha256": "a1ec3041d8f3992ec5f862731770fc84d5c43a4baee593be3257ed60024bc49b",
+      "sections_complete": false
+    },
+    {
+      "id": "Verilog高级",
+      "filename": "Verilog高级数字系统设计技术与实例分析 (Kishore Mishra) (Z-Library).pdf",
+      "pages": 413,
+      "sha256": "354bc989700302a994504a45d73ef828d16af6a5360ddf1dc4265658fa408758",
+      "sections_complete": false
+    },
+    {
+      "id": "Verilog讲义",
+      "filename": "Verilog语法讲义.pdf",
+      "pages": 32,
+      "sha256": "17a5d35e128cb7cf2a4a2405033704124898ca6da1e45ca711a64d08922d9656",
+      "sections_complete": false
+    },
+    {
+      "id": "CAN笔记",
+      "filename": "CAN总线学习笔记.pdf",
+      "pages": 6,
+      "sha256": "c4ad3a30c1329f201a6d270f869e4a262f831460ed556e636a49ddf41e45c8d3",
+      "sections_complete": false
+    },
+    {
+      "id": "CAN实战",
+      "filename": "工程师经验手记 CAN总线嵌入式开发 从入门到实战 第2版 (Pdg2Pic, 牛跃听，周立功，方丹等编著) (Z-Library).pdf",
+      "pages": 369,
+      "sha256": "95b12f4f3d022f3852a95903ddcd3755dde3f567fe61a5fa2dc5411e124373e3",
+      "sections_complete": false
+    },
+    {
+      "id": "电路",
+      "filename": "电路 邱关源-第五版.pdf",
+      "pages": 587,
+      "sha256": "9a5adf94f71f202fc91f8ed0d7bde2521a036476520503d29290989942cbb55e",
+      "sections_complete": false
+    },
+    {
+      "id": "运放",
+      "filename": "基于运算放大器和模拟集成电路的电路设计（原书第4版·精编版） (Sergio Franco) (Z-Library).pdf",
+      "pages": 354,
+      "sha256": "f04fa492c0809500042c4ff5bfd93bbab58e466b6fde41ae654d6cc2f0fe6cb6",
+      "sections_complete": false
+    },
+    {
+      "id": "仪表",
+      "filename": "仪表放大器应用工程师指南.pdf",
+      "pages": 125,
+      "sha256": "bd0ba2ab864125c3b03b5d7b000d32005a03749db70eba62d0e6d9ab81a4e6bc",
+      "sections_complete": false
+    },
+    {
+      "id": "DAQ",
+      "filename": "数据采集基础知识.pdf",
+      "pages": 100,
+      "sha256": "6fd8450cb342d26b31e9c9eb6b9616b8f573083b37394ed8f66ab9cc24558e03",
+      "sections_complete": false
+    },
+    {
+      "id": "PCB",
+      "filename": "电路设计、仿真与PCB设计——从模拟电路、数字电路、射频电路、控制电路到信号完整性分析 (崔岩松) (Z-Library).pdf",
+      "pages": 538,
+      "sha256": "d7cdec3954ab61232f7d373e802e595d4df039f7c1c92ed4f5cbd6460879037e",
+      "sections_complete": false
+    },
+    {
+      "id": "嵌入式C",
+      "filename": "嵌入式C语言自我修养：从芯片、编译器到操作系统 (王利涛 编著) (Z-Library).pdf",
+      "pages": 752,
+      "sha256": "d4d465fd4e8476dfe8a218435a61402a169850280d6ec89f25e43f45af264fcf",
+      "sections_complete": false
+    },
+    {
+      "id": "SJA1000-2000",
+      "filename": "Philips SJA1000 Product specification (2000-01-04), SJA1000.pdf",
+      "pages": 68,
+      "sha256": "65b642a7257e9e91c343426a6c63c96ec0c2f6c5a3c99fa4c3cef6422ab3c1ae",
+      "sections_complete": false
+    },
+    {
+      "id": "LM3S6965-2014",
+      "filename": "TI Stellaris LM3S6965 Microcontroller (2014-07-15), lm3s6965.pdf",
+      "pages": 761,
+      "sha256": "c3bfe9f1bcfb128f6a940aeb27805ce7ad7806ed412210b1f32367b24249f0a1",
+      "sections_complete": false
+    }
+  ],
+  "sections": [
+    {
+      "source": "ARM64",
+      "section": "11.4",
+      "title": "异常现场",
+      "pages": "170",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.1",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "ARM64",
+      "section": "21.4.4",
+      "title": "进程上下文切换",
+      "pages": "376–377",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.4",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "ARM64",
+      "section": "21.4.5",
+      "title": "新进程的第一次执行",
+      "pages": "378",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.2",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "ARM64",
+      "section": "21.5.1",
+      "title": "扩展进程控制块",
+      "pages": "379",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.5",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "ARM64",
+      "section": "21.5.2",
+      "title": "就绪队列",
+      "pages": "379",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.5",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "3.6.1",
+      "title": "ATPCS规则",
+      "pages": "148–149",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.1",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "3.6.2",
+      "title": "在C中内嵌汇编",
+      "pages": "149–152",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.2",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "3.6.3",
+      "title": "在汇编中调用C",
+      "pages": "152–153",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.3",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "5.3.1",
+      "title": "栈的初始化",
+      "pages": "276–277",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.5",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "5.3.2",
+      "title": "函数调用",
+      "pages": "277–278",
+      "status": "已抽页核读并落实",
+      "landing": "part1/ch04.md#sec-edge.1.4.5",
+      "evidence": "evidence/ch04-source-notes.md",
+      "note": "页级原创摘记与纠偏"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.2.1",
+      "title": "使用内存屏障的场景",
+      "pages": "311–312",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.3",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.2.2",
+      "title": "ARM64 屏障指令",
+      "pages": "312",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.3",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.2.3",
+      "title": "DMB 指令",
+      "pages": "312–314",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.3",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.2.4",
+      "title": "DSB 指令",
+      "pages": "314",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.3",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.2.5",
+      "title": "DMB/DSB 参数",
+      "pages": "315",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.3",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.8.1",
+      "title": "地址的本质",
+      "pages": "112–114",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.8.2",
+      "title": "总线的概念",
+      "pages": "114–115",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.8.3",
+      "title": "总线编址方式",
+      "pages": "115",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "6.7.1",
+      "title": "地址对齐 aligned",
+      "pages": "421–423",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.7",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "6.7.2",
+      "title": "结构体的对齐",
+      "pages": "423–424",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "6.7.4",
+      "title": "packed",
+      "pages": "427–428",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "6.7.5",
+      "title": "aligned 与 packed",
+      "pages": "428",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch05.md#sec-edge.2.5.1",
+      "evidence": "evidence/ch05-source-notes.md",
+      "note": "页级原创摘记与实验边界"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "I 1.4",
+      "title": "位时间",
+      "pages": "1–2",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "I 2.1",
+      "title": "数据帧",
+      "pages": "2–4",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.2",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "I 2.2",
+      "title": "错误帧与故障界定",
+      "pages": "4–5",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "I 2.3",
+      "title": "过载帧",
+      "pages": "5–6",
+      "status": "已核读，过载帧尚未实现",
+      "landing": "part2/ch06.md#sec-edge.2.6.2",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "I 2.4",
+      "title": "帧间隔",
+      "pages": "6",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.2",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN笔记",
+      "section": "II 1",
+      "title": "CAN FD 与 CAN 对比",
+      "pages": "6",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.3",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.8",
+      "title": "CAN总线通信过程",
+      "pages": "20",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.1",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.10.1",
+      "title": "数据帧",
+      "pages": "22–23",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.2",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.10.3",
+      "title": "错误帧",
+      "pages": "26",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.12",
+      "title": "位定时要求",
+      "pages": "29–30",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.13",
+      "title": "同步",
+      "pages": "30–31",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.14",
+      "title": "位流编码及位填充",
+      "pages": "31–32",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.2",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.15.1",
+      "title": "错误类型",
+      "pages": "32",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.15.2",
+      "title": "错误标志",
+      "pages": "32–33",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.16.1",
+      "title": "故障界定的方法",
+      "pages": "33",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "1.16.2",
+      "title": "错误计数规则",
+      "pages": "33–34",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "2.1.2",
+      "title": "BasicCAN模式内部寄存器地址表",
+      "pages": "59–60",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "2.1.3",
+      "title": "PeliCAN模式内部寄存器地址表",
+      "pages": "60",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "2.1.7",
+      "title": "CAN总线通信波特率的计算",
+      "pages": "68–70",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "CAN实战",
+      "section": "2.1.8",
+      "title": "SJA1000初始化流程",
+      "pages": "70",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.3",
+      "title": "Mode Register",
+      "pages": "26–27",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.4",
+      "title": "Command Register",
+      "pages": "28–29",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.5",
+      "title": "Status Register",
+      "pages": "29–30",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.6",
+      "title": "Interrupt Register",
+      "pages": "31",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.9",
+      "title": "Error Code Capture",
+      "pages": "36–37",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.11",
+      "title": "RX Error Counter",
+      "pages": "38",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.12",
+      "title": "TX Error Counter",
+      "pages": "38",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.6",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.13",
+      "title": "Transmit buffer",
+      "pages": "39–42",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.14",
+      "title": "Receive buffer",
+      "pages": "42–44",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.4.15",
+      "title": "Acceptance filter",
+      "pages": "44",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.5.1",
+      "title": "Bus Timing Register 0",
+      "pages": "50",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.5.2",
+      "title": "Bus Timing Register 1",
+      "pages": "50–51",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.4",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "SJA1000-2000",
+      "section": "6.5.4",
+      "title": "Clock Divider Register",
+      "pages": "55–56",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch06.md#sec-edge.2.6.5",
+      "evidence": "evidence/ch06-source-notes.md",
+      "note": "页级原创核读与范围限制"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "7.1.2",
+      "title": "有符号数和无符号数",
+      "pages": "477–480",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.3",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "7.1.3",
+      "title": "数据溢出",
+      "pages": "480–483",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.8",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "7.1.4",
+      "title": "数据类型转换",
+      "pages": "483–485",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch07.md#sec-edge.2.7.3",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "DAQ",
+      "section": "采样-基带抗混叠",
+      "title": "采样与基带抗混叠（抽页）",
+      "pages": "46–50",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch07.md#sec-edge.2.7.1",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "DAQ",
+      "section": "FFT-交流性能指标",
+      "title": "FFT、SINAD/SNR/ENOB（抽页）",
+      "pages": "55–59",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch07.md#sec-edge.2.7.6",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "11.3.1",
+      "title": "Sample Sequencers",
+      "pages": "397",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "11.4",
+      "title": "Initialization and Configuration",
+      "pages": "402",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg2",
+      "title": "ADC Raw Interrupt Status",
+      "pages": "406",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg3",
+      "title": "ADC Interrupt Mask",
+      "pages": "407",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg4",
+      "title": "ADC Interrupt Status and Clear",
+      "pages": "408",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg5",
+      "title": "ADC Overflow Status",
+      "pages": "409",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg13–16",
+      "title": "ADC Sample Sequence Result FIFOs",
+      "pages": "424",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg17–20",
+      "title": "ADC Sample Sequence FIFO Status",
+      "pages": "425",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "ADC-Reg26",
+      "title": "ADC Sample Sequence Control 3",
+      "pages": "430",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch07.md#sec-edge.2.7.2",
+      "evidence": "evidence/ch07-source-notes.md",
+      "note": "页级原创核读、类型纠偏与模型边界"
+    },
+    {
+      "source": "DAQ",
+      "section": "采样与实时系统",
+      "title": "采样率与实时处理约束（抽页）",
+      "pages": "41–44",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch08.md#sec-edge.2.8.1",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "DAQ",
+      "section": "孔径时间与抖动",
+      "title": "孔径延迟与孔径抖动SNR模型（抽页）",
+      "pages": "72–75",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch08.md#sec-edge.2.8.1",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "DAQ",
+      "section": "比较器亚稳态与闪码",
+      "title": "比较器亚稳态与闪码排查（抽页）",
+      "pages": "92–96",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch08.md#sec-edge.2.8.6",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "16.8",
+      "title": "DMA 和高速缓存的一致性",
+      "pages": "265–267",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch08.md#sec-edge.2.8.4",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "18.3.7",
+      "title": "DMA 内存屏障案例",
+      "pages": "310",
+      "status": "已抽页核读并落实",
+      "landing": "part2/ch08.md#sec-edge.2.8.4",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.8.2-ch08",
+      "title": "总线矩阵与多主设备并发",
+      "pages": "114–115",
+      "status": "部分抽页，整节待核读",
+      "landing": "part2/ch08.md#sec-edge.2.8.2",
+      "evidence": "evidence/ch08-source-notes.md",
+      "note": "页级原创核读与流式管道落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "2.7",
+      "title": "电源管理与休眠 (WFI/WFE)",
+      "pages": "90–91",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch09.md#sec-edge.3.9.4",
+      "evidence": "evidence/ch09-source-notes.md",
+      "note": "页级原创核读与低功耗状态机落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "5.2.4",
+      "title": "系统时钟与 PLL 模式",
+      "pages": "183–186",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch09.md#sec-edge.3.9.4",
+      "evidence": "evidence/ch09-source-notes.md",
+      "note": "页级原创核读与低功耗状态机落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "5.4-ch09",
+      "title": "系统时钟门控寄存器组 (RCGC/SCGC/DCGC)",
+      "pages": "214–233",
+      "status": "部分抽页，整节待核读",
+      "landing": "part3/ch09.md#sec-edge.3.9.4",
+      "evidence": "evidence/ch09-source-notes.md",
+      "note": "页级原创核读与低功耗状态机落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "22.2.5",
+      "title": "睡眠模式交流特性表 22-16",
+      "pages": "709",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch09.md#sec-edge.3.9.7",
+      "evidence": "evidence/ch09-source-notes.md",
+      "note": "页级原创核读与低功耗状态机落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "16.1",
+      "title": "芯片功耗随频率电压变化规律",
+      "pages": "265–267",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch09.md#sec-edge.3.9.1",
+      "evidence": "evidence/ch09-source-notes.md",
+      "note": "页级原创核读与低功耗状态机落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "10.1–10.4",
+      "title": "看门狗定时器与密钥锁定 (WDTLOAD/CTL/LOCK)",
+      "pages": "371–382",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch10.md#sec-edge.3.10.2",
+      "evidence": "evidence/ch10-source-notes.md",
+      "note": "页级原创核读与功能安全容错落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "5.2.2.7-ch10",
+      "title": "复位原因寄存器 (RESC)",
+      "pages": "176、194",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch10.md#sec-edge.3.10.8",
+      "evidence": "evidence/ch10-source-notes.md",
+      "note": "页级原创核读与功能安全容错落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "2.6.3-ch10",
+      "title": "故障状态与地址寄存器 (CFSR/HFSR/BFAR)",
+      "pages": "90",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch10.md#sec-edge.3.10.4",
+      "evidence": "evidence/ch10-source-notes.md",
+      "note": "页级原创核读与功能安全容错落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "11.4-ch10",
+      "title": "异常现场保存与故障恢复",
+      "pages": "170",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch10.md#sec-edge.3.10.6",
+      "evidence": "evidence/ch10-source-notes.md",
+      "note": "页级原创核读与功能安全容错落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "22.3",
+      "title": "NEON 指令集与 SIMD 架构",
+      "pages": "378–385",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch11.md#sec-edge.3.11.1",
+      "evidence": "evidence/ch11-source-notes.md",
+      "note": "页级原创核读与边缘张量推理落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "22.4",
+      "title": "NEON 汇编与乘累加向量化",
+      "pages": "385–395",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch11.md#sec-edge.3.11.5",
+      "evidence": "evidence/ch11-source-notes.md",
+      "note": "页级原创核读与边缘张量推理落地"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.5.6-ch11",
+      "title": "SIMD 与多媒体指令集",
+      "pages": "84–86",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch11.md#sec-edge.3.11.5",
+      "evidence": "evidence/ch11-source-notes.md",
+      "note": "页级原创核读与边缘张量推理落地"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "2.7.6-ch11",
+      "title": "NPU 神经网络处理器与边缘智能",
+      "pages": "105–110",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch11.md#sec-edge.3.11.1",
+      "evidence": "evidence/ch11-source-notes.md",
+      "note": "页级原创核读与边缘张量推理落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "7.0-ch12",
+      "title": "Internal Flash Memory 控制器与写保护",
+      "pages": "261–270",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch12.md#sec-edge.3.12.6",
+      "evidence": "evidence/ch12-source-notes.md",
+      "note": "页级原创核读与双区OTA闪存时序落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "22.1.6-ch12",
+      "title": "Flash Memory Characteristics 擦写电气特性",
+      "pages": "703",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch12.md#sec-edge.3.12.2",
+      "evidence": "evidence/ch12-source-notes.md",
+      "note": "页级原创核读与寿命倍率定理物理落地"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "4.12-ch12",
+      "title": "U-boot重定位分析与LMA/VMA解耦",
+      "pages": "256–261",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch12.md#sec-edge.3.12.2",
+      "evidence": "evidence/ch12-source-notes.md",
+      "note": "页级原创核读与Direct-XIP架构落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "16.9-ch12",
+      "title": "自修改代码与指令缓存一致性屏障",
+      "pages": "288–289",
+      "status": "已抽页核读并落实",
+      "landing": "part3/ch12.md#sec-edge.3.12.5",
+      "evidence": "evidence/ch12-source-notes.md",
+      "note": "页级原创核读与硬件移交合同落地"
+    },
+    {
+      "source": "嵌入式C",
+      "section": "3.6.1-ch13",
+      "title": "ATPCS 规约与函数寄存器传参",
+      "pages": "148–153",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch13.md#sec-edge.4.13.4",
+      "evidence": "evidence/ch13-source-notes.md",
+      "note": "页级原创核读与项目一ABI落地"
+    },
+    {
+      "source": "CAN实战",
+      "section": "2.1-ch13",
+      "title": "CAN 协议基础与报文线与仲裁",
+      "pages": "20–34",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch13.md#sec-edge.4.13.6",
+      "evidence": "evidence/ch13-source-notes.md",
+      "note": "页级原创核读与项目一告警仲裁落地"
+    },
+    {
+      "source": "DAQ",
+      "section": "4.0-ch13",
+      "title": "信号调理与低通抗混叠滤波",
+      "pages": "42–50",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch13.md#sec-edge.4.13.4",
+      "evidence": "evidence/ch13-source-notes.md",
+      "note": "页级原创核读与项目一定点滤波落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "22.3-ch13",
+      "title": "SIMD 架构与定点量化向量点积",
+      "pages": "378–395",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch13.md#sec-edge.4.13.5",
+      "evidence": "evidence/ch13-source-notes.md",
+      "note": "页级原创核读与项目一张量推理落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "11.0-ch13",
+      "title": "Watchdog Timer 控制器与复位",
+      "pages": "464–475",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch13.md#sec-edge.4.13.7",
+      "evidence": "evidence/ch13-source-notes.md",
+      "note": "页级原创核读与项目一看门狗监管落地"
+    },
+    {
+      "source": "DAQ",
+      "section": "4.0-ch14",
+      "title": "ADC 采样电容充电与阻抗匹配",
+      "pages": "42–50",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch14.md#sec-edge.4.14.1",
+      "evidence": "evidence/ch14-source-notes.md",
+      "note": "页级原创核读与项目二采样阻抗落地"
+    },
+    {
+      "source": "ARM64",
+      "section": "16.9-ch14",
+      "title": "DMA 接收端数据缓存使失效",
+      "pages": "288–289",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch14.md#sec-edge.4.14.3",
+      "evidence": "evidence/ch14-source-notes.md",
+      "note": "页级原创核读与项目二Cache失效落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "7.0-ch14",
+      "title": "Flash 块擦除停顿与总线冻结",
+      "pages": "261–270",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch14.md#sec-edge.4.14.4",
+      "evidence": "evidence/ch14-source-notes.md",
+      "note": "页级原创核读与项目二背压容量落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "6.0-ch14",
+      "title": "系统控制与低功耗待机模式",
+      "pages": "216–228",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch14.md#sec-edge.4.14.5",
+      "evidence": "evidence/ch14-source-notes.md",
+      "note": "页级原创核读与项目二WFI休眠落地"
+    },
+    {
+      "source": "LM3S6965-2014",
+      "section": "11.0-ch14",
+      "title": "窗口看门狗与晶振故障自愈",
+      "pages": "464–475",
+      "status": "已抽页核读并落实",
+      "landing": "part4/ch14.md#sec-edge.4.14.7",
+      "evidence": "evidence/ch14-source-notes.md",
+      "note": "页级原创核读与项目二故障自愈落地"
+    }
+  ]
+}

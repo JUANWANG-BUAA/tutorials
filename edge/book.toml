@@ -1,0 +1,63 @@
+# 《边缘嵌入式与实时系统 · 硬件架构、实时内核与边缘智能》
+#
+# 独立构建配置 (slug: edge)
+#   cd edge && mdbook build .
+#   cd edge && python3 tools/check_book.py
+
+[book]
+title = "边缘嵌入式与实时系统 · 硬件架构、实时内核与边缘智能"
+description = "以 x86、ARM、RISC-V 的架构、汇编、ABI、异常与实时调度为主线，深入 MMIO/DMA、CAN 总线、定点 DSP、流式 DAQ、低功耗 DVFS、看门狗容错、INT8 张量推理与双区 OTA。全书 14 个正文章节与两大工业实战项目全量闭环。"
+language = "zh-CN"
+src = "src"
+
+[build]
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+additional-css = [
+  "theme/css/base.css",
+  "theme/css/edge.css",
+  "theme/css/katex.css",
+  "theme/css/framework.css",
+  "theme/css/atlas.css",
+  "theme/css/rhine.css",
+  "theme/css/prefs.css",
+]
+additional-js = [
+  "theme/js/prefs-config.js",
+  "theme/js/page-extras.js",
+  "theme/js/search-cjk.js",
+  "theme/js/framework-core.js",
+  "theme/js/framework-nav.js",
+  "theme/js/framework-media.js",
+  "theme/js/framework-text.js",
+  "theme/js/prefs.js",
+  "theme/js/rhine.js",
+  "theme/js/atlas.js",
+]
+git-repository-url = "https://github.com/JUANWANG-BUAA/tutorials"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/JUANWANG-BUAA/tutorials/edit/main/edge/{path}"
+no-section-label = true
+site-url = "/tutorials/edge/"
+
+[output.html.search]
+enable = true
+limit-results = 40
+teaser-word-count = 36
+use-boolean-and = false
+boost-hierarchy = 4
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+[preprocessor.mathbook]
+command = "python3 tools/mathbook.py"
+
+[preprocessor.katex]
+command = "python3 tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]

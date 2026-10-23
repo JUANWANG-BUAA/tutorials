@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 560" role="img" aria-labelledby="edge-cover-title edge-cover-desc">
+  <title id="edge-cover-title">边缘嵌入式与实时系统 · 硬件架构、实时内核与边缘智能</title>
+  <desc id="edge-cover-desc">封面展示从 ARM/RISC-V/x86 硬件寄存器、MMIO/DMA 总线矩阵到 RTOS 实时内核与边缘 INT8 张量推理的底层确定性数据流。</desc>
+  <defs>
+    <linearGradient id="edge-cover-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1b2a"/>
+      <stop offset="50%" stop-color="#1b263b"/>
+      <stop offset="100%" stop-color="#415a77"/>
+    </linearGradient>
+    <linearGradient id="edge-cover-accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00b4d8"/>
+      <stop offset="100%" stop-color="#90e0ef"/>
+    </linearGradient>
+    <linearGradient id="edge-cover-line" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00b4d8"/>
+      <stop offset="100%" stop-color="#f77f00"/>
+    </linearGradient>
+    <pattern id="edge-cover-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="#00b4d8" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <!-- 背景与网格 -->
+  <rect width="420" height="560" rx="8" fill="url(#edge-cover-bg)"/>
+  <rect width="420" height="560" rx="8" fill="url(#edge-cover-grid)"/>
+  <!-- 边框内衬 -->
+  <path d="M32 32h356v496H32z" fill="none" stroke="#00b4d8" stroke-opacity="0.45" stroke-width="1.5"/>
+  <!-- 头部标识 -->
+  <text x="56" y="74" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="11" letter-spacing="3">VOL. 12 / EMBEDDED &amp; REAL-TIME</text>
+  <!-- 主标题 -->
+  <text x="56" y="136" fill="#f5f0e6" font-family="Georgia, 'Noto Serif SC', serif" font-size="34" font-weight="700">边缘嵌入式</text>
+  <text x="56" y="178" fill="#f5f0e6" font-family="Georgia, 'Noto Serif SC', serif" font-size="34" font-weight="700">与实时系统</text>
+  <!-- 副标题 -->
+  <text x="56" y="214" fill="#f77f00" font-family="ui-monospace, monospace" font-size="12" letter-spacing="1.5">HARDWARE, RTOS &amp; EDGE INFERENCE</text>
+  <!-- 架构拓扑示意图 (总线矩阵、RTOS 切换、DMA 管道与 INT8 推理) -->
+  <g stroke="url(#edge-cover-line)" stroke-width="2" fill="none" opacity="0.85">
+    <path d="M72 280h276"/>
+    <path d="M72 344h276"/>
+    <path d="M72 408h276"/>
+    <path d="M110 260v168"/>
+    <path d="M210 260v168"/>
+    <path d="M310 260v168"/>
+  </g>
+  <!-- 拓扑节点 -->
+  <g fill="#0d1b2a" stroke="#00b4d8" stroke-width="2">
+    <circle cx="110" cy="280" r="16"/><circle cx="210" cy="280" r="16"/><circle cx="310" cy="280" r="16"/>
+    <circle cx="110" cy="344" r="16"/><circle cx="210" cy="344" r="16"/><circle cx="310" cy="344" r="16"/>
+    <circle cx="110" cy="408" r="16"/><circle cx="210" cy="408" r="16"/><circle cx="310" cy="408" r="16"/>
+  </g>
+  <!-- 节点文字标签 -->
+  <text x="110" y="284" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">MMIO</text>
+  <text x="210" y="284" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">DMA</text>
+  <text x="310" y="284" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">CAN</text>
+  <text x="110" y="348" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">RTOS</text>
+  <text x="210" y="348" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">INT8</text>
+  <text x="310" y="348" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">FOTA</text>
+  <text x="110" y="412" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">WDT</text>
+  <text x="210" y="412" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">WFI</text>
+  <text x="310" y="412" fill="#00b4d8" font-family="ui-monospace, monospace" font-size="9" text-anchor="middle">RESC</text>
+  <!-- 底部装帧信息 -->
+  <text x="56" y="476" fill="#e0e1dd" font-family="ui-monospace, monospace" font-size="10" letter-spacing="1">ARM CORTEX-M / RISC-V / X86-64</text>
+  <text x="56" y="496" fill="#778da9" font-family="ui-monospace, monospace" font-size="9">14 CHAPTERS + 2 INDUSTRIAL PROJECTS</text>
+</svg>

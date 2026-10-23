@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-books=(robot numerical matrix deeplearning linux agent-systems distributed compilers algorithms embodied cpp-rust)
+books=(robot numerical matrix deeplearning linux agent-systems distributed compilers algorithms embodied cpp-rust edge)
 for book in "${books[@]}"; do
   mdbook build "$book" >/dev/null
   node tools/build_search_js.mjs "$book" | tail -1
@@ -26,7 +26,7 @@ python3 tools/optimize_site.py _site
 python3 tools/optimize_assets.py _site
 python3 tools/audit_site_assets.py _site
 python3 tools/check_site_links.py _site
-echo "构建完成：_site/（十一本 + 导览页）"
+echo "构建完成：_site/（十二本 + 导览页）"
 
 if [ "${1:-}" = "serve" ]; then
   echo "本地预览：http://127.0.0.1:8000/"
