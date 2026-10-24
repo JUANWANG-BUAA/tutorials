@@ -443,3 +443,50 @@
 **B 节漏节：** #11（网络 7.2 内存管理）、#12（网络 6.5 异常握手）落点纯在 part4，本轮未补写，仅计数；#13（网络 4.3 网卡启动准备）为跨篇项，part4 侧同样未补写。
 
 **顺手修复的连带自洽项（报告未单列）：** 4.5.3 listen 路径注释（`inet_csk_reqsk_queue_add / inet_hash_insert` → `sk->sk_prot->hash = inet_hash`）；4.5.19 bpftrace `@add` 读法；4.5.21 出口检查表的 roundup 公式行；例 4.5.1 内存账按 backlog=4096 重算；`ch09.md` 例 4.9.1 GSO 段数 44→45（65536/1460 ≈ 44.9），并连带 `ch01.md`/`ch08.md` 两处「44 个帧」同步为 45。
+
+---
+
+## 漏节处置（2026-10-25 · part3 部分）
+
+> 处理 B 表中与 part3 相关的 13 项：纯 part3 落点 12 项（#1–#10、#14、#15）+ 跨篇 #13 的 part3 侧（3.14.10）；#11/#12 落点纯在 part4（4.11.7 / 4.5.14），本轮不处理。
+> 判定按 `50-节级审计规程.md` 的五种判定逐条复核：B 表快照（2026-10-19）后正文又有并行增补（3.12.5 的校验和段、3.12.12 的 VSFS note 等），#9/#10 因此改判「已覆盖」。
+> 本轮只改 `src/part3/{ch10,ch11,ch12,ch13,ch14}.md`；未新增 H2、未动已有编号与锚点；新增 H3 三处（无编号、随所在小节风格），标题全书唯一；交叉引用只链接已存在页面。
+> 验证：`python3 tools/check_book.py` → `pages: 113, total lines: 127847, substantial: 103`（退出码 0，无告警）；`mdbook build` 通过。part3 行数 22,038 → 22,122（+84 行，+0.38%，预算 +4%）。每个缺口的增补块均 ≤40 行。
+> 内核事实按 Linux 6.8 在线源码复核：`include/asm-generic/qrwlock.h`（`_QW_LOCKED=0x0ff`、`_QW_WAITING=0x100`、`_QW_WMASK=0x1ff`、`_QR_SHIFT=9`）与 `qrwlock_types.h`（`wlocked`+`__lstate[3]`+`wait_lock`）；`mm/swap_state.c` 的 `add_to_swap_cache()` 只置 SwapCache 标志并写 `folio->swap`，不碰 `mapping`/`index`；`mm/memory.c` 的 `do_anonymous_page`/`copy_present_page`/`wp_page_copy`/`zap_pte_range→free_swap_and_cache`。
+
+**逐条处置：**
+
+- **#1 奔跑吧 2.14 匿名页面生命周期 — 真缺口，已补**。3.10.2/3.10.11 只有 LRU 与 swap entry 两段，无完整生命周期。补在 `ch10.md` 3.10.11 末尾，新增 H3「匿名页的一生：字段在各阶段怎么变」：8 阶段路径表（`do_anonymous_page` → `copy_present_page`/`wp_page_copy` → `add_to_swap`/`try_to_unmap` → `do_swap_page` → `zap_pte_range` → 释放）+ 字段账（`mapping`/`index`/`_mapcount`/`_refcount`），并澄清两个易错点：swap cache 不借走 `mapping`（仍是 anon_vma）、`_mapcount` 与 `_refcount` 是两本账。
+- **#2 奔跑吧 4.5 读写锁 — 真缺口（偏薄），已补**。3.11.3 一句带过 `rwlock_t`、3.11.8 只有 rwsem 字段，qrwlock 结构与两者分工缺失。补在 `ch11.md` 3.11.8「rwsem、semaphore、completion」之后，新增 H3「rwlock_t（qrwlock）与 rwsem：分工与语义」：qrwlock 结构体 12 行节选 + 位图读法 + 「写者在等时新读者排队」（qrwlock 对旧 rwlock 饿死问题的修正）+ 六行对照表（上下文/临界区/公平性/递归读锁/降级/trylock 失败语义）。
+- **#3 OSTEP 36.2 标准设备 — 真缺口（MMIO/PIO 已在 3.14.5 覆盖，三寄存器模型缺失），已补**。`ch14.md` 3.14.1 末尾新增 H3「设备对 CPU 暴露什么：三个寄存器与五步协议」：STATUS/DATA/COMMAND 各自语义；编址与 `readl/writel` vs `inb/outb` 一句链到 3.14.5 的对照表，不重复。
+- **#4 OSTEP 36.3 标准协议 — 真缺口，与 #3 合并补**。同一 H3 内给五步轮询协议（text 块），并说明中断替代第 4 步（链 3.14.3 的 `mychar_irq`）、DMA 替代第 2 步，定量取舍链 3.14.11.1。
+- **#5 OSTEP 38.2 故障模型 — 真缺口，已补**。`ch12.md` 3.12.5.1 末尾（故障表之后）追加：整盘/部分故障分类表（形式/谁发现/谁处理）+「RAID 5 重建窗口为什么危险」一段（潜在坏扇区 + 单冗余 → 条带永久丢失；对策 RAID 6 + 定期 scrub），并链 1.13.5 的 RAID 选型。
+- **#6 OSTEP 40.1 VSFS — 偏薄，并入现有 note 盒**。并行增补已在 3.12.12 内有「OSTEP 的 VSFS 与 ext4 的对应」note（五部分 + 字段对应），本轮只补残缺的「一次写入推一遍」：VSFS 新建文件改五个位置 → ext4 约束进同一块组再包 JBD2 事务。
+- **#7 OSTEP 44.1 磁盘故障模式 — 真缺口，与 #5 合并补**。同一张分类表覆盖「整盘故障 vs 扇区错误 vs 潜在扇区错误」三档粒度。
+- **#8 OSTEP 44.2 处理潜在扇区错误 — 真缺口，两处各补一段**。定义与固件重映射随 #5 落在 3.12.5.1；块层/RAID 路径在 `ch13.md` 3.13.13「超时」段后追加：读时暴露（UNC/MEDIUM ERROR → `BLK_STS_IOERR` → `EIO` 上传）、`Reallocated_Sector_Ct` 计数、`md` 的 `fix_read_error()` 改写强制重映射，并链回 3.12.5.1。
+- **#9 OSTEP 44.3 检测讹误：校验和 — 已覆盖，不改**。并行增补后落点齐全：3.12.5 正文（`ch12.md:341`）列出 `metadata_csum` 的校验对象、scrub、T10-PI 与「发现 vs 修复」边界；3.12.12 extent 树小节（`ch12.md:1143`）已注明「块尾 `ext4_extent_tail` 才是校验和」（A.3 修复时写入）。校验和「放在哪/覆盖什么/何时验证」三问均有落点。
+- **#10 OSTEP 44.4 使用校验和 — 已覆盖，不改**。scrub 与在线读的差异（「把读到时才报错提前到定期发现」）、不匹配后靠副本/RAID 重建、「校验和只负责发现」边界均在 3.12.5 正文；3.12.5.1 故障表的「修复」列同义。
+- **#11 网络 7.2、#12 网络 6.5 — 落点纯在 part4（4.11.7 / 4.5.14），本轮不处理，仅记录。**
+- **#13 网络 4.3 网卡启动准备（跨篇）— part3 侧偏薄，已小幅补**。3.14.10「PCI 设备的 probe 多两步」已有 enable/BAR 映射/DMA mask/IRQ/注册的五步骨架；本轮在该小节 `pcim_*` 段后补 3 行：复位（`pci_reset_function()` 或驱动专属 reset）与固件加载（`request_firmware()` + `readl_poll_timeout()` 轮询就绪位），并链 part4 的 4.8.2（RX ring 初始化）。part4 侧未动。
+- **#14 OSTEP 37.2–37.4 — 仅交叉引用，已补**。`ch13.md` 3.13.3 开头加一句：磁盘几何与「寻道+旋转+传输」时间账见 1.13.5.2，调度器参数都是在那笔账上做文章。
+- **#15 OSTEP 41.4/41.6 — 仅交叉引用，已补**。`ch12.md` 3.12.12 开头加一句：块组继承自 FFS 柱面组与「同组优先、大文件例外」策略，对比与验证在 1.13.5。
+
+**统计：** part3 相关 13 项——真缺口补写 7（#1、#2、#3、#4、#5、#7、#8；其中 #3/#4 合并一处、#5/#7 合并一处、#8 拆两处）；偏薄小补 2（#6 并入现有 note 盒、#13 part3 侧）；交叉引用补句 2（#14、#15）；复核改判已覆盖 2（#9、#10）；纯 part4 不处理 2（#11、#12，不计入 13）。新增 84 行。
+
+---
+
+## 漏节处置（2026-10-25 · part4 部分）
+
+> 只处理 B 表中落点纯在 part4 的两条：#11（深入理解 Linux 网络 7.2 内存管理）、#12（6.5 异常握手）。#13（网络 4.3 网卡启动准备）为跨篇项：part3 侧已于上一节处置；part4 侧经复核，4.8.2/4.9.7 的 ring 初始化与完成路径完整、驱动 probe 细节已由 3.14.10 承担，本轮未动。
+> 判定按五种判定复核：两条均为「偏薄」真缺口；因并行增补已把对象大小表/水位（4.11.16）与计数器清单（4.5.16）落到深水区小节，本轮补写跟随落点，而非机械照搬报告建议的 4.11.7/4.5.14（#12 仍按建议落在 4.5.14）。
+> 本轮只改 `src/part4/{ch05,ch11}.md`；未新增 H2、未动已有编号与锚点；补写用无编号 H3（part4 全篇此前无 H3，随所在篇风格）；每块 ≤40 行。与 CHECK-NETWORK-ERRORS 的「漏节处置（2026-10-25）」为同一批改动、同一次验证。
+> 6.8 在线源码复核：`reqsk_timer_handler()`（net/ipv4/inet_connection_sock.c:987，含「`qlen << 1 > max(8, backlog)` 时下调 `max_syn_ack_retries`」）与 `inet_csk_reqsk_queue_drop_and_put()`（:980）；`tcp_rcv_synsent_state_process()`（net/ipv4/tcp_input.c:6334，SYN-SENT 收裸 SYN 的 "simultaneous connect with crossed SYNs" 分支）；`tcp_rtx_synack()`（net/ipv4/tcp_output.c:4365，`LINUX_MIB_TCPSYNRETRANS`）；`skb_init()`（net/core/skbuff.c:4890，`skbuff_head_cache`/`skbuff_fclone_cache`）；`__sk_mem_schedule()`（net/core/sock.c:3156）、`proto_register()` 的协议 slab（net/core/sock.c:3938）、`sk_alloc()`（net/core/sock.c:2126）；`tcp_enter_memory_pressure()`（net/ipv4/tcp.c:329）、`tcp_clamp_window()`（net/ipv4/tcp_input.c:587）；`include/uapi/linux/snmp.h` 无 `TCPAbortOnSynDrop`。
+> 验证：`python3 tools/check_book.py` 开工基线 `pages: 113, total lines: 127847, substantial: 103`，落盘后 `pages: 113, total lines: 127985, substantial: 103`（退出码 0，无告警）；`mdbook build` 通过。part4 行数 15002 → 15140（+138，+0.92%，预算 +5%）。
+
+**逐条处置：**
+
+- **#11（网络 7.2 协议栈内存）— 真缺口（偏薄），已补**。4.11.7/4.11.16 已有对象大小表、`tcp_mem` 三档水位与 slabtop/sockstat 观测，缺「对象与缓冲各从哪个池子里来」。补在 **4.11.16 末尾**（内存构成的深水区），新增 H3「对象与缓冲各从哪个池子里来」：sock 结构体来自 `proto_register()` 按协议名建的 slab、`sk_alloc()` 取对象（常驻成本，连接不关不回收）；skb 元数据来自 `skbuff_head_cache`/`skbuff_fclone_cache`（`skb_init()`）；skb 数据区不走 sock 的 slab——`__alloc_skb()` 按长度选 kmalloc 大小类、更大走页分配器 page fragment（解释缓冲内存「按大小类跳变」）；缓冲压力机制 `__sk_mem_schedule()` → `tcp_enter_memory_pressure()`（pressure 档置位 → `tcp_clamp_window()` 收缩接收缓冲）→ max 档拒分配（`TCPAbortOnMemory`）；收尾「对象看 slabinfo、缓冲看 sockstat 的 `mem` 页数，回收路径不同」。
+- **#12（网络 6.5 异常握手）— 真缺口（偏薄），已补**。4.5 已覆盖 RST、队列溢出、SYN flood 与 SYN/SYN-ACK 重传参数，缺非典型路径。补在 **4.5.14 末尾**（报告建议落点），新增 H3「握手异常矩阵：三种实验之外的非典型路径」：四行矩阵——同时打开（双方 SYN-SENT→SYN-RECV→ESTABLISHED，6.8 有专门分支）、第三次 ACK 丢失（客户端随后数据段自带 ACK 完成服务端建连）、SYN-ACK 重传耗尽（`reqsk_timer_handler()` 静默释放，重传计入 `TcpExtTCPSynRetrans`）、半开连接（对端重启后报文触发 RST，靠心跳/keepalive 发现）；并补隐藏机制「半连接队列越满、允许的 SYN-ACK 重传次数越少」（`qlen × 2 > max(8, backlog)` 时下调上限）——「SYN-ACK 只重传一两次就没动静」未必是丢包。
+- **连带修复（B 表之外，与 #12 同域）**：4.5.16「握手路径上的丢弃计数」表中的 `TCPAbortOnSynDrop` 在 Linux 6.8 不存在（`include/uapi/linux/snmp.h` 只有 TCPAbortOnData/OnClose/OnMemory/OnTimeout/OnLinger），该行改为 `TcpExtTCPSynRetrans`（`tcp_rtx_synack()`/`tcp_retransmit_skb()` 计数；SYN-ACK 重传耗尽后 `request_sock` 被静默释放，无专门计数器）。
+
+**统计：** 2 条均为真缺口，补写 2（#11 → 4.11.16 末尾、#12 → 4.5.14 末尾）；连带修复 1 处计数器错误。本轮连同 CHECK-NETWORK-ERRORS 的 B1–B15 处置共新增 138 行（其中 #11/#12 约 24 行）。

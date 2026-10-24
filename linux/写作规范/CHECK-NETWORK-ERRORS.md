@@ -733,3 +733,32 @@ MTU=1500 IPv4 plain
 - errata「清单墙」拆组 14 处（ch01×2、ch02×2、ch03、ch05、ch06×2、ch07、ch08、ch09、ch10、ch11、ch12），每处拆成 2–4 个 3–6 条的主题组（共 38 组），条目技术表述逐字保留、盒类型不变、无锚点需要保留。
 - 术语章内统一：`头部` → `首部`（ch01 ×2、ch07 ×8、ch08 ×2；含 ch07 errata 1 条与 `http_get.c` 错误提示字符串 1 处），不全书强改。
 - 行文微调 2 处：`ch10.md` 4.10.12 节首表格补引导句；`ch08.md` 4.8.21 「实验一把「……」串起来看」补标点断句。
+
+---
+
+## 漏节处置（2026-10-25）
+
+> 处理 B 节 15 条（B1–B15）。「候补」四条不在本轮清单范围，未处置。
+> 判定按 `50-节级审计规程.md` 的五种判定逐条复核：B 表快照（2026-10-19）后正文已有并行增补与 2026-10-24 的修复，部分条目状态与报告记载已不同。
+> 本轮只改 `src/part4/*.md` 与本文件；未新增 H2、未动已有编号与锚点；补写用**无编号 H3**（part4 全篇此前无 H3，随所在篇风格，与 part3 上一轮款式一致），每块 ≤40 行。
+> 协议/内核事实按 RFC 与 Linux 6.8 在线源码复核：`reqsk_timer_handler`（net/ipv4/inet_connection_sock.c:987）、`tcp_rcv_synsent_state_process`（net/ipv4/tcp_input.c:6334）、`tcp_rtx_synack`（net/ipv4/tcp_output.c:4365）、`skb_init` 的 `skbuff_head_cache`/`skbuff_fclone_cache`（net/core/skbuff.c:4890）、`unix_attach_fds`（net/unix/scm.c）、PPP 帧格式（RFC 1662）、PPPoE（RFC 2516）、IPsec（RFC 4301/7296/3948）、RTP/RTCP（RFC 3550）、DHCP（RFC 2131）、IGMP（RFC 2236/3376）、PIM-SM（RFC 7761）、BGP（RFC 4271）、OSPF（RFC 2328）、RIP（RFC 2453）。
+> 验证：`python3 tools/check_book.py` 开工基线 `pages: 113, total lines: 127847, substantial: 103`，落盘后 `pages: 113, total lines: 127985, substantial: 103`（退出码 0，无告警）；`mdbook build` 通过。part4 行数 15002 → 15140（+138，+0.92%，预算 +5%）。
+
+**逐条处置：**
+
+- **B1（W 2.4 信道复用）— 背景，正文零句，补一句**。4.2.1 末尾追加一段：FDM/TDM/STDM/WDM/CDMA 各一短语 + 现代形态对照（数据中心 CWDM/DWDM、Wi-Fi 6 OFDMA、蜂窝 CDMA 退网），声明通信原理推导不展开，指向 legacy 附录。
+- **B2（W 3.2 PPP）— 真缺口，已补**。4.2.11 末尾新增 H3「PPP 帧格式与 PPPoE 的两个阶段」：帧字段 text 图（Flag/Address/Control/Protocol/FCS）、「FF 03 为什么是死字段」、Protocol 分用值（0x0021/0x0057/0xC021/0x8021）、LCP 建立→认证→NCP 三阶段、PPPoE 发现/会话两阶段表（PADI/PADO/PADR/PADS，EtherType 0x8863/0x8864）与 MTU 1492 的来历。
+- **B3（W 3.3.4 信道利用率、3.5 高速以太网）— 拆分判定**：3.5 高速以太网**已覆盖**（4.2.20 编码表含 100BASE-TX/1000BASE-X/1000BASE-T/10GBASE-R/25GBASE-R 的编码、符号率与开销），不改；3.3.4 利用率公式为真缺口，**并入 4.2.21 末尾**一段：`a = τ/T0`、`S_max = 1/(1+a)`、帧间间隔 96 bit time，并接到 TSO/GSO「大块摊薄固定开销」（链 4.9.8）。
+- **B4（W 4.1 虚电路 vs 数据报）— 真缺口，已补**。4.3.4 末尾新增 H3「虚电路与数据报：IP 的一次选择」：两种服务模型对比、IP 选数据报的理由（无状态转发、可绕路、端到端原则链 4.1.10）、虚电路思想的现代回声（MPLS 标签、conntrack、SDN 流表）。
+- **B5（W 4.5 路由选择协议）— 真缺口，已补**。4.3.4 末尾新增 H3「路由协议的算法骨架：RIP、OSPF、BGP」：距离向量（30 s 更新、Bellman-Ford、计数到无穷、水平分割/毒性逆转、15 跳=「把无穷定为 16」）、链路状态（LSA 泛洪、LSDB、SPF、area 0）、路径向量（AS 路径防环、local-pref/MED 策略、BGP 劫持根源），收尾「内核不跑协议：FRR/BIRD 经 netlink 注入 FIB（`ip route show proto bgp`）」。
+- **B6（W 4.7 IP 多播）— 真缺口，已补**。4.3.14 末尾新增 H3「组播与 IGMP：主机怎么加入一个组」：IGMP query/report/leave/源过滤（v2 RFC 2236、v3 RFC 3376，TTL=1）、socket 侧 `IP_ADD_MEMBERSHIP` → `ip_mc_join_group()`（net/ipv4/igmp.c）与 `ip maddr` 观测、MAC 映射回链 4.2.3、PIM-SM/RPF 一段背景 + 公有云不支持跨子网组播的工程结论、IPv6 对应 MLD。
+- **B7（W 4.8 VPN）— 真缺口，已补**。4.2.11 末尾新增 H3「VPN 与 IPsec：隧道加上认证与加密」：站点到站点/远程接入分类、AH(51) 与 NAT 冲突基本退役 vs ESP(50)+NAT-T（UDP 4500）主流、传输/隧道两种模式、IKE（UDP 500，RFC 7296）与 SA 单向、Linux XFRM（`ip xfrm state/policy`）、WireGuard（内核 5.6、UDP 51820、开销 60/80 字节）。
+- **B8（W 4.9 MPLS）— 背景，不补**。4.2.22 的 EtherType 表已有一行（`0x8847`，标签栈位置）；标签交换/标签分发（LDP/RSVP-TE）属运营商数据面，对本书「Linux 主机与云原生数据面」路径无增量；且本地 source-toc（cn8.md）只有章级目录，无法核实 8e 纸书是否保留该节，按报告自带的降级条款归为背景。条目留主线程统一进 legacy 附录。
+- **B10（W 6.2 FTP、6.3 TELNET、6.5 电子邮件、6.6 DHCP）— 拆分判定**：**DHCP 为真缺口，已补**——4.7.6 末尾新增 H3「DHCP：地址从哪来」：DORA 四步（UDP 67/68、源 0.0.0.0 广播）、T1=50% 续租/T2=87.5% 重绑定、`giaddr` 中继、dhclient/dhcpcd/systemd-networkd、云 metadata 与 CNI IPAM 两个现代对照、SLAAC/DHCPv6 分工；**FTP 已合并**（NAT/ALG 语境有实质落点：ch03 的 PORT/被动模式两处、ch08 的 conntrack helper 两处）；**TELNET 与 SMTP/POP3/IMAP/MIME 判淘汰**——分别被 SSH 与现代消息/协作链路替代，对本书路径无增量，正文仅在 4.5.12 用 SMTP「服务端先说话」作语用一例，足够（工具迁移 legacy §3/§11 已覆盖）。
+- **B11（W 7.3 数字签名、7.4 鉴别、7.5 密钥分配、7.6.1 IPsec、7.7 防火墙与 IDS）— 主体已覆盖**：数字签名/报文鉴别（HMAC）/密钥交换已覆盖（4.7.7 原语表 ECDHE/ECDSA/HMAC/前向安全 + 4.7.15 TLS 1.3）；IPsec 随 B7 补齐（AH/ESP/模式/NAT-T/XFRM）；防火墙已覆盖（4.8.16 五钩子 + 4.8.22 nftables/iptables 整节）；**KDC（Kerberos）判淘汰**（企业内网认证体系，本书路径无增量）；**IDS/入侵检测判淘汰**（安全运营主题，超出「系统与内核」范围）。
+- **B12（W 8.2–8.5 RTP/RTCP）— 真缺口，已补**。4.7.11 末尾新增 H3「RTP/RTCP：字段与反馈回路」：12 字节首部表（seq/timestamp/SSRC/PT 各喂给哪条回路；音频 8 kHz、视频 90 kHz 时钟）、抖动缓冲「延迟换平滑」、FEC/静音取舍、RTCP SR/RR 反馈与自适应码率、排障判据「序号跳变=网络丢包 vs timestamp 不连续=发送端卡顿」。
+- **B13（W 9.1 WLAN、9.5 移动 IP）— 已覆盖/合并，不改**。802.11 帧首部布局（24 字节 MAC 首部 layout）、CSMA/CA、RTS/CTS、链路层 ACK 与重传在 4.2.8（该节明写「本书只取三个点」的合并决策），截断二进制指数退避在 4.2.21；DIFS/SIFS 属合并范围内的粒度取舍。移动 IP 在 4.2.8 末段已按背景一段带过（「换基站 IP 不变、靠隧道转包」，并声明不展开），判背景已落点。
+- **B14（K 61.13 socket 高级功能）— 真缺口，已补**。4.4.4 末尾新增 H3「边角语义：带外数据、fd 传递与 SOCK_SEQPACKET」：MSG_OOB 的单字节位置标记/覆盖/SO_OOBINLINE 语义与「加急走应用层」、SCM_RIGHTS 的内核引用与 fd 存活语义（`unix_attach_fds()`）+ `SCM_CREDENTIALS`/`SO_PASSCRED`、SOCK_SEQPACKET（`unix_seqpacket_sendmsg/recvmsg`）与 SCTP（协议 132、多流/多宿）的位置。
+- **B15（K 63.3 信号驱动 I/O、63.5 pselect/ppoll）— 真缺口，已补**。4.10.13 末尾新增 H3「信号驱动 I/O 与 pselect：等待的另外两种姿势」：F_SETOWN/O_ASYNC → `sock_def_readable()` → `sk_wake_async()` 的 SIGIO 路径（回链 4.10.4 唤醒表）、「信号不带 fd/属主唯一」两个限制、`F_SETSIG`+`SA_SIGINFO` 实时信号增强与历史定位；`pselect6`/`ppoll`（fs/select.c）的原子「换掩码+等待」竞态分析与 self-pipe+epoll 的现代替代。
+
+**统计：** 15 条——真缺口补写 10（B2、B4、B5、B6、B7、B12、B14、B15 整条 + B3「利用率」、B10「DHCP」各半条）；背景补句 1（B1）；复核改判已覆盖/合并 3（B3「高速以太网」半条、B11 主体、B13）；淘汰/背景不补 2（B8；B10 的 TELNET/邮件半条，B11 的 KDC/IDS 子项一并列理由）。新增 138 行（git diff：8 个文件 +139/−1）。

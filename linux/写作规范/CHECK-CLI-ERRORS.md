@@ -228,3 +228,34 @@
   - `ch12.md:769`（0.12.6 实验）：「`Result=exit-code` 或 `resources`」——203/EXEC 时 systemd 的 Result 是 `exit-code`（`SERVICE_FAILURE_EXIT_CODE`），不会是 `resources`；「或 resources」的兜底易误导。
   - `ch10.md:146`（0.10.4）：「XFS 没有这个问题，它的 inode 是动态分配的」——严格说仍受 `maxpct` 约束（与 A.19 同型、程度轻；该句上下文指 ext4 固定 inode 数的问题，尚可辩护，建议后续措辞收紧）。
 - **验证**：改动的 bash 块（ch05 `bash -c 'yes | head … PIPESTATUS[0]'`）过 `bash -n`；`python3 tools/check_book.py` 修复前后输出一致（`pages: 113  total lines: 127031  substantial: 103`，exit 0），无新增问题页/断链/断锚点/重复锚点。
+
+---
+
+## 漏节处置（2026-10-25）
+
+> 处置口径：每条先按 `50-节级审计规程.md` 的「五种判定」复核（grep 同义关键词 + 读上下文），再决定补写/覆盖/背景/淘汰。
+> 补写规则：补在最相关现有小节末尾，能顺延编号用 H3（新增 `0.12.4.2`、`0.9.8.3`，锚点全书唯一），否则并入现有 H2 末尾；未新起 H2，未动已有编号与锚点；每条 ≤40 行。
+> 合计新增 177 行（净 +176，含 1 行替换），part0 由 16300 行到 16476 行（+1.1%，预算 +5% 内）。
+
+| # | 判定 | 落点 | 补了什么（新增行数） |
+|--:|:--|:--|:--|
+| B.1 | 真缺口，已补 | `ch06` 0.6.15 末尾新增 H3「nl、column、fold、fmt：把已有输出排成版式」（无编号 H3，延续 sort/uniq/cut/tr 的同级序列） | 5 行表（`nl -ba`/`column -t`/`fold -s`/`fmt -w`/`printf`）+ 边界段；`pr` 判背景一句带过（打印时代产物）。（+12） |
+| B.2 | 真缺口，已补 | `ch03` 0.3.6 末尾 | `plocate` 数据库与 `plocate-updatedb.timer`、`/etc/updatedb.conf` 的 `PRUNEPATHS`/`PRUNEFS`、`sudo updatedb`、与 find 的分工（locate 给候选、find 精过滤；被 prune 的路径只能 find）。（+9） |
+| B.3 | 真缺口，已补 | `ch13` 0.13.14 末尾（errata 之后收束） | scp/sftp/rsync 分工表（`-P/-i/-r`、OpenSSH 9 默认走 SFTP、`-b` 批处理失败即停、`reget/reput`、`--partial`）+ `sftp -b -` heredoc 例子 + 选择顺序。（+18） |
+| B.4 | 真缺口，已补 | `ch12` 0.12.5 末尾（`at` 原句之后展开） | at 的「提交时快照环境」模型（与 cron 相反）、时间语法（`now + 45 minutes`/`at -t`）、`atq`/`atrm`、队列字母、`at.allow`/`at.deny`（Ubuntu 默认装 deny）、与 `systemd-run --on-active` 的取舍。（+12） |
+| B.5 | 真缺口，已补 | `ch12` 新增 `### 0.12.4.2 rsyslog：/var/log/syslog 那一份从哪来 {#sec-0.12.4.2}`（顺延 0.12.4.1） | journald→ForwardToSyslog→rsyslogd 数据流、selector 规则（facility.priority、`-` 异步、`@/@@` 转发）、`/etc/rsyslog.d/30-app.conf` + `logger -p local1.info -t` 例子、与 ch05 `tee >(logger -t)` 的衔接、两份日志的排障口径。**logwatch 判淘汰**：外置 Perl 日报工具，现代栈用 `journalctl` + 集中日志（loki 类），不写。（+14） |
+| B.6 | 真缺口，已补 | `ch01` 0.1.6 末尾 | hostnamectl/timedatectl/localectl 三行表（看/改/持久化位置：`/etc/hostname`、`/etc/localtime`、`/etc/default/locale`）+ 排障口径（NTP 漂移、known_hosts、locale 影响 sort）+ `set-time` 只能在 NTP 关闭时用。（+10） |
+| B.7 | 真缺口，已补 | `ch11` 0.11.7 末尾（原 snap/flatpak 一句之后展开） | `snap list/install/connections/refresh/remove`、squashfs 挂 `/snap/<名>/<修订号>`、数据在 `/var/snap`、与 apt 的系统级/包内依赖对照、排障线索（loop 设备、`dpkg -L` 查不到）；flatpak 一句（桌面打包，服务器不用）。（+11） |
+| B.8 | 真缺口，已补 | `ch08` 0.8.6 末尾（errata 之后收束） | 全量/增量/差异三行代价表（恢复需要什么）、3-2-1、`rsync -aH --delete --link-dest` 硬链接快照例子、恢复演练（抽档恢复 + `diff -qr`/`tar -tzf`）写进 runbook；`dd` 整盘镜像一句、`cpio`/`xfsdump` 判背景不展开。（+18） |
+| B.9 | 真缺口，已补 | `ch13` 0.13.5 末尾 | curl（构造请求）vs wget（拉成本地文件）分工 + `wget -c`/`-r -np -k`/`--limit-rate`/`-qO-` 例子 + robots.txt 边界与 `-m` 镜像。（+12） |
+| B.10 | 真缺口，已补 | `ch09` 新增 `### 0.9.8.3 RLIMIT：资源限制的全表、继承与读法 {#sec-0.9.8.3}`（顺延 0.9.8.1/0.9.8.2） | 9 行 RLIMIT 表（NOFILE/NPROC/CORE/CPU/FSIZE/AS/STACK/MEMLOCK/RTPRIO + ulimit 选项 + 24.04 典型值）、fork/exec 原样继承（含 setuid）、systemd `LimitNOFILE=` 的作用点、`/proc/PID/limits` 读法与 `prlimit --pid`、非特权只能降硬限制（与 0.9.8 开头 ulimit 语义呼应）。（+18） |
+| B.11 | 覆盖（跨篇） | 不改 | `system()`/`popen()`/exec 家族在第二篇有完整落点：`part2/ch08.md` §2.8（章首即讲 `execve` 两侧与 system/popen 封装，§2.8.4 system 四个问题、§2.8.5 popen 单向管道）；Kerrisk 第 27/36 章本就是 K 线母本。part0 侧 0.2.2 已有 fork+dup2+execve 的 strace 证据层、ch04 有 NoNewPrivileges 与 execve 的安全边界，CLI 篇不需要 C API 对照表。 |
+| B.12 | 真缺口，已补 | `ch14` 0.14.9（hyperfine 段之后，主题同为计时） | `time` 关键字 vs `/usr/bin/time -v`（峰值内存/缺页）、date 六行速查表（`+%F_%T`、epoch 双向、`-d` 相对解析、`-u`、`sleep 0.5`/多参数、`cal -3`）+ 两个坑（格式串引号、cron 的 `\%`，指回 0.12.5）。（+13） |
+| B.13 | 薄落点，扩句 | `ch06` 0.6.15 的 diff/patch 段 | 原 table 行 + `diff -u` 生成补丁已在（覆盖大半）；补「演练→应用→看残留」闭环：`patch --dry-run`、`.rej`/`.orig`（`-b`）、部分应用要检查 `.rej`、`patch -R` 回滚、`cmp` 字节级（`-l` 列全部差异、首个差异偏移）。（+5，含 1 行替换） |
+| B.14 | 真缺口，已补 | `ch12` 0.12.1 末尾（开机链路的另一头） | 三层入口表：`shutdown -h/+10`（wall 广播、`-c` 取消、`-r/-H/-P`）、`systemctl reboot/poweroff/halt`（推荐，走依赖逆序）、`reboot -f`/sysrq 强入口（跳过卸载同步，仅系统冻结时用）；halt vs poweroff 的断电差别；`rescue`/`emergency` 单用户。（+10） |
+| B.15 | 真缺口，已补 | `ch04` 0.4.1 末尾（namei 段之后） | 复核确认第三篇只有 LSM 框架级内容（`part3/ch04.md` 的 `security_inode_permission` 钩子表），无 `setenforce`/`restorecon`/`ausearch` 工具级内容——按报告预案判定为真缺口。补 AppArmor（`aa-status`/`aa-complain`）与 SELinux 五命令表（`getenforce`/`setenforce`/`ls -Z`/`restorecon -Rv`/`ausearch -m avc -ts recent \| audit2why`）+「setenforce 0 只用于定位」边界 + 指向第 3 篇框架。（+15） |
+
+- **统计**：真缺口 13 条（B.1–B.10、B.12–B.15 中除 B.11 外全部），全部补写；覆盖 1 条（B.11，跨篇落点在第二篇 2.8）；母本子项淘汰 2 处（B.5 的 logwatch、B.1 的 `pr` 只留一句背景）；B.13 判「薄落点」，在原位扩句而非新开节。
+- **新增锚点**：`{#sec-0.12.4.2}`、`{#sec-0.9.8.3}`，`check_book` 验证全书唯一。
+- **验证**：`python3 tools/check_book.py` 三批中间 + 最终各跑一次，输出 `pages: 113  total lines: 127491  substantial: 103`（问题数 0，exit 0）；`mdbook build` 成功（仅原有的 search index 体积 WARN）；改动 10 章的全部 bash 块（含新增）逐章 `bash -n` 通过。
+- **行数**：git diff `--numstat` 合计 +177/-1，净 +176 行；part0 16300 → 16476 行（+1.1%，预算 +5% 内）。

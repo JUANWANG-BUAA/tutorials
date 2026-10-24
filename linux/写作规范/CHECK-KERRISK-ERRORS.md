@@ -240,3 +240,48 @@ F-01（`ch08.md:1071,1073,1217,1224` wait status 解码）、F-02（`ch14.md:390
 - `zig cc` 交叉编译复验：A-02 涉及的 `times()` 片段在 `-Wall -Wextra -Werror` 下通过。
 - 本轮 7 处修改均为表格/条目/段落文字，未触碰 C 代码块；未新增 H2 小节，未改锚点编号。
 - 全库 grep 复扫：A.1/A.2 的错误说法在 `src/` 下已无残留（`src/part0` 的「自开机以来」指 `iostat`/`top` 首帧累计值，语义不同且正确）。
+
+## 漏节处置（2026-10-25）
+
+> B 节 15 条逐条复核后的处置。复核先用《50-节级审计规程》的五种判定重判，再决定补写/不改；补写全部落在 `src/part2/`，API 语义以 man7.org（man-pages 6.19）复核（msgctl/semctl/shmctl/crypt/fts/settimeofday/stime/times/tmpfs 文档逐条对照）。新增行数合计 **+174 行**（part2 29,128 → 29,302，+0.60%，上限 +4%）；`tools/check_book.py` 通过（pages: 113，substantial: 103，问题数 0）；新增 C 代码用 `zig cc -target x86_64-linux-gnu -std=c17 -D_GNU_SOURCE -Wall -Wextra -Werror` 编译验证（fts 片段全通过；crypt 片段本机 zig sysroot 无 `libcrypt` 头，换 stub 头验证语法通过，与报告 D.2 的 liburing/libacl 同类限制）。未新起 H2、未改已有编号与锚点；新增 H3 均按所在章的无编号 H3 风格，无新锚点。
+
+### 真缺口，已补写（10 条）
+
+| # | 原报告节号 | 复核后节号 | 补写位置 | 补了什么 |
+|--:|:--|:--|:--|:--|
+| B1 | 10.5 更新系统时钟 | 同 | `ch11.md` 2.11.8「读时钟」小节末尾 | `clock_settime` 之外补 `settimeofday`（`CAP_SYS_TIME`；Linux 4.3 起早于 `CLOCK_MONOTONIC` 判 `EINVAL`）、`stime()`（glibc 2.31 已删）、`adjtimex`/`adjtime` 渐变（≈500 ppm），及跳变对绝对定时器/`TFD_TIMER_CANCEL_ON_SET` 的影响 |
+| B2 | 10.6 软件时钟（jiffies） | 同 | `ch08.md` 2.8.11.1 末尾 | jiffies/HZ 与 `_SC_CLK_TCK`（ABI 固定 100，故 `/proc` tick 分辨率恒 10 ms）、`/proc/stat` 的 `btime`、`times()` 起点 `(2^32/HZ)-300` 的回绕设计动机 |
+| B3 | 6.7 环境列表 | 同 | `ch08.md` 2.8.2 末尾新 H3「环境列表：`environ` 与 `setenv` 家族」 | 五个 API 对照表（`getenv`/`setenv`/`putenv`/`unsetenv`/`clearenv`）+ 所有权规则（putenv 不复制、getenv 指针失效、clearenv 无法释放 exec 原始数组） |
+| B4 | 8.5 密码加密和用户认证 | 同 | `ch09.md` 2.9.2 末尾 | `$id$salt$hash` 格式（`$1$`/`$5$`/`$6$`/`$y$`）、`crypt`/`crypt_r` 返回值与 errno、`getspnam`、可编译的校验片段（`-lcrypt`） |
+| B5 | 18.11 fts 文件树遍历 | 英文原版 18.11（中文版目录该号是 fchdir/目录 fd，fts 系翻译时删去） | `ch06.md` 2.6.7 末尾（think 盒后） | 四函数原型、`fts_read` 的前序/后序语义、`FTS_PHYSICAL/LOGICAL/NOSTAT/XDEV`、`FTS_SKIP` 与 `nftw` 的对应、双层错误模型（`fts_errno` vs `errno`）+ 可编译示例 |
+| B7 | 37.5 使用 syslog 记录消息和错误 | 同 | `ch19.md` 2.19.6 末尾新 H3「syslog：priority、facility 与 `/dev/log`」 | priority=facility\|level、`openlog` 四个 option 位、`setlogmask` 静默丢弃语义、`/dev/log`→journald/rsyslog 链路、容器无 `/dev/log` 的丢消息、格式串注入红线 |
+| B8 | 46.4 msgctl 操作 | **46.3**（46.4 是关联数据结构） | `ch14.md` 2.14.18 末尾（method 盒后） | cmd 全表：`IPC_STAT`（读权限）/`IPC_SET`（属主/创建者或 `CAP_SYS_ADMIN`；提 `msg_qbytes` 还要 `CAP_SYS_RESOURCE`）/`IPC_RMID`/`IPC_INFO`/`MSG_INFO`/`MSG_STAT(_ANY)`，下标枚举与返回值约定 |
+| B9 | 47.6 semctl 操作 | **47.3**（47.6 是 semop） | `ch15.md` 2.15.7.1 末尾（errata 后） | cmd 全表（`GETVAL/GETPID/GETNCNT/GETZCNT/GETALL/SETALL/SETVAL/IPC_STAT/IPC_SET/IPC_RMID/IPC_INFO/SEM_INFO/SEM_STAT`）、`union semun` 调用者自声明、`SETVAL/SETALL` 清 undo 的坑 |
+| B10 | 48.5 shmctl 操作 | **48.7**（48.5 是虚拟内存位置） | `ch15.md` 2.15.7 末尾（method 盒前） | cmd 全表：`IPC_STAT/IPC_SET/IPC_RMID`（标记删除，`SHM_DEST`）、`SHM_LOCK/SHM_UNLOCK`（2.6.10 起属主可用，受 `RLIMIT_MEMLOCK`；锁换出不等于预分配页）、`IPC_INFO/SHM_INFO/SHM_STAT(_ANY)` |
+| B11 | 63.3 信号驱动 I/O | 同 | `ch18.md` 2.18.11 末尾新 H3「信号驱动 I/O：`SIGIO` 的完整链路」 | `F_SETOWN`（正 PID/负进程组）→ `F_SETFL\|O_ASYNC` → `F_SETSIG` + `SA_SIGINFO` 取 `si_fd` → 非阻塞读 + `EAGAIN` 四步链路；输给 epoll 的机制原因（标准信号合并、每事件一个信号） |
+
+### 覆盖为主，仅补边角（3 条）
+
+| # | 原报告节号 | 复核结论 | 处置 |
+|--:|:--|:--|:--|
+| B12 | 14.10 tmpfs | tmpfs 机制与 shm 生命周期在 2.15.2/2.15.10/2.15.14 已成体系（`mm/shmem.c`、`/dev/shm` 配额、崩溃残留），报告所称漏点只剩挂载参数 | `ch15.md` 2.15.10「POSIX 共享内存 = tmpfs 文件 + 缺页异常」小节末尾补一段：`mount -t tmpfs -o size=/nr_inodes=`（缺省内存一半，超限 `ENOSPC`，可 remount）、页可换出、容器 `/dev/shm` 是独立实例（`--shm-size`） |
+| B13 | 6.6 命令行参数 | `argv[0]` 约定（ch08:79）、`getopt`/`getopt_long`（ch01 两节）、`E2BIG`/`ARG_MAX`/`MAX_ARG_STRLEN`（2.8.8）均已覆盖；真正没有的是 `/proc/PID/cmdline` 观测与 `main` 第三种形式 | `ch08.md` 2.8.2 末尾并入一段：`main(int, char*[], char*[])` 的 `envp` 即初始环境（建议改用 `getenv`）、`/proc/PID/cmdline`（NUL 分隔、显示现值，改 `argv[0]` 可见）与 `/proc/PID/environ` 权限 |
+| B14 | 61.13.5 SOCK_SEQPACKET | 类型表（2.16.10）、选型行（2.16.15「需要消息边界的本机 RPC」）已有名词级覆盖；连接语义/截断行为未展开 | `ch17.md` 2.17.1 末尾补对照表（STREAM/DGRAM/SEQPACKET 的连接·边界·顺序）+ `MSG_TRUNC` 截断语义 + 「AF_INET 基本不提供」的适用边界 |
+
+### 复核为已覆盖，不改（1 条）
+
+| # | 原报告节号 | 复核证据 |
+|--:|:--|:--|
+| B15 | 55.3.6 锁定饿死与排队优先级 | `ch03.md` 2.3.15 已明确写出核心语义：「多个读锁可能饿死一个写锁；Linux 不保证 FIFO，也不保证写者优先（Kerrisk 55.3.6）」，并交叉引用原文节号。判定：覆盖，不改 |
+
+### 淘汰，不写正文（1 条）
+
+| # | 原报告节号 | 淘汰理由 |
+|--:|:--|:--|
+| B6 | 22.7 `siginterrupt()` | POSIX.1-2008 已删除该接口（`siginterrupt(3)`：*POSIX.1-2008 removes the specification of siginterrupt()*，并指向 `sigaction` 的 `SA_RESTART`）；其机制（`SA_RESTART` 控制慢系统调用重启）在 2.10.3「`SA_RESTART` 与 `EINTR`」已完整覆盖，part2 全文 0 次出现是正确的省略。若未来在 `appendix/legacy.md` 增加「POSIX 删除的 C 接口」条目，可放一条「`siginterrupt` → `sigaction` + `SA_RESTART`/清除」对照 |
+
+### 其他说明
+
+- 原报告 B 表把 msgctl 记为 46.4、semctl 记为 47.6、shmctl 记为 48.5，与原书目录（46.3/47.3/48.7 是「控制操作」）编号错位；本表已按目录更正，处置以 API 为准，不受编号错位影响。
+- 报告说明中「K35 在 part3/ch05、K41/42 在 part1/ch07、K40 在 part0/ch12」的三条跨篇项本次未动，维持不计入 part2 漏节的结论。
+- 本轮只改 `src/part2/` 9 个文件与本文档；`SUMMARY.md`、`book.toml`、`theme/`、`tools/`、其他篇章未触碰，未执行 git 提交。
