@@ -25,7 +25,7 @@ $$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1+R_1^0R_2^1\boldsymbol
 ## 2.7.2 齐次坐标与齐次变换矩阵
 
 ::: def 定义 2.7.1 · 齐次表示与齐次变换矩阵 {#def-2.7.1}
-给一般向量 $\boldsymbol p$ 添上第 4 个单位元素，就构成**齐次坐标**（homogeneous representation，原书式 2.41）：
+给点的位置坐标 $\boldsymbol p$ 添上第 4 个单位元素，就构成**齐次坐标**（homogeneous representation，原书式 2.41）：
 
 $$\tilde{\boldsymbol p}=\begin{bmatrix}\boldsymbol p\\ 1\end{bmatrix},$$
 
@@ -137,6 +137,44 @@ $$\tilde{\boldsymbol p}^0=A_1^0A_2^1\cdots A_n^{n-1}\,\tilde{\boldsymbol p}^n,$$
 </figure>
 
 这正是把式 2.38 的链条「写简单点」得到的答案。录播 0:38:53 老师还留了一道验证作业：自己展开，验证 $\tilde{\boldsymbol p}^0=A_1^0A_2^1\tilde{\boldsymbol p}^2$ 与冗长的写法一致。连乘的工程意义（录播 0:39:01–0:39:15）在于：机器人要处理**连续**的多坐标系变换，而「式子太长不方便，先写成矩阵的形式，去矩阵重上重去（做矩阵乘法）」——2.8 节的正运动学方程 $T_n^0(q)=A_1^0(q_1)A_2^1(q_2)\cdots A_n^{n-1}(q_n)$ 就是本原理的直接套用。
+
+::: ex 例 2.7.B · 同一变换，点与方向为什么算出不同结果 {#ex-2.7.B}
+取 $R_1^0=R_z(90^\circ)$、$\boldsymbol o_1^0=(2,1,0)^{\mathrm T}$。系 1 中有点
+$\boldsymbol p^1=(1,0,0)^{\mathrm T}$，以及自由方向向量 $\boldsymbol d^1=(1,0,0)^{\mathrm T}$。
+求两者在系 0 中的表示，并把点变换回去。长度单位均为 m。
+
+::: sol 解与逐步核对
+先写出矩阵，再决定第 4 分量：
+
+$$A_1^0=\begin{bmatrix}0&-1&0&2\\1&0&0&1\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
+
+点的位置使用 $[\boldsymbol p^1;1]$，故
+$\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0=(2,2,0)^{\mathrm T}$；
+自由方向使用 $[\boldsymbol d^1;0]$，故
+$\boldsymbol d^0=R_1^0\boldsymbol d^1=(0,1,0)^{\mathrm T}$。
+**两个数列前三项相同，但一个指位置、一个指方向；平移只改变位置。**
+
+逆变换的平移块为
+$-R_1^{0\mathrm T}\boldsymbol o_1^0=(-1,2,0)^{\mathrm T}$，于是
+
+$$\boldsymbol p^1=R_1^{0\mathrm T}(\boldsymbol p^0-\boldsymbol o_1^0)
+=R_z(-90^\circ)(0,1,0)^{\mathrm T}=(1,0,0)^{\mathrm T}.$$
+
+若误用 $-\boldsymbol o_1^0$ 作逆的平移块，会得到 $(0,-3,0)^{\mathrm T}$，无法返回原点坐标。
+:::
+:::
+
+::: think 迁移练习 · 第二段平移究竟沿谁的轴
+接上一个无相对旋转的系 2，$\boldsymbol o_2^1=(1,0,0)^{\mathrm T}$。
+不展开 $4\times4$ 连乘，先判断系 2 原点在系 0 中的位置；再求 $\boldsymbol p^2=(0,1,0)^{\mathrm T}$ 在系 0 中的坐标。
+
+::: sol 核对与回读
+$\boldsymbol o_2^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1=(2,2,0)^{\mathrm T}$，
+$R_2^0=R_1^0$，故 $\boldsymbol p^0=(2,2,0)^{\mathrm T}+(-1,0,0)^{\mathrm T}=(1,2,0)^{\mathrm T}$。
+若原点算成 $(3,1,0)^{\mathrm T}$，回读本节动机中的「同一坐标系才能相加」；
+若方向也加了平移，重做 [@ex-2.7.B]；两问都能独立解释后，进入 [DH 法](sec2-8.md)。
+:::
+:::
 
 ::: note se(3)：SE(3) 的李代数（本编补充，与 2.5.3 对照） {#note-2.7.se3}
 $so(3)$ 的故事在 $SE(3)$ 上原样重演一遍。$SE(3)$ 在单位元（$I_4$）处的「无穷小版本」是

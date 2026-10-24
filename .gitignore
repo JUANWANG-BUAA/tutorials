@@ -31,3 +31,5 @@ deeplearning/tools/figs_out/
 .playwright-cli/
 # Optional theme renderer build dependencies
 node_modules/
+# 安全扫描插件的本地状态（Mimosa hook，会话内生成）
+.mimosa/

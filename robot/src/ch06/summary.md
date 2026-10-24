@@ -30,6 +30,15 @@ $$U=-\sum_{i=1}^{n}\bigl(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i
 +m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}\bigr),\qquad
 \boldsymbol g(\boldsymbol q)=\frac{\partial U}{\partial\boldsymbol q}.$$
 
+左端重力项与实际重力广义力的关系为
+
+$$\boldsymbol\tau_{\mathrm{grav}}=\sum_i\bigl(m_iJ_P^{(i)\mathrm T}\boldsymbol g_0
++m_{m_i}J_P^{(m_i)\mathrm T}\boldsymbol g_0\bigr)=-\boldsymbol g(\boldsymbol q).$$
+
+静止、无摩擦及其他外力时，保持输入为 $\boldsymbol\tau=\boldsymbol g$。
+若两种力矩的符号仍混淆，先做 [单摆双路径例题](sec6-1-2.md#ex-6.1.2.A)，
+再比较 [同一位形下保持、释放与加速](sec6-1-3.md#ex-6.1.3.A) 的三种输入。
+
 ### 运动方程
 
 $$B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}

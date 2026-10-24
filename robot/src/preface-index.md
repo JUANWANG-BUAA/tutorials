@@ -232,6 +232,30 @@
 | 视觉传感器 vision sensor | 相机 + 图像处理；可见光/红外/超声三类 | [@def-5.4.5] |
 | 相机校准矩阵 $\Xi$ | 内参数 × 透视 × 外参数的合成 | [@def-5.4.5] |
 
+## 九、动力学（6.1–6.3，对应原书 7.1–7.3）
+
+| 术语 | 一句话含义 | 首次出现 |
+|:--|:--|:--|
+| 广义坐标 generalized coordinates | 完全确定系统位形的独立变量 $\boldsymbol q$（开链取关节变量） | [@def-6.1.1] |
+| 拉格朗日函数 Lagrangian | 动能减势能 $L=T-U$；只用标量列方程 | [@def-6.1.1] |
+| 拉格朗日方程 Lagrange equations | $\frac{d}{dt}(\partial L/\partial\dot q_i)-\partial L/\partial q_i=\xi_i$；约束力自动消失 | [@def-6.1.1] |
+| 广义力 generalized force | 右端四件套：$\tau_i$、粘滞摩擦、库仑摩擦、$-J^{\mathrm T}h_e$ | [6.1](ch06/sec6-1.md) |
+| 正动力学 / 逆动力学 | 给力求运动（解微分方程）/ 给运动求力（代入公式） | [章导览](ch06/overview.md) |
+| 惯性张量 inertia tensor | $\int S^{\mathrm T}(r)S(r)\rho\,dV$；对称 6 分量；连杆系里是常数 | [6.1.1](ch06/sec6-1-1.md) |
+| 平行轴定理 | $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$ | [6.1.1](ch06/sec6-1-1.md) |
+| 惯性矩阵 $B(q)$ | $T=\frac12\dot q^{\mathrm T}B\dot q$ 的矩阵；对称、正定、随位形变 | [6.1.1](ch06/sec6-1-1.md) |
+| 自惯量 $b_{ii}$ | 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$） | [6.1.3](ch06/sec6-1-3.md) |
+| 离心项 / 科氏项 | $h_{ijj}\dot q_j^2$（同关节速度平方）/ $h_{ijk}\dot q_j\dot q_k$（$j\neq k$ 交叉） | [6.1.3](ch06/sec6-1-3.md) |
+| 重力项 $\boldsymbol g(q)$ | $\partial U/\partial q$，方程左端项；实际重力广义力为 $-\boldsymbol g$ | [6.1.2](ch06/sec6-1-2.md) |
+| $h_{ijk}$ 系数 | $\partial b_{ij}/\partial q_k-\frac12\partial b_{jk}/\partial q_i$；$C\dot q$ 的生成元 | [6.1.3](ch06/sec6-1-3.md) |
+| Christoffel 符号（第一类） | $c_{ijk}=\frac12(\partial_kb_{ij}+\partial_jb_{ik}-\partial_ib_{jk})$；使 $N$ 反对称的选法 | [6.2.1](ch06/sec6-2-1.md) |
+| 反对称性 skew-symmetry | (7.48)：Christoffel 选法下 $N=\dot B-2C$ 反对称；(7.49)：任意选法下 $\dot q^{\mathrm T}N\dot q=0$ | [@thm-6.2.1] |
+| 无源性 passivity | 惯性/科氏项沿自身速度方向不做净功——能量只在关节间搬运 | [6.2.1](ch06/sec6-2-1.md) |
+| 扩展连杆 augmented link | 连杆 $i$ + 转子 $i+1$ 合并的建模单元（转子装在前一连杆上） | [6.2.2](ch06/sec6-2-2.md) |
+| 动力学参数 $\pi$ | 每连杆 11 个刚体参数（质量、一阶矩 3、张量 6、转子惯量）；含摩擦 13 | [6.2.2](ch06/sec6-2-2.md) |
+| 回归矩阵 regressor $Y$ | $\tau=Y(q,\dot q,\ddot q)\pi$ 的系数矩阵；对参数线性 ⇒ 最小二乘辨识 | [6.2.2](ch06/sec6-2-2.md) |
+| 最小参数集 | 结构决定的可辨识参数组合（平面臂 25→8→5） | [6.2.2](ch06/sec6-2-2.md) |
+
 ## 附 · 易混术语对照
 
 | 这两者常被混淆 | 区别 |
@@ -258,3 +282,9 @@
 | 向心加速度 / 切向加速度 | 改**方向**（$\dot s^2/\rho$，平行 $n$）/ 改**大小**（$\ddot s$，平行 $t$） |
 | 位置规划 / 姿态规划 | 归结到 $s(t)$ / 归结到 $\theta(t)$（角和轴）或三欧拉角 |
 | 李群 / 李代数 | 旋转本身（群：不可交换、带约束）/ 无穷小旋转（切空间：线性 + 叉积）；$\exp$ 与 $\log$ 在两者间往返 |
+| 左端重力项 $\boldsymbol g$ / 重力广义力 $\boldsymbol\tau_{\mathrm{grav}}$ | $\partial U/\partial q$（方程左端，电机要补的量）/ 它的相反数（重力实际施加的）——差一个符号 |
+| (7.48) / (7.49) | 任意 $w$ 二次型为零（Christoffel 选法）/ 沿 $\dot q$ 为零（任意选法）——(B)⇏(A) |
+| $C$ / $C\dot q$ | 选法不唯一 / 唯一的物理量；比较两个 $C$ 前先问选法 |
+| $k_{r}^{2}I_m$ / $k_rI_m$ | 进 $B$ 对角元（角速度平方）/ 进平面臂 $b_{12}$（总角速度交叉项） |
+| 11 / 13 / 最小参数集 | 刚体惯性参数（连杆）/ 加两摩擦（关节）/ 实际可辨识的组合（结构决定） |
+| $Y$ / $\pi$ | 回归矩阵，依赖 $q,\dot q,\ddot q$，每次重算 / 常参数向量，换负载才变 |

@@ -107,8 +107,16 @@ $$q_1=\operatorname{atan2}(y,x)-\operatorname{atan2}\bigl(a_2\sin q_2,\ a_1+a_2\
 **处理**：本编统一为
 
 - 重力加速度向量：$\boldsymbol g_0$（基座系），标量 $g=9.81\ \mathrm{m/s^2}$；
-- 重力矩向量：$\boldsymbol g(\boldsymbol q)$，分量 $g_i$；
+- 方程左端的重力项：$\boldsymbol g(\boldsymbol q)=\partial U/\partial\boldsymbol q$，分量 $g_i$；实际重力广义力为 $\boldsymbol\tau_{\mathrm{grav}}=-\boldsymbol g$；
 - 讲义中的「重力项」均指 $\boldsymbol g(\boldsymbol q)$。
+
+## E6.9 本教程势能梯度符号更正
+
+§6.1.2 原先在链式法则后把结果记作 $-g_i$，又在向量式中漏掉雅可比转置求和前的负号，与本章采用的 $B\ddot q+C\dot q+g=\tau$ 约定不一致。
+现统一为 $g=\partial U/\partial q=-\tau_{\mathrm{grav}}$，并同步澄清 §6.1.3 的物理意义与本章总结。
+校验采用两条独立路径：对 $U=mgl(1-\cos q)$ 求导，以及用 $J_P^{\mathrm T}m\boldsymbol g_0$ 算实际重力广义力。
+在 $m=2\ \mathrm{kg},l=0.5\ \mathrm m,q=\pi/6$ 时分别得到 $+4.905$ 与 $-4.905\ \mathrm{N\cdot m}$；
+§6.3.1 的竖直移动关节及 §6.3.2 的平面臂重力项已按同一约定核对。
 
 ## 待核项
 

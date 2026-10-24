@@ -147,6 +147,10 @@
 
 - [第六章章末](ch06/summary.md)
   - [勘误与补注（对照教材、课件与转写）](ch06/errata.md)
+  - [习题集](ch06/exercises.md)
+  - [学习目标自检表](ch06/checklist.md)
+  - [闭卷回忆卡（24 张检索练习卡）](ch06/recall-cards.md)
+  - [综合自测卷（90 分钟 · 满分 100）](ch06/mock-exam.md)
 
 # 特训 · 竞技与考场
 

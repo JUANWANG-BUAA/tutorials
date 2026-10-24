@@ -4,7 +4,7 @@
 <div class="subtitle">位姿与旋转、正逆运动学、雅可比、奇点、轨迹规划、执行器与动力学。</div>
 <div class="cover-chips">
 <span>6 章 · 56 节正文</span>
-<span>104 道习题 · 全部附解</span>
+<span>124 道习题 · 全部附解</span>
 <span>6 组交互演示</span>
 <span>教材、课件与录播对照</span>
 </div>

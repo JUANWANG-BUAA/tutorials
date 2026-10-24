@@ -317,7 +317,7 @@ $$q(t)=q_i+(q_f-q_i)\Big[3\eta^2-2\eta^3\Big],\qquad \eta=\frac{t}{t_f}$$
 
 $$q(t)=q_i+(q_f-q_i)\Big[10\eta^3-15\eta^4+6\eta^5\Big]$$
 
-**关键点**：能量最优解**只能是三次**；选五次就放弃该指标（[@thm-4.2.A]、[@def-4.2.2]）。
+**关键点**：固定初终位置与速度、常惯量模型下，平方力矩最优解为三次；固定加速度后可另研究平方 jerk 指标，其最优解为五次（[@thm-4.2.A]、[@def-4.2.2]）。
 
 ### F2 梯形速度曲线（LSPB，工业重点）
 
@@ -341,7 +341,7 @@ t_c=\frac{q_i-q_f+\dot q_ct_f}{\dot q_c},\qquad
 
 $$q(t)=\begin{cases}q_i+\tfrac12\ddot q_ct^2 & 0\le t\le t_c\\ q_i+\ddot q_ct_c(t-t_c/2) & t_c<t\le t_f-t_c\\ q_f-\tfrac12\ddot q_c(t_f-t)^2 & t_f-t_c<t\le t_f\end{cases}$$
 
-**极限**：下界取等 ⇒ **三角形**速度曲线（无巡航段）；代价：能量比最优高 **12.5%**（[@def-4.2.3]、[@thm-4.2.C]）。
+**极限**：下界取等 ⇒ **三角形**速度曲线（无巡航段）；代价：平方力矩指标在族内最优 $t_c/T=1/3$ 时比三次高 **12.5%**（[@def-4.2.3]、[@thm-4.2.C]）。
 
 ### F3 系列点：四条路线
 
@@ -451,7 +451,7 @@ $$k_r=\frac{\omega_m}{\omega}=\frac{r}{r_m}\ (\text{典型 }几十\sim几百)$$
 $$C_m=I_{eq}\dot\omega_m+F_{eq}\omega_m+\frac{C_l}{k_r},\qquad
 I_{eq}=I_m+\frac{I}{k_r^2},\qquad F_{eq}=F_m+\frac{F}{k_r^2}$$
 
-**惯量与摩擦按 $1/k_r^2$、负载力矩与非线性按 $1/k_r$**（[@thm-5.2.C]）。摆的例子：$C_m=I_{eq}\dot\omega_m+F_{eq}\omega_m+\dfrac{mgl}{k_r}\sin\dfrac{\vartheta_m}{k_r}$——$k_r$ 同时缩小幅值与自变量，故大减速比使非线性**趋向线性化**（[@ex-5.2.D]）。
+**惯量与摩擦按 $1/k_r^2$、负载力矩与非线性按 $1/k_r$**（[@thm-5.2.C]）。摆的例子：$C_m=I_{eq}\dot\omega_m+F_{eq}\omega_m+\dfrac{mgl}{k_r}\sin\dfrac{\vartheta_m}{k_r}$——$k_r$ 缩小电机端幅值；固定电机行程时便于局部线性化，固定关节行程时不能据此消除非线性（[@ex-5.2.D]）。
 
 ### G7 位置与速度反馈控制
 
@@ -476,11 +476,66 @@ $$d=\frac{vt}{2},\qquad v\approx331.4+0.6T\ (\mathrm{m/s},\ T\ \text{为摄氏�
 
 **相机投影**：$\begin{bmatrix}x_I&y_I&\lambda\end{bmatrix}^{\mathrm T}=\Omega\tilde p_c$，$\Omega=\begin{bmatrix}fa_x&0&X_0\\0&fa_Y&Y_0\\0&0&1\end{bmatrix}$；像素 $X_I=x_I/\lambda,\ Y_I=y_I/\lambda$。整体合成**相机校准矩阵** $\Xi=\Omega\Pi T_b^c$（[@def-5.4.5]、[@thm-5.4.B]）。
 
+## H · 动力学（第 6 章，对应原书第 7 章）
+
+### H1 拉格朗日公式与广义力（**值得默写**）
+
+$$L=T-U,\qquad \frac{\mathrm d}{\mathrm dt}\Bigl(\frac{\partial L}{\partial\dot q_i}\Bigr)-\frac{\partial L}{\partial q_i}=\xi_i$$
+
+**广义力四件套**：$\xi_i=\tau_i-(F_{\mathrm v}\dot q)_i-(F_{\mathrm s}\operatorname{sgn}\dot q)_i-(J^{\mathrm T}\boldsymbol h_e)_i$。**约束力不做虚功** ⇒ 不画受力图；非保守力自己补（[@def-6.1.1]）。三步流程：**选坐标 → 写 $T,U$ → 代方程**。
+
+### H2 动能与惯性矩阵
+
+$$T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q},\qquad
+B=\sum_{i=1}^{n}\Bigl[m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}J_O^{(i)}
++m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}+J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr]$$
+
+**$B$ 三性质**：对称、正定（$\dot q^{\mathrm T}B\dot q=2T>0$）、一般随位形变。**连杆动能三块**：平动 + 交叉项（质心定义 ⇒ 为零）+ 转动；惯性张量 $\boldsymbol I_i=\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}$（连杆系里是常数）、平行轴 $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$（[6.1.1](ch06/sec6-1-1.md)）。
+
+### H3 势能与重力项（**两种力矩别混名**）
+
+$$U=-\sum_i\bigl(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}\bigr),\qquad
+\boldsymbol g(\boldsymbol q)=\frac{\partial U}{\partial\boldsymbol q}=-\boldsymbol\tau_{\mathrm{grav}}$$
+
+$U=U(\boldsymbol q)$（与 $\dot q$ 无关）；$\boldsymbol g$ 是方程**左端**重力项，实际重力广义力是它的相反数；静止保持 $\tau=\boldsymbol g$（[6.1.2](ch06/sec6-1-2.md)、[@ex-6.1.2.A]）。
+
+### H4 运动方程与 $h_{ijk}$
+
+$$h_{ijk}=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i},\qquad
+B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}+\boldsymbol g=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$$
+
+$h_{ijj}\dot q_j^2$ 离心、$h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ 科氏、$b_{ii}$ = 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$）（[6.1.3](ch06/sec6-1-3.md)）。
+
+### H5 Christoffel 符号与反对称性（两条公式两个条件）
+
+$$c_{ijk}=\frac12\Bigl(\frac{\partial b_{ij}}{\partial q_k}+\frac{\partial b_{ik}}{\partial q_j}-\frac{\partial b_{jk}}{\partial q_i}\Bigr),\qquad c_{ij}=\sum_kc_{ijk}\dot q_k$$
+
+- **(7.48)**：Christoffel 选法下 $N=\dot B-2C$ **反对称** ⇒ $\forall\boldsymbol w,\ \boldsymbol w^{\mathrm T}N\boldsymbol w=0$；
+- **(7.49)**：**任意**选法下 $\dot{\boldsymbol q}^{\mathrm T}N\dot{\boldsymbol q}=0$（能量守恒）。
+
+方向：(7.48)⇒(7.49)，反向不成立（$N$ 依赖 $\dot q$）（[@thm-6.2.1]、[6.2.1](ch06/sec6-2-1.md)）。
+
+### H6 线性性与回归矩阵
+
+$$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\boldsymbol\pi,\qquad
+\pi_i=\bigl[m_i,\ m_i\ell_{C_ix},\ m_i\ell_{C_iy},\ m_i\ell_{C_iz},\ \bar I_{i,xx},\ \bar I_{i,xy},\ \bar I_{i,xz},\ \bar I_{i,yy},\ \bar I_{i,yz},\ \bar I_{i,zz},\ I_{m_i}\bigr]^{\mathrm T}$$
+
+**三个数**：11（刚体/连杆）→ 13（含摩擦/关节）→ 最小参数集 $\le13n$（平面臂 25→8→5）。用途：线性最小二乘辨识、自适应控制、$Y$ 零列筛参数（[6.2.2](ch06/sec6-2-2.md)）。
+
+### H7 两个算例速查（单摆与平面臂）
+
+| 模型 | 方程 |
+|:--|:--|
+| 带齿轮的摆 | $(I+I_mk_r^2)\ddot\vartheta+(F+F_mk_r^2)\dot\vartheta+mgl\sin\vartheta=\tau$——**自动折算**，与第 5 章 (5.29) 一致 |
+| 单摆质点 | $0.5\ddot q+4.905=\tau$（$m=2,l=0.5$）；保持 $4.905$ / 释放 $-9.81$ / 加速 $+2$ 需 $5.905$ |
+| 平面臂 | $h=-m_2a_1\ell_2s_2$；$C=\begin{bmatrix}h\dot\vartheta_2&h(\dot\vartheta_1+\dot\vartheta_2)\\-h\dot\vartheta_1&0\end{bmatrix}$，$C\dot q=\begin{bmatrix}h(2\dot\vartheta_1\dot\vartheta_2+\dot\vartheta_2^2)\\-h\dot\vartheta_1^2\end{bmatrix}$；$b_{12}$ 含 $k_{r_2}I_{m_2}$（转子 2 总角速度 $\dot\vartheta_1+k_{r_2}\dot\vartheta_2$）、$b_{22}$ 常数 |
+| 笛卡儿臂 | $B$ 常数对角、$C=O$、$g_1=(m_1+m_{m_2}+m_2)g$、$g_2=0$——解耦 = 笛卡儿结构 + 轴正交 |
+
 ---
 
 ## 附 · 一张纸的「最小必背集」
 
-若只背这些条，背下面这十七条（老师明确点过考试权重的在最前）：
+若只背这些条，背下面这二十条（老师明确点过考试权重的在最前）：
 
 1. **绿框逐列构造** $J_i$（转动 / 移动两式）——「肯定是要考的」；
 2. **$A_i^{i-1}$ 完整矩阵**与「第 4 列 = 三参数肉身」；
@@ -498,6 +553,9 @@ $$d=\frac{vt}{2},\qquad v\approx331.4+0.6T\ (\mathrm{m/s},\ T\ \text{为摄氏�
 14. **减速比两个折算因子**：$I_{eq}=I_m+I/k_r^2$、$F_{eq}=F_m+F/k_r^2$，负载力矩 $C_l/k_r$——「$1/k_r^2$ 管惯量、$1/k_r$ 管力矩」；
 15. **电气驱动四方程**与**统一传递函数** $M(s)=k_m/[s(1+sT_m)]$，两种发电机的 $k_m,T_m$（速度控制 $1/k_v$、$R_aI_m/(k_vk_t)$；力矩控制 $k_t/(k_iF_m)$、$I_m/F_m$）；
 16. **传动装置三重作用**（定量 / 定性 / 减重解耦）与三种装置的适用场合，以及「同步带快、正时链重」；
-17. **传感器的三个公式**：编码器 $2\pi/2^n$ 与减速后的分辨率、$d=vt/2$（声纳，含 $v\approx331.4+0.6T$）、相机 $X_I=x_I/\lambda$。
+17. **传感器的三个公式**：编码器 $2\pi/2^n$ 与减速后的分辨率、$d=vt/2$（声纳，含 $v\approx331.4+0.6T$）、相机 $X_I=x_I/\lambda$；
+18. **拉格朗日方程**与三步流程（选坐标 → $T,U$ → 代方程）；**广义力四件套**；
+19. **完整运动方程那一行** $B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+\boldsymbol g=\tau-J^{\mathrm T}h_e$，与 $h_{ijk}=\partial_kb_{ij}-\frac12\partial_ib_{jk}$；
+20. **两条结构性质**：(7.48) 反对称（Christoffel 选法）与 (7.49) $\dot q^{\mathrm T}N\dot q=0$（任意选法、能量守恒）；$\tau=Y\pi$ 线性（11/13/最小参数集）。
 
 配套的常见错误清单见[易错点总表](preface-pitfalls.md)，术语查不到时用[术语索引](preface-index.md)。
