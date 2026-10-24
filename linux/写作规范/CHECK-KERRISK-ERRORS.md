@@ -210,3 +210,33 @@
 2. **编译口径**：完整程序用 `zig cc -target x86_64-linux-gnu -std=c17 -D_GNU_SOURCE -Wall -Wextra -Werror -c` 检查；等价于 Linux gcc 头文件环境，但不是 Ubuntu 24.04 的 gcc 实测。`liburing`/`libacl` 依赖外部开发包，未计入「代码块错误」。
 3. **原书页码**：本报告只对 `clean-kerrisk.md` 的节号与 man 页，不逐页核对 PDF 页码；B 的「为什么漏」以当前正文关键词/标题为准。
 4. **只读约束**：本报告未改 `src/`、`SUMMARY.md`、`book.toml`、`theme/`、`tools/`。A.2 的修复是并行写入者的改动，不是本报告所为。
+
+## 修复记录（2026-10-24）
+
+> 本轮只处理 A.1 九条与 A.2 十一条抽验；B 节 15 条漏节**未补写**（按任务约束只计数）。行号为修复后当前值。
+
+### A.1 处置（修复 7 / 已被并行修复 2 / 未找到 0）
+
+| # | 处置 | 位置（修复后） | 说明 |
+|--:|:--|:--|:--|
+| A-01 | 已被并行修复 | `src/part2/ch05.md:47,49,54,205,716,718` | 「写内容同时更新 mtime+ctime」的表述已正确；报告引用的原句已不存在，无需再改 |
+| A-02 | 已被并行修复 | `src/part2/ch08.md:1241,1243` | 已补 `<unistd.h>`，注释改为「POSIX 任意点；Linux 2.6+ 在 boot 之前」。用 `zig cc -target x86_64-linux-gnu -std=c17 -D_GNU_SOURCE -Wall -Wextra -Werror -c` 复验：原 `sysconf` 隐式声明 / `_SC_CLK_TCK` 未定义两个错误不再出现 |
+| A-03 | 本轮修复 | `src/part2/ch19.md:687,706` | 表列「仅规范模式」改为「生效条件」：`VINTR/VQUIT/VSUSP` → `ISIG`，`VERASE/VKILL/VEOF/VEOL/VEOL2` → `ICANON`，`VSTART/VSTOP` → `IXON`，`VREPRINT/VWERASE/VLNEXT/VDISCARD` → `IEXTEN`，`VMIN/VTIME` → 仅非规范；表后补一句与 2.19.8 cbreak「保留 `ISIG`」的一致性说明 |
+| A-04 | 本轮修复 | `src/part2/ch02.md:669–670` | 删「只有创建者能 linkat」；改为「不检查创建者，fd 经 `SCM_RIGHTS` 传递后对方也能 linkat」，跨文件系统限制单独成条（`EXDEV`）。`O_EXCL` 与 `CAP_DAC_READ_SEARCH` 两条原有且正确，保留 |
+| A-05 | 本轮修复 | `src/part2/ch02.md:1304` | 删「glibc 可能拆分」；改为「glibc 是薄包装，超过 `IOV_MAX` 直接 `EINVAL`，要更多段分批调用」 |
+| A-06 | 本轮修复 | `src/part2/ch10.md:1022` | 删「0 表示无限制」的猜测；改为「0 = 不允许排队；无限制用 `RLIM_INFINITY`；默认值按 `RLIMIT_NPROC` 推导、常非 0」，并补「`kill()` 对同一已排队信号仍可再送一次」 |
+| A-07 | 本轮修复 | `src/part2/ch11.md:640` | 从 `clock_gettime` 行删 `EPERM`，补注「读时钟不检查权限，`EPERM` 是 `clock_settime` 的错误」及 32 位 `EOVERFLOW`；`clock_settime` 行（:642）的 `EPERM` 保留 |
+| A-08 | 本轮修复 | `src/part2/ch01.md:741` | 删「走 vDSO 或做指针检查」；改为「排寄存器、执行陷入指令、翻译 `-1/errno`；不做 vDSO 分派，不做指针检查」 |
+| A-09 | 本轮修复 | `src/part2/ch02.md:599,601` | 删「只读一次，不留在缓存」；改为「Linux 2.6.18–6.2 no-op，6.3+ 提示页替换算法忽略已映射页访问」，表后补一句「要释放缓存用 `DONTNEED`，且只对干净页生效」 |
+
+### A.2 抽验（11/11 已确认修复，无残留）
+
+F-01（`ch08.md:1071,1073,1217,1224` wait status 解码）、F-02（`ch14.md:390,643` mq_open variadic）、F-03（`ch15.md:218,695` sem_open variadic）、F-04/F-05（`ch11.md` TZ 空/缺 tzdata → UTC）、F-06/F-07（`ch08.md:1255,1256` clock 回绕与 times 起点）、F-08（`ch07.md:916–918` clone child_tid 参数顺序）、F-09（`ch02.md:329` `<linux/fs.h>`）、F-10（`ch03.md:260` `<stdlib.h>`）、F-11（`ch09.md:615,623` setreuid「或」）——逐条 grep 复验，错误说法均不在文中，报告所引修复后的表述与当前文件一致。无残留，未需追加修改。
+
+### 本轮验证
+
+- `python3 tools/check_book.py`：修复前后输出一致（pages: 113，substantial: 103），未引入新问题。
+- `python3 tools/verify_teaching_examples.py`：4 个测试全部通过（含 `test_pending_signal_and_sigsuspend`）。
+- `zig cc` 交叉编译复验：A-02 涉及的 `times()` 片段在 `-Wall -Wextra -Werror` 下通过。
+- 本轮 7 处修改均为表格/条目/段落文字，未触碰 C 代码块；未新增 H2 小节，未改锚点编号。
+- 全库 grep 复扫：A.1/A.2 的错误说法在 `src/` 下已无残留（`src/part0` 的「自开机以来」指 `iostat`/`top` 首帧累计值，语义不同且正确）。

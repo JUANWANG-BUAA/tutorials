@@ -697,3 +697,39 @@ MTU=1500 IPv4 plain
 - **代码实测**：只在 macOS 可移植部分运行；Linux 专属路径（epoll、kTLS、netns、nft、ss）以静态核对 + 书中命令语法检查为主，未在 Linux 内核上实测，报告中对这类条目明确标注「未运行」。
 - **版本边界**：A17/A18 是「书稿声称 Linux 6.8，但引用了旧内核结构/函数」的问题；A19/A20 是「内核常量/特性写错」。如果作者本意是讲历史内核，应在正文明确标注版本，否则读者按 6.8 对照源码会找不到字段。
 - **未完成**：W 第 4.9 节是否在第 8 版保留、部分 802.11/ICMPv6 细节、nft/ss 在真实 Linux 上的逐条执行，仍需在 Linux 环境复核。A1–A20 的结论不依赖这些未完成项。
+
+---
+
+## 修复记录（2026-10-24）
+
+> 处理范围：A1–A26 全部位于 `src/part4/`；本轮只编辑 `src/part4/*.md` 与本文件，未动 SUMMARY.md、book.toml、theme/、tools/、其他篇章。
+> 报告行号基于 2026-10-19 快照，正文此后被并行修改过，逐条用「报告引用原文 grep」重定位后处置。
+> 6.8 源码复核：A17/A18 相关路径（`tcp_conn_request`、`reqsk_queue_alloc`、`struct request_sock_queue`、`inet_csk_reqsk_queue_is_full`）本轮按在线 v6.8 源码逐行核过后再改。
+> 验证：`python3 tools/check_book.py` 开工基线 `pages: 113, total lines: 127033, substantial: 103`（退出码 0）；全部修改落盘后 `pages: 113, total lines: 127117, substantial: 103`（退出码 0，无新增告警）。part4 行数 14918 → 15002（+0.6%，errata 拆组新增标题行所致，在 ±3% 内）。
+
+### A 表处置（26 条）
+
+**已在核查后的并行修改中修复、本轮逐条复核确认（17 条）**：A1（MSS 仍是 1460、每段 1448）、A2（3000 字节包切三片 1480+1480+20，offset 0/185/370）、A3（goodput.c 输出与程序实测一致）、A4（`4006` 是 TTL 高字节与协议字节连读，`1c46` 才是标识）、A5（0.05%）、A6（VLAN MTU 继承父接口、默认 noqueue）、A7（1522 = 1500+14+4+4；严格 1518 时 1496+18+4=1518）、A8（/22 例改为「三块合计 1152 > 1024，/22 本身不够」）、A9（`conntrack -C` 是全表条目数）、A12（`-S` 下第三个包 `seq 3123456790`）、A13（LAST-ACK 收 ACK 进 CLOSED，图含 CLOSING）、A14（CE 路由器置 / ECE 接收方置 / CWR 发送方置）、A15（第二片 `length 124`、载荷 104、tcpdump `offset 1376` 与片偏移字段 172 分开解释）、A16（回复方向 dst 是 NAT 后公网地址，不能当 SNAT 失效判据）、A19（40 ms 是常用量级、上限 `TCP_DELACK_MAX = HZ/5`）、A24（主机未开转发 → code 1 + `InAddrErrors`；开转发无匹配 → code 0 + `InNoRoutes`）、A26（`REORDER_HDR` 管标签位置不是字节序）。
+
+**本轮修复（正文仍有残留，按报告「正确说法」改正，9 条）**：
+
+- **A10/A11（残留）**：`ch04.md` 例 4.4.2 的「两边取 min 后，`ss -ti` 里的 `mss` 与 `wscale:7,7` 就是最终结果」改为「每个方向各自生效……没有『两边取 min』这一步；`wscale:snd,rcv` 是两个方向各自的移位；只有 SYN 与 SYN-ACK 都带 WS 缩放才启用」（RFC 7323）。4.4.10 主文的 MSS/窗口缩放句已由并行修改改对，本轮复核。
+- **A17**：`ch05.md` 4.5.15 残留的旧内核公式段整体重写：`reqsk_queue_alloc()` 签名改为 6.8 的 `void reqsk_queue_alloc(struct request_sock_queue *queue)`（只初始化 accept 链表与 fastopenq，不算长度）；删「min → max(8) → +1 → roundup_pow_of_two」手算表，改为「6.8 没有按 2 的幂取整的固定公式：判满是运行时 `qlen >= sk_max_ack_backlog`，`tcp_max_syn_backlog` 只做来源保护（backlog 最后四分之一 + `tcp_peer_is_proven` 不通过才丢）」；4.5.21 出口检查表的同款 roundup 行一并改。
+- **A18**：`ch05.md` 4.5.16 代码块按 6.8 重写——TFO 分支才调 `inet_csk_reqsk_queue_add(sk, req, fastopen_sk)`，正常分支是 `inet_csk_reqsk_queue_hash_add(sk, req, req->timeout)`；`sk_acceptq_is_full` 分支去掉旧内核的 `queue_young(sk) > 1` 条件（6.8 直接 `ListenOverflows` + drop），并补上 `tcp_max_syn_backlog` 最后四分之一的来源保护判断；说明由「同名函数、两个队列」改为「两个队列对应两个函数」。连带：4.5.3 的 listen 路径注释 `inet_csk_reqsk_queue_add / inet_hash_insert` 改为 `sk->sk_prot->hash = inet_hash`；4.5.19 bpftrace 读法由「每连接调两次」改为「每连接一次、SYN 走 hash_add」；errata 第 1/3 条同步改；例 4.5.1 内存账按 backlog=somaxconn=4096 重算（半连接 4096×256 B ≈ 1 MB，全连接 4096×2 KB ≈ 8 MB）。
+- **A20（同族残留）**：`ch02.md` `arp_rcv()` 简化代码的条件改为 `dev->flags & (IFF_NOARP | IFF_LOOPBACK)`（与 6.8 `net/ipv4/arp.c` 一致），errata「`lo` 是 `IFF_NOARP`」改为「`lo` 挂的是 `IFF_LOOPBACK`（6.8 并没有设 `IFF_NOARP`）」。ch01/ch11 两处主报错点已由并行修改修好（全 0 MAC `addr_len=6`；`NETIF_F_HW_CSUM`/`RXCSUM`）。
+- **A21**：`ch09.md` 例 4.9.1「生成 44 个段/44 个 1514 字节的帧」改为 45 段（65536/1460 ≈ 44.9：44 段满载 1460 + 1 段零头）、45 个帧，CPU 开销「1 次 → 45 次」。为保持自洽，`ch01.md`「到了网卡才切成 44 个帧」、`ch08.md`「比 44 个 1500 字节的 skb 走 44 遍」同步改 45。
+- **A22**：`ch03.md` 4.3.14 表 ICMPv6 对应列：type 3 code 1 → `1/3（最接近；ICMPv6 无 host unreachable）`，code 2 → `4/1（Parameter Problem：未知 Next Header）`（RFC 4443）。
+- **A23**：`ch11.md` `ping -M do -s 1450` → `-s 1422`（1450 − 20 IP − 8 ICMP），命令注释与 errata 第 3 条同步；4.11.24 的 MTU 实验描述重写为「MTU 1500 时 `-s 1472` 败于外层 1550 > 1500；MTU 1450 时同样 `-s 1472` 本地就 message too long，`-s 1422`（内层 IP 1450）才通」。
+- **A25**：`ch04.md` 「六个标志位」改为「图中画了 8 个标志位（CWR/ECE/URG/ACK/PSH/RST/SYN/FIN）……RFC 9293 里还有一个更少见的 NS 位」，与首部图一致。
+
+**未找到 0 条**；A 表 26 条全部处置完毕（17 条并行修改已修 + 9 条本轮修复）。
+
+### B 节漏节（不补写，仅计数）
+
+15 条（B1–B15）确认仍未落点；本轮按约定只做事实修复与文稿优化，未补写任何新节。B 表相关的一个间接改善：张彦飞 6.2.5 的队列算术落点已随 A17/A18 改为 6.8 语义（不再是「落了但错」）。
+
+### 同轮文稿优化（与本报告处置无冲突）
+
+- errata「清单墙」拆组 14 处（ch01×2、ch02×2、ch03、ch05、ch06×2、ch07、ch08、ch09、ch10、ch11、ch12），每处拆成 2–4 个 3–6 条的主题组（共 38 组），条目技术表述逐字保留、盒类型不变、无锚点需要保留。
+- 术语章内统一：`头部` → `首部`（ch01 ×2、ch07 ×8、ch08 ×2；含 ch07 errata 1 条与 `http_get.c` 错误提示字符串 1 处），不全书强改。
+- 行文微调 2 处：`ch10.md` 4.10.12 节首表格补引导句；`ch08.md` 4.8.21 「实验一把「……」串起来看」补标点断句。

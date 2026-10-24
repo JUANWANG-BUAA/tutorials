@@ -71,11 +71,11 @@ sigaction(SIGTERM, &sa, NULL);
 |:--|:--|
 | 不可捕获 | `SIGKILL`、`SIGSTOP` |
 | 阻塞 | `sigprocmask(SIG_BLOCK, &set, &old)` |
-| 等待 | `sigsuspend(&mask)` 原子解除阻塞并睡眠 |
+| 等待 | 先阻塞目标信号并检查标志，`sigsuspend(&mask)` 临时换掩码并等待；循环重查标志，返回后原掩码恢复 |
 | 未决 | `sigpending(&set)` |
 | 实时信号 | `SIGRTMIN..SIGRTMAX`，可排队 |
 | `SA_RESTART` | 可重启的调用自动重启；`poll/epoll_wait/select` 不会 |
-| 处理器内 | 只调用 async-signal-safe 函数；用 `volatile sig_atomic_t` |
+| 处理器内 | 只调用 async-signal-safe 函数；标志用 `volatile sig_atomic_t`，保存/恢复 `errno`；`sem_post` 在安全列表，`pthread_mutex_lock` 不在 |
 | 转 fd | self-pipe 或 `signalfd` |
 
 `EINTR` 处理：

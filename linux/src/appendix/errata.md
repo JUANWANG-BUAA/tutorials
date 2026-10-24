@@ -77,7 +77,7 @@
 
 ### 2.8 Shotts / shell-book
 
-- 两书都以 bash 4.x 为背景；bash 5.2 新增 `EPOCHSECONDS`、`SRANDOM`、`wait -n` 等；本书用 5.2。
+- 两书都以 bash 4.x 为背景；bash 5.0+ 陆续新增 `EPOCHSECONDS`（5.0）、`SRANDOM`（5.1）、`wait -n` 等；本书用 5.2。
 - `local` 不是 POSIX；`#!/bin/sh` 在 Debian/Ubuntu 是 dash，行为与 bash 不同。本书脚本默认 `#!/usr/bin/env bash`，可移植写法单独标注。
 - `echo -e` 不可移植；新代码用 `printf`。
 - `set -e` 的语境例外（`if`、`&&`、`||`、`!`）必须记住；本书 0.7/0.8 讲。

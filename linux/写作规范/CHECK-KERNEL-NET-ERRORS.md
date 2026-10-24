@@ -379,3 +379,67 @@
 - **`src/part3/ch10.md:404/1337`**：`PageAnonExclusive` 标注「5.17+」。该 page flag 是 5.18 前后引入的（不同 stable 分支 backport 时间不同），版本号可能有 ±1 的偏差；未拿到 6.8 git 历史前不判错。
 - **`src/part3/ch09.md:711-726`**：`kmalloc_index()` 代码块标了「简化」，但漏掉 `size>64 && <=96 → 1`、`>128 && <=192 → 2` 两个特例，与同节大小类表（96/192 桶）不一致；属教学简化边界，未进 A 表。
 - **`src/part4/ch03.md:481`**：`ip_options_compile()` 前一句「选项长度必须是 4 的倍数」若指「整个选项区/首部按 4 字节对齐」则成立，若指「每个选项」则不成立；措辞歧义，未进 A 表（A.24 已换成更硬的 `neigh_resolve_output` 语义错误）。
+
+---
+
+## 修复记录（2026-10-24 · part3 部分）
+
+> 只处理 A 表中位于 `src/part3/` 的 12 条（A.1–A.12）；part4 条目由另一代理负责，未动。
+> 本轮修改 8 个文件：`src/part3/ch01.md`、`ch02.md`、`ch03.md`、`ch05.md`、`ch07.md`、`ch09.md`、`ch12.md`、`ch14.md`。未新增 H2 小节、未改锚点编号、未动 SUMMARY/book.toml/theme/tools/part4。
+> 验证：`python3 tools/check_book.py` 修复前 `pages: 113, total lines: 127036, substantial: 103`；修复后 `pages: 113, total lines: 127033, substantial: 103`，无新增告警。
+> 证据补充：本地 6.8 源码树（`/tmp/linux68`）已不在，本轮用在线 v6.8 源码复核了 buddy 循环边界（`mm/page_alloc.c`）：`__free_one_page()` 合并循环是 `while (order < MAX_PAGE_ORDER)`，`__rmqueue_smallest()`/`__zone_watermark_ok()` 上界是 `NR_PAGE_ORDERS`，`__alloc_pages()` 的拒绝条件是 `order > MAX_PAGE_ORDER`（order 10 = 4 MiB 仍是合法请求）。
+
+**逐条处置：**
+
+- **A.1（MAX_ORDER）— 修复（残余）**。并行修改已把大部分出现点改成 `MAX_PAGE_ORDER`/`NR_PAGE_ORDERS`，本轮修掉全部残余：`ch07.md:168` 注释 `/* MAX_ORDER = 10 */` → `NR_PAGE_ORDERS = MAX_PAGE_ORDER + 1 = 11`；`ch07.md:735`（`MAX_ORDER - order`）；`ch07.md:833-841`（小节标题改为「MAX_PAGE_ORDER 为什么从 11 变成 10」，按报告改写历史叙述：旧名 `MAX_ORDER` 取 11、语义「第一个不可用的 order」，新名 `MAX_PAGE_ORDER` 取 10、语义「最大可用的 order」，并删掉错误的「最大块从 8 MiB 降到 4 MiB」——最大块一直是 4 MiB）；`ch07.md:1029`（watermark 循环 → `NR_PAGE_ORDERS`）；`ch07.md:246` 残留的「（最大块从 8 MiB 降到 4 MiB）」。**另外发现并行改名留下的 off-by-one（均在 A.1 位置列表内，已一并修）**：`ch07.md:200/800` 合并循环 `while (order < MAX_PAGE_ORDER - 1)` → `MAX_PAGE_ORDER`（否则合并最多只到 order 9）；`ch07.md:239/243`（查找到 `MAX_PAGE_ORDER-1` → `MAX_PAGE_ORDER`）；`ch07.md:337`（`order < MAX_PAGE_ORDER` → `order <= MAX_PAGE_ORDER`）；`ch07.md:342`（「order 超过 MAX_PAGE_ORDER-1 返回 NULL」→「超过 MAX_PAGE_ORDER，即 11 及以上」；order-10 是合法请求，与 6.8 检查 `order > MAX_PAGE_ORDER` 一致）；`ch07.md:696` `__rmqueue_smallest` 上界 `< MAX_PAGE_ORDER` → `< NR_PAGE_ORDERS`；`ch07.md:752` `__rmqueue_fallback` 起点 `MAX_PAGE_ORDER - 1` → `MAX_PAGE_ORDER`。同名错误在 ch07 之外还有三处，一并修：`ch01.md:468`（对比表 → `MAX_PAGE_ORDER=10（6.4 起改名）`）、`ch02.md:681`、`ch02.md:706/716-717`（note 盒标题与正文、`/proc/buddyinfo` 列数 → `NR_PAGE_ORDERS`）。
+- **A.2（__ksize）— 修复**。`ch09.md:729-756` 代码块整体替换为 `mm/slab_common.c` 的 6.8 实现（`ZERO_SIZE_PTR` → 0；非 slab 分支两个 `WARN_ON` 后返回 `folio_size(folio)`，即 `kmalloc_large` 的合法路径；slab 分支 `slab_ksize(...->slab_cache)`），正文改写并明确「`struct slab` 没有 `size` 字段」「`__ksize` 在 `mm/slab_common.c` 不在 `mm/slub.c`」；顺带把同章 errata `ch09.md:180`「`ksize` 只对 slab 对象有效」改为「只对 `kmalloc` 家族（含 `kmalloc_large` 大块）与 `kmem_cache_alloc` 的指针有效」，与修后的代码一致。
+- **A.3（extent header 校验和）— 修复（残余）**。`0x0A ee_checksum` 行已被并行修改删除、tail 说明已正确；本轮修掉残留的字段名前缀：header 五个字段 `ee_magic/ee_entries/ee_max/ee_depth/ee_generation` → `eh_*`（`ch12.md:1137-1143`）。
+- **A.4（extent 树层数）— 已修复（并行修改）**。「最多 6 层（0–5）」已正确；本轮仅顺手把 `ch12.md:1160` 的 `ee_depth` 改成 `eh_depth` 并补注 `EXT4_MAX_EXTENT_DEPTH = 5`。
+- **A.5（DCACHE 位值）— 修复（残余）**。`DCACHE_PAR_LOOKUP` 行已被并行修改改为 `BIT(28)/0x10000000`；本轮修 `ch12.md:808`：`DCACHE_WHITEOUT 0x80` 行删除，新增 `DCACHE_WHITEOUT_TYPE 0x100000（BIT(20)）` 行（按值升序插到 `0x40000` 之后），行内注明 `0x80` 实际是 `DCACHE_DONTCACHE`；`ch12.md:874` 四状态表的 `DCACHE_WHITEOUT` → `DCACHE_WHITEOUT_TYPE`。
+- **A.6（test_and_set_bit）— 修复**。`ch12.md:1266` 改为「在位图所在 buffer head 的锁保护下，用 `ext4_set_bit()`（`__set_bit_le` 的别名，非原子 RMW）置位——并发安全靠这把锁，不靠单个原子位操作」。
+- **A.7（device_driver.remove）— 修复**。`ch14.md:611` 表行改为 `int (*)(struct device *)`，并说明 `struct device_driver` 只有返回 int 的 `remove`、没有 `remove_new`；带 `void remove_new` 过渡字段的是 `struct platform_driver`（其 `remove` 返回 int、`remove_new` 返回 void）。
+- **A.8（IST 索引数）— 修复**。`ch03.md:75` 改为「IST 索引一共 5 个：`IST_INDEX_DF/NMI/DB/MCE/VC`」并补 `#VC`（AMD SEV-ES）；IST 表加第 4 行 `IST_INDEX_VC`，动机列表补一条 `#VC`，errata「每 CPU 四张」→「五张」。
+- **A.9（装门 API）— 修复**。`ch03.md:591-637`（原「装门的三个函数」小节）整体重写为「6.8 怎么装门：idt_data 与 INTG/SYSG/ISTG」：删除不存在的 `desc.h` inline 函数与 `_set_gate` 代码，改为 `INTG/SYSG/ISTG` 宏（`GATE_INTERRUPT` + DPL0/DPL3/IST）、`idt_init_desc()` + `idt_setup_from_table()` 的两层结构，`def_idts` 节选同步改为 6.8 写法（`SYSG(X86_TRAP_BP, asm_exc_int3)`、`ISTG(X86_TRAP_DF, …, IST_INDEX_DF)` 等），并注明 6.8 的 `set_intr_gate()` 只是 `idt.c` 内部 static 函数。
+- **A.10（int3/int 0x80 门类型）— 修复**。`ch03.md:46/48` 两行「陷阱门，DPL 3」→「中断门，DPL 3」；`ch03.md:662` errata 第 3 条改为「Linux 的 `int3` 与 32 位 `int 0x80` 装的也是中断门（`SYSG`，DPL 3），而 `syscall` 指令走 MSR 入口，根本不经过 IDT」。
+- **A.11（栈魔数配置名）— 修复**。`ch02.md:99` 改为：`set_task_stack_end_magic()` 无条件写魔数；`CONFIG_DEBUG_STACK_USAGE` 打开时由 `check_stack_usage()` 做栈使用量统计与告警，不是调度器每次切换都查。
+- **A.12（nice 权重表）— 修复**。`ch05.md:84-97`：表头「相对 nice 0 的份额」→「相对 nice 0 的权重比」，「两个这样的进程各占」→「与一个 nice 0 进程竞争时本进程的份额」；−20 行 97.7% → 98.9%（`88761/(88761+1024)`）；nice 5 行 24.6% → 24.7%（`335/1359` 的正常舍入）；「nice 0→1 把 50% 变成 55.6%」改为「调到 1 是降低优先级，自己份额 820/(820+1024) ≈ 44.5%，对手（nice 0）约 55.5%」。
+
+**统计：** A 表 part3 条目 12 条——本次修复 11（其中 A.1/A.3/A.5 为修并行改动后的残余）、并行修改已修复 1（A.4，本轮仅复核+字段名顺手改）、未找到 0。
+
+**B 节漏节统计（不补写，仅计数）：** part3 相关共 **13 项**——纯 part3 落点 12 项（#1 奔跑吧 2.14→3.10、#2 读写锁→3.11、#3/#4 OSTEP 36.2/36.3→3.14、#5 OSTEP 38.2→3.13/3.12、#6 OSTEP 40.1→3.12.12、#7–#10 OSTEP 44.1–44.4→3.12.5.1/3.13.13、#14 OSTEP 37.x→3.13.3 交叉引用、#15 OSTEP 41.x→3.12.12 交叉引用）；跨篇 1 项（#13 网络 4.3 网卡启动准备，建议落点含 3.14.10）。其余 2 项（#11 网络 7.2、#12 网络 6.5）落点纯在 part4，不计。
+
+**顺手发现、未修的新问题（留给下一轮定夺）：**
+
+1. `src/part3/ch07.md:742-744`（`__rmqueue_fallback` 节选）：6.8 的 `__rmqueue_fallback()` 返回 `bool`（成功与否由 `rmqueue()` 处理摘块），节选写成 `struct page *` 返回；且 6.7+ 的循环下限是 `min_order`（对非 steal 路径有下移），节选从 `order` 直接开始。节选已标「简化」，本轮只修了起点阶（`MAX_PAGE_ORDER`），签名未动。
+2. `src/part3/ch03.md:591` 小节改写后，3.3.10 开头的导语「内核用什么函数装门」一问的答案已由新小节覆盖，无需改动；但 `ch03.md:53`「`idt_setup_early_traps()` 只装 `#PF`/`#DB` 等少数几个」若要更准可写「装 `early_idts`（`#PF`/`#DB`/`#UD`/`#GP`/`int 0x80`）」，属措辞粒度问题，未动。
+3. `src/part3/ch07.md:1141` 实验模块的打印循环 `for (order = 9; order < MAX_PAGE_ORDER; order++)` 只覆盖 order 9（THP 阶），与模块用途一致，非错误；若想同时看 order 10 可改 `< NR_PAGE_ORDERS`。
+
+---
+
+## 修复记录（2026-10-24 · part4 部分）
+
+> 处理范围：A 表中位于 `src/part4/` 的 13 条（A.13–A.25）；上一节的 part3 修复记录未动。
+> 报告行号基于 2026-10-19 08:50 快照，正文此后被并行修改，逐条按报告引用原文 grep 重定位后处置。
+> 验证：`python3 tools/check_book.py` 开工基线 `pages: 113, total lines: 127033, substantial: 103`（退出码 0）；修复后 `pages: 113, total lines: 127117, substantial: 103`（退出码 0，无新增告警）。
+
+**逐条处置：**
+
+- **A.13（ECMP 同一条流）— 修复**。`ch03.md` 4.3.13 末尾一段按报告重写：同一条 TCP 流五元组固定、哈希值固定、只命中同一条路径，默认 ECMP 不是 per-packet；哈希策略改变的是**流间**分布（L3-only 会把同一对主机的流压到同一路径）；`TCPOFOQueue` 增长时的排查方向由「ECMP 哈希策略」改为「中间设备的 per-packet 分发（如 bond round-robin）与乱序的其他来源」。
+- **A.14（ICMPv6 对应列）— 修复**。`ch03.md` 4.3.14 表：3/1 → `1/3（最接近；ICMPv6 无 host unreachable）`、3/2 → `4/1（Parameter Problem：未知 Next Header）`（RFC 4443；与 CHECK-NETWORK-ERRORS 的 A22 为同一处，本轮一并修）。
+- **A.15（ESTABLISHED 进入条件）— 修复**。`ch03.md` 4.3.15 状态表行改为「看到回复方向的包，置 `IPS_SEEN_REPLY`」；`nf_conntrack_confirm` 只保留在钩子表里（其语义「确认连接、插哈希」本就正确）。下一段「收到 SYN-ACK 后才变成 ESTABLISHED」与本行现在一致。
+- **A.16（ASSURED）— 修复**。`ch03.md` 4.3.15 输出读法段改为「`[ASSURED]` = 连接已完全建立、双向确认过（TCP 进入 conntrack ESTABLISHED 时置位），作用恰恰是**保护连接不被提前淘汰**：GC 只回收没有 ASSURED 的表项」，删除反义的「可以提前淘汰」。
+- **A.17（unique_tuple 返回 void）— 修复**。`ch03.md` 端口分配第 3 点改为「全被占用时 `nf_nat_l4proto_unique_tuple()` 不报错（返回 `void`），保留可能重复的元组；真正的丢包在后面的 `__nf_conntrack_confirm()`：插入哈希表发现同 key 条目已存在，`insert_failed` 增加、包被 `NF_DROP`」。
+- **A.18（arp_queue 丢最老）— 已修复（并行修改）**。`ch03.md` 现文为「真实限额是 `unres_qlen_bytes`（默认 64 KiB），`unres_qlen` 是折算视图；超限从**队头丢最老的 skb 给新 skb 腾位置**，新 skb 反而入队」，与报告一致；本轮复核确认。
+- **A.19（NUD_FAILED）— 已修复（并行修改）**。`ch03.md` 现文为「`__neigh_event_send()` 对 FAILED 不再发 solicitation，保持 FAILED 并 `kfree_skb`；重新解析要等表项被 GC 删除或 `neigh_update()`/`ip neigh change` 显式改状态，不是『下一个包自动触发』」，与报告一致。
+- **A.20（busy/rwnd 单位）— 修复**。`ch06.md` tcp_info 表 `busy`/`rwnd_limited` 两行单位 `ms` → `μs（显示 ms）`，与 `rtt`/`rto`/`ato` 行同一口径（UAPI 注释为 usec）。
+- **A.21（带选项时的有效 MSS）— 修复**。`ch06.md` 4.6.20 边界条改写：`mss_cache` 是「扣除选项后的有效发送 MSS」，`tcp_current_mss()` 按 `header_len - tp->tcp_header_len` 再减一次——带 12 字节选项时每段可带数据少 12 字节；删除「实际段长仍是 MSS」。
+- **A.22（tcp_options_write 顺序）— 修复**。`ch06.md` 4.6.23 边界条改为 6.8 实际顺序：MSS；SACK_PERM 与 TS 同有则打进同一 4 字节字，否则 NOP NOP + TS；单独 SACK_PERM（仅当未被 TS 带走）；窗口缩放（NOP + WS）；SACK 块。并以抓包 `[mss 1460,sackOK,TS …,nop,wscale 7]` 印证 wscale 在 TS 之后。
+- **A.23（ICMP「剩余部分固定为 0」）— 修复**。`ch03.md` 4.3.14 改为「多数情况下为 0，但 **type 3 code 4 的低 16 位是下一跳 MTU**（PMTUD 的关键字段），抓包时不能当恒 0 忽略」。
+- **A.24（neigh_resolve_output 语义）— 已修复（并行修改）**。`ch03.md` 现代码为 `if (!neigh_event_send(neigh, skb))` 才发、返回 1 时「什么都不用再做，更不能再释放 skb」，读法段明确「当失败码去 `kfree_skb` 会双重释放」，与报告一致。
+- **A.25（nf_nat_ipv4_local_fn）— 修复**。`ch03.md` 钩子表行 `nf_nat_ipv4_local_out` → `nf_nat_ipv4_local_fn`。
+
+**统计：** A 表 part4 条目 13 条——本轮修复 10、并行修改已修复 3（A.18/A.19/A.24，本轮仅复核）、未找到 0。
+
+**B 节漏节：** #11（网络 7.2 内存管理）、#12（网络 6.5 异常握手）落点纯在 part4，本轮未补写，仅计数；#13（网络 4.3 网卡启动准备）为跨篇项，part4 侧同样未补写。
+
+**顺手修复的连带自洽项（报告未单列）：** 4.5.3 listen 路径注释（`inet_csk_reqsk_queue_add / inet_hash_insert` → `sk->sk_prot->hash = inet_hash`）；4.5.19 bpftrace `@add` 读法；4.5.21 出口检查表的 roundup 公式行；例 4.5.1 内存账按 backlog=4096 重算；`ch09.md` 例 4.9.1 GSO 段数 44→45（65536/1460 ≈ 44.9），并连带 `ch01.md`/`ch08.md` 两处「44 个帧」同步为 45。
