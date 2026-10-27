@@ -80,6 +80,21 @@ class ServerTest(unittest.TestCase):
         cls.httpd.shutdown()
         cls.httpd.server_close()
 
+    def setUp(self):
+        """等上一用例可能遗留的异步副作用落地，避免跨用例的 effects 计数干扰。"""
+        deadline = time.monotonic() + 5.0
+        while time.monotonic() < deadline:
+            conn = sqlite3.connect(self.db)
+            try:
+                pending = conn.execute(
+                    "SELECT COUNT(*) FROM calls "
+                    "WHERE status NOT IN ('succeeded', 'failed')").fetchone()[0]
+            finally:
+                conn.close()
+            if pending == 0:
+                return
+            time.sleep(0.02)
+
     def post(self, key: str, tool: str = "charge", args: dict | None = None,
              timeout: float = 3.0):
         return http_json("POST", self.base + "/v1/tool-calls",
@@ -126,7 +141,9 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(self.effects(), before + 2)
 
     def test_same_key_different_args_conflict(self):
-        self.post("k-conflict", args={"amount": 1})
+        status0, first = self.post("k-conflict", args={"amount": 1})
+        self.assertEqual(status0, 202, first)
+        self.wait_status(first["call_id"])   # 等副作用落地，避免干扰后续用例计数
         status, payload = self.post("k-conflict", args={"amount": 2})
         self.assertEqual(status, 409, payload)
         self.assertEqual(payload["error"]["code"], "idempotency_conflict")
