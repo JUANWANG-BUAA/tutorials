@@ -1,6 +1,6 @@
 # 公式速查卡
 
-五章共 70 余条编号公式、9 张 DH 参数表、3 套逆解公式——它们散在 40 余个小节里。本页把它们**按「表示 → 传递 → 反解 → 微分 → 力 → 驱动与测量」的顺序压成一页**，每条后面给出正文出处，供做题与复习时单点查阅。
+七章的核心公式、9 张 DH 参数表、3 套逆解公式——它们散在 60 余个小节里。本页把它们**按「表示 → 传递 → 反解 → 微分 → 力 → 驱动与测量 → 控制」的顺序压成一页**，每条后面给出正文出处，供做题与复习时单点查阅。
 
 ::: note 怎么用这一页
 - **做题卡壳时**：按下面的分节标题定位，不用翻正文；括号里的链接跳回推导与上下文。
@@ -531,11 +531,100 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 | 平面臂 | $h=-m_2a_1\ell_2s_2$；$C=\begin{bmatrix}h\dot\vartheta_2&h(\dot\vartheta_1+\dot\vartheta_2)\\-h\dot\vartheta_1&0\end{bmatrix}$，$C\dot q=\begin{bmatrix}h(2\dot\vartheta_1\dot\vartheta_2+\dot\vartheta_2^2)\\-h\dot\vartheta_1^2\end{bmatrix}$；$b_{12}$ 含 $k_{r_2}I_{m_2}$（转子 2 总角速度 $\dot\vartheta_1+k_{r_2}\dot\vartheta_2$）、$b_{22}$ 常数 |
 | 笛卡儿臂 | $B$ 常数对角、$C=O$、$g_1=(m_1+m_{m_2}+m_2)g$、$g_2=0$——解耦 = 笛卡儿结构 + 轴正交 |
 
+## I · 运动控制（第 7 章，对应原书第 8 章）
+
+口径：**任务在操作空间提出，控制动作在关节空间实现**（[7.1.4](ch07/sec7-1.md#sec-7.1.4)）。I1–I3 为**课堂**内容（第 8 周后半），I4–I7 的具体控制律为**教材补**，I8 用于选型。
+
+### I1 控制问题与两套方案（**课堂**）
+
+**控制问题**：设计广义力 $\boldsymbol\tau(t)$ 的时程，使 $\boldsymbol q(t)$ 跟踪 $\boldsymbol q_d(t)$（或 $\boldsymbol x_e$ 跟踪 $\boldsymbol x_d$），并满足瞬态/稳态指标（[7.1.1](ch07/sec7-1.md#sec-7.1.1)）。
+
+| 方案 | 闭环量 | $\boldsymbol x_d\to\boldsymbol x_e$ | 主要误差源 |
+|:--|:--|:--|:--|
+| 关节空间 | $\boldsymbol q$（编码器直测） | **开环**（只经运动学） | 运动学标定、逆解分支 |
+| 操作空间 | $\boldsymbol x_e$（多由 $\boldsymbol q$ 算出） | 闭环（若 $x$ 可测/可估） | $x$ 的测量/估计误差、$J_A$ 奇异 |
+
+**判据**：看闭环通道里有什么量、那个量的信息质量如何——不是看框图上那条线画到哪（[7.1.4.2](ch07/sec7-1.md#sec-7.1.4.2)）。
+
+### I2 驱动接口：$\boldsymbol\tau$ 与控制电压 $\boldsymbol v_c$（**课堂，本讲正题**）
+
+$$\boldsymbol q_m=K_r\boldsymbol q,\qquad
+\boldsymbol\tau_m=K_r^{-1}\boldsymbol\tau=K_t\boldsymbol i_a,\qquad
+\boldsymbol v_a=R_a\boldsymbol i_a+K_v\dot{\boldsymbol q}_m,\qquad
+\boldsymbol v_a=G_v\boldsymbol v_c$$
+
+$$\boldsymbol\tau=K_rK_tR_a^{-1}\bigl(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q}\bigr)$$
+
+**读法**：电压想产生的转矩，一部分驱动关节，一部分被**反电动势**（$\propto\dot{\boldsymbol q}$）吃掉——这一项就是耦合的来源。**加电流环**（$K_r^{-1}\boldsymbol\tau=K_t\boldsymbol i_a$、$\boldsymbol i_a=G_i\boldsymbol v_c$）后 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$，$\dot{\boldsymbol q}$ 消失（[7.2.5](ch07/sec7-2.md#sec-7.2.5)）。
+### I3 三条假设 ⇒ 速度源 / 力矩源（**课堂，「为什么能分散控制」的标准答案**）
+
+$$K_r\gg I,\quad R_a\ \text{元素很小},\quad \tau\ \text{较小}
+\ \Longrightarrow\quad G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
+\ \Longrightarrow\quad \boldsymbol v_c\approx G_v^{-1}K_vK_r\dot{\boldsymbol q}$$
+
+- $\dot{\boldsymbol q}$ 与 $\boldsymbol v_c$ 的比例关系**与机械手参数无关** ⇒ 速度控制对参数变化有固有鲁棒性；
+- $G_v^{-1}K_vK_r$ **对角** ⇒ 每关节独立 ⇒ **分散控制**；
+- 反之，$\boldsymbol\tau$ 与 $\boldsymbol v_c$ 之间隔着 $\dot{\boldsymbol q}$ ⇒ 精确算 $\tau_i$ 需知**全部关节**运动 ⇒ **集中控制**，且驱动器必须是**力矩源**（[@thm-7.2.A]、[7.2.5.5](ch07/sec7-2.md#sec-7.2.5)）。
+
+### I4 PD/PID 与稳态误差（教材补）
+
+$$\tau_i=K_{P_i}e_i+K_{D_i}\dot e_i
+\quad\Longrightarrow\quad
+J_i\ddot e_i+K_{D_i}\dot e_i+K_{P_i}e_i=d_i'$$
+
+$$\omega_n=\sqrt{K_P/J},\qquad
+\zeta=\frac{K_D}{2\sqrt{K_PJ}},\qquad
+e_{\mathrm{ss}}=\frac{d}{K_P}$$
+
+**常值扰动下 PD 有差**（$e_{\rm ss}\neq0$）；要零误差必须加积分：
+$\tau_i=K_{P_i}e_i+K_{I_i}\int e_i\,\mathrm dt+K_{D_i}\dot e_i$（1 型系统）（[7.2.2](ch07/sec7-2.md#sec-7.2.2)–[7.2.3](ch07/sec7-2.md#sec-7.2.3)）。
+
+### I5 重力补偿 PD 与增益整定（教材补）
+
+$$\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$$
+
+其中 $\boldsymbol g$ 必须用**实测** $\boldsymbol q$ 在线计算（用 $\boldsymbol q_d$ 等于开环补偿），平衡点移到 $\boldsymbol e=0$。整定 $K_P=J\omega_n^2$、$K_D=2\zeta J\omega_n$：$\zeta$ 取 $0.7$–$1$，$\omega_n$ 受采样率（闭环带宽 $\lesssim$ 采样频率的 $1/10$–$1/5$）与结构共振限制（[7.2.4](ch07/sec7-2.md#sec-7.2.4)、[7.2.7](ch07/sec7-2.md#sec-7.2.7)）。
+
+### I6 计算力矩（逆动力学）控制（教材补）
+
+$$\boldsymbol\tau=B(\boldsymbol q)\bigl(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e\bigr)
++C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}+\boldsymbol g(\boldsymbol q)$$
+
+$$\Longrightarrow\qquad \ddot{\boldsymbol e}+K_D\dot{\boldsymbol e}+K_P\boldsymbol e=\boldsymbol 0
+\qquad(\text{模型精确且未限幅})$$
+
+模型不准时右边多出 $B^{-1}[\Delta B\boldsymbol u+\Delta C\dot{\boldsymbol q}+\Delta\boldsymbol g]$ ⇒ 鲁棒/自适应；限幅是它最常见的失效原因（[7.3.2](ch07/sec7-3.md#sec-7.3.2)–[7.3.3](ch07/sec7-3.md#sec-7.3.3)）。
+
+### I7 操作空间（课件 §7.8 + 教材补）
+
+$$\dot{\boldsymbol x}=J_A(\boldsymbol q)\dot{\boldsymbol q},\qquad
+B_A\ddot{\boldsymbol x}_e+C_A\dot{\boldsymbol x}_e+\boldsymbol g_A
+=\boldsymbol\gamma_A-\boldsymbol h_A$$
+
+课件记 $B_A,C_A,\boldsymbol g_A,\boldsymbol\gamma_A$，文献与本章 7.4 记 $B_x,C_x,\boldsymbol g_x,\boldsymbol\tau_x$——**同义**，对照见 [6.7](ch06/sec6-7.md)。控制律与关节空间逐项对应：
+
+$$\boldsymbol F=B_x\bigl(\ddot{\boldsymbol x}_d+K_D\dot{\boldsymbol e}_x+K_P\boldsymbol e_x\bigr)
++C_x\dot{\boldsymbol x}+\boldsymbol g_x
+\quad\Longrightarrow\quad
+\ddot{\boldsymbol e}_x+K_D\dot{\boldsymbol e}_x+K_P\boldsymbol e_x=\boldsymbol 0$$
+
+**两处易错**：① 必须用**分析**雅可比 $J_A$（欧拉角导数 $\dot{\boldsymbol\phi}\neq$ 角速度 $\boldsymbol\omega$）；② $\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol F$（与静力学 $\boldsymbol\tau=J^{\mathrm T}F_e$ 同源）——别把 $J_A$ 与 $J$、转置与不转置混用（[7.4.2](ch07/sec7-4.md#sec-7.4.2)–[7.4.3](ch07/sec7-4.md#sec-7.4.3)）。
+
+### I8 三方案对照（选型用）
+
+| | 分散控制 | 集中 · 计算力矩 | 操作空间 |
+|:--|:--|:--|:--|
+| 反馈量 | $\boldsymbol q,\dot{\boldsymbol q}$ | $\boldsymbol q,\dot{\boldsymbol q}$ | $\boldsymbol x,\dot{\boldsymbol x}$（多为估计） |
+| 驱动器 | **速度源**（电压控制） | **力矩源**（电流环） | **力矩源** |
+| 误差方程 | 带扰动 $d_i'$ 的单轴二阶 | 解耦二阶（模型精确时） | 同左，在 $x$ 空间 |
+| 计算量 / 适用 | 最小 / 低速轻载点位 | 大 / 高速高精重载 | 最大 / 柔顺冗余 |
+
+（对照表与选型流程见 [7.4.5](ch07/sec7-4.md#sec-7.4.5)、[@method-7.2.A]。）
 ---
 
 ## 附 · 一张纸的「最小必背集」
 
-若只背这些条，背下面这二十条（老师明确点过考试权重的在最前）：
+若只背这些条，背下面这**二十四**条（老师明确点过考试权重的在最前）：
 
 1. **绿框逐列构造** $J_i$（转动 / 移动两式）——「肯定是要考的」；
 2. **$A_i^{i-1}$ 完整矩阵**与「第 4 列 = 三参数肉身」；
@@ -557,5 +646,9 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 18. **拉格朗日方程**与三步流程（选坐标 → $T,U$ → 代方程）；**广义力四件套**；
 19. **完整运动方程那一行** $B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+\boldsymbol g=\tau-J^{\mathrm T}h_e$，与 $h_{ijk}=\partial_kb_{ij}-\frac12\partial_ib_{jk}$；
 20. **两条结构性质**：(7.48) 反对称（Christoffel 选法）与 (7.49) $\dot q^{\mathrm T}N\dot q=0$（任意选法、能量守恒）；$\tau=Y\pi$ 线性（11/13/最小参数集）。
+21. **驱动接口与速度源／力矩源**：五式与 $\boldsymbol\tau=K_rK_tR_a^{-1}(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q})$；三条假设 ⇒ $\boldsymbol v_c\approx G_v^{-1}K_vK_r\dot{\boldsymbol q}$ ⇒ 可分散；要精确算 $\boldsymbol\tau$ 须整机模型 ⇒ 集中（用电流环给力矩源）；
+22. **PD 的稳态误差**：$e_{\mathrm{ss}}=d/K_P$（常值扰动下不为零）⇒ 零误差要加积分；重力补偿用**实测** $\boldsymbol q$，把平衡点移到 $\boldsymbol e=0$；
+23. **计算力矩律与误差方程**：$\boldsymbol\tau=B(\boldsymbol q)(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e)+C\dot{\boldsymbol q}+\boldsymbol g$ ⇒ $\ddot{\boldsymbol e}+K_D\dot{\boldsymbol e}+K_P\boldsymbol e=\boldsymbol 0$（靠 $B$ 正定可逆）；模型误差与限幅会让它退回「带扰动的分散系统」；
+24. **两套方案一句话**：任务在操作空间提出、控制动作在关节空间实现；关节空间方案的 $\boldsymbol x$ 段**开环**，操作空间方案的 $\boldsymbol x$ **难测**——「闭环通道里有什么量」才是方案判据。
 
 配套的常见错误清单见[易错点总表](preface-pitfalls.md)，术语查不到时用[术语索引](preface-index.md)。

@@ -105,8 +105,8 @@
 | [2](../course/ch02/overview.md) | 线性方程组的解法：高斯消去、LU、追赶法、迭代法、SOR | 第 2 章 | 第 3–6 讲 | 🚧 [讲座页承载](../lectures/lec03.md) |
 | [3](../course/ch03/overview.md) | 矩阵特征值与特征向量的计算：幂法、反幂法、位移反幂法 | 第 3 章 | 第 6–7 讲 | 🚧 [讲座页承载](../lectures/lec07.md) |
 | [4](../course/ch04/overview.md) | 非线性方程与非线性方程组的迭代解法 | 第 4 章 | 第 7–9 讲 | 🚧 [讲座页承载](../lectures/lec09.md)（第 8 讲待补） |
-| [5](../course/ch05/overview.md) | 插值与逼近 | 第 5 章 | 第 9 讲起 | 🚧 [开篇](../lectures/lec09.md) |
-| [6](../course/ch06/overview.md) | 数值积分与数值微分 | 第 6 章 | 未讲 | ⏳ 待写 |
+| [5](../course/ch05/overview.md) | 插值与逼近 | 第 5 章 | 第 9–12 讲 | ✅ [已成章](../course/ch05/overview.md) |
+| [6](../course/ch06/overview.md) | 数值积分与数值微分 | 第 6 章 | 第 12 讲 | 🚧 [已铺初稿](../course/ch06/overview.md)，待课堂回填 |
 | [7](../course/ch07/overview.md) | 常微分方程初值问题的数值解法 | 第 7 章 | 未讲 | ⏳ 待写 |
 | 补 | [数值线性代数工具箱](../ch02/overview.md)：内积、正交、投影、QR、条件数、谱、SVD | 1.3 节扩充 | 未系统讲 | ✅ [补充篇](../ch02/overview.md) |
 

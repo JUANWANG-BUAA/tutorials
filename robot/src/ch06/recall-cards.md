@@ -145,7 +145,7 @@ $$h_{ijk}(\boldsymbol q)=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\part
 $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
 +F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
 +\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e.$$
-**五左一右**：惯性、科氏/离心、粘滞摩擦、库仑摩擦、重力在左；执行器力矩减末端力在右。**约定**：$h_e$ 是末端**施加在环境上**的力；$\operatorname{sgn}\dot q$ 在 $\dot q=0$ 不连续（低速爬行的根源）。第 8 章的控制律就是**逐项补偿左边**。（[6.1.3.3 节](sec6-1-3.md)）
+**五左一右**：惯性、科氏/离心、粘滞摩擦、库仑摩擦、重力在左；执行器力矩减末端力在右。**约定**：$h_e$ 是末端**施加在环境上**的力；$\operatorname{sgn}\dot q$ 在 $\dot q=0$ 不连续（低速爬行的根源）。原书第 8 章的控制律就是**逐项补偿左边**。（[6.1.3.3 节](sec6-1-3.md)）
 :::
 
 ### C5 · Christoffel 与 $C$ 矩阵

@@ -68,7 +68,7 @@
 | 考点 | 一句话答案要点 | 回读锚点 | 30 秒自述模板 |
 |:--|:--|:--|:--|
 | 拉格朗日三步与广义力四件套 | $L=T-U$，$\frac{d}{dt}\frac{\partial L}{\partial\dot q_i}-\frac{\partial L}{\partial q_i}=\xi_i$；约束力不做虚功自动消失，右端补 $\tau$、两类摩擦、$J^{\mathrm T}h_e$ | [6.1](../ch06/sec6-1.md) | 「能量法省掉受力图；代价是非保守力全要自己补——约束越复杂越划算，外力越多个右端越要细心。」 |
-| 完整运动方程与各项命名 | $B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+g=\tau-J^{\mathrm T}h_e$；$b_{ii}$ = 锁住其他关节的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$） | [6.1.3](../ch06/sec6-1-3.md) | 「五左一右，每项有名字——第 8 章的控制律就是逐项补偿左边。」 |
+| 完整运动方程与各项命名 | $B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+g=\tau-J^{\mathrm T}h_e$；$b_{ii}$ = 锁住其他关节的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$） | [6.1.3](../ch06/sec6-1-3.md) | 「五左一右，每项有名字——原书第 8 章的控制律就是逐项补偿左边。」 |
 | 两条结构性质 | (7.48) Christoffel 选法下 $N=\dot B-2C$ 反对称；(7.49) 任意选法下 $\dot q^{\mathrm T}N\dot q=0$（能量守恒）；(A)⇒(B) 而 (B)⇏(A)。$\tau=Y(q,\dot q,\ddot q)\pi$ 对参数线性（11/13/最小参数集） | [6.2.1](../ch06/sec6-2-1.md)、[6.2.2](../ch06/sec6-2-2.md) | 「反对称管稳定性（无源性），线性性管辨识（最小二乘）——两条性质比公式本身更重要。」 |
 | 两种重力矩与平面臂数值 | $\boldsymbol g=\partial U/\partial q$ 在左端，$\tau_{\mathrm{grav}}=-\boldsymbol g$ 是实际重力广义力；静止保持 $\tau=\boldsymbol g$；平面臂 $h=-m_2a_1\ell_2s_2$ 生成 $C$，$b_{22}$ 常数、$b_{12}$ 含 $k_{r_2}I_{m_2}$ | [6.1.2](../ch06/sec6-1-2.md)、[6.3.2](../ch06/sec6-3-2.md) | 「先问符号约定再代数；平面臂是唯一要会手算的完整 $B,C,g$——两种重力矩差一个符号，混名则前馈整体反向。」 |
 

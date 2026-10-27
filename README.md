@@ -4,9 +4,9 @@
 
 | 教程 | 在线阅读 | 当前范围 |
 |---|---|---|
-| 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–6 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器、动力学（对应原书第 7 章） |
+| 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–7 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器、动力学（对应原书第 7 章）、运动控制（对应原书第 8 章） |
 | 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.8（相抵 / 满秩 / QR / Schur / 对角化 / 谱分解与幂等阵 / Jordan 分解上·λ 矩阵）。其余小节待素材补齐 |
-| 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 课堂主线七章完整正文（覆盖矩阵 + 定理/例题/习题 + 六张章节图）+ 补充篇 + 课堂精编（第 1–7、9、10 讲；第 8 讲占位）；第 10 讲补拉格朗日余项、牛顿差商与埃尔米特插值，并附重心公式、Runge 现象、数值实验与分层练习 |
+| 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 以课堂实录为主线（第 1–12 讲全程，含板书、老师强调考点与错词对照；第 10–11 讲含稳定计算、Runge 现象、数值实验与分层练习，第 12 讲含正交多项式族与数值积分分层练习）+ 教材正文七章 + 补充篇；复习层（公式卡 / 易混对照 / 术语索引 / 必读路径）+ 特训层（竞技场 / 考场模拟卷） |
 | 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 66 节 + 讲末材料」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
 | 🐧 Linux 系统与内核 | [开始阅读](https://juanwang-buaa.github.io/tutorials/linux/) | 六篇 85 章 + 项目篇：命令行与 Shell、计算机系统（CSAPP/OSTEP）、系统编程（Kerrisk）、Linux 内核、网络协议栈、云原生；附 11 个真实项目的从零复现；逐章覆盖 10 部母本 |
 | 🧭 Agent 系统工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/agent-systems/) | 4 篇 14 章 + 2 个项目：循环与状态、工具协议（JSON Schema/function calling/MCP）、沙箱与权限、上下文与记忆、规划与多智能体、评估/观测/安全/治理；与 Linux 卷、DL 卷交叉引用 |

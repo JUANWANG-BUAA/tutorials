@@ -1,6 +1,6 @@
 # 术语索引
 
-按**主题**归组的术语表：每个词给出一句话定义 + 首次出现的锚点。全文搜索能告诉你「哪些页面提到了这个词」，本页告诉你「这个词是哪一节的哪一个概念」——两者互补。
+按**主题**归组的术语表（十节、约 215 个术语 + 30 余组易混对照）：每个词给出一句话定义 + 首次出现的锚点。全文搜索能告诉你「哪些页面提到了这个词」，本页告诉你「这个词是哪一节的哪一个概念」——两者互补。
 
 ::: note 怎么用这一页
 - **读正文遇到生词**：搜不到或搜出一堆无关命中时，来这里定位「它是谁定义的」。
@@ -232,7 +232,7 @@
 | 视觉传感器 vision sensor | 相机 + 图像处理；可见光/红外/超声三类 | [@def-5.4.5] |
 | 相机校准矩阵 $\Xi$ | 内参数 × 透视 × 外参数的合成 | [@def-5.4.5] |
 
-## 九、动力学（6.1–6.3，对应原书 7.1–7.3）
+## 九、动力学（6.1–6.7，对应原书 7.1–7.8）
 
 | 术语 | 一句话含义 | 首次出现 |
 |:--|:--|:--|
@@ -255,6 +255,29 @@
 | 动力学参数 $\pi$ | 每连杆 11 个刚体参数（质量、一阶矩 3、张量 6、转子惯量）；含摩擦 13 | [6.2.2](ch06/sec6-2-2.md) |
 | 回归矩阵 regressor $Y$ | $\tau=Y(q,\dot q,\ddot q)\pi$ 的系数矩阵；对参数线性 ⇒ 最小二乘辨识 | [6.2.2](ch06/sec6-2-2.md) |
 | 最小参数集 | 结构决定的可辨识参数组合（平面臂 25→8→5） | [6.2.2](ch06/sec6-2-2.md) |
+
+## 十、运动控制（7.1–7.4，对应原书 8.1–8.2）
+
+| 术语 | 一句话含义 | 首次出现 |
+|:--|:--|:--|
+| 控制问题 control problem | 设计广义力 $\boldsymbol\tau(t)$ 的时程，使状态量跟踪期望并满足瞬态/稳态指标（超调、调节时间、稳态误差） | [7.1.1](ch07/sec7-1.md#sec-7.1.1) |
+| 自由空间运动控制 / 环境交互控制 | 与环境不接触、只控运动 / 末端受环境约束、还要控接触力（属第九章） | [7.1.2](ch07/sec7-1.md#sec-7.1.2) |
+| 关节空间控制方案 | 逆运动学把 $\boldsymbol x_d$ 变成 $\boldsymbol q_d$，闭环 $\boldsymbol q$；$\boldsymbol x$ 通道**开环** | [7.1.4.1](ch07/sec7-1.md#sec-7.1.4.1) |
+| 操作空间控制方案 | 直接在 $\boldsymbol x$ 空间闭环、不经逆解；$\boldsymbol x$ 难直接测量 ⇒ 优点只是潜在的 | [7.1.4.2](ch07/sec7-1.md#sec-7.1.4.2) |
+| 分散控制 decentralized | 逐关节独立设计，耦合当扰动（解耦控制），常用 PID 类线性方法 | [7.1.5](ch07/sec7-1.md#sec-7.1.5) |
+| 集中控制 centralized | 整机模型统一设计，显式考虑关节间动态交互，多用计算力矩/反馈线性化/鲁棒/自适应 | [7.1.5](ch07/sec7-1.md#sec-7.1.5) |
+| 独立关节近似 | 忽略关节间耦合、其余并入扰动 $d_i$；合法性来自大减速比的两条折算 | [7.2.1](ch07/sec7-2.md#sec-7.2.1) |
+| 驱动接口 | 关节力矩 $\boldsymbol\tau$ 与功率放大器控制电压 $\boldsymbol v_c$ 的五式关系（减速器 + 电机 + 放大器） | [7.2.5](ch07/sec7-2.md#sec-7.2.5) |
+| 反电动势 | $\boldsymbol v_a$ 中正比于电机角速度的项（$K_v\dot{\boldsymbol q}_m$）；它让 $\boldsymbol\tau$ 与 $\boldsymbol v_c$ 不成比例 | [7.2.5](ch07/sec7-2.md#sec-7.2.5) |
+| 速度源 / 力矩源 | 电压控制（$\dot{\boldsymbol q}\propto\boldsymbol v_c$，可分散）/ 电流控制（$\boldsymbol\tau\propto\boldsymbol v_c$，可集中） | [@thm-7.2.A] |
+| PD 控制 / 稳态误差 | $\tau_i=K_Pe_i+K_D\dot e_i$；常值扰动下 $e_{\mathrm{ss}}=d/K_P\neq0$，零误差须加积分 | [7.2.2](ch07/sec7-2.md#sec-7.2.2) |
+| 重力补偿 PD | $\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$，$\boldsymbol g$ 用**实测** $\boldsymbol q$，平衡点移到 $\boldsymbol e=0$ | [7.2.4](ch07/sec7-2.md#sec-7.2.4) |
+| 计算力矩前馈（课件题作「计算转矩前馈」） | 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ 算前馈 + PD 反馈；前馈可离线预算 | [7.2.6](ch07/sec7-2.md#sec-7.2.6) |
+| 计算力矩控制（逆动力学控制） | $\boldsymbol\tau=B(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e)+C\dot{\boldsymbol q}+\boldsymbol g$，用**实测**状态精确对消非线性 | [7.3.2](ch07/sec7-3.md#sec-7.3.2) |
+| 反馈线性化 | 用实测状态把非线性对象改造成 $n$ 个双积分器（大范围有效，区别于小偏差线性化） | [7.3.1](ch07/sec7-3.md#sec-7.3.1) |
+| 操作空间动力学模型 | $B_A\ddot{\boldsymbol x}_e+C_A\dot{\boldsymbol x}_e+\boldsymbol g_A=\boldsymbol\gamma_A-\boldsymbol h_A$（本章记 $B_x,C_x,\boldsymbol g_x,\boldsymbol\tau_x$） | [6.7](ch06/sec6-7.md)、[7.4.2](ch07/sec7-4.md#sec-7.4.2) |
+| 分析雅可比 $J_A$ | $\dot{\boldsymbol x}=J_A\dot{\boldsymbol q}$ 中的雅可比；姿态部分是欧拉角导数而非角速度 | [3.6](ch03/sec3-6.md)、[7.4.2](ch07/sec7-4.md#sec-7.4.2) |
+| 方案比较 | 分散/集中/操作空间按反馈量、驱动器、误差方程、计算量、适用工况对照 | [7.4.5](ch07/sec7-4.md#sec-7.4.5) |
 
 ## 附 · 易混术语对照
 
@@ -288,3 +311,7 @@
 | $k_{r}^{2}I_m$ / $k_rI_m$ | 进 $B$ 对角元（角速度平方）/ 进平面臂 $b_{12}$（总角速度交叉项） |
 | 11 / 13 / 最小参数集 | 刚体惯性参数（连杆）/ 加两摩擦（关节）/ 实际可辨识的组合（结构决定） |
 | $Y$ / $\pi$ | 回归矩阵，依赖 $q,\dot q,\ddot q$，每次重算 / 常参数向量，换负载才变 |
+| 关节空间 / 操作空间（方案） | 闭环 $\boldsymbol q$、$\boldsymbol x$ 开环 / 闭环 $\boldsymbol x$，但要测得出 $\boldsymbol x$ |
+| 分散控制 / 集中控制 | 单轴独立设计（耦合当扰动）/ 整机模型统一设计（显式抵消耦合）——按**工况**选，不按先进程度 |
+| 计算力矩（控制）/ 计算力矩前馈（课件题名「计算转矩前馈」） | 前馈用**实测** $\boldsymbol q,\dot{\boldsymbol q}$（精确对消）/ 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d$（可离线预算） |
+| 电压控制 / 电流控制 | $\dot{\boldsymbol q}\propto\boldsymbol v_c$（速度源，宜分散）/ $\boldsymbol\tau\propto\boldsymbol v_c$（力矩源，宜集中） |

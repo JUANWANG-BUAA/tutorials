@@ -234,7 +234,7 @@ $$\Pi_k(\tau)=q_k+v_k\tau+\frac{a_k}{2}\tau^2+\frac{j_k}{6}\tau^3,\qquad \tau=t-
 
 其中
 
-$$q_k=\Pi_k(t_k),\quad v_k=\dot\Pi_k(t_k),\quad a_k=\ddot\Pi_k(t_k),\quad j_k=\dddot\Pi_k(t_k).$$
+$$q_k=\Pi_k(t_k),\quad v_k=\dot\Pi_k(t_k),\quad a_k=\ddot\Pi_k(t_k),\quad j_k=\frac{\mathrm d^3}{\mathrm dt^3}\Pi_k(t_k).$$
 
 **这个写法的好处**：$\tau=0$ 处的值、一阶导、二阶导直接就是 $q_k,v_k,a_k$，不用解方程。
 
