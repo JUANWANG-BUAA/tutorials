@@ -518,6 +518,25 @@ $$\lambda\boldsymbol u^{\mathrm T}\boldsymbol v=(A\boldsymbol u)^{\mathrm T}\bol
 故 $(\lambda-\mu)\boldsymbol u^{\mathrm T}\boldsymbol v=0$；$\lambda\ne\mu$ 时 $\boldsymbol u\perp\boldsymbol v$。所以**跨特征值**的正交性不用做任何事；只有同一个特征值的特征子空间内部，随便取的基可能斜，才需要 Gram–Schmidt。例 3.6.6 中 $\boldsymbol x_1$ 与 $\boldsymbol x_2,\boldsymbol x_3,\boldsymbol x_4$ 的正交性正是免费的，$\boldsymbol z_2,\boldsymbol z_3,\boldsymbol z_4$ 才是 GS 的产物。
 :::
 
+::: method 为什么不能把任意特征向量组直接做 GS？
+
+实对称/正规这一前提不可省。对 $A=\begin{pmatrix}1&1\\0&2\end{pmatrix}$，$u=(1,0)^{\mathrm T}$ 属于 $1$，$v=(1,1)^{\mathrm T}$ 属于 $2$。二者无关，故 $[u,v]$ 可以完成一般对角化。但 GS 的第二步给出
+
+$$w=v-\frac{u^{\mathrm T}v}{u^{\mathrm T}u}u=(0,1)^{\mathrm T},\qquad Aw=(1,2)^{\mathrm T},$$
+
+$Aw$ 与 $w$ 不成比例，正交化后的第二列已不再是特征向量。原因是减掉了**另一个特征值**的方向：$A(v-cu)=2v-cu$，而想保留特征值 $2$ 需要 $2(v-cu)=2v-2cu$，两者相差 $cu$。
+
+若 $u,v$ 同属特征值 $\lambda$，则 $A(v-cu)=\lambda(v-cu)$，GS 才始终留在原特征子空间。这就是先按特征值分组、只在组内正交化的代数理由；正规时不同组又已自动正交，拼起来恰好得到酉基。
+
+**迁移练习。**设 $B=\operatorname{diag}(2,2,3)$，取 $u=(1,1,0)^{\mathrm T}$、$v=(1,0,0)^{\mathrm T}$。求 GS 去掉 $u$ 成分后的向量，并检查其特征值。
+
+::: sol 核对与回查
+
+$w=v-\frac12u=(1/2,-1/2,0)^{\mathrm T}$，$Bw=2w$；单位化可得 $(1,-1,0)^{\mathrm T}/\sqrt2$。若不确定为何这次保留特征向量身份，重读上面的同特征值等式；若以为所有可对角化矩阵都能如此得到酉基，回查 [@note-3.6-schur-special] 的非正规反例。
+:::
+:::
+
+
 ::: note 勘误提示（例 3.6.6 的文字） {#note-3.6-errata-e38}
 
 课件此页的文字有两处笔误：「尽管 **Q 阵**存在 4 个正交特征向量使得 **Q 可相似对角化**」应为「尽管 **B** 存在 4 个正交特征向量使得 **B 可正交对角化**」；「但**并意味**它的任意 4 个线性无关的特征向量都正交」应为「但**并不意味着**……」。数学内容不受影响，正文按更正后的表述讲解；详见[勘误 E3.8](errata.md)。

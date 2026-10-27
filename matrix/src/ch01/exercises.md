@@ -125,11 +125,11 @@ $\operatorname{span}(\boldsymbol{\theta})=\{k\boldsymbol{\theta}\}=\{\boldsymbol
 
 ::: ex A8 · 非齐次解集
 
-设 $A\boldsymbol{x}=\boldsymbol{b}$（$\boldsymbol{b}\neq\boldsymbol{\theta}$）有解，其解集 $S_b$ 是子空间吗？为什么？
+设 $A\boldsymbol{x}=\boldsymbol{b}$（$\boldsymbol{b}\neq\boldsymbol{0}$）有解，其解集 $S_b$ 是子空间吗？为什么？
 
 ::: sol 解答
 
-不是。$\boldsymbol{\theta}\in S_b$ 将意味着 $A\boldsymbol{\theta}=\boldsymbol{b}\neq\boldsymbol{\theta}$，矛盾——零向量必不在解集中（子空间第一否决项）。另外：若 $\boldsymbol{x}_1,\boldsymbol{x}_2$ 都是解，$A(\boldsymbol{x}_1+\boldsymbol{x}_2)=2\boldsymbol{b}\neq\boldsymbol{b}$，加法也不封闭。对照[@ex-1.2.1]：右端为零时解集才是子空间。
+不是。若 $\boldsymbol{0}\in S_b$，则应有 $A\boldsymbol{0}=\boldsymbol{b}$，但 $A\boldsymbol{0}=\boldsymbol{0}\neq\boldsymbol{b}$，矛盾——零向量必不在解集中（子空间第一否决项）。另外：若 $\boldsymbol{x}_1,\boldsymbol{x}_2$ 都是解，$A(\boldsymbol{x}_1+\boldsymbol{x}_2)=2\boldsymbol{b}\neq\boldsymbol{b}$，加法也不封闭。对照[@ex-1.2.1]：右端为零时解集才是子空间。
 
 :::
 
@@ -213,11 +213,11 @@ $$\boldsymbol{v}=(\boldsymbol{v}_1+\boldsymbol{w}_1)+(\boldsymbol{v}_2+\boldsymb
 
 且它与原拆法不同（相同则 $\boldsymbol{w}_1=\boldsymbol{w}_2=\boldsymbol{\theta}$，与「非平凡」矛盾）。于是「有一个向量表法唯一」与「不是直和」不能共存：**存在唯一 ⟹ 每个都唯一 ⟹ 直和**。
 
-**顺带纠正一个常见误判。** [@ex-1.6.1] 常被当成 (c) 的反例（"$xoy$ 与 $yoz$ 平面的和中 $(1,0,0)$ 表法唯一"），但那里 $(1,0,0)$ **同样**有多种表法：
+**顺带纠正一个常见误判。** [@ex-1.6.1] 常被当成 (c) 的反例（「$xoy$ 与 $yoz$ 平面的和中 $(1,0,0)$ 表法唯一」），但那里 $(1,0,0)$ **同样**有多种表法：
 
 $$(1,0,0)^{\mathrm T}=(1,\mu,0)^{\mathrm T}+(0,-\mu,0)^{\mathrm T}\qquad(\forall\,\mu\in\mathbb R),$$
 
-正与上面的平移论证一致——非直和中一个"漏网"的向量都不会有。
+正与上面的平移论证一致——非直和中一个「漏网」的向量都不会有。
 
 :::
 
@@ -244,7 +244,7 @@ $$(1,0,0)^{\mathrm T}=(1,\mu,0)^{\mathrm T}+(0,-\mu,0)^{\mathrm T}\qquad(\forall
 (a) 若平面 $W_1$ 与 $W_2$ 在几何上互相垂直（如墙角的两面），则 $W_1\perp W_2$；
 (b) 若 $V=W_1\oplus W_2$ 是正交直和分解，则 $W_2$ 必为 $W_1^{\perp}$；
 (c) 对子空间 $W$ 的**任意**基 $\boldsymbol{x}_1,\cdots,\boldsymbol{x}_k$，都有 $\operatorname{Proj}_{W}\boldsymbol{y}=\sum_i\frac{(\boldsymbol{y},\boldsymbol{x}_i)}{(\boldsymbol{x}_i,\boldsymbol{x}_i)}\boldsymbol{x}_i$；
-(d) 对任意 $A\in\mathbb C^{n\times n}$，$N(A)\cap R(A^{\mathrm H})=\{\boldsymbol{\theta}\}$。
+(d) 对任意 $A\in\mathbb C^{n\times n}$，$N(A)\cap R(A^{\mathrm H})=\{\boldsymbol{0}\}$。
 
 ::: sol 解答
 
@@ -531,7 +531,7 @@ $$R(A)=\operatorname{span}\{(1,2)^{\mathrm T}\}\subseteq\mathbb{C}^2,\qquad \dim
 
 (1) 前两个成比例（相关），故整组相关；又 $(1,1,0),(0,1,1)$ 不成比例，极大无关组 $\{(1,1,0)^{\mathrm T},(0,1,1)^{\mathrm T}\}$，秩 2。
 
-(2) 这正是[@ex-1.3.6] 勘误中的 $\boldsymbol{\alpha}$ 组：$\det\begin{pmatrix}1&1&1\\ 2&1&0\\ 1&1&1\end{pmatrix}=0$（第 1、3 行相同），且 $(1,2,1)^{\mathrm T}-2(1,1,1)^{\mathrm T}+(1,0,1)^{\mathrm T}=\boldsymbol{\theta}$，相关；任两个不成比例，极大无关组例如 $\{(1,2,1)^{\mathrm T},(1,1,1)^{\mathrm T}\}$，秩 2。
+(2) 这正是[@ex-1.3.6] 勘误中的 $\boldsymbol{\alpha}$ 组：$\det\begin{pmatrix}1&1&1\\ 2&1&0\\ 1&1&1\end{pmatrix}=0$（第 1、3 行相同），且 $(1,2,1)^{\mathrm T}-2(1,1,1)^{\mathrm T}+(1,0,1)^{\mathrm T}=\boldsymbol{0}$，相关；任两个不成比例，极大无关组例如 $\{(1,2,1)^{\mathrm T},(1,1,1)^{\mathrm T}\}$，秩 2。
 
 :::
 

@@ -131,7 +131,48 @@ $$\det J_P=-a_2a_3\,s_3\,(a_2c_2+a_3c_{23}).$$
 
 ::: sol 解答
 
-$J(\dot q^*+P\dot q_0)=v_e+JNN^{\mathrm T}\dot q_0=v_e+0=v_e$——用了 $JN=0$（[@thm-3.4.B]）。两者都是**到 $\mathcal N(J)$ 的投影**：$I-J^\dagger J$ 是伪逆诱导的正交投影（$W=I$ 时按欧氏内积正交），$NN^{\mathrm T}$ 是给定基 $N$ 的（非正交）投影；当 $N$ 的列标准正交时两者一致。作用相同：**不惊动末端的内部运动**。
+**(a) 为什么 $P=NN^{\mathrm T}$ 是到零空间的投影。**
+
+先看两件事实。其一，$N$ 是零空间基，所以 $JN=0$（[@thm-3.4.B]）。其二，$N$ 的列线性无关，$N$ 是 $n\times(n-r)$ 满列秩。
+
+计算 $P^2$：
+
+$$P^2=NN^{\mathrm T}NN^{\mathrm T}=N\left(N^{\mathrm T}N\right)N^{\mathrm T}.$$
+
+**这一步需要一个条件**：只有当 $N^{\mathrm T}N=I$（列标准正交）时才能写成 $N I N^{\mathrm T}=NN^{\mathrm T}=P$。若 $N$ 的列只是线性无关、并不正交，则 $N^{\mathrm T}N=G\neq I$（$G$ 是 Gram 矩阵），$P^2=N G N^{\mathrm T}\neq P$——**$P$ 不是投影**。
+
+所以教材这里隐含了「$N$ 取**标准正交**的零空间基」这一前提。本书 [3.4](sec3-4.md) 讨论零空间基时用的正是正交化后的 $N$，就是为了满足这个前提。**这一步是本题最容易被跳过、也最值得写清的地方**。
+
+**顺便说清一件容易含混的事**：$NN^{\mathrm T}$ 的**像空间**（值域）在任何情况下都等于 $N$ 的列空间 $=\mathcal N(J)$（因为 $N$ 列满秩，$NN^{\mathrm T}$ 与 $N$ 同秩、且 $\operatorname{range}(NN^{\mathrm T})\subseteq\operatorname{range}(N)$）。但「像空间对」不等于「是投影」——**投影还要求幂等 $P^2=P$**，而幂等只在 $N^{\mathrm T}N=I$ 时成立。这两件事要分开说。
+
+**(b) 为什么 $\dot q^*+P\dot q_0$ 仍是解。**
+
+$$J\left(\dot q^*+P\dot q_0\right)=J\dot q^*+JNN^{\mathrm T}\dot q_0=v_e+\underbrace{(JN)}_{=0}N^{\mathrm T}\dot q_0=v_e.$$
+
+**读法**：$P\dot q_0$ 落在 $\mathcal N(J)$ 里（因为 $P$ 的像就是 $\operatorname{span}(N)$），而 $J$ 把零空间映成零，所以加上它不改变末端速度。$\dot q_0$ 任意，就得到一整族解。
+
+**(c) $I-J^\dagger J$ 与 $NN^{\mathrm T}$ 的关系。**
+
+两者都是到 $\mathcal N(J)$ 的**正交投影**（在列标准正交的 $N$ 下）：
+
+$$I-J^\dagger J=N N^{\mathrm T}. \tag{3.46}$$
+
+**证明**：$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$（行满秩时）。于是
+
+$$J^\dagger J=J^{\mathrm T}(JJ^{\mathrm T})^{-1}J.$$
+
+先验它把零空间映到零：对任意 $\dot q\in\mathcal N(J)$，$J\dot q=0$ ⇒ $J^\dagger J\dot q=J^{\mathrm T}(JJ^{\mathrm T})^{-1}0=0$ ⇒ $(I-J^\dagger J)\dot q=\dot q$ ✓。
+
+再验它把行空间（$J$ 的行张成的空间）映到零：取 $\dot q=J^{\mathrm T}\boldsymbol a$，
+
+$$J^\dagger J J^{\mathrm T}\boldsymbol a=J^{\mathrm T}(JJ^{\mathrm T})^{-1}JJ^{\mathrm T}\boldsymbol a=J^{\mathrm T}\boldsymbol a=\dot q
+\ \Longrightarrow\ (I-J^\dagger J)\dot q=0\ ✓.$$
+
+一个线性映射在零空间上是恒等、在行空间上是零，且两空间正交互补（$\mathbb R^n=\mathcal N(J)\oplus\mathcal R(J^{\mathrm T})$）——这正是**正交投影**的定义，且投影方向恰是 $\mathcal N(J)$。
+
+**两个投影的关系**：$I-J^\dagger J$ 不依赖 $N$ 的取法（只要 $N$ 张成同一个零空间），$NN^{\mathrm T}$ 在 $N$ 标准正交时等于它。**若 $N$ 未正交化**，$NN^{\mathrm T}$ 连幂等都做不到（$P^2=N G N^{\mathrm T}\neq P$），此时它根本不是投影；正确的写法是 $N(N^{\mathrm T}N)^{-1}N^{\mathrm T}$（斜投影），它仍等于 $I-J^\dagger J$。
+
+**(d) 两者的共同意义**：都表示「**不惊动末端的内部运动**」——冗余机械手的自运动（self-motion）。同一个末端速度可以由无穷多组关节速度实现，差的就是零空间分量；控制上可以用它做避障、避奇异、优化姿态（[3.5.1](sec3-5.md#sec-3.5.1)）。
 
 :::
 
@@ -143,7 +184,54 @@ $J(\dot q^*+P\dot q_0)=v_e+JNN^{\mathrm T}\dot q_0=v_e+0=v_e$——用了 $JN=0$
 
 ::: sol 解答
 
-(a) $k\to0$ 得 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}=J^\dagger$（右伪逆）——[3.5.2](sec3-5.md#sec-3.5.2) 的「远离奇点取小、甚至趋 0」。(b) 对 $JJ^{\mathrm T}$ 做特征分解，特征值 $\sigma_i^2$，则 $J^*$ 的第 $i$ 个奇异方向增益为 $\sigma_i/(\sigma_i^2+k^2)\le 1/(2k)$——**有界**：$\sigma_i\to0$ 时增益不再发散（$\sigma_i/k^2$ 与 $k$ 同阶），这就是「容许误差换关节速度有界」；代价是末端速度有小偏差 $\delta$（教材 §3.5.2）。
+**(a) $k\to0$ 的极限。**
+
+$$J^*=J^{\mathrm T}\left(JJ^{\mathrm T}+k^2I\right)^{-1}\xrightarrow{k\to0}J^{\mathrm T}\left(JJ^{\mathrm T}\right)^{-1}=J^\dagger .$$
+
+**要说明为什么 $JJ^{\mathrm T}$ 可逆**：题设 $J$ 行满秩（$r\le n$ 且秩为 $r$），此时 $JJ^{\mathrm T}$ 是 $r\times r$ 正定矩阵，可逆。所以 $k=0$ 恰好退化为右伪逆——DLS 是**伪逆的正则化版本**，不是另一种算法。
+
+**(b) 奇异位形下 $k>0$ 的作用：把增益从「发散」压成「有界」。**
+
+设 $J$ 的奇异值分解 $J=U\Sigma V^{\mathrm T}$，奇异值 $\sigma_1\ge\cdots\ge\sigma_r\ge0$。则
+
+$$JJ^{\mathrm T}=U\Sigma^2U^{\mathrm T}
+\ \Longrightarrow\
+\left(JJ^{\mathrm T}+k^2I\right)^{-1}=U\left(\Sigma^2+k^2I\right)^{-1}U^{\mathrm T},$$
+
+$$J^*=V\Sigma U^{\mathrm T}U\left(\Sigma^2+k^2I\right)^{-1}U^{\mathrm T}
+=V\,\mathrm{diag}\!\left(\frac{\sigma_i}{\sigma_i^2+k^2}\right)U^{\mathrm T}. \tag{3.59}$$
+
+**逐个奇异方向的增益**：
+
+$$g_i(k)=\frac{\sigma_i}{\sigma_i^2+k^2}. \tag{3.59'}$$
+
+**先看 $k=0$**：$g_i=\sigma_i/\sigma_i^2=1/\sigma_i$。当 $\sigma_i\to0$（接近奇异）时 $g_i\to\infty$——这就是普通伪逆在奇异点附近关节速度爆炸的原因。
+
+**再看 $k>0$**。对 $g_i(k)$ 求极值：令 $\mathrm dg_i/\mathrm d\sigma_i=0$，
+
+$$\frac{\left(\sigma_i^2+k^2\right)-\sigma_i(2\sigma_i)}{\left(\sigma_i^2+k^2\right)^2}=0
+\ \Longrightarrow\
+k^2-\sigma_i^2=0
+\ \Longrightarrow\
+\sigma_i=k.$$
+
+此时
+
+$$g_i(k)\Big|_{\sigma_i=k}=\frac{k}{k^2+k^2}=\frac{1}{2k}.$$
+
+所以
+
+$$0\le g_i(k)\le\frac{1}{2k}\qquad\forall\sigma_i\ge0. \tag{3.59''}$$
+
+**这就是全部答案**：$k$ 给所有奇异方向的增益设了一个**上限 $1/(2k)$**。$\sigma_i\to0$ 时 $g_i\to\sigma_i/k^2\to0$（不是发散）——关节速度被**压住**了。
+
+**代价**：把 (3.59') 与理想增益 $1/\sigma_i$ 比较，
+
+$$\frac{g_i(k)}{1/\sigma_i}=\frac{\sigma_i^2}{\sigma_i^2+k^2}<1.$$
+
+所以在大奇异值方向（$\sigma_i\gg k$）几乎无损；在小奇异值方向，**解出的关节速度会偏小**，末端速度因此产生偏差 $\delta$（教材 §3.5.2）。这个偏差是有意为之：**用一点末端精度换关节速度有界**。
+
+**$k$ 的选法**：$k$ 太大 ⇒ 精度差（所有方向都被压）；$k$ 太小 ⇒ 接近奇异时仍会爆。工程上按「允许的最大关节速度」反推 $k\ge1/(2\dot q_{\max})$，或按最小奇异值的估计动态调整。
 
 :::
 
@@ -201,7 +289,18 @@ $$\det\bar J=a_1a_2\,s_2 .$$
 
 ::: sol 解答
 
-(a) $J_3=\begin{bmatrix}z_2\\ 0\end{bmatrix}$（$z_2=R_2^0$ 第三列 $=[c_1s_2,s_1s_2,c_2]^{\mathrm T}$）。(b) 关节 3 是**移动**关节——只产生沿轴的平移、不产生角速度（$J_{O_3}=0$）（[@thm-3.1.C]）。(c) 取 $\dot q=[0,0,\dot d_3,0,0,0]^{\mathrm T}$，末端线速度 $=z_2\dot d_3$（纯沿伸缩轴）；若方向不符，用 $J^{-1}$/伪逆解 $\dot q$——斯坦福满秩时直接逆。
+**(a) 直接套公式。** 关节 3 是**移动**关节，公式是 $J_{P_i}=z_{i-1}$、$J_{O_i}=0$：
+
+$$J_3=\begin{bmatrix}z_2\\ \boldsymbol 0\end{bmatrix},\qquad
+z_2=R_2^0\,\boldsymbol e_3=\begin{bmatrix}c_1s_2\\ s_1s_2\\ c_2\end{bmatrix}.$$
+
+**$z_2$ 是怎么来的**：斯坦福臂的前两个关节是「绕 $z_0$ 转 $\vartheta_1$」+「绕 $z_1$ 转 $\vartheta_2$」，且 $\alpha_1=\pi/2$ 把 $z_1$ 转成水平。所以 $z_2$ 是 $z_0$ 先绕 $z_1$ 转 $\vartheta_2$、再被 $\vartheta_1$ 带动——写成旋转矩阵即 $R_2^0=R_z(\vartheta_1)R_y(\vartheta_2)$（在 $\alpha_1=\pi/2$ 的建系下），其第三列就是上式。可直接验证：$|z_2|=1$ ✓，且 $\vartheta_2=0$ 时 $z_2=[0,0,1]^{\mathrm T}$（回到 $z_0$ 方向）✓。
+
+**(b) 形状为什么不同。** 转动列是「$z_{i-1}$ 与一个非零位置项」：$J_{P}=z\times(p_e-p_{i-1})\neq0$、$J_O=z$。移动列是「$z_{i-1}$ 与零」：$J_P=z$、$J_O=0$。**根源在于移动关节不改变下游的姿态**——它只平移，不旋转，所以角速度行必然为零。这不是斯坦福臂的特殊性，而是移动关节的普遍性质（SCARA 的第 3 列、笛卡儿臂的全部列都同理）。
+
+**(c) 沿 $z_2$ 进给。** 取 $\dot q=[0,0,\dot d_3,0,0,0]^{\mathrm T}$：末端的六维速度是 $J\dot q=J_3\dot d_3=[z_2\dot d_3;\ \boldsymbol 0]$——**纯沿 $z_2$ 平移、不转**。这是「只动一个关节」的做法。
+
+若要沿 $z_2$ 进给**同时保持姿态不变**，单一移动关节就够（因为移动不影响姿态）。但要沿**任意方向**进给并保持姿态，就得解 $J\dot q=[v;\ 0]$——斯坦福在非奇异位形满秩（6×6），可直接用 $J^{-1}$；在腕奇异或肩奇异处退化为伪逆或 DLS（[3.5.2](sec3-5.md#sec-3.5.2)）。
 
 :::
 
@@ -213,10 +312,29 @@ $$\det\bar J=a_1a_2\,s_2 .$$
 
 ::: sol 解答
 
-四轴全平行（$\alpha_i=0$）⇒ $z_0=z_1=z_2=z_3=[0,0,1]^{\mathrm T}$；$p_0=p_1=[0,0,0]^{\mathrm T}$、$p_2=[a_1c_1,\ a_1s_1,\ 0]^{\mathrm T}$、$p_3=p_2+[a_2c_{12},a_2s_{12},0]^{\mathrm T}$、$p_4$ 同 $p_3$（$d_3$ 沿 $z_3$ 平移同一 $z$ 坐标）。逐列：
+**约定**：$z$ 向上、$d_3$ 沿 $+z$（与 `verify_ch03_jac.py` 一致；若取 $d_3$ 向下，第 3 行第 3 列变号，其余不变）。
+
+**第一步：读几何量**。四轴全平行（$\alpha_i=0$），所以
+
+$$z_0=z_1=z_2=z_3=\begin{bmatrix}0\\0\\1\end{bmatrix}.$$
+
+各关节轴上取一点（由 $T_i^0$ 的第四列读）：
+
+$$p_0=p_1=\begin{bmatrix}0\\0\\0\end{bmatrix},\qquad
+p_2=\begin{bmatrix}a_1c_1\\ a_1s_1\\ 0\end{bmatrix},\qquad
+p_3=p_4=\begin{bmatrix}a_1c_1+a_2c_{12}\\ a_1s_1+a_2s_{12}\\ d_3\end{bmatrix}.$$
+
+（$p_3=p_4$：腕转轴过腕心，转动不移动该点。）
+
+**第二步：逐列套公式**（转动 $J_P=z_{i-1}\times(p_e-p_{i-1})$、$J_O=z_{i-1}$；移动 $J_P=z_{i-1}$、$J_O=0$），用 $[0,0,1]^{\mathrm T}\times[X,Y,Z]^{\mathrm T}=[-Y,X,0]^{\mathrm T}$：
+
+- 第 1 列：$z_0\times(p_e-p_0)=[-(a_1s_1+a_2s_{12}),\ a_1c_1+a_2c_{12},\ 0]^{\mathrm T}$，$J_{O_1}=z_0$；
+- 第 2 列：$z_1\times(p_e-p_1)=[-a_2s_{12},\ a_2c_{12},\ 0]^{\mathrm T}$，$J_{O_2}=z_1$；
+- 第 3 列（移动）：$J_{P_3}=z_2$，$J_{O_3}=0$；
+- 第 4 列：$p_e-p_3=0$ ⇒ $J_{P_4}=0$，$J_{O_4}=z_3$。
 
 $$J=\begin{bmatrix}
--[a_1s_1+a_2s_{12}] & -a_2s_{12} & 0 & 0\\
+-(a_1s_1+a_2s_{12}) & -a_2s_{12} & 0 & 0\\
 a_1c_1+a_2c_{12} & a_2c_{12} & 0 & 0\\
 0&0&1&0\\
 0&0&0&0\\
@@ -224,7 +342,9 @@ a_1c_1+a_2c_{12} & a_2c_{12} & 0 & 0\\
 1&1&0&1
 \end{bmatrix}$$
 
-第 4、5 行**恒为零**（末端绕 $x,y$ 转动自由度根本不存在）；秩 $\le\min(6,4)$，实际最大 4（前三行 $2\times2$ 块 $\det=a_1a_2s_2$ + 第三、六行）。完整推导与奇点分析见[作业三](homework03.md)。
+**第三步：读结构**。第 4、5 行**恒为零**——四轴都竖直，末端不可能有绕 $x$、$y$ 的角速度。第 6 行 $[1,1,0,1]$ 是三个转动关节的 $z$ 轴叠加（移动关节不贡献）。
+
+**秩**：$\le\min(6,4)=4$；又第 3 列 $e_3$、第 4 列 $e_6$ 与臂块（$e_1,e_2$ 张成）直和，所以只要 $s_2\neq0$ 就取到 4。完整推导与奇点分析见[作业三 3.3](homework03.md)。
 
 :::
 

@@ -164,6 +164,22 @@
 | 「求谱分解」 | 三步法 / 定理 3.7.2 | $P$ 按列读 $\boldsymbol\alpha_i$、$P^{-1}$ 按行读 $\boldsymbol\beta_i^{\mathrm H}$，按特征值分组；或 $E_i=f_i(A)/f_i(\lambda_i)$ |
 | 「用谱分解算 $A^k$ / $f(A)$ / $e^{At}$」 | 定理 3.7.1 | $f(A)=\sum_jf(\lambda_j)E_j$；先验 $\sum E_j=I$、$E_iE_j=0$，再逐项代 |
 | 「谱阵是不是正交投影」 | 命题 3.7.2 | 正规 $\Rightarrow$ $E_j^{\mathrm H}=E_j$；非正规单纯矩阵只有 $E_j^2=E_j$（斜投影） |
+| 「幂等阵怎么拆空间」 | 命题 3.7.3 | $\mathbb C^n=R(E)\oplus N(E)$、$N(E)=R(I-E)$；$E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$；$E$ 相似于 $\operatorname{diag}(I_r,0)$ |
+| 「求到子空间的正交投影矩阵」 | 例 3.7.3 | $A=[\boldsymbol a_1,\cdots,\boldsymbol a_m]$ 列满秩，$E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$；先验 $A^{\mathrm H}A$ 可逆、$E^{\mathrm H}=E$、$E^2=E$ |
+| 「解最小二乘」 | 例 3.7.4 | 法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$；$\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b$；拟合值 $A\boldsymbol x=E\boldsymbol b$，残差与 $R(A)$ 正交 |
+| 「判断 $\lambda$ 矩阵的秩」 | 定义 3.8.2 / 注 3 | 找最高阶**不恒为零**的子式；不是逐点数值秩（$\operatorname{diag}(\lambda,\lambda)$ 的秩是 $2$，不是 $0$） |
+| 「判断 $\lambda$ 矩阵可逆」 | 定理 3.8.1 | $\det A(\lambda)$ 是**非零常数**才可逆；满秩不够（$\operatorname{diag}(\lambda,\lambda+1)$ 满秩但不可逆） |
+| 「$\lambda$ 矩阵怎么消元」 | 定义 3.8.4 | 三种初等变换；第三种乘子必须是**多项式**；行变换左乘、列变换右乘；初等变换保秩 |
+| 「求 Smith 标准形」 | 定理 3.8.2 | 消成 $\operatorname{diag}(d_1,\cdots,d_r,0)$：$d_i$ 首 $1$、$d_1\mid\cdots\mid d_r$；除不尽时作带余除法把余式换到左上角 |
+| 「行列式因子 / 不变因子互换」 | 注 | $D_k=d_1\cdots d_k$，$d_k=D_k/D_{k-1}$；$D_k$ 是全部 $k$ 阶子式的首 $1$ 最大公因式 |
+| 「求初等因子」 | 定义 3.8.7 | 把每个 $d_i$ 拆成**素因子幂**，所有指数 $>0$ 的幂收进来；**重复的不能去重** |
+| 「初等因子反装不变因子」 | 注 | 同一素因子的幂**从大到小**依次填 $d_r,d_{r-1},\dots$，空缺填 $1$ |
+| 「两个 $\lambda$ 矩阵相抵吗」 | 定理 3.8.4 | 比「初等因子组 $\mathbf{+}$ 秩」；只比秩或只比初等因子都会错 |
+| 「$A\sim B$ 怎么判」 | 定理 3.8.5 | 比 $\lambda I-A$ 与 $\lambda I-B$ 的初等因子（特征矩阵秩自动相同，秩条件可省） |
+| 「写 Jordan 标准形」 | 定义 3.8.9 / 3.8.10 | 一个初等因子 $=(\lambda-\lambda_0)^s$ 对应一个 $s$ 阶块；块的分法唯一、次序自由 |
+| 「$A$ 可对角化吗」 | 推论 3.8.3 | 初等因子全一次 $\iff$ 不变因子无重根 $\iff m_A$ 无重根 |
+| 「求最小多项式（最快）」 | 定理 3.8.6 | $m_A=d_n=f_A/D_{n-1}$；或取初等因子的最小公倍式（指数最大者） |
+| 「求 $P$ 使 $P^{-1}AP=J$」 | 例 3.8.12 | 从**最高阶**广义特征向量反推：先解 $(A-\lambda I)^s\boldsymbol v=0$ 且低一阶不为 $0$，再逐次乘 $(A-\lambda I)$ |
 
 ## C. 八条公理：怎么记才不丢
 
@@ -318,7 +334,7 @@ python3 tools/export_cards.py --tags          # 第三列写章标签（Anki tag
 python3 tools/export_cards.py --only ch03     # 只导出第三章
 ```
 
-脚本会把三章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md)，共 72 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以三章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
+脚本会把三章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md)，共 97 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以三章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
 
 > 与[解题工具箱](toolbox.md)的分工：本页（与回忆卡）解决「记不记得住」，工具箱解决「做题时怎么下手、怎么验算」——考前两页各过一遍，再把[考场竞技场](ch03/arena.md)跑一轮计时赛，三件套齐活。
 
@@ -472,3 +488,15 @@ python3 tools/export_cards.py --only ch03     # 只导出第三章
 | 正交投影矩阵 | orthogonal projection matrix | $E^2=E=E^{\mathrm H}$；$\mathbb C^n=R(E)\oplus N(E)$ 且 $R(E)\perp N(E)$ | [3.7.4](ch03/sec37.md#sec-3.7.4) |
 | Lagrange 谱阵公式 | Lagrange formula for spectral matrices | $E_i=f_i(A)/f_i(\lambda_i)$，$f_i=\prod_{l\ne i}(\lambda-\lambda_l)$ | [3.7.3](ch03/sec37.md#sec-3.7.3) |
 | 预解式 | resolvent | $(\lambda I-A)^{-1}=\sum_jE_j/(\lambda-\lambda_j)$；谱分解的部分分式形式 | [3.7.3](ch03/sec37.md#sec-3.7.3) |
+| 正交投影矩阵（构造） | orthogonal projector | $E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$，投到 $R(A)$；要求 $A$ 列满秩 | [3.7.6](ch03/sec37.md#sec-3.7.6) |
+| 最小二乘 | least squares | $\min\|A\boldsymbol x-\boldsymbol b\|$；法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$ | [3.7.7](ch03/sec37.md#sec-3.7.7) |
+| $\lambda$ 矩阵 | lambda-matrix | 元素为 $\lambda$ 多项式的矩阵；特征矩阵 $\lambda I-A$ 是典型例子 | [3.8.1](ch03/sec38.md#sec-3.8.1) |
+| $\lambda$ 矩阵的秩 | rank of lambda-matrix | 非零子式的最高阶数；非零指多项式不恒为零 | [3.8.2](ch03/sec38.md#sec-3.8.2) |
+| $\lambda$ 矩阵的逆 | inverse of lambda-matrix | 存在同阶 $\lambda$ 矩阵 $B$ 使 $AB=BA=I$；充要条件是 $\det A(\lambda)$ 为非零常数 | [3.8.3](ch03/sec38.md#sec-3.8.3) |
+| 初等变换（$\lambda$ 矩阵） | elementary transformations | 换行 / 列、乘非零常数、加多项式倍；对应左乘 / 右乘初等矩阵 | [3.8.4](ch03/sec38.md#sec-3.8.4) |
+| 行列式因子 | determinant divisor | 全部 $k$ 阶子式的首 $1$ 最大公因式 $D_k$；只对 $1\le k\le r$ 定义 | [3.8.5](ch03/sec38b.md#def-3.8.5) |
+| Smith 标准形 | Smith normal form | $\operatorname{diag}(d_1,\dots,d_r,0)$，$d_i$ 首 $1$、$d_1\mid\cdots\mid d_r$；相抵下的唯一标准形 | [3.8.6](ch03/sec38b.md#thm-3.8.2) |
+| 不变因子 | invariant factor | Smith 标准形对角线上的 $d_i$；构成相抵的完全不变量 | [3.8.7](ch03/sec38b.md#def-3.8.6) |
+| 初等因子 | elementary divisor | 不变因子分解出的素因子幂的全体（多重集） | [3.8.7](ch03/sec38b.md#def-3.8.7) |
+| Jordan 块 | Jordan block | 对角元全 $\lambda_0$、超对角元全 $1$ 的 $s$ 阶方阵 $J_s(\lambda_0)$ | [3.8.10](ch03/sec38b.md#def-3.8.9) |
+| Jordan 标准形 | Jordan canonical form | 由初等因子逐个对应 Jordan 块拼成的分块对角阵；除块次序外唯一 | [3.8.10](ch03/sec38b.md#def-3.8.10) |

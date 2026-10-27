@@ -26,6 +26,32 @@ def mat_mul(a, b):
 
 
 class Homework05(unittest.TestCase):
+    def test_5_1_speed_generator_correction(self):
+        # (A4): omega_m = (K/kv) * v'_c / (1 + Ra*Fm/(kv*kt)).
+        # The published text claims the correction is 5% for the C2 parameters.
+        kv = kt = 0.2
+        Ra, Fm = 0.2, 0.01
+        ratio = Ra * Fm / (kv * kt)
+        self.assertAlmostEqual(ratio, 0.05, places=12)
+        self.assertAlmostEqual(1.0 / (1.0 + ratio), 0.952381, places=6)
+        # (B3): c_m = (kt/ki) * (v'_c - (kv/K) omega_m) / (1 + Ra/(K*ki)),
+        # with the 0.2% correction quoted for K = 1e4, ki = 0.01.
+        K, ki = 1e4, 0.01
+        ratio_b = Ra / (K * ki)
+        self.assertAlmostEqual(ratio_b, 0.002, places=12)
+        self.assertAlmostEqual(1.0 / (1.0 + ratio_b), 0.998004, places=6)
+        # Steady-state check: (5.9) and (5.10) at s = 0 reproduce (5.7) and
+        # the kv/K -> 0 form of (5.8).
+        Kv, Im, Cl = 1000.0, 0.0014, 0.0
+        vel_gain = 1.0 / kv * Kv          # (5.9) numerator at s = 0
+        self.assertAlmostEqual(vel_gain, 5000.0, places=9)
+        torque_gain = kt / (ki * Fm)      # (5.10) numerator at s = 0
+        self.assertAlmostEqual(torque_gain, 2000.0, places=9)
+        self.assertAlmostEqual(Im / Fm, 0.14, places=12)
+        # The two inequalities in Thm 5.2.B follow from one another.
+        self.assertLess(Ra / (kv * kt), 1.0 / Fm)
+        self.assertLess(Ra * Im / (kv * kt), Im / Fm)
+
     def test_5_6_force_transform(self):
         # tau_c = S(r) R f_s + R mu_s with r=[-0.3,0,0.2], R as in the text.
         r = [-0.3, 0, 0.2]
@@ -40,6 +66,19 @@ class Homework05(unittest.TestCase):
         # The two torque contributions are exact opposites.
         self.assertEqual(mat_vec(mat_mul(skew(r), R), f_s), [0, 6, 0])
         self.assertEqual(mat_vec(R, mu_s), [0, -6, 0])
+        # Independent check via |r x f| = |r||f| sin(theta): the text quotes
+        # |r| = 0.3606 m, theta = 56.31 deg, lever arm = 6.000 N.m.
+        lever = mat_vec(mat_mul(skew(r), R), f_s)
+        n_r = math.sqrt(sum(v * v for v in r))
+        n_f = math.sqrt(sum(v * v for v in f_c))
+        cos_t = sum(a * b for a, b in zip(r, f_c)) / (n_r * n_f)
+        self.assertAlmostEqual(n_r, 0.360555, places=6)
+        self.assertAlmostEqual(math.degrees(math.acos(cos_t)), 56.30993,
+                               places=4)
+        self.assertAlmostEqual(n_r * n_f * math.sin(math.acos(cos_t)), 6.0,
+                               places=9)
+        self.assertAlmostEqual(math.sqrt(sum(v * v for v in lever)), 6.0,
+                               places=9)
 
     def test_5_7_scara_camera(self):
         f, ax, ay, x0, y0 = 8.0, 79.2, 120.5, 250.0, 250.0
@@ -55,6 +94,18 @@ class Homework05(unittest.TestCase):
         self.assertAlmostEqual(p_c[0], 0.06569, places=5)
         self.assertAlmostEqual(p_c[1], 0.14142, places=5)
         self.assertAlmostEqual(p_c[2], 0.8, places=12)
+        # Intermediates published in the walked-through solution.
+        self.assertAlmostEqual(p_c[0], 0.0656854, places=7)
+        self.assertAlmostEqual(p_c[1], 0.1414214, places=7)
+        self.assertAlmostEqual(f * p_c[0] / p_c[2], 0.656854, places=6)
+        self.assertAlmostEqual(f * p_c[1] / p_c[2], 1.414214, places=6)
+        self.assertAlmostEqual(ax * f, 633.6, places=9)
+        self.assertAlmostEqual(ay * f, 964.0, places=9)
+        # Homogeneous row before the perspective division.
+        self.assertAlmostEqual(f * ax * p_c[0] + x0 * p_c[2], 241.618,
+                               places=3)
+        self.assertAlmostEqual(f * ay * p_c[1] + y0 * p_c[2], 336.330,
+                               places=3)
         # Official solution rounds p_c to three decimals first.
         for pc, expect in ((p_c, (302.02, 420.41)),
                            ([0.066, 0.141, 0.8], (302.27, 419.90))):

@@ -90,7 +90,7 @@ $g(A)=O$ 则 $g$ 是 $A$ 的零化多项式（[@def-3.5.2]）。有无穷多个�
 
 ::: sol D9 核对
 
-$A$ 相似于对角阵：存在可逆 $P$ 使 $P^{-1}AP=\Lambda$（[@def-3.6.1]）。它是 Schur 分解 $U^{\mathrm H}AU=\Lambda_{\text{上三角}}$ 当上方 $\ast$ 全为零时的特例（[@note-3.6-schur-special]）。**不等价**：互异特征值只是充分条件（[@cor-3.6.1]），$I_n$ 只有一重特征值却已是对角阵。准确的充要条件是 [@thm-3.6.1] 的五条。
+$A$ 相似于对角阵：存在可逆 $P$ 使 $P^{-1}AP=\Lambda$（[@def-3.6.1]）。一般相似对角化只要求 $P$ 可逆；Schur 分解要求变换矩阵酉，只有正规矩阵才能让 Schur 型成为对角阵，不能把所有单纯矩阵都当作其对角特例（[@note-3.6-schur-special]）。**不等价**：互异特征值只是充分条件（[@cor-3.6.1]），$I_n$ 只有一个互异特征值（代数重数为 $n$）却已是对角阵。准确的充要条件是 [@thm-3.6.1] 的五条。
 :::
 
 ### D10 · 酉相似对角化
@@ -131,6 +131,60 @@ $$E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm
 ::: sol D13 核对
 
 幂等：$E^2=E$（[@def-3.7.2]）；正交投影：$E^2=E=E^{\mathrm H}$（[@def-3.7.3]）。差别在 $E^{\mathrm H}=E$：幂等只保证 $\mathbb C^n=R(E)\oplus N(E)$、$E$ 沿 $N(E)$ 投到 $R(E)$；Hermite 再保证 $R(E)\perp N(E)$。幂等阵的特征值只能是 $0,1$，且 $\operatorname{rank}E=\operatorname{tr}E$（[@note-3.7-idempotent]）。
+:::
+
+### D14 · $\lambda$ 矩阵与它的秩
+
+什么叫 $\lambda$ 矩阵？$\lambda$ 矩阵的秩怎么定义？为什么不能说「$\lambda=0$ 时秩为 $1$，其余为 $2$」？
+
+::: sol D14 核对
+
+元素为 $\lambda$ 多项式的矩阵（[@def-3.8.1]）。秩是**非零子式的最高阶数**（[@def-3.8.2]），其中「非零」指该子式作为多项式**不恒为零**。例 $\operatorname{diag}(\lambda,\lambda+1)$：$\det=\lambda(\lambda+1)\not\equiv0$，故秩为 $2$；代入 $\lambda=0$ 得到数值秩 $1$，但那是**逐点数值秩**，不是 $\lambda$ 矩阵的秩（[@note-3.8-pointwise]）。更刺眼的是 $\operatorname{diag}(\lambda,\lambda)$：$\lambda=0$ 时是零矩阵，$\lambda$ 矩阵的秩仍为 $2$。
+:::
+
+### D15 · $\lambda$ 矩阵的可逆性
+
+写出可逆的定义与充要条件；「满秩」与「可逆」差在哪？举一个满秩但不可逆的例子。
+
+::: sol D15 核对
+
+存在同阶 $\lambda$ 矩阵 $B(\lambda)$ 使 $A(\lambda)B(\lambda)=B(\lambda)A(\lambda)=I$（[@def-3.8.3]）。充要条件：$|A(\lambda)|$ 是**非零常数**（[@thm-3.8.1]）。满秩只要求 $|A(\lambda)|\not\equiv0$；可逆要求它不能是次数 $\ge1$ 的多项式。例 $\operatorname{diag}(\lambda,\lambda+1)$ 满秩但不可逆，因为 $|A|=\lambda(\lambda+1)$ 不是常数，形式逆 $\operatorname{diag}(1/\lambda,1/(\lambda+1))$ 不是 $\lambda$ 矩阵（[@note-3.8-units]）。
+:::
+
+### D16 · 正交投影矩阵与最小二乘
+
+给 $\boldsymbol a_1,\cdots,\boldsymbol a_m$ 张成的子空间，正交投影矩阵怎么写？最小二乘解满足什么方程？
+
+::: sol D16 核对
+
+令 $A=[\boldsymbol a_1,\cdots,\boldsymbol a_m]$（列满秩），则 $E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$（[@ex-3.7.3]）；$A^{\mathrm H}A$ 可逆由 $\operatorname{rank}(A^{\mathrm H}A)=\operatorname{rank}A=m$ 保证。最小二乘 $\min\|A\boldsymbol x-\boldsymbol b\|$ 的解满足**法方程** $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$，唯一解 $\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b$；拟合值 $A\boldsymbol x=E\boldsymbol b$，残差 $\boldsymbol b-A\boldsymbol x$ 与 $R(A)$ 正交（[@ex-3.7.4]）。
+:::
+
+### D17 · 行列式因子、不变因子与 Smith 标准形
+
+写出三者的定义与换算关系。Smith 标准形与「对角阵」差在哪？
+
+::: sol D17 核对
+
+$D_k$：全部 $k$ 阶子式的首 $1$ 最大公因式，$1\le k\le r$（[@def-3.8.5]）。Smith 形：$\operatorname{diag}(d_1,\dots,d_r,0,\dots)$，$d_i$ 首 $1$ 且 $d_1\mid d_2\mid\cdots\mid d_r$（[@thm-3.8.2]）。不变因子就是这串 $d_i$（[@def-3.8.6]）。换算：$D_k=d_1\cdots d_k$，$d_k=D_k/D_{k-1}$（[@note-3.8-dk-smith]）。**对角阵不一定是 Smith 形**：还要求首 $1$ 与整除链，例 3.8.E 的 $\operatorname{diag}(\lambda-1,(\lambda-1)(\lambda-2),(\lambda-2)^2)$ 就不满足（[@ex-3.8.E]）。
+:::
+
+### D18 · 初等因子
+
+初等因子怎么定义？它是多重集还是集合？「初等因子」与「不变因子」谁信息更多？
+
+::: sol D18 核对
+
+把每个不变因子 $d_i$ 分解成素因子幂，**所有指数 $>0$ 的幂** $(\lambda-\lambda_j)^{e_{ij}}$ 合起来就是初等因子组（[@def-3.8.7]）。它是**多重集**：例 3.8.4 中 $\lambda$ 出现两次（[@note-3.8-note6]）。二者信息量：初等因子 $+$ 秩 $\iff$ 不变因子（[@note-3.8-assemble]），故初等因子单独**少一个秩**；对特征矩阵秩恒为 $n$，两者等价（[@method-3.8-similar-chain]）。
+:::
+
+### D19 · Jordan 块与 Jordan 标准形
+
+Jordan 块长什么样？给定 $A$ 怎么造它的 Jordan 标准形？唯一性到什么程度？
+
+::: sol D19 核对
+
+$J_s(\lambda_0)$：对角元全 $\lambda_0$、超对角元全 $1$、其余 $0$（[@def-3.8.9]）。造法：取 $\lambda I-A$ 的初等因子 $(\lambda-\lambda_i)^{n_i}$，每个写一个 $n_i$ 阶块，拼成 $J=\operatorname{diag}(J_1,\dots,J_s)$（[@def-3.8.10]）。唯一性：块的**分法**由初等因子固定，块的**次序**自由；约定排序后完全唯一（[@thm-3.8.5j]、[@note-3.8-unique-order]）。口诀：超对角 $1$ 必须连接**相同**对角元，对角元一变块就断（[@note-3.8-jordan-check]）。
 :::
 
 ## B. 定理卡
@@ -213,7 +267,7 @@ $A\in\mathbb C^{m\times n}_n$（列满秩，$n\le m$）可分解为 $A=UR$，$U$
 
 ::: sol T9 核对
 
-$A_1=A$，$A_k=Q_kR_k$，$A_{k+1}=R_kQ_k$（[@method-qr-algo]）。关键恒等式：$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$——**每步都是酉相似**，特征值全程不变；链式 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$。仅“特征值模互异”不保证整个矩阵收敛：$\begin{bmatrix}-1&1\\0&2\end{bmatrix}$ 的正线 QR 上三角元在 $1,-1$ 间交替。排序还取决于初始坐标旗标；$\operatorname{diag}(1,2)$ 不会自行交换顺序。实对称正定、简单正谱及适当初始分量可给出更强收敛结论，见 [@method-qr-algo]。等模也可能使子对角元不消失，例如正交旋转阵原地不动。
+$A_1=A$，$A_k=Q_kR_k$，$A_{k+1}=R_kQ_k$（[@method-qr-algo]）。关键恒等式：$A_{k+1}=Q_k^{\mathrm H}A_kQ_k$——**每步都是酉相似**，特征值全程不变；链式 $A_k=(Q_1\cdots Q_{k-1})^{\mathrm H}A(Q_1\cdots Q_{k-1})$。仅「特征值模互异」不保证整个矩阵收敛：$\begin{bmatrix}-1&1\\0&2\end{bmatrix}$ 的正线 QR 上三角元在 $1,-1$ 间交替。排序还取决于初始坐标旗标；$\operatorname{diag}(1,2)$ 不会自行交换顺序。实对称正定、简单正谱及适当初始分量可给出更强收敛结论，见 [@method-qr-algo]。等模也可能使子对角元不消失，例如正交旋转阵原地不动。
 :::
 
 ### T10 · 定理 3.5.1（Schur 引理，相似版）
@@ -355,6 +409,60 @@ $$(\lambda I-A)^{-1}=\sum_j\frac{E_j}{\lambda-\lambda_j},$$
 它是部分分式分解，极点 $\lambda_j$、留数 $E_j$；令 $\lambda=0$ 得 $A^{-1}=-\sum_jE_j/\lambda_j$（$0\notin\sigma(A)$）。
 :::
 
+### T25 · 命题 3.7.3（幂等阵四性质）
+
+列出四条；$R(E)\oplus N(E)$ 的直和怎么证？$E^*$ 为什么幂等？
+
+::: sol T25 核对
+
+（1）$E^{\mathrm H},E^*,I-E$ 幂等；（2）$E$ 单纯且相似于 $\operatorname{diag}(I_r,0)$；（3）$\mathbb C^n=R(E)\oplus N(E)$、$N(E)=R(I-E)$；（4）$E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$（[@prop-3.7.3]）。直和：$\boldsymbol x=E\boldsymbol x+(I-E)\boldsymbol x$ 给出和；交集里 $\boldsymbol y=E\boldsymbol x$ 且 $E\boldsymbol y=0$，故 $\boldsymbol y=E\boldsymbol y=0$。$E^*$（伴随矩阵）：满秩时 $E=I$；$\operatorname{rank}E\le n-2$ 时 $E^*=O$；$\operatorname{rank}E=n-1$ 时 $E^*$ 秩一、迹为 $1$，故 $(E^*)^2=E^*$（[@note-3.7-adjugate-idempotent]）。
+:::
+
+### T26 · 定理 3.8.1（$\lambda$ 矩阵可逆）与初等变换
+
+陈述定理并证明；三种初等矩阵的行列式各是多少？对 $\lambda$ 矩阵作初等变换为什么不改变秩？
+
+::: sol T26 核对
+
+$A(\lambda)$ 可逆 $\iff$ $|A(\lambda)|$ 是非零常数（[@thm-3.8.1]）。必要性：$AB=I\Rightarrow|A||B|=1$，两个多项式乘积为常数，故都为零次非零常数。充分性：$|A|=r\ne0$，取 $B=A^*/r$，$A^*$ 的元素是多项式，故 $B$ 是 $\lambda$ 矩阵。初等矩阵：$|P(i,j)|=-1$、$|P(i(k))|=k\ne0$、$|P(i,j(\varphi))|=1$，都是非零常数，故可逆（[@note-3.8-elementary-det]）。乘以可逆矩阵不改变秩，故初等变换保秩（[@note-3.8-invariants]）。
+:::
+
+### T27 · 行列式因子与 Smith 标准形（定理 3.8.2、推论 3.8.1）
+
+陈述 Smith 标准形定理；$D_k$ 与 $d_k$ 如何互换？唯一性怎么证？
+
+::: sol T27 核对
+
+任何 $\lambda$ 矩阵可经初等变换化为 $\operatorname{diag}(d_1,\dots,d_r,0,\dots)$，$d_i$ 首 $1$、$d_1\mid\cdots\mid d_r$（[@thm-3.8.2]）。换算：$D_k=d_1\cdots d_k$，$d_k=D_k/D_{k-1}$（[@note-3.8-dk-smith]）。唯一性：初等变换 $=$ 左右乘可逆 $\lambda$ 矩阵，由 Cauchy–Binet，$D_k$ 是「乘以可逆矩阵不变」的量（两边互相整除），故 $D_k$ 由 $A(\lambda)$ 本身决定，再由除法得 $d_k$ 唯一（[@cor-3.8.1]）。存在性四步：挑次数最低者 $\to$ 带余除法造余式 $\to$ 清空首行首列 $\to$ 归纳（[@thm-3.8.2] 证明）。
+:::
+
+### T28 · 相抵的三个不变量（定理 3.8.3、3.8.4、推论 3.8.2）
+
+相抵保持哪些量？哪一个是完全不变量？例 3.8.7 与 3.8.8 各说明什么？
+
+::: sol T28 核对
+
+相抵保持 Smith 形、秩、各阶行列式因子、不变因子、初等因子（[@thm-3.8.3]）。完全不变量：**不变因子**（单独即够，[@cor-3.8.2]）；或「初等因子 $+$ 秩」（[@thm-3.8.4]）。例 3.8.7：$\operatorname{diag}(\lambda,\lambda)$ 与 $\operatorname{diag}(1,\lambda^2)$ 同秩不相抵 $\Rightarrow$ 秩不是完全不变量（[@ex-3.8.7]）。例 3.8.8：$\operatorname{diag}(0,\lambda)$ 与 $\operatorname{diag}(1,\lambda)$ 初等因子相同但不相抵 $\Rightarrow$ 初等因子单独不够（[@ex-3.8.8]）。
+:::
+
+### T29 · 相似 $\iff$ 特征矩阵相抵（定理 3.8.5）
+
+陈述并证必要性；充分性为什么不能「代 $\lambda=A$」？
+
+::: sol T29 核对
+
+$A\sim B\iff\lambda I-A\cong\lambda I-B$（[@thm-3.8.5]）。必要性：$B=P^{-1}AP\Rightarrow\lambda I-B=P^{-1}(\lambda I-A)P$，常数可逆阵也是可逆 $\lambda$ 矩阵。充分性：把等式改写成 $(\lambda I-B)Q^*=qP(\lambda I-A)$（$Q^{-1}=Q^*/q$），再对次数作归纳逐层剥首项，最后得 $B=P_0AP_0^{-1}$。「代 $\lambda=A$」错在矩阵多项式代入不是环同态（[@note-3.8-eval-trap]）——结论会推出 $A=B$，显然荒谬。
+:::
+
+### T30 · Jordan 标准形定理与 Frobenius（定理 3.8.5′、3.8.6）
+
+陈述两条定理；$m_A$、$d_n$、特征值最大块阶三者的关系是什么？
+
+::: sol T30 核对
+
+Jordan 标准形定理：每个复方阵相似于其 Jordan 标准形，除块次序外唯一（[@thm-3.8.5j]）。Frobenius：$m_A(\lambda)=d_n(\lambda)$（[@thm-3.8.6]）。三者一致：$m_A=d_n=\prod_j(\lambda-\lambda_j)^{E_j}$，$E_j$ 就是 $\lambda_j$ 的最大块阶（[@note-3.8-three-multiplicities]）；另两个重数：代数重数 $=$ 以 $\lambda_j$ 为对角元的总阶数，几何重数 $=$ 块数 $=n-\operatorname{rank}(A-\lambda_jI)$。可对角化 $\iff$ 几何 $=$ 代数 $\iff$ 最大块阶 $=1$。
+:::
+
 ## C. 一张白纸的最终测试
 
 在白纸中央写「矩阵分解」，闭卷画出下面这张全景图，并在每条箭头上写出「工具」与「唯一性」两个标注：
@@ -365,12 +473,13 @@ $$
 \longrightarrow \text{QR}\ (A=QR/UR)
 \longrightarrow \text{Schur}\ (U^{\mathrm H}AU=\Lambda)
 \longrightarrow \text{对角化}\ (P^{-1}AP=\Lambda)
-\longrightarrow \text{谱分解}\ (A=\textstyle\sum_j\lambda_jE_j).
+\longrightarrow \text{谱分解}\ (A=\textstyle\sum_j\lambda_jE_j)
+\longrightarrow \text{Jordan（上）}\ (\lambda I-A).
 $$
 
-「工具」依次是：分块消元 → 选列空间基（RREF）→ GS 正交化（$+$ 基扩充）→ 对相似阵作 QR → 五条判据（求 $P$ / 正交化）→ 按特征值分组（读谱阵）。「唯一性」依次是：分解不唯一 / 标准形唯一 → 差可逆因子 $D$ → 正线唯一（去正线差对角酉阵）→ 对角元为特征值、顺序由 $U$ 定 → $P$ 可换、$\Lambda$ 的次序随 $P$ 换 → 谱阵 $E_j$ **唯一**（[@prop-3.7.1]（5））。
+「工具」依次是：分块消元 → 选列空间基（RREF）→ GS 正交化（$+$ 基扩充）→ 对相似阵作 QR → 五条判据（求 $P$ / 正交化）→ 按特征值分组（读谱阵）→ 把 $\lambda I-A$ 当多项式矩阵（初等变换）。「唯一性」依次是：分解不唯一 / 标准形唯一 → 差可逆因子 $D$ → 正线唯一（去正线差对角酉阵）→ 对角元为特征值、顺序由 $U$ 定 → $P$ 可换、$\Lambda$ 的次序随 $P$ 换 → 谱阵 $E_j$ **唯一**（[@prop-3.7.1]（5））→ Jordan 标准形除块次序外唯一（下半部分）。
 
-然后默写 T2、T4、T6、T9、T14、T16、T17、T20、T22、T24 十条定理。它们分别负责本章最常见的十类动作：**构造、分解、掰直、迭代、降次、记账、判定、升级、拆投影、算函数**。最后加试六问（对着[竞技场](arena.md)的必考点清单自评）：
+然后默写 T2、T4、T6、T9、T14、T16、T17、T20、T22、T24、T25、T26、T27、T29、T30 十五条定理。它们分别负责本章最常见的十五类动作：**构造、分解、掰直、迭代、降次、记账、判定、升级、拆投影、算函数、拆空间、判可逆、化标准形、翻译相似、定最简形**。最后加试八问（对着[竞技场](arena.md)的必考点清单自评）：
 
 ① $r_{kk}$ 何时等于 $\|\boldsymbol a_k\|$？
 ② 去掉「正线」两个字，$I_2$ 有几种 QR 分解、复方阵有几种？
@@ -378,5 +487,7 @@ $$
 ④ 五条判据里哪条是充要？两条判别口诀各是什么逻辑地位（哪条只是充分、哪条按字面是充要）？各举一个反例说明「反过来不成立」。
 ⑤ 正规矩阵与单纯矩阵差在哪？举出「单纯但不正规」与「正规但不 Hermite」各一例。
 ⑥ 谱阵的 Lagrange 公式为什么与 $P$ 的选取无关？用一句话说清「谱阵唯一、$P$ 不唯一」。
+⑦ $\lambda$ 矩阵的秩与「逐点数值秩」差在哪？举一个「满秩但不可逆」的例子，并说明差的是哪一类多项式。
+⑧ 正交投影矩阵 $A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 需要什么前提？最小二乘的法方程怎么来，残差为什么与 $R(A)$ 正交？
 
-六问全答对，本章才算「可以调用」。
+八问全答对，本章才算「可以调用」。

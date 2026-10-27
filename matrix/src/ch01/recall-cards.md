@@ -119,7 +119,7 @@ $W^{\perp}=\{\boldsymbol x\in V\mid\boldsymbol x\perp W\}$，即与 $W$ 中**每
 
 ::: sol T1 核对
 
-对非空子集 $W\subseteq V$，若任意 $\boldsymbol x,\boldsymbol y\in W$、$a,b\in F$ 都有 $a\boldsymbol x+b\boldsymbol y\in W$，则且仅则 $W$ 是子空间。第一行：「先确认 $W\subseteq V$ 且 $\boldsymbol{\theta}\in W$；任取……」
+对非空子集 $W\subseteq V$，若任意 $\boldsymbol x,\boldsymbol y\in W$、$a,b\in F$ 都有 $a\boldsymbol x+b\boldsymbol y\in W$，当且仅当 $W$ 是子空间。第一行：「先确认 $W\subseteq V$ 且 $\boldsymbol{\theta}\in W$；任取……」
 :::
 
 ### T2 · 唯一表示定理

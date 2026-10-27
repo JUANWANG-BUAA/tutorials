@@ -122,7 +122,7 @@ $$\boldsymbol{\alpha}+\boldsymbol{\beta}=\begin{pmatrix}2\\ a_2+b_2\\ \vdots\\ a
 
 **(1) 是。**任取 $\boldsymbol{\alpha},\boldsymbol{\beta}\in V_3$，其分量和分别为 0；则 $\boldsymbol{\alpha}+\boldsymbol{\beta}$ 的分量和为 $0+0=0$，$k\boldsymbol{\alpha}$ 的分量和为 $k\cdot 0=0$，故两者都落在 $V_3$ 中，封闭性成立。（$V_3$ 是 $\mathbb{R}^n$ 中过原点的「**超平面**」：由**一个**线性方程刻画的 $n-1$ 维平直对象——三维空间中的平面、二维空间中的直线都是它的特例；几何讨论见 [@ex-1.2.D]。）
 
-**(2) 不是。**最快的否决法：$0\cdot\boldsymbol{\alpha}=\boldsymbol{\theta}$ 的分量和为 $0\neq1$，即**零向量不在 $V_4$ 中**（$V_4$ 也不含任何「分量和为 0」的向量）；而任何向量空间必须含零向量。此外加法也不封闭：两个分量和为 1 的向量之和分量和为 2。
+**(2) 不是。**最快的否决法：$0\cdot\boldsymbol{\alpha}=\boldsymbol{0}$ 的分量和为 $0\neq1$，即**零向量不在 $V_4$ 中**（$V_4$ 也不含任何「分量和为 0」的向量）；而任何向量空间必须含零向量。此外加法也不封闭：两个分量和为 1 的向量之和分量和为 2。
 
 **(3) 不是。**对加法封闭（非负 + 非负 = 非负），但数乘不封闭：取 $\boldsymbol{\alpha}=(1,0)^{\mathrm T}\in V_5$，$(-1)\boldsymbol{\alpha}=(-1,0)^{\mathrm T}\notin V_5$。**这说明「只验证加法封闭」是不够的。**
 

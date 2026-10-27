@@ -64,7 +64,7 @@ $$T(\boldsymbol{\xi})=\lambda\boldsymbol{\xi}\iff(\boldsymbol{\varepsilon}_1,\cd
 1. 写出 $T$ 在给定基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_n$ 下的矩阵 $A$（第 $j$ 列 $=T(\boldsymbol{\varepsilon}_j)$ 的坐标，[@def-2.3.1]）；
 2. 解特征方程 $\det(\lambda I-A)=0$ 得特征值——**这既是 $A$ 的、也是 $T$ 的特征值**；
 3. 对每个 $\lambda$，解 $(A-\lambda I)\boldsymbol{x}=\boldsymbol{0}$ 得基础解系 $\boldsymbol{\alpha}_1,\cdots,\boldsymbol{\alpha}_s$；
-4. **乘回基**：$T$ 的特征向量是 $\boldsymbol{\xi}_k=(\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_n)\boldsymbol{\alpha}_k$（非零线性组合均为特征向量）。
+4. **乘回基**：$T$ 的特征向量是 $\boldsymbol{\xi}_k=(\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_n)\boldsymbol{\alpha}_k$（同一特征值对应的解空间中，非零线性组合仍为特征向量）。
 
 > 老师原话：「矩阵 $A$ 的特征向量……其实是线性变换特征向量的**坐标**……我们还要用这个坐标去**乘以我们所考虑的那一组基**，然后才能完成整个计算过程」（00:22:29–00:22:45）。**漏掉第 4 步、把坐标列当成 $V$ 中的向量交卷，是本节最高频的错误。**
 :::
@@ -243,6 +243,24 @@ J_3=\begin{bmatrix}1&1&\\&1&1\\&&1\end{bmatrix}.$$
 ::: note 为什么「几何重数」叫几何的？
 
 $A$ 作为一个映射 $\mathbb{C}^n\to\mathbb{C}^n$，$V_\lambda$ 是「方向被保持（只伸缩）」的向量全体；$\dim V_\lambda$ 数的是这种**独立方向**的个数。 Jordan 块的长度则记录「方向虽不变、但搅进了多少链式结构」——代数重数数根，几何重数数方向。二者相等与否，正是日后「可否对角化」的分水岭。
+:::
+
+::: ex 参数只改一个元素，为什么独立特征方向会少一条？
+
+取 $A_t=\begin{pmatrix}1&t&0\\0&1&0\\0&0&2\end{pmatrix}$，$t\in\mathbb R$。无论 $t$ 取什么值，特征多项式总是 $(\lambda-1)^2(\lambda-2)$；但解 $\lambda=1$ 的特征方程得到
+
+$$(A_t-I)\boldsymbol x=0\quad\Longleftrightarrow\quad tx_2=0,\ x_3=0.$$
+
+当 $t=0$，$x_1,x_2$ 都自由，$V_1=\operatorname{span}\{e_1,e_2\}$，几何重数为 $2$；当 $t\ne0$，$x_2$ 被迫为零，只剩 $V_1=\operatorname{span}\{e_1\}$，几何重数为 $1$。而 $V_2=\operatorname{span}\{e_3\}$ 始终只有一维。因此 $t=0$ 时可对角化，$t\ne0$ 时不可对角化。决定答案的是方程组的自由度，不是特征多项式里重复写了几个根。
+
+顺便检验一个易混点：$e_1$ 和 $e_3$ 分别是特征向量，但 $A_t(e_1+e_3)=e_1+2e_3$ 与 $e_1+e_3$ 不成比例。所以「非零线性组合仍是特征向量」只适用于**同一个特征子空间内部**。
+
+**迁移练习。**取 $t=2$，求 $V_1$、$V_2$ 及全部特征向量；若有人列出 $e_1,2e_1,e_3$ 就说凑齐了三条，应指出哪一步错误？
+
+::: sol 核对与回查
+
+$V_1=\operatorname{span}\{e_1\}$、$V_2=\operatorname{span}\{e_3\}$；全部特征向量为 $ae_1$（$a\ne0$）或 $be_3$（$b\ne0$）。$e_1,2e_1$ 相关，三个向量只提供两个独立方向。若把「个数」当作「维数」，回到 [1.3.1](../ch01/sec13.md#sec-1.3.1)；能从自由变量数出维数后，再到 [3.6.1](../ch03/sec36.md#sec-3.6.1) 把它翻译成对角化判据。
+:::
 :::
 
 <a id="sec-2.4.4"></a>

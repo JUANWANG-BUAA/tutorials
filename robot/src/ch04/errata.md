@@ -87,7 +87,7 @@ $$\texttt{created\_sec}=\operatorname{round}(\texttt{filename}_{\mathrm{ms}}/100
 - $\frac94,-\frac32,-\frac34$：插值、端点速度/加速度为零、$t=1,2,3$ 处 $C^0/C^1/C^2$ 连续**全部通过**（含虚拟点 $q_2=\frac38$、$q_4=\frac{23}8$）；
 - $\frac{51}{23},-\frac{30}{23},-\frac{18}{23}$：递推得 $v_5=\frac{3}{23}\neq0$，**末速不为零**，不满足题设。
 
-**处理**：以能通过全部约束检验的 $\frac94,-\frac32,-\frac34$ 为准，重写 [作业四 4.5](homework04.md#45-三次样条两个虚拟点与三对角系统) 步骤二/三（新的定解方程组为
+**处理**：以能通过全部约束检验的 $\frac94,-\frac32,-\frac34$ 为准，重写 [作业四 4.5](homework04.md#hw4-45) 步骤二/三（新的定解方程组为
 $\begin{bmatrix}1&1/6&0\\2&11/6&1\\1&1&1\end{bmatrix}\boldsymbol a=\begin{bmatrix}2\\1\\0\end{bmatrix}$，
 三行分别来自 $q_3=2$、$q_5=3$、$v_5=0$），并同步[习题 C5](exercises.md)。全部检验已逐条编码进
 `tools/verify_ch04_traj.py` 第 5 组（`make verify`）。**若官方解答手册确以 $\frac{51}{23}$ 组为答案，则该答案与本题端点条件不自洽**——以能通过端点与连续性检验的解为准。

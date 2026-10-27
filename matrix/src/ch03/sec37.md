@@ -14,7 +14,7 @@ $$A=\sum_{j=1}^{m}\lambda_jE_j,$$
 
 ::: note 素材与说明（本节无录播）
 
-本页依据课程第三章课件 **3.7 谱分解与幂等阵**（22 页，存于本地归档 `_sources/matrix/3.7-谱分解1.pdf`）整理。**本节无对应录播**，故不引用课堂口述与时间戳：课件的定义、定理、命题、注记与例题**照录并保留原编号**（定义 3.7.1–3.7.3、定理 3.7.1–3.7.2、命题 3.7.1–3.7.2、注 1–注 2、例 3.7.1–3.7.2 及例 3.7.2 续）；课件省略的证明（命题 3.7.1 的（5）唯一性、定理 3.7.1、定理 3.7.2、命题 3.7.2）由本编补出并逐处标注「本编补」。本编新增例题用字母编号（[@ex-3.7.A]–[@ex-3.7.C]），新增注记用「本编注」标注。
+本页依据课程第三章课件 **3.7 谱分解与幂等阵** 的两份整理：`_sources/matrix/3.7-谱分解1.pdf`（22 页，谱分解与谱阵）与 `3.7-谱分解2.pdf`（15 页，幂等阵性质、正交投影与最小二乘）。**本节无对应录播**，故不引用课堂口述与时间戳：课件的定义、定理、命题、注记与例题**照录并保留原编号**（定义 3.7.1–3.7.3、定理 3.7.1–3.7.2、命题 3.7.1–3.7.3、注 1–注 2、例 3.7.1–3.7.4 及例 3.7.2 续；两份课件的两道无编号「思考」——「谱分解总存在吗」与「为什么 Hermite 幂等阵称为正交投影阵」——同样照录，见 [@note-3.7-existence] 与 [@note-3.7-why-orthogonal]）；课件省略的证明（命题 3.7.1 的（5）唯一性、定理 3.7.1、定理 3.7.2、命题 3.7.2、命题 3.7.3 的（1）$E^*$ 部分与（3））由本编补出并逐处标注「本编补」。本编新增例题用字母编号（[@ex-3.7.A]–[@ex-3.7.F]），新增注记用「本编注」标注。
 :::
 
 <a id="sec-3.7.1"></a>
@@ -587,26 +587,303 @@ $$\mathrm iE_+-\mathrm iE_-=\begin{bmatrix}0&-1\\ 1&0\end{bmatrix}=A.$$
 三层的前提依次加强，结论也依次加强：**投影 $\to$ 正交投影 $\to$ 实正交投影**。考试里看到「求正交矩阵 $Q$」，就要落到第三层；看到「求可逆 $P$」，第二层都用不上，第一层足够。
 :::
 
-::: preview 课程预告 · 从谱分解到奇异值分解
+<a id="sec-3.7.5"></a>
 
-谱定理的适用范围有一个硬边界：$A$ 必须是**方阵**，而且必须**正规**。一般的长方矩阵 $A\in\mathbb C^{m\times n}$ 两条都不满足，但它仍有一套「几乎一样好」的分解——**奇异值分解**：
+## 3.7.5 幂等阵的四个性质：投影的代数画像
 
-$$A=U\Sigma V^{\mathrm H},$$
+前面把幂等阵当成谱阵的「副产品」：谱阵满足 $E_j^2=E_j$，于是顺手得到幂等阵。但幂等阵本身有一套完整的几何。课件的后半段用命题 3.7.3 把四件事收在一起——它们分别回答：**取共轭转置、取伴随、取补之后还是不是幂等？它相似于什么？空间怎么拆？值域里的向量被投影后变不变？**
 
-其中 $U\in\mathbb C^{m\times m}$、$V\in\mathbb C^{n\times n}$ 酉，$\Sigma\in\mathbb R^{m\times n}$ 是非负对角阵。它的证明正是把谱定理用在 $A^{\mathrm H}A$（Hermite、半正定）上：$A^{\mathrm H}A=V\Sigma^{\mathrm T}\Sigma V^{\mathrm H}$，奇异值是 $A^{\mathrm H}A$ 特征值的平方根，右奇异向量是 $V$ 的列；对非零奇异值，左奇异向量由 $U=AV\Sigma^{-1}$ 给出，零奇异值方向再补齐。所以 3.7 的谱分解不是终点，而是 SVD 的「方阵预演」；[3.2](sec32.md) 预告的广义逆、最小二乘，也都从 SVD 出发。
+::: prop 命题 3.7.3 · 幂等阵的性质 {#prop-3.7.3}
+
+设 $E\in\mathbb C_r^{n\times n}$ 是幂等阵（即 $E^2=E$，$\operatorname{rank}E=r$），则
+
+（1）$E^{\mathrm H}$、$E^{*}$ 和 $I-E$ 都是幂等矩阵；
+
+（2）$E$ 为单纯阵且相似于对角阵
+
+$$\Lambda=\begin{bmatrix}I_r&0\\0&0\end{bmatrix};$$
+
+（3）$\mathbb C^n=R(E)\oplus N(E)$，且 $N(E)=R(I-E)$；
+
+（4）$E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$，其中 $\boldsymbol x\in\mathbb C^n$。
+:::
+
+::: proof 证明（课件给（2）的分析与（4）的完整证明；（1）的 $E^*$ 部分与（3）由本编补）
+
+**（1）** $(E^{\mathrm H})^2=(E^2)^{\mathrm H}=E^{\mathrm H}$；$(I-E)^2=I-2E+E^2=I-E$。$E^*$ 指**伴随矩阵**（本课程记 $\operatorname{adj}E$，课件沿用 $E^*$）：若 $E$ 满秩则 $E=I_n$、$E^*=I_n$；若 $\operatorname{rank}E\le n-2$，则所有 $n-1$ 阶子式为 $0$，$E^*=O$；若 $\operatorname{rank}E=n-1$，则 $E^*$ 秩为 $1$，且由 $EE^*=(\det E)I=O$、$E^*E=O$ 及 $\operatorname{tr}E^*=1$ 可得 $(E^*)^2=E^*$（细节见下方本编补注）。
+
+**（2）** 令 $\varphi(\lambda)=\lambda(\lambda-1)$。由 $E^2=E$ 得
+
+$$\varphi(E)=E^2-E=O,$$
+
+即 $\varphi$ 是 $E$ 的零化多项式。$\varphi$ 的根为 $0,1$，**互异**，故由 [@thm-3.6.1]（5）$E$ 是单纯阵。幂等阵的特征值只能满足 $\lambda^2=\lambda$，即 $\lambda=0$ 或 $1$；设 $1$ 出现 $r$ 次，则 $E$ 相似于 $\operatorname{diag}(I_r,0)$。又相似不改变秩与迹，故
+
+$$\operatorname{rank}E=\operatorname{tr}E=r.$$
+
+若 $E$ 满秩，则 $r=n$，$\Lambda=I_n$，即 $E=P^{-1}I_nP=I_n$。
+
+**（3）** 对任意 $\boldsymbol x\in\mathbb C^n$，
+
+$$\boldsymbol x=E\boldsymbol x+(I-E)\boldsymbol x,$$
+
+第一项属于 $R(E)$，第二项属于 $R(I-E)$，故 $\mathbb C^n=R(E)+R(I-E)$。又
+
+$$N(E)=\{\boldsymbol x\mid E\boldsymbol x=\boldsymbol 0\}=\{(I-E)\boldsymbol x\mid \boldsymbol x\in\mathbb C^n\}=R(I-E),$$
+
+其中第二个等号用了 $E\boldsymbol x=0\iff\boldsymbol x=(I-E)\boldsymbol x$。最后看交集：若 $\boldsymbol y\in R(E)\cap N(E)$，写 $\boldsymbol y=E\boldsymbol x$，则
+
+$$\boldsymbol y=E\boldsymbol x=E^2\boldsymbol x=E(E\boldsymbol x)=E\boldsymbol y=\boldsymbol 0.$$
+
+故和是直和：$\mathbb C^n=R(E)\oplus N(E)$。
+
+**（4）** 若 $E\boldsymbol x=\boldsymbol x$，则 $\boldsymbol x$ 是 $E$ 的像，故 $\boldsymbol x\in R(E)$。反之，若 $\boldsymbol x\in R(E)$，则存在 $\boldsymbol y$ 使 $\boldsymbol x=E\boldsymbol y$，于是
+
+$$E\boldsymbol x=E(E\boldsymbol y)=E^2\boldsymbol y=E\boldsymbol y=\boldsymbol x. \qquad\blacksquare$$
+:::
+
+::: note 本编补 · $E^*$ 为什么也是幂等阵 {#note-3.7-adjugate-idempotent}
+
+设 $E^2=E$，$\operatorname{rank}E=r$。幂等阵可对角化（（2）），特征值为 $1$（$r$ 个）与 $0$（$n-r$ 个）。以下设 $n\ge2$；$n=1$ 时 $E$ 只能是 $0$ 或 $1$，$E^*=1$ 幂等，结论显然。
+
+- $r=n$：$E=I_n$，$E^*=I_n$；
+- $r\le n-2$：$E$ 的所有 $n-1$ 阶子式为 $0$，故 $E^*=O$；
+- $r=n-1$：$E^*\ne O$，且 $\operatorname{rank}E^*=1$。由 $EE^*=(\det E)I=O$ 与 $E^*E=O$，可写 $E^*=\boldsymbol u\boldsymbol v^{\mathrm H}$，并得 $E\boldsymbol u=\boldsymbol 0$、$\boldsymbol v^{\mathrm H}E=\boldsymbol 0$。于是
+  $$(E^*)^2=\boldsymbol u\boldsymbol v^{\mathrm H}\boldsymbol u\boldsymbol v^{\mathrm H}=(\boldsymbol v^{\mathrm H}\boldsymbol u)E^*.$$
+  另一方面，$E^*$ 的特征值是 $E$ 的 $n-1$ 个特征值之积：$r=n-1$ 个 $1$ 中取 $n-1$ 个，恰有一个乘积为 $1$，其余为 $0$，故 $\operatorname{tr}E^*=1$。秩一矩阵的迹就是 $\boldsymbol v^{\mathrm H}\boldsymbol u$，所以 $\boldsymbol v^{\mathrm H}\boldsymbol u=1$，$(E^*)^2=E^*$。
+
+三种情形都给出 $E^*$ 幂等。这个结论对**伴随矩阵**成立；若你的教材用 $E^*$ 表示逐元共轭，结论更直接：$\overline{E}^{\,2}=\overline{E^2}=\overline E$。
+:::
+
+**四条的读法**：（1）说「幂等」这个性质对转置、伴随、取补都稳定；（2）说幂等阵是**最规矩的单纯阵**——特征值只有 $0,1$，对角化后就是「前 $r$ 个坐标保留、后 $n-r$ 个坐标清零」；（3）说空间被 $E$ 沿 $N(E)$ 投到 $R(E)$；（4）说「已经在 $R(E)$ 里的向量，再投一次不动」——这是投影的**不动点性质**，也是「幂等」两个字的几何含义。
+
+::: think 思考（课件原文）· 为什么 Hermite 幂等阵称为正交投影阵？ {#note-3.7-why-orthogonal}
+
+**分析**：考查 [@prop-3.7.3]（3）给出的分解 $\mathbb C^n=R(E)\oplus N(E)$。任取 $\boldsymbol x\in R(E)$、$\boldsymbol y\in N(E)$，写 $\boldsymbol x=E\boldsymbol z$，则用 $E^{\mathrm H}=E$ 与 $E\boldsymbol y=\boldsymbol 0$：
+
+$$(\boldsymbol x,\boldsymbol y)=\boldsymbol y^{\mathrm H}\boldsymbol x=\boldsymbol y^{\mathrm H}E\boldsymbol z=(E^{\mathrm H}\boldsymbol y)^{\mathrm H}\boldsymbol z=(E\boldsymbol y)^{\mathrm H}\boldsymbol z=0.$$
+
+因此
+
+$$R(E)\perp N(E),\qquad \mathbb C^n=R(E)\oplus N(E)$$
+
+（这个直和是**正交直和**：两个子空间互相垂直。）
+
+**几何**：任一向量 $\boldsymbol x$ 被拆成互相垂直的两段——$\boldsymbol x=E\boldsymbol x+(\boldsymbol x-E\boldsymbol x)$，第一段落在 $R(E)$ 里，第二段（残差）落在 $N(E)$ 里。投影沿**垂直方向**落到 $R(E)$ 上，这正是「**正交**投影」四个字的含义；[3.7.6](#sec-3.7.6) 的最小二乘图里「$\boldsymbol b$ 到 $R(A)$ 的最近点」用的就是这段垂直性。
+
+（反方向也成立：沿 $N(E)$ 到 $R(E)$ 的投影若满足 $R(E)\perp N(E)$，则 $E^{\mathrm H}=E$——完整的等价刻画见 [@note-3.7-orth-proj]。）
+:::
+
+<a id="sec-3.7.6"></a>
+
+## 3.7.6 正交投影矩阵的构造：从一条向量到一列向量
+
+[3.7.4](#sec-3.7.4) 的谱阵是「已经知道特征子空间」时的正交投影。实际计算里更常见的是另一副面孔：**给一组基 $\boldsymbol a_1,\cdots,\boldsymbol a_m$，求到 $V_m=\operatorname{span}(\boldsymbol a_1,\cdots,\boldsymbol a_m)$ 的正交投影**。课件的例 3.7.3 先把 $m=1$ 的情形算出来，再「照着抄」到 $m$ 个向量。
+
+::: ex 例 3.7.3（课件原文）· 到子空间的正交投影矩阵 {#ex-3.7.3}
+
+求向量 $\boldsymbol b\in\mathbb C^n$ 在 $V_m=\operatorname{span}(\boldsymbol a_1,\cdots,\boldsymbol a_m)$ 上的正交投影，其中 $\boldsymbol a_1,\cdots,\boldsymbol a_m$ 是 $\mathbb C^n$ 中 $m$ 个线性无关向量，$m\le n$。
+
+::: sol 解答（课件路线；可逆性、Hermite 性与幂等性的验算由本编补）
+
+**先看 $m=1$**。设 $V_1=\operatorname{span}(\boldsymbol a_1)$。由 [1.5](../ch01/sec15.md) 的投影公式，
+
+$$\operatorname{Proj}_{V_1}\boldsymbol b=\frac{(\boldsymbol b,\boldsymbol a_1)}{(\boldsymbol a_1,\boldsymbol a_1)}\boldsymbol a_1.$$
+
+把内积写成矩阵乘法（本课程约定对第一变元线性）：
+
+$$(\boldsymbol b,\boldsymbol a_1)=\boldsymbol a_1^{\mathrm H}\boldsymbol b,\qquad
+(\boldsymbol a_1,\boldsymbol a_1)=\boldsymbol a_1^{\mathrm H}\boldsymbol a_1.$$
+
+注意 $\boldsymbol a_1^{\mathrm H}\boldsymbol a_1$ 是**数**，可以与向量交换次序，于是
+
+$$\operatorname{Proj}_{V_1}\boldsymbol b
+=(\boldsymbol a_1^{\mathrm H}\boldsymbol b)(\boldsymbol a_1^{\mathrm H}\boldsymbol a_1)^{-1}\boldsymbol a_1
+=\boldsymbol a_1(\boldsymbol a_1^{\mathrm H}\boldsymbol a_1)^{-1}\boldsymbol a_1^{\mathrm H}\boldsymbol b
+\triangleq E_1\boldsymbol b.$$
+
+这就把「投影」写成了一个矩阵 $E_1=\boldsymbol a_1(\boldsymbol a_1^{\mathrm H}\boldsymbol a_1)^{-1}\boldsymbol a_1^{\mathrm H}$ 乘 $\boldsymbol b$。
+
+**推广到 $m$ 个向量**。令
+
+$$A=[\boldsymbol a_1,\cdots,\boldsymbol a_m]\in\mathbb C^{n\times m},$$
+
+仿照 $E_1$ 构造
+
+$$E_m=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}.$$
+
+**$E_m$ 有定义吗？** 需要 $A^{\mathrm H}A$ 可逆。$A$ 列满秩，$\operatorname{rank}A=m$；由 [@prop-3.1.1] 的秩等式 $\operatorname{rank}(A^{\mathrm H}A)=\operatorname{rank}A=m$，而 $A^{\mathrm H}A$ 是 $m\times m$ 方阵，故可逆。✓
+
+**$E_m$ 是正交投影吗？** 验证两条：
+
+$$E_m^{\mathrm H}
+=A\big((A^{\mathrm H}A)^{-1}\big)^{\mathrm H}A^{\mathrm H}
+=A\big((A^{\mathrm H}A)^{\mathrm H}\big)^{-1}A^{\mathrm H}
+=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}
+=E_m,$$
+
+$$E_m^2
+=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}A(A^{\mathrm H}A)^{-1}A^{\mathrm H}
+=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}
+=E_m.$$
+
+Hermite 且幂等，故 $E_m$ 是正交投影（[@def-3.7.3]）。它的值域是 $R(A)=V_m$，核是 $N(A^{\mathrm H})=R(A)^{\perp}$，所以 $E_m\boldsymbol b$ 正是 $\boldsymbol b$ 在 $V_m$ 上的正交投影。∎
+:::
+:::
+
+::: note 本编注 · 实矩阵版本与「帽子矩阵」 {#note-3.7-hat}
+
+若 $\boldsymbol a_i\in\mathbb R^n$，把共轭转置换成转置即可：
+
+$$E_m=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}.$$
+
+统计学与回归分析里这个矩阵叫**帽子矩阵**（hat matrix）：它把观测向量 $\boldsymbol b$「戴上帽子」变成拟合值 $\hat{\boldsymbol b}=E_m\boldsymbol b$。两条性质 $E_m^{\mathrm T}=E_m$、$E_m^2=E_m$ 正是「投影」二字的代数版本。注意公式的**分母**是 $A^{\mathrm T}A$，不是 $A^{\mathrm T}$；$A$ 不是方阵时 $A^{\mathrm T}A$ 与 $A$ 的形状不同，不能约掉。
+:::
+
+::: ex 例 3.7.E（新增）· 算一个具体的正交投影矩阵 {#ex-3.7.E}
+
+设
+
+$$\boldsymbol a_1=\begin{bmatrix}1\\1\\0\end{bmatrix},\qquad
+\boldsymbol a_2=\begin{bmatrix}0\\1\\1\end{bmatrix},\qquad
+V=\operatorname{span}(\boldsymbol a_1,\boldsymbol a_2)\subseteq\mathbb R^3.$$
+
+求到 $V$ 的正交投影矩阵 $E$，并求 $\boldsymbol b=(1,2,3)^{\mathrm T}$ 的投影。
+
+::: sol 解答
+
+**拼矩阵**：
+
+$$A=\begin{bmatrix}1&0\\1&1\\0&1\end{bmatrix},\qquad
+A^{\mathrm T}A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+(A^{\mathrm T}A)^{-1}=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}.$$
+
+**算 $E$**：
+
+$$E=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}
+=\frac13\begin{bmatrix}2&1&-1\\1&2&1\\-1&1&2\end{bmatrix}.$$
+
+**验算**：$E^{\mathrm T}=E$ ✓；$E^2=E$（直接乘一遍，或注意 $E$ 的列是 $A$ 的列的线性组合且 $E$ 在 $R(A)$ 上为恒等）✓；$\operatorname{tr}E=2=\operatorname{rank}E$ ✓；$E\boldsymbol a_1=\boldsymbol a_1$、$E\boldsymbol a_2=\boldsymbol a_2$ ✓。
+
+**投影 $\boldsymbol b$**：
+
+$$E\boldsymbol b=\frac13\begin{bmatrix}2+2-3\\1+4+3\\-1+2+6\end{bmatrix}
+=\frac13\begin{bmatrix}1\\8\\7\end{bmatrix}.$$
+
+**验算残差**：$\boldsymbol b-E\boldsymbol b=\frac13(2,-2,2)^{\mathrm T}=\frac23(1,-1,1)^{\mathrm T}$，与 $\boldsymbol a_1$、$\boldsymbol a_2$ 都正交：
+
+$$\boldsymbol a_1^{\mathrm T}(\boldsymbol b-E\boldsymbol b)=\frac23(1-1+0)=0,\qquad
+\boldsymbol a_2^{\mathrm T}(\boldsymbol b-E\boldsymbol b)=\frac23(0-1+1)=0.$$
+
+故 $E\boldsymbol b$ 确实是 $V$ 中离 $\boldsymbol b$ 最近的点。∎
+:::
+:::
+
+<a id="sec-3.7.7"></a>
+
+## 3.7.7 最小二乘：把「无解」换成「最近」
+
+正交投影最著名的应用是**最小二乘**。线性方程组 $A\boldsymbol x=\boldsymbol b$ 可能无解——$\boldsymbol b$ 不在 $R(A)$ 里。既然不能让它「相等」，就退一步让它「最近」：
+
+::: ex 例 3.7.4（课件原文）· 最小二乘问题 {#ex-3.7.4}
+
+考查线性方程组 $A\boldsymbol x=\boldsymbol b$，其中 $A\in\mathbb C_n^{m\times n}$（列满秩）和 $\boldsymbol b\in\mathbb C^m$ 给定，$\boldsymbol x\in\mathbb C^n$ 待定。求向量 $\boldsymbol x$ 使得 $\|A\boldsymbol x-\boldsymbol b\|$ 最小。
+
+::: sol 解答（课件路线；法方程与唯一性的说明由本编补）
+
+**几何**：当 $\boldsymbol x$ 跑遍 $\mathbb C^n$ 时，$A\boldsymbol x$ 跑遍 $R(A)$。所以「$\|A\boldsymbol x-\boldsymbol b\|$ 最小」就是「在 $R(A)$ 中找离 $\boldsymbol b$ 最近的点」。由 [@ex-3.7.3]，这个最近点是正交投影
+
+$$E\boldsymbol b=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b,\qquad E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}.$$
+
+因此问题等价于解线性方程组
+
+$$A\boldsymbol x=E\boldsymbol b=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b.$$
+
+观察即得一个解
+
+$$\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b.$$
+
+**法方程**：若方程两端同时左乘 $A^{\mathrm H}$，得
+
+$$A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b.$$
+
+由于 $A$ 列满秩，$A^{\mathrm H}A$ 可逆（[3.1.4](sec31.md#sec-3.1.4)），故有唯一解
+
+$$\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b. \qquad\blacksquare$$
+:::
+:::
+
+**三句话读法**：
+
+1. **最近点 $=$ 正交投影**：$A\boldsymbol x^{*}=E\boldsymbol b$；残差 $\boldsymbol b-A\boldsymbol x^{*}=(I-E)\boldsymbol b$ 落在 $R(A)^{\perp}=N(A^{\mathrm H})$。
+2. **法方程 $=$ 残差与列空间正交**：$A^{\mathrm H}(\boldsymbol b-A\boldsymbol x)=\boldsymbol 0$，即 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$。
+3. **唯一性靠列满秩**：$A^{\mathrm H}A$ 可逆 $\iff$ $A$ 列满秩（[3.1.4](sec31.md#sec-3.1.4)）；若 $A$ 秩亏，$A^{\mathrm H}A$ 奇异，最小二乘解不唯一——那时要用广义逆（[3.2](sec32.md) 的预告）。
+
+<a id="widget-least-squares"></a>
+
+<div class="widget" data-widget="least-squares">
+<p class="widget-head"><span class="widget-kicker">动手</span><strong class="widget-title">最近点：最小二乘的几何</strong></p>
+<p class="widget-hint">拖动蓝色的 $\boldsymbol b$，或拉动「候选系数 $t$」滑块。红色虚线是候选点 $t\boldsymbol a_1$ 到 $\boldsymbol b$ 的距离；绿色是最近点 $A\boldsymbol x^{*}$（垂足），金色是垂直残差。不管 $\boldsymbol b$ 拖到哪里，读数里的「差」恒 $\ge0$，只在 $t=\boldsymbol x^{*}$ 时为 $0$；「残差与 $\boldsymbol a_1$ 的内积恒为 $0$」就是法方程 $A^{\mathrm H}(\boldsymbol b-A\boldsymbol x)=\boldsymbol 0$。</p>
+</div>
+
+::: ex 例 3.7.F（新增）· 用同一组数据做最小二乘 {#ex-3.7.F}
+
+用例 3.7.E 的 $A$ 与 $\boldsymbol b=(1,2,3)^{\mathrm T}$ 解最小二乘问题 $\min\|A\boldsymbol x-\boldsymbol b\|$。
+
+::: sol 解答
+
+**法方程**：
+
+$$A^{\mathrm T}A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+A^{\mathrm T}\boldsymbol b=\begin{bmatrix}1&1&0\\0&1&1\end{bmatrix}\begin{bmatrix}1\\2\\3\end{bmatrix}
+=\begin{bmatrix}3\\5\end{bmatrix}.$$
+
+解
+
+$$\begin{bmatrix}2&1\\1&2\end{bmatrix}\begin{bmatrix}x_1\\x_2\end{bmatrix}=\begin{bmatrix}3\\5\end{bmatrix}
+\Longrightarrow
+\begin{bmatrix}x_1\\x_2\end{bmatrix}
+=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}\begin{bmatrix}3\\5\end{bmatrix}
+=\frac13\begin{bmatrix}1\\7\end{bmatrix}.$$
+
+**拟合值**：
+
+$$A\boldsymbol x=\frac13\begin{bmatrix}1&0\\1&1\\0&1\end{bmatrix}\begin{bmatrix}1\\7\end{bmatrix}
+=\frac13\begin{bmatrix}1\\8\\7\end{bmatrix}=E\boldsymbol b,$$
+
+与例 3.7.E 的投影一致 ✓。
+
+**残差与最小范数**：
+
+$$\boldsymbol b-A\boldsymbol x=\frac13\begin{bmatrix}3\\6\\9\end{bmatrix}-\frac13\begin{bmatrix}1\\8\\7\end{bmatrix}
+=\frac13\begin{bmatrix}2\\-2\\2\end{bmatrix},\qquad
+\|A\boldsymbol x-\boldsymbol b\|=\frac{2}{\sqrt3}.$$
+
+**正交性验算**：$A^{\mathrm T}(\boldsymbol b-A\boldsymbol x)=\frac13(A^{\mathrm T}(2,-2,2)^{\mathrm T})=\boldsymbol 0$ ✓。∎
+:::
+:::
+
+::: preview 课程预告 · 从谱分解到 Jordan 分解
+
+3.6–3.7 的整套理论有一个共同前提：$A$ 必须**单纯**。一旦 $A$ 不可对角化（例如 $J_2(\lambda_0)=\begin{bmatrix}\lambda_0&1\\0&\lambda_0\end{bmatrix}$），谱分解就写不出来——但这不代表「相似意义下的最简形」没有答案。3.8 把问题换成：**一般的复方阵相似于什么样的最简矩阵？** 答案就是 **Jordan 标准形**。它的构造不走「特征向量」这条路，而是先把 $\lambda I-A$ 当作一个元素为多项式的矩阵（**$\lambda$ 矩阵**），用初等变换把它化成 Smith 标准形，再从不变因子 / 初等因子读出 Jordan 块。本页 3.7 的谱分解是「单纯情形」的答案；3.8 的 $\lambda$ 矩阵是「一般情形」的入口。
+
+（SVD 是更后面的另一条线：它把「方阵」也放宽，写成 $A=U\Sigma V^{\mathrm H}$；[3.2](sec32.md) 预告的广义逆与本节的最小二乘，最终都能在 SVD 的语言里统一。素材到位后另节整理。）
 :::
 
 ::: note 考情速递（本编依据课件小结与前章课堂考情整理；本讲无录播，未见老师原话）
 
-3.7 的课件没有单独的小结页（3.6 的小结已把「正规矩阵酉相似对角化计算」列为核心），但本节内容是它的**计算内核**：求谱阵（例 3.7.1、例 3.7.2）、用谱阵算 $A^k$ / $f(A)$（[@thm-3.7.1]）、判断正交投影（[@prop-3.7.2]）。考试里常见的三种问法：① 「求 $A$ 的谱分解」——按 [@method-spectral] 或 [@thm-3.7.2] 算，验算 $\sum E_j=I$、$E_iE_j=0$；② 「用谱分解求 $A^{100}$ / $e^{At}$」——套 $\sum\lambda_j^kE_j$ / $\sum e^{\lambda_jt}E_j$；③ 「证明谱阵是正交投影 / 谱阵唯一」——用 [@prop-3.7.1]（5）与 [@prop-3.7.2]。跨章联动：3.5 的最小多项式给出 $m_A=\prod(\lambda-\lambda_j)$（[@note-3.7-minpoly]），3.6 的正规矩阵给出 $E_j^{\mathrm H}=E_j$，2.4 的特征子空间给出 $\operatorname{rank}E_j=d_j$。分级清单与限时赛制集中在[考场竞技场](arena.md)。
+3.7 的课件在最后给出小结页（基本概念：单纯矩阵与正规矩阵谱分解、幂等矩阵、正交投影矩阵；重要结论：谱阵性质、幂等矩阵性质；重要计算：谱分解式、正交投影矩阵构造）。本节内容是这一页的**计算内核**：求谱阵（例 3.7.1、例 3.7.2）、用谱阵算 $A^k$ / $f(A)$（[@thm-3.7.1]）、判断正交投影（[@prop-3.7.2]）、用幂等阵性质拆空间（[@prop-3.7.3]）、构造正交投影矩阵并解最小二乘（[@ex-3.7.3]、[@ex-3.7.4]）。考试里常见的五种问法：① 「求 $A$ 的谱分解」——按 [@method-spectral] 或 [@thm-3.7.2] 算，验算 $\sum E_j=I$、$E_iE_j=0$；② 「用谱分解求 $A^{100}$ / $e^{At}$」——套 $\sum\lambda_j^kE_j$ / $\sum e^{\lambda_jt}E_j$；③ 「证明谱阵是正交投影 / 谱阵唯一」——用 [@prop-3.7.1]（5）与 [@prop-3.7.2]；④ 「证明幂等阵的四条性质」——用 [@prop-3.7.3]，尤其 $R(E)\oplus N(E)$ 的直和证明；⑤ 「求到子空间的正交投影矩阵 / 解最小二乘」——套 $A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 与法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$。跨章联动：3.5 的最小多项式给出 $m_A=\prod(\lambda-\lambda_j)$（[@note-3.7-minpoly]），3.6 的正规矩阵给出 $E_j^{\mathrm H}=E_j$，2.4 的特征子空间给出 $\operatorname{rank}E_j=d_j$，3.1 的秩等式给出 $A^{\mathrm H}A$ 可逆。分级清单与限时赛制集中在[考场竞技场](arena.md)。
 :::
 
 ## 3.7 小结与常见错误
 
 - **一条主线**：**对角化分解**（$A=P\Lambda P^{-1}$）$\Rightarrow$ **按特征值分组**（$A=\sum_j\lambda_jE_j$，[@def-3.7.1]；三步法 [@method-spectral]；例 3.7.1）$\Rightarrow$ **谱阵五性质**（幂等、两两正交、与 $A$ 交换、求和为 $I$、唯一；[@prop-3.7.1]）$\Rightarrow$ **函数演算**（$f(A)=\sum_jf(\lambda_j)E_j$，[@thm-3.7.1]）$\Rightarrow$ **Lagrange 公式**（$E_i=f_i(A)/f_i(\lambda_i)$，[@thm-3.7.2]；例 3.7.2）$\Rightarrow$ **正规 $\Rightarrow$ 正交投影**（[@prop-3.7.2]；[@def-3.7.3]；例 3.7.D）。
+- **幂等阵的四条性质**（[@prop-3.7.3]）：$E^{\mathrm H},E^*,I-E$ 仍幂等；$E$ 相似于 $\operatorname{diag}(I_r,0)$；$\mathbb C^n=R(E)\oplus N(E)$、$N(E)=R(I-E)$；$E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$。四条合起来说：**幂等阵就是一个投影的矩阵形式**；再加 $E^{\mathrm H}=E$，投影就变成正交投影。
+- **正交投影的构造**（[@ex-3.7.3]）：给基 $\boldsymbol a_1,\cdots,\boldsymbol a_m$ 拼成 $A$，则
+  $$E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H};$$
+  最小二乘 $\min\|A\boldsymbol x-\boldsymbol b\|$ 的解是法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$ 的唯一解 $\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b$（[@ex-3.7.4]），其拟合值 $A\boldsymbol x=E\boldsymbol b$ 正是 $\boldsymbol b$ 在 $R(A)$ 上的正交投影。
 - **两句话记住它**：**谱分解 $=$ 把对角化按特征值拆成「系数 $\times$ 投影」**——$\lambda_j$ 是数，$E_j$ 是投到第 $j$ 个特征子空间的投影；$A$ 在每块上只是数乘。**正规 $=$ 这些投影还能取正交**——$E_j^{\mathrm H}=E_j$，于是谱分解升级为谱定理。
 
-::: think 常见错误清单 · 自查六条
+::: think 常见错误清单 · 自查九条
 
 1. **把 $P^{-1}$ 的列当成 $\boldsymbol\beta_i$**：$P^{-1}=[\boldsymbol\beta_1^{\mathrm H};\cdots;\boldsymbol\beta_n^{\mathrm H}]$ 是**按行**读，$\boldsymbol\beta_i^{\mathrm H}$ 是第 $i$ 行；写成列就得不到 $\boldsymbol\beta_i^{\mathrm H}\boldsymbol\alpha_j=\delta_{ij}$。
 2. **谱阵下标与特征值错配**：$E_j$ 必须对应 $\lambda_j$；例 3.7.1 中 $E_1$ 对应 $\lambda=1$、$E_2$ 对应 $\lambda=-2$，写成 $E_1-2E_2$ 而不是 $E_1+2E_2$。
@@ -614,6 +891,9 @@ $$A=U\Sigma V^{\mathrm H},$$
 4. **忘记谱分解的前提是单纯**：不可对角化的矩阵没有这种「按特征值拆成投影」的谱分解；若硬写 $A=\sum\lambda_jE_j$，$E_j$ 不再是幂等的（会出现 Jordan 块的多项式项）。
 5. **函数演算直接套到非单纯矩阵**：$f(A)=\sum_jf(\lambda_j)E_j$ 只对单纯矩阵成立；非单纯时要加 $f^{(k)}(\lambda)$ 项（Jordan 演算），指数会出现 $t^ke^{\lambda t}$。
 6. **以为正规矩阵的谱阵一定是实矩阵**：正规矩阵的特征值可以是复数（旋转阵 $\pm\mathrm i$），谱阵也可以是复 Hermite 矩阵（[@note-3.7-rotation]）；「Hermite 谱阵」不等于「实谱阵」。
+7. **把 $A^{\mathrm H}A$ 的无条件可逆当成默认事实**：它可逆的前提是 $A$ **列满秩**（[3.1.4](sec31.md#sec-3.1.4)）；$A$ 秩亏时公式 $A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 直接失效。
+8. **把投影矩阵写成 $A(A^{\mathrm H}A)A^{\mathrm H}$**：漏了逆。正确的量纲与性质都对不上：没有逆时 $E^2\ne E$。
+9. **把最小二乘解写成 $A^{-1}\boldsymbol b$**：$A$ 不是方阵（或不可逆）时 $A^{-1}$ 根本不存在；正确的解是 $(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b$，它左乘了 $A^{\mathrm H}$，把长方问题压成方阵问题。
 :::
 
 ::: ex 即时自测（不看上文，5 分钟）{#ex-3.7.quiz}
@@ -622,7 +902,9 @@ $$A=U\Sigma V^{\mathrm H},$$
 2. 设 $A=\begin{bmatrix}3&1\\ 0&2\end{bmatrix}$，求谱分解，并用它算 $A^5$；
 3. 用定理 3.7.2 求 $A=\begin{bmatrix}2&1\\ 2&3\end{bmatrix}$ 的 $E_1,E_2$，并验证 $E_1+E_2=I$；
 4. 证明：若 $A$ 正规，则它的每个谱阵都是正交投影；
-5. 设 $E$ 是幂等阵，证明 $\operatorname{rank}E=\operatorname{tr}E$，并说明 $\mathbb C^n=R(E)\oplus N(E)$。
+5. 设 $E$ 是幂等阵，证明 $\operatorname{rank}E=\operatorname{tr}E$，并说明 $\mathbb C^n=R(E)\oplus N(E)$；
+6. 写出命题 3.7.3 的四条性质，并证明（3）中的直和；
+7. 设 $A=\begin{bmatrix}1&1\\0&1\\1&0\end{bmatrix}$，求到 $R(A)$ 的正交投影矩阵，并解最小二乘问题 $\min\|A\boldsymbol x-(1,0,1)^{\mathrm T}\|$。
 
 ::: sol 参考要点
 
@@ -631,7 +913,11 @@ $$A=U\Sigma V^{\mathrm H},$$
 3. $E_1=\frac13\begin{bmatrix}2&-1\\-2&1\end{bmatrix}$，$E_2=\frac13\begin{bmatrix}1&1\\2&2\end{bmatrix}$（[@ex-3.7.2b]）；相加得 $I$ ✓。
 4. 由 [@thm-3.6.2]，$A=U\Lambda U^{\mathrm H}$，$U$ 酉；按特征值分组得 $E_j=\sum_{i:\lambda_i=\lambda_j}\boldsymbol u_i\boldsymbol u_i^{\mathrm H}$。每项 $\boldsymbol u_i\boldsymbol u_i^{\mathrm H}$ Hermite，求和仍 Hermite：$E_j^{\mathrm H}=E_j$；又 $E_j^2=E_j$（[@prop-3.7.1]），故 $E_j$ 是正交投影。
 5. $E^2=E$ $\Rightarrow$ $E$ 可对角化、特征值 $0/1$（[@note-3.7-idempotent]）；对角化后秩 $=$ 非零特征值个数 $=$ 迹。对任意 $\boldsymbol x$，$\boldsymbol x=E\boldsymbol x+(I-E)\boldsymbol x$，第一项在 $R(E)$、第二项在 $N(E)$；若 $\boldsymbol y\in R(E)\cap N(E)$，写 $\boldsymbol y=E\boldsymbol x$，则 $\boldsymbol y=E\boldsymbol x=E^2\boldsymbol x=E\boldsymbol y=\boldsymbol 0$，故是直和。
+6. 四条见 [@prop-3.7.3]。（1）$(E^{\mathrm H})^2=(E^2)^{\mathrm H}=E^{\mathrm H}$、$(I-E)^2=I-E$；（2）$\varphi(\lambda)=\lambda(\lambda-1)$ 零化 $E$ 且无重根，故单纯，特征值 $0/1$，相似于 $\operatorname{diag}(I_r,0)$；（3）$\boldsymbol x=E\boldsymbol x+(I-E)\boldsymbol x$ 给出和，$N(E)=R(I-E)$，交集为零故为直和；（4）$E\boldsymbol x=\boldsymbol x$ 显然给出 $\boldsymbol x\in R(E)$，反之 $\boldsymbol x=E\boldsymbol y$ 时 $E\boldsymbol x=E^2\boldsymbol y=\boldsymbol x$。
+7. $A^{\mathrm T}A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$，$(A^{\mathrm T}A)^{-1}=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}$，故
+   $$E=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}=\frac13\begin{bmatrix}2&1&1\\1&2&-1\\1&-1&2\end{bmatrix}.$$
+   法方程 $A^{\mathrm T}A\boldsymbol x=A^{\mathrm T}\boldsymbol b=\begin{bmatrix}2\\1\end{bmatrix}$ 给出 $\boldsymbol x=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}\begin{bmatrix}2\\1\end{bmatrix}=\begin{bmatrix}1\\0\end{bmatrix}$。此时 $A\boldsymbol x=(1,0,1)^{\mathrm T}=\boldsymbol b$，残差为零——$\boldsymbol b$ 本来就在 $R(A)$ 里，最小二乘退化为精确解。
 :::
 :::
 
-> **下一站**：奇异值分解（3.8，待素材）——把「同一个标准正交基」放宽成「定义域与值域各一组」，一般矩阵也能写成 $A=U\Sigma V^{\mathrm H}$。
+> **下一站**：[3.8 Jordan 分解（上）· $\lambda$ 矩阵](sec38.md)——当矩阵不单纯时，谱分解失效；Jordan 分解改用「元素为多项式的矩阵」$\lambda I-A$，从秩、可逆性与初等变换出发，走向一般复方阵的相似最简形。

@@ -54,7 +54,7 @@ $A$ 的**第 $j$ 列**是什么？它依赖哪两组基？改变基时矩阵按�
 
 ::: sol D5 核对
 
-第 $j$ 列 $=$ 第 $j$ 个**出发端基向量**的像在**到达端基**下的坐标（[@def-2.3.1]）——是列不是行；依赖**两组**基（出发端 $\boldsymbol\varepsilon$、到达端 $\boldsymbol\eta$）。换基公式：$B=P^{-1}AQ$（左边管出发端、右边管到达端，注意「矩阵贴着旧基一侧」的口诀方向）；同一空间换同一组基（相似）时 $Q=P$，得 $B=P^{-1}AP$（[@thm-2.3.5]、[@cor-2.3.4]）。
+第 $j$ 列 $=$ 第 $j$ 个**出发端基向量**的像在**到达端基**下的坐标（[@def-2.3.1]）——是列不是行；依赖**两组**基（出发端 $\boldsymbol\varepsilon$、到达端 $\boldsymbol\eta$）。换基公式：$B=P^{-1}AQ$（右边 $Q$ 管出发端，左边 $P^{-1}$ 管到达端）；同一空间换同一组基（相似）时 $Q=P$，得 $B=P^{-1}AP$（[@thm-2.3.5]、[@cor-2.3.4]）。
 :::
 
 ### D6 · 同构映射
@@ -90,7 +90,7 @@ $V_\lambda=\{\boldsymbol x\mid T\boldsymbol x=\lambda\boldsymbol x\}=N(T-\lambda
 
 ::: sol D9 核对
 
-几何重数 $=\dim V_\lambda$；代数重数 $=$ $\lambda$ 作为特征多项式根的重数（[@def-eigenspace]、[@thm-mult-ineq]）。恒有 $1\le$ 几何 $\le$ 代数（[@thm-mult-ineq]）。判据：**处处取等号 $\iff$ 可对角化**；$n$ 个互异特征值是充分条件（[@thm-eig-independent]），不是必要条件。
+几何重数 $=\dim V_\lambda$；代数重数 $=$ $\lambda$ 作为特征多项式根的重数（[@def-eigenspace]、[@thm-mult-ineq]）。恒有 $1\le$ 几何 $\le$ 代数（[@thm-mult-ineq]）。判据：**处处取等号 $\iff$ 可对角化**；例如正文的 $A_t$ 始终有特征多项式 $(\lambda-1)^2(\lambda-2)$，但 $t=0$ 时 $\dim V_1=2$，$t\ne0$ 时只为 $1$；不能只数重复根而不解零空间。$n$ 个互异特征值是充分条件（[@thm-eig-independent]），不是必要条件。
 :::
 
 ### D10 · 正交矩阵与酉矩阵
@@ -191,7 +191,7 @@ $B=P^{-1}AP$ 保持：特征多项式（从而特征值**含重数**）、迹、
 
 ::: sol T8 核对
 
-可对角化 $\iff$ 每个特征值的几何重数 $=$ 代数重数（[@thm-geom-mult]、[@thm-mult-ineq]）。设计基流程（[@method-design-basis]、[@method-eig-procedure]）：① 写出**目标形式矩阵** $\Lambda$；② 反推 $T$ 在目标基上的像（$T\boldsymbol\varepsilon_j=$ 第 $j$ 列的组合）；③ 解方程解出基向量；④ 验算 $T$ 在**新基**下的过渡矩阵使 $A=P^{-1}\Lambda P$ 或直接核验 $T$ 的作用。考点提示：这是上一届考题（2.4 课堂原话）。
+可对角化 $\iff$ 每个特征值的几何重数 $=$ 代数重数（[@thm-geom-mult]、[@thm-mult-ineq]）。设计基流程（[@method-design-basis]、[@method-eig-procedure]）：① 写出**目标形式矩阵** $\Lambda$；② 反推 $T$ 在目标基上的像（$T\boldsymbol\varepsilon_j=$ 第 $j$ 列的组合）；③ 解方程解出基向量；④ 验算 $T$ 在**新基**下的过渡矩阵使 $\Lambda=P^{-1}AP$ 或直接核验 $T$ 的作用。考点提示：这是上一届考题（2.4 课堂原话）。
 :::
 
 ### T9 · 幂、逆与多项式的特征值

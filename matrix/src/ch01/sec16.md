@@ -258,7 +258,7 @@ $\boldsymbol{x}$ 在 $W_2$ 上的投影为 $\boldsymbol{z}=\boldsymbol{\varepsil
 2. 解 Gram 方程组 $G\boldsymbol{k}=\boldsymbol{c}$，其中 $c_i=(\boldsymbol{x},\boldsymbol{\varepsilon}_i)$、$g_{ij}=(\boldsymbol{\varepsilon}_j,\boldsymbol{\varepsilon}_i)$——$G$ 正定 Hermite（基的度量矩阵，[@def-1.4.4]；实空间即对称正定），方程组必有唯一解；
 3. 把坐标按「$W_1$ 的基 / $W_2$ 的基」分组，分别组装即得两个投影。
 
-本质上这就是 [1.3.5](sec13.md#sec-1.3.5) 的坐标求解，只是方程组用内积写出——好处是系数矩阵自动对称正定，数值上稳定（高斯消元无需选主元）。
+本质上这就是 [1.3.5](sec13.md#sec-1.3.5) 的坐标求解，只是方程组用内积写出。在 $\mathbb R^n$ 的标准内积下，把拼成的基按列写成 $B$，也可以直接解 $B\boldsymbol{k}=\boldsymbol{x}$；Gram 方程就是再左乘 $B^{\mathrm T}$。正定性保证精确算术下可解，却不保证有限精度下误差小：基向量近相关时，先形成 Gram 矩阵可能放大数据扰动的影响。手算可按本例走，数值实现通常优先用 QR 求坐标（见 [3.4](../ch03/sec34.md)）。这里先记住数学上的唯一可解与计算上的准确可靠是两件事。
 
 :::
 
@@ -276,6 +276,22 @@ $\boldsymbol{x}$ 在 $W_2$ 上的投影为 $\boldsymbol{z}=\boldsymbol{\varepsil
 
 :::
 
+:::
+
+::: method 从分解到投影矩阵 · 用值域与零空间检验答案
+
+把例 1.6.A 中的 $(3,1)^{\mathrm T}$ 换成任意 $(a,b)^{\mathrm T}$，分解式是
+
+$$\begin{pmatrix}a\\b\end{pmatrix}=\begin{pmatrix}a-b\\0\end{pmatrix}+\begin{pmatrix}b\\b\end{pmatrix}.$$
+
+因此沿 $W_2$ 投到 $W_1$ 的矩阵为 $P=\begin{pmatrix}1&-1\\0&0\end{pmatrix}$。三个检查各回答一个问题：$P^2=P$ 表示投过一次不再改变；$R(P)=W_1$ 表示落在哪里；$N(P)=W_2$ 表示沿哪个方向被抹掉。这里 $P^{\mathrm T}\ne P$，所以幂等仍不等于正交投影。它把 $(0,1)^{\mathrm T}$ 送到 $(-1,0)^{\mathrm T}$，也与沿 $y$ 轴投影不同。
+
+**迁移练习。**若补空间改为 $\widetilde W_2=\operatorname{span}\{(2,1)^{\mathrm T}\}$，求新投影矩阵，并验证其零空间。
+
+::: sol 核对与下一步
+
+$(a,b)^{\mathrm T}=(a-2b,0)^{\mathrm T}+b(2,1)^{\mathrm T}$，故 $\widetilde P=\begin{pmatrix}1&-2\\0&0\end{pmatrix}$，零空间由 $a=2b$ 给出，正是 $\widetilde W_2$。若只写出投影结果却说不清补空间，重看本节定义；能从矩阵找出这两个空间后，下一小节会把这个过程推广到所有幂等矩阵。想判断何时为正交投影，再读 [1.6.7](sec16.md#sec-1.6.7)。
+:::
 :::
 
 <a id="sec-1.6.4"></a>
@@ -556,7 +572,7 @@ $$\operatorname{span}(\boldsymbol{v}_1,\cdots,\boldsymbol{v}_m)=\operatorname{sp
 而 $\boldsymbol{v}_{m+1},\cdots,\boldsymbol{v}_n$ 与 $\boldsymbol{v}_1,\cdots,\boldsymbol{v}_m$ 两两正交，故每个 $\boldsymbol{v}_j\ (j>m)$ 都与 $W_1$ 的每个向量正交。
 
 ::: note 这里有一个容易写错的理由
-不要说「$W_1$ 的基本来两两正交，所以 GS 不动它们，$\boldsymbol{v}_i=\boldsymbol{x}_i$」——$\boldsymbol{x}_1,\cdots,\boldsymbol{x}_m$ 是**任取**的一组基，一般**并不**正交，GS 会实实在在改变它们（例如 $\boldsymbol{v}_2=\boldsymbol{x}_2-\frac{(\boldsymbol{x}_2,\boldsymbol{v}_1)}{(\boldsymbol{v}_1,\boldsymbol{v}_1)}\boldsymbol{v}_1\ne\boldsymbol{x}_2$）。
+不要说「$W_1$ 的基本来就两两正交，所以 GS 不动它们，$\boldsymbol{v}_i=\boldsymbol{x}_i$」——$\boldsymbol{x}_1,\cdots,\boldsymbol{x}_m$ 是**任取**的一组基，一般**并不**正交，GS 会实实在在改变它们（例如 $\boldsymbol{v}_2=\boldsymbol{x}_2-\frac{(\boldsymbol{x}_2,\boldsymbol{v}_1)}{(\boldsymbol{v}_1,\boldsymbol{v}_1)}\boldsymbol{v}_1\ne\boldsymbol{x}_2$）。
 
 结论靠的是「**张成不变**」，不是「**向量不变**」：$W_1$ 的正交基未必是原来那 $m$ 个向量，但它们仍张成 $W_1$——这已经够用了。
 :::
@@ -904,9 +920,9 @@ $$N(A)\oplus R(A^{\mathrm H})=\mathbb C^n,\qquad\text{且}\qquad R(A^{\mathrm H}
 
 ::: proof 证明 · 三步
 
-**第一步（正交）：$R(A^{\mathrm H})\perp N(A)$。**任取 $\boldsymbol{y}\in R(A^{\mathrm H})$，设 $\boldsymbol{y}=A^{\mathrm H}\boldsymbol{u}$；任取 $\boldsymbol{x}\in N(A)$，即 $A\boldsymbol{x}=\boldsymbol{\theta}$。由标准内积 $(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}\boldsymbol{y}$（[@ex-1.4.3]）：
+**第一步（正交）：$R(A^{\mathrm H})\perp N(A)$。**任取 $\boldsymbol{y}\in R(A^{\mathrm H})$，设 $\boldsymbol{y}=A^{\mathrm H}\boldsymbol{u}$；任取 $\boldsymbol{x}\in N(A)$，即 $A\boldsymbol{x}=\boldsymbol{0}$。由标准内积 $(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}\boldsymbol{y}$（[@ex-1.4.3]）：
 
-$$(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}A^{\mathrm H}\boldsymbol{u}=(A\boldsymbol{x})^{\mathrm H}\boldsymbol{u}=\boldsymbol{\theta}^{\mathrm H}\boldsymbol{u}=0 .$$
+$$(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}A^{\mathrm H}\boldsymbol{u}=(A\boldsymbol{x})^{\mathrm H}\boldsymbol{u}=\boldsymbol{0}^{\mathrm H}\boldsymbol{u}=0 .$$
 
 由 [@thm-1.6.2]，$N(A)+R(A^{\mathrm H})$ 已是直和。
 
@@ -1052,9 +1068,9 @@ $\boldsymbol{x}=(2,1,2)^{\mathrm T}=2\boldsymbol{\varepsilon}_1+\boldsymbol{\var
 
 ::: sol 第 4 题答案
 
-(1) 缺「沿哪个补空间」：同一 $W_1$ 配不同补给出不同投影（$\mathbb R^2$ 中 $x$ 轴分别配 $y$ 轴与配 $\operatorname{span}\{(1,1)\}$，$(1,1)^{\mathrm T}$ 的投影分别是 $(1,0)^{\mathrm T}$ 与 $\boldsymbol{\theta}$）。只有补取正交补时投影才唯一且「垂直落下」。
+(1) 缺「沿哪个补空间」：同一 $W_1$ 配不同补给出不同投影（$\mathbb R^2$ 中 $x$ 轴分别配 $y$ 轴与配 $\operatorname{span}\{(1,1)\}$，$(1,1)^{\mathrm T}$ 的投影分别是 $(1,0)^{\mathrm T}$ 与 $\boldsymbol{0}$）。只有补取正交补时投影才唯一且「垂直落下」。
 
-(2) $N(A)=R(I-A)$，两步双向包含（见 [1.6.4](sec16.md#sec-1.6.4) 的思考框）：$A\boldsymbol{x}=\boldsymbol{\theta}\Rightarrow\boldsymbol{x}=(I-A)\boldsymbol{x}\in R(I-A)$；$\boldsymbol{x}\in R(I-A)\Rightarrow A\boldsymbol{x}=\boldsymbol{\theta}$。
+(2) $N(A)=R(I-A)$，两步双向包含（见 [1.6.4](sec16.md#sec-1.6.4) 的思考框）：$A\boldsymbol{x}=\boldsymbol{0}\Rightarrow\boldsymbol{x}=(I-A)\boldsymbol{x}\in R(I-A)$；$\boldsymbol{x}\in R(I-A)\Rightarrow A\boldsymbol{x}=\boldsymbol{0}$。
 :::
 
 ::: hint 第 5 题 · 应用
@@ -1080,7 +1096,7 @@ $$\boldsymbol{y}=\boldsymbol{x}-\boldsymbol{z}=\Big(\tfrac32,\tfrac32,3\Big)^{\m
 
 ::: sol 第 6 题答案
 
-① $R(A^{\mathrm H})\perp N(A)$：$\boldsymbol{y}=A^{\mathrm H}\boldsymbol{u}$、$A\boldsymbol{x}=\boldsymbol{\theta}$ 时 $(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}A^{\mathrm H}\boldsymbol{u}=(A\boldsymbol{x})^{\mathrm H}\boldsymbol{u}=0$；② $\operatorname{rank}A^{\mathrm H}=\operatorname{rank}A$（转置由行秩 = 列秩；共轭保持非平凡组合的一一对应）；③ $\dim N(A)+\dim R(A^{\mathrm H})=(n-r)+r=n$，判据 (4) 给出直和，再由 ① 的包含与等维得 $(N(A))^{\perp}=R(A^{\mathrm H})$。
+① $R(A^{\mathrm H})\perp N(A)$：$\boldsymbol{y}=A^{\mathrm H}\boldsymbol{u}$、$A\boldsymbol{x}=\boldsymbol{0}$ 时 $(\boldsymbol{y},\boldsymbol{x})=\boldsymbol{x}^{\mathrm H}A^{\mathrm H}\boldsymbol{u}=(A\boldsymbol{x})^{\mathrm H}\boldsymbol{u}=0$；② $\operatorname{rank}A^{\mathrm H}=\operatorname{rank}A$（转置由行秩 = 列秩；共轭保持非平凡组合的一一对应）；③ $\dim N(A)+\dim R(A^{\mathrm H})=(n-r)+r=n$，判据 (4) 给出直和，再由 ① 的包含与等维得 $(N(A))^{\perp}=R(A^{\mathrm H})$。
 
 反向包含需要对每个 $\boldsymbol{y}\perp N(A)$ 构造 $\boldsymbol{u}$ 使 $\boldsymbol{y}=A^{\mathrm H}\boldsymbol{u}$（解方程、用秩的结构）；「包含 + 等维」绕开构造，是有限维的省力模板（同 $(W^{\perp})^{\perp}=W$）。
 :::

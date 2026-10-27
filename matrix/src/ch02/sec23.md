@@ -402,6 +402,26 @@ $$T(\varepsilon'_1,\cdots,\varepsilon'_n)=(\eta'_1,\cdots,\eta'_m)\,P^{-1}AQ .$$
 **记忆**：**$P$ 管到达端、$Q$ 管出发端，谁被换掉谁乘在这个位置上**；两者的区别正是「左乘 / 右乘」的区别，而 $P$ 取逆是因为 $B$ 要写在新基 $\eta'$ 下（旧基用新基表示要取逆）。
 :::
 
+::: method 把 $P^{-1}AQ$ 读成一条坐标路线
+
+先修是 [1.3.7 的坐标变换](../ch01/sec13.md#sec-1.3.7)：新坐标乘过渡矩阵得到旧坐标。于是输入新坐标 $\alpha'$ 要先乘 $Q$，再经 $A$ 得到输出旧坐标，最后乘 $P^{-1}$ 才得到输出新坐标：
+
+$$\alpha'\ \xrightarrow{Q}\ \alpha\ \xrightarrow{A}\ \beta\ \xrightarrow{P^{-1}}\ \beta'.$$
+
+例如 $T:\mathbb R^2\to\mathbb R^3$，$T(x,y)=(x,y,x+y)$，旧基均为标准基。输入新基为 $(1,0)^{\mathrm T},(1,1)^{\mathrm T}$，输出新基为 $(1,0,1)^{\mathrm T},(0,1,0)^{\mathrm T},(0,0,1)^{\mathrm T}$，则
+
+$$A=\begin{pmatrix}1&0\\0&1\\1&1\end{pmatrix},\quad Q=\begin{pmatrix}1&1\\0&1\end{pmatrix},\quad P=\begin{pmatrix}1&0&0\\0&1&0\\1&0&1\end{pmatrix},\quad B=P^{-1}AQ=\begin{pmatrix}1&1\\0&1\\0&1\end{pmatrix}.$$
+
+用 $\alpha'=(2,-1)^{\mathrm T}$ 走两条路验证：旧输入 $Q\alpha'=(1,-1)^{\mathrm T}$，其像为 $(1,-1,0)^{\mathrm T}$；新输出坐标 $B\alpha'=(1,-1,-1)^{\mathrm T}$，乘回输出新基 $P(1,-1,-1)^{\mathrm T}=(1,-1,0)^{\mathrm T}$。两者描述同一个像。
+
+**迁移练习。**只换输入基、输出仍用标准基，矩阵是什么？只换输出基呢？
+
+::: sol 核对
+
+分别是 $AQ=\begin{pmatrix}1&1\\0&1\\1&2\end{pmatrix}$ 与 $P^{-1}A=\begin{pmatrix}1&0\\0&1\\0&1\end{pmatrix}$。若左右乘法记反，沿上述路线逐步写坐标；维数也是检查：$P$ 为 $3\times3$，$Q$ 为 $2\times2$。只有同一空间且输入、输出使用同一组新基时，才可把两者统一为相似变换中的同一个 $P$。
+:::
+:::
+
 ::: note 注 1 · 相抵（等价）与推论 2.3.4
 
 若矩阵 $A\in F^{m\times n}$ 经过有限次初等变换变成矩阵 $B$，则称矩阵 $A$ 与 $B$ **相抵**（或**等价**），记为 $A\cong B$。符号相同不等于意思相同：这里的 $\cong$ 说的是矩阵相抵，与线性空间的同构 $V\cong W$ 是**同名不同义**的两种关系（靠等号两侧是「矩阵」还是「空间」区分；详见[符号表](../preface-notation.md)）。[@thm-2.3.5] 表明：**线性映射在不同基下的矩阵是相抵的**。
@@ -435,7 +455,7 @@ $B=P^{-1}AP$ 中出现的两个矩阵 $A,B$ 称为**相似**。课件对这一�
 **第二步（用公式）**：[@cor-2.3.4] 给出
 
 $$B=P^{-1}AP=\begin{bmatrix}1&-1\\ 0&1\end{bmatrix}\begin{bmatrix}1&1\\ 0&2\end{bmatrix}\begin{bmatrix}1&1\\ 0&1\end{bmatrix}
-=\begin{bmatrix}1&2\\ 0&2\end{bmatrix}\begin{bmatrix}1&1\\ 0&1\end{bmatrix}=\begin{bmatrix}1&0\\ 0&2\end{bmatrix}.$$
+=\begin{bmatrix}1&-1\\ 0&2\end{bmatrix}\begin{bmatrix}1&1\\ 0&1\end{bmatrix}=\begin{bmatrix}1&0\\ 0&2\end{bmatrix}.$$
 
 **第三步（为什么**本该**这样）**：直接按读法验证——$T(\varepsilon'_1)=T(1,0)^{\mathrm T}=(1,0)^{\mathrm T}=1\cdot\varepsilon'_1+0\cdot\varepsilon'_2$，$T(\varepsilon'_2)=T(1,1)^{\mathrm T}=(2,2)^{\mathrm T}=0\cdot\varepsilon'_1+2\cdot\varepsilon'_2$，故矩阵为 $\operatorname{diag}(1,2)$ ✓。
 
@@ -500,7 +520,7 @@ $$N(T)=\operatorname{span}\{( -1,1,1)^{\mathrm T}\},\qquad \dim N(T)=1 .$$
 
 $R(T)$：像的分量形如 $(x_1+x_2,\ x_2-x_3)^{\mathrm T}$，两分量可独立取值（先任取第二分量，再调 $x_1$），故 $R(T)=\mathbb R^2$，$\dim R(T)=2$。
 
-**矩阵侧**：$N(A)$：解 $A k=0$，即 $k_1+k_2=0$、$k_2-k_3=0$，同上一组方程，得 $N(A)=\operatorname{span}\{(-1,1,1)^{\mathrm T}\}$，$\dim N(A)=1$ ✓ 与 (1) 一致——这**不是巧合**：$N(T)$ 与 $N(A)$ 里的列向量长得一样，是因为 [@thm-2.3.6]（1） 的证明中那个同构映射把坐标当向量看。
+**矩阵侧**：$N(A)$：解 $A k=0$，即 $k_1+k_2=0$、$k_2-k_3=0$，同上一组方程，得 $N(A)=\operatorname{span}\{(-1,1,1)^{\mathrm T}\}$，$\dim N(A)=1$ ✓ 与 (1) 一致——这**不是巧合**：$N(T)$ 与 $N(A)$ 里的列向量长得一样，是因为 [@thm-2.3.6]（1）的证明中那个同构映射把坐标当向量看。
 $R(A)=\operatorname{span}\{(1,0)^{\mathrm T},(1,1)^{\mathrm T},(0,-1)^{\mathrm T}\}$，前两列无关故秩为 $2$，$\dim R(A)=2$ ✓ 与 (2) 一致。
 
 **核对 (3)**：$\dim N(A)+\dim R(A)=1+2=3=n$ ✓；代入 [@thm-2.2.5]：$1+2=3=\dim\mathbb R^3$ ✓。

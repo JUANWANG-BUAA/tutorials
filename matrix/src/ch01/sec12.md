@@ -395,7 +395,7 @@ $$R(A)=\{\boldsymbol{y}\in\mathbb{C}^m\mid \boldsymbol{y}=A\boldsymbol{x},\ \bol
 
 ::: note
 
-**所在空间。**$A$ 是 $m\times n$ 的，则 $N(A)$ 住在「输入侧」$\mathbb{C}^n$，$R(A)$ 住在「输出侧」$\mathbb{C}^m$——两者所在的空间维度都不同！两者都是子空间：$N(A)$ 即[@ex-1.2.1]；$R(A)$ 的验证：$\boldsymbol{y}_1=A\boldsymbol{x}_1,\ \boldsymbol{y}_2=A\boldsymbol{x}_2$，则 $k\boldsymbol{y}_1+l\boldsymbol{y}_2=A(k\boldsymbol{x}_1+l\boldsymbol{x}_2)\in R(A)$。
+**所在空间。**$A$ 是 $m\times n$ 的，则 $N(A)$ 住在「输入侧」$\mathbb{C}^n$，$R(A)$ 住在「输出侧」$\mathbb{C}^m$——两者一般分属不同的空间（方阵时同住 $\mathbb{C}^n$，但通常是其中两个不同的子空间）。两者都是子空间：$N(A)$ 即[@ex-1.2.1]；$R(A)$ 的验证：$\boldsymbol{y}_1=A\boldsymbol{x}_1,\ \boldsymbol{y}_2=A\boldsymbol{x}_2$，则 $k\boldsymbol{y}_1+l\boldsymbol{y}_2=A(k\boldsymbol{x}_1+l\boldsymbol{x}_2)\in R(A)$。
 
 :::
 
@@ -516,7 +516,7 @@ $$\boldsymbol{u}=(-n_2,n_1,0)^{\mathrm T},\qquad \boldsymbol{v}=(-n_1n_3,-n_2n_3
 
 **退化情形。** 若 $n_1=n_2=0$（此时 $n_3\neq0$），则 $W=\operatorname{span}\{(1,0,0)^{\mathrm T},(0,1,0)^{\mathrm T}\}$，即 $xOy$ 平面。
 
-**(2)** 不是。$\boldsymbol{\theta}$ 的第三分量是 $0\neq1$，零向量不在 $W''$ 中；从平移的角度看也一样：过原点的平面是子空间，整体平移离开原点之后就不再是。
+**(2)** 不是。$\boldsymbol{0}$ 的第三分量是 $0\neq1$，零向量不在 $W''$ 中；从平移的角度看也一样：过原点的平面是子空间，整体平移离开原点之后就不再是。
 
 :::
 

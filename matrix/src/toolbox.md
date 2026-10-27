@@ -129,6 +129,28 @@
 **易错**：把 $P^{-1}$ 的**列**当 $\boldsymbol\beta_i$（应读**行**）；$E_j$ 下标与 $\lambda_j$ 错配；把幂等当正交投影（只有正规矩阵才有 $E_j^{\mathrm H}=E_j$）；对非单纯矩阵硬写谱分解。
 :::
 
+::: method 流程 13 · 正交投影矩阵与最小二乘 {#flow-313}
+
+**入口**：「求 $\boldsymbol b$ 在 $\operatorname{span}(\boldsymbol a_1,\cdots,\boldsymbol a_m)$ 上的正交投影」「解最小二乘 $\min\|A\boldsymbol x-\boldsymbol b\|$」「求投影矩阵」。
+
+**步骤**：① 把基向量拼成 $A=[\boldsymbol a_1,\cdots,\boldsymbol a_m]$，先确认 $A$ **列满秩**（否则 $A^{\mathrm H}A$ 不可逆）；② 算 $A^{\mathrm H}A$（$m\times m$）并求逆；③ 投影矩阵 $E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$，投影为 $E\boldsymbol b$；④ 最小二乘写法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$，解 $\boldsymbol x=(A^{\mathrm H}A)^{-1}A^{\mathrm H}\boldsymbol b$；⑤ 验 $A\boldsymbol x=E\boldsymbol b$，残差 $\boldsymbol b-A\boldsymbol x$ 与 $A$ 的每一列正交；⑥ 验 $E^{\mathrm H}=E$、$E^2=E$、$\operatorname{tr}E=m$。
+
+**验算**：$E\boldsymbol a_i=\boldsymbol a_i$（$i=1,\cdots,m$）；$E\boldsymbol b$ 的残差与所有 $\boldsymbol a_i$ 正交；$\operatorname{rank}E=m$。
+
+**易错**：分母写成 $A^{\mathrm H}$ 或漏掉逆；$A$ 秩亏时硬套公式；把最小二乘解写成 $A^{-1}\boldsymbol b$（$A$ 不是方阵时无意义）；忘记残差正交性这一最便宜的验算。
+:::
+
+::: method 流程 14 · $\lambda$ 矩阵：判秩、判可逆、化标准形 {#flow-314}
+
+**入口**：「判断 $\lambda$ 矩阵的秩 / 是否可逆」「求 $\lambda$ 矩阵的逆」「用初等变换化简」。
+
+**步骤**：① **判秩**：找最高阶的、作为多项式**不恒为零**的子式；不要代入具体 $\lambda$ 看数值秩（[@note-3.8-pointwise]）；② **判可逆**：先算 $\det A(\lambda)$；若它是**非零常数**则可逆，否则不可逆（即使满秩）（[@thm-3.8.1]）；③ **求逆**（可逆时）：用伴随矩阵 $A^{-1}=A^*/\det A$，或直接解 $A\boldsymbol x=\boldsymbol y$；④ **初等变换**：换行 / 列、乘非零常数、加多项式倍；行变换左乘、列变换右乘；乘子必须是多项式（[@def-3.8.4]）；⑤ 化简目标：对角形 $\operatorname{diag}(d_1(\lambda),\cdots)$，为 Smith 标准形做预备（[@ex-3.8.C]）。
+
+**验算**：$\det$ 的次数与首项系数；可逆时 $AA^{-1}=I$ 逐元检查；初等变换前后秩与行列式（差一个非零常数因子）一致。
+
+**易错**：把「满秩」当「可逆」；把 $1/\lambda$ 当多项式；初等变换乘子用有理函数；忘记列变换是右乘。
+:::
+
 ## 二、二级结论速查（可直接引用）
 
 「二级结论」= 正文已证结论的一次性推论，做题时可以直接引用（引用请写出它来自哪条正定理，或现场一行验证——本表列出两样都给你）。每条都标**前提**：前提不满足时结论作废，这是判断题最爱设的坑。

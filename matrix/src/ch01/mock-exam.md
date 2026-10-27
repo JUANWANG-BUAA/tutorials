@@ -43,7 +43,7 @@
 
 **4. 对。**这是 [@prop-1.4.1]。理由：$\overline{\boldsymbol{x}^{\mathrm H}A\boldsymbol{x}}=(\boldsymbol{x}^{\mathrm H}A\boldsymbol{x})^{\mathrm H}=\boldsymbol{x}^{\mathrm H}A^{\mathrm H}\boldsymbol{x}=\boldsymbol{x}^{\mathrm H}A\boldsymbol{x}$（用了 $(BC)^{\mathrm H}=C^{\mathrm H}B^{\mathrm H}$ 与 $A^{\mathrm H}=A$）。一个数等于自身共轭当且仅当它是实数。
 
-**5. 假。**两两不成比例**不能**推出三个向量无关。反例：$(1,0)^{\mathrm T},(0,1)^{\mathrm T},(1,1)^{\mathrm T}$ 两两不成比例，但 $(1,0)^{\mathrm T}+(0,1)^{\mathrm T}-(1,1)^{\mathrm T}=\boldsymbol{\theta}$，相关。（两两不成比例只保证组内没有两个相关的子组，但三向量相关可以不需要任何一对成比例。）
+**5. 假。**两两不成比例**不能**推出三个向量无关。反例：$(1,0)^{\mathrm T},(0,1)^{\mathrm T},(1,1)^{\mathrm T}$ 两两不成比例，但 $(1,0)^{\mathrm T}+(0,1)^{\mathrm T}-(1,1)^{\mathrm T}=\boldsymbol{0}$，相关。（两两不成比例只保证组内没有两个相关的子组，但三向量相关可以不需要任何一对成比例。）
 
 **6. 对。**这是秩–零化度定理的内容，[1.3.10](sec13.md#sec-1.3.10) 思考 3、4 合起来即此（那里只作为课程预告给出，此处能用消元直观验证即可）。严格证明见第二章：[2.2.5](../ch02/sec22.md#thm-2.2.5) 的亏加秩定理是它的一般形式，[定理 2.3.6](../ch02/sec23.md#thm-2.3.6) 给出矩阵版本。
 
@@ -209,7 +209,7 @@ $$\boldsymbol{y}_j=\sum_{i=1}^{n}a_{ij}\boldsymbol{\varepsilon}_i,\qquad j=1,\cd
 
 两种情形都矛盾，故必有一个包含关系成立。
 
-**评分：**反证假设 2 分；取到「互不包含」的两个向量 3 分；两种情况各 2 分；指出矛盾并收尾 1 分。**关键给分点：**必须显式用到「子空间对减法封闭」（即 $-\boldsymbol{\beta}\in W_1$），只写「由封闭性」而不交代减法合法性会扣 1 分。
+**评分：**「$\Longleftarrow$」5 分（两种包含情形各 2 分，说清「并集等于较大者」1 分）；「$\Longrightarrow$」10 分：反证假设 2 分；取到「互不包含」的两个向量 3 分；两种情况各 2 分；指出矛盾并收尾 1 分。**关键给分点：**必须显式用到「子空间对减法封闭」（即 $-\boldsymbol{\beta}\in W_1$），只写「由封闭性」而不交代减法合法性会扣 1 分。
 
 **17.（15 分）**
 
@@ -223,7 +223,7 @@ $$EA\boldsymbol{k}=\boldsymbol{\theta}\quad\Longrightarrow\quad A\boldsymbol{k}=
 
 由 $A$ 可逆，$\boldsymbol{k}=\boldsymbol{\theta}$，故 $\boldsymbol{y}$ 组线性无关。又 $\boldsymbol{y}$ 组恰含 $n$ 个向量而 $\dim V=n$，由基扩充定理（[@cor-1.3.1] 前半）它是基。
 
-**「$\Longrightarrow$」（8 分）**设 $\boldsymbol{y}$ 组是基。由基表示唯一性，$A$ 的每一列是 $\boldsymbol{y}_j$ 在基 $E$ 下**唯一**的坐标，故 $A$ 由 $\boldsymbol{y}$ 组唯一确定。
+**「$\Longrightarrow$」（6 分）**设 $\boldsymbol{y}$ 组是基。由基表示唯一性，$A$ 的每一列是 $\boldsymbol{y}_j$ 在基 $E$ 下**唯一**的坐标，故 $A$ 由 $\boldsymbol{y}$ 组唯一确定。
 
 反设 $A$ 不可逆，则齐次方程组 $A\boldsymbol{k}=\boldsymbol{\theta}$ 有非零解 $\boldsymbol{k}\neq\boldsymbol{\theta}$。于是
 
@@ -233,7 +233,7 @@ $$k_1\boldsymbol{y}_1+\cdots+k_n\boldsymbol{y}_n=Y\boldsymbol{k}=EA\boldsymbol{k
 
 **评分：**写出 $Y=EA$ 2 分；充分性 7 分（构造零组合、由可逆得 $\boldsymbol{k}=\boldsymbol{\theta}$、引用「$n$ 个无关向量是基」）；必要性 6 分（反设不可逆 2 分、取到非零解 2 分、导出矛盾 2 分）。
 
-**另一种思路（加分不改分）：**必要性也可用「$A$ 不可逆 $\Longrightarrow$ 存在非零 $\boldsymbol{k}$ 使 $A\boldsymbol{k}=\boldsymbol{0}$」直接反证，与 [@prop-1.3.1]（1） 的证明同构。本题正是「过渡矩阵可逆」这条性质的一般形式。
+**另一种思路（加分不改分）：**必要性也可用「$A$ 不可逆 $\Longrightarrow$ 存在非零 $\boldsymbol{k}$ 使 $A\boldsymbol{k}=\boldsymbol{0}$」直接反证，与 [@prop-1.3.1]（1）的证明同构。本题正是「过渡矩阵可逆」这条性质的一般形式。
 
 :::
 

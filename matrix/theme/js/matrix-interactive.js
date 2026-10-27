@@ -1211,6 +1211,183 @@
   }
 
   /* ----------------------------------------------------------------------- *
+   * 部件：最小二乘 —— 列空间是一条直线时的「最近点」
+   * data-widget="least-squares"
+   *   - 蓝色 b 可拖；紫色 a1 的方向由滑块控制（列空间 = 直线 span(a1)）；
+   *   - 红色候选点 t·a1 沿直线滑动，虚线是候选残差；绿色是最近点 x*·a1，
+   *     金色是垂直残差——拖动候选滑块可见距离差恒 ≥ 0，只在 x* 处取 0；
+   *   - 读数给出 x*、两个距离与「残差·a1 = 0」（法方程的几何形式）。
+   * ----------------------------------------------------------------------- */
+
+  function widgetLeastSquares(root) {
+    var state = { a: [2.2, 0.9], b: [2.6, 2.2] };
+    var controls = document.createElement("div");
+    controls.className = "widget-controls";
+    root.appendChild(controls);
+
+    var stage = makeStage(root, {
+      height: 300,
+      range: 4,
+      draggable: true,
+      aria: "最小二乘演示：拖动蓝色向量 b，或拉动候选系数滑块，观察直线 span(a1) 上哪个点离 b 最近"
+    });
+    registerStage(stage);
+
+    var cand = makeSlider(controls, {
+      label: "候选系数 t（候选点 t·a₁）",
+      min: -1.5,
+      max: 3,
+      step: 0.05,
+      value: 0.4,
+      aria: "调整候选点在直线上的位置"
+    });
+    var dir = makeSlider(controls, {
+      label: "a₁ 的方向（度）",
+      min: -85,
+      max: 85,
+      step: 1,
+      value: 22,
+      aria: "调整基向量 a1 的方向"
+    });
+    var snap = makeButton(controls, "对准最近点", "把候选系数设为最小二乘解 x*");
+    var readout = makeReadout(root);
+
+    function setDir(deg) {
+      var rad = (deg * Math.PI) / 180;
+      var len = Math.sqrt(inner(state.a, state.a)) || 1;
+      state.a = [Math.cos(rad) * len, Math.sin(rad) * len];
+    }
+
+    function foot() {
+      var aa = inner(state.a, state.a);
+      var t = aa > 1e-9 ? inner(state.b, state.a) / aa : 0;
+      return { t: t, p: scale(state.a, t) };
+    }
+
+    function distTo(u) {
+      var d = [state.b[0] - u[0], state.b[1] - u[1]];
+      return Math.sqrt(inner(d, d));
+    }
+
+    function draw(ctx, plane, pal) {
+      ctx.clearRect(0, 0, stage.w, stage.h);
+      drawGrid(ctx, plane, pal);
+      var o = plane.toPx([0, 0]);
+
+      /* 列空间：整条直线 span(a1) */
+      var la = plane.toPx(scale(state.a, -plane.range * 1.5));
+      var lb = plane.toPx(scale(state.a, plane.range * 1.5));
+      ctx.save();
+      ctx.strokeStyle = withAlpha(pal.muted, 0.45);
+      ctx.setLineDash([6, 5]);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(la.x, la.y);
+      ctx.lineTo(lb.x, lb.y);
+      ctx.stroke();
+      ctx.restore();
+      label(ctx, "R(A) = span(a₁)", lb.x - 16, lb.y - 12, pal.muted, "12px " + pal.sans, "right");
+
+      var f = foot();
+      var pa = plane.toPx(state.a);
+      var pb = plane.toPx(state.b);
+      var pp = plane.toPx(f.p);
+      var q = scale(state.a, cand.read());
+      var pq = plane.toPx(q);
+
+      /* 候选残差 b → t·a1（红色虚线） */
+      ctx.save();
+      ctx.strokeStyle = withAlpha(pal.red, 0.55);
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(pb.x, pb.y);
+      ctx.lineTo(pq.x, pq.y);
+      ctx.stroke();
+      ctx.restore();
+
+      arrow(ctx, o.x, o.y, pa.x, pa.y, pal.purple, 3);
+      arrow(ctx, o.x, o.y, pp.x, pp.y, pal.green, 2.4);
+      arrow(ctx, pp.x, pp.y, pb.x, pb.y, pal.gold, 2.6);
+
+      dot(ctx, pq.x, pq.y, pal.red, 5);
+      dot(ctx, pp.x, pp.y, pal.green, 6);
+      dot(ctx, pb.x, pb.y, pal.blue, 6);
+
+      label(ctx, "a₁", pa.x + 12, pa.y + 12, pal.purple, "italic 15px " + pal.serif);
+      label(ctx, "b", pb.x + 12, pb.y - 10, pal.blue, "italic 15px " + pal.serif);
+      label(ctx, "Ax*", pp.x - 16, pp.y + 18, pal.green, "italic 14px " + pal.serif, "right");
+      label(ctx, "t·a₁", pq.x + 12, pq.y + 14, pal.red, "italic 14px " + pal.serif);
+      label(ctx, "残差 ⊥", (pp.x + pb.x) / 2 + 10, (pp.y + pb.y) / 2 - 8, pal.gold, "12px " + pal.sans);
+      label(ctx, "‖b − t·a₁‖", (pq.x + pb.x) / 2 + 10, (pq.y + pb.y) / 2 - 8, withAlpha(pal.red, 0.9), "12px " + pal.sans);
+
+      /* 垂足处的直角记号：沿 a1 与沿残差各取一小段正交边 */
+      var res = [state.b[0] - f.p[0], state.b[1] - f.p[1]];
+      var nres = Math.sqrt(inner(res, res));
+      var ua = toUnit(state.a);
+      var ur = nres > 1e-9 ? scale(res, 1 / nres) : [0, 1];
+      var s = 9; /* 像素边长（画布 y 轴向下，故数学 y 取负号） */
+      function corner(u) {
+        return { x: pp.x + u[0] * s, y: pp.y - u[1] * s };
+      }
+      var c1 = corner(ua);
+      var c2 = corner([ua[0] + ur[0], ua[1] + ur[1]]);
+      var c3 = corner(ur);
+      ctx.save();
+      ctx.strokeStyle = withAlpha(pal.gold, 0.8);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(c1.x, c1.y);
+      ctx.lineTo(c2.x, c2.y);
+      ctx.lineTo(c3.x, c3.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+    stage.draw = draw;
+
+    function finish() {
+      var f = foot();
+      var dmin = distTo(f.p);
+      var dc = distTo(scale(state.a, cand.read()));
+      var res = [state.b[0] - f.p[0], state.b[1] - f.p[1]];
+      var msg =
+        "x* = ⟨a₁,b⟩ / ⟨a₁,a₁⟩ = " + fmt(f.t) +
+        "，最小距离 ‖b − x*·a₁‖ = " + fmt(dmin) +
+        "；候选 ‖b − t·a₁‖ = " + fmt(dc) +
+        "，差 = " + fmt(Math.max(0, dc - dmin)) + " ≥ 0。" +
+        "残差与 a₁ 的内积 = " + fmt(inner(state.a, res), 6) + "（恒为 0，即法方程 a₁ᵀ(b − x*·a₁) = 0）。";
+      if (Math.abs(dc - dmin) < 0.02) msg += "此刻候选点就是最近点。";
+      readout.textContent = msg;
+    }
+
+    cand.input.addEventListener("input", function () {
+      stage.render();
+      finish();
+    });
+    dir.input.addEventListener("input", function () {
+      setDir(dir.read());
+      stage.render();
+      finish();
+    });
+    snap.addEventListener("click", function () {
+      /* 对齐到滑块步长（0.05），避免显示值与滑块位置脱节 */
+      cand.set(Math.round(foot().t * 20) / 20);
+      stage.render();
+      finish();
+    });
+
+    enableDrag(stage, function (p, delta) {
+      if (delta) state.b = clampVec(add(state.b, delta), 3.9);
+      else state.b = clampVec(p, 3.9);
+      stage.render();
+      finish();
+    });
+
+    setDir(22);
+    finish();
+  }
+
+  /* ----------------------------------------------------------------------- *
    * data-widget="arena-clock"
    * 考场竞技场：倒计时 + 记分牌（第三章特训页用）。
    *   - 计时用 deadline 时间戳（setInterval 只做采样），切后台不亏秒数；
@@ -1374,6 +1551,248 @@
   }
 
   /* ----------------------------------------------------------------------- *
+   * 部件：矩阵 → 行列式因子 → Smith 形 → 初等因子 → Jordan 形
+   * data-widget="smith-jordan"
+   * --------------------------------------------------------------------------
+   * 用 DOM 表格而不是 canvas：矩阵是**文字**，表格清晰、可选中复制、缩放不失真，
+   * 读屏也能逐格读出；用 canvas 反而要自己排版字形与对齐。
+   *
+   * 页面上不做符号计算——三个矩阵的 Smith 形、初等因子与块结构都是预置常量，
+   * 已由 tools/verify_teaching_examples.py 以多项式系数精确算术复算。这样部件
+   * 在极老的浏览器与打印场景里也能给出正确内容（渐进增强：JS 不跑时正文仍有
+   * 同一组例子）。
+   */
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function widgetSmithJordan(root) {
+    /* 三个预置矩阵，各自负责一个考点：
+       diag3 —— 可对角化时 Smith 形**不是**特征值对角阵（最常错的一处）；
+       mixed —— 一个非平凡不变因子，两个块，块阶 2 与 1；
+       same  —— 同一特征值对应两个块（3.8.F 的四阶例）。 */
+    var PRESETS = [
+      {
+        label: "三块对角 · 可对角", 
+        steps: [
+          {
+            chip: "λI−A",
+            matrix: [["λ−1", "0", "0"], ["0", "λ−2", "0"], ["0", "0", "λ−3"]],
+            note: "A = diag(1,2,3) 的特征矩阵。行列式是首 1 三次多项式，永远不恒为零——所以 λI−A 一定满秩，「秩」在这里不带信息。"
+          },
+          {
+            chip: "行列式因子",
+            list: [["D₁", "1"], ["D₂", "1"], ["D₃", "(λ−1)(λ−2)(λ−3)"]],
+            note: "一阶元素 λ−1、λ−2、λ−3 互素，故 D₁=1。二阶子式是三个两两乘积 (λ−1)(λ−2)、(λ−1)(λ−3)、(λ−2)(λ−3)，三者没有公共因子，故 D₂=1。三阶子式只有一个，就是行列式。"
+          },
+          {
+            chip: "Smith 形",
+            matrix: [["1", "0", "0"], ["0", "1", "0"], ["0", "0", "(λ−1)(λ−2)(λ−3)"]],
+            note: "注意：Smith 形**不是** diag(λ−1, λ−2, λ−3)。那个对角阵不满足整除链（λ−1 不整除 λ−2），所以它不是标准形——把特征值直接摆上对角线，是本节最常见的错误。"
+          },
+          {
+            chip: "初等因子",
+            list: [["来自 d₁", "无（d₁ = 1）"], ["来自 d₂", "无（d₂ = 1）"], ["来自 d₃", "λ−1, λ−2, λ−3"]],
+            note: "只有 d₃ 分解出的三个一次因子。初等因子全是一次 ⇒ 由推论 3.8.3，A 可对角化——「全一次」与「m_A 无重根」是同一件事。"
+          },
+          {
+            chip: "Jordan 形",
+            matrix: [["1", "0", "0"], ["0", "2", "0"], ["0", "0", "3"]],
+            note: "三个 1 阶块拼起来正好是 A 自己。可对角化的矩阵，Jordan 形就是它的对角形（块的次序可以换）。"
+          },
+          {
+            chip: "三个重数",
+            list: [["λ = 1", "代数 1 · 几何 1 · 最大块 1"], ["λ = 2", "代数 1 · 几何 1 · 最大块 1"], ["λ = 3", "代数 1 · 几何 1 · 最大块 1"]],
+            note: "三个数处处相等，正是「可对角化」的另一种说法。只要有一处几何重数小于代数重数，就说明有块阶 ≥ 2。"
+          }
+        ]
+      },
+      {
+        label: "两块不同阶",
+        steps: [
+          {
+            chip: "λI−A",
+            matrix: [["λ−2", "−1", "−1"], ["0", "λ−2", "−1"], ["0", "0", "λ−3"]],
+            note: "A = [[2,1,1],[0,2,1],[0,0,3]] 的特征矩阵。上三角，对角元 2、2、3；超对角的两个 1 正是「凑不出足够特征向量」的来源。"
+          },
+          {
+            chip: "行列式因子",
+            list: [["D₁", "1"], ["D₂", "1"], ["D₃", "(λ−2)²(λ−3)"]],
+            note: "元素里有常数 1（(1,2)、(1,3) 两个位置），故 D₁=1；二阶子式中同样有 1，故 D₂=1。D₃ 是行列式。"
+          },
+          {
+            chip: "Smith 形",
+            matrix: [["1", "0", "0"], ["0", "1", "0"], ["0", "0", "(λ−2)²(λ−3)"]],
+            note: "前两个不变因子都是 1，全部非平凡信息压在 d₃ 里。3×3 矩阵只有一个非平凡不变因子，意味着块都挂在同一个「大因子」下面。"
+          },
+          {
+            chip: "初等因子",
+            list: [["来自 d₃", "(λ−2)², λ−3"], ["块数", "2"]],
+            note: "d₃ 拆成素因子幂：(λ−2)² 与 λ−3。两个初等因子 ⇒ 两个块。这一步只做「拆分」，不看别的。"
+          },
+          {
+            chip: "Jordan 形",
+            matrix: [["2", "1", "0"], ["0", "2", "0"], ["0", "0", "3"]],
+            note: "J₂(2) ⊕ J₁(3)。核对超对角：只有 (1,2) 是 1，它连接的左右对角元都是 2 ✓；(2,3) 是 0，因为对角元从 2 变 3，块在此断开。"
+          },
+          {
+            chip: "三个重数",
+            list: [["λ = 2", "代数 2 · 几何 1 · 最大块 2"], ["λ = 3", "代数 1 · 几何 1 · 最大块 1"]],
+            note: "λ=2 的代数重数 2 大于几何重数 1 ⇒ 不可对角化；最大块阶 2 就是 m_A 中 (λ−2) 的幂次。"
+          }
+        ]
+      },
+      {
+        label: "同特征值两块",
+        steps: [
+          {
+            chip: "λI−A",
+            matrix: [["λ−2", "−1", "−1", "0"], ["0", "λ−2", "0", "−1"], ["0", "0", "λ−2", "−1"], ["0", "0", "0", "λ−2"]],
+            note: "例 3.8.F 的四阶矩阵，对角元全是 2。超对角有 1，但 (2,3) 是 0——块的断点不能靠肉眼，要靠下面的秩公式。"
+          },
+          {
+            chip: "行列式因子",
+            list: [["D₁", "1"], ["D₂", "1"], ["D₃", "λ−2"], ["D₄", "(λ−2)⁴"]],
+            note: "D₁=D₂=1；D₃ 非平凡，说明存在一个 3 阶子式整体含 (λ−2)；D₄=(λ−2)⁴ 是行列式。"
+          },
+          {
+            chip: "Smith 形",
+            matrix: [["1", "0", "0", "0"], ["0", "1", "0", "0"], ["0", "0", "λ−2", "0"], ["0", "0", "0", "(λ−2)³"]],
+            note: "两个非平凡不变因子 ⇒ 至少两个块；最大的那个是 3 次，故最大块阶 = 3。"
+          },
+          {
+            chip: "初等因子",
+            list: [["来自 d₃", "λ−2"], ["来自 d₄", "(λ−2)³"], ["块数", "2"]],
+            note: "两个初等因子都是同一个特征值的幂——**同一个特征值可以对应多个块**，块由初等因子逐个计数，不是由特征值计数。"
+          },
+          {
+            chip: "Jordan 形",
+            matrix: [["2", "1", "0", "0"], ["0", "2", "1", "0"], ["0", "0", "2", "0"], ["0", "0", "0", "2"]],
+            note: "J₃(2) ⊕ J₁(2)：一个 3 阶块加一个 1 阶块，总阶数 4 ✓。断点在第 3 行第 3 列之后——那里不再有 1。"
+          },
+          {
+            chip: "三个重数",
+            list: [["λ = 2", "代数 4 · 几何 2 · 最大块 3"], ["m_A", "(λ−2)³"], ["f_A", "(λ−2)⁴"]],
+            note: "代数 4（总阶数）、几何 2（块数）、最大块 3（m_A 的幂次）。m_A 比 f_A 低一次，正是「4 阶矩阵的最小多项式不必等于特征多项式」的实例。"
+          }
+        ]
+      }
+    ];
+
+    var presetRow = el("div", "widget-controls");
+    var stepRow = el("div", "widget-steps");
+    var figure = el("div", "widget-figure");
+    var readout = el("p", "widget-readout");
+    readout.setAttribute("role", "status");
+    readout.setAttribute("aria-live", "polite");
+    var navRow = el("div", "widget-controls");
+
+    root.appendChild(presetRow);
+    root.appendChild(stepRow);
+    root.appendChild(figure);
+    root.appendChild(readout);
+    root.appendChild(navRow);
+
+    var pIndex = 0;
+    var sIndex = 0;
+    var pChips = [];
+    var sChips = [];
+
+    var prev = el("button", "widget-btn", "← 上一步");
+    var next = el("button", "widget-btn", "下一步 →");
+    prev.type = "button";
+    next.type = "button";
+    prev.addEventListener("click", function () {
+      if (sIndex > 0) { sIndex--; render(); }
+    });
+    next.addEventListener("click", function () {
+      if (sIndex < PRESETS[pIndex].steps.length - 1) { sIndex++; render(); }
+    });
+    navRow.appendChild(prev);
+    navRow.appendChild(next);
+
+    PRESETS.forEach(function (p, i) {
+      var b = el("button", "widget-btn", p.label);
+      b.type = "button";
+      b.addEventListener("click", function () {
+        pIndex = i;
+        sIndex = 0;
+        buildSteps();
+        render();
+      });
+      presetRow.appendChild(b);
+      pChips.push(b);
+    });
+
+    /* 矩阵：零元淡出，对角元加底色（不是数学标记，只是视觉锚点） */
+    function matrixTable(rows) {
+      var wrap = el("div", "widget-matrix");
+      var table = el("table");
+      var tbody = el("tbody");
+      var square = rows.length === rows[0].length;
+      rows.forEach(function (row, ri) {
+        var tr = el("tr");
+        row.forEach(function (cell, ci) {
+          var classes = [];
+          if (cell === "0") classes.push("is-zero");
+          if (square && ri === ci) classes.push("is-diag");
+          tr.appendChild(el("td", classes.join(" "), cell));
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      return wrap;
+    }
+
+    function ledger(rows) {
+      var wrap = el("div", "widget-ledger");
+      rows.forEach(function (r) {
+        wrap.appendChild(el("span", "wk", r[0]));
+        wrap.appendChild(el("span", "wv", r[1]));
+      });
+      return wrap;
+    }
+
+    function buildSteps() {
+      while (stepRow.firstChild) stepRow.removeChild(stepRow.firstChild);
+      sChips = [];
+      PRESETS[pIndex].steps.forEach(function (s, i) {
+        var b = el("button", "widget-step", (i + 1) + " · " + s.chip);
+        b.type = "button";
+        b.addEventListener("click", function () { sIndex = i; render(); });
+        stepRow.appendChild(b);
+        sChips.push(b);
+      });
+    }
+
+    function render() {
+      var steps = PRESETS[pIndex].steps;
+      var s = steps[sIndex];
+      pChips.forEach(function (b, i) {
+        b.classList.toggle("is-active", i === pIndex);
+        b.setAttribute("aria-pressed", i === pIndex ? "true" : "false");
+      });
+      sChips.forEach(function (b, i) {
+        b.classList.toggle("is-active", i === sIndex);
+        b.setAttribute("aria-pressed", i === sIndex ? "true" : "false");
+      });
+      prev.disabled = sIndex === 0;
+      next.disabled = sIndex === steps.length - 1;
+      while (figure.firstChild) figure.removeChild(figure.firstChild);
+      figure.appendChild(s.matrix ? matrixTable(s.matrix) : ledger(s.list));
+      readout.textContent = s.note;
+    }
+
+    buildSteps();
+    render();
+  }
+
+  /* ----------------------------------------------------------------------- *
    * 注册与启动
    * ----------------------------------------------------------------------- */
 
@@ -1384,6 +1803,8 @@
     "change-basis": widgetChangeBasis,
     "linear-map": widgetLinearMap,
     "eigen": widgetEigen,
+    "least-squares": widgetLeastSquares,
+    "smith-jordan": widgetSmithJordan,
     "arena-clock": widgetArenaClock
   };
 

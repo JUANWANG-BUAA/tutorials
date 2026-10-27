@@ -4,7 +4,7 @@
 
 > **第二章（2.1–2.5）的目标**：2.1–2.2 随第 3 周录播追加、2.3 随官方课件追加、2.4–2.5 随第 5 周录播追加，见「K2 / S2 / A2」三组，与[第二章自检表](ch02/checklist.md)对应；2.6–2.7 到位后继续补充。
 >
-> **第三章（3.1–3.2、3.4–3.7）的目标**：六节随官方课件追加（均无录播），见本节末尾「K3 / S3 / A3」三组——K3.1–K3.16、S3.1–S3.5、A3.1–A3.5 覆盖 3.1–3.2；K3.17–K3.30、S3.6–S3.10、A3.6–A3.8 覆盖 3.4–3.5；K3.31–K3.44、S3.11–S3.16、A3.9–A3.12 覆盖 3.6–3.7，共 72 条，与[第三章自检表](ch03/checklist.md)、[考场竞技场](ch03/arena.md)的必考点清单同一编号；3.3 与 3.8 及以后到位后继续补充。
+> **第三章（3.1–3.2、3.4–3.8）的目标**：七节随官方课件追加（均无录播），见本节末尾「K3 / S3 / A3」三组——K3.1–K3.16、S3.1–S3.5、A3.1–A3.5 覆盖 3.1–3.2；K3.17–K3.30、S3.6–S3.10、A3.6–A3.8 覆盖 3.4–3.5；K3.31–K3.52、S3.11–S3.21、A3.9–A3.14 覆盖 3.6–3.8，共 87 条，与[第三章自检表](ch03/checklist.md)同一编号，并经[考场竞技场](ch03/arena.md)的必考点清单（竞技场自编 S1–S10 / A1–A8 考法编号，弹药列回指本表）落到考法；3.3 与 3.9 及以后到位后继续补充。
 
 ## K · 知识目标（概念与理论）
 
@@ -83,7 +83,7 @@
 <li><span class="obj-id">A2.4</span>书写矩阵与换基公式前先核对形状（$m\times n$）与基的对应关系；能区分「相抵 / 相似」「等势 / 同构」「同一个矩阵 / 同一个映射」三对概念。<span class="obj-lv">分析 / 评价</span></li>
 </ul>
 
-## 第三章 · 矩阵分解（3.1–3.2、3.4–3.7）
+## 第三章 · 矩阵分解（3.1–3.2、3.4–3.8）
 
 ### K · 知识目标
 
@@ -132,6 +132,14 @@
 <li><span class="obj-id">K3.42</span>能陈述并证明谱阵五性质（幂等、两两正交、与 $A$ 交换、求和为 $I$、唯一），尤其（5）的 Lagrange 证明。<span class="obj-lv">理解 / 证明</span></li>
 <li><span class="obj-id">K3.43</span>能区分幂等 $E^2=E$ 与正交投影 $E^2=E=E^{\mathrm H}$，说出「幂等 $=$ 投影、Hermite 幂等 $=$ 正交投影」。<span class="obj-lv">理解 / 分析</span></li>
 <li><span class="obj-id">K3.44</span>能陈述函数演算 $f(A)=\sum_jf(\lambda_j)E_j$ 与 Lagrange 公式 $E_i=f_i(A)/f_i(\lambda_i)$，并用它们算 $A^k$、$A^{-1}$、$e^{At}$。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.45</span>能完整陈述幂等阵的四条性质，并证明 $\mathbb C^n=R(E)\oplus N(E)$ 与 $E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.46</span>能写出到子空间的正交投影矩阵 $E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$，说明 $A^{\mathrm H}A$ 可逆的前提，并验证 $E^{\mathrm H}=E$、$E^2=E$。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.47</span>能由正交投影推出法方程 $A^{\mathrm H}A\boldsymbol x=A^{\mathrm H}\boldsymbol b$，并解释残差为什么与 $R(A)$ 正交。<span class="obj-lv">理解 / 证明</span></li>
+<li><span class="obj-id">K3.48</span>能说明 $\lambda$ 矩阵的秩是「不恒为零的子式」、可逆是「行列式为非零常数」，并举出满秩但不可逆的例子。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.49</span>能背写 $k$ 阶行列式因子 $D_k$ 的定义与 $D_k=d_1\cdots d_k$，说出 Smith 标准形的「首 $1$ $+$ 整除链」两条要求，并举出「对角但非 Smith」的例子。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.50</span>能由不变因子读出初等因子（多重集、不去重），也能由初等因子反装不变因子（同一素因子的幂从大到小分配）。<span class="obj-lv">理解 / 应用</span></li>
+<li><span class="obj-id">K3.51</span>能说清「秩」「初等因子」「不变因子」三者在相抵判别中的逻辑地位，并举出同秩不相抵、同初等因子不相抵两个反例。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K3.52</span>能由 $\lambda I-A$ 的初等因子写出 Jordan 标准形，陈述「除块次序外唯一」，并说出 $m_A=d_n$ 与三个重数各管什么。<span class="obj-lv">理解 / 证明</span></li>
 </ul>
 
 ### S · 技能目标
@@ -153,6 +161,11 @@
 <li><span class="obj-id">S3.14</span>能从 $P\Lambda P^{-1}$ 读出谱分解：$P$ 按列读、$P^{-1}$ 按行读、按特征值分组，并验 $\sum E_j=I$、$E_iE_j=0$。<span class="obj-lv">应用</span></li>
 <li><span class="obj-id">S3.15</span>能不求 $P^{-1}$，直接用 Lagrange 公式 $E_i=f_i(A)/f_i(\lambda_i)$ 算谱阵。<span class="obj-lv">应用 / 分析</span></li>
 <li><span class="obj-id">S3.16</span>能用谱分解算 $A^k$、$f(A)$、$e^{At}$、$A^{-1}$，并回代验算。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.17</span>能给一组向量算出投影矩阵并回代验 $E^2=E=E^{\mathrm H}$；给 $A,\boldsymbol b$ 能写法方程、解出 $\boldsymbol x$、验残差正交。<span class="obj-lv">应用 / 评价</span></li>
+<li><span class="obj-id">S3.18</span>给一个 $\lambda$ 矩阵能找最高阶非零子式、算行列式、判断可逆并求逆（若可逆）。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.19</span>能用三种初等变换把简单 $\lambda$ 矩阵化成对角形，并说明每步属于哪一种变换、乘子是什么。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S3.20</span>任给 $3\times3$ 以内的 $\lambda$ 矩阵（或特征矩阵），能算出 $D_k$、$d_i$、初等因子并回代验算。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S3.21</span>能用秩公式定出 Jordan 块结构，并求出 $P$ 使 $P^{-1}AP=J$（从最高阶广义特征向量反推），验 $AP=PJ$。<span class="obj-lv">应用 / 综合</span></li>
 </ul>
 
 ### A · 素养目标
@@ -170,4 +183,6 @@
 <li><span class="obj-id">A3.10</span>能举出「单纯但不正规」与「正规但不 Hermite」的例子，并说出差别在特征向量是否正交。<span class="obj-lv">分析 / 评价</span></li>
 <li><span class="obj-id">A3.11</span>能保持列序与行读纪律：$P$ 的列对应 $\Lambda$ 的对角元，$P^{-1}$ 按行读成 $\boldsymbol\beta_i^{\mathrm H}$，$E_j$ 的下标与 $\lambda_j$ 配对。<span class="obj-lv">评价</span></li>
 <li><span class="obj-id">A3.12</span>能辨析实 / 复边界：实正规矩阵酉对角化中的 $U$ 一般不是实正交阵；要求实正交 $Q$ 时前提是实对称（特征值全实）。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.13</span>用「秩 / 可逆 / 初等变换」前先分清：这次问的是逐点数值秩还是多项式秩？行列式是非零多项式还是非零常数？乘子是多项式还是有理函数？<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A3.14</span>能区分「相抵保持的量」与「决定相抵的量」：秩只保持不决定，初等因子要配秩才决定，不变因子单独就决定；对特征矩阵秩条件自动满足。<span class="obj-lv">分析 / 评价</span></li>
 </ul>

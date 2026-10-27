@@ -1,14 +1,14 @@
-# 习题集 · 第三章（3.1–3.2 与 3.4–3.7）
+# 习题集 · 第三章（3.1–3.2 与 3.4–3.8）
 
-三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md)、[3.4](sec34.md)、[3.5](sec35.md)、[3.6](sec36.md)、[3.7](sec37.md) 的概念与第一、二章先修知识。
+三组分层：A 组概念判断（快速自检）、B 组推理证明（考试大题）、C 组计算实操。**全部附解答**（默认折叠），建议先独立完成再展开对照。所有题目只使用 [3.1](sec31.md)、[3.2](sec32.md)、[3.4](sec34.md)、[3.5](sec35.md)、[3.6](sec36.md)、[3.7](sec37.md)、[3.8](sec38.md) 的概念与第一、二章先修知识。
 
-本页 A、B、C 三组 72 题：A 组（24 题）、B 组（20 题）、C 组（28 题）。
+本页 A、B、C 三组 82 题：A 组（27 题）、B 组（21 题）、C 组（34 题）。
 
 | 组 | 定位 | 建议时长 | 卡壳时怎么办 |
 |:--|:--|:--|:--|
-| **A 组**（24 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
-| **B 组**（20 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
-| **C 组**（28 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
+| **A 组**（27 题） | 概念判断，口答即可 | 每题 1–2 分钟 | 直接看解答，回到对应小节的「即时自测」重读 |
+| **B 组**（21 题） | 推理证明，需完整写出 | 每题 8–12 分钟 | 先看提示，再用 10 分钟；仍无思路才展开解答 |
+| **C 组**（34 题） | 计算实操，注意验算 | 每题 5–8 分钟 | 看提示定位方法，算完**一定代回验证** |
 
 ::: note 关于「提示」层
 
@@ -17,11 +17,11 @@ B5、B7、B8、B11、B15、B18、C4、C13、C14、C17 这 10 题提供了折叠�
 
 ::: note 关于难度分布
 
-A 组覆盖全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解（A1–A12）；QR 分解的存在 / 唯一 / 正线、列正交规范与酉矩阵的分野、QR 算法的相似性与收敛条件（A13–A16）；Schur 引理的适用范围、实数域边界、谱映射与特征向量继承的单向性、最小多项式的四条事实、逆矩阵公式（A17–A20）；对角化五判据、正规 / 单纯 / Hermite 的包含关系、实对称正交对角化、谱分解与谱阵（A21–A24）。
+A 组覆盖全部「辨析点」：相抵分解不唯一 / 标准形唯一、相抵与相似的分野、单侧逆的存在判别与「方阵前提」、$\operatorname{rank}(A)=\operatorname{rank}(A^{\mathrm H}A)$ 的四个等式、满秩分解的形状与读法、两种分解各自「不唯一的程度」、$AXA=A$ 的解（A1–A12）；QR 分解的存在 / 唯一 / 正线、列正交规范与酉矩阵的分野、QR 算法的相似性与收敛条件（A13–A16）；Schur 引理的适用范围、实数域边界、谱映射与特征向量继承的单向性、最小多项式的四条事实、逆矩阵公式（A17–A20）；对角化五判据、正规 / 单纯 / Hermite 的包含关系、实对称正交对角化、谱分解与谱阵（A21–A24）；$\lambda$ 矩阵的秩、满秩与可逆的分界（A25）。
 
-B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心（B1–B10，B9 把 3.1 的结论接回第一章的正定矩阵）；B11–B13 补 QR 的两条主干（对角酉阵刻画、迭代相似链与等模卡死），B14–B17 补 Schur / 谱映射 / 最小多项式的证明重做（B15 给出不依赖定理 3.5.1 的直接构造路线）；B18–B20 补正规谱定理、实正规矩阵的对称判别与谱分解驱动的逆 / 指数 / 酉性（B18 给出上三角正规阵必对角的完整归纳）。
+B 组以**相抵 $\iff$ 同秩**、**单侧逆的构造与判别**、**满秩分解的两条主干证明**（$\operatorname{rank}C=r$、[@thm-3.2.2]）与 **$AXA=A\iff CXB=I_r$** 为重心（B1–B10，B9 把 3.1 的结论接回第一章的正定矩阵）；B11–B13 补 QR 的两条主干（对角酉阵刻画、迭代相似链与等模卡死），B14–B17 补 Schur / 谱映射 / 最小多项式的证明重做（B15 给出不依赖定理 3.5.1 的直接构造路线）；B18–B20 补正规谱定理、实正规矩阵的对称判别与谱分解驱动的逆 / 指数 / 酉性（B18 给出上三角正规阵必对角的完整归纳）；B21 把幂等阵的空间分解与「伴随矩阵仍是幂等阵」收进一题。
 
-C 组训练八件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）、**GS 手算 QR 与长方阵补齐**（C17、C18、C22）、**H–C 与最小多项式驱动的三套计算**（C19–C21、C23、C24）、**对角化的判定与正交化**（C25、C26、C27）、**谱分解与 Lagrange 公式**（C28）。3.3 与 3.8 及以后素材到位后，本页按同样的三组结构续写。
+C 组训练十件基本功：**相抵分解（含分块矩阵法求 $P^{-1}$、$Q^{-1}$）**、**用相抵标准形解方程组**、**单侧逆的构造与「全部右逆」的写法**、**满秩分解的三种算法**（取列 / RREF / 从相抵分解读）、**GS 手算 QR 与长方阵补齐**（C17、C18、C22）、**H–C 与最小多项式驱动的三套计算**（C19–C21、C23、C24）、**对角化的判定与正交化**（C25、C26、C27）、**谱分解与 Lagrange 公式**（C28）、**正交投影矩阵与最小二乘**（C29）、**$\lambda$ 矩阵的秩 / 可逆 / 初等变换**（C30、C31）、**Smith 标准形 / 初等因子 / Jordan 标准形**（C32–C34）。3.3 与 3.9 及以后素材到位后，本页按同样的三组结构续写。
 :::
 
 ## A 组 · 概念判断
@@ -354,6 +354,92 @@ $$(A,\ I),\qquad\big(A\operatorname{diag}(-1,1),\ \operatorname{diag}(-1,1)\big)
 ::: sol 解答
 
 (a) **对**（[@note-3.7-existence]、[@method-spectral]）。(b) **对**（[@prop-3.7.1]（1））。(c) **错**——只有正规矩阵的谱阵才是正交投影；非正规单纯矩阵的谱阵是斜投影（[@ex-3.7.A]、[@prop-3.7.2]）。(d) **对**（[@thm-3.7.1]）。(e) **错**——谱分解的门票是单纯；不可对角化时只能退到 Schur 型 / Jordan 型，$E_j$ 不再是幂等的（会出现 Jordan 块的多项式项）。
+:::
+:::
+
+::: ex A25 · $\lambda$ 矩阵与投影六问 {#ex-A25}
+
+判断对错：
+
+(a) $\lambda$ 矩阵的秩等于「对每个 $\lambda$ 代入后数值矩阵的秩」；
+
+(b) $\lambda$ 矩阵满秩就一定有逆矩阵；
+
+(c) 若 $\lambda$ 方阵的行列式是非零常数，则它可逆；
+
+(d) 对 $\lambda$ 矩阵作初等变换不改变它的秩；
+
+(e) 若 $A$ 列满秩，则 $E=A(A^{\mathrm H}A)^{-1}A^{\mathrm H}$ 是正交投影矩阵；
+
+(f) 最小二乘问题 $\min\|A\boldsymbol x-\boldsymbol b\|$ 总有唯一解。
+
+::: sol 解答
+
+(a) **错**——秩看「存在不恒为零的子式」，不是逐点数值秩（[@note-3.8-pointwise]）。(b) **错**——满秩只保证 $\det\not\equiv0$；可逆要求 $\det$ 是非零常数，$\operatorname{diag}(\lambda,\lambda+1)$ 是反例（[@thm-3.8.1]）。(c) **对**——这正是 [@thm-3.8.1] 的充分性。(d) **对**——初等矩阵可逆，乘以可逆矩阵不改变秩（[@note-3.8-invariants]）。(e) **对**——$A^{\mathrm H}A$ 可逆、$E^{\mathrm H}=E$、$E^2=E$（[@ex-3.7.3]）。(f) **错**——唯一性需要 $A$ 列满秩；$A$ 秩亏时 $A^{\mathrm H}A$ 奇异，最小二乘解不唯一（[@ex-3.7.4]）。
+:::
+:::
+
+::: ex A26 · Smith 标准形与初等因子七问 {#ex-A26}
+
+判断对错并说明理由：
+
+(a) 对角 $\lambda$ 矩阵的 Smith 标准形就是它自己；
+
+(b) 若 $A(\lambda)$ 与 $B(\lambda)$ 的秩相同，则它们相抵；
+
+(c) 若 $A(\lambda)$ 与 $B(\lambda)$ 的初等因子相同，则它们相抵；
+
+(d) 不变因子相同的两个 $\lambda$ 矩阵一定相抵；
+
+(e) 复方阵 $A\sim B$ 当且仅当 $\lambda I-A$ 与 $\lambda I-B$ 的初等因子相同；
+
+(f) 若 $\lambda I-A$ 的初等因子全是一次式，则 $A$ 可对角化；
+
+(g) 两个初等因子相同的复方阵一定相似。
+
+::: sol 解答
+
+(a) **错**——还要求对角元首 $1$ 且满足整除链 $d_1\mid d_2\mid\cdots$；例 3.8.E 的 $\operatorname{diag}(\lambda-1,(\lambda-1)(\lambda-2),(\lambda-2)^2)$ 是对角阵但不是 Smith 形（[@ex-3.8.E]）。
+
+(b) **错**——$\operatorname{diag}(\lambda,\lambda)$ 与 $\operatorname{diag}(1,\lambda^2)$ 同秩不相抵（[@ex-3.8.7]）。
+
+(c) **错**——还要加「秩相同」；$\operatorname{diag}(0,\lambda)$ 与 $\operatorname{diag}(1,\lambda)$ 初等因子都是 $\lambda$ 但秩不同（[@ex-3.8.8]、[@thm-3.8.4]）。
+
+(d) **对**——不变因子相同 $\Rightarrow$ Smith 形相同 $\Rightarrow$ 相抵（[@cor-3.8.2]）。
+
+(e) **对**——$A\sim B\iff\lambda I-A\cong\lambda I-B$；特征矩阵都满秩，秩条件自动满足，故定理 3.8.4 退化为「初等因子相同」（[@thm-3.8.5]、[@method-3.8-similar-chain]）。
+
+(f) **对**——这是推论 3.8.3（[@cor-3.8.3]）。
+
+(g) **对**——由 (e)：特征矩阵的初等因子相同 $\Rightarrow$ 相抵 $\Rightarrow$ 相似（[@thm-3.8.5]）。注意与 (c) 的区别：那里的对象是一般的 $\lambda$ 矩阵，秩不自动相同；这里的对象是特征矩阵，秩恒为 $n$。
+:::
+:::
+
+::: ex A27 · Jordan 块与最小多项式五问 {#ex-A27}
+
+判断对错：
+
+(a) 单个 $s$ 阶 Jordan 块 $J_s(\lambda_0)$ 的最小多项式是 $(\lambda-\lambda_0)^s$；
+
+(b) 若 $A$ 的 Jordan 标准形里 $\lambda_0$ 对应 $k$ 个块，则 $\lambda_0$ 的几何重数为 $k$；
+
+(c) 若 $f_A=(\lambda-1)^3$，则 $A$ 必相似于 $J_3(1)$；
+
+(d) Jordan 标准形除块的排列次序外唯一；
+
+(e) 若 $A^2=A$，则 $A$ 的 Jordan 块全是一阶的。
+
+::: sol 解答
+
+(a) **对**——[例 3.8.10](sec38b.md#ex-3.8.10)（幂零指标为 $s$）。
+
+(b) **对**——$\dim N(A-\lambda_0I)$ 等于以 $\lambda_0$ 为对角元的块的个数（[@note-3.8-three-multiplicities]）。
+
+(c) **错**——$f_A=(\lambda-1)^3$ 只定了特征值 $1$ 的代数重数为 $3$；初等因子可能是 $(\lambda-1)^3$（一个 $3$ 阶块）、$(\lambda-1)^2(\lambda-1)$（$2$ 阶 $+$ $1$ 阶）、$(\lambda-1)^3$ 个一次（对角化）。三者互不相似（[@note-3.8-unique-order]）。
+
+(d) **对**——[@thm-3.8.5j] 的唯一性。
+
+(e) **对**——$A^2=A$ 给出零化多项式 $\lambda^2-\lambda=\lambda(\lambda-1)$ 无重根，故 $A$ 可对角化（[3.6.1](sec36.md#thm-3.6.1)（5）$\Rightarrow$（1）），Jordan 块全为一阶。
 :::
 :::
 
@@ -790,6 +876,32 @@ $$(e^{At})^{\mathrm H}e^{At}=\Big(\sum_i e^{-\lambda_it}E_i\Big)\Big(\sum_j e^{\
 故 $e^{At}$ 是酉矩阵。∎
 
 **读法**：这条把 [3.6.4](sec36.md#ex-3.6.4) 的「对角化解耦」升级成「谱分解演算」；也解释了为什么纯虚谱的线性系统（如无阻尼振动、量子演化）保持能量 / 范数。
+:::
+:::
+
+::: ex B21 · 幂等阵的空间分解与伴随 {#ex-B21}
+
+设 $E\in\mathbb C^{n\times n}$ 满足 $E^2=E$，$r=\operatorname{rank}E$。证明：
+
+(a) $\mathbb C^n=R(E)\oplus N(E)$，且 $N(E)=R(I-E)$；
+
+(b) $E\boldsymbol x=\boldsymbol x\iff\boldsymbol x\in R(E)$；
+
+(c) $E$ 的伴随矩阵 $E^*$ 也是幂等阵。
+
+::: sol 解答
+
+**(a)** 对任意 $\boldsymbol x$，$\boldsymbol x=E\boldsymbol x+(I-E)\boldsymbol x$，第一项属于 $R(E)$，第二项属于 $R(I-E)$，故 $\mathbb C^n=R(E)+R(I-E)$。又 $E\boldsymbol x=\boldsymbol 0\iff\boldsymbol x=(I-E)\boldsymbol x$，故 $N(E)=R(I-E)$。若 $\boldsymbol y\in R(E)\cap N(E)$，写 $\boldsymbol y=E\boldsymbol x$，则
+
+$$\boldsymbol y=E\boldsymbol x=E^2\boldsymbol x=E(E\boldsymbol x)=E\boldsymbol y=\boldsymbol 0.$$
+
+故和是直和。
+
+**(b)** 若 $E\boldsymbol x=\boldsymbol x$，则 $\boldsymbol x$ 是 $E$ 的像，故 $\boldsymbol x\in R(E)$。反之若 $\boldsymbol x=E\boldsymbol y$，则 $E\boldsymbol x=E^2\boldsymbol y=E\boldsymbol y=\boldsymbol x$。
+
+**(c)** 幂等阵可对角化，特征值为 $1$（$r$ 个）与 $0$（$n-r$ 个）。分三种情形：$r=n$ 时 $E=I$，$E^*=I$；$r\le n-2$ 时所有 $n-1$ 阶子式为 $0$，$E^*=O$；$r=n-1$ 时 $E^*$ 秩一，且由 $EE^*=(\det E)I=O$ 与 $\operatorname{tr}E^*=1$ 得 $(E^*)^2=E^*$（细节见 [@note-3.7-adjugate-idempotent]）。三种情形都幂等。∎
+
+**要点**：$E^2=E$ 的几何内容就是「沿 $N(E)$ 投到 $R(E)$」；(a) 是直和分解，(b) 是不动点性质。若再加 $E^{\mathrm H}=E$，则 $R(E)\perp N(E)$，投影升级为正交投影（[@note-3.7-orth-proj]）。
 :::
 :::
 
@@ -1458,6 +1570,272 @@ $$A^{10}=1^{10}E_1+2^{10}E_2=E_1+1024E_2
 :::
 :::
 
+::: ex C29 · 正交投影矩阵与最小二乘 {#ex-C29}
+
+设
+
+$$A=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix},\qquad \boldsymbol b=\begin{bmatrix}1\\1\\1\end{bmatrix}.$$
+
+(a) 求到 $R(A)$ 的正交投影矩阵 $E$，并验证 $E^{\mathrm T}=E$、$E^2=E$；
+
+(b) 求 $\boldsymbol b$ 在 $R(A)$ 上的投影 $E\boldsymbol b$，并验残差与 $R(A)$ 正交；
+
+(c) 解最小二乘问题 $\min\|A\boldsymbol x-\boldsymbol b\|$，核对 $A\boldsymbol x=E\boldsymbol b$。
+
+::: sol 解答
+
+**(a)** 
+
+$$A^{\mathrm T}A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+(A^{\mathrm T}A)^{-1}=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix},$$
+
+故
+
+$$E=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}
+=\frac13\begin{bmatrix}2&-1&1\\-1&2&1\\1&1&2\end{bmatrix}.$$
+
+$E^{\mathrm T}=E$ 显然。直接乘：
+
+$$E^2=\frac19\begin{bmatrix}2&-1&1\\-1&2&1\\1&1&2\end{bmatrix}^2
+=\frac19\cdot3\begin{bmatrix}2&-1&1\\-1&2&1\\1&1&2\end{bmatrix}=E.$$
+
+（也可用 $A^{\mathrm T}A$ 消去中间项，见 [@ex-3.7.3]。）$\operatorname{tr}E=2=\operatorname{rank}E$ ✓。
+
+**(b)** 
+
+$$E\boldsymbol b=\frac13\begin{bmatrix}2-1+1\\-1+2+1\\1+1+2\end{bmatrix}
+=\frac13\begin{bmatrix}2\\2\\4\end{bmatrix}
+=\begin{bmatrix}\tfrac23\\[2pt]\tfrac23\\[2pt]\tfrac43\end{bmatrix}.$$
+
+残差
+
+$$\boldsymbol b-E\boldsymbol b=\frac13\begin{bmatrix}1\\1\\-1\end{bmatrix},$$
+
+与 $A$ 的两列都正交：
+
+$$\frac13\big(1\cdot1+1\cdot0+(-1)\cdot1\big)=0,\qquad
+\frac13\big(1\cdot0+1\cdot1+(-1)\cdot1\big)=0. \checkmark$$
+
+**(c)** 法方程：
+
+$$A^{\mathrm T}A\boldsymbol x=A^{\mathrm T}\boldsymbol b
+\Longrightarrow
+\begin{bmatrix}2&1\\1&2\end{bmatrix}\begin{bmatrix}x_1\\x_2\end{bmatrix}
+=\begin{bmatrix}2\\2\end{bmatrix}.$$
+
+解
+
+$$\boldsymbol x=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}\begin{bmatrix}2\\2\end{bmatrix}
+=\begin{bmatrix}\tfrac23\\[2pt]\tfrac23\end{bmatrix}.$$
+
+于是
+
+$$A\boldsymbol x=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}\begin{bmatrix}\tfrac23\\[2pt]\tfrac23\end{bmatrix}
+=\begin{bmatrix}\tfrac23\\[2pt]\tfrac23\\[2pt]\tfrac43\end{bmatrix}=E\boldsymbol b\ \checkmark$$
+
+最小残差范数 $\|\boldsymbol b-A\boldsymbol x\|=\sqrt{1/9+1/9+1/9}=1/\sqrt3$。∎
+
+**要点**：投影矩阵的分母是 $A^{\mathrm T}A$（$2\times2$），不是 $A^{\mathrm T}$；最小二乘的解由法方程给出，拟合值一定等于投影 $E\boldsymbol b$。两者是同一件事的两种写法。
+:::
+:::
+
+::: ex C30 · $\lambda$ 矩阵的秩、可逆性与求逆 {#ex-C30}
+
+(a) 设
+
+$$A(\lambda)=\begin{bmatrix}\lambda&1&0\\0&\lambda&1\\1&0&\lambda\end{bmatrix}.$$
+
+求 $\det A(\lambda)$、$\operatorname{rank}A(\lambda)$，并判断是否可逆。
+
+(b) 设
+
+$$B(\lambda)=\begin{bmatrix}1&\lambda&0\\0&2&1\\0&0&1\end{bmatrix}.$$
+
+判断是否可逆；若可逆，求 $B(\lambda)^{-1}$ 并验算。
+
+::: sol 解答
+
+**(a)** 按第一行展开：
+
+$$\det A(\lambda)=\lambda(\lambda^2-0)-1(0\cdot\lambda-1\cdot1)+0=\lambda^3+1.$$
+
+这是首一三次多项式，不恒为零，故 $\operatorname{rank}A(\lambda)=3$（满秩）。但它**不是非零常数**，故由 [@thm-3.8.1] $A(\lambda)$ **不可逆**。代入 $\lambda=-1$ 时 $\det=0$，这只是「逐点数值秩」降为 $2$，不改变 $\lambda$ 矩阵的秩为 $3$（[@note-3.8-pointwise]）。
+
+**(b)** $\det B(\lambda)=1\cdot2\cdot1=2$，是非零常数，故 $B(\lambda)$ 可逆。设 $B(\lambda)\boldsymbol x=\boldsymbol y$，回代：
+
+$$x_3=y_3,\qquad 2x_2+x_3=y_2\Rightarrow x_2=\frac{y_2-y_3}{2},\qquad x_1+\lambda x_2=y_1\Rightarrow x_1=y_1-\frac{\lambda}{2}(y_2-y_3).$$
+
+故
+
+$$B(\lambda)^{-1}=
+\begin{bmatrix}
+1&-\tfrac\lambda2&\tfrac\lambda2\\[2pt]
+0&\tfrac12&-\tfrac12\\[2pt]
+0&0&1
+\end{bmatrix}.$$
+
+验算：
+
+$$\begin{bmatrix}1&\lambda&0\\0&2&1\\0&0&1\end{bmatrix}
+\begin{bmatrix}1&-\tfrac\lambda2&\tfrac\lambda2\\0&\tfrac12&-\tfrac12\\0&0&1\end{bmatrix}
+=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}. \checkmark$$
+
+**要点**：(a) 是「满秩但不可逆」的标准标本——行列式 $\lambda^3+1$ 非零但非常数；(b) 的行列式是常数 $2$，所以逆矩阵的元素仍是 $\lambda$ 的多项式（含 $-\lambda/2$，是多项式，不是 $1/\lambda$）。∎
+:::
+:::
+
+::: ex C31 · 用初等变换化对角形 {#ex-C31}
+
+用初等变换把下列 $\lambda$ 矩阵化成对角形，并写出每一步的变换类型：
+
+(a) $\begin{bmatrix}\lambda&0\\0&\lambda+1\end{bmatrix}$；(b) $\begin{bmatrix}\lambda&1\\1&\lambda\end{bmatrix}$。
+
+::: sol 解答
+
+**(a)**
+
+$$\begin{aligned}
+\begin{bmatrix}\lambda&0\\0&\lambda+1\end{bmatrix}
+&\xrightarrow{R_2+R_1}
+\begin{bmatrix}\lambda&0\\\lambda&\lambda+1\end{bmatrix}
+\xrightarrow{C_1-C_2}
+\begin{bmatrix}\lambda&0\\-1&\lambda+1\end{bmatrix}\\
+&\xrightarrow{R_1\leftrightarrow R_2}
+\begin{bmatrix}-1&\lambda+1\\\lambda&0\end{bmatrix}
+\xrightarrow{R_1\leftarrow -R_1}
+\begin{bmatrix}1&-(\lambda+1)\\\lambda&0\end{bmatrix}\\
+&\xrightarrow{C_2+(\lambda+1)C_1}
+\begin{bmatrix}1&0\\\lambda&\lambda(\lambda+1)\end{bmatrix}
+\xrightarrow{R_2-\lambda R_1}
+\begin{bmatrix}1&0\\0&\lambda(\lambda+1)\end{bmatrix}.
+\end{aligned}$$
+
+依次为：第 3 种（行）、第 3 种（列）、第 1 种、第 2 种（乘 $-1$）、第 3 种（列）、第 3 种（行）。乘子 $-\lambda$、$\lambda+1$ 都是多项式。
+
+**(b)**
+
+$$\begin{aligned}
+\begin{bmatrix}\lambda&1\\1&\lambda\end{bmatrix}
+&\xrightarrow{R_1\leftrightarrow R_2}
+\begin{bmatrix}1&\lambda\\\lambda&1\end{bmatrix}
+\xrightarrow{R_2-\lambda R_1}
+\begin{bmatrix}1&\lambda\\0&1-\lambda^2\end{bmatrix}\\
+&\xrightarrow{C_2-\lambda C_1}
+\begin{bmatrix}1&0\\0&1-\lambda^2\end{bmatrix}
+\xrightarrow{R_2\leftarrow -R_2}
+\begin{bmatrix}1&0\\0&\lambda^2-1\end{bmatrix}.
+\end{aligned}$$
+
+依次为：第 1 种、第 3 种（行）、第 3 种（列）、第 2 种（乘 $-1$）。原矩阵 $\det=\lambda^2-1$，最终矩阵 $\det=\lambda^2-1$（交换行改变一次符号，最后乘 $-1$ 又改回来）。∎
+
+**要点**：第三种变换的乘子可以是多项式，这正是 $\lambda$ 矩阵比数字矩阵「更灵活」的地方；但乘子不能是有理函数。最终对角形中 $d_1=1$ 整除 $d_2=\lambda(\lambda+1)$（或 $\lambda^2-1$），这就是 Smith 标准形的雏形（[3.8 下半](sec38b.md#thm-3.8.2)）。
+:::
+:::
+
+::: ex C32 · Smith 标准形三连算 {#ex-C32}
+
+求下列 $\lambda$ 矩阵的 Smith 标准形、不变因子与初等因子：
+
+(a) $\begin{bmatrix}\lambda&1\\1&\lambda\end{bmatrix}$；(b) $\operatorname{diag}\big(\lambda(\lambda+1),\ (\lambda+1)^2,\ 0\big)$；(c) $\begin{bmatrix}\lambda-1&1&0\\0&\lambda-1&1\\0&0&\lambda-1\end{bmatrix}$。
+
+::: sol 解答
+
+**(a)** 已在 [@ex-C31] (b) 中化成 $\operatorname{diag}(1,\lambda^2-1)$。故 Smith 形为 $\operatorname{diag}(1,(\lambda-1)(\lambda+1))$，不变因子 $d_1=1$、$d_2=\lambda^2-1$，初等因子 $\lambda-1,\ \lambda+1$。
+
+**验算**：$\det=\lambda^2-1=d_1d_2$ ✓；初等因子全一次 $\Rightarrow$ 该矩阵（作为某个 $A$ 的特征矩阵）对应的 $A$ 可对角化。
+
+**(b)** 对角元是 $\lambda(\lambda+1)$、$(\lambda+1)^2$、$0$，秩为 $2$。检查整除链：$\lambda(\lambda+1)\mid(\lambda+1)^2$？**不**（缺因子 $\lambda$），故不是 Smith 形。算行列式因子：
+
+- $D_1=\gcd\big(\lambda(\lambda+1),\ (\lambda+1)^2\big)=\lambda+1$（首 $1$ 化后）；
+- $D_2=\lambda(\lambda+1)\cdot(\lambda+1)^2=\lambda(\lambda+1)^3$；
+- $D_3=|A|=0$，但 $r=2$，不定义 $D_3$（见 [@note-3.8-d3-zero]）。
+
+于是
+
+$$d_1=D_1=\lambda+1,\qquad d_2=\frac{D_2}{D_1}=\lambda(\lambda+1)^2.$$
+
+Smith 形 $\operatorname{diag}\big(\lambda+1,\ \lambda(\lambda+1)^2,\ 0\big)$，初等因子 $\lambda+1,\ \lambda,\ (\lambda+1)^2$（共三个：来自 $d_1$ 的 $\lambda+1$，来自 $d_2$ 的 $\lambda$ 与 $(\lambda+1)^2$）。
+
+**验算**：$d_1d_2=\lambda(\lambda+1)^3=D_2$ ✓；$d_1\mid d_2$ ✓；秩 $2$ = 非零对角元个数 ✓。
+
+**(c)** 这是 $J_3(1)$ 的特征矩阵。由 [例 3.8.5](sec38b.md#ex-3.8.5)（$a=1$、$n=3$），
+
+$$D_1=D_2=1,\qquad D_3=(\lambda-1)^3.$$
+
+故 $d_1=d_2=1$、$d_3=(\lambda-1)^3$，Smith 形 $\operatorname{diag}\big(1,1,(\lambda-1)^3\big)$，初等因子只有一个 $(\lambda-1)^3$。
+
+**要点**：三小题的初等因子个数分别是 $2$、$3$、$1$，恰好对应「块数」。若把它们当作某个 $A$ 的特征矩阵，Jordan 块个数就是 $2$、$3$、$1$。∎
+:::
+:::
+
+::: ex C33 · 由 Smith 形写 Jordan 形并求 $P$ {#ex-C33}
+
+设 $A=\begin{bmatrix}2&1&1\\0&2&1\\0&0&3\end{bmatrix}$。
+
+(a) 求 $\lambda I-A$ 的 Smith 标准形与初等因子；(b) 写出 $A$ 的 Jordan 标准形 $J$ 与最小多项式；(c) 求可逆 $P$ 使 $P^{-1}AP=J$。
+
+::: sol 解答
+
+**(a)** 上三角，$f_A=(\lambda-2)^2(\lambda-3)$。算行列式因子：
+
+- $D_1=1$（元素中有 $1$）；
+- $D_2$：$(1,2)$ 与 $(1,3)$ 位置都是 $1$，取第 $1,2$ 行第 $1,2$ 列得 $(\lambda-2)^2$，取第 $1,2$ 行第 $1,3$ 列得 $1\cdot 1-1\cdot 0=1$，故 $D_2=1$；
+- $D_3=(\lambda-2)^2(\lambda-3)$。
+
+于是
+
+$$d_1=1,\quad d_2=1,\quad d_3=(\lambda-2)^2(\lambda-3).$$
+
+Smith 形 $\operatorname{diag}\big(1,1,(\lambda-2)^2(\lambda-3)\big)$；初等因子 $(\lambda-2)^2$ 与 $\lambda-3$。
+
+**(b)** 两个初等因子 $\Rightarrow$ 两个块：
+
+$$J=\begin{bmatrix}2&1&0\\0&2&0\\0&0&3\end{bmatrix}=J_2(2)\oplus J_1(3),\qquad m_A=d_3=(\lambda-2)^2(\lambda-3).$$
+
+**(c)** 记 $P=[\boldsymbol p_1,\boldsymbol p_2,\boldsymbol p_3]$，由 $AP=PJ$ 逐列读出
+
+$$A\boldsymbol p_1=2\boldsymbol p_1,\qquad A\boldsymbol p_2=\boldsymbol p_1+2\boldsymbol p_2,\qquad A\boldsymbol p_3=3\boldsymbol p_3.$$
+
+先解 $(A-2I)\boldsymbol p_1=\boldsymbol 0$：$A-2I=\begin{bmatrix}0&1&1\\0&0&1\\0&0&1\end{bmatrix}$，得 $\boldsymbol p_1=(1,0,0)^{\mathrm T}$。
+
+再解 $(A-2I)\boldsymbol p_2=\boldsymbol p_1$：方程是 $p_{22}+p_{23}=1$、$p_{23}=0$、$p_{23}=0$，故 $p_{22}=1$、$p_{23}=0$，取 $\boldsymbol p_2=(0,1,0)^{\mathrm T}$。
+
+最后解 $(A-3I)\boldsymbol p_3=\boldsymbol 0$：$A-3I=\begin{bmatrix}-1&1&1\\0&-1&1\\0&0&0\end{bmatrix}$，得 $\boldsymbol p_3=(2,1,1)^{\mathrm T}$。
+
+$$P=\begin{bmatrix}1&0&2\\0&1&1\\0&0&1\end{bmatrix}.$$
+
+**验算**：$\det P=1\ne0$；$A\boldsymbol p_1=(2,0,0)^{\mathrm T}=2\boldsymbol p_1$ ✓；$A\boldsymbol p_2=(1,2,0)^{\mathrm T}=\boldsymbol p_1+2\boldsymbol p_2$ ✓；$A\boldsymbol p_3=(6,3,3)^{\mathrm T}=3(2,1,1)^{\mathrm T}$ ✓。∎
+
+**要点**：这里 $\boldsymbol p_1$ 恰好也在 $R(A-2I)$ 里（$R(A-2I)=\operatorname{span}\{(1,0,0)^{\mathrm T}\}$），链才接得上；若由 $(A-2I)\boldsymbol p_2=\boldsymbol p_1$ 解不出，就得换一个 $\boldsymbol p_1$——这正是 [@note-3.8-chain-rule] 的规则。
+:::
+:::
+
+::: ex C34 · 用 Jordan 形算高次幂与矩阵指数 {#ex-C34}
+
+设 $A=\begin{bmatrix}1&1&0\\0&1&1\\0&0&1\end{bmatrix}$。求 $A^{10}$ 与 $e^{At}$。
+
+::: sol 解答
+
+**拆成 $I+N$**：$A=I+N$，$N=\begin{bmatrix}0&1&0\\0&0&1\\0&0&0\end{bmatrix}$，$N^2=\begin{bmatrix}0&0&1\\0&0&0\\0&0&0\end{bmatrix}$，$N^3=O$。$I$ 与 $N$ 交换，二项式定理可用：
+
+$$A^{m}=(I+N)^m=I+mN+\binom{m}{2}N^2
+=\begin{bmatrix}1&m&\binom m2\\[2pt]0&1&m\\[2pt]0&0&1\end{bmatrix}.$$
+
+取 $m=10$：
+
+$$A^{10}=\begin{bmatrix}1&10&45\\0&1&10\\0&0&1\end{bmatrix}.$$
+
+**矩阵指数**：
+
+$$e^{At}=e^{It}e^{Nt}=e^{t}\left(I+tN+\frac{t^2}{2}N^2\right)
+=e^{t}\begin{bmatrix}1&t&\tfrac{t^2}{2}\\[2pt]0&1&t\\[2pt]0&0&1\end{bmatrix}.$$
+
+**验算（$m=2,3$）**：$A^2=I+2N+N^2=\begin{bmatrix}1&2&1\\0&1&2\\0&0&1\end{bmatrix}$；直接乘 $A\cdot A$ 得同一结果 ✓。$A^3=I+3N+3N^2=\begin{bmatrix}1&3&3\\0&1&3\\0&0&1\end{bmatrix}$，与 $\binom32=3$ 一致 ✓。∎
+
+**要点**：$J_s(\lambda)$ 的幂与指数只依赖 $N$ 的幂零性；$t$ 的最高幂次为 $s-1$，这里 $s=3$，故 $e^{At}$ 的最高次项是 $t^2/2$（[@note-3.8-tkexp]）。
+:::
+:::
+
 ---
 
-**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页）、3.4 QR 分解（16 页）、3.5 Schur 分解（22 页）、3.6 对角化分解（13 + 14 页）、3.7 谱分解（22 页，后五份 PDF 存于 `_sources/matrix/`）整理 · 六节均无录播 · 整理日期 2026-10-15 · 新增例题与全部计算题均经回代验算（C19、C22 另做双精度复核；C25–C28 另用 SymPy 复核）· 3.3 与 3.8 及以后素材到位后本页续写。
+**依据**本课程第三章课件 3.1 相抵分解（15 页）、3.2 满秩分解（9 页）、3.4 QR 分解（16 页）、3.5 Schur 分解（22 页）、3.6 对角化分解（13 + 14 页）、3.7 谱分解（22 + 15 页）、3.8 Jordan 分解（50 页：上 14 + 下 36，后七份 PDF 存于 `_sources/matrix/`）整理 · 七节均无录播 · 整理日期 2026-10-22（3.8 下半 2026-10-27 续）· 新增例题与全部计算题均经回代验算（C19、C22 另做双精度复核；C25–C28 另用 SymPy 复核；C29–C34 由 `tools/verify_teaching_examples.py` 以有理数与多项式系数精确算术复算）· 3.3 与 3.9 及以后素材到位后本页续写。

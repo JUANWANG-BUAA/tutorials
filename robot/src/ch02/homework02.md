@@ -23,9 +23,19 @@
 
 ### 详细推导
 
-**第 0 步：把 α、β 用 r 的分量写出。** 由式（2.24）的几何（图 2.10），$\boldsymbol r$ 的球坐标分解给出
+**第 0 步：把 α、β 用 r 的分量写出。** 这一步是整道题的入口，必须交代清楚：式（2.24）的五步合成里用的是**球坐标**的两个角，而题目给的是 $\boldsymbol r$ 的**笛卡儿分量**。所以要先把两套描述对上。
+
+看图 2.10 的几何：先从 $z$ 轴出发，绕 $y$ 转 $\beta$ 把 $z$ 压到与 $\boldsymbol r$ 同高度的方向，再绕 $z$ 转 $\alpha$ 转到 $\boldsymbol r$ 的方位。于是 $\boldsymbol r$ 的方向由
+
+$$\boldsymbol r=\begin{bmatrix}\cos\alpha\sin\beta\\ \sin\alpha\sin\beta\\ \cos\beta\end{bmatrix}$$
+
+给出（$\boldsymbol r$ 是单位向量）。**这个式子的读法是「球坐标 → 笛卡儿」**：$\beta$ 是极角（与 $z$ 轴的夹角），$\alpha$ 是方位角。
+
+**反解**：由第三分量直接得 $\cos\beta=r_z$；再由前两个分量，$\sqrt{r_x^2+r_y^2}=\sin\beta$（因为 $r_x^2+r_y^2=\sin^2\beta(\cos^2\alpha+\sin^2\alpha)=\sin^2\beta$），于是 $\sin\beta=\sqrt{r_x^2+r_y^2}$。最后 $\cos\alpha=r_x/\sin\beta$、$\sin\alpha=r_y/\sin\beta$。合起来就是式（1）：
 
 $$\sin\alpha=\frac{r_y}{\sqrt{r_x^2+r_y^2}},\quad \cos\alpha=\frac{r_x}{\sqrt{r_x^2+r_y^2}},\qquad \sin\beta=\sqrt{r_x^2+r_y^2},\quad \cos\beta=r_z .\tag{1}$$
+
+**分母不为零的条件**：$\sqrt{r_x^2+r_y^2}=0$ 意味着 $\boldsymbol r$ 沿 $\pm z$ 轴，此时 $\alpha$ 任意（球坐标的固有奇点，与欧拉角的万向锁同源）。后面第 4 步的推导要求 $\sin\beta\neq0$；$\boldsymbol r=\pm\boldsymbol z$ 的情形可以由连续性取极限得到，结果仍成立。
 
 **第 1 步：合并前两个因子。** 记
 
@@ -65,7 +75,17 @@ $$R(\vartheta,\boldsymbol r)=c_\vartheta I+(1-c_\vartheta)\,\boldsymbol r\boldsy
 | (3,1) | $-s_\alpha s_\beta$ | $-r_y$ | $-r_y$ √ |
 | (3,2) | $c_\alpha s_\beta$ | $r_x$ | $r_x$ √ |
 
-即 $S=[\boldsymbol r]_\times=\begin{bmatrix}0&-r_z&r_y\\ r_z&0&-r_x\\ -r_y&r_x&0\end{bmatrix}$，其余对角元与 (2,2)、(3,3) 同理为零。
+即 $S=[\boldsymbol r]_\times=\begin{bmatrix}0&-r_z&r_y\\ r_z&0&-r_x\\ -r_y&r_x&0\end{bmatrix}$。
+
+**被省略的 (2,2) 与 (3,3) 补上**（这两格也最容易出错）：
+
+$(2,2)$：$(m_2\boldsymbol m_1^{\mathrm T})_{22}-(\boldsymbol m_1\boldsymbol m_2^{\mathrm T})_{22}=m_{2,2}m_{1,2}-m_{1,2}m_{2,2}=0$——**同一对元素的乘积相减，恒为零**，不需要代任何三角函数。同理 $(3,3)=m_{2,3}m_{1,3}-m_{1,3}m_{2,3}=0$。
+
+$(3,2)$：$m_{2,3}m_{1,2}-m_{1,3}m_{2,2}=0\cdot c_\alpha c_\beta-(-s_\beta)c_\alpha=c_\alpha s_\beta=r_x$ ✓（与表中一致）。
+
+**为什么对角元必然为零**：$S=\boldsymbol m_2\boldsymbol m_1^{\mathrm T}-\boldsymbol m_1\boldsymbol m_2^{\mathrm T}$ 是「外积减转置外积」，**任何**这种形式的矩阵都是反对称的（$S^{\mathrm T}=\boldsymbol m_1\boldsymbol m_2^{\mathrm T}-\boldsymbol m_2\boldsymbol m_1^{\mathrm T}=-S$），而反对称矩阵的对角元必为零。所以只要认出 $S$ 是反对称的，对角元就不用逐个算——**这是一步结构性观察，省掉两格机械计算**。
+
+**为什么 $S$ 必须等于 $[\boldsymbol r]_\times$**：$M$ 的第三列是 $\boldsymbol r$，而 $R_z(\vartheta)$ 的转轴是 $\boldsymbol z$；相似变换 $MR_z(\vartheta)M^{\mathrm T}$ 把转轴从 $\boldsymbol z$ 搬到 $M\boldsymbol z=\boldsymbol r$。所以在 $\vartheta$ 的一阶项上，$R$ 的生成元必须是「绕 $\boldsymbol r$ 的叉乘」，即 $[\boldsymbol r]_\times$。这一步给出了「$S=[\boldsymbol r]_\times$」的**必然性**，而逐元素计算只是**验证**它。
 
 **第 5 步：展开得式（2.25）。** 把 (3) 写成分量：
 
@@ -188,19 +208,62 @@ r_xr_z(1-c_\vartheta)-r_ys_\vartheta & r_yr_z(1-c_\vartheta)+r_xs_\vartheta & r_
 
 读法：$a_i$ 全为 0（相邻 $z$ 轴皆相交或平行、公垂线长度为零——[@method-2.8.zero] 的「能零则零」）；$\alpha_1=0$（$z_0\parallel z_1$）、$\alpha_2=-\pi/2$（$z_1\to z_2$ 由竖直转为水平）、$\alpha_3=0$（$z_2\parallel z_3$）；关节 1 是转动型故 $\vartheta_1$ 是变量，关节 2、3 是移动型故 $d_2,d_3$ 是变量、对应角列为常数 0。
 
-**第 3 步：写各关节变换矩阵**（代入 [@method-2.8.A] 的通式）:
+**第 3 步：写各关节变换矩阵**（代入 [@method-2.8.A] 的通式）。先把通式抄在这里，后面每个 $A$ 都对着它填：
 
-$$A_1^0(\vartheta_1)=\begin{bmatrix}c_1&-s_1&0&0\\ s_1&c_1&0&0\\ 0&0&1&0\\ 0&0&0&1\end{bmatrix},\quad
-A_2^1(d_2)=\begin{bmatrix}1&0&0&0\\ 0&0&1&0\\ 0&-1&0&d_2\\ 0&0&0&1\end{bmatrix},\quad
-A_3^2(d_3)=\begin{bmatrix}1&0&0&0\\ 0&1&0&0\\ 0&0&1&d_3\\ 0&0&0&1\end{bmatrix}.$$
+$$A_i^{i-1}=\begin{bmatrix}
+c_i&-s_ic_{\alpha_i}&s_is_{\alpha_i}&a_ic_i\\
+s_i&c_ic_{\alpha_i}&-c_is_{\alpha_i}&a_is_i\\
+0&s_{\alpha_i}&c_{\alpha_i}&d_i\\
+0&0&0&1
+\end{bmatrix}. \tag{DH}$$
 
-（$A_2^1$ 是 $\vartheta_2=0$、$\alpha_2=-\pi/2$ 代入通式的结果：$c_2=1,s_2=0,c_{\alpha_2}=0,s_{\alpha_2}=-1$。）
+**$A_1^0$**：$\vartheta_1$ 是变量，$a_1=0$、$\alpha_1=0$、$d_1=0$。代入后 $c_{\alpha_1}=1$、$s_{\alpha_1}=0$：
 
-**第 4 步：连乘**（[@thm-2.8.A]）。先算后半段：
+$$A_1^0=\begin{bmatrix}c_1&-s_1&0&0\\ s_1&c_1&0&0\\ 0&0&1&0\\ 0&0&0&1\end{bmatrix}.$$
 
-$$A_2^1A_3^2=\begin{bmatrix}1&0&0&0\\ 0&0&1&d_3\\ 0&-1&0&d_2\\ 0&0&0&1\end{bmatrix},$$
+（这就是绕 $z$ 转 $\vartheta_1$ 的纯转动矩阵——$\alpha=d=a=0$ 时 DH 矩阵退化为它，可用来检查通式没抄错。）
 
-再左乘 $A_1^0$：
+**$A_2^1$**：$\vartheta_2=0$（移动关节）、$a_2=0$、$\alpha_2=-\pi/2$、$d_2$ 是变量。代入 $c_2=1,s_2=0$、$c_{\alpha_2}=0,s_{\alpha_2}=-1$：
+
+- 第 1 行：$[1,\ -0\cdot0=0,\ 0\cdot(-1)=0,\ 0]$；
+- 第 2 行：$[0,\ 1\cdot0=0,\ -1\cdot(-1)=1,\ 0]$；
+- 第 3 行：$[0,\ -1,\ 0,\ d_2]$。
+
+$$A_2^1=\begin{bmatrix}1&0&0&0\\ 0&0&1&0\\ 0&-1&0&d_2\\ 0&0&0&1\end{bmatrix}.$$
+
+**这个矩阵的几何含义**：它把 $z_1$（竖直）转到 $z_2$（水平径向），同时沿 $z_1$ 平移 $d_2$。第 2 行第 3 列的 $+1$ 与第 3 行第 2 列的 $-1$ 正是 $\alpha_2=-90^\circ$ 的「换轴」结果——**若把 $\alpha_2$ 写成 $+\pi/2$，这两个符号都会反过来**，最终位置里 $p_y$ 的符号就错。
+
+**$A_3^2$**：$\vartheta_3=0$、$a_3=0$、$\alpha_3=0$、$d_3$ 是变量：
+
+$$A_3^2=\begin{bmatrix}1&0&0&0\\ 0&1&0&0\\ 0&0&1&d_3\\ 0&0&0&1\end{bmatrix}.$$
+
+（纯平移。）
+
+**第 4 步：连乘**（[@thm-2.8.A]）。用定义 $P_{ij}=\sum_k A_{ik}B_{kj}$ 逐元素算，不靠「取某一行」的捷径（那个捷径在平移列上容易出错）。
+
+**先算 $P=A_2^1A_3^2$**。$A_2^1$ 每行只有一个非零元，可以很快：
+
+- $P$ 第 1 行：$(A_2^1)_{11}=1$ ⇒ 取 $A_3^2$ 第 1 行 $[1,0,0,0]$；
+- $P$ 第 2 行：$(A_2^1)_{23}=1$ ⇒ 取 $A_3^2$ 第 3 行 $[0,0,1,d_3]$；
+- $P$ 第 3 行：$(A_2^1)_{32}=-1$、$(A_2^1)_{34}=d_2$ ⇒ $-1\times[0,1,0,0]+d_2\times[0,0,0,1]=[0,-1,0,d_2]$；
+- $P$ 第 4 行：$(A_2^1)_{44}=1$ ⇒ $[0,0,0,1]$。
+
+$$P=A_2^1A_3^2=\begin{bmatrix}1&0&0&0\\ 0&0&1&d_3\\ 0&-1&0&d_2\\ 0&0&0&1\end{bmatrix}.$$
+
+**读法**：$d_3$ 落在第 2 行第 4 列——它沿 $z_2$ 平移，而 $\alpha_2=-90^\circ$ 恰好把 $z_2$ 换到了原 $y$ 的位置。
+
+**再算 $T_3^0=A_1^0P$**。$A_1^0$ 只在前两行有非零元，所以：
+
+$$T_{1j}=c_1P_{1j}-s_1P_{2j},\qquad T_{2j}=s_1P_{1j}+c_1P_{2j},\qquad T_{3j}=P_{3j},\qquad T_{4j}=P_{4j}.$$
+
+逐列代入：
+
+| $j$ | $P_{1j}$ | $P_{2j}$ | $T_{1j}$ | $T_{2j}$ |
+|:--:|:--:|:--:|:--|:--|
+| 1 | 1 | 0 | $c_1$ | $s_1$ |
+| 2 | 0 | 0 | $0$ | $0$ |
+| 3 | 0 | 1 | $-s_1$ | $c_1$ |
+| 4 | 0 | $d_3$ | $-d_3s_1$ | $d_3c_1$ |
 
 $$\boxed{\;T_3^0(\boldsymbol q)=A_1^0A_2^1A_3^2=\begin{bmatrix}
 c_1 & 0 & -s_1 & -d_3s_1\\

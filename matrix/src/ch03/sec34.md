@@ -282,6 +282,26 @@ $$A=\underbrace{Q_1}_{B\ \text{的正交版}}\ \underbrace{R_1}_{C\ \text{的上
 「上三角」的含义在过渡矩阵读法里看得分明：**每个 $\boldsymbol{a}_k$ 只用前 $k$ 个标准正交方向表出**——第 $k$ 根梁只搭在更早立好的轴上。所以 QR 分解 = 满秩分解 $+$ 「基按 GS 顺序立轴」。方阵满秩时（[@thm-3.4.1]），$A=QR$ 本身就是一个满秩分解（$Q$ 列满秩、$R$ 满秩方阵自然行满秩）；不满秩时（例 3.4.2 型），坐标表出现**零行**——对应 GS 中「残差为零、无需新轴」的退化步。
 :::
 
+::: method 用刚算出的 QR 做一次最小二乘
+
+例 3.4.3 已得 $B=Q_1R_1$。分解不仅可以验乘积，还能回答：若 $B\boldsymbol{x}=\boldsymbol{b}$ 无精确解，怎样找离 $\boldsymbol{b}$ 最近的 $B\boldsymbol{x}$？先用 [1.6.7 的正交投影](../ch01/sec16.md#sec-1.6.7) 把 $\boldsymbol{b}$ 分成列空间内外两部分：
+
+$$\|B\boldsymbol{x}-\boldsymbol{b}\|_2^2=\|R_1\boldsymbol{x}-Q_1^{\mathrm T}\boldsymbol{b}\|_2^2+\|(I-Q_1Q_1^{\mathrm T})\boldsymbol{b}\|_2^2.$$
+
+第二项不随 $\boldsymbol{x}$ 改变；第一项可通过解上三角方程降为零。取 $\boldsymbol{b}=(0,1,5)^{\mathrm T}$，得到
+
+$$Q_1^{\mathrm T}\boldsymbol{b}=\begin{pmatrix}4\\1\end{pmatrix},\qquad \begin{pmatrix}5&5\\0&1\end{pmatrix}\widehat{\boldsymbol{x}}=\begin{pmatrix}4\\1\end{pmatrix},\qquad \widehat{\boldsymbol{x}}=\begin{pmatrix}-1/5\\1\end{pmatrix}.$$
+
+于是 $B\widehat{\boldsymbol{x}}=(12/5,1,16/5)^{\mathrm T}$，残差 $\boldsymbol{r}=\boldsymbol{b}-B\widehat{\boldsymbol{x}}=(-12/5,0,9/5)^{\mathrm T}$。检查 $B^{\mathrm T}\boldsymbol{r}=\boldsymbol0$，最小残差范数为 $3$。注意 $Q_1^{\mathrm T}\boldsymbol{b}$ 是投影在正交基下的坐标，而非原来两列 $B$ 下的系数；还需回代 $R_1$ 才能得到 $\widehat{\boldsymbol{x}}$。
+
+**迁移练习。**若右端改为 $\boldsymbol{b}'=\boldsymbol{b}+B(1,-1)^{\mathrm T}=(0,0,5)^{\mathrm T}$，最小二乘解和最小残差会怎样变？先用几何分解预测，再算。
+
+::: sol 核对与回查
+
+解变为 $\widehat{\boldsymbol{x}}'=(4/5,0)^{\mathrm T}$；残差完全不变，因为右端只增加了列空间中的向量。若投影部分不清楚，回看 [1.6.7](../ch01/sec16.md#sec-1.6.7)；若把 $Q_1^{\mathrm T}\boldsymbol{b}$ 直接当作解，重看例 3.4.3 中 $R_1$ 的列坐标含义。能解释这两个步骤后，再进入下一节的 QR 特征值迭代：那是同一分解的另一种用途。
+:::
+:::
+
 <a id="sec-3.4.3"></a>
 
 ## 3.4.3 QR 算法：分解怎样变成特征值算法
@@ -301,11 +321,11 @@ $$A=\underbrace{Q_1}_{B\ \text{的正交版}}\ \underbrace{R_1}_{C\ \text{的上
 1. 对 $A_k$ 作 QR 分解：$A_k=Q_kR_k$；
 2. 令 $A_{k+1}=R_kQ_k$（**交换左右**）。
 
-**收敛条件必须区分层次**：仅有“特征值模值互异”不能保证正线 QR 的**整个矩阵序列**收敛。反例
+**收敛条件必须区分层次**：仅有「特征值模值互异」不能保证正线 QR 的**整个矩阵序列**收敛。反例
 $$A=\begin{bmatrix}-1&1\\0&2\end{bmatrix},\quad Q_1=\operatorname{diag}(-1,1),\quad R_1=\begin{bmatrix}1&-1\\0&2\end{bmatrix}$$
 使 $A_2=R_1Q_1=\begin{bmatrix}-1&-1\\0&2\end{bmatrix}$、$A_3=A$。特征值模为 $1,2$，但上三角非对角元符号交替，整个矩阵没有极限；对角元却从开始就是特征值。
 
-一个可用的较强充分条件是：$A$ 为实对称正定阵，特征值 $\lambda_1>\cdots>\lambda_n>0$，且按此顺序排列的正交特征向量矩阵 $S$ 使 $S^{\mathrm T}$ 的各顺序主子式非零（保证初始坐标旗标含有所需的主特征分量）。此时正线 QR 迭代趋于按该顺序排列的对角阵。一般矩阵须另行分析子对角元、分块与相位，不能只凭“模互异”断言全矩阵收敛。
+一个可用的较强充分条件是：$A$ 为实对称正定阵，特征值 $\lambda_1>\cdots>\lambda_n>0$，且按此顺序排列的正交特征向量矩阵 $S$ 使 $S^{\mathrm T}$ 的各顺序主子式非零（保证初始坐标旗标含有所需的主特征分量）。此时正线 QR 迭代趋于按该顺序排列的对角阵。一般矩阵须另行分析子对角元、分块与相位，不能只凭「模互异」断言全矩阵收敛。
 :::
 
 为什么「交换左右再乘回去」能挤出一个上三角阵？课件用一道思考题点破了机关——**每一步迭代都是一次酉相似**：
@@ -406,6 +426,6 @@ QR 算法的收敛极限「酉相似于上三角阵」并不是迭代碰巧的�
 2. $\boldsymbol{z}_1=\tfrac{1}{\sqrt5}(1,2)^{\mathrm T}$；$(\boldsymbol{a}_2,\boldsymbol{z}_1)=\tfrac{1}{\sqrt5}$，$\boldsymbol{y}_2=(\tfrac45,-\tfrac25)^{\mathrm T}$，$\|\boldsymbol{y}_2\|=\tfrac{2}{\sqrt5}$，$\boldsymbol{z}_2=\tfrac{1}{\sqrt5}(2,-1)^{\mathrm T}$。$Q=\tfrac{1}{\sqrt5}\begin{bmatrix}1&2\\ 2&-1\end{bmatrix}$（对称且正交，$\det=-1$），$R=\begin{bmatrix}\sqrt5&\tfrac{1}{\sqrt5}\\ 0&\tfrac{2}{\sqrt5}\end{bmatrix}$；验算 $QR=\begin{bmatrix}1&\tfrac15+\tfrac45\\ 2&\tfrac25-\tfrac25\end{bmatrix}=\begin{bmatrix}1&1\\ 2&0\end{bmatrix}$ ✓。
 3. 不是（非方阵）；$QQ^{\mathrm H}$ 是到 $R(Q)$ 的正交投影矩阵 $\neq I_3$（被抹掉的是 $R(Q)^\perp$，未必是标准坐标 $\boldsymbol e_3$ 方向）；$\|Q\boldsymbol{x}\|=\|\boldsymbol{x}\|$（保范）。
 4. GS（列满秩 $\Rightarrow$ 各步残差非零）给 $A=Q_1R_1$；基扩充（[@cor-1.3.1]）后对整组重做 GS——「张成不变」保证前缀的 $\operatorname{span}$ 不变，而已标准正交的前 $n$ 个向量重走 GS 公式**每个减项内积为零**、原样保留；只有新添的向量被正交化。$U=[Q_1,U_2]$ 列标准正交的方阵即酉。
-5. $A$ 本身正交，其正线 QR 分解为 $A=A\cdot I$，故 $A_2=R_1Q_1=A$，迭代恒为 $A$ 不动。此例的矩阵序列本身有极限，但极限不是上三角阵；不能将“迭代序列收敛”和“成功三角化”混为一谈。等模反例也不意味着模互异就充分，前面的两周期例子已否定后一说法。
+5. $A$ 本身正交，其正线 QR 分解为 $A=A\cdot I$，故 $A_2=R_1Q_1=A$，迭代恒为 $A$ 不动。此例的矩阵序列本身有极限，但极限不是上三角阵；不能将「迭代序列收敛」和「成功三角化」混为一谈。等模反例也不意味着模互异就充分，前面的两周期例子已否定后一说法。
 :::
 :::

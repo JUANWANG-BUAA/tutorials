@@ -50,7 +50,7 @@
   - [综合自测卷](ch02/mock-exam.md)
   - [学习目标自检表](ch02/checklist.md)
 
-# 第三章 · 矩阵分解（课件 3.1–3.2、3.4–3.7）
+# 第三章 · 矩阵分解（课件 3.1–3.2、3.4–3.8）
 
 - [第三章 · 矩阵分解](ch03/overview.md)
   - [3.1 相抵分解](ch03/sec31.md)
@@ -59,8 +59,10 @@
   - [3.5 Schur 分解](ch03/sec35.md)
   - [3.6 对角化分解](ch03/sec36.md)
   - [3.7 谱分解与幂等阵](ch03/sec37.md)
+  - [3.8 Jordan 分解（上）· λ 矩阵](ch03/sec38.md)
+  - [3.8 Jordan 分解（下）· Smith 标准形与 Jordan 标准形](ch03/sec38b.md)
 
-- [第三章章末（3.1–3.2 与 3.4–3.7）](ch03/summary.md)
+- [第三章章末（3.1–3.2 与 3.4–3.8）](ch03/summary.md)
   - [闭卷回忆卡：定义、定理与第一行](ch03/recall-cards.md)
   - [勘误与补注（对照课件）](ch03/errata.md)
   - [习题集](ch03/exercises.md)
