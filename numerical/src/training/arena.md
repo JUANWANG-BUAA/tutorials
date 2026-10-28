@@ -55,7 +55,7 @@
 | 范数 | **范数等价性只在有限维成立**（无穷维不成立） | 第 2 讲 |
 | 范数 | 判 $I\pm A$ 可逆，**找到一个范数使 $\lVert A\rVert<1$ 即可，不碰行列式** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
 | 范数 | $\lVert A\rVert_1=$ 列和最大，$\lVert A\rVert_\infty=$ 行和最大；$\lVert A\rVert_F$ **不从属** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
-| 条件数 | $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小 $\ne$ 误差小 | [补充篇 2.4](../ch02/sec24.md) |
+| 条件数 | $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小 $\ne$ 误差小 | [补充篇 2.4](../supplement/sec24.md) |
 | 线代 | 列主元的作用是**避免小主元放大舍入误差** | 第 3 讲 |
 | 线代 | Doolittle（LU）需要**各阶顺序主子式非零** | 第 4 讲 |
 | 线代 | 稀疏 / 三对角用 $O(n)$ 追赶法，**实际没人用朴素高斯消去** | 第 4 讲 |
@@ -72,6 +72,12 @@
 | 非线性 | 割线法**必须两个初值**，收敛阶**黄金比 $1.618$**（$r^2-r-1=0$） | 第 9 讲 |
 | 插值 | $n+1$ 点确定**唯一** $n$ 次插值多项式；范德蒙德矩阵**存在唯一但病态** | 第 9 讲 |
 | 插值 | 换基到**拉格朗日基**：$l_i(x_i)=1,\ l_i(x_j)=0$，系数**直接就是 $f(x_i)$** | 第 9 讲 |
+| 插值 | 埃尔米特余项：**每个节点因子平方**、分母 $(2n+2)!$——与拉格朗日余项的全部区别 | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | 最佳平方逼近 = **正交投影**：$(f-p,\varphi_i)=0$ 对基函数逐个验证即可（教材定理 5.7） | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | Gram 矩阵非奇异要**证**：$\boldsymbol c^{\mathrm T}G\boldsymbol c=\lVert\sum c_i\varphi_i\rVert^2>0$（线性无关 + 正定） | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | 正交化的目的是**让 $G$ 对角**：$a_i=(f,\varphi_i)/(\varphi_i,\varphi_i)$ 各自独立算 | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | 函数空间的「$1$」是**常值函数**不是数；$a$ 才是数 | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | Legendre：$\int_{-1}^1L_nL_m=\dfrac{2}{2n+1}\delta_{nm}$；$\dfrac{\pi}{2}$ 是 Chebyshev（带权）的值 | [第 11 讲](../lectures/lec11.md) |
 
 ## 竞技场
 
@@ -201,7 +207,7 @@
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\lVert A\rVert<1\Rightarrow I\pm A$ 可逆且 $(I-A)^{-1}=\sum A^k$。**判可逆只需找到一个范数使 $\lVert A\rVert<1$，完全不用算行列式**——这正是老师强调的考点。<b>答案 B</b>。</p></div></details>
 </div>
-<div class="arena-q" data-id="e12" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="条件数下界" data-src="补充 2.4 · 第 2–3 讲" data-href="../ch02/sec24.html">
+<div class="arena-q" data-id="e12" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="条件数下界" data-src="补充 2.4 · 第 2–3 讲" data-href="../supplement/sec24.html">
 <p class="aq-hd"><span class="aq-id">e12</span><span class="aq-tag">范数与条件数 · 条件数下界</span></p>
 <p class="aq-prompt">对可逆矩阵 $A$，条件数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 的下界是</p>
 <ol class="aq-opts">
@@ -377,7 +383,7 @@
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>位移法：$A-pI$ 的特征值是 $\lambda_i-p$，其中 $\lvert\lambda_k-p\rvert$ 最小。对 $A-pI$ 用反幂法求出 $\lambda_k-p$，再加回 $p$ 得 $\lambda_k$。这是量子力学能级「精修」的标准手段。<b>答案 B</b>。</p></div></details>
 </div>
-<div class="arena-q" data-id="e28" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="谱半径与范数" data-src="补充 2.5 · 第 6–7 讲" data-href="../ch02/sec25.html">
+<div class="arena-q" data-id="e28" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="谱半径与范数" data-src="补充 2.5 · 第 6–7 讲" data-href="../supplement/sec25.html">
 <p class="aq-hd"><span class="aq-id">e28</span><span class="aq-tag">特征值与幂法 · 谱半径与范数</span></p>
 <p class="aq-prompt">对任意矩阵 $A$ 与任意**算子**范数，谱半径满足</p>
 <ol class="aq-opts">
@@ -410,7 +416,7 @@
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>自映射 $\varphi([a,b])\subseteq[a,b]$ 保证 $x_k$ 始终留在 $[a,b]$ 内（不越界）；压缩条件 $\lvert\varphi'(x)\rvert\le L<1$ 把误差逐次缩小，保证收敛到**唯一**不动点。老师强调**两条各管什么**别记串。<b>答案 C</b>。</p></div></details>
 </div>
-<div class="arena-q" data-id="e31" data-lv="5" data-a="0" data-tag="非线性方程与插值" data-point="牛顿法二阶收敛" data-src="第 8 讲" data-href="../lectures/lec09.html">
+<div class="arena-q" data-id="e31" data-lv="5" data-a="0" data-tag="非线性方程与插值" data-point="牛顿法二阶收敛" data-src="第 8 讲" data-href="../lectures/lec08.html">
 <p class="aq-hd"><span class="aq-id">e31</span><span class="aq-tag">非线性方程与插值 · 牛顿法二阶收敛</span></p>
 <p class="aq-prompt">牛顿法 $x_{k+1}=x_k-\dfrac{f(x_k)}{f'(x_k)}$ 具有（至少）二阶收敛，其根本原因是</p>
 <ol class="aq-opts">
@@ -475,6 +481,72 @@
 <li>系数需要解范德蒙德方程组才能确定</li>
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>拉格朗日基是「点灯」基：在**自己的节点取 1、其他节点取 0**。代入节点 $x_i$ 时其余项全为 0，方程退化为 $b_i=f(x_i)$——**系数就是函数值**，一步不用解病态的范德蒙德方程组。<b>答案 C</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e37" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="埃尔米特余项" data-src="第 11 讲" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e37</span><span class="aq-tag">非线性方程与插值 · 埃尔米特余项</span></p>
+<p class="aq-prompt">$n+1$ 个互异节点、每个节点同时给函数值与一阶导数的埃尔米特插值，其余项是</p>
+<ol class="aq-opts">
+<li>$\dfrac{f^{(n+1)}(\xi)}{(n+1)!}\prod\limits_{i=0}^{n}(x-x_i)$</li>
+<li>$\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod\limits_{i=0}^{n}(x-x_i)$</li>
+<li>$\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod\limits_{i=0}^{n}(x-x_i)^2$</li>
+<li>$\dfrac{f^{(2n+1)}(\xi)}{(2n+1)!}\prod\limits_{i=0}^{n}(x-x_i)^2$</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>条件共 $2n+2$ 个，分母必须是 $(2n+2)!$；每个节点同时约束函数值与导数，节点因子出现**两次**——所以是平方。第 11 讲用重节点差商 $f[x_i,x_i]=f'(x_i)$ 推出这条（教材定理 5.3 走辅助函数 + Rolle，同构）。</p><p><b>答案 C</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e38" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="最佳平方逼近的刻画" data-src="第 11 讲" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e38</span><span class="aq-tag">非线性方程与插值 · 最佳平方逼近的刻画</span></p>
+<p class="aq-prompt">$p^*$ 是 $f$ 在 $M=\operatorname{span}\{\varphi_0,\dots,\varphi_n\}$ 中的最佳平方逼近元，其**充要条件**是</p>
+<ol class="aq-opts">
+<li>$p^*(x_i)=f(x_i)$，对所有采样点 $x_i$</li>
+<li>$(f-p^*,\varphi_j)=0$，$j=0,\dots,n$（误差与子空间正交）</li>
+<li>$(f-p^*,f)=0$</li>
+<li>$\max\lvert f-p^*\rvert$ 在 $M$ 中最小</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>这就是投影条件（教材定理 5.7）：只需对**基函数逐个**验证内积为零，等价于对整个子空间正交。选项 A 是**插值**条件——最佳平方逼近不过点（$\sqrt{x}$ 的例子在 $x=0$ 处等于 $4/15$）；选项 D 是**最佳一致逼近**，另一套度量；选项 C 的内积对象错了。</p><p><b>答案 B</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e39" data-lv="5" data-a="3" data-tag="非线性方程与插值" data-point="Gram 矩阵非奇异" data-src="第 11 讲" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e39</span><span class="aq-tag">非线性方程与插值 · Gram 矩阵非奇异</span></p>
+<p class="aq-prompt">法方程 $G\boldsymbol a=\boldsymbol b$，$G_{ij}=(\varphi_i,\varphi_j)$。$G$ 非奇异的原因是</p>
+<ol class="aq-opts">
+<li>凡是内积写成的矩阵都可逆</li>
+<li>$G$ 对称，对称矩阵必可逆</li>
+<li>只要 $f$ 连续，$G$ 就可逆</li>
+<li>$\{\varphi_i\}$ 线性无关 $\Rightarrow$ $\boldsymbol c^{\mathrm T}G\boldsymbol c=\lVert\sum c_i\varphi_i\rVert^2>0$（正定）</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>课堂反证：$G\boldsymbol c=0$ 时，第 $i$ 个方程乘 $c_i$ 再求和，得 $\lVert\sum c_i\varphi_i\rVert^2=0$，由线性无关推出 $\boldsymbol c=0$——即 $G$ 正定、非奇异。**对称推不出可逆**（零矩阵对称）；$f$ 连续只保证右端 $\boldsymbol b$ 存在，与 $G$ 无关。</p><p><b>答案 D</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e40" data-lv="5" data-a="0" data-tag="非线性方程与插值" data-point="正交化的目的" data-src="第 11 讲" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e40</span><span class="aq-tag">非线性方程与插值 · 正交化的目的</span></p>
+<p class="aq-prompt">Gram–Schmidt 把基换成正交基后，对求解最佳平方逼近的**直接**好处是</p>
+<ol class="aq-opts">
+<li>$G$ 变成对角阵，系数 $a_i=(f,\varphi_i)/(\varphi_i,\varphi_i)$ **各自独立计算**，不再解耦合方程组</li>
+<li>减少了需要计算的内积个数</li>
+<li>逼近误差 $\lVert f-p\rVert$ 变小</li>
+<li>基函数的次数降低，计算更快</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>正交化**不改变**张成的子空间，最佳逼近与误差都不变；变的是方程组的**结构**：从满秩耦合变为对角，每个系数单独由一个内积给出。这就是老师反复说的「我们最希望 $A$ 是对角阵」。内积个数并不减少（正交基仍要算 $(f,\varphi_i)$ 与 $(\varphi_i,\varphi_i)$）。</p><p><b>答案 A</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e41" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="√x 的一次最佳平方逼近" data-src="第 11 讲 · 教材例 8" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e41</span><span class="aq-tag">非线性方程与插值 · √x 的一次最佳平方逼近</span></p>
+<p class="aq-prompt">在 $[0,1]$ 上取 $(f,g)=\int_0^1f(x)g(x)\,dx$，$f(x)=\sqrt{x}$ 在 $\operatorname{span}\{1,x\}$ 中的最佳平方逼近多项式是</p>
+<ol class="aq-opts">
+<li>$p(x)=x-\dfrac16$</li>
+<li>$p(x)=\dfrac13$</li>
+<li>$p(x)=\dfrac{4}{15}+\dfrac45x$</li>
+<li>$p(x)=\dfrac23+\dfrac25x$</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$(1,1)=1,\ (1,x)=\tfrac12,\ (x,x)=\tfrac13,\ (f,1)=\tfrac23,\ (f,x)=\tfrac25$，法方程解得 $a=\tfrac{4}{15},\ b=\tfrac45$（教材例 8 同果）。选项 A 是 $f=x^2$ 的结果（对照题）；选项 D 是换区间到 $[-1,1]$ 后 $q_1(t)=\tfrac23+\tfrac25t$ 的**中间形式**，代回 $t=2x-1$ 后仍是 C。</p><p><b>答案 C</b>。</p></div></details>
+</div>
+<div class="arena-q" data-id="e42" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="Legendre 正交性" data-src="第 11 讲" data-href="../lectures/lec11.html">
+<p class="aq-hd"><span class="aq-id">e42</span><span class="aq-tag">非线性方程与插值 · Legendre 正交性</span></p>
+<p class="aq-prompt">Legendre 多项式系 $\{L_n\}$ 在 $[-1,1]$（权 $1$）下的正交关系是</p>
+<ol class="aq-opts">
+<li>$\displaystyle\int_{-1}^{1}L_nL_m\,dx=\delta_{nm}$</li>
+<li>$\displaystyle\int_{-1}^{1}L_nL_m\,dx=\frac{2}{2n+1}\delta_{nm}$</li>
+<li>$\displaystyle\int_{-1}^{1}L_nL_m\,dx=\frac{\pi}{2}\delta_{nm}$</li>
+<li>只在 $n=m=0$ 时相互正交</li>
+</ol>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>板书结论：$\int_{-1}^1L_nL_m\,dx=\dfrac{2}{2n+1}\delta_{nm}$（注意分母 $2n+1$ 随 $n$ 变）。$\dfrac{\pi}{2}$ 是 **Chebyshev** 的正交值，且带权 $1/\sqrt{1-x^2}$、要求 $n=m\ne0$——两族多项式的「权 + 正交值」最容易记串。</p><p><b>答案 B</b>。</p></div></details>
 </div>
 </div>
 

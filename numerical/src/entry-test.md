@@ -19,7 +19,7 @@ $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=1\times2+2\times0+2\times1=4$；$\lVer
 
 $$\cos\theta=\frac{4}{3\sqrt5}\approx0.596285,\qquad\theta\approx53.40^{\circ}.$$
 
-**错因提示：** 若算出 $\cos\theta\gt1$，通常是忘了开根号，或把 $\lVert\boldsymbol{y}\rVert_2$ 写成了 $\lVert\boldsymbol{y}\rVert_1$。补充篇 [2.1](ch02/sec21.md) 就从内积与长度讲起。
+**错因提示：** 若算出 $\cos\theta\gt1$，通常是忘了开根号，或把 $\lVert\boldsymbol{y}\rVert_2$ 写成了 $\lVert\boldsymbol{y}\rVert_1$。补充篇 [2.1](supplement/sec21.md) 就从内积与长度讲起。
 :::
 
 :::
@@ -127,7 +127,7 @@ $\boldsymbol{q}_1=(1,1,0)^{\mathrm T}/\sqrt2$ 与 $\boldsymbol{q}_2=(1,-1,1)^{\m
 ::: sol 答案
 $\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_2=\dfrac{1}{2\sqrt3}\bigl[(1)(1)+(1)(-1)+(0)(1)\bigr]=0$，故**正交**；又 $\lVert\boldsymbol{q}_1\rVert_2=\lVert\boldsymbol{q}_2\rVert_2=1$，故它们是标准正交组。
 
-两个线性无关的向量总能扩充成基，再用 Gram–Schmidt 正交化——取 $\boldsymbol{q}_3$ 为与二者都正交的单位向量即可。手算：$\boldsymbol{q}_3=(1,-1,-2)^{\mathrm T}/\sqrt6$，验证 $\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_3=(1-1+0)/\sqrt{12}=0$、$\boldsymbol{q}_2^{\mathrm T}\boldsymbol{q}_3=(1+1-2)/\sqrt{18}=0$。这正是 [2.3](ch02/sec23.md) 的操作。
+两个线性无关的向量总能扩充成基，再用 Gram–Schmidt 正交化——取 $\boldsymbol{q}_3$ 为与二者都正交的单位向量即可。手算：$\boldsymbol{q}_3=(1,-1,-2)^{\mathrm T}/\sqrt6$，验证 $\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_3=(1-1+0)/\sqrt{12}=0$、$\boldsymbol{q}_2^{\mathrm T}\boldsymbol{q}_3=(1+1-2)/\sqrt{18}=0$。这正是 [2.3](supplement/sec23.md) 的操作。
 :::
 
 :::
@@ -139,7 +139,7 @@ $\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_2=\dfrac{1}{2\sqrt3}\bigl[(1)(1)+(1)
 ::: sol 答案
 投影系数 $\dfrac{\boldsymbol{a}^{\mathrm T}\boldsymbol{b}}{\boldsymbol{a}^{\mathrm T}\boldsymbol{a}}=\dfrac{4}{2}=2$，故投影 $\boldsymbol{p}=2\boldsymbol{a}=(2,2,0)^{\mathrm T}$，残差 $\boldsymbol{r}=\boldsymbol{b}-\boldsymbol{p}=(0,0,2)^{\mathrm T}$。
 
-核对：$\boldsymbol{a}^{\mathrm T}\boldsymbol{r}=0$ ✓（残差与列空间正交，这是投影的定义性质），$\lVert\boldsymbol{r}\rVert_2=2$。一般公式 $\boldsymbol{p}=\boldsymbol{a}(\boldsymbol{a}^{\mathrm T}\boldsymbol{a})^{-1}\boldsymbol{a}^{\mathrm T}\boldsymbol{b}$ 见 [2.2](ch02/sec22.md)。
+核对：$\boldsymbol{a}^{\mathrm T}\boldsymbol{r}=0$ ✓（残差与列空间正交，这是投影的定义性质），$\lVert\boldsymbol{r}\rVert_2=2$。一般公式 $\boldsymbol{p}=\boldsymbol{a}(\boldsymbol{a}^{\mathrm T}\boldsymbol{a})^{-1}\boldsymbol{a}^{\mathrm T}\boldsymbol{b}$ 见 [2.2](supplement/sec22.md)。
 :::
 
 :::
@@ -151,7 +151,7 @@ $A=\begin{pmatrix}1&2&3\\2&4&6\\1&1&1\end{pmatrix}$ 的秩是多少？$\boldsymb
 ::: sol 答案
 第 2 行 $=2\times$第 1 行，故秩不超过 $2$；而第 1、3 行线性无关（不成比例），故 $\operatorname{rank}A=2$。
 
-$A\boldsymbol{x}=(2-2,\ 4-4,\ 2-1)^{\mathrm T}=(0,0,1)^{\mathrm T}\neq\boldsymbol{0}$，故 $\boldsymbol{x}$ **不属于**零空间。零空间里的向量要满足 $x_1+2x_2+3x_3=0$ 且 $x_1+x_2+x_3=0$，可解出 $\boldsymbol{x}\in\operatorname{span}\{(1,-2,1)^{\mathrm T}\}$。**秩 + 零空间维数 $=n=3$**，与秩定理一致（[2.2](ch02/sec22.md)）。
+$A\boldsymbol{x}=(2-2,\ 4-4,\ 2-1)^{\mathrm T}=(0,0,1)^{\mathrm T}\neq\boldsymbol{0}$，故 $\boldsymbol{x}$ **不属于**零空间。零空间里的向量要满足 $x_1+2x_2+3x_3=0$ 且 $x_1+x_2+x_3=0$，可解出 $\boldsymbol{x}\in\operatorname{span}\{(1,-2,1)^{\mathrm T}\}$。**秩 + 零空间维数 $=n=3$**，与秩定理一致（[2.2](supplement/sec22.md)）。
 :::
 
 :::
@@ -165,7 +165,7 @@ $A=U\Sigma V^{\mathrm T}$，其中 $U\in\mathbb{R}^{m\times m}$、$V\in\mathbb{R
 
 $$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\ (\text{可逆时}).$$
 
-**若这两问答不出**，说明补充篇最大的新工具你还没建立起来，务必按顺序读完 [2.6](ch02/sec26.md) 之前的全部小节。
+**若这两问答不出**，说明补充篇最大的新工具你还没建立起来，务必按顺序读完 [2.6](supplement/sec26.md) 之前的全部小节。
 :::
 
 :::
@@ -174,15 +174,15 @@ $$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\
 
 | 得分 | 路线 | 说明 |
 |:--:|:--|:--|
-| **10–12 分** | 快速通道 | 先读[知识地图](preface-map.md)与[补充篇导览](ch02/overview.md)，然后直接进 [2.1](ch02/sec21.md)；第一章只在遇到具体工具时回查（例如 B3 答错就回 [1.3](ch01/sec13.md)）。 |
+| **10–12 分** | 快速通道 | 先读[概念地图](preface-map.md)与[补充篇导览](supplement/overview.md)，然后直接进 [补充篇 2.1](supplement/sec21.md)；第一章只在遇到具体工具时回查（例如 B3 答错就回 [1.3](ch01/sec13.md)）。 |
 | **7–9 分** | 标准路线 | 按目录顺序读：先把第一章的 [1.2](ch01/sec12.md)、[1.3](ch01/sec13.md) 两节速读一遍，并做习题集的 A、B 组，再进补充篇。 |
 | **4–6 分** | 夯实路线 | 从 [1.1](ch01/sec11.md) 起逐节通读，每节末的「小结与常见错误」全做一遍，第一章习题集的 A、B 组全刷一遍，再进补充篇。 |
 | **0–3 分** | 先补先修 | 先过一遍下面的[先修工具箱](entry-test.md#先修工具箱)，对照《高等代数》《数学分析》复习线性相关、特征值与 Taylor 展开，然后回本教程。 |
 
 ::: note 答错题的去向对照
-A1–A2 → [1.3.1](ch01/sec13.md#sec-1.3.1)、[2.1.1](ch02/sec21.md#sec-2.1.1)；A3–A4 → [1.3.4](ch01/sec13.md#sec-1.3.4)、[2.5.5](ch02/sec25.md#sec-2.5.5)；
+A1–A2 → [1.3.1](ch01/sec13.md#sec-1.3.1)、[2.1.1](supplement/sec21.md#sup-2.1.1)；A3–A4 → [1.3.4](ch01/sec13.md#sec-1.3.4)、[2.5.5](supplement/sec25.md#sup-2.5.5)；
 B1–B2 → [1.2.2](ch01/sec12.md#sec-1.2.2)、[1.2.3](ch01/sec12.md#sec-1.2.3)；B3–B4 → [1.3.3](ch01/sec13.md#sec-1.3.3)、[1.2.4](ch01/sec12.md#sec-1.2.4)；
-C1–C3 → [2.1](ch02/sec21.md)、[2.2](ch02/sec22.md)；C4 → [2.6](ch02/sec26.md)。
+C1–C3 → [2.1](supplement/sec21.md)、[2.2](supplement/sec22.md)；C4 → [2.6](supplement/sec26.md)。
 :::
 
 ## 先修工具箱
@@ -195,17 +195,17 @@ C1–C3 → [2.1](ch02/sec21.md)、[2.2](ch02/sec22.md)；C4 → [2.6](ch02/sec2
 
 $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1},\qquad\xi\ \text{介于}\ a,x\ \text{之间}.$$
 
-这是全部**误差传播公式**的来源（[1.2.3](ch01/sec12.md#sec-1.2.3)），也是 [2.5](ch02/sec25.md) 中特征值一阶扰动（Rayleigh 商）的来源。
+这是全部**误差传播公式**的来源（[1.2.3](ch01/sec12.md#sec-1.2.3)），也是 [2.5](supplement/sec25.md) 中特征值一阶扰动（Rayleigh 商）的来源。
 
 **② 极限与 $O$ 记号。** $T(n)=O(g(n))$ 表示存在常数 $C$ 使 $T(n)\le Cg(n)$（$n$ 足够大）。它只刻画**增长的阶**、忽略常数因子。用法与陷阱见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
 
-**③ 内积与正交（为补充篇预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。多一个视角：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta$，所以「正交」就是夹角 $90^{\circ}$。[2.1](ch02/sec21.md) 把内积公理化。
+**③ 内积与正交（为补充篇预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。多一个视角：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta$，所以「正交」就是夹角 $90^{\circ}$。[2.1](supplement/sec21.md) 把内积公理化。
 
-**④ 线性相关、基与秩。** 一组向量线性无关，指 $\sum k_i\boldsymbol{v}_i=\boldsymbol{0}$ 只有零解；$\operatorname{rank}A$ 是 $A$ 的极大线性无关列数，它与 $A\boldsymbol{x}=\boldsymbol{0}$ 的解空间维数互补：$\operatorname{rank}A+\dim N(A)=n$。这条**秩定理**是 [2.2](ch02/sec22.md) 的主角。
+**④ 线性相关、基与秩。** 一组向量线性无关，指 $\sum k_i\boldsymbol{v}_i=\boldsymbol{0}$ 只有零解；$\operatorname{rank}A$ 是 $A$ 的极大线性无关列数，它与 $A\boldsymbol{x}=\boldsymbol{0}$ 的解空间维数互补：$\operatorname{rank}A+\dim N(A)=n$。这条**秩定理**是 [2.2](supplement/sec22.md) 的主角。
 
-**⑤ 特征值与对称矩阵。** $\lambda$ 是 $A$ 的特征值 $\iff\det(A-\lambda I)=0$，对应特征向量满足 $A\boldsymbol{v}=\lambda\boldsymbol{v}$。**实对称矩阵必可正交对角化**：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且全部特征值为实数。这条结论在 [1.3.4](ch01/sec13.md#sec-1.3.4) 证 $\lVert A\rVert_2$ 时已经用到，在 [2.5](ch02/sec25.md) 会用得更彻底。
+**⑤ 特征值与对称矩阵。** $\lambda$ 是 $A$ 的特征值 $\iff\det(A-\lambda I)=0$，对应特征向量满足 $A\boldsymbol{v}=\lambda\boldsymbol{v}$。**实对称矩阵必可正交对角化**：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且全部特征值为实数。这条结论在 [1.3.4](ch01/sec13.md#sec-1.3.4) 证 $\lVert A\rVert_2$ 时已经用到，在 [2.5](supplement/sec25.md) 会用得更彻底。
 
-**⑥ 正定矩阵。** 对称矩阵 $A$ 正定 $\iff$ 全部特征值 $\gt0$ $\iff$ 各阶顺序主子式 $\gt0$（Sylvester 判据）。若 $A$ 列满秩，则 $A^{\mathrm T}A$ 正定——这是 [2.2](ch02/sec22.md) 投影公式 $A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 成立的前提（$A^{\mathrm T}A$ 可逆）。
+**⑥ 正定矩阵。** 对称矩阵 $A$ 正定 $\iff$ 全部特征值 $\gt0$ $\iff$ 各阶顺序主子式 $\gt0$（Sylvester 判据）。若 $A$ 列满秩，则 $A^{\mathrm T}A$ 正定——这是 [2.2](supplement/sec22.md) 投影公式 $A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 成立的前提（$A^{\mathrm T}A$ 可逆）。
 
 :::
 

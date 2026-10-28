@@ -1,13 +1,13 @@
 # 一页速览 · 公式与结论卡
 
-这一页把**第一章 + 补充篇（数值线性代数工具箱）**的必记公式与结论压成一页，按主题排列，每条都链到正文权威版本（推导与例子在那里）。老师主线第 2–5 章以讲座页为准；本页只收与主线交叉的公式。用途有二：**考前一小时过一遍**、**做题时忘了公式就跳过来**。
+这一页把**第一章、补充篇与课堂主线第 2–7 章**的必记公式与结论压成一页，按主题排列，每条都链到正文权威版本（推导与例子在那里）。用途有二：**考前一小时过一遍**、**做题时忘了公式就跳过来**。
 
 ::: note 怎么用这一页
 - **不是替代正文**：只有结论，没有推导与适用条件。第一次学别从这一页开始。
 - **配合「只看核心」**：正文页点「只看核心」，可跳层内容（证明、预告、拓展思考）折叠，留下的即本页展开版。
 - **自检法**：遮住右列，只看左列概念，能默写公式就打勾；默不出的点链接回读。
 - 正文各节末有完整速查表（`本节公式速查`），本页是它们的**去重汇总 + 跨节合并**。
-- **正文是唯一权威版本**：改公式先改正文，再同步本页——漏同步会被 `make check` 拦下（每条定义 / 定理的锚点都必须在本页或[术语索引](glossary.md)里出现）。
+- **正文是唯一权威版本**：改公式先改正文，再同步本页与[术语索引](glossary.md)。构建会检查语义引用，但不会自动证明复习页与正文的数学表述一致，仍需人工核对。
 :::
 
 ## 一 · 误差度量（[1.2](../ch01/sec12.md)）
@@ -96,90 +96,256 @@
 
 **中学类比的矩阵版**：$\lVert A\rVert\lt1$ 即 $\lvert r\rvert\lt1$，$I-A$ 即 $1-r$，$(I-A)^{-1}=\sum A^k$ 即 $\dfrac{1}{1-r}$——迭代法收敛性全靠这一套。
 
-## 八 · 内积与正交（补充篇 [2.1](../ch02/sec21.md)）
+## 八 · 内积与正交（补充篇 [2.1](../supplement/sec21.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
-| 内积公理 | 对称 · 对第一变元线性 · 正定（[@def-2.1.1]） |
+| 内积公理 | 对称 · 对第一变元线性 · 正定（[@def-sup-2.1.1]） |
 | 诱导范数 | $\lVert\boldsymbol{x}\rVert=\sqrt{\langle\boldsymbol{x},\boldsymbol{x}\rangle}$；Cauchy–Schwarz $\lvert\langle\boldsymbol{x},\boldsymbol{y}\rangle\rvert\le\lVert\boldsymbol{x}\rVert\lVert\boldsymbol{y}\rVert$ |
-| 是否来自内积 | 平行四边形恒等式 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2+\lVert\boldsymbol{x}-\boldsymbol{y}\rVert^2=2\lVert\boldsymbol{x}\rVert^2+2\lVert\boldsymbol{y}\rVert^2$（[@thm-2.1.2]）——**只有 2-范数满足** |
-| 正交组 | 两两内积为 $0$ 的非零向量组必线性无关（[@thm-2.1.3]） |
-| 标准正交基坐标 | $\boldsymbol{x}=\sum_i\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\boldsymbol{q}_i$；Parseval $\lVert\boldsymbol{x}\rVert^2=\sum_i\lvert\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\rvert^2$（[@thm-2.1.4]） |
-| 正交矩阵 | $Q^{\mathrm T}Q=I$、$Q^{-1}=Q^{\mathrm T}$、$\lvert\det Q\rvert=1$、$\mathrm{cond}_2(Q)=1$、保内积保范数（[@def-2.1.3]、[@thm-2.1.5]） |
-| 正交不变性 | $\lVert QA\rVert_2=\lVert A\rVert_2$，$\lVert QA\rVert_F=\lVert A\rVert_F$（[@thm-2.1.6]）——**数值算法偏爱正交变换的全部理由** |
+| 是否来自内积 | 平行四边形恒等式 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2+\lVert\boldsymbol{x}-\boldsymbol{y}\rVert^2=2\lVert\boldsymbol{x}\rVert^2+2\lVert\boldsymbol{y}\rVert^2$（[@thm-sup-2.1.2]）——**只有 2-范数满足** |
+| 正交组 | 两两内积为 $0$ 的非零向量组必线性无关（[@thm-sup-2.1.3]） |
+| 标准正交基坐标 | $\boldsymbol{x}=\sum_i\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\boldsymbol{q}_i$；Parseval $\lVert\boldsymbol{x}\rVert^2=\sum_i\lvert\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\rvert^2$（[@thm-sup-2.1.4]） |
+| 正交矩阵 | $Q^{\mathrm T}Q=I$、$Q^{-1}=Q^{\mathrm T}$、$\lvert\det Q\rvert=1$、$\mathrm{cond}_2(Q)=1$、保内积保范数（[@def-sup-2.1.3]、[@thm-sup-2.1.5]） |
+| 正交不变性 | $\lVert QA\rVert_2=\lVert A\rVert_2$，$\lVert QA\rVert_F=\lVert A\rVert_F$（[@thm-sup-2.1.6]）——**数值算法偏爱正交变换的全部理由** |
 
-## 九 · 四个子空间与投影（补充篇 [2.2](../ch02/sec22.md)）
+## 九 · 四个子空间与投影（补充篇 [2.2](../supplement/sec22.md)）
 
 | 概念 | 公式 |
 |:--|:--|
-| 四个子空间 | $C(A)\subseteq\mathbb{R}^m$、$N(A)\subseteq\mathbb{R}^n$、$C(A^{\mathrm T})\subseteq\mathbb{R}^n$、$N(A^{\mathrm T})\subseteq\mathbb{R}^m$（[@def-2.2.1]） |
-| 维数（秩定理） | $\dim C(A)=\dim C(A^{\mathrm T})=r$；$\dim N(A)=n-r$；$\dim N(A^{\mathrm T})=m-r$（[@thm-2.2.1]） |
-| 两对正交补 | $C(A^{\mathrm T})=N(A)^{\perp}$；$C(A)=N(A^{\mathrm T})^{\perp}$（[@thm-2.2.2]） |
-| 正交分解 | $\mathbb{R}^m=C(A)\oplus N(A^{\mathrm T})$，$\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{e}$，$\boldsymbol{p}\perp\boldsymbol{e}$（[@thm-2.2.3]） |
-| 投影是最近点 | 投影 $\boldsymbol{p}$ 是子空间中离 $\boldsymbol{x}$ 最近的点（[@thm-2.2.4]） |
-| 投影矩阵 | $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$；$P^{\mathrm T}=P$、$P^2=P$、$\operatorname{tr}P=r$、$\lVert P\rVert_2=1$（[@thm-2.2.5]） |
+| 四个子空间 | $C(A)\subseteq\mathbb{R}^m$、$N(A)\subseteq\mathbb{R}^n$、$C(A^{\mathrm T})\subseteq\mathbb{R}^n$、$N(A^{\mathrm T})\subseteq\mathbb{R}^m$（[@def-sup-2.2.1]） |
+| 维数（秩定理） | $\dim C(A)=\dim C(A^{\mathrm T})=r$；$\dim N(A)=n-r$；$\dim N(A^{\mathrm T})=m-r$（[@thm-sup-2.2.1]） |
+| 两对正交补 | $C(A^{\mathrm T})=N(A)^{\perp}$；$C(A)=N(A^{\mathrm T})^{\perp}$（[@thm-sup-2.2.2]） |
+| 正交分解 | $\mathbb{R}^m=C(A)\oplus N(A^{\mathrm T})$，$\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{e}$，$\boldsymbol{p}\perp\boldsymbol{e}$（[@thm-sup-2.2.3]） |
+| 投影是最近点 | 投影 $\boldsymbol{p}$ 是子空间中离 $\boldsymbol{x}$ 最近的点（[@thm-sup-2.2.4]） |
+| 投影矩阵 | $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$；$P^{\mathrm T}=P$、$P^2=P$、$\operatorname{tr}P=r$、$\lVert P\rVert_2=1$（[@thm-sup-2.2.5]） |
 | 判投影 | **对称 + 幂等**即可，不必回到定义式；只幂等不对称的是**斜投影** |
-| 最小二乘 | 正态方程 $A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$；列满秩时 $\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}$（[@thm-2.2.6]） |
+| 最小二乘 | 正态方程 $A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$；列满秩时 $\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}$（[@thm-sup-2.2.6]） |
 | 残差自检 | $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$（残差落在左零空间）——算完顺手验一下 |
-| 加权版 | $\hat{\boldsymbol{x}}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol{b}$（[@thm-2.2.7]） |
+| 加权版 | $\hat{\boldsymbol{x}}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol{b}$（[@thm-sup-2.2.7]） |
 
-## 十 · 正交化与 QR（补充篇 [2.3](../ch02/sec23.md)）
+## 十 · 正交化与 QR（补充篇 [2.3](../supplement/sec23.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
 | CGS 系数 | $r_{ij}=\boldsymbol{q}_i^{\mathrm T}\boldsymbol{a}_j$（**原始**列）——正交性损失 $\mathrm{cond}^2u$，**勿用于生产** |
 | MGS 系数 | $r_{ij}=\boldsymbol{q}_i^{\mathrm T}\boldsymbol{v}$（**当前**列）——损失 $\mathrm{cond}\,u$，一行之差 |
-| QR 分解 | $A=QR$，$Q^{\mathrm T}Q=I$，$R$ 上三角；$R$ 对角元为正时唯一（[@thm-2.3.1]、[@thm-2.3.2]） |
+| QR 分解 | $A=QR$，$Q^{\mathrm T}Q=I$，$R$ 上三角；$R$ 对角元为正时唯一（[@thm-sup-2.3.1]、[@thm-sup-2.3.2]） |
 | 分层张成 | $\operatorname{span}\{\boldsymbol{q}_1,\dots,\boldsymbol{q}_k\}=\operatorname{span}\{\boldsymbol{a}_1,\dots,\boldsymbol{a}_k\}$——QR 区别于 SVD 的关键 |
-| Householder | $H=I-2\dfrac{\boldsymbol{v}\boldsymbol{v}^{\mathrm T}}{\boldsymbol{v}^{\mathrm T}\boldsymbol{v}}$：对称、正交、$H^2=I$、$\det H=-1$（[@def-2.3.1]、[@thm-2.3.3]） |
+| Householder | $H=I-2\dfrac{\boldsymbol{v}\boldsymbol{v}^{\mathrm T}}{\boldsymbol{v}^{\mathrm T}\boldsymbol{v}}$：对称、正交、$H^2=I$、$\det H=-1$（[@def-sup-2.3.1]、[@thm-sup-2.3.3]） |
 | 消元向量 | $\boldsymbol{v}=\boldsymbol{x}+\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert_2\boldsymbol{e}_1$，$\alpha=-\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert_2$——**取反号是为了避免相近数相减** |
-| Givens | $c=x_1/r$，$s=x_2/r$，$r=\texttt{hypot}(x_1,x_2)$；$\det G=+1$（[@def-2.3.2]、[@thm-2.3.4]） |
+| Givens | $c=x_1/r$，$s=x_2/r$，$r=\texttt{hypot}(x_1,x_2)$；$\det G=+1$（[@def-sup-2.3.2]、[@thm-sup-2.3.4]） |
 | 正交性损失 | CGS $\mathrm{cond}^2u$ ／ MGS $\mathrm{cond}\,u$ ／ Householder & Givens $u$ |
 | 复杂度 | GS $2mn^2$；Householder $2mn^2-\frac23n^3$；Givens $\approx6mn^2$ |
 | 选型口诀 | **稠密用 Householder，稀疏用 Givens**；MGS 在条件数温和且需要显式 $Q$ 时可用 |
-| QR 解最小二乘 | $R\hat{\boldsymbol{x}}=(Q^{\mathrm T}\boldsymbol{b})_{1:n}$，$\lVert\boldsymbol{r}\rVert_2=\lVert\boldsymbol{d}\rVert_2$；误差 $\sim\mathrm{cond}(A)u$ vs 正态方程 $\sim\mathrm{cond}(A)^2u$（[@thm-2.3.5]） |
+| QR 解最小二乘 | $R\hat{\boldsymbol{x}}=(Q^{\mathrm T}\boldsymbol{b})_{1:n}$，$\lVert\boldsymbol{r}\rVert_2=\lVert\boldsymbol{d}\rVert_2$；误差 $\sim\mathrm{cond}(A)u$ vs 正态方程 $\sim\mathrm{cond}(A)^2u$（[@thm-sup-2.3.5]） |
 
-## 十一 · 条件数与扰动（补充篇 [2.4](../ch02/sec24.md)）
+## 十一 · 条件数与扰动（补充篇 [2.4](../supplement/sec24.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
-| 条件数 | $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$；$\mathrm{cond}_2=\sigma_{\max}/\sigma_{\min}$（[@def-2.4.1]） |
-| 基本性质 | $\ge1$；$\mathrm{cond}(A^{-1})=\mathrm{cond}(A)$；$\mathrm{cond}(cA)=\mathrm{cond}(A)$；$\mathrm{cond}_2(Q)=1$（[@thm-2.4.1]） |
-| 右端扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\delta\boldsymbol{b}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-2.4.2]） |
-| 系数扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\dfrac{\mathrm{cond}(A)}{1-\mathrm{cond}(A)\rho_A}(\rho_A+\rho_b)$，需 $\mathrm{cond}\cdot\rho_A\lt1$（[@thm-2.4.3]） |
+| 条件数 | $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$；$\mathrm{cond}_2=\sigma_{\max}/\sigma_{\min}$（[@def-sup-2.4.1]） |
+| 基本性质 | $\ge1$；$\mathrm{cond}(A^{-1})=\mathrm{cond}(A)$；$\mathrm{cond}(cA)=\mathrm{cond}(A)$；$\mathrm{cond}_2(Q)=1$（[@thm-sup-2.4.1]） |
+| 右端扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\delta\boldsymbol{b}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-sup-2.4.2]） |
+| 系数扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\dfrac{\mathrm{cond}(A)}{1-\mathrm{cond}(A)\rho_A}(\rho_A+\rho_b)$，需 $\mathrm{cond}\cdot\rho_A\lt1$（[@thm-sup-2.4.3]） |
 | 有效数字损失 | $k\approx\log_{10}\mathrm{cond}(A)$——**能保住几位**的定量答案 |
-| 残差 ≠ 误差 | $\boldsymbol{e}=A^{-1}\boldsymbol{r}$，$\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-2.4.4]） |
+| 残差 ≠ 误差 | $\boldsymbol{e}=A^{-1}\boldsymbol{r}$，$\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-sup-2.4.4]） |
 | 两个阈值 | $\mathrm{cond}\gtrsim10^{8}\approx u^{-1/2}$：弃正态方程；$\mathrm{cond}\gtrsim10^{16}\approx u^{-1}$：双精度无解 |
 
-## 十二 · 谱理论（补充篇 [2.5](../ch02/sec25.md)）
+## 十二 · 谱理论（补充篇 [2.5](../supplement/sec25.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
-| 特征值与不变量 | $A\boldsymbol{v}=\lambda\boldsymbol{v}$；$\operatorname{tr}A=\sum\lambda_i$，$\det A=\prod\lambda_i$（[@def-2.5.1]） |
-| 谱半径 | $\rho(A)=\max_i\lvert\lambda_i\rvert$；**$\rho(A)\le\lVert A\rVert$（任一相容范数）**，反向一般不成立（[@thm-2.5.1]） |
-| Gerschgorin | $\lvert\lambda-a_{ii}\rvert\le\sum_{j\neq i}\lvert a_{ij}\rvert$；连通并集含同样多个特征值（[@thm-2.5.2]） |
+| 特征值与不变量 | $A\boldsymbol{v}=\lambda\boldsymbol{v}$；$\operatorname{tr}A=\sum\lambda_i$，$\det A=\prod\lambda_i$（[@def-sup-2.5.1]） |
+| 谱半径 | $\rho(A)=\max_i\lvert\lambda_i\rvert$；**$\rho(A)\le\lVert A\rVert$（任一相容范数）**，反向一般不成立（[@thm-sup-2.5.1]） |
+| Gerschgorin | $\lvert\lambda-a_{ii}\rvert\le\sum_{j\neq i}\lvert a_{ij}\rvert$；连通并集含同样多个特征值（[@thm-sup-2.5.2]） |
 | 对角占优 | $\lvert a_{ii}\rvert\gt\sum_{j\ne i}\lvert a_{ij}\rvert\ \forall i\Rightarrow A$ 非奇异 |
-| Rayleigh 商 | $R(\boldsymbol{x})=\dfrac{\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\lambda_{\min}=\min R\le R(\boldsymbol{x})\le\max R=\lambda_{\max}$（[@def-2.5.2]、[@thm-2.5.4]） |
-| Courant–Fischer | $\lambda_k=\max_{\dim S=k}\min_{\boldsymbol{0}\ne\boldsymbol{x}\in S}R(\boldsymbol{x})$——全部中间特征值的变分刻画（[@thm-2.5.5]） |
-| 幂法收敛 | 向量 $O(\lvert\lambda_2/\lambda_1\rvert^k)$；**Rayleigh 商 $O(\lvert\lambda_2/\lambda_1\rvert^{2k})$**（[@thm-2.5.3]） |
-| 对称扰动 | $\lvert\lambda_i(A+E)-\lambda_i(A)\rvert\le\lVert E\rVert_2$（Weyl，[@thm-2.5.6]） |
+| Rayleigh 商 | $R(\boldsymbol{x})=\dfrac{\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\lambda_{\min}=\min R\le R(\boldsymbol{x})\le\max R=\lambda_{\max}$（[@def-sup-2.5.2]、[@thm-sup-2.5.4]） |
+| Courant–Fischer | $\lambda_k=\max_{\dim S=k}\min_{\boldsymbol{0}\ne\boldsymbol{x}\in S}R(\boldsymbol{x})$——全部中间特征值的变分刻画（[@thm-sup-2.5.5]） |
+| 幂法收敛 | 向量 $O(\lvert\lambda_2/\lambda_1\rvert^k)$；**Rayleigh 商 $O(\lvert\lambda_2/\lambda_1\rvert^{2k})$**（[@thm-sup-2.5.3]） |
+| 对称扰动 | $\lvert\lambda_i(A+E)-\lambda_i(A)\rvert\le\lVert E\rVert_2$（Weyl，[@thm-sup-2.5.6]） |
 | 一般扰动 | $\le\mathrm{cond}_2(V)\lVert E\rVert_2$（Bauer–Fike） |
 | 重特征值 | 非正规 $k$ 重根：移动 $O(\lVert E\rVert^{1/k})$——**固有病态，换算法无效** |
 
-## 十三 · SVD 与低秩逼近（补充篇 [2.6](../ch02/sec26.md)）
+## 十三 · SVD 与低秩逼近（补充篇 [2.6](../supplement/sec26.md)）
 
 | 概念 | 公式 / 结论 |
 |:--|:--|
-| SVD | $A=U\Sigma V^{\mathrm T}$，$\sigma_1\ge\cdots\ge\sigma_r\gt0$；$A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$，$A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i$（[@thm-2.6.1]） |
+| SVD | $A=U\Sigma V^{\mathrm T}$，$\sigma_1\ge\cdots\ge\sigma_r\gt0$；$A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$，$A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i$（[@thm-sup-2.6.1]） |
 | 与特征值 | $A^{\mathrm T}A\boldsymbol{v}_i=\sigma_i^2\boldsymbol{v}_i$；$AA^{\mathrm T}\boldsymbol{u}_i=\sigma_i^2\boldsymbol{u}_i$ |
-| 四个子空间 | $C(A)=\operatorname{span}\{\boldsymbol{u}_1..\boldsymbol{u}_r\}$；$N(A^{\mathrm T})=\operatorname{span}\{\boldsymbol{u}_{r+1}..\boldsymbol{u}_m\}$；$C(A^{\mathrm T})=\operatorname{span}\{\boldsymbol{v}_1..\boldsymbol{v}_r\}$；$N(A)=\operatorname{span}\{\boldsymbol{v}_{r+1}..\boldsymbol{v}_n\}$（[@thm-2.6.2]） |
+| 四个子空间 | $C(A)=\operatorname{span}\{\boldsymbol{u}_1..\boldsymbol{u}_r\}$；$N(A^{\mathrm T})=\operatorname{span}\{\boldsymbol{u}_{r+1}..\boldsymbol{u}_m\}$；$C(A^{\mathrm T})=\operatorname{span}\{\boldsymbol{v}_1..\boldsymbol{v}_r\}$；$N(A)=\operatorname{span}\{\boldsymbol{v}_{r+1}..\boldsymbol{v}_n\}$（[@thm-sup-2.6.2]） |
 | 范数与条件数 | $\lVert A\rVert_2=\sigma_1$；$\lVert A\rVert_F=\sqrt{\sum\sigma_i^2}$；$\mathrm{cond}_2=\sigma_1/\sigma_r$；$\lvert\det A\rvert=\prod\sigma_i$ |
 | 外积形式 | $A=\sum_{i\le r}\sigma_i\boldsymbol{u}_i\boldsymbol{v}_i^{\mathrm T}$——**秩 1 矩阵按重要性叠加** |
-| 伪逆 | $A^{+}=V\Sigma^{+}U^{\mathrm T}$；Penrose 四条件；列满秩 $A^{+}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}$（[@def-2.6.1]、[@thm-2.6.3]） |
+| 伪逆 | $A^{+}=V\Sigma^{+}U^{\mathrm T}$；Penrose 四条件；列满秩 $A^{+}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}$（[@def-sup-2.6.1]、[@thm-sup-2.6.3]） |
 | 秩亏最小二乘 | $\hat{\boldsymbol{x}}=A^{+}\boldsymbol{b}$ 是**最小范数**最小二乘解（唯一） |
-| Eckart–Young | $\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_2=\lVert A-A_k\rVert_2=\sigma_{k+1}$；F-范数版 $=\sqrt{\sum_{i\gt k}\sigma_i^2}$（[@thm-2.6.4]） |
+| Eckart–Young | $\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_2=\lVert A-A_k\rVert_2=\sigma_{k+1}$；F-范数版 $=\sqrt{\sum_{i\gt k}\sigma_i^2}$（[@thm-sup-2.6.4]） |
 | 数值秩 | $\#\{i:\sigma_i\gt t\sigma_1\}$，$t$ 按**数据噪声水平**选，不能照抄库的默认值 |
-| 迹不等式 | $\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert\le\sum_i\sigma_i(A)\sigma_i(B)$（[@ex-2.6.4]） |
+| 迹不等式 | $\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert\le\sum_i\sigma_i(A)\sigma_i(B)$（[@ex-sup-2.6.4]） |
+
+
+## 十四 · 线性方程组（第 2 章）
+
+### 直接法
+
+**Doolittle 分解** $A=LU$（$L$ 单位下三角）：
+
+$$
+u_{kj}=a_{kj}-\sum_{r=1}^{k-1}l_{kr}u_{rj}\ (j\ge k),\qquad
+l_{ik}=\frac{a_{ik}-\sum_{r=1}^{k-1}l_{ir}u_{rk}}{u_{kk}}\ (i>k).
+$$
+
+解 $Ly=b$ 前代、$Ux=y$ 回代；列主元把 $|u_{kk}|$ 换成当前列最大元，避免小主元放大误差。
+
+**追赶法**（三对角 $a_ix_{i-1}+b_ix_i+c_ix_{i+1}=d_i$）：$b_1'=b_1,\ c_1'=c_1/b_1',\ d_1'=d_1/b_1'$；对 $i=2,\dots,n$，$b_i'=b_i-a_ic_{i-1}'$，$c_i'=c_i/b_i'$，$d_i'=(d_i-a_id_{i-1}')/b_i'$；回代 $x_n=d_n'$，$x_i=d_i'-c_i'x_{i+1}$，$O(n)$。
+
+### 条件数与误差
+
+$$
+\operatorname{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert,\qquad
+\frac{\lVert\delta x\rVert}{\lVert x\rVert}\le\operatorname{cond}(A)\frac{\lVert\delta b\rVert}{\lVert b\rVert}.
+$$
+
+残差 $r=b-A\tilde x$ 小 **不等于** 误差小；误差界是 $\lVert x-\tilde x\rVert\le\lVert A^{-1}\rVert\lVert r\rVert$。
+
+### 迭代法
+
+- Jacobi：$x^{(k+1)}=D^{-1}\big(b-(L+U)x^{(k)}\big)$，$G_J=-D^{-1}(L+U)$；
+- Gauss–Seidel：$x^{(k+1)}=(D+L)^{-1}(b-Ux^{(k)})$，$G_{GS}=-(D+L)^{-1}U$；
+- SOR：$x^{(k+1)}=(D+\omega L)^{-1}\big[(1-\omega)D-\omega U\big]x^{(k)}+\omega(D+\omega L)^{-1}b$。
+
+收敛充要条件：$\rho(G)<1$。SOR 收敛的必要条件：$0<\omega<2$；严格对角占优时 Jacobi / GS 收敛，$0<\omega\le1$ 时 SOR 收敛。
+
+## 十五 · 特征值（第 3 章）
+
+**幂法**（求按模最大特征值）：先归一化再乘 $A$：
+
+$$
+u_k=\frac{y_k}{\max_i(y_k)_i},\qquad y_{k+1}=Au_k,\qquad \mu_{k+1}=\max_i(y_{k+1})_i,
+$$
+
+$\mu_k\to\lambda_1$，收敛比 $\lvert\lambda_2/\lambda_1\rvert$；$\lambda_1$ 必为实数。
+
+**Rayleigh 商**：$R(x)=\dfrac{x^{\mathrm T}Ax}{x^{\mathrm T}x}$，在特征向量处等于特征值，误差二阶。
+
+**反幂法**：每步解 $(A-pI)y_{k+1}=y_k$ 再单位化；$p$ 越接近目标特征值收敛越快，$p=0$ 时求按模最小特征值。
+
+**QR 方法**：$A_k=Q_kR_k$，$A_{k+1}=R_kQ_k=Q_k^{\mathrm T}A_kQ_k$；对角元趋于特征值。
+
+## 十六 · 非线性方程（第 4 章）
+
+**二分法**：$s\in[a_k,b_k]$，$|s-x_k|\le\dfrac{b-a}{2^k}$，线性收敛。
+
+**不动点迭代** $x_{k+1}=\varphi(x_k)$：$s=\varphi(s)$，$|x_k-s|\le\dfrac{L^k}{1-L}|x_1-x_0|$（$L=\max|\varphi'|<1$）；先验 / 后验误差估计：
+
+$$
+|x_k-s|\le\frac{L^k}{1-L}|x_1-x_0|,\qquad
+|x_k-s|\le\frac{L}{1-L}|x_k-x_{k-1}|.
+$$
+
+**Newton 法**：
+
+$$
+x_{k+1}=x_k-\frac{f(x_k)}{f'(x_k)},\qquad
+e_{k+1}=\frac{f''(\xi)}{2f'(x_k)}e_k^2\quad(\text{至少二阶}).
+$$
+
+$m$ 重根时收敛降为一阶，$\varphi'(s)=1-\frac1m$；修正 Newton：$x_{k+1}=x_k-m\dfrac{f(x_k)}{f'(x_k)}$。
+
+**割线法**：$x_{k+1}=x_k-\dfrac{f(x_k)(x_k-x_{k-1})}{f(x_k)-f(x_{k-1})}$，阶 $p=\frac{1+\sqrt5}{2}\approx1.618$。
+
+**Newton 全局收敛四条件**：$f(a)f(b)<0$、$f''$ 不变号、$f'\ne0$、初值满足 $f(x_0)f''(x_0)>0$（即从函数值与 $f''$ 同号的一端出发）。
+
+## 十七 · 插值与逼近（第 5 章）
+
+**Lagrange 插值**：
+
+$$
+L_n(x)=\sum_{i=0}^nf(x_i)\ell_i(x),\qquad
+\ell_i(x)=\prod_{\substack{j=0\\j\ne i}}^n\frac{x-x_j}{x_i-x_j},
+$$
+
+$$
+R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{i=0}^n(x-x_i).
+$$
+
+**Newton 插值**：$N_n(x)=f[x_0]+\sum_{k=1}^nf[x_0,\dots,x_k]\prod_{i=0}^{k-1}(x-x_i)$，差商 $f[x_0,\dots,x_k]=\dfrac{f[x_1,\dots,x_k]-f[x_0,\dots,x_{k-1}]}{x_k-x_0}$；加节点只添一项。
+
+**Hermite 插值**：$2n+2$ 个条件、$2n+1$ 次多项式，余项
+
+$$
+R(x)=\frac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod_{i=0}^n(x-x_i)^2.
+$$
+
+**三次样条**：$S_i(x)=a_i+b_i(x-x_i)+c_i(x-x_i)^2+d_i(x-x_i)^3$；用二阶导 $M_i$ 的三弯矩方程（三对角）解出，$O(n)$。
+
+**最佳平方逼近**：法方程 $G\boldsymbol a=\boldsymbol b$，$G_{ij}=(\varphi_i,\varphi_j)$，$b_i=(f,\varphi_i)$；正交基下解耦 $a_i=\dfrac{(f,\varphi_i)}{(\varphi_i,\varphi_i)}$。
+
+**最小二乘**：$A^{\mathrm T}A\boldsymbol c=A^{\mathrm T}\boldsymbol y$；离散内积 $(f,g)=\sum_i f(x_i)g(x_i)$。
+
+**四族正交多项式**：
+
+| 族 | 区间 | 权 $\rho$ | 递推 / 生成 |
+|:--|:--|:--|:--|
+| Legendre $P_n$ | $[-1,1]$ | $1$ | $(n+1)P_{n+1}=(2n+1)xP_n-nP_{n-1}$ |
+| Chebyshev $T_n$ | $[-1,1]$ | $1/\sqrt{1-x^2}$ | $T_n=\cos(n\arccos x)$ |
+| Laguerre $U_n$ | $[0,\infty)$ | $e^{-x}$ | $U_n=e^x\frac{d^n}{dx^n}(x^ne^{-x})$ |
+| Hermite $H_n$ | $(-\infty,\infty)$ | $e^{-x^2}$ | $H_n=(-1)^ne^{x^2}\frac{d^n}{dx^n}(e^{-x^2})$ |
+
+## 十八 · 数值积分（第 6 章）
+
+**求积公式**：$\int_a^bf\,dx\approx\sum_k\lambda_kf(x_k)$；$m$ 次代数精度 = 对 $1,x,\dots,x^m$ 精确、对 $x^{m+1}$ 不精确。
+
+**梯形 / Simpson**：
+
+$$
+T=\frac{b-a}{2}[f(a)+f(b)],\qquad R_T=-\frac{(b-a)^3}{12}f''(\xi);
+$$
+
+$$
+S=\frac{b-a}{6}\left[f(a)+4f\left(\frac{a+b}{2}\right)+f(b)\right],\qquad R_S=-\frac{(b-a)^5}{2880}f^{(4)}(\xi).
+$$
+
+**复化**：
+
+$$
+T_n=\frac h2\left[f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)\right],\qquad R_T=-\frac{(b-a)h^2}{12}f''(\xi);
+$$
+
+$$
+S_{2m}=\frac h3\left[f(a)+4\sum_{i\ \text{奇}}f(x_i)+2\sum_{i\ \text{偶}}f(x_i)+f(b)\right],\qquad R_S=-\frac{(b-a)h^4}{180}f^{(4)}(\xi).
+$$
+
+**Romberg**：$R_{k,0}=T_{2^k}$，$R_{k,j}=\dfrac{4^jR_{k,j-1}-R_{k-1,j-1}}{4^j-1}$。
+
+**Gauss–Legendre**：节点为 $P_n$ 的根，权 $A_i=\dfrac{2}{(1-x_i^2)[P_n'(x_i)]^2}$，精度 $2n-1$；$n=2$：$x=\pm1/\sqrt3,A=1$；$n=3$：$x=0,\pm\sqrt{3/5}$，$A=8/9,5/9$。
+
+**Gauss–Chebyshev**：$x_i=\cos\dfrac{(2i-1)\pi}{2n}$，$A_i=\dfrac\pi n$。
+
+## 十九 · 常微分方程（第 7 章）
+
+**Euler / 后退 Euler / 梯形 / 改进 Euler**：
+
+$$
+y_{n+1}=y_n+hf_n;\qquad y_{n+1}=y_n+hf_{n+1};
+$$
+
+$$
+y_{n+1}=y_n+\frac h2(f_n+f_{n+1});\qquad
+\bar y_{n+1}=y_n+hf_n,\quad y_{n+1}=y_n+\frac h2(f_n+f(t_{n+1},\bar y_{n+1})).
+$$
+
+**RK4**：
+
+$$
+y_{n+1}=y_n+\frac h6(k_1+2k_2+2k_3+k_4),
+$$
+
+$k_1=f(t_n,y_n)$，$k_2=f(t_n+\frac h2,y_n+\frac h2k_1)$，$k_3=f(t_n+\frac h2,y_n+\frac h2k_2)$，$k_4=f(t_n+h,y_n+hk_3)$。
+
+**稳定性**：测试方程 $y'=\lambda y$，$R(z)$ 为放大因子；Euler $R=1+z$，稳定区间 $-2<z<0$；RK4 $R=1+z+\frac{z^2}2+\frac{z^3}6+\frac{z^4}{24}$，$-2.78<z<0$。
+
+**线性多步法**：$\sum\alpha_jy_{n+j}=h\sum\beta_jf_{n+j}$；相容 $\rho(1)=0,\rho'(1)=\sigma(1)$；绝对稳定 $\rho(\zeta)-\mu\sigma(\zeta)=0$ 的根全在单位圆内。
+
+**刚性**：$r=\max|\operatorname{Re}\lambda_i|/\min|\operatorname{Re}\lambda_i|\gg1$；用 A-稳定（后退 Euler、梯形）或 $A(\alpha)$-稳定（Gear）方法。
 
 ## 四种记忆框架
 

@@ -39,11 +39,11 @@ $$G=\begin{pmatrix}u_{1x}&u_{1y}&u_{1z}&1\\u_{2x}&u_{2y}&u_{2z}&1\\u_{3x}&u_{3y}
 
 $$\begin{pmatrix}\Delta\boldsymbol{p}\\d\end{pmatrix}=G^{-1}\Delta\boldsymbol{\rho}\qquad\Longrightarrow\qquad\left\lVert\begin{pmatrix}\Delta\boldsymbol{p}\\d\end{pmatrix}\right\rVert\le\lVert G^{-1}\rVert\,\lVert\Delta\boldsymbol{\rho}\rVert .$$
 
-注意这个界里**没有** $\lVert G\rVert$ 因子：右端扰动的「分母」由伪距本身固定，完整讨论见 [2.4](../ch02/sec24.md)。GPS 文献定义的**几何精度因子**（geometric dilution of precision）正是
+注意这个界里**没有** $\lVert G\rVert$ 因子：右端扰动的「分母」由伪距本身固定，完整讨论见 [2.4](../supplement/sec24.md)。GPS 文献定义的**几何精度因子**（geometric dilution of precision）正是
 
 $$\mathrm{GDOP}=\sqrt{\operatorname{tr}\!\bigl[(G^{\mathrm T}G)^{-1}\bigr]} . \tag{A.4}$$
 
-GDOP 把位置 3 个分量与钟差的误差按平方和合成，是 $\lVert G^{-1}\rVert$ 的一种（Frobenius 型）度量。工程上还常把它拆成分量使用：$\mathrm{PDOP}$（位置部分）、$\mathrm{TDOP}$（时间部分）。**GDOP 越大，同样的测距误差造成的定位误差就越大**——它和 [2.4](../ch02/sec24.md) 的条件数 $\mathrm{cond}(A)$ 是同一个思想的两个工程名称。
+GDOP 把位置 3 个分量与钟差的误差按平方和合成，是 $\lVert G^{-1}\rVert$ 的一种（Frobenius 型）度量。工程上还常把它拆成分量使用：$\mathrm{PDOP}$（位置部分）、$\mathrm{TDOP}$（时间部分）。**GDOP 越大，同样的测距误差造成的定位误差就越大**——它和 [2.4](../supplement/sec24.md) 的条件数 $\mathrm{cond}(A)$ 是同一个思想的两个工程名称。
 
 ::: method 一组真实可复算的几何
 
@@ -148,8 +148,8 @@ report([(0,60),(120,60),(240,60),(0,80)],      "差几何（聚顶）")
 | [1.2.5](sec12.md#sec-1.2.5) 浮点范围与精度 | Ariane 5 溢出；Patriot 的 $0.1$ 二进制表示误差 |
 | [1.2.6](sec12.md#sec-1.2.6) 病态 vs 不稳定 | 卫星几何差属于问题病态，换算法无效 |
 | [1.3](sec13.md) 范数 | $\lVert\Delta\boldsymbol{p}\rVert$ 度量位置误差的大小；$\lVert G^{-1}\rVert$ 与 GDOP |
-| [2.4](../ch02/sec24.md) 条件数 | $\mathrm{cond}_2(G)$ 与 GDOP 是同一件事的两种写法 |
+| [2.4](../supplement/sec24.md) 条件数 | $\mathrm{cond}_2(G)$ 与 GDOP 是同一件事的两种写法 |
 
 ::: preview 课程预告 · 从「刚好可解」到「最优估计」
-本页处理的是**恰好四个观测**、方程数与未知数刚好相等的方阵情形。现代接收机同时能看到 8–12 颗卫星，方程变成**超定**（$G\in\mathbb{R}^{m\times4}$，$m\gt4$），要解的是最小二乘问题 $\min\lVert G\boldsymbol{\xi}-\Delta\boldsymbol{\rho}\rVert_2$——这正是[补充篇 2.2 节](../ch02/sec22.md)讲的投影与最小二乘。实际软件用 QR 分解（[2.3](../ch02/sec23.md)）求解，再用 $G$ 的奇异值判断几何质量（[2.6](../ch02/sec26.md)）。**读完补充篇，你能自己写出一个 GPS 定位求解器。**
+本页处理的是**恰好四个观测**、方程数与未知数刚好相等的方阵情形。现代接收机同时能看到 8–12 颗卫星，方程变成**超定**（$G\in\mathbb{R}^{m\times4}$，$m\gt4$），要解的是最小二乘问题 $\min\lVert G\boldsymbol{\xi}-\Delta\boldsymbol{\rho}\rVert_2$——这正是[补充篇 2.2 节](../supplement/sec22.md)讲的投影与最小二乘。实际软件用 QR 分解（[2.3](../supplement/sec23.md)）求解，再用 $G$ 的奇异值判断几何质量（[2.6](../supplement/sec26.md)）。**读完补充篇，你能自己写出一个 GPS 定位求解器。**
 :::

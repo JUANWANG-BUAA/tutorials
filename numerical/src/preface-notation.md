@@ -24,7 +24,7 @@
 |:--|:--|:--|
 | $\boldsymbol{x}=(x_1,\cdots,x_n)^{\mathrm T}$ | 向量 | 粗体小写；$\mathbb{R}^n$ 中列向量 |
 | $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}$ | 内积 | $\sum_ix_iy_i$；未特别说明时为 Euclid 内积 |
-| $\langle\boldsymbol{x},\boldsymbol{y}\rangle$ | 内积（一般记号） | 泛指某一给定的内积，见 [2.1](ch02/sec21.md) |
+| $\langle\boldsymbol{x},\boldsymbol{y}\rangle$ | 内积（一般记号） | 泛指某一给定的内积，见 [2.1](supplement/sec21.md) |
 | $\boldsymbol{x}\perp\boldsymbol{y}$ | 正交 | $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$ |
 | $\lVert\boldsymbol{x}\rVert_p$ | 向量 $p$-范数 | $\bigl(\sum\lvert x_i\rvert^p\bigr)^{1/p}$；$p=1,2,\infty$ 最常用 |
 | $\lVert\boldsymbol{x}\rVert$ | 泛指的范数 | 不指明用哪一种范数时的泛指记号 |
@@ -64,7 +64,7 @@
 | $A^{+}$ | Moore–Penrose 伪逆 | $V\Sigma^{+}U^{\mathrm T}$ |
 | $\boldsymbol q(\boldsymbol{x})$，$R(\boldsymbol{x})$ | Rayleigh 商 | $\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}/\boldsymbol{x}^{\mathrm T}\boldsymbol{x}$（对称阵） |
 | $\kappa(A)$，$\mathrm{cond}_2(A)$ | 谱条件数 | $\sigma_1/\sigma_r$ |
-| $\rho\le\lVert A\rVert$ | 谱半径与范数 | 任一相容矩阵范数下成立，见 [2.5](ch02/sec25.md) |
+| $\rho\le\lVert A\rVert$ | 谱半径与范数 | 任一相容矩阵范数下成立，见 [2.5](supplement/sec25.md) |
 
 ::: note
 

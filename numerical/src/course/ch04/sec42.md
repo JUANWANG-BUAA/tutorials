@@ -1,177 +1,263 @@
-# 4.1.5–4.1.8 Newton 法与割线法
+# 4.2 非线性方程组的迭代解法
 
-> 对应教材 4.1.5–4.1.8、定理 4.6–4.9、例 3–5、习题 6–9；对应老师第 8 讲、第 9 讲 §三–§四。
-> 主线：Newton 用切线，割线用两点；前者二阶但要导数，后者 1.618 阶但只需函数值。
+> 对应教材 4.2.1–4.2.4、定理 4.10–4.15、例 6–7、习题 10–11。**老师课堂未讲**，按教材补齐，标"教材有、课堂未讲"。
+> 主线：一元方法搬到方程组，关键是 Jacobian 与压缩/谱半径。
 
-<a id="sec-4.1.5"></a>
-## 4.1.5 Newton 法
+::: note 本节定位（教材有、课堂未讲）
+老师这一轮没有展开非线性方程组（原书 4.2）。需要时按教材补读，考试按老师范围复习（课堂范围见[第 4 章导览](overview.md)）。本节的定理 4.12–4.15 给出了完整表述与证明——它们与一元版 [@thm-4.1]、[@thm-4.6] 逐条平行，读者可对照阅读。
+:::
 
-把 $f(x)=0$ 在 $x_k$ 处线性化：
+<a id="sec-4.2.1"></a>
+## 4.2.1 非线性方程组与可微性
+
+::: def 定义 4.2.1 · 非线性方程组 {#def-4.2.1}
+设
 $$
-f(x)\approx f(x_k)+f'(x_k)(x-x_k),
+F(\boldsymbol x)=\begin{pmatrix}f_1(x_1,\dots,x_n)\\\vdots\\f_n(x_1,\dots,x_n)\end{pmatrix}=\boldsymbol0.
 $$
-令近似为零，得
+称为 $n$ 元**非线性方程组**；$F:\mathbb R^n\to\mathbb R^n$ 称为**向量值函数**，$f_i$ 是它的第 $i$ 个分量。
+:::
+
+::: def 定义 4.2.2 · Jacobian 矩阵 {#def-4.2.2}
+$F$ 在 $\boldsymbol x$ 处的**Jacobian 矩阵**（导数矩阵）为一阶偏导数排成的矩阵
 $$
-x_{k+1}=x_k-\frac{f(x_k)}{f'(x_k)}.
+F'(\boldsymbol x)=\begin{pmatrix}
+\frac{\partial f_1}{\partial x_1}&\cdots&\frac{\partial f_1}{\partial x_n}\\
+\vdots&&\vdots\\
+\frac{\partial f_n}{\partial x_1}&\cdots&\frac{\partial f_n}{\partial x_n}
+\end{pmatrix}.
 $$
-几何上，$x_{k+1}$ 是曲线在 $(x_k,f(x_k))$ 处切线与 $x$ 轴的交点。
+它是一元导数 $f'$ 的矩阵版；$n=1$ 时退化为 $\begin{pmatrix}f'(x)\end{pmatrix}$。
+:::
 
-**定理 4.6（局部平方收敛）**：设 $f$ 在根 $s$ 的某邻域内二阶连续可导，$f(s)=0$，$f'(s)\ne0$。则存在 $\delta\gt0$，当 $x_0\in(s-\delta,s+\delta)$ 时 Newton 迭代收敛到 $s$，且至少平方收敛。
+::: thm 定理 4.10 · 可微的充要条件 {#thm-4.10}
+$F(\boldsymbol x)$ 在 $\boldsymbol x_0$ 处可微的充要条件是：各分量 $f_1,\dots,f_n$ 都在 $\boldsymbol x_0$ 处可微。可微时 $F'(\boldsymbol x_0)$ 的各行即 $\nabla f_i(\boldsymbol x_0)$。
+:::
 
-**证明要点**：令 $\varphi(x)=x-f(x)/f'(x)$，则 $\varphi(s)=s$，
+::: thm 定理 4.11 · 向量值函数的中值定理 {#thm-4.11}
+设 $F$ 在包含线段 $\overline{\boldsymbol x\boldsymbol y}$ 的区域内可微，则
 $$
-\varphi'(x)=\frac{f(x)f''(x)}{[f'(x)]^2},\qquad \varphi'(s)=0.
+F(\boldsymbol x)-F(\boldsymbol y)=\int_0^1F'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)\,dt
 $$
-更直接地，在根附近取 $|f'|\ge m>0$、$|f''|\le M$。将 $f(s)=0$ 在 $x_k$ 处作二阶 Taylor 展开，得
-$$|x_{k+1}-s|\le\frac{M}{2m}|x_k-s|^2.$$
-初值充分接近根时，这个估计同时保证局部不越界与至少平方收敛；不要求 $\varphi''(s)\ne0$。$\blacksquare$
+（牛顿–莱布尼茨型公式；$\boldsymbol x-\boldsymbol y$ 是常向量，可移出积分号）。
+:::
 
-**定理 4.7（全局收敛，教材称“大范围收敛性定理”）**：设
+::: proof 证明
+对一元函数 $g(t)=F(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))$ 用牛顿–莱布尼茨公式，$g'(t)=F'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)$（链式法则）：
+$$
+F(\boldsymbol x)-F(\boldsymbol y)=g(1)-g(0)=\int_0^1g'(t)\,dt
+=\int_0^1F'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)\,dt.\ \blacksquare
+$$
+:::
 
-1. $f\in C^2[a,b]$，$f(a)f(b)\lt0$；
-2. $f''(x)$ 在 $[a,b]$ 上不变号；
-3. $f'(x)$ 在 $[a,b]$ 上不为零；
-4. $x_0\in[a,b]$，且 $f(x_0)f''(x_0)\gt0$。
+::: thm 定理 4.12 · 压缩条件的矩阵版本 {#thm-4.12}
+设 $D\subset\mathbb R^n$ 是凸区域，$G:D\to\mathbb R^n$ 在 $D$ 上可微，且存在 $L\lt1$ 使
+$$
+\lVert G'(\boldsymbol z)\rVert\le L,\qquad \forall \boldsymbol z\in D.
+$$
+则 $G$ 在 $D$ 上满足 Lipschitz 条件
+$$
+\lVert G(\boldsymbol x)-G(\boldsymbol y)\rVert\le L\lVert\boldsymbol x-\boldsymbol y\rVert,\qquad \forall \boldsymbol x,\boldsymbol y\in D.
+$$
+（教材把这一条表述为「压缩条件的矩阵版本」：标量条件 $\lvert\varphi'(x)\rvert\le L$ 的矩阵对应物；配合自映射 $G:D\to D$ 即 [@thm-4.13] 的全部条件。）
+:::
 
-则 Newton 迭代收敛到 $[a,b]$ 内唯一根 $s$，且至少平方收敛。
+::: proof 证明
+由 [@thm-4.11]（$D$ 凸保证线段在 $D$ 内）取范数：
+$$
+\lVert G(\boldsymbol x)-G(\boldsymbol y)\rVert
+=\left\lVert\int_0^1G'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)\,dt\right\rVert
+\le\int_0^1L\lVert\boldsymbol x-\boldsymbol y\rVert\,dt
+=L\lVert\boldsymbol x-\boldsymbol y\rVert.\ \blacksquare
+$$
+:::
 
-**证明要点**：由条件 (2)(3)，$f$ 单调且凸性不变，$f$ 在 $[a,b]$ 内只有一个根。条件 (4) 保证 $x_0$ 在“根的同侧”，迭代点单调有界，极限存在；再证极限为根。收敛阶由定理 4.6。完整证明见[第 9 讲](../../lectures/lec09.md)。$\blacksquare$
+<a id="sec-4.2.2"></a>
+## 4.2.2 不动点迭代
 
-**例 3（教材 4.1.5）**：$f(x)=x^3-x-1=0$，取 $x_0=1.5$：
+把 $F(\boldsymbol x)=0$ 改写成 $\boldsymbol x=G(\boldsymbol x)$，迭代
 $$
-x_1=1.34783,\quad x_2=1.32520,\quad x_3=1.32472.
-$$
-3 次就到 $10^{-5}$，明显快于简单迭代的 5 次到 $10^{-4}$。
-
-<a id="sec-4.1.6"></a>
-## 4.1.6 重根与修正 Newton 法
-
-若 $s$ 是 $f$ 的 $m\ge2$ 重根，$f(x)=(x-s)^m g(x)$，$g$ 在根附近充分光滑、$g(s)\ne0$，则 $f'(s)=0$，普通 Newton 法退化为线性收敛。若 $m$ 已知，改用
-$$
-x_{k+1}=x_k-m\frac{f(x_k)}{f'(x_k)},
-$$
-可恢复平方收敛；若 $m$ 未知，可用
-$$
-x_{k+1}=x_k-\frac{f(x_k)f'(x_k)}{[f'(x_k)]^2-f(x_k)f''(x_k)}
-$$
-（修正 Newton），在重根处至少二阶；达到根即停止，避免继续计算不定式。
-
-<a id="sec-4.1.7"></a>
-## 4.1.7 割线法
-
-用差商代替导数：
-$$
-f'(x_k)\approx\frac{f(x_k)-f(x_{k-1})}{x_k-x_{k-1}},
-$$
-得
-$$
-x_{k+1}=x_k-\frac{f(x_k)(x_k-x_{k-1})}{f(x_k)-f(x_{k-1})}.
-$$
-需要两个初值 $x_0,x_1$，每步只算一次新函数值（Newton 每步要算 $f$ 和 $f'$）。
-
-**定理 4.8**：设 $f$ 在根 $s$ 附近二阶连续可导，$f'(s)\ne0$，$f''(s)\ne0$，两个不同初值充分接近 $s$，且迭代分母非零、未有限步终止，则割线法局部收敛，渐近收敛阶为
-$$
-p=\frac{1+\sqrt5}{2}\approx1.618.
+\boldsymbol x^{(k+1)}=G(\boldsymbol x^{(k)}).
 $$
 
-**例 4（教材 4.1.7）**：仍取 $x^3-x-1=0$，取 $x_{-1}=1,x_0=2$，下表的 $k$ 计从 $2$ 出发的更新次数：
-
-| $k$ | $x_k$ | $|f(x_k)|$ |
-|:--:|:--:|:--:|
-| 0 | 2.0000000000 | $5.000e+00$ |
-| 1 | 1.1666666667 | $5.787e-01$ |
-| 2 | 1.2531120332 | $2.854e-01$ |
-| 3 | 1.3372064458 | $5.388e-02$ |
-| 4 | 1.3238500964 | $3.698e-03$ |
-| 5 | 1.3247079365 | $4.273e-05$ |
-| 6 | 1.3247179654 | $3.458e-08$ |
-| 7 | 1.3247179572 | $3.229e-13$ |
-
-约 6 次到 $10^{-7}$；比 Newton 慢，但每步省一次导数。
-
-<a id="sec-4.1.8"></a>
-## 4.1.8 单点割线法
-
-若把 $x_{k-1}$ 固定为初值 $x_0$，只更新 $x_k$：
+::: thm[core] 定理 4.13 · 压缩映像原理 {#thm-4.13}
+设 $D\subset\mathbb R^n$ 闭，$G:D\to D$，且存在 $L\lt1$，使
 $$
-x_{k+1}=x_k-\frac{f(x_k)(x_k-x_0)}{f(x_k)-f(x_0)}.
+\lVert G(\boldsymbol x)-G(\boldsymbol y)\rVert\le L\lVert\boldsymbol x-\boldsymbol y\rVert,\qquad \forall \boldsymbol x,\boldsymbol y\in D.
 $$
-这就是单点割线法（试位法的一种）。它只需一个初值和一个固定点，收敛性依赖固定点和初值的选择，不能仅凭单调性保证。
+则 $G$ 在 $D$ 内有唯一不动点 $\boldsymbol x^*$，且对任意 $\boldsymbol x^{(0)}\in D$，迭代收敛到 $\boldsymbol x^*$，并有
+$$
+\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\le\frac{L^k}{1-L}\lVert\boldsymbol x^{(1)}-\boldsymbol x^{(0)}\rVert.
+$$
+:::
 
-**定理 4.9（局部条件）**：固定点记为 $c$，设 $f\in C^2$ 于简单根 $s$ 附近、$f(c)\ne0$。迭代映射
-$$\psi(x)=x-\frac{f(x)(x-c)}{f(x)-f(c)},\qquad
-\psi'(s)=1-\frac{f'(s)(s-c)}{f(s)-f(c)}.$$
-若 $|\psi'(s)|<1$，则充分靠近 $s$ 的初值产生局部收敛；非终止且 $0<|\psi'(s)|<1$ 时恰为线性。仅有区间变号和 $f'$ 不变号不足以推出这个结论。例如 $f(x)=x^3-1$、$s=1$、$c=0$ 时 $\psi'(s)=-2$，根为排斥不动点。
+::: proof 证明
+**第 1 步 · Cauchy 列。**由 Lipschitz 条件递推，
+$$
+\lVert\boldsymbol x^{(k+1)}-\boldsymbol x^{(k)}\rVert
+\le L\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert
+\le\cdots\le L^k\lVert\boldsymbol x^{(1)}-\boldsymbol x^{(0)}\rVert.
+$$
+对 $m\gt k$ 用三角不等式与几何级数，
+$$
+\lVert\boldsymbol x^{(m)}-\boldsymbol x^{(k)}\rVert
+\le\sum_{j=k}^{m-1}\lVert\boldsymbol x^{(j+1)}-\boldsymbol x^{(j)}\rVert
+\le\sum_{j=k}^{m-1}L^j\lVert\boldsymbol x^{(1)}-\boldsymbol x^{(0)}\rVert
+\le\frac{L^k}{1-L}\lVert\boldsymbol x^{(1)}-\boldsymbol x^{(0)}\rVert\to0 .
+$$
+故 $\{\boldsymbol x^{(k)}\}$ 是 Cauchy 列；$D$ 闭，故 $\boldsymbol x^{(k)}\to\boldsymbol x^*\in D$。
 
-**例 5（教材 4.1.8）**：仍取 $x^3-x-1=0$，固定 $x_0=1$，从 $x=2$ 出发：
+**第 2 步 · 极限是不动点。**$G$ 连续（Lipschitz），对 $\boldsymbol x^{(k+1)}=G(\boldsymbol x^{(k)})$ 取极限得 $\boldsymbol x^*=G(\boldsymbol x^*)$。
 
-| $k$ | $x_k$ | $|f(x_k)|$ |
-|:--:|:--:|:--:|
-| 0 | 2.0000000000 | $5.000e+00$ |
-| 1 | 1.1666666667 | $5.787e-01$ |
-| 2 | 1.3956043956 | $3.226e-01$ |
-| 3 | 1.2991042404 | $1.066e-01$ |
-| 4 | 1.3348091646 | $4.344e-02$ |
-| 5 | 1.3208702339 | $1.635e-02$ |
-| 6 | 1.3262037791 | $6.345e-03$ |
-| 7 | 1.3241469816 | $2.434e-03$ |
-| 8 | 1.3249377847 | $9.377e-04$ |
-| 9 | 1.3246333840 | $3.606e-04$ |
-| 10 | 1.3247505038 | $1.388e-04$ |
-| 11 | 1.3247054336 | $5.341e-05$ |
+**第 3 步 · 唯一性。**若 $\boldsymbol y^*$ 也是不动点，则
+$$
+\lVert\boldsymbol x^*-\boldsymbol y^*\rVert=\lVert G(\boldsymbol x^*)-G(\boldsymbol y^*)\rVert\le L\lVert\boldsymbol x^*-\boldsymbol y^*\rVert,
+$$
+$L\lt1$ 迫使 $\lVert\boldsymbol x^*-\boldsymbol y^*\rVert=0$。
 
-本例局部因子约为 $-0.3848$，线性收敛，11 次残差才到 $10^{-4}$ 以下；比割线法慢，但只需一个初值和一个固定点。
+**第 4 步 · 误差界。**在第 1 步的不等式中令 $m\to\infty$ 即得先验界；同理从最后一步差出发有后验界
+$$
+\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\le\frac{L}{1-L}\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert\quad(k\ge1),
+$$
+与一元版 [@thm-4.1] 完全平行。$\blacksquare$
+:::
 
-<a id="sec-4.1.9"></a>
-## 4.1.9 四种方法对比
+::: thm 定理 4.14 · 线性迭代的收敛判据 {#thm-4.14}
+若 $G(\boldsymbol x)=B\boldsymbol x+\boldsymbol d$，则迭代 $\boldsymbol x^{(k+1)}=B\boldsymbol x^{(k)}+\boldsymbol d$ 对任意初值收敛的充要条件是 $\rho(B)\lt1$；$\lVert B\rVert\lt1$ 是充分条件。
+:::
 
-| 方法 | 每步信息 | 收敛阶 | 初值 | 适用 |
-|:--|:--|:--:|:--|:--|
-| 对分法 | $f$ | 1（公比 1/2） | 区间 | 只求实根，最稳 |
-| 简单迭代 | $\varphi$ | 1 或 $m$ | 一个 | 需选对 $\varphi$ |
-| Newton | $f,f'$ | 2 | 一个，靠近根 | 光滑、导数好算 |
-| 割线法 | $f$ | 1.618 | 两个 | 导数难算 |
-| 单点割线 | $f$ | 1 | 一个 + 固定点 | 简单但慢 |
+::: proof 证明
+误差满足 $\boldsymbol x^{(k)}-\boldsymbol x^*=B^k(\boldsymbol x^{(0)}-\boldsymbol x^*)$，其中 $\boldsymbol x^*=(I-B)^{-1}\boldsymbol d$（$\rho(B)\lt1$ 时 Neumann 级数 $\sum B^j$ 收敛，逆存在）。
 
-<a id="sec-4.1.10"></a>
-## 4.1.10 习题（教材习题 6–9）
+**充分性。**由谱半径公式 $\rho(B)=\lim\limits_{k\to\infty}\lVert B^k\rVert^{1/k}$，任取 $\varepsilon\gt0$ 使 $\rho(B)+\varepsilon\lt1$，存在 $K$ 使 $k\ge K$ 时 $\lVert B^k\rVert\le(\rho(B)+\varepsilon)^k$，于是
+$$
+\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\le(\rho(B)+\varepsilon)^k\lVert\boldsymbol x^{(0)}-\boldsymbol x^*\rVert\to0 .
+$$
 
-::: ex 4.6 · Newton 法（教材习题 6）
-用 Newton 法求指定方程的根，要求 $|x_k-x_{k-1}|/|x_k|\le10^{-5}$，并说明收敛理由。
+**必要性。**若迭代对任意初值收敛，则 $B^k\boldsymbol v\to\boldsymbol0$ 对一切 $\boldsymbol v$ 成立（取 $\boldsymbol x^{(0)}=\boldsymbol x^*+\boldsymbol v$）。设 $\lambda$ 是 $B$ 的模最大特征值（$|\lambda|=\rho(B)$），$\boldsymbol v$ 为对应特征向量；若 $\boldsymbol v$ 为复向量，取实部与虚部中非零者为实初值。于是 $B^k\operatorname{Re}\boldsymbol v=\operatorname{Re}(\lambda^k\boldsymbol v)$ 应收敛到零，但 $|\lambda|\ge1$ 时它按 $|\lambda|^k$ 增长（$|\lambda|\gt1$）或旋转振荡（$|\lambda|=1$），矛盾。故 $\rho(B)\lt1$。
+
+**范数条件是充分的。**$\rho(B)\le\lVert B\rVert\lt1$ 时直接由
+$$
+\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\le\lVert B\rVert^k\lVert\boldsymbol x^{(0)}-\boldsymbol x^*\rVert\to0
+$$
+得收敛——它用起来方便，却不是必要的（依赖范数的选取）。$\blacksquare$
+:::
+
+::: ex 例 6（教材 4.2.2） · 方程组不动点迭代 {#ex-4.2.1}
+教材用一个 $2\times2$ 非线性方程组，把它写成 $\boldsymbol x=G(\boldsymbol x)$，验证 $G$ 在某个区域上压缩（或 $\rho(G')\lt1$），再用迭代求解；数值表展示线性收敛。
+:::
+
+<a id="sec-4.2.3"></a>
+## 4.2.3 Newton 法（方程组）
+
+在 $\boldsymbol x^{(k)}$ 处线性化：
+$$
+F(\boldsymbol x)\approx F(\boldsymbol x^{(k)})+F'(\boldsymbol x^{(k)})(\boldsymbol x-\boldsymbol x^{(k)}),
+$$
+令其为零：
+$$
+\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}-F'(\boldsymbol x^{(k)})^{-1}F(\boldsymbol x^{(k)}).
+$$
+实际计算不显式求逆，而是解线性方程组
+$$
+F'(\boldsymbol x^{(k)})\Delta\boldsymbol x^{(k)}=-F(\boldsymbol x^{(k)}),\qquad
+\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta\boldsymbol x^{(k)}.
+$$
+
+::: thm 定理 4.15 · 方程组 Newton 的局部平方收敛 {#thm-4.15}
+设 $F$ 在解 $\boldsymbol x^*$ 的邻域内二阶连续可微，$F(\boldsymbol x^*)=0$，$F'(\boldsymbol x^*)$ 非奇异。则存在 $\delta\gt0$，当 $\boldsymbol x^{(0)}$ 充分接近 $\boldsymbol x^*$ 时，Newton 迭代收敛，且至少平方收敛。
+:::
+
+::: proof 证明
+记 $\boldsymbol e_k=\boldsymbol x^{(k)}-\boldsymbol x^*$。在 $\boldsymbol x^*$ 处作二阶 Taylor 展开（余项用积分形式，即 [@thm-4.11] 用于余项）：
+$$
+F(\boldsymbol x^{(k)})=F(\boldsymbol x^*)+F'(\boldsymbol x^*)\boldsymbol e_k+O(\lVert\boldsymbol e_k\rVert^2)
+=F'(\boldsymbol x^*)\boldsymbol e_k+O(\lVert\boldsymbol e_k\rVert^2),
+$$
+且 $F'(\boldsymbol x^{(k)})=F'(\boldsymbol x^*)+O(\lVert\boldsymbol e_k\rVert)$。对步 $\Delta_k$ 满足的方程
+$$
+F'(\boldsymbol x^{(k)})\Delta_k=-F(\boldsymbol x^{(k)})
+$$
+两边左乘 $[F'(\boldsymbol x^{(k)})]^{-1}$。因 $F'(\boldsymbol x^*)$ 非奇异，逆在邻域内连续：
+$$
+[F'(\boldsymbol x^{(k)})]^{-1}=[F'(\boldsymbol x^*)]^{-1}+O(\lVert\boldsymbol e_k\rVert),
+$$
+代入得
+$$
+\Delta_k=-\bigl([F'(\boldsymbol x^*)]^{-1}+O(\lVert\boldsymbol e_k\rVert)\bigr)
+\bigl(F'(\boldsymbol x^*)\boldsymbol e_k+O(\lVert\boldsymbol e_k\rVert^2)\bigr)
+=-\boldsymbol e_k+O(\lVert\boldsymbol e_k\rVert^2).
+$$
+于是
+$$
+\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta_k
+=\boldsymbol x^*+\boldsymbol e_k-\boldsymbol e_k+O(\lVert\boldsymbol e_k\rVert^2)
+=\boldsymbol x^*+O(\lVert\boldsymbol e_k\rVert^2),
+$$
+即 $\lVert\boldsymbol e_{k+1}\rVert\le C\lVert\boldsymbol e_k\rVert^2$。取 $\delta$ 使 $C\delta\lt1$，邻域内不越界且误差平方衰减——与一元版 [@thm-4.6] 的 $\frac{M}{2m}\lvert e_k\rvert^2$ 估计逐字平行。$\blacksquare$
+:::
+
+::: ex 例 7（教材 4.2.3） · 方程组 Newton 法 {#ex-4.2.2}
+教材对例 6 的方程组用 Newton 法，每步解一个 $2\times2$ 线性方程组；与不动点迭代相比，Newton 步数少，但每步要算 Jacobian 并解线性系统。
+:::
+
+<a id="sec-4.2.4"></a>
+## 4.2.4 离散 Newton 与 Newton–Steffensen
+
+若 Jacobian 难算，用差商近似：
+$$
+J(\boldsymbol x^{(k)},h^{(k)})_{ij}=\frac{f_i(\boldsymbol x^{(k)}+h_j^{(k)}e_j)-f_i(\boldsymbol x^{(k)})}{h_j^{(k)}},
+$$
+再解
+$$
+J(\boldsymbol x^{(k)},h^{(k)})\Delta\boldsymbol x^{(k)}=-F(\boldsymbol x^{(k)}).
+$$
+这就是离散 Newton 法。取 $h_j^{(k)}=c\lVert F(\boldsymbol x^{(k)})\rVert$ 时，称为 Newton–Steffensen 方法；在定理 4.15 的条件下，适当选 $c$ 仍至少平方收敛。
+
+::: method 算法 · 离散 Newton 与 Newton–Steffensen
+1. **离散 Newton**：每步用 $n$ 个前向差商凑出近似 Jacobian $J(\boldsymbol x^{(k)},h^{(k)})$（第 $j$ 列只扰动第 $j$ 个分量），解 $J\Delta=-F$ 并更新——把「算偏导」换成「多算 $n$ 次函数值」，与一元割线法同思路（[@thm-4.8]）。
+2. **Newton–Steffensen**：取 $h_j^{(k)}=c\lVert F(\boldsymbol x^{(k)})\rVert$，扰动步长随残差自适应：远离根时步长大胆，靠近根时步子收细。在 [@thm-4.15] 的条件下适当选 $c$ 仍至少平方收敛。
+3. **注意**：这里的 Steffensen 与 [4.1.4](sec41.md#sec-4.1.4) 的 Steffensen 加速（Aitken 外推）同名不同物，别混。
+:::
+
+::: method[core] 本节概念速查
+| 概念 | 一句话 | 本节出现位置 | 将在何处深入 |
+|:--|:--|:--|:--|
+| Jacobian 矩阵 | 一元 $f'$ 的矩阵版，$F'(\boldsymbol x)_{ij}=\partial f_i/\partial x_j$ | [@def-4.2.2] | Newton 步每步解 $F'\Delta=-F$（[4.2.3](#sec-4.2.3)） |
+| 可微充要条件 | $F$ 可微 ⟺ 各分量可微 | [@thm-4.10] | — |
+| 向量中值定理 | $F(\boldsymbol x)-F(\boldsymbol y)=\int_0^1F'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)\,dt$ | [@thm-4.11] | 压缩矩阵版 [@thm-4.12] |
+| 压缩映像原理 | Lipschitz $L\lt1$ + 自映射 ⟹ 唯一不动点、任意初值收敛 | [@thm-4.13] | 标量版 [@thm-4.1]（[4.1.2](sec41.md#sec-4.1.2)） |
+| 线性迭代判据 | $\rho(B)\lt1$ 充要；$\lVert B\rVert\lt1$ 充分 | [@thm-4.14] | [2.4.1](../ch02/sec24.md#sec-2.4.1) 谱半径与迭代法收敛性 |
+| 方程组 Newton | 线性化 + 解线性方程组，局部至少平方收敛 | [@thm-4.15] | 离散 Newton（[4.2.4](#sec-4.2.4)） |
+:::
+
+::: think 本节常见错误
+1. **把 $\lVert B\rVert\lt1$ 当必要条件。**$\rho(B)\lt1$ 才是「任意初值收敛」的充要条件；$\lVert B\rVert\lt1$ 只是充分条件，且依赖范数的选取（换成另一种范数结论可能不同）。
+2. **验压缩忘了自映射。**[@thm-4.13] 要求 $G:D\to D$ 且 $D$ 闭；只验 Lipschitz 条件，迭代可能跑出 $D$，Cauchy 列的极限也不保证落在 $D$ 内。
+3. **Newton 步显式求逆。**$F'(\boldsymbol x^{(k)})^{-1}F(\boldsymbol x^{(k)})$ 只是记号；实现应解线性方程组 $F'\Delta=-F$（$F'$ 多变时用 [2.2](../ch02/sec22.md) 的三角分解复用更经济）。
+4. **离散 Newton 的 $h$ 乱取。**$h$ 太小，差商分子相近数相减被舍入吞掉（[1.2.4](../../ch01/sec12.md#sec-1.2.4) 原则 (3)）；$h$ 太大，近似失真。Newton–Steffensen 用 $h_j=c\lVert F\rVert$ 让步长自适应。
+5. **把「存在唯一」当「能算出来」。**压缩映像原理保证收敛到唯一不动点，但每步成本、收敛快慢、问题的条件数另说（[1.2.6](../../ch01/sec12.md#sec-1.2.6)）；解线性方程组同样有向后误差与条件数的问题。
+:::
+
+<a id="sec-4.2-exercises"></a>
+## 习题（教材习题 10–11）
+
+::: ex 4.10 · 方程组简单迭代（教材习题 10）{#ex-4.10}
+用简单迭代法求教材习题 10 的非线性方程组。
 :::
 
 ::: sol 参考答案
-先验证 $f(a)f(b)\lt0$、$f'\ne0$、$f''$ 不变号、初值满足 $f(x_0)f''(x_0)\gt0$（定理 4.7），再迭代 $x_{k+1}=x_k-f/f'$；停机用相对差。
+先把方程组写成 $\boldsymbol x=G(\boldsymbol x)$，在根附近验证 $\lVert G'(\boldsymbol x)\rVert\lt1$ 或 $\rho(G')\lt1$，再迭代；停机用相邻差。若范数不满足，换等价形式或改用 Newton。
 :::
 
-::: ex 4.7 · 三阶收敛条件（教材习题 7）
-$f$ 满足什么条件可使 Newton 法具有三阶收敛速度？
-:::
-
-::: sol 参考答案
-设 $f\in C^3$ 于简单根 $s$ 附近。若 $f''(s)=0$，则 Newton 至少三阶；要断言**恰为三阶**，还须 $f'''(s)\ne0$。此时
-$$e_{k+1}=\frac{f'''(s)}{3f'(s)}e_k^3+o(e_k^3).$$
-例如 $f(x)=x+x^4$ 在 $0$ 处满足 $f''(0)=0$，但 Newton 误差为 $3e_k^4/(1+4e_k^3)$，恰为四阶，说明单写 $f''(s)=0$ 不足以断言恰为三阶。
-:::
-
-::: ex 4.8 · 重根（教材习题 8）
-设 $s$ 是 $f(x)=0$ 的 $m\ge2$ 重根，写成 $f(x)=(x-s)^m g(x)$，其中 $g$ 在根附近充分光滑且 $g(s)\ne0$，讨论修正 Newton 的收敛阶。
-
-原摘要同时写「重根」与 $f'(s)\ne0$，两者矛盾；重根应满足 $f'(s)=0$，不能沿用简单根假设。
+::: ex 4.11 · 方程组 Newton 法（教材习题 11）{#ex-4.11}
+用 Newton 法求教材习题 11 的非线性方程组。
 :::
 
 ::: sol 参考答案
-普通 Newton 在重根处线性收敛；用 $x_{k+1}=x_k-m f/f'$（$m$ 已知）可恢复到至少二阶；若用 $f f'/((f')^2-ff'')$ 的修正形式，也在重根处至少二阶。关键是消去 $(x-s)^{m-1}$ 因子。
-:::
-
-::: ex 4.9 · 割线与单点割线（教材习题 9）
-分别用割线法和单点割线法求指定方程的根。
-:::
-
-::: sol 参考答案
-割线法用两个初值，迭代 $x_{k+1}=x_k-f(x_k)(x_k-x_{k-1})/(f(x_k)-f(x_{k-1}))$，阶 1.618；单点割线固定一个初值，线性收敛。两者都不需要导数。
+写 Jacobian $F'$，每步解 $F'(\boldsymbol x^{(k)})\Delta\boldsymbol x=-F(\boldsymbol x^{(k)})$，更新 $\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta\boldsymbol x$；初值要靠近根，验证 $F'(\boldsymbol x^*)$ 非奇异。
 :::
 
 ::: note 覆盖核对
-本节覆盖教材 4.1.5–4.1.8、定理 4.6–4.9、例 3–5、习题 6–9；老师第 8 讲、第 9 讲 §三–§四。下一节：[4.2 非线性方程组](sec43.md)。
+本节覆盖教材 4.2.1–4.2.4、定理 4.10–4.15、例 6–7、习题 10–11；**老师课堂未讲**，按教材补齐。体例转换之外做了数学补全：定理 4.11–4.15 的证明、定理 4.12 的可用形式（由 [@thm-4.11] 推出）与后验误差估计，均与一元版 [@thm-4.1]、[@thm-4.6] 平行，未引入教材之外的结论。下一节：[第 4 章习题](exercises.md)。
 :::

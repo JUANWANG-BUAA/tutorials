@@ -113,7 +113,7 @@ $$\boldsymbol{x}=\Bigl(1,\ \tfrac12,\ \tfrac13,\ \cdots\Bigr):\qquad
 
 <a id="app-a-2-1"></a>
 
-### A.2.1 Jordan–von Neumann 定理：平行四边形恒等式 ⟹ 内积（[定理 2.1.2](../ch02/sec21.md#thm-2.1.2) 逆方向的完整证明）
+### A.2.1 Jordan–von Neumann 定理：平行四边形恒等式 ⟹ 内积（[定理 2.1.2](../supplement/sec21.md#thm-sup-2.1.2) 逆方向的完整证明）
 
 设 $\lVert\cdot\rVert$ 是 $\mathbb{R}^n$ 上的范数且满足平行四边形恒等式（2.2）。定义
 
@@ -147,11 +147,11 @@ $$\lvert\langle\boldsymbol{w},\boldsymbol{y}\rangle\rvert\le\frac14\bigl(\lVert\
 
 而 $\lVert(t-r_m)\boldsymbol{x}\rVert=|t-r_m|\,\lVert\boldsymbol{x}\rVert\to0$。故 $\langle t\boldsymbol{x},\boldsymbol{y}\rangle=\lim_m r_m\langle\boldsymbol{x},\boldsymbol{y}\rangle=t\langle\boldsymbol{x},\boldsymbol{y}\rangle$。∎
 
-**评注：**第二步的 $(*)$ 是全证明的心脏——平行四边形恒等式在这里恰好提供了「把 $\pm\boldsymbol{z}$ 的四个平方项两两配对」的结构；$1$-范数与 $\infty$-范数（[例 2.1.2](../ch02/sec21.md#ex-2.1.2)）正是在这一步失效。
+**评注：**第二步的 $(*)$ 是全证明的心脏——平行四边形恒等式在这里恰好提供了「把 $\pm\boldsymbol{z}$ 的四个平方项两两配对」的结构；$1$-范数与 $\infty$-范数（[例 2.1.2](../supplement/sec21.md#ex-sup-2.1.2)）正是在这一步失效。
 
 <a id="app-a-2-2"></a>
 
-### A.2.2 残差与误差的向下界（[定理 2.4.4](../ch02/sec24.md#thm-2.4.4) 的补充证明）
+### A.2.2 残差与误差的向下界（[定理 2.4.4](../supplement/sec24.md#thm-sup-2.4.4) 的补充证明）
 
 ::: thm 命题 A.2 · 残差与误差的向下界
 设 $A$ 非奇异，$\hat{\boldsymbol{x}}$ 为近似解，$\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$，$\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$。若 $\lVert\boldsymbol{e}\rVert\lt\lVert\hat{\boldsymbol{x}}\rVert$，记 $\alpha=\lVert\boldsymbol{e}\rVert/\lVert\hat{\boldsymbol{x}}\rVert$，则
@@ -221,7 +221,7 @@ $$\operatorname{tr}(ST)\ \le\ \sum_{i=1}^n\lambda_i\mu_i .$$
 
 $$\operatorname{tr}(ST)=\sum_{i,j}\lambda_i\mu_j\,(\boldsymbol{u}_i^{\mathrm T}\boldsymbol{v}_j)^2 .$$
 
-矩阵 $C=(c_{ij})$，$c_{ij}=(\boldsymbol{u}_i^{\mathrm T}\boldsymbol{v}_j)^2$，行和 $\sum_jc_{ij}=\lVert\boldsymbol{u}_i\rVert^2=1$（$\{\boldsymbol{v}_j\}$ 是标准正交基，Parseval 恒等式 [定理 2.1.4](../ch02/sec21.md#thm-2.1.4)），列和同理为 $1$——$C$ 双随机。由引理 A.3.2，$C=\sum_\pi w_\pi\Pi_\pi$，于是
+矩阵 $C=(c_{ij})$，$c_{ij}=(\boldsymbol{u}_i^{\mathrm T}\boldsymbol{v}_j)^2$，行和 $\sum_jc_{ij}=\lVert\boldsymbol{u}_i\rVert^2=1$（$\{\boldsymbol{v}_j\}$ 是标准正交基，Parseval 恒等式 [定理 2.1.4](../supplement/sec21.md#thm-sup-2.1.4)），列和同理为 $1$——$C$ 双随机。由引理 A.3.2，$C=\sum_\pi w_\pi\Pi_\pi$，于是
 
 $$\operatorname{tr}(ST)=\sum_\pi w_\pi\sum_i\lambda_i\mu_{\pi(i)}\ \overset{\text{A.3.1}}{\le}\ \sum_\pi w_\pi\sum_i\lambda_i\mu_i=\sum_i\lambda_i\mu_i. $$
 
@@ -247,7 +247,7 @@ $$\lVert S-T\rVert_F^2\ \ge\ \sum_i\lambda_i^2+\sum_i\mu_i^2-2\sum_i\lambda_i\mu
 
 <a id="app-a-2-4"></a>
 
-### A.2.4 von Neumann 迹不等式：完整证明（[例 2.6.4](../ch02/sec26.md#ex-2.6.4) 的补全）
+### A.2.4 von Neumann 迹不等式：完整证明（[例 2.6.4](../supplement/sec26.md#ex-sup-2.6.4) 的补全）
 
 ::: thm 定理 A.4 · von Neumann 迹不等式
 对任意 $A,B\in\mathbb{R}^{m\times n}$，$\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert\le\sum_{i=1}^{\min(m,n)}\sigma_i(A)\sigma_i(B)$（奇异值均降序）。
@@ -257,7 +257,7 @@ $$\lVert S-T\rVert_F^2\ \ge\ \sum_i\lambda_i^2+\sum_i\mu_i^2-2\sum_i\lambda_i\mu
 
 $$S=\begin{pmatrix}O&A\\A^{\mathrm T}&O\end{pmatrix},\qquad T=\begin{pmatrix}O&B\\B^{\mathrm T}&O\end{pmatrix}\in\mathbb{R}^{(m+n)\times(m+n)} .$$
 
-**（一）$S$ 对称，且特征值恰为 $\pm\sigma_i(A)$。**取 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$（SVD 的配对关系，[定理 2.6.1](../ch02/sec26.md#thm-2.6.1)），则
+**（一）$S$ 对称，且特征值恰为 $\pm\sigma_i(A)$。**取 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$（SVD 的配对关系，[定理 2.6.1](../supplement/sec26.md#thm-sup-2.6.1)），则
 
 $$S\begin{pmatrix}\boldsymbol{v}_i\\ \boldsymbol{u}_i\end{pmatrix}=\begin{pmatrix}A\boldsymbol{u}_i\\ A^{\mathrm T}\boldsymbol{v}_i\end{pmatrix}=\sigma_i\begin{pmatrix}\boldsymbol{v}_i\\ \boldsymbol{u}_i\end{pmatrix},\qquad
 S\begin{pmatrix}\boldsymbol{v}_i\\ -\boldsymbol{u}_i\end{pmatrix}=-\sigma_i\begin{pmatrix}\boldsymbol{v}_i\\ -\boldsymbol{u}_i\end{pmatrix}$$
@@ -276,7 +276,7 @@ $$\operatorname{tr}(ST)\ \overset{\text{A.3.3}}{\le}\ \sum_{i\le n}\sigma_i(A)\s
 
 <a id="app-a-2-5"></a>
 
-### A.2.5 Eckart–Young–Mirsky：Frobenius 情形完整证明（[定理 2.6.4](../ch02/sec26.md#thm-2.6.4) 的补全）
+### A.2.5 Eckart–Young–Mirsky：Frobenius 情形完整证明（[定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4) 的补全）
 
 ::: thm 定理 A.5 · Eckart–Young–Mirsky（Frobenius 情形）
 $\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_F=\sqrt{\sigma_{k+1}^2+\cdots+\sigma_r^2}$，由截断 SVD（2.33）取到。
@@ -302,13 +302,13 @@ $$\lVert A-B\rVert_F^2\ \ge\ \sum_{j\gt k}\sigma_j^2 .$$
 
 <a id="app-a-2-6"></a>
 
-### A.2.6 Weyl 不等式的严格证明（[定理 2.5.6](../ch02/sec25.md#thm-2.5.6)（一）的补全）
+### A.2.6 Weyl 不等式的严格证明（[定理 2.5.6](../supplement/sec25.md#thm-sup-2.5.6)（一）的补全）
 
 ::: thm 命题 A.6 · Weyl 扰动界
 $A,E$ 对称，特征值升序 $\lambda_1\le\cdots\le\lambda_n$，$\mu_1\le\cdots\le\mu_n$（$\mu$ 为 $A+E$ 的），则 $\lvert\lambda_i-\mu_i\rvert\le\lVert E\rVert_2$。
 
 ::: proof 证明
-只证 $\mu_i\le\lambda_i+\lVert E\rVert_2$（另一半对 $-E$ 同理）。由 Courant–Fischer（[定理 2.5.5](../ch02/sec25.md#thm-2.5.5) 的 max-min 形式，对升序特征值写开）：
+只证 $\mu_i\le\lambda_i+\lVert E\rVert_2$（另一半对 $-E$ 同理）。由 Courant–Fischer（[定理 2.5.5](../supplement/sec25.md#thm-sup-2.5.5) 的 max-min 形式，对升序特征值写开）：
 
 $$\mu_i=\min_{\dim\mathcal{S}=n-i+1}\ \max_{\boldsymbol{0}\neq\boldsymbol{x}\in\mathcal{S}}\frac{\boldsymbol{x}^{\mathrm T}(A+E)\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}} .$$
 
@@ -320,17 +320,17 @@ $$\mu_i\ \le\ \max_{\boldsymbol{x}\in\mathcal{S}_0}R_{A+E}(\boldsymbol{x})\ =\ \
 :::
 :::
 
-**两个附注。**① 一般形式的 Weyl 不等式 $\lambda_{i+j-1}(A+B)\le\lambda_i(A)+\lambda_j(B)$（$i+j-1\le n$）用同一论证（$\mathcal{S}_0$ 取 $A$ 的前 $i-1$ 大与 $B$ 的前 $j-1$ 大的补空间交集，维数计数同 [定理 2.6.4](../ch02/sec26.md#thm-2.6.4) 的证明）。② 证明里「把 min 换成特定子空间」这一步在正文被一笔带过，正是它使放缩合法：$\min$ 的下标换成任何一个允许的 $\mathcal{S}$，都不改变「$\le$」方向。
+**两个附注。**① 一般形式的 Weyl 不等式 $\lambda_{i+j-1}(A+B)\le\lambda_i(A)+\lambda_j(B)$（$i+j-1\le n$）用同一论证（$\mathcal{S}_0$ 取 $A$ 的前 $i-1$ 大与 $B$ 的前 $j-1$ 大的补空间交集，维数计数同 [定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4) 的证明）。② 证明里「把 min 换成特定子空间」这一步在正文被一笔带过，正是它使放缩合法：$\min$ 的下标换成任何一个允许的 $\mathcal{S}$，都不改变「$\le$」方向。
 
 <a id="app-a-2-7"></a>
 
-### A.2.7 Gelfand 公式与瞬态增长（[例 2.5.6](../ch02/sec25.md#ex-2.5.6) 的定量补全）
+### A.2.7 Gelfand 公式与瞬态增长（[例 2.5.6](../supplement/sec25.md#ex-sup-2.5.6) 的定量补全）
 
 ::: thm 定理 A.7 · Gelfand 公式
 对任意相容矩阵范数，$\displaystyle\lim_{k\to\infty}\lVert A^k\rVert^{1/k}=\rho(A)$。
 
 ::: proof 证明
-「$\ge$」：$\rho(A)^k=\rho(A^k)\le\lVert A^k\rVert$（[2.5.1](../ch02/sec25.md#sec-2.5.1) 后的注），故 $\rho(A)\le\liminf_k\lVert A^k\rVert^{1/k}$。
+「$\ge$」：$\rho(A)^k=\rho(A^k)\le\lVert A^k\rVert$（[2.5.1](../supplement/sec25.md#sup-2.5.1) 后的注），故 $\rho(A)\le\liminf_k\lVert A^k\rVert^{1/k}$。
 
 「$\le$」：取 $A$ 的 Jordan 标准形 $A=PJP^{-1}$。任给 $s\gt\rho(A)$，取 $D=\operatorname{diag}(1,\ s^{-1},\ s^{-2},\dots,s^{-(n-1)})$，则 $J_s=D^{-1}JD$ 与 $J$ 相似，且**非对角元被压缩**：$(J_s)_{ij}=s^{\,i-j}J_{ij}$，约当块的每个上移位元乘上 $s^{-1}$。再取 $\tilde s$ 使 $\rho(A)\lt\tilde s\lt s$，估计 $J_s^k$ 的元素：二项展开 $(\Lambda+s^{-1}N)^k$ 的每一项是 $k$ 个因子的乘积，每个因子或为对角元 $\lambda_i$（模 $\le\rho(A)\le\tilde s$），或为上移位元 $s^{-1}$（与 $k$ 无关的常数）。非零乘积中移位因子至多 $n-1$ 个（$N$ 的幂零性），组合数 $\binom{k}{q}\le k^{\,n-1}$，移位因子与 $\tilde s^{-(n-1)}$ 一并并入与 $k$ 无关的常数 $C$，得
 
@@ -356,11 +356,11 @@ $$\frac{\rho(B)^k}{\operatorname{cond}(V)}\ \le\ \lVert B^k\rVert\ \le\ \operato
 $$B^k=\begin{pmatrix}\lambda^k&Mk\lambda^{k-1}\\0&\lambda^k\end{pmatrix},\qquad
 \lVert B^k\rVert_2\ \ge\ Mk\lvert\lambda\rvert^{k-1},$$
 
-右端在 $k^*\approx-1/\ln\lvert\lambda\rvert$ 处达峰，峰值 $\approx\dfrac{M}{e\,\lvert\ln\lvert\lambda\rvert\rvert}$——**随 $M$ 线性增长**。取 $\lambda=0.99$、$M=1000$：峰值 $\approx\dfrac{1000}{e\times0.0101}\approx3.7\times10^{4}$，出现在 $k^*\approx99$ 步——迭代先放大三万七千倍，再开始收敛。「$\rho\lt1$ ⟹ 收敛」没有说谎，但**前一百步的灾难它一个字都没提**；这就是 [例 2.5.6](../ch02/sec25.md#ex-2.5.6) 结论「实用判据取 $\lVert H\rVert\lt1$」的定量版。
+右端在 $k^*\approx-1/\ln\lvert\lambda\rvert$ 处达峰，峰值 $\approx\dfrac{M}{e\,\lvert\ln\lvert\lambda\rvert\rvert}$——**随 $M$ 线性增长**。取 $\lambda=0.99$、$M=1000$：峰值 $\approx\dfrac{1000}{e\times0.0101}\approx3.7\times10^{4}$，出现在 $k^*\approx99$ 步——迭代先放大三万七千倍，再开始收敛。「$\rho\lt1$ ⟹ 收敛」没有说谎，但**前一百步的灾难它一个字都没提**；这就是 [例 2.5.6](../supplement/sec25.md#ex-sup-2.5.6) 结论「实用判据取 $\lVert H\rVert\lt1$」的定量版。
 
 <a id="app-a-2-8"></a>
 
-### A.2.8 Kantorovich 不等式与最速下降的收敛率（[2.4](../ch02/sec24.md) 的延伸）
+### A.2.8 Kantorovich 不等式与最速下降的收敛率（[2.4](../supplement/sec24.md) 的延伸）
 
 ::: thm 定理 A.8 · Kantorovich 不等式
 $A$ 对称正定，特征值 $0\lt m\le\cdots\le M$，则对任意 $\boldsymbol{x}\neq\boldsymbol{0}$：
@@ -386,7 +386,7 @@ $$\lVert\boldsymbol{e}_{k+1}\rVert_A^2=\lVert\boldsymbol{e}_k\rVert_A^2-2\alpha_
 
 $$\frac{\lVert\boldsymbol{e}_{k+1}\rVert_A^2}{\lVert\boldsymbol{e}_k\rVert_A^2}=1-\frac{(\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k)^2}{(\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k)(\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k)}\ \overset{\text{A.8}}{\le}\ 1-\frac{4mM}{(m+M)^2}=\Bigl(\frac{M-m}{M+m}\Bigr)^2=\Bigl(\frac{\kappa-1}{\kappa+1}\Bigr)^2 .$$
 
-（中间一步用了 $\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k$、$\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k$、$\lVert\boldsymbol{e}_k\rVert_A^2=\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k$。）**每步误差压缩因子 $\le\bigl(\frac{\kappa-1}{\kappa+1}\bigr)^2$**：$\kappa=10$ 时 $\approx0.67$（尚可），$\kappa=10^4$ 时 $\approx0.9996$——三万步才压两个数量级。条件数不仅决定**结果准不准**（[2.4](../ch02/sec24.md)），也决定**迭代快不快**；降低 $\kappa$ 的手段（预条件、行均衡化 2.4.5）由此获得双重回报。与定步长梯度下降（[附录 C.2.1](connections.md#app-c-2-1)）及共轭梯度法（$\bigl(\frac{\sqrt\kappa-1}{\sqrt\kappa+1}\bigr)^k$，见[附录 C.6.1](connections.md#app-c-6-1)）的完整对照放在附录 C。
+（中间一步用了 $\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k$、$\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k$、$\lVert\boldsymbol{e}_k\rVert_A^2=\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k$。）**每步误差压缩因子 $\le\bigl(\frac{\kappa-1}{\kappa+1}\bigr)^2$**：$\kappa=10$ 时 $\approx0.67$（尚可），$\kappa=10^4$ 时 $\approx0.9996$——三万步才压两个数量级。条件数不仅决定**结果准不准**（[2.4](../supplement/sec24.md)），也决定**迭代快不快**；降低 $\kappa$ 的手段（预条件、行均衡化 2.4.5）由此获得双重回报。与定步长梯度下降（[附录 C.2.1](connections.md#app-c-2-1)）及共轭梯度法（$\bigl(\frac{\sqrt\kappa-1}{\sqrt\kappa+1}\bigr)^k$，见[附录 C.6.1](connections.md#app-c-6-1)）的完整对照放在附录 C。
 
 ::: note 本附录引用的外部结果
 除 Birkhoff 定理（A.2.3 自证）与 Jordan 标准形（A.2.7 引用，见任何高等代数教材）外，全部推导自含。进一步的系统展开见延伸阅读里的 Horn & Johnson《Matrix Analysis》（迹不等式与特征值扰动）、Higham《Accuracy and Stability of Numerical Algorithms》（Chapter 4：求和与浮点）与 Golub & Van Loan《Matrix Computations》（2.3–2.6 节：正交化与 SVD）。

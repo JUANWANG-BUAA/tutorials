@@ -56,13 +56,13 @@
 
 **口诀：残差能算（$b-Ax$ 只用已知量），误差不能算（$x^*-x$ 含未知量）；残差小绝不等于误差小。**
 
-| | 残差 $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$ | 误差 $\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$ |
+| | 残差 $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$ | 误差 $\boldsymbol{e}=\boldsymbol{x}-\hat{\boldsymbol{x}}$ |
 |:--|:--|:--|
 | 可算吗 | **可算**（只用到已知量） | 不可算（$\boldsymbol{x}$ 未知） |
 | 关系 | $\boldsymbol{e}=A^{-1}\boldsymbol{r}$ | — |
-| 界 | $\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-2.4.4]） | — |
+| 界 | $\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-sup-2.4.4]） | — |
 
-实测：条件数 $\sim10^{10}$ 的方程组，残差只有 $2.5\times10^{-12}$，误差却高达 $50\%$（[@ex-2.4.4]）。**报误差时不能拿残差顶替误差。**
+实测：条件数 $\sim10^{10}$ 的方程组，残差只有 $2.5\times10^{-12}$，误差却高达 $50\%$（[@ex-sup-2.4.4]）。**报误差时不能拿残差顶替误差。**
 
 ## 5 · 特征值 ⟷ 奇异值
 
@@ -75,7 +75,7 @@
 | 个数 | $n$（方阵） | $\min(m,n)$（长方形也有） |
 | 何时相等 | 对称 / 正规矩阵：$\sigma_i=\lvert\lambda_i\rvert$ | — |
 
-反例：$A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 的 $\lambda_1=\lambda_2=0$，而 $\sigma_1=1$——特征值全为零，奇异值却不为零；非对称矩阵上两者对不上号，不能互相代入（[@ex-2.6.1] 的常见错误 1）。
+反例：$A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 的 $\lambda_1=\lambda_2=0$，而 $\sigma_1=1$——特征值全为零，奇异值却不为零；非对称矩阵上两者对不上号，不能互相代入（[@ex-sup-2.6.1] 的常见错误 1）。
 
 ## 6 · 谱半径 ⟷ 范数
 
@@ -88,7 +88,7 @@
 | 迭代判据 | $\rho(H)\lt1$ 是**充要**（但大规模算不出特征值） | $\lVert H\rVert\lt1$ 是**充分**（好算） |
 | 非正规矩阵 | 只保证最终衰减，**有限步可能先涨** | 保证每一步都收缩 |
 
-反例：$N=\begin{pmatrix}1&1000\\0&1\end{pmatrix}$ 的谱半径 $\rho=1$，而范数 $\lVert N\rVert_2\approx1000$——同一个矩阵，两个量差三个数量级（[2.8](../ch02/sec28.md) 陷阱 2）。实践结论：**稳妥判据用 $\lVert H\rVert\lt1$**（[@thm-1.3.6]）。
+反例：$N=\begin{pmatrix}1&1000\\0&1\end{pmatrix}$ 的谱半径 $\rho=1$，而范数 $\lVert N\rVert_2\approx1000$——同一个矩阵，两个量差三个数量级（[2.8](../supplement/sec28.md) 陷阱 2）。实践结论：**稳妥判据用 $\lVert H\rVert\lt1$**（[@thm-1.3.6]）。
 
 ## 7 · 矩阵 1-范数 ⟷ 矩阵 ∞-范数
 
@@ -139,7 +139,7 @@
 | 分界线 | $\mathrm{cond}\gtrsim10^{8}$ 时**完全失效** | 能撑到 $\mathrm{cond}\approx10^{16}$ |
 | 用途 | 只用于教学 | 条件数温和且需显式 $Q$ 时可用 |
 
-实测（$n=16$ 的 Vandermonde，[@ex-2.3.2]）：同一个矩阵上，CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert_2=6.55$（**彻底失效**），MGS 同一指标为 $4.7\times10^{-4}$，Householder 更是低到 $3.0\times10^{-15}$。
+实测（$n=16$ 的 Vandermonde，[@ex-sup-2.3.2]）：同一个矩阵上，CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert_2=6.55$（**彻底失效**），MGS 同一指标为 $4.7\times10^{-4}$，Householder 更是低到 $3.0\times10^{-15}$。
 
 ## 11 · Householder ⟷ Givens
 
@@ -154,7 +154,7 @@
 | 适用 | **稠密矩阵默认选择** | **稀疏 / 带状 / 局部修改 / 并行** |
 | 实现 | LAPACK `geqrf`（NumPy / MATLAB / SciPy 默认） | — |
 
-对稀疏矩阵用 Householder 会**毁掉零结构**（fill-in）——这正是稀疏情形改选 Givens 的决定性理由（[@thm-2.3.3]、[@thm-2.3.4]）。
+对稀疏矩阵用 Householder 会**毁掉零结构**（fill-in）——这正是稀疏情形改选 Givens 的决定性理由（[@thm-sup-2.3.3]、[@thm-sup-2.3.4]）。
 
 ## 12 · 正态方程 ⟷ QR
 
@@ -166,7 +166,7 @@
 | 有效数字 | 掉一半 | 不掉 |
 | 分界 | $\mathrm{cond}\gtrsim10^{8}\approx u^{-1/2}$ 时**必须弃用** | 可用到 $\mathrm{cond}\approx10^{16}$ |
 
-实测（[@thm-2.3.5] 后的对照表）：同一个问题在 $\mathrm{cond}=6.0\times10^{10}$ 时，正态方程误差高达 $28$（**完全失效**），QR 的误差只有 $2.2\times10^{-6}$。
+实测（[@thm-sup-2.3.5] 后的对照表）：同一个问题在 $\mathrm{cond}=6.0\times10^{10}$ 时，正态方程误差高达 $28$（**完全失效**），QR 的误差只有 $2.2\times10^{-6}$。
 
 ## 13 · 正交投影 ⟷ 斜投影
 
@@ -178,7 +178,7 @@
 | 残差 | 与子空间**垂直** | 不垂直 |
 | 例子 | $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ | $S=\begin{pmatrix}1&1\\0&0\end{pmatrix}$ |
 
-最小二乘的「残差与列空间垂直」这条性质**只对正交投影成立**：换成斜投影，残差便不再与列空间垂直（[@thm-2.2.5]）。
+最小二乘的「残差与列空间垂直」这条性质**只对正交投影成立**：换成斜投影，残差便不再与列空间垂直（[@thm-sup-2.2.5]）。
 
 ## 14 · 满 SVD ⟷ 瘦 SVD
 
@@ -191,7 +191,7 @@
 | 存储 | 大 | **最省**（工程用） |
 | 用途 | 理论推导、四个子空间的完整基 | 低秩逼近、压缩、PCA |
 
-**注意记号陷阱**：瘦 SVD 里的下标 $r$ 指**秩**；满 SVD 结构式里「前 $n$ 列」用的却是下标 $1$——两套记号，别当成一回事（[2.6.1](../ch02/sec26.md#sec-2.6.1) 的注）。
+**注意记号陷阱**：瘦 SVD 里的下标 $r$ 指**秩**；满 SVD 结构式里「前 $n$ 列」用的却是下标 $1$——两套记号，别当成一回事（[2.6.1](../supplement/sec26.md#sup-2.6.1) 的注）。
 
 ## 15 · 列空间 ⟷ 行空间 ⟷ 零空间 ⟷ 左零空间
 
@@ -204,17 +204,36 @@
 | $C(A^{\mathrm T})$ 行空间 | $\mathbb{R}^n$ | $r$ | $V$ 前 $r$ 列 |
 | $N(A)$ 零空间 | $\mathbb{R}^n$ | $n-r$ | $V$ 后 $n-r$ 列 |
 
-**先看维度（$\mathbb{R}^m$ 还是 $\mathbb{R}^n$），再谈正交补**——一半的错误是维度张冠李戴（[@thm-2.6.2]）。
+**先看维度（$\mathbb{R}^m$ 还是 $\mathbb{R}^n$），再谈正交补**——一半的错误是维度张冠李戴（[@thm-sup-2.6.2]）。
 
 ## 16 · 高斯消去（含主元）⟷ LU 分解
 
 **口诀：消去是「过程」，分解是「把过程存下来复用」。**
 
-| | 高斯消去 | LU 分解 $A=LU$ |
+| | 高斯消去 | LU 分解（无主元 $A=LU$；有主元 $QA=LU$） |
 |:--|:--|:--|
 | 本质 | 对 $[A\mid\boldsymbol{b}]$ 做初等行变换 | 把消元过程存成 $L$，$A$ 与 $\boldsymbol{b}$ 解耦 |
 | 解一次方程组 | $O(n^3)$ | 分解 $O(n^3)$ + 前代回代 $O(n^2)$ |
 | 多组右端 | 每组重来一次 $O(n^3)$ | **分解一次反复用** |
-| 存在条件 | 前 $n-1$ 个顺序主子式非零（充要：能消成上三角） | 同一条件（板书用 $\Rightarrow$） |
+| 存在条件 | 不换行时要求前 $n-1$ 个顺序主子式非零；列主元版对非奇异矩阵可完成 | 非奇异 $A$ 的无主元唯一分解要求上述主子式条件；有主元版存在 $QA=LU$ |
 
 工程要点：**一次分解，反复使用**；三对角等稀疏结构用追赶法把 $O(n^3)$ 降到 $O(n)$（[第 4 讲](../lectures/lec04.md)）。
+
+换行的细节见 [2.2 的三阶例](../course/ch02/sec22.md#sec-2.2.2)：第 $k$ 步换行时，$L$ 的前 $k-1$ 列已存乘数也要同步换，求解时前代右端是 $Qb$。主元风险可用 [2.1 的三位十进制实验](../course/ch02/sec21.md#sec-2.1.2) 核对；二进制 `float32` 与三位十进制不是同一舍入模型。
+
+## 17 · 课堂口径 ⟷ 标准术语（统一对照）
+
+课堂强调「按老师叫法答题」，但引用教材时要能对上标准术语。下表把散在各讲页的对照集中到一处；每条都给出正文权威解释。
+
+| 课堂口径 / 转写 | 标准术语 | 一句话辨析 | 正文 |
+|:--|:--|:--|:--|
+| 「残差」= 相邻迭代差 $\lVert x^{(k)}-x^{(k-1)}\rVert$ | 残差 $r^{(k)}=b-Ax^{(k)}$ | 停机用的「差」不是残差；残差小也不等于误差小 | [2.4.1](../course/ch02/sec24.md#sec-2.4.1) |
+| 「算特征值必须取 2-范数」 | Rayleigh 商 $R(y)=y^{\mathrm T}Ay/(y^{\mathrm T}y)$ | 只有 $\lVert y\rVert_2=1$ 才能省分母；别的归一化也能用 | [3.1.1](../course/ch03/sec31.md#sec-3.1.1) |
+| 「全局收敛」 | 大范围收敛性定理 | 同一结论，老师叫「全局」，教材叫「大范围」 | [4.1.5](../course/ch04/sec41b.md#sec-4.1.5) |
+| 「法方程」 | 法方程 / 正规方程 | 同一方程组两个名字；考试按老师叫法 | [5.6.1](../course/ch05/sec55.md#sec-5.6) |
+| 「预报–校正」 | 预测–校正 / predictor–corrector | 正文统一用「预报–校正」，英文缩写 PC | [7.3.2](../course/ch07/sec73.md#sec-7.3.2) |
+| 埃尔米特 / Hermite | Hermite 插值 | 中文音译与英文名混用；正文统一「埃尔米特（Hermite）」 | [5.2](../course/ch05/sec52.md#sec-5.2) |
+| 代数精度 | 代数精确度 | 同一概念；本书统一「代数精度」，并强调它不是误差阶 | [6.1](../course/ch06/sec61.md#sec-6.1) |
+| 刚性比 | stiffness ratio | $r=\max\lvert\operatorname{Re}\lambda_i\rvert/\min\lvert\operatorname{Re}\lambda_i\rvert$ | [7.5.2](../course/ch07/sec74.md#sec-7.5.2) |
+
+**用法**：答题写老师口径，引用教材写标准术语；两者冲突时以板书/正文的数学结论为准，不以名称定对错。

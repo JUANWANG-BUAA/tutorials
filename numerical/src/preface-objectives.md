@@ -1,8 +1,21 @@
 # 学习目标
 
-本清单把第一章 + 补充篇的要求逐条写成可检验的「能……」目标：每条目标后括注认知层级（Bloom 分类），并在各章末的自检表中对应到正文小节与习题。先修关系上，**K 组目标互不依赖，S 组依赖对应的 K 组，A 组依赖对应的 K、S 组**。
+本清单把全书八个单元（第一章、课堂主线第 2–7 章、补充篇）的要求逐条写成可检验的「能……」目标：每条目标后括注认知层级（Bloom 分类），并在各单元末的自检表中对应到正文小节与习题。先修关系上，**K 组目标互不依赖，S 组依赖对应的 K 组，A 组依赖对应的 K、S 组**。
 
-> 老师主线第 2–5 章（线性方程组、特征值、非线性方程、插值）目前由讲座页承载，学习目标暂以各讲页首的「10 分钟复习版」与「老师强调的考点」为准；本清单覆盖第一章 + 补充篇。
+> **编号约定**：目标编号与单元一一对应——K1/S1/A1 为第一章；K2–K7 / S2–S7 / A2–A7 为课堂主线第 2–7 章（编号与该章章号一致）；K8/S8/A8 为补充篇（数值线性代数工具箱，本书第 8 个单元）。本页完整展开第一章与补充篇的逐条目标；第 2–7 章的逐条目标写在各章末的自检表里，编号区间如下：
+>
+> | 单元 | K · 知识 | S · 技能 | A · 素养 | 逐条自检表 |
+> |:--|:--|:--|:--|:--|
+> | 第 1 章 · 绪论 | K1.1–K1.7 | S1.1–S1.6 | A1.1–A1.4 | [第一章自检表](ch01/checklist.md)（完整表述见本页上文） |
+> | 第 2 章 · 线性方程组的解法 | K2.1–K2.8 | S2.1–S2.5 | A2.1–A2.3 | [第 2 章自检表](course/ch02/checklist.md) |
+> | 第 3 章 · 矩阵特征值与特征向量的计算 | K3.1–K3.7 | S3.1–S3.6 | A3.1–A3.3 | [第 3 章自检表](course/ch03/checklist.md) |
+> | 第 4 章 · 非线性方程与非线性方程组的迭代解法 | K4.1–K4.7 | S4.1–S4.6 | A4.1–A4.3 | [第 4 章自检表](course/ch04/checklist.md) |
+> | 第 5 章 · 插值与逼近 | K5.1–K5.12 | S5.1–S5.6 | A5.1–A5.4 | [第 5 章自检表](course/ch05/checklist.md) |
+> | 第 6 章 · 数值积分 | K6.1–K6.10 | S6.1–S6.5 | A6.1–A6.3 | [第 6 章自检表](course/ch06/checklist.md) |
+> | 第 7 章 · 常微分方程初值问题的数值解法 | K7.1–K7.8 | S7.1–S7.5 | A7.1–A7.3 | [第 7 章自检表](course/ch07/checklist.md) |
+> | 补充篇 · 数值线性代数工具箱 | K8.1–K8.6 | S8.1–S8.6 | A8.1–A8.3 | [补充篇自检表](supplement/checklist.md)（完整表述见本页下文） |
+>
+> 各章导览的「本章学习目标」与各讲页首的「对应学习目标」均按这套编号引用；讲次只覆盖部分章节时，页首注明「属第 N 章目标」。
 
 ## 第一章 · 绪论
 
@@ -40,40 +53,40 @@
 
 ## 补充篇 · 数值线性代数工具箱
 
-先修链条：K2.x 依赖第一章的 K1.6、K1.7（范数与条件数）；S2.x 依赖对应的 K2.x；A2.x 依赖对应的 K2、S2 组。
+先修链条：K8.x 依赖第一章的 K1.6、K1.7（范数与条件数）；S8.x 依赖对应的 K8.x；A8.x 依赖对应的 K8、S8 组。
 
 ### K · 知识目标（概念与理论）
 
 <ul class="objlist">
-<li><span class="obj-id">K2.1</span>能陈述内积的四条公理与由内积诱导的范数，区分一般内积与 Euclid 内积（举一个加权内积的例子），并陈述正交、标准正交基、正交矩阵的定义，以及正交矩阵的等价刻画（至少六条）。<span class="obj-lv">记忆 / 理解</span></li>
-<li><span class="obj-id">K2.2</span>能陈述四个基本子空间（列空间、零空间、行空间、左零空间）的定义与两对正交补关系（$N(A)\perp C(A^{\mathrm T})$、$N(A^{\mathrm T})\perp C(A)$），说明秩定理 $\operatorname{rank}A+\dim N(A)=n$，并写出正交投影矩阵 $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 的三条性质（对称、幂等、$\lVert P\rVert_2=1$）。<span class="obj-lv">理解 / 分析</span></li>
-<li><span class="obj-id">K2.3</span>能陈述 Gram–Schmidt 正交化与 Householder 反射的构造原理，说明 QR 分解 $A=QR$ 的存在唯一性条件，并比较经典 Gram–Schmidt、修正 Gram–Schmidt、Householder、Givens 四种方法在浮点下的正交性损失量级（$O(\mathrm{cond}^2u)$ 与 $O(\mathrm{cond}\,u)$）。<span class="obj-lv">理解 / 分析</span></li>
-<li><span class="obj-id">K2.4</span>能陈述条件数 $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$ 的定义，推导右端扰动界与系数扰动界，并解释「残差小 ≠ 误差小」与「系数的微小扰动可被放大 cond 倍」。<span class="obj-lv">理解 / 分析</span></li>
-<li><span class="obj-id">K2.5</span>能陈述特征值、谱半径、Gerschgorin 圆盘定理、Rayleigh 商与 Courant–Fischer 极小极大原理，说明「谱半径 ≤ 任一相容范数」以及「非正规矩阵的特征值对扰动可以开方敏感」的原因。<span class="obj-lv">理解 / 分析</span></li>
-<li><span class="obj-id">K2.6</span>能陈述 SVD $A=U\Sigma V^{\mathrm T}$ 的两种几何读法（旋转–拉伸–旋转、两组正交基的配对），说明 $\lVert A\rVert_2=\sigma_1$、$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$、Eckart–Young 定理与数值秩的定义。<span class="obj-lv">理解 / 评价</span></li>
+<li><span class="obj-id">K8.1</span>能陈述内积的四条公理与由内积诱导的范数，区分一般内积与 Euclid 内积（举一个加权内积的例子），并陈述正交、标准正交基、正交矩阵的定义，以及正交矩阵的等价刻画（至少六条）。<span class="obj-lv">记忆 / 理解</span></li>
+<li><span class="obj-id">K8.2</span>能陈述四个基本子空间（列空间、零空间、行空间、左零空间）的定义与两对正交补关系（$N(A)\perp C(A^{\mathrm T})$、$N(A^{\mathrm T})\perp C(A)$），说明秩定理 $\operatorname{rank}A+\dim N(A)=n$，并写出正交投影矩阵 $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 的三条性质（对称、幂等、$\lVert P\rVert_2=1$）。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K8.3</span>能陈述 Gram–Schmidt 正交化与 Householder 反射的构造原理，说明 QR 分解 $A=QR$ 的存在唯一性条件，并比较经典 Gram–Schmidt、修正 Gram–Schmidt、Householder、Givens 四种方法在浮点下的正交性损失量级（$O(\mathrm{cond}^2u)$ 与 $O(\mathrm{cond}\,u)$）。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K8.4</span>能陈述条件数 $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$ 的定义，推导右端扰动界与系数扰动界，并解释「残差小 ≠ 误差小」与「系数的微小扰动可被放大 cond 倍」。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K8.5</span>能陈述特征值、谱半径、Gerschgorin 圆盘定理、Rayleigh 商与 Courant–Fischer 极小极大原理，说明「谱半径 ≤ 任一相容范数」以及「非正规矩阵的特征值对扰动可以开方敏感」的原因。<span class="obj-lv">理解 / 分析</span></li>
+<li><span class="obj-id">K8.6</span>能陈述 SVD $A=U\Sigma V^{\mathrm T}$ 的两种几何读法（旋转–拉伸–旋转、两组正交基的配对），说明 $\lVert A\rVert_2=\sigma_1$、$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$、Eckart–Young 定理与数值秩的定义。<span class="obj-lv">理解 / 评价</span></li>
 </ul>
 
 ### S · 技能目标（判定、计算与实验）
 
 <ul class="objlist">
-<li><span class="obj-id">S2.1</span>能对给定向量组手工执行 Gram–Schmidt 正交化（含三向量情形），求出对应的 $Q$ 与 $R$，并判断何时出现零列（秩亏）、该如何截断。<span class="obj-lv">应用</span></li>
-<li><span class="obj-id">S2.2</span>能对一个 $3\times3$ 或 $4\times3$ 矩阵手算一个 Householder 反射（写出 $\boldsymbol v$、$H=I-2\boldsymbol v\boldsymbol v^{\mathrm T}/\boldsymbol v^{\mathrm T}\boldsymbol v$ 与 $HA$），并说明它把哪一列化成了 $\pm\lVert\cdot\rVert_2\boldsymbol e_1$。<span class="obj-lv">应用 / 分析</span></li>
-<li><span class="obj-id">S2.3</span>能用 QR 分解求最小二乘解（含 $A$ 列满秩与秩亏两种情形），比较正态方程与 QR 的误差量级，并给出选型理由。<span class="obj-lv">应用 / 评价</span></li>
-<li><span class="obj-id">S2.4</span>能对给定矩阵估算 $\mathrm{cond}_2$ 或 $\mathrm{cond}_\infty$，据此预测求解线性方程组时有效数字的损失位数 $k\approx\log_{10}\mathrm{cond}$，并用 Hilbert 矩阵的数值实验验证预测。<span class="obj-lv">应用 / 评价</span></li>
-<li><span class="obj-id">S2.5</span>能用 Gerschgorin 圆盘给出特征值的包含区间，用幂法与 Rayleigh 商估算主特征值并报告实测收敛比，解释幂法为何以 $\lvert\lambda_2/\lambda_1\rvert$ 的速度收敛。<span class="obj-lv">应用 / 分析</span></li>
-<li><span class="obj-id">S2.6</span>能用 SVD 计算数值秩、条件数与伪逆，做秩 $k$ 截断并与理论下界 $\lVert A-A_k\rVert_2=\sigma_{k+1}$ 对照，用真实矩阵完成一次低秩压缩（报告压缩比与 $\lVert E\rVert_F/\lVert A\rVert_F$）。<span class="obj-lv">应用 / 创造</span></li>
+<li><span class="obj-id">S8.1</span>能对给定向量组手工执行 Gram–Schmidt 正交化（含三向量情形），求出对应的 $Q$ 与 $R$，并判断何时出现零列（秩亏）、该如何截断。<span class="obj-lv">应用</span></li>
+<li><span class="obj-id">S8.2</span>能对一个 $3\times3$ 或 $4\times3$ 矩阵手算一个 Householder 反射（写出 $\boldsymbol v$、$H=I-2\boldsymbol v\boldsymbol v^{\mathrm T}/\boldsymbol v^{\mathrm T}\boldsymbol v$ 与 $HA$），并说明它把哪一列化成了 $\pm\lVert\cdot\rVert_2\boldsymbol e_1$。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S8.3</span>能用 QR 分解求最小二乘解（含 $A$ 列满秩与秩亏两种情形），比较正态方程与 QR 的误差量级，并给出选型理由。<span class="obj-lv">应用 / 评价</span></li>
+<li><span class="obj-id">S8.4</span>能对给定矩阵估算 $\mathrm{cond}_2$ 或 $\mathrm{cond}_\infty$，据此预测求解线性方程组时有效数字的损失位数 $k\approx\log_{10}\mathrm{cond}$，并用 Hilbert 矩阵的数值实验验证预测。<span class="obj-lv">应用 / 评价</span></li>
+<li><span class="obj-id">S8.5</span>能用 Gerschgorin 圆盘给出特征值的包含区间，用幂法与 Rayleigh 商估算主特征值并报告实测收敛比，解释幂法为何以 $\lvert\lambda_2/\lambda_1\rvert$ 的速度收敛。<span class="obj-lv">应用 / 分析</span></li>
+<li><span class="obj-id">S8.6</span>能用 SVD 计算数值秩、条件数与伪逆，做秩 $k$ 截断并与理论下界 $\lVert A-A_k\rVert_2=\sigma_{k+1}$ 对照，用真实矩阵完成一次低秩压缩（报告压缩比与 $\lVert E\rVert_F/\lVert A\rVert_F$）。<span class="obj-lv">应用 / 创造</span></li>
 </ul>
 
 ### A · 素养目标（诊断、批判与迁移）
 
 <ul class="objlist">
-<li><span class="obj-id">A2.1</span>能诊断一个线性方程组问题的病态来源（矩阵结构、尺度差异、条件数），区分「问题病态」与「算法不稳定」，并给出至少两种改进策略（重述问题 / 正则化 / 提高精度 / 选稳定算法）。<span class="obj-lv">分析 / 评价</span></li>
-<li><span class="obj-id">A2.2</span>能批判性地评估数值线性代数库的返回值：判断残差范数能否作为误差的可靠指标，识别「数值秩」判定对阈值的依赖，说明伪逆截断参数的选择依据。<span class="obj-lv">评价</span></li>
-<li><span class="obj-id">A2.3</span>能针对一个真实数据任务（低秩压缩 / 主成分 / 病态拟合）选择合适的方法（QR / SVD / 正则化）并说明理由，量化方法与数据的匹配程度及其失效边界。<span class="obj-lv">评价 / 创造</span></li>
+<li><span class="obj-id">A8.1</span>能诊断一个线性方程组问题的病态来源（矩阵结构、尺度差异、条件数），区分「问题病态」与「算法不稳定」，并给出至少两种改进策略（重述问题 / 正则化 / 提高精度 / 选稳定算法）。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A8.2</span>能批判性地评估数值线性代数库的返回值：判断残差范数能否作为误差的可靠指标，识别「数值秩」判定对阈值的依赖，说明伪逆截断参数的选择依据。<span class="obj-lv">评价</span></li>
+<li><span class="obj-id">A8.3</span>能针对一个真实数据任务（低秩压缩 / 主成分 / 病态拟合）选择合适的方法（QR / SVD / 正则化）并说明理由，量化方法与数据的匹配程度及其失效边界。<span class="obj-lv">评价 / 创造</span></li>
 </ul>
 
 ::: note 与考核的对应
 
-K 组目标对应各章习题中 A 组与 B 组的概念题、证明题；S 组目标对应 B、C 组的计算与编程题；A 组目标对应 D 组的开放建模题与期末综合题中的分析小题。补充篇的 S2.4–S2.6 与 A2.1–A2.3 则直接对应 [2.7 数值实验](ch02/sec27.md) 的三组实验报告。
+K 组目标对应各章习题中 A 组与 B 组的概念题、证明题；S 组目标对应 B、C 组的计算与编程题；A 组目标对应 D 组的开放建模题与期末综合题中的分析小题。补充篇的 S8.4–S8.6 与 A8.1–A8.3 则直接对应 [2.7 数值实验](supplement/sec27.md) 的三组实验报告。
 
 :::

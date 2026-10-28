@@ -24,7 +24,7 @@
     2: { name: "范数与条件数", desc: "第 2–3 讲 · 向量/矩阵范数、相容性、‖A‖<1 可逆、条件数" },
     3: { name: "线性方程组与迭代法", desc: "第 3–6 讲 · 高斯消去、LU 分解、ρ(G)<1、Jacobi/G–S、SOR" },
     4: { name: "特征值与幂法", desc: "第 6–7 讲 · 单位化幂法、2-范数取特征值、反幂法、位移" },
-    5: { name: "非线性方程与插值", desc: "第 7–9 讲 · 二分法、不动点收敛、牛顿全局收敛、割线法、插值" }
+    5: { name: "非线性方程与插值", desc: "第 7–11 讲 · 二分法、不动点收敛、牛顿全局收敛、割线法、插值、最佳平方逼近与正交多项式" }
   };
 
   /* 段位门槛按**正确率**判定：分数受连击影响不稳定，正确率才代表掌握程度。 */
@@ -493,12 +493,12 @@
   showPanel();
 })();
 
-/* 考场计时器（可降级增强）：页面里放 <div id="exam-timer" data-minutes="60"></div>，
+/* 考场计时器（可降级增强）：页面里放 <div class="exam-timer" data-minutes="60"></div>，
  * 就在此处渲染一个倒计时秒表——开始 / 暂停 / 复位。关 JS 时该 div 为空，不影响阅读。
  * 与竞技场共用同一套进度条外观，但不计算分数（用于「综合自测卷」的请计时闭卷）。 */
 (function () {
   "use strict";
-  var host = document.getElementById("exam-timer");
+  var host = document.querySelector(".exam-timer");
   if (!host) return;
 
   var minutes = parseFloat(host.getAttribute("data-minutes"));

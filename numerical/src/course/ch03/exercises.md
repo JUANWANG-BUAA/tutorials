@@ -11,12 +11,12 @@
 | 4 | 反幂法 | 第 2 题 (1) 的模最小特征值 | ✅ 每步解 $Au_k=y_{k-1}$，$\lambda_n\approx1/\beta_k$。 |
 | 5 | 反幂法精修 | 已知 $\lambda\approx9$ | ✅ 对 $A-9I$ 反幂法，$\lambda\approx9+1/\beta_k$。 |
 | 6 | 实特征值算法选择 | $-50\lt\lambda_1\lt\lambda_2\lt-10\le\lambda_3\le\cdots$ | ✅ 幂法求 $\lambda_n$；反幂法求 $\lambda_1$；位移反幂法（$p\approx-10$）求 $\lambda_2$。 |
-| 7 | Jacobi 方法 | 3×3 实对称矩阵，$\varepsilon=10^{-5}$ | ✅ 平面旋转逐次消最大非对角元；对角元为特征值，累积旋转为特征向量。 |
+| 7 | Jacobi 方法 | $A=\begin{pmatrix}1&1&0.5\\1&1&0.25\\0.5&0.25&2\end{pmatrix}$，$\varepsilon=10^{-5}$ | ✅ Jacobi 迭代得特征值 $2.536526,\ 1.480121,\ -0.016647$（和 $=4=$ 迹）；特征向量由累积旋转矩阵的列给出。 |
 | 8 | 分块三角矩阵 | 证明 $P,Q$ 的特征值可延拓 | ✅ 若 $Px=\lambda x$，则 $T(x,0)^{\mathrm T}=\lambda(x,0)^{\mathrm T}$；$Q$ 同理。 |
 | 9 | Householder 映射 | $s=(-2,1,2)^{\mathrm T}$，$r=(4,3,0)^{\mathrm T}$ | ✅ $u=s-v=(-4.4,-0.8,2)^{\mathrm T}$，$v=(2.4,1.8,0)^{\mathrm T}$；$H=I-2uu^{\mathrm T}/(u^{\mathrm T}u)$。 |
-| 10 | Householder 化三对角 | 实对称矩阵 | ✅ 逐列消 $r+2$ 行以下元素，左右乘 $H_r$。 |
-| 11 | Householder 化拟上三角 | 一般实矩阵 | ✅ 相似变换 $H_rA^{(r)}H_r$，只消到 Hessenberg 形。 |
-| 12 | 基本 QR 方法 | 给定矩阵求特征值 | ✅ 迭代 $A_k=Q_kR_k$、$A_{k+1}=R_kQ_k$；对角元收敛到特征值，2×2 块用二次公式。 |
+| 10 | Householder 化三对角 | $A=\begin{pmatrix}1&2&1&2\\2&1&2&-1\\1&2&0&3\\2&-1&3&1\end{pmatrix}$ | ✅ 两次 Householder 相似变换得三对角矩阵，见[例 3.3.2](sec33.md#ex-3.3.2)；次对角线为 $(-3,\ 2.759943,\ -1.016207)$。 |
+| 11 | Householder 化拟上三角 | $A=\begin{pmatrix}2&1&3&4\\1&-1&2&1\\-1&2&1&2\\1&0&-1&3\end{pmatrix}$ | ✅ 两次相似变换得拟上三角，见[例 3.3.3](sec33.md#ex-3.3.3)；第 1 列第 3、4 行与第 2 列第 4 行为零。 |
+| 12 | 基本 QR 方法 | $A=\begin{pmatrix}3&1&0\\1&2&1\\0&1&1\end{pmatrix}$ | ✅ 基本 QR 迭代收敛到特征值 $2+\sqrt3,\ 2,\ 2-\sqrt3$（即 $3.732051,\ 2,\ 0.267949$），迭代表见[例 3.3.4](sec33.md#ex-3.3.4)。 |
 
 ::: note 覆盖核对
 本页覆盖教材习题 1–12（题面摘要 + 答案/提示），与 [3.1](sec31.md)、[3.2](sec32.md)、[3.3](sec33.md) 的例题/证明互补。覆盖矩阵见[第 3 章覆盖矩阵](coverage.md)。

@@ -15,7 +15,7 @@
 | [入学诊断自测](entry-test.md) | **定位**：12 道题判断该从哪一节开始 | 开学第一次 |
 | **本页** | **补漏**：四块先修的两级清单 + 自测题 | 卡壳时、读补充篇之前 |
 | [工程工具箱](toolbox.md) | **操作**：误差诊断、算法选型、停止准则、函数地图 | 每一段数值代码落地时 |
-| [公式与结论卡](review/formula-cards.md) | **查阅**：第一章 + 补充篇必记公式与结论 | 忘了公式 |
+| [公式与结论卡](review/formula-cards.md) | **查阅**：全书必记公式与结论（第一章、补充篇、主线第 2–7 章） | 忘了公式 |
 | [易混对照卡](review/contrast-cards.md) | **辨析**：16 对易混概念逐对比较 | 判断题、概念题 |
 | [术语索引](review/glossary.md) | **命名**：中英术语与定义位置 | 查名字、读英文材料 |
 :::
@@ -24,20 +24,20 @@
 
 **必须会**
 
-- **矩阵乘法的两种读法**：行观点（$A\boldsymbol{x}$ 的第 $i$ 个分量 = $A$ 的第 $i$ 行与 $\boldsymbol{x}$ 的内积）；列观点（$A\boldsymbol{x}$ 是 $A$ 的列向量以 $\boldsymbol{x}$ 的分量为系数的线性组合）。[2.2 四个基本子空间](ch02/sec22.md#sec-2.2.1) 全靠列观点。
+- **矩阵乘法的两种读法**：行观点（$A\boldsymbol{x}$ 的第 $i$ 个分量 = $A$ 的第 $i$ 行与 $\boldsymbol{x}$ 的内积）；列观点（$A\boldsymbol{x}$ 是 $A$ 的列向量以 $\boldsymbol{x}$ 的分量为系数的线性组合）。[2.2 四个基本子空间](supplement/sec22.md#sup-2.2.1) 全靠列观点。
 - **转置与乘积反转**：$(AB)^{\mathrm T}=B^{\mathrm T}A^{\mathrm T}$；$\operatorname{tr}(XY)=\operatorname{tr}(YX)$——顺序反转是最容易记错的一条。
-- **秩与可逆的等价链**：$\det A\neq0$、列（行）满秩、$N(A)=\{\boldsymbol{0}\}$、对任意右端有唯一解，四条等价（[2.2.1](ch02/sec22.md#sec-2.2.1)）。
-- **特征值与特征向量**：$A\boldsymbol{v}=\lambda\boldsymbol{v}$（$\boldsymbol{v}\neq\boldsymbol{0}$）；$\operatorname{tr}A=\sum_i\lambda_i$、$\det A=\prod_i\lambda_i$ 是最省事的验算式（[2.5.1](ch02/sec25.md#sec-2.5.1)）。
-- **实对称矩阵可正交对角化**：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且特征值全为实数——[2.5.4 对称谱理论](ch02/sec25.md#sec-2.5.4) 的出发点。
-- **内积、长度、正交**：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$、$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$、$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$（[2.1.1](ch02/sec21.md#sec-2.1.1) 把这套语言公理化）。
-- **初等行变换保持什么**：解集、行空间、零空间不变；**列空间会变**——[2.2.6 常见错误 3](ch02/sec22.md#sec-2.2.6) 讲的就是这一条的代价。
+- **秩与可逆的等价链**：$\det A\neq0$、列（行）满秩、$N(A)=\{\boldsymbol{0}\}$、对任意右端有唯一解，四条等价（[2.2.1](supplement/sec22.md#sup-2.2.1)）。
+- **特征值与特征向量**：$A\boldsymbol{v}=\lambda\boldsymbol{v}$（$\boldsymbol{v}\neq\boldsymbol{0}$）；$\operatorname{tr}A=\sum_i\lambda_i$、$\det A=\prod_i\lambda_i$ 是最省事的验算式（[2.5.1](supplement/sec25.md#sup-2.5.1)）。
+- **实对称矩阵可正交对角化**：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且特征值全为实数——[2.5.4 对称谱理论](supplement/sec25.md#sup-2.5.4) 的出发点。
+- **内积、长度、正交**：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$、$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$、$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$（[2.1.1](supplement/sec21.md#sup-2.1.1) 把这套语言公理化）。
+- **初等行变换保持什么**：解集、行空间、零空间不变；**列空间会变**——[2.2.6 常见错误 3](supplement/sec22.md#sup-2.2.6) 讲的就是这一条的代价。
 
 **可以边查边学**
 
-- $A^{\mathrm T}A$ 的对称正定性（$A$ 列满秩时）与正定判定：[2.2.3 投影矩阵](ch02/sec22.md#sec-2.2.3)、[入学诊断 A4](entry-test.md)。
-- **维数公式** $\dim(\mathcal{S}\cap\mathcal{T})\ge\dim\mathcal{S}+\dim\mathcal{T}-n$：它是 [Eckart–Young 定理](ch02/sec26.md#sec-2.6.5) 证明里唯一的计数工具，值得单独记一条。
-- 几何重数 / 代数重数与可对角化的判据：[2.5.5](ch02/sec25.md#sec-2.5.5) 用它解释「重特征值为什么开方敏感」。
-- **QR 分解、SVD、伪逆的结构**（各部分长什么样、各扮演什么角色）：本教程 [2.3](ch02/sec23.md)、[2.6](ch02/sec26.md) 会完整讲；读之前见过一次即可。
+- $A^{\mathrm T}A$ 的对称正定性（$A$ 列满秩时）与正定判定：[2.2.3 投影矩阵](supplement/sec22.md#sup-2.2.3)、[入学诊断 A4](entry-test.md)。
+- **维数公式** $\dim(\mathcal{S}\cap\mathcal{T})\ge\dim\mathcal{S}+\dim\mathcal{T}-n$：它是 [Eckart–Young 定理](supplement/sec26.md#sup-2.6.5) 证明里唯一的计数工具，值得单独记一条。
+- 几何重数 / 代数重数与可对角化的判据：[2.5.5](supplement/sec25.md#sup-2.5.5) 用它解释「重特征值为什么开方敏感」。
+- **QR 分解、SVD、伪逆的结构**（各部分长什么样、各扮演什么角色）：本教程 [2.3](supplement/sec23.md)、[2.6](supplement/sec26.md) 会完整讲；读之前见过一次即可。
 
 ::: ex 自测组 1（线性代数）{#ex-prereq-1}
 1. 形状推演：$A\in\mathbb{R}^{3\times4}$、$B\in\mathbb{R}^{4\times2}$、$\boldsymbol{x}\in\mathbb{R}^4$，判断 $AB$、$BA$、$A\boldsymbol{x}$、$\boldsymbol{x}^{\mathrm T}B$ 哪些能算，并写出结果的形状。
@@ -48,8 +48,8 @@
 ::: sol 答案
 1. $AB$（$3\times2$）、$A\boldsymbol{x}$（$3$ 维列向量）、$\boldsymbol{x}^{\mathrm T}B$（$1\times2$，即 2 维行向量）都能算；$BA$ 无定义——$2\times4$ 乘 $3\times4$，内维 $4\neq3$。**判形状先对齐内维。**
 2. $\det(A-\lambda I)=(2-\lambda)^2-1=0\Rightarrow\lambda_1=3,\ \lambda_2=1$。对称阵的奇异值就是特征值的绝对值，故 $\sigma_1=3$、$\sigma_2=1$：$\lVert A\rVert_2=3$，$\mathrm{cond}_2(A)=3$（复核：`np.linalg.cond(A, 2)` 给 $2.9999999999999996$，末位是浮点误差）。
-3. $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=1\cdot2+2\cdot(-2)+2\cdot1=0$，故**正交**；$\lVert\boldsymbol{x}\rVert_2=\lVert\boldsymbol{y}\rVert_2=3$。注意「长度都是 1」与「正交」是两件独立的事：前者叫**标准**，后者要逐个验证内积为零（[2.1.4 常见错误 1](ch02/sec21.md#sec-2.1.4) 就是这条的翻车现场）。
-4. $\lambda=0$（代数重数 2）；但它**不可对角化**：$A-\lambda I=A$ 的零空间只有 $\operatorname{span}\{(1,0)^{\mathrm T}\}$，几何重数 $1$ 小于代数重数 $2$。可见特征值只记录「伸缩倍数」，不含非正规部分的信息——这正是 [2.5.5](ch02/sec25.md#sec-2.5.5) 里「重特征值遇上扰动会移动 $O(\varepsilon^{1/k})$」的根源。
+3. $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=1\cdot2+2\cdot(-2)+2\cdot1=0$，故**正交**；$\lVert\boldsymbol{x}\rVert_2=\lVert\boldsymbol{y}\rVert_2=3$。注意「长度都是 1」与「正交」是两件独立的事：前者叫**标准**，后者要逐个验证内积为零（[2.1.4 常见错误 1](supplement/sec21.md#sup-2.1.4) 就是这条的翻车现场）。
+4. $\lambda=0$（代数重数 2）；但它**不可对角化**：$A-\lambda I=A$ 的零空间只有 $\operatorname{span}\{(1,0)^{\mathrm T}\}$，几何重数 $1$ 小于代数重数 $2$。可见特征值只记录「伸缩倍数」，不含非正规部分的信息——这正是 [2.5.5](supplement/sec25.md#sup-2.5.5) 里「重特征值遇上扰动会移动 $O(\varepsilon^{1/k})$」的根源。
 :::
 
 :::
@@ -67,8 +67,8 @@
 **可以边查边学**
 
 - 不动点迭代的两个条件（自映射管不越界、压缩映射管收敛）：读[第 7 讲](lectures/lec07.md)之前扫一眼即可。
-- **Lipschitz 连续性**：[2.5.5](ch02/sec25.md#sec-2.5.5) 里「对称矩阵的特征值对扰动是 $1$-Lipschitz 的」用的就是它。
-- 凸性与「梯度为零即最小」：[2.2.4 正态方程的充分性](ch02/sec22.md#sec-2.2.4) 用了一次。
+- **Lipschitz 连续性**：[2.5.5](supplement/sec25.md#sup-2.5.5) 里「对称矩阵的特征值对扰动是 $1$-Lipschitz 的」用的就是它。
+- 凸性与「梯度为零即最小」：[2.2.4 正态方程的充分性](supplement/sec22.md#sup-2.2.4) 用了一次。
 - 函数条件数 $\mathrm{cond}(f,x)=\left\lvert\dfrac{xf'(x)}{f(x)}\right\rvert$（[1.2.6](ch01/sec12.md#sec-1.2.6)），它是矩阵条件数的先声。
 
 ::: ex 自测组 2（微积分）{#ex-prereq-2}
@@ -98,10 +98,10 @@
 
 **可以边查边学**
 
-- 随机数：`rng = np.random.default_rng(0)`，之后所有随机量都从 `rng` 取（[2.7](ch02/sec27.md) 的实验报告要求写清种子）。
+- 随机数：`rng = np.random.default_rng(0)`，之后所有随机量都从 `rng` 取（[2.7](supplement/sec27.md) 的实验报告要求写清种子）。
 - 稀疏矩阵与迭代解法：`scipy.sparse`（[工具箱第四节](toolbox.md#sec-工具箱-4)）。
 - 计时：`%timeit`（IPython）或 `time.perf_counter()`。
-- 画图：`matplotlib`——画奇异值谱、残差下降曲线，是[2.7 实验报告](ch02/sec27.md)的基本要求。
+- 画图：`matplotlib`——画奇异值谱、残差下降曲线，是[2.7 实验报告](supplement/sec27.md)的基本要求。
 
 ::: ex 自测组 3（编程）{#ex-prereq-3}
 1. 判断并解释：`1.0 + 2**-53 == 1.0`、`1.0 + 2**-52 == 1.0` 分别是 `True` 还是 `False`。
@@ -140,8 +140,8 @@
 
 ::: sol 答案
 1. $\mathrm{eps}=2u$。$\mathrm{eps}=2^{-52}\approx2.22\times10^{-16}$ 是 $1.0$ 附近相邻浮点数的**间距**；$u=2^{-53}\approx1.11\times10^{-16}$ 是单次舍入的**最大相对误差**（[附录 B.2](appendix/float.md#app-b-2) 给两者的逐位来历）。
-2. 缺**范数**——没说 $10^{10}$ 是哪种范数下的条件数，三种范数之间可以差 $n$ 倍量级；另外 $k\approx\log_{10}\mathrm{cond}$ 是**最坏情形**估计，实测误差常比它小几倍（[2.4.6 常见错误 5、6](ch02/sec24.md#sec-2.4.6)）。
-3. 一般不是：$\lVert A\rVert_2=\sigma_1=\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$。只有当 $A$ **对称**（更一般地，**正规**）时才有 $\sigma_1=\lvert\lambda_{\max}\rvert$，此时 $\lVert A\rVert_2=\rho(A)$（[1.3.4](ch01/sec13.md#sec-1.3.4)、[2.5.1](ch02/sec25.md#sec-2.5.1)）。
+2. 缺**范数**——没说 $10^{10}$ 是哪种范数下的条件数，三种范数之间可以差 $n$ 倍量级；另外 $k\approx\log_{10}\mathrm{cond}$ 是**最坏情形**估计，实测误差常比它小几倍（[2.4.6 常见错误 5、6](supplement/sec24.md#sup-2.4.6)）。
+3. 一般不是：$\lVert A\rVert_2=\sigma_1=\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$。只有当 $A$ **对称**（更一般地，**正规**）时才有 $\sigma_1=\lvert\lambda_{\max}\rvert$，此时 $\lVert A\rVert_2=\rho(A)$（[1.3.4](ch01/sec13.md#sec-1.3.4)、[2.5.1](supplement/sec25.md#sup-2.5.1)）。
 :::
 
 :::
@@ -159,19 +159,19 @@
 6. $\rho(A)\lt1$ 是否保证每一步都在收缩？更稳妥的判据是什么？
 
 ::: sol 答案
-1. 约 **4 位**：约丢失 $k\approx\log_{10}\mathrm{cond}=12$ 位，双精度共约 16 位，剩下 4 位左右（[2.4.2 的换算表](ch02/sec24.md#sec-2.4.2)）。
-2. 两行几乎成比例（$\mathrm{cond}_\infty\approx4\times10^{11}$），两个方程近乎同一个约束，解可以沿直线 $x_1+x_2\approx2$ 滑动——$(1.5,0.5)^{\mathrm T}$ 与真解 $(1,1)^{\mathrm T}$ 都近似落在这条线上，故残差很小而误差很大（[例 2.4.4](ch02/sec24.md#sec-2.4.4)）。
-3. 浮点误差经过正交变换后只受机器精度支配、与矩阵大小同比例，**不随变换次数累积**；换成非正交变换 $S$，放大因子就变成 $\mathrm{cond}(S)$（[2.1.3 思考](ch02/sec21.md#sec-2.1.3)）。
-4. $10^{6}$：正态方程尚可用（但已丢约 6 位，只信 10 位），**推荐直接用 QR**；$10^{10}$：正态方程误差量级为 $\mathrm{cond}^{2}u\approx10^{4}$，结果没有意义，必须改用 QR 或 SVD（[2.3.6 实测对照](ch02/sec23.md#sec-2.3.6)）。
-5. $A=U\Sigma V^{\mathrm T}$（$U,V$ 正交、$\Sigma$ 非负对角、奇异值降序）；$\lVert A\rVert_2=\sigma_1$、$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$、$\operatorname{rank}A=\#\{\sigma_i\gt0\}$（[2.6.3](ch02/sec26.md#sec-2.6.3)）。
-6. 不保证。$\rho\lt1$ 只保证**渐近**衰减，非正规矩阵在有限步内可能先涨（瞬态增长）；稳妥判据是 $\lVert A\rVert\lt1$，它给出「每一步都在收缩」的保证（[例 2.5.6](ch02/sec25.md#sec-2.5.6)）。
+1. 约 **4 位**：约丢失 $k\approx\log_{10}\mathrm{cond}=12$ 位，双精度共约 16 位，剩下 4 位左右（[2.4.2 的换算表](supplement/sec24.md#sup-2.4.2)）。
+2. 两行几乎成比例（$\mathrm{cond}_\infty\approx4\times10^{11}$），两个方程近乎同一个约束，解可以沿直线 $x_1+x_2\approx2$ 滑动——$(1.5,0.5)^{\mathrm T}$ 与真解 $(1,1)^{\mathrm T}$ 都近似落在这条线上，故残差很小而误差很大（[例 2.4.4](supplement/sec24.md#sup-2.4.4)）。
+3. 浮点误差经过正交变换后只受机器精度支配、与矩阵大小同比例，**不随变换次数累积**；换成非正交变换 $S$，放大因子就变成 $\mathrm{cond}(S)$（[2.1.3 思考](supplement/sec21.md#sup-2.1.3)）。
+4. $10^{6}$：正态方程尚可用（但已丢约 6 位，只信 10 位），**推荐直接用 QR**；$10^{10}$：正态方程误差量级为 $\mathrm{cond}^{2}u\approx10^{4}$，结果没有意义，必须改用 QR 或 SVD（[2.3.6 实测对照](supplement/sec23.md#sup-2.3.6)）。
+5. $A=U\Sigma V^{\mathrm T}$（$U,V$ 正交、$\Sigma$ 非负对角、奇异值降序）；$\lVert A\rVert_2=\sigma_1$、$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$、$\operatorname{rank}A=\#\{\sigma_i\gt0\}$（[2.6.3](supplement/sec26.md#sup-2.6.3)）。
+6. 不保证。$\rho\lt1$ 只保证**渐近**衰减，非正规矩阵在有限步内可能先涨（瞬态增长）；稳妥判据是 $\lVert A\rVert\lt1$，它给出「每一步都在收缩」的保证（[例 2.5.6](supplement/sec25.md#sup-2.5.6)）。
 :::
 
 :::
 
 ::: method 得分与去向
 
-- **6 题全对**：直接进 [2.1 内积、正交性与正交矩阵](ch02/sec21.md)。
+- **6 题全对**：直接进 [2.1 内积、正交性与正交矩阵](supplement/sec21.md)。
 - **错 1–2 题**：按错题回到[第一节](#sec-先修-1)〜[第四节](#sec-先修-4)的对应块，补完自测题再进正文。
 - **错 3 题以上**：先通读[第一章 1.2](ch01/sec12.md) 与 [1.3](ch01/sec13.md)（误差、有效数字、范数），对照[公式与结论卡](review/formula-cards.md)第一至七节默一遍，再回来做一次本自测。
 :::
@@ -180,16 +180,16 @@
 
 | 你的症状 | 先看这一页 | 再回正文 |
 |:--|:--|:--|
-| 内积公理、正交、正交矩阵的等价条件读不顺 | [本页第一节](#sec-先修-1) | [2.1](ch02/sec21.md)、[入学诊断 C1](entry-test.md) |
-| 投影公式、四个子空间写不出来 | [本页第一节](#sec-先修-1) | [2.2](ch02/sec22.md)、[入学诊断 C2、C3](entry-test.md) |
-| Gram–Schmidt / Householder 手算卡住 | [本页第一节](#sec-先修-1) 自测第 2 题 | [2.3](ch02/sec23.md)、[习题 C2](ch02/exercises.md) |
-| 「能信几位」估不清、残差与误差分不开 | — | [2.4](ch02/sec24.md)、[工具箱第一节](toolbox.md#sec-工具箱-1)、[易混对照卡 4](review/contrast-cards.md) |
-| 特征值、谱半径、Gerschgorin 一团乱 | [本页第一、四节](#sec-先修-4) | [2.5](ch02/sec25.md)、[例题 2.5.2](ch02/sec25.md#ex-2.5.2) |
-| SVD 的几何意义想不明白 | — | [2.6.2 两种几何读法](ch02/sec26.md#sec-2.6.2)、[入学诊断 C4](entry-test.md) |
+| 内积公理、正交、正交矩阵的等价条件读不顺 | [本页第一节](#sec-先修-1) | [2.1](supplement/sec21.md)、[入学诊断 C1](entry-test.md) |
+| 投影公式、四个子空间写不出来 | [本页第一节](#sec-先修-1) | [2.2](supplement/sec22.md)、[入学诊断 C2、C3](entry-test.md) |
+| Gram–Schmidt / Householder 手算卡住 | [本页第一节](#sec-先修-1) 自测第 2 题 | [2.3](supplement/sec23.md)、[习题 C2](supplement/exercises.md) |
+| 「能信几位」估不清、残差与误差分不开 | — | [2.4](supplement/sec24.md)、[工具箱第一节](toolbox.md#sec-工具箱-1)、[易混对照卡 4](review/contrast-cards.md) |
+| 特征值、谱半径、Gerschgorin 一团乱 | [本页第一、四节](#sec-先修-4) | [2.5](supplement/sec25.md)、[例题 2.5.2](supplement/sec25.md#ex-sup-2.5.2) |
+| SVD 的几何意义想不明白 | — | [2.6.2 两种几何读法](supplement/sec26.md#sup-2.6.2)、[入学诊断 C4](entry-test.md) |
 | 浮点、有效数字、误差界的推导跟不上 | [本页第二节](#sec-先修-2) | [1.2](ch01/sec12.md)、[附录 B](appendix/float.md) |
-| 代码跑不出书里的数字、不知道该用哪个函数 | [本页第三节](#sec-先修-3) | [工程工具箱](toolbox.md)、[2.7 实验](ch02/sec27.md) |
+| 代码跑不出书里的数字、不知道该用哪个函数 | [本页第三节](#sec-先修-3) | [工程工具箱](toolbox.md)、[2.7 实验](supplement/sec27.md) |
 | 与课堂对不上（记号不同、定理编号不同） | — | [课堂精编导览的记号说明](lectures/overview.md#notation-diff) |
 
 ---
 
-**依据**第一章 + 补充篇正文的先修约定（[范围声明](preface-scope.md)、[符号表](preface-notation.md)）整理 · 自测题的数值均经 NumPy 复核（本机 numpy 2.4.6）· 与[入学诊断自测](entry-test.md)的分工：诊断页做题定路线，本页查漏补缺 · 整理日期 2026-10-20。
+**依据**第一章 + 补充篇正文的先修约定（[范围与使用方法](preface.md)、[符号表](preface-notation.md)）整理 · 自测题的数值均经 NumPy 复核（本机 numpy 2.4.6）· 与[入学诊断自测](entry-test.md)的分工：诊断页做题定路线，本页查漏补缺 · 整理日期 2026-10-20。

@@ -4,7 +4,7 @@
 
 ::: method 三条使用原则（先记住，再看下文）
 1. **先诊断，再换算法。** 病态是问题的属性、不稳定是算法的属性（[1.2.6](ch01/sec12.md#sec-1.2.6)）；判错方向，后面的努力全花在错误的地方。
-2. **先估量级，再对账。** 任何数值结论都先写一个理论量级——$\mathrm{cond}\cdot u$、$\sigma_{k+1}$、$(\lambda_2/\lambda_1)^k$——再用实测对账；[2.7](ch02/sec27.md) 的「报告要求」就是这个流程。
+2. **先估量级，再对账。** 任何数值结论都先写一个理论量级——$\mathrm{cond}\cdot u$、$\sigma_{k+1}$、$(\lambda_2/\lambda_1)^k$——再用实测对账；[2.7](supplement/sec27.md) 的「报告要求」就是这个流程。
 3. **先验收，再交付。** 算完必须过一遍[第六节](#sec-工具箱-6)的验收清单；没有验收的数值结果，只是打印出来的一堆数。
 :::
 
@@ -14,7 +14,7 @@
 |:--|:--|:--|
 | [先修与自测](prerequisite.md) | **基础层**：线代 / 微积分 / 编程 / 记号的清单与自测 | 开学前、数学卡壳时 |
 | **本页** | **操作层**：诊断 → 选型 → 停止准则 → 函数与后端 | 每一段数值代码落地时 |
-| [公式与结论卡](review/formula-cards.md) | **查阅层**：第一章 + 补充篇必记公式 | 忘了公式 |
+| [公式与结论卡](review/formula-cards.md) | **查阅层**：全书必记公式与结论 | 忘了公式 |
 | [易混对照卡](review/contrast-cards.md) | **辨析层**：16 对易混概念 | 判断题、概念题 |
 | [术语索引](review/glossary.md) | **命名层**：中英术语与定义位置 | 查名字 |
 | [附录 B](appendix/float.md) | **深挖层**：浮点算术的完整推导 | 想看清 $\mathrm{eps}$、Kahan、求和界是怎么来的 |
@@ -25,12 +25,12 @@
 
 | 量 | 怎么算 | 它回答什么 | 常见误用 |
 |:--|:--|:--|:--|
-| **残差** $\boldsymbol{r}=\boldsymbol{b}-A\boldsymbol{x}$ | `r = b - A @ x` | 方程被满足到什么程度（**可以算**） | 拿它当误差用（[例 2.4.4](ch02/sec24.md#sec-2.4.4)：残差 $2.5\times10^{-12}$、误差 $50\%$） |
+| **残差** $\boldsymbol{r}=\boldsymbol{b}-A\boldsymbol{x}$ | `r = b - A @ x` | 方程被满足到什么程度（**可以算**） | 拿它当误差用（[例 2.4.4](supplement/sec24.md#sup-2.4.4)：残差 $2.5\times10^{-12}$、误差 $50\%$） |
 | **后向误差**（向后误差） | 范数型：$\eta=\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert A\rVert\lVert\boldsymbol{x}\rVert+\lVert\boldsymbol{b}\rVert}$ | 算得的解是「哪个邻近问题的精确解」——求解器**实际保证**的量 | 把后向误差当精度报告（它是算法指标，不是解的准确度） |
-| **条件数** $\mathrm{cond}(A)$ | `np.linalg.cond(A, 2)`（内部走 SVD） | 问题天生的放大倍数 / 要丢几位 | 不注明范数就互相比较（[2.4.6](ch02/sec24.md#sec-2.4.6)） |
+| **条件数** $\mathrm{cond}(A)$ | `np.linalg.cond(A, 2)`（内部走 SVD） | 问题天生的放大倍数 / 要丢几位 | 不注明范数就互相比较（[2.4.6](supplement/sec24.md#sup-2.4.6)） |
 | **误差** $\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$ | 一般算不出（真解未知） | 解离真值多远 | 用「相邻两次迭代之差」冒充它 |
 
-**核心判据（把残差换算成误差）：** $\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\lesssim\mathrm{cond}(A)\cdot\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-2.4.4]）。求解器向后稳定只保证**残差**小；要谈解准不准，必须乘上条件数。**丢掉几位有效数字**用 $k\approx\log_{10}\mathrm{cond}(A)$ 估（[2.4.2 换算表](ch02/sec24.md#sec-2.4.2)）。
+**核心判据（把残差换算成误差）：** $\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\lesssim\mathrm{cond}(A)\cdot\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-sup-2.4.4]）。求解器向后稳定只保证**残差**小；要谈解准不准，必须乘上条件数。**丢掉几位有效数字**用 $k\approx\log_{10}\mathrm{cond}(A)$ 估（[2.4.2 换算表](supplement/sec24.md#sup-2.4.2)）。
 
 **「后向误差与条件数无关」的实测证据**（同一批 Hilbert 矩阵，`np.linalg.solve` 求解、真解全为 $1$）：
 
@@ -46,9 +46,9 @@
 | 症状 | 先算 | 判据 | 处方 |
 |:--|:--|:--|:--|
 | 残差很小，结果仍可疑 | $\mathrm{cond}(A)$ 与 $\mathrm{cond}\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$ | 后者远大于期望精度 | 换 QR / SVD、迭代精化、提高工作精度、正则化 |
-| 解的系数量级离谱（如 $O(10^{5})$ 而真值 $O(1)$） | 奇异值谱、行量级 | 有条件数平方迹象（曾算 $A^{\mathrm T}A$） | 先用 QR / SVD 复算，再决定是否正则化（[习题 D1](ch02/exercises.md) 的诊断报告就是这套流程） |
+| 解的系数量级离谱（如 $O(10^{5})$ 而真值 $O(1)$） | 奇异值谱、行量级 | 有条件数平方迹象（曾算 $A^{\mathrm T}A$） | 先用 QR / SVD 复算，再决定是否正则化（[习题 D1](supplement/exercises.md) 的诊断报告就是这套流程） |
 | 换一种解法结果差很多 | $\mathrm{cond}(A)$ | 各算法误差都 $\sim\mathrm{cond}\cdot u$ | 确认病态属于问题本身，改算法没有用 |
-| 行量级悬殊（如相差 $10^{10}$） | $\mathrm{cond}_\infty$ 前后对比 | 行均衡化后条件数骤降 | 先均衡化再评估（[例 2.4.5](ch02/sec24.md#sec-2.4.5)：$2\times10^{20}\to4\times10^{10}$） |
+| 行量级悬殊（如相差 $10^{10}$） | $\mathrm{cond}_\infty$ 前后对比 | 行均衡化后条件数骤降 | 先均衡化再评估（[例 2.4.5](supplement/sec24.md#sup-2.4.5)：$2\times10^{20}\to4\times10^{10}$） |
 | 数值秩每次统计都不一样 | 奇异值谱 + 噪声水平 | $\sigma_k$ 与噪声同量级 | 按噪声水平定阈值，不照抄库的默认值 |
 
 **可复算的两个锚点**（本机 numpy 2.4.6，命令可直接跑）：8 阶 Hilbert 矩阵 $\mathrm{cond}_2=1.53\times10^{10}$，`solve` 最大误差 $1.2\times10^{-7}$；12 阶 $\mathrm{cond}_2=1.66\times10^{16}$，`solve` 最大误差 $0.52$（真值全为 $1$）——第二行说明**解已经失去意义，而求解器并不报错**。
@@ -75,7 +75,7 @@
 | 列满秩、$\mathrm{cond}\lesssim10^{8}$ | QR（Householder） | `np.linalg.lstsq`；显式用 `np.linalg.qr` + 回代亦可 | 误差 $\sim\mathrm{cond}(A)u$ |
 | 列满秩、$\mathrm{cond}\gtrsim10^{8}$ | SVD + 阈值 | `np.linalg.lstsq`（内部走 SVD）或显式 `svd` | 同上，且能同时给出数值秩 |
 | 秩亏 / 近似秩亏 | 截断伪逆 | `np.linalg.pinv(A, rcond=...)`、`lstsq(..., rcond=...)` | 阈值按噪声水平 |
-| **正态方程**（$A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$） | 只用于教学与手算 | — | 误差 $\sim\mathrm{cond}(A)^{2}u$，唯一优点是公式短（[2.3.6](ch02/sec23.md#sec-2.3.6)） |
+| **正态方程**（$A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$） | 只用于教学与手算 | — | 误差 $\sim\mathrm{cond}(A)^{2}u$，唯一优点是公式短（[2.3.6](supplement/sec23.md#sup-2.3.6)） |
 
 **特征值与奇异值问题**
 
@@ -83,11 +83,11 @@
 |:--|:--|:--|:--|
 | 稠密、一般矩阵、全部特征值 | QR 算法（先化 Hessenberg 再迭代） | `scipy.linalg.eig` | 特征值可为复数，注意返回类型 |
 | 稠密、**对称**矩阵、全部特征值 | 对称 QR / 分治 | `scipy.linalg.eigh` | 特征值必为实数、特征向量正交，比 `eig` 又快又稳 |
-| 只要**主特征值**、矩阵–向量乘足够便宜 | 幂法 + Rayleigh 商 | 手写循环（[算法 2.5.1](ch02/sec25.md#sec-2.5.3)） | 速度由 $\lvert\lambda_2/\lambda_1\rvert$ 决定，估计值用 Rayleigh 商（二阶精度） |
+| 只要**主特征值**、矩阵–向量乘足够便宜 | 幂法 + Rayleigh 商 | 手写循环（[算法 2.5.1](supplement/sec25.md#sup-2.5.3)） | 速度由 $\lvert\lambda_2/\lambda_1\rvert$ 决定，估计值用 Rayleigh 商（二阶精度） |
 | 大规模稀疏、要最大的几个（对称） | Lanczos | `scipy.sparse.linalg.eigsh` | 只做矩阵–向量乘，$O(\mathrm{nnz})$ 每步 |
 | 大规模稀疏、**非对称** | **Arnoldi** | `scipy.sparse.linalg.eigs` | 需要多大的 $k$、`ncv` 取多少，见函数文档 |
-| 全部特征值、还想看中间过程 | QR 迭代 | 手写（[2.3 预告](ch02/sec23.md#sec-2.3.7)） | $A'=RQ=Q^{\mathrm T}AQ$ 相似，对角元趋于特征值；收敛还须核对结构、初始分量与相位；模互异本身不足以保证整个矩阵收敛 |
-| 只想知道特征值「被困在哪」 | Gerschgorin 圆盘 | 读一遍矩阵即可（[2.5.2](ch02/sec25.md#sec-2.5.2)） | $O(n^{2})$ 的围栏；对角占优时圆心就是良好近似 |
+| 全部特征值、还想看中间过程 | QR 迭代 | 手写（[2.3 预告](supplement/sec23.md#sup-2.3.7)） | $A'=RQ=Q^{\mathrm T}AQ$ 相似，对角元趋于特征值；收敛还须核对结构、初始分量与相位；模互异本身不足以保证整个矩阵收敛 |
+| 只想知道特征值「被困在哪」 | Gerschgorin 圆盘 | 读一遍矩阵即可（[2.5.2](supplement/sec25.md#sup-2.5.2)） | $O(n^{2})$ 的围栏；对角占优时圆心就是良好近似 |
 | 稀疏 / 只要前几个最大奇异值 | 迭代 SVD | `scipy.sparse.linalg.svds` | 稠密的完整 SVD 用 `np.linalg.svd` |
 
 ### 三、收敛判定与停止准则 {#sec-工具箱-3}
@@ -95,16 +95,16 @@
 **三条停止准则，缺一不可：** ① **相对**残差（或相对增量）阈值 $\lVert\boldsymbol{r}_k\rVert/\lVert\boldsymbol{b}\rVert\le\varepsilon_{\mathrm{tol}}$；② 迭代次数上限（阈值没到也要停下来并报告）；③ 判据必须能算——用真解做判据等于没有判据。
 
 ::: think 一个高频误解：相邻两次迭代值差很小，就认为接近真解
-不成立。迭代矩阵的范数接近 $1$ 时，相邻差可以很小而离真解很远——这是[必考点总表](training/arena.md#必考点总表老师课堂反复强调)里的一条，也是[第 5 讲](lectures/lec05.md)专门强调的。**收敛判据分清两层：充要条件是 $\rho(G)\lt1$，工程上实用的充分条件是 $\lVert G\rVert\lt1$**（[2.5.6](ch02/sec25.md#sec-2.5.6) 还提醒：用 $\rho$ 判断在非正规矩阵上会遇到瞬态增长）。
+不成立。迭代矩阵的范数接近 $1$ 时，相邻差可以很小而离真解很远——这是[必考点总表](training/arena.md#必考点总表老师课堂反复强调)里的一条，也是[第 5 讲](lectures/lec05.md)专门强调的。**收敛判据分清两层：充要条件是 $\rho(G)\lt1$，工程上实用的充分条件是 $\lVert G\rVert\lt1$**（[2.5.6](supplement/sec25.md#sup-2.5.6) 还提醒：用 $\rho$ 判断在非正规矩阵上会遇到瞬态增长）。
 :::
 
 **实测收敛阶怎么估。** 若误差满足 $e_{k+1}\approx C e_k^{p}$，则连续两个误差比给出
 
 $$p\approx\frac{\ln\!\left(e_{k+1}/e_k\right)}{\ln\!\left(e_k/e_{k-1}\right)} .$$
 
-**可复算的例子**（幂法求主特征值，矩阵与数据取自[例 2.5.3](ch02/sec25.md#sec-2.5.3)：$A=\begin{pmatrix}5&2&0\\2&4&1\\0&1&3\end{pmatrix}$）：$\lvert\lambda_2/\lambda_1\rvert=0.5212$，实测 Rayleigh 商误差每步乘以 $0.2717$。两点读法：
+**可复算的例子**（幂法求主特征值，矩阵与数据取自[例 2.5.3](supplement/sec25.md#sup-2.5.3)：$A=\begin{pmatrix}5&2&0\\2&4&1\\0&1&3\end{pmatrix}$）：$\lvert\lambda_2/\lambda_1\rvert=0.5212$，实测 Rayleigh 商误差每步乘以 $0.2717$。两点读法：
 
-- **比值的读法**：$0.2717=0.5212^{2}$ 恰好说明「Rayleigh 商的误差按 $(\lambda_2/\lambda_1)^{2k}$ 衰减」——比只用 $\lVert A\boldsymbol{x}\rVert$ 估计（每步 $0.5212$）快一倍（[定理 2.5.3](ch02/sec25.md#thm-2.5.3)）。
+- **比值的读法**：$0.2717=0.5212^{2}$ 恰好说明「Rayleigh 商的误差按 $(\lambda_2/\lambda_1)^{2k}$ 衰减」——比只用 $\lVert A\boldsymbol{x}\rVert$ 估计（每步 $0.5212$）快一倍（[定理 2.5.3](supplement/sec25.md#thm-sup-2.5.3)）。
 - **阶的读法**：把实测误差代进上面的公式，得到 $p\approx0.98$——它告诉你的信息是「这个序列是**几何**衰减、比值 $0.27$」，而不是「一阶收敛」。**报「阶」之前先确认序列真的落在 $e_{k+1}\approx Ce_k^{p}$（$p\gt1$）的形态里**：割线法这类 $p\approx1.618$ 的序列（[第 9 讲](lectures/lec09.md)）才适合直接用三点公式估阶。
 
 **一份可以照抄的停止准则模板：**
@@ -171,12 +171,12 @@ x = np.linalg.solve(A, b)       # 正确的写法
 
 $$\mathrm{cond}(A)=6.84\times10^{6},\qquad \mathrm{cond}(A^{\mathrm T}A)=4.68\times10^{13},\qquad \text{比值}=6.84\times10^{6}=\mathrm{cond}(A).$$
 
-所以：算 SVD 用 `np.linalg.svd(A)`；解最小二乘用 `lstsq` / QR；算条件数用 `cond(A, 2)`。**`eigh(A.T @ A)` 只适合演示「条件数为什么会平方」**（[2.6.7 常见错误 2](ch02/sec26.md#sec-2.6.7)、[2.8.2 陷阱 5](ch02/sec28.md#sec-2.8.2)）。
+所以：算 SVD 用 `np.linalg.svd(A)`；解最小二乘用 `lstsq` / QR；算条件数用 `cond(A, 2)`。**`eigh(A.T @ A)` 只适合演示「条件数为什么会平方」**（[2.6.7 常见错误 2](supplement/sec26.md#sup-2.6.7)、[2.8.2 陷阱 5](supplement/sec28.md#sup-2.8.2)）。
 
 **3. 不要把默认阈值当数据的分辨率。**
 
-- `np.linalg.matrix_rank` 的默认阈值是 $\sigma_1\cdot\max(m,n)\cdot\mathrm{eps}$（本机 numpy 2.4.6 文档如此），它只适合「精确矩阵、数值上降秩」的场景。带噪数据的实测：给一个数值秩 3 的矩阵加 $10^{-9}$ 量级噪声后，默认阈值判出 $\operatorname{rank}=20$，按噪声水平截断得 $3$（[实验三 (d)](ch02/sec27.md#sec-2.7.3)）。
-- 同一条也适用于伪逆：`np.linalg.pinv` 的默认 `rcond` 是 $10^{-15}$，不截断的伪逆会把 $1/\sigma_{\min}$ 放大 $\mathrm{cond}(A)$ 倍，与直接求逆同样危险（[2.6.4 思考](ch02/sec26.md#sec-2.6.4)）。**正确做法**：按数据噪声水平给 `rcond`（或 `tol`），并报告所选阈值。
+- `np.linalg.matrix_rank` 的默认阈值是 $\sigma_1\cdot\max(m,n)\cdot\mathrm{eps}$（本机 numpy 2.4.6 文档如此），它只适合「精确矩阵、数值上降秩」的场景。带噪数据的实测：给一个数值秩 3 的矩阵加 $10^{-9}$ 量级噪声后，默认阈值判出 $\operatorname{rank}=20$，按噪声水平截断得 $3$（[实验三 (d)](supplement/sec27.md#sup-2.7.3)）。
+- 同一条也适用于伪逆：`np.linalg.pinv` 的默认 `rcond` 是 $10^{-15}$，不截断的伪逆会把 $1/\sigma_{\min}$ 放大 $\mathrm{cond}(A)$ 倍，与直接求逆同样危险（[2.6.4 思考](supplement/sec26.md#sup-2.6.4)）。**正确做法**：按数据噪声水平给 `rcond`（或 `tol`），并报告所选阈值。
 
 ### 六、验收清单（提交数值结果前过一遍）{#sec-工具箱-6}
 
@@ -186,10 +186,10 @@ $$\mathrm{cond}(A)=6.84\times10^{6},\qquad \mathrm{cond}(A^{\mathrm T}A)=4.68\ti
 |:--:|:--|:--|:--|
 | 1 | **残差** | `r = b - A @ x; np.linalg.norm(r)/np.linalg.norm(b)` | 小于设定的相对阈值 |
 | 2 | **条件数与预期精度** | `np.linalg.cond(A, 2)`；算 $\mathrm{cond}\cdot u$ | 报告的位数与 $k\approx\log_{10}\mathrm{cond}$ 一致 |
-| 3 | **合成算例的前向误差** | 取真解 `x_true = ones(n)`、`b = A @ x_true`，再解回来比最大分量误差 | 与 $\mathrm{cond}\cdot u$ 同量级（[2.4.2](ch02/sec24.md#sec-2.4.2)、[实验二](ch02/sec27.md#sec-2.7.2)） |
+| 3 | **合成算例的前向误差** | 取真解 `x_true = ones(n)`、`b = A @ x_true`，再解回来比最大分量误差 | 与 $\mathrm{cond}\cdot u$ 同量级（[2.4.2](supplement/sec24.md#sup-2.4.2)、[实验二](supplement/sec27.md#sup-2.7.2)） |
 | 4 | **最小二乘的正交条件** | `A.T @ (b - A @ x)` | 各分量 $\sim u\lVert A\rVert\lVert\boldsymbol{r}\rVert$（免费自检） |
 | 5 | **QR / SVD 的回乘** | `np.linalg.norm(Q @ R - A)`、`np.linalg.norm(Q.T @ Q - I)` | 分别 $\sim u\lVert A\rVert$ 与 $\sim u$（Householder / Givens） |
-| 6 | **低秩逼近的误差** | `np.linalg.norm(A - A_k, 2)` 与 `S[k]` 对照 | 两者相等至机器精度（[@thm-2.6.4]） |
+| 6 | **低秩逼近的误差** | `np.linalg.norm(A - A_k, 2)` 与 `S[k]` 对照 | 两者相等至机器精度（[@thm-sup-2.6.4]） |
 | 7 | **对称 / 正定性** | `np.allclose(A, A.T)`；Cholesky 是否成功 | 声明了对称就必须核对 |
 | 8 | **行均衡化后的条件数** | `B = A / A.max(axis=1, keepdims=True)`，再算 $\mathrm{cond}_\infty$ | 判断「真病态」还是「单位没选好」 |
 | 9 | **两种算法的交叉验证** | `lstsq` 与 QR 各算一次；`pinv(rcond)` 与截断 SVD 对照 | 差异落在预期量级内，否则说明某一步写错了 |
@@ -202,14 +202,14 @@ $$\mathrm{cond}(A)=6.84\times10^{6},\qquad \mathrm{cond}(A^{\mathrm T}A)=4.68\ti
 
 | 我遇到的事 | 本页 | 正文 | 先用哪个函数 |
 |:--|:--|:--|:--|
-| 解出来不准，不知道是问题还是算法 | [第一节](#sec-工具箱-1) | [2.4](ch02/sec24.md) | `np.linalg.cond` |
-| 超定系统要不要担心病态 | [第二节](#sec-工具箱-2) | [2.3.6](ch02/sec23.md#sec-2.3.6) | `np.linalg.lstsq` |
-| 秩亏 / 有噪声的拟合 | [第五节](#sec-工具箱-5) | [2.6.4](ch02/sec26.md#sec-2.6.4)、[习题 D2](ch02/exercises.md) | `np.linalg.pinv(A, rcond=...)` |
-| 要四个基本子空间 | [第二节](#sec-工具箱-2) | [2.2](ch02/sec22.md)、[2.6.3](ch02/sec26.md#sec-2.6.3) | `np.linalg.svd` |
-| 矩阵很大、还是稀疏的 | [第四节](#sec-工具箱-4) | [2.3.5](ch02/sec23.md#sec-2.3.5) | `scipy.sparse.linalg.spsolve` / `cg` |
-| 只要最大的几个特征值 | [第二节](#sec-工具箱-2) | [2.5.3](ch02/sec25.md#sec-2.5.3) | `scipy.sparse.linalg.eigsh` / `eigs` |
-| 迭代该停在哪里、阶是多少 | [第三节](#sec-工具箱-3) | [2.5.3](ch02/sec25.md#thm-2.5.3)、[第 5 讲](lectures/lec05.md) | — |
-| 想压缩 / 降维 / 去噪 | [第二节](#sec-工具箱-2) | [2.6.5](ch02/sec26.md#sec-2.6.5)、[2.6.6](ch02/sec26.md#sec-2.6.6) | `np.linalg.svd`（截断 SVD） |
+| 解出来不准，不知道是问题还是算法 | [第一节](#sec-工具箱-1) | [2.4](supplement/sec24.md) | `np.linalg.cond` |
+| 超定系统要不要担心病态 | [第二节](#sec-工具箱-2) | [2.3.6](supplement/sec23.md#sup-2.3.6) | `np.linalg.lstsq` |
+| 秩亏 / 有噪声的拟合 | [第五节](#sec-工具箱-5) | [2.6.4](supplement/sec26.md#sup-2.6.4)、[习题 D2](supplement/exercises.md) | `np.linalg.pinv(A, rcond=...)` |
+| 要四个基本子空间 | [第二节](#sec-工具箱-2) | [2.2](supplement/sec22.md)、[2.6.3](supplement/sec26.md#sup-2.6.3) | `np.linalg.svd` |
+| 矩阵很大、还是稀疏的 | [第四节](#sec-工具箱-4) | [2.3.5](supplement/sec23.md#sup-2.3.5) | `scipy.sparse.linalg.spsolve` / `cg` |
+| 只要最大的几个特征值 | [第二节](#sec-工具箱-2) | [2.5.3](supplement/sec25.md#sup-2.5.3) | `scipy.sparse.linalg.eigsh` / `eigs` |
+| 迭代该停在哪里、阶是多少 | [第三节](#sec-工具箱-3) | [2.5.3](supplement/sec25.md#thm-sup-2.5.3)、[第 5 讲](lectures/lec05.md) | — |
+| 想压缩 / 降维 / 去噪 | [第二节](#sec-工具箱-2) | [2.6.5](supplement/sec26.md#sup-2.6.5)、[2.6.6](supplement/sec26.md#sup-2.6.6) | `np.linalg.svd`（截断 SVD） |
 | 浮点误差的来龙去脉 | — | [1.2.5](ch01/sec12.md#sec-1.2.5)、[附录 B](appendix/float.md) | `np.finfo(float).eps` |
 
 ---
