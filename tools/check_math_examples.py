@@ -23,13 +23,13 @@ def verify(actual: object, published: str) -> None:
     checked += 1
 
 
-text = (ROOT / 'numerical/src/course/ch02/sec25.md').read_text()
+text = (ROOT / 'numerical/src/course/ch02/sec24b.md').read_text()
 A = sp.Matrix([[10, -2, -2], [-2, 10, -1], [-1, -2, 3]])
 b = sp.Matrix([1, sp.Rational(1, 2), 1])
 assert A * sp.Matrix([sp.Rational(55, 238), sp.Rational(5, 34), sp.Rational(121, 238)]) == b
 D = sp.diag(*A.diagonal())
 L = sp.Matrix(3, 3, lambda i, j: A[i, j] if i > j else 0)
-for marker, N, stop in [('**例 6', D, 16), ('**例 9', D + L, 9)]:
+for marker, N, stop in [('::: ex 例 6', D, 16), ('::: ex 例 9', D + L, 9)]:
     published = {int(row[0]): row[1:] for row in rows_after(text, marker)}
     x = sp.zeros(3, 1)
     first_stop = None
@@ -47,7 +47,7 @@ for marker, N, stop in [('**例 6', D, 16), ('**例 9', D + L, 9)]:
 text = (ROOT / 'numerical/src/course/ch03/sec31.md').read_text()
 A = mp.matrix([[6, -12, 6], [-21, -3, 24], [-12, -12, 51]])
 assert sp.Matrix([[6, -12, 6], [-21, -3, 24], [-12, -12, 51]]).charpoly().as_expr().expand() == sp.Symbol('lambda')**3 - 54*sp.Symbol('lambda')**2 + 243*sp.Symbol('lambda') + 7290
-for marker, operator, initial in [('**例 1', A, [1, 0, 0]), ('**例 2', A**-1, [1, 1, 1])]:
+for marker, operator, initial in [('::: ex 例 1', A, [1, 0, 0]), ('::: ex 例 2', A**-1, [1, 1, 1])]:
     published = {int(row[0]): row[1:] for row in rows_after(text, marker)}
     u = mp.matrix(initial)
     y = u / mp.norm(u)
@@ -67,9 +67,9 @@ for marker, operator, initial in [('**例 1', A, [1, 0, 0]), ('**例 2', A**-1, 
 print(f'Mathematical examples passed: {checked} published values checked.')
 
 # Nonlinear examples: residuals must match the unrounded iterates, not displayed decimals.
-text = (ROOT / 'numerical/src/course/ch04/sec42.md').read_text()
+text = (ROOT / 'numerical/src/course/ch04/sec41b.md').read_text()
 f = lambda x: x**3 - x - 1
-for marker, fixed in [('**例 4', False), ('**例 5', True)]:
+for marker, fixed in [('::: ex 例 4', False), ('::: ex 例 5', True)]:
     published = rows_after(text, marker)
     previous, x = mp.mpf(1), mp.mpf(2)
     for row in published:

@@ -19,7 +19,7 @@ node --test tools/test_*.mjs
 python3 -m unittest discover -s tools -p 'test_*.py'
 python3 tools/check_book_boundaries.py
 
-for book in linux agent-systems distributed compilers algorithms embodied cpp-rust edge matrix robot; do
+for book in linux agent-systems distributed compilers algorithms embodied cpp-rust edge matrix robot numerical; do
   python3 "$book/tools/check_book.py"
 done
 python3 robot/tools/verify_teaching_examples.py >/dev/null
