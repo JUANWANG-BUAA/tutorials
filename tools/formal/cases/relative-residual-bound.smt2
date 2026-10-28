@@ -1,5 +1,5 @@
 ; Residual relative bound after norm axioms: e<=v*r and b<=a*x
-; Source: numerical/src/course/ch02/sec23.md#sec-2.3.3
+; Source: numerical/src/course/ch02/sec23.md#sec-2.3-exercises
 ; Real arithmetic is exact. No floating-point values are used.
 (set-logic QF_NRA)
 (set-option :timeout 15000)

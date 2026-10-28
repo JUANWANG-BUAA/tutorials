@@ -1,5 +1,5 @@
 ; Posterior contraction estimate from e<=q*(d+e)
-; Source: numerical/src/course/ch02/sec24.md#sec-2.4.2
+; Source: numerical/src/course/ch02/sec24.md#sec-2.4-theorems
 ; Real arithmetic is exact. No floating-point values are used.
 (set-logic QF_NRA)
 (set-option :timeout 15000)

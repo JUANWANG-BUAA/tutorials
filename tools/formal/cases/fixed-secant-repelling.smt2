@@ -1,5 +1,5 @@
 ; Fixed chord f=x^3-1, c=0: psi(x)=1/x^2 near root 1, with derivative -2.
-; Source: numerical/src/course/ch04/sec42.md#sec-4.1.8
+; Source: numerical/src/course/ch04/sec41b.md#sec-4.1.8
 (set-logic QF_NRA)
 (set-option :timeout 15000)
 (declare-const d Real)

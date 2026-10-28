@@ -1,5 +1,5 @@
 ; f=x+x^4: Newton error is 3*x^4/(1+4*x^3), so vanishing second derivative alone does not force exact order three
-; Source: numerical/src/course/ch04/sec42.md#sec-4.1.10
+; Source: numerical/src/course/ch04/sec41b.md#sec-4.1b-exercises
 (set-logic QF_NRA)
 (set-option :timeout 15000)
 (declare-const x Real)

@@ -1,5 +1,5 @@
 ; Ordered eigenvalues -40,-20,1: lambda_n is not largest magnitude; shift -10 is closer to 1 than -20
-; Source: numerical/src/course/ch03/sec31.md#sec-3.1.3
+; Source: numerical/src/course/ch03/sec31.md#sec-3.1-exercises
 (set-logic QF_NRA)
 (set-option :timeout 15000)
 (declare-const a Real)

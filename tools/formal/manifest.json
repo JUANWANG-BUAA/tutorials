@@ -82,7 +82,7 @@
   },
   {
     "id": "relative-residual-bound",
-    "source": "numerical/src/course/ch02/sec23.md#sec-2.3.3",
+    "source": "numerical/src/course/ch02/sec23.md#sec-2.3-exercises",
     "description": "Residual relative bound after norm axioms: e<=v*r and b<=a*x",
     "expected": [
       "sat",
@@ -91,7 +91,7 @@
   },
   {
     "id": "contraction-posterior-bound",
-    "source": "numerical/src/course/ch02/sec24.md#sec-2.4.2",
+    "source": "numerical/src/course/ch02/sec24.md#sec-2.4-theorems",
     "description": "Posterior contraction estimate from e<=q*(d+e)",
     "expected": [
       "sat",
@@ -118,7 +118,7 @@
   },
   {
     "id": "halley-sqrt-error",
-    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.5",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1-exercises",
     "description": "Halley sqrt exact error identity with positive target s and iterate x",
     "expected": [
       "sat",
@@ -127,7 +127,7 @@
   },
   {
     "id": "halley-sqrt-contraction",
-    "source": "numerical/src/course/ch04/sec41.md#sec-4.1.5",
+    "source": "numerical/src/course/ch04/sec41.md#sec-4.1-exercises",
     "description": "Positive sqrt Halley step reduces absolute error; squared ratio is <1",
     "expected": [
       "sat",
@@ -136,7 +136,7 @@
   },
   {
     "id": "newton-cubic-leading-error",
-    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "source": "numerical/src/course/ch04/sec41b.md#sec-4.1b-exercises",
     "description": "For f=e+a*e^3 the exact Newton error is 2*a*e^3/(1+3*a*e^2)",
     "expected": [
       "sat",
@@ -190,7 +190,7 @@
   },
   {
     "id": "newton-order-four-counterexample",
-    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "source": "numerical/src/course/ch04/sec41b.md#sec-4.1b-exercises",
     "description": "f=e+e^4: f second derivative at root is 0 but Newton error is order four",
     "expected": [
       "sat",
@@ -262,7 +262,7 @@
   },
   {
     "id": "algebraic-vs-magnitude",
-    "source": "numerical/src/course/ch03/sec31.md#sec-3.1.3",
+    "source": "numerical/src/course/ch03/sec31.md#sec-3.1-exercises",
     "description": "Ordered eigenvalues -40,-20,1: lambda_n is not largest magnitude; shift -10 is closer to 1 than -20",
     "expected": [
       "sat",
@@ -280,7 +280,7 @@
   },
   {
     "id": "newton-fourth-exact-map",
-    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.10",
+    "source": "numerical/src/course/ch04/sec41b.md#sec-4.1b-exercises",
     "description": "f=x+x^4: Newton error is 3*x^4/(1+4*x^3), so vanishing second derivative alone does not force exact order three",
     "expected": [
       "sat",
@@ -289,7 +289,7 @@
   },
   {
     "id": "fixed-secant-repelling",
-    "source": "numerical/src/course/ch04/sec42.md#sec-4.1.8",
+    "source": "numerical/src/course/ch04/sec41b.md#sec-4.1.8",
     "description": "Fixed chord f=x^3-1,c=0 gives derivative -2 at root 1; monotonic f and a sign bracket do not imply local convergence",
     "expected": [
       "sat",
