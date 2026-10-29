@@ -186,3 +186,15 @@
 <li><span class="obj-id">A3.13</span>用「秩 / 可逆 / 初等变换」前先分清：这次问的是逐点数值秩还是多项式秩？行列式是非零多项式还是非零常数？乘子是多项式还是有理函数？<span class="obj-lv">分析 / 评价</span></li>
 <li><span class="obj-id">A3.14</span>能区分「相抵保持的量」与「决定相抵的量」：秩只保持不决定，初等因子要配秩才决定，不变因子单独就决定；对特征矩阵秩条件自动满足。<span class="obj-lv">分析 / 评价</span></li>
 </ul>
+
+## 第四章 · 矩阵分析（4.1–4.3）
+
+三节随官方课件追加（均无录播），完整目标见[第四章自检表](ch04/checklist.md)：K4.1–K4.30（30 条知识目标）、S4.1–S4.8（8 条技能目标）、A4.1–A4.6（6 条素养目标），共 44 条，与[习题集](ch04/exercises.md)、[综合自测卷](ch04/mock-exam.md)逐条对应。这里只列三条最容易被忽略的素养目标：
+
+<ul class="objlist">
+<li><span class="obj-id">A4.1</span>面对估计问题先选尺子：列和 / 行和 / 谱 / Frobenius 各适合什么场景，代价是什么（[4.3.2](ch04/sec43.md#sec-4.3.2)）。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A4.6</span>能把「定义—图形—公式—数值」扣成闭环：看着[单位球的像](ch04/sec43.md#widget-norm-operator)说出三个诱导范数公式为什么给出同一个数。<span class="obj-lv">综合 / 评价</span></li>
+<li><span class="obj-id">A4.7</span>用结论前先核对前提：$p\ge1$、正定 Hermite、$\|I\|$ 是否为 $1$、$A$ 是否可逆、谱范数是否用了正规性。<span class="obj-lv">分析 / 评价</span></li>
+</ul>
+
+> **注**：A4.7 是上表的补充条目，不计入自检表的 44 条（自检表按 K / S / A 三系编号，A4.1–A4.6 为准）。

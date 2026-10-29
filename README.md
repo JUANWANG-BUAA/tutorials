@@ -5,7 +5,7 @@
 | 教程 | 在线阅读 | 当前范围 |
 |---|---|---|
 | 🤖 机器人控制技术 | [开始阅读](https://juanwang-buaa.github.io/tutorials/robot/) | 第 1–7 章：引言、运动学、微分运动学与静力学、轨迹规划、执行器与传感器、动力学（对应原书第 7 章）、运动控制（对应原书第 8 章） |
-| 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.8（相抵 / 满秩 / QR / Schur / 对角化 / 谱分解与幂等阵 / Jordan 分解上·λ 矩阵）。其余小节待素材补齐 |
+| 📐 矩阵论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/matrix/) | 第 1 章完整；第 2 章 2.1–2.5；第 3 章 3.1–3.2、3.4–3.8（相抵 / 满秩 / QR / Schur / 对角化 / 谱分解与幂等阵 / Jordan 分解）；第 4 章 4.1–4.3（向量范数 / 矩阵范数 / 相容范数，含范数闭环交互件）。其余小节待素材补齐 |
 | 📊 数值分析 | [开始阅读](https://juanwang-buaa.github.io/tutorials/numerical/) | 以课堂实录为主线（第 1–12 讲全程，含板书、老师强调考点与错词对照；第 10–11 讲含稳定计算、Runge 现象、数值实验与分层练习，第 12 讲含正交多项式族与数值积分分层练习）+ 教材正文七章 + 补充篇；复习层（公式卡 / 易混对照 / 术语索引 / 必读路径）+ 特训层（竞技场 / 考场模拟卷） |
 | 🧠 深度学习导论 | [开始阅读](https://juanwang-buaa.github.io/tutorials/deeplearning/) | 九讲正文按「讲导览 + 66 节 + 讲末材料」组织；每讲含总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷；另有工程工具箱、复习层（公式卡 / 易混对照卡 / 术语表 / 速查背记卡）、特训层（面试竞技场 / 综合自测卷）、延伸阅读地图与三个 Lab；依据 MIT 6.S191 整理扩充 |
 | 🐧 Linux 系统与内核 | [开始阅读](https://juanwang-buaa.github.io/tutorials/linux/) | 六篇 85 章 + 项目篇：命令行与 Shell、计算机系统（CSAPP/OSTEP）、系统编程（Kerrisk）、Linux 内核、网络协议栈、云原生；附 11 个真实项目的从零复现；逐章覆盖 10 部母本 |
@@ -15,6 +15,7 @@
 | ⚡ 算法、评估与因果推断 | [开始阅读](https://juanwang-buaa.github.io/tutorials/algorithms/) | 4 篇 14 章 + 2 个项目：渐进分析、分治、图算法、平摊分析、贪心与反例、动态规划、NP难与近似、在线算法、评估指标、假设检验、模型评估与选择、准实验因果推断；附算法评测系统与 A/B 测试分析流水线 |
 | 🦀 Rust 底层性能工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/cpp-rust/) | 4 篇 16 章 + 2 个项目：rustc 编译流水线、内存布局与 niche、所有权与 unsafe 证明、原子与 128B 伪共享消除、Tokio 调度器与管道背压、无锁队列与 EBR 代际回收、ARM NEON 向量化与零拷贝、系统采样与 CI 门禁；附 Agent 工具执行器与跨语言 C ABI 组件 |
 | 🔌 边缘嵌入式与实时系统 | [开始阅读](https://juanwang-buaa.github.io/tutorials/edge/) | 4 篇 14 章 + 2 个项目：x86/ARM/RISC-V 架构、汇编、ABI、启动、中断、抢占式 RTOS、总线 MMIO/DMA、CAN 协议栈、定点滤波、流式 DAQ、芯片低功耗、看门狗容错、INT8 张量推理与双区 OTA；附工业 CAN 诊断节点与高速 DAQ 自愈两个可运行项目 |
+| 📕 马克思主义原理 | [开始阅读](https://juanwang-buaa.github.io/tutorials/mlm/) | 6 篇 45 章 + 4 附录：唯物史观与辩证法（7 章）、政治经济学批判（12 章，商品到地租，含列宁帝国主义论）、国家与革命（7 章，含卢森堡《社会改良还是革命？》全篇论证与阿尔都塞《论再生产》六节）、第一国际到共产国际（6 章）、中国革命与毛泽东的理论（9 章，含文革与《论我国革命》）、当代问题与方法训练（4 章）；每章按问题—概念—机制—证据—反驳组织，引文标印刷页码并分级；附年表、59 条概念表、文献版本分级与 45 道习题 |
 
 ## 仓库结构
 
@@ -31,7 +32,9 @@ algorithms/    算法、评估与因果推断 · mdBook 源（4 篇 14 章 + 2 �
 embodied/      具身感知：SLAM、状态估计与传感器融合 · mdBook 源（4 篇 14 章 + 2 个项目；机器人卷 II）
 cpp-rust/      Rust 底层性能工程 · mdBook 源（4 篇 16 章 + 2 个项目；复用 shared/theme 与 tools）
 edge/          边缘嵌入式与实时系统 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
-shared/        十二本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
+mlm/           马克思主义原理 · mdBook 源（6 篇 45 章 + 4 附录；三类本书专属语义盒 arg/src/debate，
+               见 mlm/theme/css/mlm.css；复用 shared/theme 与 tools）
+shared/        十三本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
                RHINE.md 记录可选的「莱茵档案」皮肤
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
   README.md    共用层说明与本地构建方式
@@ -56,7 +59,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 
 ## 视觉层与图鉴（2026-10）
 
-这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。十本书共用同一套样式，但每本书保留自己的封面。
+这一轮把正文升级为图文并重的教程：保留文档的克制排版，用结构图和读图提示承担教学。各本书共用同一套样式，但每本书保留自己的封面。
 
 | 层 | 文件 | 作用 |
 |:--|:--|:--|
@@ -65,7 +68,7 @@ site-index.html 教程库首页（课程目录，构建时拷为 _site/index.htm
 | 图鉴交互层 | `shared/theme/js/atlas.js` | 原生图片自动图注、页首阅读元信息、菜单栏「图鉴」总览、宽图平移包装 |
 | 插图生成 | `tools/build_atlas_figures.py` | 输出 `<book>/src/assets/figures/*.md`：统一 900 宽的 SVG 展示台 + KaTeX 图注 |
 | 书封生成 | `tools/build_covers.py` | 输出 `<book>/src/assets/covers/*.svg`：机械臂 / 线性映射 / 三维曲面 / 神经网络四张封面 |
-| 导览页 | `site-index.html` | 主视觉十本书封 + 教学图鉴 feature + 十本书目（带封面）+ 五条学习路线；竖排标签、平装封面、hover 反相书目行、浅/深色切换 |
+| 导览页 | `site-index.html` | 主视觉书封条 + 教学图鉴 feature + 书目（带封面）+ 学习路线；竖排标签、平装封面、hover 反相书目行、浅/深色切换 |
 
 **加载顺序**：`base → <book> → katex → framework → atlas → prefs`。atlas 只用令牌与组件级
 特异性，不覆盖读者在 prefs 里的字体 / 字号 / 行距 / 版心选择。
@@ -111,7 +114,7 @@ pnpm --dir tools/theme-renderer install
 pnpm --dir tools/theme-renderer build
 python3 tools/theme-renderer/build_art.py
 
-# 十本书 + 搜索 + 术语 + 导览页
+# 全部书 + 搜索 + 术语 + 导览页
 ./build.sh
 node --test tools/test_theme_config.mjs
 ```

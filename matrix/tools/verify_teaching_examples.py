@@ -535,6 +535,72 @@ def check_direct_sum_38f_lemma():
     assert peq(Ds[3], pmul(pmul(lam, p3), p2))
 
 
+
+def check_ch04_norms():
+    """第四章 4.1–4.3 的数值与结构核对（精确有理数算术）。"""
+    # 例 4.3.2：列和、行和、Frobenius 与 A^HA 的特征值 5, 3, 15
+    a = [[2, -1, 0], [0, 2, 3], [1, 2, 0]]
+    assert [sum(abs(a[i][j]) for i in range(3)) for j in range(3)] == [3, 5, 3]
+    assert [sum(abs(x) for x in row) for row in a] == [3, 5, 3]
+    assert sum(x * x for row in a for x in row) == 23
+    ata = mul(trans(a), a)
+    assert ata == [[5, 0, 0], [0, 9, 6], [0, 6, 9]]
+    assert 5 + 3 + 15 == sum(ata[i][i] for i in range(3))          # tr = 23
+    assert 5 * 3 + 5 * 15 + 3 * 15 == 135                          # 二阶主子式和
+    assert 5 * 3 * 15 == 5 * (9 * 9 - 6 * 6)                       # det = 225
+
+    # 例 4.3.A：A = [[1,1],[0,1]]，A^TA 的特征值 (3 ± √5)/2，F 范数 √3
+    b = [[1, 1], [0, 1]]
+    assert mul(trans(b), b) == [[1, 1], [1, 2]]
+    assert sum(x * x for row in b for x in row) == 3
+    # λ = (3+√5)/2 满足 λ² − 3λ + 1 = 0；σ_max² = (3+√5)/2 > 0
+    assert 3 * 3 - 4 * 1 == 5
+
+    # 例 4.2.C：P^{-1}AP = [[1,1],[0,1]]（P = diag(10,1)）
+    p = [[10, 0], [0, 1]]
+    pinv = [[F(1, 10), 0], [0, 1]]
+    c = [[1, 10], [0, 1]]
+    assert mul(mul(pinv, c), p) == [[1, 1], [0, 1]]
+
+    # 例 4.3.C：A+E 的迹 4、行列式 11/4，特征值 (4 ± √5)/2
+    a2 = [[3, 0], [0, 1]]
+    e = [[0, F(1, 2)], [F(1, 2), 0]]
+    a4 = [[a2[i][j] + e[i][j] for j in range(2)] for i in range(2)]
+    assert a4 == [[3, F(1, 2)], [F(1, 2), 1]]
+    assert sum(a4[i][i] for i in range(2)) == 4
+    assert a4[0][0] * a4[1][1] - a4[0][1] * a4[1][0] == F(11, 4)
+
+    # 例 4.3.B / 习题 C9：Rayleigh 商在三个点上的读数
+    for mat, want in (
+        ([[2, 1], [1, 2]], [F(2), F(3), F(1)]),
+        ([[4, 1], [1, 4]], [F(4), F(5), F(3)]),
+    ):
+        pts = ([1, 0], [1, 1], [1, -1])
+        for x, w in zip(pts, want):
+            num = sum(x[i] * mat[i][j] * x[j] for i in range(2) for j in range(2))
+            den = sum(v * v for v in x)
+            assert F(num, den) == w
+
+    # 习题 C8：A = [[0,1/4],[1/4,0]] 的 (I−A)^{-1} 与行和 4/3
+    inv = [[F(16, 15), F(4, 15)], [F(4, 15), F(16, 15)]]
+    ima = [[F(1), F(-1, 4)], [F(-1, 4), F(1)]]
+    assert mul(ima, inv) == [[1, 0], [0, 1]]
+    assert sum(inv[0]) == F(4, 3)
+
+    # 习题 A9：全 1 矩阵的两个反例
+    a23 = [[1, 1, 1], [1, 1, 1]]
+    # 2×3 全 1：A^TA = 2J_3（每列 2 个 1），λmax = 6，‖A‖₂ = √6 > ‖A‖₁ = 2
+    assert mul(trans(a23), a23) == [[2, 2, 2], [2, 2, 2], [2, 2, 2]]
+    assert 2 * 3 == 6
+    a32 = [[1, 1], [1, 1], [1, 1]]
+    assert mul(trans(a32), a32) == [[3, 3], [3, 3]]
+    assert 3 * 2 == 6
+
+    # 习题 C6：A = [[1,2],[3,4]]，A^TA = [[10,14],[14,20]]，特征值 15 ± √221
+    c6 = [[1, 2], [3, 4]]
+    assert mul(trans(c6), c6) == [[10, 14], [14, 20]]
+    assert 10 + 20 == 30 and 10 * 20 - 14 * 14 == 4
+
 if __name__ == '__main__':
     checks = (
         check_parameter_eigenspaces, check_schur_basis, check_orthogonalization,
@@ -543,7 +609,7 @@ if __name__ == '__main__':
         check_smith_38d_self_test, check_smith_38e_diagonal_not_smith,
         check_jordan_38f_rank_formula, check_jordan_3812_transition,
         check_jordan_38g_powers_exponential, check_frobenius_minpoly_3813,
-        check_direct_sum_38f_lemma,
+        check_direct_sum_38f_lemma, check_ch04_norms,
     )
     for check in checks:
         check()

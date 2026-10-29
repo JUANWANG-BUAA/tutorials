@@ -741,6 +741,11 @@ $$\lambda I-A=\begin{bmatrix}
 
 ## 3.8.10 Jordan 块与 Jordan 标准形
 
+::: note 课堂信号（10-27）· Jordan 只考「用」，不考「证」
+
+老师明确说：考试主要考**如何利用 Jordan 分解的性质做矩阵分解**；“几乎不会考‘为什么可以 Jordan 分解’的证明”（10-27 00:16）。所以本节的存在性证明（本编补）用来建立结构直觉，**应试重点是**：由初等因子写 Jordan 形、由 Jordan 形读最小多项式、以及用 Jordan 形算幂与矩阵函数。原话见[课堂口述与考点信号](../lecture-signals.md)。
+:::
+
 现在把流水线的最后两站接上：初等因子 $\to$ Jordan 块 $\to$ Jordan 标准形。
 
 ::: def 定义 3.8.9 · Jordan 块 {#def-3.8.9}

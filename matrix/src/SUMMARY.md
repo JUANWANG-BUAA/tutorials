@@ -70,6 +70,21 @@
   - [考场竞技场：必考点三轮计时特训](ch03/arena.md)
   - [学习目标自检表](ch03/checklist.md)
 
+# 第四章 · 矩阵分析（4.1–4.3）
+
+- [第四章 · 矩阵分析](ch04/overview.md)
+  - [4.1 向量范数](ch04/sec41.md)
+  - [4.2 矩阵范数](ch04/sec42.md)
+  - [4.3 相容范数](ch04/sec43.md)
+
+- [第四章章末（4.1–4.3）](ch04/summary.md)
+  - [闭卷回忆卡：定义、定理与第一行](ch04/recall-cards.md)
+  - [勘误与补注（对照课件）](ch04/errata.md)
+  - [习题集](ch04/exercises.md)
+  - [综合自测卷](ch04/mock-exam.md)
+  - [考场竞技场：必考点三轮计时特训](ch04/arena.md)
+  - [学习目标自检表](ch04/checklist.md)
+
 # 特训 · 竞技与考场
 
 - [必考点竞技场 · 跨三章](training/arena.md)
@@ -86,3 +101,4 @@
 - [符号表](preface-notation.md)
 - [范围声明与使用方法](preface-scope.md)
 - [延伸阅读](reading.md)
+- [课堂口述与考点信号（2026 秋 · 王振乾）](lecture-signals.md)

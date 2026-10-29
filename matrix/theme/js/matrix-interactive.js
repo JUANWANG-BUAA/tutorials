@@ -1793,10 +1793,266 @@
   }
 
   /* ----------------------------------------------------------------------- *
+   * 部件：范数闭环 —— 单位球的像、最大拉伸方向与三个显式公式
+   * data-widget="norm-operator"
+   * ----------------------------------------------------------------------- */
+
+  function widgetNormOperator(root) {
+    var state = {
+      a: 1.2, b: 0.5, c: 0.3, d: 1.6,
+      p: "2",
+      x: [1, 0]
+    };
+
+    function pval() {
+      return state.p === "inf" ? Infinity : (state.p === "1" ? 1 : 2);
+    }
+
+    function norm(v, p) {
+      var x = Math.abs(v[0]), y = Math.abs(v[1]);
+      if (p === Infinity) return Math.max(x, y);
+      if (p === 1) return x + y;
+      return Math.sqrt(x * x + y * y);
+    }
+
+    /* 把方向 t 投到 p-单位球面上：径向缩放，形状即单位球边界。 */
+    function ballPoint(t, p) {
+      var c = Math.cos(t), s = Math.sin(t);
+      if (p === Infinity) {
+        var m = Math.max(Math.abs(c), Math.abs(s));
+        return m < 1e-9 ? [1, 0] : [c / m, s / m];
+      }
+      var e = 2 / p;
+      return [
+        c === 0 ? 0 : Math.sign(c) * Math.pow(Math.abs(c), e),
+        s === 0 ? 0 : Math.sign(s) * Math.pow(Math.abs(s), e)
+      ];
+    }
+
+    function apply(v) {
+      return [state.a * v[0] + state.b * v[1], state.c * v[0] + state.d * v[1]];
+    }
+
+    /* 三个显式极值：p=1 列和、p=∞ 行和、p=2 谱范数（2×2 闭式）。 */
+    function extremum(p) {
+      var A = state.a, B = state.b, C = state.c, D = state.d;
+      if (p === 1) {
+        var c1 = Math.abs(A) + Math.abs(C);
+        var c2 = Math.abs(B) + Math.abs(D);
+        return c1 >= c2
+          ? { value: c1, x: [1, 0], why: "列和 max{" + fmt(c1) + ", " + fmt(c2) + "}" }
+          : { value: c2, x: [0, 1], why: "列和 max{" + fmt(c1) + ", " + fmt(c2) + "}" };
+      }
+      if (p === Infinity) {
+        var r1 = Math.abs(A) + Math.abs(B);
+        var r2 = Math.abs(C) + Math.abs(D);
+        var x;
+        if (r1 >= r2) {
+          x = [A === 0 ? 0 : (A > 0 ? 1 : -1), B === 0 ? 0 : (B > 0 ? 1 : -1)];
+        } else {
+          x = [C === 0 ? 0 : (C > 0 ? 1 : -1), D === 0 ? 0 : (D > 0 ? 1 : -1)];
+        }
+        return { value: Math.max(r1, r2), x: x, why: "行和 max{" + fmt(r1) + ", " + fmt(r2) + "}" };
+      }
+      var m11 = A * A + C * C, m12 = A * B + C * D, m22 = B * B + D * D;
+      var tr = m11 + m22, det = m11 * m22 - m12 * m12;
+      var disc = Math.max(0, tr * tr - 4 * det);
+      var lam = (tr + Math.sqrt(disc)) / 2;
+      var vec;
+      if (Math.abs(m12) > 1e-10) vec = [m12, lam - m11];
+      else vec = m11 >= m22 ? [1, 0] : [0, 1];
+      return {
+        value: Math.sqrt(Math.max(0, lam)),
+        x: toUnit(vec),
+        why: "谱范数 √λ_max(AᵀA) = σ_max"
+      };
+    }
+
+    var controls = document.createElement("div");
+    controls.className = "widget-controls";
+    root.appendChild(controls);
+
+    var sA = makeSlider(controls, { label: "a₁₁", min: -2, max: 2, step: 0.1, value: state.a });
+    var sB = makeSlider(controls, { label: "a₁₂", min: -2, max: 2, step: 0.1, value: state.b });
+    var sC = makeSlider(controls, { label: "a₂₁", min: -2, max: 2, step: 0.1, value: state.c });
+    var sD = makeSlider(controls, { label: "a₂₂", min: -2, max: 2, step: 0.1, value: state.d });
+
+    var pRow = document.createElement("div");
+    pRow.className = "widget-controls";
+    root.appendChild(pRow);
+    var pButtons = [
+      { key: "1", text: "p = 1（列和）" },
+      { key: "2", text: "p = 2（谱）" },
+      { key: "inf", text: "p = ∞（行和）" }
+    ].map(function (item) {
+      var b = makeButton(pRow, item.text, "切换向量范数 " + item.text);
+      b.addEventListener("click", function () {
+        state.p = item.key;
+        syncButtons();
+        stage.render();
+        finish();
+      });
+      return { key: item.key, btn: b };
+    });
+    var reset = makeButton(pRow, "重置", "把矩阵恢复为默认值");
+    reset.addEventListener("click", function () {
+      state.a = 1.2; state.b = 0.5; state.c = 0.3; state.d = 1.6;
+      sA.set(state.a); sB.set(state.b); sC.set(state.c); sD.set(state.d);
+      state.x = toUnit([1, 0.2]);
+      stage.render();
+      finish();
+    });
+
+    function syncButtons() {
+      pButtons.forEach(function (it) {
+        it.btn.classList.toggle("is-active", it.key === state.p);
+        it.btn.setAttribute("aria-pressed", it.key === state.p ? "true" : "false");
+      });
+    }
+
+    var stage = makeStage(root, {
+      height: 300,
+      range: 2.9,
+      draggable: true,
+      aria: "范数闭环：虚线是单位球，填充区是它的像，蓝箭头是单位向量 x，红箭头是 Ax"
+    });
+    registerStage(stage);
+
+    var readout = makeReadout(root);
+
+    function draw(ctx, plane, pal) {
+      ctx.clearRect(0, 0, stage.w, stage.h);
+      drawGrid(ctx, plane, pal);
+      var p = pval();
+      var o = plane.toPx([0, 0]);
+
+      /* 单位球边界 */
+      var ball = [];
+      var image = [];
+      for (var i = 0; i <= 360; i++) {
+        var v = ballPoint(2 * Math.PI * i / 360, p);
+        ball.push(plane.toPx(v));
+        image.push(plane.toPx(apply(v)));
+      }
+
+      ctx.save();
+      /* 先给单位球一层浅色底，保证它在像的内部也看得见 */
+      ctx.beginPath();
+      ball.forEach(function (q, idx) {
+        if (idx === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = withAlpha(pal.blue, 0.10);
+      ctx.fill();
+
+      ctx.beginPath();
+      image.forEach(function (q, idx) {
+        if (idx === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = withAlpha(pal.accent, 0.12);
+      ctx.fill();
+      ctx.strokeStyle = withAlpha(pal.accent, 0.85);
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ball.forEach(function (q, idx) {
+        if (idx === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+      });
+      ctx.closePath();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = withAlpha(pal.muted, 0.95);
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      /* 最大拉伸方向：x* 与 Ax* */
+      var ext = extremum(p);
+      var px = plane.toPx(ext.x);
+      var pax = plane.toPx(apply(ext.x));
+      arrow(ctx, o.x, o.y, px.x, px.y, pal.blue, 2.6);
+      arrow(ctx, o.x, o.y, pax.x, pax.y, pal.red, 2.6);
+      dot(ctx, px.x, px.y, pal.blue, 5);
+      dot(ctx, pax.x, pax.y, pal.gold, 6);
+
+      /* 当前拖动的 x 与 Ax */
+      var pv = plane.toPx(state.x);
+      var pav = plane.toPx(apply(state.x));
+      arrow(ctx, o.x, o.y, pv.x, pv.y, withAlpha(pal.green, 0.95), 2.2);
+      arrow(ctx, o.x, o.y, pav.x, pav.y, withAlpha(pal.green, 0.95), 2.2);
+
+      label(ctx, "单位球", 14, 22, pal.muted, "12px " + pal.sans);
+      label(ctx, "它的像 A(B)", 14, 40, pal.accent, "12px " + pal.sans);
+      label(ctx, "x*", px.x + 10, px.y - 8, pal.blue, "italic 13px " + pal.serif);
+      label(ctx, "Ax*", pax.x + 10, pax.y - 8, pal.red, "italic 13px " + pal.serif);
+      if (Math.abs(state.x[0] - ext.x[0]) + Math.abs(state.x[1] - ext.x[1]) > 1e-3) {
+        label(ctx, "x", pv.x + 10, pv.y - 8, pal.green, "italic 13px " + pal.serif);
+        label(ctx, "Ax", pav.x + 10, pav.y - 8, pal.green, "italic 13px " + pal.serif);
+      }
+    }
+    stage.draw = draw;
+
+    function project(v) {
+      var p = pval();
+      var n = norm(v, p);
+      if (n < 1e-9) return [1, 0];
+      return [v[0] / n, v[1] / n];
+    }
+
+    function finish() {
+      var p = pval();
+      var ext = extremum(p);
+      var cur = norm(apply(state.x), p);
+      var name = p === Infinity ? "∞" : String(p);
+      var msg = "p = " + name + "：单位球面上 ‖Ax‖ 的最大值 = " + fmt(ext.value, 3) + "（" + ext.why + "）；" +
+        "当前 x 给出 " + fmt(cur, 3) + " ≤ " + fmt(ext.value, 3) + "。";
+      if (p === 2) {
+        var f = Math.sqrt(state.a * state.a + state.b * state.b + state.c * state.c + state.d * state.d);
+        msg += " 同一矩阵的 F-范数 = " + fmt(f, 3) + (f > ext.value + 1e-6 ? "，验证 ‖A‖₂ ≤ ‖A‖_F。" : "。");
+      } else {
+        msg += " 换一个 p，最大值就换一个公式——但都等于 max ‖Ax‖_p / ‖x‖_p。";
+      }
+      readout.textContent = msg;
+    }
+
+    enableDrag(
+      stage,
+      function (pt) {
+        state.x = project(pt);
+        stage.render();
+        finish();
+      },
+      function (delta) {
+        if (!delta || (!delta[0] && !delta[1])) return;
+        state.x = project([state.x[0] + delta[0] * 0.08, state.x[1] + delta[1] * 0.08]);
+        stage.render();
+        finish();
+      }
+    );
+
+    [sA, sB, sC, sD].forEach(function (s, i) {
+      s.input.addEventListener("input", function () {
+        var v = s.read();
+        if (i === 0) state.a = v;
+        if (i === 1) state.b = v;
+        if (i === 2) state.c = v;
+        if (i === 3) state.d = v;
+        stage.render();
+        finish();
+      });
+    });
+
+    state.x = project([1, 0.2]);
+    syncButtons();
+    finish();
+  }
+
+  /* ----------------------------------------------------------------------- *
    * 注册与启动
    * ----------------------------------------------------------------------- */
 
   var WIDGETS = {
+    "norm-operator": widgetNormOperator,
     "vec-decompose": widgetDecompose,
     "cauchy-schwarz": widgetCauchy,
     "gram-schmidt": widgetGramSchmidt,

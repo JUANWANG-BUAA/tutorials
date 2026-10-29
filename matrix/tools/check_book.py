@@ -311,7 +311,7 @@ def check_checklist(ch: str, claimed_rows: int) -> None:
 
 
 def check_recall_cards() -> None:
-    pages = ["ch01/recall-cards.md", "ch02/recall-cards.md", "ch03/recall-cards.md"]
+    pages = ["ch01/recall-cards.md", "ch02/recall-cards.md", "ch03/recall-cards.md", "ch04/recall-cards.md"]
     total = 0
     for rel in pages:
         if not (SRC / rel).exists():
@@ -369,24 +369,24 @@ def check_mock_exam(ch: str, expected_total: int) -> None:
 
 def check_readme_summary() -> None:
     text = (ROOT / "README.md").read_text(encoding="utf-8")
-    m = re.search(r"（(\d+) 题 / (\d+) 题 / (\d+) 题）", text)
+    m = re.search(r"（(\d+) 题 / (\d+) 题 / (\d+) 题 / (\d+) 题）", text)
     if not m:
-        fail("README.md: 找不到习题数自称「（N 题 / N 题 / N 题）」")
+        fail("README.md: 找不到习题数自称「（N 题 / N 题 / N 题 / N 题）」")
         return
-    claimed = [int(m.group(i)) for i in (1, 2, 3)]
+    claimed = [int(m.group(i)) for i in (1, 2, 3, 4)]
     actual = []
-    for ch in ("ch01", "ch02", "ch03"):
+    for ch in ("ch01", "ch02", "ch03", "ch04"):
         rel = f"{ch}/exercises.md"
         if (SRC / rel).exists():
             g = count_exercise_groups(read(rel))
             actual.append(sum(len(v) for v in g.values()))
     if claimed != actual:
         fail(f"README.md: 自称习题 {claimed} 题，实际 {actual} 题")
-    m = re.search(r"（(\d+) 条 / (\d+) 条 / (\d+) 条）", text)
+    m = re.search(r"（(\d+) 条 / (\d+) 条 / (\d+) 条 / (\d+) 条）", text)
     if m:
-        claimed = [int(m.group(i)) for i in (1, 2, 3)]
+        claimed = [int(m.group(i)) for i in (1, 2, 3, 4)]
         actual = [len(re.findall(r"^\|\s*\*{0,2}\s*[KSA][\d.]+", read(f"{ch}/checklist.md"), re.M))
-                  for ch in ("ch01", "ch02", "ch03")]
+                  for ch in ("ch01", "ch02", "ch03", "ch04")]
         if claimed != actual:
             fail(f"README.md: 自检表自称 {claimed} 条，实际 {actual} 条")
 
@@ -452,7 +452,7 @@ def main() -> int:
         check_math(strip_fences(text), rel)
     check_links(pages, page_texts, id_map)
 
-    for ch in ("ch01", "ch02", "ch03"):
+    for ch in ("ch01", "ch02", "ch03", "ch04"):
         if (SRC / f"{ch}/exercises.md").exists():
             check_exercise_page(ch)
     check_recall_cards()
@@ -460,9 +460,10 @@ def main() -> int:
     check_mock_exam("ch01", 100)
     check_mock_exam("ch02", 100)
     check_mock_exam("ch03", 200)  # 两份分卷，各 100 分
+    check_mock_exam("ch04", 100)
     check_placeholder(pages)
     check_readme_summary()
-    for ch, n in (("ch01", 25), ("ch02", 40), ("ch03", 87)):
+    for ch, n in (("ch01", 25), ("ch02", 40), ("ch03", 87), ("ch04", 44)):
         check_checklist(ch, n)
 
     n_pages = len(page_texts)

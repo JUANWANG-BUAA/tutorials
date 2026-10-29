@@ -97,6 +97,17 @@ $$\sum_ik_i\boldsymbol{a}_i=\boldsymbol{0}\iff\sum_ik_i\boldsymbol{c}_i=\boldsym
 对照记忆：相抵分解 $A=P^{-1}\Gamma Q$ 把 $A$ 的列空间「搬走」了（要问 $P^{-1}$ 才知道），满秩分解 $A=BC$ 把列空间**留在 $B$ 里**。
 :::
 
+::: note 课堂补充 · $N(A)=N(C)$（老师明说「忘了放在 PPT 上」） {#note-3.2-nullspace}
+
+**命题**：若 $A=BC$ 是满秩分解，则 $N(A)=N(C)$。
+
+**证明（两行）**：若 $C\boldsymbol{x}=\boldsymbol{0}$，则 $A\boldsymbol{x}=BC\boldsymbol{x}=\boldsymbol{0}$，故 $N(C)\subseteq N(A)$；反之若 $A\boldsymbol{x}=\boldsymbol{0}$，则 $C\boldsymbol{x}\in N(B)=\{\boldsymbol{0}\}$（$B$ 列满秩），故 $C\boldsymbol{x}=\boldsymbol{0}$。∎
+
+这是[课堂录像 10-13 01:30](../lecture-signals.md) 里老师点名「**非常重要、忘了放在 PPT 上**」的定理。它与上方的「读法」是同一件事的矩阵版：$A$ 与 $C$ 的列关系完全一致，所以零空间相同。注意它**只对满秩分解成立**——一般的 $A=BC$（$B$ 不满秩）推不出 $N(A)=N(C)$。
+
+**同一条课堂信号还有下半句**（10-13 01:16）：**“给一个矩阵 $A$，请同学们写出它的满秩分解”是过去几年经常考的题**；选基时“尽量选一组简单的”，但“比较保险的方法是对着列向量去选”——不要为了图快随手取基，换一道题可能就不成立。
+:::
+
 ::: note 注 1（课件原文）· 满秩分解不唯一，且证明即算法
 
 由于列空间 $R(A)$ 的**基选取不同**，矩阵 $A$ 的满秩分解也不唯一。实际上，上述证明也提供了一种满秩分解的**计算**方法。

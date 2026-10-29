@@ -5,7 +5,7 @@
 ::: note 怎么用这一页
 - 每一条都是「**最小可背诵单元**」——不是完整陈述，而是**能让你把完整陈述复述出来**的那根钩子。
 - 背不下来时**回正文核对**，不要在这里硬记：压缩层的作用是索引，不是替代品。
-- 本页覆盖**三章**：A / B 表各分三段——**A1/B1 第一章**、**A2/B2 第二章**、**A3/B3 第三章**；D / E / F 表各章混排。
+- 本页覆盖**四章**：A / B 表各分四段——**A1/B1 第一章**、**A2/B2 第二章**、**A3/B3 第三章**、**A4/B4 第四章（4.1–4.3）**；D / E / F 表各章混排。
 - 建议顺序：**先读 A / B 建立骨架 → 用 D 的口诀加固 → 用 E 的对比表分清易混 → 用 F 的反例守住边界**。
 - **背完之后去做题**：题型流程、二级结论与验算清单在[解题工具箱](toolbox.md)，限时训练在[考场竞技场](ch03/arena.md)（第三章）。
 - 想做成间隔复习卡，见文末「导出到 Anki」。
@@ -85,6 +85,21 @@
 | **正规矩阵** | $A^{\mathrm H}A=AA^{\mathrm H}$ | Hermite / 反 Hermite / 酉 / 正交都是；正规 $\subset$ 单纯，反之不然 |
 | **谱分解** | $A=\sum_j\lambda_jE_j$，$E_j$ 为谱阵 | $E_j=\sum_{\lambda_i=\lambda_j}\boldsymbol\alpha_i\boldsymbol\beta_i^{\mathrm H}$；谱阵**唯一**，$P$ 不唯一 |
 | **幂等 / 正交投影** | $E^2=E$ / $E^2=E=E^{\mathrm H}$ | 幂等 $=$ 投影（$R(E)\oplus N(E)$）；Hermite 幂等才是正交投影（$R(E)\perp N(E)$） |
+
+**A4 · 第四章（矩阵分析：范数）**
+
+| 概念 | 一句话 | 最容易漏 |
+|:--|:--|:--|
+| **向量范数** | 正定 $+$ 齐次 $+$ 三角，三条公理 | **不需要内积**；内积只是充分条件 |
+| **$p$-范数** | $\|x\|_p=\big(\sum|x_i|^p\big)^{1/p}$，$1\le p\le\infty$ | $0\lt p\lt1$ 三角不等式失效（只有「准范数」） |
+| **范数等价** | $k_1\|x\|_\beta\le\|x\|_\alpha\le k_2\|x\|_\beta$ | 常数是**正数**不是正整数；换范数不换极限 |
+| **矩阵的向量范数** | 把矩阵拉直，只查三条公理 | 只是「元素大小」，**不管乘法** |
+| **矩阵范数** | 三条公理 $+$ $\|AB\|\le\|A\|\|B\|$ | 第四条保证 $\|A^k\|\le\|A\|^k$，不能反向 |
+| **Frobenius 范数** | $\|A\|_F=\sqrt{\operatorname{tr}(A^{\mathrm H}A)}=\sqrt{\sum\sigma_i^2}$ | 满足乘法相容，但**不是**诱导范数 |
+| **相容** | $\|Ax\|_v\le\|A\|_m\|x\|_v$ | 管「矩阵乘向量」，与「矩阵乘矩阵」不同 |
+| **诱导（算子）范数** | $\|A\|=\max_{\|x\|=1}\|Ax\|_v$ | 与给定向量范数**配套且最紧**；$\|I\|=1$ |
+| **列和 / 行和 / 谱** | $\|A\|_1=\max_j\sum_i|a_{ij}|$；$\|A\|_\infty=\max_i\sum_j|a_{ij}|$；$\|A\|_2=\sigma_{\max}$ | 口诀「**1 列 $\infty$ 行**」；谱范数要算 $A^{\mathrm H}A$ |
+| **Rayleigh 商** | $R(x)=x^{\mathrm H}Ax/x^{\mathrm H}x$，$\lambda_n\le R\le\lambda_1$ | Hermite 矩阵才有这套上下界 |
 
 ## B. 定理：触发词 → 第一动作
 
@@ -180,6 +195,21 @@
 | 「$A$ 可对角化吗」 | 推论 3.8.3 | 初等因子全一次 $\iff$ 不变因子无重根 $\iff m_A$ 无重根 |
 | 「求最小多项式（最快）」 | 定理 3.8.6 | $m_A=d_n=f_A/D_{n-1}$；或取初等因子的最小公倍式（指数最大者） |
 | 「求 $P$ 使 $P^{-1}AP=J$」 | 例 3.8.12 | 从**最高阶**广义特征向量反推：先解 $(A-\lambda I)^s\boldsymbol v=0$ 且低一阶不为 $0$，再逐次乘 $(A-\lambda I)$ |
+
+**B4 · 第四章（矩阵分析：范数）**
+
+| 触发词 | 该用的定理 | 第一动作 |
+|:--|:--|:--|
+| 「这是不是范数」 | 定义 4.1.1（三公理） | 先查**正定性**（最常翻车：$\|x\|=|x_1-x_2|$ 不行），再查齐次；三角最后 |
+| 「这是不是矩阵范数」 | 定义 4.2.2（四公理） | 前三条之后**必查 $\|AB\|\le\|A\|\|B\|$**；反例优先试 $2\times2$ |
+| 「求 $\|A\|_1,\|A\|_\infty$」 | 定理 4.3.3 | 列和 / 行和取最大；口诀「1 列 $\infty$ 行」 |
+| 「求 $\|A\|_2$」 | 定理 4.3.3 | 先算 $A^{\mathrm H}A$，再求最大特征值开方（$=\sigma_{\max}$） |
+| 「证明两个范数等价」 | 定理 4.1.2 | 上界**算**（$\|x\|\le M\|x\|_2$），下界**紧**（反证 $+$ 单位球面有界闭） |
+| 「证明矩阵范数与向量范数相容」 | 定义 4.3.1 / 定理 4.3.2 | 若矩阵范数是诱导的，直接写 $\max$ 定义；否则用 $\|Ax\|\le\|A\|\|x\|$ 逐项验 |
+| 「造一个新的矩阵范数」 | 例 4.2.3 | $\|P^{-1}AP\|$；关键是 $P^{-1}ABP=(P^{-1}AP)(P^{-1}BP)$ |
+| 「$I-A$ 可逆吗」 | 定理 4.3.6 | 验 $\|A\|\lt1$（任选一把好算的范数）；逆的界 $\|(I-A)^{-1}\|\le\|I\|/(1-\|A\|)$ |
+| 「特征值的最大 / 最小」 | 推论 4.3.1 | Rayleigh 商：$\lambda_1=\max R$、$\lambda_n=\min R$；中间的第 $i$ 个用 Courant–Fischer |
+| 「特征值被扰动多少」 | 定理 4.3.5（Weyl） | 用 $\lambda_i(A)+\lambda_n(E)\le\lambda_i(A+E)\le\lambda_i(A)+\lambda_1(E)$；$\|E\|_2\le\varepsilon$ 时漂移 $\le\varepsilon$ |
 
 ## C. 八条公理：怎么记才不丢
 
@@ -332,9 +362,10 @@ python3 tools/export_cards.py --stats         # 只统计解析到多少张卡
 python3 tools/export_cards.py -o my/cards.tsv # 指定输出路径
 python3 tools/export_cards.py --tags          # 第三列写章标签（Anki tags 列）
 python3 tools/export_cards.py --only ch03     # 只导出第三章
+python3 tools/export_cards.py --only ch04     # 只导出第四章
 ```
 
-脚本会把三章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md)，共 97 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以三章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
+脚本会把四章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md) / [四](ch04/recall-cards.md)，共 117 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以各章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
 
 > 与[解题工具箱](toolbox.md)的分工：本页（与回忆卡）解决「记不记得住」，工具箱解决「做题时怎么下手、怎么验算」——考前两页各过一遍，再把[考场竞技场](ch03/arena.md)跑一轮计时赛，三件套齐活。
 
@@ -500,3 +531,25 @@ python3 tools/export_cards.py --only ch03     # 只导出第三章
 | 初等因子 | elementary divisor | 不变因子分解出的素因子幂的全体（多重集） | [3.8.7](ch03/sec38b.md#def-3.8.7) |
 | Jordan 块 | Jordan block | 对角元全 $\lambda_0$、超对角元全 $1$ 的 $s$ 阶方阵 $J_s(\lambda_0)$ | [3.8.10](ch03/sec38b.md#def-3.8.9) |
 | Jordan 标准形 | Jordan canonical form | 由初等因子逐个对应 Jordan 块拼成的分块对角阵；除块次序外唯一 | [3.8.10](ch03/sec38b.md#def-3.8.10) |
+
+**四 · 第四章（向量范数、矩阵范数、相容范数）**
+
+| 中文 | English | 一句话 | 出处 |
+|:--|:--|:--|:--|
+| 向量范数 | vector norm | 正定、齐次、三角三条公理；不依赖内积 | [4.1.1](ch04/sec41.md#def-4.1.1) |
+| 赋范线性空间 | normed linear space | 带范数的线性空间 $(V,\|\cdot\|)$ | [4.1.1](ch04/sec41.md#def-4.1.1) |
+| $p$-范数 | p-norm | $\|x\|_p=\big(\sum|x_i|^p\big)^{1/p}$，$1\le p\le\infty$ | [4.1.2](ch04/sec41.md#ex-4.1.3) |
+| 椭圆（加权）范数 | elliptic / weighted norm | $\|x\|_A=\sqrt{x^{\mathrm H}Ax}$，$A$ 正定 Hermite | [4.1.3](ch04/sec41.md#ex-4.1.4) |
+| 范数等价 | equivalence of norms | $k_1\|x\|_\beta\le\|x\|_\alpha\le k_2\|x\|_\beta$；有限维空间中任意两范数等价 | [4.1.4](ch04/sec41.md#def-4.1.2) |
+| 矩阵的向量范数 | entrywise matrix norm | 把矩阵拉直后的向量范数，只查三条公理 | [4.2.1](ch04/sec42.md#def-4.2.1) |
+| 矩阵范数 | matrix norm | 三条公理加乘法相容性 $\|AB\|\le\|A\|\|B\|$ | [4.2.2](ch04/sec42.md#def-4.2.2) |
+| Frobenius 范数 | Frobenius norm | $\|A\|_F=\sqrt{\operatorname{tr}(A^{\mathrm H}A)}=\sqrt{\sum\sigma_i^2}$，酉不变 | [4.2.3](ch04/sec42.md#ex-4.2.2) |
+| 相容 | compatibility | $\|Ax\|_v\le\|A\|_m\|x\|_v$：矩阵尺子与向量尺子配套 | [4.3.1](ch04/sec43.md#def-4.3.1) |
+| 诱导（算子）范数 | induced / operator norm | $\|A\|=\max_{\|x\|_v=1}\|Ax\|_v$，与给定向量范数配套且最紧 | [4.3.1](ch04/sec43.md#thm-4.3.2) |
+| 列和范数 | column-sum norm | $\|A\|_1=\max_j\sum_i|a_{ij}|$，由 $\|\cdot\|_1$ 诱导 | [4.3.2](ch04/sec43.md#thm-4.3.3) |
+| 行和范数 | row-sum norm | $\|A\|_\infty=\max_i\sum_j|a_{ij}|$，由 $\|\cdot\|_\infty$ 诱导 | [4.3.2](ch04/sec43.md#thm-4.3.3) |
+| 谱范数 | spectral norm | $\|A\|_2=\sqrt{\lambda_{\max}(A^{\mathrm H}A)}=\sigma_{\max}(A)$ | [4.3.2](ch04/sec43.md#thm-4.3.3) |
+| Rayleigh 商 | Rayleigh quotient | $R(x)=x^{\mathrm H}Ax/x^{\mathrm H}x$，$\lambda_n\le R\le\lambda_1$ | [4.3.3](ch04/sec43.md#note-4.3-rayleigh) |
+| 极大极小定理 | Courant–Fischer theorem | $\lambda_i=\max_{V_i}\min_{V_i}R=\min_{V_{n-i+1}}\max_{V}R$ | [4.3.3](ch04/sec43.md#thm-4.3.4) |
+| 特征值扰动 | eigenvalue perturbation | $\lambda_i(A)+\lambda_n(E)\le\lambda_i(A+E)\le\lambda_i(A)+\lambda_1(E)$ | [4.3.3](ch04/sec43.md#thm-4.3.5) |
+| Neumann 级数 | Neumann series | $\|A\|\lt1$ 时 $(I-A)^{-1}=\sum_{k\ge0}A^k$ | [4.3.4](ch04/sec43.md#sec-4.3.4) |
