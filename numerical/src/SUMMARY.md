@@ -97,6 +97,7 @@
   - [第 6 章导览（6.1 已开讲，6.2 起待讲）](course/ch06/overview.md)
 - [课堂精编 · 复习页](lectures/review.md)
 - [课堂精编 · 练习与自测](lectures/practice.md)
+- [老师布置的作业 · SPOC 自测题总览](lectures/homework.md)
 
 # 教材补齐 · 课堂未讲（老师进度之外）
 

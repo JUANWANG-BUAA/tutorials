@@ -538,6 +538,13 @@ $$F(\xi)=0\ \Longleftrightarrow\ \xi-\varphi(\xi)=0\ \Longleftrightarrow\ \xi=\v
   「所以写得那么厚」——**证明的细节不是人人都必须掌握**，「你只需要知道这些东西
   都是有道理的、来源都是有根据的」；但公式必须亲手推、结论必须记得住。
 
+::: note 本讲对应的书面作业 {#lec07-hw}
+
+SPOC「矩阵特征值与特征向量的计算」单元自测题（自测题 3，10-11 至 10-18，已截止）四道题全部落在本讲的幂法 / 反幂法 / 位移反幂法上，其中题 3-4（给 $\lambda_n$ 与 $\lambda_{n-1}$ 的计算方案）是本节内容的完整考核形态。
+精讲：[作业 3-1](../course/ch03/exercises.md#hw-3-1) · [3-2](../course/ch03/exercises.md#hw-3-2) · [3-3](../course/ch03/exercises.md#hw-3-3) · [3-4](../course/ch03/exercises.md#hw-3-4)；全部作业见[作业总览](homework.md)。
+
+:::
+
 ## 十三、课堂口述与标准术语对照（节选） {#lec07-S14}
 
 | 老师口述/转写 | 标准术语 |
