@@ -515,6 +515,28 @@ details.sol-box[open]{border-color:var(--ex-line)}
 details.sol-box[open]>summary{border-bottom:1px solid var(--line)}
 details.sol-box[open]>summary::before{transform:rotate(45deg)}
 .sol-inner{padding:var(--space-2) 19px var(--space-3)}
+/* 提示条：比解答更轻（虚线、暖色），只给「从哪下手」，不给全过程。 */
+details.hint-box{
+  margin:11px 0;padding:0;border:1px dashed var(--think-line);
+  background:var(--think-bg);color:var(--think-ink);
+}
+details.hint-box>summary{
+  display:flex;align-items:center;gap:9px;
+  padding:var(--space-2) 15px;color:var(--think-ink);
+  font:700 var(--fs-2xs)/1.5 var(--sans);letter-spacing:.06em;
+  cursor:pointer;list-style:none;user-select:none;
+}
+details.hint-box>summary::-webkit-details-marker{display:none}
+details.hint-box>summary::before{
+  content:"";width:5px;height:5px;
+  border-right:1px solid currentColor;border-bottom:1px solid currentColor;
+  transform:rotate(-45deg);transition:transform .16s;
+}
+details.hint-box[open]>summary{border-bottom:1px dashed var(--think-line)}
+details.hint-box[open]>summary::before{transform:rotate(45deg)}
+.hint-inner{padding:var(--space-2) 17px 10px;color:var(--think-ink);font-size:14.5px}
+.hint-inner p:first-child{margin-top:0}
+.hint-inner p:last-child{margin-bottom:0}
 /* 解答工具条 */
 .sol-toolbar{margin:26px 0 var(--space-2);text-align:right}
 .sol-toolbar button{

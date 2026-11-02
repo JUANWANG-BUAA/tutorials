@@ -150,6 +150,9 @@ html[data-density="roomy"]{
 details.sol-box{margin:var(--reading-detail-gap) 0}
 details.sol-box>summary{padding:var(--reading-detail-pad)}
 .sol-inner{padding:var(--reading-sol-pad)}
+details.hint-box{margin:var(--reading-detail-gap) 0}
+details.hint-box>summary{padding:var(--reading-detail-pad)}
+.hint-inner{padding:var(--reading-sol-pad)}
 .content figure{margin:var(--reading-fig-gap) 0;padding:var(--reading-fig-pad)}
 .content blockquote{margin:var(--reading-quote-gap) 0;padding:var(--reading-quote-pad)}
 

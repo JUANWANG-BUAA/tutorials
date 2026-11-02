@@ -24,6 +24,7 @@ additional-css = [
 additional-js = [
   "theme/js/prefs-config.js",
   "theme/js/page-extras.js",
+  "theme/js/cpp-rust.js",
   "theme/js/search-cjk.js",
   "theme/js/framework-core.js",
   "theme/js/framework-nav.js",
@@ -51,3 +52,16 @@ heading-split-level = 3
 
 [preprocessor.mathbook]
 command = "sh tools/run_mathbook.sh"
+
+# 公式：构建期渲染为 HTML（不依赖运行时 JS）。
+# no-css = true → 不注入 KaTeX 的 CDN 样式表；改用随仓库分发的
+# theme/css/katex.css + src/fonts/katex/（离线可用，无第三方请求）。
+# 走包装器：KaTeX 产物会被 pulldown 再解析一遍，字面 `~`（GFM 删除线）与
+# <annotation> 里的原始 TeX（强调/链接/表格定界符）都要先中和成实体，
+# 否则整页刷出 unclosed HTML tag 告警、公式结构被打散。见 tools/katex_wrapper.py。
+# 共享脚本（多本一份）：仓库根的 tools/katex_wrapper.py ✓ 路径相对本书根
+[preprocessor.katex]
+command = "python3 ../tools/katex_wrapper.py"
+no-css = true
+output = "htmlAndMathml"
+after = ["mathbook"]
