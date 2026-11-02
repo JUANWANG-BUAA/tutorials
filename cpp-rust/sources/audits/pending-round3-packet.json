@@ -1,0 +1,1706 @@
+{
+  "schema": 1,
+  "kind": "work-order",
+  "note": "这是给独立评审者的工作单，不是审计结论。本文件不进入审计台账，也不满足发布门禁的两轮独立审计要求。",
+  "snapshot_sha256": "db229145d053b988e6da1b50a052f73a71257c457dc1913ec171205f6dc4c5a9",
+  "snapshot_files": 1832,
+  "sections_total": 187,
+  "sections_never_audited": [
+    "sec-cpp-rust.4.17.1",
+    "sec-cpp-rust.4.17.2",
+    "sec-cpp-rust.4.17.3",
+    "sec-cpp-rust.4.17.4",
+    "sec-cpp-rust.4.17.5",
+    "sec-cpp-rust.4.17.6",
+    "sec-cpp-rust.4.17.7",
+    "sec-cpp-rust.4.17.8",
+    "sec-cpp-rust.4.17.9",
+    "sec-cpp-rust.4.17.10",
+    "sec-cpp-rust.4.17.11"
+  ],
+  "changed_since_frozen_snapshot": [
+    "book.toml",
+    "projects/tidekv/Cargo.lock",
+    "projects/tidekv/Cargo.toml",
+    "projects/tidekv/README.md",
+    "projects/tidekv/analyze.py",
+    "projects/tidekv/gate.py",
+    "projects/tidekv/probe.sh",
+    "projects/tidekv/results/run-01/bench-verification.txt",
+    "projects/tidekv/results/run-01/bench.csv",
+    "projects/tidekv/results/run-01/codegen/contains.s",
+    "projects/tidekv/results/run-01/codegen/findings.txt",
+    "projects/tidekv/results/run-01/codegen/lib.ll",
+    "projects/tidekv/results/run-01/codegen/lib.mir",
+    "projects/tidekv/results/run-01/codegen/lib.s",
+    "projects/tidekv/results/run-01/codegen/probe.ll",
+    "projects/tidekv/results/run-01/codegen/probe.mir",
+    "projects/tidekv/results/run-01/codegen/probe.s",
+    "projects/tidekv/results/run-01/codegen/probe_bloom.s",
+    "projects/tidekv/results/run-01/codegen/segment_get.s",
+    "projects/tidekv/results/run-01/environment.txt",
+    "projects/tidekv/results/run-01/gate.json",
+    "projects/tidekv/results/run-01/run-log.txt",
+    "projects/tidekv/results/run-01/statistics.json",
+    "projects/tidekv/results/run-01/test-summary.txt",
+    "projects/tidekv/run.sh",
+    "projects/tidekv/src/bin/tide-bench.rs",
+    "projects/tidekv/src/bin/tide-compactor.rs",
+    "projects/tidekv/src/bin/tide-probe.rs",
+    "projects/tidekv/src/bloom.rs",
+    "projects/tidekv/src/crc32.rs",
+    "projects/tidekv/src/engine.rs",
+    "projects/tidekv/src/epoch.rs",
+    "projects/tidekv/src/ipc.rs",
+    "projects/tidekv/src/lib.rs",
+    "projects/tidekv/src/memtable.rs",
+    "projects/tidekv/src/segment.rs",
+    "projects/tidekv/src/stats.rs",
+    "projects/tidekv/src/testutil.rs",
+    "projects/tidekv/src/wal.rs",
+    "projects/tidekv/tests/admission.rs",
+    "projects/tidekv/tests/bloom_contract.rs",
+    "projects/tidekv/tests/compaction.rs",
+    "projects/tidekv/tests/concurrency.rs",
+    "projects/tidekv/tests/epoch_reclaim.rs",
+    "projects/tidekv/tests/ipc_compactor.rs",
+    "projects/tidekv/tests/persistence.rs",
+    "projects/tidekv/tests/segment_format.rs",
+    "projects/tidekv/tests/tombstones.rs",
+    "projects/tidekv/tests/wal_recovery.rs",
+    "sources/sections.json",
+    "sources/web.json",
+    "src/SUMMARY.md",
+    "src/appendix/cheatsheet.md",
+    "src/appendix/glossary.md",
+    "src/entry-test.md",
+    "src/guide.md",
+    "src/index.md",
+    "src/introduction.md",
+    "src/lab-workshop.md",
+    "src/mainline.md",
+    "src/memory-sheet.md",
+    "src/onboarding.md",
+    "src/part1/ch01.md",
+    "src/part1/ch01_checklist.md",
+    "src/part1/ch01_exam.md",
+    "src/part1/ch01_exercises.md",
+    "src/part1/ch01_recall.md",
+    "src/part1/ch01_summary.md",
+    "src/part1/ch02.md",
+    "src/part1/ch02_checklist.md",
+    "src/part1/ch02_exam.md",
+    "src/part1/ch02_exercises.md",
+    "src/part1/ch02_recall.md",
+    "src/part1/ch02_summary.md",
+    "src/part1/ch03.md",
+    "src/part1/ch03_checklist.md",
+    "src/part1/ch03_exam.md",
+    "src/part1/ch03_exercises.md",
+    "src/part1/ch03_recall.md",
+    "src/part1/ch03_summary.md",
+    "src/part1/ch04.md",
+    "src/part1/ch04_checklist.md",
+    "src/part1/ch04_exam.md",
+    "src/part1/ch04_exercises.md",
+    "src/part1/ch04_recall.md",
+    "src/part1/ch04_summary.md",
+    "src/part1/nav.md",
+    "src/part2/ch05.md",
+    "src/part2/ch05_checklist.md",
+    "src/part2/ch05_exam.md",
+    "src/part2/ch05_exercises.md",
+    "src/part2/ch05_recall.md",
+    "src/part2/ch05_summary.md",
+    "src/part2/ch06.md",
+    "src/part2/ch06_checklist.md",
+    "src/part2/ch06_exam.md",
+    "src/part2/ch06_exercises.md",
+    "src/part2/ch06_recall.md",
+    "src/part2/ch06_summary.md",
+    "src/part2/ch07.md",
+    "src/part2/ch07_checklist.md",
+    "src/part2/ch07_exam.md",
+    "src/part2/ch07_exercises.md",
+    "src/part2/ch07_recall.md",
+    "src/part2/ch07_summary.md",
+    "src/part2/ch08.md",
+    "src/part2/ch08_checklist.md",
+    "src/part2/ch08_exam.md",
+    "src/part2/ch08_exercises.md",
+    "src/part2/ch08_recall.md",
+    "src/part2/ch08_summary.md",
+    "src/part2/nav.md",
+    "src/part3/ch09.md",
+    "src/part3/ch09_checklist.md",
+    "src/part3/ch09_exam.md",
+    "src/part3/ch09_exercises.md",
+    "src/part3/ch09_recall.md",
+    "src/part3/ch09_summary.md",
+    "src/part3/ch10.md",
+    "src/part3/ch10_checklist.md",
+    "src/part3/ch10_exam.md",
+    "src/part3/ch10_exercises.md",
+    "src/part3/ch10_recall.md",
+    "src/part3/ch10_summary.md",
+    "src/part3/ch11.md",
+    "src/part3/ch11_checklist.md",
+    "src/part3/ch11_exam.md",
+    "src/part3/ch11_exercises.md",
+    "src/part3/ch11_recall.md",
+    "src/part3/ch11_summary.md",
+    "src/part3/ch12.md",
+    "src/part3/ch12_checklist.md",
+    "src/part3/ch12_exam.md",
+    "src/part3/ch12_exercises.md",
+    "src/part3/ch12_recall.md",
+    "src/part3/ch12_summary.md",
+    "src/part3/nav.md",
+    "src/part4/ch13.md",
+    "src/part4/ch13_checklist.md",
+    "src/part4/ch13_exam.md",
+    "src/part4/ch13_exercises.md",
+    "src/part4/ch13_recall.md",
+    "src/part4/ch13_summary.md",
+    "src/part4/ch14.md",
+    "src/part4/ch14_checklist.md",
+    "src/part4/ch14_exam.md",
+    "src/part4/ch14_exercises.md",
+    "src/part4/ch14_recall.md",
+    "src/part4/ch14_summary.md",
+    "src/part4/ch15.md",
+    "src/part4/ch15_checklist.md",
+    "src/part4/ch15_exam.md",
+    "src/part4/ch15_exercises.md",
+    "src/part4/ch15_recall.md",
+    "src/part4/ch15_summary.md",
+    "src/part4/ch16.md",
+    "src/part4/ch16_checklist.md",
+    "src/part4/ch16_exam.md",
+    "src/part4/ch16_exercises.md",
+    "src/part4/ch16_recall.md",
+    "src/part4/ch16_summary.md",
+    "src/part4/ch17.md",
+    "src/part4/ch17_checklist.md",
+    "src/part4/ch17_exam.md",
+    "src/part4/ch17_exercises.md",
+    "src/part4/ch17_recall.md",
+    "src/part4/ch17_summary.md",
+    "src/part4/nav.md",
+    "src/preface-map.md",
+    "src/preface-notation.md",
+    "src/prerequisite.md",
+    "src/rcore-line.md",
+    "src/syllabus.md",
+    "src/toolbox.md",
+    "tools/audit_packet.py",
+    "tools/audit_snapshot.py",
+    "tools/build_coverage.py",
+    "tools/check_book.py",
+    "tools/check_loss.py",
+    "tools/render_figs.py",
+    "tools/run_mathbook.sh",
+    "tools/textbook_lint.py",
+    "tools/verify_all.py",
+    "tools/verify_audits.py"
+  ],
+  "frozen_only_files_excluded_by_current_rules": 2184,
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "title": "1.1 先看一个不可信的数字",
+      "file": "src/part1/ch01.md",
+      "line": 52,
+      "han": 3799,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "title": "1.2 观测开销、批量与时钟边界",
+      "file": "src/part1/ch01.md",
+      "line": 336,
+      "han": 3238,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.3",
+      "title": "1.3 优化屏障与可观察结果",
+      "file": "src/part1/ch01.md",
+      "line": 505,
+      "han": 2176,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "title": "1.4 配对、顺序与时间漂移",
+      "file": "src/part1/ch01.md",
+      "line": 633,
+      "han": 3175,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "title": "1.5 实验一：DCE 与错误归一化",
+      "file": "src/part1/ch01.md",
+      "line": 843,
+      "han": 2335,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "title": "1.6 实验二：索引与迭代器的配对观察",
+      "file": "src/part1/ch01.md",
+      "line": 1027,
+      "han": 2210,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "title": "1.7 置信区间、回归预算与三态门禁",
+      "file": "src/part1/ch01.md",
+      "line": 1220,
+      "han": 3696,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "title": "1.8 可追溯证据与复现",
+      "file": "src/part1/ch01.md",
+      "line": 1462,
+      "han": 3223,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "title": "1.9 延伸阅读与来源",
+      "file": "src/part1/ch01.md",
+      "line": 1634,
+      "han": 201,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "title": "1.10 常见错误索引",
+      "file": "src/part1/ch01.md",
+      "line": 1644,
+      "han": 521,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "title": "1.11 本章小结与章末件",
+      "file": "src/part1/ch01.md",
+      "line": 1666,
+      "han": 909,
+      "chapter": 1
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "title": "2.1 类型布局：保证、观测与外部格式",
+      "file": "src/part1/ch02.md",
+      "line": 66,
+      "han": 3167,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "title": "2.2 niche、透明包装与有效值集合",
+      "file": "src/part1/ch02.md",
+      "line": 343,
+      "han": 2688,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "title": "2.3 缓存、TLB 与热字段密度",
+      "file": "src/part1/ch02.md",
+      "line": 501,
+      "han": 3316,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "title": "2.4 AoS、SoA与编译器的访问证明",
+      "file": "src/part1/ch02.md",
+      "line": 651,
+      "han": 2432,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "title": "2.5 benchmark一：热列扫描的实测边界",
+      "file": "src/part1/ch02.md",
+      "line": 875,
+      "han": 2870,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "title": "2.6 分配成本、容量与安全字节区域",
+      "file": "src/part1/ch02.md",
+      "line": 1056,
+      "han": 3313,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "title": "2.7 benchmark二：小缓冲生命周期与区域复用",
+      "file": "src/part1/ch02.md",
+      "line": 1248,
+      "han": 2787,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "title": "2.8 对齐、分配器边界与布局重构决策",
+      "file": "src/part1/ch02.md",
+      "line": 1446,
+      "han": 4976,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "title": "2.9 延伸阅读与来源",
+      "file": "src/part1/ch02.md",
+      "line": 1676,
+      "han": 949,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "title": "2.10 常见错误索引",
+      "file": "src/part1/ch02.md",
+      "line": 1702,
+      "han": 559,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "title": "2.11 本章小结与章末件",
+      "file": "src/part1/ch02.md",
+      "line": 1724,
+      "han": 1503,
+      "chapter": 2
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "title": "3.1 所有权转移不是自动深拷贝",
+      "file": "src/part1/ch03.md",
+      "line": 64,
+      "han": 3141,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "title": "3.2 借用如何成为优化依据",
+      "file": "src/part1/ch03.md",
+      "line": 259,
+      "han": 3131,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "title": "3.3 初始化是一条状态边界",
+      "file": "src/part1/ch03.md",
+      "line": 461,
+      "han": 3155,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "title": "3.4 Drop、部分移动与错误展开",
+      "file": "src/part1/ch03.md",
+      "line": 667,
+      "han": 3365,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "title": "3.5 benchmark一：借用与显式克隆的真实工作差异",
+      "file": "src/part1/ch03.md",
+      "line": 927,
+      "han": 2951,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "title": "3.6 benchmark二：push并不自动胜过置零再填充",
+      "file": "src/part1/ch03.md",
+      "line": 1129,
+      "han": 2941,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "title": "3.7 unsafe、来源与有效引用的证明清单",
+      "file": "src/part1/ch03.md",
+      "line": 1347,
+      "han": 3624,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "title": "3.8 自引用、Pin与资源协议的组合边界",
+      "file": "src/part1/ch03.md",
+      "line": 1526,
+      "han": 3023,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "title": "3.9 延伸阅读与来源",
+      "file": "src/part1/ch03.md",
+      "line": 1671,
+      "han": 728,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "title": "3.10 常见错误索引",
+      "file": "src/part1/ch03.md",
+      "line": 1698,
+      "han": 751,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "title": "3.11 本章小结与章末件",
+      "file": "src/part1/ch03.md",
+      "line": 1720,
+      "han": 1621,
+      "chapter": 3
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "title": "4.1 编译阶段不是八台独立机器",
+      "file": "src/part1/ch04.md",
+      "line": 62,
+      "han": 3205,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "title": "4.2 HIR、THIR 与不可省略的类型调整",
+      "file": "src/part1/ch04.md",
+      "line": 293,
+      "han": 3072,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "title": "4.3 MIR：初始化不是内存是否为零",
+      "file": "src/part1/ch04.md",
+      "line": 508,
+      "han": 3546,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "title": "4.4 borrowck 与 Drop elaboration 的责任分界",
+      "file": "src/part1/ch04.md",
+      "line": 755,
+      "han": 3201,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "title": "4.5 benchmark 一：为通过检查而 clone 的实际代价",
+      "file": "src/part1/ch04.md",
+      "line": 1090,
+      "han": 2723,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "title": "4.6 benchmark 二：隐式析构状态与 Option 状态",
+      "file": "src/part1/ch04.md",
+      "line": 1325,
+      "han": 2895,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "title": "4.7 查询缓存、增量缓存与代码生成单元",
+      "file": "src/part1/ch04.md",
+      "line": 1604,
+      "han": 3984,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "title": "4.8 证据链、测量夹具与回归定位",
+      "file": "src/part1/ch04.md",
+      "line": 1855,
+      "han": 3341,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "title": "4.9 延伸阅读与来源",
+      "file": "src/part1/ch04.md",
+      "line": 2150,
+      "han": 725,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "title": "4.10 常见错误索引",
+      "file": "src/part1/ch04.md",
+      "line": 2194,
+      "han": 609,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "title": "4.11 本章小结与章末件",
+      "file": "src/part1/ch04.md",
+      "line": 2216,
+      "han": 1287,
+      "chapter": 4
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.1",
+      "title": "5.1 trait 约束首先是一份可检查的接口",
+      "file": "src/part2/ch05.md",
+      "line": 62,
+      "han": 3218,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.2",
+      "title": "5.2 单态项、可达性与真实代码体积",
+      "file": "src/part2/ch05.md",
+      "line": 302,
+      "han": 3197,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.3",
+      "title": "5.3 dyn 的数据、元数据与非稳定布局",
+      "file": "src/part2/ch05.md",
+      "line": 581,
+      "han": 3422,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "title": "5.4 去虚化取决于信息，不取决于关键字",
+      "file": "src/part2/ch05.md",
+      "line": 842,
+      "han": 3207,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "title": "5.5 benchmark 一：每元素分派与每批分派",
+      "file": "src/part2/ch05.md",
+      "line": 1082,
+      "han": 3125,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.6",
+      "title": "5.6 benchmark 二：局部已知 dyn 与不透明 dyn",
+      "file": "src/part2/ch05.md",
+      "line": 1340,
+      "han": 2858,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "title": "5.7 可擦除接口、有限策略与失败测试",
+      "file": "src/part2/ch05.md",
+      "line": 1573,
+      "han": 3178,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "title": "5.8 从采样、统计与构建边界解释结果",
+      "file": "src/part2/ch05.md",
+      "line": 1813,
+      "han": 4142,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "title": "5.9 延伸阅读与来源",
+      "file": "src/part2/ch05.md",
+      "line": 2105,
+      "han": 532,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "title": "5.10 常见错误索引",
+      "file": "src/part2/ch05.md",
+      "line": 2119,
+      "han": 529,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "title": "5.11 本章小结与章末件",
+      "file": "src/part2/ch05.md",
+      "line": 2141,
+      "han": 1336,
+      "chapter": 5
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "title": "6.1 LLVM 得到的不是原样 Rust 源码",
+      "file": "src/part2/ch06.md",
+      "line": 65,
+      "han": 3342,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "title": "6.2 alias、有效范围与安全接口的优化价值",
+      "file": "src/part2/ch06.md",
+      "line": 268,
+      "han": 3047,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "title": "6.3 边界检查、迭代器与循环向量化",
+      "file": "src/part2/ch06.md",
+      "line": 422,
+      "han": 2753,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "title": "6.4 benchmark 一：完整数据通路中的调用回退",
+      "file": "src/part2/ch06.md",
+      "line": 642,
+      "han": 3554,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "title": "6.5 CTFE、普通常量传播与 Miri 的分界",
+      "file": "src/part2/ch06.md",
+      "line": 860,
+      "han": 3130,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "title": "6.6 benchmark 二：静态表复用与逐批重建",
+      "file": "src/part2/ch06.md",
+      "line": 1074,
+      "han": 2757,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "title": "6.7 内联、CGU 与 LTO：扩大视野也有代价",
+      "file": "src/part2/ch06.md",
+      "line": 1280,
+      "han": 2808,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "title": "6.8 PGO：真实训练、可用产物与未证明的收益",
+      "file": "src/part2/ch06.md",
+      "line": 1443,
+      "han": 2883,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "title": "6.9 延伸阅读与来源",
+      "file": "src/part2/ch06.md",
+      "line": 1623,
+      "han": 716,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "title": "6.10 常见错误索引",
+      "file": "src/part2/ch06.md",
+      "line": 1639,
+      "han": 1230,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.11",
+      "title": "6.11 本章小结与章末件",
+      "file": "src/part2/ch06.md",
+      "line": 1669,
+      "han": 1212,
+      "chapter": 6
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "title": "7.1 先画访问图，再选择同步机制",
+      "file": "src/part2/ch07.md",
+      "line": 65,
+      "han": 2901,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.2",
+      "title": "7.2 内存序约束的是哪条边",
+      "file": "src/part2/ch07.md",
+      "line": 288,
+      "han": 2378,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "title": "7.3 类型、布局与载荷访问权",
+      "file": "src/part2/ch07.md",
+      "line": 488,
+      "han": 2512,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "title": "7.4 从 Rust 原子到 LLVM IR 与目标指令",
+      "file": "src/part2/ch07.md",
+      "line": 685,
+      "han": 2497,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "title": "7.5 Benchmark A：共享、相邻、隔离与批量计数",
+      "file": "src/part2/ch07.md",
+      "line": 897,
+      "han": 2702,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "title": "7.6 Benchmark B：单槽交接与阻塞通道",
+      "file": "src/part2/ch07.md",
+      "line": 1142,
+      "han": 2448,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "title": "7.7 回退案例、profiler 与证据强度",
+      "file": "src/part2/ch07.md",
+      "line": 1353,
+      "han": 2645,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "title": "7.8 从原子交接到异步调度的边界",
+      "file": "src/part2/ch07.md",
+      "line": 1577,
+      "han": 3322,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "title": "7.9 延伸阅读与来源",
+      "file": "src/part2/ch07.md",
+      "line": 1804,
+      "han": 363,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "title": "7.10 常见错误索引",
+      "file": "src/part2/ch07.md",
+      "line": 1821,
+      "han": 651,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "title": "7.11 本章小结与章末件",
+      "file": "src/part2/ch07.md",
+      "line": 1844,
+      "han": 1042,
+      "chapter": 7
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "title": "8.1 async函数构造的是对象，不是线程",
+      "file": "src/part2/ch08.md",
+      "line": 67,
+      "han": 2431,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "title": "8.2 MIR里保存了什么",
+      "file": "src/part2/ch08.md",
+      "line": 263,
+      "han": 2287,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "title": "8.3 帧大小、存活分析与Pin的边界",
+      "file": "src/part2/ch08.md",
+      "line": 482,
+      "han": 2236,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "title": "8.4 poll、Waker与就绪通知",
+      "file": "src/part2/ch08.md",
+      "line": 680,
+      "han": 2265,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "title": "8.5 单Future驱动器：防止丢失唤醒",
+      "file": "src/part2/ch08.md",
+      "line": 888,
+      "han": 2462,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "title": "8.6 Benchmark A：Ready路径与真实Pending路径",
+      "file": "src/part2/ch08.md",
+      "line": 1141,
+      "han": 2498,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "title": "8.7 Benchmark B：栈上pin与Box分配",
+      "file": "src/part2/ch08.md",
+      "line": 1365,
+      "han": 2995,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "title": "8.8 取消、阻塞、多线程与多进程的接口边界",
+      "file": "src/part2/ch08.md",
+      "line": 1662,
+      "han": 2607,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "title": "8.9 延伸阅读与来源",
+      "file": "src/part2/ch08.md",
+      "line": 1800,
+      "han": 456,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "title": "8.10 常见错误索引",
+      "file": "src/part2/ch08.md",
+      "line": 1826,
+      "han": 801,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "title": "8.11 本章小结与章末件",
+      "file": "src/part2/ch08.md",
+      "line": 1854,
+      "han": 911,
+      "chapter": 8
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "title": "9.1 从一个通知位到任务状态机",
+      "file": "src/part3/ch09.md",
+      "line": 66,
+      "han": 4046,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "title": "9.2 并发 wake、重复入队与取消边界",
+      "file": "src/part3/ch09.md",
+      "line": 269,
+      "han": 4907,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "title": "9.3 就绪队列、LIFO 槽与 work stealing",
+      "file": "src/part3/ch09.md",
+      "line": 498,
+      "han": 3672,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "title": "9.4 类型、ABI 与代码生成边界",
+      "file": "src/part3/ch09.md",
+      "line": 666,
+      "han": 2881,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "title": "9.5 benchmark一：让出粒度与worker数",
+      "file": "src/part3/ch09.md",
+      "line": 811,
+      "han": 1991,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "title": "9.6 benchmark二：阻塞poll污染观察延迟",
+      "file": "src/part3/ch09.md",
+      "line": 948,
+      "han": 2431,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "title": "9.7 背压、许可寿命与资源上界",
+      "file": "src/part3/ch09.md",
+      "line": 1098,
+      "han": 2696,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "title": "9.8 公平性、观测与退出协议",
+      "file": "src/part3/ch09.md",
+      "line": 1291,
+      "han": 2634,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "title": "9.9 延伸阅读与来源",
+      "file": "src/part3/ch09.md",
+      "line": 1475,
+      "han": 667,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "title": "9.10 常见错误索引",
+      "file": "src/part3/ch09.md",
+      "line": 1510,
+      "han": 818,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "title": "9.11 本章小结与章末件",
+      "file": "src/part3/ch09.md",
+      "line": 1538,
+      "han": 923,
+      "chapter": 9
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "title": "10.1 进程边界究竟隔离什么",
+      "file": "src/part3/ch10.md",
+      "line": 69,
+      "han": 2708,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "title": "10.2 文件描述符、所有权与EOF",
+      "file": "src/part3/ch10.md",
+      "line": 243,
+      "han": 2563,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "title": "10.3 显式线协议、布局与短读短写",
+      "file": "src/part3/ch10.md",
+      "line": 465,
+      "han": 2304,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "title": "10.4 benchmark一：每次启动与持久worker",
+      "file": "src/part3/ch10.md",
+      "line": 676,
+      "han": 3022,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "title": "10.5 输出背压、排空与有限保留",
+      "file": "src/part3/ch10.md",
+      "line": 893,
+      "han": 2328,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "title": "10.6 benchmark二：保存全部与固定前缀",
+      "file": "src/part3/ch10.md",
+      "line": 1101,
+      "han": 2619,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "title": "10.7 超时、kill、wait与排空grace",
+      "file": "src/part3/ch10.md",
+      "line": 1307,
+      "han": 3537,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "title": "10.8 进程池、共享内存与故障语义",
+      "file": "src/part3/ch10.md",
+      "line": 1582,
+      "han": 2519,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "title": "10.9 延伸阅读与来源",
+      "file": "src/part3/ch10.md",
+      "line": 1715,
+      "han": 931,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "title": "10.10 常见错误索引",
+      "file": "src/part3/ch10.md",
+      "line": 1756,
+      "han": 665,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "title": "10.11 本章小结与章末件",
+      "file": "src/part3/ch10.md",
+      "line": 1784,
+      "han": 1060,
+      "chapter": 10
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "title": "11.1 互斥锁与无锁并发的真实分水岭",
+      "file": "src/part3/ch11.md",
+      "line": 66,
+      "han": 4382,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.2",
+      "title": "11.2 线性化点、顺序保证与进度保证分级",
+      "file": "src/part3/ch11.md",
+      "line": 301,
+      "han": 3927,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "title": "11.3 经典的ABA难题与其内存安全根因",
+      "file": "src/part3/ch11.md",
+      "line": 478,
+      "han": 3292,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "title": "11.4 内存回收技术对照：Hazard Pointer与Epoch-based",
+      "file": "src/part3/ch11.md",
+      "line": 807,
+      "han": 4395,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "title": "11.5 类型系统、对齐与代码生成边界",
+      "file": "src/part3/ch11.md",
+      "line": 1071,
+      "han": 2734,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "title": "11.6 benchmark一：有界无锁队列对决互斥锁队列",
+      "file": "src/part3/ch11.md",
+      "line": 1232,
+      "han": 2696,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "title": "11.7 benchmark二：静止状态延迟与停顿参与者的回收代价",
+      "file": "src/part3/ch11.md",
+      "line": 1466,
+      "han": 2263,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "title": "11.8 RCU机制与用户态异步的协同与边界",
+      "file": "src/part3/ch11.md",
+      "line": 1662,
+      "han": 2670,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.9",
+      "title": "11.9 延伸阅读与来源",
+      "file": "src/part3/ch11.md",
+      "line": 1825,
+      "han": 298,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.10",
+      "title": "11.10 常见错误索引",
+      "file": "src/part3/ch11.md",
+      "line": 1838,
+      "han": 931,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.11",
+      "title": "11.11 本章小结与章末件",
+      "file": "src/part3/ch11.md",
+      "line": 1866,
+      "han": 792,
+      "chapter": 11
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "title": "12.1 现代处理器的向量通道与数据并行本质",
+      "file": "src/part3/ch12.md",
+      "line": 65,
+      "han": 2900,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "title": "12.2 自动向量化的触发条件、障碍与LLVM诊断",
+      "file": "src/part3/ch12.md",
+      "line": 297,
+      "han": 2941,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "title": "12.3 显式SIMD与目标特性：NEON与AVX-512的移植安全",
+      "file": "src/part3/ch12.md",
+      "line": 469,
+      "han": 2523,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "title": "12.4 零拷贝切片视图与生命周期约束",
+      "file": "src/part3/ch12.md",
+      "line": 704,
+      "han": 3099,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "title": "12.5 类型尺寸、布局与汇编展开特征",
+      "file": "src/part3/ch12.md",
+      "line": 949,
+      "han": 2302,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "title": "12.6 benchmark一：标量循环与自动/手写NEON向量化实测",
+      "file": "src/part3/ch12.md",
+      "line": 1131,
+      "han": 2273,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "title": "12.7 benchmark二：拥有型复制流与借用型分帧解析",
+      "file": "src/part3/ch12.md",
+      "line": 1334,
+      "han": 2998,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "title": "12.8 异步I/O与Linux io_uring的所有权演变",
+      "file": "src/part3/ch12.md",
+      "line": 1595,
+      "han": 4866,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "title": "12.9 延伸阅读与来源",
+      "file": "src/part3/ch12.md",
+      "line": 1977,
+      "han": 545,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.10",
+      "title": "12.10 常见错误索引",
+      "file": "src/part3/ch12.md",
+      "line": 1994,
+      "han": 910,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "title": "12.11 本章小结与章末件",
+      "file": "src/part3/ch12.md",
+      "line": 2022,
+      "han": 774,
+      "chapter": 12
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "title": "13.1 先定义问题，再选择采集器",
+      "file": "src/part4/ch13.md",
+      "line": 70,
+      "han": 4307,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "title": "13.2 样本、符号与归因分母",
+      "file": "src/part4/ch13.md",
+      "line": 290,
+      "han": 4091,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "title": "13.3 perf与PMU：先读事件契约",
+      "file": "src/part4/ch13.md",
+      "line": 489,
+      "han": 3946,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "title": "13.4 Flamegraph、off-CPU与异步链路",
+      "file": "src/part4/ch13.md",
+      "line": 681,
+      "han": 3864,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "title": "13.5 Benchmark一：计算与等待的两份画像",
+      "file": "src/part4/ch13.md",
+      "line": 883,
+      "han": 2206,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "title": "13.6 Benchmark二：逐项打点与批量聚合",
+      "file": "src/part4/ch13.md",
+      "line": 1114,
+      "han": 2538,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "title": "13.7 采样扰动、统计与Cachegrind边界",
+      "file": "src/part4/ch13.md",
+      "line": 1368,
+      "han": 3128,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "title": "13.8 从代码生成到证据包",
+      "file": "src/part4/ch13.md",
+      "line": 1562,
+      "han": 2694,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "title": "13.9 延伸阅读与来源",
+      "file": "src/part4/ch13.md",
+      "line": 1758,
+      "han": 390,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "title": "13.10 常见错误索引",
+      "file": "src/part4/ch13.md",
+      "line": 1790,
+      "han": 811,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "title": "13.11 本章小结与章末件",
+      "file": "src/part4/ch13.md",
+      "line": 1822,
+      "han": 953,
+      "chapter": 13
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "title": "14.1 构建身份不是一个版本号",
+      "file": "src/part4/ch14.md",
+      "line": 67,
+      "han": 3233,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.2",
+      "title": "14.2 Feature图：相加的能力与隐藏的工作",
+      "file": "src/part4/ch14.md",
+      "line": 265,
+      "han": 2765,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "title": "14.3 可复现构建：先划清承诺级别",
+      "file": "src/part4/ch14.md",
+      "line": 448,
+      "han": 2901,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "title": "14.4 Benchmark一：CGU、LTO与精确缓存边界",
+      "file": "src/part4/ch14.md",
+      "line": 607,
+      "han": 3250,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "title": "14.5 Benchmark二：feature回退与会拒绝的门禁",
+      "file": "src/part4/ch14.md",
+      "line": 928,
+      "han": 2923,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.6",
+      "title": "14.6 PGO：训练数据也是构建输入",
+      "file": "src/part4/ch14.md",
+      "line": 1180,
+      "han": 3029,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "title": "14.7 CI：先验证证据，再比较数字",
+      "file": "src/part4/ch14.md",
+      "line": 1383,
+      "han": 2942,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "title": "14.8 从实验包到发布责任链",
+      "file": "src/part4/ch14.md",
+      "line": 1563,
+      "han": 2705,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "title": "14.9 延伸阅读与来源",
+      "file": "src/part4/ch14.md",
+      "line": 1744,
+      "han": 675,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "title": "14.10 常见错误索引",
+      "file": "src/part4/ch14.md",
+      "line": 1782,
+      "han": 838,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "title": "14.11 本章小结与章末件",
+      "file": "src/part4/ch14.md",
+      "line": 1816,
+      "han": 916,
+      "chapter": 14
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "title": "15.1 从工具名称到可执行资源边界",
+      "file": "src/part4/ch15.md",
+      "line": 68,
+      "han": 3907,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "title": "15.2 在spawn之前建立有界准入",
+      "file": "src/part4/ch15.md",
+      "line": 314,
+      "han": 3694,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "title": "15.3 取消请求、状态观察与许可寿命",
+      "file": "src/part4/ch15.md",
+      "line": 569,
+      "han": 2845,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "title": "15.4 直接子进程wait与双路日志排空",
+      "file": "src/part4/ch15.md",
+      "line": 759,
+      "han": 4562,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "title": "15.5 类型布局、ABI与真实代码生成",
+      "file": "src/part4/ch15.md",
+      "line": 1057,
+      "han": 2652,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "title": "15.6 benchmark一：饱和准入的拒绝路径",
+      "file": "src/part4/ch15.md",
+      "line": 1251,
+      "han": 2426,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "title": "15.7 benchmark二：工具、日志与回收的批生命周期",
+      "file": "src/part4/ch15.md",
+      "line": 1439,
+      "han": 2649,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "title": "15.8 测试、正常关闭与采样证据",
+      "file": "src/part4/ch15.md",
+      "line": 1651,
+      "han": 3039,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "title": "15.9 延伸阅读与来源",
+      "file": "src/part4/ch15.md",
+      "line": 1873,
+      "han": 647,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "title": "15.10 常见错误索引",
+      "file": "src/part4/ch15.md",
+      "line": 1907,
+      "han": 1127,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "title": "15.11 本章小结与章末件",
+      "file": "src/part4/ch15.md",
+      "line": 1947,
+      "han": 1214,
+      "chapter": 15
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "title": "16.1 先确定组件能力与跨边界成本",
+      "file": "src/part4/ch16.md",
+      "line": 65,
+      "han": 3210,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "title": "16.2 版本化布局与整数错误协议",
+      "file": "src/part4/ch16.md",
+      "line": 306,
+      "han": 3040,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "title": "16.3 指针守卫与不能替调用者证明的条件",
+      "file": "src/part4/ch16.md",
+      "line": 493,
+      "han": 3120,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "title": "16.4 代号句柄、释放线性化与并发快照",
+      "file": "src/part4/ch16.md",
+      "line": 671,
+      "han": 2884,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "title": "16.5 panic 防线、失败清理与真实双向测试",
+      "file": "src/part4/ch16.md",
+      "line": 845,
+      "han": 2829,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "title": "16.6 原生构建与实际代码生成核验",
+      "file": "src/part4/ch16.md",
+      "line": 1045,
+      "han": 2774,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "title": "16.7 benchmark 一：逐元素调用与批量 FFI",
+      "file": "src/part4/ch16.md",
+      "line": 1242,
+      "han": 2565,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "title": "16.8 benchmark 二：复制导出与拥有句柄内归约",
+      "file": "src/part4/ch16.md",
+      "line": 1415,
+      "han": 2462,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "title": "16.9 延伸阅读与来源",
+      "file": "src/part4/ch16.md",
+      "line": 1588,
+      "han": 497,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "title": "16.10 常见错误索引",
+      "file": "src/part4/ch16.md",
+      "line": 1621,
+      "han": 880,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "title": "16.11 本章小结与章末件",
+      "file": "src/part4/ch16.md",
+      "line": 1661,
+      "han": 1306,
+      "chapter": 16
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "title": "17.1 立项：先把边界、输入家族与不做什么写死",
+      "file": "src/part4/ch17.md",
+      "line": 126,
+      "han": 2351,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "title": "17.2 记录与段文件布局：字节先算清楚",
+      "file": "src/part4/ch17.md",
+      "line": 275,
+      "han": 3262,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "title": "17.3 零拷贝读路径与 unsafe 担保",
+      "file": "src/part4/ch17.md",
+      "line": 453,
+      "han": 2211,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "title": "17.4 编解码：泛型还是 dyn，先问快在哪一层",
+      "file": "src/part4/ch17.md",
+      "line": 580,
+      "han": 1586,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "title": "17.5 快照、原子与 epoch 回收",
+      "file": "src/part4/ch17.md",
+      "line": 692,
+      "han": 2002,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "title": "17.6 有界准入与取消：背压挡在门口而不是排在队里",
+      "file": "src/part4/ch17.md",
+      "line": 843,
+      "han": 1553,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "title": "17.7 压缩子进程：管道会满，重试会做两遍",
+      "file": "src/part4/ch17.md",
+      "line": 953,
+      "han": 1522,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "title": "17.8 实验、三态门禁与证据包",
+      "file": "src/part4/ch17.md",
+      "line": 1058,
+      "han": 3789,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "title": "17.9 延伸阅读与来源",
+      "file": "src/part4/ch17.md",
+      "line": 1276,
+      "han": 1819,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "title": "17.10 常见错误索引",
+      "file": "src/part4/ch17.md",
+      "line": 1326,
+      "han": 324,
+      "chapter": 17
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.11",
+      "title": "17.11 本章小结与章末件",
+      "file": "src/part4/ch17.md",
+      "line": 1349,
+      "han": 644,
+      "chapter": 17
+    }
+  ]
+}

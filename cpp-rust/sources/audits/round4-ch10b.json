@@ -1,0 +1,83 @@
+{
+  "reviewer": "r4-ch10b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动通读 src/part3/ch10.md 1309-1884 行（10.7-10.11 全部正文与语义盒），并用 bench/runtime-lab 源码、bench/results/runtime-fixed 与 runtime-final 归档、tools/list_uncollected_claims.py 回核数字与代码断言；未参考任何先前审计记录。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节通读并重点回核：①10.7.2 顺序与 bench/runtime-lab/src/process.rs:198-222 的排空/grace/abort 路径一致；②10.7.6 inherit 回归逐字段对 contracts.rs:204-227（exit Some(0)、双流 !eof、reader_errors len==2、2100ms 窗口）与 worker.rs:29 的 2s 后代寿命吻合；③10.7.8 表对归档 baseline-debug/status.txt 四组 exit=101、fixed-debug/status.txt 四组 exit=0，每流 2097152 字节在 baseline-debug/flood-pipe2/report.txt 中复算到（total 2097152 且一路 eof=false）；④10.7.9 代码片段与 process_macos.rs:16-43/59-60 逐行一致（dlsym 探测 pipe2、OwnedFd、旧系统返回 Unsupported、spawn 后重置 Stdio::null）；⑤10.7.10 的 360 由 final-validation 20 个 tests-*.txt 每轮 12+6=18 项通过复算（18×10轮×2 profile=360），800=600 flood+100 sleep+100 inherit 在 diagnostic-summary.json 的 stress_reports 复算到；implementation-source-review.json 与 tools/verify_drain_fix.py 均存在；⑥10.7.11 ReaderTask 片段与 process.rs:127-133 逐字一致。没核的：race-before/after 的 gate 与 lsof 文件内容未逐行读、release 侧 status.txt 未单独读（结构存在）、Rust 1.99.0 标准库 macOS pipe+fcntl 两步路径未回读 std 源码（仅由 environment.txt 确认 rustc 1.99.0）。发现两处 P2 表述问题，见 findings。",
+      "evidence": [
+        "bench/runtime-lab/src/process.rs:127-133,198-222",
+        "bench/runtime-lab/src/process_macos.rs:16-43,59-60",
+        "bench/runtime-lab/tests/contracts.rs:204-227",
+        "bench/runtime-lab/src/bin/worker.rs:29",
+        "bench/results/runtime-fixed/baseline-debug/status.txt（4组exit=101）/ fixed-debug/status.txt（4组exit=0）",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe2/report.txt（total: 2097152, eof: false）",
+        "bench/results/runtime-fixed/diagnostic-summary.json stress_reports={flood:600,sleep:100,inherit:100}",
+        "bench/results/runtime-fixed/final-validation/tests-{debug,release}-*.txt 每文件 12+6 passed，合计360"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节通读。本节以概念与责任断言为主，不含测量数字。'本轮没有实现共享映射访问器'与 runtime-lab 源文件清单（bin/lib.rs/process.rs/process_macos.rs/wire.rs，无共享内存模块）一致；10.8.7 '本机没有执行 Linux 实验、不提供吞吐表'与 list_uncollected_claims.py 对 ch10.md:1659 的判定（无同类产物）一致，且 bench/results/x86_64-linux/ 仅含 atomics.ll/.s，无共享内存吞吐表；10.8.8 各'没有实现'项均无对应归档。池状态表、generation 三元组、幂等窗口属规范性论证，无与代码/归档矛盾之处。没核的：cross-ref 到第 9 章 9.7 的准入原则未回读。",
+      "evidence": [
+        "tools/list_uncollected_claims.py 输出 ch10.md:1625/1659 均'没有匹配到同类产物'",
+        "bench/results/x86_64-linux/ 仅 atomics.ll、atomics.s",
+        "bench/runtime-lab/src/ 文件清单（无共享内存实现）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节通读。库版本断言可落地：Tokio '=1.54.0' 见 bench/runtime-lab/Cargo.toml:9 与 Cargo.lock；std 1.99.0 与 environment.txt 的 rustc 1.99.0 吻合。母本表与 rCore 在线来源按台账口径处理（coverage.md:4070 记录 stanford-process-slides 的 URL+sha256）。问题：Stanford '共 36 个 PDF 物理页'与'第 17 页做了渲染核对'在磁盘上只有 URL 与指纹（sources/web.json:84），仓库内没有该 PDF 或渲染产物可复算页数/页范围（PDF15–20/25–26/27–35），属'引文落地依赖在线来源且渲染核对声明无本地产物'的 P2（有指纹锚定，不构成 P0）。rCore 各页内容断言同样仅在线可核，未逐页比对。",
+      "evidence": [
+        "bench/runtime-lab/Cargo.toml:9（tokio =1.54.0）",
+        "bench/results/runtime-fixed/final-validation/environment.txt（rustc 1.99.0）",
+        "sources/web.json:84-85 与 src/appendix/coverage.md:4070（仅 URL+指纹，sources/ 下无 lecture-10 PDF）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "十二条通读。可静态复算的第 3 条核实：原生 Frame 为 {u64,u64}=16 字节（wire.rs:7-10），线协议 FRAME_LEN=24（wire.rs:3），归档 type-layout.txt 'Frame size=16 align=8 wire=24'，与正文'16 字节/24 字节不能互相推导'一致。其余条目是 10.1-10.8 已核内容的跨节汇总（先 wait 后读、grace、generation、幂等等），与前述各节及代码无矛盾。没核的：第 2 条 fork 后锁继承与第 10 条预算划分属机制论述，无本地证据可核，按通读判定。",
+      "evidence": [
+        "bench/runtime-lab/src/wire.rs:3,7-10",
+        "bench/results/runtime-final/type-layout.txt（Frame size=16 align=8 wire=24）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节通读。小结与速查引用的数字核对：'1.219 ms 完整生命周期批均值'在 runtime-final/process-rpc.txt 复算到 spawn 批行 1219156.25 ns（≈1.219 ms；总均值 1251075.887 ns 属另一口径，本节表述为'批均值'与归档行一致）；'18 项 runtime-lab 测试、debug/release 各 10 轮、800 个额外进程报告'与 10.7.10 已核事实一致（12+6=18，×20=360，600+100+100=800）。出口检查命令点名 process-rpc 与 pipe-drain 两个 release 二进制，src/bin 下确实存在；tools/run_runtime_benchmarks.sh 存在。五张章末件链接文件 ch10_summary/recall/exercises/exam/checklist.md 均在 src/part3/。没核的：10.4.1/10.6.1 定义本体不在我负责区间，只验证 10.11 对它们的转述与归档一致；应能解释的差异与回归表未逐条重跑。",
+      "evidence": [
+        "bench/results/runtime-final/process-rpc.txt（spawn,6,1219156.25 ns；spawn mean=1251075.887 ns/op n=21）",
+        "bench/runtime-lab/src/bin/（worker.rs/pipe_drain.rs/process_rpc.rs 存在）",
+        "tools/run_runtime_benchmarks.sh、src/part3/ch10_summary.md 等五个章末件文件存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "severity": "P2",
+      "description": "10.7.10 把 800 份 Report 拆成'600 个 flood、100 个 timeout 与 100 个预期非 EOF 继承场景'，但归档 diagnostic-summary.json 的 stress_reports 键是 {flood:600, sleep:100, inherit:100}——'timeout' 在产物里叫 'sleep'（helper 睡 2s 触发超时路径）。总数与拆分算术成立（600+100+100=800），但正文场景名与归档键名不一致，读者按 'timeout' 去 final-validation 目录检索会找不到对应产物；另外 final-validation 下未见按 inherit 场景逐份存放的 report.txt（800 份的逐份落点我只在 diagnostic-summary.json 核到计数）。建议正文改用与归档一致的 'sleep（超时）' 口径或注明键名映射。",
+      "evidence": "bench/results/runtime-fixed/diagnostic-summary.json: stress_reports={flood:600, sleep:100, inherit:100}（repeated-validation 与 final-validation 两处同）；ch10.md:1484"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "severity": "P2",
+      "description": "Stanford 一节称来源文件'共 36 个 PDF 物理页'、核读 PDF15–20/25–26/27–35、且'第 17 页还做了渲染核对'，但仓库内 sources/ 只有 web.json 的 URL 与 coverage.md:4070 的 sha256 台账，没有 PDF 本体或任何渲染核对产物可在盘上复算页数与页范围。因有指纹锚定且明确标为在线来源，不构成'编造实测'（P0/P1），但'渲染核对'这类已完成动作的声明目前只能靠台账指纹间接支撑，建议把渲染核对留下的本地产物路径点名，或把措辞降为'按台账核读'。",
+      "evidence": "sources/web.json:84-85；src/appendix/coverage.md:4070；find sources -iname '*lecture-10*' 无结果；ch10.md:1751-1757"
+    }
+  ]
+}

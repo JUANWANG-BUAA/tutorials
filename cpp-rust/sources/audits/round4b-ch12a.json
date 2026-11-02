@@ -1,0 +1,116 @@
+{
+  "reviewer": "r4b-ch12a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part3/ch12.md 第 65–1333 行（12.1–12.6 全部正文与每个语义盒），逐条回查 bench/systems-lab 的 lib.rs/bin/simd.rs/bin/layout.rs 与 results/run-01 的 simd.txt、layout.txt、environment.txt、source-sha256.txt、codegen/*.s/*.ll，并用本机 rustc 1.99.1 实跑 -C remark 三种取值与一次真实 crate 构建，另复跑 tools/list_uncollected_claims.py 只看 ch12。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "车道公式全部自算复现：512÷32=16、512÷64=8、128÷32=4、128÷16=8（例 12.1.1 与即时自测第 3 题得数正确）；65539 用试除到 256 验证为质数且 mod 4=3，与 12.6.1 的协议设计一致；图 12-1 里的 ldr q1,[x10],#16 / mla.4s / str q2,[x11],#16 与归档汇编逐字相符。12.1.1 删掉的发射宽度数字改判后成立：整节只剩「发射宽度本书没有取证（母本表里没有这一项）」，唯一的「发射宽度 8」出现在即时自测第 2 题，那是被驳斥的学员说法而非作者断言。架构阶梯表的寄存器集（32 个 128 位 V、16 个 XMM/YMM、32 个 512 位 ZMM、SVE 32 个 Z + 16 个 P）与静态事实相符。判 finding 的原因：12.1.2 把 AVX-512 的 16 车道单周期 FMA 当硬件事实陈述，既无归档证据（本章基准全在 AArch64），也无母本行，且与常见 x86 实现的每拍 FMA 发射能力不符。",
+      "evidence": [
+        "src/part3/ch12.md:112,117-118,211-215,227-229,286",
+        "src/part3/ch12.md:82（无发射宽度断言）对照 :277（学员假设句）",
+        "复算：65539 为质数、65539=4*16384+3、512/32=16、512/64=8、128/16=8",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10858,10862-10863,10866"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "12.2.5 的改判复核通过：本机 rustc 1.99.1（rustc --version 实读）下，-C remark=loop-vectorize、=vectorizer、=all 三种取值在一个最小向量化 crate 上全部零条 remark；再到 bench/systems-lab 真实 crate 上以 RUSTFLAGS='-C target-cpu=native -C debuginfo=1 -C remark=loop-vectorize' cargo build --release 重跑一次，grep remark 计数为 0，所以「remark 这条证据链在本机不可用、改用 IR/汇编两层判」成立；`-C pass-remarks-analysis=` 实测报 error: unknown codegen option: `pass-remarks-analysis`，与正文引文逐字一致；正文点名的 <4 x i32> 与 ldur q0 两条下游证据在 run-01/codegen 里都存在。12.2.2 四大障碍、12.2.3 范式与 lib.rs:223-229 的 auto_transform 写法一致。判 finding 的原因：行 400 的括注加「只有 -C remark=all 会输出大量 inline remark」这一句在本机不可复现（真实构建里 remark=all 也是零条），它把读者往「加 debuginfo 就能看到 remark」的方向带，与同一节自己的结论相反。",
+      "evidence": [
+        "rustc --version → rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+        "复跑：rustc -O -C debuginfo=1 -C remark=loop-vectorize|vectorizer|all → remark 行数 0",
+        "复跑：cd bench/systems-lab && RUSTFLAGS='-C target-cpu=native -C debuginfo=1 -C remark=loop-vectorize' cargo build --release | grep -ci remark → 0",
+        "复跑：rustc -O -C pass-remarks-analysis=loop-vectorize → error: unknown codegen option: `pass-remarks-analysis`",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.ll:6483-6487（<4 x i32>）；同批 .s 有 ldur q0/q1 共 45 处 ldur"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "12.3.3 的注释改判复核通过：正文写「源码层是两条：先 vmulq_u32 再 vaddq_u32；能否融成一条 mla.4s 要看后端」，归档代码 src/lib.rs:243-245 正是 vaddq_u32(vmulq_u32(...), addend) 两条内联函数，而汇编产物只有一条 mla.4s（.s:10863），所以「源码两条 / 后端融成一条」两侧都有凭证，措辞与代码不冲突；常量在循环外建立也与 .s:10852 的 movi.4s v0, #3 相符。尾部账自查：65539=8×8192+3=4×16384+3，例 12.3.1 两内核各剩 3 个元素算对；即时自测第 4 题的公式在 SVE 下的限定（位宽运行时未知、步进与尾部不能写死）成立。`#[target_feature]` 必须 unsafe fn、is_aarch64_feature_detected! 作凭证、AVX-512 的 k0~k7 与 _mm512_mask_storeu_epi32 与公开 ISA 事实相符。本节没有引用任何实测数字，12.3.1 的「同一量级」是回指 12.6，且 12.6 复核通过。",
+      "evidence": [
+        "bench/systems-lab/src/lib.rs:231-249",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10852,10862-10863",
+        "复算：65539=8*8192+3=4*16384+3",
+        "src/part3/ch12.md:497-503 内联函数名对照 core::arch 公开 API"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "静态量全部复算通过：&[u8] 与 &mut [u32] 尺寸 16/对齐 8（胖指针=指针字+长度字）、Vec<u8> 24（多出 cap）、Arc<[u8]> 16，与 results/run-01/layout.txt 的三行探针（size=16/24/16）逐字一致，其余两行正文自己标明「归档未采集」；12.4.3 的 next_frame 与 lib.rs:289-298 完全同形（含 ParseError 三变体、limit 检查、get(..4)/get(..length) 两处兜底），帧格式 [4B 小端长度][载荷] 与 encode_frames 一致。100GbE 措辞复核通过：「万兆（10GbE）」「百G（100GbE，即 100 Gbit/s）」的单位换算与 IEEE 命名都对，没有出现把 Gbit 当 GB 的口径混用。判 finding 的原因两条：一是拷贝次数与本章自己的图不闭合（图只画了两步 memcpy 却断言 3 次独立拷贝）；二是例 12.4.1 第 3 问答给拷贝版的「真的去申请 4 GB」缺实现前提，按仓库里的 to_vec 路径根本申请不到。",
+      "evidence": [
+        "bench/systems-lab/results/run-01/layout.txt（7 行：&[u8]=16/8, Vec<u8>=24/8, Arc<[u8]>=16/8）",
+        "bench/systems-lab/src/lib.rs:273-298（ParseError / next_frame / encode_frames）",
+        "src/part3/ch12.md:717-729（图 4 步与「3 次拷贝、2 次分配」并排）",
+        "src/part3/ch12.md:801 对照 bench/systems-lab/src/lib.rs:311（owned 分支是 payload.to_vec()）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "探针表与产物两条全部逐字核对通过：layout.txt 确实只有 7 行且内容与表格前三行一致，后两行正文诚实标「未采集」并可用同一 show::<T> 复核（[u32;4]=16/4、&mut [u32]=16/8，复算无误）；environment.txt:14 的 profile 行与正文引号内字符串逐字相同（release; thin LTO; codegen-units=1; debug=1）；「最终二进制反汇编没有归档」与 run-01 目录实况相符（只有 binary-sha256.txt，无 objdump）。12.5.2 的 8 行循环在 .s:10855-10872 逐行命中，LBB49_3 之内确为 ldr/movi/mla/str/sub/add/cmp/b.hi 8 条，数据指令 3 条、常量与控制 5 条的拆分正确，「说成 3 条会误以为循环开销为零」的反面提醒成立。12.5.3 的 .ll 块在 6480-6491 逐行命中（load <4 x i32> align 1、splat、store align 1、icmp ugt、br），align 1 与 vld1q_u32 不要求 16 字节对齐相符；`tail call @auto_transform` 确实存在并与 lib.rs:249 的尾巴转 auto 一致；auto_transform 的 .s 循环（.s:10781-10796）是 ldr/add/add/str 四条标量体加 subs/b.ne 控制，与「标量四指令循环」相符。判 finding 的原因：两处把这段循环与这段 IR 归到 neon_inner 名下，而两份产物里都没有 neon_inner 的独立符号，它已被内联进 neon_transform（.s 里 neon_inner 只出现在调试名表 53166-53167，循环所在函数的标签是 :10827 的 neon_transform），本节的立论恰好是「产物只对生成它的那次构建负责」，归属层应写准。",
+      "evidence": [
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10781-10796,10827,10852,10855-10872,53166-53167",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.ll:6480-6491（bb2.i）与 neon_transform 内的 tail call @auto_transform",
+        "bench/systems-lab/src/lib.rs:238（.s:10868 的 .loc 39 238 指向 neon_inner 的 while）与 :249",
+        "bench/systems-lab/results/run-01/environment.txt:14；results/run-01 目录清单（无最终二进制反汇编）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部测量数字用 /usr/bin/python3 从正文点名的 bench/systems-lab/results/run-01/simd.txt 复算，逐位命中：批均值 0.535004/0.069184/0.069965，样本标准差 0.012816/0.003189/0.003086（N-1 分母），p50 0.537967/0.069456/0.070251，p99 0.560973/0.078119/0.075973，且 p99 复算等于各模式最大值，与定义 12.6.3「nearest-rank 第 ceil(21p) 个、p99 即最大值」一致；变异系数复算 2.40%/4.61%/4.41%，支持「2.4%–4.6%」区间；加速比复算 7.733 与 7.647，与 7.73/7.65 及「快 673%」相符；差值 0.000781 与相对 1.1% 相符。逐轮归因方向单独复核通过：抽的四轮 ns/元素（0 轮 0.538205/0.070846/0.071959，3 轮 0.520921/0.065204/0.064847，15 轮 0.560973/0.078119/0.067429，19 轮 0.512299/0.069456/0.065840）与原始 raw 行除以 units=1048624 完全一致；按最快判定 neon 赢第 3、15、19 轮、auto 只赢第 0 轮，与正文「neon 赢三轮、只有第 0 轮 auto 略快」同向；第 15 轮确为 auto 全 21 轮最慢；三个 p50 分别落在第 7/19/6 轮、三个 p99 落在第 15/15/13 轮，与正文逐个点名一致。协议侧核对：N=65539、REPEAT=16、65539×16=1,048,624、校验和 140746630219670 在 63 条 raw 行上唯一，warmup_ns=500298291 rounds=698 units=1048624 与文件首行逐字相同，轮转公式 (round+offset)%3 与 lib.rs:30-32 相符，正文引用的 simd.rs 入口 26 行与归档文件逐字一致，source-sha256.txt 登记了该文件哈希。归因边界（只拆「去掉调用」与「手写」两组、无 IPC/cache miss/周期数、无配对区间就不分方向）与归档里确实没有这些字段相符，12.6.4/12.6.5 的克制表述成立。",
+      "evidence": [
+        "复算脚本 /tmp/r4b_ch12.py：从 simd.txt 的 raw 行按 ns/1048624 重算 mean/sd/p50/p99/cv，与 summary 行三行逐字一致",
+        "复算四轮 winner：round0 auto(0.070846<0.071959)、round3 neon、round15 neon、round19 neon",
+        "复算 p50/p99 来源轮次：scalar(7,15)、auto(19,15)、neon(6,13)",
+        "bench/systems-lab/src/bin/simd.rs:1-26 与正文代码块逐字相同；src/lib.rs:9,12-40,210-264",
+        "bench/systems-lab/results/run-01/simd.txt:1-3,63；source-sha256.txt:1947c9be...src/bin/simd.rs"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "severity": "P2",
+      "description": "12.1.2 把 x86 AVX-512 的峰值吞吐写成硬件事实：「从传统的 128 位 XMM 扩展至 256 位 YMM 与 512 位 ZMM 寄存器，支持在单个时钟周期内并发执行 16 个 32 位单精度浮点或 8 个 64 位双精度浮点乘加运算（FMA）」。车道数 512÷32=16、512÷64=8 我复算没错，错的是「单个时钟周期」这一限定：这是具体实现相关的数据发射能力（常见 x86 服务器实现上 512 位 FMA 需要跨两拍或由双 FMA 端口分担），而本章全部基准都在 AArch64 上采（environment.txt 记 Apple M5 Pro / Mac17,9），run-01 归档里没有任何 x86 吞吐证据，12.1.1 自己又声明微架构参数不取证。同一节第 82 行对发射宽度做了「本书没有取证」的正确处理，第 118 行却把 FMA 吞吐当成结论用，口径不一致。建议改成「一条 512 位 FMA 指令携带 16 个单精度车道」，把「每周期几条宽 FMA」留给微架构与出处。",
+      "evidence": "src/part3/ch12.md:118 对照 :82；复算 512/32=16、512/64=8；bench/systems-lab/results/run-01/environment.txt:11-14（host aarch64-apple-darwin、hw.model Mac17,9、Apple M5 Pro）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "severity": "P2",
+      "description": "12.2.5 的主判（本机不产出向量化 remark，改走 IR/汇编两层）我实跑复现，成立；但同一节残留两处与本机事实相冲的措辞。其一，行 400 括注「想连源码位置一起看，再加 -C debuginfo=1（否则 rustc 只警告『requires -C debuginfo=n』）」——我加上 -C debuginfo=1 后 remark=loop-vectorize/vectorizer/all 三种取值仍是一条 remark 都没有，真实 crate 构建里 grep -ci remark 也是 0，读者照这句做会得到「警告变成空白」的第三种结果，正文应写明加 debuginfo 后本机同样零条。其二，行 405「只有 -C remark=all 会输出大量 inline remark」在我的复现里不成立（最小 crate 与真实 crate 的 -C remark=all 都没有 remark 行），这条现在没有任何归档或命令凭证，属于未落地的观察，建议删掉或改成本机复跑命令 + 计数。",
+      "evidence": "复跑：rustc -O -C debuginfo=1 配 -C remark=loop-vectorize、-C remark=vectorizer、-C remark=all 三种取值分别构建 → remark 行数均为 0；复跑：cd bench/systems-lab && RUSTFLAGS='-C target-cpu=native -C debuginfo=1 -C remark=loop-vectorize' cargo build --release | grep -ci remark → 0；src/part3/ch12.md:400,405"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "severity": "P2",
+      "description": "拷贝次数与本节自己的图不闭合。行 729 断言「一个 100 字节的协议帧可能经历 3 次独立的内存拷贝与 2 次全局堆分配器（malloc/free）调用」，但它上面那张 text 流程图（行 717-727）只有四个方框、两个搬运箭头：内核→用户态 memcpy 一次，malloc + memcpy 一次，末端只有 free 没有搬运，图里可数的 memcpy 是 2 次、堆分配器调用是 1 malloc + 1 free。要么把第三跳（网卡/驱动或协议栈→socket 缓冲）画进图，要么写成「2–3 次」并说明第三次来自哪一步；现在的写法让读者拿图去核对却核不出 3。100GbE 措辞这次改对了：10GbE=万兆、100GbE 即 100 Gbit/s 的单位换算我核对无误，没有把 Gbit 当 GB。",
+      "evidence": "src/part3/ch12.md:717-729（图 2 个 memcpy 箭头 vs 正文 3 次拷贝）；本仓库无对应拷贝次数的归档测量（run-01 无 memcpy 计数）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "severity": "P2",
+      "description": "例 12.4.1 第 3 问的答案缺实现前提，按仓库里的拷贝版路径推不出来。原文答「拷贝版会为声称的 4 GB 载荷真的去申请内存：单次恶意帧就能放大成 OOM 或长暂停」。但拷贝版要构造 Vec 必须先有一个合法切片：走 lib.rs:295-297 那条 get(..length) 时恶意长度直接返回 None → Truncated，走 &rest[..length] 时 panic，两条都不会申请 4 GB；只有先按声明长度 with_capacity/read 的形态（正文第 2 问自己提的「按帧预分配」）才成立。0xFFFF_FFF0 ≈ 4 GB 的量级我核对过（4294967280 B），问题在机制归属：现在这句把「拥有型」与「不做契约检查的预分配」混成一件事，正好和本节 preview 的口径（省掉复制、付出生命周期）对不齐。建议改成「若拷贝版按声明长度预分配（Vec::with_capacity(length) 一类），才会申请 4 GB；先取切片的 to_vec 形态仍旧只是 Truncated」。",
+      "evidence": "src/part3/ch12.md:789-801；bench/systems-lab/src/lib.rs:289-298（next_frame 两处 get 兜底）与 :311（owned 分支 payload.to_vec()）；复算 0xFFFF_FFF0=4294967280 B≈4 GB"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "severity": "P2",
+      "description": "产物归属层写错：12.5.2 说「在 results/run-01/codegen/systems_lab-*.s 这份汇编产物里，neon_inner 的循环主体是这 8 行」，12.5.3 又说「.ll ... neon_inner 的循环基本块是 4 车道形状」。我在两份产物里都核过：这 8 行（LBB49_3，.s:10855-10872）物理位于函数标签 __RNvCs4WO1Pb37diX_11systems_lab14neon_transform（.s:10827，Lfunc_begin49）体内，.s 与 .ll 里都没有 neon_inner 的独立符号，neon_inner 只以调试名表字符串出现（.s:53166-53167），源码层的对应关系靠 .loc 39 238 指回 lib.rs:238 的 while。同理 <4 x i32> 那块 bb2.i 也是内联进 neon_transform 的。这一节的论点正是「产物只对生成它的那次构建负责」「rlib 的产物不等于最终二进制」，把内联后的机器码记到内联前的函数名下，恰好是它自己警告的那种层级混淆；建议写成「neon_transform 里内联的 neon_inner 循环体」。数字本身（8 行、3 条数据指令、每轮 4 个元素、65539→16384 轮 + 尾部 3）我逐行复算全对。",
+      "evidence": "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10827,10855-10872,53166-53167；同批 .ll:6480-6491 无独立 neon_inner define；src/part3/ch12.md:986,1014,1039-1043"
+    }
+  ]
+}

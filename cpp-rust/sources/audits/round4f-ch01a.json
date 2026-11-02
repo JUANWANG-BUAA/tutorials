@@ -1,0 +1,102 @@
+{
+  "reviewer": "r4f-ch01a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part1/ch01.md 的 1.1–1.6 全部正文与每个语义盒（定义 1.1.1–1.6.2、例 1.1.1/1.1.2/1.1.3/1.2.1/1.3.1/1.4.1/1.4.2/1.5.1/1.6.1、思考 1.1.1/1.2.1/1.3.1/1.4.1/1.5.1/1.6.1、判定流程、图 1-1 与图 1-2 的 desc、八组常见错误清单、即时自测四题×6），并逐条回源 bench/foundations-lab 的 src/lib.rs、src/bin/dce.rs、src/bin/paired.rs、src/bin/locality.rs、src/bin/allocation.rs、run.sh、analyze.py、gate.py、results/native-01/{dce.csv,paired.csv,statistics.json,environment.txt,layout.txt,build-processes.txt,codegen/*.mir,*.ll,*.s,sample-*.txt}；所有实测数字用 /usr/bin/python3 从正文点名的 CSV 逐行复算（脚本在 /tmp/r4f/），并原样重放了 analyze.py（退出码 0）；另跑 tools/list_uncollected_claims.py，ch01 只有 ch01.md:54 与 ch01.md:1157 两条且都是「✓ 没有匹配到同类产物（仍需人确认关键词覆盖到了没有）」，前者是 1.1 的回答句、后者是 1.6.6 的「没有采集指令退休数或 PMU 事件」，均属未采集声明而非待补数字。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.1 全部（含预览框、定义 1.1.1/1.1.2/1.1.3、例 1.1.1/1.1.2、思考框、检查顺序框、小结、E-a~E-f、即时自测四题）。核过且成立的：N=65536 对应 src/lib.rs:5 `pub const N: usize = 65_536`；`discarded` 的 expected=0 与 21 个批次对应 dce.rs:10 与 lib.rs:6 `ROUNDS: usize = 21`，CSV 里 discarded 确为 21 行、round 覆盖 0..20、checksum 恒为 0；observed 均值 0.058630038 与 discarded 均值 0.000016082 我从 results/native-01/dce.csv 逐行复算完全命中（全精度 0.0586300379047619 / 0.00001608190476190476）；「函数体只剩两行汇编」属实——codegen/foundations_lab-29c064615efbeca4.s 里 `_RNvCs9cj3cTKSYZx_15foundations_lab9dce_empty` 的有效指令只有 `mov x0, #0` 与 `ret`（其余是 .p2align/.loc/.cfi）；契约表里 rustc 1.99.0、aarch64-apple-darwin、release 逐条对上 environment.txt:2,6,7；`black_box(5 * 10)` 可能被折成 50、打印耗时不构成对 sum 的观察等表述与 lib.rs:19-34 的夹具位置一致。判 finding 的只有一条：1.1.1 给的比值 3645.71 与其括号里的算式口径不一致（读者按括号算得 3645.6932）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/dce.csv 逐行复算：observed mean=0.0586300379047619 → 正文 0.058630038 ✓；discarded mean=0.0000160819047619 → 正文 0.000016082 ✓",
+        "bench/foundations-lab/src/lib.rs:5,6（N=65_536、ROUNDS=21）；bench/foundations-lab/src/bin/dce.rs:10（expected: 0）",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s：__RNvCs9cj3cTKSYZx_15foundations_lab9dce_empty 处仅 `mov x0, #0` / `ret` 两条指令",
+        "bench/foundations-lab/results/native-01/environment.txt:2,6,7 rustc 1.99.0 / commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4 / host aarch64-apple-darwin",
+        "decimal 精确复算：0.058630038 ÷ 0.000016082 = 3645.6931973635；全精度均值之比 = 3645.7147814758"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.2 全部（定义 1.2.1/1.2.2/1.2.3、例 1.2.1、计时边界清单、判定流程框、思考框、小结、E-a~E-f、即时自测四题）。核过且成立的：批均值公式 T/(K×N) 与 lib.rs:35 `elapsed.as_secs_f64() * 1e9 / (iterations * units)` 一致；一个 case 21 批 ✓；预热 500 ms 且预热中仍检查正确性、耗时不进统计 ✓ lib.rs:19-23（`while start.elapsed() < Duration::from_millis(500) { assert_eq!(black_box(...), case.expected); }`），「两个 case 依次预热」✓ lib.rs:18 的外层 for；计时边界清单九行逐项对上 lib.rs/dce.rs（闭包调用 lib.rs:31、输出写入 lib.rs:31、black_box lib.rs:31、断言在停表后 lib.rs:33/34、CSV 打印在停表后 lib.rs:36、输入生成与参考值在 dce.rs:4-5 即 run 之外）；「没有自动增长 K」✓ run.sh 无自适应；「目录锁串行化、这次 build-processes.txt 为空、没有锁核锁频」✓ run.sh:32-39（pgrep -fl 'cargo|rustc'）与 results/native-01/build-processes.txt 为 0 字节；「不读 TSC/CNTVCT、不发布 cycle/元素」在 1.1–1.6 全文核实为零 cycle 数字。判 finding 的是 1.2.5 的跨入口 K 解释：正文说 locality、allocation「K 相应放大」，代码里这两个恰恰是全章最小的 K。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:35,19-23,18,20（批均值公式、预热 500ms 与预热期断言、case 依次预热）",
+        "bench/foundations-lab/src/lib.rs:31,33,34,36-39 对照 1.2.3 计时边界清单逐行",
+        "bench/foundations-lab/run.sh:32-39 与 results/native-01/build-processes.txt（size 0）",
+        "六个入口的 K：dce.rs:18=256、paired.rs:18=512、borrow.rs:18=256、locality.rs:22=128、initialization.rs:17=64、allocation.rs:36=16"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.3 全部（定义 1.3.1、例 1.3.1、思考框、小结、E-a~E-f、即时自测四题）并逐条回源。核过且成立的：四道屏障确实都在夹具里——输入 `black_box(&input)`（dce.rs:9、paired.rs:9）、每次调用 `*output = black_box((case.work)())`（lib.rs:31）、批后逐项比对 outputs 与 expected（lib.rs:34，在 elapsed 之后即计时之外）、`#[inline(never)]`（lib.rs:50,61,66 三个工作核都带）；「前三道服务观察集合、第四道是实验选择」与 lib.rs 结构一致。静态量全部重算命中：`&[u64]` 16 字节、`Vec<u64>` 24 字节来自本机探针产物 results/native-01/layout.txt（`&[u64],16,8` / `Vec<u64>,24,8`），u64 输出 8 字节 ✓，工作闭包确为动态 trait 对象 `Box<dyn FnMut() -> u64 + 'a>`（lib.rs:10），输出数组确为 K 个 u64（lib.rs:17 `vec![0; iterations]`）；正文「字段顺序这里也没有承诺」与 layout.txt 只给 Record 的 C/Rust 偏移相符。例 1.3.1 关于「只 black_box 最后一次会把批均值压小约 K 倍」是机制推演，正文未标实测，不需归档。checksum 强度与浮点误差界两段为方法性表述。本节未发现与代码或归档不符之处。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:31,34,50,61,66,10,17；src/bin/dce.rs:9、src/bin/paired.rs:9",
+        "bench/foundations-lab/results/native-01/layout.txt:8-9（&[u64],16,8 / Vec<u64>,24,8）",
+        "bench/foundations-lab/examples/layout.rs 即正文所说「本机探针」的来源程序"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.4 全部（定义 1.4.1/1.4.2、例 1.4.1、判定流程框、漂移诊断、图 1-2 及其 desc、21 为奇数一节、随机化分层、不并行、绝对差与比值、小结 E-a~E-g、即时自测四题）并全部回源。核过且成立的：轮/位置/配对与 lib.rs:25-28 的 `index = (round + position) % cases.len()` 一致，我按该式重建顺序为 round0=(indexed,iterator)、round1=(iterator,indexed)，与正文「第 0 轮 A、B，第 1 轮 B、A」和 paired.csv 的 position 列逐行相符；「21 是奇数，A 先跑 11 次、B 先跑 10 次」我按同一公式数过：indexed 占 position0 的轮为 0,2,…,20 共 11 轮，iterator 为 1,3,…,19 共 10 轮 ✓；CSV 表头 `kind,round,position,case,ns_per_unit,checksum` 与 lib.rs:24 逐字相同，正文示意四行的 kind/round/position/case 取值与真实 CSV 前四行一致；「分析脚本同时输出每个 case 前 7 轮与后 7 轮平均值」✓ analyze.py:48；四个漂移数我从 paired.csv 重排 round 后复算：indexed 前 7=0.058683、后 7=0.058575，iterator 前 7=0.058684、后 7=0.058643，与正文完全一致，思考框的差 0.000108 与 0.000041、以及「样本标准差在 0.0005 量级」（实为 0.000458518/0.000541829）也都成立；例 1.4.2 的 0.058630038 与 0.000016082 及「3600 倍」按 dce.csv 复核为真（全精度比 3645.71，正文 1.1.1 已说明按数量级写作 3600）；bootstrap 种子 13013 ✓ analyze.py:24，「计时用确定性交替、种子只用于分析」与 lib.rs:27/analyze.py:24 分层一致；「不并行跑两种实现、采样不附着正式测量进程」✓ run.sh:40-43 顺序跑六个入口、run.sh:46-53 的 sample 只附着在 *-excluded 的独立进程上。未发现不符。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:25-28,24（轮转公式与 CSV 表头）；results/native-01/paired.csv 前四行 raw,0,0,indexed / raw,0,1,iterator / raw,1,0,iterator / raw,1,1,indexed",
+        "复算：indexed 首 7 均值 0.058683、末 7 0.058575；iterator 0.058684、0.058643（analyze.py:48 同式）",
+        "计数：indexed 在 position=0 出现 11 轮、iterator 10 轮（lib.rs:27 公式重建）",
+        "bench/foundations-lab/run.sh:40-43,46-53；analyze.py:24（seed 13013）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.5 全部（入口代码块、定义 1.5.1/1.5.2、两个工作核、描述统计表、例 1.5.1、四层代码生成表、修复与回归测试、思考框、生成器一节、小结 E-a~E-f、即时自测四题）。核过且成立的：正文展示的 `src/bin/dce.rs` 入口与真实文件逐行等价（dce.rs:1-19，只有空行排版差异），`run(&mut cases, 256, N)` 在 dce.rs:18 ✓；`dce_empty`/`sum_iter` 两核与 lib.rs:66-70、61-64 逐字一致；描述统计表八个数字我从 results/native-01/dce.csv 独立复算全部命中（discarded 0.000016082/0.000001491/0.000014901/0.000019848；observed 0.058630038/0.000235237/0.058561563/0.059458137），且与归档 statistics.json 逐位相同；nearest-rank 定义与 analyze.py:13 `sorted(values)[max(0, ceil(len*p)-1)]` 一致，`ceil(21×0.99)=21` 使 p99 等于样本最大值，我用真实数据验证 p99==max ✓；四层代码生成表逐层落地：MIR 里 `fn dce_empty` 仍带 `std::slice::Iter<'_, u64>` 与 inlined iter/fold 作用域（*.mir:1523-1530），优化后 LLVM IR 为 `ret i64 0`（*.ll:772-775），本机汇编只剩 mov/ret，`sum_iter` 是指向 `sum_soa` 的别名（*.ll:16 `unnamed_addr alias ... ptr @_RNvCs9cj3cTKSYZx_15foundations_lab7sum_soa`），sample 为独立运行（run.sh:46-53、sample-locality.txt 含 sum_aos/sum_soa）；回归测试名与长度集合 ✓ lib.rs:181 `for n in [0, 1, 7, 65, N]`、mod tests 在 lib.rs:174；生成器「索引乘 17 再异或常量」✓ lib.rs:46 `(i as u64).wrapping_mul(17) ^ 0x5a5a`。判 finding 是 1.5.1/1.5.7 的期望值独立性说法与本节自己给的判据相冲突（见 findings），其余无可对核出的事实错误。",
+      "evidence": [
+        "bench/foundations-lab/src/bin/dce.rs:1-19（含 :18 run(&mut cases, 256, N)）；src/lib.rs:61-64,66-70,46,174,181",
+        "results/native-01/dce.csv 复算 → 表 1.5.3 八个数全部命中；results/native-01/statistics.json['dce']['cases'] 逐位相同",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:1523-1530；同目录 .ll:16,772-775；同目录 .s 的 dce_empty 函数体",
+        "analyze.py:12-18（nearest-rank、stdev 用 N−1）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.6 全部（定义 1.6.1/1.6.2、paired.rs 入口、计时核心、例 1.6.1、误差条思考框、代码生成一节、判定流程、小结 E-a~E-f、即时自测四题）。核过且成立的：入口代码与 paired.rs:1-19 逐行等价，`run(&mut cases, 512, N)` 在 paired.rs:18 ✓；`sum_index` 用 while 且是下标访问、无 unchecked/UB ✓ lib.rs:51-59；正文展示的计时核心五行与 lib.rs:29-35 逐字相同，「输出检查在 elapsed 之后、black_box 在 elapsed 之前」✓（lib.rs:31 早于 :33，:34 晚于 :33）；描述统计表八个数字从 results/native-01/paired.csv 独立复算全部命中（indexed 0.058694076/0.000458518/0.058524311/0.060221791；iterator 0.058768701/0.000541829/0.058590114/0.060894847）；配对差值口径我按 analyze.py 的 `paired_second_minus_first` 复算：order=['indexed','iterator']，故 iterator−indexed，均值 0.000074625、差值 sd 0.000484383、固定种子 13013 的 95% bootstrap 区间 [−0.000128553, 0.000269819]（跨零）——四个数与正文逐位一致，也与归档 statistics.json 一致；我还把 analyze.py 原样重放到 /tmp 的 CSV 副本上，退出码 0，其内部断言（每 case round==range(21)、checksum 唯一）成立；定义 1.6.2 的算法四步（有放回抽 21 个、算均值、10000 次、取 2.5%/97.5% nearest-rank）与 analyze.py:21-28 完全对应，且 10000 次抽样的 2.5%/97.5% 落在索引 249/9749，正是 nearest-rank；1.6.6 的别名与独立符号断言 ✓ .ll:16 与 .ll:1030；「没有采指令退休数/PMU」在 run.sh 全文核实为真，工具 list_uncollected_claims.py 也把 ch01.md:1157 列为未采集声明；「区间只覆盖本次运行抽样波动」两处前提属方法性限定。未发现与代码或归档不符之处。",
+      "evidence": [
+        "bench/foundations-lab/src/bin/paired.rs:1-19（:18 run(&mut cases, 512, N)）；src/lib.rs:29-35,51-59",
+        "results/native-01/paired.csv 复算：indexed/iterator 各 21 批，表 1.6.3 八数命中；配对均值 0.000074625、sd 0.000484383、CI=[-0.000128553,0.000269819]",
+        "results/native-01/statistics.json['paired'] 逐位一致；/tmp/r4f/replay 中原样重放 analyze.py 退出码 0",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll:16（sum_iter alias sum_soa）、:1030（sum_index 独立 define）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "severity": "P0",
+      "description": "1.2.5 解释跨入口的 K 取值方向写反，与代码事实相反。正文：「这一章为每个入口固定 K，不同入口的 K 不同——但理由不是一条：locality、allocation 那类入口每次迭代做的事更多，K 相应放大；而 dce 与 paired 同样是 N=65536 的 u64 求和，K 却是 256 与 512（dce.rs:18、paired.rs:18）」。真实 K 值：allocation.rs:36 是 16（全章最小），locality.rs:22 是 128，initialization.rs:17 是 64，borrow.rs:18 与 dce.rs:18 是 256，paired.rs:18 是 512。也就是说正文点名的 locality 与 allocation 恰恰是 K 最小的两个入口，allocation 只有 paired 的 1/32、dce 的 1/16，「放大」应为「缩小」。同一句后文自己给出的正确理由（「这对差异来自各自的批次成本预算」）也说明该解释方向不自洽：单次迭代做的活越多，为了把单批墙钟 T 压住，K 只能调小而不是调大。此外 allocation 的分母单位也不是 N：它传的是 COUNT=4096（allocation.rs:3、:36），与「同样口径」的表述无关但值得在改文时一并核对，避免读者把六个入口的 K 当成可比。",
+      "evidence": "grep 'run(' bench/foundations-lab/src/bin/*.rs → allocation.rs:36 `run(&mut cases, 16, COUNT);`、locality.rs:22 `run(&mut cases, 128, N);`、initialization.rs:17 `run(&mut cases, 64, N);`、borrow.rs:18 `run(&mut cases, 256, N);`、dce.rs:18 `run(&mut cases, 256, N);`、paired.rs:18 `run(&mut cases, 512, N);`；allocation.rs:3 `const COUNT: usize = 4096;`"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "severity": "P2",
+      "description": "1.5 对「期望值独立性」的表述与本节自己列的错误互相冲突。1.5.1 写「`observed` 的 `expected` 来自独立的参考计算」，1.5.7 的 E-e 又把「让期望值与被测实现同源。断言于是只能验证错误目标（[@ex-1.5.1]）」列为本节常见错误。实际代码里 dce.rs:5 的 expected 是 `input.iter().fold(0u64, |a, &b| a.wrapping_add(b))`，而 observed 的被测核 sum_iter 是 lib.rs:63 `input.iter().copied().fold(0u64, u64::wrapping_add)`——同一条 fold、同一种模加法语义，只是拼写不同，谈不上「独立的参考计算」。它在 1.1.1 那条判据（「不是与被测实现共享同一个被简化掉的常量」）下是过关的，因为 expected 在计时之外运行期求值、不会被同一个常量折叠带走；但按 E-e 的字面（「同源」）就不成立。建议把措辞收紧为「计时之外独立求值的参考结果（与本核同一语义定义，故只担保『工作没被删』，不担保语义本身正确）」，或把 1.5.1 的说法与例 1.1.1 解答、E-e 三处统一到同一条判据上；否则读者会以为本章的 observed 断言能抓住房语义错误，而它抓不住。",
+      "evidence": "bench/foundations-lab/src/bin/dce.rs:5 `let expected = input.iter().fold(0u64, |a, &b| a.wrapping_add(b));` 对照 src/lib.rs:62-64 `pub fn sum_iter(...) { input.iter().copied().fold(0u64, u64::wrapping_add) }`；夹具比较在 src/lib.rs:34 `assert!(outputs.iter().all(|&v| v == case.expected));`"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "severity": "P2",
+      "description": "1.1.1 的比值口径不统一（数字本身没错，是展示算式与结论末位对不上）。正文写「比值 3645.71 倍（0.058630038 ÷ 0.000016082）」。我用高精度复算：按正文括号里给出的两个 9 位显示值相除得 3645.6931973635，而按归档 CSV 的全精度均值相除得 3645.7147814758——3645.71 这个结论对应的是后者（真值，与 results/native-01/dce.csv 完全一致），但读者照着括号做除法只能得到 3645.69，末两位差 0.02。要么把括号改成「按 dce.csv 的 21 批原始值直接相除」（与[@def-1.5.2]的口径一致），要么把结论写成 3645.69，二者取一；这与 1.2.4 思考框自己强调的「有效位数由测量协议决定，不由打印格式决定」正好是同一件事，改文时可顺手呼应。另核：章首 0.0586/0.000016 与「3600 倍」的数量级写法、以及「本章后面按数量级写作 3600 倍」的说明本身与正文一致，不是问题。",
+      "evidence": "decimal 高精度：Decimal('0.058630038')/Decimal('0.000016082')=3645.6931973635；results/native-01/dce.csv 全精度均值 0.0586300379047619… ÷ 0.0000160819047619… = 3645.7147814758（statistics.json 同值）"
+    }
+  ]
+}

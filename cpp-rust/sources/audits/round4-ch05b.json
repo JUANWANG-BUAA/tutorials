@@ -1,0 +1,88 @@
+{
+  "reviewer": "r4-ch05b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动完整通读 src/part2/ch05.md 第 1573-2219 行（5.7-5.11 全部正文与每个 preview/def/ex/sol/think/method/errata/自测盒），再用 python 从 bench/compiler-lab 的 CSV 与归档逐行复算，并回查 sources/web.json 与 sources/reviews/S08.md；未与其他评审报告对答案。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.7 全节（含 5.7.1-5.7.7 与两张例题、一个思考、判定流程、6 条 errata、4 道自测）逐句读完。核到的：①「本轮拒绝测试使用泛型方法…报告 E0038」落地——probes/rejected/dyn_generic.rs:1 与正文 :1602 的代码逐字符相同（trait Bad { fn apply<T>(&self, value: T); } fn accept(_: &dyn Bad) {}），probes/rejected/expected.tsv:5 记 dyn_generic→E0038，产物 results/extra-02/dyn_generic.txt 在盘上；②「失败输入只参与编译，不参与执行」与该目录结构（probes/rejected/ 独立于 src/bin）一致；③「本轮测试实际把 &dyn Child 转成 &dyn Parent…测试已通过」落地——tests/contracts.rs:96 函数名与 :98 的 `let child: &dyn Child = &value;` 与正文 :1701-1704 一致，results/stable-02/tests.txt:47 打点 `test current_stable_supports_trait_upcast ... ok`，同节 8 个测试全绿；④「本轮 Rust 1.99.0」与 results/stable-02/environment.txt 的 `rustc 1.99.0 (b940084d7 2026-09-28)` 相同；⑤「&dyn Kernel 只是两个机器字」「每批一次的动态进入已被摊薄」这类跨节引用我按通读判定，数字口径来自我在 5.8/5.10 复算的同一批归档。没核的：定义 5.7.1 里「接收者形式受限/不引入新类型参数/返回不需要隐藏尺寸」三条与 REF-dyn-compatibility 规范原文的逐字对应（我只确认该来源在台账与磁盘上存在，没有逐条比对措辞）；[@def-5.3.2]、[@def-1.1.1] 等锚点指向的 5.3/第 1 章正文不在我负责范围，属机械层。唯一实质问题见 findings：母本页码与版本号的归属和仓库自己的 S08 台账对不上。",
+      "evidence": [
+        "bench/compiler-lab/probes/rejected/dyn_generic.rs:1 逐字符等于 src/part2/ch05.md:1602",
+        "bench/compiler-lab/probes/rejected/expected.tsv:5 dyn_generic E0038；产物 bench/compiler-lab/results/extra-02/dyn_generic.txt",
+        "bench/compiler-lab/tests/contracts.rs:96,98 + bench/compiler-lab/results/stable-02/tests.txt:47 `test current_stable_supports_trait_upcast ... ok`（8 passed）",
+        "bench/compiler-lab/results/stable-02/environment.txt:5 `rustc 1.99.0 (b940084d7 2026-09-28)`",
+        "sources/reviews/S08.md:33 把 trait 上转型的过时预测记在 PDF169/S08-U0024 并映射到 5.4；:25 的 S08-U0016（第 12 条）只记 PDF97 与补读 99、105"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.8 全节（含 5.8.1-5.8.10、两张表、三个 def 盒、例 5.8.1/5.8.2、思考 5.8.1、判定流程、6 条 errata、4 道自测）逐句读完，这是本章数字口径的总账，我把它当作主要复算对象。全部对上的：①正式协议「每个正式 case 保存 21 个原始批次」——dispatch_grain.csv/dispatch_visibility.csv 每个 case 恰 n=21，generic/dyn_item/dyn_batch/known_dyn/opaque_dyn 五个 case 即 5.11 说的「五个正式 case」；②「归一化除数是重复数×输入元素数」——CSV 的 units 列全是 16384，repeats 列逐批变化，ns_per_unit=elapsed_ns/(repeats×units) 可由列直接复原；③「mean 算术平均、sd 样本标准差（N-1）、p50/p99 取 nearest-rank」——我用 statistics.stdev 与 ceil(q·N) 独立复算，四个量逐个等于 CSV 里 case=summary 那行的 repeats/units/elapsed_ns/ns_per_unit 四列（如 dyn_item 0.647617885/0.088344793/0.694790273/0.709374045）；④「nearest-rank p99 在 21 点样本中就是最大点」——五个 case 的 p99 全部等于各自 max，成立；⑤例 5.8.2 的三个数：0.680228（stable-01 复算 0.680228165）、0.647618（stable-02 复算 0.647617885）、差 0.032610（复算 0.032610280）、「约第一轮的 4.8%」（复算 4.794%）、「第二轮样本标准差也较大」（0.088345 vs 0.042221，且相对波动 13.64% vs 6.21%）全部成立；⑥5.8.5 六行构建表逐行等于 environment.txt 的 `profile: opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind` 与 `RUSTFLAGS=<unset>`，「target-cpu 未显式设置」因此成立；⑦5.8.3 三条文件断言落地：sample-command.txt 原文 `Sampling process 31117 for 1 second with 1 millisecond of run time between samples` 对应「以1毫秒间隔采集一秒」，macos-sample.txt 里 dynamic_items 命中 3 次、`AffineNtB4_6Kernel4step` 帧在 :35-37/:54（152 次）与 `Kernel5batch`（:40/:55，71 次），sample-run.csv 单独在盘且其 generic 首样本 0.175910 与正式 dispatch_grain.csv 不同，支持「它不参与正式表格」；⑧「正式归档保存了六个可执行文件」= results/stable-02/binaries/ 下恰好 6 个，「实验包共六个独立入口、本章占两个」= src/bin/ 六个 .rs 与正文点名的 dispatch_grain/dispatch_visibility；⑨「第二轮脚本还把独立 sample 运行纳入同一目录锁保护」= run.sh:28-29 取锁、:39-40 注释与第二次 mkdir 取锁；⑩本轮没有 perf/PMU/缓存事件产物（磁盘只有 size/nm/csv/ll/mir/s/txt），5.8.4 与 5.8.7 的缺失清单诚实。派单额外要求的「未采集」全量核查：tools/list_uncollected_claims.py --only 5 在 ch05 命中 21 条声明，其中落在 5.7/5.8/5.11 的 1659/1819/1880/1902/1963/1988/2005/2013/2051/2057/2100/1248/1278/1335 全部逐条判过；只有 :1880 与 :2057 被标 ⚠，反例是 bench/evidence-lab/results/run-01/{sample-wait.txt,profile-wait-run.txt} 与 collapse_sample.py——那是第 11 章另一个实验包的 `sample` 栈采样，不是 PMU 计数，也不是 compiler-lab 的产物，且 5.8.3 已明确本章确有栈采样。结论：这两条 ⚠ 是工具自述的误报，第 14 章那类「说没采集而盘上已有」的假陈述在第 5 章没有出现。已核的：5.8.1 那四条协议断言我最后逐行落到代码——bench/compiler-lab/src/lib.rs:13 确有 `pub fn measure(cases: &mut [Case], units: usize)`（正文「完整实现保存在 src/lib.rs::measure」成立，路径是相对实验包，与 5.11 :2183「均相对实验包」一致）；:16 对每个 case 单独进入预热、:19 `while start.elapsed() < Duration::from_millis(500)`，支持「每个 case 独立预热至少 500ms」；:29-31 `let index = (round + offset) % cases.len()` 就是「同一入口内各 case 轮转顺序」的实现；src/bin/dispatch_grain.rs:5-6 用 `input_data(16384)` 并把 `input.len()` 作为 units 传给 measure，与「归一化除数是重复数×输入元素数」和 CSV units=16384 相互对上；:13-17 三个 case 各自 `black_box(...)` 并把同一个 `expected` fold 结果交给夹具比较，支持「每次调用返回值进入 wrapping checksum」「批后与参考结果乘重复数比较」的方向。真正没核的只剩两项：[@def-1.x] 系列（第 1 章口径定义盒）的锚点内容不在我范围，以及我没有实跑 run.sh 复现整轮，只用归档复原统计量。",
+      "evidence": [
+        "复算 stable-02/dispatch_grain.csv：generic mean 0.158334 sd 0.008248 p50 0.156409 p99 0.194214（=max）；dyn_batch 0.156428/0.004677/0.155254/0.176579；dyn_item 0.647618/0.088345/0.694790/0.709374",
+        "复算 generic−dyn_batch=0.001906（正文 :1858/2088/2136）；dyn_item/dyn_batch=4.1400（正文「约 4.1 倍」）；stable-02/dispatch_visibility.csv：known−opaque=0.002170（正文 :2136）",
+        "results/stable-02/environment.txt profile 行 = 正文 :1908-1915 六行表；RUSTFLAGS=<unset> = 「target-cpu 未显式设置」",
+        "results/stable-02/macos-sample.txt:35,54 + sample-command.txt + sample-run.csv:2；run.sh:28-29,39-40",
+        "/usr/bin/python3 tools/list_uncollected_claims.py --only 5 → 21 条，⚠ 仅 2 条（1880/2057），反例文件属 bench/evidence-lab/run-01 栈采样而非 PMU"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "5.9 整节逐句读完，这节的断言几乎全是「来源能不能落地」，我逐个回盘。核到的：①三条在线 Reference 与其「别算成母本 S10」的辨析成立——sources/web.json 里 REF-trait-object / REF-dyn-compatibility / REF-codegen-attrs 三条各有 url、sha256、bytes、archive 与 `fetched: 2026-10-31`，与正文「2026-10-31 抓取入盘」一致；本地副本确在盘上：.work/cpp-rust-sources/reference/S10-trait-object.html 36227 字节、S10-dyn-compatibility.html 57237、S10-codegen-attrs.html 121551，三个大小与台账 bytes 字段逐个相同，所以「本地副本与指纹登记在来源台账的三条下」不是空话；②复核命令与数据入口点名准确：src/bin/dispatch_grain.rs、src/bin/dispatch_visibility.rs、results/stable-02/codegen/（.ll/.mir/.s 三份都在）、results/extra-02/ 的 *-size.txt 与 *-nm.txt 都在，且 one-size.txt:4 `Section __text: 217148`、many-size.txt:4 `220156`，217148 与 220156 之差 = 3008，正是 5.11 :2146 与 5.10 :2137 引用的那个字节数，所以这节把 `*-size.txt` 指为字节来源是指对了（我第一轮误判为空文件，grep 后确认有内容）；③最容易被写成空话的一句「PGO 与 ThinLTO 构建的输出也实际比较通过」我复算成立：extra-02/thin-run.txt、pgo-use-run.txt、pgo-training-run.txt 的 checksum 都是 95338125850705920，与 many-run.txt 完全相同，而 one-run.txt 是 92855992320——即两种构建确实跑过并确实比过输出，这句不是装饰。没核的：《Effective Rust》第 12 条「分派方式是接口决定」与《Guide to Rustc Development》的措辞对应我只做到台账级（S08-U0016 第 12 条标题与正文说法一致，polymorphization 那句按通读判定为谨慎表述）；5.11 复现命令我只核了文件路径存在，没有实跑 cargo。注意：本节 :2117 重复了 5.7.5 那条「S08 的上转型限制来自 Rust 1.70 时点」的归属，修法与 P1 一并记在 sec-cpp-rust.2.5.7 的条目里，不重复计一条。",
+      "evidence": [
+        "sources/web.json REF-trait-object/REF-dyn-compatibility/REF-codegen-attrs：bytes 36227/57237/121551，fetched 2026-10-31，archive .work/cpp-rust-sources/reference/S10-*.html（同路径 ls -l 大小逐个相同）",
+        "复算 many-size.txt __text 220156 − one-size.txt 217148 = 3008",
+        "extra-02 checksum：thin-run / pgo-use-run / pgo-training-run = 95338125850705920 = many-run；one-run = 92855992320",
+        "results/stable-02/codegen/ 下 .ll/.mir/.s 三份齐备；src/bin/ 两个入口存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "5.10 整节（含 8 行索引表与「四条整章才看得见」）逐句读完。核到的：这张索引表没有引入任何新数字，四条补充项里能对核的三个量我在 5.8 已从原始批次独立复算并相符——`dyn_batch` 与 `generic` 差 0.001906（0.158334−0.156428=0.001906446）、`known_dyn` 与 `opaque_dyn` 差 0.002170（0.158303−0.156133=0.002170164）、`__text` 3008 字节（220156−217148），并且「4.1 倍绑定 16384 这个批长」这句被 CSV 的 units 列直接证实（每行 units=16384）。第 1 条把「静态快、动态慢」判为不被两张正式表支持，与我复算的方向一致：stable-02 里 opaque_dyn(0.158303) 略高于 known_dyn(0.156133)、generic(0.158334) 略高于 dyn_batch(0.156428)，两组差量都在 sd/mean 2.6-2.8% 与 5.2% 之内，写成百分比结论确实超出证据；第 3、4 条是方法性表述，没有可对核的数。已核：**「八份清单共 48 条（E-a … E-f × 5.1–5.8）」成立**——按 `## 5.N` 归属逐节数 `E-x` 行得 {5.1:6,…,5.8:6} 合计 48，`::: errata` 盒恰 8 个，与索引表 8 行一致；表格里 [@def-5.1.2]/[@def-5.2.3]/[@def-5.3.3]/[@ex-5.4.1]/[@ex-5.5.1]/[@def-5.6.2] 这些锚点各指向 5.1-5.6 的定义盒，属机械层与其他评审范围，我只确认被引的数（如 5.3.2/5.3.4 的尺寸口径）与我读到的 5.7/5.8 表述不冲突。",
+      "evidence": [
+        "复算：0.158334−0.156428=0.001906；0.158303−0.156133=0.002170；220156−217148=3008；CSV units 列=16384（全部 5 个 case）",
+        "src/part2/ch05.md:1768-1778（5.7 E-a…E-f）与 :2061-2071（5.8 E-a…E-f）实数各 6 条"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.11 整节（本章小结 5 条 + 责任段 + 速查 10 行 + 学习目标/先修/课时/边界 + 复现命令 4 条 + 出口检查 + 章末件 5 行表）逐句读完。这节是整章数字的出口，我把每个复述值拿回收纳的归档逐个重算：0.156428 对 0.647618 与「约 4.1 倍」（4.1400）✓；3008 字节 ✓；「五个正式 case 各保存 21 批」✓（3+2 个 case，每个 n=21）；「两个正式入口都有完整源文件」✓（src/bin 下两个 .rs 存在且被 CSV 对应）；「六个入口顺序运行」✓（src/bin 六个 + binaries 目录六个产物）；「正式脚本要求新归档目录不存在」✓（run.sh:5 `mkdir \"$OUT\"` 无 -p，目录已存在即失败退出）；「编译与功能测试不使用这个锁」✓（cargo fmt/clippy/test/build 全在 run.sh:28 取锁之前）；「尺寸探针实际运行并逐实例校验」与 checksum 落盘（one-run.txt 92855992320、many-run.txt 95338125850705920）✓；「nightly 损坏的事实未被隐藏」有 results/extra-02/nightly.txt 在盘 ✓；「没有 Linux perf…或缓存事件测量」与磁盘产物清单相符 ✓；速查表「表里的 p99 = 21 个批均值的最大点」✓（五 case 全部 p99=max）；「偏移 24 与 32」属 5.3 口径，我按通读接受、未回查目标码。一处与脚本事实不符见 findings：:2201「目录锁只覆盖正式时间测量」被 run.sh:39-40 自己反驳——sample 运行也重新取了同一把锁，而 5.8.8 :1994 写的正是这件事，两句话在同一章里对同一把锁给了两种范围。",
+      "evidence": [
+        "run.sh:5,19-21,28-29,39-40（锁前完成 fmt/clippy/test/build；profiler 运行再次取锁）对照 src/part2/ch05.md:2201 与 :1994",
+        "复算 0.647618/0.156428=4.1400；220156−217148=3008；五 case n=21、units=16384；stable-02/binaries 六产物；extra-02/nightly.txt 存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "severity": "P1",
+      "description": "5.7.5 第 1683 行「Effective Rust 的本地 PDF103 讨论 Rust1.70 时的 trait upcast 限制」这条母本归属与仓库自己的 S08 台账不符，而它是本节历史论证的前提（:1684「该历史结论不能原封不动用于本轮 Rust1.99.0」、5.7.7 小结 ⑤、:1776 E-e、5.9 :2117、5.11 都靠它）。台账里唯一记录 trait 上转型的地方是 sources/reviews/S08.md:33 的 S08-U0024（第 19 条「避免反射」，起始 PDF164），其裁决原文写「PDF169 关于 trait 上转型的未来版本预测已过时」，且这条被映射到本章 5.4 而不是 5.7；被 :2109 点名的第 12 条 S08-U0016 台账页码是 97、补读页只记了 99 与 105，没有 103。另外「Rust 1.70」这个版本号在 sources/reviews/S08.md 与 inventory 的 S08 单元里搜不到（我 grep 过 1.70/upcast/上转型三个词），台账给的是「未来版本预测」这种没有版本号的表述。也就是说：页码（103）与版本号（1.70）都不是台账背书过的量，而正文把「本地 PDF103」当成已核实的母本读法来用，并据此在 5.9 :2117 做了时效裁决。我没有据此判 P0 的原因是：Effective Rust.pdf 不在我搜到的仓库路径内，我无法开卷逐字比对，因此不能证明第 103 页一定不这么说——但按「引用与母本/台账不符 + 关键断言无出处」这条，它至少是 P1，需要作者要么补一条 PDF103 的单元级台账记录（含 1.70 的原文摘录），要么把页码/版本改成台账已有的 PDF169/「未来版本预测」表述。真正被本轮证据支持的那半句（1.99.0 上转换测试通过）是干净的，不受影响。",
+      "evidence": "sources/reviews/S08.md:33（S08-U0024，PDF164，裁决句「PDF169关于trait上转型的未来版本预测已过时」，映射 part2/ch05.md#sec-cpp-rust.2.5.4）；sources/reviews/S08.md:25 与 sources/inventory.json 的 S08-U0016（第 12 条 pdf_page=97，reason 只提 PDF99、105）；grep '1\\.70' 与 'upcast|上转型' 在 sources/reviews/S08.md、sources/inventory.json 中无 PDF103 命中；对照 src/part2/ch05.md:1683,1684,1776,2117"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "severity": "P2",
+      "description": "定义盒的编号与出现顺序颠倒：5.8.2 的「定义 5.8.1·批均值分位数」在 :1852，5.8.4 的「定义 5.8.3·证据层次」在 :1900，5.8.5 的「定义 5.8.2·构建配置」在 :1917——即文档顺序是 5.8.1 → 5.8.3 → 5.8.2，[@def-5.8.3] 早于 [@def-5.8.2] 定义。这不是错数字，但这一节正是「按编号找口径」的总账页，三处下游引用（:1919、:2049 判定流程第 3 步引 [@def-5.8.2]；:1988、:2050、:2132 引 [@def-5.8.3]；:2057 小结 ②③ 同时引两条）要求读者靠语义而不是靠编号定位，增加误读风险。建议把「构建配置」与「证据层次」两个盒的编号按先后重排（或交换标题序号），锚点 ID 若要一并改需与机械层的锚点检查同步。",
+      "evidence": "src/part2/ch05.md:1852（定义 5.8.1 {#def-5.8.1}）、:1900（定义 5.8.3 {#def-5.8.3}）、:1917（定义 5.8.2 {#def-5.8.2}）"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "severity": "P2",
+      "description": "「目录锁只覆盖正式时间测量」（:2201）与本章另一句和脚本事实都不一致。run.sh:28-29 在正式计时前取 LOCK=/Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents/measure.lock，run.sh:39-40 又带注释「Keep the shared measurement lock so this profiler run cannot overlap a peer's timing」并为 sample 运行重新取了同一把锁；5.8.8 :1994「第二轮脚本还把独立 sample 运行纳入同一目录锁保护」写的正是这件事，也与归档（sample-command.txt + macos-sample.txt 落在同一 stable-02 目录）相符。于是同一章对同一把锁给了两种覆盖范围，而「只覆盖正式时间测量」是与实现相反的那一种。范围其实还更大：编译与功能测试确实在锁外（:2202 正确，run.sh:19-21 在取锁前），所以准确说法应是「锁覆盖正式计时与随后的 sample 运行，不覆盖编译与测试」。教学性问题而非数字错误，故 P2。",
+      "evidence": "bench/compiler-lab/run.sh:28-29,39-40；对照 src/part2/ch05.md:2201 与 :1994；results/stable-02/sample-command.txt 与 macos-sample.txt 同归档目录"
+    }
+  ]
+}

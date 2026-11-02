@@ -1,0 +1,2 @@
+codec equivalence: generic bytes == dyn bytes -> MATCH (bytes=364544, crc32=2b67ab81)
+compaction equivalence: in-process bytes == subprocess bytes -> MATCH (bytes=401770, entries=4096, dropped=0, crc32=7241b72e)

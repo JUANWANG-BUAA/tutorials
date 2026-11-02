@@ -1,0 +1,87 @@
+{
+  "reviewer": "r4f-ch13a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动独立审计：完整读 src/part4/ch13.md 的 13.1–13.6 全部正文与每个语义盒，并把「13.5 重编号后全章纯文本小节编号」作为专项检查：用 /usr/bin/python3 临时脚本（/tmp/r4f_ch13_scan.py）对整章做代码剔除后的三级编号超集扫描并比对全书标题/锚点集合，另跑 tools/check_section_refs.py（绿）与 tools/list_uncollected_claims.py --pages src/part4/ch13.md；统计量全部从 cpu-wait.txt 与 instrumentation.txt 的 21×2 / 21×3 原始批值按 [@def-13.7.3] 口径复算；栈计数从 cpu.folded / wait.folded 直接求和；代码断言逐行对 bench/evidence-lab/src/lib.rs、src/bin/cpu_wait.rs、src/bin/instrumentation.rs、src/bin/feature_work.rs 与 tools/measure.sh。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "概念节，无可复算测量数。逐条核：①[@def-13.1.1/2/3]、[@ex-13.1.1]、[@think-13.1.1] 锚点全部真实存在（ch13.md:85/106/157/173/205）；②所引第 1 章 def-1.5.1/1.1.3/1.5.2/1.2.1/1.2.2/1.7.3/1.8.1 均有 def 盒（check_links 兜底之外我在 ch01 锚点集合里见到同号）；③13.1.5 的前向数字承诺「1446/1648 与 21 批均值分属两份证据」与 13.5.7/13.5.5 实测一致（wait.folded 求和 1648、经 sleep 1446，cpu-wait.txt 21+21 批复算 cpu 均值 2.506964）；④「本轮没有采集 IPC/核心周期/调度时间线」经 list_uncollected_claims 20 条逐项核对，run-01 目录只有 sample/folded/build 产物，无 perf、无 cachegrind.out、无 PMU 文件，无盘上反例。判定 pass。",
+      "evidence": [
+        "src/part4/ch13.md:85,106,157,173,205 def/ex/think 锚点存在",
+        "python3 复算 bench/evidence-lab/results/run-01/cpu-wait.txt：cpu mean=2.506964",
+        "wait.folded 求和=1648、含 sleep 帧路径和=1446",
+        "tools/list_uncollected_claims.py --pages src/part4/ch13.md：20 条未采集声明均无同类产物反例"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量与实测计数全部独立复算：①「根 1698 = mix 叶子 1082 + compute 叶子 616」→ cpu.folded 恰 2 条路径、权重 1082 与 616、总和 1698，与 13.2.2 正文、13.4.3 表、13.5.7 三处口径一致；②13.2.4 布局表：Event 16/8 → instrumentation.txt:68 `layout,Event,size=16,align=8`；Vec<u8> 24/8 → feature-checked.txt:24 与 feature-default.txt:24 `layout,Vec_u8,size=24,align=8`（探针在 src/bin/feature_work.rs:32-35 真实存在，&[u8] 探针同行号段、标准 fat-pointer 16/8 与表一致）；③[@def-13.2.1/2/3/4]、[@ex-13.2.1/2]、[@think-13.2.1] 锚点齐（ch13.md:301/313/321/361/367/403/419）；④「本轮保留 mangled 符号」→ folded 里确为 _RNvCsfFAnx7WYh7o_12evidence_lab… 原始修饰名，正文未改写；⑤p50/p99 定义引用 [@def-13.7.3] 存在（ch13.md:1437），nearest-rank 口径与复算一致。判定 pass。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/cpu.folded：2 路径 1082+616=1698",
+        "bench/evidence-lab/results/run-01/instrumentation.txt:68 layout,Event,size=16,align=8",
+        "bench/evidence-lab/results/run-01/feature-checked.txt:24 layout,Vec_u8,size=24,align=8；src/bin/feature_work.rs:32-35 size_of 探针",
+        "src/part4/ch13.md:301-419 全部 def/ex/think 锚点存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节自我声明为 Linux 迁移检查清单、无本机执行记录，核查结果与声明相符：①run-01 目录与整包无任何 perf/cachegrind 产物，13.3.1 代码块自带「本轮未执行」注释行；②「13.5 与 13.6 的表里没有任何 cycle 列、没有 miss 率或 IPC 列」→ 逐表核对 ch13.md:1009-1012 与 1258-1262，列仅 mean/sd/p50/p99，属实；③def-13.3.1/2/3/4、ex-13.3.1/2、think-13.3.1 锚点齐（ch13.md:502/539/551/557/573/581/614）；④缩放公式 time_enabled/time_running 与官方 perf 语义一致，且被 [@def-1.6.2] 前提纪律约束，属机制陈述非实测断言；⑤例 13.3.1/13.3.2 均自注「本节没有采集」。判定 pass。",
+      "evidence": [
+        "ls bench/evidence-lab/results/run-01/：无 perf.data、无 cachegrind.out*（13.4.3 声明一致）",
+        "src/part4/ch13.md:1009-1012,1258-1262 性能表无 cycle/miss/IPC 列",
+        "src/part4/ch13.md:502-614 def-13.3.1..4、ex、think 锚点存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "①13.4.3 折叠表逐格复算：CPU 行 1698/2/mix 1082/compute 616、waiting 行 1648/5/`__semwait_signal` 1443/mix 181 → 与 cpu.folded、wait.folded 原文求和逐位吻合（waiting 五条叶子 1443+181+21+2+1）；②「转换器 tools/collapse_sample.py 把 inclusive 转叶子 exclusive」→ 文件真实存在于 bench/evidence-lab/tools/collapse_sample.py（章首 16 行声明实验包为 bench/evidence-lab/，缩写可落地），且 measure.sh:66 确以它生成 *.folded；③「没有运行 stackcollapse-perf、没有改名 perf.data」→ 盘上无此二者；④即时自测第 2 题的「1443/1446」与解答「别与根 1648 混成同一份额」自洽：1443 是叶子、1446 是经 sleep 的观察（folded 里含 sleep 帧路径权重和恰为 1446）；⑤[@def-13.4.1/2/3]、[@ex-13.4.1/2]、[@think-13.4.1] 锚点齐。判定 pass。",
+      "evidence": [
+        "python3 直接求和 cpu.folded/wait.folded：1698=1082+616；1648 五路径、semwait 1443、含 sleep 路径合计 1446",
+        "bench/evidence-lab/tools/collapse_sample.py 存在；bench/evidence-lab/tools/measure.sh:66 调用它",
+        "src/part4/ch13.md:694-806 def/ex/think 锚点存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节自身内容全部核对通过：①13.5.5 表八项统计量与从 cpu-wait.txt 原始 21+21 批值按 [@def-13.7.3] 口径（mean、N−1 sd、nearest-rank p50/p99，n=21 时 p99=最大值）的复算逐位一致（cpu 2.506964/0.082729/2.477333/2.782084，wait 46.442020/1.459728/47.026833/47.800375），共同 checksum 14437947664662268765 与文件头行相同；「wait 均值大于 cpu+40ms」复算 46.442>42.507 属实；②13.5.3 入口与 src/bin/cpu_wait.rs 逐字一致、13.5.2 两函数与 src/lib.rs 逐字一致（含 STEPS=1_000_000、sleep 40ms、轮转 (round+offset)%2、--profile 五秒循环与正式 21 批互斥）；③13.5.6 命令形状与 tools/measure.sh:46-49（--profile、sleep 0.3、sample $PID 2 1）及 sample-*-command.txt「2 seconds / 1 millisecond」吻合，profile-cpu-run.txt 显示采样循环无逐批打印；④13.5.7 栈计数 1698/1082/616 与 1648/1446/1443 全部由 folded 求和命中。但全章专项检查发现一处 13.5 重编号遗留的悬空引用：章首「三道母题」表 ch13.md:65 写「例 13.5.2（见 13.5 节）」，而 13.5 节没有任何 ::: ex 盒（全章 ex 锚点序列 13.1.1/13.2.1/13.2.2/13.3.1/13.3.2/13.4.1/13.4.2/13.6.1/13.7.1/13.7.2/13.8.1 里没有 13.5.x，13.5 只有 def-13.5.1 与 think-13.5.1），13.5.2 现在只是「业务核的完整实现」这个无例题的小节标题；全 src/ 检索亦无 ex-13.5.2。该母题承诺的 1446/1648 内容实际散在 13.5.7/E-b，无先猜后解盒可点开。见 findings。",
+      "evidence": [
+        "python3 复算 bench/evidence-lab/results/run-01/cpu-wait.txt：八项统计量与 ch13.md:1009-1012 逐位一致；头行 checksum=14437947664662268765",
+        "bench/evidence-lab/src/bin/cpu_wait.rs、src/lib.rs 与 ch13.md:910-926,932-986 逐字一致",
+        "bench/evidence-lab/tools/measure.sh:46-49 与 ch13.md:1025-1032 命令形状一致",
+        "src/part4/ch13.md:65 「例 13.5.2（见 13.5 节）」 vs 全章无 ::: ex-* 13.5.x 盒（grep '{#ex-13' 清单）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "①13.6.5 表十二项统计量从 instrumentation.txt 原始 21×3 批值复算逐位一致（none 2.472857/0.094581/2.448330/2.798125，batch 2.470040/0.079995/2.448545/2.685205，each 32.832639/0.608977/32.762500/34.306250）；派生数复算：32.832639/2.472857=13.277→「约 13.3 倍」成立，差 30.359782、none−batch=0.002817（0.114%≈「约 0.11%」，且小于两列任一批标准差）成立；checksum 188478885453998054 与文件头行一致，分母 200000 与头行 steps=200000 一致；②13.6.2 观测核心与 lib.rs 的 observed() 逐字一致（正文自注的 evidence_lab::mix 与库内 mix(value) 差异如实声明）；13.6.3 入口与 src/bin/instrumentation.rs 逐字一致（(round+offset)%3 轮转、count 断言 0/STEPS/STEPS）；③13.6.7 两个测试 observation_does_not_change_business_result、batch_counter_loses_distribution_not_count 在 lib.rs #[cfg(test)] 内真实存在且无纳秒阈值；④「Event 16/8 记为布局观察」由 instrumentation.txt:68 落地；「200000 个事件一个都没落盘」与代码 black_box 即丢一致；⑤[@def-13.6.1/2/3]、[@ex-13.6.1]、[@think-13.6.1] 锚点齐，[@def-13.7.3]、[@def-1.7.2] 引用可解析。判定 pass。",
+      "evidence": [
+        "python3 复算 bench/evidence-lab/results/run-01/instrumentation.txt：十二项统计量与 ch13.md:1260-1262 逐位一致；13.277、30.359782、0.002817 复算命中",
+        "bench/evidence-lab/src/lib.rs observed()/mix/compute/warm/report 与 tests 两测试名；src/bin/instrumentation.rs 与 ch13.md:1203-1244 逐字一致",
+        "bench/evidence-lab/results/run-01/instrumentation.txt:68 layout,Event,size=16,align=8"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "severity": "P1",
+      "description": "13.5 重编号后遗留的悬空母题：章首「建议反复做的三道母题」表（src/part4/ch13.md:65）第二行写「例 13.5.2（见 13.5 节） 1446/1648 能否当等待比例」，指向一个不存在例题盒。我列出了全章全部语义盒锚点：ex 序列为 13.1.1、13.2.1、13.2.2、13.3.1、13.3.2、13.4.1、13.4.2、13.6.1、13.7.1、13.7.2、13.8.1——13.5 节只有 def-13.5.1（同 checksum 夹具）与 think-13.5.1（21 批轮转），没有任何 ::: ex 盒；13.5.2 现仅是小节标题「业务核的完整实现」，不含例题。另两行母题都用 [@ex-13.2.1]/[例 13.6.1](#ex-13.6.1) 真链接，唯独此行是纯文本且已悬空——读者按表点开 13.5 找不到「先预测→合上解答算一遍」的对象。专项核查 tools/check_section_refs.py：独立运行返回绿（exit 0），但它对本条双重漏网——①REF 前瞻只认 的/节/小/条/）/)/，/。/、/行尾，「13.5.2（」后接开括号根本不进候选（同型漏网还有「13.5.8 会」「13.7.1 会」「1.4.5 提醒」这类编号后接空格加动词的写法）；②就算进了候选，门禁只查「编号是否存在于全书标题/锚点集合」，而 13.5.2 作为小节标题存在，会照样放行——「例/定义 前缀标签所指盒子不存在」这类悬空不在门禁建模内。我的超集扫描（整章代码剔除后所有 \\d+.\\d+.\\d+ 全量比对）确认除本条标签悬空外，正文其余三级纯文本编号（含跨章 1.3.3、1.4.5、1.8.6）均指向真实小节，rustc1.99.0 与 Valgrind 5.2.1–5.2.8 属版本号/外文章节号、经 environment.txt 与来源表核实非悬空。修复建议：把该行改指现有载体（如 think-13.5.1 或 13.5.7/E-b 的 1446/1648 讨论），或在 13.5 恢复一个真正编号的例盒；并建议门禁补「标签式引用（例 X.Y.Z / 定义 X.Y.Z）必须存在同号 ::: ex/def 盒」这一层。",
+      "evidence": "src/part4/ch13.md:65（母题表中唯一的纯文本例引用）；grep '{#ex-13' src/part4/ch13.md 无 ex-13.5.*；/usr/bin/python3 tools/check_section_refs.py 输出「检查通过」exit=0；/tmp/r4f_ch13_scan.py 的 REF 前瞻复现显示「13.5.2（」不进候选、盒标签审计唯一命中即此行"
+    }
+  ]
+}

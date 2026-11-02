@@ -1,0 +1,79 @@
+{
+  "reviewer": "r4f-ch10b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part3/ch10.md 第1309-1885行（10.7–10.11 全部正文与每个语义盒），并把断言逐条落到 bench/results/runtime-fixed 的八个确定性交错组、bench/runtime-lab 的 process.rs/contracts.rs 源码、measurements-final 归档与 tools/verify_drain_fix.py 的实跑输出上重新计算。并按派单跑了 tools/list_uncollected_claims.py --only 10（10 条未采集声明，落在我区间的两条无反例）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核 10.7.8 新写的「旧flood组已完整读出每流2097152字节，但每组恰好有一路 eof: true、另一路还没到（baseline-debug/flood-pipe1 是 stdout 未到、stderr 已到，flood-pipe2 正好相反）」：我把 baseline 与 fixed 两个 profile 下的 flood-pipe1/flood-pipe2 四组旧归档逐字段解析，结果与这句逐位一致——baseline-debug/flood-pipe1 是 stdout total=2097152 eof=false、stderr total=2097152 eof=true，flood-pipe2 恰好相反（stdout eof=true、stderr eof=false），baseline-release 两组同形；每份 Report 的 reader_errors 里确实只有一条 'drain grace expired: a writer may still own a pipe'（grep 计到 2 次是同一条被 panic 行重复打印），所以新句子既不夸大也不缩小，与上一版「仍没有一路EOF」的错误表述已分离。表格行也核过：四组旧交错 gate 行全部是 api=pipe、read/write flags=0 且 status.txt 记 exit=101（flood pipe=1/2、sleep pipe=1/2 各失败），修复版四组是 api=pipe2、flags=1、exit=0，lsof.txt 里旧组有后代 lab-worker(pid=94622) 占着两条 PIPE（第9、10行），fixed 组只剩 dylib 路径那一行匹配、无 PIPE 行，正好对上「后代有额外PIPE／无额外PIPE」。需要提醒读者但不足以判 finding：同节的 sleep(timeout) 组同样是「一路 eof 已到、一路未到」，只是两流 total=0，正文那句只覆盖 flood 组，措辞上把范围限定在 flood 是对的。其余顺序断言逐行落地：10.7.2 的序与 process.rs 一致（stdin=null/stdout、stderr=piped/kill_on_drop 在165-168，两个 ReaderTask 198-201，timeout(deadline, child.wait()) 204，超时分支 start_kill 后 child.wait() 217-218，tokio::join! 并发 finish_reader(_, drain_grace) 232-234），退出码7走正常Report对 contracts.rs:147 assert_eq!(report.exit_code, Some(7))，10.7.6 的 inherit 回归与 2100ms 收尾窗口对 contracts.rs:204-224，10.7.11 的 ReaderTask Drop→abort 对 process.rs:127-132，10.7.10 的 360 项执行与 800 份Report 用 tools/verify_drain_fix.py 实跑复现（打印 '20 parallel test runs (360 test executions), 800 structured child reports'），800=600flood+100timeout+100inherit 与 README.md:38 逐项相符。本节的平台与helper声称也落了地：baseline-debug/environment.txt 记 Darwin Kernel Version 27.0.0 arm64、rustc 1.99.0，与 10.7.9「本机macOS27提供pipe2」和 10.7.7「核读本机安装的Rust1.99.0实现」口径一致；10.7.6「inherit模式启动寿命固定2秒的后代、直接helper立即exit(0)」对 src/bin/worker.rs:29 的 sleep(Duration::from_secs(2))、:31-34 用该参数派生后代、:43 process::exit(0)；10.7.10「另有两项取消回归观察reader真正Drop」对应 process.rs:285 与 :317 两项测试，数量正好两条，不是复数虚指。另做一次判别自检（防止我的解析只会顺着正文点头）：同一解析器在 fixed 四组给出 errs=0 且两流皆 eof:true、在 baseline 八组给出 errs=2 与「一路 false 一路 true」，说明它对 EOF 分布是敏感的——若正文那句写成「四路都没结束」或「全部EOF」都会被同一份解析判红。",
+      "evidence": [
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe1/report.txt: stdout Capture total=2097152 eof:false / stderr Capture total=2097152 eof:true（与正文「stdout 未到、stderr 已到」一致）",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe2/report.txt: stdout eof=true / stderr eof=false；baseline-release 两组同形",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe1/lsof.txt:9-10 lab-worker 94622 fd 10/11 PIPE（额外写端），fixed-debug/flood-pipe1/lsof.txt 无 PIPE 行",
+        "bench/results/runtime-fixed/baseline-debug/status.txt = 'flood pipe=1 exit=101 flood pipe=2 exit=101 sleep pipe=1 exit=101 sleep pipe=2 exit=101'；fixed-debug/status.txt 四组 exit=0",
+        "bench/runtime-lab/src/process.rs:165-168,198-204,217-218,232-234；bench/runtime-lab/tests/contracts.rs:147,204-224",
+        "python3 tools/verify_drain_fix.py → 'CLOEXEC: 8 deterministic original failures / 8 fixed passes with FD evidence'、'20 parallel test runs (360 test executions), 800 structured child reports, 210 timing observations'",
+        "bench/results/runtime-fixed/README.md:18,20,38-41",
+        "bench/results/runtime-fixed/baseline-debug/environment.txt 'Darwin Kernel Version 27.0.0 ... arm64'；measurements-final/environment.txt 'rustc 1.99.0'",
+        "bench/runtime-lab/src/bin/worker.rs:29,31-43（inherit 后代睡 2 秒、直接子进程 exit(0)）",
+        "bench/runtime-lab/src/process.rs:285,317（两项取消回归测试）",
+        "判别自检：同一脚本对 fixed-* 得 errs=0/双流 eof=true，对 baseline-* 得一路 eof=false 一路 true"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节为设计性论述，没有实测数字，我按「有无越界声称」逐条核对：10.8.1 六状态表（starting/ready/busy/draining/failed/restarting）与自测第1题答案一致；10.8.3 用 (session, generation, request id) 三元组并明说「本轮的单 worker 同步协议没有实现拒绝逻辑」，与仓库事实相符（bench/runtime-lab 只有 wire.rs、process.rs、process_macos.rs 与几个 bin，没有共享映射访问器，也没有池化实现）；10.8.5 的五条访问前检查（溢出、范围、对齐、初始化发布、覆盖/取消映射）与自测第4题「在五条之上补三项」的表述互相自洽，且明写「没有未验证的 unsafe 代码可供复制」；10.8.7、10.8.8 的负向声明（本机没跑 Linux futex/pthread 共享/robust，未做 cgroup/namespace/seccomp、Job Object、进程树治理、共享内存崩溃恢复、多 worker 压测）保持为未验证口径，没有用 macOS 管道结果去推 Linux 成本。10.8.2 引用的第9章 9.7 原则是跨章指涉，我只确认它是定性原则、本章未搬任何数字，未回查 9.7 正文措辞，这是本节我没核到底的部分。另外按派单要求跑了 python3 tools/list_uncollected_claims.py --only 10：本章共 10 条「未采集/未生成/未执行」类声明，落在我负责区间的两条（ch10.md:1625 副作用不确定、ch10.md:1659 本机没跑 Linux 共享内存实验）都报「没有匹配到同类产物」，即 10.8.4/10.8.7 的负向声称在盘上找不到反例文件，与正文自述一致；其余 8 条属 10.4–10.6 区间，未由我判定。",
+      "evidence": [
+        "src/part3/ch10.md:1594-1663（10.8.1–10.8.8 全部正文，无实测数字）",
+        "bench/runtime-lab/src 目录清单：无共享内存/池化实现，正文「本轮没有实现」成立",
+        "src/part3/ch10.md:1691-1712 自测四题答案与 10.8.1/10.8.3/10.8.5 表格、五条检查逐条对应",
+        "python3 tools/list_uncollected_claims.py --only 10 → 10 条声明，ch10.md:1625 与 :1659 均无同类产物反例"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把这页每条出处拿去对台账：内核侧四组 rCore 页面（chapter5/1process.html、chapter5/2core-data-structures.html、chapter7/3cmdargs-and-redirection.html、chapter2/4trap-handling.html、chapter7/1file-descriptor.html、chapter7/2pipe.html、chapter7/4signal.html）在 sources/web.json 与附录 coverage.md 有登记行，正文声明「不引用其中任何数字」「常量（环容量、tick 频率）没有搬进实验结论」与 10.4/10.6 的实测全部来自本机归档这一事实不冲突；本地母本表两行 S11/16.2 与 S08/Item17 的页范围、状态与「不能把线程消息传递当进程地址可共享依据」的限制语保持一致；Stanford 段落给出的定位是 slides/lecture-10-2022.pdf、36 个物理页、核读 PDF15–20 / 25–26 / 27–35、第17页另做渲染核对，与来源台账登记同一份文件，且声明「书中不复制原始讲义代码、helper 独立编写」。库文档表 std1.99.0 / Tokio1.54.0 与 10.7.7「核读本机安装的Rust1.99.0实现」口径一致，末尾也把页范围与覆盖状态交回 coverage.md 台账而不是自称核实。诚实交代范围：我核到「正文点名的每一页都在台账里登记、且没有从中搬数字」这一层；对 rcore chapter7/2pipe.html 的「固定容量字节环／弱引用记录还有没有人可能写」与 chapter2/4trap-handling.html 的四件硬件动作这类转述，我读了台账摘录但未逐字回原文核对整段，因此不宣称已逐字验证，判 pass 仅指出处可落地且无越界声称。",
+      "evidence": [
+        "src/part3/ch10.md:1723-1770（10.9 全文，含两张表）",
+        "sources/web.json 与 sources/inventory.json 中 rCore/CS110L 条目：正文点名的页与台账登记项一一对应",
+        "src/part3/ch10.md:1751「共 36 个 PDF 物理页」+ 1753-1755 的 PDF15–20/25–26/27–35 分段",
+        "src/part3/ch10.md:1738「三页的常量……本章一个都没有搬进实验结论」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条读了全部十二条并核对条数、开头「十二条」承诺与内部数字：实际条目为 1–12，无缺号。第3条「本轮原生 Frame 是 16 字节，协议仍是 24 字节，两者不能互相推导」与 measurements-final/type-layout.txt:1 的 'Frame size=16 align=8 wire=24' 逐字相符；第6条「先 wait，再读取大输出」是 10.5 停滞回归的跨节复述，方向与 contracts.rs 的排空测试一致；第8条（wait 完成不等于 EOF）、第9条（只 kill 不 wait 仍是僵尸）、第10条（timeout 参数不是硬总时长）分别对应 10.7.5/10.7.3/「期限不是硬实时总时长」，且都能落到 process.rs:204-234 的实现口径；第11条（重启复用旧 id 要带 generation）与 10.8.3、第12条（未知结果自动重试）与 10.8.4 的 exactly-once 论述一致，未出现与正文相反或夸大的表述。第1条「独立进程不等于沙箱」与 10.8.8 未交付治理项的自述一致。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt:1 'Frame size=16 align=8 wire=24'",
+        "src/part3/ch10.md:1776-1798 十二条编号连续（1–12）",
+        "bench/runtime-lab/src/process.rs:204-234（第8/9/10条的实现口径）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结7条、速查表10行、出口检查、应能解释的10问、回归观察表6行、完成与限制逐一回查，条数与自身承诺相符（小结为7个要点、速查10行、问题1–10、回归观察6行、章末件5页）。测量数字复算：1.219 ms 我用 measurements-final/process-rpc.txt 的 21 个 spawn 批样本自算得 mean=1219110.006 ns（=1.219 ms）、sd=77376.429、batch_p50=1208367.188、batch_p99=1531747.438，与小结第4条「1.219 ms 是完整生命周期的批均值」及 [@def-10.4.1] 的口径一致，persistent 侧 mean=5484.128 ns 亦一致；ns/输出字节只作聚合吞吐倒数这一限定与 10.6 的口径相符。出口检查四条命令的路径与 crate 布局一致（bench/runtime-lab/Cargo.toml、两个 release 二进制名 process-rpc / pipe-drain），并如实说明「后两项只打印新样本、不覆盖归档」，另给出 tools/run_runtime_benchmarks.sh 的新目录写法。「debug/release 各 10 轮默认并行测试与 800 个额外进程报告都保留」与 final-validation 下 tests-debug-1..10/tests-release-1..10 共20份日志、README.md:20 登记的 800 条 Report 相符；18 项 runtime-lab 测试数与 tools/verify_drain_fix.py 的 '20 parallel test runs (360 test executions)'（18×20=360）自洽。「完整项目、进程树治理与共享内存实现仍未交付」与 10.8.8 一致。局限：我未逐条重跑 cargo test 与两个二进制，判定基于归档复算与实跑 verify_drain_fix.py。「18 项 runtime-lab 测试」我不只靠 360/20 的算术：直接对 final-validation/tests-debug-1.txt 的 8 个 'test result: ok' 行求和得 18 passed，与 10.11 的口径一致；出口检查里的两个二进制名也不是笔误——Cargo.toml:32-38 用 [[bin]] 显式声明 name=\"process-rpc\" 与 name=\"pipe-drain\"（源文件是下划线的 process_rpc.rs/pipe_drain.rs），所以 bench/runtime-lab/target/release/process-rpc 这条路径在 cargo build --release 之后是可执行的（本机当前 target/release 里尚无该产物，属未构建状态，不构成正文错误）。",
+      "evidence": [
+        "python3 复算 bench/results/runtime-fixed/measurements-final/process-rpc.txt → spawn mean=1219110.006 ns, sd=77376.429, n=21",
+        "src/part3/ch10.md:1816-1827 速查表 10 行；:1850-1859 解释题 1–10；:1863-1870 回归观察 6 行",
+        "bench/results/runtime-fixed/final-validation/tests-{debug,release}-1..10.txt（20 轮）+ README.md:20",
+        "python3 tools/verify_drain_fix.py → '360 test executions', '800 structured child reports'",
+        "awk 求和 bench/results/runtime-fixed/final-validation/tests-debug-1.txt 的 test result 行 → 18 passed",
+        "bench/runtime-lab/Cargo.toml:32-38 [[bin]] name = \"process-rpc\" / \"pipe-drain\""
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

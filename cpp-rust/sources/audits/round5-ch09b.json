@@ -1,0 +1,96 @@
+{
+  "reviewer": "r5-ch09b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动通读 src/part3/ch09.md 全文与 9.7–9.11 每个语义盒，逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt（用 python 复算）、tools/run_runtime_benchmarks.sh、src/appendix/coverage.md、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、.work/cpp-rust-sources/systems/3semaphore-rcore.html 与本地 tokio-1.54.0 crate 源码（runtime/mod.rs、task/state.rs、task/blocking.rs、runtime/runtime.rs）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "两条回归逐字核对通过。9.7.4 贴出的 Rust 片段与 bench/runtime-lab/tests/contracts.rs:12-22 逐行一致（channel(1)、try_send(10)、TrySendError::Full(20)、Some(10)、send(20)、drop(tx)、Some(20)、None），正文「容量满时拒绝、腾槽后复用、关闭后仍能排空」的三点概括与代码断言一一对应；正文「它没有测量通道吞吐，也没有报告队列内存峰值」经核对属实——该测试体内没有任何计时或内存采集。9.7.3 的许可寿命序列与 contracts.rs:52-69 相符：permit 在 spawn_blocking 闭包内被 move（第 58-59 行）、先 await started_rx 再 abort（63-64）、abort 后 try_acquire_owned 必须 is_err（65）、发停止信号后 task.await 仍 Ok（66-67，断言文案本身写着 started blocking task is not aborted），再取 permit is_ok（68）；「刻意不用固定 sleep」经核对成立——测试里没有 sleep/tokio::time 调用，用 oneshot 建立阶段关系。9.7.5 的「默认阻塞线程上限可能很大」与本地 tokio 1.54.0 默认值 max_blocking_threads: 512 方向一致（builder.rs:324），且是留了余地的表述。9.7.1/9.7.2/9.7.3 三个定义与自测四题属教学性论断，未见与代码或文档相反的断言。rCore 母本核对：9.7.2 关于「先取名额再干活（P/V）」「资源用整数计数、计数到零后来者排队」「归还直接把名额移交给已在等的线程，被唤醒方醒来不必重新确认」「唤醒早于等待时由计数记住这次多余唤醒」四点，逐条命中 .work/cpp-rust-sources/systems/3semaphore-rcore.html 原文（P/V 定义、整数变量+阻塞队列、「进行 V 操作的线程直接将资源移交给了它唤醒的线程」、Lost Wakeup 段落），与 sources/web.json 中 rcore-semaphore 的 review_scope 一致，非编造。本条未核：9.7.1 表格五行资源边界的完备性属教学判断，无外部证据可核。 本节判定为 finding，原因见 findings[]：P2，属表述与索引口径问题，无数字或代码事实错误。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:12-22",
+        "bench/runtime-lab/tests/contracts.rs:52-69",
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/builder.rs:324",
+        ".work/cpp-rust-sources/systems/3semaphore-rcore.html（P/V、整数计数+阻塞队列、V 直接移交资源、Lost Wakeup 段）",
+        "sources/web.json（rcore-semaphore，archive 路径与 review_scope）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "9.8.1 的核心外部断言逐字命中本地 tokio 1.54.0：src/runtime/mod.rs:279-297 形式化写下两条前提 MAX_TASKS（任意时刻任务总数不超过上界）与 MAX_SCHEDULE（任意任务的 poll 在 MAX_SCHEDULE 时间内返回），并推出存在 MAX_DELAY 使被唤醒任务在有限时间单元内被调度——正文「两个有限性前提 + 有限延迟 + 延迟不是用户可配置的常数」成立（原文还写明 MAX_DELAY 由 runtime 控制）。「文档也不承诺任务均匀轮流执行」有原文支撑：mod.rs:301-306 明说 no guarantee that the runtime is equally fair、两个就绪任务时可以先调度 A 五次再调度 B，即使用 yield_now 也一样，只保证 eventually。9.8.2「协作预算的检查点由 runtime 布置在它自己看到的操作上，不覆盖用户任意循环」与 mod.rs:382 一带的 budget 表述方向一致，且正文拒绝从夹具 yield 推出「自动每 16 步抢占」——夹具里 16 确实是显式 quantum（bench/runtime-lab/src/bin/scheduling.rs:18-24、66、72 用 [16,1024] 并以 {name}-q{quantum} 打印），正文这条自限是对的。9.8.3 的表格与「内核可强制拿回线程、Tokio 不能在任意业务指令处抢占 Future」属推论性论断，与 def-9.2.3 层次划分一致。9.8.4 例 9.8.1 的四个读数判定与 def-9.8.3 分段口径自洽；其引用「9.6 的 25.060 ms」经我从归档复算成立：blocking-poll.txt 里 inline 侧 21 个观察，mean 23.6583 ms / median 23.6041 ms / max 25.060042 ms（=25.060 ms），offload 侧 21 个观察 mean 13.633 µs / median 14.125 µs / max 18.541 µs，与 9.6 表格完全对齐，n 也确为 21，故 9.11 的「21 次观察」与 E-d「21 个观察的 p99 就是最大值」在数值上不是编造。9.8.5 的退出七步与「Drop 可能等待已开始且无法 abort 的阻塞工作、shutdown_timeout 只是停止等待」命中本地源码文档：src/task/blocking.rs:27-29（block_in_place 的代码不能被 cancel，关停 runtime 可能要等它跑完，可用 shutdown_timeout 停止等待）、:106 与 :114（spawn_blocking 任务一旦开始运行就不能 abort，因此关停要等它）。9.8.6 的「只采集聚合 ns/step 与观察延迟两类读数，steal 次数、cache miss、IPC 都没采集」与 9.3.6 的自陈一致，且全文没有任何 steal/IPC/cache miss 数字。唯一可挑剔之处见 findings：例 9.8.1 表格把 25.060 ms 放在「其他区间」列。 本节判定为 finding，原因见 findings[]：P2，属表述与索引口径问题，无数字或代码事实错误。",
+      "evidence": [
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/mod.rs:279-306（两条前提、MAX_DELAY、不保证 equally fair、yield_now 也不改变）",
+        "复算 bench/results/runtime-fixed/measurements-final/blocking-poll.txt：inline n=21 mean=23.6583ms median=23.6041ms max=25.0600ms；offload n=21 mean=13.633µs median=14.125µs max=18.541µs",
+        "bench/runtime-lab/src/bin/scheduling.rs:18-24,66,72（quantum 取 [16,1024]，标签 -q{quantum}）",
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/task/blocking.rs:27-29,106,114"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本地母本表两行核到台账：S11/16.2 的 PDF390–394 与「证据 contracts.rs」逐字命中 src/appendix/coverage.md:56（S11/BOOK-CHANNEL → part3/ch09.md#sec-cpp-rust.3.9.7，证据同为 bench/runtime-lab/tests/contracts.rs），coverage.md:216 的 S11/SRB-S11-072 也登记读页 [390,391,392,393,394]；正文「PDF 389 和 395 在本地版本是分页空白、不作核读依据」与 S11 台账一致——sources/reviews/S11.md:113、114 把 U072 的书签页记为 389、实际起始读页 390，U073 书签页 395、起始读页 396，即书签落在空白分页、正文不据此充数。外部表五行核到 sources/web.json：rcore-condvar / rcore-semaphore / rcore-sched 均 status read-mapped 且 archive 路径真实存在（3semaphore-rcore.html、4condition-variable-rcore.html、4scheduling-rcore.html），其中 rcore-sched 的 review_scope 明确登记了调度四问、MLFQ 五条规则、彩票/步长调度与 sum(Ci/Pi)<=1，与正文该行逐项对应；rcore-semaphore 行的 P/V、名额移交、唤醒丢失三点见 9.7 条目里我的原文命中。Tokio 四行核到 sources/runtime-code.json：tokio-runtime-code（runtime/mod.rs，reviewed_ranges 175–406）、tokio-state-code（state.rs，1–374）、tokio-ct-code（current_thread/mod.rs 446–477，即 park_yield/park_internal）、tokio-blocking-code（task/blocking.rs），版本号均为 1.54.0，与正文「Tokio1.54.0」及 9.11「读 state.rs 的指定范围」一致。MIT 行与 S08 行有可核对性问题，见 findings 两条。指纹文件确实存在：sources/web.json、sources/runtime-code.json 均在盘上，正文这句可解析。本条未逐字回查 MIT 讲义内容（仓库无本地母本），因此对该行的「完整讲义」范围只认台账。 本节判定为 finding，原因见 findings[]：P2/P2，属表述与索引口径问题，无数字或代码事实错误。",
+      "evidence": [
+        "src/appendix/coverage.md:56,57,59,60,61,62,216",
+        "sources/reviews/S11.md:113-114（U072 书签页 389→读页 390；U073 书签页 395→读页 396）",
+        "sources/web.json（rcore-condvar / rcore-semaphore / rcore-sched 的 archive 与 review_scope；mit-scheduling status=reviewed-online）",
+        "sources/runtime-code.json（tokio 1.54.0 四个条目与 reviewed_ranges）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "跨节索引 12 条全部逐条核到锚点存在且语义对得上：[@ex-9.1.1]（ch09.md:134）、[@def-9.2.2]（343）、[@def-9.1.2]（128，定义 9.1.2 原文正是「运行权至多属一个 worker / 通知责任是一笔欠一次 poll 的账，二者不能当成同一个锁位」，支持「弹出队列不等于 RUNNING 独占权」与「Pin 不保证线程亲和」两行的引用位置）、[@def-9.1.1]（109）、[@def-9.5.1]（850）与[@def-9.6.1]（996）、[@def-9.6.2]（1016）、[@def-9.7.2]（1169）+[@ex-9.7.1]（1155）、[@def-9.7.3]（1197）、[@ex-9.2.3]（424）、[@def-9.8.3]（1383）、[@think-9.8.1]（1346）。无空引用、无指向不存在盒子的引用。两处无锚点的断言我按代码核过：「以为 current-thread 下 tokio::spawn 自动接受 !Send」错——Send 约束写在公共签名上，本地 tokio-1.54.0 的 Runtime::spawn 要求 F: Future + Send + 'static 且 Output: Send + 'static（runtime.rs:244-247），与 runtime 配置无关，正文说法成立；「把 abort 当成已完成析构」错——spawn_blocking 一旦开始运行不能 abort（blocking.rs:106,114），须观察 JoinHandle，正文说法成立。「把每次 Pending 都算成一次内核切换」这条无锚点但与 def-9.2.3（369，内核切换与 poll 返回的差别）同源，属可接受的组织方式。本条未核：各行对读者「该在哪一节回看」的编排是否最优，属教学判断。",
+      "evidence": [
+        "src/part3/ch09.md:109,128,134,343,424,850,996,1016,1155,1169,1197,1346,1383",
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/runtime.rs:244-247",
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/task/blocking.rs:106,114"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结七条与速查表九行逐条对得上本体定义盒（def-9.1.1/9.1.2/9.2.1/9.2.2/9.3.1/9.5.1/9.6.1/9.7.1/9.7.3/9.8.4 均存在且主题相符），无「小结讲了正文没讲的东西」。出口检查三条命令全部可执行落地：bench/runtime-lab/Cargo.toml 存在，tools/run_runtime_benchmarks.sh 存在，且脚本第 6 行确实在 $out/environment.txt 已存在时打印 Choose a fresh output directory 并 exit 1——正文「换一个新输出目录、脚本拒绝覆盖已有 environment.txt 的归档目录」属实。「读 state.rs 的指定范围」对应 coverage.md:59 登记的 src/runtime/task/state.rs:1–374，我抽查其中四处：transition_to_idle 返回 OkNotified（state.rs:176）、transition_to_complete（184）、running 期间只 set_notified 不重复提交并附注释（219-223、264-269）、complete 之后不再提交（230-238）、取消请求等当前 poll 返回的注释（348-350，原文 If the task was not idle, the thread currently running the task will notice the cancelled bit and cancel it once the poll completes），四条位置加一条注释全部落地，未出现正文点名的内容在源码里找不到的情况。八个反思问题的数字前提我核了两个：「21 次观察不足以承诺生产 p99」与「9.6 的 offload 没缩短固定睡眠」，复算 blocking-poll.txt 得每侧 n=21、offload 最大 18.541 µs 而 inline 中位 23.604 ms（睡眠本体约 20 ms 量级未被缩短，与 9.6 叙述一致）；「multi4 聚合 ns/step 可小于单线程一次 step 的延迟」与 9.5 的 0.750/2.602 口径自洽。章末五页链接的五个文件名（ch09_summary/recall/exercises/exam/checklist.md）指向同目录相对路径，机械层已验可解析，我不重复判。本条未核：quantum 与尾延迟、current-q16 成本归因这两问的完整论证在 9.5/9.3，我只在本节确认它们没有引入新数字。",
+      "evidence": [
+        "tools/run_runtime_benchmarks.sh:6,15",
+        "src/appendix/coverage.md:59",
+        "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/task/state.rs:176,184,219-223,230-238,264-269,348-350",
+        "复算 bench/results/runtime-fixed/measurements-final/blocking-poll.txt：inline/offload 各 21 个观察"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "severity": "P2",
+      "description": "例 9.8.1（ch09.md:1403-1416）表格第③行的口径归属有歧义：25.060 ms 被写进「其他区间」那一格（原文「正常，量级与 9.6 的 25.060 ms 接近」），但该格的表头是「其他区间」。按 def-9.6.1（ch09.md:996）观察延迟的口径是「从通知发出到等待者恢复执行」，即恰是③行「偏大的区间」resource_ready→task_resumed 那一段；我复算归档得 inline 侧 21 个观察的 max=25.060 ms（25060042 ns），确是被 poll 占住线程造成的恢复段，而不是其余各段。字面读法会让读者以为「正常区间也有 25 ms」，与同行「其他区间正常」自相冲突。建议把该量级注写进「偏大的区间」格或改为「与 9.6 的 task_resumed 段同量级」。数值本身没有错，也没有与代码/归档相反，故只判表述问题。",
+      "evidence": "src/part3/ch09.md:1411（表格③行）、src/part3/ch09.md:996（def-9.6.1 口径）、复算 bench/results/runtime-fixed/measurements-final/blocking-poll.txt：inline max=25060042 ns=25.060 ms，n=21"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "severity": "P2",
+      "description": "本地母本表第二行（ch09.md:1517）声称 S08 / Item17 的本书落点是「9.1–9.2 责任划分」、证据是「第7章台账及本章」，但 src/appendix/coverage.md 里没有任何 S08 → part3/ch09.md 的条目：S08/R17-A（PDF146–155）与 S08/R17-B（PDF156–160）只映射到 part2/ch07.md#sec-cpp-rust.2.7.3 与 2.7.8（coverage.md:39-40），且 9.1–9.2 正文没有出现 S08/Item17 的任何引用。同时「第7章台账及本章」不是可解析的文件路径，与 ch09.md:1542 自己承诺的「每一份母本的实际页码、文件指纹与覆盖状态记录在附录：来源覆盖」不闭合。页码 146–160 与台账一致，故不构成 P1，属索引与台账口径没对齐。",
+      "evidence": "src/part3/ch09.md:1517,1542；src/appendix/coverage.md:39-40（全仓 grep S08 无 ch09 落点行）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "severity": "P2",
+      "description": "外部规范表把 MIT6.S0812020 Lecture11 的「实际核读范围」写成「完整Thread switching讲义」，但 sources/web.json 里 mit-scheduling 的 status 是 reviewed-online，review_note 明写「在线核读，未保留本地母本；正文引用的是该 URL 当时抓取到的内容」，仓库内没有可逐字比对的母本文件（.work/cpp-rust-sources 下无该讲义，只有 mit-rcu.txt）。因此 9.8.3（ch09.md:1372）那句「寄存器（CPU 内部最快的那一小批存储格子，比缓存还快）」这类带具体形容的描述，我只能确认它落在台账登记的 URL 与 sha256 上，无法逐字回查；标题 Lecture11 Thread switching 本身在 coverage.md:62 有登记，不算虚构。建议在该行或正文里把这句显式标为本书的解释性括注，而不是母本原话。",
+      "evidence": "sources/web.json 条目 id=mit-scheduling（status=reviewed-online，sha256 46a32663…，无 archive 字段）；src/appendix/coverage.md:62；src/part3/ch09.md:1372,1529"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "severity": "P2",
+      "description": "ch09.md:1215 这句在插入锚点后主干不通，读者无法判断 [@def-9.7.3] 是引用还是句子成分：「所有权系统只保证对象按规则销毁，它不知道你希望[@def-9.7.3] 对齐的是『调用方还活着』，还是『阻塞工作还在跑』。」语义本身与 def-9.7.3（ch09.md:1199）和 contracts.rs:58-59 的实现一致（许可必须对齐真实占用期，owned permit 移进闭包），不构成事实错误；建议改写为「它不知道你把[@def-9.7.3] 对齐的是……还是……」或把锚点移到句末括号里。",
+      "evidence": "src/part3/ch09.md:1199（def-9.7.3 原文）、src/part3/ch09.md:1215（问题句）、bench/runtime-lab/tests/contracts.rs:58-59"
+    }
+  ]
+}

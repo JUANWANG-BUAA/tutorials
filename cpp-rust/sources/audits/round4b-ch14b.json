@@ -1,0 +1,102 @@
+{
+  "reviewer": "r4b-ch14b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part4/ch14.md 的 14.7–14.11 全部正文与语义盒，逐条回查 bench/evidence-lab/tools/{gate.py,test_gate.py,measure.sh,build_matrix.py}、src/lib.rs、src/bin/feature_work.rs、Cargo.toml 与 results/run-01/ 归档（含 build-raw.jsonl 复算、verify-*.txt 与 processes-*.txt 字节数、test-default/checked.txt 与 gate-tests.txt 的落盘计数），并回查 src/appendix/coverage.md 与 sources/reviews/S11.md 的登记行；未抽样、未依赖任何先前对话结论。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "14.7 全节（含 preview、[@def-14.7.1]–[@def-14.7.3]、四层表、状态表、[@ex-14.7.1]、思考、判定流程、小结、errata、即时自测）逐句核到 gate.py 源码与本轮归档：三种退出状态与正文一致——load_runtime 对 21 条不齐/非有限正值/checksum 不唯一/unit 缺失一律 raise ValueError，main() 捕获后返回 2，compare() 按 ratio<=1+budget 返回 0 或 1；[@def-14.7.2]「证据不可比早于证据不足」与源码次序（先解析后比较）相符。14.7.4「gate.py 只检查样本结构、单位、checksum 与均值预算，没有自动比较 CPU 型号、工具链或输入指纹」经逐行确认成立：gate.py 全文没有读 environment.txt、source-sha256.txt 或任何机器/工具链字段。[@ex-14.7.1] ①的比值 5.27 我自己复算：0.225888/0.042857=5.2708，实跑 gate.py 得 ratio 5.270781596704855、退出码 1，与 gate-rejection.json 的 5.270781596704856 只差末位浮点求和顺序，可判复现。14.7.7「feature 二进制尚未做跨进程配对轮转」经 feature_work.rs 确认：单进程 for round in 0..21 顺序跑完，无跨二进制轮转。14.7.8「没有计算置信区间或 p 值」在 tools/ 与 run-01/ 里找不到任何 CI/ bootstrap 产物，成立。14.7.9「证据目录使用新名字并拒绝覆盖」成立：measure.sh 用 mkdir \"$OUT\"（已存在即失败）且不 rm -rf；build_matrix.py 全程用 open(\"x\") 独占创建。本节我只核到工具与归档层面，未复核 GitHub Actions 之类的真实 CI 配置（正文也声明本轮没有执行跨平台 CI，未越界宣称）。",
+      "evidence": [
+        "bench/evidence-lab/tools/gate.py:10-25（21 distinct rounds / nonpositive or nonfinite / inconsistent checksum / unit missing 四类 raise）",
+        "bench/evidence-lab/tools/gate.py:27-35（compare 只比 unit、checksum、mean/budget，scope 字段自述非显著性）",
+        "bench/evidence-lab/tools/gate.py:37-51（except (ValueError,OSError) -> return 2；return 0 if result[\"pass\"] else 1）",
+        "实跑：python3 bench/evidence-lab/tools/gate.py results/run-01/feature-default.txt results/run-01/feature-checked.txt --budget 0.2 -> exit=1, ratio=5.270781596704855（归档 gate-rejection.json:2 = 5.270781596704856）",
+        "bench/evidence-lab/src/bin/feature_work.rs:19-26（单进程 for round in 0..21，无跨二进制配对）",
+        "bench/evidence-lab/tools/measure.sh:13 mkdir \"$OUT\"（拒绝已存在目录）；bench/evidence-lab/tools/build_matrix.py:744,755 open(\"x\")",
+        "bench/evidence-lab/results/run-01/ 目录清单中无 CI/p 值/置信区间产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "14.8 全节逐条回查，重点复核派单点名的两处近期改动，均与磁盘一致。(1) processes 快照：正文称 `processes-before.txt` 与 `processes-after.txt` 都是 0 字节、由 `measure.sh:29` 与 `:52` 用 `ps -axo pid,comm | grep -E '(cargo|rustc|clang|ld$)'` 抓取、没匹配就留空——我按行号取出的命令与正文逐字相同，`wc -c` 实测两个文件均为 0 字节，正文「只是两次快照，不是全程排他 CPU 保证」的限定与 measure.sh 只抓 exec 名（注释第 18 行自述）相符；同段的目录锁叙述与 measure.sh:15-16 的 `mkdir \"$REPO/.work/cpp-rust-agents/measure.lock\"` + trap rmdir 相符，「只协调参与相同协议的测量者」成立。(2) verify-*.txt 的排除判据：正文称三份各 21 行、同单位、同输入、同 checksum，来自第 0 轮那一次额外运行，因此不进 273——`grep -c '^raw,'` 实测 verify-one/verify-release/verify-thin 各 21 行、round 值 21 个互不相同、header 均为 `unit=ns_per_byte;case=default;bytes=1048576;checksum=133693440`，来源确为 build_matrix.py:769-776 的 `if round_id == 0: ... verify-{profile}.txt`，即同一份产物反复跑同一输入、无随机化顺序，正文给出的排除理由与代码事实一致；14.4.8 errata E-g 的「63 行」= 3×21 亦成立。(3) 其余可对核断言：14.8.2 的「默认与 checked 各有 5 项 Rust 单元测试、1 项 doctest；Python 门禁有 3 项测试」我未只看正文——src/lib.rs 恰有 5 个 #[test]（observation_does_not_change_business_result / feature_result_matches_reference / reject_missing_or_invalid_samples / small_sample_p99_is_maximum / batch_counter_loses_distribution_not_count）、1 个 doc 代码块，归档 test-default.txt 与 test-checked.txt 各列出同样 5 项 ok 加 doctest 运行行、gate-tests.txt 为 `Ran 3 tests ... OK`；命令清单逐条与 bench/evidence-lab/Cargo.toml、tools/ 路径可落地，rustfmt-check.txt、clippy-check.txt、clippy-default.txt、rustdoc-check.txt、mechanical-validation.txt 均在 run-01/ 存在，支持「本轮离线执行成功」。(4) 14.8.3 的指纹与可执行副本：binary-sha256.txt 与 binaries/ 四个二进制由 measure.sh 写出，sample-cpu.txt/sample-wait.txt 由 build_matrix 之后单独采集，支持「生成代码采集在所有正式计时后进行」与「另一次同源构建」两句。(5) 14.8.4 只用 codegen/ 的 .s/.ll/.mir 确认路径形状、不报 I-cache/BTB，与 run-01/ 里确实没有 PMU 类文件一致。(6) 14.8.5 八项清单与 14.8.6/14.8.7 是规范性陈述，正文自己声明「尚未做跨所有文件的签名清单发布服务」「本实验不执行部署」，我按磁盘核对未发现相反证据（run-01/ 无签名清单文件）。本节未复核的只剩：Rust 测试体内部是否真含空输入与非整块长度断言（我只核到测试函数名与落盘 ok 行，未逐个读测试体）。",
+      "evidence": [
+        "bench/evidence-lab/tools/measure.sh:29 与 :52 逐字为 `ps -axo pid,comm | grep -E '(cargo|rustc|clang|ld$)' > \"$OUT/processes-{before,after}.txt\" || true`",
+        "wc -c results/run-01/processes-before.txt = 0、processes-after.txt = 0",
+        "grep -c '^raw,' results/run-01/verify-{one,release,thin}.txt = 21/21/21；三者 header 均为 unit=ns_per_byte;case=default;bytes=1048576;checksum=133693440；round 值 21 个唯一",
+        "bench/evidence-lab/tools/build_matrix.py:769-776（第 0 轮才跑二进制并写 verify-{profile}.txt）",
+        "bench/evidence-lab/src/lib.rs:129-160（5 个 #[test]）与 2 个 ``` 标记（1 个 doctest）",
+        "results/run-01/test-default.txt / test-checked.txt（5 项 ok + doctest 运行行）、gate-tests.txt（`Ran 3 tests in 0.006s` / `OK`）",
+        "results/run-01/ 内 rustfmt-check.txt、clippy-check.txt、clippy-default.txt、rustdoc-check.txt、mechanical-validation.txt、binary-sha256.txt、binaries/、sample-*.txt、codegen/ 均实际存在",
+        "bench/evidence-lab/tools/measure.sh:13-16（mkdir 拒绝已存在目录 + .work/cpp-rust-agents/measure.lock 独占锁）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "14.9 全节（含两张表、S11 页码说明段、在线规范段、rCore 机制侧对照段、版本差异裁决段）逐行回查登记台账。(1) 派单点名的 S11 319/331 登记页现已与磁盘一致：src/appendix/coverage.md:245 与 :247 登记 `S11/SRB-S11-U058 采用发布配置自定义构建 PDF 320–321`、`S11/SRB-S11-U060 Cargo 工作空间 PDF 332`；sources/reviews/S11.md:99 与 :101 的逐单元行给出「PDF入口 319 / 331；范围页 320；320,321」与「331；范围页 332；无」，与正文「319 与 331 是这两个单元的起始分隔页，登记与核读落在实际读到内容的 320–321 与 332 页」逐项对得上，S11.md 前导第 11 行另有「书签普遍指向仅页码的分页，正文通常从下一页开始」支撑「分隔页」这一措辞；正文表格「一基PDF页 320」「332–336」也与 coverage.md:90-92 的 EVIDENCE-S11-003/004/005 行相符。(2) 「本地 16 份母本里没有单独命名的 Cargo Reference PDF」：sources/reviews/ 恰 16 个文件，未在其中发现 Cargo Reference 书目（只核到目录名与 S11 是《Rust 程序设计语言》简体中文版整本，未把 Cargo Reference 单列为母本），正文不为不存在的书目编造 ID/页码的自我限定成立。(3) 我发现的问题只在「本章落点」一列与台账锚点不完全对应：正文给 S11 320 落点 14.1、14.4，但 coverage.md 对这一页只登记了 4.14.4（:91，另 :90 的 S11-003 落点是 ch13 13.8）；正文给 S11 332–336 落点 14.2、14.3、14.8，台账只登记 4.14.2（:92）；正文给 S14 1–15 落点 14.2、14.8，台账只登记 4.14.8（:94）；正文给 S09 64–67 落点 14.4、14.7，台账只登记 4.14.4（:89）。详见 P2 条目。本节未做的复核：远端在线规范（Cargo Features/Resolver/Profiles、rustc PGO）我只确认 sources/contributions 与 sources/web.json 里有登记行与 SHA 字段，未逐字回取网页原文比对。",
+      "evidence": [
+        "src/appendix/coverage.md:245 `S11/SRB-S11-U058 | 采用发布配置自定义构建 | PDF 320–321 | 核读映射 | part4/ch14.md#sec-cpp-rust.4.14.7`",
+        "src/appendix/coverage.md:247 `S11/SRB-S11-U060 | Cargo 工作空间 | PDF 332 | 核读映射 | ...4.14.7`",
+        "sources/reviews/S11.md:99（入口 319；范围页「320；320,321」）、:101（入口 331；范围页「332；无」）、:11（书签指向仅页码分页、正文从下一页开始）",
+        "src/appendix/coverage.md:89/91/92/94（S09-002→4.14.4、S11-004→4.14.4、S11-005→4.14.2、S14-007→4.14.8）",
+        "ls sources/reviews/ = 16 项（S01–S16）",
+        "grep -o 'ch14.md#sec-cpp-rust.4.14.N' src/appendix/coverage.md | uniq -c → 14.1:8 / 14.2:26 / 14.3:12 / 14.4:34 / 14.5:4 / 14.6:2 / 14.7:432 / 14.8:2 / 14.9:4"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "14.10 的 16 条跨节错误索引逐条回到对应小节与磁盘核对：release/feature 闭包（14.1.2–14.1.3）、Cargo.lock 不锁工具链（14.3.2、14.3.5 的 21 个不同 SHA 已由 build-raw.jsonl 复算：release 518448 字节 ×21 份、SHA 21 个互异；one 512640、thin 502672 同样 21 互异）、--offline 非沙箱（14.3.3）、default-features 并集（14.2.2）、all-features（14.2.8，本包确实只有 `checked = []` 一个可选 feature）、lto=false 与 off（14.4.3，Cargo.toml 原文 `lto = false` 与 `[profile.thin] lto = \"thin\"` 相符）、one 比 release 快（复算 fresh 均值 release 439.733 / one 338.194，差 101.539 ms 与 14.4.6 表一致）、__PAGEZERO（size-release.txt 首行 `Segment __PAGEZERO: 4294967296 (zero fill)`，__text 242940/241916/236656 与 14.4.8 表逐项相符）、哈希与性能（14.1.2）、PGO 三态与门禁自动重跑、ns/byte 口径（14.5.4）均对得上。唯一与事实冲突的是「**noop 快就认为重新编译也快。** …… 本章为它们分别保存了 21 条观察」：该句前一分句刚列了 fresh、noop、增量修改三种 case，而 build-raw.jsonl 的 case 全集只有 `{release,one,thin}×{fresh-package-target,noop}` 六个、126 行，归档里没有任何增量 case，14.4.2 也明写「本轮没有测第三种」、14.4 判定流程写「只有前两种本轮有数」，故按字面把「它们」读作三种边界即为不实登记。详见 P1 条目。",
+      "evidence": [
+        "build-raw.jsonl 126 行，case 取值经我复算为 release|one|thin × fresh-package-target|noop 六组，各 n=21；无 incremental 类 case",
+        "src/part4/ch14.md:633（[@def-14.4.2]「本轮没有测第三种」）、:873（判定流程「只有前两种本轮有数」）",
+        "复算：release fresh mean=439.733 sd=68.274 p50=416.813 p99=646.793；one 338.194/10.053/334.800/360.113；thin 1995.882/68.582/1972.251/2216.728；noop 18.576/18.713/18.194——与 14.4.6 表逐项相符",
+        "results/run-01/size-release.txt 第 1 行 __PAGEZERO 4294967296 (zero fill)；Section __text 242940（one 241916、thin 236656）",
+        "每 profile binary_bytes 单一取值 {518448}/{512640}/{502672}，binary_sha256 各 21 个互异"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "14.11 全节（本章小结七条、速查九行、出口检查、273 计数、十问、章末件表）逐条核到工具与归档：出口检查的构建与运行顺序与 measure.sh 实际次序一致（`$LAB/target/release/cpu_wait`、`instrumentation`、`feature_work`、`target-checked/release/feature_work`，其后才 build_matrix.py、sample、codegen），14.8.3「生成代码采集在所有正式计时后进行」得到脚本行序支持；`--bins` 与 `--features checked --target-dir bench/evidence-lab/target-checked` 两条命令与脚本读取路径严格对应；`bash .../measure.sh <不存在的目录>` 与 14.7.9 的「新名字并拒绝覆盖」由 `mkdir \"$OUT\"` 保证。gate 演示我实跑复现：feature-default.txt 对 feature-checked.txt、--budget 0.2 → 退出码 1、pass=false，与 gate-rejection.json 一致；`|| true` 的警告与 main() 的 `return 1` 相符。14.11 对 `test_gate.py` 三条断言的新描述与磁盘完全一致：`assertFalse(result[\"pass\"])` 一条（真实 checked 超预算）、`assertRaisesRegex(ValueError, \"21 distinct\")` 一条（20 轮候选，脚本写入 range(20)）、`assertRaisesRegex(ValueError, \"correctness\")` 一条（checksum 1 vs 2、候选更快仍拒比），错误消息原文见 gate.py:12 与 :29，故正文「一条 + 两条」的计数与匹配串都成立。273 我按 `grep -c '^raw,'` 复算：cpu-wait.txt 42（cpu 21 + wait 21）、instrumentation.txt 63（batch/each/none 各 21）、feature 两文件 21+21=42、build-raw.jsonl 126，合计 273；verify-*.txt 的 63 行与两份 sample 确在 273 之外，排除判据（第 0 轮同产物重复运行、无跨轮配对）与 build_matrix.py:769-776 相符。速查表九行与小节结论未见口径漂移。发现的问题是「可以直接数出来」没有说明数的是哪一类行：cpu-wait.txt 里标签为 cpu/wait 的记录行是 22 与 22（其中 42 行以 `raw,` 开头），直接按行数会得到 44，正文不给判据会让读者数不出 42。详见 P2 条目。本节未核：十问清单是教学性设问，无可对核断言。",
+      "evidence": [
+        "bench/evidence-lab/tools/test_gate.py:8-24（1×assertFalse + 2×assertRaisesRegex，匹配串 `21 distinct`、`correctness`；range(20) 构造缺轮、checksum \"1\" vs \"2\" 且候选 mean .5 < 基线 1）",
+        "bench/evidence-lab/tools/gate.py:12 `expected exactly 21 distinct rounds`、:29 `unit or correctness evidence differs`、:16-20（非正/非有限与 checksum 不唯一的 raise）",
+        "实跑：python3 bench/evidence-lab/tools/gate.py results/run-01/feature-default.txt results/run-01/feature-checked.txt --budget 0.2 -> exit=1",
+        "grep -c '^raw,' results/run-01/{cpu-wait.txt=42,instrumentation.txt=63,feature-default.txt=21,feature-checked.txt=21,verify-one.txt=21,verify-release.txt=21,verify-thin.txt=21}；build-raw.jsonl=126 行；42+63+42+126=273",
+        "awk -F, '{print $2}' results/run-01/cpu-wait.txt | uniq -c -> cpu 22 / wait 22（其中仅 42 行以 `raw,` 起始）",
+        "bench/evidence-lab/tools/measure.sh:38-42、:44-52、:56-59（ch13 两 benchmark → feature → build_matrix → sample → codegen 的行序）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "severity": "P1",
+      "description": "14.10「**noop 快就认为重新编译也快。**」条目末句写「本章为它们分别保存了 21 条观察」，其前一分句刚并列三种 case（fresh 目标目录、noop、改一个源文件的增量重建）。按字面读「它们」包含第三种，即声称本轮有增量边界 21 条观察。磁盘反证：build-raw.jsonl 全部 126 行的 case 取值集合只有 {release,one,thin} × {fresh-package-target,noop} 六组（每组 n=21），不存在任何增量 case，也无 incremental 归档文件；正文自己另外两处也持相反口径——[@def-14.4.2]「也不等于修改一个源文件后的增量构建——本轮没有测第三种」，14.4 判定流程「只有前两种本轮有数」。属正文与已归档事实不符的内部矛盾，需要把「它们」明确限定为 fresh 与 noop 两种边界（或改写为「本章为前两种边界各保存 21 条观察」）。",
+      "evidence": "/usr/bin/python3 复算 build-raw.jsonl：126 行，case 集合 = one/fresh-package-target、one/noop、release/fresh-package-target、release/noop、thin/fresh-package-target、thin/noop，各 21 条；src/part4/ch14.md:633、:873（本轮没有测第三种 / 只有前两种本轮有数）；src/part4/ch14.md:1808（被指出的句子）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "severity": "P2",
+      "description": "14.9 首表的「本章落点」列与 src/appendix/coverage.md 的登记锚点不完全对应，四处落点在本章找不到台账行：S11 320 正文写 14.1、14.4，台账只登记 4.14.4（coverage.md:91，S11-003 的另一行落在 ch13 13.8）；S11 332–336 正文写 14.2、14.3、14.8，台账只登记 4.14.2（:92）；S14 1–15 正文写 14.2、14.8，台账只登记 4.14.8（:94）；S09 64–67 正文写 14.4、14.7，台账只登记 4.14.4（:89）。同时台账把 S11 U058/U060 与 S14 多个单元的核读映射记为 4.14.7（CI 节），而 14.9 表格反而没写 14.7 这一落点。建议要么在正文表格只保留有 EVIDENCE 行的落点，要么补登对应锚点，避免「规范来源须有台账行」这条纪律出现空档。属可追溯性/表述问题，不是数字或事实错误：我另外确认正文点名的 S11 319/331 分隔页与 320–321、332 核读页现已与 coverage.md:245/:247 及 sources/reviews/S11.md:99/:101 逐项一致，派单点名的这一处改动是干净的。",
+      "evidence": "grep -o 'ch14.md#sec-cpp-rust.4.14.N' src/appendix/coverage.md | sort | uniq -c → 4.14.1:8 / 4.14.2:26 / 4.14.3:12 / 4.14.4:34 / 4.14.5:4 / 4.14.6:2 / 4.14.7:432 / 4.14.8:2 / 4.14.9:4；src/appendix/coverage.md:89,91,92,94,245,247；sources/reviews/S11.md:99,101"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "severity": "P2",
+      "description": "14.11 声称「正式原始集合的规模可以直接数出来：CPU 与 waiting 各 21 条共 42 条……合计 273 条」，但没有点名计数判据是「以 `raw,` 开头的观察行」。按磁盘直数会得到不同结果：cpu-wait.txt 中带 cpu/wait 标签的行各 22 行（共 44），其中只有 42 行以 `raw,` 起始；feature-default.txt、verify-*.txt 等同样另有 unit header 行与 report/summary 行。我的复算支持正文的 273（42+63+42+126=273），因此这不是数字错误，而是「可数性」这句话缺一个行谓词，读者照字面数会得出 44/46 这类值并对不上表。建议在句子中补「只数 `^raw,` 行」，与同段 verify-*.txt 处已经给出的排除判据保持同等精确度。",
+      "evidence": "grep -c '^raw,' results/run-01/cpu-wait.txt = 42；awk -F, '{print $2}' results/run-01/cpu-wait.txt | uniq -c → cpu 22 / wait 22；results/run-01/instrumentation.txt 的 `^raw,` = 63 且 case 集合 batch/each/none 各 21；build-raw.jsonl = 126 行；src/part4/ch14.md:1874（被指出的句子）"
+    }
+  ]
+}

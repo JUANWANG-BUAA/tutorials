@@ -1,0 +1,101 @@
+{
+  "reviewer": "r4f-ch12b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part3/ch12.md 的 12.7–12.11 全部正文与每个语义盒（定义 12.7.1–12.7.3 / 12.8.1–12.8.6、例 12.7.1–12.7.2 / 12.8.1–12.8.2、思考 12.7.1 / 12.8.1、判定流程、errata、即时自测、小结、延伸阅读表、章末件），逐条回磁盘对核：bench/systems-lab/results/run-01/views.txt 与 simd.txt 用 /usr/bin/python3 从 raw 行自己复算均值/标准差/分位数/逐批比值，bench/systems-lab/src/lib.rs 与 src/bin/views.rs 逐行看代码，results/run-01/codegen/*.s 查汇编指令，rCore 与 io_uring 母本在 .work/cpp-rust-sources/systems/*.html 归档里逐字比对，12.9 表每行拿去 src/appendix/coverage.md 与 sources/web.json 查台账与 SHA；另跑 tools/list_uncollected_claims.py --only 12 复核全部「未采集」声明。快照串按派单原样写入，未自行计算。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "测量数字全部可复算且逐位命中：views.txt 的 42 条 raw 行按 ns 总数除以 4096 重算，拥有侧 21 批均值 30.635765、样本标准差（N−1）0.379754、p50 30.517578、p99 31.351562；借用侧 8.510533 / 0.191487 / 8.433105 / 9.155273，与正文表与 summary 行完全一致。差值 22.125232 ns、降幅 72.2%（实算 72.2203%）、比值 3.60（实算 3.599747）均成立；逐批比值实算区间 3.3067–3.7195，正文写 3.31–3.72 且 21 格逐格对核无误、无方向反转。最近秩定义自洽：ceil(21×0.99)=21 即最大值，实算拥有侧最大批确为第 9 批 31.351562、最小第 20 批 30.202、借用侧最大第 8 批 9.155273，正文「借用侧最慢批与拥有侧最慢批不是同一批」成立；第 2 题的相对波动 1.24% / 2.25% 实算 1.2396% / 2.2500%。静态量也对：4096×1028=4 210 688 字节 = 4.0156 MiB（正文 4.02 MiB）= 4.2107 MB（正文 4.21 MB）；step_by(64) 在 1024 字节上恰好读 16 字节（实算 len(range(0,1024,64))=16），与「只碰 16 个字节」一致。代码断言逐行核对：lib.rs:9 SAMPLES=21、:19 预热 500 ms、:28-30 (round+offset)%2 轮换、:38-42 均值与 N−1 标准差、:279-288 encode_frames 写 4 字节小端长度头、:290-297 next_frame(rest, 4096) 的 limit 与 ParseError::TooLarge、:301-305 consume_frame 标 #[inline(never)] 且 step_by(64)、:307-321 view_batch 末尾 assert!(rest.is_empty())、bin/views.rs 与正文引用的三段代码逐字符相符；每批 4096 次分配对借用侧 0 次的说法在代码里成立（借用分支无 to_vec、缓冲区只在外层 encode_frames 分配一次）。判 finding 的两条是文字层面：12.7.2 说 black_box 在该函数「出现两次」，源文件里是三处调用点；12.7.3 的分配器四步没有点名是哪套分配器、其中「维护脏页计数」在磁盘上没有任何证据支撑。P0/P1 为零，无编造实测。",
+      "evidence": [
+        "bench/systems-lab/results/run-01/views.txt:raw 42 行 + summary 2 行；复算 mean=30.635765/sd=0.379754/p50=30.517578/p99=31.351562 与 8.510533/0.191487/8.433105/9.155273，逐格匹配 src/part3/ch12.md:1461-1492",
+        "src/part3/ch12.md:1466 差值 22.125232 / 72.2% / 3.60 ← 实算 22.125232（30.635765−8.510533）、72.2203%、3.599747",
+        "src/part3/ch12.md:1457 nearest-rank 定义 ← math.ceil(21*0.99)=21、ceil(21*0.5)=11，与 lib.rs:42-45 的排序取秩实现及 summary 记录值一致",
+        "src/part3/ch12.md:1349 4 210 688 字节 ← 4096*1028=4210688，/1048576=4.0156 MiB，/1e6=4.2107 MB",
+        "src/part3/ch12.md:1388 称 black_box「出现两次」，实际调用点为 bench/systems-lab/src/lib.rs:313、:314、:316 三处",
+        "src/part3/ch12.md:1424-1427 分配器四步无出处：本节的 allocator 未点名，results/run-01/environment.txt 未被正文引用，「脏页计数」无磁盘证据",
+        "tools/list_uncollected_claims.py --only 12：12.7 的 6 条「未采集」声明（ch12.md:1443/1444/1505/1516/1517/1518/1520）均无同类反例产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节通篇是机制叙述，正文明确「没有采集 io_uring 的任何延迟或吞吐数字」（ch12.md:1601、:1711、:1874、:1945、:1968），因此没有可复算的实测数字，也没有出现「拿机制冒充实测」的越界——这点核对通过。母本与结构体逐字回查：正文 12.8.2 的 struct io_uring_sqe 字段顺序（opcode/flags/ioprio/fd/union off,addr2/union addr,splice_off_in/len/…/user_data）与 io_uring(7) 归档里「Here is struct io_uring_sqe in full」那段完全对得上；struct io_uring_cqe 三字段 user_data/__s32 res/__u32 flags 与归档逐字一致，16 字节这个静态量自己算过（8+4+4=16）成立；IORING_OFF_SQ_RING 与 IORING_OFF_CQ_RING 两次 mmap 也确实在归档示例代码里，图的画法有出处。rCore 侧四行引文全部回查：easy-fs 实现篇归档有「pub const BLOCK_SZ: usize = 512」、BlockCache 含 cache/block_id/block_device: Arc<dyn BlockDevice>/modified: bool、全局管理器「尽可能将更多的块操作合并起来」，以及「扇区通常 512 字节 / Ext4 单个块默认 4096 字节 / easy-fs 里两者同为 512 字节因此不再区分」——12.8.7 定义 12.8.5 那句转述逐字落地，且登记的是实现篇（SHA ab93f730，coverage.md:592），不是使用篇，没有踩上一轮那类母本文件搞错的坑；接入篇归档确有 File trait 只有 read/write、UserBuffer、Arc<dyn BlockDevice>；串口篇有 DLAB 表与设备树 reg/interrupts/clock-frequency；virtio 篇有 kick、virtqueue/virtio-ring 与六个状态（ACKNOWLEDGE/DRIVER/FEATURES_OK/DRIVER_OK/FAILED=128/DEVICE_NEEDS_RESET=64），正文「六个状态、FAILED 与 DEVICE_NEEDS_RESET 是两种失败等级」成立。其余静态/常识断言核对：epoll 进主线于 2.6、设计者 Jens Axboe、SQPOLL 线程名 iou-sqp-<pid>、sq_thread_idle 常见 1000 ms、IORING_ENTER_SQ_WAKEUP 唤醒调用、AsyncRead 的 poll_read(Pin<&mut Self>, &mut Context, &mut ReadBuf) 签名——均与正文一致，未发现与事实相反。「至少 2 次系统调用」在 12.8.1 与 12.8.6 表里口径一致。判 finding 两条为表述与量级出处问题：SQE 那行注释写「64 字节对齐」而母本只给结构体（定长 64 字节、环内按 64 字节槽位），措辞与 alignof 易混；12.8.7 的 preview 断言「三者的成本差三个数量级」而正文随即声明这组对照没有在本机采集，量级数字没有落地出处。",
+      "evidence": [
+        ".work/cpp-rust-sources/systems/uring.html（io_uring(7)，sources/web.json:295 SHA 1ed71f55…）：struct io_uring_sqe in full 与 struct io_uring_cqe 字段逐字命中 src/part3/ch12.md:1651-1677",
+        "静态量自算：io_uring_cqe = 8+4+4 = 16 字节，与 ch12.md:1671「CQE, 16 字节」一致；SQE 定长 64 字节但母本无「64 字节对齐」措辞（ch12.md:1652）",
+        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html：BLOCK_SZ=512 / BlockCache{cache,block_id,block_device,modified} / 全局管理器合并回写 / 扇区 512 与 ext4 块 4096 / easy-fs 不区分——支持 ch12.md:1892 定义 12.8.5",
+        ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html：File trait 只 read/write、UserBuffer、Arc<dyn BlockDevice>——支持 ch12.md:1989",
+        ".work/cpp-rust-sources/systems/2device-driver-1-rcore.html（DLAB、clock-frequency、reg、interrupts、ns16550）与 2device-driver-2-rcore.html（kick、virtqueue、FAILED=128、DEVICE_NEEDS_RESET=64，六状态）——支持 ch12.md:1990-1991",
+        "ch12.md:1601/1711/1874/1945/1968 五处「没有采集」与 list_uncollected_claims.py --only 12 的输出一致，无同类产物反例",
+        "ch12.md:1884「三者的成本差三个数量级」无归档证据，且 ch12.md:1906 自陈「本书没有在本机采集这组对照」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "十行来源逐行落地核对，全部能进台账：Rust Reference target_feature 的 SHA 前缀 18becca8 对应 sources/web.json:287/607 与 coverage.md:583/4093（映射 12.3）；io_uring(7) 的 1ed71f55 对应 web.json:295、coverage.md:584/4094（映射 12.8）；rCore 第6章接口篇 55ff0cac 对应 web.json:311、coverage.md:586/4096；easy-fs 实现篇 ab93f730 对应 coverage.md:592/613 与 4100，落点 12.8.7 与正文 [@def-12.8.5] 一致；easy-fs 接入篇、串口篇、virtio 篇分别有 coverage.md:613/4119、605/4112、606/4113 台账行（后两行的 12.8 落点与表内「本书论据映射」相符；接入篇台账锚在 12.9，表内写 12.4/第 5 章，属同一来源的两种登记口径，不影响可解析性，故不判 finding）。S11 PDF 314–315 与 S08 PDF 174–175 两行的编号、页码与 inventory 里的母本条目一致，且正文只声明「核读完成」与落点，没有摘抄母本原文句子，符合本节自己声明的「本章正文只做自主分析与实测，不摘抄母本原文」。这一节我核对到 SHA 与台账行为止：S11/S08 两行的 PDF 页码没有在本轮重新抽取原文比对（PDF 在仓库外），只验了编号与页码与台账登记一致。",
+      "evidence": [
+        "src/appendix/coverage.md:583/584/586/592/599/605/606/613 与 :4093/4094/4096/4100/4112/4113/4119 逐行命中 ch12.md:1985-1993 的每一行",
+        "sources/web.json:287(18becca8…)、:295(1ed71f55…)、:311(55ff0cac…)、:351(ab93f730…)、:4119 段 f4c44e4d… 与正文 SHA 前缀逐位吻合",
+        "ch12.md:1995「不摘抄母本原文」+ 本节无任何带引号的母本句子；check_paraphrase 类风险在本节为零"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "十二条跨节错误逐条回查引用与可核事实，没有发现与正文或代码相反的说法。与实测相关的两条都站得住：「自动向量化与手写 NEON 处于同一性能量级」← simd.txt summary 行 auto mean=0.069184、neon mean=0.069965，差 1.13%，同量级成立；「未做运行时探测调用带 target_feature 的函数会 SIGILL」是机制断言，与 12.3 的 [@def-12.3.2] 契约一致，未伪装成实测。其余各条（循环内边界检查/panic 分支阻止向量化、浮点加法不满足结合律需 fast-math 授权、尾部残余需标量清理、借用视图受 'a 约束、跨步访问走 gather/scatter、AVX-512 降频、未对齐 &[u8]→&[T] 在 ARM64 触发对齐异常、io_uring 不一定赢 epoll、SQPOLL 轮询线程仍占核）全部是定性机制叙述或已明确「按负载形态测」，本节没有把它们写成已量化结论，且每条引用（[@ex-12.6.1]、[@def-12.3.2]、[@def-12.2.2]、[@ex-12.8.1]、[@def-12.2.3]、[@ex-12.3.1]、[@def-12.4.1]、[@def-12.5.1]、[@def-12.8.2]）指向的 def/ex id 在 ch12 正文里都存在。这一节我只核到引用可解析与两条数字断言可复算为止：AVX-512 降频与 gather/scatter 两条属跨架构通用知识，本轮没有本机证据（本书实验在 Apple Silicon NEON 上），正文也未声称实测，故不判 finding。",
+      "evidence": [
+        "bench/systems-lab/results/run-01/simd.txt:summary,auto,mean=0.069184 / summary,neon,mean=0.069965 ← 支撑 ch12.md:2001「同一性能量级」",
+        "ch12.md:2001-2023 的 9 个 [@id] 引用全部在正文有对应盒子：src/part3/ch12.md:1131 起 12.6、:469 起 12.3、:297 起 12.2、:704 起 12.4、:949 起 12.5、:1595 起 12.8",
+        "ch12.md:2021「io_uring 不一定显著超越 epoll」与 :1601「没有采集任何延迟或吞吐数字」口径一致，无越界"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结七条与速查九行逐条对回定义盒，口径未变（ns/元素=批均值、加速比=基准除以优化后、fast-math 是精度授权、target_feature 需运行时探测、借用视图受缓冲区生命周期约束、io_uring 所有权要撑到完成），没有把别处的数字挪来当结论。出口检查的三条数字全部复算通过：0.535004 ÷ 0.069184 = 7.7331，正文写 7.73 倍成立；0.069184 与 0.069965 两个值与 simd.txt 的 summary 行逐字相同；views 侧 72.2% 实算 72.2203% 与 12.7.4 的表同源。三条命令可执行性核过：bench/systems-lab/src/bin/ 下确有 simd.rs 与 views.rs，且 bench/systems-lab/target/release/simd 与 target/release/views 在盘上存在，因此 cargo test --offline --locked 之后直接跑这两个路径不会扑空（只提示一句：这两枚 release 产物是先前构建留下的，正文没有写 cargo build --release，换机器复跑时读者需要自行构建——不构成数字或事实错误，故不判 finding）。汇编断言逐字符命中：results/run-01/codegen/systems_lab-290015c44171d49d.s:10858 是 ldr q1, [x10], #16、:10863 是 mla.4s v2, v1, v0，且都在 neon_transform 符号（:10825）体内，正文「用这两条完成向量展开」可核验。最后一段范围声明（ARM64 向量化吞吐 + 借用切片零拷贝度量，io_uring 属前沿讨论，没有在本机 macOS 伪造 Linux 内核测试）与 12.6/12.7 的实际夹具、12.8 的「没有采集」一致，章末五页文件也都在 src/part3/ 下存在。",
+      "evidence": [
+        "复算 0.535004/0.069184=7.7331 → ch12.md:2063「7.73 倍」；0.069184/0.069965 逐字来自 bench/systems-lab/results/run-01/simd.txt 的 summary 行",
+        "复算 72.2203% → ch12.md:2063「72.2% 耗时下降」与 ch12.md:1466 同源",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10825(__RNvCs…14neon_transform)、:10858、:10863 ← ch12.md:2065",
+        "bench/systems-lab/src/bin/views.rs、simd.rs 与 bench/systems-lab/target/release/{views,simd} 在盘上存在 ← ch12.md:2057-2061",
+        "src/part3/ch12_summary.md、ch12_recall.md、ch12_exercises.md、ch12_exam.md、ch12_checklist.md 五页齐全 ← ch12.md:2073-2079"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "severity": "P2",
+      "description": "12.7.2 正文（ch12.md:1388）说「black_box 在这里出现两次，各有分工：一处挡住载荷被优化掉，一处挡住拷贝被优化掉」，但上一行刚贴出的 view_batch 源码里 black_box 是三处调用点，不是两处：lib.rs:313 的 black_box(payload.to_vec())、:314 的 black_box(&owned)、:316 的 black_box(payload)。真正成立的说法是「两种分工、三处调用点」——拥有分支里 to_vec 的结果与借给 consume_frame 的引用各包了一次。读者照正文数一遍会发现数不上，属于正文与代码计数不符的表述问题（不涉及任何测量数字）。",
+      "evidence": "bench/systems-lab/src/lib.rs:307-321（三处 black_box：:313、:314、:316），对照 src/part3/ch12.md:1370-1385 的代码块与 :1388 的「出现两次」"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "severity": "P2",
+      "description": "12.7.3（ch12.md:1422-1427）把一次 to_vec() 在分配器里拆成「定尺寸类 / 初始化簿记（多线程下还要维护脏页计数）/ 搬字节 / 即时释放（连续释放触发缓存清洗或退页）」四步，但没有点名是哪套分配器（glibc malloc、macOS libmalloc、jemalloc 的大小类别与簿记字段完全不同），「脏页计数」这项在本节没有任何磁盘证据：正文没有引用 results/run-01/environment.txt 或任何 profiler 产物，list_uncollected_claims.py --only 12 也没有对应采集项。作为机制叙述可以，但当前写法读起来像已核实的实现细节，建议改成「以 glibc tcache/fastbins 一类的线程私有缓存为例」并显式标注未取证，与同节「本节没有把四段拆开采集」(:1442) 的诚实口径对齐。",
+      "evidence": "src/part3/ch12.md:1424-1427 无来源标注；/usr/bin/python3 tools/list_uncollected_claims.py --only 12 未列出任何分配器/内存映射类产物；bench/systems-lab/results/run-01/environment.txt 存在但正文未引用"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "severity": "P2",
+      "description": "12.8.2 的 C 代码块首行注释写「提交队列条目 (SQE, 64 字节对齐)」（ch12.md:1652）。母本 io_uring(7) 归档里只有结构体本身，既没有「64 字节对齐」这句措辞，也没有把 SQE 描述为 64 字节对齐类型：可核的事实是每条 SQE 定长 64 字节、环里按 64 字节槽位索引，而 CQE 才明确是 16 字节（正文字段 __u64+__s32+__u32，自算 8+4+4=16 与之相符）。把「定长/槽位间距 64 字节」写成「64 字节对齐」容易与 alignof 混起来，也让读者以为注释来自母本原文。",
+      "evidence": ".work/cpp-rust-sources/systems/uring.html（sources/web.json:295，SHA 1ed71f55…）struct io_uring_sqe in full / struct io_uring_cqe 两段原文，对照 src/part3/ch12.md:1652 与 :1671"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "severity": "P2",
+      "description": "12.8.7 的 preview（ch12.md:1884）断言三个时刻「成本差三个数量级」，而同一节的例 12.8.2 解答与定义都明确写着「这里给的是机制与量级关系，本书没有在本机采集这组对照」（:1906），list_uncollected_claims 也确认没有任何写回/fdatasync 的归档产物。量级关系是通用工程常识而非本书测量，但放在「先抓住一件事」的 takeaway 盒里、且没带未采集标记，读者会当成本书测出来的结论；建议在 :1884 就地补一句「量级来自一般设备特性，本节未在本机采集」。",
+      "evidence": "src/part3/ch12.md:1884（三个数量级）与 :1906（本书没有在本机采集这组对照）互撞；/usr/bin/python3 tools/list_uncollected_claims.py --only 12 未匹配到 fsync/写回类产物"
+    }
+  ]
+}

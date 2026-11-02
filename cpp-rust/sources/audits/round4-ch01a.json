@@ -1,0 +1,114 @@
+{
+  "reviewer": "r4-ch01a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动通读 src/part1/ch01.md 第 52-1219 行的 1.1-1.6 全部正文与每个语义盒，然后用一条 /usr/bin/python3 脚本把六节的表格与含数字句子一次性抽出，逐条回 bench/foundations-lab/{src/lib.rs,src/bin/dce.rs,src/bin/paired.rs,analyze.py,results/native-01/} 复算与核对，没有抄正文给的数。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.1 全部（含 def 1.1.1/1.1.2/1.1.3、例 1.1.1/1.1.2/1.1.3、思考框、图 1-1、判定流程、小结、E-a~E-f、即时自测四题）。核到：65536 个 u64 与 lib.rs:5 `pub const N: usize = 65_536` 一致；实验契约表里的 rustc 1.99.0 / aarch64-apple-darwin / release / 同一台 Mac 逐条对上 results/native-01/environment.txt（`rustc 1.99.0 (b940084d7 2026-09-28)`、`host: aarch64-apple-darwin`、`profile=release opt3`、`hw.model: Mac17,9`）；`mov x0, #0` + `ret` 两行汇编与归档 .s:1166-1171 逐字相同；期望值 0 与 dce.rs 里 `expected: 0` 一致；「一次普通整数加法零点几纳秒」我无从核（无出处、无归档），但由它推出来的「快几百倍」与本章自己的数字对不上，见 findings。没核的：图 1-1 的 SVG 坐标语义（纯排版），以及 1.1 提到的 `wrapping_add` 语义描述（按语言常识判为正确，未查 std 文档）。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:5 `pub const N: usize = 65_536;`",
+        "bench/foundations-lab/results/native-01/environment.txt:2 `rustc 1.99.0 (b940084d7 2026-09-28)`；同文件 `host: aarch64-apple-darwin`、`profile=release opt3 codegen-units1`",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s:1166-1171 函数体只有 `mov x0, #0` / `ret`",
+        "复算：0.058630038 / 0.000016082 = 3645.3（本章 1.4.8 记作 3600 倍）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.2 全部（def 1.2.1/1.2.2/1.2.3、例 1.2.1、计时边界表、判定流程、Instant 小节、思考框、小结、E-a~E-f、自测四题）。逐条对上：批均值 = T/(K×N) 与 lib.rs::run 的 `elapsed.as_secs_f64()*1e9/(iterations*units)` 完全同形；「一个 case 采集 21 个批次」= lib.rs:6 `ROUNDS: usize = 21`，且 dce.csv/paired.csv 每 case 的 raw 行数实测 21；「每个 case 至少预热 500 ms」= run() 的 `while start.elapsed() < Duration::from_millis(500)`，environment.txt 亦记 `warmup=500ms/case rounds=21`；「预热中的结果仍然检查正确性」= 预热循环里的 `assert_eq!(black_box((case.work)()), case.expected)`；「这一章没有自动增长 K」= iterations 由入口写死；「不同入口的 K 不同」= dce.rs `run(&mut cases, 256, N)`、paired.rs `run(&mut cases, 512, N)`；计时边界表的「结果断言否 / CSV 格式化否 / 下一轮顺序选择否」与 run() 里 elapsed→assert→println 的实际次序一致；「没有直接读 TSC/CNTVCT、不发布 cycle/元素」= 夹具只用 `std::time::Instant`，两张表单位均为 ns/元素；1.2.6 的 `build-processes.txt` 实测 0 字节（正文「这次为空」的措辞与之一致）。没核的：1.2.6「正式脚本通过目录锁串行化」与 1.4.7「逐个运行入口、采样不附着」我只见到产物 lock-owner.txt / sample-*.txt 存在，没有定位到生成它们的驱动脚本本体（foundations-lab 内没有 .sh），也未验证「查询 cargo 与 rustc 进程」这句的脚本实现；分辨率/频率等论述属物理常识，未实测。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:6 `pub const ROUNDS: usize = 21;`",
+        "复算：dce.csv / paired.csv 每 case kind=raw 行数均 = 21",
+        "bench/foundations-lab/src/lib.rs::run（500 ms 预热 + `Instant` 差值 + `/(iterations*units)` + elapsed 之后 assert 与 println）",
+        "bench/foundations-lab/src/bin/dce.rs `run(&mut cases, 256, N);`；bench/foundations-lab/src/bin/paired.rs `run(&mut cases, 512, N);`",
+        "bench/foundations-lab/results/native-01/environment.txt `warmup=500ms/case rounds=21 order=rotating`",
+        "bench/foundations-lab/results/native-01/build-processes.txt 大小 = 0 字节（os.path.getsize）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.3 全部（四道屏障表、描述符尺寸表、def 1.3.1、例 1.3.1、inline(never) 小节、验证强度小节、思考框、小结、E-a~E-f、自测四题）。静态量自己算并回探针核对：`&[u64]` 16 字节、`Vec<u64>` 24 字节与 results/native-01/layout.txt 的 `&[u64],16,8` / `Vec<u64],24,8` 逐字相符（正文「来自本机探针」「不能当成跨平台稳定接口」的限定与归档性质一致，静态量也算得通：胖指针 ptr+len=16，Vec=ptr+len+cap=24）；「u64 输出 8 字节」「输出数组 K 个 u64」= run() 的 `let mut outputs = vec![0; iterations]`；「case 工作闭包 = 动态 trait 对象」= `Case.work: Box<dyn FnMut() -> u64>`；四道屏障逐行对上 lib.rs：`black_box(&input)`（dce.rs/paired.rs）、`*output = black_box((case.work)())`、批后 `assert!(outputs.iter().all(...))`、三个核都带 `#[inline(never)]`（lib.rs:50/61/66）。没核的：例 1.3.1「只观察最后一次会让批均值变成约一次调用成本除以 K」是编译器的可能行为而非本仓实测，我没有构造该变体去验证，按教学推断接受；1.3.4 关于 checksum 撞摘要的论述未测。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt: `&[u64],16,8` 与 `Vec<u64],24,8`",
+        "bench/foundations-lab/src/lib.rs:8-12 `pub work: Box<dyn FnMut() -> u64 + 'a>`",
+        "bench/foundations-lab/src/lib.rs:50/61/66 三个 `#[inline(never)]` 工作核",
+        "bench/foundations-lab/src/lib.rs::run `*output = black_box((case.work)());` + `assert!(outputs.iter().all(|&v| v == case.expected));`"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 1.4 全部（def 1.4.1/1.4.2、图 1-2、判定流程、字段清单、例 1.4.1/1.4.2、漂移小节、21 是奇数小节、随机化小节、并行小节、小结、E-a~E-g、自测四题）。这是六节里我对得最死的一节：CSV 表头实测为 `kind,round,position,case,ns_per_unit,checksum`，与 1.4.3 的字段清单一字不差；「第 0 轮 A、B，第 1 轮 B、A」由 run() 的 `index = (round + position) % cases.len()` 直接实现；「A 先运行 11 次，B 先运行 10 次」我从 paired.csv 数出来：indexed 的 position=0 出现 11 次、position=1 出现 10 次（iterator 相反），完全对；1.4.2 的 d=b−a 与 analyze.py::paired_interval 的 `y - x` 同向；1.4.4 四个漂移摘要我从 paired.csv 按 round<7 与 round>=14 复算得 indexed 0.058683/0.058575、iterator 0.058684/0.058643，与正文逐位相同，statistics.json 的 `first7_last7` 亦同；1.4.6「计时用确定性交替、分析用固定种子 13013」= analyze.py:24 `random.Random(13013)`，交替顺序确实无随机数。没核的：1.4.8 只核了 0.058630038 与 0.000016082 两个数本身（与 dce.csv 一致）；「平均比值不等于两组均值之比」属数学常识，未另算；「采样不附着到正式测量进程」我只确认 sample-*.txt 来自独立的 locality/borrow 运行，未核采样命令行细节（sample-command.txt 未逐行读）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/paired.csv 表头 `kind,round,position,case,ns_per_unit,checksum`",
+        "复算 position 计数：indexed {0:11, 1:10}，iterator {1:11, 0:10}（21 行/组）",
+        "复算 first7/last7：indexed 0.058683 / 0.058575，iterator 0.058684 / 0.058643（与正文四位小数逐位一致）",
+        "bench/foundations-lab/src/lib.rs::run `let index = (round + position) % cases.len();`",
+        "bench/foundations-lab/analyze.py:24 `rng = random.Random(13013)`",
+        "bench/foundations-lab/results/native-01/dce.csv 复算：discarded mean=1.6082e-05，observed mean=0.058630038"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.5 全部（def 1.5.1/1.5.2、两个入口与工作核、描述统计表、例 1.5.1、四层代码生成表、修复与回归测试小节、思考框、数据生成器小节、小结、E-a~E-f、自测四题）。核到的：dce.rs 与正文称「完整入口」逐行等价（`expected: 0` / `expected` 独立参考值、`run(&mut cases, 256, N)`）；dce_empty/sum_iter 函数体与 lib.rs:61-70 逐字一致；表格四个数我从 dce.csv 独立复算，mean/sd/p50/p99 与正文 9 位小数完全相同（discarded 0.000016082/0.000001491/0.000014901/0.000019848，observed 0.058630038/0.000235237/0.058561563/0.059458137），sd 用 N−1、分位数按 nearest-rank ceil(21×q) 复现，且 p99 == max 成立（0.059458137 即该组最大值），所以正文「p99 是这批样本的最大值」是对的；代码生成四层逐层对上归档：MIR .mir:1523 `fn dce_empty` 仍含 `std::slice::Iter` 迭代语义、LLVM IR .ll:772-774 体只有 `ret i64 0`、本机汇编 .s:1166-1171 只有 `mov x0, #0`/`ret`、`.ll:16` 确为 `sum_iter = ... alias ... sum_soa`，「归档包含实际 .mir/.ll/.s 完整文件」成立；sample 行有 sample-locality.txt（sum_iter/sum_soa/dce_empty 命中 3 次）与 sample-borrow.txt（命中 5 次）支撑；回归测试 `sums_and_representations_agree` 真实存在于 lib.rs:180，`for n in [0, 1, 7, 65, N]` 即 0/1/7/65/65536，且断言 `assert_eq!(sum_index(&input), sum_iter(&input))`，正文「0、1、7、65、65536」「要求索引与迭代器得到相同结果」「不把 discarded 当成合法求和」三句全部成立（唯一措辞偏差见 findings：它在 lib.rs 的 `#[cfg(test)] mod tests` 里，是单元测试，不在 tests/*.rs 集成测试文件中，正文写作 `tests::...` 会让人去 tests/ 目录找）。没核的：「短长度覆盖向量化尾部之外的路径」属对编译器行为的解释，我没逐长度看生成的向量化代码；1.5.6 生成器我只确认公式（lib.rs:44-47 `(i as u64).wrapping_mul(17) ^ 0x5a5a`，正文「索引乘 17 再异或常量」✓）而未核「分布不影响无分支求和循环访问次数」这一断言的实验基础。",
+      "evidence": [
+        "复算 dce.csv：discarded mean=0.000016082 sd=0.000001491 p50=0.000014901 p99=0.000019848；observed mean=0.058630038 sd=0.000235237 p50=0.058561563 p99=0.059458137（与正文 9 位全等，p99=max）",
+        "bench/foundations-lab/src/lib.rs:180-192 `fn sums_and_representations_agree() { for n in [0, 1, 7, 65, N] { ... assert_eq!(sum_index(&input), sum_iter(&input)); } }`",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:1523 / .ll:772-774 / .s:1166-1171 / .ll:16",
+        "bench/foundations-lab/src/lib.rs:44-47 `pub fn data` = `wrapping_mul(17) ^ 0x5a5a`",
+        "bench/foundations-lab/src/bin/dce.rs 与正文 1.5.1 代码块逐行等价"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "通读 1.6 全部（def 1.6.1/1.6.2、两个入口、计时核心、实测表、例 1.6.1、区间推导、为什么不能只比 sd、思考框、代码生成小节、判定流程、小结、E-a~E-f、自测四题）。核到的：paired.rs 与正文 1.6.1 代码块逐行等价（`run(&mut cases, 512, N)`、两侧共用同一份独立 `expected`）；sum_index 函数体与 lib.rs:51-59 逐字一致，确实用 `while` 且无 unchecked 访问；1.6.2 摘录的六行计时核心与 lib.rs::run 的循环体逐字一致，`black_box` 在 elapsed 之前、`assert!` 在 elapsed 之后，与正文强调的位置关系一致；实测表四个数的 mean/sd/p50/p99 我从 paired.csv 独立复算，9 位小数全等；配对均值 0.000074625 与差值 sd 0.000484383 复算全等（21 轮一一配对、无缺轮）；bootstrap 区间我用 random.Random(13013)+choices+10000 次、按 analyze.py 的 nearest-rank quantile 独立重跑，得 [-0.000128553095238096, 0.00026981890476190397]，与正文 [−0.000128553, 0.000269819] 及 statistics.json 完全相同，跨零成立；「indexed 保持独立符号」在 .ll 里数到 sum_index/sum_soa 两个 define（2 处命中），sum_iter 只在别名行出现，正文的说法对。没核的：1.6.6「两者都保留了实际的加载与归约」我只确认符号层面（别名与独立 define），没有逐行读两条内核的向量化加载/归约指令；「没有采集指令退休数或 PMU 事件」我只核到归档里没有 PMU/计数器输出文件，未排除别处采集；1.6.7 的三态/容差指引属 1.7 内容，本节未展开核对。",
+      "evidence": [
+        "复算 paired.csv：indexed mean=0.058694076 sd=0.000458518 p50=0.058524311 p99=0.060221791；iterator mean=0.058768701 sd=0.000541829 p50=0.058590114 p99=0.060894847（与正文 9 位全等）",
+        "复算 21 轮配对：mean(d)=0.000074625，sd(d)=0.000484383；独立 bootstrap(seed=13013, 10000) CI=[-0.000128553095238096, 0.00026981890476190397]",
+        "bench/foundations-lab/analyze.py:21-28 `paired_interval` 与 :12-14 nearest-rank `quantile`",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll:16 `sum_iter = ... alias ... sum_soa`",
+        "bench/foundations-lab/src/lib.rs:51-59 `sum_index`（while 循环）与 ::run 的计时核心"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "severity": "P1",
+      "description": "1.1.1（ch01.md:73）说「一次普通的整数加法通常要零点几纳秒，这个数字比它快几百倍」，量级算错。按同一章的归档数据：discarded 均值 0.000016082 ns/元素（我从 dce.csv 复算，非抄正文），observed 均值 0.058630038，两者之比 3645.3——正文自己在 1.4.8（ch01.md:779）与 1.5.7 E-a（ch01.md:983）就写作「3600 倍」。若按「零点几纳秒」取 0.1~0.5 ns，则倍数为 6218~31090 倍。无论取哪个基线，真实倍数都在 3.6e3 到 3.1e4 之间，「几百倍」比正确量级低了一个数量级以上，而且「整数加法零点几纳秒」本身无出处、无归档支撑。同一章对同一个比值给了三种口径（几百倍 / 3600 倍 / 四个数量级，见下一条），属正文内部数字矛盾。",
+      "evidence": "复算：0.058630038/0.000016082 = 3645.3；0.1/0.000016082 = 6218；0.5/0.000016082 = 31090。源数据 bench/foundations-lab/results/native-01/dce.csv（case=observed/discarded，各 21 行 raw）。正文冲突处 src/part1/ch01.md:73 vs :779 vs :983"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "severity": "P2",
+      "description": "1.5 即时自测第 1 题（ch01.md:1001）问「为什么性能差四个数量级」。同一个比值 log10(0.058630038/0.000016082) = 3.56，即约 3600 倍、三个半数量级；「四个数量级」需要 ≥10000 倍。与 1.1 的「几百倍」一起，把同一个量在小方向与大方向各拉偏了一个量级，建议统一成「约 3600 倍（不到四个数量级）」。",
+      "evidence": "复算：0.058630038/0.000016082 = 3645.3，log10 = 3.56。正文 src/part1/ch01.md:1001（另 :73、:779、:983）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "severity": "P2",
+      "description": "证据路径写成仓库根下打不开的相对形式：1.5.3（ch01.md:914）「来源是 `results/native-01/dce.csv`」、1.6.3（ch01.md:1102）「来源是 `results/native-01/paired.csv`」。磁盘实际位置是 bench/foundations-lab/results/native-01/dce.csv（我从仓库根 ls 该路径失败、find 才定位到），正文点名的路径只有站在 foundations-lab 包内才成立，而读者按字面在仓库根找不到，就无从「自己复算」。数字本身没问题（我复算全等），属落地性表述缺陷。顺带：1.5.5（ch01.md:959）把回归测试写成 `tests::sums_and_representations_agree`，它在 bench/foundations-lab/src/lib.rs:180 的 `#[cfg(test)] mod tests` 里（单元测试），tests/contracts_more.rs 中并无此名，按正文去找 tests/ 目录会找不到。建议统一写成 `bench/foundations-lab/results/native-01/dce.csv` 这类仓库根可解析路径，并注明测试所在文件。",
+      "evidence": "`ls bench/results/native-01/` 不存在；`find . -name dce.csv` → ./bench/foundations-lab/results/native-01/dce.csv（paired.csv 同）；grep -rn 'sums_and_representations_agree' 仅命中 bench/foundations-lab/src/lib.rs:180 与两处正文"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "severity": "P2",
+      "description": "1.6.3 的实测表（及 1.5.3 的表）没有给出本章自己要求公开的批次规模。1.2.5（ch01.md:443）明文：「发布归一化数值时，也要一起给出批次规模」，但两张四列表（ch01.md:916-919、1104-1107）只有 mean/sd/p50/p99，没有 K、N 与单批墙钟 T；K=256/512 与 N=65536 只能从 1.5.1/1.6.1 的代码块里挖出来。另附一个可复现性小坑：正文说算法「保存在 `analyze.py::paired_interval`」，但该函数用了 `zip(a, b, strict=True)`（analyze.py:23），在 macOS 自带 /usr/bin/python3（3.9）下直接 TypeError: zip() takes no keyword arguments——派单要求的正是用 /usr/bin/python3 复算，读者按字面跑会跑不出正文的区间（我改用同样算法手搓 Random(13013)+choices 复现，得 [-0.000128553095238096, 0.00026981890476190397]，与正文与 statistics.json 全等，数字无误）。建议表注补一句 K/N/T，并在正文或脚本头部写明需要 python≥3.10。",
+      "evidence": "src/part1/ch01.md:443 vs :916-919、:1104-1107；bench/foundations-lab/analyze.py:23；我在 /usr/bin/python3 下调用 paired_interval 复现该 TypeError 后手工重算；statistics.json['paired']['bootstrap95'] = [-0.000128553095238096, 0.00026981890476190397]"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "reviewer": "r4b-ch03b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动完整读了 src/part1/ch03.md 第 1349-1803 行（3.7-3.11 全部正文与每个 preview/def/ex/sol/think/errata/method 判定流程/note 小结/即时自测盒，未抽样）；关于代码的断言回 bench/foundations-lab/src/lib.rs、src/bin/*.rs、tests/contracts_more.rs、Cargo.toml 与 results/native-01、results/validation-01 逐条看；关于实测数字的断言从 results/native-01/borrow.csv、initialization.csv 与 statistics.json 用 /usr/bin/python3 自行复算（未抄正文）；关于引文的断言回 sources/contributions/foundations.json、foundations-web.json 与 src/appendix/coverage.md 逐字比对；另外跑了 tools/list_uncollected_claims.py，把落在 3.7-3.11 的 7 处「没有采集」（1444/1452/1571/1668/1688/1771/1793）逐条到磁盘上核是否真的没有产物。只写了本文件。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节读完（3.7.1-3.7.9 正文 + 定义 3.7.1/3.7.2、例 3.7.1 十行逐项解答、思考 3.7.1、判定流程、常见错误 E-a…E-h、即时自测四题含答案）。核了四类东西：① 与代码有关的断言成立——3.7.8 说「当前六个实验不需要 unsafe」「本包没有新增 unsafe 边界」，grep -rn unsafe bench/foundations-lab/src bench/foundations-lab/tests 返回 0 处，src/bin 恰有 6 个入口（borrow/initialization/allocation/locality/paired/dce）；ByteRegion（lib.rs:101-127）、try_build（lib.rs:156）、copy_add（lib.rs:166，测试里 lib.rs:242 用 split_at_mut）三个被点名的安全等价物都在磁盘上；② 静态量算过——例 3.7.1 的「元素数 65536、输入区 524288 字节」与 src/lib.rs:5 `pub const N: usize = 65_536` 一致，65536*8=524288 精确对上，u64 align 8 与 results/native-01/layout.txt 的 Vec<u64>,24,8 / &[u64],16,8 行相容；③ 引文落地——Strict Provenance / Exposed Provenance / Safety / Alignment / Pointer-to-reference conversion 这几段确实登记在 sources/contributions/foundations-web.json 的 FOUNDATIONS-PTR（review_scope 逐条列出这些具名节，status read-mapped），src/appendix/coverage.md:125 的映射目标正是 #sec-cpp-rust.1.3.7，所以 3.7.2/3.7.3 的「当前 std::ptr 文档把两者分开讨论」有出处；④ 工具边界——3.7.7「本轮只有普通测试、clippy、代码生成与 macOS sample」与 validation-01/{test,clippy,fmt,gate}.txt、native-01/codegen/{*.mir,*.ll,*.s}、native-01/sample-command.txt+sample-borrow.txt 逐一对上，Miri/TSan/Loom 在归档里没有产物（该句是「没有执行」，不是把没做的当做了）。判定为 finding 的原因有两处：同节对「创建引用要查几件事」给了 3.7.4 五项与 E-b 四项两套数量，并把「五行」挂到只有十行的例 3.7.1 上；以及一处「没有采集」的措辞比磁盘事实过宽（layout.txt 实存），见 findings。另注：本节的维度计数本身（预览 1355 行的「五个互相独立的维度」vs 3.7.5 证明表十行 / 判定流程 1462 行「十个维度」/ 小结 1476 行「十行互相独立」）也是两套口径，它的章内后果落在 3.11 的小结与速查上，我把那条 P1 记在 sec-cpp-rust.1.3.11。",
+      "evidence": [
+        "grep -rn unsafe bench/foundations-lab/src bench/foundations-lab/tests -> 0 命中（3.7.8「本包没有新增 unsafe」成立）",
+        "ls bench/foundations-lab/src/bin -> borrow.rs initialization.rs allocation.rs locality.rs paired.rs dce.rs（六个实验）",
+        "bench/foundations-lab/src/lib.rs:5 pub const N: usize = 65_536；65536*8=524288（例 3.7.1 两个数自洽）",
+        "bench/foundations-lab/src/lib.rs:101/114/156/166、src/lib.rs:242 split_at_mut",
+        "sources/contributions/foundations-web.json FOUNDATIONS-PTR review_scope='Safety; Alignment; Pointer to reference conversion; Allocation; Provenance; Pointers Vs Integers; Strict Provenance; Using Strict Provenance; Exposed Provenance'",
+        "src/appendix/coverage.md:125 FOUNDATIONS-PTR -> part1/ch03.md#sec-cpp-rust.1.3.7",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.{mir,ll,s} 与 sample-borrow.txt 实存；validation-01/test.txt: 'running 6 tests'+'running 4 tests'+1 doctest",
+        "ch03.md:1444「本节没有采集任何布局对比数据」vs bench/foundations-lab/results/native-01/layout.txt 的 10 行 type,size,align（无 UnsafeCell 行，但有 Option<u64>,16,8 与 Option<NonZeroU64>,8,8）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节读完（3.8.1-3.8.7 正文 + 定义 3.8.1/3.8.2、例 3.8.1 与解答、思考 3.8.1、判定流程六步、常见错误 E-a…E-g、即时自测四题含答案）。这一节几乎全是语言语义断言，能对核的是两处：① 3.8.5 用本包两个例子区分两种失败保证——「`try_build` 返回 `Err` 时销毁已建前缀、不返回半成品」对应 src/lib.rs:156 与测试 failure_drops_initialized_prefix（src/lib.rs:213），「`ByteRegion` 的 `take` 失败时保持游标不变，随后仍可成功申请原有空间」我逐行看了 lib.rs:114-120：`checked_add(len)?` 与 `get_mut(self.used..end)?` 两处 `?` 都在 `self.used = end` 之前返回，失败路径不改游标，测试 region_capacity_failure_is_transactional（lib.rs:195）覆盖它，正文与代码一致；② 节首「本章没有实现自引用 unsafe 类型，因此本节没有运行数据可采集」与全 crate 零 unsafe（grep 0 命中）相符，1571 与 1668 两处「没有采集调度或跨线程观测」我也到磁盘上确认过：foundations-lab 归档里没有任何线程/调度产物，run.sh 只跑单线程 benchmark。`Pin`/`Unpin`/`PhantomPinned`/「移动 `Pin` 句柄与移动被指向的值要分开谈」这些是语言级陈述，正文没有把它写成已核实的实验结论，语气（「通常」「不自动保证」）与证据强度相配，没有发现编造的实测数字或与代码相反的句子。这一节我没有核的：3.8.3 关于 Future/worker 迁移的机制说法属于第 8–9 章范围，我只确认本章没有声称做过实验，没有回标准库文档逐字比对。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:114-120 take() 的两条 `?` 早于 `self.used = end`，失败保持游标（3.8.5 成立）",
+        "bench/foundations-lab/src/lib.rs:156 try_build、:213 failure_drops_initialized_prefix、:195 region_capacity_failure_is_transactional",
+        "grep -rn unsafe bench/foundations-lab/{src,tests} -> 0（3.8 节首「没有实现自引用 unsafe 类型」成立）",
+        "tools/list_uncollected_claims.py 对 ch03.md:1571、ch03.md:1668 输出「✓ 没有匹配到同类产物」，且 native-01 归档内无调度/跨线程文件"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节读完（引路段、四条延伸阅读、本章独立实验的地位、没有声称完成的验证、顺着一个问题往下读的五行表）。逐条回查引文：① Effective Rust（S08）「第 20 条末：不要为了消除复制牺牲接口可用性」在 sources/contributions/foundations.json:140 与 src/appendix/coverage.md:124 都有逐字相同的行（核读映射，PDF 174–175），正文 1679 的引用与母本一致；② S08/S10/S11 三条母本身份在 coverage.md:25/27/28 实存（Effective Rust.pdf 261 页 / Rust 参考手册.pdf 376 页 / Rust 程序设计语言 简体中文版.pdf 545 页），S10 的「析构函数：初始化、部分移动、字段销毁顺序」等行也核到了（coverage.md:120）；③ std::ptr 那条有 FOUNDATIONS-PTR 台账行支撑，URL 与正文给的在线地址相同；④「本章独立实验的地位」把 borrow 与 zero_fill 的数字都归到本机归档，与我复算的来源一致；⑤「没有声称完成的验证」列的五件事（Miri/TSan/Loom、自引用 unsafe 类型、标准库 Vec 内部 unsafe 审计、完整 provenance 形式语义、全书母本覆盖）在磁盘上都没有对应产物，属诚实声明，不是把没做的当做了。判 finding 是因为第四条延伸读物里的两份在线文档被写成 def-3.3.1/def-3.3.3 的「规范来源」，却在本节自己点名的两个登记文件里查无一行，见 findings；另外 1694-1698 的目标章节链接（ch04/ch02/../part2/ch07.md/../part2/ch08.md/ch01.md）我只确认了文件存在，没有逐条确认被指过去的小节编号（如「第 2 章的布局边界」）是否真落在对应锚点上。",
+      "evidence": [
+        "sources/contributions/foundations.json:140 section=「第20条末：不要为了消除复制牺牲接口可用性」= ch03.md:1679 引文逐字相同",
+        "src/appendix/coverage.md:25/27/28 S08/S10/S11 行；coverage.md:120 S10/FOUNDATIONS-S10-012；coverage.md:124/125",
+        "grep -rn 'MaybeUninit|alloc/struct.Vec|with_capacity' sources/contributions/*.json src/appendix/coverage.md -> 0 命中",
+        "python 枚举 sources/contributions/foundations-web.json -> list 长度 3：FOUNDATIONS-PTR / FOUNDATIONS-OPTION / FOUNDATIONS-BLACK_BOX",
+        "ch03.md:1688 五项「没有执行/没有实现」声明：crate 内无 unsafe、归档内无 Miri/TSan/Loom 产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节读完（正文两段 + 八行索引表 + 章级四条）。静态量我自己数过：用正则把 ch03 全部 `::: errata` 盒的 E-x 条目数出来，依次 6、7、7、8、7、7、8、7，合计 57，与 1702「八份清单共 57 条」以及索引表每行的 E-a…E-f/E-g/E-h 范围完全一致；跨节四条里点名的锚点（[@def-3.5.1]、[@def-3.6.1]、[@def-1.7.1]、[@think-3.4.1]、[@ex-3.2.2]、[@def-1.6.2]、[@def-3.8.1]、[@ex-3.7.1]）都能在本章或 ch01 解析到（def-1.6.2 在 ch01.md:1131、def-1.7.1 在 1233、def-1.7.2 在 1243、def-1.7.3 在 1325），ch03 内部引用无悬空。判 finding 的唯一理由：第 4 条收尾写「本章的四张判定流程都在反复检查这一件事」，而我按标题数了 `^::: method 判定流程` 共 8 张（187/395/601/857/1059/1283/1458/1595 行，3.1–3.8 各一张，另有 8 张即时自测盒），同一节上一段又刚用「八份清单」证明作者是按小节全数计数的，所以「四张」是与自己口径冲突的过期数字，见 findings。我没有核的：这四张/八张的措辞是否在某处另有定义（例如只算 3.5–3.8 的性能与 unsafe 相关流程），全文没有这样的限定语。",
+      "evidence": [
+        "python 统计 ::: errata 盒条目 = [6,7,7,8,7,7,8,7]，求和 57 = ch03.md:1702「八份清单共 57 条」",
+        "grep -n '^::: method 判定流程' src/part1/ch03.md -> 8 处（187/395/601/857/1059/1283/1458/1595）；grep -c '^::: method 即时自测' -> 8",
+        "ch03.md:1720「本章的四张判定流程」与上述 8 处冲突",
+        "ch01.md:1131/1233/1243/1325 存在 def-1.6.2 / def-1.7.1 / def-1.7.2 / def-1.7.3，跨章引用可解析"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节读完（本章小结五条、改动责任、本章速查十一行、出口检查四条、章末件、本章导航含边界）。数字全部自己复算，没有抄正文：① 3.5 的配对均值我按 statistics.json borrow.paired_second_minus_first 复算为 0.10016856304761905，bootstrap95 = [0.099374896, 0.1011637449047619]，正文写 0.100168563 与 [0.099374896, 0.101163745] 是同一数的合法舍入，区间不跨零成立；再从原始 CSV 复核样本量：borrow.csv 42 行全为 kind=raw、per-case borrowed 21/cloned 21，故 1771「两个入口各有两 case，每 case 21 条正式原始批次」为真（initialization.csv 同样 21/21）。② 5.7 倍：push 均值 1.1538498514285715 ÷ zero_fill 均值 0.2013317289047619 = 5.7311…，与 3.6 的「约 5.73 倍」和本节「约 5.7 倍」一致；配对口径是 second minus first（zero_fill − push）= −0.9525181225，bootstrap95 [−0.9599265713, −0.9454010441] 整体为负，「区间整体为负」成立。③ 静态计数：`::: def` 盒共 18 个，与 1775「从 [@def-3.1.1] 起的 18 个定义盒」一致；#[test] 计数 src/lib.rs 6 + tests/contracts_more.rs 4 = 10，与 1771「十项 Rust 测试」一致，且 validation-01/test.txt 实为 running 6 + running 4 + 1 doctest；1771「compile-fail 文档测试维护 `reset` 借用边界」对得上 src/lib.rs:94 的 ```compile_fail 例（`region.reset(); slice[0] = 3;`），test.txt:63 显示该 compile fail 通过；1773/1795 章末五页在 src/part1/ 下齐备（ch03_summary/recall/exercises/exam/checklist.md），与正文「都已就位」一致（上一版的过期段落已不在）。④ 出口检查四条命令与 run.sh 相符（run.sh 第 5 行接受 out 参数，results/ownership-new-run 属新建归档，不覆盖 native-01）；「只依赖标准库」对得上 Cargo.toml——全文没有 [dependencies]/[dev-dependencies]。⑤ 1793 的边界声明（单线程、同步、桌面机 u64、没有采集跨机器/跨版本/内存流量、没跑 Miri/TSan/Loom、没实现自引用 unsafe 类型）逐条在磁盘上确认没有相反产物。判 finding 是 1730 那条小结把义务数成八项，与 3.7.5 的十行表和速查「十个维度」是两套口径，见 findings。",
+      "evidence": [
+        "复算 borrow：statistics.json paired mean 0.10016856304761905, bootstrap95 [0.099374896, 0.1011637449047619]（正文 0.100168563 / [0.099374896, 0.101163745]）",
+        "复算 initialization：1.1538498514285715/0.2013317289047619 = 5.7311，paired −0.9525181225，CI [−0.9599265713, −0.9454010441] 全负",
+        "python csv 统计 borrow.csv/initialization.csv：kind 全 raw，21 行/例，42 行/入口（1771 的 21×2 成立）",
+        "python 统计 ch03 `::: def ` = 18（1775 成立）；grep -c '#[test]' src/lib.rs=6、tests/contracts_more.rs=4（1771 十项成立）",
+        "bench/foundations-lab/src/lib.rs:94 ```compile_fail + results/validation-01/test.txt:63 'src/lib.rs - ByteRegion (line 94) - compile fail ... ok'",
+        "bench/foundations-lab/Cargo.toml 无依赖段（只依赖标准库成立）；ls src/part1 | grep ch03 -> 五个章末件文件齐",
+        "ch03.md:1730 列 8 项义务 vs ch03.md:1427-1438 十行表、:1462/:1749「十个维度」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "severity": "P1",
+      "description": "3.9 第四条延伸读物（1680 行）把两份在线文档写成「它们分别是[@def-3.3.1] 与[@def-3.3.3] 的规范来源」——`Vec::with_capacity`（https://doc.rust-lang.org/alloc/struct.Vec.html）与 `MaybeUninit`（https://doc.rust-lang.org/std/mem/union.MaybeUninit.html）的 Safety 段。但同一节开头（1675 行）声明：在线文档 URL 与抓取 SHA 都登记在 `foundations-web.json`，页码与核读状态登记在附录台账。我按这两个文件回查：用 python 枚举 sources/contributions/foundations-web.json，它是一个长度恰为 3 的列表，只有 FOUNDATIONS-PTR（std/ptr）、FOUNDATIONS-OPTION（std/option）、FOUNDATIONS-BLACK_BOX（std/hint/fn.black_box）；再对 sources/contributions/*.json 与 src/appendix/coverage.md 全文 grep 'MaybeUninit'、'alloc/struct.Vec'、'with_capacity'，命中 0 处（coverage.md 里 doc.rust-lang.org 的行只有 ptr/option/black_box 三条 FOUNDATIONS-* 与别的章的行）。也就是说：被冠以「规范来源」的两条引文在仓库里没有任何抓取件、SHA 或核读登记，3.3 的 def-3.3.1/def-3.3.3（容量不等于合法 T、MaybeUninit 的角色）因此挂在一处无法落地的外部出处上，而正文语气（「规范来源」）等于把它当已核实处理。与同节 std::ptr 那条形成对照：那条有 FOUNDATIONS-PTR 行、review_scope 逐条列出 Strict/Exposed Provenance，所以能落地。修法二选一：给这两份文档补 FOUNDATIONS-* 抓取件与台账行，或把 1680 改写成「建议读者自己去读的入口」，删掉「规范来源」的已核实语气。",
+      "evidence": "python 枚举 sources/contributions/foundations-web.json -> 3 条：FOUNDATIONS-PTR / FOUNDATIONS-OPTION / FOUNDATIONS-BLACK_BOX；grep -rn 'MaybeUninit|alloc/struct.Vec|with_capacity' sources/contributions/*.json src/appendix/coverage.md -> 0 命中；被引句在 src/part1/ch03.md:1680，口径声明在 ch03.md:1675"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "severity": "P1",
+      "description": "3.10 跨节错误第 4 条（1720 行）收尾写「本章的四张判定流程都在反复检查这一件事：结论所在的轴，与依据所在的轴，是不是同一条」，但本章实际有八张判定流程盒。我用 grep -n '^::: method 判定流程' src/part1/ch03.md 数得 8 处：187（3.1）、395（3.2）、601（3.3）、857（3.4）、1059（3.5）、1283（3.6）、1458（3.7 一段裸指针代码能不能进主干）、1595（3.8 地址敏感对象的接受条件），另有八张即时自测盒。同一节上一段（1702 行）刚用「八份清单共 57 条」的口径按小节全数计数——我复算 6+7+7+8+7+7+8+7=57 与正文一致，证明作者自己的计数单位就是「每节一张」。所以「四张」不是另一套合理口径，而是没跟着判定流程数量更新的过期数字，其后果是本章一半的判定流程（含 3.7、3.8 这两张恰好在做「轴与轴不能互替」检查的表）被排除在这条章级结论之外，读者按「四张」去找会只找到 3.5–3.8 或 3.1–3.4 的任意一半。",
+      "evidence": "grep -n '^::: method 判定流程' src/part1/ch03.md -> 187/395/601/857/1059/1283/1458/1595 共 8 处；python 统计各节 errata 条目 [6,7,7,8,7,7,8,7] 求和 57 = ch03.md:1702；冲突句在 ch03.md:1720"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "severity": "P1",
+      "description": "3.11 章末小结第五条（1730 行）把 unsafe 义务数成八项：「地址、来源、有效值、别名、同步、销毁、panic、泄漏是互相独立的义务」，而同一节内 3.11 速查（1749 行）答「裸指针解引用要几行证明？」给的是「十个维度各自独立」、出口检查的 unsafe 审查练习（1769 行）要求「逐项填写证明表」即 3.7.5 的十行（所有权、空间、时间、对齐、初始化、别名、同步、销毁、panic、泄漏，我逐行数 = 10）。1730 的八项既不是十行的子集也不是它的改名：它按 3.7 预览的命名法走（地址/来源/有效值），却补上销毁/panic/泄漏，仍然缺「所有权」「空间/时间」「初始化」三块；小结与速查/出口检查在同一节里给出两套不能换算的清单。读者按小结背书的那八项去做章末的审查练习，会漏掉 3.7.5 明列的所有权与初始化两行，而这两行正是[@think-3.7.1] 判定为「不能由『来自 Vec』推出」的漏证点。属于同节内部数字与口径矛盾（源头在 3.7 预览 ch03.md:1355 用「五个互相独立的维度」另立了一套命名，我在 sec-cpp-rust.1.3.7 的 notes 里一并记下，但可执行的修句是 1730 与 1355 都改用证明表的十行命名）。",
+      "evidence": "ch03.md:1730 八项枚举 vs ch03.md:1749「十个维度」与 ch03.md:1769 逐项填写；ch03.md:1427-1438 证明表逐行数 = 10 行"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "severity": "P2",
+      "description": "3.7.4（1411 行）说创建引用「需要非空、对齐、可解引用、有效值与合法别名（[@ex-3.7.1] 的五行）」，但被引的例 3.7.1（1384–1405 行）只有那张十行清单，里面没有任何叫「五行」的分组，也没有一行标题是「非空」或「可解引用」，引用指向落不到具体材料上；同一节的常见错误 E-b（1482 行）又写成「先查非空、对齐、有效值、别名四项」，比 3.7.4 少一项「可解引用」。两处数量不一致，而 3.7 全节强调的恰恰是「可解引用范围要单独论证」（1411 行后半、1446 行、[@think-3.7.1] 的第二件事），把它从检查清单里省掉会让读者以为非空+对齐已经覆盖范围。教学性问题，不涉及事实错误：五项内容本身与标准库对引用有效性的要求方向一致。",
+      "evidence": "ch03.md:1411「五行」vs ch03.md:1384-1405（ex-3.7.1 只有十行，无五行分组）；ch03.md:1482 E-b 四项（缺「可解引用」）vs ch03.md:1411 五项"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "severity": "P2",
+      "description": "3.7.6（1444 行）关于 UnsafeCell 影响外围布局的那句收尾写「本章没有为它写通用 niche 推断——**本节没有采集**任何布局对比数据」。限定到 UnsafeCell 是对的：我按 tools/list_uncollected_claims.py 的输出（该条打印「✓ 没有匹配到同类产物」）回到磁盘亲自看过产物，bench/foundations-lab/results/native-01/layout.txt 的 10 行 type,size,align 里没有任何 UnsafeCell 行。但「没有采集任何布局对比数据」这半句写得比事实宽：同一个 native-01 归档（也就是本章自己的归档）确实有一组布局对比数据，其中 `Option<u64>,16,8` 与 `Option<NonZeroU64>,8,8`、`Option<Handle>,8,8` 三行正是 niche 型布局对比，`Vec<u64>,24,8` 与 `&[u64],16,8` 是 3.1.2 引用的描述符尺寸（1695 行自己就写着「描述符尺寸只来自 layout 探针（3.1.2）」）。冷读者读到「本节没有采集任何布局对比数据」，很可能据此认为整章没有布局证据，从而不知道章内其实有一张可对照的 layout 表；同时这也说明 list_uncollected_claims.py 对「布局对比数据」这个关键词是漏检的（它没有把 native-01/layout.txt 认作同类产物），后续回收时不能只靠这条工具输出判定「磁盘上确实没有」。建议改成「本节没有为 `UnsafeCell` 采集布局对比数据，本章的 layout 探针见 3.1.2，不含 `UnsafeCell`」。",
+      "evidence": "tools/list_uncollected_claims.py 输出 [ch03.md:1444] ->「✓ 没有匹配到同类产物」；bench/foundations-lab/results/native-01/layout.txt 实存 10 行含 Option<u64>,16,8 / Option<NonZeroU64>,8,8 / Vec<u64>,24,8 / &[u64],16,8，无 UnsafeCell 行；对照句 ch03.md:1695"
+    }
+  ]
+}

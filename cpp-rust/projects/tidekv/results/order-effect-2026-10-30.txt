@@ -1,0 +1,27 @@
+# 跨轮位次效应复算（派生分析，不属于任何单轮证据包）
+# generated: 2026-10-30, command: python3 order_effect.py
+# 输入：results/run-01/bench.csv+statistics.json, run-02/{codec,compaction}.csv+statistics-*.json, run-03/admit.csv+statistics.json
+
+/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-01/bench.csv  ×  statistics.json
+（本表 diff = A − B；归档若约定 B − A，符号相反）
+case                n(A先/B先)  diff|A先      diff|B先      类间间距     不均衡偏移   CI半宽     |偏移|/半宽
+get_absent          8/13         -24132.1     -24580.5       +448.3        -53.4      187.4      0.285
+get_hot             8/13         -33714.1     -33769.1        +55.0         -6.5      183.8      0.036
+put_wide            8/13         -40691.9     -40344.0       -347.8        +41.4      357.1      0.116
+scan_12             8/13         -32047.8     -32100.8        +53.0         -6.3      127.6      0.049
+
+/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-02/codec.csv  ×  statistics-codec.json
+（本表 diff = A − B；归档若约定 B − A，符号相反）
+case                n(A先/B先)  diff|A先      diff|B先      类间间距     不均衡偏移   CI半宽     |偏移|/半宽
+codec_dyn          11/10             -0.1         -0.1         -0.0         -0.0        0.1      0.001
+
+/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-02/compaction.csv  ×  statistics-compaction.json
+（本表 diff = A − B；归档若约定 B − A，符号相反）
+case                n(A先/B先)  diff|A先      diff|B先      类间间距     不均衡偏移   CI半宽     |偏移|/半宽
+compact_subproc    12/9        -1517916.8   -1419106.8     -98810.1      -7057.9   110060.3      0.064
+
+/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/admit.csv  ×  statistics.json
+（本表 diff = A − B；归档若约定 B − A，符号相反）
+case                n(A先/B先)  diff|A先      diff|B先      类间间距     不均衡偏移   CI半宽     |偏移|/半宽
+ns_per_accepted    11/10          20521.3     -51988.9     +72510.2      +1726.4   118629.0      0.015
+ns_per_attempted   11/10         729295.6     649963.2     +79332.4      +1888.9    44523.1      0.042

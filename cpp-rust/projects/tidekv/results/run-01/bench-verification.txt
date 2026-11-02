@@ -1,0 +1,15 @@
+tide-bench correctness gate: A = RwLock<BTreeMap> baseline, B = tidekv, REF = naive HashMap replay
+one generated op sequence per case, fed byte-for-byte to all three; state digest compared
+
+case put_wide -- 70% put(300B) / 10% delete / 20% get over 20k keys
+  ops=900 live_keys(ref)=634 A=b6636226f008ede4 B=b6636226f008ede4 REF=b6636226f008ede4 -> MATCH
+
+case get_hot -- 90% point get on 2k warm keys / 10% put
+  ops=2900 live_keys(ref)=2000 A=79802841a06e79bb B=79802841a06e79bb REF=79802841a06e79bb -> MATCH
+
+case get_absent -- 100% point get on keys never written (bloom must reject)
+  ops=1900 live_keys(ref)=1000 A=fc4d7d8d21fc1e47 B=fc4d7d8d21fc1e47 REF=fc4d7d8d21fc1e47 -> MATCH
+
+case scan_12 -- 80% get / 20% prefix scan over 16 tags and 4k keys
+  ops=4996 live_keys(ref)=4096 A=ee8d1390a801b7f4 B=ee8d1390a801b7f4 REF=ee8d1390a801b7f4 -> MATCH
+

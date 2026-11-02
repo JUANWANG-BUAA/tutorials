@@ -1,0 +1,40 @@
+{
+  "budget_B": 10000000.0,
+  "budget_note": "10 ms per merge: the background compactor runs off the write path and is triggered every 100 ms, so one merge may take at most a tenth of that",
+  "units": "ns_per_compaction",
+  "rule": "U <= B accept | L > B reject | else insufficient-evidence",
+  "diff_convention": "diff = B(subprocess) - A(in-process), ns per merge; positive means the subprocess path costs more",
+  "bootstrap": {
+    "seed": 20289698,
+    "iterations": 20000,
+    "method": "percentile bootstrap of the paired mean difference",
+    "confidence": 0.95
+  },
+  "protocol": {
+    "seed": "20261029",
+    "rounds": "21",
+    "batches_per_round": "30",
+    "ops_per_batch": "1",
+    "warmup_ms": "500"
+  },
+  "counts": {
+    "accept": 1,
+    "reject": 0,
+    "insufficient-evidence": 0
+  },
+  "cases": [
+    {
+      "case": "compact_subproc",
+      "units": "ns_per_compaction",
+      "rounds_used": 21,
+      "arm_A_mean": 7696325.938095333,
+      "arm_B_mean": 9171895.582539715,
+      "diff_mean": 1475569.644444381,
+      "ci95_low": 1366635.811111,
+      "ci95_high": 1586756.5031745236,
+      "budget_B": 10000000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "accept"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "reviewer": "r4b-ch04b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读完 src/part1/ch04.md 第 1604–2282 行（4.7–4.11 全部正文与每个语义盒），并用 python3 一次性把 bench/compiler-lab 的 Cargo.toml、src/lib.rs、run.sh、extra.py、tests/contracts.rs、results/stable-02 六个 CSV、results/extra-02 的 stages-o0/o3 产物与 nightly.txt、sources/contributions/compiler-web.json、.work/cpp-rust-sources/compiler/thir.html、src/appendix/coverage.md 拉出来逐条回算与实取 HTTP 状态，未采信正文给出的任何数字。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.7 全部读过：def-4.7.1/4.7.2/4.7.3/4.7.4/4.7.5、ex-4.7.1、think-4.7.1、判定流程、小结与 errata、即时自测四题。构建期事实全部回盘核对通过：Cargo.toml 的 [profile.release] 确为 codegen-units=1、lto=false、debug=1、panic=\"unwind\"，与 4.7.5「本轮 release 固定一个 CGU，LTO 为 false，debug 信息等级为 1」和 4.4.6「本轮 profile 使用 panic=unwind」一致。4.7.6 表里「无逐 pass dump／无 self-profile／无可用 nightly」三行按 list_uncollected_claims.py 点名的 ch04 条目回查磁盘：results/ 全树遍历没有任何 self-profile/*.sprof、逐 pass before/after 转储或 -Z 转储产物，只有 extra-02 的 PGO 与 stages 两组文件；nightly.txt 内容是 rustc +nightly -vV 的失败记录（missing manifest），与 4.2.4 的「本机没有可用 nightly」相符。ex-4.7.2 里可回算的静态量逐条重算全部成立：stages-o0.mir 的 drop 语句 4 条，行号正是正文写的 73、86、94、98；stages-o3.mir 6 条，行号 90、99、107、132、143、148（我按 ^\\s*drop\\( 匹配还命中第 4 行，那是 fn <impl ...> as Drop>::drop 的签名行，正文按「drop 语句」不计它，口径正确）；StorageDead 在 o3 为 20 处、o0 为 0，与「O3 还多出 20 处 StorageDead（O0 为 0）」一致，正文「不是更少而是更多」的方向也没反。ex-4.7.1 三条观察归入三个家、probes/stages.rs 的 main 里 assert_eq!(count.get(), 2) 与「对应程序都实际运行了 count=2 的断言」相符（stages-o0-run.txt / stages-o3-run.txt 均在，无 panic 输出），extra-02 同目录 stages-o0/o3 的 .ll 与 .s 都在，支持「同目录还保存两种优化等级的 LLVM IR 和汇编」。本节数字与结论未发现与证据冲突。",
+      "evidence": [
+        "bench/compiler-lab/Cargo.toml:11-15 codegen-units = 1 / lto = false / debug = 1 / panic = \"unwind\"",
+        "bench/compiler-lab/results/extra-02/stages-o0.mir:73,86,94,98 四条 drop 语句；stages-o3.mir:90,99,107,132,143,148 六条；复算 StorageDead o3=20、o0=0",
+        "bench/compiler-lab/results/extra-02/nightly.txt:1-4 「$ rustc +nightly -vV / error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'」",
+        "find bench/compiler-lab/results 全树无 self-profile/sprof/逐 pass 转储产物（脚本遍历，命中项仅为 pgo-*）",
+        "bench/compiler-lab/probes/stages.rs:22 assert_eq!(count.get(), 2)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "4.8 全部读过：def-4.8.1/4.8.2、ex-4.8.1/4.8.2/4.8.3、think-4.8.1、四步判定流程、小结与 errata、即时自测四题。夹具源码逐字回查：正文 4.8.1 贴出的 Case 结构体、doc 注释「Reports batch means, not a distribution of individual request latencies.」与整个 measure 函数，和 src/lib.rs 里的实现一字不差（含 while start.elapsed() < Duration::from_millis(500)、repeats.push((10_000_000.0 / ns).ceil()...)、for round in 0..21、index = (round + offset) % cases.len()、assert_eq!(checksum, case.expected.wrapping_mul(n as u64))、value = elapsed/(n*units)、values[10] 与 values[20]）。分位数口径独立复算通过：每个 CSV 每个 case 恰 21 个原始点，nearest-rank ceil(21*0.50)=11→下标 10、ceil(21*0.99)=21→下标 20＝最大值，所以 ex-4.8.2「p99 就是最大样本」成立；我用 21 个点重算的 mean/N-1 sd/下标10/最大值与正文完全一致——borrow 0.059091/0.001233/0.058640/0.063338、clone 0.202739/0.006949/0.201627/0.225702、implicit 2.372296/0.098044/2.354229/2.757235、option 2.587951/0.246970/2.669365/2.980856；4.8.7 ex-4.8.3 引用的 3.43 倍复算 0.202739/0.059091=3.4309、差值 0.143648 也回算一致。运行隔离记录回盘：run.sh 确有 mkdir \"$LOCK\" 取锁、trap 'rmdir \"$LOCK\"' EXIT、每个入口前 ps -axo ... grep -E '(cargo|rustc)' 写入 build-processes-before.txt，该文件为空，支持「本轮这些检查没有发现活动构建进程」；4.8.5「本轮采样附着到 dispatch_grain」由 macos-sample.txt 首行「Analysis of sampling dispatch_grain (pid 31117)」证实，且 sample-run.csv 与正式六表分开，符合「没有进入 21 批正式统计」。def-4.8.2 与 4.8.5 声明「不报告没有采集的 cache miss、IPC 或核心 cycle」：results/ 全树没有 PMU/perf/计数器产物，磁盘上确实没有。唯一发现问题在 4.8.6：正文只写「PGO 工具缺失时会明确记录未执行」，但本轮 PGO 分支实际执行并留了完整产物（pgo-generate.txt、pgo-training-run.txt、pgo-merge.txt、pgo-data/merged.profdata、pgo-use.txt、pgo-use-run.txt、pgo-size.txt、pgo-train、pgo-use 九个二进制），extra-02 里也没有 pgo-unavailable.txt；读者按本节会以为 PGO 属于未执行的能力边界，属表述口径问题，不影响任何数字。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs:pub struct Case / pub fn measure 与正文 4.8.1（ch04.md:1874-1929）逐字比对一致",
+        "python3 复算 bench/compiler-lab/results/stable-02/move_cost.csv：borrow n=21 mean=0.059091 sd=0.001233 p50=0.058640 max=0.063338；clone n=21 mean=0.202739 sd=0.006949 p50=0.201627 max=0.225702",
+        "python3 复算 results/stable-02/drop_paths.csv：implicit 2.372296/0.098044/2.354229/2.757235；option 2.587951/0.246970/2.669365/2.980856",
+        "bench/compiler-lab/run.sh 含 mkdir \"$LOCK\" 取锁 + trap 'rmdir \"$LOCK\"' EXIT + ps -axo pid,comm,args | grep -E '(cargo|rustc)'；results/stable-02/build-processes-before.txt 为空文件",
+        "bench/compiler-lab/results/stable-02/macos-sample.txt:1 「Analysis of sampling dispatch_grain (pid 31117) every 1 millisecond」",
+        "ch04.md:2062 「PGO 工具缺失时会明确记录未执行」对比 results/extra-02/pgo-use.txt、pgo-data/merged.profdata 等 PGO 已执行产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "4.9 全部读过（4.9.1 四条入口与实验包段、4.9.2 证据缺口表、4.9.3 旧临时作用域规则、4.9.4 覆盖声明）。核得动的部分：probes/rejected/ 确有五个 .rs（alias_conflict / const_bounds / dyn_generic / maybe_uninitialized / use_after_move），与「保存五个被编译拒绝的输入」一致；src/bin 恰六个入口；四个 std 链接（mem::drop、cell::Cell、hint::black_box、panic::catch_unwind）实取全部 HTTP 200，可落地；Cargo.toml edition = \"2024\" 支持 4.9.3「本包使用 edition 2024」；src/appendix/coverage.md 的 S09 行确为 Guide to Rustc Development.pdf 总页 368，支持「不意味着 S09 全书 368 页都完成审查」；4.9.2 表的三行「无可用 nightly／无逐 pass dump／无 self-profile」经磁盘遍历确无产物；compiler-web.json 里 THIR 与 Drop elaboration 两条 id、url、sha256、review_scope 齐备。核不动的部分集中在 ch04.md:2167 那段「2026-11-01 复核」：其一，正文称 Drop elaboration 上游 URL「现在返回 404」，我实取 https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html 返回 200、34518 字节、标题「Drop elaboration - Rust Compiler Development Guide」；其二，正文称「台账里这条标成 archive-lost」，全仓 grep archive-lost 零命中，compiler-web.json 那条记录也没有任何状态字段，仍是带 url+sha256+evidence 的普通在册条目；其三，正文称 THIR 页「指纹按新副本重新登记」，磁盘上 .work/cpp-rust-sources/compiler/thir.html 的 sha256 是 c6591abc…851e，与台账登记的 8f345529…e1db 不符（我另按 review_scope「main article, excluding navigation」抽 <main> 重算得 3b388f4e…，同样不符），所以「逐字回查」的锚并未按正文所说重登记。这三条都属于把引用状态写成与磁盘/上游相反，其中前两条会让读者放弃一条其实仍可复核的来源，同时相信一个不存在的台账标记。4.9.1「本章关于销毁责任如何落成控制流的说法，今天能复核的是本机 MIR 产物与 probes/ 里的回归」这句结论本身与磁盘相符（stable-02/codegen/*.mir 与 probes/ 在），但它的理由是那段不实的 404/archive-lost 陈述。",
+      "evidence": [
+        "curl -w %{http_code} https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html → 200，34518 bytes，<title>Drop elaboration - Rust Compiler Development Guide",
+        "grep -rn archive-lost 整个仓库 → 0 命中；sources/contributions/compiler-web.json 第二条 {id: compiler-web-drop-elaboration, url .../mir/drop-elaboration.html, sha256 1b8044c6…, evidence .work/cpp-rust-sources/compiler/drop-elaboration.html} 无状态字段",
+        "shasum -a 256 .work/cpp-rust-sources/compiler/thir.html = c6591abc0a447caa8c9db78b82529d902747aa99680d23a91ebff9cc0d83851e ≠ 台账 8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db；<main> 抽取重算 3b388f4e4da6dd0a… 亦不符",
+        "ls .work/cpp-rust-sources/compiler/ 只有 thir.html 一个文件",
+        "bench/compiler-lab/probes/rejected/*.rs = 5 个；probes/rejected/expected.tsv 给出 E0382/E0381/E0502/E0080/E0038 五行；src/bin/*.rs = 6 个",
+        "src/appendix/coverage.md S09 行：|S09|Guide to Rustc Development.pdf|368|139|96|43|0|"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.10 全部读过：八行索引表加四条跨节错误。可回算的静态量：「八份清单共 56 条」用脚本逐节统计 ch04.md 里以 E- 开头的条目，4.1=6、4.2=6、4.3=8、4.4=8、4.5=7、4.6=7、4.7=7、4.8=7，合计 56，与正文数字一致；索引表每行写的范围也与实测逐节吻合（4.1 E-a…E-f、4.2 E-a…E-f、4.3 E-a…E-h、4.4 E-a…E-h、4.5/4.6/4.7/4.8 E-a…E-g），没有把某节多写或少写。四条跨节错误里第 2 条「把『没有采集』读成『不存在』」点名的四项缺口（可用 nightly、逐 pass 转储、self-profile、PMU 事件、跨尺寸分布）逐个回查磁盘都确实没有产物：nightly.txt 是失败记录、results/ 无 sprof/无逐 pass dump、无 PMU/perf 计数器文件、每个入口只有一份固定 units 的 CSV（move_cost 16384、drop_paths 4096×2），支持 4.5.6「没有测其它输入长度」；第 3、4 条引用的 [@ex-4.2.2]、[@ex-4.6.3]、[@def-4.7.5] 与磁盘上的 Cargo.toml 设置、CSV units 列相符。锚点 sec-cpp-rust.1.4.10 存在。本节未发现与证据冲突之处。",
+      "evidence": [
+        "python3 统计 ch04.md 各节 errata：6+6+8+8+7+7+7+7 = 56，与 ch04.md:2200「八份清单共 56 条」一致；索引表 ch04.md:2204-2211 每行范围逐节吻合",
+        "ch04.md:2216 四项缺口回盘：results/extra-02/nightly.txt 为失败记录；results/ 全树无 self-profile、无逐 pass 转储、无 PMU/perf 计数器产物；move_cost.csv/drop_paths.csv 各只有一个 units",
+        "src/part1/ch04.md:2198 锚点 {#sec-cpp-rust.1.4.10} 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.11 全部读过：本章小结五条、改动责任四条、本轮能力边界、14 行速查表、导航块与章末件表。能力边界那句逐个数过：「八项运行时契约测试通过」——tests/contracts.rs 有 8 个 #[test]，results/stable-02/tests.txt 末行「test result: ok. 8 passed; 0 failed」；「五项编译拒绝输入返回预期错误代码」——probes/rejected/ 五个 .rs 配 expected.tsv 五行（E0382/E0381/E0502/E0080/E0038），extra-02 有对应五个 .txt 诊断记录；「六个正式入口均已运行并校验输出」——src/bin 六个 .rs 且 stable-02/binaries 六个可执行文件、六个 CSV；「每个 case 保留 21 个正式原始点」——六个 CSV 每个 case 21 行（复算样本数 n=21）。速查表里与磁盘相关的量化条目也过：Vec<u64> 24 字节、&[u64] 16、Option<&u64> 8、DropProbe 8、Option<DropProbe> 8 全部与 results/extra-02/layout.csv 一致（该表在 4.6 正文，我按速查表引用回查）；「批 p99 就是最大值」已由 21 点重算证实；「五条命令，新建目录，不许覆盖旧归档」与 4.8.6 命令块及 run.sh 的 mkdir 语义相符。最后一句「没有执行 Miri、Loom、TSan 或 Linux perf」经全树遍历确认无相关产物——注意 macOS sample 属于 4.8.5 单独说明的 CPU 采样，不是 Linux perf，正文没有把它算作已执行的能力，口径成立。章末五页 ch04_summary/recall/exercises/exam/checklist 在 src/part1/ 均存在，支持「五页配套材料已经就位」。锚点 sec-cpp-rust.1.4.11 存在。本节未发现与证据冲突之处。",
+      "evidence": [
+        "bench/compiler-lab/tests/contracts.rs 8 个 #[test]；results/stable-02/tests.txt 「test result: ok. 8 passed; 0 failed」",
+        "bench/compiler-lab/probes/rejected/expected.tsv 5 行；results/extra-02/{alias_conflict,use_after_move,maybe_uninitialized,const_bounds,dyn_generic}.txt 均在",
+        "src/bin/*.rs 6 个 = results/stable-02/binaries/ 6 个 = 6 份 CSV，每份每 case 21 行（python3 计数）",
+        "results/extra-02/layout.csv：Vec<u64>,24,8 / &[u64],16,8 / Option<&u64>,8,8 / DropProbe,8,8 / Option<DropProbe>,8,8",
+        "results/ 与 .work/ 全树无 miri/loom/tsan/perf 产物；src/part1/ch04_{summary,recall,exercises,exam,checklist}.md 五个文件存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "severity": "P0",
+      "description": "ch04.md:2167 的「2026-11-01 复核」两处状态陈述与事实相反，且据此改写了本章 Drop elaboration 机制的可复核性。正文写「Drop elaboration 页的本机副本已不在盘上，上游原 URL 现在返回 404（开发指南改版），台账里这条标成 archive-lost」。回查结果：本机副本确实不在盘上（.work/cpp-rust-sources/compiler/ 只有 thir.html），但上游 URL 我实取返回 HTTP 200、正文 34518 字节、<title>Drop elaboration - Rust Compiler Development Guide</title>，根本不是 404；「标成 archive-lost」也不成立——全仓 grep archive-lost 命中 0 处，sources/contributions/compiler-web.json 的 compiler-web-drop-elaboration 条目仍是 {id,url,sha256:1b8044c6015a398cbc5829a7dfde97f02e1334d3d0bb3b20fb46ebd67f701221,review_scope,evidence} 的普通在册记录，没有任何状态字段说明来源失效。后果是正文把一条其实仍可复核的机制来源宣告为不可复核，并把一个不存在的台账标记当作已核实结论写进书里，同时据此要求读者「本章关于销毁责任如何落成控制流的说法，今天能复核的是本机的 MIR 产物与 probes/ 里的回归」。修法二选一：改判为「本机副本已丢失、上游仍在线（200），需按当前页面重抓并重新登记 sha256」，或在台账里真的补上状态字段并让正文与该字段一致。",
+      "evidence": "curl -s -o /dev/null -w '%{http_code}' https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html → 200；curl -s 该 URL | wc -c → 34518；<title>Drop elaboration - Rust Compiler Development Guide；grep -rn archive-lost . → 0 命中；sources/contributions/compiler-web.json 第 2 条无 status/状态字段；ls .work/cpp-rust-sources/compiler/ → 仅 thir.html"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "severity": "P1",
+      "description": "同段正文写「THIR 页有本机副本 .work/cpp-rust-sources/compiler/thir.html 可以逐字回查（当日重抓过一次，页面比首次登记时已有更新，指纹按新副本重新登记）」。我按两种口径重算了这份副本的 sha256：整个文件为 c6591abc0a447caa8c9db78b82529d902747aa99680d23a91ebff9cc0d83851e；按台账 review_scope「main article, excluding navigation」抽出 <main>…</main> 再算为 3b388f4e4da6dd0a…（前缀）。台账 compiler-web.json 的 compiler-web-thir 记录仍是 8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db。即「指纹已按新副本重新登记」这一步没有落到磁盘上，登记值与在册副本对不上，因此正文承诺的「可逐字回查」目前无法凭指纹建立——要么重抓未同时更新台账，要么台账那条 sha256 对应的是另一份已不在盘上的抓取。属引用与母本/登记值不符。",
+      "evidence": "shasum -a 256 .work/cpp-rust-sources/compiler/thir.html = c6591abc0a447caa8c9db78b82529d902747aa99680d23a91ebff9cc0d83851e；python3 hashlib 对 <main> 抽取重算 = 3b388f4e4da6dd0a…；sources/contributions/compiler-web.json compiler-web-thir.sha256 = 8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "severity": "P2",
+      "description": "4.9.1 只声明了 compiler-web.json 四条记录里 drop-elaboration 一条的证据缺失，但同一份台账的另外两条 compiler-web-aliasing（evidence .work/cpp-rust-sources/compiler/aliasing.html）与 compiler-web-pgo（evidence .work/cpp-rust-sources/compiler/pgo.html）指向的文件同样不在盘上——那个目录里今天只有 thir.html 一个文件。正文把「副本还在不在」写成逐条如实区分，读者据此会以为除 drop-elaboration 外其余本机副本可回查，实际可回查的只有 THIR 一条（且其 sha256 还需按上一条修正）。建议把缺口清单写全，或在正文说明这两条与本章 4.7–4.9 的论述无关，因此不进入本章可复核性声明。",
+      "evidence": "ls -la .work/cpp-rust-sources/compiler/ → 仅 thir.html（31476 bytes，Oct 31 12:03）；sources/contributions/compiler-web.json 第 3、4 条 evidence 分别为 aliasing.html、pgo.html，磁盘上均不存在"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "severity": "P2",
+      "description": "4.8.6 介绍第三组脚本（extra.py）时写「PGO 工具缺失时会明确记录未执行」，但本轮 PGO 并没有缺失、而是完整跑过：extra-02 下存在 pgo-generate.txt、pgo-training-run.txt、pgo-merge.txt、pgo-size.txt、pgo-use.txt、pgo-use-run.txt、pgo-data/default_*.profraw 与 pgo-data/merged.profdata、以及 pgo-train、pgo-use 两个已构建并运行过的二进制，目录里也没有 extra.py 在该分支写出的 pgo-unavailable.txt。这句话本身不是假事实（extra.py 确实有 (out/'pgo-unavailable.txt').write_text(...) 这条兜底），但它作为本章能力边界的描述出现，读者会把它读成「本包 PGO 属于未执行项」，而 4.9.2 与 4.11 又都没给 PGO 任何位置。建议改成「PGO 工具在位时本包会走完 generate→train→merge→use 并归档（见 extra-02/pgo-*），缺失时写 pgo-unavailable.txt 明确记录未执行」。",
+      "evidence": "bench/compiler-lab/extra.py 含 run([*common,'-Cprofile-generate=...'],'pgo-generate.txt')、run([profdata,'merge',...])、'-Cprofile-use=...' 与 (out/'pgo-unavailable.txt').write_text('Matching llvm-profdata is not installed; no PGO run.')；results/extra-02/ 实际存在 pgo-generate.txt/pgo-training-run.txt/pgo-merge.txt/pgo-data/merged.profdata/pgo-use.txt/pgo-use-run.txt/pgo-size.txt/pgo-train/pgo-use，且无 pgo-unavailable.txt；ch04.md:2062"
+    }
+  ]
+}

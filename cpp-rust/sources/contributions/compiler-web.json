@@ -2,14 +2,14 @@
   {
     "id": "compiler-web-thir",
     "url": "https://rustc-dev-guide.rust-lang.org/thir.html",
-    "sha256": "8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db",
+    "sha256": "756c33434ac476b4ddb7389a929de5248b1698d5cffd2c111905c07b4f856146",
     "review_scope": "main article, excluding navigation",
     "evidence": ".work/cpp-rust-sources/compiler/thir.html"
   },
   {
     "id": "compiler-web-drop-elaboration",
     "url": "https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html",
-    "sha256": "1b8044c6015a398cbc5829a7dfde97f02e1334d3d0bb3b20fb46ebd67f701221",
+    "sha256": "f229f77c92444d2d17b408042868f27d788ff1f84f1cf1457e670ded191863bb",
     "review_scope": "main article, excluding navigation",
     "evidence": ".work/cpp-rust-sources/compiler/drop-elaboration.html"
   },

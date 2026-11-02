@@ -1,0 +1,105 @@
+{
+  "reviewer": "r4-ch14b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动完整通读 src/part4/ch14.md 第 1385-1888 行（14.7-14.11 全部正文与 12 个语义盒），并把其中自称实测的数字逐条回 bench/evidence-lab 归档复算：gate.py 全文、measure.sh、lib.rs 测试体、run-01 的 273 条观察计数、feature-default/checked 的均值与比值、p99 与 N-1 标准差、test-default/checked/gate-tests 的测试条数、processes-before/after 快照、binary-sha256/mechanical-validation/metadata、build-raw.jsonl 的轮次与轮转顺序、verify-*.txt 的实际行数，另用 tools/list_uncollected_claims.py 对照磁盘、用 sources/sections.json 与 src/appendix/coverage.md 核 14.9 的页码登记，并亲自运行 gate.py 复现退出码 1 与 2。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条核了本节对 gate.py 的能力边界断言：读 bench/evidence-lab/tools/gate.py 全文，它确实只校验「21 个不重复 round」「值为正有限」「checksum 唯一」「unit 存在且两侧相同」「均值预算」，未读取 CPU 型号、工具链或输入指纹，与 14.7.4 的自述一致；退出码 0/1/2 的三态我亲自复现（见 evidence）。例 14.7.1 里的 133693440 与 5.27 不是编造：feature-default.txt 与 feature-checked.txt 的 header 与全部 21 行 raw 都写 checksum=133693440，两文件均值 0.04285671 与 0.22588838，比值 5.270782，gate.py 实跑输出 ratio=5.270781596704855、pass=false、exit 1。14.7.8 说本轮只有描述性均值、N-1 标准差与分位数：用 statistics.stdev(N-1) 复算 instrumentation none 得 0.094581，与归档 summary 完全一致（pstdev 是 0.092301，说明确实用的 N-1）。14.7.7 的「构建 profile 进行了轮转」成立：build-raw.jsonl 里同一 round 内 case 顺序逐轮变化。14.7.9「证据目录拒绝覆盖」成立：measure.sh:12 用不带 -p 的 mkdir。只有一处表述需要收紧，已单列为 P2。",
+      "evidence": [
+        "bench/evidence-lab/tools/gate.py 全文（load_runtime 只查 21 rounds/正值/checksum/unit，compare 只比 unit+checksum+均值）",
+        "python3 bench/evidence-lab/tools/gate.py results/run-01/feature-default.txt results/run-01/feature-checked.txt --budget 0.2 -> EXIT=1, ratio=5.270781596704855",
+        "把 feature-checked.txt 删掉 round=20 后重跑 -> EXIT=2, error=\"expected exactly 21 distinct rounds\"",
+        "bench/evidence-lab/results/run-01/feature-default.txt checksum=133693440（21 行 raw 全部一致）；均值 0.042856714 / 0.225888381 = 5.270782",
+        "statistics.stdev(instrumentation none 21 值)=0.094581 == 归档 summary sd=0.094581",
+        "bench/evidence-lab/results/run-01/build-raw.jsonl round 0..20、6 个 case，case 顺序逐轮变化"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "测试契约的计数断言全部对磁盘核实：test-default.txt 与 test-checked.txt 各有 'running 5 tests / 5 passed' 与 'Doc-tests ... running 1 test / 1 passed'，gate-tests.txt 尾行 'Ran 3 tests OK'，与「默认与 checked 各有 5 项 Rust 单元测试、1 项 doctest；Python 门禁 3 项测试」逐字相符；src/lib.rs 的 5 个测试名（observation_does_not_change_business_result / feature_result_matches_reference / reject_missing_or_invalid_samples / small_sample_p99_is_maximum / batch_counter_loses_distribution_not_count）确实覆盖输出等价、4099 字节非整块、空输入 sum_bytes(&[])、缺失/NaN/零值拒绝。14.8.1 的「21 条 nearest-rank p99 为最大值」成立：ceil(0.99*21)=21，且归档里 cpu 2.782084、wait 47.800375、none 2.798125、batch 2.685205、each 34.306250、feature-default 0.052094 全部等于各自 21 值排序后的最大值。14.8.3 的指纹与可执行副本成立（binary-sha256.txt 有 target/release/cpu_wait 与 target-checked 的 feature_work，binaries/ 目录四个副本齐）。14.8.4/14.8.5 的「不报告 I-cache」「八项清单」是限制声明，无对应产物，方向正确。唯一问题在 14.8.8 的进程快照断言，列为 P2。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/test-default.txt / test-checked.txt：5 passed + 1 doctest passed",
+        "bench/evidence-lab/results/run-01/gate-tests.txt：Ran 3 tests OK",
+        "bench/evidence-lab/src/lib.rs mod tests 五个 #[test] 体（4099 字节、&[]、NaN/0.0/20 条拒绝、nearest_rank(0.99)==21.0）",
+        "复算 nearest-rank：ceil(0.99*21)=21 -> 索引 20 = 最大值，与 6 组 summary 的 p99 全等",
+        "bench/evidence-lab/results/run-01/binary-sha256.txt 四行 + binaries/ 四个副本"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "页码本身能落地：sources/sections.json 里 EVIDENCE-S11-004=「PDF 320（一基物理页）」、EVIDENCE-S11-005=「PDF 332–336」、EVIDENCE-S14-007=「PDF 1–15」、EVIDENCE-S09-002=「PDF 64–67」，四条与表格一致；在线规范四行也在 sources/contributions/evidence-web.json 里各有 url+sha256（cargo features/resolver/profiles、rustc PGO）；rCore 两页在 sources/web.json 与 sections.json 有登记。但「S11 的 319 与 331 是分隔页，没有当作正文页登记」这句与附录登记记录相反：src/appendix/coverage.md:245 与 :247 正是把 PDF 319（采用发布配置自定义构建）和 PDF 331（Cargo 工作空间）以「核读映射」状态登记，目标锚点还是本章的 sec-cpp-rust.4.14.7。我没有核的：16 份本地母本里是否真的没有单独命名的 Cargo Reference PDF（未逐条读 inventory-original.json 的全部标题）；319/331 在 PDF 里是否确为分隔页（无本地 PDF 可翻）。",
+      "evidence": [
+        "src/appendix/coverage.md:245 |S11/SRB-S11-U058|采用发布配置自定义构建|PDF 319|核读映射|part4/ch14.md#sec-cpp-rust.4.14.7|",
+        "src/appendix/coverage.md:247 |S11/SRB-S11-U060|Cargo 工作空间|PDF 331|核读映射|part4/ch14.md#sec-cpp-rust.4.14.7|",
+        "sources/sections.json：EVIDENCE-S11-004 PDF 320、EVIDENCE-S11-005 PDF 332–336、EVIDENCE-S14-007 PDF 1–15、EVIDENCE-S09-002 PDF 64–67",
+        "sources/contributions/evidence-web.json 四条 url+sha256 齐"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "跨节索引逐条回查了可对核的十条：「门禁会拒绝只有 20 轮的候选」我实跑复现（删掉 round=20 后 exit 2，error=expected exactly 21 distinct rounds）；「lto=false 不等于关闭」与 environment.txt 的 profile 记录（release 行 debug=1 incremental=false cgu=16 lto=false；one:cgu=1；thin:cgu=1,lto=thin）用词一致；「本章的包只有一个 feature」成立（Cargo.toml 只有 checked，feature-tree.txt 印证）；「把 Mach-O 虚拟段总和当下载体积」的 __PAGEZERO=4GiB 是 arm64 事实，与 size-*.txt 的口径声明不冲突；「noop 与 fresh 是不同 case，本章为它们分别保存 21 条观察」与 build-raw.jsonl 的 6 个 case×21 一致。其余条目（feature 闭包、Cargo.lock、offline 沙箱、哈希归因）是纪律性表述，无对应产物可核，也未发现与代码相反的说法。我没有逐条再核 14.1-14.6 的原始节，只核了这些断言在归档里的落点。",
+      "evidence": [
+        "gate.py 20 轮候选实跑 EXIT=2 error=\"expected exactly 21 distinct rounds\"",
+        "bench/evidence-lab/results/run-01/environment.txt 的 profile 行与 cgu/lto 名称",
+        "bench/evidence-lab/results/run-01/build-raw.jsonl：Counter 显示 6 个 case 各 21 条"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "总量断言我逐组数过，273 成立：cpu-wait.txt 里 case=cpu 与 case=wait 各 21 行 raw（42）、instrumentation.txt 的 none/batch/each 各 21（63）、feature-default/checked 各 21（42）、build-raw.jsonl 126 行=3 profile×2 缓存边界×21 且 round 覆盖 0..20，合计 273，且 results/run-01/mechanical-validation.txt 自己就写着「formal observations: 273」并逐组列 n=21。出口检查的两条 gate 命令也真跑通：用归档两份 feature 结果加 --budget 0.2 得 ratio 5.270782、pass=false、exit 1，与「预期退出码 1，是候选超预算的拒绝」相符；gate-rejection.json 内容一致。问题出在同一句里的 verify 文件口径：磁盘上 verify-one/release/thin.txt 每个都含 21 行 raw（unit=ns_per_byte;bytes=1048576;checksum=133693440，形状与正式 feature 观察同类），正文却按「第 0 轮构建产物另行运行得到的 verify 文件只作可运行性校验」处理，而 14.4 的 839 行与 896 行进一步把它说成「一次运行」。我没有核的：「测试程序会显式检查这个状态」——只数了 test_gate.py 有 3 个 def test_，没逐行读断言体；「外层脚本依次运行第 13 章的两个 benchmark」属跨章断言，未回 ch13 核。",
+      "evidence": [
+        "grep -c '^raw,' results/run-01/verify-{one,release,thin}.txt = 21 / 21 / 21",
+        "results/run-01/mechanical-validation.txt 只登记 cpu-wait/instrumentation/feature 七组 n=21 与 'formal observations: 273'，未登记 verify-*.txt",
+        "复算 42+63+42+126=273；build-raw.jsonl round 集合 = {0..20}，6 case 各 21",
+        "gate.py 实跑 EXIT=1 ratio=5.270781596704855 budget=0.2 pass=false",
+        "src/part4/ch14.md:839 与 :896（14.4）把同一次 verify 运行称为「第 0 轮额外运行/一次运行」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "severity": "P1",
+      "description": "14.11 把 verify 文件归为「只作可运行性校验」而排除在观察数之外，但归档里 verify-one.txt、verify-release.txt、verify-thin.txt 各含 21 行 raw、同一单位（unit=ns_per_byte）、同一输入（bytes=1048576）与同一 checksum（133693440），形状与正式 feature 观察完全同类；14.4 的 839 行与 896 行更把这批数据说成「第 0 轮额外运行/一次运行」。读者按正文数不出这 63 条从哪来：273 是对的，但「另有一份 21 轮同类观测不算数」这件事既没写进排除理由，也和「一次运行」的措辞冲突，属于口径混用。mechanical-validation.txt 的排除方式是「不登记」，没有给出可核对的判据。",
+      "evidence": "grep -c '^raw,' bench/evidence-lab/results/run-01/verify-one.txt = 21（release/thin 同为 21）；文件头 'unit=ns_per_byte;case=default;bytes=1048576;checksum=133693440'；mechanical-validation.txt 只列 cpu-wait/instrumentation/feature 七组 n=21 与 'formal observations: 273'；src/part4/ch14.md:839「第 0 轮额外运行只作 checksum 与可运行性验证」、:896「用第 0 轮一次运行冒充 21 轮运行比较」、:1872"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "severity": "P1",
+      "description": "「S11 的 319 与 331 是分隔页，没有当作正文页登记」与本章附录的登记记录相反：coverage.md 第 245 行以 PDF 319、第 247 行以 PDF 331 登记了两条状态为「核读映射」的 S11 条目，目标锚点恰是 sec-cpp-rust.4.14.7（也就是我负责的节区间开头），而 14.9 的落点表只登记 320 与 332–336。要么附录该把这两行改成未登记/排除，要么正文该删掉「没有当作正文页登记」这句。",
+      "evidence": "src/appendix/coverage.md:245 '|S11/SRB-S11-U058|采用发布配置自定义构建|PDF 319|核读映射|part4/ch14.md#sec-cpp-rust.4.14.7|' ；coverage.md:247 '|S11/SRB-S11-U060|Cargo 工作空间|PDF 331|核读映射|part4/ch14.md#sec-cpp-rust.4.14.7|' ；sources/sections.json EVIDENCE-S11-004=PDF 320、EVIDENCE-S11-005=PDF 332–336"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "severity": "P2",
+      "description": "14.7.2 的分层表把「身份」写进第二层「检查什么」，紧接着的 14.7.3 表又叫「本轮工具行为」；但 gate.py 全文不读取任何身份字段（无 CPU 型号、无 rustc 版本、无输入指纹，只比 unit 与 checksum）。两表相邻、列名相似，读者容易把第二层读成「本轮已检查身份」，而这正是 14.7.4 明确否认的事。建议在该行标出「身份为正式集成应补的项，本轮未做」。",
+      "evidence": "src/part4/ch14.md:1416「第二层 | 轮数、单位、checksum、身份」对照 :1440「它没有自动比较 CPU 型号、工具链或输入指纹」；bench/evidence-lab/tools/gate.py load_runtime 只校验 21 rounds/正值/checksum 唯一/unit 存在"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "severity": "P2",
+      "description": "「正式测量前后未见 cargo/rustc/clang 构建进程名」的证据是两份 0 字节文件（processes-before.txt、processes-after.txt 各 0 字节），而 measure.sh 用 'ps -axo pid,comm | grep -E (cargo|rustc|clang|ld$) > file || true' 采集：'|| true' 使 ps 本身失败时同样产出空文件。按本章自己第 14.7.2 的定义，空采集无法区分「无构建进程」与「采集失败」，属证据不可比，正文的「未见」把不确定证据说成了阴性结论。建议改写为「两份快照均为空文件，既不能排除也不能确认并行构建进程」。",
+      "evidence": "ls -l bench/evidence-lab/results/run-01/processes-*.txt -> 0 Oct 22 21:24 / 0 Oct 22 21:26；bench/evidence-lab/tools/measure.sh:29 与 :52 的 'ps -axo pid,comm | grep -E ... || true'"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "severity": "P2",
+      "description": "「测试程序会显式检查这个状态」这句把断言挂在测试上，但我在报告里只核到 test_gate.py 有 3 个 def test_（与 14.8.2 的「3 项测试」相符）和 gate-tests.txt 尾行 'Ran 3 tests OK'，没读断言体确认哪一个专门检查 exit 1；正文用「会显式检查」这种完成态措辞，属于关键断言未给出可定位出处（哪个测试函数名）。建议点名测试函数或至少给文件:行。",
+      "evidence": "bench/evidence-lab/tools/test_gate.py def test_ 计数=3；results/run-01/gate-tests.txt 'Ran 3 tests in 0.006s OK'；src/part4/ch14.md:1870"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 /book/
+.work_tmp/
 **/target/
 **/*-target/
 **/target-*/

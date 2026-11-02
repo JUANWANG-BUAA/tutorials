@@ -1,0 +1,94 @@
+{
+  "reviewer": "sweep801-ch17b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "801f81bfcad74a0eccd57c5bd46d37a1f1de08834449b6354ea7de93ae136952",
+  "provenance": "冷启动通读 src/part4/ch17.md 1037-1590 行（17.7-17.11 全部正文与语义盒），逐条对照 projects/tidekv 的 src/ipc.rs、src/segment.rs、src/engine.rs、src/wal.rs、src/bin/tide-mech.rs、tide-bench.rs、tests/compaction.rs、gate.py、gate_mech.py、run.sh，并用 /usr/bin/python3 从 results/run-01/bench.csv、run-02/compaction.csv、run-02/codec.csv、run-03/admit.csv 与各 statistics/gate JSON、bench-verification.txt、mech-verification.txt、bloom-contract、order-effect、CORRECTION.md、sources/web.json 与 .work 存档 HTML 独立复算；跑了 tools/list_uncollected_claims.py。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "pass",
+      "method": "read+recompute",
+      "notes": "定义 17.7.1 的代码断言逐行核实：ipc.rs 注释按 64 KB 推理且正文只当推理前提（正文未把它冒充本机实测，且明写管道容量未采集，脚本确认无产物）；spawn_compactor 确实是 stdin/stdout/stderr 三路各一线程、read_to_string 到 EOF、先 join stdin 再 recv 两路输出、最后 child.wait()，与正文描述顺序一致。定义 17.7.2/17.7.3：write_segment 为临时名→sync_all→rename（segment.rs:106-116），重命名前无 exists 检查，do_compact 输出段名取 max().unwrap_or(0)+1（engine.rs:688-694）且 drop_tombstones: true（engine.rs:701），Stats 无重放计数——正文「临时名走通了、存在性检查与输入决定的任务标识都没有」与代码事实一致。tests/compaction.rs 恰四条测试（不足两段返回 None、语义、随机等价、重启存活），无「同一批输入合并两次」用例，与解答 17.7.1 一致。CompactorError 带 stderr（ipc.rs:35-44）。17.7.2 实测表全部复算命中：从 compaction.csv 5040 结构（21×30 批，seed 20261029/warm 500，CSV 头与 statistics-compaction.json protocol 一致）算得 A=7,696,325.94 B=9,171,895.58 diff=+1,475,569.64、ratio 1.1917、CI [1,366,635.81, 1,586,756.50] 与归档 JSON 及正文逐项一致；预算出处叙述（gate-compaction.json 有 budget_B=10000000.0 与旧 budget_note、现 run.sh 已是重写后的 note、CORRECTION.md 在档且引用 run.sh 行号与 grep 复核方式）逐条相符；「后台每 100 ms」确无实现（do_compact 唯一调用点是 Cmd::Compact 分支）；RSS/固定开销/构成三处未采集声明经 list_uncollected_claims.py 确认无产物。",
+      "evidence": [
+        "projects/tidekv/src/ipc.rs:131-132（64 KB 注释原文）",
+        "projects/tidekv/src/ipc.rs:151-186（三线程、join/recv/wait 顺序）",
+        "projects/tidekv/src/segment.rs:106-116（tmp→sync_all→rename，无 exists）",
+        "projects/tidekv/src/engine.rs:688-694,701（max().unwrap_or(0)+1、drop_tombstones: true）",
+        "projects/tidekv/tests/compaction.rs:36,47,94,143（四条测试名）",
+        "复算 run-02 compaction.csv：diff=+1,475,569.64 ns、A=7,696,325.94、B=9,171,895.58、ratio=1.1917，statistics-compaction.json diff_ci95=[1366635.81,1586756.50]",
+        "projects/tidekv/results/run-02/mech-verification.txt:2（bytes=401770, entries=4096, crc32=7241b72e 与正文逐字一致）",
+        "projects/tidekv/results/run-02/gate-compaction.json budget_B=10000000.0；CORRECTION.md 引用 engine.rs:565/331 可复核"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "pass",
+      "method": "read+recompute",
+      "notes": "主表四个 case 的 A/B/差值全部从 bench.csv 原始批行独立复算命中到正文给的每一位（put_wide 63.144/40539.7/+40476.5 等），且与 statistics.json 逐字段一致；正文交代的复算口径均可落地：raw_batch 恰 5,040 行、round_mean 168 行、BATCH_MEAN 最大偏离 6.0e-07、ops 列 900/2900/1900/4996、84 条（case,轮）里 B_then_A 52 / A_then_B 32、比值 642.02、get_hot 三方摘要 79802841a06e79bb、环境行（M5 Pro/rustc 1.99.1/cachelinesize 128/24 GiB/macOS 27.2 build 26B123/arm64）均与 environment.txt 相符。run-02/run-03 对照表数值逐项命中 JSON（codec 3.965/4.036/+0.071/CI[-0.054,+0.208]；attempted 774,433.8/82,915.5/−691,518.3；accepted 2,456,036.2/2,470,043.5/+14,007.4/insufficient=1），预算与判定计数（run-01 reject=4/accept=0）与四份 gate JSON 一致；每批受理 75.40 对 8.07 从 admit.csv accepted 列复算命中；admit.csv raw 1,680 行=840 批×2 口径 ✓。位次效应表整表与归档 results/order-effect-2026-10-30.txt 逐行一致（run-03 attempted A先11轮均值 729,295.6、B先 649,963.2、间距 79,332.4、偏移 1,888.9、半宽 44,523.1、4.2% 我均复算成立；A臂先行慢 11.4%、B臂后行慢 4.8% 复算 814,056.6/730,848.6、84,761.0/80,885.4 命中）。gate.py 末尾 return 0、只写 budget_B 无 note ✓；「position vs arm_order」命名差异与 ch01 def-1.4.1 原文（记录 position）相符。两处未采集声明（flush_every 单变量轮、掉电轮、分段计时）经脚本确认无产物。遗留两条 P2 见 findings（bootstrap 区间尾端未能用独立实现按 CSV 原始行逐位复现；put_wide 730/900 写占比无落盘依据）。",
+      "evidence": [
+        "复算 bench.csv（raw_batch 5,040 行）：put_wide A=63.144 B=40539.7 diff=+40476.5；get_hot 75.654/33823.8/+33748.1；get_absent 61.785/24471.5/+24409.7；scan_12 114.695/32195.3/+32080.6，全部与正文及 statistics.json 一致",
+        "arm_order 计数：B_then_A=52、A_then_B=32（84 条）；ops 列 {900,2900,1900,4996}；round_mean 偏离 max 6.0e-07",
+        "results/run-01/bench-verification.txt:8（79802841a06e79bb）；gate.json counts={'accept':0,'reject':4,'insufficient-evidence':0}、budget_B=1000.0、无 budget_note",
+        "复算 admit.csv：accepted/batch A=75.40 B=8.07；run-03 protocol seed=20261030 warmup_ms=300 rounds=21 batches=20",
+        "results/order-effect-2026-10-30.txt:10,27 与正文位次表逐行一致；(741468.5−652422.3)/2=44523.1、1888.9/44523.1=4.2%",
+        "run.sh:9,13,15 BUDGET=1000/WARM_MS=500/SEED=20261028 默认值与正文「一条命令不会回到 run-02/03 参数」相符；tide-mech.rs:288-294,340（drop_tombstones:false、merged-inproc/merged-subproc.tide、直接调 spawn_compactor）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "verdict": "pass",
+      "method": "read+recompute",
+      "notes": "台账类引用抽查可落地：rCore 五页均登记于 sources/web.json（含 sha256/bytes/archive 路径），落盘副本在 .work/cpp-rust-sources/systems/ 存在；easy-fs 存档原文确有「直接索引可以找到 14KiB 的内容」与「直接索引和一级索引支持的容量上限 78KiB」，与正文「28 个直接索引项、14 KiB/64 KiB/8 MiB」静态算术自洽（28×512B=14 KiB；一级 128×512B=64 KiB；二级 128×64 KiB=8 MiB；14+64=78 KiB）；fs-interface 页（archive=rcore-io.html）与 pipe 页（弱引用/RingBufferStatus 满空正常）的 review_scope 与正文引述方向一致。17.9 诚实声明论文条目与 LLVM 那条「没有落盘副本、不在台账」，未冒充已核实证据；布隆 0.762%≈1/131 与 results/bloom-contract-2026-10-30.txt:11 逐字一致，1/256 与 1/131 差 1.95 倍（256/131.1）算术成立。退休表曲线未采集声明无产物矛盾。「16 份纸本母本」的具体份数我只抽查了 sections.json 结构（579 条映射）未逐一点清 16 这个数，记入 P2。LLVM 原句为带引号逐字引用，正文已如实标注是 2026-10-30 在线核读、无落盘副本，本轮预算内未能联网复核原句。",
+      "evidence": [
+        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html（「直接索引可以找到 14KiB 的内容」「容量上限 78KiB」；BlockCache 出现 30 次）",
+        "sources/web.json：chapter6/1fs-interface、chapter6/2fs-implementation、chapter7/2pipe、chapter7/4signal、chapter9/2device-driver-2 等条目均含 sha256 与 archive 路径，文件存在",
+        "projects/tidekv/results/bloom-contract-2026-10-30.txt:11 rate=0.00762 (1/131.1)",
+        "算术：28×512B=14336B=14 KiB；512B/4B=128 指针/块 → 64 KiB → 8 MiB"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "索引表逐行与正文各节 errata 比对：17.1 实有 E-a..E-d、E-f 而无 E-e（ch17.md:235-243），括注「这一节没有 E-e」属实；17.2 实有 E-b2（ch17.md:415）；17.3/17.4/17.6/17.7 各五条 E-a..E-e（ch17.md:542-550,680-688,993-1001,1142-1150）；17.5 六条 E-a..E-f（829-839）；17.8 六条（1404-1414）。跨节错误三列举的四类未采集项（17.4 指令数、17.6.2 端到端与取消、17.7.2 固定开销分解、17.8.2 掉电与分段耗时）在正文对应小节均确有「没有采集」原句，且与 17.10 的输入家族括注（17.4 键16/值64、17.6 值64KiB、17.8 键14–17/值80–300）方向一致（17.6 的 64 KiB 值长经 run.sh:125 VALUE_BYTES=65536 证实）。",
+      "evidence": [
+        "src/part4/ch17.md:235,237,239,241,243（17.1 无 E-e）",
+        "src/part4/ch17.md:415（E-b2）；829-839（17.5 六条）；1142-1150（17.7 五条）；1404-1414（17.8 六条）",
+        "projects/tidekv/run.sh:125（--value-bytes 65536 证实 17.6 轮值长 64 KiB）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结与速查表只作导航，无新的可核测量断言。逐条抽查了指向的锚点存在性：def-17.1.1/17.1.2/17.3.2/17.3.3/17.4.2/17.4.3/17.6.1/17.6.3/17.7.1/17.7.3/ex-1.8.1 与 ../mainline.md#mainline-spine（mainline.md:5）、../part1/ch01.md#sec-cpp-rust.1.1.8 均有落点；「def-17.7.3 在 17.7.1 小节内」属实（ch17.md 中 17.7.3 出现在 17.7.2 实测小节之前、17.7.1 标题之下）；def-17.6.3「在 17.6.1 小节内」我只确认锚点存在、未逐行核对所在小边界，影响极小。五份章末件文件 ch17_summary/recall/exercises/exam/checklist.md 全部存在于 src/part4/。里程碑表引用的「回忆卡第 N 张」具体张数未核（章末件不在本节预算内）。",
+      "evidence": [
+        "grep -c '{#def-17.6.3|{#def-17.3.3|{#def-17.4.3' = 3（src/part4/ch17.md）",
+        "src/mainline.md:5（<a id=\"mainline-spine\">）；src/part1/ch01.md 含 sec-cpp-rust.1.1.8",
+        "ls src/part4/：ch17_checklist/exercises/exam/recall/summary.md 五件齐全"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "17.8.2 主表与 run-02 表的 95% bootstrap 区间端点与 statistics JSON 逐字一致，但我按 analyze.py 公布的算法（percentile bootstrap、20,000 次、种子 20289699）从 bench.csv/compaction.csv 的 raw_batch 原始行独立重采样时，区间尾端不能完全复现：put_wide 复算 [40109.3, 40816.4] vs 归档 [40105.6, 40819.8]，compact_subproc 复算 [1365051, 1591189] vs 归档 [1366636, 1586757]（后者差约 0.6% 半宽）。点估计（两臂均值、21 个配对差值的均值与样本标准差）全部逐位命中，方向与判定不受影响；最可能是 per-round 均值取数路径（round_mean 行 6 位小数舍入）与原始行浮点路径不同，但正文/归档没有说明区间应由哪一列复算，严格复现缺一个口径交代。",
+      "evidence": "复算输出：bootstrap(20000, seed 20261028^0xB007=20289699) put_wide [40109.3, 40816.4]；run-01/statistics.json diff_ci95=[40105.641, 40819.815]；compaction：复算 [1365051,1591189] vs statistics-compaction.json [1366635.81, 1586756.50]"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "17.8.2「按 ops 列与生成器算出来的每批写占比」四条里，scan_12 82%（4096/4996）、get_hot 72%（2090/2900）、get_absent 53%（1000/1900）均可从归档 ops 列与 setup 数静态推出并复算命中；唯独 put_wide 给的是 81.1%（730/900），而标称 70% put + 10% delete 应恰为 720/900=80%。730 这个实现值只能靠按 seed=20261028 重跑生成器得到，归档里没有任何文件记录每批实际写条数，正文也未说明 730 的来路。结论（写占比排序与付费顺序不一致）对 80% 或 81.1% 均不敏感，故仅 P2。",
+      "evidence": "src/bin/tide-bench.rs:408,439（生成器无落盘写计数）；results/run-01/bench-verification.txt:5 仅记 ops=900；730/900=81.1% 与 0.70+0.10=0.80 的 10 条差额无出处"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P2",
+      "description": "两处引用强度上限：① LLVM Benchmarking tips 那句带引号逐字引用（\"low noise is required, but not sufficient. It does not exclude measurement bias.\"）无落盘母本，正文已如实声明是「在线核读、不在台账」，本轮预算内未能联网复核原句；②「sources/sections.json（16 份纸本母本的逐条映射）」中的 16 这个份数我只验证了文件存在与 579 条映射的规模，未逐一点清母本份数。均为披露充分的强度问题，非虚构。",
+      "evidence": "grep 'Benchmarking' sources/*.json 无命中（与正文自述一致）；sections.json 长度 579，份数 16 未逐一枚举"
+    }
+  ]
+}

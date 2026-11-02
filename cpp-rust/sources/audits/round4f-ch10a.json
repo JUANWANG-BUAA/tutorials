@@ -1,0 +1,87 @@
+{
+  "reviewer": "r4f-ch10a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动独立审计：完整读 src/part3/ch10.md 的 10.1–10.6 全部正文与每个语义盒；逐行核对 bench/runtime-lab 下的 wire.rs、bin/process_rpc.rs、bin/pipe_drain.rs、bin/worker.rs、process.rs、tests/contracts.rs；用 /usr/bin/python3 从 measurements-final/process-rpc.txt 与 pipe-drain.txt 的原始 21×2 批值复算 mean/sd(N−1)/nearest-rank p50/p99；另跑 tools/list_uncollected_claims.py --pages src/part3/ch10.md，其 10 条「未采集」声明中落在 10.1–10.6 的 8 条（行 714/790/878/1000/1201/1240/1245/1273）均无盘上反例。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "概念节，无测量数字。逐条对代码：①「明确路径＋逐个参数、没有 sh -c」→ bench/runtime-lab/src/bin/process_rpc.rs 与 pipe_drain.rs 只用 Command::new(path).arg(..)，无 sh -c；②「worker.rs 只有固定几个实验模式」→ bench/runtime-lab/src/bin/worker.rs:16-48 只有 rpc|flood|sleep|fail|inherit 分支；③「Tokio1.54.0 限制 fork 后重用 runtime」的版本前提→ bench/runtime-lab/Cargo.toml:9 tokio = \"=1.54.0\"，Cargo.lock 锁 1.54.0，口径一致；④[@def-10.1.1] 孙进程持有继承写端有对应夹具（worker.rs:31-35 inherit 分支由直接子进程 spawn 后代）。未核项：Stanford CS110L 讲义 PDF 仓库内无本地母本，10.9 登记其为在线来源（lecture-10-2022.pdf，指纹在台账），10.1.4 只引定性论断、未从中推任何纳秒数，故无法逐字比对，但也没有把未落地内容写成已核实数字。判定 pass。",
+      "evidence": [
+        "bench/runtime-lab/Cargo.toml:9 tokio = \"=1.54.0\"",
+        "bench/runtime-lab/src/bin/worker.rs:16-48 五种模式分支、31-35 inherit 后代夹具",
+        "src/part3/ch10.md:156-177 未从课程材料推任何本机数字（note 框）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "①10.2.3 的 Session::finish 代码与 bench/runtime-lab/src/bin/process_rpc.rs 逐字一致：`drop(self.input.take());` 在 `self.child.wait()?` 之前，Err 文案 \"worker exit failed\" 相同；②「完整定义在 src/bin/process_rpc.rs」的路径是章首 14 行声明的 bench/runtime-lab/ 缩写，文件真实存在；③「8字节 RPCv0001 握手」→ wire.rs:5 READY: &[u8;8]=b\"RPCv0001\"；④[@think-10.2.1] 的先 wait 后关 stdin 互等推断与 finish 的实际顺序相反即触发，属协议推理，无实证数字要求；⑤图 10-1 的端点持有关系与 worker.rs:31-35 inherit（直接子退出、后代持写端）一致，10.7.6 的回归测试名 inherited_writer_does_not_hang_drainers_forever 确在 tests/contracts.rs。判定 pass。",
+      "evidence": [
+        "bench/runtime-lab/src/bin/process_rpc.rs fn finish：drop(self.input.take()) 先于 child.wait()（与 ch10.md:343-350 逐字一致）",
+        "bench/runtime-lab/src/wire.rs:5 READY=b\"RPCv0001\"（8 字节）",
+        "bench/runtime-lab/tests/contracts.rs inherited_writer_does_not_hang_drainers_forever 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量全部复算/比对：①「原生 Frame size=16、align=8、线协议 24 字节」→ bench/runtime-lab/src/wire.rs:9-13 Frame 就两个 u64（16 字节、对齐 8，与归档 measurements-final/type-layout.txt 第 1 行 `Frame size=16 align=8 wire=24` 一致），FRAME_LEN=24；②10.3.2 encode 代码与 wire.rs:16-23 逐字一致（先置零数组，故 flags=0；字节表 0/2 版本、4..8 帧长、8/16 id、16/24 value 与 10.3.1 表一致）；③「逐一破坏三个头部位置要求 InvalidData」→ wire.rs 测试 rejects_each_header_field 对 index [0,2,4] 断言 InvalidData；「id 的 little-endian 字节顺序测试」→ explicit_roundtrip_and_byte_order 断言 bytes[8..16]==[8,7,6,5,4,3,2,1]；「空流与单字节截断分别有可执行测试」→ eof_is_not_truncated_frame 两断言（None 与 UnexpectedEof）；④10.3.4 read_frame 代码与 wire.rs:46-61 逐字一致；⑤10.3.6 表点的 runtime-lab.s/.ll 与 type-layout.txt 都在 measurements-final/ 盘上存在。判定 pass。",
+      "evidence": [
+        "bench/runtime-lab/src/wire.rs:2 FRAME_LEN=24; :9-13 两个 u64; encode/decode/read_frame 与正文代码逐字一致",
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt:1 `Frame size=16 align=8 wire=24`",
+        "bench/results/runtime-fixed/measurements-final/runtime-lab.s、runtime-lab.ll 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部表格数字从原始批值复算：用 /usr/bin/python3 读 measurements-final/process-rpc.txt 的 21+21 个批样本，按[@def-1.5.2]（sd 用 N−1、p50/p99 用 nearest-rank，n=21 时 p99 即最大值）复算得 spawn mean=1219110.006、sd=77376.429、p50=1208367.188、p99=1531747.438，persistent mean=5484.128、sd=532.400、p50=5372.375、p99=7346.375，与 ch10.md:777-778 表逐位吻合；比值复算 1219110.006/5484.128=222.30，「约222倍」成立。方法学断言逐条对代码：bin/process_rpc.rs 的 main 确认每 case 先 500ms 预热、正式 21 批、for index/offset 的 (index+offset)%2 即轮转先后、batch(..,16) 即每批 16 请求；spawn 分支把握手、请求、finish（关 stdin+wait）全在 Instant::now() 与 ns_per_op 之间（10.4.4 表「每请求计入」），persistent 分支 Session::start 在计时前、finish 在计时后（「每批在计时外」）。wrapping_mul(3) 与父进程逐条 id/结果校验在 process_rpc.rs:60-66。def-10.4.3 引 rCore 机制骨架无数字，10.9 已登记在线页与「不引用其中任何数字」。判定 pass。",
+      "evidence": [
+        "python3 复算 measurements-final/process-rpc.txt 原始批值：八项统计量与正文表逐位一致（见 notes）",
+        "bench/runtime-lab/src/bin/process_rpc.rs:87-105 batch() 两分支计时边界",
+        "bench/runtime-lab/src/bin/process_rpc.rs main：500ms 预热、21 批、轮转、requests=16",
+        "src/part1/ch01.md:908-910 [@def-1.5.2] nearest-rank 定义（p99(n=21)=最大值，解释归档口径）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "机制与代码核对全部通过：①测试 wait_before_drain_is_a_reproduced_stall 在 bench/runtime-lab/tests/contracts.rs:162 存在，正文叙述逐项命中——take stdout/stderr、read_exact 首 1 字节并断言 b'x'、tokio::time::timeout(30ms, wait) 断言 is_err、start_kill 后再 wait 回收；「helper 向 stdout 写 2MiB 随后 stderr 写 2MiB」→ worker.rs:25-27 flood 先 stdout.write_all 再 stderr.write_all，字节数由参数给出（pipe_drain.rs BYTES=2MiB）；「30ms 只是观察窗口」与代码性质一致。②10.5.3 表四字段与 process.rs 一致：chunk=[0u8;8192]（:84）、checked_add 防溢出（:119）、keep=n.min(cap.saturating_sub(..))（cap 耗尽仍读并计数）、mem::take 移交两个独立 Capture（:236-237）；「单流 cap 不超过 16MiB」→ process.rs:158 `if cap > 16*1024*1024` 拒绝，另有 17MiB 被拒的测试。③10.5.4 已诚实标注「下段为旧源码快照，现版用 poll_fn」，现码确用 poll_fn（process.rs:84），保留逻辑一致。问题只有一处措辞：[@ex-10.5.1] 的夹具句「与 pipe_drain 归档逐项对得上：前缀 128、每批 2 097 152 字节」——2097152 是每流 total（code: capture.total==BYTES），每批聚合是 4194304（10.6.1 自己写明「每批合计4194304字节」），「每批 2097152」与本节主题「4MiB」及 10.6.1 口径撞车，见 findings。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:162-186 停滞重现测试与正文 10.5.2 逐项吻合",
+        "bench/runtime-lab/src/bin/worker.rs:25-27 flood 先 stdout 后 stderr 各 2MiB",
+        "bench/runtime-lab/src/process.rs:84,119,158,236 8192 块 / checked_add / 16MiB 上限 / mem::take",
+        "src/part3/ch10.md:1032 vs :1116 每批口径表述矛盾（见 finding）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "①表数字复算：用 python3 从 measurements-final/pipe-drain.txt 的 21+21 原始批值按[@def-1.5.2] 口径复算得 prefix128 mean=0.514 sd=0.031 p50=0.507 p99=0.583，retain-all mean=0.515 sd=0.027 p50=0.507 p99=0.583（p99=各组最大值 0.582933/0.583420），与 ch10.md:1162-1163 逐位吻合；ns/byte 的分母 (BYTES*2)=4194304 与[@def-10.6.1]「除以 4194304 聚合字节」一致（pipe_drain.rs:29 ns_per_op(elapsed,(BYTES*2))）。②10.6.3 七项校验逐条对上 observation()：!timed_out、exit==Some(0)、reader_errors 空、双流 eof、total==2097152、prefix.len()==cap、第 7 项内容校验（prefix 每字节==b'x'，且代码注释明确它跑在 Report.elapsed 边界之后=计时外）。③方法学：500ms 预热、21 批、(index+offset)%2 轮转均在同文件 main 中。④10.6.7 点名的产物全部在盘：runtime-final/process-rpc-sample.txt、process-sample-command.txt、measurements-final/runtime-lab.ll/.s；sample 复验命令路径 bench/runtime-lab/target/release/process-rpc 与 crate 结构一致。⑤统计纪律：均值差 0.001 < 两组 sd，正文没有宣布加速且[@ex-10.6.1] 明说无配对区间、无 p 值——与本节表数据一致。⑥「本轮没有 Linux perf/strace/PMU」经 list_uncollected_claims 核对无盘上反例。判定 pass。",
+      "evidence": [
+        "python3 复算 measurements-final/pipe-drain.txt：八项统计量与正文表逐位一致",
+        "bench/runtime-lab/src/bin/pipe_drain.rs:9-31 observation 七项校验与 BYTES*2 分母；:34-52 预热/轮转/21 批",
+        "bench/results/runtime-final/process-rpc-sample.txt 存在",
+        "tools/list_uncollected_claims.py 输出：本区间 8 条「未采集」声明均无同类产物反例"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "severity": "P2",
+      "description": "[@ex-10.5.1]（ch10.md:1032）说 stdout 夹具「与 pipe_drain 归档逐项对得上：前缀 128、每批 2 097 152 字节」。2097152=2^21 是每流 total（代码 assert capture.total==BYTES，BYTES=2*1024*1024，每流），而每批聚合输出是 4194304 字节——10.6.1（ch1116 行）自己写明「每批合计4194304字节」，10.5 节标题句也说「把4MiB全部读完」。在同一句里把每流值冠以「每批」，与本章「批=聚合 4194304」口径相撞，读者按字面会把归档里的 ns/byte 分母算成 2097152（差 2 倍）。数字本身真实、非矛盾数据，属表述口径问题，建议改成「每流 2 097 152 字节」。",
+      "evidence": "bench/runtime-lab/src/bin/pipe_drain.rs:8 BYTES=2*1024*1024；:29 ns_per_op(elapsed,(BYTES*2) as u64)=4194304 分母；src/part3/ch10.md:1116「每批合计4194304字节」对照 :1032「每批 2 097 152 字节」"
+    }
+  ]
+}

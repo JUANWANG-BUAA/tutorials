@@ -1,0 +1,74 @@
+{
+ "reviewer": "r4f-ch09b",
+ "kind": "independent",
+ "layer": "read",
+ "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+ "provenance": "冷启动读 src/part3/ch09.md 第1125–1624行全文（9.7–9.11 的正文、每个定义/例题与解答/思考/判定流程/小结/常见错误/即时自测/来源表/速查/出口检查/章末件表），逐条回查 bench/runtime-lab/tests/contracts.rs、tools/run_runtime_benchmarks.sh、.work/cpp-rust-sources/systems/3semaphore-rcore.html、sources/web.json、sources/runtime-code.json、sources/inventory.json、sources/reviews/S11.md、S08.md，在线核读 docs.rs/tokio/1.54.0 runtime 页与 pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt，并跑 tools/list_uncollected_claims.py 过滤 ch09 条目。",
+ "sections": [
+  {
+   "anchor": "sec-cpp-rust.3.9.7",
+   "verdict": "pass",
+   "method": "read",
+   "notes": "9.7 全部断言核得上。① 9.7.4 第一条回归代码盒与磁盘正在使用的测试逐段一致（bench/runtime-lab/tests/contracts.rs:10-24：channel(1)、try_send(10)、TrySendError::Full(20)、rx.recv Some(10)、send(20)、drop(tx)、Some(20)、None 全对；正文用全限定 tokio::sync::mpsc 路径属展示性改写，语义不变）；「没有测量通道吞吐、没有报告队列内存峰值」与代码事实相符。② 第二条 blocking_permit_is_held_inside_closure 的描述逐句对得上 contracts.rs:52-70：先 await started（oneshot）、再 abort、此刻 try_acquire_owned 必须 is_err、发停止信号（std::sync::mpsc 同步通道，正文称「同步停止信号」准确）、task.await 成功、再 try_acquire_owned is_ok；「刻意不用固定 sleep」与实现一致。③ 9.7.2 的 rCore 信号量断言逐条命中本地母本：取用(P)/归还(V)、资源用整数计数、计数到零后来者排队等待、归还直接把名额移交等待者故被唤醒方不必重新确认、唤醒早于等待时由计数记住多余唤醒（3semaphore-rcore.html 原文有「唤醒丢失(Lost Wakeup)」注解段与移交实现），web.json rcore-semaphore 的 review_scope 与之逐字对应。④ 许可寿命序列（permit 随异步任务释放而闭包仍跑）是逻辑构造，无实测数字声称为测量。⑤ 无测量级数字需复算。",
+   "evidence": [
+    "bench/runtime-lab/tests/contracts.rs:10-24",
+    "bench/runtime-lab/tests/contracts.rs:52-70",
+    ".work/cpp-rust-sources/systems/3semaphore-rcore.html（P/V、整数计数、直接移交、计数记住多余唤醒原文）",
+    "sources/web.json rcore-semaphore sha256=d7e474b84bdde198954…"
+   ]
+  },
+  {
+   "anchor": "sec-cpp-rust.3.9.8",
+   "verdict": "pass",
+   "method": "read",
+   "notes": "9.8 核得上。① 9.8.1 两个有限性前提：在线重抓 docs.rs/tokio/1.54.0/tokio/runtime/index.html 原句 'If the total number of tasks does not grow without bound, and no task is blocking the thread, then it is guaranteed that tasks are scheduled fairly.'；正文把第二前提转述为「每次 poll 返回所需的时间也有上界」——阻塞线程的形态正是一次不返回（或过长才返回）的 poll，9.8.2/9.8.3 明确了这个等式，转述语义等价，不是引文；「不承诺硬实时常数、不承诺均匀轮流」与该文档其余段落一致。② 9.8.2「夹具里的显式 yield 是实验设计的一部分，不能推出 Tokio 自动每 16 步抢占」与 E-c「16 是夹具里的 quantum」自洽，未声称为文档承诺。③ 9.8.3 的 MIT Lecture 11 断言在线核实：pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt 标题即 Lecture 11: Thread switching，含定时器中断抢占、寄存器与栈保存、RUNNING vs RUNNABLE；web.json 该条（id=mit-scheduling）status=reviewed-online 并有 sha256 指纹，落得地。④ 9.8.4 例 9.8.1 的 ③ 行「量级与 9.6 的 25.060 ms 接近」：25.060 ms 确为 9.6 表内 inline 观察延迟 p99（ch09.md:1030），四种慢法到区间的映射与 [@def-9.6.2] 定义一致，解答无算错。⑤ 9.8.5 退出协议七步无实测断言；「Drop 可能等待无法 abort 的阻塞工作」以 9.7.4 测试为证据，该测试 contracts.rs:64-67（abort 后 task.await 仍 Ok）确实支持。⑥ 9.8.6 「steal 次数、cache miss、IPC 都没有采集」：uncollected 工具对 ch09 的 9.7–9.11 段只点名第1454、1540行，都是这类否定自述，磁盘上确无对应采集产物，与全章口径一致。本节我只在线核了 tokio runtime 与 MIT 两份文档的上述要点，Tokio spawn_blocking 文档的取消/shutdown 细节未逐字重读（ledger 有 tokio-blocking 指纹，且正文只转述为「可能等待/可停止等待」级论断）。",
+   "evidence": [
+    "docs.rs/tokio/1.54.0/tokio/runtime/index.html 公平性原句（在线复抓逐字命中）",
+    "https://pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt: Lecture 11: Thread switching（在线复抓）",
+    "src/part3/ch09.md:1030 inline p99 25.060 ms",
+    "sources/web.json mit-scheduling / tokio-runtime / tokio-blocking 条目"
+   ]
+  },
+  {
+   "anchor": "sec-cpp-rust.3.9.9",
+   "verdict": "finding",
+   "method": "read",
+   "notes": "来源表实质落地全部核得上，唯一问题是「标题」列两处不是母本/台账原标题：S11-U072 台账标题为「消息传递」（sources/inventory.json，pdf_page 389、body_read_pages [390,391,392,393,394]，与正文「PDF390–394 本轮核读」逐页一致；「389 和 395 为分页空白不作依据」与台账 U072 书签389→读390、U073 书签395→读396 的模式一致），正文写成「消息传递与所有权转移」；S08-U0022 台账标题为「第 17 条：对共享状态的并行性保持警惕」（pdf_page 146，补读 155/156/159，登记 target 是 part2/ch07），正文写成「并发、锁与状态一致性」。两列是概括性改写而非逐字原标题（P2）。其余核过：外部规范表 10 行逐行对 web.json/runtime-code.json，rcore 五条（condvar/task-switch/time-sharing/semaphore/sched）的核读范围与 web.json review_scope 逐字对应（含彩票/步长调度对比、sum(Ci/Pi)<=1、mtime/mtimecmp、TICKS_PER_SEC=100、TaskContext 保存 ra/s0~s11/sp）；「指纹在 sources/web.json、本地 crate 文件指纹在 sources/runtime-code.json」两文件在盘且 state.rs/spawn_blocking/current_thread 均有登记；MIT 行「完整 Thread switching 讲义」已由我在线复抓证实。附录 coverage.md 与章末五页链接文件均存在。",
+   "evidence": [
+    "sources/inventory.json S11-U072（title=消息传递, pdf_page=389, body_read_pages=[390..394]）",
+    "sources/inventory.json S08-U0022（title=第 17 条：对共享状态的并行性保持警惕, pdf_page=146）",
+    "sources/web.json rcore-sched/condvar/task-switch/time-sharing/semaphore review_scope 逐字比对"
+   ]
+  },
+  {
+   "anchor": "sec-cpp-rust.3.9.10",
+   "verdict": "pass",
+   "method": "read",
+   "notes": "跨节索引 12 条逐一核对：每条的机制论断与其引用的定义锚点相符（[@ex-9.1.1]、[@def-9.2.1/9.2.2/9.1.2]、[@def-9.5.1/9.6.1/9.6.2]、[@def-9.7.1-3]、[@think-9.8.1]、[@ex-9.2.3]、[@def-9.8.3]），这些锚点在同章前文全部已定义（grep 花括号 id 逐个确认存在）。涉及测量的两处——「Pending 计数≠线程切换次数」「21 次观察的 p99 是最大值」——与 9.4/9.6 的既有台账口径一致（ch09.md:1087）；「kevent/dyld 样本」条只作解读警示，无新数字。没有发现把未采集量当结论的条目；「有界通道限制无限 spawn」「超时释放许可」两条与 9.7.1/9.7.3 定义一致。本节我只做锚点落地与口径一致性核对，未重复复算 9.5/9.6 的原始数字（那属于 x.1–x.6 读者与机械层范围）。",
+   "evidence": [
+    "src/part3/ch09.md 锚点存在性逐一 grep",
+    "src/part3/ch09.md:1087 21个观察 p99=最大值"
+   ]
+  },
+  {
+   "anchor": "sec-cpp-rust.3.9.11",
+   "verdict": "pass",
+   "method": "read",
+   "notes": "小结 7 条与速查表 9 行逐条对回定义锚点（def-9.1.1/9.1.2/9.2.1/9.2.2/9.3.1/9.3.2…def-9.8.4 均在同章有定义），无口径冲突；「观察延迟覆盖通知发出到等待者恢复」与 def-9.6.1 相符。出口检查三条命令的落点我逐个验盘：bench/runtime-lab/Cargo.toml 存在、tools/run_runtime_benchmarks.sh 存在，且脚本第 6 行 `if [[ -e \"$out/environment.txt\" ]] … exit 1` 与正文「脚本会拒绝覆盖已有 environment.txt 的归档目录」逐字吻合。「21 次观察」与 9.6 一致；state.rs 四处位置+一条注释的要求对应 runtime-code.json 登记文件。「八个问题」均为对已核过机制的回述，无新断言。章末五页 ch09_summary/recall/exercises/exam/checklist.md 文件全部存在，链接可达。",
+   "evidence": [
+    "tools/run_runtime_benchmarks.sh:6 environment.txt 拒绝覆盖",
+    "bench/runtime-lab/Cargo.toml 存在",
+    "src/part3/ch09_summary|recall|exercises|exam|checklist.md 存在"
+   ]
+  }
+ ],
+ "sources": [],
+ "findings": [
+  {
+   "anchor": "sec-cpp-rust.3.9.9",
+   "severity": "P2",
+   "description": "9.9 本地母本表的「标题」列两处不是母本/台账原标题而是概括改写：S11/16.2 行写「消息传递与所有权转移」，sources/inventory.json 中 S11-U072 的 title 实为「消息传递」；S08/Item17 行写「并发、锁与状态一致性」，台账 S08-U0022 的 title 实为「第 17 条：对共享状态的并行性保持警惕」。页码、状态、落点、证据四列均与台账一致（390–394、146 起补读155/156/159），仅标题列逐字不符，属导航表可接受的概括但严格讲不是母本原标题。",
+   "evidence": "sources/inventory.json S11-U072 title=「消息传递」；S08-U0022 title=「第 17 条：对共享状态的并行性保持警惕」，与 src/part3/ch09.md:1516-1517 两行标题列比对"
+  }
+ ]
+}

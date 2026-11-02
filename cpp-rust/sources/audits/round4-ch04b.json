@@ -1,0 +1,95 @@
+{
+  "reviewer": "r4-ch04b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动读完 src/part1/ch04.md:1604-2279（4.7 至 4.11 全部正文与每个定义、例题、解答、思考、判定流程、小结、常见错误、即时自测框），再回 bench/compiler-lab 的 src/lib.rs、src/bin/、probes/、run.sh、Cargo.toml、results/stable-02/、results/extra-02/ 与 sources/ 台账逐条对核，没有采信任何先前审计结论。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对了本节所有关于构建配置与归档的断言：Cargo.toml 确有 codegen-units=1、lto=false、debug=1、panic=\"unwind\"、edition=2024，与 4.7.5 末段和 4.9.3 一致；extra-02 目录确有 stages-o0.mir/.ll/.s 与 stages-o3.mir/.ll/.s 六件产物，两份探针都真的执行过（stages-o0-run.txt、stages-o3-run.txt），probes/stages.rs:20 就是 assert_eq!(count.get(), 2)，所以「对应程序都实际运行了 count=2 的断言」成立；4.7.3 与 4.7.6 反复声明的缺口（无增量编译加速表、无 self-profile、无逐 pass 转储）与归档实际相符，stable-02/extra-02 里确实没有这类文件。发现一处问题：例 4.7.2 的『允许的写法』把差异方向说成 O3 看不到 drop、O0 还能看到，而我按行号数了实际归档，方向是反的（O3 的 drop 语句更多），详见 findings。没核的：4.7.1/4.7.2/4.7.4 关于 rustc 开发指南机制的表述（查询四件套、依赖登记、Steal 语义）属文档性陈述，我只在 sources/contributions/compiler-web.json 与 .work 落盘的 thir.html 里确认了出处存在，未逐字比对指南原句；跨章引用（[@def-1.1.3]、[@def-4.1.1]、[@def-1.7.3]、[@ex-1.8.1]）的落点正确性留给机械层。",
+      "evidence": [
+        "bench/compiler-lab/Cargo.toml:11-14（codegen-units = 1 / lto = false / debug = 1 / panic = \"unwind\"）",
+        "ls bench/compiler-lab/results/extra-02/ → stages-o0.mir、stages-o0.ll、stages-o0.s、stages-o3.mir、stages-o3.ll、stages-o3.s 六件俱在，另有 stages-o0-run.txt、stages-o3-run.txt",
+        "bench/compiler-lab/probes/stages.rs:20 → assert_eq!(count.get(), 2);",
+        "grep 'drop(' extra-02/stages-o0.mir → 4 条语句（:73 :86 :94 :98）；stages-o3.mir → 6 条（:90 :99 :107 :132 :143 :148），两文件不相同但 O3 未删除任何 drop 分支"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "这一节的代码与数字我逐条复算了。内嵌的 measure 清单与 bench/compiler-lab/src/lib.rs:6-59 逐字相同（含 500ms 预热循环 :19、10_000_000.0/ns 批次目标 :24、for round in 0..21 :28、批末 checksum 断言 :39、N-1 标准差 :51、values[10]/values[20] :56），所以 4.8.1 的『至少预热 500ms』『约 10ms 批次』『21 批』『保留原始批次』四条全部落地。分位数我按 CSV 独立重算：move_cost.csv 里 borrow/clone 各 21 个原始点、units=16384、repeats 9941/2963，重算 mean 0.059091466 与 0.202739443、p50 0.058639890 与 0.201626642、p99 0.063337811 与 0.225701849，与 summary 行完全一致；ex-4.8.2 的下标推导 ceil(21×0.50)=11→下标 10、ceil(21×0.99)=21→下标 20 正确，正文引用的『borrow 的批 p99 是 0.063338』是真值 0.063337811 的六位四舍五入；ex-4.8.3 的 0.202739 对 0.059091 复算比得 3.4310，故『3.43 倍』成立。产物断言也核了：stable-02/codegen 的 .s 里 cloned_sum 函数体（标签在第 3209 行）含 1 处 _memcpy、1 处 __rust_alloc、1 处 __rust_dealloc，.ll 同函数含 1 处 llvm.memcpy，因此『allocator 调用、llvm.memcpy 与 deallocator 留存』不是空话。4.8.4 的隔离断言与 run.sh 相符：:29 while ! mkdir \"$LOCK\"、:30 trap 'rmdir \"$LOCK\"' EXIT、:31 与 :33 每个入口前 ps -axo 过滤 cargo|rustc，且 build-processes-before.txt 为 0 字节，确实『没有发现活动构建进程』。4.8.5 的采样附着对象经 sample-command.txt/macos-sample.txt 证实为 dispatch_grain（pid 31117）。4.8.6 五条命令与 run.sh、extra.py 的实际参数约定相符（run.sh:5 直接 mkdir \"$OUT\"，目录已存在即失败，故『不会覆盖既有归档』成立）。发现两处小问题：例 4.8.3 与判定流程第①步称期望值是『独立算出』，实际 move_cost.rs:5 的参考式与 borrowed_sum 的函数体（lib.rs:63）是同一个 fold，见 findings。没核的：我没有重跑 run.sh 与 extra.py（不新建归档、不改仓库），所以『六个入口均已运行并校验输出』只由归档里六个 CSV 的存在与 tests.txt 推定，不是我复现得到的；4.8.2 提到的逐元素与边界长度测试我只在 tests/contracts.rs 的文件层面看到 8 个 #[test]，未逐个读测试体确认覆盖空输入与非整块尾部。",
+      "evidence": [
+        "diff 语义核对：src/part1/ch04.md:1874-1929 ≡ bench/compiler-lab/src/lib.rs:6-59",
+        "python3 重算 stable-02/move_cost.csv：borrow mean=0.059091466 p99=0.063337811，clone mean=0.202739443，比值 0.202739443/0.059091466=3.4310",
+        "grep '^summary' results/stable-02/move_cost.csv results/stable-02/drop_paths.csv → 四行与重算值逐位相同（drop: implicit 2.372295921 / option 2.587951301，各 21 点）",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3209 起 cloned_sum 体内 _memcpy×1、__rust_alloc×1、__rust_dealloc×1；同哈希 .ll 第 1970 行起 llvm.memcpy×1",
+        "bench/compiler-lab/run.sh:29-33 与 :5；results/stable-02/build-processes-before.txt 大小 0 字节；results/stable-02/tests.txt → running 8 tests / 8 passed",
+        "results/stable-02/sample-command.txt + macos-sample.txt 头部 → 'Analysis of sampling dispatch_grain (pid 31117)'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核了三处可对核断言。入口清单属实：src/bin/ 下确有六个源文件（move_cost、drop_paths、dispatch_grain、dispatch_visibility、vectorize、ctfe_table），probes/rejected/ 下确有五个被拒输入加 expected.tsv，run.sh:23 与 :32 的循环正是这六个名字，故 4.9.1 的『六个入口』『五个被拒绝输入』与 4.8 的『六张表』彼此自洽。台账断言部分属实但有一个洞：4.9.1 称两份当前开发指南（THIR、Drop elaboration）都已下载并阅读全文、SHA-256 写入 compiler-web.json，我在 sources/contributions/compiler-web.json 确实看到两条记录与两个 sha256，但按 evidence 字段回磁盘时只有 .work/cpp-rust-sources/compiler/thir.html 存在（31476 字节），同目录 drop-elaboration.html 不存在，见 findings。4.9.2 表格的『本机产物已足够』三行经产物文件核实（--emit=mir/llvm-ir/asm 的归档在 stable-02/codegen，O0/O3 两组在 extra-02），后三行『无可用 nightly / 无逐 pass dump / 无 self-profile』与归档实际相符——stable-02 与 extra-02 里确实没有 self-profile 或逐 pass 文件。4.9.3 的 edition 2024 经 Cargo.toml:4 核实。4.9.4 的『S09 全书 368 页』经 sources/inventory.json 的 pdf_pages=368 核实。没核的：四条延伸阅读里 Effective Rust、参考手册与四个 std 文档链接我只确认链接与文件层级存在，未逐字比对母本原句；『母本里的 HAIR 是较早的历史称呼，本章按当前指南纠正』这句要去 S09 PDF 里翻原文，本轮没做，属未被独立证实的历史称呼判断。",
+      "evidence": [
+        "ls bench/compiler-lab/src/bin/ → 6 个文件；ls probes/rejected/ → alias_conflict.rs、const_bounds.rs、dyn_generic.rs、maybe_uninitialized.rs、use_after_move.rs + expected.tsv",
+        "sources/contributions/compiler-web.json:10-14 → compiler-web-drop-elaboration，sha256=1b8044c6…，evidence=.work/cpp-rust-sources/compiler/drop-elaboration.html",
+        "ls -la .work/cpp-rust-sources/compiler/ → 只有 thir.html（31476 字节），drop-elaboration.html 缺失",
+        "sources/inventory.json → {\"id\": \"S09\", \"pdf_pages\": 368}",
+        "bench/compiler-lab/Cargo.toml:4 → edition = \"2024\""
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这条索引表的两个统计量我都自己算了：正文里 ::: errata 盒共 8 个，条目行（形如『E-x **』）共 56 条，与『八份清单共 56 条』一致；表内逐行字母跨度 4.1 E-a…E-f、4.2 E-a…E-f、4.3 E-a…E-h、4.4 E-a…E-h、4.5 E-a…E-g、4.6 E-a…E-g、4.7 E-a…E-g、4.8 E-a…E-g 相加为 6+6+8+8+7+7+7+7=56，两处口径吻合，无内部矛盾。表列的八节锚点写法与文件里的 {#sec-cpp-rust.1.4.N} 逐一存在（我用 grep 取过全章标题行）。四条跨节错误单独核了三条：第 2 条『可用 nightly、逐 pass 转储、self-profile、PMU 事件、跨尺寸分布本章都没有』与归档实况相符（extra-01 只有一个 nightly.txt，stable-02 无 self-profile/sample 进正式统计、无 PMU 计数）；第 4 条把 CGU/LTO/panic/RUSTFLAGS/工具链提交列为构建条件，与 Cargo.toml 和 stable-02/environment.txt 的记录方式相符。第 1、3 条是方法论陈述，指向 4.5.1、4.2.2、4.6.3 等区间外小节，未逐条回看。",
+      "evidence": [
+        "python3 统计 src/part1/ch04.md：'::: errata' 计 8，'^E-[a-z] \\\\*\\\\*' 计 56；索引行字母跨度求和 6+6+8+8+7+7+7+7=56",
+        "grep -c 'id=\"sec-cpp-rust.1.4' src/part1/ch04.md → 4.1 至 4.11 锚点齐备",
+        "ls bench/compiler-lab/results/extra-01/ → 仅 nightly.txt；stable-02/ 内无 self-profile 类文件"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把小结与章末件里所有可数的断言拿去对账，四条都对得上：『八项运行时契约测试通过』—tests.txt 里 running 8 tests / 8 passed（其余九个目标 0 tests）；『五项编译拒绝输入返回预期错误代码』—probes/rejected/ 五个 .rs 与 extra-02/ 五份 .txt 一一对应，且 4.9.1 说 extra.py『不执行被拒绝输入』与归档里只有编译输出相符；『六个正式入口均已运行并校验输出』—src/bin/ 六个入口对应 stable-02/ 六个 CSV；『每个 case 保留 21 个正式原始点』—我按行重数了 move_cost.csv 与 drop_paths.csv，四个 case 各 21 行。速查表 14 行、导航表 5 页、『五条命令』（4.8.6 代码块实际 5 行命令）计数无误；『不依赖第三方 crate』经 Cargo.toml 无 dependencies 段与 Cargo.lock 仅含本包核实。小结里没有把构建期成本写进运行期表格，也没有宣布做过 Miri/Loom/TSan/Linux perf，与归档实况一致，属诚实边界。没核的：章末五页（ch04_summary.md、ch04_recall.md、ch04_exercises.md、ch04_exam.md、ch04_checklist.md）本轮未逐页打开读内容，只按本章链接契约推定其存在；『本轮能力边界』中『六个正式入口均已运行并校验输出』我是由归档文件与 CSV 内的 checksum 断言语义推定，不是自己重跑 run.sh 得到的。",
+      "evidence": [
+        "results/stable-02/tests.txt → 'running 8 tests' + 'test result: ok. 8 passed; 0 failed'",
+        "ls results/stable-02/*.csv → ctfe_table、dispatch_grain、dispatch_visibility、drop_paths、move_cost、vectorize 六个；python3 计数每 case 21 个原始点",
+        "ls probes/rejected/*.rs（5 个）与 results/extra-02/{alias_conflict,const_bounds,dyn_generic,maybe_uninitialized,use_after_move}.txt（5 份）",
+        "bench/compiler-lab/Cargo.toml:1-14 → 无 [dependencies] 段，[profile.release] 为 opt-level 3/codegen-units 1/lto false/debug 1/panic unwind"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "severity": "P1",
+      "description": "例 4.7.2（src/part1/ch04.md:1764-1770）把两份点名的归档文件说成『O3 里看不到该 drop、O0 里还能看到』，方向与归档相反，因此给出的『允许的写法』拿去套这两份文件会是假的。我数了两份 MIR 里的 drop 语句：stages-o0.mir 是 4 条（第 73、86、94、98 行），stages-o3.mir 是 6 条（第 90、99、107、132、143、148 行），O3 不但没有删除任何条件析构 drop，反而更多（O3 另有 20 处 StorageDead，O0 为 0）。该题题干还明确写着『stages-o0.mir 与 stages-o3.mir 是同一份探针程序在两个优化等级下的最终 MIR』，所以解答里的示范句不是抽象模板，而是对这组具体产物的事实陈述。同节的证据上限表述（无逐 pass 转储、不能归给单个 pass）本身站得住，故不判 P0：没有编造实测数字，方法学结论也正确，错的是示范用的可观察事实。修法：把示范句改成与归档同向的表述，例如『O0 的最终 MIR 里有 4 条 drop 语句、O3 的最终 MIR 里有 6 条，本轮没有逐 pass 转储，无法指认是哪个转换改动它们』，或改用真正呈现某条 drop 消失的产物对，并在正文点明两组文件行数。",
+      "evidence": "grep -n 'drop(' bench/compiler-lab/results/extra-02/stages-o0.mir → 4 处（73/86/94/98）；stages-o3.mir → 6 处（90/99/107/132/143/148）；python3 统计 StorageDead：o0=0、o3=20；正文见 src/part1/ch04.md:1764-1770 与 1748"
+      ,
+      "notes": "若作者认为示范句只是『句式』而非事实断言，仍建议改写，因为同一节 4.7.6 与 4.9.2 的表格都把这两份文件当作可复核产物点名给读者。"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "severity": "P1",
+      "description": "正文称两份当前 rustc 开发指南（THIR、Drop elaboration）『已实际下载并阅读全文』，并把读者指向 compiler-web.json；台账里两条记录与两个 SHA-256 都在，但按各自的 evidence 字段回磁盘只落地一份：.work/cpp-rust-sources/compiler/thir.html 存在（31476 字节），同目录的 drop-elaboration.html 不存在。于是『两份都已下载并阅读全文』这一条有一半无法在磁盘上复核，而 4.9.2、4.4 与本章多处（含 4.9.1 说本章据此纠正母本 HAIR 的历史上下文）又把 Drop elaboration 当作已核实来源在用。SHA-256 存在不等于文件存在：我无法用留存的哈希复算（原件已不在）。判 P1 而非 P0：不是编造测量数字，URL/哈希/核读范围在台账里齐备，属证据文件缺失导致的关键出处落不了地。修法二选一：重新抓取并落盘 drop-elaboration.html 后再声明『两份都已读』，或把正文改成『THIR 有本机落盘副本可复核，Drop elaboration 只有台账哈希与 URL』。",
+      "evidence": "sources/contributions/compiler-web.json:10-14 → drop-elaboration 记录 evidence=.work/cpp-rust-sources/compiler/drop-elaboration.html；ls -la .work/cpp-rust-sources/compiler/ → 仅 thir.html；同一 evidence 路径亦见于 sources/web.json:151"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "severity": "P2",
+      "description": "『期望值是独立算出的』这个说法被用得太满。例 4.8.3 解答第一步（src/part1/ch04.md:2086）称两个 case 都返回『同一份独立算出的 expected』，判定流程第①步（:2094）也要求『期望值是否独立算出』。实际 move_cost.rs:5 的参考值是 input.iter().copied().fold(0, u64::wrapping_add)，而 borrow 内核 lib.rs:62-64 的 borrowed_sum 就是同一个 fold 表达式——对 borrow 这个 case，参考实现与被测实现逐字同形，fold 本身写错时两边一起错、checksum 照样通过。它确实独立于测量路径（不是拿被测函数的返回值当期望值，因而能挡住死代码消除），所以是措辞过强而非事实错误：建议改成『在测量路径之外另行算出』，并补一句『该参考式与 borrowed 内核同形，故本夹具能证明工作未被删掉，不能证明求和语义本身正确』。drop_paths 一侧无此问题（期望值是 Cell 计数 2，见 probes/stages.rs:20 与 lib.rs:72-77 的 DropProbe）。",
+      "evidence": "bench/compiler-lab/src/bin/move_cost.rs:5 → let expected = input.iter().copied().fold(0, u64::wrapping_add); 对照 bench/compiler-lab/src/lib.rs:62-64 → borrowed_sum 同一 fold",
+      "notes": "属教学性表述问题，不影响本章任何数字与结论的方向。"
+    }
+  ]
+}

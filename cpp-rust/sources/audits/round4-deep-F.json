@@ -1,0 +1,38 @@
+{
+  "reviewer": "cold-auditor-r4-F",
+  "kind": "independent",
+  "snapshot_sha256": "736b5dff696e475ff392d4054febefa8c206ec008e26c96bc28fd512419d8d56",
+  "provenance": "冷启动第4轮深审：只看仓库现状，核数字落点与未采集声明",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "已逐格回表核对：6.4.4 实测表 zip 0.347104/0.016887/0.346487/0.378854 与 calls 0.723644/0.059594/0.718884/0.833090 与 bench/compiler-lab/results/stable-02/vectorize.csv 第 44、45 行 summary 完全一致（截断到 6 位小数），我用 21 条原始批值独立重算 mean、N-1 标准差、ceil(21×0.99)=21 的 nearest-rank p99，复现同一组数字，p99 确为该 case 最大批值；6.4.8 引用 stable-01 zip 均值 0.311992 也与 stable-01/vectorize.csv 第 44 行 0.311992212 对齐；解答里 0.723644−0.347104=0.376540 ns/元素可重算且明确标注为两组均值之差而非配对差值、不写「显著」。计量边界方面：bench/compiler-lab/src/lib.rs 第 19 行 500ms 预热、第 28 行 21 轮、第 51 行 N-1、第 56 行 values[10]/values[20] 对应表中 p50/p99，断言在第 38 行取完 elapsed 之后，与 6.4.3 表「时间戳后」一致；units=16384、u64 即 128KiB 与 environment.txt 的 M5 Pro 桌面环境相符；asm 里 add_with_calls 循环体逐元素 bl scalar_add、add_slices 出现 q 寄存器向量装载，支撑 6.4.4 的产物说法。6.4.5 与 6.4.9 声明未采集的 DDR 带宽、内存控制器计数、IPC、cache miss、周期数、能耗、请求级尾延迟，同节通篇没有给出任何可被读成实测的具体数值或趋势，run-used.sh 里 sample 附着的是 dispatch_grain 独立一次运行而非正式 vectorize 计时，目录锁为 mkdir 独占锁，声明与脚本一致。本节引用全为书内 [@def-1.x]/[@def-6.x] 交叉锚点，无外部教材或论文常量冒充本机结论。单位全程 ns/元素，分位数一律写成「批」级，未混用请求级 p99。",
+      "evidence": "src/part2/ch06.md:717-720,734-736,788; bench/compiler-lab/results/stable-02/vectorize.csv:44-45; bench/compiler-lab/results/stable-01/vectorize.csv:44; bench/compiler-lab/src/lib.rs:19,28,38,51,56; bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3960; bench/compiler-lab/results/stable-02/run-used.sh"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "汇总层能对上：11.6.3 表 Mutex 72.861686/2.683101/72.586060/78.983948 与 ArrayQueue 40.647478/8.023660/40.676117/53.237915 逐字等于 bench/systems-lab/results/run-01/queue.txt 末两行 summary，我按 raw 行 elapsed_ns/65536 重算 21 个批值，mean、N−1 sd、values[10]、values[20] 全部复现；1.79x（=72.861686/40.647478=1.79253）、最快批 25.6ns（round 5=25.574）、最慢批 53.2ns（round 7=53.238=p99）、预热 506.19ms>500ms、n=21、EACH=32768/总 65536、Barrier(4)、容量 1024、ArrayQueue align=128（layout.txt 第 1 行）都有落点，交错顺序 (round+offset)%2 与 lib.rs:32 一致，11.6.2 代码清单与 bench/systems-lab/src/lib.rs:92 起逐行吻合。问题在逐批表：11.6.3 第 1352–1372 行的 21 行 ns/op 中，Mutex 第 12–18 批与 ArrayQueue 第 12–19 批共 15 个数字无法由 queue.txt 任何 raw 行除以 65536 得到，偏差最大 −14.598/+12.306 ns/op，例如第 16 批 Mutex 写 70.732（归档为 78.091）、第 15 批 ArrayQueue 写 36.852（归档为 51.450）、第 18 批写 44.593（归档为 32.287）；我把这 15 个值乘回 65536 得到的整数纳秒在 bench/ 下 7926 个文件里都不存在，说明它们不来自任何一轮归档；这两列自身均值 72.440/40.597 也与本节汇总表 72.861686/40.647478 不同，而 1348 行宣称该表是「全部 21 批正式测量的完整数值记录，验证了实验数据的完全不可变性与分布真实性」、1422 行宣称「证据链完整」，配套的「次高争用批次」「缓存行弹跳增加」归因同样落空。诚实性方面本节没有把批 p99 说成请求级尾延迟（1395 行明确否认），1415 行声明领票原子开销「本节没有单独采集」且未给数；引用全为书内锚点，无外部常量冒充本机值。次要口径瑕疵只记 notes：1343 行列表头写「样本标准差 $s_N$」而归档与 ch01 def-1.5.2 用 N−1 分母（人口 sd 会是 2.618/7.830），同表「批 p50 (ns)」「批 p99 (ns)」丢掉了 /item 分母，1346 行「吞吐提升 79.2%」按公式为 79.25% 且未写明截断规则。",
+      "evidence": "src/part3/ch11.md:1343-1346,1348-1372,1395,1422; bench/systems-lab/results/run-01/queue.txt:2-44; bench/systems-lab/src/lib.rs:9,19,32,44,92; bench/systems-lab/src/bin/queue.rs:2; bench/systems-lab/results/run-01/layout.txt:1; src/part1/ch01.md:910"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "13.6.5 表 12 个格子（none 2.472857/0.094581/2.448330/2.798125、batch 2.470040/0.079995/2.448545/2.685205、each 32.832639/0.608977/32.762500/34.306250）与 bench/evidence-lab/results/run-01/instrumentation.txt 末三行 summary 逐字一致，我从 63 条 raw 行独立重算 mean、N−1 sd、nearest-rank p50/p99 全部复现，p99 分别等于各模式最大批值；派生量可重算且公式写在节内：32.832639/2.472857=13.2772 对应「约 13.3 倍」，32.832639−2.472857=30.359782，2.472857−2.470040=0.002817 且 0.002817/2.472857=0.1139% 对应「约 0.11%」，解答 3 还把它与两列批次标准差 0.094581/0.079995 比大小后判为噪声。业务 checksum 188478885453998054、STEPS=200_000、none 计数 0、batch 与 each 计数 200000、Event size=16/align=8 都能在 instrumentation.txt 首行与 layout 行以及 bin/instrumentation.rs 的断言里原样找到，与 13.2 第 355 行的 16/8 布局表一致；报告口径由 lib.rs:111 的 report（N−1、nearest_rank）产生，13.6.3 代码清单与 bin/instrumentation.rs 逐行相同，13.6.2 清单与 lib.rs:45 起吻合且已在 1185 行自行声明 mix 调用前缀差异。未采集项处理干净：1266 行「各成分的分项耗时，本节没有采集」、1252 行「本节没有做这件事」、1292 行「没有采集分项耗时」，同节都没有为时钟/屏障/计数拆出具体纳秒，只报总体差异；1189 行 def-13.6.2 把单位钉为 ns/聚合 step 且强调「不是单步延迟的分位数」，1258 行表头写「批均值p50/批均值p99」，没有把批均值分位数冒充请求级 p99；13.6.7 提到的两个测试名在 lib.rs:130/159 存在且在 test-default.txt、test-checked.txt 中记录为 ok。引用全为书内锚点，无外部材料常量冒充本机结论。",
+      "evidence": "src/part4/ch13.md:1122,1189,1258-1266,1280,1322,1353; bench/evidence-lab/results/run-01/instrumentation.txt:1-64,65-68; bench/evidence-lab/src/lib.rs:45-63,111-124,130,159; bench/evidence-lab/src/bin/instrumentation.rs:1-25; bench/evidence-lab/results/run-01/test-default.txt:6,8; src/part4/ch13.md:355"
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P0",
+      "description": "11.6.3 的 21 行逐批表被宣称为 run-01/queue.txt「全部 21 批正式测量的完整数值记录，验证了实验数据的完全不可变性与分布真实性」，但 Mutex 第 12–18 批与 ArrayQueue 第 12–19 批共 15 个 ns/op 数字无法由该归档任何 raw 行除以 units=65536 得到（偏差最大 −14.598/+12.306 ns/op：第 16 批 Mutex 写 70.732 而归档为 78.091，第 15 批 ArrayQueue 写 36.852 而归档为 51.450，第 18 批写 44.593 而归档为 32.287），把这些值乘回 65536 得到的整数纳秒在 bench/ 全部文件中均不存在；该两列的均值 72.440/40.597 还与同一小节汇总表 72.861686/40.647478 自相矛盾。逐批数字与「完整记录/不可变性/证据链完整」的来源声明一并构成伪造实测数据，并使「次高争用批次」「缓存行弹跳增加」等按批次归因失去落点。汇总表的四项统计量本身可复核，问题只在逐批表。",
+      "evidence": "src/part3/ch11.md:1348-1372 对照 bench/systems-lab/results/run-01/queue.txt 的 raw,mutex,12-18 与 raw,array_queue,12-19 各行"
+    }
+  ]
+}

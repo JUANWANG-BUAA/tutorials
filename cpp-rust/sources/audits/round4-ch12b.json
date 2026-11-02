@@ -1,0 +1,78 @@
+{
+  "reviewer": "r4-ch12b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动完整通读 src/part3/ch12.md 的 12.7–12.11 全部正文与语义盒；用一条 /usr/bin/python3 脚本从 bench/systems-lab/results/run-01/simd.txt 与 views.txt 逐行复算每批 ns/单位、批均值、样本标准差(N-1)、nearest-rank p50/p99(ceil(21×p))、逐批比值与轮次归属；对照 bench/systems-lab/src/lib.rs:279-320 与 src/bin/views.rs、simd.rs 源码、tools/list_uncollected_claims.py 输出、sources/web.json 与 src/appendix/coverage.md 台账；未修改任何其他文件。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "逐条复算 12.7：views.txt 63 条记录中 21 批×2 模式，每批 ns÷4096 与 12.7.4 的 21 行逐批表全部 21 行、含逐批比值列在内按 3/2 位舍入后完全一致（脚本输出 21-row table all match: True）；summary 行 owned 30.635765/0.379754/30.517578/31.351562、borrowed 8.510533/0.191487/8.433105/9.155273 与我从原始行重算的 mean/sd/p50/p99 各位一致（差<5e-7，为舍入位）；[@def-12.7.3] 的 nearest-rank 定义（第 ceil(21×p) 个、21 样本 p99=最大值）与数值一致：owned p50=第 11 位=批 10 的 30.517578、p99=批 9 最大值 ✓；「比值落在 3.31 到 3.72」「最慢批第 9(31.352)、最快批第 20(30.202)、借用最慢第 8(9.155) 且不同批」「均值差 22.125232、降低 72.2%、3.60 倍(3.5997)」「相对波动 1.24%/2.25%」「(round+offset)%2 轮换（views.txt 批 0 owned→borrowed、批 1 反序）」「每批校验和恒等 8355840」全部复算成立；代码断言核到源码：view_batch/consume_frame(next_frame(rest,4096)、black_box、#[inline(never)]、step_by(64)、assert!(rest.is_empty)) 与 lib.rs:301-320 逐字一致，views.rs 驱动与正文引用一致，source-sha256.txt 记录了两文件哈希；「分配 4096/0 次」是源码结构论断而非计时，正文如实标注；本节全部「没有采集」句与 list_uncollected_claims.py 对照无磁盘矛盾。两处表述问题见 findings（章首「万级」口径、4.0 MB 单位歧义），不影响任何数值结论。",
+      "evidence": [
+        "bench/systems-lab/results/run-01/views.txt:1-67（21×2 raw + 2 summary，独立复算 mean/sd/p50/p99 全部吻合）",
+        "复算输出：ratio min/max = 3.3067/3.7195；diff=22.125232；reduction=72.220%；ratio of means=3.5997",
+        "bench/systems-lab/src/lib.rs:279-320（encode_frames/consume_frame step_by(64)/view_batch）",
+        "bench/systems-lab/src/bin/views.rs:1-11 与正文 12.7.2 驱动代码一致",
+        "tools/list_uncollected_claims.py 输出 ch12.md:1443/1444/1505/1516-1520/1584 均「✓ 没有匹配到同类产物」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "12.8 全节只做机制与签名论断，preview 明确「没有采集 io_uring 的任何延迟或吞吐数字」，12.8.3、判定流程 5、E-f、自测第 3 题的「没有采集」句与 list_uncollected_claims.py（ch12.md:1601/1711/1874/1945/1968）对照磁盘均无矛盾产物。核对内容：SQE 字段顺序（opcode/flags/ioprio/fd/off|addr2/addr|splice_off_in/len/…/user_data）与 CQE 16 字节布局符合 io_uring(7) 公开结构；IORING_OFF_SQ_RING/CQ_RING 共享环、tail+ring_mask+RELEASE 序、SQPOLL/iou-sqp、sq_thread_idle 1000ms 为「常见取值」措辞、IORING_ENTER_SQ_WAKEUP 唤醒路径均与手册一致；tokio::io::AsyncRead::poll_read 签名与现行 API 一致；monoio/glommio 拥有型签名、泄漏池+Drop 守卫为示例代码且已自标「辅助占位函数」，未被冒充实测；12.8.7 例 12.8.2 明确标注「本书没有在本机采集这组对照」，只给量级关系；easy-fs 的 BLOCK_SZ=512、modified 脏标记、扇区 512/ext4 默认块 4096 的说法可落到 sources/web.json 归档的 rCore 2fs-implementation 页（其 review_scope 逐字覆盖这四项）。未核项：Linux 内核源码级逐字段比对 io_uring_sqe（以手册结构为据，正文该 C 片段本身也标注为节选 ...）。",
+      "evidence": [
+        "src/part3/ch12.md:1601,1711,1874,1906,1945（无实测声明）× tools/list_uncollected_claims.py ch12 全部 ✓",
+        "sources/web.json:349-352（ab93f730… 2fs-implementation，review_scope 含 BlockCache 512/modified/扇区与块）",
+        "src/part3/ch12.md:1718（poll_read 签名）与 tokio::io::AsyncRead 现行定义一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "来源表逐行落地：四个在线 SHA 前缀 18becca8/1ed71f55/55ff0cac/ab93f730 都在 sources/web.json 有完整条目（18becca8 同时以两处出现）；rCore 第 9 章两页与 3using-easy-fs-in-kernel 在 web.json 有 url+archive 记录；S11「13.4 性能对比：循环VS迭代器 PDF 314–315」与 S08「第20条末 PDF 174–175」在 src/appendix/coverage.md:587-588 有对应 SYS-S11-ITER→12.2、SYS-S08-OPT→12.7 的核读映射行。本节未摘抄母本原文（自述「正文只做自主分析与实测，不摘抄母本原文」），故无逐字引文比对项；各行的「本书论据映射」所指正文小节（12.2/12.3/12.4/12.7/12.8）均实际存在且主题吻合。未核项：PDF 物理页码 314–315/174–175 需原书扫描件，本次按台账一致性判定。",
+      "evidence": [
+        "sources/web.json:285,293,309,349,605（SHA 全匹配）；sources/web.json:462-474,525-528（rCore ch9/ch6 归档）",
+        "src/appendix/coverage.md:587-588（S11/S08 映射到 ch12 锚点）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "跨节错误索引 12 条逐条与源节对照：7.73/7.65 倍、1.1% 无区间不分方向、p99=21 样本最大值、target_feature 强制探测、limit 契约、to_vec 分配账单、浮点结合律、尾部清理、对齐 SIGBUS、SQPOLL 占核、借用视图受 'a 约束——均与 12.2/12.3/12.4/12.5/12.6/12.7/12.8 正文及各自 errata 一致，无引入新数字、无与复算值冲突（涉及数字处 0.069184/0.069965/3.60 已按 simd.txt/views.txt 独立复算为真）。「io_uring 并非任何场景超越 epoll」「AVX-512 降频」为定性判断且明示按负载形态测，未冒充实测。[@def]/[@ex] 引用锚点均指向本章已定义对象。",
+      "evidence": [
+        "复算：0.535004/0.069184=7.733、0.535004/0.069965=7.647、差 0.000781=1.12%（simd.txt 原始行）",
+        "src/part3/ch12.md:1999-2023 与 12.2–12.8 各节 errata 逐条比对无冲突"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结七条、速查九行全部与复算值和源节一致：0.069184/0.069965、7.73 倍、72.2% 耗时下降、p50/p99 为批均值排序位、加速比定义；出口检查三条命令对应实际存在的 bin（src/bin/simd.rs、src/bin/views.rs，source-sha256.txt:1,4 在录）；「汇编中 ldr q1,[x10],#16 与 mla.4s」与 12.5.2 引用的 codegen 片段一致；「本章没有在本机 macOS 上伪造 Linux 内核测试」与 12.8 全节无实测声明吻合。锚点篇号 sec-cpp-rust.3.12.* 符合 part_of(12)=3 的规则。未核项：五页章末件本身不在本区间，仅确认链接文件名存在。",
+      "evidence": [
+        "src/part3/ch12.md:2055-2067 × bench/systems-lab/results/run-01/source-sha256.txt:1,4",
+        "复算：72.220269%→「72.2%」、3.5997→「3.60 倍」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "severity": "P2",
+      "description": "章首问题主线（src/part3/ch12.md:12）把 benchmark 二描述为「万级消息流分帧解析」，但 12.7.1 实测夹具每批只有 4096 帧（数千级），12.7 正文自己通篇写「4096 帧」；「万级」是量级口径不一致的表述，建议改为「数千级帧流」或在章首写明每批 4096 帧。",
+      "evidence": "src/part3/ch12.md:12 vs src/part3/ch12.md:1349-1354；bench/systems-lab/results/run-01/views.txt units=4096"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "severity": "P2",
+      "description": "12.7.1「合计 4096 × 1028 = 4 210 688 字节，约 4.0 MB」：4 210 688 B 按 SI 是 4.21 MB，按 2^20 才是 4.02 MiB；「约 4.0」只有把 MB 当 MiB 读才成立，单位标注有歧义，建议写成「约 4.0 MiB（4.21 MB）」。数值本身（4 210 688）复算正确。",
+      "evidence": "复算：4096×1028=4210688；4210688/2^20=4.0156 MiB；4210688/10^6=4.2107 MB（src/part3/ch12.md:1349）"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "reviewer": "r4b-ch15a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动完整通读 src/part4/ch15.md 15.1–15.6 全部正文与语义盒（定义、例题与解答、思考、判定流程、小结、常见错误、即时自测），并逐条回查 projects/agent-runtime 的 lib.rs、main.rs、bin/runtime-bench.rs、scripts/measure.sh 与 evidence/run-04 归档（用 python 从 admission.csv 原始行复算统计量）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了全部可对代码的断言：两种注册入口与请求能力（helper 四行为 / fixed 只收 Input::Fixed / 无 shell 入口）与参数预算逐条对上 lib.rs 的实现；CLI 退出码 0/1/2 与 main.rs 一致。空环境、cwd=/、stdin null 的边界描述与后续各节自洽。例题、思考、判定流程与即时自测均读完，未发现与代码相反的事实；15.1.4『不经过 shell』被明确限定为入口性质而非系统性质，没有越界。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs:107 Echo≤4096 且 !s.contains('\\0')",
+        "projects/agent-runtime/src/lib.rs:110 Logs≤16*1024*1024；:113 Sleep≤60_000；:116 Fail 且 *code!=0（u8 见 :48）",
+        "projects/agent-runtime/src/lib.rs:280 timeout.is_zero()||>from_secs(60) 返回 InvalidInput；:80 argv≤32 项且每项≤4096",
+        "projects/agent-runtime/src/main.rs:76-80 SUCCESS/ExitCode::from(1)/from(2)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "例题 15.2.1 的算术独立复算通过：总许可 Q+C=20、8 项均在预算内、C=4 限同时子进程数、8×2×8192=131072 前缀上界、每项实读 2×262144=524288 字节，与正文一致；默认值 Q=16/C=4/R=8192/drain_grace=1s 直接对 Config::default() 核过。准入顺序（先许可后建 watch/oneshot）与 try_submit 实现顺序一致，拒绝路径停在第三步的说法与之相符。第 Q+1 次 Full 的解答区分了持有上界与成功数下界，口径正确。S11 母本引文属母本层职责，本层未逐页回查。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs:141-144（Default：queue 16 / concurrency 4 / retain 8192 / drain_grace 1s）",
+        "projects/agent-runtime/src/lib.rs:280（try_submit 先检查 timeout、再尝试总许可，先于消息构造）",
+        "复算：8×2×8192=131072；16+4=20；8 项 524288 字节/项"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "正文声称的 Ticket 语义（cancel 与 Drop 都只 send_replace(true)、wait 只读结果、不暴露 JoinHandle）与源码片段逐行一致；许可随 Job 的 _admission 字段在工作 Future 结束才析构的说法对上了实现。状态机表、例题 15.3.1（drop 后许可仍占用、join 计数不减少、oneshot 无接收者按正常放弃处理）与 15.2 的口径无矛盾。排队取消/timeout 不承诺硬实时回收、库不伪造 reaped=true 的边界表述诚实。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs Ticket::cancel/wait 与 impl Drop for Ticket：两处均只 self.cancel.send_replace(true)（正文 src/part4/ch15.md:620-634 引用的代码段与之逐行一致）",
+        "grep 复核：_admission 为 Job 持有的 OwnedSemaphorePermit 字段（projects/agent-runtime/src/lib.rs）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两个 8192 字节固定读缓冲、单 Future 同时 select wait/取消/deadline/双路 read、wait 成功不替代两路 EOF、drain_grace 到期记 error 不伪造 EOF——均与 lib.rs 对应。run-04 归档里 build-process-snapshot.txt 为 0 字节，与『快照未观察到其他构建进程』一致。pipe2/O_CLOEXEC 原子捕获模块与 dyld 窗口夹具的叙述与 process_macos.rs、diagnostics/pipe_gate.c 存在性相符；15.4.9 关于 Rust 1.99.0 stdlib 先 pipe 后 fcntl 的窗口描述属标准库内部实现，本层按仓库内证据（工具链版本、修复模块、8+8 失败/通过目录）核到机制层，未反汇编标准库；『SDK 标 pipe2 自 macOS 27.0 起可用』一条无法从仓库内核验，仅核到本机 ProductVersion 27.0.1。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs:483-484 let mut out_buf/err_buf = [0u8; 8192]",
+        "projects/agent-runtime/evidence/run-04/build-process-snapshot.txt 0 字节（wc -c）",
+        "projects/agent-runtime/evidence/run-04/environment.txt:1,7 uname Darwin 27.0.0 / ProductVersion 27.0.1",
+        "projects/agent-runtime/diagnostics/pipe_gate.c:37,42 gated_pipe2 interpose 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核 130 KiB 口径：15.5.1 表 10 行逐行与 run-04/layout.csv 完全一致（含 ToolResult 224、Ticket 32、Log 72、Stage 8/4）；rustc 1.99.0 + aarch64-apple-darwin 对 environment.txt 核实。例题 15.5.1 复算：8×224=1792、8×32=256、8×2×8192=131072，合计 133120 字节；133120/1024=130 恰为 130 KiB，按 1000 进制为 133.12 kB——『=130 KiB（按 1000 进制读才是 133 kB）』两个口径都成立且与 ex-15.2.1 的 131072 前缀口径自洽，未把句柄表冒充 RSS。代码生成断言抽查命中：try_submit 在 .ll 中确为 sret([32 x i8])，.s 中 LBB147_2 存在且有 mov w1,#16777216（=0x1000000，macOS O_CLOEXEC），ldapr 存在，逐字节 ldrb/eor/mul 循环存在。IPC/cache miss 拒答的表述与未采集事实一致。",
+      "evidence": [
+        "复算：1792+256+131072=133120；133120=130×1024=133.12×1000",
+        "projects/agent-runtime/evidence/run-04/layout.csv 全 10 行与正文表一致",
+        "run-04/native/agent_runtime.ll:17290 sret([32 x i8]) try_submit；agent_runtime.s:36002 mov w1,#16777216；:13 ldapr",
+        "run-04/environment.txt:3 rustc 1.99.0, host aarch64-apple-darwin"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核 15.6.7 测量锁与 measure.sh 真实行为：当前脚本与 run-04 source-snapshot 副本逐字节相同（diff 为空）；measure.sh:3-4 root=项目上三层（projects/agent-runtime→tutorials，即仓库上一层），:44 锁为 $root/.work/cpp-rust-agents/measure.lock，:45 取锁 while ! mkdir; do sleep 1; done 确无等待上限、无陈旧锁恢复，:46 仅 EXIT trap rmdir——正文『无上限忙等、锁在项目上三层、残留锁会静默挂死且该失败路径未采集』三条全部与代码一致；构建/fmt/clippy/test 在取锁之前（:10-13），两个正式入口 admission/lifecycle 在锁内串行（:49-50）。数字复核：从 admission.csv 原始 21 行自算 batch_ns/operations，得 mean 3.662、sd 0.064（N−1）、p50 3.653、p99=最大值 3.886（nearest-rank, ceil(21×0.99)=21），与正文及 statistics.csv 逐位一致；满载证明（Q=1,C=1、60000ms sleep×2、started 观察、排队项 pid=None）对 runtime-bench.rs admission() 核过；366.2µs 批总时长复算一致；ns/拒绝尝试 单位与不外推声明贯穿全节。",
+      "evidence": [
+        "diff projects/agent-runtime/scripts/measure.sh evidence/run-04/source-snapshot/scripts/measure.sh → 空",
+        "measure.sh:4,44,45,46（root 上三层、锁路径、无上限忙等、EXIT rmdir）",
+        "python 复算 run-04/admission.csv：n=21 索引0–20、mean 3.662、sd(N−1) 0.064、p50 3.653、p99 3.886=max、operations 恒 100000、checksum=拒绝计数",
+        "run-04/statistics.csv:2 admission-full,21,ns/rejected-attempt,3.662,0.064,3.653,3.886,100000",
+        "src/bin/runtime-bench.rs admission(): queue 1/concurrency 1, Sleep 60_000, started().is_some(), queued pid==None"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

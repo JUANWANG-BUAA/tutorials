@@ -25,5 +25,33 @@
     "status": "read-mapped",
     "download_evidence": ".work/cpp-rust-sources/foundations/black_box.html",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.3"
+  },
+  {
+    "id": "FOUNDATIONS-VEC-WITH-CAPACITY",
+    "url": "https://doc.rust-lang.org/alloc/vec/struct.Vec.html",
+    "sha256": "940070e15234c2eb7b1429f19ff29f717b43f9ecbefd75d6263889e464782a82",
+    "review_scope": "with_capacity / with_capacity_in / 全部 Safety 段（正文旧写法 alloc/struct.Vec.html 已重定向到这里）",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/vec.html",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3"
+  },
+  {
+    "id": "FOUNDATIONS-MAYBE-UNINIT",
+    "url": "https://doc.rust-lang.org/std/mem/union.MaybeUninit.html",
+    "sha256": "89f7cc8c3c9c2e8336b165f8b4a958f5eaa476b1de30ec959160e17414682518",
+    "review_scope": "Safety 段、Validating初始化、Methods/Implementations 中与未初始化内存相关的条款",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/maybe_uninit.html",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.3"
+  },
+  {
+    "id": "FOUNDATIONS-INSTANT",
+    "url": "https://doc.rust-lang.org/std/time/struct.Instant.html",
+    "sha256": "3552af50af2b12739b5058e7a1d64a6fc80726971cff42544d33f03cba396f15",
+    "review_scope": "Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）",
+    "status": "read-mapped",
+    "download_evidence": ".work/cpp-rust-sources/foundations/instant.html",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.2",
+    "note": "2026-11-01 抓取，docs 版本 1.99.1 (58cf8f9c3 2026-10-13)。页面给出 now() 在各平台用的时钟（Darwin `clock_gettime(CLOCK_UPTIME_RAW)`、UNIX/WASI `CLOCK_MONOTONIC`、Windows `QueryPerformanceCounter`），并声明系统挂起是否计入流逝时间「随平台与 Rust 版本变化」；页面不提供分辨率承诺。"
   }
 ]

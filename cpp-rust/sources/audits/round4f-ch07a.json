@@ -1,0 +1,88 @@
+{
+  "reviewer": "r4f-ch07a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动读 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个语义盒），逐条拿 bench/results/{local,x86_64-linux,aarch64-android} 的原始批次与汇编、bench/src/slot.rs、bench/probes/atomics.rs、bench/Cargo.toml、sources/{web.json,inventory.json} 对核，并用 /usr/bin/python3 自己复算了三张测量表；另跑了 tools/list_uncollected_claims.py --only 7。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 [@def-7.1.1] 的冲突访问/数据竞争三条件与 [@def-7.1.2] 三层证明的内部一致性；例 7.1.1 ③ 的『四线程共享计数约 6 ns』拿 atomic-4.txt 复算，Shared-Relaxed 批均 5.980、Shared-SeqCst 5.952，说『约 6』成立；7.1.3 的原子文档出处在 sources/web.json:29 确实登记为无版本号滚动入口，正文也照此不再写版本号，与该登记一致；『Rust 参考手册 PDF 第 334 页』只在 sources/inventory.json 登记了仓库外 local_path（第 21974 行），我没有读 PDF 原文核对那句，正文把它用作『历史范围』而非现行规范，按未穷尽处理；[@def-7.1.4] 的 rCore 三分类命名在 sources/web.json 与 .work/cpp-rust-sources/systems/5concurrency-problem-rcore.html 里能落到同一组词（互斥/同步/死锁缺陷），但『唤醒丢失归入同步缺陷』这一句我没有逐字回查母本原文。",
+      "evidence": [
+        "src/part2/ch07.md:65-286 全节正文逐段读",
+        "bench/results/local/atomic-4.txt 复算：Shared-Relaxed mean=5.980 sd=0.069（n=21）",
+        "sources/web.json:29 https://doc.rust-lang.org/std/sync/atomic/",
+        "sources/inventory.json:21974 local_path=/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "正向发布链与 7.2.3 反向复用边的四步 sequenced-before / synchronizes-with 推演逐行读，两段 text 证明与 [@def-7.2.2] 的『必须观察到』前提没有互相冲突；7.2.4 表按当前 Rust API 核：load 只接受 Relaxed/Acquire/SeqCst、store 只接受 Relaxed/Release/SeqCst、RMW 五种 Ordering、CAS 失败序限 Relaxed/Acquire/SeqCst，四行的『常见误用』列写的是真不适用组合；例 7.2.1 与思考框的答案口径一致（读到 false 不碰载荷、Relaxed store(false) 断的是 R→N 反向边）。这一节没有测量数字，故无复算项。",
+      "evidence": [
+        "src/part2/ch07.md:324-334 与 362-372 两段事件证明",
+        "src/part2/ch07.md:391-396 合法顺序表（与 std::sync::atomic 方法契约一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把类型表与 slot.rs 对齐：bench/src/slot.rs:8 `pub struct Slot<T>` 两字段、:17 `unsafe impl<T: Send> Sync for Slot<T> {}` 确实只有一处、:19/:24 两个端点结构体各带 `not_sync: PhantomData<Cell<()>>`（:21/:26），全文没有为 Producer/Consumer 派生 Clone，:44 `pub fn split(&mut self) -> (Producer<'_, T>, Consumer<'_, T>)` 与『&mut 借用 + 一次只返回一对』一致，所以 [@def-7.3.4] 的八条义务与 [@ex-7.3.1] 的『加 Clone 要重写证明』是同一份代码的事实。布局数字逐条复算/回档：raw 记录头两行打印 `AtomicU64 size=8 align=8 padded_size=128 padded_align=128`，environment.txt 打 `hw.cachelinesize: 128`，故 7.3.5 与 errata E-g 的 128 字节不是假定 64；『四个 [AtomicU64] 共 32 字节』= 4×8 自算正确。",
+      "evidence": [
+        "bench/src/slot.rs:8,17,19-26,44,48-52",
+        "bench/results/local/atomic-1.txt:2 与 atomic-4.txt:2（size=8 align=8 / padded 128）",
+        "bench/results/local/environment.txt:14 hw.cachelinesize: 128"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "对照表九行逐格与磁盘产物比对，全部命中：本机 bench/results/local/atomics.s 里 load_relaxed=`ldr`、load_acquire=`ldapr`、load_seqcst=`ldar`、store_relaxed=`str`、store_release=`stlr`、store_seqcst=`stlr`、add_relaxed=`ldadd`、add_return_old=`ldadd`、add_seqcst=`ldaddal`；x86_64-linux 里三种 load 全为 `movq (%rdi), %rax`、Relaxed/Release store 皆 `movq`、SeqCst store=`xchgq`、丢弃旧值与 SeqCst 递增皆 `lock addq`、返回旧值为 `lock xaddq`；aarch64-android 走 LL/SC（`ldxr/stxr`、SeqCst 为 `ldaxr/stlxr`），正是 [@def-7.4.2] 说的分岔，表的第三列只描述本机 target 没有串列。探针源码确实 3 load + 3 store + 3 递增共九个 `#[no_mangle] extern \"C\"`，与『完整文件还包括 SeqCst load、三种 store 与三种递增』相符；environment.txt 记 rustc 1.99.0 / LLVM 23.1.1、host aarch64-apple-darwin，与 7.4.4 的版本话句和『交叉只生成不运行』定位一致。",
+      "evidence": [
+        "bench/probes/atomics.rs:4-21（九个探针函数）",
+        "bench/results/local/atomics.s（ldapr / ldar / ldadd / ldaddal / stlr）",
+        "bench/results/x86_64-linux/atomics.s（movq / xchgq / lock addq / lock xaddq）",
+        "bench/results/aarch64-android/atomics.s（ldxr+stxr / ldaxr+stlxr）",
+        "bench/results/local/environment.txt:3-10（rustc 1.99.0 / LLVM 23.1.1）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两张表共 40 个数字全部从原始批次自己复算（不是抄正文）：按 case 分组后 n=21，mean/样本标准差(ddof=1)/nearest-rank p50/p99 与正文逐位相同，例如单线程 Shared-Relaxed 1.703/0.117/1.669/1.959、四线程 Shared-Relaxed 5.980/0.069/5.968/6.118、Adjacent 5.253/1.408/5.854/6.077、Padded 0.418/0.002、Batched 0.070/0.002。顺带证实 [@def-7.5.2] 的『21 个批均值的 nearest-rank p99 就是最大值』：每个 case 算出的 p99 与 max 完全相等。[@def-1.5.2] 与 [@def-1.2.2] 两个跨章锚点在 src/part1/ch01.md:908 与 :361 真实存在，不是悬空引用。环境表逐字段对 environment.txt 与 bench/Cargo.toml：Apple M5 Pro、host aarch64-apple-darwin、Darwin 27.0.0、hw.ncpu 18、hw.memsize 25769803776、缓存行 128、1.99.0/23.1.1、opt-level=3 + codegen-units=1 + lto=false + debug=1、RUSTFLAGS= 空、未设亲和性。命令与参数也对得上（atomic-contention 二进制名在 Cargo.toml 声明，threads/iterations/samples 与 raw 头 `iterations_per_thread=500000 samples=21` 一致；raw 里同一 sample 序号内 case 顺序逐批错位，支持『每批轮换模式顺序』）。A1–A4、[@def-7.5.1] 的单变量口径与例 7.5.1 解答不互相打脸。这一节我只核到数字/环境/命令层，7.5.4 的屏障计时区间与 join 位置、『统计函数在 bench/src/lib.rs』我没有逐行读 atomic_contention.rs 验证；7.5.8 的 black_box 约束同理未逐行核对。",
+      "evidence": [
+        "python3 statistics 复算 bench/results/local/atomic-1.txt / atomic-4.txt（逐位命中正文 40 个数字，p99==max）",
+        "bench/results/local/environment.txt:1-21",
+        "bench/Cargo.toml:11-30（profile.release + bin atomic-contention）",
+        "src/part1/ch01.md:908 {#def-1.5.2}、:361 {#def-1.2.2}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "测量表 8 个数字复算命中：slot mean=112.239 sd=4.588 p50=110.408 p99=127.900，sync_channel mean=3070.823 sd=313.740 p50=3103.542 p99=3608.550，n=21 且 p99 就等于最大批均值，正文与 [@def-1.5.2] 的口径一致；比值 3070.823/112.239=27.36，故『约 27 倍』不是夸大。raw 头 `iterations=5000 samples=21 payload_size=64 payload_align=8` 同时坐实 7.6.1 的容量一/64 字节载荷与 7.6.2 的复现参数。两段节选代码逐行对 bench/src/slot.rs：try_send 在 :59-68（Acquire load→Err 分支、unsafe write、`store(true, Release)` 在 :68）、try_recv 在 :74-81（`assume_init_read` 在 :80、`store(false, Release)` 在 :81），语义与正文四句依据一致；非 Copy 测试确实存在（slot.rs:117 `non_copy_payload_crosses_threads`，两个线程各 0..2000 传 `format!(\"message-{i}\")`），`Tracked(Arc<AtomicUsize>)` 的两次断言（:162 未接收恰好 drop 一次、:174 已接收不在 Slot 里重复 drop）支撑 7.6.5。[@def-7.6.1] 状态机与 7.6.6 表、[@def-7.3.4] 义务清单口径一致，7.6.8 的缺失清单没有和正文别处冲突。我只核到这些：handoff.rs 本体（忙等循环、逐条校验八个元素）与『payload 即 [u64; 8]』我按 size=64/align=8 反推相符，但没有逐行读该源文件。",
+      "evidence": [
+        "python3 复算 bench/results/local/handoff.txt（8 个数字逐位命中；p99==max；比值 27.36）",
+        "bench/src/slot.rs:59-68,74-81,117-143,160-174",
+        "bench/results/local/handoff.txt:1（iterations=5000 samples=21 payload_size=64 payload_align=8）",
+        "tools/list_uncollected_claims.py --only 7：8 条『未采集』声明全部无匹配反例（含 ch07.md:817/843/880/886/1272/1313）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "severity": "P2",
+      "description": "7.1.4 思考框解答把成本层面的理由『原 SeqCst 版本本来就是原子的，改 Relaxed 不会消除 RMW 的仲裁成本』挂到 [@def-7.1.1] 名下，但 [@def-7.1.1] 只定义冲突访问与数据竞争的成立条件，整段没谈 RMW 仲裁成本；这条理由的正文出处其实是 7.4.5『Relaxed RMW 仍然可能使用 lock 前缀，原子性需要的缓存一致性流量并未因 Relaxed 消失』与 [@def-7.4.1]。磁盘产物也支持 7.4 一侧：x86_64-linux/atomics.s 里 add_relaxed 就是 `lock addq`，与 add_seqcst 同一条指令。属引用指向不精确（不是事实错误），建议把该处引用改指 7.4.5 / [@def-7.4.1]。",
+      "evidence": "src/part2/ch07.md:225（引用位置）vs src/part2/ch07.md:157（def-7.1.1 内容）、:796-798（7.4.5 正确出处）；bench/results/x86_64-linux/atomics.s: add_relaxed=`lock addq`、add_seqcst=`lock addq`"
+    }
+  ]
+}

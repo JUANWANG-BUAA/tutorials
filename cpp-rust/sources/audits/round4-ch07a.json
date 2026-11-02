@@ -1,0 +1,109 @@
+{
+  "reviewer": "r4-ch07a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动读完 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个定义/例题/思考/判定流程/小结/常见错误/即时自测盒），用一条脚本抽出全部表格行与含数字句；再回 bench/results/local/{atomic-1,atomic-4,handoff,environment}.txt 与 {local,x86_64-linux,aarch64-android}/atomics.s 逐项复算与比对指令，并逐行读 bench/src/slot.rs、bench/src/bin/{handoff,atomic_contention}.rs、bench/src/lib.rs、bench/Cargo.toml，最后用 tools/list_uncollected_claims.py --only 7 对照磁盘产物核对全部「未采集」句。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "概念性内容（冲突访问三条件、三层证明、四种候选、三种证据）读通且与 7.2/7.4/7.5 的口径一致。静态量自算：载荷 [u64; 8] = 64 字节，与 bench/results/local/handoff.txt 表头 payload_size=64 一致；例 7.1.1 的「四线程共享计数约 6 ns」对归档真值 5.980 ns 成立。「Acquire load 编成 ldapr」这句代码断言我回产物验了（bench/results/local/atomics.s 的 load_acquire 确实只有 ldapr）。PDF 页码断言落地成功：sources/inventory.json 里 S10 文件名就是「Rust 参考手册.pdf」，其 334 页条目 title=内存模型、reason=「原书明确内存模型尚不完备」，所以 7.1.3 的书名与页码是对的。三条 P2 见 findings：定义 7.1.4 排在定义 7.1.2 之前且全书不存在定义 7.1.3；带引号的「内存模型未完全明确」是台账原文「尚不完备」的转述，而同一页在本章 7.9（第 1808 行）被写成《Rust 程序设计语言》的第 334 页，两处书名互斥（错的那处在我的区间外）；rCore 三分类只能落到 sources/web.json 的 URL，没有正文快照可逐字比对。没核：C++20 对应解释与「不含 consume」没有回线上/离线 std 文档逐字比对（盘上无 std 文档快照），只按 std 无 Ordering::Consume 判定为可信转述；定义 7.1.4 的三分类命名未逐字核对 rCore 原文。",
+      "evidence": [
+        "src/part2/ch07.md:76 与 bench/results/local/handoff.txt:1（payload_size=64 payload_align=8）",
+        "bench/results/local/atomic-4.txt 复算 Shared-Relaxed mean=5.980（对应正文「约 6 ns」）",
+        "bench/results/local/atomics.s: load_acquire -> ldapr x0, [x0]",
+        "sources/inventory.json 条目 S10 filename=Rust 参考手册.pdf / S10-U0095 title=内存模型 pdf_page=334；sources/sections.json 的 REF-MM 目标即 part2/ch07.md#sec-cpp-rust.2.7.1",
+        "grep -rn 'def-7.1.3|定义 7.1.3' src/ tools/ 无命中"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节是语义断言，无可复算数字，所以核的是「与代码/规范是否相反」。7.2.2 与 7.2.3 两段事件表（W→S→L→R 与 R→E→A→N）与 bench/src/slot.rs:59-83 的实际操作顺序逐行对得上：生产者 load(Acquire)→write→store(true,Release)，消费者 assume_init_read→store(false,Release)，双向都是 Release/Acquire，正文没有把方向写反。7.2.4 表四行我按 Rust API 契约核：load 可用 Relaxed/Acquire/SeqCst、store 可用 Relaxed/Release/SeqCst、RMW 可用全部五种（Rust 的 Ordering 恰五个变体）、CAS 失败分支限 Relaxed/Acquire/SeqCst，与正文一致；「RMW 五种 Ordering」这一格没有像其余三格那样列出具体名字，属可读性小瑕疵，我没记成 finding。7.2.1 末段「本章计数实验在所有工作线程到达完成屏障后才校验总和」回代码证实（atomic_contention.rs:64 done.wait() 在 :66 读 total 之前，且 :71 assert_eq!(total, threads*iters)）。7.2.6 关于 fence/compiler/MMIO 的三句是限定式表述，且「本章所有实验都操作普通进程内存」与两个 bin 的实际内容相符。没核：7.2.5 与 7.2.6 的规范措辞（Acquire 不发布写侧、compiler_fence 不是硬件屏障）是语言层断言，盘上无 std/clippy 文档快照可逐字比对，我只判其不与已核证据冲突、未独立验证 lint 行为。",
+      "evidence": [
+        "bench/src/slot.rs:59-83（try_send/try_recv 的 Acquire/Release 方向）",
+        "bench/src/bin/atomic_contention.rs:64,66,71（done barrier 之后才读 total 并断言 threads*iters）",
+        "src/part2/ch07.md:393-396 表四行对照 std::sync::atomic 的 Ordering 五变体"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "代码断言最多的一节，逐行打开 bench/src/slot.rs 核：7.3.2 的 struct Slot 片段与 slot.rs:8-11 逐字一致；7.3.3 的四句（split 需 &mut Slot<T>、一次只返回一个 Producer/Consumer、两个方法都需 &mut self、端点不带 Clone 且携 PhantomData<Cell<()>>）对应 slot.rs:19-27,44-55,59,74，无 Clone derive，与正文相符；7.3.4 「一处 unsafe impl<T: Send> Sync for Slot<T>」= slot.rs:17，八条义务里的第 6/7/8 条与该行的 T: Send 约束、safety 注释第 16 行「T need not be Sync」、以及 Drop 用 &mut self + assume_init_drop（slot.rs:86-95）分别对得上。静态量全部自算/复算命中：AtomicU64 size=8 align=8、Padded size=128 align=128（atomic_contention.rs:9 的 #[repr(align(128))]），归档表头 atomic-1.txt:2 印的就是这四个数；sysctl hw.cachelinesize=128 见 environment.txt；[AtomicU64] 四元素 32 字节=4×8 自算成立。类型表七行按 Send/Sync 自动推导规则逐条判，无一格写反。P2 一条：本节定义盒只有 7.3.1、7.3.2、7.3.4，不存在定义 7.3.3（7.3.3 小节给的是例 7.3.1），编号断档。没核：7.3.5 「换平台必须重测」与缓存拓扑相关的外部事实没有第二台机器可验；我没跑 cargo 构建，target/release 目录为空，故 7.5.2 的命令行只当复现指令核，不当「产物已在盘上」核。",
+      "evidence": [
+        "bench/src/slot.rs:8-11,17,19-27,44-55,59-83,86-95",
+        "bench/results/local/atomic-1.txt:2 「AtomicU64 size=8 align=8 padded_size=128 padded_align=128」",
+        "bench/results/local/environment.txt: hw.cachelinesize: 128",
+        "grep 结果：本章 def 盒序号 7.3 段实际存在 [1,2,4]，缺 3"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这节的对照表是全书最容易造假的地方，所以我逐格回产物。bench/probes/atomics.rs 九个导出函数与 7.4.1 的描述（load_relaxed/load_acquire 节选逐字一致，另含 SeqCst load、三种 store、三种递增）相符；三条 rustc 命令的 --out-dir 与盘上目录一一对应（bench/results/local、x86_64-linux、aarch64-android，且各目录确有 atomics.s 与 atomics.ll，说明 --emit=asm,llvm-ir 真实执行过）。9 行表逐格复核全部命中：本机 ldr/ldapr/ldar、str/stlr/stlr、ldadd/ldadd/ldaddal；x86-64 movq（三种 load）、movq（Relaxed/Release store）、xchgq（SeqCst store）、lock addq / lock xaddq / lock addq。版本号也对：environment.txt 记 rustc 1.99.0 / LLVM 23.1.1，正文 7.4.4 同句一致；「在线标准库页面抓取版本 1.99.1」在 sources/sections.json 以「在线1.99.1」登记。更强的一条：bench/results/local/source-hashes.json 里 bench/probes/atomics.rs、bench/src/{lib,slot}.rs、两个 bin、bench/Cargo.toml 的 sha256 与我当下读到的文件哈希逐一相同，说明归档产物与正文引用的代码是同一份，没有被事后改写。7.4.6 的 LL/SC 与 LSE 分野在产物里也可见：aarch64-android 的 add_seqcst 是 ldaxr/stlxr 重试循环，本机是单条 ldaddal，正文没有把两者混谈。7.4.7 与判定流程没有越界到 MESI/总线锁定。没核：`.ll` 里 LLVM 层的 atomic 标记我没有逐条读；表只覆盖两个 target（正文已声明），我没有验证其它 target feature 组合。另外记一条不构成 finding 的观察：bench/results/apple-m5/atomics.s 与 local/atomics.s 字节相同（diff 无输出），是重复留档，不是矛盾。",
+      "evidence": [
+        "bench/probes/atomics.rs（9 个 #[no_mangle] extern C 探针）",
+        "bench/results/local/atomics.s: load_acquire->ldapr / load_seqcst->ldar / add_seqcst->ldaddal / store_seqcst->stlr",
+        "bench/results/x86_64-linux/atomics.s: store_seqcst->xchgq / add_return_old->movq+lock xaddq / add_seqcst->lock addq",
+        "bench/results/aarch64-android/atomics.s: add_seqcst->ldaxr/stlxr/cbnz 循环",
+        "shasum -a 256 与 bench/results/local/source-hashes.json 五项全等（atomics.rs 2004aaef…、slot.rs d9a15e76…、handoff.rs 303c0890…、atomic_contention.rs 1ebf62dc…、lib.rs 05632596…）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两张结果表我拒绝抄正文，用 /usr/bin/python3 从原始批次重算：atomic-1.txt 与 atomic-4.txt 各 105 行样本（5 模式×21 批），mean/样本标准差(ddof=1)/nearest-rank p50/p99 与正文 10 行 40 个数字全部到三位小数吻合（Shared-Relaxed 单线程 1.703/0.117/1.669/1.959；四线程 5.980/0.069/5.968/6.118；Adjacent 四线程 5.253/1.408/5.854/6.077；Padded 0.418/0.002/0.417/0.424；Batched 0.070/0.002/0.070/0.075）。派生数也自算：单线程 Padded 与 Shared 均值差 0.352%，「0.5% 以内」成立；4T 两共享模式差 0.47%、1T 差 0.65%，与「两个小于 1% 的差异」句相符；例 7.5.1 引用的「慢约 0.028 ns」=5.980-5.952 ✓；被驳斥的「快 85 倍」=5.980/0.070=85.4 ✓。分位数口径正文交代清楚了（def 7.5.2 明写 nearest-rank p99 在 21 个样本下就是最大批均值，且我确认 p99 列等于 max 列），我另外核了实现：lib.rs:15-31 确为 nearest-rank 与 N-1 分母，注释与口径一致。表外的实验设置断言全部回代码命中：三种参数语义、每模式一次未计入统计的预热（:109-111）、逐批轮换模式顺序（:112-120，注释也写明热位置考虑）、计时区间（:61-65 spawn 在前、ready.wait 后起表、覆盖 start/done barrier、join 在 scope 退出后）、Adjacent 用连续 Vec<AtomicU64> 而 Padded 用 #[repr(align(128))]、Batched 每线程最后一次 fetch_add(local) 且含 black_box、校验总值 N×I。环境表 11 格逐项对 environment.txt（M5 Pro、aarch64-apple-darwin、Darwin 27、hw.ncpu=18、25769803776、cachelinesize=128、rustc/LLVM、RUSTFLAGS 空、无亲和/调频/热/PMU 采集），profile 三格对 bench/Cargo.toml 的 [profile.release]（opt-level=3、debug=1、codegen-units=1、lto=false）全等；「Cargo.toml 不依赖任何第三方 crate」对——该文件没有 [dependencies]。归因语言我按单变量纪律判：正文没有把 5.980/5.952 写成序的成本排名，反而明确否定，符合它自己的 def 7.5.1。没核：我没有重新执行二进制（target/release 为空），只信归档批次与代码哈希；温度/调度等未控因素无法事后判定其影响大小，正文也没声称。",
+      "evidence": [
+        "复算脚本输出：4T Shared-Relaxed n=21 mean=5.980 sd=0.069 p50=5.968 p99(nr)=6.118 max=6.118；4T Adjacent mean=5.253 sd=1.408 p50=5.854 p99=6.077；1T Shared-Relaxed mean=1.703 sd=0.117 p50=1.669 p99=1.959",
+        "bench/results/local/environment.txt 全字段；bench/Cargo.toml [profile.release]",
+        "bench/src/bin/atomic_contention.rs:9-10,20-74,109-124；bench/src/lib.rs:15-36",
+        "比值自算：5.980-5.952=0.028；5.980/0.070=85.43；(1.703-1.697)/1.703=0.352%"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "7.6.7 两行四列同样回归档重算：handoff.txt 的 slot 21 批 mean=112.239 sd=4.588 p50=110.408 p99(nr)=127.900，sync_channel 21 批 mean=3070.823 sd=313.740 p50=3103.542 p99(nr)=3608.550，与正文完全一致；正文声称的「比值约 27 倍」我算得 3070.823/112.239=27.36 ✓，且它把这 27 倍限死在饱和负载、双向交接、接口不等价、批 p99 非请求 p99 四条之内，没有写成「标准库算法慢 27 倍」。夹具断言逐行核 bench/src/bin/handoff.rs：Message([u64;8]) 与 64 字节载荷、消费者逐条 assert_eq!(black_box(message), Message([i;8])) 即「校验八个元素」、slot 侧 spin_loop 忙等对 sync_channel(1) 阻塞、参数序（iters, samples）与 21 批×5000 条、先各预热一批（:96-97）、再按 sample 奇偶交替两臂顺序（:100-112）全部相符；载荷状态机表五行与 slot.rs 的 try_send/try_recv/Drop 一致（未接收由 Slot Drop 销毁、已移出不得再 drop）。7.6.5 的四句我回单测核：non_copy_payload_crosses_threads 传 String 2000 条（slot.rs:117-145）、Tracked 计析构（:147-152）、unread_payload_is_dropped_once 与 received_payload_is_not_dropped_again（:155-175）。7.6.8 的「没有断开通知/超时/取消/多生产者/多消费者/不声称 wait-free」与 slot.rs 顶层注释及公开 API 面（只有 split/try_send/try_recv）相符，属可核的否证。没核：我没有实跑 handoff 复现 21 批，也没有采集能耗类数据可用来复核「更省电」的缺席；例 7.6.1 里「112 ns 覆盖一整条双向交接加校验」我只从代码结构判断计时区间，没有分解出交接与校验各自占比（正文也未宣称占比）。",
+      "evidence": [
+        "复算：handoff.txt slot n=21 mean=112.239 sd=4.588 p50=110.408 p99=127.900；sync_channel mean=3070.823 sd=313.740 p50=3103.542 p99=3608.550",
+        "比值 3070.823/112.239=27.36（正文「约 27 倍」）",
+        "bench/src/bin/handoff.rs:8,10-46,51-77,79-112；bench/src/slot.rs:59-95,117-175",
+        "bench/results/local/handoff.txt:1 表头 iterations=5000 samples=21 payload_size=64 payload_align=8"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "severity": "P2",
+      "description": "定义盒编号断档且顺序倒置：7.1.2 小节里先出现「定义 7.1.4 · 并发缺陷的三分类」（第 169 行），再出现「定义 7.1.2 · 同步证明的三个层次」（第 174 行），而全书（src/ 与 tools/）不存在任何「定义 7.1.3」/def-7.1.3。读者按编号找 7.1.3 会找不到东西，也会怀疑漏读了一盒；机械层只查锚点可解析，不查编号连续性，所以这类断档不会被门禁拦住。同一形态在 7.3 再现（只有定义 7.3.1、7.3.2、7.3.4，缺 7.3.3）。",
+      "evidence": "src/part2/ch07.md:169 与 :174 的先后顺序；脚本枚举本章 def 盒得 7.1 段=[1,2,4] 缺 3、7.3 段=[1,2,4] 缺 3；grep -rn 'def-7.1.3|定义 7.1.3' src/ tools/ 无命中"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "severity": "P2",
+      "description": "引文用了引号但不是母本原话，且同一页在本章另一处被换成另一本书。7.1.3（第 188 行）写「本地《Rust 参考手册》PDF 第 334 页还保留着较早的『内存模型未完全明确』说明」：页码与书名对得上台账（S10 filename=Rust 参考手册.pdf，S10-U0095 title=内存模型 pdf_page=334），但台账记的原文口径是「原书明确内存模型尚不完备」，「未完全明确」是转述却加了引号。更麻烦的是本章 7.9（第 1808 行）把同一句历史记录写成《Rust 程序设计语言》的第 334 页——台账里《Rust 程序设计语言 简体中文版.pdf》是 S11，其 16.4 Sync与Send 记在 PDF 403–404，两处书名对同一页只能有一处成立。修复点在 7.9（超出我这次 7.1–7.6 的派单范围），但引用一致性由 7.1.3 这句锚定，故记在本节。",
+      "evidence": "src/part2/ch07.md:188 与 :1808；sources/inventory.json 中 S10.filename=Rust 参考手册.pdf、S10-U0095(内存模型,334)、S11.filename=Rust 程序设计语言 简体中文版.pdf；sources/sections.json 的 16.4 Sync与Send pages=PDF403–404 与 REF-MM pages=PDF334"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "severity": "P2",
+      "description": "以已核实口吻引用的外部分类学无法逐字落地。定义 7.1.4 写「rCore 教程把并发缺陷分成三类，本书沿用这套命名」并给出互斥缺陷/同步缺陷/死锁缺陷三个名字，但仓库里关于 rCore 只有 sources/web.json 的 URL 与 final_url（rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/2lock.html 等），没有抓取正文快照，因此「三类」的命名与切分是不是 rCore 原文用词，冷读者无法比对；7.9 对该来源的描述也是「区分忙等、yield 与阻塞」，与三分类不是同一件事。要么补一条正文快照/页内引文登记，要么把「rCore 教程把……分成三类」改成本书自拟命名并注明受其启发。",
+      "evidence": "src/part2/ch07.md:171；sources/web.json:20-21,74-75（只有 url/final_url 字段，无正文）；grep -rn rCore sources/ 未命中任何含三分类原文的条目"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "severity": "P2",
+      "description": "7.3 的定义编号缺 7.3.3：小节 7.3.3「端点为什么不是 Clone」给的是例 7.3.1，随后的义务清单盒被编成定义 7.3.4，导致本章读者从 7.3.2 直接跳到 7.3.4，且 [@def-7.3.4] 在全章被引用 8 次，编号断层会被读成「漏了一盒」。与 7.1 的缺 7.1.3 同因，属同一次编号返工可修的问题。",
+      "evidence": "src/part2/ch07.md:514(定义7.3.1)、:531(定义7.3.2)、:560(例7.3.1)、:577(定义7.3.4)；脚本枚举 7.3 段 def 序号=[1,2,4] 缺 3"
+    }
+  ]
+}

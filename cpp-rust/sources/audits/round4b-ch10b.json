@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4b-ch10b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part3/ch10.md 的 10.7–10.11 全部正文与语义盒（定义10.7.1/10.7.2/10.7.3、例10.7.1与解答、思考10.7.1、判定流程之外的全部errata与即时自测、10.8–10.11全节），并逐条回查 bench/runtime-lab 源码与测试、bench/results/runtime-fixed 归档（baseline/fixed 八个交错组、final-validation 20轮测试与800份Report、measurements-final 三张原始样本）、tools/verify_drain_fix.py、src/appendix/coverage.md 与 sources/web.json/inventory.json 的来源台账；另跑 tools/list_uncollected_claims.py 只看 ch10。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "逐句核对了终止—回收—排空顺序与全部数字。顺序图与代码一致：stdin=null/stdout、stderr=piped/kill_on_drop 见 process.rs:164-168，取出端点与两个排空任务 172-203，timeout(deadline, child.wait()) 204，超时分支 start_kill 后再 wait 215-229，tokio::join! 并发等 drain_grace 232-235，mem::take 移交 Capture 后返回 Report 236-248；10.7.11 的 ReaderTask Drop=abort 见 process.rs:127-134，grace 到期 abort 并观察取消见 141-145。10.7.6 的 inherit 回归与夹具相符：后代固定2秒寿命 worker.rs:29-43、直接 helper exit(0) 同段，测试断言 exit_code Some(0)、两流 !eof、reader_errors 恰两条见 contracts.rs:204-226，2100ms 收尾窗口见 contracts.rs:224（归档 elapsed≈506ms、两条 grace 说明齐）。10.7.8 的 8 组交错与 gate/lsof 证据成立：baseline-debug 与 baseline-release 各 4 组 exit=101、fixed 各 4 组 exit=0（status.txt），原版 report.txt 首行 gate: api=pipe ... flags=0、修复版 api=pipe2 flags=1，baseline lsof 含 2 条 PIPE、fixed 为 0 条；interposer 递归栈溢出保留在 race-before.txt，gate 只延迟真实 pipe() 见 pipe-gate-before.c:1-2,11-12。10.7.10 的统计我复算并核对通过：tests-debug-1..10 与 tests-release-1..10 共20轮，每轮 6 项单元测试（process.rs 2 + process_macos.rs 1 + wire.rs 3）+ 12 项集成测试 = 18 项，20×18=360 全 ok、0 failed；stress-*.txt 共 800 行 Report，mode 计数精确为 flood 600 / sleep(即 timed_out=true) 100 / inherit 100，与 tools/verify_drain_fix.py 打印的「20 parallel test runs (360 test executions), 800 structured child reports」一致；两项取消回归是 process.rs:285 与 316。10.7.9 的修复边界在 process_macos.rs:pipe2 与 O_CLOEXEC(36,38)、Unsupported(32)、OwnedFd(9,16,43)、spawn 后交还 Stdio::null(59-60)；平台与工具链版本也对：environment.txt 记 Darwin Kernel 27.0.0 arm64、rustc 1.99.0。10.7.4 的 exit_code None 与 timed_out true 同时出现于 sleep 归档。唯一不符是 10.7.8 一句对旧 flood 组 EOF 的表述，见 findings。",
+      "evidence": [
+        "bench/runtime-lab/src/process.rs:164-168,172-203,204,215-229,232-235,236-248",
+        "bench/runtime-lab/src/process.rs:127-134,136-147",
+        "bench/runtime-lab/src/bin/worker.rs:29-43",
+        "bench/runtime-lab/tests/contracts.rs:204-226（含 :210 grace=30ms、:224 sleep 2100ms）,120-134,137-149",
+        "bench/results/runtime-fixed/baseline-debug/status.txt 与 baseline-release/status.txt：flood/sleep × pipe1/pipe2 四行 exit=101；fixed-debug/fixed-release/status.txt 四行 exit=0",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe1/report.txt 首行 'gate: api=pipe ... flags=0'；fixed-debug/flood-pipe1/report.txt 首行 'gate: api=pipe2 ... flags=1'",
+        "lsof PIPE 行数：baseline-debug/flood-pipe1/lsof.txt=2，fixed-debug/flood-pipe1/lsof.txt=0",
+        "bench/results/runtime-fixed/final-validation/stress-*.txt 复算：Report 行 800，mode=flood 600 / mode=sleep 100 / mode=inherit 100",
+        "bench/results/runtime-fixed/final-validation/tests-{debug,release}-1..10.txt 复算：每轮 6+12=18 项、20 轮共 360 项，全部 0 failed",
+        "tools/verify_drain_fix.py 实跑输出：'CLOEXEC: 8 deterministic original failures / 8 fixed passes with FD evidence'、'final fix: 20 parallel test runs (360 test executions), 800 structured child reports, 210 timing observations'",
+        "bench/runtime-lab/src/process_macos.rs:32,36,38,59-60,74",
+        "bench/results/runtime-fixed/final-validation/environment.txt：Darwin Kernel Version 27.0.0 arm64；rustc 1.99.0 (b940084d7 2026-09-28)",
+        "bench/runtime-lab/src/bin/pipe_drain.rs:15-16 与 contracts.rs:105：drain 测试的 grace 为 1s，与 10.7.7「没有增大1秒grace」相符"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节为设计性论述，没有实测数字，逐条按「有无越界声称」核对。10.8.1 六状态表、10.8.3 代际三元组、10.8.5 五条访问前检查、10.8.7/10.8.8 的未验证声明都保持了负向表述，与仓库事实一致：本轮确无共享映射访问器（bench/runtime-lab/src 只有 wire.rs/process.rs/process_macos.rs 与五个 bin），x86_64-linux 与 aarch64-android 结果目录里没有 cgroup/namespace/seccomp 或 futex 实验痕迹，Linux 段落没有造数。跨章引用两处：10.8.6 引第7章单槽的两条同步链，实质在 src/part2/ch07.md:1236（written-unpublished/full/moved-out 状态机）与 7.2.3「反向复用边」（约 ch07.md:356）有据；10.8.2 用引号把「把容量画在每一段队列上」记为第9章原话并注「见 9.7 节」，但 src/part3/ch09.md 全文没有这句话（9.7 只有 9.7.1「有界通道只锁住一段缓冲」与 9.7.2 准入，ch09.md:1125-1167），该句在本仓库只出现在 ch10.md:890/1611/1667，属表述归属问题，见 findings。",
+      "evidence": [
+        "src/part3/ch09.md:1125,1135,1167（9.7 与 9.7.1/9.7.2 标题），grep 全仓 '把容量画在每一段队列上' 只命中 src/part3/ch10.md:1611（及 ch10.md:890/1667、ch10_recall.md:289 的同源改写）",
+        "src/part2/ch07.md:1236 状态机与 :356 '7.2.3 反向复用边'，支撑 10.8.6 的两条链",
+        "ls bench/runtime-lab/src：只有 lib.rs/process.rs/process_macos.rs/wire.rs 与 bin/（无共享内存访问器）",
+        "10.8.7 的 Linux 负向声明与归档相符：bench/results 下无 futex/cgroup/seccomp 实验文件"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "把这页每一条出处拿到台账上逐行对。内核侧：chapter5/1process.html 与 chapter5/2core-data-structures.html 有 rcore-process/RCORE-FORK、rcore-pcb/RCORE-PCB 两行并分别映射到 10.4 与 10.1（coverage.md:595-596），URL 与 sha256 在 sources/web.json 里齐（baf6b6c1…、b418261f…）；chapter4/4sv39-implementation-2.html 落在 rcore-frame-alloc（coverage.md:594 与 4102，sha 7d5b5cb2…），正文说的「页帧分配与回收的合法性检查」与该行的 review_scope 一致；chapter7/3cmdargs-and-redirection.html、chapter2/4trap-handling.html、chapter7/1file-descriptor.html、chapter7/2pipe.html 分别有 rcore-redirection、rcore-trap（两行映射目标就是 ch10.9，coverage.md:609-610）、rcore-fd(→10.8)、rcore-pipe(→10.5) 行，rcore-signal 台账行的映射目标是 ch17 而本章 10.9 只是把它列为机制底账，属可选阅读引导，不算落点冲突。三处页内机制描述（最小空闲槽位、有界字节环与 Option<Weak<Pipe>>、信号检查在交回用户态前）与 web.json 的 review_scope 逐条对应，且 10.9 明确写了「环容量、tick 频率一个都没搬进实验结论」，与 def-10.4.3 不含 rCore 数字相符。本地母本表：S11/16.2 PDF390–394 与 coverage.md:67 的行完全一致（落点 10.3、证据 wire.rs）；S08/Item17 的 PDF146–160 区间与 coverage.md:579 一致，但该台账行的落点是 ch11，另两行 S08 Item17 记录（coverage.md:39 PDF146–155→7.3、:2526 PDF146→7.1）落点都在 ch07，唯一映射到 ch10 的 S08 行是第20条 PDF170→10.6（:394、:2529），所以本节自称的「落点 10.5–10.7」没有对应台账行。当前库文档表四行（std 1.99.0 Child、Tokio 1.54.0 process、Tokio 1.54.0 runtime、本轮 Rust 实验）与 coverage.md:64-66 逐字对得上，Tokio 版本与 Cargo.toml 的 =1.54.0、libc =0.2.191 相符。Stanford 段的 URL、36 物理页与 PDF15–20、25–35 区间和 coverage.md:63、sources/web.json 的 stanford-process-slides（sha 7f327718…，status reviewed-online）一致；「部分材料等同 2020 年内容」与「第 17 页做了渲染核对」两句没有磁盘证据（该源标注为在线核读、未保留本地母本，仓内也查不到 page-17 的渲染核对产物）。",
+      "evidence": [
+        "src/appendix/coverage.md:594-596,600-601,609-610,63,64-66,67,394,579",
+        "sources/web.json：rcore-frame-alloc sha 7d5b5cb2…（URL chapter4/4sv39-implementation-2.html）、rcore-process baf6b6c1…、rcore-pcb b418261f…、stanford-process-slides 7f327718… 且 review_note='在线核读，未保留本地母本'",
+        "bench/runtime-lab/Cargo.toml：tokio =1.54.0、libc =0.2.191（与 10.9 的 1.54.0 表一致）",
+        "S08 Item17 落点冲突：coverage.md:579 → part3/ch11.md#sec-cpp-rust.3.11.1，coverage.md:39 → part2/ch07.md#sec-cpp-rust.2.7.3，映射到 ch10 的 S08 行只有第20条 PDF170 → ch10.6",
+        "grep -r '渲染核对'/'rendered' 在 sources/ 与 bench/results/runtime-fixed/ 下无 page-17 相关产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条读了全部十二条并核对条数与内部数字：实际条目为 1–12，与开头「十二条」相符；第3条「原生 Frame 是 16 字节，协议仍是 24 字节」与归档 type-layout.txt 的 'Frame size=16 align=8 wire=24' 逐字相符；第2/8/9/10/11/12 条分别是 10.1.4、10.2.1、10.5/10.7、10.7 期限、10.8.1、10.8.4 的跨节复述，方向与定义一致，没有出现「把未实现说成已实现」的措辞（第1条仍写「本实验只管理受信任 helper」）。这一节没有测量数字，故没有需要复算的归档量；我没有再逐条重跑它引用的各节代码，因为它只复述本会话已在 10.1–10.8 核过的结论。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt：'Frame size=16 align=8 wire=24'",
+        "src/part3/ch10.md:1772-1798 计条目 12 条，与「下面十二条」一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结7条、速查10行、出口检查、应能解释的10问、回归观察6行、完成与限制逐一回查。数字全部复算通过：1.219 ms 我用 measurements-final/process-rpc.txt 的 21 个 spawn 样本自算 mean=1219110.006 ns、sd=77376.429，与表格一致（p50 1208367.1875 亦一致；p99 我按线性插值给 1477924.51，与正文 1531747.438 属不同分位数定义，该项在 10.4.6，不在我负责区间，仅作提示）；5.484 µs 对应 persistent mean=5484.128，1.219 ms/5.484 µs 的 222 倍复算为 222.30。「修复版包含 18 项 runtime-lab 测试」= 单元 2(process.rs)+1(process_macos.rs)+3(wire.rs) 加集成 12(contracts.rs)，与每轮归档 6+12 相符；「debug/release 各 10 轮」与 final-validation 的 20 个 tests-*.txt 相符；「800 个额外进程报告」相符。速查与小结里的 [@def-10.x.y] 引用 18 个锚点全部能在本文或他章解析（脚本扫描无悬空引用）；回归观察表 6 行都有对应测试：双流排空 contracts.rs:99、超时 120、继承写端 204、非零退出码7 137-147、头部 InvalidData wire.rs:77-87、截断 UnexpectedEof wire.rs:92-96。出口检查的两条 cargo 命令路径与 bin 名可落地：Cargo.toml 显式声明 [[bin]] name=process-rpc / pipe-drain（所以 target/release/process-rpc 成立），tools/run_runtime_benchmarks.sh 存在；10.11 的「128 字节前缀仍要读完 4 MiB」等表述与 10.5/10.6 定义一致。未逐项核对：--offline --locked 是否在干净环境下真能离线跑通（我没有执行构建，避免改动 target/）。",
+      "evidence": [
+        "复算 measurements-final/process-rpc.txt：n=21，spawn mean=1219110.006 sd=77376.4287 p50=1208367.1875；persistent mean=5484.1280 sd=532.3999 p50=5372.3750；比值 222.30",
+        "复算 measurements-final/pipe-drain.txt：prefix128 mean=0.5140 sd=0.0311，retain-all mean=0.5155 sd=0.0269（与 10.6.4 表格一致，供 10.11 第6条小结印证）",
+        "grep -c '#[test]/#[tokio::test]'：src/process.rs=2、src/process_macos.rs=1、src/wire.rs=3、tests/contracts.rs=12 → 18",
+        "bench/results/runtime-fixed/final-validation：tests-debug-1..10 与 tests-release-1..10 共20轮，每轮 '6 passed' + '12 passed'，0 failed",
+        "bench/runtime-lab/Cargo.toml [[bin]] name=process-rpc、pipe-drain；tools/run_runtime_benchmarks.sh 存在",
+        "bench/runtime-lab/src/wire.rs:28,77-87(InvalidData)、92-96(UnexpectedEof)；tests/contracts.rs:147(exit_code Some(7))"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "severity": "P1",
+      "description": "10.7.8「本轮实际交错与内核证据」下一句：「旧flood组已完整读出每流2097152字节，仍没有一路EOF。」按字面读是「四路里没有任一路观察到 EOF」，而归档里每个旧 flood 交错组都恰好是一路 EOF 已到、另一路未到：baseline-debug/flood-pipe1/report.txt 是 stdout total=2097152 eof:false、stderr total=2097152 eof:true，flood-pipe2 正好相反（stdout eof:true、stderr eof:false），release 两组同形；四组都只有一条 'drain grace expired' 而非两条。前半句「每流2097152字节」我核过为真，后半句与归档相反，读者据此会以为排空完全没推进、从而误判诊断链。建议改为「仍各有一路读不到 EOF」（pipe1 缺 stdout、pipe2 缺 stderr），这样才与紧接的「支持额外写端寿命而不是忘了继续读」这句结论相配——正是要点在于字节读满了、EOF 却没来。",
+      "evidence": "bench/results/runtime-fixed/baseline-debug/flood-pipe1/report.txt（stdout: total 2097152 / eof false；stderr: total 2097152 / eof true；reader_errors 仅1条）；baseline-debug/flood-pipe2/report.txt（eof true/false 互换）；baseline-release/ 两组同形；grep -E 'total:|eof:' 八份 report.txt 复算输出"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "severity": "P2",
+      "description": "10.8.2 用引号写着「第 9 章『把容量画在每一段队列上』的原则在这里继续适用（见 9.7 节）」，但对全仓 grep，这句原话只出现在本章（ch10.md:890、1611、1667 及 ch10_recall.md:289），src/part3/ch09.md 里并不存在；9.7 实际的表述是 9.7.1 标题「有界通道只锁住一段缓冲」与 9.7.2「把准入放在昂贵分配之前」。原则本身确有第9章依据，但把本章的措辞加引号记为第9章原话，读者回 9.7 找不到这句会怀疑引用可信度。修法：把引号去掉改成转述，或直接引 9.7.1 的小节标题并给锚点。",
+      "evidence": "grep -rn '容量画在\\|每一段队列' src/ → 仅 src/part3/ch10.md:890,1611,1667 与 src/part3/ch10_recall.md:289；src/part3/ch09.md:1125,1135,1167（9.7 / 9.7.1 / 9.7.2 标题）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "severity": "P2",
+      "description": "本地母本表第二行自称 S08/Item17「本书落点 10.5–10.7」，但来源台账里没有任何一条 S08 Item17 的行映射到 ch10：coverage.md:579 的 S08/SYS-S08-17（PDF 146–160）落点是 part3/ch11.md#sec-cpp-rust.3.11.1，coverage.md:39 的 S08/R17-A（PDF146–155）与 :2526 的 S08-U0022（PDF146）落点都是 part2/ch07.md；台账中唯一映射到 ch10 的 S08 行是第20条（PDF 170）→ ch10.6（coverage.md:394、2529）。页区间 146–160 本身没错，缺的是这条落点的台账行——按本项目「正文写出的规范来源必须有对应台账行」的口径，这里要么在 coverage.md 为 S08 Item17 补一行指向 ch10.5–10.7，要么把该行落点改写为实际落点（背景复用见 ch07/ch11 记录）。",
+      "evidence": "src/appendix/coverage.md:39,394,579,2526,2529（各行的 PDF 页与 核读映射 目标）；src/part3/ch10.md:1745（表格行原文「S08 / Item17 … 10.5–10.7」）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "severity": "P2",
+      "description": "Stanford 段末句「第 17 页还做了渲染核对，确认锁状态图与示例文字的对应」把一次 PDF 页面渲染核对写成已完成动作，但该来源在 sources/web.json 里明确是 status=reviewed-online、review_note=「在线核读，未保留本地母本」，仓内（sources/ 与 bench/results/runtime-fixed/）也查不到任何 page-17 的渲染产物或核对记录；能落地的只有 coverage.md:63 的「PDF15–20、25–35，共36物理页」这条在线核读行。页区间与 36 页、URL、sha 我都对上了，只有「渲染核对」这一步无磁盘证据。修法：改成「PDF15–20 按在线核读覆盖到第17页的锁状态图与文字」，或把渲染核对的产物落盘并在台账里点名文件。",
+      "evidence": "sources/web.json 条目 stanford-process-slides（url https://web.stanford.edu/class/cs110l/slides/lecture-10-2022.pdf，sha256 7f327718…，status reviewed-online，review_note 未保留本地母本）；src/appendix/coverage.md:63 与 :4070；grep 全仓 '渲染核对'/'rendered' 无 page-17 产物"
+    }
+  ]
+}

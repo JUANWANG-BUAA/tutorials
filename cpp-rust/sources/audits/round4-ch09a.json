@@ -1,0 +1,90 @@
+{
+  "reviewer": "r4-ch09a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动通读 src/part3/ch09.md 的 9.1–9.6 全部正文与每个语义盒；用 python 从 blocking-poll.txt 与 scheduling.txt/scheduling.rs 原始点独立复算全部自称实测数字；回查 type-layout.txt、scheduling.s、blocking_poll.rs、lib.rs、contracts.rs、sources/runtime-code.json、sources/web.json，并用 tools/list_uncollected_claims.py 对照全部「没有采集」句子。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "finding",
+      "notes": "概念性内容（定义 9.1.1/9.1.2/9.1.3、例 9.1.1、思考、自测）为通读判定，内部自洽、无数字。可核断言：9.1.3 声称本轮核读四个 Tokio 1.54.0 源文件且「源码路径和 SHA-256 记入 sources/runtime-code.json」——runtime-code.json 实际只登记 src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs 三条，src/task/blocking.rs 的指纹不存在（见 findings）。图 9-1 的 SVG 与 desc 逐句一致。state.rs/mod.rs/current_thread 的指纹文件在盘上存在，但其内容与本节描述的对应关系本轮没有逐行回查（仓库无 vendor 的 tokio 源码）。",
+      "evidence": [
+        "sources/runtime-code.json：正则抓取全部 *.rs 路径仅命中 src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs，无 src/task/blocking.rs",
+        "src/part3/ch09.md:96-103（9.1.3 四条清单与「记入 runtime-code.json」句）",
+        "src/part3/ch09.md:148-185（图 9-1 desc 与 SVG 元素逐条对照一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "finding",
+      "notes": "交错图、def-9.2.1/9.2.2/9.2.3 的机制论述为通读判定；「Tokio 1.54.0 的 transition_to_notified_by_ref 四分支表」「already-notified 分支仍需 Release」是对固定版本源码的描述，仓库只有指纹没有源码文本，本轮按通读判定、未逐行核对源码。9.2.5 引用的 Signal 结构体与 tests/contracts.rs::abort_observed_and_drop_executed 逐行一致（结构体在函数内、用 import 的 oneshot 路径，正文写成顶层+全限定路径，属可接受的展示改写）。def-9.2.3 的 rCore 引文「12 个被调用者保存寄存器 ra 与 s0~s11」计数错误（见 findings）；「每秒 tick 数取 100、每 10 ms」与 sources/web.json 登记一致。「本书没有在本机采集这两类切换的成本对照」经 list_uncollected_claims 与 bench 目录核对：measurements-final 无任何上下文切换成本产物，句子成立。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:27-47（Signal/Drop/ready/abort/is_cancelled/drop_rx 与正文 9.2.5 描述一致）",
+        "sources/web.json:322（review_scope：TaskContext 保存 ra 与 s0~s11 及内核栈 sp）、:332（TICKS_PER_SEC=100）",
+        "/usr/bin/python3 tools/list_uncollected_claims.py 对 ch09 各「没有采集」句全部返回「没有匹配到同类产物」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "pass",
+      "notes": "本节无自称实测数字，全部判定基于通读。核对了内部一致性：9.3.6「没有给队列窃取打点/没有采集 steal 成功率」经 list_uncollected_claims 确认磁盘无同类产物；9.3.4「本机没有 NUMA 测量」同样确认无产物；环境归档 environment.txt 明写无 PMU/亲和性，与「不报告没有采集的量」自洽。think-9.3.1 引用的 2.602/0.750 与归档相符（见 9.5）。未核：256/31/61、五种队列结构、LIFO 槽约束等对 Tokio 1.54.0 文档的转述，仓库没有该文档文本（web.json 只有 runtime 文档条目登记，本轮未取原文逐句比对）；9.3.3 彩票/步长调度对 rCore 第五章的转述也未逐字回母本。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/environment.txt（No CPU affinity, thermal/frequency isolation or PMU）",
+        "tools/list_uncollected_claims.py：ch09.md:586/600/608/642 全部 ✓ 无同类产物",
+        "src/part3/ch09.md:604（2.602/0.750 引用与 scheduling.txt:mean 行相符）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "finding",
+      "notes": "静态量全部独立核对：9.4.2 表四个尺寸与归档 type-layout.txt 逐字一致（yield_now 16/8、JoinHandle<u64> 8/8、mpsc::Sender<u64> 8/8、Frame 16/8 且 wire=24）。9.4.3 表：scheduling.s 中 transition_to_running 符号出现 2 次、casal 出现 2 次，两条汇编断言成立。9.4.4 的五行 asm 在 scheduling.s:18352 起的 step 符号内逐行存在（str x0,[sp,#8] / ldr x8,[sp,#8] / mov x10,#1 / madd x0,x8,x9,x10 / ret），x9 确由 mov+3×movk 构造——但正文说「省略了调试位置指示」，实际还省去了两条真指令（见 findings，P2）。9.4.5/思考框对 black_box、inline(never) 的断言与 scheduling.rs:11-13 相符；「同步占比没有采集」经工具确认。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt（Frame size=16 align=8 wire=24；yield_now 16/8；JoinHandle<u64> 8/8；Sender<u64> 8/8）",
+        "bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18381（step 完整体）；grep -c casal = 2；grep -c transition_to_running = 2",
+        "bench/runtime-lab/src/bin/scheduling.rs:11-13（#[inline(never)] + black_box）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "pass",
+      "notes": "自称实测数字全部回归档复算：2.602 与 0.750 分别是 scheduling.txt 里 current-q1024 与 multi4-q1024 的 mean（ns/op n=21），逐字一致；0.750÷2.602=0.28824，正文写「0.29」为正确舍入，且例 9.5.1 拒绝「快 3 倍」的推理成立（比值为 1/0.288≈3.47，正文没有把它当结论用）。口径核对：scheduling.rs:69 用 TASKS*STEPS=128×8192=1048576 作分母，与 def-9.5.1 一致；checksum 按 id rotate_left 后异或（scheduling.rs:44-46）、count 独立断言为 128（:40）、预热 ≥500 ms 并轮转四 case（:53-60）、两种 quantum 16/1024 均整除 8192。9.5.4「没有并行启动/没有附着 profiler」与 environment.txt「benchmarks sequential」一致；「读数不等于 yield 单价、quantum 缩放使 yield 次数×64」为算术通读（1024/16=64 ✓）。未核：正文引用的是正式批 scheduling.txt；另有一份 scheduling-profile-run.txt（mean 2.774/0.839）是 profiler 运行，正文正确地没有引用它——两文件口径关系本章没有解释，但不构成矛盾。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/scheduling.txt（current-q1024 mean=2.602；multi4-q1024 mean=0.750；n=21）",
+        "复算：0.750/2.602=0.28824；128×8192=1048576",
+        "bench/runtime-lab/src/bin/scheduling.rs:8-9,40,44-46,53-60,69"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "pass",
+      "notes": "重点复算节。9.6.3 表八个数字全部从 blocking-poll.txt 的 42 个原始点用 python 独立复算，逐项到小数一致：inline mean 23658343.286→23.658 ms、sd 1302022.000→1.302 ms（N−1 样本标准差）、p50 23604084→23.604 ms、p99 25060042→25.060 ms；offload mean 13632.857→13.633 µs、sd 3494.454→3.494 µs、p50 14125→14.125 µs、p99 18541→18.541 µs。必查的量级表述独立复算：中位数比 23604084/14125=1671.09，正文「1671 倍、三个数量级多一点（不到四个数量级）」成立（10^3.22）；均值比是 1735.4，正文没有误用。「21 个观察 ceil(21×0.99)=21、p99 即最大值」的 nearest-rank 论证复算成立，且 9.6.3 明确交代了分位数定义。23.658−20≈3.658 ms 差额「不归因」与单时间戳原始数据（每次观察只有一个 delay 值，无分段）自洽。代码断言回查：blocking_poll.rs:11-13 确为「发送与睡眠一起放进 spawn_blocking」、:18-19 inline 分支 send 后 sleep、:22-24 时间戳在发送方创建且正文引文逐字相符、观察 21 次且 case 交替（原始行序）、current-thread 由 lib.rs:8-9 Builder::new_current_thread 落地、20 ms 为 Duration::from_millis(20)。9.6.4/9.6.5/自测的「没有证明/没有采集」表述经工具确认无对应产物。「sd 是样本还是总体标准差」正文没有写明（归档为样本 sd）——属未交代的次要口径，未单独成条。",
+      "evidence": [
+        "复算输出：inline n=21 mean=23658343.286 sd=1302022.000 p50=23604084 p99=25060042；offload mean=13632.857 sd=3494.454 p50=14125 p99=18541；median ratio=1671.086；mean ratio=1735.391",
+        "bench/results/runtime-fixed/measurements-final/blocking-poll.txt（42 行原始点 + 摘要行）",
+        "bench/runtime-lab/src/bin/blocking_poll.rs:11-13,18-19,22-24；bench/runtime-lab/src/lib.rs:8-10"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "severity": "P1",
+      "description": "9.1.3 声称本轮核读 `src/task/blocking.rs` 的「阻塞任务与取消说明」且「源码路径和 SHA-256 记入 sources/runtime-code.json」，但该文件在 runtime-code.json 中没有任何条目：全文件正则抓取 *.rs 路径只命中 src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs 三条。spawn_blocking 文档页只登记在 sources/web.json（docs.rs 页面，不是 crate 源文件），与 9.1.3 点名的 .rs 源码段是两种证据。要么补登 blocking.rs 指纹，要么把该条改写为指向 web.json 的文档条目；其余三枚指纹经核对均在盘上存在。判 P1 而非 P0：断言的实质内容（取消说明）另有已登记的文档级出处，错的是「已记入 runtime-code.json」这句可证伪的记账声明。",
+      "evidence": "sources/runtime-code.json（python 正则抓取全文 *.rs：无 task/blocking.rs）；src/part3/ch09.md:96-103；sources/web.json 含 https://docs.rs/tokio/1.54.0/tokio/task/fn.spawn_blocking.html"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "severity": "P1",
+      "description": "def-9.2.3 转述 rCore：「实现里就是 `ra` 与 `s0~s11` 这 12 个被调用者保存寄存器（callee-saved）加上内核栈指针 `sp`」。复算：s0~s11 是 12 个 callee-saved 寄存器，加上 ra 共 13 个保存项，且按 RISC-V psABI `ra` 是 caller-saved，不属于被调用者保存集合。母本登记（web.json review_scope）原文是「TaskContext 保存 ra 与 s0~s11 及内核栈 sp」，没有「12 个被调用者保存」这个说法——本书加上去的静态计数与归类把 13 写成 12。应改成「12 个被调用者保存寄存器 s0~s11，加上返回地址 ra 与内核栈指针 sp，共 13 项」。",
+      "evidence": "src/part3/ch09.md:373（12 个的断言）；sources/web.json:322（母本 review_scope）；算术：1(ra)+12(s0..s11)=13"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "severity": "P2",
+      "description": "9.4.4 给出 step 的五行汇编并声明「省略了调试位置指示」，但保存的 scheduling.s 里 step 实际还包含两条被省略的真指令：`add x8, sp, #8`（str 与 ldr 之间）与 epilogue 的 `add sp, sp, #16`（ret 之前）。所列五行确实逐字存在、madd 乘加与 x9 的 mov/movk 构造也都相符，结论不受影响，但「只省调试指示」这句话与摘录内容不符，应改成「摘录核心指令，省略了调试指示与栈指针对齐/恢复」。",
+      "evidence": "bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18381（完整 step：sub sp / str x0 / add x8,sp,#8 / ldr x8 / mov x9+3×movk / mov x10,#1 / madd x0,x8,x9,x10 / add sp,sp,#16 / ret）"
+    }
+  ]
+}

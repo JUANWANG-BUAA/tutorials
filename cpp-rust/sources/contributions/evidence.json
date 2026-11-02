@@ -48,7 +48,7 @@
     "id": "S14",
     "source": "rustdoc 手册.pdf",
     "section": "如何写文档：完整可运行示例、公共契约、panic和错误处理",
-    "pages": "PDF 6–8、11–12（一基物理页）",
+    "pages": "PDF 6–7、11–12（一基物理页；第 8 页是 Markdown 语法一节，裁决为 excluded-reviewed）",
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.6",
     "evidence": "bench/evidence-lab/src/lib.rs"

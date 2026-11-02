@@ -1,0 +1,63 @@
+{
+  "reviewer": "cold-r3-deep-A",
+  "kind": "independent",
+  "snapshot_sha256": "959514f9ce2c8dc71ea4f61a5db5e59ad7108e6d27d818ad5cf56e22f8d1b9a9",
+  "provenance": "冷启动通读 ch17 的 17.6 与 17.7 全文及对应章末件；逐条回查 tidekv 源码与 results 归档，数字与算术用 python 独立复算",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "finding",
+      "notes": "逐句回查源码+独立复算 run-03。代码断言全部对上：准入三态在 engine.rs:232-249 submit（先查 closed→Shutdown，q.len()>=CAP→AdmissionRejected 不阻塞不入队，push_back+notify 受理）；take_batch 在 engine.rs:620-621 `let n=q.len().min(256); q.drain(..n)`，槽位在 drain 时释放、apply_write(engine.rs:624-632) 之后才 wal.append，故「CAP+256」在途上界成立；wal.rs:96-106 用无缓冲 File::write_all，追加即落到内核页缓存，sync_to(durable=false) 只 File::flush 不 fsync(wal.rs:109-115)，故「进日志只保证进了内核」准确；shutdown() 清空队列的 `Cmd::Write(_)|Cmd::Shutdown=>{}` 在 engine.rs:773；致命错误置 failure+closed 两标志后 return、不排空队列在 engine.rs:598-603；panic 时 close() 的 `let _=h.join()` 在 engine.rs:431-434；Stats 无 applied/written 字段（stats.rs:46-73），put 计尝试(write 先 add_put 后 submit，engine.rs:276-284)、admission_reject 计被拒、受理=差；MAX_SLOTS=512（epoch.rs:12），NEXT_SLOT 只增不还（epoch.rs:24,81-90），pin() 超额回 None（epoch.rs:82-84），get/get_with_seq/scan_prefix 把 snapshot() 的 None 映成 Shutdown（engine.rs:338-341,350-367），segments()/frozen_tables() 回空集合与 0（engine.rs:375-388）——「语义错，引擎没关」成立。测试：tests/admission.rs 确有三测（full_queue_rejects_immediately/control_commands_also_bounded/rejected_write_does_not_disturb_sequence）。数字独立复算全对：ns/尝试 A=774433.8 B=82915.5 diff=-691518.3 CI[-741468.5,-652422.3]；ns/受理 A=2456036.2 B=2470043.5 diff=+14007.4 CI[-105221.5,+132036.5]（statistics.json+CSV 逐批重算一致）；受理均值 75.40(范围64-131)/8.07(范围4-11)、拒绝率0.6858/0.9664、diff 逐条重算=0.2805（两列相减=0.2806 已如实注明）、每批墙钟185.86/19.90ms、9.3倍=774433/82915=9.34、聚合口径每受理2465119.0/2464724.3→B-A=-395（与逐批口径方向相反，已交代口径）、flush 均值18.49/1.98、聚合每刷10050.6/10045.5µs(差0.05%)、逐批每刷10013.9/10054.3µs(方向反、差0.40%)、每刷记录4.08(75.3976/18.4929=4.077,8.0738/1.9810=4.076)、10.05ms/4.08=2.46ms 与 /4=2.51ms(差2%)；1680 行=840批×2口径与 recompute.txt 一致；admit-verification.txt 单批样本 accepted130/rejected110 rate0.4583 digest eb67d1b3ba7cfa53 / accepted8/rejected232 digest ad8e6885296eed0f 全对；预算65536B÷1GB/s≈65.5µs、5µs<8%(7.6%)、≈0.2%(5/2456)成立；diff_convention=B(CAP=4)-A(CAP=64) 与表头 B−A 一致；门禁 gate-attempted=accept、gate-accepted=insufficient-evidence 与判定一致。章末件 ch17_summary/recall/exercises/exam 复述同批数字，无冲突。唯一问题见 findings：def 17.6.2 先说「已受理却没进日志，有三条路径」（竞态/致命错误/panic），随后又称「上面两条路径…没有测试覆盖」，只点名竞态与写线程失败两例，把 panic 那一条的测试状态漏掉，计数自相矛盾（P2 级行文/一致性）。",
+      "evidence": "engine.rs:232-249,620-621,624-632,773,598-603,431-434,276-284,338-341,350-367,375-388; wal.rs:96-115; stats.rs:46-73; epoch.rs:12,24,81-90; tests/admission.rs:12,79,128; results/run-03/statistics.json, gate-accepted.json, gate-attempted.json, recompute.txt, admit-verification.txt, admit.csv; verify_admit_csv.py; src/bin/tide-admit.rs:104-182,219-228"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "pass",
+      "notes": "逐句回查源码+独立复算 run-02。双路排空：ipc.rs:152-176 确起 stdin/stdout/stderr 三个独立线程，输出线程各 read_to_string 到 EOF 后经 channel 回传，父线程 t_in.join()→rx.recv()→erx.recv()→t_out.join()+t_err.join()→child.wait()（ipc.rs:178-186），与「先 join stdin 再收两路并 join 最后 wait」一致；注释按 64 KB 推理（ipc.rs:132），正文如实标注本机 macOS 实际管道容量未采集、第10章也只给「完整输出量远大于本机实际可用管道缓冲」的停滞重现（ch10.md:939，且 def-10.5.1/10.5.2/10.7.1 三个锚点确实存在，背压回路/有限保留/超时三件事对应无误）。原子发布/幂等：segment.rs:106-116 write_segment 走 临时名(set_extension(\"tmp\"))→sync_all→rename，rename 前无任何存在性检查；do_compact 段名 = state.segments.iter().map(id).max().unwrap_or(0)+1（engine.rs:688-694），Stats 无「重放收敛」计数（stats.rs），POSIX rename 同名静默覆盖成立——「临时名走通了、存在性检查与由输入决定的任务标识都没有」准确。测试：tests/compaction.rs 恰四测（compact_two_needs_two_segments 不足两段回 None / compact_two_merges_and_keeps_semantics / compact_two_equivalence_under_random_ops / compacted_segment_survives_restart），无「同一批输入合并两次」用例，与例 17.7.1 描述一致；无清理 .tmp 的代码（全仓 tmp 仅出现在 write_segment/wal.new）。CompactorError 把 stderr 原文带出（ipc.rs:194-198）成立。实测复算全对：statistics-compaction.json A=7696325.94 B=9171895.58（CSV BATCH_MEAN 逐行均值复算=7696325.9381/9171895.5825），diff=B-A=1475569.64→+1,475,570、CI[1366635.81,1586756.50]→[+1,366,636,+1,586,757]、ratio=1.1917→1.19、7.70ms/9.17ms/1.48ms/区间1.37-1.59ms 全符；diff_convention=B(subprocess)-A(in-process) 与「diff=B(子进程)-A(进程内)」一致；mech-verification.txt: bytes=401770,entries=4096,crc32=7241b72e（含 dropped=0）；tide-mech.rs: A=compact_in_process(读段+merge_dumps(..,false)+write_segment) 写 merged-inproc.tide、B=spawn_compactor 写 merged-subproc.tide，两臂都绕过 compact_two、均传 drop_tombstones=false（tide-mech.rs:294,341），而引擎 do_compact 固定 true（engine.rs:701）——「这两处差异决定了下面那个数不能当成引擎里一次 compact_two 的开销」准确。预算：gate-compaction.json budget_B=10000000.0 且 budget_note 原文即「后台每 100 ms 触发…占十分之一」，CORRECTION.md 逐条（do_compact 唯一调用点 engine.rs:565、compact_two engine.rs:331、无定时器）否证该依据并把正文落点指回 17.7.2，正文如实区分「数值有同期物证、含义是 2026-10-30 重写时的重述」，稳健性论证「上界1.59ms<A臂7.70ms」成立。think 框与构成推断均标注 RSS/分项/分段耗时「本轮没有采集」。未发现站不住脚之处。",
+      "evidence": "ipc.rs:132,152-198; segment.rs:106-116,366-368; engine.rs:688-704; stats.rs; src/bin/tide-mech.rs:263-370; src/bin/tide-compactor.rs:43,54; tests/compaction.rs:36,47,94,143; results/run-02/statistics-compaction.json, gate-compaction.json, mech-verification.txt, compaction.csv, CORRECTION.md; src/part3/ch10.md:917,939,954,1324"
+    }
+  ],
+  "sources": [
+    "src/part4/ch17.md",
+    "src/part4/ch17_summary.md",
+    "src/part4/ch17_recall.md",
+    "src/part4/ch17_exercises.md",
+    "src/part4/ch17_exam.md",
+    "src/part4/ch17_checklist.md",
+    "src/part3/ch09.md",
+    "src/part3/ch10.md",
+    "projects/tidekv/src/engine.rs",
+    "projects/tidekv/src/epoch.rs",
+    "projects/tidekv/src/stats.rs",
+    "projects/tidekv/src/ipc.rs",
+    "projects/tidekv/src/segment.rs",
+    "projects/tidekv/src/wal.rs",
+    "projects/tidekv/src/bin/tide-admit.rs",
+    "projects/tidekv/src/bin/tide-mech.rs",
+    "projects/tidekv/src/bin/tide-compactor.rs",
+    "projects/tidekv/tests/admission.rs",
+    "projects/tidekv/tests/compaction.rs",
+    "projects/tidekv/results/run-02/statistics-compaction.json",
+    "projects/tidekv/results/run-02/gate-compaction.json",
+    "projects/tidekv/results/run-02/mech-verification.txt",
+    "projects/tidekv/results/run-02/compaction.csv",
+    "projects/tidekv/results/run-02/CORRECTION.md",
+    "projects/tidekv/results/run-03/statistics.json",
+    "projects/tidekv/results/run-03/gate-accepted.json",
+    "projects/tidekv/results/run-03/gate-attempted.json",
+    "projects/tidekv/results/run-03/recompute.txt",
+    "projects/tidekv/results/run-03/admit-verification.txt",
+    "projects/tidekv/results/run-03/admit.csv",
+    "projects/tidekv/verify_admit_csv.py",
+    "projects/tidekv/run.sh",
+    "projects/tidekv/README.md"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "定义 17.6.2 先明确写「已受理却没进日志，有三条路径」并逐条列出①竞态窗口里被 shutdown() 丢弃的写、②写线程致命错误置两标志后 return、③写线程 panic 被 close() 的 `let _=h.join()` 吞掉；紧接着的收口句却说「上面两条路径本轮都没有测试覆盖」，只点名「在关闭窗口里并发提交」(=①) 与「写线程失败之后再 sync()」(=②)，把③（panic 路径）的测试状态漏掉了。计数自相矛盾（三条 vs 两条），且读者会误以为③已被覆盖。正确说法：三条路径本轮都没有测试覆盖，或明确区分哪两条与 recv() 阻塞相关、③另作说明。",
+      "evidence": "ch17.md 定义 17.6.2（约 900/902/906 行）；engine.rs:598-603（致命错误 return）、engine.rs:431-434（panic 后 `let _=h.join()`）、engine.rs:773（shutdown() 丢弃 Write）；tests/admission.rs 仅三测，无 panic/关闭窗口并发/失败后 sync 用例"
+    }
+  ]
+}

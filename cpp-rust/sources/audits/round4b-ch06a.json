@@ -1,0 +1,84 @@
+{
+  "reviewer": "r4b-ch06a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 ch06.md 全文 6.1-6.6（正文、定义/例题/思考/判定流程/小结/常见错误/即时自测），并把每处代码断言对到 bench/compiler-lab 的 .rs/.ll/.s、把每处测量数字用 python 从 stable-01/stable-02 CSV 逐批复算、把每处「没有采集」去 results/ 目录确认磁盘上确无产物。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节为概念层（产物层级、两道门、wrapping 域、aarch64-apple-darwin 未手写 SIMD/未 target-cpu=native），无独立测量数字。核对了它向后引用的事实：def-6.1.2 的 wrapping/浮点区分、6.4 表数字、6.3 IR 向量加法与本机 add.2d，均在后续节磁盘证据中成立。line 263 的浮点断言「本章没打开 fast-math、没采集浮点数据 = 没有采集」经 results 目录核查确无浮点产物（grep 命中仅二进制/DWARF 的 ipc 子串，非真实采集），判定为诚实。",
+      "evidence": [
+        "src/part2/ch06.md:90 wrapping_add u64 模2^64 语义（对照 lib.rs:148-157）",
+        "grep -riE 'fast.?math|floating' bench/compiler-lab/results/{stable-02,extra-02} 无 CSV/txt 采集产物（仅二进制误命中）",
+        "src/part2/ch06.md:162/187 目标未 target-cpu=native：与 codegen-build.txt 一致，属边界声明非测量"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量断言全部回 IR 核实：add_slices output 带 noalias+align 8、input 带 readonly+noalias+align 8（IR 第 1886 行签名逐字相符）；align 8 不等于 16/128 承诺、[u8;256] align=1（layout.csv 相符）判为正确。内部可变性/UnsafeCell 与 split_at_mut 为教学表述。line 366/417「raw pointer 对照=没有采集」经核查 results 内无 raw pointer 批次/正式对照产物，诚实；未把 6.8 真实 PGO 或 6.7.6 尺寸误说成没采集。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886 output noalias...align 8, input noalias...readonly align 8",
+        "bench/compiler-lab/results/extra-02/layout.csv:10 [u8;256],256,1；:3 &[u64],16,8",
+        "results 目录无 raw pointer 基准文件（grep 无产物）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐行核代码：lib.rs:148-166 的 add_slices/scalar_add/add_with_calls 与正文 6.3.2 三段完全一致（均 #[inline(never)]、assert_eq 长度、wrapping_add；对照仅改调用边界）。IR 摘录 %8=add<2 x i64> %wide.load10,%wide.load、%index.next=add nuw i64 %index,8 逐字命中（IR 第47、55 行）；add_slices 体内确为 4 条 add<2 x i64>（=四组2×i64，一次推进8元素），与正文相符；add_with_calls 体为标量 +4，符合「保留调用」。本机 .s 的 LBB6_5 块 ldp/stp q 各成对、4 条 add.2d vN、subs x11,#8、b.ne LBB6_5 与正文 6.3.5 汇编片段逐字相符。line 631「长度1000实际路径=没有采集」：tests.txt 仅正式长度16384 与 0..129 正确性测试，无 1000 观测，诚实。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs:148-166 三内核源码",
+        "compiler_lab-55987aab45b3e67f.ll:1886-2123 add_slices 体内 add<2 x i64> 计数=4，index.next+8（第55行）",
+        "compiler_lab-55987aab45b3e67f.s:3134-3156 LBB6_5: ldp q0,q1..; add.2d v0..v3; stp; subs x11,x11,#8; b.ne LBB6_5",
+        "results/stable-02/tests.txt 仅含 16384/0..129 测试，无长度1000批次"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "实测表全部由 stable-02/vectorize.csv 逐批复算并吻合到小数点后6位：zip mean0.347104/sd0.016887/p500.346487/p990.378854；calls mean0.723644/sd0.059594/p500.718884/p990.833090；n=21。派生量核对：均值差0.723644-0.347104=0.376540（正文 line734）✓；calls/zip=2.0848≈2.08（即时自测 line840）✓；p99=最大批值（nearest-rank ceil(21×0.99)=21）成立 ✓；6.4.8 stable-01 zip 均值复算=0.311992 ✓。入口 vectorize.rs 源码（fill0→add→borrowed_sum、expected=fold wrapping_add、input_data(16384)）与正文 6.4.1/6.4.2 相符。line 746/818/849 的 IPC/cache miss/内存控制器/指令退休数=没有采集，经核查 results 无任何 PMU/perf 产物，诚实。",
+      "evidence": [
+        "python 复算 results/stable-02/vectorize.csv（每 case 21 批）：zip/calls mean·sd(N-1)·p50·p99 与 ch06.md:719-720 完全一致",
+        "python 复算 results/stable-01/vectorize.csv zip mean=0.311992（ch06.md:788）",
+        "0.723644-0.347104=0.376540；0.723644/0.347104=2.0848（ch06.md:734/843）",
+        "ceil(21*0.99)=21 且 max 批值=zip0.378854/calls0.833090（ch06.md:736/804）",
+        "bench/compiler-lab/src/bin/vectorize.rs:4-12 计时体与期望值",
+        "grep -riE 'perf stat|pmu|ipc|cache.?miss' results/ 无采集产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "CTFE/常量传播/Miri 分界为概念层，但可对核项均落地：lib.rs:168-204 bit_table(BIT_TABLE=[u8;256])、static BIT_TABLE=bit_table()、runtime_table（含 black_box seed 挡折叠）、lookup_bits 与正文 6.5.3 源码逐字相符。runtime_table IR 返回确为 sret([256 x i8]) align 1 dereferenceable(256)（.ll:2366），支撑 6.1.4/6.6.4 的 256字节/align1。E0080 断言核实：probes/rejected/const_bounds.rs 的 [1u8;2][3] 越界与 results/extra-02/const_bounds.txt 内含 E0080 ✓。「Miri 本轮未执行、nightly 不可用」核实：results/extra-02/nightly.txt 显示 rustc +nightly 报 missing manifest（工具链不可用），确未跑 cargo miri ✓。line 1020 显式声明 6.7.6 的 __text 尺寸、codegen-build.txt 构建时长、6.8 的 PGO 尺寸差为已有产物、仅冷启动加载全书未测——既未把已采集说成没采集，也未虚构。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs:168-204 bit_table/BIT_TABLE/runtime_table/lookup_bits",
+        ".ll:2366 runtime_table sret([256 x i8]) align 1 dereferenceable(256)",
+        "results/extra-02/const_bounds.txt 含 E0080；probes/rejected/const_bounds.rs 越界常量",
+        "results/extra-02/nightly.txt: 'error: missing manifest in toolchain nightly-aarch64-apple-darwin' → Miri 确未执行",
+        "results/extra-02/{one,many,thin,pgo}-size.txt 与 codegen-build.txt 存在，印证 6.5.7 对已采集产物的正确指认"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "实测表由 stable-02/ctfe_table.csv 逐批复算吻合到6位：static_table mean0.169413/sd0.001526/p500.169365/p990.172596；rebuild_table mean1.953818/sd0.017490/p501.949261/p991.997598；n=21，units=256。派生量：1.953818/0.169413=11.5329≈11.5（6.6.5/即时自测 11倍）✓；p99=最大批值（nearest-rank）成立 ✓。入口 ctfe_table.rs（0u8..=255 全域、expected=count_ones 求和、static_table 查 BIT_TABLE、rebuild_table 每批 runtime_table()）与正文 6.6.2 相符。穷举测试 ctfe_exhaustive_domain 覆盖 256 项、结果上界 0..8 属实。布局表 size/align 与 layout.csv 一致。6.6.6「冷加载=本轮没有测」及 6.5.7「CTFE 构建成本不计入本运行时表」为诚实的口径限定，非误报缺失。",
+      "evidence": [
+        "python 复算 results/stable-02/ctfe_table.csv（每 case 21 批，units=256）四行数字与 ch06.md:1168-1169 完全一致",
+        "1.953818/0.169413=11.5329；逐批均值之比亦=11.5329（ch06.md:1175/1272）",
+        "bench/compiler-lab/src/bin/ctfe_table.rs:4-16 入口源码",
+        "results/extra-02/layout.csv [u8;256],256,1 / &[u64],16,8 / u64 8,8（对照 ch06.md:1148-1154）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4f-ch08a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动逐节通读 src/part2/ch08.md 的 8.1–8.6 全部正文与每个语义盒（定义、例题与解答、思考、判定流程、小结、常见错误、即时自测），并逐一回查 bench/examples/future_layout.rs、bench/src/park.rs、bench/src/bin/async_poll.rs 逐行、bench/results/local/{future-layout.mir,future-layout.txt,async-poll.txt,environment.txt,tests.txt,future-allocation.txt}、bench/results/profile/async-sample.txt，用 /usr/bin/python3 从 async-poll.txt 原始 63 行样本自行复算 mean/sd/nearest-rank 分位数；对 8.2.7 引文用 pdftotext 回查登记母本 /Users/juanwang/E-Book/Rust/Guide to Rustc Development.pdf（S09）277–279 与 319–321 页；另跑 tools/list_uncollected_claims.py 只看 ch08 输出。",
+  "sections": [
+    {
+      "anchor": "2/8.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节主体核对通过：定义 8.1.1/8.1.2/8.1.3 与 example/future_layout.rs 的 cancellation_probe（第 18–20 行：函数体内构造 Guard 后 await 永不就绪的 pending）一致；例 8.1.1 三个销毁时点由 future-layout.txt 第 3 行实测输出（0 guards / 1 guard）与示例第 50–58 行的两个 assert_eq! 支撑，正文把它归给 8.8 节也落在 ch08.md:1688–1691 的同一段输出上。新写的「不进内核只对没有唤醒别人的那次返回成立」方向上与夹具和归档相符：async_poll.rs 第 8–16 行确认 YieldOnce 在 poll 内部调用 cx.waker().wake_by_ref()，park.rs 第 15–18 行确认 Notify::notify 先 store(true, Release) 再 self.thread.unpark()，async-sample.txt 第 66/71/76 行的 Parker::unpark 帧挂在 block_on 的 park.rs:50（poll 调用行）之下、而非 park.rs:53/54（swap/park）之下，8.6.5「调用unpark和通知状态的工作仍然存在」与之一致；全档没有 Parker::park 帧，也与「通知已存在故 driver 通常不 park」不冲突。但两处越界：（1）断言「那是系统调用」在所点名归档里没有对应观察——unpark 在 async-sample.txt 是叶子帧（第 112 行计数 59），其下无任何内核帧，而同文件第 96/104 行的 stdout write 明明采得到 libsystem_kernel 帧，说明工具并非采不到内核帧；内核进入这一步属对 std Darwin Parker 实现的推断，且 token 已置位时 unpark 可走不再触发 mach 信号量的快路径，正文的普遍式表述强于证据。（2）该限定与本章 8.9 参照线结论行 ch08.md:1826「poll 返回不是上下文切换：它在同一个线程、同一个地址空间里返回，不换栈、不换页表、不进内核」未同步，同一章内对同一短语给出两种口径，读者带走的恰是后者。rCore 对照一段落在登记台账里可落到「第八章=线程管理」（sources/web.json 登记 chapter8/1thread.html 等，appendix/coverage.md:4121 rcore-thread 已核读），未见与正文冲突，但正文没有给出节级定位。判定 finding。",
+      "evidence": [
+        "src/part2/ch08.md:86（新句）对照 src/part2/ch08.md:1826（未加限定的「不进内核」）",
+        "bench/src/bin/async_poll.rs:8-16（poll 内 wake_by_ref）",
+        "bench/src/park.rs:15-18（store Release 后 thread.unpark）",
+        "bench/results/profile/async-sample.txt:66,71,76（Parker::unpark 挂在 park.rs:50 poll 行下）与 :112（unpark 计数 59）",
+        "bench/results/profile/async-sample.txt:96,104（同档确有 libsystem_kernel write 帧，unpark 之下无内核帧）",
+        "bench/results/local/future-layout.txt:3 与 bench/examples/future_layout.rs:50-58（0/1 计数实测）",
+        "src/part2/ch08.md:1688-1691（8.8 节同一段实测输出，交叉引用落地）"
+      ]
+    },
+    {
+      "anchor": "2/8.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐字回查 MIR 归档：结果文件确实以 rustc --emit=mir 的人类可读形式包含正文引用的 coroutine layout 块（field _s0: Guard; field _s1: std::future::Pending<()>; variant_fields Unresumed(0)/Returned (1)/Panicked (2)/Suspend0 (3): [_s0, _s1]），与 8.2.2 的代码块逐行一致；8.2.4 的判别值跳转在归档里是真实的 discriminant + switchInt [0,1,2,3,otherwise]，且 discriminant=1/2/3 的写点分别落在 Guard 析构后的完成态、panic 清理与挂起态，支撑正文「完成走 Returned、panic 走 Panicked」的三出口讲法；例 8.2.1 三问答与归档一致。版本口径核对：environment.txt 第 3 行 rustc 1.99.0 (b940084d7 2026-09-28)，正文「本章保存的文件来自rustc 1.99.0」成立；正文也如实说明它不是 -Z dump-mir 接口。8.2.7 的两处引文按登记的母本 S09（Guide to Rustc Development.pdf，sha256 db9052af…，368 页，local_path_matches_sha 为真）用 pdftotext 实测：277–279 页确实是「MIR borrow check」，列出先初始化、不能二次移动等移动/初始化跟踪条目；319–321 页确实是 Monomorphization 一节（为每种具体类型各生成一份代码），与正文「单态化收集」表述相符，未见与母本不符。8.2.5 的「一次 poll 可穿过多个已就绪 await」「统计调度次数要数真正返回 Pending 的次数」是口径定义而非数字，与 8.6.1 的实验分组自洽。本节无数字矛盾。",
+      "evidence": [
+        "bench/results/local/future-layout.mir:37-45（coroutine layout 原文）",
+        "bench/results/local/future-layout.mir:86-87,120-141,161（discriminant/switchInt 与三出口写点）",
+        "bench/results/local/environment.txt:3（rustc 1.99.0）",
+        "pdftotext -f 277 -l 279 sources/inventory.json 登记的 /Users/juanwang/E-Book/Rust/Guide to Rustc Development.pdf（MIR borrow check）",
+        "pdftotext -f 319 -l 321 同一 PDF（Monomorphization）",
+        "src/part2/ch08.md:1813-1814（8.9 来源表登记的 S09 页范围与正文引用页码一致）"
+      ]
+    },
+    {
+      "anchor": "2/8.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量自行复算并与归档对齐：future-layout.txt 第 1–2 行 across_await size=4097 align=1、before_await size=2 align=1，正表 8.3.2 前两行一致，且 align 确由示例第 41/46 行的 align_of_val 打印（正文「前两行的对齐来自 align_of_val」属实）；4097−2=4095 与 preview 的「差两千倍」（2048.5×）不矛盾。第三行 257 字节来自 future-allocation.txt 头部 future_size=257，该文件只输出 size、没有 align 字段，正文因此留空并写明「本基准只输出size」，例 8.3.1 第 2 问的取证纪律与磁盘产物相符，属正确的不采集声明；256+状态判别的解释与 8.2.2 判别值口径一致。两个探针的代码核对：示例第 23–37 行确有 4096 字节数组，large_across_await 在 await 之后使用 bytes[0]、large_before_await 用内层作用域把使用收在 await 之前，二者都先 await 永不就绪的 pending，正文对存活区间的讲法逐行成立。8.3.3 未给任何「实测」数字，只给 K×帧大小加任务头/队列链接/元数据/对齐浪费的算法与 K≠QPS 的提醒，属定义性内容。Pin 定义 8.3.2 与思考 8.3.1 是语言层机制（Pin<&mut T> 可指栈、Pin<Box<T>> 指堆、T: Unpin 不再限制安全移动、不保证运行时钉住标志），未冒充实测；本章驱动器确实使用 std::pin::pin!（park.rs 第 48 行），与 8.3.6「不手写RawWaker」相符（RawWaker 全章未出现）。",
+      "evidence": [
+        "bench/results/local/future-layout.txt:1-2（4097/1、2/1）",
+        "bench/examples/future_layout.rs:23-37,39-47（两探针作用域与 size_of_val/align_of_val 打印）",
+        "bench/results/local/future-allocation.txt:1（future_size=257，无 align 字段）",
+        "4097-2=4095、4097/2=2048.5（自行复算）",
+        "bench/src/park.rs:48（pin! 宏，未手写 RawWaker）"
+      ]
+    },
+    {
+      "anchor": "2/8.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "契约类断言全部回到夹具：8.4.2 的 YieldOnce 代码与 bench/src/bin/async_poll.rs 第 8–16 行同构（else 分支置位后 cx.waker().wake_by_ref() 再返回 Pending，每个新值恰一次 Pending），Unpin 才允许 Pin<&mut Self> 改字段的说法成立。8.4.4 定义 8.4.2 与例 8.4.1 三问是可核机制：丢通知由「检查谓词—注册 Waker」两步窗口触发、不要求乱序，单加 fence 不关窗口，正文没有把它写成已实测结论。8.4.5 的跨线程测试逐行对上 park.rs 第 115–147 行：Shared 含 ready 与 Option<Waker>，消费者在同一把 Mutex 内先读 ready 再登记克隆的 Waker（第 119–125 行，源码注释即「Predicate and registration protected by the same lock」），生产者在锁内置 ready 并 take 走 waker、离开作用域后才 w.wake()（第 136–143 行），正文「实际wake在释放锁后执行」准确。8.4.6 与 park.rs 第 20–27 行一致：impl Wake 显式实现 wake_by_ref（注释写明直接 fire 一次通知、绕开 clone→wake 默认路径），而 block_on 第 42–46 行仍为每个任务 Arc::new(Notify) 并 Waker::from(Arc::clone)，正文因此拒绝「整个block_on完全零堆分配」的说法有产物支撑。即时自测四题答案与本节口径一致，未把 wake 计数当进度。",
+      "evidence": [
+        "bench/src/bin/async_poll.rs:8-16（YieldOnce::poll 内 wake_by_ref）",
+        "bench/src/park.rs:115-128（Mutex<Shared>，同锁内检查谓词+注册 Waker）",
+        "bench/src/park.rs:130-148（锁内 take waker、锁外 wake，50 次重复）",
+        "bench/src/park.rs:20-27（显式 wake_by_ref，注释：fire the one notification directly，绕过 clone→wake 默认路径）",
+        "bench/src/park.rs:42-46（每任务一次 Arc 通知对象，否定零堆分配）"
+      ]
+    },
+    {
+      "anchor": "2/8.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "代码节选逐字核对：正文的 driver 循环与 park.rs 第 49–58 行完全一致（match future.as_mut().poll(&mut context) / Ready 返回 / Pending 内 while !notify.notified.swap(false, Ordering::Acquire) { thread::park(); }）。图 8-2 的 Release/Acquire 与顺序（notified.store(true, Release) 先于 thread.unpark()，driver 先 swap 再 park）与 park.rs 第 15–18、53–54 行一致，未把 park 说成通知存储。定义 8.5.1 与例 8.5.1 的令牌被吞反例可落到夹具：park.rs 第 87–104 行的 ConsumeToken 在 poll 内 thread::park() 消耗令牌后返回 Pending，注释即「consume the unpark token before returning Pending」，与 8.5.7 表的第二行「consumed_park_token｜poll内部消耗令牌」对应；第 40 行 ENTERED 的 thread_local Cell + assert!(!entered.replace(true), \"nested block_on is unsupported\") 加第 30–35 行 EnterGuard 支撑 8.5.5 的「嵌套直接 panic、unwind 也清除标记」。测试覆盖表四行全部在归档里跑过：tests.txt 含 park::tests::pre_park_notification_is_not_lost、notification_survives_a_consumed_park_token、nested_call_is_rejected_and_guard_recovers、another_thread_can_complete_future 四项 ok，正文按源码实名引用（未用「重入测试」之类模糊指代，与台账纪律一致），第 132 行 for _ in 0..50 支撑「重复50次」，8.5.8 也明确拒绝把 50 次读成全交错证明。8.5.6 关于 thread_local 属 OS 线程、本 driver 不要求 Future: Send（block_on 签名为 F: Future，无 Send 约束，第 39 行）而通知对象经 Arc+原子跨线程安全，均与代码相符。",
+      "evidence": [
+        "bench/src/park.rs:49-58（driver 循环原文）",
+        "bench/src/park.rs:15-18（store Release 后 unpark）",
+        "bench/src/park.rs:87-104（poll 内 park 消耗令牌）",
+        "bench/src/park.rs:40（thread_local Cell 重入断言 panic）与 :30-35（EnterGuard）",
+        "bench/results/local/tests.txt（park::tests 四项 ... ok）",
+        "bench/src/park.rs:131-132（for _ in 0..50）"
+      ]
+    },
+    {
+      "anchor": "2/8.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "测量级数字全部从正文点名的归档自行复算，未抄正文：async-poll.txt 共 68 行，第 2–65 行为 case,sample,ns_per_element 的 3×21 条原始样本（case 0/1/2 对应 sync/async-ready/async-self-wake，各 21 条）。我用 /usr/bin/python3 独立算得 sync mean=0.519 sd=0.074 p50=0.487 p99=0.635；async-ready mean=0.867 sd=0.108 p50=0.870 p99=1.125；async-self-wake mean=7.407 sd=0.603 p50=7.386 p99=8.326，与 8.6.4 表逐项吻合；分位数定义可核：README 声明 N-1 标准差与 nearest-rank，n=21 时 p99 即批最大值（sync 0.635、ready 1.125、self-wake 8.326 均为各模式 max），与正文「p99 是批均值的分位数、不是一次 poll 的 p99」的口径声明一致，统计量定义未缺。夹具核对：async_poll.rs 第 61–63 行 for sample in 0..=samples 配合第 72 行 if sample != 0 即「先跑一批不计入统计的预热」、第 63 行 mode=(sample+offset)%3 即「测量顺序逐批轮换」、第 71 行 assert_eq!(black_box(sum), expected) 即「每批结束校验总和」，第 8.6.9 正确性出口有据；第 67–68 行显示 async-ready 与 self-wake 都只调用一次 block_on 包住整轮任务，支撑 8.6.3「一个 Arc / 完整任务」的分摊说明，也支撑 8.6.1 三组只差一次真实 Pending。采样归档核对：async-sample.txt 第 110–113 行排序计数为 block_on 401、_dyld_start 339、Parker::unpark 59、sync_sum 28，与 8.6.8 四个数字逐个命中，第 114 行 mach_msg2_trap 9 也在档；正文把它限定成「路径含 driver 与 unpark」而拒绝除以总计数报 CPU 百分比，与同文件第 23/24 行（Thread 主栈 490 中 339 落在 _dyld_start）显示的启动污染事实相符，未越界成周期/IPC 结论（本档确无 PMU 事件，environment.txt 第 17 行也声明未做 PMU 采集）。async-poll.txt 头部 future_size=48/align=8 未被本节任何尺寸断言引用，无冲突。8.1 新句所指「unpark 工作算进结论」在 8.6.5 得到呼应，本节未与它矛盾。",
+      "evidence": [
+        "复算：bench/results/local/async-poll.txt:2-65 → sync 0.519/0.074/0.487/0.635；async-ready 0.867/0.108/0.870/1.125；async-self-wake 7.407/0.603/7.386/8.326（与 :66-68 归档汇总行逐位一致）",
+        "nearest-rank n=21 时 p99=max，与 bench/results/local/README.md「N-1标准差与nearest-rank分位数」一致",
+        "bench/src/bin/async_poll.rs:61-63（预热一批+顺序轮换）, :71（每批校验总和）, :67-68（一次 block_on 覆盖整任务）",
+        "bench/results/profile/async-sample.txt:110-114（401/339/59/28/mach_msg2_trap 9）",
+        "bench/results/local/environment.txt:17（未配置 PMU，正文不填 IPC/cache-miss 成立）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "2/8.1",
+      "severity": "P1",
+      "description": "8.1 新加的限定「『不进内核』只对没有唤醒别人的那次返回成立」没有在本章内部收口：8.9 参照线结论行（ch08.md:1826）仍写「poll 返回不是上下文切换：它在同一个线程、同一个地址空间里返回，不换栈、不换页表、不进内核」，不带任何例外，而这正是 8.1.1 自己说「本章只需要记住结论」要读者带走的那句。同一章对同一短语给出两种口径：8.1 现在把「进内核」用作是否触发内核态（unpark），8.6.5 与 1826 行把它用作是否进入内核睡眠（「这条路径没有必然进入内核睡眠」）。按我自己核对的证据，8.1 的例外方向是对的（async-sample.txt 第 66/71/76 行 Parker::unpark 挂在 park.rs:50 的 poll 调用行之下，park.rs:15-18 确证 wake_by_ref→store→unpark），但 1826 行未同步修订，读者会把两处读成互相矛盾。建议把 1826 行改为与 8.1 同口径（如「不换栈、不换页表；没有唤醒别人的那次返回不进内核，self-wake 那次要付一次 unpark 的通知工作」），并在 8.1 说明「进内核」指内核态调用而非睡眠。",
+      "evidence": "src/part2/ch08.md:86 vs :1826 vs :1223（8.6.5「这条路径没有必然进入内核睡眠」）；bench/src/park.rs:15-18；bench/results/profile/async-sample.txt:66,71,76,112"
+    },
+    {
+      "anchor": "2/8.1",
+      "severity": "P2",
+      "description": "「顺着 Notify::notify 落到 unpark，那是系统调用」的强度超过它点名的归档。归档能证明的是 unpark 帧确在 self-wake 的执行路径里（async-sample.txt:112 计数 59，父帧为 park.rs:50 的 poll 行），但 Parker::unpark 在该档是叶子帧，其下没有任何内核帧；同一份文件里 stdout 的写路径却明确采到 libsystem_kernel 的 write 帧（第 96/104 行），说明采样工具并非采不到内核态。因此「系统调用」这一步来自对 std Darwin Parker 的机制推断，而该实现有 token 已置位时不再触发 mach 信号量的快路径：本基准 driver 从不 park（全档无 Parker::park 帧），令牌长期为真，多数轮次的 unpark 可能只是加锁置位。建议措辞降到证据可支撑的「落到 std 的 Parker::unpark（async-sample.txt:112 采到 59 次），内核态进入未在本档采到对应帧」，或补一次能显示内核帧的取证。",
+      "evidence": "bench/results/profile/async-sample.txt:66,71,76（unpark 叶子帧）、:112（59）、:96,104（同档 libsystem_kernel write 帧存在，内核帧可被采到）；bench/src/park.rs:15-18,53-54（driver 侧未见 park 帧）"
+    }
+  ]
+}

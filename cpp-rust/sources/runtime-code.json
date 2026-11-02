@@ -40,5 +40,23 @@
       ]
     ],
     "status": "specified-ranges-reviewed"
+  },
+  {
+    "id": "tokio-blocking-code",
+    "crate": "tokio",
+    "version": "1.54.0",
+    "path": "src/task/blocking.rs",
+    "sha256": "ff8743009dd0f12e46a7076913d5aa24cce1a9838b63f739e445262cf1e2a774",
+    "reviewed_ranges": [
+      {
+        "lines": [
+          20,
+          130
+        ],
+        "items": "block_in_place 与 spawn_blocking 的取消语义：临界区内的代码不可取消（27–30 行）、超时后也不会真取消（117–119 行）、只有从未开始运行的阻塞任务才可能被取消（119 行起）"
+      }
+    ],
+    "status": "read-mapped",
+    "note": "2026-11-01 补登记：冷审发现第 9 章 9.1.3 声明「四个文件的指纹记入 runtime-code.json」，但这条一直漏了；现按本机 cargo registry 副本重算指纹补齐，行段为该章实际引用的取消语义。"
   }
 ]

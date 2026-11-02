@@ -1,0 +1,97 @@
+{
+  "reviewer": "r5-ch10b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整读了 src/part3/ch10.md 第 1309–1884 行（10.7 全部子节与语义盒、10.8、10.9、10.10、10.11），并逐条回查 bench/runtime-lab/src/process.rs、src/bin/worker.rs、src/process_macos.rs、tests/contracts.rs、examples/descriptor_race.rs、examples/process_stress.rs、diagnostics/README.md，以及 bench/results/runtime-fixed/ 下 baseline-debug/release 与 fixed-debug/release 的 report.txt、gate/ready、lsof.txt、status.txt、diagnostic-summary.json、diagnostic-verification.txt、implementation-source-review.json、final-validation/tests-*.txt 与 stress-*.txt、measurements-final/process-rpc.txt 与 type-layout.txt、rustup 内 std/sys/pipe/unix.rs、src/appendix/coverage.md 与 sources/web.json 的登记行。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "10.7.1–10.7.11 全文与 def-10.7.1/def-10.7.2/def-10.7.3、ex-10.7.1（含解答）、think-10.7.1（含解答）、期限小节、errata E-a…E-f、即时自测四题与答案全部读完并逐条对码对档核实。已核实：(1) 10.7.2 的 run_child 顺序与 process.rs:150-240 逐句一致（stdin=null/stdout+stderr=piped/kill_on_drop 见 process.rs:163-168，取出端点见 176-186，两个 drain 任务 191-198，timeout(deadline, child.wait()) 200，超时分支 start_kill 后 child.wait() 216-218 且状态取回自 wait，tokio::join! 并发 finish_reader(drain_grace) 233-235，移交 Capture 返回 Report 236-240）；退出码 7 走正常 Report 由 worker.rs:30 的 exit(7) 与 10.7.2 叙述一致。(2) 10.7.6 inherit 回归成立：worker.rs:31-44 直接 helper 用 current_exe 派生 sleep 后代（worker.rs:29 固定 2 秒寿命）后立即 exit(0)；contracts.rs:204-225 断言 exit_code==Some(0)、stdout/stderr 双 eof=false、reader_errors.len()==2，随后 sleep(2100ms)，注释明确不声称进程树控制。(3) 10.7.7 的 std 两步设标核实：rustup stable 源码 library/std/src/sys/pipe/unix.rs:34/38/39 为 pipe(fds) 后依次 fd0(读端).set_cloexec()、fd1(写端).set_cloexec()，非原子；bench/results/runtime-fixed/implementation-source-review.json 第 1 条登记的正是该文件 1–44 行并附 sha256，environment.txt 记录 rustc 1.99.0、Darwin 27.0.0，与正文「Rust1.99.0」「本机macOS27」一致；「没有增大1秒grace」对 descriptor_race.rs:58 的 Duration::from_secs(1)。(4) 10.7.8 表与归档逐位吻合：baseline-debug/flood-pipe1/report.txt 首行 gate api=pipe、read_fd=10 flags=0、write_fd=11 flags=0，stdout total=2097152 eof=false、stderr total=2097152 eof=true，flood-pipe2 恰好相反，与括号内说明完全一致；lsof.txt 含 2 条 PIPE；baseline-debug/status.txt 为 flood pipe1/pipe2、sleep pipe1/pipe2 四组 exit=101，fixed 同四组 exit=0，fixed-debug 首行 gate api=pipe2 flags=1、lsof PIPE 计数 0；diagnostic-verification.txt 第 1 行「8 deterministic baseline failures / 8 fixed passes」与 4+4/4+4 相符。(5) 10.7.9 修复代码存在且与正文一致：process_macos.rs 含 pipe2/O_CLOEXEC/OwnedFd/Unsupported，正文引用的四行在 process_macos.rs:54-60（stdout(out_write).stderr(err_write) 后重设 Stdio::null()）。(6) 10.7.10 统计可复算：diagnostic-summary.json 记 tests_per_run=18、complete_parallel_test_runs=20（final-validation 有 tests-debug-1..10 与 tests-release-1..10），18×20=360 与「共360项测试执行通过」一致；每轮 stress 输出「80 direct child reports, 60 flood, 10 timeout, 10 inherit」（stress-debug-1.txt），10 轮即 800/600/100/100，与 summary 的 flood 600、sleep 100、inherit 100 相符（归档把 timeout 场景命名为 sleep 模式，见 worker.rs:29 与 process_stress.rs:24）。(7) 10.7.11 ReaderTask 的 Drop→abort 见 process.rs:127-136；def/ex/think 的 [@id] 全部能在书中解析（脚本扫过 src/**/*.md，无未落地引用）。未核到的部分：10.7.7「初次并行测试只留下两个EOF断言失败」的首次事故日志我没有在 runtime-fixed 下定位到具体文件（tests-first.txt/check-first.txt 已是修复后全绿记录），但正文与 10.7.10「历史首次事故唯一归因仍不可证明」的自我限制一致，未把该次事故当作已唯一归因，故不判 P0/P1；verify_drain_fix.py 我只确认存在与可执行入口，没有整份重放它的统计。发现一条 P2：10.7.9 引用的路径写作 `src/process_macos.rs`，仓库里可解析的真实路径是 bench/runtime-lab/src/process_macos.rs（该短路径只在归档 source-snapshot 布局下成立）。",
+      "evidence": [
+        "bench/runtime-lab/src/process.rs:163-168,176-186,191-198,200,216-218,233-240",
+        "bench/runtime-lab/src/bin/worker.rs:29-31,44",
+        "bench/runtime-lab/tests/contracts.rs:204-225",
+        "bench/runtime-lab/examples/descriptor_race.rs:58,61",
+        "/Users/juanwang/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/pipe/unix.rs:34,38,39",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe1/report.txt:1 (gate api=pipe flags=0), stdout total=2097152 eof=false / stderr eof=true",
+        "bench/results/runtime-fixed/baseline-debug/flood-pipe2/report.txt:1 (stdout eof=true / stderr eof=false)",
+        "bench/results/runtime-fixed/baseline-debug/status.txt:1-4 (flood/sleep pipe1/pipe2 exit=101)",
+        "bench/results/runtime-fixed/fixed-debug/flood-pipe1/report.txt:1 (gate api=pipe2 read_fd=9 flags=1 write_fd=10 flags=1); fixed-debug/flood-pipe1/lsof.txt PIPE 计数=0（baseline 为 2）",
+        "bench/results/runtime-fixed/diagnostic-verification.txt:1 (8 baseline failures / 8 fixed passes)",
+        "bench/results/runtime-fixed/diagnostic-summary.json: tests_per_run=18, complete_parallel_test_runs=20, stress_reports={flood:600,sleep:100,inherit:100}",
+        "bench/results/runtime-fixed/final-validation/stress-debug-1.txt: 'stress: 80 direct child reports, 60 flood, 10 timeout, 10 inherit'",
+        "bench/results/runtime-fixed/final-validation/environment.txt: 'rustc 1.99.0 (b940084d7 2026-09-28)', 'Darwin ... 27.0.0'",
+        "bench/runtime-lab/src/process_macos.rs:54-60 与 pipe2/O_CLOEXEC/OwnedFd/Unsupported 关键字",
+        "bench/results/runtime-fixed/implementation-source-review.json:1 (std/sys/pipe/unix.rs 1–44, sha256 已登记)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "10.8.1–10.8.9 全部读完（含 10.8.1 状态表六行、def-10.8.1、think-10.8.1 及解答、10.8.5 五条检查、10.8.7、10.8.8、小结七条、errata E-a…E-g、即时自测四题与答案）。这一节是设计性论证而非实测，逐条检查的结论：池状态表的 six 项与「常见错误」列一一自洽，小结 ①–⑦ 与正文各小节对应且没有引用未定义锚点；10.8.3 对三元组 (session, generation, request id) 的表述在本节内一致，小结 ③ 与 10.8.1 表 restarting 行一致；10.8.5 明确声明「本轮没有实现共享映射访问器」，与仓库现状相符（我在 bench/runtime-lab 下未找到任何共享内存访问器或 unsafe 映射代码，10.8.8 的「没有做的资源治理」清单同此）；10.8.7「本机没有执行这些实验，所以不提供 Linux 共享内存吞吐表」诚实且与归档一致（runtime-fixed 下无 Linux 产物）；10.8.9 小结指向 10.9 的锚点 [#sec-cpp-rust.3.10.9] 存在。核对到的唯一外部指向是 10.8.2「见 9.7 节」，我确认第 9 章文件存在并按预算未逐行复述该原则的原文；本节没有数字断言需要复算。",
+      "evidence": [
+        "src/part3/ch10.md:1584-1715（10.8 全文）",
+        "grep 全仓 bench/runtime-lab 无共享映射/unsafe 访问器实现，与 ch10.md:1649、1663 的声明一致",
+        "src/part3/ch10.md:1717 存在被小结引用的锚点 {#sec-cpp-rust.3.10.9}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 10.9 全部四类来源小节。核到的：rCore 侧四个页名与登记台账逐字命中（sources/web.json 有 chapter4/4sv39-implementation-2.html 与 chapter5/1process.html、chapter5/2core-data-structures.html 的 url+archive 条目；src/appendix/coverage.md:600,601,609 与 571–572 登记 1file-descriptor/2pipe/4signal/3cmdargs-and-redirection/4trap-handling），正文声明「三页的常量是教学内核取值，本章一个都没搬进实验结论」与本章实测数据全部来自本地归档相符。本地母本表中 S11/16.2 PDF390–394 与 S08/Item17（第17条）PDF146–160 都可在 coverage.md:67 与 coverage.md:579 落地，页范围逐字一致；「当前库文档」表的 std1.99.0 Child / Tokio1.54.0 process / Tokio1.54.0 runtime 也与 coverage.md:64-66 的「在线精确1.99.0/1.54.0」一致，且 environment.txt 实测记录 rustc 1.99.0 支持正文的版本写法。未落地部分见 findings：Stanford CS110L 那份 slides/lecture-10-2022.pdf 在台账里只有 url+sha256+bytes（sources/web.json:82-90，coverage.md:4073 同指纹），登记页范围写作「PDF15–20、25–35，共36物理页」（coverage.md:63），正文的三处核读区间与之相容；但「首页标题为 Multiprocessing 并注明部分材料等同 2020 年内容」与「第 17 页做了渲染核对」这两条只有指纹、没有本地母本或核对记录可回查。",
+      "evidence": [
+        "sources/web.json:82-90 (stanford-process-slides url/sha256 7f327718206c…/status reviewed-online/未保留本地母本)",
+        "src/appendix/coverage.md:63 (PDF15–20、25–35，共36物理页)、coverage.md:4073 (同指纹)",
+        "src/appendix/coverage.md:67 (S11/16.2 PDF390–394)、coverage.md:579 (S08/SYS-S08-17 PDF 146–160)",
+        "sources/web.json:368-392 (chapter4/4sv39-implementation-2.html、chapter5/1process.html、chapter5/2core-data-structures.html 均带 archive 路径)",
+        "src/appendix/coverage.md:600,601,609 (chapter7/1file-descriptor.html、chapter7/2pipe.html、4trap-handling)",
+        "bench/results/runtime-fixed/final-validation/environment.txt (rustc 1.99.0)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 10.10 全部十二条跨节误判。逐条对源核对结果：第 3 条「本轮原生 Frame 是 16 字节，协议仍是 24 字节，两者不能互相推导」是可复算的静态量，measurements-final/type-layout.txt:1 原文即 `Frame size=16 align=8 wire=24`，与正文数字逐位一致；第 4/6/7/8 条（短读常态、帧首后 EOF 报截断、先 wait 会堵、保存上限不等于终止策略、wait 完成不等于 EOF）分别与 10.3–10.7 的定义及 contracts.rs 里 `eof_is_not_truncated_frame`、`inherited_writer_does_not_hang_drainers_forever`（断言 !eof 且 reader_errors=2）相符；第 9 条「只发 kill 不 wait」与 process.rs:216-218 start_kill 后再 wait 的写法相符；第 10 条与 10.7 末尾「期限不是硬实时总时长」一致；第 11/12 条与 10.8.3、10.8.4 一致；第 1/2 条与 10.1、10.8.8 的未交付清单一致（沙箱与进程树治理确实没实现）。本节无实测数字断言，因此没有需要复算的归档值；十二条均未发现与正文或代码相反的事实性表述。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt:1 `Frame size=16 align=8 wire=24`",
+        "bench/runtime-lab/tests/contracts.rs:204-225（!eof 且 reader_errors.len()==2）",
+        "bench/runtime-lab/src/process.rs:216-218（start_kill 后 child.wait()）",
+        "src/part3/ch10.md:1772-1798（10.10 十二条全文）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 10.11 小结七条、本章速查十行、出口检查（含复验命令与两条脚本片段）、应能解释的差异十题、回归测试观察表六行、完成与限制、章末件五行。核对到：小结第 4 条与速查第 5 行的 1.219 ms 有归档出处——measurements-final/process-rpc.txt:43 记 `spawn: mean=1219110.006 sd=77376.429 batch_p50=1208367.188 batch_p99=1531747.438 ns/op n=21`，1219110 ns = 1.219 ms，且正文写作「批均值」与 batch 层聚合口径相符（同文件 :37 的逐批观测 1219052.06 ns 亦落在该量级）；「修复版包含 18 项 runtime-lab 测试，debug/release 各 10 轮」与 diagnostic-summary.json 的 tests_per_run=18、complete_parallel_test_runs=20 及 final-validation 目录里 tests-debug-1..10 / tests-release-1..10 实存文件相符，各轮 `test result: ok. 6 passed` + `ok. 12 passed` 合计 18，无失败行；「800 个额外进程报告」与每轮 stress 输出 80 份 × 10 轮 = 800 相符。复验命令中 `bench/runtime-lab/Cargo.toml`、`tools/run_runtime_benchmarks.sh` 与两个 release 二进制名（process-rpc、pipe-drain）在仓库存在；章末五页文件路径（ch10_summary/recall/exercises/exam/checklist.md）与速查/出口检查引用的 [@def-*]、[@ex-*] 锚点全部可解析。未发现数字与归档矛盾。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/process-rpc.txt:37,43 (mean=1219110.006 ns → 1.219 ms 批均值)",
+        "bench/results/runtime-fixed/diagnostic-summary.json: tests_per_run=18 / complete_parallel_test_runs=20",
+        "bench/results/runtime-fixed/final-validation/tests-debug-1.txt 与 tests-release-1.txt（6 passed + 12 passed = 18，0 failed）",
+        "bench/results/runtime-fixed/final-validation/stress-debug-1.txt: 'stress: 80 direct child reports, 60 flood, 10 timeout, 10 inherit'",
+        "tools/run_runtime_benchmarks.sh 与 bench/runtime-lab/Cargo.toml 实存；src/part3/ 下 ch10_summary/recall/exercises/exam/checklist.md 实存"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "severity": "P2",
+      "description": "10.7.9 写「完整实现与unsafe义务在`src/process_macos.rs`」，但仓库里按该相对路径不存在文件：真实位置是 bench/runtime-lab/src/process_macos.rs（我在仓库内只找到这一份，另有归档 source-snapshot 副本）。短路径只在归档快照布局下成立，读者照抄路径会找不到文件，属于引用精度问题，不影响该节任何事实结论（pipe2/O_CLOEXEC/OwnedFd/Unsupported 与正文引用的四行 Stdio 释放代码我都在 bench/runtime-lab/src/process_macos.rs:54-60 逐行确认存在）。建议改成本章其他处使用的完整实验路径写法。",
+      "evidence": "find 结果：唯一实现文件为 bench/runtime-lab/src/process_macos.rs（含 pipe2/O_CLOEXEC/OwnedFd/Unsupported，第 54 行 `command.stdout(out_write).stderr(err_write)`、第 59 行重设 Stdio::null()）；src/process_macos.rs 不存在于仓库根路径下"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "severity": "P2",
+      "description": "「来源文件是 CS110L 站点的 slides/lecture-10-2022.pdf，共 36 个 PDF 物理页，首页标题为 Multiprocessing，并注明部分材料等同 2020 年内容」与「第 17 页还做了渲染核对，确认锁状态图与示例文字的对应」这两类细节，磁盘上只落地到 url + sha256 + bytes（sources/web.json:82-90 的 stanford-process-slides 条目，status 为 reviewed-online 且明确「未保留本地母本」）以及 coverage.md:63 的「PDF15–20、25–35，共36物理页」。页范围与本章引用区间一致，但首页标题、2020 年注记、第 17 页渲染核对三处没有任何可回查的本地证据文件或核对记录，被写在「延伸阅读与来源」里读起来像已完成核实的描述。属表述与出处精度问题（非数字矛盾、非编造实测），建议要么在台账补一条渲染核对记录，要么把这三处改成带限制措辞的说法。",
+      "evidence": "sources/web.json:82-90（stanford-process-slides：sha256 7f327718206c5dbf7dcfa3c22aa3c5189c7c88483cf555741eea967d0847962a、bytes 1033004、status reviewed-online、review_note 说明未保留本地母本）；src/appendix/coverage.md:63 只登记「PDF15–20、25–35，共36物理页」；find sources/ -iname '*lecture-10*' 无本地 PDF"
+    }
+  ]
+}

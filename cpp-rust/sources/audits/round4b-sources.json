@@ -1,0 +1,122 @@
+{
+ "reviewer": "r4b-sources",
+ "kind": "independent",
+ "layer": "read",
+ "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+ "provenance": "冷启动逐条回查 sources/inventory.json 的 16 个母本共 3356 个单元、sources/reviews/S01–S16.md 的 3356 行逐单元裁决、sources/sections.json 的 579 条映射，用 /usr/bin/python3 比对 unit_id/pdf_page/status 与 record_id 回链及页码跨度，核实 16 个 local_path 存在并复核 sha256 登记值，再从每本母本抽一个真实落点到 src/ 正文与 src/appendix/coverage.md 比对引用措辞。",
+ "sections": [],
+ "sources": [
+  {
+   "id": "S01",
+   "notes": "回查 inventory.json S01 的 163 个单元与 reviews/S01.md 的 163 行裁决：unit_id、pdf_page、status 三字段逐行比对 0 处偏差（read-mapped 6 / excluded-reviewed 157，与正文计数一致）；sections.json 里 S01 的 6 条映射全部有 record_id 回链、页码落在 read-mapped 单元跨度内；local_path /Users/juanwang/E-Book/C++/A Tour of C++ ….pdf 存在且 sha256 6f4c17a3… 与登记相符。抽真实落点 NAT-S01-0016（PDF 35 → part4/ch16.md#sec-cpp-rust.4.16.1）看正文：正文未点名本书、也未给出页码，措辞未超出登记的『C++ 概览作 ABI/所有权对照素材』范围；但登记理由与三本不同母本逐字雷同，见 findings。",
+   "evidence": "sources/inventory.json:S01.units + sources/reviews/S01.md + sources/sections.json(source=S01)"
+  },
+  {
+   "id": "S02",
+   "notes": "回查 579 单元 ↔ reviews/S02.md 579 行：页码/状态 0 处偏差（read-mapped 2）；sections.json 2 条映射均带 record_id 回链，页码可落在 read-mapped 跨度；local_path 存在、sha256 与登记一致。抽 NAT-S02-0294（PDF 399 → part4/ch16.md#sec-cpp-rust.4.16.1）：正文此处不引页码，未见超出登记的表述；但该单元 reason 与 C 语言母本 S15 完全同文，登记的『为何读这页』失真，见 findings。",
+   "evidence": "sources/inventory.json:S02.units + sources/reviews/S02.md + sources/sections.json(source=S02)"
+  },
+  {
+   "id": "S03",
+   "notes": "回查 280 单元 ↔ reviews/S03.md 280 行：0 处偏差（read-mapped 1）；sections.json 1 条映射有 record_id、页码 PDF 297 落在 read-mapped 单元跨度；local_path 存在、sha256 相符。抽 NAT-S03-0222（→ part2/ch07.md#sec-cpp-rust.2.7.1）：正文以『Stroustrup 标准库/原子对照』口径引用，未把该书当作内存序结论的证据，与 reason『C/C++ 原子操作与并发模型对照』一致。",
+   "evidence": "sources/inventory.json:S03.units + sources/reviews/S03.md + sources/sections.json(source=S03)"
+  },
+  {
+   "id": "S04",
+   "notes": "回查 51 单元 ↔ reviews/S04.md 51 行：0 处偏差（read-mapped 1）；1 条映射带 record_id，页码 PDF 606 落在 read-mapped 跨度；文件存在、sha256 相符。抽 NAT-S04-0032（PDF 606 → part4/ch16.md#sec-cpp-rust.4.16.1）：正文未点名《C++20 高级编程》也未给页码；但 reason 抄自 C 语言母本口径（见 findings 的批量复制项）。",
+   "evidence": "sources/inventory.json:S04.units + sources/reviews/S04.md + sources/sections.json(source=S04)"
+  },
+  {
+   "id": "S05",
+   "notes": "回查 614 单元 ↔ reviews/S05.md 614 行：0 处偏差（read-mapped 15）；sections.json 15 条全部 record_id 回链、页码均在 read-mapped 跨度；文件存在、sha256 相符。抽 NAT-S05-0091（PDF 119 → part2/ch07.md#sec-cpp-rust.2.7.1）：正文把该书仅用于 C++ 原子/内存序对照叙述，未把它当作硬件实测出处，措辞未超登记范围。",
+   "evidence": "sources/inventory.json:S05.units + sources/reviews/S05.md + sources/sections.json(source=S05)"
+  },
+  {
+   "id": "S06",
+   "notes": "回查 77 单元 ↔ reviews/S06.md 77 行：0 处偏差（read-mapped 8）；8 条映射均有 record_id、页码可落地；文件存在、sha256 相符。抽 NAT-S06-0015（PDF 63 → part1/ch03.md#sec-cpp-rust.1.3.1）：该节以 RAII/移动语义类比 Rust 所有权，未把 Meyers 的说法当作 Rust 侧实测证据，与 reason 一致。",
+   "evidence": "sources/inventory.json:S06.units + sources/reviews/S06.md + sources/sections.json(source=S06)"
+  },
+  {
+   "id": "S07",
+   "notes": "回查 81 单元 ↔ reviews/S07.md 81 行：0 处偏差（read-mapped 13）；13 条映射均有 record_id、页码在 read-mapped 跨度；文件存在、sha256 相符。抽 NAT-S07-0036（PDF 121 → part2/ch07.md#sec-cpp-rust.2.7.1）：正文引用只到『C++11 移动/智能指针语义对照』层面，未出现超出登记的原子性/性能结论。",
+   "evidence": "sources/inventory.json:S07.units + sources/reviews/S07.md + sources/sections.json(source=S07)"
+  },
+  {
+   "id": "S08",
+   "notes": "回查 44 单元 ↔ reviews/S08.md 44 行：0 处偏差（read-mapped 32）；但 sections.json 里 source=S08 的映射有 46 条，其中 14 条（R17-A/R17-B/COMPILER-S08-005/006/008/016/FOUNDATIONS-S08-001…）在 inventory 中找不到任何单元以 record_id 回链，只能靠同一 target 在多行裁决里重复出现反查（见 findings 的互链缺口项）；文件存在、sha256 6c… 相符。抽 SRC-S08-004（PDF 7 → part3/ch09.md#sec-cpp-rust.3.9.1）：正文此处引用 Effective Rust 第 1 条谈类型系统表达状态，与该行登记的 caveat『PDF11 的 SchedulerState 例子…不证明原子状态机正确』相容，未越界把它当原子状态机证据。",
+   "evidence": "sources/inventory.json:S08.units + sources/reviews/S08.md + sources/sections.json(source=S08)"
+  },
+  {
+   "id": "S09",
+   "notes": "回查 139 单元 ↔ reviews/S09.md 139 行：0 处偏差（read-mapped 96）；sections.json 有 107 条 S09 映射，其中 11 条（DEV-MOVE、DEV-MONO、COMPILER-S09-001…）无 record_id 回链（见 findings）；文件存在、sha256 相符。抽 SRC-S09-004（PDF 4 → part1/ch04.md#sec-cpp-rust.1.4.1）：正文把 x.py/config.toml 只作为历史机制背景，与该行 caveat『不能当作当前工具链已复现命令』一致，未见越界。",
+   "evidence": "sources/inventory.json:S09.units + sources/reviews/S09.md + sources/sections.json(source=S09)"
+  },
+  {
+   "id": "S10",
+   "notes": "回查 108 单元 ↔ reviews/S10.md 108 行：0 处偏差（read-mapped 74）；sections.json 90 条映射中 16 条（REF-MM、REF-ASYNC-FN、REF-ASYNC-BLOCK、REF-AWAIT…）无 record_id 回链（见 findings）；文件存在、sha256 相符。抽 SRC-S10-010（PDF 32 → part1/ch04.md#sec-cpp-rust.1.4.2）：正文以手册口径讲宏展开与编译流水线，未升级为实测结论。",
+   "evidence": "sources/inventory.json:S10.units + sources/reviews/S10.md + sources/sections.json(source=S10)"
+  },
+  {
+   "id": "S11",
+   "notes": "回查 106 单元 ↔ reviews/S11.md 106 行（该文件用三位数字锚 review-s11-uNNN，与 inventory 的 evidence_anchor 一致）：页码/状态 0 处偏差（read-mapped 43）；文件存在、sha256 609a7e0e… 与 review 顶部声明的复算结果一致；sections.json 61 条映射中 18 条无 record_id 回链（BOOK-THREAD/BOOK-SHARED/BOOK-SEND/BOOK-CHANNEL/EVIDENCE-S11-003…）。抽 SRB-S11-066（页 356–358 → part3/ch09.md#sec-cpp-rust.3.9.2）：正文只搬机制叙述，未搬原书的性能数字，符合 review 里『314–316 的历史观察本轮不搬用其数值』的自我限制。",
+   "evidence": "sources/inventory.json:S11.units + sources/reviews/S11.md + sources/sections.json(source=S11)"
+  },
+  {
+   "id": "S12",
+   "notes": "回查 86 单元 ↔ reviews/S12.md 86 行：0 处偏差（read-mapped 16）；16 条映射均有 record_id 回链；文件存在、sha256 相符。但抽 SRB-S12-U009（PDF 4 → part4/ch14.md#sec-cpp-rust.4.14.7）时台账自相矛盾：同一单元的 reason 写『ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持』，而 sections.json 与 src/appendix/coverage.md 已把该条印成指向 ch14 的『核读映射』（见 findings）。",
+   "evidence": "sources/inventory.json:S12.units + sources/reviews/S12.md + sources/sections.json(source=S12)"
+  },
+  {
+   "id": "S13",
+   "notes": "回查 183 单元 ↔ reviews/S13.md 183 行：页码偏差 0、状态偏差 0（read-mapped 18）；18 条映射均有 record_id，页码全部落在该单元 body_read_pages/scope_checked_pages 内；文件存在、sha256 相符。抽 SRB-S13-058（页 109–112 → part3/ch09.md#sec-cpp-rust.3.9.7）：正文只把有界队列作准入边界对照，与 reason『不视为并发队列』一致。",
+   "evidence": "sources/inventory.json:S13.units + sources/reviews/S13.md + sources/sections.json(source=S13)"
+  },
+  {
+   "id": "S14",
+   "notes": "回查 140 单元 ↔ reviews/S14.md 140 行：0 处偏差（read-mapped 86）；sections.json 88 条映射中 2 条（EVIDENCE-S14-006/007）无 record_id 回链，且 EVIDENCE-S14-006/007 登记的页区间（PDF 6-8、11-12 与 PDF 1-15）按单元页跨度回查，有 7 个物理页（3、4、5、8、9、10、12）归属于被裁决为 excluded-reviewed 的单元（见 findings 的 P0 项）；文件存在、sha256 5f91555f… 相符。抽 SRB-S14-U001（PDF 1 → part4/ch14.md#sec-cpp-rust.4.14.7）：该单元 reason 明写『ch14 尚不存在，未制造 target』，与已登记的 ch14 落点直接冲突。",
+   "evidence": "sources/inventory.json:S14.units + sources/reviews/S14.md + sources/sections.json(source=S14)"
+  },
+  {
+   "id": "S15",
+   "notes": "回查 690 单元 ↔ reviews/S15.md 690 行：0 处偏差（read-mapped 34）；34 条映射均有 record_id、页码在 read-mapped 跨度；文件存在、sha256 相符。抽 NAT-S15-0134（PDF 145 → part4/ch16.md#sec-cpp-rust.4.16.1）：正文此处只讲 Rust↔C ABI 的所有权/指针协议，未把 K&K 的具体页码或结论当证据；但 reason 与三本 C++ 母本逐字同文，见 findings。",
+   "evidence": "sources/inventory.json:S15.units + sources/reviews/S15.md + sources/sections.json(source=S15)"
+  },
+  {
+   "id": "S16",
+   "notes": "回查 15 单元 ↔ reviews/S16.md 15 行：0 处偏差（read-mapped 5）；5 条映射均有 record_id；文件（.epub）存在、sha256 相符。台账缺页码维度：inventory 顶层 pdf_pages=None、5 个 read-mapped 单元无 pdf_page、sections.json 的 pages 全为 None，真实定位符只存在于单元的 epub_locator，正文与 coverage.md 呈现的是 None（见 findings）。抽 NAT-S16-0005（→ part4/ch16.md#sec-cpp-rust.4.16.3）：正文引《CMake 构建实战》口径与 reason『CMake 目标配置、静态库链接与 CTest 集成』一致。",
+   "evidence": "sources/inventory.json:S16.units + sources/reviews/S16.md + sources/sections.json(source=S16)"
+  }
+ ],
+ "findings": [
+  {
+   "anchor": "S14/EVIDENCE-S14-006 与 EVIDENCE-S14-007",
+   "severity": "P0",
+   "description": "无法落地的『已核实』映射：sections.json 把这两条登记为 source=S14、status=read-mapped，页码分别是 PDF 6-8、11-12（一基物理页，target=part4/ch13.md#sec-cpp-rust.4.13.6）与 PDF 1-15（target=part4/ch14.md#sec-cpp-rust.4.14.8），src/appendix/coverage.md 据此对外印成『核读映射』。但 inventory.json 的 S14 140 个单元里没有任何单元的 record_id 等于这两个条目号（reviews/S14.md 的 140 行裁决中也查无此名），且按 S14 单元的页跨度回查，EVIDENCE-S14-007 所引 1-15 页中有 7 个物理页（3、4、5、8、9、10、12）归属于被明确裁决为 excluded-reviewed 的单元（S14-U007、U012、U016、U020、U023、U025、U029），EVIDENCE-S14-006 的 6-8、11-12 里也有 2 个物理页（8、12）落在被裁决为 excluded-reviewed 的单元区间（S14-U020、U029）。即整条映射的页码范围横跨『已排除、未采为证据』的单元，却整体标为已核读并写进正文映射表——属于引用无法落地却被当作已核实。",
+   "evidence": "sources/sections.json:EVIDENCE-S14-006/EVIDENCE-S14-007；sources/inventory.json:S14.units（record_id 查无此二值；S14-U007 p3 / U012 p4 / U016 p5 / U020 p8 / U023 p9 / U025 p10 / U029 p12 均 status=excluded-reviewed）；src/appendix/coverage.md S14 行；复算 /tmp/fix.py 输出"
+  },
+  {
+   "anchor": "S12/S14 target vs reason",
+   "severity": "P1",
+   "description": "同一台账单元自相矛盾：S12-U009 的 reason 明写『ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持』、S14-U001 的 reason 明写『ch14 尚不存在，未制造 target』，但两条 record_id 相同的 sections.json 条目都已把 target 写成 part4/ch14.md#sec-cpp-rust.4.14.7 且 status=read-mapped，coverage.md 再对外印成『核读映射』。读者据此会认为 ESP Book 与 rustdoc 手册的内容已在第 14 章被核实落地，而裁决理由本身否认存在该落点。",
+   "evidence": "sources/inventory.json:S12-U009/S14-U001 的 reason 字段；sources/sections.json:SRB-S12-U009、SRB-S14-U001 的 target 字段；src/appendix/coverage.md 对应行"
+  },
+  {
+   "anchor": "S08/S09/S10/S11/S14 互链缺口",
+   "severity": "P1",
+   "description": "sections.json 共 579 条 read-mapped 映射，其中 61 条在 inventory.json 里找不到任何以 record_id 指向它们的母本单元（S08 14 条、S09 11 条、S10 16 条、S11 18 条、S14 2 条），reviews/*.md 的裁决行也没有出现这些条目号。这些映射只能靠『同一个 target 锚点在多个 read-mapped 行里重复出现』反查母本单元，页码↔单元的对应关系不可唯一核验；母本层无法证明每条正文映射背后确有一次逐单元裁决。",
+   "evidence": "复算：/tmp/w.py 输出 orphan 计数 S08=14/S09=11/S10=16/S11=18/S14=2；示例 ID：R17-A、R17-B、COMPILER-S08-005、DEV-MOVE、DEV-MONO、REF-MM、REF-AWAIT、BOOK-THREAD、BOOK-CHANNEL"
+  },
+  {
+   "anchor": "S01/S02/S04/S15 批量复制的登记理由",
+   "severity": "P2",
+   "description": "四本不同母本（A Tour of C++、C++ Crash Course、C++20 高级编程、K&K C 语言程序设计）的 read-mapped 单元 reason 字段逐字相同：『C 语言裸指针、数组布局与内存分配原语：用于项目二 Rust 与 C ABI 边界的所有权与指针安全协议』，且四条映射都挂到同一个落点 part4/ch16.md#sec-cpp-rust.4.16.1。把 C 语言口径的理由贴在三本 C++ 母本的单元上，登记的『读这一页是为了什么』不区分母本实际内容，页码级取材范围因此不可核验；正文 4.16.1 处并未点名这四本书，也无页码可对照，属于登记与正文口径混用。",
+   "evidence": "sources/inventory.json:S01-U0016（另有 U0115/U0117 同文）、S02-U0294、S04-U0032、S15-U0134（该理由在 S15 覆盖 26 个单元） 的 reason 字段（字符串完全一致）；sources/sections.json:NAT-S01-0016/NAT-S02-0294/NAT-S04-0032/NAT-S15-0134 的 target"
+  },
+  {
+   "anchor": "S16 pages=None",
+   "severity": "P2",
+   "description": "S16 是 .epub，inventory.json 顶层 pdf_pages=None、5 个 read-mapped 单元无 pdf_page 字段，sections.json 的 pages 全部为 None，coverage.md 表格里直接印出空页码列；真实定位符只写在单元自身的 epub_locator 里，没有被提升到映射层。结果是这份母本的 5 条『已核实』映射对外没有可回查的定位，与其余 15 本用页码落地的口径不一致。",
+   "evidence": "sources/inventory.json:S16（无 pdf_pages，units 含 epub_locator）；sources/sections.json:NAT-S16-0005/0006/0009/0010/0011 的 pages=None；src/appendix/coverage.md S16 行"
+  }
+ ]
+}

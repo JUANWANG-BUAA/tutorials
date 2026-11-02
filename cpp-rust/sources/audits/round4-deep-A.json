@@ -1,0 +1,258 @@
+{
+  "reviewer": "cold-r4-deep-A",
+  "kind": "independent",
+  "snapshot_sha256": "2a7a5052b900f7f3bbe9c8898abcf80671b5d74ded12e2d2e311eb3832038df2",
+  "provenance": "冷启动通读 ch17 的 17.1-17.5 全文及对应章末件；逐字节核对段文件格式、内存序、Codec 与测试清单，静态算术用 python 复算",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "finding",
+      "notes": "核对方式：①定义 17.1.1 的七个操作名逐个在 engine.rs 找方法（put/delete/get/scan_prefix/flush/compact_two/sync 全在）；②六条不变量逐条去 tests/ 数触发它的测试（重启=persistence.rs、逐键等于参考值=tide-bench 的 REF 加 bench-verification.txt、删除不可见=tombstones.rs、集合相同=compaction.rs、旧段不释放=epoch_reclaim.rs），确认「五条有测试、段文件写定不改这条没有」成立，且 segment_format.rs 只从外部翻字节再 open；③「默认 WAL 只刷到内核不 fsync」对 Config.durable=false 与 wal.rs::sync_to；④缓存行 128 字节对 environment.txt 与 run.sh 的 sysctl -n hw.cachelinesize；⑤「零个外部依赖」对 Cargo.toml 空 [dependencies]；⑥里程碑表 M1-M7 的出口条件与四处跳转（17.6.2、17.7.1 的定义 17.7.2、17.8.2、17.8.3、17.9）逐条打开确认目标处真写着那件事：17.8.2 有 WAL 不做 fsync 与掉电不覆盖，17.8.3/17.9 有源码指纹缺档与主轮 gate.json 无 budget_note（run-01/gate.json 全文只有 budget_B，run-02 两份才有）；⑦17.1-17.5 的 35 个交叉引用锚点用脚本确认存在后，再读目标定义盒核对语义是否真支撑那句话。结果：35 个锚点全部存在，但有四处指向的定义盒讲的不是那句话（17.1 的 def-1.1.1 与 def-1.7.2、17.2 的 def-1.5.1、17.4 的 def-1.7.3），另有三处正文式指针（第 14 章的纪律、第 5 章的四层、第 3 章的边界检查）在对方章节里找不到对应内容；再查出编号断档、单位混用、出口条件与现状口径相抵。",
+      "evidence": "projects/tidekv/src/engine.rs:253-335, 84-93; src/wal.rs:109-115; tests/segment_format.rs:77-99; tests/persistence.rs; tests/epoch_reclaim.rs; results/run-01/environment.txt:4; results/run-01/gate.json:2; results/run-01/test-summary.txt; results/run-01/bench-verification.txt:1(A=RwLock<BTreeMap>, REF=naive HashMap); Cargo.toml:12-13; run.sh:24; README.md:74-80; src/part1/ch01.md:75-79"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "finding",
+      "notes": "核对方式：逐字节对照 segment.rs——条目头 17 = klen u32 + vlen u32 + op u8 + seq u64（write_segment 77-80 行的写出顺序与定义 17.2.1 一致）；索引项 12 = klen u32 + off u64，小端（index_item 203-208、footer 101-102）；页脚 34 = magic5 + ver1 + entries4 + index_off8 + bloom_off8 + bloom_len4 + crc4（FOOTER_LEN 注释与 98-104 行一致）；CRC 只算页脚之前的 buf（97 行写、157 行用 crc32(&data[..f]) 校），因此覆盖数据区+索引区+布隆区、不含页脚，与 E-d 一致；open 共五段核对：长度（FOOTER_LEN+ENTRY_HEAD）、魔数、版本、CRC，加四条范围关系（index_off>f、bloom_off>f、bloom_off+bloom_len==f、index_off+entries*12==bloom_off），与 17.3 那句「四条范围关系 + 长度/魔数/版本/CRC 四道前置检查」完全对得上，条目偏移确为 u64 的 8 字节。四处一致性（正文/图标签/desc/章末件）逐项比对，只有 <desc> 少列两项。布隆按 bloom.rs 核对：BUCKET=16、8 bit 指纹（非零强制）、contains 对整个 16 槽做无提前退出的比较，即一次探测扫 16 个槽，DEFAULT_BYTES_PER_KEY=8，故并集上界 16*2^-8=6.25% 成立。静态算术全部 python 重算且吻合：97、6356992、786432、7143424、7143458、262144、log2 65536=16、ceil(log2 16000)=14、ceil(log2 1000)=10、1525/200000=0.7625%=1/131.1、1.95 倍、1989/2000=99.45%、easy-fs 的 14 KiB/64 KiB/8 MiB（512/4=128）；实测三行数逐字对着 results/bloom-contract-2026-10-30.txt（400000 槽由 50000 键乘每键 8 字节得来，正文没写插入数但没写错）；「漏报为零在两组测试里都是硬断言」对 bloom_contract.rs:20-22 与 83-85。小出入记在这里不当 finding：例 17.2.2 说「那条测试只断言假阳率小于 5%」，实际 measured_false_positive_rate 还断言 rate>0.0。easy-fs 的对照（含「致命又难查」）另取了 rCore 教程第六章原文复核，原作确写「一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试」，28 直接项/512 B/128 项/14KiB/64KiB/8MiB 均与原作一致。",
+      "evidence": "projects/tidekv/src/segment.rs:12-20,54-104,139-166,203-208; src/bloom.rs:4,32-35,60-72,108-141,181; tests/bloom_contract.rs:14-37,69-107; results/bloom-contract-2026-10-30.txt:11-14; src/part4/ch17.md:285-455; ch17_recall.md:64-70,123-141; ch17_exercises.md:99-123,288-300; ch17_exam.md:13,24,73; python 复算见 notes"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "finding",
+      "notes": "核对方式：定义 17.3.1 列的六样持有物与 struct Segment 的六个字段一一对上（info/data/index_off/bloom_off/bloom_len/bloom），SegmentInfo 的五个成员（id/path/entries/bytes/keys）也对；open 确为一次 File::open+read_to_end 后丢弃 File，全结构没有常驻 fd，也没有 Arc<SegmentData> 这类中间层（grep 全仓 0 命中），Arc<Segment> 由 engine.rs 的 SegmentList 持有；三条安全不变量逐条对实现：①=bytes_at 的 assert 加 open 的范围核对，②=Arc 引用计数加 epoch 回收，③=写段走「临时名 sync_all 再 rename」、改动靠新建段（do_flush/do_compact）；「段缓冲构造后无写路径」对 Segment 的全部方法（只读）成立。例 17.3.1 的安全替代写法、判定流程五问、E-a..E-e 与实现无冲突。17.3.2 的 easy-fs 两句转述经 rCore 第六章原文核对属实。另记一条不算 finding 的观察：正文推荐用 checked_add 防 usize 溢出，项目实际 bytes_at 用 off+len 加 assert（segment.rs:307-312），release 下溢出会绕过该 assert——正文没有声称项目已防溢出，故只作现状与推荐不同一的备忘。查不动的：无。",
+      "evidence": "projects/tidekv/src/segment.rs:128-135,139-188,307-318; src/engine.rs:96-119,446-499,647-734; src/wal.rs rotate/rename 对照 segment.rs:106-116; grep SegmentData 无命中; rCore-Tutorial-Book-v3 chapter6/2fs-implementation（在线原文）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "finding",
+      "notes": "核对方式：Codec 的方法只有 encode(&self, rec:&CodecRecord, out:&mut Vec<u8>) 与 cmp_key(&self,a,b)->Ordering 两个，全仓没有 decode（grep 确认），调用方只有 src/bin/tide-mech.rs 与 tests/codec_contract.rs（lib.rs 仅 re-export），段写入确实不经过 Codec——write_segment 在 segment.rs 内联 extend_from_slice 各字段；17.4.2 的每个数都对着归档复算：A=3.964831→3.965、B=4.036042→4.036、差=0.071211→+0.071、区间[-0.053934,-0.054]与[0.207500,+0.208]、样本标准差 0.318330→0.318、预算 gate-codec.json 的 budget_B=1.0 与 budget_note、判定 accept；协议 21 轮×30 批、warmup_ms=500、seed=20261029、ops_per_batch=4096 抄自 codec.csv 头部，与主轮的 seed=20261028 与逐 case 分母（900/2900/1900/4996，bench-verification.txt）对照无误；机器与构建（Apple M5 Pro、rustc 1.99.1、lto=false、codegen-units=1）对 environment.txt 与 Cargo.toml；等价性证据 bytes=364544/crc32=2b67ab81 在 mech-verification.txt，且 4096*(4+4+1+16+64)=4096*89=364544 复算一致，比对确在计时之前、不一致直接 return Err 不出数（tide-mech.rs:153-160）；输出缓冲 with_capacity 在 measure() 里计时之外分配、计时批之间靠 clear 复用（tide-mech.rs:71-101），正文那句「分配成本不混进被测量的那一步」成立；代码生成两条（FixedCodec::encode 104 行/0 次 blr，encode_all_dyn 24 行/1 次 blr x22）逐字对 codec-codegen.txt。「没有采集」的两处（代码体积、指令数）在正文与 def 17.4.3 都明写，未见把假设当实测。",
+      "evidence": "projects/tidekv/src/codec.rs:19-24,42-49,58-69; src/segment.rs:77-84; src/bin/tide-mech.rs:124-218,71-101; tests/codec_contract.rs:17-58; results/run-02/{codec.csv 头部,statistics-codec.json,gate-codec.json,mech-verification.txt,codegen/codec-codegen.txt}; results/run-01/{statistics.json,bench-verification.txt}; Cargo.toml:16-20"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "finding",
+      "notes": "核对方式：定义 17.5.1 与代码逐句对——快照确实是 Heap<SegmentList> 里的 Box<SegmentList>，SegmentList 只有 segments 与 frozen 两个 Vec、无生成号字段（engine.rs:96-103）；store 内部就是 head.swap(Box::into_raw(next), SeqCst)（epoch.rs:122），pin 先读 CURRENT 并写 PINS[slot]（均 SeqCst）再 head.load(SeqCst)（epoch.rs:93-98），读者先钉后取 head 的顺序与注释一致；例 17.5.1 说「本项目走 epoch 这层，store 收 Box 不是 Arc」属实，advance() 可被测试驱动属实；退休表长度可观测（epoch.rs retired_len、engine.rs pending_reclaim）与 Stats.reclaim 计数存在；「Arc 层那对原子增减的成本本节没有采集」是明写的。内存序逐行核：SeqCst 用在 CURRENT(load/fetch_add)、PINS(store/load/clear)、head(swap/load)，Relaxed 用在 NEXT_SLOT 与 reclaimed（epoch.rs）与 stats.rs 的全部计数器（fetch_add/load 皆 Relaxed），Acquire 在 epoch.rs 只出现在 Heap::drop 取 head（epoch.rs:204），AcqRel/Release 出现在 engine.rs 的 submitted 与 closed。据此正文与章末件（回忆卡 7、习题 A6、自检表 K7、全章总结 17.5 行、自测卷第 3 题答案）对内存序的说法互相一致，但 E-c 去掉范围限定的那句与代码不符；回收所需推进次数在四处不一致（见 findings），并以 tests/epoch_reclaim.rs:59-64 的硬断言为准——release 后一次 advance() 即 reclaimed==1，注释原话「松手后一次 advance 就该回收」。图 17-3 的 desc 与正文时间轴（t1 pin、t2 换快照并挂退休、t3 release、t4 释放）与代码语义一致，除「两次」那处。",
+      "evidence": "projects/tidekv/src/epoch.rs:36,81,93-98,111,122,139-149,173,185,204,252; src/engine.rs:96-103,143-153,282,310,321,376-400,736-738; src/stats.rs:79,148-164; tests/epoch_reclaim.rs:32-65; src/part4/ch17.md:739,784,789,800,833,845,852,864; ch17_checklist.md:19,31; ch17_exercises.md:77,235; ch17_summary.md:13"
+    }
+  ],
+  "sources": [
+    "src/part4/ch17.md",
+    "src/part4/ch17_summary.md",
+    "src/part4/ch17_recall.md",
+    "src/part4/ch17_exercises.md",
+    "src/part4/ch17_exam.md",
+    "src/part4/ch17_checklist.md",
+    "projects/tidekv/src/segment.rs",
+    "projects/tidekv/src/bloom.rs",
+    "projects/tidekv/src/memtable.rs",
+    "projects/tidekv/src/wal.rs",
+    "projects/tidekv/src/codec.rs",
+    "projects/tidekv/src/engine.rs",
+    "projects/tidekv/src/epoch.rs",
+    "projects/tidekv/src/stats.rs",
+    "projects/tidekv/src/bin/tide-mech.rs",
+    "projects/tidekv/src/bin/tide-bench.rs",
+    "projects/tidekv/tests/bloom_contract.rs",
+    "projects/tidekv/tests/segment_format.rs",
+    "projects/tidekv/tests/codec_contract.rs",
+    "projects/tidekv/tests/epoch_reclaim.rs",
+    "projects/tidekv/tests/persistence.rs",
+    "projects/tidekv/tests/tombstones.rs",
+    "projects/tidekv/tests/compaction.rs",
+    "projects/tidekv/tests/wal_recovery.rs",
+    "projects/tidekv/tests/admission.rs",
+    "projects/tidekv/results/bloom-contract-2026-10-30.txt",
+    "projects/tidekv/results/run-01/environment.txt",
+    "projects/tidekv/results/run-01/gate.json",
+    "projects/tidekv/results/run-01/statistics.json",
+    "projects/tidekv/results/run-01/test-summary.txt",
+    "projects/tidekv/results/run-01/bench-verification.txt",
+    "projects/tidekv/results/run-02/environment.txt",
+    "projects/tidekv/results/run-02/codec.csv",
+    "projects/tidekv/results/run-02/statistics-codec.json",
+    "projects/tidekv/results/run-02/gate-codec.json",
+    "projects/tidekv/results/run-02/mech-verification.txt",
+    "projects/tidekv/results/run-02/codegen/codec-codegen.txt",
+    "projects/tidekv/README.md",
+    "projects/tidekv/run.sh",
+    "projects/tidekv/Cargo.toml",
+    "src/part1/ch01.md",
+    "src/part1/ch02.md",
+    "src/part1/ch03.md",
+    "src/part2/ch05.md",
+    "src/part3/ch11.md",
+    "src/part3/ch12.md",
+    "src/part4/ch14.md",
+    "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/2fs-implementation.html"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P1",
+      "description": "正文「一条不变量要配一个能触发它的测试。写不出测试的『不变量』只是愿望」引 [@def-1.1.1] 作出处，但第 1 章定义 1.1.1 是「死代码消除 DCE」，讲纯计算无observable效果即被删，全盒没有一个字讲不变量或测试；同一句在 17.1.4 的 E-b 改引 [@def-17.1.2]（不变量=能被一个测试一次性证伪）才对得上。",
+      "evidence": "src/part4/ch17.md:156 与 237；src/part1/ch01.md:75-79；src/part4/ch17.md:149-154"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "思考盒把「判断一条结论有没有价值，看它敢不敢把不适用的地方列出来」引到 [@def-1.7.2]，而定义 1.7.2 是三态门禁（U<=B 接受、L>B 拒绝、其余证据不足），与不覆盖范围 X 无关；17.1.3 的 E-d 引同一锚点说「事后补范围等于临时改判定口径」，按内容更像定义 1.7.3（采集前固定协议）。",
+      "evidence": "src/part4/ch17.md:198, 241；src/part1/ch01.md:1243-1251, 1325-1331"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "17.1 的常见错误清单编号断档：E-a、E-b、E-c、E-d、E-f，缺 E-e；同章 17.2/17.3/17.4/17.5 的清单都连号。",
+      "evidence": "src/part4/ch17.md:233-243"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "同节两处口径相抵：定义 17.1.2 明写「六条里有五条各有测试，段文件字节一旦写下不再修改这条没有」，定义 17.1.3 与里程碑 M1 却把「六条不变量各有至少一个测试」定为出口条件，而 M1 行没有像 M4（按请求取消未实现）、M5（重放幂等未实现）那样标注这一格未达成，读者会当成 M1 已出口。",
+      "evidence": "src/part4/ch17.md:153, 162, 167, 170-171；README.md:74"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "即时自测第 3 题题干说「值长普遍 1 MiB」，答案把 F 写成「普遍 10^6 字节」；1 MiB=1048576 字节，同一量两处单位不等。",
+      "evidence": "src/part4/ch17.md:251, 268"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "里程碑 M4 行的跳转「按请求取消未实现，见 17.6.2」按编号会落到小节 17.6.2（门口调小改变的是谁被拒），那一节不讲取消；实际说法在定义 17.6.2，它位于小节 17.6.1 内。同表 M5 行用的是「见 17.7.1 的定义 17.7.2」这种写明层级的写法。",
+      "evidence": "src/part4/ch17.md:170 与 171；887-900（定义 17.6.2）；951-986（小节 17.6.2）；ch17_summary.md:14"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "图 17-2 的 <desc> 把页脚字段列成「5 字节魔数 TIDE1、条目数、索引区起始偏移、布隆区起始偏移与整段 CRC32」，漏掉版本号（1 字节）与布隆区长度（4 字节）；同一图的文字标签、定义 17.2.1 与回忆卡第 4 张都含这两项，且按 desc 的五项相加只有 29 字节，与「页脚共 34 字节」自相矛盾。四处一致性的要求在这一点破了。",
+      "evidence": "src/part4/ch17.md:303 对照 328, 295, 287；ch17_recall.md:70；projects/tidekv/src/segment.rs:15-16,98-104"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "例 17.2.2 第 ② 问用「本项目仍取 8 bit，因为……代价是每键多 6 bit 常驻」说明把指纹由 8 bit 加到 14 bit 的代价，单位算错：本实现按 bytes_per_key=8 为每键预留 8 个槽，槽宽 8→14 bit 时每键常驻由 64 bit 涨到 112 bit，多的是 48 bit（6 字节）。「多 6 bit」只在「每键只占一个槽」的假设下成立，而那不是本项目的常驻口径。分级说明：按题面口径这属静态算术算错，可判 P0；因它是假设性的参数代价、不与磁盘证据相反，此处按 P1 记录。",
+      "evidence": "src/part4/ch17.md:372；projects/tidekv/src/bloom.rs:60-72,181；python：8*14-8*8=48 bit，48/8=6 字节"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "习题 C21 第 ③ 问的解答写「无漏报必须由测试逐键核对（本项目 200,000 次插入后逐键 contains 断言）」，与测试实际不符：no_false_negatives_direct 只插入 20,000 个键并逐键断言；200,000 是另一条 measured_false_positive_rate 里从未插入的键的探测次数。章末件把两个数字张冠李戴。",
+      "evidence": "ch17_exercises.md:298；projects/tidekv/tests/bloom_contract.rs:14-23（n=20_000）,26-37（n=50_000, probes=200_000）；results/bloom-contract-2026-10-30.txt:11"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "例 17.2.1 与例 17.2.2 都把「静态可推的量不需要采集、需要采集的量不能靠推」这条判据引到 [@def-1.5.1]，但第 1 章定义 1.5.1 是「名义元素」（分母是名义数还是实际访问数），盒内没有这条判据；本书把这条判据写在定义 2.3.2（布局事实/机制证据/性能结果）与 1.6.8、1.8 小结里。两处引用同一错锚点。",
+      "evidence": "src/part4/ch17.md:359, 374；src/part1/ch01.md:881-887；src/part1/ch02.md:536-540"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "「三区」与「四条带」并存且没有换算说明：预览、定义 17.2.1、17.2.3 小结与回忆卡都用三区（数据/索引/页脚），图 17-2 的 title 与 figcaption 却说「数据区、索引区、布隆区与页脚」四条带，而布隆区在定义 17.2.1 里根本没作为一区定义（只在页脚字段里以偏移与长度出现）。同一结构两种数法。",
+      "evidence": "src/part4/ch17.md:287, 295, 302, 325, 335, 407；ch17_recall.md:64-70"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "预览段有重复错字「磁盘格式又不一样：磁盘格式不一样：」；同段与即时自测第 1 题答案把页脚写成「两区偏移与整段校验和」，少了布隆区长度那 4 字节，与定义 17.2.1 的字段清单不齐（照这句加总只有 30 字节，凑不出 34）。",
+      "evidence": "src/part4/ch17.md:285, 287, 434；projects/tidekv/src/segment.rs:15-16"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "即时自测第 1 题答案把两问并成一句且缺句读：「……页脚放魔数、版本号、条目数、两区偏移与校验和定宽是为了用除法直接定位，从而能二分」——「校验和」与「定宽是为了」之间明显掉了句点，照原样背诵会背出不通的话。",
+      "evidence": "src/part4/ch17.md:432-434"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "E-d 末句把越界后果归到「对应第 3 章的边界检查」，但第 3 章全文没有「边界检查」也没有「越界」二词（各 0 命中）；本书把「边界检查」用作第 12 章向量化那一条的词。指向的章节里找不到那个东西。",
+      "evidence": "src/part4/ch17.md:419；src/part1/ch03.md（0 命中）；src/part3/ch12.md:344,355,427"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "定义 17.2.2 两处过宽：一是「本项目用一个 Option 承载它？不是」——内存表确实是显式变体 EntryKind::Delete，但段与快照的读视图正用 Option 的 None 表示墓碑，且结构体文档注释原话就是「value 为 None 表示墓碑」，按字面否认 Option 这条与实现相反；二是「全仓没有 NonZero 类型」——tidekv 里没有，但同一仓库的 projects/agent-runtime 有 Outcome::NonZero 变体，该说「本项目内没有」。",
+      "evidence": "src/part4/ch17.md:340-342；projects/tidekv/src/segment.rs:37-50；src/engine.rs:112-119；projects/agent-runtime/src/lib.rs:160,494"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P1",
+      "description": "例 17.3.1 解答末句「第 14 章那条纪律在这里同样适用：能算出来的前提，就别只写在注释里」在本章之外没有出处：第 14 章搜「注释」只有 1 处排版说明（ch14.md:703），搜「纪律」得到的是证据/命名/分层门禁三条，都不是这句；「能算出来的前提，别只写在注释里」这句话在整本书里只出现在 ch17 自己（正文 498 与习题集 135）。把本章自己的话记成第 14 章的纪律。",
+      "evidence": "src/part4/ch17.md:498；src/part4/ch14.md（无该纪律）；ch17_exercises.md:135"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P2",
+      "description": "17.3.2 末句「正是 17.3.3 那条别名规则要挡的事」按编号会落到小节 17.3.3（小结与常见错误），别名规则实为定义 17.3.3，它排在 17.3.1 小节里；本章另有 17.5.2 的 E-c 这类写明层级的写法，此处没写。",
+      "evidence": "src/part4/ch17.md:521-532, 536-538"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P2",
+      "description": "定义 17.3.2 第③条把不变量写成「段文件不可变，即写入完成后没有任何路径能改变已映射的字节」，但本项目不用 mmap（17.1.3 明列「不用 mmap 代替一次读取」，Segment 是一次 read_to_end 读进 Vec<u8>，open 后即丢弃 File），「已映射」这个说法与本章自己划下的边界冲突，应写「已读入的缓冲」；同一条在 17.3.1 的解释句与定义 17.3.3 里都改成「段缓冲/data」，只有这处留在 mmap 语汇上。",
+      "evidence": "src/part4/ch17.md:476（已映射的字节）对照 222（不用 mmap）、471 与 523（段缓冲/data）；projects/tidekv/src/segment.rs:139-141"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P2",
+      "description": "17.3 思考盒「读者迟迟不放手游标，旧段的回收就被推迟」——本章通篇讲切片/借用/快照，没有「游标」这个对象（代码里也没有），读起来像「放手引用」的错字，属可改的表述破损。",
+      "evidence": "src/part4/ch17.md:505"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P2",
+      "description": "预览把四层口径记在第 5 章名下：「第 5 章把这件事的一般答案讲清了……而是四个不同的层——分发开销、内联深度、代码体积、指令缓存命中」。第 5 章实际写的是三项（ch05.md:29「要先说清算的是分发开销、代码体积还是缓存命中」），「内联深度」这个词全书只出现在 ch17（592 与 701 行），第 5 章没有把它列为独立一层，也没有四层清单。归给别章的清单与别章不一致。",
+      "evidence": "src/part4/ch17.md:592, 701；src/part2/ch05.md:29,188,466,523"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P2",
+      "description": "例 17.4.1 末句「这个比较的实测在 17.4.2……结论是『方向不可判定，但区间的最坏端在预算内』」引 [@def-1.7.3]（探索性与确认性实验），而这条判定用的是三态门禁规则，应对应 [@def-1.7.2]；同节 666 行讲同一判定时就没有引。",
+      "evidence": "src/part4/ch17.md:624, 666；src/part1/ch01.md:1243-1251, 1325-1331"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P2",
+      "description": "17.4.2 用「在段文件这种一条记录几十字节、一次写几千条的形状上」引入实验，但被测的 FixedCodec::encode 每条只写 4+4+1+16+64=89 字节（不写条目头里那 8 字节序号），与 17.2 定的 97 字节段条目不同，也不是段写入路径（正文自己在定义 17.4.1 说了段写入不经过 Codec）；结论句的「不覆盖三件事」也没把「被测编码不等于段写入编码」列进去，读者容易把 +0.071 ns/记录读成分发在段写入上的代价。",
+      "evidence": "src/part4/ch17.md:650-672, 600；projects/tidekv/src/codec.rs:43-49；src/segment.rs:77-82；results/run-02/codec.csv:4（bytes=364544=4096*89）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P2",
+      "description": "章末件自相矛盾的措辞：自测卷第 8 题解答写「注意本比较正文没有采集，34% 本身不可引用」，而 17.4.2 正是这一比较的实测轮（run-02 归档、21 轮、区间与判定齐全），卷首说明与自检表 A3 也都写「17.4 有一轮实测」。题面那句确实没有采集，但这行不加限定的「本比较正文没有采集」会让人以为 17.4 整节没有数。",
+      "evidence": "ch17_exam.md:5, 75；src/part4/ch17.md:648-672；ch17_checklist.md:44"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P1",
+      "description": "回收需要推进几次，四处打成两派：图 17-3 的 <desc> 写「t3 之后推进 epoch 两次」、学习目标自检表 S4 的达标检验写「六步（pin→发布→断言未释放→release→推进两次→断言释放）」，而正文即时自测第 3 题第⑤步与习题 C17 第⑤步都写「显式 advance() 一次（读者已 release()，这一轮就该回收）」；实现与测试站在此后者——epoch_reclaim.rs 在 release 后调一次 advance 即断言 reclaimed==1，注释原话「松手后一次 advance 就该回收」。S4 是被用来打勾的判据，按它答会判错。",
+      "evidence": "src/part4/ch17.md:739, 864；ch17_checklist.md:31；ch17_exercises.md:235；projects/tidekv/tests/epoch_reclaim.rs:58-63；src/epoch.rs:138-176"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P1",
+      "description": "17.5.2 的 E-c 括号里写「计数器全是 Relaxed」，去掉范围限定后与代码不符：engine.rs:282 的 submitted.fetch_max(seq+1, AcqRel)、engine.rs:310/321 的 submitted.load(Acquire)、closed 的 Release/Acquire（432/601/759）都不是 Relaxed，而 submitted 正是本节自测第 4 题所说「看着只是计数、实际充当同步边」的那种量。定义 17.5.2 那句限定了「（src/stats.rs）」是准确的，E-c 不限定就自相矛盾。",
+      "evidence": "src/part4/ch17.md:789, 833, 848；projects/tidekv/src/engine.rs:273,282,310,321,432,601,759；src/stats.rs:79,148-164"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P2",
+      "description": "即时自测第 1 题问「本项目里哪两处用 SeqCst，哪两处用 Relaxed」，两处都对不上数：SeqCst 实际落在三组原子量上（CURRENT 的 load/fetch_add、PINS 的 store/load/clear、head 的 swap/load），答案只列 head.swap 与 head.load；Relaxed 也不止两处（epoch.rs 的 NEXT_SLOT 与 reclaimed、engine.rs 的 next_seq 都是 Relaxed，除 stats.rs 之外）。自检表 K7 用同一个「两处」说法，把这组数量关系问成二对二。",
+      "evidence": "src/part4/ch17.md:845, 852；ch17_checklist.md:19；projects/tidekv/src/epoch.rs:36,81,94,98,111,122,139,146,173,185,252；src/engine.rs:273"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P2",
+      "description": "定义 17.5.2 首句「代码里 head 与 PINS 用的都是 SeqCst」是绝对陈述，而同节 E-c 补了「只有 Heap::drop 取 head 用了 Acquire」（epoch.rs:204）；定义盒没带这个限定，读者按定义盒背会背错，两处该统一。",
+      "evidence": "src/part4/ch17.md:789, 833；projects/tidekv/src/epoch.rs:204"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P2",
+      "description": "即时自测第 3 题第③步说「断言 S 的段尚未释放（可用一个『已释放段』计数）」，实现里没有段粒度的释放计数：reclaimed/Stats.reclaim 记的是「epoch 回收掉的快照版本数」（stats.rs:34-35 的注释原话），段文件只在退休节点回收时随 files 列表 remove_file，没有单独计数。测试里可用的是 Node 的 Drop 标志（epoch_reclaim.rs 的 flag），不是「已释放段」计数。",
+      "evidence": "src/part4/ch17.md:864；projects/tidekv/src/stats.rs:34-35,127-130；src/epoch.rs:172-186；tests/epoch_reclaim.rs:9-30"
+    }
+  ]
+}

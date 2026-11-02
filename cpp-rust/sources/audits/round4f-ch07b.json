@@ -1,0 +1,78 @@
+{
+  "reviewer": "r4f-ch07b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动逐行读完 src/part2/ch07.md 的 7.7–7.11（1353–1925 行）全部正文与每个语义盒（案例、profiler、判定流程、决策顺序、常见错误索引、小结/速查/出口检查/即时自测/章末件），用 /usr/bin/python3 从 bench/results/local/atomic-4.txt 与 bench/results/profile/sample.txt 自算复现全部数字，逐行看 bench/examples/publication.rs、bench/src/slot.rs，回查 sources/inventory.json 与 sources/web.json 的母本登记，并跑 tools/list_uncollected_claims.py --only 7。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "7.7 全部量化断言我从归档自算复现通过：四线程 Adjacent 均值 5.253、p50 5.854、样本标准差 1.408，Padded 均值 0.418、Batched 0.070，Shared 5.980 / SeqCst 5.952（差 0.028）、Shared/Batched=84.9→『85 倍』——全部与 atomic-4.txt 逐格吻合（n=21，nearest-rank p99=最大值）。7.7.1 关于『连续只保证步长不保证起始对齐』、7.7.2『Release 只发布 store 之前的操作』回 publication.rs:13-17 核实为真（ready.store(Release) 在 line14、payload.store(42) 在 line17，正是『发布了一个还没发生的写入』的错误阶段）。7.7.3/7.7.4 引用的 826、3281、__psynch_cvwait 847 在 sample.txt 逐字命中（main-thread=826，run 闭包折叠=3281，__psynch_cvwait 折叠=847），『栈观察计数≠硬件事件计数/不是 CPU 占比』的核心口径成立。两处 P2：① 7.7.4『主线程有 826 次观察落在等待路径』——826 是主线程总样本数（递归计数），等待路径只是其主导子树，措辞把总数直接等同等待路径计数，宜写『主线程共 826 个样本，绝大多数落在 Barrier::wait→__psynch_cvwait』；② 3281/847 出自 sample 的『Total number in stack (recursive counted multiple)』进程级折叠统计，正文归到『工作线程』，而主线程也进入 run 闭包，标签略宽。均不影响本节结论，判 P2。7.7.5 Linux 采集命令与 7.7.6 回归风险的『没有采集 PMU』声明与 tools/list_uncollected_claims.py 对 ch07.md:1554 的判定一致（未采集，正确无对应产物）。",
+      "evidence": [
+        "自算 atomic-4.txt：Adjacent-Relaxed mean=5.253 sd(ddof=1)=1.4077 p50=5.854；Padded=0.418/0.002；Batched=0.070；Shared-Relaxed=5.980、Shared-SeqCst=5.952；5.980/0.070=84.9",
+        "bench/examples/publication.rs:13-17（BUG 注释与 store 顺序）",
+        "bench/results/profile/sample.txt：main-thread 826 / run 闭包折叠 3281 / __psynch_cvwait 847（字面命中）",
+        "src/part2/ch07.md:1463-1466（『工作线程闭包关联栈为 3281，__psynch_cvwait 为 847』）与 :1460-1461（『主线程有 826 次观察落在等待路径』）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "7.8 是把线程让权与执行器任务让权、进程内引用与跨进程映射、无锁与内存回收（EBR/Hazard Pointers/QSBR）、槽位跨进程迁移讲成边界方法的节，没有新的『实测』数字。逐条核对：『换等待模型/换硬件后八项义务与生命周期要重证』、『本章没有把槽位放进跨进程结构也没有为其强加缓存隔离』——回 bench/src/slot.rs 看，Slot 用 UnsafeCell<MaybeUninit<T>> + full:AtomicBool，Release/Acquire 双向交接（:60/:68/:75/:81），确无跨进程映射、确无对 payload 的显式缓存行隔离，与 7.8.9『为什么没有给槽位强加缓存隔离』的说明一致。本节引用的 [@def-7.8.1]、[@def-7.8.2]、[@ex-7.8.1]、[@think-7.8.1] 四个盒子在本节范围内真实存在（7.8.1/7.8.6/7.8.7/7.8.8），非悬空。lock-free 定义为『对操作集合全称证明有界步进度，单点 try 不够』属正确的文献口径。未发现与代码或事实相反之处。",
+      "evidence": [
+        "bench/src/slot.rs:8-17,60-81（UnsafeCell<MaybeUninit>+AtomicBool，Release/Acquire 双向，无跨进程/无强隔离）",
+        "src/part2/ch07.md:1577-1803（7.8.1–7.8.10 标题与 [@def-7.8.1]/[@def-7.8.2]/[@ex-7.8.1]/[@think-7.8.1] 均在本节内）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "在线入口四条 URL 与 sources/web.json 逐一落地：std::sync::atomic=[3]、MIT 6.S081 lockv2=[7]、rCore 2lock=[8]、Stanford lecture-13-2022=[6]，均可解析、非悬空。Effective Rust 第 17 条（数据竞争、Mutex 与共享生命周期）与《Rust 程序设计语言》16.1/16.3/16.4（join 完成语义 / 共享状态 / Send·Sync）的书内小节归属正确。但有一处 P1：正文把『内存模型』这条历史说明写成《Rust 程序设计语言》本地 PDF 第 334 页，而我直查 sources/inventory.json，唯一的 内存模型@pdf_page 334 记录 reason 为『原书明确内存模型尚不完备』，其母本是 S10 = Rust 参考手册.pdf（S11 才是 Rust 程序设计语言 简体中文版.pdf）；同一记录在本章 7.1.3 又被正确写成《Rust 参考手册》第 334 页——同章两处对同一页给出互斥书名，7.9 属挂错母本。另外正文加了引号的『内存模型未完全明确』并非台账原话（台账为『内存模型尚不完备』），是被转述却按引文呈现。判 P1（引用与母本不符 + 正文内部矛盾）。『抓取版本 1.99.1』指 std atomic 文档快照版本，与本章 bench 的 rustc 1.99.0 不是同一口径（前者是文档站点版本、后者是编译产物），未见矛盾，仅提示。",
+      "evidence": [
+        "src/part2/ch07.md:1808（把 334 页内存模型历史记录归到《Rust 程序设计语言》）vs :188 附近 7.1.3（同一 334 页记到《Rust 参考手册》）",
+        "自算 sources/inventory.json：title=内存模型 / pdf_page=334 / reason=『原书明确内存模型尚不完备』；书籍映射 S10=Rust 参考手册.pdf、S11=Rust 程序设计语言 简体中文版.pdf",
+        "sources/web.json 条目 3=atomic、6=stanford lecture-13、7=mit l-lockv2、8=rcore 2lock（四条在线入口均可落地）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "常见错误索引表声明『八份清单（共 51 条）』，我自算逐节条数求和：7.1 六条(6)+7.2 七条(7)+7.3 七条(7)+7.4 六条(6)+7.5 六条(6)+7.6 六条(6)+7.7 七条(7)+7.8 六条(6)=51，与正文一致；八行的 E-a…E-f/E-g 上界与所引各节 errata 范围相符，八个 [7.M](#sec-cpp-rust.2.7.M) 锚点齐备。表后四条整章级错误（换机器用 ns、三层压一层、用『没测出来』代替『不需要证明』、把方法当结论搬走）与 7.5.5 环境、[@def-7.1.2]/[@def-7.2.2] 口径一致。第 1 条『全部计时绑定 Apple M5 Pro、18 逻辑 CPU、128 字节缓存行（7.5.5）』：128 字节我由 atomic-4.txt 表头 padded_size=128 与 sample.txt（Code Type ARM64 / macOS 27.0.1）独立佐证，M5 Pro 与 18 逻辑 CPU 依赖 7.5.5/arch-01（environment.txt）登记，我本轮未重开 environment.txt，仅确认其为跨节一致的环境陈述而非孤立断言。判 pass。",
+      "evidence": [
+        "自算各节 errata 条数：6+7+7+6+6+6+7+6=51，对上 src/part2/ch07.md:1823『八份清单（共 51 条）』",
+        "atomic-4.txt 表头 padded_size=128、sample.txt Code Type: ARM64 / Platform: macOS（佐证 128 字节缓存行与本机架构）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本章小结七条、速查十行、出口检查八行全部带可解析 [@def-*]/[@ex-*] 或文字出处，无『待审计』占位。引用的量化点自算复现：0.418/0.070 ns/op 为四线程聚合吞吐倒数（对 atomic-4.txt 成立）、批次 p99≠请求尾延迟（21 样本 nearest-rank p99=最大批，与 def-1.5.2 口径一致）、『忙等快 27 倍』=3070.823/112.239=27.4→约 27 倍。即时自测三问（Shared-SeqCst 未必更慢、0.418 非单条延迟、false store 改 Relaxed 测试仍可能全过）均给出作答且与正文/归档一致，先猜后解到位。最低复现三条命令（cargo test / cargo clippy --manifest-path bench/Cargo.toml、bash tools/run_benchmarks.sh）对应文件存在；章末五页 ch07_summary/recall/exercises/exam/checklist.md 我 ls 确认全部存在于 src/part2/。复现提示『不要覆盖仓库保存的 local 结果』与归档放 bench/results/local/ 的约定一致。未发现数字或事实错误。",
+      "evidence": [
+        "ls src/part2/ch07_{summary,recall,exercises,exam,checklist}.md 五个文件均存在",
+        "自算 3070.823/112.239=27.4（对上『27 倍』）；atomic-4.txt 复核 0.418/0.070/5.980/5.952",
+        "src/part2/ch07.md:1886-1903 即时自测三问三答齐备；:1908-1910 复现命令指向 bench/Cargo.toml 与 tools/run_benchmarks.sh"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "severity": "P1",
+      "description": "母本归属错误 + 同章内部矛盾：正文 7.9（第 1808 行）把『内存模型』这条历史说明写成《Rust 程序设计语言》本地 PDF 第 334 页，而我直查 sources/inventory.json，唯一一条 title=内存模型、pdf_page=334 的记录（reason：原书明确内存模型尚不完备）其母本是 S10 = Rust 参考手册.pdf；S11 才是 Rust 程序设计语言 简体中文版.pdf。同一记录在本章 7.1.3 又被正确写成《Rust 参考手册》第 334 页，两处书名对同一页互斥。此外正文用引号呈现的『内存模型未完全明确』并非台账原话（台账为『内存模型尚不完备』），属被转述却按逐字引文标注。按模板判级：引用与母本不符、正文内部数字/出处矛盾 = P1。",
+      "evidence": "src/part2/ch07.md:1808 vs sources/inventory.json{title:内存模型,pdf_page:334,reason:'原书明确内存模型尚不完备'}；S10=Rust 参考手册.pdf、S11=Rust 程序设计语言 简体中文版.pdf（自算 inventory 书籍映射）；同页记录在 7.1.3 归《Rust 参考手册》"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "表述精度：7.7.4『报告中主线程有 826 次观察落在等待路径』——sample.txt 里 826 是主线程 Thread_950126 的总样本数（每 1ms 一次递归计数），等待路径（Barrier::wait→_pthread_cond_wait→__psynch_cvwait）只是其主导子树而非可证实的 100%；把总计数直接叙述为『落在等待路径』会掩盖本节正要教的区别（观察计数是路径存在性、不是精确时间占比）。同理 7.7.3 把进程级折叠统计 3281（run 闭包，主线程也进入）、847（__psynch_cvwait 全域）归到『工作线程』，标签偏宽。结论不受影响，建议改写为『主线程共 826 个样本，绝大多数落在等待路径』『3281/847 为进程级折叠计数』。",
+      "evidence": "src/part2/ch07.md:1460-1466 vs bench/results/profile/sample.txt（'826 Thread_950126 com.apple.main-thread'、折叠区 3281 run / 847 __psynch_cvwait）"
+    }
+  ]
+}

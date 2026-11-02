@@ -169,5 +169,23 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.3",
     "evidence": "src/part1/ch01.md"
+  },
+  {
+    "id": "S10",
+    "source": "Rust 参考手册.pdf",
+    "section": "未定义的行为：`&mut T`/`&T` 遵循 LLVM scoped noalias 模型，同页声明清单不穷尽且无正式语义模型",
+    "pages": "PDF 344（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "src/part1/ch03.md"
+  },
+  {
+    "id": "FOUNDATIONS-INSTANT",
+    "source": "https://doc.rust-lang.org/std/time/struct.Instant.html",
+    "section": "Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）",
+    "pages": "HTML具名节；无固定页码",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.2",
+    "evidence": "src/part1/ch01.md"
   }
 ]

@@ -1,0 +1,96 @@
+{
+  "reviewer": "sweep801-ch16b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "801f81bfcad74a0eccd57c5bd46d37a1f1de08834449b6354ea7de93ae136952",
+  "provenance": "冷启动读 src/part4/ch16.md 1244-1736 行全部正文与语义盒，用 /usr/bin/python3 从 projects/ffi-bridge/evidence/run-20261007-01/raw.csv 复算全部统计量，逐行核对 c/benchmark.c、tools/measure.sh、tools/summarize.py、include/bridge.h、src/lib.rs、environment.txt、macos-sample.txt、interference.txt、source-sha256.json 及 sources/contributions/ffi-project(-web).json、sources/reviews/S11.md，并跑了 tools/list_uncollected_claims.py。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "16.7 全部可核断言均落地：两行实测表逐项复算一致（mean/sd/p50/p99/方差/checksum）；静态量自算 8192×64=524288、0.978652−0.211897=0.766755、均值比≈4.62、nearest-rank p99=ceil(21×0.99)=21 即最大值（例 16.7.1 解答③成立）；分位数定义（nearest-rank、N-1 样本标准差、批均值口径）在正文 16.7.4 已明确交代；代码摘录与 c/benchmark.c 逐行一致；「预热≥500ms 每 case 独立」「21 批」「轮转起始 case」「elapsed_ns 呈 1000ns 步长」「参考输入确定、测试含 0 与 u64 最大值」均验证为真；「本轮没有执行跨语言 LTO」声明与磁盘一致（Cargo.toml lto=false、environment.txt 明写 no cross-language LTO，无任何 LTO 产物）。",
+      "evidence": [
+        "复算 raw.csv per_element: n=21 mean=0.978652 sd=0.021629 var=0.000467809 p50=0.986099 p99=1.005173 checksum=999f7c01d1040000，与正文 16.7.5 表及方差声明逐位一致",
+        "复算 raw.csv batch: mean=0.211897 sd=0.004042 var=0.000016336 p50=0.211716 p99=0.217438，与正文一致；summary.json 全精度值吻合",
+        "projects/ffi-bridge/c/benchmark.c: WORDS 8192u、REPEATS 64u、OBSERVATIONS 21u；`unsigned c = (observation + order) % CASES;`（轮转）；`/* Each case gets >=500ms warmup ... */` 与 `now_ns() - start < UINT64_C(500000000)`；正文 1264-1271 摘录与 which==0/which==1 分支一致",
+        "raw.csv 84 行 elapsed_ns 全部为 1000 的倍数（复算 all %1000==0 → True），支撑 16.7.4 量化步长声明",
+        "c/tests.c: `uint64_t input[] = {0, 1, UINT64_MAX, 42};` 支撑「比较零、最大 u64 边界值」；benchmark.c:40 `input[i] = 0x100000000 + i*17` 支撑确定性参考输入",
+        "tools/summarize.py: assert len(rows)==84、每 case 21、words=={8192*64}、N-1 sd、nearest-rank，与 16.7.4/16.11 描述一致",
+        "Cargo.toml [profile.release] lto=false；environment.txt『no cross-language LTO』；全仓检索无 LTO 运行产物 → 1325 行『本轮没有执行那组配置』成立"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "16.8 两行实测表逐项复算一致，checksum f9e695131a980000、方差 0.000820485/0.000195100 均与归档吻合；0.641505−0.358854=0.282651、比≈1.79、少 44.06% 三个静态量自算通过；拥有路径代码摘录逐行对得上 c/benchmark.c（which==2、rb_generate(97+rep)、rb_copy/rb_info/rb_release、written/len 双 abort、which!=3 守卫公共求和）；16.8.6 对 macos-sample.txt 的每一句（rb_* 五符号可见、rb_copy 下 _platform_memmove、rb_generate 下 memmove+分配器、2 秒 1ms 间隔）验证为真；16.8.7 干扰记录措辞与 interference.txt 一致（rustc 仅出现在 URL 字符串、cargo/clang 在 bash 命令行痕迹中）；『84 条正式观察之后另起进程』『mkdir 锁 + trap 释放』在 measure.sh 中落地；『本节没有采集 65536 词/最大值归约/IPC/cache miss』三处声明磁盘上确无相应产物。",
+      "evidence": [
+        "复算 raw.csv copy_out: mean=0.641505 sd=0.028644 var=0.000820485 p50=0.642776 p99=0.684738; owned_handle: mean=0.358854 sd=0.013968 var=0.000195100 p50=0.356674 p99=0.400543; 两者 checksum=f9e695131a980000，与正文 16.8.4 及例 16.8.1 一致",
+        "projects/ffi-bridge/c/benchmark.c:72 `if (which != 3)` 区分 owned_handle 不重复遍历 C output；rb_handle handle=0/rb_generate(UINT64_C(97)+rep)/rb_copy(handle,output,WORDS,&written)/if(written!=WORDS)abort()/rb_info(...)/info.len!=WORDS abort()/sum+=info.checksum/rb_release(handle) 全部存在",
+        "evidence/run-20261007-01/macos-sample.txt：rb_mix×2、rb_transform×2、rb_generate×12、rb_copy×2、rb_info×2、_platform_memmove×4（rb_copy 帧下 1 处、rb_generate 帧下含 malloc 分配器路径）；sample-command.txt『Sampling process 92989 for 2 seconds with 1 millisecond of run time between samples』",
+        "interference.txt：rustc 2 次命中均为 python heredoc 内 URL 文本（rustc-pgo、doc.rust-lang.org/rustc/...），非 rustc 子进程；cargo/clang 出现在 /bin/bash 命令行痕迹 → 正文 16.8.7 措辞准确",
+        "tools/measure.sh：`lock=.../measure.lock; while ! mkdir \"$lock\"; do sleep 2; done; trap 'rmdir \"$lock\"' EXIT`；`sample \"$pid\" 2 1`；benchmark.c main 支持 --profile-seconds 且校验 0<t≤120 → 84 条后另起进程可采样成立",
+        "src/lib.rs `.insert(Arc::from(data))?` ×2（另 1 处测试）支撑『两条路径共同承担 Arc::from(Vec) 内部复制、不是零拷贝』",
+        "raw.csv 仅 per_element/batch/copy_out/owned_handle 四 case、words 恒 524288，全仓无 65536 产物、无最大值归约数据、macos-sample.txt 无 IPC/cache-miss 计数器 → 1412/1556/1585 行『没有采集』声明与磁盘一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "来源核读大部分落地：FFI-CATCH/FFI-SLICE/FFI-REPR 三条目连 URL+SHA-256+范围确实写在 sources/contributions/ffi-project-web.json；rustc 1.99.0 与 environment.txt 一致；『84 条原始观察』一致；S11/19.1 四段页范围 455–456、457–459、459–460、460–461 与 ffi-project.json 记录一致。但两处不精确：① 正文『本章落点/项目证据』列与归档 target/evidence 有出入（457–459 归档 target 只有 16.3，正文写 16.1、16.3；459–460 归档 target 只有 16.2，正文写 16.2、16.6；正文给 459–460 追加 c/tests.c 证据而归档只记 include/bridge.h）；② 『454 与 462 是分页空白』这一断言无仓库内母本可复核——《Rust 程序设计语言 简体中文版.pdf》不在仓库（find 全仓无 PDF），只有 sources/reviews/S11.md 的页范围记录间接支撑，『空白』定性超出记录。",
+      "evidence": [
+        "sources/contributions/ffi-project-web.json：3 条目含 url/sha256/archive/review_scope，与正文『URL、内容 SHA-256 与范围写入该文件』一致",
+        "sources/contributions/ffi-project.json：四条 S11 记录 pages=PDF 455–456/457–459/459–460/460–461，target 分别为 4.16.3/4.16.3/4.16.2/4.16.4，evidence 为 lib.rs/contracts.rs/bridge.h/lib.rs",
+        "environment.txt：『rustc 1.99.0 (b940084d7 2026-09-28)』支撑正文『rustc 1.99.0 的实际产物』",
+        "find . -name '*.pdf' 无结果；sources/reviews/S11.md:125-126 记 19.1 书签页 454、正文页 455–461、下一单元起于 462，但未记『空白』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条抽查跨节错误索引的事实内核并全部落地：所引 15 个 [@def-*]/[@ex-*] 锚点全部在 ch16.md 声明存在；『本项目只传固定宽度元数据』对 bridge.h rb_info_v1{abi_version,struct_size,len,checksum}（归约字段仅 checksum 一个）；『4096 槽』对 src/lib.rs MAX_SLOTS=4096 且 measure 归档无聚合内存预算实现痕迹；『-UNDEBUG』对 environment.txt CMake 行；『批 p99 是 524288 词批量墙钟、21 个值取最大值』已复算；『Arc→Vec 内部复制仍在、sample 见 memmove』已验证；『vector.body 不是 SIMD 证据』引 def-16.6.2（16.6 节范围，仅核到锚点存在与归档 codegen 四文件齐备，未逐行重读 16.6 汇编——该断言本体在 16.6 审计范围内）。",
+      "evidence": [
+        "include/bridge.h：struct rb_info_v1 { uint32_t abi_version; uint32_t struct_size; uint64_t len; uint64_t checksum; }",
+        "src/lib.rs: `const MAX_SLOTS: usize = 4096;`；`#![deny(unsafe_op_in_unsafe_fn)]`；#[unsafe(no_mangle)] ×8，edition 2024（Cargo.toml）",
+        "grep '{def-16.' 与 '{ex-16.'：16.1.1/1.2/2.1/2.2/3.1/3.2/4.1/4.2/4.3/5.1/5.2/5.3/6.1/6.2/6.3、ex-16.3.1 均声明存在",
+        "environment.txt:『CMake Release; C11 -O3 -DNDEBUG -Wall -Wextra -Werror -UNDEBUG』；codegen/ 含 ffi_bridge.mir/.ll/.s 与 c-benchmark.s"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "出口检查逐条对盘：重跑三命令路径真实存在（tools/measure.sh、tools/summarize.py）且 measure.sh 要求目录不存在（mkdir \"$1\"）、取共享锁 trap 释放；『四个 case×21=84、对照同 checksum』由 summarize.py assert 群证明（84/21/观察号 1..21/words/正耗时/checksum 一致）；『Cargo.lock 已提交、无第三方依赖』对 Cargo.toml 空 dependencies 与 Cargo.lock 存在；『CMake 把 Rust 目标放进自己的构建目录』对 CMakeLists.txt RUST_TARGET_DIR=${CMAKE_BINARY_DIR}/cargo-target；文件核对表 12 项全部在归档目录；『CLI 打印版本、词数与十六进制 checksum』对 demo.txt『abi=1 words=8192 checksum=27c1e9feeec75000』；『4 项内部 + 6 项导出契约』对 rust-tests.txt『running 4/6 tests, 4+6 passed』；『被测源与当前版本一致』复算 source-sha256.json 全部 11 个文件 SHA-256 与磁盘现值 MATCH。未跑 cargo/ctest 本身（只读审计），机制叙述部分（release 线性化、generation 退休等）指向 16.4/16.5，超出本节锚点未重核。",
+      "evidence": [
+        "source-sha256.json 复算：CMakeLists.txt、Cargo.lock、Cargo.toml、c/benchmark.c、c/demo.c、c/tests.c、include/bridge.h、src/lib.rs、tests/contracts.rs、tools/measure.sh、tools/summarize.py 全部 MATCH",
+        "归档文件清单含 environment.txt、source-sha256.json、rust-tests.txt、c-tests.txt、raw.csv、summary.json、codegen/{ffi_bridge.mir,ll,s,c-benchmark.s}、macos-sample.txt、interference.txt",
+        "rust-tests.txt：『running 4 tests』『running 6 tests』『4 passed』『6 passed』；c-tests.txt：c11_contracts/cli_demo/cli_bad_length 等 4 项 Passed",
+        "tools/measure.sh：`mkdir \"$1\"`、`lock=...; while ! mkdir \"$lock\"; do sleep 2; done`、`trap 'rmdir \"$lock\"' EXIT`"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "severity": "P2",
+      "description": "16.9『本地母本的实际范围』表的『本章落点』与『项目证据』列和仓库内核读记录不完全一致：ffi-project.json 把 PDF457–459 的 target 只记为 4.16.3（正文写 16.1、16.3），PDF459–460 的 target 只记 4.16.2（正文写 16.2、16.6）、evidence 只记 include/bridge.h（正文追加 c/tests.c）。页码范围本身全部对得上，属表内多列口径不统一。",
+      "evidence": "sources/contributions/ffi-project.json 四条 S11 记录的 target/evidence 字段 vs src/part4/ch16.md:1600-1603"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "severity": "P2",
+      "description": "『454 与 462 是分页空白，不作为正文范围』无法在仓内直接复核：母本《Rust 程序设计语言 简体中文版.pdf》不在仓库（find 全仓无 .pdf），sources/reviews/S11.md:125-126 只记录了 19.1 的书签页 454 与正文页 455–461、下一单元起于 462，未记录『空白』这一定性。页范围引用本身可落地，空白断言超出母本记录。",
+      "evidence": "find . -name '*.pdf' 无结果；sources/reviews/S11.md:125『454 | 455；455,456,457,458,459,460,461』、S11.md:126『462 | 463；无』"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "severity": "P2",
+      "description": "environment.txt 的宿主采集时钟是『2026年10月22日』，而归档目录名为 run-20261007-01，相差 15 天。正文 16.8.7『归档目录名是运行标识；宿主采集时钟写在 environment.txt，不从目录名推断日期』恰好覆盖了这个错位，但没有解释为何两者不一致（如环境快照晚采或目录标签过期），读者无法判断八位数字是否与该次运行同一环境采得。",
+      "evidence": "projects/ffi-bridge/evidence/run-20261007-01/environment.txt 首行日期 vs 目录名；ch16.md:1538"
+    }
+  ]
+}

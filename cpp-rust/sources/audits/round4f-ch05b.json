@@ -1,0 +1,96 @@
+{
+  "reviewer": "r4f-ch05b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动无历史上下文：先读 写作规范/25-冷读者派单模板-187节两轮.md 全文，再完整读 src/part2/ch05.md:1573-2219（5.7-5.11 全部正文与 preview/def/ex/sol/think/method/errata 盒），断言逐条回 bench/compiler-lab 的 CSV/TOML/run.sh/src/lib.rs/probes/tests 与 results/stable-01、stable-02、extra-02 归档用 /usr/bin/python3 复算，引文回 sources/inventory.json、sources/reviews/S08.md、S09.md、src/appendix/coverage.md 与本地母本 PDF（pdftotext）逐字比对，并用 rustc 1.99.1 独立复现两段代码；另跑 tools/list_uncollected_claims.py 只看 ch05。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "整节逐句读完。代码与编译事实成立：5.7.1 的 Bad trait 与盘上探针逐字相同，E0038 既有归档输出，我又用 rustc 1.99.1 独立编译复现同一诊断（含 note: for a trait to be dyn compatible it needs to allow building a vtable），所以「失败输入只参与编译」不是修辞。5.7.5 的上转型测试与 bench/compiler-lab/tests/contracts.rs:88-100 逐字对应，我另写等价 main() 编译并运行，输出 upcast ok；「本轮 Rust1.99.0」与 stable-02 归档 environment.txt:6 一致（我机器是 1.99.1，不与之冲突）。5.7.2/5.7.3/5.7.4 与 5.7.6、判定流程、自测都是结构对比与口径声明，未宣称任何未采集数字（enum 混排那两组我确认归档里不存在对应 CSV，stable-02 仅 ctfe_table/dispatch_grain/dispatch_visibility/drop_paths/move_cost/vectorize 六份）。但 5.7.5 的 Effective Rust 页码复核未过：正文把「trait upcast 在 Rust 1.70 前后的限制」记到 PDF 169（第 19 条一线），台账与母本原文都把这条 1.70 时点限制登在 Item 12 的 [97-105] 行；169 页所在段落登的是「未来版本预测已过时」，见 findings。附带一句修订史表述也不准确。",
+      "evidence": [
+        "src/part2/ch05.md:1602 与 bench/compiler-lab/probes/rejected/dyn_generic.rs:1 逐字相同；results/extra-02/dyn_generic.txt:2 error[E0038]: the trait `Bad` is not dyn compatible",
+        "我复现：rustc --edition 2021 bad.rs -> error[E0038]（3 次输出同一码）；rustc --edition 2021 up.rs && ./up -> upcast ok；rustc --version = 1.99.1 (58cf8f9c3 2026-10-13)",
+        "src/part2/ch05.md:1689-1707 与 bench/compiler-lab/tests/contracts.rs:88,94,96,98（trait Child: Parent / current_stable_supports_trait_upcast / &dyn Child -> &dyn Parent）逐行对应",
+        "bench/compiler-lab/results/stable-02/environment.txt:6 rustc 1.99.0 (b940084d7 2026-09-28)",
+        "sources/reviews/S08.md:33 S08-U0024 第 19 条：避免反射 PDF 物理页 164，裁决注「PDF169关于trait上转型的未来版本预测已过时」",
+        "src/appendix/coverage.md:75 S08/COMPILER-S08-008 「Item12：理解泛型和trait对象之间的权衡；含Rust1.70历史限制」页范围 [97,98,99,100,101,102,103,104,105] -> src/part2/ch05.md#sec-cpp-rust.2.5.1",
+        "母本逐字比对（/usr/bin/python3 + /opt/homebrew/bin/pdftotext /Users/juanwang/E-Book/Rust/Effective Rust.pdf）：-f 97 -l 105 命中「在撰写本文时（截至Rust 1.70版本），没有办法从 Shape 向上转型到 Draw」；-f 164 -l 169 段 '1.70' 命中 0 次，该段只给出 #![feature(trait_upcasting)] 与「预计在 Rust 1.」的未来版本预测",
+        "stable-02 目录清单：无 enum 混排/缓存/PMU 归档，故 5.7.3、5.7.6 的「本节没有采集」声明与磁盘一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节 10 个小节加 5 个语义盒逐句读完，正文点名的每个数字我都从归档 CSV 自己复算（/usr/bin/python3 + statistics，未抄正文）：stable-02/dispatch_grain.csv 按 case 分组、ns_per_unit 均值 dyn_item=0.647618、dyn_batch=0.156428、generic=0.158334；比值 0.647618/0.156428=4.1401，正文「约 4.1 倍」成立；generic-dyn_batch=0.001906 与 5.10/5.8.2 用的差值逐位相同。stable-02/dispatch_visibility.csv 得 known_dyn=0.156133、opaque_dyn=0.158303，差 0.002170 亦逐位命中。跨轮：stable-01 dyn_item 均值=0.680228，与本轮差 0.032610、占第一轮 4.794%（正文「约 4.8%」成立），且 sd 由 0.042221 增至 0.088345，支持「第二轮样本标准差也较大」，正文据此拒绝写优化收益，判级正确。协议类断言全部落地：每个正式 case 恰 21 行批次（六份 CSV 全部 21+summary）、实验包共六个入口本章占 dispatch_grain/dispatch_visibility 两个、归一化除数是 repeats*units（CSV 列 repeats/units 存在，units=16384 与 5.10 第 2 条的批长绑定一致）、预热 500ms 在 src/lib.rs:19、构建六项与 Cargo.toml [profile.release] 完全一致（opt-level=3、codegen-units=1、lto=false、debug=1、panic=unwind，无 target-cpu 设置，run.sh:13 把 RUSTFLAGS 原样记入归档），所以 5.8.5 的表不是装饰。5.8.2 的统计口径我也反证过：nearest-rank p99 在 n=21 即最大点（dyn_batch 0.176579 确为该组最大值），sd 用 N-1（summary 行 rebuild_table 0.017489923 与我的样本标准差 0.017490 相符）。5.8.3/5.8.4 的采样边界与磁盘一致：sample-command.txt:1 写明 1 秒、1 毫秒间隔，macos-sample.txt 命中 dynamic_items 与 Affine::step，sample-run.csv 是另一次运行（其 dyn_item 均值 0.732891 与主表 0.647618 不同，证明主表确实取自 dispatch_grain.csv 而非采样那次），归档里没有 I-cache/BTB/指令退休/频率类文件。5.8.6 生命周期表、5.8.7 归因要求、5.8.9 决策矩阵与 5.8.10 errata 都不越层。唯一没核到的一条：5.8.1「同一入口内各 case 轮转顺序」我只核到 CSV 分组行数与 run.sh 的锁协议，没有逐行验证轮内交错顺序；判 pass 是基于其余八项协议断言全部命中，此点作为未覆盖范围记录，不作 finding。",
+      "evidence": [
+        "/usr/bin/python3 复算 bench/compiler-lab/results/stable-02/dispatch_grain.csv：dyn_item mean(ns_per_unit)=0.647618 p50=0.694790 p99nr=0.709374 sd=0.088345；dyn_batch mean=0.156428 p99nr(=max)=0.176579；generic mean=0.158334；每组行数=21",
+        "复算比值 0.647618/0.156428=4.1401；差值 0.158334-0.156428=0.001906",
+        "复算 bench/compiler-lab/results/stable-02/dispatch_visibility.csv：known_dyn=0.156133 opaque_dyn=0.158303 差=0.002170，各 21 批",
+        "复算 bench/compiler-lab/results/stable-01/dispatch_grain.csv：dyn_item mean=0.680228 sd=0.042221；0.680228-0.647618=0.032610（4.794%）",
+        "bench/compiler-lab/Cargo.toml:8-13 [profile.release] opt-level=3 / codegen-units=1 / lto=false / debug=1 / panic=\"unwind\"；无 target-cpu",
+        "bench/compiler-lab/src/lib.rs:19 while start.elapsed() < Duration::from_millis(500)",
+        "bench/compiler-lab/results/stable-02/sample-command.txt:1 'Sampling process 31117 for 1 second with 1 millisecond of run time between samples'；macos-sample.txt 命中 dynamic_items/Affine::step 3 行；sample-run.csv dyn_item mean=0.732891（与主表 0.647618 不同）",
+        "bench/compiler-lab/run.sh:29-31 取测量目录锁、:41-47 注释 'deliberately excluded from the 21 timing observations' 并在同一锁下跑 sample",
+        "results/stable-02 六份 CSV：ctfe_table/dispatch_grain/dispatch_visibility/drop_paths/move_cost/vectorize（六入口、本章两个）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节逐句读完，三类入口逐个回台账。两处特别复核都过了：① S09 归属已与台账一致——正文只把「单态项收集、后端与代码生成单元」归给《Guide to Rustc Development》（S09），inventory.json:19145 起 S09 的 filename 正是该 PDF，且三件事都有 S09 行：S09-U0123 Monomorphization 页 319「单态化收集需要生成的具体实例；PDF320补读CGU划分及代码大小/编译时间代价」、S09-U0127 Backend Agnostic Codegen 页 330、S09-U0128 rustc_codegen_llvm 重构页 330；更关键的是上一轮被指认的那句已经改掉：现在写的是 polymorphization「本书仓库里没有登记到任何母本原文，故此处不提名也不引用」，我用 grep -rin polymorph 复扫 sources/ 与 src/，S09 的核读台账与映射行确实一次都没出现该词（命中项是 sources/contributions 里被明确排除的 C++ 章节标题与历史评审自述），所以这条免责声明与台账相符、不是新的空话。② S08 第 12 条＝泛型与 trait 对象的权衡有台账（sources/reviews/S08.md:25 S08-U0016 页 97 read-mapped；src/appendix/coverage.md:75 同一条并注明含 Rust1.70 历史限制），但本节 5.9:2117 只把「上转型限制来自 Rust 1.70 时点」归到 S08 这一母本、不给页码，与 coverage.md:75 的 [97-105] 登记不冲突；把 1.70 记到 PDF 169 的是 5.7.5，那条 finding 我记在 sec-cpp-rust.2.5.7，不在本节重复计数。三条在线 Reference 的辨析也落地：sources/web.json:580/592/604 三条 id REF-trait-object、REF-dyn-compatibility、REF-codegen-attrs，sources/sections.json:6454/6465/6476 有对应 SRC- 行，src/appendix/coverage.md:615-616 登记本地副本与「旧译母本称『对象安全』，无此节」，且 inventory.json:20740 S10 的 filename 是「Rust 参考手册.pdf」（旧译参考手册），正文「别把它们算成母本 S10」因此有依据。复核入口逐个存在：src/bin/dispatch_grain.rs、src/bin/dispatch_visibility.rs、probes/code_size.rs、results/stable-02/codegen/、results/extra-02/one-size.txt:4 Section __text: 217148 与 *-nm.txt。「PGO 与 ThinLTO 构建的输出也实际比较通过」我自己复算：many-run.txt、thin-run.txt、pgo-use-run.txt 三行均为 instances=16 checksum=95338125850705920，确为实跑比对。coverage 链接 ../appendix/coverage.md 盘上存在。未核项：《Rust 程序设计语言》trait 对象那一章我只确认它是措辞性推荐、未回母本逐字比对。",
+      "evidence": [
+        "sources/inventory.json:19145 S09 filename = 'Guide to Rustc Development.pdf'；sources/reviews/S09.md:3 文件行同，:132 S09-U0123 Monomorphization 319、:136 S09-U0127 Backend Agnostic Codegen 330、:137 S09-U0128 330",
+        "grep -rin polymorph sources/ src/ 命中仅 sources/contributions/source-native-inventory.json:3061,3066,3071,3241,3561（C++ 排除项）与历史 sources/audits/*.json，S09 台账 0 命中",
+        "src/part2/ch05.md:2110-2111 与 sources/reviews/S08.md:25（S08-U0016 第 12 条 泛型与 trait 对象的权衡, 页 97, read-mapped）、src/appendix/coverage.md:75、sources/web.json:580/592/604、sources/sections.json:6454/6465/6476 逐条对应",
+        "sources/inventory.json:20739-20742 S10 filename = 'Rust 参考手册.pdf'（376 页）；src/appendix/coverage.md:616「Dyn compatibility（旧译母本称『对象安全』，无此节）」",
+        "复算 bench/compiler-lab/results/extra-02/{many-run,thin-run,pgo-use-run}.txt 均 instances=16 checksum=95338125850705920；one-size.txt:4 Section __text: 217148",
+        "文件存在性：src/bin/dispatch_grain.rs、src/bin/dispatch_visibility.rs、probes/code_size.rs、results/stable-02/codegen/、results/extra-02/one-nm.txt many-nm.txt thin-nm.txt、src/appendix/coverage.md"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节读完。数量口径自证：正文说「八份清单共 48 条（E-a … E-f × 5.1-5.8）」，我用正则统计 src/part2/ch05.md 的 E-a..E-f 行，5.1 到 5.8 每节正好 6 条、全文合计 48 条，与索引表八行一致，不虚报。索引表四个数字我复算：dyn_batch 与 generic 差 0.001906（0.158334-0.156428）、known_dyn 与 opaque_dyn 差 0.002170（0.158303-0.156133）都与 stable-02 归档逐位相同，正文把两条都判为方向未定，符合 5.8.2「没有算区间」的口径；4.1 倍绑定批长 16384 也与 CSV 的 units 列相符。第 2 条引用「5.2 的 3008 字节」是静态体积（extra-02/one-size.txt:4 与 many-size.txt:4 的 __text 之差），本节只把它当口径警示、没有搬到计时句里，跨层用法正确。本节 52 个 [@id] 引用（含 5.7-5.11 全部）我逐个比对盘上 {#id} 锚点，缺失 0 个，链接不悬空。",
+      "evidence": [
+        "/usr/bin/python3 统计：5.1-5.8 各节 errata 盒 E 项 = ['a','b','c','d','e','f']，全文 E- 行合计 48",
+        "复算差值 0.001906 与 0.002170（stable-02/dispatch_grain.csv、dispatch_visibility.csv，各 21 批）",
+        "CSV units 列 = 16384（批长绑定）；one-size.txt:4 Section __text: 217148",
+        "正则核对 src/part2/ch05.md 5.7-5.11 段 52 个 [@def-*/@ex-*/@think-*] 引用，与本章及 part1/ch01、ch04 的 {#id} 集合比对，missing=[]"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结、速查、导航、复现与定位、出口检查、章末件全部读完。小结五条与我复算的数一致：3008 字节为静态体积口径、0.156428 对 0.647618 差约 4.1 倍、两组接近数字方向未定；速查表 11 行都是口径句，其中「p99 是 21 个批均值的最大点」我按定义与归档双重确认（n=21 时 nearest-rank 落最大点，dyn_batch 0.176579 即该组最大值）。边界声明逐条对磁盘：批长 16384 见 CSV units 列，构建配置固定见 Cargo.toml，六入口顺序运行与目录锁协议见 run.sh:29-47（含把 profiler 采样重取锁那句），五个正式 case 各 21 批（dispatch_grain 3 case + dispatch_visibility 2 case，每组行数 21）全部命中；「没有 Linux perf/Miri/缓存事件」与 stable-02 目录清单相符；「nightly 损坏的事实未被隐藏」有 extra-02/nightly.txt 的 error: missing manifest in toolchain 'nightly-aarch64-apple-darwin' 为证。复现命令我核到文件与脚本契约级：run.sh 以 mkdir \"$OUT\" 建新归档（故要求目录不存在，正文这句准确）、bench/compiler-lab/extra.py 与 Cargo.toml/manifest 路径都在、probes/code_size.rs 确为尺寸探针；我没有实跑 cargo test/clippy（受 20 次调用预算限制），此点作为未覆盖范围记录。出口检查点名的产物句（visible_dynamic 无表调用、dynamic_batch 一条间接尾跳转、__PAGEZERO 不计入 __text）属 5.3/5.4 范围，本轮区间外，我只引用未复核。章末五页文件全部存在。",
+      "evidence": [
+        "复算 0.156428/0.647618（比值 4.1401）、p99nr=0.176579=dyn_batch 组内最大值，stable-02/dispatch_grain.csv 每 case 21 行",
+        "bench/compiler-lab/run.sh:5 mkdir \"$OUT\"（归档目录须不存在）、:18 cargo fmt --check、:19-21 clippy/test/build、:29-31 与 :43 目录锁两段式、:45-47 sample 运行排除在 21 批之外",
+        "文件存在：bench/compiler-lab/extra.py、probes/code_size.rs、probes/rejected/dyn_generic.rs、results/stable-02/{dispatch_grain,dispatch_visibility}.csv、results/extra-02/nightly.txt（error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'）",
+        "src/part2/ 下 ch05_summary.md、ch05_recall.md、ch05_exercises.md、ch05_exam.md、ch05_checklist.md 五个文件 os.path.exists 均为 True",
+        "src/part2/ch05.md:2113/2117 链接 ../appendix/coverage.md 存在（src/appendix/coverage.md:75 S08 行、:615-616 REF- 三行）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "severity": "P1",
+      "description": "5.7.5（src/part2/ch05.md:1683）的 Effective Rust 页码与所引事实不同页：正文写「Effective Rust 的本地 PDF 169（第 19 条一线，登记见 sources/reviews/S08.md）讨论 trait upcast 在 Rust 1.70 前后的限制」。台账把这条 Rust 1.70 时点的上转型限制登在另一行：src/appendix/coverage.md:75（S08/COMPILER-S08-008）「Item12：理解泛型和trait对象之间的权衡；含Rust1.70历史限制」页范围 [97,98,99,100,101,102,103,104,105]，而 reviews/S08.md:33（S08-U0024 第 19 条，起始页 164）对 PDF169 的登记措辞是「关于trait上转型的未来版本预测已过时」。我用 pdftotext 逐字回母本（/Users/juanwang/E-Book/Rust/Effective Rust.pdf）：-f 97 -l 105 段命中原文「在撰写本文时（截至Rust 1.70版本），没有办法从 Shape 向上转型到 Draw」；-f 164 -l 169 段字符串 '1.70' 命中 0 次，该段给的是 #![feature(trait_upcasting)] 与「预计在 Rust 1.」的未来版本预测。因此页码 169 虽然确有台账行，却落不住「Rust 1.70 前后的限制」这句被引作已核实的事实；同时正文那句「先前这里写的『PDF 103』与台账不符」也不成立——103 正在 coverage.md:75 登记的 [97-105] 范围内。建议改成双页引用：「PDF 97-105（第 12 条，src/appendix/coverage.md:75 登为该条含 Rust1.70 历史限制）给出『截至 Rust 1.70 版本无法从 Shape 向上转型到 Draw』；PDF 169（第 19 条，sources/reviews/S08.md:33 S08-U0024）给出的是已过时的未来版本预测」，并把本轮 1.99.0 已通过上转型测试的裁决挂在两处引用之后。",
+      "evidence": "pdftotext 复算：-f 97 -l 105 命中「在撰写本文时（截至Rust 1.70版本），没有办法从 Shape 向上转型到 Draw」（1.70 命中 1 次，upcast 命中 0 次因原文作「向上转型」）；-f 164 -l 169 命中 'upcast' 1 次（#![feature(trait_upcasting)] 与「预计在 Rust 1.」），'1.70' 命中 0 次；src/appendix/coverage.md:75 页范围 [97-105] 含「Rust1.70历史限制」；sources/reviews/S08.md:33 PDF169 登记为「未来版本预测已过时」"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "severity": "P2",
+      "description": "5.7.5 正文里保留了仓库内部的修订记录句「先前这里写的『PDF 103』与台账不符，已按登记值改过来」（src/part2/ch05.md:1683）。这是审计变更史而非读者需要的内容，混在正文里既占用本节唯一的引文句、又让学习者以为页码是可信度指标；按上一条 finding 的复核，这句话本身还不准确（103 落在台账登记的 [97-105] 内）。建议整句删除，页码出处直接写规范位置，修订史放 sources/audits/ 或 commit message。",
+      "evidence": "src/part2/ch05.md:1683 原句；src/appendix/coverage.md:75 登记页范围含 103；母本 pdftotext -f 97 -l 105 段含该 1.70 原文"
+    }
+  ]
+}

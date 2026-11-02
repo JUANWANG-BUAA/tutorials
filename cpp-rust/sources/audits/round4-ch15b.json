@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4-ch15b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动读完 src/part4/ch15.md 的 15.7–15.11 全部正文与语义盒（并回读 15.4 的 def-15.4.3/15.4.7 以核 checksum 口径），然后用一条 python 脚本一次性抽取表格与含数字句子，并把 6 组自称实测/代码与归档断言拿去 projects/agent-runtime 与 evidence/run-04 复算：FNV 聚合 checksum 独立重算、statistics.csv 与 lifecycle.csv 的均值/标准差/分位数、summarize.py 与 measure.sh 全文、runtime-bench.rs 的计时与校验代码、tests.txt 与 validation-02 目录的测试与压力计数、local-source-review.json 与 capture-source-review.json 的行号范围与 Cargo.lock/environment.txt 版本。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数值口径逐条复算：我把表格里的 ms/工具从 evidence/run-04/statistics.csv 的 ns 值重新换算（2871943.952→2.871944、1268895.551→1.268896、2535536.5→2.535537、7845750→7.845750；3505500.256→3.505500、2472717.121→2.472717、2285484.375→2.285484、9227984.375→9.227984；1046813.244→1.046813、621627.561→0.621628、811442.75→0.811443、3373109.375→3.373109），12 个数字全部相符，无抄错或量纲混用；sd 确为 n-1 样本标准差、p50/p99 确为 nearest-rank（summarize.py:36-37），正文也写明了这两个定义，符合统计量口径要求。静态量自算：8×2×262144=4194304、8×2×4096=65536、262144B=256KiB、三配置各 21 批共 63 行 + admission 21 行 = 84，全部与 runtime-bench.rs:7-8、lifecycle.csv（64 行含表头）、admission.csv（21 行）一致；n=21 时 nearest-rank p99 即最大值，故 15.7.6 的「最大批均值 9.227984」与该行的 p99 自洽。计时/校验边界与代码逐行相符（lifecycle_batch 起于 try_submit 前、止于全部结果，validate 在计时外，checksum 由 Log::record 在读取时算，runtime-bench.rs:103-118 与 :120-135、:139-143、:150-157 预热 500ms、:171-177 轮转起点、:192 worker_threads=2、:22-23 queue=16）。唯一不成立的是聚合 checksum 的口径（见 P0/P1）。未核：15.7.6 关于 run-03「两者均值接近、R4096 还略低」的对比没有复算（应查 evidence/run-03/statistics.csv），15.7.2 关于「中间对照建立在 run-02」的设计沿革也只核到 run-01 只有 42 条 lifecycle（两配置）、run-02/run-03 各 63 条这一点。",
+      "evidence": [
+        "src/part4/ch15.md:1540-1542 与 projects/agent-runtime/evidence/run-04/statistics.csv:3-5（逐值换算相符）",
+        "projects/agent-runtime/scripts/summarize.py:32（checks == {(8*sum(hashes)) & (2**64-1)}）",
+        "我独立复算：FNV-1a(O×262144)=918230088390419237、FNV-1a(E×262144)=11560527877840970533，8×(两者之和) mod 2^64 = 7596343361303360080",
+        "63 批跨样本求和则为 17401029919372894640（不等于正文引用的值）",
+        "projects/agent-runtime/src/bin/runtime-bench.rs:7-8,103-118,120-135,139-157,170-177,192,197",
+        "projects/agent-runtime/evidence/run-04/lifecycle.csv（63 行，checksum 列全为 7596343361303360080）、admission.csv（21 行 operations=100000）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "测试与压力计数全部回档核过：contracts.rs 有 14 个测试属性（含 1 个 #[tokio::test(flavor=\"multi_thread\", worker_threads=2)]）、regressions.rs 2 个、process_macos.rs 2 个单元，run-04/tests.txt 的 test result 行为 2 passed / 14 passed / 2 passed，共 18 项；validation-02 目录确有 debug-tests-1..10 与 release-tests-1..10（10 轮 × 2 profile × 18 = 360）和 debug-stress-1..5 / release-stress-1..5（每 profile 5 轮，2×5×80=800），与 15.8.4 的「2 单元 + 16 集成、360 项、每 profile 5 轮」一致；stress 文件抽样可见每个 runtime 呈 TimedOut / Cancelled / Success(logs，total=262144) 结构，与 640/80/80 的分层说法相符（我没有逐条数满 800 条，只按文件结构抽样确认）。负向对照代码块与 regressions.rs:23-28 逐行一致（200ms read_to_end 预期 Err、child.kill().await、再 wait、assert !success、drop(stderr)），正向确为两路各 2MiB（contracts.rs 中 2*1024*1024），故 15.7.6 的「两路各 256KiB」与本节的 2MiB 不矛盾（benchmark 与测试的字节数不同）。profile 与采样口径也核过：runtime-bench.rs:197 profile→lifecycle(Some(8)) 对应「八秒左右」，measure.sh:53-55 在 summarize 之后另起进程并执行 /usr/bin/sample $pid 3 1 对应「1ms 间隔采三秒」，macos-sample.txt 中 read_log 出现 54 次、Log/record 各 21 次、kevent 26 次、posix_spawn 36 次、wait 52 次、tool-helper 0 次，正支持 15.8.8「可见这些栈、且只采父进程」。唯一问题是排版：1707/1712 等段落以 <br> 收尾又紧跟空行，渲染出悬挂换行（见 P2）。未核：15.8.4「CLI 五个退出码逐轮验证」我只核到 regressions.rs:38-54 的期望码（sleep/cancel→1、usage→2），未重跑；「此前同源码进程实现的另一套完整重复记录」指向哪个归档未追。",
+      "evidence": [
+        "projects/agent-runtime/tests/contracts.rs（14 个 test 属性）、tests/regressions.rs:23-29,38-54、src/process_macos.rs（2 个 test）",
+        "projects/agent-runtime/evidence/run-04/tests.txt（test result: 2 passed / 14 passed / 2 passed）",
+        "projects/agent-runtime/evidence/capture-fix-final-validation-02/（debug-tests-1..10、release-tests-1..10、debug-stress-1..5、release-stress-1..5）",
+        "projects/agent-runtime/scripts/measure.sh:51-56 与 src/bin/runtime-bench.rs:150,197",
+        "projects/agent-runtime/evidence/run-04/macos-sample.txt（read_log 54、Log 21、record 21、kevent 26、posix_spawn 36、wait 52、tool-helper 0）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节全部「已核读范围」类断言我按登记文件逐条回查，都能落地：evidence/local-source-review.json 记 tokio=1.54.0、source=cache 的 src/process/mod.rs、reviewed_lines=[[199,226],[1215,1410]]、sha256 有值，与正文「199–226 行 Drop/僵尸/best-effort、1215–1410 行 pid/start_kill/kill/wait/cancel-safe」逐字对应；evidence/capture-source-review.json 的 actual_review_scope 四条分别是 std sys/pipe/unix.rs「1–44」、std sys/process/unix/unix.rs「685–780」、tokio-1.54.0 process/unix/mod.rs「1–300」、同一 mod.rs「830–984（spawn 与 cfg(tokio_unstable) spawn_with）」、SDK unistd.h「195–230: pipe2 availability macOS 27.0」，与正文列出的行号范围与用途全部一致，且 Cargo.lock 的 tokio 版本确为 1.54.0、run-04/environment.txt 确为 rustc 1.99.0 + LLVM 23.1.1 + macOS 27.0.1，支撑 15.4.10/15.9 的「pipe2 自 macOS 27.0 起可用、本机 27.0.1 实际执行」。被点的文件与目录都存在：src/lib.rs、src/bin/tool-helper.rs、src/bin/runtime-bench.rs、src/process_macos.rs、tests/contracts.rs、tests/regressions.rs、diagnostics 与 descriptor_race（examples/descriptor_race.rs）、evidence/run-04/native 恰好 6 个本轮产物（agent_runtime.{mir,ll,s}+runtime_bench.{mir,ll,s}，与 15.4.13「逐项指定输出路径」相符）、evidence/run-04/macos-sample.txt、bench/results/runtime-fixed、sources/contributions/runtime-project.json、src/appendix/coverage.md。母本登记核过：S11 条目 section=16.2 消息传递、pages=「PDF 390–394（一基物理页）」、status=read-mapped、target=part4/ch15.md#sec-cpp-rust.4.15.2、evidence=projects/agent-runtime/tests/contracts.rs，与正文表格的页码、落点、使用方式一致，「本次沿用」也与 status 相符，没有把未核读写成已核实。版权全文仅存工作区一点也核过：仓库 .work 下确有 cpp-rust-sources。唯一缺陷是表格排字（见 P2）。",
+      "evidence": [
+        "projects/agent-runtime/evidence/local-source-review.json（reviewed_lines=[[199,226],[1215,1410]], version=tokio=1.54.0）",
+        "projects/agent-runtime/evidence/capture-source-review.json（1–44 / 685–780 / 1–300 / 830–984 / 195–230）",
+        "projects/agent-runtime/Cargo.lock（tokio 1.54.0）、evidence/run-04/environment.txt（rustc 1.99.0、LLVM 23.1.1、macOS 27.0.1）",
+        "sources/contributions/runtime-project.json 的 S11 条目与 src/appendix/coverage.md:9（「PDF为一基物理页」约定）",
+        "projects/agent-runtime/evidence/run-04/native（6 个文件）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条通读 18 项跨节错误，按当前代码/归档复核了其中可对核的量化与版本断言：「饱和路径几纳秒」对应 statistics.csv 的 admission-full 3.662 ns/拒绝尝试（15.6.2 口径）；「批 ns/tool 的 p99 不是请求 p99」与 summarize.py:33 除以 operations=8 的实现一致，即每条观察确实是 8 工具的批均值；「R=0 仍承担 I/O 与 checksum 成本」有 runtime-bench.rs:145/127-132（R=0 配置仍校验 total 与 checksum）支撑；「本机 Rust 1.99 的 macOS pipe/fcntl 窗口」有 environment.txt 的 rustc 1.99.0 与 capture-source-review.json 的 std sys/pipe/unix.rs 1–44 支撑；「kill_on_drop 是 best effort」在本项目代码 src/lib.rs:470 确为兜底设置、正常路径仍显式 wait（:513-527 的 select 与 Draining）。其余条目（Ticket 许可寿命、Q+C 突发、Stage watch、只检查 Outcome、canonicalize 非沙箱、后代持有管道、显式 Stdio 忘记释放写端）是机制与结论层面的表述，与 15.2/15.3/15.4 的正文自洽，未发现与代码相反之处。这一节的 [@id] 引用我抽核了 def-15.4.1/15.4.2/15.4.3、def-15.7.2、ex-15.7.1、def-15.8.1/15.8.2、def-15.2.1、def-15.6.2 等锚点在文件内确有定义（如 :841、:1512、:1567、:1674、:1696），其余交由机械层的可解析检查。未核：条目「8 个旧实现失败与 8 个原子修复通过」指向 bench/results/runtime-fixed 的具体计数（属 15.4 范围，我只确认目录存在）。",
+      "evidence": [
+        "projects/agent-runtime/evidence/run-04/statistics.csv:2（admission-full 3.662 ns/rejected-attempt）",
+        "projects/agent-runtime/scripts/summarize.py:19,33（operations=8，batch_ns/8）",
+        "projects/agent-runtime/src/lib.rs:470,513-527、src/bin/runtime-bench.rs:120-135",
+        "projects/agent-runtime/evidence/run-04/environment.txt（rustc 1.99.0）与 evidence/capture-source-review.json（std sys/pipe/unix.rs 1–44）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "「出口检查」十条与「归档应能回答的十个问题」我逐条对盘核过：命令里的 target/debug/agent-runtime 确实存在（Cargo.toml 的 [[bin]] name=\"agent-runtime\"、path=src/main.rs），examples/library.rs、scripts/measure.sh、scripts/summarize.py 都在；最后一条 `sleep 5000 100` 应返回 TimedOut 与退出码 1 由 tests/regressions.rs:38（(vec![\"sleep\",\"5000\",\"100\"], 1, \"outcome=TimedOut\")）与 :48（stdout 必含 reaped=true）直接支撑；measure.sh:7 确为 `mkdir \"$out\"`（不带 -p，注释写明归档不可覆盖），与「输出目录必须尚不存在、不覆盖 run-01 至 run-04」一致。run-04 归档十问全部命中：environment.txt 给出 rustc 1.99.0/LLVM 23.1.1/Darwin 27.0.0/目标 aarch64-apple-darwin；source-sha256.txt 有 19 条，含 Cargo.lock、scripts/measure.sh、scripts/summarize.py 与 src/tests/examples/scripts/diagnostics 全部源文件，正对应「与源文件、Cargo.lock 和测量脚本匹配」；admission.csv 21 个不同索引且 operations=100000；lifecycle.csv 三个 case × 21 批 × 8 工具；summarize.py:26-32 独立重算 FNV 并断言与 Rust 一致；statistics.csv 用 ns/rejected-attempt 与 ns/tool-batch-mean 区分两种口径；native 目录 6 份含 MIR/LLVM IR/.s；profile 采样在 measure.sh:53-55 为独立进程；build-process-snapshot.txt 存在。汇总数字也核过：84 条 = 63 lifecycle + 21 admission，run-01=42+21=63、run-02 与 run-03 各 63+21=84、run-03 native 为 12 份（印证 15.4.13 的通配符污染说法）、gate 交错 4×2=8。唯一不成立的是测量锁那两句的完整性（见 P1）：正文说「如果锁存在，应等待持有者正常退出」，脚本确实是 mkdir 忙等并用 EXIT trap 释放自己的锁，但等待既没有超时也没有陈旧锁恢复，而且 $root 解析为书仓库上一层（实测锁在 Desktop/tutorials/.work/cpp-rust-agents/measure.lock，仓库自己的 .work 只有 cpp-rust-sources 与 figs），正文与 README 的「.work 下」说法都会让读者找错目录；确认当前 scripts/measure.sh 与 run-04 归档的 source-snapshot 副本逐行相同，故刚改过的锁逻辑与既有测量同源，不推翻已报数值。未核：速查表与小结仅是复述，我按与前四节一致的口径通读，未再独立复算；「另一台机器应首先复现正确性与计量边界」属表述，无从核。",
+      "evidence": [
+        "projects/agent-runtime/Cargo.toml（[[bin]] name=\"agent-runtime\" path=\"src/main.rs\"）、tests/regressions.rs:38,48",
+        "projects/agent-runtime/scripts/measure.sh:7（mkdir 不建父目录）、:18-24（source-sha256.txt 覆盖 scripts 与 src/tests/examples/diagnostics）、:44-46（lock=\"$root/.work/cpp-rust-agents/measure.lock\"；while ! mkdir \"$lock\" 2>/dev/null; do sleep 1; done；trap 'rmdir \"$lock\"' EXIT），root 在 :4 定义为 $project/../../..",
+        "evidence/run-04/source-sha256.txt 19 条含 scripts/measure.sh 与 scripts/summarize.py；evidence/run-04/source-snapshot/scripts/measure.sh 与当前文件逐行相同",
+        "文件系统实测：/Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents 存在、cpp-rust/.work 仅含 cpp-rust-sources 与 figs"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "severity": "P0",
+      "description": "例 15.7.1 的解答（ch15.md:1576）把 7596343361303360080 说成「run-04 全部 lifecycle 样本（三个配置合计）的聚合值」，并明确加一句「它是跨样本统计，不是某个配置单独的值」。这句与代码和归档都相反：聚合发生在批内。runtime-bench.rs 的 validate() 只对传入的一批 8 个结果的 stdout/stderr 两个 log.checksum 逐个 wrapping_add（:122、:127-132），跨批没有任何累加器；lifecycle.csv 的 63 行里每一行的 checksum 列都是同一个 7596343361303360080（三个配置各自 21 行都是它），summarize.py 也正是断言「每个 case 的 checksum 集合大小为 1」并等于 8×(FNV(O)+FNV(E)) mod 2^64（:21-32）。我按 FNV-1a 基值 0xcbf29ce484222325、乘子 0x100000001b3 独立复算：FNV(262144×'O')=918230088390419237，FNV(262144×'E')=11560527877840970533，8 倍求和 mod 2^64 = 7596343361303360080，逐字等于归档值；而若真做「全部样本跨样本合计」（63 批相加）应为 17401029919372894640，不是正文引用的数。该句还直接与自己两行前给出的 [@def-15.7.3]（:1528「把一批内各工具、各路的 FNV-1a 结果用 wrapping_add 逐项相加」）冲突，读者按解答会以为三个配置合并求和才是这个值。建议改为：该值是每个批次的聚合 checksum，因每批写入字节完全相同，63 批与三个配置逐批相同；跨批不再求和。",
+      "evidence": "src/part4/ch15.md:1576（另见 :1528 定义、:1640 第 2 题答案、:1652 第 4 题答案）；projects/agent-runtime/src/bin/runtime-bench.rs:120-135；projects/agent-runtime/scripts/summarize.py:21-32；projects/agent-runtime/evidence/run-04/lifecycle.csv（63 行 checksum 全为 7596343361303360080）；复算：8*(918230088390419237+11560527877840970533) mod 2^64 = 7596343361303360080，63*(同值) mod 2^64 = 17401029919372894640"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "severity": "P1",
+      "description": "同一口径问题在正文第一处就已埋下：15.7.4（ch15.md:1522）写「run-04 全部 lifecycle 样本的聚合值为 7596343361303360080」，既没说是逐批相同、也没说这三个配置各自的 21 行都携带它，读者只能按字面读成「对全部样本聚合」，进而被 15.7.1 解答（:1576）误导。紧邻的 [@def-15.7.3] 与 15.7.8 小结第 ④ 条、自测第 2 题答案都把这个词当作「批内」概念用，属于同一章内口径混用。修法：把 :1522 改成「每个批次的聚合 checksum 都等于 7596343361303360080，run-04 的 63 批与三个配置逐批相同」。",
+      "evidence": "src/part4/ch15.md:1522 对照 :1528 与 :1609；projects/agent-runtime/evidence/run-04/lifecycle.csv 每行一值、distinct={7596343361303360080}"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "severity": "P1",
+      "description": "15.11 关于测量锁的两句（ch15.md:2005）与脚本真实行为只有部分相符，且省掉了一个会让读者卡死的边界。相符部分：正式计时确实用目录锁串行化、采样是另一个独立进程、脚本不会 rm 他人的锁。不符/缺项部分：(1) 正文说「如果锁存在，应等待持有者正常退出」，脚本是无条件忙等 while ! mkdir \"$lock\"; do sleep 1; done（measure.sh:45），既没有等待上限也没有陈旧锁恢复；若上一次运行被 SIGKILL 而 trap 未执行，锁目录会永久残留，之后任何一次重新采集都会静默挂死，正文却把它当作正常的等待语义推荐给读者。(2) 锁路径实际落在书仓库的上一层：measure.sh:4 定义 root=\"$project/../../..\"，解析为 Desktop/tutorials，锁即 Desktop/tutorials/.work/cpp-rust-agents/measure.lock；仓库自身的 .work 下只有 cpp-rust-sources 与 figs，没有 cpp-rust-agents。因此同章 15.6.7（ch15.md:1349）「锁目录为仓库根下的 .work/measure.lock（相对脚本自身位置算出）」两处都错（既不在仓库根下，名字也不是 measure.lock），而 README.md:120 写的相对路径 .work/cpp-rust-agents/measure.lock 同样会被读成仓库内路径。建议正文点名真实路径与层级、并把「等满若干秒仍拿不到就报错退出，绝不删他人锁目录」写清。另需说明：当前 scripts/measure.sh 与 run-04 归档的 source-snapshot 副本逐行相同，所以这次改动不影响已报数值。",
+      "evidence": "src/part4/ch15.md:2005（并见 :1349 与 projects/agent-runtime/README.md:120）；projects/agent-runtime/scripts/measure.sh:4,44-46；实测 /Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents 存在、/Users/juanwang/Desktop/tutorials/cpp-rust/.work 仅含 cpp-rust-sources、figs；diff 当前与 evidence/run-04/source-snapshot/scripts/measure.sh 内容完全相同"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "severity": "P2",
+      "description": "排版悬挂：多处段落以 <br> 收尾后又紧跟空行，会在渲染页尾留出一个多余空行/孤立换行，影响 15.8 与 15.7 的段落密度观感，属纯编辑问题。位置包括 ch15.md:1707（「最终验证目录为 evidence/capture-fix-final-validation-02/。<br>」后空行）、:1712（「所有条目都要求 reaped、EOF 及无清理错误。<br>」后空行）与 :1554（「……不据此报告显著性或复制收益。<br>」后空行）。建议删掉这些段末的 <br>。",
+      "evidence": "src/part4/ch15.md:1554,1555 与 :1707,1708 与 :1712,1713（段末 <br> 后即为空行）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "severity": "P2",
+      "description": "母本落点表格里「一基物理PDF390–394，16.2消息传递」是登记约定被写反了词序：登记表与附录 coverage.md 的写法是「PDF 390–394（一基物理页）」，coverage.md:9 还专门声明「PDF为一基物理页；EPUB为XHTML定位」这条约定。页码与章节本身核对无误（S11 条目 pages=PDF 390–394、section=16.2 消息传递、target=15.2、evidence=tests/contracts.rs），只是正文这格读起来像乱码，建议按登记原样写成「PDF 390–394（一基物理页）」并保留空格。",
+      "evidence": "src/part4/ch15.md:1889；sources/contributions/runtime-project.json 的 S11 条目；src/appendix/coverage.md:9"
+    }
+  ]
+}

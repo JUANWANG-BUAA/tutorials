@@ -1,0 +1,107 @@
+{
+  "reviewer": "r4f-ch09a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part3/ch09.md 第 66–1123 行（9.1–9.6 全部正文与每个 preview/def/ex/sol/think/errata/method 盒，含图 9-1 的 SVG 与 desc），逐条回查 bench/results/runtime-fixed/measurements-final/{scheduling.s,blocking-poll.txt,scheduling.txt,type-layout.txt,source-snapshot/bench/runtime-lab/src/bin/scheduling.rs}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、本机 cargo registry 的 tokio-1.54.0 源码（src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs）、sources/{runtime-code.json,web.json} 与 .work/cpp-rust-sources/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html,3semaphore-rcore.html,4scheduling-rcore.html}；全部测量数字用 /usr/bin/python3 从原始 ns/op 行自行复算，汇编与寄存器清单逐行比对母本原文；另跑 tools/list_uncollected_claims.py 只看 ch09。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.1.1–9.1.7 与全部语义盒逐节读完，没有抽样。静态量核对：def 9.1.1 与 9.1.4 表格列的六个成分（RUNNING/COMPLETE/NOTIFIED/CANCELLED/JOIN_INTEREST+JOIN_WAKER/引用计数）在 tokio-1.54.0/src/runtime/task/state.rs:17,22,28,31,34,37 与 STATE_MASK(state.rs:40) 逐一对上，INITIAL_STATE 里引用计数与 JOIN_INTEREST 的耦合见 state.rs:61，因此「不能脱离引用计数谈某一位」不是修辞而是该版本的实际位布局。9.1.3 声称四个文件的指纹记入 sources/runtime-code.json：四条记录都在（mod.rs 段 175–406、state.rs 1–374、current_thread/mod.rs 446–477、task/blocking.rs 20–130），且 current_thread 段确实覆盖 park_yield 与其调用的 park_internal（该文件 446–461 行区间内两个函数名都在）。ex 9.1.1 的「弹出只给候选、独占权只能来自一次 RMW」与 state.rs 的 transition_to_running 路径一致，且该符号在 measurements-final/scheduling.s 里出现 2 次，说明夹具产物确实经过这条运行权转换。图 9-1 的 desc 与 SVG 元素逐条对照：四个方框、四条实线、一条 running→notified 的红色虚线（stroke-dasharray 那条 path）、complete 下方「只清账不重跑」与正文 9.1.5 的读图说明一致，无图文不符。本节无可复算的测量数字，故未复算；判定为机制与版本绑定的静态核对。",
+      "evidence": [
+        "tokio-1.54.0/src/runtime/task/state.rs:17-40 (RUNNING/COMPLETE/NOTIFIED/CANCELLED/JOIN_INTEREST/JOIN_WAKER/STATE_MASK)",
+        "tokio-1.54.0/src/runtime/task/state.rs:61 (INITIAL_STATE 含 REF_ONE*3 与 JOIN_INTEREST)",
+        "sources/runtime-code.json 四条记录的 path/reviewed_ranges",
+        "tokio-1.54.0/src/runtime/scheduler/current_thread/mod.rs:446-461 (park_yield 调用 park_internal)",
+        "bench/results/runtime-fixed/measurements-final/scheduling.s:transition_to_running 出现 2 次",
+        "src/part3/ch09.md:148-185 (图 9-1 desc 与 SVG path/rect 逐条对应)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.2.1–9.2.7 与全部语义盒逐节读完，重点复核被派单点名的两处。① 9.2.3 def 9.2.3 的「14 项保存清单」：母本 .work/cpp-rust-sources/systems/2task-switching-rcore.html 给出 `pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }`，正文写「s0~s11 这 12 个被调用者保存寄存器，再加 ra 与内核栈指针 sp，一共 14 项」，12+1+1=14 我按母本字段数与 __switch 汇编（sd sp,8(a0)、sd ra,0(a0)、.set n,0/.rept 12 SAVE_SN）双重核对成立；正文额外声明「母本原文也只说恢复 ra、s0~s11 与 sp」也与母本阶段[3]的措辞一致（我按去标签后的全文检索 ra/s0~s11/sp 三处，未见第四项）；正文自加的「ra 按 RISC-V 调用约定属 caller-saved」是本书自己的判断，母本只说「属于调用者保存的寄存器由编译器在高级语言调用函数里保存」，该判断与 RISC-V 惯例相符且不与母本冲突。② 保存项的「两条规矩」复述：母本原句为「只有那些对于程序接下来的正确执行仍然有用，且在它被切换出去的时候有被覆盖风险的那些资源才有被保存的价值」，正文「切回来之后还得用得上 + 切出去这段时间有被别的代码写脏的可能」是等价改写，未加母本没有的量词。③ 时钟抢占：母本 `const TICKS_PER_SEC: usize = 100` 与「10ms 之后一个 S 特权级时钟中断就会被触发」，正文「每秒 tick 数取 100，也就是每 10 ms 一次可能抢占」的 1/100=10 ms 我复算成立，mtime/mtimecmp/SBI set_timer 三点都在同一页。④ 9.2.1 的 transition_to_notified_by_ref 四行表与 state.rs:253 起的函数分支（complete/已通知/running/idle）逐一吻合，且 state.rs:261 的注释正是 9.2.2「合并通知仍要 Release」的落点，正文写「被核读版本的源码在 already-notified 分支中特别说明了这个问题」可落地。⑤ 9.2.5 的回归：tests/contracts.rs:27 abort_observed_and_drop_executed 存在，Signal 的 Drop 守卫、先 ready_rx.await 再 task.abort()、断言 is_cancelled()、最后等 drop_rx 的顺序与正文叙述一致；9.2.6 的 joinset_observes_panic_and_completes_other_task 在 contracts.rs:73。本节无测量数字。",
+      "evidence": [
+        ".work/cpp-rust-sources/systems/2task-switching-rcore.html: TaskContext{ra:usize, sp:usize, s:[usize;12]} 与 __switch 的 sd sp,8(a0)/sd ra,0(a0)/.rept 12 SAVE_SN → 14 项",
+        "同页阶段[3]「恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器」（正文的『母本原文也只说…』核对成立）",
+        "同页「只有那些…仍然有用，且在它被切换出去的时候有被覆盖风险的…才有被保存的价值」",
+        ".work/cpp-rust-sources/systems/4time-sharing-system-rcore.html: TICKS_PER_SEC=100、set_timer/mtimecmp、「10ms 之后一个 S 特权级时钟中断就会被触发」；1/100=10ms 复算",
+        "tokio-1.54.0/src/runtime/task/state.rs:253-266 (transition_to_notified_by_ref 分支与 Release store 注释)",
+        "bench/runtime-lab/tests/contracts.rs:27,73"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.3.1–9.3.7 与全部语义盒逐节读完。参数表逐格回查到 Tokio 1.54.0 文档注释本体：局部队列「fit at most 256 tasks…half of them are moved to the global queue」（runtime/mod.rs:352-355，且在「Multi threaded runtime」小标题 :346 之后，正文归到多线程一列是对的）；空闲 worker 窃取「moving half of the tasks in one local queue to another」（:366-369，正文写「一部分」是保守表述）；current-thread 的 31 次（:331-335）与 61 次（:337-339，多线程一节 :371-373 同样出现）；多线程全局检查「the runtime will dynamically compute it using a heuristic that targets 10ms intervals」（:358-365）对应正文「默认可动态估计检查间隔」；LIFO 槽「other worker threads cannot steal the task in the lifo slot」与 coop budget 不重置（:375-387）对应正文「连续使用受约束，且不能被其他 worker 窃取」。9.3.1 的五种结构与 :346-387 小节的五个要点一一对应。9.3.6 的归因约束与 9.3.2 末段属自我设限，与 measurements-final 里确实没有 steal 打点文件这一事实一致。9.3.3 引用 rCore 第五章的彩票/步长对照：步长一侧（与权重成反比、挑累计行程最小、每个调度周期准确等比、新进程行程为 0 会长期独占需全局统计）逐句在 4scheduling-rcore.html 找到，语义一致；彩票一侧正文写成「调度器几乎不必记历史」，母本原句是「彩票算法的优势是几乎不需要全局信息」（见 findings 的 P2）。9.3.5 的 !Send/LocalSet 与 9.3.4 的 Pin 不保证线程亲和是机制陈述，无产物可对核；9.3.4「本机没有 NUMA 测量」属自述限制，与 measurements-final 目录（无 NUMA 相关归档）一致。",
+      "evidence": [
+        "tokio-1.54.0/src/runtime/mod.rs:346 (## Multi threaded runtime 小标题), :352-355 (256 + 移一半到全局), :366-369 (steal 一半)",
+        "tokio-1.54.0/src/runtime/mod.rs:331-339 (current-thread 31 次/61 次), :358-365 (动态估计、目标 10ms), :371-387 (61 次、LIFO 槽不可窃取与 coop budget)",
+        ".work/cpp-rust-sources/systems/4scheduling-rcore.html:「步长与进程优先级成反比…选择拥有最小行程值的进程运行」「彩票调度算法只能在一段比较长的时间后…步长调度算法可以在每个调度周期后做到准确」「彩票算法的优势是几乎不需要全局信息」",
+        "bench/results/runtime-fixed/measurements-final/ 目录清单：无窃取打点、无 NUMA 归档"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.4.1–9.4.6 与全部语义盒逐节读完，重点复核派单点名的逐字汇编摘录。① 路径与行段：正文点名 bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18379，我按 1-based 直接切片读出——18352 是符号 __RNvCsi2Ahm2AaMXP_10scheduling4step:，18379 是该函数体最后一条 ret，行段两端正好包住 step 的实现，正文又说「runtime-lab 的产物目录没有 run-01 这种编号，别按那个名字去找」，我列了 runtime-fixed/ 与 measurements-final/ 两层目录，确实没有 run-01（同类编号只出现在第 2 章那类 results/native-01 归档里），这条排雷说明与磁盘一致。② 逐字比对：正文 14 行 asm（sub sp / str x0 / add x8 / InlineAsm Start / InlineAsm End / ldr x8 / mov x9 #32557 / 三条 movk #19605 lsl 16、#62509 lsl 32、#22609 lsl 48 / mov x10 #1 / madd / add sp / ret）与磁盘行 18356,18360,18361,18362,18363,18366,18367,18368,18369,18370,18373,18374,18377,18379 逐字符相同，被删的只有 .loc、.cfi_* 与 Ltmp 标签，与正文「只删了调试位置指示」的声明完全一致，没有改动原文。③ 常量复算：我用 /usr/bin/python3 拼 32557|(19605<<16)|(62509<<32)|(22609<<48)=0x5851f42d4c957f2d=6364136223846793005，与 source-snapshot 里 scheduling.rs:14 的 wrapping_mul(6364136223846793005).wrapping_add(1) 一致，正文「下面三条 movk 把同一常量拼满 64 位」成立。④ noinline/black_box：scheduling.rs:11-13 为 #[inline(never)] fn step + black_box(x)，对应 9.4.4/9.4.5 的夹具声明。⑤ 尺寸表：examples/type_layout.rs 打印 Frame/yield_now/JoinHandle<u64>/mpsc::Sender<u64> 四项，type-layout.txt 记录 Frame size=16 align=8 wire=24、yield_now 16/8、JoinHandle 8/8、Sender 8/8，与正文表格逐格相同，包括「线协议仍使用显式 24 字节编码」这一区分。⑥ 9.4.3 表里 casal：scheduling.s 中 casal 出现 2 次，正文只声明「目标汇编可见 casal 等指令…不能据此计算总同步开销」，并明确本轮没有对该指令打点，思考框 9.4.1 亦拒绝给出 15% 占比——这是自设边界，不是缺失证据的结论。",
+      "evidence": [
+        "bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18379 逐行读出并与正文 14 行 asm 逐字符比对（仅缺 .loc/.cfi_*/Ltmp）",
+        "复算：32557|(19605<<16)|(62509<<32)|(22609<<48)=6364136223846793005=0x5851f42d4c957f2d",
+        "bench/results/runtime-fixed/measurements-final/source-snapshot/bench/runtime-lab/src/bin/scheduling.rs:11-16 (#[inline(never)] step, black_box, wrapping_mul(6364136223846793005), wrapping_add(1))",
+        "bench/runtime-lab/examples/type_layout.rs:1-22 与 measurements-final/type-layout.txt 四行输出",
+        "目录列举：bench/results/runtime-fixed/ 与 measurements-final/ 均无 run-01；scheduling.s 中 casal=2、transition_to_running=2"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.5.1–9.5.5 与全部语义盒逐节读完。① 口径与分母：def 9.5.1 的 128×8192=1048576 我用 /usr/bin/python3 复算成立，且 scheduling.rs:69 的 ns_per_op(start.elapsed(), TASKS * STEPS) 证实分母是总逻辑步数而非 poll 或 yield 次数；TASKS=128、STEPS=8192（:8-9）。② 两个 quantum 整除 8192：8192/16=512、8192/1024=8，正文「没有遗漏尾部 step」与「quantum 从 1024 缩到 16 时 yield 次数变成 64 倍」（1024/16=64）复算成立。③ 读数：ex 9.5.1 的 2.602 与 0.750 我从 measurements-final/scheduling.txt 末行复算命中——current-q1024 mean=2.602 sd=0.049、multi4-q1024 mean=0.750 sd=0.015，比值 0.750÷2.602=0.2882，正文写「0.29」正确；正文拒绝把它写成「每次调用快 3 倍」，与该文件同时给出 current-q16=16.360 这一事实相符（同一并行度下 quantum 才变，成本差 6 倍以上）。④ 阶段表逐行对源码：runtime 创建在计时之外（:48-51），参考 checksum 预计算在 :44-47（早于预热），每批断言 assert_eq!(actual, expected) 在 :70 即 elapsed() 之后，析构在 main 末尾——与表里「创建两种 runtime/预计算校验结果/批后比较 checksum/析构整个 runtime」四行的「否」全部一致，任务创建、step、yield、JoinSet 收集都在 block_on(batch) 界内（:18-42）。⑤ 预热与轮转：:53-60 单个 500 ms 窗口内交替跑完两个 runtime × 两个 quantum 共四 case；:61-66 每 case 21 批、case=(index+offset)%4 轮转起点；四个 case 顺序串行 block_on，确无并行启动，与 9.5.4 的四句话逐条一致。⑥ 9.5.3 的 rust 块与 :20-31 一致，正文已声明「下面这段保持与业务核心一致」，checksum 的 value.rotate_left(id)^ 与 :38、:46 相符，任务数独立核验为 128 对应 :40 的 assert_eq!(count, TASKS)。",
+      "evidence": [
+        "复算：128*8192=1048576；8192/16=512、8192/1024=8、1024/16=64；0.750/2.602=0.2882398155",
+        "bench/results/runtime-fixed/measurements-final/scheduling.txt:85-88 (current-q16=16.360, current-q1024 mean=2.602, multi4-q16=2.033, multi4-q1024 mean=0.750, 全部 n=21)",
+        "measurements-final/source-snapshot/bench/runtime-lab/src/bin/scheduling.rs:8-9,11-16,18-42,44-51,53-60,61-74",
+        "src/part3/ch09.md:860-871 阶段表与上述行号逐行对应"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "9.6.1–9.6.5 与全部语义盒逐节读完，六个数字全部从原始 ns/op 行复算，未抄正文。① 原始归档 measurements-final/blocking-poll.txt 给出 inline/offload 各 21 行交错样本；我用 /usr/bin/python3 复算：inline n=21、mean=23658343.286 ns=23.658 ms、样本(N−1) sd=1302022.000 ns=1.302 ms、max=25060042=25.060 ms；offload n=21、mean=13632.857 ns=13.633 µs、样本 sd=3494.454 ns=3.494 µs、max=18541=18.541 µs——正文四个均值/标准差与表里 p99 逐位命中，且 sd 与「样本 sd」这一列名匹配总体 sd（1270643/3410）不同，说明用的确实是 N−1 定义；p50 与归档 batch_p50 一致（23604084=23.604 ms、14125=14.125 µs）。② p99 定义：正文声明是 21 点样本的 nearest-rank 分位数，我复算 ceil(21×0.99)=21，即 p99 等于最大值，与 ex 9.6.1 第③问一致，分位数口径已写明，不构成 P1。③ 倍数：自测第 3 题的「中位数相比 1671 倍」我按 23.604 ms ÷ 14.125 µs = 1671.08 复算命中，「三个数量级多一点」表述正确。④ 差额：23.658−20=3.658 ms，正文只写「比申请值大约多 3.658 ms」并拒绝拆分归因，与夹具（src/bin/blocking_poll.rs:13,19 两处 sleep(Duration::from_millis(20)) 为申请值）一致。⑤ 代码断言：正文表格的 inline/offload 两条分支与 blocking_poll.rs:9-21 完全对应（offload 把 tx.send(Instant::now()) 与 sleep 一起放进 spawn_blocking），:22-24 三行正是 9.6.2 引用块，逐字一致；:29-33 每个 case 各 500 ms 预热、:36-43 21 次且 (index+offset)%2 交替，与 9.6.3 的设置句相符；:3 与 :2 用 current_runtime()，支持「只使用 current-thread runtime」。⑥ 9.6.4/9.6.5 的「没有证明」清单与夹具能力一致（确实无分段打点、无阻塞池成本测量）。本节唯一可挑的是列名与归档字段名不同，见 findings 的 P2。",
+      "evidence": [
+        "复算：inline 21 样本 mean=23658343.286 sd(N−1)=1302022.000 max=25060042；offload mean=13632.857 sd(N−1)=3494.454 max=18541",
+        "复算：ceil(21*0.99)=21；23.604e-3/14.125e-6=1671.08；23.658-20=3.658",
+        "bench/results/runtime-fixed/measurements-final/blocking-poll.txt 末两行 print_stats（含 batch_p50/batch_p99/n=21 标签）",
+        "bench/runtime-lab/src/bin/blocking_poll.rs:9-24,29-43"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "severity": "P2",
+      "description": "9.3.3 讲彩票调度（抽签）那条实现路径时，正文把它的好处写成「调度器几乎不必记历史，新来者只要拿到票就能参与」。母本 chapter5/4scheduling.html 的原句是「彩票算法的优势是几乎不需要全局信息，这在合理处理新加入的进程时很精炼」——「不需要全局信息」说的是不必统计各进程的彩票数（只需更新总票数），而「不必记历史」在母本该页里找不到对应句（我按去标签全文检索「历史信息」「需要历史」均无命中，母本对步长调度反而说「操作系统会定期记录每个进程的总步长」，即记录历史是步长那一侧的做法）。措辞一换，读者容易把两条路径的区别理解成「是否保存历史」，而母本与本章表格想区分的其实是「概率式与是否需要全局统计」。同段后半句（短窗口比例不准、新来者按票参与）与母本一致，故属表述漂移而非事实错误，判 P2。",
+      "evidence": ".work/cpp-rust-sources/systems/4scheduling-rcore.html：「彩票调度算法只能在一段比较长的时间后，基于概率上实现优先级等比的时间分配，而步长调度算法可以在每个调度周期后做到准确的优先级等比的时间分配。但彩票算法的优势是几乎不需要全局信息」；同页「操作系统会定期记录每个进程的总步长，即行程（pass）」；src/part3/ch09.md:562「它的好处是调度器几乎不必记历史」"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "severity": "P2",
+      "description": "9.2.5 先声明「完整代码在 tests/contracts.rs::abort_observed_and_drop_executed」，随后给出的 rust 块把字段类型写成 Option<tokio::sync::oneshot::Sender<()>>，而磁盘上的实际代码是 Option<oneshot::Sender<()>>（该测试文件顶部 use tokio::sync::oneshot）。这是为独立可读而做的路径补全，事实无误，但与 9.5.3 同类改动处正文额外说了「下面这段保持与业务核心一致」，本节未作任何标注，读者逐字对照会以为源码里就写了全路径。建议补一句展开说明，判 P2。",
+      "evidence": "bench/runtime-lab/tests/contracts.rs:27-36（struct Signal(Option<oneshot::Sender<()>>) 与 Drop::drop 内 if let Some(tx) = self.0.take()）；src/part3/ch09.md:409-418"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "severity": "P2",
+      "description": "9.6.3 的结果表把两列命名为「观察 p50」「观察 p99」，正文也统一说「21 点样本」的 nearest-rank 分位数；但被点名的归档 blocking-poll.txt 末两行字段名是 batch_p50/batch_p99（print_stats 的输出）。数值我逐位复算一致（23604084 ns、25060042 ns、14125 ns、18541 ns），不构成数字错误，但按正文列名去归档里找「观察 p50」找不到对应键，读者复核时要多绕一步。建议在该表注一句「归档里字段名为 batch_p50/batch_p99」，判 P2。",
+      "evidence": "bench/results/runtime-fixed/measurements-final/blocking-poll.txt 末行：inline: mean=23658343.286 sd=1302022.000 batch_p50=23604084.000 batch_p99=25060042.000 ns/op n=21；src/part3/ch09.md:1028-1033"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4f-ch04a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part1/ch04.md 第 62–1602 行（4.1–4.6 全部正文与每个定义/例题/解答/思考/判定流程/小结/常见错误/即时自测盒），并逐条对磁盘证据复算：bench/compiler-lab/results/stable-02/{environment.txt,move_cost.csv,drop_paths.csv,codegen/*.ll,*.mir,*.s,tests.txt}、results/extra-02/{nightly.txt,layout.csv,use_after_move.txt,maybe_uninitialized.txt,alias_conflict.txt,expected.tsv}、results/extra-03/{hir-tree.txt,thir-flat.txt,unpretty-manifest.txt}、.work/cpp-rust-sources/compiler/thir.html、bench/compiler-lab/{src/lib.rs,src/bin/move_cost.rs,src/bin/drop_paths.rs,probes/rejected/*.rs,extra.py,tests/contracts.rs}；复算脚本放在 /tmp/r4f_calc.py（未写入仓库），并用 rustc +nightly 原样重放了两条 -Zunpretty 命令到 /tmp 比对 SHA-256；另跑 tools/list_uncollected_claims.py 只看 ch04 行。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条核对 4.1 的工具链与静态量：4.1.5「Rust 1.99.0／提交 b940084d7eb6a299eb4bfeb8e34901bc051e7ac4／LLVM 23.1.1／aarch64-apple-darwin／Apple M5 Pro／macOS 27.0.1／cache line 128 字节／RUSTFLAGS 未设置」在 environment.txt 里逐字对到（release: 1.99.0、commit-hash 全串、LLVM version: 23.1.1、host、machdep.cpu.brand_string: Apple M5 Pro、ProductVersion: 27.0.1、hw.cachelinesize: 128、RUSTFLAGS=<unset>），因此「没有 target-cpu=native／没有锁频」的限定与归档一致；例 4.1.1 与 4.1.5 引用的 24 字节 Vec 句柄用 layout.csv 复算为 Vec<u64> size=24 align=8（3 个 8 字节字），128KiB=16384×8 成立；「本机观察」与「不能升格为承诺」的口径与[@def-1.1.3]一致，没有把架构常数当结论。三层证据表、依赖图与判定流程都只是方法陈述，未声称采集了 IPC／cache miss／PMU，与 tools/list_uncollected_claims.py 对 ch04.md:120/237/288 的判定（没有匹配到同类产物）一致。未发现数字或事实错误。",
+      "evidence": [
+        "src/part1/ch04.md:216-222 对 bench/compiler-lab/results/stable-02/environment.txt:5-8,10-13,18-19（rustc 1.99.0 (b940084d7 2026-09-28)、commit-hash b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM version: 23.1.1、host: aarch64-apple-darwin、machdep.cpu.brand_string: Apple M5 Pro、hw.cachelinesize: 128、RUSTFLAGS=<unset>）",
+        "src/part1/ch04.md:224 对 bench/compiler-lab/results/stable-02/environment.txt 存在且为原始命令输出",
+        "src/part1/ch04.md:100 的 24 字节 → bench/compiler-lab/results/extra-02/layout.csv:3 `Vec<u64>,24,8`；16384×8=131072 B=128 KiB（复算）",
+        "tools/list_uncollected_claims.py 输出：ch04.md:120/237/288 均为「没有匹配到同类产物」，与正文的未采集声明相符"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "4.2.4 新写的本机 nightly 转储证据我按「逐字」标准复核，结论是这一小节本身完全落地：extra-03/unpretty-manifest.txt 记的 3 113 744／904 549 字节与两份 SHA-256（07e217f6…e3ce、435866fb…3403）与我用 hashlib 实测逐字相同；`borrowed_sum`＝DefId(0:15) 在 hir-tree.txt:10566 起确为 `DefId(0:15 ~ lib[5cf2]::borrowed_sum) => OwnerNodes {`，hir-tree.txt:33 确为同一条目的 item_ids 引用，thir-flat.txt:13916 确为 `DefId(0:15 ~ lib[5cf2]::borrowed_sum):`＋`Thir {`；rustc +nightly -vV 现为 1.101.0-nightly (16d1ffac1 2026-10-26)、commit-hash 全串 16d1ffac17ad8b739e32483ac2e65fe7e1804977，与 manifest 及转储里出现的 /rustc/<hash> 路径一致（转储中该串出现 282／378 次）。我还把两条 -Zunpretty 命令原样重放到 /tmp，exit=0、stdout 的 SHA-256 与归档逐位相同，即这份证据可复现而非摘录。thir.html 母本里 `-Zunpretty=thir-flat` 逐字存在（1 命中），extra-02/nightly.txt 确实是 `error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'`。问题出在节内其余四处仍写「拿不出转储」，与 4.2.4 自己刚登记的产物相反；另有一处日期标签对不上归档时间戳。",
+      "evidence": [
+        "src/part1/ch04.md:410-411 ↔ bench/compiler-lab/results/extra-03/unpretty-manifest.txt:11-14（字节数与 SHA-256）＋我实测 hashlib.sha256(hir-tree.txt)=07e217f60a885e4a3b8245b07e31adea241c191885f07cfa9014d68d6624e3ce、(thir-flat.txt)=435866fb14e13a762a6bc69377ed146b332014065d7efbb2c632213e78093403",
+        "src/part1/ch04.md:411 ↔ hir-tree.txt:10566、hir-tree.txt:33、thir-flat.txt:13916（逐行读到该行文本）",
+        "重放：`rustc +nightly -Zunpretty=hir-tree --edition 2021 --crate-type lib src/lib.rs` 与 `-Zunpretty=thir-flat` 均 exit=0，/tmp 产物的 sha256 与 extra-03 两份归档相同；`rustc +nightly -vV` 首行 rustc 1.101.0-nightly (16d1ffac1 2026-10-26)",
+        "src/part1/ch04.md:403 ↔ .work/cpp-rust-sources/compiler/thir.html 内 `-Zunpretty=thir-flat` 1 处逐字命中",
+        "src/part1/ch04.md:409 ↔ bench/compiler-lab/results/extra-02/nightly.txt:1-4（缺失 manifest 的失败原文）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把 4.3 的三个「本轮实际编译」断言拿去对源码与诊断：例 4.3.2 的代码逐字等于 probes/rejected/maybe_uninitialized.rs 第 1 行，4.3.5 的代码逐字等于 use_after_move.rs 第 1 行，诊断码 E0381 与 E0382 分别落在 extra-02/maybe_uninitialized.txt 与 extra-02/use_after_move.txt，且 probes/rejected/expected.tsv 就登记着 `use_after_move E0382`／`maybe_uninitialized E0381`，「extra.py 检查非零退出状态与诊断代码」也对得上 extra.py 里的 returncode 断言，因此正文没有把未运行的程序说成运行过（这两个输入从未被执行，正文与[@ex-4.3.3]的口径一致）。[@def-4.3.4] 明确写了「必定初始化／可能未初始化」是本章阅读记法而非 rustc 内部类型名，没有冒充 API；[@def-4.3.1]「有几个 local 推不出栈槽数量」与[@def-4.3.5] StorageLive/Dead 的分工都是方法陈述，不依赖未采集证据。4.3.7 表与 4.3.8 各条与前文无矛盾。即时自测第 3 题的「12 个 local」是假设句不是实测数。这一节我只核到诊断码与源码逐字一致，没有另行为部分移动场景新编译样例（正文也没声称那样做过）。",
+      "evidence": [
+        "src/part1/ch04.md:603 ↔ bench/compiler-lab/probes/rejected/maybe_uninitialized.rs:1（逐字）",
+        "src/part1/ch04.md:623 ↔ bench/compiler-lab/probes/rejected/use_after_move.rs:1（逐字）",
+        "src/part1/ch04.md:626,636 ↔ bench/compiler-lab/probes/rejected/expected.tsv:1-2 与 extra-02/use_after_move.txt、extra-02/maybe_uninitialized.txt 中的 E0382／E0381",
+        "src/part1/ch04.md:630 ↔ bench/compiler-lab/extra.py 含 returncode 与诊断码断言"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.4.5 的 82 行 MIR 我做了逐行比对：把 src/part1/ch04.md:894-988 与归档 bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 里 `fn conditional_drop(` 到该函数闭合 `}` 的整段做去尾空格比较，行数 82=82、内容完全相同（脚本判 EXACT MATCH），bb0–bb12、`_8 = const false`、`bb6 (cleanup)` 的 `switchInt(copy _8)`、`unwind terminate(cleanup)`、`resume` 全在，[@ex-4.4.3] 四条答案（`debug first => _3`、置 false 在 bb1、bb6 分流、正常边 bb9/bb11→bb10/bb12→bb2 的 return）逐条对得上原文行。4.4.2 的 E0502 样例逐字等于 probes/rejected/alias_conflict.rs，诊断码落在 extra-02/alias_conflict.txt 与 expected.tsv。4.4.6「本轮 profile 使用 panic=unwind」对 environment.txt 的 `profile: opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind` 成立；「没有把 abort 与 unwind 计时混在同一张表」与归档中只有这一套 profile 的产物一致。[@def-4.4.2] 四类情形与表格是概念分类，没有冒充 rustc 内部枚举名。未发现与产物相反的断言。",
+      "evidence": [
+        "src/part1/ch04.md:894-988 ↔ bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 的 conditional_drop 整段：82 行逐行 EXACT MATCH（我的比对脚本输出）",
+        "src/part1/ch04.md:890 点名的归档文件确实存在于 stable-02/codegen/（另有同名 .ll/.s）",
+        "src/part1/ch04.md:784 ↔ bench/compiler-lab/probes/rejected/alias_conflict.rs:1（逐字）；E0502 ↔ expected.tsv:5",
+        "src/part1/ch04.md:1022 ↔ stable-02/environment.txt:22 `profile: ... panic=unwind`"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.5 的四个数字我从 move_cost.csv 的 42 行原始批次（每 case 21 行）独立重算：borrow 21 点 mean=0.059091、N-1 sd=0.001233、nearest-rank p50=0.058640、p99=最大值 0.063338；clone mean=0.202739、sd=0.006949、p50=0.201627、p99=0.225702，与表格逐位相同；差值 0.143648 与比值 3.4309（正文写「约 3.43」）复算成立。[@ex-4.5.1] 说的分母（units=16384 由 `measure(&mut cases, input.len())` 传入）与 CSV 的 units 列一致；4.5.2 两段代码逐字对得上 src/bin/move_cost.rs 与 src/lib.rs 的 borrowed_sum/cloned_sum（签名均为 `&[u64]`，也与 nightly THIR 转储里 `fn(&'{erased} [u64]) -> u64` 相符）。4.5.5 的产物核验我按[@def-4.5.2]要求看了符号本体而不只是搜串：cloned_sum 的 LLVM IR 内保留 `__rust_alloc`、`llvm.memcpy`、`__rust_dealloc`（该函数范围内 3 处命中）与 handle_error 分支，本机 .s 里 `_memcpy` 出现 6 次；borrowed_sum 的 IR 内有 19 行向量/加法归约，且正文同时写明「不是跨版本承诺」，没有把向量化写成保证。E-c/E-f 与 4.5.6 的「没有测其它输入长度、没有跨线程／NUMA」与归档只有单一尺寸一致。",
+      "evidence": [
+        "/tmp/r4f_calc.py 对 bench/compiler-lab/results/stable-02/move_cost.csv：N=21/case，mean 0.059091、0.202739；sd(N-1) 0.001233、0.006949；p50(nearest-rank) 0.058640、0.201627；p99=max 0.063338、0.225702，与 src/part1/ch04.md:1206-1207 逐位相同",
+        "src/part1/ch04.md:1217 的 0.202739−0.059091=0.143648、比值 3.4309（复算）",
+        "src/part1/ch04.md:1124-1162 ↔ bench/compiler-lab/src/bin/move_cost.rs 与 src/lib.rs（去空白后逐字包含）",
+        "src/part1/ch04.md:1234-1242 ↔ stable-02/codegen/compiler_lab-55987aab45b3e67f.ll 的 cloned_sum 函数体含 __rust_alloc/llvm.memcpy/__rust_dealloc；.s 内 _memcpy 6 次；borrowed_sum 函数体向量归约 19 行",
+        "units=16384 ↔ move_cost.csv 第 4 列；每 case 21 批 ↔ CSV 44 行（含 summary 行除外）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.6 同样做了独立重算：drop_paths.csv 每 case 21 批，implicit mean=2.372296、sd=0.098044、p50=2.354229、p99=max=2.757235；option mean=2.587951、sd=0.246970、p50=2.669365、p99=max=2.980856，与 src/part1/ch04.md:1473-1474 逐位相同；均值差复算 0.215655（正文 0.216）、sd 比 2.519（正文 2.5）成立。8192 这条规格我用归档反推验证：`checksum = expected × repeats`（src/lib.rs 的断言），round 0 是 1037×8192=8 495 104、931×8192=7 626 752，与 CSV 里 implicit/option 的 checksum 完全吻合，即[@ex-4.6.1] 讲的「期望值来自规格不来自实现」是真的。4.6.3 尺寸表五行逐一对上 extra-02/layout.csv（DropProbe 8/8、Option<DropProbe> 8/8、Vec<u64> 24/8、&[u64] 16/8、Option<&u64> 8/8），[@def-4.6.2] 对 niche 的说明限定在引用永不为空这一点，最后一行也明确不推广。4.6.2 两段代码逐字对得上 src/lib.rs 与 src/bin/drop_paths.rs；4.6.6 的测试确实存在于 tests/contracts.rs 且 stable-02/tests.txt 记 `test panic_unwinds_initialized_guards ... ok`，「本轮没有执行 UB」与之相容。4.6.4/4.6.5 反复声明没有配对区间、没有 PMU、不算机制归因，与[@ex-4.6.3]一致， tools/list_uncollected_claims.py 也没有把任何已采集量误当成缺口。唯一可挑的是分位数定义的指引没有在本节内点名（见 findings 里的 P2）。",
+      "evidence": [
+        "/tmp/r4f_calc.py 对 bench/compiler-lab/results/stable-02/drop_paths.csv：N=21/case，四行统计量与正文表格逐位相同；差值 0.215655、sd 比 2.519（复算）",
+        "checksum 反推：src/lib.rs:39 `assert_eq!(checksum, case.expected.wrapping_mul(n as u64))`；1037×8192=8495104、931×8192=7626752 ↔ drop_paths.csv round 0 两行",
+        "src/part1/ch04.md:1440-1444 ↔ bench/compiler-lab/results/extra-02/layout.csv:3-4,8-10",
+        "src/part1/ch04.md:1353-1413 ↔ bench/compiler-lab/src/lib.rs、src/bin/drop_paths.rs（逐字包含）",
+        "src/part1/ch04.md:1528-1539 ↔ bench/compiler-lab/tests/contracts.rs 的 panic_unwinds_initialized_guards；stable-02/tests.txt 该行 ok",
+        "分位数定义：src/part1/ch04.md:1974-1975（4.8.3，nearest-rank，21 样本 p99=最大值）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "severity": "P1",
+      "description": "4.2 节内仍有四处「本机 nightly 不可用、这两层只有文档证据、转储属未采集项」的表述，与同一节 4.2.4（第 410–411 行）自己新登记的 extra-03 产物直接相反：磁盘上 hir-tree.txt（3 113 744 字节，sha256 07e217f6…e3ce）与 thir-flat.txt（904 549 字节，sha256 435866fb…3403）确实存在、`rustc +nightly -vV` 现在可用（1.101.0-nightly 16d1ffac1），我已把两条 -Zunpretty 命令原样重放且 stdout 的 SHA-256 与归档逐位相同。也就是说「拿不出转储」这句在本轮快照下是与磁盘事实相反的旧口径，属正文内部矛盾（同一节两处互相否定，读者无法判定该信哪句）。我判 P1 而不是 P0，因为没有任何数字被编造、4.2.4 本身完全落地可复核，缺陷是补采后没把节首提问（295 行「而本机为什么拿不出它的转储？」）、preview 299 行「本机没有可用的 nightly，因此 HIR 与 THIR 只有文档层说明」、小结 458 行第④条、errata 470 行 E-e「本轮 nightly 不可用，缺什么就写缺什么」、即时自测 495 行「本轮 nightly 不可用，因此没有本机 THIR 转储」这五处一起改口径；tools/list_uncollected_claims.py 也独立点到了 458 行这条（提示它仍写成缺口）。同一矛盾还溢出到我区间外的第 1760 行（4.7.6「前者缺可用 nightly（4.2.4）」）与第 2230 行（章末「没有可用 nightly 的阶段内部转储」），改的时候这两处要一并扫，但不计入本派的判定范围。",
+      "evidence": "src/part1/ch04.md:295,299,458,470,495 ↔ src/part1/ch04.md:410-411 ↔ bench/compiler-lab/results/extra-03/{hir-tree.txt,thir-flat.txt,unpretty-manifest.txt}；实测 sha256 与重放结果：`07e217f60a885e4a3b8245b07e31adea241c191885f07cfa9014d68d6624e3ce`、`435866fb14e13a762a6bc69377ed146b332014065d7efbb2c632213e78093403`（重放产物与归档相同，exit=0）；tools/list_uncollected_claims.py 输出行 `[ch04.md:458] … 转储属于未采集项`"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "severity": "P2",
+      "description": "4.2.4 第 409 行「2026-10-27 那次采集时拿不到……失败输出归档在 `extra-02/nightly.txt`」与第 413 行「2026-10-27 那一轮确实没有本机转储」给了一个日期，但它点名的归档产物时间戳是 2026-10-22 21:29:54（`stat -f %Sm` 结果），extra-02 整个归档（archive-manifest.json、environment.txt 同类批次）都是 10-22，仓库里 sources/、写作规范/、bench/compiler-lab/ 内检索不到任何 `2026-10-27` 的痕迹（唯一两处出现就是正文这两行）。失败事实本身可核（extra-02/nightly.txt 逐字是 `error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'`），所以这只影响「哪一轮」的可追溯性：日期要么改成归档真实时间，要么补一个能落地的出处（自评第十一节的台账行也没有登记 10-27）。另可注意 extra-03 manifest 写「2026-11-01 本机采集」而文件 mtime 是 11-02 01:52，属跨零点的同一次夜间采集，与正文「2026-11-01 工具链可用后补采」相容，不算矛盾。",
+      "evidence": "src/part1/ch04.md:409,413 ↔ bench/compiler-lab/results/extra-02/nightly.txt 的 mtime `Oct 22 21:29:54 2026`；`grep -rln 2026-10-27 sources 写作规范 bench/compiler-lab` 无输出；extra-03 三文件 mtime `Nov 2 01:52:23 / 01:52:59 2026`"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "severity": "P2",
+      "description": "4.6.4 的表（第 1471–1474 行）直接给出「批 p50／批 p99」两列并在正文里用它们下结论（「Option 写法的平均值较高，波动也更大」），但本节内没有交代分位数定义，只靠第 1484 行引[@def-1.6.2]讲区间；同一张表的口径其实定义在 4.8.3（第 1974–1975 行：nearest-rank，21 个样本的 p99 等于最大值），4.5.4 就明确写了「口径见[@def-1.2.2]与 4.8.3」。我按 nearest-rank 重算才能逐位复现四个数（若按线性插值，p99 会是 2.958555／0.223240，与表不符），说明定义确实必要、正文没有算错，缺的只是指引。建议在 4.6.4 表下补一句与 4.5.4 同样的口径指针，并把「批 p99 即 21 批最大值」在[@ex-4.6.3]答案里点明白，避免读者把它读成请求级分位数。",
+      "evidence": "src/part1/ch04.md:1471-1474（无定义指针）↔ src/part1/ch04.md:1202（4.5.4 有指针）↔ src/part1/ch04.md:1974-1975（4.8.3 nearest-rank 定义）；/tmp/r4f_calc.py：nearest-rank p99 = 2.980856/2.757235/0.225702/0.063338 与表相同，线性插值 p99 = 2.958555/2.702621/0.223240/0.063016 与表不同"
+    }
+  ]
+}

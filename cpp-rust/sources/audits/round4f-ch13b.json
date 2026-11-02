@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4f-ch13b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part4/ch13.md 的 13.7–13.11 全部正文与语义盒，并用 /tmp 下三条 python 脚本逐行回查 bench/evidence-lab/results/run-01 的 codegen/*.s、cpu-wait.txt、instrumentation.txt、cpu.folded、wait.folded、sample-*-command.txt、codegen-command.txt、environment.txt、measured-source/tools/measure.sh 与 bench/evidence-lab/{Cargo.toml,src/lib.rs,src/bin/*.rs,tools/measure.sh}，另比对了 sources/contributions/evidence.json、evidence-web.json、src/appendix/coverage.md、sources/reviews/S09.md、S14.md，并跑了一次 tools/list_uncollected_claims.py 只看 ch13。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条复算了本节全部可对核数字，没有发现偏差：cpu.folded 叶子/根合计=1698、wait.folded=1648（脚本逐行求和），与正文「本轮 1ms 请求间隔采到的根观察是 1698 与 1648」及例 13.7.1 完全一致；2 秒 ÷ 1 毫秒 = 2000 的算式与 sample-*-command.txt 原文「Sampling process … for 2 seconds with 1 millisecond of run time between samples」对得上，正文把缺口只写成「不能当精确时钟」是恰当的。统计口径复核通过：instrumentation.txt 解析出 each N=21、mean=32.832639、N-1 sd=0.608977、nearest-rank p50=32.762500、p99=34.306250=max，与例 13.7.2 逐字相同，ceil(0.99×21)=21 的秩算术也成立；none N=21 mean=2.472857、cpu-wait 解析出 cpu/wait 各 21 条，支持 13.7.4 关于「批次 ms 与 ns/step 是两种单位」的说法。13.7.2 的三条代码断言逐行命中：lib.rs:103-106 的 warm 用 Instant 且阈值为 Duration::from_millis(500)、cpu_wait.rs:28 与 :31 两次独立预热、instrumentation.rs:10 在同一个 warm 闭包里遍历 [None,Batch,Each] 三模式、cpu_wait.rs:38 与 instrumentation.rs:19 的 (round+offset)%N 就是「轮转 case 起点」。Cachegrind 断言属实：仓库内 glob 无任何 cachegrind 产物文件，正文也只按模拟口径陈述、未填表。cross-ref [@def-1.4.1] 确实定义在 src/part1/ch01.md。本节我只核到数字与代码，未核 13.7.6 那段对 Valgrind 手册「默认关闭」措辞的逐字性（在线母本在 .work 缓存外，本轮未复现抓取）。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/cpu.folded 逐行求和 = 1698；wait.folded = 1648",
+        "bench/evidence-lab/results/run-01/sample-cpu-command.txt:1 「2 seconds with 1 millisecond of run time between samples」",
+        "复算 instrumentation.txt each：N=21 mean=32.832639 sd(N-1)=0.608977 p50=32.762500 p99=34.306250（=max）",
+        "bench/evidence-lab/src/lib.rs:103-106 warm/500ms；src/bin/cpu_wait.rs:28,31 双预热；src/bin/instrumentation.rs:10 单循环三模式；src/bin/instrumentation.rs:19 (round+offset)%3",
+        "find bench -iname '*cachegrind*' 结果为空"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "13.8.1 的归档指向大体正确但有一处 file:line 落空：codegen/ 目录确在（25 个文件：1 个 .mir、12 个 .ll、12 个 .s），codegen-command.txt 确实只有 Compiling/Finished 两行、sample-*-command.txt 确实是采样器进度文本 3 行，正文「文件名容易读错」的提醒站得住；但被引作命令出处的 measured-source/tools/measure.sh 只有 44 行，cargo rustc --emit=mir,llvm-ir,asm 在该文件第 42 行，第 55 行属于 run-01 之后扩充过的 bench/evidence-lab/tools/measure.sh（72 行）——两个修订版被混成一条引用。13.8.2 的五行摘录我逐字比对了 cgu.00.rcgu.s：str x0,[sp,#8]（631）、ldr x8,[sp,#8]（638）、ror x8,x8,#55（642）、madd x0,x8,x9,x10（652）、ret（657）全部逐字存在且顺序一致；「x9 来自前面的常量构造」与「x10 设为 17」也对得上（645-648 四条 mov/movk 拼出 0x9e3779b97f4a7c15，651 行 mov x10,#17），ror #55 正是 lib.rs:19 rotate_left(9) 在 64 位上的等价形式，摘录本身无伪造。但正文声明的删减口径（「去掉调试行与常量构造细节」）覆盖不到被悄悄省掉的 632 行 add x8, sp, #8，而这一行恰恰是 black_box 屏障的一部分，与「用于核对屏障」自相矛盾。13.8.3 表的四十二/六十三条断言逐条数过：cpu-wait.txt 的 raw 行 cpu=21+wait=21=42、instrumentation.txt 的 raw 行 21×3=63，environment.txt/source-sha256.txt/binary-sha256.txt/measured-source/codegen/cpu.folded/wait.folded 全部存在。例 13.8.1 的平台串（Apple M5 Pro、aarch64-apple-darwin、rustc 1.99.0）逐字命中 environment.txt；比值 32.832639/2.472857=13.277 → 正文「约 13.3 倍」成立；checksum=188478885453998054 在该文件全部 raw 行一致；每批 200000 步命中 instrumentation.txt 首部 steps=200000。13.8.5 关于 run-01 之后补后处理与归档的说法有支撑：现行 measure.sh 比归档版多出 checked-codegen（62-64 行）等步骤，另有 checked-codegen-command.txt。本节判定为 finding 只针对上面那条引用与那条删减口径。",
+      "evidence": [
+        "wc -l: results/run-01/measured-source/tools/measure.sh = 44 行，emit 命令在 :42；bench/evidence-lab/tools/measure.sh = 72 行，同一命令在 :55",
+        "results/run-01/codegen/ 计数：mir=1 ll=12 s=12；codegen-command.txt=2 行（Compiling/Finished）；sample-cpu-command.txt=3 行采样器进度",
+        "results/run-01/codegen/evidence_lab-…-cgu.00.rcgu.s:631,638,642,652,657 五行逐字命中；:632 add x8, sp, #8 未收入摘录；:645-648 mov/movk 0x7c15/0x7f4a/0x79b9/0x9e37；:651 mov x10, #17",
+        "src/bench/evidence-lab/src/lib.rs:17-22 mix = black_box(value).rotate_left(9).wrapping_mul(0x9e37_79b9_7f4a_7c15).wrapping_add(17)",
+        "复算 raw 行数：cpu-wait=42、instrumentation=63；each/none 均值比 = 13.27720826112074",
+        "results/run-01/environment.txt:3,7,8,13 rustc 1.99.0 / aarch64-apple-darwin / Apple M5 Pro"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "三张表的页码与「新增规范核读」三条来源都能落地：evidence.json 全文 14 条，ch13 的本地母本只有 S09→4.13.3（PDF 64–67）、S11→4.13.8（PDF 320）、S14→4.13.6（PDF 6–8、11–12）；EVID-perf-event→4.13.3、EVID-cachegrind→4.13.7、EVID-cargo-profiles→4.13.2，与正文「新增规范核读」三行的用途描述一致，evidence-web.json 六条含 URL 与 sha256，正文指向该文件确认版本是对的；「S09 旧 nightly 参数只作历史材料」也与 reviews/S09.md 对 U0024「材料核读不等于本机执行了 perf」的裁决同向。问题集中在两点：一是「本章落点」列比两份台账登记的范围更宽（S09 多出 13.7、S14 多出 13.5 与 13.8、S11 多出 13.2），而正文自己声明「表里是本章真正读过的那几段」并把读者引向附录：来源覆盖，等于要求读者按表复核；二是正文/evidence.json 记 S14 为 6–8，而 coverage.md 同一行写「PDF 6–7、11–12（第 8 页是 Markdown 语法一节，母本裁决为 excluded-reviewed，不在核读范围内）」，S14-U020（页 8）确实在 reviews/S14.md 里被裁为 excluded-reviewed，两处对「读过哪几页」给出互斥答案。另外「母本里的 29% 示例」这一具体数字在仓库内任何 S09 台账行（reviews/S09.md 页 63/64/89/116/344 与 evidence.json 的 64–67 条目）里都搜不到，只在一份历史审计 JSON 里作为被质疑对象出现过。本节判定为 finding。",
+      "evidence": [
+        "sources/contributions/evidence.json 全部 14 条 target 枚举：ch13 侧仅 4.13.2 / 4.13.3 / 4.13.6 / 4.13.7 / 4.13.8 各一行",
+        "src/appendix/coverage.md S09 细行落点为 4.13.1/4.13.2/4.13.3/4.13.4/4.13.8（页 63/64/116/344/89），全库无 S09→4.13.7、无 S11→4.13.2、无 S14→4.13.5、无 S14→4.13.8",
+        "src/appendix/coverage.md:90 S14 行「PDF 6–7、11–12 …… 第 8 页……excluded-reviewed，不在核读范围内」vs sources/contributions/evidence.json S14 pages「PDF 6–8、11–12」vs src/part4/ch13.md:1771「6–8、11–12」",
+        "sources/reviews/S14.md 行 S14-U020 / L2 / Markdown / 页 8 / excluded-reviewed",
+        "grep -rn '29 *%' sources/reviews/S09.md src/part4/ch13.md 只命中 ch13.md:1774，母本台账无对应行"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这一节是跨节错误索引，我把它当成 15 条独立断言核：唯一带硬数字的两条都复算通过——「本章折叠结果的总数仍是 1698 与 1648」与 cpu.folded/wait.folded 的权重合计逐字相同；「21 条批均值的 p99 在 nearest-rank 下就是最大的一条」由 each 列 p99=34.306250=max 直接证实。其余条目是口径裁决，与本节区间外的正文表述方向一致（观察数非核心周期、inclusive 不可累加、skid/内联、模拟与原生分开、Cachegrind 本轮未执行、PMU 三态），没有发现与已核证据相反的说法。锚点可解析性：本节 15 处 [@def-…] 全部能在 ch13.md 的 {#def-…} 里落到定义盒，无悬空。本节我只核了数字断言与 id 落地，未逐条回查 13.1–13.6 的表述是否也遵守这些裁决。",
+      "evidence": [
+        "复算：cpu.folded total=1698、wait.folded total=1648",
+        "复算：instrumentation.txt each 列 max=34.306250 = nearest-rank p99",
+        "python 比对：13.10 区间内全部 [@def-*] 引用与本章 {#def-*} 定义集合求差为空"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结与速查表 9 行的「一句话答案」逐条回看了对应定义盒，未发现越界结论（没有把观察数写成时间、没有把插桩倍率写成采样器开销）。出口检查的命令块与磁盘一致：bench/evidence-lab/tools/measure.sh 存在且接受 NEW_OUTPUT_DIRECTORY、 Cargo.toml 里 [features] checked=[] 与 [[profile]] 齐备、--bin feature_work 对应的 src/bin/feature_work.rs 存在（另有 cpu_wait.rs、instrumentation.rs）。「输出目录必须不存在、父目录需先存在」对应 measure.sh:12 的不带 -p 的 mkdir \"$OUT\"；「用 mkdir 取得共享测量锁、EXIT 时释放」对应 :14-16 的 LOCK=$REPO/.work/cpp-rust-agents/measure.lock + while ! mkdir + trap 'rmdir \"$LOCK\"' EXIT；「拒绝覆盖既有归档」与 :6-11 拒绝未登记环境覆盖共同成立。八项手动核对里我能落地的四项全部通过：cpu-wait 原始行数=21/案例、业务 checksum 全等、N-1 标准差与 nearest-rank 分位可复算、.s 里能读到 mix 的真实函数体；「确认 sample 不是正式计时进程」有 environment.txt 的「no profiler on formal runtime samples」与 sample-*-command.txt 的独立 PID（92109/92127）支持。章末件五页文件名与 ch13_summary/recall/exercises/exam/checklist.md 一致（我未展开审读那五页，超出本派单区间）。",
+      "evidence": [
+        "bench/evidence-lab/tools/measure.sh:5,12,14-16（OUT 参数、mkdir 无 -p、mkdir 锁、trap EXIT）",
+        "bench/evidence-lab/Cargo.toml：[features] checked=[]、[profile.release] debug=1 incremental=false cgu=16 lto=false，另有 one/thin",
+        "bench/evidence-lab/src/bin/ = cpu_wait.rs, instrumentation.rs, feature_work.rs",
+        "results/run-01/environment.txt:15 「Runtime executable warmup >=500ms each experiment; no profiler on formal runtime samples.」",
+        "复算 cpu-wait.txt：cpu N=21、wait N=21；checksum=188478885453998054 全行一致"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "severity": "P1",
+      "description": "「本地PDF母本」表的『本章落点』列与两份台账登记的范围不一致，而正文声明该表就是「本章真正读过的那几段」并引读者去附录：来源覆盖复核。逐格对：S09 声称落点 13.2、13.3、13.7，evidence.json 的 S09→ch13 只有 4.13.3 一条，coverage.md 的 S09 细行另有 4.13.1/4.13.2/4.13.4/4.13.8（页 63/64/116/344/89），全库没有任何 S09→4.13.7 —— 13.7 实际登记的来源是 EVID-cachegrind 与 EVID-perf-event 两条在线规范；S14 声称落点 13.5、13.6、13.8，登记只有 4.13.6 一条，13.5 与 13.8 无行；S11 声称 13.2、13.8，登记只有 4.13.8，13.2 那条属于 EVID-cargo-profiles（在线 HTML）而不是 S11 PDF 320。三行里共 5 个落点格子（S09→13.7、S14→13.5、S14→13.8、S11→13.2，以及把 S09→13.2 归给 PDF 64–67 而非 63/64 页细行）无法在台账落地。历史两轮（round4-ch13b、round4b-ch13b）已点名同一处，本轮在快照 b63d4d52 上仍然存在。",
+      "evidence": "python 解析 sources/contributions/evidence.json 全 14 条 target：ch13 侧仅 4.13.2/4.13.3/4.13.6/4.13.7/4.13.8；src/appendix/coverage.md 的 S09 行落点为 4.13.1/4.13.2/4.13.3/4.13.4/4.13.8；grep 全 sources/ 无 'S09' 与 4.13.7 同行（除历史审计报告本身）；对照 src/part4/ch13.md:1768-1772 表体"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "severity": "P1",
+      "description": "S14 的实际核读页码在正文与两份台账之间互相矛盾：正文表写「6–8、11–12」并声明这是「本章真正读过的那几段」，evidence.json 同样写 PDF 6–8、11–12，但 coverage.md 同一母本同一 target（4.13.6）写的是「PDF 6–7、11–12」，并加注「第 8 页是 Markdown 语法一节，母本裁决为 excluded-reviewed，不在核读范围内」；reviews/S14.md 的 S14-U020（Markdown，页 8）状态确为 excluded-reviewed。也就是说正文把一页被台账明确排除在核读范围外的页码计入「真正读过」的范围，evidence.json 与 coverage.md 之间还有一处未收口的登记冲突（谁对谁错要作者裁一处，不能两本台账各说各话）。",
+      "evidence": "src/appendix/coverage.md S14/EVIDENCE-S14-006 行原文 vs sources/contributions/evidence.json {\"id\":\"S14\",\"pages\":\"PDF 6–8、11–12（一基物理页）\",\"target\":\"part4/ch13.md#sec-cpp-rust.4.13.6\"} vs src/part4/ch13.md:1771；sources/reviews/S14.md 行 review-s14-u020「Markdown | 8 | excluded-reviewed」"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "severity": "P1",
+      "description": "13.9 结尾「母本里的 29% 示例也没有进入本章实测表」引用了一个归属 S09 的具体数字，但仓库内查不到母本出处：grep '29 %'/'29%' 在 sources/reviews/S09.md 全文零命中，evidence.json 的 S09 条目（PDF 64–67）与 coverage.md 的 S09 细行（页 63/64/89/116/344）都没有任何 29% 记录，本章实测表里也不存在 29% 这个数。该句以「母本里的」为出处，属于被引作已核实却找不到母本原文的引文；要么补上页/条目登记，要么把具体数字改成不含精确数值的表述（PDF 母本在本机仓库外，本轮无法逐字比对，因此按无出处处理而非判为编造）。",
+      "evidence": "grep -rn '29 *%' sources/reviews/S09.md src/part4/ch13.md 仅命中 src/part4/ch13.md:1774；grep -rln '29%' sources/ 唯一命中为 sources/audits/sweep4ce-J.json（历史质疑记录，非母本）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "severity": "P2",
+      "description": "13.8.1 的 file:line 出处混用了两个修订版脚本：正文写「命令本身在测量脚本里（measured-source/tools/measure.sh:55）」，但归档的 results/run-01/measured-source/tools/measure.sh 只有 44 行，emit=mir,llvm-ir,asm 那条在第 42 行；第 55 行属于 run-01 之后扩充到 72 行的现行 bench/evidence-lab/tools/measure.sh。读者按正文路径跳过去会落到不存在的行，恰好落在本节自己强调「指纹只绑定对象」的证据包叙事上，建议改成 measured-source/tools/measure.sh:42（或写明现行脚本的 :55）。",
+      "evidence": "wc -l results/run-01/measured-source/tools/measure.sh = 44，其 :42 为 cargo rustc … --emit=mir,llvm-ir,asm；bench/evidence-lab/tools/measure.sh = 72 行，其 :55 为同一命令（另 :62 为 checked-codegen 版本）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "severity": "P2",
+      "description": "13.8.2 的汇编摘录本身逐字属实（五行按顺序全部命中 cgu.00.rcgu.s 的 631/638/642/652/657 行，常量构造与 mov x10,#17 的说明也与 645-648、651 行一致，ror #55 对应 lib.rs:19 的 rotate_left(9)），但删减口径漏了一处：正文声明「从实际 .s 去掉调试行与常量构造细节后」得到这五行，而被略去的 632 行 add x8, sp, #8 既不是调试行也不是常量构造，它是 black_box 屏障的一半（str/add/ldr 三行共同构成屏障），下一句又说这五行「只用于核对屏障、旋转与乘加没有被整段删除」。建议把该行补进摘录，或把口径改为「去掉调试行、位置表与常量构造，并把 black_box 的取址行折叠为存取一对」。",
+      "evidence": "results/run-01/codegen/evidence_lab-87a0b4ffa02b656c.evidence_lab.b686e75f7ad81cb0-cgu.00.rcgu.s:631-657 原文（632 行 add\\tx8, sp, #8；651 行 mov\\tx10, #17；657 行 ret）对照 src/part4/ch13.md:1593-1603"
+    }
+  ]
+}

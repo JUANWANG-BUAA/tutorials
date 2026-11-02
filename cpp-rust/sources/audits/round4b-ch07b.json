@@ -1,0 +1,68 @@
+{
+  "reviewer": "r4b-ch07b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part2/ch07.md 1353-1925 行（7.7-7.11 全部正文与语义盒），并用 python 直接从 bench/results/local/atomic-4.txt、atomic-1.txt、handoff.txt、publication.txt、environment.txt、profile/sample.txt 复算正文点名的每个数字，逐行核对 bench/examples/publication.rs、tools/run_benchmarks.sh、sources/web.json 与 src/appendix/coverage.md 的落地证据。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节读完并逐数复算：7.7.1 的 Adjacent 4线程均值 5.253、Padded 0.418、think-7.7.1 的 std 1.408 与 p50 5.854，我按 atomic-4.txt 的 21 个 Adjacent-Relaxed 样本自己算得 mean=5.253/std=1.408/nearest-rank p50=5.854271，Padded mean=0.418，全部吻合；『单线程对照没有类似改善』经 atomic-1.txt 核实（1T Adjacent 1.691 vs Padded 1.697，几乎无差）。7.7.2 的调度描述与 publication.rs 逐行相符（ready.store Release 在 14 行、payload.store(42) 在 17 行之后，两个 Barrier 强制坏调度），『实际输出』与 publication.txt 逐字一致。7.7.3 的 826/3281/847 三个栈计数在 sample.txt 原文命中，『每毫秒抓取』由 sample-command.txt 的『1 millisecond of run time between samples』支撑，workload.txt 存在。7.7.5『本章不填入任何未运行的 PMU 数字』为真：全 bench/results 下无任何 perf/PMU/cache-miss 产物，run_benchmarks.sh 第 19 行明确打印不采集 PMU。7.7.6『顺序执行不同程序』与『保存源码 SHA-256』分别由脚本第 24-27 行串行命令与 source-hashes.json 的 64 位十六进制指纹证实。小结、errata（E-a…E-g 七条）、判定流程与即时自测均读了全文；自测题号引用（如 7.7.5 清单、[@def-7.7.1]）可落地。",
+      "evidence": [
+        "bench/results/local/atomic-4.txt 复算：Adjacent n=21 mean=5.253 std=1.408 p50=5.854；Padded mean=0.418",
+        "bench/results/local/atomic-1.txt 复算：1T Adjacent mean=1.691 vs Padded 1.697",
+        "bench/examples/publication.rs:14,17 + bench/results/local/publication.txt:1（输出逐字相同）",
+        "bench/results/profile/sample.txt:826/3281/847 三计数原文命中",
+        "tools/run_benchmarks.sh:19,24-27,37；bench/results/local/source-hashes.json"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节读完。此节是边界推理，不含测量数字，无可复算的归档断言；我核对了内部引用与外部材料落地：7.8.5 三份课程材料（Stanford CS110L lecture 13、MIT 6.S081 2020 Lecture 10、rCore v3 第八章）在 sources/web.json 都有对应 URL 条目（第 4/12/20/56/65 行），正文只借方法、明确不移植其数字，与台账一致。ex-7.8.1 解答的三处可疑与其声明「本章没有为完整通信循环给出进度证明」互相自洽，未见与代码事实相反的断言；7.8.9 引用的 Padded↔Adjacent 对照在 atomic-4.txt 真实存在（5.253 vs 0.418）。判定流程里「本机的 128 字节与全部 ns 数都不迁移」与 environment.txt 的 hw.cachelinesize=128 一致。小结、E-a…E-f 六条 errata、四道即时自测全部通读，无待审计项。",
+      "evidence": [
+        "sources/web.json:4,12,20,56,65（三课程 URL 均有落地条目）",
+        "bench/results/local/environment.txt:14（hw.cachelinesize: 128）",
+        "bench/results/local/atomic-4.txt 复算 Padded 0.418 vs Adjacent 5.253（7.8.9 引用成立）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条把 7.9 的来源断言拿去落地：std::sync::atomic 文档「抓取版本 1.99.1」在 sources/web.json 的 atomic 条目（URL 与 sha256 3340497…）和 src/appendix/coverage.md:50 的「在线1.99.1」台账一致；「本地 PDF 第 334 页历史记录（内存模型未完全明确）只说明演化范围」由 coverage.md:24（S10, PDF 页 334）与 :44（S10/REF-MM 内存模型·历史说明 → ch07#sec-cpp-rust.2.7.1）逐条对上。四个在线入口 URL 与 web.json 条目逐一匹配；提到的 bench/src/slot.rs、bench/src/bin/atomic_contention.rs、bench/probes/atomics.rs、bench/results/ 全部存在于磁盘；../appendix/coverage.md 相对链接解析到实际文件 src/appendix/coverage.md。",
+      "evidence": [
+        "sources/web.json atomic 条目（sha256=334049770f…）+ src/appendix/coverage.md:50「在线1.99.1」",
+        "src/appendix/coverage.md:24,44（PDF 页 334 历史说明落到 7.1）",
+        "ls 确认 bench/src/slot.rs、bench/probes/atomics.rs、src/appendix/coverage.md 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「八份清单（共 51 条）」我全文数过：grep '^E-' 得 51 行，与声明一致；我负责的 7.7（E-a…E-g 七条）与 7.8（E-a…E-f 六条）的字母范围与正文实际清单逐条对得上，7.1-7.6 各行只核了总条数、未逐节核对字母范围（该部分属 ch07a 区间）。表后四条整章级错误逐条回查：第 1 条的「Apple M5 Pro、18 逻辑 CPU、128 字节缓存行、未设亲和性」全部在 environment.txt（brand_string/hw.ncpu=18/cachelinesize=128）与 run_benchmarks.sh 的 'No affinity…configured' 得到；第 4 条「忙等快 27 倍」我用 handoff.txt 自己复算：sync_channel 均值 3070.8 / slot 均值 112.2 = 27.36，与 ex-7.6.1 标题的 3070/112=27.41 一致，且正文把比值限定在本夹具，口径正确。",
+      "evidence": [
+        "grep -c '^E-' src/part2/ch07.md = 51",
+        "handoff.txt 复算：3070.8/112.2=27.36（≈27 倍，21 样本均值）",
+        "bench/results/local/environment.txt（M5 Pro / ncpu 18 / cachelinesize 128）+ tools/run_benchmarks.sh:19"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结、速查表、出口检查、即时自测与章末件全部通读。可复核数字：「0.418 与 0.070 ns/op 都是聚合吞吐倒数」经 atomic-4.txt 复算吻合（Padded mean 0.418、Batched mean 0.070，表头单位即 ns_per_aggregate_op）；问题一「本机分别生成 ldadd 与 ldaddal」在 atomics.s:7,23 原文命中；出口检查「在保存的 .s 中找到 mov/ldapr/ldadd」中 ldapr/ldadd 我已命中（atomics.s:31,7），mov 未单独逐行确认（低基数断言，风险很小）。复现命令组合引用的 tools/run_benchmarks.sh、bench/Cargo.toml 均存在且脚本参数与归档表头（1/4 线程、500000、21）一致。速查表引用的 [@def-7.1.1]…[@def-7.8.2]、[@ex-7.8.1]、[@def-1.5.2] 锚点全部在 ch07/ch01 定义处命中；章末五页链接对应文件 ch07_summary/recall/exercises/exam/checklist 未逐一打开，仅核到锚点与命名约定层。",
+      "evidence": [
+        "atomic-4.txt 复算：Padded mean=0.418、Batched mean=0.070（n=21）",
+        "bench/results/local/atomics.s:7 ldadd、:23 ldaddal、:31 ldapr",
+        "tools/run_benchmarks.sh:25-26 与 atomic-4.txt 表头 threads=4 iterations=500000 samples=21 一致"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

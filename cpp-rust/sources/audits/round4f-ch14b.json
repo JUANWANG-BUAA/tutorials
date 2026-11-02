@@ -1,0 +1,89 @@
+{
+  "reviewer": "r4f-ch14b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part4/ch14.md 第 1387-1891 行（14.7-14.11 全部正文与 12 个语义盒：定义 14.7.1-14.7.3、14.8.1-14.8.3、例 14.7.1/14.8.1、思考 14.7.1/14.8.1、判定流程、五份小结与 errata、两节即时自测、14.9 两张登记表、14.10 十五条、14.11 小结/速查/出口检查/章末件）。取证：读 bench/evidence-lab/tools/gate.py 与 test_gate.py 全文、build_matrix.py:40-62、measure.sh:1-60，用 python 从 run-01 归档逐条复算 feature-default/checked 与 verify-*/cpu-wait/instrumentation 的行数、round 集合、checksum、单位与均值，实跑 gate.py 复现退出码，枚举 build-raw.jsonl 的 case 取值，核对 processes-*.txt 与 test-*.txt/gate-tests.txt/mechanical-validation.txt/README.md，并跑 tools/list_uncollected_claims.py 只看 ch14。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "这一节的实测数字我全部复算过，没有一条是编造：14.7.3 表里 gate 的三态退出码 0/1/2 与 gate.py:43-49 的返回一致（load_runtime 只校验「21 个不重复 round」gate.py:13-14、「值为正且有限」:16-17、「checksum 唯一」:18-20、「unit 存在」:21-23；compare 只比 unit 与 checksum 相等再算均值比值:30-33）；例 14.7.1 的 checksum 133693440 与比值 5.27 成立——feature-default.txt 与 feature-checked.txt 的 header 及全部 21 行 raw 都写 checksum=133693440，我复算均值 0.04285671428571429 与 0.22588838095238092，比值 5.270781596704855，实跑 gate.py 得 exit 1 且 pass=false。14.7.4 的自述（不比较 CPU 型号、工具链、输入指纹）与代码相符；14.7.7 的「feature 二进制尚未做跨进程配对轮转」也成立——measure.sh:41-42 是 default 跑完 21 轮再跑 checked 21 轮，没有交替。14.7.9「证据目录拒绝覆盖」成立：measure.sh:12 用不带 -p 的 mkdir，正文说「输出目录要选一个不存在的」可核。唯一问题是 14.7.2 的分层表把通用四层模型与本轮 gate.py 的退出码混在一列（见 findings）。我没做的：14.7.5/14.7.6/14.7.8 是规范与统计表述，无磁盘证据可核，我按文本一致性读（14.7.8 说本轮只有描述性均值、N-1 标准差与分位数，与 14.5/14.4 的 summary 复算口径不冲突）；p99 的 nearest-rank 定义在 14.8.1 引 [@def-1.5.2]，本节内没有再算一次。",
+      "evidence": [
+        "bench/evidence-lab/tools/gate.py:13-24（21 distinct rounds / 正值有限 / checksum 唯一 / unit 存在），gate.py:30-33（unit 与 checksum 相等才比，ratio=candidate.mean/baseline.mean），gate.py:43-49（异常 return 2，pass 0，否则 1）",
+        "实跑：python3 bench/evidence-lab/tools/gate.py bench/evidence-lab/results/run-01/feature-default.txt bench/evidence-lab/results/run-01/feature-checked.txt --budget 0.2 -> EXIT=1, ratio=5.270781596704856, pass=false",
+        "复算均值：feature-default 0.04285671428571429、feature-checked 0.22588838095238092，比值 5.270781596704855；两文件 header 均为 unit=ns_per_byte;bytes=1048576;checksum=133693440",
+        "bench/evidence-lab/tools/measure.sh:41-42（default 与 checked 各 21 轮顺序执行，无跨进程交替配对）、measure.sh:12（mkdir 不带 -p，已存在即失败）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "14.8.2 的命令清单逐条对得上：README.md:19-30 与正文 6 条命令在 --offline --locked、--all-targets/--all-features、-D warnings、RUSTDOCFLAGS、unittest discover -p 'test_*.py' 上完全一致。测试条数我数了归档：test-default.txt 与 test-checked.txt 的各 suite 通过数为 [5,0,0,0,1]（lib 5 项单元测试、三个 bin 各 0、Doc-tests evidence_lab 1 项），gate-tests.txt 是 'Ran 3 tests / OK'，与正文「默认与 checked 各有 5 项 Rust 单元测试、1 项 doctest；Python 门禁有 3 项测试」逐项相符；test_gate.py 全文确实 3 个测试方法。14.8.3 的「保留二进制指纹、归档可执行副本」有 binary-sha256.txt（4 个二进制）与 binaries/ 目录（feature_work_checked 已改名）支撑；「生成代码采集在所有正式计时之后」由 measure.sh:53-55 的注释与顺序支撑。14.8.4 只用汇编确认路径形状、不报 I-cache/BTB：codegen 目录里是 .mir/.ll/.s（measure.sh:55-56），磁盘上没有任何 I-cache/BTB 计数器产物，声明与产物一致。14.8.5 八项清单与 14.8.8 的干扰声明我都按盘核对：14.8.8 说 processes-before.txt 与 processes-after.txt 都是 0 字节、抓取命令在 measure.sh:29 与 :52 —— 两文件确实 0 字节，两行的命令与正文引用的 `ps -axo pid,comm | grep -E '(cargo|rustc|clang|ld$)'` 逐字相同（带 `|| true`，所以没匹配就留空文件，正文的机制解释成立）；「目录锁只协调参与相同协议的测量者」对 measure.sh:14-16 的 mkdir 锁；「本轮没有锁核或锁频」对 environment.txt（只有 sysctl 读取，无 taskpolicy/nice/绑核）。锁核那句我特别查过：measure.sh 全文没有绑核或调频命令，environment.txt:23 只是读 hw.model/hw.ncpu。例 14.8.1 与判定流程是推理盒，其依赖的门禁能力边界（只比均值与 checksum）与 gate.py 相符。无问题。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/test-default.txt 与 test-checked.txt：per-suite 'test result: ok.' 通过数 [5,0,0,0,1]，Doc-tests 1 项；gate-tests.txt：'Ran 3 tests' + 'OK'",
+        "bench/evidence-lab/results/run-01/processes-before.txt 与 processes-after.txt 实测均为 0 字节；bench/evidence-lab/tools/measure.sh:29 与 :52 为 `ps -axo pid,comm | grep -E '(cargo|rustc|clang|ld$)' > \"$OUT/processes-*.txt\" || true`",
+        "bench/evidence-lab/tools/measure.sh:14-16（.work/cpp-rust-agents/measure.lock 目录锁）、:53-56（codegen 采集在正式计时之后）、:57-60（binary-sha256.txt 与 binaries/ 副本）",
+        "bench/evidence-lab/results/run-01/environment.txt:21-27（只记录 rustc -Vv 与 sysctl 读数，无锁核/锁频命令），mechanical-validation.txt 末行 'mechanical validation only; no isolation or independent-audit claim'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "按预算我只核到这一节的「登记可落地」，没有逐条回查 PDF 页码原文（那是母本层 16 条的活）。核到的部分：正文点名的两份登记文件确实存在——sources/contributions/evidence-web.json（list，12 处 cargo/rustc 相关条目）与 sources/contributions/evidence.json，附录 src/appendix/coverage.md 也在；在线规范表的四行（Cargo Features、Cargo Resolver、Cargo Profiles、rustc PGO）在 evidence-web.json 里都能按关键字 features/resolver/profiles/pgo 命中，所以「URL 与抓取 SHA-256 登记在 evidence-web.json」这句不是空话。S11/S14/S09 的行（320、332-336、1-15、64-67）与「319 与 331 是起始分隔页」的说明需要母本层逐字回查，我没做，如实记下。「本地 16 份母本里没有单独命名的 Cargo Reference PDF」与 coverage.md 的登记口径未逐条比，也归母本层。rCore 那两页只借机制、不搬命令与数字，正文已自我限定，符合本仓库「借事实不抄句子」的口径。",
+      "evidence": [
+        "文件存在：/Users/juanwang/Desktop/tutorials/cpp-rust/sources/contributions/evidence-web.json、sources/contributions/evidence.json、src/appendix/coverage.md",
+        "python 读 evidence-web.json：条目含 features/resolver/profiles/pgo/profile-guided 关键字，与在线规范表四行对应",
+        "未回查：S11 PDF 320 与 332-336、S14 1-15、S09 64-67 的页内原文（母本层范围），我在 notes 里明确标为未核"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "出口检查的可执行部分我实跑或实数过，全部命中：gate 对归档 feature 对的预期退出码确为 1（不是工具失败），正文「不要用 || true 把它变成发布通过」与 test_gate.py 一致；「一条 assertFalse(result[\"pass\"])，两条 assertRaisesRegex（分别匹配 21 distinct 与 correctness）」在 test_gate.py:12/19/23 逐字成立；构建两条 cargo build 命令与 measure.sh 依赖的 target/ 与 target-checked/ 布局吻合，外层脚本顺序（cpu_wait → instrumentation → feature 两份 → build_matrix，measure.sh:39-43）与 14.8 正文「依次运行第 13 章的两个 benchmark、feature benchmark 与 build matrix」一致；「输出目录要选一个不存在的」对 measure.sh:12。273 这条总量我也独立数了：cpu-wait.txt 42 行（cpu 21 + wait 21）、instrumentation.txt 63 行（none/batch/each 各 21）、feature 两份各 21、build-raw.jsonl 126（六组各 21），42+63+42+126=273，且 mechanical-validation.txt 末段就写着 'formal observations: 273'，README.md:12 同样登记 273；verify-*.txt 三份各 21 行 raw、unit=ns_per_byte、bytes=1048576、checksum=133693440 也都复算命中。成文速查表与出口十条问题的锚点（def-14.1.1/14.2.1/14.3.1/14.4.2/14.4.3/14.5.3/14.6.2/14.8.2、def-14.1.2）我在 14.1-14.8 的标题行逐个查到，未失配。问题只出在 verify 文件的排除判据（见 findings），以及「两份 sample 同理」这一句对 sample 产物的定性——sample-cpu.txt/sample-wait.txt 是 measure.sh:45-50 用 macOS `sample` 采的性能栈（13953 与 15016 字节，collapse_sample.py 与 mechanical-validation.txt 的 'sample cpu exclusive total 1698' 消费它们），不是可运行性校验。",
+      "evidence": [
+        "实跑 gate.py 归档对 -> EXIT=1，ratio=5.270781596704856；bench/evidence-lab/tools/test_gate.py:12,19,23（assertFalse / assertRaisesRegex '21 distinct' / 'correctness'）",
+        "计数复算：cpu-wait.txt 42、instrumentation.txt 63、feature-default+checked 42、build-raw.jsonl 126 -> 合计 273；bench/evidence-lab/results/run-01/mechanical-validation.txt 'formal observations: 273'；bench/evidence-lab/README.md:12 同登记 273",
+        "verify-release/one/thin.txt 各 21 行 raw、header 'unit=ns_per_byte;case=default;bytes=1048576;checksum=133693440'；生成处 bench/evidence-lab/tools/build_matrix.py:57-62（round_id==0 时 size -m 后运行二进制，写 verify-{profile}.txt，注释 'Correctness execution is outside measured build intervals.'）",
+        "sample 定性：bench/evidence-lab/tools/measure.sh:44-50（'Profiling is deliberately separate from the 21-batch timing experiments' + sample 命令），results/run-01/sample-cpu.txt 13953 字节、sample-wait.txt 15016 字节"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "14.10 的 case 覆盖这条是全章最容易写坏的一句，我按磁盘逐值枚举：build-raw.jsonl 126 行，case 取值恰为 {release,one,thin} × {fresh-package-target,noop} 六组，每组 21 条，没有第三种 case，所以「本章只保存了前两种 case 各 21 条」与「改一个源文件的增量重建没有测」都成立，并与 14.4.2 定义盒（ch14.md:633「也不等于修改一个源文件后的增量构建——本轮没有测第三种」）和 README.md:9「每profile21次新包目标目录与21次紧随的noop，共126条」三处一致；Mach-O 那条（__PAGEZERO 不等于磁盘占用）与 size-*.txt 用 `size -m` 采集的口径相容。十五条的来源我逐条查了锚点是否存在且指向对：def-14.1.1/14.3.1/14.3.2/14.2.1/ex-14.2.1/def-14.4.3/ex-14.4.1/def-14.4.1/def-14.4.2/def-14.1.2/def-14.6.2/def-14.5.3/def-14.7.2 全部命中真实标题。两处不足：跨节索引里没有一条来自 14.8（清单包装、基线漂移、回退单元、契约测试条数这四种恰恰要读完「构建→测量→门禁→发布」整链才浮出来，14.8.9 的 E-c/E-d/E-e/E-g 属跨节性质），以及最后一条「把本地阈值检验说成统计显著」引 [@def-14.7.1]（分层门禁），而描述性阈值≠显著性的落点是 14.7.8 与 gate.py:2 的 docstring。另：14.10 开头声明只收跨节错误、与每节 errata 互补，14.1-14.8 各有一份 ::: errata 常见错误清单（14.M 节），14.9 无（延伸阅读节，合理）。",
+      "evidence": [
+        "python 枚举 bench/evidence-lab/results/run-01/build-raw.jsonl：126 行，case 分布 = release|one|thin × fresh-package-target|noop，每组 21；无 incremental 类 case",
+        "src/part4/ch14.md:633（定义 14.4.2 明写本轮没测第三种）、bench/evidence-lab/README.md:9（126 条口径一致）",
+        "锚点存在性：ch14.md:84/276/459/474/622/631/674/1098/1215/1433 等定义标题与 14.10 各处 [@...] 指向一致；ch14.md:1503（14.7.8）才是「本轮没有置信区间或 p 值」的落点",
+        "bench/evidence-lab/tools/gate.py:2 docstring 'descriptive thresholding, not a significance test'"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "severity": "P1",
+      "description": "14.11 出口检查给 verify 文件的排除判据自相矛盾、且与盘上真正的判据不符。原文：「第 0 轮构建产物另行运行得到的 verify 文件……也是观测形状的文本，但排除判据可核对：它们没有跨轮配对设计，只作可运行性校验，因此不计入 273；两份 sample 同理。」问题一：「没有跨轮配对设计」不具区分力——同一章 14.7.7 自己写着「feature 二进制尚未做跨进程配对轮转」，而 feature-default.txt 与 feature-checked.txt（measure.sh:41-42 顺序各跑 21 轮，无交替）恰恰是计入 273 的那 42 条。按正文这条判据它们也该被排除，判据因此无法把「计入」与「排除」分开，「排除判据可核对」这句断言不成立。盘上真正的判据是另一回事：verify-*.txt 由 build_matrix.py:57-62 在 round_id==0 时运行刚构建的二进制顺带写出（注释 'Correctness execution is outside measured build intervals.'），README.md:13 登记的口径是「来自构建第0轮产物的额外可运行性校验，不进入主集合」，且它们的 header 全是 case=default、与 feature-default.txt 重复同一负载。问题二：「两份 sample 同理」把 sample 也说成可运行性校验，而 sample-cpu.txt（13953 字节）/sample-wait.txt（15016 字节）是 measure.sh:45-50 用 macOS `sample` 采的性能栈，measure.sh:44 注释明写它们与 21 批计时实验分开，并被 collapse_sample.py 与 mechanical-validation.txt 的 'sample cpu exclusive total 1698/1648' 消费——是第 13 章的采样证据，不是可运行性校验。273 这个总数本身没问题（42+63+42+126，与 mechanical-validation.txt 与 README.md:12 一致），要改的是排除理由。",
+      "evidence": "src/part4/ch14.md:1874（排除判据原句）、ch14.md:1494（14.7.7 承认 feature 未做跨进程配对轮转）、ch14.md:1609 与 1874（sample 在第 13 章用作采样证据、此处却称可运行性校验）；bench/evidence-lab/tools/build_matrix.py:57-62；bench/evidence-lab/tools/measure.sh:41-42（feature 两份顺序采集）、:44-50（sample 采集与其用途注释）；bench/evidence-lab/README.md:13；复算：verify-release/one/thin.txt 各 21 行 raw 且 header 均为 case=default;checksum=133693440；feature-default.txt 与 feature-checked.txt 各 21 轮、round 集为 0..20 但两份文件各自顺序运行，无任何交替配对字段"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "severity": "P2",
+      "description": "14.7.2 的分层表把「通用四层模型」和「本轮 gate.py 的行为」压进同一张表，第二层那行因此读起来像 gate.py 会检查身份。表原文第二层为「轮数、单位、checksum、身份 | 证据不可比（退出码 2）」，第三层为「候选与基线的预算比值 | 拒绝（退出码 1）」；退出码 1/2 只存在于本轮 gate.py（gate.py:43-49），而 gate.py 全文从不读取 CPU 型号、工具链或输入指纹——load_runtime 只查 21 个不重复 round、值为正有限、checksum 唯一、unit 存在（gate.py:13-23），compare 只比 unit 与 checksum 是否相等再算均值比值（gate.py:30-33）。这与紧邻的 14.7.4「`gate.py` 只检查样本结构、单位、checksum 与均值预算。它没有自动比较 CPU 型号、工具链或输入指纹」直接对冲：同节内先给出一张把「身份」算进退出码 2 那一层的表，再声明工具不看身份。不是事实错误（身份确实是通用第二层该查的东西，14.8.5 清单第 3、4 项也要求它），是口径混写；建议在该表加一列标明本轮覆盖到哪层，或把第二层的「身份」标为「本轮未自动检查（见 14.7.4）」。另两处同类小口径问题：14.7.2 第一层「构建、格式化、测试」本轮根本不在 gate.py 内（属 measure.sh 与 14.8.2 的命令清单），preview 与 14.7.4 虽已限定「gate.py 只覆盖其中一小段」，表未标注；14.7.3 表头写的才是「本轮工具行为」。",
+      "evidence": "src/part4/ch14.md:1415-1420（分层表，第二层含「身份」且标注退出码 2）、:1424-1429（14.7.3 表头「本轮工具行为」）、:1442-1444（14.7.4 gate.py 能力自述）、:1393（preview 称 gate.py 只覆盖一小段）；bench/evidence-lab/tools/gate.py:13-23、:30-33、:43-49（无任何身份字段读取）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "severity": "P2",
+      "description": "跨节错误索引存在一节覆盖缺口与一处指认偏斜，属完整性/表述问题，不影响数字。其一：14.10 开头声明只收「要读完整个章才浮出来」的错误，但 15 条里 14.1 两条、14.2 两条、14.3 两条、14.4 四条、14.5 一条、14.6 一条、14.7 两条，14.8 一条都没有；而 14.8.9 的 E-c「把分散记录包装成已认证清单」、E-d「每次通过就把最好值设为基线」、E-e「回退只回源码不回配置与训练数据」、E-g「用命令全绿宣称独立审计」正是要在「实验包→门禁→发布」整条链上才看穿的跨节错误，与本节的自述判据相符。其二：第 15 条「把本地阈值检验说成统计显著」的括注引 [@def-14.7.1]（定义 14.7.1 是分层门禁），而「本轮只给描述性均值、N-1 标准差与分位数，没有置信区间或 p 值」的落点是 14.7.8，工具侧证据是 gate.py:2 的 docstring 与 :34 的 scope 字段；第 13 条把「重跑直到绿」的纪律挂到 [@def-14.5.3]（门禁三种退出状态），同一条规则在 14.7.6 挂的是第 1 章的探索性/确认性区分，指认不统一。",
+      "evidence": "src/part4/ch14.md:1790（14.10 自述判据）、:1792-1820（15 条逐条读回，无 14.8 条目；第 13 条注 [@def-14.5.3]、第 15 条注 [@def-14.7.1]）、:1503-1507（14.7.8 才是无 p 值/无置信区间的落点）、:1477（14.7.6 用 [@def-1.7.3]）、:1706-1714（14.8.9 的 E-c/E-d/E-e/E-g）；bench/evidence-lab/tools/gate.py:2,:34"
+    }
+  ]
+}

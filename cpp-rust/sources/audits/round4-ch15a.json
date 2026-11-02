@@ -1,0 +1,110 @@
+{
+  "reviewer": "r4-ch15a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动通读 src/part4/ch15.md 第64-1443行（15.1-15.6 全部正文与语义盒），并从 projects/agent-runtime/evidence/run-01..04 复算 admission/statistics/layout CSV，逐行比对 src/lib.rs、src/bin/runtime-bench.rs、src/bin/tool-helper.rs、src/process_macos.rs、src/main.rs、scripts/measure.sh、evidence/run-04/native 汇编、bench/results/runtime-fixed、evidence/capture-fix-final-validation-02，以及本机 ~/.cargo 的 tokio-1.54.0/src/process/mod.rs 文档；用 tools/list_uncollected_claims.py 对照『没有采集』句子。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了：CLI 退出码契约（main.rs:74-80 SUCCESS/1/2 与正文 15.1.7 一致）；空环境+cwd=/+stdin null+kill_on_drop(true) 的构造顺序（lib.rs:470 附近 .env_clear().current_dir(\"/\").stdin(null).kill_on_drop(true)，与 def-15.1.4 一致）；timeout>0 且≤60s 的 InvalidInput（lib.rs:271 起 try_submit 内 timeout.is_zero()||>from_secs(60)）；tool-helper 与 runtime-bench 两个 bin 存在。未核：Echo 4096 字节、Logs 16MiB、argv 32 项等各预算常量的具体数值未逐个 grep（只核了 timeout 一条）；『注册名 ASCII 字母数字连字符』的校验代码未打开。这些都只有通读级判定。",
+      "evidence": [
+        "projects/agent-runtime/src/main.rs:74-80",
+        "projects/agent-runtime/src/lib.rs:271",
+        "projects/agent-runtime/src/lib.rs:470",
+        "projects/agent-runtime/src/bin/tool-helper.rs"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了：Config::default() Q=16/C=4/R=8192/drain_grace=1s（lib.rs:139）；try_submit 实际顺序 is_closed→timeout→try_acquire_owned→…→try_send（lib.rs:271 起，与 15.2.2 六步一致，饱和停在第三步成立）；Job._admission: OwnedSemaphorePermit 字段存在（lib.rs:223）；例 15.2.1 算术 8×2×8192=131072、Q+C=20、262144×2=524288 自算无误。『本节没有采集』（第566行）经 tools/list_uncollected_claims.py 确认在盘上无对应采集物，诚实。未核：『本轮核读 S11 物理页 390–394』的母本引文——本审计没有回查母本页面，该断言按通读判定，不在我的可落地证据集内；上界证明 P+W≤Q+C 是推理而非实测，未独立复证。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs:139",
+        "projects/agent-runtime/src/lib.rs:223",
+        "projects/agent-runtime/src/lib.rs:271",
+        "tools/list_uncollected_claims.py 输出含 [ch15.md:566]"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了：15.3.3 引用的 Ticket 代码块与 lib.rs 逐字一致——cancel 为 self.cancel.send_replace(true)、wait 为 (&mut self.result).await、impl Drop for Ticket 同样 send_replace(true)（lib.rs:246-258 附近）；Ticket 持有 oneshot::Receiver + watch::Sender<bool> + watch::Receiver<Stage>、Job 持有 result/stage/_admission 的通道方向与 15.3.1 描述一致；stage 在 spawn 后 send_replace 携带 pid（lib.rs:470 后）。未核：本轮没有实际运行 drop-Ticket 场景观察许可归还与 join 计数，15.3.5『没有单独测量保守收集的调度开销』经未采集工具佐证；状态机表（15.3.2）是设计描述，逐状态代码路径未全部打开。",
+      "evidence": [
+        "projects/agent-runtime/src/lib.rs:246",
+        "projects/agent-runtime/src/lib.rs:255",
+        "projects/agent-runtime/src/lib.rs:223"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对了：helper logs 模式交替写 8192 字节块（tool-helper.rs:18-19 [b'O';8192]/[b'E';8192]）；kill_on_drop 兜底但正常路径显式 wait（lib.rs:470 kill_on_drop(true) 与正文 15.4.5 一致）；tokio-1.54.0/src/process/mod.rs:1243 逐字有『On Unix platforms, this is the equivalent to sending a SIGKILL』（start_kill），mod.rs:1346 有『This function is cancel safe.』（wait），mod.rs:218/657/846 有 best-effort 回收表述——15.4.3/15.4.4/15.4.5 三处对 Tokio 的核读断言全部落地；run-04 native 恰好 6 个产物（.mir/.ll/.s ×2）✓；run-02 source-sha256.txt 12 行且 source-snapshot 12 个文件 ✓；run-01 11 条目、快照 8 个文件（『11 中 8 匹配、3 无法补存』✓）；run-03 admission 21 行 + lifecycle 63 行 = 84 条观察 ✓；capture-fix-final-validation-02 的 debug-race/release-race 各 4 场景全部 exit=0、logs 场景 report.txt total=2097152（2MiB）✓、30ms 反例 grace 在 tests/contracts.rs:407、200ms 期限在 contracts.rs:132 与 regressions.rs:23 ✓。未核：『Rust 1.99.0 macOS std 先 pipe 后分别 fcntl(FD_CLOEXEC)、本机 spawn flags 无 POSIX_SPAWN_CLOEXEC_DEFAULT』这条对标准库的机制断言——本机没有 rust std 源码副本可逐行对照，我按通读判定；pipe2 的 SDK『27.0 起可用』标注未查 SDK。发现两条见 findings（8/8 计数出处过粗、用例命名不一致）。",
+      "evidence": [
+        "projects/agent-runtime/src/bin/tool-helper.rs:18",
+        "tokio-1.54.0/src/process/mod.rs:1243",
+        "tokio-1.54.0/src/process/mod.rs:1346",
+        "projects/agent-runtime/evidence/run-02/source-sha256.txt (12 行)",
+        "projects/agent-runtime/evidence/run-01/source-sha256.txt (11 条目) / source-snapshot (8 文件)",
+        "projects/agent-runtime/evidence/run-03: 21+63=84 条观察",
+        "projects/agent-runtime/tests/contracts.rs:407 (drain_grace 30ms)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对了：15.5.1 表的全部 10 行 size/align 与 evidence/run-04/layout.csv 逐字一致（Input 24/8、Config 40/8、Log 72/8、ToolResult 224/8、Client 24/8、Ticket 32/8、Outcome 1/1、SubmitError 1/1、Stage 8/4、OwnedSemaphorePermit 16/8）；工具链 rustc 1.99.0、host aarch64-apple-darwin、M5 Pro、hw.cachelinesize 128 均在 evidence/run-04/environment.txt ✓；checksum 汇编摘录 LBB123_4 的 ldrb/eor/mul/subs/b.ne 与 agent_runtime.s 逐字一致 ✓；『LBB147_2 中可见 mov w1, #16777216 与 blr x8』核实为真（agent_runtime.s:35994 起，tab 分隔的 blr\\tx8 在该基本块内）；ldapr 17 处、casal 19 处存在 ✓；O_CLOEXEC=16777216=0x1000000 为 macOS 值 ✓；匿名 Future 未打印 size 与 layout.csv 只有 10 行一致，『未采集』诚实。算术复核：8×224=1792、8×32=256 均对，但解答一句把 133120 字节写成『约 133 KiB』，133120/1024=130 KiB（133 是按 1000 除的 kB），KiB/KB 口径混用，见 findings。未核：MIR/LLVM 摘录只有 try_submit sret 与 pipe_cloexec 结构做了存在性检查（agent_runtime.ll 含 pipe_cloexec 与 sret），未逐行审 MIR。",
+      "evidence": [
+        "projects/agent-runtime/evidence/run-04/layout.csv",
+        "projects/agent-runtime/evidence/run-04/native/agent_runtime.s:35994",
+        "projects/agent-runtime/evidence/run-04/environment.txt",
+        "1792+256+131072=133120 B = 130 KiB（复算）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对了：run-04/admission.csv 21 行、索引 0-20 完整、operations 恒为 100000、checksum=拒绝计数；从原始 batch_ns/operations 复算 mean=3.662、sd(N−1)=0.064、p50(nearest-rank)=3.653、p99=3.886=最大值，与正文表逐位一致，statistics.csv 的 admission-full 行同值 ✓；整批≈366.2µs 复算成立；REJECTS=100_000、rejected_batch 代码块与 src/bin/runtime-bench.rs 逐字一致；满载构造（Q=1、C=1、两个 60_000ms Sleep、started 观察 Running）在 bench 源码确认；build-process-snapshot.txt 为 0 字节，与『快照文件为空』一致。但 15.6.7 两句与测量脚本矛盾：正文说锁目录为『仓库根下的 .work/measure.lock』且『等满 600 秒拿不到就报错退出』，实际 scripts/measure.sh:44 是 $root/.work/cpp-rust-agents/measure.lock，45 行是无上限的 while ! mkdir; do sleep 1; done——既没有 600 秒上限也没有报错退出；trap rmdir EXIT 与 mkdir 抢锁（不删他人锁）两句倒是对的。见 findings 的 P0。",
+      "evidence": [
+        "复算：projects/agent-runtime/evidence/run-04/admission.csv → 3.662/0.064/3.653/3.886",
+        "projects/agent-runtime/src/bin/runtime-bench.rs (const REJECTS: usize = 100_000)",
+        "projects/agent-runtime/scripts/measure.sh:44-46",
+        "projects/agent-runtime/evidence/run-04/build-process-snapshot.txt (0 字节)"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "severity": "P0",
+      "description": "15.6.7 关于测量脚本锁的两句与代码事实相反：正文说锁目录是『仓库根下的 .work/measure.lock』，实际脚本用 $root/.work/cpp-rust-agents/measure.lock（路径不同）；正文说『等满 600 秒拿不到就报错退出』，实际是 while ! mkdir \"$lock\" 2>/dev/null; do sleep 1; done —— 无限等待、无 600 秒上限、从不报错退出。全仓 grep 未在 measure.sh 或 tools/run_runtime_benchmarks.sh 中找到任何 600 秒逻辑。",
+      "evidence": "projects/agent-runtime/scripts/measure.sh:44-46"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "severity": "P1",
+      "description": "例 15.5.1 解答写『句柄 + 前缀约 133 KiB』。自行复算：8×224+8×32+8×2×8192 = 133120 字节 = 恰好 130 KiB（133 这个数是按 1000 进制 kB 除出来的）。同一节其余数字（1792、256、131072）都对，唯独此处 KiB/KB 口径混用，且本节主旨正是『单位与口径』，错误被放大。",
+      "evidence": "复算 133120/1024=130 KiB；对照 projects/agent-runtime/evidence/run-04/layout.csv 的 224/32 与 R=8192"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "severity": "P2",
+      "description": "15.4.9 说『既有专门定位结果在 bench/results/runtime-fixed/：其中同一交错有 8 个旧实现失败与 8 个原子修复通过』。目录确实存在，但顶层 race 文件只有 race-before/race-before-2/race-before-2-lsof/race-after-1 四个，8+8 的计数需要进 baseline-debug/baseline-release/fixed-* 等子目录才能对上；以本审计预算未能逐目录复现该计数。出处指向过粗，建议点名到具体子目录/文件，否则读者无法复算这个『实测』数。",
+      "evidence": "bench/results/runtime-fixed/ 目录清单（顶层 race-*.txt 仅 4 个，另有 baseline-debug/baseline-release/fixed-debug/fixed-release/measurements/final-validation/repeated-validation 子目录）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "severity": "P2",
+      "description": "15.4.12 的验证表把四个场景命名为 logs/stdout、logs/stderr、timeout/stdout、timeout/stderr，而归档 evidence/capture-fix-final-validation-02/{debug,release}-race 下的实际目录与 status.txt 写的是 sleep-pipe1/sleep-pipe2（『sleep pipe=1 exit=0』）。实质相符（timeout 场景 200ms 期限见于 tests/contracts.rs:132、regressions.rs:23，logs 场景 total=2097152 即 2MiB 见于 logs-pipe1/report.txt），但正文命名与归档命名对不上，按图索骥会找不到证据。",
+      "evidence": "projects/agent-runtime/evidence/capture-fix-final-validation-02/debug-race/status.txt；logs-pipe1/report.txt:8207 (total: 2097152)"
+    }
+  ]
+}

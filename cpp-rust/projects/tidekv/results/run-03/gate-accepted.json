@@ -1,0 +1,43 @@
+{
+  "budget_B": 5000.0,
+  "budget_note": "\u9884\u7b97\u6765\u6e90\uff1a\u4e00\u6761 64 KiB \u8bb0\u5f55\u81ea\u8eab\u7684 WAL \u8ffd\u52a0\u4e0b\u754c = 65536 B \u00f7 1 GB/s \u2248 65.5 us\uff1b\u672c\u5939\u5177\u6bcf 256 KiB \u5237\u4e00\u6b21\u6bb5\uff0c\u4e00\u6761\u8bb0\u5f55\u5e73\u5747\u644a 1/4 \u6b21\u6bb5\u843d\u76d8\u30025 us/\u64cd\u4f5c\u7ea6\u4e3a\u8be5\u4e0b\u754c\u7684 8%\u3001\u672c\u8f6e\u5b9e\u6d4b\u6bcf\u53d7\u7406\u6210\u672c\u7684 0.2%\uff0c\u4f4e\u4e8e\u5b83\u7684\u5dee\u503c\u4e0d\u8db3\u4ee5\u6539\u53d8\u300eCAP \u8be5\u8bbe\u591a\u5927\u300f\u8fd9\u4e2a\u51b3\u5b9a\u3002",
+  "units": "ns_per_op",
+  "rule": "U <= B accept | L > B reject | else insufficient-evidence",
+  "diff_convention": "diff = B(CAP=4) - A(CAP=64)",
+  "cases_judged": [
+    "ns_per_accepted"
+  ],
+  "bootstrap": {
+    "seed": 20289697,
+    "iterations": 20000,
+    "method": "percentile bootstrap of the paired mean difference",
+    "confidence": 0.95
+  },
+  "protocol": {
+    "seed": "20261030",
+    "rounds": "21",
+    "batches_per_round": "20",
+    "ops_per_batch": "240",
+    "warmup_ms": "300"
+  },
+  "counts": {
+    "accept": 0,
+    "reject": 0,
+    "insufficient-evidence": 1
+  },
+  "cases": [
+    {
+      "case": "ns_per_accepted",
+      "units": "ns_per_op",
+      "rounds_used": 21,
+      "arm_A_mean": 2456036.163202714,
+      "arm_B_mean": 2470043.521504571,
+      "diff_mean": 14007.358301857132,
+      "ci95_low": -105221.47266209524,
+      "ci95_high": 132036.4529782381,
+      "budget_B": 5000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "insufficient-evidence"
+    }
+  ]
+}

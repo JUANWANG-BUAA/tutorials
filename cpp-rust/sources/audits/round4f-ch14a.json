@@ -1,0 +1,88 @@
+{
+  "reviewer": "r4f-ch14a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part4/ch14.md 的 14.1–14.6 全部正文与每个语义盒，用一条 python 脚本从 bench/evidence-lab/results/run-01/ 的 build-raw.jsonl、build-summary.json、size-*.txt、feature-*.txt、verify-*.txt、gate-rejection.json 逐项复算，并对照 tools/build_matrix.py、tools/gate.py、Cargo.toml、src/lib.rs、src/bin/feature_work.rs 与已登记档案 .work/cpp-rust-sources/evidence/cargo-profiles.html；另跑 tools/list_uncollected_claims.py 只看 ch14。",
+  "sections": [
+    {
+      "anchor": "#sec-cpp-rust.4.14.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了六层身份图与对照表的引用自洽；rustc/cargo 1.99.0 版本块与 environment.txt 记录口径一致；例 14.1.1 的 checksum 133693440 我独立算得 4096×Σ0..255=133693440，与 feature-default/checked.txt 的 unit 行逐项相符；--offline --locked、publish=false、resolver=3 均与实际 Cargo.toml 一致。未发现数字或代码事实错误。",
+      "evidence": [
+        "src/part4/ch14.md:182 checksum 133693440；复算 sum(range(256))*4096=133693440",
+        "bench/evidence-lab/results/run-01/feature-default.txt unit行 bytes=1048576;checksum=133693440",
+        "bench/evidence-lab/Cargo.toml:1-13 publish=false, resolver=\"3\", edition=2024 与正文 14.4.3 清单一字不差"
+      ]
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 feature 闭包/构建单元定义、14.2.5 命令的输出文件确实存在（feature-tree.txt、metadata.json），实验包确实零第三方依赖所以「实际树只有本包」为真；checked 为观察型 feature 的说法与 src/lib.rs:71-79 的 cfg(feature=\"checked\") + black_box(Event) 实现一致；「本轮没测复杂 resolver 性能」是范围声明，正文确无对应数字。无矛盾。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/feature-tree.txt、metadata.json 存在",
+        "bench/evidence-lab/src/lib.rs:71 pub fn sum_bytes、:75 #[cfg(feature = \"checked\")]",
+        "bench/evidence-lab/Cargo.toml 无 [dependencies]，与 14.2.5「实际树只有本包」一致"
+      ]
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重点查 14.3.5 表与例 14.3.1 解答的 __text 口径：三行 文件大小/fresh构建数/不同SHA256数（518448/21/21、512640/21/21、502672/21/21）我从 build-raw.jsonl 的 fresh 记录逐条复算全部命中；__text 242940/241916/236656 与 size-release/one/thin.txt 的 Section __text 逐项相符；「size -m 只在第 0 轮跑过一次」与 build_matrix.py 的 if round_id == 0 及 run-01 仅存 3 份 size 文件一致，口径交代是诚实的。仅发现一句省略主语的表述（见 findings），判 P2。",
+      "evidence": [
+        "build-raw.jsonl 复算：release/one/thin 各 21 条 fresh，binary_bytes 集合各只 1 值，unique sha256 各 21",
+        "size-release.txt Section __text: 242940；size-one.txt 241916；size-thin.txt 236656"
+      ]
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重点查 fresh/noop 倍数与表格一致性：14.4.6 六行 mean/sd/p50/p99 我全部从 build-raw.jsonl（126 行、6 case×21）按正文声明的 N−1 sd 与 nearest-rank 复算，逐位吻合（release fresh 439.733/68.274/416.813/646.793 … thin noop 18.194/1.219/17.894/21.100）；例 14.4.1 的 101.5 ms、1.5 倍、10 倍与例 14.4.2 的 4.5 倍、2.6% 复算成立；正文代码块与 tools/build_matrix.py 经去注释/去空白归一化后逻辑行零差异，「只调整排版与 docstring」为真。发现一处「20 倍」标量对 thin 显著低估，判 P2（见 findings）。14.4.8 体积表与 verify 三份 21 行、case=default 均核对属实。",
+      "evidence": [
+        "/tmp/r4f_ch14a.py 复算输出：6 case 的 mean/sd/p50/p99 与表完全一致",
+        "1995.882/18.194=109.7、439.733/18.576=23.7、338.194/18.713=18.1",
+        "归一化 diff：ch14.md:708-786 与 bench/evidence-lab/tools/build_matrix.py 无逻辑差异"
+      ]
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 14.5.4 表四列：feature-default.txt 与 feature-checked.txt 各 21 轮，复算 mean 0.042857/0.225888、sd 0.002920/0.005934、p50 0.041763/0.222644、p99 0.052094/0.245054 全部逐位命中；例 14.5.1 的比值 5.27 我算得 5.2707，gate-rejection.json 里 ratio=5.270781596704856、budget=0.2、pass=false 与正文退出码 1 的说法一致；gate.py 默认预算 default=.2 支持「默认 20%」；布局表 Vec 24/8、&[u8] 16/8 直接取自 feature-*.txt 的 layout 行，Event 16/8 由两个 u64 字段推得；main 程序代码块与 src/bin/feature_work.rs 逐行一致。无错误。",
+      "evidence": [
+        "feature-default.txt/feature-checked.txt summary 行与我的独立复算一致",
+        "gate-rejection.json ratio 5.270781596704856；bench/evidence-lab/tools/gate.py default=.2",
+        "src/bin/feature_work.rs 与 ch14.md:986-1025 代码块内容一致"
+      ]
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节全部是范围声明，逐条核其实：正文五处「本节没有生成 profraw/profdata、没有 PGO 数字」在 14.6 内确实无任何收益数字；「PGO 四步在第 6 章 6.8 真跑过并归档」的落点 bench/compiler-lab/results/extra-02/pgo-data/ 存在，内含 .profraw 与 merged.profdata；示例 bash 明确标注本轮未执行；rustc PGO 的绝对路径与 missing-function 警告建议有登记档案（evidence-web.json 的 rustc profile-guided-optimization 条目，review_scope 覆盖这两点）。tools/list_uncollected_claims.py 对 ch14 点名的行（22/509/849/1190/1195/1258/1333/1337 等）全是这类「未采集/未执行」声明，无冒充实测。通过。",
+      "evidence": [
+        "ls bench/compiler-lab/results/extra-02/pgo-data/：default_4638409862445482177_0.profraw、merged.profdata",
+        "sources/contributions/evidence-web.json:20-23 rustc PGO 条目 review_scope 含「绝对路径、missing-function警告」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "#sec-cpp-rust.4.14.4",
+      "severity": "P2",
+      "description": "14.4.7 标题与 14.4 preview 用「20 倍的量级差」概括 fresh/noop 之比，但同节表格的 thin 实测比值是 1995.882/18.194≈109.7（约两个数量级），「20 倍」只对 release(23.7) 与 one(18.1) 近似成立。表格本身与 preview 引用的 338–1996 ms、约 18 ms 均复算无误，故不构成数字矛盾，属标量表述以偏概全。",
+      "evidence": "build-raw.jsonl 复算：thin fresh mean 1995.882 / thin noop mean 18.194 = 109.7；release 23.7、one 18.1"
+    },
+    {
+      "anchor": "#sec-cpp-rust.4.14.3",
+      "severity": "P2",
+      "description": "例 14.3.1 解答③末句「跨 21 个目标目录是否字节相同，本节没有测过」省略了主语 __text，字面读起来与本节核心事实「21 个 SHA256 都不同」（即跨目录字节已测、且不相同）直接冲突；结合下一句「size -m 只在第 0 轮跑过一次」可知作者指的是 __text 分段值未跨目录采集——该口径本身与 build_matrix.py（round_id==0 才跑 size -m）和 run-01 仅 3 份 size 文件完全吻合，属表述歧义而非事实错误。",
+      "evidence": "ch14.md:507 原句；build_matrix.py:57 if round_id == 0 才执行 size -m；run-01 下 size-*.txt 仅 release/one/thin 三份"
+    }
+  ]
+}

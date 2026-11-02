@@ -1,0 +1,23 @@
+tide-mech 编解码分发的代码生成证据（aarch64，release；lib 与 bench 二进制的汇编）
+问题：泛型路径与 dyn 路径在汇编层到底差在哪一步
+
+A 泛型路径的单态化实例 FixedCodec::encode
+  symbol: __RNvXs_NtCseHZXeO4ot7L_6tidekv5codecNtB4_10FixedCodecNtB4_5Codec6encode
+  指令行数: 104   bl(直接调用): 7   blr(间接调用): 0
+   bl  -> __RNvMs4_NtCs8Hh7wWMBHrQ_5alloc7raw_vecINtB5_6RawVechE8grow_oneB7_
+   bl  -> _memcpy
+   bl  -> _memcpy
+   bl  -> __RINvNvMs2_NtCs8Hh7wWMBHrQ_5alloc7raw_vecINtB8_11RawVecInnerpE7reserve21do_reserve_and_handleNtNtBa_5alloc6GlobalECseHZ
+B dyn 路径的 encode_all_dyn
+  symbol: __RNvNtCseHZXeO4ot7L_6tidekv5codec14encode_all_dyn
+  指令行数: 24   bl(直接调用): 0   blr(间接调用): 1
+   blr -> blr	x22
+
+C 调用点（bench 二进制里 run_codec_experiment 函数体）
+  指令行数: 1617   blr(间接调用): 0   （dyn 的间接调用发生在 encode_all_dyn 内部，不在这里）
+  调用 1 次 -> __RNvMs4_NtCs8Hh7wWMBHrQ_5alloc7raw_vecINtB5_6RawVecNtNtCseHZXeO4ot7L_6tidekv5codec11CodecRecordE8grow_oneCslG
+  调用 3 次 -> __RNvXs_NtCseHZXeO4ot7L_6tidekv5codecNtB4_10FixedCodecNtB4_5Codec6encode
+  调用 3 次 -> __RNvNtCseHZXeO4ot7L_6tidekv5codec14encode_all_dyn
+  调用 2 次 -> __RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueNCNvCslGwocSBs7Tj_9tide_mech20run_codec_experiments_0EBF_
+  调用 4 次 -> __RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueINtNtCs8Hh7wWMBHrQ_5alloc3vec3VecNtNtCseHZXeO4ot7L_6tidekv5codec11Cod
+  调用 1 次 -> __RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueNtNtCseHZXeO4ot7L_6tidekv5codec11CodecRecordECslGwocSBs7Tj_9tide_mech

@@ -1,0 +1,90 @@
+{
+  "reviewer": "sweep4ce-C",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立核查 src/part4/ch17.md 17.6（src/part4/ch17.md:875-1035，含 preview 盒、定义 17.6.1/17.6.2/17.6.3、例 17.6.1+解答、思考盒、判定流程盒、小结、errata E-a..E-e、即时自测 4 题及答案）。方法：(1) 逐行读 projects/tidekv/src/engine.rs（submit/write/take_batch/apply_write/do_flush/writer_loop/shutdown/close/snapshot/get/flush/sync/compact_two）、src/epoch.rs、src/stats.rs、src/wal.rs、src/memtable.rs、src/bin/tide-admit.rs、tests/admission.rs 与全部 10 个 tests/*.rs；(2) 用 /usr/bin/python3 直接从 projects/tidekv/results/run-03/admit.csv（1,764 数据行 = 1,680 raw_batch + 84 BATCH_MEAN）重算每一个正文数字，并用 statistics.json / gate-*.json / admit-verification.txt / recompute.txt 对表；(3) 只读执行 verify_admit_csv.py（输出到 stdout，未落盘）与 tools/check_book.py（123 页 0 错误）核对交叉引用；(4) 协议断言与 projects/tidekv/run.sh、README.md 对照。本审计只新增 sources/audits/sweep-4ce07383-C.json，未修改任何其他文件，未重新测量。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "实测数字与代码事实全部站得住：正文 17.6 里出现的每一个数字（0.6858 / 0.9664 / +0.2805 / 185.86 / 19.90 / −165.96 / 774,433.8 / 82,915.5 / −691,518.3 / +14,007.4 / 2,456,036.2 / 2,470,043.5 / 2,465,119.0 / 2,464,724.3 / −395 / 9.3 倍 / 75.40(64–131) / 8.07(4–11) / 1,680 行 / 840 批 / 84 条 BATCH_MEAN / 11:10 轮序 / 18.49 / 1.98 / 10,050.6 / 10,045.5 / 10,013.9 / 10,054.3 / 0.05% / 0.40% / 4.08 / 2.46 / 2.51 / 0.458 / 130-110 / 8-232 / 两个摘要 / 65.5 µs / 8% / 0.2%）都能由 run-03 归档独立重算出来，两条 bootstrap 区间用 statistics.json 声明的方法（seed 20289697 = 20261030^0xB007，20,000 次配对均值百分位重采样）逐位复现；分母口径按 CSV 实际列名核对：ns_per_attempted 除以 ops=240、ns_per_accepted 除以 accepted 列，正文的「尝试 vs 受理」说法与夹具和分析脚本一致；三态判定与 gate-accepted.json（insufficient-evidence）/ gate-attempted.json（accept）及 gate.py:18-23 的规则一致。代码断言逐条证实：归还点在整批 drain 而非操作完成（engine.rs:620-621 早于 engine.rs:625）、close() 把 Shutdown 排到队尾（engine.rs:428）、致命错误分支只置 failure+closed 两标志即 return（engine.rs:598-603）、shutdown() 清队列对 Write/Shutdown 静默丢弃（engine.rs:773）、panic 路径 let _ = h.join() 后 check_failure 仍 Ok（engine.rs:431-436）、MAX_SLOTS=512 且槽号只分配不回收（epoch.rs:12/24/81-87，Guard::drop 只清 PINS 不清 SLOT，epoch.rs:248-257）、Stats 无 applied/written（stats.rs:46-72）、「没有测试覆盖」经全 tests/ 检索确证。注意：审计委托书里把正文转述成「许可在操作真正完成之后归还」，正文实际写的是相反（ch17.md:893「归还点也不是『操作真正完成』那一刻」），代码支持正文而非转述。本节无 P0/P1，仅 4 条 P2 精度/措辞问题，已进 findings[]。",
+      "evidence": [
+        "src/part4/ch17.md:891 vs projects/tidekv/src/engine.rs:232-249 — submit 先查 closed（235-237 返回 TideError::Shutdown）再查 q.len() >= admission_capacity（238-244 返回 AdmissionRejected 并 add_admission_reject），push_back+notify 后才 Ok：「不阻塞、不入队、不重试」成立",
+        "projects/tidekv/src/engine.rs:620-621 `let n = q.len().min(256); q.drain(..n).collect()` 与 engine.rs:624-625 `apply_write` 内 `wal.append(rec)?` — 槽位在整批取走时空出、日志在后面才写：ch17.md:893 正确，ch17.md:895 的 CAP+256 上界成立（队列长度 ≤ CAP，engine.rs:238）",
+        "projects/tidekv/src/engine.rs:420-437 — close() 在锁内 `q.push_back(Cmd::Shutdown)`（428）后 closed.store（432）、`let _ = h.join()`（434）、再 check_failure()（436）：ch17.md:902「排在队尾」与 ch17.md:904 引用的 engine.rs:431-434 都对上；writer_loop 对 batch 做 FIFO 逐条处理（engine.rs:549-551），排在 Shutdown 前的写必经 apply_write，故「常规关闭不丢写」成立",
+        "projects/tidekv/src/engine.rs:757-778 — shutdown() 对 Flush/Compact/Sync 逐个 send(Err(Shutdown))（764-772），`Cmd::Write(_) | Cmd::Shutdown => {}`（773）既不写日志也不回报：ch17.md:902 逐字引用正确",
+        "projects/tidekv/src/engine.rs:598-603 — 致命错误分支只做 `failure.get_or_insert_with` + `closed.store(true)` 然后 `return`，不调用 shutdown()；三个等待方 engine.rs:316/327/334 的 `rx.recv()` 因 tx 仍留在队列里而永不返回 Err：ch17.md:904「本轮没有观察过」是诚实说法",
+        "grep -rn 'Writer|panic|close()|Shutdown|failure' projects/tidekv/tests/ — 十个测试文件（admission/bloom_contract/codec_contract/compaction/concurrency/epoch_reclaim/ipc_compactor/persistence/segment_format/tombstones/wal_recovery）无一注入写线程致命错误、无「关闭窗口内并发提交」用例；tests/admission.rs 恰为 3 条：full_queue_rejects_immediately(12)、control_commands_also_bounded(79)、rejected_write_does_not_disturb_sequence(128)：ch17.md:908 的「没有测试覆盖」与「三条测的是…」均证实",
+        "projects/tidekv/src/engine.rs:253-284 — put→write 只 assign 序号、submit 成功即返回 seq（无按请求取消 API），`counters.add_put(1)` 在 submit 之前（278）；grep -rn cancel projects/tidekv/src/ 无命中：ch17.md:900「fire-and-forget」成立",
+        "projects/tidekv/src/epoch.rs:12 MAX_SLOTS=512；epoch.rs:81-87 NEXT_SLOT.fetch_add 且超限 fetch_sub 后返回 None；epoch.rs:248-257 Guard::drop 只 `PINS[slot]=usize::MAX`、不复位 SLOT、NEXT_SLOT 单调 — 上限封的是「先后 pin 过的线程数」：ch17.md:881 成立",
+        "projects/tidekv/src/engine.rs:340-341（add_get 在 pin 之前）、351/357/365（snapshot().ok_or(TideError::Shutdown)）、375-379（segments→Vec::new()）、383-387（frozen_tables→0）— ch17.md:881 四种去向逐条对上",
+        "projects/tidekv/src/stats.rs:15-45/46-72 — Counters/Stats 字段仅 put/get/get_hit/get_miss/bloom_*/flush/compact/admission_reject/reclaim/bloom_overflow/bytes_flushed/wal_rejected，无 applied/written，flush 只数次数不带时长：ch17.md:946 与 ch17.md:975 成立",
+        "recv() 调用点计数：engine.rs:316/327/334 + ipc.rs:181/182（spawn_compactor 内，由 writer_loop 经 do_compact→engine.rs:704 调用）= 5：ch17.md:930「5 个调用点、两类角色」成立；take_batch 在 Condvar 上 wait_timeout 等非空（engine.rs:609-619）：ch17.md:928 成立；Cargo.toml [dependencies] 为空 —「核心不用任何异步运行时」成立",
+        "重算 admit.csv：A 420 批受理均值 75.3976（min 64/max 131）、拒绝率 0.685843→0.6858；B 8.0738（min 4/max 11）、0.966359→0.9664；差 0.280516→+0.2805（0.9664−0.6858=0.2806 印证 ch17.md:977 的舍入提醒）；墙钟 185.8641/19.8997 ms，差 −165.9644",
+        "重算 ns/尝试：Σwall/Σ240 与逐批比值均值同为 774,433.7574 与 82,915.4773，差 −691,518.2801，比值 9.340（「降 9.3 倍」）；ns/受理：逐批比值均值 2,456,036.1632 / 2,470,043.5215 差 +14,007.3583，聚合口径 Σwall/Σaccepted = 2,465,118.9803 / 2,464,724.3026 差 −394.68（「−395 ns、方向相反」）",
+        "bootstrap 复现：按 statistics.json 声明的 seed 20289697、20,000 次、配对轮均值百分位法，从 21 个 BATCH_MEAN 对重采得 ns_per_attempted [−741,468.4666, −652,422.3474]、ns_per_accepted [−105,221.4727, +132,036.4530]，与正文两个区间逐位相同；配对差样本标准差（N−1）108,052.2840 / 282,279.7590，证实 ch17.md:964-965 的「sd 是 21 个配对轮均值的样本标准差」；boot seed = 20261030 ^ 0xB007（analyze.py:102）",
+        "分组计数：admit.csv kind 列 raw_batch 1,680 行（ns_per_attempted 840 + ns_per_accepted 840）、BATCH_MEAN 84 行（两 case 各 42）；(round,arm,batch) 去重 = 840 个真实批次，每臂 420 批；21 轮中 arm_order=A_then_B 11 轮、B_then_A 10 轮（与 README.md:89「准入轮 11:10」一致）；verify_admit_csv.py 重跑（stdout）输出 raw 行数=1680 组数=84 均值行=84、结论通过，与 recompute.txt 逐字一致；1,680 行逐行校验 value_ns_per_op == wall_ns/ops 或 wall_ns/accepted，最大相对偏离 8.8e-12",
+        "projects/tidekv/results/run-03/admit-verification.txt — A attempted=240 accepted=130 rejected=110 reject_rate=0.458333 digest=eb67d1b3ba7cfa53 engine_put=240 engine_reject=110 MATCH；B accepted=8 rejected=232 rate=0.966667 digest=ad8e6885296eed0f MATCH：ch17.md:957 全部对上，且「计时前每臂各跑一次的单批样本」由 tide-admit.rs:313-331（在 349 行计时循环之前）证实",
+        "projects/tidekv/src/bin/tide-admit.rs:109-132 — 每批新建 TempDir+引擎、cfg.durable=false（114）、单线程连发 put（120-129）、drain() 只重试 AdmissionRejected 且落在计时界内（94-102,131-132）；批末无 flush（close 走 Shutdown，engine.rs:758-773）：ch17.md:955 与 981「一个排空点、重试计进墙钟」、973「余量从不落段」成立",
+        "tide-admit.rs:138-170 — 参考实现只回放 flags 受理子集、digest 不等即 Err、Stats.put==attempted 且 admission_reject==rejected、accepted+rejected==ops.len()；341-346 失败则写验证文件后不出数：ch17.md:957「等价性先证明、对不上直接失败」成立；build_ops(69-77) 一次生成两臂共用、参数只差 cap（111）：ch17.md:955「同一份种子决定的序列、单变量对照」成立",
+        "tide-admit.rs:357-360 预热 `while Instant::now() < deadline { one_batch }`（下限 300 ms，CSV 头 warmup_ms=300，run.sh 由 README.md:11「SEED=20261030 WARM_MS=300」覆盖）；277-285 每轮臂顺序由 order_rng.below(2) 掷硬币、286-290 轮次序也打乱；ch17.md:955 协议断言与代码/run.sh:110-144 一致",
+        "projects/tidekv/src/memtable.rs:85-90 insert 先 `bytes += e.bytes()`、覆盖旧值时 `bytes -= prev.bytes()`（同长值净增 0）；entry bytes = v.len()+32（memtable.rs:49-55）→ 262144 阈值恰在 4 条（4×65568=262272）处触发；ch17.md:973「该是恰好 4 条、实算 4.08、键重复覆盖不涨字节」两条机制都被代码支持（4.0771/4.0757 由 CSV 复算）",
+        "projects/tidekv/gate.py:18-23 verdict(U<=B accept / L>B reject / else insufficient)；gate-accepted.json verdict=insufficient-evidence、gate-attempted.json verdict=accept，budget_B=5000.0；ch17.md:967「判证据不足」与 ch17.md:979「尝试口径判接受」一致；65536/1e9=65.5 µs、5/65.5=7.6%、5000/2,456,036=0.204% 与 budget_note 同口径",
+        "tools/check_book.py 运行结果「123 个页面，0 错误」；本节引用锚点 def-17.6.1/def-17.6.2/def-17.6.3/ex-17.6.1（ch17.md:889/898/944/911）与外部 [@def-1.2.2]（src/part1/ch01.md:361）、[@def-1.7.1]（src/part1/ch01.md:1233）均真实存在；ch17.md:979「17.8.2 把两条判定并排列在一起」经 ch17.md:1350-1360 表格核实（run-03 两行：接受 / 证据不足）"
+      ]
+    }
+  ],
+  "sources": [
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/src/part4/ch17.md",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/engine.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/epoch.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/stats.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/wal.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/memtable.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/bin/tide-admit.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/src/ipc.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/tests/admission.rs",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/admit.csv",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/statistics.json",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/gate-accepted.json",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/gate-attempted.json",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/admit-verification.txt",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/recompute.txt",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/results/run-03/environment.txt",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/verify_admit_csv.py",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/analyze.py",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/gate.py",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/gate_mech.py",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/order_effect.py",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/run.sh",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/README.md",
+    "/Users/juanwang/Desktop/tutorials/cpp-rust/tools/check_book.py"
+  ],
+  "findings": [
+    {
+      "anchor": "def-17.6.3",
+      "severity": "P2",
+      "description": "定义盒把「受理数 = Stats.put − Stats.admission_reject」写成普适等式，但 engine.rs 的 submit 在队列满之外还有第二条拒绝路径：引擎已关时先返回 TideError::Shutdown，而 add_put 在此之前已计数。引擎一旦 close，被拒的尝试不落 admission_reject，两数之差就会把「被 Shutdown 挡掉」算进受理。本节自己的 17.6.2 恰好描述了这条路径，两处应对齐（夹具里一批一次引擎、批内从不 close，所以本轮数字不受影响）。",
+      "evidence": "src/part4/ch17.md:946；projects/tidekv/src/engine.rs:278（add_put 先于 submit）、engine.rs:235-237（closed→Err(Shutdown) 不计数）、engine.rs:238-244（只有队列满才 add_admission_reject）；projects/tidekv/src/stats.rs:15-45（无 shutdown-reject 计数器）"
+    },
+    {
+      "anchor": "def-17.6.2",
+      "severity": "P2",
+      "description": "「已受理却没进日志」第一条路径把丢写的机制全归给 shutdown() 清队列那一行，描述不完整：与 Cmd::Shutdown 一起被同一批 take_batch 取走、但排在它之后的写，是在 writer_loop 遇到 Shutdown 就 `return` 时随 batch 向量一起被丢弃的，根本不经过 shutdown() 的 pop_front 循环。被丢写的集合与正文说法一致（只有竞态窗口里的提交），但机制少了一格，按正文去 grep 会漏掉这条出口。",
+      "evidence": "src/part4/ch17.md:902；projects/tidekv/src/engine.rs:619-621（drain 至多 256 条装入 batch）、engine.rs:579-582（Cmd::Shutdown → shutdown(&shared,…); return，batch 余下元素被 drop）、engine.rs:757-778（shutdown() 只 drain 队列）"
+    },
+    {
+      "anchor": "def-17.6.2",
+      "severity": "P2",
+      "description": "第三条路径说写线程 panic 时「既不落盘也不报错」。前半句用词过强：Wal::append 用不带缓冲的 write_all 直写文件，panic 前已追加的记录其实已经进了内核页缓存，被跳过的只是 shutdown() 里那一次 wal.sync_to(true)（即 fsync）——而本夹具 durable=false，常规路径本来也不做 fsync。与 17.8.2 已区分的「进程重启后仍在 / 掉电后仍在」相比，这里的「不落盘」是松写法，容易让读者把进程级丢失读成机器级丢失。",
+      "evidence": "src/part4/ch17.md:904；projects/tidekv/src/wal.rs:96-106（write_all，无 BufWriter）、wal.rs:108-115（sync_to 才 flush/sync_all）；projects/tidekv/src/engine.rs:758（正常 Shutdown 才 sync_to(true)）、engine.rs:440-444（Drop 吞掉 close 结果）；对照 src/part4/ch17.md:1371-1375"
+    },
+    {
+      "anchor": "def-17.6.1",
+      "severity": "P2",
+      "description": "「`CAP` 是实验契约的一部分，改它等于换实验」这句在本节里是断言，但项目对「实验契约」的定义（17.1.1 的四元组 O,F,I,X）里 F 只列键长/值长/读写比/键空间，不含 admission_capacity；CAP 的实际落点是在 run-03 归档元数据与夹具参数里，而不是契约定义。后半句（改它等于换实验）在 run-03 里确实成立——CAP 正是被操纵的唯一自变量——建议把出处指到 admit.csv 表头/README 而不是契约盒。",
+      "evidence": "src/part4/ch17.md:891 vs src/part4/ch17.md:144（定义 17.1.1 的 O/F/I/X）；projects/tidekv/results/run-03/admit.csv:3-4（cap_A=64 cap_B=4 写在元数据注释）；projects/tidekv/src/bin/tide-admit.rs:261-262,295-300；projects/tidekv/README.md:45"
+    }
+  ]
+}

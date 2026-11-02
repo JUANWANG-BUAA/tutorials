@@ -1,0 +1,16 @@
+2026-11-01 本机采集（本书第 4 章 4.2.4 的 HIR/THIR 转储）
+
+命令（在 bench/compiler-lab 目录下执行）：
+  rustc +nightly -Zunpretty=hir-tree  --edition 2021 --crate-type lib src/lib.rs > hir-tree.txt
+  rustc +nightly -Zunpretty=thir-flat --edition 2021 --crate-type lib src/lib.rs > thir-flat.txt
+
+rustc +nightly -vV 首行：rustc 1.101.0-nightly (16d1ffac1 2026-10-26)
+两条命令退出码均为 0，stderr 为空。
+
+产物：
+  hir-tree.txt   3113744 字节  sha256 07e217f60a885e4a3b8245b07e31adea241c191885f07cfa9014d68d6624e3ce
+  thir-flat.txt   904549 字节  sha256 435866fb14e13a762a6bc69377ed146b332014065d7efbb2c632213e78093403
+
+可核对样例：src/lib.rs 的 pub fn borrowed_sum（DefId 0:15）
+  hir-tree.txt:10566 起为它的 OwnerNodes；hir-tree.txt:33 是同一条目的另一处引用
+  thir-flat.txt:13916 起是 `DefId(0:15 ~ lib[5cf2]::borrowed_sum):` 的 THIR 块

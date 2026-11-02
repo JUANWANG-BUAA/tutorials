@@ -18,5 +18,21 @@
     "reports": [
       "sources/audits/round2-audit.json"
     ]
+  },
+  {
+    "round": 3,
+    "kind": "independent",
+    "snapshot_sha256": "736b5dff696e475ff392d4054febefa8c206ec008e26c96bc28fd512419d8d56",
+    "P0": 0,
+    "P1": 0,
+    "reports": [
+      "sources/audits/round3-mechanical.json"
+    ],
+    "sections_covered": 187,
+    "sources_covered": 16,
+    "reviewers": [
+      "cold-mechanical-r3"
+    ],
+    "method": "逐节机械核对（结构契约 + 引用与链接可解析）+ 测量级数字所在节的通读复核 + 16 份母本范围逐条回查锚点"
   }
 ]

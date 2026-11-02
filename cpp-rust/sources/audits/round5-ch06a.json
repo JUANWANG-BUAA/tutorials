@@ -1,0 +1,113 @@
+{
+  "reviewer": "r5-ch06a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整通读 src/part2/ch06.md 的 6.1–6.6 全部正文与每个语义盒，然后逐条回查 bench/compiler-lab/src/lib.rs、src/bin/vectorize.rs、src/bin/ctfe_table.rs、tests/contracts.rs、extra.py、run.sh，以及 results/stable-01、stable-02（vectorize.csv/ctfe_table.csv/codegen 的 .ll 与 .s/tests.txt/codegen-build.txt）与 results/extra-02（const_bounds.txt、alias_conflict.txt、layout.csv、nightly.txt、*-size.txt），并用 /usr/bin/python3 从 CSV 原始点自算均值、N−1 标准差与 nearest-rank 分位数，未抄正文数字。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 6.1 的全部静态与产物断言：6.1.2 说正式内核用 u64 且全部显式 wrapping、CTFE 表用 u8 输入域，与 lib.rs:148-166（add_slices/add_with_calls 皆 wrapping_add）、lib.rs:168-209（bit_table/runtime_table/lookup_bits 为 u8→计数）一致；6.1.4 的逐层表逐项命中本轮 IR——切片拆成指针+长度（IR:1886 的 ptr+i64 两对）、output 带 noalias 与 align 8、input 带 readonly 与 align 8、向量主体为 2×i64、runtime_table 返回经 sret 指向 256 字节（IR:2366 的 sret([256 x i8]) align 1 dereferenceable(256)）。例 6.1.1 与思考框引用的『第 5 章只有名为 vector.body 的标量展开』属跨章表述，本轮只核对本章产物：本章 add_slices 的 vector.body 确实带 2×i64 load/add/store 且本机有 add.2d，不构成矛盾。目标三元组 aarch64-apple-darwin 与 IR/asm 文件（stable-02/codegen/）一致，未见与代码相反的断言，判定通过。",
+      "evidence": [
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/lib.rs:148-166",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886,2366,2411",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3136-3151",
+        "16384*8=131072 B=128 KiB；16384/8=2048 整除；1000/8=125 整除（正文自算量全部正确）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了别名一节的每一条可核断言：6.2.2 称 output 带 noalias、input 带 readonly、两者对齐观察为 8，逐项在 IR:1886 命中（output: ptr noalias nofree noundef nonnull align 8；input: ptr noalias ... readonly align 8），正文只说 input『同样有该版本生成的别名相关信息』而未写成只带 readonly，与 IR 里 input 同时带 noalias 的事实不冲突。『align 8 不等于 16/128 字节保证』与 IR 实际 align 8 一致；6.6 布局对照 [u8;256] align 1 命中 IR:2366。6.2.5 的编译拒绝断言落地：probes/rejected/alias_conflict.rs 的诊断结果存在 extra-02/alias_conflict.txt:2，正是 error[E0502] cannot borrow `data` as mutable because it is also borrowed as immutable；长度不符在循环前 panic，与 lib.rs:149 的 assert_eq! 与 tests/contracts.rs:72-75 的 should_panic 相符。6.2.6 自称没有构造 raw pointer 对照、不给『去掉引用慢多少』的数字，属未采集声明而非编造。判定通过。",
+      "evidence": [
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/alias_conflict.txt:2",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/tests/contracts.rs:72-75"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "6.3.2 的三段内核与 lib.rs:147-166 逐字符相同（含三处 #[inline(never)]）；6.3.4 的 IR 摘录逐行命中 stable-02 的 .ll（%wide.load=load <2 x i64> ptr %1 align 8 在 1921、%wide.load10 在 1928、%8=add <2 x i64> 在 1932、store 在 1936、%index.next=add nuw i64 %index,8 在 1940），正文声明『省略调试元数据和其他基本块』与实情相符，未改指令本体；主体确为四组 2×i64（1921-1931 八条 load、1932-1935 四条 add），一次迭代推进 8 元素。6.3.5 的汇编 12 行与 .s:3136-3151 完全同序同文本（四条 add.2d、subs x11,x11,#8、b.ne LBB6_5），且 .loc 指向 lib.rs:150/151 证明属 add_slices。6.3.6/6.3.7 的测试块与 tests/contracts.rs:56-75 逐字符一致，for len in 0..130 即正文说的 0..129；u64::MAX+v 的参考值 v.wrapping_sub(1) 在模 2^64 下算得成立。6.3.3 说 scalar_add 调用确实留在循环里，命中 add_with_calls 的 IR:2439 tail call ... scalar_add（在同一函数的循环区段内）。长度断言失败路径与标量尾部都在同一函数（.s 的 LBB6_8/LBB6_10）。判定通过。",
+      "evidence": [
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/lib.rs:147-166",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1921,1928,1932,1936,1940,2439",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3136-3151,3164-3190",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/tests/contracts.rs:56-75",
+        "(2^64-1)+v ≡ v-1 (mod 2^64)，与测试参考值 u64::wrapping_sub(1) 一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "实测数字全部从归档原始点复算而非抄正文：stable-02/vectorize.csv 去掉表头与两行 summary 得 42 行、每 case n=21 个批均值；自算 zip mean=0.347104、N−1 sd=0.016887、p50=0.346487、p99=0.378854；calls mean=0.723644、sd=0.059594、p50=0.718884、p99=0.833090，与 6.4.4 表逐位相符，也与 CSV 自带 summary 行相符。口径核对：lib.rs:40 的 value=elapsed/(n*units) 且 units=16384（vectorize.rs:25 传 input.len()），故 ns/元素成立；6.4.3 计量表逐项对上——Vec 创建在 measure 之前（计时外）、output.fill(0) 与 borrowed_sum 在 run 内（vectorize.rs:4-6）、批 checksum 断言在 elapsed 之后（lib.rs:38-39）、case 轮转 index=(round+offset)%len（lib.rs:30）。6.4.9 的统计口径有定义且可核：预热 500ms（lib.rs:19）、21 批（lib.rs:28）、N−1（lib.rs:50-52）、nearest-rank 在 21 点上 ceil(21×0.99)=21 即最大批值（例 6.4.1 第 3 问算得正确，且 CSV 第 21 位排序值确为 0.378854/0.833090）；p50 亦为 values[10] 的中位数。差值 0.723644−0.347104=0.376540 复算命中。6.4.8 的 stable-01 zip 均值 0.311992 复算命中（sd 0.003452，calls 0.630335，同方向回退）。独占目录锁真实存在（run.sh:29-33 mkdir 锁 + 600s 拒绝并发），profiler 为独立一轮且注明不进 21 个观测（run.sh:41-45）。判定通过。",
+      "evidence": [
+        "python3 复算 stable-02/vectorize.csv：zip n=21 mean 0.347104 sd 0.016887 p50 0.346487 p99 0.378854；calls n=21 mean 0.723644 sd 0.059594 p50 0.718884 p99 0.833090",
+        "python3 复算 stable-01/vectorize.csv：zip mean 0.311992（calls 0.630335），差值方向一致",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/lib.rs:19,28,30,38-40,50-57",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/bin/vectorize.rs:4-6,25",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/run.sh:29-33",
+        "0.723644-0.347104=0.376540；ceil(21*0.99)=21"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "主体的 CTFE/Miri 分界断言全部落地：6.5.3 的 bit_table/BIT_TABLE/runtime_table/lookup_bits 四段与 lib.rs:168-209 逐字符相同（含 black_box(0usize) 的 seed 与注释）；6.5.4 的失败输入与 probes/rejected/const_bounds.rs:1 逐字符相同，extra-02/const_bounds.txt:2 确为 error[E0080] index out of bounds: the length is 2 but the index is 3，且该行标注求值发生在构建期、命令只 --emit=metadata（没有可执行版本），extra.py:26 的 assert process.returncode != 0 and error in process.stderr 证实『检查非零退出与错误码』。6.5.5『本轮没有执行 cargo miri test、nightly 安装不可用』被双重支撑：extra-02/nightly.txt:1-4 是 rustc +nightly -vV 的 missing manifest 报错，stable-02/tests.txt 里 grep miri 命中 0 条。6.5.1/6.5.2 的概念区分与 lib.rs:184 的 static 初始化器、lib.rs:189 的 black_box 相符。发现三条 P2 表述与出处指引问题（见 findings：6.5.7 指向 6.7.6 的 one/many/thin 说法与 6.7.6 实际表格不符、codegen-build.txt 被称作构建时长出处但其中只有 0.00s 空构建、6.5 小节编号从 6.5.1 跳到 6.5.3）。",
+      "evidence": [
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/lib.rs:168-209",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/probes/rejected/const_bounds.rs:1",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/const_bounds.txt:1-8",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/extra.py:22-26",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/nightly.txt:1-4",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/tests.txt（grep -c miri = 0）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "复算了本节全部数字：stable-02/ctfe_table.csv 每 case 21 个批值，自算 static_table mean=0.169413、sd=0.001526、p50=0.169365、p99=0.172596；rebuild_table mean=1.953818、sd=0.017490、p50=1.949261、p99=1.997598，与 6.6.5 表逐位相符；1.953818/0.169413=11.533，正文写『≈11.5』正确。口径核对：ctfe_table.rs:21 传 input.len()=256，故单位确为 ns/字节；输入 (0u8..=255) 恰为全域 256 值、expected 由 count_ones 独立算得（ctfe_table.rs:4-5），正文『count_ones 只用于参考值、未计时』成立；6.6.3 测试块与 tests/contracts.rs:77-83 逐字符一致且在 stable-02/tests.txt:48 通过。6.6.6 的产物断言命中：IR:2366 起 runtime_table 保留 256 次迭代的表项循环（icmp eq i64 ...,256）与内部 lshr 计数循环，本机 .s 有对应 LBB7_* 循环块，返回经 sret([256 x i8])。布局表可核对的四行与 extra-02/layout.csv 相符（[u8;256] 256/1、&[u64] 16/8），sret align 1 相符。一条 P2：表中 u8 与 u64 两行数值本身算得正确（1/1、8/8），但归档 layout.csv 并未列出这两个裸类型（只有 &u64 8,8），出处未点名。",
+      "evidence": [
+        "python3 复算 stable-02/ctfe_table.csv：static_table 0.169413/0.001526/0.169365/0.172596；rebuild_table 1.953818/0.017490/1.949261/1.997598；比值 11.5329",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/src/bin/ctfe_table.rs:4-5,21",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/tests/contracts.rs:77-83",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:2366,2379-2405",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/compiler-lab/results/extra-02/layout.csv"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "severity": "P2",
+      "description": "6.5.7 的补指引句写『6.7.6 给了 one/many/thin 三个构建的 __text 字节数（归档 results/extra-02/{one,many,thin,pgo}-size.txt）』，但 6.7.6 的表实际列的是 many 220156、many ThinLTO 214768、many PGO-use 220028，并没有 one 的数字；one 的 __text 只存在于归档 one-size.txt:4（217148），从未出现在 6.7.6 表里。读者按这句话去 6.7.6 找 one 会落空。括号里列的四个文件本身都存在，数字本身（220156/214768/220028、相减 5388 与 128）复算全部正确，故只降级为表述不准确。",
+      "evidence": "src/part2/ch06.md:1020（6.5.7）对照 src/part2/ch06.md:1337-1341（6.7.6 表三行为 many/thin/pgo-use）；grep 得到 bench/compiler-lab/results/extra-02/one-size.txt:4 Section __text: 217148，many-size.txt:4 220156，thin-size.txt:4 214768，pgo-size.txt:4 220028"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "severity": "P2",
+      "description": "同一句把『构建时长』的出处指到 codegen-build.txt。实查该文件唯一的时长字段是 cargo 的 Finished 行：stable-02/codegen-build.txt:1 为 `Finished release profile [optimized + debuginfo] target(s) in 0.00s`（增量空构建，run.sh:26 在 build.txt 之后再次调用 cargo，0.00s 显然不是本轮构建耗时），stable-01 的同名文件也只有 0.24s。因此该文件不能支撑『构建时长』这一维度的实测数值，与同段『这三个维度本节都没有采集具体数字』连读时容易被误读成章内已有时长证据。extra-02/{one,many,thin}-build.txt 内也没有任何 Finished/时长行（grep 命中 0）。",
+      "evidence": "bench/compiler-lab/results/stable-02/codegen-build.txt:1（in 0.00s）、stable-01/codegen-build.txt:2（in 0.24s）、stable-02/build.txt:1（in 0.00s）；grep -n 'Finished' results/extra-02/one-build.txt many-build.txt thin-build.txt 无输出"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "severity": "P2",
+      "description": "6.5 的小节编号有缺口：标题序列为 6.5.1（ch06.md:869）后直接跳到 6.5.3（ch06.md:887），全节没有 `### 6.5.2` 标题（后续 6.5.4…6.5.8 连续）。中间只有『::: def 定义 6.5.2 · 普通常量传播』盒占用了 6.5.2 这个编号，导致按小节号导航或引用『6.5.2』的读者找不到对应小节；同一模式在 6.7 也存在（6.7.1 之后是 6.7.3），但 6.7 不在本次区间内，仅在此登记本章 6.5 的这一处。",
+      "evidence": "grep -n '^### 6\\.5' src/part2/ch06.md 输出 869/887/940/956/1000/1016/1022，缺 6.5.2；src/part2/ch06.md:881 为 ::: def 定义 6.5.2"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "severity": "P2",
+      "description": "6.6.4 的类型与布局表里，『u8 输入 1 1』与『u64 归约 8 8』两行的数值经独立推算正确（Rust 数据模型下 u8 size/align 均为 1，u64 均为 8），其余四行也都能落地：[u8;256] 256/1 与 &[u64] 16/8 见 extra-02/layout.csv，『runtime_table 结果 256 字节/align 1』见 IR:2366 的 sret([256 x i8]) align 1。但归档 layout.csv 实际列出的行是 Vec<u64>/&[u64]/&u64/&dyn Operation/…/[u8;256]/Affine/DropProbe/Option<DropProbe>，并没有裸 u8 与裸 u64 两行；该表未点名出处，读者按表去 CSV 里查这两行会查不到。属出处指引不完整，不是数字错误。",
+      "evidence": "bench/compiler-lab/results/extra-02/layout.csv 全文（type,size,align 九行，无 u8/u64 独立行）；src/part2/ch06.md:1148-1154"
+    }
+  ]
+}

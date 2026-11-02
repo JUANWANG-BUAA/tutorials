@@ -1,0 +1,101 @@
+{
+  "reviewer": "r4f-ch11b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动独立复核：完整读了 src/part3/ch11.md 的 11.7–11.11 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/常见错误/即时自测），并用 /usr/bin/python3 从 bench/systems-lab/results/run-01/epoch.txt 与 queue.txt 的 raw 行逐批复算均值、样本与总体标准差、nearest-rank p50/p99、逐批倍率与逐批 z 值；打开 bench/systems-lab/src/bin/epoch.rs、src/lib.rs、tests/contracts.rs 逐行核对探针的单线程口径；回查 .work/cpp-rust-sources/systems/mit-rcu.txt（含 shasum 与关键词命中计数）与 src/appendix/coverage.md、sources/web.json 的登记行；另跑 tools/list_uncollected_claims.py --only 11。临时脚本在 /tmp/r4f_ch11b.py 与 /tmp/r4f_calc.py，仓库其他文件一律未改。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "逐批表对 run-01 归档的核对全部命中：epoch.txt 的 42 条 raw 行按 raw 值除以 units=8192 重建 21 批两列，21×2 个数值与正文表逐位吻合（最大偏差 0，正文保留 3 位小数）；summary 行 mean=16.773780/22.967872、sd=0.545335/1.172717、p50=17.094971/23.081421、p99=17.425537/25.807739 我独立复算全部命中，且 sd 与 lib.rs:43-44 的 /(SAMPLES-1) 一致——总体标准差会是 0.532192/1.144455，与正文不符，所以 $s_{N-1}$ 这一列确实是样本标准差；p50/p99 与 lib.rs:48 取排序后 values[10]/values[20] 一致，即 [@def-12.6.3]（ch12.md:1201）定义的 nearest-rank，p99 就是最大值。均值差复算 36.9272%→正文 36.9% 成立；逐批倍率复算最小 +24.699%（第 20 批）、最大 +49.323%（第 7 批），21 批全为正，第 7 批 stalled_pin 是本列最大值 25.807739，与「极值落在哪一批」的说法一致；retention 五行逐字命中 epoch.txt:46-50，4096×256=1,048,576 算术成立。单线程口径方面：preview(:1474)、11.7.2(:1499)、11.7.3(:1590) 三处都正确写明停滞由同一线程攥住的 Guard 模拟，我按 epoch.rs:7-10（holder/worker 两次 register 后 holder.pin()）与 lib.rs:191-196（epoch_batch 里 stalled.then(|| holder.pin()) 与 retire(&worker,…) 在同一线程）逐行确认，引用的 epoch.rs:7-10 是准确的；但同节「即时自测 · 11.7 第 1 题答案」写成了「另一线程攥住长期 Guard」，与本节正文自我纠正的口径相反，判 P1。第二个 P1：11.7.3 汇总表 short_pin 那格「对象随代际交替被持续平滑释放」在磁盘上没有对应测量——lib.rs:198 算出的 retained 只在 stalled 分支断言，:206 直接 black_box 丢弃，epoch.txt 对 short_pin 只有 ns 统计行，contracts.rs:60-63 的 epoch_both_paths_drop_all 也只断言两路最终 drop 全数，没有任何一处记录短 Guard 期间 dropped 随批推进的形状；stalled 一侧有 epoch.txt:46-49 与 contracts.rs:31-35 双重证据，作为对照组的 short_pin 一侧没有。tools/list_uncollected_claims.py --only 11 里我这一区间的 6 条「本节没有采集」（:1601/:1613/:1620/:1634/:1753/:1783）全部标记为「没有匹配到同类产物」，声明诚实；唯一的 ⚠ 落在 :1344（11.6 区间），而正文 :1346 已经主动说明 queue-sample.txt 是另一种口径，不算违反。另记两条 P2：「drop(guard) 的一瞬间…一次代际推进中集中爆发式销毁」把 drain() 的轮询（lib.rs:180-188）说成单次推进，归档只有一条 after_unpin 无法区分；11.7.3 的 $s_{N-1}$ 口径注位置在它要管的汇总表之后（:1562），且没像 11.6.3(:1335) 那样点明「除以 N-1」。",
+      "evidence": [
+        "python3 复算：epoch.txt raw/8192 重建 21 批两列，与 ch11.md:1566-1586 全部命中，mismatches=0",
+        "复算 mean=16.773780 sample_sd=0.545335 pop_sd=0.532192 p50nr=17.094971 p99nr=17.425537；mean=22.967872 sample_sd=1.172717 pop_sd=1.144455 p50nr=23.081421 p99nr=25.807739；均值差 36.9272%",
+        "bench/systems-lab/src/lib.rs:43-48（sd 除以 SAMPLES-1；p50=values[10]、p99=values[20]）",
+        "bench/systems-lab/src/bin/epoch.rs:7-10、:11-25（单线程 pin/retire/打印 retention）",
+        "bench/systems-lab/src/lib.rs:191-206（retained 仅 stalled 分支断言，:206 black_box 丢弃）与 bench/systems-lab/tests/contracts.rs:60-63,26-39",
+        "bench/systems-lab/results/run-01/epoch.txt:44-50（summary 两行 + retention 五行）",
+        "src/part3/ch12.md:1201（[@def-12.6.3] 给出 N−1 与 nearest-rank 定义）",
+        "tools/list_uncollected_claims.py --only 11：共 14 条声明，我区间内 6 条均为「没有匹配到同类产物」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "派单点名的「MIT 讲义归因是否已降级为背景陈述」，我实测三处：11.8.1 第二条后的括号说明（:1681）、五格表第一行（:1707）、第四行（:1710）、第五行（:1711）都明确写了「不来自这份 MIT 讲义／母本未证／属背景／不计入已核实」，降级确实做了，而且我回查母本证实自我限定为真：.work/cpp-rust-sources/systems/mit-rcu.txt（12,537 字节，shasum 前缀 34201a6f5cbd，与 sources/web.json 的 systems-mit-rcu 行、coverage.md:581/4092、11.9 表一致）里 grep -ci 'preempt|ksoftirqd|idle' 返回 0 行，正文「零命中」的说法站得住。讲义 :179「rcu_read_lock/unlock do almost nothing」、:208「delays until all CPUs have context-switched」、:145 grace period 三条前提的落点也逐行找到，11.8.2 读表法把分水岭放在第四行的论述与母本自洽。剩下的问题只有一格：第二行「静止状态定义」写成「CPU 执行上下文切换、进入 idle 或系统调用返回」，其中「进入 idle 或系统调用返回」正是母本零命中的 idle 那部分，却没有像第 1/4/5 行那样加背景标注；而 11.9 的 MIT 行「本书论据映射」仍把「静止状态定义」记作该讲义的核读落点，台账 systems-mit-rcu 的 review_scope 也写着 Quiescent State。这不是事实错误（内核静止状态确实含这两项），而是已核实范围的口径残留，判 P2。11.8.3 的 async 论述无实测主张，:1753 与 :1783 两处都写明「async 版本的滞留量本节没有采集」，口径干净；:1738 跨线程迁移用「可能」限定，且未冒充实测，可接受。",
+      "evidence": [
+        "shasum -a 256 .work/cpp-rust-sources/systems/mit-rcu.txt = 34201a6f5cbd…（12,537 字节）；sources/web.json 的 systems-mit-rcu 行 status=reviewed、archive 同路径；src/appendix/coverage.md:581、:4092",
+        "grep -ci -e preempt -e ksoftirqd -e idle 在该母本 = 0",
+        "母本原文：mit-rcu.txt:179「rcu_read_lock/unlock do almost nothing.」、:208「…delays until all CPUs have context-switched」、:145「a \"grace period\"」",
+        "src/part3/ch11.md:1681、:1707、:1710、:1711（三处降级标注）；:1708（未标注的 idle 那格）；:1839（11.9 映射仍写「静止状态定义」）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "四行登记逐行回查台账与磁盘，全部落地：MIT 行 URL 与 SHA 前缀 34201a6f 对应 sources/web.json 的 systems-mit-rcu（status=reviewed）与 coverage.md:581/4092，11.9 写「在线讲义」「核读完成」与该状态自洽；rCore 行 SHA 前缀 7684f01f 对应 id=rcore-lock（chapter8/2lock.html，status=reviewed-online，注明「在线核读，未保留本地母本」），正文写「在线文档」与之一致；S08 第 17 条 PDF 146–160 命中 coverage.md:579（同一行映射到本章 11.1 锚点与 bench/systems-lab/src/lib.rs），第 11 条 PDF 93–94 命中 coverage.md:385/:2519 的 PDF 93 起始页、:2519 的核读注还点名 PDF 94 的 MutexGuard 例子，页码区间成立。11.9 末尾「本章正文只做自主分析与实测，不摘抄母本原文」我用母本与 11.8 正文交叉看过，未见成句抄写。未核项：S08 两条的 review 单元正文（sources/reviews/S08.md）我没有逐条展开，只按 coverage 表的页码与状态列对齐。",
+      "evidence": [
+        "src/appendix/coverage.md:581（systems-mit-rcu｜在线讲义（SHA: 34201a6f...）｜核读映射→ch11#sec-cpp-rust.3.11.8）、:582（rcore-lock｜7684f01f...）、:579（S08/SYS-S08-17｜PDF 146–160）、:385/:2519（第 11 条｜PDF 93）",
+        "sources/web.json：{\"id\":\"systems-mit-rcu\",\"sha256\":\"34201a6f5cbd…\",\"status\":\"reviewed\"}；{\"id\":\"rcore-lock\",\"sha256\":\"7684f01f14641ba6…\",\"status\":\"reviewed-online\"}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节 12 条跨节错误逐条核对引用与所引节的存在性和内容一致性：[@def-11.1.2]、[@def-11.3.2]、[@def-11.5.1]、[@def-11.8.3]、[@ex-11.6.1]、[@def-11.4.3]、[@def-11.4.1]、[@def-11.2.1] 都在本章有对应定义/例题盒（:152、:664、:1073、:1729、:1382、:926、:816、:322），「11.4 E-c」「11.4 E-d」两个交叉指针在 :1020/:1022 逐字命中，「11.3 E-a」在 :750 命中。数字与口径方面没有新增断言：「无锁队列标准差走高」只指向 11.6 的 2.68→8.02（已复算），「Tag 环绕」不带具体数字，「Loom 之类」是建议而非本书产物声明，「跑一万次全绿」是修辞不是测量。未核项：本节自身不引入新的实测数字，因此没有可复算对象；我只验引用落点与措辞一致性。",
+      "evidence": [
+        "src/part3/ch11.md:1848-1870（12 条）与引用落点 :152/:664/:1073/:1729/:1382/:926/:816/:322/:1020/:1022/:750",
+        "复算（承接 11.6）：Mutex 2.683101 与 ArrayQueue 8.023660 由 queue.txt raw/65536 重建，与 :1856 的「标准差明显走高」一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结 7 条、速查 9 行、出口检查与章末件表逐条核：所有 [@…]/章节引用命中本章定义盒。数字复算全部命中——「ArrayQueue 平均耗时降到 40.65ns」对应 queue.txt 的 mean=40.647478（我按 raw/65536 独立复算）；「标准差比互斥锁放大了近 3 倍」= 8.023660/2.683101 = 2.9904，成立；「4096 个注销对象的 dropped 在解开 Guard 之前一直是 0」对应 epoch.txt:46-50 与 epoch.rs:11-25；「scalar_step 用 add w8, w8, w8, lsl #1」与 11.5.3 摘出的产物一致（lib.rs:211 的 wrapping_mul(3).wrapping_add(7) 也印证该指令序列是预期的）。出口检查三条命令的落地性：run-01/binary-sha256.txt 列出 target/release/queue 与 target/release/epoch 两个二进制、build.txt 显示 release（optimized + debuginfo）构建，test.txt 记录 10 个契约测试全 ok，所以 cargo test + 两个 release 二进制确实是可执行路径，没有指向不存在的产物。末段自我限制（未实现 Wait-Free 链表队列、未给内核 RCU 打补丁）与正文范围相符。未核项：我没有在这台机器上重跑那三条命令，只做产物存在性与指纹核对；章末五页（ch11_summary/recall/exercises/exam/checklist）只确认链接与分工，未展开审计内容。",
+      "evidence": [
+        "python3 复算 queue.txt：mean(array_queue)=40.647478、sd 比=2.9904；epoch.txt:46-50 retention 五行",
+        "bench/systems-lab/results/run-01/binary-sha256.txt（target/release/queue、target/release/epoch 在册）、build.txt（release profile）、test.txt:44-55（10 passed）",
+        "src/part3/ch11.md:1902-1914（出口检查三条命令与两个归因问题）、:1876-1898（小结与速查引用）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P1",
+      "description": "11.7 探针的单线程口径在同节内部自相矛盾：11.7.2 专门纠正「探针全程单线程……『停滞线程』是这个 Guard 模拟的，不是第二个线程（epoch.rs:7-10）」，preview(:1474) 与 11.7.3(:1590) 也都写「单线程」；但「即时自测 · 11.7 第 1 题答案」(:1645) 写成「stalled_pin：另一线程攥住长期 Guard 模拟停滞读者」。我逐行看源码：epoch.rs:7-10 与 lib.rs:193-196 里 holder 与 worker 都在同一线程 register、pin 与 retire 也在同一线程发生，不存在第二个线程，所以自测答案是错的，而且它恰好是读者要背下来的那一句，会把本章最想强调的「一个人攥票也能冻住全场」讲成「需要两个人」。",
+      "evidence": "src/part3/ch11.md:1645（「另一线程」）vs :1499、:1474、:1590（单线程口径）；bench/systems-lab/src/bin/epoch.rs:7-10；bench/systems-lab/src/lib.rs:193-197（let holder/worker = collector.register(); let guard = stalled.then(|| holder.pin()); retire(&worker, …)）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P1",
+      "description": "11.7.3 汇总表 short_pin 行在「物理内存积压与销毁现象」这一格写「对象随代际交替被持续平滑释放」，但磁盘上没有任何一次测量支持它：lib.rs:198 算出的 retained 只在 stalled 分支被断言（:199-201），:205 的注释明说「Retained is intentionally NOT the checksum」，:206 把它 black_box 丢弃，两场景都不打印；epoch.txt 里 short_pin 只有 21 条 ns 的 raw 行与一条统计行（:44），没有任何 dropped/retained 记录；contracts.rs:60-63 的 epoch_both_paths_drop_all 只断言两条路径最终 drop 完 128 个。对照组 stalled 一侧有两处证据（epoch.txt:46-49 的 dropped=0 与 contracts.rs:31-35 的每轮 count==0 断言），而 short_pin 一侧的「批内平滑释放」既没打印也没断言，只是由协议设计推出来的话，却和实测现象并排写进同一列——读者会以为它是量出来的。要么把该格改成「批内滞留量本实验未记录（lib.rs:206 丢弃 retained），只有批末全部释放有断言」，要么给 retire 后补一次 dropped 打印再重冻快照。",
+      "evidence": "src/part3/ch11.md:1547-1550（表格现象列）；bench/systems-lab/src/lib.rs:197-206；bench/systems-lab/results/run-01/epoch.txt:2-45（无 short_pin 的 dropped 记录）；bench/systems-lab/tests/contracts.rs:60-63"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P2",
+      "description": "「drop(guard) 的一瞬间 4096 个对象集中销毁」（:1474）与「积压的 4096 个对象在一次代际推进中被集中爆发式销毁」（:1590）把释放说成单次代际推进，可源码里 drop(guard) 之后走的是 drain()（lib.rs:178-188）：它反复 handle.pin().flush() 加 yield_now，直到 dropped==expected，最多容忍 5 秒，归档只在循环结束后打一条 after_unpin。也就是说一次 flush 还清还是几轮 flush 还清，日志分辨不出来；这一轮它确实还清了（dropped=4096），但「一次代际推进」是超出证据的表述，建议改成「撕票后由 drain 的轮询 flush 在批末一次还清」。",
+      "evidence": "bench/systems-lab/src/lib.rs:178-189（drain 轮询 pin().flush() 与 5 秒期限）、:202-203（drop(guard) 后调用 drain）；bench/systems-lab/results/run-01/epoch.txt:50（单条 retention,after_unpin,dropped=4096）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "severity": "P2",
+      "description": "MIT 讲义的归因降级基本完成，但漏了最后一格：11.8.2 五格表第二行「静止状态定义」在 Linux 内核一侧写成「CPU 执行上下文切换、进入 idle 或系统调用返回」，其中「进入 idle」正是 11.8.1(:1681) 自己宣布在母本里零命中的那个词，却没有像第一、四、五行那样附上「母本未证／属背景」的标注（母本只支持「delays until all CPUs have context-switched」那半句）。同时 11.9(:1839) 的 MIT 行「本书论据映射」仍把「静止状态定义」记作这份讲义的核读落点，台账 sources/web.json 的 systems-mit-rcu 行 review_scope 也写着 Quiescent State。事实本身不错（内核静止状态含 idle 与系统调用返回），问题是已核实范围的口径没补全，建议照第 1/4/5 行的写法给第 2 行加一句「后两项属 Linux 文档通行说法，登记母本未证」，并把 11.9 映射里的「静止状态定义」限定为「上下文切换计数的宽限期」。",
+      "evidence": "grep -ci -e preempt -e ksoftirqd -e idle = 0 on .work/cpp-rust-sources/systems/mit-rcu.txt（shasum 34201a6f5cbd…，12,537 字节）；母本 mit-rcu.txt:208；src/part3/ch11.md:1708、:1681、:1839；sources/web.json 的 systems-mit-rcu 行 review_scope"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P2",
+      "description": "两张表的 $s_{N-1}$ 口径注：数字两边都对，注释一边缺一半。11.6.3(:1335) 的注在表前，明说「$s_{N-1}$ 是样本标准差（除以 $N-1$，[@def-12.6.3]），逐批列里的『±X.X s』用同一个量；p50/p99 按最近秩定义」；我复算该表全部 21 批两列与逐批「偏离均值 ±X.X s」的 z 值（z=(批值−均值)∕样本标准差），21×2 个位置标签与正文逐条一致（含两处「不到 0.1s」、两处 p50、两处本列最小/最大），口径确实用的是同一个量。11.7.3 只在列头写「样本标准差 $s_{N-1}$」，解释它的那句口径注(:1562)排在它要管的汇总表之后（隔着一段 retention 日志），并且只说「均值、标准差与 p50/p99 由这同一批数算出，分位数取 nearest-rank」，没有点明「除以 N−1」；复算证明列值确是样本标准差（0.545335/1.172717，总体标准差会是 0.532192/1.144455，与正文不符），所以内容无误、只是注的位置与措辞比 11.6.3 薄一层。建议把 :1562 的注上移到 11.7.3 表前并补一句「$s_{N-1}$ 同 11.6.3，取除以 $N-1$ 的样本标准差」。另记一处无关紧要的排版差异：11.7.3 逐批列保留 3 位小数、11.6.3 保留 6 位，两者在各自精度下都能命中归档原值。",
+      "evidence": "src/part3/ch11.md:1335（11.6.3 注）、:1547-1550 与 :1562（11.7.3 注位置）；python3 复算：epoch short 16.773780/sample 0.545335/pop 0.532192；stalled 22.967872/1.172717/1.144455；queue mutex 72.861686/2.683101/2.618439、array_queue 40.647478/8.023660/7.830291，mismatches=0；bench/systems-lab/src/lib.rs:43-48；src/part3/ch12.md:1201"
+    }
+  ]
+}

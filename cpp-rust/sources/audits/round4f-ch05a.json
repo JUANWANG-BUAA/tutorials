@@ -1,0 +1,98 @@
+{
+  "reviewer": "r4f-ch05a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part2/ch05.md 第 62–1572 行（5.1–5.6 全部正文与每个 def/ex/think/method/errata/即时自测盒），逐条把代码块与 bench/compiler-lab 的 src/lib.rs、src/bin/dispatch_grain.rs、src/bin/dispatch_visibility.rs、probes/code_size.rs、probes/layout.rs 逐行比对，用 /usr/bin/python3 从 results/stable-02 的 CSV 与 results/stable-02-recalculated.json 复算全部计时数字、从 results/extra-02/*-size.txt 与 *-run.txt 复算体积与 checksum、从 results/stable-02/codegen/*.s 与 *.ll 复核两段汇编摘录与 vector.body，另用 nm 读归档二进制符号表，并跑 tools/list_uncollected_claims.py --only 5 看 ch05 的未采集声明。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.5.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 5.1.2 的 trait/Affine 代码块与 lib.rs:99-122 逐字符一致（step 的 wrapping_mul/wrapping_add/rotate_left(7)、默认 batch 的 fold(0, wrapping_add)）；例 5.1.1 的三种写法对应 lib.rs:124-145 的 generic_batch/dynamic_items/dynamic_batch/visible_dynamic，16384 这个数字来自两个正式入口 input_data(16384)（dispatch_grain.rs:6、dispatch_visibility.rs:4）；思考题引用的 0.156133、0.158303、差 0.002170 与我复算的 stable-02 dispatch_visibility 两行一致；小结 ④ 的「约 4.1 倍」我算 0.647618/0.156428=4.1404，成立；5.1.5 说对象构造在计时外，与 measure() 只在 (case.run)() 上取时（lib.rs:33-38）、Affine 与 erased 在 main 里先构造（dispatch_grain.rs:7-15）相符；类型路径表与判定流程为解释性内容，未发现与上述产物矛盾之处。全部锚点 [@def-1.1.3] 等均指向第 1 章已登记定义，未逐条追到 ch01 正文，这部分我只核到编号存在。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs:99-122 与 ch05.md:119-142 逐字符一致",
+        "bench/compiler-lab/src/bin/dispatch_grain.rs:6-9 input_data(16384), multiplier=17, increment=29",
+        "复算 stable-02/dispatch_visibility.csv：known_dyn mean=0.156133、opaque_dyn mean=0.158303、差=0.002170",
+        "复算 0.647618/0.156428=4.1404（≈4.1 倍）",
+        "bench/compiler-lab/src/lib.rs:33-40 计时块只包住 (case.run)()"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把 5.2.3 的探针代码块与 probes/code_size.rs 逐行比对（transform<const TAG>、reference、(0u64..4096)*173、functions 表 1..16 带 #[cfg(many)]、0..32 轮聚合打印 instances=/checksum=）全部一致；表中四行体积我从磁盘取真值：one-size.txt 的 __text=217148、many-size.txt=220156、thin-size.txt=214768、pgo-size.txt=220028，差值 3008 与 5388 我复算成立（220156-217148=3008，220156-214768=5388），3008/217148=1.385% 与正文「约 1.4%」一致；checksum 列我从 one-run.txt/many-run.txt/thin-run.txt/pgo-use-run.txt 读出 92855992320 与 95338125850705920（ThinLTO、PGO-use 与 many 同值），与正文一致；「可达计算实例 1/16」我另用 one-nm.txt、many-nm.txt 数 transform 符号得 1 与 16；5.2.6 的缺失清单（I-cache/ITLB/BTB/指令退休/执行次数）盘上确无对应 PMU 产物，tools/list_uncollected_claims.py 在 533/480/492 行只给出同名 size 文件这类误报，不构成反例；例 5.2.1 ③ 引用 214768 与 220156 的数字与磁盘一致。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/one-size.txt:4 __text=217148；many-size.txt:4 220156；thin-size.txt 214768；pgo-size.txt 220028",
+        "bench/compiler-lab/results/extra-02/one-run.txt:2 instances=1 checksum=92855992320；many-run.txt/thin-run.txt/pgo-use-run.txt checksum=95338125850705920",
+        "复算 220156-217148=3008，220156-214768=5388，3008/217148=1.385%",
+        "grep -c transform results/extra-02/one-nm.txt=1、many-nm.txt=16",
+        "bench/compiler-lab/probes/code_size.rs:1-42 与 ch05.md:384-442 一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "尺寸表五行我从 results/extra-02/layout.csv 逐行取真值：Affine 16/8、&u64 8/8、&dyn Operation 16/8、Box<dyn Operation> 16/8、&[u64] 16/8，全部一致，且探针确用 trait Operation（probes/layout.rs:3-19），正文没有把 Operation 与 Kernel 混写；5.3.3 的汇编摘录与 results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3770-3788 逐条对得上（循环外 ldr x23, [x1, #24]，LBB14_2 内 ldr x1,[x20],#8 / mov x0,x22 / blr x23 / add x21,x0,x21 / subs x19,x19,#1 / b.ne LBB14_2），因此「加载提出循环、每元素一次间接跳转」「24 是产物观察偏移」都成立；图 5-1 与定义 5.3.1–5.3.4 为解释模型，正文自己声明不承诺槽位与跨平台宽度，5.3.4 的「单线程、未测 Arc/Send/Sync」与 LAB.md 一致，未发现过度声明；例 5.3.1/5.3.2 的算术与推断均与上述取证一致。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/layout.csv 行 Affine/&u64/&dyn Operation/Box<dyn Operation>/&[u64]",
+        "bench/compiler-lab/probes/layout.rs:3-24 使用 trait Operation",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3770-3788（LBB14_2 循环体）与 ch05.md:707-714 摘录一致",
+        "同一 .s 全文 blr/br x 仅 4 处，dynamic_items 循环内为 blr x23"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.4.3 四个函数代码块与 lib.rs:124-145 逐字符一致（含三处 #[inline(never)] 的有无）；5.4.4 的 dynamic_batch 短摘录与 .s:3738-3742 完全一致（ldr x4,[x1,#32] / mov x1,x2 / mov x2,x3 / br x4），所以「偏移 32、间接尾调用」有产物支撑；visible_dynamic 的函数体（.s:4003 起）内没有 blr/br x，也没有 vtable 加载，支持「内部一次表调用都没有」与 5.6.4；5.4.5 我确认归档 .ll 里 vector.body 块的 %index/%vec.phi 确是标量 i64 phi（.ll:2466-2469，多路累加器），与「多路标量 i64」一致，但块名归属与「目标码主要用标量寄存器展开」我未逐条比对函数边界与寄存器类型；5.4.6/思考题只作范围限定，无新增数字。唯一问题是 generic_batch 那一行的出处（见 findings）。",
+      "evidence": [
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3738-3742 与 ch05.md:954-957 逐条一致",
+        "同一 .s:3738 偏移 #32；4003 起 visible_dynamic 体内无 blr",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:2466-2469 vector.body 内 phi i64",
+        "bench/compiler-lab/src/lib.rs:124-145 与 ch05.md:900-921 一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "我把 results/stable-02/dispatch_grain.csv 的 21 批逐点用 /usr/bin/python3 复算：generic mean=0.158334 sd(N-1)=0.008248 p50=0.156409 p99=0.194214；dyn_item 0.647618/0.088345/0.694790/0.709374；dyn_batch 0.156428/0.004677/0.155254/0.176579，六个数、十二个统计量与正文表 5.5.4 完全一致，并与 results/stable-02-recalculated.json 同值；0.489284=0.647618-0.158334、0.001906=0.158334-0.156428 我复算成立；「p99 等于 21 批最大点」我按 nearest-rank ceil(0.99*21)=21 验证，且与 lib.rs:56 的 values[20] 实现一致；预热 ≥500ms、21 轮轮转起点、批均值口径与 lib.rs:19-47 和 LAB.md 一致；例 5.5.2 关于「批长 8 本节没有采集」属实（盘上只有 units=16384 一种）；5.5.7「批结束检查与期望值的 wrapping 乘积相等」我核到 lib.rs:39 assert_eq!(checksum, expected.wrapping_mul(n))，措辞准确。问题在 [@def-5.5.1] 的「一批」口径歧义（见 findings）。",
+      "evidence": [
+        "复算 results/stable-02/dispatch_grain.csv 三 case × 21 批：mean/sd/p50/p99 与 ch05.md:1194-1196 全同",
+        "results/stable-02-recalculated.json dispatch_grain 三项 mean=0.15833449/0.64761789/0.15642805",
+        "bench/compiler-lab/src/lib.rs:19-47 500ms 预热 + 21 round；lib.rs:56 values[10]/values[20]",
+        "dispatch_grain.csv units 列恒为 16384（repeats≈3790），无其它批长度"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "5.6.2 入口代码块与 src/bin/dispatch_visibility.rs 逐字符一致（known_dyn→visible_dynamic、opaque_dyn→dynamic_batch，两者都 black_box）；表 5.6.3 四列八个数我复算：known_dyn mean=0.156133 sd=0.004065 p50=0.154657 p99=0.167349，opaque_dyn 0.158303/0.004387/0.156222/0.171070，与 CSV 及 recalculated.json 同值；差 0.002170 且小于两个 sd（0.004065、0.004387）成立，0.002170/0.156133=1.39% 与「约 1.4%」一致，0.002170×16384=35.55ns 与「≈36 纳秒」一致；5.6.4 的产物两句我核到 .s：visible_dynamic 体内无 blr 且直接从参数寄存器取字段（仅 ldr x12,[x10],#8 一类标量载入），dynamic_batch 保留 br x4 间接尾跳转，「产物不同、聚合时间接近」有据；定义 5.6.2 的摊薄前提与 1/n 推理成立；5.6.6/5.6.7 未引入任何新数字，且明确声明混排、小批、目标分布、构建时间「没有采集」，盘上确无对应产物（uncollected 脚本对本节 1493 行返回无误报反例）；即时自测第 2 题关于 sd 不等于差值不确定性的辨析在统计上正确。",
+      "evidence": [
+        "复算 results/stable-02/dispatch_visibility.csv：known_dyn 0.15613297/0.00406455/0.15465668/0.16734898，opaque_dyn 0.15830313/0.00438658/0.15622227/0.17107034",
+        "复算 0.158303-0.156133=0.002170；0.002170×16384=35.55ns；0.002170/0.156133=1.39%",
+        "bench/compiler-lab/src/bin/dispatch_visibility.rs:1-27 与 ch05.md:1372-1398 一致",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3738-3742 与 4003 起 visible_dynamic 无间接调用"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "severity": "P2",
+      "description": "5.4.4 表格最后一行与例 5.2.1 ① 都断言「generic_batch 的 Affine 实例被内联进调用方，产物里没有独立的泛型符号」，但本节没有点名任何可核的产物文件：归档里只有库 crate 的 codegen（results/stable-02/codegen/*.s/.ll/.mir），其中根本不会出现 generic_batch（泛型实例在二进制 crate 的 CGU 里生成），而两个基准二进制 results/stable-02/binaries/dispatch_grain、dispatch_visibility 的符号表在归档中没有 nm/list 文件。我自己重放 nm -a 才确认结论为真：dispatch_grain 里只有 dynamic_batch(0x1000027d8)、dynamic_items(0x1000027e8)，没有 generic_batch；dispatch_visibility 里只有 dynamic_batch(0x1000025b0)、visible_dynamic(0x1000025c0)。也就是说这句本身不错，但读者按正文给出的路径无法复核，属于出处指错层次（把二进制层面的符号事实挂在库 crate 的 codegen 摘录上）的教学性问题，建议点名「用 nm 读归档二进制」这条取证路径或补一份符号清单。",
+      "evidence": "nm -a bench/compiler-lab/results/stable-02/binaries/dispatch_grain | grep compiler_lab → 仅 dynamic_batch/dynamic_items；同法 dispatch_visibility → 仅 dynamic_batch/visible_dynamic；grep -rl generic_batch results/stable-02 只命中 codegen/compiler_lab-55987aab45b3e67f.mir"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "severity": "P2",
+      "description": "[@def-5.5.1] 把批均值定义为「一批的墙钟耗时 ÷（重复数 × 输入元素数）」，但本节从未说明这里的一「批」是 lib.rs:35-38 里 n 次完整遍历的计时块（generic 首轮 n=3790、dyn_item n 见 CSV，elapsed≈9.7ms），而 5.5.6、5.6.3 与思考题多处把「21 批」读作「21 次遍历」的口吻（例：「一次动态进入被 16384 个元素摊薄」）。数字本身完全可复现：9754333/(3790×16384)=0.157086 ns/元素与 CSV 的 ns_per_unit 逐位相同；但「批」在定义里=含 n 次遍历的计时块、在下文又近似等于一次遍历，两套读法会让摊薄分母被误当成 16384 而非 16384×n，属于口径表述需要收紧的教学性问题，不涉及数字错误。",
+      "evidence": "bench/compiler-lab/src/lib.rs:32-40（start=Instant::now(); for _ in 0..n {(case.run)()}; value=elapsed/(n*units)）；results/stable-02/dispatch_grain.csv:2 repeats=3790 units=16384 elapsed_ns=9754333 ns_per_unit=0.157086343；复算 9754333/(3790*16384)=0.157086343"
+    }
+  ]
+}

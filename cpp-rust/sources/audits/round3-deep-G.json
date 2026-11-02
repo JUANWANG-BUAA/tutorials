@@ -1,0 +1,149 @@
+{
+  "reviewer": "cold-r3-deep-G",
+  "kind": "independent",
+  "snapshot_sha256": "5083739561aa34c6b1828d05f08f8320332b9f6599f15c7ac1fdf0375b9089dd",
+  "provenance": "冷启动通读 ch17 的 17.6.1–17.10 五节全文；逐条对照 projects/tidekv 源码与 results/run-01..03 归档，均值/分组差值用 python 独立重算；布隆假阳率用 python 复刻 bloom.rs 算法复算；rCore 页面内容对照 sources/web.json 台账登记的本地归档 HTML 逐句核对",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "finding",
+      "notes": "逐条查证了 17.6 全部代码断言与全部数字。代码侧：submit 只看 q.len() >= admission_capacity、无信号量计数器（src/engine.rs:232-247）；take_batch 里 let n = q.len().min(256); q.drain(..n)（src/engine.rs:607-621），确实在 apply_write 之前就把槽位腾空（src/engine.rs:549-556 + 624-640），正文「真实上界 CAP+256」的推导成立；put 拿到序号即返回、无按请求取消 API（src/engine.rs:253-283，grep 全 src/ 无 cancel）；shutdown 里 Cmd::Write(_) | Cmd::Shutdown => {} 与 Flush/Compact/Sync 回 Err(Shutdown) 确实在（src/engine.rs:757-778）。测试侧：tests/admission.rs 三个 test 正好是「满即拒/控制命令同样有界/被拒不扰动序号」（tests/admission.rs:11,78,127），且全仓库无一条针对 close 丢弃写行为的测试（grep tests/ 只在收尾处调 close().unwrap()），正文「没有测试覆盖」成立。数字侧：用 python 跳过 # 注释行读 results/run-03/admit.csv（raw_batch 1680 行，A/B 各 840），独立重算得 A 每批受理均值 75.3976（min 64 / max 131）、B 8.0738（min 4 / max 11）、A 拒绝率 0.685843、B 0.966359、A 每批墙钟 185.8641 ms、B 19.8997 ms（差 −165.9644 ms）、A flush 均值 18.4929、B 1.9810、每次刷盘 10.0506 ms / 10.0455 ms（相差 0.051%），与正文表格逐项一致；ns/尝试 774,433.8、82,915.5、差 −691,518.3（sd 108,052.3）、CI [−741,468.5,−652,422.3] 与 ns/受理 2,456,036.2、2,470,043.5、差 +14,007.4（sd 282,279.8）、CI [−105,221.5,+132,036.5] 与 results/run-03/statistics.json 完全一致，diff_convention=B−A 也对得上；9.3 倍 = 774433.757/82915.477=9.34，0.6% = ratio_B_over_A 1.0057；判定「证据不足 / 接受」与 gate-accepted.json、gate-attempted.json 的 verdict 和 rule「U<=B accept; L>B reject; otherwise insufficient-evidence」一致；预算 5000 ns 的来历与 gate-accepted.json 的 budget_note 同一段；A 臂 130/110 + digest eb67d1b3ba7cfa53、B 臂 8/232 + ad8e6885296eed0f、两臂 MATCH 逐字命中 results/run-03/admit-verification.txt；recompute.txt 的 raw 行数=1680 与「1,680 条原始批全部重算」一致；协议参数（seed 20261030、21 轮×20 批、240 条、65536 B、flush_bytes 262144、durable=false、预热 300 ms、A/B 顺序按 order_rng.below(2) 掷硬币）在 src/bin/tide-admit.rs:253-288,357-361 与 CSV 注释行全部可核对；「状态==受理操作在 BTreeMap 上的回放，对不上不出数」确实是 one_batch 里的硬失败（src/bin/tide-admit.rs:137-165, 331-345）；「Stats.put 数的是提交尝试」与代码一致（engine.rs:279 在 submit 之前 add_put，夹具断言 stats.put==ops.len()==240 而受理只有 130）。发现的都是表述精度问题，见 findings。",
+      "evidence": "src/engine.rs:232-247,275-283,607-621,757-778; src/bin/tide-admit.rs:94-101,137-165,253-288; tests/admission.rs:11,78,127; results/run-03/admit.csv(python 重算 75.3976/8.0738/0.685843/0.966359/185.8641ms/19.8997ms/18.4929/1.9810/10.0506ms/10.0455ms), statistics.json, gate-accepted.json, gate-attempted.json, admit-verification.txt, recompute.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "finding",
+      "notes": "17.7 的实测数字全部独立重算通过，代码断言大体属实，但 def 17.7.1 对「双路排空在本项目里怎么写的」描述与源码不符。数字侧：python 跳过 # 行读 results/run-02/compaction.csv（raw_batch 1260 行，A/B 各 630），按 round 聚合后重算 A 均值 7,696,325.9381、B 均值 9,171,895.5825、配对差 +1,475,569.6444、样本 sd 266,254.240、比值 1.191724，与 statistics-compaction.json 逐项一致；我的 t 分布区间 [1,361,691, 1,589,448] 与归档 bootstrap 百分位区间 [1,366,635.8, 1,586,756.5]（正文表格用的就是后者）一致到 0.4%；diff_convention「B(subprocess) − A(in-process)」对得上正文；预算 10 ms 与 gate-compaction.json 的 budget_B=10000000.0、verdict=accept 对得上；规则「U ≤ B」确实是 gate_mech.py:7,42 的实现（U=diff_ci95_high）；「上界 1.59 ms 也低于一次进程内合并的 7.70 ms」可复核（1,586,757 < 7,696,326）。协议侧：种子 20261029、21 轮×30 批、每批 1 次合并、预热 500 ms 在 CSV 注释行与 src/bin/tide-mech.rs:374-378 的默认参数里；「各 4096 条、新段 20% 墓碑」= src/bin/tide-mech.rs:233-256（rng.below(100)<20）与 --entries 默认 4096；「两臂输出必须逐字节相同否则不出数」= src/bin/tide-mech.rs:298-302 的硬失败；归档 bytes=401770/entries=4096/crc32=7241b72e 逐字命中 results/run-02/mech-verification.txt 第二行。代码侧：write_segment 确实是临时名→sync_all→rename 且 rename 前无存在性检查（src/segment.rs:106-116，全仓 grep 无 exists 判断）；do_compact 的输出段名就是 max().unwrap_or(0)+1（src/engine.rs:690-696），不是输入段号的函数；Stats/Counters 无「重放收敛」计数器（src/stats.rs:15-43）；do_compact 唯一调用点是写线程的 Cmd::Compact 分支（src/engine.rs:566），对外只有 Tide::compact_two（src/engine.rs:331），全仓 grep interval/timer/周期任务无命中，故「没有后台压缩调度器」成立；gate-compaction.json 的 budget_note 原文确实写着「the background compactor … triggered every 100 ms」，results/run-02/CORRECTION.md 存在并给出同样的 grep 复核方式，run.sh:104 的 --budget-note 已改成契约说法；错误对象带退出码与 stderr 全文（src/ipc.rs:35-58,188-199）。测试侧：tests/compaction.rs 实际有 4 个 #[test]（needs_two_segments/merges_and_keeps_semantics/equivalence_under_random_ops/compacted_segment_survives_restart），正文只列了三条，且「没有覆盖同一批输入合并两次」经 grep 确认成立。跨章引用 def-10.5.1（背压等待回路）、def-10.7.1（超时三件事分离）、def-1.8.1 均存在；M5 里程碑在 17.1.2 表里定义且已注明「重放幂等未实现」。",
+      "evidence": "src/ipc.rs:130-132,150-199; src/segment.rs:106-116; src/engine.rs:331,566,680-724; src/bin/tide-mech.rs:233-256,263-271,290-302,374-378; tests/compaction.rs:36,47,94,143; results/run-02/{compaction.csv 重算 7696325.9381/9171895.5825/+1475569.6444/sd266254.240/ratio1.191724, statistics-compaction.json, gate-compaction.json(budget_B=1e7, verdict=accept), mech-verification.txt(bytes=401770 entries=4096 crc32=7241b72e), CORRECTION.md}; run.sh:104; gate_mech.py:7,42"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "finding",
+      "notes": "17.8 引用的三批归档几乎逐位命中，但有三处越界。命中的部分：run-01 四个 case 的 A/B 均值、配对差、样本 sd、95% 区间与我从 bench.csv（跳过 # 行，raw_batch 5,040 行、BATCH_MEAN 168 行，正文说的「5,040 行原始批次值」准确）独立重算完全一致——put_wide 63.143915/40539.6933/+40476.5494(sd 844.0277, CI 40105.641~40819.815)、get_hot 75.654363/33823.7640/+33748.1096(444.3410, 33561.875~33929.378)、get_absent 61.784555/24471.4718/+24409.6873(445.2692, 24219.816~24594.670)、scan_12 114.695008/32195.3049/+32080.6099(304.4593, 31950.893~32206.143)；ratio_B_over_A=642.0206 对得上「比值 642（40539.7 ÷ 63.144）」；gate.json 的 budget_B=1000.0、四条 verdict=reject、counts={accept:0,reject:4,insufficient-evidence:0}、bootstrap{seed:20289699,iterations:20000,percentile}、protocol{seed:20261028,rounds:21,batches_per_round:30,warmup_ms:500,flush_every:300} 全部与正文一致，「有放回」在 analyze.py:81（rng.randrange 重采样）得到证实；「每行 BATCH_MEAN 等于该（轮，臂）30 个原始批次的均值，最大偏离 6e-07」我复算得 max dev = 6.000e-07、每组正好 30 行、共 168 组；「84 个轮次里先跑 B 的 52 轮、先跑 A 的 32 轮」我按 (case,round) 去重计数得 52/32，且每个 case 都是 13/8（与位次表的 8/13 一列自洽）；掷硬币而非配额在 tide-bench.rs:420-424（order_rng.below(2)）；「区间宽度只有 700 ns 量级」= put_wide 的 40819.8−40105.6=714.2 ✓。run-02/run-03 那四行门禁表也与归档一致：codec_dyn 3.964831/4.036043/+0.071211/CI[−0.053934,+0.207500]/B=1.0/accept；compact_subproc 7,696,326/9,171,896/+1,475,570/CI[1,366,636,1,586,757]/B=10 ms/accept；ns_per_attempted 与 ns_per_accepted 两行与 run-03 的 statistics.json、两个 gate 文件一致。位次效应：我按「本臂这一轮先行还是后行」分组重算 run-03 ns_per_attempted 得 A 先行 814,056.6、A 后行 730,848.6、B 先行 80,885.4、B 后行 84,761.0（正文 814,057/730,849/80,885/84,761，11.4% 与 4.8% 都对），且 (814056.6×11+730848.6×10)/21=774,434 正好回到 A 均值、(80885.4×10+84761.0×11)/21=82,915 回到 B 均值；八行位次表与 results/order-effect-2026-10-30.txt 逐字一致，「21 轮平均 691,518 / 均衡分配 689,629 / 系统偏移 +1,889 / 半宽 44,523 / 占 4.2%」满足 691,518−689,629=1,889、1,888.9/44,523.1=4.2%。证据包盘点：run-01/02/03 目录清单与正文列的项一致，三份 environment.txt 只记机器与工具链（run-01 还有 ncpu:18、memsize:24 GiB、cachelinesize:128，与正文「24 GiB」相符）、results/ 下 grep 不到任何 sha256/源码指纹文件，「缺的是源码指纹」成立；run.sh 里 analyze.py+gate.py（主轮，run.sh:64,67）、analyze_mech.py+gate_mech.py（另两轮，run.sh:92-103）、verify_admit_csv.py（准入轮独立复算，run.sh:131）逐条命中；缺轮整对删与严格检查在 analyze.py:41-60（同轮缺一臂进 rounds_dropped、重复行直接 SystemExit，三批归档的 rounds_dropped 都是空、rounds_used=21）。17.1.2 第一条不变量已写「进程重启后仍在，不是掉电后仍在」，与本节崩溃点段互相自洽；wal.rs:109-110 的 sync_to 恒做 file.flush()、只在 durable 为真时 sync_data、durable 默认 false（engine.rs:91）、segment.rs:114 的 sync_all，代码事实成立。越界的三处见 findings。",
+      "evidence": "results/run-01/{bench.csv 重算：5040 raw/168 BATCH_MEAN/max dev 6.000e-07/52 B先 32 A先; statistics.json; gate.json(budget_B=1000, counts reject 4, 无 budget_note 字段); bench-verification.txt(get_hot 79802841a06e79bb, ops=900/2900/1900/4996); environment.txt}, results/run-02/{statistics-codec.json, gate-codec.json}, results/run-03/{statistics.json, gate-accepted.json, gate-attempted.json}, results/order-effect-2026-10-30.txt, analyze.py:41-60,81, gate.py:71-76, gate_mech.py:7,42, run.sh:64-142, src/bin/tide-bench.rs:85-130,270-335,336-373,420-424,551-566, src/wal.rs:109-110, src/segment.rs:106-116"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "verdict": "finding",
+      "notes": "这一节的可核对面分三类，三类我都查了。(1) 归档指针：三轮落盘文件清单逐个 ls 对过——run-01 的 bench.csv/bench-verification.txt/statistics.json/gate.json/environment.txt/codegen/ 都在（另有正文在 17.8.3 列的 test-summary.txt、run-log.txt）；run-02 的 codec.csv/compaction.csv/mech-verification.txt/两份 statistics-*.json/两份 gate-*.json/codegen/codec-codegen.txt 都在，且该文件第 6,13,17 行确实印着「bl(直接调用)/blr(间接调用)」计数，与「汇编层的 bl/blr 计数」相符；run-03 的 admit.csv（1,680 条原始批，列含 wall_ns、accepted、flush、bytes_flushed，与我重算一致）/admit-verification.txt/recompute.txt/statistics.json/两份 gate-*.json/environment.txt 都在。(2) 数字与代码：「0.762%、约 1/131」不在任何归档里（tests/bloom_contract.rs:39 只 println，断言仅 rate<0.05；results/ 全量 grep 无 1525/0.762/1989），我用 python 按 src/bloom.rs 的 FNV-1a+SplitMix64 finalizer、8 字节/键、16 字节桶、bucket_start=h%(slots/16)、指纹=(h>>56)&0xFF（0 改 0x7F）逐字复刻该测试（50,000 插入键 + 200,000 探测键，键串格式取自 tests/bloom_contract.rs:9 与 26-38），得 slots=400,000、桶溢出 0、fp=1525、rate=0.00762、1/131.1，与正文数字完全一致，所以这条不是造假，但它的出处只能靠重跑测试、不在证据包内；「全书没有一处声称写放大系数」grep 全书命中仅 ch17.md:218（讲「写放大与读放大互相牵扯」，无系数）与本节自述句，成立；「退休表长度做成一个可观测计数」= Tide::pending_reclaim()（src/engine.rs:398）+ 17.5 思考框（ch17.md:807「退休表长度是否收敛——它是一个可观测的计数」），且「没有采集它随时间的曲线」与归档相符（无此类文件）；「每臂预热不少于 500 ms」对应 run-01/run-02，注意 run-03 是 300 ms。(3) 外部文献：八份 rCore 页面的 URL 都在 sources/web.json 登记并带 sha256+review_scope+archive，本地归档 HTML 我逐句比过——chapter3/2task-switching 确有「恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器」「__switch」和「只有那些仍然有用且有被覆盖风险的资源才有被保存的价值」；chapter3/4time-sharing 确有 SBI set_timer、mtimecmp、const TICKS_PER_SEC: usize = 100；chapter4/3sv39 确有 satp 的 MODE/ASID/PPN 字段说明、「大页减轻 TLB 压力…提升整体的 IPC」；chapter6/2fs-implementation 确有 BlockCache 的 cache 是 512 字节数组 + modified 脏标记 + 全局管理器合并块操作、INODE_DIRECT_COUNT = 28、「通过直接索引可以找到 14KiB 的内容」、块与扇区两个概念、以及统一缓冲区的告诫；chapter7/2pipe 确有 PipeRingBuffer 写端弱引用与「所有写端都关闭后才回收」；chapter9/2device-driver-2 确有设备状态域把失败分成 FAILED（驱动无法正常驱动）与 DEVICE_NEEDS_RESET（需要重置）两级、以及 kick 通知。期刊/会议条目（LSM-Tree、WiscKey、Bloom、Cuckoo Filter、Michael HP、Fraser、Kang&Jung、Mytkowicz、Kalibera&Jones、Georges、arXiv:2401.11347、ACM DOI 10.1145/3656383）不在磁盘上，无法由我核对，我不给结论；台账的诚实性由 src/appendix/coverage.md:4133 佐证——那里明写第 17 章「结构选择认领 17.9 列出的外部文献…但没有登记为逐节母本映射」（同一行把数字来源写成只有 run-01，现已过期，属附录问题不在本次锚点内）。发现见 findings。",
+      "evidence": "sources/web.json（rcore-task-switch/time-sharing/sv39/easyfs/systems-rcore-io/pipe/signal/virtio 八条，均含 sha256+review_scope+archive）；.work/cpp-rust-sources/systems/2task-switching-rcore.html,4time-sharing-system-rcore.html,3sv39-implementation-1-rcore.html(TLB/IPC),2fs-implementation-rcore.html(INODE_DIRECT_COUNT=28、14KiB、BlockCache 512/modified),2pipe-rcore.html,2device-driver-2-rcore.html(FAILED/DEVICE_NEEDS_RESET)；projects/tidekv/results/run-02/codegen/codec-codegen.txt:6,13,17；src/bloom.rs:1-140 + tests/bloom_contract.rs:26-50 的 python 复刻（fp=1525, rate=0.00762, 1/131.1, slots=400000, 溢出 0）；src/engine.rs:398；src/part4/ch17.md:218,807；src/appendix/coverage.md:4133；projects/tidekv/README.md（无实测数字）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "verdict": "finding",
+      "notes": "逐项比对了索引表与八份实际清单：17.2 = E-a/b/b2/c/d/e（表中「E-a … E-e（含 E-b2）」正确）；17.3 = E-a..E-e ✓；17.4 = E-a..E-e ✓；17.5 = E-a..E-f ✓；17.6 = E-a..E-e ✓（ch17.md:975 起）；17.7 = E-a..E-e ✓（ch17.md:1116 起）；17.8 = E-a..E-f ✓（ch17.md:1372 起）；17.1 = E-a/b/c/d/f（ch17.md:231-243） —— 该节清单里没有 E-e，表中却写「E-a … E-f」，见 findings。四条跨节错误里可核对的三处：跨节错误二说的两笔债确有出处（17.3 清单 E-c（ch17.md:538 起）「返回切片却忘记借用会把旧段钉住。于是回收迟迟不能推进（对应 17.5）」与 17.5 思考框的退休表增长；17.7.2 的进程创建/失败路径三笔账）；跨节错误三列的三条未采集项，其中两条命中——17.6.2 原文「端到端每请求延迟…本轮没有采集」「按请求取消：引擎根本没有这条路径」✓，17.7.2 原文「子进程那 1.48 ms 里有多少是固定开销、多少随数据量变化，本轮没有采集」✓，但「17.4 的掉电语义」张冠李戴：全文 grep「掉电」只命中 ch17.md:151（17.1.2）、1317、1318（17.8.2）与本行 1498，17.4 节（584–721 行）一次都没出现；17.4 自己明写的未采集项是「记录更长时不能外推、类型集合增长后的代码体积没有采集、指令数口径没有采集」（ch17.md:666,670）；projects/tidekv/README.md:78 汇总的未采集清单里也没有把掉电归给 17.4。跨节错误四用「缺原始 CSV 或环境指纹」作条件句，与归档不冲突（run-01 两样都有，缺的是 17.8.3 说的源码指纹）。",
+      "evidence": "src/part4/ch17.md:229-237（17.1 清单 E-a..E-d+E-f，无 E-e）,538（17.3 清单）,584-721（17.4，grep 掉电 0 命中）,666,670（17.4 的三条未采集）,807（17.5 退休表）,975（17.6 清单）,1116（17.7 清单）,1372（17.8 清单）,1483-1500（索引表与四条跨节错误）,151,1317,1318（掉电唯一来源）；projects/tidekv/README.md:78"
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "17.6.2「两条没测的」写「本夹具只在批末 sync 一次」。夹具在批末的 drain() 是循环重试：tide.sync() 返回 AdmissionRejected 就 thread::yield_now() 再来一次，直到 Ok，而且这段重试被有意计进墙钟（源码注释明写「重试落在计时界内，浅队列因此付出的代价才被如实计入」）。正确说法是「批末只设一个排空点（sync 直到成功）」，而不是「sync 一次」；不影响「每请求端到端延迟未采集」这个结论，但对代码的描述不准。（projects/tidekv/README.md:63 有同样的「批末一次 sync」措辞。）",
+      "evidence": "projects/tidekv/src/bin/tide-admit.rs:90-101（drain 循环 + 计时界内注释），119-128（t0/elapsed 包住 put 连发与 drain）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "def 17.6.2 把「close() 时排在队列里的写命令被直接丢弃」描述为项目里唯一存在的放弃路径。被丢弃那一行确实存在（engine.rs:773），但它抓不到「已经排在队列里的写」：close() 是把 Cmd::Shutdown push_back 到队尾（engine.rs:420-431），写线程 take_batch 按 FIFO 取前缀、一次 ≤256 条（engine.rs:620-621），而 Shutdown 永远排在最后，所以它前面的写总会在它之前被取走并 apply_write（engine.rs:549-556,624-640），轮到 shutdown() 时队列已空；这一点对本实验的 CAP=64/4 和引擎默认的 admission_capacity=1024（engine.rs:89）都成立。真正会被丢的只有 push_back Shutdown 与 closed.store(true) 之间那条竞争窗口里插进来的写。另外还有一条正文未提的独立放弃路径：写线程遇 fatal 错误时直接 return，既不调用 shutdown() 也不排空队列（engine.rs:598-606），此时队列里剩下的写同样蒸发，等待中的控制命令靠 channel 断开拿到 Err(Shutdown)。",
+      "evidence": "projects/tidekv/src/engine.rs:420-431,549-556,598-606,620-621,757-778；默认 admission_capacity=1024 见 src/engine.rs:89（正文未声称默认值是 64）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "预算论证里「5 µs 不到它的 8%，也不到本轮实测每受理成本的 0.2%」中的第二个百分比算反了：5 µs ÷ 2,456.036 µs = 0.204%，5 µs ÷ 2,470.044 µs = 0.202%，都略高于 0.2%，不是「不到」。数字本身（2.456 ms / 2.470 ms）与归档一致，只是这句比较的方向写错；写成「约 0.2%」即可。",
+      "evidence": "results/run-03/statistics.json: arm_A_mean=2456036.163, arm_B_mean=2470043.522；同一措辞在 results/run-03/gate-accepted.json 的 budget_note 里也出现（\"0.2%\"），run.sh:140 写的是 \"8% of that floor\""
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "表格「拒绝率」配对差值写 +0.2806，按 admit.csv 逐批重算为 0.9663591−0.6858433=0.2805158，应为 +0.2805（正文的 0.2806 是把已四舍五入的 0.686/0.966 再相减得到的，与同节「1,680 条原始批全部重算」的口径不同源）。属于尾数级误差，不影响判定。",
+      "evidence": "results/run-03/admit.csv 重算：A 拒绝率 0.685843（840 批），B 0.966359（840 批）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "def 17.6.3 写「引擎自己只报前两格相关的数」，但随后给出的只有 Stats.put（提交尝试）与 Stats.admission_reject，二者只能拼出「受理」这一格；「完成」（写进日志并推进序列）在引擎计数器里没有任何对应指标——Counters/Stats 的字段是 put/get/get_hit/get_miss/bloom_*/flush/compact/admission_reject/reclaim/bloom_overflow/bytes_flushed/wal_rejected，没有 applied/written 计数；完成只能靠内部 applied 水位配合 await_seq 观察，而它不在 Stats 里。这句话把「受理有出处」顺带说成「受理与完成都有出处」，属于把推断写成观测。",
+      "evidence": "projects/tidekv/src/stats.rs:15-43（字段清单，无完成计数），src/engine.rs:275-283（add_put 在 submit 之前，计的是尝试），src/engine.rs:290-307（applied 水位只在 await_seq 内部）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "severity": "P1",
+      "description": "def 17.7.1 写「本项目的做法：一路用独立线程读，另一路在当前线程读，两者都结束后再 wait」。源码里不存在这种分工：ipc.rs 起了三个线程——stdin 写线程、stdout 读线程、stderr 读线程，两路输出都是在独立线程里 read_to_string 到 EOF，调用线程只是从两个 mpsc channel 上 recv 结果，然后 join，最后才 child.wait()。ipc.rs:130-132 的注释自己也写的是「三路管道（stdin/stdout/stderr）各自用独立线程排空」，与本节 17.7.2 里「三路管道的往返」这句互相打脸。正文把这个线程布局当作「本项目做法」的出处，指向的是代码里没有的实现形状；不变量本身（两路同时排空、wait 在读之后）成立，不影响任何数字，但按这句话去读代码会对不上。正确说法：两路输出各由独立线程排空到 EOF，父线程收齐两个线程的结果并 join 后才 wait。",
+      "evidence": "projects/tidekv/src/ipc.rs:152-159（stdin 线程）,161-168（stdout 线程）,170-177（stderr 线程）,179-186（recv×2 → join×2 → child.wait()）；对照注释 src/ipc.rs:130-132；全仓 grep thread::spawn/read_to_string 只有这一处子进程排空点"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "severity": "P2",
+      "description": "def 17.7.1 里「子进程可能在写满其中一路管道（本机管道容量见第 10 章）后阻塞」的指针落空：第 10 章没有给出任何管道容量数字。10.5.2 明确写「30ms 只是测试观察窗口，不是管道容量或调度保证」「完整输出量远大于本机实际可用管道缓冲」，10.9 延伸阅读还补了一句「三页的常量（环容量、tick 频率）是那个教学内核的设计取值，本章一个都没有搬进实验结论」。读者按这个括号去查容量，只会查到「本章不给容量」。应改成指向 10.5.2 的停滞重现测试，或把容量数字标成「本轮未采集」。",
+      "evidence": "src/part3/ch10.md:938-940,1738（无容量数值）；被引用处 src/part4/ch17.md（def 17.7.1，17.7 节第一段定义盒）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "severity": "P2",
+      "description": "例 17.7.1 里「tests/compaction.rs 覆盖了合并语义、随机操作的等价性、重启后新段仍在三条」把该文件的测试数说少了：tests/compaction.rs 有四个 #[test]，还有 compact_two_needs_two_segments（零段/一段时返回 None）。这条清单是用来支撑「哪条路径没被覆盖」的，列漏一条会让人误判覆盖范围。",
+      "evidence": "projects/tidekv/tests/compaction.rs:36,47,94,143"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P1",
+      "description": "17.8.2 的协议句写「21 轮 × 每轮 30 批 × 每批 900 次操作」。四个 case 里只有 put_wide 每批是 900 次操作。get_hot / get_absent / scan_12 的批在 900 个随机操作之前还各自整段重放 2,000 / 1,000 / 4,096 条 setup 写，这些写也在计时边界内、也在 ns/op 的分母里：每批实际是 2,900 / 1,900 / 4,996 次操作。归档里 bench.csv 的 ops 列逐行记着这四个值（每个 case 各 1,260 行），bench-verification.txt 也逐 case 印了 ops=900/2900/1900/4996。正文照抄的是 CSV 头部那行 ops_per_batch=900（它只是 --ops 参数，即随机段长度），头部与逐行 ops 列本身就不一致。为什么是问题：这条句子决定读者怎么理解 24.4–40.5 μs/op 的分母，也决定四个 case 能不能横比——把三个 case 的分母说成 900，等于把「每操作」说小了 2.1–5.6 倍。正确说法：每批重放该 case 的完整操作序列（900 / 2,900 / 1,900 / 4,996 次操作），单位分母是这个总数；并顺手修掉归档元数据里 ops_per_batch=900 与逐行 ops 列不同源的问题。",
+      "evidence": "projects/tidekv/results/run-01/bench.csv 的 ops 列（重算：put_wide=900、get_hot=2900、get_absent=1900、scan_12=4996，各 1260 行）与 results/run-01/bench-verification.txt 的 ops= 四行；代码 src/bin/tide-bench.rs:100-130（get_hot 先推 2,000 条 Put、get_absent 1,000 条、scan_12 4,096 条）与 336-373,540-566（每批=整份 ops，measure 用 nops=ops.len() 作分母）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P1",
+      "description": "17.8.2 的崩溃点段把「上表那 24.4–40.5 μs 里，段落盘那一次 fsync 是大头」当成既定事实写，但 run-01 归档里没有任何支持这一拆分的量：bench.csv 只有每批 ns/op 一个数值列，statistics.json/gate.json 只有差值与区间，夹具也不记录 flush/sync 的分段耗时（tide-bench.rs 从不读 Stats.flush 或 bytes_flushed，Counters 里也没有 WAL 字节数）。这是一句机理解释被写成观测；同段另一句「WAL 每操作那笔只到内核页缓存为止」有代码出处，恰成对照。同一个问题还波及紧跟其后的排序推断：四个 case 分母不同（900/2,900/1,900/4,996），批里掺的 setup 写不等量（0/2,000/1,000/4,096 条），按生成器标称概率算出的真实写占比约 80%/72%/53%/82%，而正文用来支撑机制的读写比是 case 标签上的 70-30/90-10/纯读/80-20；值长也各不同（300 B/120 B/120 B/80 B）。按真实写占比排序是 scan_12 > put_wide > get_hot > get_absent，按付费排序却是 put_wide > get_hot > scan_12 > get_absent——「写比例最高的 case 付得最多」在真实口径下不成立，横比这四个数还需要分母与值长一致才行。正确写法：把「是大头」改成「按布局推断可能是大头，本轮没有分段计时」，并补一句四 case 分母与值长不同、不宜横比。",
+      "evidence": "results/run-01/bench.csv 列集合（kind,case,round,arm_order,arm,value_ns_per_op,ops,warm_ns_per_op，无 flush/字节/分段耗时列）；src/bin/tide-bench.rs:336-373（只记 wall/nops）、270-335（BatchRun 每 300 操作 sync+flush，但不记录其耗时）；src/stats.rs:15-43；写占比与值长按 src/bin/tide-bench.rs:85-130 的生成器（value_at(300)/(120)/(120)/(80)）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P1",
+      "description": "位次效应段的读法句写「八条判定没因此翻向，靠的是两类轮数接近均衡：最坏一条的偏移只占半宽 28.5%，其余在 6.4% 以下」。后半句与紧挨着的那张表自相矛盾：八条的 |偏移|/半宽 是 0.285、0.116、0.064、0.049、0.042、0.036、0.015、0.001，第二大是 run-01 put_wide 的 0.116（11.6%），不是「6.4% 以下」。results/order-effect-2026-10-30.txt 里 put_wide 那一行明写 CI半宽 357.1、不均衡偏移 +41.4、|偏移|/半宽 0.116。正确说法：最坏 28.5%，次坏 11.6%，其余在 6.4% 及以下。",
+      "evidence": "projects/tidekv/results/order-effect-2026-10-30.txt（run-01 put_wide 行：类间间距 −347.8、偏移 +41.4、半宽 357.1、比值 0.116）；正文自己的位次表同一行也印着 0.116"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "def 17.8.3 盘点 run-02 时列了「environment.txt、codec.csv、compaction.csv、两份 statistics-*.json、两份 gate-*.json、mech-verification.txt、codegen/」，漏了同目录里的 CORRECTION.md——而 17.7.2 恰恰把这个文件当作「归档保持原样、更写在外面」的凭据。盘点句少列一份会影响复跑者对包内容的预期，建议补上（或注明它不是采集产物而是事后更正记录）。",
+      "evidence": "projects/tidekv/results/run-02/ 目录清单：CORRECTION.md 与 codec.csv/compaction.csv/environment.txt/gate-codec.json/gate-compaction.json/mech-verification.txt/statistics-codec.json/statistics-compaction.json/codegen 并存"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P1",
+      "description": "「本项目三组实测的落盘位置」末尾写「协议、种子与预算来源写在 gate-*.json 的 budget_note 里」。这句对 run-02/run-03 的四份 gate 成立（gate-codec.json、gate-compaction.json、gate-accepted.json、gate-attempted.json 都有 budget_note），但对 run-01 的主轮不成立：results/run-01/gate.json 里根本没有 budget_note 这个键（键集合是 budget_B/units/rule/diff_convention/bootstrap/protocol/counts/all_accept/cases），因为主轮走的是另一个脚本 gate.py，它压根不接受 --budget-note、也不写这个字段；run.sh:67 调用 gate.py 时也没有传。主轮的 1000 ns/op 预算来历只写在正文（17.4/17.8）与 README 的 BUDGET=1000 环境变量里。为什么是问题：这一句是给读者的「预算出处去哪查」指针，而主轮——也是本章唯一判成「拒绝」的那一轮——恰恰不在指的位置，按句去 grep 会一无所获。正确说法：「另两轮的 gate-*.json 带 budget_note；主轮的 gate.json 只有 budget_B，出处在正文」。",
+      "evidence": "projects/tidekv/results/run-01/gate.json（无 budget_note 键）；gate.py:71-76（写出的字段集合里没有 budget_note，脚本无 --budget-note 选项）；run.sh:67（gate.py 调用不带 note）；对照 run.sh:100-103,139-143 与四份 gate-*.json 均有 budget_note"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P2",
+      "description": "同一句开头写「两轮各自的复跑命令在 projects/tidekv/run.sh」。上面刚列完三轮（主轮、机制对照轮、准入对照轮），run.sh 也确实串起三轮（analyze.py+gate.py / analyze_mech.py+gate_mech.py / verify_admit_csv.py），README.md:78 也按 run-01/run-02/run-03 三轮写。这里的「两轮」是残留计数错误，应为「三轮」。",
+      "evidence": "projects/tidekv/run.sh:57-67（主轮）、92-103（机制轮）、131-143（准入轮）；projects/tidekv/README.md:24-51,78"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P2",
+      "description": "「内核侧机制（17.8.2 的崩溃点语义）」一条写「本书实际读过并据以写作的页面是四份」。限定词用错了层级：本节 17.9 自己就在下面「文件系统与索引结构」「有界、取消与原子发布」两条里另引了 4 份 rCore 页面（chapter6/1fs-interface、chapter7/2pipe、chapter7/4signal、chapter9/2device-driver-2）并称「对照 17.2/17.6/17.7」；台账 sources/web.json 里状态为 read-mapped 的 rCore 页面共 27 条。若这句想说「支撑 17.8.2 崩溃点段的是这四份」，就该把主语从「本书」收到「本条」。内容层面的具体描述（四份页面的寄存器集、TICKS_PER_SEC=100、satp 字段与大页/IPC、easy-fs 的 BlockCache 512 字节与 modified）我对着本地归档 HTML 逐句验过，都成立。",
+      "evidence": "sources/web.json（27 条 status=read-mapped 的 rcore-* 条目）；src/part4/ch17.md 17.9 后两条 bullet 另引 4 份页面；.work/cpp-rust-sources/systems/ 下对应 HTML"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P2",
+      "description": "ext4 延迟分配那条写「本项目把段落盘固定在每 300 次操作一次，正是为了把这个时机变成可控的批边界」。这是主轮夹具的做法，不是项目的落盘策略：tide-bench 的 B 臂把 cfg.memtable_flush_bytes 设成 usize::MAX 关掉自动落盘，再由 --flush-every（默认 300）手动 sync+flush；引擎自身的策略是按字节触发（memtable 攒够 memtable_flush_bytes 就刷，默认 64 KiB），而 17.6 的准入轮用的又是第三种口径（memtable_flush_bytes=262144、按字节触发，每批 18.49 次 flush）。正文 17.8.2 的措辞是对的（「B 侧每 300 次操作触发一次段落盘」），17.9 这句把它泛化成了项目属性。",
+      "evidence": "projects/tidekv/src/bin/tide-bench.rs:270-290（memtable_flush_bytes=usize::MAX、flush_every 参数）、310-320（每 flush_every 个操作 sync+flush）、408（--flush-every 默认 300）；src/engine.rs:587-593（写线程按 m.bytes() >= cfg.memtable_flush_bytes 触发）、88（默认 64*1024）；results/run-03/admit.csv 注释 flush_bytes=262144"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "severity": "P1",
+      "description": "跨节错误三写「每节都留了明写的未采集项——17.4 的掉电语义、17.6.2 的每请求端到端延迟与按请求取消、17.7.2 的『固定开销对随数据量增长的部分』」。第一条张冠李戴：17.4 全节（ch17.md:584-721）没有出现「掉电」二字，也没有任何崩溃语义；17.4 自己明写的未采集项是「记录更长时本轮数字不能外推」「类型集合增长后的代码体积没有采集」「指令数口径没有采集」。「掉电语义没有采集」出自 17.8.2（ch17.md:1317），17.1.2 只是引用它；README.md:78 汇总的四条未采集项里也没有把它记在 17.4 名下。这一句正好是用来支撑「机制章的结论搬进项目要重做实验」这条错误的例子清单，条数与归属错了会让读者去 17.4 找一条不存在的边界。正确写法：把「17.4 的掉电语义」换成「17.4 的指令数口径与类型集合增长后的代码体积」，掉电那条另归 17.8.2。",
+      "evidence": "src/part4/ch17.md:584-721（17.4 全节，grep「掉电」0 命中）,666,670（17.4 自己的三条不覆盖/未采集）,1317（掉电语义在 17.8.2）,1498（被审句）；projects/tidekv/README.md:78（未采集项汇总）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "severity": "P2",
+      "description": "索引表把 17.1 那行写成「E-a … E-f」，但 17.1 的清单只有 E-a、E-b、E-c、E-d、E-f 五条，根本没有 E-e。同一张表在 17.2 那行专门标了「（含 E-b2）」，说明这张表是按条目集合在用而不是按区间概写，因此 17.1 少一条字母应当显式写明（例如「E-a … E-d、E-f」）。其余七行与各自清单逐条对齐：17.3 E-a..E-e ✓、17.4 E-a..E-e ✓、17.5 E-a..E-f ✓、17.6 E-a..E-e ✓、17.7 E-a..E-e ✓、17.8 E-a..E-f ✓。",
+      "evidence": "src/part4/ch17.md:231-243（17.1 清单五条：E-a/E-b/E-c/E-d/E-f，无 E-e）；ch17.md:1483-1492（索引表，17.1 行在 1485）；17.2 清单含 E-b2 见 ch17.md:407-419"
+    }
+  ]
+}

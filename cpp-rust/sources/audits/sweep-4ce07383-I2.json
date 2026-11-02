@@ -1,0 +1,330 @@
+{
+  "reviewer": "sweep4ce-I2",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立复算：用 /usr/bin/python3 把 src/part2/ch05.md / ch06.md / ch07.md / ch08.md 的全部表格行与含 4 位以上有效数字/千分位/百分比/ns/cycles/倍率/字节/对齐的句子一次性抽取（2116 行候选，其中约 150 条为「看起来是实测」的数字或产物断言），再逐条回到归档复算。计时类：bench/compiler-lab/results/stable-01|stable-02/{dispatch_grain,dispatch_visibility,vectorize,ctfe_table,sample-run}.csv 与 bench/results/local/{atomic-1,atomic-4,handoff,async-poll,future-allocation,future-allocation-drift}.txt，口径按正文自述的 N-1 样本标准差与 21 点 nearest-rank（ceil(n·q/100)）。静态量：bench/compiler-lab/results/extra-02/{one,many,thin,pgo}-size.txt、layout.csv、*-run.txt；bench/results/local/future-layout.txt/.mir/.s；bench/results/{apple-m5,x86_64-linux,aarch64-android}/atomics.s；bench/results/profile/{sample,async-sample}.txt。产物/代码：stable-02/codegen/compiler_lab-55987aab45b3e67f.{s,ll}、results/local/future-allocation.s、probes/code_size.rs、tests/contracts.rs、src/lib.rs、src/park.rs、src/slot.rs、两个 Cargo.toml、environment.txt。归档里与 stable-02 并存的 stable-02-recalculated.json（官方复算件）与我从 CSV 重算的 mean/sd/p50/p99 逐位一致，正文用的正是 stable-02 这一组，未见使用更正前数字；未发现 CORRECTION 类文件。共提出 4 条 finding（2×P1、2×P2），本轮未发现复算不出的实测数字（0×P0）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.5.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "单态体积表与所有派生差值可复算：__text 217148/220156/214768/220028 直接来自 size -m 归档；3008、5388、128、1.4% 全部对得上；checksum 与 instances 来自对应 *-run.txt。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/one-size.txt: Section __text: 217148",
+        "bench/compiler-lab/results/extra-02/many-size.txt: 220156；220156-217148=3008；3008/217148=1.385%（正文『约 one 的 1.4%』）",
+        "bench/compiler-lab/results/extra-02/thin-size.txt: 214768；220156-214768=5388",
+        "bench/compiler-lab/results/extra-02/pgo-size.txt: 220028；220156-220028=128",
+        "one-run.txt 'instances=1 checksum=92855992320' / many|thin|pgo-*-run.txt 'instances=16 checksum=95338125850705920'（例 5.2.1 ③『同 many』成立）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "尺寸表五行与本机探针 CSV 完全一致；偏移 24（step 槽）与 32（batch 槽）都能在保存的 .s 里逐字找到，正文也明确它们只是产物观察值。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/layout.csv: Affine 16/8、&u64 8/8、&dyn Operation 16/8、Box<dyn Operation> 16/8、&[u64] 16/8",
+        "stable-02/codegen/...e67f.s dynamic_items 序言：'ldr x23, [x1, #24]'（循环外）→ 'blr x23'（LBB14_2 循环内），与 5.3.3 摘录一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "产物对照表四行逐条数过：dynamic_items 循环内 1 条 blr x23；dynamic_batch 入口恰 4 条指令并以 br x4 间接尾跳转（支持 E-e『四条指令的短入口』）；visible_dynamic 体内 blr=0、#24=0；generic_batch 在整个 .s 里符号数为 0（支持『被内联进调用方，没有独立泛型符号』）。",
+      "evidence": [
+        "stable-02 asm：blr 全文 3 处，dynamic_items 体内 1（循环内）、visible_dynamic 体内 0；dynamic_batch 体='ldr x4,[x1,#32]'+'mov x1,x2'+'mov x2,x3'+'br x4'",
+        "grep 'generic_batch' stable-02/codegen/*.s → 0 次"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "正式表 5 列 × 3 case 全部由 CSV 复算命中（n=21/格，mean/sd(N-1)/p50/p99 nearest-rank）；派生量 4.1 倍、0.001906、0.489284、p99=最大批值均可同时得到；dyn_item 均值低于自身 p50 的解释与归档极值（min 0.464836）一致。",
+      "evidence": [
+        "stable-02/dispatch_grain.csv 复算：generic mean=0.158334 sd=0.008248 p50=0.156409 p99=0.194214；dyn_item 0.647618/0.088345/0.694790/0.709374；dyn_batch 0.156428/0.004677/0.155254/0.176579",
+        "0.647618/0.156428=4.1401（『约 4.1 倍』）；0.158334-0.156428=0.001906；0.647618-0.158334=0.489284",
+        "ceil(21×0.99)=21 → p99 即最大值，与复算 p99==max 相符（5.5.6、def-5.8.1）",
+        "compiler-lab/src/lib.rs:19 'while start.elapsed() < Duration.from_millis(500)' → 预热 500ms 有据"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两行均值/标准差/分位数逐位复现，0.002170 与 0.002170×16384≈36ns 的算式成立；正文把该差值判为『方向不可判定』而非百分比结论，未借统计量越界。",
+      "evidence": [
+        "stable-02/dispatch_visibility.csv 复算：known_dyn 0.156133/0.004065/0.154657/0.167349；opaque_dyn 0.158303/0.004387/0.156222/0.171070",
+        "0.158303-0.156133=0.002170；0.002170×16384=35.55ns；0.002170/0.156133=1.39%（『约 1.4%』）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "协议与采样交叉证据可核：六个 bin 入口（本章占 2）、5 个正式 case 各 21 批、构建六项设置与 Cargo.toml/environment 一致；macos-sample.txt 里确有 dynamic_items 与 <Affine as Kernel>::step（mangled）两条折叠计数；两轮桌面差值 0.032610（4.8%）与『第二轮波动更大』均复算成立。",
+      "evidence": [
+        "bench/compiler-lab/src/bin/ 共 6 个入口；5 个 case 全部 n=21",
+        "stable-02/Cargo.toml 对应 5.8.5：opt-level=3、codegen-units=1、lto=false、debug=1、panic=\"unwind\"、RUSTFLAGS 未设",
+        "stable-02/macos-sample.txt『Sort by top of stack』：dynamic_items 268、_RNvXs_...AffineNtB4_6Kernel4step 152",
+        "stable-01/dispatch_grain.csv dyn_item mean=0.680228 vs stable-02 0.647618 → 差 0.032610（=第一轮 4.79%）；sd 0.042221 → 0.088345",
+        "src/part2/ch05.md:2121『八份清单共 48 条（E-a … E-f × 5.1–5.8）』→ 正文 E- 条目实测计数 48"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "属性观察值可复算：output 形参 noalias、input 形参 readonly、向量 load/store 对齐一律 8；E0502 编译拒绝有归档；正文反复强调 align 8 不等于 16/128 承诺，未把类型最小对齐当缓存行。",
+      "evidence": [
+        "stable-02/codegen/*.ll：noalias 336 次、readonly 68 次、'load <2 x i64>, ptr %1, align 8' 等 4 处摘录逐字符命中",
+        "bench/compiler-lab/results/extra-02/alias_conflict.txt: 'error[E0502]: cannot borrow `data` as mutable because it is also borrowed as immutable'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "向量化片段与元素数自洽：add_slices 体内恰 4 条 add.2d、2 组 ldp q/2 组 stp、'subs x11, x11, #8'，即一次主体迭代 8 个 u64；add_with_calls 体内 add.2d=0；尾部覆盖 0..129 与 should_panic 回归在测试源码里。",
+      "evidence": [
+        "stable-02 asm add_slices 体：add.2d ×4（v0/v1/v2/v3），'subs x11, x11, #8'；add_with_calls 体 add.2d=0",
+        "4×(2×i64)=8 元素/迭代；16384/8=2048 整除（6.3.6『16384 恰好能被八整除』）",
+        "compiler-lab/tests/contracts.rs: 'for len in 0..130'（=0..129）、'for len in [0,1,3,7,16,129,16384]'、u64::MAX 初始化、'#[should_panic(expected = \"assertion\")]' 各 1"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "完整数据通路表 5 列 × 2 case 复现，2.08 倍与 0.376540 差值由同一批数同时得到；计时集合（fill→加法→borrowed_sum，断言在时间戳后）与入口源码一致；128KiB 静态可算；两轮同方向回退有据。",
+      "evidence": [
+        "stable-02/vectorize.csv 复算：zip 0.347104/0.016887/0.346487/0.378854；calls 0.723644/0.059594/0.718884/0.833090；差 0.376540，比值 2.0847",
+        "stable-01/vectorize.csv：zip 0.311992、calls 0.630335（6.4.8 引的第一轮值精确，且同方向）",
+        "compiler-lab/src/bin/vectorize.rs run(): output.fill(0) → f(...) → borrowed_sum(...)，与计量表逐行对应",
+        "16384×8=131072 字节 =128 KiB"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "CTFE/Miri 分界处所有可核事实成立：E0080 是编译期失败且有诊断归档；表 256 字节、值域 0..8；nightly 损坏原样归档（正文因此不写 Miri 通过）。",
+      "evidence": [
+        "extra-02/const_bounds.txt: 'error[E0080]: index out of bounds: the length is 2 but the index is 3'（--emit=metadata，未产出可执行文件）",
+        "extra-01/nightly.txt 与 extra-02/nightly.txt: 'error: missing manifest in toolchain nightly-aarch64-apple-darwin'",
+        "extra-02/layout.csv: [u8;256] = 256/1"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "11.5 倍能由声称的那 42 个数（2×21）同时得到；布局表与探针/CSV 一致；『慢侧真的在构造』有 IR+目标码双侧证据；训练轮数 32 与探针源码相同。",
+      "evidence": [
+        "stable-02/ctfe_table.csv 复算：static_table 0.169413/0.001526/0.169365/0.172596；rebuild_table 1.953818/0.017490/1.949261/1.997598；比值 11.533",
+        "stable-02 asm runtime_table 体：4 个 LBB + 'b LBB15_1'/'b.eq' 回跳 + 'strb w12, [x9, x10]' 表写入（构造循环保留）；*.ll 有 'sret([256 x i8])' 1 处",
+        "compiler-lab/probes/code_size.rs: 'for _ in 0..32'（6.8.2『共重复 32 轮』）+ 16 个 transform 实例"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节明确只给功能与静态尺寸：__text 三行与 extra-02 归档一致，128/5388 差值复现，且 extra-02 里确实没有任何计时 CSV（『正式速度样本=否』为真，不是空话）。",
+      "evidence": [
+        "thin-size.txt/pgo-size.txt: 214768 / 220028；例 6.7.1 的 5388、128、5388/220156=2.45%",
+        "bench/compiler-lab/results/extra-02/ 下无 *.csv 计时文件（仅 layout.csv 为尺寸探针）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "PGO 四步的文件级证据链齐全，正文点名的每个文件都存在；版本串与缺 profile 警告原样保留；尺寸差 128 字节复现，且本节不写任何速度百分比。",
+      "evidence": [
+        "存在：pgo-generate.txt、pgo-training-run.txt、pgo-data/default_4638409862445482177_0.profraw、pgo-data/merged.profdata、pgo-merge.txt、pgo-use.txt、pgo-use-run.txt、pgo-size.txt、profdata-version.txt",
+        "profdata-version.txt: 'LLVM version 23.1.1-rust-1.99.0-stable'（正文逐字引用）",
+        "pgo-use.txt: 'no profile data available for function ...lang_start... 1 warning emitted'（6.8.5『原样保留 lang_start』）",
+        "pgo-training-run.txt 与 pgo-use-run.txt 均 'instances=16 checksum=95338125850705920'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "布局类静态量全部复现：载荷 64 字节、AtomicU64 8/8、Padded 128/128、缓存行 128；类型表的 Send/Sync 断言与 slot.rs 的 unsafe impl<T: Send> Sync 一致。",
+      "evidence": [
+        "bench/results/local/atomic-1.txt 第 2 行: 'AtomicU64 size=8 align=8 padded_size=128 padded_align=128'",
+        "bench/results/local/handoff.txt 第 1 行: 'payload_size=64 payload_align=8'；[u64;8]=64 字节、[u64;4]=32 字节",
+        "bench/src/slot.rs:17 'unsafe impl<T: Send> Sync for Slot<T> {}'；environment.txt: 'hw.cachelinesize: 128'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "对照表 9 行 × 2 列逐条到三个 .s 归档数过，全部命中；LL/SC 与 LSE 的分岔也有第三个 target 支撑（android 用 ldxr/stxr、ldaxr/stlxr，本机用 ldadd/ldaddal）。",
+      "evidence": [
+        "apple-m5/atomics.s：ldr / ldapr / ldar / str / stlr / stlr / ldadd / ldadd / ldaddal",
+        "x86_64-linux/atomics.s：load_relaxed|acquire|seqcst 皆 'movq (%rdi), %rax'；store 两条 movq、seqcst 'xchgq'；'lock addq'（relaxed 与 seqcst）、'lock xaddq'（返回旧值）",
+        "aarch64-android/atomics.s：ldaxr/stlxr 各 1、ldxr 存在、ldadd 0（正文『LL/SC 如 ldaxr/stlxr 对』有据）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两张表 5 模式 × 4 统计量全部由原始 txt 复现；0.028、85 倍、0.5% 以内、14.3 倍等派生量成立；环境表逐项对齐 environment.txt；单变量对照的取舍（Shared↔Batched 不算对照）写得很克制。",
+      "evidence": [
+        "atomic-1.txt 复算：1.703/0.117/1.669/1.959、1.692/0.109/1.670/1.950、1.691/0.109/1.667/1.943、1.697/0.103/1.669/1.889、0.275/0.018/0.274/0.312（n=21/行）",
+        "atomic-4.txt 复算：5.980/0.069/5.968/6.118、5.952/0.069/5.948/6.111、5.253/1.408/5.854/6.077、0.418/0.002/0.417/0.424、0.070/0.002/0.070/0.075",
+        "5.980-5.952=0.028；5.980/0.070=85.4；1.703-1.697=0.006=0.35%；5.980/0.418=14.3；单线程 sd 0.117 vs 四线程 Adjacent sd 1.408（约 20 倍，『大一个量级』）",
+        "environment.txt：Apple M5 Pro、hw.ncpu 18、hw.memsize 25769803776、hw.cachelinesize 128、rustc 1.99.0 / LLVM 23.1.1、RUSTFLAGS= 空、无亲和性/温控"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "交接表 2 × 4 复现，27 倍/1/27 由同一批数得到；接口不等价的限定语充分；2000 条 String 传递与状态表在源码里可指。",
+      "evidence": [
+        "handoff.txt 复算：slot 112.239/4.588/110.408/127.900，sync_channel 3070.823/313.740/3103.542/3608.550（n=21）；3070.823/112.239=27.36",
+        "handoff.txt 头 'iterations=5000 samples=21'（7.6.2 命令 -- 5000 21）",
+        "bench/src/slot.rs:122,135 'for i in 0..2000' 且载荷 format!(\"message-{i}\") 为 String（非 Copy）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "3281/847 两条折叠计数逐字命中归档；但把 826 说成『落在等待路径』的观察数，与 sample.txt 的口径不符（826 是主线程总观察数，等待路径的折叠叶子数是 847 且跨线程）。",
+      "evidence": [
+        "bench/results/profile/sample.txt『Sort by top of stack, same collapsed』：...atomic_contention3runs0_00uEB1d_ 3281、__psynch_cvwait 847",
+        "同文件 '826 Thread_950126   DispatchQueue_1: com.apple.main-thread' 为主线程总数；其下 run()→Barrier::wait 分支为 213+213+212+158+14+13(+3)",
+        "src/part2/ch07.md:1451『报告中主线程有 826 次观察落在等待路径』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "MIR 摘录与实际产物一致，变体编号 Unresumed(0)/Returned(1)/Panicked(2)/Suspend0(3) 与『Suspend0 两个字段』逐字符命中；构造路径搬运参数、业务体不执行也对得上；版本绑定 rustc 1.99.0。",
+      "evidence": [
+        "bench/results/local/future-layout.mir: 'field _s0: Guard;' 'field _s1: std::future::Pending<()>;' 'Unresumed(0): [], Returned (1): [], Panicked (2): [], Suspend0 (3): [_s0, _s1]'；'_0 = {coroutine...} { count: move _1 }'",
+        "bench/results/local/environment.txt: 'rustc 1.99.0 (b940084d7 2026-09-28)'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "帧尺寸表三行均为归档实测且 align 缺测时留空写明；4096+1 与 1+1 的算术自洽；『缩帧≠缩总内存』的边界写进了解释列。",
+      "evidence": [
+        "bench/results/local/future-layout.txt: 'across_await size=4097 align=1' / 'before_await size=2 align=1'",
+        "bench/results/local/future-allocation.txt 头: 'future_size=257'（正文第三行只填 size、align 明确留空）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "注册竞态与丢通知的说明与实现一致：谓词检查与 Waker 注册同锁（park.rs 注释与代码），Wake 由 Arc<Mutex<Shared>> 承载，正文据此拒绝『零堆分配』断言。",
+      "evidence": [
+        "bench/src/park.rs: 'let mut state = self.0.lock()...; if state.ready {...} else { state.waker = Some(cx.waker().clone()); Poll::Pending }'",
+        "bench/src/park.rs YieldOnce::poll：置位 + wake_by_ref + Pending，支持 8.4 自测第 1 题『恰一次 Pending』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "50 次重复与四条断言的方向都能落到源码，但表里点名的第四个测试名在仓库中不存在（真名 another_thread_can_complete_future），且『两种先后』在归档里只是同一段代码的调度结果、没有分次序的计数。",
+      "evidence": [
+        "bench/src/park.rs:82 pre_park_notification_is_not_lost、:87 notification_survives_a_consumed_park_token、:105 nested_call_is_rejected_and_guard_recovers、:131 another_thread_can_complete_future（'for _ in 0..50'）",
+        "bench/results/local/tests.txt 10 条 test ok，其中无 cross_thread_completion；全仓 grep 'cross_thread_completion' 仅命中 src/part2/ch08.md:1074,1085",
+        "src/part2/ch08.md:1074 表格行 'cross_thread_completion | 另一线程设置ready | 注册与就绪的两种先后均不丢通知'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "三行 × 4 统计量复现，case 编号到模式名的映射经源码确认（0=sync、1=async-ready、2=self-wake）；14 倍与 7.407−0.867 由同一批数得到；采样折叠计数 401/339/59/28 逐字命中，且叶子表里确实没有 park 侧计数，支撑『driver 通常没真正进内核』。",
+      "evidence": [
+        "bench/results/local/async-poll.txt 复算：0→0.519/0.074/0.487/0.635，1→0.867/0.108/0.870/1.125，2→7.407/0.603/7.386/8.326（n=21）；7.407/0.519=14.27；7.407-0.867=6.540",
+        "bench/src/bin/async_poll.rs main(): match mode {0=>sync_sum, 1=>block_on(async_sum(..,false)), _=>block_on(async_sum(..,true))}",
+        "bench/results/profile/async-sample.txt『Sort by top of stack』：block_on 闭包 401、_dyld_start 339、Parker::unpark 59、sync_sum 28、mach_msg2_trap 9（无 Parker::park 叶子）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "最终表两行、11.6 差、257 字节与 'w0=257,w1=1' 的分配参数、ldrb/strb/mov 四行 ABI 摘录全部复现；唯一对不上的是 8.7.4/例 8.7.1 把漂移日志描述为『持续单边下降』。",
+      "evidence": [
+        "future-allocation.txt 复算：stack 8.241/0.306/8.183/8.953，box 19.817/0.465/19.682/20.969（n=21）；19.817-8.241=11.576≈11.6",
+        "future-allocation.s：'mov w0, #257' + 'mov w1, #1' + 'bl __rust_alloc'；'ldrb w8, [x0]'、'ldrb w8, [x0, #1]'、'strb w9, [x0]'、'mov x0, x8' 均存在",
+        "future-allocation-drift.txt 序列（按 sample 序）：stack 13.35,13.31,13.21,17.56,17.55,15.23,12.88,12.94,13.45,12.12,12.05,10.99,11.09,10.30,10.17,9.43,9.16,8.70,8.71,8.46,7.89（5 次回升）；box 37.60,40.22,38.18,38.95,39.61,33.37,…,18.71（4 次回升，最大值 40.22 在样本 1）",
+        "bench/src/bin/future_allocation.rs 'while warmup.elapsed() < Duration::from_millis(500)'（8.7.5 预热 500ms 有据）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "析构探针的 0 与 1 两个计数是归档实测值，正文也只把它当状态机证据、不作性能数据；跨进程/取消部分未出现任何未采维度被填数的情况。",
+      "evidence": [
+        "bench/results/local/future-layout.txt: 'drop before first poll: 0 guards; drop after Pending: 1 guard'",
+        "bench/results/local/publication.txt 亦为归档原文（属 ch07 7.7.2 反例，见对应节）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "跨章清点：ch05 声明『八份清单共 48 条』与正文 E- 条目实测 48 相符；ch07 声明『共 51 条』与实测 51 相符；ch06（56 条）、ch08（50 条）未在正文声明总数，故不构成矛盾。",
+      "evidence": [
+        "src/part2/ch05.md:2121 → 48；src/part2/ch07.md:1823 → 51；逐节正则计数：ch05=48、ch06=56、ch07=51、ch08=50"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "四章正文点名的复现入口与证据路径全部存在（含 5.9 的 dispatch_grain/dispatch_visibility 源码与 CSV、6.9 的 const_bounds.txt 与 pgo-data、7.9 的 slot.rs/atomic_contention.rs/probes/atomics.rs/results、8.9 与 8.11 的 bench/Cargo.toml 与 async-poll.txt）；未出现指向空处的路径。",
+      "evidence": [
+        "存在性逐一验证：bench/compiler-lab/src/bin/dispatch_grain.rs、dispatch_visibility.rs、results/stable-02/codegen/、results/extra-02/one-size.txt|many-nm.txt、bench/probes/atomics.rs、bench/src/slot.rs、bench/src/bin/atomic_contention.rs、bench/results/local/atomic-4.txt、bench/results/local/async-poll.txt、bench/src/park.rs",
+        "7.9『本章全部数字与指令观察来自 bench/』与 4 个计时 txt + 3 个 atomics.s 的分布相符"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P1",
+      "description": "8.7.4 与例 8.7.1 把 bench/results/local/future-allocation-drift.txt 描述成『持续单边下降』，并用它支撑『单边下降说明预热不足，不是随机噪声』这一归因；按样本序复算，两条序列都不是单边：stack 有 5 次回升，其中 13.21→17.56 一次涨 4.35 ns，box 有 4 次回升且全表最大值 40.2225 落在样本 1（高于被当作起点的 37.6038）。正文引用的四个端点数本身能复算（stack 首样本 13.3525、最小 7.8854；box 首样本 37.6038、最小 18.7108），错的是形态与由形态得出的『不是随机噪声』结论。",
+      "evidence": "future-allocation-drift.txt stack 序列 13.35,13.31,13.21,17.56,17.55,15.23,12.88,12.94,13.45,12.12,12.05,10.99,11.09,10.30,10.17,9.43,9.16,8.70,8.71,8.46,7.89（回升 5 次）；box 37.60,40.22,38.18,38.95,39.61,33.37,31.86,32.23,29.56,29.00,26.29,26.07,24.80,24.37,23.86,22.78,21.98,21.28,20.43,20.42,18.71（回升 4 次）；正文 src/part2/ch08.md:1435-1436、1446、1450"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "severity": "P1",
+      "description": "8.5.7 测试矩阵把第四个测试命名为 `cross_thread_completion`，并在 8.5.8 以该标识断言『重复 50 次都过』，但该名字在整个仓库（含归档 tests.txt）不存在；bench/src/park.rs 里真实标识是 `another_thread_can_complete_future`（:131）。同一张表其余三行都是真名的可识别前缀/子串（pre_park_notification_is_not_lost、notification_survives_a_consumed_park_token、nested_call_is_rejected_and_guard_recovers），唯此行按名索引必然落空。50 次本身有据（该测试体内 for _ in 0..50），tests.txt 记录其 ok。",
+      "evidence": "src/part2/ch08.md:1074『| cross_thread_completion | 另一线程设置ready | 注册与就绪的两种先后均不丢通知 |』、:1085『`cross_thread_completion` 重复 50 次都过』；grep -r cross_thread_completion 仅命中这两行；bench/results/local/tests.txt 'test park::tests::another_thread_can_complete_future ... ok'"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "7.7.4 称『报告中主线程有 826 次观察落在等待路径』。sample.txt 里 826 是主线程的总观察数（'826 Thread_950126 DispatchQueue_1: com.apple.main-thread'），不是等待路径的折叠计数；等待路径在工具自己的折叠表里是 __psynch_cvwait 847（跨主线程与 worker），正文在 7.7.3 又恰好引用了这个 847，两个口径被并成了一句。",
+      "evidence": "bench/results/profile/sample.txt 主线程块合计 826；'Sort by top of stack, same collapsed' 段 __psynch_cvwait = 847；src/part2/ch07.md:1451"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "severity": "P2",
+      "description": "同表第四行的断言栏『注册与就绪的两种先后均不丢通知』超出归档口径：another_thread_can_complete_future 只有一条代码路径（生产者先持锁置 ready 再 take waker 后 wake），两种先后只是 50 次循环里线程调度的自然结果，源码与 tests.txt 都没有按先后分组的用例或计数，因此『两种均』无法从归档分别复算。",
+      "evidence": "bench/src/park.rs:131-147（单一交错形态、for _ in 0..50）；bench/results/local/tests.txt 仅一条 ok 记录，无分组；src/part2/ch08.md:1074"
+    }
+  ]
+}

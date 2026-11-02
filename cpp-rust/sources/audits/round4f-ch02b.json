@@ -1,0 +1,77 @@
+{
+  "reviewer": "r4f-ch02b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动读完 src/part1/ch02.md 的 2.7–2.11 全部正文与每个语义盒（定义 2.7.1/2.7.2/2.8.1–2.8.3、例 2.7.1/2.7.2/2.8.1–2.8.3、思考 2.7.1/2.8.1、判定流程、八份常见错误清单、四题即时自测、2.9 来源、2.10 索引、2.11 章末件），再回磁盘逐条对核：从 results/native-01/allocation.csv 与 locality.csv 的原始行重算均值/N−1 标准差/nearest-rank 分位数并独立复现配对 bootstrap 区间，逐行比对 src/bin/allocation.rs、src/lib.rs 的 run 夹具与 region_capacity_failure_is_transactional 测试、examples/storage_plan.rs、results/validation-01 的 storage-plan.txt 与 test.txt、layout.txt、environment.txt、run.sh、analyze.py，核对 src/appendix/coverage.md 的 rCore 台账行与章末五页件，另跑 tools/list_uncollected_claims.py --only 2。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节逐条核过，无 P0/P1。测量数字不是我抄正文，是从正文点名的归档算出来的：allocation.csv 有 42 行 raw（每 case 21 批），我用 /usr/bin/python3 直接对 ns_per_unit 列复算得 fresh_vec mean=8.248312813857142、sd(N−1)=0.173203503、批p50=8.246734619、批p99=8.638381958；byte_region mean=2.8138543991904763、sd=0.027682164、p50=2.817779541、p99=2.855300903——2.7.3 表格四列与我算出的浮点值逐位相同，所以 8.25 与 2.81 不是编造。配对均值我自己算得 −5.434458414666667，bootstrap 我按归档算法（seed=13013、10000 次重采样、分位数取 sorted[ceil(n·p)−1]）独立复现得 [−5.514596121428571, −5.358680361714286]，与正文区间逐位命中。工具链提示但不算正文错：analyze.py:23 用了 zip(..., strict=True)，本机 /usr/bin/python3 是 3.9，直接重放会 TypeError，我是在 /tmp 里换掉这一处调用才跑通的，数值不受影响（作者若要脚本可移植建议去掉 strict）。静态量全对：expected 4096×7=28672、每批 16×4096=65536，例 2.7.1 的 540561/184409/356153 ns 我复算为 540561.429/184408.762/356152.667，且 5.434458415×65536=356152.667 与「配对均值换算」这句话自洽；自测第 3 题 4096×32=131072、131072÷64=2048 成立。代码断言成立：src/bin/allocation.rs:1-36 与正文代码块业务路径逐行一致（含两臂同为 (COUNT*7) as u64、reset 在工作核开头、run(&mut cases, 16, COUNT)）；2.7.6 那段断言序列与 src/lib.rs:195 的测试体完全相同，且 results/validation-01/test.txt:9 记录该测试 ok，所以「两种失败都不动游标、reset 不清内容」是跑过的确定性事实，不是我信正文。单位与口径断言成立：src/lib.rs:15 的夹具按 iterations×units 归一化、500 ms 预热在计时外、批后逐值断言返回值，environment.txt 写明 warmup=500ms/case rounds=21 order=rotating 与 allocation 的 ns/64-byte allocation+fill+read，所以正文坚持「ns/逻辑块操作，不是纯分配延迟」有夹具支撑；分位数定义也不是悬空的——2.7.3 引 [@def-1.5.2]，该定义在 ch01 明确写出 nearest-rank ceil(21×p)，与 analyze.py 的 quantile() 一致，故不构成「没交代定义就用 p50/p99」。未采集声明可信：多连接常驻内存/峰值、请求块数分布在归档里没有对应产物（list_uncollected_claims 只看 ch02 时，2.7–2.11 的每一条都落在「没有匹配到同类产物」）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/allocation.csv 复算：42 raw 行，fresh_vec n=21 mean=8.248312813857142 sd=0.1732035025061376 p50=8.246734619 p99=8.638381958；byte_region mean=2.8138543991904763 sd=0.0276821638971387 p50=2.817779541 p99=2.855300903",
+        "独立复现 bootstrap（同归档算法：seed=13013, resamples=10000, quantile=sorted[ceil(n·p)−1]）：paired mean=−5.434458414666667, CI95=[−5.514596121428571, −5.358680361714286]，与 src/part1/ch02.md:1339 一致",
+        "src/part1/ch02.md:1315 与 1332-1337 vs bench/foundations-lab/src/bin/allocation.rs:1-36；4096×7=28672，16×4096=65536，5.434458415×65536=356152.667",
+        "src/part1/ch02.md:1373-1381 的断言序列 == bench/foundations-lab/src/lib.rs:195 region_capacity_failure_is_transactional 测试体；bench/foundations-lab/results/validation-01/test.txt:9 记录 ok",
+        "bench/foundations-lab/src/lib.rs:15（夹具 run：500 ms 计时外预热、elapsed/(iterations*units) 归一、批后断言）+ results/native-01/environment.txt warmup=500ms/case rounds=21 order=rotating",
+        "src/part1/ch01.md 定义 1.5.2（nearest-rank 分位数定义）与 bench/foundations-lab/analyze.py:8 quantile() 实现一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节是算术与设计清单，我把每个静态量自己算了一遍，全部对得上，无 P0/P1。例 2.8.1：base=0x1004、used=3 得候选 0x1007；相对取整到偏移 8 → 0x100c=4108，4108%8=4 即未对齐，正文写「0x100c÷8=513.5，余 4」为真；绝对取整 → 0x1008=4104，4104%8=0 对齐，padding=0x1008−0x1007=1、padding+size=9 与我算的一致，第五项的范围检查也确实没被正文当成已通过。例 2.8.2 的输入不是虚构的：results/native-01/layout.txt 有 Record,64,8，故 size 必须上取整到 128、纯填充 64 字节成立；65536×64=4194304、65536×128=8388608（正好翻倍）、热列 65536×8=524288 不受影响、密度 8÷64=12.5% 降到 8÷128=6.25% 我都复算过；「本机 sysctl 报告 128 字节」在 results/native-01/environment.txt:15 有 hw.cachelinesize: 128，且是 run.sh:18 那条 sysctl 采的，引用不是空的。2.8.8 的可对核部分：examples/storage_plan.rs:1-26 与正文代码块逐行一致（只少了首行 /// 注释），断言 value_offset=8、size=16、align=8、array::<u64>(usize::MAX) 报 Err、array::<()>(100) 的 size 0/align 1 全部命中 results/validation-01/storage-plan.txt 的真实 stdout；「COrder 的 value 偏移同样是 8」由 layout.txt 的 C offsets,0,8,16 独立印证；正文把这份输出限定为布局规划而非内存占用，与程序不构造裸指针、不分配对象的事实相符。2.8.2 八项要素逐条数得 8 项，即时自测第 1 题把它们分成算数（二三四五）与状态（一六七八），与该清单的编号顺序自相一致，没有前后打架。诚实边界也核了：packed 性能实验、伪共享测量、头部+载荷共置的加速数字在本章正文与归档里都不存在，正文正是这么写的（list_uncollected_claims 对 1510/1607 两条均报「没有匹配到同类产物」）。我只未核一件事：2.9.1 点名的 rCore 机制句我这边没有离线副本，逐字回查留给母本层，见 2.9 的说明；这不构成对 2.8 的减分。",
+      "evidence": [
+        "手算：0x1004+8=0x100c(4108)，4108%8=4 未对齐；0x1007 上取整=0x1008(4104)，4104%8=0；padding=1，padding+size=9",
+        "bench/foundations-lab/results/native-01/layout.txt:Record,64,8 与 C offsets,0,8,16；results/native-01/environment.txt:15 hw.cachelinesize: 128（采自 run.sh:18）",
+        "复算：65536×64=4194304、65536×128=8388608、65536×8=524288、8/64=0.125、8/128=0.0625",
+        "bench/foundations-lab/examples/storage_plan.rs:1-26 与 src/part1/ch02.md:1559-1586 代码块一致；results/validation-01/storage-plan.txt 实际 stdout：value_offset=8 size=16 align=8 / overflow=rejected zst_size=0 zst_align=1",
+        "src/part1/ch02.md:1470 八项要素计数=8；src/part1/ch02.md:1655 自测第 1 题的算数/状态划分与之相符",
+        "tools/list_uncollected_claims.py --only 2：ch02.md:1510、1607、1613 三条「未采集」声明均无同类产物匹配（packed 实验、伪共享、请求分布确实不在盘上）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 2.9 三小节并逐条落地引用登记。链接可达性：正文指向的 ../appendix/coverage.md 在磁盘上是 src/appendix/coverage.md（存在，4142 行台账），doc.rust-lang.org 的四个入口（reference/type-layout.html、std/option 的 Representation 段、std::num::NonZero、std::alloc::Layout、std::ptr）URL 形态完整且与 2.1/2.2/2.8.8 的用法对应，没有把某个数字或结论挂在不存在的文档上。母本登记这块我特意查了：2.9.1 说两份 rCore 页「在线，指纹见来源台账」，我在 coverage.md 里找到对应三行——rcore-global-alloc → chapter4/1rust-dynamic-allocation.html（指纹 14a89106…d86d6）、rcore-frame-alloc → chapter4/4sv39-implementation-2.html（7d5b5cb2…41b8）、rcore-sv39 → chapter4/3sv39-implementation-1.html（654584dd…9652），三行都写着 sections.json 指定部分已核读，所以「引用无法落地却被当作已核实」这条 P0 判据不成立。2.9.2 关于「AoS/热列对比、ByteRegion、cacheline 128 来自本章实验而非母本」的说法与磁盘相符：这些产物只在 bench/foundations-lab 下，128 来自 environment.txt 的 sysctl，ByteRegion 在 src/lib.rs:107-123 是本章自己的实现（vec![0; capacity] 全量初始化、checked_add+get_mut 的事务性推进、reset 只归零 used），我据此也确认 2.8.3 「所有字节都由 vec![0; capacity] 合法初始化」不是空话。2.9.3 的未覆盖清单我按归档扫了一遍：results/native-01 里没有任何 PMU/perf 计数产物，只有 sample-locality.txt 与 sample-borrow.txt（run.sh 用 /usr/bin/sample 单独跑、CSV 记为 *-excluded），正好对应「没测真实 cache miss/TLB miss、macOS sample 只能核对工作发生」这句限定。诚实的限制：本机没有 rCore 与 Reference 的离线副本，所以「全局分配器被 Mutex 包着」与「satp 的 MODE/ASID/PPN」这两句机制转述我没能逐字回查原文，只核到台账登记与指纹存在；不过正文在这两处明确写着只借机制、不借数字，且 2.6.6/2.3.3 确实没有从这两页引出任何数字，因此我不把它记成 finding，只在此声明未核到的部分。",
+      "evidence": [
+        "src/appendix/coverage.md 台账行：|rcore-global-alloc|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/1rust-dynamic-allocation.html|sections.json指定部分已核读；14a891067242c416309e42762e662ed0d2ce300dd61d07cb1328b596632d86d6|，另有 rcore-frame-alloc(4sv39-implementation-2) 与 rcore-sv39(3sv39-implementation-1) 两行",
+        "链接目标存在：src/appendix/coverage.md（2.9 正文写 ../appendix/coverage.md）",
+        "bench/foundations-lab/src/lib.rs:107（ByteRegion::new 用 vec![0; capacity]）、115（checked_add）、121（reset 只置 used=0）",
+        "bench/foundations-lab/results/native-01/ 目录清点：无 PMU/perf 产物，仅 sample-locality.txt、sample-borrow.txt 与 profile-*.csv-excluded（run.sh 的 sample 段）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.10 是一张索引，我按它的量化断言逐个数过：正文说「八份清单共 48 条」，我用脚本按 ::: errata 常见错误清单（2.x 节） 切块并数 E- 条目，2.1 至 2.8 每份恰好 6 条（E-a…E-f），8×6=48，与索引表里每行写的 E-a … E-f 一致，索引表也确实是 8 行对应 2.1–2.8，没有把未写清单的节算进去。我另核了两条容易被写虚的全称句：「第二类证据（事件计数）本章一次都没采集」——results/native-01 里只有 /usr/bin/sample 的墙钟采样与 CSV 批均值，没有 perf/PMU 计数文件，且 run.sh 把 sample 跑在测量进程之外、CSV 存成 profile-*.csv-excluded，所以这句话站得住；「布局尺寸、cacheline 128、两个 benchmark 的均值属于最末一层本机观测」——128 在 environment.txt:15，两个均值我从 CSV 原始行复算命中，正文没有把它们写成语言保证，2.1.3 的层级引用也在每条索引行首查里给出。四条章外错误分别指向 [@def-2.1.3]、[@def-2.3.2]、[@think-2.7.1]、[@def-2.6.2]/[@def-2.8.3]，这些锚点在本章都存在，且第 3、4 条与 2.7.3/2.7.4 的「收益与空间成本并列」、2.8.2 的八项清单未打勾行相互印证，没有索引到正文里根本没讲过的东西。表格里 [2.7] 与 [2.8] 两行的「共同把什么搞错了」我对照各自 errata 的 E-b（换掉研究对象当算法收益；把布局证明与来源证明合成一份）复述一致。这一节里没有需要复算的数字，故无算错风险点。",
+      "evidence": [
+        "脚本计数：ch02.md 的 8 份 errata 清单各 6 条（2.1–2.8），合计 48 条，与 src/part1/ch02.md:1706「八份清单共 48 条」相符",
+        "bench/foundations-lab/run.sh 的 sample 段：profiler 跑在测量进程之外，CSV 写为 results/native-01/profile-locality.csv-excluded 与 profile-borrow.csv-excluded，归档无 PMU/事件计数文件",
+        "bench/foundations-lab/results/native-01/environment.txt:15 hw.cachelinesize: 128；allocation.csv/locality.csv 复算均值命中正文数字",
+        "src/part1/ch02.md:1710-1717 索引表 8 行与正文锚点 {#sec-cpp-rust.1.2.1}…{#sec-cpp-rust.1.2.8} 一一对应，所引 [@def-2.1.3]/[@def-2.3.2]/[@think-2.7.1]/[@def-2.6.2]/[@def-2.8.3] 均可解析（我对 2.7 之后的每个 [@id] 做了全仓 id 集合校验，未解析项：无）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末件是本章最容易写虚的一节，我按「磁盘上到底有没有、数字对不对」逐项核。规模断言：两个入口各有两种 case、每 case 21 个原始批次——allocation.csv 与 locality.csv 都是 43 行（表头 + 42 raw 行 = 21×2）；共同夹具每 case 至少 500 ms 预热——src/lib.rs:15 的循环 while start.elapsed() < Duration::from_millis(500) 且断言返回值，environment.txt 写 warmup=500ms/case rounds=21 order=rotating，与「最后一条运行所有六个入口」对应 run.sh:40 的 dce paired locality allocation borrow initialization 六个 bin。「0.519 对 0.059」我从 locality.csv 复算：aos mean=0.5191432067142857、soa mean=0.05938087761904762，四舍五入正是 0.519/0.059；速查表把 0.519 读成「4.35 ms 摊到 838 万个元素上的批均值」也自洽——src/bin/locality.rs 的调用是 run(&mut cases, 128, N)，N=65536，128×65536=8388608，0.5191432067×8388608=4.3549 ms。速查表另两个静态量：Vec 描述符 24 字节命中 layout.txt 的 Vec<u64>,24,8，元素区 524288=65536×8；「take 失败游标不动」命中 lib.rs:115 的 checked_add 与 get_mut 双条件提交；「reset 只把 used 归零」命中 lib.rs:121。五条小结的限定语我逐条对回了原始证据，没有过度声称：热列投影（两表示计时前同时存在、转换不计入）与 2.5 的口径一致；「还缺绝对地址、来源与析构三份证明」是 2.8.2 清单未打勾项的重述，不是新事实。出口检查：四条命令的构件都在（foundations-lab 的 Cargo.toml、examples/layout.rs、run.sh、tests），三个源码文件我也逐行读过。章末五页件齐备且与正文的数字相符——ch02_recall.md 写明 24 张卡、四组为定义/结论/第一行/机制参照；ch02_exercises.md 为 A 组 1–7、B 组 8–15、C 组 16–20 共 20 题；ch02_exam.md 写 100 分、70 分及格；summary/checklist 文件存在。限制（我这一节没核到的部分）：我没有重新执行 cargo test 与 cargo clippy——那会往仓库的 target/ 里写东西，与派单「只写一个报告文件」冲突，所以「五页件已经就位」是文件级与数字级核对，不含重新执行；归档里已存在的 validation-01/test.txt 与 clippy.txt 可作为作者侧的等价证据。",
+      "evidence": [
+        "复算：wc -l bench/foundations-lab/results/native-01/{allocation,locality}.csv = 43（表头+42 raw=21×2）；locality aos mean=0.5191432067142857、soa mean=0.05938087761904762",
+        "bench/foundations-lab/src/bin/locality.rs: run(&mut cases, 128, N) → 128×65536=8388608；0.5191432067×8388608=4.3549 ms，对应 src/part1/ch02.md:1747",
+        "bench/foundations-lab/src/lib.rs:15（500 ms 计时外预热+逐次返回值断言）、115（checked_add/get_mut 才提交）、121（reset 只归零 used）；src/lib.rs:6 ROUNDS=21；results/native-01/environment.txt:15 cachelinesize 128 与 warmup/rounds 行",
+        "bench/foundations-lab/run.sh:40 for bin in dce paired locality allocation borrow initialization（六个入口）；results/native-01/layout.txt: Vec<u64>,24,8 与 Record,64,8",
+        "章末件：src/part1/ch02_recall.md 声明 24 张卡并列出四组（定义卡/结论卡/第一行卡/机制参照卡）；src/part1/ch02_exercises.md A 组 1–7、B 组 8–15、C 组 16–20；src/part1/ch02_exam.md 100 分与 70 分及格；ch02_summary.md、ch02_checklist.md 存在",
+        "2.7 之后每个 [@id] 引用对全仓 {#id} 集合校验，未解析引用为 0；未采集声明 26 条中 2.7–2.11 各条均无同类产物反例（tools/list_uncollected_claims.py --only 2）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

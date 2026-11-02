@@ -1,0 +1,92 @@
+{
+  "reviewer": "r5-ch03a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整读了 src/part1/ch03.md 第 64–1352 行（3.1–3.6 全部正文与每个 def/ex/think/method/errata/即时自测盒），并用 /usr/bin/python3 从 bench/foundations-lab/results/native-01/ 的 borrow.csv、initialization.csv、statistics.json、layout.txt、sample-borrow.txt、codegen/*.ll|s|mir 与 bench/foundations-lab/src/lib.rs、src/bin/*.rs、tests/contracts_more.rs 逐条复算与逐行回查，另把 3.2.4 的两句 S10 引文用 pdftotext 从 /Users/juanwang/E-Book/Rust/Rust 参考手册.pdf 第 344 页原文抽出逐字比对。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了本节全部静态量与代码断言：`N = 65536` ⇒ 输入元素区 524288 字节（65536×8，我在 python 里算过，与正文一致）；描述符尺寸 `Vec<u64>` 24、`&[u64]` 16、`ByteRegion` 32 与归档 layout 探针逐字一致，且 ByteRegion 由 `storage: Vec<u8>` + `used: usize` 组成，24+8=32 与我对齐；例 3.1.1 的 524288÷24≈21845 我复算为 21845.3，正文写作「约两万分之一」成立。表 3.1.2 的四行成本归属与 src/lib.rs 里 borrowed/cloned 的实现一致（cloned 先 `input.to_vec()` 再求和，故有独立元素区）。判定流程与即时自测没有引入新数字，只复用了已核对的 0.159020461/0.058851898，这两个数在 3.5 条目里单独复算。未发现正文与代码事实相反之处。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:5 (pub const N: usize = 65_536)",
+        "复算: 65536*8=524288; 524288/24=21845.3",
+        "bench/foundations-lab/results/native-01/layout.txt:&[u64],16,8 / Vec<u64>,24,8 / ByteRegion,32,8",
+        "bench/foundations-lab/src/lib.rs:101-104 (struct ByteRegion { storage: Vec<u8>, used: usize })",
+        "bench/foundations-lab/src/lib.rs:127-135 (borrowed/cloned 主体)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了三类证据。①代码：正文贴的 `copy_add` 与 bench/foundations-lab/src/lib.rs:166-171 逐字一致（含 assert_eq! 与 iter_mut().zip()）；例 3.2.1 的 `[10,20,0,0]`+split_at_mut(2) 断言 `[10,20,11,21]` 就是 src/lib.rs:240-245 的 disjoint_borrow_updates_only_destination，我自己按「读源、加 1、写目标」推了一遍，0→11、0→21 成立。②IR：归档 .ll 里 copy_add 签名确为 `ptr noalias nofree noundef nonnull writeonly align 8` 与 `ptr noalias nofree noundef nonnull readonly align 8`，函数体内有 12 条 `load <2 x i64>` / `add <2 x i64> … splat (i64 1)` 之类的批量访存，支持「随后出现向量加载、向量加与向量存储」。③引文：3.2.4 两句 S10 原文我在 PDF 第 344 页逐字命中（「&mut T 和 &T 遵循 LLVM 的作用域无别名(noalias)模型(scoped noalias model)，除非 &T 内部包含 UnsafeCell<U> 类型」与警告段「下面的列表并非详尽无遗地罗列了…目前 Rust 还没有正式的语义模型」），页码没有偏移；compiler-web-aliasing 我核了登记与磁盘副本：.work/cpp-rust-sources/compiler/aliasing.html 实测 SHA-256 = cbbfc595…463e0，与 sources/web.json 登记值逐位相同，正文「重新抓取，SHA-256 与登记值逐位一致」的说法与台账自洽。例外的保留声明（没有跑 Miri、不发布 Miri 结论）与 grep 结果一致：本轮 native-01 目录内无 Miri 运行记录。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:166-171, 240-245",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll:693 (copy_add 参数属性) + 函数体 12 条 <2 x i64> load/add",
+        "pdftotext -f 344 -l 344 /Users/juanwang/E-Book/Rust/Rust 参考手册.pdf：两句引文逐字命中（page 343/345 均无该句，页码定位准确）",
+        "shasum -a 256 .work/cpp-rust-sources/compiler/aliasing.html = cbbfc595f863dd608be9e095b3a6efb70c2f54e9b413f1494b5a9e75667463e0 == sources/web.json 登记值"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了本节唯一可算的实例：例 3.3.1 的 `try_build(5, make)`（下标 3 返 Err、4 未调用）四数——容量 5、退出时长度 3、被丢弃 3、返回 Err 时无 Vec。我按 src/lib.rs:156-162 的控制流走了一遍：`Vec::with_capacity(n)` 后 len=0，0/1/2 三次 push 使 len=3，`make(3)?` 早退时局部 out 仍在作用域内、离开时 drop 前缀 3 个，下标 4 从未写入也从未被读；结论与正文完全一致。`with_capacity` 只买存储不构造 T、`vec![0u64; n]` 只对 u64 合法、`&u64`/`NonZeroU64` 构造不出来，这三条是类型层面的合法值判断，与 3.6 里 init_zero 只用 u64 的实现互相印证。即时自测第 3 题引用「下标 4 panic 实测计数为 4」，该数在 3.4 条目里单独核。未采集成分与「不能用 UB 当性能候选」属声明性表述，没有可对核的数字。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:156-162 (try_build 主体：with_capacity → push(make(i)?) → Ok(out))",
+        "推演: n=5 时 with_capacity=5、Err 前 push 次数=3、可 drop 前缀=3、返回值为 Err 无 Vec",
+        "bench/foundations-lab/src/lib.rs:147-155 (init_zero 用 vec![0u64; n]，T 固定为 u64)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节所有可观察量都在仓库里落地核过。①计数：Err 路径 `count.get()==3` 与 panic 路径 `count.get()==4` 逐条命中 src/lib.rs:223 与 236，且注入点分别是 i==3 返 Err、i==4 触发 assert!，与正文例 3.4.2 的解释（前缀 3 / 前缀 4）一致，n 都是 8。②销毁顺序：`[2, 1]`（局部变量逆声明序）与 `[3, 4]`（字段声明序）两条断言在 tests/contracts_more.rs:70 与 83，正文的规则表述与测试实际断言同向，没有把两条规则互换。③成功路径与部分移动：contracts_more.rs:17/19/21 为 0→0→5，:30/32 为 1→2，:40-44 是 mem::take 后原容器 is_empty 且计数 0→1，与 3.4.8 三段贴码逐行对得上；正文引用的测试名 dynamic_borrow_conflict_is_safe_failure 确实存在于 src/lib.rs:248。④MIR：正文那段 bb6 drop(_3)→bb7、bb7 drop(_2)→bb8、bb8 resume 我在归档 .mir 的 try_build 体内逐字命中，并且同一函数头部确认 `debug out => _3`、`debug make => _2`，正文「_3 是 out、_2 是工厂闭包」不是猜的。⑤validation-01 目录存在（results/validation-01），与「补充测试日志单独放 validation-01、未改 native-01 内核源码」的登记不冲突。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:223 (assert_eq!(count.get(), 3)) / :236 (count.get(), 4)",
+        "bench/foundations-lab/tests/contracts_more.rs:17,19,21,30,32,40-44,70,83",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:try_build 内 bb6/bb7/bb8 cleanup 与 drop(_3)/drop(_2)/resume 逐字一致；同函数 scope 1 `debug out => _3`、头部 `debug make => _2`",
+        "bench/foundations-lab/src/lib.rs:156-162, 240-252"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数字全部自己复算，没有抄正文：用 /usr/bin/python3 直接读 results/native-01/borrow.csv 的 21 个 raw 批（断言 round==0..20、checksum 唯一），按 nearest-rank（ceil(n·p)−1）与 statistics.stdev（N−1）复算得 borrowed mean=0.058851898 / sd=0.000404976 / p50=0.058824778 / p99=0.059892774，cloned mean=0.159020461 / sd=0.002093374 / p50=0.158538461 / p99=0.166441023，与表格八个数逐位相同；配对（按 CSV 出现顺序 cloned−borrowed，保留轮内配对）均值=0.100168563，seed 13013、10000 次重采样的 95% 区间=[0.099374896, 0.101163745]，与正文一致，也和归档 statistics.json 一致。倍数复算 0.159020461/0.058851898=2.702045，正文写 ≈2.70 成立；单位换算复算 0.100168563×65536=6564.65 ns（正文 ≈6564.6 ns、约 6.6 微秒）、×256=1680549.6 ns（正文 1.68×10⁶ ns ≈1.68 毫秒）成立；21 个样本的 p99 = ceil(21×0.99)=21 ⇒ 就是批次最大值，正文与[@def-1.5.2] 的分位数口径交代清楚，没有把批 p99 当请求 p99 用。代码侧：正文贴的 src/bin/borrow.rs 与仓库文件逐行一致（run(&mut cases, 256, N)、夹具逐次校验 expected），borrowed/cloned 主体与 lib.rs:127-135 一致（仅 black_box 的限定写法不同）。采样与 IR 断言核过：sample-borrow.txt 第 33-34 行 borrowed→sum_soa、36-58 行 cloned 及其求和与 _xzm_* 分配/释放路径；归档 .s 第 800、844、1043、1296 行确实都是 `bl __RNvCs…sum_soa`，且 lib.rs:62 与 :87 的 sum_iter/sum_soa 函数体逐字相同，支持「符号名张冠李戴」这一解释；.ll:528 有 llvm.memcpy、cloned 路径有分配调用。唯一问题见 findings（即时自测第 3 题的数量级表述）。",
+      "evidence": [
+        "复算 results/native-01/borrow.csv: n=21；borrowed 0.058851898/0.000404976/0.058824778/0.059892774；cloned 0.159020461/0.002093374/0.158538461/0.166441023",
+        "复算配对与 bootstrap: mean=0.100168563, boot95=[0.099374896, 0.101163745]（seed 13013, 10000 次，与 bench/foundations-lab/analyze.py:paired_interval 同法）",
+        "复算比值/换算: 2.702045；6564.65 ns；1680549.6 ns",
+        "bench/foundations-lab/src/lib.rs:62 与 :87（sum_iter/sum_soa 体逐字相同）、:127-135；results/native-01/codegen/*.s:800,844,1043,1296；.ll:528 memcpy；sample-borrow.txt:33-58",
+        "bench/foundations-lab/results/native-01/statistics.json（独立复算与归档一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "同样自己复算不抄正文：读 results/native-01/initialization.csv 的 21 个 raw 批，复算 push mean=1.153849851 / sd=0.019135814 / p50=1.152266979 / p99=1.194040060，zero_fill mean=0.201331729 / sd=0.005930436 / p50=0.201612711 / p99=0.218312025，八个数与表格逐位相同；按 CSV 顺序配对（zero_fill−push）均值=−0.952518123，bootstrap95=[−0.959926571, −0.945401044]，与正文一致且整体在零的同一侧，支持「本轮不支持 push 必然更快」的方向判定。倍数与换算复算：1.153849851/0.201331729=5.731088（正文 ≈5.73、preview 的「约 1/5.7」=0.17449 成立）；0.952518123×65536=62424.23 ns（正文 ≈62,424 ns、62.4 微秒），×64=3995150.6 ns（正文 ≈4.0×10⁶ ns、约 4.0 毫秒）成立。代码与产物：正文贴的 init_push/init_zero 与 lib.rs:138-155 逐字一致，src/bin/initialization.rs 与仓库文件一致（run(&mut cases, 64, N)、n 经 black_box）。归档 .s 的 init_push 区域确有 grow_one 调用与比较指令，支持「容量比较与 grow_one 路径没有全部消除」；.ll 中 alloc_zeroed 出现 10 次、.s 中 stp 出现 51 次，与该节的机制解释方向一致。但要如实登记我的核查边界：alloc_zeroed 与 stp 我只核到「确实存在于本轮归档文件」，没有把它们定位到 init_zero 单个函数体的行号（我按标签切函数时因制表符缩进导致计数失真，未复核），因此「zero_fill 中保留 alloc_zeroed 调用、覆盖循环可见成对 stp 展开写入」这两句我只核到文件级、没核到函数级；本节其余没有采集成分占比的自认边界与归档相符（native-01 目录无逐项计时文件）。",
+      "evidence": [
+        "复算 results/native-01/initialization.csv: n=21；push 1.153849851/0.019135814/1.152266979/1.194040060；zero_fill 0.201331729/0.005930436/0.201612711/0.218312025",
+        "复算配对与 bootstrap: mean=−0.952518123, boot95=[−0.959926571, −0.945401044]",
+        "复算比值/换算: 5.731088；0.201331729/1.153849851=0.17449；62424.23 ns；3995150.6 ns",
+        "bench/foundations-lab/src/lib.rs:138-155；src/bin/initialization.rs（run(&mut cases, 64, N)）",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.s（init_push 区域含 grow_one/cmp；全文件 stp 51 次）、.ll（alloc_zeroed 10 次）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "severity": "P2",
+      "description": "即时自测 3.5 第 3 题（src/part1/ch03.md:1124）说「有人报告 0.00002 ns/元素……本节 borrowed 是 0.058851898，量级差四个数量级通常意味着工作被删」。我按这两个数复算比值：0.058851898 ÷ 0.00002 = 2942.5949，即 2.94×10³，对数跨度约 3.47 个数量级，属「差三个数量级有余、接近四个」，写成「量级差四个数量级」把倍数夸大约 3.4 倍（四倍数量级应为 ≥4000×，而 0.058851898/4000≈0.0000147 才是该说法的分界值）。数字本身与归档一致，不构成数字矛盾，只是这道辨析题给出的判据阈值口径偏松，容易让读者把「四个数量级」当成硬门槛而放过实际该拦的 2900× 回退。建议改成「差三个数量级（约 2900 倍）」或「差到千倍量级以上」。",
+      "evidence": "复算 0.058851898/0.00002=2942.5949（borrowed 均值本身经 results/native-01/borrow.csv 21 批复算确认为 0.058851898）；正文位置 src/part1/ch03.md:1124"
+    }
+  ]
+}

@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+import re
 import html
 from collections import Counter
 from pathlib import Path
@@ -17,9 +20,18 @@ Row = dict[str, Any]
 DECIDED = {"read-mapped", "excluded-reviewed"}
 
 
+# 正文全书统一用直角引号；台账里少量母本题名带弯引号，渲染时只换引号字符，
+# 不改一个字的内容（2026-11-01 排版统一，见写作规范本轮量尺重校准记录）。
+QUOTE_MAP = str.maketrans({
+    "“": "「", "”": "」",
+    "‘": "『", "’": "』",
+})
+
+
 def cell(value: Any) -> str:
     """Escape source titles for Markdown tables without interpreting embedded HTML."""
-    return html.escape(str(value), quote=False).replace("|", "\\|").replace("\n", " ")
+    return (html.escape(str(value), quote=False).replace("|", "\\|").replace("\n", " ")
+            .translate(QUOTE_MAP))
 
 
 def validate_records(
@@ -43,6 +55,183 @@ def validate_records(
         safe_evidence(record["evidence"])
         by_id[key] = record
     return by_id
+
+
+def archive_problems(web: list[Row]) -> list[str]:
+    """声明的本地归档必须真的存在，且与登记的指纹一致。
+
+    台账曾出现「写了 archive 路径、文件却早已被清理」的情况：审计看起来有本地副本，
+    实际一个字节都拿不出来。缺文件或有未解释的指纹漂移都算问题，必须在台账里写清。
+    """
+    problems: list[str] = []
+    for row in web:
+        archive = row.get("archive")
+        if not archive:
+            continue
+        path = ROOT / archive
+        if not path.is_file():
+            problems.append(f'{row["id"]}: 声明的归档不存在 {archive}')
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest != row.get("sha256") and not row.get("archive_note"):
+            problems.append(
+                f'{row["id"]}: 归档指纹与台账不一致且无 archive_note 说明 {archive}'
+            )
+    return problems
+
+
+# 过期裁决：章写出来之后仍声称「某章尚不存在/待落点」的子句（写作规范/20「映射登记的回链类型」）。
+STALE_PHRASES = ("尚不存在", "未制造 target", "待 ch14", "尚未存在", "等待相应正文落点")
+
+
+def _claimed_pages(pages: Any) -> set[int]:
+    """解析 pages 字段声明的物理页集合（只取括号注记之前的范围部分）。"""
+    head = str(pages or "").split("（")[0].split("(")[0]
+    found: set[int] = set()
+    for m in re.finditer(r"(\d+)\s*[–\-—~]\s*(\d+)", head):
+        found.update(range(int(m.group(1)), int(m.group(2)) + 1))
+    for m in re.finditer(r"\d+", re.sub(r"\d+\s*[–\-—~]\s*\d+", "", head)):
+        found.add(int(m.group(0)))
+    return found
+
+
+def _note_pages(pages: Any) -> set[int]:
+    """解析括号注记里点名的页码（含 N–M 区间），用于核对 excluded 页是否写明。"""
+    text = str(pages or "")
+    note = text.split("（", 1)[1] if "（" in text else ""
+    found: set[int] = set()
+    for m in re.finditer(r"(\d+)\s*[–\-—~]\s*(\d+)", note):
+        found.update(range(int(m.group(1)), int(m.group(2)) + 1))
+    for m in re.finditer(r"\d+", re.sub(r"\d+\s*[–\-—~]\s*\d+", "", note)):
+        found.add(int(m.group(0)))
+    return found
+
+
+def _unit_spans(book: Row) -> dict[str, tuple[int, int, str]]:
+    """单元页跨度：pdf_page 是起始页，覆盖到下一个不同起始页之前一页。"""
+    units = sorted(
+        (u for u in book["units"] if u.get("pdf_page")),
+        key=lambda u: (u["pdf_page"], u.get("unit_id", "")),
+    )
+    spans: dict[str, tuple[int, int, str]] = {}
+    i = 0
+    while i < len(units):
+        j = i
+        while j + 1 < len(units) and units[j + 1]["pdf_page"] == units[i]["pdf_page"]:
+            j += 1
+        start = units[i]["pdf_page"]
+        end = (
+            units[j + 1]["pdf_page"] - 1
+            if j + 1 < len(units)
+            else (book.get("pdf_pages") or start)
+        )
+        for k in range(i, j + 1):
+            spans[units[k]["unit_id"]] = (
+                start,
+                end,
+                units[k].get("status", "unreviewed"),
+            )
+        i = j + 1
+    return spans
+
+
+def basis_problems(books: list[Row], web: list[Row], records: list[Row]) -> list[str]:
+    """每条 read-mapped 映射必须说明「凭什么算已核读」，过期裁决一律判红。
+
+    口径（写作规范/20「映射登记的回链类型」，2026-11-01 起强制）：
+    逐单元记录靠 inventory 里 unit.record_id 回链自证；无回链的主题映射必须带
+    `basis`——`pdf-unit` 要有 `units`（同源、read-mapped、页跨度与声明页相交，
+    声明页里含 excluded-reviewed 单元的必须在注记写明），`online` 的 source 要能在
+    web.json / contributions/*-web.json 对核，`artifact` 的 evidence 要在仓内。
+    母本侧 reason/scope 不得留「某章尚不存在」这类过期裁决。
+    """
+    problems: list[str] = []
+    by_unit: dict[str, Row] = {u["unit_id"]: b for b in books for u in b["units"]}
+    backlinks = {
+        u.get("record_id") for b in books for u in b["units"] if u.get("record_id")
+    }
+    web_ids = {w["id"] for w in web}
+    for contrib in (ROOT / "sources" / "contributions").glob("*-web.json"):
+        for item in json.loads(contrib.read_text()):
+            if isinstance(item, dict) and item.get("id"):
+                web_ids.add(str(item["id"]))
+    for record in records:
+        key = record["id"]
+        if record.get("status") != "read-mapped":
+            continue
+        if key in backlinks:
+            continue  # 逐单元记录：回链即说明
+        basis = record.get("basis")
+        if basis == "online":
+            if record["source"] not in web_ids:
+                problems.append(
+                    f'{key}: online basis 的 source {record["source"]} 不在 web.json/contributions-*-web.json'
+                )
+            if record.get("units"):
+                problems.append(f"{key}: online basis 不带 units")
+            continue
+        if basis == "artifact":
+            evidence = str(record.get("evidence", ""))
+            if not evidence or evidence.startswith("http") or not (ROOT / evidence).is_file():
+                problems.append(f"{key}: artifact basis 的 evidence 不在仓内 {evidence}")
+            continue
+        if basis != "pdf-unit":
+            problems.append(f"{key}: 无回链的主题映射缺 basis（{basis!r}）")
+            continue
+        units = record.get("units") or []
+        if not units:
+            problems.append(f"{key}: pdf-unit 缺 units")
+            continue
+        book = next((b for b in books if b["id"] == record["source"]), None)
+        if not book or not book.get("pdf_pages"):
+            problems.append(f"{key}: pdf-unit 的 source {record['source']} 无可核读页码")
+            continue
+        spans = _unit_spans(book)
+        pages = _claimed_pages(record.get("pages"))
+        if not pages:
+            problems.append(f"{key}: pdf-unit 的 pages 无法解析出声明页")
+            continue
+        for uid in units:
+            owner = by_unit.get(uid)
+            if not owner or owner["id"] != record["source"]:
+                problems.append(f"{key}: unit {uid} 不存在或不属于 source {record['source']}")
+                continue
+            start, end, state = spans[uid]
+            if state != "read-mapped":
+                problems.append(f"{key}: unit {uid} 状态为 {state}，不是 read-mapped")
+            if end < min(pages) or start > max(pages):
+                problems.append(f"{key}: unit {uid} 页跨度 {start}–{end} 与声明页不相交")
+        excluded = {
+            p
+            for uid, (start, end, state) in spans.items()
+            if state == "excluded-reviewed"
+            for p in range(start, end + 1)
+            if p in pages
+        }
+        if excluded:
+            note = str(record.get("pages", "")).split("（", 1)
+            note_text = note[1] if len(note) > 1 else ""
+            named = _note_pages(record.get("pages"))
+            missing = sorted(excluded - named)
+            if missing or "excluded" not in note_text:
+                problems.append(
+                    f"{key}: 声明页含 excluded-reviewed 单元所在页 {sorted(excluded)}，注记未写明 {missing}"
+                )
+    for book in books:
+        for unit in book["units"]:
+            for field in ("reason", "scope", "review_note", "unresolved_reason"):
+                text = unit.get(field)
+                if isinstance(text, str) and any(p in text for p in STALE_PHRASES):
+                    problems.append(
+                        f'{unit.get("unit_id", book["id"])}: 过期裁决（{field}）仍含「{next(p for p in STALE_PHRASES if p in text)}」'
+                    )
+    for record in records:
+        for field, text in record.items():
+            if isinstance(text, str) and any(p in text for p in STALE_PHRASES):
+                problems.append(
+                    f'{record["id"]}: 过期裁决（{field}）仍含「{next(p for p in STALE_PHRASES if p in text)}」'
+                )
+    return problems
 
 
 def source_obligations(books: list[Row], sections: dict[str, Row]) -> list[str]:
@@ -82,7 +271,7 @@ def render(
     lines = [
         "# 母本逐节覆盖与范围裁决",
         "",
-        f"16份母本，当前目录{len(units)}项；映射记录{len(sections)}条。",
+        f"16份母本，当前目录{len(units)}项；映射记录{len(sections)}条。十七章正文中，第 1–16 章逐节挂靠上述母本；第 17 章的存储结构、近似成员查询、内存回收与测量方法四处认领外部文献（见该章 17.9），但它的数字不来自任何文献，只来自 `projects/tidekv/results/run-01/`。",
         f"已知未裁决条目 **{unresolved}**；目录仍待完善的母本 **{incomplete}**。",
         "",
         "**覆盖口径**：每个目录单元都有正文落点或有理由的范围排除；不等于逐字读完全部原书。",
@@ -186,7 +375,8 @@ def render(
         "",
         "## 发布口径",
         "",
-        "来源裁决闭合不是发布认证。发布还要求16章、每章实验、两个项目测试、代码生成/测量证据和连续两轮独立0 P0/P1。",
+        "来源裁决闭合不是发布认证。发布还要求17章正文、每章实验、三个项目（`agent-runtime`、`ffi-bridge`、`tidekv`）测试、代码生成/测量证据和连续两轮独立0 P0/P1。",
+        "第 17 章是综合大项目：它的**数字**只来自自己的代码与证据包 `projects/tidekv/results/run-01/`，机制逐节回指第 1–16 章；它的**结构选择**认领 17.9 列出的外部文献（LSM、WiscKey、Bloom、Cuckoo Filter、HP/EBR/RCU、测量方法四篇），但没有登记为逐节母本映射。",
         "`python3 tools/build_coverage.py --strict`与`python3 tools/verify_all.py --release`分别验证来源/审计与完整执行链。",
         "",
     ]
@@ -206,6 +396,16 @@ def main() -> int:
             books, web, code, load_rows(ROOT / "sources/sections.json")
         )
         obligations = source_obligations(books, sections)
+        archives = archive_problems(web)
+        if archives:
+            print("source archive check failed:")
+            print("\n".join("  - " + p for p in archives[:25]))
+            return 1
+        link_problems = basis_problems(books, web, list(sections.values()))
+        if link_problems:
+            print("ledger basis check failed:")
+            print("\n".join("  - " + p for p in link_problems[:25]))
+            return 1
         content = render(books, web, code, sections, findings, obligations)
         (ROOT / "src/appendix/coverage.md").write_text(content)
         (ROOT / "COVERAGE.md").write_text(content.replace("](../", "](src/"))
@@ -217,10 +417,11 @@ def main() -> int:
                 if f.get("status") != "closed" and f.get("severity") in {"P0", "P1"}
             ]
             problems.extend(obligations)
-            chapters = list((ROOT / "src").glob("part*/ch*.md"))
-            if len(chapters) != 16:
-                problems.append(f"only {len(chapters)}/16 chapter files")
-            for project in ["agent-runtime", "ffi-bridge"]:
+            chapters = [f for f in (ROOT / "src").glob("part*/ch*.md")
+                        if re.fullmatch(r"ch\d{2}\.md", f.name)]
+            if len(chapters) != 17:
+                problems.append(f"only {len(chapters)}/17 chapter files")
+            for project in ["agent-runtime", "ffi-bridge", "tidekv"]:
                 directory = ROOT / "projects" / project
                 for name in ["Cargo.toml", "Cargo.lock", "README.md", "src/lib.rs"]:
                     if not (directory / name).is_file():

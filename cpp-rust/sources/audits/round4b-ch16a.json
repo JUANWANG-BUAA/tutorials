@@ -1,0 +1,99 @@
+{
+  "reviewer": "r4b-ch16a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动完整读了 src/part4/ch16.md 的 16.1–16.6 全部正文与语义盒（定义 16.1.1–16.5.4、例 16.1.1/16.2.1/16.3.1/16.4.1/16.5.1/16.6.1、思考、判定流程、小结、errata、即时自测），并逐条回查 projects/ffi-bridge 的 src/lib.rs、tests/contracts.rs、c/tests.c、c/demo.c、c/benchmark.c、include/bridge.h、CMakeLists.txt、Cargo.toml、tools/measure.sh、tools/summarize.py 与 evidence/run-20261007-01/ 的 raw.csv、summary.json、environment.txt、rust-tests.txt、c-tests.txt、demo.txt、macos-sample.txt、interference.txt、sample-command.txt、codegen/{ffi_bridge.mir,ll,s,c-benchmark.s}；84 条观察的全部统计量用自写脚本从 raw.csv 独立复算；另跑 tools/list_uncollected_claims.py 只看 ch16。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "安全核片段逐字对上 src/lib.rs:33-54，两个魔数与 C 侧独立参考核 c/tests.c:7、c/benchmark.c:20 一致；「Rust 不交出数据地址」在 lib.rs 的 rb_transform/rb_create_copy/rb_generate/rb_copy 里逐个入口检查过，只见 out.write/copy_nonoverlapping 到调用者缓冲，没有任何 Rust 分配指针返回 C。三条路径的所有权表与判定流程逐条能在 c/tests.c:37-51、65-67 找到真实执行序列。图 16-1 的结构与 SVG 源码一致：只有②③两条箭头进注册表（ch16.md:197、199），①行写「不经过注册表」（:165），注册表「每槽=代号+可选 Arc 所有者」「上限 4096 槽」「句柄=代号高32位+槽下标加一」对应 lib.rs:21(4096)、57-58、78。「本轮产物实际存在复制」由 Arc::from(data)（lib.rs:215、235）与 macos-sample.txt 里 rb_generate 下的 _platform_memmove（第 83-84 行，83 样本）支撑。即时自测第 3 题引用的 0.978652 / 0.211897 我从 raw.csv 复算命中。本节未发现与代码相反的事实。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:35-54 与 ch16.md:83-103 逐字一致",
+        "projects/ffi-bridge/src/lib.rs:21 MAX_SLOTS=4096、:78 句柄编码 (generation<<32)|(index+1)",
+        "projects/ffi-bridge/c/tests.c:37-51,65-67 三条路径的真实执行",
+        "复算：per_element mean 0.978652、batch mean 0.211897 ns/word（raw.csv 21+21 条）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "静态量自己算过：InfoV1 为 u32/u32/u64/u64，repr(C) 下偏移 0/4/8/16、尺寸 24、对齐 8，与 Rust 六个断言（tests/contracts.rs:6-11）和头文件六个 _Static_assert（include/bridge.h:41-46）一一对应，另有指针宽度断言 bridge.h:39，与正文「头文件还断言指针大小为 8」相符。错误词表 0-7 与 lib.rs:11-18、bridge.h:25-26 完全一致，「rb_info 的版本/尺寸检查排在 range(out,1) 与句柄查找之前」在 lib.rs:248-251 得到验证（所以 ① 的 info 一字节不写成立）。长度单位：MAX_WORDS=1<<24 个元素（lib.rs:20，checked_len :158-163），CTest 的过大长度用 16777217=2^24+1（CMakeLists.txt:47），支持「不是字节口径」。例 16.2.1 的两侧标注大体可核：Rust 侧长度 3/checksum 60（contracts.rs:48,56）、C 侧长度 4（tests.c:21,37）、②尺寸 23 确为 C 侧独有（tests.c:41）、③哨兵 71/72+777 与 999+888 两侧都在（tests.c:43-46、contracts.rs:57-64）。但第 ④ 步的归属标注与证据不符，见 findings。",
+      "evidence": [
+        "projects/ffi-bridge/tests/contracts.rs:6-11 与 include/bridge.h:41-46 六个断言互相对应",
+        "projects/ffi-bridge/src/lib.rs:248-251（版本/尺寸先判）、:158-163 与 :20（元素数上限 2^24）",
+        "projects/ffi-bridge/c/tests.c:49-51（④ 那一步在 C 侧同样执行过）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重点复核了改动过的例 16.3.1 口径，结论：口径成立。① 重叠 rb_transform(input,input,4) 与 ② null 配非零长度 rb_transform(NULL,output,1) 确实在 C 侧真实执行（c/tests.c:34 与 :31，引用范围 31-34 覆盖两条，input/output 是 :21-22 的活数组）；③ 未对齐只在 Rust 侧（tests/contracts.rs:37-41，从 let bytes = [0u8; 24] 取 offset（基址 8 对齐时取 1，必得不对齐地址）后 rb_transform(misaligned, …, 1) 期望 EINVAL，正文写的 36-42 覆盖注释与代码块）。我在整个 c/ 与 include/ 里检索 align 关键字，只找到 bridge.h:7 的调用者义务注释和 :42 的 _Alignof(rb_info_v1) 尺寸断言，确实没有 C 侧构造未对齐指针的调用，所以「C 侧没有对应调用、写成 C 执行过就是无中生有」这一改动方向正确，且与 16.3.5（ch16.md:594）口径一致。片段 range/separate/checked_len 与 lib.rs:135-156、:158-163 逐字相同，先数值后 from_raw_parts 的顺序在 lib.rs:184-192 得到验证（from_raw_parts 全在守卫之后）。零长不构造空切片：lib.rs:186 的 if len != 0 与 c/tests.c:30、contracts.rs:83-88 的空对象链一致。另有一处代码追溯的形参标注与实现不符，见 findings。",
+      "evidence": [
+        "projects/ffi-bridge/c/tests.c:31（NULL, output, 1 → RB_EINVAL）、:34（input, input, 4 → RB_EINVAL）",
+        "projects/ffi-bridge/tests/contracts.rs:37-41 未对齐指针仅在 Rust 侧；c/ 与 include/ 全文检索 align 无 C 侧用例",
+        "projects/ffi-bridge/src/lib.rs:135-148（正文片段逐字一致）、:184-192（separate/range 先于 from_raw_parts）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "句柄编码与三关全部回查：locate 先拒低 32 位为 0（lib.rs:93-95）、再 get_mut 拒越界槽（:96）、再比代号并要求 data 仍在（:97-99），三关在同一次锁内完成（:119、:252、:279 走 snapshot，:298 走 release）。复用分支与正文片段逐字相同（lib.rs:69-78），首次登记 generation=1（:84-88）。例 16.4.1 的数值我独立算过：h1=(1<<32)|1=4294967297=0x1_0000_0001，复用后 h2=(2<<32)|1=8589934593，④ 代号 1≠2 在第二关即失败，⑤ 12 线程释放恰好 1 个 OK、11 个 ESTALE 在 tests/contracts.rs:96-104 里逐个数过，正文「契约测试逐个数过」属实。代号到 u32::MAX 退休不回绕（:74 过滤条件），到 4096 槽上限给 ERESOURCE（:80-83）。快照在锁内克隆 Arc、锁外算 checksum/复制（:103-105、:252、:279）与 release 的线性化点是锁内 take（:107-109，:300 锁外 drop）均与正文一致；读者并发测试允许 OK 或 ESTALE（:108-132）。未见与代码相反的断言，也无测量数字需要复算。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:91-109（三关 + 复用 + take）、:74 退休、:80-83 ERESOURCE",
+        "projects/ffi-bridge/tests/contracts.rs:96-104 (0..12) 线程，恰好 1 个 OK、11 个 ESTALE",
+        "复算：(1<<32)|1=4294967297、(2<<32)|1=8589934593"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "boundary 片段与 lib.rs:122-133 逐字一致，三条出口 OK/整数码/EPANIC 且 Err(payload) 走 std::mem::forget（:129），EPANIC=5、EPOISON=6 与词表相符（:11-18）。探针 rb_test_panic 在取注册表锁之前 panic（:305-309 函数体只有 boundary(|| panic!(…))），C 侧 c/tests.c:68-70 在 RB_TEST_HOOKS 下断言 RB_EPANIC 且紧接着的 rb_mix 仍返回 OK，正好支撑「C 测试后续调用正常不能反推 poison 已恢复」。局部 Mutex 毒化测试在 lib.rs:354-362（自建 local，is_poisoned 后映射 EPOISON），与「测试只毒化局部 Mutex」一致；生产路径锁错误一律 map_err 成 EPOISON（:119、:214、:234、:298），没有 into_inner。分配失败分层：try_reserve_exact→ERESOURCE（:207、:230），正文「不承诺内存耗尽时一定返回 ERESOURCE」是收敛的正确表述。16.5.5 引用的 CLI 片段与 c/demo.c:23-34 逐行一致（release 在 info 失败后仍执行并检查结果），完整文件还做十进制/尾部字符/范围校验（:12-24）。容量回归两侧都真跑过：c/tests.c:43-46（哨兵 71/72、777 保持）与 contracts.rs:57-64（999/888），守卫 capacity < data.len() 排在 copy_nonoverlapping 与 written.write 之前（lib.rs:280-289）。测试层数量核对：rust-tests.txt 里 running 4 tests（retirement_never_wraps_generation、bounded_registry_and_reuse、snapshot_keeps_data_alive…、panic_boundary_and_poison_policy）与 running 6 tests（contracts.rs 六个），c-tests.txt 是 4 项 CTest 且其中 1 项为完整 C11 契约程序，与表格及「不能把每条 assert 当独立测试进程」一致。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:122-133、:296-309、:354-362",
+        "projects/ffi-bridge/c/demo.c:23-34 与 ch16.md:921-934 逐行一致",
+        "projects/ffi-bridge/c/tests.c:43-46,68-70；tests/contracts.rs:57-64",
+        "evidence/run-20261007-01/rust-tests.txt（4+6 全过）、c-tests.txt（4/4 通过）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "工具链与宿主数字全部从归档正文读取而非抄结论：environment.txt 给出 rustc 1.99.0、LLVM 23.1.1、Apple clang 21.0.0、CMake 4.4.4、host aarch64-apple-darwin、hw.model Mac17,9、hw.ncpu 18、hw.cachelinesize 128、release opt-level=3 lto=false codegen-units=1 panic=unwind，与 16.6.3 逐项相同；C 侧同时带 -DNDEBUG 与 -UNDEBUG（后者生效），CMakeLists.txt:29-33 的 foreach(demo tests benchmark) 给三个可执行文件都加了 -UNDEBUG，:18-19 的 add_custom_command 真跑 cargo build --offline --locked --release，Cargo.toml:9 的 crate-type 为 rlib/staticlib/cdylib，16.6.1/16.6.2 因此成立。代码生成层次逐条回查：c-benchmark.s 有 bl _rb_mix（第 735 行）与 bl _rb_transform（第 682 行），也有 _rb_copy/_rb_info/_rb_generate/_rb_release 调用；ffi_bridge.s 里 rb_mix 是 cbz（null）+ and #0x7（对齐）+ cmn/b.hi（跨度）+ eor lsr #29 + madd + str + ret 的紧凑叶函数，且没有 .cfi_personality/.cfi_lsda，而 rb_release 等带分配/锁的函数有（共 9 处），正好支持「叶函数未必留异常表」；正文引用的 12 行核心循环汇编在 ffi_bridge.s:762-773 逐指令命中（制表符分隔），四元素标量 madd 与 eor 各 4 条。ffi_bridge.ll 的 noalias 出现 334 次支持别名信息行；rb_copy 的 memcpy 与 macos-sample.txt 中 rb_copy 下 165 个 _platform_memmove（第 121-122 行）、rb_generate 下的 memmove 与 malloc/free 路径支持「实际存在复制」；ldapr 出现 10 次且 std mutex lock/unlock/init 符号在汇编里，支持同步行。sample-command.txt 写明 2 秒、1 毫秒间隔，interference.txt 里能看到别的代理的 cargo build 命令行、且没有正在运行的 rustc 子进程（rustc 字样只出现在抓取脚本的 URL 字符串中），与 16.8.6/16.8.7 的表述一致（那两节不在我的区间，只作交叉印证）。发现的问题在 16.6.6 对 vector.body 的表述范围，见 findings。",
+      "evidence": [
+        "evidence/run-20261007-01/environment.txt（rustc/LLVM/clang/CMake/Mac17,9/ncpu 18/cacheline 128/优化配置）",
+        "projects/ffi-bridge/CMakeLists.txt:18-19,29-33；Cargo.toml:9,15-18",
+        "evidence/run-20261007-01/codegen/c-benchmark.s:682,735；codegen/ffi_bridge.s:762-773 与 rb_mix 叶函数无 cfi_personality",
+        "evidence/run-20261007-01/macos-sample.txt:121-124（rb_copy → _platform_memmove 165 样本）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "severity": "P2",
+      "description": "例 16.3.1 解答第 ② 步把被检查的指针写成了 range(output, 1)，但该步的调用是 rb_transform(NULL, output, 1)，形参名是 input=*const u64 接 NULL、out=output 接活数组；实现里 separate(range(input, len)?, range(out, len)?) 的第一个 range 才是 null 那一侧，range(output, 1) 按现在的写法会返回 Ok（output 对齐非空），推不出正文说的 EINVAL。返回码、被破坏的前提（非空）与「先数值后引用」的结论都对，是紧跟最近那次改动的一句话里形参指代写反，建议改成 range(input, 1)（或写成「range(为 NULL 的那个参数, 1)」），与它自己那句「注意被检查的是 null 那一侧」对齐。",
+      "evidence": "src/lib.rs:182-185（签名与求值顺序）；c/tests.c:31（rb_transform(NULL, output, 1) == RB_EINVAL）；ch16.md:562"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "severity": "P2",
+      "description": "例 16.2.1 的题面声明「下面四步各标了自己那一侧」，并给 ① 标「两侧都有」、② 标「C 侧独有」、④ 标「（Rust 侧）」；但第 ④ 步「释放之后再 rb_info(h, 1, 24, &info)」在 C 侧同样执行过（c/tests.c:49-51 依次断言 release==RB_OK、重复 release==RB_ESTALE、rb_info(handle,1,sizeof(info),&info)==RB_ESTALE），sizeof(info) 就是 24。按这一节刚为 ③（例 16.3.1）收紧的口径，同一类跨侧归属标注应一致：④ 要么标「两侧都有」，要么像 ③ 那样说明只有哪一侧有。结论本身（ESTALE、不消费句柄）无误。",
+      "evidence": "c/tests.c:49-51 与 tests/contracts.rs:65-67 两侧都有该步；ch16.md:410（题面标注）、ch16.md:557（③ 的新口径）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "severity": "P2",
+      "description": "16.6.6 写「LLVM IR 的批量循环块叫 vector.body。但这一版块内主要是展开后的标量 i64 运算」。对转换核成立：rb_transform/transform 的 vector.body 里是 load i64/lshr i64/xor i64/mul i64 的四路展开（xor <2 x i64> 与 mul <2 x i64> 在整个 ffi_bridge.ll 中出现 0 次）。但同一份 IR 里有 5 处 vector.body 标签，其中 checksum 函数的那个（ffi_bridge.ll:342 起）确实是向量化的：<2 x i64> phi 与 add <2 x i64> 共 14 处、wide.load 16 处。正文以「这一版」泛指、又在本节反复强调「每层只说一层的话」，读者容易把它读成「全库没有 SIMD」。建议限定为「转换核的 vector.body」，并顺带说明 checksum 的归约循环才是真被向量化的那一处。",
+      "evidence": "复算：ffi_bridge.ll 中 xor <2 x i64>=0、mul <2 x i64>=0、add <2 x i64>=14、vector.body 标签出现在 checksum(:342)/transform(:564)/rb_generate(:1516)/rb_info(:1940)/rb_transform(:2351)"
+    }
+  ]
+}

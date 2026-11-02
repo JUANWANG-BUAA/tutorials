@@ -1,0 +1,108 @@
+{
+  "reviewer": "r4-ch10a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动只读三样东西：src/part3/ch10.md 第 69–1308 行（10.1–10.6 全部正文、6 个语义盒类型逐盒读全）、bench/results/runtime-fixed/measurements-final/{process-rpc.txt,pipe-drain.txt,type-layout.txt} 与 bench/results/runtime-final/process-rpc-sample.txt 的原始行、bench/runtime-lab 及其 source-snapshot 下的 wire.rs/process.rs/process_rpc.rs/pipe_drain.rs/tests/contracts.rs；表格 8 个统计量用 python 从原始 21+21 个批样本重算，其余给通读判定并写明没核什么。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节无测量级数字，逐条核的是可核事实：① 10.1.2 四行边界表与定义 10.1.2 的「前三行隔离、第四行治理」读法自洽，例 10.1.1 的三处混淆各自指回表中「本身不保证」列、10.1.3 与[@def-10.1.1]，答案没有引用本节不存在的内容；② 「本轮Tokio1.54.0文档还明确限制fork后重用runtime」的版本号属实——bench/runtime-lab/Cargo.lock 里 tokio = 1.54.0；③ CS110L 与 rCore 两处外部引文在台账里有登记且映射到本节附近（COVERAGE.md 的 STANFORD-FORK「多线程fork、Command与清理责任，PDF15–20、25–35，共36物理页」→ 3.10.1，TOKIO-FORK「Unix fork限制，在线精确1.54.0」→ 3.10.1），10.1.4 的 note 框与 E-f 也主动把课程建议与本机纳秒数切开，这条纪律是对的。没核：母本 PDF 与 rCore 页面在仓库外，我没有做逐字比对，只核到「登记存在 + 正文没有把它们当性能结论」这一层；「Command 底层不固定叫 fork」属于实现细节断言，我没有反汇编 std 去验。自测四题与思考题解答均可由本节正文自证，未发现越界结论。",
+      "evidence": [
+        "src/part3/ch10.md:101-112,156-209（表格/定义/note/errata 互指）",
+        "bench/runtime-lab/Cargo.lock: tokio 1.54.0",
+        "COVERAGE.md: |stanford-process-slides/STANFORD-FORK|…|核读映射|part3/ch10.md#sec-cpp-rust.3.10.1|；|tokio-runtime/TOKIO-FORK|Unix fork限制|在线精确1.54.0|核读映射|part3/ch10.md#sec-cpp-rust.3.10.1|"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "协议性内容全部落得住：图 10-1 的三列端点分配与[@def-10.2.1]「所有写端关闭＋缓冲读完」一致；10.2.3 引用的 finish 片段位置属实（bench/runtime-lab/src/bin/process_rpc.rs:95、102 在计时窗外调用 session.finish()，Session::finish 在采样栈里对应 process_rpc.rs:70–71 → __wait4）；思考 10.2.1 的互等推演与 Session::start 先 read_exact 握手的代码顺序不冲突。但例 10.2.1 的题面括注「都是本章实测过的形态」我核不实：场景一（wait 返回而 EOF 迟到）有归档（bench/results/runtime-fixed/race-before-2.txt、final-validation/stress-*.txt 的 inherit 模式报告）；场景二（EOF 后 exit_code 为 None）在归档里确有 212 处 exit_code: None 字符串，但我没有逐条确认过「同一份报告里 stdout.eof=true 且 exit_code=None」这个配对形态；场景三（向 stdin 写请求报 BrokenPipe）在 bench/ 全树（src、tests、examples、results）里除编译产物的二进制字符串噪声外零命中，没有任何测试或归档产出过 BrokenPipe。正文没有为这句「实测过」点名任何证据文件，属于把未观测的形态说成观测过。修法二选一：把括注改成「三种形态里前两种本章有归档，第三种是协议表推演」，或补一个写 stdin 到已退出 worker 的最小复现并点名测试名。",
+      "evidence": [
+        "src/part3/ch10.md:394（「对照上表判断三个场景（都是本章实测过的形态）」）、383-390（六行观察表）",
+        "grep -r 'BrokenPipe|broken pipe' bench/ → 仅命中 bench/evidence-lab/target-checked 与 results/run-01/builds 下的二进制文件字符串表，tests/results 无一处",
+        "bench/results/runtime-fixed/race-before-2.txt:275-281（inherit 场景归档 Report）；bench/results/runtime-fixed/**/stress-*.txt 含 exit_code: None",
+        "bench/runtime-lab/src/bin/process_rpc.rs:95,102；bench/results/runtime-final/process-rpc-sample.txt:39,42（Session::finish → __wait4）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量自己算了：偏移表 2+2+4+8+8=24 ✓，「比原生 16 字节多花的 8 字节」= 24−16 ✓；归档 type-layout.txt 首行「Frame size=16 align=8 wire=24」同时坐实 10.3.1 与 10.3.6 表格第一行。两段代码是逐字对照的：encode() 与 read_frame() 在 bench/runtime-lab/src/wire.rs:13–20、44–56 与正文引用一致（含 Interrupted 续读、Ok(0)→Ok(None)、read_exact(&mut bytes[1..])）；decode 对 version/flags/length 的三处拒绝与「本轮测试逐一破坏三个头部位置」对得上（wire.rs:76–88 rejects_each_header_field 遍历 [0,2,4] 要求 InvalidData），little-endian 字节序独立测试在 wire.rs:66–74，截断测试在 wire.rs:95–97（单字节流→UnexpectedEof）。10.3.5 把 write_all/flush 与跨进程确认分开、10.3.6 把 ABI 产物限定为「不作为外部 C ABI 承诺」、思考 10.3.1 用「flags 当前必须全 0」退出「value=0 当心跳」的说法，均与代码约束方向一致。runtime-lab.s/.ll/mir 三个文件在 measurements-final 下确实存在。没核：我没有反汇编去数导出函数名清单，只核了文件存在与表格措辞；「空流与单字节截断分别有可执行测试」中我逐字看到截断测试，空流测试只看到同一 mod 内的相邻断言，未打开整段确认。",
+      "evidence": [
+        "bench/runtime-lab/src/wire.rs:3,4,13-20,22-31,44-56,66-74,76-88,95-97",
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt:1 Frame size=16 align=8 wire=24",
+        "bench/results/runtime-fixed/measurements-final/ 含 runtime-lab.s / runtime-lab.ll / runtime-lab.mir"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数字全部独立复算通过：从 measurements-final/process-rpc.txt 的 21 个 spawn 与 21 个 persistent 原始批值算得 mean=1219110.0060 / 5484.1280、样本标准差 77376.4287 / 532.3999（表里正是样本 sd，不是总体 sd）、p50=1208367.188 / 5372.375、p99=1531747.438 / 7346.375，与 10.4.6 表格八个数逐位一致；p99 取的是最大值，符合本书[@def-1.5.2]标题「nearest-rank 分位数」与第 1 章「21 个数上的 p99 就是最大值」，10.4.5 也已把「批分位数不是逐请求」写清，分位数口径不算缺失。方法学三句也落到代码：bench/runtime-lab/src/bin/process_rpc.rs:109–123 确有每 case ≥500ms 预热、每批 16 次请求、21 批、(index+offset)%2 轮转先后；wrapping_mul(3) 在 line 64；READY 是 8 字节 b\"RPCv0001\"（wire.rs:4）。ex 10.4.1 的 222 倍 = 1219110.006/5484.128 = 222.29 ✓，且①②两个「不能写」的收窄与 10.4.4 边界表自洽。问题在定义框编号与文本完整性：定义 10.4.3（第 707 行）排在定义 10.4.2（第 721 行）之前，同一小节里读者按编号找不到相邻关系；且定义 10.4.3 第一段以「…才开始执行新程序；」的分号收尾、下一段才接 waitpid，rCore 的 fork/exec 与 waitpid 被切成两段、编号又倒置，看着像漏排。另记一句 rCore 引文核对状态：COVERAGE.md 里 rcore-process/RCORE-FORK 已登记并映射到 3.10.4，但「PCB 要携带 PID 句柄、内核栈、任务状态与调度信息」这半句出自 rcore-pcb，而台账把它映射到 3.10.1（本句实际写在 10.4.3），登记锚点与落点不一致；rCore 在线页面本身在仓库外，我没有逐字比对。",
+      "evidence": [
+        "复算：bench/results/runtime-fixed/measurements-final/process-rpc.txt:1–44（21+21 原始批值）→ statistics.mean/stdev/nearest-rank 与 ch10.md:777–778 逐位相符",
+        "src/part1/ch01.md:908 定义 1.5.2 均值、标准差与 nearest-rank 分位数；:979 小结「21 个数上的 p99 就是最大值」",
+        "bench/runtime-lab/src/bin/process_rpc.rs:64,87–105,109–123；src/wire.rs:4",
+        "src/part3/ch10.md:707（def-10.4.3）先于 :721（def-10.4.2）；:709–711 段落以分号断开",
+        "COVERAGE.md：|rcore-process/RCORE-FORK|…|→ 3.10.4|，|rcore-pcb/RCORE-PCB|…|→ 3.10.1|（该句实际写在 10.4.3）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "代码与测试断言逐条对盘，全部属实：10.5.2 的停滞复现真在测试里（contracts.rs:162–186：command(\"flood\")、只 read_exact 1 字节并断言 b'x'、tokio::time::timeout(Duration::from_millis(30), child.wait()) 断言 is_err()、随后 start_kill()+wait() 防挂起），flood 夹具默认写 2097152 字节到 stdout 再写同样字节到 stderr（worker.rs:16–28），与「向 stdout 写 2MiB、随后向 stderr 写 2MiB」完全对上；「30ms 只是观察窗口不是容量证明」这句把窗口和容量分开，是诚实的。10.5.3/10.5.4 的四个字段、checked_add、8192 临时块、锁不跨 await、每流独立 Capture、cap>16MiB 拒绝（process.rs:158）、mem::take 移交（:236–237）都在盘上；尤其「下段为旧源码快照中的保留算法；现版用 poll_fn 另记 poll/Pending/EOF/Drop」这句我特意验了：before-source-snapshot 的 process.rs 用的是 read(&mut chunk).await 且无 poll_fn，final-validation 快照与现版都走 poll_fn 并写 diagnostics.polls/pending_polls/eof_after/dropped_after，keep = n.min(cap.saturating_sub(prefix.len())) 两侧一致——这条免责声明站得住，不是遮丑。唯一问题是例 10.5.1 的数字身份：题面「排空结束时的Capture状态：stdout流 total=2097152, eof=true；stderr流 total=900000, eof=false, reader_errors=[\"grace expired\"]，cap=128」用真实报告 dump 的字段语法写成，两半却不是一类东西。stdout 那半是归档真值形状（pipe_drain prefix128 每批正是 total=2097152、eof=true、prefix.len()=128；race-before-2.txt:275 也归档到 total: 2097152）；stderr 那半是构造夹具——900000 在 bench/results 与 bench/runtime-lab 全树零命中（唯一命中的 900000 是 bench/results/local/handoff.txt 里第 8 章的 slot 值 127.900000，无关），flood 夹具只可能产出 0 或 2097152，而 reader_errors 这个数组元素在仓库里从来没有等于 \"grace expired\" 的取值，代码里唯一的字符串是 \"drain grace expired: a writer may still own a pipe\"（process.rs:144，stress 归档逐行如此）。作者自己的台账也承认它是设计常量：写作规范/24-全书自评 第 364 行把 900000 归入「设计常量与预算，不是观测」。我没往 P0/P1 升的理由：正文没有对这两个数说「实测」「本轮归档」，它出现在例题题面里，答案的逻辑（eof=false 时 total 只能写成下界）本身正确；本章 think-10.3.1 用了「设想」二字标记假想，独独这个盒子没有，且把归档真值与构造值混在同一份「报告」里、还简写了错误字符串，读者会当成第 5 项校验之外的一条真实 Capture 记录。修法：题面加四字「假想题面」，并把 reader_errors 元素写成仓库里的真实字符串（或明确「以下省略为 grace 到期」）。另：10.5.5「没有采集 RSS 峰值」属实（results 树无 RSS 采样文件），我没去逐目录证明「不存在」，只确认无点名文件。",
+      "evidence": [
+        "bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/tests/contracts.rs:162-186（2MiB/2MiB、1 字节、30ms、kill+wait）",
+        "…/src/bin/worker.rs:16-28（flood 默认 2097152，先 stdout 后 stderr）",
+        "bench/runtime-lab/src/process.rs:28-31,52,84,86-96,117-122,136-144,158,236-237",
+        "before-source-snapshot/…/process.rs 有 saturating_sub 无 poll_fn；现版两者皆有 → ch10.md:970 的快照声明属实",
+        "src/part3/ch10.md:1032,1036（例 10.5.1 题面与解答）；写作规范/24-全书自评-2026-10-29.md:364；sources/audits/sweep4ce-J.json:469（前轮同题判 P2）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "计量与校验的每条断言都落到了代码：pipe_drain.rs:8 BYTES=2*1024*1024、:11 flood 传该值、:31 ns_per_op(report.elapsed, BYTES*2) ⇒ 分母 4194304，与[@def-10.6.1]「批墙钟除以 4194304 个聚合输出字节」一致（不是 ns/op 的每请求口径，正文改名是对的）；:19-29 的断言正好覆盖 10.6.3 的七项——!timed_out、exit_code==Some(0)、reader_errors.is_empty()、capture.eof、total==BYTES、prefix.len()==cap、字节内容全为 b'x' 且注释写明该校验在 elapsed 边界之外；:36-50 复算口径与 10.4 同构（500ms 预热、21 批、轮转）。表格八个数我用原始 21+21 批值复算：prefix128 mean=0.51404/sd=0.0311/p50=0.5073/p99=0.5829，retain-all mean=0.51549/sd=0.0269/p50=0.5074/p99=0.5834，与 ch10.md:1162-1163 及归档 summary 行一致；ex 10.6.1 说「0.001 的差值小于两组各自的标准差」成立（真实差 0.00145，两位小数口径下即 0.001），「本轮没有显著性检验、没有 p 值」与归档里没有任何区间/检验文件相符。10.6.7 四行采样栈我在 process-rpc-sample.txt 里逐行找得到：posix_spawnp（line 35）/__posix_spawn（37）、Session::start 下的 default_read_exact+read（28-31）、__wait4（42,54）、Session::request 下的 read（83-88，仅 1 个样本，正文没有声称其占比，措辞安全）；「对应历史版本与当时预热设置」「只观察父进程」「不给稳定态 CPU 百分比」与 sample 文件只有单个 pid 的事实一致；10.6.7 的 bash 复验命令写到 /tmp 且声明不覆盖归档，与 process-sample-command.txt 的归档路径不冲突。10.6.6 拒绝零拷贝、10.6.5 拒绝把 cap 当终止策略，均与 process.rs 无任何 kill-on-cap 逻辑相符。唯一问题是一句自相矛盾的表述：第 1177 行「两组标准差与差值不能忽略」——同节 preview 第 1109 行与[@ex-10.6.1]、E-c 都判「均值差在本轮波动之下、不能宣布加速」，而这句按字面读是把差值说成不可忽略，方向正好相反；应改成「两组标准差远大于均值差，差值不可用于结论」之类。没核：4GiB 场景（10.6.5）与「retain-all 继续累积内容」是推演，盘上没有 4GiB 归档，正文也没说测过；10.6.2「不包括父进程编译」我只核到 run_child 计时从 spawn 起，没有核 compile 阶段的归档边界。",
+      "evidence": [
+        "bench/runtime-lab/src/bin/pipe_drain.rs:8,11,19-31,36-52",
+        "复算：bench/results/runtime-fixed/measurements-final/pipe-drain.txt:1-44 → prefix128 0.51404/0.0311/0.5073/0.5829，retain-all 0.51549/0.0269/0.5074/0.5834",
+        "bench/results/runtime-final/process-rpc-sample.txt:28-31,35,37,39-42,54,83-88",
+        "src/part3/ch10.md:1109 vs :1177（口径方向相反的两句话）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "severity": "P1",
+      "description": "例 10.2.1 题面括注「（都是本章实测过的形态）」是带出处承诺的断言，但三场景里第三个不成立：向 stdin 写请求报 BrokenPipe 这一形态在 bench/ 全树（src、tests、examples、results，含全部 source-snapshot）没有任何测试或归档产出，我检索 BrokenPipe 与 broken pipe 只命中编译产物二进制的字符串表噪声；第一个（wait 返回而 EOF 迟到）有 inherit 归档支撑，第二个（EOF 后 exit_code=None）我在 stress/race 归档里看到 212 处 exit_code: None，但没有确认过与 stdout.eof=true 的同一份报告配对。正文既不点名测试名也不点名归档文件，等于把未观测的协议表行说成观测过。降为 P2 的条件：若 10.7–10.11 或某个未在我检索范围内的 harness 里确有 BrokenPipe 复现，本条只剩「括注应点名证据」的措辞问题。",
+      "evidence": "src/part3/ch10.md:394；检索 /usr/bin/python3 os.walk(bench) 匹配 BrokenPipe|broken pipe → 仅 bench/evidence-lab/target-checked/... 与 results/run-01/builds/... 的二进制；对照 bench/results/runtime-fixed/race-before-2.txt:275-281 与 stress-*.txt（exit_code: None 共 212 处）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "severity": "P2",
+      "description": "例 10.5.1（ch10.md:1032）的 Capture 题面把归档真值与构造夹具混在一份未标假想的报告里：stdout 的 total=2097152 / eof=true / cap=128 与 pipe_drain prefix128 每批归档一致，stderr 的 total=900000 在 bench/results 与 bench/runtime-lab 全目录零命中（flood 夹具只可能给 0 或 2097152），reader_errors=[\"grace expired\"] 也不是仓库里存在的取值——代码里唯一的该字段字符串是 \"drain grace expired: a writer may still own a pipe\"（process.rs:144，800 条 stress 归档逐行如此）。作者台账 写作规范/24:364 已把 900000 归入「设计常量与预算，不是观测」。判 P2 不判 P0/P1 的理由：正文没有对这两个数声明「实测」「本轮」，题面是例题给定条件，解答逻辑（eof=false 时 total 只能写成下界）本身正确；但与本章 think-10.3.1 用「设想」显式标记假想的写法相比，此盒缺少同样的标记，且以真实字段 dump 语法呈现并简写了错误字符串，读者容易当成第 10.6.3 项校验之外的真实记录。建议：题面加「假想题面」，字符串写全或注明「原文为 drain grace expired: a writer may still own a pipe」。",
+      "evidence": "src/part3/ch10.md:1032,1036；bench/runtime-lab/src/process.rs:144；bench/results/runtime-fixed/race-before-2.txt:275-281（total: 2097152, eof: true, reader_errors: [\"drain grace expired: a writer may still own a pipe\"]）；900000 检索命中仅 bench/results/local/handoff.txt:3 slot,0,127.900000（无关）；写作规范/24-全书自评-2026-10-29.md:364"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "severity": "P2",
+      "description": "定义框编号顺序与文本完整性：定义 10.4.3（ch10.md:707）出现在定义 10.4.2（:721）之前，同一节里编号与阅读顺序倒置，正文又用「[@def-10.4.1]」把两者串成递进关系，读者按编号找不到相邻内容；定义 10.4.3 第一段以「…才开始执行新程序；」的分号收尾后另起一段讲 waitpid，rCore 的 fork/exec 与 waitpid 被人为断开，另有一处「此后它的资源由父进程负责收尾（在 rCore 里，那份收尾的活儿落在一个专职的初始进程身上）」的括号说明只在 rCore 的孤儿进程情形成立，正常父子情形是父进程自己 wait，读者容易误解。另记：rCore 引文可追（COVERAGE.md 把 rcore-process/RCORE-FORK 核读映射到 3.10.4），但同段「进程控制块要携带 PID 句柄、内核栈、任务状态与调度信息」的内容属 rcore-pcb，台账却映射到 3.10.1，落点与登记锚点不一致；rCore 在线页面在仓库外，我没有做逐字比对。数字部分无问题：表格八个统计量与 21+21 原始批值复算逐位一致。",
+      "evidence": "src/part3/ch10.md:707（def-10.4.3）、:709-711（分号断段）、:721（def-10.4.2）；COVERAGE.md |rcore-process/RCORE-FORK|→3.10.4 与 |rcore-pcb/RCORE-PCB|→3.10.1；复算 bench/results/runtime-fixed/measurements-final/process-rpc.txt:1-44"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "severity": "P2",
+      "description": "同节内两句方向相反的表述：ch10.md:1109 的 preview 明确「两个case的均值差在本轮波动之下」，[@ex-10.6.1] 与 E-c 也判「0.001 的均值差不能写成加速比」；但 :1177 紧接表格的正文写「两组标准差与差值不能忽略」，字面读是把差值说成不可忽略，与同节结论相反，是本章最容易被摘出来误用的一句。复算支持 preview：prefix128 mean=0.51404、retain-all mean=0.51549，差 0.00145，而两 sd 分别 0.0311 与 0.0269，差值约为 sd 的 1/20，方向甚至与「更快」相反（retain-all 均值更大）。建议改成「两组标准差远大于均值差，本轮不能用它做方向性结论」。另：正文「0.001的差值」是三位小数发布值之差（0.515−0.514），真实差为 0.00145，可接受但如与[@def-1.5.2]口径并列最好统一取一位口径。",
+      "evidence": "src/part3/ch10.md:1109,1162-1163,1167,1177,1269；复算 bench/results/runtime-fixed/measurements-final/pipe-drain.txt:1-44"
+    }
+  ]
+}

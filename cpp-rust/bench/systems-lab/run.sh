@@ -21,9 +21,11 @@ cargo rustc --release --offline --locked --lib -- --emit=mir,llvm-ir,asm > "$OUT
 mkdir "$OUT/codegen"
 find target/release/deps -maxdepth 1 \( -name 'systems_lab-*.mir' -o -name 'systems_lab-*.ll' -o -name 'systems_lab-*.s' \) -exec cp {} "$OUT/codegen/" \;
 target/release/layout > "$OUT/layout.txt"
-LOCK=/Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents/measure.lock
-while ! mkdir "$LOCK" 2>/dev/null; do sleep 2; done
-trap 'rmdir "$LOCK"' EXIT
+LOCK="$(cd .. && pwd)/.work/measure.lock"
+mkdir -p "$(dirname "$LOCK")"
+for _ in $(seq 1 300); do mkdir "$LOCK" 2>/dev/null && break; sleep 2; done
+[ -d "$LOCK" ] || { echo "测量锁 $LOCK 等待 600s 仍被占用，本轮拒绝并发计时" >&2; exit 1; }
+trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
 { date -u; ps -axo pid,comm,args | grep -E '[c]argo |[r]ustc ' || true; } > "$OUT/interference.txt"
 for entry in queue epoch simd views; do
  target/release/"$entry" > "$OUT/$entry.txt"

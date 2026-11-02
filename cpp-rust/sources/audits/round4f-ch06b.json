@@ -1,0 +1,95 @@
+{
+  "reviewer": "r4f-ch06b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part2/ch06.md 第 1280–1737 行（6.7–6.11）全部正文与每个语义盒，并逐条回查 bench/compiler-lab/extra.py、run.sh、Cargo.toml、probes/code_size.rs、src/lib.rs、tests/contracts.rs 与 results/extra-02、results/stable-02 归档原始输出，用 python 自行复算节大小差值、警告条数与观察数，另跑 tools/list_uncollected_claims.py --only 6 与 src/appendix/coverage.md 台账行核对来源状态。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对结果：① 6.7.1/6.7.2 关于 inline(never) 的断言成立——src/lib.rs 里 scalar_add、add_with_calls、visible_dynamic、add_slices 均带 #[inline(never)]，stable-02 本机汇编在 add_with_calls（标签行 3918）内第 3960 行确实保留 bl __RNvCs9Bm3fdC1YiC_12compiler_lab10scalar_add；visible_dynamic 自己仍是独立函数体（.s 行 4003），但其 LLVM IR（.ll 行 2450 起）直接 load kernel 字段并进入 vector.body，即 dyn 来源被消解且循环被向量化，「边界保留 ≠ 体内优化」两句都有产物支撑。② 6.7.4/小结的 CGU=1、LTO=false 与 Cargo.toml [profile.release]（opt-level=3、codegen-units=1、lto=false）及 run.sh environment.txt 的 profile 行一致，主表确实不是 LTO 后的性能。③ 6.7.5 的 extra.py 描述与源码逐行一致（一个循环构造 one/many/thin，thin 多 -Clto=thin，两者同 -O 同 CGU=1，可执行文件都跑过：many-run.txt 与 thin-run.txt 都是 instances=16 checksum=95338125850705920，程序内部逐实例 assert_eq 比对 reference）。④ 6.7.6 三个 __text 数字全部从 size -m 原始输出复算命中：many 220156、thin 214768、pgo-use 220028，例 6.7.1 的 5388 与 128 两个差值我重算无误。唯一不成立的是把三行当同一对照口径：many/thin 由 extra.py 的循环构建、带 -Cdebuginfo=1，pgo-use 由 common 构建、不带，见 findings。⑤ def-6.7.4 的口径声明（不含 __PAGEZERO 虚拟保留、不把调试符号长度当 I-cache 工作集）与归档一致：size -m 里 __PAGEZERO 是 4294967296 的独立段，dSYM 另存。⑥ 6.7 节内 24 个 [@id] 引用（含 def-1.4.2/def-1.6.1/def-1.8.1/ex-6.4.1）我脚本比对全部能解析到真实 {#id}，无悬空锚点。本节未核项：即时自测第 4 题关于 ELF 侧工具的迁移说法属跨平台常识，我没有在本机复算。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3918 add_with_calls 标签，:3960 bl ...scalar_add，:4003 visible_dynamic 独立函数体",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:2450 visible_dynamic 体内 load kernel.val / vector.body（已去虚化并向量化）",
+        "bench/compiler-lab/results/extra-02/many-size.txt:3 Section __text: 220156；thin-size.txt:3 214768；pgo-size.txt:3 220028；复算 220156-214768=5388、220156-220028=128",
+        "bench/compiler-lab/extra.py:36-38（one/many/thin 构建含 -Cdebuginfo=1）与 extra.py:48（PGO common 不含 -Cdebuginfo=1）",
+        "bench/compiler-lab/Cargo.toml:11-15 opt-level=3 / codegen-units=1 / lto=false；bench/compiler-lab/run.sh environment 行 profile: opt-level=3 codegen-units=1 lto=false",
+        "bench/compiler-lab/results/extra-02/many-run.txt:2 与 thin-run.txt:2 instances=16 checksum=95338125850705920"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "四步确实真跑过，且证据链齐：extra.py:42-57 的 PGO 分支与正文 6.8.4 引用的 python 片段逐字一致（含 assert raw、拒绝覆盖已有目录 out.mkdir(exist_ok=False)、找不到匹配工具时 else 分支写 pgo-unavailable.txt），归档里 pgo-generate.txt / pgo-training-run.txt / pgo-merge.txt / pgo-use.txt / pgo-use-run.txt / pgo-size.txt / profdata-version.txt 与 pgo-data/default_4638409862445482177_0.profraw + merged.profdata 全部在盘。版本类断言我逐字回查：profdata-version.txt 行 3 打印 LLVM version 23.1.1-rust-1.99.0-stable，stable-version.txt 行 7 打印 LLVM version: 23.1.1，且 profdata 路径就是 rustup stable 工具链目录内的同名程序，6.8.3 两句成立。训练负载断言成立：code_size.rs 在 --cfg=many 下 16 个实例、外层 for _ in 0..32、每实例 assert_eq 比对独立 reference，6.8.2「依次访问 16 个实例、共重复 32 轮」与之一致。警告类断言全部复算命中：pgo-training-run.txt 全文 12 行，其中 Running out of static counters 恰好 10 条、行号为 3..12（正文说第 3 到 12 行连着十次，精确）；警告文本确实给出 -mllvm -vp-counters-per-site=<n> 的修法；extra.py 与归档里都没有第二次带该参数的运行；pgo-use.txt 行 2 的缺 profile 警告函数名是 ...3std2rt10lang_start...，即 lang_start 包装函数，6.8.5 与 def-6.8.3 成立。checksum 侧：训练与使用两侧都是 instances=16 checksum=95338125850705920，与 6.8.6 一致；尺寸 220028 复算命中。6.8 没有速度百分比可写是真的——extra-02 目录里没有任何计时 CSV（只有 layout.csv），tools/list_uncollected_claims.py --only 6 在 1449/1537/1637 行报的疑似反例都是 profile 数据与节尺寸产物，不是运行时间样本，属工具设计内的误报。不成立处：6.8.3 的「只有 profile 模式和输出路径按阶段变化」与归档命令不符，见 findings。本节未核项：def-6.8.1 关于采样式 PGO 覆盖/精度的一般性论述没有本机产物可核，按常识接受未算账。",
+      "evidence": [
+        "bench/compiler-lab/extra.py:42-57（正文 1499-1515 片段逐字命中）与 :58-59 pgo-unavailable.txt",
+        "bench/compiler-lab/results/extra-02/pgo-training-run.txt:3-12，复算 Running out of static counters 计数=10，总行数=12",
+        "bench/compiler-lab/results/extra-02/pgo-use.txt:1 命令含 -Cllvm-args=-pgo-warn-missing-function，:2 warning ..._3std2rt10lang_start... Hash = 742261418966908927",
+        "bench/compiler-lab/results/extra-02/profdata-version.txt:3 与 stable-version.txt:7（23.1.1-rust-1.99.0-stable / LLVM version: 23.1.1）",
+        "bench/compiler-lab/probes/code_size.rs:41-47（for _ in 0..32、16 个 cfg(many) 实例、逐实例 assert_eq output==reference）",
+        "bench/compiler-lab/results/extra-02/pgo-data/ 目录清单：default_4638409862445482177_0.profraw + merged.profdata；extra-02 内无 many/thin/pgo 的计时 csv"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "来源侧我按台账逐条回查，多数落地：S08 第 15 条有行（coverage.md:83 Item15：别名限制与优化，PDF 页 126–130，核读映射到 6.2）、第 9 条有行（:383 考虑使用迭代器转换代替显式循环，PDF 68，映射到 6.3）；S09 的 MIR 优化 / Constant Evaluation / Miri / Lowering 到代码生成 IR 都有行（:79、:496、:493、:494）；S10 代码生成属性有行（:81，页 140–143，映射到 6.7，正是 def-6.7.1「inline 是提示」的规范口径）；PGO 在 S09 也有行（:80）。复核入口段的文件点名基本准确：stable-02/codegen/ 里确实有 .mir/.ll/.s 三件，extra-02/const_bounds.txt 在盘，vectorize.csv 与 ctfe_table.csv 都在 stable-02，两个正式入口 src/bin/vectorize.rs 与 src/bin/ctfe_table.rs 存在。未采集清单也扛得住：extra-02 与 stable-02 里没有 LTO/PGO 速度矩阵、没有 PMU/IPC/cache miss 产物、没有 cargo miri 结果（nightly.txt 在盘但那是 rustc +nightly -vV 的失败记录），list_uncollected_claims 对 1637 行只报出 profraw/节尺寸这类同类但不同用途的产物，属误报。两处口径问题进 findings：编译器文档 URL 的核读状态在台账里有相互冲突的两行；三处标准库链接里 u8::count_ones 在台账搜不到任何行。本节未核项：Effective Rust 第 15/9 条与英文原文的逐字比对需要 pdftotext 取母本页，我这一轮没有做，只核了台账登记的条目号与页码。",
+      "evidence": [
+        "src/appendix/coverage.md:80,81,83,383,496（S08 Item15 / S08 第9条 / S09 MIR opts+PGO / S10 代码生成属性 的核读映射行）",
+        "src/appendix/coverage.md:87 EVID-rustc-pgo/compiler-web-pgo 标为「核读映射」→ part2/ch06.md#sec-cpp-rust.2.6.8；同文件另一行 https://doc.rust-lang.org/rustc/profile-guided-optimization.html 标为「已抓取，核读未登记」",
+        "grep -c count_ones src/appendix/coverage.md = 0（u8::count_ones 链接无台账行）",
+        "bench/compiler-lab/results/extra-02/ 目录清单（无 LTO/PGO 计时 csv）；stable-02/codegen/ 仅 .mir/.ll/.s 三件"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这一节是索引，我把它当作对前文可核断言的汇总逐条抽回证据，而不是只看标题：十三条与实际条数相符（正文说「下面十三条」，实测 1–13 共 13 条）。第 3 条把 align 8 说成 16 字节保证判为错误，与我复算的 IR 相符——add_slices 的向量 load/store 只有 align 8 一种对齐标注，没有 align 16；第 4 条 zip 少算尾部与「不同语义不能同表」对应 vectorize.csv 的两个 case（zip/calls）与 contracts.rs 的 unequal_lengths_are_rejected（#[should_panic(expected = \"assertion\")]）；第 5 条「空输入与 0..129 的尾部长度」逐字命中 tests/contracts.rs 的 for len in 0..130 与 for len in [0,1,3,7,16,129,16384]；第 7 条 CTFE 由 static 初始化器要求，对应 ctfe_exhaustive_domain 里 assert_eq!(BIT_TABLE, runtime_table()) 与 0u8..=255 穷举；第 8 条没有执行 cargo miri 与第 10、11、12、13 条与我核过的归档状态一致（extra-02 无 LTO/PGO 计时、pgo-training-run.txt 十条警告原样保留）。第 1、2、6、9 条是机制性表述，与 6.1–6.3、6.5 的产物口径不冲突。本节未核项：第 2 条与第 9 条把 Cell 计数与 build.rs 的 host 语义指向第 4 章/6.5.6，我只在本章范围里核到 contracts.rs 确实用 Cell 计数、bin/drop_paths.rs 用 cell::Cell，没有去第 4 章正文复算那一行。",
+      "evidence": [
+        "src/part2/ch06.md:1643-1669 计数=13 条；bench/compiler-lab/tests/contracts.rs:6（for len in [0,1,3,7,16,129,16384]）、:60（for len in 0..130）、:74-77（should_panic assertion）、:80-85（BIT_TABLE==runtime_table() 与 0u8..=255）",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll：add_slices 内向量 load/store 对齐集合复算只有 {'align 8'}，min.iters.check 为 ult i64 %output.1, 8",
+        "bench/compiler-lab/results/stable-02/vectorize.csv 与 ctfe_table.csv：case 分别为 zip/calls 与 static_table/rebuild_table",
+        "src/part2/ch06.md:1667 第 12 条复算依据 bench/compiler-lab/results/extra-02/pgo-training-run.txt:3-12（10 条）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末件与出口检查的每个数字我都复算了：① 「正式脚本会运行六个入口」——run.sh 里两个 for name in move_cost drop_paths dispatch_grain dispatch_visibility vectorize ctfe_table 循环，六个入口且串行执行、外层有测量锁，确实不是一组并行 benchmark；② 「两个正式入口共四个 case，每个 case 均有 21 个原始观察」——vectorize.csv 与 ctfe_table.csv 各 45 行 = 1 表头 + 42 观察 + 2 summary 行，round 取值 0..20 即每 case 21 个原始观察，四个 case 复算成立（另外 sample-run.csv 由 run.sh 注释明确标为排除在 21 次计时之外）；③ 「PGO 驱动不做正式计时、找不到匹配工具时明确记录未执行」——extra.py:58-59 的 pgo-unavailable.txt else 分支；④ 复现命令五条与脚本契约一致：extra.py 用 out.mkdir(parents=True, exist_ok=False) 拒绝覆盖，run.sh 用 mkdir \"$OUT\" 同样要求新目录，与「选择全新的归档目录」的提示对应；⑤ 出口检查的产物指向可核：add_with_calls 保留 scalar_add 调用（.s:3960）、add_slices 有向量 load/add/store 且同函数保留标量尾部与 assert_failed 失败路径（.ll 里 bb2 调 assert_failed、min.iters.check 与 tail 分支同在）；⑥ 小结七条与速查十条引用的 [@id] 全部可解析，速查没有夹带未采集的速度结论；⑦ 「本章没有给出未经执行的 nightly 转储」与 nightly.txt（rustc +nightly -vV 允许失败、expect_success=False）一致。本节未核项：runtime_table 构造循环没有消失这一条我只确认它是 #[inline(never)] 且被 bin 调用，没有逐行读汇编确认循环体；练习/自测五页（ch06_summary 等）不在我的节区间，未读。",
+      "evidence": [
+        "bench/compiler-lab/run.sh:25 与 :33 两个六入口循环；:36-38 与 :52 注释 A separate run, deliberately excluded from the 21 timing observations",
+        "复算：stable-02/vectorize.csv 45 行，case zip/calls × round 0..20 = 42 观察 + 2 summary；ctfe_table.csv 同结构（static_table/rebuild_table）",
+        "bench/compiler-lab/extra.py:11（out.mkdir(parents=True, exist_ok=False)）与 :58-59（pgo-unavailable.txt）",
+        "src/part2/ch06.md:1719 出口检查的产物断言，对应 compiler_lab-55987aab45b3e67f.s:3918/3960 与 .ll 的 add_slices bb2 assert_failed + vector.body + 尾部路径",
+        "src/part2/ch06.md:1280-1737 内 24 个 [@id] 与 src/**.md 的 {#id} 集合求差为空（无悬空锚点）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "severity": "P1",
+      "description": "6.8.3 的句子「profile-generate 与 profile-use 采用相同源文件。共同参数包括 edition2024、O3、CGU=1 和 cfg=many。只有 profile 模式和输出路径按阶段变化」与磁盘上的真实命令不符：use 阶段除 profile 模式与 -o 之外还多传一条 -Cllvm-args=-pgo-warn-missing-function，这是第三项按阶段变化的参数，而且正是 def-6.8.3 与 6.8.5 赖以立论的那条诊断开关。我按 extra.py 与归档命令逐字比对：extra.py:48 的 common = ['rustc','--edition=2024','-O','-Ccodegen-units=1','--cfg=many', code_size.rs]，:49 generate 只加 -Cprofile-generate 与 -o，:54-55 use 加 -Cprofile-use、-Cllvm-args=-pgo-warn-missing-function 与 -o；pgo-generate.txt:1 与 pgo-use.txt:1 的命令行原样体现这个差异（use 行里能看到 -Cllvm-args=-pgo-warn-missing-function，generate 行里没有）。连带后果是同节的对照口径：6.8.6 用「PGO-use 220028 vs 普通 many 220156 = 小 128 字节」说静态差值，但普通 many 是 extra.py:36-38 那个循环构建的，参数里多一条 -Cdebuginfo=1，而 pgo-use 走的 common 里没有它——也就是这两个构建至少差 profile 模式、输出路径、诊断开关与 debuginfo 四项，不是「只差 profile」的单变量对照；ThinLTO 那一行（many vs thin）反倒是干净的，两条命令只差 -Clto=thin，5388 字节可放心引用。修复方向：把「只有 profile 模式和输出路径按阶段变化」改成如实列出 -Cllvm-args 与相对基准构建的 -Cdebuginfo 差异，或补一次带 -Cdebuginfo=1 的 pgo-use 构建再谈 128 字节。数字本身（220156/214768/220028、5388、128、23.1.1、10 条警告、checksum 95338125850705920、32 轮、16 实例）我全部复算命中，无一造假。",
+      "evidence": "bench/compiler-lab/extra.py:48（common 无 -Cdebuginfo、无 -Cllvm-args）、:49（generate）、:54-55（use 加 -Cllvm-args=-pgo-warn-missing-function）、:36-38（many/thin 构建含 -Cdebuginfo=1）；bench/compiler-lab/results/extra-02/pgo-use.txt:1 vs pgo-generate.txt:1 vs many-build.txt:1 三条命令逐字对比；pgo-size.txt:3=220028、many-size.txt:3=220156、thin-size.txt:3=214768，复算差值 128 与 5388"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "severity": "P2",
+      "description": "6.7.6 的表把 many O3 / many ThinLTO / many PGO-use 三行并列在同一张「已观察的节大小」表里，例 6.7.1 又把后两行合写成「同一个 code_size 探针、同样 O3 与一个 CGU 的条件下」，读者据此会以为三行只差 LTO 与 profile 一个开关。实际构建参数集不同：many/thin 由 extra.py 的 for name, extra in [('one',[]),('many',['--cfg=many']),('thin',['--cfg=many','-Clto=thin'])] 循环构建，都带 -Cdebuginfo=1；PGO-use 由另一组 common 构建，不带 -Cdebuginfo=1，还多一条 -Cllvm-args。表里既没有披露 debuginfo 差异，也没有给出各行的完整参数，5388 与 128 两个差值就落在两种不同的受控程度之上——5388 是单变量，128 不是。建议：表下补一列或一句说明每行的构建参数差异（或把 PGO-use 那行移出本表、只留在 6.8.6），并把例 6.7.1 支持的结论限定为「同参数集的 ThinLTO 对照小 5388 字节」，对 128 字节明说参数集不完全一致。本节其余论断（inline 属性只是提示、边界保留与体内优化互相独立、CGU=1/LTO=false 的正式 profile、def-6.7.4 的 __text 口径）我都用产物复核通过，E-a…E-g 七条与 6.7.9 小结没有与事实冲突之处。",
+      "evidence": "bench/compiler-lab/extra.py:36-38（-Cdebuginfo=1 在 many/thin 构建里）与 :48-55（PGO common 无该项）；extra-02/many-build.txt:1、thin-build.txt:1、pgo-use.txt:1 三条命令的参数集差异；src/part2/ch06.md:1337-1343 表格与 :1351 例 6.7.1 表述"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "severity": "P2",
+      "description": "6.9 第 1633 行写「在线补充材料两处，本章确实核读过正文：Nomicon 的 Aliasing …… rustc book 的 Profile Guided Optimization 给出 6.8.2 那四阶段的官方流程」，但附录来源台账对这个 URL 存在两条互斥的登记：src/appendix/coverage.md:87 的 EVID-rustc-pgo/compiler-web-pgo 行标为「核读映射」到 part2/ch06.md#sec-cpp-rust.2.6.8，而同文件里那条以 https://doc.rust-lang.org/rustc/profile-guided-optimization.html 为 id 的独立行状态写的是「已抓取，核读未登记」。也就是说正文里「确实核读过正文」这句话踩在台账自相矛盾的地方：若以 URL 行为准，本章对该页的核读并没有登记，正文就属过度声明；若以 EVID 行为准，台账里就不该留一条状态更弱的同名行。这是登记口径问题而非编造——我核到的四阶段流程（插桩构建→执行产 profraw→llvm-profdata merge→-Cprofile-use 重建）在 extra.py 与 extra-02 归档里都独立成立，不依赖那页文档。请作者二选一：补齐 URL 行的核读登记，或把正文改成「rustc book 的 PGO 页已抓取，本章按流程登记在 EVID-rustc-pgo 下」。（附带同一节的另一条小口径问题：正文把 u8::count_ones 称作「本章参考值的来源」，但台账中 grep count_ones 命中 0 行；black_box 与 Cell 两条链接命中的台账行分别属于 S08 第 30 条→第 1 章与 S11 RefCell→第 2 章，不是本章来源行。这三处是「值得一读」的推荐口径，不算已核实声明，但若要保持全书「规范来源须有台账行」的纪律，建议要么登记、要么去掉「来源」二字。）",
+      "evidence": "src/part2/ch06.md:1633（「在线补充材料两处，本章确实核读过正文」）与 :1629-1631（S08/S09/S10 三条均有台账行）；src/appendix/coverage.md:87 核读映射行 vs 同文件 compiler-web-pgo URL 行「已抓取，核读未登记」；grep -c count_ones src/appendix/coverage.md = 0"
+    }
+  ]
+}

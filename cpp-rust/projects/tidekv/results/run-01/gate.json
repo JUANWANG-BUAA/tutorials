@@ -1,0 +1,68 @@
+{
+  "budget_B": 1000.0,
+  "units": "ns_per_op",
+  "rule": "U <= B accept | L > B reject | else insufficient-evidence",
+  "diff_convention": "diff = B(tidekv) - A(baseline), ns/op; positive means tidekv is slower",
+  "bootstrap": {
+    "seed": 20289699,
+    "iterations": 20000,
+    "method": "percentile bootstrap of the paired mean difference",
+    "confidence": 0.95
+  },
+  "protocol": {
+    "seed": "20261028",
+    "rounds": "21",
+    "batches_per_round": "30",
+    "ops_per_batch": "900",
+    "warmup_ms": "500",
+    "flush_every": "300"
+  },
+  "counts": {
+    "accept": 0,
+    "reject": 4,
+    "insufficient-evidence": 0
+  },
+  "cases": [
+    {
+      "case": "put_wide",
+      "rounds_used": 21,
+      "diff_mean_ns_per_op": 40476.549358000004,
+      "ci95_low_ns_per_op": 40105.64102985714,
+      "ci95_high_ns_per_op": 40819.815213333335,
+      "budget_B_ns_per_op": 1000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "reject"
+    },
+    {
+      "case": "get_hot",
+      "rounds_used": 21,
+      "diff_mean_ns_per_op": 33748.109593333334,
+      "ci95_low_ns_per_op": 33561.87521014286,
+      "ci95_high_ns_per_op": 33929.378483904766,
+      "budget_B_ns_per_op": 1000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "reject"
+    },
+    {
+      "case": "get_absent",
+      "rounds_used": 21,
+      "diff_mean_ns_per_op": 24409.687279809525,
+      "ci95_low_ns_per_op": 24219.815751857142,
+      "ci95_high_ns_per_op": 24594.670187952383,
+      "budget_B_ns_per_op": 1000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "reject"
+    },
+    {
+      "case": "scan_12",
+      "rounds_used": 21,
+      "diff_mean_ns_per_op": 32080.60986404762,
+      "ci95_low_ns_per_op": 31950.89336104762,
+      "ci95_high_ns_per_op": 32206.14335185714,
+      "budget_B_ns_per_op": 1000.0,
+      "rule": "U<=B accept; L>B reject; otherwise insufficient-evidence",
+      "verdict": "reject"
+    }
+  ],
+  "all_accept": false
+}

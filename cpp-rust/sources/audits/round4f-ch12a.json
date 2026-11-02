@@ -1,0 +1,60 @@
+{
+  "reviewer": "r4f-ch12a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动通读 src/part3/ch12.md 的 12.1–12.6 全部正文与语义盒，逐条对照 bench/systems-lab 的 simd.rs/lib.rs、results/run-01/{simd.txt,layout.txt,environment.txt,source-sha256.txt,codegen/*}，用 /usr/bin/python3 复算全部统计量与校验和，并在本机实跑 rustc 1.99.1 的 remark 开关；另跑 tools/list_uncollected_claims.py 过滤 ch12。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "12.1.1 删掉的发射宽度已核：ch12.md:82 只保留『本书没有取证、不当结论用』的否定式表述，全节无残留发射宽度数字被当论据；ch12.md:277 的『发射宽度 8』是即时自测里被反驳的错误命题引语，不是作者断言。车道公式（512/32=16、512/64=8、128/32=4、128/16=8）与例 12.1.1 的 65539=4×16384+3 全部手算正确；65539 确为质数（试除到 255 无因子）。图 12-1 下半部 ptr 0x5000+len 512 与 0x5200 自洽。未逐字核对 ARM SVE 128–2048 位与 AVX-512 降频的外部规范，只核了内部一致性。",
+      "evidence": ["src/part3/ch12.md:82,277", "复算：65539%4==3，65539×16==1048624，65539 试除判定质数=True"]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点 12.2.5 在本机实跑复现（当前 rustc 1.99.1，与正文『本机事实』一句一致；run-01 采集时 environment.txt 记 1.99.0，两处时间点不同不构成矛盾）：-C remark=loop-vectorize 与 -C remark=vectorizer 在 systems-lab 全量 release 构建中打印 0 条向量化 remark；-C remark=all 有 inline (success) remark 但同样没有 vectorized 字样；不带 debuginfo 时 rustc 原样打出『-C remark requires \"-C debuginfo=n\"』警告；rustc -O -C pass-remarks-analysis=loop-vectorize 报『error: unknown codegen option: pass-remarks-analysis』，pass-remarks-missed 同——正文三条开关判法逐字命中。『loop not vectorized: could not prove…』我同样采不到，正文把它标为未采集是诚实的。fallback 的两层判法可落地：run-01/codegen/ 的 .ll 有 <4 x i32> 与 align 1，.s 有 ldur q0。12.2.4 的 fp-contract=fast（FMA 收缩）与 fadd_fast（代数重排、未稳定）两个入口区分正确。",
+      "evidence": ["实跑：RUSTFLAGS=-C remark=loop-vectorize cargo build --release（/tmp 副本）→ grep -ci vectoriz = 0", "实跑：rustc -O -C pass-remarks-analysis=… → error: unknown codegen option", "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.ll:<4 x i32> 计数 4、align 1 计数 108", "rustc --version = 1.99.1"]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "12.3.3 注释逐条对真实实现：lib.rs:233 起 neon_inner 的源码确是 vld1q_u32 → vaddq_u32(vmulq_u32(…)) → vst1q_u32 两条 intrinsics，归档 .s 里融合成单条 mla.4s v2, v1, v0（mla.4s 全文只 1 处，循环外 movi.4s v0 共 2 处 movi），所以『源码层是两条、能否融成一条要看后端』这句注释与产物一致；『连续向量加载 ldr q / 存储 str q』对应 .s 的 ldr q1, [x10], #16 与 str q2, [x11], #16。lib.rs:239 的 SAFETY 注释（对齐可接受、输入共享输出独占故不重叠）与正文注释口径一致。一处口径差异但不判错：示例代码尾部写的是标量清理循环，归档实现（lib.rs 主循环后）实为 auto_transform 兜尾——正文没有把 12.3.3 声称是归档源码引用，且 12.5.3 与 12.6.1 表格都写明『余数转 auto』，链条自洽。SIGILL/target_feature/探测三件套与 Rust Reference 的公开语义相符，未逐字比对 Reference 原文（12.9 登记为核读完成，本派单范围不含逐字页码回查）。",
+      "evidence": ["bench/systems-lab/src/lib.rs:232-250,266-270", "run-01/codegen/systems_lab-290015c44171d49d.s: LBB49_3 含 mla.4s v2, v1, v0；movi.4s 共 2 处", "run-01/source-sha256.txt 与 src/lib.rs、src/bin/simd.rs 现值哈希前缀逐位相符（2fc860bc…、1947c9be…）"]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "100GbE=100 Gbit/s 换算正确；胖指针 16 字节与 layout.txt 的 &[u8],size=16,align=8 一致；next_frame 与 lib.rs:272 起的 ParseError/实现相符，get(..4)/limit/Truncated 的三问解答（例 12.4.1）逻辑复核成立；『传递不到 1 纳秒』在定义 12.4.1 与 E-c 两处都正确降级为未计时论断。唯一问题是拷贝次数与本节自己的图对不上，见 findings。",
+      "evidence": ["bench/systems-lab/results/run-01/layout.txt: &[u8],size=16,align=8", "src/part3/ch12.md:717-729（图与正文同页）", "bench/systems-lab/src/lib.rs:272 起 next_frame 定义"]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "探针表七行逐行核对 layout.txt：ArrayQueue/Guard/Collector/Arc<[u8]>/&[u8]/Vec<u8>/AtomicPtr 恰七行，&[u8] 16/8、Vec<u8> 24/8、Arc<[u8]> 16/8 全部命中；&mut [u32] 与 [u32; 4] 两行确不在探针里，正文标『未采集、按规则写出』诚实。12.5.2 引用的 8 行汇编与归档 .s 的 LBB49_3 逐条一致（ldr q1,[x10],#16 / movi.4s v2,#7 / mla.4s v2,v1,v0 / str q2,[x11],#16 / sub / add / cmp / b.hi），『3 条数据指令 + 5 条常量与控制』数得对；mla.4s 全文恰 1 处、movi.4s 恰 2 处，与『v0 循环外建好、v2 每轮重建』一致。12.5.3 的 IR 块与 .ll 的 bb2.i 逐字相符（load <4 x i32> align 1、splat (i32 3)、跳出后 tail call auto_transform 在 .ll:6500 实存）；同文件 auto_transform 主体为标量 load i32（.ll:6434），对应 .s:10757 起的 ldr w8,[x0],#4 标量循环——正文『一份产物里 4 车道与标量尾巴并存、且 rlib 产物不等于最终二进制』的克制表述成立。environment.txt 引文 profile=release; thin LTO; codegen-units=1; debug=1 逐字命中。例 12.5.1 的 2 车道变体 65539=2×32769+1 手算正确。",
+      "evidence": ["run-01/layout.txt 全文 7 行", "run-01/codegen/*.s LBB49_3、*.ll bb2.i 与 6407/6434/6500 行", "run-01/environment.txt"]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节数字从 simd.txt 的 63 条 raw 行独立复算，全部逐位命中：每模式 n=21；scalar_call 0.535004/0.012816、p50 0.537967 恰来自第 7 轮、p99 0.560973 来自第 15 轮；auto 0.069184/0.003189、p50 来自第 19 轮、p99 0.078119 来自第 15 轮且确为 21 轮最大值；neon 0.069965/0.003086、p50 来自第 6 轮、p99 来自第 13 轮；相对标准差 2.4%/4.6%/4.4% 与正文一致。12.6.3 的逐轮归因方向重点复核：抽样四轮表 0/3/15/19 十六个数值全部复算相符（0 轮 auto 0.070846 < neon 0.071959 略快，3/15/19 轮 neon 快），『neon 赢三轮、只有第 0 轮 auto 略快』『p50/p99 不是某一轮读数』两句与底账一致；raw 行序（0 轮 scalar 起、1 轮 auto 起、2 轮 neon 起）证实 (round+offset)%3 轮转。加速比 0.535004÷0.069184=7.733、÷0.069965=7.647，差值 0.000781（1.1%）复算命中；63 条 raw 的校验和全部为 140746630219670，且我用 python 按 make_input((i×0x9E3779B9 mod 2^32)×3+7 mod 2^32 求和) 独立算出同一数字——非编造。12.6.2 引用的 simd.rs 与磁盘上 source-sha256.txt 登记的版本逐字一致（N=65539、REPEAT=16、warmup_ns=500298291 rounds=698 units=1048624 命中）。归因停在『去掉调用』一层、不拆 IPC/cache，与数据覆盖面自洽。",
+      "evidence": ["复算：/usr/bin/python3 对 results/run-01/simd.txt 全部 raw 行 n÷1048624 取均值/样本标准差/nearest-rank，与 summary 行逐位一致", "复算校验和：sum(((i*0x9E3779B9)&0xFFFFFFFF)*3+7 …) for i<65539 = 140746630219670", "sha256(src/bin/simd.rs)=1947c9be… 与 source-sha256.txt 登记值一致"]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "severity": "P2",
+      "description": "12.4.1 正文说一个 100 字节帧『可能经历 3 次独立的内存拷贝与 2 次全局堆分配器（malloc/free）调用』，但同页紧挨的示意图只画了两段搬运：内核→用户态 memcpy、malloc+memcpy 进 Packet{payload:Vec}，图里推不出第三次拷贝。若第三次的口径是『网卡收包落进 socket buffer』那一跳，图从 Socket Buffer 起画就没有承载它；『2 次调用』若指 1 malloc+1 free 则口径勉强能读通，但与『2 次堆分配』的常见读法有歧义。不是数字造假（该句有『可能』对冲，也无对应实测断言），判 P2：建议图上补一行『网卡→内核缓冲（第三跳）』，或把正文改为『至少两次显式 memcpy，加收包路径还可能各添一跳；malloc/free 各一次』。",
+      "evidence": "src/part3/ch12.md:717-729：图仅含 memcpy(内核向用户态拷贝) 与 malloc+memcpy 两个箭头；ch12.md:729 记『3 次独立的内存拷贝与 2 次…调用』；对照 12.4 自测第 4 题答案与 12.7.3 四步账单均只列 1 malloc+1 memcpy+1 free 的单次循环"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "reviewer": "r4b-ch11a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 ch11.md 的 11.1–11.6 全部正文与语义盒，逐字比对 contracts.rs:115-126、crossbeam-queue 0.3.14 array_queue.rs、crossbeam-epoch 0.9.21 internal.rs、systems_lab-290015c44171d49d.s 产物，并用 python3 从 queue.txt/epoch.txt 独立复算全部均值/样本标准差/p50/p99/逐批值，另跑 tools/list_uncollected_claims.py 只看 ch11。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 11.1.1–11.1.5 全部定义/例题/自测。三级进度阶梯定义、自旋锁挂起测试、AdaptiveMutex 与 SpinLock 代码为教学模型（正文自称伪代码/抽象模型，未引作磁盘产物），无实测数字声明；「上下文切换 1,000–5,000 纳秒」「超出临界区两到三个数量级」是通用量级陈述、正文未标为本书实测，不构成测量级断言。本节「对照耗时/上下文切换次数没有采集」两处披露与 list_uncollected_claims 输出一致（ch11.md:193、:294）。",
+      "evidence": [
+        "src/part3/ch11.md:72-185（定义盒与自旋锁代码均声明为模型而非产物）",
+        "tools/list_uncollected_claims.py 输出 ch11 行 193/294：披露式「没有采集」，无未兑现数字"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读 11.2.1–11.2.6。Herlihy/Wing 1990 提出线性化、三条件定义、Michael-Scott 入队线性化点在 tail.next 的 CAS 而非 tail 的 CAS、跨两次非原子读不可线性化，均为标准并发理论表述；本节不含引磁盘证据的测量数字，例题/自测的判定与定义盒自洽（例 11.2.1 两问的合法性方向正确）。未发现内部矛盾。",
+      "evidence": [
+        "src/part3/ch11.md:314-448（逐节读毕；无「实测」类数字声明）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核 11.3.4：正文引用的 contracts.rs 测试 safe_logic_aba_is_not_a_data_race 声称 115–126 行、实测通过、归档 run-01/test.txt。我用脚本把磁盘 tests/contracts.rs 第 115–126 行与正文代码块逐行归一比对：完全逐字一致（含 // A successful CAS… 注释行），115 行正是 #[test]、126 行正是收尾 }；test.txt:45 有该测试 ok 记录。单线程探针断言 CAS 返回 Ok(1) 与语义一致。其余核读：图 11-1 五阶段与 11.3.1 漏洞代码自洽；16 位 Tag=65536 取值（例 11.3.1 的 2^16 口算成立）；「绕回吞吐门槛没有采集」披露与工具输出一致。",
+      "evidence": [
+        "bench/systems-lab/tests/contracts.rs:115-126 与 src/part3/ch11.md:645-657 逐字 diff=空（/tmp/r4b_ch11a_extract.py 输出 disk==book: True）",
+        "bench/systems-lab/results/run-01/test.txt:45 test safe_logic_aba_is_not_a_data_race ... ok"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核 11.4.5 结构图对 crossbeam-epoch 0.9.21（Cargo.lock 确认版本 0.9.21）：Local 结构在 internal.rs:289-310，含 bag: UnsafeCell<Bag>(:299)、guard_count(:302)、handle_count(:305)、pin_count(:310) 逐格对上（图是节选，还省略 entry/collector/epoch 字段，属示意而非误报）；Global 在 :156-165，locals: List<Local>(:158)、queue: Queue<SealedBag>(:161)、epoch: CachePadded<AtomicEpoch>(:164) 全对；SealedBag 在 :138-139，字段为 epoch 与 _bag（正文写作 bag，下划线省略，语义同）；「袋子里不放代际号、封口时盖 epoch」与 push_bag(:182-189) 一致；「满 64 项」与 MAX_OBJECTS=64(:57)、try_push 判满(:92) 一致；internal.rs:185 确有 atomic::fence(SeqCst)，与 11.5.3 引用的屏障出处一致。11.4.6 三纪元证明与 is_expired 的 global_epoch.wrapping_sub>=2(:151) 吻合。",
+      "evidence": [
+        "~/.cargo/registry/src/mirrors.bfsu.edu.cn-*/crossbeam-epoch-0.9.21/src/internal.rs:57,92,138-139,148-152,156-165,182-189,289-314",
+        "bench/systems-lab/Cargo.lock crossbeam-epoch = 0.9.21"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重点复核三处。11.5.2 对 crossbeam-queue 0.3.14（Cargo.lock 确认）：one_lap 注释与代码在 :130-134、初始 stamp=i 在 :120-128（正文引 113-124 覆盖 init 段，可接受）、push 判据 tail==stamp 在 :173、stamp.store(tail+1,Release) 在 :186、满判据 stamp.wrapping_add(one_lap)==tail+1 在 :194、pop 判据 head+1==stamp 在 :351、stamp.store(head.wrapping_add(one_lap),Release) 在 :372-373——全部与正文一致；index=pos&(one_lap-1)、lap=pos&!(one_lap-1) 见 :154-155/:342-343。唯一硬伤：正文写「若 stamp == head（:377），说明这一格还没有新数据，队列已空」，磁盘 :377 是 CAS 失败分支的 head = h;，空判据 else if stamp == head 实际在 :381，行号引错（语义本身正确）。11.5.3 对 systems_lab-290015c44171d49d.s（产物第 10368–10391 行）：摘出的 scalar_step 函数体去掉 .loc/.cfi/Ltmp 后指令序列与磁盘逐条一致（sub sp/str w0/add x8/InlineAsm 两行/ldr/add lsl#1/add #7/add sp/ret），符号 __RNvCs4WO1Pb37diX_11systems_lab11scalar_step 就在 :10368；计数复核 Casal=3、casp=0、dmb 总数=60、dmb ishld=54、dmb ish=6，且 6 条 ish 按最近上层标签归属恰为 retire 2(:11396,:11538)、epoch_batch 1(:7036)、drain 1(:11126)、Queue::push 1(:12674)、Queue::pop 1(:12241)——与正文逐项吻合；出处引用（array_queue.rs:194、internal.rs:185）覆盖了 push 与 defer 路径，Queue::pop 那条源自 array_queue.rs:382 的 SeqCst 栅栏未列名，属出处列举不全（并入 finding 注记）。11.5.1 类型表 7 行与 run-01/layout.txt 逐格一致（ArrayQueue<u64> 384/128 等），128 字节缓存行与 environment.txt hw.cachelinesize:128、host aarch64-apple-darwin、rustc 1.99.0、LLVM 23.1.1、M5 Pro 18 核全部对上。",
+      "evidence": [
+        "crossbeam-queue-0.3.14/src/array_queue.rs:377（head = h;）vs :381（else if stamp == head）",
+        "bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s:10368-10391 指令 diff=空；dmb ish 逐函数计数 {retire:2, epoch_batch:1, drain:1, Queue::push:1, Queue::pop:1}",
+        "bench/systems-lab/results/run-01/layout.txt（ArrayQueue<u64>,size=384,align=128 等 7 行）；results/run-01/environment.txt"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部数字从 run-01/queue.txt 的 42 条 raw 行独立复算（值=raw/65536）：Mutex<VecDeque> 均值 72.861686、s(N-1)=2.683101、p50 72.586060、p99 78.983948；ArrayQueue 均值 40.647478、s=8.023660、p50 40.676117、p99 53.237915——六个汇总数与 21 行逐批原值全部逐位相符（逐批表 0 处失配）；提升 79.3%（复算 79.25% 四舍五入）、1.79x（1.7925）成立；p50/p99 按 nearest-rank（ceil(q*n)）与正文声明口径一致，Round4/19 的「等于本列中位数」、Round5/18 的「本列最小/最大、p99 落此批」均验证；第四列 21 个「±X.Xs」逐一按 z=(x-均值)/s 复算全部对得上（含边界值 1.95→+1.9、-1.546→-1.5）。预热 506ms>500ms、每批交替执行顺序（文件行序 mutex/aq 轮换）与正文一致。11.6.2 引用的 lib.rs 骨干与磁盘一致（queue_batch 在 lib.rs:92，Barrier::new(4) :94，fetch_add 领票 :121，sort_unstable+逐位断言 :143 段）；「最重帧 queue_batch lib.rs:97 共 126 采样」与 queue-sample.txt 首条 126 命中、sample-command.txt 的 1s/1ms 口径一致；重试计数未采集的两处推断声明与工具披露行（ch11.md:1344、:1379）一致。",
+      "evidence": [
+        "queue.txt raw 42 行复算（脚本输出与正文表逐位相等，mismatches=[]）",
+        "bench/systems-lab/src/lib.rs:92,94,121,143；results/run-01/queue-sample.txt（126 采样帧 lib.rs:97）；results/run-01/sample-command.txt"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "severity": "P2",
+      "description": "11.5.2 的 pop 伪代码说明里「若 stamp == head（:377），说明这一格还没有新数据，队列已空」行号引错：crossbeam-queue 0.3.14 的 array_queue.rs:377 是 head CAS 失败分支的 `head = h;`，真正的空队列判据 `} else if stamp == head {` 在 :381（其后的 SeqCst 栅栏在 :382，即正文 11.5.3 所说 Queue::pop 那条 dmb ish 的出处）。协议语义本身与磁盘源码一致，属关键行号锚点指偏 4 行的引用问题；同段另两处小瑕疵一并记录：11.5.3 屏障出处只点名 array_queue.rs:194 与 internal.rs:185，漏列 pop 路径的 array_queue.rs:382；11.4.5 的 SealedBag { epoch, bag } 磁盘字段名实为 _bag（:140）。",
+      "evidence": "crossbeam-queue-0.3.14/src/array_queue.rs:377 `head = h;` vs :381 `} else if stamp == head {`；:382 `atomic::fence(Ordering::SeqCst);`；crossbeam-epoch-0.9.21/src/internal.rs:138-140 `struct SealedBag { epoch: Epoch, _bag: Bag }`"
+    }
+  ]
+}

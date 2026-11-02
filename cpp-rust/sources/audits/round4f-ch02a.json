@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4f-ch02a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动读了 src/part1/ch02.md 的 2.1–2.6 全部正文与每个语义盒，并逐条回查 bench/foundations-lab 的 src/lib.rs、src/bin/locality.rs、examples/layout.rs、results/native-01/{layout.txt,locality.csv,statistics.json,environment.txt,sample-locality.txt,codegen/*.s,codegen/*.ll}、tests 内 ByteRegion 用例、sources/web.json 登记的两份 rCore 母本与 FOUNDATIONS-OPTION 归档，另跑 tools/list_uncollected_claims.py 只看 ch02；未读其他章正文（只按锚点清单核对了 ch01 的被引锚点是否都存在）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "九行探针表逐格比对 results/native-01/layout.txt（COrder 24/8、RustOrder 16/8、Record 64/8、Option<NonZeroU64> 8/8、Option<u64> 16/8、Option<Handle> 8/8、&[u64] 16/8、Vec<u64> 24/8、ByteRegion 32/8），偏移 COrder 0/8/16、RustOrder 10/0/8 全部命中；COrder/RustOrder 结构定义与 examples/layout.rs:5-15 一致。例 2.1.1 自己复算：65536×8=524288、+24=524312、524288÷24=21845.3，与正文一致；N 取自 src/lib.rs:5 的 65_536。例 2.1.2 的填充 13=7+6 与 5、图 2-1 的 <desc> 字节区间（tag 10–11、padding 11–16 共 5 字节）与偏移表互洽。判定流程与 2.1.5 的保证层级是表述性内容，未发现与代码或归档相反之处。唯一缺陷是定义 2.1.1 首句残缺（见 findings P2）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:2-13（九行 size/align + 两行偏移，逐格相同）",
+        "bench/foundations-lab/examples/layout.rs:5-17（COrder/RustOrder/Handle 定义与正文代码块一致）",
+        "复算：65536*8=524288；524288+24=524312；524288/24=21845.33；24-11=13；16-11=5"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "三行 Option 对照（8/16/8）取自 layout.txt 第 5-7 行，与正文表格一致；Handle 的 #[repr(transparent)] 包装与 examples/layout.rs:16-17 相同；2.2.3 的 handle() 代码与探针程序可对照，NonZeroU64::new(raw).map(Handle) 的语义（0→None）成立。2.2.2 声称「本轮另外核读了 std::option 的 Representation 段」：sources/web.json 的 FOUNDATIONS-OPTION 条目 target 正是 part1/ch02.md#sec-cpp-rust.1.2.2、review_scope 为「Representation段及类型/条件表」，母本归档在磁盘上存在且含 Representation 小节，登记落得住。诚实边界（2.2.6「本节没有采集 Option 访问的时间数据」）与归档相符：results/native-01/ 里没有任何 option 时序文件，也没有 PMU 产物。需要说明我没核到的部分：我只确认了母本文件存在并含该小节，没有把 2.2.2 转述的引用清单（引用/NonZero/NonNull/函数指针）与 Box 条目的 Global、Sized 前提逐字比到原文句子级，因此这两处条件的措辞 fidelity 未经我核实。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:5-7（Option<NonZeroU64>,8,8 / Option<u64>,16,8 / Option<Handle>,8,8）",
+        "bench/foundations-lab/examples/layout.rs:16-17（#[repr(transparent)] struct Handle(NonZeroU64)）",
+        "sources/web.json → id FOUNDATIONS-OPTION，target part1/ch02.md#sec-cpp-rust.1.2.2，download_evidence .work/cpp-rust-sources/foundations/option.html；该文件实存且含 § Representation 目录项",
+        "ls bench/foundations-lab/results/native-01/ → 无 Option 计时/事件类归档文件（2.2.6 的未采集声明与磁盘一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "跨度与密度我自己算过：65536×64=4194304、65536×8=524288、比值 8、密度 8/64=12.5%，全部正确；cacheline 128 来自 environment.txt:15 的 hw.cachelinesize: 128，正文「不使用 64 字节假设」与之相符；「Record 只对齐到 8、不保证 128 对齐起点」与 layout.txt 的 Record,64,8 一致。TLB/伪共享/带宽记为未采集，与归档里确实没有事件产物相符（tools/list_uncollected_claims.py 对 ch02 列出 26 条未采集断言，全部是这类声明，未见与磁盘冲突）。2.3.3 引 rCore SV39 那条大页因果链：母本 .work/rcore-book/source/chapter4/3sv39-implementation-1.rst:337 逐点命中（避免大量页表项读写、降低页表节点数目、一个 TLB 表项覆盖更大空间、减轻 TLB 压力提升命中率、提高访存指令速度与整体 IPC、代价是内核要支持三种不同大小的连续区域分配），且 2.9.1 登记的正是同一份文件（sources/web.json id rcore-sv39 → chapter4/3sv39-implementation-1.html），归属没有错位。缺陷在例 2.3.1 把 4194304 说成「与归档记录一致」，而归档里根本没有这个数（见 findings P1）。",
+      "evidence": [
+        "复算：65536*64=4194304；65536*8=524288；4194304/524288=8；8/64=0.125",
+        "bench/foundations-lab/results/native-01/environment.txt:15 → hw.cachelinesize: 128",
+        "grep -rIl '4194304' bench/ → 无命中（sources/ 下命中的只是历史审计报告 JSON）",
+        "tutorials/.work/rcore-book/source/chapter4/3sv39-implementation-1.rst:337（大页因果链原文）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.4.2 的 Rust 代码块逐行对到 src/lib.rs:72-89（Record repr(C)、hot+cold[7]、两个 #[inline(never)] 折叠核）；「冷字段初始化为 11」对到 src/bin/locality.rs:7 的 cold: [11; 7]。代码生成表五行我都落到了产物：sum_aos 符号起点 codegen/*.s:862，其主体 896-912 就是正文引的四条标量装载（ldur x15,[x13,#-128]、ldur x16,[x13,#-64]、ldr x17,[x13]、ldr x15,[x13,#64]）与 add x13,x13,#256；sum_soa 符号起点 :944，其主体 978-985 是 ldp q4,q5,[x8,#-32] / ldp q6,q7,[x8],#64 与四条 add.2d——两段片段确实来自正文所声称的那个符号，没有张冠李戴（同形的 ldp 另出现在 :1609，属 sum_index，正文没有引用它）。sum_iter 别名在 :1952（.globl … 且 sum_iter = sum_soa）。切片参数 readonly+noalias 在 IR 里命中：*.ll:543（sum_aos）与 :610（sum_soa）均为 ptr noalias nofree noundef nonnull readonly align 8。例 2.4.1 我独立数过：SoA 一轮 64 连续字节=8 个 u64、四条 add.2d=8 通道，AoS 一轮 256 字节/4 元素，比值 64÷8=8，与例 2.3.1 的跨度比一致；正文进一步限定「片段不能推完整调用周期、不可推广到所有 aarch64 后端」，与只给六行引文的证据强度相配。热列投影的范围声明（冷列未存、两表示计时前并存）与 locality.rs 的实现相符。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:72-89；src/bin/locality.rs:7（cold: [11; 7]）",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s:862,896-898,905,912（sum_aos）与 :944,978-985（sum_soa）、:1952（sum_iter = sum_soa）",
+        "同目录 .ll:543 与 :610（ptr noalias … readonly align 8）",
+        "复算：2×16+2×16=64 字节/轮 → 8 个 u64；256÷4=64 字节/元素；64/8=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "结果表四个数全部从 locality.csv 的 42 行 raw 记录自己复算，没有抄正文：aos mean=0.519143207、sd=0.005283686、p50=0.519196153、p99=0.529403567（=max）；soa mean=0.059380878、sd=0.000798904、p50=0.059301615、p99=0.060682416（=max）。分位数定义按 analyze.py:8-9 的 ceil(n·p)-1 最近秩，n=21 时 p99 落在第 21 个即最大值，与正文「批 p99 仍是 21 个批均值中的最大值」完全一致，口径没有混用。配对均值 −0.459762329 复现；bootstrap 我用 analyze.py 的同一算法（seed 13013、10000 次重采样、保留轮配对）跑出 [−0.461856757, −0.457715438]，与正文逐位相同，且与 statistics.json 里 locality.paired_second_minus_first.bootstrap95 相同。夹具参数逐条对上：src/bin/locality.rs:22 的 run(&mut cases, 128, N)（每批 128 次、单位 65536）、lib.rs:20 的 500 ms 预热、lib.rs:6 的 ROUNDS=21、lib.rs:27 的轮转、lib.rs:34 的批后逐值校验、打印在计时区间之外。2.5.1 声称的「完整代码」与 src/bin/locality.rs 全文一致（仅空行差异）。例 2.5.1 换算我复算：128×65536=8388608；×0.519143207=4 354 889 ns≈4.35 ms；×0.059380878=498 123 ns≈0.50 ms；21 批≈91.5/10.5 ms；区间宽 0.004141319＝|均值| 的 0.90%；sd 摊到每批≈44.3 μs——四个数都对。8.74 倍=0.519143207/0.059380878=8.7427 ✓。例 2.5.2 说本章没有为 locality 定义预算 B、因此三态判不了，这与归档里没有预算文件相符；2.5.5 的采样读法用 sample-locality.txt:52-53（sum_aos 421、sum_soa 419 次）验证，「次数接近而单次成本差 8.74 倍」的论证与预热按墙钟运行一致。",
+      "evidence": [
+        "复算脚本（从 results/native-01/locality.csv 的 raw 行）：aos/soa 各 21 个值，mean/sd/p50/p99 与正文逐位相同",
+        "bench/foundations-lab/analyze.py:8-9（quantile=sorted[ceil(n·p)-1]）与 :22-27（seed 13013、10000 次、保留配对）→ 复现 bootstrap95=[-0.461856757,-0.457715438]",
+        "bench/foundations-lab/results/native-01/statistics.json → locality.paired_second_minus_first.bootstrap95 同值",
+        "bench/foundations-lab/src/lib.rs:6,20,27,34 与 src/bin/locality.rs:22；results/native-01/sample-locality.txt:52-53"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "2.6.3 的组件代码与 src/lib.rs:101-124 逐行相同（Vec<u8>+usize 游标、checked_add 在前、get_mut 在后、失败不写 used），「没有 unsafe」成立；compile-fail 用例与 lib.rs:94-100 的文档测试逐字相同，形状与 2.6.4 的说明一致。ByteRegion 32/8 来自 layout.txt:10，与正文引用相符。例 2.6.1 我按代码语义手推并与 lib.rs:195-203 的 region_capacity_failure_is_transactional 断言序列（take(6)fill(7)→take(3)None→take(usize::MAX)None→take(2)==[0;2]→reset→take(6)==[7;6]）逐条对齐：used 依次 6、6、6、8、0、6，内容 [0;2] 与 [7;6] 均正确，答案没有算错。2.6.6 的 rCore 归属我核到了正文登记的同一份文件（sources/web.json 中 rcore 动态分配条目 → chapter4/1rust-dynamic-allocation.html，母本 .work/rcore-book/source/chapter4/1rust-dynamic-allocation.rst）：:141 给出 Layout 的 size+align、「对齐必须是 2 的幂、返回地址必须是 align 的倍数」，:189 给出堆是 .bss 中 static mut 的零初始化字节数组、LockedHeap 被 Mutex<T> 包着且操作前要先拿锁——三笔成本的机制出处逐点落地，正文也没有借用其中任何数字。2.6.6 引用的 2.93 倍我从 allocation.csv 复算：8.248312814÷2.813854399=2.9313 ✓（配对 −5.434458415 ✓），「单线程」与 lib.rs 无并发相符，锁争用与占比拆分明确记为没有采集 ✓。两处 P2 见 findings：定义 2.6.4 里「只有②能靠少分配直接绕开，①和③只能摊薄」与它自己给的定义冲突，以及②被写成任何 GlobalAlloc 的通用成本而母本只支撑 rCore 的 LockedHeap。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:94-124,195-203（组件全文、文档测试、事务性测试）；results/native-01/layout.txt:10（ByteRegion,32,8）",
+        "tutorials/.work/rcore-book/source/chapter4/1rust-dynamic-allocation.rst:141,189（Layout/align/2 的幂、.bss 零初始化数组、LockedHeap 被 Mutex 保护要先拿锁）",
+        "复算：bench/foundations-lab/results/native-01/allocation.csv raw 21+21 行 → 8.248312814 / 2.813854399 = 2.9313；配对我 - 你 = -5.434458415"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "severity": "P1",
+      "description": "例 2.3.1 的解答写「AoS：65536 × 64 = 4194304 字节，与归档记录一致」，把这条布局事实挂到了归档上，但归档里不存在这个数：我在 bench/ 整目录（含 results/native-01 的 csv/txt/json 与 codegen 的 .s/.ll/.mir）搜 4194304，只有 sources/audits/ 下别的历史审计报告命中，bench/ 零命中；locality.csv 的列只有 kind,round,position,case,ns_per_unit,checksum，environment.txt 也没有数组字节数。数本身是对的（65536×64），可它的真正出处是 src/lib.rs:5 的 N=65_536 与 layout.txt 里 Record 的 size 64，两者相乘，而不是任何归档记录。同一句还连带影响 2.3.2 正文「本轮 AoS 元素区为 4194304 字节」的措辞可信度。按派单规则，指不到磁盘证据的「一致」属于关键断言无出处，且机械层不会抓到它（不是 [@id] 也不是链接），所以留给人读这一层。",
+      "evidence": "grep -rIl '4194304' bench/ → 无输出；bench/foundations-lab/src/lib.rs:5（pub const N: usize = 65_536）与 results/native-01/layout.txt:4（Record,64,8）→ 65536×64=4194304（我复算）；ch02.md:527「与归档记录一致」、ch02.md:541"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "定义 2.6.4 结尾「三笔里只有 ② 能靠『少分配』直接绕开，① 和 ③ 只能摊薄」与它自己给出的三笔定义相矛盾：① 明说是「每次调用都要带 Layout」，是逐调用成本，路径不调用分配器时它和 ② 一起消失，没有理由 ② 能绕开而 ① 只能摊薄；本章的 ByteRegion 正是例证——它把 65536 次/批的分配换成一次 vec![0; capacity]，① 也随之从每块一次变成整批一次（同样被绕开），而 ③ 的元数据与碎片只是被摊薄。建议改成「① 与 ② 都随调用次数线性消失，③ 只能摊薄」，或说明区分标准是「是否随调用次数线性」。",
+      "evidence": "ch02.md:1193（定义 2.6.4 三笔与其收尾句）；对照 src/lib.rs:108-111（new 里仅一次 vec![0; capacity]）与 src/bin/allocation.rs 的 fresh_vec 每块一次 vec![0u8; LEN]"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "同一处定义 2.6.4 的 ② 写成「全局分配器是全进程共享的一个对象，多线程下每次 alloc/dealloc 都要过一把锁」，这是语言层面的普适成本；而它登记的机制出处（rCore 1rust-dynamic-allocation.rst:189）承诺的是 rCore 那个被 Mutex<T> 包住的 LockedHeap，2.9.1 也确实是把它作为 2.6.6 的机制出处登记、并注明不引用其中数字。锁本身是实现选择而非 GlobalAlloc 接口的强制要求（无锁/线程局部的分配器实现存在），所以这一句应当显式标成「多数全局分配器实现的做法，本章的机制参照是 rCore 的 LockedHeap+Mutex」，否则与本节反复要求区分的保证层级（语言约束/标准库保证/本机观测）不一致。后面那条可检验推论（收益有一部分来自少拿锁）措辞已经是条件式且明确记为没有采集，不受影响。",
+      "evidence": "ch02.md:1193 与 ch02.md:1688（2.9.1 登记 rcore 动态分配为机制出处、不引用数字）；tutorials/.work/rcore-book/source/chapter4/1rust-dynamic-allocation.rst:189（'LockedHeap 也是一个被互斥锁 Mutex<T> 保护的类型，在对它任何进行任何操作之前都要先获取锁'）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "severity": "P2",
+      "description": "定义 2.1.1 首句残缺：「**size** 是一个该类型的值占多少字节，包含字段本身与必要填充」——「X 是一个 Y 占多少字节」不是完整判断句，且这一定义随即被用来支撑步长、跨度等后续结论，是全章最底层的措辞之一。建议改为「size 是一个该类型的值所占的字节数，包含字段本身与必要填充」。同段对 align 与 offset 的表述是完整的，只有 size 这半句坏了。",
+      "evidence": "ch02.md:79（定义 2.1.1 第一句）"
+    }
+  ]
+}

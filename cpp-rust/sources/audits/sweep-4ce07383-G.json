@@ -1,0 +1,104 @@
+{
+  "reviewer": "sweep4ce-G",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "Cold-start read of src/part1/ch01.md lines 633-1219 (1.4/1.5/1.6) and src/part4/ch16.md lines 847-1243 (16.5/16.6), complete, no sampling. Every measurement number was recomputed with /usr/bin/python3 from the archived raw CSVs (bench/foundations-lab/results/native-01/{dce,paired}.csv) and compared to statistics.json; all code and asm snippets were diffed token-by-token against parent files in bench/foundations-lab/{src/bin/dce.rs,src/bin/paired.rs,src/lib.rs,analyze.py,run.sh,results/native-01/codegen/*} and projects/ffi-bridge/{src/lib.rs,tests/contracts.rs,c/demo.c,c/tests.c,CMakeLists.txt,Cargo.toml,tools/measure.sh,evidence/run-20261007-01/*}. tools/check_book.py was run read-only: 123 pages, 0 errors, so every [@id] cross-reference in the audited sections resolves. No files modified except this report.",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "Design content is sound and matches the archive: 21 paired rounds, position alternation (paired.csv round 0 A,B / round 1 B,A; indexed first-position 11 rounds, iterator 10, matching '21 是奇数' 11/10), drift summary numbers 0.058683/0.058575 (indexed) and 0.058684/0.058643 (iterator) reproduce exactly from paired.csv via analyze.py first7_last7; the ~0.000108/~0.000041 deltas and 'sd 在 0.0005 量级' (0.000459/0.000542) verify. Bootstrap analysis seed 13013 and deterministic alternation match analyze.py and lib.rs run(); the separation of timing-structure randomization from analysis seed is consistent with ch17 (per-round coin flip, arm_order column, '随机化不等于平衡' and 区组化随机 only listed as a future fix, 17.8.2) — no contradiction with 1.4.5/1.4.6. Two defects found: example 1.4.2 title/body number mismatch (P1) and the 3600x rounding (P2).",
+      "evidence": [
+        "src/part1/ch01.md:777 vs 779 (title '200 倍' vs body '3600 倍')",
+        "/usr/bin/python3 recompute: 0.058630038/0.000016082 = 3645.7",
+        "bench/foundations-lab/analyze.py:24,28 (seed 13013, resamples 10000); statistics.json paired.first7_last7 = [0.058683433714285714, 0.058575046857142855] and [0.05868431485714286, 0.058643166428571425]",
+        "bench/foundations-lab/results/native-01/paired.csv: position-0 counts indexed=11 iterator=10",
+        "src/part4/ch17.md:1361,1382 ('随机化不等于平衡', 区组化随机 as pending todo) — consistent with 1.4.5/1.4.6"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "All numbers verified against the archive: dce.csv/statistics.json reproduce the 1.5.3 table exactly to 9 decimals (discarded 0.000016082/0.000001491/0.000014901/0.000019848; observed 0.058630038/0.000235237/0.058561563/0.059458137), observed p99 is indeed the max of the 21 batch means because ceil(21x0.99)=21 (recomputed). dce.rs entry, dce_empty/sum_iter kernels, the data generator (i*17 ^ 0x5a5a, '索引乘 17 再异或常量'), N=65536, Cargo.lock and no third-party deps all match parent sources; codegen claims verified layer-by-layer: MIR keeps fold/Iterator semantics for dce_empty, LLVM IR body is 'ret i64 0', the .s body is exactly 'mov x0, #0' + 'ret', and 'sum_iter = alias ... sum_soa' exists in the .ll (line 16) — the 1.5.4 table rows are each supported and no foreign-language quote is present, so no curly-quote alteration risk in this section. Minor gaps only: the section has no 判定流程 block (stylistic, shared with 1.3), and the quoted code blocks are line-reflowed copies of dce.rs/lib.rs with tokens identical.",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/statistics.json dce block vs src/part1/ch01.md:916-919",
+        "python3: max(observed batch)==p99==0.059458137; ceil(21*0.99)=21",
+        "bench/foundations-lab/src/lib.rs:44-48,50-70 vs ch01.md:892-901 (token-identical)",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.{mir:1523,ll:772-775,s:1166-1171,1952}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "Full recompute from paired.csv matches every figure: indexed 0.058694076/0.000458518/0.058524311/0.060221791, iterator 0.058768701/0.000541829/0.058590114/0.060894847, paired diff mean 0.000074625 (= mean difference, arithmetically consistent 0.058768701-0.058694076), diff sd 0.000484383, bootstrap95 [-0.000128553, 0.000269819] reproduced bit-for-bit with random.Random(13013) + rng.choices(diffs, k=21) x 10000, exactly as 定义 1.6.2 describes; nearest-rank 2.5%/97.5% matches quantile() in analyze.py. paired.rs, sum_index kernel and the run() timing core snippet are token-identical to lib.rs (assert after elapsed, black_box before elapsed, as 1.6.2 claims). 'sum_iter 与 sum_soa 是 LLVM 别名、indexed 保持独立符号' verified: alias line in .ll:16, sum_index own body in .s. Statistical-design statements (cross-zero ≠ equal-speed, error-bar overlap ≠ test, bootstrap covers only this-run sampling) are internally consistent with 1.4 and with 1.7/ch17 gating language. Teaching loop complete: 回答/预览/定义1.6.1-1.6.2/例1.6.1/思考1.6.1/判定流程/小结/errata/即时自测.",
+      "evidence": [
+        "python3 bootstrap replay reproduced statistics.json paired_second_minus_first incl. interval endpoints to 9 decimals",
+        "bench/foundations-lab/src/lib.rs:29-35 vs ch01.md:1089-1094 (exact)",
+        "results/native-01/codegen/...ll:16 alias; ...s:1579 sum_index own symbol"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "Section contains no external-authority citation and no foreign-language quote; every 'quote' here is project-internal evidence, and all of it was checked against the parent: the boundary snippet matches src/lib.rs:122-132 (only explanatory comments dropped), EPANIC=5 / ECAPACITY=4 / OK=0 / EPOISON / ESTALE match lib.rs constants, rb_test_panic panics inside boundary before any registry lock, the poison test uses a local Mutex only, the CLI snippet is verbatim from c/demo.c (minus one comment) and demo.c does check decimal parsing, minus sign, trailing char and range, the capacity regression exists on both sides (Rust: len-3 object, sentinels 999/888; C: len-4 object, short_out {71,72}, written 777), and the 16.5.7 test ledger matches cargo output exactly (4 internal, 6 export contracts, CTest total 4 = c11_contracts + 3 CLI), 12-thread release test asserts 1 OK / 11 ESTALE. One factual defect: example 16.5.1 ② states the C-side executed fixture is '长度 3 的对象 + written 预置 777' — that combination exists in neither parent (the 777 sentinel is in the C test whose object has length 4; the length-3 fixture is the Rust test with 888).",
+      "evidence": [
+        "projects/ffi-bridge/c/tests.c:38-46: rb_create_copy(input, 4, &handle); uint64_t short_out[2]={71,72}; written=777; rb_copy(...,2,&written)==RB_ECAPACITY",
+        "projects/ffi-bridge/tests/contracts.rs:47-62: rb_create_copy(input.as_ptr(),3,...) with out=[999;2], written=888",
+        "src/part4/ch16.md:946,951 vs the two parents above",
+        "evidence/run-20261007-01/rust-tests.txt '4 passed' + '6 passed'; build/CTestTestfile.cmake 4 add_test; LastTest.log all Passed",
+        "src/lib.rs:92-104 concurrent_release_is_exactly_once: (0..12), 1 OK / 11 ESTALE"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "Also contains no external citation; all claims trace to projects/ffi-bridge evidence and verified true: toolchain figures (rustc 1.99.0, LLVM 23.1.1, Apple clang 21.0.0, CMake 4.4.4, aarch64-apple-darwin, opt-level 3 / codegen-units 1 / lto=false / panic=unwind, RUSTFLAGS unset) are literally in evidence/run-20261007-01/environment.txt; host Mac17,9 + hw.cachelinesize 128 + hw.ncpu 18 match; 'Apple M5 Pro' is the book-wide name for this same host (ch11/ch12 实测环境 headers), so not a fabrication. The seven commands equal tools/measure.sh; CMakeLists really runs 'cargo build --offline --locked --release' in add_custom_command, links the static .a into three C executables each with -UNDEBUG, and defines exactly the 4 CTest entries; crate-types rlib/staticlib/cdylib and optional test-hooks feature match Cargo.toml. Codegen table rows verified: c-benchmark.s has bl _rb_mix and bl _rb_transform; _rb_mix body is check(cbz/b.hi)+madd+str+ret; ffi_bridge.s contains pthread-mutex calls and 10 ldapr; transform's vector.body (ffi_bridge.ll:564-603) is a four-wide scalar i64 block and the quoted asm (ldp/eor/madd/stp x14-x17 pattern) matches ffi_bridge.s:762-773 token-for-token; noalias/alias.scope present in IR; memcpy in ffi_bridge.s and _platform_memmove frames in macos-sample.txt (separate sample run, never the formal CSV, per measure.sh). One presentation defect: the asm excerpt normalizes parent's tab separators to single spaces (and Rust/C excerpts drop comments/re-line) — content identical, flagged P2; no curly-quote edits touched any quoted code or foreign text in these sections.",
+      "evidence": [
+        "evidence/run-20261007-01/environment.txt lines rustc/clang/cmake/hw.* vs src/part4/ch16.md:1091-1093",
+        "codegen/ffi_bridge.s:762-773 vs ch16.md:1139-1150 (normalized-whitespace exact match)",
+        "codegen/ffi_bridge.ll:564-603 vector.body scalar i64 x4 unroll",
+        "codegen/c-benchmark.s:682,735; ffi_bridge.s:2374+ (_rb_mix cbz/b.hi/madd/str/ret); ffi_bridge.s ldapr x10",
+        "CMakeLists.txt:18-24 (cargo build --offline --locked --release), :30-33 (three targets -UNDEBUG), :45-49 (4 add_test)",
+        "macos-sample.txt:32,84,122,194 _platform_memmove; sample run is separate per tools/measure.sh comment"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "severity": "P1",
+      "description": "例 1.4.2 标题与正文内部矛盾：标题写「200 倍加速从哪来」，正文与解答通篇是 3600 倍（observed/discarded 名义分母之比），200 在本节任何数字中都不存在（唯一的 200 倍出现在 1.1.3 即时自测第 3 题的另一个例子里，与本题无关）。判定流程/思考题按标题引用时会指向一个不存在的量。",
+      "evidence": "src/part1/ch01.md:777 '例 1.4.2 · 200 倍加速从哪来' vs ch01.md:779 '实测比删掉的版本慢 3600 倍'；grep '200' 在本节仅命中 320 行的另一题。"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "severity": "P1",
+      "description": "例 16.5.1 ② 声称引用「项目内真实执行过的 C 侧序列」的 16.2 同一组夹具：「长度 3 的对象，容量 2 的输出缓冲，written 预置 777」。母本对不上：C 侧（c/tests.c）written=777 的容量失败夹具对象长度是 4（rb_create_copy(input, 4, &handle)，input 有 4 个元素），而长度 3 的夹具在 Rust 侧（tests/contracts.rs cleanup_capacity_stale_and_version），其哨兵是 out=[999;2]、written=888，不是 777。两个不同夹具的参数被合并成一条并不存在的 C 侧断言。ECAPACITY=4、两格输出未变、句柄不被消费、随后 release 返回 OK 各点均与 tests.c 一致，仅「长度 3 + 777」的组合失真。",
+      "evidence": "projects/ffi-bridge/c/tests.c:38-46（len 4、short_out{71,72}、written 777、rb_copy(handle,short_out,2,&written)==RB_ECAPACITY）；projects/ffi-bridge/tests/contracts.rs:46-62（rb_create_copy(input.as_ptr(),3,...)、[999;2]、888、ECAPACITY）；src/part4/ch16.md:946,951。"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "severity": "P2",
+      "description": "「3600 倍」为粗略近似：0.058630038 / 0.000016082 = 3645.7（python3 复算）。例中作为被批判者的引语可接受，但 1.5 节 errata E-a 把它当陈述句复述（「快 3600 倍」），建议写成「约 3.6 千倍」或标注四舍五入。",
+      "evidence": "/usr/bin/python3 计算 0.058630038/0.000016082 = 3645.69；src/part1/ch01.md:779,983。"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "severity": "P2",
+      "description": "教学闭环缺「判定流程」块：1.5 有 回答/预览/定义/例题/思考/小结/errata/即时自测，但无 method 判定流程（同章 1.3 亦缺，1.4/1.6/16.5/16.6 均有），属体例不完全一致，非事实错误。",
+      "evidence": "grep 结构标记：ch01.md 中 判定流程 仅出现在 709（1.4.2）与 1161（1.6.7）行附近；1.5 区间 843-1026 无。"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "severity": "P2",
+      "description": "代码转写做了排版归一化：16.6.6 的 asm 摘录把母本 ffi_bridge.s 的制表符分隔改为单空格（token 逐条一致，已程序化比对）；16.5.1 boundary 与 16.5.5 CLI 摘录删去了注释行；1.5/1.6 的 Rust 入口相对 src/bin/*.rs 重排了换行。均未改动任何字符内容或外文原文，无弯引号污染代码的情况，但严格「逐字」口径应在正文注明「排版归一」。",
+      "evidence": "python3 归一化比对：ch16.md:1139-1150 与 ffi_bridge.s:762-773 token 级全等（母本为 tab）；src/lib.rs:122-132 含两条注释、ch16.md:863-874 无注释；c/demo.c:29 注释 /* cleanup even if info failed */ 在 ch16.md:929 被删。"
+    }
+  ]
+}

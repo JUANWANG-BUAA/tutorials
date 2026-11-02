@@ -1,0 +1,7 @@
+tide-admit CSV 独立重算
+元数据: {'seed': '20261030', 'rounds': '21', 'batches_per_round': '20', 'ops_per_batch': '240', 'warmup_ms': '300', 'cap_A': '64', 'cap_B': '4', 'value_bytes': '65536', 'flush_bytes': '262144', 'durable': 'false'}
+raw 行数=1680 组数=84 均值行=84
+每批受理数范围=[4, 131]（attempted=240）
+每批 flush 次数范围=[1, 32]  落盘字节范围=[262391, 8396531]
+重算偏差容忍=1e-06
+结论: 通过——每个比值都能从 wall_ns 与分母重推出来

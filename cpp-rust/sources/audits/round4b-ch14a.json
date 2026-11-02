@@ -1,0 +1,106 @@
+{
+  "reviewer": "r4b-ch14a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动完整通读 src/part4/ch14.md 的 14.1–14.6 全部正文与每个语义盒，并用两条 /tmp 脚本把 bench/evidence-lab/results/run-01/ 的 build-raw.jsonl、size-*.txt、verify-*.txt、feature-*.txt、gate-rejection.json、environment.txt、codegen/checked-codegen 与 tools/{build_matrix.py,gate.py,test_gate.py,measure.sh}、Cargo.toml、src/{lib.rs,bin/feature_work.rs} 一次性抽出逐项复算比对，另跑 tools/list_uncollected_claims.py 只看 ch14 行。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了身份分层与工具链/旗标三组断言：14.1.4 的五行版本块逐字落在 environment.txt:3-9（rustc 1.99.0 b940084d7、commit-hash b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、host aarch64-apple-darwin、LLVM 23.1.1、cargo 1.99.0 5f94df478）；14.1.4『本轮没有新增工具链覆盖文件』成立，bench/evidence-lab/ 下无 rust-toolchain.toml；14.1.5 的显式 --offline --locked 与 14.1.3 表『执行层记输入长度、checksum 与 21 条观察』均由实际产物支撑（feature-default.txt/feature-checked.txt 各 21 条 raw、bytes=1048576、checksum=133693440）。[@ex-14.1.1] 的 checksum 133693440 与两版一致已复算。14.1.2 图的六层与 [@def-14.1.1] 文本一致，未逐条核图内文字之外的新数字。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/environment.txt:3-9",
+        "bench/evidence-lab/ 目录清单：Cargo.lock/Cargo.toml/README.md/results/src/target/target-checked/tools（无 rust-toolchain.toml）",
+        "复算 feature-default.txt：n=21 mean=0.042857 checksum 集合 {133693440}",
+        "复算 feature-checked.txt：n=21 mean=0.225888 checksum 集合 {133693440}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 14.2.5 与 14.2.8/14.2.9 的执行类断言：feature-tree.txt 与 metadata.json 都真实存在于 run-01；14.4.3 展示的完整 Cargo.toml 与磁盘上的 bench/evidence-lab/Cargo.toml 逐行相同（publish=false、resolver=\"3\"、[features] default=[]/checked=[]、release debug=1 incremental=false cgu=16 lto=false、one cgu=1、thin cgu=1+lto=thin），因此 14.2.4『本轮独立 workspace 显式使用 resolver 3』与 14.2.3 的『本轮没有测复杂 resolver 的性能』这句范围声明都与事实一致。14.2.8『本轮分别执行默认与 all-features 测试』由 test-default.txt 与 test-checked.txt 支撑（各 5 项单元 + 1 项 doctest 通过）；14.2.9 的带 -D warnings 文档构建有 rustdoc-check.txt。[@def-14.2.3] 说 checked 构造 Event 并送进屏障，与 src/lib.rs 的 sum_bytes（#[cfg(feature=\"checked\")] black_box(Event{id,elapsed_ns:0})）一致。未核的：14.2.6 三条 cargo tree 命令形状（正文自己声明不是本轮结果）、14.2.2 概念图（非实测）。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/feature-tree.txt 存在；同目录 metadata.json 存在",
+        "bench/evidence-lab/Cargo.toml:1-27（与正文 14.4.3 代码块逐行对比一致）",
+        "bench/evidence-lab/results/run-01/test-default.txt 'test result: ok. 5 passed' 与末条 '1 passed'（doctest）",
+        "bench/evidence-lab/src/lib.rs sum_bytes 内 #[cfg(feature = \"checked\")] black_box(Event { id: u64::from(byte), elapsed_ns: 0 })"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点复核最近改过的 [@ex-14.3.1] 解答里 __text 那段跨目录断言，改后成立且口径准确：build_matrix.py 里 size -m 只在 `if round_id == 0:` 分支执行（真实文件第 57-58 行），磁盘上确实只有 size-release.txt / size-one.txt / size-thin.txt 三份、各 26 行，__text 分别为 242940 / 241916 / 236656，与正文 14.4.8 表逐项相同；解答现在只声明『第 0 轮各测过一次』并明确『跨 21 个目标目录是否字节相同本节没有测过』，没有再把 __text 当跨目录量用，与产物一致。14.3.5 表的 21/21 复算命中：build-raw.jsonl 每 profile 21 条 fresh，binary_bytes 单一值（518448 / 512640 / 502672）、binary_sha256 各 21 个不同值；14.3.6『成对身份检查』也有数据支撑——同一轮 fresh 与 noop 的 sha256 三 profile 各 21 对全部相同。『没有做字段归因』为真：tools/ 下只有 build_matrix/collapse_sample/gate/test_gate/measure/validate_run 六个脚本，无二进制差分或 otool/cmp -l 归因工具。发现一条 P2：14.3.5 把来源写成『build-raw.jsonl 与 binary-sha256.txt』，但 binary-sha256.txt 只有 4 行、且是 target/ 与 target-checked/ 的样本二进制（cpu_wait、instrumentation、feature_work、feature_work_checked），并不含这 21 个目标目录的哈希。",
+      "evidence": [
+        "复算 build-raw.jsonl：126 行；release/one/thin fresh 各 n=21，bytes 集合 {518448}/{512640}/{502672}，distinct sha256=21/21/21",
+        "复算 fresh↔noop 同轮哈希：release 21 对全同、one 21 对全同、thin 21 对全同",
+        "bench/evidence-lab/tools/build_matrix.py:57-63（真实文件行号：round_id == 0 才跑 size -m 与 correctness 运行，正文 14.4.5 的代码块只是排版后的同一段）",
+        "grep 'Section __text' run-01/size-*.txt → 242940 / 241916 / 236656；每文件 26 行、仅 3 个文件",
+        "bench/evidence-lab/results/run-01/binary-sha256.txt 共 4 行（4 个不同哈希，路径均在 target/ 与 target-checked/）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "六个构建数字全部用 summary() 的同一算法（mean、N−1 stdev、nearest-rank p50/p99）从 build-raw.jsonl 独立复算，与 14.4.6 表逐位相同：release/fresh 439.733/68.274/416.813/646.793、one/fresh 338.194/10.053/334.800/360.113、thin/fresh 1995.882/68.582/1972.251/2216.728、release/noop 18.576/1.475/17.936/21.967、one/noop 18.713/2.955/18.140/30.916、thin/noop 18.194/1.219/17.894/21.100。[@ex-14.4.1] 的 101 ms 差复算为 101.539 ms，sd 比 101.539/68.274=1.49、/10.053=10.10 与正文『1.5 倍』『10 倍』一致；14.4.5 的代码块与 tools/build_matrix.py 的执行逻辑一致（-j 1、-vv、CARGO_INCREMENTAL=0、清空四个 RUSTFLAGS/wrapper 变量、(round_id+offset)%3 轮转、21 轮×3）。[@ex-14.4.2] 的 4.5 倍与 2.6% 复算为 1995.882/439.733=4.539 与 (242940-236656)/242940=2.587%，一致。14.4.8 关于 verify-*.txt 的判据（三份各 21 行、同单位 ns_per_byte、同输入 1048576、同 checksum，且来自第 0 轮一次额外运行）复算全部命中。两处口径问题各记一条 P2：preview 的『量级差可以到二十倍』与 14.4.7 小节标题『20 倍的量级差』——同表复算出的 fresh/noop 比值实际是 one 18.07、release 23.67、thin 109.70，最小值低于 20 而最大值约为 20 的 5 倍，20 既非下界也非中心值；另 __text 与文件字节都在 14.3/14.4 两处一致（无矛盾）。",
+      "evidence": [
+        "复算输出（/tmp/audit14.py）：六个 case 的 mean/sd/p50/p99 与正文表逐位相同，n=21",
+        "复算比值：338.194/18.713=18.07、439.733/18.576=23.67、1995.882/18.194=109.70；跨列最小 18.07、最大 109.70",
+        "复算 439.733-338.194=101.539；101.539/68.274=1.49；101.539/10.053=10.10",
+        "复算 1995.882/439.733=4.539、(242940-236656)/242940=2.587%",
+        "bench/evidence-lab/tools/build_matrix.py:23-69（真实文件 main() 全文）与正文 14.4.5 代码块逻辑逐项一致",
+        "run-01/verify-{release,one,thin}.txt 各 21 条 raw 行、round 0..20、checksum 133693440、单位 ns_per_byte"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "运行侧四个统计量复算命中（default 0.042857/0.002920/0.041763/0.052094，checked 0.225888/0.005934/0.222644/0.245054，均 n=21，两版 checksum 都是 133693440）；[@ex-14.5.1] 的 5.27 复算为 5.27074，与 gate-rejection.json 里 ratio=5.270781596704856、budget=0.2、pass=false 一致；正文 14.5.6 的 compare() 片段与 tools/gate.py 逐字等价（含 unit/checksum 校验与 scope 那句）；14.5.7『三个不同拒绝理由』有 test_gate.py 的三个测试名与 gate-tests.txt 的 'Ran 3 tests ... OK' 支撑；14.5.4『先运行 default 进程，再运行 checked 进程』与 measure.sh:41-42 顺序一致。14.5.5 的代码生成断言可落地：codegen/ 与 checked-codegen/ 各保留 1 份 .mir、12 份 .ll、12 份 .s；default 的 .s 里 tbl.16b 出现 10 次、宽化累加族（uaddw/smaddl 等）20 次而 checked 为 0，checked 的 .s 里 stp 出现 22 次（cgu.00），且存在成对的 `; InlineAsm Start` / `; InlineAsm End` 之间无指令——『空内联汇编屏障』这一句确实有产物支撑，不是臆测。未完全核到：退出码 1/2 的映射只看到 gate.py 的 `sys.exit(main())` 与 measure.sh:69 捕获 GATE_STATUS，没有逐行读 main() 的返回值分支。一条 P2：14.5.3 表把 Event 的 16/8 写在『本轮size/本轮align』列下，但 feature-*.txt 只打印了 Vec_u8 与 slice_u8 两行 layout，Event 那一格是靠 lib.rs 里两个 u64 字段推出的静态量，不是本轮采集。",
+      "evidence": [
+        "复算 run-01/feature-default.txt 与 feature-checked.txt 的 21 条 raw 值：mean/sd/p50/p99 与 14.5.4 表逐位相同",
+        "run-01/gate-rejection.json：ratio=5.270781596704856 budget=0.2 pass=false scope='local workload only; no statistical significance or SLA claim'",
+        "bench/evidence-lab/tools/gate.py compare() 与正文 14.5.6 片段一致；tools/test_gate.py 三个 test_* 名称含 '21 distinct' 与 'correctness' 两条 assertRaisesRegex",
+        "bench/evidence-lab/tools/measure.sh:41-42（default 先于 checked）、:69（GATE_STATUS 捕获）",
+        "指令计数：default .s tbl.16b=10 / 宽化累加=20，checked 均为 0；checked .s cgu.00 stp=22，行 633-634 与 1300 处为空的 InlineAsm Start/End 对",
+        "run-01/feature-checked.txt 末两行只有 layout,Vec_u8,size=24,align=8 与 layout,slice_u8,size=16,align=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节是纯范围声明型，逐条核『没做』是否为真：find bench/evidence-lab -name '*.profraw' -o -name '*.profdata' -o -name '*pgo*' 返回空，run-01 里也没有 generate/use 训练目录，所以 preview、『本节没有生成 profraw/profdata、没有运行 profile-use、没有任何 PGO 收益数字』与 14.6.6『本轮没有执行这些命令』四条负断言全部成立；同时『PGO 四步在第 6 章 6.8 真跑过并归档』不是空指针——bench/compiler-lab/results/extra-02/pgo-data/ 真实存在 default_4638409862445482177_0.profraw 与 merged.profdata，与 ch14.md:22 的边界声明对得上。[@def-14.6.1]–[@def-14.6.4]、[@ex-14.6.1]、[@think-14.6.1] 与两道 method 盒没有引入任何数字，逐条读过未发现与本章产物矛盾的断言；14.6.5 的『官方说明建议使用绝对路径』属外部文档转述，我只核到它没有与本轮命令示例冲突，未回查 rustc PGO 页面原文（正文在 14.9 登记的是在线规范，非本地母本）。",
+      "evidence": [
+        "find bench/evidence-lab -name '*.profraw' -o -name '*.profdata' -o -name '*pgo*' → 无输出",
+        "bench/compiler-lab/results/extra-02/pgo-data/ = ['default_4638409862445482177_0.profraw', 'merged.profdata']",
+        "src/part4/ch14.md:22 与 1190/1195/1258/1333 的负断言与上述目录状态一致"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "severity": "P2",
+      "description": "preview（正文第 615 行）说两种边界的『量级差可以到二十倍』，14.4.7 的小节标题进一步写成『两种边界之间：20 倍的量级差』；用同节 14.4.6 表的均值复算，fresh/noop 的比值是 one 338.194/18.713=18.07、release 439.733/18.576=23.67、thin 1995.882/18.194=109.70，跨列最小 18.07、最大 109.70。20 既不是这组比值的最小值（实际 18.07，低于 20），也不是中心值（thin 达 109.7，约为 20 的 5.5 倍），而 14.4.7 正文自己给出的区间是『18 ms 附近』对『338–1996 ms』——标题里的单一『20 倍』与该行区间不自洽，读者按 20 倍推 thin 会低估约 5.5 倍。属表述口径问题：所有均值/分位数本身复算全部命中，无 P0/P1。",
+      "evidence": "复算输出：one 18.07、release 23.67、thin 109.70（比值由 build-raw.jsonl 的 6 个 case 均值相除得到，均值与正文表逐位相同）；src/part4/ch14.md:615 与 :820-822"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "severity": "P2",
+      "description": "14.3.5 把 21 个不同 SHA256 与实际记录的来源写成『来源 build-raw.jsonl 与 binary-sha256.txt』，但 run-01/binary-sha256.txt 只有 4 行，且四个路径分别是 target/release/cpu_wait、target/release/instrumentation、target/release/feature_work、target-checked/release/feature_work（measure.sh:57 的产物），根本不覆盖 14.3.5 表的 63 个构建目录；表中每个 profile 的 21 个不同哈希与文件大小只在 build-raw.jsonl 里（我按 profile 复算 distinct sha=21、bytes 单一值命中）。数字没错、可复算，只是点名的第二份证据文件与本表无关，属证据指向不准的表述问题。",
+      "evidence": "run-01/binary-sha256.txt 共 4 行、4 个不同哈希，路径均在 target/ 与 target-checked/；复算 build-raw.jsonl：release/one/thin fresh 各 distinct sha256=21、bytes {518448}/{512640}/{502672}；src/part4/ch14.md:499"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "severity": "P2",
+      "description": "14.5.3 的表头是『类型 / 本轮size / 本轮align / 计时关系』，其中 Vec_u8 24/8 与 &[u8] 16/8 能对上 feature-default.txt 与 feature-checked.txt 末尾打印的两行 layout 记录；但 Event 那一行的 16/8 在归档里没有任何采集来源（程序没有打印 Event 的 size_of/align_of），它只是 src/lib.rs 里 Event { id: u64, elapsed_ns: u64 } 的静态推导（16 字节、对齐 8，推导正确）。静态量本身算对，问题在『本轮size』这一列名让一行推导值看起来像实测值，与本章『测了才写』的口径不齐。",
+      "evidence": "run-01/feature-checked.txt 末两行仅 layout,Vec_u8,size=24,align=8 与 layout,slice_u8,size=16,align=8；bench/evidence-lab/src/bin/feature_work.rs:30-39 只打印这两个类型；bench/evidence-lab/src/lib.rs 中 Event 定义为两个 u64 字段"
+    }
+  ]
+}

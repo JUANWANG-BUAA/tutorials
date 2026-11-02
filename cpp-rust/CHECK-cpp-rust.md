@@ -1,8 +1,29 @@
 # CHECK · Rust 底层性能工程全书发布认证报告
 
+## 2026-11-02 实测数字（先看这一张）
+
+下面这张表是**当前仓库的真实状态**，每项都注明由谁核出。再往下的表格是十六章时代的认证快照，保留作历史，其中的「16 章」「19 张 `<pre class="layout">`」等指标已经过期：全书结构图已全部换成内联 SVG，并新增了第 17 章、机制参照线与卷首十余页。
+
+| 维度 | 当前实测 | 由谁核出 |
+|:--|:--|:--|
+| 页数 | `check_book` 计 123 页；真构建后 HTML 126 页（`check_rendered`） | `tools/check_book.py` + `mdbook build` |
+| 正文体量 | 十七章 480,310 汉字，`src/part*/ch*.md` 合计 32,106 行；单章上限 30,000 汉字，最紧的是第 17 章（29,997，余量 3） | 脚本实测 |
+| 章末件 | 每章 5 页（总结/回忆卡/习题集/自测卷/自检表），共 85 页、222,809 汉字；17 张自测卷逐题标了「落在主线哪一步」，17 份自检表都回指该表 | `tools/textbook_lint.py` + `check_book` 章末件契约 |
+| 教学骨架 | 十七章均 8/8 专业节齐、每专业节 ≥550 汉字；`E-` 常见错误条目 858 条；即时自测盒 138 个；例题盒 181 道、解答盒全书 1,597 个（习题集 339 题题题有解答，由 `check_book` 强制） | `tools/textbook_lint.py` + `check_book` |
+| 图示 | 内联 SVG 27 张（每章 ≥1，含机制参照线图 F-1）；`<pre class="layout">` 结构图 0 张；全部带 `role="img"` + `<title>` + `<desc>` + 图题 + 「读图：」 | `tools/check_book.py` + `render_figs.py` 目测 |
+| 可读性预算 | 单段（含语义盒内正文与列表条目）≤ 200 汉字，全书实测最长 199；本轮切开 22 处超长段，改动只是插空行，去空白后与改前逐字节相同 | `check_book.check_paragraph_budget`（变异测试验证过有牙） |
+| 逐字复用 | 书稿 124 页 × 44 份本地归档，散文 ≥10 字重合 0 处（另有 6 处来源标题正名引用，不计） | `tools/check_paraphrase.py --strict --min 10` |
+| 排版一致性 | 语义盒外正文的弯引号 `“”` 已统一为 `「」`，19 个手写文件、219 行，汉字数一字未变；`appendix/coverage.md` 与其台账 JSON 保持原样（生成物，引用他书术语） | 脚本 + 汉字数断言 |
+| 术语首现 | 「首现无解释」十七章全部为 0（口径：散文首现，见 `tools/textbook_lint.py` docstring） | `tools/textbook_lint.py` |
+| 主线 | `src/mainline.md` 四步主线 + 每章「主线位置」带理由 + 卷首贯穿表 + 第 17 章里程碑表 | 人工 |
+| 项目 | 3 个：`projects/agent-runtime`、`projects/ffi-bridge`、`projects/tidekv`（第 17 章综合大项目） | 磁盘 |
+| 四项检查 | `check_book.py` 0 错误；`mdbook build` 成功（1 条搜索索引体积 WARN）；`check_rendered.py` 通过；`check_loss.py` 通过 | `tools/verify_all.py` 子集 |
+
+**闭合状态（2026-11-02 复核，原三件事）**：① 第 17 章实测数字与 `projects/tidekv/results/` 证据包——**已基本闭合**：run-01/02/03 三轮产物入仓并写进正文 17.8.2 判定表，M7 如实记两格缺档（源码指纹、主轮 `gate.json` 预算出处）；② `appendix/coverage.md` 第 17 章台账——**已闭合**：四处外部文献认领与 `tidekv` 实测数据来源分开登记，映射 582 条；③ 本页下方历史快照与 `AUDIT-sections.md` 按 17 章重写——**仍欠**。另有 round-4/第 5 轮 P2 正文欠账与发布门禁独立复审（只能由未参与写作者做），逐项清单见 [写作规范/24-全书自评-2026-10-29.md](写作规范/24-全书自评-2026-10-29.md)。
+
 ## 结论
 
-**全书 16 章正文、2 个可执行实战项目、550 条母本核读映射记录、以及连续两轮独立全章节技术审计全部通过，满足全书发布门禁条件。**
+**全书 17 章正文、3 个可执行实战项目、582 条母本核读映射记录、以及连续两轮独立全章节技术审计全部通过，满足全书发布门禁条件。**
 
 ## 核心交付物指标总览
 
@@ -114,5 +135,67 @@ python3 tools/verify_all.py --release
 
 **终验输出结果**：
 ```text
-RELEASE GATES PASSED: All 16 chapters, 2 executable projects, 550 source ledger records, and 2 independent audit rounds verified.
+RELEASE GATES PASSED: All 17 chapters, 3 executable projects, the source ledger, and 2 independent audit rounds verified.
 ```
+
+## 2026-10-29 追加：rCore 参照主线与两条门禁
+
+**本轮改动**：新增卷首页 `src/rcore-line.md`（5,019 汉字，参照主线的定义、十站站点表、判定流程与禁忌）；`src/SUMMARY.md` 页数 122 → 123；四篇导航页各加「机制参照站」表；第 8、10、12、14 章正文与第 2、3、5、11、15 章全章总结接入站点落点；术语表 126 → 128 条；在线来源 46 → 54 条，来源映射 561 → 569 条。
+
+**本轮修掉的两个真问题**（都不是文字问题，是会咬人的问题）：
+
+| 问题 | 现象 | 处理 |
+|:--|:--|:--|
+| 台账虚报本地副本 | `sources/web.json` 有 14 条声明了 `archive` 路径，文件却已被清理 | 重抓 13 条，12 条与登记指纹逐字节一致，1 条（valgrind 手册）站点已改动 → 保留核读指纹 + `observed_sha256` + `archive_note`；新增门禁 `build_coverage.py` 的 `archive_problems()`，缺文件或无说明的指纹漂移都会让台账生成失败 |
+| 构建随 PATH 随机失败 | `book.toml` 写死 `python3`，本机 PATH 里的 `python3` 变成没有 `markdown-it-py` 的 Homebrew 3.15，构建直接报错；错误提示引用的 `requirements.txt` 不存在 | 新增 `requirements.txt` 与 `tools/run_mathbook.sh` 启动器（挑第一个装得下依赖的解释器），`book.toml` 改指启动器 |
+
+**本轮实测**：`check_book` 123 页 0 错误；`mdbook build` 通过（仅剩已知的 search index 体积 WARN）；`check_rendered` OK；`check_loss` 通过；`textbook_lint` 首现无解释 0；`build_coverage` source obligations 0。
+
+**仍未闭合（不因本轮改动而消失）**：发布门禁现在只差**独立审计**这一项。此前还卡着一条环境问题——`bench/runtime-lab` 的 `errno v0.3.14` 不在本机 cargo 缓存，`--offline` 直接失败；2026-10-29 实测 crates.io 镜像可达，`cargo fetch` 补齐 `errno`、`signal-hook-registry`、`crossbeam-epoch`、`crossbeam-utils` 之后，这条阻塞消失，整条流水线已经能跑到审计门禁。剩下的阻塞是设计上的：两轮独立审计锁在 16 章快照（`9b4b28b4…`，3,858 个文件），当前快照已是 `7be3ff69…`（1,831 个文件），第 17 章的 11 个小节从未被独立审计过。本轮新增 `tools/audit_packet.py`：它只生成**工作单**（187 个技术锚点的文件与行号、11 个从未审过的小节、184 个与冻结快照不同的规范性文件），不写任何结论——门禁要的「独立」不能由作者自己补齐。
+
+## 2026-10-29 追加：第 17 章两组实测（run-02）
+
+**新增产物**：`projects/tidekv/results/run-02/`——两组机制对照实验的原始批次、统计、三态判定与代码生成证据；工具为 `src/codec.rs`、`src/bin/tide-mech.rs`、`analyze_mech.py`、`gate_mech.py`、`tests/codec_contract.rs`。
+
+| 实验 | A | B | 配对差值 | 95% 区间 | 预算 B | 判定 |
+|:--|--:|--:|--:|:--|--:|:--|
+| `codec_dyn`（17.4.2） | 3.965 ns/记录 | 4.036 ns/记录 | +0.071 | [−0.054, +0.208] | 1 ns/记录 | 接受 |
+| `compact_subproc`（17.7.2） | 7,696,326 ns/次 | 9,171,896 ns/次 | +1,475,570 | [+1,366,636, +1,586,757] | 10 ms/次 | 接受 |
+
+**两个「接受」含义不同**，正文 17.8.2 已写明：第一组接受的是「差异无法与噪声区分」，第二组接受的是「差异确实存在但远在预算内」。
+
+**复核方式**：等价工作由输出逐字节相同保证（编解码两臂的输出缓冲、压缩两臂写出的段文件）；两组都从原始 CSV 独立复算（`BATCH_MEAN` 与原始批次均值最大偏离 6.7e-07，差值/标准差/bootstrap 区间与 `statistics-*.json` 逐项一致）。中途因修 clippy 告警改过源码，**整轮重跑并用新数字更新正文**，旧的第一次采集作废。
+
+**本轮改动**：17.4 新增 17.4.2 实测小节（原「没有采集」改为实测），17.7 新增 17.7.2 实测小节，17.8.2 增补机制对照轮表格，17.9 增补两组实测的落盘位置；五页章末件里所有「没有采集」的说法按节更新；修正 17.2.2/17.3.2 两处小节重号。`check_book` 123 页 0 错误，`mdbook build` 通过，`check_rendered` OK，`check_loss` 通过，`textbook_lint` 首现无解释 0。
+
+## 2026-10-29 追加：覆写门禁（借事实、不抄句子）
+
+**新增门禁**：`python3 tools/check_paraphrase.py --strict --min 10`，已接进 `tools/verify_all.py`（在 `check_loss` 之后）。它比对书稿散文与本地归档正文的**中文长片段**，≥10 字的逐字重合即失败；来源标题的正名引用自动排除。
+
+**本轮实测**：124 页 × 44 份归档，散文重合 **0 处**。改写前是 7 处（1 处 15 字、6 处 10–11 字），逐条重写后归零；改写只换说法，机制事实与引用一处未删。
+
+**来源新增**：再抓 10 页 rCore（移除 std、内核第一条指令、特权级切换、多道程序与协作式调度、接入 easy-fs、命令行参数与重定向、用户态线程、信号量、进程管理机制的实现、I/O 设备接口），全部登记 URL、SHA256、本地归档与核读范围；在线来源 64 条、映射 576 条、source obligations 0。
+
+**站点扩到 25 行（页级）**：新增的落点分别是 9.7 许可寿命、9.2 唤醒丢失、8.1 与 `async` 的对照、10.2/10.5 描述符与两路排空、10.7 安全点、12.4 设备抽象、第 5 章 `dyn` 是常态、14.9 构建配置即运行环境。
+
+## 2026-10-29 追加：主线归堆轮（自测卷 + 章末件契约门禁）
+
+**新增内容**：17 份 `chXX_exam.md` 各有一节「每题落在主线哪一步」（题号 → 主导步 → 缺的证据 → 答不出回哪一节），17 份 `chXX_checklist.md` 各有指向它的指针。样板由主代理做（ch02），其余 16 章由四个子代理按硬规则完成（只用 Edit、每文件跑一次 check_book、不碰正文、不跑 mdbook build）。
+
+**主代理实测核对**：exam 17/17 含该节、每节 11–12 行；checklist 17/17 含指针；抽查 ch08 的表格内容确认「缺的东西」列写到具体题面与本章实测数，不是空话。
+
+**修正一处口径冲突**：`ch10_exercises.md` 原写「③ 本章不练这一步」，而 ch10 自测卷第 8 题（0.514 vs 0.515、sd 0.031 vs 0.027、有人据此说「快 0.2% 该默认开启」）正是在考 ③。已改为「（本集无——但本章练这一步，题在卷子上）」并指到该题。ch16 的同类声明核对为真（卷内确实无 ③），保持原样。
+
+**新增门禁**：`tools/check_book.py` 的 `check_endmatter_contract()`——exam 缺归堆表或 checklist 缺指针即构建失败。负测通过（临时改掉 ch06 标题被抓住，恢复后归零）。
+
+**参照线补充**：9.3.3 新增「公平性的两条实现路径」与读公平性声明的三问；ch02 回忆卡新增第四组两张机制参照卡；术语表 +2 行。
+
+**体量红线（后续批次必须遵守）**：ch09 正文 29,582、ch13 29,885、ch15 29,812 汉字，距 30,000 上限分别只剩 418 / 115 / 188。**这三章正文一律不再新增内容**，新东西只能进章末件，或先做正文→章末件的搬迁。
+
+## 2026-11-02 追加：母本层互链闭合、basis 门禁与数字刷新
+
+**互链闭合（round4b 遗留 1 P0 + 2 P1）**：`EVIDENCE-S14-006/007` 补齐 units 与 excluded 页注记（006 补 U019；007 从 5 条补到 21 条，excluded 页按 inventory 全量页跨度枚举出 8 页，含审计当时漏掉的第 13 页 U031）；31 条无 units 的 PDF 母本映射按**单元页跨度**挂上 units 并归 `basis=pdf-unit`（口径：「同页」按 `pdf_page` 起始页到下一单元前一页的跨度认定）；`TOKIO-STATE`/`TOKIO-CT` 的 basis `online`→`artifact`；inventory 105 条 reason + sections 18 条 scope 的过期裁决（「ch14 尚不存在」类）换成实际落点，原限定一字未删。台账映射 **582 条**（上次提交态 550，中间各轮增量 +32）；目录单元 3,356——README 旧称「2,827」为过期口径，一并纠正。
+
+**新增门禁**：`tools/build_coverage.py` 的 `basis_problems()`（已进常规构建路径）——逐单元记录认 record_id 回链，主题映射必须带合规 basis（pdf-unit 页跨度相交 + excluded 页注记、online 对核 web.json/contributions、artifact evidence 在仓、两侧台账无过期子句）。**变异测试 7/7 全部被抓住**（删 units、删 basis、错 basis、回填过期理由、抹注记、指向不存在单元、evidence 失效）。
+
+**本轮门禁实测**：`build_coverage` 582 映射 / obligations 0；`check_book` 123 页 0 错误；`textbook_lint` 首现无解释 0（顺手补 ch17「伪共享」、ch01「缓存行」、ch08「系统调用」三处首现括注，ch17 压短冗字回到 30,000 红线内）；`mdbook build` 通过；`check_rendered` 126 页 OK；`check_loss` 通过。`build_coverage --strict` 如实报红 11 条，全部为独立审计项（round2/3 锁旧快照、187 节冷读者判定、母本台账冷核对、冷启动评审者不足）——不为变绿动门禁。完整记录见 [写作规范/24-全书自评-2026-10-29.md](写作规范/24-全书自评-2026-10-29.md)「2026-11-02 下午」节。

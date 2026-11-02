@@ -1,0 +1,99 @@
+{
+  "reviewer": "r4b-ch09b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读 src/part3/ch09.md 的 1125–1624 行全文（9.7–9.11 的正文、定义、例题与解答、思考、判定流程、小结、常见错误清单、即时自测、母本表、索引与章末件），并用 /usr/bin/python3 逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt、bench/results/runtime-final/blocking-poll.txt、bench/results/local/{atomic,future-allocation}*.txt、sources/inventory.json、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、.work/cpp-rust-sources/systems/3semaphore-rcore.html、tools/run_runtime_benchmarks.sh，另在线抓取 docs.rs/tokio/1.54.0 runtime 页、pdos.csail.mit.edu 6.S081 2020 schedule.html 与 l-threads.txt、以及 E-Book 里 sha256 匹配的《Rust 程序设计语言》PDF 第 388–396 页做逐字比对。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条回查后 9.7 站得住。① 9.7.4 第一条回归的代码盒与磁盘上正在使用的测试逐字一致（bench/runtime-lab/tests/contracts.rs:9-23，容量 1、try_send(10)、TrySendError::Full(20)、rx 排空、drop(tx) 后 Some(20)/None 全对），正文「没有测量通道吞吐、没有报告队列内存峰值」与代码事实相符；归档快照 bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/tests/contracts.rs 与活动文件 diff 为空，所以引用的不是过期副本。② 第二条 blocking_permit_is_held_inside_closure（contracts.rs:52-70）确实是 Semaphore::new(1)+acquire_owned 把 permit move 进 spawn_blocking 闭包、started 用 oneshot、stop 用 std::sync::mpsc、abort 后 try_acquire_owned().is_err()、闭包结束后 is_ok()，正文对阶段关系的复述没有加码；9.2 的同类 started 信号也真在 abort_observed_and_drop_executed（contracts.rs:26-49）里，正文「同一个理由在 9.2 已经用过」成立。③ 9.7.2 引 rCore 第八章信号量页的三处内容我都在本地归档里逐字找到：P/V 两种操作与荷兰语词源、'阻塞在P操作中的线程一经被唤醒就会立即进入临界区而不会检查此时是否有可用资源……因为进行V操作的线程直接将资源移交给了它唤醒的线程'、以及同页的'唤醒丢失(Lost Wakeup)问题'与 V 操作即使无人可唤醒也要记录这次唤醒（down/up 里 inner.count+=1 后才 pop_front 唤醒）。正文把它转述为「名额移交即定寿命」「计数记住多余唤醒」没有偏离母本。④ 9.7.1/9.7.3 与 64 槽例、资源五行表、执行域五行表都是机制与判据陈述，不含实测数字，也无从编造。⑤ 9.7.5「默认阻塞线程上限可能很大」故意不给具体数，与 web.json 里 tokio-blocking 只登记为在线核读、仓库无本地实测的现状一致，不构成未采集量当结论。本节没有发现 P0/P1。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:9-23 与正文 1234-1244 代码盒逐字一致（mpsc::channel(1)/try_send(10)/TrySendError::Full(20)/drop(tx)/Some(20)/None）",
+        "diff bench/runtime-lab/tests/contracts.rs bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/tests/contracts.rs → 无差异",
+        "bench/runtime-lab/tests/contracts.rs:52-70 permit 移入闭包 + started/stop 双信号 + abort 后 try_acquire_owned().is_err()",
+        ".work/cpp-rust-sources/systems/3semaphore-rcore.html：'P操作（来自荷兰语Proberen）…V操作（Verhogen）'、'进行V操作的线程直接将资源移交给了它唤醒的线程'、'唤醒丢失(Lost Wakeup)问题'",
+        "sources/web.json#rcore-semaphore archive=.work/cpp-rust-sources/systems/3semaphore-rcore.html sha256=d7e474b8… status=read-mapped"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "实质断言基本核得上，但有两处 P2。核对通过的部分：9.8.1 的两个有限性前提在母本里有原句（docs.rs/tokio/1.54.0/tokio/runtime/index.html: 'If the total number of tasks does not grow without bound, and no task is blocking the thread… it is guaranteed that tasks are scheduled fairly'），正文第二前提写成「单次 poll 时长有上界」是对 'no task is blocking the thread' 的可辩护等价转述，9.8.2 随后把它落到协作预算上，口径没有偷换；9.8.4 例 9.8.1 表格 ③ 行引用的 25.060 ms 我从归档自己复算，bench/results/runtime-fixed/measurements-final/blocking-poll.txt 的 inline 21 个样本 nearest-rank p99 = 25060042 ns = 25.060 ms，mean 23658343 ns = 23.658 ms、sd 1302022 ns = 1.302 ms、p50 23.604 ms，offload mean 13632.857 ns = 13.633 µs、sd 3.494 µs、p50 14.125 µs、p99 18.541 µs，与 9.6 表逐项一致，9.8 只是引用它做量级对照，没有另造数字；9.8.6「本章只采集了聚合 ns/step 与观察延迟两类读数，steal 次数、cache miss、IPC 都没有采集」经磁盘核查成立（见 sources 段）。判 finding 的原因见两条 P2。未核到：正文 9.8.1「文档也不承诺任务均匀轮流执行」「不是用户可配置的硬实时常数」这两条否定式断言我只取到原句的条件部分，未逐段读完该节全文；9.8.2「夹具里的显式 yield 是实验设计的一部分」我只在正文与 9.5 的口径里确认存在显式 yield，没有逐行读 bench/runtime-lab/src/bin/scheduling.rs 的 quantum 实现。",
+      "evidence": [
+        "docs.rs/tokio/1.54.0/tokio/runtime/index.html（在线抓取）原句：'If the total number of tasks does not grow without bound, and no task is blocking the thread… it is guaranteed that tasks are scheduled fairly.'",
+        "python3 复算 bench/results/runtime-fixed/measurements-final/blocking-poll.txt：inline n=21 mean=23658343.286 sd=1302022.000 p50=23604084.000 p99=25060042.000；offload n=21 mean=13632.857 sd=3494.454 p50=14125.000 p99=18541.000（与文件尾 mean/sd/batch_p50/batch_p99 行一致）",
+        "ceil(21×0.99)=21 → 该样本 p99 即最大值，与正文 9.8 引用的口径不矛盾",
+        "pdos.csail.mit.edu/6.S081/2020/schedule.html：Lecture 11 = Thread switching = lec/l-threads.txt；l-threads.txt 全文含 'kernel uses timer interrupts to grab control from looping threads'、'stack and register save area'、'RUNNING vs RUNNABLE vs SLEEPING'",
+        "l-threads.txt（12296 字节全文）grep 'cache' 命中 0 次",
+        "src/part3/ch09.md:1383 定义 9.8.3 位于 9.8.4 小节；:1434 定义 9.8.4 位于 9.8.5 小节；:1427 与 :1460 裸引用「9.8.3」指的是 xv6 小节"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "来源表的落地我逐行回查过，页码/条目号/文件路径全部对得上，只有「标题」列两处不是母本原标题（P2）。S11 行：sources/inventory.json 的 S11-U072 标题「消息传递」、pdf_page 389、body_read_pages [390,391,392,393,394]，与正文「PDF390–394 本轮核读」完全一致；我用 sha256 匹配台账（609a7e0e…）的那本 PDF 实取页面验证「389 和 395 分页空白」为真——第 389 页与第 395 页 pdftotext 抽出 3 个字符（仅页码），第 390 页是 ch16-02-message-passing.md 的「使用消息传递在线程间传送数据」正文，第 396 页起是 ch16-03 共享状态。S08 行：S08-U0022「第 17 条：对共享状态的并行性保持警惕」pdf_page 146，下一条 18 条起于 161，故 146–160 区间正确。外部表十行也逐条有指纹：tokio-runtime、tokio-blocking、rcore 四页（含 3semaphore/4condition-variable/2task-switching/4time-sharing/4scheduling）都在 sources/web.json，state.rs 与 current_thread/mod.rs 在 sources/runtime-code.json 且有 reviewed_ranges（1-374、446-477）。fork 限制的原句我也在线核到：'User code that calls fork(2)… must not reuse Tokio in the child process.'。「复用大学材料的方式」一段把讲义与本章实验分工写清、没有互相冒充，9.9 结尾把逐页指纹推给附录 coverage 也与正文一致。未核到：current_thread/mod.rs 的 446-477 行是否确实覆盖 park_yield 与 park_internal（仓库无 vendored tokio 源码，只有台账 sha256）。",
+      "evidence": [
+        "pdftotext '/Users/juanwang/E-Book/Rust/Rust 程序设计语言 简体中文版.pdf'（sha256=609a7e0edc00c1a89e502297fe7b09d62e194a29ff45a563eb70f1a75dca6c60）：page389 正文长度 3、page395 长度 3、page390 首行「使用消息传递在线程间传送数据 / ch16-02-message-passing.md」",
+        "sources/inventory.json S11-U072 pdf_page=389 body_read_pages=[390,391,392,393,394]；S11-U073 pdf_page=395 body_read_pages=[396..401]",
+        "sources/inventory.json S08-U0022 第 17 条 pdf_page=146；S08-U0023 第 18 条 pdf_page=161 → 146–160 覆盖第 17 条",
+        "sources/runtime-code.json：tokio-state-code path=src/runtime/task/state.rs reviewed_ranges=[[1,374]]；tokio-ct-code path=src/runtime/scheduler/current_thread/mod.rs reviewed_ranges=[[446,477]]",
+        "src/part3/ch09.md:1514-1519 「标题」列写「消息传递与所有权转移」「并发、锁与状态一致性」，母本原条目名分别为「消息传递 / 使用消息传递在线程间传送数据」与「第 17 条：对共享状态的并行性保持警惕」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整章索引 12 条逐条回查，未发现问题。全部 [@] 引用在 ch09 内都有对应锚点（我用 python 把 9.7 之后的 [@id] 集合与全文 {#id} 集合做差，missing 为空，不含第 1 章前缀的跨章项也都能落地）；条目内容都是机制判据，没有夹带实测数字。可核的部分：「认为有界通道可以限制无限 spawn」与 9.7.1/9.7.2 的定义、例 9.7.1 一致；「超时后释放阻塞工作的许可」正是 contracts.rs:52-70 反证的行为；「把 abort 当成已完成析构」与 contracts.rs:26-49（abort 后靠 Drop 才观察到析构）以及 9.7.4 的 JoinHandle 观察一致；「把采样中的 kevent 或 dyld 全部解释成业务 CPU 开销」引 [@def-9.8.3]（阶段时间）指向正确；「只比较 ns/step，不测无关任务的恢复延迟」引 [@def-9.5.1]、[@def-9.6.1]，与 9.5/9.6 两个 benchmark 的实际分工相符。开头自述「每一节末尾都有自己的 errata 盒」也与结构一致（9.1.7、9.2.7、9.3.7、9.4.6、9.5.5、9.6.5、9.7.6、9.8.7 八个小结小节，9.7 与 9.8 的我逐字读到清单盒）。未核到：「把 Pin 当成线程亲和性」等条目前提所在小节（9.1/9.3）不在我区间，我只按锚点可解析与措辞一致性确认。",
+      "evidence": [
+        "python3 抽取 src/part3/ch09.md 中 '## 9.7 ' 之后的 [@id] 与全文 {#id} 求差 → missing: []",
+        "bench/runtime-lab/tests/contracts.rs:26-49（abort 后由 Drop 发信号证明析构）与 :52-70（abort 不终止已开始闭包，permit 仍在闭包内）",
+        "src/part3/ch09.md:73-91 的九个小结小节标题（grep '^### 9\\.[1-8]\\.\\d 小结与常见错误'）对应 9.1.7/9.2.7/9.3.7/9.4.6/9.5.5/9.6.5/9.7.6/9.8.7"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结、速查表、出口检查与章末件逐条回查，站得住，无 P0/P1。① 出口检查三条命令的文件都真实存在：bench/runtime-lab/Cargo.toml、bench/runtime-lab（tests/src 齐备）、tools/run_runtime_benchmarks.sh；正文承诺「脚本会拒绝覆盖已有 environment.txt 的归档目录」经脚本第 6 行逐字核对为真（if [[ -e \"$out/environment.txt\" ]]; then echo \"Choose a fresh output directory…\"; exit 1; fi），且第 15 行确实把环境写进 environment.txt，所以这个判据是有牙齿的。② 「为什么 21 次观察不足以承诺生产 p99」与归档一致：blocking-poll.txt 尾部 n=21，21 样本 nearest-rank p99 即最大值。③ 「multi4 的聚合 ns/step 可以小于单线程一次 step 的延迟」「current-q16 的额外成本不能只归给原子加法」与 9.5/9.4 口径一致，且 bench/results/runtime-final/scheduling.txt 的 current-q1024（~2.6–2.8）、multi4-q1024（~0.745–0.778）、current-q16（~15.8–20.9）三簇读数确实存在，正文引用的 2.602/0.750 与 current-q16 明显高于 q1024 的形态相符。④ 「通道关闭后仍要排空已经进入缓冲的消息」「permit 与实际工作同寿命」两问分别由 contracts.rs:9-23 与 :52-70 支撑。⑤ 章末五页 ch09_summary/recall/exercises/exam/checklist 均实际存在（与 src/part3 目录一致）。⑥ 「读 state.rs 的指定范围时你应能指出四处位置和一条注释」——这一条我没能离线核：仓库只登记了 sha256 与 reviewed_ranges [[1,374]]（sources/runtime-code.json），没有 vendored tokio 源码，所以我按 pass 记，但明确写清这里我只核到「范围与指纹有登记」，未核四处位置的具体内容是否真在 1-374 行内。",
+      "evidence": [
+        "tools/run_runtime_benchmarks.sh:6 'if [[ -e \"$out/environment.txt\" ]]; then echo \"Choose a fresh output directory: $out\" >&2; exit 1; fi'；:15 '} > \"$out/environment.txt\"'",
+        "ls bench/runtime-lab/Cargo.toml bench/runtime-lab/tests/contracts.rs 存在；ls src/part3/ 含 ch09_summary.md、ch09_recall.md、ch09_exercises.md、ch09_exam.md、ch09_checklist.md",
+        "bench/results/runtime-fixed/measurements-final/blocking-poll.txt 尾行 'inline: … ns/op n=21'（21 个观察）",
+        "bench/results/runtime-final/scheduling.txt 原始样本：current-q1024 2.599477768–2.753336906，multi4-q1024 0.744779587–0.777999878，current-q16 15.812516212–20.863612175"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "severity": "P2",
+      "description": "定义锚点编号与所在小节错位，且正文同时用裸「9.8.3」指小节，读者无法分辨指的是编号 9.8.3 的定义还是 9.8.3 小节。第 1383 行的「定义 9.8.3 · 阶段时间 stage latency {#def-9.8.3}」写在 9.8.4 小节里，第 1434 行的「定义 9.8.4 · 退出协议 {#def-9.8.4}」写在 9.8.5 小节里；而 9.8.3 小节（xv6 swtch）本身没有定义盒。于是第 1427 行判定流程「④ 别把 OS 抢占当 poll……（9.8.3）」与第 1460 行小结「③ 内核抢占线程不等于 Future 被 poll（9.8.3）」里的 9.8.3 指的是小节，而第 1472、1570 行的 [@def-9.8.3] 指的是阶段时间定义——同一串号在同一章里表示两个不同对象。对照本章其他节：9.7 的 def-9.7.1/2/3 与 9.6 的 def-9.6.1/2 都是「编号=所在小节」，9.8 是唯一漂移的一处。",
+      "evidence": "src/part3/ch09.md:1381 小节标题「### 9.8.4 观测阶段时间，而不是只有总耗时」内于 :1383 出现 {#def-9.8.3}；:1432 「### 9.8.5 退出不等于丢弃 Runtime」内于 :1434 出现 {#def-9.8.4}；:1427、:1460 裸引「（9.8.3）」；:1472、:1570 引 [@def-9.8.3]；:1169/:1197 的 {#def-9.7.2}/{#def-9.7.3} 与其小节号一致"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "severity": "P2",
+      "description": "对 MIT 讲义的内容归属里夹了一句母本没有陈述的硬件比较。第 1372 行写「核读的 MIT 6.S081 2020 Lecture 11 是 Thread switching：它解释 xv6 的定时器抢占、寄存器（CPU 内部最快的那一小批存储格子，比缓存还快）与栈的保存，以及 RUNNABLE/RUNNING 的转换」。其中归属给讲义的三项（定时器抢占、寄存器与栈的保存、RUNNING/RUNNABLE）我在线核到原话：'each CPU has timer hardware, which interrupts periodically / kernel uses timer interrupts to grab control from looping threads'、'implementation provides each thread with a stack and register save area'、'RUNNING vs RUNNABLE vs SLEEPING'；lecture 编号也经 2020 schedule 确认 Lecture 11 = Thread switching（l-threads.txt）。但括号里「比缓存还快」在 l-threads.txt 全文 0 命中（连 cache 一词都不存在），它是作者替读者补的存储层级说明，被放在「它解释……」的列举中间，形式上像是讲义说过的话。事实本身不错，问题只在归属。",
+      "evidence": "https://pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt 全文 12296 字节，python re.finditer('cache') 命中 0；'faster' 仅 1 处且语境是 'that would be faster -- avoids one of the swtch() calls'，与寄存器/缓存层级无关；https://pdos.csail.mit.edu/6.S081/2020/schedule.html 给出 Lecture 11 = Thread switching → lec/l-threads.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "severity": "P2",
+      "description": "本地母本表的「标题」列两处不是母本原标题，而是作者自拟的主题短语，削弱了这一列的核对功能。第 1517 行给 S08 / Item17 写「并发、锁与状态一致性」，sources/inventory.json 里 S08-U0022 的实际标题是「第 17 条：对共享状态的并行性保持警惕」（Effective Rust 第 17 条讲的是共享状态并行的风险，不是「锁与状态一致性」的综述）；第 1516 行给 S11 / 16.2 写「消息传递与所有权转移」，台账标题是「消息传递」，PDF 第 390 页的实际节名是「使用消息传递在线程间传送数据」。两处页码我复算过都正确（S08 第 17 条 PDF146 起、第 18 条 161 起 → 146–160 成立；S11 body_read_pages 就是 390–394），所以不是引用错对象，而是标题列被改写：读者按这一列去 PDF 里找同名标题会找不到。",
+      "evidence": "sources/inventory.json S08-U0022 title='第 17 条：对共享状态的并行性保持警惕' pdf_page=146，S08-U0023 title='第 18 条：不要 panic' pdf_page=161；S11-U072 title='消息传递' pdf_page=389 body_read_pages=[390,391,392,393,394]；pdftotext 第 390 页首两行='使用消息传递在线程间传送数据' / 'ch16-02-message-passing.md'"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "severity": "P2",
+      "description": "「没有采集」的磁盘核查结果（不构成正文错误，记此供台账使用）：9.8.6 第 1454 行「本章只采集了聚合 ns/step 与观察延迟两类读数，steal 次数、cache miss、IPC 都没有采集」为真——对 bench/results 全部归档目录做了文件名与内容两级检索，含 'steal' 的只有 scheduling.ll/atomics.ll 这类编译器 IR（work-stealing 符号名），没有任何打点产物；没有任何 perf/stat/cache-miss/IPC 命名的文件，macOS 侧只有 scheduling-sample.txt / sample-command.txt 这类 sample 产物，正文第 1454 行「也没有用 macOS 采样假称 Linux perf 硬件计数」与之相符。本章其余「没有采集」四处同样磁盘无产物：9.3.6 的 steal 成功率/每次 steal 周期（无）、9.4.6 的 casal 动态次数（无计数产物）、9.1 第 448 行的 relaxed 与 release 差值（bench/results/local/atomic-1.txt、atomic-4.txt 只有 Shared-Relaxed / Shared-SeqCst / Padded-Relaxed / Adjacent-Relaxed / Batched-Relaxed 五簇，无 Release 用例，且这两个文件被 src/part2/ch08.md 引用、不属本章归档）、9.4.2 第 727 行的任务单元总分配量（bench/results/local/future-allocation.txt 只输出 ns_per_ready_future 与 future_size=257 这一静态尺寸，正文第 547 行自己也写明「本基准只输出size」）。",
+      "evidence": "grep -rli 'steal' bench/results → 仅 4 个 .ll 文件；文件清单去重后无 perf/stat/cache/IPC 命名；find bench/results -name 'atomic-*.txt' → bench/results/local/atomic-1.txt、atomic-4.txt，cut -d, -f1 | sort -u 用例集无 Release；grep -rln 'atomic-1.txt|future-allocation-drift.txt' src/ → 仅 src/part2/ch08.md；bench/results/local/future-allocation.txt 首行 'iterations=100000 samples=21 future_size=257' + 列名 'case,sample,ns_per_ready_future'"
+    }
+  ]
+}

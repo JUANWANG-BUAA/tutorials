@@ -1,0 +1,99 @@
+{
+  "reviewer": "r5-ch01b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整读了 src/part1/ch01.md 第 1222–1726 行（1.7–1.11 全部正文与语义盒），并逐条回查 bench/foundations-lab/ 的 gate.py、run.sh、analyze.py、src/lib.rs、results/native-01/{environment.txt,source-sha256.txt,statistics.json,dce.csv,paired.csv,sample-locality.txt,sample-borrow.txt}、results/validation-01/{gate.txt,test.txt}，以及 src/appendix/coverage.md 的 S08/S11 母本登记行和 src/part1/ch01_{recall,exercises,exam,checklist}.md 的章末件计数。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对结果：三态判定与 gate.py 逐条相符——正文的 U≤B 接受 / L>B 拒绝 / 其余证据不足，与 bench/foundations-lab/gate.py:11-16 的 high<=budget→accept、low>budget→reject、否则 inconclusive 完全一致，边界规则（high==budget 可接受、low==budget 且 high 更大为证据不足）在 gate.py:23-29 的测试里各有一例，validation-01/gate.txt 实跑显示 Ran 4 tests / OK，支持正文「四组单元测试」与「测试专门覆盖这两个边界」两句。例 1.7.1 的判定我按规则重算：① U=0.0004≤0.0005 接受、② L=0.0006>0.0005 拒绝、③ L=−0.0001≤B<U=0.0009 证据不足，与解答一致。SVG（图 1-3）我按刻度独立量过：横轴 0 在 x=174、每 0.0002 为 114px，预算线 x=459 反算为 (459−174)/114×0.0002=0.0005 ✓；三条横条 x/width 反算为 ① [0.0002,0.0004]、② [0.0006,0.0011]、③ [−0.0001,0.0009]，与正文与 <desc> 三个区间逐位吻合；「③ 的均值 0.0004 比 ① 的均值 0.0003 更差」也按区间中点复算成立。1.7 开头「1.6 得到一个跨零的区间」有实据：statistics.json 的 paired.bootstrap95=[−0.000128553095, 0.00026981890]，配对均值 0.000074625、sd 0.000484383 与 1.6 正文一致。1.7.7「保留全部 21 个正式批次」我数了原始 CSV：dce.csv 与 paired.csv 各 42 行 raw、每个 case 恰好 21 条、round 覆盖 0…20 无缺口。1.7.11 回指「1.6.4 说的第一个前提」与 def-1.6.2 的两处前提段落对应无误。即时自测第 2 题关于「gate.py 只做单侧判定、变快那一侧不受约束」的说法与 gate.py:24 decide((-2,-1),0)→accept 一致。发现一条 P2：正文把 gate.py 的代码块呈现为「包里的 gate.py」，但所贴片段与文件前 16 行不逐字相同（丢掉了 shebang、模块 docstring、decide 的 docstring 与 unittest 导入），复制者会得到一份不含测试的文件。",
+      "evidence": [
+        "bench/foundations-lab/gate.py:6-16（decide 的三条返回分支与两种 ValueError）",
+        "bench/foundations-lab/gate.py:19-36（test_accept/test_reject/test_inconclusive/test_invalid 四组，含 (0,1)@B=1 与 (1,2)@B=1 两个边界）",
+        "bench/foundations-lab/results/validation-01/gate.txt:1-4（Ran 4 tests in 0.000s / OK）",
+        "src/part1/ch01.md:1247-1251 与 1298-1303（三态规则与 SVG 三条横条几何），反算 x=459→B=0.0005、x=288/402→0.0002/0.0004、x=516+285→0.0006/0.0011、x=117+570→−0.0001/0.0009",
+        "bench/foundations-lab/results/native-01/statistics.json paired_second_minus_first={mean:7.4625e-05,sd:0.000484383,bootstrap95:[-0.000128553095,0.000269818904],seed:13013,resamples:10000}",
+        "bench/foundations-lab/results/native-01/dce.csv、paired.csv：raw 各 42 行，case 各 2 个 × 21 轮，round 集合 = 0..20",
+        "src/part1/ch01.md:1373-1388 与 bench/foundations-lab/gate.py:1-11（片段与文件开头不逐字一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "1.8.1 的环境段我逐项对磁盘复算：native-01/environment.txt 记有 hw.model=Mac17,9、hw.memsize=25769803776（=2^30×24，正好 24 GiB）、hw.cachelinesize=128、ProductVersion 27.0.1 / BuildVersion 26A434、rustc 1.99.0 且 commit-hash=b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、host aarch64-apple-darwin、RUSTFLAGS=-C target-cpu=native、profile=release opt3 codegen-units1 lto=false debug1；「18 核」由 perflevel0.physicalcpu=6 + perflevel1.physicalcpu=12 相加得出，Cargo.toml 的 [profile.release] 也与 opt-level=3 / debug=1 / codegen-units=1 / lto=false 四条一致。唯一没有出处的是「Apple M5 Pro」：本实验归档只写了 hw.model，芯片名只出现在同机其它实验包的 environment.txt（machdep.cpu.brand_string），记为 P2。1.8.3 的四条命令与锁的说法成立：run.sh:4 先 cd 进实验包、run.sh:32 lock=\"$(cd .. && pwd)/.work/measure.lock\"（正是正文点名的 run.sh:32 与路径 bench/.work/measure.lock）、run.sh:34 的 300 次 × sleep 2 = 600 秒、run.sh:35 超时报错退出、run.sh:36 用 EXIT trap rmdir，构建在 run.sh:11-12（取锁之前）、正式计时在 run.sh:40-43（取锁之后），正文「编译不在计时边界内」成立；run.sh:7 用 mkdir 建输出目录，故「目录必须尚不存在」成立。1.8.4 关于 source-sha256 的说法核对为真：native-01/source-sha256.txt 只含 src/bin/*.rs、src/lib.rs、examples/layout.rs、Cargo.toml/lock、analyze.py、run.sh，不含 gate.py、tests/contracts_more.rs、examples/storage_plan.rs，与「补充验证放在 validation-01/、旧原始观测不被改写」一致。1.8.5 的采样断言逐字命中：sample-locality.txt 内 sum_aos 与 sum_soa 各出现 3 次；sample-borrow.txt 内 borrowed 2 次、cloned 7 次、求和帧 5 次、malloc 20 次，支持「还可见系统分配器相关栈」。1.8.6 对 def-1.5.2 nearest-rank 的依赖成立：analyze.py::quantile 用 sorted(values)[ceil(len×p)−1]，N=21、p=0.99 时取到第 21 个即最大值。例 1.8.1 的「本章的 0.0586」与 statistics.json dce.observed.mean=0.058630038 吻合（paired.indexed=0.058694 同量级）。证据链表与判定流程五层、errata E-a…E-g 七条齐备；但清单把「文件级证据链」写成九行交付物，实际归档里还有 7 类文件未列，其中 profile-*.csv-excluded 与 sample-command.txt 恰是 1.8.5「采样来自另一进程另一轮」的直接证据，记为 P2。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/environment.txt:9-20（Mac17,9 / memsize 25769803776 / cachelinesize 128 / 27.0.1+26A434 / perflevel0=6, perflevel1=12 / RUSTFLAGS / profile=release opt3 codegen-units1 lto=false debug1）",
+        "bench/foundations-lab/Cargo.toml:10-14（opt-level=3, debug=1, codegen-units=1, lto=false）",
+        "bench/evidence-lab/results/run-01/environment.txt:14 与 bench/systems-lab/results/run-01/environment.txt:14（Apple M5 Pro 只见于同机其它 lab 的 brand_string）",
+        "bench/foundations-lab/run.sh:4,7,11-12,32,34-36,40-43,54（cd、mkdir 独占输出目录、构建先于取锁、600s 等待、EXIT trap 释放、计时在后）",
+        "bench/foundations-lab/results/native-01/source-sha256.txt:1-12（12 条指纹，无 gate.py / tests/contracts_more.rs / examples/storage_plan.rs）",
+        "bench/foundations-lab/results/native-01/sample-locality.txt（sum_aos×3, sum_soa×3）、sample-borrow.txt（borrowed×2, cloned×7, malloc×20）",
+        "bench/foundations-lab/analyze.py:11-13（quantile=sorted[max(0,ceil(len·p)−1)]）与 :19-30（paired_interval：zip 保配对、seed 13013、10000 次、0.025/0.975）",
+        "bench/foundations-lab/results/native-01/ 目录清单：另有 sample-command.txt、timeline.txt、lock-owner.txt、build-processes.txt、layout.txt、statistics-stdout.txt、profile-locality.csv-excluded、profile-borrow.csv-excluded 未进正文证据链表",
+        "src/part1/ch01.md:1546（0.0586）对 statistics.json dce.observed.mean=0.058630038"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "三条延伸阅读我拿去和来源台账对：Effective Rust 在台账里是 S08（sources/reviews/S08.md），登记的第 30 条既有「不仅仅是单元测试」（PDF 227），也有本项目的 FOUNDATIONS-S08-002「第30条：基准、black_box与观察机器码」（PDF 229–231，核读映射，落点 part1/ch01.md#sec-cpp-rust.1.1.5），所以正文把它概括为「测试、基准和编译器优化风险」并强调「基准测到的可能是优化后的路径」，落在已核读的母本内容之内，不是凭空的引文；两个标准库链接也在台账里有登记行（FOUNDATIONS-BLACK_BOX 与 FOUNDATIONS-INSTANT，各带 sha256），链接指向 doc.rust-lang.org 的 std::hint::black_box 与 std::time::Instant，与正文「尽力而为的优化提示」「墙钟的平台依赖」的定性一致。《Rust 程序设计语言》在台账里是 S11（Rust 程序设计语言 简体中文版.pdf，545 页），正文只作语言层背景引用第 11 章（测试）与第 13 章（迭代器与性能比较），与该书公认章节编排相符。段末「页码、核读状态与正文落点见附录来源台账」的相对链接 ../appendix/coverage.md 从 src/part1/ 出发指向真实存在的 src/appendix/coverage.md，可解析。本节无可对核的实测数字，未做数值复算；我没有逐页打开 Effective Rust 的 PDF 原文，判断依据是台账登记与 reviews/S08.md 的逐条摘要。",
+      "evidence": [
+        "src/appendix/coverage.md:110（S08/FOUNDATIONS-S08-002｜第30条：基准、black_box与观察机器码｜PDF 229–231｜核读映射｜落点 part1/ch01.md#sec-cpp-rust.1.1.5）",
+        "sources/reviews/S08.md:46（S08-U0037 第 30 条：不仅仅是单元测试，PDF 227，read-mapped）",
+        "src/appendix/coverage.md:4094、4131（FOUNDATIONS-BLACK_BOX 与 FOUNDATIONS-INSTANT 两个 std 文档 URL 均已登记并带内容指纹）",
+        "src/appendix/coverage.md:28、2810（S11 Rust 程序设计语言 简体中文版.pdf 台账条目存在）",
+        "src/part1/ch01.md:1646（../appendix/coverage.md 链接目标实际存在）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节是可数断言最密的一节，我全部自己数过：1.1–1.8 各节 errata 清单的实际条目为 6、6、6、7、6、6、8、7，合计 52 条，正好等于正文「八份清单共 52 条」，表格里写的 E-a…E-f / E-a…E-g / E-a…E-h 的上下界也与每份清单末条字母逐项吻合（1.4 与 1.8 到 E-g、1.7 到 E-h，其余到 E-f）。表中八个锚点 #sec-cpp-rust.1.1.1…1.1.8 在本文件内都存在。四条「跨小节」陷阱的指涉可核：第 1 条引 1.7.6 的跨章边界（正文 1.7.6 确实写了第 2 章布局、第 3 章复制的口径差异）、第 3 条与 1.8.4 的 source-sha256 结论一致（已核对 native-01/source-sha256.txt 只绑定当时的内核与脚本）、第 4 条回指 def-1.7.3。本节没有引用任何实测数字，无需复算。我只核到清单计数与锚点可解析这一层，未逐条评审 52 条 errata 的教学表述是否最优。",
+      "evidence": [
+        "python 计数：src/part1/ch01.md 各 '## ' 段内 '^E-[a-z] ' 行数 = 1.1:6, 1.2:6, 1.3:6, 1.4:7, 1.5:6, 1.6:6, 1.7:8, 1.8:7，求和 52",
+        "src/part1/ch01.md:1650（「八份清单共 52 条」）、1654-1661（表格清单范围）",
+        "src/part1/ch01.md:1445（1.7.6 跨章边界段）与 1522（1.8.4 指纹段）支持第 1、3 条跨节陷阱的指涉"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末小结与速查表的每条量化断言我都回磁盘数过：闭卷回忆卡页自称 24 张、分定义/结论/第一行三组，实际 ':::: ex 卡 N' 盒 24 个、最大编号 24，三组各 8 张（ch01_recall.md:3,9-11）；习题集分组标题为 A 组·概念（1–7）、B 组·推理（8–14）、C 组·实操（15–20），即 7/7/6 共 20 题，与正文「A 概念 7 题、B 推理 7 题、C 实操 6 题」一致；综合自测页出现 60 分钟、100 分、70 分及格三个数，与正文一致；自检表的目标编号实际为 K1–K8、S1–S7、A1–A5 共 20 条，正文写「K/S/A 二十条（8+7+5=20）」吻合，且 1.7/1.8 相关目标（K7、K8、S5、A1、A5）回指的正是本区间核过的 def-1.7.1/1.7.2/1.7.3、1.8 节与 sec 锚点。速查表里 `T / (K × N)`、「21 个差值有放回重采样 10000 次，取 2.5% 与 97.5% 点」、nearest-rank「N=21 时就是最大值」三条与 analyze.py 的实现（quantile=sorted[ceil(len·p)−1]、paired_interval 的 seed 13013 与 10000 次、分母 iterations×units）逐条相符。导航段的实验包路径 bench/foundations-lab/、入口 src/bin/dce.rs 与 src/bin/paired.rs、数据目录 results/native-01/ 均真实存在；「只依赖标准库」成立——Cargo.toml 无 [dependencies]、Cargo.lock 159 字节仅含本包。「改动实验时的责任」五条与本区间核对到的物证方向一致（改 N/K 会改变批均值口径、codegen 由 run.sh:26-29 与构建同时产出）。「本章速查」与五个章末页链接的文件都存在。未发现 P0/P1；这一节我只核到计数与路径存在性，未复核练习与自测卷的答案正确性（超出本区间）。",
+      "evidence": [
+        "src/part1/ch01_recall.md:3,9-11 与 ':::: ex 卡' 计数 24（最大编号 24，三组各 8）",
+        "src/part1/ch01_exercises.md 分组标题：'## A 组 · 概念（1–7）'、'## B 组 · 推理（8–14）'、'## C 组 · 实操（15–20）'",
+        "src/part1/ch01_exam.md 含 '60 分钟'、'100 分'、'70 分'；src/part1/ch01_checklist.md 目标编号 = K1..K8, S1..S7, A1..A5（共 20）",
+        "bench/foundations-lab/analyze.py:11-13,19-30 与 src/lib.rs:4-5,20-38（N=65_536、ROUNDS=21、分母 iterations×units、warmup 500ms、round 0..20 交替 position）",
+        "bench/foundations-lab/Cargo.toml:1-9（无依赖段）与 Cargo.lock（159 字节）；bench/foundations-lab/src/bin/{dce.rs,paired.rs} 与 results/native-01/ 存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "severity": "P2",
+      "description": "1.7.9 的代码块自称「包里的 gate.py」，但贴出的 16 行与磁盘文件不逐字相同：gate.py 第 1–2 行的 shebang 与模块 docstring、第 6 行 decide 的 docstring、第 4 行 import unittest 都被删掉了，而正文同一节紧接着声称「门禁代码本身也有四组单元测试」（gate.py:19-36 确有 4 个测试方法，validation-01/gate.txt 实跑 Ran 4 tests / OK）。读者若按这段复制，得到的是没有 unittest 导入、也没有任何测试的文件，与「四组单元测试」的说明对不上，也和 1.8 自己强调的「代码证据要与实际产物相连」相冲。建议把该块标注为「节选（去掉 docstring 与测试类）」，或直接贴 gate.py 全文。",
+      "evidence": "src/part1/ch01.md:1373-1388（贴出的片段）对比 bench/foundations-lab/gate.py:1-16（shebang、模块 docstring、decide 的 docstring、import unittest 均在文件中存在，片段里没有）；bench/foundations-lab/gate.py:19-36 与 results/validation-01/gate.txt:1-4"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P2",
+      "description": "1.8.1 把「Apple M5 Pro」写进本实验的环境契约，但这次实验的归档里没有这一项：native-01/environment.txt 只记了 hw.model: Mac17,9，没有 machdep.cpu.brand_string（同一文件里 cachelinesize=128、memsize=25769803776、6+12=18 物理核、rustc/LLVM/系统版本都有出处）。芯片名只在同机其它实验包（evidence-lab、systems-lab、compiler-lab 等）的 environment.txt 里作为 brand_string 登记。正文 1.8 节自己规定「环境是契约的一部分、每一层都要能被单独打开检查」，这处就落在契约外，读者按 1.8.3 的命令复跑也取不到这一行。建议改为「Mac17,9（芯片型号见同机其它实验包归档的 machdep.cpu.brand_string）」，或在 run.sh 的环境段补一行 brand_string 并重新生成归档。",
+      "evidence": "bench/foundations-lab/results/native-01/environment.txt:9-16（有 hw.model/Mac17,9、hw.cachelinesize 128、hw.memsize 25769803776、perflevel0=6/perflevel1=12，无 brand_string）；bench/evidence-lab/results/run-01/environment.txt:14 与 bench/systems-lab/results/run-01/environment.txt:14（machdep.cpu.brand_string: Apple M5 Pro）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P2",
+      "description": "1.8.2 的「文件级证据链」表格被当作交付清单（即时自测第 1 题也称「证据链的九个文件」），但这次归档实际有七类文件没进表：sample-command.txt、timeline.txt、lock-owner.txt、build-processes.txt、layout.txt、statistics-stdout.txt，以及 profile-locality.csv-excluded 与 profile-borrow.csv-excluded。后两类不是可有可无的：run.sh:46-53 显示采样是在正式计时之外另起进程跑的，两个 *-excluded 就是那一轮的原始 CSV，正是 1.8.5「采样覆盖了预热与正式循环的混合阶段、这一章不把采样占比当稳定态 CPU 百分比」这句话的直接证据；lock-owner.txt 与 build-processes.txt 同理支撑 1.8.3 的测量锁与「记录干扰而非宣称隔离」。表格漏掉它们，读者按表交接就会把这几层证据留在包里却没人核对。建议补两行（采样命令与被排除的非正式 CSV）或在表末明说「此表只列主链，另有 timeline/lock-owner/build-processes/layout 等辅助记录」。",
+      "evidence": "bench/foundations-lab/run.sh:37,39,44,46-53（写 lock-owner.txt、build-processes.txt、statistics-stdout.txt 与 profile-*.csv-excluded）；ls bench/foundations-lab/results/native-01/ 含 sample-command.txt(552B)、timeline.txt(288B)、layout.txt(193B)、profile-locality.csv-excluded(1580B)、profile-borrow.csv-excluded(1748B)；src/part1/ch01.md:1486-1497（九行表）与 :1613-1616（「九个文件」问答）"
+    }
+  ]
+}

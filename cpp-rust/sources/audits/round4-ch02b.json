@@ -1,0 +1,74 @@
+{
+  "reviewer": "r4-ch02b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动完整通读 src/part1/ch02.md 的 2.7–2.11 全部正文与语义盒，再用 python 从 bench/foundations-lab 的 allocation.csv/locality.csv/storage-plan.txt/layout.txt/environment.txt/lib.rs/run.sh 逐条复算与比对，未依赖任何先前结论。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "自称实测的数字全部复算通过：从 results/native-01/allocation.csv 的 21 个原始批均值独立计算，fresh_vec mean=8.248312814、N-1 sd=0.173203503、p50=8.246734619、p99=8.638381958；byte_region mean=2.813854399、N-1 sd=0.027682164、p50=2.817779541、p99=2.855300903，与 2.7.3 表逐位相符；配对均值 5.434458415（正文取 byte−fresh=−5.434458415）也复算相符，21 行 checksum 全为 28672，证实『两 case 同一参考值』为真。2.7.2『完整入口』代码与 src/bin/allocation.rs 逐行一致。静态量全对：4096×7=28672、16×4096=65536、4096×64=262144、ex-2.7.1 每批差 −5.434458415×65536≈−356153、自测第 3 题 4096×32=131072 且 131072/64=2048（第 2049 块 get_mut 越界→None→expect panic）均成立。bootstrap 区间 [−5.514596121,−5.358680362] 未逐样本重采样，但下界 −5.514596121 确实在 statistics-stdout.txt/statistics.json 中，判非编造。发现两处 P2：其一 2.7.6 引用的失败用例代码把真实断言消息改写；其二『批p99』经复算恰等于样本最大值（nearest-rank 口径），正文未 inline 交代分位数取法而只引 [@def-1.5.2]，该定义文档在本次范围外未打开核对。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/allocation.csv 复算：fresh mean=8.248312814 sdN1=0.173203503 p50=8.246734619 p99=8.638381958",
+        "复算 byte_region mean=2.813854399 sdN1=0.027682164 p50=2.817779541 p99=2.855300903；配对(fresh−byte)=+5.434458415",
+        "src/bin/allocation.rs 与正文 2.7.2 代码逐行一致；21 行 checksum 全 28672",
+        "statistics-stdout.txt 含 −5.514596121（bootstrap 下界落地）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量与代码断言全部核对通过。ex-2.8.1 明写『算术演示，不是实测』：base=0x1004/used=3 时相对做法 0x1004+8=0x100c、4108÷8=513 余 4（未对齐），绝对做法 0x1007→0x1008、4104÷8=513 整除（对齐），padding=0x1008−0x1007=1、padding+size=9，全部复算正确。ex-2.8.2/def-2.8.2 依赖的静态量属实：layout.txt 记 Record size=64 align=8、COrder `C offsets,0,8,16`（value 偏移=8，ex-2.8.3 引用一致）；repr(align(128)) 后 size≥128、数组跨度 65536×64=4194304→65536×128=8388608 翻倍、热列 524288 不变、密度 8/64=12.5%→8/128=6.25% 全算对。cacheline 128 字节实测落地：environment.txt `hw.cachelinesize: 128`，run.sh 确以 sysctl 采集。2.8.8 代码与 examples/storage_plan.rs 逐行一致，且 results/validation-01/storage-plan.txt 真实输出 `value_offset=8 size=16 align=8` 与 `overflow=rejected zst_size=0 zst_align=1`，正文『本机实际执行、偏移 8/尺寸 16/对齐 8/超大数组被拒/ZST size0 align1』完全对应。本节多处诚实声明未采集（packed 惩罚、伪共享、多连接内存）与『清单非已实现 arena』，无越界断言。未单独复核：2.1.3 表格、2.5 热列具体数值（属他节），仅确认本节引用与其口径一致。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt: Record,64,8 与 C offsets,0,8,16",
+        "results/native-01/environment.txt: hw.cachelinesize: 128",
+        "results/validation-01/storage-plan.txt: value_offset=8 size=16 align=8 / zst_size=0 zst_align=1",
+        "examples/storage_plan.rs 与正文 2.8.8 代码逐行一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "官方入口链接均为合法 rust-lang.org 路径（reference/type-layout.html、std::option::Option、std::num::NonZero、std::alloc::Layout、std::ptr），无编造 URL。rCore 两条引用诚实标注『在线，指纹见来源台账』且明确『不引用其中任何数字』，属机制出处而非实测声明，未将其当作本地已核实母本。2.9.2/2.9.3 的自述限制（AoS/热列/ByteRegion/cacheline 来自本机实验、母本未提供、译文年代差、未测 cache/TLB miss、未推稳定 ABI）与本章归档结构一致，无夸大。未核内容（写清）：我未打开 appendix/coverage.md 去逐条确认 rCore 的『指纹』是否确实登记，也未逐字比对 rCore『全局分配器被 Mutex 包着』这句是否见于原文——因正文未引其数字且标为在线，判为表述层而非可核事实，故不计 finding。",
+      "evidence": [
+        "正文所列 5 个 std/reference URL 路径合法",
+        "run.sh 的 sysctl/归档与 2.9.2『本机实验』自述相符"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "『八份清单共 48 条』经脚本逐节计数为真：2.1–2.8 每节的常见错误清单各含 E-a…E-f 共 6 条，8×6=48，且索引表每行标注 E-a…E-f 与实际一致。表内每条『把 X 当成 Y』的概括与对应小节正文（如 2.7 把收益当算法收益→[@def-2.7.2]、2.8 布局证明与来源证明合成一份→2.8.2/2.8.7）指向正确、无锚点悬空。额外四条『跨小节』错误引 [@def-2.1.3]/[@ex-2.4.1]/[@def-1.6.1]/[@def-2.8.3] 均可在正文他处落地。未核：个别第 1 章 [@def-*] 锚点定义原文（范围外）。",
+      "evidence": [
+        "脚本统计 ch02.md 各节 errata：2.1..2.8 均 6 条 abcdef，合计 48",
+        "索引表 8 行 E-a…E-f 与正文一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末件的归档与复现断言全部落地：run.sh 循环 `for bin in dce paired locality allocation borrow initialization` 恰为『六个入口』；`unit=... except allocation` 与 `warmup=500ms/case rounds=21` 对应『每 case 21 个原始批次、至少 500ms 预热』；native-01 下确有 source-sha256.txt、environment.txt、codegen/*.mir|*.ll|*.s（MIR/LLVM IR/汇编）及 sample-locality.txt（locality 独立 macOS sample 证据），『归档保存…』属实；四个复现命令指向的 Cargo.toml/examples/layout/run.sh 与数据路径 results/native-01/、results/validation-01/storage-plan.txt 均存在；五个章末页 ch02_summary/recall/exercises/exam/checklist 均实际存在。速查表引用数字核对：『0.519 对 0.059』由 locality.csv 独立复算 aos mean=0.5191、soa mean=0.0594 证实；『4.35 ms 摊到 838 万个元素』= 0.519 ns/item×8,388,608(=65536×128) 自洽。『相对游标上取整/`reset` 只把 used 归零旧字节仍可见』与 lib.rs:114-121 的 checked_add+get_mut+reset 实现一致。未逐字复核：exercises 20 题/22 张卡的内部计数（属章末件正文，本次未展开各文件）。",
+      "evidence": [
+        "run.sh: for bin in dce paired locality allocation borrow initialization（6 入口）；warmup=500ms/case rounds=21",
+        "locality.csv 复算 aos=0.5191 soa=0.0594 → 正文 0.519/0.059",
+        "native-01 含 source-sha256.txt/environment.txt/codegen/*.mir,.ll,.s/sample-locality.txt",
+        "src/part1/ch02_{summary,recall,exercises,exam,checklist}.md 均存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "severity": "P2",
+      "description": "2.7.6『安全失败用例』以代码块形式引用真实测试，但改写了其中一条断言的 expect 字符串：正文写 `region.take(2).expect(\"cursor preserved\")`，而真实测试 src/lib.rs:200 的消息是 `expect(\"failure preserved cursor\")`。行为断言本身经核对成立（take(6)+fill(7) 后游标停在 6；take(3) 因 6+3>8 返回 None、take(usize::MAX) 因 checked_add 溢出返回 None；take(2)=get_mut(6..8) 得到两块未写字节 [0;2]；reset 后再取 6 得 [7;6]），故差异仅在字符串字面量、非逻辑错误，属引用未逐字对齐。附带一提：同节『批p99』两个值经复算分别恰为各自 21 个批均值中的样本最大值（nearest-rank 口径），正文未 inline 说明分位数取法而仅引 [@def-1.5.2]。",
+      "evidence": "src/lib.rs:200 assert_eq!(region.take(2).expect(\"failure preserved cursor\"), [0; 2]); 对比 ch02.md:1376 expect(\"cursor preserved\"); allocation.csv 复算 p99=max(fresh)=8.638381958、p99=max(byte)=2.855300903"
+    }
+  ]
+}

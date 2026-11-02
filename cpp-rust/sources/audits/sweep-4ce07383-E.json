@@ -1,0 +1,138 @@
+{
+  "reviewer": "sweep4ce-E",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立审计：完整通读 src/part4/ch17.md 全文（含 17.9/17.10/17.11）与 ch17_summary.md、ch17_recall.md、ch17_exercises.md、ch17_exam.md、ch17_checklist.md 五页；用 /usr/bin/python3 对 projects/tidekv/results/{run-01,run-02,run-03,bloom-contract-2026-10-30.txt,order-effect-2026-10-30.txt} 逐数复算（配对均值、区间、拒绝率、每刷盘时长、每批记录数、4.08 条、9.3 倍、0.2%/7.6% 预算比、1,525/200,000=0.762%≈1/131、ceil(log2 16000)=14、B8 与 exam7 全部字节账）；核读 projects/tidekv/src/{epoch,stats,engine,ipc,bloom,segment,wal,memtable}.rs 与 tests/、gate*.py、analyze*.py、run.sh、verify_admit_csv.py、order_effect.py；比对 .work/figs/ch170-173.svg 与 ch17.md 内联四图；sources/web.json 台账 8 份 rCore 页面 archive 全部在盘且 sha256 匹配（2fs-implementation ab93f7308aa7…、2pipe c5ac431b83db…）；LLVM Benchmarking tips 引句经在线逐字核对命中；arXiv:2401.11347 经 Crossref 核对标题；DOI 10.1145/3656383 经 Crossref 解析容器为 PACMPL(PLDI 2024)。tools/check_book.py 运行结果：123 页 0 错误（未修改任何文件）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "verdict": "issues",
+      "method": "read+recompute+web/ledger check",
+      "notes": "三组落盘位置全部真实：run-01 八件、run-02 十件（含 CORRECTION.md）、run-03 七件与正文逐项吻合；bloom-contract-2026-10-30.txt 的命令/工具链/三行数字（fp=1525/200000、0/50000、1989/2000）逐字在档；17.9 关于预算出处的三句（gate.json 只有 budget_B、两份 gate-*.json 带 budget_note、run.sh 统一传 SEED=20261028/WARM_MS=500 而归档是 20261029/500 与 20261030/300）与 run.sh、各 statistics/gate JSON 一致；admit.csv 原始行 1,680（另有 84 行 BATCH_MEAN，与 recompute.txt 的 raw=1680/均值行=84 相符）；8 份 rCore 引用页在 web.json 均有 URL+bytes+sha256 且落盘副本存在、哈希匹配；台账边界段自述与实情相符，但存在一处条目清单失实（见 findings）与一处期刊归属错误（见 findings）。",
+      "evidence": [
+        "src/part4/ch17.md:1450-1518",
+        "projects/tidekv/results/bloom-contract-2026-10-30.txt:11-14",
+        "projects/tidekv/run.sh:9,13,15,100-104",
+        "projects/tidekv/results/run-01/gate.json（有 budget_B、无 budget_note）；run-02/gate-{codec,compaction}.json 均有 budget_note",
+        "sources/web.json（8 条 rCore 条目，archive 全部 exists=True，2fs sha256=ab93f7308aa7… 匹配）",
+        "Crossref: 10.1145/3656383 → 'Concurrent Immediate Reference Counting', Proceedings of the ACM on Programming Languages, 2024-06-20",
+        "llvm.org/docs/Benchmarking.html 原文 'Note that low noise is required, but not sufficient. It does not exclude measurement bias.' 逐字命中；页面确不讲随机化跑序"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "verdict": "pass",
+      "method": "read+enumerate",
+      "notes": "索引表八行与各节常见错误清单逐条对点：17.1 为 E-a…E-d、E-f（确无 E-e）；17.2 为 E-a、E-b、E-b2、E-c、E-d、E-e（含 E-b2）；17.3/17.4/17.6/17.7 各 E-a…E-e；17.5 为 E-a…E-f；17.8 为 E-a…E-f——编号、条数全部与正文一致。四条跨节错误的指向核对无误：错误二（17.3 借用钉缓冲→17.5 退休表、17.7 推峰值给子进程）与两节正文相符；错误三列出的四项未采集（17.4 指令数口径与代码体积、17.6.2 端到端延迟与按请求取消、17.7.2 固定开销拆分、17.8.2 掉电语义与分段耗时）在对应节均明写「没有采集」；错误四指 run-01 缺源码指纹与 [@def-17.8.3] 一致。",
+      "evidence": [
+        "src/part4/ch17.md:1520-1541 vs 各节 errata 清单（233-245、409-423、540-552、678-690、827-841、991-1003、1140-1152、1402-1416）",
+        "跨节错误三所列未采集项：src/part4/ch17.md:668、981、1130、1346-1347"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.11",
+      "verdict": "pass",
+      "method": "read+anchor/positional check",
+      "notes": "速查表 15 行的 [@id] 全部可解析（check_book.py 123 页 0 错误）；两处定位描述属实：定义 17.6.3（ch17.md:944）与定义 17.6.2（898）、17.6.1（889）都在「### 17.6.1 准入的三态」小节内（17.6.2 标题在 951 行之后）；定义 17.7.3（1099）在「### 17.7.1」小节内（17.7.2 标题在 1106 行）。本章导航引用核对：总结页确有六问；回忆卡 1–6、9–11、13–15、16–17、23、24 全部存在且组数正确（定义卡 8、结论卡 11、第一行卡 5，共 24）；习题集确为 21 题三组（A1–7、B8–14、C15–21）；自检表 K/S/A 分组存在；第 16 章标题「项目二：Rust 高性能组件与最小 C ABI」与 ch16.md:1 逐字一致。",
+      "evidence": [
+        "src/part4/ch17.md:1543-1586",
+        "src/part4/ch17.md:944（def-17.6.3）、1099（def-17.7.3）位置核验",
+        "tools/check_book.py 输出：通过！共检查 123 个页面，0 错误",
+        "src/part4/ch17_summary.md:43-48（六问）；ch17_exercises.md:3（共 21 题）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "pass_with_findings",
+      "method": "chapter-end drift check",
+      "notes": "章末页对 17.2 数字的引用全部与正文一致：条目头 17（=键长4+值长4+标记1+序号8）、索引项 12、页脚 34（=5+1+4+8+8+4+4，segment.rs:106-116 实际写入序列匹配）、97/6,356,992/786,432/7,143,424/7,143,458、索引瘦身省 262,144、16 步二分、布隆桶宽 BUCKET=16 字节（bloom.rs:4）、8 bit 指纹、每键 8 字节=64 bit=8 槽、并集上界 16/256=6.25%、f≥ceil(log2 16000)=14、实测 1,525/200,000=0.762%≈1/131 在档（results/bloom-contract-2026-10-30.txt:11）。假阳率测试探测 200,000、插入 50,000（bloom_contract.rs:27-28）；no_false_negatives_direct 插入 20,000（bloom_contract.rs:15），习题 C21 两处数字各归其位、无漂移。发现两处小问题：回忆卡 4 的「有效几字节」疑为旧稿残留（P2），以及 .work/figs 旧稿 SVG 与正文数字冲突（P2，不随书发布）。",
+      "evidence": [
+        "src/part4/ch17.md:293-296、345-359、364-376",
+        "projects/tidekv/src/bloom.rs:1-4,30-33；tests/bloom_contract.rs:15,27-28；results/bloom-contract-2026-10-30.txt:11-14",
+        "src/part4/ch17_exercises.md:288-301（C21）逐数复核通过；ch17_exam.md:61（262,144）复核通过"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "pass_with_findings",
+      "method": "chapter-end drift check",
+      "notes": "章末页对 17.6 的关键事实全部与正文一致：满即拒不阻塞/不入队/不重试；许可归还点是 take_batch 整批至多 256（engine.rs:620-621），在途上界 CAP+256；MAX_SLOTS=512 封线程总数、pin 返回 None 的三种去向（Shutdown 映射 / Stats.get 先加 / segments 回空、frozen_tables 回 0，engine.rs:340-341,375-388）均有码可查；三计数（def 17.6.3）与 Stats 无 applied/written（stats.rs 快照字段核对，applied 是 engine.rs:149 的 Mutex 水位）一致；run-03 表内全部数字（0.6858/0.9664、+0.2805、774,433.8/82,915.5、−691,518.3、2,456,036.2/2,470,043.5、+14,007.4、聚合口径 2,465,119.0/2,464,724.3、B−A 变 −394.7≈−395、4.08 条、10,050.6/10,045.5µs、逐批口径反向差 0.40%、185.86/19.90ms、18.49/1.98 次 flush）从 admit.csv 1,680 行原始数据逐条重算复现。一处 P2：回忆卡 23 的例句把「尝试数」换成「完成数÷总时长」，与正文 def 17.6.3（完成格无计数器、当不了分母）不契合。",
+      "evidence": [
+        "src/part4/ch17.md:881-949、955-979",
+        "projects/tidekv/results/run-03/admit.csv（420 批/臂，均值 75.3976/8.0738、拒绝率 0.6858/0.9664、受理范围 64–131/4–11 全部复现）",
+        "src/part4/ch17_recall.md:224-233（卡 23 例句，P2）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "pass",
+      "method": "chapter-end drift check",
+      "notes": "线程根数与职责一致：ipc.rs:152/162/171 恰三个 spawn（stdin、stdout、stderr），父线程收两个 channel 结果、join 后才 wait，与正文 def 17.7.1、总结 17.7 行、回忆卡 14 表述吻合；「64 KB」是 ipc.rs:132 注释原文，正文如实标注为推理前提且本机容量未采集；幂等未实现（write_segment 无存在性检查即 rename、段名取 max()+1，engine.rs:540-547）——正文、总结、卡 15、B13、底线第 3 条、def 17.7.3 六处口径一致；后台调度器不存在（do_compact 唯一调用点是 Cmd::Compact 分支，CORRECTION.md 用 grep 步骤自证），总结与 17.7 行未误称有；run-02 压缩数（7,696,326/9,171,896/+1,475,570、[1,366,636,1,586,757]、比值 1.19、budget_B=10000000、MATCH bytes=401770 crc32=7241b72e）与 JSON 归档逐项一致。",
+      "evidence": [
+        "projects/tidekv/src/ipc.rs:132,152-182；src/segment.rs:106-116；src/engine.rs:540-547,565,773",
+        "projects/tidekv/results/run-02/{gate-compaction.json,mech-verification.txt,CORRECTION.md}",
+        "src/part4/ch17_summary.md:15、ch17_recall.md:178-198、ch17_exercises.md:171-179"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "pass_with_findings",
+      "method": "chapter-end drift check",
+      "notes": "17.4/17.8 相关章末页数字全部复算通过：codec 结论四数（3.965/4.036/+0.071、[−0.054,+0.208]、sd 0.318、预算 1ns→接受）与 statistics-codec.json 一致；主轮四 case 表、642 比值（40539.7/63.144=642.02）、区间宽 714.2ns≈1.76%→「约 1.8%」、判定 0 接受/4 拒绝、分析种子 20289699、ops 分母 900/2,900/1,900/4,996、写占比 82/80/72/53%（按 setup+随机重放复算吻合）、值长 80/300/120/120（tide-bench.rs:91-122）、5,040 原始行、BATCH_MEAN 最大偏离 6e-07、get_hot 摘要 79802841a06e79bb、先跑 B 52/先跑 A 32、位次复算八行与 order-effect-2026-10-30.txt 逐项一致。exam 第 7 题答案（81、5,308,416、786,432、6,094,848、6,094,882）与习题 B8（177、11,599,872、786,432、12,386,304≈11.8MiB）重算全对。发现一处 P1：exam 第 11(a) 题给分「每条 2.5 分＋动作 0.5 分/条」共 3×3=9 分，与其自注「合计 8 分」及题面 (a) 8 分矛盾。",
+      "evidence": [
+        "src/part4/ch17.md:1299-1382 vs projects/tidekv/results/run-01/{statistics.json,gate.json,bench.csv,bench-verification.txt} 与 results/order-effect-2026-10-30.txt",
+        "src/part4/ch17_exam.md:40-42（(a) 8 分）与 :86（3×(2.5+0.5)=9，自注合计 8）",
+        "src/part4/ch17_exam.md:73 与 ch17_exercises.md:111：字节账全部复算正确"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "pass",
+      "method": "chapter-end drift check",
+      "notes": "原子序在正文与章末页之间零漂移且与代码一致：head 的 swap/load、PINS 的 store、CURRENT 推进均 SeqCst（epoch.rs:94-145），仅 Heap::drop 取 head 用 Acquire（epoch.rs:204）；stats.rs 纯计数全 Relaxed，submitted 用 fetch_max(AcqRel)、closed 用 Release/Acquire（engine.rs:282,235,432）——总结 17.5 行、卡 7、A6、K7、E-c、即时自测第 1 题口径相同；「降到 Release/Acquire 未实测」「本处 Arc/epoch 成本对照未采集」两处未采集声明页页一致。epoch advance 次数一致为「一次」：正文 def/即时自测第 3 题、C17、卡 13、图 17-3 内联 desc 都是「读者已 release，一次 advance() 即可回收」，与 epoch.rs:138-159 实现相符（旧稿 SVG 写两次，见 P2 findings，不随书发布）。",
+      "evidence": [
+        "projects/tidekv/src/epoch.rs:94,98,111,122,139-145,204；src/stats.rs:79,150-162；src/engine.rs:235,282,432",
+        "src/part4/ch17.md:789-800,833,864 与 ch17_summary.md:13、ch17_recall.md:167-174、ch17_exercises.md:71-79,229-237"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P1",
+      "description": "ch17_exam.md 第 11(a) 题给分算错：解答注明「每条 2.5 分，动作 0.5 分/条，合计 8 分」，但三态规则每条 2.5+0.5=3 分、三条共 9 分，与其自注合计 8 分及题面「(a)（8 分）」矛盾（(b) 12 分与「六槽齐 12 分」一致，全题 20 分不受影响）。改法：每条 2.0+0.5×3=7.5 或把小分拆成 2.5×3+0.5 说明「动作共 0.5」。",
+      "evidence": "src/part4/ch17_exam.md:40（(a)（8 分））与 :86（每条 2.5 分，动作 0.5 分/条，合计 8 分）；3×(2.5+0.5)=9≠8，/usr/bin/python3 复算"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P1",
+      "description": "17.9 内存回收条目把 [Concurrent Immediate Reference Counting](https://dl.acm.org/doi/10.1145/3656383) 的出处写成「ACM TSC 2024」。Crossref 解析该 DOI：容器为 Proceedings of the ACM on Programming Languages（PACMPL，2024-06-20，即 PLDI 2024），并不存在名为 ACM TSC 的载体；论文真实、年份对、DOI 对，但期刊/会议归属写错，读者按缩写检索会找错刊物。",
+      "evidence": "src/part4/ch17.md:1470；api.crossref.org/works/10.1145/3656383 → title='Concurrent Immediate Reference Counting', container-title=['Proceedings of the ACM on Programming Languages'], published=2024-06-20"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "severity": "P2",
+      "description": "17.9「台账边界」段自述本节论文条目时列了「两条 concurrent hash map」，但 17.9 全节的参考里没有一条并发哈希表论文（全仓 ch17.md 仅这一处提到 concurrent hash map）。幽灵条目，疑为旧版清单残留，会让读者回找不存在的引用。",
+      "evidence": "src/part4/ch17.md:1495；grep 全章 '并发哈希|concurrent hash' 仅命中 1495 行一处"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "severity": "P2",
+      "description": "ch17_recall.md 卡 23 结尾例句「饱和时『完成数 ÷ 总时长』与『受理数 ÷ 总时长』是两个不同的数」与正文定义 17.6.3 不对齐：正文的原句是「尝试数 ÷ 总时长」与「受理数 ÷ 总时长」，并明写「『完成』那一格没有计数器，当不了分母」。卡 23 前半段自己也说完成格无计数器，随后却拿完成数÷总时长当吞吐示例分母，自相矛盾且与正文漂移（应改为「尝试数」）。",
+      "evidence": "src/part4/ch17_recall.md:228-230 vs src/part4/ch17.md:944-948（def-17.6.3）；stats.rs 快照字段无 applied/written（engine.rs:149 为 Mutex 水位）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "ch17_recall.md 卡 4 卡面问「索引项几个字节、有效几字节？」，但当前格式索引项 12 字节全部有效（键长 4＋偏移 8），正文与核对段都没有「有效字节」这一分法，该问句疑为旧稿（16 字节项、部分字节另作标记/指纹槽）残留：核对答案无法回答卡面的第二问。",
+      "evidence": "src/part4/ch17_recall.md:64-71；对照 src/part4/ch17.md:293-296（def-17.2.1：每项 12 字节，只有两项）；旧稿 .work/figs/ch171.svg:② 索引区 16 字节 × n（键长2│键偏移4│值长4│值偏移4│标记与指纹2）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "图 17-1…17-4 的编号与内联 SVG 完全对应且数字与正文一致（发布物正确），但其工作稿 .work/figs/ch170-173.svg 与当前正文严重漂移：ch170 写 Release/Acquire 发布与取快照（正文/内联图为 SeqCst）；ch171 写索引项 16B、数据区 80 字节、页脚无版本号（正文为 12B、97 字节、34 字节含版本号）；ch172 写 Release 换指针、「推进 epoch 两次」（正文为 SeqCst、一次 advance 即可回收）；ch173 写「round 与 position」且把源码指纹画成已落盘的 source-sha256.txt（正文：列名 arm_order、源码指纹三轮都缺、虚线格）。这些草稿未被 src/ 或构建引用（book/ 渲染自内联 SVG），不随书出错，但若被复用会把旧数字带回来。",
+      "evidence": "python 逐 fig 比对：ch17.md 四段内联 <svg> 与 .work/figs/ch170-173.svg 文本节点差异清单（md-only/work-only 全文见审计记录）；grep -rn 'figs/ch17' src/ tools/ book.toml 无命中；book/part4/ch17.html 含内联版文本「SeqCst 换指针」「12 字节 × n」「源码指纹（三轮都缺）」"
+    }
+  ]
+}

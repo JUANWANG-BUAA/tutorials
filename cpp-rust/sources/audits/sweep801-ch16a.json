@@ -1,0 +1,95 @@
+{
+  "reviewer": "sweep801-ch16a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "801f81bfcad74a0eccd57c5bd46d37a1f1de08834449b6354ea7de93ae136952",
+  "provenance": "冷启动通读 src/part4/ch16.md 16.1-16.6 全部正文与每个语义盒（含图16-1的SVG文本），逐条对照 projects/ffi-bridge 的 src/lib.rs、tests/contracts.rs、c/tests.c、c/demo.c、include/bridge.h、CMakeLists.txt、tools/measure.sh 与 evidence/run-20261007-01（raw.csv/summary.json/environment.txt/codegen/ffi_bridge.s/ffi_bridge.ll/c-benchmark.s/rust-tests.txt/LastTest.log），用 /usr/bin/python3 复算了全部引用数字，并跑了一次 tools/list_uncollected_claims.py 过滤 ch16 条目。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 mix/transform/checksum 引文与 lib.rs 逐字一致；三条路径函数（rb_transform/rb_create_copy/rb_generate/rb_info/rb_copy/rb_release）全部存在；图 16-1 声明的 4096 槽、代号高32位+槽下标加一与代码一致；即时自测第3题引用的 16.7 实测数字（逐元素 0.978652、批量 0.211897 ns/词）用 /usr/bin/python3 从 raw.csv 按 8192×64=524288 词、21 批复算均值成功；checksum 全 21 行一致。未逐行重读 16.7 本体（不在职责范围）。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:35-54（mix/transform/checksum 与正文引用逐字一致，含 0x9e37_79b9_7f4a_7c15 / 0x243f_6a88_85a3_08d3）",
+        "复算：raw.csv per_element n=21 mean=0.978651501 ns/word（正文 0.978652 ✓）、batch mean=0.211897350（正文 0.211897 ✓），checksum 21 行均为 999f7c01d1040000",
+        "projects/ffi-bridge/src/lib.rs:21 MAX_SLOTS=4096、lib.rs:78 (generation<<32)|(index+1) 与图 16-1 文案一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量全部自算：u32+u32+u64+u64 在 align 8 下 size=24、偏移 0/4/8/16，与正文表格、Rust 断言（6 条）、C 头文件 _Static_assert（6 条+指针宽 8）一一对应；错误码 0-7 词表与 lib.rs 常量及 bridge.h enum 完全一致；例 16.2.1 全部夹具核对：Rust 侧长度 3、checksum 60=10+20+30（我复算），C 侧长度 4、哨兵 71/72 与 777，Rust 侧哨兵 999/888，①两侧都有（contracts.rs rb_info(h,2,24)、tests.c:40）、②尺寸 23 仅 C 侧（tests.c:41）、④仅 Rust 侧（contracts.rs:67）；rb_info 第一道判断确在 range 与句柄查找之前（lib.rs:248）；rb_copy 的 capacity<data.len() 在 copy_nonoverlapping 和 written.write 之前（lib.rs:280-289）；RB_MAX_WORDS=1<<24 按元素计（bridge.h:29、lib.rs:20）。",
+      "evidence": [
+        "复算：4+4+8+8=24，最大对齐 8，偏移 0/4/8/16 ✓",
+        "projects/ffi-bridge/tests/contracts.rs:6-11（size_of/align_of/offset_of 六断言）与 include/bridge.h:39-46（七条 _Static_assert）",
+        "复算：10+20+30=60 == contracts.rs:56 assert (info.len,info.checksum)==(3,60)",
+        "projects/ffi-bridge/src/lib.rs:11-18 与 include/bridge.h:25-26：OK=0,EINVAL=1,ERANGE=2,ESTALE=3,ECAPACITY=4,EPANIC=5,EPOISON=6,ERESOURCE=7 全对齐",
+        "c/tests.c:40-48（C 侧版本2/尺寸23/71,72/777/ECAPACITY 后哨兵不变）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "range/separate/boundary 引文与 lib.rs:135-155、122-133 逐字一致；rb_transform 的 from_raw_parts 排在 checked_len、separate(range(input),range(out)) 之后（lib.rs:184-191）；零长直接 OK（tests.c:30 rb_transform(NULL,NULL,0)==RB_OK）；rb_copy 先 separate(out,written) 再复制、最后写 written（lib.rs:278-289）；坏长度 u64::MAX 被拒（tests.c:32）。但例 16.3.1 的前置声明有实质错误（见 findings）：③未对齐调用并不在 C 契约测试里执行，c/tests.c 全文无任何 misalign/unaligned 测试（grep 无命中），它实际在 Rust 的 tests/contracts.rs:40-41，且与本节 16.3.5『对齐拒绝测试放在 Rust 契约测试中』自相矛盾。另 ② 解答把被检查的 range 写成 range(output,1)，实际该次调用里 null 在 input 参数位（lib.rs:185 先 range(input,len)），参数名写反（P2 级，随 finding 记录）。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:135-148 range、150-155 separate、184-191 rb_transform 检查顺序（引文逐字核对）",
+        "grep 'align' projects/ffi-bridge/c/tests.c → 0 命中；misaligned 调用在 projects/ffi-bridge/tests/contracts.rs:40-41（Rust 侧）",
+        "c/tests.c:31 rb_transform(NULL,output,1)==RB_EINVAL、:34 rb_transform(input,input,4)==RB_EINVAL、:32 UINT64_MAX==RB_ERANGE",
+        "include/bridge.h:6-11 调用者义务五条实存（单分配/初始化/独占写/两两不相交/无并发访问）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "复用核心代码引文与 lib.rs:70-79 逐字一致（slot.generation<u32::MAX 过滤、+=1、(gen<<32)|(index+1)）；例 16.4.1 的数值我自算：(1<<32)|1=4294967297、(2<<32)|1=8589934593 均正确，Slot 默认 generation=0、首次插入后为 1，与『第一次使用代号为 1』一致；代号退休测试 retirement_never_wraps_generation（lib.rs:316-326）确实构造 generation=u32::MAX 空槽并验证改用新槽；12 线程并发释放测试（contracts.rs concurrent_release_is_exactly_once）逐个数过：恰好 1 个 OK、11 个 ESTALE；槽上限 4096 返回 ERESOURCE（lib.rs:80-81 + bounded_registry_and_reuse）；release 在锁内 take()（lib.rs:108）、锁外 drop（lib.rs:298-300）；快照 Arc 克隆后锁外计算（rb_info/rb_copy 经 snapshot）；读者竞态测试只允许 OK|ESTALE（contracts.rs:121）。",
+      "evidence": [
+        "复算：1*2^32+1=4294967297；2*2^32+1=8589934593 ✓（ch16.md:730-733）",
+        "projects/ffi-bridge/src/lib.rs:70-79、104-109、296-300、80-81",
+        "tests/contracts.rs:103-104 assert 恰好 1 个 OK、11 个 ESTALE",
+        "src/lib.rs:316-326 retirement_never_wraps_generation（u32::MAX 空槽退休、新槽 index+1==2）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "boundary 引文与 lib.rs:122-133 逐字一致，含 std::mem::forget(payload)->EPANIC；rb_test_panic=boundary(||panic!)（lib.rs:307-309）根本不触碰注册表锁，『探针在取得锁之前触发』成立，c/tests.c:69-70 探针后 rb_mix 仍 OK 与『事后正常不能反推 poison 已恢复』的限定一致；局部 Mutex 毒化测试在 lib.rs:362；CLI 代码块与 c/demo.c:23-35 逐行一致，demo.c:16-17 确实校验十进制 strtoull、负号、*end 尾字符与 errno 范围；容量回归两侧都有（contracts.rs out=[999;2]/written=888 不变；tests.c short_out={71,72}/777 不变后 release OK）；测试数量表逐项对上：lib.rs 单元 4 项、contracts.rs 导出契约 6 项（rust-tests.txt 'running 4'/'running 6' 全过）、CTest 共 4 项 = c11_contracts + 3 项 CLI（CMakeLists.txt:45-49，LastTest.log 全 Passed，cli_bad_length 用 16777217=2^24+1）。",
+      "evidence": [
+        "projects/ffi-bridge/src/lib.rs:122-133、307-309、355、362",
+        "c/demo.c:13-22 与 c/tests.c:68-71（RB_TEST_HOOKS 下探针断言）",
+        "evidence/run-20261007-01/rust-tests.txt: running 4 tests（lib）+ running 6 tests（contracts）全 ok",
+        "CMakeLists.txt:45-49 四条 add_test；LastTest.log cli_bad_number 输出 'invalid unsigned integer: -1' Test Passed"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "finding",
+      "notes": "构建与代码生成主体核对通过：Cargo.toml crate-type=[rlib,staticlib,cdylib]、[profile.release] opt-level=3/lto=false/codegen-units=1/panic=unwind；CMakeLists.txt:18-24 add_custom_command 真实执行 cargo build --offline --locked --release，:29-33 三个 C 可执行（demo/tests/benchmark）都带 -UNDEBUG；正文构建命令与 tools/measure.sh:24-34 一致；environment.txt 逐字含 rustc 1.99.0、LLVM 23.1.1、Apple clang 21.0.0、cmake 4.4.4、hw.model Mac17,9、hw.cachelinesize 128、hw.ncpu 18；引文 11 行汇编在 codegen/ffi_bridge.s 的 transform 展开循环里逐字存在（ldp/stp/eor×4/madd 序列，字节偏移约 18644-18928）；transform 的 vector.body 块内是 4 条标量 mul i64、无向量类型指令（checksum 的 vector.body 才有 <2 x i64>，正文说法限定在批量循环，成立）；ffi_bridge.s 中 rb_mix 含 null/对齐检查（cbz、and #0x7）+madd+str+ret 且紧凑无异常表，rb_release 有 .cfi_personality/.cfi_lsda；c-benchmark.s 存在对 _rb_mix 的调用；mutex 符号 90 处、ldapr 10 处；macos-sample.txt 含 memmove/memcpy/rb_copy。但『实验机为 Apple M5 Pro』在本章归档里没有出处（见 findings）；『本节没有采集 x86-64 的任何数据』经 find 证实磁盘无 x86 产物（list_uncollected_claims ch16 全部 ✓ 属实，无 P0）。",
+      "evidence": [
+        "复算汇编：grep -F 'ldp\\tx14, x15, [x11, #-16]' projects/ffi-bridge/evidence/run-20261007-01/codegen/ffi_bridge.s @18644 命中，11 行引文全部逐字命中",
+        "ffi_bridge.ll：transform 的 vector.body 块向量指令 0 条、mul i64 4 条；rb_mix 段（s@52832）无 .cfi_lsda，rb_release 有",
+        "environment.txt:2-18（rustc/LLVM/clang/cmake/Mac17,9/128/18）与 ch16.md:1091-1093 逐项对上；无 machdep.cpu.brand_string，measure.sh:16 仅采集 hw.model hw.cachelinesize hw.ncpu",
+        "find projects/ffi-bridge/evidence -iname '*x86*' -o -iname '*i686*' → 空"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "severity": "P1",
+      "description": "例 16.3.1 前置声明『C 契约测试里真实执行过这三条误用调用』对第 ③ 条不成立：c/tests.c 全文没有任何未对齐指针测试（grep misalign/align 0 命中，只有 NULL/重叠/UINT64_MAX 等），③ 的 rb_transform(misaligned,...)==EINVAL 实际执行在 Rust 侧 tests/contracts.rs:40-41。测试本身真实存在、行为与解答一致，但被记到了错误的一侧，且与同节 16.3.5『对齐拒绝测试放在 Rust 契约测试中』自相矛盾。次级问题：② 解答写 `range(output, 1)` 检查 null，而该调用 rb_transform(NULL, output, 1) 的 null 在 input 参数位（lib.rs:185 先算 range(input,len)），参数名写反（P2 级）。",
+      "evidence": "grep 'align' projects/ffi-bridge/c/tests.c → 无命中；projects/ffi-bridge/tests/contracts.rs:35-41（misaligned 构造与断言 EINVAL，Rust 侧）；c/tests.c:31,34 仅覆盖 ①②；ch16.md:557 与 ch16.md:594 互斥"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "severity": "P2",
+      "description": "『实验机为 Apple M5 Pro』在本章点名的归档 environment.txt 里没有出处：该文件只归档了 rustc/LLVM/clang/cmake 版本与 hw.model Mac17,9、hw.cachelinesize 128、hw.ncpu 18，没有任何 CPU 品牌字符串，measure.sh 也未采集 machdep.cpu.brand_string；正文 16.6.3 自己的标准是『编译条件与宿主一起归档』，此项按本章产物无法复核（同机其它 lab 的 environment.txt 含 M5 字样，但那不是本章归档）。其余全部静态/host 数字我都逐项对上，此项为出处缺口而非数字错误。",
+      "evidence": "projects/ffi-bridge/evidence/run-20261007-01/environment.txt 全文无 M5/brand；tools/measure.sh:16 `sysctl hw.model hw.cachelinesize hw.ncpu`；grep -rn 'M5' projects/ffi-bridge/evidence 仅命中二进制库文件的巧合串"
+    }
+  ]
+}

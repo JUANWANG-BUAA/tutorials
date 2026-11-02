@@ -1,0 +1,111 @@
+{
+  "reviewer": "r4b-ch15b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读 src/part4/ch15.md:1448-2028 全部正文与语义盒，并逐条回查 projects/agent-runtime 的 runtime-bench.rs/measure.sh/summarize.py、evidence/run-01..04 的 lifecycle.csv+admission.csv+statistics.csv+tests.txt、capture-fix-final-validation-02 的 20 份 tests 与 10 份 stress、capture-verification.json、两份 source-review json、tokio-1.54.0 与 rustup std 缓存文件（自行复算 sha256 与 FNV），另跑 tools/list_uncollected_claims.py 只看 ch15。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 15.7.1-15.7.8 与定义 15.7.1-15.7.3、例 15.7.1、思考 15.7.1、判定流程、errata 六条、即时自测四题。本轮改动的聚合 checksum 说法独立复核通过：validate() 只在批内对 8 工具 × 2 路逐个 wrapping_add，无跨批累加器；我从 FNV-1a 递推自行重算出单批聚合值 = 7596343361303360080，与 run-04 lifecycle.csv 的 checksum 列唯一值相同，且该列确实 63 行全同（三配置各 21 行）；假设的跨批求和 63×该值 mod 2^64 精确等于正文写的 17401029919372894640，而 grep 全仓库只在 ch15.md 与 ch15_exercises.md 命中、evidence/ 零命中，所以「归档里没有这个数」成立。字节账（8×2×262144=4194304、8×2×4096=65536）、63+21=84 条正式样本、统计表的 mean/sd/p50/p99（批均值的 nearest-rank，分位数定义正文已交代）逐位对回 statistics.csv；run-01 确为两个日志配置、42+21=63 条。未发现数字与代码或归档不符。",
+      "evidence": [
+        "projects/agent-runtime/src/bin/runtime-bench.rs:120-133（fn validate 只在批内 for result in results / for log in [stdout,stderr] 做 checksum.wrapping_add，135 行 black_box 返回，无跨批变量）；:22-23 const TOOLS=8、BYTES=262_144",
+        "复算：/usr/bin/python3 FNV-1a(h=0xCBF29CE484222325, prime 0x100000001B3) 对 262144 个 'O' 与 262144 个 'E'，(8*(hO+hE)) mod 2^64 = 7596343361303360080，与正文与归档一致",
+        "projects/agent-runtime/evidence/run-04/lifecycle.csv 63 数据行、header=case,index,batch_ns,operations,checksum，checksum 列 distinct={'7596343361303360080'}，per-case Counter={logs-c1-r0:21, logs-c1-r4096:21, logs-c4-r4096:21}",
+        "复算：(7596343361303360080*63) mod 2**64 = 17401029919372894640；grep -rl 17401029919372894640 仅命中 src/part4/ch15.md、src/part4/ch15_exercises.md，projects/agent-runtime/evidence/ 零命中",
+        "projects/agent-runtime/scripts/summarize.py:21-32（先 assert len(checks)==1，再独立递推 hashes 并 assert checks == {(8*sum(hashes)) mod 2^64}）",
+        "projects/agent-runtime/evidence/run-04/statistics.csv logs-c1-r0 2871943.952/1268895.551/2535536.500/7845750.000；c1-r4096 3505500.256/2472717.121/2285484.375/9227984.375；c4-r4096 1046813.244/621627.561/811442.750/3373109.375 → 正文 2.871944/1.268896/2.535537/7.845750、3.505500/2.472717/2.285484/9.227984、1.046813/0.621628/0.811443/3.373109 全部为同值 ms 换算",
+        "projects/agent-runtime/evidence/run-04/admission.csv 21 行 operations=100000；evidence/run-04/environment.txt:40「warmup >=500ms per case; 21 observations; Tokio multi_thread workers=2」",
+        "projects/agent-runtime/evidence/run-01/lifecycle.csv 42 行、case 仅 logs-c1-r0 与 logs-c4-r4096（+21 admission=63）；run-02/run-03 各 63+21=84"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 15.8.1-15.8.9 与定义 15.8.1-15.8.3、例 15.8.1、思考 15.8.1、判定流程、errata 六条、即时自测四题。测试矩阵的数字都落到了磁盘：cargo 输出实为 2 单元 + 14 contracts + 2 regressions = 每轮 18，×10 轮 ×2 profile = 360，与 capture-verification.json 的 test_executions=360 一致；「两路各 2MiB」经 contracts.rs:39/49/51 确认为 2*1024*1024（与 15.7 benchmark 的 262144 字节是两套负载，正文分开表述，没有混用）；负向对照 200ms 窗口、kill、再 wait 与 sequential_drain_regresses_then_explicitly_recovers 名称一致；sample 确为正式样本之后的独立后台进程；race 目录双 profile 各 4 个交错。唯一问题是压力计数的口径表述：「每个 profile 5 轮…每轮 80 条」与「单套合计 800 条」在读者按 profile 求和时冲突（每 profile 实为 400），见 findings。",
+      "evidence": [
+        "projects/agent-runtime/evidence/run-04/tests.txt「running 2 tests」(unittests src/lib.rs) +「running 14 tests」(tests/contracts.rs) +「running 2 tests」(tests/regressions.rs)；evidence/capture-fix-final-validation-02/{debug,release}-tests-1..10.txt 每份同为 2/14/2 → 18×20=360",
+        "projects/agent-runtime/evidence/capture-verification.json test_executions=360、stress_reports=800、adversarial_cases=8、final_raw_observations=84",
+        "evidence/capture-fix-final-validation-02/debug-stress-1.txt 内计数 Success=64、TimedOut=8、Cancelled=8（共 80 条/轮），debug-stress-1..5 + release-stress-1..5 = 8 份 → 合计 800（每 profile 400，640/80/80 为两 profile 之和）",
+        "projects/agent-runtime/tests/contracts.rs:39 bytes: 2 * 1024 * 1024、:49 assert_eq!(log.total, 2*1024*1024)、:51 checksum(byte, 2*1024*1024)",
+        "tests/regressions.rs 含 sequential_drain_regresses_then_explicitly_recovers；ch15.md:1756-1764 的 timeout(200ms)/assert!(outcome.is_err())/child.kill().await/child.wait().await/drop(stderr) 顺序与源码一致",
+        "projects/agent-runtime/scripts/measure.sh:49-55（admission、lifecycle、summarize 之后才 background 启动 profile 并 /usr/bin/sample \"$pid\" 3 1）；evidence/run-04/macos-sample.txt、profile-run.txt 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 15.9 的母本落点表、固定版本实现资料段、自有源码与编译证据表及两段边界声明。本轮改动的 PDF 页登记词序逐字比对通过：正文「PDF 390–394（一基物理页），16.2 消息传递」与 sources/contributions/runtime-project.json 的 pages 字段、src/appendix/coverage.md:128 的 S11/RUNTIME-PROJECT-S11-001 行完全一致（含空格与括注位置），target/evidence 字段也对得上正文登记的那一份 projects/agent-runtime/tests/contracts.rs。固定版本资料我按行号与指纹自核：tokio-1.54.0/src/process/mod.rs 与 rustup std sys/pipe/unix.rs 的 sha256 逐字节命中两份 review json；199–226 确有 Dropping/Cancellation、zombie、best-effort reap，1215–1410 内有 pub fn start_kill（:1247），pipe/unix.rs 实测总长 44 行，unistd.h 195–230 登记为 pipe2 availability。两点问题见 findings：版权文本的存放路径在磁盘上不存在；「全部 44 行」的表述与台账 status 字段（not-full-file-audit，且登记的 local_copy 已不在磁盘）不一致。未核到：PDF 本体在仓库外，390–394 页的印刷内容无法在本机逐字回查；1215–1410 区间里的 pid/wait 行号未逐一指名（只确认了区间与 start_kill）。另注：coverage.md:56/67 两处同为 S11 16.2/390–394 的旧行写作「PDF390–394」无括注，属他章登记风格差异，不在本节判定内。",
+      "evidence": [
+        "src/part4/ch15.md:1893 与 sources/contributions/runtime-project.json（pages=\"PDF 390–394（一基物理页）\", section=\"16.2 使用消息传递在线程间传送数据：通道关闭、所有权转移与多个生产者\", target=\"part4/ch15.md#sec-cpp-rust.4.15.2\", evidence=\"projects/agent-runtime/tests/contracts.rs\"）与 src/appendix/coverage.md:128 三处逐字一致",
+        "sha256 复算：/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/process/mod.rs = 1ec90c89879ecf786a279ff733448cfd8109857dc28d756adb54d86762d0eeac（= local-source-review.json、capture-source-review.json 两处）；/Users/juanwang/.rustup/.../library/std/src/sys/pipe/unix.rs = 58768a98842b356a37aaf8b0d61b52ffdf66d325f090f70f8eb6b8a4ca919d7（= 登记值），且该文件行数=44",
+        "projects/agent-runtime/evidence/local-source-review.json reviewed_lines=[[199,226],[1215,1410]]、version=tokio=1.54.0；capture-source-review.json 五条目 scope 分别为 1–44、685–780、1–300、830–984、195–230，与 ch15.md:1899 逐段对应",
+        "tokio-1.54.0/src/process/mod.rs:199-226 含「## Dropping/Cancellation」「zombie」「best-effort basis, attempt to reap」；:1247 pub fn start_kill",
+        "projects/agent-runtime/evidence/capture-fix-final-validation-02/ 存在；其 debug-race 与 release-race 各含 logs-pipe1/logs-pipe2/sleep-pipe1/sleep-pipe2 → 双 profile 共 8 个 gate 交错；evidence/run-04/native、macos-sample.txt、src/process_macos.rs、tests/{contracts,regressions}.rs 均存在",
+        "落地失败：os.path.isdir('.work/cpp-rust-sources/runtime-project')=False；ls .work/cpp-rust-sources/ → compiler、evidence、ffi-project、reference、systems（全为 .html）；find .work -maxdepth 4 -name '*runtime*' 零命中；capture-source-review.json 的 local_copy 路径 .work/cpp-rust-agents/drain-debug/reference/*.rs 三个文件均不存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 15.10 全部 18 条跨节条目。引用落地逐条检查：脚本抽取全章 {#id} 锚点与正文所有 [@id] 引用比对，15.10 引用的 def-15.1.4/15.2.1/15.2.2/15.3.1/15.3.2/15.4.1/15.4.2/15.4.3/15.6.2/15.7.2/15.8.1/15.8.2、ex-15.7.1 等全部命中本章定义块（全章仅 def-1.1.3、def-1.3.1 两个跨文件引用不在 ch15 内，且不属 15.10）。版本类断言复核：「本机 Rust 1.99」= evidence/run-04/environment.txt 的 rustc 1.99.0；「Tokio 文档里的后台回收是 best effort」在 tokio-1.54.0/src/process/mod.rs:199-226 逐字命中。其余条目所依赖的数值（Q+C 突发、批均值 p99 口径、R=0 仍付 I/O 与 checksum 成本、双路等待环）已在 15.7 及对应节的证据上核过，本节没有新的数字需要复算，未发现与源码或归档相反之处。",
+      "evidence": [
+        "/usr/bin/python3 抽取 src/part4/ch15.md 全部 {#...} 与 [... @...] 引用做差集：15.10（ch15.md:1919-1957）引用项全部存在，missing 仅 def-1.1.3、def-1.3.1（非本节）",
+        "projects/agent-runtime/evidence/run-04/environment.txt「rustc 1.99.0 (b940084d7 2026-09-28)」对应 ch15.md:1955「本机 Rust 1.99」；ch15.md:880 描述的先 pipe 后逐端 FD_CLOEXEC 与 std sys/pipe/unix.rs（44 行，pub fn pipe）一致",
+        "~/.cargo/.../tokio-1.54.0/src/process/mod.rs:199-226「The tokio runtime will, on a best-effort basis, attempt to reap and clean up」对应 ch15.md:1939"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 15.11 的本章小结 7 条、速查 9 行、出口检查、归档十问、阅读实现清单、交付段与章末件表。本轮改动的锁描述逐行回查 measure.sh：锁路径 .work/cpp-rust-agents/measure.lock（:44）、mkdir 竞争获取（:45）、trap rmdir EXIT（:46）——「既不超时也不清理陈旧锁」「SIGKILL 后需人工确认持有者已死再删」两点与源码语义相符（EXIT trap 在 SIGKILL/SIGTERM 下不执行），但 :45 是每次 sleep 1 的无限轮询，把它叫「无上限忙等」不准确，见 findings。其余数字复算命中：run-01 63 / run-02 84 / run-03 84 / run-04 84 条、admission 21 个不同 index 且每批 100000 次、双 profile 8 个 gate 交错、2 单元 + 16 集成、归档十问点名的文件全部存在、CLI sleep 的 argv 形态与退出码 1 约定可在 main.rs 落地。另有一处静态计数算错：「六条命令」实为七条，见 findings。",
+      "evidence": [
+        "projects/agent-runtime/scripts/measure.sh:44-46 lock=\"$root/.work/cpp-rust-agents/measure.lock\" / while ! mkdir \"$lock\" 2>/dev/null; do sleep 1; done / trap 'rmdir \"$lock\"' EXIT",
+        "src/part4/ch15.md:1991-1999 代码块命令数=7（cargo fmt --check、cargo clippy、cargo test、cargo build --bins、cargo run --example library、agent-runtime echo、agent-runtime sleep），:1989 正文写「下面六条命令」",
+        "projects/agent-runtime/src/main.rs「[mode, millis, timeout] if mode == \"sleep\"」与 usage「sleep MILLIS TIMEOUT_MS」、Ok(false) => std::process::ExitCode::from(1) → ch15.md:1989「最后一条应返回 TimedOut、reaped=true 与退出码 1」成立；src/bin/tool-helper.rs 支持 echo/logs/sleep/fail/inherit",
+        "复算行数：evidence/run-01 lifecycle 42+admission 21=63；run-02 63+21=84；run-03 63+21=84；run-04 63+21=84 → ch15.md:2015 与 capture-verification.json final_raw_observations=84 一致",
+        "evidence/run-04/admission.csv：21 行、index 0..20 各不同、operations 全为 100000 → ch15.md:2011 第三条；run-04 目录含 environment.txt、source-sha256.txt、admission.csv、lifecycle.csv、statistics.csv、native/、macos-sample.txt、build-process-snapshot.txt、tests.txt → 十问全部有对应文件",
+        "evidence/capture-fix-final-validation-02/{debug,release}-race 各 4 个交错目录 → ch15.md:2015「两种 profile 共 8 个项目 gate 交错」；evidence/run-04/tests.txt 2+14+2 → 「两项单元测试、16 项集成测试」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "severity": "P1",
+      "description": "15.9 正文称「完整版权文本只保存在工作区 .work/cpp-rust-sources/runtime-project/」，但该目录在磁盘上不存在：.work/cpp-rust-sources/ 只有 compiler、evidence、ffi-project、reference、systems 五个子目录，内容全是 HTML 抽取件，find .work -maxdepth 4 -name '*runtime*' 零命中。于是「项目初稿实际提取并核读，本次沿用」这条断言的原始文本没有落地位置，只剩 sources/contributions/runtime-project.json 与 src/appendix/coverage.md:128 两行登记（词序与页码彼此一致，但与磁盘上的存放路径不符）；PDF 本体又在仓库外，读者按正文指的路径无法回查 390–394 页。建议改指现存路径，或明确写「该工作目录已回收，核读记录仅存 contributions json 与附录登记」。",
+      "evidence": "os.path.isdir('.work/cpp-rust-sources/runtime-project')=False；ls .work/cpp-rust-sources/ → ['compiler','evidence','ffi-project','reference','systems']；src/part4/ch15.md:1895"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "severity": "P2",
+      "description": "正文写「捕获修复还核读了本机 std 的 sys/pipe/unix.rs 全部 44 行」。文件实测总长确为 44 行（我数过），所以 1–44 就是全文；但正文点名的登记文件 capture-source-review.json 对同一条目的 status 是 targeted-source-review-not-full-file-audit（非整文件核读），且其 local_copy 字段指向的 .work/cpp-rust-agents/drain-debug/reference/std-pipe-unix.rs（连同另两个本地副本）已不在磁盘。措辞与台账状态互相打脸。建议统一为「sys/pipe/unix.rs 1–44 行（该文件全文 44 行）」，并同步 status 与本地副本说明，避免读者按正文得出「整文件已审计」或按台账得出「只读了一段」。",
+      "evidence": "len(open('~/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/pipe/unix.rs').read()) 行=44；capture-source-review.json implementation_sources[0] = {actual_review_scope:'1–44: macOS pipe then set_cloexec path', status:'targeted-source-review-not-full-file-audit', local_copy:'.work/cpp-rust-agents/drain-debug/reference/std-pipe-unix.rs'}（该路径 os.path.exists=False）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "severity": "P1",
+      "description": "出口检查段写「在项目目录执行下面六条命令」，紧接着用「最后一条」指代返回 TimedOut/退出码 1 的 agent-runtime sleep 5000 100。代码块实际是 7 条：cargo fmt --check、cargo clippy、cargo test、cargo build --bins、cargo run --example library、./target/debug/agent-runtime echo、./target/debug/agent-runtime sleep 5000 100。静态计数算错一条，应改「七条」（或拆成「四条构建验证 + 三条运行验证」）。",
+      "evidence": "src/part4/ch15.md:1991-1999 逐行清点=7 条命令，正文 ch15.md:1989 作「六条」"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "severity": "P2",
+      "description": "本轮改过的锁描述里「脚本对已存在的锁是无上限忙等（measure.sh:45）」用词不准。measure.sh:45 是 while ! mkdir \"$lock\" 2>/dev/null; do sleep 1; done —— 每次抢锁失败睡眠 1 秒的无限重试轮询，不耗 CPU，不是忙等（busy-wait/spin）；「无上限」「不超时」「不清理陈旧锁」这三层意思都成立（trap 只挂在 EXIT，SIGKILL/SIGTERM 下不执行，与同段「被 SIGKILL 打断后要人工确认持有者已死再删空锁目录」一致）。建议改成「无上限轮询（每次 sleep 1 重试）」。",
+      "evidence": "projects/agent-runtime/scripts/measure.sh:44-46；正文 src/part4/ch15.md:2009"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "severity": "P2",
+      "description": "15.8.4 的压力计数口径自相冲突：前一句「每个 profile 另有 5 轮八独立 Runtime 压力，每轮 80 条完整 ToolResult」按 profile 求和得 400；下一句「单套合计 800 条结果：640 条 logs、80 条 timeout、80 条 cancel」的 640/80/80 实际是两个 profile 的合计（每 profile 320/40/40）。归档证据：debug-stress-1..5.txt 与 release-stress-1..5.txt 共 8 份，每份计数 Success 64/TimedOut 8/Cancelled 8=80，总和 800，capture-verification.json 记 stress_reports=800。「单套」指代不清，建议写明「两个 profile 合计 800 条（每 profile 400 条：320 logs、40 timeout、40 cancel）」。",
+      "evidence": "evidence/capture-fix-final-validation-02/debug-stress-1.txt 内 Success=64、TimedOut=8、Cancelled=8；8 份 stress 文件合计 800；capture-verification.json stress_reports=800；正文 src/part4/ch15.md:1713-1716"
+    }
+  ]
+}

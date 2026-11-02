@@ -1,0 +1,126 @@
+{
+  "reviewer": "sweep801-ch17a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "801f81bfcad74a0eccd57c5bd46d37a1f1de08834449b6354ea7de93ae136952",
+  "provenance": "冷启动通读 src/part4/ch17.md 17.1–17.6 全文与每个语义盒；逐行读 projects/tidekv 的 segment/bloom/memtable/codec/epoch/stats/engine/tide-mech/tide-admit/tide-bench 与 tests/；用 /usr/bin/python3 从 results/run-01~03 的 CSV/JSON 与 bloom-contract-2026-10-30.txt 复算全部表格数字；跑 tools/list_uncollected_claims.py 并逐项查盘；比对 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html 母本。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "契约 O 七个操作、六条不变量与测试对应（5/6 有条，段不可变无测试：tests/segment_format.rs 只有 any_byte_flip 等 5 测）、REF=HashMap 回放、基线 A=RwLock<BTreeMap>、默认 durable=false 不 fsync、M4 的 CAP=64/4 对照（run-03 存在）、M7 两格缺档（run-01/gate.json 无 budget_note，全仓无 sha256 产物）全部对上。缺口在例 17.1.1 解答：把「读写比 9:1、键空间 2^16、批量写入后读」当作 17.4 tide-mech 真实输入家族陈述，与代码不符。",
+      "evidence": [
+        "src/engine.rs:88-91 memtable 64KiB/admission_capacity/durable:false 默认，与 17.1.2「默认不 fsync」一致",
+        "src/bin/tide-bench.rs:452 'A = RwLock<BTreeMap> baseline, B = tidekv, REF = naive HashMap replay'；:212-214 HashMap 回放",
+        "projects/tidekv/tests/segment_format.rs:28-112 五测均为 CRC 拒外部改动/布局，无「写下不再修改」不变量的直接测试",
+        "results/run-01/gate.json 只有 budget_B=1000 无 budget_note；grep sha256 results/ run.sh 无命中（M7 两格缺档属实）",
+        "src/bin/tide-mech.rs:156-157 codec 臂只做 encode_all/encode_all_dyn，无任何读；:376 records 默认 4096=2^12；:243 compaction 键为 format!(k{i:08})（9 字节非 16）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "finding",
+      "method": "recompute",
+      "notes": "版式常量全部对码：条目头 17=klen4+vlen4+op1+seq8（src/segment.rs:18,243-246），索引 12=klen4+off8（:20,204-206），页脚 34=magic5+ver1+entries4+idx_off8+bloom_off8+bloom_len4+crc4（:12-16）。例 17.2.1 静态算术 6,356,992/786,432/7,143,424/+34=7,143,458/262,144/log2=16 全部复算正确。布隆实测从 results/bloom-contract-2026-10-30.txt 逐数复算吻合：1525/200000=0.7625%≈0.762%（1/131.1）、0.762/0.3906=1.95、8000 键 0/50000、1989/2000=99.45%、BUCKET=16（src/bloom.rs:4）、16×2^-8=6.25%、ceil(log2 16000)=14、14×8=112bit 均对。E-d 校验和不覆盖页脚对 src/segment.rs:157。问题：17.2.2 easy-fs 容量「14 KiB、64 KiB、8 MiB」与母本不可对且按累计口径算错；预览句有重复语病。",
+      "evidence": [
+        "src/segment.rs:15-16,101-104,157-163 页脚构成/CRC 覆盖 data[..f]/四道范围核对（含 index_off+entries*12==bloom_off）逐行属实",
+        "/usr/bin/python3 复算：97*65536=6356992；12*65536=786432；和 7143424；+34=7143458；4*65536=262144；1525/200000=0.007625",
+        "results/bloom-contract-2026-10-30.txt: bytes_per_key=8 slots=400000 fp=1525/200000 rate=0.00762 (1/131.1)；segment 0/50000；engine 1989/2000；tests/bloom_contract.rs:49 断言 rate<0.05 与「只断言<5%」一致",
+        "easy-fs 累计容量应为 28×512=14KiB、(28+128)×512=79872B≈78KiB、(28+128+128²)×512≈8.07MiB；正文写 64KiB 只在「间接层新增 128 块」口径下成立",
+        "src/part4/ch17.md 17.2 预览：「磁盘格式又不一样：磁盘格式不一样：」重复"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "def 17.3.1 Segment 六字段、open 一次 read_to_end 后丢 File、无常驻 fd：src/segment.rs:131-141 属实；Arc<Segment> 共享（engine.rs:710）与热路径 unsafe 切片（segment.rs:317 from_raw_parts）属实；def 17.3.2 三条不变量对应的实现约束（边界检查+页脚四道核对 / Arc+epoch / 新建段不改旧段）均可落码。SAFETY 判据与判定流程为教学内容，无外部事实。问题只在 17.3.2 把 easy-fs 块缓存「写进去却读不出来…致命又难查」的告诫当作对 easy-fs 的引述，本地母本 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html 中「致命」「一致性」「DiskInode」「间接」均 0 命中，该句无法落地。",
+      "evidence": [
+        "src/segment.rs:141 File::open(path)?.read_to_end(&mut data)?；:317 unsafe { core::slice::from_raw_parts(...) }（实际写法与之等价，正文引用形状相符）",
+        "src/segment.rs:160-163 四条范围核对；:157 crc != crc32(&data[..f]) 判损坏",
+        "母本检索：python3 去标签后 '致命'=0 处、'一致性'=0 处、'DiskInode'=0 处（该 html 是 easy-fs 使用篇，不含文件系统实现章内容）",
+        "src/part3/ch12.md:1892 本书自己的 easy-fs BlockCache 描述只到「合并与回写时机」，未含被引作出处的那句警告"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "finding",
+      "method": "recompute",
+      "notes": "数字与归档完全对上：两臂字节等价 bytes=364544, crc32=2b67ab81（results/run-02/codec.csv 头 + mech-verification.txt MATCH）；codec.rs encode 写 klen4+vlen4+op1+键16+值64=89B×4096=364544 自洽；codegen 104 行指令/0 blr 与 24 行/1 blr x22 逐字见于 results/run-02/codegen/codec-codegen.txt:6,13-14；A 3.965/B 4.036/diff+0.071/sd 0.318 我从 codec.csv 630+630 行 raw_batch 复算（3.9648/4.0360），CI [−0.054,+0.208] 与 statistics-codec.json 一致；协议 seed 20261029、21×30、每臂≥500ms 预热、主轮 20261028、机器 M5 Pro/rustc 1.99.1/lto=false/codegen-units=1 全部核实；预算 1ns 判接受与 gate-codec.json 一致；「指令数/代码体积未采集」经查无产物，声明诚实。小瑕疵：本节两次用「95% 区间」作判定依据但未在本节交代其为配对差值 20,000 次 percentile bootstrap（定义在 17.8.1 主轮表前才给出，且分析种子不同：20289698 vs 20289699）。",
+      "evidence": [
+        "python3 复算 codec.csv raw_batch：A n=630 mean=3.9648；B n=630 mean=4.0360；statistics-codec.json diff=0.0712 sd=0.31833 ci=[-0.05393,0.20750]",
+        "grep 结果 codec-codegen.txt:6 '指令行数: 104 bl: 7 blr: 0'；:13-14 '指令行数: 24 … blr -> blr x22'",
+        "src/codec.rs:43-50 encode=klen+vlen+1字节标记+键+值；tide-mech.rs:127-138 键 8+8=16、值截 64；run.sh 默认 --records 4096",
+        "results/run-02/environment.txt: rustc 1.99.1 / Apple M5 Pro / cachelinesize 128；Cargo.toml [profile.release] lto=false, codegen-units=1",
+        "gate-codec.json budget_B=1.0, counts accept=1（上界 0.208≤1）；def 17.4.1「只有 encode/cmp_key、无 decode、segment.rs 不走 Codec」经 grep 证实"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "只核对到代码与测试层（本节无实测数字）。def 17.5.1/17.5.2 与 E-c 的每个内存序断言逐行落码：head.swap/load 均 SeqCst、PINS SeqCst、Heap::drop 取 head 用 Acquire、CURRENT fetch_add SeqCst、stats.rs 全 Relaxed、submitted(engine.rs:148) fetch_max AcqRel、closed(engine.rs:151) store Release/load Acquire——行号精确命中。SegmentList 只有 segments+frozen 两个 Vec 无生成号；store 收 Box 非 Arc；advance() 可被测试驱动（epoch_reclaim.rs 两条确定性测试）。MAX_SLOTS=512、槽号 fetch_add 只分配不回收、pin() None 三去向（Shutdown/计数先行/空集合）全部对码。示例解答第 3 题的六步与 advance() 语义一致。「Arc 层成本」「降 Release/Acquire」两处声明未采集，查 results/ 确无对应产物。",
+      "evidence": [
+        "src/epoch.rs:12 MAX_SLOTS=512；:81-84 NEXT_SLOT.fetch_add 分配、:82-84 超界回退返回 None、槽号不复用；:94,122,252 PINS/head SeqCst；:204 Heap::drop head.load(Acquire)",
+        "src/engine.rs:148,151 声明 submitted/closed；:282 fetch_max(AcqRel)、:432/:601/:759 store(Release)、:235/:295/:610 load(Acquire)",
+        "src/stats.rs:79,148-162 全 Relaxed；src/engine.rs:98-102 SegmentList{segments,frozen}",
+        "tests/epoch_reclaim.rs:33-105 retired_version_survives_until_reader_releases / another_threads_pin_blocks_reclaim 用 advance() 确定性断言",
+        "results/ 下无 Arc-vs-epoch、无 SeqCst-vs-Release 对照产物（list_uncollected_claims 对应行属实）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "pass",
+      "method": "recompute",
+      "notes": "整张表用 /usr/bin/python3 从 results/run-03/admit.csv 独立重算，全部命中：A 每批受理 75.3976（范围 64–131）、B 8.0738（4–11）；拒绝率 0.6858/0.9664、按 840 批逐条差 0.280516→0.2805（相减舍入列确得 0.2806，正文的辨析对）；墙钟 185.86/19.90ms；flush 均值 18.4929/1.9810；聚合 µs/flush 10050.6/10045.5（差 0.05%）、逐批比值 10013.9/10054.3（方向反转、差 0.40%）；Σ墙钟÷Σ受理 2,465,119.0/2,464,724.3、B−A=−394.7→−395；4.08=75.3976/18.4929 与 8.0738/1.9810；2.46ms=10.05/4.08、按 4 条 2.51 差 2%；9.3 倍=774433.8/82915.5=9.34。paired 均值/CI/sd 与 statistics.json、gate-accepted（insufficient-evidence）、gate-attempted（accept）逐字段一致；1680 行=840 批×2 口径，recompute.txt 结论「通过」；夹具参数（240 条×64KiB、flush 262144、durable=false、seed 20261030、21×20、≥300ms、批末单排空点 sync 重试计墙钟）对 src/bin/tide-admit.rs:90-99,254-260,296。def 17.6.1/176.2/176.3 的每个代码断言（closed 先判 :235、满即拒 :238-242、take_batch min(256)/drain :620-621、add_put 在 submit 前 :278、shutdown 清队 :773、致命错误只置 failure+closed 就 return :598-602、close() let _ = h.join() :431-434、无 applied/written 计数、await_seq :290）行号全中。「p99/端到端延迟、分段耗时、取消 API 无测试」声明查盘属实（tests/admission.rs 仅三条既有测项）。统计口径瑕疵：区间为 20000 次 percentile bootstrap（gate JSON 载明），正文本节只给协议未给重采样定义，随 17.4 一并计为口径交代问题。",
+      "evidence": [
+        "python3 复算 admit.csv(raw_batch,ns_per_accepted,n=840)：75.3976/8.0738、0.6858/0.9664、185.86/19.90ms、18.4929/1.9810、10050.6/10045.5、10013.9/10054.3、2465119.0/2464724.3、reject diff=0.280516",
+        "gate-accepted.json：2456036.16/2470043.52/diff 14007.36/CI[-105221.47,132036.45]/budget_B 5000/verdict insufficient-evidence；gate-attempted.json verdict=accept；statistics.json diff_stddev_sample=108052.28、sem=23578.94",
+        "admit-verification.txt：A accepted=130 rejected=110 rate=0.4583 digest=eb67d1b3ba7cfa53 MATCH；B 8/232 digest=ad8e6885296eed0f MATCH；recompute.txt raw=1680 组=84 结论通过",
+        "src/engine.rs:620-621 let n = q.len().min(256); q.drain(..n)；:773 Cmd::Write(_) | Cmd::Shutdown => {}；:598-602 fatal→failure+closed.store→return；:434 let _ = h.join()",
+        "tools/list_uncollected_claims.py ch17 输出 930/975/981 等条目对应 results/ 无任何端到端延迟/分段耗时/执行器对照产物；1GB/s 为正文自认「本机没测过」的量级假设，与 gate budget_note 一致"
+      ]
+    }
+  ],
+  "sources": [
+    "src/part4/ch17.md",
+    "projects/tidekv/src/{segment.rs,bloom.rs,memtable.rs,codec.rs,epoch.rs,stats.rs,engine.rs}",
+    "projects/tidekv/src/bin/{tide-mech.rs,tide-admit.rs,tide-bench.rs}",
+    "projects/tidekv/tests/{segment_format.rs,bloom_contract.rs,admission.rs,epoch_reclaim.rs,tombstones.rs}",
+    "projects/tidekv/results/{bloom-contract-2026-10-30.txt,run-02/*,run-03/*,run-01/gate.json}",
+    ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P1",
+      "description": "例 17.1.1 解答把机制轮输入家族陈述为「机制轮（17.4 的 tide-mech）取键长 16 字节、值长 64 字节、读写比 9:1、键空间 2^16，批量写入后读」。但 tide-mech 的 codec 臂全程只有 encode（无任何读操作，读写比与『批量写入后读』无从谈起），每批 4096 条=2^12 个不同键而非 2^16；compaction 臂键是 format!(\"k{i:08}\")（9 字节）且 20% 删除、同样无读阶段。9:1 与 2^16 在整个 tidekv 代码与三轮归档里找不到对应实现。另 17.4.2 正文说 codec「与 17.1 的输入家族一致」，而 17.1 该家族含读写比——17.4 实验根本没有读，两处内部口径互相矛盾。",
+      "evidence": "src/bin/tide-mech.rs:156-157（仅 encode_all/encode_all_dyn）、:127-138（键 8B 序号+8B 随机、值 64B）、:243-251（compaction 键 'k{i:08}' 9 字节、rng.below(100)<20 删除）、:376-377（--records 4096）；grep '9:1|read_write' 在 tide-mech/tide-admit 无命中；ch17.md:191 与 :552 的口径冲突"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "17.2.2 对 easy-fs 的容量陈述「DiskInode 28 个直接项满了走一级间接（一个 512 B 块装 512/4=128 个 u32 指针），再不够上二级间接，容量依次是 14 KiB、64 KiB、8 MiB」：按累计容量口径复算，一级间接满应为 (28+128)×512 B=79,872 B≈78 KiB（正文写 64 KiB，差 14 KiB），二级满 ≈8.07 MiB；64 KiB/8 MiB 只有在「各层新增」口径下才对，而「容量依次」的措辞是累计口径。且仓库母本 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html（easy-fs 使用篇）中 DiskInode/间接/28/128/容量数字均 0 命中，该陈述无法在已存母本中落地。",
+      "evidence": "复算 28*512=14336B=14KiB；(28+128)*512=79872B≈78KiB≠64KiB；(28+128+16384)*512=8456192B≈8.07MiB；python3 去标签检索母本 'DiskInode' hits=0、'间接' hits=0"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "17.2 预览段有重复语病：「磁盘格式又不一样：磁盘格式不一样：段文件的字节一旦写下就不再改」，同句短语连写两次。",
+      "evidence": "src/part4/ch17.md 17.2 preview 第一段（快照 801f81b 正文内）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P1",
+      "description": "17.3.2 把「每个使用者各留一块缓冲，块被改后另一副本不同步、后到的读看到旧内容」并「形容成致命又难查」的告诫明确归于 easy-fs。本书内两处 easy-fs 材料均无法落地：本地母本（使用篇 html）中「致命」「一致性」0 命中；正文自己的 ch12 对 easy-fs BlockCache 的描述（12.md:1892）只写到「合并与回写时机、扇区与块」，不含该警告句。该外部引文没有可核对母本，却以转述引语的口吻使用。",
+      "evidence": "python3 检索 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html：'致命' hits=0、'一致性' hits=0；src/part3/ch12.md:1892 无对应警告；sources/web.json 仅列主题词（BlockCache/modified/扇区与块），无此句原文"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P2",
+      "description": "17.4.2 与 17.6.2 两处以「95% 区间」作方向判定与三态判定依据，但本节内均未交代区间的统计定义（对 21 个配对轮差值均值做 20,000 次有放回 percentile bootstrap、种子 20289698/20289697）；该定义只在 17.8.1 主轮表前给出，且主轮分析种子（20289699）与机制轮不同。配对轮协议、diff 约定与 sd 口径本节写得清楚，故仅计口径交代的表述问题而非数字问题——区间数值本身与归档 JSON 逐位一致。",
+      "evidence": "src/part4/ch17.md:650 附近「协议形状与主轮一致」；statistics-codec.json bootstrap{iterations:20000, method:'percentile bootstrap of the paired mean difference', seed:20289698}；ch17.md:1313 才给出 bootstrap 定义（run-01 口径，seed 20289699）"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+rustc: rustc 1.99.1 (58cf8f9c3 2026-10-13)
+cargo: cargo 1.99.1 (5f94df478 2026-08-27)
+cpu: Apple M5 Pro
+cachelinesize: 128
+memsize_bytes: 25769803776
+sw_vers: macOS 27.2 (build 26B123)
+uname -m: arm64

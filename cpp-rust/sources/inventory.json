@@ -1648,7 +1648,10 @@
         "pdf_page": 473
       }
     ],
-    "pdf_pages": 1032
+    "pdf_pages": 1032,
+    "local_path": "/Users/juanwang/E-Book/C++/A Tour of C++ (Bjarne Stroustrup) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S02",
@@ -7451,7 +7454,10 @@
         "pdf_page": 794
       }
     ],
-    "pdf_pages": 794
+    "pdf_pages": 794,
+    "local_path": "/Users/juanwang/E-Book/C++/C++ Crash Course A Fast-Paced Introduction (Josh Lospinoso) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S03",
@@ -10262,7 +10268,10 @@
         "pdf_page": 369
       }
     ],
-    "pdf_pages": 371
+    "pdf_pages": 371,
+    "local_path": "/Users/juanwang/E-Book/C++/C++ 程序设计语言：第4部分 标准库（原书第4版 (Bjarne Stroustrup) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S04",
@@ -10783,7 +10792,10 @@
         "pdf_page": 992
       }
     ],
-    "pdf_pages": 1012
+    "pdf_pages": 1012,
+    "local_path": "/Users/juanwang/E-Book/C++/C++20高级编程(第5版)(上下册） ([比]马克·格雷戈勒（Marc Gregoire）) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S05",
@@ -16962,7 +16974,10 @@
         "pdf_page": 750
       }
     ],
-    "pdf_pages": 750
+    "pdf_pages": 750,
+    "local_path": "/Users/juanwang/E-Book/C++/C++程序设计语言.第1～3部分.原书第4版 (Bjarne Stroustrup) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S06",
@@ -17757,7 +17772,10 @@
         "pdf_page": 327
       }
     ],
-    "pdf_pages": 327
+    "pdf_pages": 327,
+    "local_path": "/Users/juanwang/E-Book/C++/Effective C++ Effective C++ 改善程序与设计的55个具体做法 第3版 ([美] Scott Meyers  侯捷 译) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S07",
@@ -18602,7 +18620,10 @@
         "pdf_page": 334
       }
     ],
-    "pdf_pages": 334
+    "pdf_pages": 334,
+    "local_path": "/Users/juanwang/E-Book/C++/Effective Modern C++ 42 Specific Ways to Improve Your Use of C++11 and C++14 (Scott Meyers) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S08",
@@ -19115,7 +19136,10 @@
         "evidence": "sources/reviews/S08.md#review-s08-u0044",
         "reason": "后记推荐异步、裸机与社区进一步阅读；书目推荐不等于本轮读过被推荐资料。"
       }
-    ]
+    ],
+    "local_path": "/Users/juanwang/E-Book/Rust/Effective Rust.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S09",
@@ -20706,7 +20730,10 @@
         "evidence": "sources/reviews/S09.md#review-s09-u0139",
         "reason": "Humor in Rust是幽默示例与链接集合，超出本书严肃低层性能证据主线。"
       }
-    ]
+    ],
+    "local_path": "/Users/juanwang/E-Book/Rust/Guide to Rustc Development.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S10",
@@ -21793,7 +21820,7 @@
         "review_depth": "body-read",
         "evidence": "sources/reviews/S10.md#review-s10-u0095",
         "reason": "原书明确内存模型尚不完备；这可支持保留模型边界的声明，不允许从缺少规范推导任意unsafe操作均合法。",
-        "target": "part1/ch03.md#sec-cpp-rust.1.3.5"
+        "target": "part2/ch07.md#sec-cpp-rust.2.7.1"
       },
       {
         "level": 1,
@@ -21943,7 +21970,10 @@
         "evidence": "sources/reviews/S10.md#review-s10-u0108",
         "reason": "术语表用于查词，开篇只抽读AST、对齐量和元数；不把词条链接算作已读其全文正文。"
       }
-    ]
+    ],
+    "local_path": "/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S11",
@@ -22201,7 +22231,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u014",
         "evidence_anchor": "review-s11-u014",
         "status": "read-mapped",
-        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -22226,7 +22256,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u015",
         "evidence_anchor": "review-s11-u015",
         "status": "read-mapped",
-        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -22251,7 +22281,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u016",
         "evidence_anchor": "review-s11-u016",
         "status": "read-mapped",
-        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -22750,7 +22780,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u040",
         "evidence_anchor": "review-s11-u040",
         "status": "read-mapped",
-        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -22986,7 +23016,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u051",
         "evidence_anchor": "review-s11-u051",
         "status": "read-mapped",
-        "reason": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。",
+        "reason": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 10.1 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "已读开篇范围，尚未选读完整相关正文；现有进程章可供父代理后续核对输出协议落点。",
         "candidate_chapters": [
@@ -23732,7 +23762,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u084",
         "evidence_anchor": "review-s11-u084",
         "status": "read-mapped",
-        "reason": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。",
+        "reason": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 3.1 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -23757,7 +23787,7 @@
         "evidence": "sources/reviews/S11.md#review-s11-u085",
         "evidence_anchor": "review-s11-u085",
         "status": "read-mapped",
-        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+        "reason": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -24426,7 +24456,10 @@
     "all_pdf_pages_read": false,
     "review_method": "PyMuPDF extraction followed by actual text review; native books use opening excerpts plus exact selected full pages, not whole-book page reading.",
     "evidence": "sources/reviews/S11.md",
-    "pagination_note": "多数书签指向仅页码的分页，正文常为 native+1；附录 B–G 只有标题，保留为文件内容限制。"
+    "pagination_note": "多数书签指向仅页码的分页，正文常为 native+1；附录 B–G 只有标题，保留为文件内容限制。",
+    "local_path": "/Users/juanwang/E-Book/Rust/Rust 程序设计语言 简体中文版.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S12",
@@ -24612,7 +24645,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u009",
         "evidence_anchor": "review-s12-u009",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -24678,7 +24711,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u012",
         "evidence_anchor": "review-s12-u012",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -24744,7 +24777,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u015",
         "evidence_anchor": "review-s12-u015",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -24770,7 +24803,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u016",
         "evidence_anchor": "review-s12-u016",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -24902,7 +24935,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u022",
         "evidence_anchor": "review-s12-u022",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25008,7 +25041,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u027",
         "evidence_anchor": "review-s12-u027",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25054,7 +25087,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u029",
         "evidence_anchor": "review-s12-u029",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25080,7 +25113,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u030",
         "evidence_anchor": "review-s12-u030",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25226,7 +25259,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u037",
         "evidence_anchor": "review-s12-u037",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25312,7 +25345,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u041",
         "evidence_anchor": "review-s12-u041",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -25998,7 +26031,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u075",
         "evidence_anchor": "review-s12-u075",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -26124,7 +26157,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u081",
         "evidence_anchor": "review-s12-u081",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -26150,7 +26183,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u082",
         "evidence_anchor": "review-s12-u082",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -26176,7 +26209,7 @@
         "evidence": "sources/reviews/S12.md#review-s12-u083",
         "evidence_anchor": "review-s12-u083",
         "status": "read-mapped",
-        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+        "reason": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -26362,7 +26395,10 @@
     ],
     "all_pdf_pages_read": true,
     "review_method": "PyMuPDF extraction followed by actual text review; native books use opening excerpts plus exact selected full pages, not whole-book page reading.",
-    "evidence": "sources/reviews/S12.md"
+    "evidence": "sources/reviews/S12.md",
+    "local_path": "/Users/juanwang/E-Book/Rust/The Rust on ESP Book 简体中文版.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S13",
@@ -30075,7 +30111,10 @@
     "review_method": "PyMuPDF extraction followed by actual text review; native books use opening excerpts plus exact selected full pages, not whole-book page reading.",
     "evidence": "sources/reviews/S13.md",
     "verified_title": "数据结构与算法：Rust 语言描述",
-    "pagination_note": "正文印刷页 1 = PDF13；序书签 PDF1 实际正文 PDF4；文献 PDF411–412 不在原生书签。"
+    "pagination_note": "正文印刷页 1 = PDF13；序书签 PDF1 实际正文 PDF4；文献 PDF411–412 不在原生书签。",
+    "local_path": "/Users/juanwang/E-Book/Rust/rust-book-zh-cn-shieber.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S14",
@@ -30101,7 +30140,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u001",
         "evidence_anchor": "review-s14-u001",
         "status": "read-mapped",
-        "reason": "已读“什么是 rustdoc？”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“什么是 rustdoc？”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30127,7 +30166,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u002",
         "evidence_anchor": "review-s14-u002",
         "status": "read-mapped",
-        "reason": "已读“基本使用”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“基本使用”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30153,7 +30192,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u003",
         "evidence_anchor": "review-s14-u003",
         "status": "read-mapped",
-        "reason": "已读“配置 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“配置 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30179,7 +30218,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u004",
         "evidence_anchor": "review-s14-u004",
         "status": "read-mapped",
-        "reason": "已读“通过 Cargo 使用 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“通过 Cargo 使用 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30205,7 +30244,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u005",
         "evidence_anchor": "review-s14-u005",
         "status": "read-mapped",
-        "reason": "已读“Outer 和 inner 文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Outer 和 inner 文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30231,7 +30270,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u006",
         "evidence_anchor": "review-s14-u006",
         "status": "read-mapped",
-        "reason": "已读“利用单独的 Markdown 文件”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“利用单独的 Markdown 文件”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30457,7 +30496,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u017",
         "evidence_anchor": "review-s14-u017",
         "status": "read-mapped",
-        "reason": "已读“如何写文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“如何写文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30483,7 +30522,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u018",
         "evidence_anchor": "review-s14-u018",
         "status": "read-mapped",
-        "reason": "已读“开始”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“开始”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30509,7 +30548,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u019",
         "evidence_anchor": "review-s14-u019",
         "status": "read-mapped",
-        "reason": "已读“文档组成”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“文档组成”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30655,7 +30694,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u026",
         "evidence_anchor": "review-s14-u026",
         "status": "read-mapped",
-        "reason": "已读“什么包含（和排除）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“什么包含（和排除）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30681,7 +30720,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u027",
         "evidence_anchor": "review-s14-u027",
         "status": "read-mapped",
-        "reason": "已读“例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30707,7 +30746,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u028",
         "evidence_anchor": "review-s14-u028",
         "status": "read-mapped",
-        "reason": "已读“什么被排除”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“什么被排除”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30753,7 +30792,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u030",
         "evidence_anchor": "review-s14-u030",
         "status": "read-mapped",
-        "reason": "已读“Command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30799,7 +30838,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u032",
         "evidence_anchor": "review-s14-u032",
         "status": "read-mapped",
-        "reason": "已读“-V/--version: version information”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“-V/--version: version information”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30825,7 +30864,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u033",
         "evidence_anchor": "review-s14-u033",
         "status": "read-mapped",
-        "reason": "已读“-v/--verbose: more verbose output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“-v/--verbose: more verbose output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30851,7 +30890,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u034",
         "evidence_anchor": "review-s14-u034",
         "status": "read-mapped",
-        "reason": "已读“-o/--out-dir: output directory path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“-o/--out-dir: output directory path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30877,7 +30916,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u035",
         "evidence_anchor": "review-s14-u035",
         "status": "read-mapped",
-        "reason": "已读“--crate-name: controlling the name of the crate”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--crate-name: controlling the name of the crate”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30903,7 +30942,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u036",
         "evidence_anchor": "review-s14-u036",
         "status": "read-mapped",
-        "reason": "已读“--document-private-items: Show items that are not public”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--document-private-items: Show items that are not public”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30929,7 +30968,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u037",
         "evidence_anchor": "review-s14-u037",
         "status": "read-mapped",
-        "reason": "已读“-L/--library-path: where to look for dependencies”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“-L/--library-path: where to look for dependencies”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30955,7 +30994,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u038",
         "evidence_anchor": "review-s14-u038",
         "status": "read-mapped",
-        "reason": "已读“--cfg: passing configuration flags”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--cfg: passing configuration flags”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -30981,7 +31020,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u039",
         "evidence_anchor": "review-s14-u039",
         "status": "read-mapped",
-        "reason": "已读“--extern: specify a dependency's location”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--extern: specify a dependency's location”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31007,7 +31046,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u040",
         "evidence_anchor": "review-s14-u040",
         "status": "read-mapped",
-        "reason": "已读“-C/--codegen: pass codegen options to rustc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“-C/--codegen: pass codegen options to rustc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31033,7 +31072,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u041",
         "evidence_anchor": "review-s14-u041",
         "status": "read-mapped",
-        "reason": "已读“--test: run code examples as tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--test: run code examples as tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31059,7 +31098,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u042",
         "evidence_anchor": "review-s14-u042",
         "status": "read-mapped",
-        "reason": "已读“--test-args: pass options to test runner”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--test-args: pass options to test runner”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31085,7 +31124,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u043",
         "evidence_anchor": "review-s14-u043",
         "status": "read-mapped",
-        "reason": "已读“--target: generate documentation for the specified target triple”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--target: generate documentation for the specified target triple”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31271,7 +31310,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u052",
         "evidence_anchor": "review-s14-u052",
         "status": "read-mapped",
-        "reason": "已读“--sysroot: override the system root”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--sysroot: override the system root”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31297,7 +31336,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u053",
         "evidence_anchor": "review-s14-u053",
         "status": "read-mapped",
-        "reason": "已读“--edition: control the edition of docs and doctests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--edition: control the edition of docs and doctests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31363,7 +31402,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u056",
         "evidence_anchor": "review-s14-u056",
         "status": "read-mapped",
-        "reason": "已读“--crate-version: control the crate version”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--crate-version: control the crate version”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31389,7 +31428,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u057",
         "evidence_anchor": "review-s14-u057",
         "status": "read-mapped",
-        "reason": "已读“@path: load command-line flags from a path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“@path: load command-line flags from a path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31475,7 +31514,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u061",
         "evidence_anchor": "review-s14-u061",
         "status": "read-mapped",
-        "reason": "已读“--nocapture”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--nocapture”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31501,7 +31540,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u062",
         "evidence_anchor": "review-s14-u062",
         "status": "read-mapped",
-        "reason": "已读“#[doc] 属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“#[doc] 属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31527,7 +31566,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u063",
         "evidence_anchor": "review-s14-u063",
         "status": "read-mapped",
-        "reason": "已读“crate 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“crate 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31633,7 +31672,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u068",
         "evidence_anchor": "review-s14-u068",
         "status": "read-mapped",
-        "reason": "已读“html_root_url”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“html_root_url”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31659,7 +31698,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u069",
         "evidence_anchor": "review-s14-u069",
         "status": "read-mapped",
-        "reason": "已读“html_no_source”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“html_no_source”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31685,7 +31724,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u070",
         "evidence_anchor": "review-s14-u070",
         "status": "read-mapped",
-        "reason": "已读“test(no_crate_inject)”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“test(no_crate_inject)”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31711,7 +31750,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u071",
         "evidence_anchor": "review-s14-u071",
         "status": "read-mapped",
-        "reason": "已读“test(attr(...))”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“test(attr(...))”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31737,7 +31776,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u072",
         "evidence_anchor": "review-s14-u072",
         "status": "read-mapped",
-        "reason": "已读“item 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“item 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31763,7 +31802,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u073",
         "evidence_anchor": "review-s14-u073",
         "status": "read-mapped",
-        "reason": "已读“inline and no_inline”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“inline and no_inline”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31789,7 +31828,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u074",
         "evidence_anchor": "review-s14-u074",
         "status": "read-mapped",
-        "reason": "已读“hidden”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“hidden”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31815,7 +31854,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u075",
         "evidence_anchor": "review-s14-u075",
         "status": "read-mapped",
-        "reason": "已读“alias”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“alias”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31841,7 +31880,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u076",
         "evidence_anchor": "review-s14-u076",
         "status": "read-mapped",
-        "reason": "已读“文档测试”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“文档测试”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31867,7 +31906,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u077",
         "evidence_anchor": "review-s14-u077",
         "status": "read-mapped",
-        "reason": "已读“文档测试通过或者失败”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“文档测试通过或者失败”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31893,7 +31932,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u078",
         "evidence_anchor": "review-s14-u078",
         "status": "read-mapped",
-        "reason": "已读“预处理例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“预处理例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31919,7 +31958,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u079",
         "evidence_anchor": "review-s14-u079",
         "status": "read-mapped",
-        "reason": "已读“隐藏例子的一部分”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“隐藏例子的一部分”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31945,7 +31984,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u080",
         "evidence_anchor": "review-s14-u080",
         "status": "read-mapped",
-        "reason": "已读“在文档测试中使用 ?”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“在文档测试中使用 ?”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31971,7 +32010,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u081",
         "evidence_anchor": "review-s14-u081",
         "status": "read-mapped",
-        "reason": "已读“在文档测试中显示警告”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“在文档测试中显示警告”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -31997,7 +32036,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u082",
         "evidence_anchor": "review-s14-u082",
         "status": "read-mapped",
-        "reason": "已读“宏的文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“宏的文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32023,7 +32062,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u083",
         "evidence_anchor": "review-s14-u083",
         "status": "read-mapped",
-        "reason": "已读“属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32049,7 +32088,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u084",
         "evidence_anchor": "review-s14-u084",
         "status": "read-mapped",
-        "reason": "已读“语法参考”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“语法参考”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32075,7 +32114,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u085",
         "evidence_anchor": "review-s14-u085",
         "status": "read-mapped",
-        "reason": "已读“收集文档测试时包含 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“收集文档测试时包含 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32101,7 +32140,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u086",
         "evidence_anchor": "review-s14-u086",
         "status": "read-mapped",
-        "reason": "已读“通过名称链接 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“通过名称链接 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32127,7 +32166,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u087",
         "evidence_anchor": "review-s14-u087",
         "status": "read-mapped",
-        "reason": "已读“有效链接”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“有效链接”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32153,7 +32192,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u088",
         "evidence_anchor": "review-s14-u088",
         "status": "read-mapped",
-        "reason": "已读“Namespaces and Disambiguators（消歧义符）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Namespaces and Disambiguators（消歧义符）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32179,7 +32218,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u089",
         "evidence_anchor": "review-s14-u089",
         "status": "read-mapped",
-        "reason": "已读“警告，re-exports, and scoping”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“警告，re-exports, and scoping”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32205,7 +32244,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u090",
         "evidence_anchor": "review-s14-u090",
         "status": "read-mapped",
-        "reason": "已读“Lints”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Lints”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32231,7 +32270,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u091",
         "evidence_anchor": "review-s14-u091",
         "status": "read-mapped",
-        "reason": "已读“broken_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“broken_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32257,7 +32296,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u092",
         "evidence_anchor": "review-s14-u092",
         "status": "read-mapped",
-        "reason": "已读“private_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“private_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32283,7 +32322,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u093",
         "evidence_anchor": "review-s14-u093",
         "status": "read-mapped",
-        "reason": "已读“missing_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“missing_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32309,7 +32348,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u094",
         "evidence_anchor": "review-s14-u094",
         "status": "read-mapped",
-        "reason": "已读“missing_crate_level_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“missing_crate_level_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32335,7 +32374,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u095",
         "evidence_anchor": "review-s14-u095",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32361,7 +32400,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u096",
         "evidence_anchor": "review-s14-u096",
         "status": "read-mapped",
-        "reason": "已读“private_doc_tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“private_doc_tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32387,7 +32426,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u097",
         "evidence_anchor": "review-s14-u097",
         "status": "read-mapped",
-        "reason": "已读“invalid_codeblock_attributes”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“invalid_codeblock_attributes”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32413,7 +32452,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u098",
         "evidence_anchor": "review-s14-u098",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32439,7 +32478,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u099",
         "evidence_anchor": "review-s14-u099",
         "status": "read-mapped",
-        "reason": "已读“invalid_rust_codeblocks”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“invalid_rust_codeblocks”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32465,7 +32504,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u100",
         "evidence_anchor": "review-s14-u100",
         "status": "read-mapped",
-        "reason": "已读“bare_urls”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“bare_urls”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32491,7 +32530,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u101",
         "evidence_anchor": "review-s14-u101",
         "status": "read-mapped",
-        "reason": "已读“高级特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“高级特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32517,7 +32556,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u102",
         "evidence_anchor": "review-s14-u102",
         "status": "read-mapped",
-        "reason": "已读“#[cfg(doc)]: 文档平台相关或者特性相关信息”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“#[cfg(doc)]: 文档平台相关或者特性相关信息”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32543,7 +32582,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u103",
         "evidence_anchor": "review-s14-u103",
         "status": "read-mapped",
-        "reason": "已读“特定平台文档之间的交互”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“特定平台文档之间的交互”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32569,7 +32608,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u104",
         "evidence_anchor": "review-s14-u104",
         "status": "read-mapped",
-        "reason": "已读“增加文档搜索的 item 别名”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“增加文档搜索的 item 别名”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32595,7 +32634,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u105",
         "evidence_anchor": "review-s14-u105",
         "status": "read-mapped",
-        "reason": "已读“不稳定特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“不稳定特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32621,7 +32660,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u106",
         "evidence_anchor": "review-s14-u106",
         "status": "read-mapped",
-        "reason": "已读“Nightly-gated functionality”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Nightly-gated functionality”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32647,7 +32686,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u107",
         "evidence_anchor": "review-s14-u107",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32673,7 +32712,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u108",
         "evidence_anchor": "review-s14-u108",
         "status": "read-mapped",
-        "reason": "已读“Extensions to the #[doc] attribute”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Extensions to the #[doc] attribute”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32699,7 +32738,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u109",
         "evidence_anchor": "review-s14-u109",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32725,7 +32764,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u110",
         "evidence_anchor": "review-s14-u110",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32831,7 +32870,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u115",
         "evidence_anchor": "review-s14-u115",
         "status": "read-mapped",
-        "reason": "已读“Unstable command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“Unstable command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -32983,7 +33022,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u122",
         "evidence_anchor": "review-s14-u122",
         "status": "read-mapped",
-        "reason": "已读“--extern-html-root-url: control how rustdoc links to non-local crates”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“--extern-html-root-url: control how rustdoc links to non-local crates”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33089,7 +33128,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u127",
         "evidence_anchor": "review-s14-u127",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33115,7 +33154,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u128",
         "evidence_anchor": "review-s14-u128",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33141,7 +33180,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u129",
         "evidence_anchor": "review-s14-u129",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33167,7 +33206,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u130",
         "evidence_anchor": "review-s14-u130",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33193,7 +33232,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u131",
         "evidence_anchor": "review-s14-u131",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33219,7 +33258,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u132",
         "evidence_anchor": "review-s14-u132",
         "status": "read-mapped",
-        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+        "reason": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33391,7 +33430,7 @@
         "evidence": "sources/reviews/S14.md#review-s14-u140",
         "evidence_anchor": "review-s14-u140",
         "status": "read-mapped",
-        "reason": "已读“JSON output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+        "reason": "已读“JSON output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。",
         "scope_disposition": "include-pending",
         "unresolved_reason": "Relevant scope retained; target chapter not yet available or selected-body review insufficient for a technical mapping.",
         "candidate_chapters": [
@@ -33533,7 +33572,10 @@
     ],
     "all_pdf_pages_read": true,
     "review_method": "PyMuPDF extraction followed by actual text review; native books use opening excerpts plus exact selected full pages, not whole-book page reading.",
-    "evidence": "sources/reviews/S14.md"
+    "evidence": "sources/reviews/S14.md",
+    "local_path": "/Users/juanwang/E-Book/Rust/rustdoc 手册.pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S15",
@@ -40510,7 +40552,10 @@
         "pdf_page": 696
       }
     ],
-    "pdf_pages": 729
+    "pdf_pages": 729,
+    "local_path": "/Users/juanwang/E-Book/C/C语言程序设计：现代方法（第2版•修订版） (K.N.King) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   },
   {
     "id": "S16",
@@ -40679,6 +40724,9 @@
         "epub_locator": "xhtml/Section14.xhtml"
       }
     ],
-    "pagination": "reflowable EPUB; use XHTML locator, not fabricated print pages"
+    "pagination": "reflowable EPUB; use XHTML locator, not fabricated print pages",
+    "local_path": "/Users/juanwang/E-Book/C/CMake构建实战-项目开发卷 (许宏旭) (z-library.sk, 1lib.sk, z-lib.sk).epub",
+    "local_path_verified": "2026-11-01",
+    "local_path_matches_sha": true
   }
 ]

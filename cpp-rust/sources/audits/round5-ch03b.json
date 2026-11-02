@@ -1,0 +1,76 @@
+{
+  "reviewer": "r5-ch03b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整通读 src/part1/ch03.md 的 3.7–3.11 全部正文与语义盒，并用 python 从 results/native-01 的 borrow.csv/initialization.csv/statistics.json 复算全部引用数字，回查 bench/foundations-lab 源码（测试计数、unsafe、compile_fail、N、bin 清单）、layout.txt、sample-command.txt、codegen 归档与 sources/contributions/foundations.json、foundations-web.json 的母本登记行。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐项核对：例 3.7.1 的静态量 65536 元素 × 8 字节 = 524288 字节自洽且与 lib.rs:5 的 N=65_536 一致；证明表 10 行（所有权/空间/时间/对齐/初始化/别名/同步/销毁/panic/泄漏）与正文「十个维度」「义务有十条」一致；3.7.3 对 addr/with_addr/map_addr 与 exposed provenance 的表述落在 FOUNDATIONS-PTR 已登记核读范围（foundations-web.json 第 6 行 review_scope 含 Provenance、Strict Provenance、Exposed Provenance）；3.7.7「本轮只有普通测试、clippy、代码生成与 macOS sample」属实：归档有 sample-command.txt（macOS sample 输出格式）、validation-01/clippy.txt、codegen 目录，且整个 results/ 无任何 Miri/TSan/Loom 产物；3.7.8「本包保持全安全」「当前六个实验不需要 unsafe」经 grep 验证：bench/foundations-lab 全部 .rs 文件 0 处 unsafe，src/bin 恰为 allocation/borrow/dce/initialization/locality/paired 六个入口；lib.rs:94 确有 compile_fail 文档测试演示 reset 的借用边界。结论：本节无编造实测、无与代码相反的断言。",
+      "evidence": [
+        "src/part1/ch03.md:1390 65536×8=524288 自洽；bench/foundations-lab/src/lib.rs:5 pub const N: usize = 65_536",
+        "grep -rn unsafe bench/foundations-lab --include=*.rs → 0 命中（3.7.8 全安全断言成立）",
+        "bench/foundations-lab/src/bin/ = allocation.rs borrow.rs dce.rs initialization.rs locality.rs paired.rs（六个实验）",
+        "sources/contributions/foundations-web.json:6 FOUNDATIONS-PTR review_scope 含 Strict Provenance/Exposed Provenance",
+        "bench/foundations-lab/src/lib.rs:94 ```compile_fail（reset 借用边界文档测试存在）",
+        "results/native-01/sample-command.txt:1 macOS sample 输出；results/ 无 miri/tsan/loom 产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节自述「没有运行数据可采集」，故无测量数字需复算；核对的均为语言事实与包内事实：Pin 不约束句柄自身移动、Unpin 使 Pin 不再施加同等约束、PhantomPinned 为零大小标记、Box 移动句柄不动载荷——与 std 文档口径一致，且正文均以「边界/条件」而非实测形式给出；3.8.1 例引用 mem::take 合法替换与 3.4.3 定义相互印证；3.8.5 说的 ByteRegion take 失败保持游标对应有测试 region_capacity_failure_is_transactional（lib.rs:195）；「本章没有实现自引用 unsafe 类型」「本节没有采集任何调度观测」经全包 0 unsafe 与归档清单核实成立，未夸大验证范围。结论：pass。",
+      "evidence": [
+        "grep -rn unsafe bench/foundations-lab --include=*.rs → 0（无自引用 unsafe 类型，声明属实）",
+        "bench/foundations-lab/src/lib.rs:195 region_capacity_failure_is_transactional（3.8.5 两保证之二的测试存在）",
+        "results/native-01/ 与 validation-01/ 清单中无任何调度/跨线程观测文件（「没有采集」属实）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "按「引文回母本」规则逐条核：S11「什么是所有权」「引用与借用」「Drop trait」三条均在 sources/contributions/foundations.json 登记且 target 指向 part1/ch03（4.1/4.2/15.3 行）；S10「不被认为是非安全的行为：泄漏、无析构退出与溢出」逐字命中登记行（PDF 347），「unsafe 责任」「临时作用域旧规则」亦有对应登记行（PDF 343–345、296–297）；S08 的引文「不要为了消除复制牺牲接口可用性」在 foundations.json 逐字命中（第20条末，PDF 174–175，target ch03 3.5）；3.9 声称的 FOUNDATIONS-VEC-WITH-CAPACITY、FOUNDATIONS-MAYBE-UNINIT 均在 foundations-web.json 登记（各 1 命中，文件含 6 条 id 与 sha256 字段），ptr/index.html URL 亦在登记中。「新增母本行位于 foundations.json、在线 URL 与 SHA 位于 foundations-web.json」的文件位置说法成立。结论：所有引用可落地，无虚构母本。",
+      "evidence": [
+        "sources/contributions/foundations.json：S11 4.1/4.2/15.3、S10 PDF 343–345/347/296–297、S08 第20条末 PDF 174–175 均 target part1/ch03",
+        "S08 引文「不要为了消除复制牺牲接口可用性」在 foundations.json 逐字命中 1 处",
+        "sources/contributions/foundations-web.json：FOUNDATIONS-VEC-WITH-CAPACITY、FOUNDATIONS-MAYBE-UNINIT、FOUNDATIONS-PTR 各 1 命中，sha256 出现 6 次"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "多数静态量核对通过：「八份清单共 57 条」精确成立（3.1 E-a..E-f=6、3.2 E-a..E-g=7、3.3=7、3.4 E-a..E-h=8、3.5=7、3.6=7、3.7 E-h=8、3.8=7，合计 57；grep '^E-' 计 57；表格各节 E 跨度逐一相符）；第 1 条对 3.5/3.6 差值来源的概括与两节正文一致；第 3 条「约 5.7 倍」与复算 5.73 一致。但第 4 条写「本章的四张判定流程」，实测本章共 8 个 ::: method 判定流程 盒（3.1.4、3.2、3.3、4.8、3.5、3.6、3.7、3.8 各一张），与同节自称「八份清单」的精确计数风格直接矛盾，属正文内部数字矛盾（P1），详见 findings。",
+      "evidence": [
+        "grep -c '^E-' src/part1/ch03.md → 57；grep -c '::: method 判定流程' src/part1/ch03.md → 8",
+        "各节清单条数：6+7+7+8+7+7+8+7=57，与 3.10 表格 E 跨度逐节一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节是数字最密集的收口区，全部从磁盘复算：borrow.csv/initialization.csv 各 42 行、每 case 恰 21 条 raw 批次（「每 case 21 条正式原始批次」成立）；自行用 python 复算 borrowed 均值 0.058851898、sd(N−1) 0.000404976、nearest-rank p50 0.058824778、p99 0.059892774，cloned 0.159020461/0.002093374/0.158538461/0.166441023，push 1.153849851/0.019135814/1.152266979/1.194040060，zero_fill 0.201331729/0.005930436/0.201612711/0.218312025——八个数与正文表逐位一致；配对均值 0.100168563（statistics.json 0.1001685630476）与 −0.952518123（归档 −0.9525181225238，第 9 位四舍五入相符），bootstrap 区间 [0.099374896,0.101163745]、[−0.959926571,−0.945401044] 与归档一致且整体在零同侧（「区间整体为负」「不跨零」成立）；倍数 524288/24≈21845、0.159020461/0.058851898≈2.70、1.153849851/0.201331729≈5.73 均自算命中；「十项 Rust 测试」精确成立（lib.rs 6 个 #[test] + tests/contracts_more.rs 4 个 = 10，且列名的六项逐一有同名测试）；「18 个定义盒」grep '::: def ' = 18；「章末件五页」ch03_summary/recall/exercises/exam/checklist.md 全部存在；出口检查命令引用的 bench/foundations-lab/run.sh 与 Cargo.toml 存在；「归档包含本机 MIR、LLVM IR、汇编与独立 borrow 采样」对应 codegen/foundations_lab-29c064615efbeca4.{mir,ll,s} 与 sample-borrow.txt 均在。结论：本节省属数字全部可复算落地，无编造实测。",
+      "evidence": [
+        "复算：borrow.csv 21+21 行，cloned−borrowed 批均值 0.100168563；initialization.csv 21+21 行，zero_fill−push −0.952518123",
+        "statistics.json paired bootstrap95 = [0.099374896,0.1011637449] 与 [−0.9599265712,−0.9454010440]，正文取整一致",
+        "grep -c '#[test]'：lib.rs=6、contracts_more.rs=4，合计 10；grep -c '::: def ' ch03.md = 18",
+        "results/native-01/codegen/ 含 .mir/.ll/.s 三件；sample-borrow.txt 存在；src/part1/ 五份章末件齐"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "severity": "P1",
+      "description": "3.10 第 4 条「本章的四张判定流程都在反复检查这一件事」与本章实际结构矛盾：src/part1/ch03.md 共含 8 个「::: method 判定流程」盒——3.1.4（拥有还是借用）、3.2.7 前（冲突判定）、3.3.7（初始化结构）、3.4.8 后（清理责任）、3.5.5（clone 该不该改）、3.6.8（初始化候选）、3.7.8（裸指针进主干）、3.8.5 后（地址敏感对象）。同一节作者自己精确写出「八份清单共 57 条」且 57 逐节核对无误，说明此处「四张」不是随性约数而是错数；若原意指「四张跨轴检查的判定流程」，现有句式「本章的四张判定流程」把总数说成四，构成正文内部数字矛盾。",
+      "evidence": "grep -c '::: method 判定流程' src/part1/ch03.md → 8（src/part1/ch03.md:187,399,605,861,1063,1287,1462,1599）；对照 src/part1/ch03.md:1724「本章的四张判定流程」与 :1706「八份清单共 57 条」（57 经逐节 E- 计数复核为真）"
+    }
+  ]
+}

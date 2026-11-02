@@ -1,0 +1,112 @@
+{
+  "reviewer": "r4f-ch01b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动读 src/part1/ch01.md 第 1220–1724 行（1.7–1.11 全部正文与每个语义盒），逐条回查 bench/foundations-lab/{gate.py,run.sh,analyze.py,Cargo.toml,src/bin}、results/native-01/{environment.txt,source-sha256.txt,statistics.json,dce.csv,paired.csv,codegen,sample-*.txt}、results/validation-01/、src/appendix/coverage.md 与 src/part1/ch01_{recall,exercises,exam,checklist,summary}.md，并用 /usr/bin/python3 复算均值与配对区间；另跑 tools/list_uncollected_claims.py --only 1。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全节 1.7.1–1.7.12 加两个自测盒都读过。可对核的部分基本命中：1.7.9 贴出的 Python 片段与 bench/foundations-lab/gate.py 的 decide() 逐行一致（非有限数与倒置区间各 raise ValueError；high<=budget→accept、low>budget→reject、其余 inconclusive），「四组单元测试」也对得上 GateTests 的 test_accept/test_reject/test_inconclusive/test_invalid，归档 results/validation-01/gate.txt 记录 'Ran 4 tests ... OK'；「边界相等」的说法被测试逐条覆盖（decide((0,1),1)=='accept' 与 decide((1,2),1)=='inconclusive'）；1.7.7 的「保留全部 21 个正式批次」我按 CSV 复算成立（dce.csv、paired.csv 各 42 行 = 2 case × 21 轮，round 0–20 齐全、每 case 单一 checksum）；1.7 开头「1.6 得到一个跨零的区间」成立，paired 的 bootstrap95 = [-0.000128553, 0.000269819] 跨零。例 1.7.1 与图 1-3 我按 SVG 坐标反算过：数轴 x=174→0、114px=0.0002，B 线 x=459→0.0005，三条横条分别落在 [0.0002,0.0004]、[0.0006,0.0011]、[-0.0001,0.0009]，读图段说的「③ 均值 0.0004 比 ① 均值 0.0003 更差」与区间中点一致，无数字矛盾。判 finding 的原因只在判定表的第三行措辞（见 P2）：它把必要前提 U>B 写成「U 更大」，与本节反复强调的「口径要写全」自相矛盾。自测第 2 题对 gate.py「单侧判定」的描述与代码一致，未发现更严重问题。",
+      "evidence": [
+        "src/part1/ch01.md:1369-1396",
+        "bench/foundations-lab/gate.py:1-41（decide() + 4 个 test_*）",
+        "bench/foundations-lab/results/validation-01/gate.txt（Ran 4 tests / OK）",
+        "复算：dce.csv、paired.csv 各 42 行，2 case × 21 轮，round 0..20 齐全",
+        "复算：statistics.json paired.bootstrap95 = [-0.000128553095238096, 0.00026981890476190397]",
+        "反算图 1-3 坐标：x=174→0，x=459→B=0.0005，三条横端点 0.0004/0.0011/0.0009 与例 1.7.1 一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "1.8.1–1.8.10 全部读过，静态量逐条回查 environment.txt：Mac17,9、hw.cachelinesize 128、hw.memsize 25769803776（我算 25769803776/2^30 = 24.000000，正文写「约 24 GiB」不算错）、macOS 27.0.1 / build 26A434、rustc 1.99.0 + commit-hash b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、host aarch64-apple-darwin、RUSTFLAGS=-C target-cpu=native 全部逐字命中；opt-level=3 / codegen-units=1 / lto=false / debug=1 与 Cargo.toml [profile.release] 一致。「没有把线程固定在某一类核心上」我用 grep 在 src、examples、run.sh、analyze.py 里搜 affinity/thread::/sched/qos_class 无命中，负面陈述成立。1.8.3 的 run.sh:32 点名准确：第 32 行正是 lock=\"$(cd .. && pwd)/.work/measure.lock\"，第 31 行注释就是 $0 相对路径的旧 bug；600 秒我也复算过（第 34 行 300 次 × sleep 2 = 600s，第 35 行超时 exit 1，第 36 行 EXIT trap rmdir），构建（第 11–12 行）确实在取锁之前。1.8.4 的「门禁测试不在 native-01 源清单里」对：source-sha256.txt 只有 12 行，含 analyze.py/run.sh/Cargo.toml/Cargo.lock 与 src、examples 的 .rs，不含 gate.py；results/validation-01/{fmt,test,clippy,gate}.txt 确在盘上。1.8.5 采样陈述逐词核对：sample-locality.txt 里 sum_aos×3、sum_soa×3；sample-borrow.txt 里 borrowed×2、cloned×7、sum_soa×5、malloc×20（即「系统分配器相关栈」），且两份都没有 PMU/cache-miss 字段，支持「不提供 cache miss、IPC 或能耗」。1.8.6 与 1.8.7 的可算部分：nearest-rank ceil(0.99×21)=21 → 21 个值的 p99 就是最大值，与 analyze.py quantile() 实现一致；例 1.8.1 里的「本章的 0.0586」能落地（dce observed 均值我复算为 0.058630037904761914，与 statistics.json 一致），0.11/0.0586=1.877，「大近一倍」表述可接受。1.8.9 第③层「分析脚本对 round 集合做严格检查」也确在 analyze.py 里（assert rounds == range(21) 与单一 checksum）。判 finding 是三条 P2：18 核的口径没交代、证据链表未登记归档里真实存在的其余文件、例 1.8.1 ① 的题干与分层定义可互换。",
+      "evidence": [
+        "src/part1/ch01.md:1473-1475, 1484-1494, 1500-1509, 1526, 1530-1544, 1576-1580",
+        "bench/foundations-lab/results/native-01/environment.txt（逐字段）",
+        "bench/foundations-lab/Cargo.toml [profile.release]",
+        "bench/foundations-lab/run.sh:31-36（锁路径与 300×2s=600s、EXIT trap）",
+        "bench/foundations-lab/results/native-01/source-sha256.txt（12 行，无 gate.py）",
+        "复算 grep：sample-locality.txt sum_aos=3/sum_soa=3；sample-borrow.txt borrowed=2/cloned=7/sum_soa=5/malloc=20",
+        "复算：paired.csv indexed 均值 0.05869407595、iterator 0.058768701；dce.csv observed 0.05863003790"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "三条来源逐条回查 src/appendix/coverage.md：Effective Rust 第 30 条有台账行（S08/FOUNDATIONS-S08-001…003，PDF 227–233、229–231、233，落点含 sec-cpp-rust.1.1.7 → gate.py），正文「讨论测试、基准和编译器优化风险」与之相符；std::hint::black_box 有台账行（FOUNDATIONS-BLACK_BOX，登记同一 URL 与核读范围），正文「尽力而为的优化提示」的措辞可落地；《Rust 程序设计语言》第 13 章的迭代器性能对比有台账行（S11/FOUNDATIONS-S11-004，13.4，PDF 314–315，落点 sec-cpp-rust.1.1.6）。但正文最后一句「每一份母本的实际页码、核读状态和正文落点记录在附录的来源台账里」与台账不符：我在 coverage.md 全文搜 'std/time' 与 'Instant'，只有 C++ 那行 'Instantiating Templates'，没有任何 std::time::Instant 的台账行，而正文把 Instant 连同「墙钟时间的平台依赖」这一具体结论当作已核读来源推荐；同理「第 11 章讲测试」在 ch01 名下也没有对应行（S11 给 ch01 的只有 13.4 那条）。链接与路径本身可解析（../appendix/coverage.md 存在）。",
+      "evidence": [
+        "src/part1/ch01.md:1640-1644",
+        "src/appendix/coverage.md：S08/FOUNDATIONS-S08-001..003、FOUNDATIONS-BLACK_BOX、S11/FOUNDATIONS-S11-004",
+        "grep -r 'std/time|Instant' src/appendix/coverage.md → 仅命中 S02-U0164 'Instantiating Templates'，无 Instant 行"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节（索引表 + 四条跨节项）读过，并做了逐节计数复算：脚本按 '## 1.N' 分段统计 '^E-x ' 行，得 {1.1:6, 1.2:6, 1.3:6, 1.4:7, 1.5:6, 1.6:6, 1.7:8, 1.8:7}，合计 52，errata 盒 8 份——与正文「八份清单共 52 条」以及索引表里每节标注的 E-a…E-f / E-g / E-h 范围完全一致，无内部矛盾。四条跨节项的落点也都能落地：第 1 条指向 1.7.6（该小节确写「跨章表格不能脱离这些边界直接横向排名」），第 3 条指向 1.8（1.8.2 末段与 1.8.4 正是源码指纹的边界说法），第 4 条引 [@def-1.7.3] 存在锚点。表内 8 个章节锚点 sec-cpp-rust.1.1.1…1.1.8 与文件里的实际 {#id} 一致。这一节我只核到计数与交叉引用，没有逐条判断 52 条错误本身的措辞质量。",
+      "evidence": [
+        "src/part1/ch01.md:1646-1666",
+        "复算：E- 条目按节计数 {1:6,2:6,3:6,4:7,5:6,6:6,7:8,8:7} = 52，::: errata 盒 = 8",
+        "锚点核对：{#sec-cpp-rust.1.1.1}…{#sec-cpp-rust.1.1.8} 全部存在；def-1.7.3 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "小结盒、本章速查、章末件表、本章导航全部读过。可核的部分多数命中：本章速查里「21 个差值有放回重采样 10000 次，取 2.5% 与 97.5% 点」与 analyze.py paired_interval()（random.Random(13013)、rng.choices(differences, k=len(differences))、10000 次、quantile .025/.975）一致；「nearest-rank p99 = 第 ceil(Np) 个值，N=21 就是最大值」与 quantile() 实现一致；「配对差值 d = b − a、先相减再平均、不要先排序」与 differences=[y-x for x,y in zip(a,b)] 一致；引号里的 0.0586、区间跨零都能落到 statistics.json。章末件五行指的文件都在盘上：ch01_summary/recall/exercises/exam/checklist.md；「24 张卡分定义、结论、第一行三组」我数到 24 个 ::: ex 卡 与 24 个 ::: sol，三组各 8 张；「A 概念 7、B 推理 7、C 实操 6、全部附解」与习题集分组（1–7 / 8–14 / 15–20）及 20 个题目盒、20 个解答盒一致；「闭卷 60 分钟、100 分、70 分及格」与自测卷首句和评分表一致；导航里的入口 src/bin/dce.rs、src/bin/paired.rs 与数据目录 results/native-01/ 均存在；先修指向的 src/introduction.md:34 '## 性能的六个常用指标' 确实存在。判 finding 是「K/S/A 十五条目标」这个数：自检表实际是 K1–K8 + S1–S7 + A1–A5 = 20 条（每行末尾各带一个 ☐ 自评格），与正文说的十五条差 5 条。",
+      "evidence": [
+        "src/part1/ch01.md:1706",
+        "src/part1/ch01_checklist.md：K1–K8、S1–S7、A1–A5 共 20 个目标行",
+        "复算：ch01_recall.md '::: ex 卡' = 24（三组各 8）、ch01_exercises.md 题目盒 20 / 解答盒 20（A 1–7、B 8–14、C 15–20）",
+        "bench/foundations-lab/analyze.py quantile()/paired_interval()（seed 13013、10000 次、.025/.975）",
+        "src/introduction.md:34 '## 性能的六个常用指标'"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "severity": "P1",
+      "description": "正文数字与真实证据不符：章末件表把自检表写成「把 K/S/A 十五条目标逐条打勾」，但 src/part1/ch01_checklist.md 里的目标行是 K1–K8（8 条）+ S1–S7（7 条）+ A1–A5（5 条）= 20 条，自评格 ☐ 也是 20 个。我按 markdown 表格行逐行数过：三段表头各 1 行、分隔行各 1 行，目标数据行合计 20 行，没有折叠或合并的目标。十五条与二十条不是口径差异（两边都是同一张表的编号计数），是正文少写了 5 条，读者按「十五条」打勾会漏掉 5 条没被任何句子覆盖的目标。",
+      "evidence": "src/part1/ch01.md:1706「把 K/S/A 十五条目标逐条打勾」；src/part1/ch01_checklist.md 目标行 K1,K2,…,K8,S1,…,S7,A1,…,A5 = 20 行（复算：8+7+5=20，☐ 计数 20）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "severity": "P1",
+      "description": "被引作已核实的来源在台账里找不到母本行，且本节的总括句因此不成立：1.9 推荐 [`std::time::Instant`](https://doc.rust-lang.org/std/time/struct.Instant.html) 并据它给出「后者说明墙钟时间的平台依赖」这句话，收尾还断言「每一份母本的实际页码、核读状态和正文落点记录在附录的来源台账里」。我在 src/appendix/coverage.md 全文搜 std/time 与 Instant，唯一命中是 C++ 侧的 |S02-U0164|Instantiating Templates|，没有任何 Instant 文档的登记行（同节的 black_box 有 FOUNDATIONS-BLACK_BOX 行、Effective Rust 第 30 条有 FOUNDATIONS-S08-001..003 行、《Rust 程序设计语言》13.4 有 FOUNDATIONS-S11-004 行，说明 URL 类来源确实应当登记）；「第 11 章讲测试」在 ch01 名下同样没有台账行。也就是说台账覆盖不到本节列出的 4 个来源中的 2 个，「每一份母本都被登记」这句全称结论被磁盘上的台账直接否证。",
+      "evidence": "src/part1/ch01.md:1641-1644；grep -rniE 'std/time|Instant' src/appendix/coverage.md → 仅 S02-U0164（C++）；对比行 FOUNDATIONS-BLACK_BOX（登记 URL https://doc.rust-lang.org/std/hint/fn.black_box.html）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "severity": "P2",
+      "description": "定义盒的判据口径不完整：[@def-1.7.2] 下面那张表把第三种情形写成「L ≤ B，且 U 更大」，而正确的必要条件是 U > B（配合 L ≤ B）。「U 更大」没有说明更大于是谁——按上下文可读成「U 比 L 大」（恒真，那样这行退化成只要 L ≤ B 就算证据不足，会把 U ≤ B 的接受情形吃掉一半），也能读成「U 比 B 大」。同一节的图 1-3 第③条写的却是无歧义的「L ≤ B < U」，自测第 1 题答案也写「其余证据不足」。表格是这条三态规则唯一的文字表达之一，建议改成「L ≤ B 且 U > B」，与本节自己要求的「口径写全」一致。",
+      "evidence": "src/part1/ch01.md:1257（表格第三行「L ≤ B，且 U 更大」）对照 :1247-1249 的 U ≤ B / L > B、:1301 图内文案「L ≤ B < U」、:1439 自测答案"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P2",
+      "description": "静态量口径未交代：1.8.1 写「Apple M5 Pro，18 核」，但 environment.txt 里没有名为「核数」的字段，只有 hw.perflevel0.physicalcpu: 6 与 hw.perflevel1.physicalcpu: 12。我相加才得到 18，即正文用的是「两个性能级物理核之和」这个口径，既不是 hw.ncpu/logicalcpu，也没有把「物理核」这个限定词写出来。本节整节都在教「数字要带口径」，这一处应补成「6 个性能级 0 + 12 个性能级 1 = 18 物理核（environment.txt）」。",
+      "evidence": "src/part1/ch01.md:1473；bench/foundations-lab/results/native-01/environment.txt: hw.perflevel0.physicalcpu: 6 / hw.perflevel1.physicalcpu: 12（复算 6+12=18）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P2",
+      "description": "证据链表与归档实际内容不一致（不完整登记）：1.8.2 的表列了 9 类文件，自测第 1 题又把「九个文件」当作答案上限；但 results/native-01/ 实际有 22 个条目，其中 locality.csv、borrow.csv、allocation.csv、initialization.csv 这四个原始 CSV 没有被表登记——而 1.8.4 正声称「实验包把原始 CSV 与 statistics.json 同时保留，支持第一种检查」，1.6/1.7 用的 locality 区间就来自 locality.csv。同理 timeline.txt、lock-owner.txt、build-processes.txt、layout.txt、statistics-stdout.txt、sample-command.txt 以及两个名为 profile-borrow.csv-excluded、profile-locality.csv-excluded 的条目也不在表里。那两个 *-excluded 尤其该交代一句：它们看起来就是「被排除的原始 CSV」，而 1.7.7 刚刚承诺「没有按看起来像干扰删批」——按本节自己的可追溯标准，归档里存在带 excluded 命名的文件却在证据链里没有对应行，读者无法判断被排除的是批次还是另一条采集通道（我核对后认为是 profiler 附带的 CSV，不是正式计时批次，故只判 P2）。",
+      "evidence": "src/part1/ch01.md:1484-1494 与 :1611-1614（自测第 1 题「九个文件」）；ls bench/foundations-lab/results/native-01/ = 22 项，含 locality.csv/borrow.csv/allocation.csv/initialization.csv/profile-borrow.csv-excluded/profile-locality.csv-excluded/timeline.txt/lock-owner.txt/build-processes.txt/layout.txt/statistics-stdout.txt/sample-command.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P2",
+      "description": "例题题干与判定流程的分层定义可互换，答案不唯一：例 1.8.1 ① 是「换一台机器，cargo test 就没过」，解答判为「构建失败（工具链、目标或依赖环境不同）」；但 1.8.9 对第②层的定义是「checksum 或断言不过」，而 cargo test 失败最常见的形态恰是断言/测试不过而非编译不过。题干没有区分「编译期失败」与「测试期失败」，读者按 1.8.9 的定义把 ① 判成第②层功能失败同样自洽，与「五层各查各的、第一行动作不同」的教学目的冲突。建议题干改成 cargo build/clippy 就报错，或在解答里补一句「先看到编译错误还是测试断言错误」。",
+      "evidence": "src/part1/ch01.md:1544（题干①）与 :1548（解答①判构建失败）对照 :1576-1577（①构建失败/②功能失败=checksum 或断言不过）"
+    }
+  ]
+}

@@ -22,6 +22,9 @@ def main():
         for command in [
             [sys.executable, 'tools/build_coverage.py'],
             [sys.executable, 'tools/check_book.py'],
+            [sys.executable, 'tools/check_loss.py'],
+            [sys.executable, 'tools/check_paraphrase.py', '--strict', '--min', '10'],
+            [sys.executable, 'tools/check_section_refs.py'],
             [sys.executable, 'tools/verify_evidence.py'],
             ['cargo', 'fmt', '--manifest-path', 'bench/Cargo.toml', '--check'],
             ['cargo', 'clippy', '--offline', '--manifest-path', 'bench/Cargo.toml', '--all-targets', '--', '-D', 'warnings'],
@@ -38,13 +41,14 @@ def main():
             ['cargo', 'clippy', '--offline', '--manifest-path', 'bench/evidence-lab/Cargo.toml', '--all-targets', '--', '-D', 'warnings'],
             ['cargo', 'test', '--offline', '--manifest-path', 'bench/evidence-lab/Cargo.toml'],
             ['mdbook', 'build'],
+            ['node', '../tools/build_search_js.mjs', '.'],
             [sys.executable, 'tools/check_rendered.py'],
         ]:
             run(command)
         if args.release:
             run([sys.executable, 'tools/build_coverage.py', '--strict'])
             run([sys.executable, 'tools/verify_audits.py'])
-            for project in ['agent-runtime', 'ffi-bridge']:
+            for project in ['agent-runtime', 'ffi-bridge', 'tidekv']:
                 manifest = f'projects/{project}/Cargo.toml'
                 run(['cargo', 'clippy', '--offline', '--manifest-path', manifest, '--all-targets', '--', '-D', 'warnings'])
                 run(['cargo', 'test', '--offline', '--manifest-path', manifest])
@@ -56,7 +60,7 @@ def main():
         if finding.get('status') != 'closed':
             print(f'OPEN {finding["severity"]}: {finding["id"]}; rerun success is not a fix.')
     if args.release:
-        print('RELEASE GATES PASSED: All 16 chapters, 2 executable projects, 550 source ledger records, and 2 independent audit rounds verified.')
+        print('RELEASE GATES PASSED: All 17 chapters, 3 executable projects, the source ledger, and 2 independent audit rounds verified.')
     else:
         print('Incremental preview passed.')
     return 0

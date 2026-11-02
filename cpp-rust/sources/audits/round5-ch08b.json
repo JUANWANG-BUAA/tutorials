@@ -1,0 +1,92 @@
+{
+  "reviewer": "r5-ch08b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动读完 src/part2/ch08.md 的 8.7–8.11 全部正文与语义盒（含 8.7 的 14 个子节、例 8.7.1/8.8.1、思考 8.7.1/8.8.1、errata、即时自测），并逐条回查 bench/src/bin/future_allocation.rs、bench/examples/future_layout.rs、bench/src/lib.rs、bench/results/local/future-allocation.txt、future-allocation-drift.txt、future-allocation.s、future-layout.txt/.mir、src/appendix/coverage.md、src/part1/ch01.md、src/part3/ch09.md，统计量全部用 python 从原始样本重算而非抄正文。",
+  "sources": [],
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对结论：这一节的测量类断言全部能在磁盘证据上复算命中，没有编造数字。①最终表 8.241/0.306/8.183/8.953 与 19.817/0.465/19.682/20.969 我从 future-allocation.txt 的 21 个原始批均值自己重算：stack mean=8.241368、stdev(N-1)=0.305777、排序中位数=8.183、nearest-rank p99(ceil(21*0.99)=21)=最大值 8.953；box mean=19.817084、sd=0.464558、p50=19.682、p99=20.969，逐位相同。②11.6 ns 的差（8.7.13）复算 19.817-8.241=11.576≈11.6 成立，且正文只把它写作「本次测量的分配路径成本」，未称 Pin 开销，口径正确。③漂移日志的每个数都能对上：stack 样本0=13.3525→样本20=7.885、box 样本0=37.604→18.711、box 样本1=40.2225 确为全表最大值、stack 样本3=17.5596，正文写的 13.35/7.89/37.60/18.71/40.22/17.56 全部命中；「21 个样本」=samples=21。④代码断言逐行对上源文件：ready(payload:[u8;256])、#[inline(never)] drive、两个分支的 Box::pin/pin! 与 black_box 写法、Waker::noop、assert_eq!(sum, iters*7)（payload 为 [7u8;256] 所以每轮值恰为 7）、500ms 交替预热后进入 21 轮正式采样、future_size 由 size_of_val(&ready([7;256])) 打印为 257；复现命令的 --bin future-allocation 与文件 future_allocation.rs 对应；「没有替换jemalloc」经全局 grep 确认 bench 内无 global_allocator，汇编走 __rust_alloc 默认系统分配器。⑤8.7.10/8.7.11 的汇编断言我逐条在 .s 里找到：第 2044-2046 行 `mov w0,#257`+`mov w1,#1`+`bl __rust_alloc`、2048 `cbz x0` 落到 handle_alloc_error、随后 ldp/stur 成组填充并有 `strb wzr,[x0]` 初始化状态、2090 `bl drive<...ready::async_fn_env#0>`、2098-2100 `mov w1,#257`+`mov w2,#1`+`bl __rust_dealloc`；drive 函数体内第 19 行 `ldrb w8,[x0]`（读状态）、22 行 `ldrb w8,[x0,#1]`（载荷起于偏移1，与 257=1+256 相互印证）、34-35 行 `mov w9,#1`+`strb w9,[x0]`（记完成）、37 行 `mov x0,x8` 返回；栈分支第 2183 行同样 bl drive 且 batch 内无对应 alloc/free 对，与正文一致。缩写 drive_ready_future/allocated_pointer 在 1532 与 1555-1557 已公开声明为改写、不冒充逐字反汇编，诚实。遗留两点表述问题记为 P2：8.7.7 表格直接印「批次p50/批次p99」而未像 8.6 那样交代 nearest-rank 定义或指向 def-1.5.2；例 8.7.1 把第 1 章的说法写成「列为禁忌」，而 ch01 全文没有「禁忌」一词。",
+      "evidence": [
+        "bench/results/local/future-allocation.txt:41-42 与我的 python 重算：stack mean=8.241368 sd=0.305777 p50=8.183 nearest-rank p99=8.953；box mean=19.817084 sd=0.464558 p50=19.682 p99=20.969",
+        "bench/results/local/future-allocation-drift.txt:stack s0=13.352500/s3=17.559590/s20=7.885420，box s0=37.603750/s1=40.222500(最大值)/s20=18.710830；正文 src/part2/ch08.md:1435-1436,1446",
+        "bench/src/bin/future_allocation.rs:10-20,23,27-38,55,59-62（drive inline(never)、Waker::noop、assert_eq!(sum,iters*7)、size_of_val=257、500ms 交替预热、21 样本）",
+        "bench/src/lib.rs:33-47 与 :55-61（ns_per_op=elapsed*1e9/ops；summarize 用 N-1 标准差与 nearest-rank 分位数，测试断言 p99([4,1,3,2])=4.0）",
+        "bench/results/local/future-allocation.s:2044-2048,2090,2098-2100（__rust_alloc w0=257/w1=1、cbz、bl drive、__rust_dealloc w1=257/w2=1）与 :19,22,34-35,37（ldrb [x0]、ldrb [x0,#1]、mov w9,#1/strb w9,[x0]、mov x0,x8）",
+        "bench/results/local/future-allocation.s:2183（栈分支同调 drive）；全库 grep 'global_allocator|jemalloc|mimalloc' 在 bench 内无命中，佐证 8.7.6 的默认分配器说法",
+        "19.817-8.241=11.576≈11.6（src/part2/ch08.md:1606）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对结论：8.8 唯一的「跑过」类断言是 8.8.2 的析构探针输出，它确实落地且被断言保护，不是编造。bench/examples/future_layout.rs:11-20 定义 Guard(Arc<AtomicUsize>) 与 drop 时 fetch_add、cancellation_probe 在 pending().await 前构造 _guard；:50-57 先在首次 poll 之前 drop 后 assert_eq!(dropped,0)，再 pin! 起来用 Waker::noop 断言返回 Pending、离开作用域后 assert_eq!(dropped,1)，最后 :58 打印那句文本——打印串是常量，但两个计数都由 assert_eq! 实测保证，输出与归档一致：bench/results/local/future-layout.txt:3 逐字为「drop before first poll: 0 guards; drop after Pending: 1 guard」。例 8.8.1 的解释与代码事实相符（首次销毁时状态机停在初始态、Guard 从未构造；Pending 后 Guard 作为跨挂起字段存在于帧里，见 .mir 的 field _s0: Guard），其「若第二次也是 0 先查两点」也是可核的调试建议而非编造数字。正文把探针明确定性为「可复现的状态检查，不是基准测试」，与 8.10 第 8 条、errata E-b 口径一致，没有把析构次数当性能指标。8.8.4 的「Ready 之后不应再被 poll，但 poll 是安全方法、合法调用不能被用来引入 UB」与 8.9 台账登记的 std::future::Future「Runtime characteristics：完成后不重poll」相符；8.8.5 关于 Waker 数据指针/函数表属当前进程、Arc 不提供跨进程生命期，以及 8.8.6 的双路管道背压、取消分层、日志截断记账，均为不依赖数字的接口论证，未见与代码或归档冲突之处。8.8.7 表无量化断言。思考 8.8.1 指向「第 15 章按项验收」经核实成立：src/part4/ch15.md:1 标题即「15 项目一：有界agent工具runtime的资源与取消协议」。本节未发现 P0/P1/P2。",
+      "evidence": [
+        "bench/examples/future_layout.rs:11-20,50-58（AtomicUsize 计数 + assert_eq!(…,0) 与 assert_eq!(…,1) + 打印）",
+        "bench/results/local/future-layout.txt:3 逐字匹配 src/part2/ch08.md:1691 引用的输出",
+        "bench/results/local/future-layout.mir:39 `field _s0: Guard;` 与 :70 `debug _guard => …variant#3).0: Guard`（Guard 确为跨挂起帧字段）",
+        "src/part4/ch15.md:1 章标题（think-8.8.1 的跨章指向成立）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对结论：来源表 8 行里 7 行能在 src/appendix/coverage.md 逐行台账对上同一页码，落点声明与页码没有造假——异步函数 PDF75（coverage.md:45 S10/REF-ASYNC-FN PDF75）、async块 PDF166–168（:46 S10/REF-ASYNC-BLOCK）、await表达式 PDF215–216（:47 S10/REF-AWAIT，台账题作「等待表达式」为同名异译）、MIR borrow check/moves PDF277–279（:48 S09/DEV-MOVE）、Monomorphization/lowering PDF319–321（:49 S09/DEV-MONO）、std::future::Future 与 std::task::Wake 的「在线1.99.1」（:51-52）。Effective Rust 第17条那行的页码也落得了地：正文写 PDF146–160，台账把它拆成 S08/R17-A PDF146–155（:39）与 S08/R17-B PDF156–160（:40），并集正好是 146–160，故不构成 P0/P1 的「引用无法落地」；但这两行的核读映射列都指向 part2/ch07.md（2.7.3、2.7.8），台账里不存在任何把第17条映射到 ch08 的行（:391 的 S08/SRC-S08-022 第17条 PDF146 同样映射到 ch07），而正文「本书落点」写成 8.4、8.8，属跨节口径不一致，记 P2。另核对两个易被忽略的外链与说法：行内链接 ../part3/ch09.md#sec-cpp-rust.3.9.2 的锚点真实存在（src/part3/ch09.md 的「## 9.2 并发 wake、重复入队与取消边界 {#sec-cpp-rust.3.9.2}」），正文标作「9.2.3」而锚点是 9.2 节级锚点，链接可解析、只算表述松散；「rCore 第 3 章的任务切换要保存 ra 与 s0~s11 并换栈」与 ch09:375 及台账 ch09:1531 登记的母本定位 chapter3/2task-switching.html「TaskContext 保存 ra/s0~s11 与内核 sp」一致，没有改动原文；「Reference 是本地旧译版、以保存的 MIR 与运行日志为准」与台账的核读状态描述不冲突。std 链接两条为 doc.rust-lang.org 官方地址，格式正确。",
+      "evidence": [
+        "src/appendix/coverage.md:45,46,47,48,49,51,52（PDF75 / PDF166–168 / PDF215–216 / PDF277–279 / PDF319–321 / 在线1.99.1 两条，逐字对上 8.9 表）",
+        "src/appendix/coverage.md:39-40（S08/R17-A PDF146–155、S08/R17-B PDF156–160，映射均为 part2/ch07.md）与 :391，对照 src/part2/ch08.md:1817「落点 8.4、8.8」",
+        "src/part3/ch09.md 的 {#sec-cpp-rust.3.9.2} 标题存在；src/part3/ch09.md:375 与 :1531（rCore chapter3/2task-switching.html 保存 ra、s0~s11、sp）",
+        "src/appendix/coverage.md:25-26（S08 Effective Rust.pdf 261页、S09 Guide to Rustc Development.pdf 368页，PDF 页码范围在物理页数内）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对结论：这一节是全章错误索引，正文明确声明「十二条」并列出 1–12 条，条数与自身陈述相符，且逐条与前面各节的事实一致、没有越界给出新数字：第1条对应 8.1 的构造/提交/完成三时点；第2条对应 8.2「一次 poll 可穿过多个已就绪 await」；第3条与 def-8.3.2 的「Pin 与栈/堆正交」一致；第4条要求核对 MIR 与 size_of_val，正是 future_layout.rs:55 与 :38-44 实际做法；第5、6条与 8.5 驱动器及 bench/src/park.rs 的通知位/嵌套拒绝一致；第7条 noop Waker 只适用于恒 Ready，与 future_allocation.rs:23 的用法和 8.7.2 的告诫一致；第8条取消不回滚对应 def-8.8.1；第9条区分 Future 的 Send 与 Waker 的 Send 为两回事，属正确的接口表述；第10条「Box 差值不能记在 Pin 名下」与 def-8.7.1 及我复算的表口径一致；第11条保留漂移批次对应 future-allocation-drift.txt 确实留档；第12条 await 不异步化阻塞对应 8.8.3。全节未把任何未落地的实测当结论，也未与代码事实相反。本节未发现 P0/P1/P2。",
+      "evidence": [
+        "src/part2/ch08.md:1832「十二条」与 :1834-1856 实际 12 条编号（计数自证）",
+        "与 src/part2/ch08.md:1481-1488（def-8.7.1+最终表）、:1678-1680（def-8.8.1）、:545/561（4097 vs 2 帧差）、bench/results/local/future-allocation-drift.txt 的留档事实逐条对齐",
+        "bench/examples/future_layout.rs:37-44（size_of_val/align_of_val）与 bench/src/park.rs:13（nested_call_is_rejected_and_guard_recovers，见 bench/results/local/tests.txt:13）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对结论：小结、速查表、出口检查与章末件指针全部能落地。①小结七条只复用已核过的数字：7.407（future-allocation 之外，来自 8.6 的 async-self-wake 行 ch08.md:1208，正文 :1201 已交代它是 21 个批均值/元素的吞吐型聚合，不是单次 poll 延迟）、8.241 与 19.817（我从原始样本重算命中），且都按 def-8.6.1/def-8.7.1 的口径命名，没有把它们升格成切换延迟或 Pin 固定开销。②速查表 12 行的「详细位置」全部指向本章真实存在的 def/ex 锚点，我用脚本把 8.7–8.11 出现的 40 余个 [@…] 引用与全书 {#id} 集合做了闭合检查：missing refs 为空、内部锚点无悬空。③出口检查的三项硬指标可核：「解释未poll时Guard计数为0」由 future_layout.rs:51-53 的 assert 与 future-layout.txt:3 支撑；「找到Suspend0及Guard存储」由 future-layout.mir 的 Suspend0（3 处）与 :39 `field _s0: Guard;` 支撑；「解释4097与2的差异」由 future-layout.txt:1-2 的 across_await size=4097 / before_await size=2 支撑。④最低复现组合四条命令与磁盘对象一一对应：bench/src/bin/future_allocation.rs、async_poll.rs 存在，bench/examples/future_layout.rs 存在，参数 100000 21 与 main() 的 iters/samples 解析一致；:1928「读者不必得到完全一致的纳秒值，但必须解释计时对象、预热、样本分母」与 8.7.5 未锁核未控温的自我限定相符，不夸大可复现性。⑤章末件五页 ch08_summary/recall/exercises/exam/checklist 全部实际存在于 src/part2/。即时自测三问的答案（poll 内循环不会自动让出、删掉 wake_by_ref 后驱动器不应忙轮询、栈上更快不能推出禁止 Box）与 8.4/8.5/8.7 的正文和 bench/src/park.rs 的实现一致。本节未发现 P0/P1/P2。",
+      "evidence": [
+        "python 闭合检查：8.7–8.11 内全部 [@def-*]/[@ex-*]/[@think-*] 引用与全书 {#id} 集合比对，missing refs=[]、missing internal anchors=[]",
+        "bench/results/local/future-layout.txt:1-3（across_await size=4097 align=1 / before_await size=2 align=1 / guard 输出）与 future-layout.mir 的 Suspend0×3、:39 field _s0: Guard",
+        "src/part2/ch08.md:1201,1208（7.407 的批均值/元素定义与数值行）对照 :1867,1883 的小结与速查表述",
+        "文件存在性：bench/src/bin/{future_allocation.rs,async_poll.rs}、bench/examples/future_layout.rs、src/part2/ch08_{summary,recall,exercises,exam,checklist}.md 均在盘上（ls 实测）"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "severity": "P2",
+      "description": "延伸阅读表把 Effective Rust 第17条的「本书落点」写成 8.4、8.8，但来源台账里没有第17条映射到第 8 章的任何一行：该条在台账中被拆成 S08/R17-A（PDF146–155）与 S08/R17-B（PDF156–160），两者的核读映射列都指向 part2/ch07.md#sec-cpp-rust.2.7.3 与 #sec-cpp-rust.2.7.8；另有一行 S08/SRC-S08-022「第 17 条：对共享状态的并行性保持警惕|PDF 146」同样映射 ch07 2.7.1。页码本身能落地（146–160 = 台账两行之并集），所以不是 P0/P1，但「落点」列与台账不一致，读者按台账回查会以为本章并未使用该条。修法二选一：在 coverage.md 为 R17-A/R17-B 补上 ch08 的映射，或把该行落点改为 7.3、7.8 并在 8.4/8.8 正文里给出真正引用它的位置。",
+      "evidence": "src/appendix/coverage.md:39（S08/R17-A|第17条 数据竞争、Mutex与共享生命周期|PDF146–155|核读映射|part2/ch07.md#sec-cpp-rust.2.7.3）、:40（S08/R17-B|PDF156–160|part2/ch07.md#sec-cpp-rust.2.7.8）、:391；对照 src/part2/ch08.md:1817「Effective Rust | 第17条共享状态 | PDF146–160 | 已核读交叉 | 8.4、8.8」"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P2",
+      "description": "8.7.7 最终表直接把两列命名为「批次p50」「批次p99」，但本节没有像 8.6 那样交代分位数定义或指向 [@def-1.5.2]：我复算确认 def-1.5.2 的 nearest-rank 规则下 ceil(21×0.99)=21 即取最大值，故 stack 的 8.953 与 box 的 20.969 其实是 21 个批均值中的最大者，不是尾部请求延迟。对照本全书 8.6 表解释（ch08.md:1201）与即时自测第 2 题（:1352）都明说了这一点、附录术语表 glossary.md:17 也定义了 nearest-rank，唯独给出这批数的表没写。正文并未用 p99 下结论（结论只用均值），所以只算表述缺环：在表下补一句「p50/p99 为 21 个批均值的 nearest-rank 分位数（[@def-1.5.2]），N=21 时 p99 即最大值」即可。",
+      "evidence": "重算输出：stack sorted 21 值 max=8.953、nearest-rank p99(ceil(21*0.99)=21)=8.953、p50=8.183；box max=20.969、p99=20.969、p50=19.682（源数据 bench/results/local/future-allocation.txt:4-40，表见 src/part2/ch08.md:1485-1488）；定义见 src/part1/ch01.md:910-912 与 src/appendix/glossary.md:17，已在用的对照写法见 src/part2/ch08.md:1201,1352"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P2",
+      "description": "例 8.7.1 的解答写「对照第 1 章把选择偏差列为禁忌[@def-1.7.3]」，但对第 1 章做过全文检索：ch01.md 里「禁忌」一词出现 0 次，def-1.7.3 的标题是「探索性实验与确认性实验」，其正文只把「根据结果不断调整输入、再用同一批数据下结论」称作选择偏差，真正带强制语气的清单是 def-1.1.3 里那个「否定（命中任意一条就要警惕）」框。引用的锚点解析正确、结论方向也没错（保留漂移批次属于反选择偏差的证据纪律），但「列为禁忌」是替第 1 章安了一个它自己没用过的分类，属跨章转述精度问题。建议改成「第 1 章把选择偏差列为要警惕的否定项（[@def-1.7.3]，并见 [@def-1.1.3] 的检查顺序）」。",
+      "evidence": "grep -n '禁忌' src/part1/ch01.md 无输出；src/part1/ch01.md:1327「定义 1.7.3 · 探索性实验与确认性实验 {#def-1.7.3}」、:1333 附近「……也是选择偏差」、:166-168 的「否定（命中任意一条就要警惕）」清单；被转述处 src/part2/ch08.md:1450"
+    }
+  ]
+}

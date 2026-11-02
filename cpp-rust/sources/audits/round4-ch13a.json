@@ -1,0 +1,86 @@
+{
+  "reviewer": "r4-ch13a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动完整通读 src/part4/ch13.md 第 70–1380 行（13.1–13.6 全部正文与每个语义盒），并用 /usr/bin/python3 从 bench/evidence-lab/results/run-01 的 cpu-wait.txt、instrumentation.txt、cpu.folded、wait.folded、sample-cpu.txt、sample-wait.txt、sample-*-command.txt、profile-*-run.txt、feature-default.txt 逐条复算，另打开 src/lib.rs、src/bin/cpu_wait.rs、src/bin/instrumentation.rs、tools/measure.sh、tools/collapse_sample.py、bench/evidence-lab/README.md 核对代码与归档断言，并跑 tools/list_uncollected_claims.py 对照磁盘产物。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "13.1 全部是方法论与定义盒，唯一可核数字断言是 13.1.5 的「21 批计时与另行采样分离、采样运行不进计时统计」与「1446/1648 属另一份证据」：cpu-wait.txt 的 21 条 raw 与 run-01 的 profile-*-run.txt、sample-*.txt 确为不同文件（不同运行），wait.folded 根 1648、经 sleep 1446（sample-wait.txt:30）复算一致。未发现与磁盘相反的事实。唯一瑕疵是 13.1.5 引用了不存在的「13.5.7」编号（记入 13.5 的 P2）。未核：图 13-1 的 SVG 版面与 @def-1.x 跨章锚点解析（机械层职责）。",
+      "evidence": [
+        "bench/evidence-lab/results/run-01/cpu-wait.txt:1（unit=batch_ms;steps=1000000;checksum=14437947664662268765）",
+        "复算：wait.folded 根=1648，sample-wait.txt:30 有 1446 经 main→sleep",
+        "profile-cpu-run.txt 与 cpu-wait.txt 为独立文件，证实计时/采样两次运行"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "自检数字全部复算：cpu.folded 两个叶子 1082+616=1698 正好等于根（正文「二者相加正好等于 1698」成立）；例 13.2.1 的 1698+1082+616=3396、1082/3396≈32%、以及被否定的「mix 消耗 64%」按 1082/1698=63.7% 读都算对。13.2.4 布局表三行均有归档来源：Event 16/8 在 instrumentation.txt:68，Vec_u8 24/8 与 slice_u8 16/8 在 feature-default.txt:24-25（由 src/bin/feature_work.rs:32-38 打印），「本轮可运行程序的布局输出」的说法成立。13.2.3「sample 保留修饰符号」与 folded 中 _RNvCs…_12evidence_lab 的 mangled 名一致。「本轮没有采集核心周期」经全盘检索证实（无任何 perf/cycle 产物），没有写反。「间隔1ms、请求2秒、根计数小于2000」与 sample-cpu-command.txt 一致。未核：binary-sha256.txt/source-sha256.txt 内容本身（仅确认存在，13.8.5 不在我范围）。",
+      "evidence": [
+        "复算 cpu.folded：{'mix':1082,'compute':616}，根 1698",
+        "bench/evidence-lab/results/run-01/instrumentation.txt:68 layout,Event,size=16,align=8",
+        "bench/evidence-lab/results/run-01/feature-default.txt:24-25 layout,Vec_u8,size=24 / slice_u8,size=16"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节自称「没有本机执行记录」：我做了反向核查——在 bench/ 全盘（排除 target/builds）按文件名与文件内容搜 perf/cachegrind/callgrind/valgrind/cycle，零命中；README.md:101 同口径声明「本轮没有PGO、Linux perf、硬件PMU、Cachegrind…」。因此「本节没有采集核心周期/任何硬件事件」「13.5 与 13.6 的表里没有任何 cycle 列」两句与磁盘一致，不存在把已采集写成未采集的「写反」；13.5/13.6 表头确无 cycle/IPC/miss 列，正文核对属实。缩放公式 估计总数=实际计数×time_enabled/time_running 与 perf_event_open 语义一致，属外部文档复述，未逐字对引文母本（本节未引用具体书页原文）。例 13.3.1/13.3.2/思考 13.3.1 均为推理形状示例，自称未采集，无数字可对核。",
+      "evidence": [
+        "检索：find bench -name '*grind*'/'*perf*' 零命中；grep -i cachegrind 仅命中 README.md:101 与正文的「没有执行」句",
+        "src/part4/ch13.md:1009-1012、1258-1262 两张表确无 cycle/IPC/miss 列"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "13.4.3 折叠表逐格复算：CPU 行根 1698、叶子路径 2、mix 1082/compute 616；waiting 行根 1648、叶子路径 5（__semwait_signal 1443、mix 181、compute 21、cerror_nocancel 2、mach_msg2_trap 1，和恰为 1648），与正文及例 13.4.1 解答「总数仍应与 1648 一致」全部吻合。权重定义「叶子 exclusive 观察数」与 tools/collapse_sample.py 的存在及 folded 形状一致。「本轮没有运行 stackcollapse-perf、没有 perf.data」经磁盘核查成立。例 13.4.2 的 35%→58% 是构造例，非实测，正文已如此标记。未核：flamegraph 绘图输入的可复现性（未重跑 collapse 脚本）；「1446 vs 1443 层级」仅抽查 sample-wait.txt 行 30-31。",
+      "evidence": [
+        "复算 wait.folded：nleaf=5，{'__semwait_signal':1443,'mix':181,'compute':21,'cerror_nocancel':2,'mach_msg2_trap':1}，总 1648",
+        "bench/evidence-lab/tools/collapse_sample.py 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "13.5 的实测数字我全部从 cpu-wait.txt 原始行重算：cpu mean=2.506964、N-1 sd=0.082729、wait mean=46.442020、sd=1.459728、共同 checksum=14437947664662268765、n=21、requested_sleep_ms=40 均与表一致；入口代码清单与 src/bin/cpu_wait.rs 逐行一致（STEPS=1_000_000、40ms sleep、(round+offset)%2 轮转、--profile 分支提前 return 故采样循环不含 21 批打印），warm 确为 ≥500ms（lib.rs:103-105），measure.sh:46-49 确为「后台跑 --profile、sleep 0.3、sample $PID 2 1」，sample-*-command.txt 证实「2 秒、1ms 间隔、两次 PID 不同（92109/92127，未并行）」。「wait 均值 46.44 大于 cpu+40=42.5」成立且解读正确。p50/p99 数值与归档 summary 行逐字一致（p99=各列最大值为 nearest_rank 口径，lib.rs:97-99），但本节表格未交代分位数定义，见 P2-1；另有悬空编号引用，见 P2-2。未核：summary 行的 sd 是否贝塞尔法之外另有修正（我按 statistics.stdev 复算已吻合）。",
+      "evidence": [
+        "复算 raw 行：cpu n=21 mean=2.506964 sd=0.082729；wait n=21 mean=46.442020 sd=1.459728（与 summary,cpu / summary,wait 行完全一致）",
+        "bench/evidence-lab/src/bin/cpu_wait.rs:5-51 与正文清单一致；tools/measure.sh:46-49 与采样命令一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "从 instrumentation.txt 原始行重算三模式：none mean=2.472857/sd=0.094581、batch 2.470040/0.079995、each 32.832639/0.608977，checksum=188478885453998054，none 计数 0、batch/each 计数 200000，全部与表格及正文断言一致；派生量复核：32.832639/2.472857=13.28≈「约 13.3 倍」，2.472857-2.470040=0.002817、占比 0.1139%≈「约 0.11%」且确小于两列 sd。观测核心与入口清单逐行对 lib.rs:49-62、src/bin/instrumentation.rs 一致（含「实际库内写作 value = mix(value)」的差异声明、(round+offset)%3 轮转、size_of/align_of 打印）；13.6.7 两个测试名真实存在于 src/lib.rs:130、159。「各成分分项耗时没有采集」「没有跨线程共享计数观测」与磁盘一致。未核：report 的 p50/p99 定义在 13.7.3（我范围外），本节因正文点名了 [@def-13.7.3] 视为已交代口径。",
+      "evidence": [
+        "复算：summary,none,batch,each 三行与正文表格逐字一致；nearest_rank p99 与 raw 最大值吻合",
+        "bench/evidence-lab/src/lib.rs:130,159 两个测试函数存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "severity": "P2",
+      "description": "「本轮实测」表直接使用「批p50/批p99」两列，但 13.5 节内没有交代分位数定义（最近秩、向上取整），直到 13.7.3 才给出该口径；对照 13.6 的同一张口径表格在正文点名了 [@def-13.7.3]，13.5 只引了批次模型 [@def-1.2.2]。按模板这条可判 P1，我降为 P2，依据是：数值与归档 summary 行逐字吻合（cpu p99=2.782084 恰为 21 条 raw 的最大值、wait p99=47.800375 亦为最大值，nearest_rank 口径成立，lib.rs:97-99 有实现与测试 small_sample_p99_is_maximum），且定义在同章后文真实存在，属指针缺失而非口径错误。修复建议：在 13.5「每case预热至少500ms」段后补一句「p50/p99 按最近秩定义，见 13.7.3」。",
+      "evidence": "复算 cpu-wait.txt raw 行：sorted 最大值 cpu=2.782084、wait=47.800375，与 summary p99 相同；src/part4/ch13.md:1003-1012 表格无分位数定义，ch13.md:1246 的 13.6 版本有"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "severity": "P2",
+      "description": "三处引用了不存在的子节编号：13.5.1 正文说「这条限制在 13.5.8 会反过来约束能说什么结论」（ch13.md:896）、13.1.5 说「13.5.7 的观察表里」（ch13.md:222）、例 13.4.2 解答说「见 13.5.6」（ch13.md:753）。当前 13.5 的编号子节只有 13.5.1–13.5.4，其后的「本轮实测/另行采样的实际命令/观察到的栈/不强求理想比例」四个标题未编号，读者按 13.5.6/13.5.7/13.5.8 找不到落点。数字与内容本身经核无误（指向的正是这些未编号小节），属版本编辑后遗留的悬空内部引用。",
+      "evidence": "src/part4/ch13.md:885-1059：13.5 内编号标题止于 '### 13.5.4 正式计时边界'，其后为无编号 '### 本轮实测' 等；机械层只验 [@id] 与链接，不验纯文本编号，故此类引用不在既有门禁覆盖内"
+    }
+  ]
+}

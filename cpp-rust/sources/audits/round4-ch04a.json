@@ -1,0 +1,118 @@
+{
+  "reviewer": "r4-ch04a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动全文读完 src/part1/ch04.md 第 62-1603 行（4.1-4.6 的正文与全部 def/ex/sol/think/method/errata/即时自测盒），再用三条 python 脚本把 bench/compiler-lab 的 environment.txt、extra-02 诊断与 layout.csv、stable-02 的 move_cost.csv/drop_paths.csv、codegen 的 .mir/.ll/.s、tests.txt 一次性抽出来复算与逐字比对；未抽样、未只读标题。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核了本节全部可对核断言。①4.1.5 的七个工具链数字逐字对着 bench/compiler-lab/results/stable-02/environment.txt：rustc 1.99.0、commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、host aarch64-apple-darwin、machdep.cpu.brand_string Apple M5 Pro、ProductVersion 27.0.1、hw.cachelinesize 128 全部命中；RUSTFLAGS=<unset> 支撑「没有设置 target-cpu=native」，profile 行 opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind 支撑 4.4.6 与 4.6 的构建口径。②例 4.1.1 的「Vec<u64> 句柄 24 字节、三个机器字」对 results/extra-02/layout.csv 的 Vec<u64>,24,8 成立，且与 4.6.3 尺寸表自洽（同一 24 字节两处口径一致）。③「不能因为第②层写着 move 就断言第③层多了一次 128KiB 复制」里的 128KiB 与 4.5 的 16384×8 字节=131072B=128KiB 复算一致。④E-a…E-f、四道即时自测题的答案只作教学表述，未发现与已核事实相抵。没核的：think-4.1.1 那句「本章没有采集对齐档位之间的对比」我只在本章范围内确认没有对齐对比表，跨章（第 1/5 章是否采集过）没查；定义 4.1.2 依赖图的每个箭头是否与 rustc-dev-guide 相符属文档层，本次没回查母本。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/environment.txt:5-22（rustc 1.99.0 / commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4 / LLVM version 23.1.1 / host aarch64-apple-darwin / Apple M5 Pro / hw.cachelinesize: 128 / ProductVersion 27.0.1 / profile opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind / RUSTFLAGS=<unset>）",
+        "复算 16384*8=131072 字节=128 KiB；bench/compiler-lab/results/extra-02/layout.csv:2（Vec<u64>,24,8）",
+        "src/part1/ch04.md:216-228、100、1245"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节的「证据缺口」叙述我全部核成：results/extra-02/nightly.txt 逐字写着「$ rustc +nightly -vV」+「error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'」，而 environment.txt:12-16 的 toolchain 列表确实含 nightly-aarch64-apple-darwin，所以 4.2.4「列出 nightly 名称但 -vV 失败、失败输出在 extra-02/nightly.txt」三句成立；extra.py:21 用 run(..., False) 记录这次预期失败，与正文「本轮没有修复全局工具链」口径一致，也确实没有 THIR/HIR 转储文件（find 过 codegen 目录只有 .ll/.mir/.s）。「本节没有采集本机 HIR/THIR 转储」= 真缺口，不是冒充。4.2.5 表格最后一行「不以 MIR 名字计栈大小」与 4.3.1 的定义不矛盾。判 finding 的唯一原因见 findings[]：两条 -Zunpretty 选项（母本的 hir-tree、当前开发指南的 thir-flat）在本节没有仓库内可定位的出处路径，我这个冷读者按正文顺不到原文——我没有判它假，只判它目前不可复核（正文其余处引用产物都会点名到 .txt/.csv 路径，此处不对称）。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/nightly.txt:1-4（missing manifest 原文）",
+        "bench/compiler-lab/results/stable-02/environment.txt:12-16（toolchain list 含 nightly-aarch64-apple-darwin）",
+        "bench/compiler-lab/extra.py:21",
+        "src/part1/ch04.md:403-419"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "两个「真正被拒绝的样例」逐字核过：probes/rejected/use_after_move.rs 与 probes/rejected/maybe_uninitialized.rs 的源码与正文代码块完全一致（含 black_box(true) 那行）；probes/rejected/expected.tsv 写明 use_after_move→E0382、maybe_uninitialized→E0381；results/extra-02/use_after_move.txt 内确有 error[E0382]、maybe_uninitialized.txt 内确有 error[E0381]；extra.py:26 的断言是 returncode!=0 and error in stderr，即「只检查非零退出与诊断码、从未运行该程序」，与 4.3.5、例 4.3.3 的表述一致，正文没有把编译期拒绝写成运行时补救。静态口径：例 4.3.2 的 E0381 结论、4.3.4 两个集合的合流规则（取交/取并）、即时自测第 1 题答案「必定初始化取交集、可能未初始化取并集」在逻辑上自洽且与 4.4 的 Conditional 衔接。定义 4.3.4 明写「是本章阅读产物的记法，不是 rustc 内部类型名字」，避免了把记法当 API，这点没问题。判 finding：正文给第一个输入点了文件路径，第二个输入只说「代码已在例 4.3.2 给出」，没点 probes/rejected/maybe_uninitialized.rs 也没点 results/extra-02/maybe_uninitialized.txt，读者按正文无法定位它「本轮实际编译」的证据（我是靠 find 目录才找到的）。",
+      "evidence": [
+        "bench/compiler-lab/probes/rejected/use_after_move.rs:1 与 ch04.md:625 逐字相同；probes/rejected/maybe_uninitialized.rs:1 与 ch04.md:605 逐字相同",
+        "bench/compiler-lab/probes/rejected/expected.tsv:1-3；results/extra-02/use_after_move.txt（error[E0382]）、results/extra-02/maybe_uninitialized.txt（error[E0381]）",
+        "bench/compiler-lab/extra.py:26"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这是本批最硬的一节，全部核成。①4.4.2 的 E0502 断言：probes/rejected/alias_conflict.rs 与正文代码块逐字相同，results/extra-02/alias_conflict.txt 内有 error[E0502]，expected.tsv:3 登记同码，故例 4.4.1 三问答得下。②4.4.5 的 MIR：归档 bench/compiler-lab/results/stable-lab.../stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 存在，我把正文 895-990 行的代码块与该文件里的 fn conditional_drop 做了归一化（去空白）逐字比较，长度均 1569 字符、判定 IDENTICAL，即「不是手写伪 MIR」成立。③正文对这段产物的五条解读逐条回查命中：bb0 的 _8 = const true、bb1 的 _8 = const false 后接 _5 = move _3 与 drop(_5) -> [return: bb7, unwind: bb3]、bb6 (cleanup) 的 switchInt(copy _8) -> [0: bb4, otherwise: bb5]、bb5 (cleanup) 的 drop(_3)、bb3 的 unwind terminate(cleanup)、debug first => _3 / debug second => _4 全在文件里，所以例 4.4.3 的①②③④四问答数与产物一致（_3=first、bb1 置 false、bb6 分流、bb9/bb11 正常边 drop(_4)、bb2 return）。④4.4.6「本轮 profile 使用 panic=unwind」对 environment.txt:20。⑤定义 4.4.2 四类与表格「Static/Dead/Conditional/Open 必须保留的行为」无内部矛盾；「flag 只是上界模型」的克制说法与 4.6.5 的产物核对方向一致。没核的：4.4.4 关于用户 Drop 类型不能部分移动、drop glue 先调用户 Drop 再递归字段这两条属语言/文档层，我只做了与语言常识一致的通读判定，没回 rustc-dev-guide 母本；unwind 边在真实 panic 运行时的行为本轮没有产物，正文也没声称有。",
+      "evidence": [
+        "src/part1/ch04.md:895-990 归一化后 == bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 的 fn conditional_drop（各 1569 字符，IDENTICAL）",
+        "MIR 片段命中：_8 = const true / _8 = const false / switchInt(copy _8) / bb5 (cleanup) / drop(_5) -> [return: bb7, unwind: bb3] / debug first => _3",
+        "bench/compiler-lab/results/extra-02/alias_conflict.txt（error[E0502]）；probes/rejected/alias_conflict.rs:1",
+        "bench/compiler-lab/results/stable-02/environment.txt:20（panic=unwind）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "计时数字全部复算命中，产物叙述有一处顺序精度问题。①我用 python 从正文点名的归档 results/stable-02/move_cost.csv 自己复算（42 行批次数据 = 2 case × 21 轮，非抄表）：borrow mean=0.059091466、N-1 sd=0.001232534、sorted[10]=0.058639890、sorted[20]=0.063337811；clone mean=0.202739443、sd=0.006948621、sorted[10]=0.201626642、sorted[20]=0.225701849，与 4.5.4 表内八个数完全一致；差 0.143648、比值 3.4309 支撑例 4.5.2 的「0.143648」与「约 3.43」。②单位口径核成：lib.rs 的 measure 里 value=elapsed/(n*units)，units=input.len()=16384，故 ns/输入元素 成立；计时循环先取 elapsed 再 assert checksum，支撑 4.5.3 表「每轮聚合校验：时间戳之后」；校准 while 循环在计时前，支撑「创建原始输入不在批计时内」。③4.5.2 两段代码与 src/bin/move_cost.rs、src/lib.rs:59-66（borrowed_sum/cloned_sum，含 #[inline(never)] 与 black_box(input.to_vec())）逐字相同。④4.5.5 产物核验我逐项回查归档：同一 .ll 的 cloned_sum 体内确有 @__rust_alloc、@llvm.memcpy.p0.p0.i64、@__rust_dealloc 与对 borrowed_sum 的调用；.s 里 __RNvCs...cloned_sum 的符号范围（第 3210-3318 行）内含唯一一条 bl _memcpy（第 3253 行），另五条 memcpy 属 slice sort 例程——即「按符号归属确认」这一步成立，正是本节思考框要求的强度；borrowed_sum 符号体（3656-3733 行）无 memcpy、有 add.2d 向量加与 LL 侧 @llvm.vector.reduce.add.v2i64，故「向量加法归约」有产物。判 finding 的原因见 findings[]：正文用「随后有 llvm.memcpy。计算之后保留 deallocator 调用」叙述顺序，而我按行序抽出的 .ll 是 alloc→borrowed_sum 调用→memcpy→dealloc，「随后」这一步与归档行序不符（我没展开基本块归属，故只按表述精度记 P2）。没核的：例 4.5.1 关于[@def-1.2.2]「批均值」的定义细节在第 1 章母本，我没回查；4.5.6「没有测其它输入长度/跨线程/NUMA」我只在本章产物清单里确认（results/stable-02 只有 move_cost/drop_paths/vectorize/dispatch/ctfe 几份 CSV），跨章是否采集过没查。",
+      "evidence": [
+        "复算自 bench/compiler-lab/results/stable-02/move_cost.csv（42 数据行）：0.059091466/0.001232534/0.058639890/0.063337811 与 0.202739443/0.006948621/0.201626642/0.225701849；diff=0.143648, ratio=3.4309",
+        "bench/compiler-lab/src/lib.rs:14-58（units=16384、value=elapsed/(n*units)、elapsed 早于 checksum 断言、21 轮、values[10]/values[20]）",
+        "bench/compiler-lab/src/bin/move_cost.rs:1-20 与 ch04.md:1126-1146 逐字相同；src/lib.rs:59-66 与 ch04.md:1154-1163 逐字相同",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll：cloned_sum 体内 @__rust_alloc / @llvm.memcpy.p0.p0.i64 / @__rust_dealloc / 调用 borrowed_sum；.s 第 3210-3318 行（cloned_sum）内第 3253 行 bl _memcpy；borrowed_sum 第 3656-3733 行含 add.2d、无 memcpy"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "尺寸与计时都复算命中，一处内部数字矛盾。①4.6.3 尺寸表五行逐行对 bench/compiler-lab/results/extra-02/layout.csv：DropProbe 8/8、Option<DropProbe> 8/8、Vec<u64> 24/8、&[u64] 16/8、Option<&u64> 8/8 全部命中（探针由 extra.py:33-35 用 rustc --edition=2024 probes/layout.rs 构建并运行，layout.csv 保留原始输出），所以定义 4.6.2 的 niche 说法与「Option 没增加本轮守卫的对象尺寸」有磁盘依据；静态复算 &[u64]=16（指针+长度）、Vec<u64>=24（指针+长度+容量）也自洽。②4.6.4 四行八个数从 results/stable-02/drop_paths.csv 复算完全一致：implicit mean=2.372295921 sd=0.098043539 sorted[10]=2.354228506 sorted[20]=2.757235226；option mean=2.587951301 sd=0.246970209 sorted[10]=2.669364888 sorted[20]=2.980856071；均值差 0.215655→正文「约 0.216」正确；21 批（42 行）与例 4.6.3「21 批之间」「保留了每个 case 的 21 个原始批次行」一致；「没有计算 p 值、没有报区间」经查归档里确无配对区间产物。③代码核对：src/bin/drop_paths.rs 与 ch04.md:1390-1415 逐字相同（含 for i in 0..4096、expected: 8192、measure(&mut cases, 4096)）；src/lib.rs:72-87 的 DropProbe/conditional_drop 与正文代码块相同；8192=4096×2 复算成立且 units=4096 使「mean ns/逻辑调用」口径正确。④4.6.5 的控制流断言有产物：同一 .ll 里 option_drop 体内确有 %first.sroa.0.0 = phi ptr [null, %bb8], [%count, %start] 与 icmp eq ptr ..., null（值名带 sroa 说明管道已跑过，称「优化后 IR」站得住），而 conditional_drop 体内 phi 与 icmp 均为 0，正对「implicit 的正常路径已按 flag 分开」「Option 版不合流就不判断」；.s 里 option_drop 3590-3655 行、conditional_drop 4101-4191 行均无 memcpy，支撑「不是额外分配了一个堆盒子」。⑤4.6.6「该测试本轮通过」对 results/stable-02/tests.txt:52「test panic_unwinds_initialized_guards ... ok」与 :56 的 8 passed; 0 failed。判 finding 见 findings[]：例 4.6.3 标题写「两倍的 sd」而同框正文与本行数字给出 2.5 倍（我复算 0.246970/0.098044=2.5190），属正文内部数字不一致；另有两条口径/可核性 P2。没核的：本节没核真实 DropProbe 计数是否在其他 case 里也成立（只信 tests.txt 的汇总行）；[@def-1.6.2]、[@def-1.7.1]、[@def-1.7.3]、[@ex-1.5.1]、[@def-1.5.2] 落在第 1 章母本，我按正文引用关系做了通读判定，没有逐条回第 1 章读定义原文。",
+      "evidence": [
+        "复算自 bench/compiler-lab/results/stable-02/drop_paths.csv（42 数据行，units=4096）：2.372295921/0.098043539/2.354228506/2.757235226 与 2.587951301/0.246970209/2.669364888/2.980856071；sd 比 = 0.246970209/0.098043539 = 2.5190；均值差 = 0.215655",
+        "bench/compiler-lab/results/extra-02/layout.csv:2-11（Vec<u64>,24,8 / &[u64],16,8 / Option<&u64>,8,8 / DropProbe,8,8 / Option<DropProbe>,8,8）",
+        "results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll：option_drop 内 phi[null,%bb8]/[%count,%start] 与 icmp eq ptr ..., null；conditional_drop 内 phi=0、icmp=0",
+        "bench/compiler-lab/src/bin/drop_paths.rs:1-25、src/lib.rs:72-95；results/stable-02/tests.txt:52,56"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "severity": "P1",
+      "description": "例 4.6.3 标题与同框正文对同一个量给出两个倍数：标题「0.216 ns 与两倍的 sd」，正文「option 的 sd（0.246970）约为 implicit（0.098044）的 2.5 倍」。我从归档 drop_paths.csv 复算：sd(implicit)=0.098043539、sd(option)=0.246970209，比值 2.5190，与 lib.rs 打印的 CSV summary 行一致。正文的 2.5 倍对，标题的「两倍」把波动差压低了近 25%，与同一段落自相矛盾（均值差 0.215655→「约 0.216」是对的）。",
+      "evidence": "src/part1/ch04.md:1484（标题）与 1486（正文 2.5 倍）；复算 0.246970209/0.098043539=2.5190；bench/compiler-lab/results/stable-02/drop_paths.csv 的 summary,implicit,.../summary,option,... 两行"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "severity": "P2",
+      "description": "4.6.4 的表列出「批 p50 / 批 p99」，本节既没交代分位数定义，也没有像 4.5.4 那样点名口径出处（4.5.4 写了「口径见[@def-1.2.2]与 4.8.3」）。真实现状：measure 排序后取 values[10] 作 p50、values[20] 作 p99，21 个批样本时 values[20] 就是最大值，我复算 option 的 p99=2.980856071 与该 case 的最大批值相同、implicit 的 2.757235226 也相同。定义其实写在章内 4.8.3（第 1972-1978 行，明写「21 个样本的 nearest-rank p99 等于最大样本」），但读者按 4.6.4 顺不到它，容易把「批 p99」读成百分位。属口径指引缺失，不是数字错误。",
+      "evidence": "src/part1/ch04.md:1473-1476（4.6.4 表）对照 1202-1204（4.5.4 有点名出处）与 1972-1978（4.8.3 定义）；bench/compiler-lab/src/lib.rs:53-58；复算 sorted[20] == max(drop_paths option 21 批)=2.980856071"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "severity": "P2",
+      "description": "4.6.6 只写「panic_unwinds_initialized_guards 测试……该测试本轮通过」，正文没给该测试的文件路径（tests/*.rs:行），也没点出承载「通过」结论的归档 results/stable-02/tests.txt。本节其余实测断言（尺寸、计时）都点了文件，读者只能按名字自行检索才能复核「本轮通过」。",
+      "evidence": "src/part1/ch04.md:1522-1542；bench/compiler-lab/results/stable-02/tests.txt:52（test panic_unwinds_initialized_guards ... ok）与 :56（8 passed; 0 failed）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "severity": "P2",
+      "description": "4.3.5 对第一个拒绝输入点了路径（「probes/rejected/use_after_move.rs 是本轮实际编译的输入」），对第二个只写「第二个输入测试条件初始化，代码已在[@ex-4.3.2]给出」。归档里它是 probes/rejected/maybe_uninitialized.rs，诊断在 results/extra-02/maybe_uninitialized.txt，登记在 probes/rejected/expected.tsv。我核到 E0381 确实成立，但按正文顺不到文件，两处的可复核强度不对称。",
+      "evidence": "src/part1/ch04.md:634；bench/compiler-lab/probes/rejected/maybe_uninitialized.rs:1、probes/rejected/expected.tsv:2、results/extra-02/maybe_uninitialized.txt（error[E0381]）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "severity": "P2",
+      "description": "4.5.5 用顺序词描述产物：「cloned_sum 的 LLVM IR 保留 allocator 调用。随后有 llvm.memcpy。计算之后保留 deallocator 调用。」三者存在性我全部核成；但我按行序抽出 .ll 里 cloned_sum 的关键指令是：@__rust_alloc → call @borrowed_sum → tail call @llvm.memcpy → @__rust_dealloc，「随后有 llvm.memcpy」和归档的行序不吻合（第三条「计算之后保留 deallocator」吻合）。我没展开基本块与控制流归属，因此不判它事实错，只建议要么写成不带顺序词的归属断言（「同一段 IR 里留存 alloc / memcpy / dealloc」），要么补一句它在哪块。",
+      "evidence": "src/part1/ch04.md:1236-1240；bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll 的 define @...cloned_sum 体内行序；对照 .s 第 3210-3318 行（cloned_sum 内唯一 bl _memcpy 在 3253 行）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "severity": "P2",
+      "description": "4.2.4 把两个 nightly 选项的出处写成「母本给出了 -Zunpretty=hir-tree」「当前开发指南给出了 -Zunpretty=thir-flat」，正文没有给仓库内可定位的母本路径或条目名，而本节的结论「本章对这两层的说明来自实际核读的指南」正建立在这两条之上。我作为冷读者在预算内没能从正文顺到原文，因此这两句目前不可复核（我没有判它假，只判它缺可定位出处；对照同节对 nightly.txt、RUSTC_BOOTSTRAP 边界都点了具体产物路径）。",
+      "evidence": "src/part1/ch04.md:403-419；bench/compiler-lab/results/extra-02/nightly.txt:1-4；bench/compiler-lab/extra.py:21"
+    }
+  ]
+}

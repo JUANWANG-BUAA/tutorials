@@ -1,0 +1,16 @@
+{
+  "reviewer": "round3-deep-D",
+  "kind": "independent",
+  "snapshot_sha256": "736b5dff696e475ff392d4054febefa8c206ec008e26c96bc28fd512419d8d56",
+  "provenance": "冷启动第3轮深审：只看仓库现状，专注测试与产物断言是否兑现",
+  "sections": [
+    {"anchor": "sec-cpp-rust.4.15.2", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []},
+    {"anchor": "sec-cpp-rust.4.15.6", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []},
+    {"anchor": "sec-cpp-rust.4.15.7", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []},
+    {"anchor": "sec-cpp-rust.4.16.1", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []},
+    {"anchor": "sec-cpp-rust.4.16.7", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []},
+    {"anchor": "sec-cpp-rust.4.16.8", "verdict": "pending", "method": "read", "notes": "待核。", "evidence": []}
+  ],
+  "findings": [],
+  "sources": []
+}

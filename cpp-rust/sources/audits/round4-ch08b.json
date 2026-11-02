@@ -1,0 +1,90 @@
+{
+  "reviewer": "r4-ch08b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动完整读了 src/part2/ch08.md 第 8.7–8.11 节全部正文与每个语义盒（含图注、例题、思考、errata、即时自测、8.9 来源表、8.10 十二条、8.11 小结/速查/出口检查/复现命令），并用 python 从 bench/results/local 的归档文件与 bench 源码逐条复算，未执行任何 cargo 构建或重跑。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "自称实测的数字全部回 bench 归档独立复算且全部对得上：8.7.7 表的 stack-pin 8.241/0.306/8.183/8.953 与 box-pin 19.817/0.465/19.682/20.969 我用 /usr/bin/python3 从 bench/results/local/future-allocation.txt 的 21 个逐样本值重算，mean=8.2414/sd=0.3058/median=8.1829 与 mean=19.8171/sd=0.4646/median=19.6817 完全吻合；p99 在 bench/src/lib.rs:24 的最近秩定义 rank(p)=sorted[ceil(p·n)-1] 下等于该序列最大值 8.95250→8.953 与 20.96917→20.969，也吻合。8.7.4 与 [@ex-8.7.1] 的漂移日志我逐样本重读 future-allocation-drift.txt 复核：stack 样本 0/1/2=13.35250/13.31125/13.21375（正文『约13.35』『前三个样本约13.3』成立），末样本 7.88542（7.89 成立）；box 样本 0=37.60375、末样本 18.71083（37.60→18.71 成立）；box 样本 1=40.22250 且确为 21 个 box 样本的最大值（『全表最大值』成立）；stack 样本 3=17.55959（『跳到17.56』成立）。单双边的独立结论：两条序列都确实不单边——stack 有 5 处上升（样本 3/7/8/12/18），box 有 4 处上升（样本 1/3/4/7），且 stack 的峰值 17.56 高于其起点 13.35，所以修订后的 [@ex-8.7.1] 措辞准确、无美化，但 8.7.4 段落本身仍读作单调下降（见 findings）。代码与归档断言也逐行对上：8.7.2/8.7.3 的两个代码块与 bench/src/bin/future_allocation.rs:10-38 一致（payload [u8;256]、Waker::noop、#[inline(never)]、black_box(future.as_mut())、assert_eq!(sum, iters*7)）；8.7.5 的 500ms 交替预热对应源码 58-61 行；8.7.6 的 257 字节来自日志头 future_size=257 与源码 size_of_val 打印；『没有替换 jemalloc』核对 bench/Cargo.toml 无 global_allocator/jemalloc/mimalloc。8.7.10 的汇编我逐条定位到 future-allocation.s 的真实行：2044 mov w0,#257 → 2045 mov w1,#1 → 2046 bl ___rust_alloc → 2050 cbz x0 → 2056-2080 多组 ldp/stur 把载荷写入 [x0,#1..#241] → 2079 strb wzr,[x0] → 2090 bl 单态化 drive → 2097-2100 mov x0,x20/mov w1,#257/mov w2,#1/bl ___rust_dealloc，『申请→填充→drive→释放』的控制流序列断言成立。8.7.11 表五条全部在该 .s 中真实存在且都落在 drive 符号（标签在 .s:4）内：ldrb w8,[x0]（19 行）、ldrb w8,[x0,#1]（22 行）、mov w9,#1 与 strb w9,[x0]（34/35 行相邻）、mov x0,x8（38 行）、w0=257/w1=1 的分配参数，『状态字节在前、载荷在后』被 strb wzr,[x0] 与 stur [x0,#1] 独立印证。我没核的：8.7.8 的 cargo rustc 命令我没有实际执行，target/ 目录下的当期产物与 .s 是否与归档一致未验证；8.7.5『仍未锁核、未控制温度』只按 environment.txt 无锁频记录判断，未做主动核查；8.7.13 的 11.6 ns 我只做算术核对（19.817−8.241=11.576）。",
+      "evidence": [
+        "bench/results/local/future-allocation.txt:1-46 复算 stack mean=8.2414 sd=0.3058 median=8.1829 max=8.95250；box mean=19.8171 sd=0.4646 median=19.6817 max=20.96917",
+        "bench/src/lib.rs:15-31（最近秩分位与 N-1 样本标准差）与 bench/src/lib.rs:55-59 测试 nearest_rank_and_sample_variance",
+        "bench/results/local/future-allocation-drift.txt:3-46 复算 stack 序列 13.35,13.31,13.21,17.56,17.55,15.23,12.88,12.94,13.45,12.12,12.05,10.99,11.09,10.30,10.17,9.43,9.16,8.70,8.71,8.46,7.89（上升位置 3/7/8/12/18）",
+        "bench/results/local/future-allocation-drift.txt box 序列 37.60,40.22,38.18,38.95,39.61,33.37,...,18.71（上升位置 1/3/4/7，argmax=样本1=40.22250）",
+        "bench/src/bin/future_allocation.rs:10-20,22-38,52-61,80-81 与 bench/results/local/future-allocation.s:4,19,22,34,35,38,2044-2046,2050,2056-2080,2090,2097-2100",
+        "bench/results/local/README.md（drift=早期只预热一批、不在最终批次内、不对应当前夹具）与 bench/results/local/environment.txt:2（rustc 1.99.0）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "唯一自称实测的数字是 8.8.2 的析构探针输出，我回磁盘逐字核对：字符串 drop before first poll: 0 guards; drop after Pending: 1 guard 原样存在于 bench/results/local/future-layout.txt:3，其打印点 bench/examples/future_layout.rs:58 之前有两条真实断言（:51 assert_eq!(dropped.load(...),0) 在只调用不 poll 的 drop 之后，:55 poll 得 Pending、:57 assert_eq!(...,1) 在 drop 之后），且 :50/:53 用 Arc::clone(&dropped) 共享同一计数器——与正文『两次构造/销毁路径』和 [@ex-8.8.1] 解答（0 与 1 的成因、以及『计数用的 AtomicUsize 是否与被测 Future 共享同一份』这一排查项）完全一致，不是编造。8.1 节引用的『8.8 用 AtomicUsize 实测到 0 与 1 两种计数』也因此落地。8.8.1 的取消安全定义、8.8.3 阻塞、8.8.4 的 Send/Ready 后不再 poll、8.8.5 跨进程 Waker、8.8.6 Agent runtime 约束、8.8.7 分层指标表都是机制与接口层面的规范性陈述，不含可实测数字，我按通读判定：与 8.4/8.5 的契约（[@def-8.4.1]、[@def-8.4.2]）和 8.1 的对象边界不矛盾，且都带限定语（『通常需要』『不能保证』），未见越界断言；8.8.7 表格明确写『需要测的指标』而非已测结果，符合本章『没有对应记录就写本节没有采集』的纪律。我没核的：8.8.4『Ready 之后不应再被 poll，合法调用不能被用来引入 UB』与 8.8.5『Arc 计数不提供进程间生命期』属 std 文档层面的语义，我未逐字打开在线 1.99.1 文档比对原文；8.8.6 与第 15 章验收的衔接、8.8.1 提到的 select! 分支行为也未回Tokio文档核对。",
+      "evidence": [
+        "bench/results/local/future-layout.txt:3 与 bench/examples/future_layout.rs:11-19,50-58（打印语句前有两个 assert_eq! 0/1 的真实断言）",
+        "src/part2/ch08.md:1691-1702（正文输出与解答）对 bench/examples/future_layout.rs:51,57 逐一成立"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "把 8.9 表的每一条与 src/appendix/coverage.md 的台账做了行级对照：REF-ASYNC-FN PDF75、REF-ASYNC-BLOCK PDF166–168、REF-AWAIT PDF215–216、DEV-MOVE PDF277–279、DEV-MONO PDF319–321、STD-FUTURE 与 STD-WAKE『在线1.99.1』都有对应核读映射行，且行内的 ch08 锚点与 8.9 声明的落点（8.1/8.2/8.3/8.4/8.5）一致；『在线1.99.1』与本机当前 rustc 1.99.1 相符，8.2『产物来自 rustc 1.99.0』与 environment.txt:2 相符，两者不是矛盾。唯一对不上的是 Effective Rust 第17条那一行（见 findings）。8.9 末段关于 rCore 第 3 章保存 ra 与 s0~s11 并换栈、以及『poll 返回不换栈不换页表不进内核』的对照，是全章最强的机制断言之一，指向 9.2.3，我没有打开 part3/ch09.md 复核该节是否存在同一表述，也未回 rCore 母本逐字比对原文——这一条我只做了通读判定，未落地核对，若需严格判级应由母本层或专门一轮回查。我没核的还包括：六个 PDF 页范围内的具体句子原文（我只核了页码台账与状态列，没有逐字比对引文），以及本章链接 doc.rust-lang.org 两条的当前可达性。",
+      "evidence": [
+        "src/appendix/coverage.md 行：|S10/REF-ASYNC-FN|...|PDF75|...ch08.md#sec-cpp-rust.2.8.1|、|S10/REF-ASYNC-BLOCK|...|PDF166–168|...2.8.3|、|S10/REF-AWAIT|...|PDF215–216|...2.8.4|、|S09/DEV-MOVE|...|PDF277–279|...2.8.2|、|S09/DEV-MONO|...|PDF319–321|...2.8.2|、|future/STD-FUTURE|...|在线1.99.1|...2.8.4|、|wake/STD-WAKE|...|在线1.99.1|...2.8.5|",
+        "bench/results/local/environment.txt:2（rustc 1.99.0）与本机 rustc --version 输出 1.99.1"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "十二条逐条读并对回各自出处：1↔8.1.1/[@def-8.1.2]，2↔8.2.5/[@def-8.4.1]（『统计真正返回 Pending 的次数』在 8.2.5 与 8.4.1 两处口径一致），3↔[@def-8.3.2]/8.7.1，4↔[@def-8.3.1]/8.3.2 实测 4097 与 2，5↔[@def-8.5.1]/8.5.4 的 swap+park 循环，6↔[@def-8.4.2]/8.4.5 的 Mutex<Shared>，8↔[@def-8.8.1]，9↔8.5.6『Future 不要求 Send 与通知对象可跨线程』的区分，10↔[@def-8.7.1]（差值命名），11↔[@ex-8.7.1] 与 8.7.4（我已在 8.7 处独立复核漂移日志确实保留且 README 声明其不参与最终统计，第 11 条的表述与磁盘事实一致，不是空洞劝诫），12↔8.8.3/章末自测第 1 题。条目 7『noop Waker 驱动真实 I/O 会永久睡眠』与 8.7.2 正文对 Waker::noop 的限定互相印证，源码 bench/src/bin/future_allocation.rs:23 确实用 noop 驱动恒 Ready 例子，未越界。本节没有新的自称实测数字，全部为对前文的索引与限缩，未发现与 8.1–8.8 正文矛盾之处，也未发现重述每节 errata 造成的重复（与开头声明『这里不再重述』一致）。我没核的：条目 4 提到用 size_of_val 核对帧大小，我只在 8.3 归档（future-layout.txt 的 4097/2 与 align=1）与 8.7 的 257 上验证过，未对其他 Future 尺寸做验证；条目 2、5、6 的并发语义属机制陈述，未做模型检查。",
+      "evidence": [
+        "src/part2/ch08.md:1832-1856 十二条与 :122-124,320-322,524-528,700-702,754-756,905-906,1013-1023,1381-1388,1446-1450,1710 各节正文逐条对齐",
+        "bench/results/local/README.md 与 bench/results/local/future-allocation-drift.txt 支持第 11 条；bench/src/bin/future_allocation.rs:23 支持第 7 条"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结七条、速查十一行、出口检查八行逐条回查是否与被引定义/例题一致，未发现张冠李戴：7.407 与 0.519、8.241、19.817 三个数在本节出现，我全部回归档复算——async-poll.txt 的 case 2 mean=7.4075、case 0 mean=0.5188，future-allocation.txt 的 stack mean=8.2414、box mean=19.8171，与本节表述及 8.6.4/8.7.7 表一致；『8.241 与 19.817 只能命名到真实测量操作』正确沿用 [@def-8.7.1]，未把差值改叫 Pin 开销。『取消是生命周期事件、Drop 不回滚外部提交』与 [@def-8.8.1] 一致；『park/unpark 令牌不能当通知存储』与 [@def-8.5.1] 及 park.rs 的 swap 循环一致。最低复现组合四条命令我核对了目标存在（bench/Cargo.toml 有 [[bin]] async-poll、future-allocation，examples/future_layout.rs 存在，cargo test 对应 bench/src/park.rs 与 bench/compiler-lab/tests/contracts.rs），但我没有执行任何一条，因此不能为『命令当前可跑通』背书；末段『读者不必得到完全一致的纳秒值』配合 environment.txt 记录 1.99.0、而本机为 1.99.1，这句限定是必要且诚实的。章末件五页的文件名（ch08_summary/recall/exercises/exam/checklist）我只确认了本页表格中的相对链接写法，未逐一打开确认存在与内容。我没核的：本节自身的每个结论我只做与正文/归档的一致性核对，未评估其对第 9 章、第 15 章的接口承诺是否兑现。",
+      "evidence": [
+        "bench/results/local/async-poll.txt 复算：case0 mean=0.5188 / case1 mean=0.8670 / case2 mean=7.4075（正文标签行 sync 0.519、async-ready 0.867、async-self-wake 7.407 全部吻合）",
+        "bench/results/local/future-allocation.txt 复算 mean=8.2414 / 19.8171；bench/Cargo.toml 的 [[bin]] name=async-poll 与 future-allocation、bench/examples/future_layout.rs 存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P2",
+      "description": "8.7.7 的最终记录表列出『批次p50』与『批次p99』两列，但 8.7 全节（含定义 8.7.1）都没有交代分位数定义，也没有交叉引用 8.6 的 [@def-8.6.1]；数字本身可复算无误，缺的是口径披露：在 bench/src/lib.rs:24 的最近秩定义下，n=21 时 rank(0.99)=sorted[ceil(0.99·21)-1]=sorted[20]，即 p99 恰好等于 21 个批均值里最大的那一个（stack 8.95250→8.953、box 20.96917→20.969，正是表中数值）。读者会把『批次p99』当成一个有统计支撑的尾部分位，实际它是单批极值。判 P2 而非 P1 的理由：8.7 的正文与例题只用 mean（8.241/19.817/11.6）作结论，没有把 p50/p99 拿来推断任何东西，且章级口径在 8.6.1 已定义为『批均值的分位数』，本节只是未复用该定义。修法建议：8.7.7 表下补一句『分位口径同 [@def-8.6.1]，21 批时最近秩 p99 即最慢一批』。",
+      "evidence": "bench/results/local/future-allocation.txt 21 个 stack 值 max=8.95250、box 值 max=20.96917；python 复算 rank(0.99)=ceil(0.99*21)-1=20 → 极值；bench/src/lib.rs:24 与 bench/src/lib.rs:55-59"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P2",
+      "description": "8.7.8 与 8.7.10 对本节最重要产物的存放位置说法不一致：8.7.8 在给出 cargo rustc --emit=asm 命令后写『该命令的完整.s产物保存在target目录』并提醒『复核时应把实际产物与工具链版本一起保存下来』，而 8.7.10 开头写『完整产物已经保存到 bench/results/local/future-allocation.s』。磁盘事实支持后者（该 .s 确实存在于 results/local 且有 2000+ 行真实指令），前者是修订前留下的过期指令，会让读者以为证据只在会被 cargo clean 清掉的 target/ 里、还需自己去补存。附带一条同源的披露缺口：该 .s 由 rustc 1.99.0 生成（environment.txt 记录），而本机当前工具链已是 1.99.1，8.7.10/8.7.11 的指令级断言（257/1 参数、偏移 1 起载荷、单态化 drive 符号）是版本绑定的，但 8.7 正文没有在该节就地标注产物版本，只在 8.7.8 用一般性提醒带过。",
+      "evidence": "src/part2/ch08.md:1510-1512（8.7.8）与 :1528（8.7.10）；bench/results/local/future-allocation.s 存在且 mov w0,#257 在第 2044 行；bench/results/local/environment.txt:2 rustc 1.99.0；rustc --version 当前输出 1.99.1"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "severity": "P2",
+      "description": "本轮重点复核项：[@ex-8.7.1] 新改的形状描述我逐样本独立核对后判定为准确，不构成美化——box 样本 1=40.22250 确为全序列最大值，stack 样本 3=17.55959 也确实存在，且两条序列都非严格单边。残留问题在 8.7.4 段落本身：它只报端点（stack 前期约13.35→后期7.89、box 约37.60→18.71）并据此称『这种持续漂移不能当作稳定对照』，而实际 stack 序列是先升后降的驼峰——峰值 17.55959 出现在样本 3，比其起点 13.35250 高约 31%，序列中共有 5 处逐样本上升（样本 3/7/8/12/18）；box 也有 4 处上升（样本 1/3/4/7）。『持续漂移』与『从前期降到后期』在 8.7.4 里读起来像单调下降，与紧随其后的例题自述『不是严格单边』形成同节内的口径落差；修法是把 8.7.4 的『持续漂移』改为『高起点加回落（含明显反弹）』，与例题统一。",
+      "evidence": "bench/results/local/future-allocation-drift.txt:3-46：stack=[13.35250,13.31125,13.21375,17.55959,17.55166,15.22875,12.87834,12.93792,13.44875,12.11875,...,8.70583,8.46,7.88542]（argmax=样本3）；box=[37.60375,40.22250,38.18458,38.95291,39.61250,...,18.71083]（argmax=样本1）"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "severity": "P2",
+      "description": "8.9 来源表最后一行『Effective Rust | 第17条共享状态 | PDF146–160 | 已核读交叉 | 本书落点 8.4、8.8 | 等待状态不变量，不把无竞争等于无死锁』的落点列在台账里没有对应记录：src/appendix/coverage.md 中所有涉及第17条的行——S08/R17-A(PDF146–155)、S08/R17-B(PDF156–160)、S08/SRC-S08-022(PDF146)、S08/SYS-S08-17(PDF146–160)、S08-U0022——的核读映射一律指向 part2/ch07.md#sec-cpp-rust.2.7.1/2.7.3/2.7.8 或 part3/ch11.md#sec-cpp-rust.3.11.1，没有一行映射到 ch08；反向看，映射到 ch08 的 S08 行只有第 8/11/14/15/16 条。因此 8.9 声明的『8.4、8.8 落点』与附录台账互相打呼：读者从 8.9 去 coverage.md 追这行的逐行状态会追不到。不按 P0/P1 判的理由：母本确实存在且状态为已核读（sources/reviews/S08.md 的 S08-U0022 在 PDF146 标 read-mapped，补读 PDF155/156/159 的句子『安全共享状态仍可能死锁或破坏跨对象不变量』与 8.9 落点说明的语义相符），所以引用可落地、不是编造；缺口只在落点列未回写台账。修法：在 coverage.md 为第17条补一行 ch08 锚点映射，或把 8.9 该行落点改为『交叉参照，主落点在 7.3/7.8』。",
+      "evidence": "src/appendix/coverage.md 第17条五行全部映射 ch07/ch11；grep ch08.md#sec-cpp-rust.2.8 的 50 行中 S08 只含 SRC-S08-011/015/019/020/021（第8/11/14/15/16条）；sources/reviews/S08.md review-s08-u0022 页 146 read-mapped"
+    }
+  ]
+}

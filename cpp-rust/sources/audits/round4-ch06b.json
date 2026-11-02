@@ -1,0 +1,113 @@
+{
+  "reviewer": "r4-ch06b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动读 src/part2/ch06.md 第 1280-1736 行（6.7 至 6.11 全部正文与每个语义盒），并回 bench/compiler-lab/results/extra-02/ 的 size/run/version/build 日志、bench/compiler-lab/extra.py、probes/code_size.rs、src/lib.rs、results/stable-02/codegen/*.s、run.sh、stable-01 批次 CSV 与 sources/inventory.json 逐条对核；另跑 tools/list_uncollected_claims.py 对照本章的未采集声明。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "这一节的数字与归档我基本全核到了：表 6.7.6 的三个 __text 字节数（220156/214768/220028）逐字来自 size -m 原始输出，且原始输出里 __PAGEZERO 是独立段、没被算进代码，正文口径与归档一致；例 6.7.1 的两处相减我重算过（5388、128）都对。6.7.5 的构建条件断言核到 many-build.txt 与 thin-build.txt：同为 --edition=2024 -O -Ccodegen-units=1 同一份 probes/code_size.rs，thin 只多 -Clto=thin，两者都真跑过并打印 instances=16；16 个实例与参考函数比较这句核到 code_size.rs:51-54 的 assert_eq!(output, reference(tag, &input))。6.7.1 的代码断言也核到：lib.rs:156 的 scalar_add 与 lib.rs:142 的 visible_dynamic 确实带 #[inline(never)]，stable-02 的本机汇编里 scalar_add 的调用点仍是 bl（第 3960 行），而 visible_dynamic 函数体（第 4003 行起）里 dyn 来源已被消解成直接 madd，没有间接调用——「边界保留不等于体内冻结」这句站得住。未采集声明方向也对：extra-02 里确实没有 many/thin 的任何计时文件，表列「是否有正式速度样本 = 否」不是全称式的「什么都没做」而是限定在速度上，写法合格。唯一问题是我在下面 P2 里说的对照口径：表里第三行的构建参数与基线不止差一个 profile 开关，正文和例 6.7.1 却把它写成同一条件下的差值。6.7.7、6.7.8 与判定流程第 1、3 步属方法论陈述，没有可对核的数字，我只做了通读；6.9 提到的 six 个入口之类不在本节，我没在此核。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/many-size.txt:6 Section __text: 220156",
+        "bench/compiler-lab/results/extra-02/thin-size.txt:6 Section __text: 214768",
+        "bench/compiler-lab/results/extra-02/pgo-size.txt:6 Section __text: 220028",
+        "220156-214768=5388、220156-220028=128（本地重算，与 ch06.md:1347 一致）",
+        "bench/compiler-lab/results/extra-02/many-build.txt:1 与 thin-build.txt:1（同为 -O -Ccodegen-units=1 --cfg=many，thin 多 -Clto=thin）",
+        "bench/compiler-lab/probes/code_size.rs:51-54 for _ in 0..32 / assert_eq!(output, reference(tag, &input))",
+        "bench/compiler-lab/src/lib.rs:156 与 :142 #[inline(never)] fn scalar_add / fn visible_dynamic",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s:3960 bl ...scalar_add；:4003-4044 visible_dynamic 体内为直接 madd，无间接调用",
+        "bench/compiler-lab/extra.py:36-41 one/many/thin 的构建与运行、无计时调用"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "四步流程我按归档逐文件回查了，正文自称的实测部分基本都能落地：pgo-generate.txt 的插桩构建命令行与 6.8.4 引用的 Python 分支逐字相同（extra.py:48-55），pgo-training-run.txt 证明训练确实跑过并打印 instances=16 checksum=95338125850705920，pgo-data/ 下真有 default_4638409862445482177_0.profraw 与 merged.profdata，pgo-merge.txt 与 pgo-use.txt 命令齐全，pgo-use-run.txt 打出同一个 checksum，pgo-size.txt 给出 220028；工具版本那句核到 profdata-version.txt 的 23.1.1-rust-1.99.0-stable 与 stable-version.txt 的 LLVM version 23.1.1，且路径在 .rustup/toolchains/stable-aarch64-apple-darwin 下，「没拿 Xcode 同名程序冒充」成立；6.8.5 那句 lang_start 缺 profile 的警告我在 pgo-use.txt 里看到了原文。未采集声明我重点查了：6.8 preview、6.8.6、判定流程第 5 步、小结④和自测第 2 题都只说「没有正式速度样本」，限定语落在速度/计时上而不是全称地否认做过任何事，和归档（extra.py 全文无计时、docstring 写明 Non-timing evidence）一致，没有把「跑过流程但没计时」写成「没跑」或把尺寸差写成收益。「32 轮」核到 code_size.rs:51。两条问题见 findings：其一是 P1——同一个归档 pgo-training-run.txt 里还有一整批 LLVM Profile Warning: Unable to track new values: Running out of static counters，正文从头到尾一个字没提，而 6.8.5 的标题就叫「真实警告没有隐藏」、判定流程第 3 步要求把这类警告解释过；这条警告意味着训练侧的 value profile 有丢弃，直接压在本节「产物可用」的强度上。其二是 P2 表述。6.8.1 关于采样式 PGO 与插桩式 PGO 的机制对比、6.8.7 训练偏差、6.8.8 host/target 区分是方法论陈述，本轮没有对应产物可核，我只通读，没有去核 macOS sample 与 LLVM profile 的格式差异原文。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/pgo-generate.txt:1 与 pgo-use.txt:1（-Cprofile-generate / -Cprofile-use + -Cllvm-args=-pgo-warn-missing-function）",
+        "bench/compiler-lab/results/extra-02/pgo-training-run.txt:2 instances=16 checksum=95338125850705920",
+        "bench/compiler-lab/results/extra-02/pgo-use-run.txt:2 instances=16 checksum=95338125850705920",
+        "bench/compiler-lab/results/extra-02/pgo-data/default_4638409862445482177_0.profraw 与 merged.profdata（find pgo-data -type f）",
+        "bench/compiler-lab/results/extra-02/profdata-version.txt:2 LLVM version 23.1.1-rust-1.99.0-stable；stable-version.txt:6 LLVM version 23.1.1",
+        "bench/compiler-lab/results/extra-02/pgo-use.txt:2-3 warning: ... no profile data available for function _RINvNtCs1SSuMAdGM58_3std2rt10lang_start ... Hash = 742261418966908927 up to 0 count discarded",
+        "bench/compiler-lab/extra.py:11 exist_ok=False；:13-18 run 保存命令+stdout+stderr 并检查返回码；:52 assert raw；:58-59 else 写 pgo-unavailable.txt",
+        "bench/compiler-lab/probes/code_size.rs:51 for _ in 0..32"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节多数是入口指引，我把仓库内可落地的那部分逐个查了：src/bin/vectorize.rs 与 src/bin/ctfe_table.rs 存在；stable-02/codegen/ 确实有 .mir/.ll/.s 三件；extra-02/ 确实有 const_bounds.txt、pgo-data/ 与各阶段日志——这些路径断言全部成立。6.11 的复现入口也对得上 run.sh。问题出在外部引文：正文写「《Effective Rust》（母本 S08）第 15 条：别名限制与优化」，而我在这个仓库自己的母本台账里查到的第 15 条标题是「理解借用检查器」（sources/inventory.json:18830、sources/sections.json:3969）；条目号没有错、内容也确实讲到借用检查器让编译器对别名作出更好的判断与优化（sources/audits/sweep-4ce07383-H.json:69 记录了 PDF126-133 的 pdftotext 证据），但用「条号：标题」的格式给出一个母本里不存在的标题，读者照回去找不到那一行，属引用与母本不符。同段第 9 条写成「用迭代器转换代替显式循环」，母本是「考虑使用迭代器转换代替显式循环」，掉了限定词，这条只算表述问题。没有核的部分要写清：六个外链 URL 我可达性与原文措辞我没有联网逐条回查；S09 关于「解释器基础设施与 Miri 叙述放在一起」、S10 关于 const fn 浮点限制的历史表述这两处，我只在 sources/reviews/S08.md 与 inventory 里看到条目登记，没有逐字比对原书页码文本；「本章确实核读过正文」这句的整体覆盖度我按 src/appendix/coverage.md 的计数抽查了 S08/S09/S10 三行存在，具体读到哪一页没有全部复核。",
+      "evidence": [
+        "sources/inventory.json:18830 title 第 15 条：理解借用检查器；:18738 title 第 9 条：考虑使用迭代器转换代替显式循环",
+        "sources/sections.json:3909 与 :3969 同两条母本条目",
+        "sources/audits/sweep-4ce07383-H.json:69 PDF126 '第 15 条：理解借用检查器'，126-133 含「别名作出更好的决策…更好的优化」",
+        "src/appendix/coverage.md:25-27 S08/S09/S10 三行台账存在",
+        "bench/compiler-lab/src/bin/ 六个 .rs；bench/compiler-lab/results/stable-02/codegen/ 三个产物；bench/compiler-lab/results/extra-02/const_bounds.txt"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "这一节是索引性清单，我把它当成对前文的重述来读，并抽了能对核的三条回归档：第 10 条「本章只执行校验并报告 __text 的大小」核到 extra.py:36-41 与 pgo-size.txt，无计时文件；第 11 条 LLVM 插桩产 profraw、再 merge 成 profdata 核到 pgo-training-run.txt/pgo-merge.txt/pgo-data/；第 12 条「本章原样保留了 lang_start 的警告」核到 pgo-use.txt:2-3 的原文，未删。第 8 条「本章没有执行 cargo miri」与归档一致：extra.py:21 用 rustc +nightly -vV 且 expect_success=False，nightly.txt 存在但内容是失败记录，没有 Miri 产物。第 1 到第 7、第 9、第 13 条属 6.1-6.6 与 6.5 的口径复述，我这一派只负责 6.7-6.11，没有回查 vectorize.rs 的测试长度集合（第 5 条的空输入与 0..129）和 build.rs 的 host 事实（第 9 条），也没有重算第 3 条的 align 8 静态量——这些留给我区间外。需要提醒的是第 12 条的措辞和 6.8 那条 P1 联动：清单说「删掉它等于删掉证据、本章原样保留」，但同归档训练阶段的 Running out of static counters 警告虽然文件里在，正文没有把它列进「可见的缺口」，索引因此比实际保留的证据少一条；我把它记在 6.8 的条目下，不重复计数。",
+      "evidence": [
+        "bench/compiler-lab/extra.py:21 run(['rustc', '+nightly', '-vV'], 'nightly.txt', False)；bench/compiler-lab/results/extra-02/nightly.txt 存在",
+        "bench/compiler-lab/results/extra-02/pgo-use.txt:2 lang_start 缺 profile 警告原文",
+        "bench/compiler-lab/results/extra-02/pgo-data/merged.profdata 与 pgo-merge.txt:1",
+        "bench/compiler-lab/extra.py:36-41（只运行与 size/nm，无计时）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "出口检查里的可核断言我都回查并成立，特别是容易被写成空头话的两句：「正式脚本会运行六个入口」核到 run.sh:23 与 :32 的六个名字，src/bin/ 下正好六个 .rs，且没有并行 benchmark 组（run.sh:42 的 sample-run 是另一支采样程序，不是本章正式批次）；「找不到匹配工具时，脚本会明确记录未执行，而不是静默跳过」核到 extra.py:58-59 的 else 分支写 pgo-unavailable.txt——6.8.4 引用的代码片段省略了这个 else，但正文没有据此声称脚本没有 else，所以不构成矛盾。「PGO 驱动不做正式计时」核到 extra.py:2 的 docstring 与非计时命令序列。「两个正式入口共四个 case，每个 case 均有 21 个原始观察」我用 stable-01 的 CSV 数过：vectorize.csv 的 zip 与 calls 各 21 行、ctfe_table.csv 的 static_table 与 rebuild_table 各 21 行，加两行 summary，与正文完全吻合。「没有给出未经执行的 nightly 转储、没有伪造 Linux perf/Miri/硬件计数」也与我看到的归档一致（extra-02 里无 perf 数据、无 miri 输出）。这一节没有把未采集写成全称否认：它说「没有声称普遍最快的实现」而不是「没做过任何测量」，和 6.4/6.6 确有计时批次的事实不冲突。本章速查表与小结只是 [@def-*] 的重述，我逐条确认引用锚点都存在、语义盒闭合（6.7/6.8 的 def 与 ex 编号连续、无缺号）。没有核的部分：复现命令里 bash run.sh 的参数是否确实接归档目录（我只看到 $OUT 的使用，没看到赋值行）、ch06_summary/exam/checklist 四页与本节结论是否一致、以及「100 分 70 分及格」这类章末件参数，我都没读，属区间外。",
+      "evidence": [
+        "bench/compiler-lab/run.sh:23 与 :32 for name in move_cost drop_paths dispatch_grain dispatch_visibility vectorize ctfe_table；bench/compiler-lab/src/bin/ 六个文件",
+        "bench/compiler-lab/extra.py:2 docstring 'Non-timing evidence...'；:58-59 else 分支写 pgo-unavailable.txt",
+        "bench/compiler-lab/results/stable-01/vectorize.csv 44 行：zip 21 / calls 21 / summary 2",
+        "bench/compiler-lab/results/stable-01/ctfe_table.csv 44 行：static_table 21 / rebuild_table 21 / summary 2",
+        "ch06.md:1703-1708 复现命令与 extra.py:10 的 sys.argv[1] 用法一致"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "severity": "P1",
+      "description": "6.8 的警告清单与归档不符：本节声称「真实警告没有隐藏」，并在 6.8.5、[@def-6.8.3]、6.10 第 12 条里只承认一条警告（pgo-use.txt 的 lang_start 缺 profile）。但同一归档里训练阶段（第二步）的 stdout+stderr 记录了多条 LLVM Profile Warning: Unable to track new values: Running out of static counters. Consider using option -mllvm -vp-counters-per-site=<n> ...，这条警告意味着插桩程序的 value profile 计数器被写满、有数据被丢弃，也就是「四步跑通」里的 profile 本身不完整。正文一字未提，判定流程第 3 步（「missing-function 之类警告是否原样保留、是否解释过」）与小结③「警告原样保留，缺口是已知局限」因此只在 use 阶段成立，读者会把它读成整条流程只有 lang_start 一个缺口。这不是数字算错，而是关键限定漏了一条，直接影响本节最强的那句「产物可用」的强度。修法：在 6.8.5 增补这段原文并说明它限制的是 value profile 的完整性（对频率线索影响多大未测），同时把小结③与 [@def-6.8.3] 的「一个警告」改成「两类警告」，6.10 第 12 条同步。",
+      "evidence": "bench/compiler-lab/results/extra-02/pgo-training-run.txt:3 起多处 'LLVM Profile Warning: Unable to track new values: Running out of static counters.'（与同文件第 2 行 instances=16 checksum=95338125850705920 混在 stdout+stderr 里，由 extra.py:15 原样落盘）；对照 ch06.md:1527 与 :1521 只写 lang_start 一条，ch06.md:1565 判定流程第 3 步"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "severity": "P1",
+      "description": "外部引文与母本不符：ch06.md:1627 写「《Effective Rust》（母本 S08）第 15 条：别名限制与优化」。仓库自己的母本台账里第 15 条的标题是「理解借用检查器」（sources/inventory.json:18830、sources/sections.json:3969），全书没有任何一处出现「别名限制与优化」这个标题。条目号与议题是能落地的（该条 PDF126-133 确实讲借用检查器让编译器对别名作出更好判断、从而更好优化，见 sources/audits/sweep-4ce07383-H.json:69 的 pdftotext 记录），所以不是编造引用；但「条号：标题」的排版让读者以为那是原标题，照标题回去检索会找不到。同段第 9 条被写成「用迭代器转换代替显式循环」，母本原标题带限定词「考虑使用」，属同类降级问题（我按 P2 处理，见下一条）。修法：改成「第 15 条（理解借用检查器）」并把「别名限制与优化」放回正文当议题描述。",
+      "evidence": "sources/inventory.json:18830 title=第 15 条：理解借用检查器；sources/inventory.json:18738 title=第 9 条：考虑使用迭代器转换代替显式循环；grep '别名限制与优化' 在 sources/ 与 src/appendix/ 无命中"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "severity": "P2",
+      "description": "同段第 9 条的标题被压缩掉限定词：母本原文是「考虑使用迭代器转换代替显式循环」，正文写「第 9 条（用迭代器转换代替显式循环）」。语义近似但不再是逐字标题，和本节自称「顺着它们继续往下读」的检索用途有冲突；建议照母本写全。",
+      "evidence": "sources/inventory.json:18738；sources/reviews/S08.md:21 S08-U0012 记录同一条映射到 ch06 6.3"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "severity": "P2",
+      "description": "表 6.7.6 与例 6.7.1 的对照口径少写了一个变量。三个 __text 数字本身我核过都对（220156/214768/220028），相减也对（5388/128）。但归档显示这三个构建并不是只差 LTO/PGO 一项：extra.py:36-38 给 one/many/thin 的公共参数里含 -Cdebuginfo=1，而 extra.py:48 的 PGO common 列表没有这个参数（pgo-generate.txt 与 pgo-use.txt 的原始命令行可证）。例 6.7.1 的「最强结论」却写成「同一个 code_size 探针、同样 O3 与一个 CGU 的条件下……PGO-use 构建小 128 字节」，把 128 这个数放在与 5388 同样的受控语气里。实际影响有限（三份 size -m 的 Segment __TEXT 总量都是 278528，__text 不装 DWARF），所以我不判 P1；但 128 字节与 __unwind_info 的 8 字节差（4944 vs 4936）这类小量本来就在噪声量级，正文应老实说明 PGO-use 与基线还差一个 debuginfo 开关，或在 6.8.6 复述时加上这句。",
+      "evidence": "bench/compiler-lab/extra.py:37（'-Cdebuginfo=1' 在 one/many/thin 的公共参数里）与 :48（PGO common 无此参数）；bench/compiler-lab/results/extra-02/pgo-generate.txt:1、pgo-use.txt:1、many-build.txt:1；many-size.txt 与 pgo-size.txt 的 __unwind_info 4944/4936"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "severity": "P2",
+      "description": "6.8.6 第一句「训练程序输出 16 个实例的 checksum」与程序实际输出形式差一层：pgo-training-run.txt 第二行是 instances=16 checksum=95338125850705920，即一个聚合 checksum 加一个实例数，16 个实例逐个与参考函数的比较是在程序内部用 assert_eq 完成的（code_size.rs:54），失败就整个进程退不出去。同节例 6.8.1 的措辞「一行输出只能证明『这个二进制跑过，并打印了 95338125850705920』」反而是准确的，两处口径不齐。建议改成「打印实例数与一个聚合 checksum，逐个实例的比较在断言里」。",
+      "evidence": "bench/compiler-lab/probes/code_size.rs:54 assert_eq!(output, reference(tag, &input))；:58 println!(\"instances={} checksum={checksum}\", functions.len())；bench/compiler-lab/results/extra-02/pgo-training-run.txt:2"
+    }
+  ]
+}

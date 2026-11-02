@@ -1,0 +1,75 @@
+{
+  "reviewer": "sweep4ce-D",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立审计。完整读取 src/part4/ch17.md 第 1037–1448 行（17.7 与 17.8 全部正文与语义盒）。全部测量数字用 /usr/bin/python3 从 projects/tidekv/results/run-01|02|03 的原始 CSV 独立复算（复用 analyze.bootstrap_ci 重算 bootstrap 区间，种子按 analyze.py 的 seed^0xB007 规则还原为 20289699/20289698/20289697，与归档逐项一致）；代码断言逐条对读 engine.rs、ipc.rs、segment.rs、wal.rs、stats.rs、memtable.rs、bin/tide-bench.rs、bin/tide-mech.rs、bin/tide-compactor.rs、tests/compaction.rs、tests/ipc_compactor.rs、run.sh、analyze.py、gate.py、gate_mech.py、order_effect.py、README.md；外部引用核对 sources/web.json 台账与 LLVM Benchmarking 在线原文。未修改任何文件，只写本报告。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "finding",
+      "method": "read+recompute",
+      "notes": "复算全部通过：run-02 compaction.csv 重算 A=7,696,325.94/B=9,171,895.58、diff=+1,475,569.64（正文 +1,475,570 与「约 1.48 ms」一致，1.48 ms = 1,475,570 ns 舍入自洽）、bootstrap CI=[1,366,635.81, 1,586,756.50]（正文 [+1,366,636, +1,586,757]、1.37–1.59 ms、比值 1.19）与 statistics-compaction.json、gate-compaction.json 逐项一致；21 轮×30 批、seed 20261029、warmup_ms=500 均在 CSV 头部与 gate protocol 中。线程/排空断言属实：ipc.rs 注释按 64 KB 推理且未指称某系统默认值；spawn_compactor 确为 stdin/stdout/stderr 三路各一独立线程，输出线程 read_to_string 到 EOF 后经 channel 送回，父线程先 join stdin、再 recv 两路 channel、join 两线程、最后 child.wait()，与正文描述完全一致。幂等断言属实：write_segment 为临时名(由最终名 set_extension(\"tmp\") 派生)→sync_all→rename，重命名前无存在性检查，仓库中 exists() 仅见于 WAL 恢复与 compactor 路径查找；do_compact 段名取 max().unwrap_or(0)+1（engine.rs:688–694）且 drop_tombstones 固定 true；do_compact 唯一调用点是 Cmd::Compact 分支（engine.rs:566），对外仅 compact_two()（engine.rs:331），engine.rs 两处 Duration::from_millis（50/20 ms）均为条件变量超时，全仓无压缩定时器——「后台调度器不存在」属实；gate-compaction.json 的 budget_B=10000000.0 与旧 budget_note（「后台每 100 ms」）属实，CORRECTION.md（10-30 写、mtime 晚于采集）与已同步更正的 run.sh:104 属实；Stats 无「重放收敛」字段属实。tests/compaction.rs 恰为正文所列四条、无「同一批输入合并两次」覆盖属实（tide-mech 夹具两臂均绕开 compact_two、直接 spawn_compactor/进程内三步、drop_tombstones=false、输出 merged-inproc.tide/merged-subproc.tide、逐字节不等即拒出数）。预算敏感性断言成立：U=1,586,757 ≤ 7,696,326 仍判 accept；gate/gate_mech 规则 U≤B accept、L>B reject 属实。byte/entries/crc32（401770/4096/7241b72e）与 compaction.csv 头部、mech-verification.txt 一致。唯二表述问题见 findings（64 KB/KiB 单位切换）。",
+      "evidence": [
+        "src/part4/ch17.md:1037-1185",
+        "projects/tidekv/src/ipc.rs:1-205（三线程排空、64 KB 注释、CompactorError 带 stderr 全文）",
+        "projects/tidekv/src/engine.rs:331,565-566,680-734（compact_two、do_compact 唯一调用点、max+1、drop_tombstones:true、无存在性检查）",
+        "projects/tidekv/src/segment.rs:106-116（临时名→sync_all→rename，无 exists 检查）",
+        "projects/tidekv/tests/compaction.rs（四条测试名与内容）",
+        "projects/tidekv/src/bin/tide-mech.rs:233-370（夹具协议、20% 墓碑、drop_tombstones=false、逐字节等价检查）",
+        "projects/tidekv/results/run-02/{compaction.csv,statistics-compaction.json,gate-compaction.json,mech-verification.txt,CORRECTION.md}",
+        "projects/tidekv/run.sh:103-105（更正后的 budget-note 文案）",
+        "python3 复算：A/B 均值、diff、N-1 标准差 266,254.24、seed 20289698 的 20,000 次 bootstrap CI 与归档逐位一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "finding",
+      "method": "read+recompute",
+      "notes": "run-01 全部数字复算通过：bench.csv 5,040 行 raw_batch（4 case×21 轮×2 臂×30 批）、每行 BATCH_MEAN 对同（轮,臂）30 批均值的最大偏离 6.00e-07（正文 6e-07）；A/B 均值 63.144/40539.7、75.654/33823.8、61.785/24471.5、114.695/32195.3，配对差值均值与 21 个差值的 N-1 标准差、seed 20289699 的 bootstrap CI 与 statistics.json/gate.json 逐项一致，四 case 全拒、counts{0,4,0}、预算 1000、协议（seed 20261028、21×30、900/批、500 ms、flush 300）与分析种子 20289699=seed^0xB007 均属实；ops 列实际取值恰为 900/2900/1900/4996，与生成器 setup 写（2000/1000/4096）及 bench-verification.txt 逐 case 打印一致；比值 642（=40539.7/63.144=642.02）与「不是同一件工作」限定成立。run-02 codec 行 3.965/4.036/+0.071/[−0.054,+0.208]/1/接受、run-03 两行（−691,518.3/[−741,468.5,−652,422.3] 接受；+14,007.4/[−105,221.5,+132,036.5] 证据不足）与 gate 文件及 admit.csv 复算一致；每批受理 75.40 对 8.07 复算一致。位次效应全部复算一致：主轮 84 条 (case,轮) 中 B 先 52、A 先 32（每 case 8/13）；run-03 按本臂先/后行分组 A=814,056.6/730,848.6（先行慢 11.39%→11.4%）、B=80,885.4/84,761.0（后行慢 4.79%→4.8%）、方向相反；diff=A−B 类均值 729,295.6/649,963.2、间距 79,332.4、实际均值 691,518.3、均衡 689,629.4、偏移 +1,888.9、半宽 44,523.1、占比 4.24%→4.2%；order_effect.py 落盘 results/order-effect-2026-10-30.txt 八行与正文表逐值一致（间距、偏移、半宽、比值），「其余六条 ≤6.4%」「最大 28.5%/次大 11.6%」「八条判定方向未翻」经逐条核对成立（各偏移远小于对应差值均值绝对值）。证据包清单与磁盘完全相符：run-01/02/03 文件枚举逐项存在，归档确无 source-sha256.txt 类文件，CSV 无 position 列（第 1 章示例 position 取值 0/1 属实）；gate.py 退出码恒 0（return 0→sys.exit）、只写 budget_B 不写 budget_note 属实；「每轮抛硬币非配额制」与三轮源码及 README 待办一致。跨章锚点 def-10.5.1/10.5.2/10.7.1/1.4.1/1.6.1/1.7.1-3/14.1.1/14.5.3/ex-1.8.1、mainline#mainline-spine、ch01#sec-cpp-rust.1.1.8 均存在；def-14.5.3 第三态「证据不可比」引述准确。17.7/17.8 内无 LLVM 引文；LLVM Benchmarking 引句在 17.9，仓库无母本落盘（正文已如实声明、web.json 台账亦无该条），经在线核对原文逐字包含 “low noise is required, but not sufficient. It does not exclude measurement bias.” 且该页确不讲随机化跑序，引用方式（可回访、非归档证据）自洽。发现一条 P1 口径混用与两条 P2，见 findings。",
+      "evidence": [
+        "src/part4/ch17.md:1186-1448",
+        "projects/tidekv/results/run-01/{bench.csv,statistics.json,gate.json,bench-verification.txt,environment.txt,run-log.txt,test-summary.txt,codegen/}",
+        "projects/tidekv/results/run-02/{codec.csv,compaction.csv,statistics-*.json,gate-*.json,mech-verification.txt,codegen/CORRECTION.md}",
+        "projects/tidekv/results/run-03/{admit.csv,statistics.json,gate-attempted.json,gate-accepted.json,recompute.txt,admit-verification.txt}",
+        "projects/tidekv/results/order-effect-2026-10-30.txt 与 order_effect.py（复算八行逐值一致）",
+        "projects/tidekv/analyze.py:76-86,102（bootstrap 与 seed^0xB007=20289699/98/97）",
+        "projects/tidekv/gate.py:18-23,78-82（U≤B/L>B 规则、return 0）",
+        "projects/tidekv/src/bin/tide-bench.rs（case 定义、setup 2000/1000/4096、值长 300/120/120/80、arm_order 掷硬币、三方摘要）",
+        "python3 复现 splitmix64 生成器：put_wide 实际写 730/900=81.1%、get_hot 2093/2900=72.2%、get_absent 1000/1900=52.6%、scan_12 4096/4996=82.0%",
+        "find results -iname '*sha*' -o -iname '*source*' → 空（source-sha256.txt 确缺）",
+        "src/part1/ch01.md:646-652,715-727（position 0/1）；src/part4/ch14.md:1094-1096（def-14.5.3）；src/mainline.md:5（mainline-spine）"
+      ]
+    }
+  ],
+  "sources": [
+    "src/part4/ch17.md",
+    "projects/tidekv/src/{engine.rs,ipc.rs,segment.rs,wal.rs,stats.rs,memtable.rs}",
+    "projects/tidekv/src/bin/{tide-bench.rs,tide-mech.rs,tide-compactor.rs,tide-admit.rs}",
+    "projects/tidekv/tests/{compaction.rs,ipc_compactor.rs}",
+    "projects/tidekv/{run.sh,analyze.py,gate.py,gate_mech.py,order_effect.py,README.md}",
+    "projects/tidekv/results/run-01/run-02/run-03 全部归档文件",
+    "projects/tidekv/results/order-effect-2026-10-30.txt",
+    "src/part1/ch01.md, src/part3/ch10.md(锚点), src/part4/ch14.md, src/mainline.md",
+    "sources/web.json（台账，无 LLVM 条目）+ https://llvm.org/docs/Benchmarking.html 在线核读"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P1",
+      "description": "17.8.2「按 ops 列与生成器（src/bin/tide-bench.rs）算出来的每批写占比是 …put_wide 80%（70% put + 10% delete）」按其自称的出处复算不能得到 80%：用归档种子 20261028 复现生成器，实际序列写占比为 730/900=81.1%；80% 是标称概率而非「算出来」的实际值（其余三个 82/72/53 实际值分别 81.99/72.17/52.6%，取整一致）。属名义概率与实际序列的口径混用；好在排序 scan_12>put_wide>get_hot>get_absent 及「与付费顺序不一致」的结论不受影响。",
+      "evidence": "python3 复现 Rng(seed^0x11) 900 次 (below(20000), below(100))：r<80 计 730 次 → 81.1%；src/part4/ch17.md:1334"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "severity": "P2",
+      "description": "定义 17.7.1 同一段先说注释按「64 KB」推理、并特意强调「注释原文就是这么写的单位」，随即自己改口用「64 KiB 只能当推理前提」——单位在一段内切换且正文未交代 KB/KiB 之别，恰是该盒自己要求分清的那类含糊。",
+      "evidence": "src/part4/ch17.md:1051；projects/tidekv/src/ipc.rs:131-132（注释原文为 64 KB）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "两处「不出数」与「其余分配」的表述与代码/算术有出入：(a) def-17.8.3 统称「测量二进制自己写 *-verification.txt（等价性不成立就不出数）」——tide-mech/tide-admit 确是先检查后写，但 tide-bench 是先落盘 bench.csv 与 verification 再检查 mismatch 并以非零码退出，CSV 实际已被写出，「不出数」靠的是 run.sh set -e 截断下游，措辞过宽；(b) 17.8.2「先跑 B 的有 52 条、先跑 A 的 32 条，其余分配见下表」——52+32 已等于全部 84 条，并无「其余」，下表给的是逐 case 的 8/13 分解。",
+      "evidence": "src/part4/ch17.md:1232,1361；projects/tidekv/src/bin/tide-bench.rs:523-544（先写文件后判 mismatch）；tide-mech.rs:300-302（先判后写）"
+    }
+  ]
+}

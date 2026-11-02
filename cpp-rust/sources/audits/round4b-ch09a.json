@@ -1,0 +1,120 @@
+{
+  "reviewer": "r4b-ch09a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读 src/part3/ch09.md 的 9.1–9.6 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/errata/即时自测），并把可对核断言逐个拿去对磁盘产物：bench/results/runtime-fixed/measurements-final/{scheduling.s,scheduling.txt,blocking-poll.txt,type-layout.txt,scheduling-sample.txt}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、~/.cargo/registry 里的 tokio-1.54.0（runtime/mod.rs 175-406 段、runtime/task/state.rs 253-278 段）、本机 rCore 母本 .work/cpp-rust-sources/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html}、sources/runtime-code.json；测量数字全部用 /usr/bin/python3 从原始 ns 样本重算。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对 9.1.3 的版本绑定与指纹登记、def-9.1.1 的六项成分、ex-9.1.1/think-9.1.1 的机制断言、图 9-1 的文字与 SVG <desc>/箭头一致性、四个概念状态与两条账的表述。结论：状态字成分表（RUNNING/COMPLETE/NOTIFIED/CANCELLED/JOIN_INTEREST+JOIN_WAKER/引用计数）与 tokio-1.54.0 state.rs 的快照位一致；「判断与改变在同一次 RMW 里」对应源码的 fetch_update_action；9.1.3 点名的四个文件（runtime/mod.rs、runtime/task/state.rs、runtime/scheduler/current_thread/mod.rs、task/blocking.rs）全部在 sources/runtime-code.json 里登记，版本 1.54.0，status 为 specified-ranges-reviewed / read-mapped，第 9 章先前漏登的 blocking.rs 已补上。图 9-1 的 desc 与 svg 元素逐条对得上（四条实线 wake/抢到 RUNNING/Pending 无通知/Ready 交出输出 + 一条红色虚线 poll 期间 wake），正文读图文字没有给图加不存在的边。本节未发现问题。",
+      "evidence": [
+        "sources/runtime-code.json:1-4 四条记录，crate=tokio version=1.54.0，path 与 9.1.3 列表逐字相同，reviewed_ranges 分别为 [175,406]、[1,374]、[446,477]、{lines:[20,130]}",
+        "~/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/task/state.rs:253-278 transition_to_notified_by_ref 用 fetch_update_action 单步读-改-写，先判 is_complete/is_notified/is_running 再落位",
+        "src/part3/ch09.md:148-185 图 9-1 的 <desc>、四条 <path> 与红色虚线 path 数量=5，与正文 9.1.5 读图段一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "这一节我把两处「最近改过」的地方当重点独立回查。def-9.2.1 的丢失唤醒定义、9.2.1 的四行状态表、9.2.2 的 Release 义务、9.2.5 的回归测试、9.2.6 的 panic 分层都可落地：状态表的分支顺序与动作与 tokio 源码一致（complete→DoNothing/无新账；already-notified→合并且仍要 Release；running→set_notified 且由运行者负责；idle 未通知→set_notified+ref_inc 并提交）；9.2.2「源码在 already-notified 分支特别说明仍需 Release」不是转述过头，母本注释逐字写了 must use an Release store 来与 transition_to_running 的 Acquire 配对。def-9.2.3 的 rCore 寄存器计数改后正确：TaskContext{ra, sp, s:[usize;12]} = 14 项，s0~s11 确为 12 个 callee-saved，ra 属 caller-saved 不在这 12 个之内，母本阶段[3] 也只恢复 ra、s0~s11、sp，切换由手写汇编 __switch 完成、TaskContext 嵌在任务控制块里；tick 一条也对，母本代码 TICKS_PER_SEC: usize = 100，正文「每 10 ms 一次可能抢占」与之相符（1000/100=10）。两点要改：9.2.3 末尾把阻塞 poll 实验指给 9.5（该实验在 9.6），以及 def-9.2.3 把「两条规矩同时成立」这条判据记在 rCore 名下，而母本给的其实是 callee-saved/caller-saved/临时寄存器三分法的理由。",
+      "evidence": [
+        "tokio-1.54.0/src/runtime/task/state.rs:255-276（四个分支 + 258-262 行注释 'Even hough we have nothing to do in this branch, wake_by_ref() should synchronize-with the task starting execution, therefore we must use an Release store (with the same value), to pair with the Acquire in transition_to_running.'）",
+        "src/part3/ch09.md:304-313 表格四行与源码分支一一对应；ch09.md:331 的 Release 说法有源码注释支撑",
+        ".work/cpp-rust-sources/systems/2task-switching-rcore.html: 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'、'阶段 [3] …恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器'、'__switch 是一个用汇编代码写的特殊函数'、'任务上下文 TaskContext 被保存在任务控制块中'；14 = 1 + 1 + 12",
+        ".work/cpp-rust-sources/systems/4time-sharing-system-rcore.html: 'TICKS_PER_SEC: usize = 100;' 与 '这样，10ms 之后一个 S 特权级时钟中断就会被触发'",
+        "src/part3/ch09.md:381 写「（9.5 的阻塞 poll 实验测的就是这条）」，但 9.5（ch09.md:838）是让出粒度与 worker 数，阻塞 poll 实验是 9.6（ch09.md:975，夹具 bench/runtime-lab/src/bin/blocking_poll.rs）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "9.3.1 的五种结构、9.3.2 的六个参数、9.3.4/9.3.5 的机制断言我逐条回查了 tokio 1.54.0 runtime/mod.rs 的 Detailed runtime behavior 段（登记范围 175-406 行内）：局部队列「fit at most 256 tasks. If more than 256 tasks are added to the local queue」→溢出转全局（mod.rs:354）、current-thread「picked a task from the local queue 31 times in a row」（334）、61 次调度间隔触发 I/O/计时器检查（338-339 与 372-373）、LIFO 槽「uses the lifo slot … coop budget is not reset … so other worker threads cannot steal the task in the lifo slot」（375-387），正文表里「连续使用受约束、不能被其他 worker 窃取」「文档默认 31 次本地选择后检查」都有出处，未越界成承诺。9.3.4「本机没有 NUMA 测量」、9.3.6「本轮没有给窃取打点、没有采 steal 成功率/每次 steal 周期数」与 list_uncollected_claims 的 ch09 条目一致（该工具在 ch09.md:588、602、610、644 都报「没有匹配到同类产物」，即确实未采），属于诚实降级。一处口径不全：think-9.3.1 与 9.5 例 9.5.1 引用的 2.602→0.750 只说「单线程 vs 4-worker、128 任务×8192 步」，没有点明这两个读数是 quantum=1024 的那一对；数字本身我复算无误，但 quantum 是本实验的自变量，缺了它读者会以为任意让出频率下都是这两行。",
+      "evidence": [
+        "tokio-1.54.0/src/runtime/mod.rs:334,338-339,354,367,372-373,375-387（31/61/256/溢出/stealing/LIFO 连续使用与不可窃取）",
+        "bench/results/runtime-fixed/measurements-final/scheduling.txt 逐批重算（n=21）：current-q1024 mean=2.602465（正文 2.602）、multi4-q1024 mean=0.750447（正文 0.750）；同文件 current-q16 mean=16.359581、multi4-q16 mean=2.032681 是另一对读数",
+        "0.750 ÷ 2.602 = 0.2882（正文写 0.29，一致）",
+        "python3 tools/list_uncollected_claims.py 的 ch09 命中：588/602/610/644 行的未采集声明均无同类产物，与 9.3.4、9.3.6 的写法相符"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重点独立复核最近改过的 9.4.4 汇编摘录：内容正确。scheduling.s 里 __RNvCsi2Ahm2AaMXP_10scheduling4step 的函数体从 18352 行起，逐行剥掉 .loc/.cfi_*/Ltmp 后与正文代码块完全一致；mov x9,#32557 + movk #19605 lsl#16 + movk #62509 lsl#32 + movk #22609 lsl#48 拼出的常量 = 6364136223846793005，正是 bench/runtime-lab/src/bin/scheduling.rs 里 step 的 wrapping_mul 乘数，madd x0,x8,x9,x10 配 mov x10,#1 对应 wrapping_add(1)，str/add x8/ldr 三行对应 black_box 取地址，所以「业务计算没有被整段折叠」成立，且产物里确有 2 处对 step 的 bl 调用（不是只有定义）。9.4.3 的 casal、transition_to_running 符号、9.4.2 的四个尺寸也全对：type-layout.txt 原文 'Frame size=16 align=8 wire=24'、'yield_now size=16 align=8'、'JoinHandle<u64> size=8 align=8'、'mpsc::Sender<u64> size=8 align=8'。两处指针问题：正文把这份 scheduling.s 称作「run-01 那份」，但 runtime-lab 的产物目录里没有 run-01 这个标签（只有 measurements-final/measurements/runtime-local/runtime-final 等；run-01 属于 evidence-lab 与 systems-lab），照这个名字找不到文件；think-9.4.1 引的「（9.5.7）」小节不存在，9.5 只有 9.5.1–9.5.5。",
+      "evidence": [
+        "grep -c '__RNvCsi2Ahm2AaMXP_10scheduling4step' + 逐行比对：bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18379（step 定义 18352、mov #32557 在 18367、Lfunc_end64 在 18381）",
+        "32557 | 19605<<16 | 62509<<32 | 22609<<48 = 6364136223846793005；bench/runtime-lab/src/bin/scheduling.rs 的 step：black_box(x).wrapping_mul(6364136223846793005).wrapping_add(1)，且带 #[inline(never)]",
+        "同一 scheduling.s 内 bl 到 step 的调用点 2 处、casal 指令 2 处、含 transition_to_running 符号",
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt 四行；程序在 bench/runtime-lab/examples/type_layout.rs",
+        "ls bench/results/runtime-fixed：fixed-debug/final-validation/before-source-snapshot/repeated-validation/baseline-debug/measurements-final/measurements/baseline-release/fixed-release，无 run-01；run-01 只存在于 bench/evidence-lab/results/run-01 与 bench/systems-lab/results/run-01",
+        "src/part3/ch09.md 内 '### 9.5.x' 标题只有 9.5.1–9.5.5，而 ch09.md:782 写「（9.5.7）」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "口径与夹具设置全部可复算：def-9.5.1 的 128×8192=1048576 正确；quantum 1024→16 时每任务 yield 次数 8→512，正文「64 倍」正确；两种 quantum 都整除 8192 正确。scheduling.rs 里确实是 TASKS=128、STEPS=8192、四个 case（current×q16/q1024、multi4×q16/q1024）、预热 while warm.elapsed() < Duration::from_millis(500)、正式 for index in 0..21、case 起点轮转 (index + offset) % 4、checksum ^= value.rotate_left(id)（与完成顺序无关，正文说法成立）、assert_eq!(count, TASKS) 独立核验任务数；正文贴的 spawn 循环与源码一致（源码为 black_box(chunk); tokio::task::yield_now().await）。读数 2.602 与 0.750 我从 21 个逐批样本重算得到 2.602465 与 0.750447，四舍五入后与正文相同，ex-9.5.1 的 0.29 也对。唯一问题是这对读数没标 quantum（见 findings），本节的负载描述只给「128 任务 × 8192 步」，而同一夹具在 q16 下是 16.360/2.033，量级完全不同，不标出来就留了误读空间。",
+      "evidence": [
+        "128*8192=1048576；8192/1024=8、8192/16=512、512/8=64；1024%16==0 且 8192%1024==0 且 8192%16==0",
+        "bench/results/runtime-fixed/measurements-final/source-snapshot/bench/runtime-lab/src/bin/scheduling.rs：'const TASKS: u64 = 128;'、'const STEPS: u64 = 8192;'、'while warm.elapsed() < Duration::from_millis(500) {'、'for index in 0..21 {'、'let case = (index + offset) % 4;'、'checksum ^= value.rotate_left(id as u32);'、'assert_eq!(count, TASKS);'",
+        "measurements-final/scheduling.txt 重算（n=21）：current-q1024 mean=2.602465、multi4-q1024 mean=0.750447、current-q16 mean=16.359581、multi4-q16 mean=2.032681"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部数字独立复算，没有一处对不上。原始文件以 ns/op 输出、每 case n=21，inline 21 个样本我重算得 mean=23658343.286 ns（正文 23.658 ms）、样本 sd=1302022.000 ns（正文 1.302 ms，取 ddof=1 的总体 sd 是 1270643 ns，正文用的是样本 sd，与归档 summary 行一致）、nearest-rank p50=23604084 ns（23.604 ms）、p99=25060042 ns（25.060 ms）；offload 重算得 mean=13632.857 ns（13.633 µs）、样本 sd=3494.454 ns（3.494 µs）、p50=14125 ns（14.125 µs）、p99=18541 ns（18.541 µs），与归档 summary 行逐字相同。分位数定义交代了（正文写明「21 点样本的 nearest-rank 分位数」），ceil(21×0.99)=21 我验算，p99=最大值成立；自测第 3 题的 23604084/14125=1671.09 →「1671 倍」正确。夹具描述与代码相符：blocking_poll.rs 只建 current-thread runtime、tx.send(Instant::now()) 在发送方、rx.await.expect(\"sender alive\") 后 sent.elapsed().as_secs_f64()*1e9、两条分支各睡 Duration::from_millis(20)、offload 走 tokio::task::spawn_blocking、最后 task.await.expect(\"async worker panicked\")、预热 500 ms、for index in 0..21、for offset in 0..2 交替 case。9.6.4/9.6.5 的降级（不声称睡眠变快、不声称多线程全局停顿、差额不拆）与 list_uncollected_claims 的 ch09 条目一致。「20 ms 是申请值不是保证值」是恰当的限定。本节未发现事实问题。",
+      "evidence": [
+        "python3 从 bench/results/runtime-fixed/measurements-final/blocking-poll.txt 的 42 行样本（inline 21 / offload 21）重算：inline mean 23.658343 ms / sd(ddof=1) 1.302022 ms / p50 23.604084 / p99 25.060042；offload mean 0.013633 ms / sd 0.003494 ms / p50 0.014125 / p99 0.018541；文件 summary 行 'inline: mean=23658343.286 sd=1302022.000 batch_p50=23604084.000 batch_p99=25060042.000 ns/op n=21'",
+        "bench/runtime-lab/src/bin/blocking_poll.rs：'tx.send(Instant::now()).expect(\"observer alive\")'、'let sent = rx.await.expect(\"sender alive\");'、'let delay = sent.elapsed().as_secs_f64() * 1e9;'、'std::thread::sleep(Duration::from_millis(20));'、'tokio::task::spawn_blocking(move || {'、'while warm.elapsed() < Duration::from_millis(500) {'、'for index in 0..21 {'、'for offset in 0..2 {'、'task.await.expect(\"async worker panicked\");'",
+        "23604084/14125=1671.0856；math.ceil(0.99*21)=21"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "severity": "P2",
+      "description": "9.4.4 把这份汇编产物称作「run-01 那份 scheduling.s」，但 runtime-lab 的结果目录里没有 run-01 这个标签：bench/results/runtime-fixed/ 下是 measurements-final、measurements、runtime-local、runtime-final、fixed-debug、fixed-release、baseline-debug、baseline-release、final-validation、repeated-validation、before-source-snapshot；run-01 只出现在 bench/evidence-lab/results/run-01 和 bench/systems-lab/results/run-01（别章的约定）。照正文给的名字无法定位文件。摘录本身与 measurements-final/scheduling.s:18352-18379 逐行一致（step 定义在 18352、mov x9,#32557 在 18367、Lfunc_end64 在 18381），measurements/scheduling.s 恰好也是同一行号，所以是标签张冠李戴而不是数字或摘录错——建议直接把「run-01」换成「measurements-final」（与 9.6.3 点名 blocking-poll.txt 的写法对齐）。",
+      "evidence": "src/part3/ch09.md:768；ls bench/results/runtime-fixed/ 与 ls bench/*/results/ 的目录清单；diff 正文代码块 vs bench/results/runtime-fixed/measurements-final/scheduling.s:18352-18379（去 .loc/.cfi/Ltmp 后逐行相同）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "severity": "P2",
+      "description": "think-9.4.1 的第 ③ 条把 scheduling-sample.txt 的采集阶段限制「（9.5.7）」作为出处，但 9.5 只有 9.5.1–9.5.5，9.5.7 不存在，这条断言因此落不到任何小节。按正文内容（预热与两个 runtime 轮转混在一起、profiler 不附着正式计时进程），指向应是 9.5.4「预热、轮转与不并行」。我另核了 substance 没问题：scheduling-sample.txt 确实是对单个 scheduling 进程每 1 ms 采样（'Analysis of sampling scheduling (pid 29381) every 1 millisecond'，Launch Time 与 Date/Time 相差 31 ms），覆盖的是混跑阶段，正文说它「不能折算成稳定态百分比」站得住。",
+      "evidence": "src/part3/ch09.md:782；正文 9.5 小节标题清单（9.5.1–9.5.5）；bench/results/runtime-fixed/measurements-final/scheduling-sample.txt:1-11"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "severity": "P2",
+      "description": "9.2.3 末段写「省下的那笔切换费，是用『不能长占线程』这条纪律换来的（9.5 的阻塞 poll 实验测的就是这条）」，指错节：测阻塞 poll 污染观察延迟的是 9.6（sec-cpp-rust.3.9.6），9.5 测的是让出粒度与 worker 数的聚合 ns/step，夹具里没有任何 sleep。同一节前文（ch09.md:367）指 9.5 时说的是 yield_now 频率，那处是对的；只有这一句串了节号。",
+      "evidence": "src/part3/ch09.md:381 对照 ch09.md:838（9.5 标题「benchmark一：让出粒度与worker数」）与 ch09.md:975（9.6 标题「benchmark二：阻塞poll污染观察延迟」）；bench/runtime-lab/src/bin/blocking_poll.rs 才有 std::thread::sleep(Duration::from_millis(20))，scheduling.rs 里没有 sleep"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "severity": "P2",
+      "description": "例 9.5.1（以及回用这两个读数的 think-9.3.1）把负载只写成「同一负载（128 任务 × 8192 步）」，没标 quantum，读者无从知道 2.602 与 0.750 是 quantum=1024 那一对 case。数字本身我复算无误（21 批均值 2.602465 与 0.750447），但同一夹具的 q16 对是 16.359581 与 2.032681，量级差一个数量级：让出频率是本实验的自变量，也是本节标题的另一半，读数引用时漏掉它属于口径交代不全（不是数字矛盾）。建议这两处都补成「current-q1024 / multi4-q1024」。",
+      "evidence": "src/part3/ch09.md:903 与 ch09.md:606；从 bench/results/runtime-fixed/measurements-final/scheduling.txt 逐 case 重算 n=21 均值：current-q1024 2.602465、multi4-q1024 0.750447、current-q16 16.359581、multi4-q16 2.032681"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "severity": "P2",
+      "description": "think-9.3.1 里被逐项拆的那句引文（「开启多线程后聚合 ns/step 从 2.602 降到 0.750」）与正文自己给的负载标注「固定 128 任务 × 8192 步的纯 CPU 夹具」都没写 quantum；这两个读数只在 quantum=1024 的那对 case 上成立（我按 21 批重算：current-q1024 mean=2.602465、multi4-q1024 mean=0.750447），而 q16 对是 16.359581 与 2.032681。9.3.6 的第 ④ 条恰好就是在批「工作负载绑定」，却漏掉了本实验的另一个自变量，读者照抄这句仍会把两行读数当成配置的一般价格。与 9.5 的同名问题（另见 findings 里锚在 3.9.5 的那条）是同一处口径缺项，改法相同：标成 current-q1024 / multi4-q1024。",
+      "evidence": "src/part3/ch09.md:606 与 ch09.md:610（第 ④ 条只写「固定 128 任务 × 8192 步」）；从 bench/results/runtime-fixed/measurements-final/scheduling.txt 逐 case 重算 n=21 均值：current-q1024 2.602465、multi4-q1024 0.750447、current-q16 16.359581、multi4-q16 2.032681"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "severity": "P2",
+      "description": "def-9.2.3 里「rCore 教程把这一层写到可运行的粒度：它给保存项定的规矩有两条，得同时成立才算数：这份状态切回来之后还得用得上，而且切出去这段时间里有被别的代码写脏的可能」把「两条判据」这条规则记在 rCore 名下。母本实际给的是三分法：__switch 手动保存 ra 与 s0~s11（因为是汇编、编译器不会插 callee-saved 保存）、caller-saved 由高级语言侧的调用者代码保存、临时寄存器不需保存——没有一个「两条同时成立」的准则句。作为教学化改写这两条讲得通，但句式让读者以为能在母本里找到那条准则；建议改成「按母本的三分法可以这样理解」。同节的可核对量我都验过：14 项 = ra + sp + s[12]、ra 属 caller-saved、TICKS_PER_SEC=100 → 10 ms，均正确。",
+      "evidence": "src/part3/ch09.md:373；.work/cpp-rust-sources/systems/2task-switching-rcore.html 的「不用保存其它寄存器是因为：其它寄存器中，属于调用者保存的寄存器是由编译器在高级语言编写的调用函数中自动生成的代码来完成保存的；还有一些寄存器属于临时寄存器，不需要保存和恢复」与 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'"
+    }
+  ]
+}

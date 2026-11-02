@@ -1,0 +1,10 @@
+tide-admit correctness gate (must pass before any timing is reported)
+A = deep admission cap, B = shallow cap; one generated op sequence fed to both
+
+arm A CAP=64 attempted=240 accepted=130 rejected=110 reject_rate=0.4583 digest=eb67d1b3ba7cfa53 engine_put=240 engine_reject=110 -> MATCH
+arm B CAP=4 attempted=240 accepted=8 rejected=232 reject_rate=0.9667 digest=ad8e6885296eed0f engine_put=240 engine_reject=232 -> MATCH
+
+参考回放只重放「本臂真正受理」的操作：被拒的操作必须不改变最终状态。
+引擎计数器（put / admission_reject）与夹具记账逐条对齐才算通过。
+reject,A,64,240,130,0.458333
+reject,B,4,240,8,0.966667

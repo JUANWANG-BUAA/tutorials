@@ -1,0 +1,99 @@
+{
+  "reviewer": "r5-ch02a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动逐字读完 src/part1/ch02.md 的 2.1–2.6 全部正文与每个语义盒（定义、例题与解答、思考、判定流程、常见错误、即时自测、小结），未抽样；回查 bench/foundations-lab 的 src/lib.rs、src/bin/locality.rs、examples/layout.rs、analyze.py 与 results/native-01/{layout.txt,locality.csv,allocation.csv,environment.txt,sample-locality.txt,statistics.json,codegen/*.s,codegen/*.ll}，另核对 src/part1/ch01.md 的被引定义与 src/appendix/coverage.md 登记行；所有测量数字用本机 /usr/bin/python3 从正文点名的 CSV 逐位复算，两条 rCore 引文回查 .work/cpp-rust-sources/systems/ 的母本 HTML 逐句比对。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "探针表九行 size/align 逐行等于 layout.txt；偏移两行 C offsets,0,8,16 与 Rust offsets,10,0,8 与正文表一致，图 2-1 的字节分段（COrder 0-1/1-8/8-16/16-18/18-24、RustOrder 0-8/8-10/10-11/11-16）也与偏移自洽并符合 repr(C) 与尾部补齐。填充算术自算：COrder 1+8+2=11、24-11=13=7+6；RustOrder 16-11=5，均正确。例 2.1.1：65536×8=524288、24+524288=524312、524288÷24=21845.33，「约两万分之一」成立。正文称探针不读填充、不用 transmute，逐行看 examples/layout.rs 只有 size_of/align_of/offset_of，属实；「本章没有启动布局随机化」与 environment.txt 的 RUSTFLAGS 一致。ByteRegion 32=24+8 也与 .ll 的 sret([32 x i8]) 互证。仅 def-2.1.1 首句「size 是一个该类型的值占多少字节」有语序瑕疵，不构成事实问题。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:2-12",
+        "bench/foundations-lab/examples/layout.rs:1-44",
+        "复算：65536*8=524288；24+524288=524312；524288/24=21845.333；24-11=13；16-11=5",
+        "bench/foundations-lab/results/native-01/environment.txt:20（RUSTFLAGS=-C target-cpu=native）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数字全部落地：Option<NonZeroU64> 8、Option<u64> 16、Option<Handle> 8、&[u64] 16 与 layout.txt 相同；16=8 载荷+8 标签的算术自洽；2.2.6「没有采集 Option 时间」经核对两份 CSV 确无相关 case；def-2.2.3 的宽引用只算描述符与 ex-2.1.1 一致。两处措辞与归档代码/出处不贴齐，见 findings：ex-2.2.1 把 Handle 说成「单字段公开结构」，但正文自引代码与 examples/layout.rs:16-17 都是私有 struct、私有字段，repr(transparent) 的条件是「恰好一个非零尺寸字段」而非公开；同一句把用户自定义透明包装归入「保证范围内」却没点名承载文档（Option 文档的 Representation 段列的是标准库类型，透明包装规则在参考手册）。另记：2.2.2 转述的 std::option 条目在仓库只有 URL+指纹登记、无本地镜像，我未能逐字比对原文，按「可落地但未逐字复核」记录，不据此判 P0/P1。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:5-8",
+        "src/part1/ch02.md:384-393 与 bench/foundations-lab/examples/layout.rs:16-17（struct Handle(NonZeroU64); 无 pub）",
+        "src/appendix/coverage.md:|FOUNDATIONS-OPTION|https://doc.rust-lang.org/std/option/index.html|SHA 08969609…|（无本地 HTML 镜像）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "算术自算全对：65536×64=4194304、65536×8=524288、比值 8、双方有效字节同为 524288、密度 8÷64=12.5%；正文点名的两个因子逐行命中（lib.rs:5 确为 pub const N: usize = 65_536;，Record size 64 在 layout.txt）。「归档 CSV 没有这一列」为真（表头只有 kind,round,position,case,ns_per_unit,checksum）。cacheline 128 命中 environment.txt 的 hw.cachelinesize: 128，正文确实没有用 64 字节假设；「Vec 只保证 8 字节对齐、不保证起点是 128 倍数」与 Record align=8 一致，因此拒绝把跨度改名成流量是对的。三类量表里所有「未采集」我反查过归档目录：无 PMU/事件文件，TLB、miss、伪共享、缓存容量确实缺采。判定流程 ④ 的「8.74 倍」复算 0.519143207÷0.059380878=8.7426。rCore 引文逐句比对母本通过（页表项读写、TLB 压力与命中率、一条表项覆盖更大范围、访存速度与整体 IPC、需支持三种不同大小连续区域），且正文声明只借机制不借数字，文件名与 coverage.md 登记 URL 一致——引用与母本相符。",
+      "evidence": [
+        "复算：65536*64=4194304；65536*8=524288；比值 8；8/64=12.5%；0.519143207/0.059380878=8.7426",
+        "bench/foundations-lab/src/lib.rs:5；results/native-01/layout.txt:4；locality.csv:1",
+        "bench/foundations-lab/results/native-01/environment.txt:14（hw.cachelinesize: 128）",
+        ".work/cpp-rust-sources/systems/3sv39-implementation-1-rcore.html（大页/TLB/IPC/三种连续区域原句）",
+        "src/appendix/coverage.md:|rcore-sv39|…chapter4/3sv39-implementation-1.html|SHA 654584dd…|→ #sec-cpp-rust.1.2.3"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "正文引的 Record/sum_aos/sum_soa 与 lib.rs:72-89 逐行相同；「冷字段初始化为 11」命中 locality.rs:7 的 cold: [11; 7]，被测核只读 row.hot；两表示在 run 之前构造、同进程并存，命中 locality.rs:4-22。代码生成五行表全部命中归档产物：.s 里 __RNv…sum_iter = __RNv…sum_soa 是符号别名；.ll 里 sum_aos/sum_soa 的 define 都带 ptr noalias nofree noundef nonnull readonly align 8；Record 仅经切片访问。两段汇编按符号边界确认归属正确：SoA 块（ldp q4,q5,[x8,#-32]／ldp q6,q7,[x8],#64／四条 add.2d）在 sum_soa 的 LBB4_4，AoS 块（ldur x15,[x13,#-128]／ldur x16,[x13,#-64]／ldr x17,[x13]／ldr x15,[x13,#64]／add x13,x13,#256）在 sum_aos 的 LBB3_4，逐字与引用一致，无编造。例 2.4.1 计数自算：SoA 每轮 64 连续字节=8 个 u64、4×2=8 条通道；AoS 装载点 0/64/128/192、256÷4=64；比值 8 与 ex-2.3.1 一致，「跨度与执行形态同时变化」的结论成立。仅标题「六行汇编」与实际引用的两段共 11 行有歧义（六行指 SoA 那块），不影响结论。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:72-89；src/bin/locality.rs:4-22",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.s（sum_iter=sum_soa 别名；LBB3_4 与 LBB4_4 两段逐字命中）",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll（sum_aos/sum_soa 形参 noalias+readonly+align 8）",
+        "复算：32+32=64 字节/轮=8 个 u64；AoS 步长 256/4=64；64÷8=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「以下是 src/bin/locality.rs 的完整代码」与文件 23 行逐语句对应（仅换行排版不同）。夹具参数逐项命中：每次调用 65536 个元素、每批 128 次（run(&mut cases,128,N)）、预热按 500ms 时间运行（lib.rs:20）、ROUNDS=21 且轮转先后（lib.rs:6,25-27）、输出先存数组批后比对（lib.rs:17,30-34）。结果表八个数字我从 locality.csv 用本机 python3 复算逐位相同：aos 0.519143207/0.005283686/0.519196153/0.529403567，soa 0.059380878/0.000798904/0.059301615/0.060682416，每组恰 21 行；配对（soa−aos 按轮）−0.459762329；照 analyze.py 的 quantile 与 random.Random(13013).choices、10000 次重采样复现区间 [−0.461856757, −0.457715438]，与 statistics.json 一致。分位数口径不含糊：ch01 def-1.5.2 写明 21 个批均值、N−1 sd、ceil(21×p) 的 nearest-rank，我按此算出 p99=第 21 个=最大值，正是正文的说法。例 2.5.1 换算全对：128×65536=8388608；一批 4 354 889 ns 与 498 123 ns；21 批 91.45/10.46 ms；每批差 −3.8568 ms；区间宽度 0.004141319=|均值| 的 0.9008%；sd 摊每批 44.32 μs。ex-2.5.2 缺预算 B 的停判与 def-1.7.1/1.7.2 一致。2.5.5 采样：sample-locality.txt 第 52-53 行 sum_aos 421、sum_soa 419，两符号都在，sample 挂独立运行（run.sh:46-49），落在按时间运行的预热段，正文的克制结论成立。",
+      "evidence": [
+        "src/bin/locality.rs:1-23；src/lib.rs:5-6,15-42",
+        "复算（/usr/bin/python3 读 results/native-01/locality.csv）：八数逐位相同；paired −0.459762329；bootstrap [−0.461856757,−0.457715438]",
+        "analyze.py:11-27 与 results/native-01/statistics.json",
+        "换算：8388608×0.519143207=4 354 889 ns；×0.059380878=498 123 ns；21 批 91.4527/10.4606 ms；CI 宽 0.004141319（0.9008%）；sd×批=44.323 μs",
+        "src/part1/ch01.md {#def-1.5.2}（nearest-rank 定义）；results/native-01/sample-locality.txt:52-53",
+        "run.sh:46-49（sample 独立于计时进程）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "代码与语义侧全部落地：ByteRegion 的 new/take/reset 与 lib.rs:101-124 逐字符相同、确无 unsafe；get_mut 拒越界、checked_add 拒溢出、游标在两个 ? 之后才赋，「容量失败不消耗剩余空间」是代码事实。例 2.6.1 我逐步手推：take(6)→used 6 填 7；take(3)→9 未溢出但 get_mut(6..9) 越界→None、used 仍 6；take(usize::MAX)→加法溢出、get_mut 不执行、used 仍 6；take(2)→end=8 成功、内容 [0;2]、used 8；reset()→used 0、storage 未动；take(6)→[7;6]。与 lib.rs:195-203 的 region_capacity_failure_is_transactional 断言一一对应，2.6.5「reset 不等于擦除」有测试支撑。compile-fail 片段与 lib.rs:94-100 文档测试逐行相同；例 2.6.2 的①②③借用区间判定与 def-2.6.3 一致。def-2.6.2 的四条不提供与 .ll 中 ByteRegion::new 调 ___rust_alloc_zeroed(capacity, 1)（只继承 u8 对齐）相符。2.6.6 的 rCore 引文逐句命中母本：alloc/dealloc 各带 Layout、size+align、align 必须 2 的幂且返回地址须为其倍数、「C 语言 malloc 不必提供对齐需求」的注解、堆内存是位于 .bss 的零初始化字节数组、LockedHeap 被 Mutex<T> 保护且任何操作先拿锁；引用的 2.7.3 两个均值我从 allocation.csv 复算为 8.248312814 与 2.813854399，比值 2.9313，正文 2.93 倍正确。问题在 def-2.6.4 的成本分类：它一边把 ① 定义成「每次调用都要带 Layout」的每次调用成本，一边断言「三笔里只有 ② 能靠少分配直接绕开，① 和 ③ 只能摊薄」，这条划分与自己的定义冲突；同时「任何走 GlobalAlloc 的堆分配至少付三笔」里 ③「要记录每块的归属与大小才能释放」被写成普遍必然，但同节引用的透明字节区域与常见 bump/arena 形态都不带每块元数据，属未加限定的过强断言。见 findings。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:101-124（组件代码逐字符相同，无 unsafe）、:195-203（事务性测试）、:94-100（compile-fail）",
+        "手推复核：take(3) 走 get_mut 失败、take(usize::MAX) 走 checked_add 失败，两者均不改 used；[0;2] 与 [7;6] 与测试断言相同",
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll（___rust_alloc_zeroed(capacity, range(i64 1, 9) 1) → align 1）",
+        ".work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html（Layout/2 的幂/.bss 零初始化数组/Mutex<T> 先拿锁原句）",
+        "复算 allocation.csv：fresh_vec 8.248312814、byte_region 2.813854399、比值 2.9313"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "severity": "P2",
+      "description": "两处表述与归档代码/出处不贴齐，8 字节这个结论本身经复核为真。① ex-2.2.1 解答称「Handle 用 #[repr(transparent)] 包了一层单字段公开结构」，但正文 2.2.3 自引的代码与归档探针 examples/layout.rs:16-17 写的都是不带任何 pub 的私有 struct 与私有字段；repr(transparent) 的形式条件是「恰好一个非零尺寸字段」，与字段或结构是否公开无关，用「公开结构」描述会让读者以为需要 pub 才能拿到该保证。② 同一句「相应保证随之传递」「第三行虽然也落在保证范围内」把用户自定义透明包装归入标准库保证，却没点名是哪份文档承载这条传递：2.2.2 与 2.9.1 登记的是 std::option 的 Representation 段（其列表项是引用、Box、NonZero、NonNull、函数指针等标准库类型），透明包装的布局规则在参考手册 Type layout 一节。这一节自己的 E-a 就是「先查文档条目原文」，正文却在这里把两份不同文档的保证合成一句、并只写「相应保证」，出处精度低于本节的自我要求。",
+      "evidence": "src/part1/ch02.md:369（ex-2.2.1 解答「单字段公开结构」「落在保证范围内」）对比 bench/foundations-lab/examples/layout.rs:16-17（#[repr(transparent)] struct Handle(NonZeroU64); 无 pub）；src/appendix/coverage.md 只登记 FOUNDATIONS-OPTION=https://doc.rust-lang.org/std/option/index.html（SHA 08969609…）与 FFI-REPR=https://doc.rust-lang.org/reference/type-layout.html（SHA d407581c…），正文未指明透明包装这条传递取自哪一份；尺寸 8 由 bench/foundations-lab/results/native-01/layout.txt:7 复核为真。"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "def-2.6.4 的三笔成本内部分类自相矛盾、且其中一笔过强。该定义把 ① 写成「参数与协议——每次调用都要带 Layout」，即一笔与调用次数成正比的成本；紧接着正文断言「三笔里只有 ② 能靠『少分配』直接绕开，① 和 ③ 只能摊薄」。但 ① 与 ② 在结构上同属每次分配都要付的固定开销，减少分配次数对 ① 的削减与对 ② 完全同向，「只有 ②」这条 carve-out 与定义自己的措辞冲突；③ 的元数据量也随块数减少。同时首句「任何走 GlobalAlloc 的堆分配至少付三笔」里 ③「分配器要记录每块的归属与大小才能释放」被表述为普遍必然，而不带分配器形态限定——本章节自己给出的反面例子就在同一节：ByteRegion 用单个游标管理、不记录任何每块元数据（.ll 显示其分配调用只带 capacity 与 align 1），rCore 的入门 bump 形态同理，所以 ③ 只在特定分配器族成立。该段的下游推论（「收益有一部分来自少拿锁」「2.93 倍必须同时报告线程数与是否共享堆」）本身是带条件句式并且明确声明多线程对照没有采集，故没有造成数字错误；我复算的两个均值 8.248312814 与 2.813854399 及比值 2.9313 与正文一致。建议修法：把 ①②③ 统一标注为「随分配次数成正比」与「随块数/存活时长相关」两类，删去「只有 ②」，并给 ③ 加上「按块记账的分配器」这一前提。",
+      "evidence": "src/part1/ch02.md:1193（「任何走 GlobalAlloc 的堆分配至少付三笔……① 参数与协议——每次调用都要带 Layout」）与 :1193 末句（「三笔里只有 ② 能靠『少分配』直接绕开，① 和 ③ 只能摊薄」）；对比 src/part1/ch02.md:1110-1113（ByteRegion 仅 storage+used 一个游标，无每块元数据）与 bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll（ByteRegion::new 调 ___rust_alloc_zeroed(capacity, 1)）；数字侧复算自 bench/foundations-lab/results/native-01/allocation.csv：mean(fresh_vec)=8.248312814、mean(byte_region)=2.813854399、比值 2.9313，与正文 2.93 倍相符。"
+    }
+  ]
+}

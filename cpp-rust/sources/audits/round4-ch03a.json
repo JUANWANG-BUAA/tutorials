@@ -1,0 +1,103 @@
+{
+  "reviewer": "r4-ch03a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动通读 src/part1/ch03.md 的 3.1–3.6 全部正文与语义盒（定义/例题/解答/思考/判定流程/小结/常见错误/即时自测），再用 bench/foundations-lab 的 borrow.csv、initialization.csv、statistics.json、layout.txt、source-sha256.txt、codegen 的 .ll/.s/.mir、sample-borrow.txt、src/lib.rs 与 tests/contracts_more.rs 复算与逐行核对；未读其他章节正文。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节静态量全部复算通过：layout 探针归档给出 &[u64]=16、Vec<u64>=24、ByteRegion=32，与正文例 3.1.1 与表格逐字一致；65536×8=524288、524288÷24≈21845.3（『约两万分之一』成立）、ByteRegion 的 Vec<u8>(24)+usize(8)=32 与 src/lib.rs:101-104 的字段自洽；前引 3.5 的 0.159020461/0.058851898 与归档完全相同。def 3.1.1 的『寄存器传递/栈槽复用/返回位置优化』与『大数组按值传递仍可能实际搬运』属机制叙述，正文自己声明『本节没有为它采集数据』，不作断言处理。唯一问题：3.1.4 引 S08 只有书名与主题概括，无单元/页定位，读者无法回查原文那句（见 findings）。图 3-1 的 SVG 坐标与文字未逐元素核对。",
+      "evidence": [
+        "src/part1/ch03.md:95,113-119,121",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/layout.txt:8-10",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:101-104",
+        "复算：65536*8=524288；524288/24=21845.333；0.159020461/0.058851898=2.702"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本轮最强的一条断言核实通过：正文说『实际 IR 中 copy_add 的目标指针带 noalias 与 writeonly，源指针带 noalias 与 readonly，两者带 nonnull、align 8』，.ll 第 693 行的签名逐字给出 dst: ptr noalias nofree noundef nonnull writeonly align 8、src: ptr noalias nofree noundef nonnull readonly align 8；『随后出现向量加载、向量加与向量存储』也在同函数体内命中 load <2 x i64> ×4、store <2 x i64> ×4。copy_add 源码与正文代码块逐字相同（assert_eq! 长度 + iter_mut().zip + wrapping_add(1)），#[inline(never)] 一致。3.2.4 『本轮没有运行 Miri』我按 results/ 全目录 grep 过 miri，零命中，声明诚实。未核项：ex 3.2.1 的 [10,20,0,0]→[10,20,11,21] 与『调用方通过 split_at_mut 提供不相交区域』那条测试是否真存在于包内，我只核到源码与 IR，没有逐行 diff 测试文件；ex 3.2.3 的 dynamic_borrow_conflict_is_safe_failure 只核到测试名存在（src/lib.rs:248），块内三行断言未逐行比对。问题：3.2.4 引 S10 同样无单元/页定位，与 3.1.4 的 S08 属同一类，已并案记在 sec-cpp-rust.1.3.1 的 P2 里，故本节判 pass。",
+      "evidence": [
+        "src/part1/ch03.md:282-294,323,347",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:164-171",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll:693",
+        "同 .ll 第 693-780 行：grep 计得 load <2 x i64> 4 次、store <2 x i64> 4 次",
+        "grep -rli miri bench/foundations-lab/results → 无输出"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "try_build 代码块与 src/lib.rs:156-162 逐字一致（with_capacity + push + ? 早退，无 MaybeUninit、无 set_len），与 3.3.3『本章组件不需要 MaybeUninit』相符；3.3.1 声称 zero_fill 只用于 u64，与 init_zero 的 vec![0u64; n]（lib.rs:147-153）相符。例 3.3.1 四个数我按代码语义独立推得：容量 5、退出时长度 3、被丢弃 3、返回 Err 无 Vec，与正文一致；自测第 3 题（n=6、下标 4 panic）的 4 个前缀元素与 3.4 实测计数 4 自洽。3.3.4 关于 panic=abort 与 3.3.6 关于 with_capacity 分配失败不映射进 E、应改用 try_reserve 的断言属语言/标准库常识且正文只作边界声明，未回源码核。未核项：3.3.2 图 3-2 的 SVG（约 30 行）只读了读图文字；『编译器可能对后者更容易做批量展开』是 3.6.5 的机制问题，已在 3.6 核。",
+      "evidence": [
+        "src/part1/ch03.md:524-535,545,583,656",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:156-162,147-153"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节所有可对核断言成立：Err 路径计数 3 与 panic 路径计数 4 分别是 src/lib.rs:223、236 的 assert_eq! 实值；Tracked 的 Drop 计数结构（Rc<Cell<usize>>）与代码块一致；contracts_more.rs 的成功路径 0→0→5（第 17、19、21 行）与部分移动 1→2（第 30、32 行）与 @think-3.4.1、3.4.8 的表述完全对应，销毁顺序测试 fields_and_locals_have_different_drop_order 确实存在（第 58 行）。3.4.5 引用的 MIR 片段是归档里的原文：.mir 第 3045 行 drop(_3) -> [return: bb7, unwind terminate(cleanup)];、第 3049 行 drop(_2) -> [return: bb8, ...]，且第 2893 行 debug out => _3、第 2881 行 debug make => _2，正文『_3 是 out、_2 是工厂闭包』正确。3.4.8『新增测试没有修改 native-01 绑定的内核源码』我用 shasum 复算：native-01/source-sha256.txt 里 src/lib.rs=0e6f1a95…、src/bin/borrow.rs=8482ca63…、src/bin/initialization.rs=be868b9e…、examples/layout.rs=7ad7d78f… 与磁盘当前文件四位一体相同，故 3.5/3.6 打印的代码确实就是被测代码（测试补充只在 #[cfg(test)] 与 tests/ 内，tests/contracts_more.rs 不在绑定清单里，属正常）。未核项：日志序列 [2,1] 与 [3,4] 的具体 id 赋值只核到测试函数存在，没读函数体逐行；mem::take 与元组示例只核到断言行。",
+      "evidence": [
+        "src/part1/ch03.md:712-718,736,750,770-778,793,813-816,819",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:223,236,248",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/tests/contracts_more.rs:17,19,21,30,32,58",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:2881,2893,3045,3049",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/source-sha256.txt + shasum -a 256 实测四个文件相同"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "测量数字全部独立复算通过：我从正文点名的 results/native-01/borrow.csv 用 statistics 重算，borrowed mean 0.058851898 / sd(N-1) 0.000404976 / nearest-rank p50 0.058824778 / p99 0.059892774，cloned 0.159020461 / 0.002093374 / 0.158538461 / 0.166441023，配对均值 0.100168563，与正文表格与行文逐位相同；bootstrap 我按 seed=13013、10000 次自举得 [0.099391, 0.101096]，与正文 [0.099374896, 0.101163745] 在重采样实现差异内一致，statistics.json 给出的正是正文那对数。口径也核到底：N=65536（lib.rs:5）、每批 256 次（bin/borrow.rs run(&mut cases,256,N)）、21 批（42 行 raw）、p99=最大值（ceil(21×0.99)=21）；例 3.5.1 的换算 0.100168563×65536=6564.6 ns（『约 6.6 微秒』）、×256=1.68 ms、比值 2.702 全部成立。『cloned 保留分配与 memcpy、borrowed 转入同一求和核』在 .ll 与 sample-borrow.txt 中命中（cloned 下 _platform_memmove）。发现的问题是 3.5.4 与 3.5.2 的自相矛盾（见 findings P1）。未核项：analyze.py 的分位数实现细节我按 nearest-rank 与 N−1 自行复算，没有比对脚本源码；例 3.5.2 的 B=0.0005 已明写假想约定，不作采集量处理。",
+      "evidence": [
+        "src/part1/ch03.md:946,952-971,977-986,992-999,1012-1014,1037",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/borrow.csv（42 行 raw，复算见 notes）",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/statistics.json borrow.paired_second_minus_first",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:5,62,127-135",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/sample-borrow.txt 调用图：borrowed → foundations_lab7sum_soa；cloned → _platform_memmove"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "测量数字同样全部复算通过：从 results/native-01/initialization.csv 重算得 push 1.153849851/0.019135814/1.152266979/1.194040060，zero_fill 0.201331729/0.005930436/0.201612711/0.218312025，配对均值 −0.952518123，与正文逐位一致；我另按 seed=13013 自举得 [−0.960024, −0.945442]，与正文 [−0.959926571, −0.945401044]（statistics.json 原值）同量级同侧。比值 1.153849851/0.201331729=5.731（『约 5.73 倍』『约 1/5.7』成立）；0.952518123×65536=62424.2 ns（『约 62.4 微秒』）、×64=3.995 ms（『约 4.0 毫秒』）；每批 64 次与 N=65536 由 bin/initialization.rs 的 run(&mut cases,64,N) 与 black_box(N) 证实。代码块与 lib.rs:138-153 逐字一致。3.6.5 的产物断言我在 .ll/.s 中命中：alloc_zeroed 出现 10 次、grow_one/RawVec 55 次、.s 中 stp 51 次，方向与正文相同。问题：这些代码生成断言只说『实际 IR』『本轮汇编』，全文没点名归档文件，而 3.5/3.6 的 csv 都点了名，可追溯性口径不统一（见 findings P2）。未核项：我没有把容量比较与成对展开定位到 init_push/init_zero 各自动作体内（只做了模块级命中计数）；『0.5 ns/元素』的 B 已声明假想约定。",
+      "evidence": [
+        "src/part1/ch03.md:1148,1154-1171,1176-1199,1204-1211,1222-1224,1245-1247",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/initialization.csv（42 行 raw，复算见 notes）",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/src/lib.rs:138-153,5",
+        "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll / .s（grep 计数）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "severity": "P1",
+      "description": "3.5.2 的代码与 3.5.4 的采样在同一归档下自相矛盾，正文没有解释就并列发布。3.5.2（ch03.md:977-986）写明被测工作核是 borrowed → sum_iter、cloned → to_vec + sum_iter，与 src/lib.rs:62（pub fn sum_iter）和 lib.rs:127-129 一致；3.5.4（ch03.md:1037）却写『独立 sample-borrow.txt 看到 borrowed 进入 sum_soa』。我在 sample-borrow.txt 的调用图里逐字确认这一点：foundations_lab8borrowed +381 之下只有 foundations_lab7sum_soa，整个文件没有 sum_iter 帧；而 sum_soa 是 lib.rs:87 的另一个独立函数（其体内不含 sum_iter，lib.rs:62-66 只有 5 行 fold）。同时 native-01/source-sha256.txt 记录 src/lib.rs=0e6f1a95c9cac5a630a7500f0f6d1c0f749987b94c5953874c48c94d6bfd389e，与磁盘当前 lib.rs 的 shasum 完全相同，所以被测源码就是正文打印的那份——两者不可能同时对。最可能的真因是链接器对折叠后完全相同的机器码做 ICF，采样把地址符号化成其中一个名字，但这属于正文必须补的一句：现在的写法让读者要么认为采样记录的不是本节被测路径，要么认为 3.5.2 的代码不是测出来的代码，直接削弱『两条路径的真实工作差异与接口设计一致』这条机制结论。",
+      "evidence": "/Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/sample-borrow.txt 调用图行『_RNvCs9cj3cTKSYZx_15foundations_lab8borrowed … + ! 381 _RNvCs9cj3cTKSYZx_15foundations_lab7sum_soa』；grep sum_iter sample-borrow.txt = 0 命中；src/lib.rs:62,87,127-129；native-01/source-sha256.txt 与 /usr/bin/shasum -a 256 src/lib.rs 同为 0e6f1a95…"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "severity": "P2",
+      "description": "代码生成断言未按本章自己的口径点名证据文件。3.6.5（ch03.md:1245-1247）的『push 循环中仍可见容量比较』『grow_one 路径也保留』『zero_fill 中保留 alloc_zeroed』『本轮汇编中有 stp 存储序列』与 3.5.4 的『cloned 的实际 IR 保留分配调用，随后有 llvm.memcpy』都只说『产物』『实际 IR』『本轮汇编』，没有给出路径；同节 3.5.3/3.6.4 却明确点名 results/native-01/borrow.csv 与 initialization.csv，两节内部口径不一致，读者无法按机械层的『点名磁盘证据』标准回查。我自行定位到 bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll 与 .s 才核到：alloc_zeroed 命中 10 次、grow_one/RawVec 55 次、.s 中 stp 51 次、llvm.memcpy 存在——结论方向成立，但都是模块级命中，正文断言的是具体函数体内的行为（init_push 的容量比较、init_zero 的成对展开），这层定位既没写进正文也没写进归档文件名，属可追溯性缺口而非事实错误。建议照 3.6.4 的写法补一句『来源为 results/native-01/codegen/<hash>.ll / .s』。",
+      "evidence": "src/part1/ch03.md:1245-1247,1035；grep -c alloc_zeroed = 10；grep -c 'grow_one|RawVec' = 55；grep -c stp .s = 51（均在 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab/results/native-01/codegen/）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "severity": "P2",
+      "description": "两处外部书引用只有书名与主题概括，无法落地回查原文。3.1.4（ch03.md:185）写『S08（Effective Rust）在复制与可用性的讨论中强调了这种取舍』，3.2.4（ch03.md:347）写『本地 S10（Rust 参考手册）较旧译文用 LLVM noalias 概括别名』。我确认两本母本在盘且与编号对应：sources/inventory.json 里 S08=Effective Rust.pdf（261 页）、S10=Rust 参考手册.pdf（376 页），所以不是空引；但两处都没给条目号/单元号/页码，也没有引文原文，读者按现在的写法既查不到『那种取舍』具体是哪一条，也查不到旧译文那句 noalias 概括长什么样——而 3.2.3 的 IR 断言恰恰能逐字落到 .ll:693，两者证据强度差一个量级。按派单判级这属关键外部断言定位缺失（够不上 P0/P1，因为没有虚构与反事实），建议补 S08-Uxxx/条目号与 S10 的页码或短语。",
+      "evidence": "src/part1/ch03.md:185,347；/Users/juanwang/Desktop/tutorials/cpp-rust/sources/inventory.json：S08 filename=Effective Rust.pdf sha256=399f4efe…pdf_pages=261；S10 filename=Rust 参考手册.pdf sha256=4b29cd11…pdf_pages=376"
+    }
+  ]
+}

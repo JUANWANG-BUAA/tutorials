@@ -1,0 +1,100 @@
+{
+  "reviewer": "r4b-ch03a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读 src/part1/ch03.md 的 3.1–3.6 全部正文与每个语义盒，然后逐条开 bench/foundations-lab 的源文件、results/native-01 的 CSV/MIR/LL IR/汇编/layout/sample 复算，并用 tools/list_uncollected_claims.py 核对每处「没有采集」在磁盘上确实没有产物。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了静态量与代码事实：例 3.1.1 与 3.1.2 表给出的描述符尺寸 24/16/32 字节逐条来自 results/native-01/layout.txt（Vec<u64>,24,8；&[u64],16,8；ByteRegion,32,8），ByteRegion 两个字段 Vec<u8>(24)+usize(8)=32 自算一致；524288=65536×8 与 lib.rs:5 的 N=65_536、lib.rs:44 data(n) 一致；524288÷24≈21845（我算得 21845.33）与「约两万分之一」一致；3.1 引用的 0.159020461/0.058851898 两个数我在 3.5 里从原始 CSV 独立复算，逐位相同。定义 3.1.1/3.1.2（移动只转移责任、Copy 不要求 Drop、Clone 成本由实现决定）与 Vec/Arc 的行为、与 borrow.rs 里 cloned=input.to_vec() 后求和的实现方向一致；3.1.3「所有权免费」的限定与 3.1.4 S08 取舍、3.1.5 三种地址、3.1.6/3.1.7 小结、E-a…E-f（6 条）、即时自测 4 题我都读了，内部无数字矛盾。本节唯一未落地的是「大数组按值传递在某些调用边界仍要实际搬运」，正文自己在 think-3.1.1 里已声明「本节没有为它采集数据」，属诚实留白而非虚构，故不判 finding。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt: Vec<u64>,24,8 / &[u64],16,8 / ByteRegion,32,8",
+        "bench/foundations-lab/src/lib.rs:5 pub const N: usize = 65_536; src/lib.rs:44-48 data(n)",
+        "bench/foundations-lab/src/lib.rs:131-135 cloned() = input.to_vec() 后 sum_iter（复制载荷路径确实存在）",
+        "复算：65536*8=524288；524288/24=21845.33；0.159020461/0.058851898=2.70204"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节最硬的可核断言是 3.2.3「本轮 LLVM 参数属性」，我直接从归档 IR 逐字对：copy_add 的签名里 dst 是 ptr noalias nofree noundef nonnull writeonly align 8、src 是 ptr noalias nofree noundef nonnull readonly align 8，正文「目标指针带 noalias 与 writeonly，源指针带 noalias 与 readonly，两者带 nonnull、align 8」完全成立；「随后出现向量加载、向量加与向量存储」也成立（body 里 %wide.load = load <2 x i64> 四次、%5 = add <2 x i64> %wide.load, splat (i64 1)）。3.2.2 的代码块与 src/lib.rs:165-171 逐行相同（含 assert_eq!(dst.len(), src.len()) 与 iter_mut().zip），例 3.2.1 的代码与 lib.rs:239-245 测试 disjoint_borrow_updates_only_destination 相同，[10,20,11,21] 按「读源+1写目标」手算成立。例 3.2.3 的代码与 lib.rs:247-254 dynamic_borrow_conflict_is_safe_failure 逐字相同，解答没有把 try_borrow 说成 UB、也没有夸大。3.2.4 的引文类断言我落到盘：S10 母本 /Users/juanwang/E-Book/Rust/Rust 参考手册.pdf（sources/inventory.json 记 sha256 4b29cd11…、376 页）pdftotext 后含 noalias 与 LLVM 各 2 处，正文只说「较旧译文用 LLVM noalias 概括别名」并拒绝把它当形式定义，措辞与证据强度相称；同节声明「本轮没有运行 Miri」，我确认 results/ 下没有任何 Miri/TSan/Loom 产物。证据表五行与例 3.2.2 的逐句判定、E-a…E-g（7 条）、即时自测 4 题内部一致，无口径混用。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.ll: define void @_RNvCs…8copy_add(ptr noalias nofree noundef nonnull writeonly align 8 …, ptr noalias nofree noundef nonnull readonly align 8 …)",
+        "同一 .ll 的 copy_add 体内：%wide.load = load <2 x i64>、%5 = add <2 x i64> %wide.load, splat (i64 1)",
+        "bench/foundations-lab/src/lib.rs:165-171 copy_add 与正文代码块逐字一致；src/lib.rs:239-254 两个测试与例 3.2.1、例 3.2.3 一致",
+        "sources/inventory.json S10 filename「Rust 参考手册.pdf」/Users/juanwang/E-Book/Rust/ 存在；pdftotext 后 grep -c noalias = 2",
+        "find bench/foundations-lab/results -iname '*miri*' -o -iname '*tsan*' -o -iname '*loom*' 无输出（3.2.4「没有运行 Miri」成立）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.3.3 的 try_build 代码与 src/lib.rs:156-162 逐行等价（正文只是把签名折成多行），WithCapacity+push 顺序、? 早退后局部 Vec 随作用域销毁的叙述与实现一致。例 3.3.1 要求的四个数我按实现推：with_capacity(5) 容量 5、下标 0..2 三次 push 后 len=3、Err 时前缀 3 个元素被 drop、返回 Err 无 Vec，与 lib.rs:212-224 failure_drops_initialized_prefix（n=8、i==3 注 Err、断言计数 3）实测口径一致，也和 3.4 的归档测试互相印证。定义 3.3.1「with_capacity 取得容量 n 但初始长度为 0」「push 先写值再纳入长度」是标准库契约，与 lib.rs:107-112 ByteRegion 用 vec![0; capacity]（u64/u8 零合法）不冲突；例 3.3.2 对 u64 可以、&u64 与 NonZeroU64 不行的判定与 layout.txt 里 Option<NonZeroU64>,8,8（零被排除）方向一致。3.3.6 关于「分配失败没有被转换成 E」我在归档 MIR 里找到结构证据：try_build 内 _17 = alloc::raw_vec::RawVecInner::try_allocate_in(… AllocInit::Uninitialized …) -> [return: bb9, unwind: bb7]，走的是标准库分配失败路径而非 E。3.3.4 的 panic/abort 三分、3.3.7、小结、E-a…E-g（7 条）、即时自测 4 题读下来无内部矛盾；「本章的 zero_fill 只用于 u64」与 3.6.2 代码一致。本节无数字断言，故不存在算错风险。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:156-162 try_build 实现；src/lib.rs:137-153 init_push/init_zero 与 3.6 一致",
+        "bench/foundations-lab/src/lib.rs:212-224 failure_drops_initialized_prefix: try_build(8,…) i==3 → assert_eq!(count.get(), 3)",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:3010 try_allocate_in(… Uninitialized …) -> [return: bb9, unwind: bb7]",
+        "bench/foundations-lab/results/native-01/layout.txt: Option<NonZeroU64>,8,8（零非合法值）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节三个「实测计数」我全部到源码核对：Err 路径 n=8、i==3 注入 → 断言 count=3（lib.rs:212-224），panic 路径 i==4 断言 → 断言 count=4（lib.rs:226-237，且确实包了 AssertUnwindSafe，与正文描述一致），Tracked 定义（Rc<Cell<usize>> + Drop 自增）与 3.4.3 代码块逐字相同（lib.rs:205-210）。3.4.5 声称的 MIR 片段我逐字符对到归档 mir 的第 3044–3053 行：bb6/bb7/bb8 三个 cleanup 边与 drop(_3)/drop(_2)/resume 完全一致，并且函数头是 fn try_build(_1: usize, _2: impl FnMut(usize)->Result<T,E>)，_3 声明为 let mut _3: std::vec::Vec<T>，所以正文「_3 是 out、_2 是工厂闭包」的局部编号解释正确，未夸大。例 3.4.1 的两串日志我读到 tests/contracts_more.rs::fields_and_locals_have_different_drop_order：先两个局部 id 1/2 断言 [2,1]，clear 后元组字段 id 3/4 drop(fields) 断言 [3,4]，与「局部逆声明序、字段声明序」的定义 3.4.2 完全对应，解答里「记录用单线程 Rc 与 RefCell、日志不用于性能采样」也与代码相符。3.4.8 的成功路径 0→0→5、部分移动 1→2、mem::take 后 0→1 三段代码与 tests/contracts_more.rs 的三个测试逐行一致；「新增测试没有改写 native-01 内核、补充日志放 validation-01」在盘上有 results/validation-01/test.txt 落地。定义 3.4.1（drop flag 是编译策略、不进气 size_of 表）、3.4.3（部分移动/mem::take）与 3.4.6/3.4.7（Drop 不保证业务完成、forget 仍属安全模型）、think-3.4.1、E-a…E-h（8 条）、即时自测 4 题读下来与其余各节口径一致，未发现内部数字矛盾。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:205-210 Tracked；:212-224 Err→3；:226-237 panic→4（catch_unwind+AssertUnwindSafe）",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.mir:2879 fn try_build(_1: usize, _2: impl FnMut(usize) -> Result<T, E>)，:2883 let mut _3: std::vec::Vec<T>，:3044-3053 bb6/bb7/bb8 (cleanup) 与正文片段逐字相同",
+        "bench/foundations-lab/tests/contracts_more.rs: successful_return_transfers_cleanup(0→0→5)、partial_move_drops_each_resource_once(1→2)、taking_ownership_leaves_valid_empty_container(0→1)、fields_and_locals_have_different_drop_order([2,1] 与 [3,4])",
+        "bench/foundations-lab/results/validation-01/test.txt 存在（补充测试日志单独归档的说法落地）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节全部测量数字我从正文点名的归档 results/native-01/borrow.csv 自己复算（未抄 statistics.json）：21 条 raw 批次下 borrowed 均值 0.058851898、N−1 标准差 0.000404976、nearest-rank p50 0.058824778、p99 0.059892774；cloned 0.159020461 / 0.002093374 / 0.158538461 / 0.166441023 —— 与 3.5.3 表格九个数逐位相同，配对均值（cloned−borrowed，按 round/position 对齐）0.100168563 也复现；bootstrap 我用 seed 13013、10000 次重采样独立跑，得 [0.099375015, 0.101163745]，与正文 [0.099374896, 0.101163745] 在上界完全一致、下界差 1.2e-7，属百分位索引口径差，不构成数字矛盾。口径断言也核过：run() 里 ns = 墙钟/(iterations*units)（lib.rs:35），与定义 3.5.1「批次墙钟除以迭代次数×元素数」一致；iterations=256 来自 src/bin/borrow.rs 的 run(&mut cases, 256, N)；3.5.2 声称的「完整代码」与盘上 borrow.rs 逐行相同（仅空行排版差异）；「公共夹具逐次校验返回值」对应 lib.rs:21 与 :34 的 assert。例 3.5.1 第 2 问的 p99=最大值的推论我实测确认：两列 p99 都等于该 case 21 个数里的最大值（ceil(21×0.99)=21）。第 3 问换算 0.100168563×65536=6564.647 ns、×256=1.6805e6 ns，与正文 6564.6 ns/1.68 ms 一致。3.5.4 的代码生成断言核到：cloned 的 IR 保留分配调用并紧跟 tail call void @llvm.memcpy.p0.p0.i64（.ll:528），链接后 .ll 里只有 sum_soa 的定义、没有 sum_iter 的定义，而 lib.rs:62-64 与 :87-89 两个函数体逐字相同，正文「采样符号名不等于源码调用边、机制是推断」的说法与证据强度相称；正文点名的 .s 第 800/844/1043/1296 行确实四条都是 bl __RNvCs…7sum_soa；sample-borrow.txt 里 sum_soa 出现 5 次、cloned 7 次、malloc 20 次、free 8 次，memcpy 0 次（正文没有据此断言没有复制，措辞正确）。「本轮没有跑 nm/dyld_info」在 results/ 里没有对应产物，「本节没有采集」分配/复制/释放成分占比与内存流量：归档里只有整案计时的 CSV（borrow/dce/allocation/locality/paired）与 -excluded 的同格式计时副本，没有任何逐项计时文件或硬件计数器文件，诚实。判 finding 的唯一原因是 3.5.4 一处行号引用指偏（见 findings，P2），其余数字与引证全部落地。",
+      "evidence": [
+        "复算（/usr/bin/python3 从 results/native-01/borrow.csv 的 42 行 raw）：borrowed mean 0.05885189785714286→0.058851898, sd 0.00040497633, p50 0.058824778, p99 0.059892774=max; cloned mean 0.1590204609047619→0.159020461, sd 0.00209337364, p50 0.158538461, p99 0.166441023=max; paired 0.10016856304761905",
+        "bootstrap(seed=13013, resamples=10000) 我算 [0.099375015, 0.101163745]；statistics.json 记 [0.099374896, 0.1011637449047619]（正文取前者口径）",
+        "bench/foundations-lab/src/lib.rs:15-42 run()（:35 除数 iterations*units、:21/:34 逐次校验）、:5 ROUNDS=21、src/bin/borrow.rs run(&mut cases, 256, N)",
+        "results/native-01/codegen/…​.ll:528 tail call void @llvm.memcpy.p0.p0.i64；.ll 内 sum_soa 有 define、sum_iter 无 define；…​.s:800,844,1043,1296 四行均为 bl __RNvCs9cj3cTKSYZx_15foundations_lab7sum_soa",
+        "results/native-01/sample-borrow.txt 计数 sum_soa 5 / cloned 7 / borrowed 2 / malloc 20 / free 8 / memcpy 0；results/native-01 目录无 nm/dyld_info/perf 计数产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "3.6.4 的四个数×两行我也从 results/native-01/initialization.csv 独立复算：push 均值 1.1538498514285715、N−1 sd 0.0191358143、nearest-rank p50 1.152266979、p99 1.194040060（同时是该列最大值）；zero_fill 0.2013317289047619 / 0.0059304356 / 0.201612711 / 0.218312025 —— 与正文表格逐位相同；配对均值（zero_fill−push）−0.9525181225238095 → 正文 −0.952518123 一致；bootstrap（seed 13013、10000 次）我算 [−0.959925697, −0.945401044]，与正文 [−0.959926571, −0.945401044] 下界差 8.7e-7（索引口径），上界逐位相同。静态量与倍数：1.153849851÷0.201331729=5.7311（正文≈5.73、preview「约 1/5.7」=0.1745，均自洽）；0.952518123×65536=62424.23 ns（正文 62,424）、×64=3.995e6 ns（正文约 4.0 ms）。代码与协议核到：init_push/init_zero 与 src/lib.rs:137-153 逐字相同；src/bin/initialization.rs 与 3.6.3 声称的「完整代码」相同，run(&mut cases, 64, N) 支持「每批 64 次、N 仍为 65536」、black_box(N) 支持「输入 n 经过 black_box」；lib.rs:181-190 的等价性测试对 n∈{0,1,7,65,N} 断言 init_push==init_zero，支持「两种结构最终产生相同长度与值序列」。3.6.5 的代码生成断言逐条对产物：init_push 的 .ll 里有 grow_one 两次调用与容量比较 %_15 = icmp samesign ule i64 %n, %_12.sroa.4.0 以及写入长度的 store，.s 里 bl …grow_one 1 次、cmp 3 次；init_zero 的 .ll 里保留 ___rust_alloc_zeroed 调用（.s 全档 alloc_zeroed 5 处），汇编里 init_zero 段 stp 16 次（如 stp x16, x12, [x11], #32）——正文说「成对展开写入」「有 stp 序列」成立。3.6.6/3.6.7 的「没有采集」我核盘：归档没有任何逐项计时、内存流量或事件计数文件，所以「保留容量路径/展开结构是机制解释、不是成分归因」的分工诚实；E-f 与 think-3.6.1「benchmark 不应执行 UB」也与盘上没有第三种未初始化 case 一致。判 finding 只因 3.6.5 一处展开度数的表述比产物粗（见 findings，P2）；数字、单位、区间与结论边界本人都认为站得住。",
+      "evidence": [
+        "复算（results/native-01/initialization.csv 42 行 raw）：push 1.1538498514285715 / 0.01913581430035697 / 1.152266979 / 1.194040060=max；zero_fill 0.2013317289047619 / 0.005930435624369704 / 0.201612711 / 0.218312025=max；paired −0.9525181225238095",
+        "bootstrap(seed=13013,10000)=[−0.959925697, −0.945401044]；statistics.json=[−0.9599265712857143, −0.9454010440952381]（正文取归档口径）",
+        "算术：1.153849851/0.201331729=5.7310879；0.952518123*65536=62424.23；*64=3.9952e6；1/5.7310879=0.174487",
+        "bench/foundations-lab/src/lib.rs:137-153 内核、src/bin/initialization.rs（run(&mut cases, 64, N)）、src/lib.rs:181-190 等价性测试",
+        "results/native-01/codegen/…​.ll：init_push 段含 %_15 = icmp samesign ule i64 %n, %_12.sroa.4.0 与 grow_one invoke；init_zero 段含 tail call …___rust_alloc_zeroed、四条标量 store i64 %14/%16/%18/%20 到 next.gep 链（4 路展开），无 vector.load/vector.store/<2 x i64>；…​.s 的 init_zero 段 stp 16 次",
+        "results/native-01 目录无逐项计时/事件计数/内存流量文件（3.6.6「本节没有采集这些量」成立）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "severity": "P2",
+      "description": "3.5.4 的行号引用指偏一行为函数签名：正文写「源码里 borrowed 调的是 sum_iter（src/lib.rs:127）」，但 src/lib.rs:127 是 `pub fn borrowed(input: &[u64]) -> u64 {` 这一行签名，真正调用 sum_iter 的是 :128（`sum_iter(black_box(input))`）。功能定位不错（函数确实是 borrowed，调用也确实是 sum_iter 而非 sum_soa），只是引用行号差一行，读者按行号跳过去会看到签名而不是断言所指的那条调用边。",
+      "evidence": "bench/foundations-lab/src/lib.rs:126-129：126 #[inline(never)] / 127 pub fn borrowed(input: &[u64]) -> u64 { / 128     sum_iter(black_box(input)) / 129 }"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "severity": "P2",
+      "description": "3.6.5 把 zero_fill 的覆盖循环描述成「可见成对展开写入」，但成对只发生在汇编层：归档 .ll 里 init_zero 的覆盖循环是 4 路展开的标量写（%14/%16/%18/%20 依次 store 到 next.gep、next.gep20、next.gep21、next.gep22），是汇编器把相邻两次标量 store 合并成 `stp x16, x12, [x11], #32` 才呈现为「成对」。正文紧接着强调「成对标量存储与向量存储不是同一回事」，方向正确（该循环确实没有 vector.load/vector.store/<2 x i64>），但「成对展开」这一句让读者以为 IR 层就是 2 路，与实际产物的展开度数不符，属表述不够精确而非数字错误。",
+      "evidence": "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll 的 init_zero 体：store i64 %14,%16,%18,%20 四条到 next.gep 链、vector.store 计数 0、<2 x i64> 计数 0；同一 .s 的 init_zero 段出现 stp\\tx16, x12, [x11], #32（stp 共 16 次）"
+    }
+  ]
+}

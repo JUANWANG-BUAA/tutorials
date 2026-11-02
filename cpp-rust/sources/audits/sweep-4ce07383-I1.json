@@ -1,0 +1,253 @@
+{
+  "reviewer": "sweep4ce-I1",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立复算：用一条 python 抽取 src/part1/ch02.md、ch03.md、ch04.md 全部含 4 位以上有效数字/千分位/百分比/倍率/表格行，再以 bench/foundations-lab/results/native-01/*.csv、statistics.json、layout.txt、bench/compiler-lab/results/stable-01|stable-02/*.csv、stable-02-recalculated.json、extra-02/layout.csv、codegen/*.s|*.ll|*.mir、environment.txt、tests.txt、probes/rejected/expected.tsv 为归档，按归档自带 analyze.py 口径（statistics.mean、statistics.stdev 即 n-1、quantile=sorted[ceil(len*p)-1] nearest-rank、seed=13013、10000 次 rng.choices 重采样、2.5%/97.5% 分位）独立重算，并用 numpy 无关的纯 stdlib 复现。静态量（size/align/offset/字节/容量/比值/单位换算）独立计算。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.1.1/2.1.4 的 size/align/offset 表与例 2.1.1 的字节换算逐项核对 layout.txt，全部一致。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt: COrder 24/8、RustOrder 16/8、Record 64/8、Option<NonZeroU64> 8/8、Option<u64> 16/8、Option<Handle> 8/8、&[u64] 16/8、Vec<u64> 24/8、ByteRegion 32/8，与 src/part1/ch02.md:88-96 完全相同",
+        "layout.txt: C offsets 0,8,16 / Rust offsets 10,0,8 == src/part1/ch02.md:147-148",
+        "复算 ch02.md:115：65536×8=524288、524288+24=524312、524288÷24≈21845.3（正文写 ≈21845）成立；RustOrder 16 与偏移 (value 0..8, short 8..10, tag 10..11 → 11 上取整到 align 8 = 16) 自洽"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.3.1/2.3.2/2.3.3 的跨度、密度、512 KiB、cacheline 128 属静态可算/系统查询量，复算无误；cacheline 值确 environment.txt 存在。",
+      "evidence": [
+        "复算：65536×64=4194304、65536×8=524288、4194304÷524288=8、8÷64=12.5%、524288 B=512 KiB",
+        "bench/foundations-lab/results/native-01/environment.txt: hw.cachelinesize: 128（且确无 L1/L2 容量项，与正文「归档只有行大小、容量未采集」一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.4.3 的汇编片段、符号别名、步长与例 2.4.1 的每轮/每元素字节比，逐行在归档 .s 中找到。",
+      "evidence": [
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.s:978 `ldp q4, q5, [x8, #-32]`、:896 `ldur x15, [x13, #-128]`、:912 `add x13, x13, #256` 均存在",
+        "同一 .s:1952 `.globl ...sum_iter = ...sum_soa` 证实「符号别名」行",
+        "复算：SoA 一轮 4×16 B=64 B 连续=8 个 u64→8 B/元素；AoS 一轮 4 次 64 B 步长读取、基址 +256→64 B/元素；256÷64=4、64÷8=8 与正文一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "2.5.2 表（aos/soa 均值、n-1 sd、批 p50、批 p99）、配对均值与 bootstrap 区间、例 2.5.1 的 ms/µs 换算全部按归档自己的 analyze.py 口径重算复现，逐位吻合；21 行原始批次、500 ms 预热、128 次/批与源码一致。",
+      "evidence": [
+        "重算 locality.csv：aos mean 0.519143207 / sd 0.005283686 / p50 0.519196153 / p99 0.529403567；soa 0.059380878 / 0.000798904 / 0.059301615 / 0.060682416 == src/part1/ch02.md:928-929",
+        "重算配对(soa−aos) mean −0.459762329、bootstrap95 [−0.461856757, −0.457715438] == ch02.md:931；与 statistics.json paired_second_minus_first 一致",
+        "复算 ch02.md:939：128×65536=8388608；×0.519143207=4 354 889 ns(4.35 ms)、×0.059380878=498 123 ns(0.50 ms)、21 批=91.5/10.5 ms、差值×8388608=−3.857 ms、区间宽 0.004141319(=|均值|的 0.90%)、sd×8388608=44.3 µs；8.74 倍=0.519143207÷0.059380878",
+        "src/lib.rs:5-6 N=65_536、ROUNDS=21；src/bin/locality.rs:22 run(&mut cases, 128, N)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "2.7.3 表、配对均值与 bootstrap 区间复现成立（原始 21 批、n−1 sd、nearest-rank、seed 13013）；但本节出口检查第 3 题把容量写成 `COUNT × 3`（即 131072 字节），与自身解答和源码常量矛盾，见 findings。",
+      "evidence": [
+        "重算 allocation.csv：fresh_vec 8.248312814/0.173203503/8.246734619/8.638381958、byte_region 2.813854399/0.027682164/2.817779541/2.855300903 == ch02.md:1334-1335",
+        "重算配对(byte_region−fresh_vec) mean −5.434458415、区间 [−5.514596121, −5.358680362] == ch02.md:1337",
+        "src/bin/allocation.rs:3-4 COUNT=4096、LEN=64 → 4096×64=262144 == ch02.md:1348；run(...,16,COUNT) → 16×4096=65536 次 == 2.7 自检「每批 16 次工作核 × 4096 块」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "2.8.2 对齐算术、2.8.4 packed/align(128) 结论、validation-01/storage-plan.txt 三项数字均可复现；但 2.7 出口检查第 3 题把容量写成 `COUNT × 3`（即 131072 字节）与自身解答、与源码常量互相矛盾（见 findings）。",
+      "evidence": [
+        "results/validation-01/storage-plan.txt: value_offset=8 size=16 align=8；overflow=rejected zst_size=0 zst_align=1 == ch02.md:1586",
+        "复算对齐例：base 0x1004、used 3 → 绝对 0x1007 上取整 8 的倍数=0x1008（合法）；相对 used 取整 8 → 0x1004+8=0x100C，0x100C%8=4（非法）与正文一致",
+        "复算 packed/align：8÷128=6.25%、65536×128=8388608=2×4194304 成立",
+        "矛盾点：src/part1/ch02.md 2.7 自检第 3 题「区域容量改成 `COUNT × 3`（即 131072 字节）」，解答又称「前 2048 块成功」；COUNT=4096（allocation.rs:3），4096×3 块=12288 块×64 B=786432 B，而 131072 B=2048 块=COUNT÷2"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.1.2 描述符尺寸表与 524288 字节载荷口径与 layout.txt 一致，静态换算无误。",
+      "evidence": [
+        "layout.txt &[u64] 16/8、Vec<u64> 24/8 == ch03.md 3.1.2 表；65536×8=524288、524288÷24≈21845（ch03.md:103）",
+        "src/lib.rs:5 N=65_536 == ch03.md:938「同一份 65536 个 u64」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.2.3 声称的 copy_add 参数属性在归档 LLVM IR 中逐属性核对成立（并非「文档说法」）。",
+      "evidence": [
+        "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll:693 define ...copy_add: %dst 带 noalias nonnull writeonly align 8，%src 带 noalias nonnull readonly align 8 == ch03.md:323",
+        "borrowed/cloned/sum_* 定义行同样带 noalias/readonly/align 8（同文件 :492/:675）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「实测计数为 3 与 4」的断言与归档测试源码、通过的 test.txt 对齐，属可复跑的确定性测试而非编造。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:213-224 failure_drops_initialized_prefix：i==3 返回 Err → assert_eq!(count.get(), 3)；:227-236 unwind_drops_initialized_prefix：i==4 panic → assert_eq!(count.get(), 4) == ch03.md:736/:750/:755",
+        "results/validation-01/test.txt：11 条 ok 中 1 条为 compile-fail doctest，其余 10 条为 Rust 测试，与 ch03 出口检查「十项 Rust 测试 + compile-fail 文档测试」一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.5.3 表、配对均值、bootstrap 区间与例 3.5.1 的倍数/p99 定义/µs·ms 换算全部复现；p99 定义（nearest-rank，21 个样本即最大值）由 analyze.py 与正文一致交代。",
+      "evidence": [
+        "重算 borrow.csv：borrowed 0.058851898/0.000404976/0.058824778/0.059892774、cloned 0.159020461/0.002093374/0.158538461/0.166441023 == ch03.md:996-997",
+        "重算配对(cloned−borrowed) mean 0.100168563、区间 [0.099374896, 0.101163745] == ch03.md:999/1079",
+        "复算：0.159020461÷0.058851898=2.70；ceil(21×0.99)=21；0.100168563×65536=6564.65 ns、×256=1.68 ms（与 ch03.md:1012-1014 一致，256 与 src/bin/borrow.rs:18 run(...,256,N) 对应）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.6.4 表、差值、区间、5.73 倍、62.4 µs/批 4.0 ms 换算与 3.6.5 汇编断言（容量比较保留、grow_one 保留、alloc_zeroed 保留、stp 序列）均可复现。",
+      "evidence": [
+        "重算 initialization.csv：push 1.153849851/0.019135814/1.152266979/1.194040060、zero_fill 0.201331729/0.005930436/0.201612711/0.218312025 == ch03.md:1208-1209",
+        "重算配对(zero_fill−push) mean −0.952518123、区间 [−0.959926571, −0.945401044] == ch03.md:1211",
+        "复算：1.153849851÷0.201331729=5.73；0.952518123×65536=62 424 ns；×64=3.995 ms≈4.0 ms（64 与 src/bin/initialization.rs:17 run(...,64,N) 对应）",
+        ".s 中 `__rust_alloc_zeroed`(:85/:1459/:1694)、`RawVec...grow_one`(:1277/:1727)、stp 共 51 处均存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.7.5 十行证明表按行数核对为 10 维（空间/时间/对齐/初始化/别名/同步/销毁/panic/泄漏等），与「十个维度各自独立」一致；本节未发布任何性能数字。",
+      "evidence": [
+        "src/part1/ch03.md 3.7.5 表实际数据行 10 行（含表头/分隔行共 12 行），== 3.7.7 小结与速查「十个维度」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.1.5 工具链事实逐条比对归档 environment.txt，包括缓存行 128 的来源与机型/系统版本。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/environment.txt: rustc 1.99.0 (b940084d7 2026-09-28)、ProductVersion 27.0.1、machdep.cpu.brand_string: Apple M5 Pro、hw.cachelinesize: 128、profile: opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind == ch04.md:216/237 与 4.7.5:1733-1735",
+        "foundations native-01/environment.txt 同样 hw.cachelinesize: 128"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.4.5「完整函数 MIR、非手写伪 MIR」的担保可核验：所引片段逐行存在于正文点名的归档文件；E0502 等拒绝码与 expected.tsv 对应。",
+      "evidence": [
+        "把 ch04.md:896-960 引用的 57 行 MIR 与 bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 全文比对，缺失行 0",
+        "probes/rejected/expected.tsv: use_after_move E0382、maybe_uninitialized E0381、alias_conflict E0502、const_bounds E0080、dyn_generic E0038（5 个输入，== 4.11「五项编译拒绝」与 4.9.1「五个被编译拒绝的输入」）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.5.4 计时表与例 4.5.2 的差值/比值按 stable-02/move_cost.csv 原始 21 批复现；正文点名的归档为 stable-02 且用的正是 stable-02 的数（非 stable-01）。",
+      "evidence": [
+        "重算 move_cost.csv 原始行：borrow 0.059091/0.001233/0.058640/0.063338、clone 0.202739/0.006949/0.201627/0.225702 == ch04.md:1208-1209，并与文件内 summary 行、stable-02-recalculated.json 一致",
+        "复算 0.202739−0.059091=0.143648、比值 3.43 == ch04.md:1219；units=16384×8 B=131072 B=128 KiB == 4.5.3 表「复制 128KiB 数据」",
+        "对照 stable-01/move_cost.csv 重算得 borrow 0.058231、clone 0.197756（正文未使用），证明正文用的是 stable-02"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "4.6.4 计时表、0.216 差值、sd 2.5 倍、「本轮没有执行配对重采样因此不报区间」全部成立；但 4.6.3 尺寸表里 `Option<&u64>` 那一行在归档 layout 探针中没有对应记录（见 findings，值本身按 niche 规则可算为 8/8）。",
+      "evidence": [
+        "重算 drop_paths.csv 原始 21 批：implicit 2.372296/0.098044/2.354229/2.757235、option 2.587951/0.246970/2.669365/2.980856 == ch04.md:1475-1476；2.587951−2.372296=0.215655≈0.216、0.246970÷0.098044=2.52",
+        "stable-02-recalculated.json 仅含 n/mean/sd_n_minus_1/p50/p99 且 verify.py 无 bootstrap/pairing 代码，支持「配对区间本轮未执行」的说法",
+        "extra-02/layout.csv 含 &u64 8/8、DropProbe 8/8、Option<DropProbe> 8/8、Vec<u64> 24/8、&[u64] 16/8，但无 `Option<&u64>` 行",
+        "src/bin/drop_paths.rs:15,20 expected=8192（4096 次调用×2）== 4.6.7「期望值 8192 来自规格」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.7 全节不给任何构建耗时数字，并明确「没有 self-profile、没有逐 pass dump」；这些缺口声明与归档实际内容一致（归档里确实没有 self-profile 文件，只有 stages-o0/o3 最终表示）。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/ 实际存在 stages-o0.mir/.ll/.s 与 stages-o3.mir/.ll/.s，无任何 self-profile/逐 pass 目录 == ch04.md:1748-1760、1762 表第 3-5 行缺口声明",
+        "extra-02/nightly.txt 存在（失败诊断），== ch04.md:412/427「本机无可用 nightly」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.8.1/4.8.3/4.8.4/4.8.6 的夹具参数、p99 定义、锁与进程检查、五条复现命令点名的文件全部存在且与脚本一致。",
+      "evidence": [
+        "compiler-lab/src/lib.rs:19 预热 500 ms、:24 repeats=ceil(10 000 000/ns)（约 10 ms 批次）；CSV 每 case 原始行 21 == ch04.md:1872/2129",
+        "run.sh:28-33 mkdir 锁 + `ps -axo pid,command | grep cargo/rustc` → build-processes-before.txt == 4.8.4「目录锁只串行化本脚本自己的测量进程」；foundations-lab 同类 results/native-01/lock-owner.txt 存在",
+        "p99：analyze.py quantile=sorted[ceil(21×0.99)−1]=第 21 位=最大值 == 4.8.3、速查「批 p99 就是最大值」",
+        "ch04.md:2050-2055 五条命令所指文件均存在：bench/compiler-lab/Cargo.toml、run.sh、extra.py；六个正式入口 = move_cost/drop_paths/dispatch_grain/dispatch_visibility/vectorize/ctfe_table 六张 CSV",
+        "compiler-lab/results/stable-02/tests.txt: contracts 8 passed == 4.11「八项运行时契约测试通过」；one/thin/many/pgo 的 size 归档未被正文当作数字引用"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.9.1/4.9.2 点名的台账与产物路径核对：compiler-web.json 与 extra-02/stages-* 均存在；被拒输入与 nightly 失败记录数量与正文相符。",
+      "evidence": [
+        "sources/contributions/compiler-web.json 存在（正文写相对文件名）",
+        "probes/rejected/*.rs 共 5 个 == ch04.md:2163「五个被编译拒绝的输入」",
+        "extra-02/stages-o0.*、stages-o3.* == ch04.md:2173"
+      ]
+    }
+  ],
+  "sources": [
+    "src/part1/ch02.md",
+    "src/part1/ch03.md",
+    "src/part1/ch04.md",
+    "bench/foundations-lab/results/native-01/{locality,allocation,borrow,initialization,dce,paired}.csv",
+    "bench/foundations-lab/results/native-01/{statistics.json,layout.txt,environment.txt,sample-locality.txt,sample-borrow.txt,lock-owner.txt,source-sha256.txt}",
+    "bench/foundations-lab/results/validation-01/{test.txt,storage-plan.txt}",
+    "bench/foundations-lab/analyze.py",
+    "bench/foundations-lab/src/{lib.rs,bin/locality.rs,bin/allocation.rs,bin/borrow.rs,bin/initialization.rs}",
+    "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.{s,ll}",
+    "bench/compiler-lab/results/stable-02/*.csv",
+    "bench/compiler-lab/results/stable-02-recalculated.json",
+    "bench/compiler-lab/results/stable-01/*.csv",
+    "bench/compiler-lab/results/stable-02/{environment.txt,tests.txt,codegen/compiler_lab-55987aab45b3e67f.mir}",
+    "bench/compiler-lab/results/extra-02/{layout.csv,nightly.txt,stages-o0.mir,stages-o3.mir}",
+    "bench/compiler-lab/{run.sh,verify.py,probes/rejected/expected.tsv}",
+    "sources/contributions/compiler-web.json"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "severity": "P1",
+      "description": "ch02 2.7 出口检查第 3 题把区域容量写成「`COUNT × 3`（即 131072 字节）」，这是静态算术错误：归档源码 allocation.rs 里 COUNT=4096、LEN=64，区域容量=COUNT×LEN=262144 字节（2.7.4 正文自己也是这个数）。按题面 COUNT×3=12288 块，×64 B=786432 B，绝不等于 131072 B；而 131072 B=2048 块×64 B=COUNT÷2，也正是该题解答里「前 2048 块成功、之后 get_mut 越界」所用的数字。即题面表达式与题面字节数、与解答三者互相矛盾，读者按表达式重算得不到解答里的容量。",
+      "evidence": "src/part1/ch02.md 2.7 自检第 3 题（「COUNT × 3」/「131072 字节」）与其解答「前 2048 块成功」；bench/foundations-lab/src/bin/allocation.rs:3-4（COUNT=4096, LEN=64）；复算 4096×3×64=786432、2048×64=131072、4096×64=262144（2.7.4 正文 ch02.md:1348）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "severity": "P2",
+      "description": "ch04 4.6.3 的尺寸表把 `Option<&u64>` 8/8 与其余四行并列为「探针结果」，但正文点名的 layout 探针归档 bench/compiler-lab/results/extra-02/layout.csv 中没有 `Option<&u64>` 这一行（只有 `&u64 8,8` 与 `Option<DropProbe> 8,8`）。数值本身按 niche 规则可静态算得（&u64 非空 8 字节 → Option 仍为 8/8），且其余 4 行与归档逐行相符，因此只算来源标注不严，不是复算不出来。",
+      "evidence": "bench/compiler-lab/results/extra-02/layout.csv 全文 9 行（Vec<u64> 24/8、&[u64] 16/8、&u64 8/8、&dyn Operation 16/8、Box<dyn> 16/8、&u64 8/8、[u8;256] 256/1、Affine 16/8、DropProbe 8/8、Option<DropProbe> 8/8），无 Option<&u64>；对照 src/part1/ch04.md:1471-1475 表"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "severity": "P2",
+      "description": "ch02 2.3.1 写「AoS：65536 × 64 = 4194304 字节，与归档记录一致」，但归档里没有任何 4194304/524288 字节的记录：native-01 只有 layout.txt 的 Record size=64 与 align=8，总量 4194304 是由 64×65536 推出来的算式结果，不是被记录的观测量。算式本身可复算成立，故仅为「一致」措辞指向了不存在的记录。",
+      "evidence": "grep 全 native-01 目录无 4194304/524288；bench/foundations-lab/results/native-01/layout.txt 第 3 行 `Record,64,8`；复算 65536×64=4194304、65536×8=524288"
+    }
+  ]
+}

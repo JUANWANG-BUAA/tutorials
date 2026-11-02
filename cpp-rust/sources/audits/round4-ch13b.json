@@ -1,0 +1,101 @@
+{
+  "reviewer": "r4-ch13b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "e7be644e8e89a4285c0e544d39b162327c668126ad4edf7c0f388d6488094cc7",
+  "provenance": "冷启动通读 src/part4/ch13.md 1360-1887 行（13.7 到 13.11 全部正文与每个语义盒），再用 /usr/bin/python3 从 bench/evidence-lab/results/run-01 的 instrumentation.txt、cpu-wait.txt、cpu.folded、wait.folded、sample-*.txt、environment.txt、codegen/*.s 逐条重算与逐字回查，并用 tools/list_uncollected_claims.py 对照磁盘产物、打开 bench/evidence-lab/src/{lib.rs,bin/*.rs} 与 tools/measure.sh 核对代码断言。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两条被点名的声明都独立复核通过。(1)『采样器开销本轮没有采集』成立：tools/list_uncollected_claims.py 对 ch13.md:1424（『本轮没有做这种附着开销的 21 次配对实验』）与 ch13.md:1416 的判定是『没有匹配到同类产物』，磁盘上也确实没有任何附着/未附着对照产物（results/run-01 里不存在名字含 attach/detach/overhead 的文件，只有 sample-cpu/sample-wait 两份单侧采样报告），measure.sh:44 明写 Profiling is deliberately separate from the 21-batch timing experiments，所以 13.7.2 拒绝把 13.6 的 13.3 倍当采样器开销是对的。(2)『21 条样本上 p99 就是最大值』成立：我从 instrumentation.txt 的 63 条 raw 行自己重算，none/batch/each 的 N 都是 21，nearest-rank 秩 ceil(0.99*21)=21，三个 case 的 p99 分别等于最大值 2.798125、2.685205、34.306250；cpu-wait.txt 的 42 条 raw 重算 cpu p99=2.782084、wait p99=47.800375，同样等于各自最大值，[@def-13.7.3] 的定义与正文用法一致，没有把批均值 p99 冒充逐事件分位数。另外核对例 13.7.1：sample-cpu.txt:24 根观察 1698、wait 折叠 1648，sample-*-command.txt:1 是『for 2 seconds with 1 millisecond of run time between samples』，2 秒/1 毫秒=2000 的理想根数与『不能把请求间隔当精确时钟』的说法与归档一致；例 13.7.2 引用的均值 32.832639、N-1 标准差 0.608977、p50 32.762500、p99 34.306250 与我重算逐位相同，each/none 均值比 13.277 倍，正文写 13.3 倍成立。[@def-13.7.4] 关于 Event 未入统计容器也核对到代码：src/lib.rs:52、:76 只有 black_box(Event{..})，观测路径没有 push 进 Vec。13.7.5/13.7.6 的外部引文逐字回查本地母本 .work/cpp-rust-sources/evidence/cachegrind.html：确有 the simulations are basic and unlikely to reflect the behaviour of a modern machine. For this reason they are off by default 与 --cache-sim=no|yes [no]，5.8.3 Accuracy 确有 REP 前缀指令每次迭代单独计数、硬件计数器只计一次的原文，正文『默认关闭』与『x86 REP 计数差异』两句都站得住；本轮确实没有 cachegrind.out* 产物。13.7.7 的进程快照核对：processes-before.txt 与 processes-after.txt 对 cargo|rustc|clang 均 0 命中，正文只说两个时点观察、不称连续监控，口径克制。唯一保留项：我没有去数 sample 报告里非折叠的其它根计数，也只按工具与脚本推断锁与预热，未复核 [@def-1.4.1] 那条跨章引用本身。",
+      "evidence": [
+        "tools/list_uncollected_claims.py 输出：[ch13.md:1424]、[ch13.md:1416]、[ch13.md:1485]、[ch13.md:1520] 均标注『✓ 没有匹配到同类产物』",
+        "bench/evidence-lab/results/run-01/ 目录清单无 attach/detach/overhead 类文件；仅 sample-cpu.txt / sample-wait.txt / profile-*-run.txt",
+        "bench/evidence-lab/tools/measure.sh:44",
+        "复算：bench/evidence-lab/results/run-01/instrumentation.txt 63 条 raw → each N=21 mean=32.832639 sd=0.608977 p50=32.762500 p99=34.306250=max",
+        "复算：bench/evidence-lab/results/run-01/cpu-wait.txt 42 条 raw → cpu p99=2.782084=max，wait p99=47.800375=max",
+        "bench/evidence-lab/results/run-01/sample-cpu.txt:24（1698 Thread_1209160）, :38（mix 叶子 1082）",
+        "bench/evidence-lab/results/run-01/cpu.folded 求和=1698，wait.folded 求和=1648",
+        "bench/evidence-lab/results/run-01/sample-cpu-command.txt:1",
+        "bench/evidence-lab/src/lib.rs:103-108（warm 用 Instant 循环到 >=500ms）, :52, :76（Event 仅 black_box）",
+        "bench/evidence-lab/src/bin/instrumentation.rs:10-14（同一 warm 循环遍历三模式）, cpu_wait.rs:28, :31（CPU 与 waiting 各自预热）",
+        ".work/cpp-rust-sources/evidence/cachegrind.html（off by default / --cache-sim=no|yes [no] / 5.8.3 REP）",
+        "bench/evidence-lab/results/run-01/processes-before.txt, processes-after.txt（cargo|rustc|clang 命中数 0）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节大部分断言我复核通过：codegen/ 实际含 1 个 .mir、12 个 .ll、12 个 .s，[@def-13.8.1] 的三层产物齐全，正文给出的 cargo rustc 命令与 measure.sh:55 一致（--emit=mir,llvm-ir,asm，--offline --locked --release，target-dir 用 NEW_CODEGEN_TARGET 占位）；[@def-13.8.2] 引用的五条指令在 cgu.00 的真实函数体里逐行存在（str x0,[sp,#8] 在 631 行、ldr x8,[sp,#8] 在 638 行、ror x8,x8,#55 在 642 行、madd x0,x8,x9,x10 在 650 行、ret 在 652 行），且 x10 确由 651 行 mov x10,#17 得到 17、x9 由 645-648 行 mov/movk 四段常量构造，正文对 x9/x10 的描述准确；表格里的 42 条与 63 条原始行数、measured-source/binary-sha256.txt/source-sha256.txt/postprocessing-source-sha256.txt/environment.txt 都逐项存在；例 13.8.1 引用的 none 2.472857、each 32.832639、checksum 188478885453998054 与我的重算和文件全一致，平台『Apple M5 Pro、aarch64-apple-darwin、rustc 1.99.0』在 environment.txt 逐字对得上。但 13.8.1 有一句把证据内容说错了：『生成命令保存在 codegen-command.txt』——该文件实测只有两行 cargo 进度输出（Compiling/Finished），不含命令本身，因为 measure.sh:55 把 stdout/stderr 重定向进了这个文件；同名的 sample-*-command.txt 也是 sample 的进度输出而非命令行。此外『去掉调试行与常量构造细节后，可观察到五行』漏计了一条既非调试行也非常量构造的 add x8, sp, #8（632 行）。详见两条 findings。",
+      "evidence": [
+        "src/part4/ch13.md:1575（生成命令保存在 codegen-command.txt）",
+        "bench/evidence-lab/results/run-01/codegen-command.txt 全文 2 行：Compiling evidence-lab v0.1.0 ... / Finished `release` profile [optimized + debuginfo] target(s) in 0.18s",
+        "bench/evidence-lab/tools/measure.sh:55（cargo rustc ... > \"$OUT/codegen-command.txt\" 2>&1）, :49（sample 命令同样重定向 stdout）",
+        "bench/evidence-lab/results/run-01/codegen/*cgu.00.rcgu.s:622-652（mix 真实函数体）",
+        "复算：bench/evidence-lab/results/run-01/instrumentation.txt summary,each n=21 mean=32.832639 与 none mean=2.472857，checksum 唯一值 188478885453998054",
+        "bench/evidence-lab/results/run-01/environment.txt（host: aarch64-apple-darwin / rustc 1.99.0 / Apple M5 Pro）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "来源登记本身可落地：三份本地 PDF 母本条目在 sources/contributions/evidence.json 里都存在且页码逐字对得上（S09 pages 64–67、S14 pages 6–8、11–12、S11 page 320，状态 read-mapped）；新增规范核读三条在 sources/contributions/evidence-web.json 里都有 id、url、sha256 与本地归档（EVID-cachegrind→cg-manual.html、EVID-perf-event→man7 perf_event_open.2、EVID-cargo-profiles→cargo/reference/profiles.html），13.7 引用的『默认关闭』与『REP 计数』确实落在 cg-manual 的 Overview 与 5.8.3，与表里写的『Overview、5.2.1–5.2.8、5.8.1–5.8.3指定范围』一致；../appendix/coverage.md 文件存在。问题在『本章落点』列的可追溯性：正文声明这一列是本章真正读过并映射的位置，但 evidence.json 里 S09 只有两条条目（一条 target=part4/ch13.md#sec-cpp-rust.4.13.3，一条给 ch14），S14 只有 target=...13.6，S11 只有 target=...13.8——也就是说 13.9 表格声称的 S09→13.2、S09→13.7、S14→13.5、S14→13.8、S11→13.2 这五个落点在登记文件里没有任何对应条目，读者拿登记反查会查不到。我没有打开 PDF 逐页复看内容是否真的覆盖 13.7（磁盘只有 PDF 母本，页内容无法机械核对），此项只核到登记与锚点映射。",
+      "evidence": [
+        "src/part4/ch13.md:1770-1772（本章落点列）",
+        "sources/contributions/evidence.json：S09 共 2 条（ch13 target=...13.3；ch14 target=...14.4），S14 共 2 条（ch13 target=...13.6；ch14 target=...14.8），S11 共 3 条（...13.8、...14.4、...14.2）",
+        "sources/contributions/evidence-web.json：EVID-cachegrind / EVID-perf-event / EVID-cargo-profiles 均有 url+sha256+archive",
+        "src/appendix/coverage.md 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "跨节索引 14 条我逐条对回了本章正文与归档，没有发现与事实相反的条目。关键量化断言复核：『本章折叠结果的总数仍是 1698 与 1648』与我从 cpu.folded/wait.folded 重算的 1698/1648 一致，也和 sample-cpu.txt:24 的根计数一致；『把 21 条批均值的 p99 称为服务 p99』这条批评与我的重算结论一致（秩 21，等于最大批均值，正文没有这样用）；『batch 聚合丢逐项分布』与 src/lib.rs:52、:76 的 Event 只经 black_box、未持久化相符；『测完插桩版再减一个固定时钟成本』被 [@def-13.7.2] 正确标为未做对照；『counter 没有并发访问者』与单线程 observed() 的实现相符；『本章没有 Cachegrind 结果』与磁盘无 cachegrind.out* 相符；『采样与正式计时分开跑』与 measure.sh:44 相符。这一节全是引用性表述，唯一的[@def-*] 锚点可解析性我交给机械层，没有逐个展开母节正文重读（仅确认 13.7 与 13.2 的相关定义存在）。",
+      "evidence": [
+        "复算：cpu.folded=1698，wait.folded=1648，sample-cpu.txt:24",
+        "复算：instrumentation.txt each 的 nearest-rank p99=34.306250=max",
+        "bench/evidence-lab/src/lib.rs:52, :76；bench/evidence-lab/tools/measure.sh:44",
+        "bench/evidence-lab/results/run-01/ 无 cachegrind.out* 与 attach/detach 对照产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末件与出口检查核对通过。『正文之后有五页章末件』成立：src/part4/ 下 ch13_summary.md、ch13_recall.md、ch13_exercises.md、ch13_exam.md、ch13_checklist.md 五个文件都在，1879 段与 1887 行表格的五行分工一致。出口检查七条命令逐条可执行性核对：cargo fmt/clippy/test/test --all-features/build --bins/build --features checked 的 manifest 路径 bench/evidence-lab/Cargo.toml 存在，feature_work bin 与 target-checked 目录都在归档里（feature-default.txt / feature-checked.txt / checked-codegen*），tools/measure.sh 存在。『脚本用 mkdir 取得共享测量锁，EXIT 时释放，并拒绝覆盖既有归档』与代码一致：measure.sh:14-16 用 mkdir \"$LOCK\" 抢锁、trap 'rmdir \"$LOCK\"' EXIT 释放，:12 的 mkdir \"$OUT\" 对已存在目录直接失败，正好实现拒绝覆盖。『从 cpu-wait 原始行数出每个 case 的 21 批』核对：42 条 raw / 2 case = 21，instrumentation 63 / 3 = 21，与 [@def-13.7.3] 口径闭合。速查表里『附着开销…不是减固定值』『21 条批均值 p99 是最大的一条批均值』两行与我的重算及 13.7.2 未采集事实相符。小结的『逐项观测会显著增加这个轻量递推夹具的聚合成本』有实测支撑（32.832639 vs 2.472857，13.28 倍）。我没有逐条重跑这七条命令（会改磁盘状态、且超出只读审计边界），只做了路径与脚本行为核对。",
+      "evidence": [
+        "src/part4/ 目录：ch13_summary.md, ch13_recall.md, ch13_exercises.md, ch13_exam.md, ch13_checklist.md 全部存在",
+        "bench/evidence-lab/tools/measure.sh:12, :14-16",
+        "复算：cpu-wait.txt 42 条 raw（2 case×21），instrumentation.txt 63 条 raw（3 case×21）",
+        "bench/evidence-lab/Cargo.toml、src/bin/feature_work.rs、results/run-01/{feature-default.txt,feature-checked.txt,checked-codegen-command.txt} 存在",
+        "复算：each mean 32.832639 / none mean 2.472857 = 13.277"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "severity": "P1",
+      "description": "13.8.1 声称『生成命令保存在 codegen-command.txt』，但磁盘上该文件不含任何命令行：全文只有 2 行 cargo 进度输出（Compiling evidence-lab v0.1.0 ... 与 Finished `release` profile [optimized + debuginfo] target(s) in 0.18s）。原因是 bench/evidence-lab/tools/measure.sh:55 把 cargo rustc 的 stdout/stderr 重定向进了这个文件（> \"$OUT/codegen-command.txt\" 2>&1），真正的命令只存在于 measure.sh:55 本身。同样的命名误导还有 sample-cpu-command.txt / sample-wait-command.txt：实测内容是 sample 的进度文本（Sampling process 92109 for 2 seconds ... / Sample analysis ... written to file），命令行参数只体现在文本里，不是命令本身。这一句把读者指向一个内容与描述相反的归档文件，属于证据指向错误而非表述偏好；命令本身在 13.8.1 的 bash 块里是准确的，可追溯性未整体丧失，因此我判 P1 而不是 P0。建议改写为『命令见 measured-source/tools/measure.sh:55；codegen-command.txt 保存的是该次 cargo rustc 的构建输出』。",
+      "evidence": "src/part4/ch13.md:1575；bench/evidence-lab/results/run-01/codegen-command.txt（2 行，wc -l 实测）；bench/evidence-lab/tools/measure.sh:55 与 :49；bench/evidence-lab/results/run-01/sample-cpu-command.txt:1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "severity": "P2",
+      "description": "13.8.2 说『从实际 .s 去掉调试行与常量构造细节后，可观察到五行』并列出 str/ldr/ror/madd/ret。真实 mix 函数体（cgu.00.rcgu.s:622-652）在去掉 .file/.loc/.cfi 与 645-648 行 mov+3×movk 的 x9 常量构造、651 行 mov x10,#17 之后，还剩 6 条指令：正文漏了 632 行的 add x8, sp, #8（它既不是调试行，也不是常量构造，而是 black_box 取地址那一步）。正文紧接着说这五行用于『核对屏障、旋转与乘加没有被整段删除』，而恰好被漏掉的那条正是屏障相关的地址物化指令，所以这是可核验的枚举不完整，不只是文风问题。建议改成『可观察到六条指令』并把 add x8, sp, #8 列出，或明确说明也去掉了 sub/add sp 与 add x8, sp, #8 这类取址与栈帧行。",
+      "evidence": "src/part4/ch13.md:1593-1603；bench/evidence-lab/results/run-01/codegen/evidence_lab-87a0b4ffa02b656c.evidence_lab.b686e75f7ad81cb0-cgu.00.rcgu.s:626(sub sp),631(str x0),632(add x8),638(ldr x8),642(ror),645-648(mov/movk x9),651(mov x10,#17),650(madd),651,657(add sp),652(ret)"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "severity": "P2",
+      "description": "13.9『本地PDF母本』表的『本章落点』列声称是本章真正读过并映射到的节，但 sources/contributions/evidence.json 里的映射对不上：S09 全库只有 2 条条目，指向 ch13 的那条 target 是 sec-cpp-rust.4.13.3（另一条给 ch14），而正文声称 S09 落在 13.2、13.3、13.7；S14 指向 ch13 的只有 ...13.6，正文声称 13.5、13.6、13.8；S11 指向 ch13 的只有 ...13.8，正文声称 13.2、13.8。也就是说该列 5 个落点（S09→13.2、S09→13.7、S14→13.5、S14→13.8、S11→13.2）在登记文件里查不到条目。页码与状态本身可落地（64–67、6–8/11–12、320 都逐字存在，status=read-mapped），所以这是登记覆盖与正文声称范围不一致，判 P2 而非 P0/P1；修法要么在 evidence.json 补 target，要么把该列措辞改成『相关节』并注明登记文件每母本只记一个主锚点。",
+      "evidence": "src/part4/ch13.md:1762、1768-1772、1790；sources/contributions/evidence.json 中 S09/S14/S11 全部条目的 target 字段实测"
+    }
+  ]
+}

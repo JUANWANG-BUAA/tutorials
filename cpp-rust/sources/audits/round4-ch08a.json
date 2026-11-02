@@ -1,0 +1,103 @@
+{
+  "reviewer": "r4-ch08a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动完整通读 src/part2/ch08.md 的 8.1–8.6 全部正文与语义盒，并用一条 python 脚本把 8.6.4 三组共 63 行原始样本、8.3.2 尺寸表、8.6.8 采样计数、8.2 的 MIR 节选、8.4/8.5 引用的 park.rs 与 async_poll.rs 源码逐一回 bench/results 与 bench/src 复算核对；另跑 tools/list_uncollected_claims.py 检查了本区间的未采集陈述。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 cancellation_probe 源码断言：bench/examples/future_layout.rs:18-21 与正文 8.1.1 展示的 async fn 逐字一致；例 8.1.1 第 2 条声称「8.8 节用 AtomicUsize 实测到 0 与 1 两种计数」，回源码确认 future_layout.rs:51 与 :57 有 assert_eq!(dropped.load(..), 0) 与 (.., 1) 两条运行时断言（:58 的 println 虽是固定文本，计数本身确被断言验证，该断言成立）。其余为概念性论断（四层对象、并发≠并行、impl Future vs Box<dyn>），无数字可核。未核：8.1.1 关于 rCore 教程第八章用户态线程定义的引述未回 sources/ 母本逐字比对（预算内让位于数字与代码核对）。",
+      "evidence": [
+        "bench/examples/future_layout.rs:18-21",
+        "bench/examples/future_layout.rs:51,57 (assert_eq 计数 0/1)",
+        "bench/results/local/future-layout.txt:4 (drop before first poll: 0 guards; drop after Pending: 1 guard)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把 8.2.2 的 coroutine layout 节选与归档 bench/results/local/future-layout.mir 逐行比对：field _s0: Guard、field _s1: std::future::Pending<()>、Unresumed(0)/Returned(1)/Panicked(2) 空字段、Suspend0(3): [_s0, _s1] 均真实存在于该版本产物，不是手写假定枚举；8.2.3 构造式与 MIR 中 `_0 = {coroutine@examples/future_layout.rs:18:54: 21:2 (#0)} { count: move _1 }` 一致；8.2.4 的 discriminant+switchInt 与 MIR `switchInt(move _14) -> [0: bb15, 1: bb14, 2: bb13, 3: bb12]` 一致。工具链版本断言「rustc 1.99.0」经 environment.txt 证实。未核：switchInt 各目标基本块与「首次/完成/panic/恢复」四条路径的逐块对应（只核到有 4 臂且编号一致）；8.2.7 的 Guide to Rustc Development PDF 277-279/319-321 页码未回母本逐字比对。",
+      "evidence": [
+        "bench/results/local/future-layout.mir (cancellation_probe 区域: field _s0: Guard; Suspend0 (3): [_s0, _s1]; switchInt 0..3)",
+        "bench/results/local/environment.txt:3 (rustc 1.99.0 (b940084d7 2026-09-28))",
+        "bench/src/bin/async_poll.rs:52 允许 iters 至 10_000_000，与 8.2.1 命令目标 results/local/future-layout.mir 文件存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "尺寸表前两行与 4096/2 的作用域论断全部经归档与源码证实（4097/1 与 2/1，align 来自 align_of_val，future_layout.rs:39-48）；「缩帧≠缩总内存」等表述自洽。但 8.3.2 表格第三行 257 出处的命令与表格不闭合，见 findings。未核：256 载荷+1 状态的可加性只是解释性论断，未（也无法）从产物直接验证字节构成。",
+      "evidence": [
+        "bench/results/local/future-layout.txt:1-2 (across_await size=4097 align=1; before_await size=2 align=1)",
+        "bench/examples/future_layout.rs:23-36 (两个 4096 字节探针)",
+        "bench/results/local/future-allocation.txt:1 (future_size=257，无 align 字段)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "YieldOnce 代码断言与 bench/src/bin/async_poll.rs:8-17 逐行一致；8.4.5 关于 park.rs 跨线程测试「同一把锁内检查谓词并注册 Waker、生产者锁内置 ready 并取走 Waker、实际 wake 在释放锁后」与 park.rs:110-148 完全对应（Completion::poll 在持锁下 check+register，producer 在块内持锁置位 take、出块后 w.wake()）；8.4.6 「显式实现 wake_by_ref 避免默认 clone、但驱动构造仍分配一个 Arc 通知对象」与 park.rs:20-27、:42-46 一致。丢通知时序（8.4.4）是纯协议论证，无对应数字。未核：例 8.4.1 第 3 问「8.4.5 的 Mutex<Shared> 测试就是这么安排的」已通过，但 fence 不能修复的说法属理论论断，仅核其与代码一致、未做独立并发模型验证。",
+      "evidence": [
+        "bench/src/bin/async_poll.rs:8-17",
+        "bench/src/park.rs:118-127,136-143",
+        "bench/src/park.rs:20-27,42-46"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "驱动循环节选与 park.rs:49-58 逐字一致；「通知先 store(true, Release) 再 unpark」与 park.rs:15-18 一致（图 8-2 标注的 Release/Acquire 边与代码相符）；重入 panic 与 thread_local Cell + RAII 守卫与 park.rs:29-41 一致；「重复 50 次」与 park.rs:132 `for _ in 0..50` 一致；四个测试的行为描述全部存在且 tests.txt 归档显示当轮通过。但 8.5.7 表与例 8.5.1 点名的测试标识符与源码函数名不符，见 findings。未核：8.5.7 表中 pre_park 断言「下次 poll 能返回 42」对应源码 Ready(42)，已顺带证实；嵌套 panic 消息文本未逐字比对。",
+      "evidence": [
+        "bench/src/park.rs:49-58 (swap(Acquire)+park 循环)",
+        "bench/src/park.rs:15-18,29-41,132",
+        "bench/src/park.rs:82,87,105,131 (实际测试函数名)",
+        "bench/results/local/tests.txt (10 passed; 含 4 个 park 测试)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节自称实测的数字全部用 /usr/bin/python3 从正文点名的 bench/results/local/async-poll.txt 的 63 行原始样本复算：sync mean=0.519 sd=0.074 p50=0.487 p99=0.635、async-ready 0.867/0.108/0.870/1.125、self-wake 7.407/0.603/7.386/8.326，与 8.6.4 表逐项吻合（样本标准差、n=21）；p99 用最近秩定义复算恰等于 21 样本最大值（0.635420/1.124580/8.326250），与自测第 2 题「最近秩分位数」口径一致。方法断言复算：每种模式先跑一批 sample==0 且不写入统计（async_poll.rs:61-75）、测量顺序 (sample+offset)%3 逐批轮换（:62-63）、循环内 black_box 与每批校验总和（:26,:37,:71）、一个 Arc 通知对象/每次 block_on 而非每次 YieldOnce（park.rs:42）。8.6.8 的 401/59/28/339 逐项在 async-sample.txt 折叠栈计数区核实；采样负载 iterations=10000000 与 async-workload.txt:1 一致。未采集陈述（IPC/cache-miss 未采集、无 PMU）经 environment.txt「No affinity... or PMU collection configured」证实为真。未核：「本机环境与第 7 章相同」只做环境文件同源推断，未与 ch07 点名的归档逐项比对；7.407−0.867=6.54 为正文自算差值，与复算一致。",
+      "evidence": [
+        "bench/results/local/async-poll.txt (63 行样本复算=表值，逐项一致)",
+        "bench/results/profile/async-sample.txt (Sort by top of stack: block_on 401 / _dyld_start 339 / Parker::unpark 59 / sync_sum 28)",
+        "bench/src/bin/async_poll.rs:61-75",
+        "bench/results/profile/async-workload.txt:1",
+        "bench/results/local/environment.txt:16"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "severity": "P2",
+      "description": "8.3.2「类型与对象布局实测表」的复现命令只给出 `cargo run --example future_layout`，且正文说「实际输出的布局如下」，但该表第三行（分配基准里的 Ready Future，size=257、align 栏「本基准只输出 size」）并非该命令的产物：future_layout 示例只打印 4097 与 2 两行，257 来自另一个程序 future-allocation（其归档头 future_size=257）。数字本身有磁盘出处、无编造，但命令与表格的对应关系不闭合，读者按正文命令跑不出第三行，与本章自己反复强调的「每个数字点名真实存在的证据文件」口径不符。",
+      "evidence": "bench/results/local/future-layout.txt 仅含 across_await=4097 / before_await=2 两行；bench/results/local/future-allocation.txt:1 `iterations=100000 samples=21 future_size=257`（无 align 字段）"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "severity": "P2",
+      "description": "8.5.7 测试覆盖表与例 8.5.1 以代码标识符口径点名四个测试：pre_park_notification、consumed_park_token、nested_call、another_thread_can_complete_future。源码中真实函数名为 park::tests::pre_park_notification_is_not_lost (park.rs:82)、notification_survives_a_consumed_park_token (park.rs:87)、nested_call_is_rejected_and_guard_recovers (park.rs:105)、another_thread_can_complete_future (park.rs:131)。前三个按正文名字在 bench/src 下 grep 不到（只在 target 二进制残留里出现 consumed_park_token 子串），其中例 8.5.1 明确写「`consumed_park_token` 测试故意……」是把不存在的选择器当成可核对的代码事实引用；测试行为本身经逐行核对全部存在且通过，故仅命名失真，判 P2。",
+      "evidence": "grep -n bench/src/park.rs:82,87,105,131 的实际函数名；bench/results/local/tests.txt 显示 4 个 park 测试 ok；grep -rn 'consumed_park_token' bench/src 无源码命中（仅 bench/target 二进制匹配）"
+    }
+  ],
+  "uncollected_claims_check": {
+    "tool": "/usr/bin/python3 tools/list_uncollected_claims.py",
+    "result": "ch08.md 命中 6 条，落在 8.1–8.6 区间的为 line 562/563（8.3「没有采集到的量就留空」）与 line 1313/1358（8.6「没有采集 IPC/cache-miss」「这些本节没有采集」）。line 562 被工具标 ⚠ 疑似已有 layout.txt 产物，经核对那些是 foundations-lab/systems-lab/compiler-lab 的 layout 文件，不含本分配基准的 align：future-allocation.txt 确实只输出 future_size=257 无 align，正文陈述为真；8.6 的 PMU/IPC 未采集陈述与 environment.txt「No PMU collection configured」一致。本区间未发现类似第 14、6 章的假「未采集」陈述。"
+  },
+  "not_checked": [
+    "8.1.1 关于 rCore 教程第八章用户态线程定义的复述（未回 sources/ 母本逐字比对）",
+    "8.2.7 Guide to Rustc Development PDF 277-279 / 319-321 页码内容（未开 PDF 比对）",
+    "8.6.2「本机环境与第 7 章相同」的逐项比对（只确认环境文件同源）",
+    "lib.rs 中 ns_per_op/print_stats 的实现细节（仅以 tests.txt 的 nearest_rank_and_sample_variance 测试通过作间接证据）"
+  ]
+}

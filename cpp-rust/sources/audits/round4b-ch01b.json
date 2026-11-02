@@ -1,0 +1,91 @@
+{
+  "reviewer": "r4b-ch01b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动完整通读 src/part1/ch01.md 第1220-1724行（1.7-1.11 全部正文与每个语义盒），逐条回查 bench/foundations-lab 的 gate.py/run.sh/analyze.py/Cargo.toml/src 与 results/native-01、results/validation-01 归档、src/appendix/coverage.md 与 sources/reviews/S08.md、S11.md 台账，另跑 tools/list_uncollected_claims.py 并核两处 ch01「没有采集」，用 /tmp/labsim 最小复现 run.sh 锁行为。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "1.7 全部可对核断言成立：正文 gate.py 代码块与 bench/foundations-lab/gate.py:8-17 的 decide() 逐字一致；「四组单元测试」属实（test_accept/reject/inconclusive/invalid），且 `python3 bench/foundations-lab/gate.py` 实跑输出 OK；「high==budget 可接受、low==budget 且 high 更大证据不足」两条边界均被单测覆盖（decide((0,1),1)=accept、decide((1,2),1)=inconclusive）。例 1.7.1 三区间对 B=0.0005 的判定重算无误（[0.0002,0.0004]≤B 接受、[0.0006,0.0011] 全>B 拒绝、[−0.0001,0.0009] 跨 B 不足）；图 1-3 SVG 线性映射复算吻合：x(v)=174+570v，B 线 459=174+2.5×114，三条横条 114/285/570 宽与区间端点一致，「③ 均值 0.0004 比 ① 的 0.0003 更差」为两区间中点真值。「保留全部 21 个正式批次」属实：dce.csv 与 paired.csv 各 case 恰 21 行。「相对预算不能塞进绝对区间」「gate 只接收绝对量」与 decide 接口一致；即时自测第 2 题「gate.py 只做单侧判定」与代码事实相符。",
+      "evidence": [
+        "bench/foundations-lab/gate.py:8-17（decide 与正文 ch01.md:1375-1385 逐字一致）",
+        "bench/foundations-lab/gate.py:21-40（四组单测）+ /usr/bin/python3 bench/foundations-lab/gate.py 实跑输出 OK",
+        "bench/foundations-lab/results/native-01/dce.csv、paired.csv（Counter 各 case 21 条，round 共 21 个）",
+        "src/part1/ch01.md:1261-1305（SVG 坐标复算：174+570v 线性映射，B 线 x=459，条宽 114/285/570）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "1.8 大多数断言回查为真：环境数字与 results/native-01/environment.txt 逐项一致（Mac17,9、hw.memsize 25769803776=恰 24 GiB、cachelinesize 128、macOS 27.0.1/26A434、rustc 1.99.0 commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、aarch64-apple-darwin、RUSTFLAGS=-C target-cpu=native；18 核=perflevel0 6+perflevel1 12；opt3/cgu1/lto=false/debug1 与 Cargo.toml [profile.release] 一致）；证据链九类文件在归档里全部存在；1.8.5 采样断言属实（sample-locality.txt 含 sum_aos/sum_soa 6 处、sample-borrow.txt 含 borrowed/cloned 9 处+分配器栈 18 处）；1.8.4 说 validation-01 存在且 gate.py 不在 native-01 的 source-sha256.txt 里，均核对为真；「批均值 0.0586」与 statistics.json dce.observed.mean=0.05863 相符；锁的 600 秒超时（300×2s）、mkdir 取得、EXIT trap 释放、输出目录必须不存在、参数相对实验包目录，均与 run.sh 一致。两处不成立：①「测量锁路径为仓库根下的 .work/measure.lock（由各实验包 run.sh 相对自身位置算出）」与当前 run.sh 相反——run.sh:4 先 cd 进包目录，:31 再从 $0 的 dirname 取「..」，/tmp/labsim 同构复现：按正文指定的 `从 cpp-rust/ 执行 bash bench/foundations-lab/run.sh` 形式会在该行 cd 失败、set -e 下 exit 1；在包目录内跑则锁落在 bench/.work/measure.lock（实验包上一级是 bench/，不是仓库根）。磁盘上仓库根 .work/ 只有 cpp-rust-sources 与 figs、无 measure.lock 痕迹，bench/.work 不存在。且 native-01 清单记录的 run.sh 哈希 b58401ec…≠现行 79ba6072…，正文描述的是改动后脚本的行为，恰与其自己 1.8.4 的「旧归档不配新说明」纪律冲突（P0）。②「Apple M5 Pro」在归档中无出处：environment.txt 只有 hw.model，无 machdep.cpu.brand_string，全档 grep 'M5' 仅命中符号 mangled 名（P1）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/environment.txt（rustc/LLVM/macOS/memsize/cachelinesize/6+12 核逐项一致）",
+        "bench/foundations-lab/Cargo.toml:7-11（opt-level=3, debug=1, codegen-units=1, lto=false）",
+        "bench/foundations-lab/run.sh:4,31-35 + /tmp/labsim 复现：父目录调起时 `cd: bench/foundations-lab/..: No such file` exit=1；包内调起 LOCK=…/bench/.work/measure.lock",
+        "ls .work → cpp-rust-sources, figs；ls bench/.work → 不存在",
+        "bench/foundations-lab/results/native-01/source-sha256.txt:12（run.sh=b58401ec…）vs 现 shasum -a 256 run.sh=79ba6072…；analyze.py 哈希则一致",
+        "bench/foundations-lab/results/native-01/statistics.json（dce.observed.mean 0.05863；observed/discarded、indexed/iterator 各 n=21；paired bootstrap95 跨零 [-0.0001285,0.0002698]）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "三条延伸阅读全部能在仓库台账落地：Effective Rust 第 30 条按 coverage.md 的 FOUNDATIONS 台账行记为「第30条：单元、集成、文档测试与基准的优化风险」（PDF 227–233，核读映射到 ch01 的 1.1.3）与「第30条：回归测试与配置覆盖建议」（PDF 233→1.1.7，落点 gate.py），与正文「讨论测试、基准和编译器优化风险、基准测到的可能是优化后的路径」的说法一致（另注：S08 通用台账该条标题作「不仅仅是单元测试」，两处并存但内容不冲突）。《Rust 程序设计语言》第 11 章测试有 S11-U041..U044（自动化测试各节 PDF 225–246）落地、第 13 章迭代器与性能比较有 FOUNDATIONS-S11-004「13.4 性能对比：循环VS迭代器」PDF 314–315 核读映射到 1.1.6，逐字核对相符。black_box「尽力而为的优化提示」与 Instant 平台依赖的表述与 std 文档口径一致。正文未把任何未落地引文当作已核实。",
+      "evidence": [
+        "src/appendix/coverage.md:109-111（S08/FOUNDATIONS-S08-001..003 第30条优化风险/基准观察机器码/回归测试，映射 ch01 1.1.3/1.1.5/1.1.7）",
+        "src/appendix/coverage.md:112（S11/FOUNDATIONS-S11-004 13.4 性能对比 PDF314-315→1.1.6）",
+        "sources/reviews/S11.md:82-85（第11章测试各节 PDF225-246）",
+        "src/appendix/coverage.md:403（S08-U0037 第30条「不仅仅是单元测试」核读记录）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「八份清单共 52 条」复算为真：ch01.md 恰有 8 个 `::: errata` 盒，`^E-` 行共 52 条，按 1.1–1.8 节分布 6/6/6/7/6/6/8/7，与表中每行标注的 E-f/E-f/E-f/E-g/E-f/E-f/E-h/E-g 逐行吻合（1.7 实数 E-a..E-h=8、1.8 实数 E-a..E-g=7 亦直接点验）。表后四条「整章级」错误分别指向 1.7.6、1.8、[@def-1.7.3] 等，引用锚点 def-1.1.1/1.1.2/1.1.3/1.2.2/1.3.1/1.4.1/1.4.2/1.5.2/1.6.2、ex-1.4.1、ex-1.5.1 在正文全部存在，无悬空 [@id]。跨章边界表述（第2章改布局、第3章改所有权）与 1.7.6 正文一致。",
+      "evidence": [
+        "grep -c '::: errata' src/part1/ch01.md = 8；grep -c '^E-' = 52",
+        "按节切分计数 1.1..1.8 = 6,6,6,7,6,6,8,7（src/part1/ch01.md:1650-1659 表格区间 E-f..E-h 逐行吻合）",
+        "锚点存在性循环检查：11 个被引 def/ex id 无缺失"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "小结与速查表逐条复算几乎全对：批均值 T/(K×N) 与 lib.rs run(cases,iterations,units) 一致，dce 用 K=256、paired 用 K=512、N=65_536，K×N≤33554432 远小于 64 位 usize 上限，1.8.7「远小于 usize 范围」为真；nearest-rank p99「N=21 时就是最大值」= ceil(21×0.99)=21 算术成立；「21 个差值有放回重采样 10000 次，取 2.5% 与 97.5% 点」与 analyze.py:23-28（rng.choices、range(10000)、quantile .025/.975、seed 13013）一致；入口 src/bin/dce.rs 与 paired.rs、数据目录 native-01、五份章末文件、Cargo.toml 无 [dependencies]（只依赖标准库）均存在核实；回忆卡 24 张、「A 概念 7 题、B 推理 7 题、C 实操 6 题」（组标题 A 1–7/B 8–14/C 15–20）、自测卷「闭卷 60 分钟、100 分、70 分及格」全部对上。不成立的一处：章末件表称自检表是「K/S/A 十五条目标」，实际 ch01_checklist.md 为 K1–K8（8 条）+ S1–S7（7 条）+ A1–A5（5 条）= 20 条，正文内部数字矛盾（P1）。",
+      "evidence": [
+        "src/part1/ch01_checklist.md:9-49（K1..K8、S1..S7、A1..A5 共 20 条行）vs src/part1/ch01.md:1706「十五条」",
+        "bench/foundations-lab/src/lib.rs:5-6,15 + src/bin/dce.rs:18（run(&mut cases,256,N)）、src/bin/paired.rs:18（512,N）；N=65_536",
+        "bench/foundations-lab/analyze.py:23-28（choices 有放回、10000、quantile .025/.975、seed 13013）",
+        "src/part1/ch01_exercises.md:18,106,206（A 组 1–7、B 组 8–14、C 组 15–20）；ch01_exam.md:3（60 分钟/100 分/70 分）；ch01_recall.md 卡片编号 24 处"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P0",
+      "description": "1.8.3（ch01.md:1500-1509）告诉读者「从 cpp-rust/ 目录执行 bash bench/foundations-lab/run.sh results/my-new-run」并声称「测量锁路径为仓库根下的 .work/measure.lock（由各实验包 run.sh 相对自身位置算出）」。现行代码两处都不符：run.sh 第 4 行已 cd 进实验包目录，第 31 行却仍以调用时的 $0 路径（bench/foundations-lab/run.sh）相对当前目录再解析 `dirname $0` 的 `..`，该相对路径在包目录内不存在。用同构脚本在 /tmp/labsim 复现：正文指定的调起形式直接在锁行报 `cd: bench/foundations-lab/..: No such file or directory` 并在 set -euo pipefail 下 exit 1（根本跑不到计时）；在包目录内调起则锁解析为 bench/.work/measure.lock——实验包上一级是 bench/，不是仓库根。磁盘证据同向：仓库根 .work/ 仅含 cpp-rust-sources 与 figs、无 measure.lock 痕迹，bench/.work 不存在。另 native-01 的 source-sha256.txt 记录 run.sh 哈希 b58401ec…，现为 79ba6072…，即脚本采集之后被改过，正文把改后脚本的行为描述进绑定旧脚本的归档复现步骤，恰是 1.8.4 自己禁止的「旧归档配新说明」。compiler-lab/systems-lab 的 run.sh 是同一错误模式。",
+      "evidence": "bench/foundations-lab/run.sh:4,31（`cd \"$(dirname \"$0\")\"` 后 lock=`$(cd \"$(dirname \"$0\")/..\" && pwd)/.work/measure.lock`）；/tmp/labsim 复现输出：父目录调起 exit=1 报 cd 错误，包内调起 LOCK=/tmp/labsim/bench/.work/measure.lock；ls .work=cpp-rust-sources,figs、ls bench/.work=不存在；source-sha256.txt:12 b58401ec… vs shasum 79ba6072…"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "severity": "P1",
+      "description": "1.8.1（ch01.md:1473）断言主机为「Apple M5 Pro」。归档里没有任何 CPU 型号出处：environment.txt 只记录 hw.model=Mac17,9、hw.memsize、hw.cachelinesize、perflevel0/1 核数（6+12=18，「18 核」有出处），不含 machdep.cpu.brand_string；对 results/native-01/ 全目录 grep 'M5' 只命中 Rust 符号 mangled 名（如 …AdGM58_…），非 CPU 字符串。同段其余环境数字全部核真，唯独型号名无出处。",
+      "evidence": "bench/foundations-lab/results/native-01/environment.txt（无 brand_string 行）；grep -rn 'M5|brand_string' results/native-01/ → 仅 sample-locality.txt 的 mangled 符号命中"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "severity": "P1",
+      "description": "1.11 章末件表（ch01.md:1706）称[学习目标自检表]为「把 K/S/A 十五条目标逐条打勾」。实际 ch01_checklist.md 的目标行是 K1–K8 共 8 条、S1–S7 共 7 条、A1–A5 共 5 条，合计 20 条，不是 15 条；正文内部数字矛盾。该表其余四项章末件数字（24 张回忆卡、A7/B7/C6、60 分钟/100 分/70 分及格）全部核真。",
+      "evidence": "src/part1/ch01_checklist.md:9-49（K 表 8 行、S 表 7 行、A 表 5 行）vs src/part1/ch01.md:1706「十五条」"
+    }
+  ]
+}

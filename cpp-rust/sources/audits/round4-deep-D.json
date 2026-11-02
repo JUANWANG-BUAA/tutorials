@@ -1,0 +1,77 @@
+{
+  "reviewer": "cold-auditor-r4-gD",
+  "kind": "independent",
+  "snapshot_sha256": "736b5dff696e475ff392d4054febefa8c206ec008e26c96bc28fd512419d8d56",
+  "provenance": "冷启动第4轮深审：只看仓库现状，专注构建参数与三态门禁判定语",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "verdict": "PASS",
+      "method": "read",
+      "notes": "本节为构建身份概念层，未给出新的实测数字。可核验的具名参数（rustc 1.99.0 / 提交 b940084d7eb6a299eb4bfeb8e34901bc051e7ac4 / LLVM 23.1.1 / host aarch64-apple-darwin / cargo 1.99.0）与 bench/evidence-lab/results/run-01/environment.txt 逐行一致；checksum 133693440 见于归档 raw 行；旗标口径「显式 --offline --locked」与 build_matrix.py 实际命令相符；示例「两版 checksum 均 133693440」可回溯。三态用法：判定流程末句「任何一步不确定→记为证据不足」引用第三态，正确未误用。结论适用范围未越界（只谈身份分层，不外推性能）。",
+      "evidence": [
+        "src/part4/ch14.md:67-263 (14.1 全文)",
+        "bench/evidence-lab/results/run-01/environment.txt (rustc/LLVM/host/cargo 行)",
+        "bench/evidence-lab/results/run-01/feature-default.txt (checksum=133693440)",
+        "src/part4/ch14.md:206-213 (判定流程第三态)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "verdict": "PASS",
+      "method": "read",
+      "notes": "构建时长与产物大小逐字段对齐归档。build-summary.json：release fresh mean 439.73299/sd 68.274/p50 416.813/p99 646.793、one fresh 338.194、thin fresh 1995.882；noop 18.576/18.713/18.194，与正文表完全相同，preview 的「fresh 338–1996 ms、noop 约 18 ms、20 倍量级」为真。产物：文件字节 release 518448/one 512640/thin 502672 取自 build-raw.jsonl（noop round0 binary_bytes），__text 242940/241916/236656 取自 size-*.txt，__PAGEZERO 4294967296 正确不作磁盘体积。Cargo.toml 三 profile（debug=1/incremental=false/cgu=16/lto=false;one cgu=1;thin cgu=1,lto=thin）与实际清单一致；lto=false 仍可 thin local LTO 的辨析正确。运行侧「没有采集」处未给具体值，判定语按证据不足处理，未把描述性均值差写成放行结论。",
+      "evidence": [
+        "src/part4/ch14.md:607-886 (14.4 全文)",
+        "bench/evidence-lab/results/run-01/build-summary.json (六 case mean/sd/p50/p99)",
+        "bench/evidence-lab/results/run-01/build-raw.jsonl (binary_bytes 518448/512640/502672)",
+        "bench/evidence-lab/results/run-01/size-release.txt / size-one.txt / size-thin.txt (__text, __PAGEZERO)",
+        "bench/evidence-lab/Cargo.toml (profiles 与正文 640-668 一致)",
+        "src/part4/ch14.md:805-812,845 (配对未做→证据不足；运行未采集)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "verdict": "PASS",
+      "method": "read",
+      "notes": "运行回退数字与门禁退出码与归档一致。feature-default.txt summary 行 mean 0.042857/sd 0.002920/p50 0.041763/p99 0.052094；feature-checked.txt mean 0.225888/sd 0.005934/p50 0.222644/p99 0.245054，两版 checksum 133693440——正文表与 preview 全对。gate-rejection.json：ratio 5.270781596704856、budget 0.2、pass false，与「比值≈5.27、按 20% 预算拒绝」相符。三态退出码核对 gate.py main()：pass→0、超预算→1、ValueError/OSError（单位或 checksum 不符）→2，与 def-14.5.3 完全一致；且正文明确区分「退出码 2 的证据不可比」与 def-1.7.2 的「区间跨预算的证据不足」，未把两者混谈。判定语未把拒绝写成「更好/没问题」，反复声明这是描述性预算阈值、非统计显著性、本轮未算配对区间，范围限定单包 1MiB 桌面不外推。",
+      "evidence": [
+        "src/part4/ch14.md:928-1127 (14.5 全文)",
+        "bench/evidence-lab/results/run-01/feature-default.txt (summary,default,...mean=0.042857)",
+        "bench/evidence-lab/results/run-01/feature-checked.txt (summary,checked,...mean=0.225888)",
+        "bench/evidence-lab/results/run-01/gate-rejection.json (ratio 5.2707,budget 0.2,pass false)",
+        "bench/evidence-lab/tools/gate.py:27-53 (compare/return 0/1/2)",
+        "src/part4/ch14.md:1094-1097 (def-14.5.3 三态退出码辨析)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "PENDING",
+      "method": "read",
+      "notes": "待审：出口命令序列、预期退出码、归档约束是否与实际脚本一致。",
+      "evidence": []
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "PENDING",
+      "method": "read",
+      "notes": "待审：准入实测数字回 tidekv CSV/JSON，两个分母（ns/尝试、ns/受理）与三态判定是否用对。",
+      "evidence": []
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "PENDING",
+      "method": "read",
+      "notes": "待审：门禁总表数字回 run-01|02|03 与 gate*.json 逐字段核，三态判定语是否用错。",
+      "evidence": []
+    }
+  ],
+  "sources": [
+    "bench/evidence-lab/results/run-01/",
+    "bench/evidence-lab/Cargo.toml",
+    "bench/evidence-lab/tools/build_matrix.py",
+    "bench/evidence-lab/tools/gate.py",
+    "src/part4/ch14.md"
+  ],
+  "findings": []
+}

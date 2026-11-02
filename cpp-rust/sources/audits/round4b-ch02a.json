@@ -1,0 +1,124 @@
+{
+  "reviewer": "r4b-ch02a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part1/ch02.md 的 2.1–2.6 全部正文与每个语义盒，逐条开 bench/foundations-lab 的 lib.rs/两个 bin/layout.rs、results/native-01 的 layout.txt、locality.csv、allocation.csv、statistics.json、environment.txt、codegen 的 .s/.ll、sample-locality.txt、run.sh、analyze.py 复核，并用 /usr/bin/python3 从 CSV 独立复算均值/标准差/批分位/配对差与固定种子 bootstrap，另跑 tools/list_uncollected_claims.py 核 ch02 的「没有采集」条目。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对 2.1 全部尺寸/对齐/偏移断言与探针产物：layout.txt 逐行给出 COrder 24/8、RustOrder 16/8、Record 64/8、Option<NonZeroU64> 8/8、Option<u64> 16/8、Option<Handle> 8/8、&[u64] 16/8、Vec<u64> 24/8、ByteRegion 32/8，与正文表格九行完全一致；COrder 偏移 0/8/16 与 RustOrder 10/0/8 也对上 layout.txt 的最后两行。examples/layout.rs 确认只调 size_of/align_of/offset_of，无 transmute、不读填充，正文那句限定成立。静态量我自己算过：COrder 字段 1+8+2=11、填充 24-11=13（7+6，与偏移段吻合）；RustOrder 填充 16-11=5；例 2.1.1 的 65536×8=524288、24/524312≈1/21845 与「约两万分之一」相符。结论：尺寸与算术无错，只在定义 2.1.1 首句有一处语序缺陷。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:2-12（九行 size/align + C/Rust offsets）",
+        "bench/foundations-lab/examples/layout.rs:2,18-31（只用 size_of/align_of/offset_of，无 transmute）",
+        "src/part1/ch02.md:86-96 表 vs layout.txt:2-10 逐行一致",
+        "src/part1/ch02.md:147-148 偏移表 vs layout.txt:11-12",
+        "自算：24-11=13、16-11=5、65536*8=524288、524288/24=21845.3（ch02.md:115,243）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对三行 Option 对照与代码：Handle 在 examples/layout.rs:16-17 确实是 #[repr(transparent)] 包 NonZeroU64，2.2.3 的 handle() 与 layout.rs 的构造一致，例 2.2.1 的「哪一行仍只是本机打印」限定与 2.1.4 的落层表不冲突。有效值/宽引用两组断言是概念性约束，与探针值 [&[u64]=16/8] 自洽。2.2.6 声明「本节没有采集 Option 访问的时间数据」：results/native-01 只有 dce/paired/locality/allocation/borrow/initialization 六份 CSV，没有任何 Option 通路计时文件，声明为真。唯一可核到但落不了地的是 2.2.2「本轮另外核读了 std::option 的 Representation 段」：仓库内没有该页本地副本，台账 coverage.md:126 只登记为「HTML具名节」并映射到本节，转述内容（含 Box 的 Global 与 Sized 前提）本身与标准库文档一致，但读者无法离线逐字复核。",
+      "evidence": [
+        "bench/foundations-lab/examples/layout.rs:16-17,26-28（Handle=transparent(NonZeroU64)、三行 Option 实测值）",
+        "src/part1/ch02.md:447 与 bench/foundations-lab/results/native-01/ 目录清单（无 Option 计时产物）",
+        "src/part1/ch02.md:378 转述 vs src/appendix/coverage.md:126 台账（无本地母本副本）",
+        "tools/list_uncollected_claims.py 对 ch02.md:447/453/484 的输出：453 行的 ⚠ 只命中 layout.txt 类尺寸文件，非时间产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对「哪些能算、哪些没采」这条线。可算部分我全部独立复算：65536×64=4194304、65536×8=524288、比值 8、密度 8/64=12.5%，0.519143207/0.059380878=8.7426（正文写 8.74 倍，正确）。cacheline 128 字节确实在 environment.txt:15（hw.cachelinesize: 128），不是凭空写 64。未采集部分经实地检查为真：整个 bench/foundations-lab 的 src/examples/results 里没有任何 PMU/cache-miss/TLB/perf 计数产物（grep 只命中 target/ 里的编译二进制），也没有大页或 packed 实验文件；lib.rs 与各 bin 无 thread/GlobalAlloc，故「单线程读、未测伪共享」成立；environment.txt 除 cachelinesize 外没有 L1/L2 容量与相联度，think 2.3.1 说缺这两个数是准确的。两处表述问题：例 2.3.1 把 4194304 说成「与归档记录一致」，而归档任何文件都不含这个数（grep 无命中），它只能由 lib.rs:5 的 N 与 layout.txt 的 Record=64 相乘推出；另外 results/native-01 存在 profile-locality.csv-excluded（表头与 locality.csv 相同，是 attach 了 sample 的额外墙钟运行，run.sh:45-48 生成、analyze.py:55 只 glob *.csv 因而被排除），文件名容易被读成「采集过机制数据」，正文没有一句话解释它。",
+      "evidence": [
+        "自算：65536*64=4194304；65536*8=524288；8/64=12.5%；0.519143207/0.059380878=8.742599",
+        "bench/foundations-lab/results/native-01/environment.txt:15（hw.cachelinesize: 128，且无 L1/L2 容量行）",
+        "bench/foundations-lab/src/lib.rs:5（N=65_536）+ results/native-01/layout.txt:4（Record,64,8）",
+        "grep -r '4194304' bench/foundations-lab → 无命中；grep -riE 'cache-miss|TLB|PMU' bench/foundations-lab/{src,examples,results} → 无命中",
+        "bench/foundations-lab/run.sh:45-48 与 analyze.py:55（-excluded 文件的来源与被排除方式）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条核 2.4.3 的产物表与两段汇编。sum_soa 的关键循环：.s:978-985 逐字为 ldp q4,q5,[x8,#-32] / ldp q6,q7,[x8],#64 / add.2d v0,v4,v0 … v3,v7,v3，与正文两段完全一致，例 2.4.1 由此数出的 64 字节=8 个 u64、4×2=8 条通道、每元素 8 字节推进正确。sum_aos：.s:896-912 为 ldur x15,[x13,#-128]、ldur x16,[x13,#-64]、ldr x17,[x13]、ldr x15,[x13,#64]、add x13,x13,#256，四个间隔 64 的热字段、每元素 64 字节、比值 8 均与正文相符（与布局跨度比一致）。别名与属性两行也落地：.s:1952 `sum_iter = sum_soa`、.ll:16 是 unnamed_addr alias 到 sum_soa；.ll:543 与 :610 的切片参数带 noalias readonly align 8，正是「后端属性」那一行的出处。2.4.1 的范围声明（只存热列、两表示计时前并存、不测转换）与 locality.rs:4-22 的实际结构一致；2.4.2 说冷字段初始化为 11 也对上 locality.rs:7。Record ABI 只经切片访问、无跨语言按值传递，属实。本节我没找到与证据不符的断言。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s:978-985（SoA 六行）、:896-912（AoS 五行）、:1952（sum_iter=sum_soa 别名）",
+        "同目录 .ll:16（alias）、:543 与 :610（ptr noalias … readonly align 8）",
+        "bench/foundations-lab/src/bin/locality.rs:4-22（两表示计时前建好）+ :7（cold: [11; 7]）",
+        "自算：4×16=64 字节/轮=8 个 u64；4×2=8 通道；256/4=64；64/8=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把结果表的每个数字从 locality.csv 原始 21 行自己重算：aos mean=0.519143207、N-1 sd=0.005283686、p50=0.519196153、p99=0.529403567；soa mean=0.059380878、sd=0.000798904、p50=0.059301615、p99=0.060682416，八项与正文/statistics.json 逐位相同。配对均值我按 round 配对复算为 −0.459762329，固定种子 bootstrap（analyze.py 的 Random(13013)+10000 次重采样+同一 ceil 分位）复现出 [−0.461856757, −0.457715438]，宽度 0.004141319、占均值绝对值 0.9008%，与例 2.5.1 的「约 0.9%」一致。分位数定义正文有交代（p99 即 21 个批均值的最大值），与 analyze.py:12-13 的 ceil 定义吻合，不是把 p99 当尾延迟用。夹具断言逐条对上代码：lib.rs:5 N=65536、:6 ROUNDS=21、:20 每 case 500 ms 预热、:26-28 轮转 position、:35 用 iterations*units 归一（单位 ns/逻辑元素）、:30-34 批后校验；run(&mut cases,128,N) 即每批 128 次调用，例 2.5.1 的 8388608 元素/批、4.35 ms 与 0.50 ms、21 批 91.5/10.5 ms、−3.857 ms、sd 摊到每批约 44 μs 我都复算通过。采样一节也站得住：sample-locality.txt:52-53 给 sum_aos 421、sum_soa 419，与 sample-command.txt 的「Sampling … for 1 second」和每 case 500 ms 预热相容，正文因此拒绝把次数接近读成成本接近是正确方向。2.5.4 描述的测试确实存在（lib.rs:179-192，长度 [0,1,7,65,N]），2.5.1「完整代码」与实际文件语义一致。",
+      "evidence": [
+        "复算：/usr/bin/python3 从 bench/foundations-lab/results/native-01/locality.csv 21 行得 mean/sd/p50/p99 = 正文值；配对差 −0.4597623290952381；bootstrap95 −0.4618567567619048 / −0.45771543752380955",
+        "bench/foundations-lab/results/native-01/statistics.json（locality 段）与 analyze.py:12-18,21-28（ceil 分位、seed 13013、10000 次）",
+        "bench/foundations-lab/src/lib.rs:5-6,20,26-28,30-35（N/ROUNDS/预热/轮转/单位/批后校验）",
+        "bench/foundations-lab/src/bin/locality.rs:22（run(&mut cases,128,N)）；results/native-01/environment.txt:21（warmup=500ms/case rounds=21 order=rotating）",
+        "bench/foundations-lab/results/native-01/sample-locality.txt:52-53（421/419）+ sample-command.txt（1 秒采样）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "组件代码逐行比对：ch02.md:1096-1119 与 lib.rs:101-124 的 ByteRegion/new/take/reset 完全等价（checked_add 先、get_mut 后、两条失败路径都在 self.used=end 之前），确无 unsafe（全仓 grep 只有注释里提到 GlobalAlloc，无实现），size 32/align 8 对 layout.txt:10，容量与溢出语义正确。例 2.6.1 我按代码手推逐步复算：take(6)→used=6；take(3)→6+3=9 不溢出但 get_mut(6..9) 越出 len 8 返回 None、used 仍 6；take(usize::MAX)→checked_add 溢出，连 get_mut 都不执行；take(2)→end=8 成功且内容为 [0;2]（偏移 6、7 从未写过）；reset→used=0；再 take(6)→[7;6]，六个答案全对。测试确实断言这两条（lib.rs:194-203）。借用一侧也对：lib.rs:91-100 的文档注释里就带这个 compile_fail 用例，例 2.6.2 的①失败/②③通过的判断符合现行借用分析。两处问题：2.6.4 展示的片段省掉了包内 doc test 的 use foundations_lab::ByteRegion;（lib.rs:95），读者照抄得到的是「找不到类型」而非示范的借用冲突；更重要的是 2.6.6 在算完 8.248312814/2.813854399=2.93（复算正确）之后写下「它测的是 ①③ 与生命期」，把这条差距的构成指定到了具体成本项，而同章 2.3.2 与 2.7.3 明确禁止在没有第二类证据时做机制归因、并声明「不支持把 2.81 称为任意对象分配耗时」；同段「③ 只能摊薄」也与本章组件自身行为相抵——byte_region 每块根本不 dealloc，per-block 元数据是被消除而不是摊薄。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:101-124 vs src/part1/ch02.md:1096-1119（take 顺序、无 unsafe）",
+        "bench/foundations-lab/src/lib.rs:194-203（region_capacity_failure_is_transactional 与 [0;2]/[7;6] 断言）",
+        "手推复算：take(3) 走 get_mut 越界、take(usize::MAX) 走 checked_add 溢出、used 恒为 6→8→0→6",
+        "bench/foundations-lab/src/lib.rs:91-100（doc test 含 use 行）vs src/part1/ch02.md:1141-1146",
+        "复算 8.248312814/2.813854399=2.931322（statistics.json allocation 段）；对照 src/part1/ch02.md:1196 与 :538、:1337 的归因纪律"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P1",
+      "description": "2.6.6 末段（ch02.md:1196）在给出 2.93 倍（fresh_vec 均值 8.248312814 ÷ byte_region 均值 2.813854399，我按 allocation.csv 21 行复算为 2.931322，数字本身正确）之后写「本章 2.7 的对照是单线程的，它测的是 ①③ 与生命期」，等于把这条实测差距的构成指定到「参数与协议」和「元数据与碎片」两项成本上；但同章 2.3.2（ch02.md:538,546-550）把机制归因列为需要第二类证据、且明确记录「未采集」，2.7.3（ch02.md:1337）也专门声明这条差距「不支持把 2.81 称为任意对象分配耗时」。同一份数据在 2.6.6 被允许做成本项归因、在 2.3/2.7 被禁止，属章内口径混用。同一句里「三笔里只有 ② 能靠少分配直接绕开，① 和 ③ 只能摊薄」还与本章自己的组件相抵：allocation.rs:28-31 的 byte_region 路径每块既不调 alloc 也不调 dealloc，per-block 的归属/大小记录（③）是被整条消除，不是摊薄；只有初次 vec![0; capacity] 那一次真正付 ①③。",
+      "evidence": "src/part1/ch02.md:1196（「它测的是 ①③ 与生命期」「① 和 ③ 只能摊薄」）vs src/part1/ch02.md:538、:546-550、:1337；bench/foundations-lab/src/bin/allocation.rs:24-33（region 路径无逐块 dealloc）+ src/lib.rs:107-111（唯一一次 vec![0; capacity]）；复算：/usr/bin/python3 由 results/native-01/allocation.csv 得 mean 8.248312814/2.813854399、比值 2.931322、配对 −5.434458415"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "severity": "P2",
+      "description": "例 2.3.1 解答（ch02.md:527）写「AoS：65536 × 64 = 4194304 字节，与归档记录一致」。归档里没有任何文件记录 4194304 这个跨度：对 bench/foundations-lab 全目录 grep 该数无命中，locality.csv 只有 ns_per_unit 与 checksum，layout.txt 只记 Record 的 size=64、align=8，环境文件只记 cacheline。这个数真正的出处是 src/lib.rs:5 的 N=65_536 乘以 layout.txt:4 的 64，属于正文反复强调的「布局事实/可以直接算」那一路，写成「与归档记录一致」把「可算」说成了「已记录」，会被读者当成第二类（采集）证据。数字本身没错。",
+      "evidence": "grep -r '4194304' /Users/juanwang/Desktop/tutorials/cpp-rust/bench/foundations-lab → 无命中；bench/foundations-lab/src/lib.rs:5（N=65_536）；results/native-01/layout.txt:4（Record,64,8）；自算 65536*64=4194304、65536*8=524288"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "severity": "P2",
+      "description": "2.3 与 2.5 两处把「一次性能计数事件都没有采集」（ch02.md:507、:555、:987）说成绝对无产物，但 results/native-01 里存在 profile-locality.csv-excluded 与 profile-borrow.csv-excluded 两个文件名带 profile 的文件，正文从未解释它们。我打开确认：表头与正式 CSV 完全相同（kind,round,position,case,ns_per_unit,checksum），是 run.sh:45-48 在 /usr/bin/sample 附加期间另跑一遍得到的墙钟计时，被 analyze.py:55（只 glob *.csv）排除在统计之外，确实不含任何 PMU/miss/TLB 计数——所以「未采集」的断言成立，但读者按文件名去找「机制证据」时会误判。建议在这两处补一句说明该文件是什么、为何 excluded。",
+      "evidence": "bench/foundations-lab/results/native-01/profile-locality.csv-excluded:1（表头同 locality.csv，43 行=标题+21 批×2 case）；run.sh:44-48（Profiler never attaches to one of the formal CSV measurement processes）；analyze.py:55-56（root.glob('*.csv') 且 assert len==6，排除 -excluded）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "severity": "P2",
+      "description": "2.2.2（ch02.md:378）称「本轮另外核读了 std::option 的 Representation 段」并转述其条目（含 Box 限定为相应 Global 形式与 Sized 条件）。转述与标准库文档的条目集合一致（引用/NonZero/NonNull/函数指针/带条件的 Box 等），且 2.2.7 与 E-d 都强调不得省略条件，方向正确；但仓库内没有该页的任何本地副本可逐字比对：sources/ 只有台账 JSON，appendix/coverage.md:126 对 FOUNDATIONS-OPTION 只登记「HTML具名节；无固定页码|核读映射」，映射目标回到 src/part1/ch02.md 自己。对一个以「引文要能找到原文」为纪律的章，这一条的落地强度低于同章的 rCore 三条（后者至少有 URL+SHA：coverage.md:4099-4102）。",
+      "evidence": "src/appendix/coverage.md:126（FOUNDATIONS-OPTION，证据列指向 src/part1/ch02.md 自身）；对照同文件:4099-4102（rcore-sv39 / rcore-global-alloc / rcore-frame-alloc 有 URL 与 SHA 指纹）；find sources -iname '*option*' → 无本地母本"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "2.6.4（ch02.md:1141-1146）声称「包中的 compile-fail 文档测试验证这个拒绝案例」并给出代码，但正文块省掉了包内 doc test 的 use foundations_lab::ByteRegion; 一行（lib.rs:95）。读者把这段直接抄进自己的项目时，编译失败的原因是 ByteRegion 未导入，而不是要示范的两个可变借用重叠——失败是失败了，却不是被示范的那条性质。正文的断言（该用例在编译期失败、不运行任何危险代码）本身与 lib.rs:94-100 一致。",
+      "evidence": "bench/foundations-lab/src/lib.rs:94-100（```compile_fail 内含 use foundations_lab::ByteRegion;）vs src/part1/ch02.md:1141-1146（无该 use 行，仅 rust,compile_fail 标注）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "severity": "P2",
+      "description": "定义 2.1.1（ch02.md:79）首句「**size** 是一个该类型的值占多少字节」语序错乱（应为「一个该类型的值所占的字节数」或「一个类型的单个值占多少字节」），是本节唯一一处纯文字缺陷；紧接着的 align 与偏移两句完整，且同一定义被后续例 2.1.2、判定流程①与 2.8.1 反复引用，读者需要先猜这一句到底指什么。",
+      "evidence": "src/part1/ch02.md:79（原文）；引用点 src/part1/ch02.md:243、:266、:1461 对「合法存放位置的地址约束」的复述均正常"
+    }
+  ]
+}

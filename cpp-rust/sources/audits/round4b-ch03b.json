@@ -1,0 +1,97 @@
+{
+  "reviewer": "r4b-ch03b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动整读 src/part1/ch03.md 第 1349–1780 行（3.7–3.11 全部正文与每个 def/ex/sol/think/method/errata/即时自测盒），逐条拿断言去对 bench/foundations-lab 的 .rs 与 results/native-01 归档（含用 /usr/bin/python3 从原始 CSV 复算），并把 3.9 点名的四类登记面 sources/contributions/foundations.json、foundations-web.json、sources/web.json、src/appendix/coverage.md 全部枚举比对；另跑 tools/list_uncollected_claims.py 只看 ch03。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.7 全节读完。代码类断言：3.7.8 说「当前六个实验不需要 unsafe」「ByteRegion / try_build / copy_add 把证明交给安全接口」——src/bin 恰为 allocation/borrow/dce/initialization/locality/paired 六个入口，grep 整个 src 无一处 unsafe 关键字，ByteRegion=src/lib.rs:101、try_build=src/lib.rs:156、copy_add=src/lib.rs:166、data(n)=src/lib.rs:44，断言与代码一致。3.7.3 的 Strict Provenance API 三条语义（addr 取地址、with_addr 保来源换地址、map_addr 保来源做变换，且都不证明新地址可解引用）落在 FOUNDATIONS-PTR 的 review_scope『Strict Provenance; Using Strict Provenance』段内（sources/contributions/foundations-web.json 第 1 条），属已登记母本，可核。静态量：例 3.7.1 的 65536 个 u64 = 524288 字节自算 65536*8=524288 成立；『u64 要求 align 8』正确。证明表 3.7.5 实数十行（所有权/空间/时间/对齐/初始化/别名/同步/销毁/panic/泄漏），与小结⑤「十行互相独立」及 3.10 表格「证明表十行」一致；例 3.7.1 的逐项填写确实覆盖这十行，无缺行。3.7.6 与 3.7.7 的工具边界自述（本轮只有测试、clippy、代码生成与 macOS sample，没跑 Miri/TSan/Loom）与归档实存相符：results/native-01 有 sample-borrow.txt、sample-locality.txt、codegen/*.mir|*.ll|*.s，目录内无 miri/tsan/loom 产物。3.7.9 的 errata 实数 8 条（E-a…E-h），与 3.10 索引行 3.7『E-a … E-h』一致。即时自测四题答案与[@def-3.7.2]/[@ex-3.7.1] 原文逐条对得上（『时间』行的错误替代确为表内『以前曾经有效』）。未核：例 3.7.1 里的 N=65536 是否与 src/bin/borrow.rs 实际使用的 N 同源（正文只说『同量级』），以及 3.7.4 引用的『五行』在 3.2 侧的原文逐字比对，这两项本轮没有核。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:44,101,156,166（data/ByteRegion/try_build/copy_add 定义行）",
+        "grep -rn unsafe bench/foundations-lab/src -> 0 命中；src/bin 六个 .rs 文件",
+        "src/part1/ch03.md:1427-1438 证明表十行；65536*8=524288",
+        "bench/foundations-lab/results/native-01/sample-borrow.txt、codegen/foundations_lab-29c064615efbeca4.{mir,ll,s}；同目录无 miri/tsan/loom 产物",
+        "sources/contributions/foundations-web.json:FOUNDATIONS-PTR review_scope 含 Strict Provenance/Using Strict Provenance"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.8 全节读完。本节自述『本章没有实现自引用 unsafe 类型，因此没有运行数据可采集』——与代码事实相符（src 无 unsafe、无 Pin/PhantomPinned 实现，grep 整包仅文档提及），故无实测数字可被要求复算，判定不构成『编造实测』。3.8.5 点名的两个例子逐一对到测试：try_build 返回 Err 时销毁已建前缀 = src/lib.rs 测试 failure_drops_initialized_prefix（src/lib.rs:213 起）；ByteRegion 的 take 失败保持游标、随后仍可取回原空间 = region_capacity_failure_is_transactional（src/lib.rs:195-201，断言字面写 'failure preserved cursor'）。3.8.3/3.8.4/3.8.6 的否定式断言（Pin 不回答线程归属、Drop 不回答业务许可、Release/Acquire 不修复发布前无效引用）都是边界声明，未引用任何未登记的实测，措辞与 3.7.7 的工具边界互不矛盾。3.8.6『本轮 zero_fill 已经展示安全结构间有较大优化空间』与 3.11『约 5.7 倍』口径一致（我从原始 CSV 复算 push/zero_fill = 5.731087979552341）。3.8.7 errata 实数 7 条，与 3.10 索引行 3.8『E-a … E-g』一致。未核：3.8.2 关于『大多数类型自动实现 Unpin』的表述只作语言常识接受，没有去 std 文档逐字比对（该文档段落不在 FOUNDATIONS-PTR 的 review_scope 里）。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:195-201（region_capacity_failure_is_transactional，含 'failure preserved cursor' 断言）、src/lib.rs:213（failure_drops_initialized_prefix）、src/lib.rs:227（unwind_drops_initialized_prefix）",
+        "grep -rn 'unsafe\\|Pin\\|PhantomPinned' bench/foundations-lab/src -> 无 unsafe 命中",
+        "复算：initialization.csv 21 条 raw 批次均值 push=1.1538498514285715、zero_fill=0.2013317289047619，比值 5.731087979552341",
+        "src/part1/ch03.md:1625-1639 共 7 条 E-x，与 1713 行索引一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "3.9 全部四条延伸读物与两个小表格逐条回查登记。已落地：S11『4.1 什么是所有权』『4.2 引用与借用』『15.3 Drop Trait』、S10『析构函数：初始化、部分移动、字段销毁顺序』『销毁作用域与临时值』『非安全块及未定义行为责任』（后者 target 正是 part1/ch03.md#sec-cpp-rust.1.3.7）、S08『第20条末：不要为了消除复制牺牲接口可用性』均在 sources/contributions/foundations.json 有行，S08 的 PDF 174–175 页码登记也在；std::ptr 文档有 FOUNDATIONS-PTR 行带 sha256=14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db，并在 src/appendix/coverage.md:4089 有台账行。查不落地的是正文写成「规范来源」的那两份在线文档：alloc/struct.Vec.html（Vec::with_capacity）与 std/mem/union.MaybeUninit.html，四处登记面 0 命中（详见 findings[0]）。另外该母本行点名的抓取副本 .work/cpp-rust-sources/foundations/ptr.html 当前不在盘（.work/cpp-rust-sources 只有 compiler/evidence/ffi-project/reference/systems 五项），SHA 无法本地复验（findings[1]）。S11 的「一个所有者」引文与 S10『用 LLVM noalias 概括别名的一段』两处我没有取到可逐字比对的母本文本（本地 PDF 未抽取，且 sources/web.json 里 compiler-web-aliasing 一条 status=archive-lost、上游 404），因此这两句只按『正文自述为旧译文、未据以下断言』接受，本轮未算核实、也未据以判级。『没有声称完成的验证』四条与代码/归档事实相符。",
+      "evidence": [
+        "src/part1/ch03.md:1680（『它们分别是[@def-3.3.1] 与[@def-3.3.3] 的规范来源』）",
+        "sources/contributions/foundations.json 全 19 行枚举：id 仅 S08/S10/S11/FOUNDATIONS-PTR/FOUNDATIONS-OPTION/FOUNDATIONS-BLACK_BOX，grep 'MaybeUninit|struct.Vec|with_capacity' = 0 命中",
+        "sources/contributions/foundations-web.json 全 3 条：FOUNDATIONS-PTR / FOUNDATIONS-OPTION / FOUNDATIONS-BLACK_BOX",
+        "grep -rn 'MaybeUninit|alloc/struct\\.Vec|with_capacity' sources -> 仅命中 sources/audits/*.json，无任何登记面",
+        "grep -n 'MaybeUninit|alloc/struct.Vec|std/ptr' src/appendix/coverage.md -> 仅 4089 行 FOUNDATIONS-PTR",
+        "src/part1/ch03.md:559 def-3.3.3 =『定义 3.3.3 · MaybeUninit』、472 行 def-3.3.1 =『容量与长度』（主题对应，缺的是登记行不是内容）",
+        "ls .work/cpp-rust-sources -> compiler evidence ffi-project reference systems（无 foundations/）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "3.10 全节读完，两个可对核的静态量都自己数过：『八份清单共 57 条』——按 ## 3.x 分段逐行数 E-[a-z] 行，3.1=6、3.2=7、3.3=7、3.4=8、3.5=7、3.6=7、3.7=8、3.8=7，合计 57，与表格逐行的 E-a…E-f/E-g/E-h 范围完全一致，无内部矛盾。表格八行的节锚点 sec-cpp-rust.1.3.1…8 与正文各节实际锚点一致。第 1717-1720 行四条『只有整章读完才看得见』的错误分别回指[@def-3.5.1]/[@def-3.6.1]/[@def-1.7.1]/[@think-3.4.1]/[@ex-3.2.2]/[@def-1.6.2]/[@def-3.8.1]/[@ex-3.7.1]，其中本章内引用（3.5.1、3.6.1、3.4.1、3.2.2、3.8.1、3.7.1）对应的盒在 ch03 都实存（def 盒共 18 个，编号连续，无缺号）；『约 5.7 倍』与我从 initialization.csv 复算的 5.731 一致。第 2 条把『测试通过不等于协议证明完』挂在[@think-3.4.1]、第 3 条的顺序声明与 3.8.6 正文一致，未见口径混用。未核：跨章锚点（第 1 章 def-1.6.2/1.7.1/1.7.2）的落点存在性交给机械层，本轮没有逐个开 ch01 验。",
+      "evidence": [
+        "计数脚本输出：{'3.1':6,'3.2':7,'3.3':7,'3.4':8,'3.5':7,'3.6':7,'3.7':8,'3.8':7} TOTAL 57",
+        "src/part1/ch03.md:1702『八份清单共 57 条』；1704-1713 表格八行范围",
+        "def 盒枚举个数 18（::: def 匹配），编号 3.1.1…3.8.2 连续无缺",
+        "复算 push/zero_fill=5.731087979552341 对应 1719 行『约 5.7 倍』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "3.11 全节读完（小结、速查表 11 行、出口检查、责任段、已有回归与证据、章末件五页、导航）。可复算的实测数字只有两条，都从原始 CSV 自己算：3.5 的配对差——borrow.csv 中 kind=raw 的 borrowed 21 条均值 0.05885189785714286、cloned 21 条均值 0.1590204609047619，差 0.10016856304761905，与正文『0.100168563』一致；区间 [0.099374896, 0.101163745] 与归档 statistics.json 的 bootstrap95=[0.099374896, 0.1011637449047619]（seed 13013、10000 次重采样）逐项对上，上界属末位四舍五入，不构成矛盾；但我没能用派单指定的 /usr/bin/python3 重放作者的 bootstrap——bench/foundations-lab/analyze.py 在本机 /usr/bin/python3（3.9 系）第 23 行 `zip(a, b, strict=True)` 直接 TypeError，因此区间是『按归档复算到均值层 + 与归档 statistics.json 一致』，不是独立重放（详见 findings[2]）。3.6 的『相差约 5.7 倍』我从 initialization.csv 复算 5.731087979552341 ✓。结构类断言全部落地：『十项 Rust 测试』= src/lib.rs 6 项 + tests/contracts_more.rs 4 项 = 10，且正文点名的六个测试名（failure_drops_initialized_prefix / unwind_drops_initialized_prefix / dynamic_borrow_conflict_is_safe_failure / disjoint_borrow_updates_only_destination / region_capacity_failure_is_transactional / sums_and_representations_agree）逐一定位到行；『compile-fail 文档测试维护 reset 借用边界』= src/lib.rs:94 的 ```compile_fail doctest 调 region.reset()（ByteRegion::reset 在 src/lib.rs:121）；『两个入口各有两 case，每 case 21 条正式原始批次』= borrow.csv 与 initialization.csv 各 42 行、按 case 拆各 21 条 raw；『归档包含本机 MIR、LLVM IR、汇编与独立 borrow 采样』= codegen/*.mir|*.ll|*.s 与 sample-borrow.txt 齐。『18 个定义盒』与枚举个数 18 相符；章末件五个链接文件（ch03_summary/recall/exercises/exam/checklist.md）指向的文件名在 src/part1 下可见。3.7/3.8 的口径（无 Miri/TSan/Loom、无 UB、无虚构硬件计数）与 3.7.7、3.9『没有声称完成的验证』一致，没有前后互斥。tools/list_uncollected_claims.py 在 ch03 命中 16 行，其中属本节的是 1771 与 1793（均为『没有采集/没有执行』式的自述边界，正文已如实标注为未采集，不是把未采集量当结论），不构成 finding。",
+      "evidence": [
+        "复算 borrow.csv：mean(cloned)-mean(borrowed)=0.1590204609047619-0.05885189785714286=0.10016856304761905；statistics.json bootstrap95=[0.099374896, 0.1011637449047619] seed=13013 resamples=10000",
+        "复算 initialization.csv：push=1.1538498514285715、zero_fill=0.2013317289047619、比值=5.731087979552341",
+        "测试计数：grep -rc '#\\[test\\]' -> src/lib.rs 6 + tests/contracts_more.rs 4 = 10（src/lib.rs:180,195,213,227,240,248）",
+        "bench/foundations-lab/src/lib.rs:92-98（```compile_fail + region.reset()）、src/lib.rs:121（pub fn reset）",
+        "行数：borrow.csv / initialization.csv 各 42 条数据行 = 2 case × 21 raw 批次",
+        "bench/foundations-lab/analyze.py:23 `zip(a, b, strict=True)` 在 /usr/bin/python3 下 TypeError: zip() takes no keyword arguments",
+        "tools/list_uncollected_claims.py ch03 命中含 [ch03.md:1771]、[ch03.md:1793]（均为未采集自述）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "severity": "P1",
+      "description": "3.9 第四条延伸读物（src/part1/ch03.md:1680）把两份在线文档明确称作某条定义的「规范来源」：『[`Vec::with_capacity`](https://doc.rust-lang.org/alloc/struct.Vec.html) 与 [`MaybeUninit`](https://doc.rust-lang.org/std/mem/union.MaybeUninit.html) 的 Safety 段，它们分别是[@def-3.3.1] 与[@def-3.3.3] 的规范来源』。去查这条登记是否真存在：正文同段（1675 行）自己规定『新增母本行位于 sources/contributions/foundations.json，在线文档 URL 与抓取 SHA 位于 foundations-web.json』，而 foundations.json 全 19 行的 id 只有 S08/S10/S11/FOUNDATIONS-PTR/FOUNDATIONS-OPTION/FOUNDATIONS-BLACK_BOX，foundations-web.json 全 3 条就是那三条 FOUNDATIONS-*；grep 'MaybeUninit'、'alloc/struct.Vec'、'with_capacity' 在 sources/ 下只命中 sources/audits/*.json，在任何登记面 0 命中；正文点名的附录来源台账 src/appendix/coverage.md（4141 行）里在线文档台账行只有 4089 行的 FOUNDATIONS-PTR 一条，没有这两份。对照同段里 std::ptr 文档确有 FOUNDATIONS-PTR 行且带 sha256（14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db）、review_scope 覆盖 Safety/Alignment/Strict Provenance，可见本章对『规范来源』本有登记惯例，唯独这两条被正文升级成 def-3.3.1/def-3.3.3 的规范来源却查无登记行；被引作已核实的来源无法落地。内容层面对得上（def-3.3.1=容量与长度、def-3.3.3=MaybeUninit，主题确由这两页 Safety 段支撑），所以是登记缺失而不是内容错。",
+      "evidence": "python 枚举 sources/contributions/foundations.json -> 19 行、无 MaybeUninit/struct.Vec/with_capacity；sources/contributions/foundations-web.json -> 3 条 FOUNDATIONS-*；grep -rn 'MaybeUninit|alloc/struct\\.Vec|with_capacity' sources -> 仅 sources/audits/*.json；grep -n 'std/ptr|MaybeUninit|alloc/struct\\.Vec' src/appendix/coverage.md -> 仅 4089 行 FOUNDATIONS-PTR；src/part1/ch03.md:1675 的登记面自述、1680 的『规范来源』原句；src/part1/ch03.md:472（def-3.3.1 容量与长度）、559（def-3.3.3 MaybeUninit）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "severity": "P2",
+      "description": "同一读物条目里 std::ptr 母本（FOUNDATIONS-PTR，支撑[@def-3.7.2] 与 3.7.3 全部 Provenance 断言）的登记行本身在，但它点名的抓取副本 download_evidence='.work/cpp-rust-sources/foundations/ptr.html' 此刻不在磁盘上：ls .work/cpp-rust-sources 只有 compiler、evidence、ffi-project、reference、systems 五个目录，没有 foundations/。于是这条 sha256 无法本地复验，3.7.3 的 addr/with_addr/map_addr 语义与 3.9『Safety/Alignment/…/Exposed Provenance 这几节支撑』只能靠台账自述。属取证副本可复核性问题（不是数字矛盾，也不是编造实测），建议要么把副本落回可入库的位置，要么在台账行按现有 compiler-web-aliasing 的先例显式标 archive-lost。",
+      "evidence": "sources/contributions/foundations-web.json:1 download_evidence=.work/cpp-rust-sources/foundations/ptr.html；ls .work/cpp-rust-sources -> compiler evidence ffi-project reference systems；对照 sources/web.json 中 compiler-web-aliasing 一条的 status=archive-lost + loss_note 先例"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "severity": "P2",
+      "description": "3.11『已有回归与证据』声明『性能表均可从原始 CSV 重算』，但本章指定的重算入口 bench/foundations-lab/analyze.py 在当前系统解释器下根本跑不起来：第 23 行 `differences = [y - x for x, y in zip(a, b, strict=True)]` 用了 zip(strict=)，/usr/bin/python3（3.9 系）执行 `analyze.py results/native-01` 直接 TypeError: zip() takes no keyword arguments。数字本身站得住——我从 borrow.csv/initialization.csv 手工复算得到 0.10016856304761905 与 5.731087979552341，均值层与归档 statistics.json 逐位一致；但 bootstrap 区间 [0.099374896, 0.101163745] 本轮只能取自归档 statistics.json，无法用正文档前的脚本独立重放。措辞应改为点明重算所需 Python 版本（或把 strict=True 改成等价的长度断言），否则『均可重算』对读者是一句跑不通的承诺。",
+      "evidence": "python3 bench/foundations-lab/analyze.py bench/foundations-lab/results/native-01 -> TypeError: zip() takes no keyword arguments（analyze.py:23）；复算输出 borrowed mean=0.05885189785714286(n=21)、cloned mean=0.1590204609047619(n=21)、diff=0.10016856304761905；statistics.json borrow.paired_second_minus_first.bootstrap95=[0.099374896, 0.1011637449047619]；initialization 比值=5.731087979552341；src/part1/ch03.md:1771"
+    }
+  ]
+}

@@ -245,7 +245,7 @@
   {
     "id": "S08",
     "source": "Effective Rust.pdf",
-    "section": "Item15：别名限制与优化（前五页）",
+    "section": "Item15：理解借用检查器——取该条后半段「借用规则→别名决策→更好的优化」（前五页）",
     "pages": [
       126,
       127,

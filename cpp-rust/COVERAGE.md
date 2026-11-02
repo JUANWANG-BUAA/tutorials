@@ -1,6 +1,6 @@
 # 母本逐节覆盖与范围裁决
 
-16份母本，当前目录3356项；映射记录550条。
+16份母本，当前目录3356项；映射记录582条。十七章正文中，第 1–16 章逐节挂靠上述母本；第 17 章的存储结构、近似成员查询、内存回收与测量方法四处认领外部文献（见该章 17.9），但它的数字不来自任何文献，只来自 `projects/tidekv/results/run-01/`。
 已知未裁决条目 **0**；目录仍待完善的母本 **0**。
 
 **覆盖口径**：每个目录单元都有正文落点或有理由的范围排除；不等于逐字读完全部原书。
@@ -90,8 +90,8 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11/EVIDENCE-S11-003|采用发布配置自定义构建：dev/release和opt-level覆盖|PDF 320（一基物理页）|核读映射|[part4/ch13.md#sec-cpp-rust.4.13.8](src/part4/ch13.md#sec-cpp-rust.4.13.8)|`bench/evidence-lab/Cargo.toml`|
 |S11/EVIDENCE-S11-004|采用发布配置自定义构建：profile的身份和优化边界|PDF 320（一基物理页）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.4](src/part4/ch14.md#sec-cpp-rust.4.14.4)|`bench/evidence-lab/Cargo.toml`|
 |S11/EVIDENCE-S11-005|Cargo工作空间：共享target/lock、显式包依赖与包选择测试；旧版示例不外推唯一构建单元|PDF 332–336（一基物理页）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.2](src/part4/ch14.md#sec-cpp-rust.4.14.2)|`bench/evidence-lab/results/run-01/metadata.json`|
-|S14/EVIDENCE-S14-006|如何写文档：完整可运行示例、公共契约、panic和错误处理|PDF 6–8、11–12（一基物理页）|核读映射|[part4/ch13.md#sec-cpp-rust.4.13.6](src/part4/ch13.md#sec-cpp-rust.4.13.6)|`bench/evidence-lab/src/lib.rs`|
-|S14/EVIDENCE-S14-007|基本使用、Cargo整合、输出导航、写作与命令参数；只采用当前工具链接受的检查|PDF 1–15（一基物理页）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.8](src/part4/ch14.md#sec-cpp-rust.4.14.8)|`bench/evidence-lab/results/run-01/rustdoc-check.txt`|
+|S14/EVIDENCE-S14-006|如何写文档：完整可运行示例、公共契约、panic和错误处理|PDF 6–7、11–12（一基物理页；第 8 页 Markdown 一节为 excluded-reviewed 不在范围内；第 12 页另含 excluded-reviewed 单元 S14-U029「自定义输出」，其内容不采为证据）|核读映射|[part4/ch13.md#sec-cpp-rust.4.13.6](src/part4/ch13.md#sec-cpp-rust.4.13.6)|`bench/evidence-lab/src/lib.rs`|
+|S14/EVIDENCE-S14-007|基本使用、Cargo整合、输出导航、写作与命令参数；只采用当前工具链接受的检查|PDF 1–15（一基物理页；其中第 3、4、5、8、9、10、12、13 页含 excluded-reviewed 单元 S14-U007–U016、S14-U020–U025、S14-U029、S14-U031，相应内容不采为证据）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.8](src/part4/ch14.md#sec-cpp-rust.4.14.8)|`bench/evidence-lab/results/run-01/rustdoc-check.txt`|
 |EVID-cargo-features/EVID-cargo-features|Features全文：default、可选依赖、feature统一、resolver2和组合测试|HTML（无固定页码）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.2](src/part4/ch14.md#sec-cpp-rust.4.14.2)|`bench/evidence-lab/results/run-01/feature-tree.txt`|
 |EVID-cargo-profiles/EVIDENCE-EVID-cargo-profiles-009|Profiles全文：CGU、incremental、lto=false/off、profile覆盖和泛型实例化|HTML（无固定页码）|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.4](src/part4/ch14.md#sec-cpp-rust.4.14.4)|`bench/evidence-lab/results/run-01/build-summary.json`|
 |EVID-cargo-profiles/EVIDENCE-EVID-cargo-profiles-010|Profiles：debug与真实产物、优化模式边界|HTML（无固定页码）|核读映射|[part4/ch13.md#sec-cpp-rust.4.13.2](src/part4/ch13.md#sec-cpp-rust.4.13.2)|`bench/evidence-lab/results/run-01/environment.txt`|
@@ -242,9 +242,9 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11/SRB-S11-U054|使用迭代器处理元素序列|PDF 300|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u054`|
 |S11/SRB-S11-U055|改进之前的 I/O 项目|PDF 308|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u055`|
 |S11/SRB-S11-U056|性能比较：循环对迭代器|PDF 313|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u056`|
-|S11/SRB-S11-U058|采用发布配置自定义构建|PDF 319|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u058`|
+|S11/SRB-S11-U058|采用发布配置自定义构建|PDF 320–321|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u058`|
 |S11/SRB-S11-U059|将 crate 发布到 Crates.io|PDF 322|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u059`|
-|S11/SRB-S11-U060|Cargo 工作空间|PDF 331|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u060`|
+|S11/SRB-S11-U060|Cargo 工作空间|PDF 332|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u060`|
 |S11/SRB-S11-U064|Box 指向堆上数据，并且可确定大小|PDF 344|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S11.md#review-s11-u064`|
 |S11/SRB-S11-U065|通过 Deref trait 将智能指针当作常规引用处理|PDF 349|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S11.md#review-s11-u065`|
 |S11/SRB-S11-U067|Rc 引用计数智能指针|PDF 359|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S11.md#review-s11-u067`|
@@ -586,6 +586,38 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |systems-rcore-io/SYS-RCORE-IO|第6章：文件系统与块设备接口设计|在线文档（SHA: 55ff0cac...）|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.4](src/part3/ch12.md#sec-cpp-rust.3.12.4)|`src/part3/ch12.md`|
 |S11/SYS-S11-ITER|13.4 性能对比：循环 VS 迭代器|PDF 314–315|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.2](src/part3/ch12.md#sec-cpp-rust.3.12.2)|`bench/systems-lab/src/bin/simd.rs`|
 |S08/SYS-S08-OPT|第20条末：优化不应以牺牲可用性为代价|PDF 174–175|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.7](src/part3/ch12.md#sec-cpp-rust.3.12.7)|`bench/systems-lab/src/bin/views.rs`|
+|rcore-task-switch/RCORE-TS|第3章：任务切换（TaskContext 与 __switch 保存恢复的资源）|在线文档（SHA: a71948e9...）|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.2](src/part3/ch09.md#sec-cpp-rust.3.9.2)|`src/part3/ch09.md`|
+|rcore-time-sharing/RCORE-TIME|第3章：分时多任务与时钟中断（时间片与抢占的驱动方式）|在线文档（SHA: 560b98fe...）|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.8](src/part3/ch09.md#sec-cpp-rust.3.9.8)|`src/part3/ch09.md`|
+|rcore-sv39/RCORE-SV39|第4章：SV39 三级页表与大页（地址翻译与 TLB 压力的机制链）|在线文档（SHA: 654584dd...）|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.3](src/part1/ch02.md#sec-cpp-rust.1.2.3)|`src/part1/ch02.md`|
+|rcore-easyfs/RCORE-EFS|第6章：easy-fs 块缓存层（脏标记、合并与回写时机；扇区与块）|在线文档（SHA: ab93f730...）|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.8](src/part3/ch12.md#sec-cpp-rust.3.12.8)|`src/part3/ch12.md`|
+|rcore-global-alloc/RCORE-GALLOC|第4章：Rust 中的动态内存分配（GlobalAlloc 签名、Layout 对齐、LockedHeap 的锁）|在线文档（SHA: 14a89106...）|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.6](src/part1/ch02.md#sec-cpp-rust.1.2.6)|`src/part1/ch02.md`|
+|rcore-frame-alloc/RCORE-FRAME|第4章：管理 SV39 多级页表（物理页帧分配与回收的合法性检查）|在线文档（SHA: 7d5b5cb2...）|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.6](src/part1/ch02.md#sec-cpp-rust.1.2.6)|`src/part1/ch02.md`|
+|rcore-process/RCORE-FORK|第5章：进程概念与 fork/exec/waitpid 三个系统调用|在线文档（SHA: baf6b6c1...）|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.4](src/part3/ch10.md#sec-cpp-rust.3.10.4)|`src/part3/ch10.md`|
+|rcore-pcb/RCORE-PCB|第5章：进程管理的核心数据结构（PidHandle/KernelStack/TCB/TaskManager/Processor）|在线文档（SHA: b418261f...）|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.1](src/part3/ch10.md#sec-cpp-rust.3.10.1)|`src/part3/ch10.md`|
+|rcore-condvar/RCORE-CONDVAR|第8章：条件变量机制（唤醒丢失与管程语义）|在线文档（SHA: 5df682f4...）|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.2](src/part3/ch09.md#sec-cpp-rust.3.9.2)|`src/part3/ch09_recall.md`|
+|rcore-concprob/RCORE-CONCPROB|第8章：并发中的问题（互斥/同步/死锁三分类）|在线文档（SHA: bc6b803b...）|核读映射|[part2/ch07.md#sec-cpp-rust.2.7.1](src/part2/ch07.md#sec-cpp-rust.2.7.1)|`src/part2/ch07.md`|
+|rcore-easyfs/RCORE-EFS-IDX|第6章：easy-fs 的 DiskInode 三级索引与统一块缓冲区|在线文档（SHA: ab93f730...）|核读映射|[part4/ch17.md#sec-cpp-rust.4.17.2](src/part4/ch17.md#sec-cpp-rust.4.17.2)|`src/part4/ch17.md`|
+|rcore-fd/RCORE-FD|第7章 1file-descriptor：标准输入输出与描述符表|chapter7/1file-descriptor.html|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.8](src/part3/ch10.md#sec-cpp-rust.3.10.8)|`src/part3/ch10.md`|
+|rcore-pipe/RCORE-PIPE|第7章 2pipe：管道与有界环|chapter7/2pipe.html|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.5](src/part3/ch10.md#sec-cpp-rust.3.10.5)|`src/part3/ch10.md`|
+|rcore-signal/RCORE-SIGNAL|第7章 4signal：信号与安全点|chapter7/4signal.html|核读映射|[part4/ch17.md#sec-cpp-rust.4.17.6](src/part4/ch17.md#sec-cpp-rust.4.17.6)|`src/part4/ch17.md`|
+|rcore-more-as/RCORE-MOREAS|第4章 7more-as：超越物理内存与空闲匹配|chapter4/7more-as.html|核读映射|[part1/ch02.md#sec-cpp-rust.1.2.6](src/part1/ch02.md#sec-cpp-rust.1.2.6)|`src/part1/ch02.md`|
+|rcore-sched/RCORE-SCHED|第5章 4scheduling：调度策略与性能指标|chapter5/4scheduling.html|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.3](src/part3/ch09.md#sec-cpp-rust.3.9.3)|`src/part3/ch09.md`|
+|rcore-serial/RCORE-SERIAL|第9章 2device-driver-1：串口与 MMIO|chapter9/2device-driver-1.html|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.8](src/part3/ch12.md#sec-cpp-rust.3.12.8)|`src/part3/ch12.md`|
+|rcore-virtio/RCORE-VIRTIO|第9章 2device-driver-2：virtio 与虚拟队列|chapter9/2device-driver-2.html|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.8](src/part3/ch12.md#sec-cpp-rust.3.12.8)|`src/part3/ch12.md`|
+|rcore-sched/RCORE-LINE|参照主线页：站点表与机制侧证据的定义|chapter5/4scheduling.html|核读映射|[rcore-line.md#rcore-line-map](src/rcore-line.md#rcore-line-map)|`src/rcore-line.md`|
+|rcore-remove-std/RCORE-REMOVESTD|第1章 2remove-std：移除标准库依赖|见 sources/web.json 的 url|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.9](src/part4/ch14.md#sec-cpp-rust.4.14.9)|`src/part4/ch14.md`|
+|rcore-trap/RCORE-TRAP|第2章 4trap-handling：特权级切换与寄存器保存|见 sources/web.json 的 url|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.9](src/part3/ch10.md#sec-cpp-rust.3.10.9)|`src/part3/ch10.md`|
+|rcore-redirection/RCORE-REDIRECT|第7章 3cmdargs-and-redirection：标准 I/O 重定向|见 sources/web.json 的 url|核读映射|[part3/ch10.md#sec-cpp-rust.3.10.9](src/part3/ch10.md#sec-cpp-rust.3.10.9)|`src/part3/ch10.md`|
+|rcore-thread/RCORE-THREAD|第8章 1thread：用户态线程管理|见 sources/web.json 的 url|核读映射|[part2/ch08.md#sec-cpp-rust.2.8.1](src/part2/ch08.md#sec-cpp-rust.2.8.1)|`src/part2/ch08.md`|
+|rcore-semaphore/RCORE-SEMAPHORE|第8章 3semaphore：信号量与唤醒丢失|见 sources/web.json 的 url|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.7](src/part3/ch09.md#sec-cpp-rust.3.9.7)|`src/part3/ch09.md`|
+|rcore-easyfs-kernel/RCORE-EFSKERNEL|第6章 3using-easy-fs-in-kernel：File 与设备抽象|见 sources/web.json 的 url|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.9](src/part3/ch12.md#sec-cpp-rust.3.12.9)|`src/part3/ch12.md`|
+|rcore-first-instr/RCORE-FIRSTINSTR|第1章 3first-instruction-in-kernel1：内核第一条指令|见 sources/web.json 的 url|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.9](src/part4/ch14.md#sec-cpp-rust.4.14.9)|`src/part4/ch14.md`|
+|REF-trait-object/SRC-REF-trait-object|trait object 类型与 dyn Trait 的表示|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](src/part2/ch05.md#sec-cpp-rust.2.5.3)|`.work/cpp-rust-sources/reference/S10-trait-object.html`|
+|REF-dyn-compatibility/SRC-REF-dyn-compatibility|Dyn compatibility（旧译母本称「对象安全」，无此节）|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](src/part2/ch05.md#sec-cpp-rust.2.5.3)|`.work/cpp-rust-sources/reference/S10-dyn-compatibility.html`|
+|REF-codegen-attrs/SRC-REF-codegen-attrs|inline / optimization-method / 代码生成属性|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.4](src/part2/ch05.md#sec-cpp-rust.2.5.4)|`.work/cpp-rust-sources/reference/S10-codegen-attrs.html`|
+|S10/FOUNDATIONS-S10-020|未定义的行为：`&amp;mut T`/`&amp;T` 遵循 LLVM scoped noalias 模型，同页声明清单不穷尽且无正式语义模型|PDF 344（一基物理页）|核读映射|[part1/ch03.md#sec-cpp-rust.1.3.2](src/part1/ch03.md#sec-cpp-rust.1.3.2)|`src/part1/ch03.md`|
+|FOUNDATIONS-INSTANT/FOUNDATIONS-INSTANT|Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）|HTML具名节；无固定页码|核读映射|[part1/ch01.md#sec-cpp-rust.1.1.2](src/part1/ch01.md#sec-cpp-rust.1.1.2)|`.work/cpp-rust-sources/foundations/instant.html`|
+|compiler-web-aliasing/compiler-web-aliasing-ch03|main article, excluding navigation；重点首末段：采用最宽泛的别名定义、Rust 自己的定义「大概会更受限制，要把 mutation 与 liveness 算进去」、完整模型还需计入函数调用/裸指针/UnsafeCell|[]|核读映射|[part1/ch03.md#sec-cpp-rust.1.3.2](src/part1/ch03.md#sec-cpp-rust.1.3.2)|`.work/cpp-rust-sources/compiler/aliasing.html`|
 
 ## 全目录逐节裁决
 
@@ -771,7 +803,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S02-U0008|Introduction|33|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0008`；C/C++ 或辅助构建通用内容（Introduction）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0009|About This Book|34|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0009`；C/C++ 或辅助构建通用内容（About This Book）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0010|Who Should Read This Book?|35|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0010`；C/C++ 或辅助构建通用内容（Who Should Read This Book?）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S02-U0011|What’s in This Book?|35|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0011`；C/C++ 或辅助构建通用内容（What’s in This Book?）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S02-U0011|What』s in This Book?|35|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0011`；C/C++ 或辅助构建通用内容（What』s in This Book?）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0012|Part I: The C++ Core Language|35|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0012`；C/C++ 或辅助构建通用内容（Part I: The C++ Core Language）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0013|Part II: C++ Libraries and Frameworks|36|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0013`；C/C++ 或辅助构建通用内容（Part II: C++ Libraries and Frameworks）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0014|An Overture to C Programmers|39|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0014`；C/C++ 或辅助构建通用内容（An Overture to C Programmers）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -793,7 +825,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S02-U0030|1: Up and Running|61|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0030`；C/C++ 或辅助构建通用内容（1: Up and Running）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0031|The Structure of a Basic C++ Program|62|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0031`；C/C++ 或辅助构建通用内容（The Structure of a Basic C++ Program）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0032|Creating Your First C++ Source File|62|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0032`；C/C++ 或辅助构建通用内容（Creating Your First C++ Source File）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S02-U0033|Main: A C++ Program’s Starting Point|62|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0033`；C/C++ 或辅助构建通用内容（Main: A C++ Program’s Starting Point）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S02-U0033|Main: A C++ Program』s Starting Point|62|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0033`；C/C++ 或辅助构建通用内容（Main: A C++ Program』s Starting Point）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0034|Libraries: Pulling in External Code|63|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0034`；C/C++ 或辅助构建通用内容（Libraries: Pulling in External Code）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0035|The Compiler Tool Chain|63|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0035`；C/C++ 或辅助构建通用内容（The Compiler Tool Chain）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0036|Setting Up Your Development Environment|64|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0036`；C/C++ 或辅助构建通用内容（Setting Up Your Development Environment）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -804,7 +836,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S02-U0041|Bootstrapping C++|71|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0041`；C/C++ 或辅助构建通用内容（Bootstrapping C++）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0042|The C++ Type System|71|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0042`；C/C++ 或辅助构建通用内容（The C++ Type System）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0043|Declaring Variables|72|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0043`；C/C++ 或辅助构建通用内容（Declaring Variables）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S02-U0044|Initializing a Variable’s State|72|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0044`；C/C++ 或辅助构建通用内容（Initializing a Variable’s State）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S02-U0044|Initializing a Variable』s State|72|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0044`；C/C++ 或辅助构建通用内容（Initializing a Variable』s State）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0045|Conditional Statements|73|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0045`；C/C++ 或辅助构建通用内容（Conditional Statements）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0046|Functions|74|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0046`；C/C++ 或辅助构建通用内容（Functions）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0047|printf Format Specifiers|76|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0047`；C/C++ 或辅助构建通用内容（printf Format Specifiers）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -863,7 +895,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S02-U0100|auto and Code Refactorings|143|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0100`；C/C++ 或辅助构建通用内容（auto and Code Refactorings）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0101|Summary|144|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0101`；C/C++ 或辅助构建通用内容（Summary）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0102|4: The Object Life Cycle|147|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0102`；C/C++ 或辅助构建通用内容（4: The Object Life Cycle）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S02-U0103|An Object’s Storage Duration|147|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0103`；C/C++ 或辅助构建通用内容（An Object’s Storage Duration）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S02-U0103|An Object』s Storage Duration|147|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0103`；C/C++ 或辅助构建通用内容（An Object』s Storage Duration）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0104|Allocation, Deallocation, and Lifetime|148|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0104`；C/C++ 或辅助构建通用内容（Allocation, Deallocation, and Lifetime）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0105|Memory Management|148|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0105`；C/C++ 或辅助构建通用内容（Memory Management）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S02-U0106|Automatic Storage Duration|148|excluded-reviewed / scope-only|—|`sources/reviews/S02.md#review-s02-u0106`；C/C++ 或辅助构建通用内容（Automatic Storage Duration）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -1435,7 +1467,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S03-U0088|33.6  建议|113|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0088`；C/C++ 或辅助构建通用内容（33.6  建议）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0089|第34章  内存和资源|114|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0089`；C/C++ 或辅助构建通用内容（第34章  内存和资源）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0090|34.1  引言|114|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0090`；C/C++ 或辅助构建通用内容（34.1  引言）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S03-U0091|34.2  “拟容器”|114|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0091`；C/C++ 或辅助构建通用内容（34.2  “拟容器”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S03-U0091|34.2  「拟容器」|114|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0091`；C/C++ 或辅助构建通用内容（34.2  「拟容器」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0092|34.2.1  array|115|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0092`；C/C++ 或辅助构建通用内容（34.2.1  array）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0093|34.2.2  bitset|117|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0093`；C/C++ 或辅助构建通用内容（34.2.2  bitset）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0094|34.2.3  vector[bool]|121|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0094`；C/C++ 或辅助构建通用内容（34.2.3  vector[bool]）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -1621,7 +1653,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S03-U0274|44.2.4  应对旧版本C++实现|362|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0274`；C/C++ 或辅助构建通用内容（44.2.4  应对旧版本C++实现）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0275|44.3  C/C++兼容性|363|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0275`；C/C++ 或辅助构建通用内容（44.3  C/C++兼容性）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0276|44.3.1  C和C++是兄弟|363|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0276`；C/C++ 或辅助构建通用内容（44.3.1  C和C++是兄弟）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S03-U0277|44.3.2  “静默”差异|364|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0277`；C/C++ 或辅助构建通用内容（44.3.2  “静默”差异）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S03-U0277|44.3.2  「静默」差异|364|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0277`；C/C++ 或辅助构建通用内容（44.3.2  「静默」差异）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0278|44.3.3  不兼容C++的C代码|365|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0278`；C/C++ 或辅助构建通用内容（44.3.3  不兼容C++的C代码）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0279|44.3.4  不兼容C的C++代码|368|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0279`；C/C++ 或辅助构建通用内容（44.3.4  不兼容C的C++代码）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S03-U0280|44.4  建议|369|excluded-reviewed / scope-only|—|`sources/reviews/S03.md#review-s03-u0280`；C/C++ 或辅助构建通用内容（44.4  建议）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -2326,7 +2358,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S06-U0019|条款08：别让异常逃离析构函数|73|read-mapped / body-sampled|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S06.md#review-s06-u0019`；C++ RAII/移动语义与 Rust 所有权借用对比：用于阐释确定性析构与所有权转移机制|
 |S06-U0020|条款09：绝不在构造和析构过程中调用virtual函数|77|read-mapped / body-sampled|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S06.md#review-s06-u0020`；C++ RAII/移动语义与 Rust 所有权借用对比：用于阐释确定性析构与所有权转移机制|
 |S06-U0021|条款10：令operator＝返回一个reference to*this|81|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0021`；C/C++ 或辅助构建通用内容（条款10：令operator＝返回一个reference to*this）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S06-U0022|条款11：在operator＝中处理“自我赋值”|82|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0022`；C/C++ 或辅助构建通用内容（条款11：在operator＝中处理“自我赋值”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S06-U0022|条款11：在operator＝中处理「自我赋值」|82|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0022`；C/C++ 或辅助构建通用内容（条款11：在operator＝中处理「自我赋值」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0023|条款12：复制对象时勿忘其每一个成分|86|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0023`；C/C++ 或辅助构建通用内容（条款12：复制对象时勿忘其每一个成分）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0024|3．资源管理|90|read-mapped / body-sampled|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S06.md#review-s06-u0024`；C++ RAII/移动语义与 Rust 所有权借用对比：用于阐释确定性析构与所有权转移机制|
 |S06-U0025|条款13：以对象管理资源|90|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0025`；C/C++ 或辅助构建通用内容（条款13：以对象管理资源）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -2347,7 +2379,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S06-U0040|条款26：尽可能延后变量定义式的出现时间|142|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0040`；C/C++ 或辅助构建通用内容（条款26：尽可能延后变量定义式的出现时间）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0041|条款27：尽量少做转型动作|145|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0041`；C/C++ 或辅助构建通用内容（条款27：尽量少做转型动作）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0042|条款28：避免返回handles指向对象内部成分|152|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0042`；C/C++ 或辅助构建通用内容（条款28：避免返回handles指向对象内部成分）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S06-U0043|条款29：为“异常安全”而努力是值得的|156|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0043`；C/C++ 或辅助构建通用内容（条款29：为“异常安全”而努力是值得的）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S06-U0043|条款29：为「异常安全」而努力是值得的|156|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0043`；C/C++ 或辅助构建通用内容（条款29：为「异常安全」而努力是值得的）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0044|条款30：透彻了解inlining的里里外外|163|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0044`；C/C++ 或辅助构建通用内容（条款30：透彻了解inlining的里里外外）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0045|条款31：将文件间的编译依存关系降至最低|169|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0045`；C/C++ 或辅助构建通用内容（条款31：将文件间的编译依存关系降至最低）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0046|6．继承与面向对象设计|178|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0046`；C/C++ 或辅助构建通用内容（6．继承与面向对象设计）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -2357,7 +2389,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S06-U0050|条款35：考虑virtual函数以外的其他选择|198|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0050`；C/C++ 或辅助构建通用内容（条款35：考虑virtual函数以外的其他选择）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0051|条款36：绝不重新定义继承而来的non-virtual函数|207|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0051`；C/C++ 或辅助构建通用内容（条款36：绝不重新定义继承而来的non-virtual函数）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0052|条款37：绝不重新定义继承而来的缺省参数值|209|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0052`；C/C++ 或辅助构建通用内容（条款37：绝不重新定义继承而来的缺省参数值）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S06-U0053|条款38：通过复合塑模出has-a或“根据某物实现出”|213|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0053`；C/C++ 或辅助构建通用内容（条款38：通过复合塑模出has-a或“根据某物实现出”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S06-U0053|条款38：通过复合塑模出has-a或「根据某物实现出」|213|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0053`；C/C++ 或辅助构建通用内容（条款38：通过复合塑模出has-a或「根据某物实现出」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0054|条款39：明智而审慎地使用private继承|216|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0054`；C/C++ 或辅助构建通用内容（条款39：明智而审慎地使用private继承）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0055|条款40：明智而审慎地使用多重继承|221|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0055`；C/C++ 或辅助构建通用内容（条款40：明智而审慎地使用多重继承）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S06-U0056|7．模板与泛型编程|228|excluded-reviewed / scope-only|—|`sources/reviews/S06.md#review-s06-u0056`；C/C++ 或辅助构建通用内容（7．模板与泛型编程）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -2420,7 +2452,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S07-U0031|Item 11: Prefer deleted functions to private undefined ones.|92|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0031`；C/C++ 或辅助构建通用内容（Item 11: Prefer deleted functions to private undefined ones.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S07-U0032|Item 12: Declare overriding functions override.|97|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0032`；C/C++ 或辅助构建通用内容（Item 12: Declare overriding functions override.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S07-U0033|Item 13: Prefer const_iterators to iterators.|104|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0033`；C/C++ 或辅助构建通用内容（Item 13: Prefer const_iterators to iterators.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S07-U0034|Item 14: Declare functions noexcept if they won’t emit exceptions.|108|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0034`；C/C++ 或辅助构建通用内容（Item 14: Declare functions noexcept if they won’t emit exceptions.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S07-U0034|Item 14: Declare functions noexcept if they won』t emit exceptions.|108|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0034`；C/C++ 或辅助构建通用内容（Item 14: Declare functions noexcept if they won』t emit exceptions.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S07-U0035|Item 15: Use constexpr whenever possible.|115|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0035`；C/C++ 或辅助构建通用内容（Item 15: Use constexpr whenever possible.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S07-U0036|Item 16: Make const member functions thread safe.|121|read-mapped / body-sampled|[part2/ch07.md#sec-cpp-rust.2.7.1](src/part2/ch07.md#sec-cpp-rust.2.7.1)|`sources/reviews/S07.md#review-s07-u0036`；C/C++ 原子操作与并发模型对照：用于深入理解硬件内存序与硬件原子语义差异|
 |S07-U0037|Item 17: Understand special member function generation.|127|excluded-reviewed / scope-only|—|`sources/reviews/S07.md#review-s07-u0037`；C/C++ 或辅助构建通用内容（Item 17: Understand special member function generation.）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -2792,9 +2824,9 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11-U011|注释|60|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 注释 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
 |S11-U012|控制流|62|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 控制流 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
 |S11-U013|认识所有权|70|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；章节导读列举子节主题，没有独立技术证明；保留原条目，实质内容分别登记子节，不重复映射。|
-|S11-U014|什么是所有权？|72|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u014`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。|
-|S11-U015|引用与借用|82|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u015`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。|
-|S11-U016|Slices|88|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u016`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。|
+|S11-U014|什么是所有权？|72|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u014`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。|
+|S11-U015|引用与借用|82|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u015`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。|
+|S11-U016|Slices|88|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u016`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。|
 |S11-U017|使用结构体来组织相关联的数据|96|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 使用结构体来组织相关联的数据 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
 |S11-U018|定义并实例化结构体|98|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 定义并实例化结构体 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
 |S11-U019|一个使用结构体的示例程序|104|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 一个使用结构体的示例程序 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
@@ -2818,7 +2850,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11-U037|泛型、trait 与生命周期|193|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；章节导读列举子节主题，没有独立技术证明；保留原条目，实质内容分别登记子节，不重复映射。|
 |S11-U038|泛型数据类型|198|read-mapped / selected-body|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u038`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
 |S11-U039|trait：定义共享的行为|205|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u039`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
-|S11-U040|生命周期与引用有效性|213|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u040`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。|
+|S11-U040|生命周期与引用有效性|213|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u040`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。|
 |S11-U041|测试|225|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。|
 |S11-U042|编写测试|227|read-mapped / scope-excerpt|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u042`；测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。|
 |S11-U043|运行测试|239|read-mapped / scope-excerpt|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u043`；测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。|
@@ -2829,7 +2861,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11-U048|重构以改进模块化与错误处理|260|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u048`；panic/Result 与错误传播影响资源边界；本轮为范围核查，未把一般错误处理引言当成 FFI panic 防线证据。|
 |S11-U049|采用测试驱动开发完善库的功能|270|read-mapped / scope-excerpt|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S11.md#review-s11-u049`；测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。|
 |S11-U050|处理环境变量|276|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；本节为 处理环境变量 的语言/API 入门或练习；Rust 底层性能主线不重复系统语法教程。|
-|S11-U051|将错误信息输出到标准错误而不是标准输出|282|read-mapped / scope-excerpt|[part3/ch10.md#sec-cpp-rust.3.10.1](src/part3/ch10.md#sec-cpp-rust.3.10.1)|`sources/reviews/S11.md#review-s11-u051`；与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。|
+|S11-U051|将错误信息输出到标准错误而不是标准输出|282|read-mapped / scope-excerpt|[part3/ch10.md#sec-cpp-rust.3.10.1](src/part3/ch10.md#sec-cpp-rust.3.10.1)|`sources/reviews/S11.md#review-s11-u051`；与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 10.1 节登记落点。|
 |S11-U052|Rust 中的函数式语言功能：迭代器与闭包|286|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；章节导读列举子节主题，没有独立技术证明；保留原条目，实质内容分别登记子节，不重复映射。|
 |S11-U053|闭包：可以捕获其环境的匿名函数|288|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u053`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
 |S11-U054|使用迭代器处理元素序列|300|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u054`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
@@ -2862,8 +2894,8 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11-U081|Refutability：何时模式可能会匹配失败|435|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；模式位置、refutability、匹配语法或关键字参考；按实际开篇范围排除语法手册内容。|
 |S11-U082|模式的全部语法|438|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；模式位置、refutability、匹配语法或关键字参考；按实际开篇范围排除语法手册内容。|
 |S11-U083|高级特征|452|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；章节导读列举子节主题，没有独立技术证明；保留原条目，实质内容分别登记子节，不重复映射。|
-|S11-U084|不安全的 Rust|454|read-mapped / selected-body|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u084`；与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。|
-|S11-U085|高级生命周期|462|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u085`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。|
+|S11-U084|不安全的 Rust|454|read-mapped / selected-body|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u084`；与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 3.1 节登记落点。|
+|S11-U085|高级生命周期|462|read-mapped / scope-excerpt|[part1/ch03.md#sec-cpp-rust.1.3.1](src/part1/ch03.md#sec-cpp-rust.1.3.1)|`sources/reviews/S11.md#review-s11-u085`；借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。|
 |S11-U086|高级 trait|469|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u086`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
 |S11-U087|高级类型|479|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u087`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
 |S11-U088|高级函数与闭包|485|read-mapped / scope-excerpt|[part2/ch05.md#sec-cpp-rust.2.5.1](src/part2/ch05.md#sec-cpp-rust.2.5.1)|`sources/reviews/S11.md#review-s11-u088`；单态化、迭代器、调用方式或动态大小类型与 codegen 相关；待 trait/LLVM 专章，不承诺旧书的零开销概括适用于所有实例。|
@@ -2878,7 +2910,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S11-U097|D - 宏|536|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；原书签落空白分页，下一物理页仅有本附录标题、无论述正文；保留条目并按文件缺文排除，不能充作宏/trait/nightly 核读。|
 |S11-U098|E - 本书翻译|538|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；原书签落空白分页，下一物理页仅有本附录标题、无论述正文；保留条目并按文件缺文排除，不能充作宏/trait/nightly 核读。|
 |S11-U099|F - 最新功能|540|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；原书签落空白分页，下一物理页仅有本附录标题、无论述正文；保留条目并按文件缺文排除，不能充作宏/trait/nightly 核读。|
-|S11-U100|G - Rust 是如何开发的与 “Nightly Rust”|542|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；原书签落空白分页，下一物理页仅有本附录标题、无论述正文；保留条目并按文件缺文排除，不能充作宏/trait/nightly 核读。|
+|S11-U100|G - Rust 是如何开发的与 「Nightly Rust」|542|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；原书签落空白分页，下一物理页仅有本附录标题、无论述正文；保留条目并按文件缺文排除，不能充作宏/trait/nightly 核读。|
 |S11-U101|目录|2|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；前后目录或印刷目录分篇标签，仅作目录对账证据，不当正文技术来源。|
 |S11-U102|入门指南（印刷目录分篇标签）|3|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；前后目录或印刷目录分篇标签，仅作目录对账证据，不当正文技术来源。|
 |S11-U103|基本 Rust 技能（印刷目录分篇标签）|4|excluded-reviewed / scope-excerpt|—|`sources/reviews/S11.md`；前后目录或印刷目录分篇标签，仅作目录对账证据，不当正文技术来源。|
@@ -2898,266 +2930,266 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S12-U006|如何使用这本书|2|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；受众、前提、资源、贡献或许可说明；只用于确认本母本的 ESP 嵌入式范围，不作性能机制来源。|
 |S12-U007|为本书做出贡献|2|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；受众、前提、资源、贡献或许可说明；只用于确认本母本的 ESP 嵌入式范围，不作性能机制来源。|
 |S12-U008|重用本材料|2|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；受众、前提、资源、贡献或许可说明；只用于确认本母本的 ESP 嵌入式范围，不作性能机制来源。|
-|S12-U009|开发方式总览|4|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u009`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U010|仓库命名约定|4|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“仓库命名约定”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U011|对乐鑫产品的支持|4|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“对乐鑫产品的支持”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U012|使用标准库（std）|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u012`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U013|当前支持情况|6|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“当前支持情况”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U014|esp-rs 相关的 Crate|6|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-rs 相关的 Crate”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U015|何时适合使用标准库（std）|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u015`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U016|使用核心库（no_std）|8|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u016`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U017|当前支持情况|8|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“当前支持情况”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U018|esp-rs 相关的 Crate|8|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-rs 相关的 Crate”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U009|开发方式总览|4|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u009`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U010|仓库命名约定|4|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「仓库命名约定」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U011|对乐鑫产品的支持|4|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「对乐鑫产品的支持」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U012|使用标准库（std）|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u012`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U013|当前支持情况|6|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「当前支持情况」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U014|esp-rs 相关的 Crate|6|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-rs 相关的 Crate」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U015|何时适合使用标准库（std）|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u015`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U016|使用核心库（no_std）|8|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u016`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U017|当前支持情况|8|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「当前支持情况」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U018|esp-rs 相关的 Crate|8|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-rs 相关的 Crate」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
 |S12-U019|何时适合使用核心库（no_std）|9|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u019`；no_std 的尺寸/实时性取舍仅是该书的建议，没有本机测量；保留为范围参照，不能推广为 no_std 必然更快或硬实时。|
-|S12-U020|配置开发环境|10|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“配置开发环境”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U021|Rust 安装|11|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Rust 安装”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U022|仅针对 RISC-V 目标|12|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u022`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U023|针对 RISC-V 和 Xtensa 目标|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“针对 RISC-V 和 Xtensa 目标”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U024|1. 安装 espup|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“1. 安装 espup”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U025|2. 安装必要的工具链|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“2. 安装必要的工具链”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U026|3. 配置环境变量|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“3. 配置环境变量”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U027|espup 安装了什么|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u027`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U028|Xtensa 目标的其他安装方法|15|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Xtensa 目标的其他安装方法”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U029|std 开发依赖项|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u029`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U030|使用容器|17|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u030`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U031|编写自己的应用|18|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“编写自己的应用”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U032|从模板生成项目|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“从模板生成项目”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U033|esp-generate|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-generate”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U034|esp-idf-template|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-idf-template”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U035|在模板中使用开发容器（Dev Container）|20|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“在模板中使用开发容器（Dev Container）”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U036|esp-generate 简介|21|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-generate 简介”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U037|检查生成的项目|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u037`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U038|main.rs 简介|22|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“main.rs 简介”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U039|运行代码|23|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“运行代码”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U040|esp-idf-template 简介|25|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-idf-template 简介”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U041|检查生成的项目|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u041`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U042|main.rs 简介|26|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“main.rs 简介”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U043|运行代码|26|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“运行代码”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U044|编写 no_std 应用|28|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“编写 no_std 应用”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U045|编写 std 应用|29|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“编写 std 应用”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U046|工具|30|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“工具”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U047|Visual Studio Code|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Visual Studio Code”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U048|实用建议|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“实用建议”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U049|在 no_std 下使用 Rust Analyzer|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“在 no_std 下使用 Rust Analyzer”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U050|在使用自定义工具链时使用 Cargo 提示|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“在使用自定义工具链时使用 Cargo 提示”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U051|其他 IDE|32|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“其他 IDE”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U052|espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“espflash”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U053|cargo-espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“cargo-espflash”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U054|espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“espflash”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U055|调试|35|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“调试”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U056|USB-JTAG-SERIAL 外设|35|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“USB-JTAG-SERIAL 外设”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U057|probe-rs|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“probe-rs”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U058|用 probe-rs 烧写|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“用 probe-rs 烧写”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U059|VS Code 扩展|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“VS Code 扩展”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U060|示例 launch.json|38|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“示例 launch.json”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U061|cargo-flash 和 cargo-embed|39|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“cargo-flash 和 cargo-embed”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U062|GDB 集成|39|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“GDB 集成”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U063|OpenOCD|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“OpenOCD”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U064|VS Code 扩展|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“VS Code 扩展”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U065|配置|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“配置”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U066|多核调试|41|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“多核调试”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U067|仿真|42|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“仿真”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U068|Wokwi|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Wokwi”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U069|使用 Wokwi VS Code 扩展|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“使用 Wokwi VS Code 扩展”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U070|使用 wokwi-server|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“使用 wokwi-server”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U071|自定义芯片|44|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“自定义芯片”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U072|QEMU|45|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“QEMU”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U073|使用 QEMU 运行项目|45|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“使用 QEMU 运行项目”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U074|Troubleshooting|46|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Troubleshooting”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U075|使用了错误的 Rust 工具链|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u075`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U076|Windows|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Windows”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U077|长路径名|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“长路径名”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U078|缺少 ABI|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“缺少 ABI”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U079|esp-idf-sys based projects|48|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“esp-idf-sys based projects”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U080|Wrong Xtal Frequency|48|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“Wrong Xtal Frequency”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U081|Environment Variable LIBCLANG_PATH Not Set|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u081`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U082|Missing ldproxy|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u082`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
-|S12-U083|sdkconfig.defaults File is Updated but it Doesn't Appear to Have Had Any Effect|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u083`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。|
+|S12-U020|配置开发环境|10|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「配置开发环境」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U021|Rust 安装|11|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Rust 安装」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U022|仅针对 RISC-V 目标|12|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u022`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U023|针对 RISC-V 和 Xtensa 目标|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「针对 RISC-V 和 Xtensa 目标」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U024|1. 安装 espup|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「1. 安装 espup」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U025|2. 安装必要的工具链|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「2. 安装必要的工具链」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U026|3. 配置环境变量|14|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「3. 配置环境变量」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U027|espup 安装了什么|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u027`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U028|Xtensa 目标的其他安装方法|15|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Xtensa 目标的其他安装方法」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U029|std 开发依赖项|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u029`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U030|使用容器|17|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u030`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U031|编写自己的应用|18|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「编写自己的应用」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U032|从模板生成项目|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「从模板生成项目」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U033|esp-generate|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-generate」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U034|esp-idf-template|19|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-idf-template」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U035|在模板中使用开发容器（Dev Container）|20|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「在模板中使用开发容器（Dev Container）」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U036|esp-generate 简介|21|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-generate 简介」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U037|检查生成的项目|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u037`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U038|main.rs 简介|22|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「main.rs 简介」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U039|运行代码|23|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「运行代码」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U040|esp-idf-template 简介|25|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-idf-template 简介」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U041|检查生成的项目|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u041`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U042|main.rs 简介|26|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「main.rs 简介」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U043|运行代码|26|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「运行代码」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U044|编写 no_std 应用|28|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「编写 no_std 应用」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U045|编写 std 应用|29|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「编写 std 应用」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U046|工具|30|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「工具」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U047|Visual Studio Code|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Visual Studio Code」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U048|实用建议|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「实用建议」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U049|在 no_std 下使用 Rust Analyzer|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「在 no_std 下使用 Rust Analyzer」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U050|在使用自定义工具链时使用 Cargo 提示|31|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「在使用自定义工具链时使用 Cargo 提示」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U051|其他 IDE|32|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「其他 IDE」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U052|espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「espflash」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U053|cargo-espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「cargo-espflash」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U054|espflash|33|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「espflash」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U055|调试|35|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「调试」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U056|USB-JTAG-SERIAL 外设|35|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「USB-JTAG-SERIAL 外设」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U057|probe-rs|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「probe-rs」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U058|用 probe-rs 烧写|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「用 probe-rs 烧写」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U059|VS Code 扩展|37|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「VS Code 扩展」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U060|示例 launch.json|38|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「示例 launch.json」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U061|cargo-flash 和 cargo-embed|39|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「cargo-flash 和 cargo-embed」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U062|GDB 集成|39|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「GDB 集成」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U063|OpenOCD|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「OpenOCD」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U064|VS Code 扩展|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「VS Code 扩展」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U065|配置|40|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「配置」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U066|多核调试|41|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「多核调试」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U067|仿真|42|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「仿真」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U068|Wokwi|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Wokwi」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U069|使用 Wokwi VS Code 扩展|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「使用 Wokwi VS Code 扩展」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U070|使用 wokwi-server|43|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「使用 wokwi-server」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U071|自定义芯片|44|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「自定义芯片」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U072|QEMU|45|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「QEMU」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U073|使用 QEMU 运行项目|45|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「使用 QEMU 运行项目」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U074|Troubleshooting|46|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Troubleshooting」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U075|使用了错误的 Rust 工具链|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u075`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U076|Windows|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Windows」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U077|长路径名|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「长路径名」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U078|缺少 ABI|47|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「缺少 ABI」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U079|esp-idf-sys based projects|48|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「esp-idf-sys based projects」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U080|Wrong Xtal Frequency|48|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「Wrong Xtal Frequency」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U081|Environment Variable LIBCLANG_PATH Not Set|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u081`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U082|Missing ldproxy|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u082`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
+|S12-U083|sdkconfig.defaults File is Updated but it Doesn't Appear to Have Had Any Effect|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u083`；已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，已映射至 14.7 节登记落点，不能推为本机已验证 ESP 支持。|
 |S12-U084|The Documentation for the Crates Mentioned on This Page is out of Date or Missing|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S12.md#review-s12-u084`；正文解释 docs.rs 构建时联网限制导致 ESP 依赖文档另行托管；可作离线文档构建门禁风险，待 Cargo/CI 专章。|
-|S12-U085|A Stack Overflow in Task main has Been Detected|49|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“A Stack Overflow in Task main has Been Detected”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
-|S12-U086|How to Disable Watchdog Timer(s)?|50|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读“How to Disable Watchdog Timer(s)?”所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U085|A Stack Overflow in Task main has Been Detected|49|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「A Stack Overflow in Task main has Been Detected」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
+|S12-U086|How to Disable Watchdog Timer(s)?|50|excluded-reviewed / body-text|—|`sources/reviews/S12.md`；已读「How to Disable Watchdog Timer(s)?」所在页正文；这是 ESP 芯片支持、开发板、工具或外设工作流，不作为桌面 Rust 底层性能机制证据。|
 
 ### S13 · rust-book-zh-cn-shieber.pdf {#coverage-s13}
 
 |母本节|标题|物理页/定位|状态与阅读深度|本书落点|证据及范围理由|
 |:--|:--|:--|:--|:--|:--|
-|S13-U001|序|1|excluded-reviewed / selected-body|—|`sources/reviews/S13.md`；原书签“序”指向空白物理页 1；实际序在物理页 4，内容说明抽象数据类型与教学简化，不是另一本 TRPL。|
-|S13-U002|Rust 基础|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 基础”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U003|本章目标|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U004|安装 Rust 及其工具链|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“安装 Rust 及其工具链”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U005|Rust 学习资料|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 学习资料”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U006|书籍文档|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“书籍文档”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U007|特定领域|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“特定领域”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U008|资源网站|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“资源网站”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U009|Rust 回顾|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 回顾”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U010|语言历史|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“语言历史”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U011|关键字、注释、命名风格|17|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“关键字、注释、命名风格”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U012|常量、变量、数据类型|20|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“常量、变量、数据类型”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U013|语句、表达式、运算符、流程控制|24|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“语句、表达式、运算符、流程控制”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U014|函数、程序结构|28|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“函数、程序结构”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U001|序|1|excluded-reviewed / selected-body|—|`sources/reviews/S13.md`；原书签「序」指向空白物理页 1；实际序在物理页 4，内容说明抽象数据类型与教学简化，不是另一本 TRPL。|
+|S13-U002|Rust 基础|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 基础」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U003|本章目标|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U004|安装 Rust 及其工具链|13|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「安装 Rust 及其工具链」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U005|Rust 学习资料|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 学习资料」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U006|书籍文档|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「书籍文档」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U007|特定领域|14|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「特定领域」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U008|资源网站|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「资源网站」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U009|Rust 回顾|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 回顾」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U010|语言历史|15|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「语言历史」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U011|关键字、注释、命名风格|17|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「关键字、注释、命名风格」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U012|常量、变量、数据类型|20|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「常量、变量、数据类型」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U013|语句、表达式、运算符、流程控制|24|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「语句、表达式、运算符、流程控制」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U014|函数、程序结构|28|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「函数、程序结构」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U015|所有权、作用域规则、生命周期|31|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u015`；母本辅助节（所有权、作用域规则、生命周期）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U016|泛型、trait|35|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u016`；母本辅助节（泛型、trait）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U017|枚举及模式匹配|39|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“枚举及模式匹配”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U017|枚举及模式匹配|39|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「枚举及模式匹配」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U018|函数式编程|40|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u018`；母本辅助节（函数式编程）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U019|智能指针|44|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u019`；母本辅助节（智能指针）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U020|异常处理|52|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u020`；母本辅助节（异常处理）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U021|宏系统|54|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“宏系统”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U021|宏系统|54|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「宏系统」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U022|代码组织及包依赖关系|55|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u022`；母本辅助节（代码组织及包依赖关系）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U023|项目：Rust 密码生成器|57|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“项目：Rust 密码生成器”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U024|总结|66|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U025|计算机科学|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“计算机科学”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U026|本章目标|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U027|快速开始|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“快速开始”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U028|什么是计算机科学|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是计算机科学”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U029|什么是编程|69|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是编程”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U030|为什么学习数据结构|69|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“为什么学习数据结构”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U031|为什么学习算法|70|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“为什么学习算法”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U032|总结|70|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U023|项目：Rust 密码生成器|57|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「项目：Rust 密码生成器」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U024|总结|66|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于语言基础与密码生成器教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U025|计算机科学|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「计算机科学」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U026|本章目标|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U027|快速开始|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「快速开始」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U028|什么是计算机科学|67|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是计算机科学」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U029|什么是编程|69|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是编程」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U030|为什么学习数据结构|69|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「为什么学习数据结构」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U031|为什么学习算法|70|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「为什么学习算法」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U032|总结|70|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于计算机科学与抽象数据类型教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U033|算法分析|71|read-mapped / selected-body|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u033`；已读 SystemTime 求和夹具与大 O 起点；输出未强制观察且缺少优化配置，旧时间不能当当前性能证据，待测量专章。|
-|S13-U034|本章目标|71|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U034|本章目标|71|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U035|什么是算法分析|71|read-mapped / selected-body|[part1/ch01.md#sec-cpp-rust.1.1.1](src/part1/ch01.md#sec-cpp-rust.1.1.1)|`sources/reviews/S13.md#review-s13-u035`；已读 SystemTime 求和夹具与大 O 起点；输出未强制观察且缺少优化配置，旧时间不能当当前性能证据，待测量专章。|
 |S13-U036|大 O 分析法|74|read-mapped / selected-body|[part1/ch01.md#sec-cpp-rust.1.1.1](src/part1/ch01.md#sec-cpp-rust.1.1.1)|`sources/reviews/S13.md#review-s13-u036`；已读 SystemTime 求和夹具与大 O 起点；输出未强制观察且缺少优化配置，旧时间不能当当前性能证据，待测量专章。|
-|S13-U037|乱序字符串检查|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“乱序字符串检查”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U038|穷举法|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“穷举法”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U039|检查法|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“检查法”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U040|排序和比较法|79|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“排序和比较法”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U041|计数和比较法|80|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“计数和比较法”的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U042|Rust 数据结构的性能|81|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u042`；“Rust 数据结构的性能”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U037|乱序字符串检查|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「乱序字符串检查」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U038|穷举法|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「穷举法」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U039|检查法|77|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「检查法」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U040|排序和比较法|79|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「排序和比较法」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U041|计数和比较法|80|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「计数和比较法」的开篇/本章上下文，属于算法分析教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U042|Rust 数据结构的性能|81|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u042`；「Rust 数据结构的性能」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U043|标量和复合类型|81|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u043`；母本辅助节（标量和复合类型）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U044|集合类型|82|read-mapped / selected-body|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u044`；已核查表 3.2/3.3 的集合操作复杂度；平均/最坏与摊还条件须另核，不把 O(1) 等同固定纳秒。|
 |S13-U045|总结|83|read-mapped / selected-body|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u045`；已核查表 3.2/3.3 的集合操作复杂度；平均/最坏与摊还条件须另核，不把 O(1) 等同固定纳秒。|
-|S13-U046|基础数据结构|84|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u046`；“基础数据结构”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
-|S13-U047|本章目标|84|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U048|线性数据结构|84|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u048`；“线性数据结构”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
-|S13-U049|栈|85|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“栈”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U050|栈的抽象数据类型|86|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“栈的抽象数据类型”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U051|Rust 实现栈|87|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现栈”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U052|括号匹配|91|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“括号匹配”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U053|进制转换|97|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“进制转换”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U054|前中后缀表达式|99|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“前中后缀表达式”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U055|中缀转前后缀表达式|101|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“中缀转前后缀表达式”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U056|队列|107|read-mapped / scope-excerpt|[part3/ch09.md#sec-cpp-rust.3.9.1](src/part3/ch09.md#sec-cpp-rust.3.9.1)|`sources/reviews/S13.md#review-s13-u056`；“队列”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U046|基础数据结构|84|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u046`；「基础数据结构」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U047|本章目标|84|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U048|线性数据结构|84|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u048`；「线性数据结构」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U049|栈|85|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「栈」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U050|栈的抽象数据类型|86|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「栈的抽象数据类型」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U051|Rust 实现栈|87|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现栈」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U052|括号匹配|91|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「括号匹配」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U053|进制转换|97|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「进制转换」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U054|前中后缀表达式|99|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「前中后缀表达式」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U055|中缀转前后缀表达式|101|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「中缀转前后缀表达式」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U056|队列|107|read-mapped / scope-excerpt|[part3/ch09.md#sec-cpp-rust.3.9.1](src/part3/ch09.md#sec-cpp-rust.3.9.1)|`sources/reviews/S13.md#review-s13-u056`；「队列」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U057|队列的抽象数据类型|108|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u057`；母本辅助节（队列的抽象数据类型）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U058|Rust 实现队列|109|read-mapped / selected-body|[part3/ch09.md#sec-cpp-rust.3.9.7](src/part3/ch09.md#sec-cpp-rust.3.9.7)|`sources/reviews/S13.md`；有界队列在 enqueue 前检查容量，Vec::insert(0) 仍线性搬移；只作准入边界对照，不视为并发队列。|
-|S13-U059|烫手山芋|113|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“烫手山芋”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U060|双端队列|115|read-mapped / scope-excerpt|[part3/ch09.md#sec-cpp-rust.3.9.1](src/part3/ch09.md#sec-cpp-rust.3.9.1)|`sources/reviews/S13.md#review-s13-u060`；“双端队列”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U059|烫手山芋|113|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「烫手山芋」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U060|双端队列|115|read-mapped / scope-excerpt|[part3/ch09.md#sec-cpp-rust.3.9.1](src/part3/ch09.md#sec-cpp-rust.3.9.1)|`sources/reviews/S13.md#review-s13-u060`；「双端队列」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U061|双端队列的抽象数据类型|115|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u061`；母本辅助节（双端队列的抽象数据类型）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U062|Rust 实现双端队列|116|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u062`；母本辅助节（Rust 实现双端队列）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U063|回文检测|122|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“回文检测”的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U064|链表|123|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u064`；“链表”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U063|回文检测|122|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「回文检测」的开篇/本章上下文，属于线性数据结构教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U064|链表|123|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u064`；「链表」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U065|链表的抽象数据类型|124|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u065`；母本辅助节（链表的抽象数据类型）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U066|Rust 实现链表|124|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u066`；母本辅助节（Rust 实现链表）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U067|链表栈|130|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u067`；母本辅助节（链表栈）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U068|Vec|135|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u068`；“Vec”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U068|Vec|135|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u068`；「Vec」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U069|Vec 的抽象数据类型|135|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u069`；母本辅助节（Vec 的抽象数据类型）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U070|Rust 实现 Vec|136|read-mapped / selected-body|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u070`；正文所谓实现 Vec 实际是 Box 节点 LVec，push/pop 都遍历；不能用作 std::vec::Vec 连续内存实现说明，待对象专章作辨误。|
-|S13-U071|总结|143|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u071`；“总结”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
-|S13-U072|递归|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“递归”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U073|本章目标|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U074|什么是递归|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是递归”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U075|递归三定律|147|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“递归三定律”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U076|到任意进制的转换|147|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“到任意进制的转换”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U077|汉诺塔|150|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“汉诺塔”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U078|尾递归|151|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“尾递归”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U079|递归和迭代|152|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“递归和迭代”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U080|动态规划|153|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“动态规划”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U081|什么是动态规划|157|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是动态规划”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U082|动态规划与递归|160|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“动态规划与递归”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U083|总结|161|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U084|查找|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U085|本章目标|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U086|查找|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U087|顺序查找|163|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“顺序查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U088|Rust 实现顺序查找|163|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现顺序查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U089|顺序查找复杂度|165|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“顺序查找复杂度”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U090|二分查找|167|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二分查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U091|Rust 实现二分查找|167|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现二分查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U092|二分查找复杂度|170|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二分查找复杂度”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U093|内插查找|170|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“内插查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U094|指数查找|172|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“指数查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U095|哈希查找|173|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“哈希查找”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U096|哈希函数|174|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“哈希函数”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U097|解决冲突|176|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“解决冲突”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U098|Rust 实现 HashMap|178|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现 HashMap”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U099|HashMap 复杂度|187|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“HashMap 复杂度”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U100|总结|188|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U101|排序|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U102|本章目标|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U103|什么是排序|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U104|冒泡排序|190|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“冒泡排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U105|快速排序|197|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“快速排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U106|插入排序|201|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“插入排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U107|希尔排序|203|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“希尔排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U108|归并排序|205|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“归并排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U109|选择排序|208|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“选择排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U110|堆排序|209|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“堆排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U111|桶排序|213|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“桶排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U112|计数排序|216|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“计数排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U113|基数排序|218|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“基数排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U114|蒂姆排序|220|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“蒂姆排序”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U115|总结|236|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U116|树|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U117|本章目标|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U118|什么是树|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U119|树的定义|240|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“树的定义”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U120|树的表示|241|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“树的表示”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U121|分析树|247|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“分析树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U122|树的遍历|248|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“树的遍历”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U123|二叉堆|257|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉堆”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U124|二叉堆的抽象数据类型|258|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉堆的抽象数据类型”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U125|Rust 实现二叉堆|258|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现二叉堆”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U126|二叉堆分析|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉堆分析”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U127|二叉查找树|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉查找树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U128|二叉查找树的抽象数据类型|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉查找树的抽象数据类型”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U129|Rust 实现二叉查找树|267|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现二叉查找树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U130|二叉查找树分析|282|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“二叉查找树分析”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U131|平衡二叉树|283|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“平衡二叉树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U132|AVL 平衡二叉树|283|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“AVL 平衡二叉树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U133|Rust 实现平衡二叉树|284|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Rust 实现平衡二叉树”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U134|平衡二叉树分析|300|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“平衡二叉树分析”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U135|总结|300|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U136|图|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“图”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U137|本章目标|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U138|什么是图|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“什么是图”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U139|图定义|302|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“图定义”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U140|图的存储形式|302|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u140`；“图的存储形式”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U071|总结|143|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u071`；「总结」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U072|递归|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「递归」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U073|本章目标|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U074|什么是递归|144|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是递归」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U075|递归三定律|147|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「递归三定律」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U076|到任意进制的转换|147|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「到任意进制的转换」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U077|汉诺塔|150|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「汉诺塔」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U078|尾递归|151|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「尾递归」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U079|递归和迭代|152|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「递归和迭代」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U080|动态规划|153|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「动态规划」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U081|什么是动态规划|157|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是动态规划」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U082|动态规划与递归|160|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「动态规划与递归」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U083|总结|161|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于递归与动态规划教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U084|查找|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U085|本章目标|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U086|查找|162|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U087|顺序查找|163|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「顺序查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U088|Rust 实现顺序查找|163|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现顺序查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U089|顺序查找复杂度|165|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「顺序查找复杂度」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U090|二分查找|167|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二分查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U091|Rust 实现二分查找|167|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现二分查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U092|二分查找复杂度|170|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二分查找复杂度」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U093|内插查找|170|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「内插查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U094|指数查找|172|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「指数查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U095|哈希查找|173|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「哈希查找」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U096|哈希函数|174|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「哈希函数」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U097|解决冲突|176|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「解决冲突」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U098|Rust 实现 HashMap|178|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现 HashMap」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U099|HashMap 复杂度|187|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「HashMap 复杂度」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U100|总结|188|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于查找教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U101|排序|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U102|本章目标|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U103|什么是排序|189|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U104|冒泡排序|190|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「冒泡排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U105|快速排序|197|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「快速排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U106|插入排序|201|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「插入排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U107|希尔排序|203|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「希尔排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U108|归并排序|205|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「归并排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U109|选择排序|208|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「选择排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U110|堆排序|209|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「堆排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U111|桶排序|213|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「桶排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U112|计数排序|216|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「计数排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U113|基数排序|218|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「基数排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U114|蒂姆排序|220|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「蒂姆排序」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U115|总结|236|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于排序教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U116|树|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U117|本章目标|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U118|什么是树|237|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U119|树的定义|240|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「树的定义」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U120|树的表示|241|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「树的表示」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U121|分析树|247|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「分析树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U122|树的遍历|248|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「树的遍历」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U123|二叉堆|257|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉堆」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U124|二叉堆的抽象数据类型|258|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉堆的抽象数据类型」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U125|Rust 实现二叉堆|258|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现二叉堆」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U126|二叉堆分析|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉堆分析」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U127|二叉查找树|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉查找树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U128|二叉查找树的抽象数据类型|266|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉查找树的抽象数据类型」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U129|Rust 实现二叉查找树|267|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现二叉查找树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U130|二叉查找树分析|282|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「二叉查找树分析」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U131|平衡二叉树|283|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「平衡二叉树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U132|AVL 平衡二叉树|283|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「AVL 平衡二叉树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U133|Rust 实现平衡二叉树|284|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Rust 实现平衡二叉树」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U134|平衡二叉树分析|300|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「平衡二叉树分析」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U135|总结|300|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于树教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U136|图|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「图」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U137|本章目标|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U138|什么是图|301|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「什么是图」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U139|图定义|302|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「图定义」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U140|图的存储形式|302|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u140`；「图的存储形式」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U141|邻接矩阵|303|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u141`；母本辅助节（邻接矩阵）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U142|邻接表|303|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u142`；母本辅助节（邻接表）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U143|图的抽象数据类型|304|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“图的抽象数据类型”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U144|图的实现|305|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“图的实现”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U145|字梯问题|314|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“字梯问题”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U146|广度优先搜索BFS|315|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“广度优先搜索BFS”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U147|实现广度优先搜索|316|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“实现广度优先搜索”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U148|广度优先搜索分析|327|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“广度优先搜索分析”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U149|骑士之旅|327|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“骑士之旅”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U150|深度优先搜索DFS|334|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“深度优先搜索DFS”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U151|实现深度优先搜索|336|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“实现深度优先搜索”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U152|深度优先搜索分析|340|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“深度优先搜索分析”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U153|拓扑排序|340|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“拓扑排序”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U154|强连通分量|349|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“强连通分量”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U155|BFS强连通分量算法|350|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“BFS强连通分量算法”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U156|DFS强连通分量算法|356|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“DFS强连通分量算法”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U157|最短路径问题|358|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“最短路径问题”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U158|Dijkstra算法|359|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Dijkstra算法”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U159|实现 Dijkstra算法|359|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“实现 Dijkstra算法”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U160|Dijkstra 算法分析|363|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Dijkstra 算法分析”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U161|总结|363|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U162|实战|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“实战”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U163|本章目标|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“本章目标”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U164|编辑距离|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“编辑距离”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U165|汉明距离|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“汉明距离”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U166|莱文斯坦距离|367|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“莱文斯坦距离”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U167|字典树|372|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“字典树”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U168|过滤器|375|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u168`；“过滤器”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U143|图的抽象数据类型|304|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「图的抽象数据类型」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U144|图的实现|305|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「图的实现」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U145|字梯问题|314|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「字梯问题」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U146|广度优先搜索BFS|315|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「广度优先搜索BFS」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U147|实现广度优先搜索|316|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「实现广度优先搜索」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U148|广度优先搜索分析|327|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「广度优先搜索分析」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U149|骑士之旅|327|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「骑士之旅」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U150|深度优先搜索DFS|334|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「深度优先搜索DFS」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U151|实现深度优先搜索|336|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「实现深度优先搜索」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U152|深度优先搜索分析|340|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「深度优先搜索分析」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U153|拓扑排序|340|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「拓扑排序」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U154|强连通分量|349|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「强连通分量」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U155|BFS强连通分量算法|350|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「BFS强连通分量算法」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U156|DFS强连通分量算法|356|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「DFS强连通分量算法」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U157|最短路径问题|358|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「最短路径问题」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U158|Dijkstra算法|359|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Dijkstra算法」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U159|实现 Dijkstra算法|359|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「实现 Dijkstra算法」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U160|Dijkstra 算法分析|363|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Dijkstra 算法分析」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U161|总结|363|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于图教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U162|实战|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「实战」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U163|本章目标|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「本章目标」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U164|编辑距离|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「编辑距离」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U165|汉明距离|364|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「汉明距离」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U166|莱文斯坦距离|367|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「莱文斯坦距离」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U167|字典树|372|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「字典树」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U168|过滤器|375|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u168`；「过滤器」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
 |S13-U169|布隆过滤器|375|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u169`；母本辅助节（布隆过滤器）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
 |S13-U170|布谷鸟过滤器|379|excluded-reviewed / scope-only|—|`sources/reviews/S13.md#review-s13-u170`；母本辅助节（布谷鸟过滤器）；经核读范围确认属于非主线细分或工具链补充说明，Rust性能工程主线已在其核心章覆盖，故作明确范围排除。|
-|S13-U171|缓存淘汰算法 LRU|385|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u171`；“缓存淘汰算法 LRU”涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
-|S13-U172|一致性哈希算法|391|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“一致性哈希算法”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U173|Base58 编码|396|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“Base58 编码”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U174|区块链|404|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“区块链”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U175|区块链及比特币原理|405|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“区块链及比特币原理”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U176|基础区块链|405|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“基础区块链”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
-|S13-U177|总结|410|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查“总结”的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U171|缓存淘汰算法 LRU|385|read-mapped / scope-excerpt|[part1/ch02.md#sec-cpp-rust.1.2.1](src/part1/ch02.md#sec-cpp-rust.1.2.1)|`sources/reviews/S13.md#review-s13-u171`；「缓存淘汰算法 LRU」涉及表示、分配、复杂度或局部性；仅据本轮范围抽页保留，等待测量/对象/优化专章，不用算法 O 记号代替机器成本。|
+|S13-U172|一致性哈希算法|391|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「一致性哈希算法」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U173|Base58 编码|396|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「Base58 编码」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U174|区块链|404|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「区块链」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U175|区块链及比特币原理|405|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「区块链及比特币原理」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U176|基础区块链|405|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「基础区块链」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
+|S13-U177|总结|410|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；已核查「总结」的开篇/本章上下文，属于算法实战教学；本书不铺陈通用数据结构与算法教程。|
 |S13-U178|书名页：数据结构与算法 Rust 语言描述|3|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；人工补充书名、前言小节或参考文献，属书目/范围说明，不冒充性能机制正文。|
 |S13-U179|基本要求|4|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；人工补充书名、前言小节或参考文献，属书目/范围说明，不冒充性能机制正文。|
 |S13-U180|全书结构|5|excluded-reviewed / scope-excerpt|—|`sources/reviews/S13.md`；人工补充书名、前言小节或参考文献，属书目/范围说明，不冒充性能机制正文。|
@@ -3169,146 +3201,146 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 
 |母本节|标题|物理页/定位|状态与阅读深度|本书落点|证据及范围理由|
 |:--|:--|:--|:--|:--|:--|
-|S14-U001|什么是 rustdoc？|1|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u001`；已读“什么是 rustdoc？”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U002|基本使用|1|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u002`；已读“基本使用”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U003|配置 rustdoc|2|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u003`；已读“配置 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U004|通过 Cargo 使用 rustdoc|2|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u004`；已读“通过 Cargo 使用 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U005|Outer 和 inner 文档|3|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u005`；已读“Outer 和 inner 文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U006|利用单独的 Markdown 文件|3|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u006`；已读“利用单独的 Markdown 文件”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U007|总结|3|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“总结”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U008|如何阅读 rustdoc 的输出|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“如何阅读 rustdoc 的输出”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U009|结构|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“结构”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U010|Item 文档|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Item 文档”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U011|导航|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“导航”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U012|导航栏|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“导航栏”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U013|主题选择和搜索栏|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“主题选择和搜索栏”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U014|主题选择|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“主题选择”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U015|搜索栏|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“搜索栏”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U016|快捷键|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“快捷键”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U017|如何写文档|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u017`；已读“如何写文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U018|开始|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u018`；已读“开始”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U019|文档组成|7|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u019`；已读“文档组成”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U020|Markdown|8|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Markdown”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U021|Strikethrough（删除线）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Strikethrough（删除线）”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U022|Footnotes（角标）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Footnotes（角标）”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U023|Tables（表格）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Tables（表格）”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U024|Task lists|10|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Task lists”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U025|Smart punctuation（标点符号）|10|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Smart punctuation（标点符号）”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U026|什么包含（和排除）|11|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u026`；已读“什么包含（和排除）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U027|例子|11|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u027`；已读“例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U028|什么被排除|12|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u028`；已读“什么被排除”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U029|自定义输出|12|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“自定义输出”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U030|Command-line arguments|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u030`；已读“Command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U031|-h/--help: help|13|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“-h/--help: help”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U032|-V/--version: version information|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u032`；已读“-V/--version: version information”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U033|-v/--verbose: more verbose output|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u033`；已读“-v/--verbose: more verbose output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U034|-o/--out-dir: output directory path|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u034`；已读“-o/--out-dir: output directory path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U035|--crate-name: controlling the name of the crate|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u035`；已读“--crate-name: controlling the name of the crate”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U036|--document-private-items: Show items that are not public|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u036`；已读“--document-private-items: Show items that are not public”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U037|-L/--library-path: where to look for dependencies|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u037`；已读“-L/--library-path: where to look for dependencies”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U038|--cfg: passing configuration flags|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u038`；已读“--cfg: passing configuration flags”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U039|--extern: specify a dependency's location|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u039`；已读“--extern: specify a dependency's location”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U040|-C/--codegen: pass codegen options to rustc|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u040`；已读“-C/--codegen: pass codegen options to rustc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U041|--test: run code examples as tests|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u041`；已读“--test: run code examples as tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U042|--test-args: pass options to test runner|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u042`；已读“--test-args: pass options to test runner”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U043|--target: generate documentation for the specified target triple|17|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u043`；已读“--target: generate documentation for the specified target triple”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U044|--default-theme: set the default theme|17|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--default-theme: set the default theme”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U045|--markdown-css: include more CSS files when rendering markdown|17|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--markdown-css: include more CSS files when rendering markdown”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U046|--html-in-header: include more HTML in|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--html-in-header: include more HTML in”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U047|--html-before-content: include more HTML before the content|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--html-before-content: include more HTML before the content”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U048|--html-after-content: include more HTML after the content|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--html-after-content: include more HTML after the content”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U049|--markdown-playground-url: control the location of the playground|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--markdown-playground-url: control the location of the playground”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U050|--markdown-no-toc: don't generate a table of contents|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--markdown-no-toc: don't generate a table of contents”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U051|-e/--extend-css: extend rustdoc's CSS|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“-e/--extend-css: extend rustdoc's CSS”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U052|--sysroot: override the system root|19|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u052`；已读“--sysroot: override the system root”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U053|--edition: control the edition of docs and doctests|20|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u053`；已读“--edition: control the edition of docs and doctests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U054|--theme: add a theme to the documentation output|20|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--theme: add a theme to the documentation output”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U055|--check-theme: verify custom themes against the default theme|20|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--check-theme: verify custom themes against the default theme”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U056|--crate-version: control the crate version|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u056`；已读“--crate-version: control the crate version”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U057|@path: load command-line flags from a path|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u057`；已读“@path: load command-line flags from a path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
+|S14-U001|什么是 rustdoc？|1|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u001`；已读「什么是 rustdoc？」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U002|基本使用|1|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u002`；已读「基本使用」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U003|配置 rustdoc|2|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u003`；已读「配置 rustdoc」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U004|通过 Cargo 使用 rustdoc|2|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u004`；已读「通过 Cargo 使用 rustdoc」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U005|Outer 和 inner 文档|3|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u005`；已读「Outer 和 inner 文档」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U006|利用单独的 Markdown 文件|3|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u006`；已读「利用单独的 Markdown 文件」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U007|总结|3|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「总结」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U008|如何阅读 rustdoc 的输出|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「如何阅读 rustdoc 的输出」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U009|结构|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「结构」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U010|Item 文档|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Item 文档」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U011|导航|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「导航」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U012|导航栏|4|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「导航栏」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U013|主题选择和搜索栏|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「主题选择和搜索栏」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U014|主题选择|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「主题选择」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U015|搜索栏|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「搜索栏」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U016|快捷键|5|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「快捷键」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U017|如何写文档|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u017`；已读「如何写文档」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U018|开始|6|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u018`；已读「开始」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U019|文档组成|7|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u019`；已读「文档组成」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U020|Markdown|8|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Markdown」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U021|Strikethrough（删除线）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Strikethrough（删除线）」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U022|Footnotes（角标）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Footnotes（角标）」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U023|Tables（表格）|9|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Tables（表格）」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U024|Task lists|10|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Task lists」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U025|Smart punctuation（标点符号）|10|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Smart punctuation（标点符号）」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U026|什么包含（和排除）|11|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u026`；已读「什么包含（和排除）」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U027|例子|11|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u027`；已读「例子」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U028|什么被排除|12|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u028`；已读「什么被排除」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U029|自定义输出|12|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「自定义输出」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U030|Command-line arguments|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u030`；已读「Command-line arguments」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U031|-h/--help: help|13|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「-h/--help: help」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U032|-V/--version: version information|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u032`；已读「-V/--version: version information」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U033|-v/--verbose: more verbose output|13|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u033`；已读「-v/--verbose: more verbose output」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U034|-o/--out-dir: output directory path|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u034`；已读「-o/--out-dir: output directory path」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U035|--crate-name: controlling the name of the crate|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u035`；已读「--crate-name: controlling the name of the crate」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U036|--document-private-items: Show items that are not public|14|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u036`；已读「--document-private-items: Show items that are not public」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U037|-L/--library-path: where to look for dependencies|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u037`；已读「-L/--library-path: where to look for dependencies」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U038|--cfg: passing configuration flags|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u038`；已读「--cfg: passing configuration flags」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U039|--extern: specify a dependency's location|15|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u039`；已读「--extern: specify a dependency's location」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U040|-C/--codegen: pass codegen options to rustc|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u040`；已读「-C/--codegen: pass codegen options to rustc」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U041|--test: run code examples as tests|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u041`；已读「--test: run code examples as tests」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U042|--test-args: pass options to test runner|16|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u042`；已读「--test-args: pass options to test runner」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U043|--target: generate documentation for the specified target triple|17|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u043`；已读「--target: generate documentation for the specified target triple」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U044|--default-theme: set the default theme|17|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--default-theme: set the default theme」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U045|--markdown-css: include more CSS files when rendering markdown|17|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--markdown-css: include more CSS files when rendering markdown」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U046|--html-in-header: include more HTML in|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--html-in-header: include more HTML in」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U047|--html-before-content: include more HTML before the content|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--html-before-content: include more HTML before the content」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U048|--html-after-content: include more HTML after the content|18|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--html-after-content: include more HTML after the content」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U049|--markdown-playground-url: control the location of the playground|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--markdown-playground-url: control the location of the playground」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U050|--markdown-no-toc: don't generate a table of contents|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--markdown-no-toc: don't generate a table of contents」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U051|-e/--extend-css: extend rustdoc's CSS|19|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「-e/--extend-css: extend rustdoc's CSS」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U052|--sysroot: override the system root|19|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u052`；已读「--sysroot: override the system root」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U053|--edition: control the edition of docs and doctests|20|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u053`；已读「--edition: control the edition of docs and doctests」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U054|--theme: add a theme to the documentation output|20|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--theme: add a theme to the documentation output」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U055|--check-theme: verify custom themes against the default theme|20|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--check-theme: verify custom themes against the default theme」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U056|--crate-version: control the crate version|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u056`；已读「--crate-version: control the crate version」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U057|@path: load command-line flags from a path|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u057`；已读「@path: load command-line flags from a path」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
 |S14-U058|--passes: add more rustdoc passes|21|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；正文明确旧 passes/input-format 已弃用或无效；保留原条目作为版本风险，不教读者依赖历史流水线。|
 |S14-U059|--no-defaults: don't run default passes|21|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；正文明确旧 passes/input-format 已弃用或无效；保留原条目作为版本风险，不教读者依赖历史流水线。|
 |S14-U060|-r/--input-format: input format|21|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；正文明确旧 passes/input-format 已弃用或无效；保留原条目作为版本风险，不教读者依赖历史流水线。|
-|S14-U061|--nocapture|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u061`；已读“--nocapture”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U062|#[doc] 属性|23|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u062`；已读“#[doc] 属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U063|crate 层面|23|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u063`；已读“crate 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U064|html_favicon_url|23|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“html_favicon_url”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U065|html_logo_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“html_logo_url”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U066|html_playground_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“html_playground_url”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U067|issue_tracker_base_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“issue_tracker_base_url”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U068|html_root_url|24|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u068`；已读“html_root_url”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U069|html_no_source|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u069`；已读“html_no_source”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U070|test(no_crate_inject)|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u070`；已读“test(no_crate_inject)”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U071|test(attr(...))|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u071`；已读“test(attr(...))”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U072|item 层面|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u072`；已读“item 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U073|inline and no_inline|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u073`；已读“inline and no_inline”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U074|hidden|26|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u074`；已读“hidden”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U075|alias|27|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u075`；已读“alias”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U076|文档测试|28|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u076`；已读“文档测试”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U077|文档测试通过或者失败|28|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u077`；已读“文档测试通过或者失败”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U078|预处理例子|29|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u078`；已读“预处理例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U079|隐藏例子的一部分|29|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u079`；已读“隐藏例子的一部分”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U080|在文档测试中使用 ?|31|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u080`；已读“在文档测试中使用 ?”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U081|在文档测试中显示警告|32|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u081`；已读“在文档测试中显示警告”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U082|宏的文档|32|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u082`；已读“宏的文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U083|属性|33|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u083`；已读“属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U084|语法参考|34|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u084`；已读“语法参考”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U085|收集文档测试时包含 item|34|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u085`；已读“收集文档测试时包含 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U086|通过名称链接 item|36|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u086`；已读“通过名称链接 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U087|有效链接|36|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u087`；已读“有效链接”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U088|Namespaces and Disambiguators（消歧义符）|37|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u088`；已读“Namespaces and Disambiguators（消歧义符）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U089|警告，re-exports, and scoping|38|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u089`；已读“警告，re-exports, and scoping”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U090|Lints|39|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u090`；已读“Lints”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U091|broken_intra_doc_links|39|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u091`；已读“broken_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U092|private_intra_doc_links|40|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u092`；已读“private_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U093|missing_docs|41|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u093`；已读“missing_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U094|missing_crate_level_docs|41|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u094`；已读“missing_crate_level_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U095|missing_doc_code_examples|42|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u095`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U096|private_doc_tests|42|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u096`；已读“private_doc_tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U097|invalid_codeblock_attributes|43|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u097`；已读“invalid_codeblock_attributes”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U098|invalid_html_tags|43|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u098`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U099|invalid_rust_codeblocks|44|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u099`；已读“invalid_rust_codeblocks”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U100|bare_urls|45|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u100`；已读“bare_urls”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U101|高级特性|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u101`；已读“高级特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U102|#[cfg(doc)]: 文档平台相关或者特性相关信息|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u102`；已读“#[cfg(doc)]: 文档平台相关或者特性相关信息”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U103|特定平台文档之间的交互|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u103`；已读“特定平台文档之间的交互”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U104|增加文档搜索的 item 别名|47|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u104`；已读“增加文档搜索的 item 别名”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U105|不稳定特性|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u105`；已读“不稳定特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U106|Nightly-gated functionality|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u106`；已读“Nightly-gated functionality”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U107|Error numbers for compile-fail doctests|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u107`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U108|Extensions to the #[doc] attribute|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u108`；已读“Extensions to the #[doc] attribute”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U109|#[doc(cfg)]: Recording what platforms or features are required for code to be present|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u109`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U110|doc_auto_cfg: Automatically generate #[doc(cfg)]|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u110`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
+|S14-U061|--nocapture|21|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u061`；已读「--nocapture」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U062|#[doc] 属性|23|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u062`；已读「#[doc] 属性」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U063|crate 层面|23|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u063`；已读「crate 层面」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U064|html_favicon_url|23|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「html_favicon_url」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U065|html_logo_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「html_logo_url」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U066|html_playground_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「html_playground_url」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U067|issue_tracker_base_url|24|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「issue_tracker_base_url」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U068|html_root_url|24|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u068`；已读「html_root_url」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U069|html_no_source|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u069`；已读「html_no_source」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U070|test(no_crate_inject)|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u070`；已读「test(no_crate_inject)」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U071|test(attr(...))|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u071`；已读「test(attr(...))」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U072|item 层面|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u072`；已读「item 层面」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U073|inline and no_inline|25|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u073`；已读「inline and no_inline」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U074|hidden|26|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u074`；已读「hidden」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U075|alias|27|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u075`；已读「alias」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U076|文档测试|28|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u076`；已读「文档测试」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U077|文档测试通过或者失败|28|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u077`；已读「文档测试通过或者失败」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U078|预处理例子|29|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u078`；已读「预处理例子」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U079|隐藏例子的一部分|29|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u079`；已读「隐藏例子的一部分」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U080|在文档测试中使用 ?|31|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u080`；已读「在文档测试中使用 ?」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U081|在文档测试中显示警告|32|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u081`；已读「在文档测试中显示警告」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U082|宏的文档|32|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u082`；已读「宏的文档」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U083|属性|33|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u083`；已读「属性」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U084|语法参考|34|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u084`；已读「语法参考」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U085|收集文档测试时包含 item|34|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u085`；已读「收集文档测试时包含 item」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U086|通过名称链接 item|36|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u086`；已读「通过名称链接 item」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U087|有效链接|36|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u087`；已读「有效链接」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U088|Namespaces and Disambiguators（消歧义符）|37|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u088`；已读「Namespaces and Disambiguators（消歧义符）」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U089|警告，re-exports, and scoping|38|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u089`；已读「警告，re-exports, and scoping」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U090|Lints|39|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u090`；已读「Lints」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U091|broken_intra_doc_links|39|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u091`；已读「broken_intra_doc_links」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U092|private_intra_doc_links|40|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u092`；已读「private_intra_doc_links」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U093|missing_docs|41|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u093`；已读「missing_docs」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U094|missing_crate_level_docs|41|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u094`；已读「missing_crate_level_docs」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U095|missing_doc_code_examples|42|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u095`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U096|private_doc_tests|42|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u096`；已读「private_doc_tests」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U097|invalid_codeblock_attributes|43|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u097`；已读「invalid_codeblock_attributes」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U098|invalid_html_tags|43|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u098`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U099|invalid_rust_codeblocks|44|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u099`；已读「invalid_rust_codeblocks」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U100|bare_urls|45|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u100`；已读「bare_urls」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U101|高级特性|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u101`；已读「高级特性」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U102|#[cfg(doc)]: 文档平台相关或者特性相关信息|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u102`；已读「#[cfg(doc)]: 文档平台相关或者特性相关信息」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U103|特定平台文档之间的交互|46|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u103`；已读「特定平台文档之间的交互」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U104|增加文档搜索的 item 别名|47|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u104`；已读「增加文档搜索的 item 别名」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U105|不稳定特性|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u105`；已读「不稳定特性」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U106|Nightly-gated functionality|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u106`；已读「Nightly-gated functionality」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U107|Error numbers for compile-fail doctests|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u107`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U108|Extensions to the #[doc] attribute|48|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u108`；已读「Extensions to the #[doc] attribute」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U109|#[doc(cfg)]: Recording what platforms or features are required for code to be present|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u109`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U110|doc_auto_cfg: Automatically generate #[doc(cfg)]|49|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u110`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
 |S14-U111|Adding your trait to the "Notable traits" dialog|50|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；Notable traits、masked、primitive、keyword 或强制不稳定标记偏标准库/编译器内部文档设施；当前性能书不实现 rustdoc 内部文档管线。|
 |S14-U112|Exclude certain dependencies from documentation|51|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；Notable traits、masked、primitive、keyword 或强制不稳定标记偏标准库/编译器内部文档设施；当前性能书不实现 rustdoc 内部文档管线。|
 |S14-U113|Document primitives|51|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；Notable traits、masked、primitive、keyword 或强制不稳定标记偏标准库/编译器内部文档设施；当前性能书不实现 rustdoc 内部文档管线。|
 |S14-U114|Document keywords|51|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；Notable traits、masked、primitive、keyword 或强制不稳定标记偏标准库/编译器内部文档设施；当前性能书不实现 rustdoc 内部文档管线。|
-|S14-U115|Unstable command-line arguments|52|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u115`；已读“Unstable command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
-|S14-U116|--markdown-before-content: include rendered Markdown before the content|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--markdown-before-content: include rendered Markdown before the content”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U117|--markdown-after-content: include rendered Markdown after the content|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--markdown-after-content: include rendered Markdown after the content”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U118|--playground-url: control the location of the playground|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--playground-url: control the location of the playground”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U119|--sort-modules-by-appearance: control how items on module pages are sorted|53|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--sort-modules-by-appearance: control how items on module pages are sorted”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U115|Unstable command-line arguments|52|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u115`；已读「Unstable command-line arguments」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
+|S14-U116|--markdown-before-content: include rendered Markdown before the content|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--markdown-before-content: include rendered Markdown before the content」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U117|--markdown-after-content: include rendered Markdown after the content|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--markdown-after-content: include rendered Markdown after the content」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U118|--playground-url: control the location of the playground|52|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--playground-url: control the location of the playground」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U119|--sort-modules-by-appearance: control how items on module pages are sorted|53|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--sort-modules-by-appearance: control how items on module pages are sorted」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
 |S14-U120|--show-type-layout: add a section to each type's docs describing its memory layout|53|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u120`；已读 --show-type-layout 的不稳定布局警告；这是固定 rustc 观测而非 ABI 承诺，待对象章真实产物对照，不假称已运行该选项。|
-|S14-U121|--resource-suffix: modifying the name of CSS/JavaScript in crate docs|53|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--resource-suffix: modifying the name of CSS/JavaScript in crate docs”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U122|--extern-html-root-url: control how rustdoc links to non-local crates|54|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u122`；已读“--extern-html-root-url: control how rustdoc links to non-local crates”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
+|S14-U121|--resource-suffix: modifying the name of CSS/JavaScript in crate docs|53|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--resource-suffix: modifying the name of CSS/JavaScript in crate docs」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U122|--extern-html-root-url: control how rustdoc links to non-local crates|54|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u122`；已读「--extern-html-root-url: control how rustdoc links to non-local crates」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
 |S14-U123|-Z force-unstable-if-unmarked|54|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；Notable traits、masked、primitive、keyword 或强制不稳定标记偏标准库/编译器内部文档设施；当前性能书不实现 rustdoc 内部文档管线。|
-|S14-U124|--index-page: provide a top-level landing page for docs|54|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--index-page: provide a top-level landing page for docs”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U125|--enable-index-page: generate a default index page for docs|55|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--enable-index-page: generate a default index page for docs”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U126|--static-root-path: control how static files are loaded in HTML output|55|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“--static-root-path: control how static files are loaded in HTML output”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U127|--persist-doctests: persist doctest executables after running|55|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u127`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U128|--show-coverage: calculate the percentage of items with documentation|55|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u128`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U129|-w/--output-format: output format|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u129`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U130|--enable-per-target-ignores: allow ignore-foo style filters for doctests|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u130`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U131|--runtool, --runtool-arg: program to run tests with; args to pass to it|58|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u131`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U132|--with-examples: include examples of uses of items as documentation|58|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u132`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。|
-|S14-U133|Website 特性|59|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“Website 特性”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U134|自定义搜索引擎|59|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“自定义搜索引擎”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U124|--index-page: provide a top-level landing page for docs|54|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--index-page: provide a top-level landing page for docs」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U125|--enable-index-page: generate a default index page for docs|55|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--enable-index-page: generate a default index page for docs」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U126|--static-root-path: control how static files are loaded in HTML output|55|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「--static-root-path: control how static files are loaded in HTML output」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U127|--persist-doctests: persist doctest executables after running|55|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u127`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U128|--show-coverage: calculate the percentage of items with documentation|55|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u128`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U129|-w/--output-format: output format|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u129`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U130|--enable-per-target-ignores: allow ignore-foo style filters for doctests|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u130`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U131|--runtool, --runtool-arg: program to run tests with; args to pass to it|58|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u131`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U132|--with-examples: include examples of uses of items as documentation|58|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u132`；已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。|
+|S14-U133|Website 特性|59|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「Website 特性」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U134|自定义搜索引擎|59|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「自定义搜索引擎」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
 |S14-U135|Passes|60|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；正文明确旧 passes/input-format 已弃用或无效；保留原条目作为版本风险，不教读者依赖历史流水线。|
-|S14-U136|References|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“References”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U137|官方|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“官方”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
-|S14-U138|社区|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读“社区”正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U136|References|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「References」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U137|官方|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「官方」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
+|S14-U138|社区|61|excluded-reviewed / body-text|—|`sources/reviews/S14.md`；已读「社区」正文；属 Markdown 排版、搜索/主题展示、文档站点装饰或参考索引，不展开成底层性能章节。|
 |S14-U139|FFI 例子|27|read-mapped / body-text|[part4/ch16.md#sec-cpp-rust.4.16.1](src/part4/ch16.md#sec-cpp-rust.4.16.1)|`sources/reviews/S14.md#review-s14-u139`；已读 FFI alias 搜索示例；它只改善发现性，不证明裸指针包装 soundness，待 FFI 项目的 API 文档落点。|
-|S14-U140|JSON output|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u140`；已读“JSON output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。|
+|S14-U140|JSON output|57|read-mapped / body-text|[part4/ch14.md#sec-cpp-rust.4.14.7](src/part4/ch14.md#sec-cpp-rust.4.14.7)|`sources/reviews/S14.md#review-s14-u140`；已读「JSON output」正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，已映射至 14.7 节登记落点。|
 
 ### S15 · C语言程序设计：现代方法（第2版•修订版） (K.N.King) (z-library.sk, 1lib.sk, z-lib.sk).pdf {#coverage-s15}
 
@@ -3319,7 +3351,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S15-U0003|数字版权声明|3|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0003`；C/C++ 或辅助构建通用内容（数字版权声明）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0004|扉页|4|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0004`；C/C++ 或辅助构建通用内容（扉页）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0005|版权页|5|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0005`；C/C++ 或辅助构建通用内容（版权页）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S15-U0006|新世纪的C语言“万宝全书”|6|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0006`；C/C++ 或辅助构建通用内容（新世纪的C语言“万宝全书”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S15-U0006|新世纪的C语言「万宝全书」|6|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0006`；C/C++ 或辅助构建通用内容（新世纪的C语言「万宝全书」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0007|第2版前言|8|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0007`；C/C++ 或辅助构建通用内容（第2版前言）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0008|目录|14|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0008`；C/C++ 或辅助构建通用内容（目录）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0009|第1章　C语言概述|22|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0009`；C/C++ 或辅助构建通用内容（第1章　C语言概述）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -3391,7 +3423,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S15-U0075|5.2.1　复合语句|80|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0075`；C/C++ 或辅助构建通用内容（5.2.1　复合语句）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0076|5.2.2　else子句|80|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0076`；C/C++ 或辅助构建通用内容（5.2.2　else子句）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0077|5.2.3　级联式if语句|82|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0077`；C/C++ 或辅助构建通用内容（5.2.3　级联式if语句）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S15-U0078|5.2.4　“悬空else”的问题|84|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0078`；C/C++ 或辅助构建通用内容（5.2.4　“悬空else”的问题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S15-U0078|5.2.4　「悬空else」的问题|84|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0078`；C/C++ 或辅助构建通用内容（5.2.4　「悬空else」的问题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0079|5.2.5　条件表达式|84|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0079`；C/C++ 或辅助构建通用内容（5.2.5　条件表达式）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0080|5.2.6　C89中的布尔值|85|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0080`；C/C++ 或辅助构建通用内容（5.2.6　C89中的布尔值）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0081|5.2.7　C99中的布尔值|86|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0081`；C/C++ 或辅助构建通用内容（5.2.7　C99中的布尔值）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -3622,12 +3654,12 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S15-U0306|16.4　联合|330|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0306`；C/C++ 或辅助构建通用内容（16.4　联合）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0307|16.4.1　用联合来节省空间|331|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0307`；C/C++ 或辅助构建通用内容（16.4.1　用联合来节省空间）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0308|16.4.2　用联合来构造混合的数据结构|333|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0308`；C/C++ 或辅助构建通用内容（16.4.2　用联合来构造混合的数据结构）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S15-U0309|16.4.3　为联合添加“标记字段”|333|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0309`；C/C++ 或辅助构建通用内容（16.4.3　为联合添加“标记字段”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S15-U0309|16.4.3　为联合添加「标记字段」|333|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0309`；C/C++ 或辅助构建通用内容（16.4.3　为联合添加「标记字段」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0310|16.4.4　匿名联合|334|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0310`；C/C++ 或辅助构建通用内容（16.4.4　匿名联合）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0311|16.5　枚举|335|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0311`；C/C++ 或辅助构建通用内容（16.5　枚举）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0312|16.5.1　枚举标记和类型名|336|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0312`；C/C++ 或辅助构建通用内容（16.5.1　枚举标记和类型名）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0313|16.5.2　枚举作为整数|336|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0313`；C/C++ 或辅助构建通用内容（16.5.2　枚举作为整数）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S15-U0314|16.5.3　用枚举声明“标记字段”|337|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0314`；C/C++ 或辅助构建通用内容（16.5.3　用枚举声明“标记字段”）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S15-U0314|16.5.3　用枚举声明「标记字段」|337|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0314`；C/C++ 或辅助构建通用内容（16.5.3　用枚举声明「标记字段」）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0315|问与答|337|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0315`；C/C++ 或辅助构建通用内容（问与答）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0316|练习题|339|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0316`；C/C++ 或辅助构建通用内容（练习题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0317|编程题|344|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0317`；C/C++ 或辅助构建通用内容（编程题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -3645,7 +3677,7 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |S15-U0329|17.3.3　realloc函数|351|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0329`；C/C++ 或辅助构建通用内容（17.3.3　realloc函数）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0330|17.4　释放存储空间|352|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0330`；C/C++ 或辅助构建通用内容（17.4　释放存储空间）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0331|17.4.1　free函数|353|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0331`；C/C++ 或辅助构建通用内容（17.4.1　free函数）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
-|S15-U0332|17.4.2　“悬空指针”问题|353|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0332`；C/C++ 或辅助构建通用内容（17.4.2　“悬空指针”问题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
+|S15-U0332|17.4.2　「悬空指针」问题|353|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0332`；C/C++ 或辅助构建通用内容（17.4.2　「悬空指针」问题）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0333|17.5　链表|353|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0333`；C/C++ 或辅助构建通用内容（17.5　链表）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0334|17.5.1　声明结点类型|354|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0334`；C/C++ 或辅助构建通用内容（17.5.1　声明结点类型）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
 |S15-U0335|17.5.2　创建结点|354|excluded-reviewed / scope-only|—|`sources/reviews/S15.md#review-s15-u0335`；C/C++ 或辅助构建通用内容（17.5.2　创建结点）；按用户最新要求全书聚焦 Rust 底层、编译器、并发与执行器，非主线 C++ 语法/类库/OOP 内容明确排除。|
@@ -4044,8 +4076,8 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |tokio-blocking|https://docs.rs/tokio/1.54.0/tokio/task/fn.spawn_blocking.html|sections.json指定部分已核读；`411f779f1b7760b3b61e29998c53ee82279b9c3294cfd77e5c029aa7c8f8982b`|
 |tokio-process|https://docs.rs/tokio/1.54.0/tokio/process/index.html|sections.json指定部分已核读；`1f5e86b178fabd15d36c36da263e06f5a2c7dac5cb4cace3a62640fb6e190a9f`|
 |std-child|https://doc.rust-lang.org/1.99.0/std/process/struct.Child.html|sections.json指定部分已核读；`df350e4b16e6a22897da447eaabee8f94e24120c6d5196e1c912cb8dcf6b5442`|
-|compiler-web-thir|https://rustc-dev-guide.rust-lang.org/thir.html|sections.json指定部分已核读；`8f345529dc5f9e59e813abb8d6ea58def3cc9839a89f0a142fb56fc76461e1db`|
-|compiler-web-drop-elaboration|https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html|sections.json指定部分已核读；`1b8044c6015a398cbc5829a7dfde97f02e1334d3d0bb3b20fb46ebd67f701221`|
+|compiler-web-thir|https://rustc-dev-guide.rust-lang.org/thir.html|sections.json指定部分已核读；`756c33434ac476b4ddb7389a929de5248b1698d5cffd2c111905c07b4f856146`|
+|compiler-web-drop-elaboration|https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html|sections.json指定部分已核读；`f229f77c92444d2d17b408042868f27d788ff1f84f1cf1457e670ded191863bb`|
 |compiler-web-aliasing|https://doc.rust-lang.org/nomicon/aliasing.html|sections.json指定部分已核读；`cbbfc595f863dd608be9e095b3a6efb70c2f54e9b413f1494b5a9e75667463e0`|
 |compiler-web-pgo|https://doc.rust-lang.org/rustc/profile-guided-optimization.html|已抓取，核读未登记；`955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66`|
 |EVID-cargo-features|https://doc.rust-lang.org/cargo/reference/features.html|sections.json指定部分已核读；`78c663fe82a9c62d4f7b7c9ebebfd8a736ee81b2e601f2b07fdf316aa68e0700`|
@@ -4065,9 +4097,42 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |systems-uring|https://man7.org/linux/man-pages/man7/io_uring.7.html|sections.json指定部分已核读；`1ed71f55954959fc551915363b054c62fb28ba57ede487303d4cb2de0057feb9`|
 |systems-uring-cancel|https://man7.org/linux/man-pages/man3/io_uring_prep_cancel.3.html|sections.json指定部分已核读；`0f9c226cb76cc8df73dbd6399e4cbe83e0db82ac62f925780968677da241e32b`|
 |systems-rcore-io|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/1fs-interface.html|sections.json指定部分已核读；`55ff0cac446a27bc0485d3c65e664193dd8dba6819a4112f4531c33a0a70fb97`|
+|rcore-task-switch|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/2task-switching.html|sections.json指定部分已核读；`a71948e9b498bc6493e310e1c5670785eaf31c50a1752f3764de9ee250832870`|
+|rcore-time-sharing|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/4time-sharing-system.html|sections.json指定部分已核读；`560b98fe7325b20dea6f385450477c4a15b27bcc1516fe6e3137dd41979533b4`|
+|rcore-sv39|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/3sv39-implementation-1.html|sections.json指定部分已核读；`654584ddd1427b1aa58e129fee09367881ebc0ad88c4a622f3d67d8baedc9652`|
+|rcore-easyfs|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/2fs-implementation.html|sections.json指定部分已核读；`ab93f7308aa7e52d8ceba32b786415e9ff75adf73b3d8dc53e1a526d690543f8`|
+|rcore-global-alloc|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/1rust-dynamic-allocation.html|sections.json指定部分已核读；`14a891067242c416309e42762e662ed0d2ce300dd61d07cb1328b596632d86d6`|
+|rcore-frame-alloc|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/4sv39-implementation-2.html|sections.json指定部分已核读；`7d5b5cb20f3af7a0ae4a85206aa5912e55dbe149dad893c4c57444115f8241b8`|
+|rcore-process|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/1process.html|sections.json指定部分已核读；`baf6b6c13910a7cf2e9939e4cbe0aaf3d01fbb7678f9d13f8bc409de63d33312`|
+|rcore-pcb|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/2core-data-structures.html|sections.json指定部分已核读；`b418261fc299f5e79bb722ee48b6989786a23e7cc8875292e463651cea4bd579`|
+|rcore-condvar|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/4condition-variable.html|sections.json指定部分已核读；`5df682f44394529cdb29f923c669a8a50b7a2d6477bbbfb445aea60cf46c10cf`|
+|rcore-concprob|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/5concurrency-problem.html|sections.json指定部分已核读；`bc6b803b516df84ca22a6bf6d804d619de322ad937fc7d6658aec12e6305bb79`|
+|rcore-fd|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/1file-descriptor.html|sections.json指定部分已核读；`03da589f388acbfaa498f3b3965c2479f7fe96e44abdc0ce398b93aaf64d6266`|
+|rcore-pipe|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/2pipe.html|sections.json指定部分已核读；`c5ac431b83db323b22ae4528b7c47a0901f2201220c47c8c8549e446c9869cf6`|
+|rcore-signal|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/4signal.html|sections.json指定部分已核读；`b877daf7dd1dfa402e862b722d5103636e2dd70d511c5f28cd38dbb65fec712c`|
+|rcore-more-as|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/7more-as.html|sections.json指定部分已核读；`c3db9cd54c9bd7f9b4a4cdc0f459909802687d8333fc08daf2de96a1d579b2a9`|
+|rcore-sched|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html|sections.json指定部分已核读；`d196c5fbef539e5bf7d94bc753d19a0fe2be7f289a1ee5d8a10ccdd999eef2c8`|
+|rcore-serial|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/2device-driver-1.html|sections.json指定部分已核读；`835fee87a32c9d2802aa3639a9ff44e1b243d06bc42c59ca7e8f12535759f894`|
+|rcore-virtio|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/2device-driver-2.html|sections.json指定部分已核读；`04353138325874b4a287c2fe9a37abcf52287171956b87bd96a793df0c9aedd8`|
+|rcore-appendixf|https://rcore-os.cn/rCore-Tutorial-Book-v3/appendix-f/index.html|已抓取，核读未登记；`714fc4869d8183b34c87f6557e07e79b7c58cea0307a4cea205e7a6db3dd18a5`|
+|rcore-remove-std|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter1/2remove-std.html|sections.json指定部分已核读；`19aac344f1d35c67052a43d9eca9f6d74911f1d4309a9246c1baa1a40fc0bcf4`|
+|rcore-first-instr|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter1/3first-instruction-in-kernel1.html|sections.json指定部分已核读；`1bc3bff9fb74cbffd1aa1c6a46a75ff755e154d446be7c4d4ac4f900e268078b`|
+|rcore-trap|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter2/4trap-handling.html|sections.json指定部分已核读；`ef54e5c8b4cc36605a0de60a9c77162ffd511fc16cce94965510206aa0ece8b5`|
+|rcore-multiprogram|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/3multiprogramming.html|已抓取，核读未登记；`2dd670f5286d16d4549508ae3f1537f472ac0c5b26405d0e1d4a2a33b4d1c45b`|
+|rcore-easyfs-kernel|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/3using-easy-fs-in-kernel.html|sections.json指定部分已核读；`f4c44e4dc9c8fe5b0d430b05576be411a83105a014d207edbd4e41d6e2eb7507`|
+|rcore-redirection|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/3cmdargs-and-redirection.html|sections.json指定部分已核读；`a8e94adce2f8cd9569da036b82ca0f80ae308d0cb33aa2f05c084fe2eb511501`|
+|rcore-thread|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/1thread.html|sections.json指定部分已核读；`c93422bd513ce80104688bc6e83452cac9655430db22d4f42827faf4b024f0cf`|
+|rcore-semaphore|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/3semaphore.html|sections.json指定部分已核读；`d7e474b84bdde198954f29957b836f8f132abd84a8f9a032b96901cc5170b333`|
+|rcore-process-mech|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/3implement-process-mechanism.html|已抓取，核读未登记；`56c79d3aa253ed117b3515efef1cd0ce33b5c39f61a5a63a352a17b1ae4827d2`|
+|rcore-io-interface|https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/1io-interface.html|已抓取，核读未登记；`d2de6c904f785e70a69dfb347363d90c6dce54493f4b8793b3b58630949a7ca1`|
+|REF-trait-object|https://doc.rust-lang.org/reference/types/trait-object.html|sections.json指定部分已核读；`750915b51305d59a1a0d42d891c8364b8350573e6b86483e1c7bdf916e66d6ca`|
+|REF-dyn-compatibility|https://doc.rust-lang.org/reference/items/traits.html#dyn-compatibility|sections.json指定部分已核读；`288f10e8f5d022f8828f908b141cba2f1e64f54973997a4c4643c2d00f33b823`|
+|REF-codegen-attrs|https://doc.rust-lang.org/reference/attributes/codegen.html|sections.json指定部分已核读；`18becca8e376dd8bc0bc8ee557ece8a2bb9053fbff23bc572c5351fbf42062c7`|
+|FOUNDATIONS-INSTANT|https://doc.rust-lang.org/std/time/struct.Instant.html|sections.json指定部分已核读；`3552af50af2b12739b5058e7a1d64a6fc80726971cff42544d33f03cba396f15`|
 |tokio-runtime-code|tokio@1.54.0/src/runtime/mod.rs|175–406；`dd4f9572e9097700820931f7e0d14a63b45f59434e635693187643eff3cb3e88`|
 |tokio-state-code|tokio@1.54.0/src/runtime/task/state.rs|1–374；`8b836adf0874bb00e9e61efec6d15010619f0acc23680e2fc23e856b1fa9ffce`|
 |tokio-ct-code|tokio@1.54.0/src/runtime/scheduler/current_thread/mod.rs|446–477；`334bcc00033b8de1a1b4f669bba00ebb56442b75328aa0196bc47082e7e6a0cc`|
+|tokio-blocking-code|tokio@1.54.0/src/task/blocking.rs|lines–items；`ff8743009dd0f12e46a7076913d5aa24cce1a9838b63f739e445262cf1e2a774`|
 
 ## 开放技术问题
 
@@ -4075,5 +4140,6 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 
 ## 发布口径
 
-来源裁决闭合不是发布认证。发布还要求16章、每章实验、两个项目测试、代码生成/测量证据和连续两轮独立0 P0/P1。
+来源裁决闭合不是发布认证。发布还要求17章正文、每章实验、三个项目（`agent-runtime`、`ffi-bridge`、`tidekv`）测试、代码生成/测量证据和连续两轮独立0 P0/P1。
+第 17 章是综合大项目：它的**数字**只来自自己的代码与证据包 `projects/tidekv/results/run-01/`，机制逐节回指第 1–16 章；它的**结构选择**认领 17.9 列出的外部文献（LSM、WiscKey、Bloom、Cuckoo Filter、HP/EBR/RCU、测量方法四篇），但没有登记为逐节母本映射。
 `python3 tools/build_coverage.py --strict`与`python3 tools/verify_all.py --release`分别验证来源/审计与完整执行链。

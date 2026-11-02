@@ -25,9 +25,12 @@ for name in move_cost drop_paths dispatch_grain dispatch_visibility vectorize ct
 done
 cargo rustc --offline --locked --release --manifest-path "$ROOT/Cargo.toml" --lib -- --emit=mir,llvm-ir,asm > "$OUT/codegen-build.txt" 2>&1
 find "$ROOT/target/release/deps" -maxdepth 1 -type f \( -name 'compiler_lab-*.mir' -o -name 'compiler_lab-*.ll' -o -name 'compiler_lab-*.s' \) -exec cp {} "$OUT/codegen/" \;
-LOCK=/Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents/measure.lock
-while ! mkdir "$LOCK" 2>/dev/null; do sleep 2; done
-trap 'rmdir "$LOCK"' EXIT
+# 上面的 cd 已把当前目录切到实验包内，$0 的相对路径此后解不出来，所以用 .. 而不是 $0/..
+LOCK="$(cd .. && pwd)/.work/measure.lock"
+mkdir -p "$(dirname "$LOCK")"
+for _ in $(seq 1 300); do mkdir "$LOCK" 2>/dev/null && break; sleep 2; done
+[ -d "$LOCK" ] || { echo "测量锁 $LOCK 等待 600s 仍被占用，本轮拒绝并发计时" >&2; exit 1; }
+trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
 ps -axo pid,comm,args | grep -E '(cargo|rustc)' | grep -v grep > "$OUT/build-processes-before.txt" || true
 for name in move_cost drop_paths dispatch_grain dispatch_visibility vectorize ctfe_table; do
   ps -axo pid,comm,args | grep -E '(cargo|rustc)' | grep -v grep >> "$OUT/build-processes-before.txt" || true

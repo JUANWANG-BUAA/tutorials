@@ -1,0 +1,127 @@
+{
+  "reviewer": "sweep4ce-F",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa9b2e",
+  "provenance": "冷启动独立审计。全文通读 src/part3/ch11.md 1236-1829 行（11.6/11.7/11.8 全部正文与语义盒）。用 /usr/bin/python3 从归档原始文件逐行复算：bench/systems-lab/results/run-01/queue.txt（45 行，raw÷units=65536）与 run-01/epoch.txt（raw÷units=8192），n=21，样本标准差÷(n-1)，p50=values[10]、p99=values[20]，口径按 lib.rs:41-49 的 measure() 实现。代码断言对照 bench/systems-lab/src/lib.rs、src/bin/queue.rs、src/bin/epoch.rs；环境断言对照 run-01/environment.txt；对齐断言对照 run-01/layout.txt；外部文献对照 .work/cpp-rust-sources/systems/mit-rcu.txt（sha256=34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6，与 coverage.md 登记一致）。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "finding",
+      "method": "recompute+read+code",
+      "notes": "先前被指fabricated的逐批表在本节已修好：21 行×2 列共 42 个数值全部精确等于 queue.txt 对应 raw÷65536（逐行核到 1e-6 位）；汇总表均值 72.861686/40.647478、s 2.683101/8.023660、p50 72.586060/40.676117、p99 78.983948/53.237915 均可由同一批 21 个数复算，且 p99 即最大值、落在 r18/r7，正文标注正确；加速比 1.79x 复算 72.861686/40.647478=1.7925 成立；预热>500ms（warmup_ns=506192375）与逐轮交替顺序（lib.rs:30-33）与归档/代码一致。残留问题：位置列 4 处中位数标注错误；『本轮没有采集采样栈』与同目录 run-01/queue-sample.txt（sample 1ms 调用栈）及 queue-profile-run.txt 冲突；E-a 与直觉盒仍以确证口吻做 CAS 碰撞归因，与本节自declare 的『机理未采集』边界自相矛盾；引用了不存在的 11.6.6。",
+      "evidence": [
+        "src/part3/ch11.md:1343-1346 汇总表 = queue.txt:43-44 summary 行，python 复算逐位吻合",
+        "src/part3/ch11.md:1352-1374 21 行逐批值 = queue.txt raw 行 ÷65536（42/42 对上）",
+        "错误中位数标注：ch11.md:1354（ArrayQueue r0 40.815353 标'等于本列中位数'，实际中位为 r4 40.676117）、1360/1365/1368（Mutex r6 72.731018/r11 72.566986/r14 72.769791 标'等于本列中位数'，实际中位为 r19 72.586060）",
+        "src/part3/ch11.md:1350 '没有采集…采样栈' vs bench/systems-lab/results/run-01/queue-sample.txt（'Analysis of sampling queue (pid 71045) every 1 millisecond'）与 queue-profile-run.txt（同协议 profiling 复测，rounds=44）",
+        "src/part3/ch11.md:1428 E-a '慢批 53.2ns 有明确的 CAS 碰撞归因'、1383 '慢时由于原子 CAS 重试碰撞与总线仲裁漂移至 53.2ns' vs 1350 自述机理不可判",
+        "src/part3/ch11.md:1350 引用 '11.6.6'，本文件 11.6 仅有 11.6.1-11.6.5",
+        "代码核对：queue_batch 与正文代码块逐行一致（lib.rs:92-148），fetch_add(Relaxed) lib.rs:121，容量 1024 lib.rs:93，空队断言 lib.rs:146；queue.rs EACH=32768、units=65536；environment.txt: 'Apple M5 Pro'、hw.cachelinesize: 128；layout.txt ArrayQueue<u64> size=384 align=128 支撑 1345 行'128 字节对齐填充'与 11.5.1 探针表"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "verdict": "finding",
+      "method": "recompute+read+code",
+      "notes": "未修干净——本节仍留有一张无法由归档复算的逐批数值表，性质与 11.6 修复前的 P0 相同。汇总表本身真实（short_pin 16.773780/0.545335/17.094971/17.425537，stalled_pin 22.967872/1.172717/23.081421/25.807739 全部可由 epoch.txt raw÷8192 复算；'延迟激增 36.9%'=22.967872/16.773780-1 成立；retention 五行与 after_unpin,dropped=4096 与归档逐字节一致，1024×4批×256B=1,048,576 成立）。但 1566-1588 行的 21 批对照表：short_pin 列 21 个数中 19 个（÷或×8192 后）在 epoch.txt 任何 raw 行中都不存在，stalled_pin 列 21 个全部不存在；第 10 行与第 0 行逐值重复；该表自身均值 16.831/sd 0.331 与同节汇总表 16.774/0.545 无法同时成立。'下表列出全部 21 批次中的精确观测'这一来源声明撑不住。另：实验规模写错（1024 vs 归档实际 8192/批）。",
+      "evidence": [
+        "src/part3/ch11.md:1564-1588 逐批表 vs bench/systems-lab/results/run-01/epoch.txt raw 行：python 比对 short_pin 19/21 无来源、stalled_pin 21/21 无来源（如 book r1 short 16.924→需 raw≈138641，归档无此行；book r1 stalled 22.845→需 raw≈187147，归档无）",
+        "src/part3/ch11.md:1568 与 1578（r0 与 r10 完全相同的 17.095/23.081）",
+        "内部矛盾：book 表列均值 16.831095、sd 0.331372 ≠ 同节汇总 16.773780、0.545335（ch11.md:1551）",
+        "汇总表可复算：epoch.txt summary 行 = ch11.md:1551-1552，逐位吻合",
+        "retention 五行逐字一致：ch11.md:1557-1561 = epoch.txt:44-48；1024·256·4=1,048,576 ✓",
+        "配置错误：ch11.md:1502-1503 称两个计时 case '注销 1024 个对象'，实际 bench/systems-lab/src/bin/epoch.rs:2-4 COUNT=8192/批（1024 只出现在 epoch.rs:10 的 4 批 retention 观测中）",
+        "代码核对：正文代码块与 lib.rs:150-160、191-208 一致（Retired 256B payload、fetch_add(Relaxed) 计数、stalled 时 assert retained==count）",
+        "ch11.md:1602/1620 '在一次代际推进中被集中爆发式销毁'：epoch.rs:18 经 drain()（lib.rs:178-189）循环 flush 至 dropped=4096，归档未记录推进次数，属超出记录的断言（轻）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "verdict": "finding",
+      "method": "read+source-check",
+      "notes": "本节无测量数字造假：对 11.7 数据的引用（4096 个 256B、dropped 恒 0、1,048,576B）与归档一致，且两处诚实声明 'async 版本的滞留量本节没有采集'（ch11.md:1753、1783）。问题在来源声明：正文点名 'sources/mit-rcu.txt'，该路径在仓库中不存在——讲义实际位于 .work/cpp-rust-sources/systems/mit-rcu.txt，sha256 与 coverage.md:581/4089 登记的 34201a6f 前缀一致，'核读'可回溯但引用路径失实。三条 RCU 前提逐条对上了讲义原文（reader can't hold pointer across context switch；Writer delays free until all CPUs have context-switched；rcu_read_lock/unlock do almost nothing；call_rcu(kfree,old)），但 '记深度' 与五格表中 '进入 idle 或系统调用返回'、'ksoftirqd 软中断' 两格超出该讲义文本，属未标出处的一般性断言。跨 .await 持 Guard 的失效形态写成运行时 '断言崩溃/竞态'，而 crossbeam-epoch Guard 为 !Send，多线程运行时下首先是编译错误，表述失准。",
+      "evidence": [
+        "src/part3/ch11.md:1679 引用 'sources/mit-rcu.txt'；ls sources/ 无此文件；find 唯一命中 /Users/juanwang/Desktop/tutorials/cpp-rust/.work/cpp-rust-sources/systems/mit-rcu.txt（shasum -a 256 = 34201a6f5cbd...，与 src/appendix/coverage.md 登记一致）",
+        "三条前提对照讲义：mit-rcu.txt:151-157（context switch 规则+all CPUs context-switched）、162-179（rcu_read_lock 不锁、只标记）、253（call_rcu(kfree,old)）✓",
+        "超出讲义：'记深度'（ch11.md:1681）、表格 '进入 idle 或系统调用返回'、'软中断（ksoftirqd）'（ch11.md:1708/1711）在 mit-rcu.txt 全文 grep 无对应",
+        "ch11.md:1738 '代际计数因此产生竞态，甚至触发断言崩溃'、E-e(1795)：Guard !Send 使该形态在多线程 tokio 下为编译期拒绝，失效机理表述与实际不符",
+        "ch11.md:1753/1783 的『没有采集』声明与归档相符：run-01/ 无 async 场景数据"
+      ]
+    }
+  ],
+  "sources": [
+    ".work/cpp-rust-sources/systems/mit-rcu.txt",
+    "bench/systems-lab/results/run-01/queue.txt",
+    "bench/systems-lab/results/run-01/epoch.txt",
+    "bench/systems-lab/results/run-01/queue-sample.txt",
+    "bench/systems-lab/results/run-01/queue-profile-run.txt",
+    "bench/systems-lab/results/run-01/layout.txt",
+    "bench/systems-lab/results/run-01/environment.txt",
+    "bench/systems-lab/src/lib.rs",
+    "bench/systems-lab/src/bin/queue.rs",
+    "bench/systems-lab/src/bin/epoch.rs",
+    "src/appendix/coverage.md"
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P0",
+      "description": "11.7.3 的 21 批逐批对照表（short_pin/stalled_pin 两列 42 个数）无法由 run-01/epoch.txt 复算：short_pin 列 19/21、stalled_pin 列 21/21 在任何 raw 行（÷8192 口径）中不存在；r10 整行复制 r0；表自身均值 16.831/sd 0.331 与同节汇总表 16.774/0.545 矛盾。正文称'下表列出全部 21 批次中……的精确观测对照'，来源声明造假。11.6 的同型表已被修复且可复算，但 11.7 这张没有修——'已修'仅完成一半。",
+      "evidence": "src/part3/ch11.md:1564-1588 vs bench/systems-lab/results/run-01/epoch.txt raw 行；python 复算脚本逐值比对（如 book r1 short 16.924→需 raw 138641，归档不存在；book stalled 列全部 21 值无对应 raw）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P1",
+      "description": "逐批表第四列'数值位置'有 4 处与数据不符：ArrayQueue r0 与 Mutex r6/r11/r14 被标为'等于本列中位数'，但 21 个数的中位数唯一（Mutex=72.586060@r19，Array=40.676117@r4）。正文同时声称位置结论'是从这 21 个数本身算出来的，不是猜的'，该声明对这几行不成立。",
+      "evidence": "src/part3/ch11.md:1350、1354、1360、1365、1368；median(21 values) 复算值与标注值逐一比对"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P1",
+      "description": "'本轮没有采集这些计数器（CAS 重试次数、缓存行弹跳计数或采样栈）'的声明与 run-01 归档内容冲突：run-01 内存在 queue-sample.txt（sample 工具 1ms 采样调用栈，5011 行）与 queue-profile-run.txt（profiling 条件下的完整 21 批复测）。即便二者不能回答'哪一批为何慢'，正文与后续章节也从未登记这两份已采集产物，'没有采集采样栈'作为全称陈述不成立。",
+      "evidence": "src/part3/ch11.md:1350 vs bench/systems-lab/results/run-01/queue-sample.txt:1 'Analysis of sampling queue (pid 71045) every 1 millisecond'；queue-profile-run.txt:1-45；grep -rn queue-sample src/ 无命中（正文完全未提及）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P1",
+      "description": "内部矛盾：11.6.3 明确宣布无采集就不能给机理解释，但 11.6.4 直觉盒写'慢时由于原子 CAS 重试碰撞与总线仲裁漂移至 53.2ns'、11.6.5 小结与 E-a 写'慢批 53.2ns 有明确的 CAS 碰撞归因'、自测第 2 题答案断言'批次耗时被重试次数带着走'——CAS 重试/碰撞归因在本节没有任何采集支撑，'明确归因'为无出处断言。",
+      "evidence": "src/part3/ch11.md:1350、1383、1405-1406、1428、1455 对照声明边界与 run-01 归档字段（仅时间戳，无计数器）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P1",
+      "description": "正文引用'11.6.5 与 11.6.6 会把这条边界再讲一遍'，但 11.6 只有 11.6.1-11.6.5，11.6.6 不存在，为悬空交叉引用。",
+      "evidence": "src/part3/ch11.md:1350；ch11.md 标题列表 1245-1422 行区间无 11.6.6"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P1",
+      "description": "实验设计描述与代码/归档不符：11.7.2 称两个计时 case 各'注销 1024 个对象'，实际 epoch.rs 的 measure 以 COUNT=8192 为单批（epoch.txt units=8192 印证），1024/批只属于其后的 4 批 retention 观测。按正文口径，汇总表 ns/item 的分母与所写批规模对不上。",
+      "evidence": "src/part3/ch11.md:1502-1503 vs bench/systems-lab/src/bin/epoch.rs:2-4（const COUNT: usize = 8192）与 epoch.txt:1 units=8192"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "severity": "P1",
+      "description": "来源声明失实：正文称核读'`sources/mit-rcu.txt`'，仓库中不存在该路径；讲义实际在 .work/cpp-rust-sources/systems/mit-rcu.txt，其 sha256 与 coverage.md 登记一致、三条 RCU 前提均能在原文对上，故'核读'内容可回溯，但写进正文的引用路径无法被读者按图索骥。",
+      "evidence": "src/part3/ch11.md:1679；ls /Users/juanwang/Desktop/tutorials/cpp-rust/sources/（无 mit-rcu.txt）；shasum -a 256 .work/cpp-rust-sources/systems/mit-rcu.txt = 34201a6f…（与 src/appendix/coverage.md:4089 一致）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "severity": "P2",
+      "description": "四舍五入口径不一致：79.2% 与 1.79x 来自同一比值 72.861686/40.647478=1.79253（+79.25%），按常规舍入应报 79.3%；正文取 79.2%（截断）。数字来源真实，仅舍入表述问题。",
+      "evidence": "src/part3/ch11.md:1242、1346、1382"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "severity": "P2",
+      "description": "'积压的 4096 个对象在一次代际推进中被集中爆发式销毁'与'在生产环境中极易导致主服务因突发内存压力而崩溃'超出归档所能证明的范围：epoch.rs 在 unpin 后以 drain 循环反复 flush 直至 dropped=4096，归档只记录终值，未记录推进次数；崩溃推断属未测量的外推（正文其余处对未采集项都做了诚实标注，唯此两句未标）。",
+      "evidence": "src/part3/ch11.md:1590 vs bench/systems-lab/src/lib.rs:178-189（drain 循环）与 epoch.rs:18"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "severity": "P2",
+      "description": "两处断言超出所引讲义/实现：(a) '记深度'、五格表'进入 idle 或系统调用返回'与'软中断（ksoftirqd）'在 mit-rcu.txt 中无对应文字（是正确的一般性内核知识，但本节把对照表的整体出处系于该讲义'核读'声明）；(b) 跨 .await 持 Guard 的失效写成运行时'断言崩溃/代际计数竞态'，而 crossbeam-epoch Guard 为 !Send，多线程运行时下首先是编译错误，失效形态表述失准。",
+      "evidence": "src/part3/ch11.md:1681、1708、1711、1738、1795 vs .work/cpp-rust-sources/systems/mit-rcu.txt 全文（grep 无 idle/ksoftirqd/depth 相应段）"
+    }
+  ]
+}

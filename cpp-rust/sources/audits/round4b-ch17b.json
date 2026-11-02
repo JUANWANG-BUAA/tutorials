@@ -1,0 +1,86 @@
+{
+  "reviewer": "r4b-ch17b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读完 src/part4/ch17.md 的 17.7–17.11 全部正文与语义盒、章末件 src/part4/ch17_exercises.md 的「17.8 的复现口径」一节，再逐条回 projects/tidekv 的 results/run-01..03 归档与 src/ 源码复算：重放了 analyze.py 与 analyze_mech.py、重算了 bench.csv 的 5,040 行原始值与 arm_order 分配、核对了 order-effect/bloom/mech/admit 四份落盘产物、engine.rs 与 ipc.rs/epoch.rs/wal.rs/segment.rs 的行级引用，并跑了 tools/list_uncollected_claims.py 只看 ch17。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "17.7 全节（定义 17.7.1–17.7.3、例 17.7.1、思考、四条底线、17.7.2 实测、小结与 E-a…E-e）逐条回查通过。17.7.2 表格四个数我用 analyze_mech.py 从 compaction.csv 原样重放：A=7696325.938、B=9171895.583、diff(B-A)=+1475569.644、CI95=[+1366635.811,+1586756.503]，与正文 7,696,326/9,171,896/+1,475,570/[+1,366,636,+1,586,757] 逐位一致；比值 1.191723902588454 对上「比值 1.19」；gate-compaction.json 里 budget_B=10000000.0 与 verdict=accept 都在，budget_note 确写的是「后台每 100 ms 触发一次」这条旧依据，正文说它被同目录 CORRECTION.md 否证——CORRECTION.md 文件存在（run-02 目录列出）。等价性数字 bytes=401770, entries=4096, crc32=7241b72e 逐字命中 mech-verification.txt；「两臂各写一个文件」也在那一行以 in-process==subprocess 的形式记录。17.7.1 关于 64 KB 的说法诚实：ipc.rs:132 注释原文正是「子进程写满 64 KB 管道缓冲后会阻塞在 write」，正文只把它当推理前提、明写本机容量没有采集，我没有在归档里找到任何管道容量测量，与声明相符。三路独立线程（t_in/t_out/t_err 各 thread::spawn、两路 read_to_string 到 EOF、父线程先 join stdin、child.wait() 在 186 行）逐行核对成立。「临时名→sync_all→rename 走通、存在性检查与输入决定的任务标识都没有」也成立：segment.rs:114 有 sync_all，engine.rs 的 do_compact 在 692 行取 .max() 后 695 行直接 segment_name(out_id)，重命名前没有 exists 查询；drop_tombstones 在引擎侧固定为 true（engine.rs:701），正文据此说夹具的 false 不同源。`Stats` 无「重放收敛」格、`tests/compaction.rs` 未覆盖同批输入合并两次，与正文一致；「没有后台调度器」我 grep engine.rs 的 timer/interval/sleep 无命中，只有 Cmd::Compact 两个分支（333/565/767），支撑「do_compact 唯一调用点是写线程」的说法。残留：`run.sh` 「已改过」属于历史声明，磁盘上无从核对，我不判它成立也不判它假。",
+      "evidence": [
+        "projects/tidekv/analyze_mech.py 重放：python3 analyze_mech.py results/run-02/compaction.csv --units ns_per_compaction --diff-convention '...' → compact_subproc A=7696325.938 B=9171895.583 diff(B-A)=+1475569.644 sd=266254.240 CI95=[+1366635.811,+1586756.503] rounds=21",
+        "projects/tidekv/results/run-02/statistics-compaction.json:arm_A_mean=7696325.938095333, diff_ci95_low=1366635.811111, ratio_B_over_A=1.191723902588454",
+        "projects/tidekv/results/run-02/gate-compaction.json:budget_B=10000000.0, verdict=accept, budget_note='triggered every 100 ms'",
+        "projects/tidekv/results/run-02/mech-verification.txt:2 compaction equivalence MATCH (bytes=401770, entries=4096, dropped=0, crc32=7241b72e)",
+        "projects/tidekv/src/ipc.rs:132,133,152,162,171,186 三路线程与 child.wait() 顺序；src/segment.rs:114 sync_all；src/engine.rs:692,695 out_id=.max() 后命名（重命名前无 exists）；src/engine.rs:701 drop_tombstones: true",
+        "projects/tidekv/results/run-02/ 目录清单含 CORRECTION.md；grep timer|interval|sleep src/engine.rs 无命中"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "17.8 全节（定义 17.8.1–17.8.3、例 17.8.1、十二问思考框、七步流程、17.8.2 实测与位次效应、17.8.3 五层表、17.8.4 小结与 E-a…E-f）逐条回查通过，含本次复核重点：17.8.2 两条口径挪到章末件后的指针与内容完整性。(1) 指针可落地：正文 1324、1336 两处都写 ch17_exercises.md#repro-17.8，同目录章末件第 326 行确有 `## 17.8 的复现口径 {#repro-17.8}`，锚点 ID 与链接片段逐字相同，不存在悬空引用。(2) 内容没丢：被挪走的第一条口径（重采样单位=配对后的 21 个轮均值差、算法位置 analyze.py:76-86、percentile bootstrap 20 000 次、分析种子 seed^0xB007）在章末件里完整保留，且我逐条验真：20261028^0xB007=20289699、20261029^0xB007=20289698、20261030^0xB007=20289697，与三份 statistics JSON 的 bootstrap.seed 完全一致；bootstrap_ci 的 def 起止行确在 analyze.py:76-86；正文侧也仍留着 20,000 次/95%/配对差值/分析种子 20289699 的口径（1313 行）与「不是原始批行」的交代（1324 行），没有把口径挪走后留下无定义的数字。被挪走的第二条（写占比排序与付费顺序不一致）同样完整：章末件给的差值降序 put_wide +40,476.5 > get_hot +33,748.1 > scan_12 +32,080.6 > get_absent +24,409.7 与我重放的 analyze.py 输出逐位一致；每批写占比 82%/81.1%/72%/53% 我按 ops 列与 tide-bench.rs 复算：get_absent 1000/1900=52.6%、get_hot (2000+90)/2900=72.1%、scan_12 4096/4996=81.98%、put_wide 标称 80%（正文与章末件都如实写明 730/900=81.1% 是按 seed 重放生成器复算的实现值、不在归档里，我认同这是诚实标注而非冒充实测）；值长 80/300/120/120 逐 case 对上 src/bin/tide-bench.rs:91(300)、101/108(120)、114(120)、122(80)，排序与付费顺序确实不一致，正文那句「不能读成谁写得多谁贵」成立。(3) 复现命令确实能重放：`python3 analyze.py results/run-01/bench.csv` 退出码 0，四个区间逐位回到表里的数 [40105.6,40819.8]/[33561.9,33929.4]/[24219.8,24594.7]/[31950.9,32206.1]，章末件那句「跳过 paired() 自己拿 raw 行重采样会差到千分之几」我未做对照实验，但配对层本身已用 statistics.json 的 per_round（21 个 diff）与 bootstrap 方法名交叉印证。其余 17.8 断言：5,040 行原始值（kind=raw_batch 计数=5040，另 168 行 BATCH_MEAN，总 5,208 数据行 + 4 行注释）成立；「每行 BATCH_MEAN 等于该（轮，臂）30 个批次的均值（最大偏离 6e-07）」我独立重算 168 组，最大绝对偏离 6.0e-07（get_hot 轮19 A：75.05603459999998 vs 75.056034），与正文相符；ops 列 900/2900/1900/4996 与 bench-verification.txt 逐 case 印值一致，CSV 头部 ops_per_batch=900 也确实与逐行 ops 不同源；三方摘要逐位相同、get_hot 同为 79802841a06e79bb ✓；比值 642（40539.7÷63.144=642.02）成立且正文如实指出它是「不是同一种工作」的比值；主轮 84 条轮-case 记录里 B 先 52／A 先 32 与每 case 13/8 的分配一致；17.8.2 那张八行位次表与 results/order-effect-2026-10-30.txt 逐格相同（含 run-02 codec −0.0、压缩 −98,810.1 与「符号相反」的脚注），「偏移占半宽最大 28.5%、次大 11.6%、其余六条 ≤6.4%」复核成立；run-01 被四格全拒（counts reject=4/accept=0）✓；证据包三份目录的逐文件清单（含 run-02 的 CORRECTION.md、run-03 的 recompute.txt、run-01 的 run-log.txt/test-summary.txt）与磁盘一致，而「缺源码指纹」我做了递归查找：仓库内无任何 source-sha256* 文件 ✓；gate.py 只写 budget_B、主轮 gate.json 里没有 budget_note 这个键 ✓（run-02/run-03 四份都有）。17.8.3 五层表与 17.8.4 六条错误是方法性内容，与上述物证不冲突。残留（不影响判定）：durable 默认为假我只核到 src/wal.rs:110-112 的条件 sync_all（默认值的定义处我没定位到）；17.8.2 表里 A 列给三位小数、B 列给一位小数，属精度不统一；run-02 那半条复现口径的具体命令行没写在章末件里（见 findings）。",
+      "evidence": [
+        "src/part4/ch17.md:1324,1336 → ch17_exercises.md#repro-17.8；src/part4/ch17_exercises.md:326 '## 17.8 的复现口径 {#repro-17.8}'（锚点存在，同目录）",
+        "python3 analyze.py results/run-01/bench.csv → put_wide +40476.5 CI=[+40105.6,+40819.8]; get_hot +33748.1 CI=[+33561.9,+33929.4]; get_absent +24409.7 CI=[+24219.8,+24594.7]; scan_12 +32080.6 CI=[+31950.9,+32206.1]（与正文表逐位一致）",
+        "python3 -c XOR: 20261028^0xB007=20289699, 20261029^0xB007=20289698, 20261030^0xB007=20289697 == statistics*.json bootstrap.seed；analyze.py:76-86 = def bootstrap_ci(iters=20000, percentile)",
+        "bench.csv kind 计数：raw_batch=5040, BATCH_MEAN=168；168 组重算 max|mean-of-30 − BATCH_MEAN|=6.0e-07；arm_order：每 case A_then_B=8 轮、B_then_A=13 轮 → 84 条中 32/52",
+        "results/run-01/bench-verification.txt ops=900/2900/1900/4996 与 get_hot A=B=REF=79802841a06e79bb；statistics.json ratio_B_over_A=642.020581536664；gate.json budget_B=1000.0 且无 budget_note 键，counts={accept:0,reject:4,insufficient-evidence:0}",
+        "src/bin/tide-bench.rs:91,101,108,114,122 值长 300/120/120/80；setup 写 2000(get_hot)/1000(get_absent)/4096(scan_12) → 写占比 82.0/81.1(标称80)/72.1/52.6%",
+        "results/order-effect-2026-10-30.txt 八行与正文位次表逐格相同；ls results/run-01|02|03 与定义 17.8.3 清单一致；glob '**/source-sha256*' 结果为空"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "17.9 逐条核台账落地情况，通过。登记面：sources/web.json（26945 字节的列表结构）里本章引用的九个页面全部有行——2fs-implementation 出现 3 次、1fs-interface 1 次、2pipe 2 次、4signal 2 次、2device-driver-2 2 次、2task-switching 3 次、4time-sharing 3 次、sv39 7 次，与正文「读取状态都记在台账 sources/web.json」相符；正文按「用在哪一节」分组，没有出现把未登记来源当已核实的写法。母本篇名这条历史坑我专门核了：17.3.2 与 17.9 都指向 chapter6/2fs-implementation.html（实现篇），不是使用篇，与台账一致。「只有已抓取并算过哈希的来源进得了台账；LLVM 那条是在线核读、没有落盘副本、也就不在台账里」我核的是反证：web.json 中 'Benchmarking'/'llvm' 命中数为 0，正文确实没有把它当归档证据，只按「读过、可回访」引用，句式和判级都不越界。论文条目（LSM-Tree、WiscKey、Bloom 1970、Cuckoo Filter、HP/EBR、PACMPL 2024、arXiv:2401.11347、Turon 2015、Mytkowicz、Kalibera & Jones、Georges）在 1497 行被明确归为「标准引文、没有落盘副本、没逐条核读原文」，因此「退休表可能无界增长」与「单槽上界要移到 1/16 那条线」这类断言在正文里是靠算术与自身实测支撑，不是靠这些文献冒充实证——判 pass。三组实测落盘位置的每条路径都真实存在：results/bloom-contract-2026-10-30.txt、run-01/02/03 三份目录、run.sh、order-effect 派生产物（正文明说它不进任何单轮证据包，与它位于 results 顶层而不属于 run-0X 相符）。1505 行关于值长的自我矛盾预防也成立：admit.csv 协议 ops_per_batch=240、gate 里 value 65536 B，确实站在主契约 X 的页大小之外，正文如实标为「刻意站在主契约之外」；1509 行「run.sh 给三轮统一传 SEED 默认 20261028/WARM_MS 默认 500，而归档 run-02 是 20261029/500、run-03 是 20261030/300」我逐行核 run.sh:13,15 与三份 protocol 字段，完全成立——这条诚实声明是有实据的，不是套话。本机 arm64 页 16 KiB、hw.cachelinesize 128 与 environment.txt 的口径一致（17.2 preview 也用它）。残留：LLVM 那句英文原句与 arXiv/PACMPL 两条引文在离线环境无从逐字比对，正文已声明它们不在台账，我不判「已核实」，只记为可回访引用。",
+      "evidence": [
+        "sources/web.json 关键词计数：2fs-implementation=3, 1fs-interface=1, 2pipe=2, 4signal=2, 2device-driver-2=2, 2task-switching=3, 4time-sharing=3, sv39=7, 'Benchmarking'=0, 'llvm'=0",
+        "projects/tidekv/run.sh:13 WARM_MS=${WARM_MS:-500}, :15 SEED=${SEED:-20261028}；statistics-compaction.json protocol seed=20261029/warmup 500；run-03 statistics.json protocol seed=20261030/warmup 300/ops 240",
+        "results/ 顶层清单含 bloom-contract-2026-10-30.txt、order-effect-2026-10-30.txt 与 run-01/02/03；src/part4/ch17.md:1481,1486 落点写 chapter6/2fs-implementation.html"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "常见错误索引逐条对正文的 errata 清单核过，无一条计数错误或条目悬空：17.1 实列 E-a/E-b/E-c/E-d/E-f（确无 E-e，索引括号说明成立）；17.2 实列 E-a/E-b/E-b2/E-c/E-d/E-e（「E-a … E-e（含 E-b2）」准确）；17.3 E-a…E-e、17.4 E-a…E-e、17.5 E-a…E-f、17.6 E-a…E-e、17.7 E-a…E-e、17.8 E-a…E-f 全部与正文条数一致，没有出现「索引说有、正文没有」或反之。四条跨节错误的内容性断言我按可核部分抽核：跨节三那句「17.4 键 16/值 64、17.6 值 64 KiB、17.8 键 14–17/值 80–300」与三份归档协议字段相符（run-02 protocol ops_per_batch=4096、mech-verification bytes=364544=4096×(17+16+64)… 即键16/值64 的定长族；run-03 value_bytes 65536；run-01 值长实测 80/120/120/300 落在 80–300）；它列举的未采集项（17.4 指令数口径、17.6.2 端到端每请求延迟与按请求取消、17.7.2 固定开销拆分、17.8.2 掉电语义与分段耗时）我在对应归档里都找不到同类产物，与 tools/list_uncollected_claims.py 的 ch17 命中行（1051/1084/1118/1130/1234/1338/1348/1349/1441/1473/1541）逐条对应，声明与实际缺口一致。判 pass。",
+      "evidence": [
+        "src/part4/ch17.md 内 8 处 `errata 常见错误清单` 的条目 ID 逐一枚举与 1522–1535 索引表比对：条数与字母完全一致（17.1 无 E-e；17.2 含 E-b2）",
+        "mech-verification.txt:1 bytes=364544 与 4096×97=397312+索引/页脚（键16/值64 定长族）相符；run-03 gate protocol ops_per_batch=240；run-01 值长 80/120/120/300（tide-bench.rs:91,101,114,122）",
+        "tools/list_uncollected_claims.py 的 ch17 命中 20 行（输出第 739–796 行），全部为「没有匹配到同类产物（仍需人确认）」，无一被归档产物反证"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结、速查与导航全节核过。速查表 15 行指向的定义/例题锚点在正文都存在且位置描述属实：def-17.6.3 确在 17.6.1 小节内（ch17.md:944）、def-17.7.3 确在 17.7.1 小节内（1099）、def-17.1.1/17.1.2/17.1.3、ex-17.2.1、def-17.3.2/17.3.3、def-17.4.2/17.4.3、ex-17.5.1、def-17.6.1、def-17.7.1、ex-17.8.1、def-17.8.3、ex-1.8.1 均可解析。章末件导航列的五页在磁盘上齐全：ch17_summary.md、ch17_recall.md、ch17_exercises.md、ch17_exam.md、ch17_checklist.md（part4 目录 ls 确认）。按里程碑那张表引用的回忆卡编号我核到卡的总数：ch17_recall.md 自述「把第 17 章拆成 24 张卡」并分三组 8+11+5=24，与正文引用的「第 1–6 张、9–11、13–15、16–17、23、24 张」全部落在 1–24 区间内，不存在越界引用；残留是卡片是否逐张打印了序号我没在文件里定位到显式编号行（我只按组数与总数核对），所以下一步读者按号取卡时靠的是分组顺序。小结那两句是定性表述，无需采集支撑；主线四步与前面各节的引用没有和物证冲突。判 pass。",
+      "evidence": [
+        "src/part4/ch17.md:944（def-17.6.3 位于 17.6.1）、1099（def-17.7.3 位于 17.7.1）",
+        "ls src/part4/ → ch17.md ch17_checklist.md ch17_exam.md ch17_exercises.md ch17_recall.md ch17_summary.md 五页章末件齐全",
+        "src/part4/ch17_recall.md 自述 24 张卡、分组 8+11+5=24，覆盖正文引用的 1–6/9–11/13–15/16–17/23/24"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "挪进章末件的复现口径只给了 run-01 那一条可直接粘贴的命令（`python3 analyze.py results/run-01/bench.csv`，我已重放，四个区间逐位命中）；同一格里「run-02 的 compaction.csv 同样复现 1366635.811111」这句没有给出命令。我按读者会走的两条路试了：`analyze.py results/run-02/compaction.csv` 不是该轮的解析器；`analyze_mech.py results/run-02/compaction.csv` 缺参数直接退出码 2（usage 要求 --units 与 --diff-convention 为必填）。补上这两个参数后数值确实逐位复现，所以断言为真，但按现文照抄是复现不出来的。次生问题：两个脚本在不带 --out 时都往被分析目录写 statistics.json——run.sh 实际传的是 `$RES/statistics.json`——我冷启动重放 run-02 那次就在 results/run-02/ 里生成了一个归档里本不存在的 statistics.json（该文件不在正文定义 17.8.3 的 run-02 逐文件清单里），我随即删除、磁盘恢复原状，仓库其他文件未改。建议「17.8 的复现口径」把 run-02 的完整命令补全，并把 --out 指到 /tmp 以免读者污染证据包。",
+      "evidence": "python3 analyze_mech.py results/run-02/compaction.csv → rc=2 'the following arguments are required: --units, --diff-convention'；补齐后 → CI95=[+1366635.811,+1586756.503]；run.sh:92,95,134 均带 --units/--diff-convention/--out；重放前 results/run-02 目录清单无 statistics.json，重放后出现、删除后恢复（git status 对 projects/tidekv 仅显示整个目录 untracked：?? cpp-rust/projects/tidekv/）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "severity": "P2",
+      "description": "排版与可达性：新挪入的「17.8 的复现口径」被追加在 ch17_exercises.md 第 326 行，而第 324 行已是「配套页面：全章总结 · 闭卷回忆卡 · 综合自测卷 · 学习目标自检表」这条收尾页脚，也就是说正文两处指针指向的内容位于该页页脚之后、任何习题组（17.8 组 B14/C19/C20 与「每节最小练习包」表格在第 303–316 行）之前都没有提示。读者从 17.8.2 跳过来能落到锚点（ID 正确），但按页浏览时容易把页脚之后的这一节当作遗留内容。建议在「每节最小练习包」表的 17.8 行或页脚之前给这一节留一行可见入口。",
+      "evidence": "src/part4/ch17_exercises.md:324 配套页面页脚行、:326 `## 17.8 的复现口径 {#repro-17.8}`（节在页脚之后）；src/part4/ch17.md:1324、1336 两处链接文字均为「本章练习」"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[package]
+name = "tidekv"
+version = "0.1.0"
+edition = "2024"
+publish = false
+rust-version = "1.85"
+
+# 独立 workspace：与 projects/agent-runtime 一致，避免继承仓库外的 workspace。
+[workspace]
+
+[dependencies]
+
+# 结论的一部分：不启用 LTO、只留 1 个 codegen unit、保留 line-table 调试信息，
+# 这样探针脚本反编译出来的 asm 与单态化后的真实热路径一致，且符号名可 grep。
+[profile.release]
+opt-level = 3
+lto = false
+codegen-units = 1
+debug = 1
+
+[[bin]]
+name = "tide-compactor"
+path = "src/bin/tide-compactor.rs"
+
+[[bin]]
+name = "tide-bench"
+path = "src/bin/tide-bench.rs"
+
+[[bin]]
+name = "tide-mech"
+path = "src/bin/tide-mech.rs"
+
+[[bin]]
+name = "tide-probe"
+path = "src/bin/tide-probe.rs"

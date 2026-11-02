@@ -1,0 +1,18 @@
+# tidekv 布隆契约测试的原始 stdout（未捕获），2026-10-30 采集
+# 命令：cargo test --release --test bloom_contract -- --nocapture
+# 工具链：rustc 1.99.1 (58cf8f9c3 2026-10-13) binary: rustc commit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67 commit-date: 2026-10-13 host: aarch64-apple-darwin release: 1.99.1 LLVM version: 23.1.1 
+# 说明：这是功能测试的打印，不是计时轮；数值确定性来自固定键序列，不依赖随机种子。
+# 正文引用处：src/part4/ch17.md 例 17.2.2 的「实测」段。
+
+running 5 tests
+test crc32_catches_single_bit_flips ... ok
+test encode_decode_round_trip ... ok
+test no_false_negatives_direct ... ok
+bloom: bytes_per_key=8 slots=400000 fp=1525/200000 rate=0.00762 (1/131.1)
+test measured_false_positive_rate ... ok
+segment bloom: 8000 keys, 0/50000 absent keys slipped through (rate=0.00000)
+engine counters: 1989 rejected / 2000 probed by absent gets
+test segment_bloom_rejects_absent_and_never_misses ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

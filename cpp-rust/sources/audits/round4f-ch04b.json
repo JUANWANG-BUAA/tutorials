@@ -1,0 +1,91 @@
+{
+  "reviewer": "r4f-ch04b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动读 src/part1/ch04.md 第 1602-2280 行（4.7 至 4.11 全部正文与每个语义盒），并逐条打开 bench/compiler-lab 的 lib.rs、tests/contracts.rs、run.sh、extra.py、Cargo.toml、results/stable-02 与 results/extra-02 归档用 /usr/bin/python3 复算；4.9 的两页重抓另查 sources/web.json、sources/contributions/compiler-web.json、磁盘上的 .work 副本并 curl 上游 URL；另跑 tools/list_uncollected_claims.py --only 4。未修改任何仓库文件，临时脚本写在 /tmp/r4f_ch04b.py 与 /tmp/r4f_ch04b2.py。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条核了本节能对核的静态量与产物存在性，全部成立。构建配置：4.7.5 说「release 固定一个 CGU、LTO 为 false、debug 信息等级为 1」，Cargo.toml 的 [profile.release] 逐字为 opt-level=3、codegen-units=1、lto=false、debug=1、panic=\"unwind\"，run.sh 写进 environment.txt 的 profile 行与之同口径。4.7.6 与例 4.7.1/4.7.2 的产物清单：extra-02 里 stages-o0.mir/.ll/.s 与 stages-o3.mir/.ll/.s 六个文件都在盘上，stages-o0-build.txt 记录的命令是 rustc --edition=2024 probes/stages.rs -Copt-level=0 --emit=mir,llvm-ir,asm,link，与「同目录还保存两种优化等级的 LLVM IR 和汇编」一致；probes/stages.rs 第 21 行确为 assert_eq!(count.get(), 2)，extra.py 第 30 行用 check=True 的 run() 执行该二进制，所以「都实际运行了 count=2 的断言」由归档能完整生成来背书。例 4.7.2 那句最要紧的静态量我逐行数了：stages-o0.mir 的 drop 语句 4 条在第 73、86、94、98 行，stages-o3.mir 6 条在第 90、99、107、132、143、148 行，O3 的 StorageDead 20 处、O0 为 0 处，与正文完全一致；我用正则粗扫时另各命中一次第 4 行，那是函数名 fn <impl at probes/stages.rs:4:1: 4:24>::drop(...) 的函数头而不是 drop 语句，正文没把它计入，是对的。「O3 不是更少而是更多」的方向也成立。4.7.3 的「本章没有采集增量编译的定量加速表」与 4.7.6 的 self-profile/逐 pass 转储缺口声明，经 list_uncollected_claims.py 反查未找到任何 ch04 的同类产物（它给的三处 ⚠ 指向 bench/results/runtime-fixed/ 与 bench/evidence-lab/run-01/，属别的章），所以这几句「未采集」写得住。表格、思考框与四条即时自测内部无数字冲突。结论：pass。",
+      "evidence": [
+        "bench/compiler-lab/Cargo.toml:9-14 ([profile.release] :10 opt-level=3, codegen-units=1, lto=false, debug=1, panic=\"unwind\")",
+        "src/part1/ch04.md:1731-1733 对照 bench/compiler-lab/results/stable-02/environment.txt:22 'profile: opt-level=3 codegen-units=1 lto=false debug=1 panic=unwind'",
+        "复算 stages-o0.mir drop=4 [73,86,94,98]、stages-o3.mir drop=6 [90,99,107,132,143,148]、StorageDead o3=20 o0=0",
+        "bench/compiler-lab/probes/stages.rs:21 assert_eq!(count.get(), 2)；bench/compiler-lab/extra.py:27-30",
+        "ls bench/compiler-lab/results/extra-02 → stages-o0.{mir,ll,s} 4820/17655/12396B, stages-o3.{mir,ll,s} 6443/11260/5465B",
+        "/usr/bin/python3 tools/list_uncollected_claims.py --only 4 → ch04 共 16 条未采集声明，1671/1760/2230 的 ⚠ 反例文件均属其它章（runtime-fixed、evidence-lab）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "先把 4.8.1 那段 rust 代码与 bench/compiler-lab/src/lib.rs 做了逐字比对：整段是 lib.rs 的连续原文（blk.strip() in lib.rs 为 True），500ms 预热、10_000_000.0/ns 选批、for round in 0..21、N-1 的 sd、values[10] 当 p50、values[20] 当 p99、批后 assert_eq!(checksum, case.expected.wrapping_mul(n)) 全在 lib.rs 的 measure 里（第 13 行起，summary 打印到第 56 行），正文没有改写过代码。分位数定义我按[@def-1.5.2]的 nearest-rank 独立算过：ceil(21×0.50)=11→下标 10，ceil(21×0.99)=21→下标 20，且我复算的 21 个原始点的 p50/p99 与 CSV 的 summary 行逐位相同，p99 确实等于最大值，ex-4.8.2 的下标论证成立。测量数字没有抄正文：我从 results/stable-02/move_cost.csv 的原始点重算 borrow mean=0.059091466、clone mean=0.202739443，比值 3.4309，正文的「0.059091 / 0.202739 / 慢 3.43 倍」三条都对得上；「批 p99 是 0.063338」= 我算出的 0.063337811 取 6 位小数。4.8.4 的隔离记录逐条命中 run.sh：第 5 行 mkdir \"$OUT\"（无 -p，所以新目录必须存在性检查与「不覆盖既有归档」成立，extra.py 第 11 行 out.mkdir(parents=True, exist_ok=False) 同口径）、第 29-33 行算出 LOCK、mkdir 取锁并把 rmdir 挂在 trap EXIT、第 34 行与循环内第 36 行逐次 ps | grep -E '(cargo|rustc)' 追加记录、第 35 行顺序跑六个入口、第 39 行 rmdir 释放；run.sh 第 23 行与第 35 行的六个名字 move_cost drop_paths dispatch_grain dispatch_visibility vectorize ctfe_table 与 results/stable-02 里的六个正式 CSV 一一对应，「六个入口共用一份 measure」属实；build-processes-before.txt 为 0 字节，所以「本轮这些检查没有发现活动构建进程」有磁盘依据。4.8.5 的采样附着对象我核了 macos-sample.txt 首行 'Analysis of sampling dispatch_grain (pid 31117)'，全文出现 dispatch_grain 41 次、move_cost 与 drop_paths 各 0 次，与「第 4 章内核没有单独的采样占比」「不冒称 clone 内核热点」一致；sample-command.txt 的 pid 31117 对得上。4.8.2 的四类配套测试我回源码点位：contracts.rs:6 的 len in [0,1,3,7,16,129,16384] 覆盖空输入与非整块尾部、:65-67 逐元素断言、:16 for flag in [false, true] 覆盖 flag 两个值、:26-34 用 catch_unwind 观察 drop(pair.0) 之后的销毁，四条都有出处。4.8.6 的五条命令与 run.sh/extra.py 的入口签名一致。唯一要提的是 4.8.5 里一句表述：sample 运行被排除出「21 批正式统计」，但 results/stable-02/sample-run.csv 本身就是同一个 measure 跑出的 21 批（我复算 generic N=21 mean=0.185851850，与 dispatch_grain.csv 的 0.158334493 是两次独立运行），排除的理由是它不属于六个正式入口，而不是它没有 21 批，数字都没错，只是容易被读反。判 P2。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs:13（pub fn measure）、:28（for round in 0..21）、:56（summary 打印 values[10]/values[20]）；正文 4.8.1 代码块为 lib.rs 连续原文",
+        "复算 results/stable-02/move_cost.csv：borrow mean 0.059091466 sd 0.001232534 p50 0.058639890 p99 0.063337811(max)；clone mean 0.202739443 sd 0.006948621 p99 0.225701849(max)；0.202739443/0.059091466=3.4309",
+        "nearest-rank：ceil(21*0.5)=11→values[10]、ceil(21*0.99)=21→values[20]，与 CSV summary 行 mean,sd,p50,p99 逐位相同（六个正式 CSV 全部 N=21）",
+        "bench/compiler-lab/run.sh:5、:29-33、:34-39（mkdir 取锁/trap rmdir/六入口顺序/逐入口 ps|grep）与 results/stable-02/build-processes-before.txt 为 0 字节",
+        "bench/compiler-lab/results/stable-02/macos-sample.txt:1 'Analysis of sampling dispatch_grain (pid 31117)'；全文 move_cost=0、drop_paths=0 次命中",
+        "bench/compiler-lab/tests/contracts.rs:6,16,26-34,65-67；bench/compiler-lab/extra.py:22-26（returncode!=0 且 error in stderr，expected.tsv 五条 E0382/E0381/E0502/E0080/E0038）",
+        "results/stable-02/sample-run.csv 复算 N=21 mean=0.185851850（P2 依据：该文件确有 21 批，被排除的理由是它不是六个正式入口之一）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "按派单要求专门复核了 4.9 新写的两页重抓与指纹登记，结论是正文说的都是真的，但取证路径有歧义。四个独立来源两两一致：正文第 2165 行给 THIR 页 31 476 字节 / SHA-256 前缀 756c3343、Drop elaboration 页 34 518 字节 / 前缀 f229f77c；sources/web.json 的 compiler-web-thir 记 sha 756c33434ac476b4ddb7389a929de5248b1698d5cffd2c111905c07b4f856146、bytes 31476、archive .work/cpp-rust-sources/compiler/thir.html，compiler-web-drop-elaboration 记 f229f77c92444d2d17b408042868f27d788ff1f84f1cf1457e670ded191863bb、bytes 34518；sources/contributions/compiler-web.json 这两条的 sha256 与 web.json 完全相同并带 review_scope「main article, excluding navigation」，所以正文「URL、SHA-256 与核读范围写在 compiler-web.json 里」这句有台账行、不落空；磁盘上 cpp-rust/.work/cpp-rust-sources/compiler/thir.html 实测 31476 字节 sha256=756c33434ac476b4…、drop-elaboration.html 34518 字节 sha256=f229f77c92444d2d…，逐字节命中。我另按正文那句「今天 curl 该 URL 返回 200 与 34 518 字节」实跑：https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html → HTTP 200、34518 字节、sha f229f77c92444d2d；https://rustc-dev-guide.rust-lang.org/thir.html → HTTP 200、31476 字节、sha 756c33434ac476b4。也就是说旧台账的「上游 404、archive-lost」确实不成立，正文的纠正与撤回都对得上母本。4.9.1 的 HAIR 说法我在这份 THIR 副本里找到原句「The THIR (Typed High-Level Intermediate Representation), previously called HAIR for 'High-Level Abstract IR'」，「母本里的 HAIR 是较早的历史称呼」站得住。4.9.2 表格的产物列（--emit=mir/llvm-ir/asm 归档、extra-02/stages-o0.*、stages-o3.*）全部在盘，空位列与 4.7.6 一致。4.9.3 的「本包使用 edition 2024」= Cargo.toml edition = \"2024\"，且 extra.py 全部 rustc 命令都带 --edition=2024。4.9.4 的「S09 全书 368 页」= sources/inventory.json 里 S09 的 pdf_pages 368，sources/reviews/S09.md 亦写「物理页：368」。要提的一处：登记用的都是相对路径 .work/cpp-rust-sources/compiler/*.html，而本机在仓库外还留着同名的重抓前旧副本 /Users/juanwang/Desktop/tutorials/.work/cpp-rust-sources/compiler/thir.html（31476 字节，sha 8f345529dc5f9e59…）与 drop-elaboration.html（34518 字节，sha 1b8044c6015a398c…）——正是台账里被作废的「旧值」；tools/fetch_runtime_sources.py 的 CACHE 定义是 ROOT.parent/.work/cpp-rust-sources/web，即按该工具的约定这个相对路径要解到仓库外那一份，于是照约定解析的读者会算出与登记不符的指纹，下一轮很容易把它误判成编造。同一形状还出现在 web.json 的 systems-mit-rcu（登记 34201a6f5cbd，仓库外副本 e1df1db3fe74），我按 control 方式全查了 51 条带 archive 路径的条目：48 条与磁盘一致、3 条不一致，全部不一致者都是「外层 .work 留旧副本、新副本落在 cpp-rust/.work」这一类。另外 sources/audit-snapshot.json 的 1866 个键里没有 .work 下的任何文件，所以这两份重抓副本不在冻结快照内。字节数与指纹本身没有一处写错，问题只在路径根不可判定，判 P2。",
+      "evidence": [
+        "实测磁盘：cpp-rust/.work/cpp-rust-sources/compiler/thir.html = 31476B sha256 756c33434ac476b4…；drop-elaboration.html = 34518B sha256 f229f77c92444d2d…（与 ch04.md:2165、sources/web.json、sources/contributions/compiler-web.json 三处一致）",
+        "curl -L 上游：thir.html → 200 / 31476B / 756c33434ac476b4；mir/drop-elaboration.html → 200 / 34518B / f229f77c92444d2d",
+        "旧副本仍在仓库外：/Users/juanwang/Desktop/tutorials/.work/cpp-rust-sources/compiler/thir.html = 31476B sha 8f345529dc5f9e59，drop-elaboration.html = 34518B sha 1b8044c6015a398c；tools/fetch_runtime_sources.py 定义 CACHE = ROOT.parent / '.work/cpp-rust-sources/web'",
+        "control 复算 web.json 51 条带 archive 路径条目：ok=48、mismatch=3（compiler-web-thir、compiler-web-drop-elaboration、systems-mit-rcu），均为相对路径根歧义",
+        "sources/audit-snapshot.json：[k for k in files if k.startswith('.work')] == []（1866 个文件，两页重抓副本不在快照内）",
+        "THIR 副本原文：'The THIR …, previously called HAIR for \"High-Level Abstract IR\"'；sources/inventory.json S09 pdf_pages=368；bench/compiler-lab/Cargo.toml edition=\"2024\"",
+        "src/part1/ch04.md:2163「URL、SHA-256 与核读范围写在 compiler-web.json 里」→ sources/contributions/compiler-web.json 存在且恰含该两条 url+sha256+review_scope"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "索引表的可对核量是计数，我全部自己数了一遍：用脚本扫 4.1 至 4.8 八个 errata 盒，逐节数 E-x 条目得 6/6/8/8/7/7/7/7，合计 56 条，与正文「八份清单共 56 条」相符；索引表每行写的区间（4.1 E-a…E-f、4.2 E-a…E-f、4.3 E-a…E-h、4.4 E-a…E-h、4.5 E-a…E-g、4.6 E-a…E-g、4.7 E-a…E-g、4.8 E-a…E-g）与实测字母范围逐节吻合，没有哪一节的条目被索引表夸大或漏计。四条跨节错误也都指向真实证据：第 2 条列举的「可用 nightly、逐 pass 转储、self-profile、PMU 事件、跨尺寸分布」在 ch04 的四处（4.2.4、4.7.6、4.5.6、4.6.5）都写的是未采集，且 list_uncollected_claims.py --only 4 在这几条上都回「没有匹配到同类产物」，本章 extra-02/nightly.txt 记录的是失败诊断而不是转储；第 4 条的构建条件项 CGU/LTO/panic/RUSTFLAGS/工具链提交与 environment.txt 逐项被记录（含 RUSTFLAGS=<unset> 的显式写法）一致。本节没有测量数字，也无引文，判 pass。",
+      "evidence": [
+        "复算 ch04.md 内 8 个 ::: errata 盒的 E-x 条目：4.1=6, 4.2=6, 4.3=8, 4.4=8, 4.5=7, 4.6=7, 4.7=7, 4.8=7，合计 56（正文第 2198 行）",
+        "results/stable-02/environment.txt:23 'RUSTFLAGS=<unset>' 与 :22 profile 行（CGU/LTO/debug/panic 全项记录）",
+        "results/extra-02/nightly.txt（rustc +nightly -vV 的失败诊断，extra.py:21 以 check=False 采集）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结、速查表、导航与章末件的计数型断言我逐条回盘核：「八项运行时契约测试通过」——tests/contracts.rs 里 #[test] 恰 8 个（sums_match_for_tails_and_overflow、partial_move_drops_exactly_once、panic_unwinds_initialized_guards、dispatch_preserves_integer_semantics、vector_tails_and_max_values、unequal_lengths_are_rejected、ctfe_exhaustive_domain、current_stable_supports_trait_upcast），results/stable-02/tests.txt 有且仅有一行 'test result: ok. 8 passed; 0 failed'，其余各 target 为 0 passed；「五项编译拒绝输入返回预期错误代码」——probes/rejected/ 恰 5 个 .rs 加 expected.tsv（E0382/E0381/E0502/E0080/E0038），extra.py:22-26 断言 returncode!=0 且错误码出现在 stderr，extra-02 里五份对应 .txt 均在；「六个正式入口均已运行并校验输出」——run.sh 六个名字循环 + results/stable-02 六份正式 CSV，每份都有 summary 行；「每个 case 保留 21 个正式原始点」——我按 case 分组数了七个 CSV，六个正式 CSV 每个 case 都恰好 N=21。能力边界段声明没跑 Miri/Loom/TSan/Linux perf、没有 nightly 阶段内转储、没有 PMU 事件，与磁盘状态相符（归档里没有相关产物，只有 macOS sample 与 --emit 产物）。「怎么复核本章的数字？五条命令」与 4.8.6 的五条一一对应。章末件五页（summary/recall/exercises/exam/checklist）的链接存在性我只依赖机械层的链接可解析判定（round4f-mechanical.json 对 sec-cpp-rust.1.4.11 判 pass），没有再用 ls 单独确认这五个文件名；速查表与学习目标里引用的[@def-*]/[@ex-*]锚点同样由机械层验证可解析，我这一层只核了它们对应的正文说法是否与本节复算结果一致（无冲突）。数字无编造、无内部矛盾，判 pass。",
+      "evidence": [
+        "grep -c '#[test]' bench/compiler-lab/tests/contracts.rs = 8；results/stable-02/tests.txt: 'test result: ok. 8 passed; 0 failed; 0 ignored'",
+        "bench/compiler-lab/probes/rejected/ 五个 .rs + expected.tsv（use_after_move E0382 / maybe_uninitialized E0381 / alias_conflict E0502 / const_bounds E0080 / dyn_generic E0038），extra.py:22-26",
+        "复算 results/stable-02 六个正式 CSV 每个 case 的原始点数：全部 N=21（move_cost borrow/clone、drop_paths implicit/option、dispatch_grain 三项、dispatch_visibility 两项、vectorize 两项、ctfe_table 两项）",
+        "sources/audits/round4f-mechanical.json：snapshot_sha256 与本次派单串相同，sec-cpp-rust.1.4.10/1.4.11 判 pass(layer=mechanical)"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "severity": "P2",
+      "description": "重抓与指纹登记本身全部核实为真（磁盘、sources/web.json、sources/contributions/compiler-web.json、上游 curl 四方一致：THIR 31476 字节 sha 756c33434ac476b4…，Drop elaboration 34518 字节 sha f229f77c92444d2d…；「上游 404/archive-lost」确被推翻）。问题在取证路径只写了相对路径 .work/cpp-rust-sources/compiler/*.html，而根不可判定：本机在仓库外仍留着同名的重抓前旧副本（tutorials/.work/…/thir.html = 31476 字节 sha 8f345529dc5f9e59…、drop-elaboration.html = 34518 字节 sha 1b8044c6015a398c…，正是台账作废的那两个旧值），而 tools/fetch_runtime_sources.py 自己把缓存根定义为 ROOT.parent/.work/cpp-rust-sources/web，按此约定解析相对路径就会取到旧副本，量出的字节数恰好与正文相同、指纹却完全不同，下一轮冷读者极易据此误判成「编造的指纹」。我把这套 control 检查铺到 web.json 全部 51 条带 archive 路径的条目：48 条与磁盘一致，3 条不一致（compiler-web-thir、compiler-web-drop-elaboration、systems-mit-rcu 登记 34201a6f5cbd vs 外层副本 e1df1db3fe74），全是同一个「外层旧副本 + 仓库内新副本」的形状。另外 sources/audit-snapshot.json 的 1866 个键里没有 .work 下任何文件，两份被 4.9 点名的重抓副本不在冻结快照内。建议（不改仓库，交给作者定）：在 ch04.md:2165 与两份台账里把根写全（如 cpp-rust/.work/cpp-rust-sources/compiler/thir.html），或把外层旧副本改名/移走留一层唯一真相，并考虑是否把 .work 的这两份纳入快照。",
+      "evidence": "sha256 实测：cpp-rust/.work/…/thir.html=756c33434ac476b4…, tutorials/.work/…/thir.html=8f345529dc5f9e59…, cpp-rust/.work/…/drop-elaboration.html=f229f77c92444d2d…, tutorials/.work/…/drop-elaboration.html=1b8044c6015a398c…（四份字节数分别 31476/31476/34518/34518）；tools/fetch_runtime_sources.py: CACHE = ROOT.parent / '.work/cpp-rust-sources/web'；control 脚本对 sources/web.json 51 条 archive 路径逐条 sha256 比对 → ok=48 mismatch=3；python -c \"[k for k in json.load(open('sources/audit-snapshot.json'))['files'] if k.startswith('.work')] == []\"（1866 键）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "severity": "P2",
+      "description": "4.8.5 第 2033 行「sample 运行没有进入 21 批正式统计」容易被读反：results/stable-02/sample-run.csv 恰恰是同一份 measure 跑出的 21 批数据（我从原始点复算 generic N=21 mean=0.185851850、dyn_item N=21 mean=0.732891474、dyn_batch N=21 mean=0.182092986），它被排除的理由是「不是六个正式入口的表、且与 macOS sample 同一次运行」，而不是「没做满 21 批」；run.sh:41 的英文注释 deliberately excluded from the 21 timing observations 也说的是正式表。数字与结论都没有错，只建议改成「sample 运行不属于六个正式入口的那张 21 批表」，免得读者反过来以为采样那次没跑批次。",
+      "evidence": "bench/compiler-lab/run.sh:41-45（deliberately excluded 注释、重取测量锁、dispatch_grain 后台跑并写 sample-run.csv）；复算 results/stable-02/sample-run.csv → 三个 case 各 N=21，mean 0.185851850/0.732891474/0.182092986，与 dispatch_grain.csv 的 0.158334493/0.647617885/0.156428047 是两次独立运行"
+    }
+  ]
+}

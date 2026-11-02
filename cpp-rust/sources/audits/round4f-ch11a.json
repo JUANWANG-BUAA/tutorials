@@ -1,0 +1,142 @@
+{
+  "reviewer": "r4f-ch11a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动逐字读了 src/part3/ch11.md 的 11.1-11.6 全部正文与每个语义盒，并把 11.3.4 的测试逐字对 bench/systems-lab/tests/contracts.rs、11.5.2 对 crossbeam-queue-0.3.14/src/array_queue.rs、11.5.3 对 results/run-01/codegen/systems_lab-290015c44171d49d.s、11.4.5 对 crossbeam-epoch-0.9.21/src/internal.rs，另用 python 从 queue.txt/epoch.txt/layout.txt/environment.txt 复算了全部统计量并跑了 tools/list_uncollected_claims.py --only 11。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 11.1.1-11.1.5 全部正文、定义框 11.1.1/11.1.2/11.1.3、思考 11.1.1、例 11.1.1、errata 与四题即时自测。三级进度阶梯的定义（Obstruction-Free/Lock-Free/Wait-Free）与自旋锁反例的判定彼此自洽，挂起测试在正文与解答里口径一致；AdaptiveMutex 与 SpinLock 两段代码都标注为抽象模型/伪代码，没有被声称为仓库文件，我按代码断言逐行看过 compare_exchange 与 swap 的参数序列合法。MESI 的 Read Invalidate、AArch64 的 casal 与 ldaxr/stlxr、x86 的 lock cmpxchg 与 11.5.3 的产物计数不冲突。唯一不可靠的是上下文切换 1,000-5,000 纳秒这一区间：它既不是本仓库的实测、也没有登记母本，却被 11.1.1 末段和自测第 3 题当成诊断阈值使用，记 P2。",
+      "evidence": [
+        "src/part3/ch11.md:90 区间 1,000-5,000 ns 与 10 ns 临界区之比 = 100-500 倍，「两到三个数量级」内部自洽",
+        "src/part3/ch11.md:294 自测第 3 题把同一区间当判定依据",
+        "src/part3/ch11.md:96-141 AdaptiveMutex 标注「典型用户态抽象模型」，与 bench/systems-lab 无对应文件，未误称为仓库代码",
+        "tools/list_uncollected_claims.py --only 11 第 1 条 [ch11.md:193] 与第 2 条 [ch11.md:294] 均无同类产物，声明成立"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 11.2.1-11.2.6 全部正文、定义 11.2.1 三条、图两个 text 时序、例 11.2.1、思考 11.2.1、判定流程四步、errata 与四题自测。这一节是可概念性论证，没有测量数字，我把三处可对核的点逐一核了：Herlihy 与 Wing 1990 提出 linearizability 属通行史实且正文未声称为本书核实；11.2.3 对 Michael-Scott 队列「入队点在 tail.next 的 CAS、不在 tail 的 CAS」的表述与 11.2.6/errata E-b 一致；11.2.4 非局部线性化点不违反定义第 1 条（瞬时点只需落在调用-返回区间内）的推理成立。所有 [@def-*]/[@ex-*]/[@think-*] 引用目标在本章或跨章都存在（def-12.6.3 在 ch12.md、def-1.5.2 与 def-1.2.2 在 ch01.md 命中）。没有发现数字与代码冲突。",
+      "evidence": [
+        "src/part3/ch12.md:{#def-12.6.3} 存在（grep 命中）",
+        "src/part1/ch01.md 中 def-1.5.2/def-1.2.2 共 21 处命中",
+        "src/part3/ch11.md:322-328 定义三条与 :459 自测第 1 题答案逐条对应",
+        "src/part3/ch11.md:373-375 三条线性化点表述与 :440 errata E-b、:434 小结 ③ 同口径"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 11.3.1-11.3.6 全部正文、NaiveStack 反例代码、图 11-1 的 SVG 与 figcaption、定义 11.3.1/11.3.2、双字 CAS 汇编块、例 11.3.1、思考 11.3.1、errata 与四题自测。重点复核 11.3.4：逐字比对成功，正文标注的 contracts.rs:115-126 与仓库真实测试的每一行（含英文注释、assert_eq! 换行、Ok(1) 单独成行）完全一致，且 run-01/test.txt 确有该测试的 ok 行，「实测通过，归档在 run-01/test.txt」这条落地成立，探针确为单线程，正文「探针刻意留在单线程」的说法与代码相符。Treiber Stack 的致命窗口位置（步骤 1 与步骤 2 之间）与代码结构相符。但 11.3.3 与 11.3.5 有两处技术错误：11.3.5 断言 casp 是 x86 助记符、不是 ARM 指令，方向反了（记 P1）；11.3.3 的 AArch64 片段自身寄存器口径冲突（记 P2）。另 11.3.6 小结用 [@ex-11.3.1] 指代 11.3.4 的单线程探针，链接可解析但指向的是标记指针例题（记 P2）。",
+      "evidence": [
+        "src/part3/ch11.md:645-657 与 bench/systems-lab/tests/contracts.rs:115-126 逐行 diff 一致（我打印了 contracts.rs 第 110-127 行原文，文件共 127 行）",
+        "bench/systems-lab/results/run-01/test.txt: 'test safe_logic_aba_is_not_a_data_race ... ok'",
+        "bench/systems-lab/tests/contracts.rs:1-2 use std::sync::atomic::{AtomicUsize, Ordering} 支撑正文里裸写 AtomicUsize/Ordering 的摘录",
+        "src/part3/ch11.md:673 断言「casp 是 x86 的双字比较交换助记符，不是 ARM 指令」；同一份产物 bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s 的 casp 计数为 0，而 CASP/CASPL/CASPAL 是 ARMv8.1 LSE 的配对比较交换指令，x86 侧对应的是 cmpxchg16b（正文 :628 自己也写的是 lock cmpxchg16b）",
+        "src/part3/ch11.md:630-632 注释行写 'casal x0, x1, [x2]' 并说新值在 (x2, x3)，:632 的指令行却用 [x4] 作地址；x2 同时被指派为新值对首址与内存地址",
+        "src/part3/ch11.md:746 用 [@ex-11.3.1] 指代 :642-660 的 contracts.rs 探针；#ex-11.3.1 实际是 :722 的标记指针例题，:660 的探针段没有独立锚点"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 11.4.1-11.4.8 全部正文、定义 11.4.1/11.4.2/11.4.3、HP 读者写者 text 图、HazardSlot 与 HazardPointerCore 两段代码、思考 11.4.1、证明框、总对照表、例 11.4.1、errata 与四题自测。重点复核 11.4.5 的结构，与 crossbeam-epoch-0.9.21/src/internal.rs 高度吻合：Local 的字段顺序（bag: UnsafeCell<Bag> 在 :299、guard_count :302、handle_count :305、pin_count :310 且注释就是「sometimes kicks off collection」）落在正文所引 289-310 内；Global 所引 156-165 与 locals: List<Local>(:158)、queue: Queue<SealedBag>(:161)、epoch: CachePadded<AtomicEpoch>(:164) 逐行命中；「袋子填满 64 项」对得上 const MAX_OBJECTS: usize = 64（:57）与 deferreds: [Deferred; NO_OP 数组长度 MAX_OBJECTS]（:111）；「代际号在封口时盖上」对得上 fn seal（:102-104）；三纪元判定 global_epoch.wrapping_sub(self.epoch) >= 2（:151）与 11.4.6 证明框一致；SeqCst 栅栏确在 internal.rs:185（正文 :1146 与 :960 的引用有效）。两处记 P2：正文把 SealedBag 写成 { epoch, bag } 并引 internal.rs:138-139，真实字段名是 _bag 且在 :140（行号范围也漏掉字段行）；HP 的 2×H 退休阈值与 Maged Michael 2004、Keir Fraser 的 EBR 归属在本章 11.9 来源表和 sources/ 台账里没有登记行，属未落地但被当作定论使用的出处。",
+      "evidence": [
+        "crossbeam-epoch-0.9.21/src/internal.rs:289,299,302,305,310 对应 src/part3/ch11.md:948-951",
+        "crossbeam-epoch-0.9.21/src/internal.rs:156-165 对应 src/part3/ch11.md:954-957",
+        "crossbeam-epoch-0.9.21/src/internal.rs:57 MAX_OBJECTS=64、:111 deferreds: [Deferred::NO_OP; MAX_OBJECTS] 对应「默认 64 项」",
+        "crossbeam-epoch-0.9.21/src/internal.rs:138-141 实为 struct SealedBag { epoch: Epoch, _bag: Bag }，:103 seal 写的是 SealedBag { epoch, _bag: self }",
+        "crossbeam-epoch-0.9.21/src/internal.rs:185 atomic::fence(Ordering::SeqCst) 存在，:151 is_expired 用 >= 2",
+        "src/part3/ch11.md:847 的 2 × H 阈值、:822 与 :924 的 Michael 2004/Fraser 归属在 src/part3/ch11.md:1835-1841 来源表（只登记 S08、MIT RCU、rCore）与 sources/ 下均无对应条目"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "读完 11.5.1-11.5.4 全部正文、定义 11.5.1/11.5.2、类型尺寸表、11.5.2 的 text 协议清单、11.5.3 的汇编摘录、例 11.5.1、思考 11.5.1、errata 与四题自测。重点复核 11.5.2 与 11.5.3，命中率很高。11.5.2 全部行号我逐条对 crossbeam-queue-0.3.14/src/array_queue.rs 核过：初始 head=tail=0 与 stamp=i 在 :113-124；one_lap 取 (cap+1).checked_next_power_of_two（即大于容量的最小 2 的幂）在 :131；push 的 stamp == tail 判定在 :173、写授权 CAS 在 :175-180、stamp.store(tail + 1, Release) 在 :186、满判定 stamp.wrapping_add(one_lap) == tail + 1 在 :194；pop 的 head + 1 == stamp 在 :351、stamp.store(head.wrapping_add(one_lap), Release) 在 :372-373、空判定 stamp == head 在 :381；正文的位置编码 index = pos & (one_lap-1)、lap = pos & !(one_lap-1) 与源码 :154-155/:342-343 完全一致。11.5.3 的摘录逐行命中产物第 10368-10391 行（函数标签、str/add x8/ldr/add lsl #1/add #7/add sp/ret 全在，正文只删 .loc/.cfi/Ltmp，一条指令没改，顺序没变）；casal 3 次、casp 0 次、dmb 共 60 条 = 54 条 dmb ishld + 6 条 dmb ish 全部复算吻合，且 6 条 dmb ish 的所在函数正好是 retire 2、epoch_batch 1、drain 1、Queue::push 1、Queue::pop 1，与正文逐项对应。11.5.1 尺寸表的 7 行与 layout.txt 逐字节一致，hw.cachelinesize 128 与 environment.txt 一致。两处记 P2：「mul 一次都没有出现」若按整份产物读不成立（同一 .s 里 mul 出现 5 次，只是都不在 scalar_step 体内），正文未把口径限定在摘录函数；把 push 满分支的 SeqCst 栅栏出处引成 array_queue.rs:194，栅栏实际在 :195。",
+      "evidence": [
+        "crossbeam-queue-0.3.14/src/array_queue.rs:113-124,131,154-155,173,175-186,194,342-343,351,372-373,381 全部对应 src/part3/ch11.md:1102-1116 与 :1098",
+        "results/run-01/codegen/systems_lab-290015c44171d49d.s:10368-10391 与 src/part3/ch11.md:1131-1141 逐行一致；文件共 71890 行",
+        "同一 .s 正则计数：casal=3、casp=0、dmb ishld=54、dmb ish=6（合计 60），dmb ish 行号 7036/11126/11396/11538/12241/12674 分属 epoch_batch/drain/retire×2/Queue::pop/Queue::push",
+        "同一 .s 的 mul 行号 3859,7773,8232,13251,13275（均在 scalar_step 体 10368-10391 之外）",
+        "results/run-01/layout.txt 7 行与 src/part3/ch11.md:1082-1088 表格逐项相同（ArrayQueue 384/128、Guard 8/8、Collector 8/8、Arc<[u8]> 16/8、&[u8] 16/8、Vec<u8> 24/8、AtomicPtr 8/8）",
+        "results/run-01/environment.txt:2,8,12,13,14 rustc 1.99.0 / LLVM 23.1.1 / hw.ncpu 18 / hw.cachelinesize 128 / Apple M5 Pro 与章首 :22 一致",
+        "crossbeam-queue-0.3.14/src/array_queue.rs:195 才是 atomic::fence(Ordering::SeqCst)，正文 :1146 引作 :194"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 11.6.1-11.6.5 全部正文、定义 11.6.1、queue_batch 代码摘录、汇总表、21 批逐批表与其数值位置列、直觉盒、例 11.6.1、判定流程、思考 11.6.1、errata 与四题自测。全部数字我自己从 bench/systems-lab/results/run-01/queue.txt 的 42 行 raw 复算，未抄正文：按 raw/65536 得 mutex 均值 72.861686、样本标准差 2.683101、p50 72.586060、p99 78.983948；array_queue 均值 40.647478、标准差 8.023660、p50 40.676117、p99 53.237915，与正文表格及归档 summary 行逐位相同；21 行逐批原值 42 个数一个不差；正文的派生量也成立：吞吐提升 (72.861686/40.647478-1)=79.25% 写作 79.3%、加速比 1.7925 写作 1.79x、标准差比 2.9904 写作「近 3 倍」、预热 506ms 支持「超 500ms」。第四列「偏离均值几个 s」的 42 个格子我用 (x-mean)/s 逐批重算全部对得上，包括 Round 4 与 Round 19 的「等于本列中位数」、Round 5 双列「本列最小」、Round 7 与 Round 18 的「本列最大且 p99 落在此批」、Round 0/6/14 的「偏离均值不到 0.1s」。最近秩分位数定义正文在 :1342 已写明并引 [@def-12.6.3]，口径交代到位。代码摘录与 bench/systems-lab/src/lib.rs:92-148 逐段对应（1024 容量、Barrier 4、每生产者 32768、领票 fetch_add、多重集逐位断言、末尾 pop()==None），src/bin/queue.rs 的 EACH=32768、units=EACH*2 与 units=65536 相符；摘录里的中文注释是改写而非逐字（正文只说「关键评测骨干」，未宣称逐字），不构成违规。uncollected 工具在本节唯一 ⚠（ch11.md:1344 采样栈）我判定为设计内误报：正文下一段 :1346 就点名 run-01/queue-sample.txt 并说明它按 1ms 采 1 秒、最重帧是 systems_lab::queue_batch（lib.rs:97）126 个采样，我核了 sample-command.txt 与 queue-sample.txt 两个数字都命中，工具给出的反例文件属 evidence-lab 的另一个实验，声明的边界（未按批打标签）成立。这一节无 P0/P1。",
+      "evidence": [
+        "python 复算 queue.txt：42 行 raw 按 65536 归一后 mean/sd/p50/p99 与 src/part3/ch11.md:1339-1340 完全一致，逐批 42 值与 :1350-1370 完全一致（阈值 5e-5）",
+        "派生量复算：79.25%→正文 79.3%（:1340）、1.7925→1.79x（:1378）、8.023660/2.683101=2.9904→「近 3 倍」（:1910）",
+        "偏离度复算全部命中，例：mutex Round 16 (78.091293-72.861686)/2.683101=+1.95→+1.9s（:1366）；array_queue Round 5 为最小值 25.574371（:1355）",
+        "bench/systems-lab/src/lib.rs:92-96,97-140,141-147 对应 src/part3/ch11.md:1264-1326；bench/systems-lab/src/bin/queue.rs 的 EACH=32768 对应 :1246",
+        "results/run-01/queue.txt 首行 warmup_ns=506192375、summary 行 n=21 对应 :1333 与 :1342",
+        "results/run-01/queue-sample.txt 'every 1 millisecond' 与 126 _RNvCs4WO1Pb37diX_11systems_lab11queue_batch ... lib.rs:97 对应 :1346",
+        "tools/list_uncollected_claims.py --only 11：共 14 条声明，13 条 ✓，1 条 ⚠（ch11.md:1344），该条正文 :1346 已自行披露口径差异"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "severity": "P1",
+      "description": "11.3.5 第 1 条路线的括号里写「casp 是 x86 的双字比较交换助记符，不是 ARM 指令」，这个断言方向反了：CASP/CASPL/CASPAL 是 ARMv8.1 LSE 的 128 位配对比较交换指令（与正文同一句里列为 AArch64 的 casa/casal 同族），x86_64 侧的双字比较交换助记符是正文自己在 :628 写的 lock cmpxchg16b，不存在叫 casp 的 x86 指令。同一份汇编产物里 casp 计数为 0（我正则复算），而正文 11.5.3 又把 casp 0 次当成「本产物没用配对 CAS」的证据，等于一边把 casp 划给 x86、一边在 AArch64 的 .s 里数它，读者无法同时接受两处。属技术事实错误，且会误导读者去 x86 手册里找 CASP。",
+      "evidence": "src/part3/ch11.md:673；对照 src/part3/ch11.md:628（x86 用 lock cmpxchg16b）与 src/part3/ch11.md:1146（AArch64 产物里 casp 0 次）；复算 /Users/juanwang/Desktop/tutorials/cpp-rust/bench/systems-lab/results/run-01/codegen/systems_lab-290015c44171d49d.s 得 casal=3、casp=0"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "severity": "P2",
+      "description": "11.3.3 的 AArch64 汇编块自身寄存器口径冲突：注释行写 casal x0, x1, [x2] 并解释「期望值与新值均要求必须使用连续的偶数-奇数寄存器对 (x0, x1) 与 (x2, x3)」，但下一行实际指令是 casal x0, x1, [x4]。按正文自己的规则，x2 既被指派为新值对首址、又被当作访存基址（[x2]），两个说法互斥；[x4] 才是与「新值占 (x2,x3)」相容的写法。教学代码块里首行与指令行不一致，读者按首行抄会写出非法编码。",
+      "evidence": "src/part3/ch11.md:630-632 三行原文；对照同段 x86_64 块 :622-628 的注释与指令是配套的"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "severity": "P2",
+      "description": "11.3.6 小结 ③ 用 [@ex-11.3.1] 指代「逻辑 ABA 可用单线程探针钉出 CAS 看不见中间历史」这件事，但 #ex-11.3.1 是 11.3.5 的例题「标记指针能骗过吗」，讲的是 Tag 位宽环绕；真正的单线程探针（contracts.rs:115-126 摘录与其后的解读）在 11.3.4 正文里，没有独立锚点。链接可解析但落点错，读者按锚跳转找不到被引的那段论证；即时自测第 2 题（:777）同一件事就只能用文字提 contracts.rs。",
+      "evidence": "src/part3/ch11.md:746 的 [@ex-11.3.1]；src/part3/ch11.md:642-660 是探针，src/part3/ch11.md:722 起才是 {#ex-11.3.1}"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "severity": "P2",
+      "description": "11.4.5 第 1 点把封口袋写成 SealedBag { epoch, bag } 并注 internal.rs:138-139，真实定义在 internal.rs:138-141、字段名带下划线前缀是 _bag（:140），seal（:103）构造时也写的是 SealedBag { epoch, _bag: self }。正文这段的用意是「代际号是袋子的标签而非袋子数量」，结论没错，但花括号里的字段名不是源码里的名字，且 138-139 只覆盖到 struct 行与 epoch 行、不含 bag 字段；与同一节里其他行号引用（289-310、156-165、185 都精确）相比，这一处的精确度掉了。",
+      "evidence": "crossbeam-epoch-0.9.21/src/internal.rs:136-141（struct SealedBag { epoch: Epoch, _bag: Bag }）、:102-104（fn seal）；正文 src/part3/ch11.md:960"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "severity": "P2",
+      "description": "11.4.2 与 11.4.4 把 HP 的批量退休阈值写成「列表累积到 2 × H（H 为插槽总数）时扫描」、并把 HP 归于 Maged Michael 2004、EBR 归于 Keir Fraser 且「在 crossbeam-epoch 中工业级成熟实现」，但这些出处在本章 11.9 的来源表（只登记 S08、MIT 6.828 RCU、rCore）与 sources/ 台账里都没有对应行。前一句是会被读者拿去实现协议的定量阈值，按派单「关键断言无出处」应落地；crossbeam-epoch 那半句我能在盘上验证（internal.rs 确实存在且实现的就是这一套），但 2 × H 与两篇论文的归属只能算未核实的背景。",
+      "evidence": "src/part3/ch11.md:822（Michael 2004）、:847（2 × H 阈值）、:924（Fraser）；src/part3/ch11.md:1835-1841 来源表无相应条目；grep -ri hazard sources/ 无命中"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "severity": "P2",
+      "description": "11.5.3 摘录后的第一句写「mul 一次都没有出现」，但正文没有限定统计范围。我的复算是：在 scalar_step 的函数体（产物第 10368-10391 行）里确实一条 mul 都没有，乘 3 走 add w8, w8, w8, lsl #1、再加 7，与正文描述一致；但在同一份 .s 全文里 mul 出现 5 次（第 3859、7773、8232、13251、13275 行，属其它函数）。本节标题又是「硬件代码生成核对：以 AArch64 汇编为准」，紧邻的下一段还在用全文计数（casal 3 次、dmb 60 条），读者很自然把「mul 一次都没有出现」也读成全文计数，那样就与产物不符。建议补上「该函数体内」。",
+      "evidence": "src/part3/ch11.md:1144；复算 systems_lab-290015c44171d49d.s：\\bmul\\b 命中 5 处（3859,7773,8232,13251,13275），函数体 10368-10391 内 0 处"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "severity": "P2",
+      "description": "11.5.3 末段说 6 条 dmb ish 的显式 SeqCst 栅栏「都能在源码里找到出处（array_queue.rs:194、internal.rs:185）」，其中 internal.rs:185 精确命中 atomic::fence(Ordering::SeqCst)；array_queue.rs 的栅栏实际在第 195 行，第 194 行是触发它的那个满分支条件 else if stamp.wrapping_add(self.one_lap) == tail + 1。而同一行号 :194 在 11.5.2 的协议清单里已经用作「满判定条件」的出处（那次是正确的），所以同一处引用被两个不同含义共用，读者按 :194 找栅栏会落空。另 pop 侧那条 dmb ish 对应的栅栏在 array_queue.rs:382，正文未点名（只举了两个出处覆盖六个落点）。",
+      "evidence": "src/part3/ch11.md:1146 与 :1110；crossbeam-queue-0.3.14/src/array_queue.rs:194（条件行）、:195（fence）、:382（pop 空分支的 fence）；crossbeam-epoch-0.9.21/src/internal.rs:185（fence）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "severity": "P2",
+      "description": "11.1.1 第 2 层给出「单次上下文切换的物理耗时通常在 1,000 至 5,000 纳秒之间」，并被 11.1.1 末段用作「比 10 纳秒临界区高两到三个数量级」的定量依据、被即时自测第 3 题用作诊断阈值（:294 直接拿 1,000-5,000 纳秒判定几微秒等待落在挂起/唤醒区间）。这个区间既不是本仓库实测（run-01/ 下没有上下文切换产物，interference.txt 也不是这个口径），也没有登记任何母本；比例推算本身自洽（1,000-5,000 / 10 = 100-500 倍，确实是 2-3 个数量级），但作为全节唯一的具体数字，它现在是无出处的断言。建议要么补一条来源台账行，要么改成不依赖具体区间的定性表述。",
+      "evidence": "src/part3/ch11.md:90、:294；ls bench/systems-lab/results/run-01/ 无上下文切换类产物；tools/list_uncollected_claims.py --only 11 的 [ch11.md:294] 条目报「没有匹配到同类产物」"
+    }
+  ]
+}

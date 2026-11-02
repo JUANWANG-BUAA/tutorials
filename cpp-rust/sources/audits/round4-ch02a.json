@@ -1,0 +1,115 @@
+{
+  "reviewer": "r4-ch02a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动通读 src/part1/ch02.md 第 66–1246 行（2.1–2.6 的全部正文与每个语义盒，未抽样），再回 bench/foundations-lab 的 results/native-01/{layout.txt,environment.txt,locality.csv,statistics.json,statistics-stdout.txt,codegen/*.s,codegen/*.ll,sample-locality.txt}、src/lib.rs、src/bin/locality.rs 与 sources/{audit-snapshot.json,sections.json,web.json} 对核；sources/audit-snapshot.json 里的 sha256 与本单快照串一致。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "探针表 9 行 size/align 我逐行比了归档 bench/foundations-lab/results/native-01/layout.txt：COrder 24/8、RustOrder 16/8、Record 64/8、Option<NonZeroU64> 8/8、Option<u64> 16/8、Option<Handle> 8/8、&[u64] 16/8、Vec<u64> 24/8、ByteRegion 32/8，全对得上，连行序都一样；偏移行 C offsets 0,8,16 与 Rust offsets 10,0,8 也来自同一文件，所以 2.1.3 表与图 2-1 的字节分段不是作者臆造。静态量我自己重算过：COrder 1+8+2=11、24−11=13（7+6 两段）、RustOrder 16−11=5、128 字节行内可容 2 个 Record、描述符 24 与元素区 524288 之比 21845，例 2.1.1/2.1.2 与自测第 3 题「小 8 字节」三处互相算得通。「本机观测」的口径与 environment.txt 的 aarch64-apple-darwin + RUSTFLAGS=-C target-cpu=native 一致，2.1.4 层级表把 RustOrder 与 &[u64] 归到必须重测那一档，落层没有越界。没核的：我只读了 layout.txt 的产物，没打开 examples/layout.rs 去证实「它调用 size_of、align_of 与 offset_of、没有读填充字节」这句关于代码的断言；也没逐字比 std::option 文档（见 2.2 条）。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:1-13（九行 type,size,align 加 C/Rust offsets 两行，与正文两张表逐位相同）",
+        "bench/foundations-lab/results/native-01/environment.txt:4,15-16（host aarch64-apple-darwin、hw.cachelinesize 128、RUSTFLAGS=-C target-cpu=native）",
+        "复算：24−(1+8+2)=13、16−11=5、65536×8=524288、524288÷24=21845.33、4194304÷524288=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "三行 Option 对照（8/16/8）与 layout.txt 一致，例 2.2.1「第三行仍只是本机打印的观测值」和 2.1.4 的层级表口径不打架。2.2.6 那句「本节没有采集 Option 访问的时间数据」我按目录核了：native-01 下只有 allocation/borrow/dce/initialization/locality/paired 六个 csv 加 sample-locality.txt，确实没有 Option 计时件，声明成立。2.2.2 转述 std::option 的 Representation 段：仓库把它登记为在线来源（sources/web.json:258 有该 URL），条目式转述（引用、NonZero、NonNull、函数指针，Box 限 Global+Sized）与官方文档的结构相符，但本地没有正文快照，我没有联网逐字比，所以这条只算「落地、未逐字比」；E-d 特意把 Box 的 Global/Sized 前提写进常见错误，方向是对的。发现一处措辞与代码不符（见 findings）：例 2.2.1 说 Handle 是「单字段公开结构」，而 2.2.3 正文代码块写的是 `#[repr(transparent)] struct Handle(NonZeroU64);`，struct 与字段都没有 pub。没核的：src/lib.rs 里 Handle 的真实可见性我没打开那一行；2.2.5「优化器可能删掉零检查」属代码生成层推测，正文自己也要求看上下文产物，未替它找产物。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/layout.txt:5-7（Option<NonZeroU64>,8,8 / Option<u64>,16,8 / Option<Handle>,8,8）",
+        "src/part1/ch02.md:365（「单字段公开结构」）与 387-388（片段无 pub）",
+        "sources/web.json:258（https://doc.rust-lang.org/std/option/index.html，仅 URL 登记，仓库无正文快照）",
+        "归档目录清单：results/native-01 下无 Option 相关 csv/txt"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节我主要按「静态量自己算」核：65536×64=4194304、65536×8=524288、比值 8、密度 8÷64=12.5%、每 128 字节行容 2 个 Record，全部算得出且例 2.3.1/自测第 1、2 题用同一组数。「本机 sysctl 报告缓存行 128 字节」这条我两头对：归档 environment.txt:15 写着 hw.cachelinesize: 128，我现在在 Mac17,9（M5）直接跑 sysctl hw.cachelinesize 也是 128，正文拒绝「缓存行一定 64」的写法站得住。三类证据的划界与磁盘一致：native-01 只有时间采样的 sample-locality.txt 与 codegen 三件套（.s/.ll/.mir），没有任何 PMU/perf 计数文件，所以 2.3.2 表里「miss 未采集」「TLB 未采集」「伪共享未采集」不是话术，是真的没有。TLB 段那条 rCore 引文落得了：sources/sections.json 有 RCORE-SV39（在线，SHA 654584dd…）映射到 sec-cpp-rust.1.2.3，book/rcore-line.html:300 对该页的描述（三级索引、大页减页表遍历并减轻 TLB 压力、代价是要支持三种大小的连续区域）与正文同一条因果链，正文也没有把它的定性说法包装成倍数。发现一处出处措辞过头（见 findings）。没核的：我没抓 rCore 页面原文逐字比；L1/L2 容量与相联度确实无处可核，正文也是这么声明的。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/environment.txt:14-15（hw.model Mac17,9、hw.cachelinesize: 128）",
+        "复算：65536×64=4194304、65536×8=524288、8÷64=12.5%、128÷64=2",
+        "sources/sections.json: RCORE-SV39 → part1/ch02.md#sec-cpp-rust.1.2.3（在线文档，SHA 654584dd…）",
+        "results/native-01 目录清单：无 PMU/事件计数件，只有 sample-locality.txt 与 codegen/{.s,.ll,.mir}"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "代码断言逐条回源：Record 的 repr(C)+Clone/Copy、sum_aos 只 fold row.hot、sum_soa 用 u64::wrapping_add，对 src/lib.rs:74-89；「冷字段初始化为 11」对 src/bin/locality.rs 的 cold: [11; 7]（同文件 hot 由 data(N) 生成、expected 只依赖 hot，与 2.5.1 的「计时外构造」叙述一致）。两段汇编我在归档产物里找到了原行：results/native-01/codegen/foundations_lab-29c064615efbeca4.s 的 978-979 行是 ldp q4,q5,[x8,#-32] 与 ldp q6,q7,[x8],#64，982-985 行是 add.2d v0,v4,v0 到 v3，989 行 subs x10,x10,#8 直接证实每轮 8 个 u64、基址前进 64；AoS 侧 896-897、899、905 行是 ldur x15,[x13,#-128]、ldur x16,[x13,#-64]、ldr x17,[x13]、ldr x15,[x13,#64]，912 行 add x13,x13,#256、914 行 subs x14,x14,#4 证实每轮 4 个 64 字节记录。例 2.4.1 数出的 8 与 64、比值 8，和归档指令与 @ex-2.3.1 的跨度比都一致。代码生成表五行：.ll:16 确实是 sum_iter = unnamed_addr alias ... sum_soa；.ll:543 与 610 的切片参数带 noalias ... readonly align 8；两个求和函数都只收切片，「Record 仅通过切片访问」成立，因此正文不把 noalias 当别名规则完整定义、把它归到本机观测层，是克制且对的。[@def-2.4.1] 的范围声明（只投影热列、两表示计时前都在、不测转换与峰值内存）我在 locality.rs 里正面证实了。没核的：.mir 我没读；「AoS 循环一次展开多个读取」已在 .s 看到（4 路展开），但没有核它对应的向量形态是否还有别的循环版本。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:74-89 与 src/bin/locality.rs 全文（cold: [11; 7]、expected 只由 hot 求和、run(&mut cases, 128, N)）",
+        "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s:978-985,989,896-914",
+        "同目录 .ll:16（sum_iter alias sum_soa）、.ll:543,610（ptr noalias nofree noundef nonnull readonly align 8）",
+        "复算：每轮 8×8=64 字节且 subs #8；AoS 每轮 4×64=256 字节且 subs #4，比值 64÷8=8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "这是本章自称实测最密集的一节，我把表里 8 个数从原始 CSV 自己复算，不是抄正文：locality.csv 有 42 行 kind=raw（每 case 21 行，与「每 case 21 个批均值」一致），我算得 aos mean 0.519143207、N-1 sd 0.005283686、p50 0.519196153、max 0.529403567；soa mean 0.059380878、sd 0.000798904、p50 0.059301615、max 0.060682416——与 2.5.2 表逐位相同。配对均值我按两种算法（按行序配对相减、与两个 mean 相减）都得 −0.459762329，和正文一致；比值 0.519143207÷0.059380878=8.7426，正文 8.74 对。分位数口径这条我特意查了：正文写「批 p99 仍是 21 个批均值中的最大值」，归档 statistics.json 的 p99 恰等于我算的 max，而线性插值会给出 0.528907823/0.060675478，说明用的是 nearest-rank/max 定义且正文明说了，不违反「p50/p99 要交代定义」。例 2.5.1 的换算全重算：128×65536=8388608；×0.519143207=4 354 889 ns；×0.059380878=498 123 ns；×21≈91.5 ms 与 10.5 ms；差值×8388608≈−3.857 ms；区间宽 −0.457715438−(−0.461856757)=0.004141319，占 |均值| 0.90%；sd 摊每批 0.005283686×8388608≈44 323 ns≈44 μs，全部对。夹具断言也落了：N=65_536（lib.rs:5）、每批 128（locality.rs 的 run 调用）、warmup=500ms/case rounds=21 order=rotating（environment.txt:22 附近）。2.5.4 说的回归测试存在（lib.rs:180 sums_and_representations_agree，长度 [0,1,7,65,N] 确含非 8 倍数，「覆盖非向量整块长度」成立）。2.5.5 的采样数量我读了 sample-locality.txt 的汇总行：sum_aos 421、sum_soa 419，「次数接近」是真的，正文据此拒绝换算成本也是对的。[@ex-2.5.2] 的三态判定拒绝发布（缺预先写下的 B）与证据边界一致。发现一处出处不精确（见 findings）：正文说结果「来源为 results/native-01/locality.csv」，但配对均值与 bootstrap 区间并不在那个 CSV 里，而在 analyze.py 派生的 statistics.json / statistics-stdout.txt（seed 13013、resamples 10000）。没核的：我没有实际重跑 10000 次 bootstrap（区间逐位取自 statistics.json，与正文一致）；也没读 sample-command.txt 去证实采样只发生在预热阶段。",
+      "evidence": [
+        "bench/foundations-lab/results/native-01/locality.csv（42 行 raw，python 复算 mean/sd/p50/max 与正文 2.5.2 表逐位相同）",
+        "results/native-01/statistics-stdout.txt 的 locality 段：paired_second_minus_first.mean=-0.4597623290952381、bootstrap95=[-0.4618567567619048,-0.45771543752380955]、seed 13013、resamples 10000",
+        "bench/foundations-lab/analyze.py:21-28（固定 seed 13013 的 paired bootstrap，输入是 batch 序列而非 locality.csv 之外的数）",
+        "results/native-01/environment.txt:22（warmup=500ms/case rounds=21 order=rotating）；src/lib.rs:5（N=65_536）；src/bin/locality.rs（run(&mut cases,128,N)）",
+        "results/native-01/sample-locality.txt:52-53（sum_aos 421 / sum_soa 419）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "关于代码的断言我逐行回源：ByteRegion 的 storage/used、new 里的 vec![0; capacity]、take 里 checked_add 后 get_mut、两步都成功才写游标、reset 只置零 used，与 src/lib.rs:101-125 完全一致，整个组件确实没有 unsafe；size 32=Vec 描述符 24+usize 8，和 layout.txt 的 ByteRegion,32,8 相符，2.6.3 拿它当「描述符+元素区」两笔账的例子站得住。例 2.6.1 的六步手推我和归档测试逐条对照：src/lib.rs:194-203 的 region_capacity_failure_is_transactional 正是 new(8)→take(6).fill(7)→take(3) 断言 None→take(usize::MAX) 断言 None→take(2) 断言 ==[0;2]→reset→take(6) 断言 ==[7;6]，正文「失败不消耗剩余空间」「复用会暴露旧字节」两条结论都是被这个测试断言过的行为，不是想象。2.6.4 的 compile_fail 文档测试在 lib.rs:94-99（以 ByteRegion::new(64) 起），与正文代码块同形；[@def-2.6.3] 的词法作用域/有效借用区间之分与 ① 失败、②③ 通过的判定，按现行借用检查是对的（我只做静态推理，没真编译试验）。2.6.6 的两条 rCore 引文落得了：sections.json 里 RCORE-GALLOC（GlobalAlloc 签名、Layout 对齐、LockedHeap 的锁）与 RCORE-FRAME 都映射到 sec-cpp-rust.1.2.6，book/print.html 的来源条目也写着「不引用其中任何数字」，本节确实只借机制。发现两条（见 findings）：「换成区域分配后快了 3.6 倍」这个数在本章没有出处，而本章唯一的同类实测（2.7.3 表，fresh_vec 8.248312814 ÷ byte_region 2.813854399）是 2.9313；另有 .bss 零初始化字节数组这一具体细节没出现在被映射的来源描述里。小瑕疵不单列：正文说「这五步说明两件事」，实际枚举了六个操作（含 reset）。没核的：2.6.2 对照表五行我只按签名与源码判断，没有构造反例编译；「2.7 是单线程」我从 lib.rs 的 run 无并发推断，未核 run.sh。",
+      "evidence": [
+        "bench/foundations-lab/src/lib.rs:101-125（ByteRegion 源码，无 unsafe，checked_add/get_mut 后才提交游标）与 94-99（compile_fail 文档测试）",
+        "bench/foundations-lab/src/lib.rs:194-203（region_capacity_failure_is_transactional：take(3)/take(usize::MAX) 均 is_none、take(2)==[0;2]、reset 后 take(6)==[7;6]）",
+        "bench/foundations-lab/results/native-01/layout.txt:10（ByteRegion,32,8）",
+        "src/part1/ch02.md:1196（3.6 倍）与 1336-1337（fresh_vec 8.248312814 / byte_region 2.813854399）；复算 8.248312814÷2.813854399=2.9313",
+        "sources/sections.json: RCORE-GALLOC、RCORE-FRAME → part1/ch02.md#sec-cpp-rust.1.2.6"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "2.6.6 写「所以『换成区域分配后快了 3.6 倍』这类结论，必须同时报告线程数与是否共享堆」。3.6 在本章（也在我查到的归档里）没有任何出处：本章唯一的区域复用实测在 2.7.3，fresh_vec 均值 8.248312814、byte_region 均值 2.813854399，我算的比值是 2.9313（p99 口径 8.638381958÷2.855300903=3.0254，也到不了 3.6）。读者紧接 2.7 读到这句，几乎必然把 3.6 当成本章结果。我按判级斟酌过要不要 P1（关键断言无出处）：这句的语法作用是举例说明「某类结论该怎么报」，不是在断言本章测到了 3.6，所以记 P2；但要么改成 2.7 的真数 2.93，要么明确标注它是别处/假想的数字并给出来源。",
+      "evidence": "src/part1/ch02.md:1196（3.6 倍）对照 src/part1/ch02.md:1336-1337（8.248312814 / 2.813854399）；复算：8.248312814÷2.813854399=2.9313；8.638381958÷2.855300903=3.0254"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "severity": "P2",
+      "description": "2.6.6 把 rCore 的接缝摊开时说「堆本身是一块位于 `.bss` 的零初始化字节数组」。被登记为出处的两条映射里都没有这一条：sources/sections.json 的 RCORE-GALLOC 只写「GlobalAlloc 签名、Layout 对齐、LockedHeap 的锁」，RCORE-FRAME 只写页帧分配与回收合法性检查；book/print.html 对同一来源的转述也只到签名与「任何操作先拿锁」。这条具体（段位置与零初始化）本身与 rCore 第四章常见实现相符，但正文把它包在「rCore 教程……把 GlobalAlloc 这个接缝摊开讲」这一句的射程里，读者会当成已从被核读页面落地的事实。建议要么把 .bss/零初始化拆出引文范围（标为通识），要么把该细节补进对应来源的核读记录。",
+      "evidence": "src/part1/ch02.md:1189（.bss 零初始化字节数组）；sources/sections.json 条目 RCORE-GALLOC（section 描述：GlobalAlloc 签名、Layout 对齐、LockedHeap 的锁，无 .bss）；book/print.html:6855（同来源转述亦无 .bss）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "severity": "P2",
+      "description": "2.5.2 开头写「来源为 results/native-01/locality.csv」。表里的 mean/sd/p50/p99 确实能从该 CSV 复算（我自己 42 行 raw 重算，逐位相同），但同段给出的配对均值 −0.459762329 与 bootstrap 区间 [−0.461856757, −0.457715438] 不在那个 CSV 里，它们落在 analyze.py 派生的 statistics.json / statistics-stdout.txt（seed 13013、resamples 10000）。照正文点名的文件读者算不出派生统计，出处精度差一层。建议在 2.5.2 补一句派生件名，例如「原始批均值见 locality.csv，配对统计见同目录 statistics.json（analyze.py，seed 13013）」。数字本身没有错。",
+      "evidence": "src/part1/ch02.md:924（来源点名）与 931（bootstrap 区间）；results/native-01/statistics-stdout.txt locality 段 paired_second_minus_first：mean −0.4597623290952381、bootstrap95 [−0.4618567567619048, −0.45771543752380955]、seed 13013；analyze.py:21-28；locality.csv 只有 kind/round/position/case/ns_per_unit/checksum 六列"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "severity": "P2",
+      "description": "例 2.3.1 解答写「AoS：65536 × 64 = 4194304 字节，与归档记录一致」。归档里没有这个数：native-01 的 layout.txt 只有 size/align，locality.csv 只有 ns/元素与校验和，environment.txt 只有协议参数；4194304 是由 N=65_536（src/lib.rs:5）与 Record size 64（layout.txt）相减无关、纯算术推出来的布局事实。数字是对的，但「与归档记录一致」暗示磁盘上存在这条记录，属于出处措辞过头；改成「由本轮归档的 N 与 Record size 直接算出」即可。",
+      "evidence": "src/part1/ch02.md:527（与归档记录一致）与 541；results/native-01/layout.txt:3（Record,64,8）、src/lib.rs:5（N=65_536）；grep 归档无 4194304 字样；复算 65536×64=4194304"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "severity": "P2",
+      "description": "例 2.2.1 解答说「Handle 用 #[repr(transparent)] 包了一层单字段公开结构」，但 2.2.3 给出的代码是 `#[repr(transparent)] struct Handle(NonZeroU64);`——结构与字段都没有 pub，是私有元组字段。若 lib.rs 里实际写的是 pub struct Handle(pub NonZeroU64)，那就是正文片段被简化了，应说明简化；若片段就是原样，则「公开结构」这个词与代码不符，而且「公开」恰是读者会误解的地方：niche 传递靠的是 repr(transparent) 与载荷的有效值集合，不靠字段可见性。建议改成「单字段结构」并注明可见性与本条保证无关。",
+      "evidence": "src/part1/ch02.md:365（单字段公开结构）与 387-392（片段无 pub）；bench/foundations-lab/results/native-01/layout.txt:7（Option<Handle>,8,8 只证明尺寸，不证明可见性）"
+    }
+  ]
+}

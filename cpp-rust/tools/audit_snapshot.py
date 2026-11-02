@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import hashlib
 import json
 from pathlib import Path
@@ -96,9 +97,10 @@ def main() -> int:
     snapshot = make_snapshot(ROOT)
     path = ROOT / "sources/audit-snapshot.json"
     if args.write:
-        chapters = list((ROOT / "src").glob("part*/ch*.md"))
-        if len(chapters) != 16:
-            parser.error("freeze requires all 16 real chapter files")
+        chapters = [f for f in (ROOT / "src").glob("part*/ch*.md")
+                    if re.fullmatch(r"ch\d{2}\.md", f.name)]
+        if len(chapters) != 17:
+            parser.error("freeze requires all 17 real chapter files")
         path.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n")
     if args.check:
         previous = json.loads(path.read_text())

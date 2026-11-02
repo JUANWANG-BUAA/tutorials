@@ -1,0 +1,152 @@
+
+$ cargo build --release --offline
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+$ cargo fmt --check
+
+$ cargo clippy --offline --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+
+$ cargo doc --offline --no-deps
+ Documenting tidekv v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.43s
+   Generated /Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv/target/doc/tidekv/index.html and 3 other files
+
+$ cargo test --release --offline -- --test-threads=4
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/release/deps/tidekv-b779f48c14b401ac)
+
+running 1 test
+test crc32::tests::known_vectors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/tide-bench.rs (target/release/deps/tide_bench-3b0815e195f24b60)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/tide-compactor.rs (target/release/deps/tide_compactor-b37db61da9a171c5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/tide-probe.rs (target/release/deps/tide_probe-673c2e0f0e9a35a6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/admission.rs (target/release/deps/admission-dc51b62176d2dda4)
+
+running 3 tests
+test rejected_write_does_not_disturb_sequence ... ok
+test full_queue_rejects_immediately ... ok
+test control_commands_also_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.49s
+
+     Running tests/bloom_contract.rs (target/release/deps/bloom_contract-6bad3dea8fd94d6e)
+
+running 5 tests
+test crc32_catches_single_bit_flips ... ok
+test encode_decode_round_trip ... ok
+test no_false_negatives_direct ... ok
+test measured_false_positive_rate ... ok
+test segment_bloom_rejects_absent_and_never_misses ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/compaction.rs (target/release/deps/compaction-97139edc88e41c9b)
+
+running 4 tests
+test compact_two_needs_two_segments ... ok
+test compact_two_merges_and_keeps_semantics ... ok
+test compacted_segment_survives_restart ... ok
+test compact_two_equivalence_under_random_ops ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/concurrency.rs (target/release/deps/concurrency-af31586fd86cd3d6)
+
+running 2 tests
+test many_readers_agree_with_final_value ... ok
+test concurrent_writers_are_serialized_correctly ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.96s
+
+     Running tests/epoch_reclaim.rs (target/release/deps/epoch_reclaim-eeef7be906c8e920)
+
+running 3 tests
+test retired_version_survives_until_reader_releases ... ok
+test another_threads_pin_blocks_reclaim ... ok
+test cross_thread_readers_never_observe_a_freed_version ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ipc_compactor.rs (target/release/deps/ipc_compactor-2785467fadddc2f8)
+
+running 5 tests
+test nonzero_exit_reports_stderr ... ok
+test compactor_keeps_tombstones_when_asked ... ok
+test compactor_merges_two_segments ... ok
+test huge_stderr_does_not_deadlock ... ok
+test wide_output_is_drained_not_deadlocked ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/persistence.rs (target/release/deps/persistence-9b6fb40a31b1477e)
+
+running 4 tests
+test wal_only_writes_survive_reopen ... ok
+test torn_wal_tail_is_dropped_on_reopen ... ok
+test unflushed_memtable_then_segment_mix_after_reopen ... ok
+test data_survives_restart_after_flush ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/segment_format.rs (target/release/deps/segment_format-d4c66145b399e55d)
+
+running 5 tests
+test unsorted_input_is_refused ... ok
+test round_trip_and_footer_layout ... ok
+test max_seq_and_scan_prefix ... ok
+test zero_copy_borrow_outlives_the_lookup_call ... ok
+test any_byte_flip_breaks_the_segment_crc ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/tombstones.rs (target/release/deps/tombstones-542c5cb481d8b956)
+
+running 5 tests
+test put_after_delete_resurrects ... ok
+test delete_in_memtable_hides_value_in_segment ... ok
+test delete_then_flush_then_delete_again ... ok
+test tombstone_across_two_segments_and_restart ... ok
+test mixed_random_ops_match_naive_model ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running tests/wal_recovery.rs (target/release/deps/wal_recovery-eb4003888cc1c224)
+
+running 7 tests
+test append_after_recovery_keeps_old_frames ... ok
+test crc_detects_flipped_crc_field_itself ... ok
+test clean_wal_replays_everything ... ok
+test corrupted_crc_stops_replay_and_counts_the_tail ... ok
+test delete_records_round_trip ... ok
+test truncated_tail_is_rejected_and_counted ... ok
+test rotate_keeping_preserves_tail_records ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests tidekv
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+$ ./target/release/tide-bench --seed 20261028 --rounds 21 --batches 30 --ops 900 --warm-ms 500 --flush-every 300 --out results/run-01/bench.csv --verify results/run-01/bench-verification.txt

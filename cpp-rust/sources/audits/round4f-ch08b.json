@@ -1,0 +1,72 @@
+{
+  "reviewer": "r4f-ch08b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动完整通读 src/part2/ch08.md 的 8.7–8.11 全部正文与语义盒，逐条对照 bench/src/bin/future_allocation.rs、bench/results/local/{future-allocation.txt,future-allocation-drift.txt,future-allocation.s,future-layout.txt,environment.txt} 复算，并跑 tools/list_uncollected_claims.py --only 8。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部可核断言逐条落地：最终表 8.241/0.306/8.183/8.953 与 19.817/0.465/19.682/20.969 从我自己解析 bench/results/local/future-allocation.txt 的 21+21 个批样本复算命中（mean/sd 逐位一致，p50 线性插值一致，p99 按最近秩等于日志行 batch_p99=8.953/20.969）；漂移日志逐点核对：stack 样本0=13.3525→样本20=7.88542（正文13.35/7.89）、box 37.60375→18.71083（37.60/18.71）、box样本1=40.2225 为全表最大、stack样本3=17.55959 跳点，全部与 8.7.4 与例 8.7.1 一致；future_size=257 与 iters*7 校验、500ms 预热、Waker::noop、两个存储分支均在源码逐行命中；8.7.10/8.7.11 汇编逐条命中 .s 产物（drive 单态化符号内 ldrb w8,[x0] / ldrb w8,[x0,#1] / mov w9,#1;strb w9,[x0] / mov x0,x8，Box 分支 mov w0,#257;mov w1,#1;bl __rust_alloc;cbz 与 mov w1,#257;mov w2,#1;bl __rust_dealloc）；'未替换jemalloc'经 grep 全 bench 无 global_allocator/jemalloc 证实。p50/p99 的定义在本章 8.6.1（批均值分位数、最近秩，ch08.md:1201/1352）已写明，8.7 表头沿用同一'批次p50/批次p99'口径，不构成口径未交代；但 8.7.7 表处未回指该定义，属可读性小瑕疵，不判级。uncollected 工具对本节仅命中 1450 行'没有采集逐样本计数器'且无产物反例，声明诚实。",
+      "evidence": [
+        "bench/results/local/future-allocation.txt:2-44 逐批样本，自算 mean=8.241/19.817 sd=0.306/0.465 p50=8.183/19.682，最近秩p99=8.953/20.969，与 1487-1488 行表一致",
+        "bench/results/local/future-allocation-drift.txt:2-44（13.352500/7.885420/37.603750/18.710830/40.222500/17.559590）",
+        "bench/src/bin/future_allocation.rs:10-40（drive、两分支、assert_eq!(sum, iters*7)）、:55（size_of_val 打印 future_size）、:59（500ms 预热）",
+        "bench/results/local/future-allocation.s:2044-2046/2097-2099（w0=257,w1=1 分配与 w1=257,w2=1 释放）、:19/:22/:34-35/:38（drive 符号内状态读取/偏移1载荷/置完成/返回）",
+        "grep bench/Cargo.toml bench/src 无 global_allocator|jemalloc；bench/Cargo.toml:29 name=future-allocation"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "内容核对通过：析构探针输出逐字命中归档 bench/results/local/future-layout.txt:3（'drop before first poll: 0 guards; drop after Pending: 1 guard'），且正文正确把它定位为状态检查而非基准；取消安全定义、async move 不改变 Send、Ready 后不得再 poll、Waker 不可跨进程复制等断言与 8.4/8.5 已核协议及 std 语义一致，未发现事实性错误。唯一问题是节首把'驱动器如何推进任务'记在 8.7 名下，实际单 Future 驱动器在 8.5（ch08.md:892），8.7 是存储策略基准（其自身开头 ch08.md:1371 写明承接的是 8.6 的通知协议），属跨节引用错位，判 P2。",
+      "evidence": [
+        "bench/results/local/future-layout.txt:3 与 src/part2/ch08.md:1691 逐字一致",
+        "src/part2/ch08.md:1668（'8.7 讲了驱动器如何推进任务'）对照 :892（8.5 标题）与 :1371"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "来源表与正文接口句核对：'rCore 第 3 章任务切换保存 ra 与 s0~s11 并换栈'与登记的母本一致（sources/web.json:324 review_scope；9.2.3 在 ch09.md:375 引用同一 chapter3/2task-switching.html 并写明母本原文只说 ra、s0~s11 与 sp，正文接口句表述未超出母本）；[9.2.3] 链接锚点 sec-cpp-rust.3.9.2 在 src/part3/ch09.md 存在；../appendix/coverage.md 解析到 src/appendix/coverage.md，含 S08 Effective Rust、S09 Guide to Rustc Development 台账节。std 文档'在线1.99.1'我未逐条回查母本台账（属母本层），本地 bench/results/local/environment.txt:3 记录实测工具链为 rustc 1.99.0，与'读的是 1.99.1 在线文档'不构成内部矛盾，仅作提示。PDF 页码逐条回查留给母本层。",
+      "evidence": [
+        "sources/web.json:324；src/part3/ch09.md:375、:1531",
+        "src/appendix/coverage.md:25-26、:2501、:2550",
+        "bench/results/local/environment.txt:3（rustc 1.99.0）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "逐条读完十二条（1–12，条数与'十二条'相符）并与已核正文比对：#3 Pin≠堆分配对应 def-8.3.2；#7 noop Waker 边界与 8.7.2 的用法自洽（只用于恒 Ready 例）；#10 差值按测量操作命名对应 def-8.7.1 与本次复算；#11 保留漂移批次对应 ex-8.7.1 与 drift 归档；#5/#6 对应 8.4/8.5 协议；#8/#12 对应 8.8 已核内容。未发现与各节证据相矛盾的条目；本节未引入新数字，无需额外复算。",
+      "evidence": [
+        "src/part2/ch08.md:1832-1856 十二条逐条对照 ch08.md:892/1371/1444-1452/1678-1736 及上述归档"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结 7 条、速查 11 行、出口检查 8 行全部读完并抽查数字口径：8.241/19.817 与我的复算一致，7.407 引用 def-8.6.1（8.6 范围，由 8a 读者与机械层覆盖，本节仅作命名引用，无新断言）；'4097 与 2'为 8.3 出口检查项，本节未复述其数值来源，我不越界重判。最低复现组合四个命令的 target 全部在盘：bench/src/bin/{async_poll.rs,future_allocation.rs}、bench/examples/future_layout.rs、bench/Cargo.toml:25/:29 两个 bin 名；章末五件套 ch08_{summary,recall,exercises,exam,checklist}.md 均存在于 src/part2/。即时自测三题与 8.7/8.8 已核结论一致。",
+      "evidence": [
+        "bench/src/bin/async_poll.rs、bench/src/bin/future_allocation.rs、bench/examples/future_layout.rs、bench/Cargo.toml:25、:29",
+        "src/part2/ 下 ch08_summary.md 等五文件（ls 确认）",
+        "本次对 future-allocation.txt 的复算 mean=8.241/19.817"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "severity": "P2",
+      "description": "8.8 节首句'8.7 讲了驱动器如何推进任务'把驱动器的讲解记错节号：单 Future 驱动器（如何推进、防丢唤醒）在 8.5（ch08.md:892 '8.5 单Future驱动器：防止丢失唤醒'），8.7 讲的是栈上 pin 与 Box 分配的存储策略基准，且 8.7 自身开头（ch08.md:1371）写明上一节 8.6 测的才是通知协议。本节其余机制断言与探针归档一致，仅跨节引用错位，判 P2 表述问题。",
+      "evidence": "src/part2/ch08.md:1668 对照 src/part2/ch08.md:892、:1371"
+    }
+  ]
+}

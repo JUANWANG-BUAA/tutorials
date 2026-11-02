@@ -1,0 +1,78 @@
+{
+  "reviewer": "r4b-ch13a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part4/ch13.md 的 13.1–13.6 全部正文与语义盒，逐条把数字拿去 bench/evidence-lab/results/run-01 的 cpu-wait.txt/instrumentation.txt/sample-cpu.txt/sample-wait.txt/cpu.folded/wait.folded 用 /usr/bin/python3 复算，把代码断言拿去 lib.rs/cpu_wait.rs/instrumentation.rs 逐行看，并用脚本扫描全章纯文本小节引用是否落到真实编号标题；另跑 tools/list_uncollected_claims.py 过滤 ch13。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节（13.1.1–13.1.6 + 定义 13.1.1/13.1.2/13.1.3、例 13.1.1、思考、判定流程、小结、errata、即时自测）完整读过，无实测数字需落地。核对所有纯文本小节引用均可解析：13.1.5「13.5.7 的观察表」→存在(### 13.5.7 line1039)；「13.4.6」→存在；「13.4.4」→存在；「13.1.4」「13.1.5」自指正确。图 13-1 五层与[@def-13.1.2] 文字一致。判定 pass。",
+      "evidence": ["src/part4/ch13.md:1076 观察到的栈/1039 ### 13.5.7 存在", "src/part4/ch13.md:77 反例与表 line93-100 口径一致", "脚本扫描：13.1 内无未解析的 13.x.y 纯文本引用"]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数字全部复核通过：主线程根 1698、mix 叶子 1082、compute 叶子 616，且 1082+616=1698（cpu.folded total=1698、distinctleaf=2、1082/616 逐条命中；sample-cpu.txt 根 1698）。Event 16/8 布局见 instrumentation.txt `layout,Event,size=16,align=8`。Vec<u8> 24/8、&[u8] 16/8 为标准 Rust 事实。发现一处悬空纯文本小节引用（见 findings）：即时自测第 4 题把待验证项指向「13.9.4」，但 13.9 无编号子节、全章无 13.9.4 标题、也无「未验证/待验证清单」实体。",
+      "evidence": ["run-01/cpu.folded total=1698 leafpaths=2 (mix 1082, compute 616)", "run-01/instrumentation.txt:layout,Event,size=16,align=8", "src/part4/ch13.md:486 「列为待验证清单（13.9.4）」——无对应标题"]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "13.3 声明「本轮没有采集任何硬件事件」，全节无本机实测数字需落地，代码引文与工具语义为迁移检查清单，判定合理；[@def-13.3.2] 缩放公式与 perf_event_open 概念一致。发现悬空纯文本小节引用：思考题解答 line622 写「这一项属于 13.9.4 的未验证清单」，而 13.9（延伸阅读与来源，line1760）仅有三个无编号子节（本地PDF母本/新增规范核读/从母本迁移时的修订），不存在 13.9.4，也没有名为「未验证清单」的段落。",
+      "evidence": ["src/part4/ch13.md:1760-1790 13.9 全节无 ### 13.9.x 编号", "src/part4/ch13.md:622 引用 13.9.4", "grep '13\\.9\\.[0-9]' 命中仅 line486/622/769 三处，均无落点"]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "13.4.3 折叠数据整表复核通过：CPU total=1698/2 叶子（mix 1082、compute 616），waiting total=1648/5 叶子（__semwait_signal 1443、mix 181、compute 21、cerror_nocancel 2、mach_msg2_trap 1；1443+181+21+2+1=1648），wait.folded 逐条命中。例 13.4.1/13.4.2、off-CPU、异步栈的口径推理自洽。发现悬空纯文本小节引用：13.4.5 line769 写「后一种需要调度事件时间线，本轮没有采集（13.9.4）」，同前——13.9.4 无落点。",
+      "evidence": ["run-01/wait.folded total=1648 leafpaths=5 (__semwait_signal 1443, mix 181)", "run-01/cpu.folded total=1698 leafpaths=2", "src/part4/ch13.md:769 引用 13.9.4 无对应标题"]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "重编号后 13.5.5–13.5.8 编号标题均存在且分位数指针已补齐：13.5.5 line1007「p50/p99 按最近秩（向上取整）定义，见 [@def-13.7.3]」，[@def-13.7.3] 锚点存在(line1437)。13.5.5/13.5.7 全部实测数字复算命中：cpu mean=2.506964 sd=0.082729 p50=2.477333 p99=2.782084，wait mean=46.442020 sd=1.459728 p50=47.026833 p99=47.800375，checksum=14437947664662268765，均与 cpu-wait.txt summary 及我按 N-1/最近秩重算逐位一致；sample 根 1698/1648、经 sleep 1446、leaf 1443 命中。代码断言：lib.rs mix(rotate_left(9)、0x9e37_79b9_7f4a_7c15、wrapping_add(17))、compute、cpu_wait.rs(STEPS=1_000_000、thread::sleep(from_millis(40))、0..21、offset 0..2、requested_sleep_ms=40) 逐行匹配。发现一处表述问题（见 findings）：errata E-a(line1074)、E-b(line1076) 与自测第2题(line1099) 用裸标题「（本轮实测）」「（观察到的栈）」指代 13.5.5/13.5.7，而非编号——「本轮实测」同时是 13.5.5 与 13.6.5 两节标题，读者无法分辨指向哪一节。",
+      "evidence": ["run-01/cpu-wait.txt summary 与重算 mean/sd/p50/p99 逐位一致", "run-01/sample-wait.txt 经 sleep 1446、__semwait_signal 1443、根 1648", "src/part4/ch13.md:1074,1076,1099 裸标题指针", "src/part4/ch13.md:1003 与 1254 两处标题均为「本轮实测」→歧义"]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全节复核通过：13.6.5 表 none 2.472857/0.094581/2.448330/2.798125、batch 2.470040/0.079995/2.448545/2.685205、each 32.832639/0.608977/32.762500/34.306250，与我按 instrumentation.txt raw 重算（N=21，N-1 sd，最近秩 p50/p99）逐位命中；checksum=188478885453998054、count 0/200000/200000 命中；each/none=32.832639/2.472857=13.277≈13.3（正文与小结一致）；差值 30.359782 正确。代码：lib.rs observed/Event(id,elapsed_ns)/Mode 与 instrumentation.rs(STEPS=200_000、offset 0..3、(round+offset)%3、size_of/align_of) 匹配；elapsed_ns 用 as_nanos 在 lib.rs observed 内。纯文本引用 13.6.4/13.6.6/13.6.7/13.6.2/13.6.3 均存在。无 P0/P1。",
+      "evidence": ["run-01/instrumentation.txt summary,none/batch/each 与重算逐位一致", "重算 each/none=13.277、差=30.359782", "bench/evidence-lab/src/bin/instrumentation.rs 200_000/(round+offset)%3 存在"]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "severity": "P1",
+      "description": "悬空的纯文本小节引用：13.2 即时自测第 4 题迁移答案写「本轮没有 Linux 执行记录，因此这些只能列为待验证清单（13.9.4）」，但 13.9「延伸阅读与来源」下只有三个无编号子节（本地PDF母本/新增规范核读/从母本迁移时的修订），全章不存在编号 13.9.4 的标题，也没有名为「未验证清单/待验证清单」的实体段落。门禁只校验 [@id] 与链接，不校验这种纯文本「13.9.4」，故未被拦下。该引用把一个「没执行/待验证」的断言挂到一个并不存在的落点上，属关键断言无出处/引用无法落地。",
+      "evidence": "src/part4/ch13.md:486 引用 (13.9.4)；grep '^### 13\\.9\\.' 无命中；13.9 正文 line1760-1790 无 13.9.4；tools/list_uncollected_claims.py ch13 亦列出 line486/622/769"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "severity": "P1",
+      "description": "同一悬空引用再现于 13.3：思考题「三个指标同向变化」解答写「这一项属于 13.9.4 的未验证清单——本轮没有执行」，指向不存在的 13.9.4 小节/清单。修复建议：改为纯文本声明（如「列入本章迁移检查清单，本轮未执行」）或为 13.9 增设真正的「未验证清单」编号小节并让三处引用统一指向它。",
+      "evidence": "src/part4/ch13.md:622 引用 13.9.4；无对应标题"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "severity": "P1",
+      "description": "同一悬空引用第三处，13.4.5 正文：「后一种需要调度事件时间线，本轮没有采集（13.9.4）」，13.9.4 无落点。三处 13.9.4（line486/622/769）应作为同一缺陷统一修正。",
+      "evidence": "src/part4/ch13.md:769 引用 13.9.4；无对应标题"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "severity": "P2",
+      "description": "重编号遗留的纯文本小节指针不一致：13.5 已把原四个无编号小节改成 13.5.5–13.5.8，但 errata E-a「（本轮实测）」、E-b「（观察到的栈）」与自测第 2 题「（本轮实测）」仍用裸标题指代 13.5.5/13.5.7，与本节其余处（13.5.1/13.5.4）用编号的写法不一致。更严重的是「本轮实测」同时是 13.5.5 与 13.6.5 两节标题，裸标题指针产生歧义，读者无法确定指 13.5 还是 13.6。建议统一改为编号 13.5.5/13.5.7。",
+      "evidence": "src/part4/ch13.md:1074,1076,1099 裸标题；src/part4/ch13.md:1003「### 13.5.5 本轮实测」与:1254「### 13.6.5 本轮实测」标题同名"
+    }
+  ]
+}

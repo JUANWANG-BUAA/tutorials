@@ -1,0 +1,90 @@
+{
+  "reviewer": "r5-ch04a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动逐字读完 4.1–4.6 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/常见错误/即时自测），并打开 bench/compiler-lab 的 src/lib.rs、两个 bin、三个 rejected 探针、extra.py、results/stable-02/environment.txt、extra-02/layout.csv、move_cost.csv、drop_paths.csv、stable-02 的 conditional_drop MIR 与 cloned_sum/borrowed_sum/option_drop LLVM IR 及汇编、tests.txt、extra-02/nightly.txt、extra-03 转储与 unpretty-manifest.txt，逐条回核。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "分层证据的三个可对核落点全部成立：①4.1.5 工具链事实（Rust 1.99.0、commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、Apple M5 Pro、macOS 27.0.1、hw.cachelinesize=128、host aarch64-apple-darwin、profile 无 target-cpu=native）逐条命中 environment.txt；②[@ex-4.1.1] 声明的 Vec<u64> 句柄 24 字节命中 layout.csv（24/8），且 24=3 个 8 字节机器字与「原三个机器字写成零」自洽；③缓存行 128 与机器型号全程按[@def-4.1.3]限定为本机观察、[think-4.1.1]明确拒斥把它升格为 ARM64 常数，未见把本机数当 SLA 或编造实测。E-a…E-f 与即时自测的层级判断无内部矛盾。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/environment.txt:5 rustc 1.99.0 (b940084d7 2026-09-28)",
+        "bench/compiler-lab/results/stable-02/environment.txt:6-13 commit-hash b940084d.../host aarch64-apple-darwin/LLVM version 23.1.1",
+        "bench/compiler-lab/results/stable-02/environment.txt:22-25 machdep.cpu.brand_string: Apple M5 Pro / hw.cachelinesize: 128 / profile opt-level=3...panic=unwind / RUSTFLAGS=<unset>",
+        "bench/compiler-lab/results/extra-02/layout.csv:2 Vec<u64>,24,8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.2.4 的两段补采时间线与磁盘证据一致：2026-10-27 那轮「拿不到 nightly」确有 extra-02/nightly.txt 记录 `error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'`；2026-11-01 补采的 extra-03/hir-tree.txt=3113744 字节、thir-flat.txt=904549 字节与 unpretty-manifest.txt 登记值逐位吻合，manifest 亦确认 rustc 1.101.0-nightly commit 16d1ffac1、两条命令退出码 0。正文『可核对样例』逐字命中：hir-tree.txt:10566 即 `DefId(0:15 ~ lib[5cf2]::borrowed_sum) => OwnerNodes {`、thir-flat.txt:13916 即同名 THIR 块，DefId 0:15 与 borrowed_sum 都对上。『thir-flat 有母本原文、hir-tree 在已登记副本中 0 命中』也复核通过（thir.html 含 `-Zunpretty=thir-flat` 一处；.work 全树检索 hir-tree 无命中）。未见把文档样例冒充本机转储。",
+      "evidence": [
+        "wc -c results/extra-03/hir-tree.txt=3113744, thir-flat.txt=904549（与正文 4.2.4 一致）",
+        "bench/compiler-lab/results/extra-03/unpretty-manifest.txt:6 rustc 1.101.0-nightly (16d1ffac1 2026-10-26)",
+        "bench/compiler-lab/results/extra-03/hir-tree.txt:10566 DefId(0:15 ~ lib[5cf2]::borrowed_sum) => OwnerNodes {",
+        "bench/compiler-lab/results/extra-03/thir-flat.txt:13916 DefId(0:15 ~ lib[5cf2]::borrowed_sum):",
+        "bench/compiler-lab/results/extra-02/nightly.txt:2 error: missing manifest in toolchain",
+        ".work/cpp-rust-sources/compiler/thir.html 含 -Zunpretty=thir-flat；grep -rl hir-tree .work 无命中"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两个「真正被拒绝」的失败输入逐行匹配源码：use_after_move.rs 正文所写 `let data = vec![1u8]; drop(data); println!(\"{}\", data.len());` 与磁盘文件一字不差，maybe_uninitialized.rs（[@ex-4.3.2] 内联那段）亦然。诊断码 E0382/E0381 同时命中 probes/rejected/expected.tsv 与 extra-02/{use_after_move,maybe_uninitialized}.txt 的 `error[E0382]`/`error[E0381]`。关键断言「编译器在产生可执行程序之前拒绝、运行时无补救」由 extra.py 实现坐实：第 24–26 行用 `rustc --edition=2024` 编译拒绝输入并断言 `process.returncode != 0 and error in process.stderr`，全程只编译不运行该输入，[@ex-4.3.3]/[think-4.3.1] 关于「旧位模式仍在、双所有者并存导致真正双重释放」的推断与此纪律自洽，无「实测运行了 UB」的编造。",
+      "evidence": [
+        "bench/compiler-lab/probes/rejected/use_after_move.rs:1 (与正文 4.3.5 代码块一致)",
+        "bench/compiler-lab/probes/rejected/maybe_uninitialized.rs:1 (与[@ex-4.3.2]代码块一致)",
+        "bench/compiler-lab/probes/rejected/expected.tsv:1-2 use_after_move→E0382 / maybe_uninitialized→E0381",
+        "grep error[E0382] results/extra-02/use_after_move.txt; error[E0381] results/extra-02/maybe_uninitialized.txt",
+        "bench/compiler-lab/extra.py:24-26 rustc --edition=2024 probes/rejected/...; assert process.returncode!=0 and error in stderr"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.4.5 声称『以下是 conditional_drop 的完整函数 MIR，来自 stable release 产物，归档为 stable-02/codegen/compiler_lab-55987aab45b3e67f.mir』——我从该归档抽出该函数与正文代码块逐行比对，bb0–bb12、`switchInt(copy _1) -> [0: bb8, otherwise: bb1]`、`_8 = const true`(bb0)/`_8 = const false`(bb1)、`_5 = move _3`+`drop(_5)`、`bb6 (cleanup): switchInt(copy _8) -> [0: bb4, otherwise: bb5]`、bb5 `drop(_3)`、bb3 `drop(_4)`+`unwind terminate(cleanup)` 全部逐字一致，非手写伪 MIR。[@ex-4.4.3] 四问答解与产物相符：debug first=>_3、_8 于 bb1 置 false、bb6 依 _8 分流至 bb4 resume 或 bb5 drop(_3)、正常边 bb9/bb11→bb10/bb12→bb2 return。4.4.2 alias_conflict.rs 逐行匹配且 E0502 命中 expected.tsv+extra-02/alias_conflict.txt；panic=unwind 与 environment profile 相符；『borrowck 不插引用计数、DropProbe 靠 Cell 计数』与 lib.rs 一致。",
+      "evidence": [
+        "awk 抽取 results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 的 fn conditional_drop 全函数，与正文 4.4.5 代码块逐行一致",
+        "MIR bb1: `_8 = const false; _5 = move _3; drop(_5)`；bb6(cleanup): `switchInt(copy _8) -> [0: bb4, otherwise: bb5]`；bb5: `drop(_3)`",
+        "bench/compiler-lab/probes/rejected/alias_conflict.rs:1 与正文 4.4.2 一致；grep error[E0502] results/extra-02/alias_conflict.txt",
+        "bench/compiler-lab/results/stable-02/environment.txt:24 profile ... panic=unwind"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.5.4 计时表我用 /usr/bin/python 侧的原始 CSV summary 行复算而非抄正文：move_cost.csv 末两行 summary,borrow,0.059091466,0.001232534,0.058639890,0.063337811 与 summary,clone,0.202739443,0.006948621,0.201626642,0.225701849，四列 mean/N-1 sd/批 p50/批 p99 与表内 0.059091/0.001233/0.058640/0.063338、0.202739/0.006949/0.201627/0.225702 逐位吻合；差值 0.202739443−0.059091466=0.143648 与比值 3.43（[@ex-4.5.2]）复算成立；units=16384、每 case 21 批（round 0–20）齐；16384×8B=128KiB 与『复制 128KiB』相符。产物核验[@def-4.5.2]成立：cloned_sum 的 .ll 含 `__rust_alloc`、`llvm.memcpy.p0.p0.i64`、`__rust_dealloc`，.s 中 `_memcpy` 出现 6 次；borrowed_sum 的 .ll 含 9 处 `<2 x i64>`、7 处向量 add、1 处 `llvm.vector.reduce`，印证『向量加法归约』非空穴来风。move_cost.rs/borrowed_sum/cloned_sum 源码逐行匹配。[think-4.5.1] 对『搜到 add 即算核验』的限定与结论范围克制得当。",
+      "evidence": [
+        "results/stable-02/move_cost.csv summary 行 = 0.059091466/0.001232534/0.058639890/0.063337811；0.202739443/0.006948621/0.201626642/0.225701849（复算，非抄正文）",
+        "0.202739443-0.059091466=0.143647977≈0.143648；0.202739443/0.059091466=3.431≈3.43",
+        "awk cloned_sum .ll: __rust_alloc / llvm.memcpy.p0.p0.i64 / __rust_dealloc 均留存；grep -c _memcpy .s = 6",
+        "awk borrowed_sum .ll: <2 x i64>×9, add <×7, llvm.vector.reduce×1",
+        "bench/compiler-lab/src/lib.rs:64-73 borrowed_sum/cloned_sum 与正文 4.5.2 代码块一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.6.4 计时表复算：drop_paths.csv summary,implicit,2.372295921,0.098043539,2.354228506,2.757235226 与 summary,option,2.587951301,0.246970209,2.669364888,2.980856071 与表内 mean/sd/p50/p99 逐位吻合；[@ex-4.6.3] 均值差 2.587951301−2.372295921=0.215655≈0.216、sd 比 0.246970209/0.098043539=2.519≈2.5 复算成立。[@ex-4.6.1] 期望值独立性与 checksum 相符：drop_paths.rs 两 case expected=8192、units=4096，CSV 中 checksum=8192×n（implicit n=1037→8495104、option n=931→7626752）逐批命中，证实每 run 返回 8192、资源总量未变。4.6.3 尺寸表五行（DropProbe 8/8、Option<DropProbe> 8/8、Vec<u64> 24/8、&[u64] 16/8、Option<&u64> 8/8）逐位命中 layout.csv。4.6.5『Option 合流保留空/非空指针状态、与 IR 的 phi 和 null 比较对应、非额外堆盒子』复核成立：option_drop 的 .ll 含 1 处 phi、1 处 ptr null 比较、0 处 alloc/memcpy；conditional_drop 亦 0 处 alloc。4.6.6 `panic_unwinds_initialized_guards ... ok` 见 tests.txt（8 passed）。lib.rs 的 DropProbe/conditional_drop/option_drop 源码逐行匹配正文。均值差无配对区间、缺 PMU 不谈机制的克制与[@def-1.4.2]/[@def-1.6.2] 一致。",
+      "evidence": [
+        "results/stable-02/drop_paths.csv summary 行 = 2.372295921/0.098043539/2.354228506/2.757235226；2.587951301/0.246970209/2.669364888/2.980856071（复算）",
+        "2.587951301-2.372295921=0.215655≈0.216；0.246970209/0.098043539=2.519≈2.5",
+        "drop_paths checksum：8192×1037=8495104(implicit)、8192×931=7626752(option) 与 CSV 一致",
+        "results/extra-02/layout.csv:9-11 及 :2,6 逐位对应 4.6.3 五行尺寸表",
+        "awk option_drop .ll: phi×1, ptr null 比较×1, __rust_alloc|memcpy×0；awk conditional_drop .ll alloc×0",
+        "results/stable-02/tests.txt:52 test panic_unwinds_initialized_guards ... ok（:56 8 passed）",
+        "src/lib.rs:75-98 DropProbe/conditional_drop/option_drop 与正文 4.6.2 一致"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

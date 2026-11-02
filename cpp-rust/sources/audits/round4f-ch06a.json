@@ -1,0 +1,96 @@
+{
+  "reviewer": "r4f-ch06a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
+  "provenance": "冷启动无上下文：先读写作规范/25 模板全文，再完整读 src/part2/ch06.md 的 6.1–6.6 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/常见错误/即时自测，行 65–1279，共 1215 行 42992 字符，未抽样），逐条把断言拿去对真实证据：用 /usr/bin/python3 从 bench/compiler-lab/results/{stable-01,stable-02}/{vectorize,ctfe_table}.csv 复算全部测量数字，逐行读 src/lib.rs、src/bin/vectorize.rs、src/bin/ctfe_table.rs、tests/contracts.rs、run.sh、extra.py，逐字比对 results/stable-02/codegen/*.ll 与 *.s 的 IR/汇编摘录，并跑 tools/list_uncollected_claims.py 只看 ch06 输出。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了本节全部四层产物断言。① [@def-6.1.4] 的四层与 [@ex-6.1.1] 解答 1 说「第 5 章出现过只有名为 vector.body 的标量展开」——本轮 ch06 的 IR 里 add_slices 主体确有 4 条 add <2 x i64>（非仅块名），与「IR 名字不等于本机 SIMD」的边界一致。② 表「add_slices 形参拆成指针与长度 / output noalias align 8 / input readonly align 8 / 向量主体 2×i64 / runtime_table 返回 sret 指向 256 字节」逐条在 IR 签名里命中：output.0 为 ptr noalias nofree noundef nonnull align 8、output.1 为 i64 长度，input.0 带 readonly align 8，runtime_table 为 sret([256 x i8]) align 1 dereferenceable(256)。③「本轮目标是 aarch64-apple-darwin、源码没有手写目标专用 SIMD、没有用 target-cpu=native」：*.s 里的 ldp q/add.2d/stp q 属 aarch64 NEON 指令，run.sh:26 的 codegen 命令只有 --emit=mir,llvm-ir,asm，无 -C target-cpu=native，断言成立。④ 即时自测第 2 题「本轮向量 load 的 align 仍为 8」：全 IR 仅 3 处 align 16，逐一看上下文分别是 alloca [16 x i8]（Instant 的 elapsed）、store i128 %52、Display3fmt 的形参属性，没有一条是向量 load，正文说法没有被夸大。⑤ 静态量 16384×8 字节 = 128 KiB（6.4.5 也这么写）复算相符。本节所有断言可对核的都核上了，无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:65-267（6.1 全文）",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll（add_slices 签名参数属性、sret([256 x i8]) align 1、add <2 x i64> 计 4 条、align 16 三处上下文）",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s（ldp q/add.2d/stp q 为 aarch64）",
+        "bench/compiler-lab/run.sh:26（cargo rustc --release --lib -- --emit=mir,llvm-ir,asm，无 target-cpu=native）",
+        "复算：16384*8=131072 B=128 KiB"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对别名/属性/内部可变性三条线。① [@def-6.2.2] 与 6.2.2「output 带 noalias、input 带 readonly、两者对齐观察为 8」逐字命中 IR 签名（见 6.1 条），不是作者口头承诺而是降级事实。② [@ex-6.2.1] 三问答：第 1 问依赖 noalias＋6.3 可见循环体，与 add_with_calls 的 IR 里 add <2 x i64> 计 0 条、call 6 次、scalar_add 出现 2 次的产物事实一致；第 2 问把 readonly 限定为「经该指针不写」表述正确；第 3 问「align 8 不等于 16 字节保证」正确，且所引「6.10 索引」确实存在（ch06.md:1641 有 ## 6.10 常见错误索引），交叉引用可落地。③ 6.2.3「第 4 章的 DropProbe 持有 Cell 引用」在本包可核：src/lib.rs:72 为 pub struct DropProbe<'a>(pub &'a Cell<u64>)，正文没有夸大。④ 6.2.5「编译拒绝输入报 E0502、该程序没有被执行」：extra-02/alias_conflict.txt:2 确为 error[E0502]: cannot borrow `data` as mutable because it is also borrowed as immutable；extra.py:26 的断言形状是 returncode != 0 且错误码在 stderr，即只编译不执行，与正文一致。⑤ 6.2.6/判定流程第 4 步「本轮没有构造 raw pointer 对照，所以不给数字也不给趋势」与 list_uncollected_claims.py 对 ch06.md:366、417 的判定（没有匹配到同类产物）相互印证，属诚实留空。无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:268-421（6.2 全文）",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll（noalias/readonly/align 8；add_with_calls 体内 call 6、scalar_add 2、向量加法 0）",
+        "bench/compiler-lab/src/lib.rs:72（DropProbe 持 &Cell<u64>）",
+        "bench/compiler-lab/results/extra-02/alias_conflict.txt:2,13（E0502）",
+        "bench/compiler-lab/extra.py:16,26（非零退出＋错误码断言，未执行）",
+        "tools/list_uncollected_claims.py → [ch06.md:366] [ch06.md:417] 没有匹配到同类产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节是代码与产物断言最密的，逐行对完。① 6.3.2 的两段内核与 src/lib.rs:148-166 逐字符相同（含 add_slices 上方的 #[inline(never)]，lib.rs:147）。② 6.3.4 IR 摘录五行（%wide.load/%wide.load10/%8 = add <2 x i64>/store/%index.next = add nuw i64 %index, 8）逐字命中 *.ll，且「实际主体同时处理四组 2×i64、一次主体迭代推进八个元素」与该函数体内 add <2 x i64> 恰为 4 条、index 步进为 8 相符。③ 6.3.5 汇编十二行（4×ldp q、4×add.2d、2×stp、subs x11,x11,#8、b.ne LBB6_5）在 *.s 里按同一顺序连续出现（文件用制表符分隔，去空白后逐行命中，标签确为 LBB6_5）。④ 6.3.6 测试体与 tests/contracts.rs:57-69 相同；「遍历 0 到 129」= for len in 0..130 ✓；「输出初始化为 u64::MAX」+ 断言 *got == v.wrapping_sub(1) 算得对：u64::MAX.wrapping_add(v) = v-1 (mod 2^64)。⑤ 6.3.7 的 should_panic(expected=\"assertion\") 与 lib.rs:149 循环前的 assert_eq! 匹配，断言消息含 assertion 子串。⑥ 6.3.1/[@def-6.3.1] 关于 zip 按较短一侧结束的语义描述正确，删断言即改变契约的推论成立。⑦ 即时自测第 3 题「1000 = 125×8」算术正确，且诚实写明该长度实际路径未采集。无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:422-641（6.3 全文）",
+        "bench/compiler-lab/src/lib.rs:147-166（add_slices/scalar_add/add_with_calls 与正文一致）",
+        "bench/compiler-lab/results/stable-02/codegen/*.ll（摘录五行逐字命中；add_slices 体内 add <2 x i64>=4、load<2xi64>=8、store=4）",
+        "bench/compiler-lab/results/stable-02/codegen/*.s（ldp/add.2d/stp/subs/b.ne LBB6_5 连续命中）",
+        "bench/compiler-lab/tests/contracts.rs:57-83（三段测试体与正文相同）",
+        "复算：0..130 覆盖 0..=129；u64::MAX+v ≡ v-1 (mod 2^64)；1000=125×8"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "测量数字全部从归档复算，没有一处可抄。① 用 /usr/bin/python3 读 results/stable-02/vectorize.csv 的 zip/calls 各 21 个 ns_per_unit 批值，自行求均值、N−1 标准差与 nearest-rank 分位，得 zip 0.347104 / 0.016887 / 0.346487 / 0.378854，calls 0.723644 / 0.059594 / 0.718884 / 0.833090，与 6.4.4 表逐位一致；差值 0.723644−0.347104=0.376540、均值比 2.0848（正文与自测写 2.08）一致。② 分位数定义核对：正文先交代「样本是 21 个批均值、nearest-rank、ceil(21×0.99)=21 故 p99 即最大批值」，复算确为 max=0.378854/0.833090，p50=values[10]，与 lib.rs:56 的取值方式相同，符合「统计量要写明分位数定义」的要求。③ 6.4.8「第一轮 stable-01 的 zip 均值为 0.311992」独立复算命中（0.311992212），且该轮 calls 均值 0.630335、比值 2.0204，「两轮同方向的调用边界回退、不外推固定倍数」成立。④ 计量表逐行核对源码：Vec 创建在 main 计时外、run() 内 fill(0)→内核→borrowed_sum 三步都在 measure 的批计时区间（lib.rs:33-38）、批 checksum 断言在 elapsed 之后（lib.rs:38-39）、预热 500ms、21 批、case 轮转 (round+offset)%len（lib.rs:28-30），全部与正文一致；单位 ns/元素来自 elapsed/(n*16384)。⑤ 入口正文块与 src/bin/vectorize.rs 26 行逐字符相同。⑥ 未采集声明核对：归档无 PMU/cache/带宽文件，profiler 那格也核对到——stable-02 的 sample-run.csv 里 case 只有 generic/dyn_item/dyn_batch（6.7 的分派基准），确无 vectorize，故 6.4.9「采样 profiler 没有附着到正式向量测试」不是空话；run.sh:29 的 .work/measure.lock 支持「独占目录锁」。无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:642-859（6.4 全文）",
+        "复算 stable-02/vectorize.csv：zip mean=0.347104 sd=0.016887 p50=0.346487 p99=max=0.378854；calls mean=0.723644 sd=0.059594 p50=0.718884 p99=max=0.833090；差=0.376540 比=2.0848（各 21 批）",
+        "复算 stable-01/vectorize.csv：zip mean=0.311992，calls mean=0.630335，比=2.0204",
+        "bench/compiler-lab/src/bin/vectorize.rs:1-26（与正文 6.4.2 逐字相同）",
+        "bench/compiler-lab/src/lib.rs:13-59（500ms 预热、21 批、轮转、断言在 elapsed 后、N−1 sd、values[10]/values[20]）",
+        "bench/compiler-lab/results/stable-02/sample-run.csv（仅 generic/dyn_item/dyn_batch，无 vectorize）",
+        "bench/compiler-lab/run.sh:29（LOCK=…/.work/measure.lock）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "CTFE/常量传播/Miri 三分法与证据落地逐条核。① 6.5.3 三段源码（bit_table、static BIT_TABLE = bit_table()、带 black_box(0usize) seed 的 runtime_table、lookup_bits）与 src/lib.rs:168-209 逐字相同，注释也在。② 6.5.4「rejected/const_bounds.rs 在编译时报告 E0080、不生成可执行版本」：probes/rejected/const_bounds.rs 单行内容 const BAD: u8 = [1u8; 2][3]; 与正文所示一致，extra-02/const_bounds.txt:2 为 error[E0080]: index out of bounds: the length is 2 but the index is 3，命令是 rustc --emit=metadata（没有可执行产物），extra.py:26 检查 returncode != 0 且错误码在 stderr——正文「错误实际由引用它的 main 触发求值需求」的说明与 main() 里 println!(\"{BAD}\") 的写法相符。③ 6.5.5「本轮没有执行 cargo miri test，nightly 安装也不可用」：results/stable-02/tests.txt 全文没有 miri，跑的是 cargo test --offline，测试名单含 ctfe_exhaustive_domain/vector_tails_and_max_values/unequal_lengths_are_rejected，测试列表里确实没有 Miri 这一格，正文没有伪造绿色状态；extra-02/nightly.txt 也在归档里。④ 静态量核对：输入域 0..=255 共 256 项、每项值为该字节置一位计数、范围 0..8、表 256 字节——与 IR 的 [256 x i8]、sret([256 x i8]) align 1、dereferenceable(256) 相符，「没有近似误差」与 [@def-6.6.2] 的穷举参考值 count_ones 相符。⑤ 6.5.7 的「本节没测构建期耗时/各节尺寸/冷启动」同时点名 6.7.6 的 one/many/thin 与归档 results/extra-02/{one,many,thin,pgo}-size.txt 与 codegen-build.txt：四个 size 文件与 codegen-build.txt 在磁盘上全部存在，交叉引用可落地（list_uncollected_claims.py 在 ch06.md:1020、1069 给出的正是这些产物目录，属「已登记」而非「假未采集」）。无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:860-1073（6.5 全文）",
+        "bench/compiler-lab/src/lib.rs:168-209（bit_table/BIT_TABLE/runtime_table/lookup_bits 逐字相同）",
+        "bench/compiler-lab/probes/rejected/const_bounds.rs:1",
+        "bench/compiler-lab/results/extra-02/const_bounds.txt:2（error[E0080]: index out of bounds: the length is 2 but the index is 3；命令为 --emit=metadata）",
+        "bench/compiler-lab/extra.py:16,26",
+        "bench/compiler-lab/results/stable-02/tests.txt（cargo test --offline，无 miri 条目）",
+        "磁盘存在性：results/extra-02/{one,many,thin,pgo}-size.txt、results/stable-02/codegen-build.txt 均存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "第二张计时表与布局表都复算/回查过。① results/stable-02/ctfe_table.csv 各 21 批复算：static_table mean=0.169413 sd=0.001526 p50=0.169365 p99=max=0.172596，rebuild_table mean=1.953818 sd=0.017490 p50=1.949261 p99=max=1.997598，与 6.6.5 表逐位一致；[@ex-6.6.1] 的比值 1.953818/0.169413=11.5329，正文写 ≈11.5、自测第 4 题写「快了 11 倍」并立刻追问口径，未夸大。② 单位口径核对：measure(&mut cases, input.len()) 且 input 为 (0u8..=255).collect() 共 256，CSV 的 units 列确为 256，故「ns/字节」而非「ns/元素」的列名正确；入口正文块与 src/bin/ctfe_table.rs 22 行逐字相同。③ 6.6.4 布局表逐行回查 results/extra-02/layout.csv：[u8;256]=256/1 ✓、&[u64]=16/8 ✓（u64 的 8/8、u8 的 1/1 两行不在这份 CSV 里，但属语言类型事实且值正确，不构成矛盾）；「runtime_table 结果 256 字节 / align 1」与 IR 的 sret([256 x i8]) align 1 相符；[@def-6.6.3] 区分最小对齐与实际放置、不把它当 cache residency 保证的表述与 6.1/6.2 的 align 讨论一致。④ 6.6.6「慢路径不是已被优化掉的假构造」：add_with_calls 那类保留调用事实已证，runtime_table 的 IR 仍在（签名存在，返回经 sret 传递），6.5.3 的 black_box 屏障在源码 lib.rs:189 逐字命中，故 rebuild 侧确实在做事；「本轮没有测冷启动首次加载」与归档里无冷启动产物相符。⑤ 6.6.8 受控外推与 6.6.3 穷举验证（tests/contracts.rs:78-83 逐项比 count_ones）互不越界。无 P0/P1。",
+      "evidence": [
+        "src/part2/ch06.md:1074-1279（6.6 全文）",
+        "复算 stable-02/ctfe_table.csv：static_table 0.169413/0.001526/0.169365/0.172596；rebuild_table 1.953818/0.017490/1.949261/1.997598；比值 11.5329；units=256",
+        "bench/compiler-lab/src/bin/ctfe_table.rs:1-22（与正文 6.6.2 逐字相同）",
+        "bench/compiler-lab/tests/contracts.rs:78-83（ctfe_exhaustive_domain）",
+        "bench/compiler-lab/results/extra-02/layout.csv（[u8;256],256,1 / &[u64],16,8）",
+        "bench/compiler-lab/results/stable-02/codegen/*.ll（sret([256 x i8]) align 1 dereferenceable(256)）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

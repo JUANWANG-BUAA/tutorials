@@ -1,0 +1,113 @@
+{
+  "reviewer": "r4-ch07b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动通读 src/part2/ch07.md 第 1353-1926 行（7.7 到 7.11 全部正文与每个 preview、def、ex、think、method、errata、即时自测盒），把数字断言拿到 bench/results/local/atomic-4.txt、atomic-1.txt、handoff.txt、publication.txt、profile/sample.txt、profile/workload.txt、profile/sample-command.txt、environment.txt、source-hashes.json 与 bench/src/slot.rs、bench/src/bin/atomic_contention.rs、bench/examples/publication.rs、bench/results/local/atomics.s、tools/run_benchmarks.sh 逐条复算或逐行对照，出处类断言只对 src/appendix/coverage.md 与 sources/web.json、sources/reviews/S10.md 回查。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节全部自称实测的数字都回档复算过且成立：四线程 Adjacent 均值 5.253、标准差 1.408、批次 p50 5.854、Padded 均值 0.418 逐字命中 atomic-4.txt 的汇总行；单线程对照确无同量级改善（Shared 1.703、Adjacent 1.691、Padded 1.697）。profiler 段的 826、3281、847 在 profile/sample.txt 里都能逐字指到（主线程 Thread_950126 合计 826 且其栈全在 Barrier 等待链上；3281 与 847 是 Sort by top of stack, same collapsed 段的两行）；7 批工作线程时长 213+213+212+158+14+13+3 恰等于 826，说明 826 确实是主线程全程等待观察数。publication 反例与 bench/examples/publication.rs 逐行相符，正文给出的输出与 bench/results/local/publication.txt 的 73 字符整行逐字相同。7.7.6 关于 tools/run_benchmarks.sh 按顺序执行且保存源码 SHA-256 的两条断言经脚本与 source-hashes.json 证实（脚本无后台符，第 37 行做 sha256 清单）。判 finding 的原因是三条教学级问题：把 1.408 说成只比所有模式大一个量级（与 0.002 比是近三个数量级）、伪代码把 publication.rs 的两个 barrier 合成一步、think 盒用 p50 作双峰论据时没在本节交代批次口径。7.7.3 的剖析吞吐不混入无 profiler 批次这句我只做到结构核对（profile/workload.txt 头三行 threads=4 iterations_per_thread=10000000 samples=2 与正文命令逐字一致，且它是独立于 atomic-4.txt 的文件），没有重跑程序验证。",
+      "evidence": [
+        "bench/results/local/atomic-4.txt:Adjacent-Relaxed mean=5.253 sd=1.408 batch_p50=5.854 n=21；Padded-Relaxed mean=0.418 sd=0.002",
+        "bench/results/local/atomic-1.txt:Shared-Relaxed mean=1.703、Adjacent-Relaxed mean=1.691、Padded-Relaxed mean=1.697（单线程无改善，支持正文 7.7.1 第三、四句）",
+        "bench/results/profile/sample.txt:23 行 826 Thread_950126 com.apple.main-thread；288 行 3281（worker 闭包符号 ___rust_begin_short_backtrace...3runs0_00uEB1d_）；289 行 __psynch_cvwait 847；287 行段名 Sort by top of stack, same collapsed (when >= 5)；1 行 every 1 millisecond",
+        "bench/examples/publication.rs:13-24 与正文 7.7.2 伪代码一致（ready.store Release→barrier→payload.store 42 Relaxed；消费者 published.wait、assert ready.load(Acquire)、payload.load(Relaxed)）；bench/results/local/publication.txt 逐字为 ready=true payload=0: wrong program order, not a hardware-reordering test",
+        "bench/results/profile/workload.txt:1 threads=4 iterations_per_thread=10000000 samples=2，与正文命令 atomic-contention 4 10000000 2 相符；bench/src/bin/atomic_contention.rs:90 断言 threads 在 1..=64、samples 在 2..=1000，命令合法",
+        "tools/run_benchmarks.sh:25-27 三个程序顺序重定向（无 & 后台），37 hashlib.sha256 清单；bench/results/local/source-hashes.json 存在",
+        "src/part2/ch07.md:1367-1368、1407、1451-1452、1507 为本节被核对句"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节几乎全是边界声明，可对核的两处都过：7.8.7 声称单槽测试覆盖空读、满写、正常移出、遗留消息四种路径，bench/src/slot.rs 恰好是四个测试且一一对上（capacity_one_and_reuse 第 108 行 try_recv 空槽返回 None、第 110 行第二次 try_send 把值 5 还给调用者；received_payload_is_not_dropped_again 第 172 行移出后销毁；unread_payload_is_dropped_once 第 160-162 行端点结束后未读载荷析构一次）；跨线程 String 多代循环对应 non_copy_payload_crosses_threads 第 117-145 行的 2000 轮 message-i。正文说这些测试没有验证线程异常退出后的进度，与磁盘一致：slot.rs 的 tests 模块只有这四个 #[test]，没有 panic、取消或超时相关用例。7.8.4 的槽位固定存在到端点结束对应 slot.rs:86-93 的 Drop 实现。7.8.9 与判定流程末行把本机 128 字节缓存行与全部 ns 数排除在可迁移结论外，与 environment.txt 的 hw.cachelinesize 128 一致。7.8.3 的八项跨进程清单、7.8.2 与 7.8.4 两个定义盒（载荷标志对合并通知、lock-free 对 wait-free 与 ABA）属规范性陈述，没有可核对的实测断言，我按通读判定其内部不自相矛盾。未核两项：def-7.6.1 状态机原文是否真的写明 empty 到 full 到 empty 恰好一次（在 7.6，不在我的区间），以及下一章 Tokio 与 Waker 的交叉引用是否成立。",
+      "evidence": [
+        "bench/src/slot.rs:104-114、117-145、154-163、165-175（四个 #[test] 与正文表的四行一一对应）",
+        "bench/src/slot.rs:86-93（Drop 里 assume_init_drop，支持遗留消息析构一次）",
+        "bench/results/local/environment.txt:hw.cachelinesize 128 与 No affinity, governor, thermal isolation or PMU collection configured by this script",
+        "src/part2/ch07.md:1694-1699（四路径表）、1701-1704（多代循环与两条没验证项）、1751（不迁移 128 字节）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "三条出处交代里两条落地、一条挂错母本。落地的一条是 std::sync::atomic 抓取版本 1.99.1：src/appendix/coverage.md:50 记 atomic/STD-ATOMICS Memory model / Portability 在线1.99.1 核读映射，sources/web.json 的 atomic 条目 sha256 334049770f651566ff55fe943fc1343423c5df17c309b82ebabeb76128febc3a 在 coverage.md:4064 同步登记，正文 7.4.4 也另记本机 rustc 1.99.0，版本口径没有混用。Effective Rust 第 17 条也落地：coverage.md:39 的 S08/R17-A 标题就是第17条 数据竞争、Mutex与共享生命周期（PDF146-155），coverage.md:2526 的 S08-U0022 为第 17 条：对共享状态的并行性保持警惕（PDF146）。问题在第 334 页：正文把它写在《Rust 程序设计语言》的句子里，但台账里唯一的 334 页内存模型记录属于 S10，而 coverage.md:27 明确 S10 是 Rust 参考手册.pdf（376 页），S11 才是 Rust 程序设计语言 简体中文版.pdf（545 页）；sources/reviews/S10.md 的 review-s10-u0095 行是 L1 内存模型 334 read-mapped，备注原书明确内存模型尚不完备，coverage.md:44 的 S10/REF-MM 内存模型（历史说明）PDF334 的映射目标正是 part2/ch07.md。S11 映射进 ch07 的只有一行 coverage.md:2883（S11-U073 共享状态，PDF395）。所以这句的出处被记到了错误的母本上，且角括号里的引文措辞与台账措辞不同（内存模型未完全明确 对 原书明确内存模型尚不完备）。另外正文说 16.1/16.3/16.4 覆盖 join 完成语义、共享状态与 Send/Sync，台账对 S11 只有共享状态一行，16.1 与 16.4 的落点在 coverage.md 里检索不到。我没有翻 S11 的 PDF 第 334 页原文，也没有逐字比对 web.json 里 mit 与 stanford 两个条目的 URL 与正文 7.9 在线入口深链是否同一路径（web.json 记的 stanford 条目是课程根地址，正文给的是 lecture-notes/lecture-13-2022 深链）。",
+      "evidence": [
+        "src/appendix/coverage.md:27 S10 为 Rust 参考手册.pdf；:28 S11 为 Rust 程序设计语言 简体中文版.pdf；:44 S10/REF-MM 内存模型（历史说明）PDF334 映射到 part2/ch07.md#sec-cpp-rust.2.7.1",
+        "sources/reviews/S10.md:review-s10-u0095 行 内存模型 334 read-mapped，备注 原书明确内存模型尚不完备",
+        "src/appendix/coverage.md:2883（S11 映射进 ch07 的唯一行是 S11-U073 共享状态 PDF395）；在 coverage.md 与 sources/sections.json 中检索 S11- 开头的 16.1/16.3/16.4 行为 0",
+        "src/appendix/coverage.md:39 与 :2526（Effective Rust 第 17 条落地）；:50 与 :4064（atomic 在线1.99.1 与 sha256 落地）",
+        "src/part2/ch07.md:1808（被核对句）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "索引表的统计口径全对：我按 E-a 到 E-g 逐节点数，7.1 到 7.8 分别是 6、7、7、6、6、6、7、6，合计 51，与正文 1823 行的八份清单共 51 条完全一致，表里每行标的 E-a … E-f 或 E-a … E-g 也与各节实际条数一一对应。表后四条章级错误里可核的三条都过：第 1 条把全部计时绑到 Apple M5 Pro、18 逻辑 CPU、128 字节缓存行与未设亲和性，逐字对上 environment.txt 的 machdep.cpu.brand_string Apple M5 Pro、hw.ncpu 18、hw.cachelinesize 128、RUSTFLAGS 空与 No affinity 那句，也对上 7.5.5 表的 18 与未设置；第 4 条的忙等快 27 倍我用 handoff.txt 的 21 个原始批独立复算，slot 均值 112.239、sync_channel 均值 3070.823、比值 27.36，正文 7.6 把它限定为夹具内观察、不写成算法排名，口径一致；第 3 条用没测出来代替不需要证明是规范性陈述。第 2 条三层证明与 [@def-7.1.2] 的对应属概念复述，我只确认被引锚在 7.1 存在。未核：本节的 errata 索引没有点名任何归档，所以无数字可复算；每条被引锚点在渲染后的可解析性交给机械层。",
+      "evidence": [
+        "逐节点数 src/part2/ch07.md 的 E-a…E-g：{7.1:6, 7.2:7, 7.3:7, 7.4:6, 7.5:6, 7.6:6, 7.7:7, 7.8:6} 合计 51，与 ch07.md:1823 一致",
+        "bench/results/local/environment.txt:machdep.cpu.brand_string Apple M5 Pro、hw.ncpu 18、hw.cachelinesize 128、RUSTFLAGS=、No affinity...configured by this script",
+        "独立复算 bench/results/local/handoff.txt（21 批）：slot mean=112.239 sd=4.588 p50=110.408 max=127.900；sync_channel mean=3070.823 sd=313.740 p50=3103.542 max=3608.550；比值 27.36",
+        "src/part2/ch07.md:1836、1842（被核对句）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "小结与速查的 10 行里有数字的三行都过：0.418 与 0.070 都是四线程表的聚合吞吐倒数（atomic-4.txt 汇总行 mean=0.418 与 mean=0.070，单线程批是 1.697 与 0.275，正文没有把两者混用），速查行 0.418 ns/op 是什么 也正确标注为四线程合计；即时自测问题一 说本机分别生成 ldadd 与 ldaddal，bench/results/local/atomics.s 里 ldadd 两次、ldaddal 一次、ldapr 一次，属实；问题二关于墙钟除以四线程总操作数的解释与正文 7.5.7 的单位定义一致。复现命令三条都可落地：bench/Cargo.toml 存在，tools/run_benchmarks.sh 接收输出目录参数（脚本用 $out/atomic-1.txt），而 bench/results/ 下确实没有 reproduction 目录，与不要覆盖 local 结果的提醒相符；出口检查里指向 slot.rs 测试与原始 atomic-4.txt 的两行都有对应实物。判 finding 只因为一处指令名：出口检查要求在保存的 .s 中找到 mov/ldapr/ldadd，但本机与 apple-m5 的 atomics.s 里没有任何裸 mov 助记符，x86 产物是 movq（7.4.4 对照表自己也写 movq），字面执行这条检查会在最该看的文件里扑空。章末件五页的文件名与 src/part2 目录相符（ch07_summary、ch07_recall、ch07_exercises、ch07_exam、ch07_checklist 都在）。未核：[@def-1.5.2] 与章内 7 处跨章锚点是否解析成功（def-1.5.2 定义在 src/part1/ch01.md，链接可达性归机械层），以及 100 分、70 分及格是否在 ch07_exam.md 里兑现（不在我的区间）。",
+      "evidence": [
+        "bench/results/local/atomic-4.txt:Padded-Relaxed mean=0.418、Batched-Relaxed mean=0.070（四线程）；bench/results/local/atomic-1.txt:Padded 1.697、Batched 0.275（单线程，未被正文混用）",
+        "bench/results/local/atomics.s:ldadd x2、ldaddal x1、ldapr x1、ldr、ldar、str、stlr；对裸 mov 的检索为 0；bench/results/x86_64-linux/atomics.s 为 movq、lock addq、lock xaddq、xchgq",
+        "src/part2/ch07.md:764-772（7.4.4 表用 movq）对照 :1880（出口检查用 mov）",
+        "tools/run_benchmarks.sh:25-27 使用 $out 目录；bench/results 目录清单为 aarch64-android、apple-m5、local、profile、runtime-final、runtime-fixed、runtime-local、x86_64-linux，无 reproduction",
+        "src/part2/ch07.md:1852、1868、1880、1886-1902、1907-1913、1919-1925（被核对句）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "severity": "P1",
+      "description": "出处挂错母本。正文说《Rust 程序设计语言》的本地 PDF 第 334 页有一条历史记录（内存模型未完全明确），但台账里 334 页的内存模型记录属于 S10，而 coverage.md:27 明确 S10 是 Rust 参考手册.pdf，S11 才是 Rust 程序设计语言 简体中文版.pdf；S11 映射进 ch07 的唯一一行是 S11-U073 共享状态（PDF 395），没有任何 S11 行落在 334 页。同时角括号里的引文与台账措辞不一致：台账写 原书明确内存模型尚不完备。同一节把这条记录当作已核实的演化范围证据使用（coverage.md:44 的 S10/REF-MM 目标正是 part2/ch07.md），因此读者按正文回到 TRPL 第 334 页会找不到对应母本内容。",
+      "evidence": "src/appendix/coverage.md:27、:28、:44；sources/reviews/S10.md 的 review-s10-u0095 行（L1 内存模型 334 read-mapped，备注 原书明确内存模型尚不完备）；src/appendix/coverage.md:2883（S11 唯一映射进 ch07 的行是共享状态 PDF395）；src/part2/ch07.md:1808"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "severity": "P2",
+      "description": "同一句还声称 16.1/16.3/16.4 覆盖 join 完成语义、共享状态与 Send/Sync 三个落点，但台账侧我只找到共享状态一行（S11-U073，PDF395）映射到 ch07，16.1 与 16.4 对应的 S11 行在 coverage.md 与 sources/sections.json 里都检索不到。延伸阅读本身不必逐条有台账行，但本节末尾把回查责任交给 coverage.md 的逐行台账，这三条里只有三分之一能回查。",
+      "evidence": "在 src/appendix/coverage.md 中以 S11- 开头且含 16.1/16.3/16.4 的行为 0 条；含 part2/ch07 的 S11 行仅 1 条（coverage.md:2883）；src/part2/ch07.md:1808、:1819"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "severity": "P2",
+      "description": "出口检查的达标证据写成 在保存的 .s 中找到 mov/ldapr/ldadd，但同一章 7.4.4 对照表与归档都写 movq：本机与 apple-m5 的 atomics.s 检索裸 mov 得 0 条（只有 ldadd 2、ldaddal 1、ldapr 1），x86_64-linux 的产物是 movq/lock addq/lock xaddq/xchgq，aarch64-android 才有一条 mov x8, x0。按字面执行这条检查会在最该看的本机文件里扑空，且 mov 与 movq 的写法也和 7.4 自建的口径不统一。",
+      "evidence": "bench/results/local/atomics.s 指令行统计：mov 0、ldapr 1、ldadd 3；bench/results/x86_64-linux/atomics.s：movq、lock addq、lock xaddq、xchgq；src/part2/ch07.md:764-772 对照 :1880"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "think 盒的题干说 Adjacent 的标准差 1.408 却比所有模式大一个量级，数字本身对（归档 sd=1.408），但倍数说错：与 Shared 的 0.069 相比约 20 倍，与 Padded 与 Batched 的 0.002 相比约 700 倍，接近三个数量级。同一句的解答把大方差当作保留的研究对象，低估倍数会让读者以为两种模式的离散度同一档次。",
+      "evidence": "bench/results/local/atomic-4.txt:Adjacent sd=1.408、Shared-Relaxed sd=0.069、Padded sd=0.002、Batched sd=0.002；1.408/0.069=20.4，1.408/0.002=704；src/part2/ch07.md:1507"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "7.7.2 的伪代码把 publication.rs 的两个 barrier 合成一步。真实代码里生产者 Release store 之后先 published.wait() 再 observed.wait() 才写载荷，消费者是先 published.wait() 再 Acquire load，最后 observed.wait()；真正保证消费者读发生在生产者发布之后的是 published，而正文只留下一句 等待 consumer 已读取，读者据此会以为调度只靠一个等待点，也就看不出为什么这次交错必然读到 0。上方那句 屏障强制安排一个错误结果可见的调度 因此被削弱。",
+      "evidence": "bench/examples/publication.rs:9-24（published 与 observed 两个 Barrier::new(2)，生产者在两次 wait 之后 payload.store(42, Relaxed)，消费者在 published.wait() 之后 ready.load(Acquire)）；src/part2/ch07.md:1390-1401"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "统计口径在本节没有就地交代。think 盒用 5.253 对 p50 5.854 的背离推出分布可能双峰，但 p50 在这里第一次出现时没写它是 21 个批次值的中位数，口径定义在 7.5.7（批次级 p50/p99 与单位式）；按工作单口径本可判 P1，我判 P2 的理由是定义确实在相邻节给出且两处数字不矛盾。我独立复算了中位数：21 个 Adjacent 批值的中位数是 5.854，与归档 batch_p50 一致，且第 1、2 批为 2.116541 与 2.110688 两个低位离群点，双峰解读有数据支撑。",
+      "evidence": "src/part2/ch07.md:1511（think 解答）对照 :1028-1031（7.5.7 的单位与 批次 p50/批次 p99 列名）；bench/results/local/atomic-4.txt 的 Adjacent-Relaxed 21 行原始值（含 sample 1=2.116541、sample 2=2.110688）"
+    }
+  ]
+}

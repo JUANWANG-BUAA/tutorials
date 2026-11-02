@@ -1,0 +1,1604 @@
+{
+  "reviewer": "cold-mechanical-r4b",
+  "kind": "independent",
+  "layer": "mechanical",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "作者写的确定性检查脚本 tools/audit_section_check.py：逐节核对结构契约（体量、教学闭环盒、编号形状）、每一个交叉引用与链接是否可解析、16 份母本映射的目标锚点是否真在稿子里。它是这一轮的机械证据层，不是人读，不能替代冷启动通读；数字与代码/归档是否相符由通读报告判。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.1.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3836 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析；本节有 15 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:1653",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3249 汉字，教学闭环盒齐备，本节 16 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:11067",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2186 汉字，教学闭环盒齐备，本节 13 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch01.md:16378",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3184 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析；本节有 16 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:20283",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2344 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析；本节有 18 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:29320",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2224 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析；本节有 18 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:35086",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3781 汉字，教学闭环盒齐备，本节 20 处交叉引用与全部链接都能解析；本节有 29 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:40432",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3282 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch01.md:49417",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：208 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch01.md:55853",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：527 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 1 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch01.md:56374",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.1.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：917 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 17 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch01.md:57533",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3180 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 20 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:2095",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2698 汉字，教学闭环盒齐备，本节 35 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch02.md:14343",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3324 汉字，教学闭环盒齐备，本节 28 处交叉引用与全部链接都能解析；本节有 11 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:20392",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2441 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 14 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:26295",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2880 汉字，教学闭环盒齐备，本节 63 处交叉引用与全部链接都能解析；本节有 27 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:35809",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3333 汉字，教学闭环盒齐备，本节 33 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:42671",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2800 汉字，教学闭环盒齐备，本节 50 处交叉引用与全部链接都能解析；本节有 22 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:50508",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4990 汉字，教学闭环盒齐备，本节 56 处交叉引用与全部链接都能解析；本节有 7 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:58113",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：956 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 5 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch02.md:68774",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：565 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 16 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch02.md:71226",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1511 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 48 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch02.md:72660",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3153 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 21 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:1980",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3141 汉字，教学闭环盒齐备，本节 37 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch03.md:11505",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3165 汉字，教学闭环盒齐备，本节 29 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:18193",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3374 汉字，教学闭环盒齐备，本节 41 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch03.md:26962",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3066 汉字，教学闭环盒齐备，本节 46 处交叉引用与全部链接都能解析；本节有 34 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:35714",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2953 汉字，教学闭环盒齐备，本节 56 处交叉引用与全部链接都能解析；本节有 23 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:42995",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3636 汉字，教学闭环盒齐备，本节 54 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:50646",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3036 汉字，教学闭环盒齐备，本节 39 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch03.md:57618",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：735 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch03.md:63478",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：757 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 9 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch03.md:65517",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1612 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 40 处交叉引用与全部链接都能解析；本节有 3 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch03.md:67050",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3217 汉字，教学闭环盒齐备，本节 27 处交叉引用与全部链接都能解析；本节有 23 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch04.md:1662",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3082 汉字，教学闭环盒齐备，本节 31 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:11135",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3557 汉字，教学闭环盒齐备，本节 34 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:16901",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3207 汉字，教学闭环盒齐备，本节 37 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:23632",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2735 汉字，教学闭环盒齐备，本节 30 处交叉引用与全部链接都能解析；本节有 15 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch04.md:32935",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2904 汉字，教学闭环盒齐备，本节 41 处交叉引用与全部链接都能解析；本节有 10 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch04.md:39178",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4053 汉字，教学闭环盒齐备，本节 41 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:46835",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3353 汉字，教学闭环盒齐备，本节 55 处交叉引用与全部链接都能解析；本节有 3 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part1/ch04.md:54344",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：882 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 6 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:63376",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：615 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 18 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:65724",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1295 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 36 处交叉引用与全部链接都能解析",
+      "evidence": "part1/ch04.md:67276",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3231 汉字，教学闭环盒齐备，本节 33 处交叉引用与全部链接都能解析；本节有 5 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:1695",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3214 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析；本节有 14 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:8624",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3434 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析；本节有 11 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:16619",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3222 汉字，教学闭环盒齐备，本节 37 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch05.md:26434",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3136 汉字，教学闭环盒齐备，本节 40 处交叉引用与全部链接都能解析；本节有 38 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:33141",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2867 汉字，教学闭环盒齐备，本节 40 处交叉引用与全部链接都能解析；本节有 28 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:40790",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3192 汉字，教学闭环盒齐备，本节 44 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch05.md:47340",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4156 汉字，教学闭环盒齐备，本节 57 处交叉引用与全部链接都能解析；本节有 6 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:53976",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：593 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 14 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch05.md:61767",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：535 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 15 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:63610",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1388 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 38 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch05.md:65050",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3351 汉字，教学闭环盒齐备，本节 27 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch06.md:2037",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3061 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:11173",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2766 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:16712",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3567 汉字，教学闭环盒齐备，本节 39 处交叉引用与全部链接都能解析；本节有 14 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch06.md:23373",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3190 汉字，教学闭环盒齐备，本节 36 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:30947",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2768 汉字，教学闭环盒齐备，本节 30 处交叉引用与全部链接都能解析；本节有 11 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch06.md:38604",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2819 汉字，教学闭环盒齐备，本节 30 处交叉引用与全部链接都能解析；本节有 9 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch06.md:45030",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3083 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 4 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch06.md:50878",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：723 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:58664",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1254 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:60787",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1220 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 32 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch06.md:62733",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2913 汉字，教学闭环盒齐备，本节 21 处交叉引用与全部链接都能解析；本节有 18 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch07.md:2463",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2388 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:11274",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2522 汉字，教学闭环盒齐备，本节 27 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:17133",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2506 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:22806",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2713 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析；本节有 5 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch07.md:29206",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2457 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:35835",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2654 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch07.md:41252",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3335 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:46973",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：370 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 2 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:53005",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：657 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 2 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:54291",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1050 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 22 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch07.md:55679",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2733 汉字，教学闭环盒齐备，本节 25 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch08.md:2402",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2293 汉字，教学闭环盒齐备，本节 24 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:10572",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2247 汉字，教学闭环盒齐备，本节 24 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:16250",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2270 汉字，教学闭环盒齐备，本节 24 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:21411",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2472 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析；本节有 14 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch08.md:26794",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2505 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析；本节有 5 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch08.md:35967",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3081 汉字，教学闭环盒齐备，本节 23 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch08.md:41892",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2623 汉字，教学闭环盒齐备，本节 7 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:49401",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：463 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:54110",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：807 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part2/ch08.md:55564",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：919 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 30 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part2/ch08.md:56924",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4058 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析；本节有 9 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch09.md:2303",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4977 汉字，教学闭环盒齐备，本节 24 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:12447",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4021 汉字，教学闭环盒齐备，本节 23 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:21947",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2924 汉字，教学闭环盒齐备，本节 28 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:29111",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1990 汉字，教学闭环盒齐备，本节 10 处交叉引用与全部链接都能解析；本节有 4 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch09.md:35108",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2453 汉字，教学闭环盒齐备，本节 21 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:39335",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3018 汉字，教学闭环盒齐备，本节 27 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:44606",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2644 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:50518",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：764 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 5 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:56263",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：824 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 12 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:58384",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：931 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 22 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch09.md:59897",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2718 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:2374",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2588 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch10.md:6972",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2316 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:14939",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3043 汉字，教学闭环盒齐备，本节 28 处交叉引用与全部链接都能解析；本节有 4 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch10.md:20608",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2387 汉字，教学闭环盒齐备，本节 25 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch10.md:26947",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2674 汉字，教学闭环盒齐备，本节 23 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:32511",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3542 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:37863",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2531 汉字，教学闭环盒齐备，本节 5 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:45656",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1439 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 3 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:50121",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：671 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:52903",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1068 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 29 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch10.md:54016",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4396 汉字，教学闭环盒齐备，本节 20 处交叉引用与全部链接都能解析；本节有 4 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch11.md:2617",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3903 汉字，教学闭环盒齐备，本节 12 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:11880",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3300 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:19408",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4389 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:34323",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2767 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:44834",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3040 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析；本节有 50 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch11.md:51876",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2426 汉字，教学闭环盒齐备，本节 16 处交叉引用与全部链接都能解析；本节有 15 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch11.md:60884",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2746 汉字，教学闭环盒齐备，本节 21 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch11.md:68109",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：303 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:74204",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：840 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 11 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:75005",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.11.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：800 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 25 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch11.md:76507",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2935 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch12.md:2719",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3060 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:13868",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2546 汉字，教学闭环盒齐备，本节 18 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:20770",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3113 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:28890",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2320 汉字，教学闭环盒齐备，本节 12 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:36904",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2309 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析；本节有 62 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch12.md:42870",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3017 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析；本节有 23 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch12.md:49709",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4875 汉字，教学闭环盒齐备，本节 25 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:57935",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：652 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 3 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:71128",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：916 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 9 处交叉引用与全部链接都能解析",
+      "evidence": "part3/ch12.md:73012",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：782 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 24 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part3/ch12.md:74535",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4297 汉字，教学闭环盒齐备，本节 32 处交叉引用与全部链接都能解析；本节有 12 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch13.md:2138",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4100 汉字，教学闭环盒齐备，本节 45 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:11803",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3901 汉字，教学闭环盒齐备，本节 47 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:19553",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3869 汉字，教学闭环盒齐备，本节 48 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:26812",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2230 汉字，教学闭环盒齐备，本节 16 处交叉引用与全部链接都能解析；本节有 12 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch13.md:34102",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2528 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 45 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch13.md:40581",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3142 汉字，教学闭环盒齐备，本节 33 处交叉引用与全部链接都能解析；本节有 7 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch13.md:48565",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2748 汉字，教学闭环盒齐备，本节 23 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch13.md:54820",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：397 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:60704",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：817 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 14 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:61795",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：961 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 23 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch13.md:63227",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3244 汉字，教学闭环盒齐备，本节 48 处交叉引用与全部链接都能解析；本节有 10 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:2198",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2777 汉字，教学闭环盒齐备，本节 33 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch14.md:11680",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2993 汉字，教学闭环盒齐备，本节 46 处交叉引用与全部链接都能解析；本节有 7 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:18369",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3355 汉字，教学闭环盒齐备，本节 70 处交叉引用与全部链接都能解析；本节有 10 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:24272",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2933 汉字，教学闭环盒齐备，本节 41 处交叉引用与全部链接都能解析；本节有 17 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:36576",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3138 汉字，教学闭环盒齐备，本节 41 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch14.md:45029",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2952 汉字，教学闭环盒齐备，本节 34 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:51964",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2718 汉字，教学闭环盒齐备，本节 33 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch14.md:57175",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：697 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch14.md:62770",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：844 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 14 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch14.md:64447",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：970 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 23 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch14.md:66046",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3837 汉字，教学闭环盒齐备，本节 43 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch15.md:2285",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3703 汉字，教学闭环盒齐备，本节 17 处交叉引用与全部链接都能解析；本节有 24 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:10112",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2858 汉字，教学闭环盒齐备，本节 17 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch15.md:20503",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4574 汉字，教学闭环盒齐备，本节 27 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:27367",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2670 汉字，教学闭环盒齐备，本节 12 处交叉引用与全部链接都能解析；本节有 7 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:38748",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2582 汉字，教学闭环盒齐备，本节 13 处交叉引用与全部链接都能解析；本节有 11 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:45161",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2756 汉字，教学闭环盒齐备，本节 17 处交叉引用与全部链接都能解析；本节有 33 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:51221",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3050 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch15.md:58278",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：655 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch15.md:65756",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1113 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 17 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch15.md:67529",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1266 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 23 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch15.md:69751",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3223 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析；本节有 17 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch16.md:2141",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3075 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:13347",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3172 汉字，教学闭环盒齐备，本节 22 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:20171",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2898 汉字，教学闭环盒齐备，本节 20 处交叉引用与全部链接都能解析；本节有 2 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch16.md:26881",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2844 汉字，教学闭环盒齐备，本节 25 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:32639",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2787 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:39413",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2574 汉字，教学闭环盒齐备，本节 14 处交叉引用与全部链接都能解析；本节有 29 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch16.md:46321",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2475 汉字，教学闭环盒齐备，本节 19 处交叉引用与全部链接都能解析；本节有 20 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch16.md:51823",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：517 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 0 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:57859",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：886 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 16 处交叉引用与全部链接都能解析；本节有 1 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch16.md:59190",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1314 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 23 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch16.md:60902",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2494 汉字，教学闭环盒齐备，本节 10 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch17.md:7468",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3290 汉字，教学闭环盒齐备，本节 17 处交叉引用与全部链接都能解析；本节有 9 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:12413",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2284 汉字，教学闭环盒齐备，本节 12 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch17.md:21241",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2579 汉字，教学闭环盒齐备，本节 15 处交叉引用与全部链接都能解析；本节有 3 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:25767",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：1964 汉字，教学闭环盒齐备，本节 9 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch17.md:30856",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3799 汉字，教学闭环盒齐备，本节 13 处交叉引用与全部链接都能解析；本节有 37 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:38061",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.7",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：3427 汉字，教学闭环盒齐备，本节 11 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:46131",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.8",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：4913 汉字，教学闭环盒齐备，本节 26 处交叉引用与全部链接都能解析；本节有 47 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:52383",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.9",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：2734 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 3 处交叉引用与全部链接都能解析；本节有 8 处测量级数字，数字与代码/归档是否相符不在本报告的核对能力内（由通读报告承担）",
+      "evidence": "part4/ch17.md:67921",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.10",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：436 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 2 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch17.md:75506",
+      "layer": "mechanical"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.11",
+      "verdict": "pass",
+      "method": "mechanical",
+      "notes": "逐节机械核对：666 汉字，教学闭环盒齐备（章末三节，按口径不查教学闭环盒），本节 15 处交叉引用与全部链接都能解析",
+      "evidence": "part4/ch17.md:76465",
+      "layer": "mechanical"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "layer": "mechanical",
+      "notes": "S01：目录 163 个单元，section_inventory_complete=True，已读并映射 6 条到本书锚点，审读页 sources/reviews/S01.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S01.md"
+    },
+    {
+      "id": "S02",
+      "layer": "mechanical",
+      "notes": "S02：目录 579 个单元，section_inventory_complete=True，已读并映射 2 条到本书锚点，审读页 sources/reviews/S02.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S02.md"
+    },
+    {
+      "id": "S03",
+      "layer": "mechanical",
+      "notes": "S03：目录 280 个单元，section_inventory_complete=True，已读并映射 1 条到本书锚点，审读页 sources/reviews/S03.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S03.md"
+    },
+    {
+      "id": "S04",
+      "layer": "mechanical",
+      "notes": "S04：目录 51 个单元，section_inventory_complete=True，已读并映射 1 条到本书锚点，审读页 sources/reviews/S04.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S04.md"
+    },
+    {
+      "id": "S05",
+      "layer": "mechanical",
+      "notes": "S05：目录 614 个单元，section_inventory_complete=True，已读并映射 15 条到本书锚点，审读页 sources/reviews/S05.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S05.md"
+    },
+    {
+      "id": "S06",
+      "layer": "mechanical",
+      "notes": "S06：目录 77 个单元，section_inventory_complete=True，已读并映射 8 条到本书锚点，审读页 sources/reviews/S06.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S06.md"
+    },
+    {
+      "id": "S07",
+      "layer": "mechanical",
+      "notes": "S07：目录 81 个单元，section_inventory_complete=True，已读并映射 13 条到本书锚点，审读页 sources/reviews/S07.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S07.md"
+    },
+    {
+      "id": "S08",
+      "layer": "mechanical",
+      "notes": "S08：目录 44 个单元，section_inventory_complete=True，已读并映射 46 条到本书锚点，审读页 sources/reviews/S08.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S08.md"
+    },
+    {
+      "id": "S09",
+      "layer": "mechanical",
+      "notes": "S09：目录 139 个单元，section_inventory_complete=True，已读并映射 107 条到本书锚点，审读页 sources/reviews/S09.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S09.md"
+    },
+    {
+      "id": "S10",
+      "layer": "mechanical",
+      "notes": "S10：目录 108 个单元，section_inventory_complete=True，已读并映射 90 条到本书锚点，审读页 sources/reviews/S10.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S10.md"
+    },
+    {
+      "id": "S11",
+      "layer": "mechanical",
+      "notes": "S11：目录 106 个单元，section_inventory_complete=True，已读并映射 61 条到本书锚点，审读页 sources/reviews/S11.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S11.md"
+    },
+    {
+      "id": "S12",
+      "layer": "mechanical",
+      "notes": "S12：目录 86 个单元，section_inventory_complete=True，已读并映射 16 条到本书锚点，审读页 sources/reviews/S12.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S12.md"
+    },
+    {
+      "id": "S13",
+      "layer": "mechanical",
+      "notes": "S13：目录 183 个单元，section_inventory_complete=True，已读并映射 18 条到本书锚点，审读页 sources/reviews/S13.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S13.md"
+    },
+    {
+      "id": "S14",
+      "layer": "mechanical",
+      "notes": "S14：目录 140 个单元，section_inventory_complete=True，已读并映射 88 条到本书锚点，审读页 sources/reviews/S14.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S14.md"
+    },
+    {
+      "id": "S15",
+      "layer": "mechanical",
+      "notes": "S15：目录 690 个单元，section_inventory_complete=True，已读并映射 34 条到本书锚点，审读页 sources/reviews/S15.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S15.md"
+    },
+    {
+      "id": "S16",
+      "layer": "mechanical",
+      "notes": "S16：目录 15 个单元，section_inventory_complete=True，已读并映射 5 条到本书锚点，审读页 sources/reviews/S16.md 存在=True，全部目标锚点在正文里能找到",
+      "evidence": "sources/reviews/S16.md"
+    }
+  ],
+  "findings": []
+}

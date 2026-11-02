@@ -1,0 +1,90 @@
+{
+  "reviewer": "r4b-ch17a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动逐字读完 src/part4/ch17.md 的 17.1–17.6 全部正文与每个语义盒（定义/例题解答/思考/判定流程/常见错误/即时自测），并把机制轮输入家族拿去逐行核 projects/tidekv/src/bin/tide-mech.rs、把 easy-fs 容量与块缓存警告两处对 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 落盘母本原文比对、把静态字节账与假阳率算式自行复算、把布隆实测回 projects/tidekv/results/bloom-contract-2026-10-30.txt 归档逐位复现、跑 python3 tools/list_uncollected_claims.py 只看 ch17；无先前上下文，不假设作者为对。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.1 全节，重点复核例 17.1.1 解答里机制轮 tide-mech 输入家族这一处新改动。逐条对真实源码：键 16 字节=8 序号+8 随机（build_records 先 extend (i as u64).to_le_bytes() 8B、再 extend rng.next_u64().to_le_bytes() 8B）；值 64 字节；每批 4096 个不同键（--records/--entries 默认 4096，键含 i 序号故 distinct）；只有写与删、没有读（codec 臂只调 encode_all/encode_all_dyn，compaction 臂 Entry::new 只造 EntryKind::Put/Delete，全节无 get/scan/decode）；compaction 臂键 k{i:08} 共 9 字节、20% 删除（below(100)<20 判 Delete）。全部命中，无口径混用。种子默认 20261029 与 17.4.2 正文一致。$F$/$X$ 为设计契约、$O$ 操作集合与 17.1.1 定义一致。六条不变量陈述（默认预写日志只 flush 到内核、无 fsync；REF 用 HashMap 重放非 RwLock<BTreeMap>；快照靠 epoch 越过退休纪元而非引用计数归零）为边界定义，非需采集的实测数。未采集项由 list_uncollected_claims 确认 ch17 全部带显式「没有采集」免责。",
+      "evidence": [
+        "tide-mech.rs:129-130 key 8B 序号+8B 随机=16B",
+        "tide-mech.rs:131-136,244,249 值 64B",
+        "tide-mech.rs:376-377 --records/--entries 默认 4096",
+        "tide-mech.rs:156-157,192,205 codec 仅 encode_all/encode_all_dyn",
+        "tide-mech.rs:243 format!(\"k{i:08}\")=9B",
+        "tide-mech.rs:246 rng.below(100)<20 -> EntryKind::Delete",
+        "tide-mech.rs:373 seed 默认 20261029",
+        "ch17.md:191 例 17.1.1 解答输入家族"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.2 全节。重点一：例 17.2.1 静态字节账自行复算全对——数据区 17+16+64=97B、条目头 17B=键长4+值长4+操作标记1+序号8、索引区 12B=键长4+偏移8、97×65536=6,356,992、12×65536=786,432、两区 7,143,424、加 34B 页脚=7,143,458、去键长省 4×65536=262,144、log2 65536=16。重点二：例 17.2.2 假阳率算式复算全对——单槽 2^-8=1/256≈0.39%、16 槽并集 16×2^-8=1/16=6.25%、⌈log2 16000⌉=14 bit、单槽版 ⌈log2 1000⌉=10 bit、64→112 bit 多 48 bit（14×8 vs 8×8）。实测三点回归档 bloom-contract-2026-10-30.txt 逐位命中：fp=1525/200000 rate=0.00762(1/131.1)、8000 键/0 于 50000、1989/2000，BUCKET=16 亦在 src/bloom.rs:4 印证；「假阳率<5%」硬断言由 rate 0.00762≪0.05 支撑。重点三：17.2.2 easy-fs 容量「本层新增 vs 累计」双口径新改动，对落盘母本 2fs-implementation 篇核对——母本原文确写一级间接「512/4=128 个数据块，对应 64KiB」、累计「直接索引和一级索引支持的容量上限 78KiB」触发二级间接；正文 14/64/8 MiB 是本层新增、78 KiB 是累计划线，两口径互不矛盾且与母本一致。17.2.2 定义 niche 处「全仓没有 NonZero 类型」grep 零命中，墓碑为 EntryKind::Delete 显式变体属实。",
+      "evidence": [
+        "ch17.md:351-359 例 17.2.1 97/12/7,143,424/262,144/16 复算一致",
+        "ch17.md:370-372 例 17.2.2 1/256·1/16·14·10·64→112 复算一致",
+        "bloom-contract-2026-10-30.txt:11 fp=1525/200000 rate=0.00762 (1/131.1)",
+        "bloom-contract-2026-10-30.txt:13-14 8000/0·50000 与 1989/2000",
+        "src/bloom.rs:4 pub const BUCKET: usize = 16;",
+        "2fs-implementation-rcore.html 母本：128 个数据块对应 64KiB、直接+一级容量上限 78KiB 才用二级间接",
+        "grep -rn NonZero projects/tidekv/src projects/tidekv/tests = 0",
+        "src/memtable.rs:13-17 enum EntryKind 含 Delete"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.3 全节。重点复核 17.3.2 对 easy-fs 块缓存警告的转述新改动（不再逐字引用）。落盘母本 2fs-implementation 篇「块缓存」一节原文是「即一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试」；正文改写成「块缓冲区里改过的内容如果对后续同一个块的读不可见，这事后果重且难查」——措辞已充分改写（修改后的内容→改过的内容、在后续同一块读操作中→如果对后续同一个块的读、很致命但又难以调试→后果重且难查），非逐字，符合「借事实不抄句子」，且未加引号冒充原文；登记的出处写成「块缓存」一节、`2fs-implementation` 篇（实现篇），与我核到的母本文件一致（母本原句确在实现篇，非使用篇），修正了旧「找不到那句」的落地问题。正文另把「为什么难查——功能测试常只走单条路径」明标为本书补，未把补的内容当作母本原话。定义 17.3.1 段句柄六项、open 后即丢 File（无常驻 fd、无 Arc<SegmentData>）、17.3.2 三条安全不变量、定义 17.3.3 别名规则、例 17.3.1 SAFETY 四件事与「data.get(off..off+len) 即无 unsafe」的判断均自洽，属机制讲解无待核实测。本节的回收代价归 17.5，不在本节判定为缺陷。",
+      "evidence": [
+        "2fs-implementation-rcore.html 母本块缓存节：一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试",
+        "ch17.md:528 正文改写为『…这事后果重且难查』并标 `2fs-implementation` 篇（实现篇）",
+        "ch17.md:528 『为什么难查』明标『是本书补的』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.4 全节。tide-mech 编解码臂源码与正文 17.4.2 一致：A=encode_all::<FixedCodec> 泛型单态、B=encode_all_dyn(&dyn Codec)、计时外分配 scratch、等价性靠 out_a!=out_b 拒报、codec=FixedCodec::new(16,64) 键 16 值 64。表内数字为配对统计量，非本轮可逐位复算的原始 CSV（run-02/codec.csv），但正文已写明单位 ns/记录、协议 21 轮×30 批、种子 20261029、diff=B−A，且明确「指令数口径本轮没有采集」「代码体积没有采集」——未采集项与 list_uncollected_claims 对 ch17 的命中一致。区间跨零判方向不可判定、以区间上界 +0.208 与预算 1 ns 判接受，逻辑自洽。定义 17.4.1 指出 Codec 缝只被 tide-mech 与 codec_contract.rs 用到、segment.rs 内联未经 Codec 无 decode，属边界陈述。无 P0/P1。",
+      "evidence": [
+        "tide-mech.rs:151,185,198 FixedCodec::new(16,64)",
+        "tide-mech.rs:156-157,192,205 encode_all/encode_all_dyn",
+        "tide-mech.rs:158-160 输出不一致即拒报",
+        "ch17.md:660-666 区间跨零/上界 +0.208<预算 1ns 判接受"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.5 全节。属机制与并发正确性讲解，无「实测数字」断言需要归档复算：定义 17.5.1 快照=Heap<SegmentList> 内 Box、head.swap(SeqCst)、pin 先记纪元再 load(SeqCst)、SegmentList 无生成号字段；定义 17.5.2 内存序 head 与 PINS 用 SeqCst、stats.rs 计数 Relaxed。E-c 与自测第 1 题如实登记 submitted(engine.rs:148)/closed(engine.rs:151) 用 AcqRel/Acquire/Release 是同步边不是纯计数，并承认「降到 Release/Acquire 本轮没有采集」——诚实标注未采集，非把无据当结论。例 17.5.1 drop 旧段=UB、Arc vs epoch 两层、17.3 借用钉住缓冲与退休表回收推迟的因果链自洽。退休表长度作可观测计数、无随时间曲线（17.9 亦登记未采集），无矛盾。无 P0/P1。",
+      "evidence": [
+        "ch17.md:789 定义 17.5.2 head/PINS SeqCst、stats.rs Relaxed",
+        "ch17.md:833 E-c engine.rs:148 submitted、engine.rs:151 closed 用 AcqRel/Acquire/Release",
+        "ch17.md:802,852 『实测本节没有采集』免责",
+        "list_uncollected_claims ch17 命中 802/852 行带免责"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "读完 17.6 全节。准入契约与实测口径自洽：定义 17.6.1 队列长度=唯一闸门、满即返 AdmissionRejected 不阻塞不入队不重试（与自测第 1 题三不一致）、take_batch 每轮 q.len().min(256) 整批 drain 使真实上界 CAP+256。定义 17.6.2 三条「已受理没进日志」路径（Shutdown 排队尾竞态、致命错误 return 不回报、写线程 panic 被 close 吞 engine.rs:431-434）均明写本轮没有测试覆盖/没有观察，不冒充已核实。17.6.2 实测表为 run-03 配对统计，正文交代分母两口径（ns/尝试 vs ns/受理）、两种聚合口径方向相反（逐批比值平均 +14,007 vs Σ÷Σ −395 ns）故判证据不足、并点明每受理 10.05 ms 是墙钟÷次数归算量非独立佐证、分段耗时未采集；拒绝率 0.6858/0.9664、+0.2805 系按 840 批逐条重算非舍入列相减（−得 0.2806），口径交代到位。1,680 行=840 批×两条口径与 verify_admit_csv.py 落盘 recompute.txt 一致陈述。定义 17.6.3 三计数（engine.rs:235 关闭拒绝计 put 不计 reject、无 applied/written 计数器）属代码事实边界陈述。无编造实测、无内部矛盾。",
+      "evidence": [
+        "ch17.md:891-895 定义 17.6.1 队列长度唯一闸门、min(256) 整批 drain、上界 CAP+256",
+        "ch17.md:904 三条未覆盖路径 + engine.rs:431-434",
+        "ch17.md:964-977 两聚合口径方向相反判证据不足、+0.2805 逐条重算",
+        "list_uncollected_claims ch17 命中 975/981 行带未采集免责"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": []
+}

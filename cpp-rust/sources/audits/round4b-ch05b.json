@@ -1,0 +1,96 @@
+{
+  "reviewer": "r4b-ch05b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动读 src/part2/ch05.md 的 5.7–5.11 全部正文与语义盒，逐条回到 bench/compiler-lab（run.sh、src/lib.rs、probes/rejected、tests/contracts.rs）、results/stable-01|02|extra-02 归档、COVERAGE.md 与 sources/reviews/S08|S09.md 复算与比对，并用 tools/list_uncollected_claims.py 逐条核 ch05 的「没有采集」。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.7.1–5.7.7 连同例 5.7.1/5.7.2、think-5.7.1、判定流程、6 条 errata、4 道自测逐句读完。可对核的部分都落地：E0038 拒绝测试的正文代码块与 probes/rejected/dyn_generic.rs:1 逐字符相同（trait Bad { fn apply<T>(&self, value: T); } fn accept(_: &dyn Bad) {} fn main() {}），probes/rejected/expected.tsv:5 记 dyn_generic→E0038，且 results/extra-02/dyn_generic.txt 在盘上，支持「失败输入只进编译不进执行」；trait upcast 测试与正文 5.7.5 的代码块一致（tests/contracts.rs:85–101，函数名 current_stable_supports_trait_upcast），实测通过记录在 results/stable-02/tests.txt:47「test current_stable_supports_trait_upcast ... ok」（8 passed; 0 failed）；「Rust 1.99.0」不是编造版本，results/extra-02/stable-version.txt 第 2 行 rustc 1.99.0 (b940084d7 2026-09-28)，release 与 host 同行；5.7.3 声明「本章没有对 enum 混排计时」经 list_uncollected_claims.py 的 [ch05.md:1659] 条目确认磁盘上无同类产物（脚本输出 ✓ 没有匹配到同类产物）；find bench/compiler-lab -iname '*enum*' 亦无产物。但 5.7.5 把母本论证钉在「本地 PDF103 讨论 Rust1.70 时的 trait upcast 限制」上，与仓库自己的 S08 台账不符，见 findings。",
+      "evidence": [
+        "bench/compiler-lab/probes/rejected/dyn_generic.rs:1 == src/part2/ch05.md:1602（逐字符相同）",
+        "bench/compiler-lab/probes/rejected/expected.tsv:5 dyn_generic\tE0038",
+        "bench/compiler-lab/tests/contracts.rs:85-101 trait Parent/Child + current_stable_supports_trait_upcast",
+        "bench/compiler-lab/results/stable-02/tests.txt:47 test current_stable_supports_trait_upcast ... ok；:56 8 passed; 0 failed",
+        "bench/compiler-lab/results/extra-02/stable-version.txt:2 rustc 1.99.0 (b940084d7 2026-09-28)",
+        "python3 tools/list_uncollected_claims.py → [ch05.md:1659] ✓ 没有匹配到同类产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "5.8.1–5.8.10 全部读完并把这节的协议句子逐个复算。复算结果：stable-02 两份 CSV 的批均值/样本标准差/N-1、p50、p99 与正文 5.5.4、5.6.3 引用的数字逐位相同（generic 0.158334/0.008248/0.156409/0.194214，dyn_item 0.647618/0.088345/0.694790/0.709374，dyn_batch 0.156428/0.004677/0.155254/0.176579，known_dyn 0.156133/0.004065/0.154657/0.167349，opaque_dyn 0.158303/0.004387/0.156222/0.171070）；每 case 恰 21 批、units 全为 16384、ns_per_unit == elapsed_ns/(repeats×units)（逐行 1e-6 容差内为真），所以「归一化除数是重复数乘输入元素数」成立；5.8.2 那句「nearest-rank p99 在 21 点样本中就是最大点」我用 ceil(0.99×21)=21 复算，五个 case 的 p99 与 max 完全相等；5.8.8 的两轮对照也对得上——stable-01 dispatch_grain.csv 的 dyn_item 我独立算得 mean=0.680228、sd=0.042221，第二轮 sd=0.088345 确实更大，差 0.032610、占第一轮 4.79%，正文写「约 4.8%」正确；「主表所有行来自同一轮归档」经核对成立（stable-01 的 dyn_batch 是 0.154928，未出现在主表）。协议与产物也都存在：实验包 src/bin 恰六个入口、本章占两个；run.sh:16–21 依次 rustfmt 检查/clippy/test/build，:24–26 复制六个二进制到 binaries（实测 6 个文件），:40–46 正式计时之外另起 dispatch_grain 并 /usr/bin/sample $PID 1 1，落盘 macos-sample.txt 与 sample-command.txt（后者逐字「Sampling process 31117 for 1 second with 1 millisecond of run time between samples」，与 5.8.3 的采集口径一致）、sample-run.csv；栈里确实同时出现 dynamic_items 与 Affine::step（macos-sample.txt:33、:35）。构建配置表逐行对上 bench/compiler-lab/Cargo.toml 的 [profile.release]：opt-level=3、codegen-units=1、lto=false、debug=1、panic=\"unwind\"，且 bench/compiler-lab/.cargo 目录不存在、Cargo.toml 无 target-cpu，故「target-cpu 未显式设置」成立。5.8.4/5.8.7 的「没有采集」经 find bench/compiler-lab -iname '*pmu*'/'*perf*'/'*icache*' 为空、list_uncollected_claims.py 对 :1819/:1880/:1902/:1963/:1988/:2005/:2013/:2051/:2057 九条全部给出 ✓ 没有匹配到同类产物（该工具对 :1880 与 :2057 给出的 ⚠ 疑似产物是 bench/results/runtime-local 与 bench/results/profile 下其他实验组的 sample 文本，非 ch05 的 PMU 事件，且 ch05 正文点名的 macos-sample.txt 是栈采样不是硬件事件，故判定「没有采集」在磁盘上为真）；nm 入口在盘（extra-02/one-nm.txt、many-nm.txt、thin-nm.txt）。剩下的问题不是数字：三个定义盒的编号顺序在本节内颠倒（[@def-5.8.3] 出现在 [@def-5.8.2] 之前），见 findings。另外这一节我只在 Cargo.toml 与 .cargo 缺失这两处核了 target-cpu，没有逐行读 stable-02/environment.txt 的 RUSTFLAGS 记录行。",
+      "evidence": [
+        "python3 /tmp/r4b2.py 从 stable-01|02 的 dispatch_grain.csv、dispatch_visibility.csv 复算：N=21/case，units=16384，mean/sd/p50/p99 与正文逐位相同",
+        "复算 p99 与 max 相等：generic 0.194214、dyn_item 0.709374、dyn_batch 0.176579、known_dyn 0.167349、opaque_dyn 0.171070",
+        "stable-01 dyn_item 独立复算 mean=0.680228 sd=0.042221 → 与 5.8.8 的 0.680228 及「第二轮 sd 较大」一致",
+        "bench/compiler-lab/src/lib.rs:19（预热 while start.elapsed() < Duration::from_millis(500)）、:28（for round in 0..21）",
+        "bench/compiler-lab/run.sh:24-26、:40-46；results/stable-02/binaries 六个文件；results/stable-02/macos-sample.txt:33,35",
+        "bench/compiler-lab/Cargo.toml [profile.release] opt-level=3 / codegen-units=1 / lto=false / debug=1 / panic=\"unwind\"；bench/compiler-lab/.cargo 不存在",
+        "results/extra-02/one-nm.txt、many-nm.txt、thin-nm.txt 存在；find bench/compiler-lab 无 *pmu*/*perf*/*icache* 产物"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "整节逐句读完。可落地的部分我逐条回了盘：三条在线 Reference 的登记与正文「2026-10-31 抓取入盘」一致（sources/web.json:578/590/602 三条 id，COVERAGE.md:4125–4127 给 URL 与 sha256，COVERAGE.md:615–617 给本地副本路径 .work/cpp-rust-sources/reference/S10-{trait-object,dyn-compatibility,codegen-attrs}.html，三条 HTML 确在盘上），且「别算成母本 S10」的辨析有台账依据（同一 616 行写明「旧译母本称『对象安全』，无此节」）；S08 = Effective Rust、第 12 条 = 泛型与 trait 对象的权衡有台账（COVERAGE.md:75 S08/COMPILER-S08-008，sources/reviews/S08.md:25 S08-U0016，sources/contributions/compiler.json:125）；正文点名的复核入口都在盘上（src/bin/dispatch_grain.rs、src/bin/dispatch_visibility.rs、results/stable-02/dispatch_grain.csv、dispatch_visibility.csv、codegen/、extra-02 的 one-size.txt/many-size.txt/thin-size.txt/pgo-size.txt 与 *-nm.txt）；「PGO 与 ThinLTO 构建的输出也实际比较通过」复算成立（extra-02/thin-run.txt 与 pgo-use-run.txt 均为 instances=16 checksum=95338125850705920）。但把 polymorphization 归给 S09 那一句在仓库里找不到任何 S09 依据：grep -rli polymorph 在 sources/ 下只命中 sources/audits/round4-ch05b.json（上一轮评审自述，不是母本），S09 的核读台账与映射行（sources/reviews/S09.md 全表、COVERAGE.md:76 S09/COMPILER-S09-009 pages 319–322、:473、:475）一次都没有出现该词；命中该词的盘上文件是在线 Reference 与 systems 目录的 HTML，即 .work/cpp-rust-sources/reference/S10-codegen-attrs.html。见 findings。",
+      "evidence": [
+        "grep -rln polymorphi sources .work/cpp-rust-sources → sources/audits/round4-ch05b.json、.work/cpp-rust-sources/systems/target-feature.html、.work/cpp-rust-sources/reference/S10-codegen-attrs.html（sources/reviews/S09.md 与 COVERAGE.md 无命中）",
+        "COVERAGE.md:76 S09/COMPILER-S09-009「Monomorphization; Collection; Lowering to Codegen IR; Code generation」[319,320,321,322] → part2/ch05.md#sec-cpp-rust.2.5.2",
+        "COVERAGE.md:615-617 与 :4125-4127（REF- 三条：URL、2026-10-31 抓取、sha256、本地 .work/cpp-rust-sources/reference/S10-*.html）",
+        "bench/compiler-lab/results/extra-02/thin-run.txt:2 与 pgo-use-run.txt:2 instances=16 checksum=95338125850705920",
+        "COVERAGE.md:75（S08 Item12 pages 97–105）与 sources/reviews/S08.md:25"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节读完（含表格八行与四条跨节错误）。静态量自己数过：src/part2/ch05.md 里 ::: errata 常见错误清单 盒共 8 个，行首 E-a…E-f 条目共 48 条（grep -c '^E-[a-f] ' = 48，grep -c 'errata 常见错误清单' = 8），与正文「八份清单共 48 条（E-a … E-f × 5.1–5.8）」相符，索引表的八行与八个盒子一一对应，八个小节锚点 sec-cpp-rust.2.5.1…8 在文中都存在。第 1–4 条跨节陈述引用的数字我复算过：0.001906 = 0.158334−0.156428、0.002170 = 0.158303−0.156133，两者都小于各自 case 的批间标准差，故「方向未定」不是话术而是与归档一致；3008 = 220156−217148（extra-02/one-size.txt、many-size.txt 记的 __text，5.2.4 表同值）；「4.1 倍」= 0.647618/0.156428 = 4.140。这一节没有新的实测断言，也没有「没有采集」句子（list_uncollected_claims.py 对 ch05 的 24 条命中行里没有落在 5.10 区间的条目）。我核到此处为止：跨节引用是否在原节都成立，我抽查了 5.2/5.5/5.6/5.8 四条，未逐条回查全部锚点。",
+      "evidence": [
+        "grep -c '^E-[a-f] ' src/part2/ch05.md = 48；grep -c 'errata 常见错误清单' src/part2/ch05.md = 8",
+        "复算：0.158334-0.156428=0.001906；0.158303-0.156133=0.002170；0.647618/0.156428=4.140；220156-217148=3008",
+        "python3 tools/list_uncollected_claims.py 的 ch05 命中行号清单不含 2119–2140（5.10 区间）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结五条、章末件表、速查十条、导航、复现与定位、出口检查逐句读完。交付边界句我逐项回盘：「两个正式入口都有完整源文件」成立（src/bin/dispatch_grain.rs、dispatch_visibility.rs，正文 5.5.2 与 5.6.2 的代码块即其内容）；「五个正式 case 各保存 21 批」复算成立（dispatch_grain.csv 的 generic/dyn_item/dyn_batch 各 21 行 + 3 行 summary，dispatch_visibility.csv 的 known_dyn/opaque_dyn 各 21 行 + 2 行 summary）；「尺寸探针实际运行并逐实例校验」有 one-run.txt/many-run.txt/thin-run.txt/pgo-use-run.txt（后者两行 instances=16 checksum=95338125850705920，与 many 同值，支持 5.9 与 5.2.4 的比对句）；「正式归档保存了六个可执行文件」= binaries 目录实测 6 个；复现四条命令与 run.sh 事实相符（mkdir \"$OUT\" 要求新目录不存在；六个入口 for 循环顺序运行；run.sh:16 执行 cargo fmt --check；锁在 :28–39 覆盖六个入口计时、:41–46 为 sample 运行重新取同一把锁，:20 的 cargo test/clippy 在取锁之前，故「编译与功能测试不使用这个锁」成立）；速查表「偏移 24 与 32」两条锚点与 5.3.3、5.4.4 的摘录一致（ldr x23, [x1, #24] / ldr x4, [x1, #32]）；「nightly 损坏的事实未被隐藏」有盘（results/extra-01/nightly.txt，快照文件表内登记）；章末五页 ch05_summary.md、ch05_recall.md、ch05_exercises.md、ch05_exam.md、ch05_checklist.md 都在 src/part2/ 下存在，src/part2/ch05.md:2215–2219 的相对链接可解析；边界段与审计范围指向 ../appendix/coverage.md（文件存在，含 ch05 的 S08/S09/S10/S11 映射行与 REF- 三条）。本节没有未被采集却写成结论的数字。上一轮（旧快照 d7abb305）对本节「目录锁只覆盖正式计时」的 P2 已在现行文本改为「目录锁覆盖两段」，与脚本一致，本快照上不再成立。",
+      "evidence": [
+        "python3 /tmp/r4b2.py：dispatch_grain.csv 3×21 批、dispatch_visibility.csv 2×21 批（units 全为 16384）",
+        "bench/compiler-lab/run.sh:4(mkdir \"$OUT\")、:16(fmt --check)、:24-26(六个 binaries)、:28-39(取锁顺序计时)、:41-46(为 sample 重新取锁)",
+        "bench/compiler-lab/results/stable-02/binaries 实测 6 个可执行文件；results/extra-02/{one,many,thin,pgo}-*run*.txt 存在",
+        "ls src/part2 | grep ch05_ = ch05_checklist.md ch05_exam.md ch05_exercises.md ch05_recall.md ch05_summary.md",
+        "bench/compiler-lab/results/extra-01/nightly.txt 存在且在 sources/audit-snapshot.json 的 files 表内"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.5.7",
+      "severity": "P1",
+      "description": "5.7.5 的母本归属与仓库自己的台账不符，而它是整节历史论证的前提（:1684「该历史结论不能原封不动用于本轮 Rust1.99.0」、5.7.7 小结⑤、:1776 E-e、5.9:2117、5.11 都靠它）。正文 :1683 写「Effective Rust 的本地 PDF103 讨论 Rust1.70 时的 trait upcast 限制」，把页码 103 与 trait 上转型绑在一起。回查台账：仓库里唯一记录 trait 上转型的是 sources/reviews/S08.md:33 的 S08-U0024（第 19 条「避免反射」，起始 PDF164），其裁决原文写「PDF169 关于 trait 上转型的未来版本预测已过时」，COVERAGE.md:2528 同一行、以及 COVERAGE.md:393/394 把它映射到 part2/ch05.md；而写有「含Rust1.70历史限制」的是 COVERAGE.md:75 的 S08/COMPILER-S08-008（第 12 条，页清单 97–105），该行的裁决只讲泛型与 trait 对象的权衡，从未出现 upcast/上转型字样，也没有把限制定位到 103 页。也就是说：台账支持「第 12 条的核读范围内含一条 Rust 1.70 时点的历史限制」与「上转型的过时预测记在 PDF169（第 19 条）」两条，但没有一条支持「PDF103 = trait upcast 限制」这一具体绑定。另，Effective Rust.pdf 不在仓库内（find . -iname '*.pdf' 在本仓库返回空），无法逐字回原文比对，只能按台账裁决。本轮实测支持的是结论的另一半（tests/contracts.rs:85–101 与 results/stable-02/tests.txt:47 的通过记录、extra-02/stable-version.txt:2 的 rustc 1.99.0），所以「现行版本已支持该转换」站得住；站不住的是把限制钉到 PDF103。修法二选一：把页码改为台账实际记录的 PDF169/第 19 条，或在 COVERAGE.md 的 S08/COMPILER-S08-008 行把「Rust1.70 历史限制」明确写成 trait 上转型并记页码，然后再在正文点 103。",
+      "evidence": "src/part2/ch05.md:1683；sources/reviews/S08.md:33（S08-U0024，第 19 条，PDF164/PDF169「trait 上转型的未来版本预测已过时」）；COVERAGE.md:75（第 12 条 pages 97–105，「含Rust1.70历史限制」，无 upcast）；COVERAGE.md:2528；find . -iname '*.pdf' → 仓库内无母本 PDF"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "severity": "P1",
+      "description": "5.9 把 polymorphization 归给母本 S09（《Guide to Rustc Development》），但仓库内没有任何 S09 依据支持这一归属。正文 :2110 写「**《Guide to Rustc Development》**（母本 S09）：单态项收集、后端与代码生成单元……该卷提到的 polymorphization 属于开发中的历史提案」。回查：grep -rln 'polymorphi' 覆盖 sources/ 与 .work/cpp-rust-sources/，命中只有 sources/audits/round4-ch05b.json（上一轮评审自述，不是母本台账）与两份在线 HTML（.work/cpp-rust-sources/reference/S10-codegen-attrs.html、systems/target-feature.html）；S09 的逐单元裁决表（sources/reviews/S09.md，全表无该词）与 ch05 用到的 S09 映射行（COVERAGE.md:76 S09/COMPILER-S09-009「Monomorphization; Collection; Lowering to Codegen IR; Code generation」pages 319–322、:473 Method lookup、:475 Opaque types）也都没有该词。S09 的 PDF 不在仓库内，无法逐字核。后果不是一句闲笔：这一节把该句当作「别把历史提案当现行编译器事实」的防线，读者按 S09 去找会找不到，等于引用无法落地却被写成母本内容。修法：改挂在已登记的 REF-codegen-attrs（COVERAGE.md:617/4127，本地副本在盘且确含该词）名下，或先在 sources/reviews/S09.md 增补一条带页码的核读记录，正文再写「该卷提到的」。",
+      "evidence": "src/part2/ch05.md:2110；grep -rln polymorphi sources .work/cpp-rust-sources → sources/audits/round4-ch05b.json、.work/cpp-rust-sources/systems/target-feature.html、.work/cpp-rust-sources/reference/S10-codegen-attrs.html；sources/reviews/S09.md（全表无命中）；COVERAGE.md:76,473,475"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.8",
+      "severity": "P2",
+      "description": "5.8 是本章「按编号找口径」的总账页，但三个定义盒的编号与出现顺序颠倒：定义 5.8.1·批均值分位数在 :1852，定义 5.8.3·证据层次在 :1900，定义 5.8.2·构建配置在 :1917——文档顺序为 5.8.1 → 5.8.3 → 5.8.2。于是 [@def-5.8.3] 的引用早于 [@def-5.8.2] 的定义出现（:1902 起即用 5.8.3，:1919 与 :2049 判定流程第 3 步、:2057 小结② 用 5.8.2，:1988、:2050、:2132 用 5.8.3），读者按编号回查会跳到错的小节；5.10 索引表与速查表也按这两个编号指向本章。不涉及任何数字或证据层次改判，属表述与检索问题。修法：把「构建配置」与「证据层次」两个盒子的编号对调（或把「构建配置」盒子上移到 5.8.4 之前），并同步所有 [@def-5.8.2]/[@def-5.8.3] 引用。",
+      "evidence": "src/part2/ch05.md:1852（定义 5.8.1）、:1900（定义 5.8.3）、:1917（定义 5.8.2）；引用点 :1902、:1919、:1988、:2049、:2050、:2057、:2132"
+    }
+  ]
+}

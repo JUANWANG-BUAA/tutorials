@@ -1,0 +1,103 @@
+{
+  "reviewer": "r4b-ch08a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part2/ch08.md 的 8.1–8.6 全部正文与每个语义盒（定义/例题与解答/思考/判定/小结/常见错误/即时自测，行 67–1368），并逐条回查 bench/examples/future_layout.rs、bench/src/park.rs、bench/src/bin/async_poll.rs、bench/Cargo.toml、bench/results/local/{future-layout.mir,future-layout.txt,future-allocation.txt,environment.txt}、bench/results/profile/{async-sample.txt,async-workload.txt} 与 sources/{reviews/S09.md,sections.json,contributions/source-rust-core-*.json}；测量数字全部用 python 从归档原始样本复算。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核对了 cancellation_probe 源码逐字（bench/examples/future_layout.rs:11,18-21 与正文 97-102 完全一致，Guard 是 Drop 计数器）、例 8.1.1 三问三答与归档实测：future-layout.txt:3 打印「drop before first poll: 0 guards; drop after Pending: 1 guard」，正文「计数 0 / 计数 1」与之相符；正文 123 行把这个探针归到 8.8 节，实测该探针正文确在 8.8 区间（ch08.md:1688-1702），交叉引用落地。四层对象关系图、边界表、impl Future 与 Box<dyn Future> 的区分、并发等待≠并行执行、思考与即时自测 4 题均只作一致性通读，无可核数字失配。发现一处绝对断言与本节自己引用的测量口径冲突：正文 86 行称本章要量的每次 poll 返回「没有换栈、没有换页表、没有进内核」，但 self-wake 组的 poll 内部就调用 wake_by_ref→Notify::notify→thread.unpark（async_poll.rs:16、park.rs:15-18），归档 async-sample.txt:112 记 Parker::unpark 观察计数 59，8.6.5 正文 1225 行也承认「调用unpark和通知状态的工作仍然存在」。",
+      "evidence": [
+        "bench/examples/future_layout.rs:11,18-21（源码与正文 97-102 逐字一致）",
+        "bench/results/local/future-layout.txt:2-3（0 guards / 1 guard 实测打印）",
+        "src/part2/ch08.md:1688-1702（析构探针确在 8.8 区间）",
+        "bench/src/bin/async_poll.rs:16 + bench/src/park.rs:15-18（poll 内走 unpark）",
+        "bench/results/profile/async-sample.txt:112（Parker::unpark=59）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "整节逐行核对 MIR 断言。正文点名的命令我原样重跑：cd bench && rustc --edition=2021 --crate-type=bin --emit=mir -C opt-level=0 examples/future_layout.rs -o /tmp/fl.mir 成功产出 28029 字节，与磁盘归档 bench/results/local/future-layout.mir（28029 字节）同尺寸，故「稳定工具链可运行」成立且不需要 nightly。@def-8.2.1 的 layout 摘要与归档 future-layout.mir:38-46 逐字相同（field _s0: Guard; field _s1: std::future::Pending<()>; Unresumed(0)/Returned(1)/Panicked(2)/Suspend0(3): [_s0,_s1]）；8.2.4 的 discriminant+switchInt 分支表与 future-layout.mir:86-87 相符，且 3=Suspend、1=Returned、2=Panicked 的语义由同文件 121/132/141 行的 discriminant 赋值独立证实，未把编号当 ABI。8.2.3 的构造路径片段正文明示「对局部名字做了简化」，不按原文引。8.2.7 的母本引文逐页回查：Guide to Rustc Development 本地 PDF 在盘（/Users/juanwang/E-Book/Rust/Guide to Rustc Development.pdf，368 页，sha256 db9052af…），正文所称 319–321（单态化收集与 MIR lowering）对应 S09-U0123（PDF319，Monomorphization，补读320）与 S09-U0124/U0125（PDF321，Lowering MIR to a Codegen IR/Code generation），277–279（MIR 上的移动与初始化跟踪）对应 S09-U0104（277）/U0105（278）/U0106（279），页码与主题均落地。「rustc 1.99.0」由 bench/results/local/environment.txt:3（rustc 1.99.0 (b940084d7 2026-09-28)）与 :8 release: 1.99.0 证实。例 8.2.1、思考 8.2.1、6 条 errata 与 4 题自测的断言（三空变体、Guard 存活区间、编号非 ABI、按 Pending 数不按 await 数）与产物一致。",
+      "evidence": [
+        "bench/results/local/future-layout.mir:38-46,86-87,121,132,141",
+        "命令重放：rustc --emit=mir 产出 28029B = 归档 28029B",
+        "bench/results/local/environment.txt:3,8",
+        "sources/reviews/S09.md:113-115,132-134（PDF277/278/279/319/321 read-mapped）",
+        "sources/contributions/source-rust-core-inventory.json（S09 sha256 db9052af22587d57b0d80e127f903e35728603afc7e9384ddbe106dcc81cfb9b, pdf_pages 368）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "静态量全部自算。两个探针源码逐字对 bench/examples/future_layout.rs:23-36（4096 字节数组，一处跨 await、一处内层作用域收在 await 前），MIR 侧证 future-layout.mir:177（field _s0: [u8; 4096]）与 :323（field _s0: u8），与 @def-8.3.1 的存活分析一致。布局表 4097/1、2/1 由 bench/results/local/future-layout.txt:1-2（across_await size=4097 align=1；before_await size=2 align=1）复算得 4097=4096+1、2=1+1，前「尺寸差两千倍」= 4097/2≈2048，成立。第三行 257 我按正文点名的归档复算：bench/results/local/future-allocation.txt:1 头行 iterations=100000 samples=21 future_size=257，且该文件与其 drift 文件、bench/src/bin/future_allocation.rs 均无 align 打印，故「本基准只输出size」「不替它编一个数」属实（tools/list_uncollected_claims.py 的 ch08.md:562-563 两条「没有采集」磁盘上确无产物）。Pin 的正交性、投影 unsafe、思考 8.3.1、5 条小结与 6 条 errata、4 题自测与 8.7 的交叉引用一致。问题只在表格出处：8.3.2 先给出唯一命令 cargo run --example future_layout 再说「实际输出的布局如下」，而该命令的归档输出只有两行 size，257 属另一命令（future-allocation，8.7）的产物，出处未在命令处点明。",
+      "evidence": [
+        "bench/examples/future_layout.rs:23-36；bench/results/local/future-layout.mir:177,323",
+        "bench/results/local/future-layout.txt:1-2（4097/1、2/1）",
+        "bench/results/local/future-allocation.txt:1（future_size=257，无 align）",
+        "4096+1=4097、2=1+1、4097/2≈2048（自算）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核了契约、YieldOnce、丢通知窗口与 Wake/RawWaker 全部可对代码的断言。YieldOnce 与正文 715-731 的代码块逐字一致（bench/src/bin/async_poll.rs:8-20），「第一次发通知并返回 Pending、第二次 Ready」「每个新值只产生一次 Pending」由 async_poll.rs:35（每轮新建 YieldOnce(false)）证实；「bool 字段可安全通过 Pin 修改因为该类型 Unpin」与该类型只含 bool 相符。@def-8.4.2 的丢通知交错与例 8.4.1 三问答（不要求乱序、单加 fence 不算解决、共锁关闭窗口）与 8.4.5 的夹具一致：bench/src/park.rs:111-114（Shared{ready,waker:Option<Waker>}）、:115（Arc<Mutex<Shared>>）、:118-126（同一把锁内先检查谓词再登记 waker，注释原文即「Predicate and registration protected by the same lock」）、:136-143（生产者取走 waker 后在锁外 w.wake()）——正文「实际wake在释放锁后执行」为真。8.4.6 三点复算成立：Wake 的 wake/wake_by_ref 均显式实现并直接 notify（park.rs:20-27），故「不为默认路径额外 clone」；block_on 仍 Arc::new(Notify) 一次（park.rs:42-46），故「不能称 block_on 完全零堆分配」为真；RawWaker 四函数协议属常识性表述且本节不声称实现（正文 616 行「不手写RawWaker」，park.rs 全文无 RawWaker）。小结/errata/自测与 def-8.4.1、def-8.4.2 一致，无数字断言失配。",
+      "evidence": [
+        "bench/src/bin/async_poll.rs:8-20,35",
+        "bench/src/park.rs:20-27,42-46,111-115,118-126,136-143",
+        "src/part2/ch08.md:715-731 与 async_poll.rs:8-20 逐字一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "核了协议与实现的每一处对应。park.rs:10-18（Notify 持有 thread 与 AtomicBool notified，notify 先 store(true, Release) 再 unpark）与图 8-2 的 notifier 侧一致；:53-55 的 while !notify.notified.swap(false, Ordering::Acquire) { thread::park(); } 与正文 1012-1023 的代码节选逐字一致，:50 的 future.as_mut().poll(&mut context) 变量名也对得上；Release/Acquire 的分工（:16 store Release、:53 swap Acquire）与 8.5.3 表述相符；「通知位合并 wake、不是计数信号量」由单一 AtomicBool（非计数）证实。例 8.5.1 的推理可核对：consumed-park-token 夹具确在 poll 内 thread::park() 吞令牌后再返回 Pending（park.rs:88-101），断言路径与解答一致。8.5.5 重入拒绝成立：park.rs:29 thread_local! ENTERED: Cell<bool>、:40 assert!(!entered.replace(true), \"nested block_on is unsupported\")、:30-35 EnterGuard 的 Drop 清标记（unwind 亦清），测试 park.rs:105-107 同时验证拒绝与恢复。8.5.6「不要求 Future: Send」为真（park.rs:39 签名 block_on<F: Future>，无 Send 约束），通知对象经 Arc 跨线程（:42-46）。50 次重复= park.rs:132 的 for _ in 0..50。问题在测试名的可定位性：8.5.7 表与 8.5.4 正文写的 pre_park_notification、consumed_park_token、nested_call 在仓库里不存在（真名 park.rs:82/87/105 为 pre_park_notification_is_not_lost、notification_survives_a_consumed_park_token、nested_call_is_rejected_and_guard_recovers），照正文 grep 会 0 命中。",
+      "evidence": [
+        "bench/src/park.rs:10-18,29-40,42-46,50,53-55,88-101,105-107,132",
+        "src/part2/ch08.md:1012-1023 与 park.rs:49-58 逐字一致",
+        "真测试名：bench/src/park.rs:82,87,105（与正文 1069-1074 表格所写不一致）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部测量数字从正文点名的归档 bench/results/local/async-poll.txt 用 python 独立复算，未抄正文：按 case 分组（0=sync、1=async-ready、2=async-self-wake，映射据 async_poll.rs:65-69）各 21 个样本，mean/sd 与最近秩分位数结果为 0.5188/0.0735/p50 0.48708/p99 0.63542；0.8670/0.1077/0.87042/1.12458；7.4075/0.6027/7.38584/8.32625，与表 1206-1208 的 0.519/0.074/0.487/0.635、0.867/0.108/0.870/1.125、7.407/0.603/7.386/8.326 逐项吻合。@def-8.6.1 已写明 p50/p99 是「批均值的最近秩分位数」而非单次 poll，故统计口径有定义。方法与代码逐条对上：三组做同一累加并每批校验总和（async_poll.rs:60,71 assert_eq!(black_box(sum), expected)）、输入走 black_box（:26,37）、测量顺序逐批轮换（:62-63 mode=(sample+offset)%3）、sample 0 整批不入统计即预热（:72，故 22 批留 21 样本）、一个 Arc 分摊到整任务（park.rs:42）、self-wake 每轮一次真实 Pending（async_poll.rs:35 + YieldOnce:11-19）。8.6.5「无必然内核睡眠但 unpark 工作量仍在」与 async-sample.txt 相符。8.6.8 四个数逐字复算于 bench/results/profile/async-sample.txt：block_on 折叠栈总计数 401（:110）、Darwin Parker::unpark 59（:112）、async_poll::sync_sum 28（:113）、_dyld_start 339（:24），故「含启动污染、不能除总计数报 CPU 百分比」有产物支撑；8.6.10 的 14 倍我算得 7.407/0.519=14.27（正文拒绝该写法，方向正确）。命令可复现：--bin async-poll 确在 bench/Cargo.toml:24-26 声明，8.6.8 的 10000000 未越 async_poll.rs:52 的 assert 上界。8.6.11 小结/errata/4 题自测无越界断言；1313 行「没有采集 IPC/cache-miss」与 1358 行「逐请求计时/协议成本占比本节没有采集」经磁盘核查属实（bench/results 下无任何 perf/IPC/cache-miss 产物，async-poll.txt 只有批均值列）。",
+      "evidence": [
+        "复算：sync 0.5188/0.0735/0.48708/0.63542；async-ready 0.8670/0.1077/0.87042/1.12458；self-wake 7.4075/0.6027/7.38584/8.32625（源 bench/results/local/async-poll.txt）",
+        "bench/results/profile/async-sample.txt:24(339),110(401),112(59),113(28)",
+        "bench/src/bin/async_poll.rs:26,35,37,52,60-72",
+        "bench/Cargo.toml:24-26（[[bin]] name=\"async-poll\"）",
+        "7.407/0.519=14.27（自算）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.8.1",
+      "severity": "P1",
+      "description": "ch08.md:86 断言「本章后面要量的每一次 poll 返回……它没有换栈、没有换页表、没有进内核」，与本节自己要量的 self-wake 路径相反：那次 Pending 是 poll 内部调用 cx.waker().wake_by_ref() 产生的，而 wake_by_ref→Notify::notify→thread.unpark 是内核态调用；本章自己的 8.6.5（ch08.md:1225）也写明「调用unpark和通知状态的工作仍然存在」，归档 async-sample.txt:112 记 Parker::unpark 观察计数 59。三句中「没换栈/没换页表」成立，「没有进内核」与代码和测量口径冲突，属正文内部（8.1 与 8.6.5）同一对象的口径混用。建议改成「没有换栈、没有换页表、不进入内核睡眠（unpark 的系统调用仍然存在）」，与 8.6.5 用同一口径。",
+      "evidence": "bench/src/bin/async_poll.rs:16（poll 内 wake_by_ref）+ bench/src/park.rs:15-18（notify 内 thread.unpark）+ bench/results/profile/async-sample.txt:112（Parker::unpark=59）；对照 src/part2/ch08.md:86 与 :1225"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.3",
+      "severity": "P2",
+      "description": "8.3.2 只在正文 533-541 给出一条命令（cargo run --example future_layout）并紧接「实际输出的布局如下」，但表格第三行的 257 并不来自该命令：future-layout.txt 只打印两行 size（4097/1、2/1）加一行 drop 计数，257 出自另一个基准 bench/results/local/future-allocation.txt:1 的头行 future_size=257。数字本身可落地、且「本基准只输出size」对 257 这一基准也成立，因此不是编造，但表格的出处命令与三行数据的来源不匹配，读者按所示命令复现会得到两行。建议在第三行前补一句该值来自 8.7 的 future-allocation 输出，或在该节同时列出第二条命令。",
+      "evidence": "bench/results/local/future-layout.txt:1-3（仅 4097/1、2/1、drop 计数）；bench/results/local/future-allocation.txt:1（iterations=100000 samples=21 future_size=257，全文无 align）"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.8.5",
+      "severity": "P2",
+      "description": "8.5.7 覆盖表（ch08.md:1071-1074）与 8.5.4 例 8.5.1（:1031）、8.5.8（:1083）把测试写成 pre_park_notification、consumed_park_token、nested_call，而仓库中的实际测试名分别是 pre_park_notification_is_not_lost、notification_survives_a_consumed_park_token、nested_call_is_rejected_and_guard_recovers；读者按正文给出的标识符 grep bench/src/park.rs 会 0 命中（consumed_park_token 与 nested_call 甚至不是任何名字的前缀/子串的完整形式，notification_survives_a_consumed_park_token 与 consumed_park_token 词序不同）。交错与断言描述本身与代码相符，故只作表述级问题：建议在表中用真名，或明确写成简称。",
+      "evidence": "bench/src/park.rs:82,87,105（真名）vs src/part2/ch08.md:1071-1074"
+    }
+  ]
+}

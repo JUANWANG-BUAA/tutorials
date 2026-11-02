@@ -1,0 +1,88 @@
+{
+  "reviewer": "r4b-ch04a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动通读 src/part1/ch04.md 第 62–1603 行（4.1–4.6 全部正文与每个定义/例题/思考/判定流程/小结/常见错误/即时自测盒），并逐条回查 bench/compiler-lab 下的 environment.txt、nightly.txt、layout.csv、move_cost.csv、drop_paths.csv、expected.tsv、tests.txt、codegen 的 .mir/.ll/.s、src/lib.rs、src/bin/move_cost.rs、src/bin/drop_paths.rs、probes/rejected/*.rs、probes/layout.rs、extra.py、Cargo.toml，用 /usr/bin/python3 从 CSV 复算全部统计量。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.4.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "工具链事实逐字对上 environment.txt：rustc 1.99.0、commit b940084d7eb6a299eb4bfeb8e34901bc051e7ac4、LLVM 23.1.1、host/target aarch64-apple-darwin、machdep.cpu.brand_string=Apple M5 Pro、ProductVersion 27.0.1、hw.cachelinesize=128、RUSTFLAGS=<unset>（支持「本章没有设置 target-cpu=native」）。「没有采集时序日志」核过：results 下不存在逐行可复现的执行日志产物，macos-sample.txt 是 sample 每 1ms 的统计栈采样汇总，不落入 def-4.1.2 定义的「可逐行复现的执行记录」，不构成矛盾；「没有采集对齐档位对比」核过（find 无 align 产物）。「句柄 24 字节」与 4.6.3 尺寸表及 extra-02/layout.csv 的 Vec<u64>,24,8 一致。即时自测第 4 题「本章没有采集 IPC/cache miss/核心周期」核过：results 全树无 PMU/perf/IPC 产物。例 4.1.1 与解答均为概念性论断，与 def-4.1.1 分层框架内部自洽。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/environment.txt:5-20（rustc/commit/LLVM/host/M5 Pro/cachelinesize 128/RUSTFLAGS unset）",
+        "bench/compiler-lab/results/extra-02/layout.csv:2（Vec<u64>,24,8）",
+        "find bench/... 无 *align*、*ipc*、*perf* 产物（复算排查）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "nightly 证据全部落地：extra-02/nightly.txt 逐字记录 `$ rustc +nightly -vV` 与 `error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'`，environment.txt:12-16 的 toolchain 列表确含 nightly 名称，支持「列出 nightly 但 -vV 失败」；「本节没有采集本机 HIR/THIR 转储」核过——results/stable-02/codegen 只有 .ll/.mir/.s 三种产物，全树 find 无 *hir*/*thir* 文件，缺项声明属实。「不使用 RUSTC_BOOTSTRAP」核过：run.sh/extra-used.sh 无该变量。HIR/THIR 的机制性论述（身份与依赖、body 范围、四条显式化）为文档层论断，不与任何本地产物冲突。但 4.2.4 的两条 -Zunpretty 选项出处在仓库里落不了地，见 findings[]。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/nightly.txt:1-4（missing manifest 诊断）",
+        "bench/compiler-lab/results/stable-02/environment.txt:12-16（toolchain 列表含 nightly-aarch64-apple-darwin）",
+        "grep -rn 'hir-tree|thir-flat' 写作规范 sources 仅命中旧审计报告，无母本原文"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "两个被拒输入逐字核对：probes/rejected/use_after_move.rs 与正文 ```fn main() { let data = vec![1u8]; drop(data); ...}``` 完全一致；4.3.2 引用的第二输入与 probes/rejected/maybe_uninitialized.rs 完全一致；expected.tsv 写 use_after_move=E0382、maybe_uninitialized=E0381，extra.py:26 `assert process.returncode != 0 and error in process.stderr` 证实正文「extra.py 只检查非零退出状态与诊断代码、从未运行这段程序」。def-4.3.4 明示两个集合「是本章阅读产物的记法，不是 rustc 内部类型的名字」，不构成越界断言；例 4.3.2 的 E0381 判定（存在一条未赋值路径→非必定初始化→拒绝）与该输入的实际诊断码一致。其余（Place/投影、move path 父子规则、StorageLive/Dead 与初始化/借用的维度区分）为语义论述，与 4.4.5 真实 MIR 产物形状相容，未见矛盾。",
+      "evidence": [
+        "bench/compiler-lab/probes/rejected/use_after_move.rs:1 与正文 625 行逐字相同",
+        "bench/compiler-lab/probes/rejected/maybe_uninitialized.rs:1 与正文 605 行逐字相同",
+        "bench/compiler-lab/probes/rejected/expected.tsv:1-2（E0382、E0381）",
+        "bench/compiler-lab/extra.py:26"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "4.4.5 声称「来自 stable release 产物，不是手写伪 MIR」并点名归档——我把正文 ```text 块与 bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.mir 中的 fn conditional_drop 全文做 unified diff，逐字节一致（MIR verbatim match: True）。例 4.4.3 的四问逐条对上产物：debug first => _3 / debug second => _4 在 scope 行、_8 = const false 在 bb1、bb6 (cleanup) 的 switchInt(copy _8) 分流 bb4/bb5、bb9/bb11 的正常 drop 与 unwind: bb6 边、bb3/bb4 的 resume——全部在引文内可指认。「本轮 profile 使用 panic=unwind」核过 Cargo.toml:14 panic=\"unwind\"（另有 opt-level=3、codegen-units=1、debug=1，与 environment.txt 的 profile 行一致）。alias_conflict.rs 与正文代码逐字一致，expected.tsv 记 E0502。四类情形表、flag 上界模型、drop(value) vs drop(&value) 均为语义论述，内部一致。",
+      "evidence": [
+        "python difflib：正文 895–991 行 ```text 块 == compiler_lab-55987aab45b3e67f.mir 的 conditional_drop 全文",
+        "bench/compiler-lab/probes/rejected/alias_conflict.rs:1 + expected.tsv:3（E0502）",
+        "bench/compiler-lab/Cargo.toml:10-14"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "计时表全部从磁盘复算，不许抄正文：move_cost.csv 每 case 21 行，按批均值列 ns_per_unit 计算得 borrow mean=0.059091、N-1 sd=0.001233、p50=0.058640，clone mean=0.202739、sd=0.006949、p50=0.201627，与正文完全一致；p99 用正文 4.8.3 声明的 nearest-rank（ceil(21×0.99)=21→下标 20=最大值）复算得 0.063338 / 0.225702，同样一致——分位数定义在 4.8.3 与 [@def-1.2.2] 有明确口径，不触发「未交代定义」问题。差值 0.202739−0.059091=0.143648、比值 3.4309≈3.43，正文算术正确。代码逐字核对：src/bin/move_cost.rs 与 4.5.2 入口引文一致，borrowed_sum/cloned_sum（含 black_box(input.to_vec()) 位置）与 lib.rs 一致，expected 由入口 fold 独立算出。产物核验落地：.ll 的 cloned_sum 体内确有 allocator 调用、llvm.memcpy、deallocator；.s 的 cloned_sum 符号范围内有 _memcpy；borrowed_sum 的 .ll 有向量归约、无 alloc/memcpy，正文 4.5.5 四句全部成立。「两者返回完全一致的值」用模 2^64 复算证明：checksum = expected×repeats mod 2^64，borrow(9941) 与 clone(2963) 解出的 expected 同为 3161248103636049920，且与 input_data(16384) 的独立求和逐位相符。「本轮没有采集其它输入长度/跨线程/NUMA」核过：move_cost.csv units 恒为 16384，results 全树无 thread/NUMA 产物。",
+      "evidence": [
+        "/usr/bin/python3 复算 move_cost.csv：mean/sd/p50 四项与正文表逐位一致；p99 按 nearest-rank=批最大值 0.063338/0.225702 一致",
+        "checksum 反解：11162240718605852672×9941⁻¹ ≡ 14278885702873243648×2963⁻¹ ≡ 3161248103636049920 == input_data(16384) 的 wrapping_add 和",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.{ll,s}：cloned_sum 含 alloc/memcpy/dealloc/_memcpy",
+        "src/part1/ch04.md:1972-1990（4.8.3 分位数口径）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.4.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "尺寸表五行逐字对上 extra-02/layout.csv：Vec<u64>,24,8、&[u64],16,8、Option<&u64>,8,8、DropProbe,8,8、Option<DropProbe>,8,8（probe 源 probes/layout.rs 打印的正是这组类型）。计时表复算：drop_paths.csv 各 21 批，implicit mean=2.372296/sd=0.098044/p50=2.354229，option mean=2.587951/sd=0.246970/p50=2.669365 全对；p99 按 4.8.3 的 nearest-rank=批最大值复得 2.757235/2.980856，与正文一致。例 4.6.3 算术核过：均值差 2.587951−2.372296=0.215655≈0.216，sd 比 0.246970/0.098044=2.52≈2.5。「21 批」计数正确。「没有配对区间、没有 PMU、没有跨线程数据」核过：results 无配对差值/置信区间产物、无 PMU、无 thread 产物。「期望值 8192 来自规格」成立：CSV checksum 列 implicit=8495104=8192×1037、option=7626752=8192×931，即每批每次 run 计数恰为 8192=4096×2。代码逐字核对：DropProbe/conditional_drop/option_drop（lib.rs:72-99）与 src/bin/drop_paths.rs 均与正文一致，含 black_box(i % 2 == 0) 与 expected: 8192。4.6.6 的 #[test] 与 tests/contracts.rs:26 一致且 tests.txt 记 `test panic_unwinds_initialized_guards ... ok`，「该测试本轮通过」落地。4.6.5「phi 与 null 比较」核到 .ll 的 option_drop 存在 phi 节点；null 比较的准确指令形态我未逐条摘出，但合流判断方向与产物相容，且本节结论自我限制为「只支持相容」，不据此判级。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/layout.csv（尺寸表五行全部命中）",
+        "/usr/bin/python3 复算 drop_paths.csv：mean/sd/p50/p99(nearest-rank) 与正文表逐位一致",
+        "drop_paths.csv checksum：8495104=8192*1037、7626752=8192*931",
+        "bench/compiler-lab/results/stable-02/tests.txt: test panic_unwinds_initialized_guards ... ok",
+        "bench/compiler-lab/src/lib.rs:72-99 + src/bin/drop_paths.rs:1-25"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.4.2",
+      "severity": "P1",
+      "description": "4.2.4 把两条 nightly 观察入口写成已核实的出处：「母本给出了 -Zunpretty=hir-tree」「当前开发指南给出了 -Zunpretty=thir-flat」，且 4.2.4 收尾断言「本章对这两层的说明来自实际核读的指南」。我在仓库全树（写作规范/、sources/ 含 sources/reviews/ 母本、*.md/*.txt/*.py/*.sh）检索 hir-tree 与 thir-flat：除旧审计报告 sources/audits/round4-ch04a.json 外零命中，母本侧只有 sources/../coverage.md:2619 的 S09-U0066 条目泛提「unpretty/expanded」且明确写「命令未在本轮执行」。也就是说这两条被引作已核实的选项名在任何母本/归档里都没有逐字原文，冷读者无法按正文顺到出处；对照同节对 nightly.txt 点名的可复核做法，此处证据不对称。我没有判它假（选项名与 rustc-dev-guide 公开常识相容），判「关键断言无出处/引文落不了地」= P1。修法：给出母本条目路径（如 sources/reviews/S09.md#review-s09-u0066 或指南文件名）或把措辞降为「据开发文档常见写法」。",
+      "evidence": "grep -rn 'unpretty' 全仓库（排除 target/ 与 ch04 正文）仅命中 src/appendix/coverage.md:2619；grep -rn 'hir-tree|thir-flat' 写作规范/ sources/ 仅命中 sources/audits/round4-ch04a.json（旧报告转述），无母本原文"
+    }
+  ]
+}

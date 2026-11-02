@@ -1,0 +1,73 @@
+{
+  "reviewer": "r4-ch09b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
+  "provenance": "冷启动全文通读 src/part3/ch09.md 第1112–1611行（9.7–9.11 全部正文与语义盒），回 bench/runtime-lab 复算归档数字与回归测试源码，用 tools/list_uncollected_claims.py 对照磁盘，并逐文件回 ~/.cargo/registry 的 tokio-1.54.0 缓存副本核对 sha256 与 reviewed_ranges 行号。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "核对了 9.7.4 两条回归断言与代码：bounded_channel_and_close_preserve_messages（contracts.rs:10）与正文 L1220-1232 的 rust 片段逐行一致（try_send Full→腾槽复用→drop 后排空到 None，channel(1)）；blocking_permit_is_held_inside_closure（contracts.rs:52）确为 Semaphore(1)+acquire_owned 移入 spawn_blocking 闭包、先等 started、abort 后 try_acquire_owned 必须 Err、发停止信号并 await 后再取必须 Ok，且不用固定 sleep——与正文 L1236 描述完全吻合。例 9.7.1、思考题与表（L1132-1138）为概念性资源边界陈述，无可测数字；容量 64/16 均为教学假设而非实测，判无问题。rCore chapter8 信号量转述（L1176-1180）与 9.9 表 L1520 自述范围一致，且 sources/web.json 含 semaphore 条目指纹可落地；未逐字比对 rCore 原文（本地无离线原文副本），此项未核。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:10-33 与 src/part3/ch09.md:1220-1232 逐行一致",
+        "bench/runtime-lab/tests/contracts.rs:52-69（started oneshot、abort 后 try_acquire_owned().is_err()、停止后再取 is_ok()）",
+        "sources/web.json 含 'semaphore' 指纹项，9.9 表 L1520 可落地"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "9.8.1/9.8.2 的『两个有限性前提』『16 是夹具显式 quantum 而非 runtime 承诺』经回查成立：bench/runtime-lab/src/bin/scheduling.rs:66 确以 [16,1024] 显式传 quantum。9.8.4 引用 9.6 的 25.060 ms 我按正文点名的归档 bench/results/runtime-fixed/measurements-final/blocking-poll.txt 用 python 独立复算：inline 21 个样本中位数 23.604 ms、最大值 25060042 ns=25.060 ms、均值 23.658 ms，offload 中位 14.125 µs、最大 18.541 µs、均值 13.633 µs，全部与正文一致。9.8.6『steal 次数、cache miss、IPC 都没有采集』经 tools/list_uncollected_claims.py --only 9 对照磁盘：该行显示『没有匹配到同类产物』，声明与盘上一致。发现一处 P2：例 9.8.1 表格（L1394-1399）第③行把『量级与 9.6 的 25.060 ms 接近』写进『其他区间』栏，但该量级描述的是偏大区间 resource_ready→task_resumed 本身，照字面读『其他区间≈25 ms 且正常』与解答矛盾。MIT 6.S081 Lecture11 与 xv6 swtch 的转述（9.8.3）未回讲义原文逐字比对（web.json 有 6.S081 指纹，判可落地），此项未核。",
+      "evidence": [
+        "复算输出：inline n=21 median=23.604 ms max=25.060 ms mean=23.658 ms；offload n=21 median=14.125 µs max=18.541 µs mean=13.633 µs",
+        "bench/runtime-lab/src/bin/scheduling.rs:66",
+        "tools/list_uncollected_claims.py ch09.md:1441 →『没有匹配到同类产物』"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "必查项：9.9 外部规范表自称『实际核读范围』，sources/runtime-code.json 给出 tokio-state-code（1.54.0, src/runtime/task/state.rs, sha256 8b836adf…, reviewed_ranges [[1,374]]）与 tokio-ct-code（…/current_thread/mod.rs, sha256 334bcc00…, reviewed_ranges [[446,477]]）。我对盘上缓存副本 ~/.cargo/registry/src/mirrors.bfsu.edu.cn-…/tokio-1.54.0/ 逐文件 shasum -a 256，两个哈希完全一致；bench/runtime-lab/Cargo.lock 钉住 tokio 1.54.0。行号对得上：mod.rs 446 行即 fn park_yield、461 行即 fn park_internal（446-477 恰好完整罩住两者，与 L1515 的『park_yield及park_internal』吻合）；state.rs 1-374 内命中 9.11 出口检查点名的四处位置与注释——L116 poll 期间清通知以检测新通知、L220-223/L265-268 running 时只置 notified 位不重复提交、L151/L163 transition_to_idle 检查 is_notified、L230 is_complete 分支、L338 transition_to_shutdown（取消等待当前 poll 的说明），文件共 657 行、范围未越界。web.json 含 6.S081、rCore 各章、tokio runtime/spawn_blocking 文档条目，L1523 指纹落地说法成立。未核：S11/S08 母本『PDF390-394 核读』『389/395 空白』无法离线验证（本地未见该 PDF），rCore/xv6 引文未逐字比对；『contracts.rs』作为 S11 证据存在（bench/runtime-lab/tests/contracts.rs）但其在 16.2 的对应关系未跨章核对。",
+      "evidence": [
+        "shasum -a 256 与 sources/runtime-code.json[1]/[2] 完全一致（8b836adf…、334bcc00…）",
+        "sed -n '446,477p' tokio-1.54.0/src/runtime/scheduler/current_thread/mod.rs 首尾即 park_yield/park_internal",
+        "grep state.rs:116,151,163,220-223,230,265-268,338 均在 1-374 内",
+        "bench/runtime-lab/Cargo.lock: tokio 1.54.0"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "通读全部 12 条跨节错误，逐条与 9.5-9.8 正文语义对照：『有界通道挡不住无限 spawn』『超时释放许可』『abort≠析构』『ns/step 与恢复延迟两种问法』均能落回本节及 9.6/9.7 的对应定义与测试，未发现与正文相反或无出处的断言；『21 个观察 p99=最大值』的 nearest-rank 推理（ceil(21×0.99)=21）我复核成立。未核：各 [@def-*]/[@ex-*] 锚点是否可解析（属机械层职责），25.060 ms 之外的历史读数未回档。",
+      "evidence": [
+        "ceil(21*0.99)=21（nearest-rank p99=最大值），与复算样本数 21 一致",
+        "src/part3/ch09.md:1551-1553 与 9.7.3/L1204-1210 语义一致"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "出口检查三条命令的路径全部存在（bench/runtime-lab/Cargo.toml、tools/run_runtime_benchmarks.sh 在盘）；『21 次观察』『multi4』『current-q16/quantum』与 scheduling.rs:50、66、72 的配置吻合；『state.rs 指定范围四处位置+一条注释』的背诵点在盘上缓存副本 1-374 行内逐条命中（见 9.9 判定）。速查表与小结 7 条为对前节的可追溯转述，抽查 permit 寿命、退出顺序两行与 9.7/9.8 定义一致。章末件 5 个链接文件名（ch09_summary/recall/exercises/exam/checklist.md）我只核了命名规律未逐个 ls——此项未核。",
+      "evidence": [
+        "bench/runtime-lab/src/bin/scheduling.rs:50 (\"multi4\")、:66 (quantum=[16,1024])、:72 (q{quantum})",
+        "复算归档：inline/offload 各 21 样本",
+        "bench/runtime-lab/Cargo.toml 与 tools/run_runtime_benchmarks.sh 存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "severity": "P2",
+      "description": "例 9.8.1 表格（L1394-1399）第③行的『其他区间』栏写作『正常，量级与 9.6 的 25.060 ms 接近』。25.060 ms 经复算确实是 inline 观察延迟的最大值（归档真值 25060042 ns），它对应的应是该行『偏大的区间』resource_ready→task_resumed，而不是『其他区间』；照字面读会出现『其他区间≈25 ms 但仍算正常』的自相矛盾，且与解答③『资源早已就绪、被占住的线程拖着』的意图不符。属表格列位/表述错误，数字本身无误，判 P2。",
+      "evidence": "复算 bench/results/runtime-fixed/measurements-final/blocking-poll.txt：inline n=21, max=25060042 ns；src/part3/ch09.md:1398"
+    }
+  ]
+}

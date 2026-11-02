@@ -28,9 +28,12 @@ find target/release/deps -name 'foundations_lab-*.mir' -exec cp {} "$out/codegen
 find target/release/deps -name 'foundations_lab-*.ll' -exec cp {} "$out/codegen/" \;
 find target/release/deps -name 'foundations_lab-*.s' -exec cp {} "$out/codegen/" \;
 ./target/release/examples/layout >"$out/layout.txt"
-lock=/Users/juanwang/Desktop/tutorials/.work/cpp-rust-agents/measure.lock
-while ! mkdir "$lock" 2>/dev/null; do sleep 2; done
-trap 'rmdir "$lock"' EXIT
+# run.sh 第 4 行已经 cd 进实验包目录，这里用 $PWD 而不是 $0：$0 是相对路径，再 cd 一次就解不出来。
+lock="$(cd .. && pwd)/.work/measure.lock"
+mkdir -p "$(dirname "$lock")"
+for _ in $(seq 1 300); do mkdir "$lock" 2>/dev/null && break; sleep 2; done
+[ -d "$lock" ] || { echo "测量锁 $lock 等待 600s 仍被占用，本轮拒绝并发计时" >&2; exit 1; }
+trap 'rmdir "$lock" 2>/dev/null || true' EXIT
 printf 'foundations pid=%s UTC=%s\n' "$$" "$(date -u)" >"$out/lock-owner.txt"
 # Record interference rather than asserting full machine isolation.
 pgrep -fl 'cargo|rustc' >"$out/build-processes.txt" || true

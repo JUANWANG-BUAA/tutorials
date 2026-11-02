@@ -1,0 +1,68 @@
+{
+  "reviewer": "sweep4ce-B",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立审计。完整通读 src/part4/ch17.md 第 457-874 行（17.3/17.4/17.5 全部正文、定义、例题与解答、思考、判定流程、常见错误、即时自测）。逐条对核 projects/tidekv 真实代码：src/segment.rs、src/epoch.rs、src/stats.rs、src/codec.rs、src/bin/tide-mech.rs、src/engine.rs，以及 tests/epoch_reclaim.rs、tests/concurrency.rs、tests/codec_contract.rs、tests/bloom_contract.rs。所有实测数字用 /usr/bin/python3 从 results/run-02/codec.csv 原始行重算（含 bootstrap CI 按 analyze.py:76 的 random.Random(seed^0xB007) 百分位法复现），并与 statistics-codec.json、gate-codec.json、mech-verification.txt、environment.txt、codegen/codec-codegen.txt、Cargo.toml 交叉核对。外部引文（17.3.2 easy-fs 块缓存）在本地母本 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 中核对原文。未修改任何其他仓库文件。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "全部可对核断言与代码一致：Segment 结构字段恰为 info/data:Vec<u8>/index_off/bloom_off/bloom_len/bloom 六样，open 一次 read_to_end 后即丢弃 File、无常驻 fd、无 Arc<SegmentData> 中间层（segment.rs:128-141,174-187）；条目偏移确为 u64 的 8 字节（segment.rs:20,84,206）；open 的页脚核对恰为四条范围关系 index_off>f、bloom_off>f、bloom_off+bloom_len==f、index_off+entries*12==bloom_off（segment.rs:160-163），且之前有长度(142)、魔数(146)、版本(149)、CRC(157) 四道前置检查，顺序与正文一致；零拷贝读路径 bytes_at 返回借用自 data 的切片并以 assert! 做边界核对（segment.rs:307-318）；引擎侧多个读者各持 Arc<Segment>（engine.rs:100,187）、Snapshot::get 返回值借用自段缓冲、借用钉住缓冲（engine.rs:449-500）。17.3.2 对 easy-fs 块缓存的转述与本地母本原文语义一致：「一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试」「去全局管理器中查看这个块是否已被缓存……在一段连续时间内对于一个块进行的所有操作均是在同一个固定的缓冲区中进行的」（2fs-implementation-rcore.html，另见本书 12.8.7 的核读记录 src/part3/ch12.md:1892,1988）。所引 [@def-12.4.1]/[@def-12.4.2]/[@def-2.3.2] 锚点均真实存在。",
+      "evidence": [
+        "projects/tidekv/src/segment.rs:128-135 (Segment 六字段)",
+        "projects/tidekv/src/segment.rs:139-141 (read_to_end 后 File 即弃)",
+        "projects/tidekv/src/segment.rs:16-20 (FOOTER_LEN=34, INDEX_ITEM=klen4+offset8)",
+        "projects/tidekv/src/segment.rs:142-163 (长度/魔数/版本/CRC 四前置检查 + 四条范围关系)",
+        "projects/tidekv/src/segment.rs:307-318 (bytes_at 边界 assert + SAFETY 注释)",
+        "projects/tidekv/src/engine.rs:98-103,100 (SegmentList 持 Vec<Arc<Segment>>)",
+        "projects/tidekv/src/engine.rs:449-500 (Snapshot::get 零拷贝借用)",
+        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html (easy-fs 块缓存原文「这很致命但又难以调试」)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "pass",
+      "method": "recompute",
+      "notes": "本节全部实测数字均可从 run-02 归档复算。Codec trait 恰两个方法 encode/cmp_key、无 decode，FixedCodec 定长实现存在（codec.rs:19-54）；编解码缝只被 tide-mech 与 tests/codec_contract.rs 使用（全仓 grep 仅 lib.rs 再导出、tide-mech.rs:17、codec_contract.rs:6），segment.rs 写路径内联字段不经 Codec，与定义 17.4.1 一致；键 16/值 64 与 17.1 输入家族（ch17.md:191）一致；两臂计时前做逐字节比对、不一致拒绝出数（tide-mech.rs:156-159），归档 bytes=364544（4096×(4+4+1+16+64)=364544，整除成立）、crc32=2b67ab81 与 mech-verification.txt 第一行一致。代码生成证据与正文逐项吻合：FixedCodec::encode 104 指令行/0 次 blr，encode_all_dyn 24 指令行/1 次 blr x22（codec-codegen.txt）。用 /usr/bin/python3 从 codec.csv 原始 1260 行 raw_batch 重算：按轮配对差值的均值 0.0712115（正文 +0.071）、样本标准差 0.318330（正文 0.318）、A 臂均值 3.964831（正文 3.965）、B 臂 4.036043（正文 4.036）；按 analyze.py:76 的 percentile bootstrap（boot_seed=20261029^0xB007=20289698、20000 次）复现 CI=[-0.0539342,+0.2075005]（正文 [−0.054,+0.208]）。协议元数据 21 轮×30 批、每批 4096、warmup_ms=500 与 CSV 头及 statistics-codec.json 一致；预算 1 ns/记录与 gate-codec.json budget_B=1.0、verdict=accept 一致；「主轮 20261028 与逐 case 分母」与 run-01/bench.csv 头（seed=20261028, ops_per_batch=900）一致；Apple M5 Pro、rustc 1.99.1 见 run-02/environment.txt，无 LTO、1 codegen unit 见 Cargo.toml [profile.release]（lto=false, codegen-units=1）。即时自测与小结无额外数字断言。",
+      "evidence": [
+        "projects/tidekv/src/codec.rs:19-24 (trait 两方法、无 decode), :43-49 (89 字节/记录), :58-69 (两条路径)",
+        "projects/tidekv/src/bin/tide-mech.rs:124-136 (键16/值64), :151-172 (计时前逐字节比对与 bytes/crc 写入头), :67-99 (scratch 在计时外、预热到 500ms)",
+        "projects/tidekv/results/run-02/codec.csv:3-4 (seed=20261029 rounds=21 batches=30 ops=4096 warmup=500; bytes=364544 crc32=2b67ab81)",
+        "/usr/bin/python3 重算: diff_mean=0.0712115, stddev=0.3183297, bootstrap CI=[-0.0539342,+0.2075005]（与 statistics-codec.json/gate-codec.json 逐项一致）",
+        "projects/tidekv/results/run-02/codegen/codec-codegen.txt (104 行/0 blr; 24 行/1 blr x22)",
+        "projects/tidekv/results/run-02/mech-verification.txt (MATCH bytes=364544, crc32=2b67ab81)",
+        "projects/tidekv/Cargo.toml:15-19; results/run-02/environment.txt",
+        "projects/tidekv/results/run-01/bench.csv:3 (主轮 seed=20261028)"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "主体断言与代码一致：SegmentList 只有 segments 与 frozen 两个 Vec、无生成号字段（engine.rs:98-103）；store 收 Box 并 head.swap(Box::into_raw(next), SeqCst)（epoch.rs:121-122）；pin 先 current_epoch（CURRENT.load SeqCst, epoch.rs:36）再 PINS.store SeqCst（:94）后 head.load SeqCst（:98），与「先记纪元再取 head」一致；advance 的 SeqCst 扫表与前缀回收（:139-158）支持图 17-3 的宽限期时间轴；「旧段不释放」确由确定性测试驱动：epoch_reclaim.rs:47-60 断言读者未松手时 advance()==0、release() 后一次 advance()==1，与即时自测第 3 题步骤逐条吻合；example 里「本项目走 epoch 这层、store 收 Box 不收 Arc」属实。「所有原子都用 SeqCst、只有 Heap::drop 取 head 用 Acquire」与 epoch.rs:204 一致；stats.rs 13 个计数器全部 Relaxed（fetch_add/load）亦实。两处问题见 findings：E-c 对 submitted/closed 的文件归属与定义 17.5.2 的全称断言。",
+      "evidence": [
+        "projects/tidekv/src/epoch.rs:94,98,122,139,145,252 (head/PINS/CURRENT 的 SeqCst) 与 :204 (drop 中 Acquire)",
+        "projects/tidekv/src/engine.rs:98-103,194 (SegmentList 两 Vec; Heap::new(\"segments\", Box::new(list)))",
+        "projects/tidekv/tests/epoch_reclaim.rs:39-64 (pin→advance==0→release→一次 advance==1)",
+        "projects/tidekv/src/stats.rs:79,148-163 (全部 Relaxed；无 submitted/closed 字段)",
+        "projects/tidekv/src/engine.rs:148,151,235,282,295,310,321,432,601,610,759 (submitted/closed 实际所在及其 AcqRel/Acquire/Release)"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P1",
+      "description": "常见错误 E-c 写道「src/stats.rs 的纯计数器是 Relaxed，但 submitted/closed 用 AcqRel/Acquire/Release——它们是同步边，不是纯计数」，句式把 submitted/closed 归到 src/stats.rs。按此路径无法找到这两个变量：stats.rs 的 Counters 只有 put/get/get_hit/get_miss/bloom_hit/bloom_reject/flush/compact/admission_reject/reclaim/bloom_overflow/bytes_flushed/wal_rejected 十三项，全部 Relaxed，且 grep submitted|closed 在 stats.rs 中 0 命中。这两个原子实际定义在 src/engine.rs 的 Shared（submitted: AtomicU64, closed: AtomicBool），正文描述的序本身（fetch_max AcqRel / load Acquire / store Release）在 engine.rs 全部可核实，属于文件指向错误的关键原子序断言。",
+      "evidence": "src/stats.rs:14-42（13 个计数器字段，无 submitted/closed）；grep -n 'submitted|closed' src/stats.rs → 0 命中；src/engine.rs:148,151（定义），:282 fetch_max(AcqRel)，:310,321 submitted.load(Acquire)，:235,295,610 closed.load(Acquire)，:432,601,759 closed.store(Release)"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P2",
+      "description": "定义 17.5.2 的全称断言「代码里 head 与 PINS 用的都是 SeqCst」与本节 E-c 自己写明的例外（只有 Heap::drop 取 head 用了 Acquire，epoch.rs:204）在同节内互相矛盾：定义处未带例外限定词，按定义字面核对代码会不通过。另 epoch.rs 内还有正文未提及的非 SeqCst 原子 NEXT_SLOT（Relaxed，:81,83）与 reclaimed（Relaxed，:173,185），虽不在「head 与 PINS」的字面范围内，但「哪两处用 Relaxed」的自测口径只数 stats.rs，读者扫 epoch.rs 会发现三处 Relaxed，建议定义处直接加上 drop/Acquire 例外以免与 E-c 打架。",
+      "evidence": "src/epoch.rs:94,98,111,122,139,145,252（head/PINS/CURRENT 的 SeqCst）对比 :204（head.load(Acquire)）；:81,83,173,185（Relaxed 的 NEXT_SLOT 与 reclaimed）；ch17.md:789 与 :833 措辞不一致"
+    }
+  ]
+}

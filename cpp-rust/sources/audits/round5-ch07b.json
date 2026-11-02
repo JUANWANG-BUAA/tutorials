@@ -1,0 +1,88 @@
+{
+  "reviewer": "r5-ch07b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动通读 src/part2/ch07.md 的 7.7–7.11 全部正文与语义盒（定义 7.7.1/7.8.1/7.8.2、例 7.7.1/7.8.1、思考 7.7.1/7.8.1、两份判定流程、两份即时自测、两份 errata、本章小结/速查/出口检查/章末件），并用 python 从 bench/results/local/atomic-4.txt、atomic-1.txt 逐批复算均值与标准差，逐行读了 bench/examples/publication.rs、bench/results/local/publication.txt、bench/results/profile/sample.txt 与 sample-command.txt、bench/results/local/environment.txt、tools/run_benchmarks.sh、bench/src/slot.rs、bench/results/apple-m5/atomics.s，以及 sources/reviews/S10.md、sources/web.json、sources/sections.json、src/appendix/coverage.md 与 .work/cpp-rust-sources/systems/2lock-rcore.html 的原文片段。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "本节全部「实测」数字我从归档复算，没有抄正文：atomic-4.txt 21 批算得 Adjacent-Relaxed 均值 5.2530、标准差 1.4077、p50 5.8543，Padded-Relaxed 均值 0.4176，Batched 0.0705，Shared-Relaxed 5.9797，Shared-SeqCst 5.9516——正文 7.7.1 的 5.253/0.418、[@think-7.7.1] 的 5.253/1.408/p50 5.854 与「比所有模式大一个量级」（1.408 对 0.069/0.002/0.002，超 20 倍）逐位命中；atomic-1.txt 单线程 Shared 1.7026、Adjacent 1.6911、Padded 1.6973 确实没有同类改善，7.7.1 的对照陈述成立。7.7.3 的 826/3281/847 三个数在 sample.txt 里逐字对到：主线程 Thread_950126 顶计 826，其下 8 条分支 213+213+212+158+14+13+2+1 恰为 826 且全部终止于 Barrier::wait→_pthread_cond_wait→__psynch_cvwait，「Sort by top of stack, same collapsed」段第 289/290 行给 3281（工作线程闭包 ___rust_begin_short_backtrace…run）与 847（__psynch_cvwait）；sample.txt 首行「every 1 millisecond」与正文「每毫秒抓取线程栈」一致。7.7.2 的运行命令与 run_benchmarks.sh:30 完全相同，publication.txt 与正文「实际输出」逐字一致，publication.rs:14-17/19-21 的 Release-后写 payload、Acquire-load 后读值与正文伪码方向一致，例 7.7.1 解答「synchronizes-with 边成立、载荷不在发布范围内」与代码注释 publication.rs:13 相符。7.7.5 的 perf 命令在正文里明确标为方法而非已采集数据，且全章（grep）不含任何 PMU 数字，与「本章不填入任何未运行的 PMU 数字」自洽；参数 4 500000 21 与 atomic-4.txt 头两行吻合。7.7.6「按顺序执行不同程序」「报告同时保存源码 SHA-256」对到 run_benchmarks.sh:30-31 顺序 cargo run（无后台符）与 :32-37 的 sha256 manifest 落盘（bench/results/local/source-hashes.json 在盘）。唯一扣分是 7.7.2 伪码把生产者的两次屏障等待压缩成一次。",
+      "evidence": [
+        "复算：bench/results/local/atomic-4.txt 21 批 → Adjacent-Relaxed mean=5.2530 sd=1.4077 p50=5.8543；Padded-Relaxed mean=0.4176；Batched mean=0.0705；Shared-Relaxed 5.9797；Shared-SeqCst 5.9516（正文 1367/1368/1507/1511 全部命中）",
+        "复算：bench/results/local/atomic-1.txt → Shared 1.7026 / Adjacent 1.6911 / Padded 1.6973，单线程无改善（正文 1369）",
+        "bench/results/profile/sample.txt:24-68（主线程 826，分支和为 826，叶为 __psynch_cvwait）、:289-290（3281 与 847）、:1（every 1 millisecond）",
+        "bench/examples/publication.rs:13-24 与 bench/results/local/publication.txt:1（输出逐字相同）",
+        "tools/run_benchmarks.sh:30 与正文 1406-1408 命令一致；:32-37 sha256 manifest → bench/results/local/source-hashes.json",
+        "bench/results/local/environment.txt:9-12（Apple M5 Pro / hw.ncpu 18 / hw.cachelinesize 128 / 无亲和性）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "静态量与代码事实逐条核过。7.8.3 的清单正文 8 项、判定流程写「八项」，数目相符；7.8.4「槽位固定存在，直到两个端点全部结束」对到 bench/src/slot.rs:36-44（Slot::new/split 借用同一数组，无动态节点分配）。7.8.7 的四路径表逐格落到真实测试：空读=slot.rs:108（try_recv 得 None）、满写还值=slot.rs:110（try_send(5)→Err(5)，未发送值还给调用者）、正常移出不重复析构=:166-174（received_payload_is_not_dropped_again，计数 1）、遗留消息析构一次=:155-162（unread_payload_is_dropped_once，计数 1）；跨线程多代 String 循环=:117-142（format!(\"message-{i}\")）。7.8.9 与判定流程里的「本机 128 字节」与 environment.txt:12 一致。[@def-7.8.2] 对 lock-free/wait-free 的区分（前者只保证冲突集中至少一个推进、后者要每操作步数上界）与 7.8.8 反例、例 7.8.1 解答「合规句子」三处口径一致，未越界宣称整协议 lock-free；思考 7.8.1 关于「地址空间同一假设最先失效」与 7.8.3 的虚拟基址/物理页论述相符。7.8.5 三份课程材料中，rCore 那条我读了磁盘上的母本 .work/cpp-rust-sources/systems/2lock-rcore.html：原文确有「最为常见的几种包括：忙等、通过 yield 暂时让权以及后面重点介绍的阻塞」、确有单核忙等失效论证「我们目前基于单核 CPU……无论多少次查看标记都必定为 true……造成 CPU 资源的严重浪费」、确有教学软件锁的 compiler_fence(Ordering::SeqCst) 片段——正文三条断言逐字落地。Stanford lecture13 与 MIT l-lockv2.txt 在 sources/web.json 里登记为 reviewed-online 且无本地母本，故这两条我只核到「来源已登记、章节/学期定位与台账一致（Winter2022 lecture13、Fall2020 Lecture10 Locking）」，讲义内部措辞（每链接线程→fd 与线程上限→固定线程池；粗粒度锁起步再测量）本轮未逐字回查，正文也未引用其数字，判不构成 finding。本节 16 个 [@] 跨节锚点（def-7.1.1/7.1.2/7.2.2/7.3.1/7.4.1/7.5.1/7.5.2/7.6.1/7.7.1/7.8.1/7.8.2、ex-7.5.1/7.7.1/7.8.1、think-7.7.1/7.8.1）我已用脚本对全 src 的 {#id} 集合逐个验证可解析，内部锚 #sec-cpp-rust.2.7.8 同样可解析。",
+      "evidence": [
+        "8 项清单 vs 判定流程「八项」：src/part2/ch07.md:1625-1632, 1749",
+        "bench/src/slot.rs:108, 110, 155-162, 166-174, 117-142（四路径 + 多代 String）",
+        "bench/src/slot.rs:36-44（固定槽位、无动态 free）",
+        ".work/cpp-rust-sources/systems/2lock-rcore.html（忙等/yield/阻塞三分、单核忙等失效、compiler_fence(Ordering::SeqCst) 原文命中）",
+        "bench/results/local/environment.txt:12（hw.cachelinesize: 128）",
+        "锚点脚本：16 个 [@id] 全部存在于 src/**/*.md 的 {#id} 集合"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "四条在线入口与三组来源全部落到登记：atomic→sources/web.json id \"atomic\"（URL 与正文链接逐字相同）、stanford-thread-notes→lecture-13-2022/、mit-lock-notes→l-lockv2.txt、rcore-lock→chapter8/2lock.html，四者在 sources/sections.json 里各有 read-mapped 条目（STD-ATOMICS / STANFORD-THREAD / MIT-LOCK / RCORE-LOCK）。「抓取版本 1.99.1」与 STD-ATOMICS 的 pages=\"在线1.99.1\"、coverage.md:50 的「在线1.99.1」一致（本机 rustc 是 1.99.0，正文并未宣称本机文档版本，故不判口径冲突，只是该 URL 不带版本号、母本未留存，版本只能信台账）。Effective Rust 第 17 条、《Rust 程序设计语言》16.1/16.3/16.4 三条分别在 coverage.md:39-43 有 PDF146–160 与 PDF383/396–404 的登记，页范围写法与 coverage.md 的「PDF」口径一致。../appendix/coverage.md 文件存在（src/appendix/coverage.md）。扣分见 findings：正文把 S10 第 334 页那句话写成带引号的原文「还没有明确的内存模型」，但仓库里能落地的只有 sources/reviews/S10.md:104 的释义「原书明确内存模型尚不完备」，PDF 本体不在磁盘（find . -name '*.pdf' 为空），逐字比对做不到；且同一 PDF334 单元在两份台账里的 target 不同（S10.md:104 → part1/ch03.md#sec-cpp-rust.1.3.5；coverage.md:44 S10/REF-MM → part2/ch07.md#sec-cpp-rust.2.7.1），正文只点 S10.md#review-s10-u0095，读者按该行反查会落到 ch03。",
+      "evidence": [
+        "sources/web.json（atomic / stanford-thread-notes / mit-lock-notes / rcore-lock 四条 URL 逐字对齐正文 1814-1817）",
+        "sources/sections.json:132-140（STD-ATOMICS，pages 在线1.99.1，target part2/ch07.md#sec-cpp-rust.2.7.2）",
+        "src/appendix/coverage.md:39-44, 50, 53-55（S08/R17-A·B、S11/BOOK-* 、S10/REF-MM PDF334、atomic/STD-ATOMICS、两讲与 rCore 映射到 2.7.8）",
+        "sources/reviews/S10.md:3（文件《Rust 参考手册.pdf》，物理页 376）与 :104（u0095，页 334，释义而非引文）；find . -name '*.pdf' → 空"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "本节的统计量我自己数过：按 E-[a-z] 前缀逐节计数，ch07 八份 errata 实际为 7.1=6、7.2=7、7.3=7、7.4=6、7.5=6、7.6=6、7.7=7、7.8=6，合计 51，与正文「八份清单（共 51 条）」及表格里每行的 E-a … E-f/E-g 区间完全一致，没有「索引是清单副本」之外的数目谎报。表中 7.7 行标 E-a…E-g、7.8 行标 E-a…E-f，与正文 1531-1543、1760-1770 的字母上界相符。表后四条独立错误的三个引用数字复算通过：「忙等快 27 倍」= 7.6.7 的 112.239 对 3070.823，比值 27.36，正文写「约 27 倍」并当场限定夹具，口径正确；「Relaxed 不比 SeqCst 快」与 atomic-4.txt 的 5.9797 对 5.9516（SeqCst 甚至略快）方向一致；「Apple M5 Pro、18 逻辑 CPU、128 字节缓存行与未设亲和性」逐字段对到 environment.txt:9-12 与 :13 的「No affinity … configured」。「跨字段一致性要另写协议」与[@def-7.1.2]的三层框架不冲突。链接 [#sec-cpp-rust.2.7.M] 八个锚点全部在文内存在。",
+      "evidence": [
+        "python 计数：7.1..7.8 的 E-a…条目 = 6/7/7/6/6/6/7/6，总和 51（src/part2/ch07.md:1823「共 51 条」）",
+        "复算：3070.823/112.239 = 27.36 → 「约 27 倍」（src/part2/ch07.md:1148, 1251）",
+        "bench/results/local/atomic-4.txt：Shared-Relaxed 5.9797 vs Shared-SeqCst 5.9516",
+        "bench/results/local/environment.txt:9-13（Apple M5 Pro / ncpu 18 / cachelinesize 128 / 无亲和性）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "小结七条与速查十条逐条回指定义锚点，指到的定义确实说了那句话（0.418/0.070 为聚合倒数→[@def-7.5.2]；栈采样不给占比→[@def-7.7.1]；单点 try 不构成 lock-free→[@def-7.8.2]、[@ex-7.8.1]）。数字复算：0.418 = Padded 均值 0.4176、0.070 = Batched 均值 0.0705（p50 0.0701），与 7.5.7 表 1036-1037 行同值。即时自测问题一「本机分别生成 ldadd 与 ldaddal」在保存的汇编里对得上：bench/results/apple-m5/atomics.s 计得 ldadd 2 处、ldaddal 1 处、ldapr 1 处、ldr 1 处，出口检查「在保存的 .s 中找到 mov/ldapr/ldadd」的两项已实证（mov 未单列计数，但同文件是 aarch64 汇编，判不构成问题）。问题二的分母说明「墙钟 / 四线程总操作数」与 atomic-4.txt 头的 threads=4 iterations_per_thread=500000 口径一致。最低复现命令三条：cargo test/clippy 指向 bench/Cargo.toml（文件在盘），bash tools/run_benchmarks.sh <outdir> 与脚本用法相符；「方差解释→原始 atomic-4.txt」的文件存在。五页章末件（ch07_summary/recall/exercises/exam/checklist.md）在 src/part2/ 下均在盘，链接可解析。局限交代：我只把本区间出现的 [@] 锚点与章内 # 锚点跑过集合校验，7.11 引到的跨章锚（[@def-1.5.2]）与章末五页的内部内容未逐字回读，留给机械层与 x.1–x.6 读者。",
+      "evidence": [
+        "复算：atomic-4.txt → Padded 均值 0.4176（正文 0.418）、Batched 均值 0.0705 / p50 0.0701（正文 0.070）",
+        "bench/results/apple-m5/atomics.s：grep -o 计得 ldadd×2、ldaddal×1、ldapr×1、ldr×1",
+        "bench/results/local/atomic-4.txt:1（threads=4 iterations_per_thread=500000 samples=21）",
+        "ls src/part2/ch07_{summary,recall,exercises,exam,checklist}.md 均存在；bench/Cargo.toml、tools/run_benchmarks.sh 存在"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "severity": "P2",
+      "description": "7.9 语言与库语义那条把《Rust 参考手册》第 334 页写成带引号的原文「还没有明确的内存模型」，并在正文里登记为已核实（指向 sources/reviews/S10.md#review-s10-u0095）。仓库内能落地的母本只有该行台账，而它的措辞是释义「原书明确内存模型尚不完备」，不是这句话；PDF 本体不在磁盘（find . -name '*.pdf' 返回空，S10.md:3 只记 文件：`Rust 参考手册.pdf`，物理页 376），所以逐字比对无法执行——引号用法超出了台账能支撑的强度。附带：同一个 PDF334 单元在两份台账里 target 不一致，S10.md:104 映射到 part1/ch03.md#sec-cpp-rust.1.3.5，coverage.md:44 的 S10/REF-MM 才映射到 part2/ch07.md#sec-cpp-rust.2.7.1；正文点名的 u0095 行反查不到 ch07。建议把引号改成释义（或补登 ch07 自己的那行），不影响本节其余四条入口与页范围登记的落地。",
+      "evidence": "sources/reviews/S10.md:3, :104（页 334 / 内存模型 / 「原书明确内存模型尚不完备」/ target=part1/ch03.md#sec-cpp-rust.1.3.5）；src/appendix/coverage.md:44（S10/REF-MM PDF334 → part2/ch07.md#sec-cpp-rust.2.7.1）；find . -name '*.pdf' → 空；src/part2/ch07.md:1808"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.7",
+      "severity": "P2",
+      "description": "7.7.2 的伪码把生产者的两次屏障等待写成一次（\"ready.store(true, Release) / 等待 consumer 已读取 / payload.store(42, Relaxed)\"），而 bench/examples/publication.rs:14-17 在 Release 与 payload.store 之间实际有 published.wait() 和 observed.wait() 两次；消费者侧的 published.wait() 对应的是生产者第一次 release。结论（Release 不发布之后的写入）与正文「实际输出」逐字一致、没有事实错误，但读者照伪码重搭调度会漏掉一个 rendezvous，教学精度不够。同一伪码块也没点出 publication.rs:23/26 的两个 assert_eq，它们才是「这个示例不会静默跑成正确结果」的保证。",
+      "evidence": "src/part2/ch07.md:1391-1401 对照 bench/examples/publication.rs:14-17（published.wait(); observed.wait(); 之后才 payload.store(42, Relaxed)）与 :19-24"
+    }
+  ]
+}

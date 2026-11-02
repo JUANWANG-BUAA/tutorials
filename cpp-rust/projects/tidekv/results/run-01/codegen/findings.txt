@@ -1,0 +1,112 @@
+
+===== environment =====
+rustc: rustc 1.99.1 (58cf8f9c3 2026-10-13)
+cargo: cargo 1.99.1 (5f94df478 2026-08-27)
+host: aarch64-apple-darwin
+cpu: Apple M5 Pro, cacheline 128 bytes
+
+===== emit =====
+$ cargo rustc --release --offline --lib -- --emit=mir,llvm-ir,asm
+   Compiling tidekv v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv)
+    Finished `release` profile [optimized + debuginfo] target(s) in 7.03s
+  -> ok
+$ cargo rustc --release --offline --bin tide-probe -- --emit=mir,llvm-ir,asm
+   Compiling tidekv v0.1.0 (/Users/juanwang/Desktop/tutorials/cpp-rust/projects/tidekv)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.49s
+  -> ok
+lib asm: results/run-01/codegen/lib.s exists=yes
+probe asm: results/run-01/codegen/probe.s exists=yes
+
+===== 1) Bloom::contains 的汇编体：除加载之外有没有调用 =====
+__RNvMNtCseHZXeO4ot7L_6tidekv5bloomNtB2_5Bloom8contains:
+符号: __RNvMNtCseHZXeO4ot7L_6tidekv5bloomNtB2_5Bloom8contains
+函数体行数: 158
+调用指令 (bl):
+148:	bl	__RNvNtNtCs3bJEMBXHbwl_4core9panicking11panic_const23panic_const_rem_by_zero
+bl 计数: 1  （0 = 热路径没有函数调用）
+b/br 无条件分支计数: 0
+  ldp 行数: 1
+  ldr 行数: 5
+  ldur 行数: 0
+  ldrb 行数: 3
+  str 行数: 0
+  stp 行数: 1
+  cmp 行数: 4
+  ccmp 行数: 0
+  csel 行数: 1
+  cinc 行数: 1
+  min 行数: 0
+  smaxp 行数: 0
+  umaxp 行数: 0
+
+===== 2) 自动向量化证据 =====
+向量寄存器出现情况:
+含 v 寄存器的行数: 9
+ldp 行数: 1
+NEON 比较/归约 (cmeq|umaxp|uminp|min|max|bif|bsl|ld1) 行数: 3
+lib LLVM-IR 中向量类型/shufflevector 命中行数: 1
+lib LLVM-IR 里的 contains 定义:
+22621:define internal fastcc noundef zeroext i1 @_RNvMNtCseHZXeO4ot7L_6tidekv5bloomNtB2_5Bloom8contains(ptr noalias nofree noundef nonnull readonly align 8 captures(none) dereferenceable(40) %self, ptr noalias nofree noundef nonnull readonly captures(address) %key.0, i64 noundef range(i64 0, -9223372036854775808) %key.1) unnamed_addr #10 personality ptr @rust_eh_personality !dbg !22094 !guid !22095 {
+
+===== 3) 内联证据：符号在哪定义、在哪被调用 =====
+-- 文件 lib.s
+   Bloom8contains        : 定义 1 处, bl 调用 2 处
+   Segment3get           : 定义 1 处, bl 调用 1 处
+   Segment12get_no_bloom : 定义 1 处, bl 调用 2 处
+   Memtable3get          : 定义 1 处, bl 调用 1 处
+   Tide3get              : 定义 1 处, bl 调用 1 处
+   Snapshot3get          : 定义 1 处, bl 调用 4 处
+   crc32                 : 定义 2 处, bl 调用 2 处
+-- 文件 probe.s
+   Bloom8contains        : 定义 0 处, bl 调用 0 处
+   Segment3get           : 定义 0 处, bl 调用 1 处
+   Segment12get_no_bloom : 定义 0 处, bl 调用 0 处
+   Memtable3get          : 定义 0 处, bl 调用 1 处
+   Tide3get              : 定义 0 处, bl 调用 1 处
+   Snapshot3get          : 定义 0 处, bl 调用 0 处
+   crc32                 : 定义 0 处, bl 调用 0 处
+probe bin 里所有对 tidekv 符号的调用点:
+   5 bl	__RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueNtNtCseHZXeO4ot7L_6tidekv6engine9TideErrorECs3JOnBuUxc1f_10tide_probe
+   4 bl	__RNvMsn_NtCs8Hh7wWMBHrQ_5alloc4syncINtB5_3ArcNtNtCseHZXeO4ot7L_6tidekv6engine6SharedE9drop_slowBK_
+   2 bl	__RNvXs_NtCseHZXeO4ot7L_6tidekv8testutilNtB4_7TempDirNtNtNtCs3bJEMBXHbwl_4core3ops4drop4Drop4drop
+   2 bl	__RNvXs4_NtCseHZXeO4ot7L_6tidekv6engineNtB5_4TideNtNtNtCs3bJEMBXHbwl_4core3ops4drop4Drop4drop
+   2 bl	__RNvMsz_NtNtNtCs8Hh7wWMBHrQ_5alloc11collections5btree3mapINtB5_8IntoIterINtNtBb_3vec3VechENtNtCseHZXeO4ot7L_6tidekv8memtable5EntryE10dying_nextCs3JOnBuUxc1f_10tide_probe
+   2 bl	__RNvMs3_NtCseHZXeO4ot7L_6tidekv6engineNtB5_4Tide5flush
+   2 bl	__RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueNtNtCseHZXeO4ot7L_6tidekv8memtable8MemtableECs3JOnBuUxc1f_10tide_probe
+   2 bl	__RINvNtCs3bJEMBXHbwl_4core3ptr9drop_glueINtNtCs8Hh7wWMBHrQ_5alloc3vec3VecNtNtCseHZXeO4ot7L_6tidekv7segment11SegmentInfoEECs3JOnBuUxc1f_10tide_probe
+   1 bl	__RNvMsn_NtCs8Hh7wWMBHrQ_5alloc4syncINtB5_3ArcINtNtNtCsdnanKjkF2cC_3std6thread9lifecycle6PacketuEE9drop_slowCseHZXeO4ot7L_6tidekv
+   1 bl	__RNvMs_NtCseHZXeO4ot7L_6tidekv8memtableNtB4_8Memtable6insert
+   1 bl	__RNvMs_NtCseHZXeO4ot7L_6tidekv8memtableNtB4_8Memtable3get
+   1 bl	__RNvMs_NtCseHZXeO4ot7L_6tidekv7segmentNtB4_7Segment4open
+   1 bl	__RNvMs_NtCseHZXeO4ot7L_6tidekv7segmentNtB4_7Segment3get
+   1 bl	__RNvMs3_NtCseHZXeO4ot7L_6tidekv6engineNtB5_4Tide8segments
+   1 bl	__RNvMs3_NtCseHZXeO4ot7L_6tidekv6engineNtB5_4Tide3put
+probe bin 的 probe_bloom 函数体里的调用:
+  行数 183，bl 计数 1
+173:	bl	__RNvNtNtCs3bJEMBXHbwl_4core9panicking11panic_const23panic_const_rem_by_zero
+Segment::get_no_bloom 体行数 228，其中 bl 计数 5
+100:	bl	_memcmp
+145:	bl	__RNvMs_NtCseHZXeO4ot7L_6tidekv7segmentNtB4_7Segment7look_at
+183:	bl	__RNvNtNtCs3bJEMBXHbwl_4core5slice5index16slice_index_fail
+194:	bl	__RNvNtNtCs3bJEMBXHbwl_4core5slice5index16slice_index_fail
+217:	bl	__RNvNtCs3bJEMBXHbwl_4core9panicking9panic_fmt
+  ldp 行数 7，v 寄存器行数 0
+
+===== 4) MIR =====
+lib.mir 行数: 62132
+MIR 里 contains 的定义行:
+1268:fn bloom::<impl at src/bloom.rs:48:1: 48:11>::contains(_1: &Bloom, _2: &[u8]) -> bool {
+1502:fn bloom::<impl at src/bloom.rs:48:1: 48:11>::contains::{closure#0}(_1: &mut {closure@src/bloom.rs:140:30: 140:35}, _2: &&u8) -> bool {
+MIR 里 contains 的 basic block 数: 7
+MIR 里对 Bloom::contains 的调用点个数: 3
+MIR 里 hash64 的调用点个数: 3
+
+===== raw counts (machine checkable) =====
+contains_asm_lines=158
+contains_bl=1
+contains_ldp=1
+contains_vreg_lines=9
+lib_ll_vector_lines=1
+probe_asm_vreg_lines=9
+
+产物: contains.s findings.txt lib.ll lib.mir lib.s probe.ll probe.mir probe.s probe_bloom.s segment_get.s 

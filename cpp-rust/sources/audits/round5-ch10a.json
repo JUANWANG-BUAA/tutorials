@@ -1,0 +1,87 @@
+{
+  "reviewer": "r5-ch10a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整通读 src/part3/ch10.md 第69-1308行（10.1-10.6 全部正文与每个定义/例题/思考/判定流程/小结/常见错误/即时自测盒），并逐一打开 bench/runtime-lab 的 wire.rs、process.rs、bin/process_rpc.rs、bin/pipe_drain.rs、bin/worker.rs、tests/contracts.rs、bench/src/lib.rs，用 /usr/bin/python3 从 measurements-final 的 process-rpc.txt 与 pipe-drain.txt 复算了全部表格统计量，另核对 type-layout.txt、runtime-lab.s/.ll、runtime-final/process-rpc-sample.txt、Cargo.lock 与 sources/web.json 台账。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "定义10.1.1/10.1.2/10.1.3、例10.1.1、思考10.1.1、判定与自测全部读完。Tokio 1.54.0 版本号与 Cargo.lock 一致（bench/runtime-lab/Cargo.lock:97-98 tokio 1.54.0），web.json 登记 docs.rs/tokio/1.54.0 runtime 页且状态 reviewed-online，fork 后限制重用 runtime 的说法可落地。唯 Stanford CS110L 那条「讲义特别讨论了多线程fork的锁状态问题」：台账只登记课程主页 URL（status=fetched-not-reviewed），磁盘上没有该课具体章节的母本可对核，属引证落地偏弱（见 P2 finding）。其余断言（Command 不叫死 fork 系统调用、孙进程可继承写端）与 worker.rs 的 inherit 模式（bench/runtime-lab/src/bin/worker.rs:31-35「grandchild retains both pipes」）互相印证。",
+      "evidence": [
+        "bench/runtime-lab/Cargo.lock:97-98 tokio 1.54.0",
+        "sources/web.json tokio-runtime 条目 url=docs.rs/tokio/1.54.0, status=reviewed-online；stanford 条目 url=web.stanford.edu/class/cs110l/, status=fetched-not-reviewed, 无 archive 字段",
+        "bench/runtime-lab/src/bin/worker.rs:31-35 inherit 模式注释 'child exits, grandchild retains both pipes'"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "定义10.2.1（EOF=所有写端关闭且缓冲读完）、10.2.2 take()/Drop 只作用于本地端点、例10.2.1 三场景与六行观察表、思考10.2.1 互等分析、小结/errata/自测逐条核对。10.2.3 引用的 Session::finish 代码与 bench/runtime-lab/src/bin/process_rpc.rs:69-76 逐行一致（先 drop(self.input.take()) 再 child.wait()，失败信息 'worker exit failed' 原文命中；正文把 io::Result 写作 std::io::Result 只是路径写全，语义相同）；Drop 里 try_wait→kill→wait 在 :77-85 也在。图10-1 的三进程端点分布与 worker.rs:31-35 的 inherit 夹具（直接子退出、孙持写端）一致。exit_code 为 None 对应信号终止是 Unix waitstatus 常识，未点名为本轮实测，不构成无出处。",
+      "evidence": [
+        "bench/runtime-lab/src/bin/process_rpc.rs:69-76 fn finish 与正文代码块逐行一致",
+        "bench/runtime-lab/src/bin/process_rpc.rs:77-85 Drop 实现 kill+wait",
+        "bench/runtime-lab/src/bin/worker.rs:31-35 inherit 回归夹具"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "24字节字节表、定义10.3.1/10.3.2、例10.3.1 三读数、10.3.5 write_all/flush 表述、10.3.6 ABI 表、思考10.3.1、小结/errata/自测全部核对。wire.rs 里 encode（bytes[0..2]=1u16le、[4..8]=24u32le、[8..16] id、[16..24] value，先全零初始化所以 flags=0）与正文代码块逐字符一致（bench/runtime-lab/src/wire.rs:13-20）；read_frame 的「先读1字节、0→Ok(None)、否则 read_exact 剩23字节」与 :46-59 一致；「逐一破坏三个头部位置要求 InvalidData」对应测试 rejects_each_header_field 的 for index in [0,2,4]（:83-97），「验证 id little-endian 字节顺序」对应 explicit_roundtrip_and_byte_order 的 assert bytes[8..16]==[8..1]（:70-77），「空流与单字节截断分别有可执行测试」对应 eof_is_not_truncated_frame（:99-107，&[][]→None、&[1u8][]→UnexpectedEof）。静态量核验：Frame 两 u64 → size=16/align=8 与 measurements-final/type-layout.txt 首行 'Frame size=16 align=8 wire=24' 一致；runtime-lab.s/.ll 确实存在于同目录。",
+      "evidence": [
+        "bench/runtime-lab/src/wire.rs:13-20, 46-59, 70-77, 83-97, 99-107",
+        "bench/results/runtime-fixed/measurements-final/type-layout.txt:1 'Frame size=16 align=8 wire=24'",
+        "bench/results/runtime-fixed/measurements-final/runtime-lab.s 与 runtime-lab.ll 存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "定义10.4.1/10.4.2/10.4.3、边界表、样本方法、结果表、例10.4.1、判定流程、10.4.8 与思考10.4.1、小结/errata/自测全部核对，并用 python 从正文点名的 runtime-fixed/measurements-final/process-rpc.txt 复算：spawn 21 批 mean=1219110.006、样本sd=77376.429、批p50=1208367.188、批p99（库的 nearest-rank，即最大值 1531747.4375→1531747.438）与表格逐项吻合；persistent 5484.128/532.400/5372.375/7346.375 同样吻合（7346.375=样本最大值）；例10.4.1 的 222 倍复算 mean(spawn)/mean(persistent)=222.298，成立。代码面：READY=b\"RPCv0001\" 固定8字节（wire.rs:5），worker 先 write_all(READY)+flush、父 read_exact 后比对（worker.rs:9-10, process_rpc.rs:33），persistent 分支 Session::start 在计时前（:89 注释 'ready handshake before timing'），每批16请求、ns_per_op(elapsed,16) 与「样本是16次请求墙钟均值」一致（:94,104；lib.rs:33-36）；wrapping_mul(3) 保留 id、父逐条校验（wire 循环 worker.rs:11-14 与 process_rpc.rs:64）。分位数定义经 [@def-1.5.2] 与 print_stats 的 batch_p50/batch_p99 标签（lib.rs:41）交代为批分位数，口径未混用。rCore 段落是转述非逐字引文，台账登记 rcore chapter8 index（fetched-not-reviewed，archive 为 index-ch8-rcore.html，该页是章节目录页、我在预算内未能把 fork/exec/waitpid 细节核到具体小节母本全文——此点未完全核实，倾向 pass）；Stanford/tokio 情况见 10.1 注。本轮没有采集启动延迟分解、没测多 worker，正文自己也这么声明，无过度断言。",
+      "evidence": [
+        "复算：process-rpc.txt spawn n=21 mean=1219110.006 sd=77376.429 p50=1208367.188 max=1531747.4375；persistent mean=5484.128 sd=532.400 p50=5372.375 max=7346.375；比值 222.298",
+        "bench/src/lib.rs:33-36,38-48（ns_per_op 与 print_stats nearest-rank 口径，tests:55-61 固化该定义）",
+        "bench/runtime-lab/src/wire.rs:5; src/bin/worker.rs:9-14; src/bin/process_rpc.rs:33,64,87-104; :110-112(≥500ms 预热) :119(轮转)",
+        "bench/results/runtime-fixed/measurements-final/process-rpc.txt 全文 42 行样本"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "定义10.5.1/10.5.2、状态四字段表、10.5.4 排空代码、例10.5.1、思考10.5.1、判定流程、10.5.6/10.5.7、小结/errata/自测全部核对。停滞重现测试与正文逐点吻合：contracts.rs:162-185 wait_before_drain_is_a_reproduced_stall 用 flood 夹具（worker.rs:16-28：先 stdout 再 stderr 各写 count 字节，pipe_drain.rs:11 传 BYTES=2MiB），先 read_exact 1 字节断言 b'x'、再 tokio::timeout(30ms, child.wait()) 必须超时、随后 start_kill+wait——「2MiB/2MiB、读一字节、30ms、kill+wait」四个参数全部命中，且正文明确 30ms 只是观察窗口。Capture 四字段（prefix/total/eof/reader_errors）在 process.rs:31,52 与 10.5.3 表一致；8192 字节临时块 process.rs:84；checked_add 溢出防护 process.rs:119；keep=n.min(cap.saturating_sub(prefix.len())) 与正文快照代码一致（快照 measurements-final/source-snapshot/bench/runtime-lab/src/process.rs:119-121），现版确为 poll_fn（同文件 :86，正文「下段为旧源码快照、现版 poll_fn」的交代准确，旧式 await 循环在 before-source-snapshot 与 baseline 快照可查）；cap>16MiB 直接 InvalidInput 拒绝（process.rs:158，tests 用 17MiB 验证）。例10.5.1 的 stdout 数字与 pipe_drain 归档形状一致（total=2097152、cap=128），stderr 一路正文自己声明为构造夹具非归档读数，未冒充实测。",
+      "evidence": [
+        "bench/runtime-lab/tests/contracts.rs:162-185",
+        "bench/runtime-lab/src/bin/worker.rs:16-28 flood 写 stdout 后 stderr",
+        "bench/runtime-lab/src/process.rs:31,52,84,119-121,158; measurements-final/source-snapshot/.../process.rs:86,119-121",
+        "bench/runtime-lab/src/bin/pipe_drain.rs:8,11,36"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "计量对象、10.6.2 阶段表、10.6.3 七项校验、结果表、例10.6.1、10.6.5/10.6.6、10.6.7 sample 表与 bash 复验命令、思考10.6.1、小结/errata/自测全部核对。从 pipe-drain.txt 复算：prefix128 n=21 mean=0.514 sd=0.031 p50=0.507 p99=0.583、retain-all mean=0.515 sd=0.027 p50=0.507 p99=0.583（=样本最大值 0.583420277，nearest-rank 口径），与表格逐项吻合；例10.6.1 里「0.001 差值小于两组 sd」成立。代码面：BYTES=2*1024*1024、每批聚合 4194304、ns_per_op(elapsed, BYTES*2) 与定义10.6.1 的「批墙钟/4194304」一致（pipe_drain.rs:8,31）；cap 取 [128, BYTES] 即 retain-all 上限恰为 2MiB（:36,46）；七项校验逐项命中 :19-29（!timed_out、exit_code==Some(0)、reader_errors 空、双流 eof、total==2097152、prefix.len()==cap、内容全为 b'x' 且注释明示在 elapsed 边界外）。10.6.7 点名的 runtime-final/process-rpc-sample.txt 确实存在；posix_spawnp/__wait4 等栈说法与该报告同源归档、正文已声明是历史版本且不给百分比，未见把未采集量写成结论。10.6.6/10.6.5 的「没有采集」自陈与归档缺对应数据相符。",
+      "evidence": [
+        "复算：pipe-drain.txt prefix128 mean=0.514 sd=0.031 p50=0.507 p99=0.583；retain-all mean=0.515 sd=0.027 p50=0.507 max=0.583420277",
+        "bench/runtime-lab/src/bin/pipe_drain.rs:8,11,19-29,31,36,43-51（21批、轮转、≥500ms 预热 :37-38）",
+        "bench/results/runtime-final/process-rpc-sample.txt 存在",
+        "bench/src/lib.rs:33-48（ns/byte 与 nearest-rank 口径）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "severity": "P2",
+      "description": "「Stanford CS110L讲义特别讨论了多线程fork的锁状态问题」这一外部文档断言，在来源台账 sources/web.json 里只登记了课程主页 https://web.stanford.edu/class/cs110l/（status=fetched-not-reviewed，无 archive 字段），磁盘上找不到承载「多线程 fork 后锁状态继承」论述的具体讲义页母本，冷读者无法逐字回查该句的内容级出处（同台账里 tokio-runtime 与 rcore 条目都给了可定位 URL/归档，对比之下此项落地偏弱）。属引证锚点选择问题而非编造：正文未标称已核实，判 P2；建议把登记换成含 fork 讨论的具体 lecture/notes URL 并抓取归档。",
+      "evidence": "sources/web.json stanford 条目：url=https://web.stanford.edu/class/cs110l/, sha256=14b5bac6..., status=fetched-not-reviewed，无 archive；find sources/.work -iname '*110l*' -o -iname '*stanford*' 无任何落盘母本；grep cs110 于 contributions/systems-web.json、inventory*.json 无命中。"
+    }
+  ]
+}

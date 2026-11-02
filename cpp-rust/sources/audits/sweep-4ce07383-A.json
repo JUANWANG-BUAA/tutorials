@@ -1,0 +1,127 @@
+{
+  "reviewer": "sweep4ce-A",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立核查。完整通读 src/part4/ch17.md 第 128-456 行（17.1 与 17.2 的全部正文、preview、定义盒、例题与解答、思考盒、判定流程、图 17-2 的 SVG 与 caption、常见错误清单、即时自测及答案）。逐条对核 projects/tidekv/src/segment.rs、src/bloom.rs、src/memtable.rs、src/wal.rs、src/engine.rs、src/epoch.rs、src/lib.rs、src/bin/tide-bench.rs、src/bin/tide-mech.rs，以及 tests/segment_format.rs、tests/bloom_contract.rs、tests/persistence.rs、tests/tombstones.rs、tests/compaction.rs、tests/epoch_reclaim.rs、tests/ipc_compactor.rs、tests/admission.rs、tests/wal_recovery.rs；实测数字与 results/bloom-contract-2026-10-30.txt、results/run-01/{bench-verification.txt,environment.txt,gate.json,test-summary.txt,codegen/}、results/run-02/*、results/run-03/* 交叉核对；全部字节算术用 /usr/bin/python3 重算；外部对照（rCore easy-fs）在本地母本 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 内逐句核对原文。未修改任何其他文件。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "finding",
+      "notes": "逐项核对了可对核的断言，多数为真，问题集中在契约 F 的归属与四处措辞/映射。①定义 17.1.1 的操作集合 7 个名字（put/delete/get/scan_prefix/flush/compact_two/sync）在 src/engine.rs 的 Tide 上逐一存在（engine.rs:253,263,350,364,320,331,309），无虚构 API。②定义 17.1.2 六条不变量逐条对码：`sync` 默认不 fsync 属实（engine.rs:84-92 Config::new 的 durable:false；wal.rs:109-113 sync_to 只在 durability 为真时 sync_all），17.8.2（ch17.md:1344-1347）确实有这段交代；REF 确是单线程 HashMap 回放、基线 A 确是 RwLock<BTreeMap>，且是两段不同代码（tide-bench.rs:3-5、178、212-214、452，run-01/bench-verification.txt:1-2）；「六条里五条有测试、唯『段文件字节一旦写下不再修改』没有」我按 tests/ 逐条数过——重启持久=persistence.rs:8,40,65，get=REF 三方比对=bench-verification.txt 四 case 全 MATCH，删除不可见=tombstones.rs:17,34,50,70，压缩前后集合相同=compaction.rs:47,94,143，快照在 epoch 越过退休纪 before 不释放=epoch_reclaim.rs:33,67,110 且回收判据确为 min_active（epoch.rs:138-157，不是引用计数）；tests/segment_format.rs 全文只有 5 个测试，其中 any_byte_flip_breaks_the_segment_crc 测的是外部改动被 CRC/范围核对拒掉、unsorted_input_is_refused 测写入前置校验，没有任何测试断言引擎不会回写已落盘段字节，正文这条自认缺档是诚实的。③里程碑表 M1-M7 与归档一一对上：M1 的 CRC 截断/损坏在 wal_recovery.rs:45,64,85 与 segment_format.rs；M2 的无漏报+假阳计数在 bloom_contract.rs:14,26；M6 的 MIR/LLVM IR/asm 在 run-01/codegen/（lib.mir、lib.ll、lib.s、findings.txt 等 8 个文件）；M7 的两格缺档复核为真——三份 environment.txt 里 grep 不到任何源码哈希（只有 rustc/cargo/cpu/cachelinesize 等机器与工具链字段），run-01/gate.json 只有 budget_B:1000.0 无 budget_note，而 run-02/gate-codec.json、gate-compaction.json 与 run-03 两份 gate-*.json 都有 budget_note；M4 指向 17.6.2 的 CAP=64/CAP=4 对照（ch17.md:959,985）与 M5 指向 17.7.1 的定义 17.7.2（def-17.7.2 落在 ch17.md:1056，确在 17.7.1 小节内，line 1103「本项目缺的正是这次查询」支撑「重放幂等未实现」）都成立。④17.1.3 六条「不做」逐条对码为真：全仓 grep mmap/leveled/NonZero（限 src、tests）零命中、无 flock/锁文件，engine.rs 只有一个扁平段列表与一次性 compact_two，无事务/隔离级别；「本书没有覆盖 LSM 分层」「不涉及数据库事务语义」按 src/ 全量 grep，其它章只在 17.1.3/17.9 自身与 appendix/coverage.md 出现，负断言成立；「上表第二行没有机制能挡住」也成立（无任何跨进程锁）。⑤回看章指向与各章标题相符（2 布局/3 所有权/7 并发原子/8 异步底座/9 执行器背压/10 多进程 IPC/11 无锁回收/12 向量化零拷贝/13 profiling/14 构建身份门禁），四个相对链接 ../part3/ch10.md、../part3/ch12.md、../part1/ch02.md、../part4/ch14.md 文件均存在。⑥九处跨章锚点 def-1.1.1/1.2.2/1.5.1/1.6.1/1.7.2/2.1.1/2.1.2/2.2.1/2.3.1/2.3.2 在 ch01/ch02 中全部存在（不会 404）。查出的问题：契约 F 声明的输入家族与主轮归档不符（P1），另有出口条件与自身缺档不闭环、『全仓没有 NonZero』越界、主线映射两处不一致、一处锚点错位（P2）。",
+      "evidence": [
+        "projects/tidekv/src/engine.rs:84-92（Config::new durable:false、memtable_flush_bytes:64*1024、admission_capacity:1024）",
+        "projects/tidekv/src/wal.rs:108-115（sync_to(durability)：只 flush，为真时才 sync_all）",
+        "projects/tidekv/src/engine.rs:253,263,309,320,331,350,364（O 的七个操作真实存在）",
+        "projects/tidekv/src/bin/tide-bench.rs:3-5,178,212-214,452（基线 A=RwLock<BTreeMap<Vec<u8>,Option<Vec<u8>>>>、REF=naive HashMap replay，两段独立代码）",
+        "projects/tidekv/results/run-01/bench-verification.txt:1-15（A/B/REF 三方四 case 全 MATCH）",
+        "projects/tidekv/tests/segment_format.rs:28,57,77,102,112（全部 5 个测试：无「段字节不再被修改」的测试，只有外部翻转被拒）",
+        "projects/tidekv/src/epoch.rs:138-157（回收判据 min_active，非引用计数）",
+        "projects/tidekv/results/run-01/gate.json（budget_B:1000.0，无 budget_note）；grep -l budget_note → 仅 run-02 两份与 run-03 两份",
+        "projects/tidekv/results/run-01/environment.txt（machine/toolchain 齐全，grep sha256|git|源码|fingerprint 零命中 → 源码指纹确实缺档）",
+        "grep -rn 'mmap|leveled|NonZero' projects/tidekv/src projects/tidekv/tests → 无命中；grep flock|LOCK projects/tidekv/src/*.rs → 无命中",
+        "src/part1/ch01.md:361（def-1.2.2=case/批次/批均值）、:881（def-1.5.1=名义元素）、:1038（def-1.6.1=等价工作比较）、:1243（def-1.7.2=三态门禁）；src/part1/ch02.md:77（def-2.1.1=size/align/offset）、:354（def-2.2.1=niche）",
+        "src/part1/ch02.md:538,555,628（第 2 章明写没有 PMU 采集）与 :512（本机 sysctl 报告缓存行 128 字节），支撑 17.2 preview 的回指措辞"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "finding",
+      "notes": "字节账与格式我逐字节对码、逐式复算，正文在这两节里给出的每一个静态数都对得上：条目头 17 = klen4+vlen4+op1+seq8（segment.rs:18，写出顺序 :77-80），索引项 12 = klen4+off8（:20，写出 :83-84，读回 index_item :203-208），页脚 34 = magic5+ver1+entries4+index_off8+bloom_off8+bloom_len4+crc4（:12-16，写出 :98-104，字段顺序与正文/图 17-2 完全一致）；MAGIC=*b\"TIDE1\" 5 字节、VERSION:u8=1 ✓。python 复算例 17.2.1：17+16+64=97；97×65536=6,356,992；12×65536=786,432；合计 7,143,424；+34=7,143,458；去掉索引里的键长省 4×65536=262,144 B=256 KiB；log2 65536=16 步——四个数与正文逐字相同，262,144 的算式成立且与 INDEX_ITEM 常量一致。布局机制断言也对：数据区按键字典序且唯一（write_segment :64-72 显式拒绝乱序/重复），二分每步只从索引取 (klen,off) 再去数据区取键（lookup_index :225-239 + bytes_at(off+ENTRY_HEAD,klen) :231），值字节确实全程不碰；定宽寻址 base+12×i ✓（:204）。「校验和恰恰不覆盖页脚自己」为真：crc=crc32(&buf) 在追加页脚之前算（:97），open 用 crc32(&data[..f]) 复核（:157），f=len-34 ✓。open 的检查清点为：长度≥FOOTER_LEN+ENTRY_HEAD、魔数相等、版本相等、四个字段读出、CRC，再四条范围关系 index_off>f / bloom_off>f / bloom_off+bloom_len==f / index_off+entries*12==bloom_off（:142-166），正文说「偏移与长度靠范围核对兜」方向正确（E-d 的归类细节另记 P2）。布隆参数全对得上：BUCKET=16（bloom.rs:4）、指纹 8 bit 且强制非零（:32-35）、contains 定长比较整个 16 槽桶（:136-141）、DEFAULT_BYTES_PER_KEY=8（:181）——故例 17.2.2 的 2^-8=1/256=0.390625%、16×2^-8=1/16=6.25%、⌈log2 16000⌉=14（log2 16000=13.966）、单槽口径下 ⌈log2 1000⌉=10、每键 8 槽×8=64 bit→8 槽×14=112 bit（多 48 bit）复算全部成立；实测三行与 results/bloom-contract-2026-10-30.txt:11-14 逐字相符（slots=400000、fp=1525/200000、rate=0.00762、1/131.1；0/50000；1989 rejected/2000 probed），复算 1525/200000=0.7625%、1/0.007625=131.15、0.7625/0.390625=1.952×、1989/2000=99.45% ✓，没有编造的实测或静态字节。墓碑与 niche 一段：memtable.rs:13-18 确为显式变体 EntryKind::Delete、:36-45 value() 才转成 Option，段内 op=2 承载删除（segment.rs:76,247）；tidekv 的 src/tests grep NonZero 零命中 ✓。与 easy-fs 的对照我找到本地母本 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 逐句核：INODE_DIRECT_COUNT=28 ✓、直接索引 14KiB ✓、一级索引块 512/4=128 个 u32 ✓、一级 64KiB ✓、二级 128×64KiB=8MiB ✓、间接索引块也位于数据块区域（正文「索引块也是数据块」）✓、读间接索引要先多读一次索引块 ✓（get_block_id :13-17 确实先 get_block_cache(indirect1) 再取项）——不是无出处引用。查出的问题：①正文把「键长固定 16、值长固定 64」当成项目输入家族，与主轮夹具/归档矛盾（P1）；②另有五处体例与措辞问题（重复短语、三区/四带、层级容量读法、实测段的测试归属、E-d 与 def 17.2.2 首句的不精确、图 desc 的「指纹槽」、一处锚点错位），均为 P2。",
+      "evidence": [
+        "projects/tidekv/src/segment.rs:12-20（MAGIC 5B=TIDE1、VERSION:u8=1、FOOTER_LEN=34、ENTRY_HEAD=17、INDEX_ITEM=12）",
+        "projects/tidekv/src/segment.rs:77-84（条目头写出顺序 klen4|vlen4|op1|seq8，随后键、值；索引写出 klen4|off8）",
+        "projects/tidekv/src/segment.rs:98-104（页脚写出顺序 magic5|ver1|entries4|index_off8|bloom_off8|bloom_len4|crc4）",
+        "projects/tidekv/src/segment.rs:97,157（crc32 在追加页脚之前算；open 用 crc32(&data[..f])，f=len-34 → 页脚 34 字节不被覆盖）",
+        "projects/tidekv/src/segment.rs:142-166（open 的五道前置检查 + 四条范围关系）",
+        "projects/tidekv/src/segment.rs:203-239,281（index_item 定宽定位 base+12*i；lookup_index 只读 off+17 起的 klen 字节，不碰值）",
+        "/usr/bin/python3 复算：17+16+64=97；97*65536=6356992；12*65536=786432；sum=7143424；+34=7143458；4*65536=262144=256.0 KiB；log2(65536)=16.0",
+        "projects/tidekv/src/bloom.rs:4,32-35,136-141,181（BUCKET=16、8bit 非零指纹、contains 比较 16 槽、每键 8 字节）",
+        "/usr/bin/python3 复算：2**-8=0.00390625=0.390625%；16*2**-8=0.0625=6.25%；ceil(log2(16000))=14（13.9658）；ceil(log2(1000))=10（9.9658）；8*8=64bit→8*14=112bit，差 48bit",
+        "/usr/bin/python3 复算：1525/200000=0.007625=0.7625%、1/0.007625=131.15、(0.007625)/(1/256)=1.952×、1989/2000=0.9945",
+        "projects/tidekv/results/bloom-contract-2026-10-30.txt:11-14 与 tests/bloom_contract.rs:26-51,69-109（三行打印、断言所在测试函数）",
+        "projects/tidekv/src/memtable.rs:13-18,36-45；src/segment.rs:76,247（EntryKind::Delete 显式变体；磁盘上 op=2）",
+        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html（INODE_DIRECT_COUNT=28、14KiB、512/4=128、64KiB、128×64KiB=8MiB、累计上限 78KiB 原句）",
+        "/usr/bin/python3 复算 easy-fs：28*512=14336=14.0 KiB；128*512=65536=64.0 KiB；14+64=78.0 KiB；128*128*512=8388608=8.0 MiB；全累计 8468480 B=8.076 MiB",
+        "projects/tidekv/src/bin/tide-bench.rs:67-79,86-133（key_at=\"{tag}::{:08d}\" → 键长 14/15/17；value_at 300/120/120/80；键空间 20_000/2_000/1_000+10_000/4_096）",
+        "projects/tidekv/src/bin/tide-mech.rs:128-136,151（FixedCodec::new(16, 64) —— 16/64 只属于 codec 机制轮）",
+        "src/part4/ch17.md:1334（本章自己：「值长也各不相同（80 / 300 / 120 / 120 B）」）与 :1503（「主轮 64 B 值长的家族」）",
+        "projects/tidekv/src/engine.rs:84-92 + src/memtable.rs:47-53（默认 64 KiB 阈值、Entry::bytes=vlen+32=96 → 每段约 682 条，装不到 2^16 条）"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P1",
+      "description": "例 17.1.1 解答把本项目的契约 F 写成「键长固定 16 字节、值长固定 64 字节、读写比 9:1、键空间 2^16，批量写入后读」（ch17.md:191，并被 17.2 直接当作「输入家族」用于字节账，也被 17.4 称为「与 17.1 的输入家族一致」、被 17.9 称为「主轮 64 B 值长的家族」），但主轮基准的夹具与归档都不是这个家族：tide-bench.rs 的键是 format!(\"{}::{:08}\", TAGS[..]) —— TAGS 长 4~7，键长只能是 14/15/17 字节，永不是固定 16；值长按 case 分别是 300/120/120/80 字节，永不是固定 64；读写比是 70put-10del-20get / 90get-10put / 纯读 / 80get-20scan，只有 get_hot 接近 9:1；键空间是 20_000 / 2_000 / 1_000(+10_000 缺席键) / 4_096，没有 2^16=65,536 这一档。本章自己的 17.8.2（ch17.md:1334）就明写「四个 case 的分母与值长都不同……值长也各不相同（80 / 300 / 120 / 120 B）」，与 17.1 声明的家族直接互斥；17.9（ch17.md:1503）的「主轮 64 B 值长」更是与 bench-verification.txt 的「70% put(300B)」相冲突。固定 16/64 只在 17.4 的 codec 机制轮里成立（tide-mech.rs:128-136,151 FixedCodec::new(16, 64)），那是另一轮夹具。后果不只是措辞：定义 17.1.1 明写「契约写在采集之前，采集之后不许修改 F 与 X」，而正文把机制轮的家族升格成了整个项目的家族，读者据 17.1 的 F 去复算 17.2 的 97 字节/条、262,144 字节节省，会与主轮真实段文件大小（值长 80~300 B）不成比例。修法二选一：把 17.1/17.2 的 16/64/9:1/2^16 明确标注为「静态字节账用的样例家族（与主轮夹具不同，主轮为 14~17 B 键 / 80~300 B 值 / 键空间 ≤20k）」，或按 tide-bench.rs 与 bench-verification.txt 重写 F。",
+      "evidence": "src/part4/ch17.md:144,191,303,347,652,1334,1503；projects/tidekv/src/bin/tide-bench.rs:22-25（TAGS 长度 4~7）、:67-79（key_at/value_at）、:86-133（四个 case 的 300/120/120/80 与 20_000/2_000/1_000/4_096）；projects/tidekv/results/run-01/bench-verification.txt:4-14；projects/tidekv/src/bin/tide-mech.rs:128-136,151；python3: len('user::00000000')=14、len('session::0000000')=17"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "定义 17.1.3 把出口条件的范例写成「六条不变量各有至少一个测试，且原始输出保存在 results/run-01/」才是出口条件（ch17.md:162），而同一节的定义 17.1.2 已承认六条里只五条有测试（:151-153）。里程碑表 M7 的缺档清单只登记了「源码指纹、主轮 gate.json 的预算出处」两格（:173），没有把这条不达标的判据登记为出口条件缺项，也没在 M1-M6 任何一行标注。按本章自己的口径（判据+落盘位置，缺项要写明），这一格应当像源码指纹那样明写「本项未满足」。",
+      "evidence": "src/part4/ch17.md:151-153 vs :162 vs :173；projects/tidekv/tests/ 11 个测试文件逐一核对，无「段字节不再被修改」的测试；projects/tidekv/results/run-01/test-summary.txt（14 个测试二进制、全部 ok，不含该测试）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "定义 17.2.2（在 17.2，但其否定式论证依赖这一句）与 17.1.2 的「不是引用计数归零」等都成立，唯「全仓没有 `NonZero` 类型」这句越界：tidekv 的 src 与 tests 确实一处也没有（我按目录 grep 为零），但同一仓库的另一个 crate 有 —— projects/agent-runtime/src/lib.rs:160 定义了 Outcome::NonZero 变体并被 tests/contracts.rs:183、tests/regressions.rs:37 断言。以「全仓」表述一个只在单个 crate 内成立的事实，会让按字面复核的审计员记为不符。建议改成「本项目（tidekv crate）没有 NonZero 类型」。",
+      "evidence": "grep -rn NonZero projects/tidekv/src projects/tidekv/tests → 0 命中；projects/agent-runtime/src/lib.rs:160,494；projects/agent-runtime/tests/contracts.rs:183"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "主线映射两处不齐：正文 17.1.1 写「$O$ 与 $I$ 保证 ①『活真的干了』，$F$ 保证 ②……$X$ 是 ④『守得住』的护栏」（ch17.md:147），即时自测第 1 题答案却写「$I$ 不变量（①与④）」（:256），把 I 同时记到 ④。同一节内一条映射两种说法，判「答对」时无法确定口径（该题给的是唯一答案框）。",
+      "evidence": "src/part4/ch17.md:147 vs :256"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "例 17.1.1 解答 ② 用 [@def-1.2.2] 支撑「值长 8 字节与值长 4 KiB 时，段文件的收益机制不是同一个」（ch17.md:185）。锚点真实存在但内容无关：def-1.2.2 是「case、批次与批均值」（批均值 = T/(K×N) 的口径定义），既不讲值长也不讲段文件收益机制。这类支撑式引用错位在 17.2 也有一处（见对应 finding），会削弱本章反复强调的「每句话交代落点」。",
+      "evidence": "src/part4/ch17.md:185；src/part1/ch01.md:361-366（def-1.2.2 的实际内容）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "17.2 的整笔字节账挂在一个项目从未采集过的「输入家族」上：例 17.2.1 题面写「输入家族里键长固定 16 字节、值长固定 64 字节」（ch17.md:347），图 17-2 的 <desc> 更写成「输入家族下每条是 17 字节条目头加 16 字节键加 64 字节值共 97 字节」（:303，读者会当成对真实段文件的描述）。算术本身我逐式复算全对（97 / 12 / 6,356,992 / 786,432 / 7,143,424 / 7,143,458 / 262,144 = 256 KiB / log2 65536 = 16，且 262,144 与 INDEX_ITEM=12→8 的差正好是 4 字节/条），所以这不是编数；问题在归属：真实夹具键长 14/15/17、值长 300/120/120/80（tide-bench.rs:67-133），记录字节数是 17+klen+vlen = 104~314 而非 97。另外「一个装满 2^16 条记录的段文件」在本项目默认配置下不可达：memtable_flush_bytes 默认 64 KiB、Entry::bytes()=vlen+32=96 → 约 682 条就落一段，65,536 条需要 ≥6.3 MB 的阈值或强制 flush；正文既不标这是假想家族，也不标这是人为放大规模，17.2.2 又接着用「17.2.1 那道题里索引瘦身省 4 字节」把结论回收成本项目论断。修法：把 ①②③④ 明确标为「样例家族（16/64），与主轮夹具不同」，并给一行「默认 64 KiB 阈值下真实段约 682 条 / 约 4 KiB 索引」的对照。",
+      "evidence": "src/part4/ch17.md:285,303,347,355,357,403；projects/tidekv/src/segment.rs:18-20（ENTRY_HEAD=17、INDEX_ITEM=12）；projects/tidekv/src/bin/tide-bench.rs:67-79,86-133；projects/tidekv/src/engine.rs:88（memtable_flush_bytes: 64*1024）；projects/tidekv/src/memtable.rs:47-53（bytes()=vlen+32）；python3: 97*65536=6356992、12*65536=786432、7143424+34=7143458、4*65536=262144、65536/96≈682"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "17.2 preview 有未清理的重复短语：「……不是实测结论。磁盘格式又不一样：磁盘格式不一样：段文件的字节一旦写下就不再改……」（ch17.md:285）。同一句里连说两次，是草稿残留，读者会怀疑后半句也是没写完的占位。",
+      "evidence": "src/part4/ch17.md:285"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "「三区」与代码/本节的图自相矛盾：preview 说「段文件因此分成三区」（:287）、定义 17.2.1 标题是「段文件三区间」（:293，只展开数据区/索引区/页脚）、17.2.3 小结 ① 说「段文件三区（数据、索引、页脚）」（:407）、17.10 跨节错误一也说「段文件三区」（:1535），但同一定义盒的页脚字段里就有「布隆区起始偏移与长度」（:295），图 17-2 明画四条带并写「③ 布隆区 16 字节一组的 8 位指纹槽」、caption 称「段文件的四条带」（:302-335），代码文档注释也是「有序条目 + 末尾索引 + 布隆块 + 页脚」四块（segment.rs:1），bloom 区还带 8 字节编码头 slots:u32|pad:u32（bloom.rs:153-159）。四区说三区不是笔误级别的小节命名差异，因为「三区」正是本节少算的布隆区，而 5 万键的段里布隆区可达 524,296 字节（8×65,536+8）。建议统一为「四区（数据/索引/布隆/页脚），本节只算前三格里的两格」，或在例 17.2.1 ③ 注明不计布隆区是因为它不属于本节布局论点。",
+      "evidence": "src/part4/ch17.md:287,293,295,302-335,407,1535；projects/tidekv/src/segment.rs:1,92-96；projects/tidekv/src/bloom.rs:149-159；python3: 8*65536+8=524296"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "17.2.2 与 easy-fs 的对照数字都能在本地母本逐字找到（INODE_DIRECT_COUNT=28、14KiB、512/4=128、64KiB、128×64KiB=8MiB、「一级索引块也位于数据块区域」「读间接索引要先读索引块」，无编造），但「容量依次是 14 KiB、64 KiB、8 MiB」（ch17.md:399）的读法与母本给出的层级边界不同：母本里 64 KiB 与 8 MiB 是各层索引**增量**能覆盖的字节数，母本自己明写「当文件大小超过直接索引和一级索引支持的容量上限 78KiB 的时候，就需要用到二级间接索引」，即累计边界是 14 KiB / 78 KiB / 约 8.08 MiB（28×512=14,336；+128×512=79,872=78 KiB；+128×128×512=8,468,480 B=8.076 MiB）。按正文「容量依次」的自然读法（每档能装多大的文件），第二、三档都与母本差一档。建议改写成「三层索引各自最多覆盖 14 KiB / 64 KiB / 8 MiB，累计上限因此是 14 KiB / 78 KiB / 约 8.08 MiB」。",
+      "evidence": "src/part4/ch17.md:399；.work/cpp-rust-sources/systems/2fs-implementation-rcore.html（「当取值为 28 的时候，通过直接索引可以找到 14KiB 的内容」「最多能够索引 512/4=128 个数据块，对应 64KiB 的内容」「超过直接索引和一级索引支持的容量上限 78KiB」「128×64KiB=8MiB」）；python3: 28*512=14336、28*512+128*512=79872(=78 KiB)、+128*128*512=8468480(=8.076 MiB)"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "例 17.2.2 的「实测」段归属不准，且有一个数容易被读反：正文说「那条测试只断言『假阳率小于 5%』，下面是它打印的三行数」（ch17.md:376）。实际 measured_false_positive_rate 有**两条**断言（rate<0.05 与 rate>0.0），并且只打印第一行；第二、三行（segment bloom 的 0/50000、engine counters 的 1989/2000）出自另一个测试 segment_bloom_rejects_absent_and_never_misses。所引数字与归档逐字相符（不是编造），但「一条测试打印三行」的交代让读者无法按测试名复跑。更实质的误读风险：「50,000 次不存在的探测，0 次漏进来」不是假阳率——Segment::get 是布隆+二分后要求键精确存在（segment.rs:211-222,225-239），不存在的键恒返回 None，这个 0 是构造性的，与同段刚算出的 6.25% 并集上界、0.762% 经验率不构成同一口径；正文紧接着说「漏报为零在两组测试里都是硬断言」，把「漏进来」（假阳被端到端接受）与「漏报」（假阴）压成一句，读者容易把 0/50000 当成假阳率为零。建议按测试名分行标注，并把 0/50000 改称「端到端读命中为零（布隆假阳仍会落到二分被拒）」。",
+      "evidence": "src/part4/ch17.md:376；projects/tidekv/tests/bloom_contract.rs:26-51（一个 println、两条 assert）与 :69-107（另两个 println：segment bloom、engine counters）；projects/tidekv/results/bloom-contract-2026-10-30.txt:11-14；projects/tidekv/src/segment.rs:211-222,225-239"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "两处格式描述与代码不精确对齐：①E-d 说「魔数、版本、条目数与两个偏移全靠 `open` 里的范围核对兜着」（ch17.md:419），但 open 里魔数与版本各有独立的相等核对（segment.rs:146-151 的 bad magic / unsupported version），受范围核对的只有条目数与两个偏移/长度（:160-166）——同节定义 17.3.1（:479）那种「四道前置检查 + 四条范围关系」的写法才是准确的。②定义 17.2.2 首句「删除操作在内存表里写成『值为空』的条目」（:342）与同段后文「内存表里的墓碑是显式变体 `EntryKind::Delete`」（:342）互相矛盾：内存表里 Delete 不携带值（memtable.rs:13-18,41-45），「值为空」只发生在磁盘与 WAL 编码上（segment.rs:75 `e.value().unwrap_or(&[])`、op=2；wal.rs 的 Delete 记录传空值）。另图 17-2 的 <desc> 写「好让二分不必先读条目头标记与指纹槽」（:303），条目头里没有指纹槽、二分也从不读指纹槽（指纹在布隆区，bloom.rs:136-141），同段正文与定义盒用的是「不必先读条目头」（:295,338），应删去「标记与指纹槽」。",
+      "evidence": "src/part4/ch17.md:342,419,479 vs projects/tidekv/src/segment.rs:142-166,75；projects/tidekv/src/memtable.rs:13-18,41-45；src/part4/ch17.md:303 vs :295,338；projects/tidekv/src/bloom.rs:136-141"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "两处支撑式引用锚点与论点无关（锚点在目标章存在，属引错位置）：例 17.2.2 ③ 用 [@def-1.5.1] 支撑「静态可推的量不需要采集，需要采集的量不能靠推」（ch17.md:374），但 def-1.5.1 是「名义元素」（名义分母 vs 实际访问元素数，DCE 场景），与静态/采集的分界无关；同节例 17.2.1 的同一论点在 :359 用的是正确锚点 def-2.3.2（布局事实/机制证据/性能结果三类量）。另思考盒「定宽让第 i 项的地址是 base+12×i……这是『布局决定可达的算法』的一个具体例子」（:384）挂的是 [@def-2.1.2]（描述符与元素区，讲的是 Vec 描述符 24 字节 vs 元素区 524288 字节），同样不支撑该论点。即时自测第 1 题答案还有一处漏断句：「页脚放魔数、版本号、条目数、两区偏移与校验和定宽是为了用除法直接定位」（:434），「校验和」与「定宽是为了」粘连，应为「……两区偏移与校验和。索引区定宽是为了……」。",
+      "evidence": "src/part4/ch17.md:374,359,384,434；src/part1/ch01.md:881-884（def-1.5.1=名义元素）；src/part1/ch02.md:536-538（def-2.3.2=三类量）；src/part1/ch02.md:102-105（def-2.1.2=描述符与元素区）"
+    }
+  ]
+}

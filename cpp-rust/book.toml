@@ -5,7 +5,7 @@
 
 [book]
 title = "Rust 底层性能工程"
-description = "Rust主线的16章性能工程：rustc/HIR/MIR/LLVM、对象与所有权、原子和内存回收、Future与执行器、多进程与IPC、SIMD与I/O、profiling、Cargo与两个可执行项目；保留cpp-rust路径。"
+description = "面向高年级本科生与研究生的 Rust 性能工程教材：性能指标与测量、rustc/HIR/MIR/LLVM、对象与所有权、原子与内存回收、Future与执行器、多进程与IPC、SIMD与I/O、profiling、Cargo与两个可执行项目；保留cpp-rust路径。"
 language = "zh-CN"
 src = "src"
 
@@ -50,4 +50,4 @@ expand = true
 heading-split-level = 3
 
 [preprocessor.mathbook]
-command = "python3 tools/mathbook.py"
+command = "sh tools/run_mathbook.sh"

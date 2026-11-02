@@ -6,7 +6,11 @@
     "pages": "PDF146–155",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.3",
-    "evidence": "bench/src/slot.rs"
+    "evidence": "bench/src/slot.rs",
+    "units": [
+      "S08-U0022"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "R17-B",
@@ -15,7 +19,11 @@
     "pages": "PDF156–160",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.8",
-    "evidence": "src/part2/ch07.md"
+    "evidence": "src/part2/ch07.md",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0022"
+    ]
   },
   {
     "id": "BOOK-THREAD",
@@ -24,7 +32,11 @@
     "pages": "PDF383–384",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.5",
-    "evidence": "bench/src/bin/atomic_contention.rs"
+    "evidence": "bench/src/bin/atomic_contention.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U071"
+    ]
   },
   {
     "id": "BOOK-SHARED",
@@ -33,7 +45,11 @@
     "pages": "PDF396–401",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.6",
-    "evidence": "bench/src/slot.rs"
+    "evidence": "bench/src/slot.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U073"
+    ]
   },
   {
     "id": "BOOK-SEND",
@@ -42,7 +58,11 @@
     "pages": "PDF403–404",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.3",
-    "evidence": "bench/src/slot.rs"
+    "evidence": "bench/src/slot.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U074"
+    ]
   },
   {
     "id": "REF-MM",
@@ -51,7 +71,11 @@
     "pages": "PDF334",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
-    "evidence": "src/part2/ch07.md"
+    "evidence": "src/part2/ch07.md",
+    "units": [
+      "S10-U0095"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "REF-ASYNC-FN",
@@ -60,7 +84,11 @@
     "pages": "PDF75",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
-    "evidence": "bench/results/local/future-layout.mir"
+    "evidence": "bench/results/local/future-layout.mir",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0018"
+    ]
   },
   {
     "id": "REF-ASYNC-BLOCK",
@@ -69,7 +97,11 @@
     "pages": "PDF166–168",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.3",
-    "evidence": "bench/examples/future_layout.rs"
+    "evidence": "bench/examples/future_layout.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0042"
+    ]
   },
   {
     "id": "REF-AWAIT",
@@ -78,7 +110,11 @@
     "pages": "PDF215–216",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.4",
-    "evidence": "bench/results/local/future-layout.mir"
+    "evidence": "bench/results/local/future-layout.mir",
+    "units": [
+      "S10-U0057"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "DEV-MOVE",
@@ -87,7 +123,13 @@
     "pages": "PDF277–279",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
-    "evidence": "bench/results/local/future-layout.mir"
+    "evidence": "bench/results/local/future-layout.mir",
+    "units": [
+      "S09-U0103",
+      "S09-U0104",
+      "S09-U0106"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "DEV-MONO",
@@ -96,7 +138,13 @@
     "pages": "PDF319–321",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.2",
-    "evidence": "bench/results/local/future-layout.mir"
+    "evidence": "bench/results/local/future-layout.mir",
+    "units": [
+      "S09-U0123",
+      "S09-U0124",
+      "S09-U0125"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "STD-ATOMICS",
@@ -105,7 +153,8 @@
     "pages": "在线1.99.1",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.2",
-    "evidence": "bench/probes/atomics.rs"
+    "evidence": "bench/probes/atomics.rs",
+    "basis": "online"
   },
   {
     "id": "STD-FUTURE",
@@ -114,7 +163,8 @@
     "pages": "在线1.99.1",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.4",
-    "evidence": "bench/src/park.rs"
+    "evidence": "bench/src/park.rs",
+    "basis": "online"
   },
   {
     "id": "STD-WAKE",
@@ -123,7 +173,8 @@
     "pages": "在线1.99.1",
     "status": "read-mapped",
     "target": "part2/ch08.md#sec-cpp-rust.2.8.5",
-    "evidence": "bench/src/park.rs"
+    "evidence": "bench/src/park.rs",
+    "basis": "online"
   },
   {
     "id": "STANFORD-THREAD",
@@ -132,7 +183,8 @@
     "pages": "Winter2022 lecture13",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.8",
-    "evidence": "src/part2/ch07.md"
+    "evidence": "src/part2/ch07.md",
+    "basis": "online"
   },
   {
     "id": "MIT-LOCK",
@@ -141,7 +193,8 @@
     "pages": "Fall2020",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.8",
-    "evidence": "src/part2/ch07.md"
+    "evidence": "src/part2/ch07.md",
+    "basis": "online"
   },
   {
     "id": "RCORE-LOCK",
@@ -150,7 +203,8 @@
     "pages": "chapter8/2lock.html指定节",
     "status": "read-mapped",
     "target": "part2/ch07.md#sec-cpp-rust.2.7.8",
-    "evidence": "src/part2/ch07.md"
+    "evidence": "src/part2/ch07.md",
+    "basis": "online"
   },
   {
     "id": "BOOK-CHANNEL",
@@ -159,7 +213,11 @@
     "pages": "PDF390–394",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.7",
-    "evidence": "bench/runtime-lab/tests/contracts.rs"
+    "evidence": "bench/runtime-lab/tests/contracts.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U072"
+    ]
   },
   {
     "id": "TOKIO-FAIR",
@@ -168,7 +226,8 @@
     "pages": "在线精确1.54.0",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.8",
-    "evidence": "bench/runtime-lab/src/bin/scheduling.rs"
+    "evidence": "bench/runtime-lab/src/bin/scheduling.rs",
+    "basis": "online"
   },
   {
     "id": "TOKIO-QUEUES",
@@ -177,7 +236,8 @@
     "pages": "在线精确1.54.0",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.3",
-    "evidence": "sources/runtime-code.json"
+    "evidence": "sources/runtime-code.json",
+    "basis": "online"
   },
   {
     "id": "TOKIO-STATE",
@@ -186,7 +246,8 @@
     "pages": "src/runtime/task/state.rs:1–374",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.2",
-    "evidence": "sources/runtime-code.json"
+    "evidence": "sources/runtime-code.json",
+    "basis": "artifact"
   },
   {
     "id": "TOKIO-CT",
@@ -195,7 +256,8 @@
     "pages": "src/runtime/scheduler/current_thread/mod.rs:446–477",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.5",
-    "evidence": "bench/results/runtime-local/scheduling-sample.txt"
+    "evidence": "bench/results/runtime-local/scheduling-sample.txt",
+    "basis": "artifact"
   },
   {
     "id": "TOKIO-BLOCK",
@@ -204,7 +266,8 @@
     "pages": "在线精确1.54.0",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.7",
-    "evidence": "bench/runtime-lab/tests/contracts.rs"
+    "evidence": "bench/runtime-lab/tests/contracts.rs",
+    "basis": "online"
   },
   {
     "id": "MIT-SWITCH",
@@ -213,7 +276,8 @@
     "pages": "Fall2020",
     "status": "read-mapped",
     "target": "part3/ch09.md#sec-cpp-rust.3.9.8",
-    "evidence": "src/part3/ch09.md"
+    "evidence": "src/part3/ch09.md",
+    "basis": "online"
   },
   {
     "id": "STANFORD-FORK",
@@ -222,7 +286,8 @@
     "pages": "PDF15–20、25–35，共36物理页",
     "status": "read-mapped",
     "target": "part3/ch10.md#sec-cpp-rust.3.10.1",
-    "evidence": "src/part3/ch10.md"
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
   },
   {
     "id": "STD-CHILD",
@@ -231,7 +296,8 @@
     "pages": "在线精确1.99.0",
     "status": "read-mapped",
     "target": "part3/ch10.md#sec-cpp-rust.3.10.7",
-    "evidence": "bench/runtime-lab/src/process.rs"
+    "evidence": "bench/runtime-lab/src/process.rs",
+    "basis": "online"
   },
   {
     "id": "TOKIO-PROCESS",
@@ -240,7 +306,8 @@
     "pages": "在线精确1.54.0",
     "status": "read-mapped",
     "target": "part3/ch10.md#sec-cpp-rust.3.10.5",
-    "evidence": "bench/runtime-lab/src/process.rs"
+    "evidence": "bench/runtime-lab/src/process.rs",
+    "basis": "online"
   },
   {
     "id": "TOKIO-FORK",
@@ -249,7 +316,8 @@
     "pages": "在线精确1.54.0",
     "status": "read-mapped",
     "target": "part3/ch10.md#sec-cpp-rust.3.10.1",
-    "evidence": "src/part3/ch10.md"
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
   },
   {
     "id": "BOOK-CHANNEL-IPC",
@@ -258,7 +326,11 @@
     "pages": "PDF390–394",
     "status": "read-mapped",
     "target": "part3/ch10.md#sec-cpp-rust.3.10.3",
-    "evidence": "bench/runtime-lab/src/wire.rs"
+    "evidence": "bench/runtime-lab/src/wire.rs",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U072"
+    ]
   },
   {
     "id": "COMPILER-S09-001",
@@ -278,7 +350,13 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.7",
     "evidence": "bench/compiler-lab/src/lib.rs",
-    "contribution": "sources/contributions/compiler.json#record-1"
+    "contribution": "sources/contributions/compiler.json#record-1",
+    "units": [
+      "S09-U0041",
+      "S09-U0042",
+      "S09-U0043"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-002",
@@ -303,7 +381,20 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
     "evidence": "bench/compiler-lab/probes/stages.rs",
-    "contribution": "sources/contributions/compiler.json#record-2"
+    "contribution": "sources/contributions/compiler.json#record-2",
+    "units": [
+      "S09-U0062",
+      "S09-U0063",
+      "S09-U0064",
+      "S09-U0065",
+      "S09-U0066",
+      "S09-U0067",
+      "S09-U0068",
+      "S09-U0069",
+      "S09-U0070",
+      "S09-U0071"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-003",
@@ -318,7 +409,14 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
     "evidence": "bench/compiler-lab/src/bin/move_cost.rs",
-    "contribution": "sources/contributions/compiler.json#record-3"
+    "contribution": "sources/contributions/compiler.json#record-3",
+    "units": [
+      "S09-U0105",
+      "S09-U0106",
+      "S09-U0107",
+      "S09-U0108"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-004",
@@ -337,7 +435,14 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
     "evidence": "bench/compiler-lab/src/bin/drop_paths.rs",
-    "contribution": "sources/contributions/compiler.json#record-4"
+    "contribution": "sources/contributions/compiler.json#record-4",
+    "units": [
+      "S09-U0120",
+      "S09-U0121",
+      "S09-U0122",
+      "S09-U0123"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S08-005",
@@ -352,7 +457,11 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
     "evidence": "bench/compiler-lab/src/bin/drop_paths.rs",
-    "contribution": "sources/contributions/compiler.json#record-5"
+    "contribution": "sources/contributions/compiler.json#record-5",
+    "units": [
+      "S08-U0015"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S08-006",
@@ -368,7 +477,11 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.3",
     "evidence": "bench/compiler-lab/src/bin/move_cost.rs",
-    "contribution": "sources/contributions/compiler.json#record-6"
+    "contribution": "sources/contributions/compiler.json#record-6",
+    "units": [
+      "S08-U0020"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S10-007",
@@ -385,7 +498,11 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
     "evidence": "bench/compiler-lab/src/bin/drop_paths.rs",
-    "contribution": "sources/contributions/compiler.json#record-7"
+    "contribution": "sources/contributions/compiler.json#record-7",
+    "units": [
+      "S10-U0085"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S08-008",
@@ -405,7 +522,11 @@
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.1",
     "evidence": "bench/compiler-lab/src/bin/dispatch_grain.rs",
-    "contribution": "sources/contributions/compiler.json#record-8"
+    "contribution": "sources/contributions/compiler.json#record-8",
+    "units": [
+      "S08-U0016"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-009",
@@ -420,7 +541,13 @@
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.2",
     "evidence": "bench/compiler-lab/probes/code_size.rs",
-    "contribution": "sources/contributions/compiler.json#record-9"
+    "contribution": "sources/contributions/compiler.json#record-9",
+    "units": [
+      "S09-U0123",
+      "S09-U0124",
+      "S09-U0125"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S10-010",
@@ -434,7 +561,11 @@
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
     "evidence": "bench/compiler-lab/src/bin/dispatch_visibility.rs",
-    "contribution": "sources/contributions/compiler.json#record-10"
+    "contribution": "sources/contributions/compiler.json#record-10",
+    "units": [
+      "S10-U0075"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S10-011",
@@ -449,7 +580,11 @@
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.4",
     "evidence": "bench/compiler-lab/src/bin/dispatch_grain.rs",
-    "contribution": "sources/contributions/compiler.json#record-11"
+    "contribution": "sources/contributions/compiler.json#record-11",
+    "units": [
+      "S10-U0034"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-012",
@@ -471,7 +606,16 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
     "evidence": "bench/compiler-lab/src/bin/ctfe_table.rs",
-    "contribution": "sources/contributions/compiler.json#record-12"
+    "contribution": "sources/contributions/compiler.json#record-12",
+    "units": [
+      "S09-U0120",
+      "S09-U0121",
+      "S09-U0122",
+      "S09-U0123",
+      "S09-U0124",
+      "S09-U0125"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S09-013",
@@ -485,7 +629,11 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.8",
     "evidence": "src/part2/ch06.md",
-    "contribution": "sources/contributions/compiler.json#record-13"
+    "contribution": "sources/contributions/compiler.json#record-13",
+    "units": [
+      "S09-U0131"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S10-014",
@@ -500,7 +648,11 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.7",
     "evidence": "bench/compiler-lab/src/bin/vectorize.rs",
-    "contribution": "sources/contributions/compiler.json#record-14"
+    "contribution": "sources/contributions/compiler.json#record-14",
+    "units": [
+      "S10-U0034"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S10-015",
@@ -516,7 +668,12 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.5",
     "evidence": "bench/compiler-lab/src/bin/ctfe_table.rs",
-    "contribution": "sources/contributions/compiler.json#record-15"
+    "contribution": "sources/contributions/compiler.json#record-15",
+    "units": [
+      "S10-U0102",
+      "S10-U0103"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "COMPILER-S08-016",
@@ -532,7 +689,11 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.2",
     "evidence": "bench/compiler-lab/src/bin/vectorize.rs",
-    "contribution": "sources/contributions/compiler.json#record-16"
+    "contribution": "sources/contributions/compiler.json#record-16",
+    "units": [
+      "S08-U0020"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "compiler-web-thir",
@@ -542,7 +703,8 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.2",
     "evidence": "src/part1/ch04.md",
-    "contribution": "sources/contributions/compiler.json#record-17"
+    "contribution": "sources/contributions/compiler.json#record-17",
+    "basis": "artifact"
   },
   {
     "id": "compiler-web-drop-elaboration",
@@ -552,7 +714,8 @@
     "status": "read-mapped",
     "target": "part1/ch04.md#sec-cpp-rust.1.4.4",
     "evidence": "bench/compiler-lab/src/bin/drop_paths.rs",
-    "contribution": "sources/contributions/compiler.json#record-18"
+    "contribution": "sources/contributions/compiler.json#record-18",
+    "basis": "artifact"
   },
   {
     "id": "compiler-web-aliasing",
@@ -562,7 +725,8 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.2",
     "evidence": "bench/compiler-lab/src/bin/vectorize.rs",
-    "contribution": "sources/contributions/compiler.json#record-19"
+    "contribution": "sources/contributions/compiler.json#record-19",
+    "basis": "artifact"
   },
   {
     "id": "compiler-web-pgo",
@@ -572,7 +736,8 @@
     "status": "read-mapped",
     "target": "part2/ch06.md#sec-cpp-rust.2.6.8",
     "evidence": "src/part2/ch06.md",
-    "contribution": "sources/contributions/compiler.json#record-20"
+    "contribution": "sources/contributions/compiler.json#record-20",
+    "basis": "artifact"
   },
   {
     "id": "EVIDENCE-S09-001",
@@ -582,7 +747,11 @@
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.3",
     "evidence": "bench/evidence-lab/results/run-01/sample-cpu.txt",
-    "contribution": "sources/contributions/evidence.json#record-1"
+    "contribution": "sources/contributions/evidence.json#record-1",
+    "units": [
+      "S09-U0024"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "EVIDENCE-S09-002",
@@ -592,7 +761,11 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
     "evidence": "bench/evidence-lab/tools/build_matrix.py",
-    "contribution": "sources/contributions/evidence.json#record-2"
+    "contribution": "sources/contributions/evidence.json#record-2",
+    "units": [
+      "S09-U0024"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "EVIDENCE-S11-003",
@@ -602,7 +775,11 @@
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.8",
     "evidence": "bench/evidence-lab/Cargo.toml",
-    "contribution": "sources/contributions/evidence.json#record-3"
+    "contribution": "sources/contributions/evidence.json#record-3",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U058"
+    ]
   },
   {
     "id": "EVIDENCE-S11-004",
@@ -612,7 +789,11 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
     "evidence": "bench/evidence-lab/Cargo.toml",
-    "contribution": "sources/contributions/evidence.json#record-4"
+    "contribution": "sources/contributions/evidence.json#record-4",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U058"
+    ]
   },
   {
     "id": "EVIDENCE-S11-005",
@@ -622,27 +803,64 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
     "evidence": "bench/evidence-lab/results/run-01/metadata.json",
-    "contribution": "sources/contributions/evidence.json#record-5"
+    "contribution": "sources/contributions/evidence.json#record-5",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U060"
+    ]
   },
   {
     "id": "EVIDENCE-S14-006",
     "source": "S14",
     "section": "如何写文档：完整可运行示例、公共契约、panic和错误处理",
-    "pages": "PDF 6–8、11–12（一基物理页）",
+    "pages": "PDF 6–7、11–12（一基物理页；第 8 页 Markdown 一节为 excluded-reviewed 不在范围内；第 12 页另含 excluded-reviewed 单元 S14-U029「自定义输出」，其内容不采为证据）",
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.6",
     "evidence": "bench/evidence-lab/src/lib.rs",
-    "contribution": "sources/contributions/evidence.json#record-6"
+    "contribution": "sources/contributions/evidence.json#record-6",
+    "units": [
+      "S14-U017",
+      "S14-U018",
+      "S14-U019",
+      "S14-U026",
+      "S14-U027",
+      "S14-U028"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "EVIDENCE-S14-007",
     "source": "S14",
     "section": "基本使用、Cargo整合、输出导航、写作与命令参数；只采用当前工具链接受的检查",
-    "pages": "PDF 1–15（一基物理页）",
+    "pages": "PDF 1–15（一基物理页；其中第 3、4、5、8、9、10、12、13 页含 excluded-reviewed 单元 S14-U007–U016、S14-U020–U025、S14-U029、S14-U031，相应内容不采为证据）",
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.8",
     "evidence": "bench/evidence-lab/results/run-01/rustdoc-check.txt",
-    "contribution": "sources/contributions/evidence.json#record-7"
+    "contribution": "sources/contributions/evidence.json#record-7",
+    "units": [
+      "S14-U001",
+      "S14-U002",
+      "S14-U003",
+      "S14-U004",
+      "S14-U005",
+      "S14-U006",
+      "S14-U017",
+      "S14-U018",
+      "S14-U019",
+      "S14-U026",
+      "S14-U027",
+      "S14-U028",
+      "S14-U030",
+      "S14-U032",
+      "S14-U033",
+      "S14-U034",
+      "S14-U035",
+      "S14-U036",
+      "S14-U037",
+      "S14-U038",
+      "S14-U039"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "EVID-cargo-features",
@@ -652,7 +870,8 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
     "evidence": "bench/evidence-lab/results/run-01/feature-tree.txt",
-    "contribution": "sources/contributions/evidence.json#record-8"
+    "contribution": "sources/contributions/evidence.json#record-8",
+    "basis": "artifact"
   },
   {
     "id": "EVIDENCE-EVID-cargo-profiles-009",
@@ -662,7 +881,8 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.4",
     "evidence": "bench/evidence-lab/results/run-01/build-summary.json",
-    "contribution": "sources/contributions/evidence.json#record-9"
+    "contribution": "sources/contributions/evidence.json#record-9",
+    "basis": "artifact"
   },
   {
     "id": "EVIDENCE-EVID-cargo-profiles-010",
@@ -672,7 +892,8 @@
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.2",
     "evidence": "bench/evidence-lab/results/run-01/environment.txt",
-    "contribution": "sources/contributions/evidence.json#record-10"
+    "contribution": "sources/contributions/evidence.json#record-10",
+    "basis": "artifact"
   },
   {
     "id": "EVID-rustc-pgo",
@@ -682,7 +903,8 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.6",
     "evidence": "src/part4/ch14.md",
-    "contribution": "sources/contributions/evidence.json#record-11"
+    "contribution": "sources/contributions/evidence.json#record-11",
+    "basis": "artifact"
   },
   {
     "id": "EVID-cachegrind",
@@ -692,7 +914,8 @@
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.7",
     "evidence": "src/part4/ch13.md",
-    "contribution": "sources/contributions/evidence.json#record-12"
+    "contribution": "sources/contributions/evidence.json#record-12",
+    "basis": "artifact"
   },
   {
     "id": "EVID-perf-event",
@@ -702,7 +925,8 @@
     "status": "read-mapped",
     "target": "part4/ch13.md#sec-cpp-rust.4.13.3",
     "evidence": "src/part4/ch13.md",
-    "contribution": "sources/contributions/evidence.json#record-13"
+    "contribution": "sources/contributions/evidence.json#record-13",
+    "basis": "artifact"
   },
   {
     "id": "EVID-cargo-resolver",
@@ -712,7 +936,8 @@
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.2",
     "evidence": "bench/evidence-lab/Cargo.toml",
-    "contribution": "sources/contributions/evidence.json#record-14"
+    "contribution": "sources/contributions/evidence.json#record-14",
+    "basis": "artifact"
   },
   {
     "id": "FFI-PROJECT-S11-001",
@@ -722,7 +947,11 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
     "evidence": "projects/ffi-bridge/src/lib.rs",
-    "contribution": "sources/contributions/ffi-project.json#record-1"
+    "contribution": "sources/contributions/ffi-project.json#record-1",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U084"
+    ]
   },
   {
     "id": "FFI-PROJECT-S11-002",
@@ -732,7 +961,11 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
     "evidence": "projects/ffi-bridge/tests/contracts.rs",
-    "contribution": "sources/contributions/ffi-project.json#record-2"
+    "contribution": "sources/contributions/ffi-project.json#record-2",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U084"
+    ]
   },
   {
     "id": "FFI-PROJECT-S11-003",
@@ -742,7 +975,11 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.2",
     "evidence": "projects/ffi-bridge/include/bridge.h",
-    "contribution": "sources/contributions/ffi-project.json#record-3"
+    "contribution": "sources/contributions/ffi-project.json#record-3",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U084"
+    ]
   },
   {
     "id": "FFI-PROJECT-S11-004",
@@ -752,7 +989,11 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.4",
     "evidence": "projects/ffi-bridge/src/lib.rs",
-    "contribution": "sources/contributions/ffi-project.json#record-4"
+    "contribution": "sources/contributions/ffi-project.json#record-4",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U084"
+    ]
   },
   {
     "id": "FFI-CATCH",
@@ -762,7 +1003,8 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.5",
     "evidence": "projects/ffi-bridge/src/lib.rs",
-    "contribution": "sources/contributions/ffi-project.json#record-5"
+    "contribution": "sources/contributions/ffi-project.json#record-5",
+    "basis": "artifact"
   },
   {
     "id": "FFI-SLICE",
@@ -772,7 +1014,8 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.3",
     "evidence": "projects/ffi-bridge/tests/contracts.rs",
-    "contribution": "sources/contributions/ffi-project.json#record-6"
+    "contribution": "sources/contributions/ffi-project.json#record-6",
+    "basis": "artifact"
   },
   {
     "id": "FFI-REPR",
@@ -782,7 +1025,8 @@
     "status": "read-mapped",
     "target": "part4/ch16.md#sec-cpp-rust.4.16.2",
     "evidence": "projects/ffi-bridge/include/bridge.h",
-    "contribution": "sources/contributions/ffi-project.json#record-7"
+    "contribution": "sources/contributions/ffi-project.json#record-7",
+    "basis": "artifact"
   },
   {
     "id": "FOUNDATIONS-S08-001",
@@ -792,7 +1036,11 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.3",
     "evidence": "bench/foundations-lab/src/bin/dce.rs",
-    "contribution": "sources/contributions/foundations.json#record-1"
+    "contribution": "sources/contributions/foundations.json#record-1",
+    "units": [
+      "S08-U0037"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "FOUNDATIONS-S08-002",
@@ -802,7 +1050,11 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.5",
     "evidence": "bench/foundations-lab/results/native-01/codegen/foundations_lab-29c064615efbeca4.s",
-    "contribution": "sources/contributions/foundations.json#record-2"
+    "contribution": "sources/contributions/foundations.json#record-2",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0037"
+    ]
   },
   {
     "id": "FOUNDATIONS-S08-003",
@@ -812,7 +1064,11 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.7",
     "evidence": "bench/foundations-lab/gate.py",
-    "contribution": "sources/contributions/foundations.json#record-3"
+    "contribution": "sources/contributions/foundations.json#record-3",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0037"
+    ]
   },
   {
     "id": "FOUNDATIONS-S11-004",
@@ -822,7 +1078,11 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.6",
     "evidence": "bench/foundations-lab/src/bin/paired.rs",
-    "contribution": "sources/contributions/foundations.json#record-4"
+    "contribution": "sources/contributions/foundations.json#record-4",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U056"
+    ]
   },
   {
     "id": "FOUNDATIONS-S10-005",
@@ -832,7 +1092,11 @@
     "status": "read-mapped",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.1",
     "evidence": "bench/foundations-lab/examples/layout.rs",
-    "contribution": "sources/contributions/foundations.json#record-5"
+    "contribution": "sources/contributions/foundations.json#record-5",
+    "units": [
+      "S10-U0080"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "FOUNDATIONS-S10-006",
@@ -842,7 +1106,11 @@
     "status": "read-mapped",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.8",
     "evidence": "bench/foundations-lab/examples/storage_plan.rs",
-    "contribution": "sources/contributions/foundations.json#record-6"
+    "contribution": "sources/contributions/foundations.json#record-6",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0080"
+    ]
   },
   {
     "id": "FOUNDATIONS-S10-007",
@@ -852,7 +1120,11 @@
     "status": "read-mapped",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
     "evidence": "bench/foundations-lab/examples/layout.rs",
-    "contribution": "sources/contributions/foundations.json#record-7"
+    "contribution": "sources/contributions/foundations.json#record-7",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0101"
+    ]
   },
   {
     "id": "FOUNDATIONS-S08-008",
@@ -862,7 +1134,11 @@
     "status": "read-mapped",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
     "evidence": "bench/foundations-lab/src/lib.rs",
-    "contribution": "sources/contributions/foundations.json#record-8"
+    "contribution": "sources/contributions/foundations.json#record-8",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0025"
+    ]
   },
   {
     "id": "FOUNDATIONS-S11-009",
@@ -872,7 +1148,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "bench/foundations-lab/src/lib.rs",
-    "contribution": "sources/contributions/foundations.json#record-9"
+    "contribution": "sources/contributions/foundations.json#record-9",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U014"
+    ]
   },
   {
     "id": "FOUNDATIONS-S11-010",
@@ -882,7 +1162,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
     "evidence": "bench/foundations-lab/src/lib.rs",
-    "contribution": "sources/contributions/foundations.json#record-10"
+    "contribution": "sources/contributions/foundations.json#record-10",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U015"
+    ]
   },
   {
     "id": "FOUNDATIONS-S11-011",
@@ -892,7 +1176,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
     "evidence": "bench/foundations-lab/tests/contracts_more.rs",
-    "contribution": "sources/contributions/foundations.json#record-11"
+    "contribution": "sources/contributions/foundations.json#record-11",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U066"
+    ]
   },
   {
     "id": "FOUNDATIONS-S10-012",
@@ -902,7 +1190,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.3",
     "evidence": "bench/foundations-lab/src/lib.rs",
-    "contribution": "sources/contributions/foundations.json#record-12"
+    "contribution": "sources/contributions/foundations.json#record-12",
+    "units": [
+      "S10-U0085"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "FOUNDATIONS-S10-013",
@@ -912,7 +1204,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
     "evidence": "src/part1/ch03.md",
-    "contribution": "sources/contributions/foundations.json#record-13"
+    "contribution": "sources/contributions/foundations.json#record-13",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0085"
+    ]
   },
   {
     "id": "FOUNDATIONS-S10-014",
@@ -922,7 +1218,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.7",
     "evidence": "bench/foundations-lab/src/lib.rs",
-    "contribution": "sources/contributions/foundations.json#record-14"
+    "contribution": "sources/contributions/foundations.json#record-14",
+    "units": [
+      "S10-U0101"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "FOUNDATIONS-S10-015",
@@ -932,7 +1232,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.4",
     "evidence": "src/part1/ch03.md",
-    "contribution": "sources/contributions/foundations.json#record-15"
+    "contribution": "sources/contributions/foundations.json#record-15",
+    "basis": "pdf-unit",
+    "units": [
+      "S10-U0101"
+    ]
   },
   {
     "id": "FOUNDATIONS-S08-016",
@@ -942,7 +1246,11 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.5",
     "evidence": "bench/foundations-lab/src/bin/borrow.rs",
-    "contribution": "sources/contributions/foundations.json#record-16"
+    "contribution": "sources/contributions/foundations.json#record-16",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0025"
+    ]
   },
   {
     "id": "FOUNDATIONS-PTR",
@@ -952,7 +1260,8 @@
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.7",
     "evidence": "src/part1/ch03.md",
-    "contribution": "sources/contributions/foundations.json#record-17"
+    "contribution": "sources/contributions/foundations.json#record-17",
+    "basis": "artifact"
   },
   {
     "id": "FOUNDATIONS-OPTION",
@@ -962,7 +1271,8 @@
     "status": "read-mapped",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.2",
     "evidence": "src/part1/ch02.md",
-    "contribution": "sources/contributions/foundations.json#record-18"
+    "contribution": "sources/contributions/foundations.json#record-18",
+    "basis": "artifact"
   },
   {
     "id": "FOUNDATIONS-BLACK_BOX",
@@ -972,7 +1282,8 @@
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.3",
     "evidence": "src/part1/ch01.md",
-    "contribution": "sources/contributions/foundations.json#record-19"
+    "contribution": "sources/contributions/foundations.json#record-19",
+    "basis": "artifact"
   },
   {
     "id": "RUNTIME-PROJECT-S11-001",
@@ -982,7 +1293,11 @@
     "status": "read-mapped",
     "target": "part4/ch15.md#sec-cpp-rust.4.15.2",
     "evidence": "projects/agent-runtime/tests/contracts.rs",
-    "contribution": "sources/contributions/runtime-project.json#record-1"
+    "contribution": "sources/contributions/runtime-project.json#record-1",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U072"
+    ]
   },
   {
     "id": "NAT-S01-0016",
@@ -2004,7 +2319,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u014",
     "review_depth": "scope-excerpt",
-    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-10"
   },
   {
@@ -2016,7 +2331,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u015",
     "review_depth": "scope-excerpt",
-    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-11"
   },
   {
@@ -2028,7 +2343,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u016",
     "review_depth": "scope-excerpt",
-    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-12"
   },
   {
@@ -2136,7 +2451,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u040",
     "review_depth": "scope-excerpt",
-    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-21"
   },
   {
@@ -2208,7 +2523,7 @@
     "target": "part3/ch10.md#sec-cpp-rust.3.10.1",
     "evidence": "sources/reviews/S11.md#review-s11-u051",
     "review_depth": "scope-excerpt",
-    "scope": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。",
+    "scope": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 10.1 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-27"
   },
   {
@@ -2263,12 +2578,12 @@
     "id": "SRB-S11-U058",
     "source": "S11",
     "section": "采用发布配置自定义构建",
-    "pages": "PDF 319",
+    "pages": "PDF 320–321",
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S11.md#review-s11-u058",
     "review_depth": "selected-body",
-    "scope": "测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。",
+    "scope": "测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；已按 ch14 的组织边界回读并映射到 14.7。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-32"
   },
   {
@@ -2287,12 +2602,12 @@
     "id": "SRB-S11-U060",
     "source": "S11",
     "section": "Cargo 工作空间",
-    "pages": "PDF 331",
+    "pages": "PDF 332",
     "status": "read-mapped",
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S11.md#review-s11-u060",
     "review_depth": "scope-excerpt",
-    "scope": "测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；当前 ch14 不存在，保留未映射状态。",
+    "scope": "测试组织、发布 profile、文档示例或工作空间属于 Cargo/CI 证据；已按 ch14 的组织边界回读并映射到 14.7。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-34"
   },
   {
@@ -2364,7 +2679,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u084",
     "review_depth": "selected-body",
-    "scope": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，等待相应正文落点。",
+    "scope": "与所有权、编译优化、测试或运行系统有关；已核查本节开头，未把抽页冒充全节阅读，已映射至 3.1 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-40"
   },
   {
@@ -2376,7 +2691,7 @@
     "target": "part1/ch03.md#sec-cpp-rust.1.3.1",
     "evidence": "sources/reviews/S11.md#review-s11-u085",
     "review_depth": "scope-excerpt",
-    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，所有权/unsafe 专章尚未存在，不把语法抽页标为深入核读。",
+    "scope": "借用有效性或生命周期机制相关；本轮仅开篇范围核查，已映射至 3.1 节登记落点，不把语法抽页标为深入核读。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-41"
   },
   {
@@ -2424,7 +2739,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u009",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-45"
   },
   {
@@ -2436,7 +2751,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u012",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-46"
   },
   {
@@ -2448,7 +2763,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u015",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-47"
   },
   {
@@ -2460,7 +2775,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u016",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-48"
   },
   {
@@ -2484,7 +2799,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u022",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-50"
   },
   {
@@ -2496,7 +2811,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u027",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-51"
   },
   {
@@ -2508,7 +2823,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u029",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-52"
   },
   {
@@ -2520,7 +2835,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u030",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-53"
   },
   {
@@ -2532,7 +2847,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u037",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-54"
   },
   {
@@ -2544,7 +2859,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u041",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-55"
   },
   {
@@ -2556,7 +2871,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u075",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-56"
   },
   {
@@ -2568,7 +2883,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u081",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-57"
   },
   {
@@ -2580,7 +2895,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u082",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-58"
   },
   {
@@ -2592,7 +2907,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S12.md#review-s12-u083",
     "review_depth": "body-text",
-    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照，ch14/ch16 尚不存在，不能推为本机已验证 ESP 支持。",
+    "scope": "已读目标/工具链、宿主 std、链接依赖或构建环境相关正文；可供 Cargo/FFI 环境边界参照；ch14/ch16 现已成章，但这几条只作环境边界参照，不能推为本机已验证 ESP 支持。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-59"
   },
   {
@@ -2820,7 +3135,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u001",
     "review_depth": "body-text",
-    "scope": "已读“什么是 rustdoc？”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“什么是 rustdoc？”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-78"
   },
   {
@@ -2832,7 +3147,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u002",
     "review_depth": "body-text",
-    "scope": "已读“基本使用”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“基本使用”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-79"
   },
   {
@@ -2844,7 +3159,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u003",
     "review_depth": "body-text",
-    "scope": "已读“配置 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“配置 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-80"
   },
   {
@@ -2856,7 +3171,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u004",
     "review_depth": "body-text",
-    "scope": "已读“通过 Cargo 使用 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“通过 Cargo 使用 rustdoc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-81"
   },
   {
@@ -2868,7 +3183,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u005",
     "review_depth": "body-text",
-    "scope": "已读“Outer 和 inner 文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Outer 和 inner 文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-82"
   },
   {
@@ -2880,7 +3195,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u006",
     "review_depth": "body-text",
-    "scope": "已读“利用单独的 Markdown 文件”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“利用单独的 Markdown 文件”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-83"
   },
   {
@@ -2892,7 +3207,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u017",
     "review_depth": "body-text",
-    "scope": "已读“如何写文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“如何写文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-84"
   },
   {
@@ -2904,7 +3219,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u018",
     "review_depth": "body-text",
-    "scope": "已读“开始”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“开始”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-85"
   },
   {
@@ -2916,7 +3231,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u019",
     "review_depth": "body-text",
-    "scope": "已读“文档组成”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“文档组成”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-86"
   },
   {
@@ -2928,7 +3243,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u026",
     "review_depth": "body-text",
-    "scope": "已读“什么包含（和排除）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“什么包含（和排除）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-87"
   },
   {
@@ -2940,7 +3255,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u027",
     "review_depth": "body-text",
-    "scope": "已读“例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-88"
   },
   {
@@ -2952,7 +3267,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u028",
     "review_depth": "body-text",
-    "scope": "已读“什么被排除”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“什么被排除”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-89"
   },
   {
@@ -2964,7 +3279,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u030",
     "review_depth": "body-text",
-    "scope": "已读“Command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-90"
   },
   {
@@ -2976,7 +3291,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u032",
     "review_depth": "body-text",
-    "scope": "已读“-V/--version: version information”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“-V/--version: version information”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-91"
   },
   {
@@ -2988,7 +3303,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u033",
     "review_depth": "body-text",
-    "scope": "已读“-v/--verbose: more verbose output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“-v/--verbose: more verbose output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-92"
   },
   {
@@ -3000,7 +3315,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u034",
     "review_depth": "body-text",
-    "scope": "已读“-o/--out-dir: output directory path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“-o/--out-dir: output directory path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-93"
   },
   {
@@ -3012,7 +3327,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u035",
     "review_depth": "body-text",
-    "scope": "已读“--crate-name: controlling the name of the crate”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--crate-name: controlling the name of the crate”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-94"
   },
   {
@@ -3024,7 +3339,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u036",
     "review_depth": "body-text",
-    "scope": "已读“--document-private-items: Show items that are not public”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--document-private-items: Show items that are not public”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-95"
   },
   {
@@ -3036,7 +3351,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u037",
     "review_depth": "body-text",
-    "scope": "已读“-L/--library-path: where to look for dependencies”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“-L/--library-path: where to look for dependencies”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-96"
   },
   {
@@ -3048,7 +3363,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u038",
     "review_depth": "body-text",
-    "scope": "已读“--cfg: passing configuration flags”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--cfg: passing configuration flags”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-97"
   },
   {
@@ -3060,7 +3375,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u039",
     "review_depth": "body-text",
-    "scope": "已读“--extern: specify a dependency's location”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--extern: specify a dependency's location”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-98"
   },
   {
@@ -3072,7 +3387,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u040",
     "review_depth": "body-text",
-    "scope": "已读“-C/--codegen: pass codegen options to rustc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“-C/--codegen: pass codegen options to rustc”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-99"
   },
   {
@@ -3084,7 +3399,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u041",
     "review_depth": "body-text",
-    "scope": "已读“--test: run code examples as tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--test: run code examples as tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-100"
   },
   {
@@ -3096,7 +3411,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u042",
     "review_depth": "body-text",
-    "scope": "已读“--test-args: pass options to test runner”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--test-args: pass options to test runner”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-101"
   },
   {
@@ -3108,7 +3423,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u043",
     "review_depth": "body-text",
-    "scope": "已读“--target: generate documentation for the specified target triple”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--target: generate documentation for the specified target triple”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-102"
   },
   {
@@ -3120,7 +3435,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u052",
     "review_depth": "body-text",
-    "scope": "已读“--sysroot: override the system root”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--sysroot: override the system root”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-103"
   },
   {
@@ -3132,7 +3447,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u053",
     "review_depth": "body-text",
-    "scope": "已读“--edition: control the edition of docs and doctests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--edition: control the edition of docs and doctests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-104"
   },
   {
@@ -3144,7 +3459,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u056",
     "review_depth": "body-text",
-    "scope": "已读“--crate-version: control the crate version”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--crate-version: control the crate version”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-105"
   },
   {
@@ -3156,7 +3471,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u057",
     "review_depth": "body-text",
-    "scope": "已读“@path: load command-line flags from a path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“@path: load command-line flags from a path”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-106"
   },
   {
@@ -3168,7 +3483,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u061",
     "review_depth": "body-text",
-    "scope": "已读“--nocapture”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--nocapture”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-107"
   },
   {
@@ -3180,7 +3495,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u062",
     "review_depth": "body-text",
-    "scope": "已读“#[doc] 属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“#[doc] 属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-108"
   },
   {
@@ -3192,7 +3507,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u063",
     "review_depth": "body-text",
-    "scope": "已读“crate 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“crate 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-109"
   },
   {
@@ -3204,7 +3519,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u068",
     "review_depth": "body-text",
-    "scope": "已读“html_root_url”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“html_root_url”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-110"
   },
   {
@@ -3216,7 +3531,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u069",
     "review_depth": "body-text",
-    "scope": "已读“html_no_source”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“html_no_source”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-111"
   },
   {
@@ -3228,7 +3543,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u070",
     "review_depth": "body-text",
-    "scope": "已读“test(no_crate_inject)”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“test(no_crate_inject)”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-112"
   },
   {
@@ -3240,7 +3555,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u071",
     "review_depth": "body-text",
-    "scope": "已读“test(attr(...))”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“test(attr(...))”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-113"
   },
   {
@@ -3252,7 +3567,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u072",
     "review_depth": "body-text",
-    "scope": "已读“item 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“item 层面”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-114"
   },
   {
@@ -3264,7 +3579,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u073",
     "review_depth": "body-text",
-    "scope": "已读“inline and no_inline”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“inline and no_inline”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-115"
   },
   {
@@ -3276,7 +3591,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u074",
     "review_depth": "body-text",
-    "scope": "已读“hidden”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“hidden”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-116"
   },
   {
@@ -3288,7 +3603,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u075",
     "review_depth": "body-text",
-    "scope": "已读“alias”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“alias”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-117"
   },
   {
@@ -3300,7 +3615,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u076",
     "review_depth": "body-text",
-    "scope": "已读“文档测试”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“文档测试”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-118"
   },
   {
@@ -3312,7 +3627,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u077",
     "review_depth": "body-text",
-    "scope": "已读“文档测试通过或者失败”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“文档测试通过或者失败”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-119"
   },
   {
@@ -3324,7 +3639,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u078",
     "review_depth": "body-text",
-    "scope": "已读“预处理例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“预处理例子”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-120"
   },
   {
@@ -3336,7 +3651,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u079",
     "review_depth": "body-text",
-    "scope": "已读“隐藏例子的一部分”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“隐藏例子的一部分”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-121"
   },
   {
@@ -3348,7 +3663,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u080",
     "review_depth": "body-text",
-    "scope": "已读“在文档测试中使用 ?”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“在文档测试中使用 ?”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-122"
   },
   {
@@ -3360,7 +3675,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u081",
     "review_depth": "body-text",
-    "scope": "已读“在文档测试中显示警告”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“在文档测试中显示警告”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-123"
   },
   {
@@ -3372,7 +3687,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u082",
     "review_depth": "body-text",
-    "scope": "已读“宏的文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“宏的文档”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-124"
   },
   {
@@ -3384,7 +3699,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u083",
     "review_depth": "body-text",
-    "scope": "已读“属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“属性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-125"
   },
   {
@@ -3396,7 +3711,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u084",
     "review_depth": "body-text",
-    "scope": "已读“语法参考”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“语法参考”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-126"
   },
   {
@@ -3408,7 +3723,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u085",
     "review_depth": "body-text",
-    "scope": "已读“收集文档测试时包含 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“收集文档测试时包含 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-127"
   },
   {
@@ -3420,7 +3735,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u086",
     "review_depth": "body-text",
-    "scope": "已读“通过名称链接 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“通过名称链接 item”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-128"
   },
   {
@@ -3432,7 +3747,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u087",
     "review_depth": "body-text",
-    "scope": "已读“有效链接”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“有效链接”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-129"
   },
   {
@@ -3444,7 +3759,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u088",
     "review_depth": "body-text",
-    "scope": "已读“Namespaces and Disambiguators（消歧义符）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Namespaces and Disambiguators（消歧义符）”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-130"
   },
   {
@@ -3456,7 +3771,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u089",
     "review_depth": "body-text",
-    "scope": "已读“警告，re-exports, and scoping”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“警告，re-exports, and scoping”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-131"
   },
   {
@@ -3468,7 +3783,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u090",
     "review_depth": "body-text",
-    "scope": "已读“Lints”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Lints”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-132"
   },
   {
@@ -3480,7 +3795,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u091",
     "review_depth": "body-text",
-    "scope": "已读“broken_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“broken_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-133"
   },
   {
@@ -3492,7 +3807,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u092",
     "review_depth": "body-text",
-    "scope": "已读“private_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“private_intra_doc_links”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-134"
   },
   {
@@ -3504,7 +3819,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u093",
     "review_depth": "body-text",
-    "scope": "已读“missing_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“missing_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-135"
   },
   {
@@ -3516,7 +3831,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u094",
     "review_depth": "body-text",
-    "scope": "已读“missing_crate_level_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“missing_crate_level_docs”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-136"
   },
   {
@@ -3528,7 +3843,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u095",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-137"
   },
   {
@@ -3540,7 +3855,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u096",
     "review_depth": "body-text",
-    "scope": "已读“private_doc_tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“private_doc_tests”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-138"
   },
   {
@@ -3552,7 +3867,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u097",
     "review_depth": "body-text",
-    "scope": "已读“invalid_codeblock_attributes”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“invalid_codeblock_attributes”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-139"
   },
   {
@@ -3564,7 +3879,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u098",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-140"
   },
   {
@@ -3576,7 +3891,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u099",
     "review_depth": "body-text",
-    "scope": "已读“invalid_rust_codeblocks”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“invalid_rust_codeblocks”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-141"
   },
   {
@@ -3588,7 +3903,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u100",
     "review_depth": "body-text",
-    "scope": "已读“bare_urls”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“bare_urls”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-142"
   },
   {
@@ -3600,7 +3915,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u101",
     "review_depth": "body-text",
-    "scope": "已读“高级特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“高级特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-143"
   },
   {
@@ -3612,7 +3927,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u102",
     "review_depth": "body-text",
-    "scope": "已读“#[cfg(doc)]: 文档平台相关或者特性相关信息”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“#[cfg(doc)]: 文档平台相关或者特性相关信息”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-144"
   },
   {
@@ -3624,7 +3939,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u103",
     "review_depth": "body-text",
-    "scope": "已读“特定平台文档之间的交互”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“特定平台文档之间的交互”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-145"
   },
   {
@@ -3636,7 +3951,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u104",
     "review_depth": "body-text",
-    "scope": "已读“增加文档搜索的 item 别名”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“增加文档搜索的 item 别名”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-146"
   },
   {
@@ -3648,7 +3963,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u105",
     "review_depth": "body-text",
-    "scope": "已读“不稳定特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“不稳定特性”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-147"
   },
   {
@@ -3660,7 +3975,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u106",
     "review_depth": "body-text",
-    "scope": "已读“Nightly-gated functionality”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Nightly-gated functionality”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-148"
   },
   {
@@ -3672,7 +3987,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u107",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-149"
   },
   {
@@ -3684,7 +3999,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u108",
     "review_depth": "body-text",
-    "scope": "已读“Extensions to the #[doc] attribute”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Extensions to the #[doc] attribute”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-150"
   },
   {
@@ -3696,7 +4011,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u109",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-151"
   },
   {
@@ -3708,7 +4023,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u110",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-152"
   },
   {
@@ -3720,7 +4035,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u115",
     "review_depth": "body-text",
-    "scope": "已读“Unstable command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“Unstable command-line arguments”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-153"
   },
   {
@@ -3744,7 +4059,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u122",
     "review_depth": "body-text",
-    "scope": "已读“--extern-html-root-url: control how rustdoc links to non-local crates”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“--extern-html-root-url: control how rustdoc links to non-local crates”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-155"
   },
   {
@@ -3756,7 +4071,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u127",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-156"
   },
   {
@@ -3768,7 +4083,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u128",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-157"
   },
   {
@@ -3780,7 +4095,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u129",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-158"
   },
   {
@@ -3792,7 +4107,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u130",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-159"
   },
   {
@@ -3804,7 +4119,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u131",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-160"
   },
   {
@@ -3816,7 +4131,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u132",
     "review_depth": "body-text",
-    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，待 ch14 固定版本验证与落点。",
+    "scope": "已读该 PDF 对 nightly/不稳定门禁的说明；快照稳定性不能当当前工具链事实，已映射至 14.7 节登记落点。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-161"
   },
   {
@@ -3840,7 +4155,7 @@
     "target": "part4/ch14.md#sec-cpp-rust.4.14.7",
     "evidence": "sources/reviews/S14.md#review-s14-u140",
     "review_depth": "body-text",
-    "scope": "已读“JSON output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI，但 ch14 尚不存在，未制造 target。",
+    "scope": "已读“JSON output”正文，涉及文档构建、API 可见性、doctest 或质量门禁；应落 Cargo/CI；ch14 后来成章，这条已按现状指向对应节，证据强度只到本条已核读的范围。",
     "contribution": "sources/contributions/source-rust-books-sections.json#record-163"
   },
   {
@@ -5871,7 +6186,11 @@
     "status": "read-mapped",
     "target": "part3/ch11.md#sec-cpp-rust.3.11.1",
     "evidence": "bench/systems-lab/src/lib.rs",
-    "contribution": "sources/contributions/systems.json#record-1"
+    "contribution": "sources/contributions/systems.json#record-1",
+    "units": [
+      "S08-U0022"
+    ],
+    "basis": "pdf-unit"
   },
   {
     "id": "SYS-S08-28",
@@ -5881,7 +6200,12 @@
     "status": "read-mapped",
     "target": "part3/ch11.md#sec-cpp-rust.3.11.4",
     "evidence": "bench/systems-lab/src/lib.rs",
-    "contribution": "sources/contributions/systems.json#record-2"
+    "contribution": "sources/contributions/systems.json#record-2",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0034",
+      "S08-U0035"
+    ]
   },
   {
     "id": "SYS-MIT-RCU",
@@ -5891,7 +6215,8 @@
     "status": "read-mapped",
     "target": "part3/ch11.md#sec-cpp-rust.3.11.8",
     "evidence": "src/part3/ch11.md",
-    "contribution": "sources/contributions/systems.json#record-3"
+    "contribution": "sources/contributions/systems.json#record-3",
+    "basis": "artifact"
   },
   {
     "id": "SYS-RCORE-LOCK",
@@ -5901,7 +6226,8 @@
     "status": "read-mapped",
     "target": "part3/ch11.md#sec-cpp-rust.3.11.1",
     "evidence": "src/part3/ch11.md",
-    "contribution": "sources/contributions/systems.json#record-4"
+    "contribution": "sources/contributions/systems.json#record-4",
+    "basis": "artifact"
   },
   {
     "id": "SYS-TARGET-FEATURE",
@@ -5911,7 +6237,8 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.3",
     "evidence": "bench/systems-lab/src/lib.rs",
-    "contribution": "sources/contributions/systems.json#record-5"
+    "contribution": "sources/contributions/systems.json#record-5",
+    "basis": "artifact"
   },
   {
     "id": "SYS-IO-URING",
@@ -5921,7 +6248,8 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
     "evidence": "src/part3/ch12.md",
-    "contribution": "sources/contributions/systems.json#record-6"
+    "contribution": "sources/contributions/systems.json#record-6",
+    "basis": "artifact"
   },
   {
     "id": "SYS-IO-URING-CANCEL",
@@ -5931,7 +6259,8 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
     "evidence": "src/part3/ch12.md",
-    "contribution": "sources/contributions/systems.json#record-7"
+    "contribution": "sources/contributions/systems.json#record-7",
+    "basis": "artifact"
   },
   {
     "id": "SYS-RCORE-IO",
@@ -5941,7 +6270,8 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.4",
     "evidence": "src/part3/ch12.md",
-    "contribution": "sources/contributions/systems.json#record-8"
+    "contribution": "sources/contributions/systems.json#record-8",
+    "basis": "artifact"
   },
   {
     "id": "SYS-S11-ITER",
@@ -5951,7 +6281,11 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.2",
     "evidence": "bench/systems-lab/src/bin/simd.rs",
-    "contribution": "sources/contributions/systems.json#record-9"
+    "contribution": "sources/contributions/systems.json#record-9",
+    "basis": "pdf-unit",
+    "units": [
+      "S11-U056"
+    ]
   },
   {
     "id": "SYS-S08-OPT",
@@ -5961,6 +6295,339 @@
     "status": "read-mapped",
     "target": "part3/ch12.md#sec-cpp-rust.3.12.7",
     "evidence": "bench/systems-lab/src/bin/views.rs",
-    "contribution": "sources/contributions/systems.json#record-10"
+    "contribution": "sources/contributions/systems.json#record-10",
+    "basis": "pdf-unit",
+    "units": [
+      "S08-U0025"
+    ]
+  },
+  {
+    "id": "RCORE-TS",
+    "source": "rcore-task-switch",
+    "section": "第3章：任务切换（TaskContext 与 __switch 保存恢复的资源）",
+    "pages": "在线文档（SHA: a71948e9...）",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.2",
+    "evidence": "src/part3/ch09.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-TIME",
+    "source": "rcore-time-sharing",
+    "section": "第3章：分时多任务与时钟中断（时间片与抢占的驱动方式）",
+    "pages": "在线文档（SHA: 560b98fe...）",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.8",
+    "evidence": "src/part3/ch09.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-SV39",
+    "source": "rcore-sv39",
+    "section": "第4章：SV39 三级页表与大页（地址翻译与 TLB 压力的机制链）",
+    "pages": "在线文档（SHA: 654584dd...）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.3",
+    "evidence": "src/part1/ch02.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-EFS",
+    "source": "rcore-easyfs",
+    "section": "第6章：easy-fs 块缓存层（脏标记、合并与回写时机；扇区与块）",
+    "pages": "在线文档（SHA: ab93f730...）",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
+    "evidence": "src/part3/ch12.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-GALLOC",
+    "source": "rcore-global-alloc",
+    "section": "第4章：Rust 中的动态内存分配（GlobalAlloc 签名、Layout 对齐、LockedHeap 的锁）",
+    "pages": "在线文档（SHA: 14a89106...）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "src/part1/ch02.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-FRAME",
+    "source": "rcore-frame-alloc",
+    "section": "第4章：管理 SV39 多级页表（物理页帧分配与回收的合法性检查）",
+    "pages": "在线文档（SHA: 7d5b5cb2...）",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "src/part1/ch02.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-FORK",
+    "source": "rcore-process",
+    "section": "第5章：进程概念与 fork/exec/waitpid 三个系统调用",
+    "pages": "在线文档（SHA: baf6b6c1...）",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.4",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-PCB",
+    "source": "rcore-pcb",
+    "section": "第5章：进程管理的核心数据结构（PidHandle/KernelStack/TCB/TaskManager/Processor）",
+    "pages": "在线文档（SHA: b418261f...）",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.1",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-CONDVAR",
+    "source": "rcore-condvar",
+    "section": "第8章：条件变量机制（唤醒丢失与管程语义）",
+    "pages": "在线文档（SHA: 5df682f4...）",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.2",
+    "evidence": "src/part3/ch09_recall.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-CONCPROB",
+    "source": "rcore-concprob",
+    "section": "第8章：并发中的问题（互斥/同步/死锁三分类）",
+    "pages": "在线文档（SHA: bc6b803b...）",
+    "status": "read-mapped",
+    "target": "part2/ch07.md#sec-cpp-rust.2.7.1",
+    "evidence": "src/part2/ch07.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-EFS-IDX",
+    "source": "rcore-easyfs",
+    "section": "第6章：easy-fs 的 DiskInode 三级索引与统一块缓冲区",
+    "pages": "在线文档（SHA: ab93f730...）",
+    "status": "read-mapped",
+    "target": "part4/ch17.md#sec-cpp-rust.4.17.2",
+    "evidence": "src/part4/ch17.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-FD",
+    "source": "rcore-fd",
+    "section": "第7章 1file-descriptor：标准输入输出与描述符表",
+    "pages": "chapter7/1file-descriptor.html",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.8",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-PIPE",
+    "source": "rcore-pipe",
+    "section": "第7章 2pipe：管道与有界环",
+    "pages": "chapter7/2pipe.html",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.5",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-SIGNAL",
+    "source": "rcore-signal",
+    "section": "第7章 4signal：信号与安全点",
+    "pages": "chapter7/4signal.html",
+    "status": "read-mapped",
+    "target": "part4/ch17.md#sec-cpp-rust.4.17.6",
+    "evidence": "src/part4/ch17.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-MOREAS",
+    "source": "rcore-more-as",
+    "section": "第4章 7more-as：超越物理内存与空闲匹配",
+    "pages": "chapter4/7more-as.html",
+    "status": "read-mapped",
+    "target": "part1/ch02.md#sec-cpp-rust.1.2.6",
+    "evidence": "src/part1/ch02.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-SCHED",
+    "source": "rcore-sched",
+    "section": "第5章 4scheduling：调度策略与性能指标",
+    "pages": "chapter5/4scheduling.html",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.3",
+    "evidence": "src/part3/ch09.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-SERIAL",
+    "source": "rcore-serial",
+    "section": "第9章 2device-driver-1：串口与 MMIO",
+    "pages": "chapter9/2device-driver-1.html",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
+    "evidence": "src/part3/ch12.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-VIRTIO",
+    "source": "rcore-virtio",
+    "section": "第9章 2device-driver-2：virtio 与虚拟队列",
+    "pages": "chapter9/2device-driver-2.html",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.8",
+    "evidence": "src/part3/ch12.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-LINE",
+    "source": "rcore-sched",
+    "section": "参照主线页：站点表与机制侧证据的定义",
+    "pages": "chapter5/4scheduling.html",
+    "status": "read-mapped",
+    "target": "rcore-line.md#rcore-line-map",
+    "evidence": "src/rcore-line.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-REMOVESTD",
+    "source": "rcore-remove-std",
+    "section": "第1章 2remove-std：移除标准库依赖",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.9",
+    "evidence": "src/part4/ch14.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-TRAP",
+    "source": "rcore-trap",
+    "section": "第2章 4trap-handling：特权级切换与寄存器保存",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.9",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-REDIRECT",
+    "source": "rcore-redirection",
+    "section": "第7章 3cmdargs-and-redirection：标准 I/O 重定向",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part3/ch10.md#sec-cpp-rust.3.10.9",
+    "evidence": "src/part3/ch10.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-THREAD",
+    "source": "rcore-thread",
+    "section": "第8章 1thread：用户态线程管理",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part2/ch08.md#sec-cpp-rust.2.8.1",
+    "evidence": "src/part2/ch08.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-SEMAPHORE",
+    "source": "rcore-semaphore",
+    "section": "第8章 3semaphore：信号量与唤醒丢失",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part3/ch09.md#sec-cpp-rust.3.9.7",
+    "evidence": "src/part3/ch09.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-EFSKERNEL",
+    "source": "rcore-easyfs-kernel",
+    "section": "第6章 3using-easy-fs-in-kernel：File 与设备抽象",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part3/ch12.md#sec-cpp-rust.3.12.9",
+    "evidence": "src/part3/ch12.md",
+    "basis": "online"
+  },
+  {
+    "id": "RCORE-FIRSTINSTR",
+    "source": "rcore-first-instr",
+    "section": "第1章 3first-instruction-in-kernel1：内核第一条指令",
+    "pages": "见 sources/web.json 的 url",
+    "status": "read-mapped",
+    "target": "part4/ch14.md#sec-cpp-rust.4.14.9",
+    "evidence": "src/part4/ch14.md",
+    "basis": "online"
+  },
+  {
+    "id": "SRC-REF-trait-object",
+    "source": "REF-trait-object",
+    "section": "trait object 类型与 dyn Trait 的表示",
+    "pages": "在线 Reference（2026-10-31 抓取）",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": ".work/cpp-rust-sources/reference/S10-trait-object.html",
+    "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
+    "basis": "artifact"
+  },
+  {
+    "id": "SRC-REF-dyn-compatibility",
+    "source": "REF-dyn-compatibility",
+    "section": "Dyn compatibility（旧译母本称「对象安全」，无此节）",
+    "pages": "在线 Reference（2026-10-31 抓取）",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
+    "evidence": ".work/cpp-rust-sources/reference/S10-dyn-compatibility.html",
+    "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
+    "basis": "artifact"
+  },
+  {
+    "id": "SRC-REF-codegen-attrs",
+    "source": "REF-codegen-attrs",
+    "section": "inline / optimization-method / 代码生成属性",
+    "pages": "在线 Reference（2026-10-31 抓取）",
+    "status": "read-mapped",
+    "target": "part2/ch05.md#sec-cpp-rust.2.5.4",
+    "evidence": ".work/cpp-rust-sources/reference/S10-codegen-attrs.html",
+    "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
+    "basis": "artifact"
+  },
+  {
+    "id": "FOUNDATIONS-S10-020",
+    "source": "S10",
+    "section": "未定义的行为：`&mut T`/`&T` 遵循 LLVM scoped noalias 模型，同页声明清单不穷尽且无正式语义模型",
+    "pages": "PDF 344（一基物理页）",
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": "src/part1/ch03.md",
+    "contribution": "sources/contributions/foundations.json#record-20",
+    "units": [
+      "S10-U0101"
+    ],
+    "basis": "pdf-unit"
+  },
+  {
+    "id": "FOUNDATIONS-INSTANT",
+    "source": "FOUNDATIONS-INSTANT",
+    "section": "Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）",
+    "pages": "HTML具名节；无固定页码",
+    "status": "read-mapped",
+    "target": "part1/ch01.md#sec-cpp-rust.1.1.2",
+    "evidence": ".work/cpp-rust-sources/foundations/instant.html",
+    "contribution": "sources/contributions/foundations.json#record-21",
+    "basis": "online"
+  },
+  {
+    "id": "compiler-web-aliasing-ch03",
+    "source": "compiler-web-aliasing",
+    "section": "main article, excluding navigation；重点首末段：采用最宽泛的别名定义、Rust 自己的定义「大概会更受限制，要把 mutation 与 liveness 算进去」、完整模型还需计入函数调用/裸指针/UnsafeCell",
+    "pages": [],
+    "status": "read-mapped",
+    "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
+    "evidence": ".work/cpp-rust-sources/compiler/aliasing.html",
+    "contribution": "sources/contributions/compiler.json#record-19",
+    "basis": "online"
   }
 ]

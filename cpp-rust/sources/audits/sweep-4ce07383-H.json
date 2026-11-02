@@ -1,0 +1,205 @@
+{
+  "reviewer": "sweep4ce-H",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立审计（内容层，非机械层）。方法：1) 读 sources/inventory.json、sections.json、web.json 与 reviews/S01-S16.md，把 S01-S16 解析到磁盘母本（实际位于 ~/E-Book/{C++,Rust,C}/，由 tools/index_sources.py 的 LIBRARY 常量确认），逐一核对 SHA-256；2) 用 pdftotext 对全部 450 条 read-mapped 单元做「标题是否落在登记 pdf_page」的逐页比对（±1 页容差），对 sections.json 中 481 条带 PDF 页码的核读定位做关键词落地检查（445 条直接通过，36 条逐一人工复核）；3) 对无文本层的扫描件（S03/S05）用 pdftoppm 渲染页面做视觉核对；4) S16 解包 EPUB 对照 toc.ncx；5) 对正文各章「延伸阅读与来源/母本对应」表逐条回母本比对（S08 条目号与页、S09 p64-67、S10 noalias、S11 19.1/16.2/14.2、S14 p1-15、rCore 各归档、FFI 归档）；6) 对 web.json 全部 archive 路径做存在性+SHA 校验；7) 对正文引用的 URL 与 web.json 登记做交叉比对；未归档的在线来源（Stanford/MIT/std/tokio）用实时抓取核验正文说法。母本文件均未被修改。",
+  "sections": [],
+  "sources": [
+    {
+      "id": "S01",
+      "notes": "A Tour of C++（第2版）。文件存在，SHA-256 与台账一致（6f4c17a3…）。6 条 read-mapped 单元（1.7 p35、6.3 p130、15/15.2 p297-298、18/18.2 p358-360）标题全部逐字落在登记页。正文（ch16/ch03/ch07）只作中文转述映射，无逐字引文；转述与母本内容方向一致。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/A Tour of C++ (Bjarne Stroustrup)…pdf 实测 SHA-256=6f4c17a33fdf3aecaf10d24c6521194346e0574907ee15df8db45243c5c9f339，与 inventory.json 一致",
+        "pdftotext 逐页比对：S01-U0016 '1.7 Pointers, Arrays, and References' 在 PDF p35 逐字命中；U0050 '6.3 Resource Management' p130 命中；U0142/U0144 '18 Concurrency'/'18.2' p358/360 命中；6/6 exact"
+      ]
+    },
+    {
+      "id": "S02",
+      "notes": "C++ Crash Course。文件存在，SHA 一致。2 条 read-mapped（第11章智能指针 p399、第19章并发 p697）标题逐字落在登记页。正文无逐字引文，仅中文映射。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/C++ Crash Course…pdf SHA-256=7a2e993c… 与台账一致",
+        "pdftotext：'11: Smart Pointers' 在 PDF p399 逐字命中；'19: Concurrency and Parallelism' 在 p697 命中；2/2 exact"
+      ]
+    },
+    {
+      "id": "S03",
+      "notes": "C++程序设计语言 第4部分 标准库（中文扫描版，无文本层，pdftotext 全文仅 3 字符）。唯一 read-mapped 单元 '第41章 并发' p297 经渲染图像视觉核对：该页页眉即「第41章 并发」，含内存模型/原子性/volatile 目录，定位成立。但整本无文本层，台账声称的 body-sampled 逐字核读无法被任何机械手段复验——定位可信、逐字内容不可复核，记 P2 提示。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/C++ 程序设计语言：第4部分 标准库…pdf SHA-256=40cbd6fc… 一致；pdftotext 1-371 页输出≈0 字符（纯图像扫描）",
+        "pdftoppm 渲染 PDF p297：页眉「第41章 并发 The C++ Programming Language Fourth Edition」，与登记标题一致"
+      ]
+    },
+    {
+      "id": "S04",
+      "notes": "C++20高级编程 第5版。文件存在，SHA 一致。1 条 read-mapped（第19章 函数指针/函数对象/lambda p606）标题逐字命中。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/C++20高级编程(第5版)…pdf SHA-256=a8be0966… 一致",
+        "pdftotext：'第19章:函数指针，函数对象，lambda表达式' 在 PDF p606 逐字命中（1/1 exact）"
+      ]
+    },
+    {
+      "id": "S05",
+      "notes": "C++程序设计语言 第1~3部分（中文扫描版，无文本层）。15 条 read-mapped 单元中 14 条经渲染视觉核对成立（p119 第5章/5.2/5.3、p171/173/178/184/186 第7章各节、p311 12.5、p330 13.3、p386 15.2、p584 22.4 均与登记页一致）；唯 S05-U0365 登记标题 '17.2 构造函数和析构函数' 与母本实际标题 '17.2 构造函数和不变式'（p438）不符——页码对、标题写错，记 P2。整本同样不可机械复验。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/C++程序设计语言.第1～3部分…pdf SHA-256=ed81bea6… 一致；pdftotext 全文 0 字符（纯扫描）",
+        "pdftoppm 视觉核对 p119（'第5章 C++概览：并发与实用功能'+'5.2 资源管理'）、p171（'第7章 指针、数组与引用'）、p543（'20.6 成员指针'）、p122/173/178/184/186/311/330/386/584 共 15 页全部命中；p438 页眉实为 '17.2 构造函数和不变式'，非台账所记 '构造函数和析构函数'"
+      ]
+    },
+    {
+      "id": "S06",
+      "notes": "Effective C++ 中文第3版（OCR 扫描，文本层噪声大：'置入'OCR 成 '宣入'、'于'成'千'）。8 条 read-mapped 中 7 条逐字命中；条款17（p104）与第2/3章章首（p63/p90）经人工复核在登记页存在，未命中仅因 OCR 错字。定位成立。注意：任何依赖该 OCR 层的「逐字比对」都只能到语义级。无 P0/P1。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/Effective C++…pdf SHA-256=475e5db9… 一致",
+        "pdftotext p104 含 '条款17:以独立语句将newed对象宣入智能指针 Store newed objects in smart pointers in standalone statements'（OCR 错字，语义同）；p63 '2 构造／析构／赋值运算'、p90 '3 资源管理/条款13' 命中"
+      ]
+    },
+    {
+      "id": "S07",
+      "notes": "Effective Modern C++。文件存在，SHA 一致。13 条 read-mapped 单元标题全部逐字落在登记页（13/13 exact）。正文（ch03/ch07/ch16）为中文转述，未见与母本冲突的定位。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C++/Effective Modern C++…pdf SHA-256=ef2f0ef5… 一致",
+        "pdftotext 逐页比对：S07 全部 13 条 read-mapped（条款1-4、6、16-23 等）标题在登记 pdf_page 逐字命中"
+      ]
+    },
+    {
+      "id": "S08",
+      "notes": "Effective Rust 中文翻译。SHA 一致，32/32 单元页级命中。条目号交叉验证：第17条 '对共享状态的并行性保持警惕' 起 PDF146、跨 146-160，与 ch09/ch10/ch11 表所记一致；第12条 '理解泛型和 trait 对象之间的权衡' 与 ch05 说法逐字一致；第20条 '避免过度优化的诱惑' 起 PDF170，ch03/ch12 所引 '第20条末 复制/可用性' 在 PDF173-176 有落地。两处问题：(a) ch11 表把「第28条：利用类型系统表达不变量 PDF205-210」标为核读完成——实际第28条是「在合适的时候使用宏」（标题在 PDF208），205-210 页是 docs.rs/crates.io 与宏的内容，「利用类型系统表达不变量」在母本中不存在对应条目 → P0；(b) ch06 把第15条转述为「别名限制与优化」，本地译名为「理解借用检查器」，但内容确有「别名作出更好的决策/更好的优化」，转述忠实于内容 → P2。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/Effective Rust.pdf SHA-256=399f4efe… 一致",
+        "pdftotext：PDF146 页首 '第 17 条：对共享状态的并行性保持警惕'；PDF208 '第 28 条：在合适的时候使用宏'；PDF205-210 关键词统计 宏=36、不变量=1；PDF126 '第 15 条：理解借用检查器' 且 126-133 含 '别名作出更好的决策…更好的优化'；条目号-标题全表已从母本逐条抽出比对"
+      ]
+    },
+    {
+      "id": "S09",
+      "notes": "Guide to Rustc Development。SHA 一致，96/96 单元页级命中。ch13/ch14 表所引 '64-67 perf采样、构建边界、incremental、栈匹配'：PDF64 起 'Profiling with perf'，65 含 incremental，67 含 perf 采样与 call-graph/stack 内容，定位与转述成立。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/Guide to Rustc Development.pdf SHA-256=db9052af… 一致",
+        "pdftotext p64 'Profiling with perf … Initial steps'；p65 'incremental'；p67 'perf works by sampling your process'；call-graph/stack 关键词命中"
+      ]
+    },
+    {
+      "id": "S10",
+      "notes": "Rust 参考手册中文（旧译）。SHA 一致，74/74 页级命中。ch03 关于「旧译用 LLVM noalias 概括别名」的说法在母本中逐字落地（'&mut T 和 &T 遵循 LLVM 的 noalias 模型'），且正文明确拒绝把它当现行定义——处理得当。问题：ch05 把三页当前在线 reference（trait-object、dyn-compatibility、codegen attributes）标称「母本 S10」并称为规范出处，但本地 S10 只有旧术语「对象安全/Object Safety」，无 dyn-compatibility 一节，且这三个 URL 未登记进 web.json → P1。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf SHA-256=4b29cd11… 一致",
+        "pdftotext 全文：'noalias' 命中 2 处（UB 列表处 '&mut T和&T遵循LLVM的作用域无别名(noalias)模型'）；'对象安全' 命中 13 处、'dyn兼容' 0 处；src/part2/ch05.md:2111 的 reference/items/traits.html#dyn-compatibility 在 sources/web.json 无对应条目"
+      ]
+    },
+    {
+      "id": "S11",
+      "notes": "Rust 程序设计语言 简体中文版。SHA 一致。台账 pagination_note 声明「正文常为 native+1」，实测 43 条 read-mapped 中 38 条恰为 +1 位移、0 条超出该声明范围，位移被如实披露。ch16 表四行 '19.1 PDF455-461' 逐页验证：455-456 裸指针/示例19-1、457 unsafe fn、458-459 split_at_mut 安全抽象与切片、459-460 extern、460-461 可变静态与线程安全，全部落地；'454/462 为分页空白' 亦属实。ch09/ch10 '16.2 消息传递 PDF390-394'、ch13/14 'PDF320 dev/release'、'PDF332-336 workspace/Cargo.lock' 均命中；'一个所有者' 措辞在母本存在。小疵：U048/U056 登记标题与译文实际标题（'重构改进模块性和错误处理'/'性能对比：循环 VS 迭代器'）不完全一致；9 条 read-mapped 单元在 inventory 无 target 但 sections.json 均有对应 SRB-* 映射，不构成缺口。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/Rust 程序设计语言 简体中文版.pdf SHA-256=609a7e0e… 一致",
+        "pdftotext：p455 '不安全 Rust ch19-01-unsafe-rust.md'；p456 示例19-1 双裸指针；p459 'extern 函数调用外部代码'；p460 '访问或修改可变静态变量'；p390-394 消息传递/channel；p320 dev/release/profile；p332-336 工作空间/Cargo.lock；p73 '一个所有者'；p261/p314 标题措辞与台账登记不一致处已记录"
+      ]
+    },
+    {
+      "id": "S12",
+      "notes": "The Rust on ESP Book 简体中文版。SHA 一致，50 页全读声明与 16/16 read-mapped 页级命中相符，全部映射到 part4/ch14。正文未发现把 ESP 内容冒充他源之处。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/The Rust on ESP Book 简体中文版.pdf SHA-256=fcfd603c… 一致；pdf_pages=50 与实测一致",
+        "pdftotext 逐页比对：S12 全部 16 条 read-mapped 标题在登记 pdf_page 逐字命中（16/16 exact）"
+      ]
+    },
+    {
+      "id": "S13",
+      "notes": "《数据结构与算法：Rust 语言描述》（文件名 rust-book-zh-cn-shieber.pdf）。SHA 一致；台账 verified_title 与母本封面/序言实测一致。18/18 read-mapped 页级命中；pagination_note（正文印刷页1=PDF13）与实际相符。U058 队列单元经 sections.json 落到 ch09 并有正文页 109-112 支撑。无发现。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/rust-book-zh-cn-shieber.pdf SHA-256=62528ca1… 一致",
+        "pdftotext p1-6：'数据结构与算法 Rust 语言描述 2021.02.11 序'；18 条 read-mapped 标题逐页命中"
+      ]
+    },
+    {
+      "id": "S14",
+      "notes": "rustdoc 手册中文。SHA 一致，61 页全读声明可信，86/86 页级命中。ch13 表 '6-8、11-12 完整示例、公共契约、错误边界' 与 ch14 表 '1-15 Cargo整合、可见性、示例、错误处理与参数' 逐项落地（p6 '如何写文档'、p11 '什么包含（和排除）/warn(missing_docs)'、p12 错误示例隐藏；'可见性' 一项由 document-private-items 三处支撑，措辞略宽）。无 P0/P1。",
+      "evidence": [
+        "/Users/juanwang/E-Book/Rust/rustdoc 手册.pdf SHA-256=5f91555f… 一致",
+        "pdftotext p6-8/p11-12 标题与内容命中；p1-15 关键词统计 Cargo=8、示例=5、错误=4、参数=10、document-private=3"
+      ]
+    },
+    {
+      "id": "S15",
+      "notes": "C语言程序设计：现代方法 中文第2版修订版。SHA 一致。34 条 read-mapped：31 条 exact，2 条 +1 位移（U0193 p222→223、U0200 p225→226）且 S15 无 pagination_note 披露 → P2；U0657/U0676 等指向 PDF643-650 的单元实际落在附录 B/C/D 的 C1X/C99/C89 对照清单（其中确有 '第8章 数组' 等条目），正文对应内容另由 U0134 等正确映射，附录定位不算虚构但作为 body 映射依据偏弱 → P2。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C/C语言程序设计：现代方法…pdf SHA-256=5038b439… 一致",
+        "pdftotext：p223 起 '第12章 指针和数组'（台账记 222）；p643-650 页眉为 '附录B C1X与C99的比较/附录C C99与C89的比较'，'第25章/第8章' 等条目在附录对照表中出现；p145 '第8章 数组' 正文另有正确映射单元"
+      ]
+    },
+    {
+      "id": "S16",
+      "notes": "CMake构建实战-项目开发卷（EPUB）。SHA 一致。台账 pagination 声明「用 XHTML 定位，勿造印刷页」，但 15 个单元全部只记章节标题、无任何 XHTML 定位字段，5 条 read-mapped 的落点（ch16 16.3 CMake 目标/静态库/CTest）与母本相符：toc.ncx 章节标题逐字一致，正文含 add_library/target_link_libraries/enable_testing/add_test。定位粒度低于自declared 政策 → P2。",
+      "evidence": [
+        "/Users/juanwang/E-Book/C/CMake构建实战-项目开发卷…epub SHA-256=3477fdba… 一致",
+        "解包后 EPUB/toc.ncx 章节标题（第1章 构建之旅…第11章 实践：基于onnxruntime…）与 reviews/S16.md 15 条逐字一致；xhtml 中 grep 到 add_library/target_link_libraries/CTest 相关命令"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.11.9",
+      "severity": "P0",
+      "description": "ch11 母本表宣称「S08 (Effective Rust) 第28条：利用类型系统表达不变量 | PDF 205–210 | 核读完成」并据此支撑 11.4 EBR Guard 论据。母本中第28条实为「在合适的时候使用宏」（标题在 PDF208），PDF205-210 内容是 docs.rs/crates.io 展示与宏；「利用类型系统表达不变量」在 S08 全部条目标题中不存在（类型系统表达的是第1/2条：数据结构/常见行为，位于书前部）。引用无法在母本落地却标称已核实。",
+      "evidence": "pdftotext Effective Rust.pdf：p208 页首 '第 28 条：在合适的时候使用宏'；p205-210 关键词 宏=36、不变量=1；全书条目-标题抽取无 '表达不变量' 条目；src/part3/ch11.md:1837"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.9",
+      "severity": "P1",
+      "description": "台账内部矛盾+离线不可复核：sections.json 把 STD-ATOMICS/STD-FUTURE/STD-WAKE/STANFORD-THREAD/MIT-LOCK/TOKIO-FAIR/TOKIO-QUEUES/TOKIO-BLOCK/MIT-SWITCH/STANFORD-FORK/STD-CHILD/TOKIO-PROCESS/TOKIO-FORK/SYS-RCORE-LOCK 标为 read-mapped，但 web.json 中对应条目（atomic/future/wake/stanford-thread-notes/mit-lock-notes/mit-scheduling/stanford-process-slides/tokio-runtime/tokio-blocking/tokio-process/std-child）全部 status=fetched-not-reviewed 且无 archive。本审计实时抓取核验了 Stanford（每连接线程→'Too many open files'→线程池）、MIT（kalloc 丢更新、'start with big locks…measure'）、Tokio 1.54.0（LIFO 连续三次暂时禁用、公平性前提）——正文说法忠实；但登记状态与正文「核读」宣称不符，且无归档可离线复验。",
+      "evidence": "sources/sections.json 上述 14 条 status=read-mapped vs sources/web.json 对应 id status=fetched-not-reviewed、无 archive 字段；WebFetch lecture-13-2022 与 l-lockv2.txt、docs.rs/tokio/1.54.0/tokio/runtime 均确认正文表述"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.5.9",
+      "severity": "P1",
+      "description": "ch05 把三页当前在线 reference（types/trait-object.html、items/traits.html#dyn-compatibility、attributes/codegen.html）标称「母本 S10」并称为定义「规范出处」；本地 S10（旧译参考手册）无 dyn-compatibility 一节、用旧术语「对象安全」，另两页 URL 未登记进 web.json。以旧母本之名引未登记在线页，台账与实际不符。同类：ch02/ch03/ch04/ch06 把 Option Representation、MaybeUninit、Vec(alloc)、NonZero、Layout、Cell、u8::count_ones、Instant、mem::drop 等 std 页称为「规范来源/参考值来源」，其中除 ptr/index、option/index、hint/black_box 已登记外，上述页面均未在 web.json 登记或归档。",
+      "evidence": "src/part2/ch05.md:2111；src/part1/ch03.md:1678；src/part1/ch02.md:1683-1684；pdftotext 'Rust 参考手册.pdf' 全文 '对象安全'=13、'dyn兼容'=0；web.json URL 清单比对：reference/items/traits.html、reference/types/trait-object.html、std/option/enum.Option.html、std/mem/union.MaybeUninit.html、alloc/struct.Vec.html、std/num/struct.NonZero.html、std/alloc/struct.Layout.html、std/cell/struct.Cell.html、std/primitive.u8.html、std/time/struct.Instant.html、std/mem/fn.drop.html 均无登记条目"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "severity": "P2",
+      "description": "EVID-cachegrind 归档 SHA 与登记不符（站点改版重抓），台账已用 observed_sha256+archive_note 如实披露并要求按当前版本重核。本审计完成重核：ch13 对该手册的唯一具体引文（x86 REP 指令计数差异）在当前归档版本中仍存在，结论不受影响。",
+      "evidence": "sources/web.json EVID-cachegrind archive_note；.work/cpp-rust-sources/evidence/cachegrind.html 实测 sha=ab36ffaa…；归档 5.8.3 节 'When a REP-prefixed instruction executes each iteration is counted separately'；src/part4/ch13.md:1485"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.7.8",
+      "severity": "P2",
+      "description": "rcore-lock 在 web.json 标 fetched-not-reviewed，但 sections.json（RCORE-LOCK/SYS-RCORE-LOCK）与 ch07/ch11 表按「核读」引用。归档实际存在且内容核实：2lock-rcore.html 明确区分忙等/yield/阻塞并讨论单核 Qemu 前提下忙等失效——正文说法成立，仅状态字段滞后。",
+      "evidence": ".work/cpp-rust-sources/systems/2lock-rcore.html：忙等=38、yield=21、阻塞=51、单核=8 处；'Qemu模拟出来的单核计算机'；src/part2/ch07.md:1809"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.3.1",
+      "severity": "P2",
+      "description": "S05-U0365 登记标题 '17.2 构造函数和析构函数' 与母本实际标题 '17.2 构造函数和不变式'（PDF438）不符；页码正确、内容仍属构造函数/RAII 语境，属台账标题转写错误。",
+      "evidence": "pdftoppm 渲染 S05 PDF p438 视觉核对：'17.2 构造函数和不变式'；sources/inventory.json S05-U0365"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "severity": "P2",
+      "description": "S15 两条 read-mapped 单元定位偏移一页（U0193 记 222 实为 223、U0200 记 225 实为 226），且 S15 无像 S11 那样的 pagination_note 披露；另有 U0650/U0657/U0676 等指向附录 B/C/D 版本对照清单而非正文页（正文对应内容已由 U0134 等正确登记）。",
+      "evidence": "pdftotext：'第12章 指针和数组' 在 S15 PDF223 起；p643-650 页眉为附录 B/C/D 对照表"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.9",
+      "severity": "P2",
+      "description": "ch06 称「《Effective Rust》第15条：别名限制与优化」，本地译本第15条标题为「理解借用检查器」；条目内容确有别名与优化的因果论述（'借用规则允许编译器对数据的别名作出更好的决策…更好的优化'），转述忠实于内容但标题不照母本，建议标注译名差异。S11 的 U048/U056 登记标题与译文实际标题（'重构改进模块性和错误处理'/'性能对比：循环 VS 迭代器'）同属此类。",
+      "evidence": "pdftotext Effective Rust.pdf p126 标题、p126-133 别名/优化原文；src/part2/ch06.md:1627"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "severity": "P2",
+      "description": "S03/S05 两份中文扫描母本完全无文本层，台账声称 body-sampled/selected-body 核读，但逐字层面无任何可机械复验的证据链（本审计只能做页级标题视觉核对，全部通过）。建议台账为扫描件显式登记 '无文本层，核读依赖视觉' 以免后续审计误判。",
+      "evidence": "pdftotext S03 全文≈3 字符、S05 全文 0 字符；pdftoppm 抽查 15 页标题全部与登记页一致"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "rCore/easy-fs 专项核查结论（无定级问题，正面记录）：rCore 母本以 .work/cpp-rust-sources/systems/*.html 归档形式在仓库内，正文关键数字全部与归档逐字吻合——DiskInode 直接项 INODE_DIRECT_COUNT=28→14KiB、一级间接 512/4=128 块→64KiB、二级间接 128×64KiB=8MiB；ch09 关于条件变量 signal 丢失「不会被记录」与 rCore 第八章原文一致；ch12 的 File trait 仅 read/write、UserBuffer 需地址翻译、ns16550a DLAB、virtio 六状态/FAILED/DEVICE_NEEDS_RESET 均在对应归档命中；web.json 全部 rcore 归档存在且 SHA 匹配。",
+      "evidence": "2fs-implementation-rcore.html：'INODE_DIRECT_COUNT: usize = 28…14KiB'、'512/4=128 个数据块，对应 64KiB'、'128×64KiB=8MiB'、'容量上限 78KiB'；4condition-variable-rcore.html：'这次signal不会有任何效果，这次唤醒也不会被记录下来'；4scheduling-rcore.html 彩票调度段；archive 路径存在性与 SHA 全量脚本校验通过（除 EVID-cachegrind 已披露项）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "severity": "P2",
+      "description": "S16 台账自声明「reflowable EPUB；使用 XHTML 定位，勿造印刷页」，但 15 个单元实际没有任何 XHTML 定位字段，定位粒度只有章节标题，低于自declared 标准；编译器/FFI 类在线来源（compiler-web-*、FFI-CATCH/SLICE/REPR）在 web.json 中缺 status 字段（None），登记不完整（FFI 三页归档内容已核实支撑 ch16 表的 Safety 条目转述）。",
+      "evidence": "sources/inventory.json S16 units 无 pdf_page/xhtml 字段；sources/web.json compiler-web-* status=None；FFI-SLICE.html 含 non-null/aligned/single allocation/isize 全部安全条件；FFI-CATCH.html 含 hook/payload；FFI-REPR.html 含 field order/padding"
+    }
+  ]
+}

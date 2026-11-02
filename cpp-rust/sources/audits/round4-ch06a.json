@@ -1,0 +1,110 @@
+{
+  "reviewer": "r4-ch06a",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "d7abb30539b3752aa5c2421d2f5391077d3c9af0ba50a2beb3ff870aa4ac90eb",
+  "provenance": "冷启动通读 src/part2/ch06.md 第 65–1279 行（6.1–6.6 全部正文与每个定义/例题/解答/思考/判定流程/常见错误/即时自测盒），再用 python 从 bench/compiler-lab 的原始归档点独立复算 10 个「实测」数字、逐字符比对 6 个源码/测试代码块、回 IR 与汇编核属性断言，并跑 tools/list_uncollected_claims.py --only 6 把 30 条未采集声明与盘中产物对摆。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.2.6.1",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "6.1.4 的表五行逐条回产物核：add_slices 的 IR define 行里两个切片各拆成 ptr+i64（output: ptr noalias nofree noundef nonnull align 8 + i64 len；input: ptr noalias nofree noundef nonnull readonly align 8 + i64 len），向量主体确是 <2 x i64>（同文件 add <2 x i64> 11 次、load <2 x i64> ... align 8 22 次），runtime_table 返回值是 sret([256 x i8]) align 1 dereferenceable(256)，即正文说的「sret 指向 256 字节结果」。目标与环境断言（aarch64-apple-darwin、无 target-cpu=native、RUSTFLAGS=<unset>）与 stable-02/environment.txt 一致；profile 是 opt-level=3 codegen-units=1。6.1.2 的 u64 全 wrapping 与 src/lib.rs 内核一致。ex 6.1.1 与思考 6.1.1 的「IR 有 vector.body 不等于本机有 SIMD」属方法层主张，正文没有把第 5 章的观察当成本轮证据，边界写得保守。没核：①「第 5 章出现过只有 vector.body 名字的标量展开」是跨章回忆，我没回 ch05 逐条验；②@def-1.6.1/@def-1.8.1 等被引定义只确认锚点在本仓库存在、未逐字比对母本原文；③「没有手写目标专用 SIMD」我只在 compiler-lab 的源码与归档里查过 intrinsic/target_feature 字样，没做全仓扫描。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886 define ...add_slices(ptr noalias nofree noundef nonnull align 8 %output.0, i64 %output.1, ptr noalias nofree noundef nonnull readonly align 8 %input.0, i64 %input.1)",
+        "同 .ll 文件 runtime_table 的 define 行：ptr dead_on_unwind noalias nofree noundef writable writeonly sret([256 x i8]) align 1 dereferenceable(256) %_0",
+        "同 .ll 计数：add <2 x i64>=11、load <2 x i64> align 8=22、store <2 x i64>=14、add nuw i64 %index, 8=4、vector.body=80、noalias=336、readonly=68、sret=2",
+        "bench/compiler-lab/results/stable-02/environment.txt:15 host/release aarch64-apple-darwin 1.99.0，:18 RUSTFLAGS=<unset>，:17 profile opt-level=3 codegen-units=1",
+        "bench/compiler-lab/src/lib.rs add_slices/scalar_add/add_with_calls/bit_table/runtime_table/lookup_bits"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "别名主张核到 IR 原文：6.2.2/6.2.1 题面说的属性在 define 行里全部存在（noalias、readonly、align 8），6.2.2 末句指向 6.6 布局表的 [u8;256] align 1 也与 extra-02/layout.csv 一致。6.2.5 的编译拒绝产物核到底：extra-02/alias_conflict.txt 记录 rustc --edition=2024 --emit=metadata 报 error[E0502]: cannot borrow `data` as mutable because it is also borrowed as immutable，只有 .rmeta、没有可执行文件，所以正文「该程序没有被执行」成立；probes/rejected/alias_conflict.rs 与 probes/rejected/expected.tsv 的 alias_conflict→E0502 映射也对得上。6.2.3 的 DropProbe 持 Cell 引用在 src/lib.rs 里确为 DropProbe<'a>(pub &'a Cell<u64>)，第 4 章引用落地。6.2.6「本轮没有构造 raw pointer 对照」用 list_uncollected_claims 与 probes/ 目录双向查过，盘上确无 raw pointer 重叠检查产物，属诚实的未测。发现的是一条内部表述问题（见 findings）：正文把 noalias 只归给 output、readonly 只归给 input，而 IR 里两个指针都带 noalias。没核：内部可变性/UnsafeCell 与「共享引用绝不变」的规范性表述我按语言常识判其成立，未回 sources/ 找母本逐字比对；「unsafe 不天然更快」「裸地址丢失更多契约」是机制陈述，本轮无对照产物可核，我没有当作数字断言处理。",
+      "evidence": [
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886（output 与 input 两个 ptr 均带 noalias，input 额外带 readonly，均 align 8）",
+        "bench/compiler-lab/results/extra-02/alias_conflict.txt:1-5（rustc --emit=metadata；error[E0502]；无执行）",
+        "bench/compiler-lab/probes/rejected/alias_conflict.rs:1 与 bench/compiler-lab/probes/rejected/expected.tsv:3（alias_conflict E0502）",
+        "bench/compiler-lab/src/lib.rs DropProbe<'a>(pub &'a Cell<u64>)",
+        "tools/list_uncollected_claims.py --only 6：ch06.md:366 与 :417 的 raw pointer 未构造声明「没有匹配到同类产物」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "代码块逐字符比对：ch06.md:445-466 的三个 #[inline(never)] 内核与 bench/compiler-lab/src/lib.rs 完全一致；:539-554 的 vector_tails_and_max_values 与 :558-564 的 unequal_lengths_are_rejected（含 #[should_panic(expected = \"assertion\")]）与 tests/contracts.rs 完全一致，且 stable-01/tests.txt 记录 contracts.rs 8 个测试全 ok、这两个名字都在列。IR 摘录核到 vector.body 块原文：%index phi、%wide.load/%wide.load7/8/9(ptr %1..%4) 与 %wide.load10/11/12(ptr %0/%5/%6) 共 8 条 load <2 x i64> ... align 8、store <2 x i64>、%index.next = add nuw i64 %index, 8，正文「四组 2×i64、一次主体迭代推进八个元素」与「省略调试元数据」的说法与产物相符。静态量自算：16384/8=2048 整除成立、0..130 即 0–129 共 130 个长度成立、参考值 v.wrapping_sub(1) 与 u64::MAX 初化的算术成立。发现一条表述与本章自己的定性打架（见 findings）。没核：①6.3.5 的 12 行汇编我只在 .s 里确认 add.2d v0, v4, v0 以及 ldp q/stp q/subs x/b.ne LBB6_* 这一族指令真实存在（真实文件以制表符分隔，正文换成空格），没有逐行确认这 12 行全部落在 add_slices 符号内、也没核 b.ne LBB6_5 这个具体标号；②「本轮 scalar_add 调用确实留在循环里」我没有逐行读 add_with_calls 的 IR/汇编去确认那条 call；③1000 与 0..129 的实际执行路径我没跑，正文自己也把 1000 标为未采集。",
+      "evidence": [
+        "bench/compiler-lab/src/lib.rs（add_slices/add_with_calls/scalar_add 源码）↔ src/part2/ch06.md:445-466",
+        "bench/compiler-lab/tests/contracts.rs（vector_tails_and_max_values、unequal_lengths_are_rejected、ctfe_exhaustive_domain）↔ src/part2/ch06.md:539-554、558-564",
+        "bench/compiler-lab/results/stable-01/tests.txt（running 8 tests，含 - should panic 的那条，test result: ok. 8 passed）",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886 起 vector.body 块：8×load <2 x i64> align 8 + store <2 x i64> + add nuw i64 %index, 8",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.s 存在 add.2d\\tv0, v4, v0 与 51 条 ldp q/stp q/add.2d/subs x/b.ne 形态指令"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.4",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「实测结果」表的 8 个数我没有抄正文，而是从 stable-02/vectorize.csv 的 42 行原始批点（zip/calls 各 21 个 ns_per_unit）自己复算：zip mean 0.347103791、sd(N−1) 0.016887185、升序第 11 个 0.346487457、最大 0.378854037；calls mean 0.723643761、sd 0.059593896、p50 0.718884028、最大 0.833089535，四舍五入后与正文 0.347104/0.016887/0.346487/0.378854、0.723644/0.059594/0.718884/0.833090 逐格吻合，也与 stable-02-recalculated.json 一致。6.4.8 的 0.311992 复算自 stable-01/vectorize.csv:44（0.311992212），同轮 calls 0.630335 也在盘上，支持「两轮同方向、没挑数」。派生算术复核：0.723644−0.347104=0.376540 ✓（正文 ex 6.4.1 第 1 问）；0.723644/0.347104=2.0848 ✓（自测第 2 题写 2.08）；ceil(21×0.99)=21 ✓，harness 直接取升序 values[20] 即最大批值，正文「nearest-rank p99 在此就是最大批值」与代码相符，且明确说了它不是尾延迟。计量表逐阶段核对 src/lib.rs 的 measure()：500ms 预热、0..21 共 21 轮、case 按 (round+offset)%len 轮转、elapsed 取好之后才 assert_eq checksum、CSV 的 units=16384 → 正文 ns/元素口径成立；6.4.2 入口代码块与 src/bin/vectorize.rs 逐字符一致（含 output.fill(0) 与 borrowed_sum 三步都在计时内、left/right 两个独立 Vec）。128KiB=16384×8 ✓。未采集维度（内存控制器计数、IPC、cache miss、周期、能耗、指令退休数、尾延迟）用工具与目录双向查过，盘上没有对应产物，不属被打脸。没核：①6.4.9「脚本使用全项目约定的独占目录锁」我只看了 stable-02 归档内容，没逐行读 run.sh / tools/run_benchmarks.sh 的锁实现；②「本轮没有并行计时其他 benchmark」无法从产物反证，只做了否证检查；③被引的 [@def-1.4.1]/[@def-1.5.2]/[@def-1.2.2] 我确认锚点可解析，未逐字比对第 1 章母本文本。",
+      "evidence": [
+        "独立复算 bench/compiler-lab/results/stable-02/vectorize.csv（N=21/各 case，units=16384）：zip 0.347104/0.016887/0.346487/0.378854；calls 0.723644/0.059594/0.718884/0.833090；summary 行见 :44-45",
+        "bench/compiler-lab/results/stable-02-recalculated.json:96-113（vectorize zip/calls 的 mean、sd_n_minus_1、p50、p99 与 raw_observations 273）",
+        "bench/compiler-lab/results/stable-01/vectorize.csv:44 summary,zip,0.311992212,0.003451776,0.311546592,0.324087333；:45 calls 0.630334568",
+        "bench/compiler-lab/src/lib.rs measure()：while start.elapsed() < Duration::from_millis(500)、for round in 0..21、assert 在 start.elapsed() 之后、summary 取 values[10]/values[20]",
+        "bench/compiler-lab/src/bin/vectorize.rs ↔ src/part2/ch06.md:665-692",
+        "工具否证：ch06.md:746/810/818/849 的未采集声明「没有匹配到同类产物」"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "CTFE 三条产物断言都落地：正文引用的失败输入 const BAD: u8 = [1u8; 2][3]; ... 与 probes/rejected/const_bounds.rs 逐字符一致；extra-02/const_bounds.txt 记录 error[E0080]: index out of bounds: the length is 2 but the index is 3、evaluation of `BAD` failed、error: aborting，且命令行是 --emit=metadata，所以「编译期就失败、没有可执行版本、等不到运行时 panic」成立；expected.tsv 的 const_bounds→E0080 映射一致。6.5.3 的四个代码块（bit_table/BIT_TABLE/runtime_table 含 black_box 注释/lookup_bits）与 src/lib.rs 逐字符一致；256 项、结果 0..8、索引天然在域内属可静态验证的算术。「本轮没有执行 cargo miri test，nightly 安装也不可用」我没当成空头声明放过：extra-02/nightly.txt 记录 rustc +nightly -vV 报 error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'，与 environment.txt 里 rustup 列表虽列出 nightly 但实际不可用并不矛盾（那条列表正是「装过但坏了」的呈现），stable-02/tests.txt 的 8 个测试也确无 miri 项。「本章没有使用 build.rs」与 stable-02/source-sha256.txt 的完整源清单（src/bin/*、src/lib.rs、tests/contracts.rs、probes/*、Cargo.*、run.sh，无 build.rs）一致。发现一条被打脸的未采集断言（见 findings）。没核：①6.5.6 关于 CTFE 依 target 数据模型、build.rs 跑在 host 的规范层说法属文档性主张，仓库内没有母本可比，我只判其与已知语义不冲突；②6.5.7「CTFE 把成本移到构建期/可能增加只读数据」我只否证了它的未采集措辞，没有测任何构建成本；③E0080 的诊断码文本未与 rustc 官方 error index 逐字比对。",
+      "evidence": [
+        "bench/compiler-lab/results/extra-02/const_bounds.txt:1-8（rustc --emit=metadata；E0080；aborting due to 1 previous error）",
+        "bench/compiler-lab/probes/rejected/const_bounds.rs:1 ↔ src/part2/ch06.md:945；bench/compiler-lab/probes/rejected/expected.tsv:4",
+        "bench/compiler-lab/results/extra-02/nightly.txt:1-4（$ rustc +nightly -vV → error: missing manifest in toolchain 'nightly-aarch64-apple-darwin'）",
+        "bench/compiler-lab/results/stable-02/tests.txt（running 8 tests，无 miri 项）与 stable-02/source-sha256.txt（无 build.rs）",
+        "bench/compiler-lab/src/lib.rs bit_table/BIT_TABLE/runtime_table/lookup_bits ↔ src/part2/ch06.md:893-936"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.6",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "6.6.5 表的 8 个数同样独立复算：从 stable-02/ctfe_table.csv 的 42 个原始批点（各 case 21 个、units=256）得 static_table mean 0.169412773、sd(N−1) 0.001526128、p50 0.169365374、最大 0.172596086；rebuild_table 1.953817841/0.017489923/1.949261029/1.997598056，四舍五入后与正文 0.169413/0.001526/0.169365/0.172596、1.953818/0.017490/1.949261/1.997598 逐格一致，units=256 支撑正文用 ns/字节而不是 ns/元素。ex 6.6.1 的 1.953818/0.169413=11.53，正文写 ≈11.5 ✓，且明确拒绝把它读成查表 vs popcount、拒绝「表越大倍数越夸张」的外推。6.6.2 与 6.6.3 的代码块分别和 src/bin/ctfe_table.rs、tests/contracts.rs 逐字符一致；6.6.1 的入口文件名、输入 (0u8..=255) 与 CSV 的 units=256 相符。6.6.4 布局表里探针真测过的两行对上 extra-02/layout.csv：[u8;256] 256/1、&[u64] 16/8；runtime_table 结果 256/1 对上 IR 的 sret([256 x i8]) align 1 dereferenceable(256)；正文对「最小对齐≠实际放置对齐≠缓存行、static 不等于常驻缓存」的边界写得比产物走得保守。冷启动/大表两个未采集维度：盘上没有对应批次，工具也没给出反例文件。没核：①u8 1/1 与 u64 8/8 两行不在 layout.csv 里，我按语言事实接受，但正文没区分「探针实测行」与「语言事实行」，也没给这两行的出处；②6.6.6「本机目标码也保留这些循环与表数据写入」我只确认 .s 里有 runtime_table 符号与向量/循环指令族，没逐行读完它的两个循环体；③stable-01 的 ctfe_table 数字（0.164591/1.852403，比值 11.26）在盘上但正文没引，不属矛盾；④[@def-1.2.2]/[@def-1.4.2]/[@def-1.8.1] 只确认锚点可解析，未逐字比对第 1 章母本。",
+      "evidence": [
+        "独立复算 bench/compiler-lab/results/stable-02/ctfe_table.csv（N=21/各 case，units=256）：summary 行见 :44-45",
+        "bench/compiler-lab/results/stable-02-recalculated.json:114-133（ctfe_table static_table/rebuild_table 的 mean、sd_n_minus_1、p50、p99）",
+        "bench/compiler-lab/src/bin/ctfe_table.rs ↔ src/part2/ch06.md:1097-1120；bench/compiler-lab/tests/contracts.rs ctfe_exhaustive_domain ↔ :1126-1134",
+        "bench/compiler-lab/results/extra-02/layout.csv:2 &[u64],16,8；:8 [u8;256],256,1",
+        "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll runtime_table define 行（sret([256 x i8]) align 1 dereferenceable(256)）",
+        "工具否证：ch06.md:631/960/962/982/994/1069 的未采集声明「没有匹配到同类产物」"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.2.6.5",
+      "severity": "P1",
+      "description": "6.5.7 用全称否证把自己说大了：ch06.md:1020 写「构建期耗时、二进制各节尺寸增量、冷启动加载代价这三个维度本章都没有采集具体数字」。前两项被本章自己的正文与磁盘产物同时打脸。①节尺寸：同一文件的 6.7.6 引言（ch06.md:1286）明写「本节能给的正面证据是功能与静态尺寸——三个构建的 __text 字节数和 16 个实例的输出校验」，6.8 小结（ch06.md:1573）更给出「尺寸差 128 字节」的具体数字，对应归档 bench/compiler-lab/results/extra-02/one-size.txt、many-size.txt、thin-size.txt、pgo-size.txt 与 one-nm.txt/many-nm.txt/thin-nm.txt 全在盘上——即「二进制各节尺寸增量」在本章不但采集了、还进了结论。②构建期耗时：stable-01/codegen-build.txt:2 有「Finished `release` profile [optimized + debuginfo] target(s) in 0.24s」、extra-02 还有 one-build.txt/many-build.txt/thin-build.txt/stages-o3-build.txt/layout-build.txt 一批 cargo 构建时长记录（虽然是为取产物而顺带留下的，不是配对实验）。③只有「冷启动加载代价」是干净未采集。这条正是 tools/list_uncollected_claims.py 的 docstring 里点名要抓的错类（它举的例子是第 14 章写「没有生成 profraw」而 6.8 真跑过 PGO）；顺带发现该脚本的 PROBES 关键词表里没有 size/nm/__text/section 一类特征，所以 :1020 这一条它只回了「没有匹配到同类产物」，属工具覆盖缺口而非声明成立。修法建议：把句子限定到该实验本身——「CTFE 静态表的构建耗时与只读数据体积增量本节没有采集」，并删掉对整章节尺寸的全称否定（或改为「章内 6.7/6.8 的尺寸数字属另一实验口径，不适用于本节」）。同一措辞在即时自测第 4 题答案（ch06.md:1069「具体构建耗时增量本章没有采集」）重复出现，改时要一起改。",
+      "evidence": "src/part2/ch06.md:1020 与 :1069 vs src/part2/ch06.md:1286、:1573；bench/compiler-lab/results/extra-02/{one,many,thin,pgo}-size.txt、extra-02/{one,many,thin}-nm.txt、bench/compiler-lab/results/stable-01/codegen-build.txt:2、extra-02/*-build.txt；/usr/bin/python3 tools/list_uncollected_claims.py --only 6 对 ch06.md:1020 输出「✓ 没有匹配到同类产物」（其 PROBES 无节尺寸特征）"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.2",
+      "severity": "P2",
+      "description": "属性归属写偏：6.2.2 定义与 6.1.4 表格把 noalias 讲成 output 的属性、readonly 讲成 input 的属性（「output 指针 | noalias、align 8 等属性」「input 指针 | readonly 等属性」「input 形参带 readonly，且同样有该版本生成的别名相关信息」），例 6.2.1 的题面更把「output 带 noalias、input 带 readonly、两者对齐为 8」列成一条产物清单。IR 原文里 add_slices 的两个指针参数都带 noalias：output.0 是 ptr noalias nofree noundef nonnull align 8，input.0 是 ptr noalias nofree noundef nonnull readonly align 8。也就是说 input 并非「只有 readonly、别名信息只是『同样有』」，而是与 output 一样被标 noalias，且除 readonly 外两条都还带 nofree/noundef/nonnull/captures(none)。按穷尽清单读的读者会得出「input 没被标 noalias」的反向误解，而 6.2.2 的整段论证（noalias 由独占/共享借用契约推导）恰恰依赖读者知道两条切片都可以不重叠。不是事实颠倒，但口径不完整，建议明写「两条切片指针在本轮 IR 里都带 noalias；input 另带 readonly」并把 captures/nofree 归入「等属性」的具体清单。",
+      "evidence": "bench/compiler-lab/results/stable-02/codegen/compiler_lab-55987aab45b3e67f.ll:1886 define void @_RNvCs9Bm3fdC1YiC_12compiler_lab10add_slices(ptr noalias nofree noundef nonnull align 8 captures(none) %output.0, i64 noundef range(...) %output.1, ptr noalias nofree noundef nonnull readonly align 8 captures(none) %input.0, i64 noundef range(...) %input.1)；对照 src/part2/ch06.md:183-185、:291、:303"
+    },
+    {
+      "anchor": "sec-cpp-rust.2.6.3",
+      "severity": "P2",
+      "description": "自相矛盾的措辞：6.3.6 写「两个向量化对照逐元素比较」，但它比的是 add_slices 与 add_with_calls，而后者正是本章反复定性为未向量化的一侧——6.3.3「本轮 scalar_add 调用确实留在循环里」、6.4.3 计量表「scalar_add 保留调用：zip 无 / calls 每元素有」、6.4.4「calls 的目标码保留逐元素直接调用」、ex 6.3.1 的结论句也写「add_with_calls 的产物保留逐元素调用」。同一节里把 calls 侧称成「向量化对照」，会让读者以为两个内核都走了向量主体，从而削弱本节自己的核心论点（测试只证语义、不证向量化，见 think 6.3.1）。属表述问题，不是数字或产物错误：两条断言（left==right 逐元素、以及每元素等于 input 值的 wrapping_sub(1)）我在 tests/contracts.rs 里逐字符核过，与正文代码块一致。建议改成「一个向量化内核与一个保留逐元素调用的对照，彼此逐元素比较，并与 wrapping 参考值比较」。",
+      "evidence": "src/part2/ch06.md:537 vs :472、:709、:722、:527；bench/compiler-lab/tests/contracts.rs vector_tails_and_max_values（left/right 分别走 add_slices 与 add_with_calls，再逐元素比 v.wrapping_sub(1)）"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "reviewer": "r5-ch02b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
+  "provenance": "冷启动完整读了 src/part1/ch02.md 第 1250–1803 行（2.7–2.11 全部正文与每个语义盒），并用 /usr/bin/python3 从 results/native-01/allocation.csv 独立复算统计量、逐行对照 allocation.rs / lib.rs / storage_plan.rs / run.sh / analyze.py / environment.txt / layout.txt / validation-01 归档与 sources/reviews/S08.md、src/appendix/coverage.md 与 rCore 三份母本 HTML。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "全部计量类断言独立复算通过，只有一条表述级问题（见 findings）。复算：用 /usr/bin/python3 从正文点名的 results/native-01/allocation.csv 自己求 21 个 fresh_vec 与 21 个 byte_region 原始值——mean 8.248312814 / 2.813854399、N−1 sd 0.173203503 / 0.027682164、nearest-rank p50 8.246734619 / 2.817779541、p99 8.638381958 / 2.855300903，与表格逐位一致；配对均值 −5.434458415 与 bootstrap95 [−5.514596121, −5.358680362] 用 analyze.py 的 seed=13013、10000 次重采样、按轮配对的口径复现成功（没有跳过轮均值层）。例 2.7.1 的换算全对：每批 = 16 × 4096 = 65536 次操作，65536 × 8.248312814 = 540561.4 ns、× 2.813854399 = 184408.8 ns、差 356152.7 ns = −5.434458415 × 65536；expected = 4096 × 7 = 28672，CSV 两个 case 的 checksum 唯一且都是 28672。代码块与 bench/foundations-lab/src/bin/allocation.rs 第 1–36 行逐行等价（COUNT/LEN/两处 expected/reset/take(black_box(LEN)).expect(\"fixed capacity\")/run(&mut cases, 16, COUNT) 全在），夹具 lib.rs:15–42 证明确实是「一个计时框住 16 次工作核、除以 iterations×units」，所以 2.7.1 说单位含取存储/写入/观察三项、不是纯分配延迟成立；2.7.4 说区域构造与销毁在计时外成立（region 在 run 之前 new、之后 drop）。2.7.6 的测试序列与 lib.rs:195–203 的 region_capacity_failure_is_transactional 逐字符一致，我按 ByteRegion::take 的实现（checked_add 失败或 get_mut 越界返回 None、只在两条检查都通过时提交 used）逐步推过：take(6)→used=6、take(3)→end=9 越界 None、take(usize::MAX)→加法溢出 None、take(2)→[0;2]、reset 后 take(6)→[7;6]，例 2.7.2 列的四条与即时自测第 3 题「容量 131072 时前 2048 块成功后 panic」都算对（131072/64=2048）。环境文件里 run.sh 写下的单位行与我复算的口径一致。",
+      "evidence": [
+        "复算输出：fresh_vec mean 8.248312814 sd 0.173203503 p50 8.246734619 p99 8.638381958；byte_region mean 2.813854399 sd 0.027682164 p50 2.817779541 p99 2.855300903；paired mean -5.434458415；boot95 [-5.514596121, -5.358680362]（源：bench/foundations-lab/results/native-01/allocation.csv 42 行 raw）",
+        "src/part1/ch02.md:1336-1339（表格与配对均值）、:1323（例 2.7.1 换算）",
+        "bench/foundations-lab/src/bin/allocation.rs:1-36",
+        "bench/foundations-lab/src/lib.rs:15-42（run 夹具与 500ms 预热）、:101-124（ByteRegion::take/reset）、:195-203（容量失败测试）",
+        "bench/foundations-lab/analyze.py:11-31（nearest-rank quantile、stdev N−1、seed 13013/10000 重采样、按轮配对）",
+        "bench/foundations-lab/run.sh:21（unit=ns/item except allocation ns/64-byte allocation+fill+read）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "静态量全部自己算过，只有一条教学分类口径问题（见 findings）。例 2.8.1：base=0x1004、used=3 → 起点 0x1007；相对做法 0x1004+8=0x100c=4108，4108 % 8 = 4（正文写「÷8=513.5 余 4」正确），绝对做法上取整得 0x1008=4104（4104 % 8 = 0），padding=1、padding+size=9、末尾 0x1010——四步与正文逐字相符。例 2.8.2 与第 3 题：Record 的 size/align 取自归档 layout.txt 第 4 行「Record,64,8」，65536×64=4194304、65536×128=8388608（正好翻倍）、热列 65536×8=524288、密度 8/64=12.5% 与 8/128=6.25% 全部复算命中；「本机 cacheline 128 字节」在 results/native-01/environment.txt 里是 hw.cachelinesize: 128。2.8.8 的代码块与 examples/storage_plan.rs:1-27 等价（只省了首行模块注释），断言值 value_offset=8 / size=16 / align=8 / array::<()>(100) size0 align1 与 results/validation-01/storage-plan.txt 的实际输出两行逐字符一致；ex-2.8.3 把 value_offset=8 与 COrder 的 value 偏移互相印证，layout.txt 第 11 行「C offsets,0,8,16」确实给出 8（第 12 行 Rust offsets,10,0,8 说明顺序不同）。2.8.2 的八项我数过是「第一…第八」共 8 项，与 2.10 索引行「八项要素」和 exam 第 11 题的八项一致。2.8.4「本章没有运行 packed 性能实验」与证据相符：examples/layout.rs 只用 size_of/align_of/offset_of 打印，没有任何 repr(packed) 探针或计时入口。2.8.9/2.8.6 反复声明的「没有采集多连接常驻内存、没有测请求分布与并发持有数」我在 native-01 归档里核对过，确实只有 6 个单线程 CSV 与 sample 文件，没有内存列，正文没有把它当已测。",
+      "evidence": [
+        "python 复算：4108 % 8 = 4；4104 % 8 = 0；padding=1；65536*64=4194304；65536*128=8388608；524288/65536=8；8/64=0.125；8/128=0.0625",
+        "src/part1/ch02.md:1480（例 2.8.1 地址算术）、:1504-1508（例 2.8.2）、:1559-1586（storage_plan 代码块）、:1588（结果点名列）",
+        "bench/foundations-lab/examples/storage_plan.rs:1-27；bench/foundations-lab/results/validation-01/storage-plan.txt:4-5",
+        "bench/foundations-lab/results/native-01/layout.txt:4,11-12；results/native-01/environment.txt（hw.cachelinesize: 128）",
+        "bench/foundations-lab/src/lib.rs:114-123（take 的 checked_add 与 get_mut 才提交 used）",
+        "bench/foundations-lab/examples/layout.rs:2,19,22（无 packed 探针）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "把这一节列出的每个入口拿去落地核过，没有发现无法兑现的引用。rCore 三份母本在 sources/web.json 都登记了 URL 与本地归档，我在归档 HTML 里逐条找到了正文所依赖的机制描述：.work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html 里确有 Mutex<T> 包裹全局分配器的表述（正文「全局分配器被 Mutex 包着，任何操作先拿锁」对得上，且明确声明不引用其中数字）；3sv39-implementation-1-rcore.html 确有「大页」专节（正文只借它的机制链）；4sv39-implementation-2-rcore.html 确有「栈式物理页帧管理策略／栈式物理页帧分配器」与回收合法性检查。台账映射也对：coverage.md:591 把 rcore-sv39 映射到 ch02#sec-cpp-rust.1.2.3（正文 2.9.1 说的是 2.3.3 借机制），coverage.md:594 把 rcore-frame-alloc 映射到 1.2.6（正文说的是 2.6.6 三笔成本）。Effective Rust 两条可核：sources/reviews/S08.md:34 登记「第 20 条」PDF170 起的复制/拥有数据取舍，coverage.md:116 更把「第20条末：复制可见性、可用性与共享所有权」直接映射到 ch02#sec-cpp-rust.1.2.6，与正文「2.6 的接口设计参照它」一致；coverage.md:109-111 把「第30条：单元、集成、文档测试与基准的优化风险」映射到第 1 章，与正文「与第 1 章同源」一致。2.9.1 第二条把 Option 文档 Representation 段登记给 2.2.2，coverage.md:126 确有 FOUNDATIONS-OPTION「Representation段及类型/条件表」映射到 ch02#sec-cpp-rust.1.2.2。2.9.2/2.9.3 的「哪些来自母本、哪些是本机实验」与我的核对结果相符：AoS/热列对比、ByteRegion、cacheline 128 确实只在本机归档里，母本没有；N−1 sd 与 bootstrap 口径确实来自第 1 章方法（analyze.py 单一实现）。",
+      "evidence": [
+        "src/appendix/coverage.md:126,591,594,603,111(第30条→1.1.5),116(第20条→1.2.6)",
+        "sources/reviews/S08.md:34（第 20 条）、:46（第 30 条）",
+        ".work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html（Mutex<T>）；3sv39-implementation-1-rcore.html（大页）；4sv39-implementation-2-rcore.html（栈式物理页帧分配器）",
+        "src/part1/ch02.md:1688-1690（两条 rCore 与 Effective Rust 的表述）、:1694-1700"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "「八份清单共 48 条」是我自己数出来的：用正则统计 2.1–2.8 每节 ::: errata 块里的 E-a…E-f，结果是 6/6/6/6/6/6/6/6 = 48，索引表的行也确实只有 2.1…2.8 八行、每行标注 E-a … E-f。表中每一行的「共同把什么搞错了」与我读到的对应小节正文一致（2.5 行指批均值 vs 单次成本、2.7 行指换掉研究对象、2.8 行指两份证明合并），没有指向不存在的小节。表下四条跨节错误点名的锚点 [@def-2.1.3]、[@ex-2.4.1]、[@def-2.3.2]、[@def-1.6.1]、[@think-2.7.1]、[@def-2.6.2]、[@def-2.8.3]、[@think-2.8.1] 全部能解析到真实 {#...} 块（2.7–2.11 区间共 45 个引用，零缺锚）。「第二类证据（事件计数）本章一次都没采集」与归档实况一致：native-01 只有 CSV/sample，没有 cache/TLB 事件计数文件，2.3.2、2.9.3 也这样声明。这一节没有任何数字断言需要复算，所以没有可算错的对象。",
+      "evidence": [
+        "python 统计：{'2.1':6,'2.2':6,'2.3':6,'2.4':6,'2.5':6,'2.6':6,'2.7':6,'2.8':6}，合计 48",
+        "src/part1/ch02.md:1706-1717（索引表）与 :1719-1724（四条跨节错误）",
+        "引用解析检查：2.7–2.11 区间 45 个 [@...] 全部命中 {#def/ex/think-...} 定义，missing=[]",
+        "bench/foundations-lab/results/native-01/ 目录清单（无事件计数归档，仅 CSV/sample/codegen）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "章末的每条自述都回查了实现与归档，没有虚报。夹具：run() 每 case 先跑满 500 ms 预热（lib.rs:20 Duration::from_millis(500)），ROUNDS=21 且 analyze.py 断言 round 恰为 range(21)，「两个入口各有两种 case、每 case 21 个原始批次」成立（allocation.csv 42 行 raw、locality.csv 同构）；locality.rs 的 run(&mut cases, 128, N) 与 N=65536 使每批元素数 = 8388608，8388608 × 0.519143207 ns = 4.35 ms，所以速查行「0.519 是 4.35 ms 摊到 838 万个元素上的批均值」我算过是对的，0.519/0.059 也与 statistics-stdout.txt 的 aos/soa 均值同量级吻合。归档清单（源码 SHA、environment、MIR/LLVM IR/asm、sample）在 results/native-01/ 逐件存在：source-sha256.txt、environment.txt、codegen/、sample-locality.txt，run.sh:12 确实 --emit=mir,llvm-ir,asm。「最后一条运行所有六个入口」对：run.sh:40 的循环正是 dce paired locality allocation borrow initialization 六个 bin，且第 32–37 行是共享测量锁、复现块第 4 条命令的路径写法与 run.sh:4-8 的 cd 行为兼容。章末件五页真实存在：ch02_summary.md 有「## 九节一览」（对应「核对九节结论」）、ch02_recall.md 四个分组标题正是「定义卡／结论卡／第一行卡／机制参照卡」且第 3 行自称 24 张（间隔表给出 8+7+7 与第四组，我核到组名与声明数，没有逐张数到 24——这一条是我唯一没穷尽的核对）、ch02_exercises.md 分组为 A 组 1–7、B 组 8–15、C 组 16–20 合计 20 题并附解答、ch02_exam.md 第 3 行「闭卷，60 分钟，100 分」与评分表「合计 100 / 70」对应「100 分、70 分及格」、ch02_checklist.md 存在。出口检查三段任务点到的锚点（[@def-2.1.2]、[@ex-2.6.2]、[@think-2.5.1]、[@def-1.8.2] 等）全部可解析。「本章属于探索性一侧，尚需独立技术审计」与事实相符。",
+      "evidence": [
+        "python 复算：8388608 × 0.519143207 ns = 4.3549 ms；128 × 65536 = 8388608",
+        "bench/foundations-lab/src/lib.rs:19-22（500 ms 预热与逐批校验）、analyze.py:44-45（range(21) 断言）",
+        "bench/foundations-lab/src/bin/locality.rs:1,20（run(&mut cases, 128, N)）；results/native-01/statistics-stdout.txt（aos 0.519143207 / soa 0.059380878）",
+        "bench/foundations-lab/run.sh:12,40（emit mir/llvm-ir/asm 与六个入口）；results/native-01/{source-sha256.txt,environment.txt,codegen,sample-locality.txt}",
+        "src/part1/ch02_summary.md:5；ch02_recall.md:3,18,110,191,272；ch02_exercises.md:18,106,224；ch02_exam.md:3,52"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.1.2.7",
+      "severity": "P2",
+      "description": "口径不一致（表述级，不是算错）：2.7.3 报「批p50／批p99」两个分位数时，只写了「统计口径同[@def-1.5.2]」，没有像同章 2.5.2（第 931 行）和 1.5.7 小结（ch01.md:981）那样补一句「21 个批均值上的 p99 就是最大值、不是一次块生命周期操作的尾延迟」。我复算确认正文的 p50/p99 确实取在轮级批均值上（fresh_vec 的 p99 = 8.638381958 恰是 21 个数里的最大值 raw,20,0；byte_region 的 p99 = 2.855300903 也是最大值 raw,18,1），所以数字没错、nearest-rank 定义也有出处；但 2.7 全节的核心警示句正是「别把 2.81 读成一次 malloc 的耗时」，冷读者在这一节最需要的就是同一句 p99 免责说明，缺它容易被读成单次访问的尾延迟。建议照 2.5.2 的写法补一行。",
+      "evidence": "复算：sorted(fresh_vec)[ceil(21×0.99)-1]=8.638381958=max=raw,20,0；sorted(byte_region)[20]=2.855300903=max=raw,18,1（bench/foundations-lab/results/native-01/allocation.csv）；对照 src/part1/ch02.md:931（2.5.2 已写明）、src/part1/ch01.md:912（def-1.5.2 nearest-rank 定义）、src/part1/ch02.md:1332-1337（2.7.3 未重述）"
+    },
+    {
+      "anchor": "sec-cpp-rust.1.2.8",
+      "severity": "P2",
+      "description": "分类口径与本章自设的两分法打架（教学一致性问题，静态量我都算对）：2.8 即时自测第 1 题把八项要素分成「算数」与「状态」两类，答案给的是「算数：二三四五；状态：一六七八」，把第一项「align 必须来自合法 Layout 或等价的受检参数」归入状态；而配套 ch02_exam.md 第 11 题的参考答案按另一条轴写成「①–⑤属布局证明（⑥的有效值一半属类型证明）；⑥–⑧属来源/权限与资源状态机证明」，即第一项属于布局证明那一侧。正文 2.8.7 又只承认「布局证明 vs 来源证明」这一条轴。三处读下来，冷读者在第 1 题会按「状态」答题、在考试按「布局」答题，其中一项可能被扣分，且第一项既不是纯算数也不是运行时状态（它是参数合法性/来源）。建议第 1 题答案把第一项单列为「来源」项，或注明与 exam 第 11 题的两分法是不同轴。",
+      "evidence": "src/part1/ch02.md:1652-1655（第 1 题「算数：二三四五；状态：一六七八」）、:1470（八项原文，第一项为 align 来源）、:1551-1553（2.8.7 只给布局/来源两分）；src/part1/ch02_exam.md:40,85（第 11 题要求按布局/来源归类，答案把 ①–⑤ 判为布局证明）"
+    }
+  ]
+}

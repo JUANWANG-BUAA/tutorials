@@ -1,0 +1,74 @@
+{
+  "reviewer": "r4b-ch16b",
+  "kind": "independent",
+  "layer": "read",
+  "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
+  "provenance": "冷启动全文读了 src/part4/ch16.md 1244-1737 行（16.7–16.11 全部正文与语义盒），逐条把实测数字用 python 从 projects/ffi-bridge/evidence/run-20261007-01/raw.csv 独立复算，对拍了 c/benchmark.c、tools/measure.sh、tools/summarize.py、environment.txt、summary.json、macos-sample.txt、interference.txt、sample-command.txt、Cargo.lock、sources/reviews/S11.md、sources/contributions/ffi-project-web.json、src/appendix/coverage.md、sources/inventory.json，并亲自重放了 S11.md 点名的外部 PDF 取证命令；另跑了 tools/list_uncollected_claims.py 过滤 ch16。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "16.7 全部数字（含例题 16.7.1 与即时自测）我未抄正文：从 raw.csv 的 elapsed_ns 除以 524288 独立复算 per_element/batch 的均值、N-1 sd、方差、nearest-rank p50/p99 与 checksum，84 条观察、每 case 21 条全部与正文表格及 summary.json 逐位一致；8192×64=524288、0.978652−0.211897=0.766755、4.6 倍、ceil(21×0.99)=21 均验算成立；p50/p99 定义（nearest-rank、21 值取最大）正文已交代。代码断言逐行核对：rb_mix 逐元素与 rb_transform 批量分支、每 case 独立 500ms 预热、轮转起始 case、时间戳后比对独立参考 checksum 都在 c/benchmark.c 落点；1000ns 步长量化我用整除验证全部 84 条成立。未采集项（跨语言 LTO、65536 词）与 environment.txt 构建行和 list_uncollected_claims 命中行（1325/1412）自洽。",
+      "evidence": [
+        "projects/ffi-bridge/evidence/run-20261007-01/raw.csv:84 行复算 mean=0.978652/0.211897 sd=0.021629/0.004042 p50=0.986099/0.211716 p99=1.005173/0.217438 var=0.000467809/0.000016336 checksum=999f7c01d1040000（与 ch16.md:1316-1319 一致）",
+        "projects/ffi-bridge/evidence/run-20261007-01/summary.json（recompute 后逐字段相等）",
+        "projects/ffi-bridge/c/benchmark.c:10-13,54-56,91-98,112-121（WORDS=8192,REPEATS=64,OBSERVATIONS=21,预热与轮转）",
+        "复算脚本输出：elapsed_ns 全部 %1000==0（支撑 ch16.md:1308 的 1000ns 步长声明）"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "verdict": "finding",
+      "method": "read",
+      "notes": "数字全部独立复算：copy_out/owned_handle 的 n=21、均值 0.641505/0.358854、sd、方差、p50/p99、checksum f9e695131a980000 与 raw.csv/summary.json 逐位一致；0.641505−0.358854=0.282651、44%、1/1.79 验算成立。代码摘录与 benchmark.c:59-72 逐行对上（seed 97+rep、which!=3、written/info.len 检查、release）。16.8.6 的采样断言我直接查了 macos-sample.txt：rb_copy 下确有 _platform_memmove（165 样本，行 121-123），sample-command.txt 写明 2 秒 1ms 间隔；16.8.7 的干扰记录与 interference.txt 相符（可见 cargo/clang 脚本痕迹，无正在执行的 rustc 子进程），锁与 trap 在 tools/measure.sh 落地。发现一处 P2：16.8.8 小结把下一节链接写成「16.9 母本对应与来源核读」，与 16.9 实际标题「延伸阅读与来源」不符。rust-tests.txt「4+6 项」计数我未逐条数（16.11 表外延内容），其余均已核。",
+      "evidence": [
+        "raw.csv 复算：copy_out mean=0.641505 sd=0.028644 var=0.000820485 p50=0.642776 p99=0.684738；owned_handle mean=0.358854 sd=0.013968 var=0.000195100 p50=0.356674 p99=0.400543（与 ch16.md:1477-1480 一致）",
+        "projects/ffi-bridge/evidence/run-20261007-01/macos-sample.txt:121-123,30-32",
+        "projects/ffi-bridge/evidence/run-20261007-01/sample-command.txt:1；interference.txt:2-3；tools/measure.sh:6,47"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "重点独立复核了刚改过的分页空白取证记录：我在本机 /Users/juanwang/E-Book/Rust/ 的原 PDF 上重算了 SHA-256，与 S11.md 及 sources/inventory.json 登记的 609a7e0e… 全串一致；又原样重放 S11.md 取证命令，pdftotext 逐页结果与之逐字对上——453=高级特征/ch19-00/9f03d42e…、454 提取仅一行「454」、455=不安全Rust/ch19-01/c2b43bd9…、461=实现不安全 trait 正文、462 仅「462」、463=高级生命周期/ch19-02/f7f5e483…。由此「454/462 是分页空白、正文从 455–461」成立，且与 S11.md 的 U084（入口 454、正文页 455–461）、U085（入口 462、正文页 463）两行及其「书签普遍指向仅页码分页」规律自洽，16.9 表的 PDF455–461 范围不越出 U084 已登记核读页。rustc 1.99.0、84 条原始观察、三个 FFI-* 来源 ID 及其 URL+sha256 分别在 environment.txt、raw.csv、contributions/ffi-project-web.json 落地；「母本没测本章 FFI 成本」与本章数据来源描述一致。附注：外部 PDF 不在仓库内，本审计是在同 sha256 的那份上重放的。",
+      "evidence": [
+        "shasum -a 256 → 609a7e0edc00c1a89e502297fe7b09d62e194a29ff45a563eb70f1a75dca6c60 = sources/reviews/S11.md:4 = sources/inventory.json:21981",
+        "pdftotext -f/-l 453/454/455/461/462/463 重放输出与 S11.md:172-182 记录逐字一致（454/462 均只剩页码一行）",
+        "projects/ffi-bridge/evidence/run-20261007-01/environment.txt:3（rustc 1.99.0）",
+        "sources/contributions/ffi-project-web.json（FFI-CATCH/FFI-SLICE/FFI-REPR 含 url+sha256）；src/appendix/coverage.md:28 S11 台账行存在"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "18 条跨节索引逐条与 16.1–16.9 正文及证据对拍：-UNDEBUG 断言在 CMakeLists.txt:33 与 measure.sh:34 落地；「批均值 p99 不是请求尾延迟」与我复算的 nearest-rank 行为一致；「owned_handle 非零拷贝」有 macos-sample 的 memmove 佐证；「vector.body 不等于 SIMD」属 16.6 口径、与本区间不矛盾。ESTALE、代号退休、payload 遗忘等条目引用的定义在正文有对应落点（锚点解析由机械层覆盖，我按文本对读未发现指向错误）。全节为索引，无新增测量数字需要复算。",
+      "evidence": [
+        "projects/ffi-bridge/CMakeLists.txt:33；projects/ffi-bridge/tools/measure.sh:18,34",
+        "ch16.md:1655 与 16.7.4/16.7.6 定义一致性；ch16.md:1657 与 macos-sample.txt:121-123"
+      ]
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "verdict": "pass",
+      "method": "read",
+      "notes": "出口检查断言逐项落地：重跑命令引用的 tools/measure.sh 与 tools/summarize.py 存在，脚本确实要求目录不存在（mkdir 失败即退）、trap 删锁、校验 21/case、观察号 1..21、words=8192*64、单 checksum、正耗时（summarize.py:14-33 我已读）；「84 条、四 case 各 21、两对照同 checksum」与 raw.csv 实测一致。出口文件表 12 项在 evidence/run-20261007-01/ 全部存在（含 codegen 四个文件）。「Cargo.lock 已提交、无第三方依赖」用 Cargo.lock 仅 1 个 [[package]] 验证成立。未运行 Miri/TSan/ perf 等限制项与 list_uncollected_claims 的 ch16 命中行无冲突。一处未核到底：rust-tests.txt 是否恰为 4 内部+6 契约我未逐条数，判为区间内低风险的遗留项，不据此定 finding。",
+      "evidence": [
+        "ls projects/ffi-bridge/evidence/run-20261007-01/：12 个出口文件齐（raw.csv 85 行=表头+84）",
+        "projects/ffi-bridge/Cargo.lock：grep -c '[[package]]' = 1",
+        "projects/ffi-bridge/tools/summarize.py:14-33；measure.sh:6,47"
+      ]
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "severity": "P2",
+      "description": "16.8.8 小结的下一节链接文字写作「16.9 母本对应与来源核读」（ch16.md:1542），但 16.9 的实际标题是「延伸阅读与来源」（ch16.md:1590）；锚点 #sec-cpp-rust.4.16.9 本身有效，属链接标签与节名不一致的表述问题。另附记：16.11 出口表称 rust-tests.txt 为『4 内部+6 契约』，本次未逐条清点条数，遗留待机械层外的作者确认。",
+      "evidence": "ch16.md:1542 vs ch16.md:1590"
+    }
+  ]
+}

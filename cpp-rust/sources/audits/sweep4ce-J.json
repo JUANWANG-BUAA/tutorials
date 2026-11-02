@@ -1,0 +1,473 @@
+{
+  "reviewer": "sweep4ce-J",
+  "kind": "independent",
+  "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
+  "provenance": "冷启动独立审计，只做「数字 vs 磁盘归档」复算，不评价文笔与教学设计。范围：src/part3/ch09.md、ch10.md、ch12.md、src/part4/ch13.md、ch14.md、ch15.md、ch16.md 正文页（第11、17章未触碰）。抽取：/usr/bin/python3 脚本先把 7 个文件按代码块屏蔽后全量扫描，取出全部 Markdown 表格（112 张）与含4 位以上有效数字/千分位/百分比/ns/µs/ms/cycles/倍率的正文句（447 条），共 559 条抽取项，逐条归类（a 声称实测 / b 静态可算 / c 无出处），不做肉眼翻页。复算归档：bench/results/runtime-fixed/measurements-final/{scheduling,blocking-poll,pipe-drain,process-rpc,type-layout}.txt、bench/results/runtime-final/*、runtime-local/*、runtime-fixed/{measurements,baseline-debug,baseline-release,fixed-debug,fixed-release,final-validation,repeated-validation}/、bench/systems-lab/results/run-01/{simd,views,layout,queue,epoch}.txt 与 codegen/*.ll/*.s、bench/evidence-lab/results/run-01/{cpu-wait,instrumentation,feature-default,feature-checked}.txt、build-raw.jsonl、build-summary.json、size-*.txt、cpu.folded、wait.folded、sample-cpu*.txt、gate-rejection.json、metadata.json、mechanical-validation.txt、projects/agent-runtime/evidence/{run-02,run-03,run-04}/（NOTES.md 指定 run-04 为当前正式证据）、capture-fix-final-validation-02/ 的 360 项测试与 800 条压力记录，projects/ffi-bridge/evidence/run-20261007-01/{raw.csv,summary.json,environment.txt,rust-tests.txt,c-tests.txt,interference.txt,macos-sample.txt,codegen/*}。统计口径（本报告统一使用，与各归档 README/脚本自述一致）：均值=算术平均；标准差=样本标准差，分母 N−1；分位数=nearest-rank，即升序排列后第 ceil(q×n) 个（1 起算），n=21 时 p50 为第 11 个、p99 恰为最大值。所有正文引用的证据文件路径都用脚本按相对根/bench/projects/tools 逐级解析并 os.path.exists 校验；外部工具链来源另按 ~/.rustup 与 ~/.cargo/registry 实际行数核对（std sys/pipe/unix.rs 确为 44 行，tokio-1.54.0 LOCAL_QUEUE_CAPACITY=256）。注：任务指定快照串为 4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e，按指示写入本文件；审计时工作树用 tools/audit_snapshot.py 重算得到 acd8c5bb1158f08719c05cf31ba8020425d241a1248f3aa599779dd45e1eac33，说明磁盘树在快照后又动过，本报告的复算以当前磁盘内容为准。",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.3.9.1",
+      "verdict": "pass",
+      "notes": "本节无实测数字断言。状态位/不变量表为语义表；引用的 Tokio 源码路径是外部文件，未当作归档。",
+      "evidence": "src/part3/ch09.md:117-124"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.2",
+      "verdict": "pass",
+      "notes": "L306-311 转换表无数值断言。",
+      "evidence": "src/part3/ch10.md 同章无冲突；src/part3/ch09.md:306-311"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.3",
+      "verdict": "finding",
+      "notes": "L537-544 把 256/31/61 明确标注为「Tokio1.54.0文档中的观察」而非本地实测，属外部来源点名，不计无出处。本机 ~/.cargo/registry/src/*/tokio-1.54.0/src/runtime/scheduler/multi_thread/queue.rs:63 `LOCAL_QUEUE_CAPACITY = 256` 相符；steal 转移一半（同文件 265 行 NUM_TASKS_TAKEN = CAPACITY/2）与「转移一部分任务」相符。L604/L608 引用的 2.602 与 0.750 与 measurements-final/scheduling.txt 的 current-q1024 mean=2.602、multi4-q1024 mean=0.750 逐字相符；128×8192=1048576 静态复算正确；9.3.6 清单实际列出 5 个共同成分（业务并行度、driver 检查频率、join 通知路径、创建与完成的重叠、跨线程同步），「至少五个成分」成立。",
+      "evidence": "src/part3/ch09.md:537-544,604-608,610-660；tokio-1.54.0 queue.rs:63,265；bench/results/runtime-fixed/measurements-final/scheduling.txt:85"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.4",
+      "verdict": "pass",
+      "notes": "L710-715 四行 size/align 逐字复算于 measurements-final/type-layout.txt：`Frame size=16 align=8 wire=24`、`yield_now size=16 align=8`、`JoinHandle<u64> size=8 align=8`、`mpsc::Sender<u64> size=8 align=8` 全部吻合；24 字节线协议对 wire.rs 的 FRAME_LEN=24 与字段切片 [0..2][2..4][4..8][8..16][16..24] 求和为 24 正确。L737/L740 点名的 scheduling.s 中 `__RNvCsi2Ahm2AaMXP_10scheduling4step`、`transition_to_running`、`casal` 均在归档汇编里实际存在（casal 2 处、transition_to_running 2 处）。「同步开销约占 15%」是 errata 里的反面说法，不是本章结论。",
+      "evidence": "src/part3/ch09.md:710-715,735-741；bench/results/runtime-fixed/measurements-final/type-layout.txt:1-4；同目录 scheduling.s:12774,18352"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "verdict": "finding",
+      "notes": "口径类算式全部静态复算通过：128×8192=1048576；quantum 1024→16 使每任务 yield 次数 8→512，即 64 倍；两种 quantum 均整除 8192；夹具与归档源码 scheduling.rs 一致（TASKS=128、STEPS=8192、预热 while elapsed<500ms、正式 0..21、(index+offset)%4 轮转、ns_per_op(elapsed, TASKS*STEPS)）。2.602/0.750 与归档 mean 相符。唯一问题是 L890/L894 把 0.750÷2.602=0.288 写成「约三分之一」（真实比值 1/3.47），详见 findings；本节正文从未给出 q16 两个读数（归档为 16.360 与 2.033），但 L1599 又要求读者解释「current-q16 的额外成本」，属可算而未排的数，不作为 finding。",
+      "evidence": "src/part3/ch09.md:839-843,880-886,890-894,906,939；bench/results/runtime-fixed/measurements-final/source-snapshot/bench/runtime-lab/src/bin/scheduling.rs；bench/results/runtime-fixed/measurements-final/scheduling.txt:85-88"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "verdict": "finding",
+      "notes": "L1015-1018 表 8 个统计量逐字复算于 measurements-final/blocking-poll.txt（inline mean=23658343.286 sd=1302022.000 p50=23604084.000 p99=25060042.000；offload mean=13632.857 sd=3494.454 p50=14125.000 p99=18541.000，n=21 且批号 0..20 连续），换算成 ms/µs 正确；「比申请的 20 ms 多出约 3.658 ms」=23.658−20 ✓；p99=最大值由 ceil(21×0.99)=21 与归档 21 个原始值同时成立 ✓（分位数定义正文已交代）。问题在 L1101 的数量级表述，见 findings。",
+      "evidence": "src/part3/ch09.md:1015-1018,1024,1028,1074,1101；bench/results/runtime-fixed/measurements-final/blocking-poll.txt:1-43"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.7",
+      "verdict": "pass",
+      "notes": "「容量只有 64 的有界通道」是例 9.7.1 的假想服务写法，不是对归档的断言；归档 contracts.rs 用的是 channel(1)（bench/runtime-lab/tests/contracts.rs:12），正文没有把它当实测。其余为上界/许可寿命的概念表。",
+      "evidence": "src/part3/ch09.md:1112-1146；bench/runtime-lab/tests/contracts.rs:12"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.8",
+      "verdict": "pass",
+      "notes": "L1394-1399 案例表引用「量级与 9.6 的 25.060 ms 接近」，与归档 inline p99=25060042 ns 一致；MIT 6.S081 页码属外部来源点名。",
+      "evidence": "src/part3/ch09.md:1394-1399；bench/results/runtime-fixed/measurements-final/blocking-poll.txt:42"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.9",
+      "verdict": "pass",
+      "notes": "来源台账（PDF 页码、rCore 在线页）属母本核对，不在本次数字复算范围；点名的 contracts.rs 在归档中真实存在。",
+      "evidence": "src/part3/ch09.md:1501-1521"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.11",
+      "verdict": "pass",
+      "notes": "小结与章末件表无数值断言；「预热 500 ms、每 case 21 批」与归档 scheduling.rs 与 README 自述一致。",
+      "evidence": "src/part3/ch09.md:1575-1585,1605-1611；bench/runtime-lab/README.md"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.1",
+      "verdict": "pass",
+      "notes": "L43-53 导航表含 1.219 ms/5.484 µs 前瞻，与 10.4 复算结果一致。",
+      "evidence": "src/part3/ch10.md:43-53"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.2",
+      "verdict": "pass",
+      "notes": "EOF/wait/退出码四行为语义表；例 10.2.1 不带具体读数。归档 report.txt 确实给出 total/eof/reader_errors 字段形态（fixed-debug/flood-pipe1/report.txt: total: 2097152, eof: true）。",
+      "evidence": "src/part3/ch10.md:383-390；bench/results/runtime-fixed/fixed-debug/flood-pipe1/report.txt:1-45"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.3",
+      "verdict": "pass",
+      "notes": "L481-487 的 24 字节帧布局逐字节复算于 wire.rs：0..2 version(u16 LE 必须为 1)、2..4 flags(必须 [0,0])、4..8 frame length(u32=24)、8..16 request_id、16..24 value，2+2+4+8+8=24 正确；8 字节握手 READY=b\"RPCv0001\" 与正文「固定8字节RPCv0001」一致。L602-608 表里 type-layout.txt 的 16/8 与 measurements-final/type-layout.txt:1 相符。",
+      "evidence": "src/part3/ch10.md:481-487,602-608,723；bench/results/runtime-fixed/measurements-final/source-snapshot/bench/runtime-lab/src/wire.rs:4-24"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.4",
+      "verdict": "pass",
+      "notes": "L775-778 表 8 个统计量逐字等于 measurements-final/process-rpc.txt 的两行 summary（spawn mean=1219110.006 sd=77376.429 p50=1208367.188 p99=1531747.438；persistent mean=5484.128 sd=532.400 p50=5372.375 p99=7346.375，n=21、批号 0..20 连续），我用 N−1 标准差与 nearest-rank 复算全部吻合。派生算式：1219110.006÷5484.128=222.3→「222倍」✓；5.484÷8=0.6855→「≈0.69 µs」✓；1.2 ms÷300 ms=0.4% ✓；每批 16 请求与 process_rpc.rs 的 batch(&worker, .., 16) ✓；正文点名的 `process-rpc-sample.txt` 只在 bench/results/runtime-final/ 存在，而 L1211 自己写明「原始文件保存在 runtime-final/」并声明对应历史版本，没有冒充当前轮实测；栈表四行（posix_spawnp、Session::start 下的 read、__wait4、请求路径 read）在该 sample 里逐条实际存在。",
+      "evidence": "src/part3/ch10.md:775-778,780,786-790,835,884,1211-1235；bench/results/runtime-fixed/measurements-final/process-rpc.txt:1-43；bench/results/runtime-final/process-rpc-sample.txt:28-31,35,42"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "verdict": "finding",
+      "notes": "8192 字节读块与 process.rs:84 `let mut chunk = [0u8; 8192];` 一致；Capture 四字段语义与 process.rs 的 Report/Capture 结构一致。例 10.5.1 的 total=2097152 与 flood 夹具实际值一致，但 total=900000 与 reader_errors=[\"grace expired\"] 在归档任何文件中都不存在（真实字符串是 \"drain grace expired: a writer may still own a pipe\"）；该盒是假想习题、正文未称实测，按表述问题记 P2。",
+      "evidence": "src/part3/ch10.md:967,987,1032-1042；bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/src/process.rs:84（let mut chunk = [0u8; 8192];）与同文件 :144（grace 到期的真实 error 字串）"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.6",
+      "verdict": "pass",
+      "notes": "L1160-1163 表 8 个统计量逐字等于 measurements-final/pipe-drain.txt summary（prefix128 0.514/0.031/0.507/0.583；retain-all 0.515/0.027/0.507/0.583），注意两组 p50、p99 在归档里确实相同，正文没有把它们编成不同值 ✓；分母 2×2097152=4194304 与 pipe_drain.rs 的 BYTES=2*1024*1024、ns_per_op(report.elapsed, (BYTES*2)) 一致；「快约 0.2%」=(0.515−0.514)/0.515=0.194% ✓；「0.001 的差值小于两组各自的标准差」0.001<0.027 ✓；两流 total 均等于 2097152 与归档断言 capture.total == BYTES 一致。",
+      "evidence": "src/part3/ch10.md:1116,1128,1146,1160-1171,1269,1286；bench/results/runtime-fixed/measurements-final/pipe-drain.txt:1-43；measurements-final/source-snapshot/bench/runtime-lab/src/bin/pipe_drain.rs:9,28"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.7",
+      "verdict": "pass",
+      "notes": "2100 ms 收尾窗口在 contracts.rs:224 实际存在；「旧flood组每流2097152字节仍没有一路EOF」与 runtime-fixed/README.md 的基线描述一致；L1447-1450 的 debug/release 各 4 组失败与 4 组通过，逐目录核对：baseline-debug/status.txt 四行 exit=101、fixed-release/status.txt 四行 exit=0，flood/sleep × pipe1/pipe2 共 4 交错 × 2 profile = 8 例，与 README「旧版8例全失败、新版8例全通过」一致。",
+      "evidence": "src/part3/ch10.md:1400-1452；bench/results/runtime-fixed/baseline-debug/status.txt；fixed-release/status.txt；final-validation/source-snapshot/bench/runtime-lab/tests/contracts.rs:224"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.8",
+      "verdict": "pass",
+      "notes": "L1816-1827 小结表无数值；「退出码7」与 contracts.rs:147 `assert_eq!(report.exit_code, Some(7))` 一致。",
+      "evidence": "src/part3/ch10.md:1816-1827,1868；bench/runtime-lab/tests/contracts.rs:147"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.9",
+      "verdict": "pass",
+      "notes": "母本/CS110L PDF 页数台账属外部核对，不在本次数字复算范围。",
+      "evidence": "src/part3/ch10.md:1742-1751"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.11",
+      "verdict": "pass",
+      "notes": "小结与复跑命令；bench/results/my-process-run 是要求「新建且不存在」的输出目录，非归档断言。",
+      "evidence": "src/part3/ch10.md:1807-1843"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.1",
+      "verdict": "pass",
+      "notes": "硬件宽度表（NEON 128/4 车道、AVX-512 512/16、SVE 128–2048/4–64、2048÷32=64）为外部架构事实且自洽；L229/L286 的 65539 mod 4 = 3、mod 8 = 3、128÷16=8 复算正确。",
+      "evidence": "src/part3/ch12.md:209-215,229,286"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.3",
+      "verdict": "pass",
+      "notes": "intrinsic 对照表与 65539=8×8192+3=4×16384+3 复算正确。",
+      "evidence": "src/part3/ch12.md:495-503,628-636"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.4",
+      "verdict": "pass",
+      "notes": "借用视图与 next_frame 的 4 字节小端长度头一致（systems-lab/src/lib.rs:279-299）。",
+      "evidence": "src/part3/ch12.md:292,750"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.5",
+      "verdict": "pass",
+      "notes": "L970-976 的 layout.txt 三行（&[u8] 16/8、Vec<u8> 24/8、Arc<[u8]> 16/8）逐字命中归档 layout.txt，且「一共七行」=layout.txt 实际 7 行 ✓；正文把 &mut [u32] 与 [u32;4] 两行明确标为「归档未采集，按布局规则写出」，16/8 与 16/4 静态正确；L1051-1061 汇编核对：systems_lab-*.s:10852 `movi.4s v0,#3` 在循环外、LBB49_3 循环体恰为 ldr/movi.4s/mla.4s/str/sub/add/cmp/b.hi 8 条，其中数据指令 3 条；「每轮 4 个元素、16384 轮、尾部 3」与 d 寄存器假设下 32769 轮尾部 1 全部复算正确；L1031 关于 auto_transform 在 .ll 里是 load/mul/add/store i32 标量四操作、且尾部以 tail call @auto_transform 交回，均在归档 .ll 中逐行命中；L1041 的 `cargo rustc --lib --emit=mir,llvm-ir,asm` 与 systems-lab/run.sh:20 一致。",
+      "evidence": "src/part3/ch12.md:970-976,1031-1061,1083-1097；bench/systems-lab/results/run-01/layout.txt:1-7；codegen/systems_lab-290015c44171d49d.s:10845-10872；同目录 .ll:6409,6483,6500；bench/systems-lab/run.sh:20"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.6",
+      "verdict": "pass",
+      "notes": "L1217-1221 三行汇总逐字等于 simd.txt 的 summary（scalar_call 0.535004/0.012816/0.537967/0.560973；auto 0.069184/0.003189/0.069456/0.078119；neon 0.069965/0.003086/0.070251/0.075973），我用 raw 行 ÷1048624 后按 N−1 sd 与 nearest-rank 复算 63 条全部吻合（每 case 21 条、轮号 0..20 连续）；L1227-1232 抽的四轮（0/3/15/19）12 个格子逐格对得上；L1193 的 `warmup_ns=500298291 rounds=698 units=1048624` 与首行逐字符一致，500.3 ms ✓；7.733=0.535004÷0.069184、7.647=0.535004÷0.069965、0.000781、1.1%、相对波动 2.4%/4.6%/4.4%、「7.73 倍＝快 673%」、1048624=65539×16、65539 确为质数且 mod 4=3、校验和 140746630219670 全部复算/核对通过；L1250 关于 auto p99 来自第 15 轮、neon 最大值来自第 13 轮，与 raw 行一致。分位数定义（nearest-rank、第 11/21 个）正文明确交代。",
+      "evidence": "src/part3/ch12.md:1142,1193,1209,1217-1232,1248-1263,1276-1323；bench/systems-lab/results/run-01/simd.txt:1-67"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.7",
+      "verdict": "pass",
+      "notes": "这是本次最该被盯的一张逐批表：L1470-1492 的 21 行 ×（owned_copy、borrowed_view、逐批比值）共 63 个格子，全部能由 views.txt 的 42 条 raw 行 ÷4096 复算出来，21/21 轮零偏差（例：第 8 批 124000/4096=30.273、37500/4096=9.155、比值 3.31）；L1461-1464 两行汇总逐字命中 summary 行；均值差 22.125232、降幅 72.2%（22.125232÷30.635765=72.22%）、3.60 倍、相对波动 1.24% 与 2.25%、比值区间 3.31–3.72、拥有侧最慢第 9 批/最快第 20 批、借用侧最慢第 8 批全部复算正确；夹具 4096×1028=4210688 字节（约 4.0 MiB）、每 64 字节取 1 字节即 1024 字节帧碰 16 字节、每批 4096 次分配、借用侧 0 次，与 encode_frames/count 与 view_batch 源码一致。",
+      "evidence": "src/part3/ch12.md:1336-1435,1451-1505,1540-1578；bench/systems-lab/results/run-01/views.txt:1-45；bench/systems-lab/src/lib.rs:12-40,279-299"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.8",
+      "verdict": "pass",
+      "notes": "io_uring/sq_thread_idle 1000 毫秒与 easy-fs 的 BLOCK_SZ=512、扇区 512/ext4 块 4096 属外部文档点名来源（12.9 台账列出 io_uring(7) 与 rCore 在线页 SHA），不是本地实测，未计无出处；本节正文没有采集吞吐数字。",
+      "evidence": "src/part3/ch12.md:1707,1874,1892,1945,1986-1991"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.9",
+      "verdict": "pass",
+      "notes": "母本页码/SHA 台账不在本次数字复算范围。",
+      "evidence": "src/part3/ch12.md:1983-1993"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.12.11",
+      "verdict": "pass",
+      "notes": "小结表内 7.73 倍、72.2% 与 12.6/12.7 复算一致。",
+      "evidence": "src/part3/ch12.md:2041-2063"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.1",
+      "verdict": "pass",
+      "notes": "L222 的 1446/1648 与 21 批均值分属两份证据，正文只允许「形状相容」，与归档结构（sample 与计时来自不同运行）一致。",
+      "evidence": "src/part4/ch13.md:87,222,274-278"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.2",
+      "verdict": "pass",
+      "notes": "根 1698 = mix 1082 + compute 616，与 cpu.folded 两行权重逐字相同（616+1082=1698），并被 mechanical-validation.txt 「sample cpu exclusive total 1698 / sample wait exclusive total 1648」独立复算；反面说法 3396=1698+1082+616 与 1082/3396≈32% 均为题目里的错误示范，正文纠正后的正确写法（1082/1698、616/1698）成立；L329 未把 64% 当成 CPU 时间。13.2.4 布局表三行（Event 16/8、Vec<u8> 24/8、&[u8] 16/8）在 run-01 归档里都有对应探针行：instrumentation.txt:68 layout,Event,size=16,align=8；feature-default.txt:24-25 layout,Vec_u8,size=24,align=8 与 layout,slice_u8,size=16,align=8。",
+      "evidence": "src/part4/ch13.md:296,319-329,353-357,387-393,468-472；bench/evidence-lab/results/run-01/cpu.folded:1-2；mechanical-validation.txt:9-10；instrumentation.txt:68；feature-default.txt:24-25"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.3",
+      "verdict": "pass",
+      "notes": "PMU/Cachegrind 本节明确声明「本节没有采集」任何 PMU 数据，无数字断言。",
+      "evidence": "src/part4/ch13.md:589,639"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.4",
+      "verdict": "pass",
+      "notes": "L712-715 折叠表复算：CPU 根 1698、叶子路径 2 条、主要叶子 mix 1082 与 compute 616；waiting 根 1648、叶子路径 5 条、__semwait_signal 1443 与 mix 181；wait.folded 五行权重 21+181+1443+2+1=1648 ✓、5 条互斥叶子路径 ✓、经过 sleep 前缀的三条合计 1443+2+1=1446 ✓。例 13.4.2 的「35%→58%」是假想情景。",
+      "evidence": "src/part4/ch13.md:712-715,724-753,829,860-866；bench/evidence-lab/results/run-01/cpu.folded；wait.folded"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.5",
+      "verdict": "pass",
+      "notes": "L1009-1012 计时表逐字命中 cpu-wait.txt 的 summary（cpu mean=2.506964 sd=0.082729 p50=2.477333 p99=2.782084；wait mean=46.442020 sd=1.459728 p50=47.026833 p99=47.800375），42 条 raw（2 case × 21、round 0..20 连续）用 N−1 标准差与 nearest-rank 复算全部吻合；steps=1000000、requested_sleep_ms=40、共同 checksum 14437947664662268765 与文件首行一致；L1041-1047 的四行采样观察数与 cpu.folded/wait.folded 一致；表头已写明「N-1 sd」「批p50/批p99」。",
+      "evidence": "src/part4/ch13.md:992-999,1009-1014,1041-1047,1074-1105；bench/evidence-lab/results/run-01/cpu-wait.txt:1-44"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.6",
+      "verdict": "pass",
+      "notes": "L1258-1262 三行汇总逐字命中 instrumentation.txt summary（none 2.472857/0.094581/2.448330/2.798125；batch 2.470040/0.079995/2.448545/2.685205；each 32.832639/0.608977/32.762500/34.306250），63 条 raw（3×21，轮号 0..20 连续）复算全对；13.3 倍=32.832639÷2.472857=13.277 ✓、差值 30.359782 ✓、none 与 batch 差 0.002817 即约 0.11% ✓ 且小于两列 sd ✓；steps=200000、checksum 188478885453998054、count 字段（none 0、batch/each 200000）与 raw 行一致 ✓。",
+      "evidence": "src/part4/ch13.md:1122-1140,1189,1246-1280,1322-1353；bench/evidence-lab/results/run-01/instrumentation.txt:1-68"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.7",
+      "verdict": "pass",
+      "notes": "「2 秒 ÷ 1 毫秒 = 2000」与 sample-cpu-command.txt「Sampling process 92109 for 2 seconds with 1 millisecond of run time between samples」一致；1698 与 1648 均低于 2000，正文正确地拒绝把它换算成丢样比例；例 13.7.1 的 p99=第 21 个=最大值 34.306250 ✓；分位数与 N−1 定义在 def-13.7.3 交代。",
+      "evidence": "src/part4/ch13.md:1376,1392-1402,1453-1462,1520-1544；bench/evidence-lab/results/run-01/sample-cpu-command.txt:1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.8",
+      "verdict": "pass",
+      "notes": "证据包清单点名的 10 个路径在 run-01 下全部存在，且「42条原始批次」「63条原始批均值」与 raw 行数逐字相等；13.8 的结论范例（2.472857→32.832639、约 13.3 倍、同 checksum）与复算一致；平台串（M5 Pro、aarch64-apple-darwin、rustc 1.99.0）见 environment.txt。",
+      "evidence": "src/part4/ch13.md:1619-1629,1674-1684；bench/evidence-lab/results/run-01/environment.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.9",
+      "verdict": "pass",
+      "notes": "母本页码台账不在本次数字复算范围；「母本里的 29% 示例没有进入本章实测表」已核对（本章实测表无 29%）。",
+      "evidence": "src/part4/ch13.md:1768-1782,1774"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.10",
+      "verdict": "pass",
+      "notes": "errata 只复述 1698/1648 与 inclusive 不可相加，与 folded 一致。",
+      "evidence": "src/part4/ch13.md:1798"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.13.11",
+      "verdict": "pass",
+      "notes": "小结表无新数字。",
+      "evidence": "src/part4/ch13.md:1840-1850"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.1",
+      "verdict": "pass",
+      "notes": "身份分层表无实测数；「checksum 都是 133693440」在 feature-default.txt/feature-checked.txt 首行与 raw 行独立复算一致。",
+      "evidence": "src/part4/ch14.md:138-146,182-186；bench/evidence-lab/results/run-01/feature-default.txt:1"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.2",
+      "verdict": "pass",
+      "notes": "feature 契约表（default/checked 输入输出与额外工作）与 metadata.json 的 features={default,checked} 及 lib.rs 的 cfg(feature) 分支一致。",
+      "evidence": "src/part4/ch14.md:359-362；bench/evidence-lab/results/run-01/metadata.json；src/lib.rs:52,76"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.3",
+      "verdict": "pass",
+      "notes": "L493-497「文件大小/字节 518448|512640|502672、fresh构建数 21、不同SHA256数 21」由 build-raw.jsonl 直接复算：三个 profile 各 21 条 fresh 记录、binary_bytes 各自恒定、binary_sha256 各自 21 个互不相同值 ✓；builds/ 下 release-00..20、one-00..20、thin-00..20 恰为 63 个目录 ✓。",
+      "evidence": "src/part4/ch14.md:493-503,518,584；bench/evidence-lab/results/run-01/build-raw.jsonl；builds/"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "verdict": "finding",
+      "notes": "L794-801 六行（fresh 三行 + noop 三行，共 24 个统计量）逐字命中 build-summary.json，并由 build-raw.jsonl 的 round 字段按 N−1 sd 与 nearest-rank 独立复算全部吻合（每 case n=21、round 0..20 连续）；L831-835 的 __text 242940/241916/236656 与 size-*.txt 逐字相同；派生算式 1995.882÷439.733=4.539→「约 4.5 倍」✓、(242940−236656)/242940=2.587%→「约小 2.6%」✓、439.733−338.194=101.539→「快 101 ms」✓、fresh 338–1996 ms 与 noop 18.194–18.713 ms 区间复算 ✓、`publish=false` 与 metadata.json 的 publish:[] ✓、分位数与 N−1 定义在 L792/L871 交代 ✓。唯一复算不出的是例 14.4.1 解答里的「方向在 4.4 倍于 sd 的量级上」，见 findings。",
+      "evidence": "src/part4/ch14.md:613,792-845,888-905；bench/evidence-lab/results/run-01/build-summary.json；build-raw.jsonl；size-release.txt/size-one.txt/size-thin.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.5",
+      "verdict": "pass",
+      "notes": "L1038-1041 门禁表逐字命中 feature-default.txt/feature-checked.txt summary（default 0.042857/0.002920/0.041763/0.052094；checked 0.225888/0.005934/0.222644/0.245054），21+21 条 raw 复算全对；比值 0.225888÷0.042857=5.2707 与 gate-rejection.json 的 ratio=5.270781596704856、budget=0.2、pass=false 一致；1 MiB=1048576 字节与 bytes=1048576 一致；退出码 0/1/2 三种状态在 tools/gate.py 的 return 0 / return 1 / return 2 中逐一对应；14.5.5 的 codegen 说法（默认产物向量化：cgu.00 的 sum_bytes 出现 load <16 x i8>、zext 到 <16 x i64>、add <16 x i64> 与 1 处 shufflevector；checked 为逐字节 load i8 + Event 的 stp）在 codegen/ 与 checked-codegen/ 中命中。",
+      "evidence": "src/part4/ch14.md:934-1067,1163-1166；bench/evidence-lab/results/run-01/feature-default.txt；feature-checked.txt；gate-rejection.json；bench/evidence-lab/tools/gate.py:33-49；codegen/*.cgu.00.ll:626-640"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.6",
+      "verdict": "pass",
+      "notes": "PGO 一节正文自我声明「不是本章两项实测 benchmark 之一」，无数字断言；引用的 rustc-pgo 文档属外部来源。",
+      "evidence": "src/part4/ch14.md:1193,1763-1768"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.7",
+      "verdict": "pass",
+      "notes": "L1444-1448 三情景（21 轮齐全比值 5.27、只有 20 轮、两台 rustc -Vv 不同）与 gate.py 的 load_runtime 要求 21 条、身份不符返回 2 的实现一致。",
+      "evidence": "src/part4/ch14.md:1411-1448,1455；bench/evidence-lab/tools/gate.py:20-49"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.8",
+      "verdict": "pass",
+      "notes": "证据清单表与 run-01 实际文件集合一致；复跑命令指向的 tools/measure.sh、tools/gate.py 在归档中真实存在。",
+      "evidence": "src/part4/ch14.md:1721,1840-1844,1857-1860；bench/evidence-lab/tools/"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.9",
+      "verdict": "pass",
+      "notes": "母本 PDF 页码台账不在本次数字复算范围。",
+      "evidence": "src/part4/ch14.md:1752-1757"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.11",
+      "verdict": "pass",
+      "notes": "小结表无新数字。",
+      "evidence": "src/part4/ch14.md:1834-1844"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.1",
+      "verdict": "pass",
+      "notes": "参数预算静态可算：Echo≤4096 且拒绝内部 NUL、Logs≤16 MiB、Sleep≤60000 ms、timeout≤60 s、argv≤32 项每项≤4096，逐条命中 projects/agent-runtime/src/lib.rs:80,107,110,113,331,336。",
+      "evidence": "src/part4/ch15.md:146-169；projects/agent-runtime/src/lib.rs:80-113,331-336"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.2",
+      "verdict": "pass",
+      "notes": "例 15.2.1 静态复算：默认 Config queue=16、concurrency=4、retain=8192、drain_grace=1s（lib.rs:138-146）→ 总许可 Q+C=20 ✓；8 项×2 路×8192=131072 字节前缀上界 ✓；每项两路各 262144 = 524288 字节 ✓；两个各 8192 字节读缓冲与 process.rs 的 [0u8; 8192] 一致 ✓；「第 21 次 try_submit 停在许可获取」与 Q+C=20 的算术一致。",
+      "evidence": "src/part4/ch15.md:339-363,557；projects/agent-runtime/src/lib.rs:138-146（queue=16、concurrency=4、retain=8192、drain_grace=1s）与 483-484（两个 [0u8; 8192] 读缓冲）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.3",
+      "verdict": "pass",
+      "notes": "Sleep(60000) 是假想题面，预算上限 60000 ms 已在 15.1 复算。",
+      "evidence": "src/part4/ch15.md:677"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.4",
+      "verdict": "pass",
+      "notes": "例 15.4.1 的 200 ms timeout、262144 与 drain_grace=1s 分别命中 tests/contracts.rs:132、run-04 快照 runtime-bench.rs:8、lib.rs:144；15.4 的 gate 表（logs/timeout × stdout/stderr 在 debug 与 release 均通过，pipe2、flags=1、无额外 PIPE）与 capture-fix-final-validation-02/{debug,release}-race/{logs,sleep}-pipe{1,2} 四个交错目录实际存在一致；「修复前核对 run-02 的 12 个被测文件」= run-02/source-snapshot 实际 12 个文件 ✓。",
+      "evidence": "src/part4/ch15.md:954-983,1508；projects/agent-runtime/tests/contracts.rs:132,407；run-04/source-snapshot/src/bin/runtime-bench.rs:8；evidence/run-02/source-snapshot/（12 files）；evidence/capture-fix-final-validation-02/debug-race、release-race"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.5",
+      "verdict": "pass",
+      "notes": "L1076-1087 十行 size/align 表逐字命中 run-04/layout.csv 十行（Input 24/8、Config 40/8、Log 72/8、ToolResult 224/8、Client 24/8、Ticket 32/8、Outcome 1/1、SubmitError 1/1、Stage 8/4、OwnedSemaphorePermit 16/8）；派生算式 8×224=1792、8×32=256、8×2×8192=131072 正确；「try_submit 返回值在 IR 里是 32 字节 sret」在 run-04/native/agent_runtime.ll:17290 逐字命中（sret([32 x i8]) align 8 dereferenceable(32)）；「`.s` 的 LBB147_2 里 `mov w1, #16777216` 与 `blr x8`」在 agent_runtime.s:35995-36003 逐字命中，16777216=0x1000000 即 macOS 的 O_CLOEXEC ✓；正文正确地写下「本轮没有打印匿名 Future 的 size，因此不填推测数字」。",
+      "evidence": "src/part4/ch15.md:1076-1087,1114-1126,1171-1178,1242-1245；projects/agent-runtime/evidence/run-04/layout.csv:1-11；native/agent_runtime.ll:17290；native/agent_runtime.s:35995-36003"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.6",
+      "verdict": "pass",
+      "notes": "L1325-1327 单行汇总（n=21、mean 3.662、sd 0.064、p50 3.653、p99 3.886 ns/拒绝）逐字命中 run-04/statistics.csv 并由 admission.csv 的 21 行 batch_ns÷operations=100000 复算全对（index 0..20 连续）；15.6.4 明确交代 N−1 与 nearest-rank、并要求索引完整 0..20；派生：3.662×100000=366200 ns=366.2 µs ✓、1/3.662 ns=每秒 2.73 亿次→「约 2.7 亿」✓、REJECTS=100_000 与空 String 的 Echo 输入逐字命中 run-04 快照 runtime-bench.rs:6,35；饱和夹具 queue=1、concurrency=1 ✓。",
+      "evidence": "src/part4/ch15.md:1258-1364,1421-1439；projects/agent-runtime/evidence/run-04/admission.csv；statistics.csv；source-snapshot/src/bin/runtime-bench.rs:6,22,35,56-58"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "verdict": "finding",
+      "notes": "L1538-1542 三行 12 个统计量与 run-04/statistics.csv 完全一致，注意 csv 单位是 ns/tool-batch-mean 而正文写 ms/工具，换算逐个正确（2871943.952 ns→2.871944 ms；1268895.551→1.268896；2535536.500→2.535537；7845750.000→7.845750；3505500.256→3.505500；2472717.121→2.472717；2285484.375→2.285484；9227984.375→9.227984；1046813.244→1.046813；621627.561→0.621628；811442.750→0.811443；3373109.375→3.373109），并由 lifecycle.csv 的 63 行 batch_ns÷operations=8 复算全对；「均值更高但中位数更低」（3.505500>2.871944 而 2.285484<2.535537）成立；「最大批均值 9.227984」=p99=第 21 个 ✓；8×2×262144=4194304 ✓；run-03 对照（2169663.917 vs 2153119.536，R4096 略低）复算正确；NOTES.md 指定正文只用 run-04，正文数值确实全部来自 run-04，未误用被取代的旧轮。唯一问题是把逐行 checksum 说成跨样本聚合值，见 findings。",
+      "evidence": "src/part4/ch15.md:1455-1576,1634-1652；projects/agent-runtime/evidence/run-04/statistics.csv；lifecycle.csv；run-03/statistics.csv；evidence/NOTES.md"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.8",
+      "verdict": "pass",
+      "notes": "「360 项测试执行」= debug/release 各 10 轮 × 每轮(2 单元 + 14 contracts + 2 regressions)=18，20×18=360 ✓，capture-fix-final-validation-02 的 debug-tests-1..10 与 release-tests-1..10 恰为 20 个文件、每个的 test result 行给出 2/14/2；「单套合计 800 条结果：640 logs、80 timeout、80 cancel」逐条点数：10 个 *-stress-*.txt 共 800 条 ToolResult，outcome 计数为 Success 640 / TimedOut 80 / Cancelled 80，与正文完全一致；每轮 80 条、每 profile 5 轮 ✓。",
+      "evidence": "src/part4/ch15.md:1704-1711,1810-1814；projects/agent-runtime/evidence/capture-fix-final-validation-02/debug-tests-1.txt 等 20 个、debug-stress-1..5.txt、release-stress-1..5.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.9",
+      "verdict": "pass",
+      "notes": "点名的本地外部来源可复核：std `sys/pipe/unix.rs` 实测恰为 44 行（正文称「全部 44 行」✓），tokio-1.54.0 `src/process/mod.rs` 1854 行，故 199–226 与 1215–1410 的行号范围真实可取；evidence/local-source-review.json 与 capture-source-review.json 均存在。母本 PDF 页码不在本次范围。",
+      "evidence": "src/part4/ch15.md:1887-1909；~/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/std/src/sys/pipe/unix.rs（44 行）；~/.cargo/registry/src/*/tokio-1.54.0/src/process/mod.rs（1854 行）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.10",
+      "verdict": "pass",
+      "notes": "errata 只复述 360/800 与「没有 Loom/Miri/TSan」，与 NOTES.md 的自述一致。",
+      "evidence": "src/part4/ch15.md:1841；projects/agent-runtime/evidence/NOTES.md"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.11",
+      "verdict": "pass",
+      "notes": "L2007 的十问逐条可核：run-04 下 environment.txt、source-sha256.txt、admission.csv（21 个不同索引、每批 operations=100000）、lifecycle.csv（3 个 case×21 批×operations=8）、statistics.csv（单位区分 rejected-attempt 与 tool-batch-mean）、native/（agent_runtime 与 runtime_bench 各 .mir/.ll/.s 六件）、sample-command.txt 来自另起进程、build-process-snapshot.txt 存在 ✓。正文提到的 .work/cpp-rust-agents/measure.lock 是 scripts/measure.sh:44 在运行时 mkdir 的锁目录，不是被担保的归档文件。",
+      "evidence": "src/part4/ch15.md:2007-2013,1349；projects/agent-runtime/evidence/run-04/；projects/agent-runtime/scripts/measure.sh:44"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.1",
+      "verdict": "pass",
+      "notes": "L295 引用 16.7 的 0.978652/0.211897 与复算一致；其余为能力矩阵无数值断言。",
+      "evidence": "src/part4/ch16.md:295"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.2",
+      "verdict": "pass",
+      "notes": "L343-350 六行（8/8、24/8、偏移 0/4/8/16 及其 4/4、8/8 对齐）同时命中 Rust 侧 tests/contracts.rs::layout_matches_c_v1 的六个断言与 include/bridge.h:39-46 的八条 _Static_assert（含 sizeof(void*)==8），字段宽度求和 4+4+8+8=24、align 8 静态自洽。",
+      "evidence": "src/part4/ch16.md:343-365；projects/ffi-bridge/tests/contracts.rs:5-12；projects/ffi-bridge/include/bridge.h:39-46"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.3",
+      "verdict": "pass",
+      "notes": "守卫表为条件矩阵，无数值断言。",
+      "evidence": "src/part4/ch16.md:572-581"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.4",
+      "verdict": "pass",
+      "notes": "句柄编码静态复算：generation 32 位 + (index+1) 32 位，(1<<32)|1=4294967297=0x1_0000_0001、(2<<32)|1=8589934593 ✓，与 lib.rs:78 `(u64::from(generation)<<32)|(index+1)` 逐位一致；MAX_SLOTS=4096 ✓；「不回绕」对应 find 的 generation<u32::MAX 条件与 retirement_never_wraps_generation 测试 ✓。",
+      "evidence": "src/part4/ch16.md:686-697,730-732,836；projects/ffi-bridge/src/lib.rs:21,58,74-97,316-319"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.5",
+      "verdict": "pass",
+      "notes": "测试矩阵「Rust 内部4项 / 导出契约6项 / CTest CLI3项」逐一点数：src/lib.rs 有 4 个 #[test]、tests/contracts.rs 有 6 个，rust-tests.txt 报 4 passed 与 6 passed；CMakeLists 注册 4 个 add_test，其中 c11_contracts 单独成行、CLI 三项（cli_demo 42 8192、cli_bad_length 42 16777217、cli_bad_number -1 4）与 c-tests.txt 的 4/4 Passed 对应。",
+      "evidence": "src/part4/ch16.md:960-965,1221；projects/ffi-bridge/evidence/run-20261007-01/rust-tests.txt；c-tests.txt；projects/ffi-bridge/CMakeLists.txt:45-49"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.6",
+      "verdict": "pass",
+      "notes": "16.6.3 环境串（rustc 1.99.0、LLVM 23.1.1、aarch64-apple-darwin、Apple clang 21.0.0、CMake 4.4.4、opt-level 3、codegen-units 1、lto false、panic unwind、Mac17,9 / M5 Pro / 18 逻辑 CPU / cacheline 128）逐项命中 environment.txt 与 Cargo.toml [profile.release]；L353-357 与 13.2 的 codegen 表对应产物存在；例 16.6.1 的三点反证逐条核到 c-benchmark.s 的 `bl _rb_mix`/`bl _rb_transform`、ffi_bridge.s 的 rb_mix 检查+madd+存储，以及 rb_transform 的 vector.body 实为 4 车道标量展开（ffi_bridge.ll:564-602 块内全是 load/lshr/xor/mul/add/store i64、index.next 加 4），与正文「块内是展开后的标量 i64 运算、结论应写成四元素展开」完全一致；正文引的汇编 12 行（ldp/eor/madd/stp）在归档 .s 中可定位。",
+      "evidence": "src/part4/ch16.md:1085-1150,1161-1166,1225-1245；projects/ffi-bridge/evidence/run-20261007-01/environment.txt；codegen/c-benchmark.s:614-735；codegen/ffi_bridge.ll:329-362,547-602；codegen/ffi_bridge.s:2372-2374；projects/ffi-bridge/Cargo.toml"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.7",
+      "verdict": "pass",
+      "notes": "L1314-1317 两行 10 个统计量逐字命中 summary.json，并由 raw.csv 的 elapsed_ns÷524288（每 case 21 条、observation 1..21 连续）按 N−1 sd 与 nearest-rank 复算全对；样本方差 0.000467809 与 0.000016336 = 各自 sd 的平方 ✓；4.6 倍=0.978652÷0.211897=4.619 ✓；0.766755 差值 ✓；8192×64=524288 ✓；两个 checksum 同为 999f7c01d1040000 ✓；「原始 elapsed_ns 呈 1000 ns 步长」实测：84 行 elapsed_ns 全部 ≡0 (mod 1000) ✓；nearest-rank 定义在 16.7.3 交代 ✓。",
+      "evidence": "src/part4/ch16.md:1256-1335,1369-1412；projects/ffi-bridge/evidence/run-20261007-01/raw.csv；summary.json"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.8",
+      "verdict": "pass",
+      "notes": "L1475-1478 两行 10 个统计量同样逐字命中 summary.json 并复算通过（copy_out 0.641505/0.028644/0.642776/0.684738；owned_handle 0.358854/0.013968/0.356674/0.400543）；方差 0.000820485、0.000195100 ✓；差值 0.282651 ✓；「少 44%」=(0.641505−0.358854)/0.641505=44.06% ✓；checksum f9e695131a980000 两行相同 ✓；rb_copy→_platform_memmove 栈在 macos-sample.txt:121-124 实际存在；interference.txt 如实记录计时前可见的桌面/cargo 活动，与「不能声称隔离」一致。",
+      "evidence": "src/part4/ch16.md:1429-1505,1542-1585；projects/ffi-bridge/evidence/run-20261007-01/summary.json；raw.csv；macos-sample.txt；interference.txt"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.9",
+      "verdict": "pass",
+      "notes": "母本 PDF455–461 台账与 edition 2024 `#[unsafe(no_mangle)]` 说明属外部核对，点名的项目文件均存在。",
+      "evidence": "src/part4/ch16.md:1598-1603"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.10",
+      "verdict": "pass",
+      "notes": "errata 只复述 524288 词/21 批与 4096 槽，均已在 16.7/16.4 复算。",
+      "evidence": "src/part4/ch16.md:1655-1661"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.16.11",
+      "verdict": "pass",
+      "notes": "出口检查表点名的 12 个文件在 run-20261007-01 下全部实际存在（environment.txt、source-sha256.json、rust-tests.txt、c-tests.txt、raw.csv、summary.json、codegen/ffi_bridge.{mir,ll,s}、codegen/c-benchmark.s、macos-sample.txt、interference.txt）；「四个 case、每个 21 条、共 84 条观察」与 raw.csv 的 84 行数据逐案相符；复跑命令里的 tools/measure.sh、tools/summarize.py 存在。",
+      "evidence": "src/part4/ch16.md:1694-1720；projects/ffi-bridge/evidence/run-20261007-01/；projects/ffi-bridge/tools/"
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.3.9.6",
+      "severity": "P1",
+      "description": "第 9.6 节 L1101 写「本例 inline 是 23.604 ms 与 25.060 ms，offload 是 14.125 µs 与 18.541 µs——两个量级差四个数量级」。按归档真实值复算：中位数比 23.604 ms ÷ 14.125 µs = 1671.1 倍（log10=3.22），最大值比 25.060 ms ÷ 18.541 µs = 1351.6 倍（log10=3.13），均值比 23658343.286 ÷ 13632.857 = 1735.6 倍。差距是 3.1–3.2 个数量级（约一千七百倍），不是四个数量级（一万倍）；本句把倍率夸大 6–7 倍，而且四个原始数在本节 L1015-1018 已经列全，读者按表就能算出 3.1。属静态算术错，非归档复算不出。",
+      "evidence": "src/part3/ch09.md:1101（对照同文件 1015-1018）；bench/results/runtime-fixed/measurements-final/blocking-poll.txt:42-43 （inline mean=23658343.286 batch_p50=23604084.000 batch_p99=25060042.000；offload mean=13632.857 batch_p50=14125.000 batch_p99=18541.000）；python3 复算 23604084/14125=1671.08、25060042/18541=1351.66、23658343.286/13632.857=1735.57"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.14.4",
+      "severity": "P1",
+      "description": "例 14.4.1 解答（L811）给出本轮该批数据的「稳妥句子」：「one 的均值更低，且方向在 4.4 倍于 sd 的量级上」。这个 4.4 无法由归档那 21 轮复算得到，正文也没交代「sd」指哪一列。release/fresh mean=439.733、sd=68.274；one/fresh mean=338.194、sd=10.053（build-summary.json 与 build-raw.jsonl 逐轮复算一致）。所有合理口径都给不出 4.4：差值 101.539 ÷ release 的 sd = 1.49；÷ one 的 sd = 10.10；÷ 合并 sd(48.80) = 2.08；按轮配对差 mean=101.539、sd=66.737、mean/sd = 1.52；两列 sd 之比 68.274/10.053 = 6.79；相对差 30.0% ÷ one 的相对波动 2.97% = 10.1。四个候选都不是 4.4。更矛盾的是同一句紧接着声明「本轮没有计算配对区间」，而唯一能生成这类「几倍于 sd」数字的对象恰是配对统计量（1.52）。该数在归档里不存在、也非静态可算，属数字无出处＋统计量对不上。",
+      "evidence": "src/part4/ch14.md:807-811（对照 822、825「包含配对单位不等于做了配对分析」）；bench/evidence-lab/results/run-01/build-summary.json（release/fresh-package-target、one/fresh-package-target 两节）；build-raw.jsonl 126 行按 round 0..20 复算：非配对 mean/sd=439.733/68.274 与 338.194/10.053，逐轮配对差 mean=101.539040 sd=66.737371"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.9.5",
+      "severity": "P2",
+      "description": "L890 与解答 L894 把 0.750 对 2.602 的关系写成「4 个 worker 让聚合成本降到约三分之一 / 约为单线程的三分之一」。按归档 mean 复算：0.750 ÷ 2.602 = 0.2883，即降到约 28.8%，等价于 1÷3.47；写成三分之一（33.3%）会把改善幅度少说约 15%。同章 9.3.6/例 9.5.1 又把「约三倍」当反面说法批评（2.602÷0.750=3.47），同一对数在本章内出现两种精度不同的口语化写法；数值本身与归档一致，故只按表述定级。",
+      "evidence": "src/part3/ch09.md:890,894（对照 604-608）；bench/results/runtime-fixed/measurements-final/scheduling.txt:86,88 （current-q1024 mean=2.602；multi4-q1024 mean=0.750）；python3 复算 0.750/2.602=0.2883、2.602/0.750=3.469"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.15.7",
+      "severity": "P2",
+      "description": "L1522 写「run-04 全部 lifecycle 样本的聚合值为 7596343361303360080」，L1576 进一步写「（三个配置合计）…它是跨样本统计，不是某个配置单独的值」。按归档口径这不成立：该数出现在 lifecycle.csv 每一行的 checksum 列（63 行全部等于它），是「这一批 8 个工具、两路各 262144 字节的批内聚合 FNV」，定义 15.7.3 自己也是这样写的（「把一批内各工具、各路的 FNV-1a 结果用 wrapping_add 逐项相加」）。它既不是跨 21 批的合并量，也不是三个配置相加的量，只是因为夹具确定所以在三配置 63 行里逐行相等。数值本身在归档里存在且逐行一致，问题只在把它说成跨样本聚合。",
+      "evidence": "src/part4/ch15.md:1522,1573-1576（对照 def-15.7.3 L1578-1580）；projects/agent-runtime/evidence/run-04/lifecycle.csv（63 行 checksum 列恒为该值）；run-04/statistics.csv 三个 case 的 checksum 列同为该值；run-04/source-snapshot/src/bin/runtime-bench.rs:176 每批打印该批 checksum"
+    },
+    {
+      "anchor": "sec-cpp-rust.3.10.5",
+      "severity": "P2",
+      "description": "例 10.5.1（L1032）用带反引号的字段格式写 stderr 流 `total=900000, eof=false, reader_errors=[\"grace expired\"]`，形似引用归档里的一份 Capture 报告。两个值都对不上归档：(1) reader_errors 的字串在仓库里没有任何一处等于 \"grace expired\"，归档写入该字段的唯一取值是 \"drain grace expired: a writer may still own a pipe\"（process.rs:144，800 条压力报告里逐行都是这个长串）；(2) total=900000 在 bench/results/runtime-fixed 与 bench/runtime-lab 全目录零命中，flood 夹具的真实 total 只有 2097152 或 0。该盒整体是假想题面、正文没有写「实测/归档」，所以按表述定级；但它示范的是「诊断报告该怎么写」，照抄会把字段取值方式带偏（同一盒里的 2097152 与 cap=128 倒是与归档一致）。",
+      "evidence": "src/part3/ch10.md:1032-1042；bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/src/process.rs:144,305（\"drain grace expired: a writer may still own a pipe\"；测试用 .contains(\"drain grace expired\")）；final-validation/stress-debug-3.txt:8 等 reader_errors 实际形态；grep '\"grace expired\"' 与 '900000' 在 bench/results、bench/runtime-lab、projects/ 均无命中"
+    }
+  ]
+}

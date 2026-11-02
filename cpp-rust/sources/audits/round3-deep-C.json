@@ -1,0 +1,119 @@
+{
+  "reviewer": "cold-r3-deep-C",
+  "kind": "independent",
+  "snapshot_sha256": "9d67823bf6ffe81ff154bf41d9743b89b7d83782aa234febd5e07aaa2519d741",
+  "provenance": "冷启动通读 ch17 的 17.1-17.5 全文及章末件；逐字节核对段文件格式、内存序、Codec 与测试清单，静态算术用 python 复算",
+  "sections": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "verdict": "finding",
+      "notes": "逐项核对了：契约四元组 O 列出的 7 个操作（put/delete/get/scan_prefix/flush/compact_two/sync）逐一在 src/engine.rs 的 Tide 方法上存在；六条不变量的「五条有测试、唯『段文件字节一旦写下不再修改』没有」逐条到 tests/ 数——重启持久=persistence.rs，get=REF=tide-bench 三方比对（bench-verification.txt 印着 A/B/REF 四 case 全 MATCH，REF 确是单线程 HashMap 回放、基线 A 确是 RwLock<BTreeMap，见 src/bin/tide-bench.rs 头部），删除不可见=tombstones.rs，压缩集合相同=compaction.rs，快照不释放=epoch_reclaim.rs；segment_format.rs 只验证外部改动被拒（且断言同时允许 crc 或 range 报错）。里程碑表 M1-M7 与 README「里程碑状态」表逐行对：M4 的 CAP=64/4 对照在 results/run-03/，M6 的 MIR/LLVM IR/asm 在 results/run-01/codegen/ 齐（lib.mir/lib.ll/lib.s 等），M7「两格缺档」属实——三份 environment.txt 均无源码指纹，run-01/gate.json 只有 budget_B 没有 budget_note（gate.py 也无 --budget-note 参数，run.sh 主轮只传 -B）。「默认预写日志只刷内核不 fsync」与 wal.rs sync_to/Config durable=false 一致，且 17.8.2 确实有此段。跨章引用 def-1.1.1/1.2.2/1.6.1/1.7.2/1.7.3 全部在 ch01 存在，「不用外部依赖」与 Cargo.toml 空依赖一致。问题只在下两条锚点错位与主线映射不齐。",
+      "evidence": "projects/tidekv/src/engine.rs:253-331（7 个操作）；tests/persistence.rs:8,40；tests/tombstones.rs:17-85；tests/compaction.rs:47-94；tests/epoch_reclaim.rs:33-67；src/bin/tide-bench.rs:3-5,212-214；results/run-01/bench-verification.txt:1-15；results/run-01/gate.json（无 budget_note）；run.sh:8,97；src/wal.rs:109-115；projects/tidekv/Cargo.toml:11-20；README.md 里程碑状态表"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "verdict": "finding",
+      "notes": "字节账逐字节对 segment.rs：条目头 17=klen4+vlen4+op1+seq8（segment.rs:18,77-80），索引项 12=klen4+off8（:20,83-84,203-208），页脚 34=magic5+ver1+entries4+index_off8+bloom_off8+bloom_len4+crc4（:12-16,98-104）；CRC 覆盖 crc32(&buf) 在追加页脚之前（:97,157），「页脚 34 字节不在其中」正确；open 的核对次序=长度/魔数/版本/CRC 四道前置+四条范围关系（index_off>f、bloom_off>f、bloom_off+bloom_len==f、index_off+entries*12==bloom_off，:142-166），与正文/图一致。全部静态算术用 python 复算：97、12、97×65536=6356992、12×65536=786432、合计 7143424、+34=7143458、省 262144=256KiB、log2 65536=16、16×2^-8=6.25%、⌈log2 16000⌉=14、单槽 1/256≈0.39%、1525/200000=0.7625%≈1/131.1、0.762/0.390625≈1.95×、1989/2000=99.45%，全对；「400000 槽、fp=1525、0/50000、1989/2000」与 results/bloom-contract-2026-10-30.txt:11-14 逐字相符；一次探测比较 16 槽与 bloom.rs BUCKET=16、contains 定长 16 字节归约一致；「全仓没有 NonZero」grep 为零；EntryKind::Delete 存在。easy-fs 一段逐句对了本地归档（.work/.../2fs-implementation-rcore.html）：INODE_DIRECT_COUNT=28、14KiB、512/4=128、二级 128×64KiB=8MiB、间接要多读一次索引块、块缓存「统一缓冲区」告诫，全部有出处。没查的：无。问题集中在 17.2.2 的一句、图 17-2 的 <desc>、和几处体例。",
+      "evidence": "projects/tidekv/src/segment.rs:12-20,74-104,142-166,157,203-239,307-318；src/bloom.rs:4,59-72,108-141,181；tests/bloom_contract.rs:26-51,69-109；results/bloom-contract-2026-10-30.txt:11-14；.work/cpp-rust-sources/systems/2fs-implementation-rcore.html（INODE_DIRECT_COUNT=28 等）；python3 复算 97*65536、12*65536、16/256、ceil(log2(16000)) 等"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "verdict": "finding",
+      "notes": "核对过：Segment 六字段与 segment.rs:128-135 一一对应（info/data/index_off/bloom_off/bloom_len/bloom）；open 一次 read_to_end 后丢弃 File、无常驻 fd ✓（:140-141）；三条安全不变量各自担保与代码吻合——①bytes_at 显式边界检查+unsafe from_raw_parts 注释（:307-318），②Arc<Segment> 共享+epoch 钉快照（engine.rs:100、epoch.rs），③写 tmp→sync_all→rename、无原地改段路径（segment.rs:106-116，全库无对已 open 段的写接口）；「一处写入即别名冲突」与段缓冲不可变流程一致。17.3.2 的 easy-fs 块缓存告诫逐句对归档原文（「一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试」「将缓冲区统一管理」），存在且转述准确。跨章锚点 12.4.1/12.4.2/2.x 均存在于 ch12/ch02。问题：Definition 17.3.1 与例 17.3.1 解答里把共享缓冲称作 SegmentData——该类型不存在，且同段先说「没有 Arc<SegmentData> 这种中间层」后文又靠它叙述析构，自相矛盾。",
+      "evidence": "projects/tidekv/src/segment.rs:128-135,140-141,307-318,106-116；src/engine.rs:100,446-457；src/epoch.rs:76-115；.work/cpp-rust-sources/systems/2fs-implementation-rcore.html（块缓存告诫段）；grep NonZero/NonNull/SegmentData src tests → 仅 ch17.md:471,496 出现"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "verdict": "finding",
+      "notes": "核对过：trait Codec 确只有 encode/cmp_key 两方法、无 decode（codec.rs:19-24）；「这条缝只被 tide-mech 与 tests/codec_contract.rs 用到」grep 全仓证实（lib.rs 只是 re-export；tide-bench/tide-probe/ipc 不调用），segment.rs 内联写字段不经 Codec ✓；实测数字逐项对归档：A=3.965/B=4.036/diff=+0.071/CI=[−0.054,+0.208]/样本标准差 0.318（statistics-codec.json: arm_A_mean 3.964831、arm_B_mean 4.036043、diff 0.071211、stddev 0.318330、ci −0.053934/+0.207500）、预算 1 ns/记录为设计规则（gate-codec.json budget_note）、判 accept 用区间上端（规则 U≤B）；协议 21 轮×30 批、预热 500ms、种子 20261029、每批 4096 条、批内臂序每轮掷硬币——tide-mech.rs 默认参数与 codec.csv 头注释、run.sh 主轮 SEED=20261028 全部吻合；bytes=364544=89×4096（9 字节头+16+64，python 复算）且 mech-verification.txt 印 MATCH crc32=2b67ab81；codegen 归档确为 FixedCodec::encode 104 行 0 次 blr、encode_all_dyn 24 行 1 次 blr x22；环境句 Apple M5 Pro/rustc 1.99.1/lto=false/codegen-units=1 对 environment.txt 与 Cargo.toml；「指令数口径与代码体积没有采集」确未见于任何归档（results/ 无 PMU 产物）。问题：preview 段的两个名字。",
+      "evidence": "projects/tidekv/src/codec.rs:11-24,58-69；src/bin/tide-mech.rs:150-173,184-210,373-381；results/run-02/statistics-codec.json、gate-codec.json、codec.csv 头 4 行、mech-verification.txt:1、codegen/codec-codegen.txt:5-15；environment.txt；Cargo.toml:15-20；python3: 89*4096=364544；grep -rn codec src/bin tests → 仅 tide-mech.rs/codec_contract.rs/lib.rs"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "verdict": "finding",
+      "notes": "核对过：Definition 17.5.1 与代码逐点吻合——Heap<SegmentList> 装 Box（engine.rs:145,194）、SegmentList 只有 segments/frozen 两个 Vec、确无生成号字段（engine.rs:97-103）、store 内 head.swap(Box::into_raw(next), SeqCst)（epoch.rs:122）、pin() 先记纪元再 head.load(SeqCst)（:93-98）、advance 判据 min_active>r.epoch（:142-157）、「不是引用计数归零」成立。内存序清点：epoch.rs 的 head（load/swap）与 PINS（store/load）及 CURRENT 全 SeqCst，仅 Heap::drop 取 head 用 Acquire（:204）——与 17.5.2/E-c 的说法一致；stats.rs 全部计数器 fetch_add/load 用 Relaxed（:79,148-163），engine.rs 的 submitted/closed/applied 不属于「stats.rs 计数器」，正文限定语正确；ex 17.5.1「Arc 层的原子增减成本：本节的实测没有采集」是明写的未采集 ✓。图 17-3 本体标签「SeqCst 取快照/SeqCst 换指针」与代码一致。没查动的：无。「退休表长度是否收敛」的曲线确实没有采集，正文也只当判据提，未冒充实测。问题集中在图 17-1 的 <desc>（内存序写反、scan 问布隆、生成号二分）与「advance 两次」的流程描述。",
+      "evidence": "projects/tidekv/src/epoch.rs:35-36,93-98,111,122,138-176,204；src/engine.rs:97-103,145,194,376-400；src/stats.rs:79,148-163；tests/epoch_reclaim.rs:47-61（release 后一次 advance 即 reclaimed==1，注释「松手后一次 advance 就该回收」）；ch17.md:60（图 17-1 desc）、:784、:864 vs src/segment.rs:256-273、src/engine.rs:502-518（scan_prefix 不经过布隆）"
+    }
+  ],
+  "sources": [],
+  "findings": [
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "即时自测 17.1 第 1 题答案把 I 映射成「①与④」，而正文 17.1.1 明写「$O$ 与 $I$ 保证 ①、$X$ 是 ④ 的护栏」，习题 A1 与 ch17_summary「一条主线」段也都只把 I 记到 ①；同一处映射两处不一致。",
+      "evidence": "src/part4/ch17.md:147 vs ch17.md:256；ch17_exercises.md:17；ch17_summary.md「一条主线」段"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.1",
+      "severity": "P2",
+      "description": "三处跨章锚点指向的定义内容与所支撑的论点无关（锚点在目标章确实存在，属引错位置）：17.1.2 用 [@def-1.1.1]（内容为死代码消除 DCE）支撑「写不出测试的不变量只是愿望」；例 17.1.1 解答②用 [@def-1.2.2]（case/批次/批均值）支撑「值长不同收益机制不同」；例 17.2.1/17.2.2 用 [@def-1.5.1]（名义元素=名义分母）支撑「静态可算的量不需要采集」。",
+      "evidence": "src/part1/ch01.md:75（def-1.1.1 DCE）、:361（def-1.2.2）、:881（def-1.5.1）；ch17.md:156,185,359,374"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P1",
+      "description": "17.2.2「tidekv 反过来——索引集中在段末、定宽、一次读进内存，换来二分不碰数据区」与正文自己的机制相反：Definition 17.2.1/17.2.1 明说二分每步「再去数据区取那段键字节比较，值字节全程不碰」，不碰的只是值字节与条目头，代码 lookup_index 每一步都经 bytes_at 读数据区的键。",
+      "evidence": "ch17.md:401 vs ch17.md:295-298；projects/tidekv/src/segment.rs:225-239,281"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "图 17-2 的 <desc> 与同图标签、定义盒不齐：desc 说页脚「依次是 5 字节魔数 TIDE1、条目数、索引区起始偏移、布隆区起始偏移与整段 CRC32」，漏掉版本号与布隆区长度（SVG 标签行和 Definition 17.2.1、segment.rs FOOTER_LEN 注释都含这两项）；同段还写「好让二分不必先读条目头标记与指纹槽」——条目头里没有「指纹槽」，指纹槽属布隆区。另 17.2 preview 有重复短语「磁盘格式又不一样：磁盘格式不一样：」。",
+      "evidence": "ch17.md:303 vs :328、:295；projects/tidekv/src/segment.rs:15-16,98-104；ch17.md:285"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "17.2 勘误 E-d 说「魔数、版本、条目数与两个偏移全靠 open 里的范围核对兜着」：魔数与版本在 open 里各有自己的相等核对（bad magic / unsupported version），并非「范围核对」；同节 Definition 17.3.1 的「长度、魔数、版本与 CRC 四道前置检查+四条范围关系」才是与代码一致的写法。",
+      "evidence": "ch17.md:419 vs ch17.md:479；projects/tidekv/src/segment.rs:142-166"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "例 17.2.2 实测段把三行打印都归给「那条测试」并称它「只断言假阳率小于 5%」：measured_false_positive_rate 其实有两条断言（rate<0.05 与 rate>0.0）且只打印第一行；第二、三行（0/50000、1989/2000）出自 segment_bloom_rejects_absent_and_never_misses。所引数字本身与归档完全一致，问题只在测试与断言的描述不准。",
+      "evidence": "ch17.md:376 vs tests/bloom_contract.rs:49-50（两条断言）、:92-97,:100-107（另两处 println）；results/bloom-contract-2026-10-30.txt:11-14"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.2",
+      "severity": "P2",
+      "description": "Definition 17.2.2 首句「删除操作在内存表里写成『值为空』的条目」与其同段后文「本项目……不是——内存表里的墓碑是显式变体 EntryKind::Delete」互相矛盾（WAL 记录才以空值承载删除）；回忆卡 5 又复述了前一句的错误口径（ch17_recall.md:81）。",
+      "evidence": "ch17.md:340-343；projects/tidekv/src/memtable.rs:13-18,36-45；src/wal.rs:268-269(engine.rs delete 传空值)"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P1",
+      "description": "Definition 17.3.1 出现代码里不存在的类型 SegmentData，且同段自相矛盾：先说 open 后「没有 Arc<SegmentData> 这种中间层」，紧接着又写多个读者「共用同一块 SegmentData」「SegmentData 一旦构造完成就不再修改，析构时随最后一个 Arc 释放」；例 17.3.1 解答的 SAFETY 要素②也用「它由 Arc<SegmentData> 持有」。代码中被 Arc 共享、构造后只读的单元是 Segment（engine.rs 里是 Vec<Arc<Segment>>），全仓 grep 无 SegmentData。",
+      "evidence": "ch17.md:471,496 vs projects/tidekv/src/segment.rs:128-135；src/engine.rs:100；grep -rn SegmentData projects/tidekv/src tests → 无"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.3",
+      "severity": "P2",
+      "description": "习题 A4 把不变量①的现状机制写成「构造时核对加越界返回空」：现码 bytes_at 越界走 assert! panic，「返回 None 并计入损坏计数」是即时自测第 3 题/C16 要求读者改写的目标版本，不是已实现机制；正文 17.3.1 自己写的是「边界检查」。",
+      "evidence": "ch17_exercises.md:53 vs projects/tidekv/src/segment.rs:307-318；ch17.md:575（第 3 题才提出改 Option）"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.4",
+      "severity": "P1",
+      "description": "17.4 preview 说「同一热循环，Codec<C1> 与 CodecDyn（装箱 trait 对象）各跑一份」——代码里两个入口是 encode_all::<C: Codec> 与 encode_all_dyn(&dyn Codec)、实现类型是 FixedCodec，不存在 CodecDyn 或名为 Codec<C1> 的类型；同节 Definition 17.4.1 与 17.4.2 实测段用的都是真实符号，唯 preview 造名。",
+      "evidence": "ch17.md:592 vs projects/tidekv/src/codec.rs:28,42-65、src/bin/tide-mech.rs:184-210"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P0",
+      "description": "图 17-1 的 <desc> 与磁盘证据相反：说读路径「先用 Acquire 取当前快照」、写者「随后以 Release 语义发布新快照」。epoch.rs 里 head.load（pin，含嵌套分支）与 head.swap（store）全部是 SeqCst；正文 Definition 17.5.2、E-c 与 ch17_summary 也都写「head 用 SeqCst、降到 Release/Acquire 没有实测依据」。同一章的图 17-3 自己标的就是「SeqCst 取快照/SeqCst 换指针」，图 17-1 的 desc 与代码、正文、另一张图四处同时矛盾。",
+      "evidence": "ch17.md:60 vs src/epoch.rs:98,111,122；ch17.md:789,833；ch17.md:754,758（图 17-3）；ch17_summary.md 17.5 行"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P1",
+      "description": "同句 desc「get 或 scan 先问布隆过滤器再生成号倒序二分索引」两处失实：①scan_prefix 从不问布隆（Snapshot::scan_prefix 直接逐段 scan_prefix→lower_bound），②「生成号」不存在——Definition 17.5.1 自己写明 SegmentList「没有额外的生成号字段」，段的先后靠列表按新→旧排列，二分的比较对象是键的字典序而非任何生成号。",
+      "evidence": "ch17.md:60 vs src/engine.rs:502-518、src/segment.rs:256-289；ch17.md:784"
+    },
+    {
+      "anchor": "sec-cpp-rust.4.17.5",
+      "severity": "P1",
+      "description": "「测试线程显式 advance() 两次跨过安全窗口」与真实测试不符：tests/epoch_reclaim.rs 的 retired_version_survives_until_reader_releases 在 release() 后只做一次 advance() 就断言 reclaimed==1，注释明写「松手后一次 advance 就该回收」；该说法同时出现在即时自测 17.5 第 3 题答案、习题 C17、自检表 S4（「推进两次」）与图 17-3 desc（「推进 epoch 两次」）四处，作为「这条不变量由确定性测试验证」的驱动步骤描述属于清单与实际不符。",
+      "evidence": "ch17.md:864；ch17_exercises.md:235；ch17_checklist.md:31（S4）；ch17.md:739（图 17-3 desc）vs tests/epoch_reclaim.rs:58-61"
+    }
+  ]
+}
