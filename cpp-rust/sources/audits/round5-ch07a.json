@@ -3,18 +3,18 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
-  "provenance": "冷启动通读 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个语义盒），逐行读了 bench/probes/atomics.rs、bench/src/slot.rs、bench/src/lib.rs、bench/src/bin/atomic_contention.rs、bench/src/bin/handoff.rs、bench/Cargo.toml，用 python 从 bench/results/local/atomic-1.txt、atomic-4.txt、handoff.txt 的原始批次复算了全部三张统计表，对照了 local/x86_64-linux/aarch64-android 三份 atomics.s、bench/results/local/environment.txt、sources/web.json、.work/cpp-rust-sources/systems/5concurrency-problem-rcore.html 与本地《Rust 参考手册》PDF 第 334 页。",
+  "provenance": "冷启动通读 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个语义盒），逐行读了 bench/probes/atomics.rs、bench/src/slot.rs、bench/src/lib.rs、bench/src/bin/atomic_contention.rs、bench/src/bin/handoff.rs、bench/Cargo.toml，用 python 从 bench/results/local/atomic-1.txt、atomic-4.txt、handoff.txt 的原始批次复算了全部三张统计表，对照了 local/x86_64-linux/aarch64-android 三份 atomics.s、bench/results/local/environment.txt、sources/web.json、sources/archive/systems/5concurrency-problem-rcore.html 与本地《Rust 参考手册》PDF 第 334 页。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.2.7.1",
       "verdict": "finding",
       "method": "read",
-      "notes": "核对了：① 载荷 [u64;8]=64 字节，与 handoff.txt 头部 payload_size=64 一致；② 例 7.1.1 ③『四线程约 6 ns』用 atomic-4.txt 复算为 Shared-Relaxed 批均 5.980、SeqCst 5.952，『约 6』成立；③ def-7.1.1 冲突访问/数据竞争三条件与 std 原子文档 access-based 表述一致；④ def-7.1.4 的 rCore 三分类：母本 .work/cpp-rust-sources/systems/5concurrency-problem-rcore.html（sha256 bc6b803b… 与 sources/web.json rcore-concprob 登记一致）逐字有『典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷』『互斥缺陷也称为违反原子性缺陷…对共享变量没进行合理的保护』，命名落地；『唤醒丢失属于这一类』是本书自加的应用性注释（该页无『唤醒丢失』一词），未伪装成 rCore 原话，可接受；⑤ 7.1.3 的参考手册 PDF 引文：实读 /Users/juanwang/E-Book/Rust/Rust 参考手册.pdf 第 334 页（inventory 登记 local_path，sha 核对项 local_path_matches_sha=true），「内存模型」节原文『Rust 还没有明确的内存模型。许多学者和行业专业人士正在研究各种提案，但就目前而言，这在该语言中仍是一个未明确定义的地方。』逐字命中（正文引文只截掉了句首主语 Rust），页上 commit 2d3085f1bab9d751e8a9b92c3b27c049ad23fdd7 与维护日期 2020-11-2 均与正文相符；⑥ 原子文档 URL 确为 sources/web.json 的无版本号滚动入口。发现问题：7.1 内定义框编号乱序且缺号（见 findings P2）。",
+      "notes": "核对了：① 载荷 [u64;8]=64 字节，与 handoff.txt 头部 payload_size=64 一致；② 例 7.1.1 ③『四线程约 6 ns』用 atomic-4.txt 复算为 Shared-Relaxed 批均 5.980、SeqCst 5.952，『约 6』成立；③ def-7.1.1 冲突访问/数据竞争三条件与 std 原子文档 access-based 表述一致；④ def-7.1.4 的 rCore 三分类：母本 sources/archive/systems/5concurrency-problem-rcore.html（sha256 bc6b803b… 与 sources/web.json rcore-concprob 登记一致）逐字有『典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷』『互斥缺陷也称为违反原子性缺陷…对共享变量没进行合理的保护』，命名落地；『唤醒丢失属于这一类』是本书自加的应用性注释（该页无『唤醒丢失』一词），未伪装成 rCore 原话，可接受；⑤ 7.1.3 的参考手册 PDF 引文：实读 /Users/juanwang/E-Book/Rust/Rust 参考手册.pdf 第 334 页（inventory 登记 local_path，sha 核对项 local_path_matches_sha=true），「内存模型」节原文『Rust 还没有明确的内存模型。许多学者和行业专业人士正在研究各种提案，但就目前而言，这在该语言中仍是一个未明确定义的地方。』逐字命中（正文引文只截掉了句首主语 Rust），页上 commit 2d3085f1bab9d751e8a9b92c3b27c049ad23fdd7 与维护日期 2020-11-2 均与正文相符；⑥ 原子文档 URL 确为 sources/web.json 的无版本号滚动入口。发现问题：7.1 内定义框编号乱序且缺号（见 findings P2）。",
       "evidence": [
         "src/part2/ch07.md:76,155,169,174,188,199",
         "bench/results/local/handoff.txt 首行 payload_size=64",
         "atomic-4.txt 复算：Shared-Relaxed mean=5.980 / Shared-SeqCst mean=5.952（21 批原始值自算，非抄正文）",
-        ".work/cpp-rust-sources/systems/5concurrency-problem-rcore.html 去标签文本『典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷』；文件 sha256=bc6b803b516df84ca22a6bf6d804d619de322ad937fc7d6658aec12e6305bb79 与 sources/web.json rcore-concprob 条目一致",
+        "sources/archive/systems/5concurrency-problem-rcore.html 去标签文本『典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷』；文件 sha256=bc6b803b516df84ca22a6bf6d804d619de322ad937fc7d6658aec12e6305bb79 与 sources/web.json rcore-concprob 条目一致",
         "/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf:334（内存模型节，commit 2d3085f1…，日期 2020-11-2）",
         "src/part2/ch07.md:155/169/174 定义框出现顺序为 7.1.1 → 7.1.4 → 7.1.2；grep 全章无 {#def-7.1.3}"
       ]

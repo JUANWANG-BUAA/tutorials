@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
-  "provenance": "冷启动无上下文：通读 src/part3/ch12.md 第 1-64 行（章首与路线/母题）与第 1334-2079 行（12.7-12.11 全部正文与每个语义盒），另写 /tmp/r4b/calc.py 从 bench/systems-lab/results/run-01/views.txt 的 42 条 raw 行与 simd.txt 的 summary 行自算全部统计量，逐行读 bench/systems-lab/src/lib.rs 与 src/bin/views.rs，并在 .work/cpp-rust-sources/systems/ 的 rCore 母本 HTML 与 src/appendix/coverage.md、tools/list_uncollected_claims.py 输出上回查引用。",
+  "provenance": "冷启动无上下文：通读 src/part3/ch12.md 第 1-64 行（章首与路线/母题）与第 1334-2079 行（12.7-12.11 全部正文与每个语义盒），另写 /tmp/r4b/calc.py 从 bench/systems-lab/results/run-01/views.txt 的 42 条 raw 行与 simd.txt 的 summary 行自算全部统计量，逐行读 bench/systems-lab/src/lib.rs 与 src/bin/views.rs，并在 sources/archive/systems/ 的 rCore 母本 HTML 与 src/appendix/coverage.md、tools/list_uncollected_claims.py 输出上回查引用。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.12.7",
@@ -24,7 +24,7 @@
       "notes": "机制节，逐句检查它有没有把未采集的东西写成实测：12.8 全节零测量数字，1601、1711、1874 三处都明写『本节没有采集』，tools/list_uncollected_claims.py 的 ch12 段（第 1601/1711/1874 行）确认这三条声明登记为未采集，没有把机制冒充数字，符合本书口径。SQE/CQE 字段契约自算：CQE = __u64 user_data + __s32 res + __u32 flags = 16 字节，正文标注『16 字节』正确；SQE 标注『64 字节对齐』措辞不严（内核的约束是 SQE 定长 64 字节，不是 64 字节对齐要求），仓库内无 Linux 头文件可比对，正文又是带省略号的示意结构，提 P2。`ring_mask`/`__ATOMIC_RELEASE` 的说明是机制而非性能结论，没有越界。`iou-sqp-<pid>`、`sq_thread_idle` 常见取值 1000 毫秒、`IORING_ENTER_SQ_WAKEUP`、`sq_thread_cpu`/`SCHED_FIFO` 均按『常见取值/机制』表述，没有配『实测』字样，本机无 Linux 无法复算，我不判为编造但也没核到出处。12.8.6 表五列对照（epoll/io_uring/kqueue/IOCP）与 1862 行『macOS 上不存在原生共享内存环』自洽，且与本章 12.11『没有在本机 macOS 上伪造 Linux 内核测试』的收口一致。12.8.7 的 rCore easy-fs 引用逐字回查母本通过：BLOCK_SZ=512、BlockCache{cache:[u8;BLOCK_SZ], block_id, block_device:Arc<dyn BlockDevice>, modified}、全局管理器『尽可能将更多的块操作合并起来，并在必要的时机发起真正的块实际读写』、『块和扇区是两个不同的概念…扇区通常 512 字节…Ext4 单个块默认 4096 字节…easy-fs 中同为 512 因此不再区分』，正文 1892 行每一小句都能在母本里找到对应原话，没有改写语义。数量级口径有一处内部不统一，提 P2。例 12.8.1 与思考 12.8.1 的答复全是机制推理（SQE 无撤回字段、泄漏池要收割），未引用任何数字，自洽。",
       "evidence": [
         "src/part3/ch12.md:1601, 1652-1676, 1689, 1703-1711, 1855-1874, 1884, 1906",
-        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html（BLOCK_SZ / BlockCache / 块与扇区注解 / 全局管理器合并回写）",
+        "sources/archive/systems/2fs-implementation-rcore.html（BLOCK_SZ / BlockCache / 块与扇区注解 / 全局管理器合并回写）",
         "tools/list_uncollected_claims.py 输出 ch12 段：1601、1711、1874 三条『没有采集』声明"
       ]
     },
@@ -32,10 +32,10 @@
       "anchor": "sec-cpp-rust.3.12.9",
       "verdict": "pass",
       "method": "read",
-      "notes": "9 行来源逐行落地：4 个在线源的 SHA 前缀都能在 src/appendix/coverage.md 找到同一行登记——18becca8 对 583 行 systems-target-feature/SYS-TARGET-FEATURE（映射 part3/ch12.md#sec-cpp-rust.3.12.3）、1ed71f55 对 584 行 systems-uring、55ff0cac 对 586 行 systems-rcore-io、ab93f730 对 592 行 rcore-easyfs/RCORE-EFS（映射 #sec-cpp-rust.3.12.8，即 12.8.7 的落点），正文行与台账行的落点没有错配。prep_cancel(3) 独立登记在 585 行（SHA 0f9c226c），12.9 把 io_uring(7) 与 prep_cancel(3) 合成一行只给了 1ed71f55 一个指纹，属可接受的合并。rCore 第 9 章两行（串口 ns16550a/DLAB/设备树、virtio 前端-virtqueue-后端与六个设备状态、FAILED 与 DEVICE_NEEDS_RESET 两种失败等级）在 coverage.md 605、606 行有登记，母本文件 2device-driver-1-rcore.html、2device-driver-2-rcore.html 确实在 .work/cpp-rust-sources/systems/ 下存在。S11 13.4 性能对比 PDF 314-315 在 587 行登记且映射到 #sec-cpp-rust.3.12.2，与正文落点 12.2 一致。1995 行『正文只保留入口，页码与指纹在附录覆盖』的说法与 coverage.md 的实际组织一致。本轮没核到的两项我在 notes 里讲清：一是 coverage.md 中含 part3/ch12.md 的行共 10 条，我只逐条读了其中 8 条（583-587、592、605-606），剩下 2 行未枚举，因此 12.9 第 5 行 chapter6/3using-easy-fs-in-kernel.html 与第 9 行 S08 是否有自己的台账行我没核完——但两行的内容我都回到母本或台账旁证对过（3using 的 File/UserBuffer/Arc<dyn BlockDevice>/#[cfg(feature=\"board_qemu\"|board_k210)] 在 .work/.../3using-easy-fs-in-kernel-rcore.html 逐字命中；S08 第 20 条末 PDF 174-175 在 coverage.md 116、124 行有同号登记，只是映射到 part1/ch02、ch03）。二是 S11/S08 的 PDF 页本轮未回原 PDF 逐字比对，io_uring 手册原文本机无 Linux 镜像也未逐字比对；这一项属机械层已覆盖的可解析性，我不据此判 finding。",
+      "notes": "9 行来源逐行落地：4 个在线源的 SHA 前缀都能在 src/appendix/coverage.md 找到同一行登记——18becca8 对 583 行 systems-target-feature/SYS-TARGET-FEATURE（映射 part3/ch12.md#sec-cpp-rust.3.12.3）、1ed71f55 对 584 行 systems-uring、55ff0cac 对 586 行 systems-rcore-io、ab93f730 对 592 行 rcore-easyfs/RCORE-EFS（映射 #sec-cpp-rust.3.12.8，即 12.8.7 的落点），正文行与台账行的落点没有错配。prep_cancel(3) 独立登记在 585 行（SHA 0f9c226c），12.9 把 io_uring(7) 与 prep_cancel(3) 合成一行只给了 1ed71f55 一个指纹，属可接受的合并。rCore 第 9 章两行（串口 ns16550a/DLAB/设备树、virtio 前端-virtqueue-后端与六个设备状态、FAILED 与 DEVICE_NEEDS_RESET 两种失败等级）在 coverage.md 605、606 行有登记，母本文件 2device-driver-1-rcore.html、2device-driver-2-rcore.html 确实在 sources/archive/systems/ 下存在。S11 13.4 性能对比 PDF 314-315 在 587 行登记且映射到 #sec-cpp-rust.3.12.2，与正文落点 12.2 一致。1995 行『正文只保留入口，页码与指纹在附录覆盖』的说法与 coverage.md 的实际组织一致。本轮没核到的两项我在 notes 里讲清：一是 coverage.md 中含 part3/ch12.md 的行共 10 条，我只逐条读了其中 8 条（583-587、592、605-606），剩下 2 行未枚举，因此 12.9 第 5 行 chapter6/3using-easy-fs-in-kernel.html 与第 9 行 S08 是否有自己的台账行我没核完——但两行的内容我都回到母本或台账旁证对过（3using 的 File/UserBuffer/Arc<dyn BlockDevice>/#[cfg(feature=\"board_qemu\"|board_k210)] 在 .work/.../3using-easy-fs-in-kernel-rcore.html 逐字命中；S08 第 20 条末 PDF 174-175 在 coverage.md 116、124 行有同号登记，只是映射到 part1/ch02、ch03）。二是 S11/S08 的 PDF 页本轮未回原 PDF 逐字比对，io_uring 手册原文本机无 Linux 镜像也未逐字比对；这一项属机械层已覆盖的可解析性，我不据此判 finding。",
       "evidence": [
         "src/appendix/coverage.md:583-587, 592, 605-606, 116, 124, 112；grep -c 'ch12.md' src/appendix/coverage.md = 10",
-        ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html：pub trait File: Send + Sync { fn read(&self, buf: UserBuffer) -> usize; fn write(...) }（仅两法）、UserBuffer 为应用地址空间缓冲区抽象且『内核无法直接通过用户地址空间的虚拟地址来访问』、#[cfg(feature=\"board_qemu\")]/#[cfg(feature=\"board_k210\")] + BLOCK_DEVICE: Arc<dyn BlockDevice>",
+        "sources/archive/systems/3using-easy-fs-in-kernel-rcore.html：pub trait File: Send + Sync { fn read(&self, buf: UserBuffer) -> usize; fn write(...) }（仅两法）、UserBuffer 为应用地址空间缓冲区抽象且『内核无法直接通过用户地址空间的虚拟地址来访问』、#[cfg(feature=\"board_qemu\")]/#[cfg(feature=\"board_k210\")] + BLOCK_DEVICE: Arc<dyn BlockDevice>",
         "src/part3/ch12.md:1985-1995"
       ]
     },

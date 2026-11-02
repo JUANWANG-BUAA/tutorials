@@ -39,9 +39,9 @@
       "anchor": "sec-cpp-rust.4.17.9",
       "verdict": "pass",
       "method": "read+recompute",
-      "notes": "台账类引用抽查可落地：rCore 五页均登记于 sources/web.json（含 sha256/bytes/archive 路径），落盘副本在 .work/cpp-rust-sources/systems/ 存在；easy-fs 存档原文确有「直接索引可以找到 14KiB 的内容」与「直接索引和一级索引支持的容量上限 78KiB」，与正文「28 个直接索引项、14 KiB/64 KiB/8 MiB」静态算术自洽（28×512B=14 KiB；一级 128×512B=64 KiB；二级 128×64 KiB=8 MiB；14+64=78 KiB）；fs-interface 页（archive=rcore-io.html）与 pipe 页（弱引用/RingBufferStatus 满空正常）的 review_scope 与正文引述方向一致。17.9 诚实声明论文条目与 LLVM 那条「没有落盘副本、不在台账」，未冒充已核实证据；布隆 0.762%≈1/131 与 results/bloom-contract-2026-10-30.txt:11 逐字一致，1/256 与 1/131 差 1.95 倍（256/131.1）算术成立。退休表曲线未采集声明无产物矛盾。「16 份纸本母本」的具体份数我只抽查了 sections.json 结构（579 条映射）未逐一点清 16 这个数，记入 P2。LLVM 原句为带引号逐字引用，正文已如实标注是 2026-10-30 在线核读、无落盘副本，本轮预算内未能联网复核原句。",
+      "notes": "台账类引用抽查可落地：rCore 五页均登记于 sources/web.json（含 sha256/bytes/archive 路径），落盘副本在 sources/archive/systems/ 存在；easy-fs 存档原文确有「直接索引可以找到 14KiB 的内容」与「直接索引和一级索引支持的容量上限 78KiB」，与正文「28 个直接索引项、14 KiB/64 KiB/8 MiB」静态算术自洽（28×512B=14 KiB；一级 128×512B=64 KiB；二级 128×64 KiB=8 MiB；14+64=78 KiB）；fs-interface 页（archive=rcore-io.html）与 pipe 页（弱引用/RingBufferStatus 满空正常）的 review_scope 与正文引述方向一致。17.9 诚实声明论文条目与 LLVM 那条「没有落盘副本、不在台账」，未冒充已核实证据；布隆 0.762%≈1/131 与 results/bloom-contract-2026-10-30.txt:11 逐字一致，1/256 与 1/131 差 1.95 倍（256/131.1）算术成立。退休表曲线未采集声明无产物矛盾。「16 份纸本母本」的具体份数我只抽查了 sections.json 结构（579 条映射）未逐一点清 16 这个数，记入 P2。LLVM 原句为带引号逐字引用，正文已如实标注是 2026-10-30 在线核读、无落盘副本，本轮预算内未能联网复核原句。",
       "evidence": [
-        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html（「直接索引可以找到 14KiB 的内容」「容量上限 78KiB」；BlockCache 出现 30 次）",
+        "sources/archive/systems/2fs-implementation-rcore.html（「直接索引可以找到 14KiB 的内容」「容量上限 78KiB」；BlockCache 出现 30 次）",
         "sources/web.json：chapter6/1fs-interface、chapter6/2fs-implementation、chapter7/2pipe、chapter7/4signal、chapter9/2device-driver-2 等条目均含 sha256 与 archive 路径，文件存在",
         "projects/tidekv/results/bloom-contract-2026-10-30.txt:11 rate=0.00762 (1/131.1)",
         "算术：28×512B=14336B=14 KiB；512B/4B=128 指针/块 → 64 KiB → 8 MiB"

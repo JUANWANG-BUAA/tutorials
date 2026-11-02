@@ -6568,7 +6568,7 @@
     "pages": "在线 Reference（2026-10-31 抓取）",
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
-    "evidence": ".work/cpp-rust-sources/reference/S10-trait-object.html",
+    "evidence": "sources/archive/reference/S10-trait-object.html",
     "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
     "basis": "artifact"
   },
@@ -6579,7 +6579,7 @@
     "pages": "在线 Reference（2026-10-31 抓取）",
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.3",
-    "evidence": ".work/cpp-rust-sources/reference/S10-dyn-compatibility.html",
+    "evidence": "sources/archive/reference/S10-dyn-compatibility.html",
     "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
     "basis": "artifact"
   },
@@ -6590,7 +6590,7 @@
     "pages": "在线 Reference（2026-10-31 抓取）",
     "status": "read-mapped",
     "target": "part2/ch05.md#sec-cpp-rust.2.5.4",
-    "evidence": ".work/cpp-rust-sources/reference/S10-codegen-attrs.html",
+    "evidence": "sources/archive/reference/S10-codegen-attrs.html",
     "note": "旧登记把这三页挂在母本 S10 名下；本条改挂在线 Reference，本地副本已入盘。",
     "basis": "artifact"
   },
@@ -6615,7 +6615,7 @@
     "pages": "HTML具名节；无固定页码",
     "status": "read-mapped",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.2",
-    "evidence": ".work/cpp-rust-sources/foundations/instant.html",
+    "evidence": "sources/archive/foundations/instant.html",
     "contribution": "sources/contributions/foundations.json#record-21",
     "basis": "online"
   },
@@ -6626,7 +6626,7 @@
     "pages": [],
     "status": "read-mapped",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.2",
-    "evidence": ".work/cpp-rust-sources/compiler/aliasing.html",
+    "evidence": "sources/archive/compiler/aliasing.html",
     "contribution": "sources/contributions/compiler.json#record-19",
     "basis": "online"
   }

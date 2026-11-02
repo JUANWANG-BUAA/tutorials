@@ -14,13 +14,13 @@
       "anchor": "sec-cpp-rust.4.17.2",
       "verdict": "finding",
       "notes": "字节账逐字节对 segment.rs：条目头 17=klen4+vlen4+op1+seq8（segment.rs:18,77-80），索引项 12=klen4+off8（:20,83-84,203-208），页脚 34=magic5+ver1+entries4+index_off8+bloom_off8+bloom_len4+crc4（:12-16,98-104）；CRC 覆盖 crc32(&buf) 在追加页脚之前（:97,157），「页脚 34 字节不在其中」正确；open 的核对次序=长度/魔数/版本/CRC 四道前置+四条范围关系（index_off>f、bloom_off>f、bloom_off+bloom_len==f、index_off+entries*12==bloom_off，:142-166），与正文/图一致。全部静态算术用 python 复算：97、12、97×65536=6356992、12×65536=786432、合计 7143424、+34=7143458、省 262144=256KiB、log2 65536=16、16×2^-8=6.25%、⌈log2 16000⌉=14、单槽 1/256≈0.39%、1525/200000=0.7625%≈1/131.1、0.762/0.390625≈1.95×、1989/2000=99.45%，全对；「400000 槽、fp=1525、0/50000、1989/2000」与 results/bloom-contract-2026-10-30.txt:11-14 逐字相符；一次探测比较 16 槽与 bloom.rs BUCKET=16、contains 定长 16 字节归约一致；「全仓没有 NonZero」grep 为零；EntryKind::Delete 存在。easy-fs 一段逐句对了本地归档（.work/.../2fs-implementation-rcore.html）：INODE_DIRECT_COUNT=28、14KiB、512/4=128、二级 128×64KiB=8MiB、间接要多读一次索引块、块缓存「统一缓冲区」告诫，全部有出处。没查的：无。问题集中在 17.2.2 的一句、图 17-2 的 <desc>、和几处体例。",
-      "evidence": "projects/tidekv/src/segment.rs:12-20,74-104,142-166,157,203-239,307-318；src/bloom.rs:4,59-72,108-141,181；tests/bloom_contract.rs:26-51,69-109；results/bloom-contract-2026-10-30.txt:11-14；.work/cpp-rust-sources/systems/2fs-implementation-rcore.html（INODE_DIRECT_COUNT=28 等）；python3 复算 97*65536、12*65536、16/256、ceil(log2(16000)) 等"
+      "evidence": "projects/tidekv/src/segment.rs:12-20,74-104,142-166,157,203-239,307-318；src/bloom.rs:4,59-72,108-141,181；tests/bloom_contract.rs:26-51,69-109；results/bloom-contract-2026-10-30.txt:11-14；sources/archive/systems/2fs-implementation-rcore.html（INODE_DIRECT_COUNT=28 等）；python3 复算 97*65536、12*65536、16/256、ceil(log2(16000)) 等"
     },
     {
       "anchor": "sec-cpp-rust.4.17.3",
       "verdict": "finding",
       "notes": "核对过：Segment 六字段与 segment.rs:128-135 一一对应（info/data/index_off/bloom_off/bloom_len/bloom）；open 一次 read_to_end 后丢弃 File、无常驻 fd ✓（:140-141）；三条安全不变量各自担保与代码吻合——①bytes_at 显式边界检查+unsafe from_raw_parts 注释（:307-318），②Arc<Segment> 共享+epoch 钉快照（engine.rs:100、epoch.rs），③写 tmp→sync_all→rename、无原地改段路径（segment.rs:106-116，全库无对已 open 段的写接口）；「一处写入即别名冲突」与段缓冲不可变流程一致。17.3.2 的 easy-fs 块缓存告诫逐句对归档原文（「一个块缓冲区修改后的内容在后续的同一个块读操作中不可见，这很致命但又难以调试」「将缓冲区统一管理」），存在且转述准确。跨章锚点 12.4.1/12.4.2/2.x 均存在于 ch12/ch02。问题：Definition 17.3.1 与例 17.3.1 解答里把共享缓冲称作 SegmentData——该类型不存在，且同段先说「没有 Arc<SegmentData> 这种中间层」后文又靠它叙述析构，自相矛盾。",
-      "evidence": "projects/tidekv/src/segment.rs:128-135,140-141,307-318,106-116；src/engine.rs:100,446-457；src/epoch.rs:76-115；.work/cpp-rust-sources/systems/2fs-implementation-rcore.html（块缓存告诫段）；grep NonZero/NonNull/SegmentData src tests → 仅 ch17.md:471,496 出现"
+      "evidence": "projects/tidekv/src/segment.rs:128-135,140-141,307-318,106-116；src/engine.rs:100,446-457；src/epoch.rs:76-115；sources/archive/systems/2fs-implementation-rcore.html（块缓存告诫段）；grep NonZero/NonNull/SegmentData src tests → 仅 ch17.md:471,496 出现"
     },
     {
       "anchor": "sec-cpp-rust.4.17.4",

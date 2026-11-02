@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
-  "provenance": "冷启动通读 src/part2/ch07.md 的 7.7–7.11 全部正文与语义盒（定义 7.7.1/7.8.1/7.8.2、例 7.7.1/7.8.1、思考 7.7.1/7.8.1、两份判定流程、两份即时自测、两份 errata、本章小结/速查/出口检查/章末件），并用 python 从 bench/results/local/atomic-4.txt、atomic-1.txt 逐批复算均值与标准差，逐行读了 bench/examples/publication.rs、bench/results/local/publication.txt、bench/results/profile/sample.txt 与 sample-command.txt、bench/results/local/environment.txt、tools/run_benchmarks.sh、bench/src/slot.rs、bench/results/apple-m5/atomics.s，以及 sources/reviews/S10.md、sources/web.json、sources/sections.json、src/appendix/coverage.md 与 .work/cpp-rust-sources/systems/2lock-rcore.html 的原文片段。",
+  "provenance": "冷启动通读 src/part2/ch07.md 的 7.7–7.11 全部正文与语义盒（定义 7.7.1/7.8.1/7.8.2、例 7.7.1/7.8.1、思考 7.7.1/7.8.1、两份判定流程、两份即时自测、两份 errata、本章小结/速查/出口检查/章末件），并用 python 从 bench/results/local/atomic-4.txt、atomic-1.txt 逐批复算均值与标准差，逐行读了 bench/examples/publication.rs、bench/results/local/publication.txt、bench/results/profile/sample.txt 与 sample-command.txt、bench/results/local/environment.txt、tools/run_benchmarks.sh、bench/src/slot.rs、bench/results/apple-m5/atomics.s，以及 sources/reviews/S10.md、sources/web.json、sources/sections.json、src/appendix/coverage.md 与 sources/archive/systems/2lock-rcore.html 的原文片段。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.2.7.7",
@@ -23,12 +23,12 @@
       "anchor": "sec-cpp-rust.2.7.8",
       "verdict": "pass",
       "method": "read",
-      "notes": "静态量与代码事实逐条核过。7.8.3 的清单正文 8 项、判定流程写「八项」，数目相符；7.8.4「槽位固定存在，直到两个端点全部结束」对到 bench/src/slot.rs:36-44（Slot::new/split 借用同一数组，无动态节点分配）。7.8.7 的四路径表逐格落到真实测试：空读=slot.rs:108（try_recv 得 None）、满写还值=slot.rs:110（try_send(5)→Err(5)，未发送值还给调用者）、正常移出不重复析构=:166-174（received_payload_is_not_dropped_again，计数 1）、遗留消息析构一次=:155-162（unread_payload_is_dropped_once，计数 1）；跨线程多代 String 循环=:117-142（format!(\"message-{i}\")）。7.8.9 与判定流程里的「本机 128 字节」与 environment.txt:12 一致。[@def-7.8.2] 对 lock-free/wait-free 的区分（前者只保证冲突集中至少一个推进、后者要每操作步数上界）与 7.8.8 反例、例 7.8.1 解答「合规句子」三处口径一致，未越界宣称整协议 lock-free；思考 7.8.1 关于「地址空间同一假设最先失效」与 7.8.3 的虚拟基址/物理页论述相符。7.8.5 三份课程材料中，rCore 那条我读了磁盘上的母本 .work/cpp-rust-sources/systems/2lock-rcore.html：原文确有「最为常见的几种包括：忙等、通过 yield 暂时让权以及后面重点介绍的阻塞」、确有单核忙等失效论证「我们目前基于单核 CPU……无论多少次查看标记都必定为 true……造成 CPU 资源的严重浪费」、确有教学软件锁的 compiler_fence(Ordering::SeqCst) 片段——正文三条断言逐字落地。Stanford lecture13 与 MIT l-lockv2.txt 在 sources/web.json 里登记为 reviewed-online 且无本地母本，故这两条我只核到「来源已登记、章节/学期定位与台账一致（Winter2022 lecture13、Fall2020 Lecture10 Locking）」，讲义内部措辞（每链接线程→fd 与线程上限→固定线程池；粗粒度锁起步再测量）本轮未逐字回查，正文也未引用其数字，判不构成 finding。本节 16 个 [@] 跨节锚点（def-7.1.1/7.1.2/7.2.2/7.3.1/7.4.1/7.5.1/7.5.2/7.6.1/7.7.1/7.8.1/7.8.2、ex-7.5.1/7.7.1/7.8.1、think-7.7.1/7.8.1）我已用脚本对全 src 的 {#id} 集合逐个验证可解析，内部锚 #sec-cpp-rust.2.7.8 同样可解析。",
+      "notes": "静态量与代码事实逐条核过。7.8.3 的清单正文 8 项、判定流程写「八项」，数目相符；7.8.4「槽位固定存在，直到两个端点全部结束」对到 bench/src/slot.rs:36-44（Slot::new/split 借用同一数组，无动态节点分配）。7.8.7 的四路径表逐格落到真实测试：空读=slot.rs:108（try_recv 得 None）、满写还值=slot.rs:110（try_send(5)→Err(5)，未发送值还给调用者）、正常移出不重复析构=:166-174（received_payload_is_not_dropped_again，计数 1）、遗留消息析构一次=:155-162（unread_payload_is_dropped_once，计数 1）；跨线程多代 String 循环=:117-142（format!(\"message-{i}\")）。7.8.9 与判定流程里的「本机 128 字节」与 environment.txt:12 一致。[@def-7.8.2] 对 lock-free/wait-free 的区分（前者只保证冲突集中至少一个推进、后者要每操作步数上界）与 7.8.8 反例、例 7.8.1 解答「合规句子」三处口径一致，未越界宣称整协议 lock-free；思考 7.8.1 关于「地址空间同一假设最先失效」与 7.8.3 的虚拟基址/物理页论述相符。7.8.5 三份课程材料中，rCore 那条我读了磁盘上的母本 sources/archive/systems/2lock-rcore.html：原文确有「最为常见的几种包括：忙等、通过 yield 暂时让权以及后面重点介绍的阻塞」、确有单核忙等失效论证「我们目前基于单核 CPU……无论多少次查看标记都必定为 true……造成 CPU 资源的严重浪费」、确有教学软件锁的 compiler_fence(Ordering::SeqCst) 片段——正文三条断言逐字落地。Stanford lecture13 与 MIT l-lockv2.txt 在 sources/web.json 里登记为 reviewed-online 且无本地母本，故这两条我只核到「来源已登记、章节/学期定位与台账一致（Winter2022 lecture13、Fall2020 Lecture10 Locking）」，讲义内部措辞（每链接线程→fd 与线程上限→固定线程池；粗粒度锁起步再测量）本轮未逐字回查，正文也未引用其数字，判不构成 finding。本节 16 个 [@] 跨节锚点（def-7.1.1/7.1.2/7.2.2/7.3.1/7.4.1/7.5.1/7.5.2/7.6.1/7.7.1/7.8.1/7.8.2、ex-7.5.1/7.7.1/7.8.1、think-7.7.1/7.8.1）我已用脚本对全 src 的 {#id} 集合逐个验证可解析，内部锚 #sec-cpp-rust.2.7.8 同样可解析。",
       "evidence": [
         "8 项清单 vs 判定流程「八项」：src/part2/ch07.md:1625-1632, 1749",
         "bench/src/slot.rs:108, 110, 155-162, 166-174, 117-142（四路径 + 多代 String）",
         "bench/src/slot.rs:36-44（固定槽位、无动态 free）",
-        ".work/cpp-rust-sources/systems/2lock-rcore.html（忙等/yield/阻塞三分、单核忙等失效、compiler_fence(Ordering::SeqCst) 原文命中）",
+        "sources/archive/systems/2lock-rcore.html（忙等/yield/阻塞三分、单核忙等失效、compiler_fence(Ordering::SeqCst) 原文命中）",
         "bench/results/local/environment.txt:12（hw.cachelinesize: 128）",
         "锚点脚本：16 个 [@id] 全部存在于 src/**/*.md 的 {#id} 集合"
       ]

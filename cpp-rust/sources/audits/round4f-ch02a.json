@@ -24,7 +24,7 @@
       "evidence": [
         "bench/foundations-lab/results/native-01/layout.txt:5-7（Option<NonZeroU64>,8,8 / Option<u64>,16,8 / Option<Handle>,8,8）",
         "bench/foundations-lab/examples/layout.rs:16-17（#[repr(transparent)] struct Handle(NonZeroU64)）",
-        "sources/web.json → id FOUNDATIONS-OPTION，target part1/ch02.md#sec-cpp-rust.1.2.2，download_evidence .work/cpp-rust-sources/foundations/option.html；该文件实存且含 § Representation 目录项",
+        "sources/web.json → id FOUNDATIONS-OPTION，target part1/ch02.md#sec-cpp-rust.1.2.2，download_evidence sources/archive/foundations/option.html；该文件实存且含 § Representation 目录项",
         "ls bench/foundations-lab/results/native-01/ → 无 Option 计时/事件类归档文件（2.2.6 的未采集声明与磁盘一致）"
       ]
     },

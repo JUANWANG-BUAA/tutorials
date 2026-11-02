@@ -27,7 +27,7 @@
         "tokio-1.54.0/src/runtime/task/state.rs:253-280（transition_to_notified_by_ref 四分支）",
         "state.rs:258-263 逐字注释「...we must use an Release store (with the same value), to pair with the Acquire in transition_to_running」；state.rs:117 transition_to_running",
         "tokio-1.54.0/src/task/blocking.rs:27-30「Code running behind `block_in_place` cannot be cancelled...」、:115-120「It is possible for a blocking task to be cancelled if it has not yet started running, but this is not guaranteed.」",
-        "sources/web.json：id=rcore-task-switch(chapter3/2task-switching.html, sha256=a71948e9…) 与 id=rcore-time-sharing(chapter3/4time-sharing-system.html, sha256=560b98fe…)；archive 在 .work/cpp-rust-sources/systems/",
+        "sources/web.json：id=rcore-task-switch(chapter3/2task-switching.html, sha256=a71948e9…) 与 id=rcore-time-sharing(chapter3/4time-sharing-system.html, sha256=560b98fe…)；archive 在 sources/archive/systems/",
         "bench/runtime-lab/tests/contracts.rs:26-48、:52、:73（abort 测试的等待-取消-断言-cancelled-等 Drop 次序）",
         "自算：12 callee-saved + ra + sp = 14；1000/100 = 10 ms"
       ]
@@ -36,11 +36,11 @@
       "anchor": "sec-cpp-rust.3.9.3",
       "verdict": "finding",
       "method": "read",
-      "notes": "逐盒核读了 9.3.1–9.3.7。参数表与结构清单我全部在 tokio-1.54.0 的运行时文档里逐行找到，没有一格是凭印象写的：current-thread「本地队列连续取 31 次后才看全局队列、31 可用 global_queue_interval 改」（runtime/mod.rs:330-335）、I/O 与计时器「无就绪任务或连续调度 61 次后检查，61 可用 event_interval 改」（:337-339 与 :371-373）、局部队列「最多容纳 256 个任务，超过后一半移到全局队列」（:353-355）、窃取「把另一个 worker 局部队列的一半搬过来」（:366-369）、multi_thread 全局检查「未显式设置时按 worker_mean_poll_time 启发式动态计算、目标 10 ms」（:360-364）、LIFO 槽「唤醒的任务进 lifo slot、槽被占时原任务回本地队列、连续使用三次后临时禁用、别的 worker 不能窃取该槽」（:375-387）；这些行都落在 runtime-code.json 登记的 reviewed_ranges=[175,406] 内，9.3.2「每一格都是绑定版本的观察、参数不是语言常量」的说法与文档原文（behavior may change in future versions、可按设置改）方向一致，9.3.3 说「本轮文档讨论了 LIFO 连续使用限制与预算」也命中（coop budget 不重置 + 三次禁用）。9.3.2 的彩票/步长对照能落地：web.json 的 rcore-sched 归档 .work/cpp-rust-sources/systems/4scheduling-rcore.html 里可搜到「彩票」「步长」，review_scope 明写「彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）」，与正文「几乎不必记历史/短窗口比例会漂」「步长与权重成反比、挑累计行程最小、新来者初始账目要校准」一致；唯一问题是引用标签把节名写成章名（见 findings，P2）。9.3.6/think-9.3.1 用到的 2.602 与 0.750 我从归档复算命中（见 9.5 判定），0.750÷2.602=0.288→「约 0.29」成立，「本轮没有采窃取次数/成功率」与 measurements-final 里不存在任何窃取打点文件一致；9.3.4/9.3.5 关于 Pin、!Send、LocalSet 的断言未引入数字，「没有 NUMA 维度就不进结论」也与 environment.txt 只记录单机信息一致。",
+      "notes": "逐盒核读了 9.3.1–9.3.7。参数表与结构清单我全部在 tokio-1.54.0 的运行时文档里逐行找到，没有一格是凭印象写的：current-thread「本地队列连续取 31 次后才看全局队列、31 可用 global_queue_interval 改」（runtime/mod.rs:330-335）、I/O 与计时器「无就绪任务或连续调度 61 次后检查，61 可用 event_interval 改」（:337-339 与 :371-373）、局部队列「最多容纳 256 个任务，超过后一半移到全局队列」（:353-355）、窃取「把另一个 worker 局部队列的一半搬过来」（:366-369）、multi_thread 全局检查「未显式设置时按 worker_mean_poll_time 启发式动态计算、目标 10 ms」（:360-364）、LIFO 槽「唤醒的任务进 lifo slot、槽被占时原任务回本地队列、连续使用三次后临时禁用、别的 worker 不能窃取该槽」（:375-387）；这些行都落在 runtime-code.json 登记的 reviewed_ranges=[175,406] 内，9.3.2「每一格都是绑定版本的观察、参数不是语言常量」的说法与文档原文（behavior may change in future versions、可按设置改）方向一致，9.3.3 说「本轮文档讨论了 LIFO 连续使用限制与预算」也命中（coop budget 不重置 + 三次禁用）。9.3.2 的彩票/步长对照能落地：web.json 的 rcore-sched 归档 sources/archive/systems/4scheduling-rcore.html 里可搜到「彩票」「步长」，review_scope 明写「彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）」，与正文「几乎不必记历史/短窗口比例会漂」「步长与权重成反比、挑累计行程最小、新来者初始账目要校准」一致；唯一问题是引用标签把节名写成章名（见 findings，P2）。9.3.6/think-9.3.1 用到的 2.602 与 0.750 我从归档复算命中（见 9.5 判定），0.750÷2.602=0.288→「约 0.29」成立，「本轮没有采窃取次数/成功率」与 measurements-final 里不存在任何窃取打点文件一致；9.3.4/9.3.5 关于 Pin、!Send、LocalSet 的断言未引入数字，「没有 NUMA 维度就不进结论」也与 environment.txt 只记录单机信息一致。",
       "evidence": [
         "tokio-1.54.0/src/runtime/mod.rs:330-335（31）、:337-339 与 :371-373（61、I/O/计时器）、:353-355（256 与一半移到全局）、:360-364（动态计算、10ms 目标）、:366-369（窃取一半）、:375-387（lifo slot 三次禁用、不可被窃取）",
         "sources/runtime-code.json：tokio-runtime-code reviewed_ranges=[[175,406]]（覆盖上述全部行号）",
-        "sources/web.json id=rcore-sched → https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html；grep 命中「彩票」「步长」于 .work/cpp-rust-sources/systems/4scheduling-rcore.html",
+        "sources/web.json id=rcore-sched → https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html；grep 命中「彩票」「步长」于 sources/archive/systems/4scheduling-rcore.html",
         "复算：0.750 ÷ 2.602 = 0.2882（正文写 0.29）；128 × 8192 = 1048576",
         "bench/results/runtime-fixed/measurements-final/ 目录清单中无任何 steal 计数/成功率打点文件（blocking-poll.txt、scheduling.txt、scheduling.s 等 26 项）"
       ]
@@ -95,8 +95,8 @@
     {
       "anchor": "sec-cpp-rust.3.9.3",
       "severity": "P2",
-      "description": "9.3.2 之后讲彩票调度与步长调度的出处被标成「rCore 教程第五章『进程调度』」，而 sources/web.json 登记的母本是 chapter5/4scheduling.html（id=rcore-sched，archive=.work/cpp-rust-sources/systems/4scheduling-rcore.html），即第五章里的调度一节，rCore v3 第五章本身不叫「进程调度」。内容我核对成立（review_scope 明写「彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）」，与正文「几乎不必记历史/短窗口比例会漂」「步长与权重成反比、挑累计行程最小、新来者初始账目要校准」一致），问题只在引用标签把节名写成章名，读者按章名去查会找不到对应标题。",
-      "evidence": "sources/web.json：{\"id\":\"rcore-sched\",\"url\":\"https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html\",\"archive\":\".work/cpp-rust-sources/systems/4scheduling-rcore.html\",\"review_scope\":\"…彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）…\"}；grep 「彩票」「步长」命中该归档"
+      "description": "9.3.2 之后讲彩票调度与步长调度的出处被标成「rCore 教程第五章『进程调度』」，而 sources/web.json 登记的母本是 chapter5/4scheduling.html（id=rcore-sched，archive=sources/archive/systems/4scheduling-rcore.html），即第五章里的调度一节，rCore v3 第五章本身不叫「进程调度」。内容我核对成立（review_scope 明写「彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）」，与正文「几乎不必记历史/短窗口比例会漂」「步长与权重成反比、挑累计行程最小、新来者初始账目要校准」一致），问题只在引用标签把节名写成章名，读者按章名去查会找不到对应标题。",
+      "evidence": "sources/web.json：{\"id\":\"rcore-sched\",\"url\":\"https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html\",\"archive\":\"sources/archive/systems/4scheduling-rcore.html\",\"review_scope\":\"…彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）…\"}；grep 「彩票」「步长」命中该归档"
     }
   ]
 }

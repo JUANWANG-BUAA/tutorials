@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
-  "provenance": "冷启动逐字读完 src/part1/ch02.md 的 2.1–2.6 全部正文与每个语义盒（定义、例题与解答、思考、判定流程、常见错误、即时自测、小结），未抽样；回查 bench/foundations-lab 的 src/lib.rs、src/bin/locality.rs、examples/layout.rs、analyze.py 与 results/native-01/{layout.txt,locality.csv,allocation.csv,environment.txt,sample-locality.txt,statistics.json,codegen/*.s,codegen/*.ll}，另核对 src/part1/ch01.md 的被引定义与 src/appendix/coverage.md 登记行；所有测量数字用本机 /usr/bin/python3 从正文点名的 CSV 逐位复算，两条 rCore 引文回查 .work/cpp-rust-sources/systems/ 的母本 HTML 逐句比对。",
+  "provenance": "冷启动逐字读完 src/part1/ch02.md 的 2.1–2.6 全部正文与每个语义盒（定义、例题与解答、思考、判定流程、常见错误、即时自测、小结），未抽样；回查 bench/foundations-lab 的 src/lib.rs、src/bin/locality.rs、examples/layout.rs、analyze.py 与 results/native-01/{layout.txt,locality.csv,allocation.csv,environment.txt,sample-locality.txt,statistics.json,codegen/*.s,codegen/*.ll}，另核对 src/part1/ch01.md 的被引定义与 src/appendix/coverage.md 登记行；所有测量数字用本机 /usr/bin/python3 从正文点名的 CSV 逐位复算，两条 rCore 引文回查 sources/archive/systems/ 的母本 HTML 逐句比对。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.1.2.1",
@@ -37,7 +37,7 @@
         "复算：65536*64=4194304；65536*8=524288；比值 8；8/64=12.5%；0.519143207/0.059380878=8.7426",
         "bench/foundations-lab/src/lib.rs:5；results/native-01/layout.txt:4；locality.csv:1",
         "bench/foundations-lab/results/native-01/environment.txt:14（hw.cachelinesize: 128）",
-        ".work/cpp-rust-sources/systems/3sv39-implementation-1-rcore.html（大页/TLB/IPC/三种连续区域原句）",
+        "sources/archive/systems/3sv39-implementation-1-rcore.html（大页/TLB/IPC/三种连续区域原句）",
         "src/appendix/coverage.md:|rcore-sv39|…chapter4/3sv39-implementation-1.html|SHA 654584dd…|→ #sec-cpp-rust.1.2.3"
       ]
     },
@@ -76,7 +76,7 @@
         "bench/foundations-lab/src/lib.rs:101-124（组件代码逐字符相同，无 unsafe）、:195-203（事务性测试）、:94-100（compile-fail）",
         "手推复核：take(3) 走 get_mut 失败、take(usize::MAX) 走 checked_add 失败，两者均不改 used；[0;2] 与 [7;6] 与测试断言相同",
         "results/native-01/codegen/foundations_lab-29c064615efbeca4.ll（___rust_alloc_zeroed(capacity, range(i64 1, 9) 1) → align 1）",
-        ".work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html（Layout/2 的幂/.bss 零初始化数组/Mutex<T> 先拿锁原句）",
+        "sources/archive/systems/1rust-dynamic-allocation-rcore.html（Layout/2 的幂/.bss 零初始化数组/Mutex<T> 先拿锁原句）",
         "复算 allocation.csv：fresh_vec 8.248312814、byte_region 2.813854399、比值 2.9313"
       ]
     }

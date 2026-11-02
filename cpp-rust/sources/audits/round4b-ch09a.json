@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
-  "provenance": "冷启动读 src/part3/ch09.md 的 9.1–9.6 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/errata/即时自测），并把可对核断言逐个拿去对磁盘产物：bench/results/runtime-fixed/measurements-final/{scheduling.s,scheduling.txt,blocking-poll.txt,type-layout.txt,scheduling-sample.txt}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、~/.cargo/registry 里的 tokio-1.54.0（runtime/mod.rs 175-406 段、runtime/task/state.rs 253-278 段）、本机 rCore 母本 .work/cpp-rust-sources/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html}、sources/runtime-code.json；测量数字全部用 /usr/bin/python3 从原始 ns 样本重算。",
+  "provenance": "冷启动读 src/part3/ch09.md 的 9.1–9.6 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/errata/即时自测），并把可对核断言逐个拿去对磁盘产物：bench/results/runtime-fixed/measurements-final/{scheduling.s,scheduling.txt,blocking-poll.txt,type-layout.txt,scheduling-sample.txt}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、~/.cargo/registry 里的 tokio-1.54.0（runtime/mod.rs 175-406 段、runtime/task/state.rs 253-278 段）、本机 rCore 母本 sources/archive/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html}、sources/runtime-code.json；测量数字全部用 /usr/bin/python3 从原始 ns 样本重算。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.9.1",
@@ -24,8 +24,8 @@
       "evidence": [
         "tokio-1.54.0/src/runtime/task/state.rs:255-276（四个分支 + 258-262 行注释 'Even hough we have nothing to do in this branch, wake_by_ref() should synchronize-with the task starting execution, therefore we must use an Release store (with the same value), to pair with the Acquire in transition_to_running.'）",
         "src/part3/ch09.md:304-313 表格四行与源码分支一一对应；ch09.md:331 的 Release 说法有源码注释支撑",
-        ".work/cpp-rust-sources/systems/2task-switching-rcore.html: 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'、'阶段 [3] …恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器'、'__switch 是一个用汇编代码写的特殊函数'、'任务上下文 TaskContext 被保存在任务控制块中'；14 = 1 + 1 + 12",
-        ".work/cpp-rust-sources/systems/4time-sharing-system-rcore.html: 'TICKS_PER_SEC: usize = 100;' 与 '这样，10ms 之后一个 S 特权级时钟中断就会被触发'",
+        "sources/archive/systems/2task-switching-rcore.html: 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'、'阶段 [3] …恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器'、'__switch 是一个用汇编代码写的特殊函数'、'任务上下文 TaskContext 被保存在任务控制块中'；14 = 1 + 1 + 12",
+        "sources/archive/systems/4time-sharing-system-rcore.html: 'TICKS_PER_SEC: usize = 100;' 与 '这样，10ms 之后一个 S 特权级时钟中断就会被触发'",
         "src/part3/ch09.md:381 写「（9.5 的阻塞 poll 实验测的就是这条）」，但 9.5（ch09.md:838）是让出粒度与 worker 数，阻塞 poll 实验是 9.6（ch09.md:975，夹具 bench/runtime-lab/src/bin/blocking_poll.rs）"
       ]
     },
@@ -114,7 +114,7 @@
       "anchor": "sec-cpp-rust.3.9.2",
       "severity": "P2",
       "description": "def-9.2.3 里「rCore 教程把这一层写到可运行的粒度：它给保存项定的规矩有两条，得同时成立才算数：这份状态切回来之后还得用得上，而且切出去这段时间里有被别的代码写脏的可能」把「两条判据」这条规则记在 rCore 名下。母本实际给的是三分法：__switch 手动保存 ra 与 s0~s11（因为是汇编、编译器不会插 callee-saved 保存）、caller-saved 由高级语言侧的调用者代码保存、临时寄存器不需保存——没有一个「两条同时成立」的准则句。作为教学化改写这两条讲得通，但句式让读者以为能在母本里找到那条准则；建议改成「按母本的三分法可以这样理解」。同节的可核对量我都验过：14 项 = ra + sp + s[12]、ra 属 caller-saved、TICKS_PER_SEC=100 → 10 ms，均正确。",
-      "evidence": "src/part3/ch09.md:373；.work/cpp-rust-sources/systems/2task-switching-rcore.html 的「不用保存其它寄存器是因为：其它寄存器中，属于调用者保存的寄存器是由编译器在高级语言编写的调用函数中自动生成的代码来完成保存的；还有一些寄存器属于临时寄存器，不需要保存和恢复」与 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'"
+      "evidence": "src/part3/ch09.md:373；sources/archive/systems/2task-switching-rcore.html 的「不用保存其它寄存器是因为：其它寄存器中，属于调用者保存的寄存器是由编译器在高级语言编写的调用函数中自动生成的代码来完成保存的；还有一些寄存器属于临时寄存器，不需要保存和恢复」与 'pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }'"
     }
   ]
 }

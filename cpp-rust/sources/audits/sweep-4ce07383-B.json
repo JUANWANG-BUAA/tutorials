@@ -2,7 +2,7 @@
   "reviewer": "sweep4ce-B",
   "kind": "independent",
   "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa91b2e",
-  "provenance": "冷启动独立审计。完整通读 src/part4/ch17.md 第 457-874 行（17.3/17.4/17.5 全部正文、定义、例题与解答、思考、判定流程、常见错误、即时自测）。逐条对核 projects/tidekv 真实代码：src/segment.rs、src/epoch.rs、src/stats.rs、src/codec.rs、src/bin/tide-mech.rs、src/engine.rs，以及 tests/epoch_reclaim.rs、tests/concurrency.rs、tests/codec_contract.rs、tests/bloom_contract.rs。所有实测数字用 /usr/bin/python3 从 results/run-02/codec.csv 原始行重算（含 bootstrap CI 按 analyze.py:76 的 random.Random(seed^0xB007) 百分位法复现），并与 statistics-codec.json、gate-codec.json、mech-verification.txt、environment.txt、codegen/codec-codegen.txt、Cargo.toml 交叉核对。外部引文（17.3.2 easy-fs 块缓存）在本地母本 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 中核对原文。未修改任何其他仓库文件。",
+  "provenance": "冷启动独立审计。完整通读 src/part4/ch17.md 第 457-874 行（17.3/17.4/17.5 全部正文、定义、例题与解答、思考、判定流程、常见错误、即时自测）。逐条对核 projects/tidekv 真实代码：src/segment.rs、src/epoch.rs、src/stats.rs、src/codec.rs、src/bin/tide-mech.rs、src/engine.rs，以及 tests/epoch_reclaim.rs、tests/concurrency.rs、tests/codec_contract.rs、tests/bloom_contract.rs。所有实测数字用 /usr/bin/python3 从 results/run-02/codec.csv 原始行重算（含 bootstrap CI 按 analyze.py:76 的 random.Random(seed^0xB007) 百分位法复现），并与 statistics-codec.json、gate-codec.json、mech-verification.txt、environment.txt、codegen/codec-codegen.txt、Cargo.toml 交叉核对。外部引文（17.3.2 easy-fs 块缓存）在本地母本 sources/archive/systems/2fs-implementation-rcore.html 中核对原文。未修改任何其他仓库文件。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.4.17.3",
@@ -17,7 +17,7 @@
         "projects/tidekv/src/segment.rs:307-318 (bytes_at 边界 assert + SAFETY 注释)",
         "projects/tidekv/src/engine.rs:98-103,100 (SegmentList 持 Vec<Arc<Segment>>)",
         "projects/tidekv/src/engine.rs:449-500 (Snapshot::get 零拷贝借用)",
-        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html (easy-fs 块缓存原文「这很致命但又难以调试」)"
+        "sources/archive/systems/2fs-implementation-rcore.html (easy-fs 块缓存原文「这很致命但又难以调试」)"
       ]
     },
     {

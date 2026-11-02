@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
-  "provenance": "冷启动逐字读完 src/part4/ch17.md 的 17.1–17.6 全部正文与每个语义盒（定义/例题解答/思考/判定流程/常见错误/即时自测），并把机制轮输入家族拿去逐行核 projects/tidekv/src/bin/tide-mech.rs、把 easy-fs 容量与块缓存警告两处对 .work/cpp-rust-sources/systems/2fs-implementation-rcore.html 落盘母本原文比对、把静态字节账与假阳率算式自行复算、把布隆实测回 projects/tidekv/results/bloom-contract-2026-10-30.txt 归档逐位复现、跑 python3 tools/list_uncollected_claims.py 只看 ch17；无先前上下文，不假设作者为对。",
+  "provenance": "冷启动逐字读完 src/part4/ch17.md 的 17.1–17.6 全部正文与每个语义盒（定义/例题解答/思考/判定流程/常见错误/即时自测），并把机制轮输入家族拿去逐行核 projects/tidekv/src/bin/tide-mech.rs、把 easy-fs 容量与块缓存警告两处对 sources/archive/systems/2fs-implementation-rcore.html 落盘母本原文比对、把静态字节账与假阳率算式自行复算、把布隆实测回 projects/tidekv/results/bloom-contract-2026-10-30.txt 归档逐位复现、跑 python3 tools/list_uncollected_claims.py 只看 ch17；无先前上下文，不假设作者为对。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.4.17.1",

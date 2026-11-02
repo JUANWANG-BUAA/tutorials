@@ -4,27 +4,27 @@
     "url": "https://rustc-dev-guide.rust-lang.org/thir.html",
     "sha256": "756c33434ac476b4ddb7389a929de5248b1698d5cffd2c111905c07b4f856146",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/thir.html"
+    "evidence": "sources/archive/compiler/thir.html"
   },
   {
     "id": "compiler-web-drop-elaboration",
     "url": "https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html",
     "sha256": "f229f77c92444d2d17b408042868f27d788ff1f84f1cf1457e670ded191863bb",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/drop-elaboration.html"
+    "evidence": "sources/archive/compiler/drop-elaboration.html"
   },
   {
     "id": "compiler-web-aliasing",
     "url": "https://doc.rust-lang.org/nomicon/aliasing.html",
     "sha256": "cbbfc595f863dd608be9e095b3a6efb70c2f54e9b413f1494b5a9e75667463e0",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/aliasing.html"
+    "evidence": "sources/archive/compiler/aliasing.html"
   },
   {
     "id": "compiler-web-pgo",
     "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
     "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/pgo.html"
+    "evidence": "sources/archive/compiler/pgo.html"
   }
 ]

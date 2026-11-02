@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "8030ea1972c57505d5ac8cabc62c3afe80184d6a32f6ff7710a22709eebe76d9",
-  "provenance": "冷启动完整通读 src/part3/ch11.md 1474-1932 行（11.7-11.11 全部正文与语义盒），用 python 从 bench/systems-lab/results/run-01/epoch.txt 逐行复算 21 批均值/标准差/p50/p99 与逐批表，核对 epoch.rs/lib.rs/queue.txt/codegen .s，回盘 .work/cpp-rust-sources/systems/mit-rcu.txt、sources/inventory.json、sources/web.json、src/appendix/coverage.md，并跑 tools/list_uncollected_claims.py 对照 ch11。",
+  "provenance": "冷启动完整通读 src/part3/ch11.md 1474-1932 行（11.7-11.11 全部正文与语义盒），用 python 从 bench/systems-lab/results/run-01/epoch.txt 逐行复算 21 批均值/标准差/p50/p99 与逐批表，核对 epoch.rs/lib.rs/queue.txt/codegen .s，回盘 sources/archive/systems/mit-rcu.txt、sources/inventory.json、sources/web.json、src/appendix/coverage.md，并跑 tools/list_uncollected_claims.py 对照 ch11。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.11.7",
@@ -21,9 +21,9 @@
       "anchor": "sec-cpp-rust.3.11.8",
       "verdict": "finding",
       "method": "read",
-      "notes": "母本回盘：.work/cpp-rust-sources/systems/mit-rcu.txt 存在，sha256=34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6，台账 sources/web.json 登记 id=systems-mit-rcu、URL=pdos.csail.mit.edu/6.828/2024/lec/l-rcu.txt，与正文 11.8.1 说法逐字吻合。三条契约中第二条（不许睡眠/让出，讲义 151/264 行）与第三条（等所有 CPU 上下文切换后回收，讲义 157/208 行）有原文支撑。但第一条的括号'可抢占内核里同时关抢占、记深度'及表格第四行 PREEMPT_RCU、第二行'进入 idle 或系统调用返回'、第五行'软中断（ksoftirqd）'在母本全文 grep preempt/idle/softirq/depth 零命中，讲义亦不出现 quiescent state 一词——这些是 Linux 通识但被混排进'核读讲义压成三条'的归属里。宽限期是计数不是计时器、驻留期论证与 11.7 证据引用（0 dropped/1,048,576）复核为真；'async 滞留量没有采集'与工具输出一致。",
+      "notes": "母本回盘：sources/archive/systems/mit-rcu.txt 存在，sha256=34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6，台账 sources/web.json 登记 id=systems-mit-rcu、URL=pdos.csail.mit.edu/6.828/2024/lec/l-rcu.txt，与正文 11.8.1 说法逐字吻合。三条契约中第二条（不许睡眠/让出，讲义 151/264 行）与第三条（等所有 CPU 上下文切换后回收，讲义 157/208 行）有原文支撑。但第一条的括号'可抢占内核里同时关抢占、记深度'及表格第四行 PREEMPT_RCU、第二行'进入 idle 或系统调用返回'、第五行'软中断（ksoftirqd）'在母本全文 grep preempt/idle/softirq/depth 零命中，讲义亦不出现 quiescent state 一词——这些是 Linux 通识但被混排进'核读讲义压成三条'的归属里。宽限期是计数不是计时器、驻留期论证与 11.7 证据引用（0 dropped/1,048,576）复核为真；'async 滞留量没有采集'与工具输出一致。",
       "evidence": [
-        ".work/cpp-rust-sources/systems/mit-rcu.txt:151,179,208,264（三条前提的原文支撑）",
+        "sources/archive/systems/mit-rcu.txt:151,179,208,264（三条前提的原文支撑）",
         "grep -i 'preempt|idle|softirq|depth' mit-rcu.txt → 仅 yield/sleep 一处命中，关抢占/记深度/idle/ksoftirqd 无原文",
         "sources/web.json systems-mit-rcu 条目（sha 与正文 34201a6f... 一致）"
       ]
@@ -36,7 +36,7 @@
       "evidence": [
         "sources/inventory.json S08-U0015 (pdf_page 93) / S08-U0022 (pdf_page 146), sha256=399f4efe...",
         "src/appendix/coverage.md:385,2519 与 S08/R17-A、S08/R17-B、S08/SYS-S08-17、systems-mit-rcu 行",
-        "shasum -a 256 .work/cpp-rust-sources/systems/mit-rcu.txt = 34201a6f5cbd...6a6"
+        "shasum -a 256 sources/archive/systems/mit-rcu.txt = 34201a6f5cbd...6a6"
       ]
     },
     {
@@ -66,8 +66,8 @@
     {
       "anchor": "sec-cpp-rust.3.11.8",
       "severity": "P1",
-      "description": "11.8.1 明确说三条契约是把 MIT 6.828 RCU 讲义'压成三条'，但第一条的括号'（可抢占内核里同时关抢占、记深度）'以及 11.8.2 表中'进入 idle 或系统调用返回''PREEMPT_RCU''软中断（ksoftirqd）批处理'均不见于母本：对 .work/cpp-rust-sources/systems/mit-rcu.txt 全文 grep（-i）preempt/idle/softirq/ksoftirqd/depth/quiescent 零命中，讲义只支撑'不睡不让出、等所有 CPU 上下文切换、宽限期靠计数'这三点。属于把外部通识混排进已核实母本的归属，引用与母本不符。",
-      "evidence": "grep -in 'preempt|idle|softirq|depth|quiescent' .work/cpp-rust-sources/systems/mit-rcu.txt → 无命中（仅 264 行 yield/sleep 命中 sleep）；正文 src/part3/ch11.md:1687,1714,1716-1717"
+      "description": "11.8.1 明确说三条契约是把 MIT 6.828 RCU 讲义'压成三条'，但第一条的括号'（可抢占内核里同时关抢占、记深度）'以及 11.8.2 表中'进入 idle 或系统调用返回''PREEMPT_RCU''软中断（ksoftirqd）批处理'均不见于母本：对 sources/archive/systems/mit-rcu.txt 全文 grep（-i）preempt/idle/softirq/ksoftirqd/depth/quiescent 零命中，讲义只支撑'不睡不让出、等所有 CPU 上下文切换、宽限期靠计数'这三点。属于把外部通识混排进已核实母本的归属，引用与母本不符。",
+      "evidence": "grep -in 'preempt|idle|softirq|depth|quiescent' sources/archive/systems/mit-rcu.txt → 无命中（仅 264 行 yield/sleep 命中 sleep）；正文 src/part3/ch11.md:1687,1714,1716-1717"
     },
     {
       "anchor": "sec-cpp-rust.3.11.7",
@@ -85,7 +85,7 @@
       "anchor": "sec-cpp-rust.3.11.9",
       "severity": "P2",
       "description": "来源表 MIT 行的'本书论据映射'写'11.8 宽限期本质、静止状态定义与非抢占假设'：宽限期本质与不让出承诺在讲义有原文（145/157/208/264 行），但'静止状态定义'（quiescent state 一词）与'非抢占假设'在母本中不出现，映射措辞超出了该母本可支撑的内容，与 11.8 的 P1 同根，建议把该行改为讲义实际表述（'上下文切换计数与不睡眠承诺'）。",
-      "evidence": ".work/cpp-rust-sources/systems/mit-rcu.txt 全文无 quiescent/preempt；正文 src/part3/ch11.md:1845"
+      "evidence": "sources/archive/systems/mit-rcu.txt 全文无 quiescent/preempt；正文 src/part3/ch11.md:1845"
     }
   ]
 }

@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
-  "provenance": "冷启动独立复核：完整读了 src/part3/ch11.md 的 11.7–11.11 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/常见错误/即时自测），并用 /usr/bin/python3 从 bench/systems-lab/results/run-01/epoch.txt 与 queue.txt 的 raw 行逐批复算均值、样本与总体标准差、nearest-rank p50/p99、逐批倍率与逐批 z 值；打开 bench/systems-lab/src/bin/epoch.rs、src/lib.rs、tests/contracts.rs 逐行核对探针的单线程口径；回查 .work/cpp-rust-sources/systems/mit-rcu.txt（含 shasum 与关键词命中计数）与 src/appendix/coverage.md、sources/web.json 的登记行；另跑 tools/list_uncollected_claims.py --only 11。临时脚本在 /tmp/r4f_ch11b.py 与 /tmp/r4f_calc.py，仓库其他文件一律未改。",
+  "provenance": "冷启动独立复核：完整读了 src/part3/ch11.md 的 11.7–11.11 全部正文与每个语义盒（定义/例题/思考/判定流程/小结/常见错误/即时自测），并用 /usr/bin/python3 从 bench/systems-lab/results/run-01/epoch.txt 与 queue.txt 的 raw 行逐批复算均值、样本与总体标准差、nearest-rank p50/p99、逐批倍率与逐批 z 值；打开 bench/systems-lab/src/bin/epoch.rs、src/lib.rs、tests/contracts.rs 逐行核对探针的单线程口径；回查 sources/archive/systems/mit-rcu.txt（含 shasum 与关键词命中计数）与 src/appendix/coverage.md、sources/web.json 的登记行；另跑 tools/list_uncollected_claims.py --only 11。临时脚本在 /tmp/r4f_ch11b.py 与 /tmp/r4f_calc.py，仓库其他文件一律未改。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.11.7",
@@ -25,9 +25,9 @@
       "anchor": "sec-cpp-rust.3.11.8",
       "verdict": "finding",
       "method": "read",
-      "notes": "派单点名的「MIT 讲义归因是否已降级为背景陈述」，我实测三处：11.8.1 第二条后的括号说明（:1681）、五格表第一行（:1707）、第四行（:1710）、第五行（:1711）都明确写了「不来自这份 MIT 讲义／母本未证／属背景／不计入已核实」，降级确实做了，而且我回查母本证实自我限定为真：.work/cpp-rust-sources/systems/mit-rcu.txt（12,537 字节，shasum 前缀 34201a6f5cbd，与 sources/web.json 的 systems-mit-rcu 行、coverage.md:581/4092、11.9 表一致）里 grep -ci 'preempt|ksoftirqd|idle' 返回 0 行，正文「零命中」的说法站得住。讲义 :179「rcu_read_lock/unlock do almost nothing」、:208「delays until all CPUs have context-switched」、:145 grace period 三条前提的落点也逐行找到，11.8.2 读表法把分水岭放在第四行的论述与母本自洽。剩下的问题只有一格：第二行「静止状态定义」写成「CPU 执行上下文切换、进入 idle 或系统调用返回」，其中「进入 idle 或系统调用返回」正是母本零命中的 idle 那部分，却没有像第 1/4/5 行那样加背景标注；而 11.9 的 MIT 行「本书论据映射」仍把「静止状态定义」记作该讲义的核读落点，台账 systems-mit-rcu 的 review_scope 也写着 Quiescent State。这不是事实错误（内核静止状态确实含这两项），而是已核实范围的口径残留，判 P2。11.8.3 的 async 论述无实测主张，:1753 与 :1783 两处都写明「async 版本的滞留量本节没有采集」，口径干净；:1738 跨线程迁移用「可能」限定，且未冒充实测，可接受。",
+      "notes": "派单点名的「MIT 讲义归因是否已降级为背景陈述」，我实测三处：11.8.1 第二条后的括号说明（:1681）、五格表第一行（:1707）、第四行（:1710）、第五行（:1711）都明确写了「不来自这份 MIT 讲义／母本未证／属背景／不计入已核实」，降级确实做了，而且我回查母本证实自我限定为真：sources/archive/systems/mit-rcu.txt（12,537 字节，shasum 前缀 34201a6f5cbd，与 sources/web.json 的 systems-mit-rcu 行、coverage.md:581/4092、11.9 表一致）里 grep -ci 'preempt|ksoftirqd|idle' 返回 0 行，正文「零命中」的说法站得住。讲义 :179「rcu_read_lock/unlock do almost nothing」、:208「delays until all CPUs have context-switched」、:145 grace period 三条前提的落点也逐行找到，11.8.2 读表法把分水岭放在第四行的论述与母本自洽。剩下的问题只有一格：第二行「静止状态定义」写成「CPU 执行上下文切换、进入 idle 或系统调用返回」，其中「进入 idle 或系统调用返回」正是母本零命中的 idle 那部分，却没有像第 1/4/5 行那样加背景标注；而 11.9 的 MIT 行「本书论据映射」仍把「静止状态定义」记作该讲义的核读落点，台账 systems-mit-rcu 的 review_scope 也写着 Quiescent State。这不是事实错误（内核静止状态确实含这两项），而是已核实范围的口径残留，判 P2。11.8.3 的 async 论述无实测主张，:1753 与 :1783 两处都写明「async 版本的滞留量本节没有采集」，口径干净；:1738 跨线程迁移用「可能」限定，且未冒充实测，可接受。",
       "evidence": [
-        "shasum -a 256 .work/cpp-rust-sources/systems/mit-rcu.txt = 34201a6f5cbd…（12,537 字节）；sources/web.json 的 systems-mit-rcu 行 status=reviewed、archive 同路径；src/appendix/coverage.md:581、:4092",
+        "shasum -a 256 sources/archive/systems/mit-rcu.txt = 34201a6f5cbd…（12,537 字节）；sources/web.json 的 systems-mit-rcu 行 status=reviewed、archive 同路径；src/appendix/coverage.md:581、:4092",
         "grep -ci -e preempt -e ksoftirqd -e idle 在该母本 = 0",
         "母本原文：mit-rcu.txt:179「rcu_read_lock/unlock do almost nothing.」、:208「…delays until all CPUs have context-switched」、:145「a \"grace period\"」",
         "src/part3/ch11.md:1681、:1707、:1710、:1711（三处降级标注）；:1708（未标注的 idle 那格）；:1839（11.9 映射仍写「静止状态定义」）"
@@ -89,7 +89,7 @@
       "anchor": "sec-cpp-rust.3.11.8",
       "severity": "P2",
       "description": "MIT 讲义的归因降级基本完成，但漏了最后一格：11.8.2 五格表第二行「静止状态定义」在 Linux 内核一侧写成「CPU 执行上下文切换、进入 idle 或系统调用返回」，其中「进入 idle」正是 11.8.1(:1681) 自己宣布在母本里零命中的那个词，却没有像第一、四、五行那样附上「母本未证／属背景」的标注（母本只支持「delays until all CPUs have context-switched」那半句）。同时 11.9(:1839) 的 MIT 行「本书论据映射」仍把「静止状态定义」记作这份讲义的核读落点，台账 sources/web.json 的 systems-mit-rcu 行 review_scope 也写着 Quiescent State。事实本身不错（内核静止状态含 idle 与系统调用返回），问题是已核实范围的口径没补全，建议照第 1/4/5 行的写法给第 2 行加一句「后两项属 Linux 文档通行说法，登记母本未证」，并把 11.9 映射里的「静止状态定义」限定为「上下文切换计数的宽限期」。",
-      "evidence": "grep -ci -e preempt -e ksoftirqd -e idle = 0 on .work/cpp-rust-sources/systems/mit-rcu.txt（shasum 34201a6f5cbd…，12,537 字节）；母本 mit-rcu.txt:208；src/part3/ch11.md:1708、:1681、:1839；sources/web.json 的 systems-mit-rcu 行 review_scope"
+      "evidence": "grep -ci -e preempt -e ksoftirqd -e idle = 0 on sources/archive/systems/mit-rcu.txt（shasum 34201a6f5cbd…，12,537 字节）；母本 mit-rcu.txt:208；src/part3/ch11.md:1708、:1681、:1839；sources/web.json 的 systems-mit-rcu 行 review_scope"
     },
     {
       "anchor": "sec-cpp-rust.3.11.7",

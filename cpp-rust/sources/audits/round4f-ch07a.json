@@ -9,7 +9,7 @@
       "anchor": "sec-cpp-rust.2.7.1",
       "verdict": "pass",
       "method": "read",
-      "notes": "核对了 [@def-7.1.1] 的冲突访问/数据竞争三条件与 [@def-7.1.2] 三层证明的内部一致性；例 7.1.1 ③ 的『四线程共享计数约 6 ns』拿 atomic-4.txt 复算，Shared-Relaxed 批均 5.980、Shared-SeqCst 5.952，说『约 6』成立；7.1.3 的原子文档出处在 sources/web.json:29 确实登记为无版本号滚动入口，正文也照此不再写版本号，与该登记一致；『Rust 参考手册 PDF 第 334 页』只在 sources/inventory.json 登记了仓库外 local_path（第 21974 行），我没有读 PDF 原文核对那句，正文把它用作『历史范围』而非现行规范，按未穷尽处理；[@def-7.1.4] 的 rCore 三分类命名在 sources/web.json 与 .work/cpp-rust-sources/systems/5concurrency-problem-rcore.html 里能落到同一组词（互斥/同步/死锁缺陷），但『唤醒丢失归入同步缺陷』这一句我没有逐字回查母本原文。",
+      "notes": "核对了 [@def-7.1.1] 的冲突访问/数据竞争三条件与 [@def-7.1.2] 三层证明的内部一致性；例 7.1.1 ③ 的『四线程共享计数约 6 ns』拿 atomic-4.txt 复算，Shared-Relaxed 批均 5.980、Shared-SeqCst 5.952，说『约 6』成立；7.1.3 的原子文档出处在 sources/web.json:29 确实登记为无版本号滚动入口，正文也照此不再写版本号，与该登记一致；『Rust 参考手册 PDF 第 334 页』只在 sources/inventory.json 登记了仓库外 local_path（第 21974 行），我没有读 PDF 原文核对那句，正文把它用作『历史范围』而非现行规范，按未穷尽处理；[@def-7.1.4] 的 rCore 三分类命名在 sources/web.json 与 sources/archive/systems/5concurrency-problem-rcore.html 里能落到同一组词（互斥/同步/死锁缺陷），但『唤醒丢失归入同步缺陷』这一句我没有逐字回查母本原文。",
       "evidence": [
         "src/part2/ch07.md:65-286 全节正文逐段读",
         "bench/results/local/atomic-4.txt 复算：Shared-Relaxed mean=5.980 sd=0.069（n=21）",

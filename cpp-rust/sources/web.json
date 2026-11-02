@@ -22,7 +22,7 @@
     "sha256": "0f096f6dffde9b08380b5b62dc91bff7a89258203ae785a07b814a381021df18",
     "bytes": 52270,
     "status": "fetched-not-reviewed",
-    "archive": ".work/cpp-rust-sources/systems/index-ch8-rcore.html"
+    "archive": "sources/archive/systems/index-ch8-rcore.html"
   },
   {
     "id": "atomic",
@@ -76,7 +76,7 @@
     "sha256": "7684f01f14641ba6e243ec99b0812a8f28c62334e1b3934d4dc81c9fb8cba468",
     "bytes": 263340,
     "status": "reviewed-online",
-    "archive": ".work/cpp-rust-sources/systems/2lock-rcore.html",
+    "archive": "sources/archive/systems/2lock-rcore.html",
     "review_note": "在线核读，未保留本地母本；正文引用的是该 URL 当时抓取到的内容，sha256 即那份字节的指纹。"
   },
   {
@@ -139,7 +139,7 @@
     "sha256": "756c33434ac476b4ddb7389a929de5248b1698d5cffd2c111905c07b4f856146",
     "review_scope": "main article, excluding navigation",
     "bytes": 31476,
-    "archive": ".work/cpp-rust-sources/compiler/thir.html",
+    "archive": "sources/archive/compiler/thir.html",
     "status": "reviewed",
     "refetch": "2026-11-01 再抓一次并重新登记指纹：旧值 8f345529… 与在册的任何一份副本都对不上，是 10-31 重抓后没同步台账留下的洞。"
   },
@@ -148,34 +148,34 @@
     "url": "https://rustc-dev-guide.rust-lang.org/mir/drop-elaboration.html",
     "sha256": "f229f77c92444d2d17b408042868f27d788ff1f84f1cf1457e670ded191863bb",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/drop-elaboration.html",
+    "evidence": "sources/archive/compiler/drop-elaboration.html",
     "status": "reviewed",
     "loss_note": "2026-11-01 撤回 archive-lost：先前登记的「上游 404」经复查不成立，该 URL 返回 200、正文 34 518 字节，已重新抓取并按新指纹登记。",
     "refetch": "2026-11-01 curl 重抓成功（200，34 518 字节）；同日也重抓过 THIR 页并更新指纹。",
     "bytes": 34518,
-    "archive": ".work/cpp-rust-sources/compiler/drop-elaboration.html"
+    "archive": "sources/archive/compiler/drop-elaboration.html"
   },
   {
     "id": "compiler-web-aliasing",
     "url": "https://doc.rust-lang.org/nomicon/aliasing.html",
     "sha256": "cbbfc595f863dd608be9e095b3a6efb70c2f54e9b413f1494b5a9e75667463e0",
     "review_scope": "main article, excluding navigation；重点首末段：采用最宽泛的别名定义、Rust 自己的定义「大概会更受限制，要把 mutation 与 liveness 算进去」、完整模型还需计入函数调用/裸指针/UnsafeCell",
-    "evidence": ".work/cpp-rust-sources/compiler/aliasing.html",
+    "evidence": "sources/archive/compiler/aliasing.html",
     "status": "read-mapped",
-    "refetch": "2026-11-01 二次复核：先前的 archive-lost 判定有误。本地副本在盘 (`.work/cpp-rust-sources/compiler/aliasing.html`，28 700 字节)，重新抓取 URL 返回 200 且 SHA-256 与登记值逐位一致（cbbfc595…463e0）。"
+    "refetch": "2026-11-01 二次复核：先前的 archive-lost 判定有误。本地副本在盘 (`sources/archive/compiler/aliasing.html`，28 700 字节)，重新抓取 URL 返回 200 且 SHA-256 与登记值逐位一致（cbbfc595…463e0）。"
   },
   {
     "id": "compiler-web-pgo",
     "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
     "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
     "review_scope": "main article, excluding navigation",
-    "evidence": ".work/cpp-rust-sources/compiler/pgo.html"
+    "evidence": "sources/archive/compiler/pgo.html"
   },
   {
     "id": "EVID-cargo-features",
     "url": "https://doc.rust-lang.org/cargo/reference/features.html",
     "sha256": "78c663fe82a9c62d4f7b7c9ebebfd8a736ee81b2e601f2b07fdf316aa68e0700",
-    "archive": ".work/cpp-rust-sources/evidence/cargo-features.html",
+    "archive": "sources/archive/evidence/cargo-features.html",
     "review_scope": "完整Features正文；重点default、optional dependencies、feature unification、resolver v2和组合测试；未跟读外链",
     "status": "read-mapped"
   },
@@ -183,7 +183,7 @@
     "id": "EVID-cargo-profiles",
     "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
     "sha256": "2178bd9b63c5be9e3546b765d1ed6aad92efefee50923e4f54dc292b50954773",
-    "archive": ".work/cpp-rust-sources/evidence/cargo-profiles.html",
+    "archive": "sources/archive/evidence/cargo-profiles.html",
     "review_scope": "完整Profiles正文；重点lto=false/off、codegen-units、incremental、overrides、泛型实例化",
     "status": "read-mapped"
   },
@@ -191,7 +191,7 @@
     "id": "EVID-rustc-pgo",
     "url": "https://doc.rust-lang.org/rustc/profile-guided-optimization.html",
     "sha256": "955a07f3d9d6328b0d344581b98248adbfa1f506372a1cceb70eab170c98ba66",
-    "archive": ".work/cpp-rust-sources/evidence/rustc-pgo.html",
+    "archive": "sources/archive/evidence/rustc-pgo.html",
     "review_scope": "完整Profile-guided Optimization正文；四阶段与Cargo流程、绝对路径、missing-function警告",
     "status": "read-mapped"
   },
@@ -199,7 +199,7 @@
     "id": "EVID-cachegrind",
     "url": "https://valgrind.org/docs/manual/cg-manual.html",
     "sha256": "40fd719bcc25649892cf5ada0d9ed87a8bf8f6efd01cabe71792877b50153955",
-    "archive": ".work/cpp-rust-sources/evidence/cachegrind.html",
+    "archive": "sources/archive/evidence/cachegrind.html",
     "review_scope": "Overview与5.2.1–5.2.8；5.8.1–5.8.3到ASLR段；非完整手册",
     "status": "read-mapped",
     "observed_sha256": "ab36ffaad32d1b45c8bd8afc87a40395293c850a03b1045d096e46e76a204343",
@@ -209,7 +209,7 @@
     "id": "EVID-perf-event",
     "url": "https://man7.org/linux/man-pages/man2/perf_event_open.2.html",
     "sha256": "03b609628cc896b110cc98dfc8b39fd169c39dc129bb47d62b918995066cd3ae",
-    "archive": ".work/cpp-rust-sources/evidence/perf-event.html",
+    "archive": "sources/archive/evidence/perf-event.html",
     "review_scope": "read_format与TOTAL_TIME_ENABLED/RUNNING、precise_ip、read返回布局及复用缩放解释；非完整系统调用手册",
     "status": "read-mapped"
   },
@@ -217,7 +217,7 @@
     "id": "EVID-cargo-resolver",
     "url": "https://doc.rust-lang.org/cargo/reference/resolver.html",
     "sha256": "dd1d061ca25ca5570df0ee0f4840e6b7ee12d7e0d9c633396520e9d3402e2d50",
-    "archive": ".work/cpp-rust-sources/evidence/cargo-resolver.html",
+    "archive": "sources/archive/evidence/cargo-resolver.html",
     "review_scope": "Resolver versions与Rust version指定段；非完整resolver文档",
     "status": "read-mapped"
   },
@@ -225,7 +225,7 @@
     "id": "FFI-CATCH",
     "url": "https://doc.rust-lang.org/std/panic/fn.catch_unwind.html",
     "sha256": "535eb1e0371946ca50fd476944eaf0411ba5ff393a53702c3d46587804a3b873",
-    "archive": ".work/cpp-rust-sources/ffi-project/FFI-CATCH.html",
+    "archive": "sources/archive/ffi-project/FFI-CATCH.html",
     "review_scope": "catch_unwind documentation including Notes",
     "status": "reviewed"
   },
@@ -233,7 +233,7 @@
     "id": "FFI-SLICE",
     "url": "https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html",
     "sha256": "c6afe18f51c844c7d48fb732865c4a4c18a15443c9d9277c7e30f93645c3a7ce",
-    "archive": ".work/cpp-rust-sources/ffi-project/FFI-SLICE.html",
+    "archive": "sources/archive/ffi-project/FFI-SLICE.html",
     "review_scope": "from_raw_parts Safety and Caveat: Lifetimes",
     "status": "reviewed"
   },
@@ -241,7 +241,7 @@
     "id": "FFI-REPR",
     "url": "https://doc.rust-lang.org/reference/type-layout.html",
     "sha256": "d407581c2d5516e63df34253f7029c2c90f7bb6c238ecccf89a5c17ba5b1b564",
-    "archive": ".work/cpp-rust-sources/ffi-project/FFI-REPR.html",
+    "archive": "sources/archive/ffi-project/FFI-REPR.html",
     "review_scope": "repr(C) struct alignment, padding and layout algorithm",
     "status": "reviewed"
   },
@@ -251,7 +251,7 @@
     "sha256": "14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db",
     "review_scope": "Safety; Alignment; Pointer to reference conversion; Allocation; Provenance; Pointers Vs Integers; Strict Provenance; Using Strict Provenance; Exposed Provenance",
     "status": "read-mapped",
-    "download_evidence": ".work/cpp-rust-sources/foundations/ptr.html",
+    "download_evidence": "sources/archive/foundations/ptr.html",
     "target": "part1/ch03.md#sec-cpp-rust.1.3.7"
   },
   {
@@ -260,7 +260,7 @@
     "sha256": "08969609f3591ba394bbe6b2b9f3dca1c96b25c7dcfa9c8f83b62c63803d99ea",
     "review_scope": "Representation段及类型/条件表；非全篇API审计",
     "status": "read-mapped",
-    "download_evidence": ".work/cpp-rust-sources/foundations/option.html",
+    "download_evidence": "sources/archive/foundations/option.html",
     "target": "part1/ch02.md#sec-cpp-rust.1.2.2"
   },
   {
@@ -269,14 +269,14 @@
     "sha256": "4343593cafcaf72edc25626a0c256afe2c334d3fcebe7f56db13bd6013dc86f9",
     "review_scope": "完整Expand description、When is this useful、How to use this与全部示例",
     "status": "read-mapped",
-    "download_evidence": ".work/cpp-rust-sources/foundations/black_box.html",
+    "download_evidence": "sources/archive/foundations/black_box.html",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.3"
   },
   {
     "id": "systems-mit-rcu",
     "url": "https://pdos.csail.mit.edu/6.828/2024/lec/l-rcu.txt",
     "sha256": "34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6",
-    "archive": ".work/cpp-rust-sources/systems/mit-rcu.txt",
+    "archive": "sources/archive/systems/mit-rcu.txt",
     "review_scope": "Quiescent State, Grace Period, Read-Copy Update core mechanisms",
     "status": "reviewed"
   },
@@ -284,7 +284,7 @@
     "id": "systems-target-feature",
     "url": "https://doc.rust-lang.org/reference/attributes/codegen.html",
     "sha256": "18becca8e376dd8bc0bc8ee557ece8a2bb9053fbff23bc572c5351fbf42062c7",
-    "archive": ".work/cpp-rust-sources/systems/target-feature.html",
+    "archive": "sources/archive/systems/target-feature.html",
     "review_scope": "target_feature attribute and SIMD intrinsic safety contracts",
     "status": "reviewed"
   },
@@ -292,7 +292,7 @@
     "id": "systems-uring",
     "url": "https://man7.org/linux/man-pages/man7/io_uring.7.html",
     "sha256": "1ed71f55954959fc551915363b054c62fb28ba57ede487303d4cb2de0057feb9",
-    "archive": ".work/cpp-rust-sources/systems/uring.html",
+    "archive": "sources/archive/systems/uring.html",
     "review_scope": "SQE/CQE ring buffers, shared memory mapping and registered buffers",
     "status": "reviewed"
   },
@@ -300,7 +300,7 @@
     "id": "systems-uring-cancel",
     "url": "https://man7.org/linux/man-pages/man3/io_uring_prep_cancel.3.html",
     "sha256": "0f9c226cb76cc8df73dbd6399e4cbe83e0db82ac62f925780968677da241e32b",
-    "archive": ".work/cpp-rust-sources/systems/uring-cancel.html",
+    "archive": "sources/archive/systems/uring-cancel.html",
     "review_scope": "io_uring async request cancelation lifecycle",
     "status": "reviewed"
   },
@@ -308,7 +308,7 @@
     "id": "systems-rcore-io",
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/1fs-interface.html",
     "sha256": "55ff0cac446a27bc0485d3c65e664193dd8dba6819a4112f4531c33a0a70fb97",
-    "archive": ".work/cpp-rust-sources/systems/rcore-io.html",
+    "archive": "sources/archive/systems/rcore-io.html",
     "review_scope": "文件系统接口：目录项是「文件名→Inode 号」的映射；路径解析必须逐级下探、天然串行；该页注解指出高并发场景可压平目录树、把磁盘布局改成类键值存储；打开文件返回描述符表最小空闲位",
     "status": "reviewed",
     "bytes": 80928
@@ -319,7 +319,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/2task-switching.html",
     "sha256": "a71948e9b498bc6493e310e1c5670785eaf31c50a1752f3764de9ee250832870",
     "bytes": 68029,
-    "archive": ".work/cpp-rust-sources/systems/2task-switching-rcore.html",
+    "archive": "sources/archive/systems/2task-switching-rcore.html",
     "review_scope": "TaskContext 保存 ra 与 s0~s11 及内核栈 sp；__switch 手写汇编；只保存仍有用且有覆盖风险的资源",
     "status": "read-mapped"
   },
@@ -329,7 +329,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/4time-sharing-system.html",
     "sha256": "560b98fe7325b20dea6f385450477c4a15b27bcc1516fe6e3137dd41979533b4",
     "bytes": 76312,
-    "archive": ".work/cpp-rust-sources/systems/4time-sharing-system-rcore.html",
+    "archive": "sources/archive/systems/4time-sharing-system-rcore.html",
     "review_scope": "时间片轮转与抢占；mtime/mtimecmp；SBI set_timer；TICKS_PER_SEC=100",
     "status": "read-mapped"
   },
@@ -339,7 +339,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/3sv39-implementation-1.html",
     "sha256": "654584ddd1427b1aa58e129fee09367881ebc0ad88c4a622f3d67d8baedc9652",
     "bytes": 108704,
-    "archive": ".work/cpp-rust-sources/systems/3sv39-implementation-1-rcore.html",
+    "archive": "sources/archive/systems/3sv39-implementation-1-rcore.html",
     "review_scope": "satp 的 MODE/ASID/PPN；三级页表逐级索引；大页降低页表遍历与 TLB 压力并提升 IPC",
     "status": "read-mapped"
   },
@@ -349,7 +349,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/2fs-implementation.html",
     "sha256": "ab93f7308aa7e52d8ceba32b786415e9ff75adf73b3d8dc53e1a526d690543f8",
     "bytes": 318657,
-    "archive": ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html",
+    "archive": "sources/archive/systems/2fs-implementation-rcore.html",
     "review_scope": "easy-fs 五层结构；BlockCache 512 字节缓冲与 modified 脏标记；全局块缓存合并与回写时机；扇区与块的区别",
     "status": "read-mapped"
   },
@@ -359,7 +359,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/1rust-dynamic-allocation.html",
     "sha256": "14a891067242c416309e42762e662ed0d2ce300dd61d07cb1328b596632d86d6",
     "bytes": 82575,
-    "archive": ".work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html",
+    "archive": "sources/archive/systems/1rust-dynamic-allocation-rcore.html",
     "review_scope": "GlobalAlloc 的 alloc/dealloc 签名与 Layout(size+align)；堆是 .bss 中零初始化数组；LockedHeap 由 Mutex 保护，任何操作先拿锁",
     "status": "read-mapped"
   },
@@ -369,7 +369,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/4sv39-implementation-2.html",
     "sha256": "7d5b5cb20f3af7a0ae4a85206aa5912e55dbe149dad893c4c57444115f8241b8",
     "bytes": 127418,
-    "archive": ".work/cpp-rust-sources/systems/4sv39-implementation-2-rcore.html",
+    "archive": "sources/archive/systems/4sv39-implementation-2-rcore.html",
     "review_scope": "物理页帧管理 StackFrameAllocator(current/end/recycled)；耗尽返回 None；回收需检查合法性；页表本身占用物理内存",
     "status": "read-mapped"
   },
@@ -379,7 +379,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/1process.html",
     "sha256": "baf6b6c13910a7cf2e9939e4cbe0aaf3d01fbb7678f9d13f8bc409de63d33312",
     "bytes": 105627,
-    "archive": ".work/cpp-rust-sources/systems/1process-rcore.html",
+    "archive": "sources/archive/systems/1process-rcore.html",
     "review_scope": "fork 复制并分配 PID；exec 清空地址空间并加载 ELF；waitpid 的必要性来自 exit 后内核栈仍在被使用",
     "status": "read-mapped"
   },
@@ -389,7 +389,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/2core-data-structures.html",
     "sha256": "b418261fc299f5e79bb722ee48b6989786a23e7cc8875292e463651cea4bd579",
     "bytes": 133668,
-    "archive": ".work/cpp-rust-sources/systems/2core-data-structures-rcore.html",
+    "archive": "sources/archive/systems/2core-data-structures-rcore.html",
     "review_scope": "PidHandle 与 KernelStack、TaskControlBlock、TaskManager、Processor 五个核心数据结构；按名加载 ELF 代码段与数据段",
     "status": "read-mapped"
   },
@@ -399,7 +399,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/4condition-variable.html",
     "sha256": "5df682f44394529cdb29f923c669a8a50b7a2d6477bbbfb445aea60cf46c10cf",
     "bytes": 111807,
-    "archive": ".work/cpp-rust-sources/systems/4condition-variable-rcore.html",
+    "archive": "sources/archive/systems/4condition-variable-rcore.html",
     "review_scope": "条件变量与唤醒丢失：signal 时无等待者则通知不被记录；换信号量可规避；管程 Hoare/Hansen 语义与紧急等待队列",
     "status": "read-mapped"
   },
@@ -409,7 +409,7 @@
     "final_url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/5concurrency-problem.html",
     "sha256": "bc6b803b516df84ca22a6bf6d804d619de322ad937fc7d6658aec12e6305bb79",
     "bytes": 73206,
-    "archive": ".work/cpp-rust-sources/systems/5concurrency-problem-rcore.html",
+    "archive": "sources/archive/systems/5concurrency-problem-rcore.html",
     "review_scope": "并发缺陷三分类：互斥（违反原子性）、同步、死锁；共享变量未合理保护是互斥缺陷主因",
     "status": "read-mapped"
   },
@@ -418,7 +418,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/1file-descriptor.html",
     "sha256": "03da589f388acbfaa498f3b3965c2479f7fe96e44abdc0ce398b93aaf64d6266",
     "bytes": 70488,
-    "archive": ".work/cpp-rust-sources/systems/1file-descriptor-rcore.html",
+    "archive": "sources/archive/systems/1file-descriptor-rcore.html",
     "review_scope": "文件描述符表：进程创建时默认打开 0/1/2；新文件总分配到最小空闲位；fork 整表继承（Arc::clone），父进程以 Arc::downgrade 存反向指针避免循环引用；Stdin::read 为忙等加主动让出",
     "status": "read-mapped"
   },
@@ -427,7 +427,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/2pipe.html",
     "sha256": "c5ac431b83db323b22ae4528b7c47a0901f2201220c47c8c8549e446c9869cf6",
     "bytes": 102904,
-    "archive": ".work/cpp-rust-sources/systems/2pipe-rcore.html",
+    "archive": "sources/archive/systems/2pipe-rcore.html",
     "review_scope": "管道是有界字节环（RING_BUFFER_SIZE=32），RingBufferStatus 分 FULL/EMPTY/NORMAL，写满与读空分别阻塞；环内以 Option<Weak<Pipe>> 记录写端存活；所有端关闭后强引用归零才回收缓冲区",
     "status": "read-mapped"
   },
@@ -436,7 +436,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/4signal.html",
     "sha256": "b877daf7dd1dfa402e862b722d5103636e2dd70d511c5f28cd38dbb65fec712c",
     "bytes": 146717,
-    "archive": ".work/cpp-rust-sources/systems/4signal-rcore.html",
+    "archive": "sources/archive/systems/4signal-rcore.html",
     "review_scope": "信号分同步（进程自身执行触发，如 SIGSEGV/SIGILL）与异步（内核或其他进程发送）；内核只在 trap 处理完、即将返回用户态前检查待处理信号；sigaction/procmask/sigreturn 三调用，处理函数末尾须手动 sigreturn",
     "status": "read-mapped"
   },
@@ -445,7 +445,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter4/7more-as.html",
     "sha256": "c3db9cd54c9bd7f9b4a4cdc0f459909802687d8333fc08daf2de96a1d579b2a9",
     "bytes": 90104,
-    "archive": ".work/cpp-rust-sources/systems/7more-as-rcore.html",
+    "archive": "sources/archive/systems/7more-as-rcore.html",
     "review_scope": "突破物理内存的三条路：分时复用（动态分配）、覆盖技术、把慢存储当内存延伸；空闲匹配策略 first-fit / best-fit / worst-fit 的速度与碎片取舍",
     "status": "read-mapped"
   },
@@ -454,7 +454,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/4scheduling.html",
     "sha256": "d196c5fbef539e5bf7d94bc753d19a0fe2be7f289a1ee5d8a10ccdd999eef2c8",
     "bytes": 108275,
-    "archive": ".work/cpp-rust-sources/systems/4scheduling-rcore.html",
+    "archive": "sources/archive/systems/4scheduling-rcore.html",
     "review_scope": "调度四问：约束条件、策略算法、性能指标、如何评价；FCFS→时间片轮转→SJF/STF→优先级→MLFQ 五条规则逐步补漏；彩票调度（概率、无需历史信息）与步长调度（确定性、新进程需全局信息）；实时可调度性条件 sum(Ci/Pi)<=1；RMS 与 EDF",
     "status": "read-mapped"
   },
@@ -463,7 +463,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/2device-driver-1.html",
     "sha256": "835fee87a32c9d2802aa3639a9ff44e1b243d06bc42c59ca7e8f12535759f894",
     "bytes": 75826,
-    "archive": ".work/cpp-rust-sources/systems/2device-driver-1-rcore.html",
+    "archive": "sources/archive/systems/2device-driver-1-rcore.html",
     "review_scope": "串口 ns16550a 的 8 个 MMIO 寄存器；DLAB 位决定同一地址映射到哪个寄存器；设备树节点给出 reg / interrupts / clock-frequency / compatible",
     "status": "read-mapped"
   },
@@ -472,7 +472,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/2device-driver-2.html",
     "sha256": "04353138325874b4a287c2fe9a37abcf52287171956b87bd96a793df0c9aedd8",
     "bytes": 99931,
-    "archive": ".work/cpp-rust-sources/systems/2device-driver-2-rcore.html",
+    "archive": "sources/archive/systems/2device-driver-2-rcore.html",
     "review_scope": "virtio 三层：前端驱动 / virtqueue 与 virtio-ring / 后端设备；驱动填请求后 kick 通知；特征位协商；设备状态域六态（ACKNOWLEDGE/DRIVER/FEATURES_OK/DRIVER_OK/FAILED/DEVICE_NEEDS_RESET）",
     "status": "read-mapped"
   },
@@ -481,7 +481,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/appendix-f/index.html",
     "sha256": "714fc4869d8183b34c87f6557e07e79b7c58cea0307a4cea205e7a6db3dd18a5",
     "bytes": 39490,
-    "archive": ".work/cpp-rust-sources/systems/appendix-f-rcore.html",
+    "archive": "sources/archive/systems/appendix-f-rcore.html",
     "review_scope": "仅标题与「参考文献：Rust Atomics and Locks」，正文为空，未提供可引用的机制内容；本轮核读后判定不入引用",
     "status": "reviewed-not-cited"
   },
@@ -490,7 +490,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter1/2remove-std.html",
     "sha256": "19aac344f1d35c67052a43d9eca9f6d74911f1d4309a9246c1baa1a40fc0bcf4",
     "bytes": 69373,
-    "archive": ".work/cpp-rust-sources/systems/2remove-std-rcore.html",
+    "archive": "sources/archive/systems/2remove-std-rcore.html",
     "review_scope": "移除标准库依赖：没有 std 时要自己提供分配器、panic 处理与启动入口，构建配置因此成为运行结果的一部分",
     "status": "read-mapped"
   },
@@ -499,7 +499,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter1/3first-instruction-in-kernel1.html",
     "sha256": "1bc3bff9fb74cbffd1aa1c6a46a75ff755e154d446be7c4d4ac4f900e268078b",
     "bytes": 69135,
-    "archive": ".work/cpp-rust-sources/systems/3first-instruction-in-kernel1-rcore.html",
+    "archive": "sources/archive/systems/3first-instruction-in-kernel1-rcore.html",
     "review_scope": "内核第一条指令：链接地址、启动汇编与最初几条指令的来源；用于说明「构建身份影响产物」",
     "status": "read-mapped"
   },
@@ -508,7 +508,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter2/4trap-handling.html",
     "sha256": "ef54e5c8b4cc36605a0de60a9c77162ffd511fc16cce94965510206aa0ece8b5",
     "bytes": 121560,
-    "archive": ".work/cpp-rust-sources/systems/4trap-handling-rcore.html",
+    "archive": "sources/archive/systems/4trap-handling-rcore.html",
     "review_scope": "特权级切换：硬件在陷入时记录原特权级、出错指令地址、原因与附加信息并跳到入口，返回用专用指令恢复；用户态与内核态共用通用寄存器，故处理前必须保存应用寄存器",
     "status": "read-mapped"
   },
@@ -517,7 +517,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter3/3multiprogramming.html",
     "sha256": "2dd670f5286d16d4549508ae3f1537f472ac0c5b26405d0e1d4a2a33b4d1c45b",
     "bytes": 103966,
-    "archive": ".work/cpp-rust-sources/systems/3multiprogramming-rcore.html",
+    "archive": "sources/archive/systems/3multiprogramming-rcore.html",
     "review_scope": "多道程序与协作式调度：任务主动放弃处理器时切换，调度队列先进先出",
     "status": "read-mapped"
   },
@@ -526,7 +526,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter6/3using-easy-fs-in-kernel.html",
     "sha256": "f4c44e4dc9c8fe5b0d430b05576be411a83105a014d207edbd4e41d6e2eb7507",
     "bytes": 160522,
-    "archive": ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html",
+    "archive": "sources/archive/systems/3using-easy-fs-in-kernel-rcore.html",
     "review_scope": "在内核中接入 easy-fs：File trait 只有 read/write；UserBuffer 是应用地址空间缓冲的抽象，须经页表翻译；块设备用 Arc<dyn BlockDevice>，按编译期特性选实现，上层只看见 trait 边界",
     "status": "read-mapped"
   },
@@ -535,7 +535,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter7/3cmdargs-and-redirection.html",
     "sha256": "a8e94adce2f8cd9569da036b82ca0f80ae308d0cb33aa2f05c084fe2eb511501",
     "bytes": 134004,
-    "archive": ".work/cpp-rust-sources/systems/3cmdargs-and-redirection-rcore.html",
+    "archive": "sources/archive/systems/3cmdargs-and-redirection-rcore.html",
     "review_scope": "命令行参数与标准 I/O 重定向：shell 在 exec 前用复制描述符的系统调用替换描述符表的 0/1/2 槽位，应用对重定向完全透明",
     "status": "read-mapped"
   },
@@ -544,7 +544,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/1thread.html",
     "sha256": "c93422bd513ce80104688bc6e83452cac9655430db22d4f42827faf4b024f0cf",
     "bytes": 98210,
-    "archive": ".work/cpp-rust-sources/systems/1thread-rcore.html",
+    "archive": "sources/archive/systems/1thread-rcore.html",
     "review_scope": "用户态线程管理：线程需自存线程号、状态、指令指针、寄存器集合与栈；切换在用户态完成，内核不感知，线程只能等对方主动让出处理器",
     "status": "read-mapped"
   },
@@ -553,7 +553,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter8/3semaphore.html",
     "sha256": "d7e474b84bdde198954f29957b836f8f132abd84a8f9a032b96901cc5170b333",
     "bytes": 102563,
-    "archive": ".work/cpp-rust-sources/systems/3semaphore-rcore.html",
+    "archive": "sources/archive/systems/3semaphore-rcore.html",
     "review_scope": "信号量：取用（P）与归还（V），资源用整数计数表示；归还时名额直接移交给等待者，被唤醒方不必重新确认；唤醒早于等待时由计数记住这次多余唤醒，避免唤醒丢失",
     "status": "read-mapped"
   },
@@ -562,7 +562,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter5/3implement-process-mechanism.html",
     "sha256": "56c79d3aa253ed117b3515efef1cd0ce33b5c39f61a5a63a352a17b1ae4827d2",
     "bytes": 173735,
-    "archive": ".work/cpp-rust-sources/systems/3implement-process-mechanism-rcore.html",
+    "archive": "sources/archive/systems/3implement-process-mechanism-rcore.html",
     "review_scope": "进程管理机制的实现：创建、切换、回收三条路径与它们各自的资源责任",
     "status": "read-mapped"
   },
@@ -571,7 +571,7 @@
     "url": "https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter9/1io-interface.html",
     "sha256": "d2de6c904f785e70a69dfb347363d90c6dce54493f4b8793b3b58630949a7ca1",
     "bytes": 86047,
-    "archive": ".work/cpp-rust-sources/systems/1io-interface-rcore.html",
+    "archive": "sources/archive/systems/1io-interface-rcore.html",
     "review_scope": "I/O 设备接口：设备呈现、状态表示、特征描述与交互机制四要素",
     "status": "read-mapped"
   },
@@ -581,7 +581,7 @@
     "final_url": "https://doc.rust-lang.org/reference/types/trait-object.html",
     "sha256": "750915b51305d59a1a0d42d891c8364b8350573e6b86483e1c7bdf916e66d6ca",
     "bytes": 36227,
-    "archive": ".work/cpp-rust-sources/reference/S10-trait-object.html",
+    "archive": "sources/archive/reference/S10-trait-object.html",
     "review_scope": "trait object 类型与 dyn Trait 的表示",
     "status": "reviewed",
     "fetched": "2026-10-31",
@@ -593,7 +593,7 @@
     "final_url": "https://doc.rust-lang.org/reference/items/traits.html#dyn-compatibility",
     "sha256": "288f10e8f5d022f8828f908b141cba2f1e64f54973997a4c4643c2d00f33b823",
     "bytes": 57237,
-    "archive": ".work/cpp-rust-sources/reference/S10-dyn-compatibility.html",
+    "archive": "sources/archive/reference/S10-dyn-compatibility.html",
     "review_scope": "Dyn compatibility（旧译母本称「对象安全」，无此节）",
     "status": "reviewed",
     "fetched": "2026-10-31",
@@ -605,7 +605,7 @@
     "final_url": "https://doc.rust-lang.org/reference/attributes/codegen.html",
     "sha256": "18becca8e376dd8bc0bc8ee557ece8a2bb9053fbff23bc572c5351fbf42062c7",
     "bytes": 121551,
-    "archive": ".work/cpp-rust-sources/reference/S10-codegen-attrs.html",
+    "archive": "sources/archive/reference/S10-codegen-attrs.html",
     "review_scope": "inline / optimization-method / 代码生成属性",
     "status": "reviewed",
     "fetched": "2026-10-31",
@@ -617,7 +617,7 @@
     "sha256": "3552af50af2b12739b5058e7a1d64a6fc80726971cff42544d33f03cba396f15",
     "review_scope": "Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）",
     "status": "read-mapped",
-    "evidence": ".work/cpp-rust-sources/foundations/instant.html",
+    "evidence": "sources/archive/foundations/instant.html",
     "target": "part1/ch01.md#sec-cpp-rust.1.1.2"
   }
 ]

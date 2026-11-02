@@ -157,13 +157,13 @@
       "anchor": "sec-cpp-rust.4.13.7",
       "severity": "P2",
       "description": "EVID-cachegrind 归档 SHA 与登记不符（站点改版重抓），台账已用 observed_sha256+archive_note 如实披露并要求按当前版本重核。本审计完成重核：ch13 对该手册的唯一具体引文（x86 REP 指令计数差异）在当前归档版本中仍存在，结论不受影响。",
-      "evidence": "sources/web.json EVID-cachegrind archive_note；.work/cpp-rust-sources/evidence/cachegrind.html 实测 sha=ab36ffaa…；归档 5.8.3 节 'When a REP-prefixed instruction executes each iteration is counted separately'；src/part4/ch13.md:1485"
+      "evidence": "sources/web.json EVID-cachegrind archive_note；sources/archive/evidence/cachegrind.html 实测 sha=ab36ffaa…；归档 5.8.3 节 'When a REP-prefixed instruction executes each iteration is counted separately'；src/part4/ch13.md:1485"
     },
     {
       "anchor": "sec-cpp-rust.2.7.8",
       "severity": "P2",
       "description": "rcore-lock 在 web.json 标 fetched-not-reviewed，但 sections.json（RCORE-LOCK/SYS-RCORE-LOCK）与 ch07/ch11 表按「核读」引用。归档实际存在且内容核实：2lock-rcore.html 明确区分忙等/yield/阻塞并讨论单核 Qemu 前提下忙等失效——正文说法成立，仅状态字段滞后。",
-      "evidence": ".work/cpp-rust-sources/systems/2lock-rcore.html：忙等=38、yield=21、阻塞=51、单核=8 处；'Qemu模拟出来的单核计算机'；src/part2/ch07.md:1809"
+      "evidence": "sources/archive/systems/2lock-rcore.html：忙等=38、yield=21、阻塞=51、单核=8 处；'Qemu模拟出来的单核计算机'；src/part2/ch07.md:1809"
     },
     {
       "anchor": "sec-cpp-rust.1.3.1",
@@ -192,7 +192,7 @@
     {
       "anchor": "sec-cpp-rust.4.17.2",
       "severity": "P2",
-      "description": "rCore/easy-fs 专项核查结论（无定级问题，正面记录）：rCore 母本以 .work/cpp-rust-sources/systems/*.html 归档形式在仓库内，正文关键数字全部与归档逐字吻合——DiskInode 直接项 INODE_DIRECT_COUNT=28→14KiB、一级间接 512/4=128 块→64KiB、二级间接 128×64KiB=8MiB；ch09 关于条件变量 signal 丢失「不会被记录」与 rCore 第八章原文一致；ch12 的 File trait 仅 read/write、UserBuffer 需地址翻译、ns16550a DLAB、virtio 六状态/FAILED/DEVICE_NEEDS_RESET 均在对应归档命中；web.json 全部 rcore 归档存在且 SHA 匹配。",
+      "description": "rCore/easy-fs 专项核查结论（无定级问题，正面记录）：rCore 母本以 sources/archive/systems/*.html 归档形式在仓库内，正文关键数字全部与归档逐字吻合——DiskInode 直接项 INODE_DIRECT_COUNT=28→14KiB、一级间接 512/4=128 块→64KiB、二级间接 128×64KiB=8MiB；ch09 关于条件变量 signal 丢失「不会被记录」与 rCore 第八章原文一致；ch12 的 File trait 仅 read/write、UserBuffer 需地址翻译、ns16550a DLAB、virtio 六状态/FAILED/DEVICE_NEEDS_RESET 均在对应归档命中；web.json 全部 rcore 归档存在且 SHA 匹配。",
       "evidence": "2fs-implementation-rcore.html：'INODE_DIRECT_COUNT: usize = 28…14KiB'、'512/4=128 个数据块，对应 64KiB'、'128×64KiB=8MiB'、'容量上限 78KiB'；4condition-variable-rcore.html：'这次signal不会有任何效果，这次唤醒也不会被记录下来'；4scheduling-rcore.html 彩票调度段；archive 路径存在性与 SHA 全量脚本校验通过（除 EVID-cachegrind 已披露项）"
     },
     {

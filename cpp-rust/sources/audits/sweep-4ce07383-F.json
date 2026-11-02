@@ -2,7 +2,7 @@
   "reviewer": "sweep4ce-F",
   "kind": "independent",
   "snapshot_sha256": "4ce07383b030ad7ee33ca981790a665ab9ca4bab230c97db9b7edb999aa9b2e",
-  "provenance": "冷启动独立审计。全文通读 src/part3/ch11.md 1236-1829 行（11.6/11.7/11.8 全部正文与语义盒）。用 /usr/bin/python3 从归档原始文件逐行复算：bench/systems-lab/results/run-01/queue.txt（45 行，raw÷units=65536）与 run-01/epoch.txt（raw÷units=8192），n=21，样本标准差÷(n-1)，p50=values[10]、p99=values[20]，口径按 lib.rs:41-49 的 measure() 实现。代码断言对照 bench/systems-lab/src/lib.rs、src/bin/queue.rs、src/bin/epoch.rs；环境断言对照 run-01/environment.txt；对齐断言对照 run-01/layout.txt；外部文献对照 .work/cpp-rust-sources/systems/mit-rcu.txt（sha256=34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6，与 coverage.md 登记一致）。",
+  "provenance": "冷启动独立审计。全文通读 src/part3/ch11.md 1236-1829 行（11.6/11.7/11.8 全部正文与语义盒）。用 /usr/bin/python3 从归档原始文件逐行复算：bench/systems-lab/results/run-01/queue.txt（45 行，raw÷units=65536）与 run-01/epoch.txt（raw÷units=8192），n=21，样本标准差÷(n-1)，p50=values[10]、p99=values[20]，口径按 lib.rs:41-49 的 measure() 实现。代码断言对照 bench/systems-lab/src/lib.rs、src/bin/queue.rs、src/bin/epoch.rs；环境断言对照 run-01/environment.txt；对齐断言对照 run-01/layout.txt；外部文献对照 sources/archive/systems/mit-rcu.txt（sha256=34201a6f5cbd841956c25b1c4a113a71a576a0f8697f700072399af8208306a6，与 coverage.md 登记一致）。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.11.6",
@@ -39,9 +39,9 @@
       "anchor": "sec-cpp-rust.3.11.8",
       "verdict": "finding",
       "method": "read+source-check",
-      "notes": "本节无测量数字造假：对 11.7 数据的引用（4096 个 256B、dropped 恒 0、1,048,576B）与归档一致，且两处诚实声明 'async 版本的滞留量本节没有采集'（ch11.md:1753、1783）。问题在来源声明：正文点名 'sources/mit-rcu.txt'，该路径在仓库中不存在——讲义实际位于 .work/cpp-rust-sources/systems/mit-rcu.txt，sha256 与 coverage.md:581/4089 登记的 34201a6f 前缀一致，'核读'可回溯但引用路径失实。三条 RCU 前提逐条对上了讲义原文（reader can't hold pointer across context switch；Writer delays free until all CPUs have context-switched；rcu_read_lock/unlock do almost nothing；call_rcu(kfree,old)），但 '记深度' 与五格表中 '进入 idle 或系统调用返回'、'ksoftirqd 软中断' 两格超出该讲义文本，属未标出处的一般性断言。跨 .await 持 Guard 的失效形态写成运行时 '断言崩溃/竞态'，而 crossbeam-epoch Guard 为 !Send，多线程运行时下首先是编译错误，表述失准。",
+      "notes": "本节无测量数字造假：对 11.7 数据的引用（4096 个 256B、dropped 恒 0、1,048,576B）与归档一致，且两处诚实声明 'async 版本的滞留量本节没有采集'（ch11.md:1753、1783）。问题在来源声明：正文点名 'sources/mit-rcu.txt'，该路径在仓库中不存在——讲义实际位于 sources/archive/systems/mit-rcu.txt，sha256 与 coverage.md:581/4089 登记的 34201a6f 前缀一致，'核读'可回溯但引用路径失实。三条 RCU 前提逐条对上了讲义原文（reader can't hold pointer across context switch；Writer delays free until all CPUs have context-switched；rcu_read_lock/unlock do almost nothing；call_rcu(kfree,old)），但 '记深度' 与五格表中 '进入 idle 或系统调用返回'、'ksoftirqd 软中断' 两格超出该讲义文本，属未标出处的一般性断言。跨 .await 持 Guard 的失效形态写成运行时 '断言崩溃/竞态'，而 crossbeam-epoch Guard 为 !Send，多线程运行时下首先是编译错误，表述失准。",
       "evidence": [
-        "src/part3/ch11.md:1679 引用 'sources/mit-rcu.txt'；ls sources/ 无此文件；find 唯一命中 /Users/juanwang/Desktop/tutorials/cpp-rust/.work/cpp-rust-sources/systems/mit-rcu.txt（shasum -a 256 = 34201a6f5cbd...，与 src/appendix/coverage.md 登记一致）",
+        "src/part3/ch11.md:1679 引用 'sources/mit-rcu.txt'；ls sources/ 无此文件；find 唯一命中 /Users/juanwang/Desktop/tutorials/cpp-rust/sources/archive/systems/mit-rcu.txt（shasum -a 256 = 34201a6f5cbd...，与 src/appendix/coverage.md 登记一致）",
         "三条前提对照讲义：mit-rcu.txt:151-157（context switch 规则+all CPUs context-switched）、162-179（rcu_read_lock 不锁、只标记）、253（call_rcu(kfree,old)）✓",
         "超出讲义：'记深度'（ch11.md:1681）、表格 '进入 idle 或系统调用返回'、'软中断（ksoftirqd）'（ch11.md:1708/1711）在 mit-rcu.txt 全文 grep 无对应",
         "ch11.md:1738 '代际计数因此产生竞态，甚至触发断言崩溃'、E-e(1795)：Guard !Send 使该形态在多线程 tokio 下为编译期拒绝，失效机理表述与实际不符",
@@ -50,7 +50,7 @@
     }
   ],
   "sources": [
-    ".work/cpp-rust-sources/systems/mit-rcu.txt",
+    "sources/archive/systems/mit-rcu.txt",
     "bench/systems-lab/results/run-01/queue.txt",
     "bench/systems-lab/results/run-01/epoch.txt",
     "bench/systems-lab/results/run-01/queue-sample.txt",
@@ -102,8 +102,8 @@
     {
       "anchor": "sec-cpp-rust.3.11.8",
       "severity": "P1",
-      "description": "来源声明失实：正文称核读'`sources/mit-rcu.txt`'，仓库中不存在该路径；讲义实际在 .work/cpp-rust-sources/systems/mit-rcu.txt，其 sha256 与 coverage.md 登记一致、三条 RCU 前提均能在原文对上，故'核读'内容可回溯，但写进正文的引用路径无法被读者按图索骥。",
-      "evidence": "src/part3/ch11.md:1679；ls /Users/juanwang/Desktop/tutorials/cpp-rust/sources/（无 mit-rcu.txt）；shasum -a 256 .work/cpp-rust-sources/systems/mit-rcu.txt = 34201a6f…（与 src/appendix/coverage.md:4089 一致）"
+      "description": "来源声明失实：正文称核读'`sources/mit-rcu.txt`'，仓库中不存在该路径；讲义实际在 sources/archive/systems/mit-rcu.txt，其 sha256 与 coverage.md 登记一致、三条 RCU 前提均能在原文对上，故'核读'内容可回溯，但写进正文的引用路径无法被读者按图索骥。",
+      "evidence": "src/part3/ch11.md:1679；ls /Users/juanwang/Desktop/tutorials/cpp-rust/sources/（无 mit-rcu.txt）；shasum -a 256 sources/archive/systems/mit-rcu.txt = 34201a6f…（与 src/appendix/coverage.md:4089 一致）"
     },
     {
       "anchor": "sec-cpp-rust.3.11.6",
@@ -121,7 +121,7 @@
       "anchor": "sec-cpp-rust.3.11.8",
       "severity": "P2",
       "description": "两处断言超出所引讲义/实现：(a) '记深度'、五格表'进入 idle 或系统调用返回'与'软中断（ksoftirqd）'在 mit-rcu.txt 中无对应文字（是正确的一般性内核知识，但本节把对照表的整体出处系于该讲义'核读'声明）；(b) 跨 .await 持 Guard 的失效写成运行时'断言崩溃/代际计数竞态'，而 crossbeam-epoch Guard 为 !Send，多线程运行时下首先是编译错误，失效形态表述失准。",
-      "evidence": "src/part3/ch11.md:1681、1708、1711、1738、1795 vs .work/cpp-rust-sources/systems/mit-rcu.txt 全文（grep 无 idle/ksoftirqd/depth 相应段）"
+      "evidence": "src/part3/ch11.md:1681、1708、1711、1738、1795 vs sources/archive/systems/mit-rcu.txt 全文（grep 无 idle/ksoftirqd/depth 相应段）"
     }
   ]
 }

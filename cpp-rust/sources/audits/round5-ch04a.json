@@ -28,7 +28,7 @@
         "bench/compiler-lab/results/extra-03/hir-tree.txt:10566 DefId(0:15 ~ lib[5cf2]::borrowed_sum) => OwnerNodes {",
         "bench/compiler-lab/results/extra-03/thir-flat.txt:13916 DefId(0:15 ~ lib[5cf2]::borrowed_sum):",
         "bench/compiler-lab/results/extra-02/nightly.txt:2 error: missing manifest in toolchain",
-        ".work/cpp-rust-sources/compiler/thir.html 含 -Zunpretty=thir-flat；grep -rl hir-tree .work 无命中"
+        "sources/archive/compiler/thir.html 含 -Zunpretty=thir-flat；grep -rl hir-tree .work 无命中"
       ]
     },
     {

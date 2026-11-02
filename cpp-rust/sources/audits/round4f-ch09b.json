@@ -3,7 +3,7 @@
  "kind": "independent",
  "layer": "read",
  "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
- "provenance": "冷启动读 src/part3/ch09.md 第1125–1624行全文（9.7–9.11 的正文、每个定义/例题与解答/思考/判定流程/小结/常见错误/即时自测/来源表/速查/出口检查/章末件表），逐条回查 bench/runtime-lab/tests/contracts.rs、tools/run_runtime_benchmarks.sh、.work/cpp-rust-sources/systems/3semaphore-rcore.html、sources/web.json、sources/runtime-code.json、sources/inventory.json、sources/reviews/S11.md、S08.md，在线核读 docs.rs/tokio/1.54.0 runtime 页与 pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt，并跑 tools/list_uncollected_claims.py 过滤 ch09 条目。",
+ "provenance": "冷启动读 src/part3/ch09.md 第1125–1624行全文（9.7–9.11 的正文、每个定义/例题与解答/思考/判定流程/小结/常见错误/即时自测/来源表/速查/出口检查/章末件表），逐条回查 bench/runtime-lab/tests/contracts.rs、tools/run_runtime_benchmarks.sh、sources/archive/systems/3semaphore-rcore.html、sources/web.json、sources/runtime-code.json、sources/inventory.json、sources/reviews/S11.md、S08.md，在线核读 docs.rs/tokio/1.54.0 runtime 页与 pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt，并跑 tools/list_uncollected_claims.py 过滤 ch09 条目。",
  "sections": [
   {
    "anchor": "sec-cpp-rust.3.9.7",
@@ -13,7 +13,7 @@
    "evidence": [
     "bench/runtime-lab/tests/contracts.rs:10-24",
     "bench/runtime-lab/tests/contracts.rs:52-70",
-    ".work/cpp-rust-sources/systems/3semaphore-rcore.html（P/V、整数计数、直接移交、计数记住多余唤醒原文）",
+    "sources/archive/systems/3semaphore-rcore.html（P/V、整数计数、直接移交、计数记住多余唤醒原文）",
     "sources/web.json rcore-semaphore sha256=d7e474b84bdde198954…"
    ]
   },

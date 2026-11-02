@@ -46,7 +46,7 @@
         "projects/agent-runtime/evidence/local-source-review.json reviewed_lines=[[199,226],[1215,1410]]、version=tokio=1.54.0；capture-source-review.json 五条目 scope 分别为 1–44、685–780、1–300、830–984、195–230，与 ch15.md:1899 逐段对应",
         "tokio-1.54.0/src/process/mod.rs:199-226 含「## Dropping/Cancellation」「zombie」「best-effort basis, attempt to reap」；:1247 pub fn start_kill",
         "projects/agent-runtime/evidence/capture-fix-final-validation-02/ 存在；其 debug-race 与 release-race 各含 logs-pipe1/logs-pipe2/sleep-pipe1/sleep-pipe2 → 双 profile 共 8 个 gate 交错；evidence/run-04/native、macos-sample.txt、src/process_macos.rs、tests/{contracts,regressions}.rs 均存在",
-        "落地失败：os.path.isdir('.work/cpp-rust-sources/runtime-project')=False；ls .work/cpp-rust-sources/ → compiler、evidence、ffi-project、reference、systems（全为 .html）；find .work -maxdepth 4 -name '*runtime*' 零命中；capture-source-review.json 的 local_copy 路径 .work/cpp-rust-agents/drain-debug/reference/*.rs 三个文件均不存在"
+        "落地失败：os.path.isdir('sources/archive/runtime-project')=False；ls sources/archive/ → compiler、evidence、ffi-project、reference、systems（全为 .html）；find .work -maxdepth 4 -name '*runtime*' 零命中；capture-source-review.json 的 local_copy 路径 .work/cpp-rust-agents/drain-debug/reference/*.rs 三个文件均不存在"
       ]
     },
     {
@@ -80,8 +80,8 @@
     {
       "anchor": "sec-cpp-rust.4.15.9",
       "severity": "P1",
-      "description": "15.9 正文称「完整版权文本只保存在工作区 .work/cpp-rust-sources/runtime-project/」，但该目录在磁盘上不存在：.work/cpp-rust-sources/ 只有 compiler、evidence、ffi-project、reference、systems 五个子目录，内容全是 HTML 抽取件，find .work -maxdepth 4 -name '*runtime*' 零命中。于是「项目初稿实际提取并核读，本次沿用」这条断言的原始文本没有落地位置，只剩 sources/contributions/runtime-project.json 与 src/appendix/coverage.md:128 两行登记（词序与页码彼此一致，但与磁盘上的存放路径不符）；PDF 本体又在仓库外，读者按正文指的路径无法回查 390–394 页。建议改指现存路径，或明确写「该工作目录已回收，核读记录仅存 contributions json 与附录登记」。",
-      "evidence": "os.path.isdir('.work/cpp-rust-sources/runtime-project')=False；ls .work/cpp-rust-sources/ → ['compiler','evidence','ffi-project','reference','systems']；src/part4/ch15.md:1895"
+      "description": "15.9 正文称「完整版权文本只保存在工作区 sources/archive/runtime-project/」，但该目录在磁盘上不存在：sources/archive/ 只有 compiler、evidence、ffi-project、reference、systems 五个子目录，内容全是 HTML 抽取件，find .work -maxdepth 4 -name '*runtime*' 零命中。于是「项目初稿实际提取并核读，本次沿用」这条断言的原始文本没有落地位置，只剩 sources/contributions/runtime-project.json 与 src/appendix/coverage.md:128 两行登记（词序与页码彼此一致，但与磁盘上的存放路径不符）；PDF 本体又在仓库外，读者按正文指的路径无法回查 390–394 页。建议改指现存路径，或明确写「该工作目录已回收，核读记录仅存 contributions json 与附录登记」。",
+      "evidence": "os.path.isdir('sources/archive/runtime-project')=False；ls sources/archive/ → ['compiler','evidence','ffi-project','reference','systems']；src/part4/ch15.md:1895"
     },
     {
       "anchor": "sec-cpp-rust.4.15.9",

@@ -34,7 +34,7 @@
       "anchor": "sec-cpp-rust.1.3.9",
       "verdict": "finding",
       "method": "read",
-      "notes": "3.9 全部四条延伸读物与两个小表格逐条回查登记。已落地：S11『4.1 什么是所有权』『4.2 引用与借用』『15.3 Drop Trait』、S10『析构函数：初始化、部分移动、字段销毁顺序』『销毁作用域与临时值』『非安全块及未定义行为责任』（后者 target 正是 part1/ch03.md#sec-cpp-rust.1.3.7）、S08『第20条末：不要为了消除复制牺牲接口可用性』均在 sources/contributions/foundations.json 有行，S08 的 PDF 174–175 页码登记也在；std::ptr 文档有 FOUNDATIONS-PTR 行带 sha256=14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db，并在 src/appendix/coverage.md:4089 有台账行。查不落地的是正文写成「规范来源」的那两份在线文档：alloc/struct.Vec.html（Vec::with_capacity）与 std/mem/union.MaybeUninit.html，四处登记面 0 命中（详见 findings[0]）。另外该母本行点名的抓取副本 .work/cpp-rust-sources/foundations/ptr.html 当前不在盘（.work/cpp-rust-sources 只有 compiler/evidence/ffi-project/reference/systems 五项），SHA 无法本地复验（findings[1]）。S11 的「一个所有者」引文与 S10『用 LLVM noalias 概括别名的一段』两处我没有取到可逐字比对的母本文本（本地 PDF 未抽取，且 sources/web.json 里 compiler-web-aliasing 一条 status=archive-lost、上游 404），因此这两句只按『正文自述为旧译文、未据以下断言』接受，本轮未算核实、也未据以判级。『没有声称完成的验证』四条与代码/归档事实相符。",
+      "notes": "3.9 全部四条延伸读物与两个小表格逐条回查登记。已落地：S11『4.1 什么是所有权』『4.2 引用与借用』『15.3 Drop Trait』、S10『析构函数：初始化、部分移动、字段销毁顺序』『销毁作用域与临时值』『非安全块及未定义行为责任』（后者 target 正是 part1/ch03.md#sec-cpp-rust.1.3.7）、S08『第20条末：不要为了消除复制牺牲接口可用性』均在 sources/contributions/foundations.json 有行，S08 的 PDF 174–175 页码登记也在；std::ptr 文档有 FOUNDATIONS-PTR 行带 sha256=14f0960be8361339aa7798e198b3f602d4c0b2b182b1bbfe904b095ff66081db，并在 src/appendix/coverage.md:4089 有台账行。查不落地的是正文写成「规范来源」的那两份在线文档：alloc/struct.Vec.html（Vec::with_capacity）与 std/mem/union.MaybeUninit.html，四处登记面 0 命中（详见 findings[0]）。另外该母本行点名的抓取副本 sources/archive/foundations/ptr.html 当前不在盘（sources/archive 只有 compiler/evidence/ffi-project/reference/systems 五项），SHA 无法本地复验（findings[1]）。S11 的「一个所有者」引文与 S10『用 LLVM noalias 概括别名的一段』两处我没有取到可逐字比对的母本文本（本地 PDF 未抽取，且 sources/web.json 里 compiler-web-aliasing 一条 status=archive-lost、上游 404），因此这两句只按『正文自述为旧译文、未据以下断言』接受，本轮未算核实、也未据以判级。『没有声称完成的验证』四条与代码/归档事实相符。",
       "evidence": [
         "src/part1/ch03.md:1680（『它们分别是[@def-3.3.1] 与[@def-3.3.3] 的规范来源』）",
         "sources/contributions/foundations.json 全 19 行枚举：id 仅 S08/S10/S11/FOUNDATIONS-PTR/FOUNDATIONS-OPTION/FOUNDATIONS-BLACK_BOX，grep 'MaybeUninit|struct.Vec|with_capacity' = 0 命中",
@@ -42,7 +42,7 @@
         "grep -rn 'MaybeUninit|alloc/struct\\.Vec|with_capacity' sources -> 仅命中 sources/audits/*.json，无任何登记面",
         "grep -n 'MaybeUninit|alloc/struct.Vec|std/ptr' src/appendix/coverage.md -> 仅 4089 行 FOUNDATIONS-PTR",
         "src/part1/ch03.md:559 def-3.3.3 =『定义 3.3.3 · MaybeUninit』、472 行 def-3.3.1 =『容量与长度』（主题对应，缺的是登记行不是内容）",
-        "ls .work/cpp-rust-sources -> compiler evidence ffi-project reference systems（无 foundations/）"
+        "ls sources/archive -> compiler evidence ffi-project reference systems（无 foundations/）"
       ]
     },
     {
@@ -84,8 +84,8 @@
     {
       "anchor": "sec-cpp-rust.1.3.9",
       "severity": "P2",
-      "description": "同一读物条目里 std::ptr 母本（FOUNDATIONS-PTR，支撑[@def-3.7.2] 与 3.7.3 全部 Provenance 断言）的登记行本身在，但它点名的抓取副本 download_evidence='.work/cpp-rust-sources/foundations/ptr.html' 此刻不在磁盘上：ls .work/cpp-rust-sources 只有 compiler、evidence、ffi-project、reference、systems 五个目录，没有 foundations/。于是这条 sha256 无法本地复验，3.7.3 的 addr/with_addr/map_addr 语义与 3.9『Safety/Alignment/…/Exposed Provenance 这几节支撑』只能靠台账自述。属取证副本可复核性问题（不是数字矛盾，也不是编造实测），建议要么把副本落回可入库的位置，要么在台账行按现有 compiler-web-aliasing 的先例显式标 archive-lost。",
-      "evidence": "sources/contributions/foundations-web.json:1 download_evidence=.work/cpp-rust-sources/foundations/ptr.html；ls .work/cpp-rust-sources -> compiler evidence ffi-project reference systems；对照 sources/web.json 中 compiler-web-aliasing 一条的 status=archive-lost + loss_note 先例"
+      "description": "同一读物条目里 std::ptr 母本（FOUNDATIONS-PTR，支撑[@def-3.7.2] 与 3.7.3 全部 Provenance 断言）的登记行本身在，但它点名的抓取副本 download_evidence='sources/archive/foundations/ptr.html' 此刻不在磁盘上：ls sources/archive 只有 compiler、evidence、ffi-project、reference、systems 五个目录，没有 foundations/。于是这条 sha256 无法本地复验，3.7.3 的 addr/with_addr/map_addr 语义与 3.9『Safety/Alignment/…/Exposed Provenance 这几节支撑』只能靠台账自述。属取证副本可复核性问题（不是数字矛盾，也不是编造实测），建议要么把副本落回可入库的位置，要么在台账行按现有 compiler-web-aliasing 的先例显式标 archive-lost。",
+      "evidence": "sources/contributions/foundations-web.json:1 download_evidence=sources/archive/foundations/ptr.html；ls sources/archive -> compiler evidence ffi-project reference systems；对照 sources/web.json 中 compiler-web-aliasing 一条的 status=archive-lost + loss_note 先例"
     },
     {
       "anchor": "sec-cpp-rust.1.3.11",

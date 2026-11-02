@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
-  "provenance": "冷启动读 src/part3/ch09.md 的 1125–1624 行全文（9.7–9.11 的正文、定义、例题与解答、思考、判定流程、小结、常见错误清单、即时自测、母本表、索引与章末件），并用 /usr/bin/python3 逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt、bench/results/runtime-final/blocking-poll.txt、bench/results/local/{atomic,future-allocation}*.txt、sources/inventory.json、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、.work/cpp-rust-sources/systems/3semaphore-rcore.html、tools/run_runtime_benchmarks.sh，另在线抓取 docs.rs/tokio/1.54.0 runtime 页、pdos.csail.mit.edu 6.S081 2020 schedule.html 与 l-threads.txt、以及 E-Book 里 sha256 匹配的《Rust 程序设计语言》PDF 第 388–396 页做逐字比对。",
+  "provenance": "冷启动读 src/part3/ch09.md 的 1125–1624 行全文（9.7–9.11 的正文、定义、例题与解答、思考、判定流程、小结、常见错误清单、即时自测、母本表、索引与章末件），并用 /usr/bin/python3 逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt、bench/results/runtime-final/blocking-poll.txt、bench/results/local/{atomic,future-allocation}*.txt、sources/inventory.json、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、sources/archive/systems/3semaphore-rcore.html、tools/run_runtime_benchmarks.sh，另在线抓取 docs.rs/tokio/1.54.0 runtime 页、pdos.csail.mit.edu 6.S081 2020 schedule.html 与 l-threads.txt、以及 E-Book 里 sha256 匹配的《Rust 程序设计语言》PDF 第 388–396 页做逐字比对。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.9.7",
@@ -14,8 +14,8 @@
         "bench/runtime-lab/tests/contracts.rs:9-23 与正文 1234-1244 代码盒逐字一致（mpsc::channel(1)/try_send(10)/TrySendError::Full(20)/drop(tx)/Some(20)/None）",
         "diff bench/runtime-lab/tests/contracts.rs bench/results/runtime-fixed/final-validation/source-snapshot/bench/runtime-lab/tests/contracts.rs → 无差异",
         "bench/runtime-lab/tests/contracts.rs:52-70 permit 移入闭包 + started/stop 双信号 + abort 后 try_acquire_owned().is_err()",
-        ".work/cpp-rust-sources/systems/3semaphore-rcore.html：'P操作（来自荷兰语Proberen）…V操作（Verhogen）'、'进行V操作的线程直接将资源移交给了它唤醒的线程'、'唤醒丢失(Lost Wakeup)问题'",
-        "sources/web.json#rcore-semaphore archive=.work/cpp-rust-sources/systems/3semaphore-rcore.html sha256=d7e474b8… status=read-mapped"
+        "sources/archive/systems/3semaphore-rcore.html：'P操作（来自荷兰语Proberen）…V操作（Verhogen）'、'进行V操作的线程直接将资源移交给了它唤醒的线程'、'唤醒丢失(Lost Wakeup)问题'",
+        "sources/web.json#rcore-semaphore archive=sources/archive/systems/3semaphore-rcore.html sha256=d7e474b8… status=read-mapped"
       ]
     },
     {

@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b0732f8b599904787c24622ad087f8b010ab86fa7a4e1d4ccd3792254d8fb37b",
-  "provenance": "冷启动通读 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个语义盒），并逐个打开 bench/probes/atomics.rs、bench/results/{local,x86_64-linux,aarch64-android}/atomics.{s,ll}、bench/results/local/{atomic-1.txt,atomic-4.txt,handoff.txt,environment.txt,README.md}、bench/src/{slot.rs,lib.rs,Cargo.toml}、bench/src/bin/handoff.rs 与 sources/{web.json,inventory.json}、.work/cpp-rust-sources/systems/5concurrency-problem-rcore.html、/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf 逐条回查，并用 /usr/bin/python3 从原始批次自算全部统计表。",
+  "provenance": "冷启动通读 src/part2/ch07.md 第 65–1352 行（7.1–7.6 全部正文与每个语义盒），并逐个打开 bench/probes/atomics.rs、bench/results/{local,x86_64-linux,aarch64-android}/atomics.{s,ll}、bench/results/local/{atomic-1.txt,atomic-4.txt,handoff.txt,environment.txt,README.md}、bench/src/{slot.rs,lib.rs,Cargo.toml}、bench/src/bin/handoff.rs 与 sources/{web.json,inventory.json}、sources/archive/systems/5concurrency-problem-rcore.html、/Users/juanwang/E-Book/Rust/Rust 参考手册.pdf 逐条回查，并用 /usr/bin/python3 从原始批次自算全部统计表。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.2.7.1",
@@ -12,7 +12,7 @@
       "notes": "核对了四组事实：① 载荷 [u64; 8]=64 字节——bench/src/bin/handoff.rs:8 `struct Message([u64; 8])`，handoff.txt:1 打印 payload_size=64 payload_align=8，字节数自算 8×8=64，成立；② 数据竞争三条件与 access-based 冲突定义（def-7.1.1）与 std::sync::atomic 文档口径一致，且 sources/web.json:29 确实登记了该页；③ def-7.1.4 的三类并发缺陷逐句对到 rCore 母本原文，术语与含义吻合，属借事实不是抄句；④ 例 7.1.1 的「三句话三种证据」分别指向 7.4 产物目录与 7.5 原始批次，两者磁盘上都存在（见 7.4/7.5 条）。本节无可核测量数字，只有「约 6 ns/聚合操作」一句，我用 atomic-4.txt 自算 Shared-Relaxed 5.980、Shared-SeqCst 5.952，「约 6 ns」方向正确。小结、errata E-a–E-f、即时自测四题答案与上面各定义一致，未发现内部矛盾。",
       "evidence": [
         "src/part2/ch07.md:76 「本章的载荷是 `[u64; 8]`，共 64 字节」↔ bench/src/bin/handoff.rs:8 `struct Message([u64; 8]);` ↔ bench/results/local/handoff.txt:1 `payload_size=64 payload_align=8`",
-        "src/part2/ch07.md:171（def-7.1.4 三类缺陷）↔ .work/cpp-rust-sources/systems/5concurrency-problem-rcore.html:「典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷」「互斥缺陷也称为违反原子性缺陷…对共享变量没进行合理的保护」「同步缺陷也称为违反顺序缺陷」",
+        "src/part2/ch07.md:171（def-7.1.4 三类缺陷）↔ sources/archive/systems/5concurrency-problem-rcore.html:「典型的主要有三类：互斥缺陷、同步缺陷和死锁缺陷」「互斥缺陷也称为违反原子性缺陷…对共享变量没进行合理的保护」「同步缺陷也称为违反顺序缺陷」",
         "src/part2/ch07.md:188 「本地《Rust 参考手册》PDF 第 334 页」↔ `pdftotext -f 334 -l 334 \"Rust 参考手册.pdf\"` 命中 1 处「还没有明确的内存模型。许多学者和行业专业人士正在研究各种提案」（第 334 页精确对上，页码不是估计）",
         "src/part2/ch07.md:199 ③「四线程共享计数约 6 ns」↔ 我按 atomic-4.txt 21 批自算：Shared-Relaxed mean 5.980 / Shared-SeqCst mean 5.952",
         "src/part2/ch07.md:150-152 冲突访问口径 ↔ sources/web.json:29 `https://doc.rust-lang.org/std/sync/atomic/`"

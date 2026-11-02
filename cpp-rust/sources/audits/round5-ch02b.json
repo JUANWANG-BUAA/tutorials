@@ -37,11 +37,11 @@
       "anchor": "sec-cpp-rust.1.2.9",
       "verdict": "pass",
       "method": "read",
-      "notes": "把这一节列出的每个入口拿去落地核过，没有发现无法兑现的引用。rCore 三份母本在 sources/web.json 都登记了 URL 与本地归档，我在归档 HTML 里逐条找到了正文所依赖的机制描述：.work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html 里确有 Mutex<T> 包裹全局分配器的表述（正文「全局分配器被 Mutex 包着，任何操作先拿锁」对得上，且明确声明不引用其中数字）；3sv39-implementation-1-rcore.html 确有「大页」专节（正文只借它的机制链）；4sv39-implementation-2-rcore.html 确有「栈式物理页帧管理策略／栈式物理页帧分配器」与回收合法性检查。台账映射也对：coverage.md:591 把 rcore-sv39 映射到 ch02#sec-cpp-rust.1.2.3（正文 2.9.1 说的是 2.3.3 借机制），coverage.md:594 把 rcore-frame-alloc 映射到 1.2.6（正文说的是 2.6.6 三笔成本）。Effective Rust 两条可核：sources/reviews/S08.md:34 登记「第 20 条」PDF170 起的复制/拥有数据取舍，coverage.md:116 更把「第20条末：复制可见性、可用性与共享所有权」直接映射到 ch02#sec-cpp-rust.1.2.6，与正文「2.6 的接口设计参照它」一致；coverage.md:109-111 把「第30条：单元、集成、文档测试与基准的优化风险」映射到第 1 章，与正文「与第 1 章同源」一致。2.9.1 第二条把 Option 文档 Representation 段登记给 2.2.2，coverage.md:126 确有 FOUNDATIONS-OPTION「Representation段及类型/条件表」映射到 ch02#sec-cpp-rust.1.2.2。2.9.2/2.9.3 的「哪些来自母本、哪些是本机实验」与我的核对结果相符：AoS/热列对比、ByteRegion、cacheline 128 确实只在本机归档里，母本没有；N−1 sd 与 bootstrap 口径确实来自第 1 章方法（analyze.py 单一实现）。",
+      "notes": "把这一节列出的每个入口拿去落地核过，没有发现无法兑现的引用。rCore 三份母本在 sources/web.json 都登记了 URL 与本地归档，我在归档 HTML 里逐条找到了正文所依赖的机制描述：sources/archive/systems/1rust-dynamic-allocation-rcore.html 里确有 Mutex<T> 包裹全局分配器的表述（正文「全局分配器被 Mutex 包着，任何操作先拿锁」对得上，且明确声明不引用其中数字）；3sv39-implementation-1-rcore.html 确有「大页」专节（正文只借它的机制链）；4sv39-implementation-2-rcore.html 确有「栈式物理页帧管理策略／栈式物理页帧分配器」与回收合法性检查。台账映射也对：coverage.md:591 把 rcore-sv39 映射到 ch02#sec-cpp-rust.1.2.3（正文 2.9.1 说的是 2.3.3 借机制），coverage.md:594 把 rcore-frame-alloc 映射到 1.2.6（正文说的是 2.6.6 三笔成本）。Effective Rust 两条可核：sources/reviews/S08.md:34 登记「第 20 条」PDF170 起的复制/拥有数据取舍，coverage.md:116 更把「第20条末：复制可见性、可用性与共享所有权」直接映射到 ch02#sec-cpp-rust.1.2.6，与正文「2.6 的接口设计参照它」一致；coverage.md:109-111 把「第30条：单元、集成、文档测试与基准的优化风险」映射到第 1 章，与正文「与第 1 章同源」一致。2.9.1 第二条把 Option 文档 Representation 段登记给 2.2.2，coverage.md:126 确有 FOUNDATIONS-OPTION「Representation段及类型/条件表」映射到 ch02#sec-cpp-rust.1.2.2。2.9.2/2.9.3 的「哪些来自母本、哪些是本机实验」与我的核对结果相符：AoS/热列对比、ByteRegion、cacheline 128 确实只在本机归档里，母本没有；N−1 sd 与 bootstrap 口径确实来自第 1 章方法（analyze.py 单一实现）。",
       "evidence": [
         "src/appendix/coverage.md:126,591,594,603,111(第30条→1.1.5),116(第20条→1.2.6)",
         "sources/reviews/S08.md:34（第 20 条）、:46（第 30 条）",
-        ".work/cpp-rust-sources/systems/1rust-dynamic-allocation-rcore.html（Mutex<T>）；3sv39-implementation-1-rcore.html（大页）；4sv39-implementation-2-rcore.html（栈式物理页帧分配器）",
+        "sources/archive/systems/1rust-dynamic-allocation-rcore.html（Mutex<T>）；3sv39-implementation-1-rcore.html（大页）；4sv39-implementation-2-rcore.html（栈式物理页帧分配器）",
         "src/part1/ch02.md:1688-1690（两条 rCore 与 Effective Rust 的表述）、:1694-1700"
       ]
     },

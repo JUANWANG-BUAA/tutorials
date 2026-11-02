@@ -35,11 +35,11 @@
       "anchor": "sec-cpp-rust.1.4.9",
       "verdict": "finding",
       "method": "read",
-      "notes": "核了三处可对核断言。入口清单属实：src/bin/ 下确有六个源文件（move_cost、drop_paths、dispatch_grain、dispatch_visibility、vectorize、ctfe_table），probes/rejected/ 下确有五个被拒输入加 expected.tsv，run.sh:23 与 :32 的循环正是这六个名字，故 4.9.1 的『六个入口』『五个被拒绝输入』与 4.8 的『六张表』彼此自洽。台账断言部分属实但有一个洞：4.9.1 称两份当前开发指南（THIR、Drop elaboration）都已下载并阅读全文、SHA-256 写入 compiler-web.json，我在 sources/contributions/compiler-web.json 确实看到两条记录与两个 sha256，但按 evidence 字段回磁盘时只有 .work/cpp-rust-sources/compiler/thir.html 存在（31476 字节），同目录 drop-elaboration.html 不存在，见 findings。4.9.2 表格的『本机产物已足够』三行经产物文件核实（--emit=mir/llvm-ir/asm 的归档在 stable-02/codegen，O0/O3 两组在 extra-02），后三行『无可用 nightly / 无逐 pass dump / 无 self-profile』与归档实际相符——stable-02 与 extra-02 里确实没有 self-profile 或逐 pass 文件。4.9.3 的 edition 2024 经 Cargo.toml:4 核实。4.9.4 的『S09 全书 368 页』经 sources/inventory.json 的 pdf_pages=368 核实。没核的：四条延伸阅读里 Effective Rust、参考手册与四个 std 文档链接我只确认链接与文件层级存在，未逐字比对母本原句；『母本里的 HAIR 是较早的历史称呼，本章按当前指南纠正』这句要去 S09 PDF 里翻原文，本轮没做，属未被独立证实的历史称呼判断。",
+      "notes": "核了三处可对核断言。入口清单属实：src/bin/ 下确有六个源文件（move_cost、drop_paths、dispatch_grain、dispatch_visibility、vectorize、ctfe_table），probes/rejected/ 下确有五个被拒输入加 expected.tsv，run.sh:23 与 :32 的循环正是这六个名字，故 4.9.1 的『六个入口』『五个被拒绝输入』与 4.8 的『六张表』彼此自洽。台账断言部分属实但有一个洞：4.9.1 称两份当前开发指南（THIR、Drop elaboration）都已下载并阅读全文、SHA-256 写入 compiler-web.json，我在 sources/contributions/compiler-web.json 确实看到两条记录与两个 sha256，但按 evidence 字段回磁盘时只有 sources/archive/compiler/thir.html 存在（31476 字节），同目录 drop-elaboration.html 不存在，见 findings。4.9.2 表格的『本机产物已足够』三行经产物文件核实（--emit=mir/llvm-ir/asm 的归档在 stable-02/codegen，O0/O3 两组在 extra-02），后三行『无可用 nightly / 无逐 pass dump / 无 self-profile』与归档实际相符——stable-02 与 extra-02 里确实没有 self-profile 或逐 pass 文件。4.9.3 的 edition 2024 经 Cargo.toml:4 核实。4.9.4 的『S09 全书 368 页』经 sources/inventory.json 的 pdf_pages=368 核实。没核的：四条延伸阅读里 Effective Rust、参考手册与四个 std 文档链接我只确认链接与文件层级存在，未逐字比对母本原句；『母本里的 HAIR 是较早的历史称呼，本章按当前指南纠正』这句要去 S09 PDF 里翻原文，本轮没做，属未被独立证实的历史称呼判断。",
       "evidence": [
         "ls bench/compiler-lab/src/bin/ → 6 个文件；ls probes/rejected/ → alias_conflict.rs、const_bounds.rs、dyn_generic.rs、maybe_uninitialized.rs、use_after_move.rs + expected.tsv",
-        "sources/contributions/compiler-web.json:10-14 → compiler-web-drop-elaboration，sha256=1b8044c6…，evidence=.work/cpp-rust-sources/compiler/drop-elaboration.html",
-        "ls -la .work/cpp-rust-sources/compiler/ → 只有 thir.html（31476 字节），drop-elaboration.html 缺失",
+        "sources/contributions/compiler-web.json:10-14 → compiler-web-drop-elaboration，sha256=1b8044c6…，evidence=sources/archive/compiler/drop-elaboration.html",
+        "ls -la sources/archive/compiler/ → 只有 thir.html（31476 字节），drop-elaboration.html 缺失",
         "sources/inventory.json → {\"id\": \"S09\", \"pdf_pages\": 368}",
         "bench/compiler-lab/Cargo.toml:4 → edition = \"2024\""
       ]
@@ -81,8 +81,8 @@
     {
       "anchor": "sec-cpp-rust.1.4.9",
       "severity": "P1",
-      "description": "正文称两份当前 rustc 开发指南（THIR、Drop elaboration）『已实际下载并阅读全文』，并把读者指向 compiler-web.json；台账里两条记录与两个 SHA-256 都在，但按各自的 evidence 字段回磁盘只落地一份：.work/cpp-rust-sources/compiler/thir.html 存在（31476 字节），同目录的 drop-elaboration.html 不存在。于是『两份都已下载并阅读全文』这一条有一半无法在磁盘上复核，而 4.9.2、4.4 与本章多处（含 4.9.1 说本章据此纠正母本 HAIR 的历史上下文）又把 Drop elaboration 当作已核实来源在用。SHA-256 存在不等于文件存在：我无法用留存的哈希复算（原件已不在）。判 P1 而非 P0：不是编造测量数字，URL/哈希/核读范围在台账里齐备，属证据文件缺失导致的关键出处落不了地。修法二选一：重新抓取并落盘 drop-elaboration.html 后再声明『两份都已读』，或把正文改成『THIR 有本机落盘副本可复核，Drop elaboration 只有台账哈希与 URL』。",
-      "evidence": "sources/contributions/compiler-web.json:10-14 → drop-elaboration 记录 evidence=.work/cpp-rust-sources/compiler/drop-elaboration.html；ls -la .work/cpp-rust-sources/compiler/ → 仅 thir.html；同一 evidence 路径亦见于 sources/web.json:151"
+      "description": "正文称两份当前 rustc 开发指南（THIR、Drop elaboration）『已实际下载并阅读全文』，并把读者指向 compiler-web.json；台账里两条记录与两个 SHA-256 都在，但按各自的 evidence 字段回磁盘只落地一份：sources/archive/compiler/thir.html 存在（31476 字节），同目录的 drop-elaboration.html 不存在。于是『两份都已下载并阅读全文』这一条有一半无法在磁盘上复核，而 4.9.2、4.4 与本章多处（含 4.9.1 说本章据此纠正母本 HAIR 的历史上下文）又把 Drop elaboration 当作已核实来源在用。SHA-256 存在不等于文件存在：我无法用留存的哈希复算（原件已不在）。判 P1 而非 P0：不是编造测量数字，URL/哈希/核读范围在台账里齐备，属证据文件缺失导致的关键出处落不了地。修法二选一：重新抓取并落盘 drop-elaboration.html 后再声明『两份都已读』，或把正文改成『THIR 有本机落盘副本可复核，Drop elaboration 只有台账哈希与 URL』。",
+      "evidence": "sources/contributions/compiler-web.json:10-14 → drop-elaboration 记录 evidence=sources/archive/compiler/drop-elaboration.html；ls -la sources/archive/compiler/ → 仅 thir.html；同一 evidence 路径亦见于 sources/web.json:151"
     },
     {
       "anchor": "sec-cpp-rust.1.4.8",

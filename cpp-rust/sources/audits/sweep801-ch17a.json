@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "801f81bfcad74a0eccd57c5bd46d37a1f1de08834449b6354ea7de93ae136952",
-  "provenance": "冷启动通读 src/part4/ch17.md 17.1–17.6 全文与每个语义盒；逐行读 projects/tidekv 的 segment/bloom/memtable/codec/epoch/stats/engine/tide-mech/tide-admit/tide-bench 与 tests/；用 /usr/bin/python3 从 results/run-01~03 的 CSV/JSON 与 bloom-contract-2026-10-30.txt 复算全部表格数字；跑 tools/list_uncollected_claims.py 并逐项查盘；比对 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html 母本。",
+  "provenance": "冷启动通读 src/part4/ch17.md 17.1–17.6 全文与每个语义盒；逐行读 projects/tidekv 的 segment/bloom/memtable/codec/epoch/stats/engine/tide-mech/tide-admit/tide-bench 与 tests/；用 /usr/bin/python3 从 results/run-01~03 的 CSV/JSON 与 bloom-contract-2026-10-30.txt 复算全部表格数字；跑 tools/list_uncollected_claims.py 并逐项查盘；比对 sources/archive/systems/3using-easy-fs-in-kernel-rcore.html 母本。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.4.17.1",
@@ -35,7 +35,7 @@
       "anchor": "sec-cpp-rust.4.17.3",
       "verdict": "finding",
       "method": "read",
-      "notes": "def 17.3.1 Segment 六字段、open 一次 read_to_end 后丢 File、无常驻 fd：src/segment.rs:131-141 属实；Arc<Segment> 共享（engine.rs:710）与热路径 unsafe 切片（segment.rs:317 from_raw_parts）属实；def 17.3.2 三条不变量对应的实现约束（边界检查+页脚四道核对 / Arc+epoch / 新建段不改旧段）均可落码。SAFETY 判据与判定流程为教学内容，无外部事实。问题只在 17.3.2 把 easy-fs 块缓存「写进去却读不出来…致命又难查」的告诫当作对 easy-fs 的引述，本地母本 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html 中「致命」「一致性」「DiskInode」「间接」均 0 命中，该句无法落地。",
+      "notes": "def 17.3.1 Segment 六字段、open 一次 read_to_end 后丢 File、无常驻 fd：src/segment.rs:131-141 属实；Arc<Segment> 共享（engine.rs:710）与热路径 unsafe 切片（segment.rs:317 from_raw_parts）属实；def 17.3.2 三条不变量对应的实现约束（边界检查+页脚四道核对 / Arc+epoch / 新建段不改旧段）均可落码。SAFETY 判据与判定流程为教学内容，无外部事实。问题只在 17.3.2 把 easy-fs 块缓存「写进去却读不出来…致命又难查」的告诫当作对 easy-fs 的引述，本地母本 sources/archive/systems/3using-easy-fs-in-kernel-rcore.html 中「致命」「一致性」「DiskInode」「间接」均 0 命中，该句无法落地。",
       "evidence": [
         "src/segment.rs:141 File::open(path)?.read_to_end(&mut data)?；:317 unsafe { core::slice::from_raw_parts(...) }（实际写法与之等价，正文引用形状相符）",
         "src/segment.rs:160-163 四条范围核对；:157 crc != crc32(&data[..f]) 判损坏",
@@ -89,7 +89,7 @@
     "projects/tidekv/src/bin/{tide-mech.rs,tide-admit.rs,tide-bench.rs}",
     "projects/tidekv/tests/{segment_format.rs,bloom_contract.rs,admission.rs,epoch_reclaim.rs,tombstones.rs}",
     "projects/tidekv/results/{bloom-contract-2026-10-30.txt,run-02/*,run-03/*,run-01/gate.json}",
-    ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html"
+    "sources/archive/systems/3using-easy-fs-in-kernel-rcore.html"
   ],
   "findings": [
     {
@@ -101,7 +101,7 @@
     {
       "anchor": "sec-cpp-rust.4.17.2",
       "severity": "P1",
-      "description": "17.2.2 对 easy-fs 的容量陈述「DiskInode 28 个直接项满了走一级间接（一个 512 B 块装 512/4=128 个 u32 指针），再不够上二级间接，容量依次是 14 KiB、64 KiB、8 MiB」：按累计容量口径复算，一级间接满应为 (28+128)×512 B=79,872 B≈78 KiB（正文写 64 KiB，差 14 KiB），二级满 ≈8.07 MiB；64 KiB/8 MiB 只有在「各层新增」口径下才对，而「容量依次」的措辞是累计口径。且仓库母本 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html（easy-fs 使用篇）中 DiskInode/间接/28/128/容量数字均 0 命中，该陈述无法在已存母本中落地。",
+      "description": "17.2.2 对 easy-fs 的容量陈述「DiskInode 28 个直接项满了走一级间接（一个 512 B 块装 512/4=128 个 u32 指针），再不够上二级间接，容量依次是 14 KiB、64 KiB、8 MiB」：按累计容量口径复算，一级间接满应为 (28+128)×512 B=79,872 B≈78 KiB（正文写 64 KiB，差 14 KiB），二级满 ≈8.07 MiB；64 KiB/8 MiB 只有在「各层新增」口径下才对，而「容量依次」的措辞是累计口径。且仓库母本 sources/archive/systems/3using-easy-fs-in-kernel-rcore.html（easy-fs 使用篇）中 DiskInode/间接/28/128/容量数字均 0 命中，该陈述无法在已存母本中落地。",
       "evidence": "复算 28*512=14336B=14KiB；(28+128)*512=79872B≈78KiB≠64KiB；(28+128+16384)*512=8456192B≈8.07MiB；python3 去标签检索母本 'DiskInode' hits=0、'间接' hits=0"
     },
     {
@@ -114,7 +114,7 @@
       "anchor": "sec-cpp-rust.4.17.3",
       "severity": "P1",
       "description": "17.3.2 把「每个使用者各留一块缓冲，块被改后另一副本不同步、后到的读看到旧内容」并「形容成致命又难查」的告诫明确归于 easy-fs。本书内两处 easy-fs 材料均无法落地：本地母本（使用篇 html）中「致命」「一致性」0 命中；正文自己的 ch12 对 easy-fs BlockCache 的描述（12.md:1892）只写到「合并与回写时机、扇区与块」，不含该警告句。该外部引文没有可核对母本，却以转述引语的口吻使用。",
-      "evidence": "python3 检索 .work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html：'致命' hits=0、'一致性' hits=0；src/part3/ch12.md:1892 无对应警告；sources/web.json 仅列主题词（BlockCache/modified/扇区与块），无此句原文"
+      "evidence": "python3 检索 sources/archive/systems/3using-easy-fs-in-kernel-rcore.html：'致命' hits=0、'一致性' hits=0；src/part3/ch12.md:1892 无对应警告；sources/web.json 仅列主题词（BlockCache/modified/扇区与块），无此句原文"
     },
     {
       "anchor": "sec-cpp-rust.4.17.4",

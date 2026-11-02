@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
-  "provenance": "冷启动通读 src/part3/ch09.md 第 66–1123 行（9.1–9.6 全部正文与每个 preview/def/ex/sol/think/errata/method 盒，含图 9-1 的 SVG 与 desc），逐条回查 bench/results/runtime-fixed/measurements-final/{scheduling.s,blocking-poll.txt,scheduling.txt,type-layout.txt,source-snapshot/bench/runtime-lab/src/bin/scheduling.rs}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、本机 cargo registry 的 tokio-1.54.0 源码（src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs）、sources/{runtime-code.json,web.json} 与 .work/cpp-rust-sources/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html,3semaphore-rcore.html,4scheduling-rcore.html}；全部测量数字用 /usr/bin/python3 从原始 ns/op 行自行复算，汇编与寄存器清单逐行比对母本原文；另跑 tools/list_uncollected_claims.py 只看 ch09。",
+  "provenance": "冷启动通读 src/part3/ch09.md 第 66–1123 行（9.1–9.6 全部正文与每个 preview/def/ex/sol/think/errata/method 盒，含图 9-1 的 SVG 与 desc），逐条回查 bench/results/runtime-fixed/measurements-final/{scheduling.s,blocking-poll.txt,scheduling.txt,type-layout.txt,source-snapshot/bench/runtime-lab/src/bin/scheduling.rs}、bench/runtime-lab/{src/bin/blocking_poll.rs,examples/type_layout.rs,tests/contracts.rs}、本机 cargo registry 的 tokio-1.54.0 源码（src/runtime/mod.rs、src/runtime/task/state.rs、src/runtime/scheduler/current_thread/mod.rs）、sources/{runtime-code.json,web.json} 与 sources/archive/systems/{2task-switching-rcore.html,4time-sharing-system-rcore.html,3semaphore-rcore.html,4scheduling-rcore.html}；全部测量数字用 /usr/bin/python3 从原始 ns/op 行自行复算，汇编与寄存器清单逐行比对母本原文；另跑 tools/list_uncollected_claims.py 只看 ch09。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.9.1",
@@ -23,12 +23,12 @@
       "anchor": "sec-cpp-rust.3.9.2",
       "verdict": "pass",
       "method": "read",
-      "notes": "9.2.1–9.2.7 与全部语义盒逐节读完，重点复核被派单点名的两处。① 9.2.3 def 9.2.3 的「14 项保存清单」：母本 .work/cpp-rust-sources/systems/2task-switching-rcore.html 给出 `pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }`，正文写「s0~s11 这 12 个被调用者保存寄存器，再加 ra 与内核栈指针 sp，一共 14 项」，12+1+1=14 我按母本字段数与 __switch 汇编（sd sp,8(a0)、sd ra,0(a0)、.set n,0/.rept 12 SAVE_SN）双重核对成立；正文额外声明「母本原文也只说恢复 ra、s0~s11 与 sp」也与母本阶段[3]的措辞一致（我按去标签后的全文检索 ra/s0~s11/sp 三处，未见第四项）；正文自加的「ra 按 RISC-V 调用约定属 caller-saved」是本书自己的判断，母本只说「属于调用者保存的寄存器由编译器在高级语言调用函数里保存」，该判断与 RISC-V 惯例相符且不与母本冲突。② 保存项的「两条规矩」复述：母本原句为「只有那些对于程序接下来的正确执行仍然有用，且在它被切换出去的时候有被覆盖风险的那些资源才有被保存的价值」，正文「切回来之后还得用得上 + 切出去这段时间有被别的代码写脏的可能」是等价改写，未加母本没有的量词。③ 时钟抢占：母本 `const TICKS_PER_SEC: usize = 100` 与「10ms 之后一个 S 特权级时钟中断就会被触发」，正文「每秒 tick 数取 100，也就是每 10 ms 一次可能抢占」的 1/100=10 ms 我复算成立，mtime/mtimecmp/SBI set_timer 三点都在同一页。④ 9.2.1 的 transition_to_notified_by_ref 四行表与 state.rs:253 起的函数分支（complete/已通知/running/idle）逐一吻合，且 state.rs:261 的注释正是 9.2.2「合并通知仍要 Release」的落点，正文写「被核读版本的源码在 already-notified 分支中特别说明了这个问题」可落地。⑤ 9.2.5 的回归：tests/contracts.rs:27 abort_observed_and_drop_executed 存在，Signal 的 Drop 守卫、先 ready_rx.await 再 task.abort()、断言 is_cancelled()、最后等 drop_rx 的顺序与正文叙述一致；9.2.6 的 joinset_observes_panic_and_completes_other_task 在 contracts.rs:73。本节无测量数字。",
+      "notes": "9.2.1–9.2.7 与全部语义盒逐节读完，重点复核被派单点名的两处。① 9.2.3 def 9.2.3 的「14 项保存清单」：母本 sources/archive/systems/2task-switching-rcore.html 给出 `pub struct TaskContext { ra: usize, sp: usize, s: [usize; 12] }`，正文写「s0~s11 这 12 个被调用者保存寄存器，再加 ra 与内核栈指针 sp，一共 14 项」，12+1+1=14 我按母本字段数与 __switch 汇编（sd sp,8(a0)、sd ra,0(a0)、.set n,0/.rept 12 SAVE_SN）双重核对成立；正文额外声明「母本原文也只说恢复 ra、s0~s11 与 sp」也与母本阶段[3]的措辞一致（我按去标签后的全文检索 ra/s0~s11/sp 三处，未见第四项）；正文自加的「ra 按 RISC-V 调用约定属 caller-saved」是本书自己的判断，母本只说「属于调用者保存的寄存器由编译器在高级语言调用函数里保存」，该判断与 RISC-V 惯例相符且不与母本冲突。② 保存项的「两条规矩」复述：母本原句为「只有那些对于程序接下来的正确执行仍然有用，且在它被切换出去的时候有被覆盖风险的那些资源才有被保存的价值」，正文「切回来之后还得用得上 + 切出去这段时间有被别的代码写脏的可能」是等价改写，未加母本没有的量词。③ 时钟抢占：母本 `const TICKS_PER_SEC: usize = 100` 与「10ms 之后一个 S 特权级时钟中断就会被触发」，正文「每秒 tick 数取 100，也就是每 10 ms 一次可能抢占」的 1/100=10 ms 我复算成立，mtime/mtimecmp/SBI set_timer 三点都在同一页。④ 9.2.1 的 transition_to_notified_by_ref 四行表与 state.rs:253 起的函数分支（complete/已通知/running/idle）逐一吻合，且 state.rs:261 的注释正是 9.2.2「合并通知仍要 Release」的落点，正文写「被核读版本的源码在 already-notified 分支中特别说明了这个问题」可落地。⑤ 9.2.5 的回归：tests/contracts.rs:27 abort_observed_and_drop_executed 存在，Signal 的 Drop 守卫、先 ready_rx.await 再 task.abort()、断言 is_cancelled()、最后等 drop_rx 的顺序与正文叙述一致；9.2.6 的 joinset_observes_panic_and_completes_other_task 在 contracts.rs:73。本节无测量数字。",
       "evidence": [
-        ".work/cpp-rust-sources/systems/2task-switching-rcore.html: TaskContext{ra:usize, sp:usize, s:[usize;12]} 与 __switch 的 sd sp,8(a0)/sd ra,0(a0)/.rept 12 SAVE_SN → 14 项",
+        "sources/archive/systems/2task-switching-rcore.html: TaskContext{ra:usize, sp:usize, s:[usize;12]} 与 __switch 的 sd sp,8(a0)/sd ra,0(a0)/.rept 12 SAVE_SN → 14 项",
         "同页阶段[3]「恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器」（正文的『母本原文也只说…』核对成立）",
         "同页「只有那些…仍然有用，且在它被切换出去的时候有被覆盖风险的…才有被保存的价值」",
-        ".work/cpp-rust-sources/systems/4time-sharing-system-rcore.html: TICKS_PER_SEC=100、set_timer/mtimecmp、「10ms 之后一个 S 特权级时钟中断就会被触发」；1/100=10ms 复算",
+        "sources/archive/systems/4time-sharing-system-rcore.html: TICKS_PER_SEC=100、set_timer/mtimecmp、「10ms 之后一个 S 特权级时钟中断就会被触发」；1/100=10ms 复算",
         "tokio-1.54.0/src/runtime/task/state.rs:253-266 (transition_to_notified_by_ref 分支与 Release store 注释)",
         "bench/runtime-lab/tests/contracts.rs:27,73"
       ]
@@ -41,7 +41,7 @@
       "evidence": [
         "tokio-1.54.0/src/runtime/mod.rs:346 (## Multi threaded runtime 小标题), :352-355 (256 + 移一半到全局), :366-369 (steal 一半)",
         "tokio-1.54.0/src/runtime/mod.rs:331-339 (current-thread 31 次/61 次), :358-365 (动态估计、目标 10ms), :371-387 (61 次、LIFO 槽不可窃取与 coop budget)",
-        ".work/cpp-rust-sources/systems/4scheduling-rcore.html:「步长与进程优先级成反比…选择拥有最小行程值的进程运行」「彩票调度算法只能在一段比较长的时间后…步长调度算法可以在每个调度周期后做到准确」「彩票算法的优势是几乎不需要全局信息」",
+        "sources/archive/systems/4scheduling-rcore.html:「步长与进程优先级成反比…选择拥有最小行程值的进程运行」「彩票调度算法只能在一段比较长的时间后…步长调度算法可以在每个调度周期后做到准确」「彩票算法的优势是几乎不需要全局信息」",
         "bench/results/runtime-fixed/measurements-final/ 目录清单：无窃取打点、无 NUMA 归档"
       ]
     },
@@ -89,7 +89,7 @@
       "anchor": "sec-cpp-rust.3.9.3",
       "severity": "P2",
       "description": "9.3.3 讲彩票调度（抽签）那条实现路径时，正文把它的好处写成「调度器几乎不必记历史，新来者只要拿到票就能参与」。母本 chapter5/4scheduling.html 的原句是「彩票算法的优势是几乎不需要全局信息，这在合理处理新加入的进程时很精炼」——「不需要全局信息」说的是不必统计各进程的彩票数（只需更新总票数），而「不必记历史」在母本该页里找不到对应句（我按去标签全文检索「历史信息」「需要历史」均无命中，母本对步长调度反而说「操作系统会定期记录每个进程的总步长」，即记录历史是步长那一侧的做法）。措辞一换，读者容易把两条路径的区别理解成「是否保存历史」，而母本与本章表格想区分的其实是「概率式与是否需要全局统计」。同段后半句（短窗口比例不准、新来者按票参与）与母本一致，故属表述漂移而非事实错误，判 P2。",
-      "evidence": ".work/cpp-rust-sources/systems/4scheduling-rcore.html：「彩票调度算法只能在一段比较长的时间后，基于概率上实现优先级等比的时间分配，而步长调度算法可以在每个调度周期后做到准确的优先级等比的时间分配。但彩票算法的优势是几乎不需要全局信息」；同页「操作系统会定期记录每个进程的总步长，即行程（pass）」；src/part3/ch09.md:562「它的好处是调度器几乎不必记历史」"
+      "evidence": "sources/archive/systems/4scheduling-rcore.html：「彩票调度算法只能在一段比较长的时间后，基于概率上实现优先级等比的时间分配，而步长调度算法可以在每个调度周期后做到准确的优先级等比的时间分配。但彩票算法的优势是几乎不需要全局信息」；同页「操作系统会定期记录每个进程的总步长，即行程（pass）」；src/part3/ch09.md:562「它的好处是调度器几乎不必记历史」"
     },
     {
       "anchor": "sec-cpp-rust.3.9.2",

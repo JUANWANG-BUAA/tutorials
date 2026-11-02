@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
-  "provenance": "冷启动通读 src/part3/ch12.md 的 12.7–12.11 全部正文与每个语义盒（定义 12.7.1–12.7.3 / 12.8.1–12.8.6、例 12.7.1–12.7.2 / 12.8.1–12.8.2、思考 12.7.1 / 12.8.1、判定流程、errata、即时自测、小结、延伸阅读表、章末件），逐条回磁盘对核：bench/systems-lab/results/run-01/views.txt 与 simd.txt 用 /usr/bin/python3 从 raw 行自己复算均值/标准差/分位数/逐批比值，bench/systems-lab/src/lib.rs 与 src/bin/views.rs 逐行看代码，results/run-01/codegen/*.s 查汇编指令，rCore 与 io_uring 母本在 .work/cpp-rust-sources/systems/*.html 归档里逐字比对，12.9 表每行拿去 src/appendix/coverage.md 与 sources/web.json 查台账与 SHA；另跑 tools/list_uncollected_claims.py --only 12 复核全部「未采集」声明。快照串按派单原样写入，未自行计算。",
+  "provenance": "冷启动通读 src/part3/ch12.md 的 12.7–12.11 全部正文与每个语义盒（定义 12.7.1–12.7.3 / 12.8.1–12.8.6、例 12.7.1–12.7.2 / 12.8.1–12.8.2、思考 12.7.1 / 12.8.1、判定流程、errata、即时自测、小结、延伸阅读表、章末件），逐条回磁盘对核：bench/systems-lab/results/run-01/views.txt 与 simd.txt 用 /usr/bin/python3 从 raw 行自己复算均值/标准差/分位数/逐批比值，bench/systems-lab/src/lib.rs 与 src/bin/views.rs 逐行看代码，results/run-01/codegen/*.s 查汇编指令，rCore 与 io_uring 母本在 sources/archive/systems/*.html 归档里逐字比对，12.9 表每行拿去 src/appendix/coverage.md 与 sources/web.json 查台账与 SHA；另跑 tools/list_uncollected_claims.py --only 12 复核全部「未采集」声明。快照串按派单原样写入，未自行计算。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.12.7",
@@ -26,11 +26,11 @@
       "method": "read",
       "notes": "本节通篇是机制叙述，正文明确「没有采集 io_uring 的任何延迟或吞吐数字」（ch12.md:1601、:1711、:1874、:1945、:1968），因此没有可复算的实测数字，也没有出现「拿机制冒充实测」的越界——这点核对通过。母本与结构体逐字回查：正文 12.8.2 的 struct io_uring_sqe 字段顺序（opcode/flags/ioprio/fd/union off,addr2/union addr,splice_off_in/len/…/user_data）与 io_uring(7) 归档里「Here is struct io_uring_sqe in full」那段完全对得上；struct io_uring_cqe 三字段 user_data/__s32 res/__u32 flags 与归档逐字一致，16 字节这个静态量自己算过（8+4+4=16）成立；IORING_OFF_SQ_RING 与 IORING_OFF_CQ_RING 两次 mmap 也确实在归档示例代码里，图的画法有出处。rCore 侧四行引文全部回查：easy-fs 实现篇归档有「pub const BLOCK_SZ: usize = 512」、BlockCache 含 cache/block_id/block_device: Arc<dyn BlockDevice>/modified: bool、全局管理器「尽可能将更多的块操作合并起来」，以及「扇区通常 512 字节 / Ext4 单个块默认 4096 字节 / easy-fs 里两者同为 512 字节因此不再区分」——12.8.7 定义 12.8.5 那句转述逐字落地，且登记的是实现篇（SHA ab93f730，coverage.md:592），不是使用篇，没有踩上一轮那类母本文件搞错的坑；接入篇归档确有 File trait 只有 read/write、UserBuffer、Arc<dyn BlockDevice>；串口篇有 DLAB 表与设备树 reg/interrupts/clock-frequency；virtio 篇有 kick、virtqueue/virtio-ring 与六个状态（ACKNOWLEDGE/DRIVER/FEATURES_OK/DRIVER_OK/FAILED=128/DEVICE_NEEDS_RESET=64），正文「六个状态、FAILED 与 DEVICE_NEEDS_RESET 是两种失败等级」成立。其余静态/常识断言核对：epoll 进主线于 2.6、设计者 Jens Axboe、SQPOLL 线程名 iou-sqp-<pid>、sq_thread_idle 常见 1000 ms、IORING_ENTER_SQ_WAKEUP 唤醒调用、AsyncRead 的 poll_read(Pin<&mut Self>, &mut Context, &mut ReadBuf) 签名——均与正文一致，未发现与事实相反。「至少 2 次系统调用」在 12.8.1 与 12.8.6 表里口径一致。判 finding 两条为表述与量级出处问题：SQE 那行注释写「64 字节对齐」而母本只给结构体（定长 64 字节、环内按 64 字节槽位），措辞与 alignof 易混；12.8.7 的 preview 断言「三者的成本差三个数量级」而正文随即声明这组对照没有在本机采集，量级数字没有落地出处。",
       "evidence": [
-        ".work/cpp-rust-sources/systems/uring.html（io_uring(7)，sources/web.json:295 SHA 1ed71f55…）：struct io_uring_sqe in full 与 struct io_uring_cqe 字段逐字命中 src/part3/ch12.md:1651-1677",
+        "sources/archive/systems/uring.html（io_uring(7)，sources/web.json:295 SHA 1ed71f55…）：struct io_uring_sqe in full 与 struct io_uring_cqe 字段逐字命中 src/part3/ch12.md:1651-1677",
         "静态量自算：io_uring_cqe = 8+4+4 = 16 字节，与 ch12.md:1671「CQE, 16 字节」一致；SQE 定长 64 字节但母本无「64 字节对齐」措辞（ch12.md:1652）",
-        ".work/cpp-rust-sources/systems/2fs-implementation-rcore.html：BLOCK_SZ=512 / BlockCache{cache,block_id,block_device,modified} / 全局管理器合并回写 / 扇区 512 与 ext4 块 4096 / easy-fs 不区分——支持 ch12.md:1892 定义 12.8.5",
-        ".work/cpp-rust-sources/systems/3using-easy-fs-in-kernel-rcore.html：File trait 只 read/write、UserBuffer、Arc<dyn BlockDevice>——支持 ch12.md:1989",
-        ".work/cpp-rust-sources/systems/2device-driver-1-rcore.html（DLAB、clock-frequency、reg、interrupts、ns16550）与 2device-driver-2-rcore.html（kick、virtqueue、FAILED=128、DEVICE_NEEDS_RESET=64，六状态）——支持 ch12.md:1990-1991",
+        "sources/archive/systems/2fs-implementation-rcore.html：BLOCK_SZ=512 / BlockCache{cache,block_id,block_device,modified} / 全局管理器合并回写 / 扇区 512 与 ext4 块 4096 / easy-fs 不区分——支持 ch12.md:1892 定义 12.8.5",
+        "sources/archive/systems/3using-easy-fs-in-kernel-rcore.html：File trait 只 read/write、UserBuffer、Arc<dyn BlockDevice>——支持 ch12.md:1989",
+        "sources/archive/systems/2device-driver-1-rcore.html（DLAB、clock-frequency、reg、interrupts、ns16550）与 2device-driver-2-rcore.html（kick、virtqueue、FAILED=128、DEVICE_NEEDS_RESET=64，六状态）——支持 ch12.md:1990-1991",
         "ch12.md:1601/1711/1874/1945/1968 五处「没有采集」与 list_uncollected_claims.py --only 12 的输出一致，无同类产物反例",
         "ch12.md:1884「三者的成本差三个数量级」无归档证据，且 ch12.md:1906 自陈「本书没有在本机采集这组对照」"
       ]
@@ -89,7 +89,7 @@
       "anchor": "sec-cpp-rust.3.12.8",
       "severity": "P2",
       "description": "12.8.2 的 C 代码块首行注释写「提交队列条目 (SQE, 64 字节对齐)」（ch12.md:1652）。母本 io_uring(7) 归档里只有结构体本身，既没有「64 字节对齐」这句措辞，也没有把 SQE 描述为 64 字节对齐类型：可核的事实是每条 SQE 定长 64 字节、环里按 64 字节槽位索引，而 CQE 才明确是 16 字节（正文字段 __u64+__s32+__u32，自算 8+4+4=16 与之相符）。把「定长/槽位间距 64 字节」写成「64 字节对齐」容易与 alignof 混起来，也让读者以为注释来自母本原文。",
-      "evidence": ".work/cpp-rust-sources/systems/uring.html（sources/web.json:295，SHA 1ed71f55…）struct io_uring_sqe in full / struct io_uring_cqe 两段原文，对照 src/part3/ch12.md:1652 与 :1671"
+      "evidence": "sources/archive/systems/uring.html（sources/web.json:295，SHA 1ed71f55…）struct io_uring_sqe in full / struct io_uring_cqe 两段原文，对照 src/part3/ch12.md:1652 与 :1671"
     },
     {
       "anchor": "sec-cpp-rust.3.12.8",

@@ -7,7 +7,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
 ROOT = Path(__file__).resolve().parents[1]
-CACHE = ROOT.parent / '.work/cpp-rust-sources/web'
+CACHE = ROOT.parent / '.work' / 'cpp-rust-sources' / 'web'
 URLS = {
     'stanford-process-slides': 'https://web.stanford.edu/class/cs110l/slides/lecture-10-2022.pdf',
     'mit-scheduling': 'https://pdos.csail.mit.edu/6.S081/2020/lec/l-threads.txt',

@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-ARCHIVE = ROOT / ".work/cpp-rust-sources"
+ARCHIVE = ROOT / "sources/archive"
 
 FENCE = re.compile(r"^```")
 TABLE = re.compile(r"^\s*\|")
@@ -147,7 +147,7 @@ def find_matches(book: str, source: str, minimum: int) -> list[tuple[int, int, i
 def main() -> int:
     ap = argparse.ArgumentParser(description="Chinese long-overlap check against local archives")
     ap.add_argument("--min", type=int, default=12, help="报出的最短重合字数")
-    ap.add_argument("--sources", default="*/*", help="来源通配（相对 .work/cpp-rust-sources），如 systems/*")
+    ap.add_argument("--sources", default="*/*", help="来源通配（相对 sources/archive），如 systems/*")
     ap.add_argument("--files", default="**/*.md", help="书稿通配（相对 src/）")
     ap.add_argument("--show", type=int, default=60, help="每段最多显示多少字")
     ap.add_argument("--strict", action="store_true", help="有散文重合即以非零码退出")

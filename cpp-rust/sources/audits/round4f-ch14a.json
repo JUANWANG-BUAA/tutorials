@@ -3,7 +3,7 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "b63d4d52001547c4f8b37d09b483dd2fdda9f51f2338064befb015593ed86ce9",
-  "provenance": "冷启动通读 src/part4/ch14.md 的 14.1–14.6 全部正文与每个语义盒，用一条 python 脚本从 bench/evidence-lab/results/run-01/ 的 build-raw.jsonl、build-summary.json、size-*.txt、feature-*.txt、verify-*.txt、gate-rejection.json 逐项复算，并对照 tools/build_matrix.py、tools/gate.py、Cargo.toml、src/lib.rs、src/bin/feature_work.rs 与已登记档案 .work/cpp-rust-sources/evidence/cargo-profiles.html；另跑 tools/list_uncollected_claims.py 只看 ch14。",
+  "provenance": "冷启动通读 src/part4/ch14.md 的 14.1–14.6 全部正文与每个语义盒，用一条 python 脚本从 bench/evidence-lab/results/run-01/ 的 build-raw.jsonl、build-summary.json、size-*.txt、feature-*.txt、verify-*.txt、gate-rejection.json 逐项复算，并对照 tools/build_matrix.py、tools/gate.py、Cargo.toml、src/lib.rs、src/bin/feature_work.rs 与已登记档案 sources/archive/evidence/cargo-profiles.html；另跑 tools/list_uncollected_claims.py 只看 ch14。",
   "sections": [
     {
       "anchor": "#sec-cpp-rust.4.14.1",

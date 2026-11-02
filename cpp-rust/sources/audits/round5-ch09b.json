@@ -3,18 +3,18 @@
   "kind": "independent",
   "layer": "read",
   "snapshot_sha256": "18fe33095aa82aabe2725a2822fa5329d832a1b7ad14000e9d9e9bd58dc26271",
-  "provenance": "冷启动通读 src/part3/ch09.md 全文与 9.7–9.11 每个语义盒，逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt（用 python 复算）、tools/run_runtime_benchmarks.sh、src/appendix/coverage.md、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、.work/cpp-rust-sources/systems/3semaphore-rcore.html 与本地 tokio-1.54.0 crate 源码（runtime/mod.rs、task/state.rs、task/blocking.rs、runtime/runtime.rs）。",
+  "provenance": "冷启动通读 src/part3/ch09.md 全文与 9.7–9.11 每个语义盒，逐条回查 bench/runtime-lab/tests/contracts.rs、bench/results/runtime-fixed/measurements-final/blocking-poll.txt（用 python 复算）、tools/run_runtime_benchmarks.sh、src/appendix/coverage.md、sources/web.json、sources/runtime-code.json、sources/reviews/S11.md、sources/archive/systems/3semaphore-rcore.html 与本地 tokio-1.54.0 crate 源码（runtime/mod.rs、task/state.rs、task/blocking.rs、runtime/runtime.rs）。",
   "sections": [
     {
       "anchor": "sec-cpp-rust.3.9.7",
       "verdict": "finding",
       "method": "read",
-      "notes": "两条回归逐字核对通过。9.7.4 贴出的 Rust 片段与 bench/runtime-lab/tests/contracts.rs:12-22 逐行一致（channel(1)、try_send(10)、TrySendError::Full(20)、Some(10)、send(20)、drop(tx)、Some(20)、None），正文「容量满时拒绝、腾槽后复用、关闭后仍能排空」的三点概括与代码断言一一对应；正文「它没有测量通道吞吐，也没有报告队列内存峰值」经核对属实——该测试体内没有任何计时或内存采集。9.7.3 的许可寿命序列与 contracts.rs:52-69 相符：permit 在 spawn_blocking 闭包内被 move（第 58-59 行）、先 await started_rx 再 abort（63-64）、abort 后 try_acquire_owned 必须 is_err（65）、发停止信号后 task.await 仍 Ok（66-67，断言文案本身写着 started blocking task is not aborted），再取 permit is_ok（68）；「刻意不用固定 sleep」经核对成立——测试里没有 sleep/tokio::time 调用，用 oneshot 建立阶段关系。9.7.5 的「默认阻塞线程上限可能很大」与本地 tokio 1.54.0 默认值 max_blocking_threads: 512 方向一致（builder.rs:324），且是留了余地的表述。9.7.1/9.7.2/9.7.3 三个定义与自测四题属教学性论断，未见与代码或文档相反的断言。rCore 母本核对：9.7.2 关于「先取名额再干活（P/V）」「资源用整数计数、计数到零后来者排队」「归还直接把名额移交给已在等的线程，被唤醒方醒来不必重新确认」「唤醒早于等待时由计数记住这次多余唤醒」四点，逐条命中 .work/cpp-rust-sources/systems/3semaphore-rcore.html 原文（P/V 定义、整数变量+阻塞队列、「进行 V 操作的线程直接将资源移交给了它唤醒的线程」、Lost Wakeup 段落），与 sources/web.json 中 rcore-semaphore 的 review_scope 一致，非编造。本条未核：9.7.1 表格五行资源边界的完备性属教学判断，无外部证据可核。 本节判定为 finding，原因见 findings[]：P2，属表述与索引口径问题，无数字或代码事实错误。",
+      "notes": "两条回归逐字核对通过。9.7.4 贴出的 Rust 片段与 bench/runtime-lab/tests/contracts.rs:12-22 逐行一致（channel(1)、try_send(10)、TrySendError::Full(20)、Some(10)、send(20)、drop(tx)、Some(20)、None），正文「容量满时拒绝、腾槽后复用、关闭后仍能排空」的三点概括与代码断言一一对应；正文「它没有测量通道吞吐，也没有报告队列内存峰值」经核对属实——该测试体内没有任何计时或内存采集。9.7.3 的许可寿命序列与 contracts.rs:52-69 相符：permit 在 spawn_blocking 闭包内被 move（第 58-59 行）、先 await started_rx 再 abort（63-64）、abort 后 try_acquire_owned 必须 is_err（65）、发停止信号后 task.await 仍 Ok（66-67，断言文案本身写着 started blocking task is not aborted），再取 permit is_ok（68）；「刻意不用固定 sleep」经核对成立——测试里没有 sleep/tokio::time 调用，用 oneshot 建立阶段关系。9.7.5 的「默认阻塞线程上限可能很大」与本地 tokio 1.54.0 默认值 max_blocking_threads: 512 方向一致（builder.rs:324），且是留了余地的表述。9.7.1/9.7.2/9.7.3 三个定义与自测四题属教学性论断，未见与代码或文档相反的断言。rCore 母本核对：9.7.2 关于「先取名额再干活（P/V）」「资源用整数计数、计数到零后来者排队」「归还直接把名额移交给已在等的线程，被唤醒方醒来不必重新确认」「唤醒早于等待时由计数记住这次多余唤醒」四点，逐条命中 sources/archive/systems/3semaphore-rcore.html 原文（P/V 定义、整数变量+阻塞队列、「进行 V 操作的线程直接将资源移交给了它唤醒的线程」、Lost Wakeup 段落），与 sources/web.json 中 rcore-semaphore 的 review_scope 一致，非编造。本条未核：9.7.1 表格五行资源边界的完备性属教学判断，无外部证据可核。 本节判定为 finding，原因见 findings[]：P2，属表述与索引口径问题，无数字或代码事实错误。",
       "evidence": [
         "bench/runtime-lab/tests/contracts.rs:12-22",
         "bench/runtime-lab/tests/contracts.rs:52-69",
         "/Users/juanwang/.cargo/registry/src/mirrors.bfsu.edu.cn-eb00624c53167367/tokio-1.54.0/src/runtime/builder.rs:324",
-        ".work/cpp-rust-sources/systems/3semaphore-rcore.html（P/V、整数计数+阻塞队列、V 直接移交资源、Lost Wakeup 段）",
+        "sources/archive/systems/3semaphore-rcore.html（P/V、整数计数+阻塞队列、V 直接移交资源、Lost Wakeup 段）",
         "sources/web.json（rcore-semaphore，archive 路径与 review_scope）"
       ]
     },
@@ -83,7 +83,7 @@
     {
       "anchor": "sec-cpp-rust.3.9.9",
       "severity": "P2",
-      "description": "外部规范表把 MIT6.S0812020 Lecture11 的「实际核读范围」写成「完整Thread switching讲义」，但 sources/web.json 里 mit-scheduling 的 status 是 reviewed-online，review_note 明写「在线核读，未保留本地母本；正文引用的是该 URL 当时抓取到的内容」，仓库内没有可逐字比对的母本文件（.work/cpp-rust-sources 下无该讲义，只有 mit-rcu.txt）。因此 9.8.3（ch09.md:1372）那句「寄存器（CPU 内部最快的那一小批存储格子，比缓存还快）」这类带具体形容的描述，我只能确认它落在台账登记的 URL 与 sha256 上，无法逐字回查；标题 Lecture11 Thread switching 本身在 coverage.md:62 有登记，不算虚构。建议在该行或正文里把这句显式标为本书的解释性括注，而不是母本原话。",
+      "description": "外部规范表把 MIT6.S0812020 Lecture11 的「实际核读范围」写成「完整Thread switching讲义」，但 sources/web.json 里 mit-scheduling 的 status 是 reviewed-online，review_note 明写「在线核读，未保留本地母本；正文引用的是该 URL 当时抓取到的内容」，仓库内没有可逐字比对的母本文件（sources/archive 下无该讲义，只有 mit-rcu.txt）。因此 9.8.3（ch09.md:1372）那句「寄存器（CPU 内部最快的那一小批存储格子，比缓存还快）」这类带具体形容的描述，我只能确认它落在台账登记的 URL 与 sha256 上，无法逐字回查；标题 Lecture11 Thread switching 本身在 coverage.md:62 有登记，不算虚构。建议在该行或正文里把这句显式标为本书的解释性括注，而不是母本原话。",
       "evidence": "sources/web.json 条目 id=mit-scheduling（status=reviewed-online，sha256 46a32663…，无 archive 字段）；src/appendix/coverage.md:62；src/part3/ch09.md:1372,1529"
     },
     {
