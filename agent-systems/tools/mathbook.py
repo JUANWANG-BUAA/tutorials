@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 r"""mathbook — 《Agent 系统工程》的 mdBook 预处理器。
 
-与 Linux 卷共用同一套盒子/交叉引用契约；本书只允许 def/thm/ex/intuition/
-method/errata/note/proof/sol 九种盒子，其他类型直接构建失败。
+与 Linux 卷共用同一套盒子/交叉引用契约；本书允许 def/thm/ex/intuition/think/
+method/errata/note/preview/proof/sol 十一种盒子，其他类型直接构建失败。
 
 补上 mdBook 原生没有、而数学教材必需的三件事：
 
@@ -12,7 +12,7 @@ method/errata/note/proof/sol 九种盒子，其他类型直接构建失败。
        正文（Markdown，可含 \( \) 与 $$ $$，可嵌套其他 ::: 盒子）
        :::
    渲染为 <div class="box def p-core" id="def-1.1.3">，样式见 theme/css/na.css。
-   可用类型见 BOX_TYPES / PROOF / SOL。
+   可用类型见 BOX_TYPES / PROOF / SOL / HINT。
 
    类型后可加**优先级标记**（可选）：`::: proof[core]`、`::: thm[skip]`，
    取值 core / main / skip，不写则按 PRIORITY_DEFAULT 取类型默认值。
@@ -92,13 +92,17 @@ BOX_TYPES = {
     "thm":     ("box thm",     "thm"),
     "ex":      ("box ex",      "ex"),
     "intuition": ("box intuition", None),
+    "think":   ("box think",   None),
     "method":  ("box method",  None),
     "errata":  ("box errata",  None),
     "note":    ("note",        None),
+    "preview": ("preview",     None),
 }
 PROOF = "proof"
 SOL = "sol"
-KNOWN = set(BOX_TYPES) | {PROOF, SOL}
+# 提示层：与 sol 一样默认折叠，样式更轻，用于「先给一句思路，再展开完整解答」。
+HINT = "hint"
+KNOWN = set(BOX_TYPES) | {PROOF, SOL, HINT}
 
 # --------------------------------------------------------------------------- #
 # 盒子优先级（阅读分层）
@@ -119,9 +123,10 @@ KNOWN = set(BOX_TYPES) | {PROOF, SOL}
 PRIORITY_DEFAULT = {
     "def": "core", "thm": "core", "prop": "core", "cor": "core", "lem": "core",
     "ex": "main", "method": "main", "intuition": "main",
-    "errata": "main", "meta": "main", SOL: "main",
+    "errata": "main", "meta": "main", SOL: "main", HINT: "main",
     "note": "main", "think": "main",
-    "proof": "skip", "preview": "skip",
+    "proof": "skip",
+    "preview": "main",
 }
 PRIORITIES = ("core", "main", "skip")
 MARKER_RE = re.compile(r"^\[([A-Za-z][\w-]*)\]\s*")
@@ -399,6 +404,9 @@ def emit_open(node) -> str:
     if typ == SOL:
         return (f'<details class="sol-box p-{prio}"{attrs}>'
                 f'<summary>{label or "解答"}</summary><div class="sol-inner">')
+    if typ == HINT:
+        return (f'<details class="hint-box p-{prio}"{attrs}>'
+                f'<summary>{label or "提示"}</summary><div class="hint-inner">')
     raise AssertionError(typ)
 
 
@@ -409,6 +417,8 @@ def emit_close(node) -> str:
     if typ == PROOF:
         return '<span class="qed">∎</span></div>'
     if typ == SOL:
+        return "</div></details>"
+    if typ == HINT:
         return "</div></details>"
     raise AssertionError(typ)
 
