@@ -21,6 +21,8 @@ rm -rf _site && mkdir -p _site
 cp site-index.html _site/index.html
 mkdir -p _site/shared/theme
 cp -R shared/theme/. _site/shared/theme/
+mkdir -p _site/shared
+cp -R shared/fonts _site/shared/fonts
 for book in "${books[@]}"; do cp -R "$book/book" "_site/$book"; done
 python3 tools/optimize_site.py _site
 python3 tools/optimize_assets.py _site
