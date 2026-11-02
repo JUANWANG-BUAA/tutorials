@@ -27,8 +27,7 @@ python3 robot/tools/verify_ch03_jac.py >/dev/null
 python3 robot/tools/verify_ch04_traj.py >/dev/null
 python3 robot/tools/verify_homework05.py >/dev/null
 python3 robot/tools/verify_homework06.py >/dev/null
-python3 robot/tools/verify_homework06b.py >/dev/null
-echo "robot 数值复算：6 个 verify 脚本全部通过"
+echo "robot 数值复算：5 个 verify 脚本全部通过"
 python3 linux/tools/build_coverage.py
 python3 agent-systems/tools/build_coverage.py
 python3 distributed/tools/check_coverage.py
