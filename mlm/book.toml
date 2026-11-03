@@ -34,6 +34,7 @@ additional-css = [
 additional-js = [
   "theme/js/prefs-config.js",
   "theme/js/page-extras.js",
+  "theme/js/mlm.js",
   "theme/js/atlas.js",
   "theme/js/search-cjk.js",
   "theme/js/framework-core.js",
