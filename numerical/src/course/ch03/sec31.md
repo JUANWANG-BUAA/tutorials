@@ -3,6 +3,347 @@
 > 对应教材 3.1.1–3.1.2、例 1–2、习题 1–6；对应老师第 6 讲末、第 7 讲 §一–§八。
 > 主线：幂法求**模最大**特征值，反幂法求**模最小**特征值，位移反幂法求**最接近 $p$** 的特征值。
 
+::: note 本节多出一节「特征值基础」，来源要说清
+下面的「特征值基础」**教材第 3 章没有**（教材从 3.1 幂法直接开始），它是**课件 6 的前 10 页**（p3–p11）的内容。
+因为幂法要反复用「模最大」「谱的界」「Rayleigh 商」，不讲这块直接进幂法会断链，所以放在这里作前置。
+**考试按课件口径，这一节属于考纲内。** 更完整的谱理论（Courant–Fischer、非正规敏感性）在[补充篇 2.5](../../supplement/sec25.md)，那部分课件未覆盖。
+:::
+
+<a id="sec-3.0"></a>
+## 特征值基础（课件 6 p3–p11）
+
+这一节把「特征值是什么、有哪些可以直接用的性质、不算特征值能把它圈到哪」一次讲完。**八条定理里有五条在幂法、反幂法、Gerschgorin 估界中会直接用到**，不是背景知识。
+
+::: intuition 直觉 · 特征值在工程里到底是什么
+课件的应用清单只有四条，但每一条都是实打实的工程问题：
+
+- **求系统的固有振动频率**——桥梁、机翼、建筑的自振频率，避开驱动频率才不会共振；
+- **求机械系统的振动频谱（模态）**——每个特征向量是一个振型；
+- **系统的稳定性分析**——动力系统 $\dot{\boldsymbol x}=A\boldsymbol x$ 的稳定性由 $\operatorname{Re}\lambda_i$ 的符号决定；
+- **物理学中某些临界值的确定**——临界载荷、临界温度本质上是某个矩阵的最小特征值。
+:::
+
+::: def 定义 3.0.1（课件定义 1） · 特征多项式、特征值、特征向量 {#def-3.0.1}
+已知 $A=(a_{ij})_{n\times n}$，称
+
+$$
+\varphi(\lambda)=\det(\lambda I-A)=
+\begin{vmatrix}
+\lambda-a_{11} & -a_{12} & \cdots & -a_{1n}\\
+-a_{21} & \lambda-a_{22} & \cdots & -a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+-a_{n1} & -a_{n2} & \cdots & \lambda-a_{nn}
+\end{vmatrix}
+=\lambda^n-(a_{11}+a_{22}+\cdots+a_{nn})\lambda^{n-1}+\cdots+(-1)^n\lvert A\rvert
+$$
+
+为 $A$ 的**特征多项式**。方程 $\varphi(\lambda)=\det(\lambda I-A)=0$ 的根称为 $A$ 的**特征值**，$\lambda(A)$ 表示 $A$ 的所有特征值的集合。
+
+设 $\lambda$ 为 $A$ 的特征值，相应齐次方程组 $(\lambda I-A)\boldsymbol x=\boldsymbol 0$ 的非零解 $\boldsymbol x$ 称为 $A$ 对应于 $\lambda$ 的**特征向量**。
+:::
+
+::: note 为什么展开式只写出首末两项
+$\lambda^n$ 的系数必为 $1$、$\lambda^{n-1}$ 的系数必为 $-\operatorname{tr}A$、常数项为 $(-1)^n\det A$——这三处**不需要真正展开行列式**就能读出来，中间项则不能。这三条正是下面定理 2 的直接来源。
+
+$n\ge 5$ 时 $\varphi(\lambda)$ 一般没有根式解（Abel–Ruffini），所以**求特征值只能靠数值方法**——这就是第 3 章存在的理由。
+:::
+
+::: ex 例 3.0.1（课件例 1） · 手算一个 $3\times3$ 的特征值与特征向量 {#ex-3.0.1}
+求 $A=\begin{pmatrix}2&1&0\\1&3&1\\0&1&2\end{pmatrix}$ 的特征值及其特征向量。
+
+**解。** 由特征多项式直接读出前两个系数：
+
+$$
+\varphi(\lambda)=\det(\lambda I-A)=\lambda^3-\operatorname{tr}(A)\lambda^2+\cdots+(-1)^3\det A .
+$$
+
+$\operatorname{tr}A=2+3+2=7$，$\det A=2(6-1)-1(2-0)=10-2=8$，故
+
+$$
+\varphi(\lambda)=\lambda^3-7\lambda^2+14\lambda-8=(\lambda-1)(\lambda-2)(\lambda-4).
+$$
+
+特征值为 $\lambda_1=4,\ \lambda_2=2,\ \lambda_3=1$。
+
+验算两条恒等式：$\sum\lambda_i=4+2+1=7=\operatorname{tr}A$ ✓；$\prod\lambda_i=4\cdot2\cdot1=8=\det A$ ✓。
+
+对应特征向量（解 $(\lambda I-A)\boldsymbol x=\boldsymbol 0$）：
+
+| $\lambda$ | 特征向量（取整） |
+|:--:|:--|
+| $1$ | $(1,-1,1)^{\mathrm T}$ |
+| $2$ | $(1,0,-1)^{\mathrm T}$ |
+| $4$ | $(1,2,1)^{\mathrm T}$ |
+
+三个特征值互异，故三个特征向量线性无关。
+:::
+
+::: thm 定理 3.0.1（课件定理 1） · 四则运算后特征值怎么变 {#thm-3.0.1}
+设 $\lambda$ 是 $A\in\mathbb R^{n\times n}$ 的特征值，$\boldsymbol x$ 是对应的非零特征向量，则
+
+1. $c\lambda$ 是 $cA$ 的特征值（常数 $c\ne0$）；
+2. $\lambda-p$ 是 $A-pI$ 的特征值，即 $(A-pI)\boldsymbol x=(\lambda-p)\boldsymbol x$；
+3. $\lambda^k$ 是 $A^k$ 的特征值，即 $A^k\boldsymbol x=\lambda^k\boldsymbol x$；
+4. 设 $A$ 非奇异，则 $\lambda\ne0$ 且 $\lambda^{-1}$ 是 $A^{-1}$ 的特征值，即 $A^{-1}\boldsymbol x=\lambda^{-1}\boldsymbol x$。
+:::
+
+::: proof 证明
+四条都是「同一个特征向量保持不变」的直接验证。
+
+1. $(cA)\boldsymbol x=c(A\boldsymbol x)=c(\lambda\boldsymbol x)=(c\lambda)\boldsymbol x$。
+2. $(A-pI)\boldsymbol x=A\boldsymbol x-p\boldsymbol x=(\lambda-p)\boldsymbol x$。
+3. 对 $k$ 归纳：$A^2\boldsymbol x=A(A\boldsymbol x)=A(\lambda\boldsymbol x)=\lambda A\boldsymbol x=\lambda^2\boldsymbol x$，余同。
+4. 由 $\det A=\prod\lambda_i\ne0$ 知所有 $\lambda\ne0$。$A\boldsymbol x=\lambda\boldsymbol x$ 两边左乘 $A^{-1}$ 得 $\boldsymbol x=\lambda A^{-1}\boldsymbol x$，即 $A^{-1}\boldsymbol x=\lambda^{-1}\boldsymbol x$。$\blacksquare$
+:::
+
+::: note 定理 3.0.1 的用处：位移反幂法全靠第 2 条
+第 2 条是整个第 3 章最有用的一条：求 $A-pI$ 的**模最小**特征值，等价于求 $A$ 的**最接近 $p$** 的特征值。位移反幂法（[3.1.2](#sec-3.1.2)）正是这样把「求最接近已知近似值的特征值」化成「求模最小」，再交给反幂法。第 3 条则解释了幂法为什么用 $A^k\boldsymbol u_0$ 迭代——$A^k$ 的特征值是 $\lambda_i^k$，模大的压倒模小的。
+:::
+
+::: thm 定理 3.0.2（课件定理 2） · 特征值与迹、行列式的关系 {#thm-3.0.2}
+若 $\lambda_i\ (i=1,\dots,n)$ 是矩阵 $A$ 的特征值，则
+
+$$
+(1)\ \sum_{i=1}^n\lambda_i=\sum_{i=1}^n a_{ii}=\operatorname{tr}(A);\qquad
+(2)\ \det(A)=\lambda_1\lambda_2\cdots\lambda_n .
+$$
+:::
+
+::: proof 证明
+由定义 3.0.1 的展开式，比较 $\lambda^{n-1}$ 系数与常数项即可。
+
+$\varphi(\lambda)=\prod_{i=1}^n(\lambda-\lambda_i)$，展开后 $\lambda^{n-1}$ 的系数是 $-\sum_i\lambda_i$，常数项是 $(-1)^n\prod_i\lambda_i$。而按行列式定义直接展开 $\det(\lambda I-A)$ 时，$\lambda^{n-1}$ 只来自主对角线乘积 $\prod_i(\lambda-a_{ii})$ 一项，其系数为 $-\sum_ia_{ii}$；常数项（即 $\lambda=0$）为 $\det(-A)=(-1)^n\det A$。两两对照即得。$\blacksquare$
+:::
+
+::: note 这两条是免费的验算工具
+算完一组特征值，**先花十秒验算** $\sum\lambda_i=\operatorname{tr}A$、$\prod\lambda_i=\det A$。浮点计算下允许 $10^{-10}$ 量级误差；差得多就是算错了。第 3 章各节的例题与习题解答都得用这两条自查。
+:::
+
+::: thm 定理 3.0.3（课件定理 3） · 转置不改变谱 {#thm-3.0.3}
+设 $A\in\mathbb R^{n\times n}$，则 $\lambda(A)=\lambda(A^{\mathrm T})$。
+:::
+
+::: proof 证明
+$\det(\lambda I-A^{\mathrm T})=\det((\lambda I-A)^{\mathrm T})=\det(\lambda I-A)$——转置不改变行列式，故特征多项式相同，特征值相同。$\blacksquare$
+
+**但特征向量会变**：$A$ 与 $A^{\mathrm T}$ 的特征向量一般不同。这一点在幂法里很要紧——课件提取特征值时用 $\beta_k=\boldsymbol y_{k-1}^{\mathrm T}A\boldsymbol y_{k-1}$，正是利用了「左、右特征向量」的关系。
+:::
+
+::: thm 定理 3.0.4（课件定理 4） · 分块上三角的谱是各块谱之并 {#thm-3.0.4}
+设 $A$ 为分块上三角阵
+
+$$
+A=\begin{pmatrix}
+A_{11} & A_{12} & \cdots & A_{1m}\\
+& A_{22} & \cdots & A_{2m}\\
+& & \ddots & \vdots\\
+& & & A_{mm}
+\end{pmatrix},
+$$
+
+其中每个对角块 $A_{ii}$ 均为方阵，则 $\lambda(A)=\bigcup_{i=1}^m\lambda(A_{ii})$。
+:::
+
+::: proof 证明
+对 $m$ 归纳。$m=1$ 平凡。设 $m-1$ 块时成立，把 $A$ 按最后一块分块为 $\begin{pmatrix}\tilde A&c\\0&A_{mm}\end{pmatrix}$，则
+
+$$
+\det(\lambda I-A)=\det(\lambda I-\tilde A)\cdot\det(\lambda I-A_{mm})
+$$
+
+（分块上三角的行列式等于对角块行列式之积）。右边两个因子的根分别是 $\lambda(\tilde A)$ 与 $\lambda(A_{mm})$，再由归纳假设得结论。$\blacksquare$
+:::
+
+::: note 定理 3.0.4 为什么考
+它是 **QR 方法「先拟上三角化」的理论依据**：拟上三角（Hessenberg）矩阵的次对角块非零但上三角块之外的块为零，其特征值可逐块收缩求解。课件把它单列为定理 4，就是要说明「能把矩阵化成上三角，特征值就一眼看出来」。QR 方法的完整内容见[3.3](sec33.md)（课件未覆盖）。
+:::
+
+::: thm 定理 3.0.5（课件定理 5） · 相似矩阵同谱，特征向量随之变换 {#thm-3.0.5}
+若 $A$ 与 $B$ 为相似矩阵，即存在非奇异 $P$ 使 $P^{-1}AP=B$，则
+
+1. $A$ 与 $B$ 有相同的特征值；
+2. 若 $\boldsymbol y$ 是 $B$ 的特征向量，则 $P\boldsymbol y$ 是 $A$ 的特征向量。
+:::
+
+::: proof 证明
+1. $\det(\lambda I-B)=\det(\lambda I-P^{-1}AP)=\det\bigl(P^{-1}(\lambda I-A)P\bigr)=\det(P^{-1})\det(\lambda I-A)\det(P)=\det(\lambda I-A)$。
+2. $B\boldsymbol y=\lambda\boldsymbol y$ 即 $P^{-1}AP\boldsymbol y=\lambda\boldsymbol y$，两边左乘 $P$ 得 $A(P\boldsymbol y)=\lambda(P\boldsymbol y)$。$\blacksquare$
+:::
+
+::: note 第 2 条常被漏掉
+课件把它写出来了，而补充篇只写了第 1 条。**求特征向量时这一条不可少**：Jacobi 方法和 QR 方法都是「把 $A$ 逐步相似变换到对角/三角」，特征值直接在对角线上读，但**特征向量必须把累积的变换矩阵乘回去**——就是这一条。见 [3.2 Jacobi](sec32.md)。
+:::
+
+::: thm 定理 3.0.6（课件定理 6） · 实对称矩阵的正交约化 {#thm-3.0.6}
+设 $A\in\mathbb R^{n\times n}$ 为对称矩阵，则
+
+1. $A$ 的特征值**均为实数**；
+2. $A$ 有 $n$ 个**线性无关**的特征向量；
+3. 存在**正交矩阵** $P$ 使得
+
+$$
+P^{-1}AP=\operatorname{diag}(\lambda_1,\lambda_2,\dots,\lambda_n),
+$$
+
+且 $\lambda_i\ (i=1,2,\dots,n)$ 为 $A$ 的特征值，而 $P=(\boldsymbol u_1,\boldsymbol u_2,\dots,\boldsymbol u_n)$ 的列向量 $\boldsymbol u_j$ 为对应于 $\lambda_j$ 的特征向量。
+:::
+
+::: note 这三条为什么放在一起
+三个结论是递进的：**实特征值**（才能排序、才能谈「最大最小」）→ **$n$ 个线性无关特征向量**（才能对角化）→ **正交**（不只是相似，还是正交相似，$P^{-1}=P^{\mathrm T}$）。
+
+第三条最强：它保证 $A=Q\Lambda Q^{\mathrm T}$，于是 $A$ 的任意多项式 $f(A)=Qf(\Lambda)Q^{\mathrm T}$，所有谱理论（Rayleigh 商、Courant–Fischer、奇异值 = 特征值绝对值）都从这里出发。
+
+对称矩阵因此是「最友好」的一类：特征值实、特征向量正交、扰动敏感度温和（见[补充篇 2.5](../../supplement/sec25.md)）。
+:::
+
+::: def 定义 3.0.2（课件定义 2） · Gerschgorin 圆盘 {#def-3.0.2}
+设 $A=(a_{ij})_{n\times n}$，令
+
+$$
+r_i=\sum_{j\ne i}\lvert a_{ij}\rvert,\qquad
+D_i=\{z:\ \lvert z-a_{ii}\rvert\le r_i,\ z\in\mathbb C\},\quad (i=1,\dots,n),
+$$
+
+称 $D_i$ 为复平面上以 $a_{ii}$ 为圆心、以 $r_i$ 为半径的 **Gerschgorin 圆盘**。
+:::
+
+::: thm 定理 3.0.7（课件定理 7） · Gerschgorin 圆盘定理 {#thm-3.0.7}
+1. 设 $A=(a_{ij})_{n\times n}$，则 $A$ 的每一个特征值必属于下列某个圆盘之中：
+
+$$
+\lvert\lambda-a_{ii}\rvert\le\sum_{j\ne i}\lvert a_{ij}\rvert,\qquad (i=1,\dots,n).
+$$
+
+2. 如果上述 $n$ 个圆盘中有 $m$ 个圆盘构成一个连通域 $S$，且 $S$ 与其余 $n-m$ 个圆盘**分离**，则 $S$ 中**恰有** $A$ 的 $m$ 个特征值。
+:::
+
+::: proof 证明（第 1 条）
+设 $\lambda$ 是特征值、$\boldsymbol x\ne\boldsymbol 0$ 是对应特征向量，$A\boldsymbol x=\lambda\boldsymbol x$。取 $\lvert x_k\rvert=\max_i\lvert x_i\rvert\gt0$，看第 $k$ 个方程：
+
+$$
+(\lambda-a_{kk})x_k=\sum_{j\ne k}a_{kj}x_j
+\ \Longrightarrow\ 
+\lvert\lambda-a_{kk}\rvert\lvert x_k\rvert\le\sum_{j\ne k}\lvert a_{kj}\rvert\lvert x_j\rvert\le\Bigl(\sum_{j\ne k}\lvert a_{kj}\rvert\Bigr)\lvert x_k\rvert .
+$$
+
+两边约去 $\lvert x_k\rvert\gt0$ 即得 $\lvert\lambda-a_{kk}\rvert\le r_k$，故 $\lambda\in D_k$。$\blacksquare$
+
+（第 2 条用连续性论证：令 $A_t=D+t(A-D)$，$D=\operatorname{diag}(a_{ii})$。$t=0$ 时特征值恰是各圆心，$t=1$ 时按第 1 条落在各圆盘内；特征值随 $t$ 连续变化，无法跳过 $S$ 与其余圆盘之间的空隙，故 $S$ 内的个数守恒。完整证明见[补充篇 2.5.2](../../supplement/sec25.md#thm-sup-2.5.2)。）
+:::
+
+::: method 圆盘定理的三种用法
+1. **判断可逆 / 有没有零特征值**：若所有圆盘都不含原点，则 $0\notin\lambda(A)$，$A$ 可逆。最常用的充分条件是**严格对角占优**（$\lvert a_{ii}\rvert\gt r_i$ 对每行成立）。
+2. **围出特征值的范围**：直接读矩阵的对角元与行和，$O(n^2)$ 就能给出可靠围栏——不需要任何特征值计算。
+3. **给特征值近似**：对角占优时圆盘很小，$a_{ii}$ 就是 $\lambda_i$ 的良好近似，误差 $\le r_i$。
+:::
+
+::: note 课件多一个技巧：用 $D^{-1}AD$ 缩放圆盘（补充篇没有）
+课件 p10 给了一个补充篇没写的关键手法：取非奇异对角阵 $D=\operatorname{diag}(\alpha_1,\dots,\alpha_n)$，则
+
+$$
+D^{-1}AD=\Bigl(\frac{a_{ij}\alpha_j}{\alpha_i}\Bigr)_{n\times n}.
+$$
+
+由定理 3.0.5，$D^{-1}AD$ 与 $A$ **相似、特征值相同**，但**圆盘的半径与连通性都变了**。适当选 $\alpha_i$ 可以让圆盘收缩、从重叠变成分离，从而把第 2 条（连通域计数）真正用起来。
+
+这是「不做特征值计算就收紧估计」的标准手段，考试常考。
+:::
+
+::: ex 例 3.0.2（课件例 2） · 用对角缩放把 Gerschgorin 围栏收紧 {#ex-3.0.2}
+估计 $A=\begin{pmatrix}4&1&0\\1&0&-1\\1&1&-4\end{pmatrix}$ 的特征值范围。
+
+**第一步：直接看三个圆盘**（按行）：
+
+$$
+\lvert\lambda-4\rvert\le1,\qquad \lvert\lambda-0\rvert\le2,\qquad \lvert\lambda+4\rvert\le2 .
+$$
+
+即 $\lambda$ 落在 $[3,5]$、$[-2,2]$、$[-6,-2]$ 三个区间之并。第一个与后两个分离，但后两个在 $[-2,2]$ 与 $[-6,-2]$ 处仅交于一点，判断不够清楚。
+
+**第二步：取 $D=\operatorname{diag}(1,1,\tfrac{10}{9})$ 缩放**。$D^{-1}AD$ 的元素为 $a_{ij}\alpha_j/\alpha_i$：
+
+$$
+D^{-1}AD=\begin{pmatrix}
+4 & 1 & 0\\
+1 & 0 & -\tfrac{10}{9}\\
+0.9 & 0.9 & -4
+\end{pmatrix}.
+$$
+
+**第三步：重看圆盘**：
+
+| 圆盘 | 范围 |
+|:--|:--|
+| $\lvert\lambda-4\rvert\le1$ | $3\le\lambda_1\le5$ |
+| $\lvert\lambda\rvert\le1+\tfrac{10}{9}=\tfrac{19}{9}$ | $-\tfrac{19}{9}\le\lambda_2\le\tfrac{19}{9}$ |
+| $\lvert\lambda+4\rvert\le1.8$ | $-5.8\le\lambda_3\le-2.2$ |
+
+现在三个区间两两分离，由定理 3.0.7 第 2 条，**各区间内恰有一个特征值**——这比第一步的结论强得多。
+
+（验算：$A$ 的实际特征值约为 $4.2030,\ -0.4429,\ -3.7601$，确实分别落在三个区间内。）
+:::
+
+::: def 定义 3.0.3（课件定义 3） · Rayleigh 商 {#def-3.0.3}
+设 $A$ 是 $n$ 阶**实对称**阵，对于任一非零向量 $\boldsymbol x\in\mathbb R^n$，称
+
+$$
+R(\boldsymbol x)=\frac{(A\boldsymbol x,\boldsymbol x)}{(\boldsymbol x,\boldsymbol x)}
+$$
+
+为关于向量 $\boldsymbol x$ 的**瑞雷（Rayleigh）商**。
+:::
+
+::: thm 定理 3.0.8（课件定理 8） · Rayleigh 商的变分性质 {#thm-3.0.8}
+设 $A$ 为 $n$ 阶实对称阵，$\lambda_1\ge\lambda_2\ge\cdots\ge\lambda_n$ 为 $A$ 的特征值（**降序**，与第 3 章其余各节一致），则
+
+$$
+(1)\ \lambda_1\ge\frac{(A\boldsymbol x,\boldsymbol x)}{(\boldsymbol x,\boldsymbol x)}\ge\lambda_n
+\quad\text{对任何非零}\ \boldsymbol x\in\mathbb R^n;
+$$
+$$
+(2)\ \lambda_1=\max_{\boldsymbol x\ne\boldsymbol 0}\frac{(A\boldsymbol x,\boldsymbol x)}{(\boldsymbol x,\boldsymbol x)};\qquad
+(3)\ \lambda_n=\min_{\boldsymbol x\ne\boldsymbol 0}\frac{(A\boldsymbol x,\boldsymbol x)}{(\boldsymbol x,\boldsymbol x)} .
+$$
+:::
+
+::: proof 证明
+由定理 3.0.6，实对称阵有标准正交特征向量组 $\boldsymbol u_1,\dots,\boldsymbol u_n$，$A\boldsymbol u_i=\lambda_i\boldsymbol u_i$。任取 $\boldsymbol x=\sum_ic_i\boldsymbol u_i\ne\boldsymbol 0$，则
+
+$$
+(A\boldsymbol x,\boldsymbol x)=\Bigl(\sum_ic_i\lambda_i\boldsymbol u_i,\sum_jc_j\boldsymbol u_j\Bigr)=\sum_i\lambda_ic_i^2,\qquad
+(\boldsymbol x,\boldsymbol x)=\sum_ic_i^2 .
+$$
+
+于是 $R(\boldsymbol x)=\frac{\sum_i\lambda_ic_i^2}{\sum_ic_i^2}$，是 $\lambda_i$ 以 $c_i^2\ge0$ 为权的**加权平均**，故必落在 $[\lambda_n,\lambda_1]$ 内——第 (1) 条成立。
+
+取 $\boldsymbol x=\boldsymbol u_1$（即 $c_1\ne0$、其余 $c_i=0$）得 $R=\lambda_1$，故上界可达，第 (2) 条成立；取 $\boldsymbol x=\boldsymbol u_n$ 同理得第 (3) 条。$\blacksquare$
+:::
+
+::: note Rayleigh 商与幂法的接口
+幂法在第 $k$ 步用 $\beta_k=\boldsymbol y_{k-1}^{\mathrm T}A\boldsymbol y_{k-1}$ 提取特征值。若 $\lVert\boldsymbol y_{k-1}\rVert_2=1$，这个式子**就是 Rayleigh 商**——所以它必然落在 $[\lambda_n,\lambda_1]$ 内，并且当 $\boldsymbol y_{k-1}$ 接近主特征向量时逼近 $\lambda_1$。这解释了为什么 2-范数归一化下可以省略分母，而用其他范数归一化时不能省（见 [3.1.1](#sec-3.1.1)）。
+
+**符号提醒**：本节用降序（$\lambda_1$ 最大），与课件、第 3 章其余各节一致。[补充篇 2.5.4](../../supplement/sec25.md#thm-sup-2.5.4) 用升序（$\lambda_1$ 最小），读那节时注意换算。
+:::
+
+::: think 这一节的常见错误
+1. **把 $\lambda_1$ 永远当最大**。第 3 章全章按**模**排序（$\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots$），只有实对称情形才有「$\lambda_1$ 是代数最大」的结论。非对称矩阵里模最大的可能是负数，见 [3.1.1](#sec-3.1.1) 的习题反例 $(-40,-20,1)$。
+2. **以为 $\lambda(A)=\lambda(A^{\mathrm T})$ 就可以拿 $A^{\mathrm T}$ 的特征向量当 $A$ 的**。特征值相同，特征向量不同。
+3. **分了块却忘了分块上三角的前提**。定理 3.0.4 要求**对角块是方阵、且下三角块为零**。一般分块矩阵没有这个结论。
+4. **Gerschgorin 只算一半**。只看行圆盘往往不够；课件例 2 的做法是**同时用对角缩放**把圆盘拉开。列圆盘（按列求和）也是同理，两种取交更紧。
+5. **Rayleigh 商用在非对称矩阵上**。定理 3.0.8 全部依赖实对称 + 标准正交特征基。非对称时 Rayleigh 商可能落在谱外。
+:::
+
+::: method[core] 特征值基础 · 必记六条
+| 结论 | 式子 | 用处 |
+|:--|:--|:--|
+| 迹与行列式 | $\sum\lambda_i=\operatorname{tr}A$，$\prod\lambda_i=\det A$ | 十秒验算 |
+| 四则运算 | $c\lambda$、$\lambda-p$、$\lambda^k$、$\lambda^{-1}$ | 位移反幂法的根据 |
+| 分块上三角 | $\lambda(A)=\bigcup\lambda(A_{ii})$ | QR 拟上三角化 |
+| 相似不变 | 特征值同、特征向量乘 $P$ | Jacobi/QR 求特征向量 |
+| 实对称 | 实特征值 + 正交特征基 + $Q\Lambda Q^{\mathrm T}$ | 谱理论的总入口 |
+| Gerschgorin | $\lvert\lambda-a_{ii}\rvert\le r_i$，连通域计数 | 不计算就估界 |
+:::
+
 <a id="sec-3.1.1"></a>
 ## 3.1.1 幂法
 

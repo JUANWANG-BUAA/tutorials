@@ -94,35 +94,46 @@
 
 - [第 12 讲（10-26）：正交多项式族与零点定理、离散内积与最小二乘、数值积分开篇](lectures/lec12.md)
   - [教材 · 6.1–6.3 求积公式、插值型求积与 Newton–Cotes](course/ch06/sec61.md)
-  - [第 6 章导览（6.1 已开讲，6.2 起待讲）](course/ch06/overview.md)
+  - [第 6 章导览](course/ch06/overview.md)
+
+- [第 13 讲（10-28）：插值型求积公式、Newton–Cotes 与复化梯形的二阶收敛](lectures/lec13.md)
+  - [教材 · 6.5 复化求积法](course/ch06/sec65.md)
+
+- [第 14 讲（11-02）：Gauss 型求积——节点也自由，精度从 $n$ 次提到 $2n-1$ 次](lectures/lec14.md)
+  - [教材 · 6.7 Gauss 型求积公式](course/ch06/sec67.md)
+
+> **第 6 章的 6.4 由课件 14 覆盖**；6.5.2（区间逐次分半法）、6.6、6.8 仍按教材铺好。
+> 录播实录现已到第 14 讲，6.1–6.3 与 6.5.1、6.7 都有对应讲次可挂。
+
+- [6.4 Newton–Cotes 公式的收敛性与数值稳定性（课件 14，课堂未讲）](course/ch06/sec64.md)
+- [第 6 章总结](course/ch06/summary.md)
+- [学习目标自检表](course/ch06/checklist.md)
+- [闭卷回忆卡](course/ch06/recall-cards.md)
+- [综合自测卷（100 分）](course/ch06/mock-exam.md)
+- [勘误与补注](course/ch06/errata.md)
+- [课件 ↔ 教材 ↔ 录播 · 三方对照总表](lectures/crosswalk.md)
 - [课堂精编 · 复习页](lectures/review.md)
 - [课堂精编 · 练习与自测](lectures/practice.md)
 - [老师布置的作业 · SPOC 自测题总览](lectures/homework.md)
+- [课件布置的教材作业 · 逐讲台账](lectures/assignments.md)
 
-# 教材补齐 · 课堂未讲（老师进度之外）
+# 教材补齐 · 课件未覆盖（考纲外，正文保留）
 
-> 老师尚未讲到的教材内容，按教材预先铺好成节；对应讲次落地后，从小节回填课堂实录链接。
-> **复习与考试以老师讲的为范围。**
+> 课件（朱立永班，16 份、426 页）**没有覆盖**的内容，按教材预先铺好成节。
+> 与「课堂未讲」不同：这一组的判据是**课件里没有**，不是录播里没有——录播只到第 12 讲，若按录播判会把第 6 章大半误判为不考。
+> **复习与考试以课件为准**；课件未覆盖的部分可读，但不作必考。
 
-- [第 3 章 · Jacobi 方法（教材补齐）](course/ch03/sec32.md)
-- [第 3 章 · QR 方法（教材补齐）](course/ch03/sec33.md)
-- [第 4 章 · 非线性方程组的迭代解法（教材补齐）](course/ch04/sec42.md)
-- [第 5 章 · 5.3 样条插值（教材补齐）](course/ch05/sec53.md)
-- [第 5 章 · 5.4 三角插值与快速 Fourier 变换（教材补齐）](course/ch05/sec54.md)
+- [第 3 章 · Jacobi 方法（课件未覆盖）](course/ch03/sec32.md)
+- [第 3 章 · QR 方法（课件未覆盖）](course/ch03/sec33.md)
+- [第 4 章 · 非线性方程组的迭代解法（课件未覆盖）](course/ch04/sec42.md)
+- [第 5 章 · 5.3 样条插值（课件未覆盖）](course/ch05/sec53.md)
+- [第 5 章 · 5.4 三角插值与快速 Fourier 变换（课件未覆盖）](course/ch05/sec54.md)
 - [第 6 章覆盖矩阵](course/ch06/coverage.md)
   - [第 6 章习题（教材 1–23）](course/ch06/exercises.md)
-  - [6.4 Newton–Cotes 公式的收敛性与数值稳定性](course/ch06/sec64.md)
-  - [6.5 复化求积法](course/ch06/sec65.md)
-  - [6.6 Romberg 积分法](course/ch06/sec66.md)
-  - [6.7 Gauss 型求积公式](course/ch06/sec67.md)
-  - [6.8 二重积分的数值求积法](course/ch06/sec68.md)
-  - [第 6 章总结](course/ch06/summary.md)
-  - [学习目标自检表](course/ch06/checklist.md)
-  - [闭卷回忆卡](course/ch06/recall-cards.md)
-  - [综合自测卷（100 分）](course/ch06/mock-exam.md)
-  - [勘误与补注](course/ch06/errata.md)
+  - [6.6 Romberg 积分法（课件未覆盖，但课件 14 布置了教材题 12）](course/ch06/sec66.md)
+  - [6.8 二重积分的数值求积法（课件未覆盖）](course/ch06/sec68.md)
 
-- [第 7 章 常微分方程初值问题的数值解法（整章待讲）](course/ch07/overview.md)
+- [第 7 章 常微分方程初值问题的数值解法（**不在本次考纲**，正文保留）](course/ch07/overview.md)
   - [第 7 章覆盖矩阵](course/ch07/coverage.md)
   - [7.1–7.2 初值问题与单步法](course/ch07/sec71.md)
   - [7.3 线性多步法](course/ch07/sec73.md)

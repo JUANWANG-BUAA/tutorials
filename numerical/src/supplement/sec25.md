@@ -4,6 +4,12 @@
 
 前四节把矩阵当作「算子」「方程组」「投影工具」，这一节换视角：**矩阵的谱（特征值集合）刻画它的本质行为**——条件数回答「解被放大多少」（2.4），谱半径 $\rho(A)$ 回答「迭代收不收敛、多快」，SVD（2.6）与 QR 迭代也都建立在谱上。本节重点是特征值的**扰动敏感性**：[1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在此重演，且结论反直觉——对称矩阵温和，非正规矩阵「开方敏感」。路线：谱半径及其上界 → Gerschgorin 圆盘（不算特征值也能定位它们）→ 对称情形（Rayleigh 商与 Courant–Fischer）→ 非正规情形的定量警告。
 
+::: note 符号约定（与第 3 章的差别，务必看清）
+**本节 $\lambda_1\le\lambda_2\le\cdots\le\lambda_n$（升序）**——因为 Rayleigh 商、Courant–Fischer、Weyl 不等式的标准写法都从这里出发，$\lambda_1$ 是**最小**、$\lambda_n$ 是**最大**。
+**第 3 章与课件用降序** $\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots\ge\lvert\lambda_n\rvert$，那里 $\lambda_1$ 是**模最大**（幂法求的那个）。
+两处律一读就会串号：看到 $\lambda_1=\max R(\boldsymbol x)$ 时是本节约定，看到「幂法收敛到 $\lambda_1$」时是第 3 章约定。第 3 章的对应内容见 [3.1 幂法](../course/ch03/sec31.md)。
+:::
+
 <a id="sup-2.5.1"></a>
 
 ## 2.5.1 特征值、谱与谱半径

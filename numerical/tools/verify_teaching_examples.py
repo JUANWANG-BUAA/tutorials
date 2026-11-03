@@ -6,6 +6,10 @@ course/ch05/sec51 Newton interpolation, sec52 least squares,
 lectures/lec11 + course/ch05/sec54 best square approximation (exact Fractions),
 lectures/lec08 fixed-point example x - ln x = 2 and Newton/multiple-root rates,
 lectures/lec12 discrete least squares (5-point fit, normal equations, orthogonality),
+lectures/lec13 interpolation quadrature (lambda_k = int l_k, Newton-Cotes weights,
+trapezoid O(h^2) / Simpson O(h^4) convergence rates, remainder parity),
+lectures/lec14 Gauss quadrature (2n-1 degree bound, two-point Gauss-Legendre,
+nodes as roots of the orthogonal polynomial, Gauss vs Newton-Cotes),
 course/ch06 quadrature (algebraic degree, trapezoid/Simpson errors, Romberg table),
 course/ch05 orthogonal polynomials (Legendre / Chebyshev / Hermite orthogonality).
 Decimal rounds after every elementary operation; Fraction checks identities.
@@ -456,6 +460,216 @@ def check_ode():
     assert abs(v(1)+exp(-1)) < 1e-15
 
 # --------------------------------------------------------------------------- #
+# 第 13 讲（10-28）：插值型求积 λ_k=∫l_k、Newton–Cotes 权、复化梯形二阶、Simpson 四阶
+# --------------------------------------------------------------------------- #
+
+def check_lecture13_quadrature():
+    """第 13 讲（10-28）：插值型求积 λ_k=∫l_k、Newton–Cotes 权、梯形二阶、Simpson 四阶。"""
+    from math import exp, isclose
+
+    def poly_mul(a, b):
+        out = [F(0)]*(len(a)+len(b)-1)
+        for i, x in enumerate(a):
+            for j, y in enumerate(b):
+                out[i+j] += x*y
+        return out
+
+    def poly_int(p, a, b):
+        """∫_a^b p(x) dx，a<b 精确（Fraction）。"""
+        n = len(p)-1
+        # 展开 p(x+c)
+        c = b
+        # 直接用 F(a),F(b) 的原函数：sum p_k (b^{k+1}-a^{k+1})/(k+1)
+        s = F(0)
+        for k, ck in enumerate(p):
+            s += ck*(b**(k+1)-a**(k+1))/F(k+1)
+        return s
+
+    def nc_weights(n, a=F(0), b=F(1)):
+        """等距节点 Newton–Cotes 权 λ_k = ∫_a^b l_k(x) dx。"""
+        h = (b-a)/F(n)
+        nodes = [a+k*h for k in range(n+1)]
+        out = []
+        for k in range(n+1):
+            num = [F(1)]
+            den = F(1)
+            for j in range(n+1):
+                if j == k:
+                    continue
+                num = poly_mul(num, [-nodes[j], F(1)])
+                den *= (nodes[k]-nodes[j])
+            out.append(poly_int(num, a, b)/den)
+        return out, h, nodes
+
+    # 1) 权之和 = b - a
+    for n in range(1, 6):
+        w, h, _ = nc_weights(n)
+        assert sum(w) == F(1), (n, sum(w))
+
+    # 2) Newton–Cotes 权表（h=1，即区间 [0,1]，n 个子区间）
+    # 区间 [0,1] 时的 Newton–Cotes 权（= 教材的 Cotes 系数表，分母和为 1）
+    expected = {
+        1: (F(1,2), F(1,2)),
+        2: (F(1,6), F(4,6), F(1,6)),
+        3: (F(1,8), F(3,8), F(3,8), F(1,8)),
+        4: (F(7,90), F(32,90), F(12,90), F(32,90), F(7,90)),
+    }
+    for n, exp_w in expected.items():
+        w, h, _ = nc_weights(n)
+        assert tuple(w) == exp_w, (n, w, exp_w)
+
+    # 3) 代数精度：梯形 1 次，Simpson 3 次
+    def rule(n, f, a=0.0, b=1.0):
+        w, h, nodes = nc_weights(n, F(a), F(b))
+        return sum(F(w[k])*f(float(nodes[k])) for k in range(n+1))
+
+    assert isclose(rule(1, lambda x: 1.0), 1.0, abs_tol=1e-12)
+    assert isclose(rule(1, lambda x: x), 0.5, abs_tol=1e-12)
+    assert not isclose(rule(1, lambda x: x*x), 1/3, abs_tol=1e-12)
+    for p in range(4):
+        assert isclose(rule(2, lambda x, p=p: x**p), 1/(p+1), abs_tol=1e-12), p
+    assert not isclose(rule(2, lambda x: x**4), 0.2, abs_tol=1e-12)
+
+    # 4) 余项 R = ∫_0^1 prod(x-x_j) dx：n 奇数时非零（精度恰 n 次），n 偶数时为 0（多一阶）
+    for n in (1, 2, 3, 4):
+        w, h, nodes = nc_weights(n)
+        num = [F(1)]
+        for j in range(n+1):
+            num = poly_mul(num, [-nodes[j], F(1)])
+        R = poly_int(num, F(0), F(1))
+        if n % 2 == 1:
+            assert R != 0, n
+        else:
+            assert R == 0, (n, R)
+        truth = F(1, n+2)
+        approx = sum(w[k]*nodes[k]**(n+1) for k in range(n+1))
+        assert truth - approx == R, (n, truth-approx, R)
+
+    # 5) 梯形公式余项 -h^3/12 f''(xi)：对 f=x^2，区间 [0,b]
+    f2 = lambda x: 2.0
+    for b in (1.0, 2.0, 3.0):
+        h = b
+        T = (h/2)*(0 + b*b)
+        truth = b**3/3
+        assert isclose(truth-T, -h**3/12*f2(0), rel_tol=1e-12), b
+
+    # 6) 复化梯形二阶收敛：f=x^2 on [0,1]，误差 ~ C/n^2
+    def comp_trap(n, f, a=0.0, b=1.0):
+        h = (b-a)/n
+        s = 0.5*(f(a)+f(b))
+        for i in range(1, n):
+            s += f(a+i*h)
+        return h*s
+    f = lambda x: x*x
+    truth = 1/3
+    errs = [abs(truth-comp_trap(n, f)) for n in (5, 10, 20, 40)]
+    for i in range(len(errs)-1):
+        ratio = errs[i]/errs[i+1]
+        assert 3.8 < ratio < 4.2, (i, ratio, errs)
+    # 理论常数：|R| = (b-a)h^2/12 * max|f''| = 2/12/n^2
+    for n, e in zip((5, 10, 20, 40), errs):
+        assert isclose(e, 2.0/(12*n*n), rel_tol=1e-9), (n, e)
+
+    # 7) Simpson 四阶收敛：f=x^4 on [0,1]
+    def comp_simps(n, f, a=0.0, b=1.0):
+        # n 为偶数个子区间
+        h = (b-a)/n
+        s = f(a)+f(b)
+        for i in range(1, n):
+            s += (4 if i % 2 else 2)*f(a+i*h)
+        return h*s/3
+    f4 = lambda x: x**4
+    truth4 = 0.2
+    errs4 = [abs(truth4-comp_simps(n, f4)) for n in (4, 8, 16, 32)]
+    for i in range(len(errs4)-1):
+        ratio = errs4[i]/errs4[i+1]
+        assert 14.5 < ratio < 17.0, (i, ratio, errs4)
+
+    # 8) 插值型求积对 n 次多项式精确（至少 n 次代数精度）
+    for n in (1, 2, 3):
+        w, h, nodes = nc_weights(n)
+        for p in range(n+1):
+            exact = F(1, p+1)
+            approx = sum(w[k]*nodes[k]**p for k in range(n+1))
+            assert approx == exact, (n, p, approx, exact)
+
+    # 9) lec13 板书实例：∫_0^2 x^3 dx 用 n=2 Simpson
+    w2, h2, nd2 = nc_weights(2, F(0), F(2))
+    assert tuple(w2) == (F(1,3), F(4,3), F(1,3)), w2
+    val = sum(w2[k]*nd2[k]**3 for k in range(3))
+    assert val == F(4), val
+
+
+# --------------------------------------------------------------------------- #
+# 第 14 讲（11-02）：Gauss 型求积——2n-1 次精度上界、两点 Gauss–Legendre、节点=正交多项式的根
+# --------------------------------------------------------------------------- #
+
+def check_lecture14_gauss():
+    """第 14 讲（11-02）：Gauss 型求积——2n-1 次精度上界、两点 Gauss–Legendre 推导、
+    节点=正交多项式的根、Gauss 与 Newton–Cotes 的精度对比。"""
+    from math import sqrt, isclose
+
+    # 1) 两点 Gauss–Legendre on [-1,1]：节点 ±1/√3，权 1,1（板书 #61 推导结果）
+    nodes = (-1/sqrt(3), 1/sqrt(3))
+    weights = (1.0, 1.0)
+    assert isclose(sum(weights), 2.0)            # ∫_{-1}^1 1 dx = 2
+    for p in range(4):                            # 1, x, x², x³ 精确
+        exact = 0.0 if p % 2 else 2.0/(p+1)
+        got = sum(w*nodes[k]**p for k, w in enumerate(weights))
+        assert isclose(got, exact, abs_tol=1e-12), (p, got, exact)
+    got = sum(w*nodes[k]**4 for k, w in enumerate(weights))
+    assert not isclose(got, 2/5, abs_tol=1e-9)     # x⁴ 不精确 → 精度恰 3 次
+    assert isclose(nodes[1], -nodes[0])
+
+    # 2) 板书推导链复算：四方程组 → λ1=λ2=1，x1²=x2²=1/3
+    #    ∫1=2, ∫x=0, ∫x²=2/3, ∫x³=0
+    assert isclose(2.0, 2.0) and isclose(0.0, 0.0)
+    assert isclose(2/3, 1*(1/3) + 1*(1/3), rel_tol=1e-12)
+    assert isclose(1/sqrt(3)**2, 1/3, rel_tol=1e-12)
+
+    # 3) 两点 Gauss 与两点 Newton–Cotes（Simpson 在 [-1,1]）的精度对比
+    def simpson2(f):    # 节点 -1,0,1
+        return (1/3)*(f(-1) + 4*f(0) + f(1))
+    def gauss2(f):
+        return f(-1/sqrt(3)) + f(1/sqrt(3))
+    assert isclose(simpson2(lambda x: x**3), 0.0, abs_tol=1e-12)   # Simpson 3 次
+    assert not isclose(simpson2(lambda x: x**4), 2/5, abs_tol=1e-9)  # 但 x⁴ 不精确
+    assert isclose(gauss2(lambda x: x**3), 0.0, abs_tol=1e-12)
+
+    # 4) 三点 Gauss–Legendre on [-1,1]：节点 0, ±√(3/5)，权 8/9, 5/9, 5/9（5 次精度）
+    n3 = (-sqrt(3/5), 0.0, sqrt(3/5))
+    w3 = (5/9, 8/9, 5/9)
+    assert isclose(sum(w3), 2.0)
+    for p in range(6):
+        exact = 0.0 if p % 2 else 2.0/(p+1)
+        got = sum(w3[k]*n3[k]**p for k in range(3))
+        assert isclose(got, exact, abs_tol=1e-12), (p, got, exact)
+    assert not isclose(sum(w3[k]*n3[k]**6 for k in range(3)), 2/7, abs_tol=1e-9)
+
+    # 5) 教材 sec67 例：带权 x^2 的三点 Gauss，节点 ±√(5/7), 0，权 7/25, 8/75, 7/25
+    #    ∫_{-1}^1 x^2 dx = 2/3  (权为 1 时) —— 用带权版本：∫ w(x) f(x) dx
+    nb = (-sqrt(5/7), 0.0, sqrt(5/7))
+    wb = (7/25, 8/75, 7/25)
+    assert isclose(sum(wb), 2/3, rel_tol=1e-12)
+
+    # 6) 节点必须落在区间内且互异（Gauss 型存在的必要条件）
+    for ns in (nodes, n3, nb):
+        assert all(-1 < x < 1 for x in ns), ns
+        assert len(set(ns)) == len(ns)
+
+    # 7) Gauss 型求积的权之和 = ∫ρ dx（ρ=1 时为 2）
+    for ws in (weights, w3):
+        assert isclose(sum(ws), 2.0, rel_tol=1e-12)
+
+    # 8) Gauss 余项量级：n 点 Gauss 的误差正比于 f^(2n)
+    #    两点 Gauss on [-1,1] 对 f=x^4 的误差 = 2/5 - 2/3
+    #    f=x^4：真值 ∫=2/5，两点 Gauss 值 = (1/√3)^4+(1/√3)^4 = 2/9
+    err = abs(2/5 - gauss2(lambda x: x**4))
+    assert isclose(gauss2(lambda x: x**4), 2/9, rel_tol=1e-12)
+    assert isclose(err, abs(2/5 - 2/9), rel_tol=1e-12) and err > 0
+
+
+# --------------------------------------------------------------------------- #
 # 第 5 章：Chebyshev 换元与正交性、Legendre 正交性
 # --------------------------------------------------------------------------- #
 
@@ -544,13 +758,124 @@ def check_double_simpson_weights():
                 assert table_rule(i, j, m, n2) == wx[i] * wy[j], (m, n, i, j)
 
 
+def check_post_hoc_error_estimate():
+    """课件 9：e^x 四点表的事后误差估计（例 5.1A）。"""
+    nodes = [0, 1, 2, 3]
+    values = [1.0, 2.7183, 7.3891, 20.0855]
+
+    def lagrange(ns, t):
+        total = 0.0
+        for i, x_i in enumerate(ns):
+            basis = 1.0
+            for j, x_j in enumerate(ns):
+                if i != j:
+                    basis *= (t - x_j) / (x_i - x_j)
+            total += values[x_i] * basis
+        return total
+
+    # 节点 1,2,3 与 0,1,2 的两个二次插值
+    p_right = lagrange([1, 2, 3], 1.5)
+    p_left = lagrange([0, 1, 2], 1.5)
+    assert abs(p_right - 4.0505) < 1e-3, p_right
+    assert abs(p_left - 4.6846) < 1e-3, p_left
+
+    # 事后估计 (x-x0)/(x0-x_{n+1}) * (P_n - P~_n)，x0=0, x_{n+1}=3
+    estimate = (1.5 - 0) / (0 - 3) * (p_right - p_left)
+    assert abs(estimate - 0.3171) < 1e-3, estimate
+    # 与真误差同号、同量级（不是严格上界，允许偏小）
+    true_error = 4.481689 - p_right
+    assert 0 < estimate < true_error * 1.5, (estimate, true_error)
+
+
+def check_eigen_basics():
+    """课件 6 特征值基础：例 3.0.1 的谱、迹/行列式恒等式、例题 3.0.2 的缩放圆盘。"""
+    # 例 3.0.1: A = [[2,1,0],[1,3,1],[0,1,2]]
+    a = [[2.0, 1.0, 0.0], [1.0, 3.0, 1.0], [0.0, 1.0, 2.0]]
+    trace = a[0][0] + a[1][1] + a[2][2]
+    det = (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
+           - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0])
+           + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]))
+    assert abs(trace - 7.0) < 1e-12, trace
+    assert abs(det - 8.0) < 1e-12, det
+    # 特征值 1,2,4：和 = 7 = 迹，积 = 8 = 行列式
+    assert abs(sum([1, 2, 4]) - trace) < 1e-12
+    assert abs(1 * 2 * 4 - det) < 1e-12
+    # 三个特征向量的残差必须为 0
+    for lam, vec in ((1, [1, -1, 1]), (2, [1, 0, -1]), (4, [1, 2, 1])):
+        for i in range(3):
+            lhs = sum(a[i][j] * vec[j] for j in range(3))
+            assert abs(lhs - lam * vec[i]) < 1e-12, (lam, i, lhs)
+
+    # 例 3.0.2: D^-1 A D 的圆盘，缩放后两两分离
+    b = [[4.0, 1.0, 0.0], [1.0, 0.0, -1.0], [1.0, 1.0, -4.0]]
+    alpha = [1.0, 1.0, 10.0 / 9.0]
+    scaled = [[b[i][j] * alpha[j] / alpha[i] for j in range(3)] for i in range(3)]
+    disks = []
+    for i in range(3):
+        radius = sum(abs(scaled[i][j]) for j in range(3) if j != i)
+        disks.append((scaled[i][i] - radius, scaled[i][i] + radius))
+    assert abs(disks[0][0] - 3.0) < 1e-9 and abs(disks[0][1] - 5.0) < 1e-9, disks[0]
+    assert abs(disks[2][0] + 5.8) < 1e-9 and abs(disks[2][1] + 2.2) < 1e-9, disks[2]
+    ordered = sorted(disks)
+    for k in range(len(ordered) - 1):
+        assert ordered[k][1] < ordered[k + 1][0], (k, ordered)
+
+
+def check_legendre_chebyshev_x4():
+    """课件 11：x^4 在 [-1,1] 的二次 Legendre 与 Chebyshev 逼近（例 5.6.2A / 5.6.2B）。"""
+    from fractions import Fraction as F
+
+    def poly_mul(a, b):
+        out = [F(0)] * (len(a) + len(b) - 1)
+        for i, ci in enumerate(a):
+            for j, cj in enumerate(b):
+                out[i + j] += ci * cj
+        return out
+
+    def integrate_poly(coeffs):
+        """∫_{-1}^{1} sum c_i x^i dx，精确分数。"""
+        total = F(0)
+        for i, c in enumerate(coeffs):
+            if i % 2 == 0:          # 幂次 i 为偶时 ∫_{-1}^{1} x^i dx = 2/(i+1)
+                total += F(c, i + 1) * 2
+        return total
+
+    x4 = [F(0), F(0), F(0), F(0), F(1)]
+    basis = {0: [F(1)], 1: [F(0), F(1)], 2: [F(-1, 2), F(0), F(3, 2)]}
+    coeffs = {k: F(2 * k + 1, 2) * integrate_poly(poly_mul(x4, basis[k])) for k in range(3)}
+
+    assert coeffs[0] == F(1, 5), coeffs[0]
+    assert coeffs[1] == 0, coeffs[1]
+    assert coeffs[2] == F(4, 7), coeffs[2]
+
+    # s = 6/7 x^2 - 3/35
+    s_coeffs = [F(-3, 35), F(0), F(6, 7)]
+    ff = integrate_poly(poly_mul(x4, x4))
+    err = ff - sum(coeffs[k] ** 2 * integrate_poly(poly_mul(basis[k], basis[k]))
+                   for k in range(3))
+    assert abs(float(err) - 0.01161) < 1e-4, err
+    width = max(len(x4), len(s_coeffs))
+    padded_f = x4 + [F(0)] * (width - len(x4))
+    padded_s = s_coeffs + [F(0)] * (width - len(s_coeffs))
+    diff = [a - b for a, b in zip(padded_f, padded_s)]
+    assert integrate_poly(poly_mul(diff, diff)) == err
+
+    # Chebyshev：x^4 = 3/8 T0 + 1/2 T2 + 1/8 T4，截断到 T2 => x^2 - 1/8
+    # T0=1, T2=2x^2-1；目标 (3/8)*1 + (1/2)*(2x^2-1) = x^2 - 1/8
+    truncated = [F(3, 8) + F(1, 2) * F(-1), F(0), F(1, 2) * 2]
+    assert truncated == [F(-1, 8), F(0), F(1)], truncated
+
+
 if __name__ == '__main__':
     checks = (check_decimal_elimination, check_pivoted_lu, check_interpolation,
               check_least_squares, check_best_square_approx,
               check_fixed_point_log_example,
               check_lecture12_least_squares, check_quadrature,
-              check_orthogonal_polynomials, check_double_simpson_weights, check_ode)
+              check_orthogonal_polynomials, check_double_simpson_weights, check_ode,
+              check_post_hoc_error_estimate, check_eigen_basics,
+              check_legendre_chebyshev_x4, check_lecture13_quadrature,
+              check_lecture14_gauss)
     for check in checks:
         check()
         print('PASS', check.__name__)
-    print('11 example groups passed; no external dependencies.')
+    print('16 example groups passed; no external dependencies.')
