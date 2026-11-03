@@ -28,6 +28,16 @@ GATE_THEORY = {
     "formulas": 4,
     "deferrals": 2,
 }
+# 第二篇按原著结构制逐步改为《资本论》逐篇精读，
+# 精读章下限 30000（CHAPTER-STANDARD §2）；现有 ch08–10 均在 32k 以上。
+GATE_CLOSE_READING = {
+    "chapter_chars": 30000,
+    "min_section": 900,
+    "tables": 3,
+    "exercises": 6,
+    "formulas": 4,
+    "deferrals": 2,
+}
 GATE_HISTORY = {
     "chapter_chars": 15000,
     "min_section": 900,
@@ -48,7 +58,7 @@ GATE_FRONT = {
 # 篇 → 达标线
 PART_GATE = {
     "part1": GATE_THEORY,    # 唯物史观与辩证法
-    "part2": GATE_THEORY,    # 政治经济学批判
+    "part2": GATE_CLOSE_READING,  # 政治经济学批判（原著逐篇精读）
     "part3": GATE_THEORY,    # 国家、革命与专政
     "part4": GATE_HISTORY,   # 工人运动实践史
     "part5": GATE_HISTORY,   # 中国革命与毛泽东的理论
