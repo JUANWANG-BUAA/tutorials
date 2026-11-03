@@ -593,6 +593,14 @@ def check_lecture13_quadrature():
             approx = sum(w[k]*nodes[k]**p for k in range(n+1))
             assert approx == exact, (n, p, approx, exact)
 
+    # 8b) lec13 练习 B4：复化梯形 n=4、f=x^2、[0,1]
+    #     T_4 = 11/32，误差 -1/96 与定理公式精确吻合（f'' 常数时平均值定理取等号）
+    h4 = F(1, 4)
+    T4 = h4 * F(1, 2) * (F(0) + 2*F(1, 16) + 2*F(1, 4) + 2*F(9, 16) + F(1))
+    assert T4 == F(11, 32), T4
+    assert F(1, 3) - T4 == -F(1, 96)
+    assert -F(1) * h4 * h4 / F(12) * 2 == -F(1, 96)   # 定理公式 -(b-a)h^2/12·f''
+
     # 9) lec13 板书实例：∫_0^2 x^3 dx 用 n=2 Simpson
     w2, h2, nd2 = nc_weights(2, F(0), F(2))
     assert tuple(w2) == (F(1,3), F(4,3), F(1,3)), w2
