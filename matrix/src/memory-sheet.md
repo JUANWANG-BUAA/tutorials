@@ -5,7 +5,7 @@
 ::: note 怎么用这一页
 - 每一条都是「**最小可背诵单元**」——不是完整陈述，而是**能让你把完整陈述复述出来**的那根钩子。
 - 背不下来时**回正文核对**，不要在这里硬记：压缩层的作用是索引，不是替代品。
-- 本页覆盖**四章**：A / B 表各分四段——**A1/B1 第一章**、**A2/B2 第二章**、**A3/B3 第三章**、**A4/B4 第四章（4.1–4.3）**；D / E / F 表各章混排。
+- 本页覆盖**四章**：A / B 表各分四段——**A1/B1 第一章**、**A2/B2 第二章**、**A3/B3 第三章**、**A4/B4 第四章（4.1–4.3、4.5–4.6）**；D / E / F 表各章混排。
 - 建议顺序：**先读 A / B 建立骨架 → 用 D 的口诀加固 → 用 E 的对比表分清易混 → 用 F 的反例守住边界**。
 - **背完之后去做题**：题型流程、二级结论与验算清单在[解题工具箱](toolbox.md)，限时训练在[考场竞技场](ch03/arena.md)（第三章）。
 - 想做成间隔复习卡，见文末「导出到 Anki」。
@@ -100,6 +100,10 @@
 | **诱导（算子）范数** | $\|A\|=\max_{\|x\|=1}\|Ax\|_v$ | 与给定向量范数**配套且最紧**；$\|I\|=1$ |
 | **列和 / 行和 / 谱** | $\|A\|_1=\max_j\sum_i|a_{ij}|$；$\|A\|_\infty=\max_i\sum_j|a_{ij}|$；$\|A\|_2=\sigma_{\max}$ | 口诀「**1 列 $\infty$ 行**」；谱范数要算 $A^{\mathrm H}A$ |
 | **Rayleigh 商** | $R(x)=x^{\mathrm H}Ax/x^{\mathrm H}x$，$\lambda_n\le R\le\lambda_1$ | Hermite 矩阵才有这套上下界 |
+| **谱 / 谱半径** | $\rho(A)=\max|\lambda|$ | 只看得见特征值，看不见 Jordan 块；$\rho=0$ 不推出 $A=O$ |
+| **盖尔圆盘** | 圆心 $a_{ii}$、半径 $\sum_{j\ne i}|a_{ij}|$ | 半径按**行**算；转置后圆心不变、半径改列和 |
+| **孤立盖尔圆** | 与其余圆盘都不相交的那个 | 只有孤立圆才「恰装一个」；一般情形一个可装两个 |
+| **Neumann 级数** | $\rho(A)\lt1\iff\sum_{m\ge0}A^m=(I-A)^{-1}$ | 条件看 $\rho$ 不看 $\|A\|$；$\sum_{m\ge1}$ 还要减 $I$ |
 
 ## B. 定理：触发词 → 第一动作
 
@@ -210,6 +214,10 @@
 | 「$I-A$ 可逆吗」 | 定理 4.3.6 | 验 $\|A\|\lt1$（任选一把好算的范数）；逆的界 $\|(I-A)^{-1}\|\le\|I\|/(1-\|A\|)$ |
 | 「特征值的最大 / 最小」 | 推论 4.3.1 | Rayleigh 商：$\lambda_1=\max R$、$\lambda_n=\min R$；中间的第 $i$ 个用 Courant–Fischer |
 | 「特征值被扰动多少」 | 定理 4.3.5（Weyl） | 用 $\lambda_i(A)+\lambda_n(E)\le\lambda_i(A+E)\le\lambda_i(A)+\lambda_1(E)$；$\|E\|_2\le\varepsilon$ 时漂移 $\le\varepsilon$ |
+| 「特征值大概在哪个区域」 | 盖尔圆盘（定理 4.5.3） | 圆心对角元、半径同行非对角元之和；取转置再取交能夹小 |
+| 「要数几个特征值在那个区域」 | 定理 4.5.4 | **先看有几块连通区**；孤立圆才数得准；不够就调 $DAD^{-1}$ |
+| 「$A^k$ 会不会趋于零」 | 定理 4.6.3 | 先试 $\|A\|\lt1$（好算）；判不了就上 $\rho(A)\lt1$（充要） |
+| 「$\sum c_mA^m$ 收不收」 | 定理 4.6.5（Abel） | 比 $\rho(A)$ 与 $r$；相等就回定义逐元素算，别硬套 |
 
 ## C. 八条公理：怎么记才不丢
 
@@ -365,7 +373,7 @@ python3 tools/export_cards.py --only ch03     # 只导出第三章
 python3 tools/export_cards.py --only ch04     # 只导出第四章
 ```
 
-脚本会把四章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md) / [四](ch04/recall-cards.md)，共 117 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以各章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
+脚本会把四章[闭卷回忆卡](ch01/recall-cards.md)（[一](ch01/recall-cards.md) / [二](ch02/recall-cards.md) / [三](ch03/recall-cards.md) / [四](ch04/recall-cards.md)，共 131 张）的每张卡拆成「正面 / 背面」两列 **TSV**（制表符分隔，即 Anki 导入时的「制表符」选项），输出文件自带 `#separator:tab` / `#html:true` 头，Anki 里「文件 → 导入」直接可用；公式保留 `$…$`，需装 MathJax 才渲染（方括号 id 引用会降级为纯 id 文本，方便回教程查证）。复习日程以各章回忆卡页内的说明为准（当天 / 1 / 3 / 7 天，只重做 △ 和 ×）。
 
 > 与[解题工具箱](toolbox.md)的分工：本页（与回忆卡）解决「记不记得住」，工具箱解决「做题时怎么下手、怎么验算」——考前两页各过一遍，再把[考场竞技场](ch03/arena.md)跑一轮计时赛，三件套齐活。
 
@@ -553,3 +561,12 @@ python3 tools/export_cards.py --only ch04     # 只导出第四章
 | 极大极小定理 | Courant–Fischer theorem | $\lambda_i=\max_{V_i}\min_{V_i}R=\min_{V_{n-i+1}}\max_{V}R$ | [4.3.3](ch04/sec43.md#thm-4.3.4) |
 | 特征值扰动 | eigenvalue perturbation | $\lambda_i(A)+\lambda_n(E)\le\lambda_i(A+E)\le\lambda_i(A)+\lambda_1(E)$ | [4.3.3](ch04/sec43.md#thm-4.3.5) |
 | Neumann 级数 | Neumann series | $\|A\|\lt1$ 时 $(I-A)^{-1}=\sum_{k\ge0}A^k$ | [4.3.4](ch04/sec43.md#sec-4.3.4) |
+| 谱 / 谱半径 | spectrum / spectral radius | $Sp(A)$ 是特征值集合；$\rho(A)=\max|\lambda|$ | [4.5.1](ch04/sec45.md#def-4.5.1) |
+| 谱半径下确界 | spectral radius as infimum | $\rho(A)=\inf\|A\|$，但下确界不一定取到 | [4.5.2](ch04/sec45.md#thm-4.5.2) |
+| 盖尔圆盘 | Gershgorin disk | 圆心 $a_{ii}$、半径同行非对角元绝对值之和 | [4.5.4](ch04/sec45.md#def-4.5.2) |
+| 对角占优 | diagonally dominant | $|a_{ii}|\gt\sum_{j\ne i}|a_{ij}|$；由盖尔圆推出非奇异 | [4.5.5](ch04/sec45.md#cor-4.5.2) |
+| 按范数 / 坐标收敛 | convergence by norm / coordinate | 有限维下等价（范数等价） | [4.6.1](ch04/sec46.md#def-4.6.1) |
+| 绝对收敛 | absolute convergence | 各元素数值级数都绝对收敛；$\iff\sum\|A_k\|$ 收敛 | [4.6.4](ch04/sec46.md#def-4.6.5) |
+| 矩阵幂级数 | matrix power series | $\sum c_mA^m$，$A^0=I$ | [4.6.5](ch04/sec46.md#def-4.6.6) |
+| 收敛半径 | radius of convergence | $|z|\lt r$ 收敛、$|z|\gt r$ 发散 | [4.6.5](ch04/sec46.md#lem-4.6.1) |
+| Abel 型定理 | Abel-type theorem | $\rho(A)\lt r$ 绝对收敛、$\rho(A)\gt r$ 发散 | [4.6.5](ch04/sec46.md#thm-4.6.5) |

@@ -2048,10 +2048,184 @@
   }
 
   /* ----------------------------------------------------------------------- *
+   * 部件：盖尔圆盘 —— 两个圆盘罩住两个特征值
+   * data-widget="gershgorin"
+   *   - 四个滑块给 2×2 实矩阵的四个元素；一个 D 滑块做注 3 的 DAD⁻¹；
+   *   - 画布是复平面：圆心 = 对角元，半径 = 同行非对角元绝对值之和；
+   *   - 特征值用 2×2 闭式解，可能为复（判别式 < 0），所以不能用实轴的画法。
+   * ----------------------------------------------------------------------- */
+
+  function widgetGershgorin(root) {
+    var state = { a11: 1.0, a12: 0.15, a21: -0.2, a22: -0.4, t: 1 };
+
+    var controls = document.createElement("div");
+    controls.className = "widget-controls";
+    root.appendChild(controls);
+
+    var s11 = makeSlider(controls, { label: "a₁₁", min: -2, max: 2, step: 0.05, value: state.a11 });
+    var s12 = makeSlider(controls, { label: "a₁₂", min: -1.2, max: 1.2, step: 0.05, value: state.a12 });
+    var s21 = makeSlider(controls, { label: "a₂₁", min: -1.2, max: 1.2, step: 0.05, value: state.a21 });
+    var s22 = makeSlider(controls, { label: "a₂₂", min: -2, max: 2, step: 0.05, value: state.a22 });
+
+    var dRow = document.createElement("div");
+    dRow.className = "widget-controls";
+    root.appendChild(dRow);
+    var sT = makeSlider(dRow, {
+      label: "D = diag(d, 1) 的 d",
+      min: 0.4, max: 2.5, step: 0.05, value: state.t,
+      aria: "相似变换 D = diag(d,1) 的参数 d"
+    });
+    var reset = makeButton(dRow, "重置", "恢复默认矩阵与 d = 1");
+    reset.addEventListener("click", function () {
+      state.a11 = 1.0; state.a12 = 0.15; state.a21 = -0.2; state.a22 = -0.4; state.t = 1;
+      s11.set(state.a11); s12.set(state.a12); s21.set(state.a21); s22.set(state.a22); sT.set(state.t);
+      stage.render();
+      finish();
+    });
+
+    /* DAD⁻¹：d₁ = d、d₂ = 1 ⇒ b₁₂ = a₁₂·d，b₂₁ = a₂₁/d；对角元不动。 */
+    function scaled() {
+      return {
+        a11: state.a11,
+        a12: state.a12 * state.t,
+        a21: state.a21 / state.t,
+        a22: state.a22
+      };
+    }
+
+    function disks() {
+      var m = scaled();
+      return [
+        { c: m.a11, r: Math.abs(m.a12), name: "G₁" },
+        { c: m.a22, r: Math.abs(m.a21), name: "G₂" }
+      ];
+    }
+
+    /* 特征值：λ² − tr·λ + det = 0，判别式可能为负 ⇒ 返回 [re, im]。 */
+    function eigvals() {
+      var m = state;
+      var tr = m.a11 + m.a22;
+      var det = m.a11 * m.a22 - m.a12 * m.a21;
+      var disc = tr * tr - 4 * det;
+      var re = tr / 2;
+      if (disc >= 0) {
+        var s = Math.sqrt(disc);
+        return [[re + s / 2, 0], [re - s / 2, 0]];
+      }
+      var im = Math.sqrt(-disc) / 2;
+      return [[re, im], [re, -im]];
+    }
+
+    var stage = makeStage(root, {
+      height: 300,
+      range: 2.6,
+      aria: "盖尔圆盘：两个圆盘以对角元为圆心，半径是同行非对角元之和；四角星是真实特征值"
+    });
+    registerStage(stage);
+
+    var readout = makeReadout(root);
+
+    function draw(ctx, plane, pal) {
+      ctx.clearRect(0, 0, stage.w, stage.h);
+      drawGrid(ctx, plane, pal);
+      var o = plane.toPx([0, 0]);
+      var sc = plane.scale;
+
+      /* 两个圆盘 */
+      var ds = disks();
+      var colors = [pal.blue, pal.green];
+      ds.forEach(function (d, i) {
+        var c = plane.toPx([d.c, 0]);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, Math.max(1, d.r * sc), 0, Math.PI * 2);
+        ctx.fillStyle = withAlpha(colors[i], 0.10);
+        ctx.fill();
+        ctx.strokeStyle = withAlpha(colors[i], 0.9);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+        dot(ctx, c.x, c.y, colors[i], 4.5);
+        label(ctx, d.name, c.x, c.y - d.r * sc - 8, colors[i], "12px " + pal.sans, "center");
+        label(ctx, "r = " + fmt(d.r, 2), c.x, c.y + d.r * sc + 12, colors[i], "11px " + pal.sans, "center");
+      });
+
+      /* 真实特征值：四角星 */
+      eigvals().forEach(function (pc, i) {
+        var p = plane.toPx(pc);
+        ctx.save();
+        ctx.fillStyle = pal.red;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - 6);
+        ctx.lineTo(p.x + 6, p.y);
+        ctx.lineTo(p.x, p.y + 6);
+        ctx.lineTo(p.x - 6, p.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        if (i === 0) label(ctx, "λ", p.x + 10, p.y - 8, pal.red, "italic 13px " + pal.serif);
+      });
+
+      label(ctx, "Re", o.x + plane.range * sc - 14, o.y - 8, pal.muted, "11px " + pal.sans);
+      label(ctx, "Im", o.x + 8, o.y - plane.range * sc + 12, pal.muted, "11px " + pal.sans);
+    }
+    stage.draw = draw;
+
+    function finish() {
+      var ds = disks();
+      var gap = Math.abs(ds[0].c - ds[1].c) - (ds[0].r + ds[1].r);
+      var ev = eigvals();
+      var inG1 = ev.filter(function (p) {
+        return Math.abs(complexAbs([p[0] - ds[0].c, p[1]])) <= ds[0].r + 1e-9;
+      }).length;
+      var inG2 = ev.filter(function (p) {
+        return Math.abs(complexAbs([p[0] - ds[1].c, p[1]])) <= ds[1].r + 1e-9;
+      }).length;
+      var msg = "G₁：心 " + fmt(ds[0].c) + "，r = " + fmt(ds[0].r, 2) +
+        "；G₂：心 " + fmt(ds[1].c) + "，r = " + fmt(ds[1].r, 2) + "。";
+      msg += gap > 1e-9
+        ? " 两盘分离（间距 " + fmt(gap, 2) + "）⇒ 定理 4.5.4 说各装一个。"
+        : " 两盘相交 ⇒ 定理 4.5.4 用不上，只能断言「两个特征值都在并集里」。";
+      msg += " 实际落点：G₁ 内 " + inG1 + " 个、G₂ 内 " + inG2 + " 个";
+      msg += "（特征值 " + ev.map(function (p) {
+        return fmt(p[0], 2) + (Math.abs(p[1]) > 1e-9 ? (p[1] > 0 ? "+" : "−") + fmt(Math.abs(p[1]), 2) + "i" : "");
+      }).join("、") + "）。";
+      if (Math.abs(state.t - 1) > 1e-9) {
+        msg += " d = " + fmt(state.t, 2) + " 时圆心不动、半径改变——相似变换不改特征值。";
+      }
+      readout.textContent = msg;
+    }
+
+    function complexAbs(v) {
+      return Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+    }
+
+    [s11, s12, s21, s22].forEach(function (s, i) {
+      s.input.addEventListener("input", function () {
+        var v = s.read();
+        if (i === 0) state.a11 = v;
+        if (i === 1) state.a12 = v;
+        if (i === 2) state.a21 = v;
+        if (i === 3) state.a22 = v;
+        stage.render();
+        finish();
+      });
+    });
+    sT.input.addEventListener("input", function () {
+      state.t = sT.read();
+      stage.render();
+      finish();
+    });
+
+    finish();
+  }
+
+  /* ----------------------------------------------------------------------- *
    * 注册与启动
    * ----------------------------------------------------------------------- */
 
   var WIDGETS = {
+    "gershgorin": widgetGershgorin,
     "norm-operator": widgetNormOperator,
     "vec-decompose": widgetDecompose,
     "cauchy-schwarz": widgetCauchy,

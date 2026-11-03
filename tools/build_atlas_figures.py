@@ -1185,7 +1185,156 @@ def fig_num_ode():
                       note="Euler O(h)；RK4 O(h⁴)；Adams 每步一次函数值但要启动。",
                       height=380)
 
+def disk_panel(x, y, w, h, disks, eigvals, title, legend, tone):
+    """复平面面板：画盖尔圆盘 + 特征值点。上下留白固定，保证圆盘不压标题。"""
+    out = []
+    out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="var(--paper)" '
+               f'fill-opacity=".55" stroke="var(--line)" stroke-opacity=".7"/>')
+    xr, yr = (-2.6, 13.6), (-4.4, 4.4)
+    body_top, body_bot = y + 26, y + h - 54
+    scale = min((w - 20) / (xr[1] - xr[0]), (body_bot - body_top) / (yr[1] - yr[0]))
+    cx, cy = sum(xr) / 2, 0.0
+    px, py = x + w / 2, (body_top + body_bot) / 2
+
+    def P(re_, im_):
+        return px + (re_ - cx) * scale, py - (im_ - cy) * scale
+
+    for i in range(int(xr[0]) + 1, int(xr[1]) + 1, 2):
+        gx, _ = P(i, 0)
+        out.append(f'<path d="M{gx:.1f} {body_top:.1f} V{body_bot:.1f}" stroke="var(--line)" stroke-opacity=".26" stroke-dasharray="2 6"/>')
+        out.append(t(gx, body_bot + 13, str(i), cls="pl-axis-label", anchor="middle"))
+    ax0, ay0 = P(xr[0], 0)
+    ax1, _ = P(xr[1], 0)
+    out.append(f'<path d="M{ax0:.1f} {ay0:.1f} H{ax1:.1f}" stroke="var(--ink-2)" stroke-opacity=".5" stroke-width="1.2"/>')
+    out.append(t(ax1 - 2, ay0 - 6, "Re", cls="pl-axis-label", anchor="end"))
+
+    palette = {"accent": TONES["accent"], "gold": TONES["gold"], "cyan": TONES["cyan"],
+               "green": TONES["green"], "plum": TONES["plum"]}
+    for name, re_, im_, r, col, dash in disks:
+        gx, gy = P(re_, im_)
+        rr = r * scale
+        stroke = palette.get(col, TONES["accent"])
+        dash_attr = ' stroke-dasharray="6 5"' if dash else ""
+        out.append(f'<circle cx="{gx:.1f}" cy="{gy:.1f}" r="{rr:.1f}" fill="{stroke}" fill-opacity=".08" '
+                   f'stroke="{stroke}" stroke-opacity=".9" stroke-width="1.8"{dash_attr}/>')
+        out.append(t(gx, gy - rr - 7, name, cls="pl-mono", fill=stroke, anchor="middle", size="11.5"))
+        out.append(t(gx - rr + 7, gy + 15, f"r = {r:g}", cls="pl-mono", fill=stroke, anchor="start", size="9.5"))
+    for re_, im_ in eigvals:
+        gx, gy = P(re_, im_)
+        out.append(f'<path d="M{gx:.1f} {gy-5:.1f} L{gx+5:.1f} {gy:.1f} L{gx:.1f} {gy+5:.1f} L{gx-5:.1f} {gy:.1f} Z" '
+                   f'fill="var(--fig-red)" stroke="var(--paper)" stroke-width="1.2"/>')
+    out.append(t(x + 12, y + 17, title, cls="pl-mono", fill=palette.get(tone, TONES["accent"]), size="11"))
+    out.append(t(x + w / 2, y + h - 14, legend, cls="pl-mono", anchor="middle", size="9.5", fill=TONES["muted"]))
+    return "".join(out)
+
+
+def fig_matrix_gershgorin():
+    uid = "matrix-gershgorin"
+    ev = [(9.3038, 0.0), (3.0320, 0.0563), (-0.3357, 0.9285)]
+    body = []
+    body.append(disk_panel(
+        32, 132, 422, 272,
+        [("G₁", 9, 0, 2, "accent", False),
+         ("G₂", 0, 1, 2, "cyan", False),
+         ("G₃", 3, 0, 2, "green", False)],
+        ev, "① D = I：G₂ 与 G₃ 交成一片，只有 G₁ 孤立",
+        "★ 真实特征值 9.30 / 3.03+0.06i / −0.34+0.93i（均在各自圆盘内）", "accent"))
+    body.append(disk_panel(
+        466, 132, 402, 272,
+        [("G₁′", 9, 0, 4, "accent", True),
+         ("G₂′", 0, 1, 1.5, "cyan", True),
+         ("G₃′", 3, 0, 1.5, "green", True)],
+        ev, "② D = diag(2,1,1)：三个圆盘两两分离",
+        "圆心一个没动（仍是对角元），只有半径变成 4 / 1.5 / 1.5", "plum"))
+    caption = ("<b>读图：</b>四角星是真实特征值，圆盘是盖尔圆给它们的「领地」——圆心是第 i 个对角元，半径是第 i 行"
+               "「除去对角元」的绝对值之和。左图（D = I）里 G₂（心在 i、半径 2）与 G₃（心在 3、半径 2）重叠成一个"
+               "连通区，两个圆盘 ⇒ 那里恰有 2 个特征值；只有 G₁ 孤立，所以能断言的只有「有一个特征值在 [7,11] 内」。"
+               "右图取 D = diag(2,1,1)：第一行放大 2 倍、第一列缩小一半，圆心一个没动，"
+               "半径却分成 4 / 1.5 / 1.5，三个圆盘各自孤立——结论升到「三个特征值互异」。"
+               "<b>相似变换不改变谱，只改变我们对它的描述精度。</b>")
+    return plate(uid, 440, "MATRIX · GERSHGORIN / 16",
+                 "盖尔圆盘：挪一挪圆盘，把 1 个数成 3 个",
+                 "例 4.5.8：A = [[9,1,1],[1,i,1],[1,1,3]]，D = I 与 D = diag(2,1,1) 两种看法的对比。",
+                 "".join(body), tone="accent", atlas_no="M-16", caption=caption)
+
+
+def tr(x, y, raw, cls="pl-label", fill=None, anchor=None, size=None, opacity=None):
+    """同 t()，但不转义：用于需要 <tspan> 上下标的文字。"""
+    attrs = [f'x="{x:.1f}"', f'y="{y:.1f}"', f'class="{cls}"']
+    if fill:
+        attrs.append(f'style="fill:{fill}"')
+    if anchor:
+        attrs.append(f'text-anchor="{anchor}"')
+    if size:
+        attrs.append(f'font-size="{size}"')
+    if opacity is not None:
+        attrs.append(f'opacity="{opacity}"')
+    return f'<text {" ".join(attrs)}>{raw}</text>'
+
+
+def abel_panel(x, y, w, h, dots, title, verdict, verdict_color, tone, on_ring=False):
+    """一个复平面小面板：单位收敛圆 + 若干谱点。dots = [(re, im, color)]。"""
+    out = []
+    out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="var(--paper)" '
+               f'fill-opacity=".55" stroke="var(--line)" stroke-opacity=".7"/>')
+    cx, cy, r = x + w / 2, y + 96, 58
+    for i in (-1, 1):
+        out.append(f'<path d="M{cx + i * r:.1f} {y + 28} V{y + h - 54}" stroke="var(--line)" stroke-opacity=".20" stroke-dasharray="2 6"/>')
+        out.append(f'<path d="M{x + 12} {cy + i * r:.1f} H{x + w - 12}" stroke="var(--line)" stroke-opacity=".20" stroke-dasharray="2 6"/>')
+    out.append(f'<path d="M{x + 12} {cy} H{x + w - 12}" stroke="var(--ink-2)" stroke-opacity=".45" stroke-width="1.1"/>')
+    out.append(f'<path d="M{cx} {y + 28} V{y + h - 54}" stroke="var(--ink-2)" stroke-opacity=".45" stroke-width="1.1"/>')
+    out.append(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{TONES["accent"]}" stroke-width="2"'
+               f'{" stroke-dasharray=\"6 5\"" if on_ring else ""}/>')
+    # 半径示意线 + 标签
+    out.append(f'<path d="M{cx} {cy} L{cx + r * 0.5:.1f} {cy - r * 0.866:.1f}" stroke="{TONES["accent"]}" '
+               f'stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="3 3"/>')
+    out.append(tr(cx + r * 0.30, cy - r * 0.34, "r", cls="pl-mono", fill=TONES["accent"], size="11"))
+    for re_, im_, col in dots:
+        gx, gy = cx + re_ * r, cy - im_ * r
+        out.append(f'<circle cx="{gx:.1f}" cy="{gy:.1f}" r="5" fill="{col}" stroke="var(--paper)" stroke-width="1.3"/>')
+    out.append(tr(x + 12, y + 18, title, cls="pl-mono", fill=TONES[tone], size="11"))
+    out.append(tr(x + w / 2, y + h - 26, verdict, cls="pl-mono", anchor="middle", fill=verdict_color, size="11.5"))
+    return "".join(out)
+
+
+def fig_matrix_abel():
+    uid = "matrix-abel"
+    body = []
+    green, red = TONES["green"], "var(--fig-red)"
+    body.append(abel_panel(
+        32, 132, 272, 216,
+        [(0.34, 0.20, green), (-0.30, 0.22, green)],
+        "\u2460 \u03c1(A) = 0.4",
+        "\u03c1 &lt; r\uff1a\u7edd\u5bf9\u6536\u655b", green, "accent"))
+    body.append(abel_panel(
+        312, 132, 272, 216,
+        [(-1.0, 0.0, red)],
+        "\u2461 \u03c1(A) = 1 = r",
+        "\u03c1 = r\uff1a\u5b9a\u7406\u5931\u6548\uff0c\u53e6\u7b97", red, "gold", on_ring=True))
+    body.append(abel_panel(
+        592, 132, 272, 216,
+        [(1.30, 0.55, red), (-1.15, -0.75, red)],
+        "\u2462 \u03c1(A) = 1.4",
+        "\u03c1 &gt; r\uff1a\u53d1\u6563", red, "plum"))
+    body.append(f'<rect x="32" y="356" width="832" height="62" rx="14" fill="var(--paper)" '
+                f'fill-opacity=".7" stroke="var(--line)" stroke-opacity=".8"/>')
+    body.append(tr(50, 378, "判据只看最远的那个特征值，不看矩阵元素有多大：", cls="pl-small"))
+    body.append(tr(50, 402, "ρ(A) &lt; r 时总存在一把范数使 ‖A‖ &lt; r（定理 4.5.2），化归成数值幂级数；ρ(A) = r 时范数再调也没用。",
+                   cls="pl-small"))
+    caption = ("<b>读图：</b>圆圈是数值幂级数 Σcₘzᵐ 的收敛圆（半径 r），圆点是各矩阵的谱。①全部特征值在圆内（ρ &lt; r）"
+               "——矩阵幂级数绝对收敛，哪怕 ‖A‖ 的读数大于 r；②特征值恰在圆周上（ρ = r）——定理失效，必须回到定义逐项判断；"
+               "③有特征值在圆外（ρ &gt; r）——幂级数的通项不趋于零，必然发散。"
+               "<b>所以「ρ &lt; r」是充分条件，「ρ &gt; r」是必然发散的，边界要单独验。</b>"
+               "例 4.6.7 就卡在第②种：A 的谱半径恰是 1，ΣAᵏ/k 发散，而同一个 A 换成 ΣAᵏ/k² 就收敛。")
+    return plate(uid, 440, "MATRIX \u00b7 ABEL / 17",
+                 "Abel \u578b\u5b9a\u7406\uff1a\u8c31\u534a\u5f84\u843d\u5728\u6536\u655b\u5706\u7684\u54ea\u4e00\u8fb9",
+                 "\u77e9\u9635\u5e42\u7ea7\u6570 \u03a3 c_k A^k \u7684\u655b\u6563\u6027\u7531 \u03c1(A) \u4e0e\u6536\u655b\u534a\u5f84 r \u7684\u5927\u5c0f\u51b3\u5b9a\u3002",
+                 "".join(body), tone="cyan", atlas_no="M-17", caption=caption)
+
+
 FIGURES = {
+    "matrix-gershgorin": ("matrix", fig_matrix_gershgorin),
+    "matrix-abel": ("matrix", fig_matrix_abel),
     "robot-system": ("robot", fig_robot_system),
     "robot-pose": ("robot", fig_robot_pose),
     "matrix-map": ("matrix", fig_matrix_map),

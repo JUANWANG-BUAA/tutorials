@@ -460,10 +460,10 @@ def main() -> int:
     check_mock_exam("ch01", 100)
     check_mock_exam("ch02", 100)
     check_mock_exam("ch03", 200)  # 两份分卷，各 100 分
-    check_mock_exam("ch04", 100)
+    check_mock_exam("ch04", 200)  # 两份分卷，各 100 分
     check_placeholder(pages)
     check_readme_summary()
-    for ch, n in (("ch01", 25), ("ch02", 40), ("ch03", 87), ("ch04", 44)):
+    for ch, n in (("ch01", 25), ("ch02", 40), ("ch03", 87), ("ch04", 64)):
         check_checklist(ch, n)
 
     n_pages = len(page_texts)

@@ -5,8 +5,10 @@ Scope: ch02/sec24 parameter eigenspaces, ch03/sec35 Schur basis,
 ch03/sec36 Gram–Schmidt, ch03/sec37 orthogonal projection & least squares
 (examples 3.7.E / 3.7.F, exercise C29), ch03/sec38 lambda-matrix inverses
 and elementary-transformation chains (examples 3.8.A–3.8.C, exercises
-C30/C31, polynomial coefficients as exact Fractions). This does not prove
-the general spectral theorems.
+C30/C31, polynomial coefficients as exact Fractions), ch04 norm/spectrum
+examples (4.5.3–4.5.9 Gershgorin disks, 4.6.4/4.6.7 series, 4.6.9 Neumann
+truncation; eigenvalues via a small companion-matrix iteration). This does
+not prove the general spectral theorems.
 """
 from fractions import Fraction as F
 
@@ -601,6 +603,255 @@ def check_ch04_norms():
     assert mul(trans(c6), c6) == [[10, 14], [14, 20]]
     assert 10 + 20 == 30 and 10 * 20 - 14 * 14 == 4
 
+
+# ---------------------------------------------------------------- 第四章 4.5–4.6
+
+def _mat_vec(a, x):
+    return [sum(ai * xi for ai, xi in zip(row, x)) for row in a]
+
+
+def _char_poly(a):
+    """Faddeev–LeVerrier：返回 [1, c_1, ..., c_n]（Fraction），即 λⁿ + c_1λⁿ⁻¹ + … + c_n。
+
+    M_1 = I,  c_1 = -tr(A);
+    M_k = A·M_{k-1} + c_{k-1}·I,  c_k = -(1/k)·tr(A·M_k).
+    """
+    n = len(a)
+    c = -sum(a[i][i] for i in range(n))
+    coef = [F(1), c]
+    m = [[F(1) if i == j else F(0) for j in range(n)] for i in range(n)]   # M_1
+    for k in range(2, n + 1):
+        am = mul(a, m)
+        m = [[am[i][j] + (c if i == j else 0) for j in range(n)] for i in range(n)]   # M_k
+        am = mul(a, m)
+        c = -sum(am[i][i] for i in range(n)) / k
+        coef.append(c)
+    return coef
+
+
+def _poly_eval(coef, z):
+    """Horner，z 允许复数。"""
+    out = 0j
+    for c in coef:
+        out = out * z + complex(c)
+    return out
+
+
+def _roots(coef, iters=400):
+    """Durand–Kerner 迭代求全部复根（独立于 matplotlib/numpy）。"""
+    n = len(coef) - 1
+    lead = complex(coef[0])
+    roots = [complex(0.4, 0.9) ** k for k in range(n)]
+    for _ in range(iters):
+        new = []
+        for i in range(n):
+            num = _poly_eval(coef, roots[i]) / lead
+            den = 1 + 0j
+            for j in range(n):
+                if i != j:
+                    den *= (roots[i] - roots[j])
+            if abs(den) < 1e-14:
+                den = 1e-14 + 0j
+            new.append(roots[i] - num / den)
+        roots = new
+    return roots
+
+
+def _eigvals(a):
+    return _roots(_char_poly(a))
+
+
+def _gershgorin(a):
+    """返回 [(圆心, 半径)]（按行）。"""
+    n = len(a)
+    out = []
+    for i in range(n):
+        rad = sum(abs(a[i][j]) for j in range(n) if j != i)
+        out.append((complex(a[i][i]), rad))
+    return out
+
+
+def check_ch04_spectral_radius_and_disks():
+    # 例 4.5.2：谱半径与四个范数
+    a2 = [[F(1), F(2)], [F(2), F(2)]]
+    coef2 = _char_poly(a2)
+    assert coef2 == [F(1), F(-3), F(-2)], coef2   # λ² − 3λ − 2
+    ev2 = _eigvals(a2)
+    rho2 = max(abs(z) for z in ev2)
+    # (3 + √17)/2 ≈ 3.5616
+    assert abs(rho2 - (3 + 17 ** 0.5) / 2) < 1e-9
+
+    # 例 4.5.3：三个圆盘两两不相交，每个特征值各在一个盘内
+    a3 = [[1, 0.02, 0.11], [0.01, 1j, 0.14], [0.02, 0.01, 0.5]]
+    disks3 = _gershgorin(a3)
+    assert [round(r, 10) for _, r in disks3] == [0.13, 0.15, 0.03]
+    # 圆盘两两分离
+    for i in range(3):
+        for j in range(i + 1, 3):
+            ci, ri = disks3[i]
+            cj, rj = disks3[j]
+            assert abs(ci - cj) > ri + rj - 1e-12, (i, j)
+
+    # 例 4.5.5：一个圆盘空着、一个装两个（ρ = 0.6，特征值 0.5 ± 0.3317i）
+    a5 = [[F(0), F(-4, 10)], [F(9, 10), F(1)]]
+    coef5 = _char_poly(a5)
+    assert coef5 == [F(1), F(-1), F(36, 100)], coef5   # λ² − λ + 0.36
+    ev5 = _eigvals(a5)
+    for z in ev5:
+        assert abs(abs(z) - 0.6) < 1e-9, z
+        assert abs(z) > F(4, 10)          # 不在 G₁
+        assert abs(z - 1) <= F(9, 10)     # 在 G₂
+
+    # 例 4.5.7：G₄ = [0,2] 孤立；实系数 ⇒ 实根成对，故至少 2 个实特征值
+    a7 = [[9, 1, -2, 1], [0, 8, 1, 1], [-1, 0, 4, 0], [1, 0, 0, 1]]
+    disks7 = _gershgorin(a7)
+    assert [r for _, r in disks7] == [4, 2, 1, 1]
+    ev7 = _eigvals(a7)
+    assert all(abs(z.imag) < 1e-8 for z in ev7), ev7     # 四个全实
+    assert sum(1 for z in ev7 if abs(z - 1) <= 1) == 1    # G₄ 里恰一个
+
+    # 例 4.5.6：n 阶矩阵的圆盘两两不相交（取 n = 5 验证）
+    n = 5
+    a6 = [[F(2 * (i + 1)) if i == j else F(1, n) for j in range(n)] for i in range(n)]
+    disks6 = _gershgorin(a6)
+    for i in range(n):
+        for j in range(i + 1, n):
+            assert abs(disks6[i][0] - disks6[j][0]) > disks6[i][1] + disks6[j][1]
+
+    # 例 4.5.8：D = diag(2,1,1) 把三个圆盘分开
+    a8 = [[9, 1, 1], [1, 1j, 1], [1, 1, 3]]
+    d8 = [2, 1, 1]
+    b8 = [[a8[i][j] * F(d8[i], d8[j]) for j in range(3)] for i in range(3)]
+    disks8 = _gershgorin(b8)
+    assert [r for _, r in disks8] == [4, F(3, 2), F(3, 2)]
+    for i in range(3):
+        for j in range(i + 1, 3):
+            assert abs(disks8[i][0] - disks8[j][0]) > disks8[i][1] + disks8[j][1] - 1e-12
+
+    # 例 4.5.A：ρ = 0.1 而 ‖A‖₁ = ‖A‖∞ = 1.1；定理 4.5.2 的构造给出 0.11
+    fa = [[F(1, 10), F(1)], [F(0), F(1, 10)]]      # 超对角 1 的 2 阶 Jordan 块
+    ev_aa = _eigvals(fa)
+    assert all(abs(z - 0.1) < 1e-9 for z in ev_aa), ev_aa
+    assert max(sum(abs(v) for v in row) for row in fa) == F(11, 10)          # ‖·‖∞
+    assert max(sum(abs(fa[i][j]) for i in range(2)) for j in range(2)) == F(11, 10)   # ‖·‖₁
+    # Q = diag(1, 1/ε) → 超对角元乘 ε
+    q = [[F(1), F(0)], [F(0), F(1, 100)]]
+    qinv = [[F(1), F(0)], [F(0), F(100)]]
+    sas = mul(mul(qinv, fa), q)
+    assert sas == [[F(1, 10), F(1, 100)], [F(0), F(1, 10)]], sas
+    assert max(sum(abs(sas[i][j]) for i in range(2)) for j in range(2)) == F(11, 100)
+    # A^k 的 (1,2) 元 = k·0.1^(k-1) > 0.1^k，故下确界取不到
+    for k in (1, 5, 10):
+        assert k * F(1, 10) ** (k - 1) > F(1, 10) ** k
+
+
+
+def check_ch04_series():
+    """4.6 的级数算例：部分和、Neumann 截断、边界发散。"""
+
+    def mat_pow(a, k):
+        n = len(a)
+        out = [[F(1) if i == j else F(0) for j in range(n)] for i in range(n)]
+        for _ in range(k):
+            out = mul(out, a)
+        return out
+
+    # 例 4.6.4：对角元 1/(k(k+1)) 与 2k/3^k，和分别为 1 与 3/2
+    s1 = sum(F(1, k * (k + 1)) for k in range(1, 4000))
+    assert abs(float(s1) - 1) < 2e-3, s1
+    s2 = sum(F(2 * k, 3 ** k) for k in range(1, 60))
+    assert abs(float(s2) - F(3, 2)) < 1e-12, float(s2)
+
+    # 例 4.6.7：A = [[-1,1],[0,-1]]，Σ A^k/k 的 (1,2) 元通项是 (-1)^(k-1)，不趋于零
+    for k in (1, 2, 3, 4, 11, 12):
+        assert abs((-1) ** (k - 1)) == 1      # 通项不趋于零 ⇒ 级数发散
+
+    # 例 4.6.9：3×3 矩阵 ρ ≈ 0.8390 < 1，Neumann 级数收敛
+    b = [[F(2, 10), F(5, 10), F(2, 10)],
+         [F(1, 10), F(5, 10), F(3, 10)],
+         [F(1, 10), F(4, 10), F(2, 10)]]
+    coef = _char_poly(b)
+    assert coef == [F(1), F(-9, 10), F(5, 100), F(1, 1000)], coef   # λ³ − 0.9λ² + 0.05λ + 0.001
+    ev = _eigvals(b)
+    rho = max(abs(z) for z in ev)
+    assert abs(rho - 0.83898339) < 1e-6, rho
+    # 行和都 < 1 ⇒ ‖B‖∞ = 0.9
+    assert max(sum(row) for row in b) == F(9, 10)
+
+    # 习题 C12：A 的 ρ = 0.5，谱半径决定衰减率
+    c = [[F(2, 10), F(3, 10)], [F(1, 10), F(4, 10)]]
+    assert _char_poly(c) == [F(1), F(-6, 10), F(5, 100)]            # λ² − 0.6λ + 0.05
+    ev_c = sorted(abs(z) for z in _eigvals(c))
+    assert abs(ev_c[0] - 0.1) < 1e-9 and abs(ev_c[1] - 0.5) < 1e-9, ev_c
+
+    # 习题 C11(a)：Σ A^m/2^m 的和 = [[2,4],[0,2]]，直接由 Neumann 级数算
+    a11 = [[F(1), F(2)], [F(0), F(1)]]
+    half = [[x / 2 for x in row] for row in a11]
+    # (I − A/2)^-1
+    i_minus = [[F(1) - half[0][0], -half[0][1]], [-half[1][0], F(1) - half[1][1]]]
+    det = i_minus[0][0] * i_minus[1][1] - i_minus[0][1] * i_minus[1][0]
+    assert det == F(1, 4), det
+    inv = [[i_minus[1][1] / det, -i_minus[0][1] / det],
+           [-i_minus[1][0] / det, i_minus[0][0] / det]]
+    assert inv == [[F(2), F(4)], [F(0), F(2)]], inv
+
+    # 习题 C8/C12 型：‖A‖∞ = 0.5 时截断误差界取等
+    a = [[F(0), F(1, 2)], [F(1, 2), F(0)]]
+    s3 = [[F(0)] * 2 for _ in range(2)]
+    for m in range(4):
+        pm = mat_pow(a, m)
+        s3 = [[s3[i][j] + pm[i][j] for j in range(2)] for i in range(2)]
+    assert s3 == [[F(5, 4), F(5, 8)], [F(5, 8), F(5, 4)]], s3
+    inv_a = [[F(4, 3), F(2, 3)], [F(2, 3), F(4, 3)]]
+    err = [[inv_a[i][j] - s3[i][j] for j in range(2)] for i in range(2)]
+    assert err == [[F(1, 12), F(1, 24)], [F(1, 24), F(1, 12)]], err
+    assert max(sum(abs(v) for v in row) for row in err) == F(1, 8)     # 界 0.5^4/0.5 = 1/8
+
+
+def check_ch04_review_2026_11_03():
+    """复核记录 R1–R4：把曾写错的数值钉成断言，防止回退。"""
+    # R1：例 4.5.5 的 ∞-范数与 1-范数
+    a = [[F(0), F(-2, 5)], [F(9, 10), F(1)]]
+    rows = [abs(a[i][0]) + abs(a[i][1]) for i in range(2)]
+    cols = [abs(a[0][j]) + abs(a[1][j]) for j in range(2)]
+    assert rows == [F(2, 5), F(19, 10)], rows          # 0.4 与 1.9
+    assert max(rows) == F(19, 10)                      # ‖A‖∞ = 1.9（不是 2.3）
+    assert cols == [F(9, 10), F(7, 5)], cols           # 0.9 与 1.4
+    assert max(cols) == F(7, 5)                        # ‖A‖₁ = 1.4
+
+    # R2：习题 C10 的特征值（曾误写为 5.372/4.372/−4.745）
+    c10 = [[4, 1, 1], [1, 4, 1], [1, 1, -3]]
+    ev = sorted(z.real for z in _eigvals(c10))
+    assert abs(ev[0] - (-3.24264)) < 1e-4, ev
+    assert abs(ev[1] - 3.0) < 1e-6, ev
+    assert abs(ev[2] - 5.24264) < 1e-4, ev
+    # 谱半径与范数界：6 偏松约 14%
+    assert abs((6 - ev[2]) / ev[2] - 0.14446) < 1e-3
+
+    # R3：习题 C12 的误差矩阵：1-范数是列和最大 ≈ 0.0937，∞-范数恰为 1/16
+    a12 = [[F(1, 5), F(3, 10)], [F(1, 10), F(2, 5)]]
+    s4 = [[F(0), F(0)], [F(0), F(0)]]
+    pw = [[F(1), F(0)], [F(0), F(1)]]
+    for _ in range(5):
+        s4 = [[s4[i][j] + pw[i][j] for j in range(2)] for i in range(2)]
+        pw = mul(pw, a12)
+    assert s4[1][1] == F(17309, 10000), s4      # 1.7309（不是 1.7369）
+    inv = [[F(4, 3), F(2, 3)], [F(2, 9), F(16, 9)]]
+    err = [[inv[i][j] - s4[i][j] for j in range(2)] for i in range(2)]
+    inf_n = max(sum(abs(v) for v in row) for row in err)
+    one_n = max(sum(abs(err[i][j]) for i in range(2)) for j in range(2))
+    assert inf_n == F(1, 16), inf_n              # 0.0625 恰好取等
+    assert abs(float(one_n) - 0.093744) < 1e-5, float(one_n)
+
+    # R4：自测卷二第 11 题的 S3 的 (2,2) 元
+    a11m = [[F(3, 10), F(4, 10)], [F(2, 10), F(1, 10)]]
+    s3 = [[F(0), F(0)], [F(0), F(0)]]
+    pw = [[F(1), F(0)], [F(0), F(1)]]
+    for _ in range(4):
+        s3 = [[s3[i][j] + pw[i][j] for j in range(2)] for i in range(2)]
+        pw = mul(pw, a11m)
+    assert s3[1][1] == F(1231, 1000), s3          # 1.231（不是 1.241）
+
 if __name__ == '__main__':
     checks = (
         check_parameter_eigenspaces, check_schur_basis, check_orthogonalization,
@@ -610,6 +861,8 @@ if __name__ == '__main__':
         check_jordan_38f_rank_formula, check_jordan_3812_transition,
         check_jordan_38g_powers_exponential, check_frobenius_minpoly_3813,
         check_direct_sum_38f_lemma, check_ch04_norms,
+        check_ch04_spectral_radius_and_disks, check_ch04_series,
+        check_ch04_review_2026_11_03,
     )
     for check in checks:
         check()
