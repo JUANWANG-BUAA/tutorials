@@ -27,7 +27,7 @@
 
 **A5.** 重参数化技巧是什么？一句话说清它为什么让采样可导。
 ::: sol
-把采样写成 $z=\boldsymbol\mu_\phi(\boldsymbol x)+\boldsymbol\sigma_\phi(\boldsymbol x)\odot\boldsymbol\varepsilon$、$\boldsymbol\varepsilon\sim\mathcal N(\boldsymbol 0,I)$（[方法 4.3.1](sec43.md#method-4.3.1)）。**为什么可导**：随机性来自与 $\phi$ 无关的 $\boldsymbol\varepsilon$，$\phi$ 只出现在「平移 + 伸缩」这条**确定性**路径上，所以「对参数求梯度」可以在给定 $\boldsymbol\varepsilon$ 的那份样本上直接做（路径导数），既无偏又利用了 $\nabla_z f$，方差远小于 REINFORCE（[命题 4.3.1](sec43.md#prop-4.3.1)）。（✓ / △ / ×）
+把采样写成 $z=\boldsymbol\mu_\phi(\boldsymbol x)+\boldsymbol\sigma_\phi(\boldsymbol x)\odot\boldsymbol\varepsilon$、$\boldsymbol\varepsilon\sim\mathcal N(\boldsymbol 0,I)$（[方法 4.3.1](sec43.md#method-4.3.1)）。**为什么可导**：随机性来自与 $\phi$ 无关的 $\boldsymbol\varepsilon$，$\phi$ 只出现在「平移 + 伸缩」这条**确定性**路径上，所以「对参数求梯度」可以在给定 $\boldsymbol\varepsilon$ 的那份样本上直接做（路径导数），既无偏又利用了 $\nabla_z f$，方差需与具体对数导数估计及基线比较，不能无条件保证更小（[命题 4.3.1](sec43.md#prop-4.3.1)）。（✓ / △ / ×）
 :::
 
 **A6.** 后验坍塌的定义是什么？可观察的判据是什么？
@@ -66,7 +66,7 @@ $\tilde\varepsilon_\theta(x_t,t,c)=\varepsilon_\theta(x_t,t,\varnothing)+w\bigl(
 
 **B2.** VAE 的三件套是哪三件，各自解决什么？少一件会怎样？
 ::: sol
-**先验** $p(z)=\mathcal N(0,I)$ 定采样起点；**ELBO** 定优化目标（下界，缺口是后验与近似后验的 KL）；**重参数化** $z=\boldsymbol\mu+\boldsymbol\sigma\odot\boldsymbol\varepsilon$ 让采样可导。**少先验** → 无法定义从哪采（退化成 AE）；**少 ELBO** → 没有可训练的目标（重建 + KL 的组合正是它）；**少重参数化** → 期望里的采样节点不可导，只能用高方差 REINFORCE，训练慢到不可用。（✓ / △ / ×）
+**先验** $p(z)=\mathcal N(0,I)$ 定采样起点；**ELBO** 定优化目标（下界，缺口是后验与近似后验的 KL）；**重参数化** $z=\boldsymbol\mu+\boldsymbol\sigma\odot\boldsymbol\varepsilon$ 让采样可导。**少先验** → 无法定义从哪采（退化成 AE）；**少 ELBO** → 没有可训练的目标（重建 + KL 的组合正是它）；**少重参数化** → 期望里的采样节点不可导，可用其他梯度估计方法，但方差与成本需要检验。（✓ / △ / ×）
 :::
 
 **B3.** 为什么 GAN 天生脆弱？说出三个结构性失效模式。
@@ -126,7 +126,7 @@ $\nabla_\phi\mathbb E_{z\sim q_\phi}[f(z)]=\mathbb E_{\boldsymbol\varepsilon}\bi
 
 **C3.** 写出对角高斯与标准正态之间的 KL 闭式，并说明每项的惩罚方向。
 ::: sol
-$\mathrm{KL}\bigl(\mathcal N(\boldsymbol\mu,\operatorname{diag}(\boldsymbol\sigma^2))\,\|\,\mathcal N(0,I)\bigr)=\frac12\sum_{j=1}^{d}\bigl(\mu_j^2+\sigma_j^2-1-\log\sigma_j^2\bigr)$（[命题 4.3.2](sec43.md#prop-4.3.2)）。**读法**：$\mu_j^2$ 把均值拉向原点；$\sigma_j^2$ 惩罚方差过大、$-\log\sigma_j^2$ 惩罚方差过小，二者之和在 $\sigma_j^2=1$ 处取最小 $0$——**单维可以为负**，非负性只对总和成立。（✓ / △ / ×）
+$\mathrm{KL}\bigl(\mathcal N(\boldsymbol\mu,\operatorname{diag}(\boldsymbol\sigma^2))\,\|\,\mathcal N(0,I)\bigr)=\frac12\sum_{j=1}^{d}\bigl(\mu_j^2+\sigma_j^2-1-\log\sigma_j^2\bigr)$（[命题 4.3.2](sec43.md#prop-4.3.2)）。**读法**：$\mu_j^2$ 把均值拉向原点；$\sigma_j^2$ 惩罚方差过大、$-\log\sigma_j^2$ 惩罚方差过小，$\sigma_j^2-1-\log\sigma_j^2$ 在 $\sigma_j^2=1$ 处取最小 $0$，加上 $\mu_j^2$ 后**每维 KL 都非负**。单个采样的对数密度差可以为负，不能与其期望混淆。（✓ / △ / ×）
 :::
 
 **C4.** 写出 GAN 的极小极大目标与最优判别器下的等价距离。

@@ -74,7 +74,7 @@ $$\log p_\theta(\boldsymbol x)=\mathbb E_q\!\left[\log\frac{p_\theta(\boldsymbol
 **(c) 两种读法。** Jensen 路线告诉你 ELBO「长什么样」——它是把不可积的积分换成可采样期望后**必然出现**的下界，也解释了为什么必须有一个 $q_\phi$；贝叶斯路线告诉你 ELBO「缺了什么」——缺口 $=\mathrm{KL}(q_\phi\|p_\theta(z\mid\boldsymbol x))\ge0$。**推论（工程上最有用）**：重建很差而 KL 又很小时，缺口可能很大，此时「最大化下界」并不等于「最大化似然」。
 :::
 
-**B2.** 证明重参数化梯度 $\widehat{\boldsymbol g}_{\text{path}}=\nabla_z f(z)\cdot\nabla_\phi(\boldsymbol\mu_\phi+\boldsymbol\sigma_\phi\odot\boldsymbol\varepsilon)$ 是 $\nabla_\phi\mathbb E_{q_\phi}[f(z)]$ 的无偏估计，并说明它为什么比 REINFORCE 估计方差小。（依据：[命题 4.3.1](sec43.md#prop-4.3.1)、[方法 4.3.1](sec43.md#method-4.3.1)）
+**B2.** 证明重参数化梯度 $\widehat{\boldsymbol g}_{\text{path}}=\nabla_z f(z)\cdot\nabla_\phi(\boldsymbol\mu_\phi+\boldsymbol\sigma_\phi\odot\boldsymbol\varepsilon)$ 是 $\nabla_\phi\mathbb E_{q_\phi}[f(z)]$ 的无偏估计，并说明无偏性是否能保证比 REINFORCE 的方差小。（依据：[命题 4.3.1](sec43.md#prop-4.3.1)、[方法 4.3.1](sec43.md#method-4.3.1)）
 
 ::: sol 提示与答案
 **障碍先写清**：重建项是 $\mathbb E_{z\sim q_\phi(z\mid\boldsymbol x)}[f(z)]$，**被求期望的分布本身依赖 $\phi$**，采样节点在计算图上是不可导断点。
@@ -85,7 +85,7 @@ $$\mathbb E_{q_\phi}[f(z)]=\mathbb E_{\boldsymbol\varepsilon\sim\mathcal N(\bold
 $$\nabla_\phi\mathbb E_{q_\phi}[f]=\mathbb E_{\boldsymbol\varepsilon}\bigl[\nabla_\phi f(\boldsymbol\mu_\phi+\boldsymbol\sigma_\phi\odot\boldsymbol\varepsilon)\bigr]=\mathbb E_{\boldsymbol\varepsilon}\bigl[\nabla_z f(z)^{\mathrm T}\nabla_\phi z\bigr]=\mathbb E[\widehat{\boldsymbol g}_{\text{path}}].$$
 即 $\widehat{\boldsymbol g}_{\text{path}}$ 无偏——**这就是「路径导数」**：在给定 $\boldsymbol\varepsilon$ 的那一份具体样本上梯度是确定的，随机性只来自 $\boldsymbol\varepsilon$。
 
-**(3) 与 REINFORCE 的差别。** 对数导数估计由 $\nabla_\phi\mathbb E_{q_\phi}[f]=\mathbb E_{q_\phi}[f(z)\nabla_\phi\log q_\phi(z\mid\boldsymbol x)]$ 给出，它**只用标量 $f(z)$** 与得分函数相乘：不含 $\nabla_z f$，即「哪个方向能降低 $f$」这条信息完全丢失。而 $\nabla_\phi\log q_\phi$ 的范数通常随维数 $d$ 增长，标量 $f$ 无法抵消，方差随 $d$ 明显恶化；路径导数通过 $\nabla_z f$ 直接把方向信息送进梯度，与 $d$ 的关系温和得多。
+**(3) 与 REINFORCE 的差别。** 路径导数使用 $\nabla_z f$；对数导数估计用 $f(z)\nabla_\phi\log q_\phi$。两者都可无偏，但方差没有固定排序。用正文 $f(z)=\sin(10z),z\sim\mathcal N(\mu,1),\mu=0$ 的反例，路径估计方差约 50，对数导数估计方差约 0.5；基线也会改变对数导数估计的方差。
 :::
 
 **B3.** 推导最优判别器 $D^\star$，并代回 $V$ 证明 $\min_G\max_DV$ 等价于最小化 $2\,\mathrm{JSD}(p_{\text{data}}\|p_g)-\log4$；最后指出这个漂亮结论暴露了哪个病根。（依据：[定理 4.4.1](sec44.md#thm-4.4.1)）
@@ -213,9 +213,9 @@ assert v_rein.var() > 5 * v_path.var()             # REINFORCE 方差显著更�
 **C2. KL 闭式与 Monte Carlo 估计的一致性与成本。**
 对 $q=\mathcal N(\mu,\mathrm{diag}(\sigma^2))$、$p=\mathcal N(0,I)$，实现 `kl_closed(mu, logvar)`（闭式）与 `kl_mc(mu, logvar, n)`（用 $z=\mu+\sigma\varepsilon$ 样本估计 $\log q(z)-\log p(z)$ 的均值）。验收标准：
 
-1. **与手算一致**：$\mu=(1.0,-0.5)$、$\sigma=(0.5,2.0)$ 时 `kl_closed` 返回 $1.75$（误差 $<10^{-6}$）；$\mu=(0.8,)$、$\sigma^2=(0.25,)$ 时返回约 $0.638$（误差 $<10^{-3}$）。
-2. **单维可为负**：$\mu=-0.5,\sigma^2=2.0$ 时该维贡献为 $\frac12(0.25+2-1-\log4)\approx-0.068$——断言 `kl_closed` **不**对其做 `clamp(min=0)`，并断言 `kl_closed` 对完整向量仍 $\ge0$。
-3. **MC 收敛**：断言 `abs(kl_mc - kl_closed) < 0.05`（$n=4096$，多种子下 $\ge90\%$ 通过）；并断言 `kl_closed` 的耗时比 `kl_mc(n=4096)` 低一个数量级以上。
+1. **与手算一致**：$\mu=(1.0,-0.5)$、$\sigma=(0.5,2.0)$ 时 `kl_closed` 返回 $1.75$（误差 $<10^{-6}$）；单维 $\mu=0.8$、$\sigma^2=0.25$ 时返回约 $0.638147$（误差 $<10^{-3}$）。
+2. **逐维非负**：$\mu=-0.5,\sigma^2=2$ 时该维 KL 为 $\frac12(0.25+2-1-\log2)\approx0.278426$；$\mu=0,\sigma^2=1$ 时为零。不要将单个采样的对数密度差与期望 KL 混淆。
+3. **MC 统计核对**：固定随机种子、取 $n=65536$，用实际样本的标准误差报告估计与闭式的差异；不要把一次随机估计的固定绝对阈值或某台机器上的耗时倍数写成算法正确性的保证。
 
 ::: sol 参考实现
 ```python
@@ -240,9 +240,12 @@ mu, logvar = torch.tensor([[1.0, -0.5]]), torch.log(torch.tensor([[0.25, 4.0]]))
 assert abs(kl_closed(mu, logvar).item() - 1.75) < 1e-6                       # 验收 1
 one = kl_closed(torch.tensor([[0.8]]), torch.log(torch.tensor([[0.25]])))
 assert abs(one.item() - 0.638) < 1e-3
-neg_dim = kl_closed(torch.tensor([[0.0, -0.5]]), torch.log(torch.tensor([[1.0, 2.0]])))
-assert neg_dim.item() < 1e-6 and kl_closed(mu, logvar).item() >= 0           # 验收 2（单维可为负）
-assert abs(kl_mc(mu, logvar) - kl_closed(mu, logvar).item()) < 0.05          # 验收 3
+one_dim = kl_closed(torch.tensor([[0.0, -0.5]]), torch.log(torch.tensor([[1.0, 2.0]])))
+assert abs(one_dim.item() - 0.2784264097) < 1e-6                         # 验收 2
+assert kl_closed(torch.zeros(1), torch.zeros(1)).item() == 0
+torch.manual_seed(2026)
+print("MC estimate", kl_mc(mu, logvar, n=65536).item(), "closed", kl_closed(mu, logvar).item())
+# 标准误差与独立复算见 tools/verify_teaching_examples.py；不把随机误差视作实现错误。
 ```
 :::
 

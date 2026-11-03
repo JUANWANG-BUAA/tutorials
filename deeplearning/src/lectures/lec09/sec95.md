@@ -230,7 +230,7 @@ $\blacksquare$
 ## 9.5.5 量化与 PEFT：把 7B 放进一张卡 {#sec-9.5.5}
 
 ::: def 定义 9.5.5 · LoRA、QLoRA 与推理量化 {#def-9.5.5}
-三者都"用更低的比特表示模型"，但目标不同：
+三者都「用更低的比特表示模型」，但目标不同：
 
 **LoRA（低秩适配）**：冻结预训练权重 $W_0$，只训练低秩增量
 $$W=W_0+\Delta W=W_0+\frac{\alpha}{r}BA,\qquad B\in\mathbb R^{d\times r},\ A\in\mathbb R^{r\times k},\ r\ll\min(d,k),$$

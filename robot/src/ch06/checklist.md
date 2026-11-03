@@ -28,10 +28,10 @@
 |:--|:--:|:--|
 | S6.1 **建模流程**：单摆 / 带齿轮摆的四步手推（坐标 → $T,U$ → 方程 → 广义力） | □ | [@ex-6.1.2.A]、[@ex-6.1.3.A]；习题 C1 |
 | S6.2 **算例能力**：手算平面臂 $B$、Christoffel、$C$、$\boldsymbol g$ 并求逆动力学力矩 | □ | [6.3.2](sec6-3-2.md)；习题 C2、C4；[作业六 7-2、7-6](homework06.md) |
-| S6.3 **结构验证**：数值验证 $N$ 反对称与能量恒等式 | □ | [@thm-6.2.1]；习题 B5、C6 |
+| S6.3 **结构验证**：数值验证 $N$ 反对称与能量恒等式 | □ | [@thm-6.2.1]；习题 B5、C6；[作业六·补 7-10](homework06b.md) |
 | S6.4 **力折算**：$\tau=J^{\mathrm T}f$ 折算末端力并做功率回代检验 | □ | [6.1.3](sec6-1-3.md)；[作业六 7-7](homework06.md) |
 | S6.5 **参数辨识**：把 $\tau=Y\pi$ 化为线性最小二乘并判断可辨识性 | □ | [6.2.2](sec6-2-2.md)；习题 C5、D2 |
-| S6.6 **数值验算**：对本章数值做脚本复算 | □ | `tools/verify_teaching_examples.py`、`tools/verify_homework06.py`；习题 C1–C6 |
+| S6.6 **数值验算**：对本章数值做脚本复算 | □ | `tools/verify_teaching_examples.py`、`tools/verify_homework06.py`、`tools/verify_homework06b.py`；习题 C1–C6 |
 
 ## A · 态度与工程判断（怎么想）
 

@@ -29,7 +29,11 @@ $$\theta_{t+1}=\theta_t-\eta\,\widehat{\boldsymbol g}_t,\qquad \widehat{\boldsym
 
 $$\mathcal L(\theta_{t+1})\le\mathcal L(\theta_t)-\frac{\eta}{2}\bigl\lVert\nabla\mathcal L(\theta_t)\bigr\rVert^2 .$$
 
-若进一步假设 $\mathcal L$ 是 $\mu$-强凸，则 $\lVert\theta_t-\theta^\star\rVert^2$ 以速率 $\bigl(1-\eta\mu\bigr)^{t}$ 几何收敛；若只假设凸，则需 $O(1/\varepsilon)$ 步使梯度范数降到 $\varepsilon$。
+若进一步假设 $\mathcal L$ 是 $\mu$-强凸、$\theta^\star$ 为最优点，则函数值误差满足
+
+$$\mathcal L(\theta_t)-\mathcal L(\theta^\star)\le(1-\eta\mu)^t[\mathcal L(\theta_0)-\mathcal L(\theta^\star)].$$
+
+若只假设凸且最优点存在，标准保证是**函数值误差**为 $O(1/t)$，即达到函数值误差 $\varepsilon$ 需 $O(1/\varepsilon)$ 步（常数依赖曲率与初始距离）。函数值误差、梯度范数与参数距离是不同的验收量，引用收敛速率时必须指明是哪一个。
 :::
 
 ::: proof 推导（下降引理的来源）
@@ -182,6 +186,35 @@ $$\frac{\mathcal L_+-\mathcal L_-}{2h}\approx0.02417,\qquad\text{解析值 }a^{(
 两者吻合到 $10^{-5}$ 的精度。**顺带说明为什么必须用中心差分**：若改用前向差分（$h=10^{-3}$），得到的是 $0.02466$，与解析值差约 $2\%$——这个误差来自二阶余项 $\frac12\mathcal L''h\approx\frac12\times1\times10^{-3}$，与实现是否正确无关。**这也是 [1.5.4](#sec-1.5.4) 里「阈值要配合差分格式理解」的原因**。
 
 **顺带读出一个重要现象**：$\boldsymbol\delta^{(1)}$ 的第一个分量比第二个小约 30 倍（$6.5\times10^{-4}$ 对 $1.9\times10^{-2}$），因为它乘上了 $\tanh$ 在 $z_1=2.5$ 处的导数 $0.0266$——那只有最大值 $1$ 的 $2.7\%$。**这就是 [1.3.3](sec13.md) 梯度消失的数值形态**：一个本该被更新的权重，实际只收到千分之几的梯度。$\blacksquare$
+:::
+:::
+
+::: ex 例 1.5.A · 同一个参数走两条路径，梯度为什么要相加 {#ex-1.5.A}
+设 $a=wx_1$、$b=wx_2$、$\hat y=a+b$，$\mathcal L=\frac12(\hat y-y)^2$。
+取 $x_1=1,x_2=2,y=1,w=1$。先求 $\partial\mathcal L/\partial w$，再用学习率 $0.1$ 更新一次。
+
+::: proof 解
+前向得到 $a=1,b=2,\hat y=3,\mathcal L=2$，输出的上游梯度为 $\hat y-y=2$。
+沿 $a$ 路径回到 $w$ 的贡献是 $2x_1=2$，沿 $b$ 路径的贡献是 $2x_2=4$，所以
+
+$$\frac{\partial\mathcal L}{\partial w}=2+4=6,\qquad w_{\mathrm{new}}=1-0.1\times6=0.4.$$
+
+回代得 $\hat y_{\mathrm{new}}=1.2$、$\mathcal L_{\mathrm{new}}=0.02$。
+独立验算可先合并函数：$\mathcal L(w)=\frac12(3w-1)^2$，导数 $3(3w-1)$ 在 $w=1$ 同样为 6。
+
+**共享一次参数，不代表只算一次使用。** 反传在每个分叉汇合处把贡献相加；
+第 2 讲 RNN 跨时间共享权重、第 3 讲卷积跨位置共享卷积核，都会沿用这条规则。
+:::
+:::
+
+::: think 迁移练习 · 共享求和与批平均是两件事
+若把上例的单个样本复制成两个完全相同的样本，损失分别采用「批平均」与「批求和」，梯度各是多少？
+
+::: sol 核对与回读
+批平均梯度仍为 $(6+6)/2=6$；批求和梯度为 12。
+单样本内部的两条共享路径始终要相加；是否再除以批大小，取决于损失的定义。
+若得到 3，说明把共享的两次使用误当作需要平均；若批平均得到 12，回读 [SGD 的定义](#def-1.5.1)。
+两种归约都能解释后，再用本节中心差分检验手推梯度，随后进入 [RNN 的权值共享](../lec02/sec22.md)。
 :::
 :::
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 560" role="img" aria-labelledby="mlm-cover-title mlm-cover-desc">
+  <title id="mlm-cover-title">马克思主义原理 · 理论、历史与实践</title>
+  <desc id="mlm-cover-desc">封面以深赭红为底，自上而下是商品—货币—资本的流转链、两大部类再生产的循环，以及国家与阶级的结构剖面。</desc>
+  <defs>
+    <linearGradient id="mlm-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2b1414"/>
+      <stop offset="52%" stop-color="#4a1f1c"/>
+      <stop offset="100%" stop-color="#7a2f26"/>
+    </linearGradient>
+    <linearGradient id="mlm-accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e0b062"/>
+      <stop offset="100%" stop-color="#f2d9a8"/>
+    </linearGradient>
+    <linearGradient id="mlm-line" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0b062"/>
+      <stop offset="100%" stop-color="#a8452f"/>
+    </linearGradient>
+    <pattern id="mlm-grid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0H0V26" fill="none" stroke="#e0b062" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="420" height="560" rx="8" fill="url(#mlm-bg)"/>
+  <rect width="420" height="560" rx="8" fill="url(#mlm-grid)"/>
+  <path d="M30 30h360v500H30z" fill="none" stroke="#e0b062" stroke-opacity="0.42" stroke-width="1.4"/>
+
+  <text x="54" y="72" fill="#e0b062" font-family="ui-monospace, monospace" font-size="10.5" letter-spacing="3">VOL. 13 / MARXISM</text>
+
+  <text x="54" y="134" fill="#f6efe2" font-family="Georgia, 'Noto Serif SC', serif" font-size="35" font-weight="700">马克思主义</text>
+  <text x="54" y="176" fill="#f6efe2" font-family="Georgia, 'Noto Serif SC', serif" font-size="35" font-weight="700">原理</text>
+
+  <text x="54" y="210" fill="#e0b062" font-family="ui-monospace, monospace" font-size="11" letter-spacing="1.6">THEORY · HISTORY · PRACTICE</text>
+  <path d="M54 226h180" stroke="#e0b062" stroke-opacity="0.55" stroke-width="1"/>
+
+  <!-- 商品—货币—资本：G—W...P...W'—G' -->
+  <g stroke="url(#mlm-line)" stroke-width="1.7" fill="none" opacity="0.9">
+    <circle cx="92" cy="286" r="15"/>
+    <circle cx="176" cy="286" r="15"/>
+    <circle cx="260" cy="286" r="15"/>
+    <circle cx="344" cy="286" r="15"/>
+    <path d="M107 286h54"/>
+    <path d="M191 286h54"/>
+    <path d="M275 286h54"/>
+    <path d="M169 279l7 7-7 7"/>
+    <path d="M253 279l7 7-7 7"/>
+    <path d="M337 279l7 7-7 7"/>
+  </g>
+  <text x="92" y="291" fill="#f2d9a8" font-family="Georgia, serif" font-size="14" text-anchor="middle">G</text>
+  <text x="176" y="291" fill="#f2d9a8" font-family="Georgia, serif" font-size="14" text-anchor="middle">W</text>
+  <text x="260" y="291" fill="#f2d9a8" font-family="Georgia, serif" font-size="14" text-anchor="middle">P</text>
+  <text x="344" y="291" fill="#f2d9a8" font-family="Georgia, serif" font-size="13" text-anchor="middle">G′</text>
+  <text x="54" y="322" fill="#e0b062" fill-opacity="0.75" font-family="ui-monospace, monospace" font-size="9">货币 → 商品 → 生产 → 增殖</text>
+
+  <!-- 两大部类再生产：两个相交环 -->
+  <g stroke="#e0b062" stroke-opacity="0.72" stroke-width="1.5" fill="none">
+    <circle cx="150" cy="392" r="46"/>
+    <circle cx="238" cy="392" r="46"/>
+    <path d="M150 346v-16"/>
+    <path d="M238 438v18"/>
+  </g>
+  <text x="118" y="396" fill="#f2d9a8" font-family="ui-monospace, monospace" font-size="11">I</text>
+  <text x="266" y="396" fill="#f2d9a8" font-family="ui-monospace, monospace" font-size="11">II</text>
+  <text x="54" y="460" fill="#e0b062" fill-opacity="0.75" font-family="ui-monospace, monospace" font-size="9">I(v+m) = IIc</text>
+
+  <!-- 国家与阶级：结构剖面 -->
+  <g stroke="#a8452f" stroke-width="1.4" fill="none" opacity="0.85">
+    <path d="M54 492h312"/>
+    <path d="M54 508h312"/>
+    <path d="M54 524h312"/>
+  </g>
+  <g fill="#e0b062" fill-opacity="0.7">
+    <rect x="54" y="484" width="14" height="16"/>
+    <rect x="77" y="484" width="14" height="16"/>
+  </g>
+  <text x="120" y="497" fill="#e0b062" fill-opacity="0.8" font-family="ui-monospace, monospace" font-size="9">上层建筑 / 经济结构 / 生产力</text>
+
+  <text x="366" y="524" fill="#e0b062" fill-opacity="0.55" font-family="ui-monospace, monospace" font-size="9" text-anchor="end">45 CH · 6 PARTS</text>
+</svg>

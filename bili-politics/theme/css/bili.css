@@ -1,0 +1,468 @@
+/* ==========================================================================
+   《劳动 · 制度 · 他者》— 杂志版式层
+   --------------------------------------------------------------------------
+   目标：让「视频讲稿」读起来像一本严肃杂志。
+   三条纪律：
+     1. 测度优先——中文单行控制在 34 字上下，超过就失去阅读节奏；
+     2. 层级靠留白与线，不靠字号堆叠；
+     3. 装饰只做记号（栏目、时间点、关键词），不抢正文。
+   本文件在 shared 的 base/framework/prefs 之后加载。
+   ========================================================================== */
+
+:root {
+  --mag-ink:        #191b20;
+  --mag-ink-soft:   #565c68;
+  --mag-ink-faint:  #8b919d;
+  --mag-rule:       #dcdae0;
+  --mag-rule-soft:  #ebe9ee;
+  --mag-paper:      #fcfbf8;
+
+  --mag-accent:     #9c2f22;
+  --mag-field:      #6d4a1c;
+  --mag-compare:    #1e4c68;
+  --mag-debate:     #7a2740;
+
+  --mag-mono: ui-monospace, SFMono-Regular, "SF Mono", "JetBrains Mono",
+              Menlo, Consolas, monospace;
+  --mag-serif: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+
+  --mag-measure: 34em;
+}
+
+/* 共享层把根字号设为 12px；本书按 16px 排版（不影响其它书）。 */
+html { font-size: 16px; }
+
+/* ---------- 正文区域 ---------- */
+.content { max-width: 760px; }
+
+.content main {
+  font-size: 16.5px;
+  line-height: 2.0;
+  color: var(--mag-ink);
+  letter-spacing: .008em;
+}
+
+/* ---------- 栏目眉题 ---------- */
+.mag-head {
+  margin: 0 0 2rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--mag-rule);
+  position: relative;
+}
+.mag-head::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -1px;
+  width: 56px; height: 3px;
+  background: var(--mag-accent);
+}
+.mag-head.field::after   { background: var(--mag-field); }
+.mag-head.compare::after { background: var(--mag-compare); }
+.mag-head.debate::after  { background: var(--mag-debate); }
+
+.mag-kicker {
+  font-family: var(--mag-mono);
+  font-size: 11.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mag-accent);
+  margin-bottom: .7rem;
+}
+.mag-head.field   .mag-kicker { color: var(--mag-field); }
+.mag-head.compare .mag-kicker { color: var(--mag-compare); }
+.mag-head.debate  .mag-kicker { color: var(--mag-debate); }
+
+/* ---------- 大标题 ---------- */
+.mag-title {
+  font-family: var(--mag-serif);
+  font-size: clamp(27px, 2.9vw, 36px) !important;
+  line-height: 1.34 !important;
+  font-weight: 800;
+  letter-spacing: -.005em;
+  margin: .2rem 0 1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  color: var(--mag-ink);
+}
+
+/* ---------- 导语 ---------- */
+.mag-lede {
+  font-family: var(--mag-serif);
+  font-size: 16.5px;
+  line-height: 1.95;
+  color: var(--mag-ink-soft);
+  margin: 0 0 1.1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--mag-rule);
+  max-width: var(--mag-measure);
+}
+
+/* ---------- 元信息条 ---------- */
+.mag-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 .8rem;
+  font-family: var(--mag-mono);
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  color: var(--mag-ink-faint);
+  padding-top: .3rem;
+}
+.mag-meta > span + span::before {
+  content: "·";
+  margin-right: .8rem;
+  color: var(--mag-rule);
+}
+.mag-meta .mag-up {
+  color: var(--mag-accent);
+  font-weight: 600;
+}
+.mag-head.field   .mag-meta .mag-up { color: var(--mag-field); }
+.mag-head.compare .mag-meta .mag-up { color: var(--mag-compare); }
+.mag-head.debate  .mag-meta .mag-up { color: var(--mag-debate); }
+
+/* ---------- 关键词条 ---------- */
+.mag-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .45rem;
+  margin: 0 0 1.2rem;
+  padding: .8rem 1rem;
+  background: #f7f6f3;
+  border: 1px solid var(--mag-rule-soft);
+  border-radius: 4px;
+}
+.mag-keys-label {
+  display: inline-block !important;
+  font-family: var(--mag-mono);
+  font-size: 11px;
+  letter-spacing: .16em;
+  color: var(--mag-ink-faint);
+  margin-right: .4rem;
+}
+.mag-keys .tag {
+  display: inline-block !important;
+  padding: .12rem .6rem;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--mag-ink-soft);
+  background: #fff;
+  border: 1px solid var(--mag-rule);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* ---------- 原视频来源 ---------- */
+.mag-origin {
+  font-size: 12.5px;
+  color: var(--mag-ink-faint);
+  margin: 0 0 2.2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--mag-rule-soft);
+  line-height: 1.7;
+}
+.mag-origin a {
+  color: var(--mag-ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--mag-rule);
+  word-break: break-all;
+  font-family: var(--mag-mono);
+  font-size: 11.5px;
+}
+.mag-origin a:hover { color: var(--mag-accent); border-bottom-color: var(--mag-accent); }
+
+/* ---------- 正文 ---------- */
+.mag-body { max-width: var(--mag-measure); }
+
+/* 用 .content .mag-body p 提高特异性，压过 prefs.css 的 .content p 行距覆盖 */
+.content .mag-body p,
+.mag-body p {
+  font-size: 16.5px;
+  line-height: 2.0;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  margin: 0 0 1.15em;
+  text-indent: 0;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* 首字下沉 */
+.mag-body > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--mag-serif);
+  font-size: 3.15em;
+  line-height: .88;
+  padding: .1em .12em 0 0;
+  margin-top: .04em;
+  font-weight: 700;
+  color: var(--mag-accent);
+}
+
+/* 时间点标记 */
+.mag-body h4 {
+  font-family: var(--mag-mono) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: .12em;
+  color: var(--mag-ink-faint) !important;
+  margin: 2.6em 0 1em !important;
+  padding: .3em 0 .3em .9em !important;
+  border-left: 2px solid var(--mag-accent) !important;
+  border-bottom: 0 !important;
+  background: none !important;
+  max-width: 12em;
+}
+
+/* 引文 */
+.mag-body blockquote,
+.mag-quote {
+  margin: 1.8em 0;
+  padding: .9em 0 .9em 1.4em;
+  border-left: 3px solid var(--mag-accent);
+  font-family: var(--mag-serif);
+  font-size: 16.5px;
+  line-height: 1.95;
+  color: var(--mag-ink);
+  background: linear-gradient(90deg, rgba(156,47,34,.045), transparent 70%);
+}
+.mag-body blockquote p { margin: 0; }
+
+/* 正文小标题 */
+.content h2 {
+  font-family: var(--mag-serif);
+  font-size: 23px !important;
+  line-height: 1.5 !important;
+  font-weight: 700;
+  margin: 2.6em 0 .9em !important;
+  padding-bottom: .35em;
+  border-bottom: 1px solid var(--mag-rule-soft);
+}
+.content h3 {
+  font-size: 17.5px !important;
+  font-weight: 700;
+  margin: 1.9em 0 .6em !important;
+  color: var(--mag-ink);
+}
+.content h3::before {
+  content: "";
+  display: inline-block;
+  width: 5px; height: 5px;
+  margin-right: .55em;
+  vertical-align: .22em;
+  background: var(--mag-accent);
+}
+
+/* 列表 */
+.content ul, .content ol {
+  padding-left: 1.3em;
+  margin: 0 0 1.15em;
+}
+.content li { margin: .42em 0; line-height: 1.95; }
+.content li::marker { color: var(--mag-accent); }
+
+/* 强调 */
+.content strong { font-weight: 700; color: var(--mag-ink); }
+.content em { font-style: normal; border-bottom: 2px solid rgba(156,47,34,.25); }
+
+/* 行内代码与表格 */
+.content code {
+  font-family: var(--mag-mono);
+  font-size: .9em;
+  background: #f4f3ef;
+  padding: .1em .35em;
+  border-radius: 3px;
+}
+.content table {
+  border-collapse: collapse;
+  margin: 1.4em 0;
+  font-size: 14.5px;
+  width: 100%;
+}
+.content table th {
+  font-family: var(--mag-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-align: left;
+  padding: .55em .8em;
+  border-bottom: 2px solid var(--mag-rule);
+  background: transparent;
+  font-weight: 600;
+}
+.content table td {
+  padding: .55em .8em;
+  border-bottom: 1px solid var(--mag-rule-soft);
+  line-height: 1.75;
+}
+
+/* ---------- 卷首跨页 ---------- */
+.vol-cover {
+  margin: -1rem 0 2.6rem;
+  padding: 2.8rem 0 2rem;
+  border-top: 8px solid var(--mag-accent);
+  border-bottom: 1px solid var(--mag-rule);
+  background: linear-gradient(180deg, rgba(156,47,34,.035), transparent 60%);
+}
+.vol-cover .vol-no {
+  font-family: var(--mag-mono);
+  font-size: 11.5px;
+  letter-spacing: .34em;
+  color: var(--mag-accent);
+}
+.vol-cover h1 {
+  font-family: var(--mag-serif);
+  font-size: clamp(34px, 4.6vw, 50px) !important;
+  line-height: 1.14 !important;
+  letter-spacing: -.015em;
+  margin: .55rem 0 1rem !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+.vol-cover .vol-sub {
+  font-family: var(--mag-serif);
+  font-size: 16px;
+  line-height: 2.0;
+  color: var(--mag-ink-soft);
+  max-width: 40em;
+  margin: 0;
+}
+
+/* ---------- 目录页 ---------- */
+.mag-toc {
+  columns: 2;
+  column-gap: 2.6rem;
+  font-size: 14.5px;
+  line-height: 2.1;
+}
+.mag-toc .toc-vol {
+  break-after: avoid;
+  font-family: var(--mag-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--mag-accent);
+  margin: 1.3rem 0 .45rem;
+  padding-bottom: .3rem;
+  border-bottom: 1px solid var(--mag-rule-soft);
+}
+.mag-toc a { text-decoration: none; color: var(--mag-ink-soft); }
+.mag-toc a:hover { color: var(--mag-accent); }
+
+/* ---------- 侧栏目录 ---------- */
+.sidebar .chapter li { line-height: 1.55; margin: .3rem 0; }
+.sidebar .chapter li a {
+  font-size: 13px;
+  padding: .18rem 0;
+  display: block;
+}
+.sidebar .chapter li a.active,
+.sidebar .chapter li a:hover { color: var(--mag-accent); }
+.sidebar .part-title {
+  font-family: var(--mag-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--mag-ink-faint);
+  margin-top: .9rem;
+}
+
+/* ---------- 上下页导航 ---------- */
+.nav-chapters {
+  font-size: 13.5px;
+  border-top: 1px solid var(--mag-rule-soft);
+  margin-top: 3rem;
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 900px) {
+  .content main { font-size: 16px; line-height: 1.95; }
+  .mag-body p { font-size: 16px; line-height: 1.95; }
+  .mag-body { max-width: none; }
+  .mag-toc { columns: 1; }
+}
+@media (max-width: 720px) {
+  .mag-title { font-size: 24px !important; }
+  .vol-cover h1 { font-size: 30px !important; }
+  .mag-body > p:first-of-type::first-letter { font-size: 2.6em; }
+  .mag-body p { text-align: left; }
+  .content main { font-size: 15.5px; }
+}
+
+/* ---------- 暗色主题 ---------- */
+.navy, .coal, .ayu {
+  --mag-ink: #e6e9ef;
+  --mag-ink-soft: #b0b8c4;
+  --mag-ink-faint: #828a97;
+  --mag-rule: #3a414d;
+  --mag-rule-soft: #2d343e;
+  --mag-paper: #1b1e24;
+  /* 共享层把 --bg 固定成白色，导致 .page-wrapper 在暗色下仍是白底；
+     这里让 --bg 跟随主题的 --page。 */
+  --bg: var(--page);
+}
+
+/* .page-wrapper 是实际绘制的底色层，必须显式跟随 */
+.navy .page-wrapper, .coal .page-wrapper, .ayu .page-wrapper {
+  background-color: var(--page) !important;
+}
+.navy html, .coal html, .ayu html,
+html.navy, html.coal, html.ayu {
+  background-color: var(--page) !important;
+}
+
+/* 正文颜色必须用 !important 压过共享层 .content main / .content p 的墨色 */
+.navy .content main, .coal .content main, .ayu .content main,
+.navy .mag-body p, .coal .mag-body p, .ayu .mag-body p {
+  color: var(--mag-ink) !important;
+}
+.navy .mag-title, .coal .mag-title, .ayu .mag-title {
+  color: var(--mag-ink) !important;
+}
+.navy .mag-lede, .coal .mag-lede, .ayu .mag-lede {
+  color: var(--mag-ink-soft) !important;
+}
+.navy .content h2, .coal .content h2, .ayu .content h2,
+.navy .content h3, .coal .content h3, .ayu .content h3,
+.navy .content li, .coal .content li, .ayu .content li {
+  color: var(--mag-ink) !important;
+}
+.navy .mag-keys, .coal .mag-keys, .ayu .mag-keys {
+  background: rgba(255,255,255,.045);
+  border-color: var(--mag-rule-soft);
+}
+.navy .mag-keys .tag, .coal .mag-keys .tag, .ayu .mag-keys .tag {
+  background: rgba(255,255,255,.07);
+  border-color: var(--mag-rule);
+  color: var(--mag-ink-soft);
+}
+.navy .mag-keys-label, .coal .mag-keys-label, .ayu .mag-keys-label {
+  color: var(--mag-ink-faint);
+}
+.navy .mag-origin, .coal .mag-origin, .ayu .mag-origin { color: var(--mag-ink-faint); }
+.navy .mag-origin a, .coal .mag-origin a, .ayu .mag-origin a { color: var(--mag-ink-soft); }
+.navy .vol-cover, .coal .vol-cover, .ayu .vol-cover {
+  background: linear-gradient(180deg, rgba(156,47,34,.14), transparent 60%);
+}
+.navy .content code, .coal .content code, .ayu .content code {
+  background: rgba(255,255,255,.08);
+  color: var(--mag-ink);
+}
+.navy .mag-body blockquote, .coal .mag-body blockquote, .ayu .mag-body blockquote {
+  background: linear-gradient(90deg, rgba(156,47,34,.14), transparent 70%);
+  color: var(--mag-ink);
+}
+.navy .content table td, .coal .content table td, .ayu .content table td {
+  border-bottom-color: var(--mag-rule-soft);
+  color: var(--mag-ink-soft);
+}
+.navy .content table th, .coal .content table th, .ayu .content table th {
+  border-bottom-color: var(--mag-rule);
+  color: var(--mag-ink);
+}
+
+/* ---------- 打印 ---------- */
+@media print {
+  .mag-body p { font-size: 11.5pt; line-height: 1.75; text-align: justify; }
+  .mag-body h4 { break-after: avoid; }
+  .mag-head { break-after: avoid; }
+}

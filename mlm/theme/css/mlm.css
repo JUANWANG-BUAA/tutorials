@@ -1,0 +1,97 @@
+/* 《马克思主义原理》本书样式
+ * 只放本书特有的东西：三类新语义盒子的配色、章首页的论点提要、
+ * 引文块的版式、年表的窄栏排版。共用骨架在 shared/theme/css/base.css。
+ */
+
+/* ── 三类新盒子 ───────────────────────────────────────────── */
+.box.arg{
+  border-left-color:#7a5c9e;
+  background:color-mix(in srgb,var(--surface-card) 96%,#7a5c9e);
+}
+.box.arg .box-tag{color:#5c427a}
+.box.src{
+  border-left-color:#8a6a3a;
+  background:color-mix(in srgb,var(--surface-card) 96%,#8a6a3a);
+}
+.box.src .box-tag{color:#6b5129}
+.box.debate{
+  border-left-color:#9e4b4b;
+  background:color-mix(in srgb,var(--surface-card) 96%,#9e4b4b);
+}
+.box.debate .box-tag{color:#7a3535}
+
+html.coal .box.arg,html.ayu .box.arg,html.navy .box.arg{
+  border-left-color:#b49ad6;
+  background:color-mix(in srgb,var(--surface-card) 92%,#b49ad6);
+}
+html.coal .box.arg .box-tag,html.ayu .box.arg .box-tag,html.navy .box.arg .box-tag{color:#cbb6e6}
+html.coal .box.src,html.ayu .box.src,html.navy .box.src{
+  border-left-color:#c9a66b;
+  background:color-mix(in srgb,var(--surface-card) 92%,#c9a66b);
+}
+html.coal .box.src .box-tag,html.ayu .box.src .box-tag,html.navy .box.src .box-tag{color:#dcbe8c}
+html.coal .box.debate,html.ayu .box.debate,html.navy .box.debate{
+  border-left-color:#d08585;
+  background:color-mix(in srgb,var(--surface-card) 92%,#d08585);
+}
+html.coal .box.debate .box-tag,html.ayu .box.debate .box-tag,html.navy .box.debate .box-tag{color:#e3a5a5}
+
+/* ── 章首提要 ─────────────────────────────────────────────── */
+.chapter-index{
+  display:grid;gap:12px;margin:18px 0 26px;
+}
+.chapter-index > div{
+  padding:13px 17px;
+  border-left:3px solid var(--accent);
+  background:var(--paper-soft);
+}
+.chapter-index .ci-label{
+  display:block;margin-bottom:5px;
+  font:700 var(--fs-2xs)/1.4 var(--mono);
+  letter-spacing:.14em;color:var(--muted);
+}
+.chapter-index p{margin:0;font-size:15px;line-height:1.75;color:var(--ink-2)}
+
+/* ── 经典引文 ─────────────────────────────────────────────── */
+blockquote.cite{
+  margin:var(--space-4) 0;padding:12px 18px 12px 20px;
+  border-left:3px solid var(--line-strong);
+  background:var(--paper-soft);
+  font-size:15px;line-height:1.8;color:var(--ink-2);
+}
+blockquote.cite p{margin:0 0 .6em}
+blockquote.cite p:last-child{margin-bottom:0}
+blockquote.cite .src{
+  display:block;margin-top:8px;
+  font:400 12.5px/1.6 var(--sans);color:var(--muted);font-style:normal;
+}
+
+/* ── 年表 ─────────────────────────────────────────────────── */
+.timeline{
+  margin:var(--space-4) 0;
+  border-left:2px solid var(--line-strong);
+  padding-left:18px;
+}
+.timeline dt{
+  margin-top:14px;
+  font:700 13px/1.5 var(--mono);color:var(--accent);
+}
+.timeline dd{margin:2px 0 0;font-size:14.6px;line-height:1.75;color:var(--ink-2)}
+
+/* ── 论点提要（章末） ─────────────────────────────────────── */
+.keypoints{
+  margin:var(--space-5) 0;padding:16px 20px;
+  border:1px solid var(--line);border-radius:7px;background:var(--paper);
+}
+.keypoints > .kp-title{
+  display:block;margin-bottom:8px;
+  font:700 var(--fs-2xs)/1.4 var(--mono);letter-spacing:.12em;color:var(--muted);
+}
+.keypoints ol{margin:0;padding-left:1.3em}
+.keypoints li{margin:6px 0;font-size:15px;line-height:1.75}
+
+/* 窄屏：公式与长引文不压扁 */
+@media (max-width:720px){
+  blockquote.cite{padding:10px 12px 10px 14px}
+  .chapter-index > div{padding:11px 13px}
+}

@@ -2,7 +2,7 @@
 
 [4.2](sec42.md)的诊断很清楚：自编码器的潜空间是一张「只在对数据有效的窄带上成立的编码—解码表」，没有概率结构，从 $\mathcal N(0,I)$ 采一个 $z$ 解码出来是垃圾。修法也因此很直接——**给潜空间指定一个先验，并强迫编码结果贴近它**。这样潜空间每一处都有定义，我们就可以从先验里随便采点、解码出新样本。
 
-这个想法一句话就说完，但要让它**可训练**，需要三样东西同时到位：一个可算的目标（ELBO）、一个让采样可导的技巧（重参数化）、一个能写出闭式的正则项（高斯 KL）。三样缺一，VAE 都训不起来——这是本节的主干。学完本节你应当能：独立推出 ELBO 并说清缺口是哪个 KL；解释重参数化为什么让「采样」这一步变得可导；手算一个样本的 VAE 损失；诊断后验坍塌。
+这个想法一句话就说完，但要让它**可训练**，需要三样东西同时到位：一个可算的目标（ELBO）、一个让采样可导的技巧（重参数化）、一个能写出闭式的正则项（高斯 KL）。ELBO 是目标，重参数化与闭式 KL 是本节高效计算它的选择；其他估计方法也可以训练 VAE——这是本节的主干。学完本节你应当能：独立推出 ELBO 并说清缺口是哪个 KL；解释重参数化为什么让「采样」这一步变得可导；手算一个样本的 VAE 损失；诊断后验坍塌。
 
 ## 4.3.1 从「一个点」到「一个分布」
 
@@ -15,7 +15,7 @@ VAE 把编码器的输出从**一个点**换成**一个分布**，并给潜变�
 
 模型要最大化的对象是数据的对数似然
 $$\log p_\theta(\boldsymbol x)=\log\int p_\theta(\boldsymbol x\mid z)\,p(z)\,dz,$$
-它对任意神经网络解码器都**不可解**（要对全部潜变量积分）。VAE 转而最大化它的**证据下界**（Evidence Lower BOund, ELBO）
+它对一般非线性神经网络解码器通常**没有可直接使用的闭式解**（要对全部潜变量积分）。VAE 转而最大化它的**证据下界**（Evidence Lower BOund, ELBO）
 $$\mathcal L_{\mathrm{ELBO}}=\underbrace{\mathbb E_{q_\phi(z\mid\boldsymbol x)}\bigl[\log p_\theta(\boldsymbol x\mid z)\bigr]}_{\text{重建项}}-\underbrace{\mathrm{KL}\bigl(q_\phi(z\mid\boldsymbol x)\,\|\,p(z)\bigr)}_{\text{正则项}} .$$
 训练目标是最大化 $\mathcal L_{\mathrm{ELBO}}$，等价于最小化 $\mathcal L_{\mathrm{VAE}}=-\mathcal L_{\mathrm{ELBO}}$。
 :::
@@ -25,9 +25,9 @@ $$\mathcal L_{\mathrm{ELBO}}=\underbrace{\mathbb E_{q_\phi(z\mid\boldsymbol x)}\
 
 KL 项 $\frac12\sum_j(\mu_j^2+\sigma_j^2-1-\log\sigma_j^2)$ 是一个**双向的力**：$\mu_j^2$ 把每个样本的均值拉向原点，而 $\sigma_j^2-1-\log\sigma_j^2$ 在 $\sigma_j^2=1$ 处取最小值 $0$，把方差推向 $1$。结果是近似后验被压成一个个**互相重叠**的团，共同铺满 $\mathcal N(0,I)$ 的支撑。
 
-于是潜空间里**没有空洞**：任意一个从先验采出的 $z$ 都落在某个样本的团附近，解码器在那里被训练过，输出合理。也正因相邻的 $z$ 解码相似，我们可以做**插值**——在两个潜码之间线性走一遍，解码结果平滑地从一张图过渡到另一张。
+KL 正则鼓励编码分布接近先验，但不保证所有先验样本都位于训练充分的区域，也不保证生成质量。高斯后验具有全空间支撑，只表示任意开集有非零概率，不能据此断言解码器在每处都见过足够样本。插值是否平滑、先验采样是否合理，还需分别检查。
 
-**三件套的分工**：先验 $p(z)$ 定**采样起点**，ELBO 定**优化目标**，重参数化让**目标可导**。三者缺一不可，这一点是本节的骨架。
+**三件套的分工**：先验 $p(z)$ 定**采样起点**，ELBO 定**优化目标**，重参数化让**目标可导**。这是本节采用的计算路线；没有闭式 KL 或不用路径导数时，也可另选数值估计方法。
 :::
 
 ## 4.3.2 ELBO：从 $\log p(\boldsymbol x)$ 到下界 {#sec-4.3.2}
@@ -89,13 +89,13 @@ $$\nabla_\phi\,\mathbb E_{z\sim q_\phi}\bigl[f(z)\bigr]=\mathbb E_{\boldsymbol\v
 ::: intuition 重参数化的几何图像：同一份噪声被平移伸缩
 想象先验是一个固定的「噪声星座」$\boldsymbol\varepsilon$。参数 $\phi$ 不改变星座，只改变**把星座搬到潜空间哪里的那套变换**（均值是平移、标准差是各轴缩放）。于是「采样」不再是「从参数化的分布里抽签」这种不可导动作，而是「搬运一份固定的随机样本」这种可导动作。
 
-**一个常见误解值得当场拆掉**：「重参数化让采样变得确定」——不是。采样依然是随机的，只是随机性来自 $\boldsymbol\varepsilon$；我们求的梯度是**对参数**的梯度，在给定 $\boldsymbol\varepsilon$ 的那一份具体样本上是确定的（这叫路径导数，pathwise derivative）。在多次采样下取平均，仍然是随机梯度的无偏估计，只是方差远小于 REINFORCE。
+**一个常见误解值得当场拆掉**：「重参数化让采样变得确定」——不是。采样依然是随机的，只是随机性来自 $\boldsymbol\varepsilon$；我们求的梯度是**对参数**的梯度，在给定 $\boldsymbol\varepsilon$ 的那一份具体样本上是确定的（这叫路径导数，pathwise derivative）。在多次采样下取平均，仍然是随机梯度的无偏估计，但与 REINFORCE 的方差次序取决于被积函数及估计方法。
 :::
 
-::: prop 命题 4.3.1 · 重参数化梯度的无偏性与方差优势 {#prop-4.3.1}
+::: prop 命题 4.3.1 · 重参数化梯度的无偏性与方差比较的条件 {#prop-4.3.1}
 设 $f$ 可微、$q_\phi(z\mid\boldsymbol x)=\mathcal N(\boldsymbol\mu_\phi,\operatorname{diag}(\boldsymbol\sigma_\phi^2))$，且可交换积分与求导（$f$ 与 $q_\phi$ 满足常规正则条件）。则路径导数估计
 $$\widehat{\boldsymbol g}_{\text{path}}=\nabla_z f(z)\big|_{\,z=\boldsymbol\mu_\phi+\boldsymbol\sigma_\phi\odot\boldsymbol\varepsilon}\cdot\nabla_\phi\bigl(\boldsymbol\mu_\phi(\boldsymbol x)+\boldsymbol\sigma_\phi(\boldsymbol x)\odot\boldsymbol\varepsilon\bigr),\qquad \boldsymbol\varepsilon\sim\mathcal N(\boldsymbol 0,I)$$
-是 $\nabla_\phi\mathbb E_{q_\phi}[f(z)]$ 的**无偏**估计；而 REINFORCE 估计 $\widehat{\boldsymbol g}_{\text{LR}}=f(z)\nabla_\phi\log q_\phi(z\mid\boldsymbol x)$ 同样无偏，但**不利用 $f$ 的梯度信息**，其方差随 $d$ 增长显著更快。
+是 $\nabla_\phi\mathbb E_{q_\phi}[f(z)]$ 的**无偏**估计；而 REINFORCE 估计 $\widehat{\boldsymbol g}_{\text{LR}}=f(z)\nabla_\phi\log q_\phi(z\mid\boldsymbol x)$ 同样无偏，但**不利用 $f$ 的梯度信息**，两种估计量的方差取决于 $f$、分布、参数化与基线，不能仅按维数断言谁一定更小。
 :::
 
 ::: proof 证明（无偏性与「梯度信息」的来源）
@@ -105,9 +105,7 @@ $$\mathbb E_{q_\phi}\bigl[f(z)\bigr]=\mathbb E_{\boldsymbol\varepsilon\sim\mathc
 $$\nabla_\phi\,\mathbb E_{q_\phi}[f]=\mathbb E_{\boldsymbol\varepsilon}\Bigl[\nabla_\phi f\bigl(\boldsymbol\mu_\phi+\boldsymbol\sigma_\phi\odot\boldsymbol\varepsilon\bigr)\Bigr]=\mathbb E_{\boldsymbol\varepsilon}\Bigl[\nabla_z f(z)^{\mathrm T}\,\nabla_\phi z\Bigr],$$
 右侧就是 $\widehat{\boldsymbol g}_{\text{path}}$，故无偏。
 
-**（ii）为什么它比 REINFORCE 方差小。** 对数导数估计的形式是
-$$\nabla_\phi\,\mathbb E_{q_\phi}[f]=\int f(z)\,\nabla_\phi\log q_\phi(z\mid\boldsymbol x)\,q_\phi(z)\,dz=\mathbb E_{q_\phi}\bigl[f(z)\,\nabla_\phi\log q_\phi(z\mid\boldsymbol x)\bigr],$$
-它只通过**标量** $f(z)$ 与分布的得分相乘来传播信息，完全不含 $\nabla_z f$。在一个 $d$ 维空间中，$\nabla_\phi\log q_\phi$ 的范数通常随 $d$ 增长，而 $f(z)$ 作为标量无法抵消这种增长，故方差随 $d$ 明显恶化；路径导数则通过 $\nabla_z f$ 直接把「哪个方向能降低 $f$」的信息送进梯度，与 $d$ 的关系温和得多。$\blacksquare$
+**（ii）方差不能由无偏性排出固定次序。** 对 $z\sim\mathcal N(\mu,1)$、$f(z)=\sin(10z)$，在 $\mu=0$ 处，路径导数为 $10\cos(10z)$，其方差约为 50；无基线对数导数估计为 $z\sin(10z)$，方差约为 0.5。两者均值都为 $10e^{-50}$。可用标准高斯恒等式 $\mathbb E[\cos(tZ)]=e^{-t^2/2}$、$\mathbb E[Z^2\cos(tZ)]=(1-t^2)e^{-t^2/2}$ 分别算二阶矩核对。这是路径导数方差反而更大的可算反例。因此「路径导数常适合可微解码器」不能升格为无条件的方差优势定理。$\blacksquare$
 :::
 
 ::: think 高斯之外，还有哪些分布可以重参数化
@@ -129,7 +127,7 @@ $$\mathrm{KL}(p\|q)=\tfrac12\Bigl[\log\frac{\det\Sigma_q}{\det\Sigma_p}-d+\opera
 $$\mathrm{KL}= \tfrac12\Bigl[\log\frac{1}{\prod_j\sigma_j^2}-d+\sum_j\sigma_j^2+\sum_j\mu_j^2\Bigr]
 =\tfrac12\sum_j\Bigl(\mu_j^2+\sigma_j^2-1-\log\sigma_j^2\Bigr).$$
 
-**逐项读法**：$\mu_j^2$ 度量「均值偏离先验中心」的代价；$\sigma_j^2$ 与 $-\log\sigma_j^2$ 是一对：前者惩罚「方差过大」，后者惩罚「方差过小」，二者之和在 $\sigma_j^2=1$ 处取到最小 $0$——即**当且仅当该维后验恰好等于先验时，这一维对 KL 无贡献**。$\blacksquare$
+**逐项读法**：$\mu_j^2$ 度量「均值偏离先验中心」的代价；$\sigma_j^2$ 与 $-\log\sigma_j^2$ 是一对：前者惩罚「方差过大」，后者惩罚「方差过小」，$\sigma_j^2-1-\log\sigma_j^2$ 在 $\sigma_j^2=1$ 处取到最小 $0$——即**当且仅当该维后验恰好等于先验时，这一维对 KL 无贡献**。$\blacksquare$
 :::
 
 ::: intuition 闭式解为什么至关重要
@@ -161,23 +159,37 @@ $$\mathcal L_{\mathrm{VAE}}=\underbrace{\mathbb E_{q_\phi}\bigl[-\log p_\theta(\
 </table>
 
 ::: ex 例 4.3.1 · 手算一个样本的 VAE 损失 {#ex-4.3.1}
-设潜维 $d=2$，某样本编码得到 $\boldsymbol\mu=(1.0,\,-0.5)$、$\boldsymbol\sigma=(0.5,\,2.0)$；解码的平均重建误差为 $\lVert\boldsymbol x-g_\theta(z)\rVert^2=0.36$（取 $\sigma_x^2=1$ 的高斯解码器）。求这一样本的 $-\mathrm{ELBO}$。
+设潜维 $d=2$，某样本编码得到 $\boldsymbol\mu=(1.0,\,-0.5)$、$\boldsymbol\sigma=(0.5,\,2.0)$；某次重参数化样本的重建平方误差和为 $\lVert\boldsymbol x-g_\theta(z)\rVert^2=0.36$（取 $\sigma_x^2=1$ 的高斯解码器）。求忽略高斯常数项后的单次采样负 ELBO 估计；再说明它与精确期望的区别。
 
 ::: proof 解
 **KL 项**（用 [@prop-4.3.2]）。先算 $\sum_j\mu_j^2=1^2+(-0.5)^2=1.25$。再算 $\sum_j\sigma_j^2=0.25+4=4.25$。对数项 $\sum_j\log\sigma_j^2=\log(0.25\cdot4)=\log1=0$。于是
 $$\mathrm{KL}=\frac12\bigl(1.25+4.25-2-0\bigr)=\frac12\times3.5=1.75 .$$
 **重建项**。固定方差 $\sigma_x^2=1$ 时，$-\log p_\theta(\boldsymbol x\mid z)=\frac12\lVert\boldsymbol x-g_\theta(z)\rVert^2+\text{const}=\frac12\times0.36=0.18$（忽略与 $\theta,\phi$ 无关的常数）。
 
-**合计**：$-\mathrm{ELBO}=0.18+1.75=1.93$。可见这一个样本上 **KL 正则占了大头**——网络被推着把 $\mu$ 拉向 $0$、$\sigma$ 拉向 $1$。若把 $\sigma$ 压小（想重建更准），KL 会因 $-\log\sigma_j^2$ 增大而变贵；这就是 VAE「重建准度 vs 潜空间规整」的张力。
+**合计**：忽略常数的单次采样估计为 $0.18+1.75=1.93$；精确负 ELBO 的重建项是对 $q_\phi$ 的期望，不能只凭一次解码结果得到。可见这一个样本上 **KL 正则占了大头**——网络被推着把 $\mu$ 拉向 $0$、$\sigma$ 拉向 $1$。若把 $\sigma$ 压小（想重建更准），KL 会因 $-\log\sigma_j^2$ 增大而变贵；这就是 VAE「重建准度 vs 潜空间规整」的张力。
 
-**顺带检验一下「每维独立」**：第二维的 $(\mu_2^2,\sigma_2^2)=(-0.5,2.0)$ 给出 $\frac12(0.25+2-1-\log4)=\frac12(1.25-1.386)\approx-0.068$，是**负贡献**——因为该维的方差 $2$ 偏大、偏离先验中心不多，整体上比「恰好等于先验」还便宜一点。KL 非负的是**总和**，单维可以被允许为负号出现在这个求和式里。$\blacksquare$
+**逐维核对**：第一维贡献为 $\frac12(1+0.25-1-\log0.25)\approx0.818147$；
+第二维注意 $\sigma_2=2$，所以 $\sigma_2^2=4$，贡献为
+$\frac12(0.25+4-1-\log4)\approx0.931853$，两者和为 1.75。
+每维都非负，因为对任意 $v>0$ 有 $v-1-\log v\ge0$，再加 $\mu^2\ge0$。
+「单维高斯 KL 可以为负」是错误的；单个 Monte Carlo 的 $\log q(z)-\log p(z)$ 可以为负，那是被积函数，不是其期望 KL。
+:::
+
+::: think 迁移练习 · 从标准差换成方差，并检查损失归约
+若第二维给的是 $\sigma_2^2=2$（不是标准差 2），其 KL 贡献是多少？若输入维数为 4，代码把平方误差和 0.36 改成每维平均值再乘 $1/2$，重建项与 KL 的相对权重改变了多少？
+
+::: sol 核对
+该维为 $\frac12(0.25+2-1-\log2)\approx0.278426$，仍为正。
+平方误差平均值为 $0.36/4=0.09$，再乘 $1/2$ 得 $0.045$，只有原重建项 $0.18$ 的四分之一。
+若 KL 不变，就把 KL 相对权重放大了 4 倍。应先按样本分别对输入维与潜维求和，再对批平均；使用其他归约时需明确相应系数。
+:::
 :::
 
 ::: intuition 插值：VAE 的招牌演示
-因为潜空间连续且各处的解码器都被训练过，我们可以在两个真实样本的潜码之间**线性走一遍**，解码结果会平滑地从一张图过渡到另一张。三个实现细节决定演示是否好看：
+可以在两个真实样本的潜码之间**线性走一遍**并观察解码结果，但连续的潜空间不保证中间帧具有合理语义，也不保证路径各处都训练充分。三个实现细节决定演示是否好看：
 
 1. **用均值 $\boldsymbol\mu$ 而不是采样得到的 $z$** 作为端点——$\mu$ 是「该样本在潜空间的中心」，受随机噪声影响更小；
-2. **沿直线插值，而不是球面插值**：潜空间近似各向同性高斯，线性插值的中间态解释性最强（这也是 VAE 与 GAN 潜空间插值的经验差别之一）；
+2. **明确插值路径**：线性插值易实现；高维高斯的典型样本常集中在一定半径附近，球面插值是另一种可比较的路径。不存在仅凭「VAE」名称即可选出的普适最佳方案；
 3. **中途的样本要落到先验的高密度区**：插值路径若经过低密度区，中间帧会出现「抽象糊块」；出现这种现象通常意味着 KL 权重 $\beta$ 偏小、潜空间的团没有充分重叠（见 [4.3.6](#sec-4.3.6)）。
 :::
 :::

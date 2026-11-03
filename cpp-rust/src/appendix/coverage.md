@@ -612,12 +612,12 @@ PDF为一基物理页；EPUB为XHTML定位。抽页、全文提取、内容核�
 |rcore-semaphore/RCORE-SEMAPHORE|第8章 3semaphore：信号量与唤醒丢失|见 sources/web.json 的 url|核读映射|[part3/ch09.md#sec-cpp-rust.3.9.7](../part3/ch09.md#sec-cpp-rust.3.9.7)|`src/part3/ch09.md`|
 |rcore-easyfs-kernel/RCORE-EFSKERNEL|第6章 3using-easy-fs-in-kernel：File 与设备抽象|见 sources/web.json 的 url|核读映射|[part3/ch12.md#sec-cpp-rust.3.12.9](../part3/ch12.md#sec-cpp-rust.3.12.9)|`src/part3/ch12.md`|
 |rcore-first-instr/RCORE-FIRSTINSTR|第1章 3first-instruction-in-kernel1：内核第一条指令|见 sources/web.json 的 url|核读映射|[part4/ch14.md#sec-cpp-rust.4.14.9](../part4/ch14.md#sec-cpp-rust.4.14.9)|`src/part4/ch14.md`|
-|REF-trait-object/SRC-REF-trait-object|trait object 类型与 dyn Trait 的表示|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](../part2/ch05.md#sec-cpp-rust.2.5.3)|`.work/cpp-rust-sources/reference/S10-trait-object.html`|
-|REF-dyn-compatibility/SRC-REF-dyn-compatibility|Dyn compatibility（旧译母本称「对象安全」，无此节）|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](../part2/ch05.md#sec-cpp-rust.2.5.3)|`.work/cpp-rust-sources/reference/S10-dyn-compatibility.html`|
-|REF-codegen-attrs/SRC-REF-codegen-attrs|inline / optimization-method / 代码生成属性|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.4](../part2/ch05.md#sec-cpp-rust.2.5.4)|`.work/cpp-rust-sources/reference/S10-codegen-attrs.html`|
+|REF-trait-object/SRC-REF-trait-object|trait object 类型与 dyn Trait 的表示|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](../part2/ch05.md#sec-cpp-rust.2.5.3)|`sources/archive/reference/S10-trait-object.html`|
+|REF-dyn-compatibility/SRC-REF-dyn-compatibility|Dyn compatibility（旧译母本称「对象安全」，无此节）|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.3](../part2/ch05.md#sec-cpp-rust.2.5.3)|`sources/archive/reference/S10-dyn-compatibility.html`|
+|REF-codegen-attrs/SRC-REF-codegen-attrs|inline / optimization-method / 代码生成属性|在线 Reference（2026-10-31 抓取）|核读映射|[part2/ch05.md#sec-cpp-rust.2.5.4](../part2/ch05.md#sec-cpp-rust.2.5.4)|`sources/archive/reference/S10-codegen-attrs.html`|
 |S10/FOUNDATIONS-S10-020|未定义的行为：`&amp;mut T`/`&amp;T` 遵循 LLVM scoped noalias 模型，同页声明清单不穷尽且无正式语义模型|PDF 344（一基物理页）|核读映射|[part1/ch03.md#sec-cpp-rust.1.3.2](../part1/ch03.md#sec-cpp-rust.1.3.2)|`src/part1/ch03.md`|
-|FOUNDATIONS-INSTANT/FOUNDATIONS-INSTANT|Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）|HTML具名节；无固定页码|核读映射|[part1/ch01.md#sec-cpp-rust.1.1.2](../part1/ch01.md#sec-cpp-rust.1.1.2)|`.work/cpp-rust-sources/foundations/instant.html`|
-|compiler-web-aliasing/compiler-web-aliasing-ch03|main article, excluding navigation；重点首末段：采用最宽泛的别名定义、Rust 自己的定义「大概会更受限制，要把 mutation 与 liveness 算进去」、完整模型还需计入函数调用/裸指针/UnsafeCell|[]|核读映射|[part1/ch03.md#sec-cpp-rust.1.3.2](../part1/ch03.md#sec-cpp-rust.1.3.2)|`.work/cpp-rust-sources/compiler/aliasing.html`|
+|FOUNDATIONS-INSTANT/FOUNDATIONS-INSTANT|Expand description、Monotonicity、OS-specific behaviors、Underlying System calls（不含全部 API 签名审计）|HTML具名节；无固定页码|核读映射|[part1/ch01.md#sec-cpp-rust.1.1.2](../part1/ch01.md#sec-cpp-rust.1.1.2)|`sources/archive/foundations/instant.html`|
+|compiler-web-aliasing/compiler-web-aliasing-ch03|main article, excluding navigation；重点首末段：采用最宽泛的别名定义、Rust 自己的定义「大概会更受限制，要把 mutation 与 liveness 算进去」、完整模型还需计入函数调用/裸指针/UnsafeCell|[]|核读映射|[part1/ch03.md#sec-cpp-rust.1.3.2](../part1/ch03.md#sec-cpp-rust.1.3.2)|`sources/archive/compiler/aliasing.html`|
 
 ## 全目录逐节裁决
 
