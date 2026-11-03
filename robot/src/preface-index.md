@@ -271,13 +271,13 @@
 | 反电动势 | $\boldsymbol v_a$ 中正比于电机角速度的项（$K_v\dot{\boldsymbol q}_m$）；它让 $\boldsymbol\tau$ 与 $\boldsymbol v_c$ 不成比例 | [7.2.5](ch07/sec7-2.md#sec-7.2.5) |
 | 速度源 / 力矩源 | 电压控制（$\dot{\boldsymbol q}\propto\boldsymbol v_c$，可分散）/ 电流控制（$\boldsymbol\tau\propto\boldsymbol v_c$，可集中） | [@thm-7.2.A] |
 | PD 控制 / 稳态误差 | $\tau_i=K_Pe_i+K_D\dot e_i$；常值扰动下 $e_{\mathrm{ss}}=d/K_P\neq0$，零误差须加积分 | [7.2.2](ch07/sec7-2.md#sec-7.2.2) |
-| 重力补偿 PD | $\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$，$\boldsymbol g$ 用**实测** $\boldsymbol q$，平衡点移到 $\boldsymbol e=0$ | [7.2.4](ch07/sec7-2.md#sec-7.2.4) |
-| 计算力矩前馈（课件题作「计算转矩前馈」） | 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ 算前馈 + PD 反馈；前馈可离线预算 | [7.2.6](ch07/sec7-2.md#sec-7.2.6) |
-| 计算力矩控制（逆动力学控制） | $\boldsymbol\tau=B(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e)+C\dot{\boldsymbol q}+\boldsymbol g$，用**实测**状态精确对消非线性 | [7.3.2](ch07/sec7-3.md#sec-7.3.2) |
-| 反馈线性化 | 用实测状态把非线性对象改造成 $n$ 个双积分器（大范围有效，区别于小偏差线性化） | [7.3.1](ch07/sec7-3.md#sec-7.3.1) |
+| 重力补偿 PD | $\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$，$\boldsymbol g$ 用**实测** $\boldsymbol q$，平衡点移到 $\boldsymbol e=0$ | [7.3.3](ch07/sec7-3.md#sec-7.3.3) |
+| 计算力矩前馈（课件题作「计算转矩前馈」） | 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ 算前馈 + PD 反馈；前馈可离线预算 | [7.2.7](ch07/sec7-2.md#sec-7.2.7) |
+| 计算力矩控制（逆动力学控制） | $\boldsymbol\tau=B(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e)+C\dot{\boldsymbol q}+\boldsymbol g$，用**实测**状态精确对消非线性 | [7.3.4](ch07/sec7-3.md#sec-7.3.4) |
+| 反馈线性化 | 用实测状态把非线性对象改造成 $n$ 个双积分器（大范围有效，区别于小偏差线性化） | [7.3.4](ch07/sec7-3.md#sec-7.3.4) |
 | 操作空间动力学模型 | $B_A\ddot{\boldsymbol x}_e+C_A\dot{\boldsymbol x}_e+\boldsymbol g_A=\boldsymbol\gamma_A-\boldsymbol h_A$（本章记 $B_x,C_x,\boldsymbol g_x,\boldsymbol\tau_x$） | [6.7](ch06/sec6-7.md)、[7.4.2](ch07/sec7-4.md#sec-7.4.2) |
 | 分析雅可比 $J_A$ | $\dot{\boldsymbol x}=J_A\dot{\boldsymbol q}$ 中的雅可比；姿态部分是欧拉角导数而非角速度 | [3.6](ch03/sec3-6.md)、[7.4.2](ch07/sec7-4.md#sec-7.4.2) |
-| 方案比较 | 分散/集中/操作空间按反馈量、驱动器、误差方程、计算量、适用工况对照 | [7.4.5](ch07/sec7-4.md#sec-7.4.5) |
+| 方案比较 | 分散/集中/操作空间按反馈量、驱动器、误差方程、计算量、适用工况对照 | [7.5.4](ch07/sec7-5.md#sec-7.5.4) |
 
 ## 附 · 易混术语对照
 

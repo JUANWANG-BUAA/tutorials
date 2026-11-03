@@ -533,7 +533,7 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 
 ## I · 运动控制（第 7 章，对应原书第 8 章）
 
-口径：**任务在操作空间提出，控制动作在关节空间实现**（[7.1.4](ch07/sec7-1.md#sec-7.1.4)）。I1–I3 为**课堂**内容（第 8 周后半），I4–I7 的具体控制律为**教材补**，I8 用于选型。
+口径：**任务在操作空间提出，控制动作在关节空间实现**（[7.1.4](ch07/sec7-1.md#sec-7.1.4)）。I1–I7 全部为**课堂**内容：I1–I3 来自第 8 周后半（2026-10-26），I4–I7 来自第 9 周（2026-11-02）；I8 用于选型。
 
 ### I1 控制问题与两套方案（**课堂**）
 
@@ -546,7 +546,7 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 
 **判据**：看闭环通道里有什么量、那个量的信息质量如何——不是看框图上那条线画到哪（[7.1.4.2](ch07/sec7-1.md#sec-7.1.4.2)）。
 
-### I2 驱动接口：$\boldsymbol\tau$ 与控制电压 $\boldsymbol v_c$（**课堂，本讲正题**）
+### I2 驱动接口：$\boldsymbol\tau$ 与控制电压 $\boldsymbol v_c$（**课堂，第 8 周**）
 
 $$\boldsymbol q_m=K_r\boldsymbol q,\qquad
 \boldsymbol\tau_m=K_r^{-1}\boldsymbol\tau=K_t\boldsymbol i_a,\qquad
@@ -566,7 +566,7 @@ $$K_r\gg I,\quad R_a\ \text{元素很小},\quad \tau\ \text{较小}
 - $G_v^{-1}K_vK_r$ **对角** ⇒ 每关节独立 ⇒ **分散控制**；
 - 反之，$\boldsymbol\tau$ 与 $\boldsymbol v_c$ 之间隔着 $\dot{\boldsymbol q}$ ⇒ 精确算 $\tau_i$ 需知**全部关节**运动 ⇒ **集中控制**，且驱动器必须是**力矩源**（[@thm-7.2.A]、[7.2.5.5](ch07/sec7-2.md#sec-7.2.5)）。
 
-### I4 PD/PID 与稳态误差（教材补）
+### I4 分散控制：PD/PI、根轨迹与干扰抑制（课堂，第 9 周）
 
 $$\tau_i=K_{P_i}e_i+K_{D_i}\dot e_i
 \quad\Longrightarrow\quad
@@ -577,15 +577,15 @@ $$\omega_n=\sqrt{K_P/J},\qquad
 e_{\mathrm{ss}}=\frac{d}{K_P}$$
 
 **常值扰动下 PD 有差**（$e_{\rm ss}\neq0$）；要零误差必须加积分：
-$\tau_i=K_{P_i}e_i+K_{I_i}\int e_i\,\mathrm dt+K_{D_i}\dot e_i$（1 型系统）（[7.2.2](ch07/sec7-2.md#sec-7.2.2)–[7.2.3](ch07/sec7-2.md#sec-7.2.3)）。
+$\tau_i=K_{P_i}e_i+K_{I_i}\int e_i\,\mathrm dt+K_{D_i}\dot e_i$（1 型系统）（[7.2.2](ch07/sec7-2.md#sec-7.2.2)–[7.2.4](ch07/sec7-2.md#sec-7.2.4)）。
 
-### I5 重力补偿 PD 与增益整定（教材补）
+### I5 重力补偿 PD 与增益整定（课堂，第 9 周）
 
 $$\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$$
 
-其中 $\boldsymbol g$ 必须用**实测** $\boldsymbol q$ 在线计算（用 $\boldsymbol q_d$ 等于开环补偿），平衡点移到 $\boldsymbol e=0$。整定 $K_P=J\omega_n^2$、$K_D=2\zeta J\omega_n$：$\zeta$ 取 $0.7$–$1$，$\omega_n$ 受采样率（闭环带宽 $\lesssim$ 采样频率的 $1/10$–$1/5$）与结构共振限制（[7.2.4](ch07/sec7-2.md#sec-7.2.4)、[7.2.7](ch07/sec7-2.md#sec-7.2.7)）。
+其中 $\boldsymbol g$ 必须用**实测** $\boldsymbol q$ 在线计算（用 $\boldsymbol q_d$ 等于开环补偿），平衡点移到 $\boldsymbol e=0$。整定 $K_P=J\omega_n^2$、$K_D=2\zeta J\omega_n$：$\zeta$ 取 $0.7$–$1$，$\omega_n$ 受采样率（闭环带宽 $\lesssim$ 采样频率的 $1/10$–$1/5$）与结构共振限制（[7.3.3](ch07/sec7-3.md#sec-7.3.3)、[7.2.3](ch07/sec7-2.md#sec-7.2.3)）。
 
-### I6 计算力矩（逆动力学）控制（教材补）
+### I6 计算力矩（逆动力学）控制（课堂，第 9 周）
 
 $$\boldsymbol\tau=B(\boldsymbol q)\bigl(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymbol e}+K_P\boldsymbol e\bigr)
 +C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}+\boldsymbol g(\boldsymbol q)$$
@@ -593,9 +593,9 @@ $$\boldsymbol\tau=B(\boldsymbol q)\bigl(\ddot{\boldsymbol q}_d+K_D\dot{\boldsymb
 $$\Longrightarrow\qquad \ddot{\boldsymbol e}+K_D\dot{\boldsymbol e}+K_P\boldsymbol e=\boldsymbol 0
 \qquad(\text{模型精确且未限幅})$$
 
-模型不准时右边多出 $B^{-1}[\Delta B\boldsymbol u+\Delta C\dot{\boldsymbol q}+\Delta\boldsymbol g]$ ⇒ 鲁棒/自适应；限幅是它最常见的失效原因（[7.3.2](ch07/sec7-3.md#sec-7.3.2)–[7.3.3](ch07/sec7-3.md#sec-7.3.3)）。
+模型不准时右边多出 $B^{-1}[\Delta B\boldsymbol u+\Delta C\dot{\boldsymbol q}+\Delta\boldsymbol g]$ ⇒ 鲁棒/自适应；限幅是它最常见的失效原因（[7.3.4](ch07/sec7-3.md#sec-7.3.4)–[7.3.5](ch07/sec7-3.md#sec-7.3.5)）。
 
-### I7 操作空间（课件 §7.8 + 教材补）
+### I7 操作空间（课堂，第 9 周；模型见课件 §7.8）
 
 $$\dot{\boldsymbol x}=J_A(\boldsymbol q)\dot{\boldsymbol q},\qquad
 B_A\ddot{\boldsymbol x}_e+C_A\dot{\boldsymbol x}_e+\boldsymbol g_A
@@ -619,7 +619,7 @@ $$\boldsymbol F=B_x\bigl(\ddot{\boldsymbol x}_d+K_D\dot{\boldsymbol e}_x+K_P\bol
 | 误差方程 | 带扰动 $d_i'$ 的单轴二阶 | 解耦二阶（模型精确时） | 同左，在 $x$ 空间 |
 | 计算量 / 适用 | 最小 / 低速轻载点位 | 大 / 高速高精重载 | 最大 / 柔顺冗余 |
 
-（对照表与选型流程见 [7.4.5](ch07/sec7-4.md#sec-7.4.5)、[@method-7.2.A]。）
+（对照表与选型流程见 [7.5.4](ch07/sec7-5.md#sec-7.5.4)、[@method-7.2.A]。）
 ---
 
 ## 附 · 一张纸的「最小必背集」
