@@ -33,3 +33,22 @@ deeplearning/tools/figs_out/
 node_modules/
 # 安全扫描插件的本地状态（Mimosa hook，会话内生成）
 .mimosa/
+
+# 站点手工备份目录（build 前的现场备份，不入库）
+_site.bak-*/
+_site.old-*/
+_site.partial-*/
+
+# 会话本地数据与工具状态
+.workbuddy/
+.v2c/
+.video_agent/
+
+# linux 本地实验/编译探针产物（会话内生成，可随时删除）
+linux/f1
+linux/f2
+linux/hook.c
+linux/libhook.dylib
+linux/tgt
+linux/tgt.c
+linux/.tmp_*.c
