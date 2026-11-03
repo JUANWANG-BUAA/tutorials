@@ -27,7 +27,7 @@ test('every fenced code language in the current source has an explicit grammar o
       }
     }
   }
-  for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers']) visit(new URL(book + '/src', root).pathname);
+  for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers', 'algorithms']) visit(new URL(book + '/src', root).pathname);
 });
 
 test('assembly and common tutorial languages render colored tokens and escaped code', () => {

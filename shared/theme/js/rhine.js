@@ -23,7 +23,7 @@
     if (cover) {
       // The course slug comes from the book root, not the translated title.
       var slug = location.pathname.split("/").filter(Boolean).find(function (part) {
-        return ["robot","matrix","numerical","deeplearning","linux","agent-systems","distributed","compilers"].indexOf(part) !== -1;
+        return ["robot","matrix","numerical","deeplearning","linux","agent-systems","distributed","compilers","algorithms"].indexOf(part) !== -1;
       });
       if (slug) {
         var plate = document.createElement("div");

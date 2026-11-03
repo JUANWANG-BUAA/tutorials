@@ -1,7 +1,7 @@
 /* Optional second browser pass; invoke with playwright-cli run-code --filename. */
 async (hostPage) => {
   const url = new URL(hostPage.url());
-  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers)\/.*$/, '/').replace(/index\.html$/, '');
+  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers|algorithms)\/.*$/, '/').replace(/index\.html$/, '');
   const origin = url.origin + prefix.replace(/\/$/, '');
   const page = await hostPage.context().browser().newPage({ serviceWorkers: 'block' });
   const results = [];

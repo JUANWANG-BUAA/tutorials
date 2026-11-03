@@ -6,7 +6,7 @@
 async (hostPage) => {
   const url = new URL(hostPage.url());
   const page = await hostPage.context().browser().newPage({ serviceWorkers: 'block' });
-  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers)\/.*$/, '/');
+  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers|algorithms)\/.*$/, '/');
   const base = url.origin + (prefix.endsWith('/') ? prefix : '/');
   const results = [];
   const errors = [];
@@ -177,11 +177,11 @@ async (hostPage) => {
   check(resumeHref.endsWith('#' + encodeURIComponent(destination)), 'continue reading resumes at the last visible section', resumeHref);
 
   await page.setViewportSize({ width: 1280, height: 800 });
-  for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers']) {
+  for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers', 'algorithms']) {
     await visit(book + '/index.html');
     check(await page.locator('html').getAttribute('data-book') === book && await page.locator('#prefs-toggle').count() === 1, book + ' initializes the shared reader');
     await page.keyboard.press('Control+k');
-    await page.locator('#mdbook-searchbar').fill({ robot: '机械手', matrix: '线性', numerical: '误差', deeplearning: '梯度', linux: '进程', 'agent-systems': '工具', distributed: '一致性', compilers: '编译' }[book]);
+    await page.locator('#mdbook-searchbar').fill({ robot: '机械手', matrix: '线性', numerical: '误差', deeplearning: '梯度', linux: '进程', 'agent-systems': '工具', distributed: '一致性', compilers: '编译', algorithms: '渐进' }[book]);
     await page.waitForFunction(() => document.querySelectorAll('#mdbook-searchresults li').length > 0);
     results.push(book + ' searches its compact Chinese index');
   }

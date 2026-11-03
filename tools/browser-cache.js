@@ -3,7 +3,7 @@
  */
 async (hostPage) => {
   const url = new URL(hostPage.url());
-  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers)\/.*$/, '/').replace(/index\.html$/, '');
+  const prefix = url.pathname.replace(/\/(robot|matrix|numerical|deeplearning|linux|agent-systems|distributed|compilers|algorithms)\/.*$/, '/').replace(/index\.html$/, '');
   const base = url.origin + prefix;
   const context = await hostPage.context().browser().newContext({ serviceWorkers: 'allow' });
   const page = await context.newPage();

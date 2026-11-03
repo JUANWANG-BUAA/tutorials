@@ -7,6 +7,8 @@ async (hostPage) => {
   const errors = [];
   const checks = [];
   const check = (ok, label) => { if (!ok) throw new Error(label); checks.push(label); };
+  // 课程数在首个上下文里测得，供无 JavaScript 的回退断言复用。
+  let total = 0;
   page.on('pageerror', error => errors.push(error.message));
   try {
     await page.goto(base);
@@ -16,17 +18,20 @@ async (hostPage) => {
     check(await page.locator('#main-content').evaluate(el => el === document.activeElement), 'skip link moves focus into course content');
     const tools = () => page.locator('.course-tools:visible');
     const rows = () => page.locator('.index-row:visible, .rh-course:visible');
-    check(await rows().count() === 12, 'all twelve courses are available initially');
+    // 课程数以站点实际发布的 index-row 为准，新增课程时不必改这里。
+    total = await page.locator('.index-row').count();
+    check(total >= 12, 'the catalogue publishes every course row');
+    check(await rows().count() === total, 'all available courses are visible initially');
     await tools().getByRole('searchbox').fill('ＬＩＮＵＸ');
     check(await rows().count() === 1 && (await rows().textContent()).includes('Linux 系统与内核'), 'full-width mixed-case course keywords normalize correctly');
     await tools().getByRole('searchbox').press('Escape');
-    check(await rows().count() === 12, 'Escape clears the course query');
+    check(await rows().count() === total, 'Escape clears the course query');
     await tools().getByRole('button', { name: '人工智能', exact: true }).click();
     check(await rows().count() === 3, 'direction filters select deep learning, Agent and algorithms courses');
     await tools().getByRole('searchbox').fill('不存在的课程xyz');
     check(await rows().count() === 0 && await page.locator('.course-empty:visible').count() === 1, 'an empty catalogue explains how to recover');
     await tools().getByRole('button', { name: '重置筛选' }).click();
-    check(await rows().count() === 12 && await tools().getByRole('searchbox').evaluate(el => el === document.activeElement), 'reset restores the full catalogue and input focus');
+    check(await rows().count() === total && await tools().getByRole('searchbox').evaluate(el => el === document.activeElement), 'reset restores the full catalogue and input focus');
     await tools().getByRole('searchbox').fill('矩阵 分解');
     check(await rows().count() === 1, 'multiple keywords match across course copy');
     await page.getByLabel('界面外观').selectOption('rhine');
@@ -90,7 +95,8 @@ async (hostPage) => {
   try {
     const fallback = await plain.newPage();
     await fallback.goto(base);
-    check(await fallback.locator('.index-row').count() === 12 && await fallback.locator('.index-row').first().isVisible(), 'all course links remain accessible without JavaScript');
+    const fallbackRows = fallback.locator('.index-row');
+    check(await fallbackRows.count() === total && await fallbackRows.first().isVisible(), 'all course links remain accessible without JavaScript');
   } finally { await plain.close(); }
   return { passed: checks.length, checks };
 }

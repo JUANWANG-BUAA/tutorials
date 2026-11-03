@@ -25,7 +25,8 @@
     linux: "Linux 系统与内核",
     "agent-systems": "Agent 系统工程",
     distributed: "分布式系统与数据面",
-    compilers: "编译器与程序分析"
+    compilers: "编译器与程序分析",
+    algorithms: "算法、评估与因果推断"
   };
   var book = detectBook();
   if (book) root.setAttribute("data-book", book);
