@@ -256,6 +256,7 @@
 | B.15 | 真缺口，已补 | `ch04` 0.4.1 末尾（namei 段之后） | 复核确认第三篇只有 LSM 框架级内容（`part3/ch04.md` 的 `security_inode_permission` 钩子表），无 `setenforce`/`restorecon`/`ausearch` 工具级内容——按报告预案判定为真缺口。补 AppArmor（`aa-status`/`aa-complain`）与 SELinux 五命令表（`getenforce`/`setenforce`/`ls -Z`/`restorecon -Rv`/`ausearch -m avc -ts recent \| audit2why`）+「setenforce 0 只用于定位」边界 + 指向第 3 篇框架。（+15） |
 
 - **统计**：真缺口 13 条（B.1–B.10、B.12–B.15 中除 B.11 外全部），全部补写；覆盖 1 条（B.11，跨篇落点在第二篇 2.8）；母本子项淘汰 2 处（B.5 的 logwatch、B.1 的 `pr` 只留一句背景）；B.13 判「薄落点」，在原位扩句而非新开节。
+- **追加（2026-10-29，0.9 教材化改造批次）**：B.11 判词「part0 侧不需要 C API 对照表」在 0.9.7 正文改造中翻案——该节现含 `execve`/`execl*`/`execv*` 与 `system()`/`popen()` 的五行对照表（进程数、是否经 shell、返回值语义）加 `strace` 实测摘录，补上了建议落点里「0.9.7 补 1 个小表」的原案；B.10 的 0.9.8.3 在改造中补了 `ulimit -f`（`SIGXFSZ` 153 / 忽略后 `EFBIG`）与 `ulimit -v`（`ENOMEM`→`MemoryError`）、`-t`（`SIGXCPU` 152）的 Ubuntu 24.04 现场触发证据。两处均为正文改造，未再新起节。
 - **新增锚点**：`{#sec-0.12.4.2}`、`{#sec-0.9.8.3}`，`check_book` 验证全书唯一。
 - **验证**：`python3 tools/check_book.py` 三批中间 + 最终各跑一次，输出 `pages: 113  total lines: 127491  substantial: 103`（问题数 0，exit 0）；`mdbook build` 成功（仅原有的 search index 体积 WARN）；改动 10 章的全部 bash 块（含新增）逐章 `bash -n` 通过。
 - **行数**：git diff `--numstat` 合计 +177/-1，净 +176 行；part0 16300 → 16476 行（+1.1%，预算 +5% 内）。

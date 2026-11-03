@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""本书结构质检：不读全文，只做机械检查，输出短报告。
+"""本书结构质检 + 自称数量同步门：不读全文，只做机械检查，输出短报告。
 
 用法：python3 tools/check_book.py [--verbose]
 检查项：
@@ -10,6 +10,8 @@
   - 显式锚点 {#...} 是否全书唯一
   - 站内 .md 链接目标是否存在
   - TODO / 「本章正在编写」占位符
+  - **自称数量与实际一致**（对齐矩阵论的同步门）——自检表「展开成 N 条」、
+    回忆卡「N 张卡」、习题集「共 N 题」逐处对照实际计数，题号/卡号必须连续
 """
 
 from __future__ import annotations
@@ -62,8 +64,9 @@ def check_page(title, rel):
         else:
             body_lines.append(l)
     body = "\n".join(body_lines)
-    # 行内代码里的 {#...} 只是字面量（如 ${#a[@]}），不参与锚点检查
-    anchor_body = re.sub(r"`[^`]*`", "", body)
+    # 行内代码里的 {#...} 只是字面量（如 ${#a[@]}），不参与锚点检查。
+    # 必须逐行匹配：不跨行的反引号才是行内代码；跨行配对会把后面的标题锚点整段吞掉。
+    anchor_body = re.sub(r"`[^`\n]*`", "", body)
     anchors = ANCHOR.findall(anchor_body)
     links = MD_LINK.findall(body)
     anchor_links = MD_LINK_ANCHOR.findall(body)
@@ -94,6 +97,84 @@ def check_page(title, rel):
     return {"title": title, "rel": rel, "missing": False, "lines": len(lines),
             "h2": h2, "problems": problems, "anchors": anchors, "links": links,
             "anchor_links": anchor_links}
+
+
+# ---------------------------------------------------------------- 数量同步门
+# 对齐矩阵论 check_book.py 的「自称数量与实际一致」门禁。套件页的导语常写
+# 「展开成 22 条」「25 张卡」「共 18 题」这类自称——计数对不上就是编辑事故。
+# 两代编号都认：习题 `例 2.2-A1`（新）与 `A1`（旧）；只查存在的自称，没写不拦。
+
+CHECKLIST_ROW = re.compile(r"^\|\s*\*\*([A-Z]+)(\d+(?:\.\d+)*)\b", re.M)
+CLAIM_ROWS = re.compile(r"展开成\s*(\d+)\s*条")
+RECALL_BOX = re.compile(r"^:::\s*[A-Za-z]+\s+回忆\s*(\d+)\b", re.M)
+CLAIM_CARDS = re.compile(r"(\d+)\s*张卡")
+EX_ITEM = re.compile(r"^:::\s*ex\s+(?:例\s*[\d.]+-)?([ABC])(\d+)\b", re.M)
+CLAIM_EX = re.compile(r"共\s*(\d+)\s*题")
+
+
+def _check_seq(rel: str, what: str, nums, problems) -> None:
+    """一组编号必须从 1 起连续（允许重复出现时只查集合连续）。"""
+    uniq = sorted({int(n) for n in nums})
+    if uniq and uniq != list(range(1, len(uniq) + 1)):
+        problems.append(f"{rel}: {what}编号不连续：{uniq[:15]}…")
+
+
+def check_counts():
+    """套件页自称数量与实际计数对照；返回问题清单。"""
+    problems = []
+    for part in sorted(os.listdir(SRC)):
+        pdir = os.path.join(SRC, part)
+        if not (part.startswith("part") and os.path.isdir(pdir)):
+            continue
+        for fn in sorted(os.listdir(pdir)):
+            path = os.path.join(pdir, fn)
+            if not os.path.isfile(path):
+                continue
+            rel = f"{part}/{fn}"
+
+            if fn.endswith("-checklist.md"):
+                text = open(path, encoding="utf-8").read()
+                rows = CHECKLIST_ROW.findall(text)   # [(letter, "5.1"| "5")]
+                m = CLAIM_ROWS.search(text)
+                if m and int(m.group(1)) != len(rows):
+                    problems.append(
+                        f"{rel}: 自称展开 {m.group(1)} 条，实际 {len(rows)} 条")
+                # 两代编号：`K1` 平铺（1..N 连续）与 `K5.1`/`K5.1.1` 前缀式
+                # （同一前缀下最后一段连续）
+                for letter in sorted({r[0] for r in rows}):
+                    nums = [n for l, n in rows if l == letter]
+                    if any("." in n for n in nums):
+                        groups = {}
+                        for n in nums:
+                            if "." in n:
+                                prefix, _, last = n.rpartition(".")
+                                groups.setdefault(prefix, []).append(int(last))
+                        for prefix, lasts in sorted(groups.items()):
+                            _check_seq(rel, f"{letter}{prefix}.", lasts, problems)
+                    else:
+                        _check_seq(rel, letter, nums, problems)
+
+            elif fn.endswith("-recall.md"):
+                text = open(path, encoding="utf-8").read()
+                cards = [int(n) for n in RECALL_BOX.findall(text)]
+                m = CLAIM_CARDS.search(text)
+                if m and int(m.group(1)) != len(cards):
+                    problems.append(
+                        f"{rel}: 自称 {m.group(1)} 张卡，实际 {len(cards)} 张")
+                _check_seq(rel, "回忆卡", cards, problems)
+
+            elif fn.endswith("-exercises.md"):
+                text = open(path, encoding="utf-8").read()
+                items = EX_ITEM.findall(text)
+                m = CLAIM_EX.search(text)
+                if m and int(m.group(1)) != len(items):
+                    problems.append(
+                        f"{rel}: 自称共 {m.group(1)} 题，实际 {len(items)} 题")
+                for letter in "ABC":
+                    nums = [int(n) for l, n in items if l == letter]
+                    if nums:
+                        _check_seq(rel, f"{letter} 组", nums, problems)
+    return problems
 
 
 def main():
@@ -147,7 +228,12 @@ def main():
         print("\n各页行数:")
         for r in results:
             print(f"  {r['rel']:28s} {r['lines']:5d}  H2={r['h2']}")
-    return 1 if (bad or dup or broken or broken_anchors) else 0
+    count_problems = check_counts()
+    if count_problems:
+        print(f"\n自称数量不同步 ({len(count_problems)}):")
+        for p in count_problems[:40]:
+            print(f"  {p}")
+    return 1 if (bad or dup or broken or broken_anchors or count_problems) else 0
 
 
 if __name__ == "__main__":

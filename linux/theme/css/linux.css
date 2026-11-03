@@ -167,9 +167,17 @@ html[data-book="linux"]{--cover-spine:#1f6f5c}
  * §7  窄屏与打印
  * ======================================================================== */
 @media(max-width:700px){
-  .content .terminal{font-size:11.5px}
+  /* 这三类块的字符对齐本身承载信息（fd 表、三层结构图、系统调用表），
+     缩字号省不下宽度——它们已经允许横向滚动——只会把可读性赔进去。 */
+  .content .terminal{font-size:12.5px}
   .content .terminal pre,.content .terminal .term-body{padding:9px 10px}
-  .content pre.layout,.content pre.tree{font-size:11px}
+  .content pre.layout,.content pre.tree{font-size:12px}
+  /* 窄屏上这些 ASCII 图必然横向溢出且触屏不显示滚动条，读者不知道右边还有内容。
+     用固定在盒子右缘的遮罩渐隐做「还有内容」的提示：不依赖底色，深浅色都成立。 */
+  .content pre.layout,.content pre.tree{
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 20px),transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 20px),transparent 100%);
+  }
 }
 @media print{
   .content .terminal{
@@ -183,7 +191,11 @@ html[data-book="linux"]{--cover-spine:#1f6f5c}
 /* 窄屏：宽表允许横向滚动，避免术语表/系统调用表被裁掉右列 */
 @media(max-width:700px){
   .content table{display:block;overflow-x:auto;max-width:100%}
-  .content table.syscall{font-size:11px}
+  /* mdBook 默认把 th 压到 .82em，窄屏上落到 10.5px，读不动。
+     表本来就要横向滚动，字号换不来宽度，不如还给读者。 */
+  .content table{font-size:13.5px}
+  .content table th{font-size:12.5px}
+  .content table.syscall{font-size:12px}
 }
 
 /* ======================================================================== *
@@ -250,3 +262,79 @@ html.ayu .variant-switcher button.is-active{color:#10211d}
 .content pre:hover .copy-code,.content pre .copy-code:focus{opacity:1}
 .content pre .copy-code.is-copied{background:var(--accent);border-color:var(--accent);color:#fff}
 @media(max-width:700px){.content pre .copy-code{opacity:.9;font-size:10.5px;padding:2px 6px}}
+
+/* —— 阅读分层（类名由 tools/mathbook.py 的盒子优先级生成）——
+   全书上千个盒子，若视觉权重完全相同，读者无法判断「哪些必记、哪些可跳」。
+   p-core = 必记骨架（定义、定理族、速查表、错误清单）：加重；
+   p-main = 主体：正常样式；
+   p-skip = 第一遍可跳（证明、课程预告）：减弱。
+   skip 只是降低权重、不隐藏——要折叠请用页面的「只看核心」开关。 */
+.box.p-core{border-left-width:var(--space-1)}
+
+.box.p-core>.box-tag{font-size:var(--fs-xs);letter-spacing:.07em}
+
+.proof.p-core{
+  border-left:3px solid var(--thm-line);background:var(--thm-bg);
+  color:var(--ink);
+}
+
+.proof.p-skip{color:var(--muted);font-size:var(--fs-lg);border-top-style:dashed}
+
+.proof.p-skip .pf-label{color:var(--muted)}
+
+.box.p-skip{
+  border-left-color:var(--line);background:transparent;color:var(--ink-2);
+}
+
+.box.p-skip>.box-tag{color:var(--muted);font-weight:600}
+
+.note.p-skip,.preview.p-skip{background:transparent;color:var(--muted)}
+
+/* 「只看核心」：折叠全部可跳层（证明、预告、拓展思考） */
+html.core-only .p-skip{display:none}
+
+/* 打印时一律展开：纸面上没有开关可点，缺内容比多内容更糟 */
+@media print{html.core-only .p-skip{display:block}}
+
+/* 阅读分层图例（由 linux.js 注入到正文开头）：标题与开关占一行，
+   下面三条各自成行（色块 / 名称 / 适用内容）。 */
+.layer-legend{
+  margin:var(--space-4) 0 22px;padding:13px var(--space-4) var(--space-3);
+  border:1px solid var(--line);background:var(--paper-soft);
+  font:var(--fs-md)/1.6 var(--sans);color:var(--ink-2);
+}
+
+.layer-legend-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:var(--space-3);margin-bottom:9px;
+}
+
+.layer-legend-title{color:var(--ink);font-weight:700}
+
+.layer-legend ul{display:grid;gap:var(--space-1);margin:0;padding:0;list-style:none}
+
+.layer-legend ul li{
+  display:grid;grid-template-columns:var(--space-4) max-content 1fr;
+  align-items:center;gap:0 var(--space-2);margin:0;padding:0;border:0;
+}
+
+.layer-legend ul li b{color:var(--ink-2);font-weight:600}
+
+.layer-legend ul li .desc{color:var(--muted);font-size:var(--fs-sm)}
+
+.layer-legend .swatch{
+  width:10px;height:10px;
+  border:1px solid var(--line-strong);border-left:3px solid var(--line-strong);
+}
+
+.layer-legend .swatch.core{border-left-color:var(--thm-line);border-left-width:var(--space-1)}
+
+.layer-legend .swatch.skip{border-left-color:var(--line);background:transparent}
+
+.layer-legend button{
+  flex:0 0 auto;padding:3px 10px;border:1px solid var(--line-strong);
+  background:var(--paper);color:var(--ink-2);
+  font:600 var(--fs-xs)/1.4 var(--sans);cursor:pointer;
+}
+
+.layer-legend button:hover{border-color:var(--ink);color:var(--ink)}

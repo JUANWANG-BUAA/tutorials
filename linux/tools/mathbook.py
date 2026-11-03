@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-r"""mathbook — 《矩阵论》教程的 mdBook 预处理器。
+r"""mathbook — 《Linux 系统与内核》教程的 mdBook 预处理器（与矩阵论同一套语义）。
 
-补上 mdBook 原生没有、而数学教材必需的三件事：
+补上 mdBook 原生没有、而教材必需的几件事：
 
 1. 语义盒子
-       ::: def 定义 1.1.3 · 数域 field {#def-1.1.3}
+       ::: def 定义 2.2.1 · 打开文件 {#def-2.2.1}
        正文（Markdown，可含 \( \) 与 $$ $$，可嵌套其他 ::: 盒子）
        :::
-   渲染为 <div class="box def p-core" id="def-1.1.3">，样式见 theme/css/na.css。
-   可用类型见 BOX_TYPES / PROOF / SOL。
+   渲染为 <div class="box def p-core" id="def-2.2.1">，样式见 theme/css/linux.css。
+   可用类型见 BOX_TYPES / PROOF / SOL / HINT。
 
    类型后可加**优先级标记**（可选）：`::: proof[core]`、`::: thm[skip]`，
    取值 core / main / skip，不写则按 PRIORITY_DEFAULT 取类型默认值。
-   渲染为附加类 `p-core` / `p-main` / `p-skip`，供 CSS 做阅读分层。
+   渲染为附加类 `p-core` / `p-main` / `p-skip`，供 CSS 做阅读分层
+   （见 linux.css §阅读分层 与 linux.js 的「只看核心」开关）。
+
+   折叠盒（sol / hint / proof）的标题若只是「解答」「答案」「提示」这类通用词，
+   会自动继承所属例题 / 习题的编号（「解答 · 例 2.2.1」），见 label_folds()。
 
 2. 符号化交叉引用
        ……即为 [@def-1.1.3] 中定义的数域。
@@ -101,7 +105,9 @@ BOX_TYPES = {
 }
 PROOF = "proof"
 SOL = "sol"
-KNOWN = set(BOX_TYPES) | {PROOF, SOL}
+# 提示层：与 sol 一样默认折叠，但样式更轻，用于「先给一句思路，再展开完整解答」。
+HINT = "hint"
+KNOWN = set(BOX_TYPES) | {PROOF, SOL, HINT}
 
 # --------------------------------------------------------------------------- #
 # 盒子优先级（阅读分层）
@@ -116,13 +122,13 @@ KNOWN = set(BOX_TYPES) | {PROOF, SOL}
 #   core —— 必记（定义、定理族、速查表、错误清单）：高对比，复习时的骨架
 #   main —— 主体（例题、方法、直觉、边注、思考）：正常样式
 #   skip —— 第一遍可跳（证明、课程预告）：弱化，二刷再回来
-# 渲染为 <div class="… p-core|p-main|p-skip">，样式见 theme/css/na.css §3。
+# 渲染为 <div class="… p-core|p-main|p-skip">，样式见 theme/css/linux.css §阅读分层。
 # 注意 note / think 默认是 main：书里的「常见错误清单」「速查表」都挂在这两类上，
 # 属于复习骨架；真正可跳的那些已单独标 [skip]。
 PRIORITY_DEFAULT = {
     "def": "core", "thm": "core", "prop": "core", "cor": "core", "lem": "core",
     "ex": "main", "method": "main", "intuition": "main",
-    "errata": "main", "meta": "main", SOL: "main",
+    "errata": "main", "meta": "main", SOL: "main", HINT: "main",
     "note": "main", "think": "main",
     "proof": "skip", "preview": "skip",
 }
@@ -185,7 +191,7 @@ def md_render(markdown_src: str) -> str:
         html = html.replace(f"\ue000{i}\ue001", tex)
     # 盒内相对链接：.md → .html（mdBook 之后看不到这些链接）
     html = re.sub(r'(href="[^"#]*?)\.md(#[^"]*)?(")', r"\1.html\2\3", html)
-    return html
+    return lazy_images(html)
 
 
 # --------------------------------------------------------------------------- #
@@ -219,9 +225,21 @@ def split_id(text: str):
 
 
 def ref_text(label: str) -> str:
-    """把盒子标题转成适合做链接文字的形式：取 “·” 之前，去掉尾部括注。"""
-    head = label.split(" · ", 1)[0].strip()
-    head = re.sub(r"[（(][^）)]*[）)]\s*$", "", head).strip()
+    """把盒子标题转成适合做链接文字的形式。
+
+    标题格式是 `类型 编号 · 名称`，但中间常夹着一个括注（`例 2.2.1（先猜）· …`）。
+    要得到干净的链接文字，必须**先按分隔符切掉名称**，再反复剥掉尾部括注——
+    只做其中一步都会留下整条名称，让正文里的引用变成一大段话。
+
+    分隔符写作“·”，但两侧空格并不统一，因此按 `\\s*·\\s*` 切分而不是匹配固定串。
+    """
+    head = re.split(r"\s*·\s*", label.strip(), maxsplit=1)[0].strip()
+    # 括注可能叠加（`例 2.2.5 续（实测读数）`），故循环剥到不动为止。
+    while True:
+        stripped = re.sub(r"\s*[（(][^）)]*[）)]\s*$", "", head).strip()
+        if stripped == head:
+            break
+        head = stripped
     return head or label
 
 
@@ -312,6 +330,13 @@ def assign_labels(sections, table: LabelTable) -> None:
                             f"{where}: 未知盒子优先级 `[{marker}]`"
                             f"（可用：{'、'.join(PRIORITIES)}）")
                     label, id_ = split_id(raw)
+                    # 盒子标题（含 summary 与 box-tag）不经 markdown 渲染，写在里面的 [@ref]
+                    # 会原样显示成字面量。这里拦住，提示改写为纯文字。
+                    if label and "[@" in label:
+                        table.errors.append(
+                            f"{where}: 盒子标题里不能写交叉引用 `{label.strip()}`"
+                            "（标题不渲染 Markdown，会显示成字面量）；请改写为纯文字，如「定理 2.2.3」")
+                        continue
                     if not id_:
                         continue                      # 无锚点则不可被引用
                     if id_ in table.full:
@@ -342,6 +367,10 @@ def parse_tree(content: str, where: str, table: LabelTable):
     """
     root = []
     stack = [root]
+    # 与 stack 同步的「外层盒子」栈：栈顶是当前盒子的父盒子。
+    # 用途见 label_folds()——解答盒要继承它所属例题/习题的编号，
+    # 否则页面上会有几百个一模一样的「解答」。
+    parents = [None]
     buf = []
 
     def flush():
@@ -360,6 +389,7 @@ def parse_tree(content: str, where: str, table: LabelTable):
                 continue
             flush()
             stack.pop()
+            parents.pop()
             continue
         m = OPEN_RE.match(line)
         if m:
@@ -374,9 +404,11 @@ def parse_tree(content: str, where: str, table: LabelTable):
                 label = table.full[id_]
             flush()
             node = {"typ": typ, "label": label, "id": id_,
-                    "prio": box_priority(typ, marker), "children": []}
+                    "prio": box_priority(typ, marker),
+                    "parent": parents[-1], "children": []}
             stack[-1].append(("box", node))
             stack.append(node["children"])
+            parents.append(node)
             continue
         buf.append(line)
 
@@ -384,6 +416,43 @@ def parse_tree(content: str, where: str, table: LabelTable):
     if len(stack) != 1:
         table.errors.append(f"{where}: 有 {len(stack) - 1} 个 `:::` 盒子未闭合")
     return root
+
+
+# 解答 / 提示 / 证明盒的「折叠标题」。缺省时它们全叫「解答」——全书几百个 sol 盒
+# 都显示「解答」，读者无法从标题知道它是哪道题的，屏幕阅读器用户更是只能听到
+# 一长串同名按钮。这里让它们继承所属例题 / 习题的编号：`解答 · 例 2.2.1`。
+FOLD_TYPES = (SOL, HINT, PROOF)
+# 例题、习题、思考题都值得继承；定义与定理的证明也用同一套（如「证明 · 定理 2.2.3」）
+PARENT_LABEL_TYPES = ("ex", "thm", "prop", "cor", "lem", "think", "def")
+# 「通用词」标题：虽然作者写了字，但没有辨识度。命中这张表的标题会被「继承来的」
+# 标题替换掉；作者写的有信息量的标题（「解答（1）」不算，「几何解释」算）不受影响。
+GENERIC_FOLD_TITLES = {
+    "", "解答", "解", "解法", "答案", "参考答案", "参考要点",
+    "证明", "证", "证法", "验证", "推导", "提示", "提示 1", "提示 2",
+}
+DEFAULT_FOLD_LABEL = {SOL: "解答", HINT: "提示", PROOF: "证明"}
+
+
+def label_folds(node) -> None:
+    """给 sol / hint / proof 盒补一个「继承来的」有辨识度标题。
+
+    只在标题是**通用词**时才补；作者写的有信息量的标题完全不动。
+    """
+    label = (node.get("label") or "").strip()
+    if node.get("typ") in FOLD_TYPES and label in GENERIC_FOLD_TITLES:
+        parent = node.get("parent")
+        # 往外套一层：习题常写成 `::: ex 例 2.2.1 · …` → `::: sol`，
+        # 但也可能是 `::: sol` 直接嵌在另一个 sol 里（多问式解答），
+        # 所以逐层向上找到第一个有编号的盒子。
+        while parent is not None:
+            plabel = (parent.get("label") or "").strip()
+            if parent.get("typ") in PARENT_LABEL_TYPES and plabel:
+                node["label"] = f"{DEFAULT_FOLD_LABEL[node['typ']]} · {ref_text(plabel)}"
+                break
+            parent = parent.get("parent")
+    for kind, val in node.get("children", []):
+        if kind == "box":
+            label_folds(val)
 
 
 def emit_open(node) -> str:
@@ -402,6 +471,9 @@ def emit_open(node) -> str:
     if typ == SOL:
         return (f'<details class="sol-box p-{prio}"{attrs}>'
                 f'<summary>{label or "解答"}</summary><div class="sol-inner">')
+    if typ == HINT:
+        return (f'<details class="hint-box p-{prio}"{attrs}>'
+                f'<summary>{label or "提示"}</summary><div class="hint-inner">')
     raise AssertionError(typ)
 
 
@@ -411,7 +483,7 @@ def emit_close(node) -> str:
         return "</div>"
     if typ == PROOF:
         return '<span class="qed">∎</span></div>'
-    if typ == SOL:
+    if typ in (SOL, HINT):
         return "</div></details>"
     raise AssertionError(typ)
 
@@ -531,9 +603,67 @@ def normalize_emphasis(text: str) -> str:
     return "\n".join(out)
 
 
+# 正文图片一律懒加载（对齐矩阵论）：长页插图全在首屏之外，不设 loading 时
+# 浏览器会一次性全部下载并解码，首屏白等；设成 lazy 后只有视口附近的图会被取。
+#
+# 做法上踩过两次坑，记在这里免得重犯：
+#  ① **不能用 pulldown-cmark 的「属性块」写法**（图片语法后紧跟花括号）。
+#     mdBook 0.5 不认，图片会退化成字面文本。
+#  ② **产出原始 <img> 时，alt 里不能留 `$…$`**。mdBook 会把 <img> 当作行内
+#     原始 HTML 保留，但 mdbook-katex 仍会扫描整页，把属性里的 `$…$` 换成
+#     KaTeX 的 HTML——那串 HTML 自带 class="katex" 这样的双引号，塞进属性值
+#     就撑破了标签，图片彻底消失。修法是 strip_math_from_alt()。
+IMG_MD_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)(\s+\"[^\"]*\")?\)")
+IMG_TAG_RE = re.compile(r"<img\b([^>]*?)(/?)>")
+# 行内数学 `$…$` 与独立数学 `$$…$$` 都算一整段
+MATH_SPAN_RE = re.compile(r"\$\$[^$]*\$\$|\$[^$]*\$")
+
+
+def strip_math_from_alt(alt: str) -> str:
+    """删掉 alt 里的数学段并整理空白。
+
+    只删不译：把 `$x$` 猜成 `x` 需要一张命令表，而正文里公式本来就会渲染，
+    alt 只需说清「这张图是什么」。这也是无障碍上的正确做法——读屏不该念 LaTeX。
+    """
+    cleaned = MATH_SPAN_RE.sub(" ", alt)
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    cleaned = re.sub(r"\s+([，。；：、）】」！？])", r"\1", cleaned)
+    return cleaned.strip()
+
+
+def lazy_images_markdown(text: str) -> str:
+    """把 Markdown 图片语法换成带 loading 的原始 <img>。
+
+    Markdown 允许行内原始 HTML，mdBook 会原样保留（已实测验证直引号安全）。
+    只处理顶层正文；盒内图片由 markdown-it 渲染，走 lazy_images() 那条 HTML 路径。
+    """
+    def rep(m):
+        alt, src, title = m.group(1), m.group(2), m.group(3)
+        alt = strip_math_from_alt(alt)
+        attr = ""
+        if title:
+            attr = " title=" + title.strip()
+        return ('<img src="' + src + '" alt="' + alt + '"' + attr
+                + ' loading="lazy" decoding="async">')
+    return IMG_MD_RE.sub(rep, text)
+
+
+def lazy_images(html: str) -> str:
+    """给已渲染好的 <img> 补懒加载属性（盒内图片走这条路径）。"""
+    def rep(m):
+        attrs, slash = m.group(1), m.group(2)
+        if "loading=" not in attrs:
+            attrs += ' loading="lazy"'
+        if "decoding=" not in attrs:
+            attrs += ' decoding="async"'
+        return "<img" + attrs + slash + ">"
+    return IMG_TAG_RE.sub(rep, html)
+
+
 def render_box(node, table: LabelTable, where: str) -> str:
     """渲染一个盒子：先把子树变成 Markdown（内层盒子已展开为 HTML），
     再用 markdown-it 渲染，最后包成不含空行的单个 HTML 块。"""
+    label_folds(node)
     parts = []
     for kind, val in node["children"]:
         if kind == "text":
@@ -552,7 +682,8 @@ def render_tree(root, table: LabelTable, where: str) -> str:
     parts = []
     for kind, val in root:
         if kind == "text":
-            parts.append(normalize_emphasis(resolve_refs(val, table, where)))
+            parts.append(lazy_images_markdown(
+                normalize_emphasis(resolve_refs(val, table, where))))
         else:
             parts.append(render_box(val, table, where))
     return "\n\n".join(p for p in parts if p != "")

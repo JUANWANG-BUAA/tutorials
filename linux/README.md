@@ -65,7 +65,11 @@ pip3 install -r requirements.txt
 python3 tools/build_figures.py          # 重建全部图版
 python3 tools/build_figures.py fd-table # 只重建一张
 python3 tools/build_coverage.py         # 生成 A.4 并校验 10 本母本逐章落点
-python3 tools/check_book.py             # 结构质检
+python3 tools/check_book.py             # 结构质检 + 自称数量同步门
+python3 tools/check_loss.py             # 教材化改造体量守护（对比 git HEAD）
+python3 tools/check_kits.py             # 章末件覆盖率清点（总览 + 五件套）
+python3 tools/textbook_lint.py          # 行文体检（非阻塞，供三视角审读）
+python3 tools/export_cards.py           # 回忆卡导出 Anki TSV（--stats 先清点）
 ```
 
 图版输出到 `src/assets/figures/<name>.md`，页面用：
@@ -78,13 +82,17 @@ python3 tools/check_book.py             # 结构质检
 
 ## 4. 写作约定
 
-- 每章：`chapter-index` 两栏 → 2–4 段导语 → 编号 H2 → 图/代码/errata/自测 → 出口检查 → 母本对应 → 下一站。
-- 盒子：`::: def/thm/ex/intuition/method/errata/think/note`，嵌套 `proof`/`sol`；锚点全书唯一。
+- **教材化改造（2026-10-29 起）以 [`写作规范/70-教材化改造总纲.md`](写作规范/70-教材化改造总纲.md) 为准**：章总览 + 章末五件套、rustwiki 语言、Kerrisk/CSAPP 主干、非科班八条。每章改完按 [`写作规范/72-章节审读表.md`](写作规范/72-章节审读表.md) 做主线/文段/行文三视角审读。
+- 每章：`chapter-index` 两栏 → 2–4 段导语 → 编号 H2 → 图/代码/errata/自测 → 本章小结 → 母本对应 → 下一站。
+- 盒子：`::: def/thm/ex/intuition/preview/method/errata/think/note`，嵌套 `proof`/`sol`/`hint`；锚点全书唯一。交叉引用写 `[@def-2.2.1]`，引用不存在的锚点**构建失败**。
+- 盒子标题可带**优先级标记**：`::: thm[skip]`（core / main / skip），渲染为 `p-core`/`p-skip` 阅读分层，配 `linux.js` 的「只看核心」开关。
+- 折叠盒（`sol`/`hint`/`proof`）标题只写「解答」「提示」这类通用词时，构建器自动继承所属例题编号（「解答 · 例 2.2.1」）；有信息量的标题不动。
+- **自称数量要与实际一致**：自检表导语「展开成 N 条」、回忆卡「N 张卡」、习题集「共 N 题」都被 `check_book.py` 的同步门对照实际计数，改完套件记得改自称。
 - 代码：C17 + POSIX，`-Wall -Wextra -Werror`；错误处理不能省。
-- 图：必须有 `<title>`、`<desc>`、`<figcaption>`，图注以「读图：」开头。
+- 图：必须有 `<title>`、`<desc>`、`<figcaption>`，图注以「读图：」开头；构建器给图片加 `loading="lazy"`。
 - 旧内容：主线只讲现代做法，历史与兼容集中在 `src/appendix/legacy.md`。
 
-详见 `写作规范/00-写作总则.md`。
+详见 `写作规范/00-写作总则.md`（底线）与 `写作规范/70-教材化改造总纲.md`（教材体与改造流程）。
 
 ## 5. 已知构建注意
 

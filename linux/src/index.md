@@ -31,7 +31,7 @@
 <a class="bc-row" href="part5/ch01.md"><span class="bc-no">05</span><span class="bc-title">云原生</span><span class="bc-count">6 章</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="projects/overview.md"><span class="bc-no">06</span><span class="bc-title">项目复现</span><span class="bc-count">4 条主线 / 11 项目</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 </div>
-<p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。第一次来，先读 <a href="roadmap.md">三条学习路线</a>。</p>
+<p class="bc-note">第一次来，先看 <a href="knowledge-map.md">全书知识地图</a>：六篇为什么按这个顺序、三条路线各读哪些章。默认建议从 <a href="roadmap.md">路线 A（应用与运维）</a> 起步；目标是系统编程或内核性能，再按地图切到 B/C。</p>
 </section>
 
 <section class="study-paths" aria-label="学习路线">
