@@ -100,6 +100,11 @@ BOX_TYPES = {
     "arg":     ("box arg",     None),
     "src":     ("box src",     None),
     "debate":  ("box debate",  None),
+    # 现代工具层（见 写作规范/MODERN-TOOLING.md）：数据表、可视化、仿真、今日视角。
+    "data":    ("box data",    None),
+    "viz":     ("box viz",     None),
+    "sim":     ("box sim",     None),
+    "lens":    ("box lens",    None),
 }
 PROOF = "proof"
 SOL = "sol"
@@ -127,6 +132,8 @@ PRIORITY_DEFAULT = {
     "errata": "main", "meta": "main", "arg": "core", "src": "main",
     "debate": "main", SOL: "main",
     "note": "main", "think": "main",
+    # 现代工具层：数据与仿真支撑正文论证，属主层；「今日视角」可跳读。
+    "data": "main", "viz": "main", "sim": "main", "lens": "skip",
     "proof": "skip", "preview": "skip",
 }
 PRIORITIES = ("core", "main", "skip")

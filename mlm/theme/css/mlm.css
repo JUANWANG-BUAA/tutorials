@@ -95,3 +95,34 @@ blockquote.cite .src{
   blockquote.cite{padding:10px 12px 10px 14px}
   .chapter-index > div{padding:11px 13px}
 }
+
+/* ── 现代工具层四类盒子（写作规范/MODERN-TOOLING.md） ─────────── */
+/* data 数据表：支持正文的数据整理，用青色系，与 arg/src/debate 区分开。 */
+.box.data{border-left-color:#3a7a7a;background:color-mix(in srgb,var(--surface-card) 96%,#3a7a7a)}
+.box.data .box-tag{color:#2b5c5c}
+/* viz 可视化：内联 SVG，白底保证图在深色主题下仍可读。 */
+.box.viz{border-left-color:#4a7c9e;background:color-mix(in srgb,var(--surface-card) 96%,#4a7c9e)}
+.box.viz .box-tag{color:#355a73}
+.box.viz svg{
+  display:block;width:100%;height:auto;margin:10px 0 8px;
+  background:#fff;border-radius:6px;padding:8px;
+  border:1px solid color-mix(in srgb,var(--ink-3) 25%,transparent);
+}
+/* sim 仿真：代码块等宽字体，横向可滚。 */
+.box.sim{border-left-color:#5d7a3a;background:color-mix(in srgb,var(--surface-card) 96%,#5d7a3a)}
+.box.sim .box-tag{color:#475e2b}
+.box.sim pre{overflow-x:auto}
+/* lens 今日视角：弱化显示，属可跳读层。 */
+.box.lens{border-left-style:dashed;border-left-color:#888}
+.box.lens .box-tag{color:#666}
+
+html.coal .box.data,html.ayu .box.data,html.navy .box.data{
+  border-left-color:#5fa3a3;background:color-mix(in srgb,var(--surface-card) 92%,#5fa3a3)}
+html.coal .box.data .box-tag,html.ayu .box.data .box-tag,html.navy .box.data .box-tag{color:#8ecfcf}
+html.coal .box.viz,html.ayu .box.viz,html.navy .box.viz{
+  border-left-color:#7aa8c4;background:color-mix(in srgb,var(--surface-card) 92%,#7aa8c4)}
+html.coal .box.viz .box-tag,html.ayu .box.viz .box-tag,html.navy .box.viz .box-tag{color:#a8cfe2}
+html.coal .box.sim,html.ayu .box.sim,html.navy .box.sim{
+  border-left-color:#8aa85f;background:color-mix(in srgb,var(--surface-card) 92%,#8aa85f)}
+html.coal .box.sim .box-tag,html.ayu .box.sim .box-tag,html.navy .box.sim .box-tag{color:#b8d190}
+html.coal .box.lens .box-tag,html.ayu .box.lens .box-tag,html.navy .box.lens .box-tag{color:#aaa}
