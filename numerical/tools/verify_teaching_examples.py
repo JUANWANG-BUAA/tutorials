@@ -657,6 +657,33 @@ def check_lecture14_gauss():
         assert all(-1 < x < 1 for x in ns), ns
         assert len(set(ns)) == len(ns)
 
+    # 6b) 第 14 讲 §五 的带权 x² 算例（板书内积列表的复算）
+    from fractions import Fraction as Fx
+    def wip(f, g):
+        """∫_{-1}^1 f·g·x² dx，精确分数。"""
+        prod = poly_mul14([Fx(c) for c in f], [Fx(c) for c in g])
+        total = Fx(0)
+        for k, ck in enumerate(prod):
+            if (k + 2) % 2 == 0:          # ∫_{-1}^1 x^{k+2} dx = 2/(k+3)（k+2 偶）
+                total += ck * Fx(2, k + 3)
+        return total
+    def poly_mul14(a, b):
+        out = [Fx(0)] * (len(a) + len(b) - 1)
+        for i, ci in enumerate(a):
+            for j, cj in enumerate(b):
+                out[i + j] += ci * cj
+        return out
+    one=[Fx(1)]; xx=[Fx(0),Fx(1)]; x2=[Fx(0),Fx(0),Fx(1)]; x3=[Fx(0),Fx(0),Fx(0),Fx(1)]
+    assert wip(xx, one) == Fx(0)                         # (x,φ0)=0
+    assert wip(x2, xx) == Fx(0)                          # (x²,φ1)=0
+    assert wip(xx, xx) == Fx(2, 5), wip(xx, xx)          # (φ1,φ1)=2/5
+    assert wip(x3, xx) == Fx(2, 7), wip(x3, xx)          # (x³,φ1)=2/7
+    assert wip(x2, one)/wip(one, one) == Fx(3, 5)        # φ2 = x² - 3/5
+    assert wip(x3, xx)/wip(xx, xx) == Fx(5, 7)           # φ3 = x³ - 5/7 x
+    from math import sqrt as _sq
+    _r = _sq(5/7)
+    assert abs(_r*_r - 5/7) < 1e-15                      # φ3 的根 ±√(5/7),0
+
     # 7) Gauss 型求积的权之和 = ∫ρ dx（ρ=1 时为 2）
     for ws in (weights, w3):
         assert isclose(sum(ws), 2.0, rel_tol=1e-12)
