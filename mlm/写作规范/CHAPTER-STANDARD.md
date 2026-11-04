@@ -91,7 +91,7 @@
 - 只引能核对的原文。**禁止编造页码。**
 - 核不到原文的，改成转述，不加引号、不标页码。
 - 逐字引用；可用「……」省略中间，不许改词。
-- 写完跑 `python3 .work/mlm-corpus/verify_cites2.py`，未命中的逐条解释（篇名式引用 / OCR 偏移 / 语料未收）。
+- 写完跑 `python3 .work/mlm-corpus/verify_cites.py`（v3，2026-11-04 起；旧版 verify_cites2.py 仍在但已废弃），未命中的逐条解释（篇名式引用 / OCR 偏移 / 语料未收）。
 
 ## 5. 禁止事项
 
@@ -136,7 +136,7 @@
 ```bash
 python3 mlm/tools/check_depth.py --book <本章路径> --verbose
 cd /Users/juanwang/Desktop/tutorials && PATH="$PWD/.work/formal-venv/bin:/usr/bin:$HOME/.cargo/bin" mdbook build mlm
-cd /Users/juanwang/Desktop/tutorials && python3 .work/mlm-corpus/verify_cites2.py | tail -8
+cd /Users/juanwang/Desktop/tutorials && python3 .work/mlm-corpus/verify_cites.py | tail -8
 ```
 
 `mdbook build` 必须输出 `HTML book written`，不能有 mathbook 报错。
