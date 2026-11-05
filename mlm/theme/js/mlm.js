@@ -1,39 +1,16 @@
 /**
- * mlm.js — 《马克思主义原理》页面增强脚本
+ * mlm.js — 《马克思主义原理》本书脚本
  *
- * 功能：
- * 1. 公式横向滚动提示（宽公式左右渐隐提示）
- * 2. 回到顶部按钮（滚动超过一屏后显示）
- * 3. 页内目录生成（H2 小节数 ≥ 3 时自动生成）
- * 4. 表格响应式增强（移动端自动横向滚动）
+ * 共用附加操作（进度条 / 页内目录 / 解答工具条 / 返回教程库 / 宽公式提示）
+ * 由 theme/js/page-extras.js 提供，这里只 boot 配置。
+ * 本书专属：回到顶部、表格增强、引用增强、各类教学演示。
  */
 
 (function() {
   'use strict';
 
   // ========================================================================
-  // §1 公式横向滚动提示
-  // ========================================================================
-  function enhanceFormulaScroll() {
-    const displays = document.querySelectorAll('.katex-display');
-    displays.forEach(el => {
-      const checkScroll = () => {
-        const canScroll = el.scrollWidth > el.clientWidth;
-        const isAtStart = el.scrollLeft <= 2;
-        const isAtEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
-
-        el.classList.toggle('can-scroll', canScroll && isAtEnd);
-        el.classList.toggle('scrolled-start', canScroll && !isAtStart);
-      };
-
-      checkScroll();
-      el.addEventListener('scroll', checkScroll, { passive: true });
-      window.addEventListener('resize', checkScroll, { passive: true });
-    });
-  }
-
-  // ========================================================================
-  // §2 回到顶部按钮
+  // §1 回到顶部按钮
   // ========================================================================
   function setupBackToTop() {
     const btn = document.createElement('button');
@@ -62,35 +39,7 @@
   }
 
   // ========================================================================
-  // §3 页内目录生成
-  // ========================================================================
-  function generatePageTOC() {
-    const content = document.querySelector('.content');
-    if (!content) return;
-
-    const headings = Array.from(content.querySelectorAll('h2'));
-    // 只在 H2 数量 ≥ 3 时生成目录
-    if (headings.length < 3) return;
-
-    const firstH2 = headings[0];
-    const toc = document.createElement('nav');
-    toc.className = 'page-toc';
-    toc.setAttribute('aria-label', '页内目录');
-
-    headings.forEach(h => {
-      const link = document.createElement('a');
-      link.href = '#' + (h.id || '');
-      link.textContent = h.textContent.replace(/^[\d\.\s]+/, ''); // 移除前导编号
-      link.className = 'page-toc-link';
-      toc.appendChild(link);
-    });
-
-    // 插入到第一个 H2 之前
-    firstH2.parentNode.insertBefore(toc, firstH2);
-  }
-
-  // ========================================================================
-  // §4 表格响应式增强
+  // §3 表格响应式增强
   // ========================================================================
   function enhanceTables() {
     const tables = document.querySelectorAll('.content table');
@@ -568,7 +517,21 @@
     });
   }
 
-  function init() {
+  function initBookExtras() {
+    if (window.TUTORIALS_EXTRAS && typeof window.TUTORIALS_EXTRAS.boot === 'function') {
+      window.TUTORIALS_EXTRAS.boot({
+        slug: 'mlm',
+        pageTocLevels: ['h2'],
+        toolbarPlacement: 'top',
+        formulaHint: true
+      });
+    } else if (document.documentElement && !document.documentElement.classList.contains('tutorials-ready')) {
+      // 兜底：extras 未加载时仍摘掉冷启动守卫，避免整页过渡被永久关掉
+      document.documentElement.classList.add('tutorials-ready');
+    }
+  }
+
+  function initDemosAndChrome() {
     setupProductivityDemo();
     setupOutsourceDemo();
     setupInvestBalanceDemo();
@@ -577,23 +540,24 @@
     setupCompositionDemo();
     setupFlowDemo();
     setupWageDemo();
-    enhanceFormulaScroll();
     setupBackToTop();
-    generatePageTOC();
     enhanceTables();
     enhanceCitations();
   }
 
-  // DOM 就绪后执行
+  function init() {
+    initBookExtras();
+    initDemosAndChrome();
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  // 监听页面切换（mdBook 的 SPA 导航）
   window.addEventListener('hashchange', () => {
-    setTimeout(init, 100);
+    setTimeout(initDemosAndChrome, 100);
   });
 
 })();

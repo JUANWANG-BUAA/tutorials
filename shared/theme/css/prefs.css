@@ -366,19 +366,37 @@ html[data-bg="laid"]{
     var(--page);
   --bg-size:auto,auto,auto;
 }
-html[data-bg="paper"]{
+/* 默认（无 data-bg）与显式「纸张纤维」同栈：prefs 默认档不写属性 */
+html[data-bg="paper"],
+html:not([data-bg]){
+  /* 纤维 + 极淡径向晕影：像装订册页受光，而不是平面纯色 */
   --bg-stack:
-    repeating-linear-gradient(115deg,var(--fiber) 0 1px,transparent 1px 5px),
-    repeating-linear-gradient(25deg,var(--fiber) 0 1px,transparent 1px 7px),
-    repeating-linear-gradient(to bottom,var(--fiber) 0 1px,transparent 1px 3px),
+    radial-gradient(120% 80% at 50% -10%,color-mix(in srgb,var(--paper) 70%,transparent),transparent 55%),
+    radial-gradient(90% 60% at 100% 100%,var(--paper-shade,color-mix(in srgb,var(--ink) 3%,transparent)),transparent 46%),
+    repeating-linear-gradient(118deg,var(--fiber-strong,var(--fiber)) 0 1px,transparent 1px 6px),
+    repeating-linear-gradient(28deg,var(--fiber) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(to bottom,var(--fiber) 0 1px,transparent 1px 4px),
+    linear-gradient(180deg,var(--paper) 0%,var(--page) 42%,var(--page) 100%);
+  --bg-size:auto,auto,auto,auto,auto,auto;
+}
+
+/* 「随主题」：更克制的纸感，仍避免纯色平板 */
+html[data-bg="theme"]{
+  --bg-stack:
+    radial-gradient(110% 70% at 12% -8%,var(--wash-accent),transparent 42%),
+    radial-gradient(90% 60% at 96% 108%,var(--wash-sage),transparent 48%),
+    repeating-linear-gradient(116deg,var(--fiber) 0 1px,transparent 1px 9px),
     var(--page);
   --bg-size:auto,auto,auto,auto;
 }
 
 html[data-bg] body,
-html[data-bg] .page-wrapper{
-  background:var(--bg-stack);
-  background-size:var(--bg-size);
+html[data-bg] .page-wrapper,
+html:not([data-bg]) body,
+html:not([data-bg]) .page-wrapper{
+  background:var(--bg-stack,var(--page));
+  background-size:var(--bg-size,auto);
+  background-attachment:scroll;
 }
 
 /* ======================================================================== *
@@ -515,10 +533,12 @@ html[data-bg] .page-wrapper{
     repeating-linear-gradient(to bottom,var(--grid-mid) 0 1px,transparent 1px 5px),
     repeating-linear-gradient(to right,var(--grid-line) 0 1px,transparent 1px 28px);
 }
-.prefs-paper[data-paper="paper"]{
+.prefs-paper[data-paper="paper"],
+.prefs-paper[data-paper="theme"]{
   background-image:
-    repeating-linear-gradient(115deg,var(--fiber) 0 1px,transparent 1px 4px),
-    repeating-linear-gradient(25deg,var(--fiber) 0 1px,transparent 1px 6px);
+    radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--paper) 55%,transparent),transparent 60%),
+    repeating-linear-gradient(118deg,var(--fiber-strong,var(--fiber)) 0 1px,transparent 1px 5px),
+    repeating-linear-gradient(28deg,var(--fiber) 0 1px,transparent 1px 7px);
 }
 @media(max-width:420px){
   .prefs-row[data-pref="bg"] .prefs-opts{grid-template-columns:repeat(3,minmax(0,1fr))}

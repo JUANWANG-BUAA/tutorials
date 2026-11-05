@@ -72,11 +72,12 @@ html.light body,html.rust body,html.navy body,html.coal body,html.ayu body{
   background:var(--page);
 }
 .page{
+  /* 底纹交给 prefs 的纸张栈；这里只保留极淡色晕，避免盖住纤维 */
   background:
-    radial-gradient(1100px 520px at 76% -8%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 62%),
-    radial-gradient(900px 460px at 12% -12%,color-mix(in srgb,var(--atlas-cyan) 5%,transparent),transparent 58%),
-    var(--page);
-  background-attachment:fixed,fixed,scroll;
+    radial-gradient(1100px 520px at 76% -8%,color-mix(in srgb,var(--accent) 5%,transparent),transparent 62%),
+    radial-gradient(900px 460px at 12% -12%,color-mix(in srgb,var(--atlas-cyan) 3.5%,transparent),transparent 58%),
+    transparent;
+  background-attachment:scroll;
 }
 #mdbook-page-wrapper{isolation:isolate}
 
@@ -1004,8 +1005,10 @@ html[data-book="deeplearning"]{--hero-mark:url("data:image/svg+xml,%3Csvg xmlns=
  * ======================================================================== */
 .page{background:transparent}
 #mdbook-menu-bar{
-  background:var(--page);border-bottom:1px solid var(--line);box-shadow:none;
-  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:color-mix(in srgb,var(--paper) 92%,transparent);
+  border-bottom:1px solid var(--line);box-shadow:none;
+  -webkit-backdrop-filter:blur(10px) saturate(1.1);
+  backdrop-filter:blur(10px) saturate(1.1);
 }
 #mdbook-menu-bar-hover-placeholder{pointer-events:none}
 #mdbook-menu-bar .menu-title{font-family:var(--sans);font-weight:600;letter-spacing:.01em}

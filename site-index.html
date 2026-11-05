@@ -16,41 +16,61 @@ try {
 <style>
   :root{
     color-scheme:light;
-    --paper:#f3f2ed;
-    --paper-2:#eceae3;
-    --ink:#111418;
+    /* 与教程正文 Light/Rust 纸感对齐：冷灰白纸 + 档案红强调 */
+    --paper:#f4f3ee;
+    --paper-2:#eceae4;
+    --ink:#161418;
     --ink-2:#4d535a;
     --muted:#737980;
-    --line:#d3d1c9;
-    --line-2:#b9b7ae;
-    --accent:#c2482f;
-    --accent-ink:#a63a25;
+    --line:#d5d2c9;
+    --line-2:#bbb8ae;
+    --accent:#b54330;
+    --accent-ink:#953626;
+    --fiber:color-mix(in srgb,var(--ink) 3.6%,transparent);
+    --fiber-strong:color-mix(in srgb,var(--ink) 5.2%,transparent);
     --serif:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
-    --sans:-apple-system,BlinkMacSystemFont,"Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+    --sans:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     --mono:"SFMono-Regular","Roboto Mono",Consolas,"Liberation Mono",monospace;
     --max:1180px;
   }
   html[data-theme="dark"]{
     color-scheme:dark;
-    --paper:#101214;
-    --paper-2:#15181b;
-    --ink:#efeee9;
-    --ink-2:#b4b7ba;
-    --muted:#858a90;
-    --line:#2b3035;
-    --line-2:#41474d;
+    --paper:#17191d;
+    --paper-2:#22252b;
+    --ink:#ecedee;
+    --ink-2:#b8bbbf;
+    --muted:#8e9297;
+    --line:#3a3f46;
+    --line-2:#50565e;
     --accent:#e0b25b;
     --accent-ink:#f0c878;
+    --fiber:color-mix(in srgb,var(--ink) 4%,transparent);
+    --fiber-strong:color-mix(in srgb,var(--ink) 6%,transparent);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:var(--paper);color:var(--ink);font:14px/1.7 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    color:var(--ink);font:14px/1.7 var(--sans);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    background:
+      radial-gradient(120% 70% at 50% -8%,color-mix(in srgb,var(--paper-2) 80%,transparent),transparent 52%),
+      radial-gradient(80% 50% at 100% 100%,color-mix(in srgb,var(--ink) 3%,transparent),transparent 48%),
+      repeating-linear-gradient(118deg,var(--fiber-strong) 0 1px,transparent 1px 7px),
+      repeating-linear-gradient(28deg,var(--fiber) 0 1px,transparent 1px 9px),
+      linear-gradient(180deg,var(--paper-2),var(--paper) 40%,var(--paper));
+  }
   a{color:inherit}
   ::selection{background:color-mix(in srgb,var(--accent) 25%,transparent)}
   .wrap{width:min(var(--max),calc(100% - 64px));margin:0 auto}
   .mono{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
 
-  .topbar{border-bottom:1px solid var(--line)}
+  .topbar{
+    border-bottom:1px solid var(--line);
+    background:color-mix(in srgb,var(--paper) 88%,transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(1.1);
+    backdrop-filter:blur(12px) saturate(1.1);
+    position:sticky;top:0;z-index:40;
+  }
   .topbar-inner{display:flex;align-items:center;height:62px;gap:30px}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
   .brand-mark{width:11px;height:11px;background:var(--accent);display:inline-block}
@@ -149,7 +169,17 @@ try {
   .paths-title{margin:0 0 10px;font:700 clamp(24px,2.6vw,30px)/1.3 var(--serif);letter-spacing:-.01em}
   .paths-intro{max-width:640px;margin:0 0 26px;color:var(--ink-2);font-size:13px;line-height:1.85}
   .path-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-  .path-card{display:flex;flex-direction:column;gap:12px;padding:20px 20px 18px;border:1px solid var(--line-2);background:var(--paper-2);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+  .path-card{
+    display:flex;flex-direction:column;gap:12px;padding:20px 20px 18px;
+    border:1px solid var(--line-2);
+    background:
+      linear-gradient(165deg,color-mix(in srgb,var(--paper) 70%,#fff),var(--paper-2));
+    box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 35%,transparent);
+    clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);
+  }
+  html[data-theme="dark"] .path-card{
+    box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 6%,transparent);
+  }
   .path-tag{color:var(--accent-ink);font:700 9.5px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase}
   .path-card h3{font:700 19px/1.35 var(--serif);letter-spacing:-.005em}
   .path-card p{color:var(--ink-2);font-size:12.5px;line-height:1.8}

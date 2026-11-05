@@ -96,6 +96,12 @@
       nav.appendChild(link);
     });
 
+    // 有章首提要时，目录放在提要之后，避免「标题 → 长目录 → 本章回答」的倒置感
+    var chapterIndex = main.querySelector(":scope > .chapter-index");
+    if (chapterIndex) {
+      chapterIndex.insertAdjacentElement("afterend", nav);
+      return;
+    }
     var first = main.firstElementChild;
     if (first && first.tagName === "H1") first.insertAdjacentElement("afterend", nav);
     else main.insertBefore(nav, first);
@@ -162,8 +168,20 @@
   function portalUrl(slug) {
     var segments = location.pathname.split("/").filter(Boolean);
     var index = segments.lastIndexOf(slug);
-    if (index < 0) return null;
-    return "/" + segments.slice(0, index).join("/") + (index > 0 ? "/" : "");
+    if (index >= 0) {
+      return "/" + segments.slice(0, index).join("/") + (index > 0 ? "/" : "");
+    }
+    // 兜底：mdBook 注入的 path_to_root 指向本书根；再上一级通常是教程库首页
+    // （例如 /tutorials/mlm/part1/ → ../.. → /tutorials/）。单独 `mdbook serve` 本书
+    // 且路径里没有 slug 时仍可能 404，此时不插按钮。
+    try {
+      if (typeof path_to_root === "string") {
+        var bookRoot = new URL(path_to_root || "./", location.href);
+        var portal = new URL("../", bookRoot);
+        if (portal.pathname !== bookRoot.pathname) return portal.pathname;
+      }
+    } catch (error) { /* 忽略 */ }
+    return null;
   }
 
   function buildPortalHome(slug) {

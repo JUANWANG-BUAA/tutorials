@@ -1,7 +1,39 @@
 /* 《马克思主义原理》本书样式
  * 只放本书特有的东西：三类新语义盒子的配色、章首页的论点提要、
- * 引文块的版式、年表的窄栏排版。共用骨架在 shared/theme/css/base.css。
+ * 引文块的版式、年表的窄栏排版；以及长文中文阅读的版心 / 字体节奏。
+ * 共用骨架在 shared/theme/css/base.css（其后加载本文件，再经 atlas / prefs）。
  */
+
+/* ── 阅读版心与字体（长篇中文） ─────────────────────────────────
+ * 问题：默认 780px 版心 + 拉丁优先无衬线，在暗色主题下显得行过长、字偏「飘」。
+ * 策略：略收版心、中文屏幕字体优先、略放宽行距；读者若在菜单里选了 width/density，
+ * prefs 的 data-* 规则特异性更高，仍可覆盖。
+ */
+/* 菜单默认写 data-width/density="standard"；prefs 对 standard 不另设令牌，
+   故本书在「标准」档给出更适合长中文的默认值。窄/宽、紧凑/宽松仍由 prefs 接管。 */
+html:not([data-width]),
+html[data-width="standard"]{
+  --content-max-width:700px;
+}
+html:not([data-density]),
+html[data-density="standard"]{
+  --reading-lh:1.84;
+  --reading-para-gap:15px;
+  --reading-h2-gap:58px;
+  --reading-h3-gap:40px;
+  --reading-box-gap:22px;
+  --reading-quote-gap:18px;
+  --reading-quote-pad:14px 20px;
+}
+:root{
+  /* 中文屏显优先；Avenir 只作拉丁回退，避免 CJK 被拉丁字体「带瘦」 */
+  --sans:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans CJK SC",
+    "Microsoft YaHei","Avenir Next","Segoe UI",sans-serif;
+  --display:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",
+    "PingFang SC",Georgia,serif;
+  --serif-display:var(--display);
+  --serif-text:var(--display);
+}
 
 /* ── 三类新盒子 ───────────────────────────────────────────── */
 .box.arg{
@@ -43,6 +75,7 @@ html.coal .box.debate .box-tag,html.ayu .box.debate .box-tag,html.navy .box.deba
 .chapter-index > div{
   padding:13px 17px;
   border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;
   background:var(--paper-soft);
 }
 .chapter-index .ci-label{
@@ -50,14 +83,20 @@ html.coal .box.debate .box-tag,html.ayu .box.debate .box-tag,html.navy .box.deba
   font:700 var(--fs-2xs)/1.4 var(--mono);
   letter-spacing:.14em;color:var(--muted);
 }
-.chapter-index p{margin:0;font-size:15px;line-height:1.75;color:var(--ink-2)}
+.chapter-index p{
+  margin:0;font-size:15px;line-height:1.78;
+  color:var(--ink);font-family:var(--sans);
+}
 
 /* ── 经典引文 ─────────────────────────────────────────────── */
 blockquote.cite{
-  margin:var(--space-4) 0;padding:12px 18px 12px 20px;
+  margin:var(--reading-quote-gap,var(--space-4)) 0;
+  padding:var(--reading-quote-pad,12px 18px 12px 20px);
   border-left:3px solid var(--line-strong);
   background:var(--paper-soft);
-  font-size:15px;line-height:1.8;color:var(--ink-2);
+  font-family:var(--display);
+  font-size:15.5px;line-height:1.88;color:var(--ink);
+  font-weight:500;
 }
 blockquote.cite p{margin:0 0 .6em}
 blockquote.cite p:last-child{margin-bottom:0}
@@ -100,13 +139,31 @@ blockquote.cite .src{
 /* data 数据表：支持正文的数据整理，用青色系，与 arg/src/debate 区分开。 */
 .box.data{border-left-color:#3a7a7a;background:color-mix(in srgb,var(--surface-card) 96%,#3a7a7a)}
 .box.data .box-tag{color:#2b5c5c}
-/* viz 可视化：内联 SVG，白底保证图在深色主题下仍可读。 */
+/* viz 可视化：内联 SVG；浅色卡片底，避免刺眼纯白块。 */
 .box.viz{border-left-color:#4a7c9e;background:color-mix(in srgb,var(--surface-card) 96%,#4a7c9e)}
 .box.viz .box-tag{color:#355a73}
+.box.viz figure{margin:8px 0 4px}
+.box.viz figcaption{
+  margin:0 2px 4px;font-size:13px;line-height:1.55;color:var(--muted);
+}
 .box.viz svg{
-  display:block;width:100%;height:auto;margin:10px 0 8px;
-  background:#fff;border-radius:6px;padding:8px;
-  border:1px solid color-mix(in srgb,var(--ink-3) 25%,transparent);
+  display:block;width:100%;max-width:560px;height:auto;margin:8px auto;
+  background:color-mix(in srgb,var(--paper) 92%,#fff);
+  border-radius:8px;padding:10px 12px;
+  border:1px solid color-mix(in srgb,var(--line-strong) 55%,transparent);
+  box-shadow:0 1px 0 color-mix(in srgb,var(--ink) 4%,transparent);
+}
+.box.viz input[type="range"]{accent-color:var(--accent)}
+.box.viz button{
+  margin:2px 6px 2px 0;padding:6px 10px;border-radius:6px;
+  border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);
+  font:500 13px/1.3 var(--sans);cursor:pointer;
+}
+.box.viz button:hover{border-color:var(--ink);color:var(--ink)}
+.box.viz [aria-live]{
+  margin:8px 0;padding:10px 12px;border-radius:6px;
+  background:var(--paper-soft);border:1px solid var(--line);
+  font-size:14px;line-height:1.65;color:var(--ink-2);
 }
 /* sim 仿真：代码块等宽字体，横向可滚。 */
 .box.sim{border-left-color:#5d7a3a;background:color-mix(in srgb,var(--surface-card) 96%,#5d7a3a)}
@@ -127,11 +184,12 @@ html.coal .box.sim,html.ayu .box.sim,html.navy .box.sim{
 html.coal .box.sim .box-tag,html.ayu .box.sim .box-tag,html.navy .box.sim .box-tag{color:#b8d190}
 html.coal .box.lens .box-tag,html.ayu .box.lens .box-tag,html.navy .box.lens .box-tag{color:#aaa}
 
-/* ── mdBook 框架适配 ─────────────────────────────────────────── */
+/* ── mdBook 框架适配 + 正文排版 ──────────────────────────────── */
 body{
   background:var(--page);
   font-family:var(--sans);
   -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;
 }
 
@@ -145,14 +203,109 @@ body{
   #mdbook-menu-bar .portal-home-label{display:none}
 }
 
-.content p{margin:var(--space-3) 0;text-align:left;font-family:var(--sans)}
+/* 正文：用阅读令牌，别再写死 margin 顶掉 prefs 的 density */
+.content{
+  font-family:var(--sans);
+  font-size:var(--fs-body);
+  line-height:var(--reading-lh);
+  color:var(--ink);
+  letter-spacing:.01em;
+  font-optical-sizing:auto;
+}
+.content p,
+.content li{
+  margin:var(--reading-para-gap) 0;
+  font-family:var(--sans);
+  font-size:1em;
+  line-height:var(--reading-lh);
+  color:var(--ink);
+  text-align:left;
+  text-wrap:pretty;
+}
+.content li{margin:calc(var(--reading-para-gap) * .35) 0}
+.content strong,.content b{font-weight:650;color:var(--ink)}
+
+/* 标题：宋体骨架、字距收紧，避免暗色下「发虚」 */
+.content h1,
+.content h2,
+.content h3,
+.content h4{
+  font-family:var(--display);
+  color:var(--ink);
+  letter-spacing:0;
+  text-wrap:balance;
+  -webkit-font-smoothing:antialiased;
+}
+.content main > h1{
+  font-size:clamp(28px,3vw,36px);
+  line-height:1.32;
+  font-weight:700;
+  max-width:36em;
+}
+.content h2{
+  font-size:clamp(21px,2.1vw,25px);
+  line-height:1.42;
+  font-weight:700;
+  max-width:34em;
+}
+.content h3{
+  font-size:clamp(17.5px,1.7vw,19.5px);
+  line-height:1.48;
+  font-weight:650;
+  max-width:36em;
+}
+.content h4{
+  font-size:15.5px;
+  line-height:1.5;
+  font-weight:600;
+}
+
+/* 盒内正文跟随主栏节奏，标签保持等宽小字 */
+.content .box p,
+.content .box li{
+  line-height:calc(var(--reading-lh) - .04);
+  color:var(--ink);
+}
+.content .box .box-tag{letter-spacing:.08em}
 
 /* ── 页内目录与导航增强 ──────────────────────────────────────── */
 .page-toc{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;
-  margin:26px 0 30px;padding:13px 17px 11px;
-  border:1px solid var(--line);background:var(--paper-soft);
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;
+  margin:20px 0 28px;padding:16px 18px 16px;
+  border:1px solid var(--line);border-radius:8px;background:var(--paper-soft);
 }
+.page-toc .page-toc-title{
+  grid-column:1/-1;margin:0 0 6px;padding:0 0 8px;
+  border-bottom:1px solid var(--line);
+  font:700 var(--fs-2xs)/1.4 var(--mono);letter-spacing:.14em;color:var(--muted);
+}
+/* 覆盖 base / rhine 的 nowrap+ellipsis：长中文标题截断会像渲染坏了 */
+.content .page-toc a,
+html[data-skin="rhine"] .content .page-toc a{
+  min-width:0;max-width:100%;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere;
+  padding:4px 0;
+  font:400 13.5px/1.55 var(--sans);
+  color:var(--ink);
+  letter-spacing:.005em;
+}
+.content .page-toc a:hover,
+html[data-skin="rhine"] .content .page-toc a:hover{
+  color:var(--accent-text);
+}
+.sol-toolbar{margin:6px 0 24px}
+
+.vol-cover .vol-nav{margin:18px 0 0}
+.vol-cover .vol-nav a{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;
+  border-bottom:1px solid color-mix(in srgb,var(--line-strong) 70%,transparent);
+  padding-bottom:2px;
+}
+.vol-cover .vol-nav a:hover{color:var(--accent-text);border-bottom-color:var(--accent-text)}
 
 html{scroll-behavior:smooth}
 

@@ -49,71 +49,71 @@
  * ------------------------------------------------------------------------ */
 :root,
 html.rust{
-  /* Rust · 温和暖纸（与侧栏、弹层同一色温） */
-  --page:#fbf8f2;--sidebar:#f5f1e9;--paper:#fffdf9;--paper-soft:#f6f2eb;
-  --ink:#201b17;--ink-2:#5d554d;--muted:#756d64;
-  --line:#e4dbcf;--line-strong:#c9bcad;--control-line:#998b7b;
-  --accent:#b96543;--accent-strong:#9f5033;--accent-text:#9f5033;
-  --accent-soft:rgba(185,101,67,.10);--sage:#6f8f82;
-  --shadow-ink:rgba(50,40,29,.86);
-  --surface-card:rgba(254,250,242,.92);--surface-soft:rgba(244,238,228,.68);
-  --mark-bg:#f0c9a8;
+  /* Rust · 暖调印刷纸（略压奶油感，强调色偏赭石而非陶土） */
+  --page:#f7f3eb;--sidebar:#efe9df;--paper:#fbf7f0;--paper-soft:#f1ebe2;
+  --ink:#1f1a16;--ink-2:#5a534b;--muted:#746c63;
+  --line:#e0d6c8;--line-strong:#c4b6a5;--control-line:#958675;
+  --accent:#a85a3a;--accent-strong:#8f472c;--accent-text:#8f472c;
+  --accent-soft:rgba(168,90,58,.10);--sage:#5f7f72;
+  --shadow-ink:rgba(42,34,24,.84);
+  --surface-card:rgba(251,247,240,.94);--surface-soft:rgba(241,235,226,.72);
+  --mark-bg:#ebc4a4;
   --link-color:var(--accent-strong);
   --scheme:light;
 }
 
 html.light{
-  /* Light · 中性白纸（不带暖调，蓝灰强调） */
-  --page:#ffffff;--sidebar:#f6f7f8;--paper:#ffffff;--paper-soft:#f5f7f9;
-  --ink:#171b20;--ink-2:#46505a;--muted:#68737f;
-  --line:#e3e7eb;--line-strong:#cbd3dc;--control-line:#9aa5b0;
-  --accent:#2f74b8;--accent-strong:#205f9e;--accent-text:#205f9e;
-  --accent-soft:rgba(47,116,184,.10);--sage:#4f7a6a;
-  --shadow-ink:rgba(15,17,20,.86);
-  --surface-card:rgba(255,255,255,.94);--surface-soft:rgba(243,244,246,.72);
-  --mark-bg:#d8e8f7;
+  /* Light · 冷灰白纸（带一点纸浆灰，避免纯白刺眼） */
+  --page:#f4f5f7;--sidebar:#eef0f3;--paper:#fafbfc;--paper-soft:#eef1f4;
+  --ink:#161a1f;--ink-2:#44505a;--muted:#66727e;
+  --line:#dde2e8;--line-strong:#c4ccd6;--control-line:#93a0ac;
+  --accent:#2c6faf;--accent-strong:#1e5a96;--accent-text:#1e5a96;
+  --accent-soft:rgba(44,111,175,.10);--sage:#4a7464;
+  --shadow-ink:rgba(14,16,20,.82);
+  --surface-card:rgba(250,251,252,.96);--surface-soft:rgba(238,241,244,.74);
+  --mark-bg:#d2e4f5;
   --link-color:var(--accent-strong);
   --scheme:light;
 }
 
 html.coal{
-  /* Coal · 中性深灰（冷灰蓝强调） */
-  --page:#15171a;--sidebar:#1a1c20;--paper:#1f2125;--paper-soft:#26292e;
-  --ink:#e6e7e8;--ink-2:#b7b9bc;--muted:#8b8e92;
-  --line:#383c41;--line-strong:#4c5157;--control-line:#666c73;
-  --accent:#7ba7d4;--accent-strong:#9dc0e4;--accent-text:#9dc0e4;
-  --accent-soft:rgba(123,167,212,.12);--sage:#8aa79b;
-  --shadow-ink:rgba(0,0,0,.90);
-  --surface-card:rgba(31,33,37,.94);--surface-soft:rgba(38,41,46,.70);
-  --mark-bg:#3c4653;
+  /* Coal · 夜读纸面（抬离纯黑，带极淡冷灰纸感） */
+  --page:#17191d;--sidebar:#1c1f24;--paper:#22252b;--paper-soft:#2a2e35;
+  --ink:#ecedee;--ink-2:#b8bbbf;--muted:#8e9297;
+  --line:#3a3f46;--line-strong:#50565e;--control-line:#6a7078;
+  --accent:#7eabd6;--accent-strong:#a0c4e6;--accent-text:#a0c4e6;
+  --accent-soft:rgba(126,171,214,.13);--sage:#8eab9f;
+  --shadow-ink:rgba(0,0,0,.88);
+  --surface-card:rgba(34,37,43,.96);--surface-soft:rgba(42,46,53,.74);
+  --mark-bg:#3f4956;
   --link-color:var(--accent);
   --scheme:dark;
 }
 
 html.navy{
-  /* Navy · 蓝黑（青蓝强调） */
-  --page:#101522;--sidebar:#141a2a;--paper:#1a2032;--paper-soft:#222a3d;
-  --ink:#e2e7f2;--ink-2:#b2bbd0;--muted:#8892a8;
-  --line:#2f3a52;--line-strong:#43506e;--control-line:#5d6b8c;
-  --accent:#5fa8d8;--accent-strong:#86c2e8;--accent-text:#86c2e8;
-  --accent-soft:rgba(95,168,216,.12);--sage:#7fb3a6;
-  --shadow-ink:rgba(0,0,0,.92);
-  --surface-card:rgba(26,32,50,.94);--surface-soft:rgba(34,42,61,.70);
-  --mark-bg:#33445c;
+  /* Navy · 蓝墨纸（深蓝灰底，像夜间阅读灯下的铜版纸） */
+  --page:#121826;--sidebar:#161d2e;--paper:#1c2436;--paper-soft:#252e43;
+  --ink:#e6ebf5;--ink-2:#b4bdcf;--muted:#8a94a9;
+  --line:#313b52;--line-strong:#455272;--control-line:#5f6d8e;
+  --accent:#62abd9;--accent-strong:#8ac5e9;--accent-text:#8ac5e9;
+  --accent-soft:rgba(98,171,217,.13);--sage:#82b6a9;
+  --shadow-ink:rgba(0,0,0,.90);
+  --surface-card:rgba(28,36,54,.96);--surface-soft:rgba(37,46,67,.74);
+  --mark-bg:#364760;
   --link-color:var(--accent);
   --scheme:dark;
 }
 
 html.ayu{
-  /* Ayu · 琥珀深色（暖色系独立选项；默认深色为 Coal） */
-  --page:#0f1419;--sidebar:#141a20;--paper:#1a1f26;--paper-soft:#242a32;
-  --ink:#e8e8e8;--ink-2:#b8b8b8;--muted:#8f9398;
-  --line:#3a414a;--line-strong:#4e5661;--control-line:#687382;
-  --accent:#d6a15c;--accent-strong:#edb96f;--accent-text:#e1ad66;
-  --accent-soft:rgba(214,161,92,.12);--sage:#86a89b;
-  --shadow-ink:rgba(0,0,0,.90);
-  --surface-card:rgba(26,31,38,.94);--surface-soft:rgba(36,42,50,.70);
-  --mark-bg:#5a4a2e;
+  /* Ayu · 暖夜纸（深褐灰底 + 琥珀强调，像旧书页的夜间模式） */
+  --page:#12171c;--sidebar:#171d23;--paper:#1d232b;--paper-soft:#272e37;
+  --ink:#ebeaea;--ink-2:#bcbcbc;--muted:#92969b;
+  --line:#3d444e;--line-strong:#515965;--control-line:#6b7582;
+  --accent:#d8a45f;--accent-strong:#eebb74;--accent-text:#e4b06a;
+  --accent-soft:rgba(216,164,95,.13);--sage:#8aab9e;
+  --shadow-ink:rgba(0,0,0,.88);
+  --surface-card:rgba(29,35,43,.96);--surface-soft:rgba(39,46,55,.74);
+  --mark-bg:#5e4e32;
   --link-color:var(--accent);
   --scheme:dark;
 }
@@ -219,7 +219,10 @@ html.ayu{
   --grid-mid:color-mix(in srgb,var(--ink) 4%,transparent);
   --grid-strong:color-mix(in srgb,var(--ink) 8%,transparent);
   --dot:color-mix(in srgb,var(--ink) 15%,transparent);
-  --fiber:color-mix(in srgb,var(--ink) 4.5%,transparent);
+  /* 纸纤维两档：细纹 + 粗纹交叉，避免单层斜线像屏幕噪声 */
+  --fiber:color-mix(in srgb,var(--ink) 3.8%,transparent);
+  --fiber-strong:color-mix(in srgb,var(--ink) 5.6%,transparent);
+  --paper-shade:color-mix(in srgb,var(--ink) 3.2%,transparent);
   --selection-bg:color-mix(in srgb,var(--accent) 22%,transparent);
 }
 
@@ -246,11 +249,13 @@ html.ayu{
   --sidebar-target-width:286px;
   --menu-bar-height:58px;
 
-  /* 默认采用清晰的无衬线屏幕阅读；衬线保留为可选正文风格。 */
+  /* 默认采用清晰的无衬线屏幕阅读；衬线保留为可选正文风格。
+     中文屏显字体优先，避免拉丁字体抢先导致 CJK 回落发虚。 */
   --serif-display:var(--sans);
   --serif-text:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","STSong",Georgia,serif;
   --serif:var(--serif-text);
-  --sans:"Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans CJK SC",
+    "Microsoft YaHei","Avenir Next","Segoe UI",sans-serif;
   --mono:"SFMono-Regular","Roboto Mono",Consolas,"Liberation Mono",monospace;
 }
 
@@ -448,7 +453,15 @@ html:not(.tutorials-ready) *::after{
 .box{
   position:relative;margin:var(--space-5) 0;padding:18px 22px 14px;
   border:1px solid var(--line);border-left:3px solid var(--line-strong);
-  border-radius:7px;background:var(--paper);
+  border-radius:7px;
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--paper) 88%,#fff) 0%,var(--paper) 48%,var(--paper-soft) 100%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 22%,transparent),0 1px 0 var(--paper-shade);
+}
+html.coal .box,html.navy .box,html.ayu .box{
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--paper) 86%,#fff) 0%,var(--paper) 52%,var(--paper-soft) 100%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 5%,transparent),0 1px 0 color-mix(in srgb,#000 28%,transparent);
 }
 .box.def{border-left-color:var(--def-line);background:var(--def-bg)}
 .box.thm{border-left-color:var(--thm-line);background:var(--thm-bg)}
