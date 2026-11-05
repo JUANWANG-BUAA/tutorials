@@ -45,8 +45,8 @@ MD_H1 = re.compile(r"^#\s+\S")
 MD_HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
 ALLOWED_BOX = {"def", "thm", "ex", "sol", "note", "think", "intuition",
                "method", "errata", "proof", "preview",
-               "arg", "src", "debate"}
-PLACEHOLDER = re.compile(r"\b(TODO|FIXME)\b")
+               "arg", "src", "debate", "data", "viz", "sim", "lens"}
+PLACEHOLDER = re.compile(r"\b(TODO|FIXME)\b|(待写：|待写:|（导语：写手据)")
 EXCLUDE_H1 = ("SUMMARY.md",)
 
 
@@ -189,7 +189,7 @@ def main():
             flag(rel, message)
         for no, line in enumerate(lines, 1):
             if PLACEHOLDER.search(line):
-                flag(rel, f"L{no}: 占位符 {PLACEHOLDER.search(line).group(1)}")
+                flag(rel, f"L{no}: 占位符 {PLACEHOLDER.search(line).group(0)}")
 
     # SUMMARY entries exist and are non-empty.
     for rel in pages:

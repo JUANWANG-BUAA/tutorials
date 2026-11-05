@@ -62,7 +62,7 @@ SOURCES = {
         "columns": {"term": ["术语"], "en": ["英文"], "def": ["一句话"]},
     },
     "mlm": {
-        "page": "appendix/glossary.html",
+        "page": "appendix/A159.html",
         "columns": {"term": ["概念"], "def": ["定义"], "extra": ["常见误读"], "origin": ["首次定义"]},
     },
 }

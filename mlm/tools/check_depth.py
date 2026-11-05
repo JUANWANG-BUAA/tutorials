@@ -63,6 +63,7 @@ PART_GATE = {
     "part4": GATE_HISTORY,   # 工人运动实践史
     "part5": GATE_HISTORY,   # 中国革命与毛泽东的理论
     "part6": GATE_THEORY,    # 当代问题与方法训练
+    "part7": GATE_FRONT,     # 文本细读与方法（卷首/附录型，无独立篇幅下限）
 }
 
 
