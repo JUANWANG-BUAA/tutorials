@@ -3,15 +3,15 @@
 <h1>数值分析</h1>
 <div class="subtitle">误差与算法、线性方程组、特征值、非线性方程与插值；另附数值线性代数工具箱。</div>
 <div class="cover-chips">
-<span>逐讲实录 14 讲 · 正文 7 章 + 补充篇</span>
-<span>课堂精编 14 页（第 1–14 讲全程）</span>
+<span>逐讲实录 15 讲 · 正文 7 章 + 补充篇</span>
+<span>课堂精编 15 页（第 1–15 讲全程）</span>
 <span>186 道习题 · 答案与提示齐全</span>
 <span>复习材料与考场特训</span>
 </div>
 <details class="cover-details">
 <summary>查看教材范围与资料说明</summary>
 <div class="meta">
-依据 <b>颜庆津《数值分析》（第 4 版）</b>整理扩充。<b>以老师讲的课为主线</b>：「课堂主线」为 2026 秋《数值分析 I》逐讲实录（第 1–14 讲全程，含板书、老师强调考点与错词对照）；每讲条目下直接挂着对应的教材小节（与原书同号），教材围绕课堂展开；老师未讲的内容收在「教材补齐」组；「补充篇」为数值线性代数工具箱。例题与实验数值均经 Python 复算。
+依据 <b>颜庆津《数值分析》（第 4 版）</b>整理扩充。<b>以老师讲的课为主线</b>：「课堂主线」为 2026 秋《数值分析 I》逐讲实录（第 1–15 讲全程，含板书、老师强调考点与错词对照）；每讲条目下直接挂着对应的教材小节（与原书同号），教材围绕课堂展开；老师未讲的内容收在「教材补齐」组；「补充篇」为数值线性代数工具箱。例题与实验数值均经 Python 复算。
 </div>
 </details>
 
@@ -31,7 +31,7 @@
 <a class="bc-row" href="course/ch06/overview.md"><span class="bc-no">06</span><span class="bc-title">第六章 · 数值积分</span><span class="bc-count">8 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="course/ch07/overview.md"><span class="bc-no">07</span><span class="bc-title">第七章 · 常微分方程</span><span class="bc-count">4 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="supplement/overview.md"><span class="bc-no">补</span><span class="bc-title">补充篇 · 数值线性代数工具箱</span><span class="bc-count">8 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
-<a class="bc-row" href="lectures/overview.md"><span class="bc-no">课</span><span class="bc-title">课堂精编 · 2026 秋《数值分析 I》</span><span class="bc-count">14 讲</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="lectures/overview.md"><span class="bc-no">课</span><span class="bc-title">课堂精编 · 2026 秋《数值分析 I》</span><span class="bc-count">15 讲</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 </div>
 <p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。</p>
 </section>

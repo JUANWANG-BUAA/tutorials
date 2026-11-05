@@ -901,6 +901,52 @@ def check_legendre_chebyshev_x4():
     assert truncated == [F(-1, 8), F(0), F(1)], truncated
 
 
+def check_lecture15_ode():
+    """第 15 讲（11-04）：Euler 向前一阶收敛、Taylor 二阶二阶收敛、
+    数列例子的 2^n 分支放大、模型方程稳定性边界 τ=2/|λ|。"""
+    from math import exp
+
+    # 1. Euler 向前 on y'=y, y(0)=1, T=1: 整体误差 O(τ) —— 步长减半误差约减半
+    def euler1(tau):
+        y, n = 1.0, round(1.0/tau)
+        for _ in range(n):
+            y += tau*y
+        return abs(y - exp(1.0))
+    ratio1 = euler1(0.01)/euler1(0.005)
+    assert 1.9 < ratio1 < 2.1, ratio1  # 一阶
+
+    # 2. Taylor 二阶 on y'=y: y_{k+1}=y_k(1+τ+τ²/2) → 整体误差 O(τ²)
+    def taylor2(tau):
+        y, n = 1.0, round(1.0/tau)
+        for _ in range(n):
+            y += tau*y + (tau*tau/2)*y
+        return abs(y - exp(1.0))
+    ratio2 = taylor2(0.02)/taylor2(0.01)
+    assert 3.8 < ratio2 < 4.2, ratio2  # 二阶
+
+    # 3. 数列例子: y_{n+1}=(5/2)y_n−y_{n−1}, y_1=1/2, y_2=1/4 ⟹ y_n=(1/2)^n
+    seq = [0.5, 0.25]
+    for n in range(2, 6):
+        seq.append(2.5*seq[n-1] - seq[n-2])
+    for n, v in enumerate(seq, start=1):
+        assert abs(v - 0.5**n) < 1e-14, (n, v)  # 纯衰减分支
+    # 单点扰动 δ1=ε, δ2=0 ⟹ δ_n = (8ε/3)(1/2)^n − (ε/6)·2^n
+    eps = 1e-16
+    eps_act = (0.5 + eps) - 0.5      # 浮点里实际生效的扰动
+    a, b = 0.5 + eps, 0.25           # ŷ_1, ŷ_2
+    for n in range(2, 20):
+        a, b = b, 2.5*b - a          # 循环结束后 b = ŷ_20
+    pred = (8*eps_act/3)*0.5**20 - (eps_act/6)*2**20
+    got = b - 0.5**20
+    assert abs(got - pred) < 1e-10, (got, pred)
+    assert abs(got) > 1e-11, got     # ≈1.9e-11：机器精度被放大 5 个量级
+
+    # 4. 稳定性边界 λ=-5: τ=0.39 衰减 / τ=0.4 临界(因子=-1) / τ=0.5 放大
+    for tau, lo, hi in ((0.39, 0.0, 1.0), (0.5, 1.0, 2.0)):
+        f = abs(1 + tau*(-5))
+        assert lo < f < hi, (tau, f)
+    assert abs(1 + 0.4*(-5)) == 1.0  # 临界：因子恰为 -1
+
 if __name__ == '__main__':
     checks = (check_decimal_elimination, check_pivoted_lu, check_interpolation,
               check_least_squares, check_best_square_approx,
@@ -909,8 +955,8 @@ if __name__ == '__main__':
               check_orthogonal_polynomials, check_double_simpson_weights, check_ode,
               check_post_hoc_error_estimate, check_eigen_basics,
               check_legendre_chebyshev_x4, check_lecture13_quadrature,
-              check_lecture14_gauss)
+              check_lecture14_gauss, check_lecture15_ode)
     for check in checks:
         check()
         print('PASS', check.__name__)
-    print('16 example groups passed; no external dependencies.')
+    print('17 example groups passed; no external dependencies.')
