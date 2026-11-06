@@ -108,6 +108,39 @@ $$\theta_{\mathrm{MLE}}=\arg\max_{\theta}\prod_{i=1}^{N}p(\boldsymbol y_i\mid\bo
 
 ## 1.4.4 softmax + 交叉熵的梯度：一个值得记住的结果
 
+两类问题叠在一起，所以公式看起来突然变复杂。先把它们拆开。
+
+**为什么要有 softmax。** 网络吐出来的是实数 logits，可正可负，加起来也不是 1。交叉熵要的是 $\log\hat p$，而 $\hat p$ 必须落在 $(0,1)$ 里并且各类加总为 1。softmax 做的只是这件事：先取指数（变成正数），再除以总和（变成分布）。
+
+**为什么梯度最后只剩 $\hat p-y$。** 交叉熵对 $\hat p_c$ 的导数含 $1/\hat p_c$，softmax 对 logit 的导数含 $\hat p$。两项相乘时 $\hat p$ 约掉。下面先用两个类别把约分做完，定理是同一段代数在 $C$ 类上的写法。
+
+::: ex 例 1.4.0 · 两个类别，看约分发生在哪 {#ex-1.4.0}
+logits $\boldsymbol z=(1,0)$，真值是第 1 类，$\boldsymbol y=(1,0)$。用 $\mathrm e^{1}=2.7183$、$\mathrm e^{0}=1$。求 $\hat{\boldsymbol p}$、损失，以及 $\partial\mathcal L/\partial z_1$、$\partial\mathcal L/\partial z_2$。不要先套 $\hat p-y$，把链式法则乘完再对照。
+
+::: proof 解
+分母 $S=2.7183+1=3.7183$。
+
+$$\hat p_1=\frac{2.7183}{3.7183}=0.7311,\qquad \hat p_2=\frac{1}{3.7183}=0.2689 .$$
+
+两者之和是 1。损失只用真类：$\mathcal L=-\log 0.7311=0.3132$（四位小数；手算时保留你自己的位数，再与 $\hat p-\boldsymbol y$ 对照到同一精度）。
+
+对 $z_1$ 用乘积法则。$\hat p_1=\mathrm e^{z_1}/S$，
+
+$$\frac{\partial\hat p_1}{\partial z_1}=\hat p_1(1-\hat p_1),\qquad
+\frac{\partial\hat p_2}{\partial z_1}=-\hat p_2\hat p_1 .$$
+
+$\mathcal L=-y_1\log\hat p_1-y_2\log\hat p_2$，这里 $y_2=0$，所以只有第一项，
+
+$$\frac{\partial\mathcal L}{\partial z_1}=-\frac{1}{\hat p_1}\cdot\hat p_1(1-\hat p_1)=-(1-\hat p_1)=\hat p_1-1=-0.2689 .$$
+
+对 $z_2$：真类概率对 $z_2$ 的导数是 $-\hat p_1\hat p_2$，于是
+
+$$\frac{\partial\mathcal L}{\partial z_2}=-\frac{1}{\hat p_1}\cdot(-\hat p_1\hat p_2)=\hat p_2=0.2689 .$$
+
+这和 $\hat{\boldsymbol p}-\boldsymbol y=(-0.2689,\ 0.2689)$ 相同。梯度下降会把 $z_1$ 抬高、把 $z_2$ 压低，幅度都是「不该有的那部分概率」。$\blacksquare$
+:::
+:::
+
 ::: thm 定理 1.4.2 · softmax 复合交叉熵的梯度 {#thm-1.4.2}
 设 logits $\boldsymbol z\in\mathbb R^{C}$，$\hat p_c=\dfrac{e^{z_c}}{\sum_{c'}e^{z_{c'}}}$，$\mathcal L=-\sum_c y_c\log \hat p_c$（$y$ 可为 one-hot 或软标签，只要 $\sum_c y_c=1$）。则
 

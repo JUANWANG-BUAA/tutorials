@@ -56,7 +56,7 @@ $$\mathbb E\Bigl[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)b(s_t)\Bigr]=\mat
 **错。** 四个越界象限里**只有两个**满足 $\partial f/\partial\rho=0$：$A\gt0$ 且 $\rho\gt1+\varepsilon$、以及 $A\lt0$ 且 $\rho\lt1-\varepsilon$——这两格是「**继续外推**」的方向被停手。另两格（$A\gt0$ 且 $\rho\lt1-\varepsilon$、$A\lt0$ 且 $\rho\gt1+\varepsilon$）的梯度**仍然活跃**，且方向恰好是把 $\rho$ **拉回区间**。此外还有两点容易漏：① 被裁剪的是**目标函数**，不是策略概率本身（概率仍可变，只是没有奖励激励），因此不会出现 $\log 0$；② 「目标对 $\rho$ 的偏导为 0」不等于「该样本对参数 $\theta$ 完全没有贡献」——$\rho$ 本身仍通过 $\pi_\theta$ 依赖 $\theta$，只是链式法则中这一环断开了，所以实现上要用 `clip_fraction` 监控越界比例。
 :::
 
-## B 组 · 推导与证明（6 题）
+## B 组 · 推导与证明（7 题）
 
 > 要求：关键步骤逐条写出，不许写「略」；先写形状或先算中间量。
 
@@ -159,6 +159,16 @@ $$(I-\gamma P^\pi)^{-1}=\frac{1}{0.1}\begin{pmatrix}0.1&0.9\\0&1\end{pmatrix}=\b
 **③ 策略改进。** 用 $Q^\pi(s,a)=r(s,a)+\gamma V^\pi(s')$：$Q^\pi(s_1,\mathrm L)=1+0.9\times18=17.2$、$Q^\pi(s_1,\mathrm R)=0+0.9\times20=18$；$Q^\pi(s_2,\mathrm L)=0+0.9\times18=16.2$、$Q^\pi(s_2,\mathrm R)=2+0.9\times20=20$。两处的贪心动作都是 $\mathrm R$，与 $\pi$ 相同 ⇒ **$\pi$ 已最优**，$V^\ast=(18,20)$；再代回最优方程自检：$V^\ast(s_1)=\max\{17.2,18\}=18$ ✓、$V^\ast(s_2)=\max\{16.2,20\}=20$ ✓。
 
 **④ $\gamma=0.5$。** $V(s_2)=2/(1-0.5)=4$、$V(s_1)=0+0.5\times4=2$，于是 $Q(s_1,\mathrm L)=1+0.5\times2=2.0$、$Q(s_1,\mathrm R)=0+0.5\times4=2.0$——**两个动作打平**（$\gamma=0.9$ 时 $\mathrm R$ 严格占优 0.8）。结论：$\gamma$ 不只是数值技巧，它**决定动作的排序**；调大 $\gamma$ 会让长期布局压过即时收益，但同时把信用分配的跨度拉长、训练更难。
+:::
+
+**B7.**（入门手算）logits $\boldsymbol z=(0,0)$，采到动作 2，回报 $G=2$。$\partial\log\pi_k/\partial z_j=\delta_{kj}-\pi_j$。(1) 写出这一次的策略梯度估计 $G\nabla_{\boldsymbol z}\log\pi_2$；(2) 用 $\eta=0.2$ 做梯度上升，写出新的 logits。不必再算新的 softmax，但要说明动作 2 的 logit 变大还是变小。依据：[例 5.4.0](sec54.md#ex-5.4.0)。
+
+::: sol 答案
+$\pi=(1/2,1/2)$。对动作 2，梯度是 $(-\pi_1,\ 1-\pi_2)=(-0.5,\ 0.5)$。乘上 $G=2$：$(-1,\ 1)$。
+
+$$\boldsymbol z\leftarrow (0,0)+0.2\cdot(-1,\ 1)=(-0.2,\ 0.2).$$
+
+动作 2 的 logit 从 0 升到 $0.2$，动作 1 的 logit 降到 $-0.2$。正回报抬高了刚被采样的那个动作。
 :::
 
 ## C 组 · 编程实现（6 题） {#sec-C}
