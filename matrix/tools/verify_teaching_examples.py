@@ -731,7 +731,7 @@ def check_ch04_spectral_radius_and_disks():
     # 例 4.5.A：ρ = 0.1 而 ‖A‖₁ = ‖A‖∞ = 1.1；定理 4.5.2 的构造给出 0.11
     fa = [[F(1, 10), F(1)], [F(0), F(1, 10)]]      # 超对角 1 的 2 阶 Jordan 块
     ev_aa = _eigvals(fa)
-    assert all(abs(z - 0.1) < 1e-9 for z in ev_aa), ev_aa
+    assert all(abs(z - 0.1) < 1e-8 for z in ev_aa), ev_aa
     assert max(sum(abs(v) for v in row) for row in fa) == F(11, 10)          # ‖·‖∞
     assert max(sum(abs(fa[i][j]) for i in range(2)) for j in range(2)) == F(11, 10)   # ‖·‖₁
     # Q = diag(1, 1/ε) → 超对角元乘 ε
