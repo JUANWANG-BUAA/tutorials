@@ -13,6 +13,24 @@
 
 > **与课程的关系**：本教程是**学习辅助**，不是课程的替代。课程官网、讲义 PDF、实验 Notebook 与录播视频是权威源；本教程的作用是把它们读薄、串起来。原文术语一律保留英文对照（见[符号与缩略语表](preface-notation.md)与[术语索引](review/glossary.md)）。
 
+## 与 2024–2026 公开课表的对应（核查于 2026-11）
+
+本教程的九讲标题对齐的是 **2026 年公开课表**（[introtodeeplearning.com/2026](https://introtodeeplearning.com/2026/index.html)），不是 2025 年春季那一版十讲。现场课与网上首播的日期不同，标题以课表卡片为准：
+
+| 本教程 | 2026 公开课表 | 2025 春季公开课表（结构不同，不另开一讲） |
+|:--|:--|:--|
+| 第 1–6 讲 | Lecture 1–6：导论、序列、视觉、生成、强化学习、New Frontiers | 同名的 Lecture 1–6 |
+| 第 7 讲 | Lecture 7：*The Three Laws of AI*（客座，Douglas Blank；幻灯片日期 2026-01-09） | 无此标题。Lecture 7–8 为 *Large Language Models (I)/(II)* |
+| 第 8 讲 | Lecture 8：*AI for Science*（客座，Chris Bishop） | 科学内容在 Lecture 10：*AI for Biology*；Lecture 9 为 *AI in the Wild* |
+| 第 9 讲 | Lecture 9：*Secrets to Massively Parallel Training*（客座，Mathias Lechner；幻灯片题为 *Massively Parallel Training*） | 该年课表没有这一讲的标题 |
+| 三个 Lab | 音乐生成；Facial Detection Systems；Fine-Tune an LLM, You Must! | 题目相同 |
+
+2026 年 FAQ 写明：作为 3 学分课程，按 **P/D/F**、以**项目提案**完成为评分依据。实验竞赛、奖品与 TEDx 名额属于课程运营，不以本教程为准。
+
+2026 年 Lecture 6 的幻灯片标题是 *Deep Learning Limitations and New Frontiers*（Ava Amini，2026-01-07）。抽查到的页面仍在讲记忆容量、对抗样本、扩散与下一个 token 预测；本教程第 6 讲把其中的语言模型一半展开成可复算的账，并标明哪些是拓展。第 7–9 讲同样比客座幻灯片更长：客座给出问题与案例，正文补机制、判据和失效边界。
+
+实验仓库以 2025 年起课表所链的 [MITDeepLearning/introtodeeplearning](https://github.com/MITDeepLearning/introtodeeplearning) 为准。Lab 1、Lab 2 同时提供 `PT_`（PyTorch）与 `TF_`（TensorFlow 2 + Keras 的即时执行）笔记本；Lab 3 只有一份微调笔记本。更早页面上的 `aamini/introtodeeplearning` 是旧组织路径。
+
 ## 本书页面体系（一句话分工）
 
 | 页面 | 你什么时候用它 |

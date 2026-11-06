@@ -4,8 +4,8 @@
 
 ## 1. 环境与模型
 
-- **库**：`transformers` + `peft`（HuggingFace 生态），或等价的 LoRA 实现。
-- **基座模型**：选一个**能在你的显存里加载**的预训练模型（先跑通小模型，再考虑更大的）。本书不绑定具体型号；关键是理解流程。
+- **库**：`transformers` + `peft`。官方 2026 年笔记本是仓库里的 `lab3/LLM_Finetuning.ipynb`，没有单独的 TensorFlow 版。
+- **基座模型**：笔记本以 Liquid AI 的 **LFM2-1.2B** 为例（它自己写的量级是约十亿参数）。本书不要求你用同一权重；先用能放进显存的因果语言模型跑通。换模型时，`target_modules` 的名字会变，以 `model.named_modules()` 为准，不要照抄字符串。
 - **数据**：一个**指令-回答**格式的小数据集（几百到几千条即可）。格式通常是：
 
 ```text
@@ -34,13 +34,20 @@ $$h=Wx+BAx.$$
 
 ```python
 from peft import LoraConfig, get_peft_model
-cfg = LoraConfig(r=8, lora_alpha=16, target_modules=["q_proj", "v_proj"],
-                 lora_dropout=0.05, task_type="CAUSAL_LM")
+
+cfg = LoraConfig(
+    r=8,
+    task_type="CAUSAL_LM",
+    target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                    "gate_proj", "up_proj", "down_proj"],
+)
 model = get_peft_model(base_model, cfg)
-model.print_trainable_parameters()   # 例：trainable 0.1% | total 100%
+model.print_trainable_parameters()
 ```
 
-`target_modules` 通常选注意力里的投影矩阵（$Q,V$）；`r` 是秩，越大容量越大、越贵。
+这组 `target_modules` 来自 2026 年官方笔记本：注意力的四块投影，加上 SwiGLU 前馈的三块。只训 `q_proj` 和 `v_proj` 仍然是合法的 LoRA，只是和那份笔记本不是同一个实验。`r` 越大容量越大、也越贵。`lora_alpha` 与 `lora_dropout` 有默认值；要和别人的结果对比时，把实际用到的字段写进配置，而不是假设默认值不变。
+
+官方训练循环用的优化器是 **Lion**，不是 AdamW。Lion 不在 PyTorch 核心的 `torch.optim` 里，导入路径以你安装的包为准。换优化器会改变同样学习率下的步长，所以「lr = 1e-4」不能从 Adam 的经验直接搬过来。笔记本里的 `1e-4` 只是那份作业的起点。
 
 ## 3. 数据格式与分词
 
@@ -54,16 +61,40 @@ model.print_trainable_parameters()   # 例：trainable 0.1% | total 100%
 
 ## 4. 训练
 
-与[第 1 讲](../lectures/lec01/overview.md)的循环完全一致，只是模型大：
+与[第 1 讲](../lectures/lec01/overview.md)的循环完全一致，只是损失要自己对齐到「下一个 token」，并且 prompt 的位置不能进损失。官方笔记本走的是这条显式写法，而不是依赖 `outputs.loss` 的默认掩码：
 
 ```python
-out  = model(**batch)          # 前向
-loss = out.loss                # 交叉熵（对 response token，第 1 讲 1.4）
-loss.backward()                # 反向（定理 1.2）
-opt.step(); opt.zero_grad()    # 更新（定义 1.3）
+import torch.nn.functional as F
+
+out = model(input_ids=input_ids)
+# logits[t] 预测的是 token[t+1]；labels 里 prompt 和 padding 事先写成 -100
+shift_logits = out.logits[:, :-1, :].contiguous()
+shift_labels = labels[:, 1:].contiguous()
+loss = F.cross_entropy(
+    shift_logits.view(-1, shift_logits.size(-1)),
+    shift_labels.view(-1),
+    ignore_index=-100,
+)
+opt.zero_grad()
+loss.backward()
+opt.step()
 ```
 
-受限显存时可叠加（第 9 讲）：**梯度累积**模拟大批量、**混合精度**降占用、**梯度检查点**用计算换显存。
+`ignore_index=-100` 是 `cross_entropy` 的现行约定。若你改用模型自带的 `labels=` 参数，也必须确认库把 `-100` 当成忽略位；不要假设每个版本都会替你掩掉 prompt。生成用现行的 `generate`：
+
+```python
+with torch.inference_mode():
+    new_ids = model.generate(
+        input_ids,
+        do_sample=True,
+        max_new_tokens=32,
+        temperature=0.7,
+    )
+```
+
+`temperature` 只在 `do_sample=True` 时改变分布。`do_sample=False` 是贪心解码，温度写上去也不起作用。
+
+受限显存时可叠加（第 9 讲）：**梯度累积**模拟大批量、**混合精度**降占用、**梯度检查点**用计算换显存。BF16 用 `torch.autocast("cuda", dtype=torch.bfloat16)` 即可，不必再套 FP16 的 `GradScaler`。
 
 ## 5. 评估：怎么判断「微调有用」
 
@@ -72,6 +103,7 @@ opt.step(); opt.zero_grad()    # 更新（定义 1.3）
 | 定性 | 对若干留出问题采样，人工/对照检查是否按格式作答 |
 | 定量 | 在留出集上算 token 级困惑度（perplexity），或任务专属指标（如精确匹配率） |
 | 对照 | **必须对比微调前**，否则无法判断提升来自微调还是运气 |
+| 和官方作业的差别 | 2026 年笔记本评的是一种文风是否被学到（风格适配）。流畅不等于风格对，也不等于事实对。报告里写清你测的是格式、风格还是答案 |
 
 ::: think "模型会说话了"不等于"任务学会了"
 用自然语言采样很容易产生「看起来像那么回事」的输出。评估要盯**任务指标**（是否答对、格式对不对），而不是输出的流畅度。范式化评估（固定问题集、固定解码参数）才能做前后对比。
@@ -99,7 +131,9 @@ opt.step(); opt.zero_grad()    # 更新（定义 1.3）
 |:--|:--|
 | 加载 tokenizer 与 `input_ids` | [6.1 大语言模型](../lectures/lec06/sec61.md)：BPE 分词决定 token 边界与序列长度 |
 | 只在 response 上算损失（mask prompt） | [6.1](../lectures/lec06/sec61.md)：监督微调的目标是「学会回答」而非「复述问题」 |
-| `LoraConfig(r=..., target_modules=...)` | [9.5 PEFT](../lectures/lec09/sec95.md)：低秩增量 $W=W_0+BA$ |
+| `LoraConfig` 的 `target_modules` | [9.5 PEFT](../lectures/lec09/sec95.md)：低秩增量 $W=W_0+BA$；模块名随模型而变 |
+| `cross_entropy(..., ignore_index=-100)` 与右移一位 | [6.1](../lectures/lec06/sec61.md)：下一个 token；prompt 不进损失 |
+| `generate(..., do_sample=True, temperature=)` | [Lab 1](lab1.md) 的温度；贪心解码时温度无效 |
 | 4-bit 量化基座 + LoRA（QLoRA） | [9.5](../lectures/lec09/sec95.md)：显存降到 $10N$ 量级 |
 | 梯度累积达到有效批大小 | [1.6 优化器](../lectures/lec01/sec16.md)、[9.2 数据并行](../lectures/lec09/sec92.md) |
 | 微调前后对比 + 留出集评测 | [6.7 评估](../lectures/lec06/sec67.md)：口径要对齐，且要防污染 |
