@@ -327,7 +327,7 @@ $$\mathcal S=\{1,2,3\},\qquad \sum_{i\in\mathcal S}\hat p_i=0.970,\qquad \tilde{
 
 ::: note[skip] 延伸阅读
 - 本书 [Lab 1](../../labs/lab1.md)（音乐生成）：本节每一条都能在实验里找到对应的代码与排错步骤，建议与 [2.8.8](#sec-2.8.8) 的对照表一起读。
-- MIT 6.S191 *Introduction to Deep Learning*（官网 `introtodeeplearning.com`，Lab 仓库 `github.com/aamini/introtodeeplearning`）：母本课程与配套的音乐生成实验。
+- MIT 6.S191 *Introduction to Deep Learning*（官网 `introtodeeplearning.com`，现行 Lab 仓库 `github.com/MITDeepLearning/introtodeeplearning`）：母本课程与配套的音乐生成实验。`aamini/introtodeeplearning` 是更早的组织路径。
 - Cho et al., *Learning Phrase Representations using RNN Encoder–Decoder*（2014, arXiv:1406.1078）——GRU 的原始论文，[Lab 1](../../labs/lab1.md) 默认使用的循环单元。
 - Jozefowicz, Zaremba & Sutskever, *An Empirical Exploration of Recurrent Network Architectures*（2015, ICML）——在大规模对比中 GRU 与 LSTM 表现相近、门控结构的选择并非决定性因素这一经验结论的来源。
 - Olah, *Understanding LSTM Networks*（2015, colah.github.io）——用图解讲清门控与状态通道，配合 [2.3](sec23.md) 读。

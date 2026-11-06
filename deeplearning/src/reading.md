@@ -12,7 +12,7 @@
 
 | 资料 | 入口 | 读什么 / 何时读 |
 |:--|:--|:--|
-| **MIT 6.S191《Introduction to Deep Learning》**（母本） | [introtodeeplearning.com](http://introtodeeplearning.com/) ｜ 实验仓库 [github.com/aamini/introtodeeplearning](https://github.com/aamini/introtodeeplearning) | 每讲讲义 PDF 与三个 Lab 的 Notebook；**本教程的九讲顺序与实验题目以它为骨架**。想核对「课程原话」时读它 |
+| **MIT 6.S191《Introduction to Deep Learning》**（母本） | [introtodeeplearning.com](https://introtodeeplearning.com/)（年份归档如 [/2026](https://introtodeeplearning.com/2026/index.html)、[/2025](https://introtodeeplearning.com/2025/index.html)）｜ 实验仓库 [github.com/MITDeepLearning/introtodeeplearning](https://github.com/MITDeepLearning/introtodeeplearning) | 2026 年九讲 PDF 与三个 Lab。**本教程的九讲顺序以 2026 课表为骨架**；2025 年是十讲，对照见[范围声明](preface-scope.md)。旧路径 `aamini/introtodeeplearning` 不再作为现行仓库 |
 | 本教程的姊妹书（同仓） | [矩阵论](../matrix/index.html) ｜ [数值分析](../numerical/index.html) ｜ [机器人控制技术](../robot/index.html) | 数学基础（矩阵、数值稳定、优化）在别处的系统展开 |
 
 ## 二、体系化教材与公开课（按「先读谁」排序）

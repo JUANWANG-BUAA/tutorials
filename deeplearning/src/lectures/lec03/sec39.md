@@ -119,7 +119,7 @@ FGSM（Fast Gradient Sign Method，2014，arXiv:1412.6572）
       x' = x + ε · sign( ∇_x L(f(x), y) )
   优点：一次反传即可，极快；缺点：容易过拟合到单个模型，迁移性一般
 
-PGD（Projected Gradient Descent，2017，arXiv:1706.07334）
+PGD（Projected Gradient Descent，2017，arXiv:1706.06083）
   多步迭代 + 每步投影回 ε 球内
       x_{t+1} = Π_{‖·‖_∞ ≤ ε} ( x_t + α · sign( ∇_x L(f(x_t), y) ) )
   优点：更强的攻击，常被用作"评估鲁棒性的标准对手"；缺点：计算成本 = 步数 × 一次反传
@@ -300,7 +300,7 @@ $$\delta_{\ell_2}=1\cdot\frac{(2,-1,1)}{\sqrt6}=\Bigl(\tfrac{2}{\sqrt6},-\tfrac{
 :::
 
 ::: note[skip] 延伸阅读
-- 对抗攻击与防御：Goodfellow, Shlens & Szegedy, *Explaining and Harnessing Adversarial Examples*（2014，arXiv:1412.6572）——FGSM 原始论文；Madry et al., *Towards Deep Learning Models Resistant to Adversarial Attacks*（2017，arXiv:1706.07334）——PGD 与对抗训练。
+- 对抗攻击与防御：Goodfellow, Shlens & Szegedy, *Explaining and Harnessing Adversarial Examples*（2014，arXiv:1412.6572）——FGSM 原始论文；Madry et al., *Towards Deep Learning Models Resistant to Adversarial Attacks*（2017，arXiv:1706.06083）——PGD 与对抗训练。arXiv:1706.07334 是另一篇代数论文，不要再用。
 - 人脸识别偏见与影响评估：Buolamwini & Gebru, *Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification*（2018，FAT*）——分群评估的标志性工作（**具体错误率数字以原文为准**）。
 - 数据集偏见与伦理框架：Gebru et al., *Datasheets for Datasets*（2018/2021，arXiv:1803.09010）；Mitchell et al., *Model Cards for Model Reporting*（2018/2019，arXiv:1810.03993）——把「数据集的适用边界」与「模型的评估分层」写成标准文档。
 - 深伪与合成媒体：系统性综述与检测基准的文献数量与名称随时效变化较快，**本节不列举具体编号以避免引用失准**；治理框架见 [第 7 讲](../lec07/overview.md)的「三条法则」。

@@ -11,7 +11,7 @@
 <details class="cover-details">
 <summary>查看课程范围与资料说明</summary>
 <div class="meta">
-依据 <b>MIT 6.S191《Introduction to Deep Learning》</b>（公开课，官网 introtodeeplearning.com）的九讲主题与三个软件实验整理。公式与结论经本地复算；2023–2025 年前沿内容标注来源与待核实事项；代码示例依赖 TensorFlow / PyTorch 公开接口。
+依据 <b>MIT 6.S191《Introduction to Deep Learning》</b>（公开课，官网 introtodeeplearning.com）的九讲主题与三个软件实验整理。九讲标题对照的是 <b>2026</b> 年公开课表；2025 年春季曾临时改成十讲，对照见范围声明。公式与结论经本地复算；前沿内容标注来源与待核实事项；代码示例依赖现行 PyTorch / TensorFlow 2 公开接口。
 </div>
 </details>
 
@@ -38,6 +38,6 @@
 
 <footer class="book-colophon">
   <span class="colophon-kicker">COLOPHON / 题记</span>
-  <span class="colophon-main">依据 MIT 6.S191《Introduction to Deep Learning》九讲与三个 Lab 整理扩充；图版与公式由 SVG / KaTeX 生成。</span>
-  <span class="colophon-meta">MDBOOK · 2026-10</span>
+  <span class="colophon-main">依据 MIT 6.S191《Introduction to Deep Learning》2026 年九讲课表与三个 Lab 整理扩充；2025 年十讲结构的去向写在范围声明里。图版与公式由 SVG / KaTeX 生成。</span>
+  <span class="colophon-meta">MDBOOK · 2026-11</span>
 </footer>
