@@ -106,8 +106,8 @@
 | [3](../course/ch03/overview.md) | 矩阵特征值与特征向量的计算：幂法、反幂法、位移反幂法 | 第 3 章 | 第 6–7 讲 | ✅ [已成章](../course/ch03/overview.md) |
 | [4](../course/ch04/overview.md) | 非线性方程与非线性方程组的迭代解法 | 第 4 章 | 第 7–9 讲 | ✅ [已成章](../course/ch04/overview.md) |
 | [5](../course/ch05/overview.md) | 插值与逼近 | 第 5 章 | 第 9–12 讲 | ✅ [已成章](../course/ch05/overview.md) |
-| [6](../course/ch06/overview.md) | 数值积分 | 第 6 章 | 6.1 已讲 | ✅ [6.1 已开讲](../course/ch06/overview.md)，6.2 起待讲 |
-| [7](../course/ch07/overview.md) | 常微分方程初值问题的数值解法 | 第 7 章 | 未讲 | 🚧 [已铺初稿](../course/ch07/overview.md)，待课堂回填 |
+| [6](../course/ch06/overview.md) | 数值积分 | 第 6 章 | 第 12–14 讲 | 已讲插值型、Newton–Cotes、复化与 Gauss；详见[覆盖矩阵](../course/ch06/coverage.md) |
+| [7](../course/ch07/overview.md) | 常微分方程初值问题的数值解法 | 第 7 章 | 第 15 讲开讲 | 已讲 Euler、收敛与模型方程稳定性；详见[覆盖矩阵](../course/ch07/coverage.md) |
 | 补 | [数值线性代数工具箱](../supplement/overview.md)：内积、正交、投影、QR、条件数、谱、SVD | 1.3 节扩充 | 未系统讲 | ✅ [补充篇](../supplement/overview.md) |
 
 一条红线贯穿全部七章 + 补充篇：**误差 → 条件数（问题的固有敏感性）→ 稳定性（算法对误差的处理）**。第一章把红线的前半段立起来；从第二章起，每个新算法都会被这三把尺子量一遍。

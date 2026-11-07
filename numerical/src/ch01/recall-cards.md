@@ -57,7 +57,7 @@ $x=\pm m\times\beta^{e}$，$m=(0.b_1b_2\cdots b_t)_\beta$，$L\le e\le U$；$\ma
 ::: think A 组的适用条件（背定义时要一起带走的东西）{#rc-a-conditions}
 - 误差限 $\varepsilon$ 是**上界**不是误差本身；$x=a\pm\varepsilon$ 里只有 $a$ 是已知的。
 - 相对误差两种写法只在 $\lvert e_{\mathrm r}\rvert\ll1$ 时等价；$\lvert e_{\mathrm r}\rvert$ 到 $0.1$ 量级时近似值已接近失效。
-- 有效数字判据里的 $\varepsilon$ **必须与该数写出的位数相称**：只写 2 位数字却要求第 7 位准确，结论只能是「没有有效数字」（[@ex-1.2.3] 的 $c=0.86\times10^5$）。
+- 有效数字由误差保证判定，显示长度另行说明：$c=0.86\times10^5$ 若明确给出误差限 $0.005$，可写成 $86000.00\pm0.005$，不能因尾零未写就否定可靠精度（[@ex-1.2.3]）。
 - $\mathrm{eps}$ 与 $u$ 差一个 $2$：$\mathrm{eps}$ 是相邻浮点数的相对间距，$u$ 是一次舍入的相对误差上界，写公式时不要互换。
 - 从属范数只对**配对**的向量范数有意义：$\lVert A\rVert_p$ 里的 $p$ 说的是**向量**的 $p$-范数。
 :::
@@ -136,7 +136,7 @@ $e=x-a$；$\lvert e\rvert\le\varepsilon$；$x=a\pm\varepsilon$；$\varepsilon_{\
 
 **C2.** 由误差限**反求**有效数字位数的操作式（含「没有有效数字」的情形）。
 ::: sol
-解 $\tfrac12\times10^{m-n}=\varepsilon(a)$，即 $n=m-\log_{10}(2\varepsilon)$；$n\le k$ 成立，$n\gt k$ 则**没有**有效数字。快捷核对：误差限是不是**某一位**的半个单位（[1.2.2](sec12.md#sec-1.2.2) 判定流程框）。（✓ / △ / ×）
+对非零近似值和正误差限，取满足 $\varepsilon(a)\le\tfrac12\times10^{m-n}$ 的最大整数 $n$；可用 $\lfloor m-\log_{10}(2\varepsilon)\rfloor$，并直接核对边界。若 $n<1$，该界不能保证第一位；若 $n$ 超过显示长度，应明确补写尾零或误差限，不是“没有有效数字”（[1.2.2](sec12.md#sec-1.2.2)）。（✓ / △ / ×）
 :::
 
 **C3.** 有效数字 ⟹ 相对误差限（两个档次）。

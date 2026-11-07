@@ -947,6 +947,21 @@ def check_lecture15_ode():
         assert lo < f < hi, (tau, f)
     assert abs(1 + 0.4*(-5)) == 1.0  # 临界：因子恰为 -1
 
+def check_course_learning_lab():
+    from pathlib import Path
+    from runpy import run_path
+
+    script = Path(__file__).resolve().parents[1] / "src/assets/code/course_lab.py"
+    namespace = run_path(str(script))
+    namespace["verify_examples"]()
+
+
+def check_deep_teaching_examples():
+    from verify_deep_examples import verify
+
+    verify()
+
+
 if __name__ == '__main__':
     checks = (check_decimal_elimination, check_pivoted_lu, check_interpolation,
               check_least_squares, check_best_square_approx,
@@ -955,8 +970,9 @@ if __name__ == '__main__':
               check_orthogonal_polynomials, check_double_simpson_weights, check_ode,
               check_post_hoc_error_estimate, check_eigen_basics,
               check_legendre_chebyshev_x4, check_lecture13_quadrature,
-              check_lecture14_gauss, check_lecture15_ode)
+              check_lecture14_gauss, check_lecture15_ode, check_course_learning_lab,
+              check_deep_teaching_examples)
     for check in checks:
         check()
         print('PASS', check.__name__)
-    print('17 example groups passed; no external dependencies.')
+    print(f'{len(checks)} example groups passed; no external dependencies.')
