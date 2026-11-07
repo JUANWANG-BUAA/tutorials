@@ -64,7 +64,7 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 
 $$V=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}
 +\frac12\tilde{\boldsymbol q}^{\mathrm T}K_P\tilde{\boldsymbol q},\qquad
-\boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}+K_D\dot{\boldsymbol q}
+\boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}-K_D\dot{\boldsymbol q}
 \ \Longrightarrow\
 \dot V=-\dot{\boldsymbol q}^{\mathrm T}(F+K_D)\dot{\boldsymbol q}\le0 \tag{7.3-3,7.3-6,7.3-7}$$
 

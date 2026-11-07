@@ -41,17 +41,14 @@ $\boldsymbol q,\dot{\boldsymbol q}$；想补偿 $\Delta B\ddot{\boldsymbol q}$�
 
 ## 7.3.2 李雅普诺夫稳定性：够用的版本
 
-后面四种控制律的稳定性证明都用同一套工具：**找一个「能量函数」，证明它沿系统轨迹单调下降**。
-老师在 00:58:00–01:10:40 用二十分钟讲了这个工具的最小版本。
+把机械臂停在目标位置附近，轻轻偏离一点，再放开。我们希望它能回到目标，也希望这种判断有证明。本节用一个类似能量的函数 $V$，检查闭环运动是否会持续消耗偏差对应的能量。这里的函数不一定就是实际物理能量。录播 00:58:00 至 01:10:40 介绍了这个工具。
 
-考虑非线性系统 $\dot{\boldsymbol e}=f(\boldsymbol e)$，平衡点 $\boldsymbol e=0$。若存在标量函数
-$V(\boldsymbol e)$ 满足
+考虑自治系统 $\dot{\boldsymbol e}=f(\boldsymbol e)$，平衡点为零。这里 $\boldsymbol e$ 代表完整误差状态；二阶机器人系统通常要同时包含位置误差和速度。假设 $f$ 局部 Lipschitz，存在连续可微函数 $V$，在原点邻域内满足
 
 $$V(0)=0,\qquad V(\boldsymbol e)>0\ (\boldsymbol e\neq0),\qquad
 \dot V(\boldsymbol e)<0\ (\boldsymbol e\neq0),\tag{7.3-1}$$
 
-则平衡点是**全局渐近稳定**的：不管初始状态在哪，$\boldsymbol e(t)\to0$。$V$ 叫**李雅普诺夫函数**，
-物理上就是一个「能量」——能量非负、且沿轨迹一直减少，系统只能往能量最低点（平衡点）走。
+则原点局部渐近稳定。要推出全局渐近稳定，一组常用的充分条件是：系统与上述不等式在整个 $\mathbb R^n$ 上成立，并且 $V$ 径向无界，即 $\|\boldsymbol e\|\to\infty$ 时 $V\to\infty$。这个条件把轨迹限制在有界子水平集中。只写“能量一直下降”，还不足以保证状态不会逃向无穷远。
 
 最常用的构造是**二次型**（图 7.3-2）：
 
@@ -61,18 +58,16 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 
 ![课堂幻灯片 · 60:40：二次型李雅普诺夫函数——$V=e^{\mathrm T}Qe$，$\dot V=2e^{\mathrm T}Qf(e)$](../assets/ch07/lyapunov.jpg)
 
-**半负定怎么办**：很多机器人系统的 $\dot V$ 只能证到 $\le0$（比如 $\dot V=-\dot{\boldsymbol q}^{\mathrm T}K_D\dot{\boldsymbol q}$，
-只含速度、不含位置）。这时用**拉萨尔不变性原理**：若 $\dot V\le0$，且「$\dot V=0$ 的集合里
-除了平衡点没有别的整条轨迹」，则仍然渐近稳定。机器人里的用法是：
+很多机器人系统只能得到 $\dot V\le0$，例如 $\dot V=-\dot{\boldsymbol q}^{\mathrm T}K_D\dot{\boldsymbol q}$。机械臂停在错误位置的一瞬间，速度也是零，因而 $\dot V=0$；但位置反馈随后会让它动起来。证明时必须区分“此刻不动”和“以后一直不动”。
 
-1. 由 $\dot V\le0$ 得 $\dot{\boldsymbol q}\to0$；
-2. 把 $\dot{\boldsymbol q}\equiv0$ 代回闭环方程，解出**只有** $\boldsymbol e=0$ 能满足；
-3. 于是 $\boldsymbol e\to0$。
+拉萨尔不变性原理处理这个区别。在自治系统的紧致正向不变集上，若 $\dot V\le0$，轨迹趋向 $\dot V=0$ 集合内的最大不变集。对下面的重力补偿 PD，可按以下步骤检查：
 
-::: intuition 一句话记住
-**李雅普诺夫 = 找能量；拉萨尔 = 能量不再下降时，看看停在哪。** 机器人控制里 90% 的稳定性证明
-就是这两步：构造 $V=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}+\frac12\boldsymbol e^{\mathrm T}K_P\boldsymbol e$，
-求导，用 $\dot B-2C$ 的反对称性消掉交叉项。
+1. 用 $V$ 的子水平集证明轨迹有界，并且不会离开这个集合。
+2. 在 $\dot V=0$ 的候选状态中，要求 $\dot q\equiv0$，再代回闭环方程，求出能够一直保持静止的状态。
+3. 若只剩目标平衡点，才得到位置和速度误差都趋于零。不能直接由 $\dot V\le0$ 跳到速度收敛。
+
+::: intuition 回用第六章的结构性质
+下面用位置误差 $\tilde q=q_d-q$ 构造 $V=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}+\frac12\tilde{\boldsymbol q}^{\mathrm T}K_P\tilde{\boldsymbol q}$。求导后会出现 $\dot B-2C$；第六章证明的反对称性让相应二次型消失。先试着找到这一项，再看下一段的完整计算。
 :::
 
 <a id="sec-7.3.3"></a>
@@ -89,7 +84,7 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 $$V(\dot{\boldsymbol q},\tilde{\boldsymbol q})
 =\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}
 +\frac12\tilde{\boldsymbol q}^{\mathrm T}K_P\tilde{\boldsymbol q}>0
-\quad(\forall\dot{\boldsymbol q},\tilde{\boldsymbol q}\neq0).\tag{7.3-3}$$
+\quad\bigl((\dot{\boldsymbol q},\tilde{\boldsymbol q})\neq(0,0)\bigr).\tag{7.3-3}$$
 
 对时间求导，注意 $\boldsymbol q_d$ 是常数（$\dot{\boldsymbol q}_d=0$，$\dot{\tilde{\boldsymbol q}}=-\dot{\boldsymbol q}$）：
 
@@ -107,20 +102,21 @@ $$\dot V=\frac12\dot{\boldsymbol q}^{\mathrm T}\bigl(\dot B(\boldsymbol q)-2C(\b
 
 **第一项为零**——这正是第六章性质一（$\dot B-2C$ 反对称）的用处。取控制律
 
-$$\boxed{\ \boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}+K_D\dot{\boldsymbol q}\ }\tag{7.3-6}$$
+$$\boxed{\ \boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}-K_D\dot{\boldsymbol q}\ }\tag{7.3-6}$$
+
+这里 $K_P,K_D$ 对称正定，$F$ 对称半正定。由于目标固定，$\dot{\tilde q}=-\dot q$，所以阻尼项也可写成 $+K_D\dot{\tilde q}$。若用实际速度 $\dot q$，必须取负号。可以用一个瞬间检查：已到目标但仍向正方向运动时，阻尼应产生反向力矩。
 
 代回得
 
 $$\dot V=-\dot{\boldsymbol q}^{\mathrm T}(F+K_D)\dot{\boldsymbol q}\le0.\tag{7.3-7}$$
 
-由拉萨尔原理：$\dot V=0\Rightarrow\dot{\boldsymbol q}=0$；代回闭环方程得 $K_P\tilde{\boldsymbol q}=0
-\Rightarrow\tilde{\boldsymbol q}=0$。**平衡点全局渐近稳定**。
+假设采用无关节限位的展开坐标 $q\in\mathbb R^n$、模型光滑、重力补偿精确且驱动力矩不限幅，并有 $B(q)\succeq b_*I$（常数 $b_*>0$）。则 $V$ 径向无界，其子水平集紧致且正向不变。$\dot V=0$ 要求 $\dot q=0$；若要一直保持在该集合内，还必须有 $\ddot q=0$。代回闭环方程，得 $K_P\tilde q=0$，故最大不变集只有目标平衡点。于是该理想模型在这些坐标与假设下全局渐近稳定。
 
 **三个必须记住的限制**：
 
 1. **只对点对点有效**。推导里用了 $\dot{\boldsymbol q}_d=0$；跟踪时 $\boldsymbol q_d(t)$ 不是常数，
-   $\dot{\tilde{\boldsymbol q}}\neq-\dot{\boldsymbol q}$，(7.3-4) 多出 $-\dot{\boldsymbol q}^{\mathrm T}K_P\dot{\boldsymbol q}_d$
-   一类项，证不出 $\dot V\le0$。**跟踪要用 7.3.4 的逆动力学**。
+   $\dot{\tilde{\boldsymbol q}}\neq-\dot{\boldsymbol q}$，(7.3-4) 多出 $\tilde{\boldsymbol q}^{\mathrm T}K_P\dot{\boldsymbol q}_d$
+   一项，不能沿用这个证明。下一节给出用于跟踪的逆动力学控制。
 2. **$\boldsymbol g$ 必须用实测 $\boldsymbol q$**。用 $\boldsymbol q_d$ 算等于开环补偿，位形偏差时补错。
 3. **它只补了重力**。$B\ddot{\boldsymbol q}$ 与 $C\dot{\boldsymbol q}$ 没补，速度一高就露馅。
 

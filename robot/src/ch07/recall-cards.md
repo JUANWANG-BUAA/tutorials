@@ -33,7 +33,7 @@ $d$ 收全部非对角项、$\Delta B$ 项、$C$ 项、重力项。（[7.2.1](se
 写出重力补偿 PD 的控制律与它的适用前提。
 
 ::: note A3 核对
-$\boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}+K_D\dot{\boldsymbol q}$，
+$\boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde{\boldsymbol q}-K_D\dot{\boldsymbol q}$，
 $\tilde{\boldsymbol q}=\boldsymbol q_d-\boldsymbol q$。前提：**点对点**（$\boldsymbol q_d$ 为常数，
 $\dot{\boldsymbol q}_d=0$）；$\boldsymbol g$ 用**实测** $\boldsymbol q$。跟踪轨迹时不能用。（[7.3.3](sec7-3.md#sec-7.3.3)）
 :::
@@ -149,8 +149,8 @@ $d_d=K_r^{-1}\Delta B(q_d)K_r^{-1}\ddot q_{md}+K_r^{-1}C(q_d,\dot q_d)K_r^{-1}\d
 ::: note C5 核对
 $V=\frac12\dot q^{\mathrm T}B\dot q+\frac12\tilde q^{\mathrm T}K_P\tilde q$；
 $\dot V=\frac12\dot q^{\mathrm T}(\dot B-2C)\dot q-\dot q^{\mathrm T}F\dot q
-+\dot q^{\mathrm T}(u-g-K_P\tilde q)$；第一项由反对称性为零，取 $u=g+K_P\tilde q+K_D\dot q$
-得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$。（[7.3.3](sec7-3.md#sec-7.3.3)）
++\dot q^{\mathrm T}(u-g-K_P\tilde q)$；第一项由反对称性为零，取 $u=g+K_P\tilde q-K_D\dot q$
+得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$。这里的负号对应实际速度；若改用误差速度，才写 $+K_D\dot{\tilde q}$。渐近收敛还需在有界不变集中应用拉萨尔原理，不能仅凭 $\dot V\le0$ 判断。（[7.3.3](sec7-3.md#sec-7.3.3)）
 :::
 
 ### C6 · 逆动力学的误差方程

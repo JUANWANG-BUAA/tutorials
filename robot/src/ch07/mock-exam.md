@@ -72,8 +72,8 @@ $d$ 里至少包含哪三项。
 **7.** $V=\frac12\dot q^{\mathrm T}B\dot q+\frac12\tilde q^{\mathrm T}K_P\tilde q$（2 分）；
 $\dot V=\frac12\dot q^{\mathrm T}(\dot B-2C)\dot q-\dot q^{\mathrm T}F\dot q
 +\dot q^{\mathrm T}(u-g-K_P\tilde q)$（4 分）；第一项由反对称性为零（2 分）；
-取 $u=g+K_P\tilde q+K_D\dot q$ 得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$（2 分）；
-拉萨尔：$\dot V=0\Rightarrow\dot q=0$，代回得 $K_P\tilde q=0\Rightarrow\tilde q=0$（2 分）。
+取 $u=g+K_P\tilde q-K_D\dot q$ 得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$（2 分）；
+按正文的理想模型假设，先说明 $V$ 的子水平集紧致且正向不变；$\dot V=0$ 中要一直保持 $\dot q=0$，还需 $\ddot q=0$，代回闭环得 $K_P\tilde q=0$。最大不变集只有目标平衡点，故收敛（2 分）。
 
 **8.** $u=B(\ddot q_d+K_D\dot{\tilde q}+K_P\tilde q)+n$（3 分）；
 $\ddot{\tilde q}+K_D\dot{\tilde q}+K_P\tilde q=0$（3 分）。

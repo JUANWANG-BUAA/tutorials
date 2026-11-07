@@ -1,7 +1,7 @@
 <section class="chapter-cover">
 <div class="kicker">机器人控制技术 · 定制教程</div>
 <h1>机器人控制技术</h1>
-<div class="subtitle">位姿与旋转、正逆运动学、雅可比、奇点、轨迹规划、执行器、动力学与运动控制。</div>
+<div class="subtitle">从一台两连杆机械臂开始，学习怎样计算姿势、安排运动，并纠正实际运动中的偏差。</div>
 <div class="cover-chips">
 <span>7 章 · 64 节正文</span>
 <span>124 道习题 · 全部附解</span>
@@ -21,6 +21,20 @@
   <div class="book-3d"><div class="book"><div class="face face-front">{{#include assets/covers/robot.svg}}</div></div></div>
 </div>
 </section>
+
+## 同一个点，两种姿势
+
+两根杆长都是 1 米。机械臂可以用两种姿势碰到同一个点，一种“肘朝上”，另一种“肘朝下”。让关节平滑地从一种姿势转到另一种，末端会一直留在原地吗？
+
+先在纸上画出中途的姿势，再看[两连杆练习](training/two-link.md)。这道题会用到正逆运动学、奇点和轨迹规划。随后给杆加上重量、给电机加上限制，就需要继续学习动力学与控制。
+
+## 从哪里开始
+
+- **系统入门**：先看[阅读方法与七章安排](preface.md)；先修不确定时做[入学诊断](entry-test.md)，读完一章后完成相应的两连杆练习。
+- **跟课与作业**：在下方进入对应章节，按章导览中的录播时间学习，再做左侧目录里的作业详解与习题。
+- **期末复习**：先闭卷做[综合训练](training/arena.md)，按错题链接回读；再用各章回忆卡检验，而不只是重看公式。
+
+**复习节奏建议**：学完当天先闭卷回忆，约 1 天、3 天、1 周后再抽查；不会的题回读后重新做，会的题也在下次混合抽查。间隔可按个人情况调整，纸笔记录即可。
 
 <section class="book-contents" aria-label="目录">
 <div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">7 章 · 64 节</span></div>

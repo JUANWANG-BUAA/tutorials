@@ -332,5 +332,91 @@ class ChapterSixExamples(unittest.TestCase):
                 self.assertIn(marker, text, file)
 
 
+class TwoLinkCourseChecks(unittest.TestCase):
+    def test_midpoint_and_time_scaling(self):
+        def trajectory(time, duration):
+            progress = time / duration
+            blend = 3 * progress**2 - 2 * progress**3
+            return (math.pi * blend / 2, math.pi / 2 - math.pi * blend)
+
+        for duration in (1.0, 2.0, 4.0):
+            self.assertEqual(trajectory(0.0, duration), (0.0, math.pi / 2))
+            self.assertEqual(trajectory(duration, duration), (math.pi / 2, -math.pi / 2))
+            midpoint = duration / 2
+            angles = trajectory(midpoint, duration)
+            position = planar_fk((1.0, 1.0), angles)
+            self.assertAlmostEqual(position[0], math.sqrt(2))
+            self.assertAlmostEqual(position[1], math.sqrt(2))
+            increment = 1e-5 * duration
+            before = planar_fk((1.0, 1.0), trajectory(midpoint - increment, duration))
+            after = planar_fk((1.0, 1.0), trajectory(midpoint + increment, duration))
+            for coordinate in range(2):
+                self.assertAlmostEqual((after[coordinate] - before[coordinate]) / (2 * increment), 0.0, places=8)
+            left_angles = trajectory(midpoint - increment, duration)
+            right_angles = trajectory(midpoint + increment, duration)
+            first_speed = (right_angles[0] - left_angles[0]) / (2 * increment)
+            self.assertAlmostEqual(first_speed, 3 * math.pi / (4 * duration), places=8)
+
+        self.assertAlmostEqual(10 * 3 * math.pi / (4 * 2), 11.78097245096)
+        minimum_duration = 3 * math.pi / 4
+        self.assertAlmostEqual(10 * 3 * math.pi / (4 * minimum_duration), 10.0)
+
+    def test_uniform_rods_energy_and_gravity(self):
+        gravity = 9.81
+        increment = 1e-6
+
+        def potential(angles):
+            first_height = math.sin(angles[0]) / 2
+            second_height = math.sin(angles[0]) + math.sin(sum(angles)) / 2
+            return gravity * (first_height + second_height)
+
+        def kinetic(angles, rates):
+            first_rate, second_rate = rates
+            first_velocity = (-math.sin(angles[0]) * first_rate / 2,
+                              math.cos(angles[0]) * first_rate / 2)
+            second_velocity = (
+                -math.sin(angles[0]) * first_rate - math.sin(sum(angles)) * sum(rates) / 2,
+                math.cos(angles[0]) * first_rate + math.cos(sum(angles)) * sum(rates) / 2,
+            )
+            return (sum(value**2 for value in first_velocity + second_velocity) / 2
+                    + (first_rate**2 + (first_rate + second_rate)**2) / 24)
+
+        for angles in ((0.0, math.pi / 2), (0.4, -0.8), (-0.7, 1.2)):
+            gravity_terms = (
+                gravity * (1.5 * math.cos(angles[0]) + 0.5 * math.cos(sum(angles))),
+                gravity * 0.5 * math.cos(sum(angles)),
+            )
+            for coordinate in range(2):
+                plus, minus = list(angles), list(angles)
+                plus[coordinate] += increment
+                minus[coordinate] -= increment
+                gradient = (potential(plus) - potential(minus)) / (2 * increment)
+                self.assertAlmostEqual(gradient, gravity_terms[coordinate], places=7)
+            inertia_first = 5 / 3 + math.cos(angles[1])
+            inertia_cross = 1 / 3 + math.cos(angles[1]) / 2
+            inertia_second = 1 / 3
+            self.assertAlmostEqual(2 * kinetic(angles, (1.0, 0.0)), inertia_first)
+            self.assertAlmostEqual(2 * kinetic(angles, (0.0, 1.0)), inertia_second)
+            self.assertAlmostEqual(kinetic(angles, (1.0, 1.0))
+                                   - kinetic(angles, (1.0, 0.0))
+                                   - kinetic(angles, (0.0, 1.0)), inertia_cross)
+
+        self.assertAlmostEqual(gravity * 1.5, 14.715)
+        self.assertAlmostEqual(gravity * 1.5 + 5 / 3, 16.381666666666668)
+        self.assertGreater(gravity * 1.5, 12)
+
+    def test_feedback_damping_and_disturbance(self):
+        position_gain, damping_gain, inertia, friction = 25.0, 10.0, 2.0, 0.3
+        for error, velocity in ((0.0, 1.0), (0.2, -0.7), (-0.1, 0.5)):
+            torque_after_gravity = position_gain * error - damping_gain * velocity
+            acceleration = (torque_after_gravity - friction * velocity) / inertia
+            energy_rate = inertia * velocity * acceleration - position_gain * error * velocity
+            self.assertAlmostEqual(energy_rate, -(friction + damping_gain) * velocity**2)
+            self.assertLess(energy_rate, 0)
+        self.assertEqual(damping_gain**2 - 4 * position_gain, 0)
+        self.assertAlmostEqual(0.1 / position_gain, 0.004)
+        self.assertAlmostEqual(0.1 / 100, 0.001)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

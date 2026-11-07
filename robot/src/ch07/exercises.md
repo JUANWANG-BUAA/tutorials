@@ -112,8 +112,8 @@ $q,\dot q$，在线，模型精确时精确对消。三者是「前馈 → 前�
 $V=\frac12\dot q^{\mathrm T}B\dot q+\frac12\tilde q^{\mathrm T}K_P\tilde q$；
 $\dot V=\frac12\dot q^{\mathrm T}(\dot B-2C)\dot q-\dot q^{\mathrm T}F\dot q
 +\dot q^{\mathrm T}(u-g-K_P\tilde q)$。第一项由反对称性为零。取
-$u=g+K_P\tilde q+K_D\dot q$ 得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$。
-拉萨尔：$\dot V=0\Rightarrow\dot q=0$；代回闭环得 $K_P\tilde q=0\Rightarrow\tilde q=0$。
+$u=g+K_P\tilde q-K_D\dot q$ 得 $\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q\le0$。
+在正文给定的精确补偿、无限幅与惯性一致正定等假设下，$V$ 的子水平集紧致且正向不变。拉萨尔原理要求寻找 $\dot V=0$ 的最大不变集：$\dot q\equiv0$ 还要求 $\ddot q\equiv0$，代回闭环才得 $K_P\tilde q=0$，从而收敛到目标。
 （[7.3.3](sec7-3.md#sec-7.3.3)）
 :::
 

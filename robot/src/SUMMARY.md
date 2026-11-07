@@ -4,7 +4,7 @@
 
 # 卷首
 
-- [范围与目标](preface.md)
+- [阅读方法与课程安排](preface.md)
 - [范围声明与使用方法](preface-scope.md)
 - [学习目标（K / S / A）](preface-objectives.md)
 - [符号与缩略语表](preface-notation.md)
@@ -19,6 +19,7 @@
 - [公式速查卡](preface-formulas.md)
 - [术语索引](preface-index.md)
 - [易错点总表](preface-pitfalls.md)
+- [两连杆练习：从运动学到控制](training/two-link.md)
 
 # 第一章 · 引言（第 1 周录播）
 
