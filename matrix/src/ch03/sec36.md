@@ -79,7 +79,7 @@ $$\sum_i g_i=n=\sum_i d_i\iff g_i=d_i\quad(\forall i).$$
 两条合起来，（1）$\iff$（2）$\iff$（4）$\iff$（3）。
 :::
 
-真正有含量的是（5）。它把 [3.5.5](sec35.md#thm-3.5.5) 的「最小多项式与特征多项式同根、且整除一切零化多项式」变成了判别工具：**无重根**四个字，恰好对应「每个特征值只配一个因子」，也就对应「每个特征子空间都能顶满」。
+接下来要连接（5）与前四条：多项式“无重根”，为什么会保证特征向量足够多？正向可以把多项式代入对角阵直接检查；反向则需要构造一组矩阵，把任意向量分到各个特征子空间中。下面逐步说明这个构造从哪里来。
 
 ::: proof 证明（课件未给，本编补：(1)$\iff$(5)，含一条 Lagrange 投影构造）
 
@@ -97,16 +97,18 @@ $$M(\lambda)=\prod_{j=1}^{m}(\lambda-\lambda_j)$$
 
 $$m_A(\lambda)=\prod_{j=1}^{m}(\lambda-\lambda_j).$$
 
-令
+**构造的动机。** 我们希望找到一个多项式，在 $\lambda_j$ 处取 $1$，在其他特征值处取 $0$。先把其他根的因子相乘，再除以它在 $\lambda_j$ 处的值：
 
 $$f_j(\lambda)=\frac{m_A(\lambda)}{\lambda-\lambda_j}=\prod_{l\ne j}(\lambda-\lambda_l),\qquad
 E_j=\frac{f_j(A)}{f_j(\lambda_j)}\quad(j=1,\cdots,m).$$
+
+由于特征值互异，$f_j(\lambda_j)=\prod_{l\ne j}(\lambda_j-\lambda_l)\ne0$，所以这个除法有意义。这里 $E_j$ 是矩阵；$E(\lambda_j)$ 是特征子空间，两个记号不要混淆。我们接下来验证：这些矩阵能把向量分完，并且每份都落在正确的特征子空间。
 
 **第一步：$\sum_j E_j=I$。** 多项式 $h(\lambda)=\sum_{j=1}^{m}\dfrac{f_j(\lambda)}{f_j(\lambda_j)}-1$ 的次数不超过 $m-1$，却在 $\lambda_1,\cdots,\lambda_m$ 这 $m$ 个点处取零（代入 $\lambda=\lambda_i$ 时只有第 $i$ 项存活，且等于 $1$）。故 $h\equiv0$，即 $\sum_j f_j(\lambda)/f_j(\lambda_j)=1$ 恒成立；代入 $A$ 得 $\sum_j E_j=I$。
 
 **第二步：$E_iE_j=O$（$i\ne j$）。** 乘积 $f_i(\lambda)f_j(\lambda)$ 含有 $m_A$ 的每一个因式（$i\ne j$ 时，$\lambda-\lambda_i$ 来自 $f_j$，$\lambda-\lambda_j$ 来自 $f_i$，其余因式两边都有），故被 $m_A$ 整除：$f_if_j=m_A\,q_{ij}$。代入 $A$：$f_i(A)f_j(A)=m_A(A)q_{ij}(A)=O$，于是 $E_iE_j=O$。
 
-**第三步：$E_j$ 的列都是 $\lambda_j$ 的特征向量。** 因为
+**第三步：$E_j$ 的像落在特征子空间中。** 因为
 
 $$(A-\lambda_jI)f_j(A)=m_A(A)=O,$$
 
@@ -116,12 +118,23 @@ $$(A-\lambda_jI)f_j(A)=m_A(A)=O,$$
 
 $$\boldsymbol x=\Big(\sum_{j=1}^{m}E_j\Big)\boldsymbol x=\sum_{j=1}^{m}E_j\boldsymbol x,$$
 
-右边每一项或为零、或为特征向量，故 $\boldsymbol x$ 是特征向量的线性组合；亦即 $\mathbb C^n=\sum_j E(\lambda_j)$。不同特征值的特征子空间交集为零（[@thm-eig-independent]），故这是直和，$\sum_j\dim E(\lambda_j)=n$，由（4）$\iff$（1）得 $A$ 可对角化。
+右边每一项都属于 $E(\lambda_j)$，所以 $\mathbb C^n=\sum_j E(\lambda_j)$。还需要证明拆分唯一，不能只凭“两两交为零”就断言多个子空间的和是直和。
+
+设 $\boldsymbol y_j\in E(\lambda_j)$，且 $\sum_j\boldsymbol y_j=\boldsymbol0$。由 $A\boldsymbol y_j=\lambda_j\boldsymbol y_j$，对任意多项式 $p$ 都有 $p(A)\boldsymbol y_j=p(\lambda_j)\boldsymbol y_j$。因此
+
+$$E_i\boldsymbol y_j
+=\frac{f_i(\lambda_j)}{f_i(\lambda_i)}\boldsymbol y_j
+=\begin{cases}
+\boldsymbol y_i,&j=i,\\
+\boldsymbol0,&j\ne i.
+\end{cases}$$
+
+对 $\sum_j\boldsymbol y_j=\boldsymbol0$ 左乘 $E_i$，便得到 $\boldsymbol y_i=\boldsymbol0$。对每个 $i$ 都如此，故这确实是直和，$\sum_j\dim E(\lambda_j)=n$。由（4）$\iff$（1），$A$ 可对角化。
 
 **读法**：这组 $E_j$ 不是临时拼出来的辅助矩阵，它们正是 [3.7](sec37.md) 的**谱阵**——[3.7.2](sec37.md#thm-3.7.2) 会给出同一个公式 $E_j=f_j(A)/f_j(\lambda_j)$。换句话说，（5）$\Rightarrow$（1）的证明已经在「用投影多项式把空间拆成特征子空间的直和」；3.7 只是把这个构造正式命名为谱分解。
 :::
 
-::: note 本编注 · 第五条为什么是「判定神器」 {#note-3.6-minpoly-power}
+::: note 本编注 · 何时使用最小多项式判据 {#note-3.6-minpoly-power}
 
 五条判据里，（2）（3）（4）都要「解方程 / 算秩」，对 $n$ 较大的矩阵是实打实的计算；（5）则常常只要算一个多项式。更关键的是，**（5）是充要条件**。下面两条推论是两条便于上手的判别口诀，但它们的逻辑地位不同（这正是本节最容易混淆的地方，[@note-3.6-sufficient]）：
 

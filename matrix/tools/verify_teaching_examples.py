@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact checks for selected teaching examples; standard library only.
+"""Exact algebra and numerical checks for selected teaching examples.
 Run: python3 matrix/tools/verify_teaching_examples.py
 Scope: ch02/sec24 parameter eigenspaces, ch03/sec35 Schur basis,
 ch03/sec36 Gram–Schmidt, ch03/sec37 orthogonal projection & least squares
@@ -7,7 +7,7 @@ ch03/sec36 Gram–Schmidt, ch03/sec37 orthogonal projection & least squares
 and elementary-transformation chains (examples 3.8.A–3.8.C, exercises
 C30/C31, polynomial coefficients as exact Fractions), ch04 norm/spectrum
 examples (4.5.3–4.5.9 Gershgorin disks, 4.6.4/4.6.7 series, 4.6.9 Neumann
-truncation; eigenvalues via a small companion-matrix iteration). This does
+truncation; eigenvalues via Durand–Kerner polynomial root iteration). This does
 not prove the general spectral theorems.
 """
 from fractions import Fraction as F
@@ -730,8 +730,10 @@ def check_ch04_spectral_radius_and_disks():
 
     # 例 4.5.A：ρ = 0.1 而 ‖A‖₁ = ‖A‖∞ = 1.1；定理 4.5.2 的构造给出 0.11
     fa = [[F(1, 10), F(1)], [F(0), F(1, 10)]]      # 超对角 1 的 2 阶 Jordan 块
-    ev_aa = _eigvals(fa)
-    assert all(abs(z - 0.1) < 1e-9 for z in ev_aa), ev_aa
+    assert _char_poly(fa) == [F(1), F(-1, 5), F(1, 100)]
+    shifted = sub(fa, [[F(1, 10), F(0)], [F(0), F(1, 10)]])
+    assert shifted != [[0, 0], [0, 0]]
+    assert mul(shifted, shifted) == [[0, 0], [0, 0]]
     assert max(sum(abs(v) for v in row) for row in fa) == F(11, 10)          # ‖·‖∞
     assert max(sum(abs(fa[i][j]) for i in range(2)) for j in range(2)) == F(11, 10)   # ‖·‖₁
     # Q = diag(1, 1/ε) → 超对角元乘 ε
@@ -852,6 +854,86 @@ def check_ch04_review_2026_11_03():
         pw = mul(pw, a11m)
     assert s3[1][1] == F(1231, 1000), s3          # 1.231（不是 1.241）
 
+def check_proof_basis_and_projectors():
+    identity = [[1, 0], [0, 1]]
+    zero = [[0, 0], [0, 0]]
+    matrix = [[2, 1], [0, 3]]
+    projectors = [
+        sub([[3, 0], [0, 3]], matrix),
+        sub(matrix, [[2, 0], [0, 2]]),
+    ]
+    assert sub(identity, projectors[0]) == projectors[1]
+    assert mul(projectors[0], projectors[1]) == zero
+    assert mul(projectors[1], projectors[0]) == zero
+    for eigenvalue, projector in zip((2, 3), projectors):
+        assert mul(projector, projector) == projector
+        assert mul(matrix, projector) == [
+            [eigenvalue * entry for entry in row] for row in projector
+        ]
+    transform = [[1, 1, 0], [0, 0, 1]]
+    adapted_basis = [[1, 0, 0], [-1, 1, 0], [0, 0, 1]]
+    images = mul(transform, adapted_basis)
+    assert rank(adapted_basis) == 3
+    assert images == [[0, 1, 0], [0, 0, 1]]
+    assert rank([row[1:] for row in images]) == 2
+    assert 3 - rank(transform) == 1
+
+
+def check_smith_descent_proof():
+    polynomial = [F(0), F(1)]
+    next_polynomial = [F(1), F(1)]
+    quotient, remainder = pdivmod(next_polynomial, polynomial)
+    assert quotient == [1] and remainder == [1]
+    assert len(remainder) < len(polynomial)
+    diagonal = [[polynomial, []], [[], next_polynomial]]
+    row_added = [[polynomial, next_polynomial], [[], next_polynomial]]
+    column_reduced = [[polynomial, remainder], [[], next_polynomial]]
+    column_swapped = [[remainder, polynomial], [next_polynomial, []]]
+    row_cleared = [
+        [remainder, polynomial],
+        [[], pneg(pmul(next_polynomial, polynomial))],
+    ]
+    for stage in (diagonal, row_added, column_reduced, column_swapped, row_cleared):
+        factors = invariant_factors(stage)
+        assert peq(factors[0], [1])
+        assert peq(factors[1], [0, 1, 1])
+
+
+def check_neumann_proof_boundaries():
+    identity = [[F(1), F(0)], [F(0), F(1)]]
+    zero = [[F(0), F(0)], [F(0), F(0)]]
+    matrix = [[F(1, 10), F(0)], [F(1), F(1, 10)]]
+    norms = []
+    for exponent in range(1, 11):
+        power = identity
+        for _ in range(exponent):
+            power = mul(power, matrix)
+        expected = F(1, 10) ** exponent + exponent * F(1, 10) ** (exponent - 1)
+        assert max(sum(abs(entry) for entry in row) for row in power) == expected
+        norms.append(expected)
+    assert norms[:3] == [F(11, 10), F(21, 100), F(31, 1000)]
+    assert all(after < before for before, after in zip(norms, norms[1:]))
+    for matrix in (
+        [[F(0), F(1)], [F(0), F(0)]],
+        [[F(1, 2), F(1)], [F(0), F(1, 2)]],
+        identity,
+        [[F(2), F(0)], [F(0), F(2)]],
+    ):
+        partial_sum = zero
+        power = identity
+        for _ in range(8):
+            partial_sum = [
+                [left + right for left, right in zip(sum_row, power_row)]
+                for sum_row, power_row in zip(partial_sum, power)
+            ]
+            power = mul(power, matrix)
+            assert mul(sub(identity, matrix), partial_sum) == sub(identity, power)
+            assert mul(partial_sum, sub(identity, matrix)) == sub(identity, power)
+    nilpotent = [[0, 1], [0, 0]]
+    assert mul(nilpotent, nilpotent) == zero
+    assert sub(identity, [[2, 0], [0, 2]]) == [[-1, 0], [0, -1]]
+
+
 if __name__ == '__main__':
     checks = (
         check_parameter_eigenspaces, check_schur_basis, check_orthogonalization,
@@ -863,9 +945,11 @@ if __name__ == '__main__':
         check_direct_sum_38f_lemma, check_ch04_norms,
         check_ch04_spectral_radius_and_disks, check_ch04_series,
         check_ch04_review_2026_11_03,
+        check_proof_basis_and_projectors, check_smith_descent_proof,
+        check_neumann_proof_boundaries,
     )
     for check in checks:
         check()
         print('PASS', check.__name__)
-    print(f'{len(checks)} exact example groups passed; no external dependencies.')
+    print(f'{len(checks)} example groups passed (exact algebra and numerical checks); no external dependencies.')
 

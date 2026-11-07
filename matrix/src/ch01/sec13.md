@@ -647,7 +647,7 @@ $n$ 维线性空间中任意 $n$ 个线性无关的向量均为 $V$ 的一组基
 
 :::
 
-把两个子空间的基「拼」在一起，就得到和空间的基；不过公共部分会被数两遍，要除掉一次。把这句话写成等式，正是本节最后一条大定理。
+把两个子空间的基放在一起，一定能张成和空间，但不一定线性无关。要准确计数，先取交空间的基，再分别补成两个子空间的基：这样公共部分只保留一份。下面还要证明，合并后的向量组没有其他冗余。
 
 ::: thm 定理 1.3.5 · 维数公式（维数定理） {#thm-1.3.5}
 
@@ -661,23 +661,63 @@ $$\dim(W_1+W_2)=\dim W_1+\dim W_2-\dim(W_1\cap W_2).$$
 
 记 $r=\dim(W_1\cap W_2)$，$s=\dim W_1-r$，$t=\dim W_2-r$。
 
-**取基。**取 $W_1\cap W_2$ 的一组基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r$（当 $r=0$ 时跳过此步）。由基扩充定理，把它分别扩充为：$W_1$ 的基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\ \boldsymbol{\alpha}_1,\cdots,\boldsymbol{\alpha}_s$，与 $W_2$ 的基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\ \boldsymbol{\beta}_1,\cdots,\boldsymbol{\beta}_t$。
+**第一步：让两组基共用交空间的那一部分。**
+
+取 $W_1\cap W_2$ 的一组基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r$。由基扩充定理，分别得到
+
+$$\begin{aligned}
+W_1\text{ 的基：}&\quad
+\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\
+\boldsymbol{\alpha}_1,\cdots,\boldsymbol{\alpha}_s,\\
+W_2\text{ 的基：}&\quad
+\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\
+\boldsymbol{\beta}_1,\cdots,\boldsymbol{\beta}_t.
+\end{aligned}$$
+
+若某一组的长度为零，就省略该组及相应求和。特别地，$r=0$ 时交空间为零空间，公共基为空。
 
 **断言：**$\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\boldsymbol{\alpha}_1,\cdots,\boldsymbol{\alpha}_s,\boldsymbol{\beta}_1,\cdots,\boldsymbol{\beta}_t$（共 $r+s+t$ 个）是 $W_1+W_2$ 的一组基。
 
-**张成：**任取 $\boldsymbol{w}\in W_1+W_2$，$\boldsymbol{w}=\boldsymbol{w}_1+\boldsymbol{w}_2$。把 $\boldsymbol{w}_1$ 用 $W_1$ 的基表示、$\boldsymbol{w}_2$ 用 $W_2$ 的基表示，求和即得 $\boldsymbol{w}$ 用断言中 $r+s+t$ 个向量的表示。
+**第二步：证明合并后的向量组张成和空间。**
 
-**无关：**设
+任取 $\boldsymbol{w}\in W_1+W_2$，按和空间的定义可写成 $\boldsymbol{w}=\boldsymbol{w}_1+\boldsymbol{w}_2$。分别用上面两组基表示：
+
+$$\begin{aligned}
+\boldsymbol{w}_1&=\sum_i u_i\boldsymbol{\varepsilon}_i+\sum_j a_j\boldsymbol{\alpha}_j,\\
+\boldsymbol{w}_2&=\sum_i v_i\boldsymbol{\varepsilon}_i+\sum_l b_l\boldsymbol{\beta}_l,\\
+\boldsymbol{w}&=\sum_i(u_i+v_i)\boldsymbol{\varepsilon}_i
++\sum_j a_j\boldsymbol{\alpha}_j+\sum_l b_l\boldsymbol{\beta}_l.
+\end{aligned}$$
+
+因此每个 $\boldsymbol w$ 都能用合并后的向量组表示。还不能立刻计数：生成组只有在线性无关时才是基。
+
+**第三步：证明没有遗漏的冗余。** 设
 
 $$\sum_{i=1}^r c_i\boldsymbol{\varepsilon}_i+\sum_{j=1}^s a_j\boldsymbol{\alpha}_j+\sum_{l=1}^t b_l\boldsymbol{\beta}_l=\boldsymbol{\theta}.\tag{*}$$
 
-移项：$\displaystyle\sum_j a_j\boldsymbol{\alpha}_j=-\sum_i c_i\boldsymbol{\varepsilon}_i-\sum_l b_l\boldsymbol{\beta}_l\eqqcolon\boldsymbol{\gamma}$。左边 $\in W_1$；右边是 $W_2$ 的基向量的组合，$\in W_2$。故 $\boldsymbol{\gamma}\in W_1\cap W_2=\operatorname{span}(\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r)$，即存在 $d_i$ 使 $\boldsymbol{\gamma}=\sum_i d_i\boldsymbol{\varepsilon}_i$。于是
+先把只在 $W_1$ 的基中新增的 $\boldsymbol\alpha$ 组移到一边：
+
+$$\boldsymbol{\gamma}
+=\sum_j a_j\boldsymbol{\alpha}_j
+=-\sum_i c_i\boldsymbol{\varepsilon}_i-\sum_l b_l\boldsymbol{\beta}_l.$$
+
+左边的表示说明 $\boldsymbol\gamma\in W_1$，右边的表示说明 $\boldsymbol\gamma\in W_2$。因此 $\boldsymbol\gamma$ 落在交空间里，必须还能用公共基表示：$\boldsymbol\gamma=\sum_i d_i\boldsymbol{\varepsilon}_i$。把这两种表示相减，得到
 
 $$\sum_j a_j\boldsymbol{\alpha}_j-\sum_i d_i\boldsymbol{\varepsilon}_i=\boldsymbol{\theta}$$
 
-是 $W_1$ 的基向量的零组合，由基无关性得 $a_j=0$（且 $d_i=0$）。代回 $(*)$ 得 $\sum c_i\boldsymbol{\varepsilon}_i+\sum b_l\boldsymbol{\beta}_l=\boldsymbol{\theta}$。这是 $W_2$ 的基 $\boldsymbol{\varepsilon}_1,\cdots,\boldsymbol{\varepsilon}_r,\boldsymbol{\beta}_1,\cdots,\boldsymbol{\beta}_t$ 的零组合，由基的无关性得 $c_i=0,\ b_l=0$。全部系数为零，断言的无关性成立。
+这是 $W_1$ 的基向量的零组合，所以 $a_j=0$、$d_i=0$。再把 $a_j=0$ 代回 $(*)$：
 
-**计数：**$\dim(W_1+W_2)=r+s+t=(r+s)+(r+t)-r=\dim W_1+\dim W_2-\dim(W_1\cap W_2)$。
+$$\sum_i c_i\boldsymbol{\varepsilon}_i+\sum_l b_l\boldsymbol{\beta}_l=\boldsymbol{\theta}.$$
+
+这次使用 $W_2$ 的基的无关性，得到 $c_i=0$、$b_l=0$。原等式的全部系数为零，合并后的向量组确实线性无关。
+
+**第四步：基已经构造好，最后才计数。**
+
+$$\begin{aligned}
+\dim(W_1+W_2)&=r+s+t\\
+&=(r+s)+(r+t)-r\\
+&=\dim W_1+\dim W_2-\dim(W_1\cap W_2).
+\end{aligned}$$
 
 :::
 

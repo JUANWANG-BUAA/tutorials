@@ -3,10 +3,10 @@
 <h1>矩阵论</h1>
 <div class="subtitle">线性空间与坐标、线性映射与矩阵、矩阵分解，以及给矩阵装上尺子：范数、相容与谱。</div>
 <div class="cover-chips">
-<span>4 章 · 21 节</span>
+<span>4 章 · 23 节（24 个正文页面）</span>
 <span>证明工坊 · 习题与自测</span>
 <span>复习卡 · 考场冲刺</span>
-<span>部分章节待补：2.6–2.7、3.3、4.4 及以后</span>
+<span>部分章节待补：2.6–2.7、3.3、4.4、4.7 及以后</span>
 </div>
 <details class="cover-details">
 <summary>查看课程范围与资料说明</summary>
@@ -26,7 +26,7 @@
 </section>
 
 <section class="book-contents" aria-label="目录">
-<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">4 章 · 21 节</span></div>
+<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">4 章 · 23 节</span></div>
 <div class="bc-list">
 <a class="bc-row" href="ch01/overview.md"><span class="bc-no">01</span><span class="bc-title">第一章 · 线性空间引论</span><span class="bc-count">6 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch02/overview.md"><span class="bc-no">02</span><span class="bc-title">第二章 · 线性映射与矩阵</span><span class="bc-count">5 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>

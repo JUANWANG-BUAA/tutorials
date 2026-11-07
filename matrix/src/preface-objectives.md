@@ -187,16 +187,16 @@
 <li><span class="obj-id">A3.14</span>能区分「相抵保持的量」与「决定相抵的量」：秩只保持不决定，初等因子要配秩才决定，不变因子单独就决定；对特征矩阵秩条件自动满足。<span class="obj-lv">分析 / 评价</span></li>
 </ul>
 
-## 第四章 · 矩阵分析（4.1–4.3）
+## 第四章 · 矩阵分析（4.1–4.3、4.5–4.6）
 
-五节随官方课件追加（均无录播），完整目标见[第四章自检表](ch04/checklist.md)：K4.1–K4.44（44 条知识目标）、S4.1–S4.11（11 条技能目标）、A4.1–A4.9（9 条素养目标），共 64 条，与[习题集](ch04/exercises.md)、[综合自测卷](ch04/mock-exam.md)逐条对应。这里只列三条最容易被忽略的素养目标：
+已整理五节；课堂材料的覆盖范围见[第四章导读](preface.md)。完整目标见[第四章自检表](ch04/checklist.md)：K4.1–K4.44（44 条知识目标）、S4.1–S4.11（11 条技能目标）、A4.1–A4.9（9 条素养目标），共 64 条，与[习题集](ch04/exercises.md)、[综合自测卷](ch04/mock-exam.md)逐条对应。这里列出五条值得结合例题检查的素养目标：
 
 <ul class="objlist">
 <li><span class="obj-id">A4.1</span>面对估计问题先选尺子：列和 / 行和 / 谱 / Frobenius 各适合什么场景，代价是什么（[4.3.2](ch04/sec43.md#sec-4.3.2)）。<span class="obj-lv">分析 / 评价</span></li>
-<li><span class="obj-id">A4.6</span>能把「定义—图形—公式—数值」扣成闭环：看着[单位球的像](ch04/sec43.md#widget-norm-operator)说出三个诱导范数公式为什么给出同一个数。<span class="obj-lv">综合 / 评价</span></li>
-<li><span class="obj-id">A4.7</span>边界意识：遇到 $\rho(A)=r$ 或 $\rho(A)\ge1$ 时主动放弃范数工具、回定义逐元素算（[4.6 注 1](ch04/sec46.md#note-4.6-1)）。<span class="obj-lv">分析 / 评价</span></li>
+<li><span class="obj-id">A4.6</span>看着[单位球的像](ch04/sec43.md#widget-norm-operator)，说明所选诱导范数的定义、显式公式与图中最大读数为什么一致；不同范数的值不必相等。<span class="obj-lv">综合 / 评价</span></li>
+<li><span class="obj-id">A4.7</span>边界意识：遇到 $\rho(A)=r$ 时，不套用 Abel 型定理的圆内结论；结合系数与 Jordan 块另作判断（[4.6 注 1](ch04/sec46.md#note-4.6-1)）。<span class="obj-lv">分析 / 评价</span></li>
 <li><span class="obj-id">A4.8</span>调参意识：判断「该改哪一行 / 列」才能让圆盘分开，并承认有时调不开（[例 4.5.8](ch04/sec45.md#ex-4.5.8)、[4.5.9](ch04/sec45.md#ex-4.5.9)）。<span class="obj-lv">分析 / 评价</span></li>
 <li><span class="obj-id">A4.9</span>工具选择：面对「要数特征值 / 要判收敛 / 要估误差」三类问题各选对工具，并说出代价。<span class="obj-lv">综合 / 评价</span></li>
 </ul>
 
-> **注**：上表三题与自检表逐条对应（A4.7 = 边界意识、A4.8 = 调参意识、A4.9 = 工具选择），全部计入 64 条。
+> **注**：这里列出的五条目标均沿用自检表的编号，已计入 64 条，不另增加考核项目。

@@ -332,7 +332,7 @@ $$N(T)=\{x\in V\mid T(x)=\boldsymbol{\theta}'\},\qquad R(T)=\{y\in W\mid \exists
 
 ::: thm 定理 2.2.5 · 亏加秩定理（维数公式）{#thm-2.2.5}
 
-设 $T\in L(V,W)$，则
+设 $V$ 是有限维线性空间，$T\in L(V,W)$，则
 
 $$\dim N(T)+\dim R(T)=\dim V,$$
 
@@ -342,23 +342,29 @@ $$\dim N(T)+\dim R(T)=\dim V,$$
 
 ::: proof 证明（基扩充——课堂上证到一半下课，此处按老师的路线补完）
 
-记 $\dim V=n$。
+**要证什么。** 记 $\dim V=n$、$\dim N(T)=m$。我们要找到 $R(T)$ 的一组基，并证明它恰有 $n-m$ 个向量。
 
-**第一步（取 $V$ 的基）**：设 $\varepsilon_1,\cdots,\varepsilon_n$ 为 $V$ 的基。
+**为什么从核空间的基开始。** 核里的向量经过 $T$ 都变成零。先把这些方向放进基里，再补齐其余方向，才能看清哪些像需要保留。
 
-**第二步（取 $N(T)$ 的基并扩充）**：设 $\dim N(T)=m\le n$，取 $N(T)$ 的基 $h_1,\cdots,h_m$。由[基扩充定理](../ch01/sec13.md)（板书 90:18 的图解正对应此步）扩充为 $V$ 的基
+**第一步：取核的基，再扩充到定义域。** 取 $N(T)$ 的基 $h_1,\cdots,h_m$，由[基扩充定理](../ch01/sec13.md#cor-1.3.1)（板书 90:18 对应此步）扩充为 $V$ 的基
 
 $$h_1,\cdots,h_m,\ h_{m+1},\cdots,h_n .$$
 
-**第三步（$R(T)$ 由后 $n-m$ 个像张成）**：$V$ 中任一向量 $\beta=k_1h_1+\cdots+k_nh_n$，作用 $T$：
+当 $m=0$ 时，核的基为空；当 $m=n$ 时，无须补充向量，$T$ 是零映射，结论直接成立。下面的空和也按零理解。
 
-$$T(\beta)=k_1T(h_1)+\cdots+k_mT(h_m)+k_{m+1}T(h_{m+1})+\cdots+k_nT(h_n)=k_{m+1}T(h_{m+1})+\cdots+k_nT(h_n),$$
+**第二步：证明后面那些像张成 $R(T)$。** 任取 $y\in R(T)$，按像空间的定义，存在 $\beta\in V$ 使 $y=T(\beta)$。用刚才的基表示 $\beta$，再利用线性性：
 
-（用了 $h_1,\cdots,h_m\in N(T)$ 故前 $m$ 项为零）——因此
+$$\begin{aligned}
+\beta&=\sum_{i=1}^{n}k_i h_i,\\
+y=T(\beta)&=\sum_{i=1}^{m}k_iT(h_i)+\sum_{i=m+1}^{n}k_iT(h_i)\\
+&=\sum_{i=m+1}^{n}k_iT(h_i).
+\end{aligned}$$
+
+最后一行用到 $h_1,\cdots,h_m\in N(T)$。因此 $R(T)$ 中每个向量都在后 $n-m$ 个像的张成空间里；反过来，这些像及其线性组合都属于 $R(T)$。两边包含关系齐备，才得到
 
 $$R(T)=\operatorname{span}\{T(h_{m+1}),\cdots,T(h_n)\}.$$
 
-**第四步（后 $n-m$ 个像线性无关——课堂停在这里，下面补完）**：若
+**第三步：证明这些像线性无关。** 原向量无关，不代表经过 $T$ 后仍无关；这里必须再证一次。课堂停在这一步，以下补完。设
 
 $$c_{m+1}T(h_{m+1})+\cdots+c_nT(h_n)=\boldsymbol{\theta}',$$
 
@@ -366,14 +372,32 @@ $$c_{m+1}T(h_{m+1})+\cdots+c_nT(h_n)=\boldsymbol{\theta}',$$
 
 $$c_{m+1}h_{m+1}+\cdots+c_nh_n=c_1h_1+\cdots+c_mh_m,$$
 
-即 $c_1h_1+\cdots+c_mh_m-c_{m+1}h_{m+1}-\cdots-c_nh_n=\boldsymbol{\theta}$。因 $h_1,\cdots,h_n$ 是 $V$ 的基（线性无关），全部系数为零，特别地 $c_{m+1}=\cdots=c_n=0$。故 $T(h_{m+1}),\cdots,T(h_n)$ 线性无关、构成 $R(T)$ 的基：
+移到一边：
+
+$$\sum_{i=1}^{m}c_i h_i-\sum_{i=m+1}^{n}c_i h_i=\boldsymbol{\theta}.$$
+
+这一次使用的是**原空间中整组基** $h_1,\cdots,h_n$ 的无关性。它迫使全部系数为零，特别是 $c_{m+1}=\cdots=c_n=0$，所以后 $n-m$ 个像线性无关。
+
+**第四步：由基的长度得到维数。** 第二步证明张成，第三步证明无关，因此这些像构成 $R(T)$ 的基：
 
 $$\dim R(T)=n-m=\dim V-\dim N(T).\qquad\blacksquare$$
 :::
 
-::: preview 定理在说什么
+<figure class="proof-flow" aria-labelledby="rank-nullity-route-caption">
+<ol>
+<li><strong>取核的基</strong><span>这些方向的像都是零。</span></li>
+<li><strong>补成定义域的基</strong><span>后加的向量提供候选像。</span></li>
+<li><strong>分别验证张成与无关</strong><span>两项都成立，候选像才是基。</span></li>
+<li><strong>数像空间的基</strong><span>定义域维数减去核维数，就是秩。</span></li>
+</ol>
+<figcaption id="rank-nullity-route-caption">亏加秩证明路线。最容易漏的是第三步：原向量无关，并不能直接推出它们的像无关。</figcaption>
+</figure>
 
-「$V$ 的 $n$ 个自由度被分成两份：$m$ 个被 $T$ 压成零（$N(T)$），剩下的 $n-m$ 个原样传给 $R(T)$。」维数守恒：**死的部分 + 活的部分 = 全部**。它是判断「单射 / 满射 / 同构」的定量工具（$T$ 单射 $\iff\dim N(T)=0$；$T$ 满射 $\iff\dim R(T)=\dim W$），下一节还会以矩阵形式重述一遍（[定理 2.3.6](sec23.md#thm-2.3.6)），此后的秩理论与特征值讨论都建立在它上面。
+::: note 定理在说什么
+
+$V$ 的一组基可以分成两部分：核中的 $m$ 个方向被映成零，补入的 $n-m$ 个方向的像构成像空间的基。这里保留的是**独立方向的数量**，不表示映射保持长度或夹角。
+
+这给出了判断映射的定量方法：$T$ 单射 $\iff\dim N(T)=0$；若 $W$ 也有限维，$T$ 满射 $\iff\dim R(T)=\dim W$。下一节取定基，把 $T$ 写成矩阵 $A$，就能将这个结论改写为熟悉的「自由未知量个数 $+$ 矩阵秩 $=$ 列数」（[定理 2.3.6](sec23.md#thm-2.3.6)）。
 :::
 
 ## 2.2 小结与常见错误
