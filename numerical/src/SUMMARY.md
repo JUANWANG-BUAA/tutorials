@@ -9,11 +9,12 @@
 - [符号表](preface-notation.md)
 - [先修与自测：线性代数 · 微积分 · 编程 · 记号](prerequisite.md)
 - [工程工具箱：误差诊断 · 算法选型 · 停止准则 · 函数地图](toolbox.md)
+- [算法实作课 · 输入、步骤、停止与失败诊断](training/algorithm-workshop.md)
 
 # 学前准备
 
 - [入学诊断自测](entry-test.md)
-- [概念地图 · 第一章与补充篇](preface-map.md)
+- [全课程概念地图 · 先修、误差与方法](preface-map.md)
 
 # 课堂主线 · 2026 秋《数值分析 I》逐讲实录（全书主线）
 
@@ -120,11 +121,10 @@
 - [老师布置的作业 · SPOC 自测题总览](lectures/homework.md)
 - [课件布置的教材作业 · 逐讲台账](lectures/assignments.md)
 
-# 教材补齐 · 课件未覆盖（考纲外，正文保留）
+# 教材拓展与后续内容 · 按需学习
 
-> 课件（朱立永班，16 份、426 页）**没有覆盖**的内容，按教材预先铺好成节。
-> 与「课堂未讲」不同：这一组的判据是**课件里没有**，不是录播里没有——判据定于录播只到第 12 讲时（现已到第 15 讲），若按录播判会把第 6 章大半误判为不考。
-> **复习与考试以课件为准**；课件未覆盖的部分可读，但不作必考。
+> 这一组保留其他方法与后续章节入口；它不是“考纲外”清单。
+> 课件与录播来自不同班级，须分别记录来源。本班课堂已讲、作业涉及与考试范围不是同一概念，见[来源判定规则](lectures/crosswalk.md)。
 
 - [第 3 章 · Jacobi 方法（课件未覆盖）](course/ch03/sec32.md)
 - [第 3 章 · QR 方法（课件未覆盖）](course/ch03/sec33.md)
@@ -136,7 +136,7 @@
   - [6.6 Romberg 积分法（课件未覆盖，但课件 14 布置了教材题 12）](course/ch06/sec66.md)
   - [6.8 二重积分的数值求积法（课件未覆盖）](course/ch06/sec68.md)
 
-- [第 7 章 常微分方程初值问题的数值解法（课件未覆盖，**课堂已于 11-04 开讲**）](course/ch07/overview.md)
+- [第 7 章导览与后续：常微分方程（第 15 讲已开篇）](course/ch07/overview.md)
   - [第 7 章覆盖矩阵](course/ch07/coverage.md)
   - [7.3 线性多步法](course/ch07/sec73.md)
   - [7.4–7.5 步长的选择、方程组与刚性问题](course/ch07/sec74.md)
@@ -173,12 +173,13 @@
 - [一页速览 · 公式与结论卡](review/formula-cards.md)
 - [易混对照卡](review/contrast-cards.md)
 - [术语索引（中英对照）](review/glossary.md)
-- [最小必读路径](review/study-paths.md)
+- [七章学习路径 · 跟课、复习与深入理解](review/study-paths.md)
 
 # 特训 · 竞技与考场
 
 - [必考点竞技场](training/arena.md)
 - [考场模拟卷 · 100 分制](training/exam-sprint.md)
+- [跨章实验 · 从数据到面积，再到动力学](training/learning-lab.md)
 
 # 附录 · 拓展与推导
 

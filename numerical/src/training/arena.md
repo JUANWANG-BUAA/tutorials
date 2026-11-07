@@ -50,7 +50,7 @@
 |:--|:--|:--|
 | 误差 | 判断递推是否稳定，**只看舍入误差放大因子是否 $>1$**，不看递推式本身 | 第 1 讲 |
 | 误差 | **相近数相减**最危险；改写如 $a^2-b^2=(a-b)(a+b)$ | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
-| 误差 | 有效数字判据 $\tfrac12\times10^{m-n}\le\varepsilon(a)$，从**第一位非零数字**数起 | [1.2.2](../ch01/sec12.md#sec-1.2.2) |
+| 误差 | 保证至少 $n$ 位有效数字的误差限判据为 $\varepsilon(a)\le\tfrac12\times10^{m-n}$，从第一位非零数字数起 | [1.2.2](../ch01/sec12.md#sec-1.2.2) |
 | 范数 | **相容关系** $\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert$ 是后面一切的起点 | 第 2 讲 |
 | 范数 | **范数等价性只在有限维成立**（无穷维不成立） | 第 2 讲 |
 | 范数 | 判 $I\pm A$ 可逆，**找到一个范数使 $\lVert A\rVert<1$ 即可，不碰行列式** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
@@ -63,7 +63,7 @@
 | 迭代 | 误差递推盯「**下标 $+$ 幂次 $=$ 常数**」；拆法即名字（$A=N-P$） | 第 5 讲 |
 | 迭代 | $\lVert G\rVert$ 接近 1 时，**相邻迭代值差小不能断定接近真解** | 第 5 讲 |
 | 迭代 | SOR **必要**条件 $\omega\in(0,2)$：区间外一定不收敛，区间内不保证 | 第 6 讲 |
-| 特征值 | 幂法**先单位化、再乘 $A$**，顺序不能反 | 第 7 讲 |
+| 特征值 | 每步控制向量尺度，保持归一化、下标与特征值估计式配套；完整 Rayleigh 商与非零缩放无关 | 第 7 讲 |
 | 特征值 | 求**特征向量**范数任取；省略 Rayleigh 分母须作 **2-范数**单位化；保留分母则可任取范数 | 第 7 讲 |
 | 特征值 | 「**严格**按模最大」这个前提缺不得；实矩阵的它**必为实数** | 第 7 讲 |
 | 特征值 | 反幂法**不构造 $A^{-1}$**，每步解 $Au_{k+1}=y_k$；位移 $A-pI$ 求最接近 $p$ 的特征值 | 第 7 讲 |
@@ -154,14 +154,14 @@
 </div>
 <div class="arena-q" data-id="e7" data-lv="1" data-a="2" data-tag="误差与精度" data-point="误差四分类" data-src="1.1 · 第 1 讲" data-href="../lectures/lec01.html">
 <p class="aq-hd"><span class="aq-id">e7</span><span class="aq-tag">误差与精度 · 误差四分类</span></p>
-<p class="aq-prompt">在数值分析的四类误差中，**本课程能控制、也正是要研究的对象**是</p>
+<p class="aq-prompt">用有限项 Taylor 多项式代替原函数，即使每一步都精确计算，仍然留下的近似误差属于</p>
 <ol class="aq-opts">
 <li>模型误差</li>
 <li>观测误差</li>
 <li>截断误差</li>
 <li>舍入误差</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>模型误差、观测误差来自问题本身，无法消除；舍入误差由机器字长决定（但其**传播**可控）；**截断误差**来自算法对无穷过程的截断，是算法设计的核心研究对象。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>这是截断误差：用有限近似代替原来的数学运算所产生。若再用有限精度运算，还会引入舍入误差。本课程同时研究截断误差、舍入误差及误差传播，不能把可研究的对象限定为一种。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e8" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="矩阵范数计算" data-src="1.3.4 · 第 2–3 讲" data-href="../ch01/sec13.html#sec-1.3.4">
 <p class="aq-hd"><span class="aq-id">e8</span><span class="aq-tag">范数与条件数 · 矩阵范数计算</span></p>
@@ -209,7 +209,7 @@
 </div>
 <div class="arena-q" data-id="e12" data-lv="2" data-a="2" data-tag="范数与条件数" data-point="条件数下界" data-src="补充 2.4 · 第 2–3 讲" data-href="../supplement/sec24.html">
 <p class="aq-hd"><span class="aq-id">e12</span><span class="aq-tag">范数与条件数 · 条件数下界</span></p>
-<p class="aq-prompt">对可逆矩阵 $A$，条件数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 的下界是</p>
+<p class="aq-prompt">采用同一个从属矩阵范数时，对可逆矩阵 $A$，条件数 $\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert$ 的下界是</p>
 <ol class="aq-opts">
 <li>$0$</li>
 <li>$\dfrac1n$</li>
@@ -253,21 +253,21 @@
 </div>
 <div class="arena-q" data-id="e16" data-lv="3" data-a="2" data-tag="线性方程组与迭代法" data-point="LU 分解条件" data-src="第 4 讲" data-href="../lectures/lec04.html">
 <p class="aq-hd"><span class="aq-id">e16</span><span class="aq-tag">线性方程组与迭代法 · LU 分解条件</span></p>
-<p class="aq-prompt">对方阵 $A$ 做 Doolittle（$L$ 单位下三角、$U$ 上三角）分解，**无需换行即可进行**的充分条件是</p>
+<p class="aq-prompt">对非奇异方阵 $A$，Doolittle（$L$ 单位下三角、$U$ 上三角）分解无需换行且所有主元非零的充要条件是</p>
 <ol class="aq-opts">
 <li>$A$ 对称正定</li>
 <li>$A$ 是严格对角占优的</li>
 <li>$A$ 的各阶顺序主子式均非零</li>
 <li>$A$ 的行列式不为零</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>Doolittle 分解能逐步进行，当且仅当各阶顺序主子式均非零（$\det A\ne0$ 不够——那只是可逆）。严格对角占优是更强的**充分**条件（能保证非奇异），但标准表述是顺序主子式。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>主元可写成相邻顺序主子式之比，因此各阶顺序主子式非零给出充要条件。对称正定、严格对角占优也都足以保证，但不是必要条件；例如单位上三角矩阵可以既不对称也不严格对角占优，仍无需换行分解。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e17" data-lv="3" data-a="0" data-tag="线性方程组与迭代法" data-point="迭代收敛充要条件" data-src="第 5 讲" data-href="../lectures/lec05.html">
 <p class="aq-hd"><span class="aq-id">e17</span><span class="aq-tag">线性方程组与迭代法 · 迭代收敛充要条件</span></p>
-<p class="aq-prompt">对迭代式 $\boldsymbol{x}^{(k+1)}=G\boldsymbol{x}^{(k)}+\boldsymbol{d}$，其收敛的**充要**条件是</p>
+<p class="aq-prompt">对迭代式 $\boldsymbol{x}^{(k+1)}=G\boldsymbol{x}^{(k)}+\boldsymbol{d}$，从任意初值收敛到唯一不动点的充要条件是（范数均预先指定）</p>
 <ol class="aq-opts">
 <li>$\rho(G)<1$</li>
-<li>$\lVert G\rVert<1$（某个范数）</li>
+<li>$\lVert G\rVert_2<1$</li>
 <li>$G$ 对称正定</li>
 <li>$\lVert G\rVert_\infty<1$</li>
 </ol>
@@ -308,14 +308,14 @@
 </div>
 <div class="arena-q" data-id="e21" data-lv="3" data-a="1" data-tag="线性方程组与迭代法" data-point="矩阵分裂" data-src="第 5 讲" data-href="../lectures/lec05.html">
 <p class="aq-hd"><span class="aq-id">e21</span><span class="aq-tag">线性方程组与迭代法 · 矩阵分裂</span></p>
-<p class="aq-prompt">「拆法即名字」——Jacobi、Gauss–Seidel、SOR 三者都由 $A=N-P$ 的分裂决定。它们对 $A=L+D+U$ 的**分裂方式**，共同点是</p>
+<p class="aq-prompt">设 $A=L+D+U=N-P$，其中 $L,U$ 是严格下、上三角部分。Jacobi 的分裂应取</p>
 <ol class="aq-opts">
-<li>都取 $N=L+U$、$P=D$</li>
-<li>都取 $P$ 包含对角部分 $D$（严格三角部分归入 $N$）</li>
-<li>都把整个 $A$ 当作 $P$</li>
-<li>都要求 $A$ 对称</li>
+<li>$N=L+U,\ P=D$</li>
+<li>$N=D,\ P=-(L+U)$</li>
+<li>$N=A,\ P=A$</li>
+<li>$N=-D,\ P=L+U$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>三种方法都把**对角部分 $D$ 留在 $P$**、把严格的上下三角部分放进 $N$（Gauss–Seidel 再取 $P=D+L$、SOR 用 $\omega$ 加权）。名字由「怎么拆」决定——这就是「拆法即名字」。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>先验算 $N-P=D+L+U=A$，再写 $Dx^{(k+1)}=-(L+U)x^{(k)}+b$。Gauss–Seidel 则取 $N=D+L,\ P=-U$。始终把容易求解的部分放在 $N$，不要混用 $A=N-P$ 与其他教材的符号约定。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e22" data-lv="3" data-a="2" data-tag="线性方程组与迭代法" data-point="稀疏与复杂度" data-src="第 4 讲" data-href="../lectures/lec04.html">
 <p class="aq-hd"><span class="aq-id">e22</span><span class="aq-tag">线性方程组与迭代法 · 稀疏与复杂度</span></p>

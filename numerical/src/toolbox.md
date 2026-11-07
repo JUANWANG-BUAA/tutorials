@@ -2,6 +2,8 @@
 
 正文回答「为什么」，这一页回答「**动手时先看哪一页、用哪个函数**」。它是一张**索引**：拿到一个具体症状，先在本页定位到该算哪个量、该调哪个函数，再回正文读推导。本页不重述正文内容，也不重复复习层的公式卡与对照卡。
 
+第一次把公式写成程序，请先做[算法实作课](training/algorithm-workshop.md)：逐项确认输入、更新顺序、停止证据和失败处理，再回来选择函数。
+
 ::: method 三条使用原则（先记住，再看下文）
 1. **先诊断，再换算法。** 病态是问题的属性、不稳定是算法的属性（[1.2.6](ch01/sec12.md#sec-1.2.6)）；判错方向，后面的努力全花在错误的地方。
 2. **先估量级，再对账。** 任何数值结论都先写一个理论量级——$\mathrm{cond}\cdot u$、$\sigma_{k+1}$、$(\lambda_2/\lambda_1)^k$——再用实测对账；[2.7](supplement/sec27.md) 的「报告要求」就是这个流程。
@@ -92,7 +94,7 @@
 
 ### 三、收敛判定与停止准则 {#sec-工具箱-3}
 
-**三条停止准则，缺一不可：** ① **相对**残差（或相对增量）阈值 $\lVert\boldsymbol{r}_k\rVert/\lVert\boldsymbol{b}\rVert\le\varepsilon_{\mathrm{tol}}$；② 迭代次数上限（阈值没到也要停下来并报告）；③ 判据必须能算——用真解做判据等于没有判据。
+**停止设计包括三部分：** ① 选可计算且与任务相符的指标，例如 $\|r_k\|\le\mathrm{atol}+\mathrm{rtol}\|b\|$，避免零右端导致除零；② 设置迭代预算，并区分达标与预算耗尽；③ 检查非有限值和停滞。增量小不能替代残差或误差界，真解未知时不能用真误差作为实际停止判据。
 
 ::: think 一个高频误解：相邻两次迭代值差很小，就认为接近真解
 不成立。迭代矩阵的范数接近 $1$ 时，相邻差可以很小而离真解很远——这是[必考点总表](training/arena.md#必考点总表老师课堂反复强调)里的一条，也是[第 5 讲](lectures/lec05.md)专门强调的。**收敛判据分清两层：充要条件是 $\rho(G)\lt1$，工程上实用的充分条件是 $\lVert G\rVert\lt1$**（[2.5.6](supplement/sec25.md#sup-2.5.6) 还提醒：用 $\rho$ 判断在非正规矩阵上会遇到瞬态增长）。
@@ -105,18 +107,32 @@ $$p\approx\frac{\ln\!\left(e_{k+1}/e_k\right)}{\ln\!\left(e_k/e_{k-1}\right)} .$
 **可复算的例子**（幂法求主特征值，矩阵与数据取自[例 2.5.3](supplement/sec25.md#sup-2.5.3)：$A=\begin{pmatrix}5&2&0\\2&4&1\\0&1&3\end{pmatrix}$）：$\lvert\lambda_2/\lambda_1\rvert=0.5212$，实测 Rayleigh 商误差每步乘以 $0.2717$。两点读法：
 
 - **比值的读法**：$0.2717=0.5212^{2}$ 恰好说明「Rayleigh 商的误差按 $(\lambda_2/\lambda_1)^{2k}$ 衰减」——比只用 $\lVert A\boldsymbol{x}\rVert$ 估计（每步 $0.5212$）快一倍（[定理 2.5.3](supplement/sec25.md#thm-sup-2.5.3)）。
-- **阶的读法**：把实测误差代进上面的公式，得到 $p\approx0.98$——它告诉你的信息是「这个序列是**几何**衰减、比值 $0.27$」，而不是「一阶收敛」。**报「阶」之前先确认序列真的落在 $e_{k+1}\approx Ce_k^{p}$（$p\gt1$）的形态里**：割线法这类 $p\approx1.618$ 的序列（[第 9 讲](lectures/lec09.md)）才适合直接用三点公式估阶。
+- **阶的读法**：几何衰减 $e_{k+1}/e_k\to c\in(0,1)$ 正是一阶（线性）收敛；三点公式在渐近区应给出 $p\approx1$。不能因为 Rayleigh 商误差含平方就称该序列二阶收敛：平方是相对于特征向量方向误差而言。估阶前需排除误差为零、尚未进入渐近区或已受舍入支配的情况。
 
-**一份可以照抄的停止准则模板：**
+**残差停止的教学模板。** 预先给出非负容差与正整数预算，且至少一个容差为正；此模板只判断残差是否达标，不宣称给出前向误差界。
 
 ```python
-for k in range(maxit):                     # ② 上限永远写进循环
-    x = step(x)                            # 迭代一步
-    res = np.linalg.norm(b - A @ x) / bnorm # ① 相对残差
-    if res < tol: break                    # 达标即停
-else:
-    print(f"未达标即触顶：k={maxit} 残差={res:.3e} "
-          f"cond 估计={np.linalg.cond(A, 2):.2e}")  # ③ 触顶时报告诊断量
+threshold = atol + rtol * np.linalg.norm(b)
+status = "预算耗尽"
+for iteration in range(maxit + 1):
+    residual_norm = np.linalg.norm(b - A @ solution)
+    if not np.isfinite(residual_norm):
+        status = "残差非有限"
+        break
+    if residual_norm <= threshold:
+        status = "残差达标"
+        break
+    if iteration == maxit:
+        break
+    candidate = step(solution)
+    if not np.all(np.isfinite(candidate)):
+        status = "迭代值非有限"
+        break
+    if np.array_equal(candidate, solution):
+        status = "浮点停滞且残差未达标"
+        break
+    solution = candidate
+print(status, iteration, residual_norm)
 ```
 
 ### 四、工具地图：任务 → 函数 → 后端 {#sec-工具箱-4}

@@ -1,7 +1,7 @@
 <section class="chapter-cover">
 <div class="kicker">数值分析 · 定制教程</div>
 <h1>数值分析</h1>
-<div class="subtitle">误差与算法、线性方程组、特征值、非线性方程与插值；另附数值线性代数工具箱。</div>
+<div class="subtitle">从误差与线性方程，到插值、积分和微分方程：推导方法、检验结果、识别失败。</div>
 <div class="cover-chips">
 <span>逐讲实录 15 讲 · 正文 7 章 + 补充篇</span>
 <span>课堂精编 15 页（第 1–15 讲全程）</span>
@@ -33,7 +33,7 @@
 <a class="bc-row" href="supplement/overview.md"><span class="bc-no">补</span><span class="bc-title">补充篇 · 数值线性代数工具箱</span><span class="bc-count">8 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="lectures/overview.md"><span class="bc-no">课</span><span class="bc-title">课堂精编 · 2026 秋《数值分析 I》</span><span class="bc-count">15 讲</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 </div>
-<p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。</p>
+<p class="bc-note">第一次学习从<a href="review/study-paths.md">七章学习路径</a>进入；用<a href="preface-map.md">概念地图</a>补先修，用<a href="training/learning-lab.md">跨章实验</a>检验理解，再做<a href="training/exam-sprint.md">七章综合卷</a>。左侧目录与页首搜索供查阅。</p>
 </section>
 
 <footer class="book-colophon">

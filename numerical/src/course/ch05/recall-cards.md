@@ -10,7 +10,7 @@
 
 **A2.** 内积空间的四条公理是什么？
 ::: sol
-① 非负性 $\langle x,x\rangle\ge0$，且 $\langle x,x\rangle=0\iff x=0$（正定）；② 线性（第一变量的线性）；③ 对称 $\langle x,y\rangle=\langle y,x\rangle$；④ $\langle ax+by,z\rangle=a\langle x,z\rangle+b\langle y,z\rangle$。由此得 Cauchy–Schwarz：$|\langle x,y\rangle|\le\lVert x\rVert\lVert y\rVert$。（✓ / △ / ×）
+实内积的四项可列为：对称性 $\langle x,y\rangle=\langle y,x\rangle$；第一变量的齐次性 $\langle ax,y\rangle=a\langle x,y\rangle$；可加性 $\langle x+z,y\rangle=\langle x,y\rangle+\langle z,y\rangle$；正定性 $\langle x,x\rangle\ge0$ 且等号仅在 $x=0$ 时成立。齐次与可加合称线性。由此得 Cauchy–Schwarz：$|\langle x,y\rangle|\le\|x\|\|y\|$。（✓ / △ / ×）
 :::
 
 **A3.** 最佳平方逼近的最优性条件是什么？
@@ -36,9 +36,9 @@ $$p_n(x)=f[x_0]+f[x_0,x_1](x-x_0)+f[x_0,x_1,x_2](x-x_0)(x-x_1)+\cdots$$
 
 **B3.** Hermite 余项和 Lagrange 余项差在哪？
 ::: sol
-Hermite 插值满足 $p(x_i)=f(x_i)$、$p'(x_i)=f'(x_i)$（$i=0,\dots,n$，共 $2n+2$ 个条件），$p$ 是 $2n+1$ 次多项式，余项为
+互异节点上 Hermite 插值满足 $p(x_i)=f(x_i)$、$p'(x_i)=f'(x_i)$（$i=0,\dots,n$，共 $2n+2$ 个条件），$p$ 次数至多 $2n+1$。若 $f\in C^{2n+2}$，则余项为
 $$R(x)=\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod_{i=0}^n(x-x_i)^2.$$
-比 Lagrange 多一个平方因子，阶也高一阶。课堂用**重节点差商**（$f[x_i,x_i]=f'(x_i)$）推出同一结论，教材用辅助函数 + Rolle。（✓ / △ / ×）
+同一组 $n+1$ 个节点只给函数值时，余项需 $n+1$ 阶导数；同时给一阶导时需 $2n+2$ 阶导数，不能笼统说“只高一阶”。重节点差商用 $f[x_i,x_i]=f'(x_i)$，余项证明使用带重零点的 Rolle 论证。（✓ / △ / ×）
 :::
 
 **B4.** 正交多项式有哪些关键性质？
@@ -60,5 +60,5 @@ $$R(x)=\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod_{i=0}^n(x-x_i)^2.$$
 
 **A4.** B 样条为什么适合大数据量插值？DFT 与 FFT 的复杂度差在哪？
 ::: sol
-B 样条基 $N_{i,k}$ 有**局部支撑**：只影响相邻若干段，插值方程组因此带状，可用 $O(n)$ 追赶法；改一个数据点只影响局部。DFT 直接算是 $O(N^2)$；FFT 利用 $W=e^{-2\pi i/N}$ 的周期性把下标按二进制拆分，蝶形递推降到 $O(N\log N)$，标准算法要求 $N=2^m$。（✓ / △ / ×）
+B 样条基具有局部支撑；改变一个基系数只影响其支撑区间。但改变一个插值数据可能通过求解带状系统改变多个系数，不能保证影响严格局部。固定次数、固定带宽且满足可解条件时，带状求解成本可随节点数线性增长。DFT 直接计算为 $O(N^2)$；FFT 是快速计算 DFT 的算法族，基 2 版本要求 $N=2^m$，其他 FFT 可处理其他长度。（✓ / △ / ×）
 :::
