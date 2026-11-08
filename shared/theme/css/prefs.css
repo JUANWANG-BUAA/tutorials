@@ -14,14 +14,12 @@
  *   data-palette  主题色（随主题 / 海蓝 / 青绿 / 松绿 / 琥珀 / 高对比 / 档案红 / 工程蓝 / 酸性黄）
  *   data-bg       背景纹理（随主题 / 柔和光感 / 纯净 / 细网格 / 方格纸 / 横线稿纸 / 点阵 / 纸张纤维 / 蓝图网格 / 帘纹纸）
  *
- * **与菜单栏主题弹层的关系**：主题弹层负责明暗与代码高亮；本面板的主题色同时
- * 调整强调色与纸张/卡片底色，明暗仍交给原生主题弹层，两个入口不抢同一件事。
+ * **与菜单栏主题弹层的关系**：主题弹层负责明暗与代码高亮；主题色只调整强调色。
  *
  * 为什么是「属性驱动」而不是内联 style：
  *   1. 偏好要能覆盖权威样式里的自定义属性（如 --content-max-width），而自定义属性
  *      的覆盖靠选择器特异性 + 源顺序；属性选择器特异性高于 :root，本文件又最后加载。
- *   2. 默认档（sans / m / standard / standard / theme）不写任何属性，外观与设置面板
- *      出现之前逐像素一致——升级不改变任何读者的现有观感。
+ *   2. 默认档（sans / m / standard / standard / theme / plain）不写任何属性。
  *
  * 加载顺序：book.toml 的 additional-css 里排在权威样式表与 framework.css **之后**
  * （framework.css 也接管了 .content p / li / ol / ul 的行高），这样同特异性的声明
@@ -171,6 +169,7 @@ html[data-width="full"]{--content-max-width:1180px}
  * 只改链接、选中态与控件强调色；背景、侧栏、边框与文字始终跟随 mdBook 主题。
  * 因而浅色/深色主题可以自由切换，而强调色不会带来另一套不协调的纸张色。
  * ======================================================================== */
+@media screen{
 html[data-palette="blue"]:not(.coal):not(.navy):not(.ayu){
   --accent:#2f74b8;--accent-strong:#205f9e;--accent-text:#205f9e;--link-color:var(--accent-strong);
 }
@@ -221,25 +220,6 @@ html[data-palette="endfield"].coal,html[data-palette="endfield"].navy,html[data-
   --accent:#d6ff3f;--accent-strong:#e6ff86;--accent-text:#e6ff86;--link-color:var(--accent);
 }
 
-/* 新主题的纸色：只改纸张/卡片，不改变文字与语义色 */
-
-html[data-palette="blueprint"]:not(.coal):not(.navy):not(.ayu){
-  --page:#eef3f7;--sidebar:#e7edf1;--paper:#f9fbfc;--paper-soft:#eef3f7;
-  --surface-card:rgba(249,251,252,.94);--surface-soft:rgba(238,243,247,.72);
-}
-
-html[data-palette="archive"]:not(.coal):not(.navy):not(.ayu){
-  --page:#f2ecdf;--sidebar:#ebe3d4;--paper:#fbf6ea;--paper-soft:#f3ecdf;
-  --surface-card:rgba(251,246,234,.94);--surface-soft:rgba(243,236,223,.72);
-}
-html[data-palette="endfield"]:not(.coal):not(.navy):not(.ayu){
-  --page:#e8e6df;--sidebar:#dedcd4;--paper:#f3f1ea;--paper-soft:#e9e7df;
-  --surface-card:rgba(243,241,234,.94);--surface-soft:rgba(233,231,223,.72);
-}
-html[data-palette="blueprint"].coal,html[data-palette="blueprint"].navy,html[data-palette="blueprint"].ayu{
-  --page:#0d1b27;--sidebar:#112333;--paper:#142838;--paper-soft:#1b3142;
-  --surface-card:rgba(20,40,56,.94);--surface-soft:rgba(27,49,66,.72);
-}
 html[data-palette="blue"],html[data-palette="teal"],
 html[data-palette="green"],html[data-palette="amber"],html[data-palette="contrast"],
 html[data-palette="archive"],html[data-palette="blueprint"],html[data-palette="endfield"]{
@@ -300,7 +280,7 @@ html[data-palette].ayu{--shadow-ink:rgba(0,0,0,.90)}
    · body            —— 页面外侧（侧栏之外）的底；
    · .page-wrapper   —— mdBook 自己会给它画一层不透明底（background:var(--bg)），
                         正文区的底纹其实一直被它挡住，所以必须同时画在这里。 */
-html[data-bg="plain"]{--bg-stack:none;--bg-size:auto}
+html:not([data-bg]),html[data-bg="plain"]{--bg-stack:var(--page);--bg-size:auto}
 
 /* 柔和光感：轻微的强调色与辅助色晕染，默认保持干净纯色。 */
 html[data-bg="wash"]{
@@ -366,9 +346,7 @@ html[data-bg="laid"]{
     var(--page);
   --bg-size:auto,auto,auto;
 }
-/* 默认（无 data-bg）与显式「纸张纤维」同栈：prefs 默认档不写属性 */
-html[data-bg="paper"],
-html:not([data-bg]){
+html[data-bg="paper"]{
   /* 纤维 + 极淡径向晕影：像装订册页受光，而不是平面纯色 */
   --bg-stack:
     radial-gradient(120% 80% at 50% -10%,color-mix(in srgb,var(--paper) 70%,transparent),transparent 55%),
@@ -390,13 +368,13 @@ html[data-bg="theme"]{
   --bg-size:auto,auto,auto,auto;
 }
 
-html[data-bg] body,
 html[data-bg] .page-wrapper,
-html:not([data-bg]) body,
 html:not([data-bg]) .page-wrapper{
   background:var(--bg-stack,var(--page));
   background-size:var(--bg-size,auto);
   background-attachment:scroll;
+}
+body{background:var(--page)}
 }
 
 /* ======================================================================== *
@@ -549,9 +527,8 @@ html:not([data-bg]) .page-wrapper{
   .prefs-panel{left:8px;width:calc(100vw - 16px)}
 }
 
-/* 打印：偏好面板属屏幕阅读；字体 / 字号 / 密度 / 配色仍尊重读者选择（见上） */
 @media print{
   .prefs-toggle,.prefs-panel{display:none!important}
-  /* 纸面上不要纹理：属性选择器的特异性高于打印块里的 body 规则，这里显式压回 */
-  html[data-bg] body,html[data-bg] .page-wrapper{background:var(--page)!important}
+  html body,html .page-wrapper,html .page{background:#fff!important;color:#111}
+  .page-toc-disclosure{display:none}
 }

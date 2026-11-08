@@ -599,38 +599,38 @@ a.crossref:hover{background:var(--accent-soft)}
 /* 迁移自旧版的插图类（.diagram-*）：原来定义在旧站样式里，
  * 移植主题时必须一并带回，否则 SVG 只有类名没有样式，会被浏览器
  * 用默认黑色填充画成实心块。 */
-.content figure svg{color:var(--ink)}
-.content figure .diagram-grid{stroke:var(--line);stroke-width:1;fill:none}
-.content figure .diagram-axis{stroke:var(--line-strong);stroke-width:1.25;fill:none}
-.content figure .diagram-accent{stroke:var(--accent);fill:none;stroke-width:3}
-.content figure .diagram-sage{stroke:var(--sage);fill:none;stroke-width:3}
-.content figure .diagram-muted{stroke:var(--muted);fill:none;stroke-width:1.5;stroke-dasharray:5 5}
-.content figure .diagram-fill-accent{fill:var(--accent);fill-opacity:.10;stroke:var(--accent);stroke-width:1}
-.content figure .diagram-fill-sage{fill:var(--sage);fill-opacity:.11;stroke:var(--sage);stroke-width:1}
-.content figure .diagram-node{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
-.content figure .diagram-text{fill:var(--ink);font-weight:600;font-size:var(--fs-md);font-family:var(--sans)}
-.content figure .diagram-note{fill:var(--ink-2);font-size:var(--fs-md);font-family:var(--sans)}
-.content figure .diagram-mono{fill:var(--accent-text);font-weight:700;font-size:var(--fs-xs);font-family:var(--mono)}
-.content figure .diagram-accent,
-.content figure .diagram-sage,
-.content figure .diagram-muted,
-.content figure .diagram-grid,
-.content figure .diagram-axis{fill:none}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) svg{color:var(--ink)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-grid{stroke:var(--line);stroke-width:1;fill:none}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-axis{stroke:var(--line-strong);stroke-width:1.25;fill:none}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-accent{stroke:var(--accent);fill:none;stroke-width:3}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-sage{stroke:var(--sage);fill:none;stroke-width:3}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-muted{stroke:var(--muted);fill:none;stroke-width:1.5;stroke-dasharray:5 5}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-fill-accent{fill:var(--accent);fill-opacity:.10;stroke:var(--accent);stroke-width:1}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-fill-sage{fill:var(--sage);fill-opacity:.11;stroke:var(--sage);stroke-width:1}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-node{fill:var(--paper);stroke:var(--line-strong);stroke-width:1.2}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-text{fill:var(--ink);font-weight:600;font-size:var(--fs-md);font-family:var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-note{fill:var(--ink-2);font-size:var(--fs-md);font-family:var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-mono{fill:var(--accent-text);font-weight:700;font-size:var(--fs-xs);font-family:var(--mono)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-accent,
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-sage,
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-muted,
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-grid,
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .diagram-axis{fill:none}
 /* 正文 SVG 图形：文字用主题字体与颜色；具体颜色由 --fig-* 令牌给出 */
-.content figure svg text{font-family:var(--sans)}
-.content figure svg .fg-axis{stroke:var(--ink-2)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) svg text{font-family:var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) svg .fg-axis{stroke:var(--ink-2)}
 /* 正文 SVG 图形：用主题令牌着色，暗色下自动适配 */
 .content figure svg.figure-svg{margin:2px auto}
-.content figure .fg-axis{stroke:var(--ink-2);stroke-width:1.3}
-.content figure .fg-vec{stroke:var(--accent-text);stroke-width:2.2}
-.content figure .fg-dash{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:4 3}
-.content figure .fg-label{fill:var(--ink-2);font:var(--fs-sm) var(--sans)}
-.content figure .fg-label-a{fill:var(--accent-text);font:var(--fs-sm) var(--sans)}
-.content figure .fg-label-v{fill:var(--accent-text);font:italic var(--fs-md) var(--serif)}
-.content figure .fg-muted{fill:var(--muted);font:var(--fs-sm) var(--sans)}
-.content figure .fg-point{fill:var(--accent-text)}
-.content figure .mk-axis{fill:var(--ink-2)}
-.content figure .mk-vec{fill:var(--accent-text)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-axis{stroke:var(--ink-2);stroke-width:1.3}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-vec{stroke:var(--accent-text);stroke-width:2.2}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-dash{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:4 3}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-label{fill:var(--ink-2);font:var(--fs-sm) var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-label-a{fill:var(--accent-text);font:var(--fs-sm) var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-label-v{fill:var(--accent-text);font:italic var(--fs-md) var(--serif)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-muted{fill:var(--muted);font:var(--fs-sm) var(--sans)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .fg-point{fill:var(--accent-text)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .mk-axis{fill:var(--ink-2)}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) .mk-vec{fill:var(--accent-text)}
 .katex-display{margin:15px 0;padding:5px 2px;overflow-x:auto;overflow-y:hidden}
 .katex-display>.katex{font-size:1.02em}
 /* ======================================================================== *

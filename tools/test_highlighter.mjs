@@ -37,3 +37,15 @@ test('assembly and common tutorial languages render colored tokens and escaped c
     assert.ok(!rendered.includes('x < 2'));
   }
 });
+
+test('MATLAB tutorial code highlights comments, keywords, builtins and strings', () => {
+  const code = "% 外环\nif abs(error) < 2\n  label = '<ready>';\n  gain = [1, 2; 3, 4];\nend";
+  const rendered = highlighter.highlight(code, { language: 'matlab' }).value;
+  assert.match(rendered, /<span class="hljs-comment">% 外环<\/span>/);
+  assert.match(rendered, /<span class="hljs-keyword">if<\/span>/);
+  assert.match(rendered, /<span class="hljs-built_in">abs<\/span>/);
+  assert.match(rendered, /<span class="hljs-string">&#x27;&lt;ready&gt;&#x27;<\/span>/);
+  assert.match(rendered, /<span class="hljs-number">4<\/span>/);
+  assert.ok(!rendered.includes('<ready>'));
+  assert.ok(!rendered.includes(' < 2'));
+});

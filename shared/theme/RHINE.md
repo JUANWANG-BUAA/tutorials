@@ -10,11 +10,13 @@
 - `css/rhine.css`：共享阅读令牌、浅色工具栏、章节、语义盒和表格；仅 screen + `[data-skin="rhine"]` 生效。
 - `js/rhine-portal.js`：从经典 `.index-row` / `.path-card` 读取真实课程与路线；支持鼠标、键盘与主题往返。
 - `js/prefs-config.js`：门户和阅读页共用偏好 schema；`prefs.css` 最后加载，读者偏好保持优先。
-- `tools/theme-renderer/scene.js`：原创程序化横向磨砂档案阵列，中央八件映射课程；选中件原槽抬升，快速切换从当前位置接续。
+- `tools/theme-renderer/scene.js`：原创程序化横向磨砂档案阵列，档案件映射当前课程；选中件原槽抬升，快速切换从当前位置接续。
 - `js/rhine-scene.js`：Three.js 打包产物，不直接手改。许可在 `vendor/three-LICENSE.txt`。
 - `tools/theme-renderer/build_art.py` → `assets/rhine-*.svg`：暖纸目录封面，也是 WebGL 不可用时的替代内容。
 
 渲染只在需要动画或状态变化时运行；离开首屏/隐藏标签页暂停。`prefers-reduced-motion` 禁用入场与插值。所有课程入口都有 DOM 链接，不依赖 WebGL。
+
+2026-11-08 阅读页调整：标题采用简洁无衬线排版，移除重复档案条；默认纯净背景，显式材质交给偏好层统一绘制。手机页内目录默认折叠。图鉴悬停和键盘焦点采用成对的前景/背景颜色，正文、灯箱和缩略图共用 SVG 语义样式。屏幕外观不参与打印颜色计算。当前公开目录的 13 门课程均有专属莱茵封面。
 
 ## 重建与验证
 

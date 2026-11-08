@@ -7,14 +7,13 @@
   if (window.TUTORIALS_PREFS) return;
   var DEFAULT_PREFS = {
     // 首次访问始终使用原有图鉴；莱茵档案仅在用户主动选择后恢复。
-    // 默认开纸张纤维底纹，明暗与强调色仍跟主题弹层。
     skin: "classic",
     font: "sans",
     size: "m",
     density: "standard",
     width: "standard",
     palette: "theme",
-    bg: "paper"
+    bg: "plain"
   };
 
   /* 六个轴与 prefs.css 的选择器一一对应；改选项请同时改三处：

@@ -14,6 +14,12 @@ function load(values={},denied=false){
  vm.runInContext(source,context);return {attrs,context,config:context.window.TUTORIALS_PREFS};
 }
 test('first-time readers retain the classic appearance with no extra attributes',()=>{const {attrs,config}=load();assert.equal(attrs.size,0);assert.equal(config.defaults.skin,'classic');});
+test('plain is the default background while a saved paper choice still restores',()=>{
+ const {config}=load();
+ assert.equal(config.defaults.bg,'plain');
+ assert.equal(load({'tutorials-prefs:bg':'plain'}).attrs.has('data-bg'),false);
+ assert.equal(load({'tutorials-prefs:bg':'paper'}).attrs.get('data-bg'),'paper');
+});
 test('existing preferences and the independent skin restore together',()=>{
  const {attrs}=load({'tutorials-prefs:skin':'rhine','tutorials-prefs:font':'serif','tutorials-prefs:palette':'blueprint','tutorials-prefs:bg':'dots','tutorials-prefs:width':'wide'});
  assert.deepEqual(Object.fromEntries(attrs),{'data-skin':'rhine','data-font':'serif','data-width':'wide','data-palette':'blueprint','data-bg':'dots'});
@@ -87,9 +93,11 @@ test('the scene bundle is a committed build artifact, not hand-written runtime c
  assert.ok(existsSync(resolve(root,'tools/theme-renderer/build_art.py')));
 });
 
-test('all eight generated cover plates exist and are valid SVG documents', () => {
+test('every course has a generated cover plate with a valid SVG document', () => {
  const files=readdirSync(resolve(root,'shared/theme/assets')).filter(f=>/^rhine-.*\.svg$/.test(f));
- assert.equal(files.length,8);
+ const catalogue=readFileSync(resolve(root,'site-index.html'),'utf8');
+ const declared=Array.from(catalogue.matchAll(/data-rhine-cover="shared\/theme\/assets\/([^"]+)"/g),match=>match[1]);
+ assert.deepEqual(files.sort(),declared.sort());
  for(const f of files){
   const svg=readFileSync(resolve(root,'shared/theme/assets',f),'utf8');
   assert.match(svg,/^<svg[\s>]/);

@@ -6,8 +6,7 @@
  * 只负责取值、落属性与面板 UI），这样「看」与「控」分离，关掉 JS 时页面就是
  * 默认外观，不会缺内容。
  *
- * 明暗主题由 mdBook 原生主题弹层管理；本面板的主题色同时调整强调色与纸张/卡片
- * 底色，但明暗与代码高亮仍交给原生主题弹层，两个入口不抢同一件事。
+ * 明暗主题由 mdBook 原生主题弹层管理；本面板的主题色只调整强调色。
  *
  * 首屏防闪：属性由 theme/head.hbs 里的内联脚本在 <head> 阶段就写好（早于首次
  * 绘制），本文件只在末尾补面板。因此这里的 apply() 对首屏是「幂等重放」。
@@ -21,8 +20,6 @@
   var STORE_PREFIX = "tutorials-prefs:";
   var MENU_BAR_ID = "mdbook-menu-bar";
 
-  /* 默认值刻意都是「不写属性」的那一档：设置层出现之前的样子就是默认外观，
-     升级不会改变任何老读者的观感。 */
   var config = window.TUTORIALS_PREFS;
   if (!config) return;
   var DEFAULT_PREFS = config.defaults;

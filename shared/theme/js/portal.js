@@ -45,6 +45,9 @@
   var filter = { query: "", topic: "all" };
   var sequence = 0;
   var catalogue = Array.from(document.querySelectorAll(".index-row"));
+  document.querySelectorAll("[data-course-count]").forEach(function (node) {
+    node.textContent = String(catalogue.length);
+  });
   var topics = [["all", "全部课程"], ["math", "数学与控制"], ["systems", "系统工程"], ["ai", "人工智能"], ["humanities", "人文与理论"]];
 
   function normalize(value) { return value.normalize("NFKC").toLocaleLowerCase().replace(/\s+/g, " ").trim(); }

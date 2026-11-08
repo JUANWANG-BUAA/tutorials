@@ -313,16 +313,16 @@ try {
   <section class="hero">
     <div class="wrap hero-grid">
       <aside class="hero-side" aria-hidden="true">
-        <span class="index">01—10</span>
+        <span class="index">01—<span data-course-count>13</span></span>
         <span class="line"></span>
         <span class="vertical">BUAA / GRADUATE TEACHING LIBRARY / 2026</span>
       </aside>
       <div class="hero-copy">
         <div class="hero-kicker">Graduate teaching library</div>
-        <h1>十一本研究生<br><em>课程讲义</em></h1>
+        <h1>研究生<br><em>课程讲义</em></h1>
         <p class="lead">从数学基础到系统工程，按课程阅读讲义、推导与例题，再用练习检验理解。选好课程后，先读导览了解前置知识；查找具体概念时，可在书内搜索。</p>
         <div class="hero-meta">
-          <span>11 本书</span><span>5 条学习路线</span><span>每本一份导览页</span><span>全文搜索在浏览器内完成</span>
+          <span><span data-course-count>13</span> 本书</span><span>5 条学习路线</span><span>每本一份导览页</span><span>全文搜索在浏览器内完成</span>
         </div>
         <div class="hero-actions">
           <a class="btn" href="#books">选择课程 <span aria-hidden="true">↓</span></a>
@@ -330,7 +330,7 @@ try {
         </div>
       </div>
       <div class="hero-visual">
-        <div class="feature-strip feature-strip-7" aria-label="十三本书">
+        <div class="feature-strip feature-strip-7" aria-label="课程封面">
           <a class="strip-item active" href="robot/" aria-label="机器人控制技术"><span>01</span><img src="robot/assets/covers/robot.svg" alt=""></a>
           <a class="strip-item" href="matrix/" aria-label="矩阵论"><span>02</span><img src="matrix/assets/covers/matrix.svg" alt=""></a>
           <a class="strip-item" href="numerical/" aria-label="数值分析"><span>03</span><img src="numerical/assets/covers/numerical.svg" alt=""></a>
@@ -346,7 +346,7 @@ try {
           <a class="strip-item" href="mlm/" aria-label="马克思主义原理"><span>13</span><img src="mlm/assets/covers/mlm.svg" alt=""></a>
         </div>
         <div class="feature-frame">
-          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / 12</span></div>
+          <div class="feature-head"><span>VOL. 01 / ROBOTICS</span><span><b>01</b> / <span data-course-count>13</span></span></div>
           <a class="feature-cover" href="robot/"><img src="robot/assets/covers/robot.svg" alt="机器人控制技术书封"></a>
           <div class="feature-foot"><span>机器人控制技术</span><span>7 章 · 64 节</span></div>
         </div>
@@ -378,10 +378,10 @@ try {
       <aside class="index-side">
         <span class="kicker">INDEX / 01</span>
         <span class="label">课程目录</span>
-        <span class="count">12</span>
+        <span class="count" data-course-count>13</span>
       </aside>
       <div class="index-list">
-        <a class="index-row" href="robot/" data-topics="math">
+        <a class="index-row" href="robot/" data-topics="math" data-rhine-cover="shared/theme/assets/rhine-robot.svg">
           <span class="row-no">01</span>
           <img class="row-cover" src="robot/assets/covers/robot.svg" alt="">
           <span class="row-head"><span class="row-en">ROBOTICS</span><span class="row-title">机器人控制技术</span></span>
@@ -389,7 +389,7 @@ try {
           <span class="row-meta"><span>7 章 · 64 节</span><span>104 道习题 · 全部附解</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="matrix/" data-topics="math">
+        <a class="index-row" href="matrix/" data-topics="math" data-rhine-cover="shared/theme/assets/rhine-matrix.svg">
           <span class="row-no">02</span>
           <img class="row-cover" src="matrix/assets/covers/matrix.svg" alt="">
           <span class="row-head"><span class="row-en">LINEAR ALGEBRA</span><span class="row-title">矩阵论</span></span>
@@ -397,7 +397,7 @@ try {
           <span class="row-meta"><span>3 章 · 18 节</span><span class="row-flag">2.6–2.7、3.3、3.8 下半待补</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="numerical/" data-topics="math">
+        <a class="index-row" href="numerical/" data-topics="math" data-rhine-cover="shared/theme/assets/rhine-numerical.svg">
           <span class="row-no">03</span>
           <img class="row-cover" src="numerical/assets/covers/numerical.svg" alt="">
           <span class="row-head"><span class="row-en">NUMERICAL METHODS</span><span class="row-title">数值分析</span></span>
@@ -405,7 +405,7 @@ try {
           <span class="row-meta"><span>课堂实录 12 讲 · 正文 7 章</span><span>40 道习题 · <span class="row-flag">第 1–12 讲全程</span></span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="deeplearning/" data-topics="ai math">
+        <a class="index-row" href="deeplearning/" data-topics="ai math" data-rhine-cover="shared/theme/assets/rhine-deeplearning.svg">
           <span class="row-no">04</span>
           <img class="row-cover" src="deeplearning/assets/covers/deeplearning.svg" alt="">
           <span class="row-head"><span class="row-en">DEEP LEARNING</span><span class="row-title">深度学习导论</span></span>
@@ -413,7 +413,7 @@ try {
           <span class="row-meta"><span>9 讲 · 66 节</span><span>习题 · 自测 · 3 个 Lab</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="linux/" data-topics="systems">
+        <a class="index-row" href="linux/" data-topics="systems" data-rhine-cover="shared/theme/assets/rhine-linux.svg">
           <span class="row-no">05</span>
           <img class="row-cover" src="linux/assets/covers/linux.svg" alt="">
           <span class="row-head"><span class="row-en">LINUX &amp; KERNEL</span><span class="row-title">Linux 系统与内核</span></span>
@@ -421,7 +421,7 @@ try {
           <span class="row-meta"><span>6 篇 · 85 章</span><span>11 个真实项目 · 自测卷</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="agent-systems/" data-topics="ai systems">
+        <a class="index-row" href="agent-systems/" data-topics="ai systems" data-rhine-cover="shared/theme/assets/rhine-agent-systems.svg">
           <span class="row-no">06</span>
           <img class="row-cover" src="agent-systems/assets/covers/agent-systems.svg" alt="">
           <span class="row-head"><span class="row-en">AGENT SYSTEMS</span><span class="row-title">Agent 系统工程</span></span>
@@ -429,7 +429,7 @@ try {
           <span class="row-meta"><span>4 篇 · 14 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="distributed/" data-topics="systems">
+        <a class="index-row" href="distributed/" data-topics="systems" data-rhine-cover="shared/theme/assets/rhine-distributed.svg">
           <span class="row-no">07</span>
           <img class="row-cover" src="distributed/assets/covers/distributed.svg" alt="">
           <span class="row-head"><span class="row-en">DISTRIBUTED SYSTEMS</span><span class="row-title">分布式系统与数据面</span></span>
@@ -437,7 +437,7 @@ try {
           <span class="row-meta"><span>5 篇 · 13 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="compilers/" data-topics="systems">
+        <a class="index-row" href="compilers/" data-topics="systems" data-rhine-cover="shared/theme/assets/rhine-compilers.svg">
           <span class="row-no">08</span>
           <img class="row-cover" src="compilers/assets/covers/compilers.svg" alt="">
           <span class="row-head"><span class="row-en">COMPILERS &amp; ANALYSIS</span><span class="row-title">编译器与程序分析</span></span>
@@ -445,7 +445,7 @@ try {
           <span class="row-meta"><span>4 篇 · 14 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="algorithms/" data-topics="math ai systems">
+        <a class="index-row" href="algorithms/" data-topics="math ai systems" data-rhine-cover="shared/theme/assets/rhine-algorithms.svg">
           <span class="row-no">09</span>
           <img class="row-cover" src="algorithms/assets/covers/algorithms.svg" alt="">
           <span class="row-head"><span class="row-en">ALGORITHMS &amp; CAUSALITY</span><span class="row-title">算法、评估与因果推断</span></span>
@@ -453,7 +453,7 @@ try {
           <span class="row-meta"><span>4 篇 · 14 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="embodied/" data-topics="math systems">
+        <a class="index-row" href="embodied/" data-topics="math systems" data-rhine-cover="shared/theme/assets/rhine-embodied.svg">
           <span class="row-no">10</span>
           <img class="row-cover" src="embodied/assets/covers/embodied.svg" alt="">
           <span class="row-head"><span class="row-en">EMBODIED PERCEPTION</span><span class="row-title">具身感知：SLAM 与状态估计</span></span>
@@ -461,7 +461,7 @@ try {
           <span class="row-meta"><span>4 篇 · 14 章</span><span>28 个实验 · 2 个项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="cpp-rust/" data-topics="systems">
+        <a class="index-row" href="cpp-rust/" data-topics="systems" data-rhine-cover="shared/theme/assets/rhine-cpp-rust.svg">
           <span class="row-no">11</span>
           <img class="row-cover" src="cpp-rust/assets/covers/cpp-rust.svg" alt="">
           <span class="row-head"><span class="row-en">RUST PERFORMANCE</span><span class="row-title">Rust 底层性能工程</span></span>
@@ -469,7 +469,7 @@ try {
           <span class="row-meta"><span>4 篇 · 16 章</span><span>2 个可运行项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="edge/" data-topics="systems">
+        <a class="index-row" href="edge/" data-topics="systems" data-rhine-cover="shared/theme/assets/rhine-edge.svg">
           <span class="row-no">12</span>
           <img class="row-cover" src="edge/assets/covers/edge.svg" alt="">
           <span class="row-head"><span class="row-en">EDGE &amp; REAL-TIME</span><span class="row-title">边缘嵌入式与实时系统</span></span>
@@ -477,7 +477,7 @@ try {
           <span class="row-meta"><span>4 篇 · 14 章</span><span>12 套实验固件 · 2 个项目</span></span>
           <span class="row-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="index-row" href="mlm/" data-topics="humanities">
+        <a class="index-row" href="mlm/" data-topics="humanities" data-rhine-cover="shared/theme/assets/rhine-mlm.svg">
           <span class="row-no">13</span>
           <img class="row-cover" src="mlm/assets/covers/mlm.svg" alt="">
           <span class="row-head"><span class="row-en">MARXISM</span><span class="row-title">马克思主义原理</span></span>
