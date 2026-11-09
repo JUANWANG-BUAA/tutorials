@@ -71,7 +71,7 @@
 
   function buildPageToc(levels) {
     var main = document.querySelector("main");
-    if (!main || main.querySelector(":scope > .page-toc")) return;
+    if (!main || main.querySelector(":scope > .page-toc-disclosure")) return;
     var selector = (levels && levels.length ? levels : ["h2"]).join(", ");
 
     var headings = Array.prototype.filter.call(main.querySelectorAll(selector), function (heading) {
@@ -80,12 +80,21 @@
     if (headings.length < 3) return;
 
     var nav = document.createElement("nav");
-    var title = document.createElement("span");
+    var disclosure = document.createElement("details");
+    var summary = document.createElement("summary");
+    var narrowScreen = window.matchMedia("(max-width: 700px)");
+    var manuallyToggled = false;
+    disclosure.className = "page-toc-disclosure";
+    disclosure.open = !narrowScreen.matches;
+    summary.textContent = "本页内容 · " + headings.length + " 个主题";
+    summary.addEventListener("click", function () { manuallyToggled = true; });
+    narrowScreen.addEventListener("change", function (event) {
+      if (!manuallyToggled) disclosure.open = !event.matches;
+    });
     nav.className = "page-toc";
     nav.setAttribute("aria-label", "本页内容");
-    title.className = "page-toc-title";
-    title.textContent = "本页内容";
-    nav.appendChild(title);
+    disclosure.appendChild(summary);
+    disclosure.appendChild(nav);
 
     headings.forEach(function (heading) {
       var anchor = heading.querySelector("a.header");
@@ -99,12 +108,12 @@
     // 有章首提要时，目录放在提要之后，避免「标题 → 长目录 → 本章回答」的倒置感
     var chapterIndex = main.querySelector(":scope > .chapter-index");
     if (chapterIndex) {
-      chapterIndex.insertAdjacentElement("afterend", nav);
+      chapterIndex.insertAdjacentElement("afterend", disclosure);
       return;
     }
     var first = main.firstElementChild;
-    if (first && first.tagName === "H1") first.insertAdjacentElement("afterend", nav);
-    else main.insertBefore(nav, first);
+    if (first && first.tagName === "H1") first.insertAdjacentElement("afterend", disclosure);
+    else main.insertBefore(disclosure, first);
   }
 
   /* ------------------------------------------------------------------ *
@@ -149,7 +158,7 @@
 
     if (placement === "top") {
       var main = document.querySelector("main");
-      var pageToc = main && main.querySelector(":scope > .page-toc");
+      var pageToc = main && main.querySelector(":scope > .page-toc-disclosure");
       if (pageToc) { pageToc.insertAdjacentElement("afterend", toolbar); return; }
       var first = main && main.firstElementChild;
       if (first && first.tagName === "H1") { first.insertAdjacentElement("afterend", toolbar); return; }

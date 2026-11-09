@@ -51,7 +51,7 @@ async (hostPage) => {
   await page.getByRole('button', { name: '阅读偏好', exact: true }).click();
   await page.getByRole('button', { name: '莱茵档案', exact: true }).click();
   await page.keyboard.press('Escape');
-  check(await page.locator('.rhine-document-head').count() === 1, 'reader skin changes retain a single chapter header');
+  check(await page.locator('main > h1').count() === 1 && await page.locator('.rhine-document-head').count() === 0, 'reader skin changes keep one heading without duplicate archive metadata');
   await page.setViewportSize({ width: 390, height: 600 });
   await page.getByRole('button', { name: '阅读偏好', exact: true }).click();
   check(await page.locator('#prefs-panel').evaluate(el => { const r = el.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.bottom <= innerHeight; }), 'Rhine preferences fit with the mobile sidebar expanded');

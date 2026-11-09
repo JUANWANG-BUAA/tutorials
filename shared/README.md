@@ -14,9 +14,9 @@ shared/theme/            浏览器侧资源（各书的 theme/ 里放符号链�
   js/atlas.js            原生图片自动图注 / 页首阅读元信息 / 图鉴画廊 / 宽图平移
   js/prefs-config.js     唯一偏好 schema：首屏恢复 + 面板 + 导览页皮肤选择共用
   js/prefs.js            阅读偏好面板与持久化
-  css/rhine.css          可选「莱茵档案」阅读皮肤：暖纸 + 黑色终端条/青色进度
-  css/rhine-portal.css   可选「莱茵档案」导览页：黑功能条/青色档案区/档案块/索引
-  js/rhine.js            阅读页可移除装饰条；不改正文
+  css/rhine.css          可选「莱茵档案」阅读皮肤：暖灰纸面与黄铜强调色
+  css/rhine-portal.css   可选「莱茵档案」导览页：课程档案与三维阵列
+  js/rhine.js            阅读页可恢复的封面替换；不改正文
   js/portal.js           导览页主题与皮肤选择 / 共用课程筛选 / 跨课程继续阅读
   js/rhine-portal.js     导览页组合层：从经典 DOM 读取课程，生成可 dispose 的档案终端
   js/rhine-scene.js      3D 场景构建产物（源：tools/theme-renderer/scene.js）
@@ -37,14 +37,9 @@ tools/                   构建脚本（八本一份）+ theme-renderer/
 
 ## 莱茵档案（可选皮肤）
 
-2026-10 新增的 opt-in 视觉皮肤，默认不启用。两个空间共用一套“终端 + 档案”语言：
+可选视觉皮肤，默认不启用。导览页保留课程档案与三维阵列；阅读页采用暖灰纸面、简洁标题和黄铜强调色。
 
-- **导览页**：黑功能条、超大 `ATLAS`、青色档案区、黑色档案块、底部 01–08 索引；3D 单件厚玻璃
-  档案匣，内部文件/实体双环/纸标签/螺钉，选择时雾面转清晰，带涟漪、补光与指针视差。
-- **阅读页**：暖纸正文保持原样，顶栏换成黑色终端条 + 青色进度线；侧栏、H1、盒子、表格、图注
-  继续用暖纸/黄铜，和档案匣内部文件同一材质语言。
-
-只影响 `html[data-skin="rhine"]`，screen-only；默认 `classic` 不写属性，老读者升级后完全不变。
+只影响 `html[data-skin="rhine"]`，仅在 screen 生效；默认 `classic` 不写属性。两种皮肤共用清晰教材的阅读结构。
 完整契约、文件清单、动效与验收见 [theme/RHINE.md](theme/RHINE.md)。3D 重建：
 
 ```bash
@@ -54,6 +49,17 @@ python3 tools/theme-renderer/build_art.py
 ./build.sh
 node --test tools/test_theme_config.mjs
 ```
+
+## 阅读外观的边界
+
+- 明暗主题负责纸面与正文颜色；主题色偏好只负责强调色，定义、定理等语义色独立。
+- 背景默认 `plain`。显式保存的 `paper` 继续恢复；纹理只在 `.page-wrapper` 绘制，内部 `.page` 保持透明。
+- 打印使用白底深字，不继承屏幕强调色与纹理；保留字体、字号和密度偏好。
+- 页内目录使用原生 `details.page-toc-disclosure`，700px 以内默认收起。手动开关后保持选择，不随窗口大小变化重置。
+- SVG 内部语义样式覆盖正文、灯箱与图鉴缩略图；容器仅负责布局。保留克隆 ID 去重和随主题更新的变量。
+- 门户从 `.index-row` 读取课程与显式封面；新增课程应同步生成资源并运行 `tools/test_portal_assets.mjs`。
+
+构建后运行 `node tools/check_browser.mjs`，包括真实控件切换、图形语义、打印、手机目录和门户封面的回归检查。
 
 ## 为什么是符号链接
 

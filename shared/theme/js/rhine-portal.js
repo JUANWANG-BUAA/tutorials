@@ -99,7 +99,6 @@
        rows instead of duplicating course data; if the catalogue changes size
        or a course is added, this composition follows it. */
     var books = Array.from(original.querySelectorAll(".index-row")).map(function (row, index) {
-      var slug = (row.getAttribute("href") || "").replace(/\/$/, "");
       var ownCover = row.querySelector(".row-cover");
       var fallbackCover = ownCover ? ownCover.getAttribute("src") : "";
       return {
@@ -107,13 +106,11 @@
         description: text(row, ".row-desc"),
         meta: Array.from(row.querySelectorAll(".row-meta > span")).map(function (node) { return node.textContent.trim(); }).join(" · "),
         topics: row.dataset.topics || "", href: row.getAttribute("href"), fallbackCover: fallbackCover,
-        cover: "shared/theme/assets/rhine-" + slug + ".svg"
+        cover: row.getAttribute("data-rhine-cover") || fallbackCover
       };
     });
     if (!books.length) return;
     var total = String(books.length).padStart(2, "0");
-    var countWord = books.length === 8 ? "八" : (books.length === 7 ? "七" : String(books.length));
-    var routeCount = String(original.querySelectorAll(".path-card").length).padStart(2, "0");
     var featureLink = original.querySelector(".feature-link");
     var atlasHref = featureLink ? featureLink.getAttribute("href") : "#rhine-books";
     var atlasLabel = featureLink ? featureLink.textContent.trim().replace(/^进入\s*/, "").replace(/\s*↗\s*$/, "") : "教学图版";
@@ -128,7 +125,7 @@
       '<div class="rh-hero rh-shell">' +
         '<div class="rh-hero-copy"><div class="rh-eyebrow"><i></i>GRADUATE COURSE ARCHIVE / 课程档案</div>' +
         '<h1 class="rh-brandmark">课程档案<span>COURSE ARCHIVE</span></h1>' +
-        '<p class="rh-lede">数学、系统与人工智能，八门课程按章展开。<br>选择课程后，从导览了解前置知识与学习安排。</p></div>' +
+        '<p class="rh-lede">数学、系统、人工智能与人文，'+books.length+' 门课程按章展开。<br>选择课程后，从导览了解前置知识与学习安排。</p></div>' +
         '<aside class="rh-file" aria-live="polite" aria-atomic="true"><div class="rh-file-top"><span data-selected-en></span><span>FILE <b data-selected-no>01</b> / '+total+'</span></div>' +
         '<h2 data-selected-title></h2><p data-selected-description></p><div class="rh-file-meta" data-selected-meta></div>' +
         '<a class="rh-access" data-access><span>进入课程</span><b>↗</b></a></aside>' +

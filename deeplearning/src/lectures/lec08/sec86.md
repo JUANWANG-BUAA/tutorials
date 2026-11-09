@@ -122,7 +122,7 @@ $\ell_1$ 惩罚会把大多数系数压到零，留下的少数非零项就是�
 |:--|:--|:--|:--|:--|
 | **符号回归** | 表达式（公式） | 拟合误差 + 复杂度 + 量纲 / 极限检查 | Schmidt & Lipson（2009，*Science*）；稀疏辨识（2016，*PNAS*）；结合深度学习的符号模型（2020，NeurIPS） | 中（可解释、可人工审查；但「公式成立」需独立数据） |
 | **程序搜索** | 计算机程序（算法 / 构造） | **可执行的评分函数**：跑一遍就有客观分数 | FunSearch（2024，*Nature*；**无 arXiv**）——用语言模型变异程序、用自动评估器筛选 | 高（分数可复算、结果可复现） |
-| **数学证明** | 证明步骤 / 辅助构造 | **符号演绎引擎 + 形式化检查器**（如 Lean / Isabelle 一类系统） | AlphaGeometry（2024，*Nature*；arXiv:2401.04088）；AlphaProof 与 AlphaEvolve 为 DeepMind 官方博客 / 技术报告（2024 / 2025，**无 arXiv**） | 最高（形式化证明可由机器逐行核对） |
+| **数学证明** | 证明步骤 / 辅助构造 | **符号演绎引擎 + 形式化检查器**（如 Lean / Isabelle 一类系统） | AlphaGeometry（Trinh 等，2024，*Nature* 625:476–482，文章页 `s41586-023-06747-5`；**不附 arXiv**）；AlphaProof 与 AlphaEvolve 为 DeepMind 官方博客 / 技术报告（2024 / 2025，**无 arXiv**） | 最高（形式化证明可由机器逐行核对） |
 
 **共同结构**：**「生成候选 + 验证候选」的闭环**。三条路线的差别集中在一点：**验证器有多硬**。
 :::
@@ -241,7 +241,7 @@ $\ell_1$ 惩罚会把大多数系数压到零，留下的少数非零项就是�
 - Brunton, Proctor & Kutz, *Discovering governing equations from data by sparse identification of nonlinear dynamical systems*（2016，*PNAS*）——稀疏辨识的经典工作，[@def-8.6.3] 的 $\ell_1$ 形式与字典构造来源于此（**arXiv 编号未核实**）。
 - Cranmer 等, *Discovering symbolic models from deep learning with inductive biases*（2020，NeurIPS）——把图网络与符号回归结合，从轨迹中提取可解释的相互作用项（**arXiv 编号未核实**）。
 - Romera-Paredes 等, *Mathematical discoveries from program search with large language models*（2024，*Nature* 625:468；**无 arXiv**）——FunSearch：语言模型提出程序变异、自动评估器筛选；本节 [@method-8.6.2] 中「可执行复算」验证器的代表。
-- Trinh 等, *Solving olympiad geometry without human demonstrations*（2024，*Nature*；arXiv:2401.04088）——AlphaGeometry：语言模型提出辅助构造 + 符号演绎引擎闭环。
+- Trinh 等, *Solving olympiad geometry without human demonstrations*（2024，*Nature* 625:476–482，[doi.org/10.1038/s41586-023-06747-5](https://doi.org/10.1038/s41586-023-06747-5)）——AlphaGeometry：语言模型提出辅助构造 + 符号演绎引擎闭环。**不要引用 arXiv:2401.04088**：该编号是 *Mixtral of Experts*。期刊摘要报告：在 30 道奥林匹克几何题上解出 25 道，先前方法解出 10 道。这是论文自己的测试集结果，不是本教程复现的分数。
 - DeepMind 官方博客 / 技术报告：AlphaProof（2024，**无 arXiv**）与 AlphaEvolve（2025，**无 arXiv**）——形式化数学与算法发现的后续工作；引用请以官方页面为准。
 - 与本节问题域直接相关的两讲：本讲的 [8.1](sec81.md)（科学数据的三个特点与三类任务）与 [第 7 讲](../lec07/sec75.md)（把风险与不确定性写成清单）——「发现的验证」本质上是同一套「证据分级」思路在科学场景的应用。
 :::

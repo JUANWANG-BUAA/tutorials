@@ -179,7 +179,7 @@
 # 实验 · 三个 Lab
 
 - [Lab 1 · 深度学习入门与音乐生成](labs/lab1.md)
-- [Lab 2 · 人脸检测系统](labs/lab2.md)
+- [Lab 2 · 人脸分类与算法去偏](labs/lab2.md)
 - [Lab 3 · 微调一个大语言模型](labs/lab3.md)
 
 # 复习与查阅

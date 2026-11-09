@@ -56,7 +56,7 @@
 **错。** 每一次基于验证集的选择都在**消耗验证集的信息**，等价于在验证集上过拟合，报告指标会系统性偏高。正确做法：选模型用验证集，**最终报告用只评估一次的测试集**（[定义 1.7.1](sec17.md#def-1.7.1)：测试集只应被使用一次）。若必须报验证集指标，要说明调参次数并给出多种子方差。
 :::
 
-## B 组 · 推导与证明（6 题）
+## B 组 · 推导与证明（7 题）
 
 > 要求：关键步骤逐条写出，不许写「略」；涉及形状的先写形状。
 
@@ -121,6 +121,16 @@ $$\operatorname{Var}(z)=\sum_{i=1}^{d_{\text{in}}}\operatorname{Var}(w_ix_i)=d_{
 要让 $\operatorname{Var}(z)=\sigma_x^2$（方差守恒），只需 $\sigma_w^2=1/d_{\text{in}}$。
 **(2) 反向也守恒。** 梯度从 $d_{\text{out}}$ 侧回传给出另一条件 $\sigma_w^2=1/d_{\text{out}}$；两个条件一般不能同时满足，取调和平均作为折中：$\sigma_w^2=\dfrac{2}{d_{\text{in}}+d_{\text{out}}}$（Xavier）。均匀分布版本上界为 $\sqrt{6/(d_{\text{in}}+d_{\text{out}})}$。
 **(3) ReLU 翻倍。** 零均值对称分布下 $\operatorname{Var}(\max(0,z))=\frac12\operatorname{Var}(z)$（一半样本被截断为零），要维持守恒须把前向增益翻倍：$\sigma_w^2=2/d_{\text{in}}$（Kaiming）。**错配症状**（[推论 1.3.1](sec13.md#cor-1.3.1)）：Sigmoid 配 Kaiming 会过早饱和（初期损失几乎不降）；ReLU 配 Xavier 会逐层衰减（深层网络的有效深度变小）。
+:::
+
+**B7.**（入门手算，闭卷）模型 $\hat y=wx+b$，$\mathcal L=\frac12(\hat y-y)^2$。$x=4$、$y=6$、$w=0$、$b=1$、$\eta=0.05$。求更新前的损失、$\partial\mathcal L/\partial w$、$\partial\mathcal L/\partial b$，做一次梯度下降，再求更新后的 $\hat y$ 与损失。依据：[例 1.1.0](sec11.md#ex-1.1.0)。
+
+::: sol 答案
+更新前 $\hat y=1$，$\mathcal L=\frac12(1-6)^2=12.5$。$\partial\mathcal L/\partial\hat y=-5$，故 $\partial\mathcal L/\partial w=-20$，$\partial\mathcal L/\partial b=-5$。
+
+$$w\leftarrow 0-0.05\cdot(-20)=1,\qquad b\leftarrow 1-0.05\cdot(-5)=1.25 .$$
+
+新预测 $\hat y=4\cdot 1+1.25=5.25$，损失 $\frac12(5.25-6)^2=0.28125$。损失下降，但没有到 0：步长比 [例 1.1.0](sec11.md#ex-1.1.0) 里那一次碰巧消掉残差的步长更小。
 :::
 
 ## C 组 · 编程实现（6 题）

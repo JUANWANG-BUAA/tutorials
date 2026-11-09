@@ -56,7 +56,7 @@
 **错。** FSQ 改变的是**表示的结构**：从「学出来的 $K$ 个码字」变成「逐维固定的网格 $K=\prod_iL_i$」。因此它一次性去掉了三样东西——代码本损失、commitment loss 与最近邻搜索（量化从 $O(K)$ 变成逐维 round 的 $O(d)$），也去掉了它们带来的不稳定（死码字、码字塌缩）。**代价也要说清**：VQ 的码字是数据驱动的（可以贴合数据流形），FSQ 的网格是先验固定的（在超立方体上均匀铺）；数据分布极不均匀时 VQ 理论上更高效，但实践中去掉各种不稳定技巧后整体收益更大。
 :::
 
-## B 组 · 推导与证明（6 题）
+## B 组 · 推导与证明（7 题）
 
 > 要求：关键步骤逐条写出，不许写「略」；涉及形状的先写形状。B1–B4 为本讲的四条主干推导，B5–B6 为两条「变体推导」。
 
@@ -155,6 +155,16 @@ $$\mathcal L=\underbrace{\lVert\boldsymbol x-\mathcal D(z_q)\rVert_2^2}_{\text{�
 **(II) 均值解与模糊的来源。** 固定 $\boldsymbol z$，解码器逐像素以高斯建模 $p(\boldsymbol x\mid\boldsymbol z)=\prod_i\mathcal N(x_i;g_i(\boldsymbol z),\sigma^2)$。最大化对数似然等价于最小化 $\mathbb E_{\boldsymbol x\mid\boldsymbol z}\lVert\boldsymbol x-g(\boldsymbol z)\rVert_2^2$，对 $g$ 逐坐标求导置零得
 $$g_i^\star(\boldsymbol z)=\mathbb E[x_i\mid\boldsymbol z].$$
 **结论**：当给定 $\boldsymbol z$ 仍有多个可能的高频细节时，条件均值是它们的**加权平均**，平均的结果在感知上是模糊的（细节被抹平）。这正是 VQGAN 要加**感知损失**（在预训练特征空间比较，惩罚「看起来不像」而非「像素有偏差」）与**对抗损失**（patch 级判别器，逼解码器补出**合理的**高频而非安全的均值）的原因。
+:::
+
+**B7.**（入门手算）两个离散潜变量各占 $\tfrac12$，$p(x\mid 0)=0.1$、$p(x\mid 1)=0.9$。取 $\log 0.1=-2.3026$、$\log 0.9=-0.1054$、$\log 0.5=-0.6931$。(1) 算 $\log\mathbb E[p(x\mid z)]$；(2) 算 $\mathbb E[\log p(x\mid z)]$；(3) 说明采样一个 $z$ 能估计的是哪一个，以及两者之差的符号。依据：[例 4.3.0](sec43.md#ex-4.3.0)。
+
+::: sol 答案
+混合概率 $\tfrac12\cdot 0.1+\tfrac12\cdot 0.9=0.5$，所以 $\log\mathbb E[p]=-0.6931$。
+
+$$\mathbb E[\log p]=\tfrac12(-2.3026-0.1054)=-1.2040 .$$
+
+$-1.2040<-0.6931$。采一个 $z$ 再算 $\log p(x\mid z)$，估计的是第二项。两者之差是正的 $0.5109$，方向与 Jensen 不等式一致：对数在期望外面，不低于先进对数再取期望。这是两个点上的算术，不是高斯 VAE 的 ELBO 数值。
 :::
 
 ## C 组 · 编程实现（7 题）

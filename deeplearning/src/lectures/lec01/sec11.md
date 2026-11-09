@@ -23,6 +23,47 @@ $z$ 称为**预激活**（pre-activation），$a$ 称为**激活值**（activati
 $w_i$ 回答「第 $i$ 个输入有多重要」，$b$ 回答「整体上要有多容易被激活」，$\phi$ 回答「这个单元的输出长什么样」。**加权求和 + 偏置**只能在输入空间里划一刀（一个超平面），**$\phi$ 决定这一刀怎么被「读出来」**：阶跃读出 0/1 判决、Sigmoid 读出概率、ReLU 读出「只在正方向放行」的强度。第 1.3 节会看到：$\phi$ 的选择直接决定深层网络能不能训得动。
 :::
 
+::: note 先修
+这一节只用到内积 $\boldsymbol w^{\mathrm T}\boldsymbol x$ 和一元导数。感知机收敛定理的证明可以整段跳过，它不参与后面任何一讲的计算。
+:::
+
+::: ex 例 1.1.0 · 先改一个权重 {#ex-1.1.0}
+先不要看多层网络。模型只有两个数：$w$ 和 $b$，预测是一条直线
+
+$$\hat y=wx+b,\qquad \mathcal L=\frac12(\hat y-y)^2 .$$
+
+取 $x=3$、$y=10$、$w=1$、$b=0$、学习率 $\eta=0.1$。做完一次更新，并说明这一步为什么刚好把这一个点拟合到了。
+
+::: proof 解
+**前向。** $\hat y=1\cdot 3+0=3$。残差 $\hat y-y=-7$。损失 $\mathcal L=\frac12(-7)^2=24.5$。
+
+**为什么损失是这个形状。** $\frac12(\hat y-y)^2$ 在 $\hat y=y$ 时为 0，离得越远越大，而且在真值处导数为 0、别处导数正好是残差 $\hat y-y$。系数 $\frac12$ 只是为了让后面的 2 消掉，换掉它不改变「往哪边走」，只改变步长的尺度。
+
+**对参数求导（链式法则，只走一条链）。**
+
+$$\frac{\partial\mathcal L}{\partial\hat y}=\hat y-y=-7,\qquad
+\frac{\partial\hat y}{\partial w}=x=3,\qquad
+\frac{\partial\hat y}{\partial b}=1 .$$
+
+所以
+
+$$\frac{\partial\mathcal L}{\partial w}=(-7)\cdot 3=-21,\qquad
+\frac{\partial\mathcal L}{\partial b}=-7 .$$
+
+梯度指向损失上升的方向。更新要减梯度：
+
+$$w\leftarrow 1-0.1\cdot(-21)=3.1,\qquad b\leftarrow 0-0.1\cdot(-7)=0.7 .$$
+
+新预测 $3.1\cdot 3+0.7=10$，损失变成 0。
+
+**这一步碰巧走完，不是梯度下降的普遍性质。** 这里只有一个点，模型又是直线，步长恰好把残差消掉。再加第二个点（例如 $x=1,y=0$），同一次更新不可能同时把它也拟合到 0。多个点、再加上后面的非线性，才需要反复走。$\blacksquare$
+:::
+:::
+
+::: method 默写点 · 1.1
+合上书应能写出三行：$\hat y=wx+b$；$\partial\mathcal L/\partial w=(\hat y-y)\,x$（损失取 $\frac12(\hat y-y)^2$）；$w\leftarrow w-\eta\,\partial\mathcal L/\partial w$。写不出第三行时，回到上面这一例，不要先背感知机收敛定理。
+:::
+
 写成矩阵形式（一批数据一次算完）：
 
 ::: method 批量形式与形状约定 {#method-1.1.1}

@@ -19,6 +19,10 @@
 | [8 · AI for Science](../lectures/lec08/overview.md) | 把科学试错变成可微分的推断 | 结构预测、等变网络、神经算子、PINN 边界、外推 vs 插值 | — |
 | [9 · 大规模并行训练](../lectures/lec09/overview.md) | 模型放不下时，切分与通信是核心 | 显存五账单、DP/TP/PP、ZeRO/FSDP、混合精度、LoRA | [Lab 3](../labs/lab3.md) |
 
+## 和母本哪一年对齐
+
+九讲标题跟的是 **2026** 年课表（网上首播 2026-03-30 起，每周一讲）。2025 年春季曾把后半改成十讲：第 7–8 讲是两节大语言模型客座，第 9 讲 *AI in the Wild*，第 10 讲 *AI for Biology*。那些题目没有在本书里另开讲次——语言模型与评测在[第 6 讲](lec06/overview.md)，生物与材料在[第 8 讲](lec08/overview.md)，部署与公平在[第 7 讲](lec07/overview.md)。逐讲对照、客座姓名和实验仓库见[范围声明](../preface-scope.md)。
+
 ## 每讲的固定结构（读法一致）
 
 每一讲都按同一套骨架组织，便于跳读与复习：

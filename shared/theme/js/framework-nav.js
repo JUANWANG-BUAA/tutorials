@@ -353,7 +353,7 @@
   }
 
   function railTrigger() {
-    var toc = document.querySelector(".page-toc");
+    var toc = document.querySelector(".page-toc-disclosure, .page-toc");
     if (!toc) return 240;
     var rect = toc.getBoundingClientRect();
     return window.scrollY + rect.bottom - 80;
@@ -410,6 +410,8 @@
       requestAnimationFrame(function () { railFrame = false; syncRailVisibility(); paintRailCurrent(); });
     }, { passive: true });
     window.addEventListener("resize", syncPageRail, { passive: true });
+    var pageContents = document.querySelector(".page-toc-disclosure");
+    if (pageContents) pageContents.addEventListener("toggle", syncPageRail);
     // 版心宽度等偏好变化后重新算余量（prefs.js 在应用后派发该事件）
     document.addEventListener("tutorials:prefs", syncPageRail);
     // mdBook 的侧栏由隐藏 checkbox 驱动。监听 change 修复「收起后本页大纲仍不出现」；

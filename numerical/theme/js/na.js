@@ -62,7 +62,7 @@
     });
     box.querySelector(".layer-legend-head").appendChild(button);
 
-    var anchor = main.querySelector(":scope > .page-toc");
+    var anchor = main.querySelector(":scope > .page-toc-disclosure");
     if (!anchor) {
       // 首页没有 H1，首个子元素是 .chapter-cover；若直接插在它前面，
       // 图例就会浮在封面之上。挂到封面之后。

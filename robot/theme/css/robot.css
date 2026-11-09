@@ -78,9 +78,9 @@ details.sol-box>summary::after{
 
 /* SVG 里的真上下标：不用 Unicode 下标字符（ᵢ ₁ ₑ 等字形覆盖率差，
    会渲染成豆腐块），改用 tspan + 字号/基线偏移 */
-.content figure svg .sb{font-size:70%;baseline-shift:-18%}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) svg .sb{font-size:70%;baseline-shift:-18%}
 
-.content figure svg .sp{font-size:70%;baseline-shift:32%}
+:is(.content figure,.figure-zoom-stage,.atlas-entry-art) svg .sp{font-size:70%;baseline-shift:32%}
 
 /* 交互操作台（sec2-12 两连杆臂）：滑杆面板与读数。
  * 逻辑全部在本页内联 <script>（无依赖、无构建步骤）；

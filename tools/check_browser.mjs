@@ -45,7 +45,7 @@ try {
   });
   opened = true;
   await command('open', `http://127.0.0.1:${port}/tutorials/`, '--browser=chrome');
-  for (const suite of ['browser-interactions.js', 'browser-reader-variants.js', 'browser-portal.js', 'browser-cache.js']) {
+  for (const suite of ['browser-interactions.js', 'browser-reader-variants.js', 'browser-visual-contracts.js', 'browser-portal.js', 'browser-cache.js']) {
     const response = await command('run-code', '--filename', `tools/${suite}`);
     const result = JSON.parse(response.result);
     if (!Number.isInteger(result.passed) || result.passed < 1 || result.checks?.length !== result.passed) {

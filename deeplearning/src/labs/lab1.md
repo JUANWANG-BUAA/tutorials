@@ -4,8 +4,8 @@
 
 ## 1. 环境与数据
 
-- **运行环境**：Python 3.9+，TensorFlow 或 PyTorch 任选其一（本书示例给出 PyTorch 版本，思路与框架无关）。
-- **数据**：一小段符号化的旋律（如 ABC 记谱或 MIDI 转成的音符事件序列）。把它当作**一串 token**——这正是[第 2 讲](../lectures/lec02/overview.md)把序列当作离散符号序列的翻版。
+- **运行环境**：Python 3.9+。本书示例用 PyTorch。官方 2026 年仓库 [MITDeepLearning/introtodeeplearning](https://github.com/MITDeepLearning/introtodeeplearning) 的 `lab1/` 同时给出 `PT_Part1_Intro.ipynb`、`PT_Part2_Music_Generation.ipynb` 和对应的 `TF_` 笔记本。TensorFlow 那条线是 **TensorFlow 2 的即时执行 + Keras**，不是 `tf.Session` / `placeholder` 那一套。两条线的计算图语义相同，接口不要互相翻译着抄。
+- **数据**：一小段 ABC 记谱（官方 Part 2 就是字符级 RNN，预测乐谱的下一个字符）。把它当作**一串 token**——这正是[第 2 讲](../lectures/lec02/overview.md)把序列当作离散符号序列的翻版。MIDI 事件序列也可以，但那就不再是官方笔记本的任务。
 
 ::: note 数据很小，所以别期待"作曲"
 本实验的目的是**看清训练循环与序列模型的行为**，不是训练一个能谱曲的模型。数据集只有几 KB 时，模型能学会**局部**的音符搭配与节奏模式就已经达到目标。判断标准是「续写像训练数据」，不是「续写好不好听」。
@@ -16,19 +16,22 @@
 把一个简单函数（如 $y=\sin(3x)$ 在若干采样点上）当作回归问题，用一层网络拟合。**每一步都对应第 1 讲的四个动作**：
 
 ```python
-import torch, torch.nn as nn
+import torch
+from torch import nn
 
 model = nn.Sequential(nn.Linear(1, 64), nn.ReLU(), nn.Linear(64, 1))
-opt   = torch.optim.Adam(model.parameters(), lr=1e-2)
+opt = torch.optim.Adam(model.parameters(), lr=1e-2)
 loss_fn = nn.MSELoss()
 
 for step in range(2000):
-    pred = model(x)                 # ① 前向：得到预测
-    loss = loss_fn(pred, y)         # ② 损失：MSE（回归用 MSE，见第 1 讲 1.4）
-    opt.zero_grad()                 #    清空上一轮梯度
-    loss.backward()                 # ③ 反向：自动微分求梯度（定理 1.2）
-    opt.step()                      # ④ 更新：θ ← θ − η∇L
+    pred = model(x)          # ① 前向
+    loss = loss_fn(pred, y)  # ② MSE（回归，见第 1 讲 1.4）
+    opt.zero_grad()
+    loss.backward()          # ③ 反向
+    opt.step()               # ④ 更新
 ```
+
+`zero_grad()` 放在 `backward()` 之前。PyTorch 默认把梯度**累加**到 `.grad` 上；顺序反了，这一步就会叠加上一步的梯度。官方笔记本用的也是 `torch.nn` 与 `torch.optim`，不是已经删除的 `torch.autograd.Variable`。
 
 ::: note 逐行对应的讲次
 `model(x)` = [定义 1.1](../lectures/lec01/overview.md) 的前向；`loss_fn` = [定义 1.2](../lectures/lec01/overview.md) 的 MSE；`loss.backward()` = [定理 1.2](../lectures/lec01/overview.md) 的反向传播；`opt.step()` = [定义 1.3](../lectures/lec01/overview.md) 的梯度下降。**把这条对应关系记住，你就掌握了所有深度学习的骨架。**

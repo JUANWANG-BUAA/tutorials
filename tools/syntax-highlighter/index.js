@@ -27,9 +27,10 @@ import vim from 'highlight.js/lib/languages/vim';
 import protobuf from 'highlight.js/lib/languages/protobuf';
 import xml from 'highlight.js/lib/languages/xml';
 import powershell from 'highlight.js/lib/languages/powershell';
+import matlab from 'highlight.js/lib/languages/matlab';
 import plaintext from 'highlight.js/lib/languages/plaintext';
 
-const languages = { bash, c, cpp, python, rust, javascript, json, sql, x86asm, armasm, llvm, ini, makefile, http, yaml, markdown, lua, awk, cmake, dockerfile, vim, protobuf, xml, powershell, plaintext };
+const languages = { bash, c, cpp, python, rust, javascript, json, sql, x86asm, armasm, llvm, ini, makefile, http, yaml, markdown, lua, awk, cmake, dockerfile, vim, protobuf, xml, powershell, matlab, plaintext };
 for (const [name, grammar] of Object.entries(languages)) hljs.registerLanguage(name, grammar);
 hljs.registerAliases(['asm'], { languageName: 'x86asm' });
 hljs.registerAliases(['jsonl'], { languageName: 'json' });

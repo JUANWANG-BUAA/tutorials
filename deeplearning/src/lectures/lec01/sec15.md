@@ -6,6 +6,54 @@
 
 这一节要讲清三件事：梯度下降为什么会收敛；**反向传播到底是什么**（答案：链式法则 + 中间结果复用，本质是动态规划）；以及一个被很多人忽略的实践环节——**梯度检查**，它是在你怀疑自己手写的算子出错时唯一可靠的验证手段。
 
+::: note 先修与读法
+第一遍只需要一元链式法则。下面的开场手算不使用矩阵。1.5.1 的 Lipschitz 与强凸保证可以整段跳过：神经网络的损失通常不凸，那条定理说的是「凸且光滑时步长该怎么选」，不是「网络一定这样收敛」。
+:::
+
+## 开场：两个标量参数的反向传播 {#sec-1.5.0}
+
+矩阵形式的递推在 [1.5.3](#sec-1.5.3) 。在那之前，用两个数把「误差从输出走回每一个参数」做完。模型是
+
+$$z=w_1 x,\qquad a=\mathrm{ReLU}(z),\qquad \hat y=w_2 a,\qquad \mathcal L=\frac12(\hat y-y)^2 .$$
+
+ReLU 在 $z>0$ 时导数为 1，在 $z<0$ 时导数为 0。取 $x=2$、$y=1$、$w_1=0.5$、$w_2=1.5$。
+
+::: ex 例 1.5.0 · 把链式法则走成一次更新 {#ex-1.5.0}
+(1) 算出 $\hat y$ 与 $\mathcal L$；(2) 写出 $\partial\mathcal L/\partial w_2$ 与 $\partial\mathcal L/\partial w_1$，并在每一步旁注形状（这里全是标量）；(3) 用 $\eta=0.1$ 更新一次，再算新的损失。
+
+::: proof 解
+**(1) 前向。** $z=0.5\cdot 2=1>0$，所以 $a=1$。$\hat y=1.5\cdot 1=1.5$。残差 $0.5$，
+
+$$\mathcal L=\frac12(0.5)^2=0.125 .$$
+
+**(2) 从损失往回乘。** 损失对预测的导数是残差本身：
+
+$$\frac{\partial\mathcal L}{\partial\hat y}=\hat y-y=0.5 .$$
+
+$w_2$ 只出现在 $\hat y=w_2 a$ 里，所以
+
+$$\frac{\partial\mathcal L}{\partial w_2}=\frac{\partial\mathcal L}{\partial\hat y}\cdot a=0.5\cdot 1=0.5 .$$
+
+同一份 $\partial\mathcal L/\partial\hat y$ 还要继续往左走，先变成对 $a$ 的导数，再穿过 ReLU，再乘上 $x$：
+
+$$\frac{\partial\mathcal L}{\partial a}=0.5\cdot w_2=0.75,\qquad
+\frac{\partial\mathcal L}{\partial z}=0.75\cdot 1=0.75,\qquad
+\frac{\partial\mathcal L}{\partial w_1}=0.75\cdot x=1.5 .$$
+
+四个量都是标量，和 $w_1,w_2,\mathcal L$ 同形。若 $z$ 是负数，ReLU 的导数为 0，$\partial\mathcal L/\partial w_1$ 就是 0：上游的误差到不了 $w_1$。这就是后面说的「死亡 ReLU」在一个数上的样子。
+
+**(3) 更新。**
+
+$$w_1\leftarrow 0.5-0.1\cdot 1.5=0.35,\qquad w_2\leftarrow 1.5-0.1\cdot 0.5=1.45 .$$
+
+新的前向：$z=0.7$，$a=0.7$，$\hat y=1.015$，$\mathcal L=\frac12(0.015)^2=1.125\times 10^{-4}$。损失从 $0.125$ 降到大约 $10^{-4}$。这是**这一个样本、这一次步长**上的算术，不是对训练曲线的统计。$\blacksquare$
+:::
+:::
+
+::: method 默写点 · 1.5
+反向传播在这个例子里只有一条规则：每个参数的梯度 $=$「损失对它下游那个量的导数」乘「那个量对它的局部导数」。局部导数在乘法里就是另一个因子（$a$ 或 $x$），在 ReLU 里就是 0 或 1。层数变多时，只是把这条规则沿计算图多走几步，中间结果存下来复用。
+:::
+
 ## 1.5.1 梯度下降与随机梯度下降
 
 ::: def 定义 1.5.1 · 梯度下降（gradient descent） {#def-1.5.1}
@@ -99,7 +147,7 @@ $$\bar{\boldsymbol u}=J^{\mathrm T}\bar{\boldsymbol v}\qquad\text{（即 }\bar u
 工程上的三条缓解路径：① **激活重计算（activation checkpointing / gradient checkpointing）**——只保留少数「检查点」的激活，反向时把中间段重算一遍，用时间换显存；② **混合精度**——用 BF16/FP16 保存激活，显存减半（见 [第 9 讲](../lec09/overview.md)）；③ **融合算子**——把「前向 + 反向」写成一个内核，避免把中间量写回显存。前向模式没有这个包袱（不需要保存全部中间结果），所以在**内存紧张而输入维度很小**的场景（如逐参数优化、隐式微分）反而有优势。
 :::
 
-## 1.5.3 反向传播的完整推导
+## 1.5.3 反向传播的完整推导 {#sec-1.5.3}
 
 现在把上面的机制落到 MLP 上。设 $L$ 层网络，批大小 $B$，损失 $\mathcal L$ 对所有样本取平均。
 
