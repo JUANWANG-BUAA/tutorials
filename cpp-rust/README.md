@@ -86,7 +86,7 @@ cd cpp-rust
 # 1. 章节结构契约检查 (验证行数、H1/H2 结构、锚点唯一性、图表与陷阱)
 python3 tools/check_book.py
 
-# 2. 统计报告 (输出 16 章的行数、标题、代码块与陷阱明细)
+# 2. 统计报告 (输出各章的行数、标题、代码块与陷阱明细)
 python3 tools/audit_stats.py
 
 # 3. 原始实验数据与源码快照比对
@@ -95,12 +95,13 @@ python3 tools/verify_evidence.py
 # 4. 描述符继承竞争与修复验证
 python3 tools/verify_drain_fix.py
 
-# 5. 连续两轮独立全章节审计验证
+# 5. 独立审计门禁 (当前 17 章快照按设计报红，见下方说明)
 python3 tools/verify_audits.py
 
 # 6. 全书发布级严格门禁检查 (编译所有包、跑完所有测试、构建全书 HTML)
 python3 tools/verify_all.py --release
 ```
 
-执行 `python3 tools/verify_all.py --release` 即可验证全书达到正式发布标准：
-`RELEASE GATES PASSED: All 17 chapters, 3 executable projects, the source ledger, and 2 independent audit rounds verified.`
+`python3 tools/verify_all.py --release` 会依次跑完编译、测试、构建、链接与台账检查，最后停在**独立审计门禁**。当前 17 章快照还没有完成两轮独立复审：已冻结的审计记录只覆盖 16 章、176 个技术锚点，不含第 17 章的 11 节，也不含此后的章末件与机制参照线改造。因此 `verify_audits.py` 与 `--release` 报红是设计上的正确状态，不是待修故障，也不要为了让门禁转绿去改审计记录。作者不能自己签这份审计，工作单由 `tools/audit_packet.py` 生成，阻塞点明细见 [AUDIT-sections.md](AUDIT-sections.md)。
+
+日常可用的机械门禁与当前实测数字见 [CHECK-cpp-rust.md](CHECK-cpp-rust.md) 顶部表格。
