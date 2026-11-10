@@ -1044,10 +1044,34 @@
         note: "2.9.6：球形臂（RRP）+ 球形腕（3R）接口对齐直接连乘——「先定方向再探距离」的经典组合。"
       }
     ];
+    /* ---- 第二轮补充：DLR 七自由度冗余臂（2.9.8）与并联机构（1.2.3） ---- */
+    var KINDS_EXTRA = [
+      {
+        id: "dlr", name: "DLR 七自由度", seq: "转动/移动交替（本质冗余）", ws: "近似球体",
+        rows: [
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₁", range: [-140, 140], def: 20 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₂", range: [-70, 70], def: -25 },
+          { alpha: HALF_PI, a: 0, d: 0.22, th: 0, type: "P", label: "d₃（移动）", range: [0.05, 0.42], def: 0.24 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₄", range: [-140, 140], def: 15 },
+          { alpha: HALF_PI, a: 0, d: 0.2, th: 0, type: "P", label: "d₅（移动）", range: [0.05, 0.4], def: 0.22 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₆", range: [-70, 70], def: -20 },
+          { alpha: 0, a: 0, d: 0.12, th: 0, type: "P", label: "d₇（移动）", range: [0.02, 0.3], def: 0.16 }
+        ],
+        note: "2.9.8：DLR 机械手全表 aᵢ=0、αᵢ=π/2（i=1…6）、α₇=0，关节 3、5、7 是移动型。七个自由度对六维位姿是<b>本质冗余</b>（见 2.10.3）——同一末端位形有一整族解。"
+      },
+      {
+        id: "parallel", name: "并联机构（四腿示意）", seq: "四条运动链同时连基座与末端", ws: "被缩减的工作空间",
+        custom: "parallel",
+        rows: [{ alpha: 0, a: 0, d: 0, th: 0, type: "R", label: "驱动角 β", range: [25, 70], def: 45 }],
+        note: "1.2.3：并联构形里<b>多条运动链同时连接基座与末端执行器</b>（ABB IRB 340 FlexPicker 即四轴并联）。优势是结构刚性高、可达较高操作速度；代价是<b>工作空间被缩减</b>。注意这里每条链都是闭链——自由度不再是「关节数减约束」那么简单。"
+      }
+    ];
+
+    KINDS = KINDS.concat(KINDS_EXTRA);
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "构形动物园：九种机构，拖转起来数自由度"));
+    head.appendChild(el("b", null, "构形动物园：十一种机构，拖转起来数自由度"));
     host.appendChild(head);
     host.appendChild(el("p", "lab-note", "选一种构形，拖动关节滑杆、拖转视角（画布内按住拖动、滚轮缩放）。绿色圆柱 = 转动关节，金色 = 移动关节的导轨滑块；虚线 = 关节轴线。对照着「臂的关节序列 → 工作空间形状」这条判别主线看：三移 → 长方体；一转两移 → 空心圆柱；两转一移 → 中空球；三轴平行 → 扁形回转体；全转动 → 近似球。"));
 
@@ -1122,6 +1146,36 @@
       v.label(kernel.sclv(kernel.addv(B, T4), 0.5), "4", c.gold);
     }
 
+    /* 并联机构（四腿平行四边形，1.2.3 的示意）：驱动角 β 决定平台高度 */
+    function drawParallel(v, kind, betaDeg) {
+      var c = palette();
+      var beta = betaDeg * Math.PI / 180;
+      var L = 0.6, Rb = 0.4;
+      var h = L * Math.sin(beta);
+      var Rp = Rb + L * Math.cos(beta);
+      /* 基座 */
+      v.box([0, 0, -0.03], [0.5, 0.5, 0.025], kernel.Tid().R, { color: c.neutral });
+      /* 平台（升降） */
+      v.box([0, 0, h], [0.18, 0.18, 0.025], kernel.Tid().R, { color: c.gold });
+      v.sphere([0, 0, h + 0.06], 0.03, { color: c.red });
+      v.label([0, 0, h + 0.12], "末端执行器（平台）", c.red, 10, 2);
+      var phis = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
+      phis.forEach(function (phi) {
+        var B = [Rb * Math.cos(phi), Rb * Math.sin(phi), 0];
+        var P = [Rp * Math.cos(phi), Rp * Math.sin(phi), h];
+        var tan = [-Math.sin(phi), Math.cos(phi), 0];
+        /* 每条腿两根平行杆 → 平行四边形闭链 */
+        v.cyl(B, P, 0.026, { color: c.blue });
+        v.cyl(kernel.addv(B, kernel.sclv(tan, 0.07)), kernel.addv(P, kernel.sclv(tan, 0.07)),
+          0.016, { color: c.muted });
+        v.sphere(B, 0.035, { color: c.green });
+        v.sphere(P, 0.028, { color: c.gold });
+      });
+      v.label([Rb * 0.7, Rb * 0.7, 0.02], "基座铰点（4 个）", c.green, 10, 6);
+      v.label([0, 0, h + 0.02], "平台铰点（4 个）", c.gold, -60, -6);
+      v.label([0.3, 0.2, h * 0.6], "驱动角 β = " + betaDeg.toFixed(0) + "°", c.blue, 12, 0);
+    }
+
     function draw() {
       if (!view) return;
       var kind = findKind();
@@ -1134,6 +1188,8 @@
 
       if (kind.custom === "para") {
         drawPara(view, kind);
+      } else if (kind.custom === "parallel") {
+        drawParallel(view, kind, state.q[0]);
       } else {
         var frames = kernel.fkChain(rows, q);
         drawChain(view, frames, {
@@ -1190,8 +1246,12 @@
       view.render(state.hover);
 
       var dof = rows.length;
-      var html = "<p><b>" + kind.name + "</b>：" + kind.seq + "，自由度 " + dof +
-        (kind.custom === "para" ? "（独立驱动 2 个，闭链约束吃掉 2 个）" : "") +
+      var dofText = kind.custom === "para"
+        ? "自由度 " + dof + "（独立驱动 2 个，闭链约束吃掉 2 个）"
+        : (kind.custom === "parallel"
+          ? "本示意为<b>竖直升降 1 自由度</b>的四腿平行四边形（ABB IRB 340 FlexPicker 则是四轴并联）"
+          : "自由度 " + dof);
+      var html = "<p><b>" + kind.name + "</b>：" + kind.seq + "，" + dofText +
         "；工作空间：" + kind.ws + "。</p>";
       html += "<p class='lab-note'>" + kind.note + "</p>";
       if (endF) {
@@ -2807,6 +2867,104 @@
     return draw;
   }
 
+  /* ================= 实验：hyd3d · 液压驱动：缸体、活塞与三支流路（ch05 §5.2.2） ================= */
+
+  function labHyd3D(host) {
+    var state = { d: 0.32, qm: 0.5, leak: 0.12, comp: 0.08 };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "液压驱动：缸筒、活塞，以及流量的三条去路"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "液压缸 = 缸体 + 活塞杆：<b>推动伸缩 d</b> 就是移动关节的位移（教材 §7.3 的两连杆笛卡儿臂就是它驱动的，见 6.3.1）。泵送来的体积流速 Q 并不全用来推活塞——它分成三条去路：<b>Qₘ 有用流量</b>（推活塞）、<b>Q_l 泄漏</b>（缸壁间隙漏回储液池）、<b>Q_c 压缩</b>（油液被压缩储存在缸里）。拖活塞看这三条支路如何随速度与位置变化——这正是液压与电气最本质的差别。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    slider(controls, "活塞位移 d", 0.05, 0.55, 0.005, state.d, function (v) { state.d = v; draw(); },
+      function (v) { return (v * 1000).toFixed(0) + " mm"; });
+    slider(controls, "泵流量 Q", 0.1, 1, 0.05, state.qm, function (v) { state.qm = v; draw(); },
+      function (v) { return v.toFixed(2) + " L/s"; });
+    slider(controls, "泄漏 Q_l", 0, 0.4, 0.01, state.leak, function (v) { state.leak = v; draw(); },
+      function (v) { return v.toFixed(2); });
+    slider(controls, "压缩 Q_c", 0, 0.4, 0.01, state.comp, function (v) { state.comp = v; draw(); },
+      function (v) { return v.toFixed(2); });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "液压缸结构与流量的三条去路");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.58, { span: 1.15, center: [0, 0, 0.18], az: -38, elv: 20 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var R = 0.11, L = 0.62;
+      /* 缸体（剖开一半，露出活塞） */
+      var segs = 14, i, j;
+      for (i = 0; i < segs; i++) {
+        var a0 = Math.PI * 0.1 + (Math.PI * 0.8) * i / segs;
+        var a1 = Math.PI * 0.1 + (Math.PI * 0.8) * (i + 1) / segs;
+        var p1 = [R * Math.cos(a0), R * Math.sin(a0), 0];
+        var p2 = [R * Math.cos(a1), R * Math.sin(a1), 0];
+        var p3 = [p2[0], p2[1], L];
+        var p4 = [p1[0], p1[1], L];
+        view.poly([p1, p2, p3, p4], { color: c.neutral, both: true });
+      }
+      /* 缸底与杆端盖 */
+      view.box([0, 0, -0.02], [R, R, 0.02], kernel.Tid().R, { color: c.neutral });
+      /* 活塞 + 活塞杆 */
+      view.cyl([0, 0, -0.02], [0, 0, state.d], R * 0.92, { color: c.green, seg: 14 });
+      view.cyl([0, 0, state.d], [0, 0, L + 0.12], 0.026, { color: c.blue, seg: 10 });
+      /* 油液 */
+      view.cyl([0, 0, 0.005], [0, 0, Math.max(0.01, state.d - 0.005)], R * 0.86, { color: c.gold, seg: 12 });
+      view.label([0, 0, state.d + 0.16], "活塞杆（连到移动关节）", c.blue, 12, 2);
+      view.label([0, 0, 0.01], "油液（可压缩）", c.gold, -46, 14);
+      view.label([0, R * 0.9, L * 0.6], "缸体", c.neutral, 10, 0);
+      view.label([0, 0, state.d * 0.5], "活塞", c.green, 10, -6);
+
+      /* 流路：泵 → 分布器 → 三条支路 */
+      var src = [-0.42, 0, L * 0.75];
+      view.box(src, [0.06, 0.05, 0.05], kernel.Tid().R, { color: c.ink2 });
+      view.label(src, "泵 + 分布器", c.ink2, -30, -14);
+      var junction = [-0.22, 0, L * 0.75];
+      view.line(src, junction, { color: c.ink2, width: 2.4 });
+      var Q = state.qm + state.leak + state.comp;
+      var qm = state.qm / Q, ql = state.leak / Q, qc = state.comp / Q;
+      var outP = [junction[0] - 0.12, 0, junction[2]];
+      var outL = [junction[0], 0.28, junction[2] + 0.06];
+      var outC = [junction[0], -0.28, junction[2] + 0.06];
+      view.line(junction, outP, { color: c.green, width: 2 + 5 * qm });
+      view.line(junction, outL, { color: c.red, width: 2 + 5 * ql });
+      view.line(junction, outC, { color: c.gold, width: 2 + 5 * qc });
+      view.label(outP, "Q_m 有用（推活塞）", c.green, -70, 4);
+      view.label(outL, "Q_l 泄漏", c.red, 8, -4);
+      view.label(outC, "Q_c 压缩", c.gold, 8, 10);
+      /* 有用流量的终点：缸腔 */
+      view.line(outP, [0, 0, state.d * 0.5], { color: c.green, width: 1.6, dash: [4, 3] });
+
+      view.render(null);
+
+      var html = "<p><b>流速平衡</b>：分布器送出的体积流速 Q 分成三份——" +
+        "Qₘ 推活塞（有用）、Q_l 经缸壁间隙漏回储液池（<b>渗漏</b>）、Q_c 把油液压扁储存在缸里（<b>可压缩性</b>）。</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>支路</th><th>当前流量</th><th>占比</th><th>物理</th></tr></thead><tbody>" +
+        "<tr><td>Q_m 有用</td><td>" + state.qm.toFixed(2) + "</td><td>" + (qm * 100).toFixed(0) + "%</td><td>推活塞做功</td></tr>" +
+        "<tr><td>Q_l 泄漏</td><td>" + state.leak.toFixed(2) + "</td><td>" + (ql * 100).toFixed(0) + "%</td><td>缸壁间隙漏回储液池，效率损失</td></tr>" +
+        "<tr><td>Q_c 压缩</td><td>" + state.comp.toFixed(2) + "</td><td>" + (qc * 100).toFixed(0) + "%</td><td>油液压缩，位置越靠后越难压缩（储能）</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>这两项（渗漏与可压缩性）是液压与电气最本质的动态差别：电气侧只有电流一个方程，液压侧要拆成渗漏 + 可压缩性两项，" +
+        "而且<b>压力反馈层是液压的固有结构、拆不掉</b>（不像电流反馈那样可选）。所以液压建模的路线是「<b>照着电气再做一遍</b>」，只把差别记牢。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -2836,7 +2994,8 @@
     chassis3d: labChassis3D,
     drive3d: labDrive3D,
     motor3d: labMotor3D,
-    sensor3d: labSensor3D
+    sensor3d: labSensor3D,
+    hyd3d: labHyd3D
   };
 
   function boot() {
