@@ -49,6 +49,7 @@ ALLOWED_BOX = {"def", "thm", "ex", "sol", "note", "think", "intuition",
                "method", "errata", "proof", "preview"}
 PLACEHOLDER = re.compile(r"\b(TODO|FIXME)\b")
 DATA_LAB = re.compile(r"\bdata-lab=[\"']([\w-]+)[\"']")
+DATA_MECH = re.compile(r"\bdata-mech=[\"\']([\w-]+)[\"\']")
 REGISTRY = re.compile(r"registry\s*=\s*\{([^}]*)\}", re.S)
 EXCLUDE_H1 = ("SUMMARY.md",)
 
@@ -238,12 +239,25 @@ def main():
         with open(os.path.join(theme_dir, js_name), encoding="utf-8") as fh:
             for reg_m in REGISTRY.finditer(fh.read()):
                 registered.update(re.findall(r"([\w-]+)\s*:", reg_m.group(1)))
+    mech_keys: set[str] = set()
+    for js_name in sorted(os.listdir(theme_dir)):
+        if not re.match(r"robot-labs.*\.js$", js_name):
+            continue
+        with open(os.path.join(theme_dir, js_name), encoding="utf-8") as fh:
+            js_text = fh.read()
+        mech_block = re.search(r"var DEFS = \{(.*?)\n    \};", js_text, re.S)
+        if mech_block:
+            mech_keys.update(re.findall(r"^\s{6}(\w+):\s*\{", mech_block.group(1), re.M))
+
     for rel, lines in texts.items():
         body, _ = split_fences(lines)
         for no, line in body:
             for m in DATA_LAB.finditer(line):
                 if m.group(1) not in registered:
                     flag(rel, f"L{no}: data-lab=\"{m.group(1)}\" 无注册实现（空盒）")
+            for m in DATA_MECH.finditer(line):
+                if mech_keys and m.group(1) not in mech_keys:
+                    flag(rel, f"L{no}: data-mech=\"{m.group(1)}\" 不在 mech3d 的机构定义里（实例会退化）")
 
     total = sum(len(v) for v in problems.values())
     if total == 0:

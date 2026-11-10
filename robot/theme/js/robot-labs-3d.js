@@ -3103,6 +3103,208 @@
     return draw;
   }
 
+  /* ================= 实验：mech3d · 2.9 各类机械手：逐种把 DH 表连乘成一条手臂 =================
+     一个通用实验，按宿主容器的 data-mech 取机构定义：每个实例渲染该机构的
+     DH 坐标架、关节滑杆与连乘矩阵 T，并把矩阵的列与画布里的几何量联动。 */
+
+  function labMech3D(host) {
+    var which = host.getAttribute("data-mech") || "planar3r";
+    var HALF_PI = Math.PI / 2;
+    var DEFS = {
+      planar3r: {
+        name: "三连杆平面臂", sec: "2.9.1",
+        rows: [
+          { alpha: 0, a: 0.45, d: 0, type: "R", label: "ϑ₁" },
+          { alpha: 0, a: 0.36, d: 0, type: "R", label: "ϑ₂" },
+          { alpha: 0, a: 0.26, d: 0, type: "R", label: "ϑ₃" }
+        ],
+        note: "三个关节转轴全部平行（都沿 z₀），于是 dᵢ=αᵢ=0 全表成立，DH 表只剩三个 θ。最简单的机构，也是后面几节算式形状的模板。",
+        extra: "结构性观察：z₃⁰=[0 0 1]ᵀ 与 z₀ 一致——三轴全平行，所以三个关节只决定末端在平面内的位置。",
+        tLabel: "T₃⁰（原书式 2.63）", tfn: "planar"
+      },
+      para: {
+        name: "平行四边形臂", sec: "2.9.2",
+        custom: "para",
+        rows: [
+          { alpha: 0, a: 0.45, d: 0, type: "R", label: "ϑ₁′（曲柄）" },
+          { alpha: 0, a: 0.5, d: 0, type: "R", label: "ϑ₁″（驱动杆）" }
+        ],
+        note: "闭链机构：选关节 4 为断开关节后建系，约束方程 ϑ₂′=ϑ₁″−ϑ₁′、ϑ₃′=π−ϑ₂′ 把两条支链绑在一起，**独立变量只剩基座上的两个驱动关节**。",
+        extra: "算式里的细节：连杆 1′ 的长度 a₁′ 对末端位置的贡献**恰好相消**——位置只由 a₁″ 与 a₄ 决定。",
+        tLabel: "T₄⁰（原书式 2.64）", tfn: "para"
+      },
+      spherical: {
+        name: "球形臂", sec: "2.9.3",
+        rows: [
+          { alpha: -HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₁" },
+          { alpha: HALF_PI, a: 0, d: 0.18, type: "R", label: "ϑ₂" },
+          { alpha: 0, a: 0, d: 0, type: "P", label: "d₃" }
+        ],
+        note: "第一个带移动关节的结构：两转动 + 一移动（伸缩）。三个 aᵢ 全为零，因为 z₀ 与 z₁ 相交、z₁ 与 z₂ 相交、z₂∥z₃。",
+        extra: "结构性观察：**移动关节 d₃ 不影响旋转块**——伸缩不改变姿态；单位向量 y₃⁰=[−s₁\\ c₁\\ 0]ᵀ 的方向**只由第一关节**决定（第二关节的转轴 z₁ 恰与 y₃ 平行）。",
+        tLabel: "T₃⁰（原书式 2.65）", tfn: "spherical"
+      },
+      stanford: {
+        name: "斯坦福机械手", sec: "2.9.6",
+        rows: [
+          { alpha: -HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₁" },
+          { alpha: HALF_PI, a: 0, d: 0.16, type: "R", label: "ϑ₂" },
+          { alpha: 0, a: 0, d: 0, type: "P", label: "d₃" },
+          { alpha: -HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₄" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₅" },
+          { alpha: 0, a: 0, d: 0.13, type: "R", label: "ϑ₆" }
+        ],
+        note: "球形臂 + 球形腕，**两者的坐标系 3 一致——接口对齐，可以直接连乘**。末端位置比纯球形臂多出一项：沿 a₆⁰ 方向外移 d₆。",
+        extra: "把 d₆ 拖到 0，末端位置与单一球形臂**完全相同**——这一点对 2.12.2 的解耦逆解至关重要。",
+        tLabel: "T₆⁰（原书式 2.68–2.69）", tfn: "stanford"
+      },
+      anthroWrist: {
+        name: "带球形腕的拟人臂（重建系）", sec: "2.9.7",
+        rows: [
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₁" },
+          { alpha: 0, a: 0.55, d: 0, type: "R", label: "ϑ₂" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₃" },
+          { alpha: -HALF_PI, a: 0, d: 0.3, type: "R", label: "ϑ₄" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₅" },
+          { alpha: 0, a: 0, d: 0.14, type: "R", label: "ϑ₆" }
+        ],
+        note: "拟人臂的坐标系 3 与球形腕的坐标系 3 **不一致**（x₃ 相差 π/2、原点相差 a₃），不能直接连乘——出路是插入常值变换把接口对齐，或者**整体重建系**（原书走这条路）。",
+        extra: "重建系后注意参数表的变化：原拟人臂的 a₃ 消失了，它化入 d₄ 的参考方向；α₃ 也从 0 变成 π/2。令 d₆=0 即得**腕心**位置。",
+        tLabel: "p₆⁰（原书式 2.70–2.71）", tfn: "pos"
+      },
+      dlr: {
+        name: "DLR 机械手", sec: "2.9.8",
+        rows: [
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₁" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₂" },
+          { alpha: HALF_PI, a: 0, d: 0.22, type: "P", label: "d₃" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₄" },
+          { alpha: HALF_PI, a: 0, d: 0.2, type: "P", label: "d₅" },
+          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₆" },
+          { alpha: 0, a: 0, d: 0.12, type: "P", label: "d₇" }
+        ],
+        note: "七自由度机械手，属于**本质冗余**（2.10.3）：全表 aᵢ=0、αᵢ=π/2（i=1…6）、α₇=0，关节 3、5、7 是移动型。",
+        extra: "七个自由度对六维位姿是冗余的——同一末端位形有**一整族**解，冗余度用来自避奇异与避障碍（3.4 节）。",
+        tLabel: "T₇⁰（连乘结果，原书式 2.72–2.76）", tfn: "num"
+      }
+    };
+    var def = DEFS[which] || DEFS.planar3r;
+    var state = { q: def.rows.map(function (r) { return r.type === "P" ? (r.d || 0.2) : 20; }), hover: null };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, def.name + "：把 DH 表连乘成一条手臂"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖动各关节变量与视角，看这张 DH 表怎么变成一条真实机构：绿色圆柱是转动关节、金色导轨是移动关节；画布上标出每个坐标系的 x/y/z 轴。下方是连乘矩阵 T 的数值——**悬停某一列**，对应的坐标架轴会加粗（列 = 轴的方向余弦；末列 = 位置）。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    def.rows.forEach(function (row, i) {
+      if (row.type === "P") {
+        slider(controls, row.label, 0.04, 0.5, 0.005, state.q[i], function (v) { state.q[i] = v; draw(); },
+          function (v) { return (v * 1000).toFixed(0) + " mm"; });
+      } else {
+        slider(controls, row.label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+          function (v) { return v.toFixed(0) + "°"; });
+      }
+    });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", def.name + "的三维机构与连乘矩阵");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.62, { span: 1.4, center: [0, 0, 0.25], az: -34, elv: 19 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var q = state.q.map(function (v, i) {
+        return def.rows[i].type === "P" ? v : v * DEG;
+      });
+      view.grid(0.85, 0.17, 0, { color: c.line });
+
+      var frames = null, T = null;
+      if (def.custom === "para") {
+        /* 平行四边形臂：闭链，按约束方程构造 */
+        var t1 = q[0], t1b = q[1];
+        var a1 = 0.45, a1b = 0.5, a2 = 0.5, a4 = 0.3;
+        var e = function (ang) { return [Math.cos(ang), Math.sin(ang), 0]; };
+        var A = kernel.sclv(e(t1), a1);
+        var C = kernel.sclv(e(t1b), a1b);
+        var B = kernel.addv(A, kernel.sclv(e(t1b), a2));
+        var T4 = kernel.addv(C, kernel.sclv(e(t1), -a4));
+        view.cyl([0, 0, -0.16], [0, 0, 0], 0.09, { color: c.neutral, seg: 10 });
+        view.cyl([-0.05, 0, -0.06], [0.05, 0, 0.06], 0.085, { color: c.green, seg: 10 });
+        view.cyl(A, B, 0.032, { color: c.blue });
+        view.cyl(C, B, 0.032, { color: c.blue });
+        view.cyl([0, 0, 0], A, 0.032, { color: c.blue });
+        view.cyl([0, 0, 0], C, 0.032, { color: c.blue });
+        view.cyl(B, T4, 0.026, { color: c.gold });
+        view.sphere(B, 0.032, { color: c.green });
+        view.sphere(T4, 0.03, { color: c.red });
+        view.label(kernel.sclv(kernel.addv([0, 0, 0], A), 0.5), "1′", c.blue);
+        view.label(kernel.sclv(kernel.addv(A, B), 0.5), "2′", c.blue);
+        view.label(kernel.sclv(kernel.addv(C, B), 0.5), "3′", c.blue);
+        view.label(kernel.sclv(kernel.addv([0, 0, 0], C), 0.5), "1″", c.blue);
+        var c1 = Math.cos(t1), s1 = Math.sin(t1), c1b = Math.cos(t1b), s1b = Math.sin(t1b);
+        T = {
+          R: [[-c1, s1, 0], [-s1, -c1, 0], [0, 0, 1]],
+          p: [a1b * c1b - a4 * c1, a1b * s1b - a4 * s1, 0]
+        };
+      } else {
+        frames = kernel.fkChain(def.rows, q);
+        drawChain(view, frames, {
+          toolLen: 0.12, triads: true, triadSize: 0.24, span: 1.2,
+          frameRange: [0, frames.length - 1], hlFrame: "f"
+        });
+        var last = frames[frames.length - 1];
+        view.line([0, 0, 0], last.o, { color: c.red, width: 1.8, dash: [7, 4], hl: "pos" });
+        T = last.T;
+      }
+
+      view.render(state.hover);
+
+      /* DH 参数表（悬停联动） */
+      var tbl = "<table class='lab-matrix'><thead><tr><th>i</th><th>αᵢ</th><th>aᵢ</th><th>dᵢ</th><th>ϑᵢ/dᵢ</th></tr></thead><tbody>";
+      def.rows.forEach(function (row, i) {
+        var alphaTxt = Math.abs(row.alpha - HALF_PI) < 1e-6 ? "π/2" : (Math.abs(row.alpha + HALF_PI) < 1e-6 ? "−π/2" : "0");
+        tbl += "<tr><td>" + (i + 1) + "</td>" +
+          "<td data-hl='al" + i + "'>" + alphaTxt + "</td>" +
+          "<td data-hl='a" + i + "'>" + (row.a ? row.a.toFixed(2) : "0") + "</td>" +
+          "<td data-hl='d" + i + "'>" + (row.d ? row.d.toFixed(2) : "0") + "</td>" +
+          "<td data-hl='th" + i + "'>" + (row.type === "P" ? (state.q[i] * 1000).toFixed(0) + " mm" : state.q[i].toFixed(0) + "°") + "</td></tr>";
+      });
+      tbl += "</tbody></table>";
+
+      /* 连乘矩阵 */
+      var mat = [];
+      for (var r = 0; r < 4; r++) {
+        var rowArr = [];
+        for (var cc = 0; cc < 4; cc++) {
+          var v = (r === 3) ? (cc === 3 ? 1 : 0) : (cc === 3 ? T.p[r] : T.R[r][cc]);
+          var key = cc === 3 ? "pos" : "f" + (cc === 0 ? "0" : "1") + "-" + cc;
+          rowArr.push({ v: v, hl: key });
+        }
+        mat.push(rowArr);
+      }
+      var html = "<span class='lab-matrix-label'>" + def.tLabel + " =</span>" + matrixHTML(mat, 3);
+      html += "<p class='lab-note'>" + def.note + "</p>";
+      html += "<p class='lab-note'>" + def.extra + "</p>";
+      html += tbl;
+      html += "<p class='lab-note'>读法：前三行前三列是<b>旋转块</b>（每列 = 一个坐标系的轴在基座系里的方向余弦），第四列是<b>位置</b>；悬停任一格，画布里对应的轴或位置矢量会加粗。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -3134,7 +3336,8 @@
     motor3d: labMotor3D,
     sensor3d: labSensor3D,
     hyd3d: labHyd3D,
-    ctrl3d: labCtrl3D
+    ctrl3d: labCtrl3D,
+    mech3d: labMech3D
   };
 
   function boot() {
