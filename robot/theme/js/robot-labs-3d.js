@@ -40,7 +40,8 @@
       gold: cssVar("--fig-gold"),
       red: cssVar("--fig-red"),
       purple: cssVar("--fig-purple"),
-      neutral: cssVar("--fig-neutral")
+      neutral: cssVar("--fig-neutral"),
+      surface: cssVar("--surface-soft")
     };
   }
 
@@ -297,6 +298,130 @@
       R: [[c1 * c2, -s1, c1 * s2], [s1 * c2, c1, s1 * s2], [-s2, 0, c2]],
       p: [c1 * s2 * d3 - s1 * d2, s1 * s2 * d3 + c1 * d2, c2 * d3]
     };
+  };
+
+  /* 3×3 行列式 */
+  kernel.det3 = function (A) {
+    return A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1])
+      - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])
+      + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+  };
+
+  /* 对称 3×3 的 Jacobi 特征分解：返回 { values: [λ0,λ1,λ2], vectors: [[v0],[v1],[v2]] }
+     vectors[j] 是 λj 对应的单位特征向量（列向量式）。用显式 JᵀAJ / V←VJ 迭代。 */
+  kernel.symEig3 = function (A) {
+    var a = [
+      [A[0][0], A[0][1], A[0][2]],
+      [A[1][0], A[1][1], A[1][2]],
+      [A[2][0], A[2][1], A[2][2]]
+    ];
+    var V = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    var i, j, k, l, it;
+    for (it = 0; it < 60; it++) {
+      /* 选非对角元绝对值最大的一对 */
+      var p = 0, q = 1, best = Math.abs(a[0][1]);
+      if (Math.abs(a[0][2]) > best) { p = 0; q = 2; best = Math.abs(a[0][2]); }
+      if (Math.abs(a[1][2]) > best) { p = 1; q = 2; best = Math.abs(a[1][2]); }
+      if (best < 1e-15) break;
+      var theta = (a[q][q] - a[p][p]) / (2 * a[p][q]);
+      var t = (theta >= 0 ? 1 : -1) / (Math.abs(theta) + Math.sqrt(theta * theta + 1));
+      var c = 1 / Math.sqrt(t * t + 1), s = t * c;
+      /* J：列 p = [c, s, 0]ᵀ 作用在 (p,q) 平面，列 q = [−s, c, 0]ᵀ */
+      var J = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+      J[p][p] = c; J[p][q] = s; J[q][p] = -s; J[q][q] = c;
+      /* A' = Jᵀ A J */
+      var tmp = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      for (k = 0; k < 3; k++) for (l = 0; l < 3; l++) {
+        var acc = 0;
+        for (i = 0; i < 3; i++) acc += J[i][k] * a[i][l];
+        tmp[k][l] = acc;
+      }
+      var a2 = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      for (k = 0; k < 3; k++) for (l = 0; l < 3; l++) {
+        var acc2 = 0;
+        for (i = 0; i < 3; i++) acc2 += tmp[k][i] * J[i][l];
+        a2[k][l] = acc2;
+      }
+      a = a2;
+      /* V ← VJ（特征向量按列累积） */
+      var V2 = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      for (k = 0; k < 3; k++) for (l = 0; l < 3; l++) {
+        var acc3 = 0;
+        for (i = 0; i < 3; i++) acc3 += V[k][i] * J[i][l];
+        V2[k][l] = acc3;
+      }
+      V = V2;
+    }
+    var vals = [a[0][0], a[1][1], a[2][2]];
+    var vecs = [[V[0][0], V[0][1], V[0][2]], [V[1][0], V[1][1], V[1][2]], [V[2][0], V[2][1], V[2][2]]];
+    return { values: vals, vectors: vecs };
+  };
+
+  /* 几何雅可比的位置块（3×n）：第 i 列 = z_{i−1} × (p_e − p_{i−1}) */
+  kernel.geoJacPos = function (frames) {
+    var n = frames.length - 1;
+    var pe = frames[n].o;
+    var J = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    for (var i = 1; i <= n; i++) {
+      var z = frames[i - 1].z;
+      var r = kernel.subv(pe, frames[i - 1].o);
+      var col = kernel.crs(z, r);
+      J[0][i - 1] = col[0];
+      J[1][i - 1] = col[1];
+      J[2][i - 1] = col[2];
+    }
+    return J;
+  };
+
+  /* 拟人臂闭式 J̄（3.2.2 式 (3.37)）——node 测试与几何雅可比对拍 */
+  kernel.anthroJbar = function (t1, t2, t3, a2, a3) {
+    var c1 = Math.cos(t1), s1 = Math.sin(t1);
+    var c2 = Math.cos(t2), s2 = Math.sin(t2);
+    var c23 = Math.cos(t2 + t3), s23 = Math.sin(t2 + t3);
+    var A = a2 * c2 + a3 * c23;
+    var B = a2 * s2 + a3 * s23;
+    return [
+      [-s1 * A, -c1 * B, -c1 * a3 * s23],
+      [c1 * A, -s1 * B, -s1 * a3 * s23],
+      [0, A, a3 * c23]
+    ];
+  };
+
+  /* 拟人臂逆解（原书式 2.98–2.110）：返回 4 支解 + 可达性诊断 */
+  kernel.anthroIK = function (p, a2, a3) {
+    var px = p[0], py = p[1], pz = p[2];
+    var norm2 = px * px + py * py + pz * pz;
+    var R = Math.sqrt(px * px + py * py);
+    var c3 = (norm2 - a2 * a2 - a3 * a3) / (2 * a2 * a3);
+    var out = { reachable: Math.abs(c3) <= 1, c3: c3, R: R, shoulderSingular: R < 1e-9, solutions: [] };
+    if (!out.reachable) {
+      out.reason = c3 > 1
+        ? "腕心太远：‖p_w‖ = " + Math.sqrt(norm2).toFixed(3) + " m > a₂ + a₃ = " + (a2 + a3).toFixed(3) + " m（式 2.98 的容许性条件被破坏）"
+        : "腕心太近：‖p_w‖ = " + Math.sqrt(norm2).toFixed(3) + " m < |a₂ − a₃| = " + Math.abs(a2 - a3).toFixed(3) + " m（式 2.98 的容许性条件被破坏）";
+      return out;
+    }
+    var s3abs = Math.sqrt(Math.max(0, 1 - c3 * c3));
+    var D = a2 * a2 + a3 * a3 + 2 * a2 * a3 * c3;
+    var elbows = [s3abs, -s3abs];
+    var shoulders = [1, -1];
+    for (var e = 0; e < 2; e++) {
+      var s3 = elbows[e];
+      var th3 = Math.atan2(s3, c3);
+      for (var sh = 0; sh < 2; sh++) {
+        var sig = shoulders[sh];
+        var c2 = (sig * R * (a2 + a3 * c3) + pz * a3 * s3) / D;
+        var s2 = (pz * (a2 + a3 * c3) - sig * R * a3 * s3) / D;
+        var th2 = Math.atan2(s2, c2);
+        var th1 = R < 1e-9 ? 0 : (sig > 0 ? Math.atan2(py, px) : Math.atan2(-py, -px));
+        out.solutions.push({
+          th1: th1, th2: th2, th3: th3,
+          elbow: s3 > 0 ? "up" : "down",
+          shoulder: sig > 0 ? "right" : "left",
+          sig: sig, s3: s3
+        });
+      }
+    }
+    return out;
   };
 
   /* ================= 3D 引擎：轨道相机 + 画家算法 + 平面着色 ================= */
@@ -625,9 +750,16 @@
     function makeLabel(ctx, pl, prim, c) {
       return function () {
         ctx.globalAlpha = prim.dim ? 0.6 : 1;
-        ctx.fillStyle = prim.color || c.ink2;
+        var x = pl.x + (prim.dx === undefined ? 5 : prim.dx);
+        var y = pl.y + (prim.dy === undefined ? -4 : prim.dy);
         ctx.font = "bold 12px " + cssVar("--sans");
-        ctx.fillText(prim.text, pl.x + (prim.dx || 5), pl.y + (prim.dy === undefined ? -4 : prim.dy));
+        /* 光晕：先用画布底色描一圈，文字压在连杆/网格上也读得清 */
+        ctx.strokeStyle = c.surface || c.paper;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.strokeText(prim.text, x, y);
+        ctx.fillStyle = prim.color || c.ink2;
+        ctx.fillText(prim.text, x, y);
         ctx.globalAlpha = 1;
       };
     }
@@ -1258,6 +1390,507 @@
     return draw;
   }
 
+  /* ================= 实验：anthro3d · 拟人臂 T₃⁰（ch02 §2.9.4） ================= */
+
+  function labAnthro3D(host) {
+    var A2 = 0.62, A3 = 0.52;
+    var state = { q: [20, 42, -70], hover: null, showFrame: true };
+    var rows = [
+      { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+      { alpha: 0, a: A2, d: 0, type: "R" },
+      { alpha: 0, a: A3, d: 0, type: "R" }
+    ];
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "拟人臂：把 T₃⁰ 每一个元素都对上几何"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖 θ₁、θ₂、θ₃ 与视角。下方是原书式 2.66 的 T₃⁰ 数值，**悬停某一列**：第 1–3 列是动系三根轴在基座系里的方向余弦（高亮画布里对应的坐标架轴），第 4 列是腕心位置（高亮从肩心指向 o₃ 的位置矢量）。两个「结构性观察」在画面上直接可见：第 3 列 $[s_1,-c_1,0]^T$ **只含 θ₁**——转肩不改变 $z_3$ 的指向；$z_3=z_2$，故系 2、系 3 的 z 轴重合（画布里那两根平行箭头）。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "坐标架", [{ value: "on", text: "显示系 0–3" }, { value: "off", text: "只看机械本体" }], "on",
+      function (v) { state.showFrame = v === "on"; draw(); });
+    ["θ₁（腰）", "θ₂（肩）", "θ₃（肘）"].forEach(function (label, i) {
+      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; });
+    });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "拟人臂三自由度机构与 T₃⁰ 逐列读解");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.62, { span: 1.45, center: [0, 0, 0.3], az: -34, elv: 19 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var q = [state.q[0] * DEG, state.q[1] * DEG, state.q[2] * DEG];
+      var frames = kernel.fkChain(rows, q);
+      var T3 = kernel.anthroT3(q[0], q[1], q[2], A2, A3);
+
+      view.grid(0.85, 0.17, 0, { color: c.line });
+      drawChain(view, frames, {
+        toolLen: 0.12,
+        triads: state.showFrame,
+        triadSize: 0.3,
+        frameRange: [0, 3],
+        hlFrame: "f"
+      });
+      /* 位置矢量（基座原点 → o₃）：悬停第 4 列时高亮 */
+      var p3 = frames[3].o;
+      view.line([0, 0, 0], p3, { color: c.red, width: 2, dash: [7, 4], hl: "pos" });
+      view.label(kernel.sclv(p3, 0.55), "p₃ = 腕心", c.red, 8, 4);
+      /* z₃ = z₂ 的提示：两根平行轴 */
+      if (state.showFrame) {
+        view.line(kernel.addv(frames[2].o, kernel.sclv(frames[2].z, 0.2)), kernel.addv(frames[2].o, kernel.sclv(frames[2].z, 0.42)),
+          { color: c.gold, width: 1.6, hl: "f3-2" });
+        view.line(kernel.addv(frames[3].o, kernel.sclv(frames[3].z, 0.2)), kernel.addv(frames[3].o, kernel.sclv(frames[3].z, 0.42)),
+          { color: c.gold, width: 1.6, hl: "f3-2" });
+      }
+
+      view.render(state.hover);
+
+      /* T₃⁰ 的 4×4 数值（前 3×3 为 R，第 4 列为位置） */
+      var m = [
+        [{ v: T3.R[0][0], hl: "f0-0" }, { v: T3.R[0][1], hl: "f0-1" }, { v: T3.R[0][2], hl: "f3-2" }, { v: T3.p[0], hl: "pos" }],
+        [{ v: T3.R[1][0], hl: "f0-0" }, { v: T3.R[1][1], hl: "f0-1" }, { v: T3.R[1][2], hl: "f3-2" }, { v: T3.p[1], hl: "pos" }],
+        [{ v: T3.R[2][0], hl: "f0-0" }, { v: T3.R[2][1], hl: "f0-1" }, { v: T3.R[2][2], hl: "f3-2" }, { v: T3.p[2], hl: "pos" }],
+        [0, 0, 0, 1]
+      ];
+      var html = matrixHTML(m, 3).replace("<table", "<span class='lab-matrix-label'>T₃⁰ =</span><table");
+      html += "<p class='lab-note'><b>逐列读法</b>：第 1 列 = $x_3$ 在系 0 中的方向余弦，第 2 列 = $y_3$，第 3 列 = $z_3$，" +
+        "第 4 列 = 腕心位置。悬停任一格，画布里对应的轴或位置矢量会加粗。</p>";
+      html += "<p class='lab-note'><b>结构性观察</b>：第 3 列 $[s_1,-c_1,0]^T$ 只含 θ₁——<b>转肩不改变 $z_3$ 的指向</b>（$z_3$ 永远躺在水平面里，且随腰一起转）；" +
+        "第 3 列的第 3 个分量恒为 0，正是 $z_3=z_2$（系 2、系 3 的 z 轴重合）的代数痕迹。" +
+        "第 4 列的三个分量就是 2.12.5 逆解的<b>腕心方程</b> $p_{wx}=c_1(a_2c_2+a_3c_{23})$、$p_{wy}=s_1(a_2c_2+a_3c_{23})$、$p_{wz}=a_2s_2+a_3s_{23}$。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：wrist3d · 球形腕解耦（ch02 §2.9.5） ================= */
+
+  function labWrist3D(host) {
+    var state = { q: [25, -40, 30], d6: 0.16, hover: null };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "球形腕：三轴交于一点，腕心纹丝不动"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "只画腕部（系 3 固连在腕心上）：拖 θ₄、θ₅、θ₆ —— <b>红球标的腕心始终不动</b>，只有末端姿态在转；这正是 1.2.3 解耦原理的运动学落点。下方并排列出 $R_6^3$ 与 ZYZ 合成矩阵：它们<b>逐元素相等</b>，悬停右矩阵的格子会同步高亮左边同一位置。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    ["θ₄（偏摆）", "θ₅（俯仰）", "θ₆（回转）"].forEach(function (label, i) {
+      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; });
+    });
+    slider(controls, "工具长度 d₆", 0, 0.4, 0.01, state.d6, function (v) { state.d6 = v; draw(); },
+      function (v) { return v.toFixed(2) + " m"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "球形腕三轴共点，转腕不移动腕心");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.6, { span: 0.82, center: [0, 0, 0.08], az: -30, elv: 18 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var q = [state.q[0] * DEG, state.q[1] * DEG, state.q[2] * DEG];
+      var rowsLocal = [
+        { alpha: -Math.PI / 2, a: 0, d: 0, type: "R" },
+        { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+        { alpha: 0, a: 0, d: state.d6, type: "R" }
+      ];
+      var frames = kernel.fkChain(rowsLocal, q);
+      var R63 = frames[3].T.R;
+      var ZYZ = kernel.zyzMatrix(state.q[0], state.q[1], state.q[2]);
+
+      view.grid(0.7, 0.14, 0, { color: c.line });
+      /* 腕心：系 3 的原点固定 */
+      view.sphere([0, 0, 0], 0.05, { color: c.red });
+      view.label([0, 0, 0], "腕心（三轴交点）", c.red, -52, 16);
+      /* 系 3（固定） */
+      view.triad([0, 0, 0], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], 0.3, ["x₃", "y₃", "z₃"],
+        { colors: [c.muted, c.muted, c.muted], width: 1.5 });
+      /* 系 4、5、6 */
+      [1, 2, 3].forEach(function (idx) {
+        var f = frames[idx];
+        var R = [[f.x[0], f.y[0], f.z[0]], [f.x[1], f.y[1], f.z[1]], [f.x[2], f.y[2], f.z[2]]];
+        view.triad(f.o, R, 0.26, ["x" + (idx + 3), "y" + (idx + 3), "z" + (idx + 3)], {
+          colors: [c.blue, c.green, c.gold], width: 2.2, hlPrefix: "f" + (idx + 3) + "-"
+        });
+        /* 关节轴线（三轴都过腕心） */
+        view.line(kernel.sclv(f.z, -0.34), kernel.sclv(f.z, 0.34),
+          { color: c.muted, width: 1.1, dash: [6, 4], hl: "f" + (idx + 3) + "-2" });
+      });
+      /* 工具末端 */
+      var tip = frames[3].o;
+      view.sphere(tip, 0.032, { color: c.gold });
+      view.label(tip, "末端（沿 z₆ 外移 d₆）", c.gold, 14, 14);
+
+      view.render(state.hover);
+
+      var mL = [], mR = [], i, j;
+      for (i = 0; i < 3; i++) {
+        var rl = [], rr = [];
+        for (j = 0; j < 3; j++) {
+          rl.push({ v: R63[i][j], hl: "c" + j });
+          rr.push({ v: ZYZ[i][j], hl: "c" + j });
+        }
+        mL.push(rl);
+        mR.push(rr);
+      }
+      var maxDiff = 0;
+      for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) maxDiff = Math.max(maxDiff, Math.abs(R63[i][j] - ZYZ[i][j]));
+
+      var html = "<span class='lab-matrix-label'>R₆³ =</span>" + matrixHTML(mL, 3) +
+        "<span class='lab-matrix-label'>　ZYZ(θ₄,θ₅,θ₆) =</span>" + matrixHTML(mR, 3);
+      html += "<p class='lab-note'><b>两个矩阵逐元素相等</b>（最大偏差 " + maxDiff.toExponential(1) + "）：" +
+        "球形腕的三个转角 $(θ_4,θ_5,θ_6)$ 恰是<b>相对系 3 的 ZYZ 角</b>。这正是 2.12.6「腕逆解 = ZYZ 反解」的全部伏笔——" +
+        "腕的三轴交于一点（$a_4=a_5=d_5=0$），$R_6^3$ 写成 $R_z(θ_4)R_x(-\\pi/2)R_z(θ_5)R_x(\\pi/2)R_z(θ_6)$，" +
+        "而 $R_x(-\\pi/2)R_z(θ_5)R_x(\\pi/2)^{-1}=R_y(θ_5)$（共轭把绕 z 的转动搬到绕 y），整块塌成 ZYZ。</p>";
+      html += "<p class='lab-note'>腕心位置 = 系 3 原点，<b>与 θ₄θ₅θ₆ 无关</b>（拖动三个滑杆时红球纹丝不动）；末端沿 $z_6$ 外移 $d_6$ = " + state.d6.toFixed(2) + " m。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：ik3d · 拟人臂逆解四支（ch02 §2.12.5） ================= */
+
+  function labIK3D(host) {
+    var A2 = 0.62, A3 = 0.52;
+    var state = { p: [0.55, 0.3, 0.35], shoulder: "right", hover: null };
+    var rows = [
+      { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+      { alpha: 0, a: A2, d: 0, type: "R" },
+      { alpha: 0, a: A3, d: 0, type: "R" }
+    ];
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "逆运动学：给定腕心，解出四支姿态"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖动目标点 $p_w$ 的三个坐标（红球就是腕心目标），看四支解如何出现：肩右/肩左 × 肘上/肘下。粗线是当前选中肩支的两支解（肘上实、肘下细），极淡的是另一肩支。走到可达边界会出现告警——那是式 2.98 的容许性条件 $|a_2-a_3|\\le\\|p_w\\|\\le a_2+a_3$ 被破坏；把目标放到肩轴上（$p_x=p_y=0$）则 θ₁ 任意，是肩奇异。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "肩支", [{ value: "right", text: "肩右" }, { value: "left", text: "肩左" }], "right",
+      function (v) { state.shoulder = v; draw(); });
+    slider(controls, "目标 p_x", -1, 1, 0.01, state.p[0], function (v) { state.p[0] = v; draw(); }, function (v) { return v.toFixed(2) + " m"; });
+    slider(controls, "目标 p_y", -1, 1, 0.01, state.p[1], function (v) { state.p[1] = v; draw(); }, function (v) { return v.toFixed(2) + " m"; });
+    slider(controls, "目标 p_z", -0.8, 0.8, 0.01, state.p[2], function (v) { state.p[2] = v; draw(); }, function (v) { return v.toFixed(2) + " m"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "拟人臂逆运动学的四支解与目标腕心");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.62, { span: 1.25, center: [0, 0, 0.28], az: -34, elv: 19 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var ik = kernel.anthroIK(state.p, A2, A3);
+      view.grid(0.85, 0.17, 0, { color: c.line });
+
+      /* 目标点 */
+      view.sphere(state.p, 0.045, { color: c.red });
+      view.label(state.p, "目标腕心 p_w", c.red, -20, -16);
+      view.line([0, 0, 0], state.p, { color: c.red, width: 1.4, dash: [6, 4] });
+
+      if (ik.reachable) {
+        ik.solutions.forEach(function (sol) {
+          var isSel = sol.shoulder === state.shoulder;
+          var frames = kernel.fkChain(rows, [sol.th1, sol.th2, sol.th3]);
+          if (!isSel) {
+            /* 另一肩支：极淡的细骨架 */
+            for (var i = 1; i <= 3; i++) {
+              view.line(frames[i - 1].o, frames[i].o, { color: c.muted, width: 1 });
+            }
+            view.sphere(frames[3].o, 0.028, { color: c.muted });
+            return;
+          }
+          drawChain(view, frames, { toolLen: 0.1, triads: false, span: 1.2 });
+          /* 肘上实、肘下细 */
+          if (sol.elbow === "down") {
+            for (var k = 1; k <= 3; k++) {
+              view.line(frames[k - 1].o, frames[k].o, { color: c.green, width: 1.2, dash: [5, 3] });
+            }
+          }
+          /* 肘支标签标在肘关节处（末端点被目标球占据，标那儿必然打架） */
+          view.label(frames[2].o, sol.elbow === "up" ? "肘上" : "肘下", sol.elbow === "up" ? c.ink2 : c.muted,
+            sol.elbow === "up" ? 12 : 12, sol.elbow === "up" ? -12 : 14);
+        });
+      }
+
+      view.render(state.hover);
+
+      var html = "";
+      if (!ik.reachable) {
+        html += "<p class='lab-warn'><b>无解</b>：" + ik.reason + "。容许性条件 $|a_2-a_3|\\le\\|p_w\\|\\le a_2+a_3$（原书式 2.98）。</p>";
+      } else {
+        html += "<table class='lab-matrix'><thead><tr><th>支</th><th>θ₁</th><th>θ₂</th><th>θ₃</th><th>FK 校验</th></tr></thead><tbody>";
+        ik.solutions.forEach(function (sol) {
+          var frames = kernel.fkChain(rows, [sol.th1, sol.th2, sol.th3]);
+          var p = frames[3].o;
+          var err = Math.sqrt(Math.pow(p[0] - state.p[0], 2) + Math.pow(p[1] - state.p[1], 2) + Math.pow(p[2] - state.p[2], 2));
+          var mark = sol.shoulder === state.shoulder ? "★ " : "";
+          html += "<tr><td>" + mark + (sol.shoulder === "right" ? "肩右" : "肩左") + "/" + (sol.elbow === "up" ? "肘上" : "肘下") + "</td>" +
+            "<td>" + (sol.th1 / DEG).toFixed(1) + "°</td><td>" + (sol.th2 / DEG).toFixed(1) + "°</td><td>" + (sol.th3 / DEG).toFixed(1) + "°</td>" +
+            "<td>" + err.toExponential(1) + "</td></tr>";
+        });
+        html += "</tbody></table>";
+        html += "<p class='lab-note'>四支解 = <b>肘双支</b>（$s_3=\\pm\\sqrt{1-c_3^2}$，原书式 2.99–2.101）× <b>肩双支</b>" +
+          "（$\\vartheta_1^{\\mathrm I}=\\operatorname{Atan2}(p_{wy},p_{wx})$、$\\vartheta_1^{\\mathrm{II}}=\\operatorname{Atan2}(-p_{wy},-p_{wx})$，相差 $\\pi$，原书式 2.109–2.110）。" +
+          "「FK 校验」列是把这支解代回正运动学后与目标的偏差——应当是 1e-16 量级。</p>";
+        if (ik.shoulderSingular) {
+          html += "<p class='lab-warn'><b>肩奇异</b>：$p_x=p_y=0$（腕心落在肩轴上），$\\vartheta_1$ <b>任意</b>——无穷多解，" +
+            "无论腰怎么转，腕心都不动（3.3.1 第 2 类后果：解不唯一）。</p>";
+        }
+        if (Math.abs(ik.c3) > 0.999) {
+          html += "<p class='lab-warn'><b>接近边界奇点</b>：$c_3=\\pm1$（肘伸直或折回），$s_3\\to0$，雅可比趋近奇异。</p>";
+        }
+      }
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：jac3d · 雅可比逐列贡献（ch03 §3.2） ================= */
+
+  function labJac3D(host) {
+    var PLAN = { a1: 0.45, a2: 0.36, a3: 0.26 };
+    var ANTH = { a2: 0.62, a3: 0.52 };
+    var state = { kind: "planar", q: [35, -40, 30], dq: [0.6, -0.4, 0.5], hover: null };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "雅可比的列：谁在出力，出多大力"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖动三个<b>关节速度</b>滑杆 $\\dot\\vartheta_i$，看末端速度 $v_e=\\sum_i J_i\\dot\\vartheta_i$ 怎么变。画布里三根彩箭头是**每一列单独贡献**的速度（$J_i\\dot\\vartheta_i$），粗红箭头是它们的和。悬停下方 $J$ 矩阵的<b>某一列</b>，画布里该列的箭头会加粗、其余变淡——第 $i$ 列的含义就是「只动关节 $i$、其余锁死时末端的贡献」（3.1.2）。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "机构", [{ value: "planar", text: "三连杆平面臂" }, { value: "anthro", text: "拟人臂" }], "planar",
+      function (v) { state.kind = v; draw(); });
+    ["q̇₁", "q̇₂", "q̇₃"].forEach(function (label, i) {
+      slider(controls, label, -1.5, 1.5, 0.05, state.dq[i], function (v) { state.dq[i] = v; draw(); },
+        function (v) { return v.toFixed(2) + " rad/s"; });
+    });
+    ["θ₁", "θ₂", "θ₃"].forEach(function (label, i) {
+      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; });
+    });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "雅可比逐列贡献的三维可视化");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0, 0.25], az: -32, elv: 20 });
+    view.onChange = function () { draw(); };
+
+    function currentRows() {
+      if (state.kind === "planar") {
+        return [
+          { alpha: 0, a: PLAN.a1, d: 0, type: "R" },
+          { alpha: 0, a: PLAN.a2, d: 0, type: "R" },
+          { alpha: 0, a: PLAN.a3, d: 0, type: "R" }
+        ];
+      }
+      return [
+        { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+        { alpha: 0, a: ANTH.a2, d: 0, type: "R" },
+        { alpha: 0, a: ANTH.a3, d: 0, type: "R" }
+      ];
+    }
+
+    function draw() {
+      var c = palette();
+      var rows = currentRows();
+      var q = [state.q[0] * DEG, state.q[1] * DEG, state.q[2] * DEG];
+      var frames = kernel.fkChain(rows, q);
+      var pe = frames[3].o;
+
+      view.grid(0.85, 0.17, 0, { color: c.line });
+      drawChain(view, frames, { toolLen: 0.1, span: 1.2 });
+
+      /* 几何雅可比的位置块（3×3） */
+      var Jp = kernel.geoJacPos(frames);
+      /* 平面情形：第 3 行取 ω（[1,1,1]），与 3.2.1 的 J̄ 一致 */
+      var J = state.kind === "planar"
+        ? [[Jp[0][0], Jp[0][1], Jp[0][2]], [Jp[1][0], Jp[1][1], Jp[1][2]], [1, 1, 1]]
+        : Jp;
+
+      var colColors = [c.blue, c.green, c.gold];
+      var total = [0, 0, 0];
+      var parts = [];
+      for (var i = 0; i < 3; i++) {
+        var v = [J[0][i] * state.dq[i], J[1][i] * state.dq[i], state.kind === "planar" ? 0 : J[2][i] * state.dq[i]];
+        parts.push(v);
+        total[0] += v[0]; total[1] += v[1]; total[2] += v[2];
+      }
+
+      /* 速度箭头：从末端点出发 */
+      var SC = 0.55; /* m/(rad/s) → m 的显示比例 */
+      parts.forEach(function (v, i) {
+        var tip = kernel.addv(pe, kernel.sclv(v, SC));
+        view.line(pe, tip, { color: colColors[i], width: 2.2, hl: "c" + i });
+        view.label(tip, "v" + (i + 1), colColors[i], 6, -4);
+      });
+      var tipT = kernel.addv(pe, kernel.sclv(total, SC));
+      view.line(pe, tipT, { color: c.red, width: 3.4 });
+      view.label(tipT, "v_e（合计）", c.red, 8, 4);
+
+      view.render(state.hover);
+
+      var rowsHtml = [];
+      for (var r = 0; r < 3; r++) {
+        var row = [];
+        for (var col = 0; col < 3; col++) row.push({ v: J[r][col], hl: "c" + col });
+        rowsHtml.push(row);
+      }
+      var html = matrixHTML(rowsHtml, 3).replace("<table", "<span class='lab-matrix-label'>" +
+        (state.kind === "planar" ? "J̄ = [vₓ; v_y; ω]" : "J̄ = [vₓ; v_y; v_z]") + " =</span><table");
+      html += "<p class='lab-note'><b>逐列读法</b>：第 $i$ 列 = 「只动关节 $i$（其余锁死）时末端的贡献」" +
+        "（$J_i=\\boldsymbol z_{i-1}\\times(\\boldsymbol p_e-\\boldsymbol p_{i-1})$，3.1.2）。" +
+        "悬停某一列，画布里该列对应的速度箭头加粗、其余变淡。</p>";
+      var vmag = Math.sqrt(total[0] * total[0] + total[1] * total[1] + total[2] * total[2]);
+      html += "<p class='lab-note'>当前合计末端速度 |v_e| = " + vmag.toFixed(3) + " m/s" +
+        (state.kind === "planar" ? "，角速度 ω = " + (state.dq[0] + state.dq[1] + state.dq[2]).toFixed(3) + " rad/s" : "") + "。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：sing3d · 可操作度椭球与奇点（ch03 §3.3） ================= */
+
+  function labSing3D(host) {
+    var A2 = 0.62, A3 = 0.52;
+    var state = { q: [20, 42, -70], hover: null, showEll: true, scale: 0.28 };
+    var rows = [
+      { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+      { alpha: 0, a: A2, d: 0, type: "R" },
+      { alpha: 0, a: A3, d: 0, type: "R" }
+    ];
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "可操作度椭球：奇点就是它被压扁的那一刻"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拟人臂的 $\\bar J$ 决定末端能把多大的速度「摊」到哪些方向。椭球是 $JJ^T$ 的特征方向与 $\\sqrt{\\lambda_i}$：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（$s_3=0$，边界奇点）与 <b>腕点落到肩轴上</b>（$a_2c_2+a_3c_{23}=0$，内部奇点），看椭球怎么压扁到一条线。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "椭球", [{ value: "on", text: "显示" }, { value: "off", text: "隐藏" }], "on",
+      function (v) { state.showEll = v === "on"; draw(); });
+    ["θ₁（腰）", "θ₂（肩）", "θ₃（肘）"].forEach(function (label, i) {
+      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; });
+    });
+    slider(controls, "椭球显示比例", 0.1, 0.6, 0.02, state.scale, function (v) { state.scale = v; draw(); },
+      function (v) { return v.toFixed(2) + " m/(rad/s)"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "拟人臂的可操作度椭球随位形压扁");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+    bindHover(readout, function (key) { state.hover = key; draw(); });
+
+    var view = makeView(canvas, 0.62, { span: 1.5, center: [0, 0, 0.3], az: -34, elv: 19 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var q = [state.q[0] * DEG, state.q[1] * DEG, state.q[2] * DEG];
+      var frames = kernel.fkChain(rows, q);
+      var pe = frames[3].o;
+      var J = kernel.anthroJbar(q[0], q[1], q[2], A2, A3);
+      var det = kernel.det3(J);
+      var E = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) {
+        var s = 0;
+        for (var k = 0; k < 3; k++) s += J[k][i] * J[k][j];
+        E[i][j] = s;
+      }
+      var eig = kernel.symEig3(E);
+      /* 特征值升序 → 主轴从短到长 */
+      var order = [0, 1, 2].sort(function (a, b) { return eig.values[a] - eig.values[b]; });
+      var axes = [], radii = [];
+      order.forEach(function (idx) {
+        axes.push([eig.vectors[0][idx], eig.vectors[1][idx], eig.vectors[2][idx]]);
+        radii.push(Math.sqrt(Math.max(0, eig.values[idx])) * state.scale);
+      });
+
+      view.grid(0.85, 0.17, 0, { color: c.line });
+      drawChain(view, frames, { toolLen: 0.08, span: 1.2 });
+
+      if (state.showEll) {
+        view.ellipsoid(pe, axes, radii, { color: c.purple, width: 1.6, axesToo: true });
+        view.label(kernel.addv(pe, kernel.sclv(axes[2], radii[2])), "主轴（最快方向）", c.purple, 8, 2);
+      }
+
+      view.render(state.hover);
+
+      var s3 = Math.sin(q[2]);
+      var shoulderFactor = A2 * Math.cos(q[1]) + A3 * Math.cos(q[1] + q[2]);
+      var w = Math.sqrt(Math.abs(det));
+      var html = "<p><b>可操作度</b> $w=\\sqrt{\\det(\\bar J\\bar J^{T})}=|\\det\\bar J|=" + w.toFixed(4) + "</p>";
+      html += "<p class='lab-note'>$\\det\\bar J=-a_2a_3\\,s_3\\,(a_2c_2+a_3c_{23})$（3.2.2）——两个因子各自归零即奇异：</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>因子</th><th>当前值</th><th>含义</th></tr></thead><tbody>" +
+        "<tr><td>$s_3$</td><td>" + s3.toFixed(4) + "</td><td>肘角正弦：$s_3=0$ ⇒ 肘伸直/折回（<b>边界奇点</b>）</td></tr>" +
+        "<tr><td>$a_2c_2+a_3c_{23}$</td><td>" + shoulderFactor.toFixed(4) + "</td><td>腕点距肩轴的投影：为 0 ⇒ 腕点落到 $z_0$ 轴上（<b>内部奇点</b>）</td></tr>" +
+        "</tbody></table>";
+      var warn = "";
+      if (Math.abs(s3) < 0.08) warn += "<p class='lab-warn'><b>接近肘奇点</b>（边界）：椭球被压成一条线，末端在该方向上「给不出速度」。</p>";
+      if (Math.abs(shoulderFactor) < 0.08) warn += "<p class='lab-warn'><b>接近肩奇点</b>（内部）：两列线性相关，逆解出现无穷多解。</p>";
+      html += warn;
+      html += "<p class='lab-note'>椭球半轴 = $\\sqrt{\\lambda_i(JJ^T)}$（显示比例 " + state.scale.toFixed(2) + " m/(rad/s)）：" +
+        "最长半轴 " + radii[2].toFixed(3) + " m，最短半轴 " + radii[0].toFixed(3) + " m。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -1276,7 +1909,12 @@
   var registry = {
     zoo3d: labZoo3D,
     euler3d: labEuler3D,
-    dh3d: labDH3D
+    dh3d: labDH3D,
+    anthro3d: labAnthro3D,
+    wrist3d: labWrist3D,
+    ik3d: labIK3D,
+    jac3d: labJac3D,
+    sing3d: labSing3D
   };
 
   function boot() {

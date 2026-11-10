@@ -8,6 +8,7 @@ verify:
 	python3 tools/verify_homework05.py
 	python3 tools/verify_homework06.py
 	python3 tools/verify_homework07.py
+	node tools/check_labs3d_math.mjs
 	python3 tools/check_book.py
 
 book:
