@@ -424,6 +424,15 @@ s_{\vartheta_i} & c_{\vartheta_i}c_{\alpha_i} & -c_{\vartheta_i}s_{\alpha_i} & a
 0 & s_{\alpha_i} & c_{\alpha_i} & d_i\\
 0&0&0&1
 \end{bmatrix}$$
+
+::: note 旋转块的三列各是谁 {#note-2.8.A.cols}
+把旋转块（前三行前三列）拆成两个因子读：$A_i^{i-1}=R_z(\vartheta_i)R_x(\alpha_i)$（两个平移不影响姿态）。于是
+
+- **第 1 列** $=R_z(\vartheta_i)R_x(\alpha_i)\boldsymbol e_x$：先被 $R_x$ 转成 $[1,0,0]^T$（不变，因为 $x$ 轴是转轴），再被 $R_z$ 转 $\vartheta_i$ ⇒ $[c_{\vartheta_i},s_{\vartheta_i},0]^T$。**所以第 1 列与 $\alpha_i$ 无关**；
+- **第 2、3 列** $=$ $R_z(\vartheta_i)$ 作用在 $R_x(\alpha_i)$ 的第 2、3 列上：$R_x(\alpha_i)$ 把 $y,z$ 混成 $[0,c_\alpha,s_\alpha]^T$ 与 $[0,-s_\alpha,c_\alpha]^T$，随后的 $R_z$ 只转它们的 $x,y$ 分量、$z$ 分量原样保留——这正是第 3 行为 $[0,s_\alpha,c_\alpha]$ 的原因。
+
+一句话：**第 1 列来自「转 $\vartheta_i$」，第 2、3 列来自「先扭 $\alpha_i$ 再转 $\vartheta_i$」**，第 4 列则是三个参数的位置化身（$a_ic_\vartheta,a_is_\vartheta,d$）。
+:::
 :::
 
 ::: proof 验算 · 逐列读回几何 + 两个退化自检（本编补充）

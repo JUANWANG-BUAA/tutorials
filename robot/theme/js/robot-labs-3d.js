@@ -16,10 +16,72 @@
 
   /* ================= 基础 DOM / 画布工具（与 robot-labs.js 同一套约定） ================= */
 
+
+  /* 运行时注入的文字不经过 KaTeX（构建期才渲染），所以这里把常用的 LaTeX 片段
+     翻成等价的 Unicode/纯文本，避免读者看到 b₁₁ 这样的源码。 */
+  var SUB = { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉",
+    "a": "ₐ", "e": "ₑ", "i": "ᵢ", "j": "ⱼ", "k": "ₖ", "m": "ₘ", "n": "ₙ", "o": "ₒ", "p": "ₚ", "r": "ᵣ", "s": "ₛ",
+    "t": "ₜ", "u": "ᵤ", "v": "ᵥ", "x": "ₓ", "-": "₋", "+": "₊", "=": "₌", "(": "₍", ")": "₎" };
+  var SUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+    "T": "ᵀ", "n": "ⁿ", "i": "ⁱ", "+": "⁺", "-": "⁻", "(": "⁽", ")": "⁾" };
+  function subText(s) {
+    return s.split("").map(function (ch) { return SUB[ch] || ch; }).join("");
+  }
+  function supText(s) {
+    return s.split("").map(function (ch) { return SUP[ch] || ch; }).join("");
+  }
+  /* 只处理本教程用到的 LaTeX 子集：希腊字母、下标上标、根号、关系符。 */
+  /* 规则表里的每一项都是「正则源码字符串」：注意 JS 字符串字面量里一个反斜杠
+     会被吃掉（"\s" → "s"），所以文件里必须写成两个（"\\s"）。 */
+  /* 规则表里的每项是「正则源码字符串」。注意两层转义：
+     文件里 2 个反斜杠 → JS 字符串值 1 个 → 正则里表示「可选的字面反斜杠」，
+     所以命令规则匹配的是命令名本身（vartheta → ϑ），残留的反斜杠由表尾的清理规则删掉。 */
+  /* 规则表里的每项是「正则源码字符串」。注意两层转义：
+     文件里 2 个反斜杠 → JS 字符串值 1 个 → 正则里表示「可选的字面反斜杠」，
+     所以命令规则匹配的是命令名本身（vartheta → ϑ），残留的反斜杠由表尾的清理规则删掉。 */
+  /* 规则表里的每项是「正则源码字符串」。注意两层转义：
+     文件里 2 个反斜杠 → JS 字符串值 1 个 → 正则里表示「可选的字面反斜杠」，
+     所以命令规则匹配的是命令名本身（vartheta → ϑ），残留的反斜杠由表尾的清理规则删掉。 */
+  var TEX_RULES = [
+    ["\\\\operatorname{([^}]*)}", function (m) { return m[1]; }],
+    ["\\\\mathrm{([^}]*)}", function (m) { return m[1]; }],
+    ["\\\\mathbf\\\\*", ""],
+    ["\\\\bar\\\\s*([A-Za-z])", function (m) { return m[1] + "̇"; }],
+    ["\\\\text{([^}]*)}", function (m) { return m[1]; }],
+    ["\\\\dot\\\\s*([A-Za-z])", function (m) { return m[1] + "̇"; }],
+    ["\\\\cdot", "·"], ["\\\\times", "×"], ["\\\\pm", "±"],
+    ["\\\\le(?![a-zA-Z])", "≤"], ["\\\\ge(?![a-zA-Z])", "≥"],
+    ["\\\\ne(?![a-zA-Z])", "≠"], ["\\\\approx", "≈"], ["\\\\equiv", "≡"],
+    ["\\\\sqrt{([^}]*)}", function (m) { return "√(" + m[1] + ")"; }],
+    ["\\\\vartheta", "ϑ"], ["\\\\varphi", "φ"], ["\\\\theta", "θ"],
+    ["\\\\phi", "φ"], ["\\\\psi", "ψ"], ["\\\\alpha", "α"], ["\\\\beta", "β"],
+    ["\\\\gamma", "γ"], ["\\\\omega", "ω"], ["\\\\lambda", "λ"], ["\\\\Delta", "Δ"],
+    ["\\\\ell", "ℓ"], ["\\\\sigma", "σ"], ["\\\\mu", "μ"], ["\\\\tau", "τ"],
+    ["\\\\det", "det"], ["\\\\cot", "cot"], ["\\\\tan", "tan"],
+    ["\\\\sin", "sin"], ["\\\\cos", "cos"], ["\\\\log", "log"],
+    ["\\\\quad", " "], ["\\\\qquad", " "],
+    ["\\\\", ""]
+  ];
+  function texInline(t) {
+    var out = t;
+    TEX_RULES.forEach(function (rule) {
+      var re = new RegExp(rule[0], "g");
+      out = out.replace(re, rule[1]);
+    });
+    return out
+      .replace(/_\{([^}]*)\}/g, function (_, inner) { return subText(inner); })
+      .replace(/\^\{([^}]*)\}/g, function (_, inner) { return supText(inner); })
+      .replace(/_([A-Za-z0-9])/g, function (_, ch) { return SUB[ch] || ("_" + ch); })
+      .replace(/\^([A-Za-z0-9])/g, function (_, ch) { return SUP[ch] || ("^" + ch); });
+  }
+  function texLite(s) {
+    return String(s).replace(/[$]([^$]+)[$]/g, function (_, inner) { return texInline(inner); });
+  }
+
   function el(tag, cls, text) {
     var node = document.createElement(tag);
     if (cls) node.className = cls;
-    if (text !== undefined && text !== null) node.textContent = text;
+    if (text !== undefined && text !== null) node.textContent = texLite(text);
     return node;
   }
 
@@ -1136,7 +1198,7 @@
         var p = endF[endF.length - 1].o;
         html += "<p class='lab-note'>末端原点当前位于 (" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ", " + p[2].toFixed(2) + ") m。</p>";
       }
-      readout.innerHTML = html;
+      readout.innerHTML = texLite(html);
     }
 
     view = makeView(canvas, 0.66, {
@@ -1258,7 +1320,7 @@
       } else {
         html += "<p class='lab-warn'><b>" + otherName + " 反解奇异</b>：φ 与 ψ 只剩和 / 差组合，解不唯一。</p>";
       }
-      readout.innerHTML = html;
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1381,8 +1443,8 @@
         "<tr><td>2</td><td>0</td><td data-hl='a2'>" + A2.toFixed(2) + "</td><td>0</td><td data-hl='th1'>" + state.q[1].toFixed(0) + "°</td></tr>" +
         "<tr><td>3</td><td>0</td><td data-hl='a3'>" + A3.toFixed(2) + "</td><td>0</td><td data-hl='th2'>" + state.q[2].toFixed(0) + "°</td></tr>" +
         "</tbody></table>";
-      readout.innerHTML = "<p>" + stageNotes[state.stage] + "</p>" + table +
-        "<p class='lab-note'>与 2.9.4 拟人臂的 DH 表逐字相同；连乘结果 T₃⁰ 见 2.9.4。</p>";
+      readout.innerHTML = texLite("<p>" + stageNotes[state.stage] + "</p>" + table +
+        "<p class='lab-note'>与 2.9.4 拟人臂的 DH 表逐字相同；连乘结果 T₃⁰ 见 2.9.4。</p>");
     }
 
     draw();
@@ -1405,7 +1467,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "拟人臂：把 T₃⁰ 每一个元素都对上几何"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖 θ₁、θ₂、θ₃ 与视角。下方是原书式 2.66 的 T₃⁰ 数值，**悬停某一列**：第 1–3 列是动系三根轴在基座系里的方向余弦（高亮画布里对应的坐标架轴），第 4 列是腕心位置（高亮从肩心指向 o₃ 的位置矢量）。两个「结构性观察」在画面上直接可见：第 3 列 $[s_1,-c_1,0]^T$ **只含 θ₁**——转肩不改变 $z_3$ 的指向；$z_3=z_2$，故系 2、系 3 的 z 轴重合（画布里那两根平行箭头）。"));
+    host.appendChild(el("p", "lab-note", "拖 θ₁、θ₂、θ₃ 与视角。下方是原书式 2.66 的 T₃⁰ 数值，**悬停某一列**：第 1–3 列是动系三根轴在基座系里的方向余弦（高亮画布里对应的坐标架轴），第 4 列是腕心位置（高亮从肩心指向 o₃ 的位置矢量）。两个「结构性观察」在画面上直接可见：第 3 列 [s₁,-c₁,0]ᵀ **只含 θ₁**——转肩不改变 z₃ 的指向；z₃=z₂，故系 2、系 3 的 z 轴重合（画布里那两根平行箭头）。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1464,12 +1526,12 @@
         [0, 0, 0, 1]
       ];
       var html = matrixHTML(m, 3).replace("<table", "<span class='lab-matrix-label'>T₃⁰ =</span><table");
-      html += "<p class='lab-note'><b>逐列读法</b>：第 1 列 = $x_3$ 在系 0 中的方向余弦，第 2 列 = $y_3$，第 3 列 = $z_3$，" +
+      html += "<p class='lab-note'><b>逐列读法</b>：第 1 列 = x₃ 在系 0 中的方向余弦，第 2 列 = y₃，第 3 列 = z₃，" +
         "第 4 列 = 腕心位置。悬停任一格，画布里对应的轴或位置矢量会加粗。</p>";
-      html += "<p class='lab-note'><b>结构性观察</b>：第 3 列 $[s_1,-c_1,0]^T$ 只含 θ₁——<b>转肩不改变 $z_3$ 的指向</b>（$z_3$ 永远躺在水平面里，且随腰一起转）；" +
-        "第 3 列的第 3 个分量恒为 0，正是 $z_3=z_2$（系 2、系 3 的 z 轴重合）的代数痕迹。" +
-        "第 4 列的三个分量就是 2.12.5 逆解的<b>腕心方程</b> $p_{wx}=c_1(a_2c_2+a_3c_{23})$、$p_{wy}=s_1(a_2c_2+a_3c_{23})$、$p_{wz}=a_2s_2+a_3s_{23}$。</p>";
-      readout.innerHTML = html;
+      html += "<p class='lab-note'><b>结构性观察</b>：第 3 列 [s₁,-c₁,0]ᵀ 只含 θ₁——<b>转肩不改变 z₃ 的指向</b>（z₃ 永远躺在水平面里，且随腰一起转）；" +
+        "第 3 列的第 3 个分量恒为 0，正是 z₃=z₂（系 2、系 3 的 z 轴重合）的代数痕迹。" +
+        "第 4 列的三个分量就是 2.12.5 逆解的<b>腕心方程</b> pwₓ=c₁(a₂c₂+a₃c₂₃)、pwy=s₁(a₂c₂+a₃c₂₃)、pwz=a₂s₂+a₃s₂₃。</p>";
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1486,7 +1548,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "球形腕：三轴交于一点，腕心纹丝不动"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "只画腕部（系 3 固连在腕心上）：拖 θ₄、θ₅、θ₆ —— <b>红球标的腕心始终不动</b>，只有末端姿态在转；这正是 1.2.3 解耦原理的运动学落点。下方并排列出 $R_6^3$ 与 ZYZ 合成矩阵：它们<b>逐元素相等</b>，悬停右矩阵的格子会同步高亮左边同一位置。"));
+    host.appendChild(el("p", "lab-note", "只画腕部（系 3 固连在腕心上）：拖 θ₄、θ₅、θ₆ —— <b>红球标的腕心始终不动</b>，只有末端姿态在转；这正是 1.2.3 解耦原理的运动学落点。下方并排列出 R₆³ 与 ZYZ 合成矩阵：它们<b>逐元素相等</b>，悬停右矩阵的格子会同步高亮左边同一位置。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1562,11 +1624,11 @@
       var html = "<span class='lab-matrix-label'>R₆³ =</span>" + matrixHTML(mL, 3) +
         "<span class='lab-matrix-label'>　ZYZ(θ₄,θ₅,θ₆) =</span>" + matrixHTML(mR, 3);
       html += "<p class='lab-note'><b>两个矩阵逐元素相等</b>（最大偏差 " + maxDiff.toExponential(1) + "）：" +
-        "球形腕的三个转角 $(θ_4,θ_5,θ_6)$ 恰是<b>相对系 3 的 ZYZ 角</b>。这正是 2.12.6「腕逆解 = ZYZ 反解」的全部伏笔——" +
-        "腕的三轴交于一点（$a_4=a_5=d_5=0$），$R_6^3$ 写成 $R_z(θ_4)R_x(-\\pi/2)R_z(θ_5)R_x(\\pi/2)R_z(θ_6)$，" +
-        "而 $R_x(-\\pi/2)R_z(θ_5)R_x(\\pi/2)^{-1}=R_y(θ_5)$（共轭把绕 z 的转动搬到绕 y），整块塌成 ZYZ。</p>";
-      html += "<p class='lab-note'>腕心位置 = 系 3 原点，<b>与 θ₄θ₅θ₆ 无关</b>（拖动三个滑杆时红球纹丝不动）；末端沿 $z_6$ 外移 $d_6$ = " + state.d6.toFixed(2) + " m。</p>";
-      readout.innerHTML = html;
+        "球形腕的三个转角 (θ₄,θ₅,θ₆) 恰是<b>相对系 3 的 ZYZ 角</b>。这正是 2.12.6「腕逆解 = ZYZ 反解」的全部伏笔——" +
+        "腕的三轴交于一点（a₄=a₅=d₅=0），R₆³ 写成 R_z(θ₄)Rₓ(-/2)R_z(θ₅)Rₓ(/2)R_z(θ₆)，" +
+        "而 Rₓ(-/2)R_z(θ₅)Rₓ(/2)⁻¹=R_y(θ₅)（共轭把绕 z 的转动搬到绕 y），整块塌成 ZYZ。</p>";
+      html += "<p class='lab-note'>腕心位置 = 系 3 原点，<b>与 θ₄θ₅θ₆ 无关</b>（拖动三个滑杆时红球纹丝不动）；末端沿 z₆ 外移 d₆ = " + state.d6.toFixed(2) + " m。</p>";
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1589,7 +1651,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "逆运动学：给定腕心，解出四支姿态"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖动目标点 $p_w$ 的三个坐标（红球就是腕心目标），看四支解如何出现：肩右/肩左 × 肘上/肘下。粗线是当前选中肩支的两支解（肘上实、肘下细），极淡的是另一肩支。走到可达边界会出现告警——那是式 2.98 的容许性条件 $|a_2-a_3|\\le\\|p_w\\|\\le a_2+a_3$ 被破坏；把目标放到肩轴上（$p_x=p_y=0$）则 θ₁ 任意，是肩奇异。"));
+    host.appendChild(el("p", "lab-note", "拖动目标点 p_w 的三个坐标（红球就是腕心目标），看四支解如何出现：肩右/肩左 × 肘上/肘下。粗线是当前选中肩支的两支解（肘上实、肘下细），极淡的是另一肩支。走到可达边界会出现告警——那是式 2.98 的容许性条件 |a₂-a₃|≤|p_w|≤ a₂+a₃ 被破坏；把目标放到肩轴上（pₓ=p_y=0）则 θ₁ 任意，是肩奇异。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1650,7 +1712,7 @@
 
       var html = "";
       if (!ik.reachable) {
-        html += "<p class='lab-warn'><b>无解</b>：" + ik.reason + "。容许性条件 $|a_2-a_3|\\le\\|p_w\\|\\le a_2+a_3$（原书式 2.98）。</p>";
+        html += "<p class='lab-warn'><b>无解</b>：" + ik.reason + "。容许性条件 |a₂-a₃|≤|p_w|≤ a₂+a₃（原书式 2.98）。</p>";
       } else {
         html += "<table class='lab-matrix'><thead><tr><th>支</th><th>θ₁</th><th>θ₂</th><th>θ₃</th><th>FK 校验</th></tr></thead><tbody>";
         ik.solutions.forEach(function (sol) {
@@ -1663,18 +1725,18 @@
             "<td>" + err.toExponential(1) + "</td></tr>";
         });
         html += "</tbody></table>";
-        html += "<p class='lab-note'>四支解 = <b>肘双支</b>（$s_3=\\pm\\sqrt{1-c_3^2}$，原书式 2.99–2.101）× <b>肩双支</b>" +
-          "（$\\vartheta_1^{\\mathrm I}=\\operatorname{Atan2}(p_{wy},p_{wx})$、$\\vartheta_1^{\\mathrm{II}}=\\operatorname{Atan2}(-p_{wy},-p_{wx})$，相差 $\\pi$，原书式 2.109–2.110）。" +
+        html += "<p class='lab-note'>四支解 = <b>肘双支</b>（s₃=±√(1-c₃²)，原书式 2.99–2.101）× <b>肩双支</b>" +
+          "（ϑ₁mathrm I=operatorname{Atan2}(pwy,pwₓ)、ϑ₁^{mathrm{II}}=operatorname{Atan2}(-pwy,-pwₓ)，相差 ，原书式 2.109–2.110）。" +
           "「FK 校验」列是把这支解代回正运动学后与目标的偏差——应当是 1e-16 量级。</p>";
         if (ik.shoulderSingular) {
-          html += "<p class='lab-warn'><b>肩奇异</b>：$p_x=p_y=0$（腕心落在肩轴上），$\\vartheta_1$ <b>任意</b>——无穷多解，" +
+          html += "<p class='lab-warn'><b>肩奇异</b>：pₓ=p_y=0（腕心落在肩轴上），ϑ₁ <b>任意</b>——无穷多解，" +
             "无论腰怎么转，腕心都不动（3.3.1 第 2 类后果：解不唯一）。</p>";
         }
         if (Math.abs(ik.c3) > 0.999) {
-          html += "<p class='lab-warn'><b>接近边界奇点</b>：$c_3=\\pm1$（肘伸直或折回），$s_3\\to0$，雅可比趋近奇异。</p>";
+          html += "<p class='lab-warn'><b>接近边界奇点</b>：c₃=±1（肘伸直或折回），s₃→0，雅可比趋近奇异。</p>";
         }
       }
-      readout.innerHTML = html;
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1693,7 +1755,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "雅可比的列：谁在出力，出多大力"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖动三个<b>关节速度</b>滑杆 $\\dot\\vartheta_i$，看末端速度 $v_e=\\sum_i J_i\\dot\\vartheta_i$ 怎么变。画布里三根彩箭头是**每一列单独贡献**的速度（$J_i\\dot\\vartheta_i$），粗红箭头是它们的和。悬停下方 $J$ 矩阵的<b>某一列</b>，画布里该列的箭头会加粗、其余变淡——第 $i$ 列的含义就是「只动关节 $i$、其余锁死时末端的贡献」（3.1.2）。"));
+    host.appendChild(el("p", "lab-note", "拖动三个<b>关节速度</b>滑杆 ϑᵢ，看末端速度 vₑ=ᵢ Jᵢϑᵢ 怎么变。画布里三根彩箭头是**每一列单独贡献**的速度（Jᵢϑᵢ），粗红箭头是它们的和。悬停下方 J 矩阵的<b>某一列</b>，画布里该列的箭头会加粗、其余变淡——第 i 列的含义就是「只动关节 i、其余锁死时末端的贡献」（3.1.2）。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1782,13 +1844,13 @@
       }
       var html = matrixHTML(rowsHtml, 3).replace("<table", "<span class='lab-matrix-label'>" +
         (state.kind === "planar" ? "J̄ = [vₓ; v_y; ω]" : "J̄ = [vₓ; v_y; v_z]") + " =</span><table");
-      html += "<p class='lab-note'><b>逐列读法</b>：第 $i$ 列 = 「只动关节 $i$（其余锁死）时末端的贡献」" +
-        "（$J_i=\\boldsymbol z_{i-1}\\times(\\boldsymbol p_e-\\boldsymbol p_{i-1})$，3.1.2）。" +
+      html += "<p class='lab-note'><b>逐列读法</b>：第 i 列 = 「只动关节 i（其余锁死）时末端的贡献」" +
+        "（Jᵢ= zᵢ₋₁×( pₑ- pᵢ₋₁)，3.1.2）。" +
         "悬停某一列，画布里该列对应的速度箭头加粗、其余变淡。</p>";
       var vmag = Math.sqrt(total[0] * total[0] + total[1] * total[1] + total[2] * total[2]);
       html += "<p class='lab-note'>当前合计末端速度 |v_e| = " + vmag.toFixed(3) + " m/s" +
         (state.kind === "planar" ? "，角速度 ω = " + (state.dq[0] + state.dq[1] + state.dq[2]).toFixed(3) + " rad/s" : "") + "。</p>";
-      readout.innerHTML = html;
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1811,7 +1873,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "可操作度椭球：奇点就是它被压扁的那一刻"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拟人臂的 $\\bar J$ 决定末端能把多大的速度「摊」到哪些方向。椭球是 $JJ^T$ 的特征方向与 $\\sqrt{\\lambda_i}$：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（$s_3=0$，边界奇点）与 <b>腕点落到肩轴上</b>（$a_2c_2+a_3c_{23}=0$，内部奇点），看椭球怎么压扁到一条线。"));
+    host.appendChild(el("p", "lab-note", "拟人臂的 J̇ 决定末端能把多大的速度「摊」到哪些方向。椭球是 JJᵀ 的特征方向与 √(λᵢ)：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（s₃=0，边界奇点）与 <b>腕点落到肩轴上</b>（a₂c₂+a₃c₂₃=0，内部奇点），看椭球怎么压扁到一条线。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1871,19 +1933,446 @@
       var s3 = Math.sin(q[2]);
       var shoulderFactor = A2 * Math.cos(q[1]) + A3 * Math.cos(q[1] + q[2]);
       var w = Math.sqrt(Math.abs(det));
-      var html = "<p><b>可操作度</b> $w=\\sqrt{\\det(\\bar J\\bar J^{T})}=|\\det\\bar J|=" + w.toFixed(4) + "</p>";
-      html += "<p class='lab-note'>$\\det\\bar J=-a_2a_3\\,s_3\\,(a_2c_2+a_3c_{23})$（3.2.2）——两个因子各自归零即奇异：</p>";
+      var html = "<p><b>可操作度</b> w=√(det(J̄J̄ᵀ))=|det J̄|=" + w.toFixed(4) + "</p>";
+      html += "<p class='lab-note'>̇=-a₂a₃ s₃ (a₂c₂+a₃c₂₃)（3.2.2）——两个因子各自归零即奇异：</p>";
       html += "<table class='lab-matrix'><thead><tr><th>因子</th><th>当前值</th><th>含义</th></tr></thead><tbody>" +
-        "<tr><td>$s_3$</td><td>" + s3.toFixed(4) + "</td><td>肘角正弦：$s_3=0$ ⇒ 肘伸直/折回（<b>边界奇点</b>）</td></tr>" +
-        "<tr><td>$a_2c_2+a_3c_{23}$</td><td>" + shoulderFactor.toFixed(4) + "</td><td>腕点距肩轴的投影：为 0 ⇒ 腕点落到 $z_0$ 轴上（<b>内部奇点</b>）</td></tr>" +
+        "<tr><td>s₃</td><td>" + s3.toFixed(4) + "</td><td>肘角正弦：s₃=0 ⇒ 肘伸直/折回（<b>边界奇点</b>）</td></tr>" +
+        "<tr><td>a₂c₂+a₃c₂₃</td><td>" + shoulderFactor.toFixed(4) + "</td><td>腕点距肩轴的投影：为 0 ⇒ 腕点落到 z₀ 轴上（<b>内部奇点</b>）</td></tr>" +
         "</tbody></table>";
       var warn = "";
       if (Math.abs(s3) < 0.08) warn += "<p class='lab-warn'><b>接近肘奇点</b>（边界）：椭球被压成一条线，末端在该方向上「给不出速度」。</p>";
       if (Math.abs(shoulderFactor) < 0.08) warn += "<p class='lab-warn'><b>接近肩奇点</b>（内部）：两列线性相关，逆解出现无穷多解。</p>";
       html += warn;
-      html += "<p class='lab-note'>椭球半轴 = $\\sqrt{\\lambda_i(JJ^T)}$（显示比例 " + state.scale.toFixed(2) + " m/(rad/s)）：" +
+      html += "<p class='lab-note'>椭球半轴 = √(λᵢ(JJᵀ))（显示比例 " + state.scale.toFixed(2) + " m/(rad/s)）：" +
         "最长半轴 " + radii[2].toFixed(3) + " m，最短半轴 " + radii[0].toFixed(3) + " m。</p>";
-      readout.innerHTML = html;
+      readout.innerHTML = texLite(html);
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：cart3d · 两连杆笛卡儿臂（ch06 §6.3.1） ================= */
+
+  function labCart3D(host) {
+    /* 例 7.2 同款参数（教材 §7.3.1 的标准简化：转子质心在关节轴上） */
+    var P = { m1: 50, m2: 50, mm1: 5, mm2: 5, I1: 10, I2: 10, Im1: 0.01, Im2: 0.01, kr1: 100, kr2: 100, g: 9.81 };
+    var state = { d1: 0.45, d2: 0.35 };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "笛卡儿臂：为什么它的惯性矩阵是常数"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "关节 1 沿 z₀ 竖直移动 d₁，关节 2 沿水平方向移动 d₂。**随便拖 d₁,d₂**：下方 B 的三个数<b>一动不动</b>——因为 B 里根本没有 d₁,d₂。这不是巧合，而是「全平动关节」的直接后果：连杆不做转动，动能只是 12mḋ²，与位形无关。于是 Ḃ=0、C=O——<b>既没有离心项，也没有科氏项</b>。这是 6.3.2 平面臂的对照组：那边的复杂性全部来自「转动关节 + 位形变化」。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    slider(controls, "d₁（沿 z₀ 升降）", 0, 0.9, 0.01, state.d1, function (v) { state.d1 = v; draw(); }, function (v) { return v.toFixed(2) + " m"; });
+    slider(controls, "d₂（水平伸缩）", -0.6, 0.6, 0.01, state.d2, function (v) { state.d2 = v; draw(); }, function (v) { return v.toFixed(2) + " m"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "两连杆笛卡儿臂：两个移动关节");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.58, { span: 1.35, center: [0, 0, 0.5], az: -36, elv: 16 });
+    view.onChange = function () { draw(); };
+
+    function draw() {
+      var c = palette();
+      var b11 = P.m1 + P.mm2 + P.kr1 * P.kr1 * P.Im1 + P.m2;
+      var b22 = P.m2 + P.kr2 * P.kr2 * P.Im2;
+      var g1 = (P.m1 + P.mm2 + P.m2) * P.g;
+
+      view.grid(0.85, 0.17, 0, { color: c.line });
+      /* 立柱（关节 1 沿 z 移动） */
+      view.box([0, 0, 0.05], [0.07, 0.07, 0.06], kernel.Tid().R, { color: c.neutral });
+      var carriage = [0, 0, state.d1];
+      view.box(carriage, [0.1, 0.1, 0.05], kernel.Tid().R, { color: c.green });
+      view.cyl([0, 0, 0.1], [0, 0, 0.92], 0.022, { color: c.muted, seg: 8 });
+      /* 水平臂（关节 2 沿 x 移动） */
+      var armEnd = [state.d2, 0, state.d1];
+      view.cyl(carriage, armEnd, 0.04, { color: c.blue });
+      view.sphere(armEnd, 0.05, { color: c.red });
+      /* 载荷（连杆 2 + 转子 2） */
+      view.box(kernel.addv(armEnd, [0.05, 0, 0]), [0.05, 0.05, 0.05], kernel.Tid().R, { color: c.gold });
+      view.label(armEnd, "末端（连杆 2 末端）", c.red, 12, 4);
+      view.label(carriage, "关节 1（移动）", c.green, 12, -4);
+      /* 重力方向（z 竖直向上 → 重力沿 −z） */
+      view.line([0, 0, 0.95], [0, 0, 0.75], { color: c.red, width: 2.2 });
+      view.label([0, 0, 0.72], "重力", c.red, 8, 2);
+
+      view.render(null);
+
+      var html = "<table class='lab-matrix'><thead><tr><th>量</th><th>值</th><th>含义</th></tr></thead><tbody>" +
+        "<tr><td>b₁₁</td><td>" + b11.toFixed(2) + "</td><td>关节 1 折算惯量：m₁+mₘ_₂+kᵣ_₁²Iₘ_₁+m₂（<b>不含 d₁,d₂</b>）</td></tr>" +
+        "<tr><td>b₂₂</td><td>" + b22.toFixed(2) + "</td><td>关节 2 折算惯量：m₂+kᵣ_₂²Iₘ_₂</td></tr>" +
+        "<tr><td>b₁₂</td><td>0</td><td>两轴完全解耦</td></tr>" +
+        "<tr><td>C</td><td>O</td><td>Ḃ=0 ⇒ 无离心项、无科氏项</td></tr>" +
+        "<tr><td>g₁</td><td>" + g1.toFixed(2) + " N</td><td>要托起「连杆 1 + 转子 2 + 连杆 2」的总重</td></tr>" +
+        "<tr><td>g₂</td><td>0</td><td>关节 2 水平运动，重力不做功</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>拖动 d₁,d₂ 时这些数<b>纹丝不动</b>——这就是「常数惯性矩阵」的含义。与 6.3.2 平面臂对照：那边 b₁₁ 含 2a₁ℓ₂cosϑ₂、b₂₂ 是常数，Cq̇ 里也长出了离心与科氏项。</p>";
+      readout.innerHTML = texLite(html);
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：dyn3d · 两连杆平面臂的动力学（ch06 §6.3.2） ================= */
+
+  function labDyn3D(host) {
+    /* 例 7.2 的参数（教材图 7.5–7.7 同款） */
+    var P = {
+      a1: 1.0, a2: 1.0, l1: 0.5, l2: 0.5,
+      m1: 50, m2: 50, mm1: 5, mm2: 5,
+      I1: 10, I2: 10, Im1: 0.01, Im2: 0.01,
+      kr1: 100, kr2: 100, g: 9.81
+    };
+    var state = { th1: 60, th2: -40, dq1: 0, dq2: 0, run: false, t: 0, trail: [] };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "平面臂动力学：B、C、g 各自在动"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖 ϑ₁,ϑ₂ 与角速度 ϑ₁,ϑ₂：下方 B 的三个元素随**位形**变（b₁₁ 里藏着 2a₁ℓ₂cosϑ₂），C 随位形与速度变，重力矩随姿态变；只有 b₂₂ 是常数。按「自由摆动」键则以**零输入力矩**做 RK4 积分——臂会自己摆下去，所有项都参与，画面上的弧线就是 B q+Cq̇+g=0 的结果。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    slider(controls, "ϑ₁", -180, 180, 1, state.th1, function (v) { state.th1 = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+    slider(controls, "ϑ₂", -180, 180, 1, state.th2, function (v) { state.th2 = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+    slider(controls, "ϑ̇₁", -2, 2, 0.05, state.dq1, function (v) { state.dq1 = v; draw(); }, function (v) { return v.toFixed(2) + " rad/s"; });
+    slider(controls, "ϑ̇₂", -2, 2, 0.05, state.dq2, function (v) { state.dq2 = v; draw(); }, function (v) { return v.toFixed(2) + " rad/s"; });
+    var runBtn = el("button", "lab-btn", "自由摆动（零输入力矩）");
+    runBtn.type = "button";
+    runBtn.addEventListener("click", function () {
+      state.run = !state.run;
+      runBtn.classList.toggle("on", state.run);
+      runBtn.textContent = state.run ? "暂停" : "自由摆动（零输入力矩）";
+      if (!state.run) { state.t = 0; state.trail = []; }
+      if (state.run && timer === null) timer = setInterval(tick, 16);
+      if (!state.run && timer !== null) { clearInterval(timer); timer = null; }
+    });
+    host.appendChild(runBtn);
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "两连杆平面臂的动力学仿真");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0.35, 0], az: -22, elv: 12 });
+    view.onChange = function () { draw(); };
+
+    var timer = null;
+
+    /* --- 动力学内核（严格按 6.3.2 的公式） --- */
+    function B(q1, q2) {
+      var c2 = Math.cos(q2);
+      return [
+        [P.I1 + P.m1 * P.l1 * P.l1 + P.kr1 * P.kr1 * P.Im1 + P.I2 + P.m2 * (P.a1 * P.a1 + P.l2 * P.l2 + 2 * P.a1 * P.l2 * c2) + P.Im2 + P.mm2 * P.a1 * P.a1,
+          P.I2 + P.m2 * (P.l2 * P.l2 + P.a1 * P.l2 * c2) + P.kr2 * P.Im2],
+        [P.I2 + P.m2 * (P.l2 * P.l2 + P.a1 * P.l2 * c2) + P.kr2 * P.Im2,
+          P.I2 + P.m2 * P.l2 * P.l2 + P.kr2 * P.kr2 * P.Im2]
+      ];
+    }
+    function gravity(q1, q2) {
+      var c1 = Math.cos(q1), c12 = Math.cos(q1 + q2);
+      return [
+        (P.m1 * P.l1 + P.mm2 * P.a1 + P.m2 * P.a1) * P.g * c1 + P.m2 * P.l2 * P.g * c12,
+        P.m2 * P.l2 * P.g * c12
+      ];
+    }
+    function hOf(q2) { return -P.m2 * P.a1 * P.l2 * Math.sin(q2); }
+    function Cmat(q2, dq1, dq2) {
+      var h = hOf(q2);
+      return [[h * dq2, h * (dq1 + dq2)], [-h * dq1, 0]];
+    }
+    /* q̈ = -B⁻¹ (C q̇ + g) */
+    function accel(q1, q2, dq1, dq2) {
+      var Bm = B(q1, q2), Cm = Cmat(q2, dq1, dq2), G = gravity(q1, q2);
+      var r1 = Cm[0][0] * dq1 + Cm[0][1] * dq2 + G[0];
+      var r2 = Cm[1][0] * dq1 + Cm[1][1] * dq2 + G[1];
+      var det = Bm[0][0] * Bm[1][1] - Bm[0][1] * Bm[1][0];
+      return [(Bm[1][1] * r1 - Bm[0][1] * r2) / det, (-Bm[1][0] * r1 + Bm[0][0] * r2) / det];
+    }
+    function deriv(y) {
+      var a = accel(y[0], y[1], y[2], y[3]);
+      return [y[2], y[3], a[0], a[1]];
+    }
+    function rk4(y, dt) {
+      var k1 = deriv(y);
+      var y2 = y.map(function (v, i) { return v + 0.5 * dt * k1[i]; });
+      var k2 = deriv(y2);
+      var y3 = y.map(function (v, i) { return v + 0.5 * dt * k2[i]; });
+      var k3 = deriv(y3);
+      var y4 = y.map(function (v, i) { return v + dt * k3[i]; });
+      var k4 = deriv(y4);
+      return y.map(function (v, i) { return v + dt / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]); });
+    }
+    function tick() {
+      var y = [state.th1 * DEG, state.th2 * DEG, state.dq1, state.dq2];
+      var dt = 1 / 120;
+      for (var i = 0; i < 2; i++) y = rk4(y, dt);
+      state.th1 = y[0] / DEG; state.th2 = y[1] / DEG;
+      state.dq1 = y[2]; state.dq2 = y[3];
+      state.t += dt * 2;
+      draw();
+    }
+
+    function draw() {
+      var c = palette();
+      var q1 = state.th1 * DEG, q2 = state.th2 * DEG;
+      var J1 = [0, 0, 0];
+      var J2 = [P.a1 * Math.cos(q1), P.a1 * Math.sin(q1), 0];
+      var E = [J2[0] + P.a2 * Math.cos(q1 + q2), J2[1] + P.a2 * Math.sin(q1 + q2), 0];
+      var C1 = [P.l1 * Math.cos(q1), P.l1 * Math.sin(q1), 0];
+      var C2 = [J2[0] + P.l2 * Math.cos(q1 + q2), J2[1] + P.l2 * Math.sin(q1 + q2), 0];
+
+      view.grid(0.95, 0.19, 0, { color: c.line });
+      /* 立柱 */
+      view.box([0, 0, -0.06], [0.08, 0.08, 0.03], kernel.Tid().R, { color: c.neutral });
+      /* 两根连杆（y 竖直向上，臂在 xy 平面内） */
+      view.cyl(J1, J2, 0.045, { color: c.blue });
+      view.cyl(J2, E, 0.038, { color: c.blue });
+      /* 质心 */
+      view.sphere(C1, 0.038, { color: c.gold });
+      view.sphere(C2, 0.034, { color: c.gold });
+      /* 关节 */
+      view.sphere(J1, 0.055, { color: c.green });
+      view.sphere(J2, 0.048, { color: c.green });
+      view.sphere(E, 0.03, { color: c.red });
+      view.label(J1, "关节 1", c.green, -46, 14);
+      view.label(J2, "关节 2", c.green, 12, -6);
+      view.label(C1, "连杆 1 质心", c.gold, 10, 4);
+      view.label(C2, "连杆 2 质心", c.gold, 10, 4);
+      /* 重力方向（y 向上 → 重力沿 −y） */
+      view.line([0, 0.75, 0], [0, 0.55, 0], { color: c.red, width: 2.2 });
+      view.label([0, 0.53, 0], "g", c.red, 8, 2);
+
+      /* 重力力矩箭头：在关节处画弧 + 标注大小 */
+      var G = gravity(q1, q2);
+      view.arc(J1, [0, 0, 1], [0, 1, 0], 0.22, 0, Math.sign(G[0]) * 0.8, { color: c.purple, width: 1.8 });
+      view.label(J1, "g₁ = " + G[0].toFixed(1) + " N·m", c.purple, 14, 8);
+      view.arc(J2, [0, 0, 1], [0, 1, 0], 0.16, 0, Math.sign(G[1]) * 0.8, { color: c.purple, width: 1.8 });
+      view.label(J2, "g₂ = " + G[1].toFixed(1) + " N·m", c.purple, 14, 10);
+
+      /* 末端轨迹 */
+      if (state.trail.length > 1) {
+        view.path(state.trail, { color: c.accent, width: 1.6 });
+      }
+
+      view.render(null);
+
+      var Bm = B(q1, q2), Cm = Cmat(q2, state.dq1, state.dq2);
+      var html = "<table class='lab-matrix'><thead><tr><th>项</th><th>值</th><th>随什么变</th></tr></thead><tbody>" +
+        "<tr><td>b₁₁</td><td>" + Bm[0][0].toFixed(1) + "</td><td>随 ϑ₂（含 2a₁ℓ₂c₂）</td></tr>" +
+        "<tr><td>b₁₂=b₂₁</td><td>" + Bm[0][1].toFixed(1) + "</td><td>随 ϑ₂ ⇒ 两轴耦合</td></tr>" +
+        "<tr><td>b₂₂</td><td>" + Bm[1][1].toFixed(1) + "</td><td><b>常数</b>（关节 2 看不见连杆 1）</td></tr>" +
+        "<tr><td>h=-m₂a₁ℓ₂s₂</td><td>" + hOf(q2).toFixed(2) + "</td><td>随 ϑ₂</td></tr>" +
+        "<tr><td>C₁₁</td><td>" + Cm[0][0].toFixed(2) + "</td><td>随 ϑ₂</td></tr>" +
+        "<tr><td>C₁₂</td><td>" + Cm[0][1].toFixed(2) + "</td><td>随 ϑ₁+ϑ₂</td></tr>" +
+        "<tr><td>C₂₁</td><td>" + Cm[1][0].toFixed(2) + "</td><td>随 ϑ₁</td></tr>" +
+        "<tr><td>g₁</td><td>" + G[0].toFixed(1) + " N·m</td><td>随姿态（重力矩）</td></tr>" +
+        "<tr><td>g₂</td><td>" + G[1].toFixed(1) + " N·m</td><td>随姿态</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>" + (state.run ? "自由摆动中（t = " + state.t.toFixed(2) + " s，零输入力矩）" : "按「自由摆动」键看 τ=0 时的自由响应") +
+        "：B 的<b>位形依赖</b>让同一条轨迹在不同姿态下走得不一样，C 的<b>速度项</b>在高速段显著（离心 ϑ₂² 与科氏 ϑ₁ϑ₂），重力项量级最小但不可忽略。</p>";
+      readout.innerHTML = texLite(html);
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  /* ================= 实验：chassis3d · 轮系与底盘（ch01 §1.3） ================= */
+
+  function labChassis3D(host) {
+    var DEGR = Math.PI / 180;
+    var LAYOUTS = [
+      {
+        id: "diff", name: "差动式", sub: "两同轴定轮 + 被动自位轮",
+        note: "两驱动轮同轴、独立驱动；机身靠第三个被动自位轮保持平衡。v=(v₁+v₂)/2、ω=(v₂-v₁)/(2r) —— 想原地旋转就把两轮反向转。",
+        wheels: [{ x: -0.32, y: 0.28, drive: true }, { x: -0.32, y: -0.28, drive: true }, { x: 0.42, y: 0, drive: false, caster: true }]
+      },
+      {
+        id: "synchro", name: "同步驱动式", sub: "三个导向轮，牵引/转向机械耦合",
+        note: "牵引与转向由机械耦合（如差动机构）分配给三个轮子，机身指向不变——推着走不拐弯，适合直行运输。",
+        wheels: [{ x: 0.3, y: 0, drive: true }, { x: -0.15, y: 0.26, drive: true }, { x: -0.15, y: -0.26, drive: true }]
+      },
+      {
+        id: "tricycle", name: "三轮式", sub: "后轴两定轮 + 前舵轮",
+        note: "和汽车一样靠舵轮转向：ω=vtanδ/L。定轮不能侧滑，所以转向全靠前轮。",
+        wheels: [{ x: -0.3, y: 0.26, drive: true }, { x: -0.3, y: -0.26, drive: true }, { x: 0.38, y: 0, drive: false, steer: true }]
+      },
+      {
+        id: "car", name: "汽车式（阿克曼）", sub: "后定轮 + 两前转向轮",
+        note: "阿克曼转向几何：两前轮转角**必须不等**——δᵢₙ=cot⁻¹ (cotδ-L/R)、δₒᵤₜ=cot⁻¹ (cotδ+L/R)，否则内轮会打滑。",
+        wheels: [{ x: -0.3, y: 0.26, drive: true }, { x: -0.3, y: -0.26, drive: true }, { x: 0.38, y: 0.3, drive: false, steer: true, inner: true }, { x: 0.38, y: -0.3, drive: false, steer: true, inner: false }]
+      },
+      {
+        id: "omni3", name: "三主动自位轮式", sub: "三个 120° 布置的主动自位轮",
+        note: "三个轮子都装在自位支架上、各自能绕竖直轴自由转向，机身控制每个轮子的「速度 + 转向角」就能得到任意平面运动——全向。",
+        wheels: [{ x: 0.3, y: 0, drive: true, omni: true }, { x: -0.15, y: 0.26, drive: true, omni: true }, { x: -0.15, y: -0.26, drive: true, omni: true }]
+      }
+    ];
+    var state = { layout: "diff", vl: 0.5, vr: 0.5, delta: 20, mecanum: false };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "轮系与底盘：轮子怎么转，机身就怎么走"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "选一种底盘布局，拖两个驱动轮的速度，看机身的速度 v 与角速度 ω（绿色箭头）。差速式能原地转、同步式只能直行、汽车式要靠舵轮、阿克曼几何让内外轮转角不等、三自位轮式能横着走。切到「麦克纳姆轮」看 45° 斜置滚子的特殊结构——它让轮子既能推又能横移。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "底盘", LAYOUTS.map(function (l) { return { value: l.id, text: l.name }; }), "diff",
+      function (v) { state.layout = v; draw(); });
+    toggleGroup(controls, "特写", [{ value: "no", text: "整车" }, { value: "yes", text: "麦克纳姆轮" }], "no",
+      function (v) { state.mecanum = v === "yes"; draw(); });
+    slider(controls, "左轮速度", -1, 1, 0.05, state.vl, function (v) { state.vl = v; draw(); }, function (v) { return v.toFixed(2) + " m/s"; });
+    slider(controls, "右轮速度", -1, 1, 0.05, state.vr, function (v) { state.vr = v; draw(); }, function (v) { return v.toFixed(2) + " m/s"; });
+    slider(controls, "舵角 δ", -35, 35, 1, state.delta, function (v) { state.delta = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "五种底盘布局的 3D 视图与轮速运动");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.6, { span: 1.25, center: [0, 0, 0.12], az: -42, elv: 26 });
+    view.onChange = function () { draw(); };
+
+    function wheel(v, x, y, r, width, axis, color) {
+      /* 轮子：轴向 axis（单位向量），用圆盘近似 */
+      var seg = 16, i, ang;
+      var u = kernel.norm(Math.abs(axis[0]) < 0.9 ? kernel.crs(axis, [1, 0, 0]) : kernel.crs(axis, [0, 1, 0]));
+      var w = kernel.crs(axis, u);
+      var c = [x, y, 0];
+      for (i = 0; i < seg; i++) {
+        var a1 = 2 * Math.PI * i / seg, a2 = 2 * Math.PI * (i + 1) / seg;
+        var p1 = kernel.addv(c, kernel.sclv(kernel.addv(kernel.sclv(u, Math.cos(a1)), kernel.sclv(w, Math.sin(a1))), r));
+        var p2 = kernel.addv(c, kernel.sclv(kernel.addv(kernel.sclv(u, Math.cos(a2)), kernel.sclv(w, Math.sin(a2))), r));
+        var q1 = kernel.addv(p1, kernel.sclv(axis, width / 2));
+        var q2 = kernel.addv(p2, kernel.sclv(axis, width / 2));
+        var r1 = kernel.addv(p1, kernel.sclv(axis, -width / 2));
+        var r2 = kernel.addv(p2, kernel.sclv(axis, -width / 2));
+        v.poly([q1, q2, r2, r1], { color: color, both: true });
+      }
+      v.cyl(kernel.addv(c, kernel.sclv(axis, -width / 2)), kernel.addv(c, kernel.sclv(axis, width / 2)), r * 0.25, { color: color, seg: 8 });
+    }
+
+    function draw() {
+      var c = palette();
+      var layout = LAYOUTS.filter(function (l) { return l.id === state.layout; })[0];
+
+      if (state.mecanum) {
+        /* 麦克纳姆轮特写：一个轮 + 45° 斜置滚子 */
+        view.grid(0.6, 0.12, -0.3, { color: c.line });
+        var R = 0.3;
+        var dir = [1, 0, 0];
+        wheel(view, 0, 0, R, 0.12, [0, 1, 0], c.blue);
+        /* 滚子：沿轮周分布、轴线与轮平面成 45° */
+        for (var i = 0; i < 8; i++) {
+          var ang = 2 * Math.PI * i / 8;
+          var center = [0, 0, 0];
+          var radial = [Math.cos(ang), 0, Math.sin(ang)];
+          var rc = kernel.sclv(radial, R * 0.78);
+          var rollerAxis = kernel.norm([radial[0] * Math.cos(Math.PI / 4), Math.sin(Math.PI / 4), radial[2] * Math.cos(Math.PI / 4)]);
+          var half = R * 0.28;
+          var A = kernel.addv(rc, kernel.sclv(rollerAxis, -half));
+          var Bp = kernel.addv(rc, kernel.sclv(rollerAxis, half));
+          view.cyl(A, Bp, 0.028, { color: c.gold, seg: 8 });
+        }
+        view.label([0, 0, R * 0.85], "轮体（绕 y 轴滚）", c.blue, 12, 0);
+        view.label([R * 0.9, 0.12, R * 0.4], "滚子轴 45°", c.gold, 10, 2);
+        view.render(null);
+        readout.innerHTML = texLite("<p><b>麦克纳姆轮</b>：轮体绕自身轴（y）滚动，轮缘上的滚子轴与轮平面成 <b>45°</b> 斜置。</p>" +
+          "<p class='lab-note'>斜置滚子的作用：轮子被驱动向前滚时，滚子与地面的接触线把驱动力分解成**沿轮平面**与**垂直轮平面**两个分量——所以这��轮子既能像普通轮那样推着走，又能横着平移（这正是「全向」的来源）。普通轮做不到横向平移，因为它只有一个滚动自由度。</p>");
+        return;
+      }
+
+      view.grid(0.75, 0.15, 0, { color: c.line });
+      /* 机身 */
+      view.box([0, 0, 0.08], [0.42, 0.32, 0.04], kernel.Tid().R, { color: c.neutral });
+      view.box([0.1, 0, 0.16], [0.14, 0.12, 0.06], kernel.Tid().R, { color: c.muted });
+
+      /* 轮子 */
+      layout.wheels.forEach(function (w) {
+        var steer = w.steer ? state.delta * DEGR : 0;
+        /* 转向轮：先绕竖直轴转 δ，再按轮轴方向摆 */
+        var wheelAxis = [0, 1, 0];
+        var axisPos = [0, 1, 0];
+        if (w.steer) {
+          var ca = Math.cos(steer), sa = Math.sin(steer);
+          /* 舵轮绕 z 转 δ：轮轴（原本沿 x）转到 (cosδ, sinδ) */
+          axisPos = [ca, sa, 0];
+          wheelAxis = [ca, sa, 0];
+        }
+        var color = w.drive ? c.blue : c.gold;
+        wheel(view, w.x, w.y, 0.1, 0.07, wheelAxis, color);
+        if (w.caster) {
+          /* 自位轮：小球 + 竖直轴 */
+          view.sphere([w.x, w.y, 0], 0.05, { color: c.purple });
+          view.line([w.x, w.y, 0], [w.x, w.y, 0.1], { color: c.purple, width: 1.4, dash: [4, 3] });
+        }
+        if (w.omni) {
+          /* 自位支架 */
+          view.line([w.x, w.y, 0], [w.x, w.y, 0.12], { color: c.purple, width: 1.4 });
+        }
+      });
+
+      /* 速度与角速度 */
+      var v = 0, omega = 0, kind = "";
+      if (layout.id === "diff") {
+        v = (state.vl + state.vr) / 2; omega = (state.vr - state.vl) / 0.56;
+        kind = "差速：v=(v₁+v₂)/(2)，ω=(v₂-v₁)/(2r)";
+      } else if (layout.id === "synchro") {
+        v = (state.vl + state.vr) / 2; omega = 0;
+        kind = "同步驱动：机身指向锁定，ω=0";
+      } else if (layout.id === "tricycle" || layout.id === "car") {
+        v = (state.vl + state.vr) / 2;
+        omega = v * Math.tan(state.delta * DEGR) / 0.68;
+        kind = "转向底盘：ω=(vtanδ)/(L)";
+      } else {
+        v = (state.vl + state.vr) / 2; omega = (state.vr - state.vl) / 0.56;
+        kind = "全向：轮向自由，可合成任意 v,ω";
+      }
+      if (v > 1e-6) {
+        view.line([0, 0, 0.25], [0, v, 0.25], { color: c.green, width: 3 });
+        view.label([0, v, 0.25], "v = " + v.toFixed(2) + " m/s", c.green, 10, 4);
+      }
+      if (Math.abs(omega) > 1e-6) {
+        view.arc([0, 0, 0.25], [1, 0, 0], [0, 1, 0], 0.34, 0, Math.max(-2.6, Math.min(2.6, omega * 0.6)),
+          { color: c.red, width: 2.4 });
+        view.label([0.34, 0, 0.25], "ω = " + omega.toFixed(2) + " rad/s", c.red, 10, 4);
+      }
+
+      view.render(null);
+
+      var html = "<p><b>" + layout.name + "</b>：" + layout.sub + "。</p>";
+      html += "<p class='lab-note'>" + layout.note + "</p>";
+      html += "<p class='lab-note'>当前：" + kind + " ⇒ 机身线速度 " + v.toFixed(2) + " m/s、角速度 " + omega.toFixed(2) + " rad/s。" +
+        "左右轮同速 = 直行；差速式左右轮反向 = <b>原地旋转</b>（扫地机器人的「转圈」就是它）。</p>";
+      if (layout.id === "car") {
+        var R = 0.5, L = 0.68, cot = 1 / Math.tan(Math.max(1, Math.abs(state.delta)) * DEGR);
+        var din = Math.atan(1 / Math.max(0.05, cot - L / R)) / DEGR;
+        var dout = Math.atan(1 / Math.max(0.05, cot + L / R)) / DEGR;
+        html += "<p class='lab-note'><b>阿克曼几何</b>：转向半径 R = " + R.toFixed(2) + " m、轴距 L = " + L.toFixed(2) + " m、方向盘转角 δ = " + state.delta + "° ⇒ " +
+          "内轮 " + din.toFixed(1) + "°、外轮 " + dout.toFixed(1) + "°（<b>两轮不等</b>）。若两轮都打 δ，内外轮的转弯半径不同，内轮必然侧滑。</p>";
+      }
+      readout.innerHTML = texLite(html);
     }
 
     draw();
@@ -1914,7 +2403,10 @@
     wrist3d: labWrist3D,
     ik3d: labIK3D,
     jac3d: labJac3D,
-    sing3d: labSing3D
+    sing3d: labSing3D,
+    cart3d: labCart3D,
+    dyn3d: labDyn3D,
+    chassis3d: labChassis3D
   };
 
   function boot() {
@@ -1942,5 +2434,6 @@
   /* node 测试出口：数学内核（不碰 DOM） */
   if (typeof module !== "undefined" && module.exports) {
     module.exports = kernel;
+    kernel.texLite = texLite;
   }
 })();
