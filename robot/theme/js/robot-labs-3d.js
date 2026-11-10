@@ -2965,6 +2965,144 @@
     return draw;
   }
 
+  /* ================= 实验：ctrl3d · 关节空间 vs 操作空间：同一条直线任务走成两种样（ch07 §7.1.4 / §7.4.3） ================= */
+
+  function labCtrl3D(host) {
+    var A2 = 0.62, A3 = 0.52;
+    var rows = [
+      { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
+      { alpha: 0, a: A2, d: 0, type: "R" },
+      { alpha: 0, a: A3, d: 0, type: "R" }
+    ];
+    var P0 = [0.55, 0, 0.35], P1 = [0.85, 0, 0.25];
+    var state = { mode: "joint", t: 0.5, showBoth: true };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "同一条笛卡尔直线任务，两种控制方案走出两种轨迹"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "虚线是末端要走的<b>直线</b>（任务定义在操作空间）。**关节空间控制**：每个关节各自插值，末端实际走成一条<b>弧线</b>——离直线有偏差；**操作空间控制**：逐点用逆雅可比反解关节角，末端<b>贴着直线走</b>。拖「任务进度」看两端重合、中段分离。这正是 7.1.4 两套方案的区别在空间上的样子，也是 7.4.3「先翻译，再关节控制」的意义所在。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "方案", [{ value: "joint", text: "关节空间控制" }, { value: "task", text: "操作空间控制" }], "joint",
+      function (v) { state.mode = v; draw(); });
+    slider(controls, "任务进度 t", 0, 1, 0.01, state.t, function (v) { state.t = v; draw(); },
+      function (v) { return (v * 100).toFixed(0) + "%"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "关节空间与操作空间控制的笛卡尔路径跟踪对比");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.62, { span: 1.45, center: [0.25, 0, 0.3], az: -40, elv: 22 });
+    view.onChange = function () { draw(); };
+
+    /* 末端（腕心）位置：由关节角算 */
+    function fk(q) {
+      var fr = kernel.fkChain(rows, q);
+      return { p: fr[3].o, frames: fr };
+    }
+    /* 逆解：取肩右/肘上支 */
+    function ik(p) {
+      var sol = kernel.anthroIK(p, A2, A3);
+      if (!sol.reachable) return null;
+      var pick = sol.solutions.filter(function (s) { return s.shoulder === "right" && s.elbow === "up"; })[0];
+      return pick ? [pick.th1, pick.th2, pick.th3] : [sol.solutions[0].th1, sol.solutions[0].th2, sol.solutions[0].th3];
+    }
+
+    function draw() {
+      var c = palette();
+      var qA = ik(P0), qB = ik(P1);
+      if (!qA || !qB) { readout.innerHTML = "<p class='lab-warn'>目标点不可达。</p>"; return; }
+
+      /* 关节空间：关节角线性插值 */
+      var qj = [0, 1, 2].map(function (i) { return qA[i] + state.t * (qB[i] - qA[i]); });
+      var pJoint = fk(qj).p;
+      /* 操作空间：沿直线取点，逐点逆解 */
+      var pTask = [0, 1, 2].map(function (i) { return P0[i] + state.t * (P1[i] - P0[i]); });
+      var qTask = ik(pTask);
+      var pTaskActual = qTask ? fk(qTask).p : pTask;
+
+      /* 轨迹：两种方案的完整路径 */
+      function pathOf(kind) {
+        var pts = [], i2;
+        for (i2 = 0; i2 <= 40; i2++) {
+          var t = i2 / 40;
+          if (kind === "joint") {
+            var q = [0, 1, 2].map(function (i) { return qA[i] + t * (qB[i] - qA[i]); });
+            pts.push(fk(q).p);
+          } else {
+            var p = [0, 1, 2].map(function (i) { return P0[i] + t * (P1[i] - P0[i]); });
+            var qq = ik(p);
+            if (qq) pts.push(fk(qq).p);
+          }
+        }
+        return pts;
+      }
+
+      view.grid(0.9, 0.18, 0, { color: c.line });
+      /* 理想直线（任务） */
+      view.path([P0, P1], { color: c.muted, width: 1.6, dash: [8, 5] });
+      view.sphere(P0, 0.028, { color: c.neutral });
+      view.sphere(P1, 0.028, { color: c.neutral });
+      view.label(P0, "起点", c.neutral, 8, 4);
+      view.label(P1, "终点", c.neutral, 8, 4);
+      /* 关节空间轨迹（弯曲） */
+      view.path(pathOf("joint"), { color: c.blue, width: 2 });
+      /* 操作空间轨迹（贴合直线） */
+      view.path(pathOf("task"), { color: c.red, width: 2 });
+      /* 当前末端 */
+      var cur = state.mode === "joint" ? pJoint : pTaskActual;
+      var curQ = state.mode === "joint" ? qj : qTask;
+      var fr = fk(curQ).frames;
+      drawChain(view, fr, { toolLen: 0.12, span: 1.2 });
+      view.sphere(cur, 0.032, { color: state.mode === "joint" ? c.blue : c.red });
+      /* 偏差：当前末端到直线的距离 */
+      var dvec = [P1[0] - P0[0], P1[1] - P0[1], P1[2] - P0[2]];
+      var L2 = kernel.dot(dvec, dvec);
+      var w = [cur[0] - P0[0], cur[1] - P0[1], cur[2] - P0[2]];
+      var s = kernel.dot(w, dvec) / L2;
+      var proj = [P0[0] + s * dvec[0], P0[1] + s * dvec[1], P0[2] + s * dvec[2]];
+      var dev = kernel.len(kernel.subv(cur, proj));
+      view.line(cur, proj, { color: c.purple, width: 1.8, dash: [4, 3] });
+      if (dev > 0.004) view.label(proj, "偏差 " + (dev * 1000).toFixed(1) + " mm", c.purple, 8, -6);
+
+      view.render(null);
+
+      /* 两种方案的最大偏差 */
+      var maxJoint = 0, maxTask = 0, i3;
+      for (i3 = 0; i3 <= 40; i3++) {
+        var tt = i3 / 40;
+        var qq = [0, 1, 2].map(function (i) { return qA[i] + tt * (qB[i] - qA[i]); });
+        var pj = fk(qq).p;
+        var pp = [0, 1, 2].map(function (i) { return P0[i] + tt * (P1[i] - P0[i]); });
+        var qt = ik(pp);
+        var pt = qt ? fk(qt).p : pp;
+        maxJoint = Math.max(maxJoint, kernel.len(kernel.subv(pj, pp)));
+        maxTask = Math.max(maxTask, kernel.len(kernel.subv(pt, pp)));
+      }
+
+      var html = "<p><b>当前方案</b>：" + (state.mode === "joint" ? "关节空间控制（各关节各自插值）" : "操作空间控制（逐点逆雅可比反解）") +
+        "；末端到任务直线的偏差 <b>" + (dev * 1000).toFixed(1) + " mm</b>。</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>方案</th><th>全程最大偏差</th><th>原因</th></tr></thead><tbody>" +
+        "<tr><td>关节空间</td><td>" + (maxJoint * 1000).toFixed(1) + " mm</td><td>各关节运动不成比例，末端在笛卡尔空间走成弧线</td></tr>" +
+        "<tr><td>操作空间</td><td>" + (maxTask * 1000).toFixed(1) + " mm</td><td>逐点反解 + 逆雅可比修正，误差只来自离散与奇点附近</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>这就是 7.1.4 的对照在空间上的样子：**任务提在操作空间，控制动作却落在关节空间**（7.1.4）。" +
+        "关节空间控制不需要逆运动学、实时性好，代价是<b>笛卡尔直线任务走不成直线</b>；操作空间控制（7.4.3）先用逆雅可比把笛卡尔增量翻译成关节增量，" +
+        "再交给内层的关节控制执行，末端才真正贴着直线走——但它需要逆雅可比，在<b>奇点附近不可用</b>（7.4.3.2 会讲转置雅可比的替代）。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -2995,7 +3133,8 @@
     drive3d: labDrive3D,
     motor3d: labMotor3D,
     sensor3d: labSensor3D,
-    hyd3d: labHyd3D
+    hyd3d: labHyd3D,
+    ctrl3d: labCtrl3D
   };
 
   function boot() {
