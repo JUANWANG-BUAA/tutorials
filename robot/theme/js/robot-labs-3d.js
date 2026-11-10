@@ -2537,6 +2537,152 @@
     return draw;
   }
 
+  /* ================= 实验：motor3d · 伺服电机的内部结构（ch05 §5.1.2） ================= */
+
+  function labMotor3D(host) {
+    var state = { mode: "brushed", theta: 0, cut: true };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "伺服电机里面长什么样：换向器为什么必须转"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "两台电机剖开来对比。**永磁直流（有刷）**：磁极固定在定子上，电枢绕组在转子上，靠**换向器 + 电刷**机械换向——拖动转子，看**换向器跟着转、电刷固定不动**。**无刷直流**：永磁体搬到转子上，定子是多相绕组，轴上加**位置传感器**，由电子模块按转子位置依次给相绕组通电——**没有换向器，也没有电刷**。两者的「换向装置」位置正好互换，这是 5.1.2 的关键对照。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "类型", [{ value: "brushed", text: "永磁直流（有刷）" }, { value: "brushless", text: "无刷直流（BLDC）" }], "brushed",
+      function (v) { state.mode = v; draw(); });
+    slider(controls, "转子转角", -180, 180, 1, state.theta, function (v) { state.theta = v; draw(); },
+      function (v) { return v.toFixed(0) + "°"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "伺服电机剖面：定子、转子、换向器与电刷");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.62, { span: 0.92, center: [0, 0, 0], az: -42, elv: 24 });
+    view.onChange = function () { draw(); };
+
+    /* 以 z 为轴的电机剖面：外壳半径 R，转子半径 r */
+    function shell(v, z0, z1, R, color, seg, gapFrom, gapTo) {
+      var i, ang, a0 = gapFrom || 0, a1 = gapTo === undefined ? 2 * Math.PI : gapTo;
+      var N = seg || 18;
+      for (i = 0; i < N; i++) {
+        var t0 = a0 + (a1 - a0) * i / N, t1 = a0 + (a1 - a0) * (i + 1) / N;
+        var p1 = [R * Math.cos(t0), R * Math.sin(t0), z0];
+        var p2 = [R * Math.cos(t1), R * Math.sin(t1), z0];
+        var p3 = [p2[0], p2[1], z1];
+        var p4 = [p1[0], p1[1], z1];
+        v.poly([p1, p2, p3, p4], { color: color, both: true });
+      }
+    }
+    function disc(v, z, R, color, seg) {
+      var pts = [], i;
+      for (i = 0; i < (seg || 18); i++) {
+        var a = 2 * Math.PI * i / (seg || 18);
+        pts.push([R * Math.cos(a), R * Math.sin(a), z]);
+      }
+      v.poly(pts, { color: color });
+    }
+
+    function draw() {
+      var c = palette();
+      var th = state.theta * Math.PI / 180;
+      var R = 0.26, r = 0.15, L = 0.34;
+      var cut = state.cut;
+
+      view.grid(0.42, 0.14, -0.34, { color: c.line });
+      /* 外壳（剖开：只画 2/3，留缺口露出内部） */
+      shell(view, -L / 2, L / 2, R, c.neutral, 16, cut ? -Math.PI * 0.35 : 0, cut ? Math.PI * 1.05 : 2 * Math.PI);
+
+      if (state.mode === "brushed") {
+        /* 永磁体（定子磁极）：两段弧 */
+        shell(view, -L / 2 + 0.03, L / 2 - 0.03, r * 0.98, c.purple, 10, Math.PI * 0.18, Math.PI * 0.82);
+        shell(view, -L / 2 + 0.03, L / 2 - 0.03, r * 0.98, c.purple, 10, Math.PI * 1.18, Math.PI * 1.82);
+        /* 电枢（转子 + 绕组） */
+        view.cyl([0, 0, -L / 2 + 0.02], [0, 0, L / 2 - 0.02], r * 0.6, { color: c.blue, seg: 14 });
+        for (var i = 0; i < 6; i++) {
+          var a = th + i * Math.PI / 3;
+          var px = r * 0.82 * Math.cos(a), py = r * 0.82 * Math.sin(a);
+          view.box([px, py, 0], [0.028, 0.028, L / 2 - 0.08],
+            [[Math.cos(a), -Math.sin(a), 0], [Math.sin(a), Math.cos(a), 0], [0, 0, 1]], { color: c.gold });
+        }
+        /* 换向器：轴上分段圆柱，随转子转 */
+        var segs = 6;
+        for (i = 0; i < segs; i++) {
+          var a0 = th + i * 2 * Math.PI / segs, a1 = th + (i + 1) * 2 * Math.PI / segs;
+          var pts = [];
+          for (var j = 0; j <= 3; j++) {
+            var aa = a0 + (a1 - a0) * j / 3;
+            pts.push([r * 0.5 * Math.cos(aa), r * 0.5 * Math.sin(aa), -L / 2 + 0.02]);
+          }
+          for (j = 3; j >= 0; j--) {
+            var ab = a0 + (a1 - a0) * j / 3;
+            pts.push([r * 0.5 * Math.cos(ab), r * 0.5 * Math.sin(ab), -L / 2 + 0.09]);
+          }
+          view.poly(pts, { color: i % 2 ? c.green : c.red, both: true });
+        }
+        /* 电刷：固定，压在换向器上 */
+        view.box([0, r * 0.62, -L / 2 + 0.055], [0.035, 0.03, 0.045], kernel.Tid().R, { color: c.ink2 });
+        view.box([0, -r * 0.62, -L / 2 + 0.055], [0.035, 0.03, 0.045], kernel.Tid().R, { color: c.ink2 });
+        view.label([0, r * 0.62, -L / 2 + 0.12], "电刷（固定）", c.ink2, 10, 4);
+        view.label([0, -r * 0.62, -L / 2 + 0.12], "电刷（固定）", c.ink2, 10, 4);
+        view.label([0, 0, L / 2 + 0.03], "换向器（随转子转）", c.green, 10, 2);
+        view.label([0, r * 0.98, 0], "永磁体（定子）", c.purple, 12, 0);
+        view.label([0, 0, -L / 2 - 0.06], "转子电枢绕组（随转子转）", c.gold, -70, 8);
+      } else {
+        /* 无刷：永磁转子（3 极）+ 多相定子绕组 + 位置传感器 + 静态整流器 */
+        var pole = 0.11;
+        for (i = 0; i < 3; i++) {
+          var ap = th + i * 2 * Math.PI / 3;
+          var p1 = [pole * Math.cos(ap), pole * Math.sin(ap), -L / 2 + 0.03];
+          var p2 = [pole * Math.cos(ap + 0.5), pole * Math.sin(ap + 0.5), -L / 2 + 0.03];
+          var p3 = [p2[0], p2[1], L / 2 - 0.03];
+          var p4 = [p1[0], p1[1], L / 2 - 0.03];
+          view.poly([p1, p2, p3, p4], { color: i === 1 ? c.red : c.purple, both: true });
+        }
+        view.cyl([0, 0, -L / 2 + 0.05], [0, 0, L / 2 - 0.05], pole * 0.55, { color: c.blue, seg: 12 });
+        /* 三相定子绕组（6 个线圈块） */
+        var phases = ["A", "B", "C"], phaseCol = [c.blue, c.green, c.gold];
+        for (i = 0; i < 6; i++) {
+          var ag = i * Math.PI / 3 + Math.PI / 6;
+          var ph = Math.floor(i / 2) % 3;
+          view.box([r * 0.86 * Math.cos(ag), r * 0.86 * Math.sin(ag), 0], [0.032, 0.032, L / 2 - 0.1],
+            [[Math.cos(ag), -Math.sin(ag), 0], [Math.sin(ag), Math.cos(ag), 0], [0, 0, 1]], { color: phaseCol[ph] });
+        }
+        /* 轴上位置传感器 */
+        view.box([0, 0, L / 2 + 0.05], [0.05, 0.05, 0.025], kernel.Tid().R, { color: c.gold });
+        view.label([0, 0, L / 2 + 0.1], "位置传感器（轴上）", c.gold, 12, 2);
+        /* 静态整流器 */
+        view.box([0.42, 0, -0.18], [0.1, 0.07, 0.05], kernel.Tid().R, { color: c.ink2 });
+        view.label([0.42, 0, -0.26], "静态整流器 / 电子模块", c.ink2, -40, 4);
+        phases.forEach(function (nm, k) {
+          view.line([0.34, 0, -0.18], [r * 0.86 * Math.cos(k * 2 * Math.PI / 3 + Math.PI / 6), r * 0.86 * Math.sin(k * 2 * Math.PI / 3 + Math.PI / 6), 0],
+            { color: phaseCol[k], width: 1.4 });
+        });
+        view.label([0, r * 0.98, 0], "多相定子绕组", c.ink2, 12, 0);
+        view.label([0, 0, -L / 2 - 0.06], "永磁转子（随转子转）", c.purple, -70, 8);
+      }
+
+      view.render(null);
+
+      var html = state.mode === "brushed"
+        ? "<p><b>永磁直流（有刷）</b>：① <b>定子</b>由永磁体（铁磁陶瓷或稀土）产生磁通量；② <b>电枢</b>是绕在旋转磁心上的通电绕组；③ <b>换向器</b>按转子运动决定换向逻辑，并通过<b>电刷</b>给旋转的电枢线圈供电。</p>" +
+          "<p class='lab-note'>拖转子时注意：<b>换向器与电枢一起转，电刷固定不动</b>——机械换向就发生在这个错位里：线圈转到某个位置时，换向器把它的接点反接到另一极，于是力矩方向自动跟着反转，不用外部开关。<b>代价</b>是电刷与换向器的接触压降（电损耗）、摩擦发热与磨损、以及换向器限制的转速上限。</p>"
+        : "<p><b>无刷直流（BLDC）</b>：① <b>永磁转子</b>；② <b>多相定子绕组</b>；③ <b>静态整流器</b>——根据轴上位置传感器的信号，按转子位置生成各相绕组的馈入序列。</p>" +
+          "<p class='lab-note'>换相原理：先由位置传感器找到<b>与磁场正交的线圈</b>，磁场作用其上使转子转动；转子转过之后，电子模块让磁场依次与各相定子绕组作用，<b>电枢磁场始终与定子磁场正交</b>——与有刷电机里「电刷位于激磁磁场 π/2 角处」的工作方式相似。好处是定转子功能互换带来的四条：散热更好（绕组在定子上）、转子紧凑（无绕组，可用稀土永磁）、<b>转动惯量更小</b>（呼应六条要求第 1 条）、无电刷磨损与电损耗。</p>";
+      html += "<p class='lab-note'><b>一句话对照</b>：有刷电机里的<b>电刷 + 换向器</b>，与无刷电机里的<b>位置传感器 + 电子控制模块</b>，所起的作用是类似的——一个用机械方式换向，一个用电子方式换向。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -2564,7 +2710,8 @@
     cart3d: labCart3D,
     dyn3d: labDyn3D,
     chassis3d: labChassis3D,
-    drive3d: labDrive3D
+    drive3d: labDrive3D,
+    motor3d: labMotor3D
   };
 
   function boot() {
