@@ -2683,6 +2683,130 @@
     return draw;
   }
 
+  /* ================= 实验：sensor3d · 传感器装在哪、怎么测（ch05 §5.3 / §5.4） ================= */
+
+  function labSensor3D(host) {
+    var state = { mode: "where", show: { enc: true, tach: true, strain: true, force: true, dist: true, cam: true } };
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "传感器：装在哪儿，测的是什么"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "模式①把传感器摆到机械臂的真实位置：<b>本体传感器</b>测关节内部的三个量——位置（编码器，装在关节电机轴上）、速度（测速反馈）、力矩（关节应变片）；<b>外部传感器</b>测与环境的交互——腕力传感器在腕部、距离传感器（超声/激光）在腕部朝外、视觉相机在腕部或头部。模式②把关节剖开，看**增量式编码器**怎么把角位置变成数字：码盘随轴转、遮光槽让光电开关输出脉冲。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "模式", [{ value: "where", text: "① 传感器装在哪" }, { value: "encoder", text: "② 编码器怎么测角" }], "where",
+      function (v) { state.mode = v; draw(); });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "机器人上的传感器布置与编码器结构");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0, 0.28], az: -36, elv: 19 });
+    view.onChange = function () { draw(); };
+
+    /* 增量式编码器：码盘（带 N 条遮光槽）+ 光电开关 */
+    function encoder(v, z0, z1, N) {
+      var c = palette();
+      var R = 0.16;
+      /* 码盘 */
+      v.cyl([0, 0, z0], [0, 0, z0 + 0.02], R, { color: c.neutral, seg: 18 });
+      var i, j;
+      for (i = 0; i < N; i++) {
+        var a0 = 2 * Math.PI * i / N, a1 = 2 * Math.PI * (i + 0.55) / N;
+        var pts = [];
+        for (j = 0; j <= 3; j++) {
+          var aa = a0 + (a1 - a0) * j / 3;
+          pts.push([R * Math.cos(aa), R * Math.sin(aa), z0 + 0.02]);
+        }
+        for (j = 3; j >= 0; j--) {
+          var ab = a0 + (a1 - a0) * j / 3;
+          pts.push([R * Math.cos(ab), R * Math.sin(ab), z0 - 0.015]);
+        }
+        v.poly(pts, { color: c.ink2, both: true });
+      }
+      /* 两只光电开关（固定） */
+      [-1, 1].forEach(function (sgn) {
+        var y = sgn * (R + 0.05);
+        v.box([0, y, z0 + 0.002], [0.03, 0.022, 0.028], kernel.Tid().R, { color: c.gold });
+        v.line([0, y, z0 + 0.002], [0, sgn * R * 0.99, z0 + 0.002], { color: c.gold, width: 1.2, dash: [3, 3] });
+      });
+      /* 电机轴 */
+      v.cyl([0, 0, z0 - 0.09], [0, 0, z1], 0.035, { color: c.blue, seg: 12 });
+    }
+
+    function draw() {
+      var c = palette();
+      if (state.mode === "encoder") {
+        view.grid(0.4, 0.08, -0.34, { color: c.line });
+        encoder(view, -0.05, 0.34, 16);
+        view.label([0, 0.22, -0.05], "码盘（随轴转，16 条槽）", c.ink2, 12, 2);
+        view.label([0.06, 0.21, -0.05], "光电开关（固定）", c.gold, 10, 4);
+        view.label([0, -0.1, -0.14], "电机轴（被测转角）", c.blue, 12, 2);
+        view.render(null);
+        readout.innerHTML = "<p><b>增量式编码器</b>：码盘固定在电机轴上，盘上开 N 条等距遮光槽；两只<b>光电开关</b>固定在机壳上，对准槽区。" +
+          "轴每转过一个槽距，开关输出一个脉冲——<b>数脉冲的个数就知道转了多少</b>，再由两路信号的先后关系定出方向。这就是「角位置 → 数字」的空间实现。</p>" +
+          "<p class='lab-note'>分辨率 = 360°/N（16 槽即 22.5°/脉冲，实际靠细分到 1/1000 rad 量级）。" +
+          "代价是<b>必须知道初始位置</b>（上电找零），而绝对式编码器（磁式/光电式）直接读出绝对位置、无需归零。</p>";
+        return;
+      }
+
+      /* 模式①：传感器布置 */
+      view.grid(0.85, 0.17, 0, { color: c.line });
+      /* 机械臂本体（拟人臂三自由度） */
+      var J1 = [0, 0, 0.18], J2 = [0.42, 0, 0.62], W = [0.78, 0, 0.5];
+      view.cyl([0, 0, 0], J1, 0.06, { color: c.neutral, seg: 10 });
+      view.cyl(J1, J2, 0.045, { color: c.blue });
+      view.cyl(J2, W, 0.04, { color: c.blue });
+      view.sphere(J1, 0.06, { color: c.green });
+      view.sphere(J2, 0.05, { color: c.green });
+      /* 腕与末端 */
+      view.box(W, [0.05, 0.05, 0.05], kernel.Tid().R, { color: c.gold });
+      view.cyl([W[0] + 0.05, 0, W[2]], [W[0] + 0.16, 0, W[2]], 0.018, { color: c.neutral, seg: 8 });
+
+      function mark(p, name, color, offset) {
+        view.sphere(p, 0.032, { color: color });
+        view.label(p, name, color, offset ? offset[0] : 10, offset ? offset[1] : -4);
+        view.line(p, kernel.addv(p, [0, 0, 0.09]), { color: color, width: 1, dash: [3, 3] });
+      }
+      if (state.show.enc) mark([J2[0] - 0.12, 0, J2[2] - 0.07], "编码器（位置）", c.purple, [-70, 10]);
+      if (state.show.tach) mark([J2[0] - 0.2, 0, J2[2] - 0.11], "测速（速度）", c.blue, [-70, 26]);
+      if (state.show.strain) mark([J1[0] + 0.18, 0, J1[2] + 0.05], "应变片（力矩）", c.green, [8, -10]);
+      if (state.show.force) mark([W[0] + 0.1, 0, W[2]], "腕力传感器", c.red, [10, 6]);
+      if (state.show.dist) mark([W[0] + 0.16, 0.02, W[2] + 0.05], "距离（超声/激光）", c.gold, [10, -10]);
+      if (state.show.cam) mark([W[0] + 0.02, 0.08, W[2] + 0.12], "视觉相机", c.neutral, [10, -12]);
+      /* 视场锥（视觉/距离） */
+      view.arc([W[0] + 0.17, 0, W[2]], [0, 1, 0], [1, 0, 0], 0.12, -0.5, 0.5, { color: c.gold, width: 1.2, dash: [4, 3] });
+      view.path([
+        [W[0] + 0.17, 0, W[2]], [W[0] + 0.55, -0.16, W[2] + 0.1], [W[0] + 0.55, 0.16, W[2] + 0.1], [W[0] + 0.17, 0, W[2]]
+      ], { color: c.gold, width: 1.1, dash: [4, 3] });
+
+      view.render(null);
+
+      var html = "<p><b>本体传感器</b>（测关节内部的三个状态量）与<b>外部传感器</b>（测与环境交互）装在完全不同的位置：</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>传感器</th><th>装在哪</th><th>测什么</th></tr></thead><tbody>" +
+        "<tr><td>编码器 / 旋转变压器</td><td>关节电机轴上</td><td>关节位置（外环反馈，最常用）</td></tr>" +
+        "<tr><td>测速反馈</td><td>电机侧</td><td>关节速度（内环反馈，也可由编码器微分间接得到）</td></tr>" +
+        "<tr><td>应变片</td><td>关节/连杆根部</td><td>关节力矩</td></tr>" +
+        "<tr><td>腕力传感器</td><td>腕部（外链与末端之间）</td><td>3 力分量 + 3 力矩分量（六维）</td></tr>" +
+        "<tr><td>距离传感器</td><td>腕部朝外</td><td>障碍物距离（超声传播时间 / 激光三角测量）</td></tr>" +
+        "<tr><td>视觉传感器</td><td>腕部或头部</td><td>目标特征（CCD 积分转移 / CMOS 每像素放大）</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>位置、速度、力矩是<b>三个</b>量——「有了编码器就不需要别的传感器」是常见误解；而速度还有两条测法：直接测（测速反馈）与间接测（编码器角位置对时间微分），精度与带宽各有权衡。外部传感器的共同点是<b>与环境交互</b>，且不一定装在机器人本体上（也可以装在空间里）。</p>";
+      readout.innerHTML = html;
+      return;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -2711,7 +2835,8 @@
     dyn3d: labDyn3D,
     chassis3d: labChassis3D,
     drive3d: labDrive3D,
-    motor3d: labMotor3D
+    motor3d: labMotor3D,
+    sensor3d: labSensor3D
   };
 
   function boot() {
