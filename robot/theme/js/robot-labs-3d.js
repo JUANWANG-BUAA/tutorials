@@ -75,7 +75,7 @@
       .replace(/\^([A-Za-z0-9])/g, function (_, ch) { return SUP[ch] || ("^" + ch); });
   }
   function texLite(s) {
-    return String(s).replace(/[$]([^$]+)[$]/g, function (_, inner) { return texInline(inner); });
+    return String(s).replace(/[]([^]+)[$]/g, function (_, inner) { return texInline(inner); });
   }
 
   function el(tag, cls, text) {
@@ -2380,6 +2380,163 @@
     return draw;
   }
 
+  /* ================= 实验：drive3d · 三种传动装置（ch05 §5.1.1.2 / §5.2.3） ================= */
+
+  function labDrive3D(host) {
+    var state = { mode: "gear", theta: 0, kr: 10, lead: 0.02, rIn: 0.12, rOut: 0.3 };
+    var RAD = 2 * Math.PI;
+
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "三种传动装置：旋转怎么变成另一样东西"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "拖「输入转角」看传动结果。**齿轮副**：小齿轮（电机）带大齿轮（关节），<b>转向相反</b>、转速按半径比缩小；**滚珠丝杠**：转动变成沿轴的<b>平移</b>，位移 = 转角 × 导程 / 2π；**同步带**：两轮靠带传动，同样是旋转→旋转，但可把电机<b>远置</b>。下方给出 5.2.3 的三个折算因子：转速 ×k_r、力矩 ÷k_r、惯量 ÷k_r²。"));
+
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    toggleGroup(controls, "装置", [
+      { value: "gear", text: "圆柱齿轮副" },
+      { value: "screw", text: "滚珠丝杠" },
+      { value: "belt", text: "同步带" }
+    ], "gear", function (v) { state.mode = v; draw(); });
+    slider(controls, "输入转角 θ_m", -180, 180, 1, state.theta, function (v) { state.theta = v; draw(); },
+      function (v) { return v.toFixed(0) + "°"; });
+    slider(controls, "减速比 k_r", 2, 100, 1, state.kr, function (v) { state.kr = v; draw(); },
+      function (v) { return v.toFixed(0); });
+    slider(controls, "导程 l（丝杠）", 0.005, 0.05, 0.001, state.lead, function (v) { state.lead = v; draw(); },
+      function (v) { return (v * 1000).toFixed(0) + " mm"; });
+
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "齿轮副、滚珠丝杠与同步带的三维演示");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    host.appendChild(readout);
+
+    var view = makeView(canvas, 0.58, { span: 1.25, center: [0, 0, 0], az: -36, elv: 24 });
+    view.onChange = function () { draw(); };
+
+    /* 齿轮：齿数随半径，齿沿圆周分布 */
+    function gear(v, center, r, teeth, angle, color, axis) {
+      var rot = kernel.rotAxis(axis, angle);
+      var toothH = r * 0.16, toothW = r * 0.13;
+      for (var i = 0; i < teeth; i++) {
+        var a = 2 * Math.PI * i / teeth + angle;
+        var dir = [Math.cos(a), Math.sin(a), 0];
+        var tip = kernel.addv(center, kernel.sclv(dir, r + toothH * 0.5));
+        var R = [[rot[0][0], rot[1][0], rot[2][0]], [rot[0][1], rot[1][1], rot[2][1]], [rot[0][2], rot[1][2], rot[2][2]]];
+        var local = [r + toothH * 0.2, 0, 0];
+        var off = kernel.Trot({ R: R, p: [0, 0, 0] }, local);
+        var p = kernel.addv(center, off);
+        view.box(p, [toothH * 0.5, toothW * 0.5, r * 0.7], R, { color: color });
+      }
+      view.cyl(kernel.addv(center, kernel.sclv(axis, -r * 0.55)), kernel.addv(center, kernel.sclv(axis, r * 0.55)), r * 0.82,
+        { color: color, seg: 20 });
+    }
+
+    function draw() {
+      var c = palette();
+      view.grid(0.7, 0.14, -0.28, { color: c.line });
+      var th = state.theta * Math.PI / 180;
+      var kr = state.kr;
+      var outTh = th / kr;
+      var html = "";
+
+      if (state.mode === "gear") {
+        /* 小齿轮（电机）在左，大齿轮（关节）在右，轴平行于 z */
+        var rM = 0.11, rJ = rM * kr;
+        var rm = Math.min(0.16, rM), rj = Math.min(0.26, rM * Math.min(kr, 12) / 6);
+        var cM = [-rj - rm - 0.03, 0, 0], cJ = [0, 0, 0];
+        /* 轴线 */
+        view.cyl(kernel.addv(cM, [0, 0, -0.3]), kernel.addv(cM, [0, 0, 0.16]), 0.022, { color: c.muted, seg: 8 });
+        view.cyl(kernel.addv(cJ, [0, 0, -0.3]), kernel.addv(cJ, [0, 0, 0.16]), 0.022, { color: c.muted, seg: 8 });
+        gear(view, cM, rm, Math.max(8, Math.round(rm * 60)), th, c.blue, [0, 0, 1]);
+        gear(view, cJ, rj, Math.max(10, Math.round(rj * 60)), -outTh, c.gold, [0, 0, 1]);
+        /* 啮合点标记 */
+        view.sphere([cJ[0] - rj, cJ[1], cJ[2]], 0.02, { color: c.red });
+        view.label(cM, "电机小齿轮 r_m", c.blue, -46, 16);
+        view.label(cJ, "关节大齿轮 r", c.gold, 12, -8);
+        html += "<p><b>齿轮副</b>：旋转 → 旋转，<b>转向相反</b>（外啮合）；转速比 = 半径比 = 齿数比。</p>";
+        html += "<p class='lab-note'>减速比 kᵣ=r/rₘ=" + kr + "：关节转 " + (outTh * 180 / Math.PI).toFixed(1) +
+          "°，电机转 " + state.theta.toFixed(0) + "°。<b>力矩按 1/k_r 放大、惯量按 1/k_r² 缩小</b>（5.2.3）。" +
+          (kr >= 20 ? "大减速比还让<b>非线性耦合项相对线性化</b>——这正是 5.2.3 的结论。" : "减速比还小，负载的非线性项在电机端仍占相当比重。") + "</p>";
+      } else if (state.mode === "screw") {
+        /* 丝杠轴沿 x，螺母沿轴移动 */
+        var L = 0.62;
+        view.cyl([-L / 2, 0, 0], [L / 2, 0, 0], 0.05, { color: c.neutral, seg: 16 });
+        /* 螺旋线 */
+        var turns = 7, pts = [], i;
+        for (i = 0; i <= turns * 24; i++) {
+          var f = i / (turns * 24);
+          var a = f * turns * RAD + th;
+          pts.push([-L / 2 + f * L, 0.065 * Math.cos(a), 0.065 * Math.sin(a)]);
+        }
+        view.path(pts, { color: c.gold, width: 1.8 });
+        /* 滚珠 */
+        for (i = 0; i < 6; i++) {
+          var fb = (i + 0.5) / 6;
+          var ab = fb * turns * RAD + th;
+          view.sphere([-L / 2 + fb * L, 0.065 * Math.cos(ab), 0.065 * Math.sin(ab)], 0.018, { color: c.blue });
+        }
+        /* 螺母 */
+        var disp = th * state.lead / RAD;
+        var xN = Math.max(-L / 2 + 0.05, Math.min(L / 2 - 0.05, disp));
+        view.box([xN, 0, 0], [0.05, 0.11, 0.11], kernel.Tid().R, { color: c.green });
+        view.label([xN, 0.14, 0], "螺母（移动关节）", c.green, 10, 4);
+        view.label([L / 2, 0, 0], "丝杠（固定）", c.neutral, -30, 18);
+        html += "<p><b>滚珠丝杠</b>：旋转 → <b>平移</b>，用于移动关节（棱柱关节）。</p>";
+        html += "<p class='lab-note'>导程 l=" + (state.lead * 1000).toFixed(0) + " mm/圈 ⇒ 电机转 " + state.theta.toFixed(0) +
+          "° 时螺母移动 " + (disp * 1000).toFixed(1) + " mm（= 转角 × 导程 / 2π）。" +
+          "滚珠把滑动摩擦变成滚动摩擦，**刚度高、间隙小**——代价是结构复杂、成本高。</p>";
+      } else {
+        /* 同步带：两轮 + 带 */
+        var r1 = 0.1, r2 = 0.2, d = 0.52;
+        var c1 = [-d / 2, 0, 0], c2 = [d / 2, 0, 0];
+        view.cyl(kernel.addv(c1, [0, 0, -0.05]), kernel.addv(c1, [0, 0, 0.05]), r1, { color: c.blue, seg: 16 });
+        view.cyl(kernel.addv(c2, [0, 0, -0.05]), kernel.addv(c2, [0, 0, 0.05]), r2, { color: c.gold, seg: 16 });
+        /* 带：两条外公切线 + 两段包角弧 */
+        var ang = Math.asin((r2 - r1) / d);
+        var u1 = [Math.cos(Math.PI / 2 + ang), Math.sin(Math.PI / 2 + ang), 0];
+        var u2 = [Math.cos(-Math.PI / 2 - ang), Math.sin(-Math.PI / 2 - ang), 0];
+        view.line(kernel.addv(c1, kernel.sclv(u1, r1)), kernel.addv(c2, kernel.sclv(u1, r2)), { color: c.red, width: 3 });
+        view.line(kernel.addv(c1, kernel.sclv(u2, r1)), kernel.addv(c2, kernel.sclv(u2, r2)), { color: c.red, width: 3 });
+        view.arc(c1, [0, 0, 1], [Math.cos(Math.PI / 2 + ang), Math.sin(Math.PI / 2 + ang), 0], r1,
+          Math.PI / 2 + ang, -Math.PI / 2 - ang, { color: c.red, width: 3 });
+        view.arc(c2, [0, 0, 1], [Math.cos(-Math.PI / 2 - ang), Math.sin(-Math.PI / 2 - ang), 0], r2,
+          -Math.PI / 2 - ang, Math.PI / 2 + ang, { color: c.red, width: 3 });
+        /* 轮上的辐条标出转动 */
+        for (var i = 0; i < 4; i++) {
+          var a1 = th + i * Math.PI / 2;
+          view.line(c1, kernel.addv(c1, [Math.cos(a1) * r1 * 0.9, Math.sin(a1) * r1 * 0.9, 0.06]), { color: c.blue, width: 1.4 });
+          var a2 = -outTh + i * Math.PI / 2;
+          view.line(c2, kernel.addv(c2, [Math.cos(a2) * r2 * 0.9, Math.sin(a2) * r2 * 0.9, 0.06]), { color: c.gold, width: 1.4 });
+        }
+        view.label(c1, "主动轮（电机）", c.blue, -46, 14);
+        view.label(c2, "从动轮（关节）", c.gold, 12, -8);
+        html += "<p><b>同步带</b>：旋转 → 旋转，<b>同向</b>；作用是<b>把电机远置</b>（远离关节，减小惯量与结构约束）。</p>";
+        html += "<p class='lab-note'>带速相等 ⇒ R₁ω₁=R₂ω₂，从动轮转速按半径比缩放。" +
+          "带轻（高速低矩），但橡胶带<b>力矩太大就变形</b>；正时链是钢的、能扛大力矩，但重、高速会颤动——" +
+          "<b>要快要轻用带，要重耐操用链</b>（5.1.1.2）。</p>";
+      }
+
+      view.render(null);
+
+      html += "<table class='lab-matrix'><thead><tr><th>量</th><th>折算关系</th><th>k_r = " + kr + " 时</th></tr></thead><tbody>" +
+        "<tr><td>关节转速</td><td>÷ k_r</td><td>" + (1 / kr).toFixed(4) + " 倍</td></tr>" +
+        "<tr><td>关节力矩</td><td>× k_r</td><td>" + kr + " 倍</td></tr>" +
+        "<tr><td>负载惯量（折到电机侧）</td><td>÷ k_r²</td><td>" + (1 / (kr * kr)).toExponential(2) + " 倍</td></tr>" +
+        "</tbody></table>";
+      html += "<p class='lab-note'>这三行就是 5.2.3 的核心：<b>大减速比让电机侧的惯量与黏滞摩擦按 1/k_r² 缩小，负载力矩按 1/k_r 减小</b>。" +
+        "同一条曲线的另一面：直驱虽然省掉了传动装置的间隙与弹性，却<b>省不掉这些折算</b>——电机得直接扛负载惯量。</p>";
+      readout.innerHTML = html;
+    }
+
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   /* ================= 主题 / 纸张配色变化 → 全部重绘（与 robot-labs.js 同一套） ================= */
 
   var redraws = [];
@@ -2406,7 +2563,8 @@
     sing3d: labSing3D,
     cart3d: labCart3D,
     dyn3d: labDyn3D,
-    chassis3d: labChassis3D
+    chassis3d: labChassis3D,
+    drive3d: labDrive3D
   };
 
   function boot() {
