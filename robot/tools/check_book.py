@@ -14,7 +14,9 @@
   5. 行内 / 块级公式定界符配平；
   6. {#锚点}、<a id>、标题 slug 全书唯一；[@引用] 与站内链接（含 #锚点）可达；
   7. 相对路径图片存在；
-  8. 无 TODO / FIXME 占位符。
+  8. 无 TODO / FIXME 占位符；
+  9. 每个交互实验名（data-lab）都能在 theme/js/robot-labs*.js 的注册表里找到
+     ——防止实验容器静默渲染成空盒。
 
 锚点体系说明：本书锚点有三种来源——盒子标题的 {#name}、正文里手写的
 <a id="sec-x.y.z"></a>（mathbook 预处理器据其生成跳转目标）、以及 mdBook
@@ -46,6 +48,8 @@ MD_HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
 ALLOWED_BOX = {"def", "thm", "ex", "sol", "note", "think", "intuition",
                "method", "errata", "proof", "preview"}
 PLACEHOLDER = re.compile(r"\b(TODO|FIXME)\b")
+DATA_LAB = re.compile(r"\bdata-lab=[\"']([\w-]+)[\"']")
+REGISTRY = re.compile(r"registry\s*=\s*\{([^}]*)\}", re.S)
 EXCLUDE_H1 = ("SUMMARY.md",)
 
 
@@ -224,6 +228,22 @@ def main():
                 resolved = os.path.normpath(os.path.join(base, src))
                 if not os.path.exists(os.path.join(SRC, resolved)):
                     flag(rel, f"L{no}: 图片不存在：{src}")
+
+    # Pass 3: 交互实验名 ↔ JS 注册表 对应（两个运行时文件的 registry 并集）。
+    theme_dir = os.path.join(ROOT, "theme", "js")
+    registered: set[str] = set()
+    for js_name in sorted(os.listdir(theme_dir)):
+        if not re.match(r"robot-labs.*\.js$", js_name):
+            continue
+        with open(os.path.join(theme_dir, js_name), encoding="utf-8") as fh:
+            for reg_m in REGISTRY.finditer(fh.read()):
+                registered.update(re.findall(r"([\w-]+)\s*:", reg_m.group(1)))
+    for rel, lines in texts.items():
+        body, _ = split_fences(lines)
+        for no, line in body:
+            for m in DATA_LAB.finditer(line):
+                if m.group(1) not in registered:
+                    flag(rel, f"L{no}: data-lab=\"{m.group(1)}\" 无注册实现（空盒）")
 
     total = sum(len(v) for v in problems.values())
     if total == 0:

@@ -265,6 +265,17 @@ details.sol-box>summary::after{
 
 .lab-matrix-label{font-size:.86rem;color:var(--ink-2);vertical-align:middle}
 
+/* --- 3D 实验（robot-labs-3d.js）：轨道拖拽与矩阵悬停联动 --- */
+.lab canvas.lab-3d{cursor:grab;touch-action:none}
+
+.lab canvas.lab-3d:active{cursor:grabbing}
+
+.lab-matrix td[data-hl]{cursor:help;transition:background-color .12s}
+
+.lab-matrix td[data-hl]:hover{background:var(--accent-soft,var(--surface-soft));outline:1px solid var(--accent-strong)}
+
+.lab-hint{font-size:.8rem;color:var(--muted);margin:2px 0 0}
+
 @media (max-width:640px){
   .lab-ctl input[type=range]{width:110px}
   .lab{padding:var(--space-3)}
