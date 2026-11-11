@@ -127,38 +127,35 @@
 </defs>
 <g font-size="13.5" text-anchor="middle">
 <!-- 行1: 从位姿到速度 -->
-<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="200" x="10" y="18"></rect><text fill="var(--fig-blue)" x="110" y="43">位姿运动学 x=k(q)（第2编）</text>
+<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="200" x="10" y="18"></rect><text fill="var(--fig-blue)" x="110" y="43">正运动学 p(q)、R(q)（第2编）</text>
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="210" x="245" y="18"></rect><text fill="var(--fig-blue)" x="350" y="43">求导：v_e = J(q) q′</text>
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="200" x="490" y="18"></rect><text fill="var(--fig-blue)" x="590" y="43">旋转矩阵求导 R′ = S(ω)R</text>
-<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="190" x="720" y="18"></rect><text fill="var(--fig-blue)" x="815" y="43">逐列构造（绿框）</text>
+<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="190" x="720" y="18"></rect><text fill="var(--fig-blue)" x="815" y="43">逐列构造 J（3.1）</text>
 <!-- 行2: 结构的雅可比 -->
 <rect fill="color-mix(in srgb, var(--fig-gold) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-gold) 45%, transparent)" width="170" x="10" y="128"></rect><text fill="var(--fig-gold)" x="95" y="153">三连杆平面臂</text>
 <rect fill="color-mix(in srgb, var(--fig-gold) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-gold) 45%, transparent)" width="170" x="220" y="128"></rect><text fill="var(--fig-gold)" x="305" y="153">拟人臂</text>
 <rect fill="color-mix(in srgb, var(--fig-gold) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-gold) 45%, transparent)" width="170" x="430" y="128"></rect><text fill="var(--fig-gold)" x="515" y="153">斯坦福机械手</text>
 <rect fill="color-mix(in srgb, var(--fig-gold) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-gold) 45%, transparent)" width="250" x="640" y="128"></rect><text fill="var(--fig-gold)" x="765" y="153">全部从正运动学 T 读取</text>
-<!-- 行3: 两种病 -->
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="230" x="10" y="238"></rect><text fill="var(--fig-red, #c96a5a)" x="125" y="263">奇点 det J=0（3.3）</text>
+<!-- 行3: 任务条件与零空间 -->
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="230" x="10" y="238"></rect><text fill="var(--fig-red, #c96a5a)" x="125" y="263">奇点：任务秩下降（3.3）</text>
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="230" x="280" y="238"></rect><text fill="var(--fig-red, #c96a5a)" x="395" y="263">冗余 n&gt;r（3.4）</text>
-<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="250" x="550" y="238"></rect><text fill="var(--fig-green)" x="675" y="263">解耦判据 / 零空间 P=NNT</text>
-<!-- 行4: 三味药 + 对偶 -->
-<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="10" y="348"></rect><text fill="var(--fig-green)" x="110" y="373">J<tspan class="sp">−1</tspan>（方阵）</text>
-<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="240" y="348"></rect><text fill="var(--fig-green)" x="340" y="373">J† 伪逆（冗余）</text>
-<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="470" y="348"></rect><text fill="var(--fig-green)" x="570" y="373">J* 阻尼（奇点）</text>
+<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="250" x="550" y="238"></rect><text fill="var(--fig-green)" x="675" y="263">解耦 / 零空间投影（正交基）</text>
+<!-- 行4: 按条件和目标求逆速度；另列静力对偶 -->
+<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="10" y="348"></rect><text fill="var(--fig-green)" x="110" y="373">J<tspan class="sp">−1</tspan>（方阵满秩）</text>
+<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="240" y="348"></rect><text fill="var(--fig-green)" x="340" y="373">J† 最小范数/最小二乘</text>
+<rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="470" y="348"></rect><text fill="var(--fig-green)" x="570" y="373">J* 速度与残差权衡</text>
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="190" x="700" y="348"></rect><text fill="var(--fig-blue)" x="795" y="373">静力对偶 τ=J<tspan class="sp">T</tspan>F</text>
 </g>
 <g stroke="var(--muted)" stroke-width="1.4" fill="none" marker-end="url(#arr3)">
 <path d="M210,38 L245,38"></path><path d="M455,38 L490,38"></path><path d="M690,38 L720,38"></path>
-<path d="M815,58 L815,128" opacity="0"></path>
 <path d="M110,58 L95,128"></path><path d="M350,58 L305,128"></path><path d="M590,58 L515,128"></path>
-<path d="M95,168 L125,238"></path><path d="M515,168 L395,238"></path>
-<path d="M210,238 L395,238" opacity="0"></path>
-<path d="M125,278 L110,348"></path><path d="M395,278 L340,348"></path><path d="M395,278 L570,348"></path>
-<path d="M675,278 L795,348"></path>
+
 </g>
 <g font-size="12" fill="var(--muted)" text-anchor="middle">
 <text x="460" y="110">三种结构：同一台流水线</text>
-<text x="460" y="225">两种「不方阵」：退化与欠定</text>
-<text x="460" y="440">自上而下：先求导得 J，再按结构组装，然后治两种病，最后接上力</text>
+<text x="460" y="225">检查任务条件：奇异与冗余可以同时出现</text>
+<text x="340" y="322">逆速度求解：结合矩阵条件与求解目标选取（3.5）</text>
+<text x="460" y="440">先求导、组装 J，再判断任务与求解目标，最后建立静力对偶</text>
 </g>
 </svg>
 </figure>
@@ -167,8 +164,8 @@
 
 - **蓝（求导链）**：位姿运动学 → 微分运动学是本章全部内容的根；$\dot R=S(\omega)R$ 是把「姿态随时间变」翻译成「角速度」的关键一步（[@thm-3.1.A]）。
 - **金（结构）**：三种结构共用一台流水线，且所有中间量都来自第 2 编的 $T_i^0$——**第 2 编打得牢，第 3 编才算得顺**。
-- **红（两种病）**：奇点是「秩亏」（列不够用）、冗余是「欠定」（列太多）——一左一右两个方向的病。
-- **绿（三味药）**：$J^{-1}$ / $J^\dagger$ / $J^*$ 按方阵满秩 / 长方形 / 退化对号；**静力对偶**（蓝框）是收束：$J$ 转置后把力接回关节。
+- **红（任务条件）**：奇点指当前任务秩低于最大可达秩；冗余比较关节数与任务维数。冗余机械手也可能处在奇点，两者并非互斥。
+- **绿（逆速度求解）**：普通逆要求方阵满秩；一般伪逆给最小范数的最小二乘解，可行时精确满足任务；DLS以任务残差与关节速度代价作权衡。右伪逆闭式还要求行满秩，见[§3.5](ch03/sec3-5.md)。**静力对偶**（蓝框）则用转置将末端力映回关节。
 
 
 ## 第四编 · 轨迹规划：让机器人按你要的方式动
