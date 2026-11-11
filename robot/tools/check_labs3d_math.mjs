@@ -685,6 +685,22 @@ for (const [t1, t2, d3] of [[0.4, 0.7, 0.8], [0, -0.5, 0.6]]) {
   check("发布练习 R/P 混合链 T₂⁰", closeMatrix(K.Tmatrix(mixed[2].T), [[1, 0, 0, 0.5], [0, 1, 0, 1], [0, 0, 1, 0.5], [0, 0, 0, 1]]));
 }
 
+/* --- §3.3: output-space ellipsoid, area and degenerate dimensions --- */
+for (const angles of [[0.2,0.4,-0.8], [1.1,0.4,-0.8], [0,0,0], [0,PI/2,0], [0,PI/2,PI]]) {
+  const J = K.anthroJbar(...angles, 0.62, 0.52);
+  const e = K.velocityEllipsoid(J);
+  const E = J.map(row => J.map(other => row.reduce((sum,v,k) => sum+v*other[k],0)));
+  e.axes.forEach((u,i) => {
+    const Eu = E.map(row=>row.reduce((sum,v,k)=>sum+v*u[k],0));
+    check("速度椭球主轴位于输出空间", Eu.every((v,k)=>near(v,e.sigma[i]**2*u[k],1e-9)));
+  });
+  check("可操作度等于奇异值乘积及行列式绝对值", near(e.w,Math.abs(K.det3(J)),1e-10) && near(e.sigma.reduce((a,b)=>a*b,1),e.w,1e-7));
+}
+const elbow = K.velocityEllipsoid(K.anthroJbar(0,0,0,0.62,0.52));
+check("单肘奇点速度集退化为面", elbow.sigma.filter(v=>v>1e-7).length===2);
+const both = K.velocityEllipsoid(K.anthroJbar(0,PI/2,0,0.62,0.52));
+check("肩肘同时奇异速度集退化为线", both.sigma.filter(v=>v>1e-7).length===1);
+
 /* --- 报告 --- */
 if (failures.length === 0) {
   console.log(`check_labs3d_math: OK（${passed} 项）`);

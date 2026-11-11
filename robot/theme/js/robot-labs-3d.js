@@ -592,6 +592,22 @@
 
   /* 对称 3×3 的 Jacobi 特征分解：返回 { values: [λ0,λ1,λ2], vectors: [[v0],[v1],[v2]] }
      vectors[j] 是 λj 对应的单位特征向量（列向量式）。用显式 JᵀAJ / V←VJ 迭代。 */
+  // Output-space velocity set: directions are eigenvectors of J Jᵀ.
+  kernel.velocityEllipsoid = function (J) {
+    var E = J.map(function (row) {
+      return J.map(function (other) {
+        return row.reduce(function (sum, value, k) { return sum + value * other[k]; }, 0);
+      });
+    });
+    var eig = kernel.symEig3(E);
+    var order = [0, 1, 2].sort(function (a, b) { return eig.values[a] - eig.values[b]; });
+    return {
+      axes: order.map(function (idx) { return [eig.vectors[0][idx], eig.vectors[1][idx], eig.vectors[2][idx]]; }),
+      sigma: order.map(function (idx) { return Math.sqrt(Math.max(0, eig.values[idx])); }),
+      w: Math.abs(kernel.det3(J))
+    };
+  };
+
   kernel.symEig3 = function (A) {
     var a = [
       [A[0][0], A[0][1], A[0][2]],
@@ -2832,18 +2848,32 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "可操作度椭球：奇点就是它被压扁的那一刻"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拟人臂的 J̇ 决定末端能把多大的速度「摊」到哪些方向。椭球是 JJᵀ 的特征方向与 √(λᵢ)：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（s₃=0，边界奇点）与 <b>腕点落到肩轴上</b>（a₂c₂+a₃c₂₃=0，内部奇点），看椭球怎么压扁到一条线。"));
+    host.appendChild(el("p", "lab-note", "拟人臂的位置雅可比 Jₚ 决定末端能把多大的速度「摊」到哪些方向。总关节速度模上限为 1 rad/s；椭球来自 JₚJₚᵀ 的特征方向与 √(λᵢ)：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（s₃=0，边界奇点）与 <b>腕点落到肩轴上</b>（a₂c₂+a₃c₂₃=0，内部奇点），单一奇点通常压扁为面；两种奇点同时发生时可退化为线。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
     toggleGroup(controls, "椭球", [{ value: "on", text: "显示" }, { value: "off", text: "隐藏" }], "on",
       function (v) { state.showEll = v === "on"; draw(); });
+    var sliders = [];
     ["θ₁（腰）", "θ₂（肩）", "θ₃（肘）"].forEach(function (label, i) {
-      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
-        function (v) { return v.toFixed(0) + "°"; });
+      sliders.push(slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; }));
     });
-    slider(controls, "椭球显示比例", 0.1, 0.6, 0.02, state.scale, function (v) { state.scale = v; draw(); },
-      function (v) { return v.toFixed(2) + " m/(rad/s)"; });
+    sliders.push(slider(controls, "椭球显示比例", 0.1, 0.6, 0.02, state.scale, function (v) { state.scale = v; draw(); },
+      function (v) { return v.toFixed(2) + " s"; }));
+
+    var reset = el("button", "lab-btn", "重置关节与视角");
+    reset.type = "button";
+    reset.addEventListener("click", function () {
+      [20, 42, -70, 0.28].forEach(function (value, i) {
+        sliders[i].input.value = value;
+        sliders[i].input.dispatchEvent(new Event("input"));
+      });
+      state.hover = null;
+      view.cam.az = -34; view.cam.elv = 19; view.cam.zoom = 1;
+      draw();
+    });
+    controls.appendChild(reset);
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -2864,20 +2894,9 @@
       var pe = frames[3].o;
       var J = kernel.anthroJbar(q[0], q[1], q[2], A2, A3);
       var det = kernel.det3(J);
-      var E = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-      for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) {
-        var s = 0;
-        for (var k = 0; k < 3; k++) s += J[k][i] * J[k][j];
-        E[i][j] = s;
-      }
-      var eig = kernel.symEig3(E);
-      /* 特征值升序 → 主轴从短到长 */
-      var order = [0, 1, 2].sort(function (a, b) { return eig.values[a] - eig.values[b]; });
-      var axes = [], radii = [];
-      order.forEach(function (idx) {
-        axes.push([eig.vectors[0][idx], eig.vectors[1][idx], eig.vectors[2][idx]]);
-        radii.push(Math.sqrt(Math.max(0, eig.values[idx])) * state.scale);
-      });
+      var velocitySet = kernel.velocityEllipsoid(J);
+      var axes = velocitySet.axes;
+      var radii = velocitySet.sigma.map(function (sigma) { return sigma * state.scale; });
 
       view.grid(0.85, 0.17, 0, { color: c.line });
       drawChain(view, frames, { toolLen: 0.08, span: 1.2 });
@@ -2891,18 +2910,19 @@
 
       var s3 = Math.sin(q[2]);
       var shoulderFactor = A2 * Math.cos(q[1]) + A3 * Math.cos(q[1] + q[2]);
-      var w = Math.sqrt(Math.abs(det));
+      var w = velocitySet.w;
       var html = "<p><b>可操作度</b> w=√(det(J̄J̄ᵀ))=|det J̄|=" + w.toFixed(4) + "</p>";
-      html += "<p class='lab-note'>̇=-a₂a₃ s₃ (a₂c₂+a₃c₂₃)（3.2.2）——两个因子各自归零即奇异：</p>";
+      html += "<p class='lab-note'>det Jₚ=-a₂a₃ s₃ (a₂c₂+a₃c₂₃)（3.2.2）——两个因子各自归零即奇异：</p>";
       html += "<table class='lab-matrix'><thead><tr><th>因子</th><th>当前值</th><th>含义</th></tr></thead><tbody>" +
         "<tr><td>s₃</td><td>" + s3.toFixed(4) + "</td><td>肘角正弦：s₃=0 ⇒ 肘伸直/折回（<b>边界奇点</b>）</td></tr>" +
         "<tr><td>a₂c₂+a₃c₂₃</td><td>" + shoulderFactor.toFixed(4) + "</td><td>腕点距肩轴的投影：为 0 ⇒ 腕点落到 z₀ 轴上（<b>内部奇点</b>）</td></tr>" +
         "</tbody></table>";
       var warn = "";
-      if (Math.abs(s3) < 0.08) warn += "<p class='lab-warn'><b>接近肘奇点</b>（边界）：椭球被压成一条线，末端在该方向上「给不出速度」。</p>";
-      if (Math.abs(shoulderFactor) < 0.08) warn += "<p class='lab-warn'><b>接近肩奇点</b>（内部）：两列线性相关，逆解出现无穷多解。</p>";
+      if (Math.abs(s3) < 0.08) warn += "<p class='lab-warn'><b>接近肘奇点</b>（边界）：最短半轴接近零；完全奇异时会失去一个或多个瞬时位置速度方向。</p>";
+      if (Math.abs(shoulderFactor) < 0.08) warn += "<p class='lab-warn'><b>接近肩奇点</b>（内部）：腰关节的线速度贡献接近零；是否可实现指定速度还须检查列空间。</p>";
+      html += "<p class='lab-note'>奇异值 σ（m/rad）：[" + velocitySet.sigma.map(function (v) { return v.toFixed(4); }).join(", ") + "]。杆长 a₂=0.62 m，a₃=0.52 m；w 的单位为 m³/rad³。</p>";
       html += warn;
-      html += "<p class='lab-note'>椭球半轴 = √(λᵢ(JJᵀ))（显示比例 " + state.scale.toFixed(2) + " m/(rad/s)）：" +
+      html += "<p class='lab-note'>椭球半轴 = σᵢ(Jₚ) × 1 rad/s（箭头示意长度再乘 " + state.scale.toFixed(2) + " s）：" +
         "最长半轴 " + radii[2].toFixed(3) + " m，最短半轴 " + radii[0].toFixed(3) + " m。</p>";
       readout.innerHTML = texLite(html);
     }
