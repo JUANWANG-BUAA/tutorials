@@ -129,7 +129,7 @@
 | 反对称矩阵 / 叉乘算子 | skew-symmetric operator $S(\boldsymbol\omega)$ | $S(\boldsymbol\omega)\boldsymbol p\equiv\boldsymbol\omega\times\boldsymbol p$；$\dot R=S(\boldsymbol\omega)R$ | [@def-3.1.2] |
 | 逐列构造 | — | $J_i$ = 单关节对末端速度的贡献（绿框公式） | [@thm-3.1.C] |
 | 雅可比计算五步 | — | 建系 → 填表 → 连乘 → 读 $z,\boldsymbol p$ → 组装 | [@method-3.2.A] |
-| 运动学奇点 | kinematic singularity | $\det J(\boldsymbol q)=0$ 的位形 | [@def-3.3.1] |
+| 运动学奇点 | kinematic singularity | 固定任务下，$\operatorname{rank}J$ 低于机构最大可达秩的位形；通常可逆方阵可用 $\det J=0$ | [@def-3.3.1] |
 | 边界奇点 / 内部奇点 | boundary / interior singularity | 位于工作空间边界 / 工作空间内部 | [3.3](ch03/sec3-3.md) |
 | 腕奇点 | wrist singularity | $\vartheta_5=0,\pi$（$s_5=0$），两腕轴共线 | [@thm-3.3.A] |
 | 肘奇点 | elbow singularity | $s_3=0$，臂完全伸直或折回 | [@thm-3.3.A] |
@@ -141,7 +141,7 @@
 | 最小范数解 | minimum-norm solution | 满足任务且 $\|\dot{\boldsymbol q}\|$ 最小 | [@def-3.5.1] |
 | 阻尼最小二乘 | damped least squares, DLS | 容许末端误差 $\delta$ 换可解性 | [@def-3.5.2] |
 | 奇异情形广义逆 | $J^*$ | $W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$ | [@def-3.5.2] |
-| 可操作度 | manipulability $w(q)$ | $\sqrt{\det(JJ^{\mathrm T})}$；离零越远离奇点越远 | [3.5.1](ch03/sec3-5.md#sec-3.5.1) |
+| 可操作度 | manipulability $w(q)$ | $\sqrt{\det(JJ^{\mathrm T})}$，固定单位与度量下的速度椭球体积比例；不等于到奇点的通用距离 | [3.5.1](ch03/sec3-5.md#sec-3.5.1) |
 | 分析雅可比 | analytic Jacobian $J_A$ | 用欧拉角速率 $\dot{\boldsymbol\varphi}$ 而非角速度 $\boldsymbol\omega$ | [@def-3.6.1] |
 | 换基矩阵 | $T(\boldsymbol\varphi)$ | $\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$；三列 = 欧拉角三根转轴 | [@thm-3.6.A] |
 | 逆雅可比方案 | — | $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+Ke)$，完全线性化 | [3.7.1](ch03/sec3-7.md#sec-3.7.1) |
@@ -293,8 +293,8 @@
 | 移动关节 / 转动关节 | 平动（$q_i=d_i$）/ 转动（$q_i=\vartheta_i$） |
 | 开式链 / 闭式链 | 无回路（可直接数自由度）/ 有回路（须扣约束） |
 | 精度 / 分辨率 | 本课程只讲前者；后者是编码器等硬件指标 |
-| 奇点 / 病态 | 前者 $\det J=0$（结构性）；后者 $\det J$ 很小（邻域，同样危险） |
-| 表示奇点 / 运动学奇点 | 前者属姿态**表示**（欧拉角歧义）；后者属机械**结构**（轴共线）——两者在 $J_A$ 处汇合 |
+| 奇点 / 病态 | 前者是任务雅可比的实际降秩；后者是在固定度量下某些奇异值很小、反解对相应方向敏感，可在满秩时发生 |
+| 表示奇点 / 运动学奇点 | 前者是姿态参数化退化，如欧拉角表示奇点；后者是所选任务的实际速度映射降秩 |
 | 路径点 / 经由点 | 前者必须**到达**；后者只从**附近经过**（抛物线混合的削角） |
 | 路径 / 轨迹 | 纯几何 / 几何 + 时间律 |
 | 三次 / 五次多项式 | 4 约束（可指定位置 + 速度）/ 6 约束（再加初终加速度） |
