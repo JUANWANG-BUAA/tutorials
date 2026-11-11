@@ -24,6 +24,8 @@
 
 课件 Slide 135 的时间轴图（低优先级任务 + ISR + 高优先级任务，7 个时刻）说明了这个过程：
 
+{{#include ../assets/figures/arm-scheduling.md}}
+
 ```
 低优先级任务 ────► ISR ────┐
                             │ 中断服务程序使高优先级任务就绪

@@ -30,6 +30,8 @@ CPSR   ─────────── 共用 ──────────�
 SPSR   无   SPSR_fiq SPSR_svc SPSR_abt SPSR_und SPSR_irq
 ```
 
+{{#include ../assets/figures/arm-registers.md}}
+
 为什么这样切？R8–R12 给 FIQ 独享副本，中断处理程序可以直接用自己的寄存器干活、不碰现场（呼应 2.6 FIQ 的"快"）；R13/R14 每种模式一份，让每种异常都有自己的**栈**和**返回地址**，互不踩踏。
 
 ATPCS（过程调用标准）给部分寄存器起了别名，读别人的代码会碰到：R9 = SB（静态基址）、R10 = SL（栈限制）、R11 = FP（栈帧指针）、R12 = IP（过程调用中间临时）、a1–a4/v1–v8 等。知道是别名即可，本课程用 R 编号。
