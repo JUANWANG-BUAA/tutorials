@@ -39,9 +39,9 @@ async (hostPage) => {
     check(await page.locator('.skip-link').getAttribute('href') === '#rhine-main-content', 'the skip link targets the active portal composition');
     await tools().getByRole('button', { name: '重置筛选' }).click();
     await tools().getByRole('button', { name: '系统工程', exact: true }).click();
-    check(await rows().count() === 8, 'Rhine filters the same system courses');
+    check(await rows().count() === 9, 'Rhine filters the same system courses');
     await page.getByLabel('界面外观').selectOption('classic');
-    check(await rows().count() === 8 && await tools().getByRole('button', { name: '系统工程', exact: true }).getAttribute('aria-pressed') === 'true', 'returning to classic synchronizes filter controls and results');
+    check(await rows().count() === 9 && await tools().getByRole('button', { name: '系统工程', exact: true }).getAttribute('aria-pressed') === 'true', 'returning to classic synchronizes filter controls and results');
     await page.getByRole('button', { name: '切换为深色', exact: true }).click();
     check(await page.getByRole('button', { name: '切换为浅色', exact: true }).count() === 1, 'brightness control names the next action');
 

@@ -162,7 +162,7 @@ async (hostPage) => {
     const galleryContrasts = [];
     const galleryMetaContrasts = [];
     const galleryFocusContrasts = [];
-    for (const chapter of ['/matrix/ch01/sec16.html', '/robot/ch02/sec2-4.html']) {
+    for (const chapter of ['/matrix/ch01/sec16.html', '/robot/ch03/sec3-2.html']) {
       await visit(chapter);
       const figure = chapter.startsWith('/robot/') ? page.locator('main figure').filter({ has: page.locator('.diagram-axis') }).filter({ has: page.locator('.sb') }).first() : page.locator('main figure').filter({ has: page.locator('.diagram-text') }).first();
       const figureIndex = await figure.evaluate(element => Array.from(document.querySelectorAll('main figure')).indexOf(element));
