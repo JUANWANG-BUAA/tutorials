@@ -2696,22 +2696,36 @@
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "雅可比的列：谁在出力，出多大力"));
+    head.appendChild(el("b", null, "雅可比的列：各关节怎样贡献末端速度"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖动三个<b>关节速度</b>滑杆 ϑᵢ，看末端速度 vₑ=ᵢ Jᵢϑᵢ 怎么变。画布里三根彩箭头是**每一列单独贡献**的速度（Jᵢϑᵢ），粗红箭头是它们的和。悬停下方 J 矩阵的<b>某一列</b>，画布里该列的箭头会加粗、其余变淡——第 i 列的含义就是「只动关节 i、其余锁死时末端的贡献」（3.1.2）。"));
+    host.appendChild(el("p", "lab-note", "调节关节速度 q̇ᵢ（rad/s），观察 vₑ = Σ Jₚ,ᵢ q̇ᵢ。三根彩色箭头表示各关节的线速度贡献，红色箭头表示合计。角度滑杆决定当前位形，不是播放时间。悬停矩阵列可高亮对应贡献。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
     toggleGroup(controls, "机构", [{ value: "planar", text: "三连杆平面臂" }, { value: "anthro", text: "拟人臂" }], "planar",
       function (v) { state.kind = v; draw(); });
+    var sliders = [];
     ["q̇₁", "q̇₂", "q̇₃"].forEach(function (label, i) {
-      slider(controls, label, -1.5, 1.5, 0.05, state.dq[i], function (v) { state.dq[i] = v; draw(); },
-        function (v) { return v.toFixed(2) + " rad/s"; });
+      sliders.push(slider(controls, label, -1.5, 1.5, 0.05, state.dq[i], function (v) { state.dq[i] = v; draw(); },
+        function (v) { return v.toFixed(2) + " rad/s"; }));
     });
     ["θ₁", "θ₂", "θ₃"].forEach(function (label, i) {
-      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
-        function (v) { return v.toFixed(0) + "°"; });
+      sliders.push(slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
+        function (v) { return v.toFixed(0) + "°"; }));
     });
+
+    var reset = el("button", "lab-btn", "重置参数与视角");
+    reset.type = "button";
+    reset.addEventListener("click", function () {
+      [0.6, -0.4, 0.5, 35, -40, 30].forEach(function (value, i) {
+        sliders[i].input.value = value;
+        sliders[i].input.dispatchEvent(new Event("input"));
+      });
+      state.hover = null;
+      view.cam.az = -32; view.cam.elv = 20; view.cam.zoom = 1;
+      draw();
+    });
+    controls.appendChild(reset);
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -2767,7 +2781,7 @@
       }
 
       /* 速度箭头：从末端点出发 */
-      var SC = 0.55; /* m/(rad/s) → m 的显示比例 */
+      var SC = 0.55; /* 速度乘以 0.55 s，得到画布中的示意长度 */
       parts.forEach(function (v, i) {
         var tip = kernel.addv(pe, kernel.sclv(v, SC));
         view.line(pe, tip, { color: colColors[i], width: 2.2, hl: "c" + i });
@@ -2786,10 +2800,12 @@
         rowsHtml.push(row);
       }
       var html = matrixHTML(rowsHtml, 3).replace("<table", "<span class='lab-matrix-label'>" +
-        (state.kind === "planar" ? "J̄ = [vₓ; v_y; ω]" : "J̄ = [vₓ; v_y; v_z]") + " =</span><table");
+        (state.kind === "planar" ? "J̄（行：vₓ、vᵧ、ω_z）" : "Jₚ（行：vₓ、vᵧ、v_z）") + " =</span><table");
       html += "<p class='lab-note'><b>逐列读法</b>：第 i 列 = 「只动关节 i（其余锁死）时末端的贡献」" +
-        "（Jᵢ= zᵢ₋₁×( pₑ- pᵢ₋₁)，3.1.2）。" +
+        "（Jₚ,ᵢ= zᵢ₋₁×( pₑ- pᵢ₋₁)，3.1.2）。" +
         "悬停某一列，画布里该列对应的速度箭头加粗、其余变淡。</p>";
+      html += "<p class='lab-note'>杆长（m）：" + (state.kind === "planar" ? "a₁=0.45，a₂=0.36，a₃=0.26" : "a₂=0.62，a₃=0.52") +
+        "。线速度 vₑ = [" + total.map(function (v) { return v.toFixed(3); }).join(", ") + "] m/s。箭头按速度乘 0.55 s 绘制，不是运动后的轨迹。</p>";
       var vmag = Math.sqrt(total[0] * total[0] + total[1] * total[1] + total[2] * total[2]);
       html += "<p class='lab-note'>当前合计末端速度 |v_e| = " + vmag.toFixed(3) + " m/s" +
         (state.kind === "planar" ? "，角速度 ω = " + (state.dq[0] + state.dq[1] + state.dq[2]).toFixed(3) + " rad/s" : "") + "。</p>";

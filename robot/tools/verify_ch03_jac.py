@@ -465,6 +465,15 @@ class JacobianChecks(unittest.TestCase):
         err_pub = max_err(jp_rows, pub)
         self.assertLess(err_pub, 1e-10)
 
+    def test_position_task_loses_rotation_at_shoulder_axis(self):
+        q = (0.0, math.pi / 2, 0.0)
+        jp, jo = analytic_geometric(ANTHRO_DH, q)
+        # A waist rotation leaves endpoint position unchanged, but rotates its frame.
+        self.assertLess(max(abs(x) for x in jp[0]), 1e-12)
+        self.assertEqual(jo[0], [0.0, 0.0, 1.0])
+        self.assertLess(max_err(jp, numeric_jp(fk_pos(ANTHRO_DH), q)), 1e-8)
+        self.assertLess(max_err(jo, numeric_jo(fk_rot(ANTHRO_DH), q)), 1e-8)
+
     def test_scara_jacobian(self):
         # Exercises C4: 6x4 Jacobian, rows 4-5 zero, det of planar block a1a2 s2.
         q = (0.5, 1.1, 0.2, -0.7)
