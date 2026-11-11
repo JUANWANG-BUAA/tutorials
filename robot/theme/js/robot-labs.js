@@ -1237,6 +1237,80 @@
     host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
   }
 
+  function labDls2d(host) {
+    var epsilon = 0.1, damping = 0.1;
+    var head = el('div', 'lab-head');
+    head.appendChild(el('span', 'lab-tag', '阻尼权衡实验'));
+    head.appendChild(el('b', null, '要求速度(1,1)，能实际实现多少？'));
+    host.appendChild(head);
+    host.appendChild(el('p', 'lab-note', '归一化矩阵 J = diag(1, ε)。ε控制第二方向的能力，k控制速度代价；本图是求解机制的通道模型。'));
+    var controls = el('div', 'lab-controls'); host.appendChild(controls);
+    var ability = slider(controls, '第二方向能力 ε', 0, 1, 0.01, epsilon, function (value) { epsilon = value; draw(); }, function (value) { return value.toFixed(2); });
+    var weight = slider(controls, '阻尼 k', 0.02, 1, 0.01, damping, function (value) { damping = value; draw(); }, function (value) { return value.toFixed(2); });
+    [['ε=1', 1], ['ε=0.1', 0.1], ['ε=0.01', 0.01], ['ε=0', 0], ['重置', 0.1]].forEach(function (preset) {
+      var button = el('button', 'lab-btn', preset[0]); button.type = 'button';
+      button.addEventListener('click', function () {
+        epsilon = preset[1]; ability.input.value = epsilon; ability.out.textContent = epsilon.toFixed(2);
+        if (preset[0] === '重置') { damping = 0.1; weight.input.value = damping; weight.out.textContent = damping.toFixed(2); }
+        draw();
+      });
+      controls.appendChild(button);
+    });
+    var canvas = el('canvas', 'lab-canvas'); canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', 'Moore–Penrose正侧逆增益与DLS增益，零点的伪逆值单独标出'); host.appendChild(canvas);
+    var readout = el('div', 'lab-readout'); readout.setAttribute('aria-live', 'polite'); host.appendChild(readout);
+    function gain(sigma) { return sigma / (sigma * sigma + damping * damping); }
+    function norm(values) { return Math.hypot(values[0], values[1]); }
+    function draw() {
+      var mp = [1, epsilon === 0 ? 0 : 1 / epsilon], dls = [gain(1), gain(epsilon)];
+      var achievedMP = [mp[0], epsilon * mp[1]], achievedDLS = [dls[0], epsilon * dls[1]];
+      var residualMP = achievedMP.map(function (value) { return 1 - value; });
+      var residualDLS = achievedDLS.map(function (value) { return 1 - value; });
+      var peak = 1 / (2 * damping), fitted = fit(canvas, 0.55), ctx = fitted.ctx, c = fitted.c;
+      var left = 58, right = fitted.w - 24, top = 38, bottom = fitted.h - 82;
+      var ymax = Math.max(2, Math.ceil(peak * 1.25));
+      function px(x) { return left + x * (right - left); }
+      function py(y) { return bottom - y / ymax * (bottom - top); }
+      ctx.font = '12px sans-serif'; ctx.fillStyle = c.ink;
+      ctx.fillText('逆映射增益；纵轴0–' + ymax + '，超出图高的红线截去', left, 19);
+      ctx.strokeStyle = c.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(left, top); ctx.lineTo(left, bottom); ctx.lineTo(right, bottom); ctx.stroke();
+      for (var tick = 0; tick <= 5; tick++) {
+        var x = tick / 5, y = ymax * tick / 5;
+        ctx.fillStyle = c.muted; ctx.textAlign = 'center'; ctx.fillText(x.toFixed(1), px(x), bottom + 18);
+        ctx.textAlign = 'right'; ctx.fillText(y.toFixed(1), left - 8, py(y) + 4);
+      }
+      ctx.textAlign = 'left'; ctx.fillStyle = c.ink; ctx.fillText('奇异值 σ', right - 62, bottom + 38);
+      function curve(fn, color, dashed) {
+        var started = false; ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dashed ? [6, 4] : []); ctx.beginPath();
+        for (var i = 0; i <= 500; i++) {
+          var sigma = i / 500, value = fn(sigma);
+          if (!Number.isFinite(value) || value > ymax) { started = false; continue; }
+          if (started) ctx.lineTo(px(sigma), py(value)); else ctx.moveTo(px(sigma), py(value));
+          started = true;
+        }
+        ctx.stroke(); ctx.setLineDash([]);
+      }
+      curve(function (sigma) { return sigma > 0 ? 1 / sigma : Infinity; }, c.red, true);
+      curve(gain, c.green, false);
+      ctx.strokeStyle = c.blue; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(px(epsilon), top); ctx.lineTo(px(epsilon), bottom); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = c.green; ctx.beginPath(); ctx.arc(px(damping), py(peak), 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillText('峰值 1/(2k) = ' + peak.toFixed(2), Math.min(px(damping) + 9, right - 157), py(peak) - 9);
+      ctx.fillStyle = c.blue; ctx.beginPath(); ctx.arc(px(epsilon), py(gain(epsilon)), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = c.red; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px(0), py(0), 5, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = c.red; ctx.fillText('红虚线：σ>0时1/σ；MP(0)=0', left, fitted.h - 22);
+      ctx.fillStyle = c.green; ctx.fillText('绿线：σ/(σ²+k²)', Math.min(left + 270, right - 150), fitted.h - 22);
+      readout.innerHTML = matrixHTML([
+        ['方法', 'q̇₁', 'q̇₂', '实际v₁', '实际v₂', 'δ₁', 'δ₂'],
+        ['Moore–Penrose'].concat(mp, achievedMP, residualMP),
+        ['DLS'].concat(dls, achievedDLS, residualDLS)
+      ], 3);
+      readout.appendChild(el('p', null, 'DLS：关节速度范数 ' + norm(dls).toFixed(5) + '；任务残差范数 ' + norm(residualDLS).toFixed(5) + '。当前指令的速度界 √2/(2k) = ' + (Math.SQRT2 * peak).toFixed(5) + '。'));
+      readout.appendChild(el('p', 'lab-note', epsilon === 0 ? 'ε恰好为0：第二方向缺失，MP与DLS都留下第二任务残差1；零点伪逆取0，不能读成1/0。' : 'ε>0：MP精确满足两条任务，第二关节速度为1/ε；DLS同时惩罚速度与残差。蓝点是当前第二方向的DLS增益。'));
+      host.setAttribute('data-dls-values', JSON.stringify({ epsilon: epsilon, k: damping, mp: mp, dls: dls, achievedMP: achievedMP, achievedDLS: achievedDLS, residualMP: residualMP, residualDLS: residualDLS, gainBound: peak, velocityBound: Math.SQRT2 * peak }));
+    }
+    host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
+  }
+
   /* ---------------- 主题 / 纸张配色变化 → 全部重绘 ----------------
    * 四个实验的取色都发生在 draw() 里（fit() 会调 palette()），所以换主题或换纸张
    * 配色后必须重画一次，否则画布会停在旧配色上——那是「两套系统」的观感来源之一。
@@ -1257,7 +1331,7 @@
   function boot() {
     var hosts = document.querySelectorAll("[data-lab]");
     if (hosts.length === 0) return;
-    var registry = { nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
+    var registry = { dls2d: labDls2d, nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
     Array.prototype.forEach.call(hosts, function (host) {
       var name = host.getAttribute("data-lab");
       var builder = registry[name];

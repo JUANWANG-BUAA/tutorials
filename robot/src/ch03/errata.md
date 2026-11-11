@@ -56,7 +56,7 @@ $w(q)=\sqrt{\det(JJ^{\mathrm T})}$ 与速度 / 力椭球（原书 §3.4 或 3.5 
 - 本书向量一律粗体 $\boldsymbol z$、$\boldsymbol p$；讲座与课件板书用上划线 $\underline{z}$——引用板书时按此换算；
 - $z_{i-1}$ 一律指**基坐标系**下的关节 $i$ 轴向单位向量（[3.1.3](../ch03/sec3-1.md#sec-3.1.3) 特别强调）；
 - 冗余的「任务行列数」$r$ 与「操作空间维数」$m$、$n$ 的来源见 [2.10](../ch02/sec2-10.md)；
-- $J^\dagger$ 为**右伪逆** $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$；$J^*$ 为奇异情形广义逆 $W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$——两者不同（[@def-3.5.1]、[@def-3.5.2]）。
+- $J^\dagger$ 为Moore–Penrose伪逆，行满秩时有右伪逆闭式 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$；$J^*$ 为阻尼广义逆 $W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$——两者不同（[@def-3.5.1]、[@def-3.5.2]）。
 
 <a id="errata-3.7"></a>
 

@@ -277,20 +277,22 @@ P=NN^{\mathrm T}\ (\text{秩 }n-\operatorname{rank}J;\ \text{行满秩时 }n-r),
 |:--|:--|:--|:--|
 | 方阵满秩 | $J^{-1}$ | $\dot{\boldsymbol q}=J^{-1}\boldsymbol v_e$，配数值积分 $\boldsymbol q_{k+1}=\boldsymbol q_k+J^{-1}\boldsymbol v_e\Delta t$ | $n=r$、无奇异 |
 | 长方（冗余） | $J^\dagger$ | $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | $r<n$、行满秩 |
-| 退化（奇异邻域） | $J^*$ | $J^{*}=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$；$W=I,K=k^{-2}I,k>0$ 时 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | 容许末端误差 $\delta$ |
+| 速度与残差权衡（含奇异邻域） | $J^*$ | $J^{*}=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$；$W=I,K=k^{-2}I,k>0$ 时 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | $W,K\succ0$；容许任务速度残差 $\delta$ |
 
 见 [@def-3.5.1]、[@def-3.5.2]。
 
-> **口诀**：方阵求逆、矮胖求伪逆、退化加阻尼。
+> **范围**：右伪逆闭式要求行满秩；一般Moore–Penrose伪逆任意秩下存在。DLS用于权衡速度与残差，不限于降秩时使用。
 > **参数别混**：取 $K=k^{-2}I$、$k>0$。奇点邻域可增大阻尼 $k$（减小误差权重 $K$），以任务误差限制关节速度；$J$ 行满秩时 $k\to0^+$ 才趋于右伪逆。
 
 **$\dot{\boldsymbol q}_0$ 的三种取法**（都取 $k_0(\partial g/\partial\boldsymbol q)^{\mathrm T}$，最大化 $g$）：
 
 | 目标 $g$ | 作用 |
 |:--|:--|
-| $w=\sqrt{\det(JJ^{\mathrm T})}$（可操作度） | 远离奇异 |
-| 关节角到**中点**的距离 | 躲关节极限 |
-| 臂上点到障碍物的**最小**距离 | 避障 |
+| $w=\sqrt{\det(JJ^{\mathrm T})}$（可操作度） | 增大速度椭球体积，不等于增大到奇点的距离 |
+| $-\frac1{2n}\sum_i((q_i-\bar q_i)/\Delta_i)^2$ | 尝试靠近关节中点，不能保证不越限 |
+| 臂上点到障碍表面的**最小**距离 | 尝试增大间距，最近点切换处可能不可微 |
+
+这里 $\bar q_i$ 为关节中点，$\Delta_i=q_{iM}-q_{im}>0$ 为行程。投影梯度只描述局部次目标的贡献，还需计入主任务运动。
 
 ### D7 分析雅可比
 

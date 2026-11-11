@@ -583,6 +583,63 @@ class JacobianChecks(unittest.TestCase):
             self.assertLess(max_err(mat_mul(j, rates), [[0.0], [1.0]]), 1e-12)
         self.assertLess(max_err(mat_mul(j, [[0.0], [-1.0], [1.0]]), [[1.0], [0.0]]), 1e-12)
 
+    def test_inverse_velocity_worked_examples(self):
+        """Check published right inverses against constraints and solution costs."""
+        j = [[-1.0, -1.0, 0.0], [2.0, 1.0, 1.0]]
+        for inverse, weights, expected in [
+            ([[0, 1/3], [-1, -1/3], [1, 2/3]], [1, 1, 1], [1/3, -1/3, 2/3]),
+            ([[1/2, 2/3], [-3/2, -2/3], [1/2, 1/3]], [1, 1, 4], [2/3, -2/3, 1/3]),
+        ]:
+            self.assertLess(max_err(mat_mul(j, inverse), eye(2)), 1e-12)
+            rates = [row[1] for row in inverse]
+            self.assertLess(max(abs(x-y) for x, y in zip(rates, expected)), 1e-12)
+            baseline = sum(w*x*x for w, x in zip(weights, rates))
+            for perturbation in (-2, -0.1, 0.1, 1.5):
+                shifted = [x+perturbation*z for x, z in zip(rates, [-1, 1, 1])]
+                cost = sum(w*x*x for w, x in zip(weights, shifted))
+                self.assertGreater(cost, baseline)
+        # The independent scalar family gives lambda=2/11 for third weight 9.
+        rates = [[9/11], [-9/11], [2/11]]
+        self.assertLess(max_err(mat_mul(j, rates), [[0], [1]]), 1e-12)
+        self.assertAlmostEqual(-4+22*rates[2][0], 0)
+        # Euler's velocity solution does not put the finite step on the line.
+        h = 0.1
+        actual = [math.cos(h), 1+math.sin(h)]
+        self.assertAlmostEqual(actual[0], 0.995004165278, places=11)
+        self.assertAlmostEqual(actual[1], 1.099833416647, places=11)
+
+    def test_weighted_dls_augmented_matches_normal_equation(self):
+        """The task-space formula must solve the independent joint-space equation."""
+        weights, penalties, target = [1.0, 2.0, 4.0], [3.0, 5.0], [0.4, -0.7]
+        for j in ([[1, -1, 0], [2, 1, 1]], [[1, 2, 0], [2, 4, 0]], [[0, 0, 0], [0, 0, 0]]):
+            c = [[sum(j[a][i]*j[b][i]/weights[i] for i in range(3))
+                  + (1/penalties[a] if a == b else 0) for b in range(2)] for a in range(2)]
+            determinant = c[0][0]*c[1][1]-c[0][1]*c[1][0]
+            multipliers = [(c[1][1]*target[0]-c[0][1]*target[1])/determinant,
+                           (-c[1][0]*target[0]+c[0][0]*target[1])/determinant]
+            rates = [sum(j[a][i]*multipliers[a] for a in range(2))/weights[i] for i in range(3)]
+            residual = [target[a]-sum(j[a][i]*rates[i] for i in range(3)) for a in range(2)]
+            for a in range(2):
+                self.assertAlmostEqual(residual[a], multipliers[a]/penalties[a], places=12)
+            for i in range(3):
+                self.assertAlmostEqual(weights[i]*rates[i], sum(j[a][i]*penalties[a]*residual[a] for a in range(2)), places=12)
+
+    def test_dls_table_and_direction_bound(self):
+        fixtures = [(1, 100/101), (0.1, 5), (0.01, 100/101), (0, 0)]
+        for sigma, expected in fixtures:
+            actual = sigma/(sigma*sigma+0.1**2)
+            self.assertAlmostEqual(actual, expected, places=12)
+            # Check the derivative of the original scalar cost at the solution.
+            self.assertAlmostEqual(-sigma*(1-sigma*actual)+0.1**2*actual, 0, places=12)
+        for k in (0.02, 0.1, 0.5, 1.0):
+            peak = 1/(2*k)
+            self.assertAlmostEqual(k/(k*k+k*k), peak, places=12)
+            for index in range(1001):
+                sigma = index/500
+                gain = sigma/(sigma*sigma+k*k)
+                self.assertLessEqual(gain, peak+1e-12)
+                self.assertAlmostEqual(sigma*gain+k*k/(sigma*sigma+k*k), 1, places=12)
+
     def test_finite_self_motion_and_tangent_drift(self):
         """Independent FK checks exact equal-link geometry and tangent error."""
         def endpoint(q):

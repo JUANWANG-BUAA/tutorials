@@ -50,12 +50,10 @@ $n>r$ 判任务相关冗余，$r$ 是独立任务变量数，不能与当前秩 
 写出 $J^\dagger$ 的表达式、它的性质，以及它与 $J^{-1}$ 的分工。
 
 ::: sol A5 核对
-$$\dot{\boldsymbol q}=J^{\mathrm T}(JJ^{\mathrm T})^{-1}\boldsymbol v_e=J^\dagger\boldsymbol v_e,\qquad J^\dagger\triangleq J^{\mathrm T}(JJ^{\mathrm T})^{-1}\ (r\times n).$$
-
-它就是**右广义逆 / 伪逆**。验证 $JJ^\dagger\boldsymbol v_e=(JJ^{\mathrm T})(JJ^{\mathrm T})^{-1}\boldsymbol v_e=\boldsymbol v_e$——**确实满足约束**；而单权情形下的解又使关节速度范数**局部最小**，因此称为**最小范数解**。**三种处境的药**：方阵满秩 → $J^{-1}$（配数值积分）；长方冗余 → $J^\dagger$（+ 零空间项）；退化奇异 → $J^*$（阻尼）。口诀：**方阵求逆、矮胖求伪逆、退化加阻尼**。（[@def-3.5.1]）
+$J\in\mathbb R^{r\times n}$ 行满秩时，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}\in\mathbb R^{n\times r}$、$JJ^\dagger=I_r$。固定当前 $J,v_e$ 后，$J^\dagger v_e$ 是唯一全局最小范数可行解，不代表整条轨迹最优。证明用任意可行扰动 $z\in\mathcal N(J)$：交叉项为零，范数平方增加 $\|z\|^2$。方阵满秩时 $J^\dagger=J^{-1}$；降秩时一般Moore–Penrose伪逆仍存在，须用正奇异值方向构造，不能再套这个行满秩闭式。（[@def-3.5.1]）
 :::
 
-### A6 · 奇异情形的广义逆 $J^*$（DLS）
+### A6 · 阻尼广义逆 $J^*$（DLS）
 
 写出 $J^*$ 的表达式与经典阻尼形式，并说明 $K$ 的取法。
 
@@ -231,7 +229,9 @@ $$\det J_{22}=(z_3\times z_4)\cdot z_5\propto s_5\qquad\Longrightarrow\qquad s_5
 写出 $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$ 里两项的角色，以及 DLS 增益。
 
 ::: sol C7 核对
-**两项各是什么**：第一项 $J^\dagger\boldsymbol v_e$ 是满足任务的最小范数特解（「**干活用的**」）；第二项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 是**齐次解**——$P=I-J^\dagger J$ 是零空间投影矩阵，$JP\dot{\boldsymbol q}_0=(J-J)\dot{\boldsymbol q}_0=0$，故**不惊动末端**，**内部运动**正是由它描述（与 [@thm-3.4.B] 的 $P=NN^{\mathrm T}$ 同一角色、两种写法）。**DLS 增益**：横轴为奇异值 $\sigma$，伪逆的增益 $1/\sigma$ 在奇点处**发散**；DLS 的增益 $\dfrac{\sigma}{\sigma^2+k^2}$ **处处有界**，峰值只有 $1/(2k)$。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
+可行任务中，$J^\dagger v_e$ 是最小范数特解，$P\dot q_0$ 是零空间速度，$P=I-J^\dagger J=NN^{\mathrm T}$（$N$ 列标准正交）。加入后不增加所选任务的瞬时速度，不保证完整位姿或有限更新不变。
+
+正奇异值的伪逆增益为 $1/\sigma$，$\sigma\to0^+$ 时可无界；在恰好为零的方向，Moore–Penrose增益取0。DLS增益是 $\sigma/(\sigma^2+k^2)$，$k>0$ 时峰值 $1/(2k)$；任务残差分量为 $k^2b_i/(\sigma_i^2+k^2)$，缺失方向仍留下完整指令残差。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
 :::
 
 ### C8 · 微分运动学与静力学的"两个接口"

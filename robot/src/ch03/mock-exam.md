@@ -26,7 +26,7 @@
 
 **6.** 工具点雅可比换成腕心雅可比后，可以原样代入工具点的六维期望速度，因为二者的行列式相等。
 
-**7.** 冗余机械手用 $J^\dagger$ 解出的 $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e$ 是满足任务约束的最小范数解；再加上 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 之后，末端速度仍然不变。
+**7.** 对行满秩任务，冗余机械手用 $J^\dagger$ 解出的 $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e$ 是满足任务约束的最小范数解；再加上 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 之后，末端速度仍然不变。
 
 **8.** 力从末端传到关节要用 $J^{-1}$：既然速度满足 $\boldsymbol v_e=J\dot{\boldsymbol q}$，力的关系就应当是把同一条式子反过来解。
 
@@ -48,7 +48,7 @@
 
 **（6）** **错。** $J_w=MJ_e$，其中 $M=\begin{bmatrix}I&S(p_e-p_w)\\0&I\end{bmatrix}$ 可逆且 $\det M=1$。变换保留完整六维信息和秩，但改变了线速度的参考点。工具点指令应先转换成 $v_w=Mv_e$；腕心任务可以直接用 $J_w$ 做速度反解。（[@thm-3.3.A]）
 
-**（7）** **对。** $J^\dagger\boldsymbol v_e$ 是满足 $\boldsymbol v_e=J\dot{\boldsymbol q}$ 的**最小范数解**（「干活用的」）；第二项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 是**齐次解**：$J(I-J^\dagger J)\dot{\boldsymbol q}_0=(J-J)\dot{\boldsymbol q}_0=0$，故**它对末端速度的贡献恒为零**——这正是「**不惊动末端**的内部运动」，用来做再配置（提高灵巧性、避障、回避奇异、远离关节极限）。（[@def-3.5.1]、[3.5.1](sec3-5.md#sec-3.5.1)）
+**（7）** **对。** $J^\dagger\boldsymbol v_e$ 是满足 $\boldsymbol v_e=J\dot{\boldsymbol q}$ 的**最小范数解**（「干活用的」）；第二项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 是**齐次解**：$J(I-J^\dagger J)\dot{\boldsymbol q}_0=(J-J)\dot{\boldsymbol q}_0=0$，故**它对所选任务瞬时速度的贡献恒为零**——这正是「**不惊动末端**的内部运动」，用来做再配置（提高灵巧性、避障、回避奇异、远离关节极限）。（[@def-3.5.1]、[3.5.1](sec3-5.md#sec-3.5.1)）
 
 **（8）** **错。** 力变换是 $J^{\mathrm T}$（**对偶**），不是求逆——$\boldsymbol\tau=J^{\mathrm T}F_e$ 来自虚功原理 / 功率守恒：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau=\boldsymbol v_e^{\mathrm T}F_e=(J\dot{\boldsymbol q})^{\mathrm T}F_e=\dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}F_e$ 对任意 $\dot{\boldsymbol q}$ 成立。**两条纪律**：$J$ 是长方阵时 $J^{\mathrm T}$ 照样可用（无需方阵、无需满秩）；$F_e$ 与 $J$ 必须在**同一坐标系**下。（[@def-3.8.1]、[3.8.1](sec3-8.md#sec-3.8.1)）
 
@@ -66,7 +66,7 @@
 
 **13.（4 分）** 写出六轴臂奇点解耦的矩阵形式与三个具体奇点条件，并说明这个技巧的合法性来源。
 
-**14.（4 分）** 写出处理 $J$ 的三种「形状」各自该用的工具（含公式），并写出它们共同的可逆性前提。
+**14.（4 分）** 写出处理 $J$ 的三种「形状」各自该用的工具（含公式），并分别说明右伪逆闭式与DLS的可逆性条件。
 
 **15.（4 分）** 写出逆微分运动学用于逆运动学数值算法时的两条路线（含公式）与各自的误差动态特点。
 
@@ -83,10 +83,10 @@
 | 形状 | 工具 | 公式 |
 |:--|:--|:--|
 | 方阵满秩 | $J^{-1}$ + 数值积分 | $\boldsymbol q(t_{k+1})\approx\boldsymbol q(t_k)+J^{-1}(\boldsymbol q(t_k))\boldsymbol v_e(t_k)\Delta t$ |
-| 冗长（$r<n$） | 右伪逆 + 零空间项 | $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ |
-| 退化（奇异） | 阻尼最小二乘 | $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$（$W=I,K=k^{-2}I,k>0$） |
+| 冗余且行满秩（$r<n$） | 右伪逆 + 零空间项 | $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ |
+| 需要权衡速度与残差（含奇异邻域） | 阻尼最小二乘 | $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$（$W=I,K=k^{-2}I,k>0$） |
 
-**共同的可逆性前提**：$JW^{-1}J^{\mathrm T}$ 可逆 ⇔ $J$ **行满秩**（无奇异）——$J$ 与 $W$ 都满秩时，左右相乘相当于初等变换、不改变秩。**DLS 为什么例外**：$JW^{-1}J^{\mathrm T}+K^{-1}$ 因 $K^{-1}$ 项在**奇异时仍可逆**，这正是它治奇点的机制。**评分**：三格各 1 分；可逆性前提 1 分。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
+**可逆性证明**：$W$ 对称正定时，$a^{\mathrm T}JW^{-1}J^{\mathrm T}a=(J^{\mathrm T}a)^{\mathrm T}W^{-1}(J^{\mathrm T}a)$。它对所有非零 $a$ 严格为正，当且仅当 $J$ 行满秩；不能以任意矩阵相乘不改秩作理由。**DLS 的条件**：再有 $K\succ0$，增加 $K^{-1}$ 后，矩阵在奇异时仍正定可逆；这使正则化问题可解，并未恢复丢失的方向。**评分**：三格各 1 分；可逆性前提 1 分。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
 
 **15.** **逆雅可比方案**：$\dot{\boldsymbol q}=J_A^{-1}(\boldsymbol q)\big(\dot{\boldsymbol x}_d+K\boldsymbol e\big)$，其中 $\boldsymbol e=\boldsymbol x_d-\boldsymbol x$；代入得 $\dot{\boldsymbol e}=\dot{\boldsymbol x}_d-J_A\dot{\boldsymbol q}=-K\boldsymbol e$ ⇒ 误差动态被化成**一阶线性系统**，$K$ 正定即指数收敛（**完全线性化**）。**雅可比转置方案**：$\dot{\boldsymbol q}=J^{\mathrm T}K\boldsymbol e$；**误差动态是非线性**的（多出含 $J$ 随位形变化的项），$K$ 取大不一定更好，稳定性只能用 **Lyapunov 函数**分析，收敛只是**局部**的。**冗余情形两者都换成伪逆**。**评分**：两式 2 分；两条误差动态特点 1.5 分；冗余替换 0.5 分。（[3.7.1](sec3-7.md#sec-3.7.1)、[3.7.2](sec3-7.md#sec-3.7.2)）
 
@@ -202,7 +202,7 @@ $$\boldsymbol\tau^{\mathrm T}=-\boldsymbol f_e^{\mathrm T}\bar J_P\qquad\Longrig
 
 **19.（10 分）「三味药」（$J^{-1}$ / $J^\dagger$ / $J^*$）的选型：给定任务时怎么选、选错的后果是什么。**
 
-要求：分别说明三个工具的**存在条件**与**解的性质**；举出一个「用错药」的具体场景并说明后果；说明为什么 DLS 的「容许小误差」在工程上可接受。
+要求：分别说明三个工具的**存在条件**与**解的性质**；举出一个「用错药」的具体场景并说明后果；说明DLS的任务速度残差在什么条件下可接受。
 
 **20.（10 分）为什么奇点必须靠规划回避而不能靠算法硬吃？**
 
@@ -217,17 +217,17 @@ $$\boldsymbol\tau^{\mathrm T}=-\boldsymbol f_e^{\mathrm T}\bar J_P\qquad\Longrig
 | 工具 | 存在条件 | 解的性质 |
 |:--|:--|:--|
 | $J^{-1}$ | $J$ **方阵且满秩**（$n=r$、无奇异） | 唯一精确解，满足 $J\dot{\boldsymbol q}=\boldsymbol v_e$；配数值积分 $\boldsymbol q(t_{k+1})\approx\boldsymbol q(t_k)+J^{-1}\boldsymbol v_e\Delta t$ 可绕开解析解不存在的问题 |
-| $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | $J$ **行满秩**（无奇异），$r\times n$ 长方（冗余） | **最小范数解**：$J^\dagger\boldsymbol v_e$ 满足任务且 $\|\dot{\boldsymbol q}\|$ 局部最小；加零空间项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 后末端速度不变，可做内部再配置 |
-| $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | **$k>0$**（阻尼项 $k^2I$ 保证矩阵可逆） | 容许任务速度带小误差 $\delta$ 的解——用「不精确」换回**可解性与有界性** |
+| $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | $J$ **行满秩**（无奇异），$r\times n$ 长方（冗余） | **最小范数解**：$J^\dagger\boldsymbol v_e$ 满足任务且 $\|\dot{\boldsymbol q}\|$ 在固定当前 $J,v_e$ 的全部可行解中唯一全局最小；加零空间项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 后末端速度不变，可做内部再配置 |
+| $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | **$k>0$**（阻尼项 $k^2I$ 保证矩阵可逆） | 容许任务速度残差 $\delta$ 的解（大小须计算）——用「不精确」换回**可解性与有界性** |
 
 **(b) 用错药的具体场景与后果（3 分）** 任选一个说透即可：
-- **对冗余臂求 $J^{-1}$**：$r\times n$ 的长方阵**根本没有逆**，程序会抛奇异矩阵或给出乱值——「不存在逆，就要用广义逆，这是线代 / 矩阵论的基础」；
+- **对冗余臂求 $J^{-1}$**：$r\times n$ 的长方阵**根本没有逆**，须改为有明确目标的广义逆求解，不能套方阵求逆公式；
 - **在奇点邻域用 $J^\dagger$**：$JJ^{\mathrm T}$ 接近奇异，困难方向的伪逆增益趋大，含该方向分量的指令可能要求很大的关节速度，驱动器饱和、轨迹冲出；
-- **在远离奇点用 $J^*$**：$k$ 取大时 $K^{-1}$ 项占主导，位置跟踪恒有残余误差（本该精确的任务被「阻尼」成不精确），**精度白白损失**。
+- **误用过大阻尼**：当任务可行、精确解的速度也可接受时，仍取很大的 $k$，会不必要地压低实际任务速度、增大残差。
 
-**(c) 为什么 DLS 的「容许小误差」可接受（2 分）** 取 $K=k^{-2}I$，可增大阻尼 $k$，用任务速度误差换取较小的关节速度；远离奇点且 $J$ 行满秩时，$k\to0^+$ 使解趋于右伪逆。代价可由增益曲线解释：困难方向上伪逆增益为 $1/\sigma$，而 DLS 增益为 $\sigma/(\sigma^2+k^2)$，固定 $k>0$ 时峰值为 $1/(2k)$。它限制了反解增益，同时允许实际速度偏离指令；是否可接受仍取决于任务容许的误差与关节限速。
+**(c) 怎样判断DLS残差是否可接受（2 分）** 取 $K=k^{-2}I$，可增大阻尼 $k$，用任务速度误差换取较小的关节速度；远离奇点且 $J$ 行满秩时，$k\to0^+$ 使解趋于右伪逆。代价可由增益曲线解释：困难方向上伪逆增益为 $1/\sigma$，而 DLS 增益为 $\sigma/(\sigma^2+k^2)$，固定 $k>0$ 时峰值为 $1/(2k)$。它限制了反解增益，同时允许实际速度偏离指令；是否可接受仍取决于任务容许的误差与关节限速。
 
-**评分建议**：三格 5 分（每格的存在条件 + 解的性质各约 0.8 分）；「用错药」场景 3 分（须写出后果，只写「会出错」不给分）；DLS 的可接受性 2 分（须点出「$K$ 随位形调节」与「精确解不存在」这两层）。
+**评分建议**：三格 5 分（每格的存在条件 + 解的性质各约 0.8 分）；「用错药」场景 3 分（须写出后果，只写「会出错」不给分）；DLS 的可接受性 2 分（须说明阻尼与速度/残差的权衡，并区分任务不可行与可行但速度过大的情形）。
 
 **20.（10 分）**
 

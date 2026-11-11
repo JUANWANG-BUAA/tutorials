@@ -24,7 +24,7 @@
 
 :::
 
-::: ex A2 · 三种「不方阵」与三味药
+::: ex A2 · 逆速度求解的选择
 
 把 $J$ 的方阵满秩 / 行满秩长方 / 不满秩三种情形与 $J^{-1}$、$J^\dagger$、$J^*$ 对号，并各说一句「什么时候用、解的性质」。
 
@@ -34,9 +34,9 @@
 |:--|:--|:--|
 | 方阵、满秩（$n=r$，无奇异） | $J^{-1}$ | $\dot q=J^{-1}v_e$ 唯一解；配数值积分（[@def-3.5.1] 前的 3.5.0） |
 | 长方、行满秩（$r<n$，冗余） | $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | 解最小范数（$W=I$）；加零空间项 $(I-J^\dagger J)\dot q_0$ 做内部运动（[@def-3.5.1]） |
-| 退化 / 邻域（奇异） | $J^*=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$ | 容许末端速度误差 $\delta$；取 $K=k^{-2}I$，增大 $k$ 抑制速度；行满秩且 $k\to0^+$ 时趋于右伪逆（[@def-3.5.2]） |
+| 需要权衡速度与残差（含奇异邻域） | $J^*=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$ | 容许末端速度误差 $\delta$；取 $K=k^{-2}I$，增大 $k$ 抑制速度；行满秩且 $k\to0^+$ 时趋于右伪逆（[@def-3.5.2]） |
 
-一句话：**方阵求逆、矮胖求伪逆、退化加阻尼**。
+这些工具并非互斥：Moore–Penrose 伪逆在任意秩下存在；表中的右伪逆闭式要求行满秩。DLS在满秩时也能使用，目的是在速度和残差之间权衡。
 
 :::
 
@@ -178,63 +178,42 @@ $$J^\dagger J J^{\mathrm T}\boldsymbol a=J^{\mathrm T}(JJ^{\mathrm T})^{-1}JJ^{\
 
 :::
 
-::: ex B5 · DLS 的极限行为（原书 3.59 / 3.10）
+::: ex B5 · DLS 的方向增益与误差（原书 3.59 / 3.10）
 
-对 $J^*=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$（$r\le n$ 行满秩）：(a) $k\to0$ 且 $J$ 行满秩时趋于什么？(b) 在奇异位形（$JJ^{\mathrm T}$ 奇异）时 $k>0$ 的作用是什么？
+设 $J\in\mathbb R^{r\times n}$、$k>0$，$J^*=J^{\mathrm T}(JJ^{\mathrm T}+k^2I_r)^{-1}$。(a) 证明正阻尼时任何秩下均可计算，并说明 $k\to0^+$ 的极限；(b) 推导每个奇异方向的增益、残差与峰值；(c) 若用增益界选取速度上限，为什么不能漏掉指令幅值？
 
 ::: sol 解答
 
-**(a) $k\to0$ 的极限。**
+**(a) 可逆性与极限。** 对非零 $a$，
 
-$$J^*=J^{\mathrm T}\left(JJ^{\mathrm T}+k^2I\right)^{-1}\xrightarrow{k\to0}J^{\mathrm T}\left(JJ^{\mathrm T}\right)^{-1}=J^\dagger .$$
+$$a^{\mathrm T}(JJ^{\mathrm T}+k^2I_r)a=\|J^{\mathrm T}a\|^2+k^2\|a\|^2>0.$$
 
-**要说明为什么 $JJ^{\mathrm T}$ 可逆**：题设 $J$ 行满秩（$r\le n$ 且秩为 $r$），此时 $JJ^{\mathrm T}$ 是 $r\times r$ 正定矩阵，可逆。所以 $k=0$ 恰好退化为右伪逆——DLS 是**伪逆的正则化版本**，不是另一种算法。
+所以任意秩下矩阵均正定。若 $J$ 行满秩，令 $k\to0^+$ 就得到 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$。若降秩，该闭式不能取 $k=0$；但固定 $J$ 的DLS极限仍是一般Moore–Penrose伪逆，下面的方向分解说明这一点。
 
-**(b) 奇异位形下 $k>0$ 的作用：把增益从「发散」压成「有界」。**
+**(b) 方向增益。** 用标准正交奇异方向写 $J=\sum_{i=1}^s\sigma_i u_i v_i^{\mathrm T}$，只对正奇异值求和。因为 $JJ^{\mathrm T}u_i=\sigma_i^2u_i$、$J^{\mathrm T}u_i=\sigma_i v_i$，
 
-设 $J$ 的奇异值分解 $J=U\Sigma V^{\mathrm T}$，奇异值 $\sigma_1\ge\cdots\ge\sigma_r\ge0$。则
+$$J^*u_i=\frac{\sigma_i}{\sigma_i^2+k^2}v_i.$$
 
-$$JJ^{\mathrm T}=U\Sigma^2U^{\mathrm T}
-\ \Longrightarrow\
-\left(JJ^{\mathrm T}+k^2I\right)^{-1}=U\left(\Sigma^2+k^2I\right)^{-1}U^{\mathrm T},$$
+在值域的正交补上 $J^{\mathrm T}u=0$，因此DLS增益为0。此写法不把矩形的奇异值矩阵直接平方。对固定正 $\sigma_i$，$k\to0^+$ 给出 $1/\sigma_i$；缺失方向始终为0，恰好构成一般伪逆。
 
-$$J^*=V\Sigma U^{\mathrm T}U\left(\Sigma^2+k^2I\right)^{-1}U^{\mathrm T}
-=V\,\mathrm{diag}\!\left(\frac{\sigma_i}{\sigma_i^2+k^2}\right)U^{\mathrm T}. \tag{3.59}$$
+指令分量为 $b_i$ 时，关节速度分量是 $g_k(\sigma_i)b_i$，实际任务分量是 $\sigma_i g_k(\sigma_i)b_i$，因此
 
-**逐个奇异方向的增益**：
+$$g_k(\sigma)=\frac{\sigma}{\sigma^2+k^2},\qquad
+\delta_i=\frac{k^2}{\sigma_i^2+k^2}b_i.$$
 
-$$g_i(k)=\frac{\sigma_i}{\sigma_i^2+k^2}. \tag{3.59'}$$
+保留求导的关键步：
 
-**先看 $k=0$**：$g_i=\sigma_i/\sigma_i^2=1/\sigma_i$。当 $\sigma_i\to0$（接近奇异）时 $g_i\to\infty$——这就是普通伪逆在奇异点附近关节速度爆炸的原因。
+$$g_k'(\sigma)=\frac{k^2-\sigma^2}{(\sigma^2+k^2)^2}.$$
 
-**再看 $k>0$**。对 $g_i(k)$ 求极值：令 $\mathrm dg_i/\mathrm d\sigma_i=0$，
+导数在 $\sigma=k$ 由正变负，所以峰值为 $g_k(k)=1/(2k)$。当方向缺失时，关节速度为0，任务残差仍为该方向的完整指令分量；不能说阻尼恢复了能力。
 
-$$\frac{\left(\sigma_i^2+k^2\right)-\sigma_i(2\sigma_i)}{\left(\sigma_i^2+k^2\right)^2}=0
-\ \Longrightarrow\
-k^2-\sigma_i^2=0
-\ \Longrightarrow\
-\sigma_i=k.$$
+**(c) 速度界。** 在统一欧氏尺度下，正交方向合成给出
 
-此时
+$$\|\dot q_{\rm DLS}\|\le\frac{\|v\|}{2k}.$$
 
-$$g_i(k)\Big|_{\sigma_i=k}=\frac{k}{k^2+k^2}=\frac{1}{2k}.$$
-
-所以
-
-$$0\le g_i(k)\le\frac{1}{2k}\qquad\forall\sigma_i\ge0. \tag{3.59''}$$
-
-**这就是全部答案**：$k$ 给所有奇异方向的增益设了一个**上限 $1/(2k)$**。$\sigma_i\to0$ 时 $g_i\to\sigma_i/k^2\to0$（不是发散）——关节速度被**压住**了。
-
-**代价**：把 (3.59') 与理想增益 $1/\sigma_i$ 比较，
-
-$$\frac{g_i(k)}{1/\sigma_i}=\frac{\sigma_i^2}{\sigma_i^2+k^2}<1.$$
-
-所以在大奇异值方向（$\sigma_i\gg k$）几乎无损；在小奇异值方向，**解出的关节速度会偏小**，末端速度因此产生偏差 $\delta$（教材 §3.5.2）。这个偏差是有意为之：**用一点末端精度换关节速度有界**。
-
-**$k$ 的选法**：$k$ 太大 ⇒ 精度差（所有方向都被压）；$k$ 太小 ⇒ 接近奇异时仍会爆。工程上按「允许的最大关节速度」反推 $k\ge1/(2\dot q_{\max})$，或按最小奇异值的估计动态调整。
+若指令满足 $\|v\|\le V$，选择 $k\ge V/(2Q)$ 可由此充分保证 $\|\dot q\|\le Q$。省略 $V$ 就忽略了输入放大；这个归一化范数界也不能直接代替不同单位关节的逐项限速。阻尼是否过大还要检查任务残差。详见[独立练习](sec3-5.md#practice-3.5.dls)。
 
 :::
-
 :::
 
 ::: ex B6 · 速度 / 力变换的转置对偶（原书 3.16 / 3.112–3.116）
@@ -364,7 +343,7 @@ a_1c_1+a_2c_{12} & a_2c_{12} & 0 & 0\\
 
 ::: sol 解答（验收标准）
 
-$J_P$（前两行）：$\det J_P=a_1a_2s_2=0.25s_2$，$w=|\det J_P|=0.25|\sin\vartheta_2|$：$90°$ 时 $0.2500$、$30°$ 时 $0.1250$、$5°$ 时 $0.0218$、$0.1°$ 时 $4.36\times10^{-4}$——**趋于 0 的速度与 $\vartheta_2$ 同阶**，正是 [3.5.1](sec3-5.md#sec-3.5.1) 用 $\max w$ 远离奇异的依据；也说明奇点邻域「$\det J$ 小、$J^{-1}$ 大」的放大机制（2:11:18）。
+$J_P$（前两行）：$\det J_P=a_1a_2s_2=0.25s_2$，$w=|\det J_P|=0.25|\sin\vartheta_2|$：$90°$ 时 $0.2500$、$30°$ 时 $0.1250$、$5°$ 时 $0.0218$、$0.1°$ 时 $4.36\times10^{-4}$——**趋于 0 的速度与 $\vartheta_2$ 同阶**，可用 [3.5.1](sec3-5.md#sec-3.5.1) 的指标描述速度椭圆体积缩小。特定指令是否要求大速度，还要检查它在困难奇异方向上的分量，不能只由行列式大小判断。
 
 :::
 
@@ -372,11 +351,11 @@ $J_P$（前两行）：$\det J_P=a_1a_2s_2=0.25s_2$，$w=|\det J_P|=0.25|\sin\va
 
 ::: ex C6 · DLS 增益曲线（原书 3.10 相关）
 
-对 $J=[\sigma]$（单自由度）：画 $|\dot q/v_e|=\sigma/(\sigma^2+k^2)$ 随 $\sigma$ 的曲线（$\sigma\in[0,2]$，$k=0.1,0.5$），标出峰值点并与伪逆（$\sigma\to0$ 时发散）对照。
+对 $J=[\sigma]$（单自由度、$v_e\ne0$）：画 $|\dot q/v_e|=\sigma/(\sigma^2+k^2)$ 随 $\sigma$ 的曲线（$\sigma\in[0,2]$，$k=0.1,0.5$），标出峰值点并与伪逆（$\sigma\to0$ 时发散）对照。
 
 ::: sol 解答（验收标准）
 
-增益 $g(\sigma)=\sigma/(\sigma^2+k^2)$，$g'=0\Rightarrow\sigma=k$，峰值 $g_{\max}=1/(2k)$。$k=0.1$ 时峰值 $5$（在 $\sigma=0.1$）；$k=0.5$ 时峰值 $1$（在 $\sigma=0.5$）。伪逆增益 $1/\sigma$ 在 $0^+$ 无界。曲线族说明：**$k$ 是「增益上限」的旋钮**——$1/(2k)$ 即 $J^*$ 各方向增益的界；$k\to0$ 全曲线回到 $1/\sigma$。
+增益 $g(\sigma)=\sigma/(\sigma^2+k^2)$，$g'=0\Rightarrow\sigma=k$，峰值 $g_{\max}=1/(2k)$。$k=0.1$ 时峰值 $5$（在 $\sigma=0.1$）；$k=0.5$ 时峰值 $1$（在 $\sigma=0.5$）。伪逆增益 $1/\sigma$ 在 $0^+$ 无界。曲线族说明：**$k$ 是「增益上限」的旋钮**——$1/(2k)$ 即 $J^*$ 各方向增益的界；固定 $\sigma>0$ 时，$k\to0^+$ 趋于 $1/\sigma$；在 $\sigma=0$ 处，DLS和Moore–Penrose增益均为0，不能声称整条曲线一致趋于无界逆增益。
 
 :::
 

@@ -1,207 +1,325 @@
 # 3.5 逆微分运动学
 
-正问题「给 $\dot q$ 求 $v_e$」一次矩阵乘法就能解决；逆问题「给 $v_e$ 求 $\dot q$」却要解线性方程组，麻烦全在 $J$ 的形状上：方阵满秩（求逆）、长方矮胖（冗余）、退化（奇异）。本节按这三种情形给出三套答案——直接逆、伪逆 + 零空间、阻尼最小二乘——三套合起来，就是**数值逆运动学的发动机**。录播 1:56:39–2:19:53。
+§3.4 求出了“一个特解加全部零空间速度”。现在还差两件事：怎样求特解，怎样在多组关节速度中作选择？本节先求严格满足任务的最优速度，再讨论靠近奇点时怎样用任务误差换取较小的关节速度。最后用同一组输入比较求解结果。对应录播 1:56:39–2:19:53。
 
-::: preview 先修补 · 拉格朗日乘子法（本节推导只用到这一条）
-
-在进入具体情形之前，先把一件工具补好：「带等式约束的二次型最小化」有一个固定的三步套路，本节 3.5.1 与 3.5.2 会各用一次。
-
-**问题**：$\min_{\boldsymbol x}\frac12\boldsymbol x^{\mathrm T}Q\boldsymbol x$，约束 $A\boldsymbol x=\boldsymbol b$（$Q$ 对称正定）。
-
-1. **构造拉格朗日函数**：$\mathcal L(\boldsymbol x,\boldsymbol\lambda)=\frac12\boldsymbol x^{\mathrm T}Q\boldsymbol x+\boldsymbol\lambda^{\mathrm T}(A\boldsymbol x-\boldsymbol b)$；
-2. **对 $\boldsymbol x$ 求偏导置零**：$Q\boldsymbol x+A^{\mathrm T}\boldsymbol\lambda=0\Rightarrow\boldsymbol x=-Q^{-1}A^{\mathrm T}\boldsymbol\lambda$（$Q$ 正定保证这是**极小**而非极大）；
-3. **回代约束解出 $\boldsymbol\lambda$**：$A\boldsymbol x=-AQ^{-1}A^{\mathrm T}\boldsymbol\lambda=\boldsymbol b\Rightarrow\boldsymbol\lambda=-(AQ^{-1}A^{\mathrm T})^{-1}\boldsymbol b$，再回代得
-
-$$\boldsymbol x=Q^{-1}A^{\mathrm T}(AQ^{-1}A^{\mathrm T})^{-1}\boldsymbol b .$$
-
-**可逆性前提**：$AQ^{-1}A^{\mathrm T}$ 可逆 ⇔ $A$ **行满秩**。这条前提本节要盯紧，因为它会两次出场：3.5.1 要求 $J$ 行满秩（无奇异），3.5.2 的 $JW^{-1}J^{\mathrm T}+K^{-1}$ 则因 $K^{-1}$ 项而在奇异时仍可逆——这正是 DLS 治奇点的机制。
-
-:::
+下文固定当前位形，记所选任务的速度方程为 $v=J\dot q$，其中 $J\in\mathbb R^{r\times n}$、$v\in\mathbb R^r$、$\dot q\in\mathbb R^n$。任务、参考点与表达坐标系均须先确定；几何角速度和姿态参数导数的转换留到 §3.6。
 
 <a id="sec-3.5.0"></a>
 
-## 3.5.0 方阵情形：直接求逆 + 数值积分
+## 3.5.0 方阵情形：求速度，再积分
 
-正运动学 $x_e=k(q)$ 高度非线性，封闭形式的逆解「很可能不存在」。实际操作中，我们用**微分运动的思想 + 数值计算**来求运动学逆解——雅可比正是**数值计算的桥梁**（1:56:40）。最简单的起点是 $n=r$、$J$ 为方阵且满秩的情形：
+若 $r=n$ 且 $J$ 满秩，线性方程有唯一解：
 
-$$\dot q=J^{-1}(q)\,v_e,\qquad
-q(t_{k+1})=q(t_k)+\int_{t_k}^{t_{k+1}}\dot q\,\mathrm dt\approx q(t_k)+J^{-1}(q(t_k))\,v_e(t_k)\,\Delta t$$
+$$\dot q=J^{-1}(q)v.$$
 
-「这样不受方程结构是否可解的影响，没有解析解也能解」（1:58:24）。注意这一招的前提是 $J$ 为方阵且满秩：不满秩是**奇异**，长方阵是**冗余**，两者都要另作处理（分别见 3.5.2 与 3.5.1）。
+已知初始关节位置 $q(0)$，沿时间积分即可得到 $q(t)=q(0)+\int_0^t\dot q(\tau)\,\mathrm d\tau$。计算机只在离散时刻更新，最简单的前向 Euler 法将一个时间步内的速度近似为常数：
+
+$$q_{k+1}=q_k+J^{-1}(q_k)v_k\Delta t.$$
+
+每步都要用新的 $q_k$ 重算 $J$。这利用了速度方程的线性结构，不必先求出封闭形式的位姿逆解；但瞬时速度正确不等于有限步位姿精确，§3.4 已给出二阶漂移的例子。
+
+::: ex 跟算 · 两连杆向上运动一步
+两杆各1 m，在 $q_k=[0,\pi/2]^{\mathrm T}$ 时，笔尖位于 $(1,1)$ m。位置雅可比与指令为
+
+$$J=\begin{bmatrix}-1&-1\\1&0\end{bmatrix},\qquad v=\begin{bmatrix}0\\1\end{bmatrix}\ {\rm m/s}.$$
+
+由第二行得 $\dot q_1=1$，第一行得 $\dot q_2=-1$ rad/s。取 $\Delta t=0.1$ s，得到 $q_{k+1}=[0.1,\pi/2-0.1]^{\mathrm T}$。第二杆绝对角仍为 $\pi/2$，所以实际笔尖是
+
+$$p_{k+1}=[\cos0.1,\ 1+\sin0.1]^{\mathrm T}
+\approx[0.995004,1.099833]^{\mathrm T}\ {\rm m}.$$
+
+理想直线一步的目标为 $(1,1.1)$ m，两者不同。逆微分运动学求当前速度；数值积分精度和轨迹误差反馈还要另行处理，见 §3.7。
+:::
 
 <a id="sec-3.5.1"></a>
 
-## 3.5.1 冗余机械手（$r<n$）：伪逆与零空间
+## 3.5.1 冗余情形：在可行速度中选择
 
-冗余情形的一般思路，是把它等效为一个**有约束的线性最优化问题**（1:59:00）：在约束 $J\dot q=v_e$ 下最小化关节速度的加权范数
+### 加权范数：为什么需要一个目标？
 
-$$\min_{\dot q}\ g(\dot q)=\tfrac12\,\dot q^{\mathrm T}W\dot q\qquad\text{s.t.}\quad J\dot q=v_e$$
+设 $r<n$ 且 $J$ 行满秩。任务方程有无穷多解；若希望某些关节少动，可以给它们较大的代价。用对称正定矩阵 $W\in\mathbb R^{n\times n}$ 表示权重，求
 
-其中 $W$ 为 $n\times n$ 对称正定加权矩阵（$W=I$ 时即关节速度范数最小）。下面照 preview 里的三步套路引入拉格朗日乘子：
+$$\min_{\dot q}\ C(\dot q)=\tfrac12\dot q^{\mathrm T}W\dot q,
+\qquad J\dot q=v.$$
 
-$$\mathcal L(\dot q,\lambda)=\tfrac12\dot q^{\mathrm T}W\dot q+\lambda^{\mathrm T}(J\dot q-v_e)$$
+正定指任意非零 $z$ 都满足 $z^{\mathrm T}Wz>0$，所以每个非零速度都有正代价。$W=I_n$ 时最小化通常的欧氏范数；对角 $W$ 可以分别惩罚各关节。混合移动/转动关节时先用选定尺度归一化，或由 $W$ 表示尺度与相对代价，不能直接把数值大小当成同一种物理量。
 
-::: proof 推导（老师全程口述，1:59:30–2:03:30）
-**一阶条件**（对 $\dot q$ 求偏导置零）：
+### 拉格朗日乘子怎样求出候选解？
 
-$$W\dot q+J^{\mathrm T}\lambda=0\qquad\Longrightarrow\qquad \dot q=-W^{-1}J^{\mathrm T}\lambda$$
+将每条任务方程乘以一个待定系数，组成乘子向量 $\lambda\in\mathbb R^r$，定义
 
-（再对 $\dot q$ 求一次导得 $W$，它正定 ⇒ 这是极小值而非极大值——「一阶导为零得极值点，二阶导正定是最小值」，2:01:23。）
-**回代约束**：
+$$\mathcal L(\dot q,\lambda)=\tfrac12\dot q^{\mathrm T}W\dot q
++\lambda^{\mathrm T}(v-J\dot q).$$
 
-$$J\dot q=-JW^{-1}J^{\mathrm T}\lambda=v_e\qquad\Longrightarrow\qquad JW^{-1}J^{\mathrm T}\lambda=-v_e$$
+对称 $W$ 的二次型导数为 $W\dot q$；线性项对 $\dot q$ 的导数为 $-J^{\mathrm T}\lambda$。分别对两个未知向量求导置零：
 
-**可逆性**（老师特意停下论证，2:02:12）：不考虑奇异时 $J$ 满秩（秩 $r$），$JW^{-1}J^{\mathrm T}$ 是 $r\times r$ 方阵。$J$ 与 $W$ 都满秩，左右相乘相当于做初等变换、不改变秩，故 $JW^{-1}J^{\mathrm T}$ 可逆——「前面这个矩阵不可逆的话，后面的表示就没有意义了」。于是
+$$W\dot q-J^{\mathrm T}\lambda=0,\qquad v-J\dot q=0.$$
 
-$$\lambda=-(JW^{-1}J^{\mathrm T})^{-1}v_e,\qquad
-\boxed{\ \dot q=W^{-1}J^{\mathrm T}\big(JW^{-1}J^{\mathrm T}\big)^{-1}v_e\ }$$
+第一式给出 $\dot q=W^{-1}J^{\mathrm T}\lambda$；代入第二式：
+
+$$G\lambda=v,\qquad G=JW^{-1}J^{\mathrm T}\in\mathbb R^{r\times r}.$$
+
+**为什么 $G$ 可逆？** $W^{-1}$ 仍对称正定。对任意 $a\ne0$，行满秩保证 $J^{\mathrm T}a\ne0$，故
+
+$$a^{\mathrm T}Ga=(J^{\mathrm T}a)^{\mathrm T}W^{-1}(J^{\mathrm T}a)>0.$$
+
+所以 $G$ 正定可逆。反之，若 $J$ 不行满秩，存在非零 $a$ 使 $J^{\mathrm T}a=0$，于是 $Ga=0$，$G$ 不可逆。不能用“矩阵相乘不改秩”代替这个论证；相乘的矩阵并非都可逆。
+
+回代得到加权最优候选解，记加权右逆为 $J_W^\#$：
+
+$$\dot q_W=J_W^\#v,\qquad
+J_W^\#=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T})^{-1}\in\mathbb R^{n\times r}.$$
+
+直接乘 $J$ 得 $JJ_W^\#=I_r$，所以候选解满足任务。
+
+### 为什么它是唯一的全局最优解？
+
+仅有一阶条件还不够。任何其他可行速度都可写成 $\dot q_W+z$，其中 $Jz=0$。展开代价差：
+
+$$C(\dot q_W+z)-C(\dot q_W)
+=z^{\mathrm T}W\dot q_W+\tfrac12z^{\mathrm T}Wz.$$
+
+由 $W\dot q_W=J^{\mathrm T}\lambda$，交叉项是 $z^{\mathrm T}J^{\mathrm T}\lambda=(Jz)^{\mathrm T}\lambda=0$。因此任何非零可行扰动都会使代价严格增加。$\dot q_W$ 是固定当前 $J,v$ 后的唯一全局最优速度；这不保证积分后的整条关节轨迹具有最小总能量或最短长度。原教材“locally minimizes”须结合当前位形的语境理解。
+
+![课堂课件第49页：加权二次优化、乘子方程与单权特例；正文补出正定性和唯一最优的证明](../assets/ch03/lagrange-pseudo.jpg)
+
+::: def 定义 3.5.1 · 行满秩时的右伪逆与最小范数解 {#def-3.5.1}
+当 $W=I_n$ 时，
+
+$$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}\in\mathbb R^{n\times r},\qquad
+\dot q_{\min}=J^\dagger v.$$
+
+$JJ^\dagger=I_r$；$J^\dagger v$ 是全部满足 $J\dot q=v$ 的速度中唯一的最小范数解。注意伪逆交换输入与输出的维度：$r$ 维任务速度映回 $n$ 维关节速度。方阵满秩时它等于 $J^{-1}$。后文将说明一般秩下的 Moore–Penrose 伪逆，不能将此行满秩闭式的限制误说成“一般伪逆在奇点不存在”。
 :::
 
-![课堂幻灯片 · 01:59:02：约束二次优化 + 拉格朗日乘子推导](../assets/ch03/lagrange-pseudo.jpg)
+### 贯穿跟算：同一个3R任务怎样选速度？
 
-**$W=I$：右伪逆**（2:03:27）：
+沿用 §3.4 的三杆各1 m、$q_*=[0,\pi/2,-\pi/2]^{\mathrm T}$，只要求笔尖位置速度 $v=[0,1]^{\mathrm T}$ m/s：
 
-::: def 定义 3.5.1 · 右伪逆 $J^\dagger$ 与最小范数解 {#def-3.5.1}
-$$\dot q=J^{\mathrm T}(JJ^{\mathrm T})^{-1}v_e=J^\dagger v_e,\qquad J^\dagger\triangleq J^{\mathrm T}(JJ^{\mathrm T})^{-1}\ (r\times n)$$
+$$J=\begin{bmatrix}-1&-1&0\\2&1&1\end{bmatrix},\quad
+JJ^{\mathrm T}=\begin{bmatrix}2&-3\\-3&6\end{bmatrix},\quad
+(JJ^{\mathrm T})^{-1}=\begin{bmatrix}2&1\\1&2/3\end{bmatrix}.$$
 
-按现代矩阵论的说法，它就是**右广义逆 / 伪逆**。直接验证 $JJ^\dagger v_e=(JJ^{\mathrm T})(JJ^{\mathrm T})^{-1}v_e=v_e$，可见它确实满足约束；而单权情形得到的解又使关节速度范数**局部最小**，因此称为最小范数解。
+用二阶逆矩阵公式可核对行列式为3。左乘 $J^{\mathrm T}$：
+
+$$J^\dagger=\begin{bmatrix}0&1/3\\-1&-1/3\\1&2/3\end{bmatrix},\qquad
+\dot q_{\min}=\begin{bmatrix}1/3\\-1/3\\2/3\end{bmatrix}\ {\rm rad/s}.$$
+
+独立检查：§3.4 的全部解为 $(1-\lambda,-1+\lambda,\lambda)$，其范数平方为 $2(1-\lambda)^2+\lambda^2$。求导得 $-4+6\lambda=0$，所以 $\lambda=2/3$，最小平方范数为 $2/3$，与矩阵求解一致。
+
+若第三关节运动代价更高，取 $W=\operatorname{diag}(1,1,4)$，则
+
+$$JW^{-1}J^{\mathrm T}=\begin{bmatrix}2&-3\\-3&21/4\end{bmatrix},\qquad
+\dot q_W=\begin{bmatrix}2/3\\-2/3\\1/3\end{bmatrix}\ {\rm rad/s}.$$
+
+仍有 $J\dot q_W=v$，第三关节速度变小，前两关节多承担运动。再用解族检查加权代价：$\dot q^{\mathrm T}W\dot q=2(1-\lambda)^2+4\lambda^2$，导数为 $-4+12\lambda$，最优 $\lambda=1/3$。权重改变选出的解，不改变任务方程。
+
+### 指定附加速度：最近的可行解怎样推？
+
+若已有期望关节速度 $\dot q_0$，目标是尽量接近它，同时严格满足主任务：
+
+$$\min_{\dot q}\tfrac12(\dot q-\dot q_0)^{\mathrm T}W(\dot q-\dot q_0),\qquad J\dot q=v.$$
+
+令 $d=\dot q-\dot q_0$，约束变成 $Jd=v-J\dot q_0$。这与刚证明的问题形式完全相同，因而
+
+$$d=J_W^\#(v-J\dot q_0),\qquad
+\dot q=J_W^\#v+(I_n-J_W^\#J)\dot q_0.$$
+
+当 $W=I_n$ 时，得到常用式
+
+$$\dot q=J^\dagger v+P\dot q_0,\qquad P=I_n-J^\dagger J.$$
+
+$JP=J-JJ^\dagger J=0$。$J^\dagger J$ 对称且幂等，其像空间为 $J$ 的行空间；所以 $P$ 是到零空间的欧氏正交投影，与 §3.4 的标准正交基表达 $NN^{\mathrm T}$ 相同。一般 $W$ 对应加权的最近解，不能把加权投影直接当成欧氏正交投影。
+
+对上面的3R数据，指定 $\dot q_0=e_1=(1,0,0)$ rad/s。§3.4 已求得 $Pe_1=(1,-1,-1)/3$，所以最近可行解为
+
+$$\dot q=\begin{bmatrix}1/3\\-1/3\\2/3\end{bmatrix}
++\frac13\begin{bmatrix}1\\-1\\-1\end{bmatrix}
+=\begin{bmatrix}2/3\\-2/3\\1/3\end{bmatrix}\ {\rm rad/s}.$$
+
+它通常不会恰好等于 $\dot q_0$；“希望接近”是次目标，并没有新增 $\dot q=\dot q_0$ 这条硬约束。若 $v=0$，解为 $P\dot q_0$，只保持所选任务的瞬时速度为零。
+
+![课堂课件第50页：最小化与指定关节速度的距离，并推导最近的可行速度](../assets/ch03/right-pseudoinv.jpg)
+
+### 次目标怎样给出具体的梯度？
+
+常取 $\dot q_0=k_0\nabla g(q)$，$k_0>0$。§3.4 已证明：欧氏投影的零空间贡献为 $\dot g_{\rm null}=k_0\|P\nabla g\|^2\ge0$。三种常用指标各有不同含义：
+
+- **可操作度** $g=w=\sqrt{\det(JJ^{\mathrm T})}$：在固定尺度下等于速度椭球体积的比例，行秩下降时为零。提高体积不等于增大每个方向的能力，也不等于增大到奇异集合的距离，见 §3.3。
+- **靠近关节中点**：设上下限为 $q_{iM},q_{im}$，中点 $\bar q_i=(q_{iM}+q_{im})/2$，行程 $\Delta_i=q_{iM}-q_{im}>0$。取负偏离平方
+
+$$g(q)=-\frac1{2n}\sum_i\left(\frac{q_i-\bar q_i}{\Delta_i}\right)^2,\qquad
+\frac{\partial g}{\partial q_i}=-\frac{q_i-\bar q_i}{n\Delta_i^2}.$$
+
+关节高于中点时该梯度分量为负，低于中点时为正。最大化的是负偏离平方；若最大化“到中点的距离”，方向反而错了。投影会改变原梯度，且主任务也在影响关节，不能由此保证不越限。
+
+- **增加障碍间距**：可取臂上点到障碍表面的最小距离。若用球心距离，应减去球半径，才是表面间距。最近点唯一且距离光滑时可求梯度；最近点切换处可能不可微。这是局部再配置的指标，不能据此保证整条轨迹无碰撞。
+
+![课堂课件第51页：主任务、齐次项与梯度次目标的关系；位置任务没有约束工具朝向](../assets/ch03/q0-solution.jpg)
+
+![课堂课件第52页：可操作度、负归一化关节偏离平方与障碍距离三类指标](../assets/ch03/q0-choices.jpg)
+
+::: think 独立练习 · 换权重、换附加速度 {#practice-3.5.redundancy}
+仍用本节3R的 $J,v$。
+1. 取 $W=\operatorname{diag}(1,1,9)$，从解族直接求最优速度，不先套矩阵公式。
+2. $W=I$、$\dot q_0=(0,0,1)$ 时，最近可行解是什么？为什么可以不算伪逆？
+3. 若某关节 $q_i=0.8$、上下限为0与1，$n=3$，求中点指标的梯度分量。最大化该指标希望它向哪个方向运动？
+
+::: sol 核对与理由
+1. 范数代价为 $2(1-\lambda)^2+9\lambda^2$，导数为 $-4+22\lambda$；$\lambda=2/11$，速度 $(9/11,-9/11,2/11)$ rad/s。
+2. $J\dot q_0=(0,1)=v$，它本来可行，与自身距离为零，所以最近解就是 $(0,0,1)$ rad/s。
+3. $\bar q_i=0.5,\Delta_i=1$，梯度为 $-(0.8-0.5)/3=-0.1$，原梯度希望减小该关节变量；实际速度还要满足主任务并经过投影。
 :::
-
-![课堂幻灯片 · 02:03:58：单权情形 ⇒ 右伪逆](../assets/ch03/right-pseudoinv.jpg)
-
-**指定 $\dot q_0$ 的通解**（2:04:29）：冗余还有一个好处——可以「顺便」让 $\dot q$ 尽量接近某个期望值 $\dot q_0$（相当于在任务约束之外再附加一条约束）：
-
-$$\min_{\dot q}\ \tfrac12(\dot q-\dot q_0)^{\mathrm T}W(\dot q-\dot q_0)\quad\text{s.t.}\quad J\dot q=v_e
-\qquad\xrightarrow{\ \text{同上推导}\ }\qquad
-\boxed{\ \dot q=J^\dagger v_e+(I_n-J^\dagger J)\,\dot q_0\ }$$
-
-（$W=I$ 情形。）
-
-![课堂幻灯片 · 02:06:15：指定附加速度的通解与零空间投影](../assets/ch03/q0-solution.jpg)
-
-::: intuition 两项各是什么
-- **第一项 $J^\dagger v_e$**：满足任务的最小范数特解（「干活用的」）；
-- **第二项 $(I-J^\dagger J)\dot q_0$：齐次解**。这里 $P=I-J^\dagger J$ 是零空间投影矩阵——$JP\dot q_0=(J-J)\dot q_0=0$，所以该项**不惊动末端**（与 [@thm-3.4.B] 的 $P=NN^{\mathrm T}$ 是同一角色，只是两种写法）。**内部运动**正是由它描述，机械手借此完成再配置（2:06:13）。
 :::
-
-**$\dot q_0$ 的三种取法**（2:07:04）：先定义标量函数 $g(q)$，再取
-
-$$\dot q_0=k_0\left(\frac{\partial g(q)}{\partial q}\right)^{\mathrm T}\quad(\text{沿梯度方向})$$
-
-所谓三种取法，其实就是三个不同的 $g$：
-
-1. **可操作度**（最大化）：$g(q)=w(q)=\sqrt{\det(JJ^{\mathrm T})}$，方阵时为 $|\det J|$。它是固定单位与度量下速度椭球的体积比例，在行秩下降时为零。提高体积不保证每个方向都更容易控制，也不等于增大到奇异集合的几何距离；困难方向应结合最小奇异值检查，推导见 [3.3.2](sec3-3.md#sec-3.3.2)。
-2. **与关节极限的距离**（最大化）：让各关节角尽量靠近行程中点 $\tfrac12(\vartheta_{i\mathrm M}+\vartheta_{im})$，从而保证不会到达极限位置（2:09:06）；
-3. **与障碍物的距离**（最大化）：取机械臂上所有点与障碍物距离的**最小值**作为 $g$，再让它最大化——「使最小距离最大化——最小距离都大了，其他肯定更远」（2:09:31）。
-
-老师一句话点破了这套做法成立的根据：「为什么能优化？因为冗余——不是一个解，有很多个解，可以把我们的目标转化成优化问题」（2:10:06）。
-
-![课堂幻灯片 · 02:08:04：附加速度的三种取法](../assets/ch03/q0-choices.jpg)
 
 <a id="sec-3.5.2"></a>
 
-## 3.5.2 运动学奇点情形：阻尼最小二乘
+## 3.5.2 奇异与邻域：先分清能否精确实现
 
-$J^{-1}$ 与 $J^\dagger$ 都只在满秩时才可计算，而奇点位形处 $v_e=J\dot q$ 里含有线性相关的方程（2:10:14），要分两种情况看：
+### 一般伪逆为什么在奇异处仍有定义？
 
-- 若 $v_e\in\mathcal R(J)$：**提取出所有线性无关方程**就能解出 $\dot q$，这条路径仍然可实现；
-- 若 $v_e\notin\mathcal R(J)$：$v_e$ 无法用关节速度线性表出，**方程无解**。
+行满秩闭式 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ 在降秩时失效，但 Moore–Penrose 伪逆本身仍存在。用奇异值分解说明这一点：设当前秩为 $s$，
 
-**为什么奇点邻域也危险**：在行满秩邻域，沿第 $i$ 个输出奇异方向的速度分量 $b_i$，对应的最小范数关节速度分量为 $b_i/\sigma_i$。若 $\sigma_i$ 很小且 $b_i$ 不同时变小，关节速度要求就会放大。零指令仍有零解，不能说所有指令或所有逆矩阵元素都发散；[3.3.2](sec3-3.md#sec-3.3.2) 已用两连杆消元和速度椭圆推导这一点。
+$$J=\sum_{i=1}^{s}\sigma_i u_i v_i^{\mathrm T},\qquad\sigma_i>0.$$
 
-**解决思路：容许小误差，换回可解性**（阻尼最小二乘，DLS，2:12:16）：不再要求微分运动方程严格成立，而是容许 $v_e$ 带一个小的误差 $\delta$：
+$u_i\in\mathbb R^r$ 是标准正交的可实现任务方向，$v_i\in\mathbb R^n$ 是对应的标准正交关节方向，$Jv_i=\sigma_i u_i$。将指令分为 $v=\sum_i b_i u_i+v_\perp$，其中 $b_i=u_i^{\mathrm T}v$，$v_\perp$ 与值域正交。对每个正奇异值方向，令关节分量为 $b_i/\sigma_i$，就能实现 $b_i u_i$；$v_\perp$ 无法实现。最小范数的最小二乘解为
 
-$$g(\dot q,\delta)=\tfrac12\dot q^{\mathrm T}W\dot q+\tfrac12\,\delta^{\mathrm T}K\,\delta\qquad\text{s.t.}\quad v_e-J\dot q=\delta$$
+$$J^\dagger=\sum_{i=1}^{s}\frac1{\sigma_i}v_i u_i^{\mathrm T},\qquad
+\dot q_{\rm MP}=J^\dagger v.$$
 
-$K$ 就是这两项之间的权衡系数：$K$ 取得大，更用力压制误差；$K$ 取得小，则更偏向让关节速度小。
+这是先最小化 $\|J\dot q-v\|$，再在同样残差的解中取最小 $\|\dot q\|$。零空间速度不会改善残差，取零才使范数最小。若 $v_\perp=0$，任务精确可行；否则任何算法都无法在当前位形补回这个方向。
 
-![课堂幻灯片 · 02:14:57：增广变量法化为同型问题](../assets/ch03/dls-augmented.jpg)
+近奇点时，正的 $\sigma_i$ 很小，非零 $b_i$ 会要求很大的关节速度。但在恰好 $\sigma_i=0$ 时，Moore–Penrose 伪逆将该方向的逆增益取为0，并非把 $1/0$ 写进矩阵。固定指令下，这个值可能与从非奇异位形逼近的结果不连续。§3.3 的速度方程已展示这种区别。
 
-**增广变量法**（2:14:24）：把误差也并入未知量，令 $w=\begin{bmatrix}\dot q\\ \epsilon\end{bmatrix}$（课件记 $\epsilon$）、$A=[J\ \ -I]$，则 $Aw=J\dot q-\epsilon=v_e$；目标随之写成单一二次型 $g=\tfrac12w^{\mathrm T}Qw$，$Q=\operatorname{diag}\{W,K\}$。接下来套用拉格朗日乘子法，与 3.5.1 完全同型：先有 $w=-Q^{-1}A^{\mathrm T}\lambda$，再由 $AQ^{-1}A^{\mathrm T}=JW^{-1}J^{\mathrm T}+K^{-1}$（$A$ 满秩、$Q$ 正定 ⇒ 可逆，论证同前）解出 $\lambda$，即得
+### 阻尼最小二乘从哪个目标得到？
 
-$$\begin{bmatrix}\dot q\\ \epsilon\end{bmatrix}=\begin{bmatrix}W^{-1}J^{\mathrm T}\\ -K^{-1}\end{bmatrix}\big(JW^{-1}J^{\mathrm T}+K^{-1}\big)^{-1}v_e,\qquad \epsilon=-\delta.$$
+即使方程有精确解，近奇点的速度要求也可能过大。阻尼最小二乘（DLS）不再强求速度完全匹配，而求
 
-![课堂幻灯片 · 02:17:37：奇异情形广义逆与权重矩阵的取法](../assets/ch03/dls-jstar.jpg)
+$$\min_{\dot q}\ F(\dot q)
+=\tfrac12\|v-J\dot q\|^2+\tfrac12 k^2\|\dot q\|^2,\qquad k>0.$$
 
-::: def 定义 3.5.2 · 奇异情形的广义逆 $J^*$ {#def-3.5.2}
-$$\dot q=J^{*}v_e,\qquad J^{*}=W^{-1}J^{\mathrm T}\big(JW^{-1}J^{\mathrm T}+K^{-1}\big)^{-1}$$
+这里采用选定尺度的欧氏坐标。第一项惩罚任务速度误差，第二项惩罚关节速度；增大 $k$ 就更不愿让关节快速运动。求导得正规方程
 
-当 $W=I$、$K=k^{-2}I$、$k>0$ 时，得到经典阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$。这里 $K$ 是**误差权重**，$k$ 是**阻尼系数**，两者方向相反：奇点邻域可增大 $k$（即减小 $K$），限制关节速度，但要容许更大的任务速度误差；远离奇点可减小 $k$（即增大 $K$）。当 $J$ 行满秩且 $k\to0^+$ 时，公式趋于右伪逆。
+$$-J^{\mathrm T}(v-J\dot q)+k^2\dot q=0
+\quad\Longrightarrow\quad
+(J^{\mathrm T}J+k^2I_n)\dot q=J^{\mathrm T}v.$$
+
+对非零 $z$，$z^{\mathrm T}(J^{\mathrm T}J+k^2I_n)z=\|Jz\|^2+k^2\|z\|^2>0$，故任何秩下都有唯一最优解。又因
+
+$$(J^{\mathrm T}J+k^2I_n)J^{\mathrm T}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I_r),$$
+
+左右两种求解写法相等：
+
+$$\dot q=(J^{\mathrm T}J+k^2I_n)^{-1}J^{\mathrm T}v
+=J^{\mathrm T}(JJ^{\mathrm T}+k^2I_r)^{-1}v.$$
+
+实际计算通常解线性方程组，无须显式形成逆矩阵。
+
+### 加权误差与增广变量为什么给出同一结果？
+
+若误差和关节速度各有权重，设 $W\succ0,K\succ0$，$\delta=v-J\dot q\in\mathbb R^r$，求
+
+$$\min\ \tfrac12\dot q^{\mathrm T}W\dot q+\tfrac12\delta^{\mathrm T}K\delta,
+\qquad J\dot q+\delta=v.$$
+
+将 $w=[\dot q^{\mathrm T},\delta^{\mathrm T}]^{\mathrm T}$、$A=[J\ I_r]$、$Q=\operatorname{diag}(W,K)$ 合并，得到 $\min\tfrac12w^{\mathrm T}Qw$、$Aw=v$。$A$ 含单位阵，任何 $J$ 下都行满秩。套用本节已经证明的加权解，逐块相乘：
+
+$$Q^{-1}A^{\mathrm T}=\begin{bmatrix}W^{-1}J^{\mathrm T}\\K^{-1}\end{bmatrix},\qquad
+AQ^{-1}A^{\mathrm T}=JW^{-1}J^{\mathrm T}+K^{-1}=C.$$
+
+$C$ 的二次型是一个非负项加严格正项，所以始终正定；得到
+
+$$\dot q=W^{-1}J^{\mathrm T}C^{-1}v,\qquad\delta=K^{-1}C^{-1}v.$$
+
+核对约束：$J\dot q+\delta=(JW^{-1}J^{\mathrm T}+K^{-1})C^{-1}v=v$。这里始终使用同一误差定义，不需要中途换成相反符号。
+
+![课堂课件第53页：将任务速度残差并入未知量，化为增广二次优化；图中为单权阻尼特例](../assets/ch03/dls-augmented.jpg)
+
+::: def 定义 3.5.2 · 阻尼广义逆 $J^*$ {#def-3.5.2}
+$$J^*=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}\in\mathbb R^{n\times r}.$$
+
+$W,K$ 对称正定时，$J^*v$ 是上述加权误差目标的唯一最优解。$W=I_n,K=k^{-2}I_r$ 时，
+
+$$J^*=J^{\mathrm T}(JJ^{\mathrm T}+k^2I_r)^{-1}.$$
+
+$K$ 是误差权重，$k$ 是阻尼参数：增大 $k$ 相当于减小 $K$。这是正则化的速度解，不保证 $JJ^*=I_r$，也不等于一般 Moore–Penrose 伪逆。
 :::
 
-下图用一条曲线把「为什么要加阻尼」画了出来。横轴是 $J$ 的奇异值 $\sigma$（$\det J\to0$ 即最小奇异值 $\to0$），纵轴是把任务速度映回关节速度的增益：伪逆的增益 $1/\sigma$ 在奇点处发散；DLS 的增益 $\sigma/(\sigma^2+k^2)$ 则处处有界，峰值只有 $1/(2k)$。
+![课堂课件第55页：单权增广问题的推导，得到增益受限的DLS公式](../assets/ch03/dls-jstar.jpg)
 
-<figure>
-<svg class="figure-svg" viewBox="0 0 920 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-35-title fig-35-desc">
-<title id="fig-35-title">伪逆与阻尼最小二乘的增益曲线</title>
-<desc id="fig-35-desc">横轴为奇异值 σ，纵轴为对任务速度的增益。红色虚线为伪逆增益 1/σ，在 σ 趋于 0 时发散；绿色实线为 DLS 增益 σ/(σ²+k²)（k=0.25），处处有界，峰值 1/(2k) 出现在 σ=k；两条曲线在远离奇点处几乎重合。</desc>
-<defs>
-<marker id="f35-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
-<marker id="f35-r" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-red)"/></marker>
-</defs>
-<text class="diagram-text" x="450" y="30" text-anchor="middle">奇点邻域的两种「逆」：伪逆发散、DLS 有界</text>
-<rect x="90" y="44" width="110" height="256" fill="var(--accent)" fill-opacity=".06"/>
-<text class="diagram-note" fill="var(--accent-text)" x="148" y="100" text-anchor="middle">奇点邻域</text>
-<text class="diagram-note" fill="var(--accent-text)" x="148" y="118" text-anchor="middle">增大阻尼 k</text>
-<line class="diagram-axis" x1="80" y1="300" x2="820" y2="300" marker-end="url(#f35-m)"/>
-<line class="diagram-axis" x1="80" y1="300" x2="80" y2="44" marker-end="url(#f35-m)"/>
-<text class="diagram-text" x="762" y="338">奇异值 σ</text>
-<text class="diagram-note" x="96" y="76">σ = 0：奇异</text>
-<g stroke="var(--line)"><line x1="310" y1="300" x2="310" y2="294"/><line x1="530" y1="300" x2="530" y2="294"/><line x1="750" y1="300" x2="750" y2="294"/>
-<line x1="74" y1="236" x2="80" y2="236"/><line x1="74" y1="172" x2="80" y2="172"/><line x1="74" y1="108" x2="80" y2="108"/><line x1="74" y1="44" x2="80" y2="44"/></g>
-<text class="diagram-mono" x="310" y="318" text-anchor="middle">0.5</text>
-<text class="diagram-mono" x="530" y="318" text-anchor="middle">1.0</text>
-<text class="diagram-mono" x="750" y="318" text-anchor="middle">1.5</text>
-<text class="diagram-mono" x="68" y="240" text-anchor="end">1</text>
-<text class="diagram-mono" x="68" y="176" text-anchor="end">2</text>
-<text class="diagram-mono" x="68" y="112" text-anchor="end">3</text>
-<text class="diagram-mono" x="68" y="48" text-anchor="end">4</text>
-<line x1="80" y1="172" x2="262" y2="172" stroke="var(--line-strong)" stroke-dasharray="5 4"/>
-<text class="diagram-mono" x="268" y="176">1/(2k)</text>
-<line x1="200" y1="300" x2="200" y2="178" stroke="var(--line)" stroke-dasharray="4 4"/>
-<text class="diagram-mono" x="200" y="318" text-anchor="middle">σ = k</text>
-<polyline points="191,22 205,55 219,82 233,103 247,121 261,135 275,148 289,158 303,168 317,176 331,183 345,190 359,195 373,200 387,205 401,209 415,213 429,217 443,220 457,223 471,226 485,229 499,231 513,233 526,235 540,237 554,239 568,241 582,243 596,244 610,246 624,247 638,249 652,250 666,251 680,252 694,253 708,254 722,255 736,256 750,257" fill="none" stroke="var(--fig-red)" stroke-width="2" stroke-dasharray="7 5"/>
-<line x1="191" y1="46" x2="191" y2="14" stroke="var(--fig-red)" stroke-width="1.8" marker-end="url(#f35-r)"/>
-<text class="diagram-text" fill="var(--fig-red)" x="330" y="110">求逆 / 伪逆：增益 1/σ → ∞</text>
-<text class="diagram-note" fill="var(--fig-red)" x="330" y="130">det J → 0 时关节速度发散，「这就是为什么要避开」</text>
-<polyline points="90,300 101,275 112,251 123,230 134,212 145,198 156,187 167,180 178,175 189,173 200,172 211,173 222,174 233,176 244,179 255,182 266,185 277,188 288,191 299,194 310,198 321,201 332,204 343,206 354,209 365,212 376,214 387,217 398,219 409,221 420,223 431,225 442,227 453,229 464,231 475,232 486,234 497,236 508,237 519,238 530,240 541,241 552,242 563,244 574,245 585,246 596,247 607,248 618,249 629,250 640,251 651,252 662,253 673,253 684,254 695,255 706,256 717,256 728,257 739,258 750,258" fill="none" stroke="var(--fig-green)" stroke-width="2.4"/>
-<circle class="diagram-fill-sage" cx="200" cy="172" r="5"/>
-<text class="diagram-text" fill="var(--fig-green)" x="420" y="252">DLS J*：σ/(σ² + k²)，峰值 1/(2k)</text>
-<text class="diagram-note" fill="var(--fig-green)" x="420" y="272">容许小误差 δ，换来「奇异可容」</text>
-<text class="diagram-note" x="450" y="342" text-anchor="middle">示意取 k = 0.25；σ ≫ k 时两线接近；行满秩且 k → 0 时趋于右伪逆</text>
-</svg>
-<figcaption>伪逆 vs 阻尼最小二乘（本教程绘）：图中固定 $k=0.25$。当 $k>0$ 时，增益不超过 $1/(2k)$；行满秩时令 $k\to0^+$（即 $K=k^{-2}I$ 增大），DLS 趋于右伪逆。选取阻尼时要在关节速度与任务误差之间权衡。</figcaption>
-</figure>
+### 每个方向的增益和误差怎样算？
+
+在一对奇异方向上，将关节速度写为 $\alpha_i v_i$、指令分量为 $b_i u_i$。该方向的代价为 $\tfrac12(b_i-\sigma_i\alpha_i)^2+\tfrac12k^2\alpha_i^2$。对 $\alpha_i$ 求导：
+
+$$-\sigma_i(b_i-\sigma_i\alpha_i)+k^2\alpha_i=0
+\quad\Longrightarrow\quad
+\alpha_i=\frac{\sigma_i}{\sigma_i^2+k^2}b_i.$$
+
+因此逆映射增益为 $g_k(\sigma)=\sigma/(\sigma^2+k^2)$，实际任务分量为 $\sigma_i\alpha_i$，误差为
+
+$$\delta_i=b_i-\sigma_i\alpha_i
+=\frac{k^2}{\sigma_i^2+k^2}b_i.$$
+
+$\sigma_i\gg k$ 时误差较小；$\sigma_i\ll k$ 时速度被压低，大部分指令留在误差里。对缺失方向 $\sigma_i=0$，增益为0、误差仍为 $b_i$。
+
+为什么增益有界？直接求导：
+
+$$g_k'(\sigma)=\frac{k^2-\sigma^2}{(\sigma^2+k^2)^2}.$$
+
+它在 $\sigma<k$ 时为正、$\sigma>k$ 时为负，所以峰值出现在 $\sigma=k$，大小为 $1/(2k)$。在选定欧氏尺度下，因奇异方向正交，得到 $\|\dot q_{\rm DLS}\|\le\|v\|/(2k)$；指令幅值增大，速度界也同比增大。这个范数界不能直接当成一套不同单位关节的硬限速设置。
+
+### 跟算与演示：限制速度留下多少误差？
+
+用归一化的二维通道 $J=\operatorname{diag}(1,\epsilon)$、指令 $v=(1,1)$。$\epsilon$ 是第二方向的能力，逐渐变小直至丢失；这是说明求解机制的矩阵模型，不对应一幅特定机械臂。固定 $k=0.1$：
+
+| $\epsilon$ | Moore–Penrose 速度 $\dot q_{\rm MP}$ | DLS速度 $\dot q$ | DLS实际任务速度 $J\dot q$ |
+|--:|:--:|:--:|:--:|
+| 1 | $(1,1)$ | $(0.99010,0.99010)$ | $(0.99010,0.99010)$ |
+| 0.1 | $(1,10)$ | $(0.99010,5)$ | $(0.99010,0.5)$ |
+| 0.01 | $(1,100)$ | $(0.99010,0.99010)$ | $(0.99010,0.00990)$ |
+| 0 | $(1,0)$，最小二乘解 | $(0.99010,0)$ | $(0.99010,0)$ |
+
+第二行可手算 $0.1/(0.1^2+0.1^2)=5$，实现速度为 $0.1\times5=0.5$，残差为0.5。最后一行没有任何精确解；DLS 没有补回丢失方向。
+
+::: think 操作 · 阻尼、关节速度与任务误差 {#lab-3.5.dls}
+先预测：固定 $k=0.1$，把 $\epsilon$ 从0.1降到0.01，DLS第二关节速度会增大还是减小？实际任务速度呢？操作后分别核对增益曲线、关节速度和任务残差。再固定 $\epsilon=0.1$ 增大阻尼，观察交换的两种代价；最后比较“接近0”与“恰好为0”的伪逆读数。
+
+<div class="lab" data-lab="dls2d"></div>
+
+没有脚本时，用上表和 $\epsilon/(\epsilon^2+k^2)$ 计算同样的比较。读数均使用同一组归一化坐标。
+:::
+
+::: think 独立练习 · 不照抄上表 {#practice-3.5.dls}
+1. $J=[0.2]$、$v=2$、$k=0.1$，求伪逆速度、DLS速度、实际任务速度和残差。
+2. 当 $J=[0]$、$v=2$ 时，上述四个量怎样变化？能否把 $1/\sigma$ 的正侧极限当作零点的伪逆值？
+3. 在统一归一化尺度下，$\|v\|\le2$，希望用增益界保证 $\|\dot q\|\le5$，$k$ 至少取多少？该选择是否保证任务误差很小？
+
+::: sol 核对与解释
+1. 伪逆速度为 $2/0.2=10$；DLS速度为 $0.2\times2/(0.04+0.01)=8$；实际任务速度1.6，残差0.4。
+2. 零矩阵的伪逆也是零，最小二乘速度为0；DLS速度也为0，实际速度为0，残差仍为2。正侧 $1/\sigma$ 无界，不等于零点处 Moore–Penrose 伪逆的定义。
+3. $2/(2k)\le5$，故 $k\ge0.2$ 是该范数界给出的充分选择；不能由此保证误差小，仍需检查各方向的 $k^2/(\sigma_i^2+k^2)b_i$。
+:::
+:::
 
 <a id="sec-3.5"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
+## 3.5 小结与闭卷检查
 
-先别翻正文与速查卡，把下面几条默写出来，再展开核对。写不出来，说明这一节还没「拿走」。
+先问任务是否可行，再问要优化什么。行满秩时，右伪逆给唯一最小范数特解；指定附加速度得到最近可行解。降秩时，一般伪逆仍给最小范数的最小二乘解。DLS 进一步用残差代价与速度代价作权衡，固定正阻尼可限制增益，但无法恢复不可达方向。
 
-1. $J$ 的三种「不方 / 退化」各对应哪个工具？
-2. 写出 $J^\dagger$ 并说明它的解有什么性质。
-3. DLS 里的 $K$ 在奇点邻域与远离奇点各怎么取？为什么？
+::: think 闭卷检查 · 重建求解方法
+1. $J$、$J^\dagger$、$W$、$K$ 的维度是什么？为什么 $JW^{-1}J^{\mathrm T}$ 行满秩时正定？
+2. 怎样证明加权候选解是固定当前位形后的唯一全局最优解？最近 $\dot q_0$ 的解怎样通过变量平移得到？
+3. 为什么零奇异值不参与一般伪逆的求和？近奇点的大增益与恰好在奇点处有何不同？
+4. 从DLS目标怎样推出正规方程、方向增益、任务误差和峰值？
 
 ::: sol 核对
+$J$ 为 $r\times n$、$J^\dagger$ 为 $n\times r$、$W$ 为 $n\times n$、$K$ 为 $r\times r$。二次型 $(J^{\mathrm T}a)^{\mathrm T}W^{-1}(J^{\mathrm T}a)$ 在 $J$ 行满秩且 $a\ne0$ 时严格为正。
 
-方阵满秩 → $J^{-1}$（配数值积分）；长方冗余 → $J^\dagger$（+ 零空间项）；退化 → $J^*$（阻尼）。口诀：方阵求逆、矮胖求伪逆、退化加阻尼。
+任意可行扰动 $z$ 满足 $Jz=0$；代价差的交叉项消失，剩下 $\tfrac12z^{\mathrm T}Wz>0$。最近解令 $d=\dot q-\dot q_0$，解 $Jd=v-J\dot q_0$，再加回 $\dot q_0$。
 
-$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$，是**右伪逆**；$J^\dagger\boldsymbol v_e$ 是满足任务约束的**最小范数解**（$\|\dot{\boldsymbol q}\|$ 局部最小）。
+一般伪逆只反演正奇异值，零奇异值的逆增益取0。正奇异值趋零且对应指令不消失时速度可无界；在零点改为最小二乘解，可能留有不可消除的任务残差。
 
-以 $W=I$、$K=k^{-2}I$ 为例：奇点邻域可增大阻尼 $k$、减小误差权重 $K$，用任务误差换取较小的关节速度；行满秩且远离奇点时，可减小 $k$，在 $k\to0^+$ 时趋于右伪逆。
-
+DLS正规方程为 $(J^{\mathrm T}J+k^2I)\dot q=J^{\mathrm T}v$；方向增益 $\sigma/(\sigma^2+k^2)$、残差因子 $k^2/(\sigma^2+k^2)$，导数在 $\sigma=k$ 变号，峰值 $1/(2k)$。$k$ 大更惩罚关节速度，同时可能增大误差。
 :::
-
-:::
-
-## 3.5 小结与常见错误
-
-- **一条主线**：方阵（求逆 + 数值积分）→ 矮胖（拉格朗日乘子 ⇒ $J^\dagger$ 最小范数解，再加 $P\dot q_0$ 零空间项）→ 退化（DLS：容许 $\delta$、增广同型、$J^*$）。
-- **三个矩阵别混**：$J^{-1}$（方阵满秩）、$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$（冗余、行满秩）、$J^*$（奇异邻域、阻尼）——分别对应三种「不方 / 退化」的处境。
-
-::: think 常见错误清单 · 自查三条
-1. 对冗余臂硬求 $J^{-1}$——$r\times n$ 的长方阵根本没有逆；「不存在逆，就要用广义逆（左 / 右广义逆、伪逆），这是线代 / 矩阵论的基础」（0:17:35）；
-2. 忘了 $JW^{-1}J^{\mathrm T}$ 可逆的前提是 $J$ 行满秩（无奇异）——一到奇点情形，老配方就失效，必须换用 DLS；
-3. 把 $\dot q_0$ 项当成任务误差的修正——它在任务空间的投影恒为零，只能用来调整内部姿态；「干活」永远靠第一项。
 :::
