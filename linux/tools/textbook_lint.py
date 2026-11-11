@@ -32,6 +32,8 @@ QUIZ = re.compile(r"^:::\s*method\s+即时自测", re.M)
 ERRATA = re.compile(r"^:::\s*errata\b", re.M)
 DEF = re.compile(r"^:::\s*def\b", re.M)
 EX = re.compile(r"^:::\s*ex\b", re.M)
+EX_BLOCK = re.compile(r"^:::\s*ex\b[^\n]*\n(.*?)^:::", re.S | re.M)
+GUESS = ("先猜", "先预测", "先选", "先写", "先自己")
 SOL = re.compile(r"^:::\s*sol\b", re.M)
 REF = re.compile(r"\[@[\w.\-]+\]")
 
@@ -145,6 +147,7 @@ def stats(path: Path) -> dict:
         "errata": len(ERRATA.findall(text)),
         "def": len(DEF.findall(text)),
         "ex": len(EX.findall(text)),
+        "ex_guess": sum(1 for b in EX_BLOCK.findall(text) if any(w in b for w in GUESS)),
         "sol": len(SOL.findall(text)),
         "refs": len(REF.findall(body)),
         "para_avg": sum(chars) / len(paras) if paras else 0,
@@ -197,6 +200,11 @@ def main() -> int:
             issues.append(f"缺「这一节回答」{s['h2'] - s['q']}/{s['h2']}")
         if s["h2"] and s["quiz"] < s["h2"]:
             issues.append(f"缺即时自测 {s['h2'] - s['quiz']}/{s['h2']}")
+        # 骨架齐却一个例题都没有：progress.py 与 check_book 都查不出这个缺口（2.8 曾如此）
+        if s["h2"] and s["q"] >= s["h2"] and s["quiz"] >= s["h2"] and s["ex"] == 0:
+            issues.append("骨架齐但例题盒为 0")
+        if s["ex"] and s["ex_guess"] < s["ex"]:
+            issues.append(f"例题缺先猜 {s['ex'] - s['ex_guess']}/{s['ex']}")
         if s["para_max"] > 320:
             issues.append(f"最长段落 {s['para_max']} 字")
         if s["sent_avg"] > 60:

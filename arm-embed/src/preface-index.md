@@ -54,6 +54,22 @@
 | 实时性定义 / 硬实时 / 软实时 / IEEE 七特征 | [4.12](ch04/sec4-12.md) |
 | 实时 Linux / 瘦内核 / 超微内核 / 资源内核 / PREEMPT_RT | [4.13](ch04/sec4-13.md) |
 
+## 第五章 · AArch64 与内存系统（延伸阅读）
+
+| 术语 | 去处 |
+|:--|:--|
+| AArch32 / AArch64 / ARMv9 演进 | [5.1](ch05/sec5-1.md) |
+| x0–x30 / w 视图 / XZR 零寄存器 | [5.2](ch05/sec5-2.md) |
+| MOVZ/MOVK / CSEL / ADRP / STP·LDP | [5.3](ch05/sec5-3.md) |
+| 异常级 EL0–EL3 / VBAR_ELx / ESR_ELx / SPSel / ERET | [5.4](ch05/sec5-4.md) |
+| GIC / SGI·PPI·SPI / Distributor | [5.5](ch05/sec5-5.md) |
+| 四级页表 / 恒等映射 / Device vs Normal | [5.6](ch05/sec5-6.md) |
+| ASID / 重名与同名 / VIPT | [5.7](ch05/sec5-7.md) |
+| 组相连 / 共享属性 / PoU 与 PoC / DC·IC 维护 | [5.8](ch05/sec5-8.md) |
+| MESI / ACE / clean 与 invalidate | [5.9](ch05/sec5-9.md) |
+| DMB·DSB·ISB / LDAR·STLR / LDXR·STXR / 自旋锁 | [5.10](ch05/sec5-10.md) |
+| 链接地址 / AAPCS64 / LP64 陷阱 | [5.11](ch05/sec5-11.md) |
+
 ## 人名与机构
 
 ARM（Acorn RISC Machine → Advanced RISC Machines）、Wind River、NICTA、AUTOSAR 联盟等背景见对应小节的"来历"段，不单列。

@@ -107,6 +107,13 @@
 | 2.5 正文重写 | 完成 | 18/18 节、16,508 汉字；六件套齐；三视角 A2/B2/C2；例题 5 个全先猜（access/open 身份分裂/cp 与 cat 稀疏复制/chmod g+rw 与 mask/tmpfs btime/list-get 失败）；2.5.18 转「本章小结」；**恢复先读 Kerrisk 原书再写作（第 15–17 章逐节通读）**；打勾表移交 ch05-checklist.md |
 | 2.6 正文重写 | 完成 | 16/16 节、19,479 汉字；六件套齐、SUMMARY 登记；三视角 A2/B2/C2；例题 3 个全先猜（对符号链接 link 的结果/rename 同文件两名/renameat2 语义），另 2.5 式先猜覆盖 inotify 权限一次性检查；**先读 Kerrisk 第 18–19 章逐节通读**并织入表 18-1 解引用分界、§18.2 fast symlink 与 8/40 层限制、§18.4 rename 同文件规则、§18.6 setgid 继承、§19.2 权限一次性检查、§19.3 cookie/IN_IGNORED、§19.4 合并与缓冲纪律；2.6.16 转「本章小结」；打勾表移交 ch06-checklist.md；lint「读者」×3 改写、5 术语首现加注；搜索索引（6155 篇）/术语气泡（138 条）随构建重建 |
 
+| 2.7 正文重写 | 完成 | 9/9 节、22,288 汉字（原 9,747）；六件套齐并登记 SUMMARY（全书 367 页）；三视角 A2/B2/C2；例题 3 个全先猜；11 个可编译程序、10 组新读数全部 VM 实测（`fork_first` 991/9 与 999/1、`cow_probe` RSS 不翻倍、`mt_fork_deadlock` plain→signal 14 / atfork→exit 0 / `_Fork`+atfork→仍 14、`vfork_share` 200 vs fork 100、`spawn_probe` rc=2 且 errno=2、`exitcode` 256→0/1000→232、`zombie_probe` Z→消失、`reap_children` 四类事件、`clone_demo` 三档、`waitid_peek`）；推翻 6 条旧断言（posix_spawn 用 clone3 而非 clone、errno 会被置位、去掉 CLONE_VM 报 EINVAL、CLD_STOPPED=5 非 2、sched_child_runs_first 本机不存在、入口改 aarch64 口径）；2.7.9 转「本章小结」、打勾表移交 ch07-checklist.md；**并按 `humanizer-zh-context` 做去模板腔编辑**：6 个小结长段拆成 2–3 段、散文加粗削 39 处、戏剧化措辞归零 |
+| 2.8 章末六件套 | 完成 | 六页 903 行已建并登记 SUMMARY；C 组 7 题 VM 真跑；代理另报正文两处程序 bug 与三条事实翻案，待正文批重放核实 |
+
+| 2.8 正文重写 | 完成 | 15/15 节、25,856 汉字（原 8,491）；六件套齐并登记；三视角 A2/B2/C2；例题 3 个全先猜（shebang 截断/system 返回值/ps RSS 字段）；9 个完整程序从书中版本抽出重编重跑；**修好两处真 bug**（exec_fd_audit 奇偶判据+越界读、spawn_stats 的 `%*lu` 编译失败）；订正 9 条旧断言（shebang 255 静默截断非 127/ENOEXEC、execveat 是 3.19、ps RSS 来自 statm 而非 stat 第24字段、shell 用 clone(CLONE_VM\|CLONE_VFORK)、CONFIG_HZ=1000 而 CLK_TCK=100、popen 提前关流得 141、binfmt_misc 真实条目、ptrace 27 次与 strace -c 互证、aarch64 无 PTRACE_GETREGS）；2.8.15 转「本章小结」；**并给 textbook_lint 补了「例题盒为 0/缺先猜」两条信号（双向变异测试通过）** |
+
+| 2.9 正文重写 | 完成 | 14/14 节、23,716 汉字（原 8,263）；六件套齐并登记（373 页）；三视角 A2/B2/C2；例题 3 个全先猜；主线程正文与套件代理并行、交回后回扫 7 处漂移；订正 7 条旧断言（附加组 9 个非 2、alice→juanwang 真读数、ERANGE 三连重试实测、file_caps 改 ping 免特权、unshare -Ur 失败真因 AppArmor sysctl=1、**跑着的 ping CapEff=0 是它自清空 + strace 下 ptrace 规则拒授文件能力**、getresuid 不接受 NULL）；需 root 的输出块全部标「示意（未实测）」；2.9.14 转「本章小结」 |
+
 ### 构建验收（2026-10-29 复核）
 
 - `PATH=/usr/bin:$PATH mdbook build .` 成功（`INFO HTML book written to`）；`check_book` 241 页 0 问题；`check_html` 245 页交付 HTML 标签栈全部平衡，退出 0。本轮构建 WARN 约 110 条，全部落在含 `&lt;` 的代码块页（随改造推进数量上升），已确认非产物缺陷。

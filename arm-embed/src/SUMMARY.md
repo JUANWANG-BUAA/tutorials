@@ -91,3 +91,23 @@
   - [学习目标自检表](ch04/checklist.md)
   - [闭卷回忆卡](ch04/recall-cards.md)
   - [综合自测卷](ch04/mock-exam.md)
+
+# 第五章 · AArch64 与内存系统（延伸阅读）
+
+- [第五章 · AArch64 与内存系统](ch05/overview.md)
+  - [5.1 从 ARMv7-A 到 ARMv8-A：版本演进](ch05/sec5-1.md)
+  - [5.2 AArch64 执行状态与寄存器组](ch05/sec5-2.md)
+  - [5.3 A64 指令集：与 A32 的关键差异](ch05/sec5-3.md)
+  - [5.4 AArch64 异常体系：异常级与向量表](ch05/sec5-4.md)
+  - [5.5 中断控制器 GIC](ch05/sec5-5.md)
+  - [5.6 MMU 与多级页表](ch05/sec5-6.md)
+  - [5.7 TLB：地址转换缓存](ch05/sec5-7.md)
+  - [5.8 高速缓存：映射方式与共享性](ch05/sec5-8.md)
+  - [5.9 缓存一致性：MESI 与维护指令](ch05/sec5-9.md)
+  - [5.10 内存屏障与原子操作](ch05/sec5-10.md)
+  - [5.11 链接器、链接脚本与 AAPCS64](ch05/sec5-11.md)
+
+- [第五章章末](ch05/summary.md)
+  - [勘误与补注（对照素材来源）](ch05/errata.md)
+  - [习题集](ch05/exercises.md)
+  - [闭卷回忆卡](ch05/recall-cards.md)

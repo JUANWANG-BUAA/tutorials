@@ -745,6 +745,93 @@
 
 **结论**：2.6 通过（A2/B2/C2）。第 2 篇进度 110/317 节（2.1 17 + 2.2 20 + 2.3 19 + 2.4 17 + 2.5 18 + 2.6 16 + 2.7/2.10/2.13 各 1 节试点），下一步 2.7 进程创建与终止（六件套未建、正文 1/9）。
 
+## 2026-11-08 · 2.7 进程创建与终止（三视角审读）
+
+状态：9/9 节达标（9747 → 22288 汉字），六件套 6/6 已建并登记 SUMMARY（全书 367 页，交付 HTML 371 页）。`check_book` 零报错、`check_loss` +12541 汉字 / H2 10→10、`check_suspect` 本章 0、`check_numbering` 本章无条目、`check_terms` 本章无信号、`textbook_lint` 无优先信号（段均 87、段最大 212、句均 31.9）。`mdbook build` 有 `INFO HTML book written`，`check_html` 371 页标签栈平衡。
+
+| 维度 | 分数 | 证据（段落/小节） | 问题 | 修复 |
+|:--|--:|:--|:--|:--|
+| A 主线 | 2 | overview「这条主线怎么走」四段递进：创建与继承 → 变体与危险区 → 终止与回收 → 内核与 wait 全景；2.7.9 用三条判据回扣，并说清 2.8 接走「立刻 exec 的那一半」 | 总览与总结有 4 处被正文改动甩下（程序数 5→11、2.7.9 仍叫「出口检查」、死锁标「未实测」、`pthread_create` 写成 `clone`） | 已逐处订正为盘上实况 |
+| B 文段 | 2 | 每节先给可跑实验再给机制：2.7.1 `fork_first` 管道裁判、2.7.3 `mt_fork_deadlock` 对照、2.7.6 `zombie_probe` 的 Z→消失；段间承接靠「上一节的结论」而非套话 | 本轮初稿 6 个小结都是 267–326 字单段，违反「一段 1–4 句」 | 按 humanizer-zh-context 拆成 2–3 段，段最大降到 212、>200 字散文段清零 |
+| C 行文 | 2 | 例题 3/3 带先猜（例 2.7.1 RSS/PSS、2.7.2 退出码低 8 位、2.7.3 去掉 flag）；errata 5 组；def 5 个；页表/缺页/cgroup 首现补白话 | 初稿加粗 246 处、有「钉死」「咬人」「只配」「全部价值与全部危险」等短剧腔；唯一例题盒缺先猜 | 削掉本轮散文加粗 39 处（自证除 `**` 外零字符改动），戏剧化措辞归零，补先猜并新增两个例题 |
+
+**抽读段落**：ch07-overview 全文、ch07-summary 前 22 行、正文 2.7.4/2.7.6/2.7.8 首屏与小结。
+
+**本轮实测推翻的旧断言**（都已改正文并留读数）：
+1. `posix_spawn` 失败时「不设置 errno」→ 本机 glibc 2.39 上 `rc=2` 且 `errno` 也被置 2，连跑两次同值；改为「判 rc，不判 errno」。
+2. glibc 用 `clone(CLONE_VM|CLONE_VFORK)` 实现 `posix_spawn` → 本机 `strace` 实为 `clone3(CLONE_VM|CLONE_VFORK|CLONE_CLEAR_SIGHAND)`；`pthread_create` 同样是 `clone3` 且 `exit_signal=0`。
+3. 「去掉 `CLONE_VM` 程序照样跑、只是看不到共享」→ 实为 `EINVAL`，因为 `CLONE_SIGHAND` 依赖 `CLONE_VM`；两个都去掉才跑通，且 `tid=0` 本身就是隔离证据。
+4. `CLD_STOPPED`「glibc 里是 2」→ 编译打印常量得 `CLD_STOPPED=5`、`CLD_KILLED=2`；`waitid_peek` 整块假输出（含 maxrss/minflt/PID）换成真跑值。
+5. `/proc/sys/kernel/sched_child_runs_first` 可切换 fork 后谁先跑 → 本机内核 7.0.0-38 上该文件不存在。
+6. 2.7.7 入口按 x86-64 + Linux 6.8 叙述 → 改为 aarch64 口径并附 `kallsyms` 逐符号命中表；`__arm64_sys_fork` 符号存在但调用号表无 `__NR_fork`，「查得到」与「用得到」分开判。
+
+**新增可复现实验**（全部免 sudo，`lab2c7_` 前缀）：`fork_first`（1000 轮 991/9 与 999/1）、`cow_probe`（RSS 约 263 MB 不翻倍、shared 1000→2000）、`mt_fork_deadlock`（plain→signal 14、atfork→exit 0、`_Fork`+atfork→仍 signal 14）、`vfork_share` 与 fork 对照（200 vs 100）、`spawn_probe`、`exitcode`（256→0、1000→232）、`zombie_probe`（Z→/proc 消失）、`reap_children`（四类事件七行）、`clone_demo` 三档、`waitid_peek`。
+
+**三个最需要改的地方**：
+1. 套件页与正文的同步：正文一改，总览/总结里的计数与「未实测」标注就会过时，收口时必须回头扫一遍套件页（本轮抓到 4 处）。
+2. 小结不要写成一段三百字的压缩摘要；先分段再谈收束句。
+3. 强调符号要省着用：本轮 246 处加粗里 88 处是体例必需的 Q/A 标签，其余散文强调削到每段最多一处。
+
+**结论**：2.7 通过（A2/B2/C2）。第 2 篇进度 118/317 节（2.1–2.7 七章 116 节全部收口，另加 2.10 与 2.13 各 1 节试点），下一步 2.8 程序执行与子进程监控（六件套已建齐并登记，正文 0/15；套件代理已报出正文两处程序 bug 与三条事实翻案，待主线程重放核实后修）。
+
+## 2026-11-09 · 2.8 程序执行与子进程监控（三视角审读）
+
+状态：15/15 节达标（8491 → 25856 汉字），六件套 6/6 已登记（全书 367 页、交付 HTML 371 页）。`check_book` 零报错、`check_loss` +17365 汉字 / H2 16→16、`check_suspect` 本章 0、`check_numbering` 本章无条目、`check_terms` 本章无信号、`textbook_lint` 无优先信号（段均 79、段最大 186、句均 31.5）。例题 3/3 带先猜、errata 5 组、完整可编译程序 9 个。`mdbook build` 有 `INFO HTML book written`，`check_html` 371 页标签栈平衡。
+
+| 维度 | 分数 | 证据（段落/小节） | 问题 | 修复 |
+|:--|--:|:--|:--|:--|
+| A 主线 | 2 | 四单元递进：exec 的边界（2.8.1–3）→ 便利封装的代价（4/5/10）→ 拿到可信结果（6/7）→ 内核深处与收口（8–15）；2.8.15 用三条判据回扣，并说清 2.9 接走「凭证与 capability」 | 套件页有 5 处被正文订正甩下（2.8.15 仍叫出口检查、`posix_spawn` 写成 clone、errata 建议修法与实际修法不一致） | 已逐页回扫订正，errata 两条 bug 标注「已修 + 实际修法」 |
+| B 文段 | 2 | 每节先给可跑实验再给机制：2.8.1 `exec_identity`、2.8.3 `exec_inherit`、2.8.5 `popen_demo`、2.8.7 `ptrace_min`、2.8.13 两个观测实验；段均 79、无 >200 字散文段 | 2.8.7 原代码是 x86 专用（`orig_rax`/`PTRACE_GETREGS`），在本机根本编译不过；2.8.11 末段 300 字 | 重写为 aarch64 可跑版（`PTRACE_GETREGSET`+`NT_PRSTATUS`），长段拆成三段 |
+| C 行文 | 2 | 例题 3 个全先猜（shebang 截断/system 返回值/ps RSS 字段）；四个术语（文件描述符、页表、缺页、cgroup）集中成一段白话放在首现之前 | **全章原本 0 个 `::: ex` 盒**，违反「例题先猜后解」质量线；一处「跳过本轮」被 lint 判为审计口吻 | 补 3 个例题盒（全部用本轮真读数），改写为「跳过这次采样」 |
+
+**抽读段落**：ch08-overview 小节一览表、ch08-summary 四单元全文、正文 2.8.5/2.8.7/2.8.13 的实验与判读段。
+
+**本轮实测推翻或订正的旧断言**（都已改正文并留读数）：
+1. **两处程序真 bug**：`exec_fd_audit.c` 按循环下标而非 fd 号判奇偶（导致泄漏 fd 与正文说法相反）+ `leaked[16]` 越界读（实测打印 `fd 1619733012` 等垃圾号、`exit=1`）；`spawn_stats.c` 的 `%*lu`/`%*ld` 在 GCC 13 `-Werror=format=` 下编译失败。两处都修好并从**书中版本**重新抽出编译运行验证：前者 `before=64 / after=32 / leaked 3 5 … 65 / exit=0`，后者三路读数正常。
+2. **shebang 上限**：旧稿「超过 127 字节报 `ENOEXEC`」两处都错。本机六档实测（250/254/255/256/257/300）证明 255 是最后完整通过的長度、256 起被截到 243 个 A，且**退出码始终 0**（静默截断）；`BINPRM_BUF_SIZE=256` 含 NUL。
+3. **`execveat` 版本**：旧稿 2.6.16 → 本机 `man 2 execveat` HISTORY 原文 **Linux 3.19, glibc 2.34**；aarch64 调用号 `execve`=221、`execveat`=281。
+4. **`ps` 的 RSS 来源**：旧稿「`stat` 第 24 字段 × 4 KiB 正好是 `ps` RSS」不成立。本机 `stat`=431 页（1724 KiB）、`statm` resident=470 页（1880 KiB）、`ps` RSS=1880 KiB、`VmRSS`=1880 kB（=RssAnon 92+RssFile 1788）；连采两次差值稳定 39 页，排除时序解释。`vsize` 则与 `VSZ` 精确对应（8060928 B = 7872 KiB）。
+5. **shell 的创建方式**：旧稿预期 `clone(child_stack=NULL, CLONE_CHILD_CLEARTID|…)` 并称「NULL 表示共享父进程栈」。本机 `sh -c 'sleep 0.1; exit 7'` 实为 **`clone(CLONE_VM|CLONE_VFORK|SIGCHLD)`** 且给了真实 child_stack（vfork 形态）；并订正「`child_stack=NULL` 是 COW 复制栈、不是共享」。
+6. **`CONFIG_HZ` 与 `_SC_CLK_TCK` 独立**：本机 `CONFIG_HZ=1000` 而 `_SC_CLK_TCK=100`，实证 `/proc` 滴答分辨率恒为 10 ms。
+7. **`popen` 提前关读端**：默认 `pclose` 得退出码 **141**（shell 的 128+13），忽略 `SIGPIPE` 后变成命令自报 Broken pipe 并退出 1；两种结局状态字不同。
+8. **`binfmt_misc` 现场**：本机已挂载、`status=enabled`，真实条目是 `jar`/`llvm-18-runtime.binfmt`/`python3.12`，没有旧稿举例的 `qemu-x86_64`；注册需 root，标未实测。
+9. **`ptrace` 互证**：自写 `ptrace_min` 数出 27 次 syscall，`strace -f -c /bin/true` 末行也是 `27 total`，两条独立路径同值；附加 PID 1 得 `EPERM`(1)，`ptrace_scope=1`。另发现 `PTRACE_GET_SYSCALL_INFO` 由 `<linux/ptrace.h>` 提供（`<sys/ptrace.h>` 里 grep 为 0），且 `<elf.h>` 与 `<linux/elf.h>` 同 include 会因 `Elf64_Addr` 类型冲突编译失败。
+
+**三个最需要改的地方**：
+1. **例题盒不能漏**：本章套件齐全、门禁全绿，但 `::: ex` 为 0——`progress.py` 与 `check_book` 都查不出这个缺口，只有按质量线手数才发现。收口清单里要加一条「例题盒 ≥3 且全带先猜」。
+2. **跨架构代码必须在本机编译过**：2.8.7 的 x86 专用片段看着像能跑，实际在 aarch64 上连编译都过不了。凡贴进正文的程序都要从**书中版本**抽出重编重跑，不能只验证自己另写的副本。
+3. **套件页要跟着正文订正回扫**：本轮抓到 5 处漂移，其中 errata 建议的修法与主线程实际采用的修法不同，若不回扫就会留下互相矛盾的两套说法。
+
+**结论**：2.8 通过（A2/B2/C2）。第 2 篇进度 133/317 节（2.1–2.8 八章 131 节全部收口，另 2.10/2.13 各 1 节试点）。下一步 2.9 进程凭证、用户、组与能力（套件代理本轮因额度上限失败、六页未落盘，正文 0/14，需重派或主线程接手）。
+
+## 2026-11-09 · 2.9 进程凭证、用户、组与能力（三视角审读）
+
+状态：14/14 节达标（8263 → 23716 汉字），六件套 6/6 已登记（全书 373 页、交付 HTML 377 页）。`check_book` 零报错、`check_loss` +15453 汉字 / H2 15→15、`check_suspect` 本章 0、`check_numbering` 本章无条目、`check_terms` 本章无信号、`textbook_lint` 无优先信号（段均 73、段最大 179、句均 30.9）。例题 3/3 带先猜、errata 5 组、完整程序 6 个。`mdbook build` 有 `INFO HTML book written`，`check_html` 377 页平衡。本章是「主线程写正文 + 套件代理并行」形状：代理写六页期间主线程改正文，交回后回扫订正 7 处漂移。
+
+| 维度 | 分数 | 证据（段落/小节） | 问题 | 修复 |
+|:--|--:|:--|:--|:--|
+| A 主线 | 2 | overview 主线「权限是凭证的函数，不是用户名的函数」；四单元递进（身份→数据库→提权降权→能力最小化）；2.9.14 三条判据回扣并说清 2.10 接走「真实 UID 决定谁能发信号」 | 套件 3 处仍叫「出口检查」 | 已订正为「本章小结」 |
+| B 文段 | 2 | 每节先实测后机制：2.9.1 status 五行、2.9.4 七次 setresuid 尝试、2.9.9 ERANGE 三连重试、2.9.12 失败原文当读数；段均 73 | 2.9.3/2.9.5 的 setuid-root 输出块无法本机复现（需 root） | 标「示意（未实测）」并补免特权可验的另一半（自己文件 4755 不提权、passwd/mount 均 4755 root:root） |
+| C 行文 | 2 | 例题 3 个全先猜（setresuid 合法集/CapBnd≠特权/ERANGE 重试次数）；namespace 首现加注；「读者」口吻一处改「你」 | 初稿例题盒 0（新门禁信号抓出）；alice 假输出两处 | 补 3 个例题盒；alice 换 juanwang 真读数 |
+
+**抽读段落**：ch09-overview 前 30 行与路线表、ch09-summary 四单元与主线句、正文 2.9.4/2.9.9/2.9.12 的实验与判读段。
+
+**本轮实测推翻或订正的旧断言**：
+1. **附加组**：旧稿 `supplementary groups: 1000 27` → 本机实为 **9 个**（4 24 27 30 46 100 114 125 1000），`id`、`show_creds`、`nss_lookup` 三处互证。
+2. **`nss_lookup` 的 alice/groups(3)**：本机无 alice；换 juanwang 真读数，并补 cap=16 时三次 `rc=34`（ERANGE）16→32→64→128 的重试实测。NSS 链本机是 `files systemd sss` 三个后端。
+3. **`file_caps` 示例**：旧稿对 python3.12 `setcap`（需 root 且危险）→ 改为直接解码系统现成的 `/usr/bin/ping`（revision=2、effective=1、permitted 仅 CAP_NET_RAW(13)、setuid=0），免特权真跑。
+4. **`unshare -Ur`**：旧稿给「预期输出 uid=0(root)」→ 本机实测**失败**（`write failed /proc/self/uid_map: Operation not permitted`），定位真因：`apparmor_restrict_unprivileged_userns=1` + AppArmor enabled + `newuidmap` 未装；`unshare -U` 单独成功（nobody）。失败原文与四个 sysctl 一起入正文当读数。
+5. **跑着的 ping CapEff=0**（新发现，例 2.9.2）：裸跑 ping 成功但运行中 CapEff/Prm 十次采样全 0；strace 抓到 ping 自己 `capset({0,0,0})`；`ping_group_range=1 0` 为空故必须走 SOCK_RAW。结论：文件能力 exec 时确实授予、ping 开好套接字后主动清空。且 strace 下 socket 反而 EPERM——ptrace 安全规则阻止被跟踪进程 exec 时获得文件能力（观察者效应，回扣 2.8.7）。
+6. **`getresuid(NULL,NULL,&sv)`**：glibc 2.39 包装不接受 NULL 出参（EFAULT），三个都要给真实变量。
+7. **子进程 `_exit` 丢输出**：自写探针忘了关缓冲，子进程输出全丢——正是 2.7.5 教的坑，修后从书内版本重抽重编验证。
+
+**三个最需要改的地方**：
+1. 需 root 的输出块一律「示意（未实测）」并补免特权可验的替代实验，不要留「预期输出」让读者当读数。
+2. 实验失败时把失败原文 + 相关 sysctl 当第一手读数写（2.9.12 的 AppArmor 定位比「预期成功输出」有价值得多）。
+3. 套件与正文并行写时，交回后必须回扫（本轮 7 处漂移：出口检查名称 ×3、alice 引用 ×2、setcap/unshare 口径 ×2）。
+
+**结论**：2.9 通过（A2/B2/C2）。第 2 篇进度 147/317 节（2.1–2.9 九章 145 节全部收口，另 2.10/2.13 各 1 节试点）。下一步 2.10 信号（套件 0/6、正文 1/16）。
+
 ## 记录模板
 
 
