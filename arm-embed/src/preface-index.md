@@ -34,6 +34,7 @@
 | SWI 软中断 / MRS / MSR | [3.8](ch03/sec3-8.md) |
 | ADR / ADRL / LDR 伪指令 / NOP | [3.9](ch03/sec3-9.md) |
 | Thumb 指令集 / 互操作 / veneer | [3.10](ch03/sec3-10.md) |
+| 源程序格式 / AREA·ENTRY·END / 指示符 / 内嵌汇编 / APCS | [3.11](ch03/sec3-11.md) |
 
 ## 第四章 · 嵌入式操作系统
 
@@ -41,16 +42,17 @@
 |:--|:--|
 | 嵌入式系统定义 / 安全关键系统 / 确定性 | [4.1](ch04/sec4-1.md) |
 | DO-178B/C / DAL A–E / ARINC 653 分区 | [4.2](ch04/sec4-2.md) |
-| 嵌入式 Linux / uClinux / VxWorks / QNX | [4.3](ch04/sec4-3.md) |
-| 微内核三代 / L4 家族 / seL4 / capability | [4.4](ch04/sec4-4.md) |
-| RT-Thread / 国产 RTOS 谱系 | [4.5](ch04/sec4-5.md) |
-| 进程 / 线程 / 任务 / 任务状态机 / TCB | [4.6](ch04/sec4-6.md) |
-| 上下文切换 / 非抢占（协作式）/ 抢占 / 调度时延 | [4.7](ch04/sec4-7.md) |
-| RMS / EDF / LLF / 可调度性判定 | [4.8](ch04/sec4-8.md) |
-| 信号量 / 互斥量 / 消息队列 / 邮箱 / 事件标志 / 优先级反转 | [4.9](ch04/sec4-9.md) |
-| ISR / 中断嵌套 / 时钟节拍 / 延时 | [4.10](ch04/sec4-10.md) |
-| 分区内存 / 堆 / 碎片 | [4.11](ch04/sec4-11.md) |
-| 实时 Linux / PREEMPT_RT / 双内核 | [4.12](ch04/sec4-12.md) |
+| 单内核 / 微内核 / 混合内核 / 外内核 | [4.3](ch04/sec4-3.md) |
+| 微内核三代 / L4 家族 / seL4 / capability / Retype | [4.4](ch04/sec4-4.md) |
+| 嵌入式 Linux / μC Linux / VxWorks / QNX / μC/OS / RTEMS / TinyOS | [4.5](ch04/sec4-5.md) |
+| RT-Thread / 国产 RTOS 谱系 / 华为产品线 | [4.6](ch04/sec4-6.md) |
+| 进程 / 线程 / 任务 / 任务状态机 / 前后台系统 / 临界区 | [4.7](ch04/sec4-7.md) |
+| 上下文切换 / 非抢占（协作式）/ 抢占 / 时间片 / VxWorks 调度 | [4.8](ch04/sec4-8.md) |
+| RMS / EDF / LLF / 可调度性判定 | [4.9](ch04/sec4-9.md) |
+| 共享内存 / 消息邮箱 / 消息队列 / 信号量 / 死锁 / 优先级反转 / 可重入 | [4.10](ch04/sec4-10.md) |
+| ISR / 中断嵌套 / 时钟节拍 / 中断与调度时延 | [4.11](ch04/sec4-11.md) |
+| 实时性定义 / 硬实时 / 软实时 / IEEE 七特征 | [4.12](ch04/sec4-12.md) |
+| 实时 Linux / 瘦内核 / 超微内核 / 资源内核 / PREEMPT_RT | [4.13](ch04/sec4-13.md) |
 
 ## 人名与机构
 

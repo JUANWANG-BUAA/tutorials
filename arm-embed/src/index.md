@@ -3,7 +3,7 @@
 <h1>嵌入式系统</h1>
 <div class="subtitle">从按下复位键那一步开始：先弄清 ARM 处理器由哪些部件组成、一条指令怎样寻址执行，再看多个任务怎样在同一个核上共存。</div>
 <div class="cover-chips">
-<span>3 章 · 33 节正文</span>
+<span>3 章 · 35 节正文</span>
 <span>章末六件 · 附解答</span>
 <span>课件逐页对照</span>
 <span>寄存器 / 异常 / 调度全表</span>
@@ -33,7 +33,7 @@
 **复习节奏建议**：学完当天先闭卷回忆（寄存器表、异常向量表适合默写），约 1 天、3 天、1 周后再抽查；汇编读程序题改一个条件重做，调度题换一组参数重算。间隔可按个人情况调整，纸笔记录即可。
 
 <section class="book-contents" aria-label="目录">
-<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">3 章 · 33 节</span></div>
+<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">3 章 · 35 节</span></div>
 <div class="bc-list">
 <a class="bc-row" href="ch02/overview.md"><span class="bc-no">02</span><span class="bc-title">第二章 · ARM 微处理器体系结构</span><span class="bc-count">11 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch03/overview.md"><span class="bc-no">03</span><span class="bc-title">第三章 · ARM 指令集</span><span class="bc-count">10 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>

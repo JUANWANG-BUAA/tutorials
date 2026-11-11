@@ -16,7 +16,7 @@
 | [4.2 航电标准谱系](sec4-2.md) | DO-178B/C、DAL、ARINC 653、Common Criteria | Slide 11–18 |
 | [4.3 内核结构](sec4-3.md) | 单内核 / 微内核 / 混合内核 / 外内核 | Slide 113–126 |
 | [4.4 微内核与 seL4](sec4-4.md) | 三代微内核、capability、IPC、内存与线程 | Slide 36–48 |
-| [4.5 主流 OS 全景](sec4-5.md) | 嵌入式 Linux、uClinux、VxWorks、QNX、μC/OS、RTEMS、RTOS 分类 | Slide 31–35、60–72、107–111 |
+| [4.5 主流 OS 全景](sec4-5.md) | 嵌入式 Linux、μC Linux、VxWorks、QNX、μC/OS、RTEMS、RTOS 分类 | Slide 31–35、60–72、107–111 |
 | [4.6 RT-Thread 与国产 RTOS](sec4-6.md) | RT-Thread、翼辉/道系统/天脉、华为、航天国防谱系 | Slide 97–104 |
 | [4.7 进程、线程与任务模型](sec4-7.md) | 三层概念、任务状态机、前后台系统、内核职责 | Slide 127–130、143–148 |
 | [4.8 任务调度](sec4-8.md) | 非抢占 vs 抢占、上下文切换、VxWorks 调度策略 | Slide 131–137、174–179 |
