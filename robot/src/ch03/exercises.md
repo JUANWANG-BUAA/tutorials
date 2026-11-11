@@ -127,21 +127,21 @@ $$\det J_P=-a_2a_3\,s_3\,(a_2c_2+a_3c_{23}).$$
 
 ::: ex B4 · 零空间解族（原书 3.46）
 
-证明：若 $\dot q^*$ 满足 $J\dot q=v_e$，$P=NN^{\mathrm T}$（$N$ 为零空间基），则 $\dot q^*+P\dot q_0$ 仍是解；并说明 $I-J^\dagger J$ 与 $NN^{\mathrm T}$ 的关系。
+证明：若 $\dot q^*$ 满足 $J\dot q=v_e$，$P=NN^{\mathrm T}$（$N$ 为标准正交零空间基），则 $\dot q^*+P\dot q_0$ 仍是解；并说明 $I-J^\dagger J$ 与 $NN^{\mathrm T}$ 的关系。
 
 ::: sol 解答
 
 **(a) 为什么 $P=NN^{\mathrm T}$ 是到零空间的投影。**
 
-先看两件事实。其一，$N$ 是零空间基，所以 $JN=0$（[@thm-3.4.B]）。其二，$N$ 的列线性无关，$N$ 是 $n\times(n-r)$ 满列秩。
+先看两件事实。其一，$N$ 是零空间基，所以 $JN=0$（[@thm-3.4.B]）。其二，记 $s=\operatorname{rank}J$，$N$ 是 $n\times(n-s)$ 的列标准正交矩阵。行满秩时才有 $s=r$。
 
 计算 $P^2$：
 
 $$P^2=NN^{\mathrm T}NN^{\mathrm T}=N\left(N^{\mathrm T}N\right)N^{\mathrm T}.$$
 
-**这一步需要一个条件**：只有当 $N^{\mathrm T}N=I$（列标准正交）时才能写成 $N I N^{\mathrm T}=NN^{\mathrm T}=P$。若 $N$ 的列只是线性无关、并不正交，则 $N^{\mathrm T}N=G\neq I$（$G$ 是 Gram 矩阵），$P^2=N G N^{\mathrm T}\neq P$——**$P$ 不是投影**。
+**这一步需要一个条件**：只有当 $N^{\mathrm T}N=I$（列标准正交）时才能写成 $N I N^{\mathrm T}=NN^{\mathrm T}=P$。若 $N$ 的列只是线性无关、并非标准正交，则 $N^{\mathrm T}N=G\neq I$（$G$ 是 Gram 矩阵），$P^2=N G N^{\mathrm T}\neq P$——**$P$ 不是投影**。
 
-所以教材这里隐含了「$N$ 取**标准正交**的零空间基」这一前提。本书 [3.4](sec3-4.md) 讨论零空间基时用的正是正交化后的 $N$，就是为了满足这个前提。**这一步是本题最容易被跳过、也最值得写清的地方**。
+原教材式(3.46)只要求 $\mathcal R(P)=\mathcal N(J)$，用来生成全部速度解，并未指定 $P=NN^{\mathrm T}$。本节进一步选择正交投影；简式 $NN^{\mathrm T}$ 的归一化条件必须明确写出，不能归因为教材暗含了某个 $N$。
 
 **顺便说清一件容易含混的事**：$NN^{\mathrm T}$ 的**像空间**（值域）在任何情况下都等于 $N$ 的列空间 $=\mathcal N(J)$（因为 $N$ 列满秩，$NN^{\mathrm T}$ 与 $N$ 同秩、且 $\operatorname{range}(NN^{\mathrm T})\subseteq\operatorname{range}(N)$）。但「像空间对」不等于「是投影」——**投影还要求幂等 $P^2=P$**，而幂等只在 $N^{\mathrm T}N=I$ 时成立。这两件事要分开说。
 
@@ -157,7 +157,7 @@ $$J\left(\dot q^*+P\dot q_0\right)=J\dot q^*+JNN^{\mathrm T}\dot q_0=v_e+\underb
 
 $$I-J^\dagger J=N N^{\mathrm T}. \tag{3.46}$$
 
-**证明**：$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$（行满秩时）。于是
+**行满秩情形的证明**：此时 $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$。于是
 
 $$J^\dagger J=J^{\mathrm T}(JJ^{\mathrm T})^{-1}J.$$
 
@@ -170,9 +170,9 @@ $$J^\dagger J J^{\mathrm T}\boldsymbol a=J^{\mathrm T}(JJ^{\mathrm T})^{-1}JJ^{\
 
 一个线性映射在零空间上是恒等、在行空间上是零，且两空间正交互补（$\mathbb R^n=\mathcal N(J)\oplus\mathcal R(J^{\mathrm T})$）——这正是**正交投影**的定义，且投影方向恰是 $\mathcal N(J)$。
 
-**两个投影的关系**：$I-J^\dagger J$ 不依赖 $N$ 的取法（只要 $N$ 张成同一个零空间），$NN^{\mathrm T}$ 在 $N$ 标准正交时等于它。**若 $N$ 未正交化**，$NN^{\mathrm T}$ 连幂等都做不到（$P^2=N G N^{\mathrm T}\neq P$），此时它根本不是投影；正确的写法是 $N(N^{\mathrm T}N)^{-1}N^{\mathrm T}$（斜投影），它仍等于 $I-J^\dagger J$。
+**两个投影的关系**：$I-J^\dagger J$ 不依赖 $N$ 的取法（只要 $N$ 张成同一个零空间），$NN^{\mathrm T}$ 在 $N$ 标准正交时等于它。**若 $N$ 未标准正交化**，$NN^{\mathrm T}$ 连幂等都做不到（$P^2=N G N^{\mathrm T}\neq P$），此时它根本不是投影；正确的写法是 $N(N^{\mathrm T}N)^{-1}N^{\mathrm T}$（正交投影），它仍等于 $I-J^\dagger J$。
 
-**(d) 两者的共同意义**：都表示「**不惊动末端的内部运动**」——冗余机械手的自运动（self-motion）。同一个末端速度可以由无穷多组关节速度实现，差的就是零空间分量；控制上可以用它做避障、避奇异、优化姿态（[3.5.1](sec3-5.md#sec-3.5.1)）。
+**(d) 两者的共同意义**：都提取不增加所选任务瞬时速度的内部运动。存在非平凡零空间时，同一个可实现任务速度对应无穷多组关节速度，差的就是零空间分量；控制上可用它调整关节配置，尝试改善障碍距离、奇异性或姿态（[3.5.1](sec3-5.md#sec-3.5.1)）。
 
 :::
 

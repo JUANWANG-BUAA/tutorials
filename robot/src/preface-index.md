@@ -134,9 +134,9 @@
 | 腕奇点 | wrist singularity | $\vartheta_5=0,\pi$（$s_5=0$），两腕轴共线 | [@thm-3.3.A] |
 | 肘奇点 | elbow singularity | $s_3=0$，臂完全伸直或折回 | [@thm-3.3.A] |
 | 肩奇点 | shoulder singularity | $a_2c_2+a_3c_{23}=0$，腕点落在第一关节轴上 | [@thm-3.3.A] |
-| 零空间 | null space $\mathcal N(J)$ | 不产生末端运动的关节速度集合 | [@thm-3.4.B] |
-| 零空间投影 | $P=NN^{\mathrm T}$ | 秩为 $n-\operatorname{rank}J_{\rm task}$，行满秩时为 $n-r$；投影速度不产生一阶任务变化 | [@thm-3.4.B] |
-| 内部运动 / 自运动 | internal motion / self-motion | 只改内部姿态、不改末端的运动 | [@thm-3.4.B] |
+| 零空间 | null space $\mathcal N(J)$ | 不产生所选任务瞬时变化的关节速度集合 | [@thm-3.4.B] |
+| 零空间投影 | $P=NN^{\mathrm T}$（$N$ 列标准正交） | 秩为 $n-\operatorname{rank}J_{\rm task}$，行满秩时为 $n-r$；投影速度不产生一阶任务变化 | [@thm-3.4.B] |
+| 内部运动 / 自运动 | internal motion / self-motion | 保持所选任务的构形变化；位置任务可改变朝向 | [@thm-3.4.B] |
 | 右伪逆 | right pseudo-inverse $J^\dagger$ | $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$；给出最小范数解 | [@def-3.5.1] |
 | 最小范数解 | minimum-norm solution | 满足任务且 $\|\dot{\boldsymbol q}\|$ 最小 | [@def-3.5.1] |
 | 阻尼最小二乘 | damped least squares, DLS | 容许末端误差 $\delta$ 换可解性 | [@def-3.5.2] |

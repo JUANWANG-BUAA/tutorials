@@ -32,15 +32,17 @@ $J$ 称**几何雅可比矩阵**，是位形 $\boldsymbol q$ 的函数；$J_P$ �
 写出冗余的判据，并指出两个子空间各回答什么问题。
 
 ::: sol A3 核对
-当机械手自由度个数 $n$ **大于**描述给定任务所必需的变量个数 $r$ 时，称该机械手对给定任务**冗余**。操作空间维度 $m<n$ 时一定冗余；任务维度恒有 $r\le m\le6$。**冗余是任务相关的概念**：同一台机械手对某任务冗余、对另一任务可能非冗余（[@ex-3.4.A] 的三连杆平面臂即此）。**两个子空间**：**值域空间 $\mathcal R(J)$** 回答「哪些末端速度能做到」（不在其中的速度**不可能**用关节速度线性表出，方程无解）；**零空间 $\mathcal N(J)$** 回答「哪些关节速度不惊动末端」——冗余时 $\mathcal N(J)$ 必非空，存在 $n\times(n-r)$ 的列满秩矩阵 $N$ 使 $JN=0$。（[@def-3.4.1]）
+$n>r$ 判任务相关冗余，$r$ 是独立任务变量数，不能与当前秩 $s=\operatorname{rank}J$ 混用。$\mathcal R(J)$ 描述当前可实现的任务速度，$\mathcal N(J)$ 描述不产生一阶任务变化的关节速度；核维数一般是 $n-s$，行满秩时才为 $n-r$。核永远含零向量，非平凡瞬时内部运动要求 $\mathcal N(J)\ne\{0\}$。任务雅可比来自 $x=f(q)$ 的求导，不总是选取几何雅可比的行。（[@def-3.4.1]、[@ex-3.4.A]）
 :::
 
 ### A4 · 零空间投影与解族
 
-写出 $P$ 的定义、秩与解族，以及证明只差哪一步。
+写出 $P$ 的定义、秩与解族，并说明通解为什么既无错解也不漏解。
 
 ::: sol A4 核对
-取 $\boldsymbol P=NN^{\mathrm T}$（**秩 $n-r$**）。若 $\dot{\boldsymbol q}^*$ 是 $v_e=J\dot{\boldsymbol q}$ 的一个特解、$\dot{\boldsymbol q}_0$ 是**任意**向量，则 $\dot{\boldsymbol q}^*+\boldsymbol P\dot{\boldsymbol q}_0$ **仍是方程的解**。**证明只有一步**：验证 $J\boldsymbol P\dot{\boldsymbol q}_0=JNN^{\mathrm T}\dot{\boldsymbol q}_0=(JN)N^{\mathrm T}\dot{\boldsymbol q}_0=0$——故 $\boldsymbol P\dot{\boldsymbol q}_0$ 落在 $\mathcal N(J)$ 里，对末端速度的贡献**恒为零**。**用途**：让机械手在执行任务的同时**重新配置**自身（提升灵巧性、避障、回避奇异、远离关节极限）。（[@thm-3.4.B]）
+若 $B$ 是零空间的普通满列秩基，$P=B(B^{\mathrm T}B)^{-1}B^{\mathrm T}$；若 $N^{\mathrm T}N=I$，可写为 $P=NN^{\mathrm T}$。$P^2=P$、$P^{\mathrm T}=P$、$JP=0$，秩为 $n-\operatorname{rank}J$。
+
+存在特解时，全部速度解是 $\dot q=\dot q^*+P\dot q_0$：加核中向量仍为解，任意两解之差又必在核中。只保持所选任务的瞬时速度；位置任务可改变朝向，有限更新一般产生二阶误差。（[@thm-3.4.B]、[独立练习](sec3-4.md#practice-3.4.project)）
 :::
 
 ### A5 · 右伪逆与最小范数解

@@ -566,5 +566,45 @@ class JacobianChecks(unittest.TestCase):
                 self.assertAlmostEqual(sum(angular[j][axis] * rates[j] for j in range(6)), [0.0, 1.0, 0.0][axis], places=8)
 
 
+    def test_redundancy_projection_and_velocity_family(self):
+        """Verify the section-3.4 worked projection and task change."""
+        j = [[-1.0, -1.0, 0.0], [2.0, 1.0, 1.0]]
+        b = [-1.0, 1.0, 1.0]
+        p = [[x * y / 3 for y in b] for x in b]
+        self.assertLess(max_err(mat_mul(j, p), [[0.0] * 3] * 2), 1e-12)
+        self.assertLess(max_err(mat_mul(p, p), p), 1e-12)
+        for scale in (0.2, 2.0, -3.0):
+            basis = [scale * x for x in b]
+            gram = sum(x * x for x in basis)
+            projected = [[x * y / gram for y in basis] for x in basis]
+            self.assertLess(max_err(projected, p), 1e-12)
+        for value in (-2.0, 0.0, 1.0, 2.5):
+            rates = [[1 - value], [-1 + value], [value]]
+            self.assertLess(max_err(mat_mul(j, rates), [[0.0], [1.0]]), 1e-12)
+        self.assertLess(max_err(mat_mul(j, [[0.0], [-1.0], [1.0]]), [[1.0], [0.0]]), 1e-12)
+
+    def test_finite_self_motion_and_tangent_drift(self):
+        """Independent FK checks exact equal-link geometry and tangent error."""
+        def endpoint(q):
+            absolute = [q[0], q[0] + q[1], sum(q)]
+            return [sum(math.cos(a) for a in absolute), sum(math.sin(a) for a in absolute)]
+
+        for index in range(121):
+            phi = index * math.pi / 360
+            wx, wy = 2 - math.cos(phi), 1 - math.sin(phi)
+            cosine = (wx * wx + wy * wy - 2) / 2
+            self.assertLess(abs(cosine), 1.0)
+            q2 = math.acos(cosine)
+            q1 = math.atan2(wy, wx) - math.atan2(math.sin(q2), 1 + cosine)
+            exact = [q1, q2, phi - q1 - q2]
+            for actual, expected in zip(endpoint(exact), (2.0, 1.0)):
+                self.assertAlmostEqual(actual, expected, places=12)
+            tangent = [-phi, math.pi / 2 + phi, -math.pi / 2 + phi]
+            px, py = endpoint(tangent)
+            self.assertAlmostEqual(px, 2 * math.cos(phi), places=12)
+            self.assertAlmostEqual(py, 1.0, places=12)
+            self.assertAlmostEqual(math.hypot(px - 2, py - 1), 2 * (1 - math.cos(phi)), places=12)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

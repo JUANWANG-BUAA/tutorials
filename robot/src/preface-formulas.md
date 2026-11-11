@@ -269,7 +269,7 @@ $$n>r\ \Longrightarrow\ \mathcal N(J)\neq\{0\},\qquad
 P=NN^{\mathrm T}\ (\text{秩 }n-\operatorname{rank}J;\ \text{行满秩时 }n-r),\qquad
 \dot{\boldsymbol q}=\dot{\boldsymbol q}^*+P\dot{\boldsymbol q}_0$$
 
-$P\dot{\boldsymbol q}_0$ 在零空间里，**不惊动末端**（$JP\dot{\boldsymbol q}_0=0$）——用来做内部运动 / 再配置（避障、躲关节极限、远离奇异）。见 [@def-3.4.1]、[@thm-3.4.B]。
+这里 $N$ 的列须标准正交；普通基 $B$ 应用 $P=B(B^{\mathrm T}B)^{-1}B^{\mathrm T}$。$P\dot{\boldsymbol q}_0$ 不增加所选任务的瞬时速度（$JP\dot{\boldsymbol q}_0=0$）——用来做内部运动 / 再配置（避障、躲关节极限、远离奇异）。见 [@def-3.4.1]、[@thm-3.4.B]。
 
 ### D6 逆微分运动学：三味药
 

@@ -63,7 +63,7 @@
 | $S(\boldsymbol\omega)=[\boldsymbol\omega]_\times$ | 叉乘算子 / 反对称矩阵（$so(3)$ 元素；角速度的矩阵形式，首见 2.5） | 2.5 / 3.1 |
 | $J^\dagger$ | 右伪逆（最小范数解，冗余情形） | 3.5 |
 | $J^*$ | 阻尼广义逆（奇异邻域） | 3.5 |
-| $N,P$ | 零空间矩阵与投影 $P=NN^{\mathrm T}$ | 3.4 |
+| $N,P$ | 标准正交零空间基与投影 $P=NN^{\mathrm T}$ | 3.4 |
 | $J_A$、$T(\boldsymbol\varphi)$ | 分析雅可比与换基矩阵（$\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$） | 3.6 |
 | $F_e=[\boldsymbol f_e;\boldsymbol\mu_e]$ | 末端广义力（3 力 + 3 矩） | 3.8 |
 | $\boldsymbol\tau$ | 关节力矩向量（$\boldsymbol\tau=J^{\mathrm T}F_e$） | 3.8 |

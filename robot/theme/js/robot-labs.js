@@ -1148,6 +1148,95 @@
     return draw;
   }
 
+  function labNullspace2d(host) {
+    var angle = 0;
+    var head = el('div', 'lab-head');
+    head.appendChild(el('span', 'lab-tag', '自运动实验'));
+    head.appendChild(el('b', null, '固定笔尖的曲线，与初始零空间的切线'));
+    host.appendChild(head);
+    host.appendChild(el('p', 'lab-note', '三杆各1 m，目标笔尖(2,1) m。蓝色按逆解重新配置，红色虚线只作一次 q* + φb 更新；两者有相同末杆朝向。灰色为初始构形。'));
+    var controls = el('div', 'lab-controls');
+    host.appendChild(controls);
+    var control = slider(controls, '末杆绝对角 φ', 0, 60, 0.01, 0, function (value) { angle = value; draw(); }, function (value) { return value.toFixed(2) + '°'; });
+    [['0.1 rad', 0.1 / DEG], ['0.2 rad', 0.2 / DEG], ['30°', 30], ['60°', 60], ['重置', 0]].forEach(function (preset) {
+      var button = el('button', 'lab-btn', preset[0]);
+      button.type = 'button';
+      button.addEventListener('click', function () {
+        control.input.value = preset[1];
+        angle = preset[1];
+        control.out.textContent = angle.toFixed(2) + '°';
+        draw();
+      });
+      controls.appendChild(button);
+    });
+    var canvas = el('canvas', 'lab-canvas');
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', '等长三杆自运动：蓝色精确曲线保持笔尖，红色切线更新产生漂移');
+    host.appendChild(canvas);
+    var readout = el('div', 'lab-readout');
+    readout.setAttribute('aria-live', 'polite');
+    host.appendChild(readout);
+    function points(q) {
+      var result = [[0, 0]], orientation = 0;
+      q.forEach(function (value) {
+        orientation += value;
+        var previous = result[result.length - 1];
+        result.push([previous[0] + Math.cos(orientation), previous[1] + Math.sin(orientation)]);
+      });
+      return result;
+    }
+    function format(value) { return (Math.abs(value) < 0.00000005 ? 0 : value).toFixed(5); }
+    function vector(values) { return '(' + values.map(format).join(', ') + ')'; }
+    function draw() {
+      var phi = angle * DEG;
+      var wrist = [2 - Math.cos(phi), 1 - Math.sin(phi)];
+      var cosine = (wrist[0] * wrist[0] + wrist[1] * wrist[1] - 2) / 2;
+      var q2 = Math.acos(cosine);
+      var q1 = Math.atan2(wrist[1], wrist[0]) - Math.atan2(Math.sin(q2), 1 + cosine);
+      var exact = [q1, q2, phi - q1 - q2];
+      var tangent = [-phi, Math.PI / 2 + phi, -Math.PI / 2 + phi];
+      var exactPoints = points(exact), tangentPoints = points(tangent), initialPoints = points([0, Math.PI / 2, -Math.PI / 2]);
+      var exactError = Math.hypot(exactPoints[3][0] - 2, exactPoints[3][1] - 1);
+      var tangentError = Math.hypot(tangentPoints[3][0] - 2, tangentPoints[3][1] - 1);
+      var fitted = fit(canvas, 0.64), ctx = fitted.ctx, c = fitted.c;
+      var scale = Math.min((fitted.w - 90) / 3, (fitted.h - 100) / 3);
+      function pixel(p) { return [45 + (p[0] + 0.25) * scale, fitted.h / 2 + (0.15 - p[1]) * scale]; }
+      function chain(list, color, width, dashed) {
+        ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dashed ? [7, 5] : []);
+        ctx.beginPath();
+        list.forEach(function (p, i) { var v = pixel(p); if (i === 0) ctx.moveTo(v[0], v[1]); else ctx.lineTo(v[0], v[1]); });
+        ctx.stroke(); ctx.setLineDash([]);
+        list.forEach(function (p) { var v = pixel(p); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(v[0], v[1], width + 1, 0, Math.PI * 2); ctx.fill(); });
+      }
+      ctx.font = '13px sans-serif'; ctx.fillStyle = c.ink;
+      ctx.fillText('+x →  +y ↑；各杆长1 m；φ = ' + angle.toFixed(2) + '°', 16, 24);
+      ctx.strokeStyle = c.gold; ctx.setLineDash([4, 5]); ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (var degree = 0; degree <= 60; degree++) {
+        var a = degree * DEG, point = pixel([2 - Math.cos(a), 1 - Math.sin(a)]);
+        if (degree === 0) ctx.moveTo(point[0], point[1]); else ctx.lineTo(point[0], point[1]);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+      chain(initialPoints, c.muted, 1.5, true);
+      chain(tangentPoints, c.red, 3, true);
+      chain(exactPoints, c.blue, 4, false);
+      var fixed = pixel([2, 1]); ctx.strokeStyle = c.green; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(fixed[0], fixed[1], 9, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = c.ink; ctx.fillText('固定目标 (2,1)', fixed[0] - 90, fixed[1] - 20);
+      if (tangentError > 0.001) { var tip = pixel(tangentPoints[3]); ctx.fillStyle = c.red; ctx.fillText('切线更新笔尖', tip[0] - 40, tip[1] + 24); }
+      ctx.fillStyle = c.gold; ctx.fillText('金色虚线：精确腕点轨迹', 16, fitted.h - 16);
+      readout.innerHTML = matrixHTML([
+        ['构形', 'q₁ (°)', 'q₂ (°)', 'q₃ (°)'],
+        ['精确自运动'].concat(exact.map(function (value) { return value / DEG; })),
+        ['一次切线更新'].concat(tangent.map(function (value) { return value / DEG; }))
+      ], 5);
+      readout.appendChild(el('p', null, '精确笔尖 ' + vector(exactPoints[3]) + ' m；位置误差 ' + exactError.toExponential(2) + ' m。'));
+      readout.appendChild(el('p', null, '切线更新笔尖 ' + vector(tangentPoints[3]) + ' m；位置误差 ' + format(tangentError) + ' m；理论值 2(1−cosφ) = ' + format(2 * (1 - Math.cos(phi))) + ' m。'));
+      readout.appendChild(el('p', 'lab-note', '两种构形的末杆朝向均为 ' + angle.toFixed(2) + '°。只有位置被固定，朝向未受约束；这不是恒定速度的运动动画。'));
+      host.setAttribute('data-nullspace-values', JSON.stringify({ phi: phi, exact: exact, tangent: tangent, exactPoints: exactPoints, tangentPoints: tangentPoints, exactError: exactError, tangentError: tangentError }));
+    }
+    host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
+  }
+
   /* ---------------- 主题 / 纸张配色变化 → 全部重绘 ----------------
    * 四个实验的取色都发生在 draw() 里（fit() 会调 palette()），所以换主题或换纸张
    * 配色后必须重画一次，否则画布会停在旧配色上——那是「两套系统」的观感来源之一。
@@ -1168,7 +1257,7 @@
   function boot() {
     var hosts = document.querySelectorAll("[data-lab]");
     if (hosts.length === 0) return;
-    var registry = { arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
+    var registry = { nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
     Array.prototype.forEach.call(hosts, function (host) {
       var name = host.getAttribute("data-lab");
       var builder = registry[name];
