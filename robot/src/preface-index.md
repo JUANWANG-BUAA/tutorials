@@ -143,7 +143,7 @@
 | 阻尼广义逆 | $J^*$ | $W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$ | [@def-3.5.2] |
 | 可操作度 | manipulability $w(q)$ | $\sqrt{\det(JJ^{\mathrm T})}$，固定单位与度量下的速度椭球体积比例；不等于到奇点的通用距离 | [3.5.1](ch03/sec3-5.md#sec-3.5.1) |
 | 分析雅可比 | analytic Jacobian $J_A$ | 用欧拉角速率 $\dot{\boldsymbol\varphi}$ 而非角速度 $\boldsymbol\omega$ | [@def-3.6.1] |
-| 换基矩阵 | $T(\boldsymbol\varphi)$ | $\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$；三列 = 欧拉角三根转轴 | [@thm-3.6.A] |
+| 换基矩阵 | $T(\boldsymbol\varphi)$ | $\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$；三列为基系表示的瞬时轴；$\sin\vartheta\ne0$时ZYZ可逆 | [@thm-3.6.A] |
 | 逆雅可比方案 | — | $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+Ke)$，完全线性化 | [3.7.1](ch03/sec3-7.md#sec-3.7.1) |
 | 转置方案 | — | $\dot{\boldsymbol q}=J^{\mathrm T}Ke$，省计算、非线性 | [3.7.2](ch03/sec3-7.md#sec-3.7.2) |
 
@@ -287,8 +287,8 @@
 | 可达工作空间 / 灵活工作空间 | 前者只需一种允许方向，后者须实现规定方向集合中每一种方向 |
 | 本质冗余 / 功能冗余 | 完整位姿维数为 m 时 n>m / 放松任务到 r<m 产生；局部自运动须看秩与约束 |
 | 轨迹规划 / 运动规划 | 生成时间律 / 解决避障 |
-| 几何雅可比 / 分析雅可比 | 用 $\boldsymbol\omega$（正交基）/ 用 $\dot{\boldsymbol\varphi}$（非正交的欧拉角轴） |
-| $J^{-1}$ / $J^\dagger$ / $J^*$ | 方阵满秩 / 冗余（行满秩）/ 奇异邻域（阻尼） |
+| 几何雅可比 / 分析雅可比 | 分别输出物理角速度分量 / 姿态坐标导数；一般不能用逐轴点积互换 |
+| $J^{-1}$ / $J^\dagger$ / $J^*$ | 方阵满秩的精确解 / 最小范数的最小二乘解（右伪逆闭式另需行满秩）/ 速度与残差的阻尼权衡 |
 | 右乘 / 左乘 | 绕当前轴（动系）/ 绕固定轴（定系） |
 | 移动关节 / 转动关节 | 平动（$q_i=d_i$）/ 转动（$q_i=\vartheta_i$） |
 | 开式链 / 闭式链 | 无回路（可直接数自由度）/ 有回路（须扣约束） |

@@ -301,7 +301,7 @@ T(\boldsymbol\varphi)=\begin{bmatrix}0&-s_\varphi&s_\vartheta c_\varphi\\0&c_\va
 J_A=T_A^{-1}J,\qquad
 T_A=\begin{bmatrix}I_3&0\\0&T\end{bmatrix}$$
 
-$T$ 的三列 = 欧拉角三根转轴在基系中的方向（**未必正交**）。线速度部分 $J$ 与 $J_A$ **相同**，姿态部分差一个换基。$s_\vartheta=0$ 时 $T$ 奇异 ⇒ $J_A$ 失效（与 ZYZ 表示奇点同源）。见 [@def-3.6.1]、[@thm-3.6.A]。
+$T$ 三列是基系表示的ZYZ瞬时转轴；系数一般不等于逐轴点积。$\det T=-\sin\vartheta$，上面的逆换算仅适用于 $\sin\vartheta\ne0$ 的光滑分支。同一参考点和表达系中，两种雅可比前三行相同，且此时秩相等；表示奇点不能直接判定机构奇异。见 [@def-3.6.1]、[@thm-3.6.A]。
 
 ---
 

@@ -265,6 +265,11 @@ details.sol-box>summary::after{
 
 .lab-matrix-label{font-size:.86rem;color:var(--ink-2);vertical-align:middle}
 
+/* 本章新增实验沿用正文字号缩放，避免mdBook的小rem基准把读数缩至8px。 */
+.lab:is([data-lab="dls2d"],[data-lab="eulerRates"]){font-size:.875em}
+.lab:is([data-lab="dls2d"],[data-lab="eulerRates"]) :is(.lab-head b,.lab-note,.lab-ctl,.lab-group-label,.lab-btn,.lab-readout,.lab-matrix,.lab-matrix td,.lab-matrix th){font-size:inherit}
+.lab:is([data-lab="dls2d"],[data-lab="eulerRates"]) .lab-tag{font-size:.85em}
+
 /* --- 3D 实验（robot-labs-3d.js）：轨道拖拽与矩阵悬停联动 --- */
 .lab canvas.lab-3d{cursor:grab;touch-action:none}
 
@@ -286,3 +291,6 @@ details.sol-box>summary::after{
   .lab-controls{display:none}
   .lab canvas{max-width:70%}
 }
+
+/* 自检目标是完整句子，首列须可换行。 */
+.robot-checklist :is(th,td):first-child{white-space:normal}

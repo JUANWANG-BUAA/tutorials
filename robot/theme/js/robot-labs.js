@@ -1237,6 +1237,71 @@
     host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
   }
 
+  function labEulerRates(host) {
+    var theta = 60, mode = 'rates';
+    var head = el('div', 'lab-head');
+    head.appendChild(el('span', 'lab-tag', '角速度换算实验'));
+    head.appendChild(el('b', null, '同一组三根轴，系数与投影相同吗？'));
+    host.appendChild(head);
+    host.appendChild(el('p', 'lab-note', 'ZYZ，φ固定为0，ψ不影响T。角度滑块用度；速率和角速度读数均为rad/s。左图画单位方向，右图单独画角速度的xz分量。'));
+    var controls = el('div', 'lab-controls'); host.appendChild(controls);
+    var angle = slider(controls, '中间角 θ', 0, 180, 1, theta, function (value) { theta = value; draw(); }, function (value) { return value + '°'; });
+    var modes = toggleGroup(controls, '保持不变的量', [{ value: 'rates', text: '固定角速率' }, { value: 'omega', text: '固定角速度' }], mode, function (value) { mode = value; draw(); });
+    [60, 90, 30, 1, 0, 180].forEach(function (value) {
+      var button = el('button', 'lab-btn', 'θ=' + value + '°'); button.type = 'button';
+      button.addEventListener('click', function () { theta = value; syncAngle(); draw(); }); controls.appendChild(button);
+    });
+    var reset = el('button', 'lab-btn', '重置'); reset.type = 'button';
+    reset.addEventListener('click', function () { theta = 60; syncAngle(); modes[0].click(); }); controls.appendChild(reset);
+    var canvas = el('canvas', 'lab-canvas'); canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', 'φ为0时ZYZ单位转轴的xz平面真形，以及单独标度的角速度分量'); host.appendChild(canvas);
+    var readout = el('div', 'lab-readout'); readout.setAttribute('aria-live', 'polite'); host.appendChild(readout);
+    function syncAngle() { angle.input.value = theta; angle.out.textContent = theta + '°'; }
+    function draw() {
+      var t = theta * DEG, s = theta === 0 || theta === 180 ? 0 : Math.sin(t), c = theta === 90 ? 0 : Math.cos(t);
+      var singular = s === 0;
+      var rates = mode === 'rates' ? [1, 2, 3] : (singular ? null : [-c / s, 0, 1 / s]);
+      var omega = mode === 'rates' ? [3 * s, 2, 1 + 3 * c] : [1, 0, 0];
+      var projections = [omega[2], omega[1], s * omega[0] + c * omega[2]];
+      var fitted = fit(canvas, 0.56), ctx = fitted.ctx, colors = fitted.c;
+      var cy = fitted.h * 0.51, cx = fitted.w * 0.25, dx = fitted.w * 0.73, length = Math.min(95, fitted.h * 0.25);
+      ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = colors.ink;
+      ctx.fillText('单位转轴：xz平面真形', cx, 24); ctx.fillText(mode === 'rates' ? '合成角速度：xz分量' : '给定角速度：xz分量', dx, 24);
+      [cx, dx].forEach(function (x) {
+        arrow(ctx, x - length * 1.15, cy, x + length * 1.15, cy, colors.line, 1);
+        arrow(ctx, x, cy + length * 1.15, x, cy - length * 1.15, colors.line, 1);
+        ctx.fillStyle = colors.muted; ctx.fillText('x', x + length * 1.15, cy + 17); ctx.fillText('z', x - 14, cy - length * 1.15);
+      });
+      arrow(ctx, cx, cy, cx, cy - length, colors.gold, 3);
+      arrow(ctx, cx, cy, cx + length * s, cy - length * c, colors.blue, 2);
+      ctx.strokeStyle = colors.purple; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, length * 0.38, -Math.PI / 2, -Math.PI / 2 + t); ctx.stroke();
+      ctx.fillStyle = colors.purple; ctx.fillText('θ=' + theta + '°', cx + 52, cy - length - 16);
+      ctx.strokeStyle = colors.green; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx - length * 0.85, cy + length * 0.8, 7, 0, 2 * Math.PI); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - length * 0.85 - 3, cy + length * 0.8 - 3); ctx.lineTo(cx - length * 0.85 + 3, cy + length * 0.8 + 3); ctx.moveTo(cx - length * 0.85 - 3, cy + length * 0.8 + 3); ctx.lineTo(cx - length * 0.85 + 3, cy + length * 0.8 - 3); ctx.stroke(); ctx.fillStyle = colors.green;
+      ctx.textAlign = 'left'; ctx.fillText('y′背向读者', cx - length * 0.85 + 13, cy + length * 0.8 + 4);
+      var unit = mode === 'rates' ? length / 4 : length;
+      arrow(ctx, dx, cy, dx + unit * omega[0], cy - unit * omega[2], colors.ink, 3);
+      ctx.textAlign = 'center'; ctx.fillStyle = colors.ink;
+      ctx.fillText('ωx=' + omega[0].toFixed(3) + '，ωz=' + omega[2].toFixed(3), dx, cy + length + 34);
+      ctx.fillText('y分量单列：ωy=' + omega[1].toFixed(3), dx, cy + length + 53);
+      ctx.strokeStyle = colors.muted; ctx.beginPath(); ctx.moveTo(dx + length, cy - 4); ctx.lineTo(dx + length, cy + 4); ctx.moveTo(dx - 4, cy - length); ctx.lineTo(dx + 4, cy - length); ctx.stroke();
+      ctx.fillStyle = colors.muted; ctx.fillText(mode === 'rates' ? '4' : '1', dx + length, cy + 17);
+      ctx.fillText('右图刻度单位：rad/s', dx, 45);
+      ctx.fillStyle = colors.gold; ctx.fillText('金：z', cx - 40, fitted.h - 20); ctx.fillStyle = colors.blue; ctx.fillText('蓝：z″', cx + 35, fitted.h - 20);
+      var blank = ['—', '—', '—'];
+      readout.innerHTML = matrixHTML([
+        ['量（rad/s）', '第1项', '第2项', '第3项'],
+        ['欧拉角速率 (φ̇, θ̇, ψ̇)'].concat(rates || blank),
+        ['基系角速度 (ωx, ωy, ωz)'].concat(omega),
+        ['逐轴点积 (z·ω, y′·ω, z″·ω)'].concat(projections)
+      ], 5);
+      readout.appendChild(el('p', null, 'det T = −sin θ = ' + (-s).toFixed(5) + '。' + (mode === 'rates' ? '当前固定角速率(1,2,3)，比较第一行与第三行。' : '当前固定基系角速度(1,0,0)，比较角速率与实际角速度。')));
+      readout.appendChild(el('p', 'lab-note', singular ? (mode === 'rates' ? 'T降秩，正向合成仍成立；这组三项速率给出了一个确定角速度，但反向不能唯一恢复系数。' : '无唯一逆换算：在固定φ=0的这个奇点代表下，有限角速率还不能表示所给的x方向角速度。破折号不是速率为0。') : (theta === 90 ? '此时三列恰好正交，第一行与逐轴点积相同；其他角度一般不相同。' : '系数须解T乘法方程；逐轴点积通常不等于欧拉角速率。逆换算靠近端点会出现很大的参数速率。')));
+      host.setAttribute('data-euler-values', JSON.stringify({ theta: theta, mode: mode, singular: singular, determinant: -s, rates: rates, omega: omega, projections: projections }));
+    }
+    host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
+  }
+
   function labDls2d(host) {
     var epsilon = 0.1, damping = 0.1;
     var head = el('div', 'lab-head');
@@ -1331,7 +1396,7 @@
   function boot() {
     var hosts = document.querySelectorAll("[data-lab]");
     if (hosts.length === 0) return;
-    var registry = { dls2d: labDls2d, nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
+    var registry = { eulerRates: labEulerRates, dls2d: labDls2d, nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
     Array.prototype.forEach.call(hosts, function (host) {
       var name = host.getAttribute("data-lab");
       var builder = registry[name];

@@ -65,10 +65,14 @@ $W=I$、$K=k^{-2}I$、$k>0$ 时得到经典**阻尼形式** $J^{*}=J^{\mathrm T}
 
 ### A7 · 分析雅可比
 
-写出定义与它和几何雅可比的关系，并说明 $T$ 的三列是什么。
+分别写出两种雅可比的输出、维度及可逆换算条件。$T$ 的三列是什么？
 
 ::: sol A7 核对
-**几何雅可比**（$J$）：逐列给出每个关节速度对末端**线速度与角速度**的贡献，角速度部分 $\boldsymbol\omega_e$ 是末端角速度在**基坐标系**三根轴上的分量。**分析雅可比** $J_A$：把正运动学对关节变量直接微分，姿态部分改用欧拉角 $\boldsymbol\varphi_e=[\varphi\ \vartheta\ \psi]^{\mathrm T}$（ZYZ）的时间导数 $\dot{\boldsymbol\varphi}_e$——**绕欧拉角所定义转轴的旋转速度**。关系：$J_A=T_A^{-1}(\boldsymbol\varphi_e)J$，$T_A=\begin{bmatrix}I_3&0\\0&T(\boldsymbol\varphi_e)\end{bmatrix}$，其中 $T$ 的三列就是**三根瞬时转轴在基系中的方向**（$z$、转 $\varphi$ 后的 $y'$、再转 $\vartheta$ 后的 $z''$），**未必正交**。（[@def-3.6.1]、[@thm-3.6.A]）
+
+$J,J_A\in\mathbb R^{6\times n}$ 分别满足 $[\dot p_e;\omega_e]=J\dot q$ 与 $[\dot p_e;\dot{\boldsymbol\varphi}_e]=J_A\dot q$。在同一参考点和表达系中，前三行相同；后三行分别是物理角速度和姿态坐标导数。
+
+ZYZ的 $T$ 三列为基系表示的 $z,R_z(\varphi)y,R_z(\varphi)R_y(\vartheta)z$，它们按系数合成角速度。光滑坐标分支内 $J=T_AJ_A$，$T_A=\operatorname{diag}(I_3,T)$；$\det T=-\sin\vartheta\ne0$ 时 $J_A=T_A^{-1}J$。这些系数一般不是向三根轴的点积投影。（[@def-3.6.1]、[@thm-3.6.A]）
+
 :::
 
 ## B. 结论卡
@@ -115,15 +119,19 @@ $$\begin{bmatrix}\dot{\boldsymbol p}_w\\ \boldsymbol\omega_e\end{bmatrix}=\begin
 $W\succ0$ 时，$JW^{-1}J^{\mathrm T}$ 可逆当且仅当 $J$ 行满秩；再有 $K\succ0$，$JW^{-1}J^{\mathrm T}+K^{-1}$ 始终正定。一般Moore–Penrose伪逆在降秩时仍存在，提供最小范数的最小二乘解；DLS在满秩时也可用，二者都不能恢复缺失的方向。（[3.5.0](sec3-5.md#sec-3.5.0)–[3.5.2](sec3-5.md#sec-3.5.2)）
 :::
 
-### B5 · 同一个角速度、两种读数
+### B5 · 角速率换算与表示奇点
 
-写出换基矩阵与两句口诀，并说明 $J$ 与 $J_A$ 在哪几行必然相同。
+从三根转轴写出 $T$；取 $\varphi=0$、固定 $\omega_e=(1,0,0)^{\mathrm T}$ 时，$\vartheta$ 趋近0会发生什么？这能说明机构奇异吗？
 
 ::: sol B5 核对
-$$\boldsymbol\omega_e=T(\boldsymbol\varphi)\dot{\boldsymbol\varphi}_e,\qquad
-T(\boldsymbol\varphi)=\begin{bmatrix}0&-s_\varphi&s_\vartheta c_\varphi\\ 0&c_\varphi&s_\vartheta s_\varphi\\ 1&0&c_\vartheta\end{bmatrix}\ (\text{ZYZ}),\qquad J_A=T_A^{-1}J .$$
 
-**诀窍**：把 $T$ 读作「**三根瞬时转轴在基系中的方向排成的矩阵**」——一个向量（角速度）、两组「坐标」：在正交基里读数得几何雅可比的后三行，在非正交基（$z,y',z''$）里读数得 $\dot{\boldsymbol\varphi}$。**口诀**：**位置部分同、姿态部分异；几何看得见（$\boldsymbol\omega$ 有分量）、分析可积分（$\dot{\boldsymbol\varphi}$ 可积分）**。**必然相同的部分**：前三行（线速度）——$\dot{\boldsymbol p}_e$ 对 $\boldsymbol q$ 直接求偏导的结果与逐列构造的结果一致。**一致的特例**：平面臂（欧拉角轴与固定轴重合，不存在换基问题）。（[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3)）
+$$\omega_e=T\dot{\boldsymbol\varphi}_e,\qquad
+T=\begin{bmatrix}0&-s_\varphi&c_\varphi s_\vartheta\\0&c_\varphi&s_\varphi s_\vartheta\\1&0&c_\vartheta\end{bmatrix}.$$
+
+当 $\sin\vartheta\ne0$ 时，题设给出 $\dot{\boldsymbol\varphi}_e=(-\cot\vartheta,0,1/\sin\vartheta)^{\mathrm T}$。物理角速度保持1rad/s，参数速率却可很大；端点处 $T$ 第1、3列共线，固定这个代表不能提供唯一逆换算。是否机构奇异还须检查几何任务的秩，不能从坐标表示直接断定。
+
+平面臂选 $(p_x,p_y,\alpha)$，$\alpha=\sum q_i$ 时 $\dot\alpha=\omega_z$，降维后的两种雅可比才相同；这不意味着一般三维ZYZ的三轴重合。$\omega$ 各分量可以积分，但仅保留三个积分值不足以恢复旋转顺序及最终姿态。（[§3.6](sec3-6.md)）
+
 :::
 
 ### B6 · 逆方案 vs 转置方案

@@ -64,7 +64,7 @@
 | $J^\dagger$ | Moore–Penrose伪逆（行满秩时可用右伪逆闭式） | 3.5 |
 | $J^*$ | 阻尼广义逆（速度与残差权衡） | 3.5 |
 | $N,P$ | 标准正交零空间基与投影 $P=NN^{\mathrm T}$ | 3.4 |
-| $J_A$、$T(\boldsymbol\varphi)$ | 分析雅可比与换基矩阵（$\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$） | 3.6 |
+| $J_A$、$T(\boldsymbol\varphi)$ | 位姿坐标的雅可比与角速率合成矩阵（$\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$，ZYZ在$\sin\vartheta\ne0$时可逆） | 3.6 |
 | $F_e=[\boldsymbol f_e;\boldsymbol\mu_e]$ | 末端广义力（3 力 + 3 矩） | 3.8 |
 | $\boldsymbol\tau$ | 关节力矩向量（$\boldsymbol\tau=J^{\mathrm T}F_e$） | 3.8 |
 

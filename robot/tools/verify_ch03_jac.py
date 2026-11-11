@@ -640,6 +640,73 @@ class JacobianChecks(unittest.TestCase):
                 self.assertLessEqual(gain, peak+1e-12)
                 self.assertAlmostEqual(sigma*gain+k*k/(sigma*sigma+k*k), 1, places=12)
 
+    def test_zyz_rate_axes_against_rotation_derivatives(self):
+        """Central differences of the complete rotation independently check T."""
+        def ry(t):
+            c, s = math.cos(t), math.sin(t)
+            return [[c, 0, s], [0, 1, 0], [-s, 0, c]]
+
+        def rz(t):
+            return [row[:3] for row in rot_z(t)[:3]]
+
+        def rotation(q):
+            return mat_mul(mat_mul(rz(q[0]), ry(q[1])), rz(q[2]))
+
+        for phi in (-2.0, -0.4, 0.0, math.pi/2):
+            for theta in (0.02, math.pi/6, math.pi/2, math.pi-0.02):
+                q = [phi, theta, 0.7]
+                sp, cp, st, ct = math.sin(phi), math.cos(phi), math.sin(theta), math.cos(theta)
+                t = [[0, -sp, cp*st], [0, cp, sp*st], [1, 0, ct]]
+                actual_columns = numeric_jo(rotation, q)
+                self.assertLess(max_err(actual_columns, [[t[r][c] for r in range(3)] for c in range(3)]), 2e-9)
+                ti = [[-cp*ct/st, -sp*ct/st, 1], [-sp, cp, 0], [cp/st, sp/st, 0]]
+                self.assertLess(max_err(mat_mul(t, ti), eye(3)), 1e-12)
+                self.assertAlmostEqual(det3(t), -st, places=12)
+        # Independently worked values distinguish coefficients from dot products.
+        t = [[0, 0, math.sqrt(3)/2], [0, 1, 0], [1, 0, 0.5]]
+        omega = mat_mul(t, [[1], [2], [3]])
+        self.assertLess(max_err(omega, [[3*math.sqrt(3)/2], [2], [2.5]]), 1e-12)
+        self.assertLess(max_err(mat_mul(list(map(list, zip(*t))), omega), [[2.5], [2], [3.5]]), 1e-12)
+        # Companion exercise uses different axes and rates from the main example.
+        t = [[0, -1, 0], [0, 0, math.sqrt(3)/2], [1, 0, 0.5]]
+        self.assertLess(max_err(mat_mul(t, [[-1], [-2], [2]]), [[2], [math.sqrt(3)], [0]]), 1e-12)
+
+    def test_representation_singularity_and_rotation_order(self):
+        """A smooth XYZ wrist can be regular where the ZYZ chart is singular."""
+        def ry(t):
+            c, s = math.cos(t), math.sin(t)
+            return [[c, 0, s], [0, 1, 0], [-s, 0, c]]
+
+        def rx(t):
+            return [row[:3] for row in rot_x(t)[:3]]
+
+        def rz(t):
+            return [row[:3] for row in rot_z(t)[:3]]
+
+        columns = numeric_jo(lambda q: mat_mul(mat_mul(rx(q[0]), ry(q[1])), rz(q[2])), [0, 0, 0])
+        self.assertLess(max_err(columns, eye(3)), 1e-11)
+        for ct in (1, -1):
+            t = [[0, 0, 0], [0, 1, 0], [1, 0, ct]]
+            self.assertEqual(det3(t), 0)
+            self.assertEqual(t[0], [0, 0, 0])  # No finite coefficients yield omega_x=1.
+        for theta, expected in ((math.pi/2, (0, 0, 1)), (math.pi/6, (-math.sqrt(3), 0, 2)), (math.pi/180, (-57.28996163075943, 0, 57.298688498550185))):
+            rates = [-math.cos(theta)/math.sin(theta), 0, 1/math.sin(theta)]
+            self.assertLess(max(abs(a-b) for a, b in zip(rates, expected)), 1e-12)
+            self.assertAlmostEqual(math.sin(theta)*rates[2], 1)
+            self.assertAlmostEqual(rates[0]+math.cos(theta)*rates[2], 0)
+        a = mat_mul(ry(math.pi/2), rx(math.pi/2))
+        b = mat_mul(rx(math.pi/2), ry(math.pi/2))
+        self.assertLess(max_err(a, [[0, 1, 0], [0, 0, -1], [-1, 0, 0]]), 1e-12)
+        self.assertLess(max_err(b, [[0, 0, 1], [1, 0, 0], [0, 1, 0]]), 1e-12)
+        self.assertGreater(max_err(a, b), 0.9)
+        # Reduced planar task: alpha-dot and physical omega_z agree.
+        dh = [(0, 0, 1, 0, 'r')]*3
+        q = [0, math.pi/2, -math.pi/2]
+        jp, jo = analytic_geometric(dh, q)
+        reduced = [[column[0] for column in jp], [column[1] for column in jp], [column[2] for column in jo]]
+        self.assertLess(max_err(reduced, [[-1, -1, 0], [2, 1, 1], [1, 1, 1]]), 1e-12)
+        self.assertLess(max_err(mat_mul(reduced, [[1], [-1], [2]]), [[0], [3], [2]]), 1e-12)
+
     def test_finite_self_motion_and_tangent_drift(self):
         """Independent FK checks exact equal-link geometry and tangent error."""
         def endpoint(q):

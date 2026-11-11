@@ -36,7 +36,7 @@
 
 ::: note 第一部分答案（每题 3 分：判断 1 分 + 理由 2 分）
 
-**（1）** **对。** $J$ 是**位形**的函数（$J(\boldsymbol q)$），$\boldsymbol v_e=\begin{bmatrix}\dot{\boldsymbol p}_e\\ \boldsymbol\omega_e\end{bmatrix}=J(\boldsymbol q)\dot{\boldsymbol q}$；而 $\boldsymbol\omega_e$ 的三个分量定义为末端角速度在**基坐标系**三根轴上的投影。**这一句正是几何 / 分析雅可比分歧的根源**：换到欧拉角的非正交瞬时轴上读数，就得到 $J_A$。（[@def-3.1.1]、[3.6.1](sec3-6.md#sec-3.6.1)）
+**（1）** **对。** $[\dot p_e;\omega_e]=J(q)\dot q$，$\omega_e$ 是角速度在基系正交轴上的分量。分析雅可比另输出姿态坐标导数 $\dot{\boldsymbol\varphi}_e$，一般不能靠逐轴点积把角速度换成该导数。（[@def-3.1.1]、[3.6.1](sec3-6.md#sec-3.6.1)）
 
 **（2）** **错。** $S(\boldsymbol\omega)$ 有 9 个元素，但受**反对称**约束（对角线为零、非对角镜像反号）——独立元素恰为 **3** 个，与 $\boldsymbol\omega$ 的 3 个分量**一一对应**。老师原话是「一对一的映射关系，可以类比，但不完全一样」：$S$ 与 $R$ 都是「省参数」的表示（各自 3 个独立量），但不是同一个对象。（[@def-3.1.2]）
 
@@ -52,7 +52,7 @@
 
 **（8）** **错。** 力变换是 $J^{\mathrm T}$（**对偶**），不是求逆——$\boldsymbol\tau=J^{\mathrm T}F_e$ 来自虚功原理 / 功率守恒：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau=\boldsymbol v_e^{\mathrm T}F_e=(J\dot{\boldsymbol q})^{\mathrm T}F_e=\dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}F_e$ 对任意 $\dot{\boldsymbol q}$ 成立。**两条纪律**：$J$ 是长方阵时 $J^{\mathrm T}$ 照样可用（无需方阵、无需满秩）；$F_e$ 与 $J$ 必须在**同一坐标系**下。（[@def-3.8.1]、[3.8.1](sec3-8.md#sec-3.8.1)）
 
-**（9）** **对。** $J_A=T_A^{-1}J$ 中 $T_A=\begin{bmatrix}I_3&0\\0&T(\boldsymbol\varphi_e)\end{bmatrix}$——左上角的 $I_3$ 说明**线速度部分两式一致**，右下角的 $T$ 说明角速度部分要换算。ZYZ 的表示奇点（$\vartheta=0,\pi$，进动轴与自转轴重合）使 $T$ 的第 1、3 列共线、$T$ 奇异，于是 $J_A$ 也失去定义——**两者同源**。（[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3)）
+**（9）** **错。** 同一参考点、同一表达系中，位置部分相同；但ZYZ表示奇点只说明 $T$ 不可逆，不能据此宣布几何雅可比也失效。例：$R(q)=R_x(q_1)R_y(q_2)R_z(q_3)$ 在 $q=0$ 时，旋转任务的 $J_O=I_3$ 满秩，同一姿态的ZYZ却有 $\vartheta=0$。仅在 $\sin\vartheta\ne0$ 的光滑分支内，$J_A=T_A^{-1}J$ 并与 $J$ 保持相同秩。（[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3)）
 
 **（10）** **错。** 只有**逆方案**能把误差动态化成 $\dot{\boldsymbol e}=\dot{\boldsymbol x}_d-J_A\dot{\boldsymbol q}=\dot{\boldsymbol x}_d-(\dot{\boldsymbol x}_d+K\boldsymbol e)=-K\boldsymbol e$（**完全线性化**）；**转置方案**的误差动态是**非线性**的——多出含 $J$ 随位形变化的项，稳定性只能借助 **Lyapunov 函数**分析，收敛只是**局部**的。代价换收益：转置省去了求逆（「$J^{-1}$ 很花时间；用 $J^{\mathrm T}$ 直接调换一下元素位置就可以了」）。（[3.7.1](sec3-7.md#sec-3.7.1)、[3.7.2](sec3-7.md#sec-3.7.2)）
 
@@ -271,7 +271,7 @@ $$\boldsymbol\tau^{\mathrm T}=-\boldsymbol f_e^{\mathrm T}\bar J_P\qquad\Longrig
 | 6、13 | [@thm-3.3.A] 的适用边界与 [3.3.3](sec3-3.md#sec-3.3.3) 的「为什么可以挪参考点」框 | 习题 B3；回忆卡 B3、D5 |
 | 7、14、19 | [3.4](sec3-4.md)、[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2) | 习题 B4、B5、C5、C6；回忆卡 A5、A6、A7、B4、B8、C7 |
 | 8、18 | [@def-3.8.1] 的虚功推导与 [3.8.1](sec3-8.md#sec-3.8.1) 的「为什么是 $J^{\mathrm T}$」框 | 习题 A4；回忆卡 C4、D7 |
-| 9 | [@def-3.6.1]、[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3) | 习题 A3；回忆卡 A8、B5 |
+| 9 | [@def-3.6.1]、[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3) | 习题 A3；回忆卡 A7、B5 |
 | 10、15 | [3.7.1](sec3-7.md#sec-3.7.1)、[3.7.2](sec3-7.md#sec-3.7.2)（**不考细节，但两条路线要能分清**） | 回忆卡 B6、D8 |
 | 16 | [3.2.1](sec3-2.md#sec-3.2.1) 与 [@ex-book-3.2] | 习题 C2；回忆卡 C3 |
 | 20 | [3.3.1](sec3-3.md#sec-3.3.1) 三类后果 + 工程规避视频段；[3.5.2](sec3-5.md#sec-3.5.2) | 习题 D1；回忆卡 B7、C7、D4 |
