@@ -15,7 +15,8 @@
 | ⚡ 算法、评估与因果推断 | [开始阅读](https://juanwang-buaa.github.io/tutorials/algorithms/) | 4 篇 14 章 + 2 个项目：渐进分析、分治、图算法、平摊分析、贪心与反例、动态规划、NP难与近似、在线算法、评估指标、假设检验、模型评估与选择、准实验因果推断；附算法评测系统与 A/B 测试分析流水线 |
 | 🦀 Rust 底层性能工程 | [开始阅读](https://juanwang-buaa.github.io/tutorials/cpp-rust/) | 4 篇 16 章 + 2 个项目：rustc 编译流水线、内存布局与 niche、所有权与 unsafe 证明、原子与 128B 伪共享消除、Tokio 调度器与管道背压、无锁队列与 EBR 代际回收、ARM NEON 向量化与零拷贝、系统采样与 CI 门禁；附 Agent 工具执行器与跨语言 C ABI 组件 |
 | 🔌 边缘嵌入式与实时系统 | [开始阅读](https://juanwang-buaa.github.io/tutorials/edge/) | 4 篇 14 章 + 2 个项目：x86/ARM/RISC-V 架构、汇编、ABI、启动、中断、抢占式 RTOS、总线 MMIO/DMA、CAN 协议栈、定点滤波、流式 DAQ、芯片低功耗、看门狗容错、INT8 张量推理与双区 OTA；附工业 CAN 诊断节点与高速 DAQ 自愈两个可运行项目 |
-| 📕 马克思主义原理 | [开始阅读](https://juanwang-buaa.github.io/tutorials/mlm/) | 6 篇 45 章 + 4 附录：唯物史观与辩证法（7 章）、政治经济学批判（12 章，商品到地租，含列宁帝国主义论）、国家与革命（7 章，含卢森堡《社会改良还是革命？》全篇论证与阿尔都塞《论再生产》六节）、第一国际到共产国际（6 章）、中国革命与毛泽东的理论（9 章，含文革与《论我国革命》）、当代问题与方法训练（4 章）；每章按问题—概念—机制—证据—反驳组织，引文标印刷页码并分级；附年表、59 条概念表、文献版本分级与 45 道习题 |
+| 🔧 嵌入式系统 | [开始阅读](https://juanwang-buaa.github.io/tutorials/arm-embed/) | 3 章 35 节：ARM 微处理器体系结构（七种模式 · 37 个寄存器分组 · CPSR/SPSR · 异常向量与优先级 · 复位 · 存储器映射 I/O 与大小端）、ARM 指令集（条件域 · 九种寻址方式 · 访存两族 · 数据处理与桶形移位器 · 乘法 · 分支与状态切换 · SWI/MRS/MSR · 伪指令 · Thumb 互操作 · 汇编程序与 C 互调）、嵌入式操作系统（安全关键标准与 DO-178B/C · 内核结构四型 · 微内核与 seL4 · 主流 RTOS 谱系 · RT-Thread 与国产 RTOS · 任务模型与抢占调度 · RMS/EDF/LLF · 进程间通信与优先级反转 · 中断与时钟节拍 · 实时性判据 · 实时 Linux）；每章六件（总结 / 勘误 / 习题 / 自检表 / 回忆卡 / 自测卷）；第一章绪论课件待发布 |
+| 📕 马克思主义原理 | [开始阅读](https://juanwang-buaa.github.io/tutorials/mlm/) | 正文不在当前工作区。章节顺序见 `mlm/章节排布` 与 `mlm/src/SUMMARY.md` |
 
 ## 仓库结构
 
@@ -32,8 +33,8 @@ algorithms/    算法、评估与因果推断 · mdBook 源（4 篇 14 章 + 2 �
 embodied/      具身感知：SLAM、状态估计与传感器融合 · mdBook 源（4 篇 14 章 + 2 个项目；机器人卷 II）
 cpp-rust/      Rust 底层性能工程 · mdBook 源（4 篇 16 章 + 2 个项目；复用 shared/theme 与 tools）
 edge/          边缘嵌入式与实时系统 · mdBook 源（4 篇 14 章 + 2 个项目；复用 shared/theme 与 tools）
-mlm/           马克思主义原理 · mdBook 源（6 篇 45 章 + 4 附录；三类本书专属语义盒 arg/src/debate，
-               见 mlm/theme/css/mlm.css；复用 shared/theme 与 tools）
+arm-embed/     嵌入式系统 · mdBook 源（3 章 35 节；复用 shared/theme 与 tools）
+mlm/           马克思主义原理 · 章节排布与构建配置仍在；正文不在本目录
 shared/        十三本书**共用一份**的浏览器侧资源与构建工具（各书 theme/ 里是符号链接）；
                RHINE.md 记录可选的「莱茵档案」皮肤
   theme/       head.hbs、atlas 视觉层、framework/prefs 的 css+js、search-cjk.js
