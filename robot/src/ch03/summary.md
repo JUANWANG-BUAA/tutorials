@@ -10,7 +10,7 @@
 | **[3.4](sec3-4.md) 冗余分析** | 任务冗余 $n>r$；核维数 $n-\operatorname{rank}J$；标准正交基下 $P=NN^{\mathrm T}$；全部解为特解加核（[@thm-3.4.B]） | 把任务求导等同选行；漏归一化；把瞬时不动当有限位姿不变 |
 | **[3.5](sec3-5.md) 逆微分运动学** | 方阵逆 + 数值积分；行满秩、等权时 $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$（[@def-3.5.1]）；$\dot q=J^\dagger v_e+(I-J^\dagger J)\dot q_0$；DLS 与 $J^*$（[@def-3.5.2]） | 把行满秩闭式当一般伪逆；漏任务残差；把瞬时全局最优当轨迹最优 |
 | **[3.6](sec3-6.md) 分析雅可比** | 从ZYZ乘积求导得 $\omega_e=T\dot{\boldsymbol\varphi}_e$；光滑且 $\sin\vartheta\ne0$ 时 $J_A=T_A^{-1}J$ 并保秩；分量积分不足以恢复姿态 | 把系数当点积；把表示奇点当机构奇点；丢失旋转顺序 |
-| **[3.7](sec3-7.md) 逆运动学算法** | 逆方案 $\dot q=J_A^{-1}(\dot x_d+Ke)$（完全线性化）；转置方案 $J^{\mathrm T}Ke$（省计算、Lyapunov）；二阶算法 $\ddot e+K_D\dot e+K_Pe=0$ | 转置方案按线性设计；忽略 $\dot J$ |
+| **[3.7](sec3-7.md) 逆运动学算法** | 逆方案解 $J_A\dot q=\dot x_d+Ke$，连续误差 $\dot e=-Ke$；固定目标转置方案 $J_A^{\mathrm T}Ke$，$\dot V=-\|J_A^{\mathrm T}Ke\|^2$；二阶解 $J_A\ddot q=\ddot x_d+K_D\dot e+K_Pe-\dot J_A\dot q$ | 混用任务坐标与几何J；把转置也换成伪逆；漏掉秩、区域、移动目标或积分步长条件 |
 | **[3.8](sec3-8.md) 静力学** | $\tau=J^{\mathrm T}F_e$（虚功原理，[@def-3.8.1]）；速度 / 力变换转置对偶（3.8.2） | 用 $J^{-1}$ 传力；力的坐标系未统一 |
 
 ## 一条主线

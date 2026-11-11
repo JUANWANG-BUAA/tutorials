@@ -730,5 +730,112 @@ class JacobianChecks(unittest.TestCase):
             self.assertAlmostEqual(math.hypot(px - 2, py - 1), 2 * (1 - math.cos(phi)), places=12)
 
 
+    def test_feedback_gradient_and_reachable_stationary_error(self):
+        """Cost gradient comes from independent FK; a reachable target can stall."""
+        fk = fk_pos([(0, 0, 1, 0, 'r'), (0, 0, 1, 0, 'r')])
+        q, target, gains = [0.3, 1.1], [1.1, 0.9], [2, 3]
+        cols = numeric_jp(fk, q)
+        error = [target[i] - fk(q)[i] for i in range(2)]
+        speed = [sum(col[i] * gains[i] * error[i] for i in range(2)) for col in cols]
+        def cost(angles):
+            return sum(gains[i] * (target[i] - fk(angles)[i]) ** 2 / 2 for i in range(2))
+        for axis in range(2):
+            plus, minus = q[:], q[:]
+            plus[axis] += EPS
+            minus[axis] -= EPS
+            self.assertAlmostEqual((cost(plus) - cost(minus)) / (2 * EPS), -speed[axis], places=8)
+        # Finite difference of the cost along the chosen joint velocity.
+        plus = [q[i] + EPS * speed[i] for i in range(2)]
+        minus = [q[i] - EPS * speed[i] for i in range(2)]
+        self.assertAlmostEqual((cost(plus) - cost(minus)) / (2 * EPS), -sum(v * v for v in speed), places=7)
+        stalled_cols = numeric_jp(fk, [0, 0])
+        self.assertLess(max(abs(col[0]) for col in stalled_cols), 1e-9)
+        a = math.acos(0.75)
+        self.assertLess(math.hypot(fk([a, -2 * a])[0] - 1.5, fk([a, -2 * a])[1]), 1e-12)
+
+    def test_feedback_one_step_and_second_order_bias(self):
+        """Compare published updates with DH FK and directional J differences."""
+        dh = [(0, 0, 1, 0, 'r'), (0, 0, 1, 0, 'r')]
+        fk = fk_pos(dh)
+        q, v = [0, math.pi / 2], [0.2, -0.1]
+        for speed, expected in [([-0.2, 0], [0.08020133, -0.07980134]), ([-0.4, -0.2], [0.04083589, -0.05821121])]:
+            p = fk([q[i] + 0.1 * speed[i] for i in range(2)])
+            for axis, goal in enumerate([1.1, 0.9]):
+                self.assertAlmostEqual(goal - p[axis], expected[axis], places=8)
+        def jcols(angles):
+            return analytic_geometric(dh, angles)[0]
+        plus = jcols([q[i] + EPS * v[i] for i in range(2)])
+        minus = jcols([q[i] - EPS * v[i] for i in range(2)])
+        bias = [sum((plus[col][row] - minus[col][row]) / (2 * EPS) * v[col] for col in range(2)) for row in range(2)]
+        for actual, expected in zip(bias, [-0.04, -0.01]):
+            self.assertAlmostEqual(actual, expected, places=9)
+        acceleration, error, edot = [-1.19, 0.35], [0.1, -0.1], [0.1, -0.2]
+        j = jcols(q)
+        eddot = [-sum(j[col][row] * acceleration[col] for col in range(2)) - bias[row] for row in range(2)]
+        for row in range(2):
+            self.assertAlmostEqual(eddot[row] + 4 * edot[row] + 4 * error[row], 0, places=9)
+        # Independent scalar task x=q²: ẍ=2q q̈+2q̇².
+        self.assertAlmostEqual(-(2 * 2 * -0.625 + 2 * 0.5 ** 2) + 3 * -2 + 4, 0)
+        for step, expected in [(0.1, 0.6), (0.4, -0.6), (0.6, -1.4)]:
+            self.assertAlmostEqual(1 - 4 * step, expected)
+        self.assertAlmostEqual(0.8 - 4 * 0.2, 0)
+
+    def test_column_cross_orientation_error_derivative(self):
+        """Differentiate independent rotating columns with two moving attitudes."""
+        def rotation(v):
+            angle = math.sqrt(sum(x * x for x in v))
+            if angle == 0:
+                return eye(3)
+            axis = [x / angle for x in v]
+            s = [[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]]
+            ss = mat_mul(s, s)
+            return [[float(i == j) + math.sin(angle) * s[i][j] + (1 - math.cos(angle)) * ss[i][j] for j in range(3)] for i in range(3)]
+        def transpose(a):
+            return [list(row) for row in zip(*a)]
+        def error(re, rd):
+            cs = [cross([re[i][col] for i in range(3)], [rd[i][col] for i in range(3)]) for col in range(3)]
+            return [sum(col[i] for col in cs) / 2 for i in range(3)]
+        for angle in [0.2, math.pi / 3, math.pi / 2, 2 * math.pi / 3, math.pi]:
+            re, rd = rotation([0.3, -0.2, 0.1]), rotation([0, 0, angle])
+            we, wd = [0.2, -0.4, 0.1], [-0.3, 0.1, 0.2]
+            plus = error(mat_mul(rotation([EPS * v for v in we]), re), mat_mul(rotation([EPS * v for v in wd]), rd))
+            minus = error(mat_mul(rotation([-EPS * v for v in we]), re), mat_mul(rotation([-EPS * v for v in wd]), rd))
+            # S(a)S(b)=b aᵀ-(a·b)I gives L independently as a dyadic sum.
+            trace = sum(re[i][col] * rd[i][col] for i in range(3) for col in range(3))
+            l = [[0.5 * (trace * float(i == j) - sum(re[i][col] * rd[j][col] for col in range(3))) for j in range(3)] for i in range(3)]
+            predicted = [sum(l[j][i] * wd[j] - l[i][j] * we[j] for j in range(3)) for i in range(3)]
+            for i in range(3):
+                self.assertAlmostEqual((plus[i] - minus[i]) / (2 * EPS), predicted[i], places=8)
+        for angle in [math.pi / 3, math.pi / 2, 2 * math.pi / 3, math.pi]:
+            actual = error(eye(3), rotation([0, 0, angle]))
+            self.assertAlmostEqual(actual[2], math.sin(angle), places=12)
+        self.assertAlmostEqual(math.cos(math.pi / 2), 0, places=12)
+
+    def test_quaternion_error_product_and_fixed_target_derivative(self):
+        """Finite quaternion increments verify signs, order and nonlinear rates."""
+        def product(a, b):
+            av, bv = a[1:], b[1:]
+            c = cross(av, bv)
+            return [a[0] * b[0] - sum(av[i] * bv[i] for i in range(3))] + [a[0] * bv[i] + b[0] * av[i] + c[i] for i in range(3)]
+        def conjugate(q):
+            return [q[0]] + [-v for v in q[1:]]
+        def axis_quat(v):
+            angle = math.sqrt(sum(x * x for x in v))
+            return [math.cos(angle / 2)] + [math.sin(angle / 2) * x / angle for x in v] if angle else [1, 0, 0, 0]
+        qd, qe, omega = axis_quat([0.3, 0.1, -0.2]), axis_quat([-0.1, 0.4, 0.2]), [0.2, -0.3, 0.4]
+        delta = product(qd, conjugate(qe))
+        plus = product(qd, conjugate(product(axis_quat([EPS * w for w in omega]), qe)))
+        minus = product(qd, conjugate(product(axis_quat([-EPS * w for w in omega]), qe)))
+        cross_term = cross(delta[1:], omega)
+        predicted = [sum(delta[i + 1] * omega[i] for i in range(3)) / 2] + [-(delta[0] * omega[i] + cross_term[i]) / 2 for i in range(3)]
+        for i in range(4):
+            self.assertAlmostEqual((plus[i] - minus[i]) / (2 * EPS), predicted[i], places=9)
+        # Sign-flipped representatives describe the same relative attitude.
+        flipped = product([-v for v in qd], conjugate(qe))
+        for i in range(4):
+            self.assertAlmostEqual(flipped[i], -delta[i], places=12)
+        self.assertAlmostEqual(axis_quat([0, 0, math.pi / 3])[3], 0.5, places=12)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -139,8 +139,14 @@ T=\begin{bmatrix}0&-s_\varphi&c_\varphi s_\vartheta\\0&c_\varphi&s_\varphi s_\va
 写出两式，并说明为什么转置方案不能按"完全线性化"设计增益。
 
 ::: sol B6 核对
-**逆雅可比方案**：$\dot{\boldsymbol q}=J_A^{-1}(\boldsymbol q)\big(\dot{\boldsymbol x}_d+K\boldsymbol e\big)$，代入得 $\dot{\boldsymbol e}=\dot{\boldsymbol x}_d-J_A\dot{\boldsymbol q}=-K\boldsymbol e$ ⇒ 误差动态被化成**一阶线性系统**，$K$ 正定即指数收敛（**完全线性化**，代价是每次要求逆、计算贵）。
-**雅可比转置方案**：$\dot{\boldsymbol q}=J^{\mathrm T}K\boldsymbol e$，省去求逆（「$J^{-1}$ 很花时间；用 $J^{\mathrm T}$ 直接调换一下元素位置就可以了」），但误差动态是**非线性**的——多出含 $J$ 随位形变化的项，稳定性只能借助 **Lyapunov 函数**分析，收敛只是**局部**的。**二阶算法**：$\ddot{\boldsymbol e}+K_D\dot{\boldsymbol e}+K_P\boldsymbol e=0$，把加速度也纳入，误差方程里出现 $\dot J(\boldsymbol q)$ 项。（[3.7.1](sec3-7.md#sec-3.7.1)–[3.7.3](sec3-7.md#sec-3.7.3)）
+
+设 $e=x_d-k(q)$、$J_A=\partial k/\partial q$，所以 $\dot e=\dot x_d-J_A\dot q$。
+
+- 逆方案：解 $J_A\dot q=\dot x_d+Ke$。方阵可逆时为 $\dot q=J_A^{-1}(\dot x_d+Ke)$，回代得 $\dot e=-Ke$；常对称正定 $K$ 给连续误差的指数衰减。轨迹须保持光滑可逆；行满秩冗余时可用右伪逆加零空间速度。
+- 转置方案：固定目标取 $V=\tfrac12e^{\mathrm T}Ke$，$\nabla_qV=-J_A^{\mathrm T}Ke$，故令 $\dot q=J_A^{\mathrm T}Ke$。回代为 $\dot e=-J_AJ_A^{\mathrm T}Ke$，并有 $\dot V=-\|J_A^{\mathrm T}Ke\|^2$。区域内行满秩且最小奇异值有正下界才得到统一衰减估计；降秩可有非零误差驻点。转置本来就能用于长方矩阵。
+
+二阶方案对速度式求导得到 $\ddot x=J_A\ddot q+\dot J_A\dot q$，再解 $J_A\ddot q=\ddot x_d+K_D\dot e+K_Pe-\dot J_A\dot q$。回代后才有 $\ddot e+K_D\dot e+K_Pe=0$；$\dot J_A$ 补偿在关节算法中被抵消。有限步积分另需检查步长。（[§3.7.1](sec3-7.md#sec-3.7.1)、[§3.7.2](sec3-7.md#sec-3.7.2)、[§3.7.4](sec3-7.md#sec-3.7.4)）
+
 :::
 
 ### B7 · 奇点为什么必须在**规划**层回避（而不是调算法）
@@ -296,7 +302,11 @@ $$\underbrace{\boldsymbol v_e=J(\boldsymbol q)\dot{\boldsymbol q}}_{\text{微分
 ### D7 · 「转置方案按完全线性化设计增益也没问题」
 
 ::: sol D7 核对
-**错。** 转置方案 $\dot{\boldsymbol q}=J^{\mathrm T}K\boldsymbol e$ 的误差动态是**非线性**的（多出含 $J$ 随位形变化的项），$K$ 取大不一定更好；稳定性只能借助 **Lyapunov 函数**分析，收敛只是**局部**的。只有**逆方案** $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+K\boldsymbol e)$ 才把误差动态化成 $\dot{\boldsymbol e}=-K\boldsymbol e$ 那样的一阶线性系统（代价是每次求逆更贵）。**怎么记**：**逆方案能完全线性化，转置方案省计算但只局部收敛**。（[3.7.2](sec3-7.md#sec-3.7.2)）
+
+错。固定目标下 $\dot q=J_A^{\mathrm T}Ke$ 给 $\dot e=-J_A(q)J_A(q)^{\mathrm T}Ke$，衰减速率随位形变化。由 $V=\tfrac12e^{\mathrm T}Ke$ 得 $\dot V=-\|J_A^{\mathrm T}Ke\|^2$；不能把它当成 $\dot e=-Ke$。
+
+例如 $x=q$、移动目标 $x_d=vt$ 时，纯转置反馈给 $\dot e=v-ke$，一般留下 $v/k$ 偏差。固定目标的下降证明不能原样用于移动目标。即使逆方案连续时间精确抵消，显式欧拉在线性任务中也要满足 $0<hk<2$；正增益不代表任意步长都稳定。（[§3.7.1](sec3-7.md#sec-3.7.1)、[§3.7.2](sec3-7.md#sec-3.7.2)）
+
 :::
 
 ## 导出到 Anki / CSV

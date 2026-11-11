@@ -144,8 +144,8 @@
 | 可操作度 | manipulability $w(q)$ | $\sqrt{\det(JJ^{\mathrm T})}$，固定单位与度量下的速度椭球体积比例；不等于到奇点的通用距离 | [3.5.1](ch03/sec3-5.md#sec-3.5.1) |
 | 分析雅可比 | analytic Jacobian $J_A$ | 用欧拉角速率 $\dot{\boldsymbol\varphi}$ 而非角速度 $\boldsymbol\omega$ | [@def-3.6.1] |
 | 换基矩阵 | $T(\boldsymbol\varphi)$ | $\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$；三列为基系表示的瞬时轴；$\sin\vartheta\ne0$时ZYZ可逆 | [@thm-3.6.A] |
-| 逆雅可比方案 | — | $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+Ke)$，完全线性化 | [3.7.1](ch03/sec3-7.md#sec-3.7.1) |
-| 转置方案 | — | $\dot{\boldsymbol q}=J^{\mathrm T}Ke$，省计算、非线性 | [3.7.2](ch03/sec3-7.md#sec-3.7.2) |
+| 逆雅可比方案 | — | 任务光滑且方阵可逆时解 $J_A\dot q=\dot x_d+Ke$，连续误差为 $\dot e=-Ke$ | [3.7.1](ch03/sec3-7.md#sec-3.7.1) |
+| 转置方案 | — | 固定目标取 $\dot q=J_A^{\mathrm T}Ke$；代价下降，收敛须检查区域与秩 | [3.7.2](ch03/sec3-7.md#sec-3.7.2) |
 
 ## 六、静力学（3.8）
 

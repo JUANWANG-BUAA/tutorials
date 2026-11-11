@@ -32,7 +32,7 @@
 
 **9.** 分析雅可比 $J_A$ 与几何雅可比 $J$ 的区别只出现在姿态部分；两者在欧拉角歧义处（$s_\vartheta=0$）同时失效，是同源问题。
 
-**10.** 雅可比转置方案 $\dot{\boldsymbol q}=J^{\mathrm T}K\boldsymbol e$ 与逆雅可比方案 $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+K\boldsymbol e)$ 都能把误差动态化成 $\dot{\boldsymbol e}=-K\boldsymbol e$ 那样的一阶线性系统。
+**10.** 对任务坐标 $x=k(q)$，雅可比转置方案 $\dot{\boldsymbol q}=J_A^{\mathrm T}K\boldsymbol e$ 与逆雅可比方案 $\dot{\boldsymbol q}=J_A^{-1}(\dot{\boldsymbol x}_d+K\boldsymbol e)$ 都能把误差动态化成 $\dot{\boldsymbol e}=-K\boldsymbol e$ 那样的一阶线性系统。
 
 ::: note 第一部分答案（每题 3 分：判断 1 分 + 理由 2 分）
 
@@ -54,7 +54,7 @@
 
 **（9）** **错。** 同一参考点、同一表达系中，位置部分相同；但ZYZ表示奇点只说明 $T$ 不可逆，不能据此宣布几何雅可比也失效。例：$R(q)=R_x(q_1)R_y(q_2)R_z(q_3)$ 在 $q=0$ 时，旋转任务的 $J_O=I_3$ 满秩，同一姿态的ZYZ却有 $\vartheta=0$。仅在 $\sin\vartheta\ne0$ 的光滑分支内，$J_A=T_A^{-1}J$ 并与 $J$ 保持相同秩。（[@thm-3.6.A]、[3.6.3](sec3-6.md#sec-3.6.3)）
 
-**（10）** **错。** 只有**逆方案**能把误差动态化成 $\dot{\boldsymbol e}=\dot{\boldsymbol x}_d-J_A\dot{\boldsymbol q}=\dot{\boldsymbol x}_d-(\dot{\boldsymbol x}_d+K\boldsymbol e)=-K\boldsymbol e$（**完全线性化**）；**转置方案**的误差动态是**非线性**的——多出含 $J$ 随位形变化的项，稳定性只能借助 **Lyapunov 函数**分析，收敛只是**局部**的。代价换收益：转置省去了求逆（「$J^{-1}$ 很花时间；用 $J^{\mathrm T}$ 直接调换一下元素位置就可以了」）。（[3.7.1](sec3-7.md#sec-3.7.1)、[3.7.2](sec3-7.md#sec-3.7.2)）
+**（10）** **错。** 逆方案在任务坐标光滑、$J_A$ 可逆、模型精确的连续时间条件下给 $\dot e=-Ke$。转置方案在固定目标下给 $\dot e=-J_A(q)J_A(q)^{\mathrm T}Ke$，位形相关矩阵未被抵消；由 $V=\tfrac12e^{\mathrm T}Ke$ 才得到 $\dot V=-\|J_A^{\mathrm T}Ke\|^2$。它的收敛须检查区域与秩，不能照搬前一式的衰减率。（[§3.7.1](sec3-7.md#sec-3.7.1)、[§3.7.2](sec3-7.md#sec-3.7.2)）
 
 :::
 
@@ -88,7 +88,11 @@
 
 **可逆性证明**：$W$ 对称正定时，$a^{\mathrm T}JW^{-1}J^{\mathrm T}a=(J^{\mathrm T}a)^{\mathrm T}W^{-1}(J^{\mathrm T}a)$。它对所有非零 $a$ 严格为正，当且仅当 $J$ 行满秩；不能以任意矩阵相乘不改秩作理由。**DLS 的条件**：再有 $K\succ0$，增加 $K^{-1}$ 后，矩阵在奇异时仍正定可逆；这使正则化问题可解，并未恢复丢失的方向。**评分**：三格各 1 分；可逆性前提 1 分。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
 
-**15.** **逆雅可比方案**：$\dot{\boldsymbol q}=J_A^{-1}(\boldsymbol q)\big(\dot{\boldsymbol x}_d+K\boldsymbol e\big)$，其中 $\boldsymbol e=\boldsymbol x_d-\boldsymbol x$；代入得 $\dot{\boldsymbol e}=\dot{\boldsymbol x}_d-J_A\dot{\boldsymbol q}=-K\boldsymbol e$ ⇒ 误差动态被化成**一阶线性系统**，$K$ 正定即指数收敛（**完全线性化**）。**雅可比转置方案**：$\dot{\boldsymbol q}=J^{\mathrm T}K\boldsymbol e$；**误差动态是非线性**的（多出含 $J$ 随位形变化的项），$K$ 取大不一定更好，稳定性只能用 **Lyapunov 函数**分析，收敛只是**局部**的。**冗余情形两者都换成伪逆**。**评分**：两式 2 分；两条误差动态特点 1.5 分；冗余替换 0.5 分。（[3.7.1](sec3-7.md#sec-3.7.1)、[3.7.2](sec3-7.md#sec-3.7.2)）
+**15.** 令 $e=x_d-k(q)$、$J_A=\partial k/\partial q$。逆方案解 $J_A\dot q=\dot x_d+Ke$；方阵可逆时写为 $\dot q=J_A^{-1}(\dot x_d+Ke)$，回代给 $\dot e=-Ke$，常对称正定 $K$ 使连续误差指数衰减，轨迹须保持光滑可逆。
+
+转置方案 $\dot q=J_A^{\mathrm T}Ke$，固定目标时 $\dot e=-J_AJ_A^{\mathrm T}Ke$、$V=\tfrac12e^{\mathrm T}Ke$ 满足 $\dot V=-\|J_A^{\mathrm T}Ke\|^2$。最小奇异值有正下界的行满秩区域内可估计衰减；奇点可存在非零误差驻点。移动目标另有 $e^{\mathrm T}K\dot x_d$ 项。冗余且行满秩时，逆方案可改用右伪逆加零空间速度；转置仍用转置，不需改成伪逆。
+
+**评分**：两种关节速度公式2分；各自误差方程及固定目标条件1.5分；正确区分冗余处理0.5分。（[§3.7.1](sec3-7.md#sec-3.7.1)、[§3.7.2](sec3-7.md#sec-3.7.2)）
 
 :::
 

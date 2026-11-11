@@ -72,7 +72,7 @@
 | 21 | [§3.4 冗余分析](src/ch03/sec3-4.md) | 已验收 | [记录](review/section-3.4.md) |
 | 22 | [§3.5 逆微分运动学](src/ch03/sec3-5.md) | 已验收 | [记录](review/section-3.5.md) |
 | 23 | [§3.6 分析雅可比矩阵](src/ch03/sec3-6.md) | 已验收 | [记录](review/section-3.6.md) |
-| 24 | [§3.7 逆运动学算法](src/ch03/sec3-7.md) | 待审 | — |
+| 24 | [§3.7 逆运动学算法](src/ch03/sec3-7.md) | 待验证 | [记录](review/section-3.7.md) |
 | 25 | [§3.8 静力学](src/ch03/sec3-8.md) | 待审 | — |
 | 26 | [§4.1 路径和轨迹](src/ch04/sec4-1.md) | 待审 | — |
 | 27 | [§4.2.1 点对点运动](src/ch04/sec4-2-1.md) | 待审 | — |

@@ -1237,6 +1237,100 @@
     host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
   }
 
+  function labIkFeedback(host) {
+    var k = 2, h = 0.05, index = 0, method = 'inverse', paths;
+    var target = [1.1, 0.9], names = { inverse: '逆方案', transpose: '转置方案', second: '二阶方案' };
+    var methods = ['inverse', 'transpose', 'second'];
+    var head = el('div', 'lab-head'); head.appendChild(el('span', 'lab-tag', '闭环求解实验'));
+    head.appendChild(el('b', null, '同一起点、同一目标，三条误差曲线')); host.appendChild(head);
+    host.appendChild(el('p', 'lab-note', '单位杆长2R臂，初始q=(0,π/2)，固定目标(1.1,0.9)m。逆/转置取K=kI；二阶取Kₚ=k²I、Kᴅ=2kI，初始关节速度为0。全部使用正文的显式欧拉更新。'));
+    var controls = el('div', 'lab-controls'); host.appendChild(controls);
+    var methodButtons = toggleGroup(controls, '观察机械臂', methods.map(function (value) { return { value: value, text: names[value] }; }), method, function (value) { method = value; draw(); });
+    var gain = slider(controls, '增益参数 k', 0.5, 6, 0.5, k, function (value) { k = value; rebuild(); draw(); }, function (value) { return value.toFixed(1); });
+    var stepButtons = toggleGroup(controls, '步长 h', [0.1, 0.05, 0.025].map(function (value) { return { value: value, text: value + 's' }; }), h, function (value) {
+      var time = index * h; h = value; index = Math.round(time / h); rebuild(); syncTime(); draw();
+    });
+    var timeline = slider(controls, '时刻 t', 0, Math.round(4 / h), 1, index, function (value) { index = value; draw(); }, function (value) { return (value * h).toFixed(3) + 's'; });
+    function button(label, action) { var node = el('button', 'lab-btn', label); node.type = 'button'; node.addEventListener('click', action); controls.appendChild(node); }
+    button('下一步', function () { index = Math.min(index + 1, Math.round(4 / h)); syncTime(); draw(); });
+    button('到4秒', function () { index = Math.round(4 / h); syncTime(); draw(); });
+    button('重置', function () {
+      k = 2; h = 0.05; index = 0; method = 'inverse'; gain.input.value = k; gain.out.textContent = k.toFixed(1);
+      methodButtons.forEach(function (node, i) { var on = i === 0; node.classList.toggle('on', on); node.setAttribute('aria-pressed', String(on)); });
+      stepButtons.forEach(function (node, i) { var on = i === 1; node.classList.toggle('on', on); node.setAttribute('aria-pressed', String(on)); });
+      rebuild(); syncTime(); draw();
+    });
+    var canvas = el('canvas', 'lab-canvas'); canvas.setAttribute('role', 'img'); host.appendChild(canvas);
+    var readout = el('div', 'lab-readout'); readout.setAttribute('aria-live', 'polite'); host.appendChild(readout);
+    function position(q) { return [Math.cos(q[0]) + Math.cos(q[0] + q[1]), Math.sin(q[0]) + Math.sin(q[0] + q[1])]; }
+    function jac(q) { var a = q[0], b = a + q[1]; return [[-Math.sin(a) - Math.sin(b), -Math.sin(b)], [Math.cos(a) + Math.cos(b), Math.cos(b)]]; }
+    function product(a, v) { return a.map(function (row) { return row[0] * v[0] + row[1] * v[1]; }); }
+    function solve(a, v) { var d = a[0][0] * a[1][1] - a[0][1] * a[1][0]; return [(a[1][1] * v[0] - a[0][1] * v[1]) / d, (-a[1][0] * v[0] + a[0][0] * v[1]) / d]; }
+    function rebuild() {
+      paths = {};
+      methods.forEach(function (name) {
+        var q = [0, Math.PI / 2], velocity = [0, 0], samples = [];
+        for (var i = 0; i <= Math.round(4 / h); i++) {
+          var p = position(q), error = [target[0] - p[0], target[1] - p[1]], j = jac(q), acceleration = null;
+          if (name === 'second') {
+            var b = q[0] + q[1], vb = velocity[0] + velocity[1];
+            var jd = [[-Math.cos(q[0]) * velocity[0] - Math.cos(b) * vb, -Math.cos(b) * vb], [-Math.sin(q[0]) * velocity[0] - Math.sin(b) * vb, -Math.sin(b) * vb]];
+            var taskVelocity = product(j, velocity), bias = product(jd, velocity);
+            acceleration = solve(j, error.map(function (value, axis) { return k * k * value - 2 * k * taskVelocity[axis] - bias[axis]; }));
+          } else {
+            var correction = error.map(function (value) { return k * value; });
+            velocity = name === 'inverse' ? solve(j, correction) : [j[0][0] * correction[0] + j[1][0] * correction[1], j[0][1] * correction[0] + j[1][1] * correction[1]];
+          }
+          samples.push({ q: q.slice(), p: p, error: error, errorNorm: Math.hypot(error[0], error[1]), velocity: velocity.slice(), acceleration: acceleration });
+          q = q.map(function (value, axis) { return value + h * velocity[axis]; });
+          if (acceleration) velocity = velocity.map(function (value, axis) { return value + h * acceleration[axis]; });
+        }
+        paths[name] = samples;
+      });
+    }
+    function syncTime() { timeline.input.max = Math.round(4 / h); timeline.input.value = index; timeline.out.textContent = (index * h).toFixed(3) + 's'; }
+    function draw() {
+      var selected = paths[method][index], scene = fit(canvas, 0.52), ctx = scene.ctx, c = scene.c;
+      var colors = { inverse: c.blue, transpose: c.green, second: c.purple };
+      var ox = scene.w * 0.11, oy = scene.h - 60, scale = Math.min(scene.w * 0.16, (scene.h - 95) / 2.1);
+      function px(x) { return ox + x * scale; } function py(y) { return oy - y * scale; }
+      ctx.font = '14px sans-serif'; ctx.fillStyle = c.ink; ctx.fillText(names[method] + ' · t=' + (index * h).toFixed(3) + 's', 20, 25);
+      arrow(ctx, ox, oy, px(2.1), oy, c.muted, 1); arrow(ctx, ox, oy, ox, py(2.1), c.muted, 1);
+      ctx.fillStyle = c.muted; ctx.fillText('x / m', px(2.1) - 25, oy + 41); ctx.fillText('y / m', ox - 30, py(2.1) - 9);
+      [0, 1, 2].forEach(function (tick) { ctx.fillText(String(tick), px(tick) - 3, oy + 18); if (tick) ctx.fillText(String(tick), ox - 18, py(tick) + 4); });
+      ctx.strokeStyle = colors[method]; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]); ctx.beginPath();
+      paths[method].slice(0, index + 1).forEach(function (sample, i) { if (i) ctx.lineTo(px(sample.p[0]), py(sample.p[1])); else ctx.moveTo(px(sample.p[0]), py(sample.p[1])); }); ctx.stroke(); ctx.setLineDash([]);
+      var elbow = [Math.cos(selected.q[0]), Math.sin(selected.q[0])];
+      ctx.strokeStyle = colors[method]; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(px(elbow[0]), py(elbow[1])); ctx.lineTo(px(selected.p[0]), py(selected.p[1])); ctx.stroke();
+      [[0, 0], elbow, selected.p].forEach(function (point) { ctx.fillStyle = c.ink; ctx.beginPath(); ctx.arc(px(point[0]), py(point[1]), 4, 0, Math.PI * 2); ctx.fill(); });
+      ctx.strokeStyle = c.red; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px(target[0]), py(target[1]), 6, 0, Math.PI * 2); ctx.moveTo(px(target[0]) - 9, py(target[1])); ctx.lineTo(px(target[0]) + 9, py(target[1])); ctx.stroke();
+      ctx.fillStyle = c.red; ctx.fillText('目标', px(target[0]) + 12, py(target[1]) + 16);
+      var left = scene.w * 0.55, right = scene.w - 24, top = 65, bottom = scene.h - 60, maxError = 0.15;
+      ctx.fillStyle = c.ink; ctx.fillText('三种方案的实际误差范数 / m', left - 8, 25);
+      ctx.strokeStyle = c.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(left, top); ctx.lineTo(left, bottom); ctx.lineTo(right, bottom); ctx.stroke();
+      function tx(t) { return left + t / 4 * (right - left); } function ey(error) { return bottom - error / maxError * (bottom - top); }
+      ctx.font = '13px sans-serif';
+      [0, 0.05, 0.1, 0.15].forEach(function (tick) { ctx.fillStyle = c.muted; ctx.textAlign = 'right'; ctx.fillText(tick.toFixed(2), left - 7, ey(tick) + 4); });
+      [0, 1, 2, 3, 4].forEach(function (tick) { ctx.textAlign = 'center'; ctx.fillText(String(tick), tx(tick), bottom + 19); }); ctx.textAlign = 'left'; ctx.fillText('t / s', right - 25, bottom + 38);
+      methods.forEach(function (name, row) {
+        ctx.strokeStyle = colors[name]; ctx.lineWidth = name === method ? 2.8 : 1.5; ctx.beginPath();
+        paths[name].forEach(function (sample, i) { if (i) ctx.lineTo(tx(i * h), ey(sample.errorNorm)); else ctx.moveTo(tx(0), ey(sample.errorNorm)); }); ctx.stroke();
+        ctx.fillStyle = colors[name]; ctx.fillText(names[name], left + row * (right - left) / 3, 48);
+      });
+      ctx.strokeStyle = c.ink; ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(tx(index * h), top); ctx.lineTo(tx(index * h), bottom); ctx.stroke(); ctx.setLineDash([]);
+      var states = {}, finalErrors = {};
+      readout.innerHTML = matrixHTML([['方案', '误差范数 / m', 'q₁ / rad', 'q₂ / rad', '速度范数 / (rad/s)']].concat(methods.map(function (name) {
+        var sample = paths[name][index]; states[name] = sample; finalErrors[name] = paths[name][paths[name].length - 1].errorNorm;
+        return [names[name], sample.errorNorm, sample.q[0], sample.q[1], Math.hypot(sample.velocity[0], sample.velocity[1])];
+      })), 6);
+      readout.appendChild(el('p', null, names[method] + '：末端 p=(' + selected.p.map(function (v) { return v.toFixed(6); }).join(', ') + ')m；误差 e=(' + selected.error.map(function (v) { return v.toFixed(6); }).join(', ') + ')m。'));
+      readout.appendChild(el('p', 'lab-note', '三条曲线始终用各自的新关节位置重算误差。二阶方案第一个位置更新用旧速度0，所以第一步位置保持不动；改变步长后可比较数值积分的影响。'));
+      canvas.setAttribute('aria-label', names[method] + '机械臂及三条误差曲线，当前时刻' + (index * h).toFixed(3) + '秒；数值见下表');
+      host.setAttribute('data-ik-values', JSON.stringify({ k: k, h: h, index: index, t: index * h, method: method, states: states, finalErrors: finalErrors }));
+    }
+    rebuild(); host.hidden = false; draw(); window.addEventListener('resize', draw); return draw;
+  }
+
   function labEulerRates(host) {
     var theta = 60, mode = 'rates';
     var head = el('div', 'lab-head');
@@ -1396,7 +1490,7 @@
   function boot() {
     var hosts = document.querySelectorAll("[data-lab]");
     if (hosts.length === 0) return;
-    var registry = { eulerRates: labEulerRates, dls2d: labDls2d, nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
+    var registry = { ikFeedback: labIkFeedback, eulerRates: labEulerRates, dls2d: labDls2d, nullspace2d: labNullspace2d, arm: labArm, traj: labTraj, rotation2d: labRotation2d, workspace2d: labWorkspace2d, calibration2d: labCalibration2d, rotationDerivative: labRotationDerivative, jacobian2d: labJacobian2d };
     Array.prototype.forEach.call(hosts, function (host) {
       var name = host.getAttribute("data-lab");
       var builder = registry[name];
