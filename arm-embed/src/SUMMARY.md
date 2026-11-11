@@ -59,6 +59,7 @@
   - [3.8 杂项指令：SWI 与程序状态寄存器访问](ch03/sec3-8.md)
   - [3.9 伪指令](ch03/sec3-9.md)
   - [3.10 Thumb 指令集与 ARM/Thumb 互操作](ch03/sec3-10.md)
+  - [3.11 汇编程序结构与 C 互调](ch03/sec3-11.md)
 
 - [第三章章末](ch03/summary.md)
   - [勘误与补注（对照课件）](ch03/errata.md)
