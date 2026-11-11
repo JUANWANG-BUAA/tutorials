@@ -511,6 +511,60 @@ class JacobianChecks(unittest.TestCase):
         for k in range(3):
             self.assertAlmostEqual(jp[2][k], z2[k], places=12)
 
+    def test_stanford_compact_axes_and_wrist_blocks(self):
+        """Check the lesson's compact directions against DH transforms and FK."""
+        generator = random.Random(323)
+        for sample in range(30):
+            q = [generator.uniform(-math.pi, math.pi) for _ in range(6)]
+            q[2] = generator.uniform(0.1, 1.0)
+            c1, s1 = math.cos(q[0]), math.sin(q[0])
+            c2, s2 = math.cos(q[1]), math.sin(q[1])
+            c4, s4 = math.cos(q[3]), math.sin(q[3])
+            c5, s5 = math.cos(q[4]), math.sin(q[4])
+            u = [c1 * c2, s1 * c2, -s2]
+            v = [-s1, c1, 0.0]
+            w = [c1 * s2, s1 * s2, c2]
+            t = [c4 * u[i] + s4 * v[i] for i in range(3)]
+            z4 = [-s4 * u[i] + c4 * v[i] for i in range(3)]
+            z5 = [s5 * t[i] + c5 * w[i] for i in range(3)]
+            axes = [[0.0, 0.0, 1.0], v, w, w, z4, z5]
+            wrist = [0.2 * v[i] + q[2] * w[i] for i in range(3)]
+            endpoint = [wrist[i] + 0.1 * z5[i] for i in range(3)]
+            columns = [cross(axes[0], endpoint), cross(v, endpoint), w,
+                       [0.1 * s5 * z4[i] for i in range(3)],
+                       [0.1 * (c5 * t[i] - s5 * w[i]) for i in range(3)],
+                       [0.0, 0.0, 0.0]]
+            angular = [axes[0], v, [0.0, 0.0, 0.0], w, z4, z5]
+            transforms = chain(STANFORD_DH, q)
+            with self.subTest(sample=sample):
+                self.assertLess(max_err(axes, [[transforms[j][i][2] for i in range(3)] for j in range(6)]), 1e-12)
+                for joint in (3, 4, 5):
+                    self.assertLess(max(abs(transforms[joint][i][3] - wrist[i]) for i in range(3)), 1e-12)
+                self.assertLess(max(abs(transforms[6][i][3] - endpoint[i]) for i in range(3)), 1e-12)
+                self.assertLess(max_err(columns, numeric_jp(fk_pos(STANFORD_DH), q)), 1e-8)
+                self.assertLess(max_err(angular, numeric_jo(fk_rot(STANFORD_DH), q)), 1e-8)
+
+    def test_stanford_mixed_rates_and_changed_tool_point(self):
+        """Verify the worked 6x6 matrix and the independent offset exercise."""
+        q = (0.0, math.pi / 2, 0.6, 0.0, math.pi / 2, 0.0)
+        published = [[-0.2, -0.1, 1, 0, -0.1, 0],
+                     [0.6, 0, 0, 0.1, 0, 0], [0, -0.6, 0, 0, 0, 0],
+                     [0, 0, 0, 1, 0, 0], [0, 1, 0, 0, 1, 0],
+                     [1, 0, 0, 0, 0, -1]]
+        for tool_length, expected_velocity in ((0.1, [0.0, 0.0, 0.0]), (0.0, [0.1, 0.0, 0.0])):
+            dh = list(STANFORD_DH)
+            dh[-1] = (0.0, tool_length, 0.0, 0.0, "r")
+            linear = numeric_jp(fk_pos(dh), q)
+            angular = numeric_jo(fk_rot(dh), q)
+            if tool_length:
+                rows = [[linear[j][i] for j in range(6)] for i in range(3)]
+                rows += [[angular[j][i] for j in range(6)] for i in range(3)]
+                self.assertLess(max_err(rows, published), 1e-8)
+            rates = (0.0, 0.0, 0.1, 0.0, 1.0, 0.0)
+            for axis in range(3):
+                self.assertAlmostEqual(sum(linear[j][axis] * rates[j] for j in range(6)), expected_velocity[axis], places=8)
+                self.assertAlmostEqual(sum(angular[j][axis] * rates[j] for j in range(6)), [0.0, 1.0, 0.0][axis], places=8)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

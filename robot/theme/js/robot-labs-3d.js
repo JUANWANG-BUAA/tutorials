@@ -775,7 +775,7 @@
     /* ---- 图元（世界坐标，render 时投影、排序、绘制） ---- */
     view.line = function (a, b, o) {
       o = o || {};
-      view.prims.push({ kind: "path", pts: [a, b], color: o.color, width: o.width || 1.6, dash: o.dash, hl: o.hl, noDim: o.noDim });
+      view.prims.push({ kind: o.arrow ? "axis" : "path", a: a, b: b, pts: [a, b], color: o.color, width: o.width || 1.6, dash: o.dash, hl: o.hl, noDim: o.noDim });
     };
     view.path = function (pts, o) {
       o = o || {};
@@ -2738,7 +2738,7 @@
         sliders[i].input.dispatchEvent(new Event("input"));
       });
       state.hover = null;
-      view.cam.az = -32; view.cam.elv = 20; view.cam.zoom = 1;
+      view.cam.az = 35; view.cam.elv = 28; view.cam.zoom = 1;
       draw();
     });
     controls.appendChild(reset);
@@ -2752,7 +2752,7 @@
     host.appendChild(readout);
     bindHover(readout, function (key) { state.hover = key; draw(); });
 
-    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0, 0.25], az: -32, elv: 20 });
+    var view = makeView(canvas, 0.6, { span: 1.5, center: [0.25, 0.15, 0.25], az: 35, elv: 28 });
     view.onChange = function () { draw(); };
 
     function currentRows() {
@@ -2778,7 +2778,7 @@
       var pe = frames[3].o;
 
       view.grid(0.85, 0.17, 0, { color: c.line });
-      drawChain(view, frames, { toolLen: 0.1, span: 1.2 });
+      drawChain(view, frames, { toolLen: 0, span: 1.2 });
 
       /* 几何雅可比的位置块（3×3） */
       var Jp = kernel.geoJacPos(frames);
@@ -2789,23 +2789,29 @@
 
       var colColors = [c.blue, c.green, c.gold];
       var total = [0, 0, 0];
+      var omega = [0, 0, 0];
       var parts = [];
       for (var i = 0; i < 3; i++) {
         var v = [J[0][i] * state.dq[i], J[1][i] * state.dq[i], state.kind === "planar" ? 0 : J[2][i] * state.dq[i]];
         parts.push(v);
         total[0] += v[0]; total[1] += v[1]; total[2] += v[2];
+        for (var axis = 0; axis < 3; axis++) omega[axis] += frames[i].z[axis] * state.dq[i];
       }
 
       /* 速度箭头：从末端点出发 */
-      var SC = 0.55; /* 速度乘以 0.55 s，得到画布中的示意长度 */
+      var SC = 0.28; /* 速度乘以 0.28 s，得到画布中的示意长度 */
       parts.forEach(function (v, i) {
+        if (kernel.len(v) < 1e-10) return;
         var tip = kernel.addv(pe, kernel.sclv(v, SC));
-        view.line(pe, tip, { color: colColors[i], width: 2.2, hl: "c" + i });
-        view.label(tip, "v" + (i + 1), colColors[i], 6, -4);
+        view.line(pe, tip, { color: colColors[i], width: 2.2, hl: "c" + i, arrow: true });
+        view.label(tip, "v" + (i + 1), colColors[i], 6, -12 - 14 * i);
       });
       var tipT = kernel.addv(pe, kernel.sclv(total, SC));
-      view.line(pe, tipT, { color: c.red, width: 3.4 });
-      view.label(tipT, "v_e（合计）", c.red, 8, 4);
+      if (kernel.len(total) >= 1e-10) {
+        view.line(pe, tipT, { color: c.red, width: 3.4, arrow: true });
+        view.label(tipT, "vₑ（合计）", c.red, 8, 18);
+      }
+      view.label(pe, "pₑ", c.ink, -20, 16);
 
       view.render(state.hover);
 
@@ -2818,10 +2824,16 @@
       var html = matrixHTML(rowsHtml, 3).replace("<table", "<span class='lab-matrix-label'>" +
         (state.kind === "planar" ? "J̄（行：vₓ、vᵧ、ω_z）" : "Jₚ（行：vₓ、vᵧ、v_z）") + " =</span><table");
       html += "<p class='lab-note'><b>逐列读法</b>：第 i 列 = 「只动关节 i（其余锁死）时末端的贡献」" +
-        "（Jₚ,ᵢ= zᵢ₋₁×( pₑ- pᵢ₋₁)，3.1.2）。" +
+        "（Jₚ,ᵢ= zᵢ₋₁×( pₑ- pᵢ₋₁)，3.1.3）。" +
         "悬停某一列，画布里该列对应的速度箭头加粗、其余变淡。</p>";
       html += "<p class='lab-note'>杆长（m）：" + (state.kind === "planar" ? "a₁=0.45，a₂=0.36，a₃=0.26" : "a₂=0.62，a₃=0.52") +
-        "。线速度 vₑ = [" + total.map(function (v) { return v.toFixed(3); }).join(", ") + "] m/s。箭头按速度乘 0.55 s 绘制，不是运动后的轨迹。</p>";
+        "。线速度 vₑ = [" + total.map(function (v) { return v.toFixed(3); }).join(", ") + "] m/s。箭头按速度乘 0.28 s 绘制，不是运动后的轨迹。</p>";
+      html += "<table class='lab-table'><thead><tr><th>贡献</th><th>vₓ（m/s）</th><th>vᵧ（m/s）</th><th>v_z（m/s）</th></tr></thead><tbody>";
+      parts.forEach(function (part, i) {
+        html += "<tr><td>关节 " + (i + 1) + "</td>" + part.map(function (value) { return "<td>" + value.toFixed(3) + "</td>"; }).join("") + "</tr>";
+      });
+      html += "<tr><td>合计</td>" + total.map(function (value) { return "<td>" + value.toFixed(3) + "</td>"; }).join("") + "</tr></tbody></table>";
+      html += "<p class='lab-note'>角速度向量 ω = [" + omega.map(function (value) { return value.toFixed(3); }).join(", ") + "] rad/s。画布不把角速度画成线速度箭头；pₑ 是第三系原点，未加额外工具偏置。零线速度不画方向箭头，可从表格读零值。</p>";
       var vmag = Math.sqrt(total[0] * total[0] + total[1] * total[1] + total[2] * total[2]);
       html += "<p class='lab-note'>当前合计末端速度 |v_e| = " + vmag.toFixed(3) + " m/s" +
         (state.kind === "planar" ? "，角速度 ω = " + (state.dq[0] + state.dq[1] + state.dq[2]).toFixed(3) + " rad/s" : "") + "。</p>";
