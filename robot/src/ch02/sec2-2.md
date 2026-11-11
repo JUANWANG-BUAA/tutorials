@@ -1,6 +1,8 @@
 # 2.2 旋转矩阵
 
-把 [2.1](sec2-1.md) 得到的 9 个方向余弦组织成一个矩阵，就得到机器人学最核心的工具——**旋转矩阵**。本节先给出它的定义与两条代数性质，再推导三个**基本旋转**（全章积木），最后用两个小例子兑现它的**三重几何身份**。本节内容对应第 1 周录播 2:05–2:18（幻灯片 07208 / 07715 / 08239）；第 2 周开篇 0:02:47–0:05:21 另有一段复习（下方两处「第 2 周」时间点即出自该段）。
+上一节已经能逐根写出刚体三轴的方向。把它们按列组成矩阵后，就能一次换算整列坐标。但同一个矩阵既能描述坐标系的朝向，也能旋转向量，符号相同并不代表物理过程相同。
+
+本节先从三根轴推出正交性与右手条件，再写出三个基本旋转。最后用同一组数比较**向量真的转动**与**同一点改用另一套坐标**，通过读数判断该乘 $R$ 还是 $R^{\mathrm T}$。原书对应 §2.2，印刷页 40–45；本教程将其拆成下列四部分。
 
 <a id="sec-2.2.1"></a>
 
@@ -12,7 +14,7 @@
 $$R=\begin{bmatrix}\boldsymbol x'&\boldsymbol y'&\boldsymbol z'\end{bmatrix}
 =\begin{bmatrix}x'_x & y'_x & z'_x\\ x'_y & y'_y & z'_y\\ x'_z & y'_z & z'_z\end{bmatrix}\qquad(\text{原书式 }2.3)$$
 
-称为**旋转矩阵**：每一列就是固连系对应轴在参考系中的表示，故又称**方向余弦阵**（第 2 周录播 0:03:23：「它的每一个值实际上就是一个余弦值」）。
+称为**旋转矩阵**，又称**方向余弦阵**。这里沿用两系均为右手正交系的约定；第 1、2、3 列依次表示本体系 $x'$、$y'$、$z'$ 轴在参考系中的坐标。
 :::
 
 两条代数性质不必死记——从定义直接乘一遍就出来了（原书式 2.4–2.5）。注意 $R^{\mathrm T}$ 的第 $i$ **行**正是 $R$ 的第 $i$ **列**，于是 $R^{\mathrm T}R$ 的 $(i,j)$ 元恰是**第 $i$ 列与第 $j$ 列的点积**。记三列为 $\boldsymbol c_1=\boldsymbol x',\boldsymbol c_2=\boldsymbol y',\boldsymbol c_3=\boldsymbol z'$，则
@@ -35,24 +37,28 @@ $$SO(3)=\{R\in\mathbb{R}^{3\times3}:\ R^TR=I_3,\ \det(R)=1\}.$$
 :::
 
 ::: note 9 个量、6 个约束、3 个独立参数 {#note-2.2.2}
-$R$ 表面上有 9 个元素，但三列模长为 1 给出 3 个约束，两两垂直再给出 3 个约束，**一共 6 个约束压掉 6 个自由度，独立参数只剩 3 个**（第 2 周录播 0:04:41「我们说它是九个量」→ 0:05:16「其实只有三个独立的元素」）。这本账是 [2.4](sec2-4.md) 欧拉角（3 参数）与 [2.5](sec2-5.md) 角和轴（4 参数）的出发点，也是 [2.10](sec2-10.md) 操作空间取最简表示的理由。
+$R$ 有 9 个元素，三列单位长度给 3 个约束、两两垂直再给 3 个约束，留下 **3 个连续独立参数**。$\det R=+1$ 选择右手性，不再扣一个连续自由度。
+
+这是局部参数计数，不表示任意挑出三个矩阵元素就能唯一恢复姿态，也不保证一套三个角在所有姿态下都无奇异。[§2.4](sec2-4.md) 的欧拉角、[§2.5](sec2-5.md) 的角和轴及 [§2.10](sec2-10.md) 的操作空间表示都会用到这一区分。
 :::
 
-::: note 为什么叫「群」——顺便预定的两个词：李群与李代数 {#note-2.2.group}
+::: note 选读 · 群、李群与李代数 {#note-2.2.group}
 **群**（group）是带一种「乘法」的集合，满足四条公理：**封闭性**（任意两元之积仍在集合内）、**结合律**、**存在单位元**、**每个元存在逆元**。
 
 $SO(3)$ 逐条兑现：两个旋转之积仍满足 $R^{\mathrm T}R=I$、$\det=+1$（封闭）；矩阵乘法天然结合；$I_3$ 是单位元；$R^{-1}=R^{\mathrm T}$ 仍是旋转矩阵（有逆）。
 
-像 $SO(3)$ 这样元素还能**连续光滑变化**的群称为**李群**（Lie group，挪威数学家 Sophus Lie 的姓音译「李」）——直观图像：全体姿态构成一个 3 维的光滑「曲面」，机器人转动时 $R(t)$ 就在这张曲面上滑动。
+$SO(3)$ 也构成一个光滑流形（可以局部用连续参数描述的空间），而且矩阵乘法与求逆都是光滑映射，因此它是**李群**（Lie group）。直观上，全体姿态构成嵌在九维矩阵空间中的三维“曲面”，机器人转动时 $R(t)$ 沿着这张“曲面”变化。
 
-这张曲面在单位元 $I_3$ 处的**切平面**（无穷小旋转的世界）称为 $SO(3)$ 的**李代数**，记作 $so(3)$（小写）。它是 [2.5.3](sec2-5.md#sec-2.5.3) 的主角——角和轴、Rodrigues 公式，以及第 3 章的角速度，都会在那里统一成「指数映射 / 对数映射」一对操作。此处只需先把名词立住：读到 $SO(3)$ 时，知道「它是一个元素可以连续变化的群」就够了。
+这张“曲面”在单位元 $I_3$ 处的**切空间**描述无穷小旋转，记作 $so(3)$（小写）；它由 $3\times3$ 反对称矩阵组成，并带有矩阵交换子运算，称为李代数。[§2.5.3](sec2-5.md#sec-2.5.3) 会说明它怎样连接角和轴、指数映射与角速度。这一段属于后续内容的预告；本节计算只需掌握群的四条性质与旋转矩阵判据。
 :::
 
 <a id="sec-2.2.2"></a>
 
 ## 2.2.2 基本旋转
 
-参考系 $O\text{-}xyz$ 绕某一根坐标轴转过一个角，就得到 $O'\text{-}x'y'z'$——这类单轴旋转是后面所有复合旋转的**积木**。约定**逆时针方向为正**（原书）。
+保持参考系不动，让与它最初同向、**共原点**的本体系绕一根参考轴转动，得到三个基本旋转。正方向用**右手定则**确定：右拇指指向转轴正方向，四指弯曲方向为正。等价地，**从转轴正端朝原点看**，逆时针为正；从另一端看，视觉方向相反。
+
+下文用 $c_\alpha=\cos\alpha$、$s_\alpha=\sin\alpha$ 等缩写。矩阵元素无量纲，角度需采用一致的单位；编程时三角函数通常接收弧度。
 
 先以绕 $z$ 轴转 $\alpha$ 为例（图 2.2），按定义逐列写出新轴在参考系中的投影：
 
@@ -62,11 +68,9 @@ $$\boldsymbol x'=\begin{bmatrix}c_\alpha\\ s_\alpha\\ 0\end{bmatrix},\quad
 \;\Longrightarrow\;
 R_z(\alpha)=\begin{bmatrix}c_\alpha & -s_\alpha & 0\\ s_\alpha & c_\alpha & 0\\ 0&0&1\end{bmatrix}\qquad(\text{原书式 }2.6)$$
 
-录播 2:07–2:08 老师逐列带推：「前三列就是这个单位向量在三个轴上的投影——在 $x$ 轴上投影是多少？就是 $\cos\alpha$；在 $y$ 轴上呢？就是 $\sin\alpha$；在 $z$ 轴上呢？是 $0$。」
+![课堂幻灯片：绕 z 轴的基本旋转推导，标题为“2.2.1 基本旋转”](../assets/ch02/basic-rotation.jpg)
 
-![课堂幻灯片 · 约2.2.1：绕 z 轴的基本旋转推导](../assets/ch02/basic-rotation.jpg)
-
-看懂上图（本教程绘），$R_z(\alpha)$ 的每个元素就都有了出处：从 $+z$ 端往下看，$\boldsymbol x'$ 在 $x$ 轴上的投影是 $\cos\alpha$，在 $y$ 轴上的投影是 $\sin\alpha$——左图的三个彩色标注与右图矩阵里的彩色元素一一对应。
+下面把同一推导画成从 $+z$ 朝原点看的平面图。$\boldsymbol x'$ 在 $x$、$y$ 上的投影分别是 $c_\alpha,s_\alpha$；与它垂直的 $\boldsymbol y'$ 则给出 $-s_\alpha,c_\alpha$。逐列读图，就不必孤立地背负号。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-22-title fig-22-desc">
@@ -78,11 +82,11 @@ R_z(\alpha)=\begin{bmatrix}c_\alpha & -s_\alpha & 0\\ s_\alpha & c_\alpha & 0\\ 
 <marker id="f22-s" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--sage)"/></marker>
 <marker id="f22-g" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--fig-gold)"/></marker>
 </defs>
-<text class="diagram-text" x="230" y="36" text-anchor="middle">绕 z 转 α：从 +z 端往下看</text>
-<text class="diagram-text" x="674" y="36" text-anchor="middle">Rz(α) = 左图几何的矩阵化</text>
+<text class="diagram-text" x="230" y="26" text-anchor="middle">绕 z 转 α：从 +z 端往下看</text>
+<text class="diagram-text" x="674" y="26" text-anchor="middle">Rz(α) = 左图几何的矩阵化</text>
 <circle cx="230" cy="180" r="95" fill="none" stroke="var(--line)" stroke-dasharray="3 5"/>
 <line class="diagram-axis" x1="100" y1="180" x2="375" y2="180" marker-end="url(#f22-m)"/>
-<line class="diagram-axis" x1="230" y1="305" x2="230" y2="55" marker-end="url(#f22-m)"/>
+<line class="diagram-axis" x1="230" y1="277" x2="230" y2="55" marker-end="url(#f22-m)"/>
 <text class="diagram-note" x="384" y="185">x</text>
 <text class="diagram-note" x="222" y="50" text-anchor="end">y</text>
 <line stroke="var(--fig-blue)" stroke-width="2.6" marker-end="url(#f22-b)" x1="230" y1="180" x2="284" y2="102"/>
@@ -96,9 +100,9 @@ R_z(\alpha)=\begin{bmatrix}c_\alpha & -s_\alpha & 0\\ s_\alpha & c_\alpha & 0\\ 
 <text class="diagram-text" fill="var(--fig-blue)" x="257" y="197" text-anchor="middle">cα</text>
 <text class="diagram-text" fill="var(--fig-green)" x="218" y="141" text-anchor="end">sα</text>
 <text class="diagram-text" fill="var(--fig-gold)" x="176" y="197" text-anchor="middle">−sα</text>
-<path d="M 341 170 A 112 112 0 0 0 277 79" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#f22-g)"/>
-<text class="diagram-note" x="352" y="122">α 逆时针为正</text>
-<text class="diagram-note" x="230" y="291" text-anchor="middle">同一张图既给出 x′ 列、也给出 y′ 列——两列合起来就是 Rz(α)</text>
+<path d="M270 180 A40 40 0 0 0 252.77 147.11" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#f22-g)"/>
+<text class="diagram-note" x="277" y="157">α</text>
+<text class="diagram-note" x="230" y="290" text-anchor="middle">先写 x′ 列，再写 y′ 列；z′ = z</text>
 <g fill="none" stroke="var(--line)">
 <rect x="590" y="88" width="168" height="120"/><line x1="646" y1="88" x2="646" y2="208"/><line x1="702" y1="88" x2="702" y2="208"/>
 <line x1="590" y1="128" x2="758" y2="128"/><line x1="590" y1="168" x2="758" y2="168"/>
@@ -113,8 +117,8 @@ R_z(\alpha)=\begin{bmatrix}c_\alpha & -s_\alpha & 0\\ s_\alpha & c_\alpha & 0\\ 
 <text class="diagram-note" x="618" y="193" text-anchor="middle">0</text>
 <text class="diagram-note" x="674" y="193" text-anchor="middle">0</text>
 <text class="diagram-text" fill="var(--fig-purple)" x="730" y="193" text-anchor="middle">1</text>
-<text class="diagram-note" x="674" y="238" text-anchor="middle">第 1 列 = x′ 的三轴投影，第 2 列 = y′ 的三轴投影</text>
-<text class="diagram-note" x="674" y="260" text-anchor="middle">第 3 行 / 列 = [0 0 1]：绕谁转，谁不动（记忆钩子）</text>
+<text class="diagram-note" x="674" y="238" text-anchor="middle">第 1、2 列分别对应 x′、y′</text>
+<text class="diagram-note" x="674" y="260" text-anchor="middle">第 3 行为 [0 0 1]，第 3 列为其转置</text>
 </svg>
 <figcaption>绕 z 基本旋转的几何 → 矩阵（本教程绘）：逐列投影给出 $R_z(\alpha)$ 的全部元素；蓝 / 绿 / 金三色把左图的 $c_\alpha,s_\alpha,-s_\alpha$ 与右图矩阵元素对应起来，第三行第三列的「钉住」结构对应「绕谁转谁不动」。</figcaption>
 </figure>
@@ -129,11 +133,11 @@ R_x(\gamma)=\begin{bmatrix}1&0&0\\ 0&c_\gamma & -s_\gamma\\ 0&s_\gamma & c_\gamm
 
 | 矩阵 | 被钉住的部分 | 剩下的是什么 |
 |:--|:--|:--|
-| $R_z(\varphi)$ | 第 3 行与第 3 列都是 $[0\ 0\ 1]^T$ / $[0\ 0\ 1]$ —— $z$ 轴原地不动 | 左上 $2\times2$ 是 $xy$ 平面内的 $c,s$ 旋转 |
-| $R_y(\beta)$ | **第 2 列**是 $[0\ 1\ 0]^T$（$y$ 轴不动），但第 2 **行**是 $[0\ 1\ 0]$ | 剩下的两块分布在 $xz$ 平面：$R_y$ 的 $xz$ 平面旋转里 $s$ 的符号与 $R_z$ 不同（因为 $z\to x$ 的右手方向与 $z\to y$ 相反） |
-| $R_x(\gamma)$ | **第 1 行与第 1 列**都是 $[1\ 0\ 0]$ —— $x$ 轴不动 | 右下 $2\times2$ 是 $yz$ 平面内的 $c,s$ 旋转 |
+| $R_z(\alpha)$ | 第 3 列为 $(0,0,1)^{\mathrm T}$，第 3 行为 $(0,0,1)$ | $+90^\circ$ 时，$x\to+y$、$y\to-x$ |
+| $R_y(\beta)$ | 第 2 列为 $(0,1,0)^{\mathrm T}$，第 2 行为 $(0,1,0)$ | $+90^\circ$ 时，$x\to-z$、$z\to+x$；因此 $(3,1)$ 元为 $-s_\beta$ |
+| $R_x(\gamma)$ | 第 1 列为 $(1,0,0)^{\mathrm T}$，第 1 行为 $(1,0,0)$ | $+90^\circ$ 时，$y\to+z$、$z\to-y$ |
 
-读法：**沿被钉住的那一行看过去**，其余两行就是那个平面的方向余弦；$R_y$ 之所以「第 2 行也是 $[0\ 1\ 0]$」，是因为 $y$ 轴既是被转轴、又是旋转平面的法向——只有它自己不动。
+先写不动轴对应的列，再按右手定则写另外两列。比如 $R_y(90^\circ)$ 的第一列必须是 $(0,0,-1)^{\mathrm T}$，不能因为熟悉 $R_z$ 就把正弦符号直接照搬。
 :::
 
 另有一条常用关系——负角旋转等于转置（原书式 2.9）：
@@ -141,11 +145,11 @@ R_x(\gamma)=\begin{bmatrix}1&0&0\\ 0&c_\gamma & -s_\gamma\\ 0&s_\gamma & c_\gamm
 $$R_k(-\vartheta)=R_k^T(\vartheta),\qquad k=x,y,z .$$
 
 ::: intuition 几何意义与记忆法
-$R_k(\vartheta)$ 描述「把参考系的三根轴调到与刚体坐标系一致，需要绕哪个单轴转多少」——这就是它作为**姿态描述**的含义（原书）。记忆：**绕谁转，谁那一行/列就是 $[0\ 0\ 1]$ 型的「钉住」结构**，其余 2×2 是平面内的 $c,s$ 旋转块（符号按右手准则）。
+$R_k(\vartheta)$ 的三列描述本体系经过单轴转动后的朝向。绕 $x,y,z$ 时，不动轴对应的列分别为 $(1,0,0)^{\mathrm T}$、$(0,1,0)^{\mathrm T}$、$(0,0,1)^{\mathrm T}$；相应行是它们的转置。只有绕 $z$ 时，才是第 3 行/列的 $001$ 结构。
 :::
 
 ::: method 为什么从基本旋转出发
-任意复杂姿态都可由这三次基本旋转**复合**得到——这是 [2.4](sec2-4.md) 欧拉角表示的出发点（录播 2:09：「让这三个基本旋转转三次，就可以得到一个任意的指向」）。而「三次怎么乘」正是 [2.3](sec2-3.md) 要回答的合成规则。
+选取适当的三次基本旋转序列，可以表示任意空间姿态。例如绕当前轴的 $Z\!Y\!Z$ 序列是 [§2.4](sec2-4.md) 的一套欧拉角约定；并非任意选三次都能覆盖所有姿态，连续三次绕同一轴就不行。“三次怎么乘”由 [§2.3](sec2-3.md) 解释。
 :::
 
 <a id="sec-2.2.3"></a>
@@ -154,12 +158,16 @@ $R_k(\vartheta)$ 描述「把参考系的三根轴调到与刚体坐标系一致
 
 有了三个基本旋转，接着看旋转矩阵如何作用于向量。先从两系**原点重合**的最简情形说起（图 2.3）：空间中同一点 $P$ 在两个系中的坐标分别为 $\boldsymbol p$ 与 $\boldsymbol p'$。由式 2.3 可得（原书式 2.10）：
 
-$$\boldsymbol p=R\,\boldsymbol p' .$$
+$$\boldsymbol p=p'_x\boldsymbol x'+p'_y\boldsymbol y'+p'_z\boldsymbol z'=R\,\boldsymbol p' .$$
+
+本节带撇号表示本体系坐标，不表示时间上的“转动之前”。点 $P$ 没有移动，只是两套基底给出不同读数。写成下一节的上下标，就是 $\boldsymbol p^0=R_1^0\boldsymbol p^1$；这里 $R=R_1^0$。
 
 ::: thm 原理 2.2.A · 坐标变换与逆变换 {#thm-2.2.A}
 $R$ 是「把同一点在**动系**中的坐标换算到**参考系**」的**变换矩阵**。由正交性，逆变换白送（原书式 2.11）：
 
 $$\boldsymbol p'=R^T\boldsymbol p .$$
+
+若问“已知参考系坐标，求本体系坐标”，就用 $R^{\mathrm T}$。两系原点不重合时，点的位置变换还须加减平移；自由方向的坐标换算则不需要平移。
 :::
 
 ::: ex 例 2.1（原书）· 绕 z 轴转动后的坐标关系 {#ex-book-2.1}
@@ -176,7 +184,7 @@ $$\rho_x=\rho'_x\cos\alpha-\rho'_y\sin\alpha,\qquad
 
 ## 2.2.4 旋转算子与三重几何身份
 
-同一个乘积 $\boldsymbol p=R\boldsymbol p'$，还有第二种读法：把 $R$ 当**算子**用，在同一坐标系内把向量「转过去」。因 $R$ 正交，乘积 $\boldsymbol p=R\boldsymbol p'$ 与 $\boldsymbol p'$ **模长相等**——证明只需一步（原书）：
+同一个乘积 $\boldsymbol p=R\boldsymbol p'$，还可把 $R$ 当**旋转算子**：这时两列坐标都写在同一个固定参考系中，$\boldsymbol p'$ 表示转动前的向量，$\boldsymbol p$ 表示转动后的向量。为避免撇号的双重用途，下方数值对照与演示改用 $\boldsymbol v_{\rm before}$、$\boldsymbol v_{\rm after}$。因 $R$ 正交，转动保持模长（原书）：
 
 $$\|\boldsymbol p\|^2=\boldsymbol p'^T R^TR\,\boldsymbol p'=\boldsymbol p'^T\boldsymbol p'=\|\boldsymbol p'\|^2 .$$
 
@@ -190,7 +198,7 @@ p_z=p'_z\;\Longrightarrow\;\boldsymbol p=R_z(\alpha)\boldsymbol p' .$$
 形式上与例 2.1 完全相同，但语义不同：这里是**同一个系内**把向量旋转，那里是**两个系之间**换算坐标（原书特别区分了这两种用法）。
 :::
 
-![课堂幻灯片 · 约2.2.3：旋转矩阵的三个等价几何意义](../assets/ch02/three-meanings.jpg)
+![课堂幻灯片：归纳中的相对指向与坐标变换两条；旋转算子这一条见原书印刷页 44–45](../assets/ch02/three-meanings.jpg)
 
 ::: thm 定理 2.2.B · 旋转矩阵的三重几何身份 {#thm-2.2.B}
 同一个 $R$ 有三种等价解读：
@@ -198,14 +206,45 @@ p_z=p'_z\;\Longrightarrow\;\boldsymbol p=R_z(\alpha)\boldsymbol p' .$$
 2. **坐标变换**——同一点在两系（原点重合）下坐标之间的变换，$\boldsymbol p=R\boldsymbol p'$；
 3. **旋转算子**——同一坐标系内把一个向量旋转到新方向的算子。
 
-录播 2:16–2:18 老师收束这三点时强调：「它本质上就是**固连坐标系的单位向量在参考坐标系里的三个投影，三个单位向量所以是九个投影**」——定义简单，但后面要大量使用。
+计算前先写清楚：哪两列在比较、各用哪个坐标系、是否真的发生转动。几何解释相互对应，但求解方向决定使用 $R$ 还是 $R^{\mathrm T}$。
+:::
+
+### 同一组数，两种不同的问题
+
+::: ex 数值对照 · 都是 +90°，为什么读数正负不同？ {#ex-2.2.compare}
+取 $R=R_z(90^\circ)$，输入列 $\boldsymbol a=(1,0.5,0)^{\mathrm T}$。以下向量坐标为无量纲示例；若它们表示点的位置，则统一乘长度单位，并要求两系共原点。
+
+| 情境 | 保持不变的是什么？ | 计算与结果 |
+|---|---|---|
+| 转向量 | 参考坐标系不动，向量从 $\boldsymbol a$ 真正正转 $90^\circ$ | $\boldsymbol v_{\rm after}=R\boldsymbol a=(-0.5,1,0)^{\mathrm T}$ |
+| 换坐标 | 点 $P$ 不动，它的参考系坐标为 $\boldsymbol p^0=\boldsymbol a$；本体系相对参考系正转 $90^\circ$ | $\boldsymbol p^1=R^{\mathrm T}\boldsymbol p^0=(0.5,-1,0)^{\mathrm T}$ |
+
+第二行得到的不是点向下移动，而是同一个点在旋转后基底中的新读数。两种情境都保持模长 $\sqrt{1.25}\approx1.118$，所以**只查模长不能判断你是否把 $R$ 与 $R^{\mathrm T}$ 用反**。
+:::
+
+先在纸上预测 $\alpha=90^\circ$ 时两种情境的输出，再操作下方演示。切换模式时观察：蓝色向量是否改变方向？虚线坐标轴是否转动？读数用的是哪一套坐标？角度控件可用方向键调整，“重置”恢复 $30^\circ$ 与“转向量”。
+
+<div class="lab" data-lab="rotation2d" hidden></div>
+
+<noscript><p>使用上面的数值表和下面的折叠练习，可以完成同样的判断。</p></noscript>
+
+::: think 练习 · 不看演示先判断 {#practice-2.2.rotation}
+1. 令 $\alpha=-90^\circ$，仍用 $\boldsymbol a=(1,0.5,0)^{\mathrm T}$：转向量与换坐标分别得到什么？
+2. 令 $\alpha=180^\circ$，为什么只做这一角度的测试不容易发现 $R$ 与 $R^{\mathrm T}$ 用反？
+3. 对绕 $+y$ 轴正转 $90^\circ$ 的主动旋转，$(1,0,0)^{\mathrm T}$ 变成什么？请用右手定则验证。
+
+::: sol 练习核对
+1. 转向量用 $R_z(-90^\circ)$，得到 $(0.5,-1,0)^{\mathrm T}$；换坐标用它的转置，得到 $(-0.5,1,0)^{\mathrm T}$。与上表的两项恰好交换。
+2. $R_z(180^\circ)=R_z^{\mathrm T}(180^\circ)=\operatorname{diag}(-1,-1,1)$，两项都得到 $(-1,-0.5,0)^{\mathrm T}$。还应测试 $\pm90^\circ$ 等能区分二者的角度。
+3. 得到 $(0,0,-1)^{\mathrm T}$。右拇指沿 $+y$，正转把 $+x$ 带到 $-z$，这也检查了 $R_y$ 第一列正弦项的负号。
+:::
 :::
 
 <a id="sec-2.2"></a>
 
 ::: think 默写点 · 合上书再写（主动回忆）
 
-不看正文与速查卡，先写出下面几条，再展开核对。写不出来就说明这一节还没「拿走」。
+不看正文与速查卡，先写再展开核对。
 
 1. 默写 $R_x(\vartheta)$、$R_y(\vartheta)$、$R_z(\vartheta)$。
 2. 写出旋转矩阵的三条性质（正交性、行列式、独立参数）。
@@ -213,11 +252,11 @@ p_z=p'_z\;\Longrightarrow\;\boldsymbol p=R_z(\alpha)\boldsymbol p' .$$
 
 ::: sol 核对
 
-见[公式速查卡](../preface-formulas.md) A2 节——注意 $R_y$ 的 $\sin$ 项符号与 $R_x,R_z$ 相反。
+三个矩阵见[公式速查卡 A2](../preface-formulas.md#a2-基本旋转)。先检查不动轴那一列，再检查 $+90^\circ$ 时另外两轴的方向；例如 $R_y$ 必须把 $+x$ 带到 $-z$。
 
 $R^{\mathrm T}R=I$（即 $R^{-1}=R^{\mathrm T}$）、$\det R=+1$、独立参数 3 个。
 
-姿态**描述**（说工具相对法兰的朝向）/ 坐标**变换**（把相机系坐标搬到基座系）/ 旋转**算子**（把刀尖向量绕刀轴转 $30°$）。
+姿态描述：三列说明工具系相对法兰系的三轴朝向。坐标变换：共原点时，$\boldsymbol p^0=R_1^0\boldsymbol p^1$；若相机与基座原点不同，点坐标还需平移。旋转算子：同一固定系中，$\boldsymbol v_{\rm after}=R\boldsymbol v_{\rm before}$；若转轴不过原点，转动点的位置还需先减去轴上参考点再旋转、最后加回。
 
 :::
 
@@ -230,7 +269,7 @@ $R^{\mathrm T}R=I$（即 $R^{-1}=R^{\mathrm T}$）、$\det R=+1$、独立参数 
 - **一个打通**：例 2.1（[@ex-book-2.1]，坐标变换）与例 2.2（[@ex-book-2.2]，旋转算子）形式同、语义异——读公式先问「同一点还是同一个系」。
 
 ::: think 常见错误清单 · 自查三条
-1. 把 $R^{-1}=R^T$ 当废话——它来自正交性（[@thm-2.2.A]），是「逆变换白送」的根源，务必能自己推；
+1. 只靠模长检查乘法方向：$R$ 与 $R^{\mathrm T}$ 都保持模长，仍须说明输入和输出分别在哪个系；
 2. 混淆「姿态描述」与「坐标变换」：$R_1^0$ 的**列**是系 1 的轴在系 0 中的像（把系 1 坐标搬到系 0），上下标读反就全错；
 3. 认为 $\det R$ 取 $\pm1$ 无所谓——$\det=-1$ 是左手系（含镜像），不属于 $SO(3)$，用它会得到「照镜子」的假姿态。
 :::

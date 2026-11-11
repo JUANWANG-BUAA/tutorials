@@ -97,12 +97,13 @@ def arrow(x1, y1, x2, y2, color="var(--accent)", width=1.8, dashed=False, curve=
     return out
 
 
-def plate(uid, height, kicker, title, subtitle, body, tone="accent", atlas_no="01", caption=""):
+def plate(uid, height, kicker, title, subtitle, body, tone="accent", atlas_no="01", caption="", scroll_label=None):
     caption = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", caption)
     accent = TONES[tone]
     cyan = TONES["cyan"]
+    scroll_attrs = f' tabindex="0" role="region" aria-label="{e(scroll_label)}"' if scroll_label else ""
     return f'''<figure class="fig-plate fig-wide has-fig-scroll" id="fig-{uid}" data-fig-kind="plate">
-<div class="fig-scroll">
+<div class="fig-scroll"{scroll_attrs}>
 <svg class="figure-svg atlas-plate" viewBox="0 0 900 {height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="{uid}-title {uid}-desc">
 <title id="{uid}-title">{e(title)}</title>
 <desc id="{uid}-desc">{e(subtitle)}</desc>
@@ -148,81 +149,66 @@ def fig_robot_system():
     uid = "robot-system"
     body = []
     specs = [
-        ("感知", ["编码器 · 力 / 视觉"], "cyan"),
-        ("规划", ["路径 · 轨迹 · 抓取"], "accent"),
-        ("控制", ["PID · 计算力矩"], "plum"),
-        ("执行", ["电机 · 减速器"], "green"),
-        ("机械本体", ["连杆 · 关节 · 末端"], "gold"),
+        (230, 174, 180, 88, "控制系统", ["比较目标与测量", "计算命令"], "plum"),
+        (470, 174, 150, 88, "执行系统", ["驱动器 · 电机", "产生并传递驱动力"], "green"),
+        (680, 174, 180, 88, "机械系统", ["连杆 · 关节 · 夹爪", "运动并作用于环境"], "gold"),
+        (450, 332, 200, 88, "传感系统", ["测量内部状态与环境", "输出测量值 y"], "cyan"),
     ]
-    x0, y, w, h, gap = 34, 170, 146, 88, 19
-    cards = []
-    for i, (title, subs, tone) in enumerate(specs):
-        x = x0 + i * (w + gap)
-        color = TONES[tone]
-        cards.append((x, color))
-        body.append(node(x, y, w, h, title, subs, color, index=f"0{i+1}"))
-        if i < len(specs) - 1:
-            body.append(arrow(x + w + 2, y + h / 2, x + w + gap - 3, y + h / 2, "var(--muted)", 1.6))
-    # 目标 / 指令标签
-    body.append(chip(360, 132, "目标 → 指令", TONES["accent"], w=124))
-    # 反馈回路
-    start_x = cards[-1][0] + w / 2
-    end_x = cards[0][0] + w / 2
-    body.append(arrow(start_x, y + h + 4, end_x, y + h + 4, TONES["cyan"], 1.8, curve=(450, 330)))
-    body.append(t(450, 326, "传感器反馈：位置 · 速度 · 力", cls="pl-mono", anchor="middle", fill=TONES["cyan"]))
-    body.append(t(450, 350, "控制比较目标与反馈，再发出命令。", cls="pl-note", anchor="middle"))
-    body.append(t(450, 116, "SENSE → THINK → ACT", cls="pl-mono", anchor="middle", fill=TONES["accent"], opacity=.75))
-    caption = "<b>读图：</b>上排是信息与能量的前进方向：<b>感知 → 规划 → 控制 → 执行 → 机械本体</b>；下方青色回路是反馈。规划回答「去哪里」，控制回答「怎么去」，执行回答「用什么去」，机械本体决定「能去到哪里」。<b>闭环</b>才是机器人区别于普通机械的关键。"
-    return plate(uid, 368, "ROBOTICS · SYSTEM ANATOMY / 01", "一个机器人系统，一条闭环",
-                 "机械本体把电变成运动，传感器把运动变成可观测的量，控制器再把误差闭合回目标。",
-                 "".join(body), "accent", "R-01", caption)
+    for i, (x, y, w, h, title, subs, tone) in enumerate(specs):
+        body.append(node(x, y, w, h, title, subs, TONES[tone]))
+    body.append(chip(32, 204, "目标 r", TONES["accent"], w=135, h=28))
+    body.append(arrow(169, 218, 228, 218, TONES["accent"]))
+    body.append(arrow(412, 218, 468, 218, TONES["plum"]))
+    body.append(t(440, 196, "命令 u", cls="pl-mono", anchor="middle", fill=TONES["plum"]))
+    body.append(arrow(622, 218, 678, 218, TONES["green"]))
+    body.append(t(650, 196, "驱动力", cls="pl-mono", anchor="middle", fill=TONES["green"]))
+    body.append('<path d="M770 264V376H652" fill="none" stroke="var(--atlas-cyan)" '
+                'stroke-width="1.8" marker-end="url(#arrow-c)"/>')
+    body.append(t(780, 306, "运动结果", cls="pl-mono", fill=TONES["cyan"]))
+    body.append('<path d="M448 376H320V264" fill="none" stroke="var(--atlas-cyan)" '
+                'stroke-width="1.8" marker-end="url(#arrow-c)"/>')
+    body.append(t(320, 317, "测量值 y", cls="pl-mono", anchor="middle", fill=TONES["cyan"]))
+    body.append(t(450, 461, "命令沿上方传递；运动结果经传感器测量后，沿下方返回控制器。", cls="pl-note", anchor="middle"))
+    caption = "<b>读图：</b>从目标出发，依次追踪控制、执行、机械运动，再沿下方箭头经过传感系统返回控制系统。四个方框对应四个子系统；目标是外部输入。箭头表示信号或作用的传递方向，并非全是电能传递。<b>本教程绘</b>，不是原书图 1.1。"
+    return plate(uid, 492, "ROBOTICS · SYSTEM ANATOMY / 01", "四个子系统怎样协作",
+                 "执行系统提供驱动力，机械系统产生运动，传感器测量结果，控制器据此调整命令。",
+                 "".join(body), "accent", "R-01", caption,
+                 scroll_label="四个子系统怎样协作，可左右滚动查看")
 
 
 def fig_robot_pose():
-    uid = "robot-pose"
     body = []
-    # 参考系
-    ox, oy = 300, 330
-    axes = [((ox + 185, oy + 42), TONES["red"], "x"), ((ox - 145, oy + 76), TONES["green"], "y"), ((ox, oy - 160), TONES["accent"], "z")]
-    for (x2, y2), color, label in axes:
-        body.append(arrow(ox, oy, x2, y2, color, 2.2))
-        body.append(t(x2 + (14 if x2 > ox else -8), y2 + (10 if y2 > oy else -8), label, cls="pl-mono", fill=color, anchor="end" if x2 < ox else "start"))
-    body.append(f'<circle cx="{ox}" cy="{oy}" r="5" fill="var(--ink)"/>')
-    body.append(t(ox - 12, oy + 24, "O", cls="pl-mono"))
-    # 刚体
-    bx, by = 545, 205
-    body.append(f'<ellipse cx="{bx}" cy="{by}" rx="78" ry="50" fill="{TONES["accent"]}" fill-opacity=".06" stroke="{TONES["accent"]}" stroke-opacity=".28" transform="rotate(-14 {bx} {by})"/>')
-    body.append(f'<path d="M{bx-68} {by-34} Q{bx-10} {by-74} {bx+62} {by-26} Q{bx+72} {by+24} {bx+12} {by+46} Q{bx-54} {by+38} {bx-68} {by-34}Z" fill="var(--paper)" fill-opacity=".55" stroke="{TONES["accent"]}" stroke-opacity=".3"/>')
-    # 本体坐标系
-    for (x2, y2), color, label in [((bx + 100, by - 20), TONES["red"], "x′"), ((bx - 70, by + 84), TONES["green"], "y′"), ((bx, by - 104), TONES["accent"], "z′")]:
-        body.append(arrow(bx, by, x2, y2, color, 2))
-        body.append(t(x2 + (10 if x2 > bx else -6), y2 + (8 if y2 > by else -6), label, cls="pl-mono", fill=color, anchor="end" if x2 < bx else "start"))
-    body.append(f'<circle cx="{bx}" cy="{by}" r="5" fill="{TONES["accent"]}"/><circle cx="{bx}" cy="{by}" r="11" fill="none" stroke="{TONES["accent"]}" stroke-opacity=".3"/>')
-    body.append(t(bx + 14, by + 5, "O′", cls="pl-mono", fill=TONES["accent"]))
-    # 投影线
-    body.append(f'<path d="M{bx} {by} L{ox + 190} {oy + 52}" stroke="{TONES["accent"]}" stroke-opacity=".25" stroke-dasharray="4 6"/>')
-    body.append(f'<path d="M{bx} {by} L{ox - 150} {oy + 86}" stroke="{TONES["accent"]}" stroke-opacity=".25" stroke-dasharray="4 6"/>')
-    body.append(f'<path d="M{bx} {by} L{ox} {oy - 160}" stroke="{TONES["accent"]}" stroke-opacity=".25" stroke-dasharray="4 6"/>')
-    body.append(t(390, 156, "o′ = [o′ₓ  o′ᵧ  o′𝓏]ᵀ", cls="pl-mono", fill=TONES["accent"], anchor="middle", size="14"))
-    # 右侧矩阵
-    px, py, pw, ph = 690, 138, 178, 208
-    body.append(f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="15" fill="var(--paper)" fill-opacity=".72" stroke="var(--line)" stroke-opacity=".8"/>')
-    body.append(t(px + 16, py + 25, "姿态矩阵 R", cls="pl-label"))
-    body.append(t(px + 16, py + 44, "每列 = 本体轴", cls="pl-small"))
-    body.append(t(px + 16, py + 60, "在参考系中的方向", cls="pl-small"))
-    for r in range(3):
-        for c in range(3):
-            x, y = px + 26 + c * 34, py + 62 + r * 32
-            body.append(f'<rect x="{x}" y="{y}" width="27" height="24" rx="5" fill="{TONES["accent"]}" fill-opacity="{0.13 if r == c else 0.04}" stroke="{TONES["accent"]}" stroke-opacity="{0.4 if r == c else 0.14}"/>')
-            body.append(t(x + 13.5, y + 16.5, ["x′·x", "y′·x", "z′·x"][c] if r == 0 else "·", cls="pl-mono", anchor="middle", fill=TONES["accent"] if r == c else "var(--muted)", size="8.5"))
-    body.append(chip(px + 16, py + ph - 42, "3 + 3 = 6 DOF", TONES["gold"], w=132))
-    # 右侧注释
-    body.append(t(676, 382, "位置告诉你「在哪里」；", cls="pl-small"))
-    body.append(t(676, 401, "姿态告诉你「朝向哪里」。", cls="pl-small"))
-    body.append(t(664, 426, "缺一个，刚体的位姿就还没说完整。", cls="pl-small", fill=TONES["accent"]))
-    caption = "<b>读图：</b>左侧是<b>参考系</b> O–xyz，右侧刚体上固连一个<b>本体坐标系</b> O′–x′y′z′。位置只给出 O′ 的三个坐标；姿态由三根本体轴在参考系里的 9 个方向余弦给出——单位模长与两两正交把 9 个数压到 3 个独立角，所以「位置 3 + 姿态 3 = 6」。"
-    return plate(uid, 440, "ROBOTICS · POSE / 02", "位姿 = 位置 + 姿态",
-                 "位置是「在哪里」，姿态是「朝向哪里」；两者合起来才是一个刚体在空间中的完整描述。",
+    reference_origin = (170, 330)
+    body_origin = (430, 255)
+    projected_axes = ((100, 30), (-70, 35), (0, -100))
+    body_axes = (projected_axes[1], (-100, -30), projected_axes[2])
+    body.append('<ellipse cx="440" cy="268" rx="105" ry="52" fill="var(--accent)" fill-opacity=".06" stroke="var(--accent)" stroke-opacity=".28"/>')
+    body.append(arrow(*reference_origin, *body_origin, TONES["cyan"], 2.6))
+    body.append(t(292, 279, "o′：从 O 指向 O′", cls="pl-small", fill=TONES["cyan"], anchor="middle"))
+    for origin, vectors, labels in ((reference_origin, projected_axes, ("x", "y", "z")),
+                                    (body_origin, body_axes, ("x′ = y", "y′ = −x", "z′ = z"))):
+        for vector, color, label in zip(vectors, (TONES["red"], TONES["green"], TONES["accent"]), labels):
+            endpoint = (origin[0] + vector[0], origin[1] + vector[1])
+            body.append(arrow(*origin, *endpoint, color, 2))
+            label_offset = 12 if vector[0] >= 0 else -12
+            label_height = endpoint[1] + 24 if label == "x′ = y" else endpoint[1] - 8
+            body.append(t(endpoint[0] + label_offset, label_height, label, cls="pl-mono", fill=color,
+                          anchor="start" if vector[0] >= 0 else "end"))
+        body.append(f'<circle cx="{origin[0]}" cy="{origin[1]}" r="4" fill="var(--ink)"/>')
+    body.append(t(154, 352, "O", cls="pl-mono"))
+    body.append(t(442, 274, "O′", cls="pl-mono"))
+    body.append('<rect x="635" y="144" width="230" height="218" rx="12" fill="var(--paper)" stroke="var(--line)"/>')
+    body.append(t(650, 171, "姿态：绕参考 z 正转 90°", cls="pl-small"))
+    body.append(t(650, 196, "列依次为 x′、y′、z′", cls="pl-small"))
+    for row_index, row_values in enumerate(((0, -1, 0), (1, 0, 0), (0, 0, 1))):
+        for column_index, value in enumerate(row_values):
+            body.append(t(686 + column_index * 56, 229 + row_index * 34, str(value), cls="pl-mono", anchor="middle"))
+    body.append(t(650, 338, "方向余弦无量纲", cls="pl-small"))
+    body.append(t(55, 400, "先确定 O′ 在哪里，再确定三根本体轴的方向。", cls="pl-small"))
+    body.append(t(55, 424, "空间投影示意；屏幕上的夹角不等于实际三维夹角。", cls="pl-small"))
+    caption = "<b>读图：</b>蓝色箭头是位置向量 O→O′；两组三轴使用同一线性投影。此例本体 x′ 与参考 y 同向，y′ 与参考 x 反向，z′ 与参考 z 同向，右侧按列列出方向余弦。位置以长度计，方向余弦无量纲。自由刚体的位置与姿态各有三个局部独立变量；图的投影不用于量角。"
+    return plate("robot-pose", 440, "ROBOTICS · POSE / 02", "位姿 = 位置 + 姿态",
+                 "同一个参考点位置，可以对应不同的三轴朝向；位置和姿态须分别说明。",
                  "".join(body), "accent", "R-02", caption)
 
 
@@ -603,15 +589,15 @@ def fig_robot_euler():
     body.append(arrow(cx, cy, cx - 88, cy + 62, TONES["green"], 2, label="y", label_dy=12))
     body.append(arrow(cx, cy, cx, cy - 118, TONES["accent"], 2, label="z", label_dy=-8))
     # 三个角标
-    body.append(chip(492, 172, "α  绕 z", TONES["accent"], w=94))
-    body.append(chip(492, 216, "β  绕 y′", TONES["cyan"], w=94))
-    body.append(chip(492, 260, "γ  绕 z″", TONES["gold"], w=94))
+    body.append(chip(492, 172, "φ  绕 z", TONES["accent"], w=94))
+    body.append(chip(492, 216, "ϑ  绕 y′", TONES["cyan"], w=94))
+    body.append(chip(492, 260, "ψ  绕 z″", TONES["gold"], w=94))
     body.append(t(492, 306, "ZYZ：内旋三次，顺序不能换。", cls="pl-small"))
     # 万向节锁
     body.append(f'<rect x="492" y="326" width="344" height="54" rx="10" fill="{TONES["red"]}" fill-opacity=".06" stroke="{TONES["red"]}" stroke-opacity=".28"/>')
-    body.append(t(510, 348, "万向节锁  β = 0 或 π", cls="pl-mono", fill=TONES["red"]))
-    body.append(t(510, 367, "两个环轴重合，丢失一个自由度。", cls="pl-small"))
-    caption = "<b>读图：</b>ZYZ 是「先绕 z 转 α，再绕新 y 转 β，最后绕新 z 转 γ」的内旋序列。三个环分别代表三次旋转；当 β=0 或 π 时，第一、第三环的轴重合，两个角只剩一个独立效果——这就是<b>万向节锁</b>。"
+    body.append(t(510, 348, "表示奇点  ϑ = 0 或 π", cls="pl-mono", fill=TONES["red"]))
+    body.append(t(510, 367, "首末转轴共线，首末角不能独立反解。", cls="pl-small"))
+    caption = "<b>读图：</b>ZYZ 是「先绕 z 转 φ，再绕新 y 转 ϑ，最后绕新 z 转 ψ」的当前轴序列。圆环仅表示三个参数，不是给定角度的几何投影。ϑ=0 时只能确定 φ+ψ，ϑ=π 时只能确定 φ−ψ；这是表示退化，不表示刚体真实转动自由度消失。"
     return plate(uid, 410, "ROBOTICS · EULER ANGLES / 11", "欧拉角：三个环，三次旋转",
                  "ZYZ 与 RPY 都是把姿态拆成三个可读的角，但读数依赖顺序，也会遇到万向节锁。",
                  "".join(body), "accent", "R-11", caption)
@@ -660,39 +646,26 @@ def fig_matrix_eigen():
 def fig_robot_dh():
     uid = "robot-dh"
     body = []
-    # 两段连杆
-    p0, p1, p2 = (250, 310), (390, 220), (570, 250)
-    body.append(f'<path d="M{p0[0]} {p0[1]} L{p1[0]} {p1[1]}" stroke="{TONES["accent"]}" stroke-width="18" stroke-linecap="round" opacity=".28"/>')
-    body.append(f'<path d="M{p1[0]} {p1[1]} L{p2[0]} {p2[1]}" stroke="{TONES["cyan"]}" stroke-width="14" stroke-linecap="round" opacity=".3"/>')
-    body.append(f'<path d="M{p0[0]} {p0[1]} L{p1[0]} {p1[1]}" stroke="{TONES["accent"]}" stroke-width="6" stroke-linecap="round"/>')
-    body.append(f'<path d="M{p1[0]} {p1[1]} L{p2[0]} {p2[1]}" stroke="{TONES["cyan"]}" stroke-width="5" stroke-linecap="round"/>')
-    for (x, y), r, color, label in [(p0, 13, TONES["gold"], "J₁"), (p1, 11, TONES["gold"], "J₂"), (p2, 8, TONES["gold"], "TCP")]:
-        body.append(f'<circle cx="{x}" cy="{y}" r="{r+5}" fill="var(--paper)" stroke="{color}" stroke-width="2"/>')
-        body.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{color}" fill-opacity=".15"/>')
-        body.append(t(x, y - r - 12, label, cls="pl-mono", fill=color, anchor="middle"))
-    # 关节轴
-    body.append(f'<path d="M{p1[0]-34} {p1[1]+10} L{p1[0]+34} {p1[1]-10}" stroke="{TONES["plum"]}" stroke-width="2" stroke-dasharray="4 4"/>')
-    body.append(t(p1[0] + 38, p1[1] - 8, "z₁", cls="pl-mono", fill=TONES["plum"]))
-    # 参数标注
-    body.append(f'<path d="M{p0[0]} {p0[1]-22} L{p1[0]} {p1[1]-22}" stroke="{TONES["accent"]}" stroke-opacity=".55" stroke-dasharray="3 5"/>')
-    body.append(t((p0[0]+p1[0])/2, p0[1] - 30, "a₁", cls="pl-mono", fill=TONES["accent"], anchor="middle"))
-    body.append(t((p0[0]+p1[0])/2, p0[1] + 36, "α₁", cls="pl-mono", fill=TONES["cyan"], anchor="middle"))
-    body.append(t(p1[0] + 28, (p1[1]+p2[1])/2 + 10, "d₂", cls="pl-mono", fill=TONES["gold"]))
-    body.append(t(p1[0] + 28, (p1[1]+p2[1])/2 + 28, "θ₂", cls="pl-mono", fill=TONES["plum"]))
-    # 右侧公式卡
-    body.append(f'<rect x="640" y="140" width="224" height="220" rx="14" fill="var(--paper)" fill-opacity=".74" stroke="var(--line)" stroke-opacity=".8"/>')
-    body.append(t(658, 168, "DH 四参数", cls="pl-kicker", fill=TONES["gold"]))
-    body.append(t(658, 194, "aᵢ₋₁  沿 x 的连杆长度", cls="pl-small"))
-    body.append(t(658, 216, "αᵢ₋₁  绕 x 的扭转角", cls="pl-small"))
-    body.append(t(658, 238, "dᵢ     沿 z 的偏置", cls="pl-small"))
-    body.append(t(658, 260, "θᵢ     绕 z 的关节角", cls="pl-small"))
-    body.append(f'<path d="M658 278H846" stroke="var(--line)" stroke-opacity=".7"/>')
-    body.append(t(658, 300, "Tᵢ  =  Rot_z(θᵢ) Trans_z(dᵢ)", cls="pl-mono", fill=TONES["accent"], size="10.5"))
-    body.append(t(658, 318, "      Trans_x(aᵢ₋₁) Rot_x(αᵢ₋₁)", cls="pl-mono", fill=TONES["accent"], size="10.5"))
-    body.append(t(658, 342, "四个数确定一个连杆坐标系。", cls="pl-note"))
-    caption = "<b>读图：</b>DH 把「两根相邻关节轴之间的相对位姿」压缩成四个数：沿 x 平移 <b>a</b>、绕 x 转 <b>α</b>、沿 z 平移 <b>d</b>、绕 z 转 <b>θ</b>。转动关节只有 θ 是变量；四个参数排成一张表，整条机械臂的几何就写完了。"
-    return plate(uid, 420, "ROBOTICS · DH PARAMETERS / 13", "DH 四参数：四个数写清一根连杆",
-                 "相邻关节轴之间的相对位姿，只需要 a、α、d、θ 四个数。",
+    operations = [
+        ("① Rot_z(θᵢ)", "绕当前 z 转", "关节 i 的正轴为 zᵢ₋₁"),
+        ("② Trans_z(dᵢ)", "沿当前 z 移", "到公垂线的垂足"),
+        ("③ Trans_x(aᵢ)", "沿当前 x 移", "沿公垂线到新原点"),
+        ("④ Rot_x(αᵢ)", "绕当前 x 转", "把 z 转到 zᵢ"),
+    ]
+    for index, (operation, action, meaning) in enumerate(operations):
+        horizontal = 32 + 213 * index
+        body.append(f'<rect x="{horizontal}" y="145" width="195" height="120" rx="8" fill="var(--paper)" stroke="var(--line)"/>')
+        body.append(t(horizontal + 97, 175, operation, cls="pl-mono", anchor="middle", fill=TONES["accent"]))
+        body.append(t(horizontal + 97, 208, action, cls="pl-small", anchor="middle"))
+        body.append(t(horizontal + 97, 242, meaning, cls="pl-note", anchor="middle"))
+        if index < 3:
+            body.append(t(horizontal + 204, 209, "→", cls="pl-mono", anchor="middle"))
+    body.append(t(450, 303, "从系 i−1 起步，按当前轴逐步右乘，最后得到系 i 的位姿", cls="pl-small", anchor="middle"))
+    body.append(t(450, 335, "四因子作用到一个列向量时，仍从最右侧先算", cls="pl-note", anchor="middle"))
+    body.append(t(450, 375, "固定几何的 R 行：θᵢ 变化；P 行：dᵢ 变化。aᵢ、αᵢ 恒定。", cls="pl-small", anchor="middle"))
+    caption = "<b>读图：</b>本书标准 DH 的每一行都用 aᵢ、αᵢ、dᵢ、θᵢ。箭头是构造坐标系的时序，各步绕或沿当前轴，故在乘积中依次右乘；用矩阵换算点坐标时则从右向左作用。四参数依赖选系，并不把一般刚体位姿的六维自由度改成四维。"
+    return plate(uid, 420, "ROBOTICS · DH PARAMETERS / 13", "标准 DH：一行参数，四步建系",
+                 "先定轴向、原点与零位，再沿同一套约定连乘。",
                  "".join(body), "accent", "R-13", caption)
 
 
@@ -950,31 +923,32 @@ def fig_robot_jacobian():
         body.append(f'<circle cx="{x}" cy="{y}" r="{r+4}" fill="var(--paper)" stroke="{color}" stroke-width="2"/>')
         body.append(t(x - r - 10, y - 2, label, cls="pl-mono", anchor="end", fill=color))
     # 关节角速度弧
-    body.append(f'<path d="M{p0[0]-34} {p0[1]} A 34 34 0 0 1 {p0[0]-9} {p0[1]-33}" fill="none" stroke="{TONES["plum"]}" stroke-width="2" marker-end="url(#arrow-p)"/>')
-    body.append(t(p0[0]-52, p0[1]+14, "q̇₁", cls="pl-mono", fill=TONES["plum"]))
-    body.append(f'<path d="M{p1[0]-26} {p1[1]} A 26 26 0 0 1 {p1[0]-9} {p1[1]-25}" fill="none" stroke="{TONES["plum"]}" stroke-width="2" marker-end="url(#arrow-p)"/>')
-    body.append(t(p1[0]-44, p1[1]+14, "q̇₂", cls="pl-mono", fill=TONES["plum"]))
+    body.append(t(p0[0]-34, p0[1]+34, "q̇₁ = 0（锁住）", cls="pl-mono", anchor="middle", fill=TONES["plum"]))
+    body.append(f'<path d="M{p1[0]-9} {p1[1]-25} A 26 26 0 0 0 {p1[0]-26} {p1[1]}" fill="none" stroke="{TONES["plum"]}" stroke-width="2" marker-end="url(#arrow-p)"/>')
+    body.append(t(p1[0]-44, p1[1]-42, "q̇₂ = +1 rad/s", cls="pl-mono", fill=TONES["plum"]))
     # 末端速度
-    body.append(arrow(p2[0], p2[1], p2[0] + 112, p2[1] - 58, TONES["red"], 2.6, label="v", label_dy=-10))
-    body.append(arrow(p2[0], p2[1], p2[0] + 34, p2[1] - 96, TONES["green"], 2, label="ω", label_dy=-8))
+    body.append(arrow(p2[0], p2[1], p2[0] - 27, p2[1] - 105, TONES["red"], 2.6, label="v", label_dy=-10))
+    body.append(f'<circle cx="510" cy="286" r="12" fill="none" stroke="{TONES["green"]}" stroke-width="2"/>')
+    body.append(f'<circle cx="510" cy="286" r="3" fill="{TONES["green"]}"/>')
+    body.append(t(510, 318, "ω：出纸面", cls="pl-small", anchor="middle", fill=TONES["green"]))
     # 右侧雅可比
     bx, by = 606, 146
     body.append(f'<rect x="{bx}" y="{by}" width="256" height="222" rx="14" fill="var(--paper)" fill-opacity=".58" stroke="var(--line)" stroke-opacity=".8"/>')
-    body.append(t(bx+18, by+26, "几何雅可比", cls="pl-kicker", fill=TONES["gold"]))
-    body.append(t(bx+18, by+86, "J(q) =", cls="pl-mono", fill=TONES["accent"], size="14"))
-    body.append(t(bx+84, by+58, "q̇₁", cls="pl-mono", anchor="middle", fill=TONES["plum"], size="9.5"))
-    body.append(t(bx+156, by+58, "q̇₂", cls="pl-mono", anchor="middle", fill=TONES["plum"], size="9.5"))
-    cells = [("∂vₓ/∂q₁", "∂vₓ/∂q₂"), ("∂vᵧ/∂q₁", "∂vᵧ/∂q₂")]
+    body.append(t(bx+18, by+26, "平面位置块 Jₚ,xy（2×2）", cls="pl-kicker", fill=TONES["gold"]))
+    body.append(t(bx+119, by+58, "关节 1", cls="pl-mono", anchor="middle", fill=TONES["plum"], size="10"))
+    body.append(t(bx+189, by+58, "关节 2", cls="pl-mono", anchor="middle", fill=TONES["plum"], size="10"))
+    cells = [("∂pₓ/∂q₁", "∂pₓ/∂q₂"), ("∂pᵧ/∂q₁", "∂pᵧ/∂q₂")]
     for r in range(2):
         for c in range(2):
             cx, cy = bx + 88 + c * 70, by + 68 + r * 52
             body.append(f'<rect x="{cx}" y="{cy}" width="62" height="42" rx="6" fill="{TONES["accent"]}" fill-opacity="{.1 if c == 0 else .05}" stroke="{TONES["accent"]}" stroke-opacity=".26"/>')
             body.append(t(cx+31, cy+26, cells[r][c], cls="pl-mono", anchor="middle", fill=TONES["accent"], size="11.5"))
-    body.append(t(bx+76, by+92, "vₓ", cls="pl-mono", anchor="end", fill=TONES["muted"], size="9.5"))
-    body.append(t(bx+76, by+144, "vᵧ", cls="pl-mono", anchor="end", fill=TONES["muted"], size="9.5"))
-    body.append(t(bx+128, by+200, "每一列 = 一个关节的贡献方向", cls="pl-small", anchor="middle"))
-    body.append(t(450, 400, "v = J(q) · q̇：关节速度经雅可比映射成末端速度。", cls="pl-note", anchor="middle"))
-    caption = "<b>读图：</b>雅可比是「每个关节单独动一点，末端往哪走」的偏导表。第 i 列是第 i 个关节速度对末端线速度 / 角速度的贡献；末端速度箭头是各列贡献的线性叠加。"
+    body.append(t(bx+76, by+94, "pₓ 行", cls="pl-mono", anchor="end", fill=TONES["muted"], size="10"))
+    body.append(t(bx+76, by+146, "pᵧ 行", cls="pl-mono", anchor="end", fill=TONES["muted"], size="10"))
+    body.append(t(bx+128, by+188, "角速度行另计：ωz = q̇₁ + q̇₂", cls="pl-small", anchor="middle"))
+    body.append(t(bx+128, by+210, "完整几何雅可比为 6×2", cls="pl-small", anchor="middle"))
+    body.append(t(450, 400, "(vₓ, vᵧ)ᵀ = Jₚ,xy(q) q̇；ω 的正方向沿 +z 出纸面。", cls="pl-note", anchor="middle"))
+    caption = "<b>读图：</b>右表只列<b>位置对关节角的偏导</b>，乘关节速度后得到平面线速度；完整几何雅可比还包括角速度行。左图锁住关节 1，关节 2 以 +1 rad/s 逆时针转动，v 垂直于第二杆、朝左上，ω 沿 +z 出纸面。速度箭头长度仅为示意，未给定杆长。"
     return plate(uid, 420, "ROBOTICS · JACOBIAN / 19", "雅可比：把关节速度翻译成末端速度",
                  "v = J(q)q̇；J 的每一列，都是一个关节对末端的「贡献方向」。",
                  "".join(body), "red", "R-19", caption)

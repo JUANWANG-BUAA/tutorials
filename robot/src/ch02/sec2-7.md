@@ -1,220 +1,238 @@
 # 2.7 齐次变换
 
-位姿 = 位置 + 指向，而「先加平移、再乘旋转」的写法在链式变换中会越写越长。本节用**齐次坐标**把两者打包进一个 4×4 矩阵，为 DH 法的连乘打好地基。录播 0:30:54–0:39:43。
+一个点在两套坐标系中的数值可以不同，物理位置却相同。前面用旋转矩阵换算方向；两系原点不重合时，还要加上平移。本节把 $\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0$ 写成一个矩阵乘法，依次检查点与方向、逆变换、连续换系，为下一节 DH 法准备计算方法。
 
 <a id="sec-2.7.1"></a>
 
-## 2.7.1 动机：平移 + 旋转的写法太长
+## 2.7.1 动机：让平移与旋转使用同一种运算
 
-设点 $P$ 在参考系 $0$ 与动系 $1$ 中的坐标分别为 $\boldsymbol p^0,\boldsymbol p^1$，动系原点在系 $0$ 中的位置为 $\boldsymbol o_1^0$、姿态为 $R_1^0$（原书图 2.11）。由三角关系可得（录播 0:32:08 老师：「看这个三角关系就对了」）：
+设同一个物理点 $P$ 在系 0、系 1 中的坐标为 $\boldsymbol p^0,\boldsymbol p^1$。$R_1^0$ 的列是系 1 三根轴在系 0 中的方向，$\boldsymbol o_1^0$ 是系 1 原点在系 0 中的位置。三角关系给出（原书图 2.11、式 2.38）
 
-$$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol p^1\qquad(\text{原书式 }2.38)$$
+$$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol p^1.$$
 
-![课堂幻灯片 · 约30:54：p^0 = o_1^0 + R_1^0p^1（平移 + 旋转）](../assets/ch02/homogeneous-setup.jpg)
+![课堂幻灯片：同一点在两套坐标系中的坐标与原点偏移](../assets/ch02/homogeneous-setup.jpg)
 
-这里有两个要点。其一，$\boldsymbol o_1^0$ 与 $R_1^0\boldsymbol p^1$ 必须先表示在同一坐标系里，才能相加（录播 0:32:27：「把所有的量都描述在同一个坐标系」）；其二，逆变换只要左乘 $(R_1^0)^T$，即得 $\boldsymbol p^1=-R_0^1\boldsymbol o_1^0+R_0^1\boldsymbol p^0$（式 2.39–2.40）。
+**读图顺序**：从 $O_0$ 沿原点偏移走到 $O_1$，再沿 $O_1P$ 走到 $P$。计算时先用 $R_1^0$ 把后一个向量的分量换成系 0 的表示，再与同样用系 0 表示的 $\boldsymbol o_1^0$ 相加。这是在换坐标，并没有把点搬走；若把同一矩阵当作主动运动，必须另外声明固定坐标系和施加对象。
 
-链式场景把问题暴露得更清楚：引入坐标系 2、消去中间量之后（录播 0:34:03 板书），
+反过来，先减去原点偏移，再用转置旋转：
 
-$$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1+R_1^0R_2^1\boldsymbol p^2$$
+$$\boldsymbol p^1=(R_1^0)^{\mathrm T}(\boldsymbol p^0-\boldsymbol o_1^0)
+=R_0^1\boldsymbol p^0-R_0^1\boldsymbol o_1^0\qquad(\text{原书式 }2.39\text{–}2.40).$$
 
-每多加一个坐标系，式子就长一层：旋转部分要连乘、平移部分要累加，两种运算形式并不统一，没法直接合并——这正是要把它们打包的原因。
+引入系 2，代入 $\boldsymbol p^1=\boldsymbol o_2^1+R_2^1\boldsymbol p^2$，便得
+
+$$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1+R_1^0R_2^1\boldsymbol p^2.$$
+
+第二段平移也要先旋转到系 0，不能直接把 $\boldsymbol o_1^0$ 与 $\boldsymbol o_2^1$ 相加。下面用多一个分量，把这层嵌套统一成连乘。
 
 <a id="sec-2.7.2"></a>
 
 ## 2.7.2 齐次坐标与齐次变换矩阵
 
-::: def 定义 2.7.1 · 齐次表示与齐次变换矩阵 {#def-2.7.1}
-给点的位置坐标 $\boldsymbol p$ 添上第 4 个单位元素，就构成**齐次坐标**（homogeneous representation，原书式 2.41）：
+::: def 定义 2.7.1 · 点、方向与刚体齐次变换 {#def-2.7.1}
+为点的位置坐标添上第 4 分量 1；为自由方向向量添上 0：
 
-$$\tilde{\boldsymbol p}=\begin{bmatrix}\boldsymbol p\\ 1\end{bmatrix},$$
+$$\tilde{\boldsymbol p}=\begin{bmatrix}\boldsymbol p\\1\end{bmatrix},\qquad
+\tilde{\boldsymbol d}=\begin{bmatrix}\boldsymbol d\\0\end{bmatrix}.$$
 
-则式 2.38 可写成（4×4）矩阵乘法（原书式 2.42–2.43）
+定义 $4\times4$ **齐次变换矩阵**（homogeneous transformation matrix，原书式 2.41–2.43）
 
-$$\tilde{\boldsymbol p}^0=A_1^0\,\tilde{\boldsymbol p}^1,\qquad
-A_1^0=\begin{bmatrix}R_1^0 & \boldsymbol o_1^0\\ \boldsymbol 0^T & 1\end{bmatrix},$$
+$$A_1^0=\begin{bmatrix}R_1^0&\boldsymbol o_1^0\\\boldsymbol0^{\mathrm T}&1\end{bmatrix},\qquad
+\tilde{\boldsymbol p}^0=A_1^0\tilde{\boldsymbol p}^1.$$
 
-称 $A_1^0$ 为**齐次变换矩阵**。因 $\boldsymbol o_1^0\in\mathbb{R}^3$、$R_1^0\in SO(3)$，$A$ 属于**特殊欧几里得群** $SE(3)=\mathbb{R}^3\times SO(3)$。
+这些刚体变换组成**特殊欧几里得群**
+
+$$SE(3)=\left\{\begin{bmatrix}R&\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}:R\in SO(3),\ \boldsymbol o\in\mathbb R^3\right\}.$$
+
+它有 3 个旋转自由度和 3 个平移自由度，但不是任意 $4\times4$ 矩阵；必须检验旋转块与底行。
 :::
 
-![课堂幻灯片 · 约35:52：齐次变换矩阵的分块结构](../assets/ch02/homogeneous-matrix.jpg)
+![课堂幻灯片：把旋转与平移打包成齐次变换矩阵](../assets/ch02/homogeneous-matrix.jpg)
 
-把矩阵乘开验算一下：前 3 行恰好是 $R_1^0\boldsymbol p^1+\boldsymbol o_1^0$，第 4 行是 $1$（录播 0:34:53 老师提醒这东西「实际上很简单」，0:36:17 又现场带着算了一遍）。各块的含义也就一目了然（录播 0:39:19）：**左上 $3\times3$ 管指向，右上 $3\times1$ 管位置，底行占位**；当两系原点重合时，$A$ 退化为纯旋转。
+### 底行为什么是 0 0 0 1？
+
+对前三项为 $\boldsymbol x$、第 4 分量为 $w$ 的列向量，直接分块相乘：
+
+$$\begin{bmatrix}R&\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}
+\begin{bmatrix}\boldsymbol x\\w\end{bmatrix}
+=\begin{bmatrix}R\boldsymbol x+w\boldsymbol o\\w\end{bmatrix}.$$
+
+因此点取 $w=1$，位置会受平移影响；自由方向取 $w=0$，只受旋转影响。底行使 $w$ 保持原值，并非随意的占位。这里采用刚体变换，点的末分量恒为 1，方向恒为 0；**方向不能除以末分量**。一般投影坐标在末分量非零时才可除回 1，属于另一种变换，不能与这里的刚体变换混用。
+
+原书把 $SE(3)$ 写成 $\mathbb R^3\times SO(3)$，可以理解为每个姿态由平移和旋转两部分组成；**合成并非分别相加、相乘**。从矩阵乘法可得
+
+$$(R,\boldsymbol o)(S,\boldsymbol t)=(RS,\ \boldsymbol o+R\boldsymbol t).$$
+
+第二段平移会受前一旋转影响，数学上称为半直积结构。做题时记住这个分块结果即可，不必先学群论。
 
 <a id="sec-2.7.3"></a>
 
-## 2.7.3 逆变换与非正交性
+## 2.7.3 逆变换与正交性的边界
 
-齐次变换矩阵**不再保持正交性**（原书式 2.46）：一般地 $A^{-1}\neq A^T$。逆变换其实不必另起炉灶——式 2.39–2.40 已经把它算出来了：
+由 $\boldsymbol p^1=(R_1^0)^{\mathrm T}(\boldsymbol p^0-\boldsymbol o_1^0)$，直接打包出逆（原书式 2.44–2.45）：
 
-$$\boldsymbol p^1=\big(R_1^0\big)^{\mathrm T}\boldsymbol p^0-\big(R_1^0\big)^{\mathrm T}\boldsymbol o_1^0 ,$$
+$$A_0^1=(A_1^0)^{-1}=\begin{bmatrix}(R_1^0)^{\mathrm T}&-(R_1^0)^{\mathrm T}\boldsymbol o_1^0\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}.$$
 
-这是一次「旋转 $R^{\mathrm T}$ + 平移 $-R^{\mathrm T}\boldsymbol o$」的仿射映射，按定义 2.7.1 的打包规则，立刻就能写成矩阵形式（原书式 2.44–2.45）：
+逆的平移是 $-R^{\mathrm T}\boldsymbol o$，它用**系 1** 表示，通常不等于用系 0 表示的 $-\boldsymbol o$。这不是完整矩阵转置；利用旋转块的正交性，求逆仍然很便于计算。
 
-$$A_0^1=(A_1^0)^{-1}=\begin{bmatrix}R_1^{0\mathrm T} & -R_1^{0\mathrm T}\boldsymbol o_1^0\\ \boldsymbol 0^T & 1\end{bmatrix}
-=\begin{bmatrix}R_0^1 & -R_0^1\,\boldsymbol o_1^0\\ \boldsymbol 0^T & 1\end{bmatrix}$$
+::: proof 验证 · 分块相乘与正交性的充要条件（本编补充）
+令 $B=\begin{bmatrix}R^{\mathrm T}&-R^{\mathrm T}\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}$。有
 
-::: proof 验证 · 分块乘一次即知（本编补充）
-$$\begin{bmatrix}R^{\mathrm T}&-R^{\mathrm T}\boldsymbol o\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix}
-\begin{bmatrix}R&\boldsymbol o\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix}
-=\begin{bmatrix}R^{\mathrm T}R&\ R^{\mathrm T}\boldsymbol o-R^{\mathrm T}\boldsymbol o\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix}
-=\begin{bmatrix}I_3&\boldsymbol 0\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix} .$$
+$$BA=\begin{bmatrix}R^{\mathrm T}R&R^{\mathrm T}\boldsymbol o-R^{\mathrm T}\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}=I_4,$$
 
-（左上块用正交性 $R^{\mathrm T}R=I$；右上块两项恰好相消。）既左逆又右逆（同法右乘一遍），故确为 $A^{-1}$。□
+同样 $AB=I_4$，所以 $B=A^{-1}$。而
+
+$$A^{\mathrm T}A=\begin{bmatrix}I_3&R^{\mathrm T}\boldsymbol o\\\boldsymbol o^{\mathrm T}R&1+\boldsymbol o^{\mathrm T}\boldsymbol o\end{bmatrix}.$$
+
+因此 $A^{-1}=A^{\mathrm T}$ **当且仅当 $\boldsymbol o=0$**。纯旋转的 $\operatorname{diag}(R,1)$ 仍正交；有非零平移时才不正交。$\det A=\det R=1$ 对所有刚体变换成立，单凭行列式为 1 不能判断整体正交。□
 :::
-
-这与式 2.39–2.40 的结论恰好一致：旋转块取转置，平移块先反向、再左乘转置。要注意**旋转部分仍是正交的**——求逆之所以「不便宜」，只在于不能整体转置了事，而必须按分块公式重新装配。
 
 <a id="sec-2.7.4"></a>
 
-## 2.7.4 连乘：为什么机器人学离不开它
+## 2.7.4 连乘：同一个点逐系换算
 
 ::: thm 原理 2.7.A · 链式变换的连乘（原书式 2.47） {#thm-2.7.A}
-一串坐标变换可以合成单一矩阵：
 
-$$\tilde{\boldsymbol p}^0=A_1^0A_2^1\cdots A_n^{n-1}\,\tilde{\boldsymbol p}^n,$$
+$$\tilde{\boldsymbol p}^0=A_1^0A_2^1\cdots A_n^{n-1}\tilde{\boldsymbol p}^n.$$
 
-其中 $A_i^{i-1}$ 是「点在系 $i$ 的表示 → 系 $i-1$ 的表示」的齐次变换。
+右侧先作用：$A_2^1$ 将系 2 坐标换成系 1，$A_1^0$ 再换成系 0；相接的坐标系必须一致。两段合成为
+
+$$A_2^0=A_1^0A_2^1=\begin{bmatrix}R_1^0R_2^1&\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}.$$
+
+旋转与平移都由这一次矩阵乘法得到。交换次序通常改变数值，而且 $A_2^1A_1^0$ 的坐标系接口不相接，不能把它解释成同一个 $2\to0$ 换系链。
 :::
 
-公式只有一行，但含义值得看清：下图把「连乘」画了出来。左图是一条机械链，每根连杆上都固连一个坐标系，点 $P$ 的坐标从系 2 传回系 0，恰好是两次矩阵乘法；右图是单个 $A$ 的分块职责——一个矩阵同时管指向与位置。
-
 <figure>
-<svg class="figure-svg" viewBox="0 0 920 334" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-27-title fig-27-desc">
-<title id="fig-27-title">链式变换的连乘与 A 的分块结构</title>
-<desc id="fig-27-desc">左图：基座系 0、连杆上的系 1 与系 2，点 P 的齐次坐标沿运动链乘两次变换矩阵（系 1 相对系 0、系 2 相对系 1）传回系 0。右图：4×4 齐次变换矩阵的分块——左上 3×3 旋转块管指向，右上 3×1 管位置，底行 0 0 0 1 占位。</desc>
-<defs>
-<marker id="f27-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
-<marker id="f27-b" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-blue)"/></marker>
-</defs>
-<text class="diagram-text" x="280" y="36" text-anchor="middle">一串坐标系 → 一串矩阵连乘</text>
-<text class="diagram-text" x="730" y="36" text-anchor="middle">A 的分块结构：一个矩阵管两件事</text>
-<g stroke="var(--fig-blue)" stroke-width="1.6" marker-end="url(#f27-b)">
-<line x1="150" y1="250" x2="222" y2="250"/>
-<line x1="150" y1="250" x2="150" y2="186"/>
-<line x1="280" y1="160" x2="342" y2="160"/>
-<line x1="280" y1="160" x2="280" y2="106"/>
-<line x1="410" y1="120" x2="468" y2="120"/>
-<line x1="410" y1="120" x2="410" y2="66"/>
-</g>
-<text class="diagram-text" fill="var(--fig-blue)" x="228" y="264">x<tspan class="sb">0</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="140" y="180" text-anchor="end">z<tspan class="sb">0</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="348" y="156">x<tspan class="sb">1</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="272" y="100" text-anchor="end">z<tspan class="sb">1</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="474" y="116">x<tspan class="sb">2</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="402" y="60" text-anchor="end">z<tspan class="sb">2</tspan></text>
-<line stroke="var(--accent)" stroke-width="5" x1="150" y1="250" x2="280" y2="160"/>
-<line stroke="var(--accent)" stroke-width="5" x1="280" y1="160" x2="410" y2="120"/>
-<circle class="diagram-node" cx="150" cy="250" r="7"/>
-<circle class="diagram-node" cx="280" cy="160" r="7"/>
-<circle class="diagram-fill-accent" cx="410" cy="120" r="6"/>
-<text class="diagram-note" x="140" y="272" text-anchor="end">基座系 0</text>
-<text class="diagram-text" fill="var(--accent-text)" x="424" y="112">P（p²，系 2 中坐标）</text>
-<g fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f27-m)">
-<path d="M 262 178 C 220 214 190 224 168 236"/>
-<path d="M 388 136 C 350 158 322 162 300 158"/>
-</g>
-<text class="diagram-text" x="196" y="216">A<tspan class="sb">1</tspan><tspan class="sp">0</tspan></text>
-<text class="diagram-text" x="336" y="172">A<tspan class="sb">2</tspan><tspan class="sp">1</tspan></text>
-<text class="diagram-mono" x="280" y="304" text-anchor="middle">p<tspan class="sp">0</tspan> = A<tspan class="sb">1</tspan><tspan class="sp">0</tspan> · A<tspan class="sb">2</tspan><tspan class="sp">1</tspan> · p<tspan class="sp">2</tspan>　（各 p 为齐次坐标 [p; 1]）</text>
-<rect x="570" y="80" width="240" height="120" class="diagram-fill-accent"/>
-<rect x="810" y="80" width="80" height="120" class="diagram-fill-sage"/>
-<rect x="570" y="200" width="320" height="40" fill="var(--paper-soft)" stroke="var(--line-strong)" stroke-width="1"/>
-<g fill="none" stroke="var(--line)">
-<rect x="570" y="80" width="320" height="160"/>
-<line x1="650" y1="80" x2="650" y2="240"/><line x1="730" y1="80" x2="730" y2="240"/><line x1="810" y1="80" x2="810" y2="240"/>
-<line x1="570" y1="120" x2="890" y2="120"/><line x1="570" y1="160" x2="890" y2="160"/><line x1="570" y1="200" x2="890" y2="200"/>
-</g>
-<text class="diagram-text" fill="var(--accent-text)" x="690" y="147" text-anchor="middle" font-size="19">R</text>
-<text class="diagram-text" fill="var(--sage)" x="850" y="147" text-anchor="middle" font-size="19">o</text>
-<text class="diagram-note" x="610" y="225">0</text><text class="diagram-note" x="690" y="225">0</text>
-<text class="diagram-note" x="770" y="225">0</text><text class="diagram-note" x="850" y="225">1</text>
-<circle fill="var(--accent)" cx="580" cy="266" r="4"/><text class="diagram-note" x="592" y="271">左上 3×3：指向（原点重合时 = 纯旋转）</text>
-<circle fill="var(--sage)" cx="580" cy="290" r="4"/><text class="diagram-note" x="592" y="295">右上 3×1：位置（动系原点用固定系的话说）</text>
-<circle fill="var(--line-strong)" cx="580" cy="314" r="4"/><text class="diagram-note" x="592" y="319">底行 0 0 0 1：占位，让 4×4 乘法封闭、链条可连乘</text>
+<svg class="figure-svg" viewBox="0 0 920 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-27-title fig-27-desc">
+<title id="fig-27-title">同一点逐系换坐标与齐次矩阵分块</title>
+<desc id="fig-27-desc">左侧三个框依次是同一物理点的系2、系1、系0坐标，箭头先乘系2到系1的矩阵，再乘系1到系0的矩阵。右侧旋转块、平移列与底行展示矩阵结构。点的位置不因换坐标而移动。</desc>
+<defs><marker id="f27-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker></defs>
+<text class="diagram-text" x="280" y="35" text-anchor="middle">同一个物理点 P，三组坐标</text>
+<g class="diagram-node"><rect x="30" y="105" width="110" height="60" rx="8"/><rect x="220" y="105" width="110" height="60" rx="8"/><rect x="410" y="105" width="110" height="60" rx="8"/></g>
+<g class="diagram-text" text-anchor="middle"><text x="85" y="141">p̃²</text><text x="275" y="141">p̃¹</text><text x="465" y="141">p̃⁰</text><text x="180" y="90">A₂¹</text><text x="370" y="90">A₁⁰</text></g>
+<g stroke="var(--line-strong)" stroke-width="1.6" marker-end="url(#f27-m)"><line x1="140" y1="135" x2="216" y2="135"/><line x1="330" y1="135" x2="406" y2="135"/></g>
+<text class="diagram-note" x="275" y="208" text-anchor="middle">先 2→1，再 1→0；点没有移动</text>
+<text class="diagram-text" x="275" y="251" text-anchor="middle">p̃⁰ = A₁⁰ A₂¹ p̃²</text>
+<text class="diagram-text" x="735" y="35" text-anchor="middle">A 的分块结构</text>
+<rect class="diagram-fill-accent" x="595" y="65" width="210" height="140"/><rect class="diagram-fill-sage" x="805" y="65" width="70" height="140"/>
+<rect class="diagram-node" x="595" y="205" width="280" height="40"/>
+<g class="diagram-text" text-anchor="middle"><text x="700" y="143">R</text><text x="840" y="143">o</text><text x="630" y="232">0</text><text x="700" y="232">0</text><text x="770" y="232">0</text><text x="840" y="232">1</text></g>
+<text class="diagram-note" x="735" y="280" text-anchor="middle">末分量保持：点 1，方向 0</text>
 </svg>
-<figcaption>齐次变换的链式合成（本教程绘）：左图——点 P 的坐标沿运动链「逐系外推」，每跨一系乘一个 $A$，这就是 [@thm-2.7.A] 的连乘；右图——$A$ 的分块职责，底行占位使「平移 + 旋转」统一为矩阵乘法。</figcaption>
+<figcaption>本教程绘：箭头表示坐标换算的先后；乘积从右向左作用。右图的底行保持点与方向各自的末分量。</figcaption>
 </figure>
 
-这正是把式 2.38 的链条「写简单点」得到的答案。录播 0:38:53 老师还留了一道验证作业：自己展开，验证 $\tilde{\boldsymbol p}^0=A_1^0A_2^1\tilde{\boldsymbol p}^2$ 与冗长的写法一致。连乘的工程意义（录播 0:39:01–0:39:15）在于：机器人要处理**连续**的多坐标系变换，而「式子太长不方便，先写成矩阵的形式，去矩阵重上重去（做矩阵乘法）」——2.8 节的正运动学方程 $T_n^0(q)=A_1^0(q_1)A_2^1(q_2)\cdots A_n^{n-1}(q_n)$ 就是本原理的直接套用。
-
 ::: ex 例 2.7.B · 同一变换，点与方向为什么算出不同结果 {#ex-2.7.B}
-取 $R_1^0=R_z(90^\circ)$、$\boldsymbol o_1^0=(2,1,0)^{\mathrm T}$。系 1 中有点
-$\boldsymbol p^1=(1,0,0)^{\mathrm T}$，以及自由方向向量 $\boldsymbol d^1=(1,0,0)^{\mathrm T}$。
-求两者在系 0 中的表示，并把点变换回去。长度单位均为 m。
+取 $R_1^0=R_z(90^\circ)$、$\boldsymbol o_1^0=(2,1,0)^{\mathrm T}$。系 1 中有点 $\boldsymbol p^1=(1,0,0)^{\mathrm T}$ 和自由方向 $\boldsymbol d^1=(1,0,0)^{\mathrm T}$。求在系 0 中的表示，再把点换回去。点和原点的长度单位为 m，方向取单位向量。
 
 ::: sol 解与逐步核对
-先写出矩阵，再决定第 4 分量：
 
 $$A_1^0=\begin{bmatrix}0&-1&0&2\\1&0&0&1\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
 
-点的位置使用 $[\boldsymbol p^1;1]$，故
-$\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0=(2,2,0)^{\mathrm T}$；
-自由方向使用 $[\boldsymbol d^1;0]$，故
-$\boldsymbol d^0=R_1^0\boldsymbol d^1=(0,1,0)^{\mathrm T}$。
-**两个数列前三项相同，但一个指位置、一个指方向；平移只改变位置。**
+点取末分量 1，得 $\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0=(2,2,0)^{\mathrm T}$；方向取末分量 0，得 $\boldsymbol d^0=R_1^0\boldsymbol d^1=(0,1,0)^{\mathrm T}$。输入的前三项相同，语义与第四项不同，结果也不同。
 
-逆变换的平移块为
-$-R_1^{0\mathrm T}\boldsymbol o_1^0=(-1,2,0)^{\mathrm T}$，于是
+逆矩阵为
 
-$$\boldsymbol p^1=R_1^{0\mathrm T}(\boldsymbol p^0-\boldsymbol o_1^0)
-=R_z(-90^\circ)(0,1,0)^{\mathrm T}=(1,0,0)^{\mathrm T}.$$
+$$A_0^1=\begin{bmatrix}0&1&0&-1\\-1&0&0&2\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
 
-若误用 $-\boldsymbol o_1^0$ 作逆的平移块，会得到 $(0,-3,0)^{\mathrm T}$，无法返回原点坐标。
+其中 $-R_1^{0\mathrm T}\boldsymbol o_1^0=(-1,2,0)^{\mathrm T}$。逆作用到 $[2,2,0,1]^{\mathrm T}$ 后，回到 $[1,0,0,1]^{\mathrm T}$。若误用 $-\boldsymbol o_1^0$ 作逆的平移块，得到 $(0,-3,0)^{\mathrm T}$，无法返回原坐标。
 :::
 :::
 
-::: think 迁移练习 · 第二段平移究竟沿谁的轴
-接上一个无相对旋转的系 2，$\boldsymbol o_2^1=(1,0,0)^{\mathrm T}$。
-不展开 $4\times4$ 连乘，先判断系 2 原点在系 0 中的位置；再求 $\boldsymbol p^2=(0,1,0)^{\mathrm T}$ 在系 0 中的坐标。
+::: think 练习 1 · 逆矩阵与纯平移边界 {#practice-2.7.inverse}
+取 $R=I_3$、$\boldsymbol o=(2,-1,3)^{\mathrm T}$，点 $\boldsymbol p=(1,2,0)^{\mathrm T}$、方向 $\boldsymbol d=(1,2,0)^{\mathrm T}$。分别变换，再用正确的逆返回。$A$ 的行列式为 1，能否据此判断它正交？若平移改成 0 呢？
 
-::: sol 核对与回读
-$\boldsymbol o_2^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1=(2,2,0)^{\mathrm T}$，
-$R_2^0=R_1^0$，故 $\boldsymbol p^0=(2,2,0)^{\mathrm T}+(-1,0,0)^{\mathrm T}=(1,2,0)^{\mathrm T}$。
-若原点算成 $(3,1,0)^{\mathrm T}$，回读本节动机中的「同一坐标系才能相加」；
-若方向也加了平移，重做 [@ex-2.7.B]；两问都能独立解释后，进入 [DH 法](sec2-8.md)。
+::: sol 核对
+点变成 $(3,1,3)^{\mathrm T}$，方向仍是 $(1,2,0)^{\mathrm T}$。逆的平移为 $(-2,1,-3)^{\mathrm T}$，分别返回原点坐标与方向；底行不会把方向的 0 变成 1。$\det A=1$，但非零平移使 $A^{\mathrm T}A\ne I_4$；平移为 0 时，$A=I_4$，整体正交。
 :::
 :::
 
-::: note se(3)：SE(3) 的李代数（本编补充，与 2.5.3 对照） {#note-2.7.se3}
-$so(3)$ 的故事在 $SE(3)$ 上原样重演一遍。$SE(3)$ 在单位元（$I_4$）处的「无穷小版本」是
+::: ex 例 2.7.C · 两段旋转和平移都参与合成 {#ex-2.7.C}
+接例 2.7.B 的系 1，再令 $R_2^1=R_x(90^\circ)$、$\boldsymbol o_2^1=(1,0,0)^{\mathrm T}$，点 $\boldsymbol p^2=(0,1,0)^{\mathrm T}$。先预测：第二段原点偏移在系 0 中沿哪根方向？
 
-$$se(3)=\Big\{\begin{bmatrix}S(\omega)&\boldsymbol v\\ \boldsymbol 0^{\mathrm T}&0\end{bmatrix}:\ \omega,\boldsymbol v\in\mathbb R^3\Big\},$$
+$$A_2^1=\begin{bmatrix}1&0&0&1\\0&0&-1&0\\0&1&0&0\\0&0&0&1\end{bmatrix},\qquad
+A_2^0=\begin{bmatrix}0&0&1&2\\1&0&0&2\\0&1&0&0\\0&0&0&1\end{bmatrix}.$$
 
-它由「角速度 $\omega$ + 线速度 $\boldsymbol v$」共 **6 个参数**描述，装帽 / 摘帽的做法与 $so(3)$ 完全相同。它的元素称为**空间速度 / 旋量**（twist）。指数映射 $\exp\big(\begin{bmatrix}S(\omega)&\boldsymbol v\\\boldsymbol 0^{\mathrm T}&0\end{bmatrix}\big)$ 给出**螺旋运动**——绕一根不过原点的轴「边转边走」：当 $\omega=0$ 时退化为纯平移，当 $\boldsymbol v$ 平行于 $\omega$ 时则是真正的螺钉运动（第 4 章以后的螺旋理论与空间速度即源于此）。本课程按原书路线，用分块的 $(\dot{\boldsymbol p},\omega)$ 处理（第 3 章 3.1.2）；$se(3)$ 这套语言，则留给对照现代教材（如 Lynch & Park《Modern Robotics》）时使用。
+$\boldsymbol o_2^0=(2,1,0)^{\mathrm T}+R_z(90^\circ)(1,0,0)^{\mathrm T}=(2,2,0)^{\mathrm T}$；第二段偏移沿系 0 的 +y。逐级算 $\boldsymbol p^1=(1,0,1)^{\mathrm T}$，再得 $\boldsymbol p^0=(2,2,1)^{\mathrm T}$，与直接用 $A_2^0$ 一致。
 
-**为什么值得知道**：$SE(3)$ 和 $so(3)$ 一样「不可交换、不能整体求逆转置」，但它的李代数 $se(3)$ 只是一个普通的 6 维线性空间。于是做插值、求导、优化时，可以先到李代数里去算，算完再通过指数映射回到群上（「角速度不是角度向量的导数」这一注意点，在 $se(3)$ 上同样成立，见 [3.6.3](../ch03/sec3-6.md#sec-3.6.3)）。
+若只交换两矩阵进行数值运算，$(A_2^1A_1^0)[\boldsymbol p^2;1]$ 得到前三项 $(2,0,1)^{\mathrm T}$；它既不同于正确结果，也没有所需的坐标系接口。矩阵可相乘不代表物理标签可省。
+:::
+
+<a id="lab-2.7"></a>
+
+### 操作：同一点不动，切换它的坐标表示
+
+演示默认采用例 2.7.B 的第一段变换，第二段先取无相对旋转、沿系 1 的 +x 平移 1 m。输入前三项固定为 $(0,1,0)$，可选择它表示点或自由方向。
+
+1. 先预测系 2 原点在系 0 中的位置，再读下方原点与合成矩阵的平移列。
+2. 逐级查看系 2、系 1、系 0 的坐标。**画面中的同一个点 P 保持不动**；改变的是当前读取的坐标系与从该原点到 P 的线段。切到直接合成，核对最终坐标完全相同。
+3. 切换点/方向，观察末分量 1/0 与平移项；自由方向箭头可以移到各系原点，方向不变。
+4. 载入“两段转动例题”，核对例 2.7.C、逆变换返回值与错误顺序的数值对照。
+5. 把两段平移都置零，观察整体正交误差变成约 0；再加平移，检查 det A 仍约为 1。按“重置齐次变换与视角”恢复所有控件与相机。
+
+<div class="lab" data-lab="homogeneous3d" hidden></div>
+
+没有脚本时，可用例 2.7.B/C 与下面两份练习完成相同核对。
+
+::: think 练习 2 · 第二段平移究竟沿谁的轴 {#practice-2.7.chain}
+仍取例 2.7.B 的系 1，但 $R_2^1=I$、$\boldsymbol o_2^1=(1,0,0)^{\mathrm T}$。不展开 $4\times4$ 连乘，求系 2 原点在系 0 中的位置、点 $\boldsymbol p^2=(0,1,0)^{\mathrm T}$ 的像，以及自由方向 $\boldsymbol d^2=(0,1,0)^{\mathrm T}$ 的像。
+
+::: sol 核对
+$\boldsymbol o_2^0=(2,2,0)^{\mathrm T}$、$R_2^0=R_z(90^\circ)$；点变成 $(1,2,0)^{\mathrm T}$，方向变成 $(-1,0,0)^{\mathrm T}$。若原点算成 $(3,1,0)$，说明漏了旋转第二段平移；若方向也加上 $(2,2,0)$，说明把末分量错取成 1。
+:::
+:::
+
+::: think 练习 3 · 坐标长度变了，刚体距离还保持吗？ {#practice-2.7.distance}
+在练习 2 中另取点 $\boldsymbol q^2=(1,1,0)^{\mathrm T}$。求 $\boldsymbol q^0$，比较两点间距离；再看 $\|\boldsymbol p^2\|$ 与 $\|\boldsymbol p^0\|$ 是否必须相等。为什么两点之差的齐次末分量为 0？
+
+::: sol 核对
+$\boldsymbol q^0=(1,3,0)^{\mathrm T}$，两点间距在两系中均为 1 m。点到各自坐标原点的距离不必相等：此处 $\|\boldsymbol p^2\|=1$、$\|\boldsymbol p^0\|=\sqrt5$。两点之差为 $[\boldsymbol q;1]-[\boldsymbol p;1]=[\boldsymbol q-\boldsymbol p;0]$，平移相消，只受旋转；所以刚体运动保距离，与整个 A 一般不正交并不矛盾。
+:::
+:::
+
+::: note se(3)：有限位姿与瞬时速度要区分（本编补充） {#note-2.7.se3}
+
+$SE(3)$ 是有限刚体变换组成的群；它在单位元 $I_4$ 处的切空间是六维线性空间
+
+$$se(3)=\left\{\begin{bmatrix}S(\omega)&\boldsymbol v\\\boldsymbol0^{\mathrm T}&0\end{bmatrix}:\omega,\boldsymbol v\in\mathbb R^3\right\}.$$
+
+这里的底行全零，所以这些 $4\times4$ 矩阵始终不可逆，不能对它们套用刚体逆公式。$so(3)$ 与 $se(3)$ 都是李代数，须与有限旋转/位姿组成的群区分。装帽把六个数装成这个矩阵，摘帽取回六个数；使用前还要说明六元组的排列约定。
+
+若 $A(t)=[R(t),\boldsymbol o(t);0,1]$，**空间速度矩阵**为
+
+$$\widehat\xi_s=\dot A A^{-1}=\begin{bmatrix}\dot R R^{\mathrm T}&\dot{\boldsymbol o}-\dot R R^{\mathrm T}\boldsymbol o\\\boldsymbol0^{\mathrm T}&0\end{bmatrix}
+=\begin{bmatrix}S(\omega_s)&\boldsymbol v_s\\\boldsymbol0^{\mathrm T}&0\end{bmatrix}.$$
+
+因此 $\boldsymbol v_s=\dot{\boldsymbol o}-\omega_s\times\boldsymbol o$，**一般不等于动系原点的线速度** $\dot{\boldsymbol o}$。本体系速度则用 $A^{-1}\dot A$，其右上块为 $R^{\mathrm T}\dot{\boldsymbol o}$，两种表达不能混用。若 $\widehat\xi_s$ 表示恒定速度，时间为 t，则 $A(t)=\exp(t\widehat\xi_s)A(0)$；指数中须用与速度相配的时间，使参数量纲一致。
+
+举例：以 1 rad/s 绕经过 $(1,0,0)$、平行 z 的固定轴纯转。位置以 m 计，t 为以秒计的时间数值；取 $A(0)=I_4$，有 $\omega_s=(0,0,1)$ rad/s、$\boldsymbol v_s=(0,-1,0)$ m/s，而
+
+$$A(t)=\begin{bmatrix}\cos t&-\sin t&0&1-\cos t\\\sin t&\cos t&0&-\sin t\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
+
+在 $t=\pi/2$ 时原点位置 $(1,-1,0)$、速度 $(1,0,0)$，与 $\boldsymbol v_s$ 不同。它仍是纯转，非零的 v 来自旋转轴偏离原点；若再沿轴以恒定速度平移，才得到有轴向进给的螺旋运动。$\omega=0$ 时则是纯平移。本节先掌握有限变换；第 3 章讨论的 $(\dot{\boldsymbol p},\omega)$ 与这里的 twist 须按定义换算，不能仅因为都是六个数就等同。
 :::
 
 <a id="sec-2.7"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
+::: think 默写点 · 合上书再写
 
-不要翻正文与速查卡，先把下面几条默写出来，再展开核对。写不出来，就说明这一节还没有真正「拿走」。
-
-1. 写出齐次变换矩阵 $A$ 的分块结构与它的逆。
-2. 为什么 $A^{-1}\neq A^{\mathrm T}$？
-3. 方向向量（自由向量）的变换用 $A$ 的哪一块？
+1. 点与方向的末分量分别是多少？为什么平移只影响前者？
+2. 写出 A 的逆；整体转置求逆何时成立？
+3. 写出两段合成的旋转块和平移块；谁先作用？
+4. 为什么刚体保持两点距离，却一般不保持点坐标的长度？
 
 ::: sol 核对
-
-$A=\begin{bmatrix}R&\boldsymbol o\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix}$，$A^{-1}=\begin{bmatrix}R^{\mathrm T}&-R^{\mathrm T}\boldsymbol o\\ \boldsymbol 0^{\mathrm T}&1\end{bmatrix}$。
-
-正交性只在**旋转块**内成立；平移块使整个 $4\times4$ 矩阵不再正交。
-
-只用左上块 $R$——自由向量不吃平移。
-
+点取 1、方向取 0，分块式给出 $R\boldsymbol x+w\boldsymbol o$。逆为 $[R^{\mathrm T},-R^{\mathrm T}\boldsymbol o;0,1]$；整体转置等于逆当且仅当平移为 0。$A_1^0A_2^1$ 右侧先作用，块分别为 $R_1^0R_2^1$、$\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1$。两点相减后平移消失；点到不同坐标系原点的距离不必相同。
 :::
-
 :::
 
 ## 2.7 小结与常见错误
 
-- **一个打包**：$\tilde{\boldsymbol p}=[\boldsymbol p;1]$ 把「平移 + 旋转」压缩成一个 $SE(3)$ 矩阵，加法项随之消失，链条变成连乘；求逆则按分块公式 $A^{-1}=\begin{bmatrix}R^T & -R^T\boldsymbol o\\ \boldsymbol 0^T & 1\end{bmatrix}$（最快的推导：设出逆的分块形式，再解方程）。
-- **一条边界**：方向向量（自由向量）的变换只用左上块 $R$，不吃平移。
+- 点用 $[p;1]$，自由方向用 $[d;0]$；底行保持末分量，方向不做除零归一化。
+- 逆的平移是 $-R^{\mathrm T}o$；非零平移时整个 A 不正交，零平移的纯旋转是例外。
+- 连乘要对上坐标系接口；第二段平移先转到前一坐标系才能相加。相同的数值维度不保证标签一致。
+- 补充的 se(3) 是瞬时速度的矩阵空间，空间速度中的 v 一般不是动系原点的线速度。
 
-::: think 常见错误清单 · 自查三条
-1. 把 $A^T$ 当成 $A$ 的逆——正交性只在旋转块内成立（原书式 2.46）；
-2. 齐次坐标乘完后忘记「除以第 4 分量归一化」——本课程恒取第 4 分量为 1，所以这一步可以省略，但读其他教材（透视 / 缩放变换，原书脚注）时会遇到一般情形；
-3. 把 $\boldsymbol o_1^0$ 读成「系 0 原点在系 1 中的坐标」——上下标读反了；记住这句顺口令：**右上块 = 「动系原点用固定系的话说」**。
-:::
+常见错误：把换坐标画成点在运动；把逆平移直接写成 −o；给方向末分量 1；对方向除以末分量 0；只用 det A=1 判断合法性；交换矩阵后仍沿用原换系标签。
+
+下一节 [2.8 正运动学与 DH 法](sec2-8.md) 为相邻连杆建立坐标系，把这里的两段连乘推广到 n 个关节。先独立完成练习 2，再进入建系与参数表。

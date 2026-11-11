@@ -12,24 +12,22 @@
 $$F_e=\begin{bmatrix}f_e\\ \mu_e\end{bmatrix}\in\mathbb R^6\qquad(3\ \text{平动力}+3\ \text{转动力矩}),\qquad
 \tau=[\tau_1,\dots,\tau_n]^{\mathrm T}$$
 
-静力平衡关系（**运动静力学对偶**）：
+以下统一约定 $F_e$ 为**机械臂向环境施加**的末端广义力；环境作用在机械臂上的反作用广义力为 $F_{\mathrm{env}}=-F_e$。$F_e$ 与 $J$ 均在基坐标系表示，力矩参考点取末端原点。忽略重力、摩擦等其他负载时，静力平衡关系（**运动静力学对偶**）为：
 
 $$\boxed{\ \tau=J^{\mathrm T}(q)\,F_e\ }$$
 :::
 
-::: proof 推导（虚功原理，2:27:09–2:27:52 课件页）
-设关节虚位移 $\mathrm dq$，对应末端虚位移 $\mathrm dx_e=J\,\mathrm dq$。
+::: proof 推导（虚功原理，对照 2:27:09–2:27:52 课件页）
+设关节虚位移 $\mathrm dq$，对应末端的虚平移与无穷小虚转角堆叠为 $\mathrm dx_e=J\,\mathrm dq$；后者不是欧拉角增量。
 
-- 关节端做功（关节力矩做的功）：$\mathrm dW_\tau=\tau^{\mathrm T}\mathrm dq$；
-- 末端处外力做的功：$\mathrm dW_F=f_e^{\mathrm T}\mathrm dP_e+\mu_e^{\mathrm T}\omega_e\,\mathrm dt$（外力 $F_e$ 在末端虚位移上做的功）；
+- 关节驱动力矩的虚功：$\mathrm dW_\tau=\tau^{\mathrm T}\mathrm dq$；
+- 环境反作用力的虚功：$\mathrm dW_{\mathrm{env}}=F_{\mathrm{env}}^{\mathrm T}J\,\mathrm dq=-F_e^{\mathrm T}J\,\mathrm dq$。
 
-静态平衡时**系统总虚功为零**（能量守恒，可逆虚位移）：
+静态平衡时**总虚功为零**：
 
-$$\mathrm dW_\tau+\mathrm dW_F=0
-\ \Longrightarrow\ \tau^{\mathrm T}\mathrm dq=-F_e^{\mathrm T}\begin{bmatrix}\mathrm dP_e\\ \omega_e\mathrm dt\end{bmatrix}
-=-F_e^{\mathrm T}J\,\mathrm dq$$
+$$\mathrm dW_\tau+\mathrm dW_{\mathrm{env}}=(\tau^{\mathrm T}-F_e^{\mathrm T}J)\,\mathrm dq=0.$$
 
-对任意 $\mathrm dq$ 成立 ⇒ $\tau^{\mathrm T}=-F_e^{\mathrm T}J$，取转置即 $\tau=J^{\mathrm T}F_e$。□
+对任意 $\mathrm dq$ 成立，故 $\tau^{\mathrm T}=F_e^{\mathrm T}J$，取转置得 $\tau=J^{\mathrm T}F_e$。若把符号用于环境施加的力，则应写成 $\tau=-J^{\mathrm T}F_{\mathrm{env}}$。□
 :::
 
 ![课堂幻灯片 · 02:27:31：虚功原理 ⇒ 关节力矩与末端力的对偶](../assets/ch03/virtual-work.jpg)
@@ -118,7 +116,7 @@ $$\begin{bmatrix}\dot p_1^0\\ \omega_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&-R_1^
 
 ::: sol 核对
 
-设关节虚位移 $\mathrm dq$，末端虚位移 $\mathrm dx_e=J\mathrm dq$。关节端做功 $\tau^{\mathrm T}\mathrm dq$，末端处外力做功 $-F_e^{\mathrm T}J\mathrm dq$；静态平衡时总虚功为零 ⇒ $\tau^{\mathrm T}=-F_e^{\mathrm T}J$，取转置即 $\boldsymbol\tau=J^{\mathrm T}F_e$。
+取 $F_e$ 为机械臂向环境施加的力，环境反作用力为 $-F_e$。由 $\mathrm dx_e=J\mathrm dq$，总虚功为 $(\tau^{\mathrm T}-F_e^{\mathrm T}J)\mathrm dq=0$，对任意虚位移成立，故 $\tau^{\mathrm T}=F_e^{\mathrm T}J$，即 $\boldsymbol\tau=J^{\mathrm T}F_e$。
 
 因为能量必须守恒：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau=\boldsymbol v_e^{\mathrm T}F_e=(J\dot{\boldsymbol q})^{\mathrm T}F_e=\dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}F_e$，对任意 $\dot{\boldsymbol q}$ 成立。**无需方阵、无需满秩**——这正是对偶比求逆更普适之处。
 

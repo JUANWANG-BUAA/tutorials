@@ -2,7 +2,7 @@
 
 ## 第一编 · 引言：机器人学的骨架
 
-第一章的任务是把「机器人」这件事的骨架立起来：**机器人是什么**（定义与四子系统，[1.1](ch01/sec1-1.md)）；**它的身体长什么样**——固定底座的机械手（[1.2](ch01/sec1-2.md)）与移动底座的移动机器人（[1.3](ch01/sec1-3.md)）；**它在哪里工作**——结构化环境的工业机器人学与弱结构环境的先进机器人学（[1.4](ch01/sec1-4.md)）；**研究它的什么**——建模、规划、控制三大主题与全书十二章的映射（[1.5](ch01/sec1-5.md)）。学习时建议按箭头顺序自检「前一环是否真正懂了」。
+第一章先看机器人的定义与四子系统（[1.1](ch01/sec1-1.md)），再看机械手（[1.2](ch01/sec1-2.md)）与移动底盘（[1.3](ch01/sec1-3.md)）的结构边界。部署要求分项分析（[1.4](ch01/sec1-4.md)）；建模、规划与控制把这些要求转成可计算的问题（[1.5](ch01/sec1-5.md)）。图底行按原书编号，本站七章与原书主题的对应入口见 §1.5.4。
 
 <figure>
 <svg height="500" viewBox="0 0 920 500" width="920" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +29,7 @@
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="180" x="10" y="298"></rect><text fill="var(--fig-red, #c96a5a)" x="100" y="323">工业机器人学（结构化）</text>
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="190" x="230" y="298"></rect><text fill="var(--fig-red, #c96a5a)" x="325" y="323">三能力：搬运/操作/测量</text>
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="220" x="460" y="298"></rect><text fill="var(--fig-red, #c96a5a)" x="570" y="323">先进机器人学（野外 / 服务）</text>
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="150" x="720" y="298"></rect><text fill="var(--fig-red, #c96a5a)" x="795" y="323">自治性谱系</text>
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="150" x="720" y="298"></rect><text fill="var(--fig-red, #c96a5a)" x="795" y="323">四问分别分析</text>
 <!-- 第3行: 方法论路线图 -->
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="170" x="10" y="408"></rect><text fill="var(--fig-blue)" x="95" y="433">建模（第2,3,7,11章）</text>
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="190" x="220" y="408"></rect><text fill="var(--fig-blue)" x="315" y="433">规划（第4,11,12章）</text>
@@ -46,8 +46,8 @@
 </g>
 <g font-size="12" fill="var(--muted)" text-anchor="middle">
 <text x="460" y="120">身体：两类机械结构</text>
-<text x="460" y="285">用武之地：从结构化到开放环境</text>
-<text x="460" y="395">方法论：全书十二章的骨架</text>
+<text x="460" y="285">部署：环境、变化、风险与决策分工</text>
+<text x="460" y="395">方法论：以下使用原书章号，教程入口见 §1.5.4</text>
 </g>
 </svg>
 </figure>
@@ -56,8 +56,8 @@
 
 - **蓝（顶行）**：「感知与行为之间的智能联系」+ 四子系统闭环——全章总纲。
 - **金绿（两类身体）**：机械手（构形 / 拓扑 / 腕解耦）与轮系布局（机动性），在移动机械手处汇合。
-- **红（两个世界）**：结构化环境有限自治、开放环境强自治——同一身体，不同「智力预算」。
-- **底行**：建模 → 规划 → 控制，每框标注对应章节，学完全书应能逐框复述。
+- **红（部署问题）**：结构名称不能代替环境与任务分析，四问不合成为“先进程度”。
+- **底行**：框内为原书章节；教程第六章对应原书第七章，第七章对应原书第八章。未收录的原书主题在 §1.5.4 标明。
 
 ## 第二编 · 运动学：描述与传递的代数
 

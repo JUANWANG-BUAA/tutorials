@@ -564,6 +564,10 @@ def render_box(node, table: LabelTable, where: str) -> str:
             parts.append(render_box(val, table, where))
     inner_md = normalize_emphasis("\n\n".join(parts))
     inner_html = md_render(inner_md) if inner_md.strip() else ""
+    # pre 中的换行属于代码内容。转成字符引用既保留空行/缩进，也不会结束外层 HTML 块。
+    inner_html = re.sub(r"<pre\b[^>]*>.*?</pre>",
+                        lambda match: match.group(0).replace("\n", "&#10;"),
+                        inner_html, flags=re.S | re.I)
     # 关键：抹掉空行，使整个盒子成为 pulldown-cmark 眼中的**一个** HTML 块。
     inner_html = re.sub(r"\n\s*\n+", "\n", inner_html).strip()
     return f"{emit_open(node, table, where)}\n{inner_html}\n{emit_close(node)}"

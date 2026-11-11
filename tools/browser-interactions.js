@@ -48,6 +48,19 @@ async (hostPage) => {
   check(await pan.evaluate(el => el.scrollWidth > el.clientWidth), 'mobile diagrams retain readable size and pan horizontally');
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'mobile figures do not widen the document');
 
+  await visit('robot/ch02/sec2-8.html');
+  await page.waitForSelector('main .term');
+  check(await page.locator('main svg .term').count() === 0, 'glossary enhancement preserves SVG teaching labels');
+
+  await visit('robot/ch01/sec1-1.html');
+  const prewrappedPan = page.locator('#fig-robot-system > .fig-scroll');
+  check(await prewrappedPan.evaluate(el => el.tabIndex === 0 && el.getAttribute('role') === 'region' && !!el.getAttribute('aria-label')), 'prewrapped diagrams have named keyboard-accessible scroll regions');
+  await prewrappedPan.focus();
+  const prewrappedURL = page.url();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForFunction(() => document.querySelector('#fig-robot-system > .fig-scroll').scrollLeft > 0);
+  check(page.url() === prewrappedURL, 'arrows pan prewrapped diagrams without navigating chapters');
+
   await visit('robot/ch02/sec2-1.html');
   const imageFigure = page.locator('main figure[data-zoomable="1"]').filter({ has: page.locator('img') }).first();
   await imageFigure.focus();

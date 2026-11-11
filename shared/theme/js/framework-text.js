@@ -100,7 +100,7 @@
    * ------------------------------------------------------------------ */
   var TERM_MAX_PER_PAGE = 40;
   var TERM_TOO_FREQUENT = 12;
-  var TERM_SKIP_SELECTOR = "pre, code, a, h1, h2, h3, h4, h5, h6, script, style, .katex, .term, .box-tag, .page-toc, #page-rail, #term-popover, summary, button";
+  var TERM_SKIP_SELECTOR = "pre, code, a, svg, h1, h2, h3, h4, h5, h6, script, style, .katex, .term, .box-tag, .page-toc, #page-rail, #term-popover, summary, button";
   var termPopover = null;
   var termHideTimer = 0;
   var activeTerm = null;

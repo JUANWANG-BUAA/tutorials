@@ -19,7 +19,7 @@
 | 正交性 | $R^{\mathrm T}R=I$，即 $R^{-1}=R^{\mathrm T}$ | [@def-2.2.2] |
 | 行列式 | $\det R=+1$（$=-1$ 是镜像，不是旋转） | [@def-2.2.2] |
 | 独立参数 | $9$ 量 $-6$ 约束 $=3$ | [@def-2.2.1] |
-| 列的含义 | $R$ 的第 $j$ 列 = 系 $j$ 的 $x_j$ 轴在系 $i$ 中的方向余弦 | [@def-2.2.1] |
+| 列的含义 | $R_j^i$ 的第 1、2、3 列分别为系 $j$ 的 $x_j,y_j,z_j$ 三轴在系 $i$ 中的坐标 | [@def-2.2.1] |
 
 **三重身份**（同一矩阵、三种读法）：姿态**描述** / 坐标**变换** / 旋转**算子**——[@thm-2.2.B]。
 
@@ -29,15 +29,17 @@ $$R_x(\vartheta)=\begin{bmatrix}1&0&0\\0&c_\vartheta&-s_\vartheta\\0&s_\vartheta
 R_y(\vartheta)=\begin{bmatrix}c_\vartheta&0&s_\vartheta\\0&1&0\\-s_\vartheta&0&c_\vartheta\end{bmatrix},\quad
 R_z(\vartheta)=\begin{bmatrix}c_\vartheta&-s_\vartheta&0\\s_\vartheta&c_\vartheta&0\\0&0&1\end{bmatrix}$$
 
+正方向：从转轴正端朝原点看为逆时针（右手定则）。主动转向量：$\boldsymbol v_{\rm after}=R\boldsymbol v_{\rm before}$；共原点坐标换算：$\boldsymbol p^i=R_j^i\boldsymbol p^j$，反向用转置。两系原点不同时，点坐标还须处理平移。
+
 ### A3 合成规则（一切序列的母规则）
 
 | 情形 | 做法 | 出处 |
 |:--|:--|:--|
-| 绕**当前**轴（动系）连续转 | **右乘** $R=R_1R_2R_3$ | [@thm-2.3.A] |
-| 绕**固定**轴（定系）连续转 | **左乘** $R=R_3R_2R_1$ | [@thm-2.3.B] |
-| 旋转不可交换 | $R_1R_2\neq R_2R_1$ | [@ex-book-2.3] |
+| 绕**当前**轴（动系）依次转 $B_1,B_2,B_3$ | **右乘** $R=R_0B_1B_2B_3$ | [@thm-2.3.A] |
+| 绕**固定**轴（定系）依次转 $S_1,S_2,S_3$ | **左乘** $R=S_3S_2S_1R_0$ | [@thm-2.3.B] |
+| 一般不可交换 | 一般有 $R_1R_2\neq R_2R_1$；同轴、零角等情况可相等 | [@ex-book-2.3] |
 
-> **口诀**：右乘当前轴、左乘固定轴。ZYZ / RPY 的对偶、DH 的 $A_i$ 连乘、角和轴的五步序列，全是这一条的换装登场。
+> **口诀**：当前右、固定左，保留初始姿态 $R_0$。从 $I$ 出发，固定轴序列与轴角成对倒序的当前轴序列终态相同；ZYZ 与 RPY 的轴序列不同，不能把同一组三个角直接互换。
 
 ### A4 ZYZ 欧拉角（绕当前轴，右乘）
 
@@ -54,9 +56,11 @@ $$\varphi=\operatorname{Atan2}(r_{23},r_{13}),\quad
 \vartheta=\operatorname{Atan2}\!\Big(\sqrt{r_{13}^2+r_{23}^2},\ r_{33}\Big),\quad
 \psi=\operatorname{Atan2}(r_{32},-r_{31})$$
 
-第二支：三个宗量整体变号（$\vartheta$ 取 $(-\pi,0)$）。**奇点** $s_\vartheta=0$：只能定 $\varphi\pm\psi$，见 [@thm-2.4.B]。
+第二支可取 $(\varphi+\pi,-\vartheta,\psi+\pi)$，首末角按周期规范；$\vartheta$ 式的 $r_{33}$ 不变号。**奇点**：$\vartheta=0$ 只定 $\varphi+\psi$，$\vartheta=\pi$ 只定 $\varphi-\psi$，见 [@thm-2.4.B]。
 
 ### A5 RPY 角（绕固定轴，左乘）
+
+从 $I$ 出发，实际发生顺序为固定 $x$ 轴转 $\psi$（滚转）→ 固定 $y$ 轴转 $\vartheta$（俯仰）→ 固定 $z$ 轴转 $\varphi$（偏航）。因子从左追加，得到下式；也可读为当前轴 $z(\varphi)\to y(\vartheta)\to x(\psi)$。
 
 $$R(\boldsymbol\phi)=R_z(\varphi)R_y(\vartheta)R_x(\psi)=
 \begin{bmatrix}
@@ -71,9 +75,9 @@ $$\varphi=\operatorname{Atan2}(r_{21},r_{11}),\quad
 \vartheta=\operatorname{Atan2}\!\Big(-r_{31},\sqrt{r_{11}^2+r_{21}^2}\Big),\quad
 \psi=\operatorname{Atan2}(r_{32},r_{33})$$
 
-**奇点** $c_\vartheta=0$（俯仰 $\pm90°$）。角名：roll 绕纵轴 $x$、pitch 绕 $y$、yaw 绕竖轴 $z$。
+第二支可取 $(\varphi+\pi,\pi-\vartheta,\psi+\pi)$，各角按周期规范。$\vartheta$ 的第二支为 $\operatorname{Atan2}(-r_{31},-\sqrt{r_{11}^2+r_{21}^2})$，其中 $-r_{31}$ 不变号。**奇点**：$\vartheta=+90°$ 只定 $\varphi-\psi$，$\vartheta=-90°$ 只定 $\varphi+\psi$。角名：roll 绕 $x$、pitch 绕 $y$、yaw 绕 $z$。
 
-> **为什么反解一律用 Atan2**：$\arccos$ 的值域只有 $[0,\pi]$（不唯一），且导数 $(\arccos x)'=-1/\sqrt{1-x^2}$ 在 $x\to\pm1$ 处无界（误差被无限放大）；$(\arctan x)'=1/(1+x^2)\le1$ 处处有界。见 [@thm-2.4.A]。
+> **Atan2 的用途与边界**：$\operatorname{Atan2}(y,x)$ 用两个符号保留象限；输入半径 $\rho=\sqrt{x^2+y^2}$ 时，梯度模为 $1/\rho$。ZYZ 首末角的 $\rho=|\sin\vartheta|$，RPY 为 $|\cos\vartheta|$，趋零仍病态；原点无方向。$\arccos$ 可用于已选定的 $[0,\pi]$ 主支，但单个余弦不足以判完整象限，且近 $\pm1$ 敏感。见 [@thm-2.4.A]。
 
 ### A6 角和轴（4 参数，Rodrigues 公式）
 
@@ -88,13 +92,13 @@ r_xr_z(1-c_\vartheta)-r_ys_\vartheta & r_yr_z(1-c_\vartheta)+r_xs_\vartheta & r_
 | 合成路径 | $R_z(\alpha)R_y(\beta)R_z(\vartheta)R_y(-\beta)R_z(-\alpha)$（全左乘） | [@def-2.5.1] |
 | 紧凑形式 | $R=c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$ | [@pf-2.5.rodrigues] |
 | 由 $R$ 求角（取迹） | $\cos\vartheta=\dfrac{r_{11}+r_{22}+r_{33}-1}{2}$ | [@def-2.5.1] |
-| 由 $R$ 求轴（取反对称部分） | $\boldsymbol r=\dfrac{1}{2s_\vartheta}[r_{32}-r_{23},\ r_{13}-r_{31},\ r_{21}-r_{12}]^{\mathrm T}$ | [@def-2.5.1] |
-| 指数映射 | $R(\vartheta,\boldsymbol r)=\exp\big(\vartheta S(\boldsymbol r)\big)=I+\sin\vartheta\,S+(1-\cos\vartheta)\,S^2$（幂次三循环 $S^2=\boldsymbol r\boldsymbol r^{\mathrm T}-I$、$S^3=-S$） | [@thm-2.5.D] |
-| 对数映射 | $\log R=\vartheta S(\boldsymbol r)=\dfrac{\vartheta}{2s_\vartheta}(R-R^{\mathrm T})$ | [@thm-2.5.E] |
+| 由 $R$ 求轴（取反对称部分） | $\boldsymbol r=\dfrac{1}{2\sin\vartheta}[r_{32}-r_{23},\ r_{13}-r_{31},\ r_{21}-r_{12}]^{\mathrm T}$，仅限 $0<\vartheta<\pi$；先查正交性与 det=1 | [@thm-2.5.B] |
+| 指数映射 | $R=\exp(\vartheta S)=I+\sin\vartheta S+(1-\cos\vartheta)S^2$；$\phi=\vartheta\boldsymbol r$ 是三维指数坐标；$S^2=\boldsymbol r\boldsymbol r^{\mathrm T}-I$、$S^3=-S$，非零幂四周期 | [@thm-2.5.D] |
+| 对数映射 | $\operatorname{Log}R=\dfrac{\vartheta}{2\sin\vartheta}(R-R^{\mathrm T})$，$0<\vartheta<\pi$；摘帽为 $\phi=\vartheta\boldsymbol r$；主支 $\operatorname{Log}I=0$，半圈取 $\pm\pi S(\boldsymbol r)$ | [@thm-2.5.E] |
 | 不唯一 | $R(-\vartheta,-\boldsymbol r)=R(\vartheta,\boldsymbol r)$ | [@thm-2.5.A] |
-| 失效 | $s_\vartheta=0$：$\vartheta=0$ 轴任意；$\vartheta=\pi$ 反对称部分为零（对角线 $r_i^2=(r_{ii}+1)/2$ 另解） | [@thm-2.5.B] |
+| 逆解端点 | 主角 $[0,\pi]$；零角轴任意、主向量为零；半圈 $B=(R+I)/2$，取最大 $B_{kk}$，$r_k=\sqrt{B_{kk}}$、$r_i=B_{ik}/r_k$，整体正负等价 | [@thm-2.5.B] |
 
-### A7 单位四元数（4 参数，无逆解奇点）
+### A7 单位四元数（4 参数，提取须选稳定支路）
 
 $$\eta=\cos\frac{\vartheta}{2},\qquad\boldsymbol\epsilon=\sin\frac{\vartheta}{2}\,\boldsymbol r,\qquad\eta^2+|\boldsymbol\epsilon|^2=1$$
 
@@ -104,10 +108,13 @@ $$R(\eta,\boldsymbol\epsilon)=\begin{bmatrix}
 2(\epsilon_x\epsilon_z-\eta\epsilon_y) & 2(\epsilon_y\epsilon_z+\eta\epsilon_x) & 2(\eta^2+\epsilon_z^2)-1
 \end{bmatrix}$$
 
-$$\eta=\tfrac12\sqrt{r_{11}+r_{22}+r_{33}+1},\qquad
-\boldsymbol\epsilon=\tfrac12\begin{bmatrix}\operatorname{sgn}(r_{32}-r_{23})\sqrt{r_{11}-r_{22}-r_{33}+1}\\ \operatorname{sgn}(r_{13}-r_{31})\sqrt{r_{22}-r_{33}-r_{11}+1}\\ \operatorname{sgn}(r_{21}-r_{12})\sqrt{r_{33}-r_{11}-r_{22}+1}\end{bmatrix}$$
+稳定提取：确认 $R\in SO(3)$ 后，按 [@method-2.6.extract] 用矩阵元素构造对称矩阵 $H=4qq^{\mathrm T}$。其对角依次为 $1+r_{11}+r_{22}+r_{33}$、$1+r_{11}-r_{22}-r_{33}$、$1-r_{11}+r_{22}-r_{33}$、$1-r_{11}-r_{22}+r_{33}$；非对角为 $H_{01}=r_{32}-r_{23}$、$H_{02}=r_{13}-r_{31}$、$H_{03}=r_{21}-r_{12}$、$H_{12}=r_{12}+r_{21}$、$H_{13}=r_{13}+r_{31}$、$H_{23}=r_{23}+r_{32}$。
 
-逆 $Q^{-1}=\{\eta,-\boldsymbol\epsilon\}$；乘积 $Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}$。见 [@def-2.6.1]、[@thm-2.6.A]。
+$$k=\arg\max_j H_{jj},\qquad q_k=\tfrac12\sqrt{H_{kk}}\ge\tfrac12,\qquad q_i=\frac{H_{ik}}{4q_k}.$$
+
+原书式 2.34–2.35 的逐分量符号法在 $\eta>0$ 时可用，精确半圈不能从反对称差定相对符号，见 [E2.7](ch02/errata.md#errata-2.7)。选最大分量为正仍可能跨支整体反号；连续跟踪另需相邻四维点积对齐。
+
+逆 $Q^{-1}=\{\eta,-\boldsymbol\epsilon\}$；Hamilton 乘积 $Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}$ 对应 $R_1R_2$，右侧 $Q_2$ 先作用。见 [@ex-2.6.C]。
 
 ### A8 齐次变换（$SE(3)$）
 
@@ -115,7 +122,9 @@ $$\tilde{\boldsymbol p}=\begin{bmatrix}\boldsymbol p\\1\end{bmatrix},\qquad
 A_1^0=\begin{bmatrix}R_1^0&\boldsymbol o_1^0\\\boldsymbol 0^{\mathrm T}&1\end{bmatrix},\qquad
 A_0^1=(A_1^0)^{-1}=\begin{bmatrix}R_1^{0\mathrm T}&-R_1^{0\mathrm T}\boldsymbol o_1^0\\\boldsymbol 0^{\mathrm T}&1\end{bmatrix}$$
 
-连乘：$\tilde{\boldsymbol p}^0=A_1^0A_2^1\cdots A_n^{n-1}\tilde{\boldsymbol p}^n$（[@thm-2.7.A]）。
+点 $[p;1]$，方向 $[d;0]$；$A[x;w]=[Rx+wo;w]$，方向不能除以末分量 0。整体转置等于逆当且仅当 $o=0$。
+
+连乘 $A_2^0=A_1^0A_2^1$，块为 $R_1^0R_2^1$、$o_1^0+R_1^0o_2^1$；右侧先作用，坐标系接口须相接。一般链为 $\tilde p^0=A_1^0\cdots A_n^{n-1}\tilde p^n$。见 [@thm-2.7.A]、[@ex-2.7.C]。
 
 > **两条纪律**：$A^{-1}\neq A^{\mathrm T}$（正交性只在旋转块内成立）；方向向量（自由向量）的变换只用左上块 $R$，不吃平移。
 
@@ -134,20 +143,20 @@ s_{\vartheta_i} & c_{\vartheta_i}c_{\alpha_i} & -c_{\vartheta_i}s_{\alpha_i} & a
 
 两步分解：先「沿 $z_{i-1}$ 平移 $d_i$ + 绕 $z_{i-1}$ 转 $\vartheta_i$」，再「沿 $x_i$ 平移 $a_i$ + 绕 $x_i$ 转 $\alpha_i$」，右乘合成（[@method-2.8.A]）。
 
-**第 4 列就是三参数的「肉身」**：$(a_ic_{\vartheta_i},\ a_is_{\vartheta_i},\ d_i)$；旋转块 = 绕 $z$ 转 $\vartheta$ $\oplus$ 绕 $x$ 转 $\alpha$。
+第 4 列前三项 $(a_ic_{\vartheta_i},\ a_is_{\vartheta_i},\ d_i)$ 是新系原点在旧系中的位置；旋转块为 $R_z(\vartheta_i)R_x(\alpha_i)$。
 
-### B2 DH 四规则（每条各管一个参数）
+### B2 DH 建系与四参数
 
-**记忆主线 · 看守模型（[@method-2.8.watch]）**：系 $i-1$ 看守关节 $i$——$z_{i-1}$ 就是关节 $i$ 的轴线；杆 $i$ 固连系 $i$（原点在关节 $i+1$ 轴上）。建系四步实例见 [@method-2.8.anthro]。
+**记忆主线 · 看守模型（[@method-2.8.watch]）**：系 $i-1$ 看守关节 $i$——$z_{i-1}$ 就是关节 $i$ 的轴线；杆 $i$ 固连系 $i$（i<n 时原点在关节 i+1 轴上，末杆系另选）。建系四步实例见 [@method-2.8.anthro]。
 
 | 规则 | 服务的参数 | 为什么 |
 |:--|:--|:--|
-| $z_i$ 沿**关节 $i+1$** 的轴线 | $\vartheta_i,d_i$（**变量**） | 关节运动就是「绕/沿自己的轴」，在 $A$ 里恰表现为绕 $z_{i-1}$ 转 / 沿 $z_{i-1}$ 移 |
-| 原点 $o_i$ 取在公垂线交点、$x_i$ 沿公垂线 | $a_i$（常数） | 两根 $z$ 轴的相对位置由公垂线一锤定音 |
+| $z_{i-1}$ 沿**关节 $i$** 的轴线 | $\vartheta_i$ 或 $d_i$ 为变量 | 关节运动在 $A$ 里表现为绕 $z_{i-1}$ 转或沿 $z_{i-1}$ 移 |
+| 原点 $o_i$ 取在公垂线交点、$x_i$ 沿公垂线 | $a_i$（常数） | 公垂线给两轴的间距；垂足相对旧原点的位置还须用 $d_i$ 描述 |
 | 同一对 $z$ 轴的方向关系 | $\alpha_i$（常数） | 方向差只剩绕 $x_i$ 的一个转角 |
 | $y_i$ 右手系补齐 | — | 只保证 $R\in SO(3)$ |
 
-**总原则**：能自由选取的地方「**让参数尽量为零**」（[@method-2.8.zero]）——2.9 各表里成片的 $0$ 就是这条的兑现。
+**特殊情形**：平行 R 可选 $d_i=0$，P 则在参考行程选固连原点，运动后 $d_i$ 仍变；相交但不平行时 $x_i$ 须垂直两轴；反向平行轴可取扭角 $\pi$。合法简化固定项，不能改几何或消掉活动量。
 
 **3 常 1 变**：$a_i,\alpha_i$ 恒为常数；$d_i,\vartheta_i$ 中恰有一个是关节变量 $q_i$（转动关节 $q_i=\vartheta_i$、移动关节 $q_i=d_i$）——[@def-2.8.3]。
 
@@ -155,20 +164,20 @@ s_{\vartheta_i} & c_{\vartheta_i}c_{\alpha_i} & -c_{\vartheta_i}s_{\alpha_i} & a
 
 1. 关节轴编号，定 $z_0,\dots,z_{n-1}$；2. 选系 0；3. 对 $i=1..n-1$ 定 $o_i$；
 4. 沿公垂线取 $x_i$；5. 右手系补 $y_i$；6. 选系 $n$；7. 列 $4n$ 参数表；
-8. 逐个算 $A_i^{i-1}$；9. 连乘得 $T_n^0(q)$；10. 串常值变换 $T_b^0,T_e^n$ 得 $T_e^b$。
+8. 逐个算 $A_i^{i-1}$；9. 连乘得 $T_n^0(q)$；10. 串常值变换 $T_0^b,T_e^n$ 得 $T_e^b$。
 
-> **课堂口诀**：编号、建系（能零则零）、列参数表、代入、连乘。
+> 先标正轴与零位，再建系、列参数、连乘，并用独立几何核对。
 
 ### B4 两个空间、工作空间与冗余
 
-$$\boldsymbol x_e=k(\boldsymbol q),\qquad T_e^b(\boldsymbol q)=T_b^0\,T_n^0(\boldsymbol q)\,T_e^n,\qquad
+$$\boldsymbol x_e=k(\boldsymbol q),\qquad T_e^b(\boldsymbol q)=T_0^b\,T_n^0(\boldsymbol q)\,T_e^n,\qquad
 T_n^0=A_1^0A_2^1\cdots A_n^{n-1}$$
 
 | 概念 | 内容 | 出处 |
 |:--|:--|:--|
-| 可达 ⊇ 灵活 | 可达 = 至少一个方向能到；灵活 = 任意方向都能到 | [@def-2.10.2] |
-| 精度 ≠ 重复精度 | 精度 = 指令位姿与真实位姿的差；重复精度 = 多次回同一点的散布 | [@def-2.10.2] |
-| 冗余判据 | $n$ 关节数、$m$ 操作空间维数、$r$ 任务实际用到的维数；$n>r$ 即冗余 | [@def-2.10.3] |
+| 可达 ⊇ 灵活 | 可达位置是整个允许关节域的像；灵活须能实现规定方向集合中的每一种方向 | [@def-2.10.2] |
+| 精度 ≠ 重复精度 | 定位精度看目标偏差；重复精度看同条件回访散布，须统一测试口径 | [@note-2.10.acc] |
+| 冗余与瞬时核 | $n$ 独立关节数、$m$ 结构适配的完整位姿维数、$r$ 任务独立约束数；正常点行满秩时局部自由度 $n-r$，一般核维数 $n-\operatorname{rank}J_{\rm task}$ | [@def-2.10.3] |
 
 ### B5 运动学标定
 
@@ -176,7 +185,7 @@ $$\Delta\boldsymbol x=\Phi\,\Delta\boldsymbol\xi,\qquad
 \Delta\boldsymbol\xi=(\Phi^{*\mathrm T}\Phi^*)^{-1}\Phi^{*\mathrm T}\Delta\boldsymbol x^*,\qquad
 \boldsymbol\xi'=\boldsymbol\xi+\Delta\boldsymbol\xi$$
 
-$\Phi$ 为 $m\times4n$ 标定矩阵，$\Delta\boldsymbol\xi$ 为 $4n$ 维参数偏差。量测条件 $tm\ge4n$（**宜远大于**，防 $\Phi$ 病态）；因 $k$ 非线性，须**迭代**。见 [@method-2.11.steps]。
+$\Phi$ 为 $m\times p$ 标定矩阵，$\Delta\boldsymbol\xi$ 为实际可辨识参数子集的偏差，且 $p\le4n$；$4n$ 只是把四列 DH 表项全部列出的上限写法。量测条件是 $tm\ge p$（**宜远大于**，还须列满秩、条件数可接受）；因 $k$ 非线性，须**迭代**。见 [@method-2.11.steps]。
 
 ---
 
@@ -196,7 +205,7 @@ $$\boldsymbol p_w=\boldsymbol p_e-d_6\,\boldsymbol a_e$$
 4. 解**腕**：由 $(R_3^0)^{\mathrm T}R_e=R_6^3$ 反解 $(q_4,q_5,q_6)$；
 5. 整理全部解支。
 
-**腕 = ZYZ 反解**：球形腕的姿态部分与 ZYZ 欧拉角反解同构（A4 的公式直接可用）。
+**本表腕 = ZYZ 反解**：§2.9.5 的扭角与零位给出 $R_6^3=R_z(\vartheta_4)R_y(\vartheta_5)R_z(\vartheta_6)$，可用 A4 并保留奇异分支；其他选系先换算，不能只凭三轴共点直接套关节读数。
 
 > **数解支的口诀**：位置解给「臂」的支数（平面臂 2 支 = 肘上 / 肘下，拟人臂 4 支），方向解给「腕」的支数（球腕 2 支 = 翻转），总数 = 臂 × 腕。
 
@@ -213,7 +222,7 @@ $$\dot R=S(\boldsymbol\omega)R,\qquad
 S(\boldsymbol\omega)=\begin{bmatrix}0&-\omega_z&\omega_y\\\omega_z&0&-\omega_x\\-\omega_y&\omega_x&0\end{bmatrix},\qquad
 S(\boldsymbol\omega)\boldsymbol p\equiv\boldsymbol\omega\times\boldsymbol p$$
 
-推导链：$RR^{\mathrm T}=I$ 求导 ⇒ $\dot RR^{\mathrm T}$ 反对称 ⇒ 用常模向量比对 $\boldsymbol\omega\times\boldsymbol r$ 认出 $S=S(\boldsymbol\omega)$（[@thm-3.1.A]）。共轭关系 $RS(\boldsymbol\omega)R^{\mathrm T}=S(R\boldsymbol\omega)$（[@thm-3.1.B]，已在 [2.5](ch02/sec2-5.md#sec-2.5.1) 作为工具证明）。李代数读法：$\boldsymbol\omega=(\dot RR^{\mathrm T})^\vee$（基系读数），$R^{\mathrm T}\dot R$ 给刚体系读数（[@note-3.1.lie]）——「角速度 = $so(3)$ 的元素」（[2.5.3](ch02/sec2-5.md#sec-2.5.3)）。
+推导链：$RR^{\mathrm T}=I$ 求导 ⇒ $\dot RR^{\mathrm T}$ 反对称 ⇒ 认出 $S(\boldsymbol\omega)$（[@thm-3.1.A]）。共轭关系见 [@thm-3.1.B]。$\boldsymbol\omega=(\dot RR^{\mathrm T})^\vee\in\mathbb R^3$ 是基系角速度，$R^{\mathrm T}\dot R$ 给刚体系分量；$S(\boldsymbol\omega)\in so(3)$，不能混淆向量与矩阵。
 
 ### D2 逐列构造（绿框，**必考**）
 
@@ -225,15 +234,19 @@ J_i=\begin{bmatrix}J_{P_i}\\J_{O_i}\end{bmatrix},\qquad
 
 | 量 | 从哪读 |
 |:--|:--|
-| $z_{i-1}$ | $T_{i-1}^0$ 左上 $3\times3$ 块的**第三列**（基系表示，**不是** $[0,0,1]^{\mathrm T}$！） |
+| $z_{i-1}$ | $T_{i-1}^0$ 左上 $3\times3$ 块的**第三列**（基系表示，不能预设为 $[0,0,1]^{\mathrm T}$；平面平行轴可恰好相等） |
 | $\boldsymbol p_{i-1}$ | $T_{i-1}^0$ 第四列前三行 |
-| $\boldsymbol p_e$ | $T_n^0$ 第四列前三行 |
+| $\boldsymbol p_e$ | $T_e^0=T_n^0T_e^n$ 第四列前三行；末端点与第 $n$ 系原点重合时才可直接取 $T_n^0$ |
 
 **物理含义**：其余关节全部锁死时，单个关节的单位速度对末端速度的贡献。
 
 ### D3 换到别的坐标系
 
+若 $R^u$ 表示把基坐标系中的分量转换为 $u$ 坐标系中的分量（$v^u=R^u v^0$），则
+
 $$J^u=\begin{bmatrix}R^u&0\\0&R^u\end{bmatrix}J$$
+
+此式只改变同一末端点速度向量的表达基；移动取速度的点或求相对于运动参考系的速度，还需要额外项。
 
 ### D4 奇点
 
@@ -249,7 +262,7 @@ $$\det J(\boldsymbol q)=0$$
 ### D5 冗余与零空间
 
 $$n>r\ \Longrightarrow\ \mathcal N(J)\neq\{0\},\qquad
-P=NN^{\mathrm T}\ (\text{秩 }n-r),\qquad
+P=NN^{\mathrm T}\ (\text{秩 }n-\operatorname{rank}J;\ \text{行满秩时 }n-r),\qquad
 \dot{\boldsymbol q}=\dot{\boldsymbol q}^*+P\dot{\boldsymbol q}_0$$
 
 $P\dot{\boldsymbol q}_0$ 在零空间里，**不惊动末端**（$JP\dot{\boldsymbol q}_0=0$）——用来做内部运动 / 再配置（避障、躲关节极限、远离奇异）。见 [@def-3.4.1]、[@thm-3.4.B]。
@@ -260,12 +273,12 @@ $P\dot{\boldsymbol q}_0$ 在零空间里，**不惊动末端**（$JP\dot{\boldsy
 |:--|:--|:--|:--|
 | 方阵满秩 | $J^{-1}$ | $\dot{\boldsymbol q}=J^{-1}\boldsymbol v_e$，配数值积分 $\boldsymbol q_{k+1}=\boldsymbol q_k+J^{-1}\boldsymbol v_e\Delta t$ | $n=r$、无奇异 |
 | 长方（冗余） | $J^\dagger$ | $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | $r<n$、行满秩 |
-| 退化（奇异邻域） | $J^*$ | $J^{*}=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$；$W=I,K=k^2I$ 时 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | 容许末端误差 $\delta$ |
+| 退化（奇异邻域） | $J^*$ | $J^{*}=W^{-1}J^{\mathrm T}(JW^{-1}J^{\mathrm T}+K^{-1})^{-1}$；$W=I,K=k^{-2}I,k>0$ 时 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | 容许末端误差 $\delta$ |
 
 见 [@def-3.5.1]、[@def-3.5.2]。
 
 > **口诀**：方阵求逆、矮胖求伪逆、退化加阻尼。
-> **$K$ 的取法**：奇点邻域取**大**（压住发散），远离奇点取**小甚至趋 0**（退回伪逆）。
+> **参数别混**：取 $K=k^{-2}I$、$k>0$。奇点邻域可增大阻尼 $k$（减小误差权重 $K$），以任务误差限制关节速度；$J$ 行满秩时 $k\to0^+$ 才趋于右伪逆。
 
 **$\dot{\boldsymbol q}_0$ 的三种取法**（都取 $k_0(\partial g/\partial\boldsymbol q)^{\mathrm T}$，最大化 $g$）：
 
@@ -401,7 +414,9 @@ $$\theta_f=\arccos\!\Big(\frac{r_{11}+r_{22}+r_{33}-1}{2}\Big),\qquad
 r'=\frac{1}{2\sin\theta_f}\begin{bmatrix}r_{32}-r_{23}\\ r_{13}-r_{31}\\ r_{21}-r_{12}\end{bmatrix},\qquad
 \omega'=\dot\theta\,r'$$
 
-**两次降维**：位置落在 $s(t)$、姿态落在 $\theta(t)$——都是一维标量，直接复用关节空间的方法。
+角轴逆解中的轴公式只适用于 $0<\theta_f<\pi$；零角和半圈按 [@thm-2.5.B] 处理。相对插值 $R_i\exp(s\operatorname{Log}(R_i^{\mathrm T}R_f))$ 的轴分量在初始工具系中，半圈需选路径。
+
+**两次降维**：位置落在 $s(t)$、姿态落在 $\theta(t)$，固定路径后可复用一维标量规划。
 
 ---
 

@@ -1,8 +1,10 @@
 # 机器人教程本地校验入口。正文与习题中提到的「make verify」即此目标。
-.PHONY: verify book
+.PHONY: verify verify-exercises book
 
 verify:
+	python3 tools/test_mathbook.py
 	python3 tools/verify_teaching_examples.py
+	python3 tools/verify_ch02_mock.py
 	python3 tools/verify_ch03_jac.py
 	python3 tools/verify_ch04_traj.py
 	python3 tools/verify_homework05.py
@@ -10,6 +12,9 @@ verify:
 	python3 tools/verify_homework07.py
 	node tools/check_labs3d_math.mjs
 	python3 tools/check_book.py
+
+verify-exercises:
+	python3 tools/verify_ch02_exercises.py
 
 book:
 	mdbook build

@@ -14,53 +14,53 @@
 
 | 术语 | 英文 | 一句话含义 | 出处 |
 |:--|:--|:--|:--|
-| 机器人 | robot | 能影响其工作环境的机器，**无关外表**；判据是「感知—决策—作用」闭环 | [@def-1.1.1] |
-| robota | — | 捷克语「强迫劳动」，1920 年 Čapek 戏剧《R.U.R.》杜撰 robot 一词的词源 | [1.1.1](ch01/sec1-1.md#sec-1.1.1) |
-| 阿西莫夫三定律 | Asimov's laws | 1940s 的**科幻设定**，非工程标准；其精神被 ISO 10218 / ISO/TS 15066 继承 | [1.1.1](ch01/sec1-1.md#sec-1.1.1) |
+| 机器人 | robot | 教材按内置规则、感知数据与物理动作的联系描述的机器；与外表无关，闭环不是分类充分条件 | [@def-1.1.1] |
+| robota | — | 表示劳役的词，与 Čapek 于 1920 年写成的戏剧《R.U.R.》中的 robot 一词有关 | [1.1.1](ch01/sec1-1.md#sec-1.1.1) |
+| 阿西莫夫三定律 | Asimov's laws | 教材介绍的 20 世纪 40 年代科幻行为规则，不能替代具体安全设计与验收 | [1.1.1](ch01/sec1-1.md#sec-1.1.1) |
 | 机械系统 | mechanical system | 「身体」：运动装置（轮系、履带、腿）+ 操作装置（机械手、末端执行器） | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
 | 执行系统 | actuation system | 「肌肉」：伺服电机、驱动器、传动装置 | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
 | 传感系统 | sensory system | 「感官」：本体传感器（位置）+ 外部传感器（力、相机） | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
 | 控制系统 | control system | 「大脑」：在约束下实现感知到行为的智能联系，服从反馈原理 | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
-| 控制论 | cybernetics | 更广的学科名，还涵盖运动监测、人工智能、算法结构与编程环境 | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
+| 控制论 | cybernetics | 教材讨论运动控制、监督及相关计算问题的学科背景；此处不划定学科包含关系 | [1.1.3](ch01/sec1-1.md#sec-1.1.3) |
 | 开式运动链 | open kinematic chain | 连杆链两端之间只有一个连接序列 | [@def-1.2.1] |
 | 闭式运动链 | closed kinematic chain | 存在连杆序列形成回路；自由度须扣独立约束 | [@def-1.2.1] |
 | 移动关节 | prismatic joint | 实现相对**平移**；此时 $q_i=d_i$ | [@def-1.2.2] |
 | 转动关节 | revolute joint | 实现相对**转动**；此时 $q_i=\vartheta_i$ | [@def-1.2.2] |
-| 自由度 | degrees of freedom, DOF | 关节允许的独立运动数；开链可直接计数 | [@def-1.2.2] |
-| 工作空间 | workspace | 末端执行器能到达的区域；形状与容积取决于结构及关节限位 | [@def-1.2.2] |
+| 自由度 | degrees of freedom, DOF | 描述机构构形所需的独立变量数；闭链须检查约束 | [@def-1.2.2] |
+| 工作空间 | workspace | 本节指选定末端参考点的可达位置集合；仍须另查目标朝向 | [@def-1.2.2] |
 | 冗余 | redundant | 系统自由度多于任务变量数——可用来避障、优化姿态 | [@thm-1.2.A] |
-| 笛卡儿型 | Cartesian | 三移动关节，工作空间为长方体；刚性好、精度处处一致 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
+| 笛卡儿型 | Cartesian | 三条正交移动轴，理想位置工作空间为长方体；实际精度还受标定与载荷等影响 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
 | 圆柱型 | cylindrical | 转 + 移 + 移，工作空间为空心圆柱的一部分 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
 | 球型 | spherical | 转 + 转 + 移，工作空间为中空球体的一部分 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
 | SCARA | selective compliance assembly robot arm | 三轴**平行**，竖直刚、水平顺从，适合插装 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
 | 拟人型 | anthropomorphic | 全转动关节，最灵活；应用范围最广的工业构形 | [1.2.2](ch01/sec1-2.md#sec-1.2.2) |
 | 平行四边形臂 | parallelogram arm | 肩肘间引入平行四边形几何（闭链）以提高刚度 | [1.2.3](ch01/sec1-2.md#sec-1.2.3) |
-| 并联构形 | parallel manipulator | 多条运动链同时连接基座与末端；高刚性、工作空间缩减 | [1.2.3](ch01/sec1-2.md#sec-1.2.3) |
-| 球形腕 | spherical wrist | 三个转动关节且**三轴交于一点**——实现定位与定向解耦 | [@def-1.2.3] |
-| 解耦 | decoupling | 把一个问题拆成可独立求解的两个子问题（球形腕 / 导向轮转向与牵引分离） | [@thm-1.2.C] |
+| 并联构形 | parallel manipulator | 多条支链同时连接基座与末端平台；支链通过二者共同形成回路 | [1.2.3](ch01/sec1-2.md#sec-1.2.3) |
+| 球形腕 | spherical wrist | 三个转动轴交于腕心 W；固定臂时，腕转动不改变 W，偏置工具点 P 可移动 | [@def-1.2.3] |
+| 解耦 | decoupling | 利用结构分步求解；球腕先由目标工具位姿算腕心，再求臂解与相对腕朝向 | [@thm-1.2.C] |
 | 末端执行器 | end-effector | 按任务指定的工具：钳子、喷枪、铣刀、多触点手等 | [1.2.4](ch01/sec1-2.md#sec-1.2.4) |
-| 定轮 | fixed wheel | 只能沿轮面直「走」 | [@def-1.3.1] |
-| 导向轮 | steerable wheel | 电机控制转向，两轴均过轮心——能「转」 | [@def-1.3.1] |
-| 自位轮 | castor wheel | 垂直轴不过轮心（有偏移量），**被动**对齐——会「飘」 | [@def-1.3.1] |
-| 麦克纳姆轮 | Mecanum wheel | 轮缘 $45°$ 滚筒，实现全向移动 | [1.3.2](ch01/sec1-3.md#sec-1.3.2) |
-| 即时机动性 | instantaneous mobility | 容许瞬时运动的方向数，**可能小于**位形变量数 | [@def-1.3.2] |
+| 定轮 | fixed wheel | 滚动轴过轮心、轮向相对底盘固定；可主动或从动 | [@def-1.3.1] |
+| 导向轮 | steerable wheel | 滚动轴与竖直转向轴均过轮心；是否主动转向另看驱动配置 | [@def-1.3.1] |
+| 自位轮 | caster wheel | 竖直转向轴偏离轮心；常被动回转，牵引可被动或主动 | [@def-1.3.1] |
+| 麦克纳姆轮 | Mecanum wheel | 轮缘斜置滚子；适当布置并独立驱动的四轮可合成全向运动 | [1.3.2](ch01/sec1-3.md#sec-1.3.2) |
+| 即时机动性 | instantaneous mobility | 当前无侧滑约束下的独立底盘速度方向数，可能小于位形变量数 | [@def-1.3.2] |
 | 无侧滑约束 | no-side-slip constraint | 速度层面的约束，解释「不能即时横移」——但**不等于**不能横移 | [@def-1.3.2] |
-| 支撑三角形 | support triangle | 三轮布局中三接地点构成的三角形，稳定性判据 | [@thm-1.3.B] |
-| 工业机器人学 | industrial robotics | 结构化环境、先验已知、有限自治 | [@def-1.4.1] |
-| 先进机器人学 | advanced robotics | 弱结构 / 开放环境，要求强自治 | [@def-1.4.2] |
+| 支撑三角形 | support triangle | 三个有效接地点的支撑区域；平地静止时重心投影须在内部才有抗倾覆余量 | [@thm-1.3.B] |
+| 工业机器人学 | industrial robotics | 工业中的机器人设计、控制与应用；原书典型场景为结构化环境，实际部署仍须分项分析 | [@def-1.4.1] |
+| 先进机器人学 | advanced robotics | 原书讨论不确定环境与自治需求的历史分类，含遥操作案例；不是形态或性能等级 | [@def-1.4.2] |
 | 运动学 | kinematics | 只描述运动，**不含力** | [@def-1.5.1] |
 | 微分运动学 | differential kinematics | 速度层面的映射（第 3 章） | [@def-1.5.1] |
-| 动力学 | dynamics | 力与运动的关系（第 7 章） | [@def-1.5.1] |
+| 动力学 | dynamics | 广义力与运动的关系，另需质量/惯量等信息；教程第六章对应原书第七章 | [@def-1.5.1] |
 | 轨迹规划 | trajectory planning | 生成**时间律**：何时在何处 | [@def-1.5.2] |
-| 运动规划 | motion planning | 解决**避障**：走哪条路 | [@def-1.5.2] |
-| 反馈不可替代 | — | 模型永远不能完全描述真实结构，故反馈不可省略 | [@thm-1.5.B] |
+| 运动规划 | motion planning | 寻找满足任务与约束的运动；原书第十二章重点讨论避碰，当前未收录 | [@def-1.5.2] |
+| 反馈 | feedback | 用参考与测量的差修正命令；效果须检查稳定性、测量质量与驱动限制 | [@thm-1.5.B] |
 
 ## 二、姿态表示（2.1–2.7）
 
 | 术语 | 英文 | 一句话含义 | 出处 |
 |:--|:--|:--|:--|
-| 位姿 | pose | 位置 + 姿态；$T=(\boldsymbol p,R)$，共 6 个独立变量 | [@def-2.1.1] |
-| 方向余弦 | direction cosines | 两坐标系各轴夹角的余弦；9 个即旋转矩阵的元素 | [@thm-2.1.A] |
+| 位姿 | pose | 参考点位置 + 固连系三轴朝向；无额外约束的空间刚体有 6 个自由度 | [@def-2.1.1] |
+| 方向余弦 | direction cosines | 本体轴与参考轴夹角的余弦，无量纲；三单位、三正交约束之外还须检查右手性 | [@thm-2.1.A] |
 | 旋转矩阵 | rotation matrix | 描述姿态的 $3\times3$ 正交矩阵，$R^{\mathrm T}R=I$、$\det R=+1$ | [@def-2.2.1] |
 | 特殊正交群 | $SO(3)$ | 所有旋转矩阵构成的群 | [@def-2.2.2] |
 | 三重身份 | — | 同一矩阵的三种读法：姿态**描述** / 坐标**变换** / 旋转**算子** | [@thm-2.2.B] |
@@ -68,8 +68,8 @@
 | 右乘 / 左乘 | — | 绕**当前**轴连续转用右乘，绕**固定**轴用左乘 | [@thm-2.3.A]、[@thm-2.3.B] |
 | 欧拉角 | Euler angles | 3 参数姿态表示；27 种轴序只有 12 种可行 | [2.4](ch02/sec2-4.md) |
 | ZYZ 角 | — | 绕**当前**轴（$z,y',z''$）的欧拉角序列，右乘 | [2.4.2](ch02/sec2-4.md#sec-2.4.2) |
-| RPY 角 | roll-pitch-yaw | 航空航海惯用：绕**固定**轴 $z,y,x$，左乘；又称 ZYX 角 | [2.4.5](ch02/sec2-4.md#sec-2.4.5) |
-| Atan2 | $\operatorname{Atan2}(y,x)$ | 双变量反正切：用 $x,y$ 符号定象限，在 $(-\pi,\pi]$ 内唯一 | [@thm-2.4.A] |
+| RPY 角 | roll-pitch-yaw | 本书 $R_z(\varphi)R_y(\vartheta)R_x(\psi)$：从 $I$ 出发，固定轴实际时序为 $x(\psi)\to y(\vartheta)\to z(\varphi)$，逐次左乘；等价于当前轴 ZYX 时序 | [2.4.5](ch02/sec2-4.md#sec-2.4.5) |
+| Atan2 | $\operatorname{Atan2}(y,x)$ | 取非零向量 $(x,y)$ 的方向并保留象限；输入半径趋零时敏感，原点无方向 | [@thm-2.4.A] |
 | 表示奇点 | representation singularity | 欧拉角在 $s_\vartheta=0$（ZYZ）或 $c_\vartheta=0$（RPY）处退化 | [@thm-2.4.B] |
 | 角和轴 | angle and axis | 4 参数表示 $(\vartheta,\boldsymbol r)$；$\boldsymbol r$ 为单位轴 | [@def-2.5.1] |
 | 叉乘算子 | skew-symmetric operator $S(\omega)$ | 把叉积装进矩阵：$S(\omega)p=\omega\times p$；反对称 | [@def-2.5.2] |
@@ -78,15 +78,15 @@
 | 李代数 | Lie algebra $so(3)$ | 李群在单位元处的切空间；$so(3)$ = 全体 3×3 反对称矩阵（3 维） | [@def-2.5.3] |
 | 装帽 / 摘帽 | hat / vee | $\hat\omega=S(\omega)$、$S^\vee=\omega$：$\mathbb R^3$ 与 $so(3)$ 的一一对应 | [@def-2.5.3] |
 | 指数映射 | exponential map | $\exp(\vartheta S(\boldsymbol r))=I+\sin\vartheta\,S+(1-\cos\vartheta)S^2$ = Rodrigues | [@thm-2.5.D] |
-| 对数映射 | logarithm map | $\log R=\vartheta S(\boldsymbol r)=\frac{\vartheta}{2\sin\vartheta}(R-R^{\mathrm T})$——逆解的打包写法 | [@thm-2.5.E] |
+| 对数映射 | logarithm map | 选支 $\operatorname{Log}R\in so(3)$，摘帽为三维旋转向量；零点主向量为 0，半圈有 ± 两代表 | [@thm-2.5.E] |
 | 李括号 | Lie bracket | $[A,B]=AB-BA$；在 $so(3)$ 上就是叉积 $[S(a),S(b)]=S(a\times b)$ | [@note-2.5.payoff] |
-| 旋量 / 空间速度 | twist $se(3)$ | $SE(3)$ 的李代数元素 $\begin{bmatrix}S(\omega)&\boldsymbol v\\\boldsymbol 0^{\mathrm T}&0\end{bmatrix}$（6 参数）；exp 给螺旋运动 | [@note-2.7.se3] |
+| 旋量 / 刚体速度 | twist | $se(3)$ 矩阵 $[S(\omega),v;0,0]$；空间表达为 $\dot A A^{-1}$，$v_s=\dot o-\omega_s\times o$；本体系表达为 $A^{-1}\dot A$ | [@note-2.7.se3] |
 | Rodrigues 公式 | Rodrigues formula | 由 $(\vartheta,\boldsymbol r)$ 显式构造 $R$ 的矩阵 | [@def-2.5.1] |
-| 单位四元数 | unit quaternion / Euler parameters | $Q=\{\eta,\boldsymbol\epsilon\}$，半角打包，4 参数 − 1 约束 | [@def-2.6.1] |
-| 半角打包 | half-angle packing | $\eta=\cos\frac{\vartheta}{2}$、$\boldsymbol\epsilon=\sin\frac{\vartheta}{2}\boldsymbol r$——消除角和轴的不唯一 | [@thm-2.6.A] |
-| 齐次坐标 | homogeneous coordinates | $\tilde{\boldsymbol p}=[\boldsymbol p;1]$，把平移与旋转打包 | [@def-2.7.1] |
-| 齐次变换矩阵 | homogeneous transformation | $A=\begin{bmatrix}R&\boldsymbol o\\\boldsymbol 0^{\mathrm T}&1\end{bmatrix}\in SE(3)$；$A^{-1}\neq A^{\mathrm T}$ | [@def-2.7.1] |
-| 特殊欧几里得群 | $SE(3)$ | $\mathbb R^3\times SO(3)$ | [@def-2.7.1] |
+| 单位四元数 | unit quaternion / Euler parameters | Hamilton、标量在前；单位约束；$q\sim-q$ 同姿态；乘积右侧先作用 | [@def-2.6.1]、[@method-2.6.extract] |
+| 半角打包 | half-angle packing | $\eta=\cos(\vartheta/2)$、$\boldsymbol\epsilon=\sin(\vartheta/2)\boldsymbol r$；合并同步反号参数，但保留 $Q\sim-Q$ | [@thm-2.6.A] |
+| 齐次坐标 | homogeneous coordinates | 点 $[p;1]$、自由方向 $[d;0]$；刚体矩阵保持末分量，方向不除以 0 | [@def-2.7.1] |
+| 齐次变换矩阵 | homogeneous transformation | $A=[R,o;0,1]\in SE(3)$；逆 $[R^{\mathrm T},-R^{\mathrm T}o;0,1]$；整体正交当且仅当 $o=0$ | [@def-2.7.1] |
+| 特殊欧几里得群 | $SE(3)$ | 刚体齐次矩阵组成的群；$(R,o)(S,t)=(RS,o+Rt)$，旋转影响后一段平移，不是直积群的分量运算 | [@def-2.7.1] |
 
 ## 三、正运动学与 DH 法（2.8–2.11）
 
@@ -96,19 +96,19 @@
 | 接近向量 | approach vector $\boldsymbol a_e$ | 末端坐标系第三列，指向抓取 / 工作方向 | [@def-2.8.2] |
 | 滑动向量 | sliding vector $\boldsymbol s_e$ | 钳口滑动平面内、垂直于 $\boldsymbol a_e$ | [@def-2.8.2] |
 | 法向向量 | normal vector $\boldsymbol n_e$ | $=\boldsymbol s_e\times\boldsymbol a_e$，使三者成右手系 | [@def-2.8.2] |
-| DH 法 | Denavit–Hartenberg | 用 4 个参数描述相邻连杆坐标系关系 | [@def-2.8.3] |
-| DH 四参数 | $a_i,\alpha_i,d_i,\vartheta_i$ | 杆件长度 / 扭角 / 关节距离 / 关节转角；**3 常 1 变** | [@def-2.8.3] |
+| DH 法 | Denavit–Hartenberg | 按轴线与公垂线选固连系，用四参数表达相邻变换；不改变一般位姿的六维性质 | [@def-2.8.3] |
+| DH 四参数 | $a_i,\alpha_i,d_i,\vartheta_i$ | 固定几何与选系的单自由度 R/P 行：$a_i,\alpha_i$ 恒定，$d_i,\vartheta_i$ 中一个活动，另一个为常数 | [@def-2.8.3] |
 | 建系四规则 | — | $z_i$ 沿关节 $i+1$ 轴、原点在公垂线交点、$x_i$ 沿公垂线、右手系补 $y_i$ | [@method-2.8.dh] |
 | 能零则零 | — | 自由选取处选「让参数尽量为零」的方案 | [@method-2.8.zero] |
-| 关节空间 | joint space | 关节变量 $\boldsymbol q$ 张成的空间 | [@def-2.10.1] |
-| 操作空间 | operational space | 末端位姿 $\boldsymbol x_e$ 张成的空间 | [@def-2.10.1] |
+| 关节空间 | joint space | 允许的独立关节变量组合；局部用 q，周期角与限位须保留 | [@def-2.10.1] |
+| 操作空间 | operational space | 末端位姿的空间；最小姿态坐标有局部分支，表示分量数不等于可控维数 | [@def-2.10.1] |
 | 可达工作空间 | reachable workspace | 至少能从**一个**方向到达的点集 | [@def-2.10.2] |
-| 灵活工作空间 | dexterous workspace | 能从**任意**方向到达的点集；⊆ 可达 | [@def-2.10.2] |
-| 精度 | accuracy | 指令位姿与真实位姿之差；可标定改善 | [@def-2.10.2] |
-| 重复定位精度 | repeatability | 多次回同一点的散布；示教再现的命根 | [@def-2.10.2] |
-| 本质冗余 / 功能冗余 | intrinsic / functional redundancy | 结构上 $n>m$ / 任务上 $n>r$ | [@def-2.10.3] |
-| 运动学标定 | kinematic calibration | 由位姿量测反推真实 DH 参数；线性化 + 最小二乘 + 迭代 | [@method-2.11.steps] |
-| 标定矩阵 | $\Phi$ | $m\times4n$，参数空间到操作空间的雅可比 | [@method-2.11.steps] |
+| 灵活工作空间 | dexterous workspace | 规定方向集合中每种方向都可实现的点集；⊆ 可达 | [@def-2.10.2] |
+| 精度 | accuracy | 实际到达相对目标的偏差；运动学标定可改善模型解释的系统部分 | [@note-2.10.acc] |
+| 重复定位精度 | repeatability | 同条件反复执行同一指令的结果散布；与目标偏差分别判断，数值须核对统计口径 | [1.4.2](ch01/sec1-4.md#sec-1.4.2)、[@def-2.10.2] |
+| 本质冗余 / 功能冗余 | intrinsic / functional redundancy | $m$ 为结构适配完整位姿维数，$n>m$ 为本质冗余；放松任务 $r<m$ 可产生功能冗余，正常点须检查任务秩 | [@def-2.10.3] |
+| 运动学标定 | kinematic calibration | 在固定规范下由外部位姿量测辨识可估参数；线性化 + 最小二乘 + 验证 | [@method-2.11.steps] |
+| 标定矩阵 | $\Phi$ | $m\times p$，参数子集到选定残差坐标的雅可比；$p\le4n$ | [@method-2.11.steps] |
 
 ## 四、逆运动学（2.12）
 
@@ -135,7 +135,7 @@
 | 肘奇点 | elbow singularity | $s_3=0$，臂完全伸直或折回 | [@thm-3.3.A] |
 | 肩奇点 | shoulder singularity | $a_2c_2+a_3c_{23}=0$，腕点落在第一关节轴上 | [@thm-3.3.A] |
 | 零空间 | null space $\mathcal N(J)$ | 不产生末端运动的关节速度集合 | [@thm-3.4.B] |
-| 零空间投影 | $P=NN^{\mathrm T}$ | 秩 $n-r$；$P\dot{\boldsymbol q}_0$ 不惊动末端 | [@thm-3.4.B] |
+| 零空间投影 | $P=NN^{\mathrm T}$ | 秩为 $n-\operatorname{rank}J_{\rm task}$，行满秩时为 $n-r$；投影速度不产生一阶任务变化 | [@thm-3.4.B] |
 | 内部运动 / 自运动 | internal motion / self-motion | 只改内部姿态、不改末端的运动 | [@thm-3.4.B] |
 | 右伪逆 | right pseudo-inverse $J^\dagger$ | $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$；给出最小范数解 | [@def-3.5.1] |
 | 最小范数解 | minimum-norm solution | 满足任务且 $\|\dot{\boldsymbol q}\|$ 最小 | [@def-3.5.1] |
@@ -283,9 +283,9 @@
 
 | 这两者常被混淆 | 区别 |
 |:--|:--|
-| 精度 / 重复定位精度 | 精度 = 与标称值的偏差（可标定改善）；重复精度 = 回访一致性 | 
-| 可达工作空间 / 灵活工作空间 | 前者只需一个方向能到，后者要任意方向都能到 |
-| 本质冗余 / 功能冗余 | 结构上 $n>m$ / 任务上 $n>r$ |
+| 精度 / 重复定位精度 | 定位精度比较实际到达与指令目标；重复定位精度描述同条件回访的集中程度，比较数值须统一测试口径 |
+| 可达工作空间 / 灵活工作空间 | 前者只需一种允许方向，后者须实现规定方向集合中每一种方向 |
+| 本质冗余 / 功能冗余 | 完整位姿维数为 m 时 n>m / 放松任务到 r<m 产生；局部自运动须看秩与约束 |
 | 轨迹规划 / 运动规划 | 生成时间律 / 解决避障 |
 | 几何雅可比 / 分析雅可比 | 用 $\boldsymbol\omega$（正交基）/ 用 $\dot{\boldsymbol\varphi}$（非正交的欧拉角轴） |
 | $J^{-1}$ / $J^\dagger$ / $J^*$ | 方阵满秩 / 冗余（行满秩）/ 奇异邻域（阻尼） |

@@ -3,4 +3,4 @@
 # mdBook 与 mdbook-katex 是外部可执行文件，见 docs/ARCHITECTURE.md；
 # 这里只列出预处理器与内容校验脚本所需的 Python 包（Python ≥ 3.9）。
 markdown-it-py>=3.0
-numpy>=1.24          # tools/verify_ch02_fk.py 与 verify_homework02.py 的数值回归
+numpy>=1.24          # 数值复算；第二章完整程序的额外依赖见 requirements-exercises.txt

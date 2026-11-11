@@ -3,6 +3,9 @@
 
 Run from any directory: python3 robot/tools/verify_ch03_jac.py
 Scope:
+  - mixed R/P chains       (all-origin velocity recursion, sec 3.1)
+  - fixed tool offsets     (position/angular blocks and expression frames)
+  - rotation derivatives   (base and body angular-velocity components)
   - three-link planar arm  (sec 3.2.1, exercises C1/C2)
   - two-link planar arm    (det and manipulability, exercises C5)
   - anthropomorphic arm    (sec 3.2.2, published 3x3 block and its det)
@@ -14,6 +17,7 @@ check is the central difference of the forward kinematics.
 """
 
 import math
+import random
 import unittest
 
 EPS = 1e-6
@@ -68,10 +72,11 @@ def chain(dh_list, q):
     return ts
 
 
-def analytic_geometric(dh_list, q):
+def analytic_geometric(dh_list, q, tool=None):
     """Column-by-column geometric Jacobian from the cumulative T matrices."""
     ts = chain(dh_list, q)
-    pe = [ts[-1][i][3] for i in range(3)]
+    endpoint = mat_mul(ts[-1], tool) if tool is not None else ts[-1]
+    pe = [endpoint[i][3] for i in range(3)]
     n = len(q)
     jp, jo = [], []
     for i in range(n):
@@ -159,6 +164,145 @@ def det3(m):
 
 
 class JacobianChecks(unittest.TestCase):
+    def test_revolute_relative_translation_is_not_constant(self):
+        theta, rate, length, offset = math.pi / 2, 0.5, 0.8, 0.2
+        plus = dh_joint(theta + EPS * rate, offset, length, 0.3)
+        minus = dh_joint(theta - EPS * rate, offset, length, 0.3)
+        derivative = [(plus[axis][3] - minus[axis][3]) / (2 * EPS) for axis in range(3)]
+        for actual, expected in zip(derivative, (-0.4, 0.0, 0.0)):
+            self.assertAlmostEqual(actual, expected, places=8)
+        self.assertGreater(math.hypot(*derivative), 0.39)
+
+    def test_mixed_dh_velocity_recursion_against_fk(self):
+        generator = random.Random(310)
+        for sample in range(60):
+            dh = [(generator.uniform(-1, 1), generator.uniform(-0.5, 0.5),
+                   generator.uniform(0.1, 1), generator.uniform(-2, 2), kind)
+                  for kind in ("r", "p", "r", "p")]
+            angles = [generator.uniform(-1, 1) for _ in dh]
+            rates = [generator.uniform(-2, 2) for _ in dh]
+            transforms = chain(dh, angles)
+            plus = chain(dh, [value + EPS * rate for value, rate in zip(angles, rates)])
+            minus = chain(dh, [value - EPS * rate for value, rate in zip(angles, rates)])
+            velocity = [0.0] * 3
+            omega = [0.0] * 3
+            for joint, (theta_off, offset, length, alpha, kind) in enumerate(dh):
+                previous = transforms[joint]
+                theta = theta_off + (angles[joint] if kind == "r" else 0)
+                local_r = [length * math.cos(theta), length * math.sin(theta),
+                           offset + (angles[joint] if kind == "p" else 0)]
+                local_dot = ([-rates[joint] * local_r[1], rates[joint] * local_r[0], 0]
+                             if kind == "r" else [0, 0, rates[joint]])
+                base_r = [sum(previous[row][col] * local_r[col] for col in range(3))
+                          for row in range(3)]
+                base_dot = [sum(previous[row][col] * local_dot[col] for col in range(3))
+                            for row in range(3)]
+                transport = cross(omega, base_r)
+                velocity = [velocity[axis] + base_dot[axis] + transport[axis] for axis in range(3)]
+                if kind == "r":
+                    omega = [omega[axis] + rates[joint] * previous[axis][2] for axis in range(3)]
+                transform = transforms[joint + 1]
+                derivative = [[(plus[joint + 1][row][col] - minus[joint + 1][row][col]) / (2 * EPS)
+                               for col in range(3)] for row in range(3)]
+                skew = mat_mul(derivative, [[transform[col][row] for col in range(3)] for row in range(3)])
+                numeric_omega = [skew[2][1], skew[0][2], skew[1][0]]
+                with self.subTest(sample=sample, joint=joint):
+                    for axis in range(3):
+                        numeric_velocity = (plus[joint + 1][axis][3] - minus[joint + 1][axis][3]) / (2 * EPS)
+                        self.assertAlmostEqual(velocity[axis], numeric_velocity, places=7)
+                        self.assertAlmostEqual(omega[axis], numeric_omega[axis], places=7)
+            columns, angular = analytic_geometric(dh, angles)
+            for axis in range(3):
+                self.assertAlmostEqual(velocity[axis], sum(columns[joint][axis] * rates[joint] for joint in range(4)), places=10)
+                self.assertAlmostEqual(omega[axis], sum(angular[joint][axis] * rates[joint] for joint in range(4)), places=10)
+
+    def test_tool_point_and_expression_frame(self):
+        dh = [(0.2, 0.1, 0.7, 0.6, "r"), (-0.4, 0.3, 0.2, -0.8, "p"),
+              (0.1, 0.2, 0.5, 0.4, "r")]
+        angles = [0.3, 0.4, -0.7]
+        tool = mat_mul(mat_mul(trans_x(0.4), trans_z(0.2)), rot_x(0.7))
+        columns, angular = analytic_geometric(dh, angles, tool)
+        original, original_angular = analytic_geometric(dh, angles)
+
+        def endpoint(values):
+            return mat_mul(chain(dh, values)[-1], tool)
+
+        def position(values):
+            return [row[3] for row in endpoint(values)[:3]]
+
+        def rotation(values):
+            return [row[:3] for row in endpoint(values)[:3]]
+
+        self.assertLess(max_err(columns, numeric_jp(position, angles)), 1e-8)
+        self.assertLess(max_err(angular, numeric_jo(rotation, angles)), 1e-8)
+        self.assertEqual(angular, original_angular)
+        self.assertEqual(columns[1], original[1])
+        self.assertGreater(max_err(columns, original), 0.1)
+        base_to_u = mat_mul(rot_x(0.9), rot_z(-0.4))
+
+        def express(vector):
+            return [sum(base_to_u[row][col] * vector[col] for col in range(3)) for row in range(3)]
+
+        self.assertLess(max_err([express(col) for col in columns], numeric_jp(lambda values: express(position(values)), angles)), 1e-8)
+        self.assertLess(max_err([express(col) for col in angular], numeric_jo(lambda values: mat_mul([row[:3] for row in base_to_u[:3]], rotation(values)), angles)), 1e-8)
+
+    def test_base_and_body_angular_velocity(self):
+        angles, rates = [0.4, -0.6], [0.8, -0.3]
+
+        def rotation(values):
+            return [row[:3] for row in mat_mul(rot_z(values[0]), rot_x(values[1]))[:3]]
+
+        current = rotation(angles)
+        transpose = [[current[col][row] for col in range(3)] for row in range(3)]
+        plus = rotation([value + EPS * rate for value, rate in zip(angles, rates)])
+        minus = rotation([value - EPS * rate for value, rate in zip(angles, rates)])
+        derivative = [[(plus[row][col] - minus[row][col]) / (2 * EPS) for col in range(3)] for row in range(3)]
+        base_skew = mat_mul(derivative, transpose)
+        body_skew = mat_mul(transpose, derivative)
+        base = [base_skew[2][1], base_skew[0][2], base_skew[1][0]]
+        body = [body_skew[2][1], body_skew[0][2], body_skew[1][0]]
+        expected_base = [rates[1] * math.cos(angles[0]), rates[1] * math.sin(angles[0]), rates[0]]
+        self.assertGreater(max(abs(base[axis] - body[axis]) for axis in range(3)), 0.1)
+        for axis in range(3):
+            self.assertAlmostEqual(base[axis], expected_base[axis], places=8)
+            self.assertAlmostEqual(body[axis], sum(transpose[axis][col] * base[col] for col in range(3)), places=8)
+        self.assertLess(max_err(derivative, mat_mul(base_skew, current)), 1e-8)
+
+    def test_so3_bracket_and_euler_tangent(self):
+        """Check the so(3) bracket and distinguish a tangent update from a rotation."""
+        def hat(vector):
+            x, y, z = vector
+            return [[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]]
+
+        a, b = [1.0, -2.0, 0.5], [-0.3, 0.7, 1.2]
+        left = mat_mul(hat(a), hat(b))
+        right = mat_mul(hat(b), hat(a))
+        bracket = [[left[row][col] - right[row][col] for col in range(3)] for row in range(3)]
+        expected = hat(cross(a, b))
+        self.assertLess(max_err(bracket, expected), 1e-12)
+        ordinary = left
+        self.assertGreater(max(abs(ordinary[row][col] + ordinary[col][row])
+                               for row in range(3) for col in range(3)), 0.1)
+        omega = [0.0, 0.0, 2.0]
+        h = 0.5
+        tangent = [[(1.0 if row == col else 0.0) + h * hat(omega)[row][col]
+                    for col in range(3)] for row in range(3)]
+        gram = mat_mul([[tangent[col][row] for col in range(3)] for row in range(3)], tangent)
+        self.assertGreater(max(abs(gram[row][col] - (1.0 if row == col else 0.0))
+                               for row in range(3) for col in range(3)), 0.5)
+
+    def test_rz_worked_derivative(self):
+        """Reproduce the section's alpha=pi/2, alpha_dot=2 worked example."""
+        angle, rate = math.pi / 2, 2.0
+        current = [[math.cos(angle), -math.sin(angle), 0.0],
+                   [math.sin(angle), math.cos(angle), 0.0], [0.0, 0.0, 1.0]]
+        derivative = [[-rate * math.sin(angle), -rate * math.cos(angle), 0.0],
+                      [rate * math.cos(angle), -rate * math.sin(angle), 0.0], [0.0, 0.0, 0.0]]
+        transpose = [[current[col][row] for col in range(3)] for row in range(3)]
+        skew = mat_mul(derivative, transpose)
+        self.assertEqual(skew, [[0.0, -2.0, 0.0], [2.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+        self.assertLess(max_err(derivative, [[-2.0, 0.0, 0.0], [0.0, -2.0, 0.0], [0.0, 0.0, 0.0]]), 1e-14)
+
     def test_planar3_central_difference(self):
         # Exercises C1: q=(0.3,-0.7,1.1), a=(1,0.8,0.6).
         q = (0.3, -0.7, 1.1)
@@ -180,6 +324,117 @@ class JacobianChecks(unittest.TestCase):
                     [jp[c][1] for c in range(3)],
                     [1.0, 1.0, 1.0]]
             self.assertAlmostEqual(det3(full), a1 * a2 * math.sin(q2), places=10)
+
+    def test_two_link_cross_chapter_case(self) -> None:
+        """Verify both IK branches, orientations, Jacobians and velocity answers."""
+        dh = [(0.0, 0.0, 1.0, 0.0, "r"), (0.0, 0.0, 1.0, 0.0, "r")]
+        cases = (
+            (
+                (0.0, math.pi / 2),
+                ((-1.0, -1.0), (1.0, 0.0)),
+                math.pi / 2,
+                (0.0, -0.1),
+                (0.1, 0.0),
+            ),
+            (
+                (math.pi / 2, -math.pi / 2),
+                ((-1.0, 0.0), (1.0, 1.0)),
+                0.0,
+                (0.0, 0.1),
+                (0.0, 0.1),
+            ),
+        )
+        for angles, expected_jacobian, heading, rates, velocity in cases:
+            with self.subTest(angles=angles):
+                position = fk_pos(dh)(angles)
+                self.assertAlmostEqual(position[0], 1.0)
+                self.assertAlmostEqual(position[1], 1.0)
+                rotation = fk_rot(dh)(angles)
+                self.assertAlmostEqual(math.atan2(rotation[1][0], rotation[0][0]), heading)
+                columns, _ = analytic_geometric(dh, angles)
+                for row in range(2):
+                    for col in range(2):
+                        self.assertAlmostEqual(columns[col][row], expected_jacobian[row][col])
+                    actual = sum(columns[col][row] * rates[col] for col in range(2))
+                    self.assertAlmostEqual(actual, velocity[row])
+                self.assertLess(max_err(columns, numeric_jp(fk_pos(dh), angles)), 1e-8)
+
+    def test_two_link_singular_directions(self) -> None:
+        """Separate unavailable radial motion from nonunique tangent motion."""
+        dh = [(0.0, 0.0, 1.0, 0.0, "r"), (0.0, 0.0, 1.0, 0.0, "r")]
+        columns, _ = analytic_geometric(dh, (0.0, 0.0))
+        self.assertEqual(columns, [[0.0, 2.0, 0.0], [0.0, 1.0, 0.0]])
+        for rates in ((0.0, 0.1), (0.05, 0.0)):
+            self.assertAlmostEqual(sum(columns[col][0] * rates[col] for col in range(2)), 0.0)
+            self.assertAlmostEqual(sum(columns[col][1] * rates[col] for col in range(2)), 0.1)
+        null_rates = (1.0, -2.0)
+        for row in range(2):
+            self.assertAlmostEqual(sum(columns[col][row] * null_rates[col] for col in range(2)), 0.0)
+
+    def test_two_link_static_reaction_and_power(self) -> None:
+        """Check actuator sign using lever arms and nonzero virtual power."""
+        dh = [(0.0, 0.0, 1.0, 0.0, "r"), (0.0, 0.0, 1.0, 0.0, "r")]
+        angles = (0.0, math.pi / 2)
+        columns, _ = analytic_geometric(dh, angles)
+        transforms = chain(dh, angles)
+        output_force = (0.0, 10.0)
+        torques = [sum(column[row] * output_force[row] for row in range(2)) for column in columns]
+        self.assertAlmostEqual(torques[0], 10.0)
+        self.assertAlmostEqual(torques[1], 0.0)
+        for joint in range(2):
+            lever_x = transforms[-1][0][3] - transforms[joint][0][3]
+            lever_y = transforms[-1][1][3] - transforms[joint][1][3]
+            moment = lever_x * output_force[1] - lever_y * output_force[0]
+            self.assertAlmostEqual(torques[joint], moment)
+            reaction_torque = sum(-columns[joint][row] * output_force[row] for row in range(2))
+            self.assertAlmostEqual(torques[joint] + reaction_torque, 0.0)
+        for rates, expected_power in (((0.0, -0.1), 0.0), ((0.1, -0.1), 1.0)):
+            velocity = [sum(columns[col][row] * rates[col] for col in range(2)) for row in range(2)]
+            joint_power = sum(torques[col] * rates[col] for col in range(2))
+            output_power = sum(output_force[row] * velocity[row] for row in range(2))
+            self.assertAlmostEqual(joint_power, expected_power)
+            self.assertAlmostEqual(joint_power, output_power)
+            if expected_power:
+                self.assertNotAlmostEqual(-joint_power, output_power)
+
+    def test_two_link_damping_tradeoff(self) -> None:
+        """Check DLS stationarity, speed bound and inaccessible directions."""
+        dh = [(0.0, 0.0, 1.0, 0.0, "r"), (0.0, 0.0, 1.0, 0.0, "r")]
+        for angles in ((0.0, 0.0), (0.0, 0.01), (0.4, 0.8)):
+            columns, _ = analytic_geometric(dh, angles)
+            for target in ((0.1, 0.0), (0.0, 0.1)):
+                previous_speed = math.inf
+                previous_error = -math.inf
+                for damping in (0.1, 0.5):
+                    with self.subTest(angles=angles, target=target, damping=damping):
+                        metric_xx = sum(column[0] ** 2 for column in columns) + damping**2
+                        metric_xy = sum(column[0] * column[1] for column in columns)
+                        metric_yy = sum(column[1] ** 2 for column in columns) + damping**2
+                        determinant = metric_xx * metric_yy - metric_xy**2
+                        self.assertGreater(determinant, 0.0)
+                        dual = (
+                            (metric_yy * target[0] - metric_xy * target[1]) / determinant,
+                            (metric_xx * target[1] - metric_xy * target[0]) / determinant,
+                        )
+                        rates = [sum(column[row] * dual[row] for row in range(2)) for column in columns]
+                        velocity = [sum(columns[col][row] * rates[col] for col in range(2)) for row in range(2)]
+                        residual = [velocity[row] - target[row] for row in range(2)]
+                        for col in range(2):
+                            gradient = damping**2 * rates[col] + sum(columns[col][row] * residual[row] for row in range(2))
+                            self.assertAlmostEqual(gradient, 0.0, places=10)
+                        speed = math.hypot(*rates)
+                        error = math.hypot(*residual)
+                        self.assertLessEqual(speed, math.hypot(*target) / (2 * damping) + 1e-10)
+                        self.assertLessEqual(speed, previous_speed + 1e-10)
+                        self.assertGreaterEqual(error + 1e-10, previous_error)
+                        previous_speed, previous_error = speed, error
+                        if angles == (0.0, 0.0):
+                            self.assertAlmostEqual(velocity[0], 0.0)
+                            if target[0]:
+                                self.assertAlmostEqual(speed, 0.0)
+                            else:
+                                self.assertAlmostEqual(rates[0], 0.2 / (5 + damping**2))
+                                self.assertAlmostEqual(rates[1], 0.1 / (5 + damping**2))
 
     def test_two_link_manipulability(self):
         # Exercises C5: a1=a2=0.5, w = 0.25 |sin ϑ2|.

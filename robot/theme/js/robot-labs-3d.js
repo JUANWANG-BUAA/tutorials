@@ -262,6 +262,172 @@
   kernel.rotY = function (a) { var c = Math.cos(a), s = Math.sin(a); return [[c, 0, s], [0, 1, 0], [-s, 0, c]]; };
   kernel.rotZ = function (a) { var c = Math.cos(a), s = Math.sin(a); return [[c, -s, 0], [s, c, 0], [0, 0, 1]]; };
 
+  kernel.axisDirection = function (direction) {
+    if (!Array.isArray(direction) || direction.length !== 3 || !direction.every(Number.isFinite)) throw new Error("轴必须包含三个有限实数");
+    var length = Math.hypot.apply(null, direction);
+    if (!(length > 0) || !Number.isFinite(length)) throw new Error("零向量不能作为旋转轴");
+    return direction.map(function (value) { return value / length; });
+  };
+
+  kernel.axisAngleMatrix = function (direction, angle) {
+    if (!Number.isFinite(angle)) throw new Error("转角必须是有限实数");
+    var axis = kernel.axisDirection(direction);
+    var columns = [[1, 0, 0], [0, 1, 0], [0, 0, 1]].map(function (vector) { return kernel.rotAxis(axis, vector, angle); });
+    return columns[0].map(function (unused, row) { return columns.map(function (column) { return column[row]; }); });
+  };
+
+  kernel.axisAngleSteps = function (direction, angle) {
+    if (!Number.isFinite(angle)) throw new Error("转角必须是有限实数");
+    var axis = kernel.axisDirection(direction);
+    var radius = Math.hypot(axis[0], axis[1]);
+    var alpha = radius === 0 ? 0 : Math.atan2(axis[1], axis[0]);
+    var beta = Math.atan2(radius, axis[2]);
+    var stages = [
+      { name: "z", axis: [0, 0, 1], angle: -alpha },
+      { name: "y", axis: [0, 1, 0], angle: -beta },
+      { name: "z", axis: [0, 0, 1], angle: angle },
+      { name: "y", axis: [0, 1, 0], angle: beta },
+      { name: "z", axis: [0, 0, 1], angle: alpha }
+    ];
+    var steps = [{ R: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], axis: null, angle: 0 }];
+    stages.forEach(function (stage) {
+      var elementary = stage.name === "z" ? kernel.rotZ(stage.angle) : kernel.rotY(stage.angle);
+      steps.push({ R: kernel.mul3(elementary, steps[steps.length - 1].R), axis: stage.axis, name: stage.name, angle: stage.angle });
+    });
+    return { axis: axis, alpha: alpha, beta: beta, steps: steps };
+  };
+
+  kernel.rotationQuality = function (rotation) {
+    if (!Array.isArray(rotation) || rotation.length !== 3 || !rotation.every(function (row) {
+      return Array.isArray(row) && row.length === 3 && row.every(Number.isFinite);
+    })) throw new Error("输入必须是有限的 3×3 矩阵");
+    var orthogonalError = 0;
+    for (var first = 0; first < 3; first++) for (var second = 0; second < 3; second++) {
+      var product = 0;
+      for (var row = 0; row < 3; row++) product += rotation[row][first] * rotation[row][second];
+      orthogonalError = Math.max(orthogonalError, Math.abs(product - (first === second ? 1 : 0)));
+    }
+    var determinant = kernel.det3(rotation);
+    if (orthogonalError > 1e-8 || Math.abs(determinant - 1) > 1e-8) throw new Error("输入不满足旋转矩阵的正交性或 det=1");
+    return { orthogonalError: orthogonalError, determinant: determinant };
+  };
+
+  kernel.extractAxisAngle = function (rotation) {
+    var quality = kernel.rotationQuality(rotation);
+    var orthogonalError = quality.orthogonalError, determinant = quality.determinant;
+    var skew = [(rotation[2][1] - rotation[1][2]) / 2, (rotation[0][2] - rotation[2][0]) / 2, (rotation[1][0] - rotation[0][1]) / 2];
+    var sine = Math.hypot.apply(null, skew);
+    var cosine = Math.max(-1, Math.min(1, (rotation[0][0] + rotation[1][1] + rotation[2][2] - 1) / 2));
+    var angle = Math.atan2(sine, cosine);
+    if (sine < 1e-12 && cosine > 0) return { angle: 0, axis: null, vector: [0, 0, 0], branch: "zero", orthogonalError: orthogonalError, determinant: determinant };
+    var axis;
+    var branch = "regular";
+    if (cosine < -0.999999) {
+      var symmetric = rotation.map(function (values, rowIndex) {
+        return values.map(function (value, column) {
+          return ((value + rotation[column][rowIndex]) / 2 - (rowIndex === column ? cosine : 0)) / (1 - cosine);
+        });
+      });
+      var pivot = symmetric[1][1] > symmetric[0][0] ? 1 : 0;
+      if (symmetric[2][2] > symmetric[pivot][pivot]) pivot = 2;
+      var component = Math.sqrt(Math.max(0, symmetric[pivot][pivot]));
+      axis = kernel.axisDirection(symmetric.map(function (values) { return values[pivot] / component; }));
+      if (sine >= 1e-12 && kernel.dot(axis, skew) < 0) axis = kernel.sclv(axis, -1);
+      branch = sine < 1e-12 ? "pi" : "near-pi";
+    } else {
+      axis = kernel.sclv(skew, 1 / sine);
+    }
+    return { angle: angle, axis: axis, vector: kernel.sclv(axis, angle), branch: branch, orthogonalError: orthogonalError, determinant: determinant };
+  };
+
+  kernel.unitQuaternion = function (quaternion) {
+    if (!Array.isArray(quaternion) || quaternion.length !== 4 || !quaternion.every(Number.isFinite)) throw new Error("四元数须为标量在前的四个有限实数");
+    var length = Math.hypot.apply(null, quaternion);
+    if (!(length > 0) || !Number.isFinite(length)) throw new Error("零四元数不能归一化");
+    return quaternion.map(function (value) { return value / length; });
+  };
+
+  function requireUnitQuaternion(quaternion) {
+    var normalized = kernel.unitQuaternion(quaternion);
+    if (Math.abs(Math.hypot.apply(null, quaternion) - 1) > 1e-8) throw new Error("输入须满足单位四元数约束");
+    return normalized;
+  }
+
+  kernel.quaternionFromAxis = function (direction, angle) {
+    if (!Number.isFinite(angle)) throw new Error("转角必须是有限实数");
+    var axis = kernel.axisDirection(direction);
+    return [Math.cos(angle / 2)].concat(kernel.sclv(axis, Math.sin(angle / 2)));
+  };
+
+  kernel.quaternionMatrix = function (quaternion) {
+    var values = requireUnitQuaternion(quaternion);
+    var scalar = values[0], horizontal = values[1], vertical = values[2], depth = values[3];
+    return [
+      [2 * (scalar * scalar + horizontal * horizontal) - 1, 2 * (horizontal * vertical - scalar * depth), 2 * (horizontal * depth + scalar * vertical)],
+      [2 * (horizontal * vertical + scalar * depth), 2 * (scalar * scalar + vertical * vertical) - 1, 2 * (vertical * depth - scalar * horizontal)],
+      [2 * (horizontal * depth - scalar * vertical), 2 * (vertical * depth + scalar * horizontal), 2 * (scalar * scalar + depth * depth) - 1]
+    ];
+  };
+
+  kernel.quaternionProduct = function (first, second) {
+    var left = requireUnitQuaternion(first), right = requireUnitQuaternion(second);
+    var leftVector = left.slice(1), rightVector = right.slice(1);
+    return [left[0] * right[0] - kernel.dot(leftVector, rightVector)].concat(
+      kernel.addv(kernel.addv(kernel.sclv(rightVector, left[0]), kernel.sclv(leftVector, right[0])), kernel.crs(leftVector, rightVector))
+    );
+  };
+
+  kernel.quaternionInverse = function (quaternion) {
+    var values = requireUnitQuaternion(quaternion);
+    return [values[0], -values[1], -values[2], -values[3]];
+  };
+
+  kernel.quaternionExtract = function (rotation) {
+    var quality = kernel.rotationQuality(rotation);
+    var horizontal = rotation[0][0], vertical = rotation[1][1], depth = rotation[2][2];
+    var crossX = rotation[2][1] - rotation[1][2];
+    var crossY = rotation[0][2] - rotation[2][0];
+    var crossZ = rotation[1][0] - rotation[0][1];
+    var sumXY = rotation[0][1] + rotation[1][0];
+    var sumXZ = rotation[0][2] + rotation[2][0];
+    var sumYZ = rotation[1][2] + rotation[2][1];
+    var symmetric = [
+      [1 + horizontal + vertical + depth, crossX, crossY, crossZ],
+      [crossX, 1 + horizontal - vertical - depth, sumXY, sumXZ],
+      [crossY, sumXY, 1 - horizontal + vertical - depth, sumYZ],
+      [crossZ, sumXZ, sumYZ, 1 - horizontal - vertical + depth]
+    ];
+    var pivot = 0;
+    for (var index = 1; index < 4; index++) if (symmetric[index][index] > symmetric[pivot][pivot]) pivot = index;
+    var component = Math.sqrt(Math.max(0, symmetric[pivot][pivot])) / 2;
+    var quaternion = kernel.unitQuaternion(symmetric.map(function (row) { return row[pivot] / (4 * component); }));
+    return { quaternion: quaternion, pivot: pivot, orthogonalError: quality.orthogonalError, determinant: quality.determinant };
+  };
+
+  kernel.quaternionSignCandidate = function (rotation) {
+    kernel.rotationQuality(rotation);
+    var horizontal = rotation[0][0], vertical = rotation[1][1], depth = rotation[2][2];
+    var signs = [rotation[2][1] - rotation[1][2], rotation[0][2] - rotation[2][0], rotation[1][0] - rotation[0][1]];
+    var squares = [1 + horizontal + vertical + depth, 1 + horizontal - vertical - depth, 1 - horizontal + vertical - depth, 1 - horizontal - vertical + depth];
+    return squares.map(function (value, index) { return Math.sqrt(Math.max(0, value)) / 2 * (index === 0 || signs[index - 1] >= 0 ? 1 : -1); });
+  };
+
+  kernel.compositionSteps = function (angleY, angleZ, mode, order, initial) {
+    var rotations = { y: kernel.rotY(angleY * DEG), z: kernel.rotZ(angleZ * DEG) };
+    var directions = { y: [0, 1, 0], z: [0, 0, 1] };
+    var steps = [{ R: initial, axis: null }];
+    order.split("").forEach(function (name) {
+      var previous = steps[steps.length - 1].R;
+      var axis = mode === "fixed" ? directions[name] : kernel.Trot({ R: previous }, directions[name]);
+      var rotation = rotations[name];
+      steps.push({
+        R: mode === "fixed" ? kernel.mul3(rotation, previous) : kernel.mul3(previous, rotation),
+        axis: axis
+      });
+    });
+    return steps;
+  };
+
   /* 齐次位姿 T = { R: 3×3, p: 平移 }（4×4 齐次阵的活动表示） */
   kernel.Tid = function () { return { R: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], p: [0, 0, 0] }; };
   kernel.Tmul = function (A, B) {
@@ -276,6 +442,40 @@
     ];
   };
   kernel.Tvec = function (T, v) { return kernel.addv(kernel.Trot(T, v), T.p); };
+
+  function requirePose(pose) {
+    if (!pose || !Array.isArray(pose.p) || pose.p.length !== 3 || !pose.p.every(Number.isFinite)) throw new Error("位姿平移须含三个有限实数");
+    kernel.rotationQuality(pose.R);
+    return pose;
+  }
+
+  kernel.Tmatrix = function (pose) {
+    requirePose(pose);
+    return pose.R.map(function (row, index) { return row.concat(pose.p[index]); }).concat([[0, 0, 0, 1]]);
+  };
+
+  kernel.Tinverse = function (pose) {
+    requirePose(pose);
+    var transpose = pose.R[0].map(function (unused, column) { return pose.R.map(function (row) { return row[column]; }); });
+    return { R: transpose, p: kernel.sclv(kernel.Trot({ R: transpose }, pose.p), -1) };
+  };
+
+  kernel.homogeneousSteps = function (firstAngle, secondAngle, origin, offset) {
+    if (![firstAngle, secondAngle, offset].every(Number.isFinite)) throw new Error("转角和位移必须是有限实数");
+    var first = requirePose({ R: kernel.rotZ(firstAngle * DEG), p: origin });
+    var second = { R: kernel.rotX(secondAngle * DEG), p: [offset, 0, 0] };
+    var combined = kernel.Tmul(first, second);
+    var input = [0, 1, 0];
+    var intermediatePoint = kernel.Tvec(second, input);
+    var intermediateDirection = kernel.Trot(second, input);
+    return {
+      first: first, second: second, combined: combined, inverse: kernel.Tinverse(combined),
+      wrong: kernel.Tmul(second, first),
+      points: [input.slice(), intermediatePoint, kernel.Tvec(first, intermediatePoint)],
+      directions: [input.slice(), intermediateDirection, kernel.Trot(first, intermediateDirection)],
+      frames: [combined, first, kernel.Tid()]
+    };
+  };
 
   /* 标准 DH 关节变换（与书中式一致）：
      A_i^{i-1} = Rot_z(ϑ)·Trans_z(d)·Trans_x(a)·Rot_x(α) */
@@ -316,18 +516,39 @@
     return kernel.mul3(kernel.mul3(kernel.rotZ(phi * DEG), kernel.rotY(the * DEG)), kernel.rotX(psi * DEG));
   };
   kernel.extractZYZ = function (R) {
-    var sb = Math.sqrt(R[0][2] * R[0][2] + R[1][2] * R[1][2]);
-    if (sb < 1e-9) {
-      return { ok: false, phi: Math.atan2(R[1][0], R[0][0]) / DEG, theta: (R[2][2] > 0 ? 0 : 180), psi: 0 };
+    var sb = Math.hypot(R[0][2], R[1][2]);
+    if (sb < 1e-12) {
+      var parallel = R[2][2] > 0;
+      var combined = Math.atan2(parallel ? R[1][0] : -R[1][0], parallel ? R[0][0] : -R[0][0]) / DEG;
+      return { ok: false, phi: combined, theta: parallel ? 0 : 180, psi: 0, radius: sb, combination: parallel ? "φ+ψ" : "φ−ψ" };
     }
-    return { ok: true, phi: Math.atan2(R[1][2], R[0][2]) / DEG, theta: Math.atan2(sb, R[2][2]) / DEG, psi: Math.atan2(R[2][1], -R[2][0]) / DEG };
+    return { ok: true, phi: Math.atan2(R[1][2], R[0][2]) / DEG, theta: Math.atan2(sb, R[2][2]) / DEG, psi: Math.atan2(R[2][1], -R[2][0]) / DEG, radius: sb };
   };
   kernel.extractRPY = function (R) {
-    var cb = Math.sqrt(R[0][0] * R[0][0] + R[1][0] * R[1][0]);
-    if (cb < 1e-9) {
-      return { ok: false, phi: Math.atan2(-R[0][1], R[1][1]) / DEG, theta: (R[2][0] < 0 ? 90 : -90), psi: 0 };
+    var cb = Math.hypot(R[0][0], R[1][0]);
+    if (cb < 1e-12) {
+      var positive = R[2][0] < 0;
+      return { ok: false, phi: Math.atan2(-R[0][1], R[1][1]) / DEG, theta: positive ? 90 : -90, psi: 0, radius: cb, combination: positive ? "φ−ψ" : "φ+ψ" };
     }
-    return { ok: true, phi: Math.atan2(R[1][0], R[0][0]) / DEG, theta: Math.atan2(-R[2][0], cb) / DEG, psi: Math.atan2(R[2][1], R[2][2]) / DEG };
+    return { ok: true, phi: Math.atan2(R[1][0], R[0][0]) / DEG, theta: Math.atan2(-R[2][0], cb) / DEG, psi: Math.atan2(R[2][1], R[2][2]) / DEG, radius: cb };
+  };
+  kernel.eulerSteps = function (mode, phi, theta, psi) {
+    var names = mode === "zyz" ? ["z", "y", "z"] : ["x", "y", "z"];
+    var angles = mode === "zyz" ? [phi, theta, psi] : [psi, theta, phi];
+    var directions = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+    var rotations = { x: kernel.rotX, y: kernel.rotY, z: kernel.rotZ };
+    var steps = [{ R: kernel.Tid().R, axis: null }];
+    names.forEach(function (name, index) {
+      var previous = steps[steps.length - 1].R;
+      var rotation = rotations[name](angles[index] * DEG);
+      steps.push({
+        R: mode === "zyz" ? kernel.mul3(previous, rotation) : kernel.mul3(rotation, previous),
+        axis: mode === "zyz" ? kernel.Trot({ R: previous }, directions[name]) : directions[name],
+        name: name,
+        angle: angles[index]
+      });
+    });
+    return steps;
   };
 
   /* 拟人臂闭式 T₃⁰（原书式 2.66，node 测试对拍用） */
@@ -423,7 +644,10 @@
   kernel.geoJacPos = function (frames) {
     var n = frames.length - 1;
     var pe = frames[n].o;
-    var J = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    /* 行数恒为 3，列数必须随关节数 n 走：写死三列会让 7 自由度（DLR）这类
+       非三关节机构拿到带空洞的矩阵，读数里出现 undefined → NaN。 */
+    var J = [[], [], []];
+    for (var r = 0; r < 3; r++) for (var c0 = 0; c0 < n; c0++) J[r][c0] = 0;
     for (var i = 1; i <= n; i++) {
       var z = frames[i - 1].z;
       var r = kernel.subv(pe, frames[i - 1].o);
@@ -454,8 +678,11 @@
     var px = p[0], py = p[1], pz = p[2];
     var norm2 = px * px + py * py + pz * pz;
     var R = Math.sqrt(px * px + py * py);
-    var c3 = (norm2 - a2 * a2 - a3 * a3) / (2 * a2 * a3);
-    var out = { reachable: Math.abs(c3) <= 1, c3: c3, R: R, shoulderSingular: R < 1e-9, solutions: [] };
+    var c3raw = (norm2 - a2 * a2 - a3 * a3) / (2 * a2 * a3);
+    /* 边界容差：臂恰好伸直/折回时 ‖p‖=a₂±a₃，浮点舍入会让 c₃ 略大于 1，
+       若直接判 >1 不可达，会在可达边界上误报「无解」。夹到 [-1,1] 再算 s₃。 */
+    var c3 = Math.max(-1, Math.min(1, c3raw));
+    var out = { reachable: Math.abs(c3raw) <= 1 + 1e-12, c3: c3, R: R, shoulderSingular: R < 1e-9, solutions: [] };
     if (!out.reachable) {
       out.reason = c3 > 1
         ? "腕心太远：‖p_w‖ = " + Math.sqrt(norm2).toFixed(3) + " m > a₂ + a₃ = " + (a2 + a3).toFixed(3) + " m（式 2.98 的容许性条件被破坏）"
@@ -903,7 +1130,7 @@
       view.cyl(
         kernel.addv(o, kernel.sclv(axis, -jr * 0.9)),
         kernel.addv(o, kernel.sclv(axis, jr * 0.9)),
-        jr, { color: c.green, hl: opt.hlTheta && opt.hlTheta + i, seg: 10 }
+        jr, { color: opt.jointTypes && opt.jointTypes[i] === "P" ? c.gold : c.green, hl: opt.hlTheta && opt.hlTheta + i, seg: 10 }
       );
     }
 
@@ -949,9 +1176,8 @@
 
   /* ================= 实验：zoo3d · 构形动物园（ch01 §1.2） ================= */
 
-  function labZoo3D(host) {
+  kernel.zooKinds = function () {
     var HALF_PI = Math.PI / 2;
-    var state = { kind: "anthro", q: [0, 40, -75, 0, 0, 0, 0], hover: null };
 
     /* 各构形定义：rows 为 DH 行（type: R/P，range: 关节范围，def: 默认值） */
     var KINDS = [
@@ -959,7 +1185,7 @@
         id: "cartesian", name: "笛卡儿型", seq: "移动 ×3（PPP）", ws: "长方体",
         rows: [
           { alpha: -HALF_PI, a: 0, d: 0, th: 0, type: "P", label: "d₁（立柱升降）", range: [-0.45, 0.45], def: 0.18 },
-          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "P", label: "d₂（横梁平移）", range: [-0.35, 0.35], def: 0.22 },
+          { alpha: HALF_PI, a: 0, d: 0, th: HALF_PI, type: "P", label: "d₂（横梁平移）", range: [-0.35, 0.35], def: 0.22 },
           { alpha: 0, a: 0, d: 0, th: 0, type: "P", label: "d₃（主轴进给）", range: [-0.35, 0.35], def: -0.25 }
         ],
         note: "三根移动轴互相垂直：每关节独管一个笛卡儿坐标，像三维打印机；工作空间是长方体。"
@@ -983,14 +1209,14 @@
         note: "与 2.9.3 球形臂同构：两转定方向、一移探距离；工作空间是中空球体的一部分（这里 d₂ 是肩部偏置）。"
       },
       {
-        id: "scara", name: "SCARA", seq: "转动 + 转动 + 移动（三轴平行，RR:P）", ws: "扁形回转体",
+        id: "scara", name: "SCARA", seq: "转动 + 转动 + 移动（臂 RRP + 腕 R，整体 RRPR）", ws: "扁形回转体",
         rows: [
           { alpha: 0, a: 0.5, d: 0, th: 0, type: "R", label: "θ₁", range: [-140, 140], def: 25 },
           { alpha: 0, a: 0.42, d: 0, th: 0, type: "R", label: "θ₂", range: [-150, 150], def: -45 },
           { alpha: 0, a: 0, d: 0, th: 0, type: "P", label: "d₃（竖直下压）", range: [-0.4, 0], def: -0.18 },
           { alpha: 0, a: 0, d: 0, th: 0, type: "R", label: "θ₄（腕回转）", range: [-180, 180], def: 0 }
         ],
-        note: "三根轴全平行（都竖直）：水平面内两个转动定位、竖直方向移动下压——竖直刚、水平顺从，天生适合插装。"
+        note: "四根关节轴全平行（都竖直）：水平面内两个转动定位、竖直方向移动下压——竖直刚、水平顺从，天生适合插装。"
       },
       {
         id: "planar3r", name: "平面三连杆", seq: "转动 ×3（三轴平行，RRR）", ws: "环形（平面）",
@@ -1008,7 +1234,7 @@
           { alpha: 0, a: 0.45, d: 0, th: 0, type: "R", label: "θ₁′（曲柄）", range: [20, 130], def: 55 },
           { alpha: 0, a: 0.5, d: 0, th: 0, type: "R", label: "θ₁″（驱动杆）", range: [40, 150], def: 95 }
         ],
-        note: "2.9.2 的闭链：O–A–B–C 构成平行四边形，两个驱动关节都装在基座（执行器不上臂）；与两连杆臂运动学等价，刚度更高。"
+        note: "2.9.2 的闭链：O–A–B–C 构成平行四边形，两个驱动关节都装在基座（执行器不上臂）；本图只表示几何约束，不计算承载或刚度。"
       },
       {
         id: "anthro", name: "拟人臂", seq: "转动 ×3（腰—肩—肘，RRR）", ws: "近似球体",
@@ -1017,14 +1243,14 @@
           { alpha: 0, a: 0.62, d: 0, th: 0, type: "R", label: "θ₂（肩）", range: [-90, 90], def: 42 },
           { alpha: 0, a: 0.52, d: 0, th: 0, type: "R", label: "θ₃（肘）", range: [-140, 140], def: -70 }
         ],
-        note: "2.9.4：腰轴竖直、肩肘轴水平平行，像人的胳膊；全转动关节、最灵活，工业界占比 59%。"
+        note: "2.9.4：腰轴竖直、肩肘轴水平平行，像人的胳膊；关节角与末端坐标通常相互耦合。"
       },
       {
         id: "anthroWrist", name: "拟人臂 + 球形腕", seq: "转动 ×6（3R 臂 + 三轴共点腕）", ws: "近似球体",
         rows: [
           { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₁（腰）", range: [-150, 150], def: 15 },
           { alpha: 0, a: 0.55, d: 0, th: 0, type: "R", label: "θ₂（肩）", range: [-70, 80], def: 35 },
-          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₃（肘）", range: [-120, 120], def: -55 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₃（肘）", range: [-120, 120], def: 35 },
           { alpha: -HALF_PI, a: 0, d: 0.3, th: 0, type: "R", label: "θ₄（腕偏摆）", range: [-120, 120], def: 20 },
           { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₅（腕俯仰）", range: [-110, 110], def: -35 },
           { alpha: 0, a: 0, d: 0.14, th: 0, type: "R", label: "θ₆（腕回转）", range: [-180, 180], def: 0 }
@@ -1047,33 +1273,47 @@
     /* ---- 第二轮补充：DLR 七自由度冗余臂（2.9.8）与并联机构（1.2.3） ---- */
     var KINDS_EXTRA = [
       {
-        id: "dlr", name: "DLR 七自由度", seq: "转动/移动交替（本质冗余）", ws: "近似球体",
+        id: "dlr", name: "DLR 七自由度", seq: "转动 ×7（7R）", ws: "近似球体",
         rows: [
           { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₁", range: [-140, 140], def: 20 },
-          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₂", range: [-70, 70], def: -25 },
-          { alpha: HALF_PI, a: 0, d: 0.22, th: 0, type: "P", label: "d₃（移动）", range: [0.05, 0.42], def: 0.24 },
-          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₄", range: [-140, 140], def: 15 },
-          { alpha: HALF_PI, a: 0, d: 0.2, th: 0, type: "P", label: "d₅（移动）", range: [0.05, 0.4], def: 0.22 },
-          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₆", range: [-70, 70], def: -20 },
-          { alpha: 0, a: 0, d: 0.12, th: 0, type: "P", label: "d₇（移动）", range: [0.02, 0.3], def: 0.16 }
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₂", range: [-180, 180], def: 150 },
+          { alpha: HALF_PI, a: 0, d: 0.22, th: 0, type: "R", label: "θ₃", range: [-180, 180], def: 45 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₄", range: [-180, 180], def: 140 },
+          { alpha: HALF_PI, a: 0, d: 0.2, th: 0, type: "R", label: "θ₅", range: [-180, 180], def: 35 },
+          { alpha: HALF_PI, a: 0, d: 0, th: 0, type: "R", label: "θ₆", range: [-180, 180], def: 40 },
+          { alpha: 0, a: 0, d: 0.12, th: 0, type: "R", label: "θ₇", range: [-180, 180], def: 15 }
         ],
-        note: "2.9.8：DLR 机械手全表 aᵢ=0、αᵢ=π/2（i=1…6）、α₇=0，关节 3、5、7 是移动型。七个自由度对六维位姿是<b>本质冗余</b>（见 2.10.3）——同一末端位形有一整族解。"
+        note: "2.9.8：DLR 机械手全表 aᵢ=0、αᵢ=π/2（i=1…6）、α₇=0，七个变量都是转角 θ₁…θ₇；d₃、d₅、d₇ 是固定连杆尺寸。七个自由度对六维位姿是<b>本质冗余</b>（见 2.10.3）——在满秩的可达位形附近，同一末端位姿通常有一族关节解。"
       },
       {
-        id: "parallel", name: "并联机构（四腿示意）", seq: "四条运动链同时连基座与末端", ws: "被缩减的工作空间",
+        id: "parallel", name: "并联升降示意", seq: "四条伸缩支链连接固定基座与平台", ws: "竖直线段",
         custom: "parallel",
-        rows: [{ alpha: 0, a: 0, d: 0, th: 0, type: "R", label: "驱动角 β", range: [25, 70], def: 45 }],
-        note: "1.2.3：并联构形里<b>多条运动链同时连接基座与末端执行器</b>（ABB IRB 340 FlexPicker 即四轴并联）。优势是结构刚性高、可达较高操作速度；代价是<b>工作空间被缩减</b>。注意这里每条链都是闭链——自由度不再是「关节数减约束」那么简单。"
+        rows: [{ alpha: 0, a: 0, d: 0, th: 0, type: "P", label: "平台高度 h", range: [0.25, 0.7], def: 0.45 }],
+        note: "本教学示意假定中央导向柱只允许平台竖直平移，四条伸缩支链同步伸长。支链通过基座和平台共同构成回路；单独一条支链并不是闭链。这是 1 自由度升降机构，不是 FlexPicker 的结构模型；图中不计算刚度或速度。"
       }
     ];
 
-    KINDS = KINDS.concat(KINDS_EXTRA);
+    return KINDS.concat(KINDS_EXTRA);
+  };
+
+  kernel.zooParallelGeometry = function (h) {
+    var phis = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
+    return phis.map(function (phi) {
+      var B = [0.4 * Math.cos(phi), 0.4 * Math.sin(phi), 0];
+      var P = [0.2 * Math.cos(phi), 0.2 * Math.sin(phi), h];
+      return { base: B, platform: P, length: kernel.len(kernel.subv(P, B)) };
+    });
+  };
+
+  function labZoo3D(host) {
+    var KINDS = kernel.zooKinds();
+    var state = { kind: "anthro", q: [], hover: null };
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "构形动物园：十一种机构，拖转起来数自由度"));
+    head.appendChild(el("b", null, "构形动物园：比较关节轴与工具点运动"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "选一种构形，拖动关节滑杆、拖转视角（画布内按住拖动、滚轮缩放）。绿色圆柱 = 转动关节，金色 = 移动关节的导轨滑块；虚线 = 关节轴线。对照着「臂的关节序列 → 工作空间形状」这条判别主线看：三移 → 长方体；一转两移 → 空心圆柱；两转一移 → 中空球；三轴平行 → 扁形回转体；全转动 → 近似球。"));
+    host.appendChild(el("p", "lab-note", "选择构形，再逐个调整关节。绿色为转动关节、金色为移动关节；虚线是关节轴，红点 P 是读数对应的末端原点。末端坐标轴显示朝向。球形腕另用蓝点 W 标出腕心。画布可拖转、滚轮缩放；本演示未计算可达边界，工作空间应结合正文的轴几何与限位理解。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1096,18 +1336,31 @@
 
     var view = null;
     var sliderRefs = [];
+    var resetButton = el("button", "lab-btn", "重置当前关节");
+    resetButton.type = "button";
+    resetButton.addEventListener("click", function () { resetSliders(); draw(); });
+    controls.appendChild(resetButton);
 
     function resetSliders() {
-      sliderRefs.forEach(function (r) { if (r.input.parentNode) r.input.parentNode.parentNode.removeChild(r.input.parentNode); });
+      sliderRefs.forEach(function (r) {
+        /* 容错：重复切换构形时控件可能已被移除，硬取 parentNode 会空指针 */
+        var wrap = r.input && r.input.parentNode;
+        if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      });
       sliderRefs = [];
       var kind = KINDS.find(function (k) { return k.id === state.kind; });
       kind.rows.forEach(function (row, i) {
         sliderRefs.push(slider(controls, row.label, row.range[0], row.range[1], row.type === "P" ? 0.01 : 1, row.def, function (v) {
           state.q[i] = v;
           draw();
-        }, function (v) { return v.toFixed(v < 10 ? 2 : 0) + (row.type === "P" ? " m" : "°"); }));
+        }, function (v) { return v.toFixed(row.type === "P" ? 2 : 0) + (row.type === "P" ? " m" : "°"); }));
       });
       state.q = kind.rows.map(function (row) { return row.def; });
+      if (view) {
+        view.cam.zoom = kind.id === "dlr" ? 2 : 1.3;
+        view.center[0] = kind.id === "anthroWrist" ? 0.35 : 0;
+        view.center[2] = kind.id === "dlr" ? 0.18 : 0.28;
+      }
     }
 
     function findKind() {
@@ -1146,34 +1399,21 @@
       v.label(kernel.sclv(kernel.addv(B, T4), 0.5), "4", c.gold);
     }
 
-    /* 并联机构（四腿平行四边形，1.2.3 的示意）：驱动角 β 决定平台高度 */
-    function drawParallel(v, kind, betaDeg) {
+    function drawParallel(v, kind, h) {
       var c = palette();
-      var beta = betaDeg * Math.PI / 180;
-      var L = 0.6, Rb = 0.4;
-      var h = L * Math.sin(beta);
-      var Rp = Rb + L * Math.cos(beta);
-      /* 基座 */
       v.box([0, 0, -0.03], [0.5, 0.5, 0.025], kernel.Tid().R, { color: c.neutral });
-      /* 平台（升降） */
+      v.cyl([0, 0, 0], [0, 0, 0.76], 0.035, { color: c.muted });
       v.box([0, 0, h], [0.18, 0.18, 0.025], kernel.Tid().R, { color: c.gold });
-      v.sphere([0, 0, h + 0.06], 0.03, { color: c.red });
-      v.label([0, 0, h + 0.12], "末端执行器（平台）", c.red, 10, 2);
-      var phis = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
-      phis.forEach(function (phi) {
-        var B = [Rb * Math.cos(phi), Rb * Math.sin(phi), 0];
-        var P = [Rp * Math.cos(phi), Rp * Math.sin(phi), h];
-        var tan = [-Math.sin(phi), Math.cos(phi), 0];
-        /* 每条腿两根平行杆 → 平行四边形闭链 */
-        v.cyl(B, P, 0.026, { color: c.blue });
-        v.cyl(kernel.addv(B, kernel.sclv(tan, 0.07)), kernel.addv(P, kernel.sclv(tan, 0.07)),
-          0.016, { color: c.muted });
-        v.sphere(B, 0.035, { color: c.green });
-        v.sphere(P, 0.028, { color: c.gold });
+      kernel.zooParallelGeometry(h).forEach(function (leg) {
+        var midpoint = kernel.sclv(kernel.addv(leg.base, leg.platform), 0.5);
+        v.cyl(leg.base, midpoint, 0.032, { color: c.blue });
+        v.cyl(midpoint, leg.platform, 0.019, { color: c.gold });
+        v.sphere(leg.base, 0.035, { color: c.green });
+        v.sphere(leg.platform, 0.028, { color: c.green });
       });
-      v.label([Rb * 0.7, Rb * 0.7, 0.02], "基座铰点（4 个）", c.green, 10, 6);
-      v.label([0, 0, h + 0.02], "平台铰点（4 个）", c.gold, -60, -6);
-      v.label([0.3, 0.2, h * 0.6], "驱动角 β = " + betaDeg.toFixed(0) + "°", c.blue, 12, 0);
+      v.sphere([0, 0, h], 0.03, { color: c.red });
+      v.label([0, 0, h], "平台中心 P", c.red, 12, -18);
+      v.label([0, 0, 0.76], "竖直导向", c.muted, -90, -20);
     }
 
     function draw() {
@@ -1193,70 +1433,50 @@
       } else {
         var frames = kernel.fkChain(rows, q);
         drawChain(view, frames, {
-          toolLen: 0.14,
-          jointR: kind.id === "cartesian" ? 0.06 : 0.07,
+          toolLen: 0,
+          triads: true, frameRange: [rows.length, rows.length], triadSize: 0.16,
+          jointTypes: rows.map(function (row) { return row.type; }),
+          jointR: kind.id === "dlr" ? 0.035 : 0.06,
+          linkR: kind.id === "dlr" ? 0.025 : 0.04,
           baseH: 0.001
         });
+        if (kind.id === "anthroWrist" || kind.id === "stanford") {
+          var wrist = frames[4].o;
+          view.sphere(wrist, 0.042, { color: palette().blue });
+          view.label(wrist, "腕心 W", palette().blue, 12, -16);
+          view.label(frames[rows.length].o, "工具点 P", palette().red, 12, 16);
+        }
         /* 移动关节画导轨示意：金色细杆沿轴向 */
         rows.forEach(function (row, i) {
           if (row.type !== "P") return;
           var f = frames[i];
           var dir = f.z;
-          var near = kernel.addv(f.o, kernel.sclv(dir, row.range[0] > 0 ? row.range[0] - 0.08 : 0.05));
+          var near = kernel.addv(f.o, kernel.sclv(dir, row.range[0] - 0.06));
           var far = kernel.addv(f.o, kernel.sclv(dir, row.range[1] + 0.06));
           view.cyl(near, far, 0.02, { color: palette().gold });
         });
       }
 
-      /* 工作空间虚线提示 */
-      var wsColor = palette().purple;
-      var endF = kind.custom === "para" ? null : kernel.fkChain(rows, q);
-      if (kind.ws === "长方体") {
-        var h = 0.5, rxy = 0.62;
-        [[-rxy, -h / 2], [rxy, -h / 2], [rxy, h / 2], [-rxy, h / 2]].forEach(function (corner, i, arr) {
-          var next = arr[(i + 1) % 4];
-          view.path([
-            [corner[0], corner[1], -0.02], [next[0], next[1], -0.02],
-            [next[0], next[1], h], [corner[0], corner[1], h]
-          ], { color: wsColor, width: 1.1, dash: [5, 4] });
-        });
-      } else if (kind.ws === "空心圆柱体") {
-        [0.02, 0.62].forEach(function (z) {
-          view.arc([0, 0, z], [1, 0, 0], [0, 1, 0], 0.85, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-        });
-        for (var k = 0; k < 4; k++) {
-          var ang = k * Math.PI / 2;
-          view.line([0.85 * Math.cos(ang), 0.85 * Math.sin(ang), 0.02], [0.85 * Math.cos(ang), 0.85 * Math.sin(ang), 0.62],
-            { color: wsColor, width: 1.1, dash: [5, 4] });
-        }
-      } else if (kind.ws === "中空球体") {
-        /* 用三个不同法面的大圆近似球壳 */
-        view.arc([0, 0.25, 0.45], [1, 0, 0], [0, 0, 1], 0.85, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-        view.arc([0, 0.25, 0.45], kernel.norm([0, 1, 1]), kernel.norm([1, -1, 0.2]), 0.85, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-        view.arc([0, 0.25, 0.45], kernel.norm([0, 1, -1]), kernel.norm([1, 1, 0.2]), 0.85, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-      } else if (kind.ws === "扁形回转体" || kind.ws === "环形（平面）") {
-        var plane = kind.ws === "扁形回转体" ? 0.1 : 0.02;
-        view.arc([0, 0, plane], [1, 0, 0], [0, 1, 0], kind.rows.reduce(function (s, r) { return s + (r.a || 0); }, 0) || 0.7, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-      } else if (kind.ws === "近似球体") {
-        var cr = kind.rows.reduce(function (s, r) { return s + (r.a || 0) + (r.type === "P" ? 0.6 : 0); }, 0.3);
-        view.arc([0, 0.3, 0.45], [1, 0, 0], [0, 0, 1], 0.82, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-        view.arc([0, 0.3, 0.45], kernel.norm([0, 1, 1]), kernel.norm([1, -1, 0.2]), 0.82, 0, 2 * Math.PI, { color: wsColor, width: 1.1, dash: [5, 4] });
-      }
-
+      var endF = kind.custom ? null : kernel.fkChain(rows, q);
       view.render(state.hover);
 
-      var dof = rows.length;
       var dofText = kind.custom === "para"
-        ? "自由度 " + dof + "（独立驱动 2 个，闭链约束吃掉 2 个）"
-        : (kind.custom === "parallel"
-          ? "本示意为<b>竖直升降 1 自由度</b>的四腿平行四边形（ABB IRB 340 FlexPicker 则是四轴并联）"
-          : "自由度 " + dof);
-      var html = "<p><b>" + kind.name + "</b>：" + kind.seq + "，" + dofText +
-        "；工作空间：" + kind.ws + "。</p>";
+        ? "独立驱动变量 2 个（其余关节运动受闭链几何约束）"
+        : (kind.custom === "parallel" ? "在竖直导向与四腿同步假设下，自由度 1" : "自由度 " + rows.length);
+      var html = "<p><b>" + kind.name + "</b>：" + kind.seq + "；" + dofText + "。</p>";
       html += "<p class='lab-note'>" + kind.note + "</p>";
+      html += "<p class='lab-note'>长度和滑杆范围为教学设定，不代表实机尺寸、限位或无碰撞范围。</p>";
+      function xyz(p) { return "(" + p.map(function (x) { return x.toFixed(3); }).join(", ") + ") m"; }
       if (endF) {
-        var p = endF[endF.length - 1].o;
-        html += "<p class='lab-note'>末端原点当前位于 (" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ", " + p[2].toFixed(2) + ") m。</p>";
+        var last = endF[endF.length - 1];
+        html += "<p data-zoo-point='P'>红点 P：" + xyz(last.o) + "。</p>";
+        html += "<p data-zoo-axis='x'>工具 x 轴方向（无量纲）：(" + last.x.map(function (x) { return x.toFixed(3); }).join(", ") + ")。</p>";
+        if (kind.id === "anthroWrist" || kind.id === "stanford") {
+          var W = endF[4].o;
+          html += "<p data-zoo-point='W'>蓝点 W（腕心）：" + xyz(W) + "；工具偏置 |P−W| = " + kernel.len(kernel.subv(last.o, W)).toFixed(3) + " m。只转腕时 W 不动，P 可以移动；末端绝对朝向同时取决于臂与腕。</p>";
+        }
+      } else if (kind.custom === "parallel") {
+        html += "<p data-zoo-point='P'>平台中心 P：" + xyz([0, 0, state.q[0]]) + "；每条支链长 " + kernel.zooParallelGeometry(state.q[0])[0].length.toFixed(3) + " m。</p>";
       }
       readout.innerHTML = texLite(html);
     }
@@ -1275,114 +1495,244 @@
 
   /* ================= 实验：euler3d · 欧拉角逐级复合（ch02 §2.4） ================= */
 
-  function labEuler3D(host) {
-    var state = { mode: "zyz", phi: 30, theta: 55, psi: 20, step: 3, hover: null };
-
+  function labComposition3D(host) {
+    var state = { angleY: 90, angleZ: 90, mode: "fixed", order: "yz", initial: "identity", step: 2 };
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "欧拉角在三维里怎么转：ZYZ 与 RPY 的逐级复合"));
+    head.appendChild(el("b", null, "两次旋转：轴在哪里，因子就接在哪里"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖动画布转视角、拖 φ/ϑ/ψ 看动坐标架怎么动。步进滑杆把三次转动拆开：每一步只显示「转到这一步为止」的坐标架（浅色为中间结果），正在生效的旋转轴加粗高亮。悬停下方 R 矩阵的列，画布里对应的动系轴会跟着加粗——第 j 列就是动系第 j 根轴在参考系里的方向。"));
-
+    host.appendChild(el("p", "lab-note", "蓝、绿、金色为工具 x′、y′、z′ 轴，灰色为固定轴；红线标出所选步骤使用的转轴。拖动画布改变观察方向，滚轮缩放。矩阵、三轴坐标和画布始终对应同一步；第 0 步尚未转动。"));
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
-    toggleGroup(controls, "约定", [{ value: "zyz", text: "ZYZ" }, { value: "rpy", text: "RPY" }], "zyz", function (v) { state.mode = v; draw(); });
-    slider(controls, "φ", -180, 180, 1, state.phi, function (v) { state.phi = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
-    slider(controls, "ϑ", -180, 180, 1, state.theta, function (v) { state.theta = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
-    slider(controls, "ψ", -180, 180, 1, state.psi, function (v) { state.psi = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
-    slider(controls, "复合到第几步", 1, 3, 1, 3, function (v) { state.step = v; draw(); }, function (v) { return ["①", "②", "③"][v - 1]; });
-
+    var modeButtons = toggleGroup(controls, "轴的约定", [
+      { value: "fixed", text: "固定轴 · 左乘" }, { value: "current", text: "当前轴 · 右乘" }
+    ], state.mode, function (value) { state.mode = value; draw(); });
+    var orderButtons = toggleGroup(controls, "发生顺序", [
+      { value: "yz", text: "先 y 后 z" }, { value: "zy", text: "先 z 后 y" }
+    ], state.order, function (value) { state.order = value; draw(); });
+    var initialButtons = toggleGroup(controls, "初始姿态", [
+      { value: "identity", text: "初始 I" }, { value: "tilted", text: "初始 Rx(45°)" }
+    ], state.initial, function (value) { state.initial = value; draw(); });
+    var angleY = slider(controls, "绕 y 的角 α", -180, 180, 1, 90, function (value) { state.angleY = value; draw(); }, degrees);
+    var angleZ = slider(controls, "绕 z 的角 β", -180, 180, 1, 90, function (value) { state.angleZ = value; draw(); }, degrees);
+    var step = slider(controls, "显示到第几步", 0, 2, 1, 2, function (value) { state.step = value; draw(); });
+    var reset = el("button", "lab-btn", "重置旋转与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
-    canvas.setAttribute("aria-label", "欧拉角逐级复合的三维坐标架");
+    canvas.setAttribute("aria-label", "两步旋转合成的三维坐标架，精确方向见下方读数");
     host.appendChild(canvas);
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
     host.appendChild(readout);
+    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0, 0], az: -30, elv: 18 });
+    view.onChange = draw;
 
-    bindHover(readout, function (key) {
-      state.hover = key;
+    function degrees(value) { return value + "°"; }
+    function vectorText(vector) {
+      return "(" + vector.map(function (value) { return (Math.abs(value) < 0.0005 ? 0 : value).toFixed(3); }).join(", ") + ")";
+    }
+    function roundedMatrix(matrix) {
+      return matrix.map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0005 ? 0 : value; }); });
+    }
+    function expression(order) {
+      var factors = order.slice(0, state.step).split("").map(function (axis) {
+        return axis === "y" ? "Ry(" + degrees(state.angleY) + ")" : "Rz(" + degrees(state.angleZ) + ")";
+      });
+      var start = state.initial === "identity" ? "I" : "Rx(45°)";
+      return state.mode === "fixed" ? factors.reverse().concat([start]).join(" · ") : [start].concat(factors).join(" · ");
+    }
+    function difference(first, second) {
+      return Math.max.apply(null, first.map(function (row, rowIndex) {
+        return Math.max.apply(null, row.map(function (value, column) { return Math.abs(value - second[rowIndex][column]); }));
+      }));
+    }
+    function draw() {
+      var colors = palette();
+      var initial = state.initial === "identity" ? kernel.Tid().R : kernel.rotX(45 * DEG);
+      var swapped = state.order === "yz" ? "zy" : "yz";
+      var steps = kernel.compositionSteps(state.angleY, state.angleZ, state.mode, state.order, initial);
+      var selected = steps[state.step];
+      var comparison = kernel.compositionSteps(state.angleY, state.angleZ, state.mode, swapped, initial)[state.step];
+      var reverseOther = kernel.compositionSteps(state.angleY, state.angleZ, state.mode === "fixed" ? "current" : "fixed", swapped, initial)[2];
+      view.grid(0.8, 0.2, -0.55, { color: colors.line });
+      view.triad([0, 0, 0], kernel.Tid().R, 0.78, ["x₀", "y₀", "z₀"], { colors: [colors.muted, colors.muted, colors.muted], width: 1.3 });
+      view.box([0, 0, 0], [0.14, 0.1, 0.2], selected.R, { color: colors.neutral });
+      view.triad([0, 0, 0], selected.R, 0.56, ["x′", "y′", "z′"], { colors: [colors.blue, colors.green, colors.gold], width: 2.8 });
+      if (selected.axis) {
+        view.line(kernel.sclv(selected.axis, -0.7), kernel.sclv(selected.axis, 0.7), { color: colors.red, width: 3 });
+      }
+      view.render();
+      var axes = [0, 1, 2].map(function (column) { return selected.R.map(function (row) { return row[column]; }); });
+      var axisName = state.step === 0 ? "尚无新增转轴" : "本步绕" + (state.mode === "fixed" ? "固定 " : "上一步工具系的 ") + state.order[state.step - 1] + " 轴；其固定系方向 " + vectorText(selected.axis);
+      readout.innerHTML = "";
+      readout.appendChild(el("p", null, "第 " + state.step + " 步 / 共 2 步。" + axisName + "。"));
+      readout.appendChild(el("p", null, "本序 R = " + expression(state.order)));
+      var matrix = el("div");
+      matrix.setAttribute("data-composition-matrix", "selected");
+      matrix.innerHTML = matrixHTML(roundedMatrix(selected.R), 3);
+      readout.appendChild(matrix);
+      readout.appendChild(el("p", null, "工具轴在固定系的坐标：x′ = " + vectorText(axes[0]) + "；y′ = " + vectorText(axes[1]) + "；z′ = " + vectorText(axes[2]) + "。"));
+      readout.appendChild(el("p", null, "交换发生顺序、保持轴约定和初始姿态，同样显示第 " + state.step + " 步：R = " + expression(swapped)));
+      var otherMatrix = el("div");
+      otherMatrix.setAttribute("data-composition-matrix", "swapped");
+      otherMatrix.innerHTML = matrixHTML(roundedMatrix(comparison.R), 3);
+      readout.appendChild(otherMatrix);
+      readout.appendChild(el("p", null, "同一步两矩阵的最大元素差 = " + difference(selected.R, comparison.R).toFixed(3) + (state.step < 2 ? "；尚未完成两步，不能据此判断最终是否可交换。" : "；读数保留三位小数，接近 0 时应结合精确公式判断是否相同。")));
+      readout.appendChild(el("p", null, "另作完整两步比较：改用另一轴约定并倒序，终态最大元素差 = " + difference(steps[2].R, reverseOther.R).toFixed(3) + "。从 I 出发恒为 0；初始倾斜后一般不为 0。"));
+    }
+    reset.addEventListener("click", function () {
+      state.angleY = 90;
+      state.angleZ = 90;
+      state.mode = "fixed";
+      state.order = "yz";
+      state.initial = "identity";
+      state.step = 2;
+      [[angleY, 90, "90°"], [angleZ, 90, "90°"], [step, 2, "2"]].forEach(function (entry) {
+        entry[0].input.value = entry[1];
+        entry[0].out.textContent = entry[2];
+      });
+      [modeButtons, orderButtons, initialButtons].forEach(function (buttons) {
+        buttons.forEach(function (button, index) {
+          button.classList.toggle("on", index === 0);
+          button.setAttribute("aria-pressed", index === 0 ? "true" : "false");
+        });
+      });
+      view.cam.az = -30;
+      view.cam.elv = 18;
+      view.cam.zoom = 1;
       draw();
     });
+    host.hidden = false;
+    draw();
+    return draw;
+  }
 
-    /* 逐步复合的中间旋转。两种约定的「分解读法」不同：
-       ZYZ = 当前轴约定：先绕 z₀ 转 φ，再绕新 y′ 转 ϑ，再绕新 z″ 转 ψ；
-       RPY = 固定轴约定：先绕固定 x₀ 转 ψ，再绕固定 y₀ 转 ϑ，最后绕固定 z₀ 转 φ。 */
-    function steps() {
-      if (state.mode === "zyz") {
-        return [
-          kernel.rotZ(state.phi * DEG),
-          kernel.mul3(kernel.rotZ(state.phi * DEG), kernel.rotY(state.theta * DEG)),
-          kernel.zyzMatrix(state.phi, state.theta, state.psi)
-        ];
-      }
-      return [
-        kernel.rotX(state.psi * DEG),
-        kernel.mul3(kernel.rotY(state.theta * DEG), kernel.rotX(state.psi * DEG)),
-        kernel.rpyMatrix(state.phi, state.theta, state.psi)
-      ];
-    }
-    /* 第 i 步的转轴（世界系）：ZYZ 里是「上一步坐标系里的轴」，RPY 里恒为固定轴 */
-    function stepAxisWorld(i, Rs) {
-      if (state.mode === "zyz") {
-        var local = [[0, 0, 1], [0, 1, 0], [0, 0, 1]][i];
-        var base = i === 0 ? kernel.Tid().R : Rs[i - 1];
-        return kernel.Trot({ R: base, p: [0, 0, 0] }, local);
-      }
-      return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][i];
-    }
-    function stepName(i) {
-      return state.mode === "zyz"
-        ? ["绕 z₀ 转 φ", "再绕新 y′ 转 ϑ", "再绕新 z″ 转 ψ"][i]
-        : ["绕固定 x₀ 转 ψ（先转）", "绕固定 y₀ 转 ϑ", "绕固定 z₀ 转 φ（最后转）"][i];
-    }
-
+  function labEuler3D(host) {
+    var state = { mode: "zyz", phi: 30, theta: 55, psi: 20, step: 3 };
+    var message = "";
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "欧拉角：逐步合成，或保持姿态换一套角"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "灰色为固定轴，蓝/绿/金色为工具三轴，红线为本步转轴。矩阵与方向读数始终对应同一步。普通约定按钮保留三个数并重算姿态；同姿态转换按钮对当前显示矩阵反解。拖动画布和滚轮只改变视角。"));
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    var modeButtons = toggleGroup(controls, "约定（保留三个数）", [
+      { value: "zyz", text: "ZYZ" }, { value: "rpy", text: "RPY" }
+    ], state.mode, function (value) { state.mode = value; message = ""; draw(); });
+    function degrees(value) { return value.toFixed(6).replace(/\.?0+$/, "") + "°"; }
+    var phi = slider(controls, "φ", -180, 180, "any", state.phi, function (value) { state.phi = value; message = ""; draw(); }, degrees);
+    var theta = slider(controls, "ϑ", -180, 180, "any", state.theta, function (value) { state.theta = value; message = ""; draw(); }, degrees);
+    var psi = slider(controls, "ψ", -180, 180, "any", state.psi, function (value) { state.psi = value; message = ""; draw(); }, degrees);
+    var step = slider(controls, "显示到第几步", 0, 3, 1, state.step, function (value) { state.step = value; message = ""; draw(); });
+    var convert = el("button", "lab-btn", "同一姿态换成另一套角");
+    convert.type = "button";
+    controls.appendChild(convert);
+    var reset = el("button", "lab-btn", "重置旋转与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "所选步骤的三维坐标架；精确方向和转轴见下方读数");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
+    host.appendChild(readout);
     var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0, 0], az: -30, elv: 18 });
-    view.onChange = function () { draw(); };
+    view.onChange = draw;
 
-    function draw() {
-      var c = palette();
-      view.grid(0.8, 0.2, -0.55, { color: c.line });
-
-      var Rs = steps();
-      var O = [0, 0, 0];
-      /* 参考系（灰） */
-      view.triad(O, kernel.Tid().R, 0.62, ["x₀", "y₀", "z₀"], { colors: [c.muted, c.muted, c.muted], width: 1.4 });
-      /* 中间步骤坐标架（半透明淡色） */
-      for (var i = 0; i < state.step - 1; i++) {
-        view.triad(O, Rs[i], 0.46, null, { colors: [c.blue, c.green, c.gold], width: 1.6, dim: true });
-      }
-      /* 当前步坐标架（亮） */
-      view.triad(O, Rs[state.step - 1], 0.56, ["x′", "y′", "z′"], { colors: [c.blue, c.green, c.gold], width: 2.6 });
-      /* 正在生效的旋转轴：粗箭头 */
-      var axWorld = stepAxisWorld(state.step - 1, Rs);
-      var L = 0.85;
-      view.line(kernel.sclv(axWorld, -L), kernel.addv(O, kernel.sclv(axWorld, L)),
-        { color: c.red, width: 3 });
-      view.label(kernel.addv(O, kernel.sclv(axWorld, L)), "当前转轴", c.red, 6, 2);
-
-      view.render(state.hover);
-
-      var R = Rs[2];
-      var rows = [];
-      for (var r = 0; r < 3; r++) {
-        var row = [];
-        for (var col = 0; col < 3; col++) row.push({ v: R[r][col], hl: "c" + col });
-        rows.push(row);
-      }
-      var html = matrixHTML(rows, 3).replace("<table", "<span class='lab-matrix-label'>R =</span><table");
-      html += "<p class='lab-note'>第 " + ["一", "二", "三"][state.step - 1] + " 步：" + stepName(state.step - 1) +
-        "（" + (state.mode === "zyz" ? "ZYZ" : "RPY") + " 约定下当前步生效）。悬停 R 的第 j 列，画布里动系第 j 根轴会加粗——列向量 = 动系轴在参考系中的方向余弦。</p>";
-      var other = state.mode === "zyz" ? kernel.extractRPY(R) : kernel.extractZYZ(R);
-      var otherName = state.mode === "zyz" ? "RPY" : "ZYZ";
-      if (other.ok) {
-        html += "<p class='lab-note'><b>换用 " + otherName + " 反解同一个 R</b>：φ=" + other.phi.toFixed(1) + "°，ϑ=" + other.theta.toFixed(1) + "°，ψ=" + other.psi.toFixed(1) + "°。</p>";
-      } else {
-        html += "<p class='lab-warn'><b>" + otherName + " 反解奇异</b>：φ 与 ψ 只剩和 / 差组合，解不唯一。</p>";
-      }
-      readout.innerHTML = texLite(html);
+    function vectorText(vector) {
+      return "(" + vector.map(function (value) { return (Math.abs(value) < 0.0000005 ? 0 : value).toFixed(6); }).join(", ") + ")";
     }
-
+    function difference(first, second) {
+      return Math.max.apply(null, first.map(function (row, rowIndex) {
+        return Math.max.apply(null, row.map(function (value, column) { return Math.abs(value - second[rowIndex][column]); }));
+      }));
+    }
+    function selected() { return kernel.eulerSteps(state.mode, state.phi, state.theta, state.psi)[state.step]; }
+    function inverse(mode, rotation) { return mode === "zyz" ? kernel.extractZYZ(rotation) : kernel.extractRPY(rotation); }
+    function forward(mode, angles) { return mode === "zyz" ? kernel.zyzMatrix(angles.phi, angles.theta, angles.psi) : kernel.rpyMatrix(angles.phi, angles.theta, angles.psi); }
+    function syncControls() {
+      [[phi, state.phi], [theta, state.theta], [psi, state.psi], [step, state.step]].forEach(function (entry, index) {
+        entry[0].input.value = entry[1];
+        entry[0].out.textContent = index < 3 ? degrees(entry[1]) : String(entry[1]);
+      });
+      modeButtons.forEach(function (button, index) {
+        var active = index === (state.mode === "zyz" ? 0 : 1);
+        button.classList.toggle("on", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+    function draw() {
+      var colors = palette();
+      var current = selected();
+      var rotation = current.R;
+      view.grid(0.8, 0.2, -0.55, { color: colors.line });
+      view.triad([0, 0, 0], kernel.Tid().R, 0.78, ["x₀", "y₀", "z₀"], { colors: [colors.muted, colors.muted, colors.muted], width: 1.3 });
+      view.box([0, 0, 0], [0.14, 0.1, 0.2], rotation, { color: colors.neutral });
+      view.triad([0, 0, 0], rotation, 0.56, ["x′", "y′", "z′"], { colors: [colors.blue, colors.green, colors.gold], width: 2.8 });
+      if (current.axis) {
+        view.line(kernel.sclv(current.axis, -0.7), kernel.sclv(current.axis, 0.7), { color: colors.red, width: 3 });
+      }
+      view.render();
+      readout.innerHTML = "";
+      readout.appendChild(el("p", null, state.mode.toUpperCase() + " 第 " + state.step + " 步 / 共 3 步：" + (current.axis
+        ? "本步绕" + (state.mode === "zyz" ? "上一步工具系的 " : "固定 ") + current.name + " 轴转 " + degrees(current.angle) + "；转轴的固定系方向 " + vectorText(current.axis)
+        : "初始姿态 I，尚无新增转轴") + "。"));
+      readout.appendChild(el("p", "lab-note", state.mode === "zyz" ? "发生顺序：当前 z(φ) → 新 y(ϑ) → 新 z(ψ)，逐次右乘。" : "发生顺序：固定 x(ψ) → 固定 y(ϑ) → 固定 z(φ)，逐次左乘。"));
+      var matrix = el("div");
+      matrix.setAttribute("data-euler-matrix", "selected");
+      matrix.innerHTML = matrixHTML(rotation.map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0000005 ? 0 : value; }); }), 6);
+      readout.appendChild(matrix);
+      ["x′", "y′", "z′"].forEach(function (name, column) {
+        var axis = el("p", null, name + " 在固定系中的方向 = " + vectorText(rotation.map(function (row) { return row[column]; })) + "。");
+        axis.setAttribute("data-euler-axis", String(column));
+        readout.appendChild(axis);
+      });
+      ["zyz", "rpy"].forEach(function (mode) {
+        var angles = inverse(mode, rotation);
+        var residual = difference(rotation, forward(mode, angles));
+        var result = el("p", angles.ok ? "lab-note" : "lab-warn",
+          mode.toUpperCase() + " 反解当前矩阵：φ=" + degrees(angles.phi) + "，ϑ=" + degrees(angles.theta) + "，ψ=" + degrees(angles.psi) +
+          "；输入半径 ρ=" + angles.radius.toExponential(3) + "；重建最大元素差=" + residual.toExponential(2) + "。" +
+          (angles.ok ? (angles.radius < 0.05 ? " 接近表示奇点，但仍可分离；角度对扰动较敏感。" : " 非奇点，取第一支。")
+            : " 数值奇点：只能确定 " + angles.combination + "，这里选 ψ=0 的代表，解不唯一。"));
+        result.setAttribute("data-euler-inverse", mode);
+        readout.appendChild(result);
+      });
+      if (message) readout.appendChild(el("p", "lab-note", message));
+    }
+    convert.addEventListener("click", function () {
+      var before = selected().R;
+      var target = state.mode === "zyz" ? "rpy" : "zyz";
+      var angles = inverse(target, before);
+      state.mode = target;
+      state.phi = angles.phi;
+      state.theta = angles.theta;
+      state.psi = angles.psi;
+      state.step = 3;
+      message = "已把原先显示的姿态转成 " + target.toUpperCase() + " 第 3 步；转换前后最大元素差=" + difference(before, forward(target, angles)).toExponential(2) + "。";
+      syncControls();
+      draw();
+    });
+    reset.addEventListener("click", function () {
+      state.mode = "zyz";
+      state.phi = 30;
+      state.theta = 55;
+      state.psi = 20;
+      state.step = 3;
+      message = "";
+      view.cam.az = -30;
+      view.cam.elv = 18;
+      view.cam.zoom = 1;
+      syncControls();
+      draw();
+    });
+    host.hidden = false;
     draw();
     window.addEventListener("resize", draw);
     return draw;
@@ -1390,8 +1740,438 @@
 
   /* ================= 实验：dh3d · 拟人臂 DH 建系（ch02 §2.8，替换 2D 版） ================= */
 
+  function labAxisAngle3D(host) {
+    var state = { direction: [1, 1, 1], angle: 120, mode: "net", step: 5 };
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "角和轴：净旋转与五步辅助构造"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "输入三个方向分量后自动归一化；零向量报错。灰色为固定三轴，蓝/绿/金色为当前三轴；虚线为原轴 r，紫线为当前 P r，红线为本步固定转轴。画面、矩阵、向量读数始终对应同一步。拖动或滚轮仅改变相机。"));
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    var modes = toggleGroup(controls, "显示方式", [
+      { value: "net", text: "净旋转" }, { value: "construction", text: "五步构造" }
+    ], state.mode, function (value) { state.mode = value; sync(); draw(); });
+    function number(value) { return value.toFixed(6).replace(/\.?0+$/, "") || "0"; }
+    var directionControls = ["轴输入 x", "轴输入 y", "轴输入 z"].map(function (name, index) {
+      return slider(controls, name, -1, 1, "any", state.direction[index], function (value) { state.direction[index] = value; draw(); }, number);
+    });
+    var angleControl = slider(controls, "净旋转角 ϑ", -360, 360, "any", state.angle, function (value) { state.angle = value; draw(); }, function (value) { return number(value) + "°"; });
+    var stepControl = slider(controls, "构造显示步数", 0, 5, 1, state.step, function (value) { state.step = value; draw(); });
+    var presets = [
+      { text: "循环换位 120°", direction: [1, 1, 1], angle: 120 },
+      { text: "混合符号半圈", direction: [1, -1, 0], angle: 180 },
+      { text: "负 z 轴", direction: [0, 0, -1], angle: 90 }
+    ];
+    presets.forEach(function (preset) {
+      var button = el("button", "lab-btn", preset.text);
+      button.type = "button";
+      button.addEventListener("click", function () {
+        state.direction = preset.direction.slice();
+        state.angle = preset.angle;
+        state.mode = "net";
+        state.step = 5;
+        sync();
+        draw();
+      });
+      controls.appendChild(button);
+    });
+    var reset = el("button", "lab-btn", "重置角轴与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "角轴净旋转或当前辅助步骤的坐标架；精确方向见下方读数");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
+    host.appendChild(readout);
+    var view = makeView(canvas, 0.6, { span: 1.7, center: [0, 0, 0], az: -30, elv: 18 });
+    view.onChange = draw;
+    function vectorText(vector) {
+      return "(" + vector.map(function (value) { return (Math.abs(value) < 0.0000005 ? 0 : value).toFixed(6); }).join(", ") + ")";
+    }
+    function vectorReadout(key, text, vector) {
+      var paragraph = el("p", null, text + vectorText(vector));
+      paragraph.setAttribute("data-angle-vector", key);
+      readout.appendChild(paragraph);
+    }
+    function sync() {
+      directionControls.forEach(function (control, index) {
+        control.input.value = state.direction[index];
+        control.out.textContent = number(state.direction[index]);
+      });
+      angleControl.input.value = state.angle;
+      angleControl.out.textContent = number(state.angle) + "°";
+      stepControl.input.value = state.step;
+      stepControl.out.textContent = String(state.step);
+      stepControl.input.disabled = state.mode === "net";
+      modes.forEach(function (button, index) {
+        var active = index === (state.mode === "net" ? 0 : 1);
+        button.classList.toggle("on", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+    function draw() {
+      var colors = palette();
+      readout.innerHTML = "";
+      var construction;
+      try {
+        construction = kernel.axisAngleSteps(state.direction, state.angle * DEG);
+      } catch (error) {
+        view.render();
+        readout.appendChild(el("p", "lab-warn", error.message + "。请调节轴输入或重置；当前没有可显示的旋转。"));
+        host.setAttribute("data-angle-valid", "false");
+        return;
+      }
+      host.setAttribute("data-angle-valid", "true");
+      var finalRotation = kernel.axisAngleMatrix(construction.axis, state.angle * DEG);
+      var current = state.mode === "net" ? { R: finalRotation, axis: construction.axis, angle: state.angle * DEG } : construction.steps[state.step];
+      var rotation = current.R;
+      var movedAxis = kernel.Trot({ R: rotation }, construction.axis);
+      view.grid(0.9, 0.2, -0.65, { color: colors.line });
+      view.triad([0, 0, 0], kernel.Tid().R, 0.78, ["x₀", "y₀", "z₀"], { colors: [colors.muted, colors.muted, colors.muted], width: 1.2 });
+      view.box([0, 0, 0], [0.14, 0.1, 0.2], rotation, { color: colors.neutral });
+      view.triad([0, 0, 0], rotation, 0.56, ["x′", "y′", "z′"], { colors: [colors.blue, colors.green, colors.gold], width: 2.8 });
+      view.line(kernel.sclv(construction.axis, -0.95), kernel.sclv(construction.axis, 0.95), { color: colors.muted, width: 2, dash: [5, 4] });
+      view.line([0, 0, 0], kernel.sclv(movedAxis, 0.9), { color: colors.purple, width: 3 });
+      if (current.axis) view.line(kernel.sclv(current.axis, -0.72), kernel.sclv(current.axis, 0.72), { color: colors.red, width: 2 });
+      view.render();
+      readout.appendChild(el("p", null, state.mode === "net"
+        ? "当前为净旋转 P=R，绕原轴转 " + number(state.angle) + "°。构造步数控件暂不可用。"
+        : "五步构造：第 " + state.step + " 步 / 共 5 步；" + (current.axis ? "本步绕固定 " + current.name + " 转 " + number(current.angle / DEG) + "°。" : "初始矩阵 I。") +
+          (state.step === 5 ? "此时 P=R，完成净角轴旋转。" : "当前 P 是辅助步骤的累积矩阵，尚未完成净角轴旋转。")));
+      vectorReadout("input-axis", "归一化后的原轴 r = ", construction.axis);
+      vectorReadout("moved-axis", "当前 P r = ", movedAxis);
+      readout.appendChild(el("p", "lab-note", "α=" + number(construction.alpha / DEG) + "°，β=" + number(construction.beta / DEG) + "°（从 +z 量起；r=±z 时约定 α=0）。"));
+      var matrix = el("div");
+      matrix.setAttribute("data-angle-matrix", "selected");
+      matrix.innerHTML = matrixHTML(rotation.map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0000005 ? 0 : value; }); }), 6);
+      readout.appendChild(matrix);
+      vectorReadout("point", "p=(1,2,3)，当前 P p = ", kernel.Trot({ R: rotation }, [1, 2, 3]));
+      var inverse = kernel.extractAxisAngle(rotation);
+      var rebuilt = inverse.axis ? kernel.axisAngleMatrix(inverse.axis, inverse.angle) : kernel.Tid().R;
+      var residual = 0;
+      rotation.forEach(function (row, rowIndex) { row.forEach(function (value, column) { residual = Math.max(residual, Math.abs(value - rebuilt[rowIndex][column])); }); });
+      readout.appendChild(el("p", "lab-note", "反解当前 P：主角=" + number(inverse.angle / DEG) + "°；" +
+        (inverse.axis ? "主轴=" + vectorText(inverse.axis) : "轴任意，主旋转向量为零") +
+        "；分支=" + inverse.branch + "；重建最大元素差=" + residual.toExponential(2) + "。"));
+      vectorReadout("log", "当前主旋转向量 φ（弧度）= ", inverse.vector);
+      readout.appendChild(el("p", "lab-note", "正交误差=" + inverse.orthogonalError.toExponential(2) + "；det P=" + inverse.determinant.toFixed(6) + "。数值端点阈值为 |sin ϑ|<10⁻¹²；近零轴不稳定，近半圈从对称部分求轴，精确半圈选最大分量为正的代表。"));
+    }
+    reset.addEventListener("click", function () {
+      state.direction = [1, 1, 1];
+      state.angle = 120;
+      state.mode = "net";
+      state.step = 5;
+      view.cam.az = -30;
+      view.cam.elv = 18;
+      view.cam.zoom = 1;
+      sync();
+      draw();
+    });
+    host.hidden = false;
+    sync();
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  function labQuaternion3D(host) {
+    var state = { direction: [1, -1, 0], angle: 180, sign: 1, exact: true };
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "四元数：半圈提取与双重覆盖"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "灰色是固定三轴，彩色是旋转后三轴，虚线是旋转轴。切换 Q 与 −Q 时画面和矩阵相同。默认直接载入精确半圈矩阵，用两种提取法的重建误差检查结果；调节角轴后改用角轴生成矩阵。"));
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    function number(value) { return value.toFixed(6).replace(/\.?0+$/, "") || "0"; }
+    function vectorText(vector) {
+      return "(" + vector.map(function (value) { return (Math.abs(value) < 0.0000005 ? 0 : value).toFixed(6); }).join(", ") + ")";
+    }
+    var directionControls = ["轴输入 x", "轴输入 y", "轴输入 z"].map(function (name, index) {
+      return slider(controls, name, -1, 1, "any", state.direction[index], function (value) { state.direction[index] = value; state.exact = false; draw(); }, number);
+    });
+    var angleControl = slider(controls, "旋转角 ϑ", -720, 720, "any", state.angle, function (value) { state.angle = value; state.exact = false; draw(); }, function (value) { return number(value) + "°"; });
+    var signs = toggleGroup(controls, "四元数符号", [{ value: "1", text: "Q" }, { value: "-1", text: "−Q" }], "1", function (value) { state.sign = Number(value); draw(); });
+    var exact = el("button", "lab-btn", "精确半圈反例");
+    exact.type = "button";
+    controls.appendChild(exact);
+    var reset = el("button", "lab-btn", "重置四元数与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "单位四元数对应的三维旋转；矩阵和提取结果见下方读数");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
+    host.appendChild(readout);
+    var view = makeView(canvas, 0.6, { span: 1.7, center: [0, 0, 0], az: -30, elv: 18 });
+    view.onChange = draw;
+    function sync() {
+      directionControls.forEach(function (control, index) {
+        control.input.value = state.direction[index];
+        control.out.textContent = number(state.direction[index]);
+      });
+      angleControl.input.value = state.angle;
+      angleControl.out.textContent = number(state.angle) + "°";
+      signs.forEach(function (button, index) {
+        var active = index === (state.sign === 1 ? 0 : 1);
+        button.classList.toggle("on", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+    function report(key, label, vector) {
+      var paragraph = el("p", null, label + vectorText(vector));
+      paragraph.setAttribute("data-quaternion-vector", key);
+      readout.appendChild(paragraph);
+    }
+    function residual(first, second) {
+      return Math.max.apply(null, first.map(function (row, rowIndex) {
+        return Math.max.apply(null, row.map(function (value, column) { return Math.abs(value - second[rowIndex][column]); }));
+      }));
+    }
+    function draw() {
+      readout.innerHTML = "";
+      var axis, quaternion, rotation;
+      try {
+        axis = kernel.axisDirection(state.direction);
+        quaternion = state.exact ? [0, Math.SQRT1_2, -Math.SQRT1_2, 0] : kernel.quaternionFromAxis(axis, state.angle * DEG);
+        rotation = state.exact ? [[0, -1, 0], [-1, 0, 0], [0, 0, -1]] : kernel.quaternionMatrix(quaternion);
+      } catch (error) {
+        view.render();
+        host.setAttribute("data-quaternion-valid", "false");
+        readout.appendChild(el("p", "lab-warn", error.message + "。请调节轴输入或重置；当前没有可显示的旋转。"));
+        return;
+      }
+      host.setAttribute("data-quaternion-valid", "true");
+      host.setAttribute("data-quaternion-source", state.exact ? "exact" : "axis");
+      var colors = palette();
+      view.grid(0.9, 0.2, -0.65, { color: colors.line });
+      view.triad([0, 0, 0], kernel.Tid().R, 0.78, ["x₀", "y₀", "z₀"], { colors: [colors.muted, colors.muted, colors.muted], width: 1.2 });
+      view.box([0, 0, 0], [0.14, 0.1, 0.2], rotation, { color: colors.neutral });
+      view.triad([0, 0, 0], rotation, 0.56, ["x′", "y′", "z′"], { colors: [colors.blue, colors.green, colors.gold], width: 2.8 });
+      view.line(kernel.sclv(axis, -0.95), kernel.sclv(axis, 0.95), { color: colors.purple, width: 2, dash: [5, 4] });
+      view.render();
+      var displayed = quaternion.map(function (value) { return state.sign * value; });
+      readout.appendChild(el("p", null, state.exact ? "来源：精确给定矩阵（反对称差严格为零）。" : "来源：角轴生成，ϑ=" + number(state.angle) + "°。"));
+      report("input", "当前 q（标量在前）= ", displayed);
+      report("opposite", "同姿态的 −q = ", displayed.map(function (value) { return -value; }));
+      report("axis", "单位轴 r = ", axis);
+      var matrix = el("div");
+      matrix.setAttribute("data-quaternion-matrix", "rotation");
+      matrix.innerHTML = matrixHTML(rotation.map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0000005 ? 0 : value; }); }), 6);
+      readout.appendChild(matrix);
+      report("point", "p=(1,2,3)，R p = ", kernel.Trot({ R: rotation }, [1, 2, 3]));
+      var stable = kernel.quaternionExtract(rotation);
+      var candidate = kernel.quaternionSignCandidate(rotation);
+      var stableError = residual(rotation, kernel.quaternionMatrix(stable.quaternion));
+      var candidateError = residual(rotation, kernel.quaternionMatrix(candidate));
+      report("stable", "最大分量法提取 q = ", stable.quaternion);
+      report("candidate", "原书符号法候选 q = ", candidate);
+      var errors = el("p", candidateError > 1e-8 ? "lab-warn" : "lab-note", "稳定法重建最大元素差=" + stableError.toExponential(2) + "；原书符号法重建最大元素差=" + candidateError.toExponential(2) + "。" + (candidateError > 1e-8 ? "候选不能重建输入矩阵：半圈须用交叉项恢复相对符号。" : "本次数值候选可以重建；这不能证明符号法在精确半圈总有效。"));
+      errors.setAttribute("data-quaternion-errors", "");
+      readout.appendChild(errors);
+      readout.appendChild(el("p", "lab-note", "提取主元 k=" + stable.pivot + "（0=η，1=εx，2=εy，3=εz），取最大分量为正；单位约束=" + displayed.reduce(function (sum, value) { return sum + value * value; }, 0).toFixed(6) + "；正交误差=" + stable.orthogonalError.toExponential(2) + "；det R=" + stable.determinant.toFixed(6) + "。"));
+    }
+    function restore() {
+      state.direction = [1, -1, 0];
+      state.angle = 180;
+      state.sign = 1;
+      state.exact = true;
+      sync();
+    }
+    exact.addEventListener("click", function () { restore(); draw(); });
+    reset.addEventListener("click", function () {
+      restore();
+      view.cam.az = -30;
+      view.cam.elv = 18;
+      view.cam.zoom = 1;
+      draw();
+    });
+    host.hidden = false;
+    sync();
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
+  function labHomogeneous3D(host) {
+    var state = { firstAngle: 90, secondAngle: 0, origin: [2, 1, 0], offset: 1, kind: "point", mode: "steps", step: 0, showMatrices: false };
+    var head = el("div", "lab-head");
+    head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
+    head.appendChild(el("b", null, "齐次变换：同一点逐系换坐标"));
+    host.appendChild(head);
+    host.appendChild(el("p", "lab-note", "系 0 是固定参考系；彩色三轴表示当前读数所在的系，其余三轴为灰色。红点 P 是同一个物理点，换系步骤不会移动它；紫线从当前系原点指向 P。自由方向用紫色箭头表示，可移到不同原点。长度单位 m；拖动或滚轮只改变视角。"));
+    var controls = el("div", "lab-controls");
+    host.appendChild(controls);
+    function number(value) { return value.toFixed(6).replace(/\.?0+$/, "") || "0"; }
+    var kindButtons = toggleGroup(controls, "输入含义", [{ value: "point", text: "点：w=1" }, { value: "direction", text: "自由方向：w=0" }], state.kind, function (value) { state.kind = value; draw(); });
+    var modeButtons = toggleGroup(controls, "计算方式", [{ value: "steps", text: "逐级换系" }, { value: "combined", text: "直接合成" }], state.mode, function (value) { state.mode = value; sync(); draw(); });
+    var firstControl = slider(controls, "系 1 绕系 0 的 z 角", -180, 180, "any", 90, function (value) { state.firstAngle = value; draw(); }, function (value) { return number(value) + "°"; });
+    var secondControl = slider(controls, "系 2 绕系 1 的 x 角", -180, 180, "any", 0, function (value) { state.secondAngle = value; draw(); }, function (value) { return number(value) + "°"; });
+    var originControls = ["系 1 原点 x", "系 1 原点 y", "系 1 原点 z"].map(function (name, index) {
+      return slider(controls, name, -3, 3, "any", state.origin[index], function (value) { state.origin[index] = value; draw(); }, number);
+    });
+    var offsetControl = slider(controls, "系 2 沿系 1 的 x 偏移", -2, 2, "any", 1, function (value) { state.offset = value; draw(); }, number);
+    var stepControl = slider(controls, "换系步数", 0, 2, 1, 0, function (value) { state.step = value; draw(); });
+    var example = el("button", "lab-btn", "两段转动例题");
+    example.type = "button";
+    controls.appendChild(example);
+    var reset = el("button", "lab-btn", "重置齐次变换与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
+    var canvas = el("canvas", "lab-canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "同一点在三套坐标系中的表示；精确坐标、矩阵与逆变换见下方读数");
+    host.appendChild(canvas);
+    var readout = el("div", "lab-readout");
+    readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
+    host.appendChild(readout);
+    var view = makeView(canvas, 0.64, { span: 1.1, center: [0, 0, 0], az: -30, elv: 24 });
+    view.onChange = draw;
+    function syncButtons(buttons, activeIndex) {
+      buttons.forEach(function (button, index) {
+        button.classList.toggle("on", index === activeIndex);
+        button.setAttribute("aria-pressed", index === activeIndex ? "true" : "false");
+      });
+    }
+    function sync() {
+      [[firstControl, state.firstAngle], [secondControl, state.secondAngle], [offsetControl, state.offset], [stepControl, state.step]].forEach(function (pair, index) {
+        pair[0].input.value = pair[1];
+        pair[0].out.textContent = number(pair[1]) + (index < 2 ? "°" : "");
+      });
+      originControls.forEach(function (control, index) { control.input.value = state.origin[index]; control.out.textContent = number(state.origin[index]); });
+      stepControl.input.disabled = state.mode === "combined";
+      syncButtons(kindButtons, state.kind === "point" ? 0 : 1);
+      syncButtons(modeButtons, state.mode === "steps" ? 0 : 1);
+    }
+    function report(key, label, vector) {
+      var paragraph = el("p", null, label + "(" + vector.map(function (value) { return (Math.abs(value) < 0.0000005 ? 0 : value).toFixed(6); }).join(", ") + ")");
+      paragraph.setAttribute("data-homogeneous-vector", key);
+      readout.appendChild(paragraph);
+    }
+    function matrixBlock(parent, key, label, pose) {
+      parent.appendChild(el("p", "lab-note", label));
+      var matrix = el("div");
+      matrix.setAttribute("data-homogeneous-matrix", key);
+      matrix.innerHTML = matrixHTML(kernel.Tmatrix(pose).map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0000005 ? 0 : value; }); }), 6);
+      parent.appendChild(matrix);
+    }
+    function draw() {
+      readout.innerHTML = "";
+      var scene;
+      try { scene = kernel.homogeneousSteps(state.firstAngle, state.secondAngle, state.origin, state.offset); }
+      catch (error) {
+        view.render();
+        readout.appendChild(el("p", "lab-warn", error.message));
+        return;
+      }
+      var colors = palette();
+      var step = state.mode === "combined" ? 2 : state.step;
+      var pointMode = state.kind === "point";
+      var values = pointMode ? scene.points : scene.directions;
+      var selectedFrame = scene.frames[step];
+      var worldPoint = scene.points[2], worldDirection = scene.directions[2];
+      canvas.setAttribute("data-world-point", JSON.stringify(worldPoint));
+      var extents = scene.frames.map(function (frame) { return frame.p; }).concat([worldPoint]);
+      scene.frames.forEach(function (frame) { extents.push(kernel.addv(frame.p, worldDirection)); });
+      var center = [0, 1, 2].map(function (index) {
+        var coordinates = extents.map(function (point) { return point[index]; });
+        return (Math.min.apply(null, coordinates) + Math.max.apply(null, coordinates)) / 2;
+      });
+      var scale = Math.max(1.7, Math.max.apply(null, extents.map(function (point) { return kernel.len(kernel.subv(point, center)); })) + 0.65);
+      function position(point) { return kernel.sclv(kernel.subv(point, center), 1 / scale); }
+      [0, 1, 2].filter(function (index) { return index !== step; }).concat([step]).forEach(function (index) {
+        var frame = scene.frames[index];
+        var frameIndex = 2 - index;
+        var showLabels = index === step || kernel.len(kernel.subv(frame.p, selectedFrame.p)) > 1e-9;
+        view.triad(position(frame.p), frame.R, 0.5 / scale, showLabels ? ["x" + frameIndex, "y" + frameIndex, "z" + frameIndex] : null, {
+          colors: index === step ? [colors.blue, colors.green, colors.gold] : [colors.muted, colors.muted, colors.muted],
+          width: index === step ? 2.8 : 1.2, originLabel: showLabels ? "O" + frameIndex : null
+        });
+      });
+      if (pointMode) {
+        var connector = kernel.subv(worldPoint, selectedFrame.p), connectorLength = kernel.len(connector);
+        if (connectorLength > 0.075) {
+          var connectorEnd = kernel.subv(worldPoint, kernel.sclv(connector, 0.075 / connectorLength));
+          view.line(position(selectedFrame.p), position(connectorEnd), { color: colors.purple, width: 2, dash: [5, 4] });
+        }
+        view.sphere(position(worldPoint), 0.065 / scale, { color: colors.red });
+        view.label(position(worldPoint), "P", colors.red, -16, -10);
+      } else {
+        var start = position(selectedFrame.p), end = position(kernel.addv(selectedFrame.p, worldDirection));
+        view.prims.push({ kind: "axis", a: start, b: end, color: colors.purple, width: 3 });
+        view.label(end, "d（自由方向）", colors.purple, 9, -10);
+      }
+      view.render();
+      readout.appendChild(el("p", null, (state.mode === "combined" ? "直接合成 2→0" : "逐级换系：第 " + step + " 步 / 共 2 步，当前系 " + (2 - step)) + "；末分量 w=" + (pointMode ? "1，点的位置受平移影响。" : "0，方向只受旋转影响。")));
+      report("input", "输入（系 2）= ", values[0]);
+      report("intermediate", "换到系 1 = ", values[1]);
+      report("final", "换到系 0 = ", values[2]);
+      report("selected", "当前所读的齐次坐标 = ", values[step].concat(pointMode ? 1 : 0));
+      report("origin", "系 2 原点在系 0 中的位置 = ", scene.combined.p);
+      var selected = step === 0 ? kernel.Tid() : step === 1 ? scene.second : scene.combined;
+      matrixBlock(readout, "selected", step === 0 ? "尚未换系：I₄" : step === 1 ? "当前累计矩阵 A₂¹" : "当前累计矩阵 A₂⁰=A₁⁰ A₂¹", selected);
+      var returned = pointMode ? kernel.Tvec(scene.inverse, values[2]) : kernel.Trot(scene.inverse, values[2]);
+      report("returned", "由系 0 逆变换返回系 2 = ", returned);
+      var wrong = pointMode ? kernel.Tvec(scene.wrong, values[0]) : kernel.Trot(scene.wrong, values[0]);
+      report("wrong", "交换两矩阵的数值结果（不是合法的 2→0 换系链）= ", wrong);
+      var difference = Math.max.apply(null, wrong.map(function (value, index) { return Math.abs(value - values[2][index]); }));
+      var roundtrip = Math.max.apply(null, returned.map(function (value, index) { return Math.abs(value - values[0][index]); }));
+      var full = kernel.Tmatrix(scene.combined), orthogonalError = 0;
+      full.forEach(function (unused, row) {
+        full.forEach(function (other, column) {
+          var product = full.reduce(function (sum, current) { return sum + current[row] * current[column]; }, 0);
+          orthogonalError = Math.max(orthogonalError, Math.abs(product - (row === column ? 1 : 0)));
+        });
+      });
+      var quality = kernel.rotationQuality(scene.combined.R);
+      var diagnostic = el("p", "lab-note", "逆变换往返最大分量差=" + roundtrip.toExponential(2) + "；交换顺序的输出差=" + difference.toExponential(2) + "；整体正交误差=" + orthogonalError.toExponential(2) + "；det A=" + quality.determinant.toFixed(6) + "。方向不受平移，但两个旋转的次序仍可能改变方向；某个输入结果偶然相同也不能证明矩阵相同。");
+      diagnostic.setAttribute("data-homogeneous-diagnostics", "");
+      readout.appendChild(diagnostic);
+      var details = el("details");
+      details.open = state.showMatrices;
+      details.addEventListener("toggle", function () { if (details.isConnected) state.showMatrices = details.open; });
+      details.appendChild(el("summary", null, "展开两段矩阵与逆矩阵"));
+      matrixBlock(details, "first", "第一段 A₁⁰", scene.first);
+      matrixBlock(details, "second", "第二段 A₂¹", scene.second);
+      matrixBlock(details, "inverse", "合成的逆 A₀²=(A₂⁰)⁻¹", scene.inverse);
+      readout.appendChild(details);
+    }
+    function restore(secondAngle, step) {
+      state.firstAngle = 90;
+      state.secondAngle = secondAngle;
+      state.origin = [2, 1, 0];
+      state.offset = 1;
+      state.kind = "point";
+      state.mode = "steps";
+      state.step = step;
+      state.showMatrices = false;
+      sync();
+    }
+    example.addEventListener("click", function () { restore(90, 2); draw(); });
+    reset.addEventListener("click", function () {
+      restore(0, 0);
+      view.cam.az = -30;
+      view.cam.elv = 24;
+      view.cam.zoom = 1;
+      draw();
+    });
+    host.hidden = false;
+    sync();
+    draw();
+    window.addEventListener("resize", draw);
+    return draw;
+  }
+
   function labDH3D(host) {
-    var state = { stage: 0, q: [20, 42, -70], hover: null };
+    var state = { stage: 0, q: [20, 42, -70], hover: null, showMatrices: false };
     var A2 = 0.62, A3 = 0.52;
     var rows = [
       { alpha: Math.PI / 2, a: 0, d: 0, type: "R" },
@@ -1401,18 +2181,29 @@
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "拟人臂 DH 建系：拖转着把四个坐标系「长」出来"));
+    head.appendChild(el("b", null, "拟人臂 DH：建系、参数与数值连乘"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "按 ①→④ 分步构造，随意拖转视角、拖动 θ。关键看三件事：关节 i 转动只带动它下游的坐标系（系 0 纹丝不动）；无论姿态怎么变，α₁=90°、a₂=上臂长这些几何量不变——「3 常 1 变」；转到侧面看 z₁、z₂ 两根平行轴与公垂线（上臂）的立体关系。悬停下方 DH 表的单元格：θᵢ → 高亮关节轴，aᵢ → 高亮连杆，α₁ → 高亮扭角弧。"));
+    host.appendChild(el("p", "lab-note", "长度 m，滑条角度为度，计算用 rad。先预测哪个坐标系会动，再改变一个关节角；下方坐标与矩阵可核对。彩色轴按 x/y/z 排列，系 0 固定；按①到④显示建系过程。用几何高亮按钮定位参数，拖动画布只改变视角。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
-    toggleGroup(controls, "构造步骤", [
+    var stageButtons = toggleGroup(controls, "构造步骤", [
       { value: "0", text: "① 轴线" }, { value: "1", text: "② 系0" }, { value: "2", text: "③ 系1" }, { value: "3", text: "④ 系2·3" }
     ], "0", function (v) { state.stage = parseFloat(v); draw(); });
-    ["θ₁", "θ₂", "θ₃"].forEach(function (label, i) {
-      slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+    var jointControls = ["θ₁", "θ₂", "θ₃"].map(function (label, index) {
+      return slider(controls, label, -180, 180, 1, state.q[index], function (value) { state.q[index] = value; draw(); }, function (value) { return value.toFixed(0) + "°"; });
     });
+    var highlightButtons = toggleGroup(controls, "几何高亮", [
+      { value: "none", text: "全部几何" }, { value: "th0", text: "关节 1 轴" },
+      { value: "th1", text: "关节 2 轴" }, { value: "th2", text: "关节 3 轴" },
+      { value: "a2", text: "上臂 a₂" }, { value: "a3", text: "前臂 a₃" }, { value: "al1", text: "扭角 α₁" }
+    ], "none", function (value) { state.hover = value === "none" ? null : value; draw(); });
+    var zero = el("button", "lab-btn", "载入 DH 零位");
+    zero.type = "button";
+    controls.appendChild(zero);
+    var reset = el("button", "lab-btn", "重置 DH 模型与视角");
+    reset.type = "button";
+    controls.appendChild(reset);
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -1420,12 +2211,8 @@
     host.appendChild(canvas);
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
+    readout.setAttribute("aria-atomic", "true");
     host.appendChild(readout);
-
-    bindHover(readout, function (key) {
-      state.hover = key;
-      draw();
-    });
 
     var view = makeView(canvas, 0.64, { span: 1.5, center: [0, 0, 0.22], az: -32, elv: 20 });
     view.onChange = function () { draw(); };
@@ -1436,6 +2223,7 @@
       var frames = kernel.fkChain(rows, q);
       var S = frames[0].o;      /* 肩（= 系0/1 原点） */
       var E = frames[2].o;      /* 肘（系2 原点） */
+      canvas.setAttribute("data-dh-frames", JSON.stringify(frames.map(function (frame) { return kernel.Tmatrix(frame.T); })));
       var W = frames[3].o;      /* 腕（系3 原点） */
 
       view.grid(0.85, 0.17, 0, { color: c.line });
@@ -1467,10 +2255,19 @@
         var put = function (idx, dim) {
           var f = frames[idx];
           var R = [[f.x[0], f.y[0], f.z[0]], [f.x[1], f.y[1], f.z[1]], [f.x[2], f.y[2], f.z[2]]];
-          view.triad(f.o, R, idx === 0 ? 0.34 : 0.26, ["x" + idx, "y" + idx, "z" + idx], {
+          var size = idx === 0 ? 0.34 : 0.26;
+          view.triad(f.o, R, size, idx >= 2 ? ["x" + idx, "y" + idx, "z" + idx] : null, {
             colors: triadColors, width: idx === 0 && state.stage < 3 ? 2.6 : 2, dim: dim,
             hlPrefix: "f" + idx + "-"
           });
+          if (idx < 2) {
+            var sharedX = state.stage >= 2 && kernel.len(kernel.subv(frames[0].x, frames[1].x)) < 1e-9;
+            if (idx === 0 || !sharedX) view.label(kernel.addv(f.o, kernel.sclv(f.x, size)), sharedX ? "x0=x1" : "x" + idx, c.blue, 8, idx === 0 ? 12 : -8);
+            if (idx === 0) {
+              view.label(kernel.addv(f.o, kernel.sclv(f.y, size)), "y0", c.green, 8, 12);
+              view.label(kernel.addv(f.o, kernel.sclv(f.z, size)), state.stage >= 2 ? "z0=y1" : "z0", c.gold, -48, -10);
+            } else view.label(kernel.addv(f.o, kernel.sclv(f.z, size)), "z1", c.gold, 8, -8);
+          }
         };
         put(0, state.stage >= 3);
         if (state.stage >= 2) put(1, state.stage >= 3);
@@ -1493,7 +2290,7 @@
       view.render(state.hover);
 
       var stageNotes = [
-        "第①步：只画三根关节轴线。关节1竖直过肩点；关节2水平过肩点；关节3过肘点、与关节2平行。轴线的两两关系（轴1⊥轴2 相交、轴2∥轴3）已经决定了整张参数表。",
+        "第①步：只画三根关节轴线。关节1竖直过肩点；关节2水平过肩点；关节3过肘点、与关节2平行。轴1与轴2相交，轴2与轴3平行；还须确定杆长、正轴、固连原点与关节零位才能填表。",
         "第②步：放系 0。z₀ = 关节1轴（系 0 看守关节 1）；o₀ 取在轴1∩轴2（肩心）⇒ d₁ = 0；x₀ 水平任选。系 0 固连基座，任何关节都动不了它。",
         "第③步：放系 1。z₁ = 关节2轴。两轴相交 ⇒ a₁ = 0；从 z₀ 绕 x₁ 拧到 z₁ 顺着右手四指 ⇒ α₁ = π/2。紫色弧就是这 90°。拖 θ₁：整条臂带着系 1、2、3 一起绕 z₀ 转。",
         "第④步：放系 2、3。z₂ = 关节3轴 ∥ z₁ ⇒ α₂ = 0；公垂线就是上臂 ⇒ a₂；d₂ = 0，系 3 同理。红色弧是 θ₂、θ₃ 的定义角。拖 θ₂、θ₃：每个关节只带动它下游的坐标系，参数表里的常数纹丝不动。"
@@ -1503,16 +2300,97 @@
         "<tr><td>2</td><td>0</td><td data-hl='a2'>" + A2.toFixed(2) + "</td><td>0</td><td data-hl='th1'>" + state.q[1].toFixed(0) + "°</td></tr>" +
         "<tr><td>3</td><td>0</td><td data-hl='a3'>" + A3.toFixed(2) + "</td><td>0</td><td data-hl='th2'>" + state.q[2].toFixed(0) + "°</td></tr>" +
         "</tbody></table>";
-      readout.innerHTML = texLite("<p>" + stageNotes[state.stage] + "</p>" + table +
-        "<p class='lab-note'>与 2.9.4 拟人臂的 DH 表逐字相同；连乘结果 T₃⁰ 见 2.9.4。</p>");
+      readout.innerHTML = texLite("<p>" + stageNotes[state.stage] + "</p>" + table);
+      function vector(key, label, values) {
+        var paragraph = el("p", null, label + " = (" + values.map(function (value) { return (Math.abs(value) < 0.0000005 ? 0 : value).toFixed(6); }).join(", ") + ")");
+        paragraph.setAttribute("data-dh-vector", key);
+        readout.appendChild(paragraph);
+      }
+      vector("shoulder", "肩心 O₀=O₁（系 0）", S);
+      vector("elbow", "肘 O₂（系 0）", E);
+      vector("wrist", "腕 O₃（系 0）", W);
+      function matrix(parent, key, label, pose) {
+        parent.appendChild(el("p", "lab-note", label));
+        var block = el("div");
+        block.setAttribute("data-dh-matrix", key);
+        block.innerHTML = matrixHTML(kernel.Tmatrix(pose).map(function (row) { return row.map(function (value) { return Math.abs(value) < 0.0000005 ? 0 : value; }); }), 6);
+        parent.appendChild(block);
+      }
+      matrix(readout, "combined", "T₃⁰=A₁⁰A₂¹A₃²；此演示取基座系=系 0、工具系=系 3", frames[3].T);
+      var diagnostics = el("p", "lab-note", "上臂长度=" + kernel.len(kernel.subv(E, S)).toFixed(6) + " m；前臂长度=" + kernel.len(kernel.subv(W, E)).toFixed(6) + " m；轴 1·轴 2=" + kernel.dot(frames[0].z, frames[1].z).toFixed(6) + "；轴 2·轴 3=" + kernel.dot(frames[1].z, frames[2].z).toFixed(6) + "。零位腕心应为 (1.14, 0, 0)，扭角仍为 +90°。");
+      diagnostics.setAttribute("data-dh-diagnostics", "");
+      readout.appendChild(diagnostics);
+      var details = el("details");
+      details.open = state.showMatrices;
+      details.addEventListener("toggle", function () { if (details.isConnected) state.showMatrices = details.open; });
+      details.appendChild(el("summary", null, "展开逐行 DH 矩阵"));
+      rows.forEach(function (row, index) { matrix(details, "joint-" + (index + 1), "A" + (index + 1) + "（仅随 θ" + (index + 1) + " 变化）", kernel.dhA(row.alpha, row.a, row.d, q[index])); });
+      readout.appendChild(details);
+      host.hidden = false;
     }
 
+    function load(angles, stage, resetCamera) {
+      state.q = angles.slice();
+      state.stage = stage;
+      state.hover = null;
+      state.showMatrices = false;
+      jointControls.forEach(function (control, index) { control.input.value = angles[index]; control.out.textContent = angles[index] + "°"; });
+      stageButtons.forEach(function (button, index) { button.classList.toggle("on", index === stage); button.setAttribute("aria-pressed", index === stage ? "true" : "false"); });
+      highlightButtons.forEach(function (button, index) { button.classList.toggle("on", index === 0); button.setAttribute("aria-pressed", index === 0 ? "true" : "false"); });
+      if (resetCamera) { view.cam.az = -32; view.cam.elv = 20; view.cam.zoom = 1; }
+      draw();
+    }
+    zero.addEventListener("click", function () { load([0, 0, 0], 3, false); });
+    reset.addEventListener("click", function () { load([20, 42, -70], 0, true); });
     draw();
     window.addEventListener("resize", draw);
     return draw;
   }
 
   /* ================= 实验：anthro3d · 拟人臂 T₃⁰（ch02 §2.9.4） ================= */
+
+  function mechanismActions(host, controls, state, view, draw, zeroAngles) {
+    var initial = { q: state.q.slice(), d6: state.d6, az: view.cam.az, elv: view.cam.elv, zoom: view.cam.zoom };
+    var buttons = toggleGroup(controls, "矩阵列高亮", [
+      { value: "none", text: "全部几何" }, { value: "end-0", text: "第 1 列 · x" },
+      { value: "end-1", text: "第 2 列 · y" }, { value: "end-2", text: "第 3 列 · z" },
+      { value: "pos", text: "第 4 列 · 位置" }
+    ], "none", function (value) { state.hover = value === "none" ? null : value; draw(); });
+    function load(zero) {
+      state.q = zero ? zeroAngles.slice() : initial.q.slice();
+      if (!zero) state.d6 = initial.d6;
+      state.hover = null;
+      buttons.forEach(function (button, index) {
+        button.classList.toggle("on", index === 0);
+        button.setAttribute("aria-pressed", index === 0 ? "true" : "false");
+      });
+      if (!zero) { view.cam.az = initial.az; view.cam.elv = initial.elv; view.cam.zoom = initial.zoom; }
+      Array.prototype.forEach.call(controls.querySelectorAll("input[type=range]"), function (input, index) {
+        input.value = index < state.q.length ? state.q[index] : state.d6;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      draw();
+    }
+    var referenceLabel = zeroAngles.some(function (value) { return value !== 0; }) ? "转角归零（行程 0.20 m）" : "载入 DH 零位";
+    [[referenceLabel, true], ["重置关节、工具与视角", false]].forEach(function (action) {
+      var button = el("button", "lab-btn", action[0]);
+      button.type = "button";
+      button.addEventListener("click", function () { load(action[1]); });
+      controls.appendChild(button);
+    });
+    host.hidden = false;
+  }
+
+  function mechanismReadout(host, readout, state, transform, extra) {
+    host.setAttribute("data-mechanism-values", JSON.stringify({ q: state.q, d6: state.d6, matrix: kernel.Tmatrix(transform), extra: extra }));
+    Array.prototype.forEach.call(readout.querySelectorAll("table[data-mechanism-matrix] tr"), function (row) {
+      Array.prototype.forEach.call(row.cells, function (cell, column) {
+        var active = state.hover === (column === 3 ? "pos" : "end-" + column);
+        cell.style.background = active ? "var(--accent-soft)" : "";
+        cell.style.fontWeight = active ? "700" : "";
+      });
+    });
+  }
 
   function labAnthro3D(host) {
     var A2 = 0.62, A3 = 0.52;
@@ -1527,12 +2405,10 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "拟人臂：把 T₃⁰ 每一个元素都对上几何"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖 θ₁、θ₂、θ₃ 与视角。下方是原书式 2.66 的 T₃⁰ 数值，**悬停某一列**：第 1–3 列是动系三根轴在基座系里的方向余弦（高亮画布里对应的坐标架轴），第 4 列是腕心位置（高亮从肩心指向 o₃ 的位置矢量）。两个「结构性观察」在画面上直接可见：第 3 列 [s₁,-c₁,0]ᵀ **只含 θ₁**——转肩不改变 z₃ 的指向；z₃=z₂，故系 2、系 3 的 z 轴重合（画布里那两根平行箭头）。"));
+    host.appendChild(el("p", "lab-note", "固定腰角，只动肩肘，先预测哪一列不变，再核对矩阵。长度 m，转角滑杆用度。图中彩色坐标架为系 3，金色虚线分别过 o₂ 与 o₃，表示同向但不重合的 z₂、z₃。按钮可用键盘选择高亮。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
-    toggleGroup(controls, "坐标架", [{ value: "on", text: "显示系 0–3" }, { value: "off", text: "只看机械本体" }], "on",
-      function (v) { state.showFrame = v === "on"; draw(); });
     ["θ₁（腰）", "θ₂（肩）", "θ₃（肘）"].forEach(function (label, i) {
       slider(controls, label, -180, 180, 1, state.q[i], function (v) { state.q[i] = v; draw(); },
         function (v) { return v.toFixed(0) + "°"; });
@@ -1545,10 +2421,9 @@
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
     host.appendChild(readout);
-    bindHover(readout, function (key) { state.hover = key; draw(); });
-
     var view = makeView(canvas, 0.62, { span: 1.45, center: [0, 0, 0.3], az: -34, elv: 19 });
     view.onChange = function () { draw(); };
+    mechanismActions(host, controls, state, view, draw, [0, 0, 0]);
 
     function draw() {
       var c = palette();
@@ -1558,22 +2433,23 @@
 
       view.grid(0.85, 0.17, 0, { color: c.line });
       drawChain(view, frames, {
-        toolLen: 0.12,
-        triads: state.showFrame,
+        toolLen: 0,
+        triads: false,
         triadSize: 0.3,
-        frameRange: [0, 3],
+        frameRange: [3, 3],
         hlFrame: "f"
       });
+      view.triad(frames[3].o, T3.R, 0.3, ["x₃", "y₃", "z₃"], { colors: [c.blue, c.green, c.gold], width: 2.2, hlPrefix: "end-" });
       /* 位置矢量（基座原点 → o₃）：悬停第 4 列时高亮 */
       var p3 = frames[3].o;
       view.line([0, 0, 0], p3, { color: c.red, width: 2, dash: [7, 4], hl: "pos" });
-      view.label(kernel.sclv(p3, 0.55), "p₃ = 腕心", c.red, 8, 4);
+      view.label(kernel.sclv(p3, 0.55), "p₃（定位点）", c.red, 8, 4);
       /* z₃ = z₂ 的提示：两根平行轴 */
       if (state.showFrame) {
         view.line(kernel.addv(frames[2].o, kernel.sclv(frames[2].z, 0.2)), kernel.addv(frames[2].o, kernel.sclv(frames[2].z, 0.42)),
-          { color: c.gold, width: 1.6, hl: "f3-2" });
+          { color: c.gold, width: 1.6, hl: "end-2" });
         view.line(kernel.addv(frames[3].o, kernel.sclv(frames[3].z, 0.2)), kernel.addv(frames[3].o, kernel.sclv(frames[3].z, 0.42)),
-          { color: c.gold, width: 1.6, hl: "f3-2" });
+          { color: c.gold, width: 1.6, hl: "end-2" });
       }
 
       view.render(state.hover);
@@ -1585,13 +2461,14 @@
         [{ v: T3.R[2][0], hl: "f0-0" }, { v: T3.R[2][1], hl: "f0-1" }, { v: T3.R[2][2], hl: "f3-2" }, { v: T3.p[2], hl: "pos" }],
         [0, 0, 0, 1]
       ];
-      var html = matrixHTML(m, 3).replace("<table", "<span class='lab-matrix-label'>T₃⁰ =</span><table");
+      var html = matrixHTML(m, 3).replace("<table", "<span class='lab-matrix-label'>T₃⁰（位置单位 m）=</span><table data-mechanism-matrix");
       html += "<p class='lab-note'><b>逐列读法</b>：第 1 列 = x₃ 在系 0 中的方向余弦，第 2 列 = y₃，第 3 列 = z₃，" +
-        "第 4 列 = 腕心位置。悬停任一格，画布里对应的轴或位置矢量会加粗。</p>";
+        "第 4 列 = o₃ 的位置。用按钮逐列核对。</p>";
       html += "<p class='lab-note'><b>结构性观察</b>：第 3 列 [s₁,-c₁,0]ᵀ 只含 θ₁——<b>转肩不改变 z₃ 的指向</b>（z₃ 永远躺在水平面里，且随腰一起转）；" +
-        "第 3 列的第 3 个分量恒为 0，正是 z₃=z₂（系 2、系 3 的 z 轴重合）的代数痕迹。" +
+        "肩肘轴与末系 z 轴同向水平；z₂、z₃ 相隔 a₃=0.52 m，并不重合。" +
         "第 4 列的三个分量就是 2.12.5 逆解的<b>腕心方程</b> pwₓ=c₁(a₂c₂+a₃c₂₃)、pwy=s₁(a₂c₂+a₃c₂₃)、pwz=a₂s₂+a₃s₂₃。</p>";
       readout.innerHTML = texLite(html);
+      mechanismReadout(host, readout, state, T3, { position: p3, z2: frames[2].z, z3: frames[3].z, separation: A3 });
     }
 
     draw();
@@ -1608,7 +2485,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "球形腕：三轴交于一点，腕心纹丝不动"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "只画腕部（系 3 固连在腕心上）：拖 θ₄、θ₅、θ₆ —— <b>红球标的腕心始终不动</b>，只有末端姿态在转；这正是 1.2.3 解耦原理的运动学落点。下方并排列出 R₆³ 与 ZYZ 合成矩阵：它们<b>逐元素相等</b>，悬停右矩阵的格子会同步高亮左边同一位置。"));
+    host.appendChild(el("p", "lab-note", "先预测再操作：腕心在原点；有长度的工具尖端会随前两个腕角移动，只转最后一角则尖端不动。实际关节轴是 z₃、z₄、z₅，虚线均过腕心。两矩阵按本表扭角与零位应逐元素相等；按钮高亮系 6 的同一列。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -1626,10 +2503,9 @@
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
     host.appendChild(readout);
-    bindHover(readout, function (key) { state.hover = key; draw(); });
-
     var view = makeView(canvas, 0.6, { span: 0.82, center: [0, 0, 0.08], az: -30, elv: 18 });
     view.onChange = function () { draw(); };
+    mechanismActions(host, controls, state, view, draw, [0, 0, 0]);
 
     function draw() {
       var c = palette();
@@ -1650,21 +2526,26 @@
       /* 系 3（固定） */
       view.triad([0, 0, 0], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], 0.3, ["x₃", "y₃", "z₃"],
         { colors: [c.muted, c.muted, c.muted], width: 1.5 });
-      /* 系 4、5、6 */
-      [1, 2, 3].forEach(function (idx) {
+      [3].forEach(function (idx) {
         var f = frames[idx];
         var R = [[f.x[0], f.y[0], f.z[0]], [f.x[1], f.y[1], f.z[1]], [f.x[2], f.y[2], f.z[2]]];
         view.triad(f.o, R, 0.26, ["x" + (idx + 3), "y" + (idx + 3), "z" + (idx + 3)], {
-          colors: [c.blue, c.green, c.gold], width: 2.2, hlPrefix: "f" + (idx + 3) + "-"
+          colors: [c.blue, c.green, c.gold], width: 2.2, hlPrefix: "end-"
         });
-        /* 关节轴线（三轴都过腕心） */
-        view.line(kernel.sclv(f.z, -0.34), kernel.sclv(f.z, 0.34),
-          { color: c.muted, width: 1.1, dash: [6, 4], hl: "f" + (idx + 3) + "-2" });
+      });
+      frames.slice(0, 3).forEach(function (frame, index) {
+        view.line(kernel.sclv(frame.z, -0.34), kernel.sclv(frame.z, 0.34), { color: c.muted, width: 1.5, dash: [6, 4] });
+        if (index === 0 || Math.abs(kernel.dot(frame.z, frames[0].z)) < 1 - 1e-9) {
+          view.label(kernel.sclv(frame.z, -0.36), "关节" + (index + 4) + "轴 z" + (index + 3), c.muted, 8, index * 12);
+        } else {
+          view.label(kernel.sclv(frame.z, 0.38), "关节4、6轴共线", c.muted, 8, -14);
+        }
       });
       /* 工具末端 */
       var tip = frames[3].o;
       view.sphere(tip, 0.032, { color: c.gold });
-      view.label(tip, "末端（沿 z₆ 外移 d₆）", c.gold, 14, 14);
+      view.line([0, 0, 0], tip, { color: c.gold, width: 3, hl: "pos" });
+      view.label(tip, "工具尖端", c.gold, -82, -14);
 
       view.render(state.hover);
 
@@ -1681,14 +2562,16 @@
       var maxDiff = 0;
       for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) maxDiff = Math.max(maxDiff, Math.abs(R63[i][j] - ZYZ[i][j]));
 
-      var html = "<span class='lab-matrix-label'>R₆³ =</span>" + matrixHTML(mL, 3) +
-        "<span class='lab-matrix-label'>　ZYZ(θ₄,θ₅,θ₆) =</span>" + matrixHTML(mR, 3);
+      var html = "<span class='lab-matrix-label'>R₆³ =</span>" + matrixHTML(mL, 3).replace("<table", "<table data-mechanism-matrix") +
+        "<span class='lab-matrix-label'>　ZYZ(θ₄,θ₅,θ₆) =</span>" + matrixHTML(mR, 3).replace("<table", "<table data-mechanism-matrix");
       html += "<p class='lab-note'><b>两个矩阵逐元素相等</b>（最大偏差 " + maxDiff.toExponential(1) + "）：" +
         "球形腕的三个转角 (θ₄,θ₅,θ₆) 恰是<b>相对系 3 的 ZYZ 角</b>。这正是 2.12.6「腕逆解 = ZYZ 反解」的全部伏笔——" +
-        "腕的三轴交于一点（a₄=a₅=d₅=0），R₆³ 写成 R_z(θ₄)Rₓ(-/2)R_z(θ₅)Rₓ(/2)R_z(θ₆)，" +
-        "而 Rₓ(-/2)R_z(θ₅)Rₓ(/2)⁻¹=R_y(θ₅)（共轭把绕 z 的转动搬到绕 y），整块塌成 ZYZ。</p>";
+        "本表取 α₄=−π/2、α₅=π/2，令 Q=Rₓ(−π/2)，则 Q R_z(θ₅) Q⁻¹=R_y(θ₅)。共点本身并不保证任意选系的角都等于 ZYZ。</p>";
       html += "<p class='lab-note'>腕心位置 = 系 3 原点，<b>与 θ₄θ₅θ₆ 无关</b>（拖动三个滑杆时红球纹丝不动）；末端沿 z₆ 外移 d₆ = " + state.d6.toFixed(2) + " m。</p>";
       readout.innerHTML = texLite(html);
+      readout.appendChild(el("p", "lab-note", "工具尖端 p₆³ = (" + tip.map(function (value) { return value.toFixed(3); }).join(", ") + ") m；腕心 = (0, 0, 0) m；到腕心距离 = " + kernel.len(tip).toFixed(3) + " m。"));
+      if (Math.abs(Math.sin(q[1])) < 1e-9) readout.appendChild(el("p", "lab-warn", "腕部奇异：第一、第三腕轴共线，角度解不唯一。"));
+      mechanismReadout(host, readout, state, frames[3].T, { wrist: [0, 0, 0], tip: tip, axes: frames.slice(0, 3).map(function (frame) { return frame.z; }), zyz: ZYZ, maxDiff: maxDiff });
     }
 
     draw();
@@ -1786,7 +2669,7 @@
         });
         html += "</tbody></table>";
         html += "<p class='lab-note'>四支解 = <b>肘双支</b>（s₃=±√(1-c₃²)，原书式 2.99–2.101）× <b>肩双支</b>" +
-          "（ϑ₁mathrm I=operatorname{Atan2}(pwy,pwₓ)、ϑ₁^{mathrm{II}}=operatorname{Atan2}(-pwy,-pwₓ)，相差 ，原书式 2.109–2.110）。" +
+          "（θ₁ I = Atan2(pᵧ,pₓ)、θ₁ II = Atan2(−pᵧ,−pₓ)，相差 π，原书式 2.109–2.110）。" +
           "「FK 校验」列是把这支解代回正运动学后与目标的偏差——应当是 1e-16 量级。</p>";
         if (ik.shoulderSingular) {
           html += "<p class='lab-warn'><b>肩奇异</b>：pₓ=p_y=0（腕心落在肩轴上），ϑ₁ <b>任意</b>——无穷多解，" +
@@ -2256,52 +3139,128 @@
 
   /* ================= 实验：chassis3d · 轮系与底盘（ch01 §1.3） ================= */
 
-  function labChassis3D(host) {
-    var DEGR = Math.PI / 180;
-    var LAYOUTS = [
+  kernel.chassisLayouts = function () {
+    return [
       {
         id: "diff", name: "差动式", sub: "两同轴定轮 + 被动自位轮",
-        note: "两驱动轮同轴、独立驱动；机身靠第三个被动自位轮保持平衡。v=(v₁+v₂)/2、ω=(v₂-v₁)/(2r) —— 想原地旋转就把两轮反向转。",
+        note: "车体 x 轴向前、y 轴向左；参考点在两驱动轮轴中点。轮距 b=0.56 m，v=(v左+v右)/2，ω=(v右−v左)/b；正角速度为左转。输入是轮缘线速度，不是电机转速。",
         wheels: [{ x: -0.32, y: 0.28, drive: true }, { x: -0.32, y: -0.28, drive: true }, { x: 0.42, y: 0, drive: false, caster: true }]
       },
       {
         id: "synchro", name: "同步驱动式", sub: "三个导向轮，牵引/转向机械耦合",
-        note: "牵引与转向由机械耦合（如差动机构）分配给三个轮子，机身指向不变——推着走不拐弯，适合直行运输。",
+        note: "三个轮子具有相同的滚动方向与速度，底盘只平移，ω=0。改变共同转向角可改变平移方向，但不会改变车身朝向；这里比较的是保持该轮向的瞬时运动。",
         wheels: [{ x: 0.3, y: 0, drive: true }, { x: -0.15, y: 0.26, drive: true }, { x: -0.15, y: -0.26, drive: true }]
       },
       {
         id: "tricycle", name: "三轮式", sub: "后轴两定轮 + 前舵轮",
-        note: "和汽车一样靠舵轮转向：ω=vtanδ/L。定轮不能侧滑，所以转向全靠前轮。",
+        note: "参考点在后轴中点，轴距 L=0.68 m。前轮转角 δ 和后轴中心速度 v 决定 ω=v tanδ/L；左右后轮须以不同轮缘速度通过弯道，可由机械差速器分配。",
         wheels: [{ x: -0.3, y: 0.26, drive: true }, { x: -0.3, y: -0.26, drive: true }, { x: 0.38, y: 0, drive: false, steer: true }]
       },
       {
         id: "car", name: "汽车式（阿克曼）", sub: "后定轮 + 两前转向轮",
-        note: "阿克曼转向几何：两前轮转角**必须不等**——δᵢₙ=cot⁻¹ (cotδ-L/R)、δₒᵤₜ=cot⁻¹ (cotδ+L/R)，否则内轮会打滑。",
+        note: "参考点在后轴中点。轴距 L=0.68 m，前轮距 t=0.60 m；δ 是等效前轮转角，不是方向盘转角。R=L/tanδ，左右前轮分别满足 tanδ左=L/(R−t/2)、tanδ右=L/(R+t/2)。右转时右轮是内轮；直行时两角均为零。",
         wheels: [{ x: -0.3, y: 0.26, drive: true }, { x: -0.3, y: -0.26, drive: true }, { x: 0.38, y: 0.3, drive: false, steer: true, inner: true }, { x: 0.38, y: -0.3, drive: false, steer: true, inner: false }]
       },
       {
         id: "omni3", name: "三主动自位轮式", sub: "三个 120° 布置的主动自位轮",
-        note: "三个轮子都装在自位支架上、各自能绕竖直轴自由转向，机身控制每个轮子的「速度 + 转向角」就能得到任意平面运动——全向。",
-        wheels: [{ x: 0.3, y: 0, drive: true, omni: true }, { x: -0.15, y: 0.26, drive: true, omni: true }, { x: -0.15, y: -0.26, drive: true, omni: true }]
+        note: "这里先给定底盘目标速度，再计算三个偏置自位轮的瞬时滚动速度和被动转向速率。竖直支点与接触点沿轮向相距 e=0.06 m，转向未被当作电机输入。此速度分配示意不模拟对齐过程、力矩或轮地打滑，也不验证所有轮向下的驱动可控性。",
+        wheels: [{ x: 0.42, y: 0, drive: true, omni: true }, { x: -0.21, y: 0.364, drive: true, omni: true }, { x: -0.21, y: -0.364, drive: true, omni: true }]
       }
     ];
-    var state = { layout: "diff", vl: 0.5, vr: 0.5, delta: 20, mecanum: false };
+  };
+
+  kernel.chassisMotion = function (layoutId, input) {
+    var layout = kernel.chassisLayouts().find(function (item) { return item.id === layoutId; });
+    var delta = input.delta * DEG;
+    var vx = input.speed, vy = 0, omega = 0;
+    var reference = [-0.3, 0, 0];
+    if (layoutId === "diff") {
+      vx = (input.vl + input.vr) / 2;
+      omega = (input.vr - input.vl) / 0.56;
+      reference = [-0.32, 0, 0];
+    } else if (layoutId === "synchro") {
+      vx = input.speed * Math.cos(delta);
+      vy = input.speed * Math.sin(delta);
+      reference = [0, 0, 0];
+    } else if (layoutId === "car" || layoutId === "tricycle") {
+      omega = input.speed * Math.tan(delta) / 0.68;
+    } else if (layoutId === "omni3") {
+      vy = input.side;
+      omega = input.yaw;
+      reference = [0, 0, 0];
+    }
+    var wheels = layout.wheels.map(function (wheel, index) {
+      var heading = 0;
+      if (layoutId === "synchro" || wheel.steer) heading = delta;
+      if (layoutId === "car" && wheel.steer) {
+        heading = Math.atan2(0.68 * Math.tan(delta), 0.68 - wheel.y * Math.tan(delta));
+      }
+      if (wheel.omni) heading = index * Math.PI * 2 / 3;
+      var pivot = [wheel.x, wheel.y, 0];
+      var contact = pivot.slice();
+      var pivotVelocity = [vx - omega * (wheel.y - reference[1]), vy + omega * (wheel.x - reference[0]), 0];
+      var direction = [Math.cos(heading), Math.sin(heading), 0];
+      var normal = [-direction[1], direction[0], 0];
+      var swivel = 0;
+      if (wheel.omni || wheel.caster) {
+        contact = kernel.subv(pivot, kernel.sclv(direction, 0.06));
+        swivel = kernel.dot(normal, pivotVelocity) / 0.06 - omega;
+      }
+      return {
+        x: contact[0], y: contact[1], heading: heading, pivot: pivot,
+        drive: wheel.drive, caster: wheel.caster || wheel.omni,
+        speed: kernel.dot(direction, pivotVelocity), swivel: swivel,
+        velocity: wheel.omni || wheel.caster
+          ? kernel.subv(pivotVelocity, kernel.sclv(normal, 0.06 * (omega + swivel))) : pivotVelocity
+      };
+    });
+    return { vx: vx, vy: vy, omega: omega, reference: reference, wheels: wheels,
+      radius: Math.abs(Math.tan(delta)) < 1e-12 ? null : 0.68 / Math.tan(delta) };
+  };
+
+  function labChassis3D(host) {
+    var LAYOUTS = kernel.chassisLayouts();
+    var state = { layout: "diff", vl: 0.5, vr: 0.5, speed: 0.5, delta: 20, side: 0, yaw: 0, mecanum: false };
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "轮系与底盘：轮子怎么转，机身就怎么走"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "选一种底盘布局，拖两个驱动轮的速度，看机身的速度 v 与角速度 ω（绿色箭头）。差速式能原地转、同步式只能直行、汽车式要靠舵轮、阿克曼几何让内外轮转角不等、三自位轮式能横着走。切到「麦克纳姆轮」看 45° 斜置滚子的特殊结构——它让轮子既能推又能横移。"));
+    host.appendChild(el("p", "lab-note", "比较不同布局允许的瞬时速度。车体 x 向前、y 向左；蓝轮表示牵引驱动、金轮为从动轮、紫色支架表示偏置自位轮。绿色线段显示平移速度方向与大小，红弧表示角速度；模型不会沿轨迹行驶。每种布局使用自己的输入与公式，麦克纳姆特写只展示滚子几何。尺寸和范围均为教学设定。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
     toggleGroup(controls, "底盘", LAYOUTS.map(function (l) { return { value: l.id, text: l.name }; }), "diff",
-      function (v) { state.layout = v; draw(); });
+      function (v) { state.layout = v; resetControls(); draw(); });
     toggleGroup(controls, "特写", [{ value: "no", text: "整车" }, { value: "yes", text: "麦克纳姆轮" }], "no",
-      function (v) { state.mecanum = v === "yes"; draw(); });
-    slider(controls, "左轮速度", -1, 1, 0.05, state.vl, function (v) { state.vl = v; draw(); }, function (v) { return v.toFixed(2) + " m/s"; });
-    slider(controls, "右轮速度", -1, 1, 0.05, state.vr, function (v) { state.vr = v; draw(); }, function (v) { return v.toFixed(2) + " m/s"; });
-    slider(controls, "舵角 δ", -35, 35, 1, state.delta, function (v) { state.delta = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
+      function (v) { state.mecanum = v === "yes"; resetControls(); draw(); });
+    var inputs = el("div", "lab-controls");
+    host.appendChild(inputs);
+    function resetControls() {
+      inputs.textContent = "";
+      if (state.mecanum) return;
+      var reset = el("button", "lab-btn", "重置当前底盘");
+      reset.type = "button";
+      reset.addEventListener("click", function () { resetControls(); draw(); });
+      inputs.appendChild(reset);
+      function add(label, key, min, max, step, value, unit) {
+        state[key] = value;
+        slider(inputs, label, min, max, step, value, function (next) { state[key] = next; draw(); },
+          function (next) { return next.toFixed(unit === "°" ? 0 : 2) + " " + unit; });
+      }
+      if (state.layout === "diff") {
+        add("左轮轮缘速度", "vl", -1, 1, 0.05, 0.5, "m/s");
+        add("右轮轮缘速度", "vr", -1, 1, 0.05, 0.5, "m/s");
+      } else {
+        add(state.layout === "synchro" ? "共同轮缘速度" : "参考点前向速度", "speed", -1, 1, 0.05, 0.5, "m/s");
+        if (state.layout === "omni3") {
+          add("参考点左向速度", "side", -1, 1, 0.05, 0, "m/s");
+          add("底盘角速度", "yaw", -1, 1, 0.05, 0, "rad/s");
+        } else {
+          add(state.layout === "synchro" ? "共同轮向角" : "等效前轮转角 δ", "delta", -35, 35, 1, 20, "°");
+        }
+      }
+    }
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -2311,7 +3270,7 @@
     readout.setAttribute("aria-live", "polite");
     host.appendChild(readout);
 
-    var view = makeView(canvas, 0.6, { span: 1.25, center: [0, 0, 0.12], az: -42, elv: 26 });
+    var view = makeView(canvas, 0.6, { span: 1.1, center: [0, 0, 0.12], az: -42, elv: 42 });
     view.onChange = function () { draw(); };
 
     function wheel(v, x, y, r, width, axis, color) {
@@ -2320,6 +3279,7 @@
       var u = kernel.norm(Math.abs(axis[0]) < 0.9 ? kernel.crs(axis, [1, 0, 0]) : kernel.crs(axis, [0, 1, 0]));
       var w = kernel.crs(axis, u);
       var c = [x, y, 0];
+      var frontFace = [], backFace = [];
       for (i = 0; i < seg; i++) {
         var a1 = 2 * Math.PI * i / seg, a2 = 2 * Math.PI * (i + 1) / seg;
         var p1 = kernel.addv(c, kernel.sclv(kernel.addv(kernel.sclv(u, Math.cos(a1)), kernel.sclv(w, Math.sin(a1))), r));
@@ -2329,7 +3289,11 @@
         var r1 = kernel.addv(p1, kernel.sclv(axis, -width / 2));
         var r2 = kernel.addv(p2, kernel.sclv(axis, -width / 2));
         v.poly([q1, q2, r2, r1], { color: color, both: true });
+        frontFace.push(q1);
+        backFace.unshift(r1);
       }
+      v.poly(frontFace, { color: color, both: true });
+      v.poly(backFace, { color: color, both: true });
       v.cyl(kernel.addv(c, kernel.sclv(axis, -width / 2)), kernel.addv(c, kernel.sclv(axis, width / 2)), r * 0.25, { color: color, seg: 8 });
     }
 
@@ -2341,100 +3305,78 @@
         /* 麦克纳姆轮特写：一个轮 + 45° 斜置滚子 */
         view.grid(0.6, 0.12, -0.3, { color: c.line });
         var R = 0.3;
-        var dir = [1, 0, 0];
-        wheel(view, 0, 0, R, 0.12, [0, 1, 0], c.blue);
+        wheel(view, 0, 0, R * 0.65, 0.12, [0, 1, 0], c.blue);
         /* 滚子：沿轮周分布、轴线与轮平面成 45° */
         for (var i = 0; i < 8; i++) {
           var ang = 2 * Math.PI * i / 8;
-          var center = [0, 0, 0];
           var radial = [Math.cos(ang), 0, Math.sin(ang)];
-          var rc = kernel.sclv(radial, R * 0.78);
-          var rollerAxis = kernel.norm([radial[0] * Math.cos(Math.PI / 4), Math.sin(Math.PI / 4), radial[2] * Math.cos(Math.PI / 4)]);
+          var rc = kernel.sclv(radial, R * 0.9);
+          var rollerAxis = kernel.norm([-Math.sin(ang), 1, Math.cos(ang)]);
           var half = R * 0.28;
           var A = kernel.addv(rc, kernel.sclv(rollerAxis, -half));
           var Bp = kernel.addv(rc, kernel.sclv(rollerAxis, half));
+          view.cyl(kernel.sclv(radial, R * 0.6), rc, 0.014, { color: c.blue, seg: 6 });
           view.cyl(A, Bp, 0.028, { color: c.gold, seg: 8 });
         }
-        view.label([0, 0, R * 0.85], "轮体（绕 y 轴滚）", c.blue, 12, 0);
-        view.label([R * 0.9, 0.12, R * 0.4], "滚子轴 45°", c.gold, 10, 2);
+        view.label([0, 0, -R * 0.6], "轮体（绕 y 轴滚）", c.blue, -105, 24);
+        view.label([0, 0, R], "滚子轴 45°", c.gold, 12, -20);
         view.render(null);
         readout.innerHTML = texLite("<p><b>麦克纳姆轮</b>：轮体绕自身轴（y）滚动，轮缘上的滚子轴与轮平面成 <b>45°</b> 斜置。</p>" +
-          "<p class='lab-note'>斜置滚子的作用：轮子被驱动向前滚时，滚子与地面的接触线把驱动力分解成**沿轮平面**与**垂直轮平面**两个分量——所以这��轮子既能像普通轮那样推着走，又能横着平移（这正是「全向」的来源）。普通轮做不到横向平移，因为它只有一个滚动自由度。</p>");
+          "<p class='lab-note'>滚子沿轮缘切向斜置，与轮平面成 45°；接触处可沿滚子允许的方向被动运动。四个适当布置、独立驱动的轮子可合成前进、横移与旋转。单个轮子的特写不能单独证明整车全向性，本图不模拟受力。</p>");
         return;
       }
 
-      view.grid(0.75, 0.15, 0, { color: c.line });
+      var motion = kernel.chassisMotion(layout.id, state);
+      view.grid(0.75, 0.15, -0.1, { color: c.line });
       /* 机身 */
-      view.box([0, 0, 0.08], [0.42, 0.32, 0.04], kernel.Tid().R, { color: c.neutral });
-      view.box([0.1, 0, 0.16], [0.14, 0.12, 0.06], kernel.Tid().R, { color: c.muted });
+      var casterLayout = layout.id === "omni3";
+      view.box([0, 0, 0.18], [0.22, 0.16, 0.025], kernel.Tid().R, { color: c.neutral });
 
       /* 轮子 */
-      layout.wheels.forEach(function (w) {
-        var steer = w.steer ? state.delta * DEGR : 0;
-        /* 转向轮：先绕竖直轴转 δ，再按轮轴方向摆 */
-        var wheelAxis = [0, 1, 0];
-        var axisPos = [0, 1, 0];
-        if (w.steer) {
-          var ca = Math.cos(steer), sa = Math.sin(steer);
-          /* 舵轮绕 z 转 δ：轮轴（原本沿 x）转到 (cosδ, sinδ) */
-          axisPos = [ca, sa, 0];
-          wheelAxis = [ca, sa, 0];
-        }
+      motion.wheels.forEach(function (w, index) {
+        var wheelAxis = [-Math.sin(w.heading), Math.cos(w.heading), 0];
         var color = w.drive ? c.blue : c.gold;
+        view.line([0, 0, 0.18], [w.pivot[0], w.pivot[1], 0.18], { color: c.neutral, width: 6 });
+        if (!w.caster) view.line([w.x, w.y, 0.18], [w.x, w.y, 0], { color: c.neutral, width: 3 });
         wheel(view, w.x, w.y, 0.1, 0.07, wheelAxis, color);
         if (w.caster) {
-          /* 自位轮：小球 + 竖直轴 */
-          view.sphere([w.x, w.y, 0], 0.05, { color: c.purple });
-          view.line([w.x, w.y, 0], [w.x, w.y, 0.1], { color: c.purple, width: 1.4, dash: [4, 3] });
+          view.line([w.pivot[0], w.pivot[1], 0.18], [w.pivot[0], w.pivot[1], 0], { color: c.purple, width: 2 });
+          view.line([w.pivot[0], w.pivot[1], 0.14], [w.x, w.y, 0.14], { color: c.purple, width: 3 });
+          view.line([w.x, w.y, 0.14], [w.x, w.y, 0], { color: c.purple, width: 2 });
+          if (casterLayout && index === 2) view.label([w.x, w.y, 0.18], "偏置 e", c.purple, -25, -8);
         }
-        if (w.omni) {
-          /* 自位支架 */
-          view.line([w.x, w.y, 0], [w.x, w.y, 0.12], { color: c.purple, width: 1.4 });
-        }
+        view.label([w.x, w.y, -0.1], "轮" + (index + 1), color, 5, 16);
       });
 
       /* 速度与角速度 */
-      var v = 0, omega = 0, kind = "";
-      if (layout.id === "diff") {
-        v = (state.vl + state.vr) / 2; omega = (state.vr - state.vl) / 0.56;
-        kind = "差速：v=(v₁+v₂)/(2)，ω=(v₂-v₁)/(2r)";
-      } else if (layout.id === "synchro") {
-        v = (state.vl + state.vr) / 2; omega = 0;
-        kind = "同步驱动：机身指向锁定，ω=0";
-      } else if (layout.id === "tricycle" || layout.id === "car") {
-        v = (state.vl + state.vr) / 2;
-        omega = v * Math.tan(state.delta * DEGR) / 0.68;
-        kind = "转向底盘：ω=(vtanδ)/(L)";
-      } else {
-        v = (state.vl + state.vr) / 2; omega = (state.vr - state.vl) / 0.56;
-        kind = "全向：轮向自由，可合成任意 v,ω";
+      var origin = [motion.reference[0], motion.reference[1], 0.28];
+      view.triad([0.55, -0.5, 0], kernel.Tid().R, 0.16, ["x 前", "y 左", "z 上"], {colors:[c.muted,c.muted,c.muted]});
+      if (Math.hypot(motion.vx, motion.vy) > 1e-6) {
+        var velocityTip = kernel.addv(origin, [motion.vx * 0.5, motion.vy * 0.5, 0]);
+        view.line(origin, velocityTip, { color: c.green, width: 3 });
+        view.sphere(velocityTip, 0.018, { color: c.green });
       }
-      if (v > 1e-6) {
-        view.line([0, 0, 0.25], [0, v, 0.25], { color: c.green, width: 3 });
-        view.label([0, v, 0.25], "v = " + v.toFixed(2) + " m/s", c.green, 10, 4);
-      }
-      if (Math.abs(omega) > 1e-6) {
-        view.arc([0, 0, 0.25], [1, 0, 0], [0, 1, 0], 0.34, 0, Math.max(-2.6, Math.min(2.6, omega * 0.6)),
+      if (Math.abs(motion.omega) > 1e-6) {
+        view.arc(origin, [1, 0, 0], [0, 1, 0], 0.34, 0, Math.max(-2.6, Math.min(2.6, motion.omega * 0.6)),
           { color: c.red, width: 2.4 });
-        view.label([0.34, 0, 0.25], "ω = " + omega.toFixed(2) + " rad/s", c.red, 10, 4);
       }
 
       view.render(null);
 
       var html = "<p><b>" + layout.name + "</b>：" + layout.sub + "。</p>";
       html += "<p class='lab-note'>" + layout.note + "</p>";
-      html += "<p class='lab-note'>当前：" + kind + " ⇒ 机身线速度 " + v.toFixed(2) + " m/s、角速度 " + omega.toFixed(2) + " rad/s。" +
-        "左右轮同速 = 直行；差速式左右轮反向 = <b>原地旋转</b>（扫地机器人的「转圈」就是它）。</p>";
+      html += "<p data-chassis-motion>车体坐标速度：vₓ = " + motion.vx.toFixed(3) + " m/s；vᵧ = " + motion.vy.toFixed(3) + " m/s；ω = " + motion.omega.toFixed(3) + " rad/s。</p>";
+      html += "<p>各轮轮缘速度（轮 1…" + motion.wheels.length + "）：" + motion.wheels.map(function (w) {return w.speed.toFixed(3);}).join("，") + " m/s。</p>";
       if (layout.id === "car") {
-        var R = 0.5, L = 0.68, cot = 1 / Math.tan(Math.max(1, Math.abs(state.delta)) * DEGR);
-        var din = Math.atan(1 / Math.max(0.05, cot - L / R)) / DEGR;
-        var dout = Math.atan(1 / Math.max(0.05, cot + L / R)) / DEGR;
-        html += "<p class='lab-note'><b>阿克曼几何</b>：转向半径 R = " + R.toFixed(2) + " m、轴距 L = " + L.toFixed(2) + " m、方向盘转角 δ = " + state.delta + "° ⇒ " +
-          "内轮 " + din.toFixed(1) + "°、外轮 " + dout.toFixed(1) + "°（<b>两轮不等</b>）。若两轮都打 δ，内外轮的转弯半径不同，内轮必然侧滑。</p>";
+        html += "<p data-chassis-steering>左前轮 δ左 = " + (motion.wheels[2].heading / DEG).toFixed(2) + "°；右前轮 δ右 = " + (motion.wheels[3].heading / DEG).toFixed(2) + "°；" + (motion.radius === null ? "直行，转弯半径趋于无穷。" : "后轴中心有符号转弯半径 R = " + motion.radius.toFixed(3) + " m。") + "</p>";
+      }
+      if (layout.id === "omni3") {
+        html += "<p>当前轮向 β = 0°、120°、240°，被动转向速率 β̇（相对底盘）：" + motion.wheels.map(function (w) {return w.swivel.toFixed(3);}).join("，") + " rad/s。该数值由偏置处的无侧滑条件计算，并非三个转向电机指令。</p>";
       }
       readout.innerHTML = texLite(html);
     }
 
+    resetControls();
     draw();
     window.addEventListener("resize", draw);
     return draw;
@@ -3118,8 +4060,8 @@
           { alpha: 0, a: 0.36, d: 0, type: "R", label: "ϑ₂" },
           { alpha: 0, a: 0.26, d: 0, type: "R", label: "ϑ₃" }
         ],
-        note: "三个关节转轴全部平行（都沿 z₀），于是 dᵢ=αᵢ=0 全表成立，DH 表只剩三个 θ。最简单的机构，也是后面几节算式形状的模板。",
-        extra: "结构性观察：z₃⁰=[0 0 1]ᵀ 与 z₀ 一致——三轴全平行，所以三个关节只决定末端在平面内的位置。",
+        note: "有向关节轴同向平行给出 αᵢ=0，各原点选在同一运动平面才给出 dᵢ=0。长度 m，角度滑杆用度；矩阵报告系 3，没有额外工具长度。",
+        extra: "z₃⁰=[0 0 1]ᵀ 固定，但平面朝向 φ=θ₁+θ₂+θ₃ 仍会变。工具约定 aₑ=x₃ 时还需右乘正文的常值旋转。",
         tLabel: "T₃⁰（原书式 2.63）", tfn: "planar"
       },
       para: {
@@ -3140,7 +4082,7 @@
           { alpha: HALF_PI, a: 0, d: 0.18, type: "R", label: "ϑ₂" },
           { alpha: 0, a: 0, d: 0, type: "P", label: "d₃" }
         ],
-        note: "第一个带移动关节的结构：两转动 + 一移动（伸缩）。三个 aᵢ 全为零，因为 z₀ 与 z₁ 相交、z₁ 与 z₂ 相交、z₂∥z₃。",
+        note: "两转动加一移动。前两对相邻轴相交，末对 z₂、z₃ 同轴，因此 aᵢ=0；仅有平行不足以推出 a=0。",
         extra: "结构性观察：**移动关节 d₃ 不影响旋转块**——伸缩不改变姿态；单位向量 y₃⁰=[−s₁\\ c₁\\ 0]ᵀ 的方向**只由第一关节**决定（第二关节的转轴 z₁ 恰与 y₃ 平行）。",
         tLabel: "T₃⁰（原书式 2.65）", tfn: "spherical"
       },
@@ -3168,34 +4110,31 @@
           { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₅" },
           { alpha: 0, a: 0, d: 0.14, type: "R", label: "ϑ₆" }
         ],
-        note: "拟人臂的坐标系 3 与球形腕的坐标系 3 **不一致**（x₃ 相差 π/2、原点相差 a₃），不能直接连乘——出路是插入常值变换把接口对齐，或者**整体重建系**（原书走这条路）。",
-        extra: "重建系后注意参数表的变化：原拟人臂的 a₃ 消失了，它化入 d₄ 的参考方向；α₃ 也从 0 变成 π/2。令 d₆=0 即得**腕心**位置。",
-        tLabel: "p₆⁰（原书式 2.70–2.71）", tfn: "pos"
+        note: "对整臂重建系后，第 3 行 a₃=0、α₃=π/2；第 4 行 d₄=0.30 m、α₄=−π/2。前臂长度改用 d₄ 表示，旧肘角=新肘角−90°。",
+        extra: "矩阵报告工具尖端；腕心在 o₄，p_w=p₆−d₆a₆，只转腕角不移动腕心。将工具长度调为零核对两点重合。",
+        tLabel: "T₆⁰（位置见原书式 2.70）", tfn: "pos"
       },
       dlr: {
         name: "DLR 机械手", sec: "2.9.8",
-        rows: [
-          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₁" },
-          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₂" },
-          { alpha: HALF_PI, a: 0, d: 0.22, type: "P", label: "d₃" },
-          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₄" },
-          { alpha: HALF_PI, a: 0, d: 0.2, type: "P", label: "d₅" },
-          { alpha: HALF_PI, a: 0, d: 0, type: "R", label: "ϑ₆" },
-          { alpha: 0, a: 0, d: 0.12, type: "P", label: "d₇" }
-        ],
-        note: "七自由度机械手，属于**本质冗余**（2.10.3）：全表 aᵢ=0、αᵢ=π/2（i=1…6）、α₇=0，关节 3、5、7 是移动型。",
-        extra: "七个自由度对六维位姿是冗余的——同一末端位形有**一整族**解，冗余度用来自避奇异与避障碍（3.4 节）。",
+        rows: kernel.zooKinds().find(function (kind) { return kind.id === "dlr"; }).rows,
+        note: "七个关节均为转动关节，变量为 θ₁…θ₇；d₃、d₅、d₇ 是固定几何尺寸，不是移动关节变量。",
+        extra: "七自由度相对一般六维位姿任务具有运动学冗余；在可达且满秩的位形附近，同一末端位姿通常有一族关节解。",
         tLabel: "T₇⁰（连乘结果，原书式 2.72–2.76）", tfn: "num"
       }
     };
     var def = DEFS[which] || DEFS.planar3r;
-    var state = { q: def.rows.map(function (r) { return r.type === "P" ? (r.d || 0.2) : 20; }), hover: null };
+    var initialAngles = {
+      planar3r: [20, 35, -65], para: [15, 100], spherical: [30, 50, 0.30],
+      stanford: [20, 45, 0.30, 25, 50, -30], anthroWrist: [20, 35, 40, 25, 40, -30],
+      dlr: def.rows.map(function (row) { return row.def; })
+    };
+    var state = { q: initialAngles[which] ? initialAngles[which].slice() : [20, 35, -65], d6: def.rows.length === 6 ? def.rows[5].d : undefined, hover: null };
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, def.name + "：把 DH 表连乘成一条手臂"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖动各关节变量与视角，看这张 DH 表怎么变成一条真实机构：绿色圆柱是转动关节、金色导轨是移动关节；画布上标出每个坐标系的 x/y/z 轴。下方是连乘矩阵 T 的数值——**悬停某一列**，对应的坐标架轴会加粗（列 = 轴的方向余弦；末列 = 位置）。"));
+    host.appendChild(el("p", "lab-note", "先按正文预测位置，再改变一个变量核对。长度 m，转角用度；绿色短圆柱表示 R，金色表示 P；基座灰色短轴与彩色末端坐标架供对照。矩阵的前三列为末系轴向，末列为红色端点位置，没有另加未计入矩阵的工具杆。用按钮逐列高亮，拖动画布只改变视角。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -3208,6 +4147,9 @@
           function (v) { return v.toFixed(0) + "°"; });
       }
     });
+    if (state.d6 !== undefined) {
+      slider(controls, "工具长度 d₆", 0, 0.4, 0.01, state.d6, function (value) { state.d6 = value; draw(); }, function (value) { return value.toFixed(2) + " m"; });
+    }
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -3216,10 +4158,10 @@
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
     host.appendChild(readout);
-    bindHover(readout, function (key) { state.hover = key; draw(); });
-
-    var view = makeView(canvas, 0.62, { span: 1.4, center: [0, 0, 0.25], az: -34, elv: 19 });
+    var view = makeView(canvas, 0.62, { span: 1.4, center: [0, 0, 0.25], az: -65, elv: 28 });
+    view.cam.zoom = which === "dlr" ? 1.8 : 1.3;
     view.onChange = function () { draw(); };
+    mechanismActions(host, controls, state, view, draw, def.rows.map(function (row) { return row.type === "P" ? 0.20 : 0; }));
 
     function draw() {
       var c = palette();
@@ -3228,7 +4170,10 @@
       });
       view.grid(0.85, 0.17, 0, { color: c.line });
 
-      var frames = null, T = null;
+      var frames = null, T = null, extra = {};
+      var activeRows = def.rows.map(function (row, index) {
+        return { alpha: row.alpha, a: row.a, d: index === 5 && state.d6 !== undefined ? state.d6 : row.d, type: row.type, label: row.label };
+      });
       if (def.custom === "para") {
         /* 平行四边形臂：闭链，按约束方程构造 */
         var t1 = q[0], t1b = q[1];
@@ -3244,40 +4189,52 @@
         view.cyl(C, B, 0.032, { color: c.blue });
         view.cyl([0, 0, 0], A, 0.032, { color: c.blue });
         view.cyl([0, 0, 0], C, 0.032, { color: c.blue });
-        view.cyl(B, T4, 0.026, { color: c.gold });
+        view.cyl(C, T4, 0.026, { color: c.gold });
         view.sphere(B, 0.032, { color: c.green });
         view.sphere(T4, 0.03, { color: c.red });
-        view.label(kernel.sclv(kernel.addv([0, 0, 0], A), 0.5), "1′", c.blue);
-        view.label(kernel.sclv(kernel.addv(A, B), 0.5), "2′", c.blue);
-        view.label(kernel.sclv(kernel.addv(C, B), 0.5), "3′", c.blue);
-        view.label(kernel.sclv(kernel.addv([0, 0, 0], C), 0.5), "1″", c.blue);
+        [["O", [0, 0, 0]], ["A", A], ["B", B], ["C", C]].forEach(function (point) { view.label(point[1], point[0], c.muted, 8, -16); });
         var c1 = Math.cos(t1), s1 = Math.sin(t1), c1b = Math.cos(t1b), s1b = Math.sin(t1b);
         T = {
           R: [[-c1, s1, 0], [-s1, -c1, 0], [0, 0, 1]],
           p: [a1b * c1b - a4 * c1, a1b * s1b - a4 * s1, 0]
         };
+        extra = { passive: [t1b - t1, Math.PI - t1b + t1], points: [A, B, C, T4], closure: kernel.len(kernel.subv(kernel.addv(A, C), B)) };
+        view.line([0, 0, 0], T.p, { color: c.red, width: 2, dash: [7, 4], hl: "pos" });
       } else {
-        frames = kernel.fkChain(def.rows, q);
+        frames = kernel.fkChain(activeRows, q);
         drawChain(view, frames, {
-          toolLen: 0.12, triads: true, triadSize: 0.24, span: 1.2,
-          frameRange: [0, frames.length - 1], hlFrame: "f"
+          toolLen: 0, triads: false, span: 1.2, jointTypes: activeRows.map(function (row) { return row.type; })
         });
         var last = frames[frames.length - 1];
         view.line([0, 0, 0], last.o, { color: c.red, width: 1.8, dash: [7, 4], hl: "pos" });
         T = last.T;
+        if (state.d6 !== undefined) {
+          extra.wrist = frames[which === "stanford" ? 3 : 4].o;
+          extra.distance = kernel.len(kernel.subv(T.p, extra.wrist));
+          view.sphere(extra.wrist, 0.028, { color: c.purple });
+          view.label(extra.wrist, "腕心", c.purple, -40, 22);
+        }
+        extra.frames = frames.map(function (frame) { return kernel.Tmatrix(frame.T); });
       }
-
+      view.triad([0, 0, 0], kernel.Tid().R, 0.18, ["x₀", "y₀", "z₀"], { colors: [c.muted, c.muted, c.muted], width: 1 });
+      view.triad(T.p, T.R, 0.24, ["x" + (which === "para" ? "₄" : subText(String(def.rows.length))), "y" + (which === "para" ? "₄" : subText(String(def.rows.length))), "z" + (which === "para" ? "₄" : subText(String(def.rows.length)))], { colors: [c.blue, c.green, c.gold], width: 2.2, hlPrefix: "end-" });
+      if (which === "planar3r") view.label(kernel.addv(T.p, kernel.sclv([T.R[0][0], T.R[1][0], T.R[2][0]], 0.25)), "工具接近 aₑ=x₃", c.blue, 8, -12);
       view.render(state.hover);
 
       /* DH 参数表（悬停联动） */
-      var tbl = "<table class='lab-matrix'><thead><tr><th>i</th><th>αᵢ</th><th>aᵢ</th><th>dᵢ</th><th>ϑᵢ/dᵢ</th></tr></thead><tbody>";
-      def.rows.forEach(function (row, i) {
+      var tableRows = which === "para" ? [
+        { alpha: 0, a: 0.45, d: 0, theta: q[0], id: "1′", type: "R" },
+        { alpha: 0, a: 0.5, d: 0, theta: extra.passive[0], id: "2′", type: "被动" },
+        { alpha: 0, a: 0.45, d: 0, theta: extra.passive[1], id: "3′", type: "被动" },
+        { alpha: 0, a: 0.5, d: 0, theta: q[1], id: "1″", type: "R" },
+        { alpha: 0, a: 0.3, d: 0, theta: 0, id: "4", type: "固定末杆" }
+      ] : activeRows.map(function (row, index) {
+        return { alpha: row.alpha, a: row.a, d: row.type === "P" ? q[index] : row.d, theta: row.type === "P" ? 0 : q[index], id: index + 1, type: row.type };
+      });
+      var tbl = "<table class='lab-matrix' data-mechanism-dh><thead><tr><th>i</th><th>类型</th><th>aᵢ (m)</th><th>αᵢ</th><th>dᵢ (m)</th><th>θᵢ</th></tr></thead><tbody>";
+      tableRows.forEach(function (row) {
         var alphaTxt = Math.abs(row.alpha - HALF_PI) < 1e-6 ? "π/2" : (Math.abs(row.alpha + HALF_PI) < 1e-6 ? "−π/2" : "0");
-        tbl += "<tr><td>" + (i + 1) + "</td>" +
-          "<td data-hl='al" + i + "'>" + alphaTxt + "</td>" +
-          "<td data-hl='a" + i + "'>" + (row.a ? row.a.toFixed(2) : "0") + "</td>" +
-          "<td data-hl='d" + i + "'>" + (row.d ? row.d.toFixed(2) : "0") + "</td>" +
-          "<td data-hl='th" + i + "'>" + (row.type === "P" ? (state.q[i] * 1000).toFixed(0) + " mm" : state.q[i].toFixed(0) + "°") + "</td></tr>";
+        tbl += "<tr><td>" + row.id + "</td><td>" + row.type + "</td><td>" + row.a.toFixed(2) + "</td><td>" + alphaTxt + "</td><td>" + row.d.toFixed(3) + "</td><td>" + (row.theta / DEG).toFixed(1) + "°</td></tr>";
       });
       tbl += "</tbody></table>";
 
@@ -3287,17 +4244,22 @@
         var rowArr = [];
         for (var cc = 0; cc < 4; cc++) {
           var v = (r === 3) ? (cc === 3 ? 1 : 0) : (cc === 3 ? T.p[r] : T.R[r][cc]);
-          var key = cc === 3 ? "pos" : "f" + (cc === 0 ? "0" : "1") + "-" + cc;
+          var key = cc === 3 ? "pos" : "end-" + cc;
           rowArr.push({ v: v, hl: key });
         }
         mat.push(rowArr);
       }
-      var html = "<span class='lab-matrix-label'>" + def.tLabel + " =</span>" + matrixHTML(mat, 3);
+      var html = "<span class='lab-matrix-label'>" + def.tLabel + "（位置 m）=</span>" + matrixHTML(mat, 3).replace("<table", "<table data-mechanism-matrix");
       html += "<p class='lab-note'>" + def.note + "</p>";
       html += "<p class='lab-note'>" + def.extra + "</p>";
       html += tbl;
-      html += "<p class='lab-note'>读法：前三行前三列是<b>旋转块</b>（每列 = 一个坐标系的轴在基座系里的方向余弦），第四列是<b>位置</b>；悬停任一格，画布里对应的轴或位置矢量会加粗。</p>";
-      readout.innerHTML = html;
+      html += "<p class='lab-note'>R 的每列是末系一根轴在基座系中的方向；第四列为图中红色端点位置。P 行只有 d 是活动量，R 行只有 θ 是活动量；工具长度是独立演示的固定几何参数。</p>";
+      readout.innerHTML = texLite(html).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+      readout.appendChild(el("p", "lab-note", "端点位置 = (" + T.p.map(function (value) { return value.toFixed(3); }).join(", ") + ") m。"));
+      if (extra.wrist) readout.appendChild(el("p", "lab-note", "腕心 = (" + extra.wrist.map(function (value) { return value.toFixed(3); }).join(", ") + ") m；尖端到腕心距离 = " + extra.distance.toFixed(3) + " m = d₆。"));
+      if (which === "para") readout.appendChild(el("p", "lab-note", "闭合误差 |OA+OC−OB| = " + extra.closure.toExponential(1) + " m。被动角由两驱动角决定，五行表属于带分支的树，不是五行串联。"));
+      if (which === "planar3r") readout.appendChild(el("p", "lab-note", "平面朝向 φ = " + state.q.reduce(function (sum, value) { return sum + value; }, 0).toFixed(1) + "°（按模 360° 理解）。"));
+      mechanismReadout(host, readout, state, T, extra);
     }
 
     draw();
@@ -3322,7 +4284,11 @@
 
   var registry = {
     zoo3d: labZoo3D,
+    composition3d: labComposition3D,
     euler3d: labEuler3D,
+    axisangle3d: labAxisAngle3D,
+    quaternion3d: labQuaternion3D,
+    homogeneous3d: labHomogeneous3D,
     dh3d: labDH3D,
     anthro3d: labAnthro3D,
     wrist3d: labWrist3D,

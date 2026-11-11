@@ -35,7 +35,7 @@ $$\boldsymbol r=\begin{bmatrix}\cos\alpha\sin\beta\\ \sin\alpha\sin\beta\\ \cos\
 
 $$\sin\alpha=\frac{r_y}{\sqrt{r_x^2+r_y^2}},\quad \cos\alpha=\frac{r_x}{\sqrt{r_x^2+r_y^2}},\qquad \sin\beta=\sqrt{r_x^2+r_y^2},\quad \cos\beta=r_z .\tag{1}$$
 
-**分母不为零的条件**：$\sqrt{r_x^2+r_y^2}=0$ 意味着 $\boldsymbol r$ 沿 $\pm z$ 轴，此时 $\alpha$ 任意（球坐标的固有奇点，与欧拉角的万向锁同源）。后面第 4 步的推导要求 $\sin\beta\neq0$；$\boldsymbol r=\pm\boldsymbol z$ 的情形可以由连续性取极限得到，结果仍成立。
+**极点单独处理**：$\rho=0$ 时轴为 $\pm z$，方位角无定义，可约定 $\alpha=0$，并分别取 $\beta=0,\pi$。后面的分量消去按 $\rho>0$ 推导；极点可直接代回五步式，无须除以 $\sin\beta$。这是辅助球坐标的退化，不能直接等同于欧拉角的首末轴组合退化。
 
 **第 1 步：合并前两个因子。** 记
 
@@ -321,7 +321,7 @@ $$p_x^2+p_y^2=d_3^2(s_1^2+c_1^2)=d_3^2
 
 $$\vartheta_1=\operatorname{Atan2}\!\left(\frac{-p_x}{d_3},\ \frac{p_y}{d_3}\right)=\operatorname{Atan2}(-p_x,\ p_y).$$
 
-用 `Atan2` 而非 $\arccos$ 的理由见 [@thm-2.4.A]（唯一化象限 + 精度均匀）。
+用 `Atan2` 保留象限的理由见 [@thm-2.4.A]；本式输入半径为 $d_3$，靠近 $d_3=0$ 时方位角仍敏感，不能称为处处“精度均匀”。
 
 ::: thm 结论 2.19 · 圆柱形臂的逆解 {#thm-2.19}
 $$\boxed{\;\vartheta_1=\operatorname{Atan2}(-p_x,\,p_y),\qquad d_3=\sqrt{p_x^2+p_y^2},\qquad d_2=p_z\;}$$

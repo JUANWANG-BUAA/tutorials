@@ -60,7 +60,7 @@
 
 ## 第二部分 · 填空简答（5 题 × 4 分 = 20 分）
 
-**11.（4 分）** 写出从 $RR^{\mathrm T}=I$ 到 $\dot R=S(\boldsymbol\omega)R$ 的推导链（三步），并说明「$S$ 就是角速度」这一步用的是哪两个物理事实。
+**11.（4 分）** 写出从 $RR^{\mathrm T}=I$ 到 $\dot R=S(\boldsymbol\omega)R$ 的推导链（三步），并说明识别「$S$ 是角速度的叉乘矩阵」用的是哪两个物理事实。
 
 **12.（4 分）** 写出几何雅可比的逐列构造（绿框）——转动关节列与移动关节列各是什么，并把每一列所需的量指到正运动学的哪一部分。
 
@@ -74,7 +74,7 @@
 
 **11.** **三步推导链**：① 由 $RR^{\mathrm T}=I$ 两边求导并用乘积法则 ⇒ $\dot RR^{\mathrm T}+R\dot R^{\mathrm T}=0$；② 记 $S\triangleq\dot RR^{\mathrm T}$，则 $S+S^{\mathrm T}=0$——$S$ **反对称**；③ 两边**右乘 $R$** 把 $\dot R$ 单独解出来 ⇒ $\dot R=S\,R$。**识别 $S$ 的两个物理事实**：(a) 对常模向量 $\boldsymbol p(t)=R(t)\boldsymbol p'$ 求导，得 $\dot{\boldsymbol p}=S R\boldsymbol p'$；(b) 力学给随坐标系一起转动的点线速度 $\dot{\boldsymbol p}=\boldsymbol\omega\times\boldsymbol p=\boldsymbol\omega\times R\boldsymbol p'$。两式对**任意** $\boldsymbol p'$ 成立 ⇒ $S R=S(\boldsymbol\omega)R$。**评分**：三步 2 分；两个事实与比较过程 2 分。（[@thm-3.1.A]、[@def-3.1.2]）
 
-**12.** 转动关节：$J_{P_i}=z_{i-1}\times(\boldsymbol p_e-\boldsymbol p_{i-1})$、$J_{O_i}=z_{i-1}$；移动关节：$J_{P_i}=z_{i-1}$、$J_{O_i}=\boldsymbol 0$（课件用 $\sigma_i$ 区分：转动 $\sigma_i=0$、移动 $\sigma_i=1$）。**量的出处**：$z_{i-1}=R_{i-1}$（即 $T_{i-1}^0$ 的左上 $3\times3$ 块）的**第三列**；$\boldsymbol p_{i-1}$ = $T_{i-1}^0$ 第四列前三行；$\boldsymbol p_e$ = $T_n^0$ 第四列前三行。**物理解读**：其余关节全部锁死、只以单位速度驱动第 $i$ 个关节，末端产生的速度就是第 $i$ 列。**评分**：两式 2 分；出处 1.5 分；物理解读或「$z_{i-1}$ 不是 $[0,0,1]^{\mathrm T}$」的提醒 0.5 分。（[@thm-3.1.C]）
+**12.** 转动关节：$J_{P_i}=z_{i-1}\times(\boldsymbol p_e-\boldsymbol p_{i-1})$、$J_{O_i}=z_{i-1}$；移动关节：$J_{P_i}=z_{i-1}$、$J_{O_i}=\boldsymbol 0$（课件用 $\sigma_i$ 区分：转动 $\sigma_i=0$、移动 $\sigma_i=1$）。**量的出处**：$z_{i-1}=R_{i-1}$（$T_{i-1}^0$ 左上 $3\times3$ 块）的第三列；$\boldsymbol p_{i-1}$ 取 $T_{i-1}^0$ 第四列前三行；$\boldsymbol p_e$ 取 $T_e^0=T_n^0T_e^n$ 第四列前三行，末端点与第 $n$ 系原点重合时才可直接取 $T_n^0$。**物理解读**：其余关节全部锁死、只以单位速度驱动第 $i$ 个关节，末端产生的速度就是第 $i$ 列。**评分**：两式 2 分；出处 1.5 分；物理解读或不能预设轴向数值的提醒 0.5 分。（[@thm-3.1.C]）
 
 **13.** 把参考点从末端挪到**腕心** $\boldsymbol p_w$，得下三角分块 $\begin{bmatrix}\dot{\boldsymbol p}_w\\ \boldsymbol\omega_e\end{bmatrix}=\begin{bmatrix}J_{11}&0\\ J_{21}&J_{22}\end{bmatrix}\begin{bmatrix}\dot{\boldsymbol q}_a\\ \dot{\boldsymbol q}_w\end{bmatrix}$，$\det J=\det J_{11}\det J_{22}$。**三个条件**：腕奇点 $\det J_{22}\propto s_5$ ⇒ $\vartheta_5=0,\pi$（**内部奇点**）；肘奇点 $s_3=0$（**边界奇点**）；肩奇点 $a_2c_2+a_3c_{23}=0$。**合法性来源**：运动学奇点是**机械结构固有的特性，与坐标系建在哪里无关**——所以完全可以为了简化计算而重新选参考系（取在腕心），使 $J_{12}=0$。**评分**：矩阵与判定式 1.5 分；三个条件 1.5 分；合法性来源 1 分。（[@thm-3.3.A]）
 
@@ -84,7 +84,7 @@
 |:--|:--|:--|
 | 方阵满秩 | $J^{-1}$ + 数值积分 | $\boldsymbol q(t_{k+1})\approx\boldsymbol q(t_k)+J^{-1}(\boldsymbol q(t_k))\boldsymbol v_e(t_k)\Delta t$ |
 | 冗长（$r<n$） | 右伪逆 + 零空间项 | $\dot{\boldsymbol q}=J^\dagger\boldsymbol v_e+(I-J^\dagger J)\dot{\boldsymbol q}_0$，$J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ |
-| 退化（奇异） | 阻尼最小二乘 | $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$（$W=I,K=k^2I$） |
+| 退化（奇异） | 阻尼最小二乘 | $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$（$W=I,K=k^{-2}I,k>0$） |
 
 **共同的可逆性前提**：$JW^{-1}J^{\mathrm T}$ 可逆 ⇔ $J$ **行满秩**（无奇异）——$J$ 与 $W$ 都满秩时，左右相乘相当于初等变换、不改变秩。**DLS 为什么例外**：$JW^{-1}J^{\mathrm T}+K^{-1}$ 因 $K^{-1}$ 项在**奇异时仍可逆**，这正是它治奇点的机制。**评分**：三格各 1 分；可逆性前提 1 分。（[3.5.1](sec3-5.md#sec-3.5.1)、[3.5.2](sec3-5.md#sec-3.5.2)）
 
@@ -218,14 +218,14 @@ $$\boldsymbol\tau^{\mathrm T}=-\boldsymbol f_e^{\mathrm T}\bar J_P\qquad\Longrig
 |:--|:--|:--|
 | $J^{-1}$ | $J$ **方阵且满秩**（$n=r$、无奇异） | 唯一精确解，满足 $J\dot{\boldsymbol q}=\boldsymbol v_e$；配数值积分 $\boldsymbol q(t_{k+1})\approx\boldsymbol q(t_k)+J^{-1}\boldsymbol v_e\Delta t$ 可绕开解析解不存在的问题 |
 | $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$ | $J$ **行满秩**（无奇异），$r\times n$ 长方（冗余） | **最小范数解**：$J^\dagger\boldsymbol v_e$ 满足任务且 $\|\dot{\boldsymbol q}\|$ 局部最小；加零空间项 $(I-J^\dagger J)\dot{\boldsymbol q}_0$ 后末端速度不变，可做内部再配置 |
-| $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | **无前提**（$K^{-1}$ 项保证 $JW^{-1}J^{\mathrm T}+K^{-1}$ 可逆） | 容许任务速度带小误差 $\delta$ 的解——用「不精确」换回**可解性与有界性** |
+| $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$ | **$k>0$**（阻尼项 $k^2I$ 保证矩阵可逆） | 容许任务速度带小误差 $\delta$ 的解——用「不精确」换回**可解性与有界性** |
 
 **(b) 用错药的具体场景与后果（3 分）** 任选一个说透即可：
 - **对冗余臂求 $J^{-1}$**：$r\times n$ 的长方阵**根本没有逆**，程序会抛奇异矩阵或给出乱值——「不存在逆，就要用广义逆，这是线代 / 矩阵论的基础」；
 - **在奇点邻域用 $J^\dagger$**：$JJ^{\mathrm T}$ 接近奇异，$(JJ^{\mathrm T})^{-1}$ 的元素整体趋于无穷 ⇒ 反解出来的**关节速度趋于无穷**，驱动器饱和、轨迹冲出；
 - **在远离奇点用 $J^*$**：$k$ 取大时 $K^{-1}$ 项占主导，位置跟踪恒有残余误差（本该精确的任务被「阻尼」成不精确），**精度白白损失**。
 
-**(c) 为什么 DLS 的「容许小误差」可接受（2 分）** 因为**代价是可量化的、且可以随位形调节**：远离奇点时令 $K\to0$，公式退回 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$（精确解，误差为零）；只在奇点邻域把 $K$ 取大，把 $\det J\to0$ 引起的发散压住。增益曲线给出了界：伪逆增益 $1/\sigma$ 在奇点处发散，DLS 增益 $\sigma/(\sigma^2+k^2)$ 处处有界、峰值只有 $1/(2k)$。也就是说——**不是因为容许误差，而是因为在奇点附近「精确解本身不存在（$v_e\notin\mathcal R(J)$）或无限大」，退一小步换回可控**。
+**(c) 为什么 DLS 的「容许小误差」可接受（2 分）** 因为**代价是可量化的、且可以随位形调节**：取 $K=k^{-2}I$，奇点邻域可增大阻尼 $k$（减小误差权重 $K$），以任务误差换取较小的关节速度；远离奇点且 $J$ 行满秩时，让 $k\to0^+$，解趋于右伪逆。增益曲线给出了界：伪逆增益 $1/\sigma$ 在奇点处发散，DLS 增益 $\sigma/(\sigma^2+k^2)$ 处处有界、峰值只有 $1/(2k)$。也就是说——**不是因为容许误差，而是因为在奇点附近「精确解本身不存在（$v_e\notin\mathcal R(J)$）或无限大」，退一小步换回可控**。
 
 **评分建议**：三格 5 分（每格的存在条件 + 解的性质各约 0.8 分）；「用错药」场景 3 分（须写出后果，只写「会出错」不给分）；DLS 的可接受性 2 分（须点出「$K$ 随位形调节」与「精确解不存在」这两层）。
 

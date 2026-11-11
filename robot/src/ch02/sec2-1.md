@@ -1,139 +1,175 @@
 # 2.1 刚体的姿态
 
-要描述机器人，第一步是学会描述**一个刚体**。刚体在空间中的完整描述 = **位置**（参考点坐标）+ **姿态**（固连坐标系三根轴的指向），二者合称**位姿**。本节给出这两半的数学写法——其中姿态那一半，正是 2.2 节旋转矩阵的定义来源。录播对应第 1 周 1:56–2:01（幻灯片 07016 / 07208）。
+夹爪到达了工件上方，却横着对准工件，仍然不能完成抓取。上一章把任务分成建模、规划与控制；开始建模时，首先要说清楚工具**在哪里、朝哪里**。这两个问题分别由位置和姿态回答，合起来叫**位姿**。
 
-<aside class="margin-note"><span class="mn-label">NOTE / 6 DOF</span>位置给 3 个坐标；姿态给 3 个独立角。两者合起来才是刚体的 6 个自由度。</aside>
+本节用固连在刚体上的坐标系描述位姿，再解释三根轴上的 9 个方向余弦。读完后，你应能从轴的方向写出分量，分清位置与方向的单位，并检查一组三轴能否表示刚体的朝向。
 
-<a id="sec-2.1.1"></a>
-
+<aside class="margin-note"><span class="mn-label">NOTE / 6 DOF</span>无额外约束的空间刚体有 6 个自由度：位置 3 个、姿态 3 个。姿态的 3 个参数是局部计数，不保证某一套角度参数在所有朝向下都唯一、无奇异。</aside>
 
 {{#include ../assets/figures/robot-pose.md}}
+
+<a id="sec-2.1.1"></a>
 
 ## 2.1.1 位姿与位置的描述
 
 ::: def 定义 2.1.1 · 位姿（pose） {#def-2.1.1}
-**刚体**（rigid body）可由其在空间中相对参考坐标系 $O\text{-}xyz$ 的**位置**与**方向**（orientation，又称姿态）完整描述，二者合称**位姿**（position and orientation）。位置占 3 个数、姿态需要 3 个独立角度，合起来正是「6 个数」——这一直觉在 [1.2.1](../ch01/sec1-2.md#sec-1.2.1) 的六自由度判据里已经见过。
+把一个坐标系固定在刚体上：原点 $O'$ 随刚体移动，三根轴随刚体转动。相对于已选定的参考系，$O'$ 的**位置**与固连系的**姿态**（orientation，即三根轴的指向）共同确定刚体的位姿（pose）。这里假定刚体形状以及固连系在刚体上的安装方式已经确定。
+
+无额外约束的空间刚体有 3 个平移自由度和 3 个转动自由度；机械手的关节约束可能限制实际可实现的位姿，不能据此断言任意机器人都有 6 个自由度。
 :::
 
-令 $O\text{-}xyz$ 为标准正交参考坐标系，$\boldsymbol x,\boldsymbol y,\boldsymbol z$ 为三轴单位向量。刚体上取一点 $O'$ 作为参考点（图 2.1），其位置可沿三轴分解：
+令 $O\text{-}xyz$ 为右手正交参考系，$\boldsymbol x,\boldsymbol y,\boldsymbol z$ 为三轴单位向量。位置向量 $\overrightarrow{OO'}$ 可沿三轴分解：
 
-$$\boldsymbol o'=o'_x\boldsymbol x+o'_y\boldsymbol y+o'_z\boldsymbol z,\qquad
-\boldsymbol o'=\begin{bmatrix}o'_x\\ o'_y\\ o'_z\end{bmatrix}\in\mathbb{R}^3\qquad(\text{原书式 }2.1)$$
+$$\overrightarrow{OO'}=o'_x\boldsymbol x+o'_y\boldsymbol y+o'_z\boldsymbol z,\qquad
+\boldsymbol o'=\begin{bmatrix}o'_x\\o'_y\\o'_z\end{bmatrix}\in\mathbb R^3
+\qquad(\text{原书式 }2.1)$$
 
-![课堂幻灯片 · 约2.1：刚体上点 O′ 的位置描述](../assets/ch02/rigid-body-pose.jpg)
+左边的箭头是几何向量，右边的列是它在参考系中的**坐标表示**。原书将二者都简记为 $\boldsymbol o'$；下文沿用这一习惯，但换坐标系时要说明分量在哪个系中。若采用米，三个位置分量都以米计。
 
-::: note 为什么 $\boldsymbol o'$ 是「有界向量」
-它自带作用点与作用线（从原点 $O$ 指向 $O'$），因此不同于自由向量——后者只有方向与模长。原书特别点出了这一区别；后续做「向量的坐标变换」时，点与自由向量的区别就体现在要不要叠加平移（这正是 [2.7](sec2-7.md) 引入齐次变换的动机）。
+![课堂幻灯片：刚体上点 O′ 的位置描述，对应原书 §2.1](../assets/ch02/rigid-body-pose.jpg)
+
+::: note 原书的 bound vector 指什么？
+原书称位置向量为 bound vector，强调起点 $O$ 和终点 $O'$ 已指定；这里理解为**有固定起点的位置向量**。旧译“有界向量”容易让人误以为长度存在某个上界。
+
+点 $O'$ 与向量 $\overrightarrow{OO'}$ 是不同对象。改变参考原点，点的位置坐标会改变；自由向量只描述大小与方向，平移原点不会改变它的分量（前提是坐标轴方向保持不变）。[§2.7](sec2-7.md) 将把这一差别写进统一的变换公式。
 :::
+
+给出 $O'$ 的位置仍未确定姿态。即使再给出工具轴 $\boldsymbol z'$ 的方向，夹爪仍可绕这根轴滚转，横向的 $\boldsymbol x'$、$\boldsymbol y'$ 会随之改变。因此**一根轴的方向不等于完整姿态**；需要描述整个固连系。
 
 <a id="sec-2.1.2"></a>
 
 ## 2.1.2 姿态与方向余弦
 
-只有位置还不够——刚体绕该点还能任意转向。为描述指向，在刚体上**固连**一个标准正交坐标系 $O'\text{-}x'y'z'$（原点取在 $O'$），再把它的三根轴单位向量 $\boldsymbol x',\boldsymbol y',\boldsymbol z'$ 用参考系的三轴展开：
+在刚体上固连右手正交坐标系 $O'\text{-}x'y'z'$。把三根轴的单位向量分别沿参考系分解：
 
 $$\begin{aligned}
-\boldsymbol x' &= x'_x\boldsymbol x+x'_y\boldsymbol y+x'_z\boldsymbol z\\
-\boldsymbol y' &= y'_x\boldsymbol x+y'_y\boldsymbol y+y'_z\boldsymbol z\\
-\boldsymbol z' &= z'_x\boldsymbol x+z'_y\boldsymbol y+z'_z\boldsymbol z
+\boldsymbol x'&=x'_x\boldsymbol x+x'_y\boldsymbol y+x'_z\boldsymbol z,\\
+\boldsymbol y'&=y'_x\boldsymbol x+y'_y\boldsymbol y+y'_z\boldsymbol z,\\
+\boldsymbol z'&=z'_x\boldsymbol x+z'_y\boldsymbol y+z'_z\boldsymbol z.
 \end{aligned}\qquad(\text{原书式 }2.2)$$
 
-![课堂幻灯片 · 约2.2：把固连系三轴投影到参考系（方向余弦）](../assets/ch02/direction-cosines.jpg)
+下标表示沿哪根**参考轴**的分量，例如 $x'_y$ 是本体系 $x'$ 轴沿参考系 $y$ 轴的分量。
 
-::: thm 原理 2.1.A · 9 个系数即方向余弦 {#thm-2.1.A}
-式 2.2 中的每个系数都是**方向余弦**：例如 $x'_y=\boldsymbol x'\cdot\boldsymbol y=\cos\angle(\boldsymbol x',\boldsymbol y)$，就是固连系某根轴与参考系某根轴夹角的余弦（录播：「它就是两个单位向量做点积」）。
-又因单位向量模长为 1、三轴两两垂直，这 9 个方向余弦并不独立——**只有 3 个独立**（[@note-2.2.2] 的账本，下一节展开）。
+![课堂幻灯片：固连系三轴在参考系中的分量，幻灯片标题为“2.2 旋转矩阵”](../assets/ch02/direction-cosines.jpg)
+
+::: thm 原理 2.1.A · 方向余弦与三个独立参数 {#thm-2.1.A}
+由于三轴都是单位向量，每个分量都是两根轴夹角的余弦。例如
+
+$$x'_y=\boldsymbol x'\cdot\boldsymbol y=\cos\angle(\boldsymbol x',\boldsymbol y).$$
+
+它是无量纲的数，范围为 $[-1,1]$。负值表示沿该参考轴的负方向有分量，不表示夹角为负。
+
+三根轴共给出 9 个方向余弦，但必须同时满足：
+
+$$\|\boldsymbol x'\|^2=\|\boldsymbol y'\|^2=\|\boldsymbol z'\|^2=1,\qquad
+\boldsymbol x'\cdot\boldsymbol y'=\boldsymbol y'\cdot\boldsymbol z'=\boldsymbol z'\cdot\boldsymbol x'=0.$$
+
+三条单位长度约束、三条垂直约束，共 6 个独立约束，使连续独立参数为 $9-6=3$。此外，两坐标系约定均为右手系，还须有 $\boldsymbol x'\times\boldsymbol y'=\boldsymbol z'$，以排除镜像。右手条件选择正交三轴的手性，不再减少一个连续自由度。矩阵写法见 [§2.2 的参数计数](sec2-2.md#note-2.2.2)。
 :::
 
-看下图，两图对照着看：左图把位置向量 $\boldsymbol o'$ 沿三根参考轴拆成 **3 个系数**；右图对固连系的一根轴 $\boldsymbol x'$ 做同样的事——每个系数都是它在某根参考轴上的投影，这正是「方向余弦」的几何来源。
+### 从读数理解“投影”
+
+先看一个 $xy$ 平面内的例子。左图的位置点为 $P=(0.30,0.20,0)\,\mathrm m$；右图的单位方向为 $(0.60,0.80,0)^{\mathrm T}$。两图都沿参考轴读分量，但**左图读长度，右图读无量纲的方向余弦**。两图各用自己的比例尺，屏幕上的箭头长度不能跨图比较。
 
 <figure>
-<svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-21-title fig-21-desc">
-<title id="fig-21-title">位置分解与方向余弦分解</title>
-<desc id="fig-21-desc">左图：位置向量 o′ 沿参考系三根轴分解为三个系数，虚线画出分解长方体。右图：固连系单位轴 x′ 同样沿三根参考轴分解，三个系数就是方向余弦；对 y′、z′ 重复同样分解共得 9 个数。</desc>
+<svg class="figure-svg" viewBox="0 0 920 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-21-title fig-21-desc">
+<title id="fig-21-title">位置分量与单位方向分量的带数对照</title>
+<desc id="fig-21-desc">左图：点 P 的 x 坐标零点三零米、y 坐标零点二零米、z 坐标零，虚线连接轴上读数与点。右图：单位方向的 x 分量零点六零、y 分量零点八零、z 分量零，平方和为一。两图都在 xy 平面内，z 轴朝向屏幕外。</desc>
 <defs>
 <marker id="f21-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
 <marker id="f21-b" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--fig-blue)"/></marker>
-<marker id="f21-g" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--fig-gold)"/></marker>
-<marker id="f21-n" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--fig-green)"/></marker>
-<marker id="f21-p" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--fig-purple)"/></marker>
 </defs>
-<text class="diagram-text" x="240" y="40" text-anchor="middle">位置：参考点沿三轴分解（式 2.1）</text>
-<text class="diagram-text" x="690" y="40" text-anchor="middle">姿态：固连系轴逐一分解（式 2.2）</text>
-<g stroke="var(--line-strong)" stroke-width="1.3" marker-end="url(#f21-m)">
-<line x1="240" y1="268" x2="405" y2="313"/>
-<line x1="240" y1="268" x2="162" y2="223"/>
-<line x1="240" y1="268" x2="240" y2="96"/>
+<text class="diagram-text" x="240" y="32" text-anchor="middle">位置：分量单位为 m</text>
+<text class="diagram-text" x="700" y="32" text-anchor="middle">单位方向：分量无量纲</text>
+<g stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#f21-m)">
+<line x1="100" y1="245" x2="395" y2="245"/><line x1="100" y1="245" x2="100" y2="65"/>
+<line x1="560" y1="245" x2="855" y2="245"/><line x1="560" y1="245" x2="560" y2="65"/>
 </g>
-<text class="diagram-note" x="414" y="322">x</text>
-<text class="diagram-note" x="150" y="220" text-anchor="end">y</text>
-<text class="diagram-note" x="232" y="90" text-anchor="end">z</text>
-<g stroke="var(--line)" stroke-dasharray="4 4" fill="none">
-<line x1="348" y1="297" x2="311" y2="276"/><line x1="348" y1="297" x2="348" y2="170"/>
-<line x1="203" y1="247" x2="311" y2="276"/><line x1="203" y1="247" x2="203" y2="119"/>
-<line x1="240" y1="141" x2="348" y2="170"/><line x1="240" y1="141" x2="203" y2="119"/>
-<line x1="311" y1="276" x2="311" y2="148"/><line x1="348" y1="170" x2="311" y2="148"/><line x1="203" y1="119" x2="311" y2="148"/>
+<g stroke="var(--line-strong)" stroke-dasharray="5 4" fill="none">
+<path d="M280,245 V125 H100"/><path d="M674,245 V93 H560"/>
 </g>
-<circle class="diagram-node" cx="240" cy="268" r="4"/>
-<line stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#f21-g)" x1="240" y1="268" x2="348" y2="297"/>
-<line stroke="var(--fig-green)" stroke-width="1.8" marker-end="url(#f21-n)" x1="240" y1="268" x2="203" y2="247"/>
-<line stroke="var(--fig-purple)" stroke-width="1.8" marker-end="url(#f21-p)" x1="240" y1="268" x2="240" y2="141"/>
-<line stroke="var(--fig-blue)" stroke-width="2.6" marker-end="url(#f21-b)" x1="240" y1="268" x2="311" y2="148"/>
-<text class="diagram-text" fill="var(--fig-gold)" x="356" y="302">o′<tspan class="sb">x</tspan></text>
-<text class="diagram-text" fill="var(--fig-green)" x="196" y="244" text-anchor="end">o′<tspan class="sb">y</tspan></text>
-<text class="diagram-text" fill="var(--fig-purple)" x="248" y="136">o′<tspan class="sb">z</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="300" y="140" text-anchor="end">o′</text>
-<g stroke="var(--line)" stroke-dasharray="4 4" fill="none">
-<line x1="805" y1="299" x2="772" y2="280"/><line x1="805" y1="299" x2="805" y2="250"/>
-<line x1="656" y1="249" x2="772" y2="280"/><line x1="656" y1="249" x2="656" y2="199"/>
-<line x1="690" y1="219" x2="805" y2="250"/><line x1="690" y1="219" x2="656" y2="199"/>
-<line x1="772" y1="280" x2="772" y2="230"/><line x1="805" y1="250" x2="772" y2="230"/><line x1="656" y1="199" x2="772" y2="230"/>
+<g stroke="var(--fig-blue)" stroke-width="2.5" marker-end="url(#f21-b)">
+<line x1="100" y1="245" x2="280" y2="125"/><line x1="560" y1="245" x2="674" y2="93"/>
 </g>
-<circle class="diagram-node" cx="690" cy="268" r="4"/>
-<line stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#f21-g)" x1="690" y1="268" x2="805" y2="299"/>
-<line stroke="var(--fig-green)" stroke-width="1.8" marker-end="url(#f21-n)" x1="690" y1="268" x2="656" y2="249"/>
-<line stroke="var(--fig-purple)" stroke-width="1.8" marker-end="url(#f21-p)" x1="690" y1="268" x2="690" y2="219"/>
-<line stroke="var(--fig-blue)" stroke-width="2.6" marker-end="url(#f21-b)" x1="690" y1="268" x2="772" y2="230"/>
-<text class="diagram-text" fill="var(--fig-blue)" x="782" y="224">x′</text>
-<text class="diagram-text" fill="var(--fig-gold)" x="812" y="308">x′<tspan class="sb">x</tspan> = x′·x</text>
-<text class="diagram-text" fill="var(--fig-green)" x="648" y="246" text-anchor="end">x′<tspan class="sb">y</tspan> = x′·y</text>
-<text class="diagram-text" fill="var(--fig-purple)" x="698" y="212">x′<tspan class="sb">z</tspan> = x′·z</text>
-<text class="diagram-note" x="240" y="334" text-anchor="middle">位置 = 3 个系数（有界向量：有作用点 O）</text>
-<text class="diagram-note" x="690" y="334" text-anchor="middle">对 y′、z′ 重复同样分解 → 9 个系数 = 9 个方向余弦</text>
+<g class="diagram-text">
+<text x="82" y="267">O</text><text x="395" y="267">x</text><text x="80" y="68">y</text>
+<text x="280" y="270" text-anchor="middle">0.30</text><text x="90" y="130" text-anchor="end">0.20</text><text x="292" y="120">P</text>
+<text x="542" y="267">O</text><text x="855" y="267">x</text><text x="540" y="68">y</text>
+<text x="674" y="270" text-anchor="middle">0.60</text><text x="550" y="98" text-anchor="end">0.80</text><text x="689" y="88">单位轴 x′</text>
+</g>
+<text class="diagram-note" x="240" y="306" text-anchor="middle">z = 0；位置向量长度约 0.361 m</text>
+<text class="diagram-note" x="700" y="306" text-anchor="middle">z 分量为 0；0.60² + 0.80² = 1</text>
 </svg>
-<figcaption>方向余弦的几何来源（本教程绘）：固连系每根轴在参考系三轴上的投影给出三个系数，三根轴共 9 个——单位模长与两两垂直把这 9 个数的独立自由度压到 3 个（[@thm-2.1.A]）。</figcaption>
+<figcaption>分量读取示例（本教程绘）。两图的 z 轴均指向屏幕外。右图只描述一根轴，另外两根轴的朝向也须确定：可先选定一根与它垂直的横向轴，再由叉积确定第三轴。三轴必须共同满足单位长度、正交与右手条件。</figcaption>
 </figure>
 
-于是，把这 9 个数按列排成（3×3）矩阵，就得到下一节的**旋转矩阵** $R$（原书式 2.3）——本节只立概念，矩阵的性质与运算全部留给 [2.2](sec2-2.md)。
+### 一组完整位姿：位置与朝向分别填写
+
+::: ex 带数示范 · 绕参考 z 轴正转 90° {#ex-2.1.pose}
+设固连系原点的位置为 $\boldsymbol o'=(0.30,-0.20,0.10)^{\mathrm T}\,\mathrm m$。固连系最初与参考系同向，随后绕与参考 $z$ 轴平行、经过 $O'$ 的轴按右手定则转 $+90^\circ$，保持 $O'$ 不动。从 $+z$ 一侧朝原点看，这个转动为逆时针。于是
+
+$$\boldsymbol x'=(0,1,0)^{\mathrm T},\qquad
+\boldsymbol y'=(-1,0,0)^{\mathrm T},\qquad
+\boldsymbol z'=(0,0,1)^{\mathrm T}.$$
+
+逐列检查：$x'$ 指向参考 $+y$，$y'$ 指向参考 $-x$，$z'$ 保持不变。把这三列并排写出，就得到顶部图中的
+
+$$R=\begin{bmatrix}0&-1&0\\1&0&0\\0&0&1\end{bmatrix}.$$
+
+例如 $y'_x=-1=\cos180^\circ$，$x'_x=0=\cos90^\circ$。矩阵元素没有米或角度单位，位置列仍以米计。
+:::
+
+::: think 练习 1 · 同一位姿下，点与方向怎样读？ {#practice-2.1.point}
+沿用上例。工具上的点 $P$ 在固连系中的坐标为 $(0.10,0,0)^{\mathrm T}\,\mathrm m$，某单位方向在固连系中为 $(1,0,0)^{\mathrm T}$。
+
+1. 先按 $x'$ 的朝向判断：点 $P$ 在参考系中的坐标是什么？该单位方向在参考系中又是什么？
+2. 若保持三轴朝向不变，只把 $O'$ 的参考系 $x$ 坐标增加 $0.20\,\mathrm m$，上述两项各怎样变化？
+
+::: sol 练习 1 核对
+从 $O'$ 沿 $x'$ 走 $0.10\,\mathrm m$，就是沿参考 $+y$ 走 $0.10\,\mathrm m$，所以
+
+$$\boldsymbol p=\boldsymbol o'+0.10\boldsymbol x'
+=(0.30,-0.10,0.10)^{\mathrm T}\,\mathrm m.$$
+
+单位方向只是 $\boldsymbol x'=(0,1,0)^{\mathrm T}$，不加 $\boldsymbol o'$。平移后，点坐标变为 $(0.50,-0.10,0.10)^{\mathrm T}\,\mathrm m$，方向仍为 $(0,1,0)^{\mathrm T}$。如果给方向也加上位置，它通常连单位长度都不再保持。
+:::
+:::
+
+::: think 练习 2 · 三根轴都垂直，就够了吗？ {#practice-2.1.handedness}
+另一组候选轴为 $\boldsymbol x'=(1,0,0)^{\mathrm T}$、$\boldsymbol y'=(0,1,0)^{\mathrm T}$、$\boldsymbol z'=(0,0,-1)^{\mathrm T}$。
+
+检查三根轴的长度、两两点积和 $\boldsymbol x'\times\boldsymbol y'$。它们能否表示参考右手系经过刚体转动后的朝向？如果只指定 $\boldsymbol z'=(0,0,1)^{\mathrm T}$，又是否能唯一确定姿态？
+
+::: sol 练习 2 核对
+三根轴长度均为 1，两两点积均为 0，但 $\boldsymbol x'\times\boldsymbol y'=(0,0,1)^{\mathrm T}=-\boldsymbol z'$。这是左手系，对应矩阵 $\operatorname{diag}(1,1,-1)$ 的行列式为 $-1$，不能由右手系仅作刚体转动得到。下一节将把“正交且行列式为 $+1$”写成旋转矩阵的判据。
+
+只给定 $z'$ 也不够。例如 $(\boldsymbol x',\boldsymbol y')=(\boldsymbol x,\boldsymbol y)$ 和 $(\boldsymbol y,-\boldsymbol x)$ 都与 $\boldsymbol z'=\boldsymbol z$ 组成右手系，却相差绕 $z'$ 的 $90^\circ$ 转动；连续滚转角仍未确定。
+:::
+:::
 
 <a id="sec-2.1"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
-
-不看正文与速查卡，先写出下面几条，再展开核对。写不出来就说明这一节还没「拿走」。
-
-1. 位姿由哪两半组成？各几个独立变量？
-2. 9 个方向余弦为什么只有 3 个独立？
-3. 给出刚体上一点的位置，是否就确定了它的位姿？
+::: think 默写点 · 合上书再写
+1. 位姿由什么组成？“6 个自由度”适用于什么对象？
+2. 写出方向余弦 $x'_y$ 的点积表达式、单位和取值范围。
+3. 9 个方向余弦有哪些连续约束？还要检查什么手性条件？
+4. 为什么只给位置和一根工具轴的方向仍不够？
 
 ::: sol 核对
-
-位置（3）+ 姿态（3）。
-
-$R$ 的 9 个元素受正交条件 $R^{\mathrm T}R=I$（6 个独立约束），剩 3 个。
-
-不能。绕该点还剩三个转动自由度，姿态必须另外描述。
-
+1. 位置与姿态。无额外约束的空间刚体有 3 个平移、3 个转动自由度；不代表任意机械手都能实现任意位姿，也不保证一套角度参数能全局唯一地表示姿态。
+2. $x'_y=\boldsymbol x'\cdot\boldsymbol y$，无量纲，取值 $[-1,1]$。
+3. 三条单位长度、三条两两垂直约束，留下 3 个连续独立参数；还须 $\boldsymbol x'\times\boldsymbol y'=\boldsymbol z'$，排除左手镜像。
+4. 位置只确定 $O'$；指定一根工具轴后，绕该轴的滚转仍可改变另外两根轴。
 :::
-
 :::
 
 ## 2.1 小结与常见错误
 
-- **一条主线**：位姿 = 位置（参考点 3 个坐标，式 2.1）+ 姿态（固连系三轴在参考系中的 9 个方向余弦，式 2.2）；后者只有 3 个独立量。
-- **一个区分**：$\boldsymbol o'$ 是有界向量（点），不是自由向量——涉及不同原点时必须补平移。
+位姿需要同时说明原点的位置与固连系三轴的朝向。位置分量有长度单位；三轴的方向余弦无量纲，按列组成下一节的旋转矩阵。三轴的单位长度、正交性与右手性必须一起检查。
 
-::: think 常见错误清单 · 自查两条
-1. 以为给出原点位置就等于确定了刚体——绕该点还剩三个转动自由度，姿态必须另外描述；
-2. 把方向余弦说成「夹角」——它是**夹角的余弦**，取值 $[-1,1]$，符号携带朝向信息。
-:::
+- 把位置当位姿：固定 $O'$ 后，刚体仍可绕它转动。
+- 把一根轴当完整姿态：绕该轴的滚转尚未确定。
+- 把方向余弦当角度：它是夹角的余弦，负号表示投影朝向。
+- 给方向叠加平移：同向平移坐标系时，改变的是点的位置坐标。
+
+接下来，[§2.2](sec2-2.md) 将用矩阵统一处理三根轴，并区分姿态描述、坐标变换与旋转操作。

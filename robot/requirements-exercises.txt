@@ -1,0 +1,4 @@
+# 第二章可运行习题与 verify_ch02_exercises.py；与纯文本构建环境分开。
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7

@@ -89,20 +89,23 @@
   var figureCount = 0;
 
   function wrapWideSvgs() {
-    document.querySelectorAll("main figure > svg").forEach(function (svg) {
+    document.querySelectorAll("main figure > svg, main figure > .fig-scroll > svg").forEach(function (svg) {
       var width = svg.viewBox && svg.viewBox.baseVal.width;
       if (width < 600 || !width) return;
-      var figure = svg.parentElement;
-      var scroll = document.createElement("div");
-      scroll.className = "fig-scroll";
+      var scroll = svg.parentElement.classList.contains("fig-scroll") ? svg.parentElement : null;
+      var figure = scroll ? scroll.parentElement : svg.parentElement;
+      if (!scroll) {
+        scroll = document.createElement("div");
+        scroll.className = "fig-scroll";
+        figure.insertBefore(scroll, svg);
+        scroll.appendChild(svg);
+      }
       scroll.tabIndex = 0;
       scroll.setAttribute("role", "region");
-      scroll.setAttribute("aria-label", "插图，可左右滚动查看");
+      if (!scroll.hasAttribute("aria-label")) scroll.setAttribute("aria-label", "插图，可左右滚动查看");
       scroll.addEventListener("keydown", function (event) {
         if (/^Arrow/.test(event.key)) event.stopPropagation();
       });
-      figure.insertBefore(scroll, svg);
-      scroll.appendChild(svg);
       figure.classList.add("has-fig-scroll");
     });
   }

@@ -119,14 +119,14 @@ $K$ 就是这两项之间的权衡系数：$K$ 取得大，更用力压制误差
 
 **增广变量法**（2:14:24）：把误差也并入未知量，令 $w=\begin{bmatrix}\dot q\\ \epsilon\end{bmatrix}$（课件记 $\epsilon$）、$A=[J\ \ -I]$，则 $Aw=J\dot q-\epsilon=v_e$；目标随之写成单一二次型 $g=\tfrac12w^{\mathrm T}Qw$，$Q=\operatorname{diag}\{W,K\}$。接下来套用拉格朗日乘子法，与 3.5.1 完全同型：先有 $w=-Q^{-1}A^{\mathrm T}\lambda$，再由 $AQ^{-1}A^{\mathrm T}=JW^{-1}J^{\mathrm T}+K^{-1}$（$A$ 满秩、$Q$ 正定 ⇒ 可逆，论证同前）解出 $\lambda$，即得
 
-$$\begin{bmatrix}\dot q\\ \epsilon\end{bmatrix}=\begin{bmatrix}W^{-1}\\ -K^{-1}\end{bmatrix}J^{\mathrm T}\big(JW^{-1}J^{\mathrm T}+K^{-1}\big)^{-1}v_e$$
+$$\begin{bmatrix}\dot q\\ \epsilon\end{bmatrix}=\begin{bmatrix}W^{-1}J^{\mathrm T}\\ -K^{-1}\end{bmatrix}\big(JW^{-1}J^{\mathrm T}+K^{-1}\big)^{-1}v_e,\qquad \epsilon=-\delta.$$
 
 ![课堂幻灯片 · 02:17:37：奇异情形广义逆与权重矩阵的取法](../assets/ch03/dls-jstar.jpg)
 
 ::: def 定义 3.5.2 · 奇异情形的广义逆 $J^*$ {#def-3.5.2}
 $$\dot q=J^{*}v_e,\qquad J^{*}=W^{-1}J^{\mathrm T}\big(JW^{-1}J^{\mathrm T}+K^{-1}\big)^{-1}$$
 
-$W=I$、$K=k^2 I$ 加权时，即经典的阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$。$K$ 的取法（2:16:33）：**奇点邻域内取足够大**——$K^{-1}$ 项占主导，把 $\det J\to0$ 引起的发散压住，奇异也就变得可以容忍；**远离奇点则取小、甚至趋于 $0$**——此时公式退回 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$，而远离奇点处 $JJ^{\mathrm T}$ 可逆，问题解决。
+当 $W=I$、$K=k^{-2}I$、$k>0$ 时，得到经典阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{\mathrm T}+k^2I)^{-1}$。这里 $K$ 是**误差权重**，$k$ 是**阻尼系数**，两者方向相反：奇点邻域可增大 $k$（即减小 $K$），限制关节速度，但要容许更大的任务速度误差；远离奇点可减小 $k$（即增大 $K$）。当 $J$ 行满秩且 $k\to0^+$ 时，公式趋于右伪逆。
 :::
 
 下图用一条曲线把「为什么要加阻尼」画了出来。横轴是 $J$ 的奇异值 $\sigma$（$\det J\to0$ 即最小奇异值 $\to0$），纵轴是把任务速度映回关节速度的增益：伪逆的增益 $1/\sigma$ 在奇点处发散；DLS 的增益 $\sigma/(\sigma^2+k^2)$ 则处处有界，峰值只有 $1/(2k)$。
@@ -142,7 +142,7 @@ $W=I$、$K=k^2 I$ 加权时，即经典的阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{
 <text class="diagram-text" x="450" y="30" text-anchor="middle">奇点邻域的两种「逆」：伪逆发散、DLS 有界</text>
 <rect x="90" y="44" width="110" height="256" fill="var(--accent)" fill-opacity=".06"/>
 <text class="diagram-note" fill="var(--accent-text)" x="148" y="100" text-anchor="middle">奇点邻域</text>
-<text class="diagram-note" fill="var(--accent-text)" x="148" y="118" text-anchor="middle">K 取大</text>
+<text class="diagram-note" fill="var(--accent-text)" x="148" y="118" text-anchor="middle">增大阻尼 k</text>
 <line class="diagram-axis" x1="80" y1="300" x2="820" y2="300" marker-end="url(#f35-m)"/>
 <line class="diagram-axis" x1="80" y1="300" x2="80" y2="44" marker-end="url(#f35-m)"/>
 <text class="diagram-text" x="762" y="338">奇异值 σ</text>
@@ -168,9 +168,9 @@ $W=I$、$K=k^2 I$ 加权时，即经典的阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{
 <circle class="diagram-fill-sage" cx="200" cy="172" r="5"/>
 <text class="diagram-text" fill="var(--fig-green)" x="420" y="252">DLS J*：σ/(σ² + k²)，峰值 1/(2k)</text>
 <text class="diagram-note" fill="var(--fig-green)" x="420" y="272">容许小误差 δ，换来「奇异可容」</text>
-<text class="diagram-note" x="450" y="342" text-anchor="middle">示意取 k = 0.25；σ ≫ k 时两线重合 → 远离奇点 DLS 退回伪逆，K 取小甚至趋 0</text>
+<text class="diagram-note" x="450" y="342" text-anchor="middle">示意取 k = 0.25；σ ≫ k 时两线接近；行满秩且 k → 0 时趋于右伪逆</text>
 </svg>
-<figcaption>伪逆 vs 阻尼最小二乘（本教程绘）：增益曲线解释了 [@def-3.5.2] 里 $K$ 的取法——奇点邻域 $K^{-1}$ 项占主导，把 $1/\sigma$ 的发散压成不超过 $1/(2k)$ 的有界增益；远离奇点取 $K\to0$，DLS 连续退化为 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$。</figcaption>
+<figcaption>伪逆 vs 阻尼最小二乘（本教程绘）：图中固定 $k=0.25$。当 $k>0$ 时，增益不超过 $1/(2k)$；行满秩时令 $k\to0^+$（即 $K=k^{-2}I$ 增大），DLS 趋于右伪逆。选取阻尼时要在关节速度与任务误差之间权衡。</figcaption>
 </figure>
 
 <a id="sec-3.5"></a>
@@ -189,7 +189,7 @@ $W=I$、$K=k^2 I$ 加权时，即经典的阻尼形式 $J^{*}=J^{\mathrm T}(JJ^{
 
 $J^\dagger=J^{\mathrm T}(JJ^{\mathrm T})^{-1}$，是**右伪逆**；$J^\dagger\boldsymbol v_e$ 是满足任务约束的**最小范数解**（$\|\dot{\boldsymbol q}\|$ 局部最小）。
 
-奇点邻域取**大**——$K^{-1}$ 项占主导，把 $\det J\to0$ 引起的发散压住；远离奇点取**小甚至趋 0**——退回 $J^{\mathrm T}(JJ^{\mathrm T})^{-1}$，而那里 $JJ^{\mathrm T}$ 可逆。
+以 $W=I$、$K=k^{-2}I$ 为例：奇点邻域可增大阻尼 $k$、减小误差权重 $K$，用任务误差换取较小的关节速度；行满秩且远离奇点时，可减小 $k$，在 $k\to0^+$ 时趋于右伪逆。
 
 :::
 
