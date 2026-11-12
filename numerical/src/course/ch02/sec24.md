@@ -126,6 +126,30 @@ $$
 实际要求解的方程组，规模“成百上千万、甚至上亿”，而把 $G$ 的特征根全部算出来比高斯消去还贵——充要条件**没法直接用**，于是需要一条可操作的充分条件（定理 2.9）。
 :::
 
+::: ex 例题 · 松弛参数的范围怎样求 {#slide-richardson-parameter}
+对方程组
+$$
+3x_1+x_2=1,\qquad x_1+3x_2=2,
+$$
+采用迭代
+$$
+\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\omega(\boldsymbol b-A\boldsymbol x^{(k)}),
+\qquad \omega\ne0.
+$$
+若序列收敛到 $\boldsymbol x^*$，对迭代式取极限，便有 $\omega(\boldsymbol b-A\boldsymbol x^*)=0$，所以极限一定是原方程组的解。
+
+要进一步保证任意初值都收敛，需检查 $G=I-\omega A$。这里 $A=\begin{pmatrix}3&1\\1&3\end{pmatrix}$ 的特征值为 $2,4$，因此
+$$
+\rho(G)=\max\{|1-2\omega|,|1-4\omega|\}<1
+\quad\Longleftrightarrow\quad 0<\omega<\frac12.
+$$
+例如 $\omega=1/3$ 时，两个特征值分别为 $1/3,-1/3$，谱半径为 $1/3$；它也是本题使谱半径最小的参数。相应精确解为 $(1/8,5/8)^{\mathrm T}$。
+
+这个方法通常称为 Richardson 迭代。参数也记作 $\omega$，但更新公式与后面的 SOR 不同，参数范围需要按本题的迭代矩阵重新推导。
+
+来源：经典迭代课件第 11 页。
+:::
+
 ::: thm 定理 2.9 · 充分条件与误差估计 {#thm-2.9}
 若存在某种矩阵范数使 $\lVert G\rVert\lt1$，则
 

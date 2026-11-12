@@ -347,7 +347,7 @@ def check_quadrature():
         assert isclose(approx, exact, abs_tol=1e-12), (p, approx, exact)
     assert not isclose(sum(w*x**6 for x, w in zip(nodes, weights)), 2/9)
 
-    # 例 6.7.2：三点 Simpson vs 三点 Gauss 算 ∫_{-1}^1 sqrt(1+x)
+    # 例 6.7.2 后的端点奇异对照例：sqrt(1+x)
     g = lambda x: sqrt(1+x)
     S3 = (1/3)*(g(-1)+4*g(0)+g(1))
     xg = (-sqrt(3/5), 0.0, sqrt(3/5))
@@ -361,7 +361,7 @@ def check_quadrature():
     x4 = (-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116)
     w4 = (0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451)
     G4 = 0.5*sum(w*f(1.5+0.5*x) for x, w in zip(x4, w4))
-    assert isclose(G4, 2.020049534, rel_tol=1e-9), G4
+    assert isclose(G4, 2.020049533, rel_tol=1e-9), G4
 
     # 例 6.7.5：三点 Gauss–Chebyshev 算 ∫ sqrt((2+x)/(1-x^2))
     hfun = lambda x: sqrt(2+x)

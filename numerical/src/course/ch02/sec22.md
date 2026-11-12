@@ -112,6 +112,20 @@ $$L=\begin{pmatrix}1&0&0\\2&1&0\\3&-5&1\end{pmatrix},\qquad
 U=\begin{pmatrix}1&2&3\\0&1&-4\\0&0&-24\end{pmatrix}.$$
 
 验算 $LU$ 的三行：$[1,2,3]$、$2[1,2,3]+[0,1,-4]=[2,5,2]$、$3[1,2,3]-5[0,1,-4]+[0,0,-24]=[3,1,5]$，与 $A$ 一致。
+
+接着解课件给定的 $A\boldsymbol x=(14,18,20)^{\mathrm T}$。先由 $L\boldsymbol y=\boldsymbol b$ 前代：
+$$
+y_1=14,\qquad y_2=18-2\times14=-10,\qquad
+y_3=20-3\times14+5\times(-10)=-72.
+$$
+再由 $U\boldsymbol x=\boldsymbol y$ 回代：
+$$
+x_3=\frac{-72}{-24}=3,\qquad x_2=-10+4x_3=2,\qquad
+x_1=14-2x_2-3x_3=1.
+$$
+最终解为 $(1,2,3)^{\mathrm T}$。分解、前代、回代是三个连续步骤：换右端时只需重做后两步。
+
+来源：三角分解课件第 15 页。
 :::
 
 ::: note 编程提示

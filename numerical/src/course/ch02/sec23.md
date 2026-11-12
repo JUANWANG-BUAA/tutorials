@@ -82,18 +82,62 @@ $$
 条件数大说明某些相对输入扰动可能产生较大的相对解变化，并不表示每个输入都必然达到最坏情况。改进算法可以减少额外的计算误差；若要降低原始数据误差的影响，则需要更准确的数据或重新考虑模型。提高运算精度可以减少舍入，正则化则会改变求解目标，二者不能混为一谈。
 :::
 
+::: ex 例题 · 同时扰动系数与右端 {#slide-perturbed-system}
+比较下面两个只有微小数据差异的方程组：
+$$
+\begin{pmatrix}2&3\\2&3.00001\end{pmatrix}\boldsymbol x
+=\begin{pmatrix}8\\8.00002\end{pmatrix},\qquad
+\begin{pmatrix}2&3\\2&2.99999\end{pmatrix}\widetilde{\boldsymbol x}
+=\begin{pmatrix}8\\8.00003\end{pmatrix}.
+$$
+第一个方程组的两行相减，得 $0.00001x_2=0.00002$，所以 $\boldsymbol x=(1,2)^{\mathrm T}$。第二个方程组则给出 $-0.00001\widetilde x_2=0.00003$，所以 $\widetilde{\boldsymbol x}=(8.5,-3)^{\mathrm T}$。
+
+在无穷范数下，$\lVert\Delta A\rVert_\infty=2\times10^{-5}$、$\lVert\Delta\boldsymbol b\rVert_\infty=10^{-5}$，而解的相对变化为
+$$
+\frac{\lVert\widetilde{\boldsymbol x}-\boldsymbol x\rVert_\infty}
+{\lVert\boldsymbol x\rVert_\infty}=\frac{7.5}{2}=3.75.
+$$
+这里两次都按精确算术求解，却得到相差很大的解，说明敏感性来自方程组本身。上面的扰动界还要求 $\lVert A^{-1}\rVert\lVert\Delta A\rVert<1$；本题该乘积为 $6.00001$，不能直接使用那条有分母的界。
+
+来源：病态线性方程组课件第 4 页。
+:::
+
 ::: ex 例 4 · 右端微小扰动引起解的巨大变化 {#ex-2.3-textbook4}
 考虑
 $$
 A=\begin{pmatrix}1&1\\1&1.0001\end{pmatrix}
 $$
-展示右端微小扰动引起解的巨大变化；其 $\mathrm{cond}_\infty(A)\approx4.0\times10^4$，右端 $0.005\%$ 的扰动可带来约 $50\%$ 的解误差。
+取本节开头的右端 $(2,2.0001)^{\mathrm T}$，解为 $(1,1)^{\mathrm T}$。只把第二个右端增加 $0.0001$，解就变成 $(0,2)^{\mathrm T}$。以无穷范数衡量，右端相对扰动约为 $0.005\%$，解的相对变化为 $100\%$。
 
 条件数验算（编者按定义核算）：$\det A=10^{-4}$，$A^{-1}=10^4\begin{pmatrix}1.0001&-1\\-1&1\end{pmatrix}$；$\lVert A\rVert_\infty=2.0001$、$\lVert A^{-1}\rVert_\infty=2.0001\times10^4$（最大行和），故 $\mathrm{cond}_\infty(A)=(2.0001)^2\times10^4\approx4.0\times10^4$。两行几乎成比例，正是条件数爆表的几何原因。
 :::
 
-::: ex 例 5 · 先均衡化，再谈病态 {#ex-2.3-textbook5}
-系数矩阵元素数量级悬殊时，先做**行均衡化**（每行除以该行最大元素）再算条件数/求解；否则“病态”可能只是量纲造成的假象。
+::: ex 例 5 · 选主元仍可能受到病态性的影响 {#ex-2.3-textbook5}
+考虑
+$$
+A=\begin{pmatrix}0.2161&0.1441\\1.2969&0.8648\end{pmatrix},\qquad
+\boldsymbol b=\begin{pmatrix}0.1440\\0.8642\end{pmatrix}.
+$$
+把题面小数视为精确数据，可得
+$$
+\det A=-10^{-8},\qquad
+A^{-1}=\begin{pmatrix}-86480000&14410000\\129690000&-21610000\end{pmatrix},
+\qquad \boldsymbol x=(2,-2)^{\mathrm T}.
+$$
+因此 $\lVert A\rVert_\infty=2.1617$、$\lVert A^{-1}\rVert_\infty=151300000$，条件数为 $327065210$。
+
+现在按八位十进制有效数字逐次四舍五入，模拟课件的列主元消元。先交换两行，用第 1 行消去第 2 行。乘数以及更新后的最后一行分别为
+$$
+m=\operatorname{fl}(0.2161/1.2969)=0.16662811,
+$$
+$$
+\bigl(0,\ \operatorname{fl}(0.1441-\operatorname{fl}(m\times0.8648))
+\mid\operatorname{fl}(0.1440-\operatorname{fl}(m\times0.8642))\bigr)
+=(0,10^{-8}\mid-10^{-8}).
+$$
+这里 $\operatorname{fl}$ 表示每次运算后都保留八位有效数字。回代得到近似解 $(1.3331791,-1)^{\mathrm T}$，相对无穷范数误差为 $1/2$。选主元控制了消元乘数，但两行几乎成比例，舍入造成的微小差异仍会明显改变解。
+
+来源：病态线性方程组课件第 14 页。这里的 $50\%$ 属于本例的舍入实验，不能移用到前一个右端扰动例中。
 :::
 
 <a id="sec-2.3.2"></a>
@@ -120,9 +164,7 @@ $$
 
 **为什么有效**：若 $A$ 已作 LU 分解，每步只多算一次残差（$O(n^2)$）与两次三角回代（$O(n^2)$），**不重新分解**（$O(n^3)$），代价很低。
 
-**为什么有限**：残差 $\boldsymbol r_k$ 本身要用有限精度算，若 $\mathrm{cond}(A)$ 过大，$\boldsymbol r_k$ 的相对误差已经和 $\Delta\boldsymbol x_k$ 一样大，迭代就不再改善。**它能把误差压到 $\mathrm{cond}(A)\cdot u$ 的量级，压不到 $u$**。
-
-（这正是[补充篇 2.4](../../supplement/sec24.md) 讲的「残差小 ≠ 误差小」的工程用法：我们**故意**用残差作校正量，但每轮都要用高精度算残差。）
+精化能否继续改善，取决于校正方程的求解精度、残差的计算精度与矩阵条件数。若残差计算中的舍入已掩盖真正的残差，校正可能停滞；用更高精度计算残差通常有助于改善这一点。不能把 $\mathrm{cond}(A)u$ 当作所有精化算法都无法突破的误差下限。
 :::
 
 <a id="sec-2.3-precond"></a>

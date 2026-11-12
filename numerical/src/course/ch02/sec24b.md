@@ -99,6 +99,67 @@ $$\lVert G_J\rVert_\infty=\max_i\sum_{j=1}^n|G_{ij}|
 **应用背景**：热 / 扩散方程用 **Crank–Nicolson 格式**离散后，左端矩阵就是行对角占优的——“不是稀罕的矩阵，而是比较常见的”。这就是对角占优判据值得单独记的原因。
 :::
 
+::: ex 例题 · 从零向量开始做 Jacobi 迭代 {#slide-jacobi-three-variable}
+对课件中的方程组
+$$
+\begin{cases}
+8x_1-3x_2+2x_3=20,\\
+4x_1+11x_2-x_3=33,\\
+6x_1+3x_2+12x_3=36,
+\end{cases}
+$$
+逐行解出对角项，得到
+$$
+\begin{aligned}
+x_1^{(k+1)}&=(20+3x_2^{(k)}-2x_3^{(k)})/8,\\
+x_2^{(k+1)}&=(33-4x_1^{(k)}+x_3^{(k)})/11,\\
+x_3^{(k+1)}&=(36-6x_1^{(k)}-3x_2^{(k)})/12.
+\end{aligned}
+$$
+同一轮右端全部使用旧值。从 $\boldsymbol x^{(0)}=\boldsymbol0$ 出发，前三轮为
+$$
+\boldsymbol x^{(1)}=(5/2,3,3)^{\mathrm T},\quad
+\boldsymbol x^{(2)}=(23/8,26/11,1)^{\mathrm T},\quad
+\boldsymbol x^{(3)}=(69/22,45/22,171/176)^{\mathrm T}.
+$$
+迭代矩阵的无穷范数为
+$$
+\lVert G_J\rVert_\infty=\max\left\{\frac58,\frac5{11},\frac9{12}\right\}=\frac34<1,
+$$
+所以迭代从任意初值收敛到唯一解 $(3,2,1)^{\mathrm T}$。即使已经知道真解，练习时也应按更新公式算出各轮，再用真解检查误差。
+
+来源：经典迭代课件第 6–8、15 页。
+:::
+
+::: ex 例题 · 含参数时，范数条件与精确范围有什么差别 {#slide-jacobi-parameter}
+考虑
+$$
+\begin{cases}
+x_1+ax_2=1,\\
+ax_1+x_2+ax_3=2,\\
+ax_2+x_3=3.
+\end{cases}
+$$
+Jacobi 迭代是
+$$
+x_1^{(k+1)}=1-ax_2^{(k)},\quad
+x_2^{(k+1)}=2-a(x_1^{(k)}+x_3^{(k)}),\quad
+x_3^{(k+1)}=3-ax_2^{(k)}.
+$$
+它的迭代矩阵与特征多项式为
+$$
+G_J=\begin{pmatrix}0&-a&0\\-a&0&-a\\0&-a&0\end{pmatrix},\qquad
+\det(\lambda I-G_J)=\lambda(\lambda^2-2a^2).
+$$
+所以 $\rho(G_J)=\sqrt2|a|$，对任意初值收敛的精确范围是
+$$
+|a|<\frac1{\sqrt2}.
+$$
+若只用 $\lVert G_J\rVert_\infty=2|a|<1$，只能得到更窄的充分范围 $|a|<1/2$。端点 $|a|=1/\sqrt2$ 处谱半径等于 $1$，不满足任意初值收敛的条件。
+
+来源：经典迭代课件第 17 页。
+:::
+
 ::: ex 例 6 · 严格对角占优矩阵的迭代 {#ex-2.4-textbook6}
 方程组
 $$
@@ -166,7 +227,7 @@ $$
 与 Jacobi 的唯一差别：**本轮已算出的新分量立刻投入使用**。形式上是隐式的，实际按 $i=1,\dots,n$ 一行一行显式计算。
 
 ::: method 「形式隐式、实际显式」的机理
-困难在于 $(L+D)^{-1}$ **写不出显式**。两边乘 $N$、移项，转而利用 $D$ 好求逆这一点：
+实际求解不必形成 $(L+D)^{-1}$。从三角方程出发，把对角项留在左边：
 
 $$(L+D)x^{(k+1)}=-Ux^{(k)}+b
 \ \Longrightarrow\
@@ -230,6 +291,22 @@ GS 迭代矩阵 $G_{GS}=-(D+L)^{-1}U$，$\lVert G_{GS}\rVert_1=150/300\lt1$，�
 Jacobi 与 Gauss–Seidel 没有对所有矩阵都成立的快慢或收敛性排序。二者可能同时收敛，也可能只有一个收敛；[例 10](#ex-2.4-textbook10) 给出了后一种情形。比较具体问题时，应分别考察迭代矩阵的谱半径。
 :::
 
+::: ex 例题 · 二阶方程组的 Jacobi 与 GS 为何同时收敛 {#slide-jacobi-gs-two-variable}
+对 $3x_1+ax_2=1$、$bx_1-3x_2=2$，两个迭代矩阵分别为
+$$
+G_J=\begin{pmatrix}0&-a/3\\b/3&0\end{pmatrix},\qquad
+G_{GS}=\begin{pmatrix}0&-a/3\\0&-ab/9\end{pmatrix}.
+$$
+GS 的第二行来自先算 $x_1^{(k+1)}=(1-ax_2^{(k)})/3$，再代入 $x_2^{(k+1)}=(bx_1^{(k+1)}-2)/3$。因此
+$$
+\rho(G_J)=\frac{\sqrt{|ab|}}3,\qquad
+\rho(G_{GS})=\frac{|ab|}9=\rho(G_J)^2.
+$$
+两种方法都恰在 $|ab|<9$ 时对任意初值收敛。这里包括 $ab<0$ 时 Jacobi 出现共轭虚特征值的情况，判断时始终取模。这是二阶情形的关系，不能据此推断一般高阶矩阵。
+
+来源：经典迭代课件第 22 页。
+:::
+
 <a id="sec-2.4.4"></a>
 ## 2.4.4 逐次超松弛（SOR）
 
@@ -262,7 +339,7 @@ $$G=N^{-1}P=-\big(L+\omega^{-1}D\big)^{-1}\big[(1-\omega^{-1})D+U\big].$$
 :::
 
 ::: method 显示化：移项 + 两边乘 $\omega D^{-1}$
-$N=L+\omega^{-1}D$ 是下三角，$N^{-1}$ **写不出显式**（对比 Jacobi 的 $N=D$），于是回到 $N\boldsymbol x^{(k+1)}=P\boldsymbol x^{(k)}+\boldsymbol b$ 再变形：
+$N=L+\omega^{-1}D$ 是下三角矩阵，计算时直接解三角方程。把 $N\boldsymbol x^{(k+1)}=P\boldsymbol x^{(k)}+\boldsymbol b$ 展开：
 
 $$\big(L+\omega^{-1}D\big)\,\boldsymbol x^{(k+1)}=-\big[(1-\omega^{-1})D+U\big]\boldsymbol x^{(k)}+\boldsymbol b .$$
 
