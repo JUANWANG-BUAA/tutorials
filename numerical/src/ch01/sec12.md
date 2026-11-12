@@ -111,7 +111,7 @@ $$e = x-a ,$$
 
 准确值 $x$、近似值 $a$ 和误差限 $\varepsilon$ 三者的关系是
 
-$$a-\varepsilon\lt x\lt a+\varepsilon ,$$
+$$a-\varepsilon\le x\le a+\varepsilon ,$$
 
 常记为 $x = a\pm\varepsilon$。例如，$a=3.14$ 作为圆周率 $\pi$ 的一个近似值，绝对误差为 $e=\pi-3.14$。由 $\pi=3.14159265\cdots$ 易知 $\lvert e\rvert\lt0.002$，故可取误差限 $\varepsilon = 0.002$，写作 $\pi = 3.14\pm0.002$。
 
@@ -132,7 +132,7 @@ $$e_{\mathrm r} \approx \frac{x-a}{a}$$
 
 $$\varepsilon_{\mathrm r} = \frac{\varepsilon(a)}{\lvert a\rvert} ,$$
 
-即 $\lvert e_{\mathrm r}\rvert\le\varepsilon_{\mathrm r}$。相对误差一般用百分比表示。
+这是以近似值为分母的实用误差限，严格地界住 $|(x-a)/a|$。若要界住定义中以真值为分母的 $|e_{\mathrm r}|$，在 $\varepsilon(a)<|a|$ 时应使用 $\varepsilon(a)/(|a|-\varepsilon(a))$。两者在小误差下近似相同，相对误差一般用百分比表示。
 :::
 
 **两种相对误差差多远？**（推导）真实值 $(x-a)/x$ 与实用值 $(x-a)/a$ 之间只差一个因子：

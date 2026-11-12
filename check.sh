@@ -37,7 +37,7 @@ python3 cpp-rust/tools/build_coverage.py
 # 发布认证门禁（冷读者独立复审等欠账）只在发布前人工把关，不进 CI 构建链：
 #   python3 cpp-rust/tools/build_coverage.py --strict
 #   python3 cpp-rust/tools/verify_audits.py
-python3 numerical/tools/verify_teaching_examples.py
+bash numerical/tools/check.sh
 python3 matrix/tools/verify_teaching_examples.py
 
 # Keep each project's module search path isolated.

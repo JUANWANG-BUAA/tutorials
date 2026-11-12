@@ -167,8 +167,8 @@ $$\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\le\frac{\lVert A
 
 **两个附注。**
 
-1. **可计算性。**$\alpha$ 用的是 $\hat{\boldsymbol{x}}$（在手上）而非 $\boldsymbol{x}$（不可知）；充分条件 $\alpha\lt1$ 由 $\lVert\boldsymbol{e}\rVert\lt\lVert\boldsymbol{x}\rVert/2$ 保证（此时 $\lVert\hat{\boldsymbol{x}}\rVert\ge\lVert\boldsymbol{x}\rVert-\lVert\boldsymbol{e}\rVert\gt\lVert\boldsymbol{e}\rVert$）——这正是正文定理 2.4.4 括注的来历。
-2. **与上界合起来读。**上界（2.23）说「残差被 $\mathrm{cond}$ 放大成误差」，本命题说「误差也顶多被 $\mathrm{cond}$ 压成残差」：二者互相控制在 $\mathrm{cond}$ 因子内。**残差小 + 条件数小 ⟺ 误差小**——两件事都不可省。
+1. **可计算性。** 虽然分母使用近似解，但分子 $\|\boldsymbol e\|$ 仍依赖未知真解，所以 $\alpha$ 不能直接由近似解算出。条件 $\alpha<1$ 是此界的前提；例如已另行证明 $\|\boldsymbol e\|<\|\boldsymbol x\|/2$ 时，可以由反三角不等式推出它。
+2. **与上界合起来读。**上界（2.23）说「残差被 $\mathrm{cond}$ 放大成误差」，本命题说「误差也顶多被 $\mathrm{cond}$ 压成残差」：二者互相控制在 $\mathrm{cond}$ 因子内。条件数小时，相对残差与相对误差能互相给出较紧的界；条件数大时也可能碰巧得到小误差，不能把条件数小当作解准确的必要条件。
 
 <a id="app-a-2-3"></a>
 
@@ -386,7 +386,7 @@ $$\lVert\boldsymbol{e}_{k+1}\rVert_A^2=\lVert\boldsymbol{e}_k\rVert_A^2-2\alpha_
 
 $$\frac{\lVert\boldsymbol{e}_{k+1}\rVert_A^2}{\lVert\boldsymbol{e}_k\rVert_A^2}=1-\frac{(\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k)^2}{(\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k)(\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k)}\ \overset{\text{A.8}}{\le}\ 1-\frac{4mM}{(m+M)^2}=\Bigl(\frac{M-m}{M+m}\Bigr)^2=\Bigl(\frac{\kappa-1}{\kappa+1}\Bigr)^2 .$$
 
-（中间一步用了 $\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k$、$\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k$、$\lVert\boldsymbol{e}_k\rVert_A^2=\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k$。）**每步误差压缩因子 $\le\bigl(\frac{\kappa-1}{\kappa+1}\bigr)^2$**：$\kappa=10$ 时 $\approx0.67$（尚可），$\kappa=10^4$ 时 $\approx0.9996$——三万步才压两个数量级。条件数不仅决定**结果准不准**（[2.4](../supplement/sec24.md)），也决定**迭代快不快**；降低 $\kappa$ 的手段（预条件、行均衡化 2.4.5）由此获得双重回报。与定步长梯度下降（[附录 C.2.1](connections.md#app-c-2-1)）及共轭梯度法（$\bigl(\frac{\sqrt\kappa-1}{\sqrt\kappa+1}\bigr)^k$，见[附录 C.6.1](connections.md#app-c-6-1)）的完整对照放在附录 C。
+（中间一步用了 $\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A\tilde{\boldsymbol{e}}_k$、$\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k=\tilde{\boldsymbol{e}}_k^{\mathrm T}A^2\tilde{\boldsymbol{e}}_k$、$\lVert\boldsymbol{e}_k\rVert_A^2=\tilde{\boldsymbol{e}}_k^{\mathrm T}\tilde{\boldsymbol{e}}_k$。）这里控制的是**平方误差范数之比**：$\kappa=10$ 时上界约 $0.67$，$\kappa=10^4$ 时约 $0.9996$。对范数本身开方后，每步上界为 $(\kappa-1)/(\kappa+1)$，不能将两种指标混用。这是最坏情形的上界，实际步数还受初值和谱分布影响。与定步长梯度下降及共轭梯度的统一比较见[附录 C.2.1](connections.md#app-c-2-1)和[附录 C.6.1](connections.md#app-c-6-1)。
 
 ::: note 本附录引用的外部结果
 除 Birkhoff 定理（A.2.3 自证）与 Jordan 标准形（A.2.7 引用，见任何高等代数教材）外，全部推导自含。进一步的系统展开见延伸阅读里的 Horn & Johnson《Matrix Analysis》（迹不等式与特征值扰动）、Higham《Accuracy and Stability of Numerical Algorithms》（Chapter 4：求和与浮点）与 Golub & Van Loan《Matrix Computations》（2.3–2.6 节：正交化与 SVD）。

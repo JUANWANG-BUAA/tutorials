@@ -449,7 +449,7 @@ $$\bigl\lVert(I\pm A)^{-1}\bigr\rVert\le\frac{1}{1-\lVert A\rVert} .$$
 
 $$\boldsymbol{v}=\mp A\boldsymbol{v} .$$
 
-两边取范数——这里的向量范数取与所用矩阵范数相容的那一个（存在性见[习题 B5](exercises.md)；若矩阵范数本身就是算子范数，直接用它从属的向量范数）：
+两边取范数——这里的向量范数取与所用矩阵范数相容的那一个（存在性见[习题 B4](exercises.md)；若矩阵范数本身就是算子范数，直接用它从属的向量范数）：
 
 $$\lVert\boldsymbol{v}\rVert=\lVert A\boldsymbol{v}\rVert\le\lVert A\rVert\,\lVert\boldsymbol{v}\rVert .$$
 
@@ -598,7 +598,7 @@ True
 | $\lVert A\rVert_\infty$ | $\max_i\sum_j\lvert a_{ij}\rvert$ | $\lVert\cdot\rVert_\infty$ | **行**和取大 |
 | $\lVert A\rVert_F$ | $\bigl(\sum_{i,j}a_{ij}^2\bigr)^{1/2}$ | **不**从属任何范数 | 平方和开方 |
 
-相容性：$\lVert A\boldsymbol{x}\rVert_p\le\lVert A\rVert_p\lVert\boldsymbol{x}\rVert_p$；等价性：$\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1\le n\lVert\boldsymbol{x}\rVert_\infty$；定理 1.3.6：$\lVert A\rVert\lt1\Rightarrow I\pm A$ 非奇异、$\lVert(I\pm A)^{-1}\rVert\le(1-\lVert A\rVert)^{-1}$；Neumann：$\sum A^k=(I-A)^{-1}$。
+相容性：$\lVert A\boldsymbol{x}\rVert_p\le\lVert A\rVert_p\lVert\boldsymbol{x}\rVert_p$；等价性：$\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1\le n\lVert\boldsymbol{x}\rVert_\infty$；定理 1.3.6（下述逆范数界限于算子范数）：$\lVert A\rVert\lt1\Rightarrow I\pm A$ 非奇异、$\lVert(I\pm A)^{-1}\rVert\le(1-\lVert A\rVert)^{-1}$；Neumann：$\sum A^k=(I-A)^{-1}$。
 :::
 
 ::: think[core] 常见错误清单 · 自查六条

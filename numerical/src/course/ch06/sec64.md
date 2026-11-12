@@ -59,7 +59,7 @@ $f(x)=1/(1+x^2)$ 在实区间上光滑。积分作为连续函数上的线性泛
 :::
 
 <a id="sec-6.4.2"></a>
-## 6.4.2 数值稳定性：权之和是无界的
+## 6.4.2 数值稳定性：权的绝对和无界
 
 设计算 $f(x_k)$ 时有舍入误差 $\varepsilon_k$，即实际算得 $\tilde f(x_k)=f(x_k)+\varepsilon_k$，且 $|\varepsilon_k|\le\varepsilon$。则计算 $I_n(f)$ 时，由 $\varepsilon_k$ 引起的**积累误差**为
 

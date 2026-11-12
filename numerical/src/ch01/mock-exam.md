@@ -317,4 +317,4 @@ $$\lVert\boldsymbol e_k\rVert\le q^k\lVert\boldsymbol e_0\rVert\le\frac{q^k}{1-q
 | 6、7、8、9、17、20 | [1.3.2](sec13.md#sec-1.3.2)、[1.3.4](sec13.md#sec-1.3.4)、[1.3.7](sec13.md#sec-1.3.7)、[@thm-1.3.7]、[1.3.5](sec13.md#sec-1.3.5) 预告框 | [习题 B3](exercises.md)、[习题 B4](exercises.md)、[习题 B6](exercises.md) |
 | 16、19 | [1.2.3](sec12.md#sec-1.2.3) 四则表与式 (1.1)、[真实应用案例](application.md) | [习题 C2](exercises.md)、[习题 D1](exercises.md) |
 
-**最后一句**：本卷的目的不是打分，而是**把「以为会了」的地方暴露出来**。凡「能算出数但说不清依据」的题，回到对应节的 `intuition` 框与[回忆卡](recall-cards.md)当天再练一遍；同一类错误出现两次以上，那不是粗心，而是概念缺口。
+复盘时，把说不清依据的题标出来，回读对应小节的直觉说明与[回忆卡](recall-cards.md)，再闭卷重做。同类错误重复出现时，分别检查概念、条件与计算步骤，确定需要补练的部分。

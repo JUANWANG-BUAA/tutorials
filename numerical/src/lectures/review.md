@@ -118,7 +118,7 @@
 
 | 结论 | 适用条件 / 注意 | 出处 |
 |:--|:--|:--|
-| 问题设定：$A$ 实矩阵，$\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots$，特征向量互异 | 「**严格**按模最大」这个前提缺不得，全部推导都建在它上面 | [第 7 讲 §一](lec07.md#lec07-S2) |
+| 问题设定：$A$ 实矩阵，$\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots$，特征向量构成基、初值含主分量 | 「**严格**按模最大」这个前提缺不得，全部推导都建在它上面 | [第 7 讲 §一](lec07.md#lec07-S2) |
 | 实矩阵按模严格最大的特征值**必为实数** | 反证：共轭 $\overline{\lambda_1}$ 也是特征值且模相同，与「严格最大」矛盾 | [第 7 讲 §二](lec07.md#lec07-S3) |
 | 基本展开 $A^{k}u_0=\lambda_1^{k}\bigl[\alpha_1x_1+\sum_{i\ge2}\alpha_i(\lambda_i/\lambda_1)^{k}x_i\bigr]$；两个障碍：相对衰减 $\ne$ 绝对衰减、$\lambda_1^{k}$ 溢出 | 直接累乘 $A$ 会溢出，且滤不掉其他分量——这才需要单位化 | [第 7 讲 §三](lec07.md#lec07-S4) |
 | **幂法**：$y_k=\dfrac{u_k}{\lVert u_k\rVert}$、$u_{k+1}=Ay_k$（**先单位化，再乘 $A$**） | 求**特征向量**时范数随便取；极限 $y_k\to(\lambda_1/\lvert\lambda_1\rvert)^{k}\alpha_1x_1/\lVert\alpha_1x_1\rVert$，$\lambda_1\lt0$ 时差一个 $(-1)^{k}$ | [第 7 讲 §四](lec07.md#lec07-S5) |

@@ -171,7 +171,7 @@ x_2=\frac{0.5000-1.954\times0.3882}{3.158}=\frac{-0.2585}{3.158}=-0.08186,$$
 
 $$x_1=\frac{3.000-1.116\times(-0.08186)-5.712\times0.3882}{-2.000}=\frac{0.8740}{-2.000}=-0.4370 .$$
 
-**结果 $\boldsymbol x=(-0.4370,\,-0.08186,\,0.3882)^{\mathrm T}$，三位分量都达到 3–4 位有效数字。**
+**结果 $\boldsymbol x=(-0.4370,\,-0.08186,\,0.3882)^{\mathrm T}$，各分量相对误差约为 $0.13\%$、$0.17\%$、$0.062\%$；改善明显，但不能据打印了四位就称都有四位有效数字。**
 
 ### 三、分析（这一节才是得分点）
 
@@ -185,10 +185,10 @@ $$x_1=\frac{3.000-1.116\times(-0.08186)-5.712\times0.3882}{-2.000}=\frac{0.8740}
 三条结论：
 
 1. **病根是小主元**。$a_{11}=0.001$ 使 $m_{21}=-1000$：消元时把行 1 放大约 1000 倍再加到行 2 上，行 2 的原始信息（只有 4 位有效数字）被彻底淹没。这一步之后，"行 2 的 $a_{22}$" 其实是 $1000\times2.000$ 舍入后的残余，与原矩阵几乎无关。
-2. **问题本身不病态**。$\mathrm{cond}_\infty(A)=21.76$ 意味着「输入 4 位、输出至少 3 位」本是可保证的。顺序消去丢掉的位数**全部是算法自己造的**——这正好呼应第 3 讲老师那句「列主元不改变条件数，只改变算法对误差的放大」。
-3. **列主元的机制是「让乘数不超过 1」**。$|m_{ik}|\le1$ 保证消元时不会把某一行放大，误差不被额外放大；这是[2.1.2 列主元](sec21.md#sec-2.1.2) 的结论，本题是它的数值证据。
+2. **问题本身不病态**。条件数说明输入扰动可能被放大；结合具体扰动界才能估计输出误差，不能仅凭输入四位就保证输出至少三位。顺序消去丢掉的位数**全部是算法自己造的**——这正好呼应第 3 讲老师那句「列主元不改变条件数，只改变算法对误差的放大」。
+3. **列主元的机制是「让乘数不超过 1」**。列主元使 $|m_{ik}|\le1$，抑制由消元乘数引起的放大，但后续元素仍可能增长，不能据此保证舍入误差绝不放大；这是[2.1.2 列主元](sec21.md#sec-2.1.2) 的结论，本题是它的数值证据。
 
-**思考题（老师课上的追问）**：如果把第一行乘 $1000$ 变成整行放大（即把三个方程都除以 $0.001$），再用顺序消去，结果会好吗？——会。放大行只是等价变换，$a_{11}$ 变成 $1$、乘数变成 $O(1)$，误差不再爆炸。这说明**「小主元」的危害不在数值小，而在于它让乘数大**。
+**编者复核：缩放能否代替选主元？** 将第一行乘 $1000$，乘数虽然从 $-1000,-2000$ 变成 $-1,-2$，但第一行的其他元素也放大了 $1000$ 倍；生成的 $2004,3005,4001,6006$ 等消元数据并未改善。在相同四位算术和运算次序下仍得到原来的劣解。应联合考虑乘数、元素增长与尺度，不能宣称“把小主元放大就解决稳定性”。
 
 :::
 
@@ -282,43 +282,34 @@ $$\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\omega\bigl(A^{\mathrm T}\boldsymbol
 
 ::: sol 精讲 {#sol-hw-2-5}
 
-**第一步：写成标准迭代形式 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$。**
+**先核对原题的记号。** PDF 写的是 $0<\omega<2\rho^{-2}(A)$，却未在题面把 $\rho$ 定义为谱范数。本书统一用 $\rho(A)$ 表示谱半径；按此含义，原命题对一般非奇异矩阵**不成立**。不能擅自改称“题目用 $\rho$ 表示谱范数”来消除矛盾。
 
-$$\boldsymbol x^{(k+1)}=\underbrace{(I-\omega A^{\mathrm T}A)}_{G}\boldsymbol x^{(k)}+\underbrace{\omega A^{\mathrm T}\boldsymbol b}_{\boldsymbol d}.$$
+反例取
 
-**第二步：认清 $A^{\mathrm T}A$ 的谱。** $A$ 非奇异 ⟹ 对任意 $\boldsymbol v\neq\boldsymbol 0$，$\boldsymbol v^{\mathrm T}A^{\mathrm T}A\boldsymbol v=\lVert A\boldsymbol v\rVert_2^2\gt0$，故 $A^{\mathrm T}A$ **对称正定**，其特征值 $\mu_1\ge\cdots\ge\mu_n\gt0$，且 $\mu_{\max}=\lVert A\rVert_2^{2}=\rho(A)^{2}$（题目把 $\rho(A)$ 用作 $A$ 的谱范数，即 $\rho(A)=\lVert A\rVert_2=\sqrt{\mu_{\max}}$；这是本题记号的关键，务必看清）。
+$$A=\begin{pmatrix}1&2\\0&1\end{pmatrix},\quad \rho(A)=1,\quad
+A^{\mathrm T}A=\begin{pmatrix}1&2\\2&5\end{pmatrix}.$$
 
-**第三步：$G$ 的特征值。** $A^{\mathrm T}A$ 对称，存在正交阵 $Q$ 使其对角化：$Q^{\mathrm T}A^{\mathrm T}AQ=\operatorname{diag}(\mu_1,\dots,\mu_n)$。于是
+后者的特征值是 $3\pm2\sqrt2$。取 $\omega=1\in(0,2)$，迭代矩阵 $G=I-A^{\mathrm T}A$ 有特征值 $-2-2\sqrt2$，模大于 1，因此不能对任意初值收敛。
 
-$$Q^{\mathrm T}GQ=Q^{\mathrm T}(I-\omega A^{\mathrm T}A)Q=\operatorname{diag}(1-\omega\mu_1,\dots,1-\omega\mu_n),$$
+**正确结论与证明。** 对一般非奇异实方阵，迭代对任意初值收敛的充要条件是
 
-即 $G$ 的特征值是 $\lambda_i=1-\omega\mu_i$。
+$$\boxed{0<\omega<\frac2{\|A\|_2^2}=\frac2{\lambda_{\max}(A^{\mathrm T}A)}.}$$
 
-**第四步：把「$\rho(G)\lt1$」翻译成对 $\omega$ 的条件。**
+令 $x^*=A^{-1}b$、$e_k=x^{(k)}-x^*$，有
 
-$$\lvert 1-\omega\mu_i\rvert\lt1\iff -1\lt1-\omega\mu_i\lt1\iff 0\lt\omega\mu_i\lt2\iff \omega\lt\frac{2}{\mu_i}.$$
+$$e_{k+1}=(I-\omega A^{\mathrm T}A)e_k.$$
 
-要对**所有** $i$ 成立，只需对最大的 $\mu_{\max}$ 成立：
+因 $A$ 非奇异，$A^{\mathrm T}A$ 对称正定，可正交对角化，其特征值满足 $0<\mu_{\min}\le\mu_i\le\mu_{\max}=\|A\|_2^2$。因此
 
-$$\omega\lt\frac{2}{\mu_{\max}}=\frac{2}{\lVert A\rVert_2^{2}}=\frac{2}{\rho^{2}(A)} .$$
+$$\rho(G)=\max_i|1-\omega\mu_i|<1
+\iff 0<\omega\mu_i<2\quad(\text{所有 }i)
+\iff 0<\omega<2/\mu_{\max}.$$
 
-又 $\omega\gt0$ 时上式自动给出 $\omega\mu_i\gt0$，故**充要条件**是 $\omega\in\bigl(0,2\rho^{-2}(A)\bigr)$。由[定理 2.9](sec24.md#sec-2.4.1)（$\rho(G)\lt1$ ⟺ 对任意初值收敛），迭代对任意 $\boldsymbol x^{(0)}$ 收敛。
+这时 $e_k=G^ke_0\to0$，极限正是 $Ax=b$ 的唯一解。也可在极限处得到 $A^{\mathrm T}(Ax^*-b)=0$，利用 **$A^{\mathrm T}$ 可逆**推出残差为零；不能将其随意左乘残差后写成残差平方。
 
-**第五步：极限就是解。** 设 $\boldsymbol x^{(k)}\to\boldsymbol x^{*}$，在迭代式两边取极限：
+**什么时候原题的界也对？** 若额外知道 $A$ 为实正规矩阵（实对称是常见特例），则 $\|A\|_2=\rho(A)$，两种界才一致。缺少该条件时应提交上述更正与反例，或向老师确认记号。
 
-$$\boldsymbol x^{*}=\boldsymbol x^{*}+\omega\bigl(A^{\mathrm T}\boldsymbol b-A^{\mathrm T}A\boldsymbol x^{*}\bigr)
-\ \Longrightarrow\ A^{\mathrm T}A\boldsymbol x^{*}=A^{\mathrm T}\boldsymbol b
-\ \Longrightarrow\ A^{\mathrm T}(A\boldsymbol x^{*}-\boldsymbol b)=\boldsymbol 0 .$$
-
-左乘 $(A\boldsymbol x^{*}-\boldsymbol b)^{\mathrm T}$ 得 $\lVert A\boldsymbol x^{*}-\boldsymbol b\rVert_2^2=0$，即 $A\boldsymbol x^{*}=\boldsymbol b$。$\blacksquare$
-
-**补一句为什么它一定收敛到解而不是「最小二乘解」**：上式只给出 $A\boldsymbol x^{*}$ 在 $A$ 的零空间上的投影为零，一般情况下这不足以断言 $A\boldsymbol x^{*}=\boldsymbol b$（那正是最小二乘的正规方程）。本题之所以能推出等号，是因为**第五步用的是左乘 $(A\boldsymbol x^{*}-\boldsymbol b)^{\mathrm T}$ 而非任意左乘**——它把残差自身的 2-范数压成 0。若 $A$ 奇异，$A^{\mathrm T}A$ 只是半正定、$\mu_{\min}=0$，$\omega$ 的条件失效，迭代极限一般只是最小二乘解。
-
-**三个易错点**：
-1. 把 $\rho(A)$ 当成「$A$ 的谱半径」——若是谱半径，$2\rho^{-2}(A)$ 与 $\lVert A\rVert_2$ 无关，结论就不成立了。本题记号按谱范数理解（等价地：条件是 $\omega\lt2/\mu_{\max}(A^{\mathrm T}A)$）。
-2. 只证「充分」不证「必要」——题目要求 $\omega$ 的**整个区间**，端点 $\omega=2/\mu_{\max}$ 处 $\lambda_{\max}=-1$、$\rho(G)=1$，迭代不收敛（振荡不衰减），必须点出来。
-3. 忘记验证 $A^{\mathrm T}A$ 正定就直接说「特征值都正」——非奇异是关键前提。
-
+**边界与选参。** $\omega=0$ 时不更新；$\omega=2/\mu_{\max}$ 时出现特征值 -1，某些初值会不衰减地振荡。若已知两个端点，最小化最坏误差因子的选择为 $\omega_*=2/(\mu_{\min}+\mu_{\max})$，对应因子 $(\mu_{\max}-\mu_{\min})/(\mu_{\max}+\mu_{\min})$。这里的充要条件来自[谱半径定理 2.8](sec24.md#thm-2.8)，不是范数充分条件定理 2.9。
 :::
 
 ::: ex 作业 2-6 · 三对角型矩阵：Jacobi 与 GS 同时收敛的充要条件 {#hw-2-6}
@@ -375,7 +366,7 @@ $$G_{GS}=-\begin{pmatrix}0&\frac{a}{10}&0\\[2pt]0&-\frac{ab}{100}&\frac{b}{10}\\
 $$M=\begin{pmatrix}\frac{ab}{100}&-\frac{b}{10}\\[3pt]-\frac{a^{2}b}{500}&\frac{ab}{50}\end{pmatrix},\qquad
 \operatorname{tr}M=\frac{3ab}{100},\quad \det M=\frac{a^{2}b^{2}}{5000}-\frac{a^{2}b^{2}}{5000}=0 .$$
 
-行列式为零 ⟹ $M$ 是**秩 1** 矩阵，两个特征值为 $0$ 与 $\operatorname{tr}M=\dfrac{3ab}{100}$。于是
+行列式为零 ⟹ $M$ 的**秩至多为 1**（$a=b=0$ 时秩为 0），两个特征值为 $0$ 与 $\operatorname{tr}M=\dfrac{3ab}{100}$。于是
 
 $$\rho(G_{GS})=\frac{3\lvert ab\rvert}{100},\qquad
 \rho(G_{GS})\lt1\iff\lvert ab\rvert\lt\frac{100}{3}.$$

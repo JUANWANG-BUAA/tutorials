@@ -68,7 +68,7 @@ $Nx^{(k+1)}=Px^{(k)}+b$（只要 $N$ 取得「好解」即可），并不显式�
 格式立住之后，下面先回答收敛性。**思路**：先把 $G$ 对角化，把原本耦合的系统解耦成
 $n$ 条互不影响的标量递推。设
 $G=T^{-1}\Lambda T$（$\Lambda=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，
-$T$ 为特征向量矩阵）。对迭代式两边左乘 $T$，令 $y^{(k)}=Tx^{(k)}$、$\tilde d=Td$：
+$T^{-1}$ 的列组成特征向量基）。这里先假设 $G$ 可对角化；对迭代式两边左乘 $T$，令 $y^{(k)}=Tx^{(k)}$、$\tilde d=Td$：
 
 $$y^{(k+1)}=\Lambda y^{(k)}+\tilde d\qquad\Longleftrightarrow\qquad
 y_i^{(k+1)}=\lambda_i\,y_i^{(k)}+\tilde d_i,\quad i=1,\dots,n .$$
@@ -80,11 +80,11 @@ $$z_{k+1}=\lambda z_k+E=\lambda^2z_{k-1}+(\lambda+1)E=\cdots
 =\lambda^{k+1}z_0+(\lambda^{k}+\cdots+1)\,E
 =\lambda^{k+1}z_0+\frac{1-\lambda^{k+1}}{1-\lambda}\,E .$$
 
-（$\lambda=1$ 时右端退化为 $z_0+(k+1)E$，显然发散；课堂上未单独点出，此为补注。）
+（编者补注：$\lambda=1$ 时应另算为 $z_0+(k+1)E$。$E\ne0$ 时发散；$E=0$ 时为依赖初值的常数，不能使任意初值趋于同一个解。）
 当且仅当 $|\lambda|<1$ 时 $\lambda^{k+1}\to0$，极限为 $E/(1-\lambda)$，**与初值 $z_0$ 无关**。
 于是：
 
-$$\textbf{定理（原书定理 2.8）}\quad\text{迭代格式对任意初值 }x^{(0)}\text{ 收敛}\iff\rho(G)<1,\qquad
+$$\textbf{定理（原书定理 2.8）}\quad\text{迭代格式对任意初值 }x^{(0)}\text{ 趋于同一个解}\iff\rho(G)<1,\qquad
 \rho(G)=\max_{1\le i\le n}|\lambda_i| .$$
 
 ::: note 课堂推导的价值

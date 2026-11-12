@@ -96,35 +96,38 @@ $$G=\begin{pmatrix}c&s\\-s&c\end{pmatrix}=\begin{pmatrix}5/13&-12/13\\12/13&5/13
 **13.** $\boldsymbol y=A\boldsymbol x_0=(2,1)^{\mathrm T}$，$\lVert\boldsymbol y\rVert_2=\sqrt5$，故 $\boldsymbol x_1=\dfrac{1}{\sqrt5}(2,1)^{\mathrm T}$。
 $A\boldsymbol x_1=\dfrac{1}{\sqrt5}(5,4)^{\mathrm T}$，
 $$R(\boldsymbol x_1)=\boldsymbol x_1^{\mathrm T}A\boldsymbol x_1=\frac{2\times5+1\times4}{5}=\frac{14}{5}=2.8 .$$
-真特征值 $\lambda=1,3$，故 $\lambda_1=3$，估计误差 $0.2$。理论量级：$\lvert\lambda_2/\lambda_1\rvert=1/3$，**Rayleigh 商**误差 $O((1/3)^2)\approx0.11$——与实测 $0.2$ 同量级（若改用 $\lVert A\boldsymbol x\rVert/\lVert\boldsymbol x\rVert$ 一阶估计，误差量级是 $1/3\approx0.33$，同样精度要多花一倍步数）（[@thm-sup-2.5.3]）。**给分**：$\boldsymbol x_1$ $1.5$ 分、Rayleigh 商 $1.5$ 分、量级说明 $1$ 分。
+真特征值为 $1,3$，故估计误差为 $0.2$。本对称矩阵上，Rayleigh 商误差渐近按 $|\lambda_2/\lambda_1|^{2k}=(1/9)^k$ 衰减；$1/9$ 是相邻误差比的极限，不是第一步误差本身。范数比 $\|A\boldsymbol x_1\|_2/\|\boldsymbol x_1\|_2=\sqrt{41/5}$ 在本例中也对方向误差二次敏感，不能说它必然多用一倍步数；它还会丢失负特征值的符号（[@thm-sup-2.5.3]）。**给分**：$\boldsymbol x_1$ $1.5$ 分、Rayleigh 商 $1.5$ 分、量级说明 $1$ 分。
 :::
 
 **14.** 对
 $$A=\begin{pmatrix}9&1&2\\0&4&1\\1&0&3\end{pmatrix}$$
 写出全部 Gerschgorin **行**圆盘与**列**圆盘，给出由两个并集取交集得到的最紧围栏，并说明为什么 $A$ 非奇异。
 ::: sol
-**14. 行圆盘**（第 $i$ 行非对角绝对值和为半径）：
-| $i$ | 中心 $a_{ii}$ | 半径 $r_i$ | 区间 |
-|:--:|:--:|:--:|:--|
-| 1 | $9$ | $\lvert1\rvert+\lvert2\rvert=3$ | $[6,12]$ |
-| 2 | $4$ | $0+1=1$ | $[3,5]$ |
-| 3 | $3$ | $1+0=1$ | $[2,4]$ |
+**14.** 用复圆盘 $D(c,r)=\{z\in\mathbb C:|z-c|\le r\}$ 表示，行圆盘分别是 $D(9,3)$、$D(4,1)$、$D(3,1)$；列圆盘分别是 $D(9,1)$、$D(4,1)$、$D(3,3)$。圆盘与实轴的交段如下，但这不先行假定全部特征值都为实数：
 
-**列圆盘**（半径换成该列非对角绝对值和）：第 $1$ 列 $0+1=1\Rightarrow[8,10]$；第 $2$ 列 $1+0=1\Rightarrow[3,5]$；第 $3$ 列 $2+1=3\Rightarrow[0,6]$。
-**最紧围栏**：行并集 $=[2,12]$，列并集 $=[0,10]$，取交集得
-$$\sigma(A)\subseteq[2,12]\cap[0,10]=[2,10].$$
-**结构信息**：行圆盘里 $[6,12]$ 与其余两个不相交，故其中恰含 $1$ 个特征值；$[3,5]$ 与 $[2,4]$ 连通，该连通区恰含 $2$ 个特征值（[@thm-sup-2.5.2] 包含性与连通性条款）。
-**非奇异**：$A$ 严格对角占优（$9\gt3$、$4\gt1$、$3\gt1$），故 $0$ 不属于任何圆盘、$A$ 可逆（数值核对：特征值 $\approx9.3447,\ 3.8424,\ 2.8129$，全部落在 $[2,10]$ 内 ✓）。**给分**：行圆盘 $1.5$ 分、列圆盘 $1$ 分、交集 $0.5$ 分、非奇异依据 $1$ 分。
+| 方向 | 第 1 个 | 第 2 个 | 第 3 个 |
+|:--|:--|:--|:--|
+| 行圆盘的实轴交段 | $[6,12]$ | $[3,5]$ | $[2,4]$ |
+| 列圆盘的实轴交段 | $[8,10]$ | $[3,5]$ | $[0,6]$ |
+
+两组并集取交集给出复平面的围栏
+$$\sigma(A)\subseteq\bigl(D(9,3)\cup D(4,1)\cup D(3,1)\bigr)
+\cap\bigl(D(9,1)\cup D(4,1)\cup D(3,3)\bigr).$$
+其与实轴的交集为 $[2,5]\cup\{6\}\cup[8,10]$；行并集的实轴交段是 $[2,5]\cup[6,12]$，不能把中间的空隙填成 $[2,12]$。
+
+行圆盘 $D(9,3)$ 与其余两盘分离，因此其中恰含一个特征值，低处连通分支含两个。所有行圆盘均不含 0，故 $A$ 非奇异。数值核对：特征值约为 $2.8129,3.8424,9.3447$。本例可另用特征多项式 $p(t)=t^3-16t^2+73t-101$ 在 $(2,3)$、$(3,4)$、$(9,10)$ 上的变号，证明三个特征值确为实数；不能把非对称矩阵的谱先当作实数来画区间。
+
+**给分**：行圆盘 1.5 分、列圆盘 1 分、正确取交集 0.5 分、非奇异依据 1 分。
 :::
 
 **15.** 某对称正定矩阵在 2-范数下 $\mathrm{cond}_2(A)=4\times10^9$，双精度下 $u\approx1.1\times10^{-16}$：
 (1) 解 $A\boldsymbol x=\boldsymbol b$ 时大约丢几位有效数字、还剩几位（按双精度约有 $16$ 位计）？
 (2) 若把同一问题改写成最小二乘并用**正态方程**求解，等效问题的条件数变成多少、还剩几位？（提示：$\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$。）
-(3) 条件数大到什么量级时，双精度任何算法都救不了？
+(3) 条件数大到什么量级时，基于 $\mathrm{cond}\,u$ 的最坏情形估计不再保证可靠数字？这是否表示每个具体右端都无法准确求解？
 ::: sol
-**15.** **(1)** 丢失位数 $k\approx\log_{10}\mathrm{cond}=9.6\approx10$ 位，双精度下**只剩约 6 位**（$\mathrm{cond}\cdot u\approx4\times10^{-7}$）。
-**(2)** 正态方程显式形成 $A^{\mathrm T}A$，条件数被**平方**：$\mathrm{cond}(A^{\mathrm T}A)=1.6\times10^{19}$，$k\approx19.2\gt16$——**有效数字全部丢光**，结果不可用（实证：$\mathrm{cond}=6\times10^{10}$ 时正态方程误差 $28$，真值 $1$）。
-**(3)** $\mathrm{cond}\gtrsim10^{16}=u^{-1}$ 时，任何双精度算法都救不了（只能重述问题、正则化或提高精度）。**顺带记住分水岭**：$\mathrm{cond}\gtrsim10^{8}=u^{-1/2}$ 时就必须弃用正态方程改用 QR / SVD（[@thm-sup-2.3.5]、[2.4.2](sec24.md#sup-2.4.2) 判据表）。**给分**：(1) $1.5$ 分；(2) $1.5$ 分；(3) $1$ 分。
+**15.** **(1)** 丢失位数 $k\approx\log_{10}\mathrm{cond}=9.6\approx10$ 位，按该量级估计，双精度下约剩 6 位；实际损失未必达到最坏情形（$\mathrm{cond}\cdot u\approx4\times10^{-7}$）。
+**(2)** 正态方程显式形成 $A^{\mathrm T}A$，条件数被**平方**：$\mathrm{cond}(A^{\mathrm T}A)=1.6\times10^{19}$，$k\approx19.2\gt16$——这一估计已无法保证有效数字；不能把它当成每个实例的实际误差（实证：$\mathrm{cond}=6\times10^{10}$ 时正态方程误差 $28$，真值 $1$）。
+**(3)** 当 $\mathrm{cond}\,u$ 接近 1，即双精度下条件数约达 $10^{16}$ 时，这一最坏情形估计不再保证有效数字；特殊右端或扰动方向仍可能得到准确结果。对显式法方程，$\mathrm{cond}^2u$ 更早变大，因此常优先选择 QR / SVD，再结合实际容差验收（[@thm-sup-2.3.5]、[2.4.2](sec24.md#sup-2.4.2)）。**给分**：(1) 1.5 分；(2) 1.5 分；(3) 1 分。
 
 :::
 
@@ -175,7 +178,7 @@ $$A=\begin{pmatrix}1&1\\1&1\\1&0\end{pmatrix},\qquad \boldsymbol b=\begin{pmatri
 (1) 手算 Gram–Schmidt 正交化，写出 $Q$（列标准正交）与 $R$（上三角、对角元为正，保留根号形式）；
 (2) 用 QR 解最小二乘：写出 $Q^{\mathrm T}\boldsymbol b$，回代 $R\hat{\boldsymbol x}=Q^{\mathrm T}\boldsymbol b$ 求出 $\hat{\boldsymbol x}$，再给出投影 $\boldsymbol p=A\hat{\boldsymbol x}$、残差 $\boldsymbol r$、$\lVert\boldsymbol r\rVert_2$，并核对 $A^{\mathrm T}\boldsymbol r=\boldsymbol 0$；
 (3) 用正态方程 $A^{\mathrm T}A\boldsymbol x=A^{\mathrm T}\boldsymbol b$ 重算 $\hat{\boldsymbol x}$，与 (2) 对照；
-(4) 若 $A$ 换成条件数 $\mathrm{cond}(A)\approx6.03\times10^{10}$ 的病态 Vandermonde 设计矩阵（$m=20,n=15$，相容右端），说明两条路线的误差量级与数字，并指出「何时必须弃用正态方程」。
+(4) 若 $A$ 换成条件数 $\mathrm{cond}(A)\approx6.03\times10^{10}$ 的病态 Vandermonde 设计矩阵（$m=20,n=15$，相容右端），说明两条路线的误差量级与数字，并指出何时不宜依赖显式法方程求高精度解。
 
 ::: sol 第 17 题答案与评分要点
 
@@ -202,7 +205,7 @@ $$\hat{\boldsymbol x}=\frac12\begin{pmatrix}2&-2\\-2&3\end{pmatrix}\begin{pmatri
 | 正态方程 | $\mathrm{cond}^2u$ | $\approx4.0\times10^{5}$ | $28$（真值 $1$，**完全失效**） |
 | QR | $\mathrm{cond}\,u$ | $\approx6.7\times10^{-6}$ | $2.2\times10^{-6}$ ✓ |
 
-**分水岭**：$\mathrm{cond}(A)\gtrsim u^{-1/2}\approx10^{8}$ 时必须弃用正态方程，改用 QR；秩亏或需要判断数值秩时用 SVD（[@thm-sup-2.3.5]、[2.3.6](sec23.md#sup-2.3.6) 实测表）。
+**风险判断**：$\mathrm{cond}(A)^2u$ 接近或超过 1 时，通常应优先评估 QR；秩亏或需要判断数值秩时用 SVD。这里的量级用于评估保证，不是所有实例同时失败的分界（[@thm-sup-2.3.5]、[2.3.6](sec23.md#sup-2.3.6) 实测表）。
 
 **评分**：(1) $\boldsymbol q_1,r_{11}$ $1$ 分、$r_{12}$ 与 $\boldsymbol v$ $1.5$ 分、$r_{22},\boldsymbol q_2,Q,R$ $1.5$ 分；(2) $Q^{\mathrm T}\boldsymbol b$ $1$ 分、回代求 $\hat{\boldsymbol x}$ $1.5$ 分、$\boldsymbol p,\boldsymbol r,\lVert\boldsymbol r\rVert$ 与核对 $1.5$ 分；(3) $0.5$ 分（含「两路线一致」的判断）；(4) $1.5$ 分（两个量级 + 分水岭）。**忘记 $A^{\mathrm T}\boldsymbol r=\boldsymbol 0$ 自检，从 (2) 扣 $0.5$ 分。**
 

@@ -100,6 +100,10 @@ $$
 
 ::: proof 证明（老师第 5 讲 §二的对角化解耦，板书完整）
 
+先讨论 $G$ 可对角化的情形。取可逆矩阵 $T$ 使
+$$G=T^{-1}\Lambda T,\qquad\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_n).$$
+对原迭代式左乘 $T$，令 $\boldsymbol y^{(k)}=T\boldsymbol x^{(k)}$、$\tilde{\boldsymbol d}=T\boldsymbol d$，才得到下面的解耦系统；复特征值时可在复数空间完成变换。若 $G$ 不可对角化，不能硬套这一步，须用本证明末尾的 Jordan 块论证。
+
 $$
 \boldsymbol y^{(k+1)}=\Lambda \boldsymbol y^{(k)}+\tilde{\boldsymbol d}
 \qquad\Longleftrightarrow\qquad
@@ -114,7 +118,7 @@ z_{k+1}=\lambda z_k+E=\lambda^2z_{k-1}+(\lambda+1)E=\cdots
 =\lambda^{k+1}z_0+\frac{1-\lambda^{k+1}}{1-\lambda}\,E .
 $$
 
-（$\lambda=1$ 时右端退化为 $z_0+(k+1)E$，显然发散。）当且仅当 $|\lambda|\lt1$ 时 $\lambda^{k+1}\to0$，极限为 $E/(1-\lambda)$，**与初值 $z_0$ 无关**——逐分量收敛，故 $\boldsymbol x^{(k)}$ 收敛。若 $G$ 不可对角化，用 Jordan 标准形：Jordan 块 $J=\lambda I+N$ 的 $k$ 次幂含 $\binom{k}{s}\lambda^{k-s}$，当 $|\lambda|\lt1$ 时仍趋于 0；反之若某个 $|\lambda|\ge1$，取对应特征向量作初值误差，$\boldsymbol e_k$ 不趋于 0。$\blacksquare$
+（$\lambda=1$ 时右端为 $z_0+(k+1)E$：$E\ne0$ 时发散；$E=0$ 时虽为常数，却依赖初值，不能使任意初值都趋于同一个方程解。）当且仅当 $|\lambda|\lt1$ 时 $\lambda^{k+1}\to0$，极限为 $E/(1-\lambda)$，**与初值 $z_0$ 无关**——逐分量收敛，故 $\boldsymbol x^{(k)}$ 收敛。若 $G$ 不可对角化，用 Jordan 标准形：Jordan 块 $J=\lambda I+N$ 的 $k$ 次幂含 $\binom{k}{s}\lambda^{k-s}$，当 $|\lambda|\lt1$ 时仍趋于 0；反之若某个 $|\lambda|\ge1$，取对应特征向量作初值误差，$\boldsymbol e_k$ 不趋于 0。$\blacksquare$
 :::
 
 ::: note 课堂推导的价值（老师第 5 讲 §二）

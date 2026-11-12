@@ -532,7 +532,7 @@ $$
 c_k=\frac{2}{\pi}\int_{-1}^{1}\frac{\arcsin x\,T_k(x)}{\sqrt{1-x^2}}\,dx
 =\frac{2}{\pi}\int_0^{\pi}\Bigl(\frac\pi2-\theta\Bigr)\cos k\theta\,d\theta .
 $$
-$k=0$ 时 $c_0=\frac\pi2$；$k\ge1$ 时 $\int_0^\pi\cos k\theta\,d\theta=0$，而
+$k=0$ 时被积函数关于 $\theta=\pi/2$ 反对称，故 $c_0=0$；$k\ge1$ 时 $\int_0^\pi\cos k\theta\,d\theta=0$，而
 $$
 \int_0^{\pi}\theta\cos k\theta\,d\theta
 =\Bigl[\frac{\theta\sin k\theta}{k}+\frac{\cos k\theta}{k^2}\Bigr]_0^\pi
@@ -541,7 +541,7 @@ $$
 $$
 所以
 $$
-\arcsin x=\frac\pi2-\frac4\pi\sum_{\substack{k\ge1\\ k\ \text{奇}}}\frac{T_k(x)}{k^2}
+\arcsin x=\frac4\pi\sum_{\substack{k\ge1\\ k\ \text{奇}}}\frac{T_k(x)}{k^2}
 =\frac4\pi\Bigl(T_1(x)+\frac{T_3(x)}9+\frac{T_5(x)}{25}+\frac{T_7(x)}{49}+\cdots\Bigr).
 $$
 截到 $n=7$：
@@ -549,7 +549,7 @@ $$
 \arcsin x\approx\frac4\pi\Bigl(x+\frac{4x^3-3x}{9}+\frac{16x^5-20x^3+5x}{25}
 +\frac{64x^7-112x^5+56x^3-7x}{49}\Bigr).
 $$
-**读法**：系数按 $1/k^2$ 衰减——Chebyshev 展开对光滑函数收敛很快；这与 [5.1](sec51.md) 的 Chebyshev 节点（零点 $x_i=\cos\frac{(2i-1)\pi}{2n}$）是同一族多项式的两种用法。
+奇函数 $\arcsin x$ 的展开只含奇次项，代入 $x=0$ 可立即核对常数项和符号。本例的非零系数按 $1/k^2$ 衰减；它在端点的导数无界，不能用来说明一般光滑函数的快速收敛。这里的展开与 [5.1](sec51.md) 的 Chebyshev 节点（零点 $x_i=\cos\frac{(2i-1)\pi}{2n}$）使用同一族多项式，分别用于函数表示与节点选择。
 :::
 
 ::: note 最佳一致逼近（本编补充，教材 5.6 不展开；第 11 讲 §六.5）
@@ -561,10 +561,10 @@ $$
 
 | 度量 | 名称 | 记法 | 特点 |
 |:--|:--|:--|:--|
-| $\lVert\cdot\rVert_\infty$ | **一致逼近 / 均匀逼近** | $\max_{x}\lvert f-p\rvert$ | 控制**最坏点**；存在性靠 Chebyshev 交替定理 |
-| $\lVert\cdot\rVert_2$ | **均方逼近 / 平方逼近** | $\sqrt{\int\rho(f-p)^2}$ | 控制**整体**；光滑可微，能求导得法方程 |
+| $\lVert\cdot\rVert_\infty$ | **一致逼近 / 均匀逼近** | $\max_{x}\lvert f-p\rvert$ | 控制最坏点；多项式最佳逼近可由交替定理刻画 |
+| $\lVert\cdot\rVert_2$ | **均方逼近 / 平方逼近** | $\sqrt{\int\rho(f-p)^2}$ | 控制整体平方误差；最小化其平方可导出法方程 |
 
-**本节（5.6）取的是 $L^2$**，因为只有它可微、能化成线性方程组。**这是选择 $L^2$ 的全部理由**——不是因为它更「正确」，而是因为它**好算**。
+本节（5.6）采用 $L^2$ 度量。误差范数的平方是关于逼近系数的二次函数，求偏导即可得到线性法方程，正交基还能使方程解耦。计算方便是这一选择的理由之一；实际选哪种度量，还取决于要控制整体误差还是最坏点误差。
 
 两者的差别是实质的：$L^2$ 逼近允许个别点上误差很大（只要整体平方面积小），$L^\infty$ 不允许。同一个 $f$、同样的次数，两种度量给出**不同的最优多项式**。
 :::

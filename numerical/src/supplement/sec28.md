@@ -41,19 +41,19 @@
 八条按性质分三组：**算法选错**（1、2、5——数学上等价，数值上不等价）；**判据用错**（3、6、7——拿残差当误差、按默认阈值定数值秩、拿谱半径当范数）；**概念误读**（4、8——病态与重特征值的敏感性都是问题属性，换算法救不了）。
 
 **1. 在生产代码里用经典 Gram–Schmidt（CGS）。**
-CGS 与 MGS 只差「内积用原始列还是当前列」，数值上却差一个 $\mathrm{cond}$（$10^{8}$ 倍量级）；**正确做法是改用 MGS 或 Householder**。实测：$n=16$ 时 CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert_2=6.55$（完全不正交），MGS 是 $4.7\times10^{-4}$，Householder 是 $3.0\times10^{-15}$。**判据：$\mathrm{cond}\gtrsim u^{-1/2}\approx10^{8}$ 时 CGS 彻底失效**（[2.3.3](sec23.md#sup-2.3.3)、[实验一](sec27.md#sup-2.7.1)）。
+CGS 与 MGS 只差「内积用原始列还是当前列」，数值上却差一个 $\mathrm{cond}$（$10^{8}$ 倍量级）；**正确做法是改用 MGS 或 Householder**。实测：$n=16$ 时 CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert_2=6.55$（完全不正交），MGS 是 $4.7\times10^{-4}$，Householder 是 $3.0\times10^{-15}$。应同时检查 $\mathrm{cond}^2u$ 与实测正交性；前者是风险量级，并非对每个输入的失效结论（[2.3.3](sec23.md#sup-2.3.3)、[实验一](sec27.md#sup-2.7.1)）。
 
 **2. 用正态方程解病态最小二乘。**
-正态方程里的 $A^{\mathrm T}A$ 把条件数**平方**。实测：$\mathrm{cond}=6\times10^{10}$ 时，正态方程误差 $28$（真值 $1$，完全崩溃），QR 仍是 $2.2\times10^{-6}$（[2.3.6](sec23.md#sup-2.3.6)、[实验二](sec27.md#sup-2.7.2)）。**判据：$\mathrm{cond}\gtrsim10^{8}$ 必须换 QR / SVD。**
+正态方程里的 $A^{\mathrm T}A$ 把条件数**平方**。实测：$\mathrm{cond}=6\times10^{10}$ 时，正态方程误差 $28$（真值 $1$，完全崩溃），QR 仍是 $2.2\times10^{-6}$（[2.3.6](sec23.md#sup-2.3.6)、[实验二](sec27.md#sup-2.7.2)）。当 $\mathrm{cond}^2u$ 已不小时，通常优先评估 QR / SVD，并按残差、数据误差与容差验收。
 
 **3. 用残差当误差的代理指标。**
-实测构造：残差 $\lVert\boldsymbol{r}\rVert_\infty/\lVert\boldsymbol{b}\rVert_\infty=2.5\times10^{-12}$，解的相对误差却达 $50\%$（[例 2.4.4](sec24.md#sup-2.4.4)）。**正确判据是 $\mathrm{cond}(A)\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$，不是残差本身**；求解器返回的残差只说明「算法向后稳定」，不说明结果准。
+实测构造：残差 $\lVert\boldsymbol{r}\rVert_\infty/\lVert\boldsymbol{b}\rVert_\infty=2.5\times10^{-12}$，解的相对误差却达 $50\%$（[例 2.4.4](sec24.md#sup-2.4.4)）。**正确判据是 $\mathrm{cond}(A)\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$，不是残差本身**；残差本身也不是完整的向后稳定性证明，还须按输入尺度归一化并说明允许扰动哪些数据。
 
 **4. 以为病态可以用换算法解决。**
-同一病态矩阵，Cholesky、QR、SVD 的误差**量级相同**（都是 $\mathrm{cond}\cdot u$）：实测 Hilbert 12 阶无论用哪种解法，误差都是 $0.22$（[实验二](sec27.md#sup-2.7.2)）。**病态是问题的属性（[1.2.6](../ch01/sec12.md#sec-1.2.6)）：换算法救不了，只能重述问题或提高精度。**
+病态描述给定问题对输入扰动的敏感性，稳定算法也不能消除这种敏感性；不同算法的实际误差仍可能不同。Hilbert 实验的结果须按具体右端、精度与实现解释（[实验二](sec27.md#sup-2.7.2)），不能由条件数断言三种算法误差恰好相等。改善数据、提高精度、正则化或重述问题，分别改变了不同的误差来源。
 
 **5. 对 $A^{\mathrm T}A$ 做特征值分解来「算 SVD」。**
-数学上等价，数值上是灾难：$\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$，直接丢掉一半有效数字。**永远用 `np.linalg.svd(A)`**（Golub–Kahan 直接作用在 $A$ 上），不要 `eigh(A.T @ A)`。
+数学上等价，数值上是灾难：$\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$，可能额外损失有效数字，并非恰好损失一半。**永远用 `np.linalg.svd(A)`**（Golub–Kahan 直接作用在 $A$ 上），不要 `eigh(A.T @ A)`。
 
 **6. 不截断伪逆、不按噪声水平定数值秩。**
 实测：给矩阵加 $10^{-9}$ 的噪声后，`matrix_rank` 默认阈值判出 $20$，按噪声阈值只有 $3$——**判错 6 倍多**（[例 2.6.5](sec26.md#sup-2.6.5) 后的思考、[实验三](sec27.md#sup-2.7.3)）。**正确做法是按噪声水平定数值秩、截断伪逆**：未截断的伪逆会放大 $1/\sigma_{\min}$，与直接求逆同样危险。

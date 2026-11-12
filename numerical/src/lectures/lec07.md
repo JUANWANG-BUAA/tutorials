@@ -30,7 +30,7 @@
 
 | 内容 | 要点 |
 |:--|:--|
-| 问题设定 | $A$ 实矩阵，$|\lambda_1|\gt|\lambda_2|\ge\cdots\ge|\lambda_n|$，$x_1,\dots,x_n$ 互异（线性无关） |
+| 问题设定 | $A$ 实矩阵，$|\lambda_1|\gt|\lambda_2|\ge\cdots\ge|\lambda_n|$，$x_1,\dots,x_n$ 构成特征向量基，初值主展开系数非零 |
 | 基本展开 | $u_0=\sum_i\alpha_ix_i\Rightarrow A^ku_0=\lambda_1^k\bigl[\alpha_1x_1+\sum_{i\ge2}\alpha_i(\lambda_i/\lambda_1)^kx_i\bigr]$ |
 | **实数性** | 实矩阵的按模严格最大特征值**必为实数**（否则共轭 $\bar\lambda_1$ 也是特征值、模相同且不同，矛盾） |
 | 两个障碍 | ① 其他分量只是**相对**变小，绝对量仍大；② $\lambda_1^k$ 增长过快（溢出/下溢） |
@@ -82,9 +82,7 @@ $$A\ \text{为实矩阵},\qquad |\lambda_1|\gt|\lambda_2|\ge|\lambda_3|\ge\cdots
 \qquad x_1,x_2,\dots,x_n\ \text{互异},$$
 
 「我们要计算的情况是：$A$ 是实矩阵，并且有一个（特征）根，它的绝对值要**严格**大于
-其他所有特征根。」特征向量互异是**假设**，用来保证 $x_1,\dots,x_n$ **线性无关**、能张成整个
-空间——「因为 $A$ 的特征（向量）是能张成整个空间的，所以我随便给一个初始向量，
-它一定可以由这些特征向量**线性表示**」。任取非零初始向量
+其他所有特征根。」编者核验：严格按模最大并不保证存在完整特征向量基，“互异向量”也不能推出线性无关。本讲的展开应明确假设 $x_1,\ldots,x_n$ 线性无关，且初值在主方向上的展开系数 $\alpha_1\ne0$。不同特征值对应的特征向量线性无关，是可用的充分事实；普通非对称矩阵的展开系数不能用右特征向量的欧氏投影代替。
 
 $$u_0=\alpha_1x_1+\alpha_2x_2+\cdots+\alpha_nx_n .$$
 
@@ -216,7 +214,7 @@ $$\boxed{\ y_k\ \longrightarrow\ \Bigl(\frac{\lambda_1}{|\lambda_1|}\Bigr)^{k}
 | 情形 | $(\lambda_1/|\lambda_1|)^k$ | 极限 |
 |:--|:--|:--|
 | $\lambda_1\gt0$ | $1$ | $y_k\to\dfrac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}$，即 $x_1$ 的单位向量 |
-| $\lambda_1\lt0$ | $(-1)^k$ | $y_k\to(-1)^k\dfrac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}$，**符号交替** |
+| $\lambda_1\lt0$ | $(-1)^k$ | $(-1)^k y_k\to\dfrac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}$，**符号交替** |
 
 $\lambda_1\lt0$ 时迭代值不断变号，「但说白了，它还是你的特征向量，只不过在迭代过程中
 符号一直在变来变去」——不影响迭代值仍是 $x_1$ 的单位向量。
@@ -233,7 +231,7 @@ $\lambda_1\lt0$ 时迭代值不断变号，「但说白了，它还是你的特�
 
 $$Ay_k\ \longrightarrow\ \lambda_1\cdot\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\qquad(\lambda_1\gt0).$$
 
-但直接取 $Ay_k$ 与 $y_k$ 的对应分量之比会被 $(-1)^k$ 干扰，需要一个**对称的**组合。
+对应分量比在分母非零且目标分量不太小时也能估计特征值，公共的交替符号会抵消；其风险是选到零或很小的分量。下面用内积组合得到 Rayleigh 商，避免依赖某个分量。
 取 **2-范数**，并注意 2-范数单位化保证 $\lVert y_k\rVert_2=1$，于是
 $y_k^{\mathrm T}y_k=\lVert y_k\rVert_2^2=1$，计算
 
@@ -505,9 +503,8 @@ $$F(\xi)=0\ \Longleftrightarrow\ \xi-\varphi(\xi)=0\ \Longleftrightarrow\ \xi=\v
    音近致误），标准术语为**原点位移 / 位移反幂法**（shifted inverse iteration）。
 4. **原书编号**：本讲两个定理（幂法收敛定理、不动点迭代收敛定理）课堂均**未念编号**，
    本编不注编号，以内容对照原书第 3 章、第 4 章。原书第 3 章为特征值计算、第 4 章为
-   非线性方程，与本书第 6、7 章对应（[路线图](../ch01/sec11.md#roadmap)）。
-5. **「特征向量互异」的用法**：课堂把「$\lambda_i$ 互异 $\Rightarrow x_i$ 线性无关」
-   当作已知事实直接使用（这是标准结论：不同特征值的特征向量线性无关），未证。
+   非线性方程，与本书第 3、4 章对应（[路线图](../ch01/sec11.md#roadmap)）。
+5. **特征向量基的条件**：本讲用特征展开推导，须明确线性无关与初始主分量非零。“互异向量”不是线性无关的充分条件，见[正文补注](../course/ch03/sec31.md#note-power-initial)。
 6. **反幂法解方程组的代价**：课堂只说「用 LU 分解或迭代法解 $Au_{k+1}=y_k$」，
    未讨论 $A$ 的分解可**预先算一次**并复用（这是反幂法实用化的关键），亦未提
    $A-pI$ 病态时的精度问题。

@@ -197,7 +197,7 @@ for j = 1, ..., n:
 2. **MGS 按 $\mathrm{cond}(A)\cdot u$ 增长**：$n=14$ 时 $\mathrm{cond}\cdot u=3.8\times10^{-5}$，实测 $4.7\times10^{-6}$；$n=16$ 时 $3.0\times10^{-3}$ 对 $4.7\times10^{-4}$——同量级 ✓。
 3. **CGS 按 $\mathrm{cond}^2(A)\cdot u$ 增长，随后饱和**：$n=10$ 时 $\mathrm{cond}^2u=3.5\times10^{-1}$、实测已到 $1.2$；$n\ge12$ 时 $\mathrm{cond}^2u\gg1$，实测停在 $O(1)\sim O(10)$——**正交性完全丧失**（$\lVert Q^{\mathrm T}Q-I\rVert_2$ 的平凡上界是 $n+1$，$n=16$ 时为 $17$）。
 
-**分界线：** $\mathrm{cond}(A)^2u\gtrsim1$，即 $\mathrm{cond}(A)\gtrsim u^{-1/2}\approx10^{8}$（双精度）。超过它，CGS 彻底失效；MGS 还能撑到 $\mathrm{cond}\approx u^{-1}\approx10^{16}$。**结论：要用 Gram–Schmidt 就必须用 MGS；要最好的正交性，用 Householder。**
+当 $\mathrm{cond}(A)^2u$ 接近 1 时，CGS 的典型正交性误差界已不能保证误差小；双精度中的 $u^{-1/2}\approx10^8$ 是风险量级，不是所有矩阵同时失效的分界。MGS 也须检查 $\mathrm{cond}(A)u$ 与实测正交性；若它接近 1，同样不能保证结果。稠密 QR 通常优先使用 Householder，需要逐列更新时可选 MGS，并按需要重正交化。
 :::
 
 ::: ex 例 2.3.2（新增） · 亲手看见 CGS 失效（数值实验） {#ex-sup-2.3.2}
@@ -246,7 +246,7 @@ for n in [6, 8, 10, 12, 14, 16]:
 
 **为什么 CGS 饱和而 MGS 不饱和？**
 
-**（i）误差的「引用结构」不同。** CGS 的系数 $r_{ij}$ 用**原始** $\boldsymbol{a}_j$ 计算，而 $\boldsymbol{a}_j$ 在第 $j$ 步之前从未被修正过；于是 $\boldsymbol{q}_j$ 一旦带上舍入误差，这个误差就会被后来**所有更大下标** $j'$ 的系数计算反复引用，按 $\mathrm{cond}$ 逐层累积。而 MGS 每一步用的都是已经扣掉旧分量的当前向量，误差只被引用一次。
+**（i）投影使用的向量不同。** CGS 用原始列 $\boldsymbol a_j$ 计算各投影系数，MGS 每次先更新当前列再计算下一项。这会改变已有舍入误差进入后续投影的方式；在相应满秩与小误差条件下，典型分析分别给出 $O(\mathrm{cond}(A)^2u)$ 和 $O(\mathrm{cond}(A)u)$ 的正交性损失。它们是带条件和维数因子的估计，不能归结为某项误差“只被引用一次”。
 
 **（ii）「饱和」只是平凡的几何效应，不代表安全。** $\lVert Q^{\mathrm T}Q-I\rVert_2$ 的最大可能值是 $\lVert Q^{\mathrm T}Q\rVert_2+1\le\lVert Q\rVert_2^2+1$。当 CGS 算出的 $\hat Q$ 已经几乎不正交（各列趋于平行）时，$\lVert\hat Q\rVert_2$ 增长到 $\sqrt n$ 量级，这个指标就只能停在 $O(n)$——**错到顶了，再坏也坏不下去**。
 
@@ -261,12 +261,12 @@ $n=10$ 时理论值 $\mathrm{cond}^2u=0.35$ 尚小于 $1$，实测 $1.19$ 已饱
 
 ## 2.3.4 Householder 反射
 
-MGS 补上了 CGS 的漏洞，误差却仍按 $\mathrm{cond}\cdot u$ 增长。要彻底摆脱条件数，就得让**每一步都是正交变换**——正交变换不放大误差（[@thm-sup-2.1.6]）。Householder 反射是这种做法最简洁的实现。
+MGS 的正交性损失仍可能受条件数放大。Householder 改用一系列正交变换构造 QR，使所构造 $Q$ 的正交性有不同的误差保证；这不等于消除了后续求解问题的条件数。先从一次反射看起。
 
 ::: intuition 直觉 · 用一面镜子把向量「拍」到坐标轴上
 给你 $\boldsymbol{x}\in\mathbb{R}^k$，想把它变成 $\pm\lVert\boldsymbol{x}\rVert_2\boldsymbol{e}_1$（除第一个分量外全部清零）。怎么办？
 
-**找一面镜子。** 镜像保长度，所以 $\boldsymbol{x}$ 只能映成同样长度的 $\pm\lVert\boldsymbol{x}\rVert\boldsymbol{e}_1$。镜面的法线应沿着「$\boldsymbol{x}$ 与它的像的中点方向」——因为**入射向量与出射向量关于镜面对称**。Householder 反射就是这面镜子：
+镜像保长度，目标向量只能取 $\alpha\boldsymbol e_1$、$|\alpha|=\|\boldsymbol x\|_2$。通过原点的反射超平面，其法线应沿 $\boldsymbol v=\boldsymbol x-\alpha\boldsymbol e_1$，即原向量与目标向量之差。对应的 Householder 矩阵为：
 
 $$H=I-2\frac{\boldsymbol{v}\boldsymbol{v}^{\mathrm T}}{\boldsymbol{v}^{\mathrm T}\boldsymbol{v}}.$$
 
@@ -320,7 +320,7 @@ $$\boldsymbol{v}=\boldsymbol{x}-\alpha\boldsymbol{e}_1=\boldsymbol{x}+\operatorn
 
 则 $H=I-2\boldsymbol{v}\boldsymbol{v}^{\mathrm T}/(\boldsymbol{v}^{\mathrm T}\boldsymbol{v})$ 满足 $H\boldsymbol{x}=\alpha\boldsymbol{e}_1$。
 
-**为什么这样取符号？** 若取 $\alpha=+\lVert\boldsymbol{x}\rVert$，当 $x_1\gt0$ 时 $\boldsymbol{v}$ 的首分量就是 $x_1-\lVert\boldsymbol{x}\rVert$，这是**两个相近数相减**（[1.2.4](../ch01/sec12.md#sec-1.2.4) 原则 (3)）。反过来取符号后，首分量变成 $x_1+\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert$，是**相加**，永远不损失有效数字。**这是数值分析里反复出现的符号选择技巧：能用加就不用减。**
+**为什么这样取符号？** 若取 $\alpha=+\lVert\boldsymbol{x}\rVert$，当 $x_1\gt0$ 时 $\boldsymbol{v}$ 的首分量就是 $x_1-\lVert\boldsymbol{x}\rVert$，这是**两个相近数相减**（[1.2.4](../ch01/sec12.md#sec-1.2.4) 原则 (3)）。反过来取符号后，首分量变成 $x_1+\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert$，是同号相加，避免了首分量的相消；仍须处理一般舍入误差与浮点范围。
 :::
 
 ::: ex 例 2.3.3（新增） · 手算一个 Householder 反射 {#ex-sup-2.3.3}
@@ -354,7 +354,8 @@ R = copy(A);  Q = I_m
 for k = 1, ..., n:
     x = R[k:m, k]                       # 当前列从对角线开始的片段
     if ||x|| == 0: continue
-    alpha = -sign(x_1) * ||x||_2
+    sign_plus = 1 if x_1 >= 0 else -1     # 零首分量也必须取非零符号
+    alpha = -sign_plus * ||x||_2
     v = x - alpha * e_1
     v = v / ||v||_2                     # 规范化，避免溢出
     R[k:m, k:n] = R[k:m, k:n] - 2*v*(v' * R[k:m, k:n])   # 左乘 H_k
@@ -363,7 +364,7 @@ for k = 1, ..., n:
 
 第 $k$ 步把第 $k$ 列中第 $k+1,\dots,m$ 个元素全部化为零，同时不破坏已经产生的零。最终 $R$ 上三角，$Q$ 是 $m$ 阶正交阵（只保留前 $n$ 列，就得到「瘦」QR）。
 
-**复杂度：** 约 $2mn^2-\frac23n^3$ flops，与 Gram–Schmidt 同量级，**但正交性总是 $\sim u$**，与 $\mathrm{cond}(A)$ 无关。
+**复杂度：** 只形成 $R$ 的主要运算量约 $2mn^2-\frac23n^3$ flops；显式累积完整 $Q$ 另有开销，瘦 $Q$ 或隐式反射存储可节省资源。在无溢出等常规浮点假设下，Householder 的正交性误差通常为带维数因子的 $O(u)$，不像单次经典 Gram–Schmidt 那样直接受 $\kappa(A)$ 放大；不能把它写成任意规模下恰等于机器精度。
 :::
 
 ::: ex 例 2.3.4（新增） · 用 Householder 做一次 QR {#ex-sup-2.3.4}
@@ -448,7 +449,7 @@ $2\times2$ 已上三角：$R=\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}$，$Q=G^{
 | CGS | 一列（逐步投影） | $2mn^2$ | $\mathrm{cond}^2u$（**勿用于生产**） | 教学、理论推导 |
 | **MGS** | 一列（逐步投影） | $2mn^2$ | $\mathrm{cond}\,u$ | 需要显式 $Q$、条件数温和 |
 | **Householder** | **一整列**（$>1$ 个元素） | $2mn^2-\frac23n^3$ | $\boldsymbol{u}$（与 cond 无关） | **稠密矩阵的默认选择** |
-| **Givens** | **一个元素** | 约 $6mn^2$（3 倍） | $u$（与 cond 无关） | **稀疏 / 带状 / 局部修改 / 并行** |
+| **Givens** | **一个元素** | $3mn^2-n^3$（只求 $R$ 的主要项） | $u$（与 cond 无关） | **稀疏 / 带状 / 局部修改 / 并行** |
 
 **口诀：稠密用 Householder，稀疏用 Givens；MGS 在条件数温和且需要 $Q$ 的显式列时可用；CGS 只用于教学。** LAPACK 的 `geqrf`（Householder）是 NumPy `np.linalg.qr`、MATLAB `qr`、SciPy 的共同默认路径。
 :::
@@ -462,7 +463,7 @@ $2\times2$ 已上三角：$R=\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}$，$Q=G^{
 ## 2.3.6 用 QR 解最小二乘：为什么比正态方程好
 
 ::: intuition 直觉 · 把「平方」消掉
-正态方程 $A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$ 的毛病出在 $\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$（$A^{\mathrm T}A$ 的奇异值是 $A$ 的奇异值的**平方**，见 [2.6.3](sec26.md#sup-2.6.3)）：条件数一平方，有效数字就掉一半。
+正态方程 $A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$ 的毛病出在 $\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$（$A^{\mathrm T}A$ 的奇异值是 $A$ 的奇异值的**平方**，见 [2.6.3](sec26.md#sup-2.6.3)）：显式形成法方程可能额外放大舍入误差；并非可用的有效数字恰好减少一半。
 
 QR 的做法是代入 $A=QR$，利用正交不变性（[@thm-sup-2.1.6]）：
 
@@ -476,7 +477,7 @@ $$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert QR\boldsymbol{x}-\bolds
 
 $$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert R\boldsymbol{x}-\boldsymbol{c}\rVert_2^2+\lVert\boldsymbol{d}\rVert_2^2 .$$
 
-因此最小二乘解由**上三角方程组** $R\hat{\boldsymbol{x}}=\boldsymbol{c}$ 给出（回代，$O(n^2)$），最小残差范数为 $\lVert\boldsymbol{d}\rVert_2$。**误差量级：**
+因此最小二乘解由**上三角方程组** $R\hat{\boldsymbol{x}}=\boldsymbol{c}$ 给出（回代，$O(n^2)$），最小残差范数为 $\lVert\boldsymbol{d}\rVert_2$。**误差量级的适用范围：** 对相容或残差足够小、尺度适当的问题，常用以下量级比较两条路线：
 
 $$\text{正态方程：}\quad\frac{\lVert\hat{\boldsymbol{x}}-\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\sim\mathrm{cond}(A)^2\,u;\qquad
 \text{QR：}\quad\frac{\lVert\hat{\boldsymbol{x}}-\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\sim\mathrm{cond}(A)\,u .$$
@@ -488,7 +489,7 @@ $$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2=\lVert\bar Q^{\mathrm T}(A\bolds
 
 取平方即得。第二项与 $\boldsymbol{x}$ 无关，故只能令第一项为零；$R$ 非奇异（$A$ 列满秩）故解唯一，最小值 $\lVert\boldsymbol{d}\rVert_2^2$。
 
-**误差量级（要点）：** 正态方程显式形成并求解一个条件数为 $\mathrm{cond}(A)^2$ 的问题，任何后向稳定的解法（如 Cholesky）只能保证相对误差 $\sim\mathrm{cond}(A)^2u$；QR 路径中所有变换都是正交的（[@thm-sup-2.1.6]：不放大误差），误差只经过 $\mathrm{cond}(R)=\mathrm{cond}(A)$ 一次。严格的后向误差分析见 Higham《Accuracy and Stability of Numerical Algorithms》§20.3–20.5。
+**误差分析的条件：** 显式形成法方程会引入额外的舍入误差；QR 避开了这一步，并可给出关于原最小二乘数据的后向误差保证。但一般不相容最小二乘的解敏感性还取决于残差大小与 $\boldsymbol b$ 相对列空间的位置，对 $A$ 的扰动可能出现带 $\mathrm{cond}(A)^2$ 的项。因此不能把上面的量级比较当成所有右端下的统一前向误差定理。严格分析见 Higham《Accuracy and Stability of Numerical Algorithms》§20.3–20.5。
 :::
 
 :::
@@ -504,7 +505,7 @@ $$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2=\lVert\bar Q^{\mathrm T}(A\bolds
 
 **第二行是最重要的一格：** 条件数 $6\times10^{10}$ 时，正态方程解出的系数误差达到 $28$——相比真值 $1$ 毫无意义；QR 仍给出 $10^{-6}$ 量级。**理论预测：** 正态方程 $\mathrm{cond}^2u\approx(6.03\times10^{10})^2\times1.1\times10^{-16}\approx4\times10^{5}$（实测 $28$，误差被部分抵消但仍不可用）；QR 为 $\mathrm{cond}\cdot u\approx6\times10^{-6}$，实测 $2.2\times10^{-6}$ ✓。
 
-**结论：条件数超过约 $10^{8}\approx u^{-1/2}$ 时，必须放弃正态方程，改用 QR 或 SVD。** 这是「公式最简的写法未必是最稳定的算法」（[1.1.3](../ch01/sec11.md#sec-1.1.3)）在矩阵层面的重演。
+当 $\mathrm{cond}(A)^2u$ 接近或超过 1 时，通常不宜依赖显式法方程求高精度解，应优先评估 QR 或 SVD；具体可用性还要看数据、残差和所需容差。 这是「公式最简的写法未必是最稳定的算法」（[1.1.3](../ch01/sec11.md#sec-1.1.3)）在矩阵层面的重演。
 :::
 
 ::: ex 例 2.3.6（新增） · 用 QR 解一个最小二乘问题 {#ex-sup-2.3.6}
@@ -546,13 +547,13 @@ $$\hat{\boldsymbol{x}}=(1,1)^{\mathrm T}.$$
 | 消元向量 | $\boldsymbol{v}=\boldsymbol{x}+\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert_2\boldsymbol{e}_1$，$\alpha=-\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert_2$ |
 | Givens | $c=x_1/r$，$s=x_2/r$，$r=\texttt{hypot}(x_1,x_2)$；$\det G=+1$ |
 | 正交性损失 | CGS：$\mathrm{cond}^2u$；MGS：$\mathrm{cond}\,u$；Householder / Givens：$u$ |
-| 复杂度 | GS：$2mn^2$；Householder：$2mn^2-\frac23n^3$；Givens：约 $6mn^2$ |
+| 复杂度 | GS：$2mn^2$；Householder：$2mn^2-\frac23n^3$；Givens：$3mn^2-n^3$（只求 $R$） |
 | QR 最小二乘 | $R\hat{\boldsymbol{x}}=(Q^{\mathrm T}\boldsymbol{b})_{1:n}$；$\lVert\boldsymbol{r}\rVert_2=\lVert\boldsymbol{d}\rVert_2$ |
 
 :::
 
 ::: think[core] 常见错误清单 · 自查七条
-1. **把经典 Gram–Schmidt 当生产代码。** 条件数超过 $10^{8}$ 时，CGS 给出的 $Q$ **完全不正交**（见 2.3.3 的表格），后续所有基于 $Q$ 的结论同时失效。代码里请用 Householder（`np.linalg.qr`），至少也要用 MGS。
+1. **未经检查就依赖经典 Gram–Schmidt 的正交性。** 2.3.3 的实验显示病态输入可能造成严重损失；$\kappa^2u$ 是风险估计，不能替代实测 $\|Q^{\mathrm T}Q-I\|$。稠密 QR 可优先使用 Householder（`np.linalg.qr`），逐列构造可考虑 MGS 与重正交化。
 2. **MGS 写成 CGS。** 两者只差「内积用原始列还是当前列」，数学上等价，数值上差别巨大。写代码时必须**逐列就地更新**，不能先留一份原始备份再用备份算系数。
 3. **Householder 消元向量取错符号。** 若取 $\alpha=+\lVert\boldsymbol{x}\rVert$ 且 $x_1\gt0$，$\boldsymbol{v}$ 的首分量 $x_1-\lVert\boldsymbol{x}\rVert$ 是相近数相减，损失有效数字（[1.2.4](../ch01/sec12.md#sec-1.2.4)）。正确取 $\alpha=-\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert$，让首分量变成**相加**。
 4. **手写 $\sqrt{x_1^2+x_2^2}$ 算 Givens 的 $r$。** 会溢出 / 下溢；用 `hypot`。同理 $\lVert\boldsymbol{x}\rVert_2$ 用 `np.linalg.norm`，别手写 `sqrt(x@x)`。

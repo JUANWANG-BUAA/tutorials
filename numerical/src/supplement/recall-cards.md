@@ -113,17 +113,17 @@ $\hat{\boldsymbol x}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol b$，满足
 
 **B10.** 四种正交化方法（CGS / MGS / Householder / Givens）的正交性损失各是什么量级？怎么选？
 ::: sol
-CGS：$\mathrm{cond}^2u$（$\mathrm{cond}\gtrsim u^{-1/2}\approx10^8$ 后彻底失效，误差**饱和**在 $O(n)$——最坏情形）；MGS：$\mathrm{cond}\,u$；Householder 与 Givens：$u$（与 $\mathrm{cond}$ 无关）。选法：稠密用 Householder（LAPACK `geqrf`、NumPy 默认），稀疏 / 带状 / 局部修改用 Givens（一次只动两行），需要显式 $Q$ 且条件数温和时可用 MGS，CGS 只用于教学（[2.3.3](sec23.md#sup-2.3.3) 对比表、[@thm-sup-2.3.3]、[@thm-sup-2.3.4]）。（✓ / △ / ×）
+在相应满秩、小误差与浮点假设下，CGS 与 MGS 的典型正交性损失分别为 $O(\mathrm{cond}^2u)$、$O(\mathrm{cond}\,u)$；Householder 与 Givens 通常为带维数因子的 $O(u)$。这些是条件性估计，不能按一个固定条件数断言所有输入都失效。选法：稠密用 Householder（LAPACK `geqrf`、NumPy 默认），稀疏 / 带状 / 局部修改用 Givens（一次只动两行），需要显式 $Q$ 且条件数温和时可用 MGS，CGS 只用于教学（[2.3.3](sec23.md#sup-2.3.3) 对比表、[@thm-sup-2.3.3]、[@thm-sup-2.3.4]）。（✓ / △ / ×）
 :::
 
 **B11.** 用 QR 解最小二乘要解什么方程？为什么它比正态方程好，好在哪个量级？
 ::: sol
-把 $A$ 的全 QR 代入：$\lVert A\boldsymbol x-\boldsymbol b\rVert^2=\lVert R\boldsymbol x-\boldsymbol c\rVert^2+\lVert\boldsymbol d\rVert^2$（$\boldsymbol c$ 为 $Q^{\mathrm T}\boldsymbol b$ 前 $n$ 行），故解上三角方程 $R\hat{\boldsymbol x}=\boldsymbol c$（回代 $O(n^2)$），最小残差范数 $=\lVert\boldsymbol d\rVert_2$。**全程不形成 $A^{\mathrm T}A$**，误差量级从正态方程的 $\mathrm{cond}^2u$ 降到 $\mathrm{cond}\,u$——$\mathrm{cond}\gtrsim10^{8}$ 时必须弃用正态方程（[@thm-sup-2.3.5]、[2.3.6](sec23.md#sup-2.3.6)）。（✓ / △ / ×）
+把 $A$ 的全 QR 代入：$\lVert A\boldsymbol x-\boldsymbol b\rVert^2=\lVert R\boldsymbol x-\boldsymbol c\rVert^2+\lVert\boldsymbol d\rVert^2$（$\boldsymbol c$ 为 $Q^{\mathrm T}\boldsymbol b$ 前 $n$ 行），故解上三角方程 $R\hat{\boldsymbol x}=\boldsymbol c$（回代 $O(n^2)$），最小残差范数 $=\lVert\boldsymbol d\rVert_2$。**不形成 $A^{\mathrm T}A$**，避免显式法方程的额外误差。相容或小残差情形下，常比较 $\mathrm{cond}^2u$ 与 $\mathrm{cond}\,u$；一般不相容问题还要考虑残差相关的敏感性，不能承诺 QR 的前向误差总为后一个量级（[@thm-sup-2.3.5]、[2.3.6](sec23.md#sup-2.3.6)）。（✓ / △ / ×）
 :::
 
 **B12.** 条件数的五条基本性质 + 两条扰动界 + 「丢几位」的估计。
 ::: sol
-$\mathrm{cond}(A)\ge1$（算子范数下）；$\mathrm{cond}(A^{-1})=\mathrm{cond}(A)$；$\mathrm{cond}(cA)=\mathrm{cond}(A)$；$\mathrm{cond}_2(Q)=1$；$\mathrm{cond}(AB)\le\mathrm{cond}(A)\mathrm{cond}(B)$（一般不是等式）。右端扰动 $\dfrac{\lVert\delta\boldsymbol x\rVert}{\lVert\boldsymbol x\rVert}\le\mathrm{cond}\dfrac{\lVert\delta\boldsymbol b\rVert}{\lVert\boldsymbol b\rVert}$（紧界）；系数扰动 $\le\dfrac{\mathrm{cond}}{1-\mathrm{cond}\rho_A}(\rho_A+\rho_b)$，要求 $\mathrm{cond}\cdot\rho_A\lt1$。丢失位数 $k\approx\log_{10}\mathrm{cond}$；$\mathrm{cond}\gtrsim10^{16}=u^{-1}$ 时双精度形同奇异（[@thm-sup-2.4.1]–[@thm-sup-2.4.3]、[2.4.2](sec24.md#sup-2.4.2)）。（✓ / △ / ×）
+$\mathrm{cond}(A)\ge1$（算子范数下）；$\mathrm{cond}(A^{-1})=\mathrm{cond}(A)$；$\mathrm{cond}(cA)=\mathrm{cond}(A)$；$\mathrm{cond}_2(Q)=1$；$\mathrm{cond}(AB)\le\mathrm{cond}(A)\mathrm{cond}(B)$（一般不是等式）。右端扰动 $\dfrac{\lVert\delta\boldsymbol x\rVert}{\lVert\boldsymbol x\rVert}\le\mathrm{cond}\dfrac{\lVert\delta\boldsymbol b\rVert}{\lVert\boldsymbol b\rVert}$（紧界）；系数扰动 $\le\dfrac{\mathrm{cond}}{1-\mathrm{cond}\rho_A}(\rho_A+\rho_b)$，要求 $\mathrm{cond}\cdot\rho_A\lt1$。丢失位数 $k\approx\log_{10}\mathrm{cond}$；$\mathrm{cond}\,u$ 接近 1 时，最坏情形估计通常已不能保证可靠数字，但不表示每个具体右端都无法准确求解（[@thm-sup-2.4.1]–[@thm-sup-2.4.3]、[2.4.2](sec24.md#sup-2.4.2)）。（✓ / △ / ×）
 :::
 
 **B13.** 「残差小」为什么推不出「误差小」？正确的判据是什么？
@@ -193,7 +193,7 @@ CGS：$r_{ij}=\boldsymbol q_i^{\mathrm T}\boldsymbol a_j$（原始列）；MGS�
 
 **C6.** QR 解最小二乘的两式 + 四种方法的正交性损失与复杂度。
 ::: sol
-$R\hat{\boldsymbol x}=(Q^{\mathrm T}\boldsymbol b)_{1:n}$、$\lVert\boldsymbol r\rVert_2=\lVert\boldsymbol d\rVert_2$。损失：CGS $\mathrm{cond}^2u$、MGS $\mathrm{cond}\,u$、Householder $\approx u$、Givens $\approx u$；复杂度：GS $2mn^2$、Householder $2mn^2-\tfrac23n^3$、Givens 约 $6mn^2$（[@thm-sup-2.3.5]、[2.3.5](sec23.md#sup-2.3.5) 对比表）。（✓ / △ / ×）
+$R\hat{\boldsymbol x}=(Q^{\mathrm T}\boldsymbol b)_{1:n}$、$\lVert\boldsymbol r\rVert_2=\lVert\boldsymbol d\rVert_2$。损失：CGS $\mathrm{cond}^2u$、MGS $\mathrm{cond}\,u$、Householder $\approx u$、Givens $\approx u$；复杂度：GS $2mn^2$、Householder $2mn^2-\tfrac23n^3$、Givens $3mn^2-n^3$（后二者仅计形成 $R$ 的主要项）（[@thm-sup-2.3.5]、[2.3.5](sec23.md#sup-2.3.5) 对比表）。（✓ / △ / ×）
 :::
 
 **C7.** 条件数全量速记（定义 + 两界 + 位数 + 残差关系）。

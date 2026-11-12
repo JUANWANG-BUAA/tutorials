@@ -257,23 +257,13 @@ def page_id_set(rel: str, text: str) -> set[str]:
     return ids
 
 
-def built_ids():
-    """若已构建，读取产物里每页的真实 id——比近似 slug 可靠得多。"""
-    book = ROOT / "book"
-    if not book.is_dir():
-        return None
-    out = {}
-    for f in book.rglob("*.html"):
-        rel = str(f.relative_to(book)).replace(".html", ".md")
-        out[rel] = set(re.findall(r'id="([^"]+)"', f.read_text(encoding="utf-8")))
-    return out or None
-
-
 def check_links(pages, page_texts, id_map):
+    """只按当前源码检查；生成 HTML 的链接须在新构建后另行检查。
+
+    book/ 可能来自任意旧版本，不能让它覆盖刚收集的源码锚点。
+    否则删除锚点会被旧 HTML 掩盖，新增锚点又会被误报为缺失。
+    """
     all_rels = {rel for _, rel in pages}
-    built = built_ids()
-    if built:
-        id_map = built
     for rel, text in page_texts.items():
         rows = strip_fences(text)
         body = "\n".join(line for _, in_f, line, _ in rows if not in_f)

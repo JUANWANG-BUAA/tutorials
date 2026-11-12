@@ -10,9 +10,9 @@
 | <span id="ex-3-3">3</span> | 商序列收敛 | 证明 $\frac{v^{\mathrm T}A^ku_0}{v^{\mathrm T}A^{k-1}u_0}\to\lambda_1$ | ✅ 展开 $A^ku_0$，同除 $\lambda_1^{k-1}$，其余项含 $(\lambda_j/\lambda_1)^k\to0$。 |
 | <span id="ex-3-4">4</span> | 反幂法 | 第 2 题 (1) 的模最小特征值 | ✅ 每步解 $Au_k=y_{k-1}$，$\lambda_n\approx1/\beta_k$。 |
 | <span id="ex-3-5">5</span> | 反幂法精修 | 已知 $\lambda\approx9$ | ✅ 对 $A-9I$ 反幂法，$\lambda\approx9+1/\beta_k$。 |
-| <span id="ex-3-6">6</span> | 实特征值算法选择 | $-50\lt\lambda_1\lt\lambda_2\lt-10\le\lambda_3\le\cdots$ | ✅ 幂法求 $\lambda_n$；反幂法求 $\lambda_1$；位移反幂法（$p\approx-10$）求 $\lambda_2$。 |
+| <span id="ex-3-6">6</span> | 实特征值算法选择 | $-50\lt\lambda_1\lt\lambda_2\lt-10\le\lambda_3\le\cdots$ | ✅ 对 $A+50I$ 幂法求 $\lambda_n$、反幂法求 $\lambda_1$；求 $\lambda_2$ 前先消去第一特征方向或验证合适的位移，见[3.6](sec31.md)。 |
 | <span id="ex-3-7">7</span> | Jacobi 方法 | $A=\begin{pmatrix}1&1&0.5\\1&1&0.25\\0.5&0.25&2\end{pmatrix}$，$\varepsilon=10^{-5}$ | ✅ Jacobi 迭代得特征值 $2.536526,\ 1.480121,\ -0.016647$（和 $=4=$ 迹）；特征向量由累积旋转矩阵的列给出。 |
-| <span id="ex-3-8">8</span> | 分块三角矩阵 | 证明 $P,Q$ 的特征值可延拓 | ✅ 若 $Px=\lambda x$，则 $T(x,0)^{\mathrm T}=\lambda(x,0)^{\mathrm T}$；$Q$ 同理。 |
+| <span id="ex-3-8">8</span> | 分块三角矩阵 | 证明 $P,Q$ 的特征值可延拓 | ✅ 用 $\det(\lambda I-T)=\det(\lambda I-P)\det(\lambda I-Q)$ 证明谱的并集；右下块的向量一般不能直接补零。 |
 | <span id="ex-3-9">9</span> | Householder 映射 | $s=(-2,1,2)^{\mathrm T}$，$r=(4,3,0)^{\mathrm T}$ | ✅ $u=s-v=(-4.4,-0.8,2)^{\mathrm T}$，$v=(2.4,1.8,0)^{\mathrm T}$；$H=I-2uu^{\mathrm T}/(u^{\mathrm T}u)$。 |
 | <span id="ex-3-10">10</span> | Householder 化三对角 | $A=\begin{pmatrix}1&2&1&2\\2&1&2&-1\\1&2&0&3\\2&-1&3&1\end{pmatrix}$ | ✅ 两次 Householder 相似变换得三对角矩阵，见[例 3.3.2](sec33.md#ex-3.3.2)；次对角线为 $(-3,\ 2.759943,\ -1.016207)$。 |
 | <span id="ex-3-11">11</span> | Householder 化拟上三角 | $A=\begin{pmatrix}2&1&3&4\\1&-1&2&1\\-1&2&1&2\\1&0&-1&3\end{pmatrix}$ | ✅ 两次相似变换得拟上三角，见[例 3.3.3](sec33.md#ex-3.3.3)；第 1 列第 3、4 行与第 2 列第 4 行为零。 |
@@ -24,7 +24,7 @@
 
 作业名称「矩阵特征值与特征向量的计算」，发布在北航 SPOC《数值分析 I》课程 → 作业测试，附件 `数值分析单元自测题3.pdf`（原件本地归档于 `_sources/homework/`，该目录入库规则为忽略）。
 满分 10 分，接收班级 2026-2027-1-GA01011002-学院路 1 班；起止时间 2026-10-11 00:00 至 2026-10-18 00:00（已截止）。
-四道题都是「**先看谱、再选算法**」型：题 1、2 考移位与商的收敛对象，题 3 考拟上三角阵的谱（分块三角 = 分块对角化），题 4 考「幂法/反幂法/移位反幂法」三件套的分工。**本章的题目几乎不需要大量计算，考的是判断**。
+四道题都是「**先看谱、再选算法**」型：题 1、2 考移位与商的收敛对象，题 3 考拟上三角阵的谱（分块三角的谱等于对角块谱的并集），题 4 考「幂法/反幂法/移位反幂法」三件套的分工。**本章的题目几乎不需要大量计算，考的是判断**。
 
 :::
 
@@ -48,13 +48,13 @@ A. $\lambda_1$　　B. $\lambda_2$　　C. $\lambda_3$　　D. $\lambda_n$
 
 ::: sol 精讲 {#sol-hw-3-1}
 
-**答案：B（$\lambda_2$）。**
+**按题目默认的可逆性与初值条件，答案：B（$\lambda_2$）。** 原题没有排除 $\lambda_2=-6$，也没有明确初值的目标方向分量；若前者成立，所写逆不存在，若后者为零，则不能保证得到该方向。下面先给出标准解题思路，再指出边界。
 
 **第一步：看出这是「对 $A+6I$ 做反幂法」。** 迭代式 $\boldsymbol u_k=(A+6I)^{-1}\boldsymbol y_{k-1}$ 就是「解方程组 $(A+6I)\boldsymbol u_k=\boldsymbol y_{k-1}$ 再归一化」——即对矩阵
 
 $$M=(A+6I)^{-1}$$
 
-做**幂法**。所以 $\boldsymbol u_k$ 收敛到 $M$ 的**模最大**特征值对应的特征向量。
+做**幂法**。在移位矩阵可逆、初值含目标特征分量时，$\boldsymbol u_k$ 的方向趋向 $M$ 的**模最大**特征值对应方向；负特征值可引起符号交替。
 
 **第二步：把 $M$ 的特征值算出来。** $A$ 的特征值是 $\lambda_i$，则 $A+6I$ 的特征值是 $\lambda_i+6$，$M=(A+6I)^{-1}$ 的特征值是
 
@@ -78,9 +78,9 @@ $$\mu_i=\frac{1}{\lambda_i+6},\qquad i=1,\dots,n .$$
 本题 $\sigma=-6$，而 $-12\lt\lambda_2\lt0$ 是**唯一把 $-6$ 夹在内部的区间**（$\lambda_2$ 到 $-6$ 的距离 $<6$，其余特征值到 $-6$ 的距离都 $>6$）——所以答案是 $\lambda_2$。
 
 **三个易错点**：
-1. **符号**：$A+6I$ 对应移位 $\sigma=-6$（不是 $+6$）。写成 $\sigma=6$ 就会误选 C（$\lambda_3$ 离 6 最近）。
+1. **符号**：$A+6I$ 对应移位 $\sigma=-6$（不是 $+6$）。若误写成 $\sigma=6$，就改变了目标；题给区间甚至不足以断定哪个特征值离 $+6$ 最近。
 2. **模，不是大小**：反幂法比的是 $\lvert\lambda_i-\sigma\rvert$，不是 $\lambda_i-\sigma$。若只看代数大小会误判 $\lambda_1$（最负）。
-3. **互异实数**这个前提不能丢：若 $\lambda_i$ 有重根或复根，$M$ 的模最大特征值可能不唯一，$\boldsymbol u_k$ 不收敛到单个特征向量。
+3. **可执行性与初值**：须有 $\lambda_2\ne-6$、初值在 $\boldsymbol x_2$ 上的展开系数非零。互异实特征值保证可对角化，但不能代替这两项条件；原题的遗漏应明确补注。
 
 :::
 
@@ -125,7 +125,7 @@ $$\beta_k\longrightarrow\lambda_1\cdot\frac{c_1\boldsymbol v^{\mathrm T}\boldsym
 2. **为什么要 $c_1\neq0$**：否则分子分母的常数项同时为 0，$\beta_k$ 收敛到 $\lambda_2$（甚至更后面的特征值）；
 3. **为什么要 $\boldsymbol v^{\mathrm T}\boldsymbol x_1\neq0$**：$\boldsymbol v$ 是「探测方向」，若它与 $\boldsymbol x_1$ 正交，则 $\boldsymbol v^{\mathrm T}\boldsymbol u_k$ 里 $\lambda_1$ 的成分被消掉，商收敛到下一个特征值。
 
-**与正文的联系**：这就是[3.1.1 幂法](sec31.md#sec-3.1.1) 的「规范化技巧」的理论依据。实际计算不能直接用 $A^k\boldsymbol u_0$（会溢出），要对每步归一化；归一化只改变数乘因子、不改变方向，所以商仍收敛到 $\lambda_1$。教材习题 3 就是本题的原型。
+**与正文的联系**：这就是[3.1.1 幂法](sec31.md#sec-3.1.1) 的「规范化技巧」的理论依据。实际计算不能直接用 $A^k\boldsymbol u_0$（会溢出），要对每步归一化；归一化只改变方向的尺度，但若把商中的两个向量各自归一化，就必须补回尺度因子；不能直接对两个单位向量取商后仍断言极限是 $\lambda_1$。例如用单位向量 $y_{k-1}$，比值 $v^{\mathrm T}Ay_{k-1}/(v^{\mathrm T}y_{k-1})$ 才保留原商。教材习题 3 就是本题的原型。
 
 :::
 
@@ -175,7 +175,7 @@ $$\lambda^2-4\lambda+11=0\ \Longrightarrow\ \lambda=2\pm\mathrm i\sqrt{7}\quad(\
 
 $$\boxed{\ \lambda=\frac{9+\sqrt{13}}{2},\ \frac{9-\sqrt{13}}{2},\ 6,\ 2+\mathrm i\sqrt{7},\ 2-\mathrm i\sqrt{7}\ }$$
 
-即约 $6.3028,\ 2.6972,\ 6,\ 2\pm3.3166\mathrm i$。
+即约 $6.3028,\ 2.6972,\ 6,\ 2\pm2.6458\mathrm i$。
 
 **验算（必做，10 秒）**：特征值之和应等于迹
 
@@ -198,70 +198,54 @@ $$\frac{9+\sqrt{13}}{2}+\frac{9-\sqrt{13}}{2}+6+(2+\mathrm i\sqrt7)+(2-\mathrm i
 
 ::: sol 精讲 {#sol-hw-3-4}
 
-**先把「谁给谁」说清楚**（这是本题最容易写错的地方）：
+题设按**代数大小**排序，不能把最小值直接当成最小模。以下给出不要求特征值为正的两套方案。互异实特征值保证 $A$ 可对角化；每次幂迭代还须选取含目标方向分量的初值。
 
-- **幂法**（对 $A$ 直接迭代）给的是**模最大**的特征值 $\lambda_1$（需要 $\lvert\lambda_1\rvert\gt\lvert\lambda_n\rvert$）；
-- **反幂法**（对 $A^{-1}$ 迭代，等价于每步解 $A\boldsymbol u=\boldsymbol y$）给的是**模最小**的特征值 $\lambda_n$（需要 $\lvert\lambda_n\rvert\lt\lvert\lambda_i\rvert$，$i\neq n$）；
-- **移位反幂法**（对 $(A-\sigma I)^{-1}$ 迭代）给的是**离 $\sigma$ 最近**的特征值。
+### 方案一：平移后用幂法，再消去已求方向
 
-所以：求 $\lambda_n$ 用反幂法；求 $\lambda_{n-1}$ 用**以 $\lambda_n$ 为移位量**的反幂法。下面写出可直接编程的方案。
+先用 Gerschgorin 圆盘得到实谱的上下界
 
-### 方案一：求 $\lambda_n$（反幂法）
+$$\ell=\min_i\left(a_{ii}-\sum_{j\ne i}|a_{ij}|\right),\qquad
+u=\max_i\left(a_{ii}+\sum_{j\ne i}|a_{ij}|\right).$$
 
-前提：$\lvert\lambda_n\rvert$ 严格小于其余特征值的模（题目只给了大小顺序，实际做题时应加一句「若 $\lvert\lambda_n\rvert$ 不是最小模，改用移位」）。
+取 $c>u$，令 $B=cI-A$。其特征值满足
 
-1. 任取初值 $\boldsymbol u_0\neq\boldsymbol 0$；
-2. 对 $k=1,2,\dots$：
-   1. 归一化 $\boldsymbol y_{k-1}=\dfrac{\boldsymbol u_{k-1}}{\lVert\boldsymbol u_{k-1}\rVert_\infty}$；
-   2. **解方程组** $A\boldsymbol u_k=\boldsymbol y_{k-1}$（用 LU 分解，一次分解反复使用）；
-   3. 取商 $\beta_k=\bigl(\boldsymbol y_{k-1}\bigr)_{j}\big/\bigl(\boldsymbol u_k\bigr)_{j}$，其中 $j$ 是 $\lvert\boldsymbol u_k\rvert$ 最大的分量下标（用最大分量比避免小分母）；
-   4. 若 $\lvert\beta_k-\beta_{k-1}\rvert\lt\varepsilon$，停止；
-3. 输出 $\lambda_n\approx\dfrac{1}{\beta_k}$，特征向量 $\approx\boldsymbol y_k$。
+$$c-\lambda_n>c-\lambda_{n-1}>\cdots>c-\lambda_1>0.$$
 
-**为什么**：$A^{-1}$ 的特征值是 $1/\lambda_i$，模最大者是 $1/\lambda_n$（因为 $\lvert\lambda_n\rvert$ 最小），幂法给出它；商的倒数即 $\lambda_n$。
+因此对 $B$ 用幂法得到 $\theta_n=c-\lambda_n$ 与右特征向量 $v_n$，还原 $\lambda_n=c-\theta_n$。
 
-### 方案二：求 $\lambda_{n-1}$（以 $\lambda_n$ 为移位的反幂法）
+要继续求 $\lambda_{n-1}$，再对 $B^{\mathrm T}$ 求相应左特征向量 $w_n$，归一化使 $w_n^{\mathrm T}v_n=1$，定义谱投影 $P_n=v_nw_n^{\mathrm T}$。于是
 
-1. 用方案一先算出 $\lambda_n$ 的近似值 $\tilde\lambda_n$；
-2. 取移位量 $\sigma=\tilde\lambda_n$，构造 $A-\sigma I$ 并作 LU 分解（注意 $A-\sigma I$ 可能接近奇异，这正是我们要的）；
-3. 对 $k=1,2,\dots$：
-   1. 归一化 $\boldsymbol y_{k-1}=\dfrac{\boldsymbol u_{k-1}}{\lVert\boldsymbol u_{k-1}\rVert_\infty}$；
-   2. 解 $(A-\sigma I)\boldsymbol u_k=\boldsymbol y_{k-1}$；
-   3. 取商 $\beta_k=\bigl(\boldsymbol y_{k-1}\bigr)_j\big/\bigl(\boldsymbol u_k\bigr)_j$；
-4. 输出
+$$B_1=B-\theta_nP_n$$
 
-$$\lambda_{n-1}\approx\sigma+\frac{1}{\beta_k},\qquad\text{特征向量}\approx\boldsymbol y_k .$$
+把已求特征值变成零，其余特征值保持 $c-\lambda_i$。对 $B_1$ 用幂法得到 $\theta_{n-1}$，还原 $\lambda_{n-1}=c-\theta_{n-1}$。实际只需计算 $Bz-\theta_n v_n(w_n^{\mathrm T}z)$，无需形成稠密投影矩阵。非对称矩阵的左、右特征向量通常不同，不能擅自把 $w_n$ 换成 $v_n$。
 
-**为什么**：$A-\sigma I$ 的特征值是 $\lambda_i-\sigma$，其中 $\lvert\lambda_{n}-\sigma\rvert$ 最小（$\sigma$ 就在 $\lambda_n$ 旁边），故 $(A-\sigma I)^{-1}$ 的模最大特征值是 $\dfrac{1}{\lambda_n-\sigma}$，反幂法收敛到 $\boldsymbol x_n$ 方向——**等等，这样得到的是 $\lambda_n$ 而不是 $\lambda_{n-1}$！**
+### 方案二：在谱的左侧选位移，反幂法后消去已求方向
 
-### 修正：移位量必须偏向 $\lambda_{n-1}$
+取 $\sigma<\ell$，则 $A-\sigma I$ 可逆，且
 
-上面的写法是错的（很多答案就错在这里）。正确的取法是让 $\sigma$ **更靠近 $\lambda_{n-1}$ 而不是 $\lambda_n$**。两种可操作的做法：
+$$0<\lambda_n-\sigma<\lambda_{n-1}-\sigma<\cdots<\lambda_1-\sigma.$$
 
-**(a) 用两个已知近似做中点**：若已求得 $\lambda_n$ 的近似 $\tilde\lambda_n$，再取一个 $\lambda_{n-1}$ 的粗近似 $\tilde\lambda_{n-1}$（例如用幂法对 $A$ 求 $\lambda_1$ 后配合迹：$\sum\lambda_i=\operatorname{tr}A$，逐步回推），取
+对 $C=(A-\sigma I)^{-1}$ 用幂法，即每步先归一化、再解
 
-$$\sigma=\tfrac12\bigl(\tilde\lambda_{n-1}+\tilde\lambda_n\bigr),$$
+$$(A-\sigma I)u_k=y_{k-1}.$$
 
-则 $\lvert\lambda_{n-1}-\sigma\rvert\approx\lvert\lambda_n-\sigma\rvert$，仍不保险。
+若 $\|y_{k-1}\|_2=1$，取 $\mu_k=y_{k-1}^{\mathrm T}u_k$，则 $\mu_k\to1/(\lambda_n-\sigma)$，故
 
-**(b) 标准做法——把 $\lambda_n$ 先「移走」**：取 $\sigma=\tilde\lambda_n$ 对 $(A-\sigma I)^{-1}$ 迭代，收敛到 $\boldsymbol x_n$（这正是方案一，说明移位量落在哪个特征值上就收敛到哪个）。要拿 $\lambda_{n-1}$，必须让 $\sigma$ 落在 $\lambda_{n-1}$ 的**吸引域**内：
+$$\lambda_n\approx\sigma+\frac1{\mu_k}.$$
 
-$$\sigma\ \text{取在}\ \lambda_n\ \text{与}\ \lambda_{n-1}\ \text{之间、且更靠近}\ \lambda_{n-1},\ \text{例如}\ \sigma=\tilde\lambda_n+\delta,\quad 0\lt\delta\lt\tfrac12\lvert\tilde\lambda_{n-1}-\tilde\lambda_n\rvert .$$
+求次小值时，用同一个谱投影消去已求分量：
 
-此时 $\lvert\lambda_{n-1}-\sigma\rvert\lt\lvert\lambda_n-\sigma\rvert$ 且对其它 $i$ 也有 $\lvert\lambda_{n-1}-\sigma\rvert\lt\lvert\lambda_i-\sigma\rvert$，反幂法收敛到 $\boldsymbol x_{n-1}$，输出 $\lambda_{n-1}\approx\sigma+\dfrac{1}{\beta_k}$。
+$$C_1=C-\frac1{\lambda_n-\sigma}P_n.$$
 
-### 答题模板（考场上照这个写）
+每次作用 $C_1$ 时，先解一次 $(A-\sigma I)z=y$，再减去 $v_n(w_n^{\mathrm T}y)/(\lambda_n-\sigma)$。对该算子用幂法，主特征值变成 $1/(\lambda_{n-1}-\sigma)$，再按同样公式还原。转置求解可复用相应分解求左特征向量。
 
-> **(1) 求 $\lambda_n$：** 对 $A$ 作 LU 分解；取 $\boldsymbol u_0\neq\boldsymbol 0$，迭代 $\boldsymbol y_{k-1}=\boldsymbol u_{k-1}/\lVert\boldsymbol u_{k-1}\rVert_\infty$，解 $A\boldsymbol u_k=\boldsymbol y_{k-1}$，$\beta_k=(\boldsymbol y_{k-1})_j/(\boldsymbol u_k)_j$；则 $\lambda_n\approx1/\beta_k$，$\boldsymbol x_n\approx\boldsymbol y_k$。收敛速度由 $\lvert\lambda_n\rvert/\lvert\lambda_{n-1}\rvert$ 决定。
->
-> **(2) 求 $\lambda_{n-1}$：** 取移位量 $\sigma$ 使 $\lvert\lambda_{n-1}-\sigma\rvert\lt\lvert\lambda_i-\sigma\rvert\ (i\neq n-1)$（实用取法：$\sigma$ 落在 $\lambda_n$ 与 $\lambda_{n-1}$ 之间且偏向 $\lambda_{n-1}$）；对 $(A-\sigma I)$ 作 LU 分解，迭代解 $(A-\sigma I)\boldsymbol u_k=\boldsymbol y_{k-1}$，$\beta_k=(\boldsymbol y_{k-1})_j/(\boldsymbol u_k)_j$；则 $\lambda_{n-1}\approx\sigma+1/\beta_k$。
+### 一个可手算的验收例
 
-**评分要点**：
-1. 说清「幂法给模最大、反幂法给模最小」这一对偶关系；
-2. 反幂法**每步解方程组**（不是乘逆矩阵）——这是它与幂法的唯一实现差别，也是 $O(n^3)$ 与 $O(n^2)$ 的分水岭；
-3. 求 $\lambda_{n-1}$ **必须用移位**，且要说清移位量偏向谁；
-4. 收敛速度：反幂法的比值是 $\left\lvert\dfrac{\lambda_n}{\lambda_{n-1}}\right\rvert$，两个特征值越接近收敛越慢——这正是「已知近似值时反幂法极快」的原因（移位后比值可任意小）。
+取 $A=\operatorname{diag}(-4,1,3)$。方案一选 $c=5$，$B=\operatorname{diag}(9,4,2)$，先得到 $\lambda_n=5-9=-4$；消去第一方向后 $B_1=\operatorname{diag}(0,4,2)$，得到 $\lambda_{n-1}=5-4=1$。
 
+方案二选 $\sigma=-5$，$C=\operatorname{diag}(1,1/6,1/8)$，先得到 $-5+1/1=-4$；消去第一方向后得到 $1/6$，还原为 $-5+6=1$。
+
+**三条实现边界**：① 反幂法每步解方程，不显式求逆；② 移位若恰等于已求特征值，矩阵奇异，且邻近它的位移仍优先吸引原特征值，不会自动给出“下一个”；③ 数值消去使用近似特征对，会有误差污染，应检查原方程残差，必要时用子空间迭代或稳定的降阶方法。给出严格最近条件的目标位移也是可行方案，但仅凭本题排序不能凭空假设已经知道次小特征值的位置。
 :::
 
 ::: note 作业组与正文的对应 {#hw-3-cover}
@@ -288,6 +272,23 @@ $$\sigma\ \text{取在}\ \lambda_n\ \text{与}\ \lambda_{n-1}\ \text{之间、�
 
 **一条铁律**：作业 3-1 与作业 3-4 连着做。前者是「给定移位量，判断收敛到谁」，后者是「给定目标，设计移位量」——**正着会做、反着不会做，是本章最典型的失分模式**。
 
+:::
+
+## 编者补充训练 · 保留并订正的新增题
+
+以下练习由旧改稿的三对角矩阵题订正而来，**不属于 SPOC 原始作业**。
+
+::: ex 编者练习 3.E1 · 三对角矩阵的特征方向与合法位移 {#editor-eigen-shift}
+设 $T=\begin{pmatrix}2&-1&0\\-1&2&-1\\0&-1&2\end{pmatrix}$。
+
+1. 写出按模最大的特征值与单位特征向量，解释为什么全正向量不能作为它的答案。
+2. 用位移反幂法求中间特征值：能否取 $\sigma=2$？改成 $\sigma=2.1$ 后，初值 $(1,1,1)^{\mathrm T}$ 与 $(1,0,0)^{\mathrm T}$ 哪个可用？
+
+::: sol 解答
+特征值为 $2-\sqrt2,2,2+\sqrt2$。最大特征值的单位向量可取 $\boldsymbol v_+=(1/2,-\sqrt2/2,1/2)^{\mathrm T}$；全正的 $(1/2,\sqrt2/2,1/2)^{\mathrm T}$ 属于最小特征值。
+
+$T-2I$ 奇异，不能执行该位移下的线性求解。取 $\sigma=2.1$ 时可逆，且 2 是离位移最近的特征值。对应中间特征向量 $\boldsymbol v_0=(1,0,-1)^{\mathrm T}/\sqrt2$。初值 $(1,1,1)^{\mathrm T}$ 与它正交，精确算术下始终缺失目标分量；$(1,0,0)^{\mathrm T}$ 的目标分量非零，可用于反幂法。每步解 $(T-2.1I)\boldsymbol u_k=\boldsymbol y_{k-1}$ 后归一化，并检查 $\|T\boldsymbol y_k-\lambda_k\boldsymbol y_k\|$。
+:::
 :::
 
 ::: note 覆盖核对

@@ -1,6 +1,6 @@
 # 附录 C · 跨学科联系与应用拓展
 
-第一章造了尺子（误差、范数、条件数），补充篇造了工具箱（正交、投影、QR、谱、SVD）。本附录回答一个正向的问题：**这套工具在别的学科里以什么形态出现？**每一节都给一个小推导或一张映射表，而不是口号；正文出处全部链接。阅读本附录不需要先学过那些学科——把每一节当成「同一个数学结构的另一份说明书」即可。
+第一章讨论误差、范数和条件数，补充篇进一步介绍正交、投影、QR、谱与 SVD。本附录从统计、优化、信号和控制等问题出发，说明这些工具怎样使用。各节保留简短推导和正文链接；遇到陌生背景时，先看变量的定义与数学假设。
 
 <a id="app-c-1"></a>
 
@@ -22,19 +22,21 @@ $$\operatorname{Var}(\hat{\boldsymbol{x}})=\sigma^2(A^{\mathrm T}A)^{-1}A^{\math
 
 $$\operatorname{Var}(\tilde{\boldsymbol{x}})=\sigma^2CC^{\mathrm T}=\sigma^2\bigl[C_0C_0^{\mathrm T}+DD^{\mathrm T}\bigr]=\sigma^2(A^{\mathrm T}A)^{-1}+\sigma^2DD^{\mathrm T}\ \succeq\ \operatorname{Var}(\hat{\boldsymbol{x}}),$$
 
-其中 $\succeq$ 指差 $DD^{\mathrm T}$ 半正定。∎
+其中 $\succeq$ 表示两个协方差矩阵之差半正定。∎
 
-**数值侧面。**$(A^{\mathrm T}A)^{-1}$ 的对角元是各系数方差的放大器：$\operatorname{cond}(A)$ 大 ⟹ 回归系数又不准又不稳。统计上的「多重共线性」**就是**数值分析上的病态——列空间里有两根几乎平行的轴（[例 2.4.1](../supplement/sec24.md#ex-sup-2.4.1) 的几何读法）。
+**数值侧面。**各系数的方差由 $\sigma^2(A^{\mathrm T}A)^{-1}$ 的对角元给出。小奇异值对应的方向会放大观测噪声；条件数只衡量相对敏感性，单凭它不能确定方差的绝对大小。多重共线性是若干列之间近似线性相关，不限于某两列几乎平行；列尺度悬殊也可能使未缩放矩阵的条件数变大（见[例 2.4.1](../supplement/sec24.md#ex-sup-2.4.1)）。
 
 ### C.1.2 广义最小二乘：换内积 = 换噪声模型（对应 [定理 2.2.7](../supplement/sec22.md#thm-sup-2.2.7)）
 
-噪声不均匀或相关时 $\operatorname{Var}(\boldsymbol{\varepsilon})=\sigma^2\Omega$（$\Omega$ 对称正定）。高斯对数似然 $\log p(\boldsymbol{y}\mid\boldsymbol{x})=-\frac{1}{2\sigma^2}(\boldsymbol{y}-A\boldsymbol{x})^{\mathrm T}\Omega^{-1}(\boldsymbol{y}-A\boldsymbol{x})+\text{const}$，最大化它 ⟺ 最小化 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_{\Omega^{-1}}^2$——**正是加权最小二乘**（权矩阵 $W=\Omega^{-1}$）。取 Cholesky 分解 $\Omega^{-1}=L^{\mathrm T}L$，则问题化为对 $(LA,\ L\boldsymbol{b})$ 的普通最小二乘：噪声被「漂白」，[2.2.5](../supplement/sec22.md#sup-2.2.5) 的全部结论原样适用。**「换内积」在统计里读作「按测量精度加权」**——本教程正文那句「换内积 ⟹ 换几何」的第一次兑现。
+若 $\operatorname{Var}(\boldsymbol{\varepsilon})=\sigma^2\Omega$，其中 $\Omega$ 对称正定，可最小化 $\lVert A\boldsymbol{x}-\boldsymbol{y}\rVert_{\Omega^{-1}}^2$，得到广义最小二乘估计。若再假设噪声服从高斯分布，其对数似然为
+$$\log p(\boldsymbol{y}\mid\boldsymbol{x})=-\frac{1}{2\sigma^2}(\boldsymbol{y}-A\boldsymbol{x})^{\mathrm T}\Omega^{-1}(\boldsymbol{y}-A\boldsymbol{x})+\text{const},$$
+故它也是最大似然估计。取 Cholesky 分解 $\Omega^{-1}=L^{\mathrm T}L$，问题化为对 $(LA,L\boldsymbol{y})$ 的普通最小二乘，变换后的噪声协方差为 $\sigma^2I$，称为白化。协方差的逆决定权矩阵；有相关噪声时，权矩阵一般不是对角阵。这里的高斯假设用于似然解释，白化和线性无偏估计的方差比较本身不要求高斯分布。
 
 ### C.1.3 岭回归 = SVD 滤波（推导）
 
-病态问题的标准疗法：最小化 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2+\lambda\lVert\boldsymbol{x}\rVert_2^2$，解满足 $(A^{\mathrm T}A+\lambda I)\hat{\boldsymbol{x}}_\lambda=A^{\mathrm T}\boldsymbol{b}$。代入 $A=U\Sigma V^{\mathrm T}$（$A^{\mathrm T}A=V\Sigma^2V^{\mathrm T}$，$A^{\mathrm T}\boldsymbol{b}=V\Sigma U^{\mathrm T}\boldsymbol{b}$）：
+取 $\lambda>0$，考虑带惩罚项的最小二乘：最小化 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2+\lambda\lVert\boldsymbol{x}\rVert_2^2$，解满足 $(A^{\mathrm T}A+\lambda I)\hat{\boldsymbol{x}}_\lambda=A^{\mathrm T}\boldsymbol{b}$。代入秩为 $r$ 的薄 SVD，$A=U_r\Sigma_rV_r^{\mathrm T}$，其中 $\Sigma_r\in\mathbb R^{r\times r}$：
 
-$$\hat{\boldsymbol{x}}_\lambda=V(\Sigma^2+\lambda I)^{-1}\Sigma U^{\mathrm T}\boldsymbol{b}=\sum_{i=1}^{r}\underbrace{\frac{\sigma_i^2}{\sigma_i^2+\lambda}}_{=:f_i}\cdot\frac{\boldsymbol{u}_i^{\mathrm T}\boldsymbol{b}}{\sigma_i}\,\boldsymbol{v}_i .$$
+$$\hat{\boldsymbol{x}}_\lambda=V_r(\Sigma_r^2+\lambda I_r)^{-1}\Sigma_r U_r^{\mathrm T}\boldsymbol{b}=\sum_{i=1}^{r}\underbrace{\frac{\sigma_i^2}{\sigma_i^2+\lambda}}_{=:f_i}\cdot\frac{\boldsymbol{u}_i^{\mathrm T}\boldsymbol{b}}{\sigma_i}\,\boldsymbol{v}_i .$$
 
 **读法：岭回归对每个 SVD 分量乘上滤波因子 $f_i\in(0,1)$**——大奇异值方向（$f_i\approx1$）原样保留，小奇异值方向（$\sigma_i^2\ll\lambda$，$f_i\approx\sigma_i^2/\lambda$）被压制。对比：
 
@@ -62,23 +64,23 @@ $$\hat{\boldsymbol{x}}_\lambda=V(\Sigma^2+\lambda I)^{-1}\Sigma U^{\mathrm T}\bo
 $$|1-\alpha\lambda_i|\in\Bigl[0,\ 1-\frac{\lambda_{\min}}{\lambda_{\max}}\Bigr]=\Bigl[0,\ 1-\frac1\kappa\Bigr]\qquad\Longrightarrow\qquad
 \lVert\boldsymbol{e}_k\rVert\le\Bigl(1-\frac1\kappa\Bigr)^k\lVert\boldsymbol{e}_0\rVert .$$
 
-三种攻击 $\kappa$ 的迭代法并排：
+对同一个对称正定二次问题，下面统一比较 $A$-范数下的误差上界。记 $\kappa=\mathrm{cond}_2(A)$、$E_k=\|\boldsymbol e_k\|_A$；上面的定步长估计在该范数下同样成立。
 
-| 方法 | 每步压缩因子（$A$-范数或谱意义） | 出处 |
+| 方法 | 第 $k$ 步误差上界 | 出处 |
 |:--|:--|:--|
-| 梯度下降，定步长 $\alpha=1/\lambda_{\max}$ | $1-\dfrac1\kappa$ | 本节 |
-| 最速下降 / 梯度下降，最优步长 | $\Bigl(\dfrac{\kappa-1}{\kappa+1}\Bigr)^2$ | [附录 A.2.8](derivations.md#app-a-2-8)（Kantorovich） |
-| 共轭梯度（CG） | $\Bigl(\dfrac{\sqrt\kappa-1}{\sqrt\kappa+1}\Bigr)$（注意是 $\sqrt\kappa$ 与一次幂） | [附录 C.6.1](#app-c-6-1) |
+| 梯度下降，定步长 $\alpha=1/\lambda_{\max}$ | $E_k\le(1-1/\kappa)^kE_0$ | 本节 |
+| 最速下降，每步精确线搜索 | $E_k\le\bigl((\kappa-1)/(\kappa+1)\bigr)^kE_0$ | [附录 A.2.8](derivations.md#app-a-2-8)（平方范数界开方） |
+| 共轭梯度（CG） | $E_k\le2\bigl((\sqrt\kappa-1)/(\sqrt\kappa+1)\bigr)^kE_0$ | [附录 C.6.1](#app-c-6-1) |
 
-$\kappa=10^4$ 时三个因子分别为 $0.9999$、$0.9996$、$0.96$——同一问题，快慢差三个数量级。深度学习的损失曲面**高度病态**（各方向曲率悬殊），动量法、Adam、二阶法统统是在压 $\kappa$（C.2.3）；「为什么我的模型训练得慢」的第一嫌疑人常常不是学习率，而是**曲率条件数**。
+$\kappa=10^4$ 时，三个几何底数分别约为 $0.9999$、$0.9998$、$0.9802$。第二行若比较平方误差，才会出现 $0.9996$；CG 的全局上界另有系数 2，不能将其底数当作每一步的精确压缩比。这些界说明条件数如何影响这类二次问题的收敛保证，实际速度还受初值和特征值分布影响。推广到非凸训练时，不能据此断言动量、Adam 或二阶法必然降低同一个条件数。
 
 ### C.2.2 低秩的世界：从 Eckart–Young 到 LoRA 与推荐系统
 
-「用低维结构近似高维对象」是当代机器学习的通用范式，其数学内核全部指向 [定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4)：
+低秩模型用较少的自由参数表示矩阵。下面三类应用都与低秩结构有关，但 [定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4) 只保证给定矩阵的最佳低秩逼近，不能直接保证各类训练任务的效果：
 
 - **推荐系统 / 矩阵补全**：评分矩阵 $R$（用户×物品）假设近似低秩（口味由少数隐因子决定），于是「补全缺失评分」=「在已知元素约束下找低秩矩阵」——Eckart–Young 保证若观测完整，最优低秩就是截断 SVD；观测残缺时问题非凸，Netflix Prize 时代的经典做法仍以 SVD / 矩阵分解为骨架。
-- **LoRA（大模型低秩适配）**：微调大模型时更新 $\Delta W=BA$（秩 $r\ll n$），参数量从 $n^2$ 降到 $r(m+n)$。其有效性依赖经验事实：**预训练权重的「改动量」本身近似低秩**——若改动恰为低秩，截断 SVD 就是最优压缩（[定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4)），LoRA 用随机优化去搜一个「接近最优低秩」的因子。
-- **语言与图像的谱衰减**：自然图像、词-文档矩阵、注意力矩阵的奇异值普遍快速衰减（平滑/相关性 ⟹ 低秩），这是「少数主成分抓住大部分信息」（[2.6.6](../supplement/sec26.md#sup-2.6.6) 能量表）在各数据模态上的重演。
+- **LoRA（大模型低秩适配）**：对 $m\times n$ 权重矩阵，令更新 $\Delta W=BA$、秩至多为 $r$，可训练参数由 $mn$ 个减为 $r(m+n)$ 个。若已知一个理想更新，截断 SVD 可求它在指定范数下的最佳低秩逼近；实际训练并不知道该更新，任务损失的优化也不是这一逼近定理。
+- **语言与图像的谱衰减**：若具体数据矩阵的奇异值衰减较快，少数分量就能保留较大比例的平方能量（[2.6.6](../supplement/sec26.md#sup-2.6.6)）。是否足以完成下游任务，需要检查数据和任务误差，不能只由矩阵所属的数据类型判断。
 
 ### C.2.3 预条件：Adam、牛顿法与「换度量」
 
@@ -87,10 +89,10 @@ $\kappa=10^4$ 时三个因子分别为 $0.9999$、$0.9996$、$0.96$——同一�
 | 场景 | $P$ 的取法 | 效果 |
 |:--|:--|:--|
 | 迭代法（[第 2 章](../course/ch02/overview.md)） | 不完全 Cholesky / 块对角 | Krylov 迭代步数骤减 |
-| 牛顿法 | 局部 Hessian 逆 $H^{-1}$ | 二次收敛；曲率被精确「拉圆」 |
+| 牛顿法 | 局部 Hessian $H$，实际作用为 $H^{-1}$ | 在相应光滑性和非奇异条件下局部至少二阶；非凸时还需处理不定 Hessian |
 | Adam 优化器 | 梯度二阶矩的对角阵 $\operatorname{diag}(\sqrt{v})$ | 每维自适应步长 ≈ 对角预条件 |
 
-「换 $P$」在几何上等价于「换内积/范数」（加权最小二乘 [定理 2.2.7](../supplement/sec22.md#thm-sup-2.2.7) 的机制），在优化上等价于「把病态的椭球等距看成球」。Adam 并不保证 $\kappa$ 下降（它是启发式），但成功的直觉来自这里——**度量改好，收敛变快**。
+当 $P$ 对称正定时，可用它定义加权内积；合适的预条件有助于改善谱分布和迭代速度。Adam 的按分量缩放可作类似解释，但不保证条件数下降。一般非对称或不定的 $P$ 不能直接当作内积矩阵。
 
 <a id="app-c-3"></a>
 
@@ -110,7 +112,7 @@ $$(F^{\mathrm H}F)_{jk}=\frac1N\sum_{n=0}^{N-1}\omega^{n(j-k)}=\frac1N\begin{cas
 
 $$\mathrm{SNR}=\frac{(\boldsymbol{h}^{\mathrm T}\boldsymbol{s})^2}{\operatorname{Var}(\boldsymbol{h}^{\mathrm T}\boldsymbol{n})}=\frac{(\boldsymbol{h}^{\mathrm T}\boldsymbol{s})^2}{\boldsymbol{h}^{\mathrm T}R\boldsymbol{h}}$$
 
-最大。令 $\tilde{\boldsymbol{h}}=R^{1/2}\boldsymbol{h}$、$\tilde{\boldsymbol{s}}=R^{-1/2}\boldsymbol{s}$，SNR $=\dfrac{(\tilde{\boldsymbol{h}}^{\mathrm T}\tilde{\boldsymbol{s}})^2}{\lVert\tilde{\boldsymbol{h}}\rVert^2}$，由 Cauchy–Schwarz（[引理 1.3.1](../ch01/sec13.md#sec-1.3.1)）$\le\lVert\tilde{\boldsymbol{s}}\rVert^2$，取等 $\tilde{\boldsymbol{h}}\propto\tilde{\boldsymbol{s}}$，即
+最大。以下假设 $R$ 对称正定。令 $\tilde{\boldsymbol{h}}=R^{1/2}\boldsymbol{h}$、$\tilde{\boldsymbol{s}}=R^{-1/2}\boldsymbol{s}$，SNR $=\dfrac{(\tilde{\boldsymbol{h}}^{\mathrm T}\tilde{\boldsymbol{s}})^2}{\lVert\tilde{\boldsymbol{h}}\rVert^2}$，由 Cauchy–Schwarz（[引理 1.3.1](../ch01/sec13.md#sec-1.3.1)）$\le\lVert\tilde{\boldsymbol{s}}\rVert^2$，取等 $\tilde{\boldsymbol{h}}\propto\tilde{\boldsymbol{s}}$，即
 
 $$\boxed{\ \boldsymbol{h}\ \propto\ R^{-1}\boldsymbol{s}\ },\qquad\max\mathrm{SNR}=\boldsymbol{s}^{\mathrm T}R^{-1}\boldsymbol{s} .$$
 
@@ -149,7 +151,7 @@ JPEG（DCT）、小波、SVD 压缩（[2.6.6](../supplement/sec26.md#sup-2.6.6)�
 
 ### C.4.2 结构振动：广义特征值问题的对称化（推导）
 
-无阻尼结构的自由振动 $M\ddot{\boldsymbol{u}}+K\boldsymbol{u}=\boldsymbol{0}$（$M$ 质量阵、$K$ 刚度阵，均对称正定/半正定）化为**广义特征值问题** $K\boldsymbol{\varphi}=\omega^2M\boldsymbol{\varphi}$：固有频率 $\omega_i=\sqrt{\lambda_i}$，振型 $\boldsymbol{\varphi}_i$。处理它的标准手法正是加权内积（[例 2.1.1](../supplement/sec21.md#ex-sup-2.1.1) / [定理 2.2.7](../supplement/sec22.md#thm-sup-2.2.7)）：Cholesky 分解 $M=LL^{\mathrm T}$，令 $\boldsymbol{\psi}=L^{\mathrm T}\boldsymbol{\varphi}$：
+无阻尼结构的自由振动 $M\ddot{\boldsymbol{u}}+K\boldsymbol{u}=\boldsymbol{0}$（$M$ 为质量阵、$K$ 为刚度阵，$M$ 对称正定、$K$ 对称半正定）化为**广义特征值问题** $K\boldsymbol{\varphi}=\omega^2M\boldsymbol{\varphi}$：固有频率 $\omega_i=\sqrt{\lambda_i}$，振型 $\boldsymbol{\varphi}_i$。处理它的标准手法正是加权内积（[例 2.1.1](../supplement/sec21.md#ex-sup-2.1.1) / [定理 2.2.7](../supplement/sec22.md#thm-sup-2.2.7)）：Cholesky 分解 $M=LL^{\mathrm T}$，令 $\boldsymbol{\psi}=L^{\mathrm T}\boldsymbol{\varphi}$：
 
 $$K L^{-\mathrm T}\boldsymbol{\psi}=\omega^2LL^{\mathrm T}\boldsymbol{\varphi}=\omega^2L\boldsymbol{\psi}\qquad\Longrightarrow\qquad
 \underbrace{L^{-1}KL^{-\mathrm T}}_{=:K',\ \text{对称}}\ \boldsymbol{\psi}=\omega^2\boldsymbol{\psi}.$$
@@ -168,7 +170,7 @@ $$K L^{-\mathrm T}\boldsymbol{\psi}=\omega^2LL^{\mathrm T}\boldsymbol{\varphi}=\
 
 ### C.4.4 电路仿真（SPICE）：一切归结为「解方程有多准」
 
-SPICE 的三类分析在数值上分别是：直流分析 = 牛顿法，**每步解一个线性方程组**（节点导纳矩阵，大型稀疏）；交流小信号 = 频率扫描下的复线性方程组；瞬态分析 = 隐式积分（[路线图第 7 章](../ch01/sec11.md#roadmap)），每个时间步解一个（非线性 → 牛顿 → 线性）方程组。芯片设计一天跑百万次仿真，每次的解是否可信，取决于：线性求解器的稳定性（列主元，[路线图第 2 章](../ch01/sec11.md#roadmap)）、导纳矩阵的条件数（电源/地节点电导悬殊 → 行均衡化，[2.4.5](../supplement/sec24.md#sup-2.4.5)）、停机判据的范数选择（[1.3.6](../ch01/sec13.md#sec-1.3.6)）。**「数值分析是 EDA 的地基」不是修辞，是供应链。**
+SPICE 的三类分析在数值上分别是：直流分析 = 牛顿法，**每步解一个线性方程组**（节点导纳矩阵，大型稀疏）；交流小信号 = 频率扫描下的复线性方程组；瞬态分析 = 隐式积分（[路线图第 7 章](../ch01/sec11.md#roadmap)），每个时间步解一个（非线性 → 牛顿 → 线性）方程组。这些求解结果是否可信，需要检查：线性求解器的稳定性（列主元，[路线图第 2 章](../ch01/sec11.md#roadmap)）、导纳矩阵的条件数（电源/地节点电导悬殊 → 行均衡化，[2.4.5](../supplement/sec24.md#sup-2.4.5)）、停机判据的范数选择（[1.3.6](../ch01/sec13.md#sec-1.3.6)）。这些检查分别控制离散模型、线性求解和迭代停止造成的误差。
 
 <a id="app-c-5"></a>
 
@@ -180,16 +182,16 @@ SPICE 的三类分析在数值上分别是：直流分析 = 牛顿法，**每步
 
 $$G=\alpha S+(1-\alpha)\,\frac{\boldsymbol{e}\boldsymbol{e}^{\mathrm T}}{n}\qquad(\alpha\approx0.85,\ \boldsymbol{e}=(1,\dots,1)^{\mathrm T})$$
 
-的最大特征向量（特征值 $1$；$G$ 列随机 ⟹ $1$ 是特征值，Perron–Frobenius 保证对应正向量唯一）。**收敛速度由第二特征值决定，而它被 $\alpha$ 钉死**：设 $G\boldsymbol{y}=\lambda\boldsymbol{y}$，$\lambda\neq1$。由 $G^{\mathrm T}\boldsymbol{e}=\boldsymbol{e}$（列随机），$\boldsymbol{e}^{\mathrm T}\boldsymbol{y}=\tfrac1\lambda\boldsymbol{e}^{\mathrm T}G\boldsymbol{y}=\tfrac1\lambda\boldsymbol{e}^{\mathrm T}\boldsymbol{y}$，故 $\boldsymbol{e}^{\mathrm T}\boldsymbol{y}=0$。于是传送项失效：
+的特征值 1 对应的正特征向量，并归一化为分量和为 1。这里 $0<\alpha<1$ 且传送分布为正，故该归一化向量唯一。为估计其他特征值，设 $G\boldsymbol{y}=\lambda\boldsymbol{y}$、$\lambda\ne1$。由 $\boldsymbol e^{\mathrm T}G=\boldsymbol e^{\mathrm T}$ 得 $(\lambda-1)\boldsymbol e^{\mathrm T}\boldsymbol y=0$，所以 $\boldsymbol e^{\mathrm T}\boldsymbol y=0$；这一步也适用于 $\lambda=0$，无须除以 $\lambda$。于是传送项消失：
 
 $$G\boldsymbol{y}=\alpha S\boldsymbol{y}+\underbrace{(1-\alpha)\tfrac{\boldsymbol{e}}{n}\,(\boldsymbol{e}^{\mathrm T}\boldsymbol{y})}_{=\boldsymbol{0}}=\alpha S\boldsymbol{y}\qquad\Longrightarrow\qquad
 \lvert\lambda\rvert\,\lVert\boldsymbol{y}\rVert_1=\lVert G\boldsymbol{y}\rVert_1\le\alpha\lVert S\boldsymbol{y}\rVert_1\le\alpha\lVert\boldsymbol{y}\rVert_1,$$
 
-（$S$ 列随机 ⟹ $1$-范数不增）即 $\lvert\lambda_2\rvert\le\alpha$。**幂法（[2.5.3](../supplement/sec25.md#sup-2.5.3)）的收敛因子 $\le0.85$，与网络规模无关**——这是 Google 当年能「一遍一遍乘到收敛」的原因，也是「传送概率 $\alpha$」在数学上的真实作用：它买的不是公平，是**谱隙**。
+因为 $S$ 非负且列和为 1，$\|S\|_1=1$，故其他特征值均满足 $|\lambda|\le\alpha$。对分量和相同的两个概率向量，其差的传送项也消失，直接得到 $\|G\boldsymbol r-G\boldsymbol s\|_1\le\alpha\|\boldsymbol r-\boldsymbol s\|_1$。这给出[幂法](../supplement/sec25.md#sup-2.5.3)的收缩界；$\alpha$ 是沿链接移动的概率，传送概率为 $1-\alpha$。
 
 ### C.5.2 潜在语义分析（LSA）与矩阵分解家族
 
-词-文档矩阵 $X$（行=词，列=文档，元素=词频）：$X\approx X_k$（截断 SVD）把「词 × 文档」压缩成「$k$ 个概念 × 文档」——$\boldsymbol{v}_i$ 是概念在文档上的分布，$\boldsymbol{u}_i$ 是概念用哪些词表达。截断甩掉的部分恰是同义词共现的噪声与偶然搭配，于是「car」与「automobile」自动靠近：**Eckart–Young 的「最优低秩」在信息检索里读作「最优概念抽象」**。词嵌入（GloVe 本质是对共现矩阵做低秩分解）、推荐系统（C.2.2）、LoRA（C.2.2）是同一母题在三个年代的变奏。
+词-文档矩阵 $X$ 的行对应词，列对应文档。截断 SVD 用 $k$ 个分量近似 $X$；左右奇异向量分别给出词和文档在这些分量上的坐标。Eckart–Young 定理保证这一近似在谱范数和 Frobenius 范数下最优，但不保证每个分量都是可解释的「概念」，也不保证被丢弃的成分全是噪声。语义检索效果仍须用具体任务评估。它与推荐系统、低秩适配（C.2.2）共享矩阵分解工具，各自的观测模型和优化目标则不同。
 
 <a id="app-c-6"></a>
 
@@ -199,7 +201,7 @@ $$G\boldsymbol{y}=\alpha S\boldsymbol{y}+\underbrace{(1-\alpha)\tfrac{\boldsymbo
 
 ### C.6.1 Krylov 子空间一瞥：投影 + 正交化 + 条件数开方
 
-大规模稀疏方程组 $A\boldsymbol{x}=\boldsymbol{b}$（$n\sim10^7$，$O(n^3)$ 直接法不可行）的现代解法不是迭代逼近（[第 2 章](../course/ch02/overview.md)的经典格式），而是**投影**：在 Krylov 子空间
+对大规模稀疏方程组，Krylov 方法通过投影构造迭代近似，与[第 2 章](../course/ch02/overview.md)的定常迭代采用不同的搜索空间。先取初值为零，则在 Krylov 子空间
 
 $$\mathcal{K}_k(A,\boldsymbol{b})=\operatorname{span}\{\boldsymbol{b},\ A\boldsymbol{b},\ A^2\boldsymbol{b},\ \dots,\ A^{k-1}\boldsymbol{b}\}$$
 
@@ -207,12 +209,12 @@ $$\mathcal{K}_k(A,\boldsymbol{b})=\operatorname{span}\{\boldsymbol{b},\ A\boldsy
 
 - **Arnoldi 过程** = 对 Krylov 序列做 Gram–Schmidt（[2.3.1](../supplement/sec23.md#sup-2.3.1)）——正交化不是备考技巧，是大规模计算的承重墙；
 - **GMRES/CG** = 残差/误差到子空间的（斜）投影（[定理 2.2.3](../supplement/sec22.md#thm-sup-2.2.3) 的双侧推广）；
-- **收敛率**（$A$ 对称正定时）：$\lVert\boldsymbol{e}_k\rVert_A\le2\Bigl(\dfrac{\sqrt\kappa-1}{\sqrt\kappa+1}\Bigr)^k\lVert\boldsymbol{e}_0\rVert_A$——**条件数开了平方**，与梯度下降的 $\bigl(\frac{\kappa-1}{\kappa+1}\bigr)^k$（C.2.1）并排读：同样的 $k$ 步预算，CG 对付得了 $\kappa=10^6$，梯度下降对付不了 $\kappa=10^3$。直觉：CG 的第 $k$ 步在 $k$ 维子空间里**最优**（近似解一个 $k\times k$ 小特征值问题，最优多项式 ≈ Chebyshev 多项式），而梯度下降每步只看局部斜率。
+- **收敛率**（$A$ 对称正定、精确算术时）：$\lVert\boldsymbol{e}_k\rVert_A\le2\Bigl(\dfrac{\sqrt\kappa-1}{\sqrt\kappa+1}\Bigr)^k\lVert\boldsymbol{e}_0\rVert_A$。与 C.2.1 的最速下降界相比，这个上界依赖 $\sqrt\kappa$。CG 在当前仿射 Krylov 空间中最小化 $A$-范数误差，证明用多项式逼近估计这一最小值；算法不需要每步求解一个小特征值问题，也不能仅由条件数断言某次任务能否完成。
 
 ### C.6.2 预条件：把「好解的矩阵」藏在背后
 
-CG 的 $\sqrt\kappa$ 还不够时，解 $P^{-1}A\boldsymbol{x}=P^{-1}\boldsymbol{b}$：取 $P\approx A$ 而易于求解（不完全 Cholesky、块对角、多重网格），$\mathrm{cond}(P^{-1}A)\ll\mathrm{cond}(A)$。这就是 C.2.3 那张表的算法库版本——**「换度量」是贯穿统计（加权最小二乘）、优化（Adam/牛顿）、数值代数（预条件）三个领域的同一招式**：问题没变，看问题的坐标系变了，条件数就变了。
+对称正定问题可选对称正定的预条件矩阵 $P$，使每步容易求解 $P\boldsymbol z=\boldsymbol r$。预条件 CG 等价于在对称系统 $P^{-1/2}AP^{-1/2}$ 上使用 CG，其收敛界中的条件数是 $\mathrm{cond}_2(P^{-1/2}AP^{-1/2})$。$P^{-1}A$ 与该矩阵相似，但一般不对称，不能直接把它的谱条件比与欧氏范数条件数混用。好的预条件能改善谱分布；是否减少总计算量，还要比较预条件的构造、每步求解成本和实际迭代数。
 
 ::: note 怎么用本附录
-每节的推导都只需要本课程第一章 + 补充篇的内容：内积与投影（2.1–2.2）、正交化（2.3）、条件数（1.2.6、2.4）、谱（2.5）、SVD（2.6）。写课程报告或综述时，建议的结构是「先复述正文工具，再给本附录的对应推导，最后回到自己领域的一句话总结」——数学结构是桥，走过去时别忘了桥墩在哪。
+各节使用的线性代数工具主要来自第一章和补充篇，应用背景及噪声模型另在本节说明：内积与投影（2.1–2.2）、正交化（2.3）、条件数（1.2.6、2.4）、谱（2.5）、SVD（2.6）。写课程报告或综述时，建议的结构是「先复述正文工具，再给本附录的对应推导，最后回到自己领域的一句话总结」——数学结构是桥，走过去时别忘了桥墩在哪。
 :::

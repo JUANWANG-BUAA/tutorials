@@ -22,7 +22,7 @@ $$\text{输入端扰动}\ \delta\boldsymbol{b}\quad\longrightarrow\quad\text{输
 :::
 
 ::: def 定义 2.4.1 · 条件数 {#def-sup-2.4.1}
-设 $A\in\mathbb{R}^{n\times n}$ 非奇异，$\lVert\cdot\rVert$ 是某种矩阵范数。称
+设 $A\in\mathbb{R}^{n\times n}$ 非奇异。本节的扰动界与紧性讨论统一使用同一向量范数及其诱导矩阵范数。称
 
 $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
@@ -32,12 +32,12 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 ::: thm 定理 2.4.1（新增） · 条件数的基本性质 {#thm-sup-2.4.1}
 设 $A,B\in\mathbb{R}^{n\times n}$ 非奇异，则
 
-1. $\mathrm{cond}(A)\ge1$（$1=\lVert I\rVert=\lVert AA^{-1}\rVert\le\lVert A\rVert\lVert A^{-1}\rVert$，此步要求 $\lVert I\rVert=1$，如算子范数；F-范数下只能得 $\mathrm{cond}_F\ge\sqrt n$）。等号可以取到：$\mathrm{cond}_2$ 下取等 $\iff$ 所有奇异值相等 $\iff$ $A=c\cdot$（正交阵）（$c\neq0$）——标量阵只是其中最简单的例子；
+1. $\mathrm{cond}(A)\ge1$（$1=\lVert I\rVert=\lVert AA^{-1}\rVert\le\lVert A\rVert\lVert A^{-1}\rVert$，使用本节的诱导范数约定；若另外定义 F-范数乘积，则由奇异值的 Cauchy–Schwarz 不等式得到 $\lVert A\rVert_F\lVert A^{-1}\rVert_F\ge n$，不能把它当作同一向量范数下的最优扰动放大率）。等号可以取到：$\mathrm{cond}_2$ 下取等 $\iff$ 所有奇异值相等 $\iff$ $A=c\cdot$（正交阵）（$c\neq0$）——标量阵只是其中最简单的例子；
 2. $\mathrm{cond}(A^{-1})=\mathrm{cond}(A)$；
 3. $\mathrm{cond}(cA)=\mathrm{cond}(A)$（$c\neq0$）——**条件数与整体尺度无关**；
 4. $\mathrm{cond}_2(A)=\dfrac{\sigma_{\max}(A)}{\sigma_{\min}(A)}$（$=\sqrt{\lambda_{\max}(A^{\mathrm T}A)/\lambda_{\min}(A^{\mathrm T}A)}$）；
 5. 对正交矩阵 $Q$：$\mathrm{cond}_2(Q)=1$；
-6. 对任意 $\boldsymbol{x}\neq\boldsymbol{0}$：$\dfrac{1}{\mathrm{cond}(A)}\le\dfrac{\lVert A\boldsymbol{x}\rVert}{\lVert A\rVert\lVert\boldsymbol{x}\rVert}\le1$，且 $\dfrac{\lVert\boldsymbol{x}\rVert}{\lVert A\rVert\lVert A^{-1}\boldsymbol{x}\rVert}\le\dfrac{\lVert A^{-1}\boldsymbol{x}\rVert}{\lVert A^{-1}\rVert\lVert\boldsymbol{x}\rVert}\le1$——放大与缩小因子都被 $\mathrm{cond}$ 夹住；
+6. 对任意 $\boldsymbol{x}\neq\boldsymbol{0}$：$\dfrac{1}{\mathrm{cond}(A)}\le\dfrac{\lVert A\boldsymbol{x}\rVert}{\lVert A\rVert\lVert\boldsymbol{x}\rVert}\le1$，且 $\dfrac1{\mathrm{cond}(A)}\le\dfrac{\lVert A^{-1}\boldsymbol{x}\rVert}{\lVert A^{-1}\rVert\lVert\boldsymbol{x}\rVert}\le1$——放大与缩小因子都被 $\mathrm{cond}$ 夹住；
 7. **不可乘性：** $\mathrm{cond}(AB)\le\mathrm{cond}(A)\mathrm{cond}(B)$，但**不是等式**。
 
 ::: proof 证明
@@ -47,7 +47,7 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
 **5：** 由 [@thm-sup-2.1.5] 第 10 条，正交阵奇异值全为 $1$。
 
-**7：** $(AB)^{-1}=B^{-1}A^{-1}$，故 $\mathrm{cond}(AB)=\lVert AB\rVert\lVert B^{-1}A^{-1}\rVert\le\lVert A\rVert\lVert B\rVert\lVert B^{-1}\rVert\lVert A^{-1}\rVert=\mathrm{cond}(A)\mathrm{cond}(B)$。取 $A=\operatorname{diag}(1,10)$、$B=\operatorname{diag}(10,1)$ 时 $\mathrm{cond}_2(A)=\mathrm{cond}_2(B)=10$、$AB=I$、$\mathrm{cond}_2(AB)=1\lt100$，故一般不是等式。
+**7：** $(AB)^{-1}=B^{-1}A^{-1}$，故 $\mathrm{cond}(AB)=\lVert AB\rVert\lVert B^{-1}A^{-1}\rVert\le\lVert A\rVert\lVert B\rVert\lVert B^{-1}\rVert\lVert A^{-1}\rVert=\mathrm{cond}(A)\mathrm{cond}(B)$。取 $A=\operatorname{diag}(1,10)$、$B=\operatorname{diag}(10,1)$ 时 $\mathrm{cond}_2(A)=\mathrm{cond}_2(B)=10$、$AB=10I$、$\mathrm{cond}_2(AB)=1\lt100$，故一般不是等式。
 
 **性质 4 是工程上最常用的识别手段：$\mathrm{cond}_2$ 就是「最大奇异值 / 最小奇异值」**，因此第 2.6 节用 SVD 算条件数是标准做法（`np.linalg.cond(A, 2)` 内部就用 SVD）。
 :::
@@ -63,7 +63,7 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
 **$B$。** $\det B=8-4=4$，$B^{-1}=\frac14\begin{pmatrix}4&-2\\-2&2\end{pmatrix}=\begin{pmatrix}1&-0.5\\-0.5&0.5\end{pmatrix}$。行和：$B$ 为 $4,6$，故 $\lVert B\rVert_\infty=6$；$B^{-1}$ 为 $1.5,1.0$，故 $\lVert B^{-1}\rVert_\infty=1.5$。$\mathrm{cond}_\infty(B)=9$。谱条件数（NumPy）：$\mathrm{cond}_2(B)\approx6.85$（奇异值 $5.236/0.764$）。
 
-**为什么差这么多？** 条件数**不是**在量「矩阵元素有多大」，而是在量**行（列）向量之间的接近程度**。$B$ 的两列 $(2,2)^{\mathrm T}$ 与 $(2,4)^{\mathrm T}$ 夹角约 $18^{\circ}$，比 $A$ 的两列（相互正交）更「接近平行」，于是 $B$ 更接近奇异——**条件数度量的是「离奇异有多远」**。这一点在 [2.6.5](sec26.md#sup-2.6.5) 用最小奇异值讲会更清楚：$\mathrm{cond}_2(A)=1/(\text{相对距离})$。
+这个例子中，列向量接近线性相关使条件数增大；一般情形还受各方向尺度的影响，不能只用两列之间的夹角定义条件数。$B$ 的两列 $(2,2)^{\mathrm T}$ 与 $(2,4)^{\mathrm T}$ 夹角约 $18^{\circ}$，比 $A$ 的两列（相互正交）更「接近平行」，于是 $B$ 更接近奇异——**条件数度量的是「离奇异有多远」**。这一点在 [2.6.5](sec26.md#sup-2.6.5) 用最小奇异值讲会更清楚：$\mathrm{cond}_2(A)=1/(\text{相对距离})$。
 
 **（2）** 取 $c=-3$、$A=B$：$cA$ 的行和是原来 $3$ 倍，$(cA)^{-1}$ 的行和是原来 $1/3$ 倍，乘积不变，故 $\mathrm{cond}_\infty(cA)=\mathrm{cond}_\infty(B)=9$ ✓。**条件数对整体缩放免疫**——把方程组每行都乘以 $10^{6}$ 不会改变病态程度。
 :::
@@ -88,7 +88,7 @@ $$\mathrm{cond}(A)=\lVert A\rVert\,\lVert A^{-1}\rVert \tag{2.17}$$
 
 $$\frac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\cdot\frac{\lVert\delta\boldsymbol{b}\rVert}{\lVert\boldsymbol{b}\rVert} . \tag{2.18}$$
 
-**而且这个界是紧的：** 对每个矩阵 $A$，都能找到右端扰动使上述比值任意接近 $\mathrm{cond}(A)$（在具体某对向量上未必取等，但这个界本身不能再改进）。
+**这个界对可独立选择的右端与扰动是紧的**：在有限维诱导范数下，可同时选择 $x$ 和 $\delta b$ 使两步不等式取等；对已经固定的某个 $b$，实际最坏放大率可能更小。
 
 ::: proof 证明
 两式相减：$A\,\delta\boldsymbol{x}=\delta\boldsymbol{b}$，故 $\delta\boldsymbol{x}=A^{-1}\delta\boldsymbol{b}$，取范数并用相容性：
@@ -99,7 +99,9 @@ $$\lVert\delta\boldsymbol{x}\rVert\le\lVert A^{-1}\rVert\lVert\delta\boldsymbol{
 
 **紧性：** 关键在于 $\boldsymbol{x}$ 与 $\delta\boldsymbol{b}$ 可以独立选取。把 $\boldsymbol{x}$ 取成使 $\lVert A\boldsymbol{x}\rVert/\lVert\boldsymbol{x}\rVert=\lVert A\rVert$ 的向量、把 $\delta\boldsymbol{b}$ 取成使 $\lVert A^{-1}\delta\boldsymbol{b}\rVert/\lVert\delta\boldsymbol{b}\rVert=\lVert A^{-1}\rVert$ 的向量，两条链就各自取到等号。
 
-但这两个方向一般不重合，所以**界在具体某对向量上未必达到**。不过总能构造出使比值趋于 $\mathrm{cond}$ 的实例（例如 $A$ 对称时，$\boldsymbol{x}$ 取最小特征值方向、$\delta\boldsymbol{b}$ 取最大特征值方向）。因此（2.18）是**最优的一般界**，没法再改进；具体问题的实际放大倍数则可能小于它。
+这两个方向不必重合，因为 $x$ 和 $\delta b$ 可以独立选取，且 $b=Ax$。例如实对称正定矩阵可取 $x$ 沿最大特征值方向、$\delta b$ 沿最小特征值方向，两条不等式同时取等。若把这两个方向反过来，通常得不到最坏放大。
+
+**第 6 条性质的证明。** 由 $x=A^{-1}Ax$ 得 $\|x\|\le\|A^{-1}\|\|Ax\|$，再除以 $\|A\|\|x\|$ 即得下界。把 $A$ 换成 $A^{-1}$ 就得到另一组上下界；不能把两个不同向量上的放大率随意排成一条大小链。
 :::
 
 :::
@@ -150,10 +152,10 @@ n=12 cond=1.719e+16 log10(cond)= 16.2 实测最大误差=2.2e-01 cond*u=1.9e+00
 **读这张表，看三件事：**
 
 1. **实测误差与 $\mathrm{cond}\cdot u$ 同量级**（$n=6$ 时 $2.3\times10^{-10}$ 对 $1.7\times10^{-9}$；$n=10$ 时 $7.4\times10^{-4}$ 对 $1.8\times10^{-3}$；$n=12$ 时 $0.22$ 对 $1.9$）——**条件数确实能预测精度**。要注意实测值通常**比界小几倍**，因为（2.19）给的是最坏情形估计；$n=4$ 那一行（$5.0\times10^{-14}$ 对 $1.7\times10^{-12}$）界尤其保守，说明条件数小的时候实际误差远小于界。
-2. **$n=12$ 时解已完全失效**（误差 $0.22$，而真值全是 $1$）：$\mathrm{cond}\cdot u=1.9\gt1$，相对误差可以超过 $100\%$。**用双精度解 12 阶 Hilbert 系统，在这个意义上是没有意义的**——尽管 `np.linalg.solve` 返回了一堆看起来很正常的数。
-3. **Hilbert 矩阵的条件数大致按 $10^{1.5n}$ 增长**：每增加一阶，就多丢约 $1.5$ 位。$n=14$ 时 $\mathrm{cond}\approx4\times10^{17}\gt1/u$，双精度彻底失效。
+2. **这次 $n=12$ 计算已有明显误差**（最大分量误差约 $0.22$，真值全为 $1$）。$\mathrm{cond}\cdot u>1$ 表明通常的精度估计已不能提供有效保证，不表示每个右端、每种算法都必然得到超过 $100\%$ 的误差。
+3. **Hilbert 矩阵的条件数大致按 $10^{1.5n}$ 增长**：每增加一阶，就多丢约 $1.5$ 位。$n=14$ 时 $\mathrm{cond}\approx4\times10^{17}\gt1/u$，双精度下常规误差保证可能失效，应检查残差、尺度、输入表示误差并考虑更高精度。
 
-**验收标准：** 你机器上算出的 $\mathrm{cond}$ 应与上表一致（相对差别在 $10^{-3}$ 量级内），误差随 BLAS 实现略有不同但同量级；把 `np.linalg.solve` 换成手写 Cholesky，误差量级不变——**因为病态是问题的属性，不是算法的**（[1.2.6](../ch01/sec12.md#sec-1.2.6) 的核心区分）。
+**验收标准：** 记录维数、浮点类型、库版本、条件数估计、尺度化残差和已知解误差。高度病态时不同平台的 SVD 条件数估计及解误差都可能明显不同，不能要求固定相对差 $10^{-3}$。换算法不会消除问题的敏感性，但会改变后向误差；必要时用高精度基准区分两者。
 :::
 
 :::
@@ -204,7 +206,7 @@ $$\delta\boldsymbol{x}=-(I+A^{-1}\delta A)^{-1}A^{-1}\delta A\,\boldsymbol{x},\q
 
 两边除以 $\lVert\boldsymbol{x}\rVert$、把 $\varepsilon$ 展开即得（2.21）。同时扰动时把 $\delta\boldsymbol{b}$ 的贡献加上（与右端扰动同法）即得（2.22）。
 
-**这里有两点值得注意。** ① 上面用到了第一章的定理 1.3.6（Neumann 界），**这是它在第二章的第一次实战**：课堂上老师用反证法证过这条定理，还演示了 $\lVert A\rVert_1=0.7<1$ 判 $I+A$ 可逆的数值例（见[第 3 讲精编](../lectures/lec03.md)）；本节反复使用的「∞-范数 = 行和」也出自那一讲。② 条件（2.20）并非可有可无的技术性假设——它恰好刻画了「$\delta A$ 还没把 $A$ 推过奇异点」这件事。
+**这里有两点值得注意。** ① 上面用到了第一章的定理 1.3.6（Neumann 界），**这是它在第二章的第一次实战**：课堂上老师用反证法证过这条定理，还演示了 $\lVert A\rVert_1=0.7<1$ 判 $I+A$ 可逆的数值例（见[第 3 讲精编](../lectures/lec03.md)）；本节反复使用的「∞-范数 = 行和」也出自那一讲。② 条件（2.20）并非可有可无的技术性假设——它是保证扰动后可逆和该误差界有效的充分条件；不满足时仅说明此界无法保证，不能推出某个具体扰动已经导致奇异。
 :::
 
 :::
@@ -221,7 +223,7 @@ $A^{-1}=\dfrac{1}{4.0001-4}\begin{pmatrix}4.0001&-2\\-2&1\end{pmatrix}=10^{4}\be
 
 $$\text{界的分母 }1-\varepsilon=1-6.0=-5.0\lt0\ \longrightarrow\ \text{负数！}$$
 
-**这说明什么？** 分母变负不是推导出了差错，而是定理在**报警**：$\varepsilon\gt1$ 说明 $\delta A$ 的量级已经足够把 $A$ 推过奇异点（$\mathrm{cond}\cdot\rho_A\ge1$ 正是「$A+\delta A$ 可能奇异」的定量刻画）。而此时扰动方程组确实失控了：精确解为 $x_2=\dfrac{10^{-4}}{10^{-4}+t}=\dfrac12$、$x_1=3-2x_2=2$，相对误差达 $100\%$。教训：**系数扰动的界只在 $\mathrm{cond}\cdot\rho_A\ll1$ 时可用，一旦越过 $1$，就完全是另一回事。**
+**这说明什么？** 分母变负不是推导出了差错，而是定理在**报警**：当 $\varepsilon\ge1$ 时，该充分条件失效；实际是否奇异还取决于扰动方向。本例 $t>0$ 时 $\det(A+\delta A)=10^{-4}+t>0$，并没有经过奇异点。而此时扰动方程组确实失控了：精确解为 $x_2=\dfrac{10^{-4}}{10^{-4}+t}=\dfrac12$、$x_1=3-2x_2=2$，相对误差达 $100\%$。教训：**本界的适用前提是 $\mathrm{cond}\cdot\rho_A<1$；接近 1 时界会变得很大，超过 1 时不能继续代入。**
 
 **改用更小的扰动。** 取 $t=10^{-6}$ 重算：$\rho_A\approx1.67\times10^{-7}$，$\varepsilon=\mathrm{cond}\cdot\rho_A\approx0.060\lt1$（条件满足），
 
@@ -229,7 +231,7 @@ $$\text{界}=\frac{3.6\times10^{5}}{1-0.060}\times1.67\times10^{-7}\approx0.064 
 
 **实测：** 消元得 $(10^{-4}+t)x_2=10^{-4}$，即 $x_2=\dfrac{10^{-4}}{10^{-4}+t}\approx0.9901$、$x_1=3-2x_2\approx1.0198$，相对误差 $\approx2\%$。**界 $0.064$ 只比实测大 $3$ 倍**，对「只扰动一个元素」这种良性扰动已经相当紧；当然界仍是**最坏情形**（最坏扰动方向能让 $\lVert A^{-1}\delta A\rVert$ 达到 $\mathrm{cond}\cdot\rho_A$，本例远没有达到）。**界的方向和量级都对。**
 
-**真正的结论：** 两个尺度必须拼起来看。$\varepsilon=\mathrm{cond}\cdot\rho_A\lt1$ 时，界可用且方向正确（本例实测只是它的若干分之一）；$\varepsilon\gt1$ 时定理失效，解可以完全失控（$t=10^{-4}$ 那段就是）。当 $\rho_A=u\approx10^{-16}$、$\mathrm{cond}=10^{5}$ 时，$\mathrm{cond}\cdot u\approx10^{-11}$，即**最多丢 11 位**。这与（2.19）完全一致。
+**真正的结论：** 两个尺度必须拼起来看。$\varepsilon=\mathrm{cond}\cdot\rho_A\lt1$ 时，界可用且方向正确（本例实测只是它的若干分之一）；$\varepsilon\gt1$ 时定理失效，解可以完全失控（$t=10^{-4}$ 那段就是）。当 $\rho_A=u\approx10^{-16}$、$\mathrm{cond}=10^{5}$ 时，$\mathrm{cond}\cdot u\approx10^{-11}$，即相应最坏量级约为 $10^{-11}$，粗略保留约 11 位有效数字、损失约 5 位。这与（2.19）完全一致。
 :::
 
 :::
@@ -244,28 +246,30 @@ $$\text{界}=\frac{3.6\times10^{5}}{1-0.060}\times1.67\times10^{-7}\approx0.064 
 - $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$ 是**可以算的**（$\boldsymbol{b}$ 和 $\hat{\boldsymbol{x}}$ 都在手上）。它衡量 $\hat{\boldsymbol{x}}$ 把方程解得有多好。
 - $\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$ 一般**算不出来**（真解 $\boldsymbol{x}$ 并不知道）。它衡量 $\hat{\boldsymbol{x}}$ 离真值有多远。
 
-**残差小 ⟹ 误差大**是完全可能的：病态矩阵能把「很小的残差」放大成「很大的误差」。许多工程事故就栽在把这两个量混为一谈——**求解器报告残差 $\sim10^{-15}$，用户以为解准到 15 位，实际上第 3 位就是错的。**
+**残差小而误差大**是完全可能的：病态矩阵能把「很小的残差」放大成「很大的误差」。许多工程事故就栽在把这两个量混为一谈——**求解器报告残差 $\sim10^{-15}$，用户以为解准到 15 位，实际上第 3 位就是错的。**
 :::
 
 ::: thm 定理 2.4.4（新增） · 残差与误差的定量关系 {#thm-sup-2.4.4}
 设 $\hat{\boldsymbol{x}}$ 是 $A\boldsymbol{x}=\boldsymbol{b}$ 的近似解，$\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$，$\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$。则
 
-$$\boldsymbol{e}=A^{-1}\boldsymbol{r},\qquad\text{故}\qquad
+$$\boldsymbol{e}=-A^{-1}\boldsymbol{r},\qquad\text{故}\qquad
 \lVert\boldsymbol{e}\rVert\le\lVert A^{-1}\rVert\lVert\boldsymbol{r}\rVert,\qquad
 \frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\cdot\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert} . \tag{2.23}$$
 
-**配套的「向下界」（它说明上界不是空的，而且误差反过来也控制着残差）：**
+**反向估计。** 取同一向量范数及其从属矩阵范数，且 $\boldsymbol b\ne0$。由 $\boldsymbol r=-A\boldsymbol e$ 与 $\|\boldsymbol b\|\ge\|\boldsymbol x\|/\|A^{-1}\|$，得到
 
-$$\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\ \le\ \mathrm{cond}(A)\cdot\frac{\lVert\boldsymbol{e}\rVert/\lVert\hat{\boldsymbol{x}}\rVert}{1-\lVert\boldsymbol{e}\rVert/\lVert\hat{\boldsymbol{x}}\rVert}$$
+$$\frac1{\mathrm{cond}(A)}\frac{\|\boldsymbol r\|}{\|\boldsymbol b\|}
+\le\frac{\|\boldsymbol e\|}{\|\boldsymbol x\|}
+\le\mathrm{cond}(A)\frac{\|\boldsymbol r\|}{\|\boldsymbol b\|}.$$
 
-（右端分母里用的是近似解而不是真解，只要 $\lVert\hat{\boldsymbol{x}}\rVert\gt\lVert\boldsymbol{x}\rVert/2$，这个量就是**可以算出来的**；此式说明误差大时残差必大——与 (2.23) 合起来，同一件事被 $\mathrm{cond}$ 从上下两头夹住。）一句话：**残差小推不出误差小，但残差小再加上条件数小，就能推出误差小。**
+如果改用 $\alpha=\|\boldsymbol e\|/\|\hat{\boldsymbol x}\|$，则在 **$\alpha<1$** 时还可写成 $\|\boldsymbol r\|/\|\boldsymbol b\|\le\mathrm{cond}(A)\alpha/(1-\alpha)$。这仍含未知真解的误差，不能直接作为可计算的停机量，也不能解释为“误差大时残差必大”。病态问题允许小残差与大误差同时出现。
 
 ::: proof 证明
 由 $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}=A\boldsymbol{x}-A\hat{\boldsymbol{x}}=-A\boldsymbol{e}$ 得 $\boldsymbol{e}=-A^{-1}\boldsymbol{r}$，取范数并用相容性得第一式。再用 $\lVert\boldsymbol{b}\rVert\le\lVert A\rVert\lVert\boldsymbol{x}\rVert$ 得 $\dfrac{1}{\lVert\boldsymbol{x}\rVert}\le\dfrac{\lVert A\rVert}{\lVert\boldsymbol{b}\rVert}$，相乘即得（2.23）。
 
-**向下界的证明**留作[习题 B5](exercises.md) 的补充（提示：$\boldsymbol{b}=\boldsymbol{r}+A\hat{\boldsymbol{x}}-A\boldsymbol{e}$ 与 $\lVert\hat{\boldsymbol{x}}\rVert\le\lVert\boldsymbol{x}\rVert+\lVert\boldsymbol{e}\rVert$ 双向放缩）；完整推导见[附录 A.2.2](../appendix/derivations.md#app-a-2-2)。
+反向估计已由上述两条范数不等式给出；采用近似解作分母时的推导见[附录 A.2.2](../appendix/derivations.md#app-a-2-2)。
 
-**（2.23）回答了「求解器到底报告了什么」：** 求解器能保证的是**残差**（后向误差，[1.2.6](../ch01/sec12.md#sec-1.2.6)），用户想要的却是**误差**（前向误差）——两者之间恰好隔着一个 $\mathrm{cond}(A)$。**这正是 [1.2.6](../ch01/sec12.md#sec-1.2.6) 那张 conditioning/stability 表格的矩阵版。**
+**（2.23）回答了「求解器到底报告了什么」：** 求解器通常监测残差，并由适当尺度化形成**后向误差**指标（[1.2.6](../ch01/sec12.md#sec-1.2.6)），用户想要的却是**误差**（前向误差）——两者之间恰好隔着一个 $\mathrm{cond}(A)$。**这正是 [1.2.6](../ch01/sec12.md#sec-1.2.6) 那张 conditioning/stability 表格的矩阵版。**
 :::
 
 :::
@@ -324,22 +328,22 @@ $$x_1+x_2\approx2,\qquad x_1+x_2\approx2$$
 
 ::: method 工程上怎么用（五条）
 
-**① 先估 $\mathrm{cond}$，再定精度要求。** $\mathrm{cond}$ 一旦算出，要丢的位数 $k\approx\log_{10}\mathrm{cond}$ 立刻可得。NumPy 一行搞定：`np.linalg.cond(A)`（默认 2-范数，内部用 SVD，成本约 $O(n^3)$）。矩阵很大时可以改用 $\mathrm{cond}_1$ 或 $\mathrm{cond}_\infty$（`np.linalg.cond(A, np.inf)`）——它先显式求逆再取范数（`inv` + `norm`），对大矩阵往往比 SVD 便宜。
+**① 先估 $\mathrm{cond}$，再定精度要求。** $\mathrm{cond}$ 一旦算出，要丢的位数 $k\approx\log_{10}\mathrm{cond}$ 立刻可得。NumPy 一行搞定：`np.linalg.cond(A)`（默认 2-范数，内部用 SVD，成本约 $O(n^3)$）。矩阵很大时可以改用 $\mathrm{cond}_1$ 或 $\mathrm{cond}_\infty$（`np.linalg.cond(A, np.inf)`）——它先显式求逆再取范数（`inv` + `norm`），两者通常都需 $O(n^3)$ 工作，实际速度取决于实现与矩阵结构；大规模问题宜用基于分解的条件数估计。
 
 **② 别自己硬算 $\lVert A^{-1}\rVert$。** `np.linalg.cond` 内部已经处理好，你不需要真的去求逆（2-范数版直接看奇异值）。手写 `np.linalg.norm(np.linalg.inv(A))` 既引入额外误差，又更慢。
 
-**③ 元素量级悬殊时，用成分条件数或 Skeel 条件数。** 若 $A$ 各元素的量级相差极大（如 $a_{11}\sim1$、$a_{22}\sim10^{10}$），全局 $\mathrm{cond}$ 会给出**过于悲观**的结论，因为它假定每个元素都受到相对扰动。更合适的是**成分条件数**（componentwise condition number）与 **Skeel 条件数**
+**③ 元素量级悬殊时，用成分条件数或 Skeel 条件数。** 若 $A$ 各元素的量级相差极大（如 $a_{11}\sim1$、$a_{22}\sim10^{10}$），全局 $\mathrm{cond}$ 会给出**过于悲观**的结论，因为范数相对扰动允许小元素承受相对于自身很大的变化。更合适的是**成分条件数**（componentwise condition number）与 **Skeel 条件数**
 
 $$\mathrm{cond}_{\mathrm{Skeel}}(A)=\lVert\,\lvert A^{-1}\rvert\,\lvert A\rvert\,\rVert_\infty , \tag{2.24}$$
 
-（$\lvert A\rvert$ 表示逐元素取绝对值。）这个数恰好是「元素相对扰动」下的放大因子，且总有 $\mathrm{cond}_{\mathrm{Skeel}}(A)\le\mathrm{cond}_\infty(A)\le n\,\mathrm{cond}_{\mathrm{Skeel}}(A)$。LAPACK 的 `gecon` 估计**范数版**条件数（基于 `getrf` 的 LU 分解做 $O(n^2)$ 逆估计，不求逆）；**成分条件数**则出现在残差迭代精化 `gerfs` 的误差界里。
+（$\lvert A\rvert$ 表示逐元素取绝对值。）这个数用于描述系数矩阵的成分相对扰动，并有 $\mathrm{cond}_{\mathrm{Skeel}}(A)\le\mathrm{cond}_\infty(A)$；反向的 $n$ 倍上界一般不成立。例如 $A=\operatorname{diag}(1,M)$、$M>1$ 时，两者分别为 1 与 $M$。具体解的成分误差界还会依赖 $\boldsymbol x$ 和右端扰动。LAPACK 的 `gecon` 估计**范数版**条件数（基于 `getrf` 的 LU 分解做 $O(n^2)$ 逆估计，不求逆）；**成分条件数**则出现在残差迭代精化 `gerfs` 的误差界里。
 
 **④ 提高精度的三种正规手段**（按代价从低到高）：
-- **迭代精化**（iterative refinement）：先用双精度算残差 $\boldsymbol{r}=\boldsymbol{b}-A\boldsymbol{x}$（病态时这一项反而算得准，因为残差本身就是小量），再解修正方程 $A\delta\boldsymbol{x}=\boldsymbol{r}$，令 $\boldsymbol{x}\leftarrow\boldsymbol{x}+\delta\boldsymbol{x}$。代价低，能把精度恢复到接近机器精度。
-- **提高工作精度**：用 `float128`、双-双精度（double-double）或 MPFR。代价高，但治本。
+- **迭代精化**（iterative refinement）：计算残差 $\boldsymbol{r}=\boldsymbol{b}-A\boldsymbol{x}$，必要时使用比求解阶段更高的精度（小残差可能受到相消影响，并不天然算得准），再解修正方程 $A\delta\boldsymbol{x}=\boldsymbol{r}$，令 $\boldsymbol{x}\leftarrow\boldsymbol{x}+\delta\boldsymbol{x}$。可复用已有分解；能否改善以及达到何种精度，取决于条件数、分解质量和残差的计算精度。
+- **提高工作精度**：用双-双精度（double-double）或 MPFR 等提高有效精度。`longdouble` / `float128` 的实际精度取决于平台，不能只凭名称判断；提高计算精度也不能补回输入数据本身缺失的准确度。
 - **重述问题**：正则化（Tikhonov，[习题 D2](exercises.md)）、换配方（如求根公式用韦达改述，[1.2.4](../ch01/sec12.md#sec-1.2.4) 原则 (2)）、换坐标系（去中心化、归一化）。
 
-**⑤ 区分「病态」与「缩放不良」。** 若各行量级相差 $10^{15}$，方程组看起来病态；但**给每行乘上适当的常数**（行缩放 / 均衡化）之后，条件数可能大幅下降——这不是问题固有的病态，只是单位没选好。**先做行均衡化，再看条件数**，这是实践中的标准第一步。
+**⑤ 区分「病态」与「缩放不良」。** 若各行量级相差 $10^{15}$，方程组在所选范数下可能病态；**给每行乘上适当的常数**（行缩放 / 均衡化）之后，条件数可能大幅下降。缩放会改变范数下的扰动模型；应结合原始数据的单位、成分误差和缩放后的残差解释结果。**先做行均衡化，再看条件数**，这是实践中的标准第一步。
 :::
 
 ::: ex 例 2.4.5（新增） · 行缩放救回一个「假病态」矩阵 {#ex-sup-2.4.5}
@@ -393,14 +397,14 @@ print(np.linalg.cond(B, np.inf))          # ≈4.0e10
 | 右端扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\delta\boldsymbol{b}\rVert}{\lVert\boldsymbol{b}\rVert}$（**紧界**） |
 | 系数扰动 | $\dfrac{\lVert\delta\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}\le\dfrac{\mathrm{cond}(A)}{1-\mathrm{cond}(A)\rho_A}(\rho_A+\rho_b)$，需 $\mathrm{cond}\cdot\rho_A\lt1$ |
 | 有效数字损失 | $k\approx\log_{10}\mathrm{cond}(A)$ |
-| 残差 vs 误差 | $\boldsymbol{e}=A^{-1}\boldsymbol{r}$，$\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$ |
+| 残差 vs 误差 | $\boldsymbol{e}=-A^{-1}\boldsymbol{r}$，$\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$ |
 | Skeel 条件数 | $\lVert\,\lvert A^{-1}\rvert\,\lvert A\rvert\,\rVert_\infty$（元素扰动下的正确度量） |
 | 两个阈值 | $\mathrm{cond}\gtrsim10^{8}$：弃正态方程；$\mathrm{cond}\gtrsim10^{16}$：双精度无解 |
 
 :::
 
 ::: think[core] 常见错误清单 · 自查七条
-1. **拿残差当误差的代理。** 例 2.4.4 中残差只有 $2.5\times10^{-12}$，误差却高达 $50\%$。**该看的判据是 $\mathrm{cond}\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$。** 求解器返回的残差只说明「算法向后稳定」，并不说明「结果准」。
+1. **拿残差当误差的代理。** 例 2.4.4 中残差只有 $2.5\times10^{-12}$，误差却高达 $50\%$。**该看的判据是 $\mathrm{cond}\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$。** 小的尺度化残差或后向误差描述这一次近似解满足方程的程度，不能单凭它证明算法对所有输入都后向稳定，也不能推出前向误差小。
 2. **把「病态」当成「算法不好」。** 病态是 $A$ 的属性（[1.2.6](../ch01/sec12.md#sec-1.2.6)）。同一个病态矩阵，换 Cholesky、换 QR、换 SVD，误差量级**都一样**——都是 $\mathrm{cond}\cdot u$。要改进只能**重述问题**或**提高精度**。
 3. **忘了行均衡化。** 各行量级相差 $10^{10}$ 时，$\mathrm{cond}_\infty$ 会被「单位不一致」污染（例 2.4.5 从 $10^{20}$ 降到 $4\times10^{10}$）。**先均衡化再评估**是标准流程。
 4. **手写 `inv(A)` 算条件数。** 用 `np.linalg.cond(A)`；它更快（2-范数用 SVD、1/∞-范数用 LU 估计），也更准。手写求逆还会引入额外误差。

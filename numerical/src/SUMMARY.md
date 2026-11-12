@@ -179,6 +179,7 @@
 
 - [必考点竞技场](training/arena.md)
 - [考场模拟卷 · 100 分制](training/exam-sprint.md)
+- [基础综合卷（保留版）](training/exam-foundations.md)
 - [跨章实验 · 从数据到面积，再到动力学](training/learning-lab.md)
 
 # 附录 · 拓展与推导
