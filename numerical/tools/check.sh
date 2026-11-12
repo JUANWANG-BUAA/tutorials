@@ -14,3 +14,4 @@ python3 numerical/tools/verify_textbook_rewrite.py
 python3 numerical/tools/verify_classroom_notes.py
 
 python3 numerical/tools/verify_slide_examples.py
+python3 numerical/tools/verify_spectral_root_examples.py
