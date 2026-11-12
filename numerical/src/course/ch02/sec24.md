@@ -1,11 +1,8 @@
 # 2.4.1 迭代法引论
 
-> 对应教材 2.4.1、定理 2.7–2.9、习题 13–14；对应老师第 4 讲 §五、第 5 讲 §一–§三。
-> 主线：把 $A\boldsymbol x=\boldsymbol b$ 拆成 $A=N-P$，得到 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$；收敛性只看 $G$ 的谱半径。
+直接法通过消元或分解求解方程组。还可以从一个近似解出发，用它计算下一个近似解，反复进行。这就是迭代法。
 
-::: note 为什么走迭代（老师第 4 讲 §五）
-矩阵**求逆困难**，矩阵**相乘**却容易（可并行、可分块，MATLAB 内置优化）——迭代法每一步只做“矩阵 × 向量”这样的便宜操作。主流的大规模求解器是 **Krylov 子空间方法**（GMRES）；本节的分裂迭代是理解这一切的入口，也是 [2.4.2–2.4.4](sec24b.md) 三个经典格式的共同底座。
-:::
+本节先把方程组改写成便于更新的形式，再分析近似解是否趋于真解。即使相邻两步已经很接近，也还要有误差估计，才能判断是否达到所需精度。
 
 ## 引导算例：相邻两步很接近，可以停了吗？
 
@@ -68,8 +65,8 @@ $$
 
 实际计算**不显式求 $N^{-1}$**，而是每步解 $N\boldsymbol x^{(k+1)}=P\boldsymbol x^{(k)}+\boldsymbol b$——只要 $N$ 取得“好解”即可。
 
-::: note 板书把 $A^{-1}$ 划掉了（老师第 5 讲 §一）
-第 5 讲重推这段时刻意不走直接求逆：板书上 $A^{-1}$ 被整段划掉，只保留“乘”与“解三角/对角方程组”。若极限存在，对迭代式取极限即得不动点方程 $\boldsymbol x^{*}=G\boldsymbol x^{*}+\boldsymbol d$——它正对应原方程组 $(I-G)\boldsymbol x=\boldsymbol d$。
+::: note 公式中的逆与实际求解
+迭代公式里的 $N^{-1}$ 用来表示“解以 $N$ 为系数矩阵的方程组”，实现时通常不需要形成逆矩阵。若迭代收敛到 $\boldsymbol x^*$，对递推式取极限，便有 $\boldsymbol x^*=G\boldsymbol x^*+\boldsymbol d$，也就是 $(I-G)\boldsymbol x^*=\boldsymbol d$。
 :::
 
 **误差方程**：令 $\boldsymbol e_k=\boldsymbol x^{(k)}-\boldsymbol x^*$，则
@@ -80,12 +77,12 @@ $$
 $$
 所以迭代收敛 $\iff$ 对任意初值 $G^k\boldsymbol e_0\to0$ $\iff$ $G$ 的谱半径 $\rho(G)\lt1$。
 
-::: note 选法的艺术（老师第 4 讲 §五）
+::: note 选法的艺术
 核心是选好分裂 $A=N-P$，让迭代矩阵 $G$ 满足 $\lVert G\rVert\lt1$ 且收敛快——“**找到一个矩阵范数使 $\lVert G\rVert\lt1$**”是收敛判定的钥匙。[2.4.2–2.4.4](sec24b.md) 的 Jacobi、Gauss–Seidel、SOR，就是三种不同的拆法。
 :::
 
 <a id="sec-2.4-theorems"></a>
-## 三个基本定理（教材 2.4.1 续）
+## 三个基本定理
 
 ::: thm 定理 2.7 · 范数收敛与分量收敛 {#thm-2.7}
 若对某种范数 $\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\to0$，则按分量也有 $\boldsymbol x^{(k)}\to\boldsymbol x^*$。这是有限维范数等价性的直接推论，用来把“范数收敛”与“分量收敛”互换。
@@ -98,7 +95,7 @@ $$
 $$
 :::
 
-::: proof 证明（老师第 5 讲 §二的对角化解耦，板书完整）
+::: proof 证明
 
 先讨论 $G$ 可对角化的情形。取可逆矩阵 $T$ 使
 $$G=T^{-1}\Lambda T,\qquad\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_n).$$
@@ -110,7 +107,7 @@ $$
 y_i^{(k+1)}=\lambda_i\,y_i^{(k)}+\tilde d_i,\quad i=1,\dots,n .
 $$
 
-$T$ 可逆，新旧两个系统“要么一块收敛、要么一块发散”，故只需研究其中一条标量递推 $z_{k+1}=\lambda z_k+E$。把它反复代入（板书有完整演算）：
+由于 $T$ 可逆，原向量序列收敛当且仅当变换后的序列收敛。对角化后，每个分量都满足形如 $z_{k+1}=\lambda z_k+E$ 的标量递推。反复代入可得：
 
 $$
 z_{k+1}=\lambda z_k+E=\lambda^2z_{k-1}+(\lambda+1)E=\cdots
@@ -121,11 +118,11 @@ $$
 （$\lambda=1$ 时右端为 $z_0+(k+1)E$：$E\ne0$ 时发散；$E=0$ 时虽为常数，却依赖初值，不能使任意初值都趋于同一个方程解。）当且仅当 $|\lambda|\lt1$ 时 $\lambda^{k+1}\to0$，极限为 $E/(1-\lambda)$，**与初值 $z_0$ 无关**——逐分量收敛，故 $\boldsymbol x^{(k)}$ 收敛。若 $G$ 不可对角化，用 Jordan 标准形：Jordan 块 $J=\lambda I+N$ 的 $k$ 次幂含 $\binom{k}{s}\lambda^{k-s}$，当 $|\lambda|\lt1$ 时仍趋于 0；反之若某个 $|\lambda|\ge1$，取对应特征向量作初值误差，$\boldsymbol e_k$ 不趋于 0。$\blacksquare$
 :::
 
-::: note 课堂推导的价值（老师第 5 讲 §二）
-原书对定理 2.8 的态度是“证明从略，读者可参阅文献”；本讲用对角化 + 标量递推把证明完整走了一遍——这正是本节收录这段推导的原因。$G$ 不可对角化时改用 Jordan 形，每块多出 $k$ 的多项式因子（$k^m\lambda^k$ 型），$|\lambda|\lt1$ 时仍趋零，**结论不变、计算变繁**（老师明确交代，未展开）。
+::: note 不可对角化时怎么办
+上面的证明假设 $G$ 可以对角化，以便把向量递推化成若干个标量递推。若 $G$ 不可对角化，可以改用 Jordan 形：各块的幂包含 $k^m\lambda^k$ 一类项。只要 $|\lambda|<1$，指数衰减仍快于多项式增长，所以结论不变。
 :::
 
-::: note 现实困难（老师第 5 讲 §二）
+::: note 现实困难
 实际要求解的方程组，规模“成百上千万、甚至上亿”，而把 $G$ 的特征根全部算出来比高斯消去还贵——充要条件**没法直接用**，于是需要一条可操作的充分条件（定理 2.9）。
 :::
 
@@ -147,7 +144,7 @@ $$
 :::
 
 ::: proof[core] 证明
-**(1) 存在唯一。**$\lVert G\rVert\lt1$ $\Rightarrow$ $I-G$ 可逆（[1.3.5](../../ch01/sec13.md#sec-1.3.5) 的可逆性判据取 $B=-G$；等价地，Neumann 级数 $\sum_{j\ge0}G^j$ 收敛且 $(I-G)^{-1}=\sum_{j\ge0}G^j$）。由 $(I-G)\boldsymbol x=\boldsymbol d$ 知解存在唯一。这一半在[第 4 讲](../../lectures/lec04.md)已完成。
+**(1) 存在唯一。**$\lVert G\rVert\lt1$ $\Rightarrow$ $I-G$ 可逆（[1.3.5](../../ch01/sec13.md#sec-1.3.5) 的可逆性判据取 $B=-G$；等价地，Neumann 级数 $\sum_{j\ge0}G^j$ 收敛且 $(I-G)^{-1}=\sum_{j\ge0}G^j$）。由 $(I-G)\boldsymbol x=\boldsymbol d$ 知解存在唯一。因此，不动点就是原线性方程组的唯一解。
 
 **(2) 收敛与先验估计（误差递推）。**不动点方程与迭代式相减，常向量 $\boldsymbol d$ 被消去：$\boldsymbol x^{(k+1)}-\boldsymbol x^{*}=G(\boldsymbol x^{(k)}-\boldsymbol x^{*})$。取与该矩阵范数**相容**的向量范数（$\lVert A\boldsymbol x\rVert\le\lVert A\rVert\lVert\boldsymbol x\rVert$；任一矩阵范数都存在与之相容的向量范数），逐次递推：
 
@@ -157,7 +154,7 @@ $$
 
 裂项 $\boldsymbol x^{(k)}-\boldsymbol x^{*}=\sum_{j=k}^{\infty}(\boldsymbol x^{(j)}-\boldsymbol x^{(j+1)})$，而相邻差满足 $\boldsymbol x^{(j)}-\boldsymbol x^{(j+1)}=G^{j}(\boldsymbol x^{(0)}-\boldsymbol x^{(1)})$，取范数并用几何级数 $\sum_{j\ge k}\lVert G\rVert^j=\lVert G\rVert^k/(1-\lVert G\rVert)$ 即得先验估计。
 
-**(3) 后验估计（“差小即停”的道理，老师第 5 讲 §三分四步板书）。**
+**(3) 后验估计：由相邻两步的差估计误差。**
 
 1. **裂项**：对 $m\gt k$，$\boldsymbol x^{(m)}-\boldsymbol x^{(k)}=(\boldsymbol x^{(m)}-\boldsymbol x^{(m-1)})+\cdots+(\boldsymbol x^{(k+1)}-\boldsymbol x^{(k)})$；
 2. **相邻差被 $G$ 压缩**：相邻两个迭代式相减（$\boldsymbol d$ 消去）得 $\boldsymbol x^{(m)}-\boldsymbol x^{(m-1)}=G^{\,m-k-1}(\boldsymbol x^{(k+1)}-\boldsymbol x^{(k)})$；
@@ -165,15 +162,15 @@ $$
 4. **令 $m\to\infty$**（$\boldsymbol x^{(m)}\to\boldsymbol x^*$，$\lVert G\rVert^{m-k}\to0$），再用一次相邻差压缩 $\lVert\boldsymbol x^{(k+1)}-\boldsymbol x^{(k)}\rVert\le\lVert G\rVert\,\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert$，得后验估计。$\blacksquare$
 :::
 
-::: method 「下标 + 幂次 = 常数」规律（老师第 5 讲 §三，三次强调）
+::: method 「下标 + 幂次 = 常数」规律
 递推误差估计时，盯着这个规律推：$\lVert\boldsymbol x^{(k+1)}-\boldsymbol x^*\rVert\le\lVert G\rVert\lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert$ 一路放缩下去，**下标与 $\lVert G\rVert$ 的幂次之和恒为 $k+1$**——先验估计全靠它；后验估计则全靠裂项加几何级数。
 :::
 
-::: note 停机判据的术语辨析（老师第 5 讲 §六）
-课堂上把停机用的**相邻迭代差** $\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert$ 口称为“残差”；标准术语里**残差**指 $\boldsymbol r^{(k)}=\boldsymbol b-A\boldsymbol x^{(k)}$，两者不是一回事（残差与误差的关系见 [2.3](sec23.md#sec-2.3.2)）。读题时先问一句：题目说的“残差”是哪一个。
+::: note 停机判据的术语辨析
+相邻迭代差与残差是两个不同的量。前者是 $\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert$；后者是 $\boldsymbol r^{(k)}=\boldsymbol b-A\boldsymbol x^{(k)}$。相邻差要结合本节的后验界使用；残差与解误差的关系则见 [2.3](sec23.md#sec-2.3.2)。
 :::
 
-::: note 两条使用警告（原书 §2.4.1，课上未提、摘录备用）
+::: note 使用误差界的两个前提
 $\lVert G\rVert$ 很接近 1 时，相邻差小**不能**断定接近真解（后验估计的常数 $\lVert G\rVert/(1-\lVert G\rVert)$ 会爆）；$I-G$ 病态时迭代再多也未必得到好结果。
 :::
 
@@ -203,24 +200,24 @@ $\lVert G\rVert$ 很接近 1 时，相邻差小**不能**断定接近真解（�
 :::
 
 <a id="sec-2.4-exercises"></a>
-## 习题（教材习题 13–14）
+## 习题
 
-::: ex 2.13 · 迭代序列收敛判断（教材习题 13）
-对教材习题 13 的三个迭代公式，判断其产生的向量序列是否收敛（初值任取）。
+::: ex 2.13 · 迭代序列收敛判断 {#exercise-2.13}
+对迭代 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+(1,1)^{\mathrm T}$，分别取
+$$G_1=\operatorname{diag}(1/2,1/3),\qquad G_2=\operatorname{diag}(1,1/2),\qquad G_3=\operatorname{diag}(-1,1/2).$$
+判断是否对任意初值收敛到同一个不动点，并说明可能出现的特殊初值。
 :::
 
 ::: sol 参考答案
-写出各自的迭代矩阵 $G$，算 $\rho(G)$：$\rho(G)\lt1$ 则对任意初值收敛；$\rho(G)\ge1$ 则不保证（若 $=1$，须区分“收敛到指定解”与“序列本身有极限”：$G=I$ 的误差保持常数，序列可收敛却不到指定解；$G=-I$ 的非零误差则振荡）。不要只看某个范数 $\ge1$ 就判发散——范数只是充分条件。
+$G_1$ 的谱半径为 $1/2$，对任意初值收敛到 $(2,3/2)^{\mathrm T}$。$G_2$ 的第一分量每步增加 $1$，不收敛。$G_3$ 的第一分量满足 $x_1^{(k+1)}=1-x_1^{(k)}$，通常在两个值间交替；只有初始第一分量为 $1/2$ 时，这个分量保持不变，此时向量收敛到 $(1/2,2)^{\mathrm T}$。
 :::
 
-::: ex 2.14 · 必收敛的迭代（教材习题 14）
-证明教材习题 14 的迭代公式产生的序列必收敛，并指出它收敛到哪个线性方程组的解。
+::: ex 2.14 · 必收敛的迭代 {#exercise-2.14}
+设
+$$G=\begin{pmatrix}0.2&1.2\\0.1&0.2\end{pmatrix},\qquad\boldsymbol d=(1,0)^{\mathrm T}.$$
+证明 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$ 对任意初值收敛，求其极限，并说明为何 $\lVert G\rVert_\infty$ 不能直接给出收敛保证。
 :::
 
 ::: sol 参考答案
-把迭代写成 $\boldsymbol x^{(k+1)}=G\boldsymbol x^{(k)}+\boldsymbol d$，先算 $\rho(G)$；本题已算得 $\rho(G)\approx0.6236\lt1$，由 [@thm-2.8] 得对任意初值收敛。这里 $\lVert G\rVert_\infty=1.55\gt1$，不能声称用这个范数通过 [@thm-2.9]；极限满足 $\boldsymbol x^*=G\boldsymbol x^*+\boldsymbol d$，即 $(I-G)\boldsymbol x^*=\boldsymbol d$，对应方程组 $(I-G)\boldsymbol x=\boldsymbol d$。
-:::
-
-::: note 覆盖核对
-本节覆盖教材 2.4.1、定理 2.7–2.9、习题 13–14；老师第 4 讲 §五（动机、选法艺术、唯一性半场证明）与第 5 讲 §一–§三（对角化解耦自证充要条件、先验/后验估计、“下标+幂次”规律、残差术语辨析、两条使用警告）。下一节：[2.4.2–2.4.4 Jacobi、Gauss–Seidel 与 SOR](sec24b.md)。
+两个特征值为 $0.2\pm\sqrt{0.12}$，所以 $\rho(G)\approx0.546410<1$。但 $\lVert G\rVert_\infty=1.4>1$，这个范数条件没有通过，不能据此判断发散。极限满足 $(I-G)\boldsymbol x^*=\boldsymbol d$，解得 $\boldsymbol x^*=(20/13,5/26)^{\mathrm T}$。
 :::

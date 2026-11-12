@@ -393,9 +393,9 @@ def parse_num_ranges(cell: str) -> list[int]:
 
 
 def check_chapter_exercises(chapters):
-    """course/ch0X 习题：标题自称的「教材 1–N」必须被表格逐题覆盖。"""
+    """course/ch0X 来源习题摘要：标题自称的「教材 1–N」必须被表格逐题覆盖。"""
     for d in chapters:
-        rel = f"{d}/exercises.md"
+        rel = f"{d}/source-exercises.md"
         if not (SRC / rel).exists():
             continue
         text = read(rel)

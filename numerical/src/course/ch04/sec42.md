@@ -1,11 +1,8 @@
 # 4.2 非线性方程组的迭代解法
 
-> 对应教材 4.2.1–4.2.4、定理 4.10–4.15、例 6–7、习题 10–11。**老师课堂未讲**，按教材补齐，标"教材有、课堂未讲"。
-> 主线：一元方法搬到方程组，关键是 Jacobian 与压缩/谱半径。
+一元方程只有一个未知量。多个未知量同时满足非线性关系时，需要求解 $F(\boldsymbol x)=\boldsymbol0$。
 
-::: note 本节定位（教材有、课堂未讲）
-老师这一轮没有展开非线性方程组（原书 4.2）。需要时按教材补读，考试按老师范围复习（课堂范围见[第 4 章导览](overview.md)）。本节的定理 4.12–4.15 给出了完整表述与证明——它们与一元版 [@thm-4.1]、[@thm-4.6] 逐条平行，读者可对照阅读。
-:::
+一元方法中的许多想法仍然适用：把方程改写成不动点形式，或用局部线性关系修正近似解。变化在于，导数要换成由偏导数组成的 Jacobian 矩阵；Newton 法的每一步则要求解一个线性方程组。
 
 <a id="sec-4.2.1"></a>
 ## 4.2.1 非线性方程组与可微性
@@ -35,7 +32,7 @@ $F(\boldsymbol x)$ 在 $\boldsymbol x_0$ 处可微的充要条件是：各分量
 :::
 
 ::: thm 定理 4.11 · 向量值函数的中值定理 {#thm-4.11}
-设 $F$ 在包含线段 $\overline{\boldsymbol x\boldsymbol y}$ 的区域内可微，则
+设 $F$ 在包含线段 $\overline{\boldsymbol x\boldsymbol y}$ 的区域内连续可微，则
 $$
 F(\boldsymbol x)-F(\boldsymbol y)=\int_0^1F'(\boldsymbol y+t(\boldsymbol x-\boldsymbol y))(\boldsymbol x-\boldsymbol y)\,dt
 $$
@@ -51,7 +48,7 @@ $$
 :::
 
 ::: thm 定理 4.12 · 压缩条件的矩阵版本 {#thm-4.12}
-设 $D\subset\mathbb R^n$ 是凸区域，$G:D\to\mathbb R^n$ 在 $D$ 上可微，且存在 $L\lt1$ 使
+设 $D\subset\mathbb R^n$ 是凸区域，$G:D\to\mathbb R^n$ 在 $D$ 上连续可微，且存在 $L\lt1$ 使
 $$
 \lVert G'(\boldsymbol z)\rVert\le L,\qquad \forall \boldsymbol z\in D.
 $$
@@ -59,7 +56,7 @@ $$
 $$
 \lVert G(\boldsymbol x)-G(\boldsymbol y)\rVert\le L\lVert\boldsymbol x-\boldsymbol y\rVert,\qquad \forall \boldsymbol x,\boldsymbol y\in D.
 $$
-（教材把这一条表述为「压缩条件的矩阵版本」：标量条件 $\lvert\varphi'(x)\rvert\le L$ 的矩阵对应物；配合自映射 $G:D\to D$ 即 [@thm-4.13] 的全部条件。）
+
 :::
 
 ::: proof 证明
@@ -81,7 +78,7 @@ $$
 $$
 
 ::: thm[core] 定理 4.13 · 压缩映像原理 {#thm-4.13}
-设 $D\subset\mathbb R^n$ 闭，$G:D\to D$，且存在 $L\lt1$，使
+设 $D\subset\mathbb R^n$ 非空且闭，$G:D\to D$，且存在 $L\lt1$，使
 $$
 \lVert G(\boldsymbol x)-G(\boldsymbol y)\rVert\le L\lVert\boldsymbol x-\boldsymbol y\rVert,\qquad \forall \boldsymbol x,\boldsymbol y\in D.
 $$
@@ -123,7 +120,7 @@ $$
 :::
 
 ::: thm 定理 4.14 · 线性迭代的收敛判据 {#thm-4.14}
-若 $G(\boldsymbol x)=B\boldsymbol x+\boldsymbol d$，则迭代 $\boldsymbol x^{(k+1)}=B\boldsymbol x^{(k)}+\boldsymbol d$ 对任意初值收敛的充要条件是 $\rho(B)\lt1$；$\lVert B\rVert\lt1$ 是充分条件。
+若 $G(\boldsymbol x)=B\boldsymbol x+\boldsymbol d$，则迭代 $\boldsymbol x^{(k+1)}=B\boldsymbol x^{(k)}+\boldsymbol d$ 对任意初值收敛到同一个不动点的充要条件是 $\rho(B)\lt1$；$\lVert B\rVert\lt1$ 是充分条件。
 :::
 
 ::: proof 证明
@@ -134,7 +131,11 @@ $$
 \lVert\boldsymbol x^{(k)}-\boldsymbol x^*\rVert\le(\rho(B)+\varepsilon)^k\lVert\boldsymbol x^{(0)}-\boldsymbol x^*\rVert\to0 .
 $$
 
-**必要性。**若迭代对任意初值收敛，则 $B^k\boldsymbol v\to\boldsymbol0$ 对一切 $\boldsymbol v$ 成立（取 $\boldsymbol x^{(0)}=\boldsymbol x^*+\boldsymbol v$）。设 $\lambda$ 是 $B$ 的模最大特征值（$|\lambda|=\rho(B)$），$\boldsymbol v$ 为对应特征向量；若 $\boldsymbol v$ 为复向量，取实部与虚部中非零者为实初值。于是 $B^k\operatorname{Re}\boldsymbol v=\operatorname{Re}(\lambda^k\boldsymbol v)$ 应收敛到零，但 $|\lambda|\ge1$ 时它按 $|\lambda|^k$ 增长（$|\lambda|\gt1$）或旋转振荡（$|\lambda|=1$），矛盾。故 $\rho(B)\lt1$。
+**必要性。**假设所有实初值都收敛到同一个不动点 $\boldsymbol x^*$。取初值 $\boldsymbol x^*+\boldsymbol w$，便知 $B^k\boldsymbol w\to\boldsymbol0$ 对每个实向量 $\boldsymbol w$ 都成立。设 $\lambda$ 是 $B$ 的任一特征值，$\boldsymbol v\ne\boldsymbol0$ 是对应的特征向量。即使 $\boldsymbol v$ 是复向量，把它写成 $\boldsymbol u+i\boldsymbol w$ 后，也有
+$$
+B^k\boldsymbol v=B^k\boldsymbol u+iB^k\boldsymbol w\to\boldsymbol0.
+$$
+另一方面，$B^k\boldsymbol v=\lambda^k\boldsymbol v$，所以 $|\lambda|^k\lVert\boldsymbol v\rVert_2\to0$。由于 $\boldsymbol v\ne\boldsymbol0$，必有 $|\lambda|\lt1$。这对所有特征值都成立，故 $\rho(B)\lt1$。
 
 **范数条件是充分的。**$\rho(B)\le\lVert B\rVert\lt1$ 时直接由
 $$
@@ -143,8 +144,25 @@ $$
 得收敛——它用起来方便，却不是必要的（依赖范数的选取）。$\blacksquare$
 :::
 
-::: ex 例 6（教材 4.2.2） · 方程组不动点迭代 {#ex-4.2.1}
-教材用一个 $2\times2$ 非线性方程组，把它写成 $\boldsymbol x=G(\boldsymbol x)$，验证 $G$ 在某个区域上压缩（或 $\rho(G')\lt1$），再用迭代求解；数值表展示线性收敛。
+::: ex 例 6 · 方程组不动点迭代 {#ex-4.2.1}
+求解
+$$x=\frac12\cos y,\qquad y=\frac12\sin x.$$
+令 $G(x,y)=(\frac12\cos y,\frac12\sin x)^{\mathrm T}$，取 $D=[-1/2,1/2]^2$，从 $(0,0)^{\mathrm T}$ 开始迭代。
+
+$G$ 将 $D$ 映入 $D$。导数矩阵为
+$$G'(x,y)=\begin{pmatrix}0&-\frac12\sin y\\\frac12\cos x&0\end{pmatrix},$$
+所以 $\lVert G'(x,y)\rVert_\infty\le1/2$。由压缩映像原理，$D$ 内有唯一解，且从任意 $D$ 内初值出发都收敛。
+
+下表每一行同时使用上一行的两个分量更新：
+
+| $k$ | $x_k$ | $y_k$ |
+|--:|--:|--:|
+| 0 | 0.00000000 | 0.00000000 |
+| 1 | 0.50000000 | 0.00000000 |
+| 2 | 0.50000000 | 0.23971277 |
+| 3 | 0.48570311 | 0.23971277 |
+| 4 | 0.48570311 | 0.23341513 |
+逐步迭代可得解约为 $(0.48640515,0.23372550)$。后验因子 $L/(1-L)=1$，所以相邻两步之差的无穷范数不超过 $\varepsilon$ 时，当前解误差也不超过 $\varepsilon$。
 :::
 
 <a id="sec-4.2.3"></a>
@@ -197,8 +215,21 @@ $$
 即 $\lVert\boldsymbol e_{k+1}\rVert\le C\lVert\boldsymbol e_k\rVert^2$。取 $\delta$ 使 $C\delta\lt1$，邻域内不越界且误差平方衰减——与一元版 [@thm-4.6] 的 $\frac{M}{2m}\lvert e_k\rvert^2$ 估计逐字平行。$\blacksquare$
 :::
 
-::: ex 例 7（教材 4.2.3） · 方程组 Newton 法 {#ex-4.2.2}
-教材对例 6 的方程组用 Newton 法，每步解一个 $2\times2$ 线性方程组；与不动点迭代相比，Newton 步数少，但每步要算 Jacobian 并解线性系统。
+::: ex 例 7 · 方程组 Newton 法 {#ex-4.2.2}
+仍解上例的方程组，取
+$$F(x,y)=\begin{pmatrix}x-\frac12\cos y\\y-\frac12\sin x\end{pmatrix},\qquad F'(x,y)=\begin{pmatrix}1&\frac12\sin y\\-\frac12\cos x&1\end{pmatrix}.$$
+从 $(0,0)^{\mathrm T}$ 出发，第一步解
+$$\begin{pmatrix}1&0\\-1/2&1\end{pmatrix}\begin{pmatrix}\Delta x\\\Delta y\end{pmatrix}=\begin{pmatrix}1/2\\0\end{pmatrix},$$
+得到 $(x_1,y_1)=(1/2,1/4)$。后续每步在新点重新计算 Jacobian 并求解修正量。表中的残差由尚未截短的计算值求得，坐标只显示八位小数。解附近 Jacobian 非奇异，因而充分接近解后至少平方收敛。
+
+| $k$ | $x_k$ | $y_k$ | $\lVert F(x_k,y_k)\rVert_\infty$ |
+|--:|--:|--:|--:|
+| 0 | 0.00000000 | 0.00000000 | $5.00e-01$ |
+| 1 | 0.50000000 | 0.25000000 | $1.55e-02$ |
+| 2 | 0.48646351 | 0.23377308 | $6.39e-05$ |
+| 3 | 0.48640516 | 0.23372550 | $5.50e-10$ |
+| 4 | 0.48640515 | 0.23372550 | $\lt10^{-14}$ |
+与前例相比，Newton 法用较少的轮数达到同样精度，但每轮多出 Jacobian 和线性方程组的计算。不能只比较迭代轮数来判断总用时。
 :::
 
 <a id="sec-4.2.4"></a>
@@ -240,24 +271,20 @@ $$
 :::
 
 <a id="sec-4.2-exercises"></a>
-## 习题（教材习题 10–11）
+## 习题
 
-::: ex 4.10 · 方程组简单迭代（教材习题 10）{#ex-4.10}
-用简单迭代法求教材习题 10 的非线性方程组。
+::: ex 4.10 · 方程组简单迭代{#ex-4.10}
+对[例 6](#ex-4.2.1) 中给出的方程组，从 $(0,0)^{\mathrm T}$ 出发作不动点迭代，保证解的无穷范数误差不超过 $10^{-6}$。记录迭代次数。
 :::
 
 ::: sol 参考答案
-先把方程组写成 $\boldsymbol x=G(\boldsymbol x)$，在根附近验证 $\lVert G'(\boldsymbol x)\rVert\lt1$ 或 $\rho(G')\lt1$，再迭代；停机用相邻差。若范数不满足，换等价形式或改用 Newton。
+采用例中的 $G$ 和 $D$，可取 $L=1/2$。以 $\lVert\boldsymbol x^{(k)}-\boldsymbol x^{(k-1)}\rVert_\infty\le10^{-6}$ 为停止条件，后验界保证当前解误差满足要求。从初值开始更新 10 次后首次满足此条件。解约为 $(0.48640515,0.23372550)$。
 :::
 
-::: ex 4.11 · 方程组 Newton 法（教材习题 11）{#ex-4.11}
-用 Newton 法求教材习题 11 的非线性方程组。
+::: ex 4.11 · 方程组 Newton 法{#ex-4.11}
+对[例 7](#ex-4.2.2) 中的同一方程组作 Newton 迭代，从 $(0,0)^{\mathrm T}$ 出发，以 $\lVert F(\boldsymbol x^{(k)})\rVert_\infty\le10^{-10}$ 为停止条件。对比每轮所需的运算与第 4.10 题。
 :::
 
 ::: sol 参考答案
-写 Jacobian $F'$，每步解 $F'(\boldsymbol x^{(k)})\Delta\boldsymbol x=-F(\boldsymbol x^{(k)})$，更新 $\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta\boldsymbol x$；初值要靠近根，验证 $F'(\boldsymbol x^*)$ 非奇异。
-:::
-
-::: note 覆盖核对
-本节覆盖教材 4.2.1–4.2.4、定理 4.10–4.15、例 6–7、习题 10–11；**老师课堂未讲**，按教材补齐。体例转换之外做了数学补全：定理 4.11–4.15 的证明、定理 4.12 的可用形式（由 [@thm-4.11] 推出）与后验误差估计，均与一元版 [@thm-4.1]、[@thm-4.6] 平行，未引入教材之外的结论。下一节：[第 4 章习题](exercises.md)。
+使用例中给出的 Jacobian，每步求解 $F'(\boldsymbol x^{(k)})\Delta\boldsymbol x=-F(\boldsymbol x^{(k)})$。不能把第一步的 Jacobian 固定用于所有后续步骤，否则得到的是另一种方法。核对最终两条方程的残差；本题的残差阈值与第 4.10 题的误差阈值不同，比较轮数时应先统一精度要求。
 :::

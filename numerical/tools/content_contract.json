@@ -145,7 +145,13 @@
     "appendix/numerical-diff.md",
     "reading.md",
     "training/exam-foundations.md",
-    "course/ch05/slide-examples.md"
+    "course/ch05/slide-examples.md",
+    "course/ch02/source-exercises.md",
+    "course/ch03/source-exercises.md",
+    "course/ch04/source-exercises.md",
+    "course/ch05/source-exercises.md",
+    "course/ch06/source-exercises.md",
+    "course/ch07/source-exercises.md"
   ],
   "required_anchors": {
     "ch01/sec11.md": [

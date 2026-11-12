@@ -10,3 +10,4 @@ python3 numerical/tools/verify_recovery.py
 python3 numerical/tools/verify_content_comparison.py
 python3 numerical/tools/verify_editorial_review.py
 python3 numerical/tools/verify_source_completion.py
+python3 numerical/tools/verify_textbook_rewrite.py

@@ -1,36 +1,36 @@
-# 第 2 章习题（教材 1–24）
+# 第 2 章练习与解答
 
-> 题面数据以颜庆津《数值分析》（第 4 版）第 2 章习题（p.45–47）为准；本表给**题面摘要、答案/提示、正文落点**，保证 24 题不漏。
-> 标记：✅ 已给答案/提示；逐题数值可按教材数据复算。
+各节末尾已经给出题目与参考解答。下表按顺序列出入口；本页后半部分是综合练习。
 
-| 题 | 主题 | 题面摘要 | 答案 / 提示 |
-|:--:|:--|:--|:--|
-| <span id="ex-2-1">1</span> | 三位十进制：顺序 Gauss vs 列主元 | 解一个 3×3 方程组，精确解 $(-2.6,1,2)^{\mathrm T}$ | ✅ 顺序消去在小主元处失稳；列主元结果接近精确解。见 [2.1](sec21.md#sec-2.1-exercises)。 |
-| <span id="ex-2-2">2</span> | 消元矩阵 $R$ | 写出 $k=1$ 消元对应的左乘矩阵 | ✅ $R=I-\sum_{i=2}^n m_{i1}e_ie_1^{\mathrm T}$，单位下三角。 |
-| <span id="ex-2-3">3</span> | 行交换矩阵 $Q_k$ | 交换第 $k$ 行与第 $i_k$ 行 | ✅ 置换矩阵；$Q_k^{-1}=Q_k^{\mathrm T}=Q_k$。 |
-| <span id="ex-2-4">4</span> | Doolittle 运算量 | 统计乘除法次数 | ✅ 约 $n^3/3+n^2$；主导项 $n^3/3$。 |
-| <span id="ex-2-5">5</span> | 不选主元 Doolittle | 解教材给出的 3×3 方程组 | ✅ 解 $\approx(0.9314,-0.3885,-1.0244)^{\mathrm T}$；分解可进行，无需换行。 |
-| <span id="ex-2-6">6</span> | 选主元 Doolittle | 解教材给出的 4×4 方程组 | ✅ 选主元后 $x=(-18.3875,-5.8125,-15.4625,35.9375)^{\mathrm T}$；置换后 $LU$ 的 $U$ 对角为 $10,7.5,5,-3.84$。 |
-| <span id="ex-2-7">7</span> | 带状存储计算 $Ax$ | 带内元素存于 $(r+s+1)\times n$ 矩阵 $C$ | ✅ $u_i=\sum_{j=\max(1,i-r)}^{\min(n,i+s)}C_{r+1+i-j,j}y_j$。 |
-| <span id="ex-2-8">8</span> | 追赶法 | 解五元三对角方程组，精确解 $(0.21,-0.52,1.2,0.82,-0.64)^{\mathrm T}$ | ✅ 追/赶公式；$O(n)$。见 [2.2.4](sec22.md#sec-2.2.4)。 |
-| <span id="ex-2-9">9</span> | 八位十进制列主元 + 条件数 | 解 2×2 方程组并求行范数条件数 | ✅ $x\approx(2,-2)^{\mathrm T}$，$\mathrm{cond}_\infty(A)\approx3.27\times10^8$；条件数极大，八位十进制下解仍可能严重失真。 |
-| <span id="ex-2-10">10</span> | 正交矩阵条件数 | 证明 $\mathrm{cond}_2(A)=1$ | ✅ $\sigma_i=1$，故比值 1。 |
-| <span id="ex-2-11">11</span> | 残差与误差界 | 证明 $\frac{\lVert x^*-\tilde x\rVert}{\lVert x^*\rVert}\le\mathrm{cond}(A)\frac{\lVert r\rVert}{\lVert b\rVert}$ | ✅ $x^*-\tilde x=A^{-1}r$，取范数并用 $\lVert b\rVert\le\lVert A\rVert\lVert x^*\rVert$。 |
-| <span id="ex-2-12">12</span> | 条件数 / 残差反例 | 两个近似解的残差与误差对比 | ✅ $\mathrm{cond}_\infty(A)\approx3.96\times10^4$；$\tilde x=(1,0)$ 残差 $(0,0.01)$，$\tilde x=(100.5,-99.5)$ 残差 $(-0.995,-0.985)$——前者残差小但误差巨大，后者残差大但更接近真解。 |
-| <span id="ex-2-13">13</span> | 迭代序列收敛判断 | 两个迭代公式，初值任取 | ✅ (1) $\rho(G)=5$，发散；(2) $\rho(G)\approx0.8358\lt1$，收敛。 |
-| <span id="ex-2-14">14</span> | 迭代公式必收敛 | 证明收敛并指出对应方程组 | ✅ $\rho(G)\approx0.6236\lt1$（虽然 $\lVert G\rVert_\infty=1.55$）；极限满足 $(I-G)x=d$，即对应方程组 $x=Gx+d$。 |
-| <span id="ex-2-15">15</span> | Jacobi 解方程组 | 3×3 方程组，相邻差 $\le10^{-4}$ | ✅ $x\approx(-3.0909,1.0946,1.2655)^{\mathrm T}$；$\rho(G_J)\approx0.5877\lt1$，20 次迭代达到 $10^{-4}$。 |
-| <span id="ex-2-16">16</span> | Jacobi 收敛性讨论 | 四个 3×3 矩阵 | ✅ (1) $\rho_J\approx1.118$ 发散；(2) $\rho_J\approx1.2\times10^{-5}$ 收敛；(3) $\rho_J\approx1.2\times10^{-5}$ 收敛；(4) $\rho_J\approx1.118$ 发散。 |
-| <span id="ex-2-17">17</span> | GS 解第 15 题 | 同上，用 GS | ✅ $x\approx(-3.0909,1.0945,1.2655)^{\mathrm T}$；$\rho(G_{GS})=0.2$，9 次迭代达到 $10^{-4}$（Jacobi 20 次）。 |
-| <span id="ex-2-18">18</span> | GS 收敛性讨论 | 第 16 题四个矩阵 | ✅ (1) $\rho_{GS}=0.5$ 收敛；(2) $\rho_{GS}=2$ 发散；(3) $\rho_{GS}\approx4.828$ 发散；(4) $\rho_{GS}\approx1.651$ 发散——(1)(2)(3) 正是“Jacobi 与 GS 一收一散”的例子。 |
-| <span id="ex-2-19">19</span> | 构造必收敛迭代 | 为给定方程组设计迭代 | ✅ 把方程重排为 $[10,-2,0;2,10,-1;1,2,-5]$，严格对角占优；用 Jacobi/GS 必收敛，解 $\approx(0.5502,1.2510,-1.3896)^{\mathrm T}$。 |
-| <span id="ex-2-20">20</span> | 2×2 的 Jacobi/GS | 证明同时收敛/发散 | ✅ $\rho(G_{GS})=\rho(G_J)^2$。 |
-| <span id="ex-2-21">21</span> | 含参数 $a$ 的收敛范围 | $A$ 对角 1、非对角 $a$ | ✅ Jacobi：$\rho(G_J)=2|a|$，故 $|a|\lt1/2$；GS：$\rho(G_{GS})\lt1$ 当且仅当 $-1/2\lt a\lt1$（端点 $\rho=1$，不保证）。 |
-| <span id="ex-2-22">22</span> | 直接判定 GS | 给定矩阵，证明 GS 必收敛 | ✅ $A$ 对称，特征值 $\approx0.0885,1.8705,6.0410$ 全正，故对称正定；由定理 2.16，GS 收敛（$\rho(G_{GS})=0.9$）。 |
-| <span id="ex-2-23">23</span> | SOR（$\omega=0.9$） | 解方程组，相邻差 $\le10^{-5}$ | ✅ $A$ 严格对角占优，$\omega=0.9\le1$，定理 2.20 保证收敛；10 次迭代得 $(-4,3,2)^{\mathrm T}$。 |
-| <span id="ex-2-24">24</span> | SOR（$\omega=1.25$） | 解方程组，相邻差 $\le10^{-5}$ | ✅ $A$ 对称正定（特征值 $1,1,10$），$\omega=1.25\in(0,2)$，Ostrowski 保证收敛；20 次迭代得 $(0.5,1,1)^{\mathrm T}$。 |
+| 题号 | 练习 |
+|:--|:--|
+| <span id="ex-2-1">2.1</span> | [三位十进制的顺序消去与列主元](sec21.md#exercise-2.1) |
+| <span id="ex-2-2">2.2</span> | [消元矩阵 R](sec21.md#exercise-2.2) |
+| <span id="ex-2-3">2.3</span> | [行交换矩阵 Q_k](sec21.md#exercise-2.3) |
+| <span id="ex-2-4">2.4</span> | [Doolittle 运算量](sec22.md#exercise-2.4) |
+| <span id="ex-2-5">2.5</span> | [不选主元的 Doolittle](sec22.md#exercise-2.5) |
+| <span id="ex-2-6">2.6</span> | [选主元的 Doolittle](sec22.md#exercise-2.6) |
+| <span id="ex-2-7">2.7</span> | [带状存储下计算 Ax](sec22.md#exercise-2.7) |
+| <span id="ex-2-8">2.8</span> | [追赶法](sec22.md#exercise-2.8) |
+| <span id="ex-2-9">2.9</span> | [八位十进制列主元 + 条件数](sec23.md#exercise-2.9) |
+| <span id="ex-2-10">2.10</span> | [正交矩阵的条件数](sec23.md#exercise-2.10) |
+| <span id="ex-2-11">2.11</span> | [残差与误差界](sec23.md#exercise-2.11) |
+| <span id="ex-2-12">2.12</span> | [条件数与残差反例](sec23.md#exercise-2.12) |
+| <span id="ex-2-13">2.13</span> | [迭代序列收敛判断](sec24.md#exercise-2.13) |
+| <span id="ex-2-14">2.14</span> | [必收敛的迭代](sec24.md#exercise-2.14) |
+| <span id="ex-2-15">2.15</span> | [Jacobi 解方程组](sec24b.md#exercise-2.15) |
+| <span id="ex-2-16">2.16</span> | [Jacobi 收敛性讨论](sec24b.md#exercise-2.16) |
+| <span id="ex-2-17">2.17</span> | [Gauss–Seidel 解第 15 题](sec24b.md#exercise-2.17) |
+| <span id="ex-2-18">2.18</span> | [GS 收敛性讨论](sec24b.md#exercise-2.18) |
+| <span id="ex-2-19">2.19</span> | [构造必收敛的迭代](sec24b.md#exercise-2.19) |
+| <span id="ex-2-20">2.20</span> | [2×2 的 Jacobi 与 GS](sec24b.md#exercise-2.20) |
+| <span id="ex-2-21">2.21</span> | [含参数 a 的收敛范围](sec24b.md#exercise-2.21) |
+| <span id="ex-2-22">2.22</span> | [直接判定 GS](sec24b.md#exercise-2.22) |
+| <span id="ex-2-23">2.23</span> | [SOR（ω=0.9）](sec24b.md#exercise-2.23) |
+| <span id="ex-2-24">2.24</span> | [SOR（ω=1.25）](sec24b.md#exercise-2.24) |
 
-## 课堂补充题
+
+## 补充练习
 
 ::: ex 2.C1 · 为什么列主元能控制误差？
 从乘数 $|m_{ik}|\le1$ 出发，解释列主元为什么能避免“小主元放大舍入误差”。
@@ -48,14 +48,10 @@
 取 $A=\begin{pmatrix}1&1\\1&1.0001\end{pmatrix}$，两个近似解的残差都可很小，但解可差很远；因为 $e=A^{-1}r$，$\lVert A^{-1}\rVert$ 很大。停机判据只能控制残差，不能控制误差。
 :::
 
-## 作业组 · 老师布置的 SPOC 自测题（第二章 线性方程组的解法）
+## 作业组：综合练习
 
-::: note 这份作业的来路与交法 {#hw-2-meta}
-
-作业名称「线性方程组的解法」，发布在北航 SPOC《数值分析 I》课程 → 作业测试，附件 `数值分析单元自测题2.pdf`（原件本地归档于 `_sources/homework/`，该目录入库规则为忽略）。
-满分 10 分，接收班级 2026-2027-1-GA01011002-学院路 1 班；起止时间 2026-10-04 00:00 至 2026-10-11 00:00（已截止）。
-六道题覆盖本章四条主线：**主元素与顺序主子式（题 1）→ 小主元的灾难（题 2）→ 由矩阵范数造向量范数（题 3）→ LU 求解（题 4）→ 迭代格式的收敛半径（题 5）→ Jacobi 与 GS 的充要条件（题 6）**。所有数值已用四位十进制／分数精确算术复算，可逐位核对。
-
+::: note 练习说明 {#hw-2-meta}
+下面的综合练习附有完整推导。建议先独立作答，再展开解答核对关键步骤。
 :::
 
 ::: ex 作业 2-1 · 主元素就是顺序主子式的比值 {#hw-2-1}
@@ -94,7 +90,7 @@ $$D_k=\det A_k=\det L_k\cdot\det U_k=\prod_{i=1}^{k}u_{ii}=\prod_{i=1}^{k}a_{ii}
 
 $$\frac{D_k}{D_{k-1}}=\frac{\prod_{i=1}^{k}a_{ii}^{(i)}}{\prod_{i=1}^{k-1}a_{ii}^{(i)}}=a_{kk}^{(k)} .\qquad\blacksquare$$
 
-**老师在第 3–4 讲强调过的两点，正好是这道题的注解**：
+这里需要区分消元能否进行与方程组是否有唯一解：
 
 1. **主元的乘积 = 行列式**（在无换行时）。所以「消元过程会不会断」等价于「$D_k$ 会不会变号为零」——这就是定理 2.2 里那串顺序主子式条件的来源。
 2. **换行之后这个公式就失效**。列主元法里 $P A=LU$，取行列式只能得到 $\pm D_k=\det U_k$，主元不再是 $D_k/D_{k-1}$。作业 2-2 的四位十进制实验会看到：一旦换行，主元的量级与 $D_k$ 的关系就被打乱，而这恰恰是列主元「救回精度」的机制。
@@ -185,7 +181,7 @@ $$x_1=\frac{3.000-1.116\times(-0.08186)-5.712\times0.3882}{-2.000}=\frac{0.8740}
 三条结论：
 
 1. **病根是小主元**。$a_{11}=0.001$ 使 $m_{21}=-1000$：消元时把行 1 放大约 1000 倍再加到行 2 上，行 2 的原始信息（只有 4 位有效数字）被彻底淹没。这一步之后，"行 2 的 $a_{22}$" 其实是 $1000\times2.000$ 舍入后的残余，与原矩阵几乎无关。
-2. **问题本身不病态**。条件数说明输入扰动可能被放大；结合具体扰动界才能估计输出误差，不能仅凭输入四位就保证输出至少三位。顺序消去丢掉的位数**全部是算法自己造的**——这正好呼应第 3 讲老师那句「列主元不改变条件数，只改变算法对误差的放大」。
+2. **区分问题敏感性与算法误差。**本例矩阵的条件数不大。顺序消去出现的大误差来自计算过程；改用列主元可以改善结果，而原矩阵的条件数保持不变。
 3. **列主元的机制是「让乘数不超过 1」**。列主元使 $|m_{ik}|\le1$，抑制由消元乘数引起的放大，但后续元素仍可能增长，不能据此保证舍入误差绝不放大；这是[2.1.2 列主元](sec21.md#sec-2.1.2) 的结论，本题是它的数值证据。
 
 **编者复核：缩放能否代替选主元？** 将第一行乘 $1000$，乘数虽然从 $-1000,-2000$ 变成 $-1,-2$，但第一行的其他元素也放大了 $1000$ 倍；生成的 $2004,3005,4001,6006$ 等消元数据并未改善。在相同四位算术和运算次序下仍得到原来的劣解。应联合考虑乘数、元素增长与尺度，不能宣称“把小主元放大就解决稳定性”。
@@ -216,11 +212,11 @@ $$\lVert\boldsymbol x+\boldsymbol y\rVert=\lVert(\boldsymbol x+\boldsymbol y)\bo
 =\lVert\boldsymbol x\boldsymbol e_i^{\mathrm T}+\boldsymbol y\boldsymbol e_i^{\mathrm T}\rVert
 \le\lVert\boldsymbol x\boldsymbol e_i^{\mathrm T}\rVert+\lVert\boldsymbol y\boldsymbol e_i^{\mathrm T}\rVert=\lVert\boldsymbol x\rVert+\lVert\boldsymbol y\rVert .\qquad\blacksquare$$
 
-**加分的一步（老师通常会给分）**：这个向量范数与 $\lVert\cdot\rVert$ **相容**。因为
+**相容性。**这个向量范数与 $\lVert\cdot\rVert$ **相容**。因为
 
 $$\lVert A\boldsymbol x\rVert=\lVert A\boldsymbol x\boldsymbol e_i^{\mathrm T}\rVert=\lVert A(\boldsymbol x\boldsymbol e_i^{\mathrm T})\rVert\le\lVert A\rVert\,\lVert\boldsymbol x\boldsymbol e_i^{\mathrm T}\rVert=\lVert A\rVert\,\lVert\boldsymbol x\rVert .$$
 
-这条结论正是[1.3.3](../../ch01/sec13.md#sec-1.3.3) 讲的「**任何一个矩阵范数都存在与它相容的向量范数**」的构造性证明，而教材习题 15（[B4](../../ch01/exercises.md#sec-练习-b)）用的是另一个构造 $\lVert\boldsymbol x\rVert_*=N(\boldsymbol x\boldsymbol b^{\mathrm T})$。两个构造思路完全一致：**把向量「做成」矩阵，再用矩阵范数度量**。
+这给出了[1.3.3](../../ch01/sec13.md#sec-1.3.3) 中相容向量范数的一种构造。[第一章练习 B4](../../ch01/exercises.md#sec-练习-b) 使用另一种构造 $\lVert\boldsymbol x\rVert_*=N(\boldsymbol x\boldsymbol b^{\mathrm T})$。两个构造思路完全一致：**把向量「做成」矩阵，再用矩阵范数度量**。
 
 :::
 
@@ -266,7 +262,7 @@ $$\boxed{\ \boldsymbol x=(1,\,-1,\,1)^{\mathrm T}\ }$$
 **本题的三个考点**（也是考场上最容易丢分的三处）：
 1. Doolittle 与 Crout 别混：Doolittle 是 $L$ 对角全 1、先算 $U$ 的第 $k$ 行；Crout 是 $U$ 对角全 1、先算 $L$ 的第 $k$ 列。本题按 Doolittle 走。
 2. 顺序不能反：**先前代后回代**，$LU\boldsymbol x=\boldsymbol b$ 要拆成 $L(U\boldsymbol x)=\boldsymbol b$，令 $\boldsymbol y=U\boldsymbol x$。
-3. 分解与右端无关：若还有另一组右端 $\boldsymbol b'$，只需再做一次前代+回代，$O(n^2)$ 而不是 $O(n^3)$——这就是老师说的「一次分解、反复使用」。
+3. 分解与右端无关：若还有另一组右端 $\boldsymbol b'$，只需再做一次前代+回代，$O(n^2)$ 而不是 $O(n^3)$，可复用已有的分解。
 
 :::
 
@@ -307,7 +303,7 @@ $$\rho(G)=\max_i|1-\omega\mu_i|<1
 
 这时 $e_k=G^ke_0\to0$，极限正是 $Ax=b$ 的唯一解。也可在极限处得到 $A^{\mathrm T}(Ax^*-b)=0$，利用 **$A^{\mathrm T}$ 可逆**推出残差为零；不能将其随意左乘残差后写成残差平方。
 
-**什么时候原题的界也对？** 若额外知道 $A$ 为实正规矩阵（实对称是常见特例），则 $\|A\|_2=\rho(A)$，两种界才一致。缺少该条件时应提交上述更正与反例，或向老师确认记号。
+**什么时候原题的界也对？** 若额外知道 $A$ 为实正规矩阵（实对称是常见特例），则 $\|A\|_2=\rho(A)$，两种界才一致。对于一般矩阵，不能把谱半径直接替代这里的谱范数。
 
 **边界与选参。** $\omega=0$ 时不更新；$\omega=2/\mu_{\max}$ 时出现特征值 -1，某些初值会不衰减地振荡。若已知两个端点，最小化最坏误差因子的选择为 $\omega_*=2/(\mu_{\min}+\mu_{\max})$，对应因子 $(\mu_{\max}-\mu_{\min})/(\mu_{\max}+\mu_{\min})$。这里的充要条件来自[谱半径定理 2.8](sec24.md#thm-2.8)，不是范数充分条件定理 2.9。
 :::
@@ -391,7 +387,7 @@ $$\rho(G_{GS})=\frac{3\lvert ab\rvert}{100},\qquad
 | $(-10,-8)$ | $1.5492$ | $2.4000$ | 都发散 |
 | $(2,-3)$ | $0.4243$ | $0.1800$ | 都收敛 |
 
-**这道题为什么值得考**：一般情形下 Jacobi 与 GS 没有「谁更好」的定论（[第 5 讲 §七](../../lectures/lec05.md#lec05-S7) 明确讲了「一个收敛一个发散」的例子，如教材习题 16/18 的矩阵 (1)）。而本题的结构（第一列、第一行的位置特殊）使得 $\rho_{GS}=\rho_J^{2}$，于是「同时收敛」成为必然。**会算 $\rho$ 只是及格，看出「$\rho_{GS}$ 与 $\rho_J$ 的关系」才是满分**。
+本题的特殊零元结构使 $\rho(G_{GS})=\rho(G_J)^2$，因此两种方法必然同时满足或不满足谱半径收敛条件。一般矩阵没有这个关系，应分别检查。
 
 **易错点**：
 1. $G_{GS}$ 的第一列算错（把 $ab/100$ 放到第 1 列的 $(2,1)$ 位置）——记住 $U$ 的第一列全零，$G_{GS}$ 的第一列必然全零，可用来自检；
@@ -413,26 +409,7 @@ $$\rho(G_{GS})=\frac{3\lvert ab\rvert}{100},\qquad
 
 :::
 
-## 按正文进度练（作业与教材习题的插入点）
 
-::: method[core] 读完哪一节，就做哪几题 {#hw-2-progress}
+## 练习顺序 {#hw-2-progress}
 
-| 读完 | 立刻做（10–15 分钟） | 再做（30–60 分钟） | 为什么放在这里 |
-|:--|:--|:--|:--|
-| [2.1.1 高斯消去](sec21.md#sec-2.1.1) | 教材习题 [1](exercises.md#ex-2-1)、[2](exercises.md#ex-2-2)、[3](exercises.md#ex-2-3) | **作业 2-1**（主元素 = 主子式之比） | 作业 2-1 的证明要用 $A=LU$，而 $LU$ 的合法性正是「主元非零 ⟺ 主子式非零」，学完消元立刻做最顺 |
-| [2.1.2 列主元](sec21.md#sec-2.1.2) | **作业 2-2** 的「顺序消去」一半（自己算到 $x_1=0$） | **作业 2-2** 完整（列主元 + 分析）· 教材习题 [9](exercises.md#ex-2-9) | 亲手算出 $x_1=0$ 的震惊感，比读十遍「列主元必要」有用；习题 9 是八位十进制的同型题 |
-| [2.2 直接三角分解](sec22.md#sec-2.2.1) | 教材习题 [4](exercises.md#ex-2-4)、[8](exercises.md#ex-2-8)（追赶法） | **作业 2-4**（LU 求解）· 教材习题 [5](exercises.md#ex-2-5)、[6](exercises.md#ex-2-6) | 作业 2-4 是 Doolittle 的最短完整流程，先做它再碰选主元的习题 6 |
-| [2.3 条件数与病态](sec23.md#sec-2.3.1) | 教材习题 [10](exercises.md#ex-2-10)、[11](exercises.md#ex-2-11) | 教材习题 [12](exercises.md#ex-2-12)（残差小误差大） | 做完作业 2-2 再看条件数，才能分清「问题病态」与「算法不稳」 |
-| [2.4.1 迭代法引论](sec24.md#sec-2.4.1) | 教材习题 [13](exercises.md#ex-2-13)、[14](exercises.md#ex-2-14) | **作业 2-5**（Richardson 的 $\omega$ 区间） | 作业 2-5 是「$\rho(G)\lt1$」的第一次非平凡应用：$G$ 的特征值要自己算出来 |
-| [2.4.2–2.4.4 Jacobi/GS/SOR](sec24b.md#sec-2.4.2) | 教材习题 [15](exercises.md#ex-2-15)、[17](exercises.md#ex-2-17) | **作业 2-6**（$\lvert ab\rvert\lt100/3$）· 教材习题 [16](exercises.md#ex-2-16)、[18](exercises.md#ex-2-18) | 习题 16/18 是「一个收敛一个发散」的反例，作业 2-6 是「必然同时收敛」的正例——正反并做才算懂 |
-
-**两条铁律**：
-
-1. **作业 2-2 必须亲手算完，不许看答案**。这道题的全部价值在「$x_1$ 变成 0」那一刻的体感；看了答案就永远学不会。
-2. **作业 2-6 与教材习题 16/18 对着做**。前者告诉你「有时两者同时收敛」，后者告诉你「有时一收一散」——只记其中一半，考场上遇到另一半就废。
-
-:::
-
-::: note 覆盖核对
-本页覆盖教材习题 1–24（题面摘要 + 答案/提示）、两道课堂补充题，以及**老师布置的 SPOC 自测题六道（完整精讲）**；逐题数值可按教材数据复算。覆盖矩阵见[第 2 章覆盖矩阵](coverage.md)。
-:::
+先完成消元和 LU 的计算题，再用条件数解释残差，最后做迭代收敛性练习。

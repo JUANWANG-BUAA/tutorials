@@ -93,6 +93,9 @@
       if (currentPage) li.classList.add("expanded");
       else if (saved === "0") li.classList.remove("expanded");
       else if (saved === "1") li.classList.add("expanded");
+      else if (window.TUTORIALS_NAV && window.TUTORIALS_NAV.defaultCollapsed === true) {
+        li.classList.remove("expanded");
+      }
       syncChevron(li, toggle);
     });
   }

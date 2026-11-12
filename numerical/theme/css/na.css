@@ -113,58 +113,6 @@ body{
 
 .note.p-skip,.preview.p-skip{background:transparent;color:var(--muted)}
 
-/* 「只看核心」：折叠全部可跳层（证明、预告、拓展思考） */
-html.core-only .p-skip{display:none}
-
-/* 打印时一律展开：纸面上没有开关可点，缺内容比多内容更糟 */
-@media print{html.core-only .p-skip{display:block}}
-
-/* 阅读分层图例（由 na.js 注入到正文开头）。
-   此前是「标题 + 三条说明 + 开关」挤成一段的小字，折行后层级读不出来。
-   改成：标题与开关占一行，下面三条各自成行（色块 / 名称 / 适用内容）。 */
-.layer-legend{
-  margin:var(--space-4) 0 22px;padding:13px var(--space-4) var(--space-3);
-  border:1px solid var(--line);background:var(--paper-soft);
-  font:var(--fs-md)/1.6 var(--sans);color:var(--ink-2);
-}
-
-.layer-legend-head{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:var(--space-3);margin-bottom:9px;
-}
-
-.layer-legend-title{color:var(--ink);font-weight:700}
-
-.layer-legend ul{display:grid;gap:var(--space-1);margin:0;padding:0;list-style:none}
-
-.layer-legend ul li{
-  display:grid;grid-template-columns:var(--space-4) max-content 1fr;
-  align-items:center;gap:0 var(--space-2);margin:0;padding:0;border:0;
-}
-
-.layer-legend ul li b{color:var(--ink-2);font-weight:600}
-
-.layer-legend ul li .desc{color:var(--muted);font-size:var(--fs-sm)}
-
-.layer-legend .swatch{
-  width:10px;height:10px;
-  border:1px solid var(--line-strong);border-left:3px solid var(--line-strong);
-}
-
-.layer-legend .swatch.core{border-left-color:var(--thm-line);border-left-width:var(--space-1)}
-
-.layer-legend .swatch.skip{border-left-color:var(--line);background:transparent}
-
-.layer-legend button{
-  flex:0 0 auto;padding:3px 10px;border:1px solid var(--line-strong);
-  background:var(--paper);color:var(--ink-2);
-  font:600 var(--fs-xs)/1.4 var(--sans);cursor:pointer;
-}
-
-.layer-legend button:hover{border-color:var(--ink);color:var(--ink)}
-
-.layer-legend button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-
 /* 例题解答（可折叠） */
 details.sol-box{
   margin:13px 0;border:1px solid var(--line);background:var(--paper);
