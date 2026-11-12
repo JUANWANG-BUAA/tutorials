@@ -84,6 +84,7 @@
 - [第 11 讲（10-21）：埃尔米特余项收尾、内积空间与最佳平方逼近、Gram–Schmidt 与正交多项式](lectures/lec11.md)
   - [教材 · 5.2 埃尔米特（Hermite）插值](course/ch05/sec52.md)
   - [教材 · 5.5–5.6 正交多项式与最佳平方逼近（含 5.6.4 曲线拟合）](course/ch05/sec55.md)
+  - [5.6 课件原例：从法方程到曲线拟合](course/ch05/slide-examples.md)
   - [第 5 章导览](course/ch05/overview.md)
   - [第 5 章覆盖矩阵](course/ch05/coverage.md)
   - [第 5 章习题（教材 1–46）](course/ch05/exercises.md)

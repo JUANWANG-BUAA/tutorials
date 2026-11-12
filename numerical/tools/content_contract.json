@@ -144,7 +144,8 @@
     "appendix/connections.md",
     "appendix/numerical-diff.md",
     "reading.md",
-    "training/exam-foundations.md"
+    "training/exam-foundations.md",
+    "course/ch05/slide-examples.md"
   ],
   "required_anchors": {
     "ch01/sec11.md": [
@@ -313,7 +314,9 @@
       "thm-3.0.6",
       "thm-3.0.7",
       "thm-3.0.8",
-      "thm-3.1.1"
+      "thm-3.1.1",
+      "power-dominant-pair",
+      "ex-power-conjugate-pair"
     ],
     "course/ch04/exercises.md": [
       "ex-4-1",
@@ -386,6 +389,23 @@
       "thm-4.7",
       "thm-4.8",
       "thm-4.9"
+    ],
+    "course/ch05/slide-examples.md": [
+      "slide-sine",
+      "slide-root",
+      "slide-arctan",
+      "slide-ladle"
+    ],
+    "course/ch07/sec71.md": [
+      "rk3-construction",
+      "method-rk3",
+      "euler-initial-stability",
+      "thm-euler-perturbation",
+      "rk-stability-derivation",
+      "ex-rk-slide-comparison"
+    ],
+    "course/ch07/sec74.md": [
+      "adaptive-rk4-loop"
     ]
   },
   "homework_counts": {

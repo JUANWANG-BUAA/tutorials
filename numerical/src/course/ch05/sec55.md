@@ -248,6 +248,19 @@ $x=\cos\theta$ 把 $[-1,1]$ 映到 $[0,\pi]$，$\sqrt{1-x^2}=\sin\theta$；换�
 | Laguerre | $[0,\infty)$ | $e^{-x}$ | $U_n(x)=e^x\dfrac{d^n}{dx^n}(x^ne^{-x})$ | $\displaystyle\int_0^\infty e^{-x}U_nU_m\,dx=(n!)^2\delta_{nm}$ |
 | Hermite | $(-\infty,\infty)$ | $e^{-x^2}$ | $H_n(x)=(-1)^ne^{x^2}\dfrac{d^n}{dx^n}e^{-x^2}$ | $\displaystyle\int_{-\infty}^{\infty}e^{-x^2}H_nH_m\,dx=2^nn!\sqrt{\pi}\,\delta_{nm}$ |
 
+用递推式计算这些多项式，可以避免反复作高阶求导。本页沿用上表的归一化：
+
+$$
+\begin{aligned}
+U_0&=1,\quad U_1=1-x,&
+U_{n+1}&=(2n+1-x)U_n-n^2U_{n-1},\\
+H_0&=1,\quad H_1=2x,&
+H_{n+1}&=2xH_n-2nH_{n-1}\qquad(n\ge1).
+\end{aligned}
+$$
+
+例如 $U_2=x^2-4x+2$、$H_2=4x^2-2$。常见另一记号 $L_n=U_n/n!$ 满足 $(n+1)L_{n+1}=(2n+1-x)L_n-nL_{n-1}$。lecture10 p.11 混用了两种系数；复习时先由生成公式算出前两项，就能检查所用递推是否一致。这里的 $H_n$ 采用权 $e^{-x^2}$，不是权 $e^{-x^2/2}$ 的另一种 Hermite 归一化。
+
 ### 四族一览
 
 ::: method[core] 四族经典正交多项式（第 12 讲 §2.4 板书汇总）
@@ -970,6 +983,8 @@ $$
 | 离散内积 | $(f,g)=\sum_i f(x_i)g(x_i)$ | [@def-5.6.3] | [5.6.4](#sec-5.6.4) 曲线拟合 |
 | 最小二乘法方程 | $A^{\mathrm T}A\boldsymbol c=A^{\mathrm T}\boldsymbol y$ | [@thm-ls-normal] | [6.1](../ch06/sec61.md) 插值型求积 |
 :::
+
+连续函数和离散数据的计算都已经归结为投影。若想把这条思路从头练一遍，可接着做[四道课件原例](slide-examples.md)：先用幂基列法方程，再换正交基，最后比较非线性模型线性化前后的误差。
 
 ::: think 本节常见错误
 1. **把「1」当数而不是常值函数。** 函数空间里 $f,g,1,x$ 都是向量；$a$ 才是数（老师在第 11 讲专门纠正）。

@@ -45,6 +45,101 @@ $$
 这里右端估计的是两次半步所得细解的局部误差；粗解的相应估计还要乘 $2^p$。在误差渐近展开成立时，可据此接受细解，或缩短步长重算，再用安全因子调整下一步。该估计不要求显式给出高阶导数的上界，但局部容差仍不等于全程全局误差保证。
 :::
 
+### 让步长自己调整：先试算，再决定是否前进 {#adaptive-rk4-loop}
+
+固定步长在解变化平缓处可能多算，在变化剧烈处又可能不够细。步长加倍法利用两种计算结果的差来估计一步误差。对 RK4，若粗步的局部误差为 $Ch^5+O(h^6)$，从同一起点走两次半步的局部误差为
+
+$$
+2C(h/2)^5+O(h^6)=\frac{Ch^5}{16}+O(h^6).
+$$
+
+因此细解误差估计是 $(y_{\mathrm{fine}}-y_{\mathrm{coarse}})/15$。两次半步虽然多算了一步，领先误差仍缩小到原来的 $1/16$。
+
+把这个估计变成程序，要先约定什么叫“够准”。对标量问题，令
+
+$$
+s=\mathrm{atol}+\mathrm{rtol}\max(|y_n|,|y_{\mathrm{fine}}|),\qquad
+E=\frac{|y_{\mathrm{fine}}-y_{\mathrm{coarse}}|}{15s}.
+$$
+
+$\mathrm{atol}$ 是绝对容差，给接近零的解提供误差尺度；$\mathrm{rtol}$ 是相对容差，使大数值分量允许相应的绝对误差。$E\le1$ 就接受细解，更新时刻；否则原地缩短步长重算。拒步时，时间和已接受的解都不改变。
+
+由于估计对应 $h^5$，可取下一步为
+
+$$
+h_{\mathrm{new}}=h\cdot\operatorname{clip}(0.9E^{-1/5},0.2,5),
+$$
+
+其中 clip 将倍率限制在 $[0.2,5]$；0.9 是给误差估计留余量的安全系数。误差为零时取倍率 5。临近终点时先令 $h=\min(h,T-t_n)$，确保最后一步恰好到达终点。
+
+下面是可直接运行的标量示例。它接受两半步的细解，不额外作 Richardson 外推；每次试步都记录是否接受，便于看清循环。
+
+```python
+import math
+
+
+def rk4_step(f, t, y, h):
+    k1 = f(t, y)
+    k2 = f(t + h / 2, y + h * k1 / 2)
+    k3 = f(t + h / 2, y + h * k2 / 2)
+    k4 = f(t + h, y + h * k3)
+    return y + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6
+
+
+def adaptive_rk4(f, t0, y0, end, h0, atol=1e-6, rtol=1e-6):
+    # 标量、向前积分；返回已接受节点和全部试步记录。
+    if end < t0 or h0 <= 0 or atol <= 0 or rtol < 0:
+        raise ValueError("要求 end >= t0、h0 > 0、atol > 0、rtol >= 0")
+    t, y, h = t0, y0, h0
+    nodes, trials = [(t, y)], []
+    for _ in range(10000):
+        if t >= end:
+            return nodes, trials
+        h = min(h, end - t)
+        if t + h == t:
+            raise ArithmeticError("步长小于当前浮点时间分辨率")
+        coarse = rk4_step(f, t, y, h)
+        half = rk4_step(f, t, y, h / 2)
+        fine = rk4_step(f, t + h / 2, half, h / 2)
+        estimate = (fine - coarse) / 15
+        scale = atol + rtol * max(abs(y), abs(fine))
+        error = abs(estimate) / scale
+        if not math.isfinite(error):
+            raise ArithmeticError("试步结果不是有限数")
+        accepted = error <= 1
+        trials.append((t, h, error, accepted))
+        if accepted:
+            t = end if h == end - t else t + h
+            y = fine
+            nodes.append((t, y))
+        factor = 5.0 if error == 0 else 0.9 * error ** (-1 / 5)
+        factor = min(5.0, max(0.2, factor))
+        h *= factor if accepted else min(1.0, factor)
+    raise RuntimeError("试步次数超过本教学示例的上限")
+
+
+nodes, trials = adaptive_rk4(lambda t, y: y, 0.0, 1.0, 1.0, 1.0,
+                             atol=1e-6, rtol=0.0)
+for t, h, error, accepted in trials:
+    print(f"{t:.6f} {h:.6f} {error:.6f} {accepted}")
+print(f"终点：{nodes[-1][0]:.6f}，数值解：{nodes[-1][1]:.9f}")
+```
+
+本例的试步过程如下。先看前两行：第一次被拒绝后，第二次仍从 $t=0$ 出发。
+
+| 起点 $t$ | 试步 $h$ | 缩放误差 $E$ | 接受？ |
+|--:|--:|--:|:--:|
+| 0.000000 | 1.000000 | 600.857205 | 否 |
+| 0.000000 | 0.250316 | 0.530094 | 是 |
+| 0.250316 | 0.255776 | 0.759027 | 是 |
+| 0.506092 | 0.243249 | 0.761250 | 是 |
+| 0.749341 | 0.231200 | 0.751825 | 是 |
+| 0.980541 | 0.019459 | 0.000004 | 是 |
+
+最终 $y(1)\approx2.718277242$，与 $e$ 的差约为 $4.59\times10^{-6}$。这里的 $10^{-6}$ 控制每次试步的局部估计，整体误差还包含前面各步的累积。
+
+对方程组，给每个分量设自己的 $s_i=\mathrm{atol}_i+\mathrm{rtol}_i\max(|Y_{n,i}|,|Y_{\mathrm{fine},i}|)$，用 $E=\max_i|e_i|/s_i$ 统一决定整步是否接受。后面把高阶方程改写成系统时，可以继续使用这个判断。
+
 ::: note 变步长与多步法的冲突
 固定步长多步法的系数依赖等距历史节点，变步长时不能原封不动复用这些系数。可按实际时间节点重新插值求系数，或用 Nordsieck 表示更新历史；必要时也可用单步法重启。自适应既可用于 RK，也可用于变步长 Adams/BDF，只是历史与步长比的管理更复杂。
 :::
