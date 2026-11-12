@@ -119,6 +119,7 @@
 # 资料记录
 
 - [资料来源与编校记录](lectures/crosswalk.md)
+  - [17 讲课件核对与课堂重点](lectures/slide-coverage.md)
   - [课堂来源记录](lectures/overview.md)
     - [第 1 讲来源记录](lectures/lec01.md)
     - [第 2 讲来源记录](lectures/lec02.md)

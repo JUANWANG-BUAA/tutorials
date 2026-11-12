@@ -1,0 +1,218 @@
+[
+  {
+    "id": "class-02-digits",
+    "file": "ch01/sec12.md",
+    "title": "课堂提示 · 先看误差限，再数有效数字（据整理稿）",
+    "lecture": 2,
+    "time": "",
+    "source_anchor": "",
+    "evidence": "edited-notes"
+  },
+  {
+    "id": "class-07-power",
+    "file": "course/ch03/sec31.md",
+    "title": "课堂提示 · 幂法的前提与归一化（据整理稿）",
+    "lecture": 7,
+    "time": "",
+    "source_anchor": "",
+    "evidence": "edited-notes"
+  },
+  {
+    "id": "class-06-sor-necessary",
+    "file": "course/ch02/sec24b.md",
+    "title": "课堂重点 · 松弛参数在区间内，还要检查矩阵",
+    "lecture": 6,
+    "time": "36:30–38:25",
+    "source_anchor": "lec06-S6",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-06-sor-spd",
+    "file": "course/ch02/sec24b.md",
+    "title": "课堂重点 · 把矩阵条件与参数范围一起记",
+    "lecture": 6,
+    "time": "1:30:39–1:32:17",
+    "source_anchor": "lec06-S9",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-08-contraction",
+    "file": "course/ch04/sec41.md",
+    "title": "课堂重点 · 自映射与压缩各管什么",
+    "lecture": 8,
+    "time": "03:17–15:00",
+    "source_anchor": "lec08-S2",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-08-order",
+    "file": "course/ch04/sec41.md",
+    "title": "课堂讲法 · 用 Taylor 展开判断收敛阶",
+    "lecture": 8,
+    "time": "38:00–51:00",
+    "source_anchor": "lec08-S6",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-09-newton-range",
+    "file": "course/ch04/sec41b.md",
+    "title": "课堂重点 · 二阶收敛要连同初值条件理解",
+    "lecture": 9,
+    "time": "11:20–21:30",
+    "source_anchor": "lec09-S4",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-09-secant",
+    "file": "course/ch04/sec41b.md",
+    "title": "课堂重点 · 割线法需要两个初值",
+    "lecture": 9,
+    "time": "34:20–46:40、51:27–64:00",
+    "source_anchor": "lec09-S8",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-09-interpolation-basis",
+    "file": "course/ch05/sec51.md",
+    "title": "课堂讲法 · 存在唯一以后，还要选好计算公式",
+    "lecture": 9,
+    "time": "80:00–99:03",
+    "source_anchor": "sec-lec09-11",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-10-newton-table",
+    "file": "course/ch05/sec51.md",
+    "title": "课堂重点 · 增加节点时，保留已有差商",
+    "lecture": 10,
+    "time": "47:00–70:00",
+    "source_anchor": "lec10-S13",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-10-remainder",
+    "file": "course/ch05/sec51.md",
+    "title": "课堂讲法 · 余项证明中的零点怎样数",
+    "lecture": 10,
+    "time": "36:00–47:00",
+    "source_anchor": "lec10-S9",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-11-hermite",
+    "file": "course/ch05/sec52.md",
+    "title": "课堂讲法 · 一阶导数条件对应重复节点",
+    "lecture": 11,
+    "time": "03:00–12:00",
+    "source_anchor": "lec11-S4",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-11-projection",
+    "file": "course/ch05/sec55.md",
+    "title": "课堂重点 · 投影条件要对整个逼近空间成立",
+    "lecture": 11,
+    "time": "17:00–52:00",
+    "source_anchor": "lec11-S10",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-12-orthogonal-weight",
+    "file": "course/ch05/sec55.md",
+    "title": "课堂重点 · 正交多项式要连同区间和权一起用",
+    "lecture": 12,
+    "time": "15:00–30:00",
+    "source_anchor": "lec12-S6",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-12-zeros",
+    "file": "course/ch05/sec55.md",
+    "title": "课堂讲法 · 零点定理为何要在这里学",
+    "lecture": 12,
+    "time": "30:00–40:00",
+    "source_anchor": "lec12-S12",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-12-discrete",
+    "file": "course/ch05/sec55.md",
+    "title": "课堂讲法 · 把积分换成求和，得到最小二乘",
+    "lecture": 12,
+    "time": "40:00–76:00",
+    "source_anchor": "lec12-S15",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-12-degree",
+    "file": "course/ch06/sec61.md",
+    "title": "课堂重点 · 代数精度怎样检验",
+    "lecture": 12,
+    "time": "80:00–90:00",
+    "source_anchor": "lec12-S29",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-13-at-least",
+    "file": "course/ch06/sec61.md",
+    "title": "课堂重点 · “至少”二字不能省",
+    "lecture": 13,
+    "time": "16:00–30:00、63:00–71:00",
+    "source_anchor": "lec13-S8",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-13-simpson",
+    "file": "course/ch06/sec61.md",
+    "title": "课堂讲法 · Simpson 余项为什么换用 Hermite 插值",
+    "lecture": 13,
+    "time": "71:00–88:00",
+    "source_anchor": "lec13-S22",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-14-gauss-degree",
+    "file": "course/ch06/sec67.md",
+    "title": "课堂重点 · 精度上限要靠反证",
+    "lecture": 14,
+    "time": "15:00–33:00",
+    "source_anchor": "lec14-S5",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-14-weighted",
+    "file": "course/ch06/sec67.md",
+    "title": "课堂讲法 · 带权 Gauss 先把内积写对",
+    "lecture": 14,
+    "time": "38:00–76:00",
+    "source_anchor": "lec14-S15",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-15-euler-start",
+    "file": "course/ch07/sec71.md",
+    "title": "课堂重点 · 推导从精确解的等式开始",
+    "lecture": 15,
+    "time": "04:29–13:04",
+    "source_anchor": "lec15-S3",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-15-global-order",
+    "file": "course/ch07/sec71.md",
+    "title": "课堂重点 · 局部误差怎样累积成整体误差",
+    "lecture": 15,
+    "time": "16:47–31:40、1:01:07–1:01:26",
+    "source_anchor": "lec15-S8",
+    "evidence": "board-transcript"
+  },
+  {
+    "id": "class-15-step-stability",
+    "file": "course/ch07/sec71.md",
+    "title": "课堂重点 · 收敛阶不能替代稳定步长",
+    "lecture": 15,
+    "time": "1:14:25–1:25:00",
+    "source_anchor": "lec15-S19",
+    "evidence": "board-transcript"
+  }
+]
