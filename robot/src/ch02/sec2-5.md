@@ -4,6 +4,8 @@
 
 先区分三件事：**正解**对任意角都有效；**参数表示**可能不唯一；**逆解算法**在零角和半圈处需要换公式。这里的零角与半圈都不会使机器人失去实际运动能力。学完后应能算出一个完整矩阵、解释两端退化，并用演示核对每一步。
 
+
+
 <a id="sec-2.5.1"></a>
 
 ## 2.5.1 定义与五步合成
@@ -96,7 +98,7 @@ r_xr_z(1-c_\vartheta)-r_ys_\vartheta & r_yr_z(1-c_\vartheta)+r_xs_\vartheta & r_
 
 $$S(\omega)=\begin{bmatrix}0&-\omega_z&\omega_y\\ \omega_z&0&-\omega_x\\ -\omega_y&\omega_x&0\end{bmatrix},\qquad\text{满足 } S(\omega)\,p\equiv\omega\times p\ \ (\forall p\in\mathbb R^3).$$
 
-（逐列验证：第 1 列 $S(\omega)\boldsymbol x=\omega\times\boldsymbol x=[0,\omega_z,-\omega_y]^{\mathrm T}$，恰为矩阵的第 1 列；其余两列同法。）$S(\omega)$ 满足 $S^{\mathrm T}(\omega)=-S(\omega)$，即**反对称矩阵**：对角线恒为零、非对角元素镜像反号；此外还有 $S(\omega)=-S(-\omega)$。第 3 章将证明 $S(\omega)$ 正是**角速度**的矩阵化身（[@def-3.1.2]）；本节先把它当作「把叉积装进矩阵代数」的纯工具。
+（逐列验证：第 1 列 $S(\omega)\boldsymbol x=\omega\times\boldsymbol x=[0,\omega_z,-\omega_y]^{\mathrm T}$，恰为矩阵的第 1 列；其余两列同法。）$S(\omega)$ 满足 $S^{\mathrm T}(\omega)=-S(\omega)$，即**[反对称矩阵](../recall.md#skew)**：对角线恒为零、非对角元素镜像反号；此外还有 $S(\omega)=-S(-\omega)$。第 3 章将证明 $S(\omega)$ 正是**角速度**的矩阵化身（[@def-3.1.2]）；本节先把它当作「把叉积装进矩阵代数」的纯工具。
 :::
 
 ::: proof 证明 · 从五步合成到 Rodrigues 矩阵（本编补充，对应原书习题 2.4） {#pf-2.5.rodrigues}
@@ -262,7 +264,7 @@ $$\exp\big(\vartheta S(\boldsymbol r)\big)=I+\sin\vartheta\,S+(1-\cos\vartheta)\
 
 $$R(\vartheta,\boldsymbol r)=\exp\big(\vartheta S(\boldsymbol r)\big),$$
 
-映射 $\exp:so(3)\to SO(3)$ 称为**指数映射**。通常把三维向量 $\phi=\vartheta\boldsymbol r$ 称为**旋转向量或指数坐标**，而 $\hat\phi=S(\phi)=\vartheta S(\boldsymbol r)$ 是对应的李代数矩阵。指数的输入是该矩阵，输出是旋转矩阵；每个输入只有一个输出，但不同输入可以映到同一个旋转。
+映射 $\exp:so(3)\to SO(3)$ 称为**指数映射**。通常把三维向量 $\phi=\vartheta\boldsymbol r$ 称为**旋转向量或指数坐标**，而 $\hat\phi=S(\phi)=\vartheta S(\boldsymbol r)$ 是对应的李代数矩阵。指数的输入是该矩阵，输出是[旋转矩阵](../recall.md#rotation)；每个输入只有一个输出，但不同输入可以映到同一个旋转。
 :::
 
 ::: proof 证明 · 幂次化简与正弦余弦级数
@@ -375,7 +377,7 @@ $\Delta=R_z(90^\circ)$、$A=(\pi/2)S(\boldsymbol z)$，所以 $R(1/2)=R_z(135^\c
 
 ::: think 默写点 · 合上书再写（主动回忆）
 
-不看正文与速查卡，先写出下面几条，再展开核对。写不出来就说明这一节还没「拿走」。
+
 
 1. 写出绕任意轴 $\boldsymbol r$ 转 $\vartheta$ 的五步固定轴构造；其中哪两步先把轴对齐 $z$？
 2. 由 $R$ 求 $\vartheta$ 与 $\boldsymbol r$ 的公式各是什么（各自用 $R$ 的哪部分）？

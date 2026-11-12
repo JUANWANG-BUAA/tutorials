@@ -1,152 +1,107 @@
 # 6.6 轨迹的动态标度
 
-> 录播 01:27:15–01:36:48。课件 **§7.7「轨迹的动态标度」**（标题 01:28:15、目标页 01:31:08），本书编为 6.6。
-> 本节回答：**规划好的轨迹如果超出电机转矩，能不能不重画路径、只改时间？** 答案是可以——把时间拉长或缩短，这就是**动态标度（dynamic scaling）**。
-
-::: note 来源与边界（本节）
-- **教材对应**：教材第 7 章没有把这一节单独编号（或在习题/附注中），本页以课件为准；对应关系见节末待核。
-- **课堂 vs 教材**：推导按课件板书整理；口述与公式符号方向不一致处保留原样，一并列入节末待核。文中「课件」指幻灯片、「老师」指口述。
-:::
+轨迹满足速度、加速度限制后，仍可能在逆动力学验算中超力矩。此时可保持几何路径，调整[时间律](../recall.md#time-law)。不过动态项、重力和摩擦随时间的变化规律不同，需要分别计算，不能先假定放慢必然可行。课堂回看：01:27:15–01:36:48。
 
 ## 6.6.1 为什么需要动态标度
 
-第 4 章的轨迹规划只保证**几何路径**与**时间律**平滑（位置、速度、加速度连续），**没有检查力矩**。老师把问题说得直白（01:27:35–01:28:18）：若关节转矩**超过电机的最大转矩**，这条轨迹就执行不了，实际运动到不了规划的位置。
+第四章可以先按运动学条件规划，再用第六章模型核查力矩。若超限主要来自加速度或速度二次项，延长时间可能有效；若主要来自无法保持的重力负载，单纯延时并不能提供额外支撑力。
 
-路径本身是好的，不想重画，怎么办？**重新分配时间**——「把这个时间处理一下，拉长，或者缩短这个时间」，机器人跑慢一点，转矩就降下来。**路径不变，只改「什么时候走到路径的哪一点」**，相当于给这条路径重配一个「速度表」，让全程力矩都不超过电机能力。
+动态标度保持经过的关节构形，只改变到达时刻。原路径若存在碰撞或越限，几何问题仍然存在，不能单靠调整时间消除。
 
-![课堂幻灯片 · 91:08：动态标度的目标与核心思想——重新分配时间，让转矩始终在可行范围](../assets/ch06/dynscale-goal.jpg)
+![保持路径、重选时间律的动态标度目标](../assets/ch06/dynscale-goal.jpg)
 
 ## 6.6.2 时间标度函数与轨迹重参数化
 
-设原来的轨迹为 $\boldsymbol q(t)$，$t\in[0,t_f]$。定义一个**时间标度函数** $r(t)$，满足
+先将原参考运动写为 $\bar q(r)$，$r\in[0,\bar t_f]$。这里 $r$ 可直接取原运动的时间标签；新运动使用时间 $t\in[0,t_f]$，另选非递减映射
 
-$$r(0)=0,\qquad r(t_f)=\bar t_f,\qquad r(t)\ \text{随时间单调递增},$$
+$$r(0)=0,\qquad r(t_f)=\bar t_f,\qquad q(t)=\bar q(r(t)).$$
 
-并把原轨迹**重参数化**为
+不改变 $\bar q$，只改变 $r(t)$，就不会改变经过的路径。停顿时可有 $\dot r=0$；若允许反向遍历，则还要另外规定方向与边界，本节不讨论。
 
-$$\boxed{\ \boldsymbol q(t)=\bar{\boldsymbol q}\bigl(r(t)\bigr)\ }$$
+先求一阶导数 $\dot q=\bar q'(r)\dot r$。再对两个因子分别求导：
 
-其中 $\bar{\boldsymbol q}(r)$ 是「按路径参数 $r$ 描述的几何路径」，与原时间律无关；$r$ 走得快慢就决定机器人沿路径的快慢。
+$$\ddot q=\frac{d\bar q'}{dr}\dot r\dot r+\bar q'\ddot r
+=\bar q''\dot r^2+\bar q'\ddot r.$$
 
-对时间求导（链式法则）：
+撇号始终表示对路径标签 $r$ 求导，点号始终对新时间 $t$ 求导。两种导数若混用，就无法得到正确的平方项。
 
-$$\dot{\boldsymbol q}=\dot r\,\bar{\boldsymbol q}'(r),$$
-
-$$\ddot{\boldsymbol q}=\dot r^2\,\bar{\boldsymbol q}''(r)+\ddot r\,\bar{\boldsymbol q}'(r),$$
-
-其中 $\bar{\boldsymbol q}'=\mathrm d\bar{\boldsymbol q}/\mathrm d r$、$\bar{\boldsymbol q}''=\mathrm d^2\bar{\boldsymbol q}/\mathrm d r^2$。第一项是「路径二阶导数 × 速度平方」（弯曲/向心效应），第二项是「路径切向 × 切向加速度」；**时间标度的全部信息就藏在 $\dot r,\ddot r$ 里。**
-
-![课堂幻灯片 · 92:04：时间标度函数 $r(t)$ 与轨迹重参数化 $q(t)=\bar q(r(t))$](../assets/ch06/dynscale-def.jpg)
+![原路径标签与新时间之间的映射](../assets/ch06/dynscale-def.jpg)
 
 ## 6.6.3 代入动力学方程
 
-为看清本质，课件略去阻尼、摩擦和末端力（$F_{\mathrm v}=F_{\mathrm s}=0,\boldsymbol h_c=\boldsymbol 0$），把关节空间方程写成
+先忽略摩擦与接触。将速度二次项记成 $\Gamma(q)[v,v]$，意思是第 $i$ 项为相应系数与 $v_jv_k$ 的求和，并不是普通矩阵平方。它与本章的 $C(q,v)v$ 表示同一个速度项。
 
-$$B(\boldsymbol q)\ddot{\boldsymbol q}+\Gamma(\boldsymbol q)[\dot{\boldsymbol q}\dot{\boldsymbol q}]
-+\boldsymbol g(\boldsymbol q)=\boldsymbol\tau,$$
+将两阶导数代入 $B\ddot q+\Gamma(q)[\dot q,\dot q]+g=\tau$：
 
-其中 $\Gamma(\boldsymbol q)[\dot{\boldsymbol q}\dot{\boldsymbol q}]$ 就是 [6.1.3](sec6-1-3.md) 的 $C\dot{\boldsymbol q}$（课件用 $\Gamma$ 记）代入 $\dot{\boldsymbol q}=\dot r\bar{\boldsymbol q}'$、$\ddot{\boldsymbol q}=\dot r^2\bar{\boldsymbol q}''+\ddot r\bar{\boldsymbol q}'$：
+$$\tau=\dot r^2\left(B(\bar q)\bar q''+
+\Gamma(\bar q)[\bar q',\bar q']\right)
++\ddot r\,B(\bar q)\bar q'+g(\bar q).$$
 
-$$\boxed{\ \dot r^2\Bigl(B(\bar{\boldsymbol q})\bar{\boldsymbol q}''(r)
-+\Gamma(\bar{\boldsymbol q})[\bar{\boldsymbol q}'(r)\bar{\boldsymbol q}'(r)]\Bigr)
-+\ddot r\,B(\bar{\boldsymbol q})\bar{\boldsymbol q}'(r)
-+\boldsymbol g(\bar{\boldsymbol q})=\boldsymbol\tau\ }$$
+速度二次项含两个 $\dot r$，因此与路径曲率产生的加速度项具有相同缩放因子。时间律不匀速时，额外的 $\ddot r\,B\bar q'$ 仍然存在。
 
-所以：**同一个几何路径，换不同的 $r(t)$ 就得到不同的力矩曲线**；$\dot r,\ddot r$ 越小，关节速度/加速度越小，转矩越小（01:31:04–01:31:24）。
-
-![课堂幻灯片 · 92:51：把重参数化后的速度/加速度代入动力学方程](../assets/ch06/dynscale-subst.jpg)
+![将链式法则代入关节动力学](../assets/ch06/dynscale-subst.jpg)
 
 ## 6.6.4 重力项与「速度/加速度转矩分量」
 
-关键观察：**重力只依赖位置，不依赖时间标度**——同一点不管快慢经过，$\boldsymbol g(\bar{\boldsymbol q})$ 都一样。于是转矩分成两部分：
+定义原路径在单位标签推进速度下的动态部分
 
-$$\boldsymbol\tau(t)=\underbrace{B\ddot{\boldsymbol q}+\Gamma[\dot{\boldsymbol q}\dot{\boldsymbol q}]}_{\boldsymbol\tau_s(t)}
-+\underbrace{\boldsymbol g(\boldsymbol q)}_{\text{不随标度变}}.$$
+$$\bar\tau_s(r)=B(\bar q(r))\bar q''(r)
++\Gamma(\bar q(r))[\bar q'(r),\bar q'(r)].$$
 
-去掉重力项，得到**速度/加速度引起的转矩分量**的换标关系：
+则新运动所需力矩为
 
-$$\boldsymbol\tau_s(t)=\dot r^2\Bigl(B(\bar{\boldsymbol q})\bar{\boldsymbol q}''(r)
-+\Gamma(\bar{\boldsymbol q})[\bar{\boldsymbol q}'(r)\bar{\boldsymbol q}'(r)]\Bigr)
-+\ddot r\,B(\bar{\boldsymbol q})\bar{\boldsymbol q}'(r).$$
+$$\tau(t)=\dot r^2\bar\tau_s(r)+\ddot rB(\bar q)\bar q'+g(\bar q).$$
 
-再定义**单位路径速度下的转矩分量**
+$g(\bar q)$ 只由当前构形决定。同一构形慢慢经过或快速经过，重力项相同；改变速度不能直接把它除以某个时间倍数。
 
-$$\boxed{\ \bar{\boldsymbol\tau}_s(r)=B(\bar{\boldsymbol q}(r))\bar{\boldsymbol q}''(r)
-+\Gamma(\bar{\boldsymbol q}(r))[\bar{\boldsymbol q}'(r)\bar{\boldsymbol q}'(r)]\ }$$
-
-就有紧凑的换标式
-
-$$\boxed{\ \boldsymbol\tau_s(t)=\dot r^2\,\bar{\boldsymbol\tau}_s(r)+\ddot r\,B(\bar{\boldsymbol q}(r))\bar{\boldsymbol q}'(r)\ }$$
-
-它把「路径」与「时间律」彻底分开：$\bar{\boldsymbol\tau}_s(r)$ 只由几何路径决定，$\dot r,\ddot r$ 只由时间律决定。
-
-![课堂幻灯片 · 93:37：去掉重力项后，速度/加速度转矩分量的换标关系](../assets/ch06/dynscale-tau-s.jpg)
+![动态分量与重力分量需要分别缩放](../assets/ch06/dynscale-tau-s.jpg)
 
 ## 6.6.5 简单线性标度：$r(t)=ct$
 
-最简单的时间律是**线性标度**
+取 $r=ct$，$c>0$，则 $\dot r=c$、$\ddot r=0$，新时长满足 $t_f=\bar t_f/c$，并有
 
-$$r(t)=ct.$$
+$$\tau_s(t)=c^2\bar\tau_s(ct).$$
 
-此时 $\dot r=c$、$\ddot r=0$，换标式退化为
+所以 $c>1$ 表示更快，$c<1$ 表示更慢。若改用时长倍数 $T=t_f/\bar t_f$，则 $c=1/T$：
 
-$$\boxed{\ \boldsymbol\tau_s(t)=c^2\,\bar{\boldsymbol\tau}_s(ct)\ }$$
+$$r(t)=t/T,\qquad \tau_s(t)=\frac{1}{T^2}\bar\tau_s(t/T).$$
 
-**方向要小心。** 按 $r=ct$，$c>1$ 是推进更快、$\boldsymbol\tau_s$ 放大 $c^2$ 倍，$c<1$ 才是放慢。工程上更习惯用**时间拉长倍数 $T$**（新时长 $=T\times$ 原时长，$T>1$ 表示放慢）：
+在这个理想模型中，对应路径点的动态力矩精确按 $1/T^2$ 缩放，总力矩还需加回不变的重力项。若计入黏滞摩擦，其项按 $1/T$ 变化；方向保持不变时，库仑摩擦也不会按平方规律下降。
 
-$$r(t)=\frac{t}{T}\quad\Longleftrightarrow\quad c=\frac{1}{T},
-\qquad
-\boldsymbol\tau_s(t)=\frac{1}{T^2}\,\bar{\boldsymbol\tau}_s\!\left(\frac{t}{T}\right).$$
+![常数推进速度与新旧运动时长的对应](../assets/ch06/dynscale-linear.jpg)
 
-即**时间拉长 $T$ 倍，速度/加速度引起的转矩分量约降到 $1/T^2$**。例：$T=2$（时间拉长一倍），$\boldsymbol\tau_s$ 降到原来的 **$1/4$**（01:33:03–01:33:21）。
+### 带重力时，实际怎样检查时间倍数
 
-注意这是**约**降到 $1/T^2$：完整转矩里的重力项 $\boldsymbol g$ 不变，总转矩不会严格按 $T^2$ 缩小；重力占主导时，拉长时间帮助有限。
+在一个路径点，令原动态力矩为 $a$，重力项为 $g$，限制为 $|\tau|\le\tau_{\max}$。记 $z=1/T^2$；只考虑放慢时 $0<z\le1$，限制成为
 
-![课堂幻灯片 · 95:27：简单线性标度 $r(t)=ct$ 给出 $\tau_s(t)=c^2\bar\tau_s(ct)$](../assets/ch06/dynscale-linear.jpg)
+$$-\tau_{\max}\le g+az\le\tau_{\max}.$$
 
-**怎么选 $T$（或 $c$）**（01:33:48–01:34:01）：①用**逆动力学**（6.5，实际用牛顿–欧拉递推 6.4）沿原轨迹逐点算 $\boldsymbol\tau(t)$；②找出**转矩超限最大的关节**与时刻；③由 $1/T^2$ 估 $T$（如 $T=\sqrt{|\boldsymbol\tau_s|_{\max}/\tau_{\max}}$；用课件 $c$ 则 $c=1/T$）；④用新 $T$ 重做逆解检查，确认全程可行。
+例如 $g=4,a=8,\tau_{\max}=6$ N·m，要求 $z\le1/4$，故 $T\ge2$。这一点动态项与重力同向，放慢可降低峰值。
+
+反过来若 $g=8,a=-6,\tau_{\max}=5$，原总力矩为2 N·m；约束要求 $z\ge1/2$，即 $T\le\sqrt2$。动态项原本抵消了部分重力，放得太慢反而超限。
+
+对所有路径点和所有关节求上述可行区间的交集，再换回 $T$。没有交集时，一种统一延时无法满足全程限制。若完全忽略重力等其他项，才可单独使用 $T\ge\sqrt{\max|\bar\tau_s|/\tau_{\max}}$ 这类平方根估计。
 
 ## 6.6.6 优缺点与适用场合
 
-线性标度的优劣（01:34:01–01:34:20）：
+统一延时只调整一个数，容易实现，但会让整条轨迹都受最紧约束点限制。非线性时间律可在不同区间采用不同速度，不过其 $\ddot r$ 项也会产生力矩，不能只逐点缩放 $\dot r^2$ 而漏掉加减速过程。
 
-| | 线性标度 $r=ct$ |
-|:--|:--|
-| **优点** | 极易实现，只需要调一个常数（$T$ 或 $c$）；不改变几何路径 |
-| **缺点** | 不够灵活：整条轨迹统一拉长/缩短，可能为了一个超限点牺牲其他关节的性能，只是全局折中 |
-| **适用** | 离线轨迹快速修正、教学演示、实时性要求不高的场合 |
+重选时间后，还要回查端点：原先为零的端点速度仍为零，原先指定的非零端点速度却会改变。最终需一起验证速度、加速度、力矩、采样和工艺要求。
 
-更精细的做法是选**非线性** $r(t)$：超限时段慢、其余保持原速（「局部降速」），但要解带约束的时间律优化问题，实现复杂得多；课件只提了一句「你可以取其他形式来满足你的要求」（01:33:40–01:33:48）。
+![统一标度的实现简单与全局保守之间的取舍](../assets/ch06/dynscale-proscons.jpg)
 
-![课堂幻灯片 · 96:06：线性标度的优点（只调一个常数）与缺点（整条轨迹折中）](../assets/ch06/dynscale-proscons.jpg)
 
-![课堂实况 · 94:30：老师在投影前讲时间标度函数与轨迹重参数化](../assets/ch06/dynscale-board.jpg)
 
 ## 6.6.7 小结与常见错误
 
-- **一句话**：动态标度 = **路径不变，重排时间**；$r(t)$ 重参数化原轨迹，$\dot r,\ddot r$ 决定新的速度/加速度与转矩，换标后 $\boldsymbol\tau_s=\dot r^2\bar{\boldsymbol\tau}_s(r)+\ddot r B\bar{\boldsymbol q}'$。
-- **一个特例**：$r=ct$ 时 $\boldsymbol\tau_s=c^2\bar{\boldsymbol\tau}_s(ct)$；用 $T=1/c$ 说，拉长 $T$ 倍约降 $1/T^2$。
-- **一个限制**：重力项不随标度变，总转矩不是严格 $c^2$ 缩放。
+先区分路径导数和时间导数，再区分动态项与重力、摩擦。只有在假设明确的对应路径点上，才能使用平方缩放。最终可行性由完整力矩带符号相加后的结果决定，而不是分别比较各项绝对值。
 
-### 常见错误清单
+::: think 检查理解
+1. 总时长翻倍后，速度、加速度和本节动态力矩分别变成多少？
+2. 具有 $g=8,a=-6$ 的例子为什么不能无限放慢？
+3. 非线性 $r(t)$ 中若只保留 $\dot r^2$，漏掉的力矩对应什么运动？
 
-1. **把 $r$ 当成时间**：$r$ 是**路径参数**；$r(t)$ 单调递增但不一定等于 $t$。
-2. **漏掉 $\ddot r$ 项**：只有 $r=ct$（$\ddot r=0$）时可省，一般时间律下 $\ddot r B\bar{\boldsymbol q}'$ 必须保留。
-3. **以为重力也按 $c^2$ 缩放**：重力只依赖位置，同一点标度前后相同。
-4. **把「转矩降到 $1/T^2$」当精确结论**：只对 $\boldsymbol\tau_s$ 成立，总转矩要加回重力。
-5. **只检查一个关节**：应沿轨迹逐点逆解、取所有关节的最大值。
-6. **线性标度万能论**：它简单但保守；局部超限时宜用非线性时间律或局部降速。
-
-### 默写点 · 合上书再写
-
-1. 写出 $r(t)$ 的定义与重参数化 $\boldsymbol q(t)=\bar{\boldsymbol q}(r(t))$。
-2. 写出 $\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 关于 $\dot r,\ddot r,\bar{\boldsymbol q}',\bar{\boldsymbol q}''$ 的表达式。
-3. 写出换标后的动力学方程与 $\bar{\boldsymbol\tau}_s(r)$ 的定义。
-4. $r=ct$ 时 $\boldsymbol\tau_s$ 与 $c$ 的关系？时间拉长 2 倍时降到多少？
-5. 为什么重力项不随标度变化？这对「拉长时间降转矩」有什么限制？
-
-::: note 待核（本节）
-1. **课件公式里的一个上标**：投影上 $\bar{\boldsymbol\tau}_s$ 定义式括号内的第二个因子有时像 $\bar{\boldsymbol q}^{-1}(r)$；按上下文应取 $\bar{\boldsymbol q}'(r)$（速度耦合项换标后为 $\Gamma[\bar{\boldsymbol q}'\bar{\boldsymbol q}']$）。本页按 $\bar{\boldsymbol q}'$ 处理，建议对照原稿确认。
-2. **课件口述的 $c$ 与公式的 $c$ 方向相反**：课件 §7.7 写「一般令 $c>1$，表示执行时间拉长，所需转矩的幅值约降低到原来的 $1/c^2$」；但按同页 $r(t)=ct$，$c>1$ 会让 $\dot r$ 更大、运动更快、转矩更大。最合理的解释是口述的 $c$ 为**时间拉长倍数**（本页 $T$），公式里 $c=1/T$，两者只差倒数。**待核**课件原稿/教材。
-3. **与教材的对应**：教材第 7 章是否单列本节**待核**（可能在习题/附注中）。
+::: sol 核对
+速度为一半，加速度和动态力矩为四分之一，重力不变。第二例的动态项原本抵消重力，放慢后抵消减弱。漏掉的是改变路径推进速度产生的切向加速度需求 $\ddot rB\bar q'$。
+:::
 :::

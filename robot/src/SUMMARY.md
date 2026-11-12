@@ -16,6 +16,7 @@
 
 # 复习层
 
+- [公式与符号：随用随查](recall.md)
 - [公式速查卡](preface-formulas.md)
 - [术语索引](preface-index.md)
 - [易错点总表](preface-pitfalls.md)
@@ -175,7 +176,7 @@
   - [习题集](ch07/exercises.md)
   - [学习目标自检表](ch07/checklist.md)
   - [闭卷回忆卡（20 张检索练习卡）](ch07/recall-cards.md)
-  - [综合自测卷（90 分钟 · 满分 100）](ch07/mock-exam.md)
+  - [综合自测卷（90 分钟 · 满分 110）](ch07/mock-exam.md)
 
 # 特训 · 竞技与考场
 

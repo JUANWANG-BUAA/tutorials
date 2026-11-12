@@ -4,6 +4,8 @@
 
 本节先从三根轴推出正交性与右手条件，再写出三个基本旋转。最后用同一组数比较**向量真的转动**与**同一点改用另一套坐标**，通过读数判断该乘 $R$ 还是 $R^{\mathrm T}$。原书对应 §2.2，印刷页 40–45；本教程将其拆成下列四部分。
 
+
+
 <a id="sec-2.2.1"></a>
 
 ## 2.2.1 定义与两条代数性质
@@ -14,7 +16,7 @@
 $$R=\begin{bmatrix}\boldsymbol x'&\boldsymbol y'&\boldsymbol z'\end{bmatrix}
 =\begin{bmatrix}x'_x & y'_x & z'_x\\ x'_y & y'_y & z'_y\\ x'_z & y'_z & z'_z\end{bmatrix}\qquad(\text{原书式 }2.3)$$
 
-称为**旋转矩阵**，又称**方向余弦阵**。这里沿用两系均为右手正交系的约定；第 1、2、3 列依次表示本体系 $x'$、$y'$、$z'$ 轴在参考系中的坐标。
+称为**[旋转矩阵](../recall.md#rotation)**，又称**方向余弦阵**。这里沿用两系均为右手正交系的约定；第 1、2、3 列依次表示本体系 $x'$、$y'$、$z'$ 轴在参考系中的坐标。
 :::
 
 两条代数性质不必死记——从定义直接乘一遍就出来了（原书式 2.4–2.5）。注意 $R^{\mathrm T}$ 的第 $i$ **行**正是 $R$ 的第 $i$ **列**，于是 $R^{\mathrm T}R$ 的 $(i,j)$ 元恰是**第 $i$ 列与第 $j$ 列的点积**。记三列为 $\boldsymbol c_1=\boldsymbol x',\boldsymbol c_2=\boldsymbol y',\boldsymbol c_3=\boldsymbol z'$，则

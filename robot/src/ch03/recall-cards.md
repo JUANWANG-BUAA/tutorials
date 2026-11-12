@@ -222,10 +222,14 @@ $$F_e=\begin{bmatrix}\boldsymbol f_e\\ \boldsymbol\mu_e\end{bmatrix}\in\mathbb R
 写出速度变换与力变换两式，并指出对偶体现在哪里。
 
 ::: sol C5 核对
-$$\begin{bmatrix}\dot{\boldsymbol p}_1^0\\ \boldsymbol\omega_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&-R_1^0S(\tilde{\boldsymbol p})\\ 0&R_1^0\end{bmatrix}\begin{bmatrix}\boldsymbol v_1\\ \boldsymbol\omega_1\end{bmatrix},\qquad
-\begin{bmatrix}\boldsymbol f_1^0\\ \boldsymbol\mu_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&0\\ R_1^0S(\tilde{\boldsymbol p})&R_1^0\end{bmatrix}\begin{bmatrix}\boldsymbol f_1\\ \boldsymbol\mu_1\end{bmatrix}.$$
+令 A 为系 0 原点、B 为系 1 原点，$r=p_B^0-p_A^0$、$R=R_1^0$。速度从 A（系 0 分量）传到 B（系 1 分量），广义力反向折回：
 
-**力的变换矩阵恰是速度变换矩阵的转置**。**对偶的具体体现**：平移耦合项 $S(\tilde{\boldsymbol p})$ 在**速度**块里带**负号**、在**力**块里**不带负号并移位**。**与 $J^u$ 的分工**：$J^u$ 只改旋转块；这里还含**平移的耦合**。**使用纪律**：传感器、工件、工具各自的坐标系都不一样，**要先把力 / 速度统一到同一个坐标系，再谈平衡**。（[3.8.2](sec3-8.md#sec-3.8.2)）
+$$v_B^1=Mv_A^0,\quad
+M=\begin{bmatrix}R^{\mathrm T}&-R^{\mathrm T}S(r)\\0&R^{\mathrm T}\end{bmatrix},\qquad
+F_A^0=M^{\mathrm T}F_B^1=\begin{bmatrix}R&0\\S(r)R&R\end{bmatrix}F_B^1.$$
+
+功率不变 $F_B^{1\mathrm T}Mv_A^0=F_A^{0\mathrm T}v_A^0$ 给出反向转置；若两种量都从 A 换到 B，则 $F_B^1=M^{-\mathrm T}F_A^0$。同一点只换基时，速度与力都用 $\operatorname{diag}(R,R)$；不要把它们误称为同方向互为转置。
+
 :::
 
 ### C6 · 球腕奇点判据与两式

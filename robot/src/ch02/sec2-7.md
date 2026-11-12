@@ -1,6 +1,8 @@
 # 2.7 齐次变换
 
-一个点在两套坐标系中的数值可以不同，物理位置却相同。前面用旋转矩阵换算方向；两系原点不重合时，还要加上平移。本节把 $\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0$ 写成一个矩阵乘法，依次检查点与方向、逆变换、连续换系，为下一节 DH 法准备计算方法。
+一个点在两套坐标系中的数值可以不同，物理位置却相同。前面用[旋转矩阵](../recall.md#rotation)换算方向；两系原点不重合时，还要加上平移。本节把 $\boldsymbol p^0=R_1^0\boldsymbol p^1+\boldsymbol o_1^0$ 写成一个矩阵乘法，依次检查点与方向、逆变换、连续换系，为下一节 DH 法准备计算方法。
+
+
 
 <a id="sec-2.7.1"></a>
 
@@ -23,7 +25,7 @@ $$\boldsymbol p^1=(R_1^0)^{\mathrm T}(\boldsymbol p^0-\boldsymbol o_1^0)
 
 $$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1+R_1^0R_2^1\boldsymbol p^2.$$
 
-第二段平移也要先旋转到系 0，不能直接把 $\boldsymbol o_1^0$ 与 $\boldsymbol o_2^1$ 相加。下面用多一个分量，把这层嵌套统一成连乘。
+第二段平移也要先旋转到系 0，不能直接把 $\boldsymbol o_1^0$ 与 $\boldsymbol o_2^1$ 相加。下面用多一个分量，把这层嵌套统一成[连乘](../recall.md#homogeneous)。
 
 <a id="sec-2.7.2"></a>
 

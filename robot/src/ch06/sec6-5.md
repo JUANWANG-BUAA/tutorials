@@ -1,135 +1,98 @@
 # 6.5 动力学正解与逆解
 
-> 录播 01:20:24–01:28:15。课件 **§7.6「动力学正解与逆解问题」**（01:21:04 起），本书编为 6.5；
-> 01:20:24 起老师先接着 6.4 把两种方法对比完，再转入这一对问题。
-> 本节回答：**给了力，机器人怎么动**（正解，仿真用）；**要它这样动，需要多大力**（逆解，控制与轨迹规划用）。
-
-::: note 来源、边界与待核（本节）
-- **教材对应**：教材第 7 章在牛顿–欧拉之后讨论同一对问题；课件这一节没有再标教材式号，具体节号与式号**待核**。
-- **课堂 vs 教材**：定义与两个计算公式按课堂整理；计算量一节的课件口径与递推口径及其关系在本页讲清。文中「课件」指幻灯片、「老师」指口述。
-- **待核（计算量口径）**：$O(n)$ 与 $O(n^2)$ 的口径差异已在本节说明，教材印刷版对 $O(n)$ 的写法**待核**（见 [6.4.9](sec6-4.md) 的注）。
-:::
+同一条[动力学方程](../recall.md#dynamics)可以从两个方向使用。给关节力矩和当前状态，求下一步怎样加速，是正动力学；给要求的构形、速度与加速度，求需要多大力矩，是逆动力学。前者还要随时间积分，后者在给定状态处是一次代数计算。课堂回看：01:20:24–01:28:15。
 
 ## 6.5.1 两个问题：正解与逆解
 
-动力学方程
-
-$$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
-+\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_c$$
-
-把「力」和「运动」连在一起。沿着两个方向读，就是两个问题（01:22:51–01:23:12）：
-
 ::: def 定义 6.5.1 · 动力学正解与逆解 {#def-6.5.1}
-- **动力学正解（direct dynamics）**：已知初值 $\boldsymbol q(t_0),\dot{\boldsymbol q}(t_0)$ 与 $t>t_0$ 的关节转矩 $\boldsymbol\tau(t)$（和可能的末端力 $\boldsymbol h_c(t)$），求 $\ddot{\boldsymbol q}(t)$，再积分出 $\dot{\boldsymbol q}(t),\boldsymbol q(t)$。
-- **动力学逆解（inverse dynamics）**：已知关节轨迹 $\boldsymbol q(t),\dot{\boldsymbol q}(t),\ddot{\boldsymbol q}(t)$（通常由运动学逆解或轨迹规划给出）与末端力 $\boldsymbol h_c(t)$，求实现该运动所需的关节转矩 $\boldsymbol\tau(t)$。
+对本章模型，先将速度、重力、摩擦与已知末端负载收成偏置项 $b(q,\dot q,h_e)$：
+
+$$B(q)\ddot q+b(q,\dot q,h_e)=\tau,$$
+
+$$b=C(q,\dot q)\dot q+g(q)+F_v\dot q+F_s\operatorname{sgn}(\dot q)+J^{\mathrm T}h_e.$$
+
+正动力学在给定 $q,\dot q,\tau,h_e$ 时求 $\ddot q$。若要求一段运动，还需初始状态 $q(t_0),\dot q(t_0)$ 和后续输入。
+
+逆动力学在给定 $q,\dot q,\ddot q,h_e$ 时求 $\tau$。所有状态与外力均需采用同一时刻和相容单位。
 :::
 
-两个问题的难度完全不同：
+这里 $h_e$ 继续表示机器人对环境施加的力系，因此它移到力矩需求一侧时为正。如果接触力本身未知，还须结合接触约束求解，不能只把它当作已知数代入。
 
-- **逆解是代数代入**：$\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 已知，右边全是已知量，直接算 $\boldsymbol\tau$ 即可，不需求解微分方程。
-- **正解要解微分方程**：$\boldsymbol\tau$ 已知，但 $\ddot{\boldsymbol q}$ 藏在质量矩阵后面，先解线性方程再做数值积分；一般没有闭式解，误差还会随积分累积。
+![正动力学与逆动力学的输入输出](../assets/ch06/dyn-def.jpg)
 
-这与运动学正/逆问题一一对应（$\boldsymbol q\leftrightarrow\boldsymbol x$，$\boldsymbol\tau\leftrightarrow$ 运动）。这两个方向都很大，「具体方法了解一下即可」，但做仿真与控制必须明白区别（01:26:23–01:27:01）：控制里绝大多数时候用逆解，仿真里才用正解。
-
-![课堂幻灯片 · 84:43：动力学正解（direct dynamics）与逆解（inverse dynamics）的定义](../assets/ch06/dyn-def.jpg)
+正、逆运动学处理关节坐标与末端位姿的几何关系，不需要质量与驱动力。同样使用“正、逆”命名，并不表示动力学会有相同的求解难度或多解情形。
 
 ## 6.5.2 正解：解出加速度，再数值积分
 
-把运动方程移项。记
+先移项得到线性方程
 
-$$\boldsymbol\tau'(\boldsymbol q,\dot{\boldsymbol q})
-=C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-+F_{\mathrm v}\dot{\boldsymbol q}
-+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
-+\boldsymbol g(\boldsymbol q)+J^{\mathrm T}(\boldsymbol q)\boldsymbol h_c,$$
+$$B(q)\ddot q=\tau-b.$$
 
-它表示**由当前位置、速度（及末端力）引起的转矩分量**，与加速度无关。于是
+模型满足独立坐标与正动能条件时，$B\succ0$，所以当前加速度唯一。公式可写为 $\ddot q=B^{-1}(\tau-b)$；数值实现通常直接求解线性系统，例如对称正定分解，不必显式构造逆矩阵。还要检查模型量纲、尺度与条件数，不能仅因数学上可逆就忽略数值误差。
 
-$$\boxed{\ \ddot{\boldsymbol q}=B^{-1}(\boldsymbol q)\bigl(\boldsymbol\tau-\boldsymbol\tau'\bigr)\ }$$
+用上一节的两杆质点模型检查一次。此刻 $B=\begin{bmatrix}4&2\\2&2\end{bmatrix}$、$b=g=(19.62,0)^{\mathrm T}$，输入 $\tau=(27.62,4)^{\mathrm T}$，因此
 
-这是正解的一步：给定状态与输入转矩，算出当前加速度。
+$$4\ddot q_1+2\ddot q_2=8,\qquad2\ddot q_1+2\ddot q_2=4.$$
 
-**为什么 $B^{-1}$ 一定存在。** [6.1.1](sec6-1-1.md) 已证明 $B(\boldsymbol q)$ **对称正定**（$2T=\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}>0$），故 $B^{-1}$ 存在；但 $B$ 的条件数可能很差（高减速比、轻杆重载），求逆要小心——这是仿真里「模型不准/数值爆炸」的常见来源。
+两式相减得到 $2\ddot q_1=4$，故 $\ddot q_1=2$、$\ddot q_2=0$，恰好恢复上一节给定的加速度。
 
-得到 $\ddot{\boldsymbol q}(t_k)$ 后，用数值积分推进一个步长 $\Delta t$：
+![由当前状态和输入求解关节加速度](../assets/ch06/dyn-qddot.jpg)
 
-$$\dot{\boldsymbol q}(t_{k+1})=\dot{\boldsymbol q}(t_k)+\int_{t_k}^{t_{k+1}}\ddot{\boldsymbol q}\,\mathrm d t,
-\qquad
-\boldsymbol q(t_{k+1})=\boldsymbol q(t_k)+\int_{t_k}^{t_{k+1}}\dot{\boldsymbol q}\,\mathrm d t.$$
+但加速度不是完整轨迹。写成一阶状态 $y=[q;v]$，还需积分
 
-课件明确说可用**龙格–库塔法（Runge–Kutta）**之类的数值积分（01:26:00 前后）：步长越小越准、计算量越大。把「解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ → 积分 → 更新状态」循环下去，就是给定转矩下的运动——**仿真**的内环。
+$$\dot y=\begin{bmatrix}v\\B(q)^{-1}(\tau-b(q,v,h_e))\end{bmatrix}.$$
 
-![课堂幻灯片 · 85:46：正解的核心式 $\ddot q=B^{-1}(q)(\tau-\tau')$ 与 $\tau'$ 的定义](../assets/ch06/dyn-qddot.jpg)
+例如显式Euler用 $v_{k+1}=v_k+h\ddot q_k$、$q_{k+1}=q_k+hv_k$。Runge–Kutta方法则在步内多次计算状态与加速度。步长和方法决定截断误差，输入变化、接触和摩擦过零也会影响计算；不能只检查第一步加速度正确就认为仿真轨迹正确。
 
-![课堂幻灯片 · 86:10：由加速度做数值积分，推进到下一时刻的位置与速度](../assets/ch06/dyn-integration.jpg)
+![从加速度积分到速度和位置](../assets/ch06/dyn-integration.jpg)
 
 ## 6.5.3 逆解：给定运动，直接算转矩
 
-逆解把方程反过来用：
+逆动力学在同一时刻直接计算
 
-$$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
-+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-+F_{\mathrm v}\dot{\boldsymbol q}
-+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
-+\boldsymbol g(\boldsymbol q)+J^{\mathrm T}(\boldsymbol q)\boldsymbol h_c\ }$$
+$$\tau=B(q)\ddot q+b(q,\dot q,h_e).$$
 
-指定关节轨迹的 $\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$（通常由运动学逆解给出）与末端力，就能算出所需关节转矩。用途清单（01:26:06–01:26:23）：
+若把上面的 $\ddot q=(2,0)$ 代入，惯性需求为 $(8,4)$ N·m，再加保持重力所需的 $(19.62,0)$ N·m，得到 $(27.62,4)$ N·m。正逆两次计算应互相恢复，这是程序的一个有效核验。
 
-- **轨迹规划 / 可行性校验**：算出的 $\boldsymbol\tau$ 若超过电机最大转矩，轨迹不可执行，需改轨迹或改时间（见 [6.6](sec6-6.md) 的动态标度）；
-- **控制算法**：把逆解作前馈项（计算力矩控制、逆动力学控制），反馈只处理误差与扰动；
-- **模型修正**：用实测轨迹与逆解对照，检查/修正模型非线性项。
+沿轨迹逐时刻计算逆动力学，可检查力矩限值，也可生成前馈或反馈补偿输入。要判断电机能否实际跟踪，还须加入模型误差、执行器能力与闭环分析，所需力矩本身不足以保证无误差运动。
 
 ## 6.5.4 与 6.4 的衔接：逆解的两种算法
 
-6.4 的牛顿–欧拉递推本质上就是**逆解的高效算法**：给定 $\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$，两遍循环直接得 $\boldsymbol\tau$，不必显式构造 $B,C,\boldsymbol g$。分工与 6.4.9 一致（01:22:19–01:22:49）：**控制器与分析用拉格朗日，实时逆解与仿真内环用牛顿–欧拉。**
+一种做法先构造 $B,C,g$ 再代入；另一种用牛顿–欧拉递推直接求力矩。物理假设相同，两者应给一致结果。比较前要先统一转子等部件是否计入，否则差异可能来自模型，而非算法。
 
-课件还给出一个「反过来」的技巧：**用牛顿–欧拉递推求惯性矩阵 $B(\boldsymbol q)$ 的列**（01:27:03 前后）：
+逆动力学还可用于提取 $B$ 的列。固定构形，关闭摩擦与末端负载，令速度为零。记
 
-1. 令 $\boldsymbol g_0=\boldsymbol 0$、$\dot{\boldsymbol q}=\boldsymbol 0$，末端力与摩擦为零；
-2. 取 $\ddot{\boldsymbol q}=\boldsymbol e_i$（第 $i$ 个分量为 1，其余为 0）；
-3. 此时递推得到的关节转矩就是 $\boldsymbol\tau=B(\boldsymbol q)\boldsymbol e_i$，即 $B$ 的**第 $i$ 列**；
-4. 对 $i=1,\dots,n$ 各做一次，拼起来就是完整的 $B(\boldsymbol q)$。
+$$\tau_0=\operatorname{ID}(q,0,0),\qquad
+\tau_i=\operatorname{ID}(q,0,e_i).$$
 
-需要矩阵时可用 $n$ 次递推把它「采」出来，代价是 $n$ 倍逆解计算量——两者并不互斥。
+因为两次计算的重力相同，
 
-![课堂幻灯片 · 87:03：用牛顿–欧拉递推、令 $\dot q=0$、$\ddot q=e_i$ 求 $B(q)$ 的列](../assets/ch06/dyn-B-ne.jpg)
+$$\tau_i-\tau_0=B(q)e_i.$$
+
+差值就是第 $i$ 列；无需为了这一步特意更改重力参数。也可以关闭重力，此时 $\tau_0=0$。对所有单位加速度各算一次，便得到整张惯性矩阵。
+
+![用单位关节加速度提取惯性矩阵的列](../assets/ch06/dyn-B-ne.jpg)
 
 ## 6.5.5 计算量：课件口径与递推口径
 
-课件 §7.6 末尾给出（01:27:31）：
+给定一次 $q,\dot q,\ddot q$ 的刚体逆动力学，标准两遍递推每杆进行固定规模运算，可实现 $O(n)$。若已经有稠密 $n\times n$ 矩阵，再做矩阵向量乘是另一个计算任务，通常需要 $O(n^2)$。
 
-| 问题 | 课件写的计算量 |
-|:--|:--|
-| 动力学正解 | $O(n^2)$ |
-| 动力学逆解 | $O(n^2)$ |
+构造全部 $B$、对稠密矩阵作通用分解、使用专门正动力学递推，以及进行符号展开，各有不同成本。因此复杂度要连同算法和输出要求说明。对随构形变化的模型，也不能无条件假定逆矩阵已预先算好。
 
-这里的 $n^2$ 指**「$B,C,\boldsymbol g$ 已备成 $n\times n$ 矩阵，做一次矩阵–向量乘/求值」**：逆解 $\boldsymbol\tau=B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\cdots$ 是 $O(n^2)$；正解若 $B^{-1}$ 已预先算好也是 $O(n^2)$，每步重新分解 $B$ 则再加 $O(n^3)$。
+![课堂中的计算量比较；须同时说明矩阵是否已构造及使用的算法](../assets/ch06/dyn-complexity.jpg)
 
-6.4 的牛顿–欧拉递推是另一种口径：**不构造 $B,C,\boldsymbol g$**，每根杆只做常数规模运算，逆解是 $O(n)$。两者不矛盾但**不能混着比**：说「牛顿–欧拉 $O(n)$」指递推算法，说「正/逆解 $O(n^2)$」指封闭模型运算（见 [6.4.9](sec6-4.md) 的口径表）。老师在 01:26:17 口述「$N$ 个关节……都是 $N$ 方的关系」，与课件这张表一致。
 
-![课堂幻灯片 · 87:31：逆解的用途与正解/逆解的计算量（课件写 $O(n^2)$）](../assets/ch06/dyn-complexity.jpg)
-
-![课堂实况 · 84:30：老师在投影前讲拉格朗日法与牛顿–欧拉法的对比，本节由此转入正/逆解](../assets/ch06/dyn-board-compare.jpg)
 
 ## 6.5.6 小结与常见错误
 
-- **一句话**：正解 = 解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ + 数值积分，逆解 = 把 $\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 代进方程算 $\boldsymbol\tau$；前者「以力求运动」（仿真），后者「以运动求力」（控制、规划）。
-- **两种算法**：拉格朗日封闭式（好推难算）、牛顿–欧拉递推（难推好算，$O(n)$）。
+每次计算先列出已知量和所求量。逆动力学代入运动求力，正动力学解力平衡求加速度；只有后者进一步积分，才产生输入作用下的状态轨迹。验证时应同时做正逆互代、静止保持和步长收敛检查。
 
-### 常见错误清单
+::: think 检查理解
+1. 已知力矩但没有初始位置与速度，能否唯一预测后续运动？
+2. 为什么建议解 $B\ddot q=r$，而不把显式求逆当成必经步骤？
+3. 提取 $B$ 的列时，为什么需要减掉 $\tau_0$？
 
-1. **把正解当「代公式」**：正解要先解线性方程再积分，只算 $\ddot{\boldsymbol q}$ 只算一步。
-2. **逆解漏掉末端力**：$\boldsymbol\tau$ 含 $J^{\mathrm T}\boldsymbol h_c$，有接触必须加。
-3. **正解漏掉 $\boldsymbol\tau'$**：它含 $C\dot{\boldsymbol q}$、摩擦、重力、末端力，漏一项加速度就错。
-4. **以为 $B^{-1}$ 一定好算**：$B$ 可逆但可能病态，高减速比/轻杆尤其要查条件数。
-5. **把 $O(n^2)$ 与 $O(n)$ 混着说**：先问「在说封闭模型还是递推算法」。
-6. **把正/逆动力学与正/逆运动学混淆**：前者是力↔运动，后者是关节角↔末端位姿。
-
-### 默写点 · 合上书再写
-
-1. 写出正解与逆解的定义（已知什么、求什么），说明哪个要解微分方程。
-2. 写出 $\ddot{\boldsymbol q}=B^{-1}(\boldsymbol\tau-\boldsymbol\tau')$ 与 $\boldsymbol\tau'$ 的完整表达式。
-3. 正解为何要数值积分？常用什么方法？
-4. 牛顿–欧拉递推如何求 $B(\boldsymbol q)$ 的列？
-5. 课件写正/逆解各 $O(n^2)$、递推逆解 $O(n)$——这两种说法分别在说什么？
+::: sol 核对
+一般不能，动力学是状态微分方程，需要初值。解线性系统可以避免不必要的显式逆，并利用对称正定结构。$\tau_0$ 保留了相同构形下的偏置，取差后才能单独得到单位加速度产生的惯性力矩。
+:::
+:::

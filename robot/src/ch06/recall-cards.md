@@ -134,7 +134,7 @@ $$\boldsymbol\tau_{\mathrm{grav}}=\sum_i\bigl(m_iJ_P^{(i)\mathrm T}\boldsymbol g
 ::: sol C3 核对
 $$h_{ijk}(\boldsymbol q)=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i},\qquad
 \sum_{j=1}^{n}b_{ij}\ddot q_j+\sum_{j,k}h_{ijk}\dot q_k\dot q_j+g_i=\xi_i.$$
-**读法**：$h_{ijj}\dot q_j^2$ 是**离心项**（$h_{iii}=0$，因 $\partial b_{ii}/\partial q_i=0$）；$h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ 是**科氏项**。**系数 $\frac12$ 别丢**——它在第二项上，丢了整个速度项就错。（[6.1.3.2 节](sec6-1-3.md)）
+**读法**：$h_{ijj}\dot q_j^2$ 是**离心项**（一般 $h_{iii}=\tfrac12\partial b_{ii}/\partial q_i$，相应对角惯量不依赖本关节时才为零）；$h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ 是**科氏项**。**系数 $\frac12$ 别丢**——它在第二项上，丢了整个速度项就错。（[6.1.3.2 节](sec6-1-3.md)）
 :::
 
 ### C4 · 完整运动方程（那一行）
@@ -176,7 +176,7 @@ C\dot{\boldsymbol q}=\begin{bmatrix}h(2\dot\vartheta_1\dot\vartheta_2+\dot\varth
 ::: sol C7 核对
 $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\boldsymbol\pi,\qquad
 \boldsymbol\pi\in\mathbb R^{p}\ \text{常参数}.$$
-**三个数**：11（刚体/连杆）、13（含摩擦/关节，无接触力）、最小参数集 $\le13n$（平面臂 8，可再压到 5）。**线性来源**：动能每项 = 参数 × 运动学系数；拉格朗日方程是线性运算，不破坏线性。**Y 的结构**：对开链，$\boldsymbol y_{ij}$ 在 $j<i$ 时为零 ⇒ 回归矩阵**下三角**。（[6.2.2 节](sec6-2-2.md)）
+**三个数**：11（刚体/连杆）、13（含摩擦/关节，无接触力）、最小参数集 $\le13n$（平面臂 8，可再压到 5）。**线性来源**：动能每项 = 参数 × 运动学系数；拉格朗日方程是线性运算，不破坏线性。回归矩阵的结构取决于参数排序与坐标选择，不能仅凭开链结构断言它是三角阵；最小参数集还取决于哪些参数组合能够被测量辨识。（[6.2.2 节](sec6-2-2.md)）
 :::
 
 ### C8 · 两个「秒写」模型

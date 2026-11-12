@@ -162,9 +162,9 @@
 |:--|:--|:--|:--|
 | 路径 | path | 纯几何描述：经过哪些点、连成什么形状 | [@def-4.1.1] |
 | 轨迹 | trajectory | 指定了**时间律**的路径（每点的速度 / 加速度） | [@def-4.1.2] |
-| 运动规划 | motion planning | 轨迹规划 + 避障 + 优化（动态过程，含动力学） | [@def-4.1.3] |
+| 运动规划 | motion planning | 求满足任务与约束的可行运动，可再优化；可离线或在线 | [@def-4.1.3] |
 | 运动律 | motion law | 表征从初始位姿到最终位姿过渡过程的函数 | [@thm-4.1.A] |
-| 三次多项式 | cubic polynomial | 4 系数 / 4 约束；最小能量解的形式 | [@def-4.2.1] |
+| 三次多项式 | cubic polynomial | 4 系数 / 4 约束；常惯量模型下最小平方力矩解的形式 | [@def-4.2.1] |
 | 五次多项式 | quintic polynomial | 6 系数 / 6 约束；可指定初终加速度 | [@def-4.2.2] |
 | 梯形速度曲线 | trapezoidal velocity profile | 匀加速—巡航—匀减速；工业最常用 | [@def-4.2.3] |
 | 抛物线混合 | parabolic blend / LSPB | 梯形速度积分后的位置形态（直线 + 两端抛物线） | [@def-4.2.3] |
@@ -204,12 +204,12 @@
 | 液压伺服发动机 hydraulic servomotor | 基于压缩流体容积变化；低速大转矩 | [@def-5.1.10] |
 | 电液伺服系统 electrohydraulic servo system | 用电控信号驱动分布器、调制流速的接口 | [@def-5.1.12] |
 | 分布器 distributor | 改变从能源传到发动机的流体流速的元件 | [@def-5.1.12] |
-| 储液器 accumulator | 储存液压能、抑制压力振荡；作用同滤波电容 | [@note-5.1.4] |
+| 蓄能器 accumulator | 储存压力能并缓冲压力变化；与主要储液、回油的油箱不同 | [@note-5.1.4] |
 | 斩波器 chopper | DC-DC 变换器，控制永磁直流电机 | [@thm-5.1.D] |
 | 逆变器 inverter | DC-AC 变换器，控制无刷直流电机 | [@thm-5.1.D] |
 | 反电动势 back emf $V_g$ | 与角速度成正比的电枢电压降落，$V_g=k_v\Omega_m$ | [@def-5.2.1] |
 | 电流反馈 current feedback | 由 $k_i$ 测量电枢电流、经 $C_i(s)$ 调节的局部回路 | [@def-5.2.2] |
-| 速度控制发电机 velocity-controlled generator | 不加电流反馈时的驱动特性；抗扰好 | [@thm-5.2.A] |
+| 速度控制发电机 velocity-controlled generator | 特定电压驱动近似下的端口特性，仍需核对负载速度偏差 | [@thm-5.2.A] |
 | 力矩控制发电机 torque-controlled generator | 加电流反馈时的驱动特性；力矩独立于转速 | [@thm-5.2.A] |
 | 减速比 $k_r$ | $\omega_m/\omega=r/r_m$；机器人上典型值几十到几百 | [@def-5.2.4] |
 | 等效惯量 / 等效摩擦 $I_{eq},F_{eq}$ | 负载惯量与摩擦按 $1/k_r^2$ 折算到电机轴的结果 | [@thm-5.2.C] |
@@ -269,7 +269,7 @@
 | 独立关节近似 | 忽略关节间耦合、其余并入扰动 $d_i$；合法性来自大减速比的两条折算 | [7.2.1](ch07/sec7-2.md#sec-7.2.1) |
 | 驱动接口 | 关节力矩 $\boldsymbol\tau$ 与功率放大器控制电压 $\boldsymbol v_c$ 的五式关系（减速器 + 电机 + 放大器） | [7.2.5](ch07/sec7-2.md#sec-7.2.5) |
 | 反电动势 | $\boldsymbol v_a$ 中正比于电机角速度的项（$K_v\dot{\boldsymbol q}_m$）；它让 $\boldsymbol\tau$ 与 $\boldsymbol v_c$ 不成比例 | [7.2.5](ch07/sec7-2.md#sec-7.2.5) |
-| 速度源 / 力矩源 | 电压控制（$\dot{\boldsymbol q}\propto\boldsymbol v_c$，可分散）/ 电流控制（$\boldsymbol\tau\propto\boldsymbol v_c$，可集中） | [@thm-7.2.A] |
+| 速度源 / 力矩源 | 驱动端口的近似特性：需分别核对负载、内环带宽与限幅；不等于分散／集中的分类 | [@thm-7.2.A] |
 | PD 控制 / 稳态误差 | $\tau_i=K_Pe_i+K_D\dot e_i$；常值扰动下 $e_{\mathrm{ss}}=d/K_P\neq0$，零误差须加积分 | [7.2.2](ch07/sec7-2.md#sec-7.2.2) |
 | 重力补偿 PD | $\boldsymbol\tau=\boldsymbol g(\boldsymbol q)+K_P\boldsymbol e+K_D\dot{\boldsymbol e}$，$\boldsymbol g$ 用**实测** $\boldsymbol q$，平衡点移到 $\boldsymbol e=0$ | [7.3.3](ch07/sec7-3.md#sec-7.3.3) |
 | 计算力矩前馈（课件题作「计算转矩前馈」） | 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ 算前馈 + PD 反馈；前馈可离线预算 | [7.2.7](ch07/sec7-2.md#sec-7.2.7) |
@@ -314,4 +314,4 @@
 | 关节空间 / 操作空间（方案） | 闭环 $\boldsymbol q$、$\boldsymbol x$ 开环 / 闭环 $\boldsymbol x$，但要测得出 $\boldsymbol x$ |
 | 分散控制 / 集中控制 | 单轴独立设计（耦合当扰动）/ 整机模型统一设计（显式抵消耦合）——按**工况**选，不按先进程度 |
 | 计算力矩（控制）/ 计算力矩前馈（课件题名「计算转矩前馈」） | 前馈用**实测** $\boldsymbol q,\dot{\boldsymbol q}$（精确对消）/ 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d$（可离线预算） |
-| 电压控制 / 电流控制 | $\dot{\boldsymbol q}\propto\boldsymbol v_c$（速度源，宜分散）/ $\boldsymbol\tau\propto\boldsymbol v_c$（力矩源，宜集中） |
+| 电压控制 / 电流控制 | 电压经电气和机械动态产生运动；电流内环在其带宽内近似实现转矩命令，均需核查具体模型 |

@@ -451,7 +451,7 @@ class TypicalMechanismTeachingChecks(unittest.TestCase):
             self.assert_matrix_close(self.published(self.block(1).split("三者依次连乘", 1)[1], values), planar)
             self.assert_matrix_close(self.published(self.block(3).split("再连乘", 1)[1], values), spherical)
             self.assert_matrix_close(self.published(self.block(4), values), anthropomorphic)
-            tool = self.published(self.block(1).split("应补常值变换", 1)[1], {})
+            tool = self.published(self.block(1).split("$$T_e^3=", 1)[1], {})
             combined = HomogeneousTeachingChecks.multiply(planar, tool)
             for component in range(3):
                 self.assertAlmostEqual(combined[component][2], planar[component][0], places=12)
@@ -1611,6 +1611,366 @@ class TwoLinkCourseChecks(unittest.TestCase):
         self.assertEqual(damping_gain**2 - 4 * position_gain, 0)
         self.assertAlmostEqual(0.1 / position_gain, 0.004)
         self.assertAlmostEqual(0.1 / 100, 0.001)
+
+
+class RecallRevisionChecks(unittest.TestCase):
+    """Recompute selected examples added in the teaching and recall revision."""
+
+    @staticmethod
+    def expression(text, variable, value):
+        text = re.sub(r"\\tfrac(\d)(\d)", r"(\1/\2)", text)
+        text = text.replace(variable, "(" + repr(value) + ")").replace("^", "**")
+        text = re.sub(r"(?<=[\d)])(?=\()", "*", text)
+        if re.search(r"[^\d\s.+*/()\-]", text):
+            raise ValueError("Unsupported published polynomial: " + text)
+        return eval(text, {"__builtins__": {}})
+
+    def test_published_natural_and_clamped_three_point_splines(self):
+        text = (SOURCE / "ch04/sec4-2-2.md").read_text(encoding="utf-8")
+        example = text.split("{#ex-4.2.spline-small}", 1)[1].split(":::", 1)[0]
+        cases = example.split(r"\begin{cases}", 1)[1].split(r"\end{cases}", 1)[0]
+        branches = [line.split(",&", 1)[0].strip() for line in cases.split(r"\\")]
+        self.assertEqual(len(branches), 2)
+        evaluate = lambda branch, t: self.expression(branch, "t", t)
+        self.assertAlmostEqual(evaluate(branches[0], 0), 0)
+        self.assertAlmostEqual(evaluate(branches[0], 1), 1)
+        self.assertAlmostEqual(evaluate(branches[1], 1), 1)
+        self.assertAlmostEqual(evaluate(branches[1], 2), 0)
+        step = 1e-4
+        for branch in branches:
+            first = (evaluate(branch, 1 + step) - evaluate(branch, 1 - step)) / (2 * step)
+            second = (evaluate(branch, 1 + step) - 2 * evaluate(branch, 1)
+                      + evaluate(branch, 1 - step)) / step**2
+            self.assertAlmostEqual(first, 0, places=7)
+            self.assertAlmostEqual(second, -3, places=6)
+        clamped = re.search(r"两段分别变为 \$(.*?)\$ 与 \$(.*?)\$", example)
+        self.assertIsNotNone(clamped)
+        for branch, start, end in ((clamped[1], 0, 1), (clamped[2], 2, 1)):
+            self.assertAlmostEqual(evaluate(branch, start), 0)
+            self.assertAlmostEqual(evaluate(branch, end), 1)
+            velocity = (evaluate(branch, start + step) - evaluate(branch, start - step)) / (2 * step)
+            self.assertAlmostEqual(velocity, 0, places=7)
+
+    def test_published_quintic_and_its_derivatives(self):
+        text = (SOURCE / "ch04/sec4-2-1.md").read_text(encoding="utf-8")
+        position, velocity, acceleration = [re.search(pattern, text)[1] for pattern in (
+            r"H\(u\)=(.*?),", r"H'\(u\)=(.*?),", r"H''\(u\)=(.*?)\.\$\$")]
+        evaluate = lambda expression, u: self.expression(expression, "u", u)
+        for u, expected in ((0, 0), (1, 1)):
+            self.assertEqual(evaluate(position, u), expected)
+            self.assertEqual(evaluate(velocity, u), 0)
+            self.assertEqual(evaluate(acceleration, u), 0)
+        for u in (0.1, 0.3, 0.5, 0.7, 0.9):
+            step = 1e-5
+            self.assertAlmostEqual((evaluate(position, u + step) - evaluate(position, u - step))
+                                   / (2 * step), evaluate(velocity, u), places=7)
+            self.assertAlmostEqual((evaluate(velocity, u + step) - evaluate(velocity, u - step))
+                                   / (2 * step), evaluate(acceleration, u), places=7)
+        self.assertEqual(evaluate(position, 0.5), 0.5)
+        self.assertEqual(evaluate(velocity, 0.5) / 2, 15 / 16)
+        self.assertAlmostEqual(abs(evaluate(acceleration, (3 - math.sqrt(3)) / 6)),
+                               10 * math.sqrt(3) / 3)
+
+    def test_published_wrench_power_example(self):
+        text = (SOURCE / "ch03/sec3-8.md").read_text(encoding="utf-8")
+        example = text.split("{#ex-3.8.transform}", 1)[1].split(":::", 1)[0]
+        vector = lambda pattern: [float(value) for value in re.search(pattern, example)[1].split(",")]
+        r = vector(r"r=\((.*?)\)")
+        linear_a = vector(r"A 点速度为 \$\((.*?)\)")
+        angular_a = vector(r"角速度为 \$\((.*?)\)")
+        force_b = vector(r"f_B\^1=\((.*?)\)")
+        moment_b = vector(r"mu_B\^1=\((.*?)\)")
+        angle = math.radians(float(re.search(r"R=R_z\((\d+)", example)[1]))
+        rotate = lambda v, a: [math.cos(a) * v[0] - math.sin(a) * v[1],
+                               math.sin(a) * v[0] + math.cos(a) * v[1], v[2]]
+        cross = lambda a, b: [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]
+        dot = lambda a, b: sum(x*y for x, y in zip(a, b))
+        linear_b = rotate([x+y for x, y in zip(linear_a, cross(angular_a, r))], -angle)
+        force_a = rotate(force_b, angle)
+        moment_a = [x+y for x, y in zip(rotate(moment_b, angle), cross(r, force_a))]
+        power_b = dot(force_b, linear_b) + dot(moment_b, rotate(angular_a, -angle))
+        power_a = dot(force_a, linear_a) + dot(moment_a, angular_a)
+        for name, value in (("P_A", power_a), ("P_B", power_b)):
+            claim = float(re.search(name + r"=.*?=([\d.]+)", example)[1])
+            self.assertAlmostEqual(value, claim)
+        self.assertAlmostEqual(power_a, power_b)
+        self.assertNotAlmostEqual(dot(force_a, linear_a) + dot(rotate(moment_b, angle), angular_a), power_a)
+
+    def test_published_time_scaling_limits_with_gravity(self):
+        text = (SOURCE / "ch06/sec6-6.md").read_text(encoding="utf-8")
+        examples = re.findall(r"g=(\d+),a=(-?\d+),\\tau_\{\\max\}=(\d+)", text)
+        self.assertEqual(len(examples), 2)
+        for (g, a, limit), boundary, inside, outside in zip(
+                examples, (2, math.sqrt(2)), (3, 1.1), (1.5, 2)):
+            g, a, limit = int(g), int(a), int(limit)
+            self.assertAlmostEqual(abs(g + a / boundary**2), limit)
+            self.assertLess(abs(g + a / inside**2), limit)
+            self.assertGreater(abs(g + a / outside**2), limit)
+
+    def test_robust_boundary_layer_lyapunov_bound(self):
+        generator = random.Random(7314)
+        rho, epsilon = 2.0, 0.1
+        for unused in range(300):
+            e, velocity = generator.uniform(-2, 2), generator.uniform(-2, 2)
+            inertia = generator.uniform(0.5, 3)
+            eta = generator.uniform(-rho, rho)
+            q11, q12, q22 = 29 / 24, 1 / 8, 5 / 24  # A=[[0,1],[-4,-3]], P=I.
+            z = (q12 * e + q22 * velocity) / inertia
+            omega = rho * z / max(abs(z), epsilon)
+            acceleration = -4 * e - 3 * velocity + (eta - omega) / inertia
+            derivative = 2 * ((q11 * e + q12 * velocity) * velocity
+                              + (q12 * e + q22 * velocity) * acceleration)
+            self.assertLessEqual(derivative, -(e**2 + velocity**2) + rho * epsilon / 2 + 1e-12)
+
+
+class BodyRewriteChecks(unittest.TestCase):
+    """Independent numerical checks for examples in the paragraph rewrite."""
+
+    def test_near_singularity_joint_speed_limit(self):
+        angle = math.radians(1)
+        speed = 0.1
+        first = speed / math.tan(angle)
+        second = -speed / (0.8 * math.sin(angle)) - first
+        jacobian = ((-0.8 * math.sin(angle), -0.8 * math.sin(angle)),
+                    (1 + 0.8 * math.cos(angle), 0.8 * math.cos(angle)))
+        actual = [row[0] * first + row[1] * second for row in jacobian]
+        self.assertAlmostEqual(actual[0], speed)
+        self.assertAlmostEqual(actual[1], 0)
+        self.assertAlmostEqual(first, 5.7290, places=4)
+        self.assertAlmostEqual(second, -12.8913, places=4)
+        allowed = speed * 2 / max(abs(first), abs(second))
+        self.assertAlmostEqual(allowed, 0.01551, places=5)
+        self.assertIn("0.01551", (SOURCE / "ch03/sec3-3.md").read_text())
+
+    def test_static_torques_against_lever_arms_and_nonzero_power(self):
+        force = (2, 3)
+        lever_arms = ((1, 1), (0, 1))
+        torques = [r[0] * force[1] - r[1] * force[0] for r in lever_arms]
+        self.assertEqual(torques, [1, -2])
+        joint_speed = (0.2, -0.1)
+        linear_speed = (-joint_speed[0] - joint_speed[1], joint_speed[0])
+        joint_power = sum(a * b for a, b in zip(torques, joint_speed))
+        tool_power = sum(a * b for a, b in zip(force, linear_speed))
+        self.assertAlmostEqual(joint_power, 0.4)
+        self.assertAlmostEqual(tool_power, joint_power)
+
+    def test_circle_axis_projection_and_arc_length(self):
+        axis_point, start = (0, 0, 1), (2, 0, 3)
+        direction = (0, 0, 1)
+        delta = [a - b for a, b in zip(start, axis_point)]
+        projection = sum(a * b for a, b in zip(delta, direction))
+        center = [a + projection * b for a, b in zip(axis_point, direction)]
+        radius = math.dist(start, center)
+        position = (radius * math.cos(math.pi / radius),
+                    radius * math.sin(math.pi / radius), center[2])
+        self.assertEqual(center, [0, 0, 3])
+        self.assertAlmostEqual(radius, 2)
+        for actual, expected in zip(position, (0, 2, 3)):
+            self.assertAlmostEqual(actual, expected)
+        self.assertAlmostEqual(math.hypot(0.2**2 / 0.5, 0.1), math.sqrt(0.0164))
+        self.assertAlmostEqual(math.sqrt(0.5 * 0.1), 0.2236, places=4)
+
+    def test_overlapping_cubic_and_lspb_displacements(self):
+        cubic = lambda u: 3 * u**2 - 2 * u**3
+        self.assertEqual(cubic(0.875), 0.95703125)
+        self.assertEqual(cubic(0.125), 0.04296875)
+        blend = (1 - 1 / math.sqrt(3)) / 2
+        self.assertAlmostEqual(6 * math.pi * blend * (1 - blend), math.pi)
+        self.assertAlmostEqual(3 * math.pi * blend * (1 - blend), math.pi / 2)
+        advance = 0.18
+        self.assertLess(advance, blend)
+        self.assertAlmostEqual(0.5 * 3 * math.pi * advance**2 / math.pi, 0.0486)
+        self.assertIn("0.0486", (SOURCE / "ch04/sec4-2-2.md").read_text())
+
+    def test_pd_pi_stability_and_voltage_load_drop(self):
+        inertia, friction, frequency, damping = 0.02, 0.1, 10, 0.8
+        proportional = inertia * frequency**2
+        derivative = 2 * damping * inertia * frequency - friction
+        self.assertAlmostEqual(proportional, 2)
+        self.assertAlmostEqual(derivative, 0.22)
+        self.assertAlmostEqual((friction + derivative) / inertia, 16)
+        self.assertAlmostEqual(0.2 / proportional, 0.1)
+        # Roots of 0.5(s+1)(s²+s+1) must satisfy the published PI characteristic.
+        for root in (-1 + 0j, complex(-0.5, math.sqrt(3) / 2),
+                     complex(-0.5, -math.sqrt(3) / 2)):
+            self.assertAlmostEqual(abs(0.5 * root**3 + root**2 + root + 0.5), 0)
+            self.assertLess(root.real, 0)
+        motor_current = 10 / (100 * 2)
+        resistive_drop = 10 * motor_current
+        voltage = 2 * 100 * 0.1 + resistive_drop
+        self.assertAlmostEqual(motor_current, 0.05)
+        self.assertAlmostEqual(voltage, 20.5)
+        self.assertAlmostEqual(voltage / (2 * 100), 0.1025)
+
+    def test_task_spring_torque_and_singular_wrong_equilibrium(self):
+        jacobian = ((-1, -1), (1, 0))
+        spring = (100 * 0.02, 100 * -0.01)
+        torques = [sum(jacobian[row][col] * spring[row] for row in range(2))
+                   for col in range(2)]
+        self.assertEqual(torques, [-3, -2])
+        singular = ((0, 0), (2, 1))
+        error = (-0.5, 0)
+        self.assertTrue(all(sum(singular[row][col] * error[row] for row in range(2)) == 0
+                            for col in range(2)))
+        # The target is reachable, so this is a rank issue rather than infeasibility.
+        second = 2 * math.acos(0.75)
+        target = planar_fk([1, 1], [-second / 2, second])
+        self.assertAlmostEqual(target[0], 1.5)
+        self.assertAlmostEqual(target[1], 0)
+
+    def test_newton_euler_against_planar_lagrange_model(self):
+        """Compare the two recursions with an independently expanded 2R model."""
+        cross = lambda a, b: (a[1] * b[2] - a[2] * b[1],
+                              a[2] * b[0] - a[0] * b[2],
+                              a[0] * b[1] - a[1] * b[0])
+        add = lambda *vectors: tuple(map(sum, zip(*vectors)))
+        scale = lambda a, vector: tuple(a * value for value in vector)
+        generator = random.Random(6402)
+        for unused in range(100):
+            q1, q2, v1, v2, a1, a2 = [generator.uniform(-2, 2) for index in range(6)]
+            lengths, centers, masses, inertias = (1.1, 0.8), (0.4, 0.3), (2, 3), (0.2, 0.1)
+            force_child = moment_child = (0, 0, 0)
+            origin_acceleration = (0, 9.81, 0)  # physical acceleration minus gravity
+            angular_speed = angular_acceleration = 0
+            demands = []
+            for index, angle in enumerate((q1, q1 + q2)):
+                r = (lengths[index] * math.cos(angle), lengths[index] * math.sin(angle), 0)
+                c = scale((centers[index] - lengths[index]) / lengths[index], r)
+                angular_speed += (v1, v2)[index]
+                angular_acceleration += (a1, a2)[index]
+                omega, alpha = (0, 0, angular_speed), (0, 0, angular_acceleration)
+                origin_acceleration = add(origin_acceleration, cross(alpha, r),
+                                          cross(omega, cross(omega, r)))
+                center_acceleration = add(origin_acceleration, cross(alpha, c),
+                                          cross(omega, cross(omega, c)))
+                demands.append((r, c, scale(masses[index], center_acceleration),
+                                (0, 0, inertias[index] * angular_acceleration)))
+            torques = []
+            for r, c, force, moment in reversed(demands):
+                moment_child = add(moment, moment_child, cross(add(r, c), force),
+                                   cross(r, force_child))
+                force_child = add(force, force_child)
+                torques.append(moment_child[2])
+            h = -masses[1] * lengths[0] * centers[1] * math.sin(q2)
+            b11 = (inertias[0] + masses[0] * centers[0]**2 + inertias[1]
+                   + masses[1] * (lengths[0]**2 + centers[1]**2
+                                  + 2 * lengths[0] * centers[1] * math.cos(q2)))
+            b12 = inertias[1] + masses[1] * (centers[1]**2
+                                           + lengths[0] * centers[1] * math.cos(q2))
+            b22 = inertias[1] + masses[1] * centers[1]**2
+            g2 = masses[1] * centers[1] * 9.81 * math.cos(q1 + q2)
+            g1 = (masses[0] * centers[0] + masses[1] * lengths[0]) * 9.81 * math.cos(q1) + g2
+            expected = (b11 * a1 + b12 * a2 + h * (2 * v1 * v2 + v2**2) + g1,
+                        b12 * a1 + b22 * a2 - h * v1**2 + g2)
+            for actual, target in zip(reversed(torques), expected):
+                self.assertAlmostEqual(actual, target, places=10)
+
+    def test_fixed_axis_quintic_angular_speed(self):
+        angle, duration, progress = math.pi / 2, 2, 0.5
+        quintic = 10 * progress**3 - 15 * progress**4 + 6 * progress**5
+        rate = angle / duration * 30 * progress**2 * (1 - progress)**2
+        self.assertAlmostEqual(angle * quintic, math.pi / 4)
+        self.assertAlmostEqual(rate, 15 * math.pi / 32)
+        self.assertIn("15\\pi/32", (SOURCE / "ch04/sec4-3-3.md").read_text())
+
+    def test_adaptive_energy_cross_terms_cancel(self):
+        generator = random.Random(7317)
+        for unused in range(100):
+            inertia = generator.uniform(0.2, 3)
+            inertia_rate = generator.uniform(-1, 1)
+            coriolis = inertia_rate / 2
+            sigma = generator.uniform(-2, 2)
+            regression = generator.uniform(-3, 3)
+            parameter_error = generator.uniform(-1, 1)
+            damping, parameter_weight = 4, 2
+            sigma_rate = (-coriolis * sigma - regression * parameter_error
+                          - damping * sigma) / inertia
+            parameter_rate = regression * sigma / parameter_weight
+            energy_rate = (inertia * sigma * sigma_rate
+                           + 0.5 * inertia_rate * sigma**2
+                           + parameter_weight * parameter_error * parameter_rate)
+            self.assertAlmostEqual(energy_rate, -damping * sigma**2)
+
+
+class ProseCompanionChecks(unittest.TestCase):
+    """Check numerical answers corrected while reconciling prose with models."""
+
+    def test_published_cartesian_determinant_and_eigenvalues(self):
+        text = (SOURCE / "ch06/exercises.md").read_text(encoding="utf-8")
+        example = text.split("::: ex C3 ", 1)[1].split("::: ex C4 ", 1)[0]
+        coefficient = float(re.search(r"6\.3\\times2\.4-(\d+)\\cos\^2", example).group(1))
+        # The off-diagonal term comes from m2 times the dot product of the axes.
+        mass = 2.0
+        self.assertAlmostEqual(coefficient, mass ** 2)
+        for step in range(181):
+            off_diagonal = mass * math.cos(step * math.pi / 180)
+            self.assertGreater(6.3 * 2.4 - off_diagonal ** 2, 0)
+        off_diagonal = mass * math.cos(math.pi / 4)
+        discriminant = math.sqrt((6.3 - 2.4) ** 2 + 4 * off_diagonal ** 2)
+        expected = ((6.3 + 2.4 - discriminant) / 2,
+                    (6.3 + 2.4 + discriminant) / 2)
+        printed = re.search(r"特征值约为([\d.]+)与([\d.]+)", example).groups()
+        for value, target in zip(printed, expected):
+            self.assertAlmostEqual(float(value), target, places=5)
+
+    def test_published_torque_difference_keeps_bias_once(self):
+        text = (SOURCE / "ch06/exercises.md").read_text(encoding="utf-8")
+        example = text.split("::: ex C4 ", 1)[1].split("::: ex C5 ", 1)[0]
+        inertia, unused_h, unused_c, velocity, gravity = planar_arm_terms(
+            math.pi / 4, -math.pi / 6, 0.5, -0.25)
+        b11, b12, b22 = inertia
+        inertial = (b11 * 0.2 + b12 * 0.4, b12 * 0.2 + b22 * 0.4)
+        printed = example.split("惯性增量 $(", 1)[1].split(")$", 1)[0]
+        printed = [float(value.replace("\\", "")) for value in printed.split(",")]
+        for axis, expected in enumerate(inertial):
+            zero_acceleration = velocity[axis] + gravity[axis]
+            accelerated = expected + zero_acceleration
+            self.assertAlmostEqual(accelerated - zero_acceleration, printed[axis], places=3)
+
+    def test_published_rotor_share_uses_total_off_diagonal(self):
+        text = (SOURCE / "ch06/exercises.md").read_text(encoding="utf-8")
+        example = text.split("::: ex D3 ", 1)[1].split("::: ex D4 ", 1)[0]
+        printed = re.search(r"占比分别约([\d.]+)%与([\d.]+)%", example).groups()
+        shares = []
+        for reduction in (100, 1):
+            inertia = planar_arm_terms(math.pi / 4, -math.pi / 6, 0, 0,
+                                       kr2=reduction)[0]
+            shares.append(100 * reduction * 0.01 / inertia[1])
+        for value, target in zip(printed, shares):
+            self.assertAlmostEqual(float(value), target, places=5)
+        self.assertLess(shares[1], shares[0])
+
+    def test_published_sensor_point_shift_preserves_nonzero_power(self):
+        text = (SOURCE / "ch05/exercises.md").read_text(encoding="utf-8")
+        example = text.split("::: ex C6 ", 1)[1].split("::: ex D1 ", 1)[0]
+
+        def vector(pattern):
+            raw = re.search(pattern, example).group(1)
+            return tuple(map(float, re.findall(r"-?\d+(?:\.\d+)?", raw)))
+
+        force = vector(r"f_s=\[([^]]+)\]")
+        sensor_moment = vector(r"\\mu_s=\[([^]]+)\]")
+        offset = vector(r"r=\[([^]]+)\]")
+        contact_moment = vector(r"\\mu_c=[^\n]*=\[([^]]+)\]")
+
+        def cross(first, second):
+            return (first[1] * second[2] - first[2] * second[1],
+                    first[2] * second[0] - first[0] * second[2],
+                    first[0] * second[1] - first[1] * second[0])
+
+        arm_moment = cross(offset, force)
+        for measured, arm, printed in zip(sensor_moment, arm_moment, contact_moment):
+            self.assertAlmostEqual(measured - arm, printed)
+        angular = (0, 2, 0)
+        sensor_velocity = (1, 0, 0.5)
+        shift_velocity = cross(angular, offset)
+        contact_velocity = tuple(a + b for a, b in zip(sensor_velocity, shift_velocity))
+        sensor_power = sum(f * v + m * w for f, v, m, w in
+                           zip(force, sensor_velocity, sensor_moment, angular))
+        contact_power = sum(f * v + m * w for f, v, m, w in
+                            zip(force, contact_velocity, contact_moment, angular))
+        self.assertAlmostEqual(sensor_power, 15)
+        self.assertAlmostEqual(contact_power, sensor_power)
 
 
 if __name__ == "__main__":

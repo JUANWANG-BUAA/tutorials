@@ -70,7 +70,7 @@ $$T_e^b(\boldsymbol q)=T_0^b\,T_n^0(\boldsymbol q)\,T_e^n .$$
 :::
 
 ::: method 先把「系到底挂在哪」说透：看守模型（本编补充） {#method-2.8.watch}
-四条规则里最容易卡住读者的，是「$z_i$ 沿**关节 $i+1$** 的轴」这个**编号错位**——下标 $i$ 配不上关节 $i$，对着图找半天才发觉配错了对。这里把挂靠关系一次说透，之后再看四条规则就只是操作细节。
+先区分连杆编号和关节编号。系 $i$ 固连在杆 $i$ 上，而它的 $z_i$ 轴沿下一关节的轴线；等价地说，关节 $i$ 的轴是 $z_{i-1}$。下标相差一来自这套编号约定。
 
 对 $i<n$，**杆 $i$ 上固连坐标系 $i$，其 $z$ 轴放在关节 $i+1$ 的轴线上**；末杆没有关节 $n+1$，末杆系另选。把下标换个方向读——
 
@@ -105,7 +105,118 @@ $$T_e^b(\boldsymbol q)=T_0^b\,T_n^0(\boldsymbol q)\,T_e^n .$$
 
 ![课堂幻灯片 · 约54:40：DH 建系规则与连杆坐标系](../assets/ch02/dh-rules.jpg)
 
-下面在三转动拟人臂上建系：肩回转、肩俯仰、肘俯仰，能同时检查相交轴与平行轴。随后再用平面两杆快检：此时公垂线就是杆的方向，参数更简单，但规则仍然适用。
+先给**平面两连杆**建系（见下图）：三个 $z$ 轴同向指出纸面，给出 $\alpha_i=0$；三个原点取在同一平面，给出 $d_i=0$。两个 R 关节分别以转角为变量。先遮住右表，按四步流程建系，再核对每个数的依据。
+
+<figure>
+<svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-dhw-t fig-dhw-d">
+<title id="fig-dhw-t">两连杆平面臂的 DH 建系实例</title>
+<desc id="fig-dhw-d">左图俯视：三个坐标系的 z 轴全部指出纸面，x0 沿基座水平参考，x1、x2 分别沿第一、第二杆，相邻 x 的有向角是关节变量。右图两行参数表中 a 为杆长，ϑ 为变量，α 与 d 为零。</desc>
+<defs>
+<marker id="fdh-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
+<marker id="fdh-b" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-blue)"/></marker>
+<marker id="fdh-n" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-green)"/></marker>
+<marker id="fdh-g" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-gold)"/></marker>
+</defs>
+<text class="diagram-text" x="240" y="30" text-anchor="middle">建系结果（俯视，z 全部指出纸面 ⊙）</text>
+<text class="diagram-text" x="710" y="30" text-anchor="middle">DH 参数表：每个 0 都有来历</text>
+<g stroke="var(--line-strong)" stroke-width="1.2" marker-end="url(#fdh-m)">
+<line x1="240" y1="262" x2="330" y2="262"/>
+<line x1="240" y1="262" x2="240" y2="192"/>
+</g>
+<text class="diagram-note" x="234" y="186" text-anchor="end">y</text>
+<line stroke="var(--accent)" stroke-width="5" x1="240" y1="262" x2="317.1" y2="170.1"/>
+<line stroke="var(--accent)" stroke-width="5" x1="317.1" y1="170.1" x2="279.1" y2="88.5"/>
+<line x1="317.1" y1="170.1" x2="342.8" y2="139.5" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="4 4"/>
+<path d="M 280 262 A 40 40 0 0 0 265.7 231.4" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#fdh-g)"/>
+<text class="diagram-text" fill="var(--fig-gold)" x="292" y="252">ϑ<tspan class="sb">1</tspan></text>
+<path d="M 339 144 A 34 34 0 0 0 302.7 139.3" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#fdh-g)"/>
+<text class="diagram-text" fill="var(--fig-gold)" x="346" y="140">ϑ<tspan class="sb">2</tspan></text>
+<g stroke-width="2.2">
+<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="240" y1="262" x2="330" y2="262"/>
+<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="240" y1="262" x2="240" y2="207"/>
+<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="317.1" y1="170.1" x2="352.5" y2="128"/>
+<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="317.1" y1="170.1" x2="275" y2="134.7"/>
+<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="279.1" y1="88.5" x2="261.2" y2="50.1"/>
+<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="279.1" y1="88.5" x2="240.7" y2="106.4"/>
+</g>
+<g>
+<circle cx="240" cy="262" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="240" cy="262" r="2.2" fill="var(--ink-2)"/>
+<circle cx="317.1" cy="170.1" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="317.1" cy="170.1" r="2.2" fill="var(--ink-2)"/>
+<circle cx="279.1" cy="88.5" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="279.1" cy="88.5" r="2.2" fill="var(--ink-2)"/>
+</g>
+<text class="diagram-text" fill="var(--fig-blue)" x="336" y="278">x<tspan class="sb">0</tspan></text>
+<text class="diagram-text" fill="var(--fig-blue)" x="352" y="120">x<tspan class="sb">1</tspan></text>
+<text class="diagram-text" fill="var(--fig-blue)" x="250" y="48" text-anchor="end">x<tspan class="sb">2</tspan></text>
+<text class="diagram-note" x="224" y="280" text-anchor="end">o<tspan class="sb">0</tspan></text>
+<text class="diagram-note" x="330" y="180">o<tspan class="sb">1</tspan></text>
+<text class="diagram-note" x="292" y="84">o<tspan class="sb">2</tspan></text>
+<text class="diagram-text" fill="var(--accent-text)" x="300" y="234">a<tspan class="sb">1</tspan></text>
+<text class="diagram-text" fill="var(--accent-text)" x="262" y="142" text-anchor="end">a<tspan class="sb">2</tspan></text>
+<text class="diagram-note" x="300" y="322" text-anchor="middle">z 全平行 → α = 0；原点同面 → d = 0；x 沿连杆方向 → a 恰为杆长</text>
+<g fill="none" stroke="var(--line)">
+<rect x="540" y="60" width="330" height="135"/>
+<line x1="540" y1="105" x2="870" y2="105"/><line x1="540" y1="150" x2="870" y2="150"/><line x1="615" y1="60" x2="615" y2="195"/><line x1="690" y1="60" x2="690" y2="195"/><line x1="765" y1="60" x2="765" y2="195"/><line x1="840" y1="60" x2="840" y2="195"/>
+</g>
+<text class="diagram-text" x="577" y="89" text-anchor="middle">连杆 i</text>
+<text class="diagram-text" x="652" y="89" text-anchor="middle">a</text>
+<text class="diagram-text" x="727" y="89" text-anchor="middle">α</text>
+<text class="diagram-text" x="802" y="89" text-anchor="middle">d</text>
+<text class="diagram-text" x="855" y="89" text-anchor="middle">ϑ</text>
+<text class="diagram-text" x="577" y="134" text-anchor="middle">1</text>
+<text class="diagram-text" fill="var(--fig-blue)" x="652" y="134" text-anchor="middle">a<tspan class="sb">1</tspan></text>
+<text class="diagram-note" x="727" y="134" text-anchor="middle">0</text>
+<text class="diagram-note" x="802" y="134" text-anchor="middle">0</text>
+<text class="diagram-text" fill="var(--fig-gold)" x="855" y="134" text-anchor="middle">ϑ<tspan class="sb">1</tspan></text>
+<text class="diagram-text" x="577" y="179" text-anchor="middle">2</text>
+<text class="diagram-text" fill="var(--fig-blue)" x="652" y="179" text-anchor="middle">a<tspan class="sb">2</tspan></text>
+<text class="diagram-note" x="727" y="179" text-anchor="middle">0</text>
+<text class="diagram-note" x="802" y="179" text-anchor="middle">0</text>
+<text class="diagram-text" fill="var(--fig-gold)" x="855" y="179" text-anchor="middle">ϑ<tspan class="sb">2</tspan></text>
+<circle fill="var(--fig-gold)" cx="556" cy="238" r="4"/><text class="diagram-note" x="566" y="243">变量（每行恰一个：z 规则决定）</text>
+<circle fill="var(--fig-blue)" cx="556" cy="262" r="4"/><text class="diagram-note" x="566" y="267">常数（杆长 / 扭角：公垂线与两轴夹角）</text>
+<circle fill="var(--muted)" cx="556" cy="286" r="4"/><text class="diagram-note" x="566" y="291">0（z 平行 → α=0；原点共面 → d=0）</text>
+<text class="diagram-note" x="710" y="322" text-anchor="middle">参数选得好 = 让 0 尽量多；2.9 节全部算例照此办理</text>
+</svg>
+<figcaption>DH 建系的第一个完整实例（本教程绘）：俯视下三个 $z$ 轴全部指出纸面且互相平行，于是 $\alpha_i=0$；原点取在同一平面，$d_i=0$；$x_i$ 沿连杆方向，$a_i$ 恰为杆长；相邻 $x$ 轴的夹角就是仅有的两个变量 $\vartheta_1,\vartheta_2$。把左图的几何逐条「翻译」成右表——这是这台平面臂的建系结果；「让 0 尽量多」的选系原则见下文（[@method-2.8.zero]）。</figcaption>
+</figure>
+
+::: method 总原则：在合法选系中简化常数 {#method-2.8.zero}
+利用建系自由度让固定参数尽量简单，同时保持坐标系固连、轴向与零位清楚。不能为了填零而改机构几何或消掉 P 关节的活动距离；一次选定的常值偏置也要在后续计算中保留。
+:::
+
+### 把两杆例子从参数表算到末端
+
+先取基座系与系 0 重合，暂时把工具系直接选为末杆系 2。两个关节都是转动型，三个 $z$ 轴同向指出纸面，$x_1,x_2$ 分别沿两根杆。于是每行的 $a_i$ 为杆长、$\alpha_i=d_i=0$，只有 $\vartheta_i$ 随关节运动改变。[四参数的几何含义](../recall.md#dh)可在这里回看。
+
+对这种平面结构，一段变换就是绕旧 $z$ 转 $\vartheta_i$，再沿转后的 $x$ 走杆长 $a_i$：
+
+$$A_i^{i-1}=\begin{bmatrix}c_i&-s_i&0&a_ic_i\\s_i&c_i&0&a_is_i\\0&0&1&0\\0&0&0&1\end{bmatrix},\qquad c_i=\cos\vartheta_i,\ s_i=\sin\vartheta_i.$$
+
+接着算 $T_2^0=A_1^0A_2^1$。先看位置列：第二段位移原本用系 1 表示，须先转到系 0，再与第一段相加：
+
+$$p_2^0=\begin{bmatrix}a_1c_1\\a_1s_1\\0\end{bmatrix}
++R_z(\vartheta_1)\begin{bmatrix}a_2c_2\\a_2s_2\\0\end{bmatrix}
+=\begin{bmatrix}a_1c_1+a_2(c_1c_2-s_1s_2)\\a_1s_1+a_2(s_1c_2+c_1s_2)\\0\end{bmatrix}.$$
+
+用和角公式，第二杆的方向变成 $\vartheta_1+\vartheta_2$；旋转块同样得到 $R_z(\vartheta_1+\vartheta_2)$。记 $c_{12}=\cos(\vartheta_1+\vartheta_2)$、$s_{12}=\sin(\vartheta_1+\vartheta_2)$，完整结果为
+
+$$T_2^0=\begin{bmatrix}c_{12}&-s_{12}&0&a_1c_1+a_2c_{12}\\s_{12}&c_{12}&0&a_1s_1+a_2s_{12}\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
+
+两杆各1 m，取 $(\vartheta_1,\vartheta_2)=(0,\pi/2)$，位置为 $(1,1,0)$ m，末杆的 $x_2$ 朝基系 $+y$。这与开头画图相符。至此已完成一次建系、填表、连乘和几何复核；后面的一般矩阵需要解释的，是空间轴之间不再平行时多出来的扭角。
+
+### 为什么与开头例 2.4 的旋转块不同
+
+开头的工具系沿用夹爪约定：$n_e=z_2$、$s_e=-y_2$、$a_e=x_2$，原点仍与 $o_2$ 重合。由[旋转矩阵的列](../recall.md#rotation)可直接写出固定工具变换：
+
+$$T_e^2=\begin{bmatrix}0&0&1&0\\0&-1&0&0\\1&0&0&0\\0&0&0&1\end{bmatrix}.$$
+
+右乘 $T_e^0=T_2^0T_e^2$，三个方向列依次变成 $z_2,-y_2,x_2$，正好恢复例 2.4 的矩阵。位置没有改变，方向列改变了排列和符号，因为工具轴定义不同。遇到这种差别，先检查两套坐标轴，再判断计算是否出错。
+
+### 再看有扭角的空间结构
+
+接下来给三转动拟人臂建系。它的肩回转轴与肩俯仰轴相交，肩俯仰轴与肘轴平行，可以用来练习非零扭角的判号。
+
+
 
 ::: method 例解 · 在拟人臂上四步建系（本编补充，逐格对照下图） {#method-2.8.anthro}
 **结构与正方向**：系 0 的 +z 竖直，零位两杆沿 +x。取零位关节 2、3 的正轴都沿 $-y_0$；关节 1 正轴为 $+z_0$。运动时用右手正角。这些方向约定与下表的 $\alpha_1=+\pi/2$ 配套，不能只从“水平”判断扭角正负。
@@ -245,90 +356,11 @@ $$T_e^b(\boldsymbol q)=T_0^b\,T_n^0(\boldsymbol q)\,T_e^n .$$
 选择不同 DH 系，中间的 $A_i^{i-1}$ 以及 $T_n^0$ 数值都可能改变；统一物理基座、工具和关节零位，并同步 $T_0^b,T_e^n$ 后，描述同一物理位姿的 $T_e^b$ 才相同。例如仅把系 0 的原点沿 +z 抬高 h，就有 $T_0^b=\operatorname{Trans}_z(h)$，而末端在系 0 中的 z 坐标减 h，两者乘回后不变。
 :::
 
-再用**平面两连杆**快检（见下图）：三个 $z$ 轴同向指出纸面，给出 $\alpha_i=0$；三个原点取在同一平面，给出 $d_i=0$。两个 R 关节分别以转角为变量。先遮住右表，按四步流程建系，再核对每个数的依据。
-
-<figure>
-<svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-dhw-t fig-dhw-d">
-<title id="fig-dhw-t">两连杆平面臂的 DH 建系实例</title>
-<desc id="fig-dhw-d">左图俯视：三个坐标系的 z 轴全部指出纸面，x0 沿基座水平参考，x1、x2 分别沿第一、第二杆，相邻 x 的有向角是关节变量。右图两行参数表中 a 为杆长，ϑ 为变量，α 与 d 为零。</desc>
-<defs>
-<marker id="fdh-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
-<marker id="fdh-b" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-blue)"/></marker>
-<marker id="fdh-n" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-green)"/></marker>
-<marker id="fdh-g" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-gold)"/></marker>
-</defs>
-<text class="diagram-text" x="240" y="30" text-anchor="middle">建系结果（俯视，z 全部指出纸面 ⊙）</text>
-<text class="diagram-text" x="710" y="30" text-anchor="middle">DH 参数表：每个 0 都有来历</text>
-<g stroke="var(--line-strong)" stroke-width="1.2" marker-end="url(#fdh-m)">
-<line x1="240" y1="262" x2="330" y2="262"/>
-<line x1="240" y1="262" x2="240" y2="192"/>
-</g>
-<text class="diagram-note" x="234" y="186" text-anchor="end">y</text>
-<line stroke="var(--accent)" stroke-width="5" x1="240" y1="262" x2="317.1" y2="170.1"/>
-<line stroke="var(--accent)" stroke-width="5" x1="317.1" y1="170.1" x2="279.1" y2="88.5"/>
-<line x1="317.1" y1="170.1" x2="342.8" y2="139.5" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="4 4"/>
-<path d="M 280 262 A 40 40 0 0 0 265.7 231.4" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#fdh-g)"/>
-<text class="diagram-text" fill="var(--fig-gold)" x="292" y="252">ϑ<tspan class="sb">1</tspan></text>
-<path d="M 339 144 A 34 34 0 0 0 302.7 139.3" fill="none" stroke="var(--fig-gold)" stroke-width="1.8" marker-end="url(#fdh-g)"/>
-<text class="diagram-text" fill="var(--fig-gold)" x="346" y="140">ϑ<tspan class="sb">2</tspan></text>
-<g stroke-width="2.2">
-<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="240" y1="262" x2="330" y2="262"/>
-<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="240" y1="262" x2="240" y2="207"/>
-<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="317.1" y1="170.1" x2="352.5" y2="128"/>
-<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="317.1" y1="170.1" x2="275" y2="134.7"/>
-<line stroke="var(--fig-blue)" marker-end="url(#fdh-b)" x1="279.1" y1="88.5" x2="261.2" y2="50.1"/>
-<line stroke="var(--fig-green)" stroke-width="1.6" marker-end="url(#fdh-n)" x1="279.1" y1="88.5" x2="240.7" y2="106.4"/>
-</g>
-<g>
-<circle cx="240" cy="262" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="240" cy="262" r="2.2" fill="var(--ink-2)"/>
-<circle cx="317.1" cy="170.1" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="317.1" cy="170.1" r="2.2" fill="var(--ink-2)"/>
-<circle cx="279.1" cy="88.5" r="9" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="279.1" cy="88.5" r="2.2" fill="var(--ink-2)"/>
-</g>
-<text class="diagram-text" fill="var(--fig-blue)" x="336" y="278">x<tspan class="sb">0</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="352" y="120">x<tspan class="sb">1</tspan></text>
-<text class="diagram-text" fill="var(--fig-blue)" x="250" y="48" text-anchor="end">x<tspan class="sb">2</tspan></text>
-<text class="diagram-note" x="224" y="280" text-anchor="end">o<tspan class="sb">0</tspan></text>
-<text class="diagram-note" x="330" y="180">o<tspan class="sb">1</tspan></text>
-<text class="diagram-note" x="292" y="84">o<tspan class="sb">2</tspan></text>
-<text class="diagram-text" fill="var(--accent-text)" x="300" y="234">a<tspan class="sb">1</tspan></text>
-<text class="diagram-text" fill="var(--accent-text)" x="262" y="142" text-anchor="end">a<tspan class="sb">2</tspan></text>
-<text class="diagram-note" x="300" y="322" text-anchor="middle">z 全平行 → α = 0；原点同面 → d = 0；x 沿连杆方向 → a 恰为杆长</text>
-<g fill="none" stroke="var(--line)">
-<rect x="540" y="60" width="330" height="135"/>
-<line x1="540" y1="105" x2="870" y2="105"/><line x1="540" y1="150" x2="870" y2="150"/><line x1="615" y1="60" x2="615" y2="195"/><line x1="690" y1="60" x2="690" y2="195"/><line x1="765" y1="60" x2="765" y2="195"/><line x1="840" y1="60" x2="840" y2="195"/>
-</g>
-<text class="diagram-text" x="577" y="89" text-anchor="middle">连杆 i</text>
-<text class="diagram-text" x="652" y="89" text-anchor="middle">a</text>
-<text class="diagram-text" x="727" y="89" text-anchor="middle">α</text>
-<text class="diagram-text" x="802" y="89" text-anchor="middle">d</text>
-<text class="diagram-text" x="855" y="89" text-anchor="middle">ϑ</text>
-<text class="diagram-text" x="577" y="134" text-anchor="middle">1</text>
-<text class="diagram-text" fill="var(--fig-blue)" x="652" y="134" text-anchor="middle">a<tspan class="sb">1</tspan></text>
-<text class="diagram-note" x="727" y="134" text-anchor="middle">0</text>
-<text class="diagram-note" x="802" y="134" text-anchor="middle">0</text>
-<text class="diagram-text" fill="var(--fig-gold)" x="855" y="134" text-anchor="middle">ϑ<tspan class="sb">1</tspan></text>
-<text class="diagram-text" x="577" y="179" text-anchor="middle">2</text>
-<text class="diagram-text" fill="var(--fig-blue)" x="652" y="179" text-anchor="middle">a<tspan class="sb">2</tspan></text>
-<text class="diagram-note" x="727" y="179" text-anchor="middle">0</text>
-<text class="diagram-note" x="802" y="179" text-anchor="middle">0</text>
-<text class="diagram-text" fill="var(--fig-gold)" x="855" y="179" text-anchor="middle">ϑ<tspan class="sb">2</tspan></text>
-<circle fill="var(--fig-gold)" cx="556" cy="238" r="4"/><text class="diagram-note" x="566" y="243">变量（每行恰一个：z 规则决定）</text>
-<circle fill="var(--fig-blue)" cx="556" cy="262" r="4"/><text class="diagram-note" x="566" y="267">常数（杆长 / 扭角：公垂线与两轴夹角）</text>
-<circle fill="var(--muted)" cx="556" cy="286" r="4"/><text class="diagram-note" x="566" y="291">0（z 平行 → α=0；原点共面 → d=0）</text>
-<text class="diagram-note" x="710" y="322" text-anchor="middle">参数选得好 = 让 0 尽量多；2.9 节全部算例照此办理</text>
-</svg>
-<figcaption>DH 建系的第一个完整实例（本教程绘）：俯视下三个 $z$ 轴全部指出纸面且互相平行，于是 $\alpha_i=0$；原点取在同一平面，$d_i=0$；$x_i$ 沿连杆方向，$a_i$ 恰为杆长；相邻 $x$ 轴的夹角就是仅有的两个变量 $\vartheta_1,\vartheta_2$。把左图的几何逐条「翻译」成右表——这是这台平面臂的建系结果；「让 0 尽量多」的选系原则见下文（[@method-2.8.zero]）。</figcaption>
-</figure>
-
-::: method 总原则：在合法选系中简化常数 {#method-2.8.zero}
-利用建系自由度让固定参数尽量简单，同时保持坐标系固连、轴向与零位清楚。不能为了填零而改机构几何或消掉 P 关节的活动距离；一次选定的常值偏置也要在后续计算中保留。
-:::
-
 ### DH 四参数与 $A_i^{i-1}$
 
 ![课堂幻灯片 · 约1:00:16：四参数定义（红字助记为课堂标注）](../assets/ch02/dh-params.jpg)
 
-上面两例的轴线两两「相交 / 平行」，是教学里的乖巧情形；一般情形下相邻两轴**异面**（既不相交也不平行，工业臂的肩部偏置很常见），此时公垂线唯一。四个参数在这种一般位置下的几何定义如下图——例解里的每一步，都是这张图在特殊轴对上的退化版本：
+上面两例只用到了相交轴和平行轴。更一般地，相邻两轴可能异面，即既不相交也不平行；此时公垂线唯一。四个参数在这种一般位置下的几何定义如下图——例解里的每一步，都是这张图在特殊轴对上的退化版本：
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 486" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-dh-t fig-dh-d">

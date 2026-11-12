@@ -2,11 +2,13 @@
 
 夹爪到达了工件上方，却横着对准工件，仍然不能完成抓取。上一章把任务分成建模、规划与控制；开始建模时，首先要说清楚工具**在哪里、朝哪里**。这两个问题分别由位置和姿态回答，合起来叫**位姿**。
 
-本节用固连在刚体上的坐标系描述位姿，再解释三根轴上的 9 个方向余弦。读完后，你应能从轴的方向写出分量，分清位置与方向的单位，并检查一组三轴能否表示刚体的朝向。
+本节用固连在刚体上的[坐标系](../recall.md#joint)描述位姿，再解释三根轴上的 9 个方向余弦。读完后，你应能从轴的方向写出分量，分清位置与方向的单位，并检查一组三轴能否表示刚体的朝向。
 
 <aside class="margin-note"><span class="mn-label">NOTE / 6 DOF</span>无额外约束的空间刚体有 6 个自由度：位置 3 个、姿态 3 个。姿态的 3 个参数是局部计数，不保证某一套角度参数在所有朝向下都唯一、无奇异。</aside>
 
 {{#include ../assets/figures/robot-pose.md}}
+
+
 
 <a id="sec-2.1.1"></a>
 
@@ -141,7 +143,7 @@ $$\boldsymbol p=\boldsymbol o'+0.10\boldsymbol x'
 检查三根轴的长度、两两点积和 $\boldsymbol x'\times\boldsymbol y'$。它们能否表示参考右手系经过刚体转动后的朝向？如果只指定 $\boldsymbol z'=(0,0,1)^{\mathrm T}$，又是否能唯一确定姿态？
 
 ::: sol 练习 2 核对
-三根轴长度均为 1，两两点积均为 0，但 $\boldsymbol x'\times\boldsymbol y'=(0,0,1)^{\mathrm T}=-\boldsymbol z'$。这是左手系，对应矩阵 $\operatorname{diag}(1,1,-1)$ 的行列式为 $-1$，不能由右手系仅作刚体转动得到。下一节将把“正交且行列式为 $+1$”写成旋转矩阵的判据。
+三根轴长度均为 1，两两点积均为 0，但 $\boldsymbol x'\times\boldsymbol y'=(0,0,1)^{\mathrm T}=-\boldsymbol z'$。这是左手系，对应矩阵 $\operatorname{diag}(1,1,-1)$ 的行列式为 $-1$，不能由右手系仅作刚体转动得到。下一节将把“正交且行列式为 $+1$”写成[旋转矩阵](../recall.md#rotation)的判据。
 
 只给定 $z'$ 也不够。例如 $(\boldsymbol x',\boldsymbol y')=(\boldsymbol x,\boldsymbol y)$ 和 $(\boldsymbol y,-\boldsymbol x)$ 都与 $\boldsymbol z'=\boldsymbol z$ 组成右手系，却相差绕 $z'$ 的 $90^\circ$ 转动；连续滚转角仍未确定。
 :::
