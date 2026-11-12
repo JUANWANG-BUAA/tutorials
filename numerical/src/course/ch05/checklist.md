@@ -14,7 +14,7 @@
 | K5.8 | 写出 Gram–Schmidt 公式与次数保持 | $\varphi_k=x^k-\sum_{j<k}\dfrac{(x^k,\varphi_j)}{(\varphi_j,\varphi_j)}\varphi_j$，$\deg\varphi_k=k$ | ☐ |
 | K5.9 | 写出四族正交多项式的区间与权 | Legendre $[-1,1],1$；Chebyshev $[-1,1],\frac1{\sqrt{1-x^2}}$；Laguerre $[0,\infty),e^{-x}$；Hermite $(-\infty,\infty),e^{-x^2}$ | ☐ |
 | K5.10 | 写出离散内积与最小二乘 | $(f,g)=\sum_i f(x_i)g(x_i)$ | ☐ |
-| K5.11 | 说明 B 样条基与局部支撑 | Cox–de Boor 递推；$N_{i,k}$ 只在 $[x_i,x_{i+k+1}]$ 非零，方程组带状 | ☐ |
+| K5.11 | 说明 B 样条基与局部支撑 | Cox–de Boor 递推；$N_{i,k}$ 的支撑在结点区间 $[t_i,t_{i+k+1}]$ 内，方程组带状 | ☐ |
 | K5.12 | 写出三角插值、DFT 与 FFT 复杂度 | 等距节点三角函数组正交；$c_k=\frac1N\sum f_le^{-ikl}$；FFT 为 $O(N\log N)$ | ☐ |
 
 ## S · 技能
