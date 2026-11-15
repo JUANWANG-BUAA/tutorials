@@ -67,6 +67,9 @@
 | $J_A$、$T(\boldsymbol\varphi)$ | 位姿坐标的雅可比与角速率合成矩阵（$\boldsymbol\omega_e=T\dot{\boldsymbol\varphi}_e$，ZYZ在$\sin\vartheta\ne0$时可逆） | 3.6 |
 | $F_e=[\boldsymbol f_e;\boldsymbol\mu_e]$ | 末端广义力（3 力 + 3 矩） | 3.8 |
 | $\boldsymbol\tau$ | 关节力矩向量（$\boldsymbol\tau=J^{\mathrm T}F_e$） | 3.8 |
+| $h_e=[f_e;\mu_e]$ | 机器人施加于环境的末端力／力矩；环境施加于机器人的反力为 $-h_e$ | 8.1 |
+| $h_A=T_A^{\mathrm T}h_e$ | 与位姿参数速率功率配对的操作空间广义力 | 8.1 |
+| $S_f,S_v$ | 接触任务中的力目标子空间与可行速度子空间基 | 8.5 |
 
 ## 第四章记号
 

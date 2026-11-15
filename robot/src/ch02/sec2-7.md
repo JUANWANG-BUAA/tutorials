@@ -59,13 +59,13 @@ $$\begin{bmatrix}R&\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}
 \begin{bmatrix}\boldsymbol x\\w\end{bmatrix}
 =\begin{bmatrix}R\boldsymbol x+w\boldsymbol o\\w\end{bmatrix}.$$
 
-因此点取 $w=1$，位置会受平移影响；自由方向取 $w=0$，只受旋转影响。底行使 $w$ 保持原值，并非随意的占位。这里采用刚体变换，点的末分量恒为 1，方向恒为 0；**方向不能除以末分量**。一般投影坐标在末分量非零时才可除回 1，属于另一种变换，不能与这里的刚体变换混用。
+因此点取 $w=1$，位置会受平移影响；自由方向取 $w=0$，只受旋转影响。底行 $[\boldsymbol0^{\mathrm T},1]$ 的作用就是让相乘后的第 4 分量仍等于原来的 $w$，这样下一次再左乘另一个齐次矩阵时，点仍然是点、方向仍然是方向。
 
-原书把 $SE(3)$ 写成 $\mathbb R^3\times SO(3)$，可以理解为每个姿态由平移和旋转两部分组成；**合成并非分别相加、相乘**。从矩阵乘法可得
+两个齐次变换相乘时，分块乘法给出
 
-$$(R,\boldsymbol o)(S,\boldsymbol t)=(RS,\ \boldsymbol o+R\boldsymbol t).$$
+$$\begin{bmatrix}R&\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}\begin{bmatrix}S&\boldsymbol t\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}=\begin{bmatrix}RS&\boldsymbol o+R\boldsymbol t\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}.$$
 
-第二段平移会受前一旋转影响，数学上称为半直积结构。做题时记住这个分块结果即可，不必先学群论。
+原书把 $SE(3)$ 记成 $\mathbb R^3\times SO(3)$，指每个元素由平移 $\boldsymbol o$ 和旋转 $R$ 两部分组成；但两段合成的平移列是 $\boldsymbol o+R\boldsymbol t$，第二段平移先被前一段旋转 $R$ 转到同一坐标系，再与 $\boldsymbol o$ 相加（数学上称半直积）。这正是 §2.7.1 式 2.38 代入两段换系时出现的那一项。
 
 <a id="sec-2.7.3"></a>
 
@@ -86,7 +86,7 @@ $$BA=\begin{bmatrix}R^{\mathrm T}R&R^{\mathrm T}\boldsymbol o-R^{\mathrm T}\bold
 
 $$A^{\mathrm T}A=\begin{bmatrix}I_3&R^{\mathrm T}\boldsymbol o\\\boldsymbol o^{\mathrm T}R&1+\boldsymbol o^{\mathrm T}\boldsymbol o\end{bmatrix}.$$
 
-因此 $A^{-1}=A^{\mathrm T}$ **当且仅当 $\boldsymbol o=0$**。纯旋转的 $\operatorname{diag}(R,1)$ 仍正交；有非零平移时才不正交。$\det A=\det R=1$ 对所有刚体变换成立，单凭行列式为 1 不能判断整体正交。□
+因此 $A^{-1}=A^{\mathrm T}$ **当且仅当 $\boldsymbol o=0$**：纯旋转的 $\operatorname{diag}(R,1)$ 仍正交，一旦有非零平移，$A^{\mathrm T}A$ 的右下角变成 $1+\|\boldsymbol o\|^2>1$，就不再是正交矩阵。注意按最后一行展开行列式总有 $\det A=\det R=1$，所以 $\det A=1$ 对所有刚体齐次变换都成立，不能用来判断 $A$ 是否正交。□
 :::
 
 <a id="sec-2.7.4"></a>

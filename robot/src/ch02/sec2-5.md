@@ -2,7 +2,7 @@
 
 如果只需描述工具从一个姿态转到另一个姿态，可以直接问：**绕哪根轴，转多少角？** 本节用单位轴 $\boldsymbol r$ 和转角 $\vartheta$ 表示旋转，先从五次基本旋转推出 Rodrigues 公式，再反求轴与角，最后把同一公式写成矩阵指数。
 
-先区分三件事：**正解**对任意角都有效；**参数表示**可能不唯一；**逆解算法**在零角和半圈处需要换公式。这里的零角与半圈都不会使机器人失去实际运动能力。学完后应能算出一个完整矩阵、解释两端退化，并用演示核对每一步。
+欧拉角在 $\sin\vartheta=0$ 或 $\cos\vartheta=0$ 处有表示奇点。角和轴换了一种思路：正解公式对任意轴、任意转角都成立，只在从矩阵反求 $(\vartheta,\boldsymbol r)$ 时，零角（轴任意）和半圈（$\sin\pi=0$）两处需要换一套提取式。
 
 
 
@@ -13,7 +13,7 @@
 ::: def 定义 2.5.1 · 角和轴表示 {#def-2.5.1}
 任一旋转都可由**旋转轴的单位向量** $\boldsymbol r=[r_x\ r_y\ r_z]^T$（相对参考系 $O\text{-}xyz$）与**旋转角** $\vartheta$共同表示，记作 $R(\vartheta,\boldsymbol r)$。采用右手定则：右手拇指沿 $\boldsymbol r$，其余四指弯曲方向为正；从轴的正端朝原点看是逆时针。本文用主动旋转 $p_{\rm new}=Rp$，公式内角度均为弧度，带 $^\circ$ 的数值与演示输入除外。
 
-两者共 4 个数（$1+3$），故为**非最简表示**；但轴受单位约束 $r_x^2+r_y^2+r_z^2=1$（原书式 2.29），局部独立参数仍为 3。单位约束不保证表示全局唯一。
+两者共 4 个数（$1+3$），故为**非最简表示**；轴受单位约束 $r_x^2+r_y^2+r_z^2=1$（原书式 2.29），局部独立参数仍为 3（[@note-2.2.2]）。
 :::
 
 我们已经会写绕坐标轴的基本旋转。原书图 2.10 给出一种**辅助构造**：先把轴与整个待转物体一起转到辅助姿态，使轴对齐 $z$；绕固定 $z$ 转所需角度；再撤销前两次对齐动作。每一步都绕固定坐标轴，按 [@thm-2.3.B] 逐次左乘。
@@ -149,18 +149,18 @@ $$Rp=p_\parallel+\cos\vartheta\,p_\perp+\sin\vartheta\,(\boldsymbol r\times p_\p
 $$R(-\vartheta,-\boldsymbol r)=R(\vartheta,\boldsymbol r).$$
 同步反号给同一旋转，另有周期性 $R(\vartheta+2k\pi,\boldsymbol r)=R(\vartheta,\boldsymbol r)$。通常约定**主角** $\vartheta\in[0,\pi]$：在 $0<\vartheta<\pi$ 时轴唯一；$\vartheta=0$ 时任意轴都给 $I$；$\vartheta=\pi$ 时只有轴的正负仍无法区分。
 
-[2.6](sec2-6.md) 的半角打包会把同步反号的两组参数映到同一四元数，但仍保留 $Q$ 与 $-Q$ 表示同一姿态的双重覆盖，不能声称不唯一性全部消失。
+[2.6](sec2-6.md) 的半角打包会把同步反号的两组参数映到同一四元数，只剩转角相差 $2\pi$ 带来的 $Q$ 与 $-Q$ 双重覆盖。
 :::
 
 逆问题：已知 $R=[r_{ij}]$，反求 $(\vartheta,\boldsymbol r)$。先确认输入确实属于 $SO(3)$：数值计算要独立检查 $R^{\mathrm T}R\approx I$、$\det R\approx1$。**不能用归一化轴来掩盖坏矩阵**。下面的推导都假设 $R$ 合法。
 
-**取迹**——$S(\boldsymbol r)$ 对角线为零、$\operatorname{tr}(\boldsymbol r\boldsymbol r^{\mathrm T})=r_x^2+r_y^2+r_z^2=1$，轴被消去：
+**取迹**。从紧凑式 $R=c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$ 出发：$S(\boldsymbol r)$ 对角线全为零，$\operatorname{tr}(\boldsymbol r\boldsymbol r^{\mathrm T})=r_x^2+r_y^2+r_z^2=1$，把三项的对角和加起来，轴就消掉了：
 
 $$\operatorname{tr}R=3c_\vartheta+(1-c_\vartheta)\cdot 1=1+2c_\vartheta
 \quad\Longrightarrow\quad
 \cos\vartheta=\frac{r_{11}+r_{22}+r_{33}-1}{2}\qquad(\text{原书式 }2.27)$$
 
-**取反对称部分**——$c_\vartheta I$ 与 $(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}$ 都是对称矩阵，作差 $R-R^{\mathrm T}$ 后只剩反对称件：
+**取反对称部分**。$c_\vartheta I$ 与 $(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}$ 都是对称矩阵，作差 $R-R^{\mathrm T}$ 后对称件相消，只剩 $s_\vartheta\big(S(\boldsymbol r)-S(\boldsymbol r)^{\mathrm T}\big)=2s_\vartheta S(\boldsymbol r)$：
 
 $$R-R^{\mathrm T}=2s_\vartheta\,S(\boldsymbol r)
 \quad\Longrightarrow\quad
@@ -177,7 +177,7 @@ $$\vartheta=\operatorname{atan2}\!\left(\|v\|,\frac{\operatorname{tr}R-1}{2}\rig
 取主角 $\vartheta\in[0,\pi]$，式 2.28 在两个端点不能直接除以 $\sin\vartheta$：
 
 - **零角**：$R=I_3$，轴任意；但选定主旋转向量 $\phi=\vartheta\boldsymbol r$ 就是唯一的零向量。
-- **半圈**：$R=2\boldsymbol r\boldsymbol r^{\mathrm T}-I_3$。令 $B=(R+I)/2=\boldsymbol r\boldsymbol r^{\mathrm T}$，取最大对角元 $B_{kk}$，设 $r_k=\sqrt{B_{kk}}$，再取 $r_i=B_{ik}/r_k$。因 $\sum B_{ii}=1$，最大项至少 $1/3$，不会除以零。**对角线只给绝对值，非对角项给相对符号**；最后整体反号也合法。
+- **半圈**（$\vartheta=\pi$）：此时 $c_\vartheta=-1,s_\vartheta=0$，紧凑式化为 $R=-I_3+2\boldsymbol r\boldsymbol r^{\mathrm T}$，所以 $B=(R+I_3)/2=\boldsymbol r\boldsymbol r^{\mathrm T}$。它的 $(i,j)$ 元是 $r_ir_j$：对角元 $B_{kk}=r_k^2$ 给出绝对值，非对角元 $B_{ik}=r_ir_k$ 给出 $r_i$ 与 $r_k$ 的相对符号。因为 $\sum_k B_{kk}=\|\boldsymbol r\|^2=1$，最大的对角元 $B_{kk}\ge1/3$；取 $r_k=\sqrt{B_{kk}}>0$，再由同一列算 $r_i=B_{ik}/r_k$，分母至少 $1/\sqrt3$，不会除以零。最后把整根轴取反 $-\boldsymbol r$ 也表示同一个半圈旋转。
 
 近半圈但尚未到端点时，可从
 
@@ -230,17 +230,17 @@ $B=(R+I)/2$ 的对角为 $(1/2,1/2,0)$。全部取正会给 $(1,1,0)/\sqrt2$，�
 
 $$so(3)\triangleq\big\{S\in\mathbb R^{3\times3}:\ S^{\mathrm T}=-S\big\}$$
 
-称为 $SO(3)$ 的**李代数**（Lie algebra）。由 [@def-2.5.2]，每个 $S\in so(3)$ 形如 $S(\omega)$ 且与 $\omega\in\mathbb R^3$ **一一对应**——这一对操作常记作**装帽 / 摘帽**（hat / vee）：
+称为 $SO(3)$ 的**李代数**（Lie algebra）。由 [@def-2.5.2]，每个 $S\in so(3)$ 形如 $S(\omega)$，与 $\omega\in\mathbb R^3$ 一一对应。这一对操作常记作**装帽 / 摘帽**（hat / vee）：
 
-$$\hat\omega=S(\omega)\in so(3),\qquad \big(S(\omega)\big)^\vee=\omega\in\mathbb R^3,$$
+$$\hat\omega=S(\omega)\in so(3),\qquad \big(S(\omega)\big)^\vee=\omega\in\mathbb R^3$$
 
-（不少教材把 $S(\omega)$ 写成 $[\omega]_\times$ 或 $\hat\omega$。）因此 $so(3)$ 是一个 **3 维向量空间**——对加法与数乘封闭——一组自然基（**生成元**）是
+（不少教材把 $S(\omega)$ 写成 $[\omega]_\times$ 或 $\hat\omega$）。两个反对称矩阵相加或乘实数仍反对称，所以 $so(3)$ 是一个 **3 维向量空间**，一组自然基（**生成元**）是
 
 $$S_x=S(\boldsymbol x)=\begin{bmatrix}0&0&0\\0&0&-1\\0&1&0\end{bmatrix},\quad
 S_y=S(\boldsymbol y)=\begin{bmatrix}0&0&1\\0&0&0\\-1&0&0\end{bmatrix},\quad
-S_z=S(\boldsymbol z)=\begin{bmatrix}0&-1&0\\1&0&0\\0&0&0\end{bmatrix},$$
+S_z=S(\boldsymbol z)=\begin{bmatrix}0&-1&0\\1&0&0\\0&0&0\end{bmatrix}.$$
 
-任何 $S(\omega)=\omega_xS_x+\omega_yS_y+\omega_zS_z$——「绕三根坐标轴的无穷小旋转」按分量组合出任意方向的无穷小旋转。
+任何 $S(\omega)=\omega_xS_x+\omega_yS_y+\omega_zS_z$：绕三根坐标轴的无穷小旋转按分量相加，就给出任意方向的无穷小旋转。
 :::
 
 **为什么说 $so(3)$ 是 $SO(3)$ 的「微分版本」（切空间）？** 把紧凑形式按小角度 $\delta$ 展开（$c_\delta\approx1$、$s_\delta\approx\delta$）：
@@ -251,7 +251,7 @@ $$R(\delta,\boldsymbol r)=I+\delta S(\boldsymbol r)+O(\delta^2),$$
 
 在一般姿态 $R$ 处，$\dot R$ 通常不反对称，**$\dot R R^{\mathrm T}$** 才是 $so(3)$ 元素。第 3 章写成 $\dot R=S(\boldsymbol\omega)R$，其中 $\boldsymbol\omega\in\mathbb R^3$，而 $S(\boldsymbol\omega)\in so(3)$。所以 $so(3)$ 特指单位元 $I$ 处的切空间；其他位置的切向量要先移回单位元再比较。
 
-::: thm 定理 2.5.D · 指数映射——Rodrigues 公式的第二来历 {#thm-2.5.D}
+::: thm 定理 2.5.D · 指数映射：Rodrigues 公式的第二来历 {#thm-2.5.D}
 对单位轴 $\boldsymbol r$（$|\boldsymbol r|=1$）、任意角 $\vartheta$，矩阵指数
 
 $$\exp\big(\vartheta S(\boldsymbol r)\big)\triangleq I+\vartheta S+\frac{\vartheta^2S^2}{2!}+\frac{\vartheta^3S^3}{3!}+\cdots,\qquad S=S(\boldsymbol r)$$
@@ -260,7 +260,7 @@ $$\exp\big(\vartheta S(\boldsymbol r)\big)\triangleq I+\vartheta S+\frac{\varthe
 
 $$\exp\big(\vartheta S(\boldsymbol r)\big)=I+\sin\vartheta\,S+(1-\cos\vartheta)\,S^2 .$$
 
-代入 $S^2=\boldsymbol r\boldsymbol r^{\mathrm T}-I$，即紧凑形式 $c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$——与 [@pf-2.5.rodrigues] 五步合成的结果**逐元素相同**。于是
+代入 $S^2=\boldsymbol r\boldsymbol r^{\mathrm T}-I$，即紧凑形式 $c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$，与 [@pf-2.5.rodrigues] 五步合成的结果**逐元素相同**。于是
 
 $$R(\vartheta,\boldsymbol r)=\exp\big(\vartheta S(\boldsymbol r)\big),$$
 
@@ -286,7 +286,7 @@ $$\exp(\vartheta S)=I+\Big(\vartheta-\frac{\vartheta^3}{3!}+\frac{\vartheta^5}{5
 两个括号正是 $\sin\vartheta$ 与 $1-\cos\vartheta$ 的泰勒级数。□
 :::
 
-::: thm 定理 2.5.E · 对数映射——逆解公式的来历 {#thm-2.5.E}
+::: thm 定理 2.5.E · 对数映射：逆解公式的来历 {#thm-2.5.E}
 设 $R\in SO(3)$，选主角 $0<\vartheta<\pi$。这一区间的旋转对数分支为
 
 $$\operatorname{Log} R=\vartheta\,S(\boldsymbol r)=\frac{\vartheta}{2\sin\vartheta}\,\big(R-R^{\mathrm T}\big),\qquad
@@ -333,14 +333,14 @@ $$\phi=(\operatorname{Log}R)^\vee=\vartheta\boldsymbol r,$$
 </figure>
 
 ::: note 这套语言买了什么（与全书的接口） {#note-2.5.payoff}
-1. **两条推导路合流**：五步合成（几何，[@pf-2.5.rodrigues]）与泰勒级数（分析，[@thm-2.5.D]）殊途同归到 $R(\vartheta,\boldsymbol r)=\exp(\vartheta S(\boldsymbol r))$。以后见「Rodrigues 公式」，两副眼镜随取随用。
-2. **角速度的反对称矩阵属于 $so(3)$**：第 3 章将证明 $\dot R=S(\boldsymbol\omega)R$（[@thm-3.1.A]），即 $S(\boldsymbol\omega)=\dot R R^{\mathrm T}$。一般情况下 $\boldsymbol\omega$ 不等于欧拉角向量或旋转向量的逐项导数（[3.6.3](../ch03/sec3-6.md#sec-3.6.3)）；固定轴的 $\phi(t)=\vartheta(t)\boldsymbol r$ 则有 $\boldsymbol\omega=\dot\vartheta\boldsymbol r$，要保留这个特例。
-3. **不可交换的残留物 = 李括号**：$so(3)$ 不止是向量空间，还自带一种乘法——**李括号** $[A,B]=AB-BA$。在 $so(3)$ 上：作用到任意 $p$，$S(a)S(b)p=a\times(b\times p)=b\,(a\cdot p)-(a\cdot b)\,p$，即 $S(a)S(b)=ba^{\mathrm T}-(a\cdot b)I$；与交换 $a,b$ 的结果相减，常数项抵消：
+1. **两条推导路合流**：五步合成（几何，[@pf-2.5.rodrigues]）与泰勒级数（分析，[@thm-2.5.D]）都得到 $R(\vartheta,\boldsymbol r)=\exp(\vartheta S(\boldsymbol r))$。
+2. **角速度的反对称矩阵属于 $so(3)$**：第 3 章证明 $\dot R=S(\boldsymbol\omega)R$（[@thm-3.1.A]），即 $S(\boldsymbol\omega)=\dot R R^{\mathrm T}$。一般情况下 $\boldsymbol\omega$ 不等于欧拉角向量或旋转向量的逐项导数（[3.6.3](../ch03/sec3-6.md#sec-3.6.3)）；绕固定轴的 $\phi(t)=\vartheta(t)\boldsymbol r$ 才有 $\boldsymbol\omega=\dot\vartheta\boldsymbol r$。
+3. **不可交换的残留物：李括号**。$so(3)$ 不止是向量空间，还带一种运算 $[A,B]=AB-BA$，叫**李括号**。作用到任意 $p$，$S(a)S(b)p=a\times(b\times p)=b\,(a\cdot p)-(a\cdot b)\,p$，即 $S(a)S(b)=ba^{\mathrm T}-(a\cdot b)I$；与交换 $a,b$ 的结果相减，$(a\cdot b)I$ 抵消：
 
    $$[S(a),S(b)]=S(a)S(b)-S(b)S(a)=ba^{\mathrm T}-ab^{\mathrm T}=S(a\times b).$$
 
-   **$so(3)$ 的李括号就是叉积**——「代数」二字的含义所在，也是 [2.3](sec2-3.md) 的旋转不可交换在无穷小层面留下的痕迹（括号不为零）。
-4. **$SE(3)$ 的对应结构**：[2.7](sec2-7.md#note-2.7.se3) 给出李代数 $se(3)$；恒定刚体速度可通过指数生成有限运动。空间速度中的 v 一般不等于动系原点的线速度，须按其定义换算。
+   **$so(3)$ 的李括号就是叉积**。这就是“李代数”里“代数”二字的含义，也是 [2.3](sec2-3.md) 的旋转不可交换在无穷小层面留下的痕迹。
+4. **$SE(3)$ 的对应结构**：[2.7](sec2-7.md#note-2.7.se3) 给出李代数 $se(3)$；恒定刚体速度可通过指数生成有限运动。空间速度中的 $\boldsymbol v$ 一般不等于动系原点的线速度，须按定义换算。
 :::
 
 ::: think 练习 2 · 轴任意，是否意味着主对数任意？ {#practice-2.5.log}
@@ -400,9 +400,7 @@ $\vartheta=0$：$R=I$，轴任意而主旋转向量为零。$\vartheta=\pi$：�
 
 ## 2.5 小结与常见错误
 
-- **一条主线**：任意旋转 = 一根轴 + 一个角 → 借 $z$ 轴五步左乘合成 → 消去 $\alpha,\beta$ 得 Rodrigues 矩阵（紧凑形式 $cI+(1-c)\boldsymbol r\boldsymbol r^{\mathrm T}+sS(\boldsymbol r)$）→ 迹求角、反对称部分求轴。
-- **李代数**：$\phi=\vartheta\boldsymbol r\in\mathbb R^3$，$S(\phi)\in so(3)$，$\exp(S(\phi))=R$。$\boldsymbol\omega$ 是向量，$S(\boldsymbol\omega)=\dot R R^{\mathrm T}$ 才是李代数矩阵。
-- **边界**：零角的轴任意但主旋转向量为零；半圈轴有整体正负两选，交叉项决定相对符号；任意角的正解都有效。不限制分支时有无限多种等价对数。
+任意旋转都能写成绕一根单位轴 $\boldsymbol r$ 转一个角 $\vartheta$。借 $z$ 轴做五步固定轴左乘，消去辅助角 $\alpha,\beta$，就得到 Rodrigues 矩阵 $R=c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$；同一个矩阵也等于指数映射 $\exp(\vartheta S(\boldsymbol r))$，其中 $\phi=\vartheta\boldsymbol r\in\mathbb R^3$ 是旋转向量，$S(\phi)\in so(3)$。反解时取迹求 $\cos\vartheta$、取反对称部分求 $\sin\vartheta\,\boldsymbol r$：零角处轴任意但主旋转向量唯一为零；半圈处反对称部分为零，改用 $B=(R+I)/2=\boldsymbol r\boldsymbol r^{\mathrm T}$ 的最大对角元求绝对值、同一列的非对角元恢复相对符号。
 
 ::: think 常见错误清单 · 自查三条
 1. 五步时序应逐次左乘；$\beta$ 从 $+z$ 量起。第 3 步只是辅助状态的固定 $z$ 旋转，不能与五步净效果混为一谈。

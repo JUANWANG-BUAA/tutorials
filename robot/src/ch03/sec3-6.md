@@ -23,10 +23,8 @@ $$v_e=\begin{bmatrix}\dot p_e\\\omega_e\end{bmatrix}=J(q)\dot q,
 $$J_A(q)=\frac{\partial k}{\partial q},\qquad
 \dot x_{e,j}=\sum_{i=1}^n\frac{\partial k_j}{\partial q_i}\dot q_i.$$
 
-两者前三行都是 $\partial p_e/\partial q$，所以相同；后三行一般不同。不能把 $v_e$ 和 $\dot x_e$ 当成同一个六维输出。
+两者前三行都是 $\partial p_e/\partial q$，所以相同；后三行一般不同。$J_A$ 里的“分析”指对选定的位姿坐标 $k(q)$ 求偏导；几何雅可比同样用到了求导，它的角速度部分来自 $\dot R R^{\mathrm T}=S(\omega_e)$（[§3.1](sec3-1.md)）。因此两者的区别在后三行输出的是什么量，不在是否使用求导。
 :::
-
-分析雅可比 $J_A$ 中的“分析”指对所选位姿坐标求导。几何雅可比同样可以由求导得到：其角速度部分来自 $\dot R R^{\mathrm T}=S(\omega_e)$，见[§3.1](sec3-1.md)。两者的区别在输出量，不在是否使用求导。
 
 <a id="sec-3.6.2"></a>
 
@@ -126,7 +124,7 @@ $$\boxed{T^{-1}=\begin{bmatrix}
 c_\varphi/ s_\vartheta&s_\varphi/s_\vartheta&0
 \end{bmatrix}}.$$
 
-其中 $\cot\vartheta=\cos\vartheta/\sin\vartheta$，它与最后一行都含有分母 $1/\sin\vartheta$。分母来自解线性方程时的相除，反映参数换算的条件，并不表示电机产生了无限角速度。
+其中 $\cot\vartheta=\cos\vartheta/\sin\vartheta$，它与最后一行都含有分母 $1/\sin\vartheta$。分母来自解上面那组线性方程时的相除，反映的是这组欧拉角坐标能不能反向换算；关节本身的转速仍是有限的。
 
 沿 $T$ 第一列展开行列式，也得到同一可逆条件：
 
@@ -135,7 +133,7 @@ $$\det T=\det\begin{bmatrix}-s_\varphi&c_\varphi s_\vartheta\\c_\varphi&s_\varph
 
 所以在ZYZ的通常范围 $0\le\vartheta\le\pi$ 内，两个端点是表示奇点。$\vartheta=0$ 时 $z''=z$，$\vartheta=\pi$ 时 $z''=-z$，三个角速率不能唯一、完整地表示三维角速度。
 
-例如 $\varphi=0,\vartheta=0$ 时 $T\dot{\boldsymbol\varphi}_e=(0,\dot\vartheta,\dot\varphi+\dot\psi)^{\mathrm T}$：有限速率无法给出沿 $x$ 的角速度；给定沿 $z$ 的角速度，又只能确定 $\dot\varphi+\dot\psi$。这里固定了这一组欧拉角代表；换一个奇点处的参数代表并不能建立覆盖附近所有姿态的光滑三维坐标。
+例如 $\varphi=0,\vartheta=0$ 时 $T\dot{\boldsymbol\varphi}_e=(0,\dot\vartheta,\dot\varphi+\dot\psi)^{\mathrm T}$：有限速率无法给出沿 $x$ 的角速度；给定沿 $z$ 的角速度，又只能确定 $\dot\varphi+\dot\psi$。这是这套欧拉角在 $\vartheta=0$ 附近的固有性质，只把 $(\varphi,\psi)$ 改选成另一对代表角，这根消失的轴并不会恢复。
 
 ### 实验：是角速度变大，还是参数速率变大
 
@@ -174,7 +172,7 @@ $$\boxed{J=T_AJ_A},\qquad
 
 ![课件第59页：角速度合成矩阵T及其行列式条件](../assets/ch03/analytic-relation.jpg)
 
-**表示奇点不等于机构奇点。** $s_\vartheta=0$ 说明这个ZYZ坐标图失去局部可逆性，不能用 $T_A^{-1}J$ 定义通用的逆换算；几何雅可比是否降秩，要独立看机构及所选任务。不能据此宣布 $J$ 也失效。
+**表示奇点不等于机构奇点。** $s_\vartheta=0$ 说明 ZYZ 坐标在这里不能用 $T_A^{-1}$ 反向换算；机构本身的几何雅可比 $J$ 有没有丢方向，要独立看 $\operatorname{rank}J$。
 
 一个可计算的反例：三轴转动链的方向取 $R(q)=R_x(q_1)R_y(q_2)R_z(q_3)$，在 $q=0$ 时三根瞬时轴分别为 $e_x,e_y,e_z$，故旋转任务的几何雅可比（角速度块）$J_O=I_3$，可产生任意角速度。同一姿态 $R=I_3$ 用ZYZ表示时却有 $\vartheta=0$。机构的旋转任务没有丢方向，出问题的是所选欧拉角坐标。
 
@@ -210,7 +208,7 @@ $$J_{\rm planar}=\begin{bmatrix}-1&-1&0\\2&1&1\\1&1&1\end{bmatrix},\qquad
 J_{\rm planar}\begin{bmatrix}1\\-1\\2\end{bmatrix}
 =\begin{bmatrix}0\\3\\2\end{bmatrix}.$$
 
-最后一项既是 $\dot\alpha=2$，也是 $\omega_z=2$ rad/s。这是**一个固定转轴和一个方向角的降维任务**，并不是把一般三维ZYZ的三根轴全部设为同一根。
+最后一项既是 $\dot\alpha=2$，也是 $\omega_z=2$ rad/s。之所以完全一致，是因为平面臂只有一根固定转轴 $z$，方向角只有一个 $\alpha$，不存在三维 ZYZ 里三根转轴随姿态转动并可能重合的问题。
 
 <a id="practice-3.6"></a>
 

@@ -6,7 +6,7 @@
 
 先用两杆位置求导认识雅可比，再处理旋转和连杆速度，最后推导空间机构的逐列公式。例题与[两连杆第二关](../training/two-link.md#mission-velocity)使用同一类构形，可互相核对。课堂对应第3周课件第6–19页，截图供回看使用。
 
-本节约定基座固定，关节为单自由度转动关节（R）或移动关节（P），工具与末杆固连。除显式上标外，向量均在基坐标系 $0$ 中表达。$R=R_e^0$ 把工具系分量变为基系分量，$p_e$ 是指定工具点的位置；关节变量可同时含弧度和米，不能把整列 $q$ 都当作角度。
+本节约定基座固定，关节为单自由度转动关节（R）或移动关节（P），工具与末杆固连。除显式上标外，向量均在基坐标系 $0$ 中表达。$R=R_e^0$ 把工具系分量变为基系分量，$p_e$ 是指定工具点的位置。R 关节的 $q_i$ 是转角（rad），P 关节的 $q_i$ 是位移（m），所以 $q$ 的各分量单位可以不同。
 
 ### 先把位置变化算成一条速度方程
 
@@ -35,7 +35,7 @@ a_1\cos q_1+a_2\cos(q_1+q_2)&a_2\cos(q_1+q_2)
 2. **偏导对应“只改一个输入”。** $p(q_1,\ldots,q_n)$ 的第 $i$ 个偏导是其他关节固定时的位置变化率；当所有 $q_i=q_i(t)$ 同时变化，链式法则把这些贡献相加。它正是雅可比按列构造的依据。
 3. **叉乘给切向方向。** $a\times b=(a_yb_z-a_zb_y,\ a_zb_x-a_xb_z,\ a_xb_y-a_yb_x)^{\mathrm T}$，交换次序会反号。特别是 $e_z\times(x,y,z)^{\mathrm T}=(-y,x,0)^{\mathrm T}$：绕 $+z$ 正转时，朝右的力臂产生向上的瞬时速度。
 
-主体推导只使用乘积求导、正交性与叉乘。后面的李群和李代数放在选读部分，说明这些矩阵关系如何统一描述；第一次学习可先完成逐列构造。
+主体推导只用乘积求导、正交性和叉乘。旋转的切空间、李括号和指数映射放在本节末尾的选读部分，说明这些矩阵关系为什么成立；第一次学习可以先跳过，直接做到逐列构造。
 
 
 <a id="sec-3.1.1"></a>
@@ -50,7 +50,7 @@ a_1\cos q_1+a_2\cos(q_1+q_2)&a_2\cos(q_1+q_2)
 $$T_e^0(q)=\begin{bmatrix}R_e^0(q)&p_e(q)\\0^{\mathrm T}&1\end{bmatrix},
 \qquad R_e^0=\begin{bmatrix}n_e&s_e&a_e\end{bmatrix}.$$
 
-$R_e^0$ 与 $p_e$ 都是位形 $q$ 的函数。$n_e,s_e,a_e$ 是工具系三根轴在基系中的单位向量——也称法向、滑动、接近向量，见 [@def-2.8.2]。**微分运动学**要找的是：关节速度与这个工具点的线速度、工具刚体角速度之间的关系。
+$R_e^0$ 与 $p_e$ 都是位形 $q$ 的函数。$n_e,s_e,a_e$ 是工具系三根轴在基系中的单位向量，也称法向、滑动、接近向量，见 [@def-2.8.2]。**微分运动学**要找的是：关节速度与这个工具点的线速度、工具刚体角速度之间的关系。
 
 ::: def 定义 3.1.1 · 微分运动学方程与几何雅可比 {#def-3.1.1}
 末端执行器速度取六维堆叠 $v_e=\begin{bmatrix}\dot p_e\\\omega_e\end{bmatrix}$（$3$ 平动 $+3$ 转动），微分运动学方程为
@@ -59,19 +59,15 @@ $$\begin{bmatrix}\dot p_e\\ \omega_e\end{bmatrix}=J(q)\,\dot q=\begin{bmatrix}J_
 
 $J$ 称**几何雅可比矩阵**，是位形 $q$ 的函数；$J_P$（position）对应线速度、$J_O$（orientation）对应角速度，各 $3\times n$。$\omega_e$ 的三个分量是同一角速度向量在**基坐标系**三根轴上的分量，一般不等于三个欧拉角各自的导数，二者关系在 [§3.6](sec3-6.md) 推导。
 
-这里的 $v_e$ 是按“线速度在前、角速度在后”堆叠的六维向量，前三项单位为 $\mathrm{m/s}$，后三项为 $\mathrm{rad/s}$。它不是任意六个姿态参数的导数，也不能与采用不同排列或不同参考点的空间速度直接混用。
+$v_e$ 按“线速度在前、角速度在后”堆叠，前三项单位为 $\mathrm{m/s}$，后三项为 $\mathrm{rad/s}$。线速度属于指定的工具点；换一个参考点或换一种堆叠次序，得到的是另一种空间速度，不能直接混用。
 :::
 
 ![课件 PDF 第 6 页：微分运动学方程与几何雅可比的分块](../assets/ch03/jac-def.jpg)
 
-位置对时间的导数就是线速度。姿态由旋转矩阵描述，因此还需弄清矩阵的时间导数怎样对应物理角速度。
+位置对时间的导数就是线速度。姿态由旋转矩阵描述，而 $R$ 的九个元素并不独立：三列始终是标准正交组，$RR^{\mathrm T}=I$ 在任何时刻都成立。对这条约束求导，就能看出 $\dot R$ 必须具有什么结构。
 
 ::: thm 定理 3.1.A · 旋转矩阵的导数与反对称算子 {#thm-3.1.A}
-设 $R=R(t)$ 为时变旋转矩阵。由正交性 $RR^{\mathrm T}=I$，两边求导并用乘积法则：
-
-$$\dot RR^{\mathrm T}+R\dot R^{\mathrm T}=0 .$$
-
-记 $S\triangleq\dot RR^{\mathrm T}$，则 $S+S^{\mathrm T}=0$——$S$ **反对称**（对角线为零、非对角元素反对称）。将定义式两边右乘 $R$ 得
+设 $R=R(t)$ 为时变旋转矩阵，记 $S\triangleq\dot RR^{\mathrm T}$。则 $S$ 反对称，即 $S+S^{\mathrm T}=0$（对角线为零，非对角元素两两反号），并且
 
 $$\dot R=S\,R .$$
 :::
@@ -89,7 +85,7 @@ $$S^{\mathrm T}=(\dot RR^{\mathrm T})^{\mathrm T}=R\dot R^{\mathrm T}=-\dot RR^{
 
 $$SR=(\dot RR^{\mathrm T})R=\dot R(R^{\mathrm T}R)=\dot R.$$
 
-这一步用结合律约去了相邻的旋转矩阵与转置，没有交换矩阵次序。得到“$S$ 反对称、$\dot R=SR$”后，还需确定 $S$ 与物理角速度的关系。
+这一步用结合律约去了相邻的旋转矩阵与转置，没有交换矩阵次序。注意反对称的是 $\dot RR^{\mathrm T}$，不是 $\dot R$ 本身，例 3.1 会给出 $\dot R$ 不反对称的数值。得到“$S$ 反对称、$\dot R=SR$”后，还需确定 $S$ 与物理角速度的关系。
 :::
 
 ![课件 PDF 第 7 页：正交性求导得到反对称算子](../assets/ch03/rot-derivation.jpg)
@@ -154,158 +150,12 @@ $$R_z=\begin{bmatrix}0&-1&0\\1&0&0\\0&0&1\end{bmatrix},\qquad
 \dot R_z=\begin{bmatrix}-2&0&0\\0&-2&0\\0&0&0\end{bmatrix},\qquad
 S(\omega)=\begin{bmatrix}0&-2&0\\2&0&0\\0&0&0\end{bmatrix}.$$
 
-$\dot R_z$ 此刻是对称矩阵，显然不能直接当作 $S(\omega)$。取随刚体转动的单位方向 $b=R_ze_x=(0,1,0)^{\mathrm T}$，则 $\dot b=\dot R_ze_x=(-2,0,0)^{\mathrm T}=\omega\times b$，方向向左。这里 $b$ 无长度单位，$\dot b$ 的单位为 $\mathrm{s^{-1}}$；若改为长 1 m 的位移向量，才得到数值相同、单位为 m/s 的点速度。
+$\dot R_z$ 此刻是对称矩阵，不能直接当作 $S(\omega)$：反对称的是 $\dot R_zR_z^{\mathrm T}$，不是 $\dot R_z$。取随刚体转动的单位方向 $b=R_ze_x=(0,1,0)^{\mathrm T}$，则 $\dot b=\dot R_ze_x=(-2,0,0)^{\mathrm T}=\omega\times b$，方向向左。这里 $b$ 无长度单位，$\dot b$ 的单位为 $\mathrm{s^{-1}}$；若改为长 1 m 的位移向量，才得到数值相同、单位为 m/s 的点速度。
 
-该例后续用于 [§3.2.1](sec3-2.md#sec-3.2.1) 和 [§3.7](sec3-7.md)。
+该例后续用于 [§3.2.1](sec3-2.md#sec-3.2.1) 和 [§3.7](sec3-7.md)。为什么 $\dot R$ 不反对称、右乘 $R^{\mathrm T}$ 又恰好把它变成反对称，以及基系与刚体系两套角速度读数怎样换算，留到本节末尾的选读（[@note-3.1.lie]）讲；§3.1.2 和 §3.1.3 的推导不依赖它。
 
 ![课件 PDF 第 9 页：绕 z 轴旋转矩阵的逐元素求导与乘转置](../assets/ch03/rz-example.jpg)
 :::
-
-<details>
-<summary>选读：旋转的切空间、李括号与指数映射</summary>
-
-::: note 数学补充 · 从旋转集合到李代数 {#note-3.1.lie}
-本段解释四个容易混淆的对象：姿态 $R$、沿姿态运动的导数 $\dot R$、反对称矩阵 $S(\omega)$ 和三维角速度 $\omega$。只用矩阵求导、级数与叉乘即可跟完。
-:::
-
-### 旋转为什么构成群，反对称矩阵为什么有三个自由量
-
-三维旋转的集合记作
-
-$$SO(3)=\{R\in\mathbb R^{3\times3}\mid R^{\mathrm T}R=I,\ \det R=1\}.$$
-
-正交性保持长度和夹角，$\det R=1$ 排除镜像反射。这里的“群”表示旋转可依次合成：两个旋转相乘仍是旋转，单位元为 $I$，逆为 $R^{\mathrm T}$，乘法满足结合律。例如 $(R_1R_2)^{\mathrm T}(R_1R_2)=R_2^{\mathrm T}IR_2=I$，行列式也是 $1\cdot1=1$。但旋转不能任意线性相加：$I+I=2I$ 的列长度是 2，所以 $SO(3)$ 不是向量空间。
-
-把所有 $3\times3$ 反对称矩阵组成的集合记作
-
-$$so(3)=\{A\in\mathbb R^{3\times3}\mid A^{\mathrm T}=-A\}.
-\qquad A=\begin{bmatrix}0&-a_z&a_y\\a_z&0&-a_x\\-a_y&a_x&0\end{bmatrix}.$$
-
-这样的矩阵相加或乘实数仍反对称。每个矩阵又都能唯一写成 $a_xS(e_x)+a_yS(e_y)+a_zS(e_z)$，因此它是三维向量空间。$S:\mathbb R^3\to so(3)$ 又叫“戴帽”，逆操作 $A^\vee=(A_{32},A_{13},A_{21})^{\mathrm T}$ 叫“摘帽”。它们只改写同一组三个数；**戴帽不等于矩阵指数**。$S(\omega)$ 的元素随角速度有 $\mathrm{s^{-1}}$ 的单位，$hS(\omega)$ 才是用于有限增量的无量纲矩阵（弧度按无量纲处理）。
-
-### 切空间：为什么求导后还要乘一次 $R^{\mathrm T}$
-
-先考虑经过单位姿态的可微旋转曲线 $Q(s)$，满足 $Q(0)=I$。对 $QQ^{\mathrm T}=I$ 求导，在 $s=0$ 得 $Q'(0)+Q'(0)^{\mathrm T}=0$。所以曲线从单位姿态出发的瞬时方向一定反对称。
-
-反过来，给任意反对称矩阵 $A$，用级数定义 $\exp(sA)=I+sA+s^2A^2/2!+\cdots$。因 $A$ 与 $-A$ 可交换，
-
-$$\exp(sA)^{\mathrm T}\exp(sA)=\exp(-sA)\exp(sA)=I.$$
-
-正交矩阵的行列式只能是 $\pm1$；该连续曲线在 $s=0$ 取 $I$，故行列式始终是 $+1$。又有 $\left.\frac{d}{ds}\exp(sA)\right|_{s=0}=A$。因此每个反对称矩阵都能作为这种瞬时方向；这些方向组成单位姿态处的**切空间** $T_I SO(3)=so(3)$。切空间描述“此刻能往哪里走”，不是另一组有限姿态。
-
-在一般姿态 $R$ 处，可沿曲线 $\exp(sA)R$ 运动，导数为 $AR$；由前面的正交性求导，所有允许导数也都有这种形式：
-
-$$T_R SO(3)=\{AR\mid A\in so(3)\}.$$
-
-所以 $\dot R$ 属于当前 $R$ 处的切空间，一般不反对称。右乘 $R^{\mathrm T}$ 才把它变为单位姿态处的反对称矩阵。上例 $\alpha=\pi/2$ 时的对角阵 $\dot R_z$ 就是具体反例。
-
-### 同一个角速度，为什么有基系和刚体系两套读数
-
-假设 $R(t)$ 二次连续可微，对一个短时间 $h$，$R(t+h)=R+h\dot R+O(h^2)$。将两个姿态组成相对旋转，分别得到
-
-$$\begin{aligned}
-R(t+h)R(t)^{\mathrm T}&=I+h\underbrace{\dot RR^{\mathrm T}}_{\Omega_0}+O(h^2),\\
-R(t)^{\mathrm T}R(t+h)&=I+h\underbrace{R^{\mathrm T}\dot R}_{\Omega_e}+O(h^2).
-\end{aligned}$$
-
-第一种增量从左作用在当前 $R$ 上，按固定基系表达；第二种从右作用，按当前刚体系表达。它们满足
-
-$$\Omega_e=R^{\mathrm T}\Omega_0R=S(R^{\mathrm T}\omega^0),\qquad
-\omega^0=(\dot RR^{\mathrm T})^\vee,\qquad
-\omega^e=(R^{\mathrm T}\dot R)^\vee=R^{\mathrm T}\omega^0.$$
-
-两套读数描述同一物理角速度，只是分量采用的坐标系不同。因此也可写 $\dot R=S(\omega^0)R=RS(\omega^e)$。本节其他位置省略上标时，$\omega$ 默认指 $\omega^0$。
-
-### 李括号：它比普通的向量空间多了什么
-
-李代数是带有**李括号**的向量空间；括号须对两个输入分别线性、满足 $[A,B]=-[B,A]$ 和 Jacobi 恒等式 $[A,[B,C]]+[B,[C,A]]+[C,[A,B]]=0$。矩阵李代数中取 $[A,B]=AB-BA$。分别线性与反对称性可以直接展开验证；把 Jacobi 恒等式的三个双重括号展开，$ABC,ACB,BAC,BCA,CAB,CBA$ 各出现一次正号和一次负号，也全部抵消。若 $A,B$ 反对称，还须验证结果仍在同一空间：
-
-$$[A,B]^{\mathrm T}=B^{\mathrm T}A^{\mathrm T}-A^{\mathrm T}B^{\mathrm T}=BA-AB=-[A,B],$$
-
-因此括号运算仍留在 $so(3)$ 中。普通乘法却没有这个性质，例如 $S(e_x)^2=\operatorname{diag}(0,-1,-1)$ 并不反对称。
-
-对 $A=S(a)$、$B=S(b)$，用向量三重积恒等式作用于任意 $x$：
-
-$$\begin{aligned}
-[S(a),S(b)]x
-&=a\times(b\times x)-b\times(a\times x)\\
-&=b(a^{\mathrm T}x)-a(b^{\mathrm T}x)=(a\times b)\times x.
-\end{aligned}$$
-
-所以 $[S(a),S(b)]=S(a\times b)$。叉乘正对应这里的李括号；“三维向量与反对称矩阵同构”既可指戴帽的线性对应，也可在明确配上这两种括号后指李代数对应，不能说成有限姿态与角速度一一对应。括号衡量次序的差异。将 $\exp(hA)=I+hA+h^2A^2/2+O(h^3)$ 与 $\exp(hB)$ 相乘，两种次序的一次项和平方项相同，只剩交叉项之差：
-
-$$\exp(hA)\exp(hB)-\exp(hB)\exp(hA)=h^2(AB-BA)+O(h^3).$$
-
-### 指数映射：从瞬时方向走到有限旋转
-
-当基系角速度 $\omega^0$ 在整个时间段恒定时，$\dot R=S(\omega^0)R$ 的解为
-
-$$R(t+h)=\exp\!\big(hS(\omega^0)\big)R(t).$$
-
-直接求导可核对该式满足微分方程与初值。若角速度随时间改变，把当前角速度放入这个指数只是一种局部近似，不能当作整段精确解。一次欧拉更新 $R+h\dot R=(I+hS)R$ 沿切线走，通常偏离旋转集合；其正交误差为
-
-$$(I+hS)^{\mathrm T}(I+hS)-I=-h^2S^2.$$
-
-对单位轴 $u$，令 $U=S(u)$。向量三重积给 $U^2=uu^{\mathrm T}-I$，再左乘 $U$，利用 $Uu=u\times u=0$ 得 $U^3=-U$。因此指数级数的奇次幂合成 $(\theta-\theta^3/3!+\cdots)U=\sin\theta U$，非零偶次幂合成 $(\theta^2/2!-\theta^4/4!+\cdots)U^2=(1-\cos\theta)U^2$，得到第二章的 Rodrigues 公式：
-
-$$\exp(\theta U)=I+\sin\theta U+(1-\cos\theta)U^2.$$
-
-它把有限旋转向量 $\phi=\theta u$ 映为姿态，却不是全局一一对应：绕同轴多转 $2\pi$ 会得到相同姿态。不同轴的矩阵一般不交换，所以也不能任意用 $\exp(A+B)=\exp(A)\exp(B)$。有限旋转向量的导数 $\dot\phi$ 一般不等于角速度；绕固定单轴是相等的特例。
-
-<a id="lab-3.1.rotation-derivative"></a>
-
-::: think 操作实验 · 圆弧、切线和旋转导数
-一根长 1 m 的杆绕固定 $+z$ 轴匀速转动。先预测：在 $\alpha=90^\circ$、$\dot\alpha=2\ \mathrm{rad/s}$ 时，杆端切线朝哪边？再把步长 $h$ 从 0.5 s 缩小到 0.01 s，比较圆弧终点和切线预测。哪些量随步长变，哪些是当前时刻的导数？
-
-<div class="lab" data-lab="rotationDerivative" hidden></div>
-
-图上实线表示当前杆，圆上的点表示精确旋转后的位置，切线上的点表示 $p+h\dot p$。精确点来自 $\exp(hS)R$，切线预测来自 $(I+hS)R$。本实验只模拟恒定单轴角速度；下例再处理两根不平行轴。无脚本时可按下面的数字纸笔核对。
-
-::: sol 数字核对
-取 $\alpha=\pi/2$、$\dot\alpha=2$、$h=0.5$，当前杆端 $p=(0,1)$ m，$\dot p=(-2,0)$ m/s。精确点为 $(-\sin1,\cos1)\approx(-0.841471,0.540302)$ m，切线预测为 $(-1,1)$ m。后者距原点 $\sqrt2$ m，已经不在单位圆上；正交误差矩阵的最大绝对元素为 $(h\dot\alpha)^2=1$。若 $h=0.01$ s，该误差降到 $0.0004$，但导数仍是 $(-2,0)$ m/s。
-:::
-:::
-
-::: ex 补充例 · 两轴组合旋转的角速度必须换基 {#ex-3.1.two-axes}
-设 $R=R_z(\alpha)R_x(\beta)$，两角都随时间变化。记 $Z=R_z(\alpha)$、$X=R_x(\beta)$。乘积求导后分别求两种角速度矩阵：
-
-$$\begin{aligned}
-\dot R R^{\mathrm T}
-&=(\dot ZX+Z\dot X)X^{\mathrm T}Z^{\mathrm T}\\
-&=\dot ZZ^{\mathrm T}+Z(\dot XX^{\mathrm T})Z^{\mathrm T}\\
-&=S(\dot\alpha e_z)+S(\dot\beta Ze_x).
-\end{aligned}$$
-
-因 $Ze_x=(\cos\alpha,\sin\alpha,0)^{\mathrm T}$，基系分量为
-
-$$\omega^0=(\dot\beta\cos\alpha,\ \dot\beta\sin\alpha,\ \dot\alpha)^{\mathrm T}.$$
-
-第二个转动轴随第一个转动转向，不能一直当作基系 $e_x$。换到刚体系，也可直接从乘积求导算：
-
-$$\begin{aligned}
-R^{\mathrm T}\dot R
-&=X^{\mathrm T}(Z^{\mathrm T}\dot Z)X+X^{\mathrm T}\dot X\\
-&=S(\dot\alpha X^{\mathrm T}e_z)+S(\dot\beta e_x),\\
-\omega^e&=(\dot\beta,\ \dot\alpha\sin\beta,\ \dot\alpha\cos\beta)^{\mathrm T}.
-\end{aligned}$$
-
-取 $\alpha=\beta=\pi/2$、$\dot\alpha=1$、$\dot\beta=2$，得到 $\omega^0=(0,2,1)^{\mathrm T}$、$\omega^e=(2,1,0)^{\mathrm T}$，单位均为 rad/s。这时
-
-$$R=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix},\qquad
-R^{\mathrm T}\begin{bmatrix}0\\2\\1\end{bmatrix}=\begin{bmatrix}2\\1\\0\end{bmatrix}.$$
-
-两套分量不同，长度都为 $\sqrt5$；这也是换基结果的独立检查。直接把两个角的导数拼成基系角速度 $(2,0,1)$ 会错，原因是漏掉第二根轴的转向。
-:::
-
-::: think 理解自检 · 四个对象放在哪个集合里 {#practice-3.1.lie}
-仍取例 3.1 的 $\alpha=\pi/2$、$\dot\alpha=2$，回答：$R$、$\dot R$、$\dot RR^{\mathrm T}$ 各属于什么集合？$I+0.5S(\omega)$ 是旋转吗？把 $S(\omega)$ 摘帽和对它取指数，分别得到什么类型的对象？
-
-::: sol 核对
-$R\in SO(3)$；$\dot R\in T_RSO(3)$，本例它是对角阵 $\operatorname{diag}(-2,-2,0)$，不在 $so(3)$；$\dot RR^{\mathrm T}\in so(3)$。$I+0.5S(\omega)$ 的前两列长度都是 $\sqrt2$，不是旋转矩阵。摘帽得到角速度向量 $(0,0,2)$ rad/s；指数须先乘时间 $h$，$\exp(hS(\omega))$ 得到恒定角速度在这段时间积累的有限旋转。补一问：为什么只测一个轴上点的速度不够？因为该点速度可为零，不能据此排除绕该轴转动。
-:::
-:::
-
-</details>
 
 <a id="sec-3.1.2"></a>
 
@@ -334,7 +184,7 @@ R_1^0\dot p^1=(0,0.2,0)^{\mathrm T}.$$
 
 ![课件 PDF 第 10 页：点的坐标变换与求导后的三项速度](../assets/ch03/point-velocity.jpg)
 
-**（b）DH 建系回顾与记号。** 沿用第 2 章的标准 DH：关节 $i$ 的轴为 $z_{i-1}$，$T_i^0=T_{i-1}^0A_i^{i-1}$，其中 $A_i^{i-1}=R_z(\vartheta_i)T_z(d_i)T_x(a_i)R_x(\alpha_i)$。不要与修改 DH 的变换次序和参数下标混用。记 $p_{i-1},p_i$ 为两坐标系原点在基系中的位置，$r_{i-1,i}^{i-1}$ 为坐标系 $i$ 原点相对 $i-1$ 原点的位移、采用 $i-1$ 系表达，则
+**（b）DH 建系回顾与记号。** 沿用第 2 章的标准 DH：关节 $i$ 的轴为 $z_{i-1}$，$T_i^0=T_{i-1}^0A_i^{i-1}$，其中 $A_i^{i-1}=R_z(\vartheta_i)T_z(d_i)T_x(a_i)R_x(\alpha_i)$。不要与修改 DH 的变换次序和参数下标混用。把（a）套到链上：（a）里的坐标系 $1$ 取作坐标系 $i-1$，点 $P$ 取作坐标系 $i$ 的原点。记 $p_{i-1},p_i$ 为两坐标系原点在基系中的位置，$r_{i-1,i}^{i-1}$ 为坐标系 $i$ 原点相对 $i-1$ 原点的位移、采用 $i-1$ 系表达，则
 
 $$p_i=p_{i-1}+R_{i-1}\,r_{i-1,i}^{i-1}.$$
 
@@ -453,6 +303,8 @@ $$J_i^{(P)}=\begin{bmatrix}z_{i-1}\\\boldsymbol 0\end{bmatrix}.$$
 
 （课件用关节标志 $\sigma_i$ 区分两类关节：转动 $\sigma_i=0$、移动 $\sigma_i=1$，上式两列取法据此二选一。）
 :::
+
+**与 §3.1.2 的递推互相核对。** 对转动关节，把递推 $\dot p_i=\dot p_{i-1}+\omega_i\times(p_i-p_{i-1})$ 从 $i=1$ 加到 $i=n$，用 $\dot p_0=0$ 得 $\dot p_e=\sum_i\omega_i\times(p_i-p_{i-1})$，其中末项的 $p_n$ 取工具点（工具点相对末杆固定，当作多出的一个原点，公式不变）。再代入 $\omega_i=\sum_{j\le i}\dot q_jz_{j-1}$，把含 $\dot q_j$ 的项收在一起，关节 $j$ 的系数是 $z_{j-1}\times\sum_{i\ge j}(p_i-p_{i-1})=z_{j-1}\times(p_e-p_{j-1})$，正是转动列。移动关节在递推里多出 $\dot d_iz_{i-1}$，对应移动列 $z_{i-1}$。两条路径给出同一个雅可比。
 
 **单位也能帮助检查列。** 转动列的 $J_{P_i}$ 是“米／弧度”，乘 rad/s 后成为 m/s；$J_{O_i}$ 是单位轴，乘关节角速度后成为 rad/s。移动列的 $J_{P_i}$ 无量纲，乘 m/s 得线速度，角速度贡献为零。混合 R/P 机构的不同列不能一律按角度单位解释；六维速度的上下三行也不能直接相加比较大小。
 
@@ -574,7 +426,9 @@ $$\frac{\partial p_e}{\partial q_1}=\begin{bmatrix}-l_1\sin q_1-l_2\sin(q_1+q_2)
 :::
 :::
 
-**雅可比的坐标变换。** 上述 $J$ 是相对**基坐标系**建立的。下面只改变**同一末端点的速度向量所用的表达基**，不改变取速度的点，也不求相对于运动参考系的速度（后两种情形还需要额外项）。设 $R^u$ 表示把基系分量转换为 $u$ 系分量，即 $v^u=R^u v^0$。用 $v_{P,e}=\dot p_e$ 单指线速度，则在其他坐标系 $u$ 中读同一个速度向量时，$v_{P,e}^u=R^u\dot p_e$、$\omega_e^u=R^u\omega_e$：
+### 换一套坐标系读同一个雅可比
+
+上述 $J$ 是相对**基坐标系**建立的。下面只改变**同一末端点的速度向量所用的表达基**，不改变取速度的点，也不求相对于运动参考系的速度（后两种情形还需要额外项）。设 $R^u$ 表示把基系分量转换为 $u$ 系分量，即 $v^u=R^u v^0$。用 $v_{P,e}=\dot p_e$ 单指线速度，则在其他坐标系 $u$ 中读同一个速度向量时，$v_{P,e}^u=R^u\dot p_e$、$\omega_e^u=R^u\omega_e$：
 
 $$\begin{bmatrix}v_{P,e}^u\\ \omega_e^u\end{bmatrix}=\begin{bmatrix}R^u&0\\0&R^u\end{bmatrix}\begin{bmatrix}\dot p_e\\ \omega_e\end{bmatrix}
 \qquad\Longrightarrow\qquad
@@ -582,7 +436,7 @@ J^u=\begin{bmatrix}R^u&0\\0&R^u\end{bmatrix}J .$$
 
 这里的 $v_{P,e}^u$ 不能直接当作运动坐标系下位置坐标 $p_e^u$ 的时间导数：后者还要对坐标系本身的运动求导。
 
-用前面那根 1 m 旋转杆就能区分：令 $u$ 系与杆固连且原点固定，$p^u=(1,0,0)^{\mathrm T}$，故 $\dot p^u=0$。在 $\alpha=\pi/2$、$\dot\alpha=2$ 时，基系速度是 $(-2,0,0)^{\mathrm T}$ m/s；把同一速度换成杆系分量得 $R^{\mathrm T}\dot p^0=(0,2,0)^{\mathrm T}$ m/s，并不等于零。对 $p^u=R^{\mathrm T}p^0$ 求导可直接看见抵消项：
+用例 3.1 里那根绕 $+z$ 轴转动的 1 m 杆就能区分（取 $\alpha=\pi/2$、$\dot\alpha=2\ \mathrm{rad/s}$）：令 $u$ 系与杆固连且原点固定，杆端在 $u$ 系中的坐标恒为 $p^u=(1,0,0)^{\mathrm T}$ m，故 $\dot p^u=0$。基系速度是 $(-2,0,0)^{\mathrm T}$ m/s；把同一速度换成杆系分量得 $R^{\mathrm T}\dot p^0=(0,2,0)^{\mathrm T}$ m/s，并不等于零。对 $p^u=R^{\mathrm T}p^0$ 求导可直接看见抵消项：
 
 $$\dot p^u=\dot R^{\mathrm T}p^0+R^{\mathrm T}\dot p^0
 =-R^{\mathrm T}S(\omega)p^0+R^{\mathrm T}\dot p^0=0.$$
@@ -590,6 +444,152 @@ $$\dot p^u=\dot R^{\mathrm T}p^0+R^{\mathrm T}\dot p^0
 若 $u$ 系原点也移动，位置坐标还含原点差，求导时同样不能漏掉它的速度。因此块对角换基公式只负责本段明确约定的“同一点、同一物理速度、换一套分量”。
 
 ![课件 PDF 第 18 页：不同表达坐标系下的雅可比](../assets/ch03/jac-frame-u.jpg)
+
+<details>
+<summary>选读：旋转的切空间、李括号与指数映射</summary>
+
+::: note 数学补充 · 从旋转集合到李代数 {#note-3.1.lie}
+本节主线到这里已经完整：$\dot R=S(\omega)R$、连杆速度递推和逐列构造。这部分回头解释其中的四个对象为什么这样联系：姿态 $R$、沿姿态运动的导数 $\dot R$、反对称矩阵 $S(\omega)$ 和三维角速度 $\omega$。只用矩阵求导、级数与叉乘即可跟完。
+:::
+
+### 旋转为什么构成群，反对称矩阵为什么有三个自由量
+
+三维旋转的集合记作
+
+$$SO(3)=\{R\in\mathbb R^{3\times3}\mid R^{\mathrm T}R=I,\ \det R=1\}.$$
+
+正交性保持长度和夹角，$\det R=1$ 排除镜像反射。这里的“群”表示旋转可依次合成：两个旋转相乘仍是旋转，单位元为 $I$，逆为 $R^{\mathrm T}$，乘法满足结合律。例如 $(R_1R_2)^{\mathrm T}(R_1R_2)=R_2^{\mathrm T}IR_2=I$，行列式也是 $1\cdot1=1$。但旋转不能任意线性相加：$I+I=2I$ 的列长度是 2，所以 $SO(3)$ 不是向量空间。
+
+把所有 $3\times3$ 反对称矩阵组成的集合记作
+
+$$so(3)=\{A\in\mathbb R^{3\times3}\mid A^{\mathrm T}=-A\}.
+\qquad A=\begin{bmatrix}0&-a_z&a_y\\a_z&0&-a_x\\-a_y&a_x&0\end{bmatrix}.$$
+
+这样的矩阵相加或乘实数仍反对称。每个矩阵又都能唯一写成 $a_xS(e_x)+a_yS(e_y)+a_zS(e_z)$，因此它是三维向量空间。$S:\mathbb R^3\to so(3)$ 又叫“戴帽”，逆操作 $A^\vee=(A_{32},A_{13},A_{21})^{\mathrm T}$ 叫“摘帽”。它们只改写同一组三个数；**戴帽不等于矩阵指数**。$S(\omega)$ 的元素随角速度有 $\mathrm{s^{-1}}$ 的单位，$hS(\omega)$ 才是用于有限增量的无量纲矩阵（弧度按无量纲处理）。
+
+### 切空间：为什么求导后还要乘一次 $R^{\mathrm T}$
+
+先考虑经过单位姿态的可微旋转曲线 $Q(s)$，满足 $Q(0)=I$。对 $QQ^{\mathrm T}=I$ 求导，在 $s=0$ 得 $Q'(0)+Q'(0)^{\mathrm T}=0$。所以曲线从单位姿态出发的瞬时方向一定反对称。
+
+反过来，给任意反对称矩阵 $A$，用级数定义 $\exp(sA)=I+sA+s^2A^2/2!+\cdots$。因 $A$ 与 $-A$ 可交换，
+
+$$\exp(sA)^{\mathrm T}\exp(sA)=\exp(-sA)\exp(sA)=I.$$
+
+正交矩阵的行列式只能是 $\pm1$；该连续曲线在 $s=0$ 取 $I$，故行列式始终是 $+1$。又有 $\left.\frac{d}{ds}\exp(sA)\right|_{s=0}=A$。因此每个反对称矩阵都能作为这种瞬时方向；这些方向组成单位姿态处的**切空间** $T_I SO(3)=so(3)$。切空间描述“此刻能往哪里走”，不是另一组有限姿态。
+
+在一般姿态 $R$ 处，可沿曲线 $\exp(sA)R$ 运动，导数为 $AR$；由前面的正交性求导，所有允许导数也都有这种形式：
+
+$$T_R SO(3)=\{AR\mid A\in so(3)\}.$$
+
+所以 $\dot R$ 属于当前 $R$ 处的切空间，一般不反对称。右乘 $R^{\mathrm T}$ 才把它变为单位姿态处的反对称矩阵。例 3.1 在 $\alpha=\pi/2$ 时的对角阵 $\dot R_z$ 就是具体反例。
+
+### 同一个角速度，为什么有基系和刚体系两套读数
+
+假设 $R(t)$ 二次连续可微，对一个短时间 $h$，$R(t+h)=R+h\dot R+O(h^2)$。将两个姿态组成相对旋转，分别得到
+
+$$\begin{aligned}
+R(t+h)R(t)^{\mathrm T}&=I+h\underbrace{\dot RR^{\mathrm T}}_{\Omega_0}+O(h^2),\\
+R(t)^{\mathrm T}R(t+h)&=I+h\underbrace{R^{\mathrm T}\dot R}_{\Omega_e}+O(h^2).
+\end{aligned}$$
+
+第一种增量从左作用在当前 $R$ 上，按固定基系表达；第二种从右作用，按当前刚体系表达。它们满足
+
+$$\Omega_e=R^{\mathrm T}\Omega_0R=S(R^{\mathrm T}\omega^0),\qquad
+\omega^0=(\dot RR^{\mathrm T})^\vee,\qquad
+\omega^e=(R^{\mathrm T}\dot R)^\vee=R^{\mathrm T}\omega^0.$$
+
+两套读数描述同一物理角速度，只是分量采用的坐标系不同。因此也可写 $\dot R=S(\omega^0)R=RS(\omega^e)$。本节其他位置省略上标时，$\omega$ 默认指 $\omega^0$。
+
+### 李括号：它比普通的向量空间多了什么
+
+李代数是带有**李括号**的向量空间；括号须对两个输入分别线性、满足 $[A,B]=-[B,A]$ 和 Jacobi 恒等式 $[A,[B,C]]+[B,[C,A]]+[C,[A,B]]=0$。矩阵李代数中取 $[A,B]=AB-BA$。分别线性与反对称性可以直接展开验证；把 Jacobi 恒等式的三个双重括号展开，$ABC,ACB,BAC,BCA,CAB,CBA$ 各出现一次正号和一次负号，也全部抵消。若 $A,B$ 反对称，还须验证结果仍在同一空间：
+
+$$[A,B]^{\mathrm T}=B^{\mathrm T}A^{\mathrm T}-A^{\mathrm T}B^{\mathrm T}=BA-AB=-[A,B],$$
+
+因此括号运算仍留在 $so(3)$ 中。普通乘法却没有这个性质，例如 $S(e_x)^2=\operatorname{diag}(0,-1,-1)$ 并不反对称。
+
+对 $A=S(a)$、$B=S(b)$，用向量三重积恒等式作用于任意 $x$：
+
+$$\begin{aligned}
+[S(a),S(b)]x
+&=a\times(b\times x)-b\times(a\times x)\\
+&=b(a^{\mathrm T}x)-a(b^{\mathrm T}x)=(a\times b)\times x.
+\end{aligned}$$
+
+所以 $[S(a),S(b)]=S(a\times b)$。叉乘正对应这里的李括号；“三维向量与反对称矩阵同构”既可指戴帽的线性对应，也可在明确配上这两种括号后指李代数对应，不能说成有限姿态与角速度一一对应。括号衡量次序的差异。将 $\exp(hA)=I+hA+h^2A^2/2+O(h^3)$ 与 $\exp(hB)$ 相乘，两种次序的一次项和平方项相同，只剩交叉项之差：
+
+$$\exp(hA)\exp(hB)-\exp(hB)\exp(hA)=h^2(AB-BA)+O(h^3).$$
+
+### 指数映射：从瞬时方向走到有限旋转
+
+当基系角速度 $\omega^0$ 在整个时间段恒定时，$\dot R=S(\omega^0)R$ 的解为
+
+$$R(t+h)=\exp\!\big(hS(\omega^0)\big)R(t).$$
+
+直接求导可核对该式满足微分方程与初值。若角速度随时间改变，把当前角速度放入这个指数只是一种局部近似，不能当作整段精确解。一次欧拉更新 $R+h\dot R=(I+hS)R$ 沿切线走，通常偏离旋转集合；其正交误差为
+
+$$(I+hS)^{\mathrm T}(I+hS)-I=-h^2S^2.$$
+
+对单位轴 $u$，令 $U=S(u)$。向量三重积给 $U^2=uu^{\mathrm T}-I$，再左乘 $U$，利用 $Uu=u\times u=0$ 得 $U^3=-U$。因此指数级数的奇次幂合成 $(\theta-\theta^3/3!+\cdots)U=\sin\theta U$，非零偶次幂合成 $(\theta^2/2!-\theta^4/4!+\cdots)U^2=(1-\cos\theta)U^2$，得到第二章的 Rodrigues 公式：
+
+$$\exp(\theta U)=I+\sin\theta U+(1-\cos\theta)U^2.$$
+
+它把有限旋转向量 $\phi=\theta u$ 映为姿态，却不是全局一一对应：绕同轴多转 $2\pi$ 会得到相同姿态。不同轴的矩阵一般不交换，所以也不能任意用 $\exp(A+B)=\exp(A)\exp(B)$。有限旋转向量的导数 $\dot\phi$ 一般不等于角速度；绕固定单轴是相等的特例。
+
+<a id="lab-3.1.rotation-derivative"></a>
+
+::: think 操作实验 · 圆弧、切线和旋转导数
+一根长 1 m 的杆绕固定 $+z$ 轴匀速转动。先预测：在 $\alpha=90^\circ$、$\dot\alpha=2\ \mathrm{rad/s}$ 时，杆端切线朝哪边？再把步长 $h$ 从 0.5 s 缩小到 0.01 s，比较圆弧终点和切线预测。哪些量随步长变，哪些是当前时刻的导数？
+
+<div class="lab" data-lab="rotationDerivative" hidden></div>
+
+图上实线表示当前杆，圆上的点表示精确旋转后的位置，切线上的点表示 $p+h\dot p$。精确点来自 $\exp(hS)R$，切线预测来自 $(I+hS)R$。本实验只模拟恒定单轴角速度；下例再处理两根不平行轴。无脚本时可按下面的数字纸笔核对。
+
+::: sol 数字核对
+取 $\alpha=\pi/2$、$\dot\alpha=2$、$h=0.5$，当前杆端 $p=(0,1)$ m，$\dot p=(-2,0)$ m/s。精确点为 $(-\sin1,\cos1)\approx(-0.841471,0.540302)$ m，切线预测为 $(-1,1)$ m。后者距原点 $\sqrt2$ m，已经不在单位圆上；正交误差矩阵的最大绝对元素为 $(h\dot\alpha)^2=1$。若 $h=0.01$ s，该误差降到 $0.0004$，但导数仍是 $(-2,0)$ m/s。
+:::
+:::
+
+::: ex 补充例 · 两轴组合旋转的角速度必须换基 {#ex-3.1.two-axes}
+设 $R=R_z(\alpha)R_x(\beta)$，两角都随时间变化。记 $Z=R_z(\alpha)$、$X=R_x(\beta)$。乘积求导后分别求两种角速度矩阵：
+
+$$\begin{aligned}
+\dot R R^{\mathrm T}
+&=(\dot ZX+Z\dot X)X^{\mathrm T}Z^{\mathrm T}\\
+&=\dot ZZ^{\mathrm T}+Z(\dot XX^{\mathrm T})Z^{\mathrm T}\\
+&=S(\dot\alpha e_z)+S(\dot\beta Ze_x).
+\end{aligned}$$
+
+因 $Ze_x=(\cos\alpha,\sin\alpha,0)^{\mathrm T}$，基系分量为
+
+$$\omega^0=(\dot\beta\cos\alpha,\ \dot\beta\sin\alpha,\ \dot\alpha)^{\mathrm T}.$$
+
+第二个转动轴随第一个转动转向，不能一直当作基系 $e_x$。换到刚体系，也可直接从乘积求导算：
+
+$$\begin{aligned}
+R^{\mathrm T}\dot R
+&=X^{\mathrm T}(Z^{\mathrm T}\dot Z)X+X^{\mathrm T}\dot X\\
+&=S(\dot\alpha X^{\mathrm T}e_z)+S(\dot\beta e_x),\\
+\omega^e&=(\dot\beta,\ \dot\alpha\sin\beta,\ \dot\alpha\cos\beta)^{\mathrm T}.
+\end{aligned}$$
+
+取 $\alpha=\beta=\pi/2$、$\dot\alpha=1$、$\dot\beta=2$，得到 $\omega^0=(0,2,1)^{\mathrm T}$、$\omega^e=(2,1,0)^{\mathrm T}$，单位均为 rad/s。这时
+
+$$R=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix},\qquad
+R^{\mathrm T}\begin{bmatrix}0\\2\\1\end{bmatrix}=\begin{bmatrix}2\\1\\0\end{bmatrix}.$$
+
+两套分量不同，长度都为 $\sqrt5$；这也是换基结果的独立检查。直接把两个角的导数拼成基系角速度 $(2,0,1)$ 会错，原因是漏掉第二根轴的转向。
+:::
+
+::: think 理解自检 · 四个对象放在哪个集合里 {#practice-3.1.lie}
+仍取例 3.1 的 $\alpha=\pi/2$、$\dot\alpha=2$，回答：$R$、$\dot R$、$\dot RR^{\mathrm T}$ 各属于什么集合？$I+0.5S(\omega)$ 是旋转吗？把 $S(\omega)$ 摘帽和对它取指数，分别得到什么类型的对象？
+
+::: sol 核对
+$R\in SO(3)$；$\dot R\in T_RSO(3)$，本例它是对角阵 $\operatorname{diag}(-2,-2,0)$，不在 $so(3)$；$\dot RR^{\mathrm T}\in so(3)$。$I+0.5S(\omega)$ 的前两列长度都是 $\sqrt2$，不是旋转矩阵。摘帽得到角速度向量 $(0,0,2)$ rad/s；指数须先乘时间 $h$，$\exp(hS(\omega))$ 得到恒定角速度在这段时间积累的有限旋转。补一问：为什么只测一个轴上点的速度不够？因为该点速度可为零，不能据此排除绕该轴转动。
+:::
+:::
+
+</details>
 
 <a id="sec-3.1"></a>
 

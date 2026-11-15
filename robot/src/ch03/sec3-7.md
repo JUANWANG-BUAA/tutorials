@@ -77,7 +77,7 @@ $$\frac{\mathrm d}{\mathrm dt}\|e\|^2=-2e^{\mathrm T}Ke
 
 $$\dot q=J_A^\dagger(\dot x_d+Ke)+(I_n-J_A^\dagger J_A)\dot q_0.$$
 
-左乘 $J_A$，第一项成为 $\dot x_d+Ke$，第二项为零，所以仍有 $\dot e=-Ke$。精确抵消依靠的是**行满秩的右逆性质**，不是“任何伪逆都能消去雅可比”。
+左乘 $J_A$，第一项成为 $\dot x_d+Ke$，第二项因 $J_A(I_n-J_A^\dagger J_A)=0$ 而消失，所以仍有 $\dot e=-Ke$。这一步靠的是行满秩时的右逆性质 $J_AJ_A^\dagger=I_r$。
 
 若改用阻尼算子 $J_A^*$，记要求的任务速度为 $u=\dot x_d+Ke$、实际未实现的部分为 $\delta=(I_r-J_AJ_A^*)u$，则
 
@@ -115,7 +115,7 @@ $$e_{j+1}=(1-hk)e_j.$$
 | 1s | −1 | 交替而不衰减 |
 | 1.1s | −1.2 | 幅值增大 |
 
-这是线性任务的精确结果。对非线性机械臂，有限更新还带有本节开头的高阶项，不能把 $0<hk<2$ 当作全局收敛保证。固定目标、取 $hK=I$ 时，逆方案的一步正是Newton迭代：用局部线性模型解下一次修正；初值和邻域仍然重要。
+这是线性任务的精确结果。非线性机械臂在每一步还带有本节开头的 $O(h^2\|\dot q_k\|^2)$ 项，步长还要保证局部线性近似有效。固定目标、取 $hK=I$ 时，逆方案的一步就是 Newton 迭代：用局部线性模型解下一次修正，初值离目标太远或跨过奇点时仍可能发散。
 
 <a id="sec-3.7.2"></a>
 
@@ -159,7 +159,7 @@ $$\begin{aligned}
 $$\dot V\le-\sigma_0^2\|Ke\|^2
 \le-2\sigma_0^2\lambda_{\min}(K)V.$$
 
-这给出该区域内的指数衰减估计。该结论需要区域和秩条件；不能只从某一点的满秩推出全局逆解一定成功。
+这给出该区域内的指数衰减估计。前提是整条轨迹都留在这个 $\sigma_{\min}(J_A)\ge\sigma_0>0$ 的区域内；下面的反例说明，若途中经过奇点，算法可能在误差尚未归零时停住。
 
 转置方案的误差方程本身是
 
@@ -260,12 +260,10 @@ $$L=-\frac12\sum_i S(r_{di})S(r_{ei}).$$
 $$\begin{aligned}
 \frac{\mathrm d}{\mathrm dt}(r_{ei}\times r_{di})
 &=(\omega_e\times r_{ei})\times r_{di}
- +r_{ei}\times(\omega_d\times r_{di})\\
-&=S(r_{di})S(r_{ei})\omega_e
- -S(r_{ei})S(r_{di})\omega_d.
+ +r_{ei}\times(\omega_d\times r_{di}).
 \end{aligned}$$
 
-求和并乘 $1/2$，得到
+用叉乘的反对称性和 $S(a)b=a\times b$ 改写两项，把 $\omega_e,\omega_d$ 挪到最右边：第一项是 $-r_{di}\times(\omega_e\times r_{ei})=r_{di}\times(r_{ei}\times\omega_e)=S(r_{di})S(r_{ei})\omega_e$；第二项同理是 $-r_{ei}\times(r_{di}\times\omega_d)=-S(r_{ei})S(r_{di})\omega_d$。注意到 $\big(S(r_{di})S(r_{ei})\big)^{\mathrm T}=S(r_{ei})^{\mathrm T}S(r_{di})^{\mathrm T}=(-S(r_{ei}))(-S(r_{di}))=S(r_{ei})S(r_{di})$，所以第二项的系数正是第一项系数的转置。求和并乘 $1/2$，得到
 
 $$\boxed{\dot e_O=L^{\mathrm T}\omega_d-L\omega_e}. \tag{3.7-5}$$
 
@@ -276,7 +274,7 @@ $$\dot e=\begin{bmatrix}\dot p_d\\L^{\mathrm T}\omega_d\end{bmatrix}
 
 这里才能使用输出物理角速度的几何 $J$。例如固定期望姿态且 $L$ 可逆时，要指定 $\dot e_O=-K_Oe_O$，须令 $\omega_e=L^{-1}K_Oe_O$，再与位置速度一起反解关节。
 
-$L$ 的条件不能略去。沿上述 $z$ 轴误差，$L_{33}=\cos\theta$，其余对应块为 $\tfrac12\begin{bmatrix}1+\cos\theta&-\sin\theta\\\sin\theta&1+\cos\theta\end{bmatrix}$；在90°处 $L$ 已奇异。换成这种误差并不意味着可以任意大角度套用逆换算。
+$L$ 也有自己的可逆范围。沿上述绕 $z$ 轴转 $\theta$ 的误差，$L_{33}=\cos\theta$，其余对应块为 $\tfrac12\begin{bmatrix}1+\cos\theta&-\sin\theta\\\sin\theta&1+\cos\theta\end{bmatrix}$；在 $\theta=90^\circ$ 处 $L_{33}=0$，$L$ 已不可逆，所以式 (3.7-5) 的逆换算只在 $|\theta|<90^\circ$ 的近目标区域成立。
 
 ### 四元数：无欧拉角表示奇点，也有符号选择
 
@@ -348,7 +346,7 @@ $$\dot V=\dot e^{\mathrm T}\ddot e+\dot e^{\mathrm T}K_Pe
 
 $$e(t)=(1+kt)e^{-kt}e(0).$$
 
-它不同于一阶的 $e^{-kt}e(0)$。二阶算法可指定关节速度的变化，并不因此天然收敛更快。
+它不同于一阶的 $e^{-kt}e(0)$：在 $t=0$ 处斜率为零（因为初速为零），起步比一阶慢，好处是能够指定初始关节速度、避免速度在起点跳变。
 
 冗余且 $J_A$ 行满秩时，可用 $J_A^\dagger$ 乘式(3.7-6)的括号，再加 $(I-J_A^\dagger J_A)\ddot q_0$；左乘 $J_A$ 后仍抵消。这里加的是零空间**加速度**，不能把它写成一阶的速度项。
 

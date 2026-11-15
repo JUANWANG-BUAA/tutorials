@@ -20,9 +20,9 @@
 
 (a) 拉格朗日方程只用到标量 $L=T-U$；**理想约束力不做虚功**（关节反力沿约束方向、约束方向不允许虚位移），它们既不进 $T$ 也不进 $U$，因此被方程**自动排除**。约束越复杂（闭链、多点接触）这一优势越明显（[@def-6.1.1]、[6.1](sec6-1.md)）。
 
-(b) **非保守力**必须作为广义力 $\xi_i$ 补到右端，共四件套：执行器力矩 $\tau_i$、粘滞摩擦 $F_{\mathrm v}\dot q_i$、库仑摩擦 $F_{\mathrm s}\operatorname{sgn}\dot q_i$、末端接触力 $-(J^{\mathrm T}h_e)_i$（[6.1.2 节](sec6-1.md)）。
+(b) **非保守力**必须作为广义力 $\xi_i$ 补到右端，共四件套：执行器力矩 $\tau_i$、粘滞摩擦 $F_{\mathrm v}\dot q_i$、库仑摩擦 $F_{\mathrm s}\operatorname{sgn}\dot q_i$、末端接触力 $-(J^{\mathrm T}h_e)_i$（[6.1 节 §6.1.2](sec6-1.md)）。
 
-(c) **不会**。势能加减一个**常数**只改 $L$ 的常数项，求偏导后为零，运动方程不变；会致命的是**非常数项**写错（例如把 $U=mgl(1-\cos\vartheta)$ 的 $\cos$ 写成 $\sin$）——那不是「零点选错」，是势能函数写错（[6.1.5 节](sec6-1.md)常见错误 2）。
+(c) **不会**。势能加减一个**常数**只改 $L$ 的常数项，求偏导后为零，运动方程不变；会致命的是**非常数项**写错（例如把 $U=mgl(1-\cos\vartheta)$ 的 $\cos$ 写成 $\sin$）——那不是「零点选错」，是势能函数写错（[6.1 节 §6.1.5](sec6-1.md)常见错误 2）。
 
 :::
 
@@ -37,7 +37,7 @@
 (a) $\boldsymbol\tau_{\mathrm{grav}}=\sum_j\bigl(m_jJ_P^{(j)\mathrm T}\boldsymbol g_0+m_{m_j}J_P^{(m_j)\mathrm T}\boldsymbol g_0\bigr)
 =-\dfrac{\partial U}{\partial\boldsymbol q}=-\boldsymbol g(\boldsymbol q)$——**方向相反，是一对不同的量**（[6.1.2.3 节](sec6-1-2.md)、勘误 E6.8）。本教程把重力移到左端，故静止、无摩擦无外力时 $\boldsymbol\tau=\boldsymbol g(\boldsymbol q)$：电机出的力矩与实际重力广义力等值反向（[@ex-6.1.2.A]）。
 
-(b) 教材约定 $\boldsymbol h_e$ 是**末端执行器施加在环境上的力/力矩**。执行器要平衡它，方程写成 $\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$；若改问「环境反作用在末端的力 $\boldsymbol f=-\boldsymbol h_e$」，则右端为 $+J^{\mathrm T}\boldsymbol f$——**先统一约定再代数，两种写法说的是同一件事**（[6.1.2 节符号约定](sec6-1.md)、[6.1.3 节](sec6-1-3.md)常见错误 4）。
+(b) 教材约定 $\boldsymbol h_e$ 是**末端执行器施加在环境上的力/力矩**。执行器要平衡它，方程写成 $\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$；若改问「环境反作用在末端的力 $\boldsymbol f=-\boldsymbol h_e$」，则右端为 $+J^{\mathrm T}\boldsymbol f$——**先统一约定再代数，两种写法说的是同一件事**（[6.1 节 §6.1.2](sec6-1.md)符号约定、[6.1.3 节](sec6-1-3.md)常见错误 4）。
 
 :::
 
