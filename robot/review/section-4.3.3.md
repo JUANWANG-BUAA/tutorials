@@ -21,4 +21,3 @@
 
 - 五次时间律 $\theta(t)=(\pi/2)(10u^3-15u^4+6u^5)$（$u=t/2$）：在 $t=1\ \mathrm s$（$u=0.5$）时 $\theta=\pi/4$，$\dot\theta=(\pi/2)\cdot(30u^2-60u^3+30u^4)/2=(\pi/2)\cdot(15/8)/2=15\pi/32\approx1.4726\ \mathrm{rad/s}$。
 
-- 五次时间律 $\theta(t)=(\pi/2)(10u^3-15u^4+6u^5)$（$u=t/2$）：在 $t=1\ \mathrm s$（$u=0.5$）时 $\theta=\pi/4$，$\dot\theta=(\pi/2)\cdot(30u^2-60u^3+30u^4)/2$，代入 $u=0.5$ 得 $\dot\theta=(\pi/2)\cdot(15/8)/2=15\pi/32\approx1.4726\ \mathrm{rad/s}$。
