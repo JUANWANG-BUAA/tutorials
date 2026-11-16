@@ -1,8 +1,21 @@
 # 第四章 · 轨迹规划
 
-## 换一种肘姿，末端会经过哪里？
+## 从前两章到这一章：让 $q$ 随时间变化
 
-第二章中，两种关节构型都能到达 $(1,1)$。现在让关节从一种平滑地转到另一种。先画出运动一半时的手臂，猜猜末端是否还在原地，再读 [4.1 路径与轨迹](sec4-1.md)和 [4.2.1 点对点运动](sec4-2-1.md)。
+第二章给定关节变量 $\boldsymbol q$，计算末端位姿；第三章再给定关节速度 $\dot{\boldsymbol q}$，计算末端速度：
+
+$$T_e^b=T_e^b(\boldsymbol q),\qquad
+\begin{bmatrix}\dot{\boldsymbol p}_e\\\boldsymbol\omega_e\end{bmatrix}
+=J(\boldsymbol q)\dot{\boldsymbol q}.$$
+
+前两章问的是「**这一刻**机械臂在哪里、动得多快」。第四章问的是「从起点到终点的这段时间里，每个关节应该怎样运动」。因此，本章没有换掉 $\boldsymbol q$，只是给它加上时间：
+
+$$\boldsymbol q(t)=\begin{bmatrix}q_1(t)&\cdots&q_n(t)\end{bmatrix}^{\mathrm T},\qquad
+\dot{\boldsymbol q}(t),\quad\ddot{\boldsymbol q}(t).$$
+
+规划器先生成这三组关节参考量，伺服控制器再去跟踪它们。把 $\boldsymbol q(t)$ 代回第二、三章的公式，就得到末端随时间的位姿和速度。比如两连杆机械臂从一种肘姿换到另一种肘姿，先规划两个关节各自的 $q_j(t)$，再用正运动学计算末端经过哪里；关节变量各走一条简单曲线，末端不一定走直线。
+
+本章先从路径和轨迹的区别讲起，再处理「只给起点、终点和总时间，怎样生成 $q(t)$」的问题。
 
 读完后做[两连杆第五关](../training/two-link.md#mission-path)，算中点位置与速度峰值，再把运动时间减半。中间会出现一个关节仍在动、末端瞬时速度却为零的时刻，用第三章的雅可比解释它。
 

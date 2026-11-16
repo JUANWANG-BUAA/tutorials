@@ -80,7 +80,7 @@ $\det J$ 的形状值得直接看图：它只依赖肘角 $\vartheta_2$，按正
 <circle class="diagram-fill-accent" cx="282" cy="70" r="5"/>
 <circle class="diagram-fill-sage" cx="647" cy="280" r="5"/>
 <text class="diagram-text" fill="var(--fig-green)" x="282" y="56" text-anchor="middle">π/2：面积最大（det = a₁a₂）</text>
-<text class="diagram-note" x="647" y="304" text-anchor="middle">3π/2：面积同样最大（det < 0）</text>
+<text class="diagram-note" x="647" y="304" text-anchor="middle">3π/2：面积同样最大（det &lt; 0）</text>
 <text class="diagram-text" fill="var(--fig-red)" x="90" y="100">ϑ<tspan class="sb">2</tspan> = 0：伸直</text>
 <text class="diagram-text" fill="var(--fig-red)" x="465" y="100" text-anchor="middle">ϑ<tspan class="sb">2</tspan> = π：折回</text>
 <text class="diagram-text" fill="var(--fig-red)" x="822" y="100">2π：伸直</text>

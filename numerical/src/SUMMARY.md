@@ -72,6 +72,7 @@
   - [全篇总结](supplement/summary.md)
   - [习题](supplement/exercises.md)
 - [复习与查阅](review/formula-cards.md)
+  - [方法地图：先判断问题，再选算法](review/method-map.md)
   - [易混概念对照](review/contrast-cards.md)
   - [术语索引](review/glossary.md)
   - [学习与复习指南](review/study-paths.md)

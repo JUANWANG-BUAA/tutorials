@@ -17,6 +17,7 @@
 # 复习层
 
 - [公式速查卡](preface-formulas.md)
+- [易混对照卡](preface-contrast.md)
 - [术语索引](preface-index.md)
 - [易错点总表](preface-pitfalls.md)
 - [两连杆练习：从运动学到控制](training/two-link.md)
