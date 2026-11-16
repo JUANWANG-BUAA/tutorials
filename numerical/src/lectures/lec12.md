@@ -641,19 +641,19 @@ $$
 
 七帧按时间排序，标题给出时间点与内容。
 
-![第 12 讲板书 · 30:00：四族正交多项式（右板）与 $T_0$–$T_3$ 的 $\cos$ 换元推导](../assets/lectures/lec12-board-families.jpg)
+![第 12 讲板书 · 30:00：四族正交多项式（右板）与 T_0–T_3 的 cos 换元推导](../assets/lectures/lec12-board-families.jpg)
 
-![第 12 讲板书 · 35:00：零点定理——$k$ 次正交多项式在 $[a,b]$ 上有 $k$ 个不同根（左板上方）](../assets/lectures/lec12-board-zeros-theorem.jpg)
+![第 12 讲板书 · 35:00：零点定理——k 次正交多项式在 [a,b] 上有 k 个不同根（左板上方）](../assets/lectures/lec12-board-zeros-theorem.jpg)
 
-![第 12 讲板书 · 55:00：5 点数据表与拟合目标 $m(x)=a_0+a_1x+a_2x^2$、$\min\lVert\cdot\rVert_2$](../assets/lectures/lec12-board-least-squares.jpg)
+![第 12 讲板书 · 55:00：5 点数据表与拟合目标 m(x) = a_0+a_1x+a_2x²、min ‖·‖_2](../assets/lectures/lec12-board-least-squares.jpg)
 
-![第 12 讲板书 · 65:00：自然基下的 $3\times3$ 法方程（板书原式）](../assets/lectures/lec12-board-normal-equations.jpg)
+![第 12 讲板书 · 65:00：自然基下的 3×3 法方程（板书原式）](../assets/lectures/lec12-board-normal-equations.jpg)
 
-![第 12 讲板书 · 83:00：求积公式、等距节点 $h=(b-a)/n$、左矩形，以及「$m$ 次代数精度」的定义](../assets/lectures/lec12-board-quadrature.jpg)
+![第 12 讲板书 · 83:00：求积公式、等距节点 h=(b−a)/n、左矩形，以及「m 次代数精度」的定义](../assets/lectures/lec12-board-quadrature.jpg)
 
-![第 12 讲板书 · 86:00：梯形公式的三条验证：$f=1,x$ 精确，$f=x^2$ 不精确（得 $1\ne\frac23$）](../assets/lectures/lec12-board-trapezoid.jpg)
+![第 12 讲板书 · 86:00：梯形公式的三条验证：f=1, x 精确，f=x² 不精确（得 1≠2/3）](../assets/lectures/lec12-board-trapezoid.jpg)
 
-![第 12 讲板书 · 93:00：插值型求积：$f\approx p_n=\sum f(x_i)l_i$，逐项积分得 $\lambda_i=\int_a^b l_i(x)\,dx$](../assets/lectures/lec12-board-interpolation-quadrature.jpg)
+![第 12 讲板书 · 93:00：插值型求积：f ≈ p_n = Σ f(x_i)l_i，逐项积分得 λ_i = ∫_a^b l_i(x)dx](../assets/lectures/lec12-board-interpolation-quadrature.jpg)
 
 ## 课堂口述与标准术语对照 {#lec12-S35}
 
