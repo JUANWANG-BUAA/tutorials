@@ -139,6 +139,26 @@ $$\omega(t)=at^2+bt+c .$$
 
 ## C. 公式卡
 
+### B8 · 高阶插值的端点振荡是可以算出来的
+
+写出高阶插值的失败例子，并说明它为什么不是"理论上的担心"。
+
+::: sol B8 核对
+对 $f(x)=1/(1+25x^2)$ 在 $[-1,1]$ 上取等距节点作拉格朗日插值：**9 个点**（次数 8）的插值多项式在右端冲到约 $-0.9$；**11 个点**（次数 10）冲到 $-2$ 以下并在两端冲出图框——这就是 **Runge 现象**。原因是高次幂在等距节点上的病态放大：节点越近，插值误差的放大因子越大。老师对教材第 ② 条缺点的补充是「并非每条高阶曲线都必然振荡」，但**不能指望它不振荡**；分段低阶用不着赌这一点。（[@method-4.2.A]）
+:::
+
+### B9 · 圆弧上法向为什么指向圆心
+
+写出 $\mathrm d^2p/\mathrm ds^2$ 与圆心向量的关系，并给出曲率。
+
+::: sol B9 核对
+由 (4.41)：
+
+$$\frac{\mathrm d^2p}{\mathrm ds^2}=-\frac1\rho\cdot\underbrace{\frac{p(s)-c}{\rho}}_{\text{指向圆心的单位向量}},\qquad \Big\|\frac{\mathrm d^2p}{\mathrm ds^2}\Big\|=\frac1\rho .$$
+
+**负号 ⇒ 法向 $n$ 指向圆心**；模长的倒数 $1/\rho$ 就是**曲率**。物理上：向心加速度沿半径指向圆心，而法向正是沿着半径的那一侧——「二阶对 $s$ 求导，就是法向单位向量，或者是**向心加速度的方向**」（2:13:56）。直线上 $\mathrm d^2p/\mathrm ds^2\equiv\boldsymbol 0$，法向无从定义，标架不唯一。（[@def-4.3.3]、[@thm-4.3.A]）
+:::
+
 ### C1 · 三次多项式的系数方程组
 
 写出四个方程，并说明例 4.2.B（$0\to\pi$，$t_f=1$）的解与三张曲线的形状。
@@ -241,6 +261,54 @@ $$\boldsymbol\omega'=\dot\theta\,\boldsymbol r',\qquad \dot{\boldsymbol\omega}'=
 R_e(t)=R_iR'(t),\qquad \boldsymbol\omega_e=R_i\boldsymbol\omega'(t),\qquad \dot{\boldsymbol\omega}_e=R_i\dot{\boldsymbol\omega}'(t) .$$
 
 **为什么高明**：「**这个轴是固定的、不变的**，那我们只要规划 $\theta$ 就可以了——相当于把它变成一个**一维**的问题。」（[@thm-4.3.F]）
+:::
+
+### C8 · 路线①的三次 Hermite 插值与端点加速度
+
+写出路线①每段的多项式（局部坐标）与两端加速度，并说明加速度为什么在接点处跳。
+
+::: sol C8 核对
+局部坐标 $s=t-t_k$、$h=t_{k+1}-t_k$、$\Delta q=q_{k+1}-q_k$：
+
+$$\Pi_k=q_k+v_ks+\Big(\frac{3\Delta q}{h^2}-\frac{2v_k+v_{k+1}}{h}\Big)s^2+\Big(-\frac{2\Delta q}{h^3}+\frac{v_k+v_{k+1}}{h^2}\Big)s^3 .$$
+
+两端加速度：
+
+$$\ddot\Pi_k(t_k)=\frac{6\Delta q}{h^2}-\frac{4v_k+2v_{k+1}}{h},\qquad \ddot\Pi_k(t_{k+1})=-\frac{6\Delta q}{h^2}+\frac{2v_k+4v_{k+1}}{h}.$$
+
+左段末端与右段始端一般**不相等**（各自只受本段数据影响），所以 $q,\dot q$ 连续而 $\ddot q$ 跳跃——这正是路线③要额外施加加速度连续条件的原因。$v_k=v_{k+1}=0$ 时退化为 $3u^2-2u^3$（$u=s/h$）。（[@ex-4.2.E]、[@method-4.2.C]）
+:::
+
+### C9 · 样条降维的两个核心式：(4.26)(4.27) 与三对角元素
+
+写出段内加速度的插值式、段位置的端点量形式，以及三对角阵里各类元素的来历。
+
+::: sol C9 核对
+**段内加速度是直线**（两端各一个待定量 $M_k=\ddot\Pi_k(t_k)$、$M_{k+1}$）：
+
+$$\ddot\Pi_k(t)=\frac{M_k}{\Delta t_k}(t_{k+1}-t)+\frac{M_{k+1}}{\Delta t_k}(t-t_k).$$
+
+**两次积分后段位置只依赖四个端点量**（$q_k,q_{k+1},M_k,M_{k+1}$）：
+
+$$\Pi_k(t)=\frac{M_k}{6\Delta t_k}(t_{k+1}-t)^3+\frac{M_{k+1}}{6\Delta t_k}(t-t_k)^3+\Big(\frac{q_k}{\Delta t_k}-\frac{\Delta t_kM_k}{6}\Big)(t_{k+1}-t)+\Big(\frac{q_{k+1}}{\Delta t_k}-\frac{\Delta t_kM_{k+1}}{6}\Big)(t-t_k).$$
+
+前两项配**加速度**、后两项配**位置**。**三对角阵元素**：对角元本底 $(\Delta t_{j-1}+\Delta t_j)/3$（速度连续式中 $M_j$ 的系数），首末行再加 $\Delta t/6$ 与 $\Delta t^2/(6\Delta t)$（已知端点加速度移项 + 虚拟点表达式并入），旁轴元 $\Delta t_k/6$（第 2、$N-1$ 行带 $-\Delta t^2/(6\Delta t)$ 修正，来自虚拟点），其余为零。（[@thm-4.2.H]）
+:::
+
+### C10 · 抛物线混合的偏离量与各段时函数
+
+写出混合段加速度、偏离经由点的量，以及混合段与线性段的时函数。
+
+::: sol C10 核对
+常值速度 $q_{k-1,k}=\dfrac{q_k-q_{k-1}}{\Delta t_k}$，混合加速度 $\ddot q_k=\dfrac{q_{k,k+1}-q_{k-1,k}}{\Delta t'_k}$，**偏离量**
+
+$$\delta_k=\frac{\ddot q_k\,\Delta t'^2_k}{8}=\frac{\|\boldsymbol v_2-\boldsymbol v_1\|\Delta t'}{8}.$$
+
+**混合段**（$s=t-t_k$，$|s|\le\Delta t'_k/2$，以左侧常值速度 $v_{k-1,k}$ 起算）：
+
+$$q(t)=q_k-v_{k-1,k}\frac{\Delta t'_k}{2}-\frac{\ddot q_k\Delta t'^2_k}{8}+v_{k-1,k}s+\frac{\ddot q_k}{2}s^2,\qquad \dot q(t)=v_{k-1,k}+\ddot q_k\Big(s+\frac{\Delta t'_k}{2}\Big).$$
+
+**线性段**：$q(t)=q_k+\delta_k+v_{k,k+1}\big(t-t_k-\frac{\Delta t'_k}{2}\big)$，$\dot q=v_{k,k+1}$，$\ddot q=0$。两段在交界处位置与速度都接得上，只有加速度从 $\ddot q_k$ 跳到 $0$。**首末段延长**：总时长 $t_N-t_1+(\Delta t'_1+\Delta t'_N)/2$。（[@def-4.2.7]、[@ex-4.2.J]）
 :::
 
 ## D. 陷阱卡（先指出错在哪，再给正确说法）
