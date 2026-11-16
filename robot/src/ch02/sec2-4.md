@@ -2,8 +2,6 @@
 
 上一节用矩阵合成旋转。这一节反过来问：怎样用三个角记录一个姿态，又怎样从矩阵把角找回来？我们比较两套明确的约定：**ZYZ 当前轴旋转**与**RPY 固定轴旋转**。学习时要区分轴序列、角的取值范围和不能唯一反解的姿态。
 
-
-
 <a id="sec-2.4.1"></a>
 
 
@@ -11,7 +9,7 @@
 
 ## 2.4.1 最简表示与 12 种可行序列
 
-§2.2 已经算出：旋转矩阵的 9 个元素受 6 个独立正交约束，留下 3 个连续自由度（[@note-2.2.2]）。因此可以用三个角作局部最简表示；至于为什么任何一套三个角都会在某些姿态处退化，本节的式 2.19–2.20 会直接算出来。
+旋转矩阵的 9 个元素受 6 个独立正交约束，因此姿态具有 3 个连续自由度（[@note-2.2.2]）。三个参数可以作**局部最简表示**；这不保证一套三个角在所有姿态处都唯一、连续、无奇异。
 
 从 $I$ 出发，三个轴各可选 $X,Y,Z$，共有 $3^3=27$ 种序列。相邻同轴旋转可合并，例如 $ZXX$ 只剩两转，$XXX$ 只剩一个有效角，不能覆盖任意姿态。留下的 $3\times2\times2=12$ 种分为：
 
@@ -34,7 +32,7 @@
 
 ![课堂图片：ZYZ 三步旋转](../assets/ch02/zyz-steps.jpg)
 
-三步过程中坐标架怎样一步步转动，看下图（灰虚线是上一步的旧架）：每转一次，“当前轴”就换到刚转出来的新架上，对应矩阵依次往右乘。
+三步过程中坐标架如何演化，看下图（灰虚 = 上一步的旧架）：每转一次，「当前轴」就换到刚转出来的新架上——这正是「右乘」的几何本体。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-zyzs-t fig-zyzs-d">
@@ -107,13 +105,6 @@
 <figcaption>ZYZ 三步坐标架（取 $\varphi=40°,\vartheta=55°,\psi=30°$）。灰虚线是上一步坐标架；圆环箭头只示意转动，不用于量角。初始 $z_0$ 与终态 $z_3=z_2$ 的夹角为 $55°$；第三步绕 $z_2$ 转动，不改变这根轴的方向。</figcaption>
 </figure>
 
-
-把三个基本旋转矩阵乘开：先算后两步
-
-$$R_y(\vartheta)R_z(\psi)=\begin{bmatrix}c_\vartheta&0&s_\vartheta\\0&1&0\\-s_\vartheta&0&c_\vartheta\end{bmatrix}\begin{bmatrix}c_\psi&-s_\psi&0\\s_\psi&c_\psi&0\\0&0&1\end{bmatrix}=\begin{bmatrix}c_\vartheta c_\psi&-c_\vartheta s_\psi&s_\vartheta\\s_\psi&c_\psi&0\\-s_\vartheta c_\psi&s_\vartheta s_\psi&c_\vartheta\end{bmatrix},$$
-
-再左乘 $R_z(\varphi)$，就得到 ZYZ 的正解矩阵：
-
 $$R(\boldsymbol\phi)=R_z(\varphi)\,R_{y'}(\vartheta)\,R_{z''}(\psi)
 =\begin{bmatrix}
 c_\varphi c_\vartheta c_\psi-s_\varphi s_\psi & -c_\varphi c_\vartheta s_\psi-s_\varphi c_\psi & c_\varphi s_\vartheta\\
@@ -169,9 +160,7 @@ $$d\alpha=\frac{x\,dy-y\,dx}{x^2+y^2},\qquad
 
 ![课堂图片：逆解——锁定第三列](../assets/ch02/zyz-inv-setup.jpg)
 
-对照式 2.18，第三列是 $(c_\varphi s_\vartheta,\ s_\varphi s_\vartheta,\ c_\vartheta)^{\mathrm T}$，第三行前两项是 $(-s_\vartheta c_\psi,\ s_\vartheta s_\psi)$。它们把三个角拆开了：$r_{33}=c_\vartheta$ 只含 $\vartheta$；第三列前两项之比只含 $\varphi$；第三行前两项之比只含 $\psi$。当 $s_\vartheta\ne0$（即 $r_{13},r_{23}$ 不全为零；$s_\vartheta=0$ 的退化情形见下方定理 2.4.B）时，分两支取 $s_\vartheta$ 的正负号：
-
-先取 $s_\vartheta=\sqrt{r_{13}^2+r_{23}^2}>0$，即 $\vartheta\in(0,\pi)$。此时 $s_\vartheta>0$ 不改变 $(r_{13},r_{23})=s_\vartheta(c_\varphi,s_\varphi)$ 与 $(-r_{31},r_{32})=s_\vartheta(c_\psi,s_\psi)$ 的象限，直接送入 Atan2 得第一支解（原书式 2.19）：
+求解分三步走：① 第三列的 $[1,3]$、$[2,3]$ 只含 $\varphi,\vartheta$（$r_{23}=s_\varphi s_\vartheta,\ r_{13}=c_\varphi s_\vartheta$），由此定出 $\varphi$；② 用平方和消去 $\varphi$，再配合 $[3,3]=c_\vartheta$ 定出 $\vartheta$（取 $s_\vartheta>0$ 即 $\vartheta\in(0,\pi)$）；③ 最后用 $[3,1]$、$[3,2]$ 定出 $\psi$。以下设 $s_\vartheta\ne0$（即 $r_{13},r_{23}$ 不全为零；$s_\vartheta=0$ 的退化情形见下方定理 2.4.B）。第一支解为（原书式 2.19）
 
 $$\varphi=\operatorname{Atan2}(r_{23},r_{13}),\qquad
 \vartheta=\operatorname{Atan2}\!\big(\sqrt{r_{13}^2+r_{23}^2},\ r_{33}\big),\qquad
@@ -179,7 +168,7 @@ $$\varphi=\operatorname{Atan2}(r_{23},r_{13}),\qquad
 
 ![课堂图片：逆解两支完整公式](../assets/ch02/zyz-inv-solution.jpg)
 
-若改取 $\vartheta\in(-\pi,0)$，则 $s_\vartheta=-\sqrt{r_{13}^2+r_{23}^2}<0$。这时 $r_{13}=c_\varphi s_\vartheta$ 与 $c_\varphi$ **反号**，$r_{23},r_{31},r_{32}$ 同理，所以送入 $\varphi,\psi$ 的两个实参都要添负号，才能恢复 $(c_\varphi,s_\varphi)$ 与 $(c_\psi,s_\psi)$ 的正确象限，得到第二支解（原书式 2.20）：
+若在 $(-\pi,0)$ 中选 $\vartheta$，则得到效果相同的第二支（原书式 2.20）
 
 $$\varphi=\operatorname{Atan2}(-r_{23},-r_{13}),\qquad
 \vartheta=\operatorname{Atan2}\!\big({-\sqrt{r_{13}^2+r_{23}^2}},\ r_{33}\big),\qquad
@@ -188,12 +177,11 @@ $$\varphi=\operatorname{Atan2}(-r_{23},-r_{13}),\qquad
 注意 $\vartheta$ 式的第二个实参 $r_{33}$ **不变号**。等价角组可写为 $(\varphi+\pi,-\vartheta,\psi+\pi)$，首末角按 $2\pi$ 周期化到所选区间。
 
 ::: thm 定理 2.4.B · ZYZ 的表示奇点 {#thm-2.4.B}
-当 $s_\vartheta=0$ 时，$r_{13}=r_{23}=r_{31}=r_{32}=0$，式 2.19–2.20 中求 $\varphi,\psi$ 的 Atan2 都遇到 $(0,0)$。代回式 2.18 的左上 $2\times2$ 块，用和差角公式化简：
+当 $\vartheta=0$ 时，$R=R_z(\varphi+\psi)$，只能确定**和**。当 $\vartheta=\pi$ 时，
 
-- $\vartheta=0$（$c_\vartheta=1,s_\vartheta=0$）：左上块为 $\begin{bmatrix}c_\varphi c_\psi-s_\varphi s_\psi&-c_\varphi s_\psi-s_\varphi c_\psi\\s_\varphi c_\psi+c_\varphi s_\psi&-s_\varphi s_\psi+c_\varphi c_\psi\end{bmatrix}=\begin{bmatrix}\cos(\varphi+\psi)&-\sin(\varphi+\psi)\\\sin(\varphi+\psi)&\cos(\varphi+\psi)\end{bmatrix}$，即 $R=R_z(\varphi+\psi)$，只能确定**和** $\varphi+\psi$；
-- $\vartheta=\pi$（$c_\vartheta=-1,s_\vartheta=0$）：左上块化为 $\begin{bmatrix}-\cos(\varphi-\psi)&-\sin(\varphi-\psi)\\-\sin(\varphi-\psi)&\cos(\varphi-\psi)\end{bmatrix}$，即 $R=R_z(\varphi-\psi)R_y(\pi)$，只能确定**差** $\varphi-\psi$。
+$$R=R_z(\varphi-\psi)R_y(\pi),$$
 
-几何上，这两处第一次转的 $z$ 轴与第三次转的 $z''$ 轴同向或反向共线，两次转动合并成绕同一根轴的一次转动，所以矩阵里只剩它们的和或差。这是角度表示退化，刚体本身的转动自由度并未减少。
+只能确定**差**。第一、第三转轴分别同向或反向共线，不能从矩阵把两个角独立分离。这是角度表示退化，不表示刚体的真实转动自由度消失。
 :::
 
 奇点处仍可选一组代表，例如令 $\psi=0$：$\vartheta=0$ 时取 $\varphi=\operatorname{Atan2}(r_{21},r_{11})$；$\vartheta=\pi$ 时取 $\varphi=\operatorname{Atan2}(-r_{21},-r_{11})$。这是一项选支约定，不是唯一解。
@@ -237,10 +225,8 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 
 ### 两端奇点要分清和与差
 
-当 $c_\vartheta=0$（$\vartheta=\pm\pi/2$）时，$r_{11}=r_{21}=r_{32}=r_{33}=0$，式 2.22–2.23 中求 $\varphi,\psi$ 的 Atan2 同样遇到 $(0,0)$。把 $c_\vartheta=0,s_\vartheta=\pm1$ 代回式 2.21 的右上 $2\times2$ 块：
-
-- $\vartheta=+\pi/2$（$s_\vartheta=1$）：第 1、2 行的第 2、3 列化为 $\begin{bmatrix}-\sin(\varphi-\psi)&\cos(\varphi-\psi)\\\cos(\varphi-\psi)&\sin(\varphi-\psi)\end{bmatrix}$，即 $R=R_z(\varphi-\psi)R_y(\pi/2)$，只能确定**差** $\varphi-\psi$；
-- $\vartheta=-\pi/2$（$s_\vartheta=-1$）：同一块化为 $\begin{bmatrix}-\sin(\varphi+\psi)&-\cos(\varphi+\psi)\\\cos(\varphi+\psi)&-\sin(\varphi+\psi)\end{bmatrix}$，即 $R=R_z(\varphi+\psi)R_y(-\pi/2)$，只能确定**和** $\varphi+\psi$。
+- $\vartheta=+\pi/2$ 时，$R=R_z(\varphi-\psi)R_y(\pi/2)$，只能确定**差**；
+- $\vartheta=-\pi/2$ 时，$R=R_z(\varphi+\psi)R_y(-\pi/2)$，只能确定**和**。
 
 两端均可令 $\psi=0$，取 $\varphi=\operatorname{Atan2}(-r_{12},r_{22})$ 作为代表。附近的角度可能剧烈变化，即使矩阵和真实姿态变化很小。
 
@@ -251,7 +237,7 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 :::
 
 ::: preview 后续：单位四元数
-§2.6 用 4 个参数加一个单位模长约束表示姿态，避免[欧拉角](../recall.md#euler)这种局部坐标奇点。但它仍有 $Q$ 与 $-Q$ 表示同一姿态的不唯一性；从角轴换成四元数也不能让所有表示歧义自动消失。
+§2.6 用 4 个参数加一个单位模长约束表示姿态，避免欧拉角这种局部坐标奇点。但它仍有 $Q$ 与 $-Q$ 表示同一姿态的不唯一性；从角轴换成四元数也不能让所有表示歧义自动消失。
 :::
 
 <a id="lab-2.4"></a>

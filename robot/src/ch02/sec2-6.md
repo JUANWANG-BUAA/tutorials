@@ -1,12 +1,10 @@
 # 2.6 单位四元数
 
-[2.5](sec2-5.md) 的角轴表示有两个不方便的地方：$(-\vartheta,-\boldsymbol r)$ 与 $(\vartheta,\boldsymbol r)$ 是同一旋转的两组参数，零角 $\vartheta=0$ 时转轴还没定义。本节的**[单位四元数](../recall.md#quaternion)**（unit quaternion，又称欧拉参数）用半角把角与轴打包成四个数：$\eta=\cos(\vartheta/2)$、$\boldsymbol\epsilon=\sin(\vartheta/2)\boldsymbol r$。同步反号的两组角轴参数立刻合并成同一个四元数，零角也直接变成 $(1,0,0,0)$；剩下的只有转角加 $2\pi$ 带来的 $Q$ 与 $-Q$ 双重覆盖，以及半圈 $\eta=0$ 处需要选对提取支路。
+[2.5](sec2-5.md) 用单位轴和转角描述姿态。本节的**单位四元数**（unit quaternion，又称欧拉参数）将半角与轴打包：同步反号的两组角轴参数会映到同一个四元数，零角时也不再需要指定轴。但它仍保留 $Q\sim-Q$ 的双重覆盖，半圈提取需选择稳定支路；不能把换表示理解为消除全部不唯一。
 
 ::: note 本节定位（教材补充 · 课程未授）
-本节对应原书 §2.6，先修内容是[旋转矩阵](../recall.md#rotation)与角轴。学习重点是：把四元数变回可检查的矩阵、从半圈矩阵正确提取四元数、读对乘法顺序，以及保持相邻时刻的符号连续。课程覆盖范围见[范围声明](../preface-scope.md)。
+本节对应原书 §2.6，先修内容是旋转矩阵与角轴。学习重点是：把四元数变回可检查的矩阵、从半圈矩阵正确提取四元数、读对乘法顺序，以及保持相邻时刻的符号连续。课程覆盖范围见[范围声明](../preface-scope.md)。
 :::
-
-
 
 <a id="sec-2.6.1"></a>
 
@@ -27,8 +25,8 @@ $$\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1\qquad(\text{原书式 }2.32)$$
 :::
 
 ::: thm 原理 2.6.A · 四元数修掉了哪些缺陷 {#thm-2.6.A}
-半角打包把 $-\vartheta$ 与 $-\boldsymbol r$ 同时代进去时，$\cos\frac{-\vartheta}{2}=\cos\frac{\vartheta}{2}$、$\sin\frac{-\vartheta}{2}(-\boldsymbol r)=\sin\frac{\vartheta}{2}\boldsymbol r$，四个数完全不变：
-1. **合并同步反号的参数组**：$(\vartheta,\boldsymbol r)$ 与 $(-\vartheta,-\boldsymbol r)$ 映到同一个 $Q$，消去了原书式 2.26 的重复。
+关键差别在**半角打包**：代入 $-\vartheta$ 与 $-\boldsymbol r$，得 $\cos\frac{-\vartheta}{2}=\cos\frac{\vartheta}{2}$、$\sin\frac{-\vartheta}{2}(-\boldsymbol r)=\sin\frac{\vartheta}{2}\boldsymbol r$——**同一结果**。
+1. **合并同步反号的参数组**：$(\vartheta,\boldsymbol r)$ 与 $(-\vartheta,-\boldsymbol r)$ 映到同一个 Q。这是原书式 2.26 所列重复参数的消除，不意味着所有重复表示都消失。
 2. **仍保留 $Q\sim-Q$**：转角加 $2\pi$ 使四元数整体反号，旋转不变。非半圈处可取 $\eta>0$ 定符号；半圈 $\eta=0$ 时还需额外约定，不能仅靠 $\eta\ge0$ 选出唯一代表。
 3. **提取算法仍需分支**：零角可用单位四元数代表，半圈也有合法四元数，但含除法的提取公式必须避开小分母；下一部分分别检查其适用范围。
 :::
@@ -99,22 +97,20 @@ $$c_\vartheta I=(2\eta^2-1)I,\qquad
 (1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}=2\sin^2\tfrac\vartheta2\ \boldsymbol r\boldsymbol r^{\mathrm T}=2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T},\qquad
 s_\vartheta S(\boldsymbol r)=2\sin\tfrac\vartheta2\cos\tfrac\vartheta2\ S(\boldsymbol r)=2\eta\,S(\boldsymbol\epsilon).$$
 
-（这里用了 $S(\cdot)$ 的线性：$S(\boldsymbol\epsilon)=\sin\frac\vartheta2\,S(\boldsymbol r)$。）合并得**四元数紧凑形式**
+（$S(\boldsymbol\epsilon)=\sin\frac\vartheta2\,S(\boldsymbol r)$——$S(\cdot)$ 对参数线性。）合并得**四元数紧凑形式**
 
-$$R=(2\eta^2-1)I+2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T}+2\eta\,S(\boldsymbol\epsilon).$$
+$$R=(2\eta^2-1)I+2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T}+2\eta\,S(\boldsymbol\epsilon),$$
 
-逐元素展开：对角线是 $2\eta^2-1+2\epsilon_i^2=2(\eta^2+\epsilon_i^2)-1$；非对角 $(i,j)$ 元是 $2\epsilon_i\epsilon_j+2\eta\,S(\boldsymbol\epsilon)_{ij}$，其中 $S(\boldsymbol\epsilon)_{12}=-\epsilon_z$ 等，就得到式 2.33 的九个元素。□
+逐元素展开：对角线 $=2\eta^2-1+2\epsilon_i^2=2(\eta^2+\epsilon_i^2)-1$；非对角 $(i,j)=2\epsilon_i\epsilon_j+2\eta\,S(\boldsymbol\epsilon)_{ij}$，而 $S(\boldsymbol\epsilon)_{xy}=-\epsilon_z$ 等——即式 2.33 的九个元素。□
 :::
 
 ### 逆解：先求平方，再从最大分量提取
 
-从紧凑形式 $R=(2\eta^2-1)I+2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T}+2\eta S(\boldsymbol\epsilon)$ 出发：把三个对角元相加，用 $\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1$ 得 $\operatorname{tr}R=3(2\eta^2-1)+2(1-\eta^2)=4\eta^2-1$；单独看第 $i$ 个对角元是 $r_{ii}=2\eta^2-1+2\epsilon_i^2$；取反对称差则消去前两项对称矩阵，留下
+由紧凑形式可直接得到
 
 $$\operatorname{tr}R=4\eta^2-1,\qquad
 r_{ii}=2\eta^2-1+2\epsilon_i^2,\qquad
 R-R^{\mathrm T}=4\eta S(\boldsymbol\epsilon).$$
-
-再把 $1=\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2$ 与三个 $r_{ii}$ 组合，就能单独解出每个分量的平方：$1+r_{11}-r_{22}-r_{33}=4\epsilon_x^2$，其余两式同理。
 
 因此，在**选取 $\eta>0$** 时，原书式 2.34–2.35 的分量符号法为
 
@@ -142,7 +138,7 @@ R(q_{\rm sign})=\begin{bmatrix}0&1&0\\1&0&0\\0&0&-1\end{bmatrix}\ne R_\pi.$$
 :::
 
 ::: method 稳定提取：选最大的四元数分量 {#method-2.6.extract}
-先确认 $R^{\mathrm T}R\approx I$、$\det R\approx1$。为什么能避开 $\eta=0$？式 2.34–2.35 只用了对角线（给四个平方）和反对称差（给 $4\eta\epsilon_i$），把对称非对角和 $r_{ij}+r_{ji}=4\epsilon_i\epsilon_j$ 丢掉了；半圈 $\eta=0$ 时恰恰是这一组还留着各分量的相对符号。把全部 16 个两两乘积 $4q_iq_j$ 收集成 $4\times4$ 对称矩阵 $H=4qq^{\mathrm T}$（其中 $q=(\eta,\epsilon_x,\epsilon_y,\epsilon_z)^{\mathrm T}$）：
+先确认 $R^{\mathrm T}R\approx I$、$\det R\approx1$。令 $q=(\eta,\epsilon_x,\epsilon_y,\epsilon_z)^{\mathrm T}$，由正解构造
 
 $$H=\begin{bmatrix}
 1+r_{11}+r_{22}+r_{33}&r_{32}-r_{23}&r_{13}-r_{31}&r_{21}-r_{12}\\
@@ -200,7 +196,7 @@ $$Q^{-1}=\{\eta,-\boldsymbol\epsilon\}\quad\Longleftrightarrow\quad R^{-1}=R^T .
 
 $$Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^T\boldsymbol\epsilon_2,\ \ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}.$$
 
-::: note 乘法公式从哪来：「标量 + 向量」的数（本编补充）
+::: note 乘法公式从哪来——「标量 + 向量」的数（本编补充）
 四元数是形如 $\eta+\epsilon_x i+\epsilon_y j+\epsilon_z k$ 的数：标量加三个虚部，虚单位满足 $i^2=j^2=k^2=ijk=-1$（等价地 $ij=k,\ jk=i,\ ki=j$，反序差一负号）。按分配律相乘，再把标量与向量部分分别收集，得到
 
 $$(a,\boldsymbol u)\otimes(b,\boldsymbol v)=\big(ab-\boldsymbol u\cdot\boldsymbol v,\ \ a\boldsymbol v+b\boldsymbol u+\boldsymbol u\times\boldsymbol v\big).$$
@@ -280,7 +276,7 @@ $170^\circ\to190^\circ$ 的连续端点点积为 $\cos10^\circ$，SLERP 中点�
 
 ::: think 默写点 · 合上书再写（主动回忆）
 
-
+不看正文与速查卡，先写出下面几条，再展开核对。写不出来就说明这一节还没「拿走」。
 
 1. 写出 $(\vartheta,\boldsymbol r)\to(\eta,\boldsymbol\epsilon)$ 的换算与单位约束。
 2. 四元数的独立参数是几个？为什么？

@@ -1,9 +1,8 @@
 # 3.6 分析雅可比矩阵
 
-上一节用 $J\dot q=v_e$ 求关节速度，姿态部分的输出是物理角速度 $\omega_e$。当目标用欧拉角表示时，还需要参数导数 $\dot{\boldsymbol\varphi}_e$；这两个三维量通常不同。下面从转轴和[旋转矩阵](../recall.md#rotation)求导建立换算关系，并确定它的适用范围。
+上一节用 $J\dot q=v_e$ 求关节速度，其中姿态速度是物理角速度 $\omega_e$。如果控制目标却写成“欧拉角从多少变到多少”，需要的是参数导数 $\dot{\boldsymbol\varphi}_e$。这两个三维量通常不同；本节从转轴和旋转矩阵求导，推导怎样换算，再说明换算何时失效。
 
-本节沿用[§2.4](../ch02/sec2-4.md)的[ZYZ](../recall.md#euler)约定：$R=R_z(\varphi)R_y(\vartheta)R_z(\psi)$，绕当前轴依次旋转。所有向量都在同一固定基系表示，角度计算用弧度，角速度和角速率用rad/s。录播对应2:17:32–2:24:12；正文可独立跟算。
-
+本节沿用[§2.4](../ch02/sec2-4.md)的ZYZ约定：$R=R_z(\varphi)R_y(\vartheta)R_z(\psi)$，绕当前轴依次旋转。所有向量都在同一固定基系表示，角度计算用弧度，角速度和角速率用rad/s。录播对应2:17:32–2:24:12；正文可独立跟算。
 
 <a id="sec-3.6.1"></a>
 
@@ -23,8 +22,10 @@ $$v_e=\begin{bmatrix}\dot p_e\\\omega_e\end{bmatrix}=J(q)\dot q,
 $$J_A(q)=\frac{\partial k}{\partial q},\qquad
 \dot x_{e,j}=\sum_{i=1}^n\frac{\partial k_j}{\partial q_i}\dot q_i.$$
 
-两者前三行都是 $\partial p_e/\partial q$，所以相同；后三行一般不同。$J_A$ 里的“分析”指对选定的位姿坐标 $k(q)$ 求偏导；几何雅可比同样用到了求导，它的角速度部分来自 $\dot R R^{\mathrm T}=S(\omega_e)$（[§3.1](sec3-1.md)）。因此两者的区别在后三行输出的是什么量，不在是否使用求导。
+两者前三行都是 $\partial p_e/\partial q$，所以相同；后三行一般不同。不能把 $v_e$ 和 $\dot x_e$ 当成同一个六维输出。
 :::
+
+这里“分析”指对所选位姿坐标求导，并不表示只有 $J_A$ 才能通过求导得到。几何雅可比的角速度部分也能由 $\dot R R^{\mathrm T}=S(\omega_e)$ 求出，见[§3.1](sec3-1.md)。
 
 <a id="sec-3.6.2"></a>
 
@@ -46,7 +47,7 @@ $s_\alpha,c_\alpha$ 分别简写 $\sin\alpha,\cos\alpha$。最后一次绕 $z''$
 
 ### 第二步：为什么三个贡献可以相加
 
-令 $A=R_z(\varphi),B=R_y(\vartheta),C=R_z(\psi)$，于是 $R=ABC$。[乘积求导](../recall.md#chain-rule)，再右乘 $R^{\mathrm T}=C^{\mathrm T}B^{\mathrm T}A^{\mathrm T}$：
+令 $A=R_z(\varphi),B=R_y(\vartheta),C=R_z(\psi)$，于是 $R=ABC$。乘积求导，再右乘 $R^{\mathrm T}=C^{\mathrm T}B^{\mathrm T}A^{\mathrm T}$：
 
 $$\begin{aligned}
 \dot R R^{\mathrm T}
@@ -88,7 +89,7 @@ $$T^{\mathrm T}\omega_e=T^{\mathrm T}T\dot{\boldsymbol\varphi}_e,
 \qquad
 T^{\mathrm T}T=\begin{bmatrix}1&0&c_\vartheta\\0&1&0\\c_\vartheta&0&1\end{bmatrix}.$$
 
-三个轴之间有 $z\cdot z''=c_\vartheta$，其余两组点积为0。因此只有 $\vartheta=\pi/2$ 时，三列恰好正交，可以由逐轴点积取系数。一般可逆时应求 $T^{-1}\omega_e$，而非 $T^{\mathrm T}\omega_e$。这里需要三根轴线性无关；仅仅互不平行仍不够，例如 $e_x,e_y,e_x+e_y$ 就在同一平面内。
+这里 $z\cdot z''=c_\vartheta$，其余两组点积为0。只有 $\vartheta=\pi/2$ 时三列才恰好正交。一般可逆时，要算的是 $T^{-1}\omega_e$，而非 $T^{\mathrm T}\omega_e$。三根向量能作为三维基，要求**线性无关**；仅说“彼此不平行”并不充分，例如 $e_x,e_y,e_x+e_y$ 就仍共面。
 
 ### 跟算：同一个角速度的两套数值
 
@@ -124,16 +125,14 @@ $$\boxed{T^{-1}=\begin{bmatrix}
 c_\varphi/ s_\vartheta&s_\varphi/s_\vartheta&0
 \end{bmatrix}}.$$
 
-其中 $\cot\vartheta=\cos\vartheta/\sin\vartheta$，它与最后一行都含有分母 $1/\sin\vartheta$。分母来自解上面那组线性方程时的相除，反映的是这组欧拉角坐标能不能反向换算；关节本身的转速仍是有限的。
-
-沿 $T$ 第一列展开行列式，也得到同一可逆条件：
+沿 $T$ 第一列展开行列式也得到同一条件：
 
 $$\det T=\det\begin{bmatrix}-s_\varphi&c_\varphi s_\vartheta\\c_\varphi&s_\varphi s_\vartheta\end{bmatrix}
 =-(s_\varphi^2+c_\varphi^2)s_\vartheta=-s_\vartheta.$$
 
 所以在ZYZ的通常范围 $0\le\vartheta\le\pi$ 内，两个端点是表示奇点。$\vartheta=0$ 时 $z''=z$，$\vartheta=\pi$ 时 $z''=-z$，三个角速率不能唯一、完整地表示三维角速度。
 
-例如 $\varphi=0,\vartheta=0$ 时 $T\dot{\boldsymbol\varphi}_e=(0,\dot\vartheta,\dot\varphi+\dot\psi)^{\mathrm T}$：有限速率无法给出沿 $x$ 的角速度；给定沿 $z$ 的角速度，又只能确定 $\dot\varphi+\dot\psi$。这是这套欧拉角在 $\vartheta=0$ 附近的固有性质，只把 $(\varphi,\psi)$ 改选成另一对代表角，这根消失的轴并不会恢复。
+例如 $\varphi=0,\vartheta=0$ 时 $T\dot{\boldsymbol\varphi}_e=(0,\dot\vartheta,\dot\varphi+\dot\psi)^{\mathrm T}$：有限速率无法给出沿 $x$ 的角速度；给定沿 $z$ 的角速度，又只能确定 $\dot\varphi+\dot\psi$。这里固定了这一组欧拉角代表；换一个奇点处的参数代表并不能建立覆盖附近所有姿态的光滑三维坐标。
 
 ### 实验：是角速度变大，还是参数速率变大
 
@@ -152,7 +151,7 @@ $$\dot{\boldsymbol\varphi}_e=(-\cot\vartheta,0,1/\sin\vartheta)^{\mathrm T}.$$
 
 <div class="lab" data-lab="eulerRates"></div>
 
-**读数之后解释**：固定角速率时，端点处的 $T$ 虽然降秩，仍可正向合成角速度。反过来固定角速度时，端点没有唯一逆换算，演示因此不以大数或零代替逆解。接近端点的多个大速率可能互相抵消，合成的物理角速度仍很小。
+**读数之后解释**：固定角速率时，即使端点处 $T$ 降秩，正向合成仍有定义；固定角速度时，端点处显示“无唯一逆换算”，不能拿很大的数或零冒充逆解。靠近端点的大速率相互抵消后，仍可能合成很小的物理角速度。
 
 ### 两种雅可比怎样连接
 
@@ -172,7 +171,7 @@ $$\boxed{J=T_AJ_A},\qquad
 
 ![课件第59页：角速度合成矩阵T及其行列式条件](../assets/ch03/analytic-relation.jpg)
 
-**表示奇点不等于机构奇点。** $s_\vartheta=0$ 说明 ZYZ 坐标在这里不能用 $T_A^{-1}$ 反向换算；机构本身的几何雅可比 $J$ 有没有丢方向，要独立看 $\operatorname{rank}J$。
+**表示奇点不等于机构奇点。** $s_\vartheta=0$ 说明这个ZYZ坐标图失去局部可逆性，不能用 $T_A^{-1}J$ 定义通用的逆换算；几何雅可比是否降秩，要独立看机构及所选任务。不能据此宣布 $J$ 也失效。
 
 一个可计算的反例：三轴转动链的方向取 $R(q)=R_x(q_1)R_y(q_2)R_z(q_3)$，在 $q=0$ 时三根瞬时轴分别为 $e_x,e_y,e_z$，故旋转任务的几何雅可比（角速度块）$J_O=I_3$，可产生任意角速度。同一姿态 $R=I_3$ 用ZYZ表示时却有 $\vartheta=0$。机构的旋转任务没有丢方向，出问题的是所选欧拉角坐标。
 
@@ -182,7 +181,7 @@ $$\boxed{J=T_AJ_A},\qquad
 
 $$\boldsymbol\varphi_e(t)=\boldsymbol\varphi_e(0)+\int_0^t\dot{\boldsymbol\varphi}_e(\tau)\,d\tau.$$
 
-在同一光滑分支内，给定初值就可以局部积分欧拉角。$\omega_e$ 的各分量也能积分，但只保留所得三维积分向量，会丢掉恢复最终姿态所需的顺序信息。原教材例3.3用下面两种转动次序说明这一点。
+需要初值，也需要正确处理坐标分支；这并不禁止用欧拉角进行局部数值积分。$\omega_e$ 的各分量同样可以积分，错误在于把所得三维积分向量直接当成最终姿态。原教材例3.3给出以下反例。
 
 从 $R(0)=I_3$ 出发，两段各持续1秒。方案A先绕**固定基系** $x$ 转 $90^\circ$，再绕基系 $y$ 转 $90^\circ$；方案B把顺序交换。两者都满足
 
@@ -208,7 +207,7 @@ $$J_{\rm planar}=\begin{bmatrix}-1&-1&0\\2&1&1\\1&1&1\end{bmatrix},\qquad
 J_{\rm planar}\begin{bmatrix}1\\-1\\2\end{bmatrix}
 =\begin{bmatrix}0\\3\\2\end{bmatrix}.$$
 
-最后一项既是 $\dot\alpha=2$，也是 $\omega_z=2$ rad/s。之所以完全一致，是因为平面臂只有一根固定转轴 $z$，方向角只有一个 $\alpha$，不存在三维 ZYZ 里三根转轴随姿态转动并可能重合的问题。
+最后一项既是 $\dot\alpha=2$，也是 $\omega_z=2$ rad/s。这是**一个固定转轴和一个方向角的降维任务**，并不是把一般三维ZYZ的三根轴全部设为同一根。
 
 <a id="practice-3.6"></a>
 
@@ -230,6 +229,19 @@ J_{\rm planar}\begin{bmatrix}1\\-1\\2\end{bmatrix}
 
 <a id="sec-3.6"></a>
 
+::: think 闭卷重建
+
+1. 从 $R=ABC$ 求导，重建三根轴与矩阵 $T$；指出每个向量的表达坐标系。
+2. 用两个线性组合推出 $T^{-1}$，解释为何出现 $1/\sin\vartheta$。
+3. 从两种速度方程推出 $J=T_AJ_A$，写明何时能求逆、何时保留秩。
+4. 用两次固定轴旋转说明 $\int\omega\,dt$ 为什么不足以确定最终姿态。
+
+::: sol 重建要点
+
+乘积求导的三项分别化成 $S(z\dot\varphi)$、$S(R_zy\dot\vartheta)$、$S(R_zR_yz\dot\psi)$，都在基系中；它们相加后按三根单位轴排成 $T$。前两行按 $(-s_\varphi,c_\varphi)$ 消去 $\dot\psi$，按 $(c_\varphi,s_\varphi)$ 消去 $\dot\vartheta$，后一式须除 $s_\vartheta$，再由第三行求 $\dot\varphi$。$T_A=\operatorname{diag}(I_3,T)$，$J\dot q=T_AJ_A\dot q$ 对任意关节速度成立；在 $s_\vartheta\ne0$ 的光滑分支内才可逆，且两种雅可比秩相等。两段 $x/y$ 基系转动顺序不同，分量积分相同，却将初始 $e_z$ 分别转到 $-e_y$ 和 $e_x$。
+
+:::
+:::
 
 ## 3.6 小结与下一节
 
