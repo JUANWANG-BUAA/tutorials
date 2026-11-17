@@ -10,9 +10,9 @@
 
 ::: note 阅卷口径（先读，能省不少分）
 - **判断必须带机制词**：写「错」不给分，写「错，因为范数为 $1$ 只保证『标准』，正交要逐个验证内积」才拿满。常用机制词：平行四边形恒等式、列满秩、`cond` 平方、正交性损失量级、对称 + 幂等、截断阈值。
-- **公式要说前提**：正态方程要写「$A$ 列满秩」；QR 唯一要写「$R$ 对角元全为正」；系数扰动界要写「$\mathrm{cond}\cdot\rho_A\lt1$」。
+- **公式要说前提**：正态方程始终是最小二乘的最优性条件，只有唯一解及逆矩阵公式要求 $A$ 列满秩；薄 QR 唯一还要求列满秩且 $R$ 对角元全为正；系数扰动界要求 $\mathrm{cond}\cdot\rho_A<1$。
 - **手算题先摆中间量、报误差要注明范数**：$A^{\mathrm T}A$、$Q^{\mathrm T}\boldsymbol b$、残差、$\lVert\cdot\rVert$ 都要落在卷面上（只给最终答案最多得 $3$ 分）；「能信几位」要说清是 $u$ 还是 $\mathrm{cond}\cdot u$ 量级。
-- **开放题四件套**：方案 / 理由 / 失败判据 / 验证计划，缺一项扣 $2$ 分（第四部分每题 $10$ 分）。
+- **开放题四件套**：方案 / 理由 / 失败判据 / 验证计划均须写明，具体分值按各题后的评分细目，不统一按缺一项扣 $2$ 分。
 :::
 
 ## 第一部分 · 概念判断（10 题 × 3 分 = 30 分）
@@ -56,15 +56,15 @@
 
 **8.** 对任意非奇异方阵 $A,B$ 与任意矩阵范数，都有 $\mathrm{cond}(AB)=\mathrm{cond}(A)\mathrm{cond}(B)$，且 $\mathrm{cond}(A)\ge1$。
 ::: sol
-**8. 错（两处都不严谨）。** ① 次可乘性只给出 $\mathrm{cond}(AB)\le\mathrm{cond}(A)\mathrm{cond}(B)$，一般不是等式（$A=\mathrm{diag}(1,10)$、$B=\mathrm{diag}(10,1)$ 时 $AB=I$、左端 $=1$、右端 $=100$）。② $\mathrm{cond}(A)\ge1$ 需要 $\lVert I\rVert=1$，即算子范数；F-范数下只有 $\mathrm{cond}_F\ge\sqrt n$（[@thm-sup-2.4.1]）。
+**8. 错。** $\mathrm{cond}(AB)\le\mathrm{cond}(A)\mathrm{cond}(B)$，一般不取等：$A=\operatorname{diag}(1,10)$、$B=\operatorname{diag}(10,1)$ 时 $AB=10I$，两边分别为 1 和 100。F-范数乘积也满足下界，事实上 $\|A\|_F\|A^{-1}\|_F\ge n$；不能把它解释成同一向量范数下的最优相对扰动放大率（[@thm-sup-2.4.1]）。
 :::
 
 **9.** 求解器报告的残差很小（例如 $\lVert\boldsymbol r\rVert_2/\lVert\boldsymbol b\rVert_2\approx10^{-14}$）就说明解的前向误差也很小。
 ::: sol
-**9. 错。** 残差与误差之间隔着条件数：$\boldsymbol e=A^{-1}\boldsymbol r$，故 $\dfrac{\lVert\boldsymbol e\rVert}{\lVert\boldsymbol x\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol r\rVert}{\lVert\boldsymbol b\rVert}$。教材实测：残差相对量 $2.5\times10^{-12}$、相对误差 $50\%$。求解器能保证的是残差（后向误差），用户要的是误差（前向误差）（[@thm-sup-2.4.4]、[@ex-sup-2.4.4]）。
+**9. 错。** 若 $A$ 非奇异、$\boldsymbol b\ne0$，取 $\boldsymbol e=\hat{\boldsymbol x}-\boldsymbol x$、$\boldsymbol r=\boldsymbol b-A\hat{\boldsymbol x}$，则 $\boldsymbol e=-A^{-1}\boldsymbol r$，相对误差至多为 $\mathrm{cond}(A)\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$。例中相对残差 $2.5\times10^{-12}$，相对误差却达 $50\%$。小残差本身不证明算法对所有输入后向稳定（[@thm-sup-2.4.4]、[@ex-sup-2.4.4]）。
 :::
 
-**10.** (a) 对任何实方阵都有 $\sigma_i(A)=\lvert\lambda_i(A)\rvert$；(b) 对任何矩阵都有 $\rho(A)\le\lVert A\rVert_2$。
+**10.** (a) 对任何实方阵都有 $\sigma_i(A)=|\lambda_i(A)|$；(b) 对任何方阵都有 $\rho(A)\le\lVert A\rVert_2$。
 ::: sol
 **10.** **(a) 错、(b) 对。** (a) 奇异值总非负、共 $\min(m,n)$ 个，特征值可负可复；反例 $A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$：$\lambda_i=0$ 而 $\sigma_1=1$。(b) 对：取特征向量 $\boldsymbol v$ 得 $\lvert\lambda\rvert\lVert\boldsymbol v\rVert=\lVert A\boldsymbol v\rVert\le\lVert A\rVert_2\lVert\boldsymbol v\rVert$，取最大即得 $\rho\le\lVert A\rVert_2$（[2.5.1](sec25.md#sup-2.5.1) 三者关系框）。**给分**：(a)(b) 各 $1.5$ 分。
 
@@ -88,7 +88,7 @@ Parseval 核对：$12+\frac12+\frac32=14=\lVert\boldsymbol x\rVert_2^2=1+4+9$ �
 **12.** $r=\sqrt{5^2+(-12)^2}=13$，$c=\dfrac{x_1}{r}=\dfrac{5}{13}$，$s=\dfrac{x_2}{r}=-\dfrac{12}{13}$，
 $$G=\begin{pmatrix}c&s\\-s&c\end{pmatrix}=\begin{pmatrix}5/13&-12/13\\12/13&5/13\end{pmatrix}.$$
 验证：$G\boldsymbol x=\Bigl(\frac{25+144}{13},\ \frac{60-60}{13}\Bigr)^{\mathrm T}=(13,0)^{\mathrm T}$ ✓；$c^2+s^2=\frac{25+144}{169}=1$ 故 $G$ 正交、$\det G=1$（保定向，与 Householder 的 $-1$ 相反）。
-**为什么用 `hypot`**：直接算 $x_1^2+x_2^2$ 在分量接近 $10^{154}$ 时**上溢**、接近 $10^{-160}$ 时**下溢**成零；`hypot` 先按量级缩放再开方（[@thm-sup-2.3.4] 后的注、[2.3.5](sec23.md#sup-2.3.5)）。**给分**：$r,c,s,G$ 各 $0.5$ 分、验证 $1$ 分、`hypot` 理由 $1$ 分。
+**为什么用 `hypot`**：浮点实现中直接计算平方和会使动态范围缩小：双精度分量达到约 $10^{155}$ 时平方可上溢，约 $10^{-162}$ 时平方可下溢到零；`hypot` 通过缩放降低这类中间运算风险。本题的 $5,-12$ 手算不存在这一问题（[@thm-sup-2.3.4] 后的注、[2.3.5](sec23.md#sup-2.3.5)）。**给分**：$r,c,s,G$ 各 $0.5$ 分、验证 $1$ 分、`hypot` 理由 $1$ 分。
 :::
 
 **13.** 对 $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$、初值 $\boldsymbol x_0=(1,0)^{\mathrm T}$：做**一步**幂法（先乘 $A$、再单位化），写出 $\boldsymbol x_1$，并用 Rayleigh 商给出 $\lambda_1$ 的估计；与真主特征值比较，指出理论误差量级 $\lvert\lambda_2/\lambda_1\rvert^2$ 是多少。
@@ -163,8 +163,11 @@ $$P=A_2(A_2^{\mathrm T}A_2)^{-1}A_2^{\mathrm T}=\frac16\begin{pmatrix}5&2&-1\\2&
 
 **(3)** 
 $$\boldsymbol p=P\boldsymbol b=\frac16\begin{pmatrix}5+2\\2+2\\-1+2\end{pmatrix}=\Bigl(\frac76,\ \frac23,\ \frac16\Bigr)^{\mathrm T}.$$
-最小二乘解由 $(A_2^{\mathrm T}A_2)\hat{\boldsymbol x}=A_2^{\mathrm T}\boldsymbol b$ 给出，$A_2^{\mathrm T}\boldsymbol b=(2,3)^{\mathrm T}$：
-$$\hat{\boldsymbol x}=\frac16\begin{pmatrix}14&-6\\-6&3\end{pmatrix}\begin{pmatrix}2\\3\end{pmatrix}=\frac16\begin{pmatrix}10\\-3\end{pmatrix}=\Bigl(\frac53,\ -\frac12\Bigr)^{\mathrm T},\qquad A_2\hat{\boldsymbol x}=\Bigl(\frac76,\frac23,\frac16\Bigr)^{\mathrm T}=\boldsymbol p\ \checkmark$$
+先求前两列张成投影的系数 $\boldsymbol c$：$(A_2^{\mathrm T}A_2)\boldsymbol c=A_2^{\mathrm T}\boldsymbol b$，其中 $A_2^{\mathrm T}\boldsymbol b=(2,3)^{\mathrm T}$，故
+$$\boldsymbol c=\frac16\begin{pmatrix}14&-6\\-6&3\end{pmatrix}\begin{pmatrix}2\\3\end{pmatrix}=\Bigl(\frac53,-\frac12\Bigr)^{\mathrm T},\qquad A_2\boldsymbol c=\boldsymbol p.$$
+原题的 $A$ 有四列，因此一个最小二乘解应为四维向量：$\hat{\boldsymbol x}=(5/3,-1/2,0,0)^{\mathrm T}$。全部解为
+$$\hat{\boldsymbol x}+s(-1,-1,1,0)^{\mathrm T}+t(-2,1,0,1)^{\mathrm T},\qquad s,t\in\mathbb R.$$
+这里没有要求最小范数；不能把两维的 $\boldsymbol c$ 直接当成原问题的解。
 $$\boldsymbol r=\boldsymbol b-\boldsymbol p=\Bigl(-\frac16,\ \frac13,\ -\frac16\Bigr)^{\mathrm T},\qquad \lVert\boldsymbol r\rVert_2=\sqrt{\frac1{36}+\frac19+\frac1{36}}=\frac{1}{\sqrt6}\approx0.4082 .$$
 核对 $A^{\mathrm T}\boldsymbol r=\boldsymbol 0$：$A_2^{\mathrm T}\boldsymbol r=\Bigl(-\frac16+\frac13-\frac16,\ -\frac16+\frac23-\frac12\Bigr)^{\mathrm T}=(0,0)^{\mathrm T}$ ✓（另外两列由前两列线性组合而来，故同样为零）。**勾股核对**：$\lVert\boldsymbol p\rVert^2=\frac{11}{6}$、$\lVert\boldsymbol r\rVert^2=\frac16$、和 $=2=\lVert\boldsymbol b\rVert^2$ ✓。
 
@@ -196,7 +199,7 @@ $$\hat{\boldsymbol x}=\Bigl(0,\ \frac12\Bigr)^{\mathrm T},\qquad \boldsymbol p=A
 
 **(3)** $A^{\mathrm T}A=\begin{pmatrix}3&2\\2&2\end{pmatrix}$（$\det=2$），$(A^{\mathrm T}A)^{-1}=\dfrac12\begin{pmatrix}2&-2\\-2&3\end{pmatrix}$，$A^{\mathrm T}\boldsymbol b=(1,1)^{\mathrm T}$：
 $$\hat{\boldsymbol x}=\frac12\begin{pmatrix}2&-2\\-2&3\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix}=\frac12\begin{pmatrix}0\\1\end{pmatrix}=\Bigl(0,\frac12\Bigr)^{\mathrm T}\ \checkmark$$
-两条路线**结果完全一致**——本例条件数很小（$\mathrm{cond}_2(A)\approx3.23$），差异被舍入掩盖。
+精确算术下两条路线给出同一解。本例 $\mathrm{cond}_2(A)\approx3.23$，浮点实现的差别通常很小；不应把“结果一致”解释为两种算法没有舍入差别。
 
 **(4)** 两条路线的误差量级相差一个条件数：
 
@@ -247,7 +250,7 @@ $$\lVert A\rVert_2=\sigma_1=2\sqrt{10}\approx6.3246,\qquad \lVert A\rVert_F=\sqr
 $$\mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_2}=2,\qquad \lvert\det A\rvert=20=\sigma_1\sigma_2=2\sqrt{10}\cdot\sqrt{10}\ \checkmark$$
 丢失位数 $k\approx\log_{10}2\approx0.3$，即**几乎不丢位数**（剩约 $15\sim16$ 位）——$\mathrm{cond}=2$ 是良态。
 
-**评分**：(1) $A^{\mathrm T}A$ 与特征值 $1.5$ 分、奇异值 $1$ 分、$V$ $1$ 分；(2) $U$ $2$ 分（两列各 $1$）、外积核算 $1.5$ 分；(3) $A_1$ 与外积 $1$ 分、两条 Eckart–Young 等式 $1$ 分；(4) 四个量与位数预测 $2$ 分。**把 $\sigma_i$ 写成 $\lambda_i$（本题 $\lambda_i$ 指 $A^{\mathrm T}A$ 的 $40,10$，或 $A$ 的 $4,5$）该小题不得分。**
+**评分**：(1) $A^{\mathrm T}A$ 与特征值 $1$ 分、奇异值 $1$ 分、$V$ $1$ 分；(2) $U$ $2$ 分、外积核算 $1$ 分；(3) $A_1$ 与外积 $1$ 分、两条误差等式 $1$ 分；(4) 四个量与位数预测 $2$ 分，共 $10$ 分。把 $\sigma_i$ 写成 $\lambda_i$（本题 $A^{\mathrm T}A$ 的特征值为 $40,10$，$A$ 的特征值为 $4,5$）按相应项目扣分。
 
 :::
 
@@ -262,28 +265,28 @@ $$\mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_2}=2,\qquad \lvert\det A\rvert=20=\s
 ::: sol 第 19 题参考答案与评分要点
 
 **(1) 方案：SVD 截断（`np.linalg.svd` / 随机化 SVD）**，核心公式
-$$X\approx X_k=\sum_{i\le k}\sigma_i\boldsymbol u_i\boldsymbol v_i^{\mathrm T},\qquad \lVert X-X_k\rVert_2=\sigma_{k+1},\qquad \text{存储 }k(m+n)\ \text{个数 vs } mn .$$
-复杂度约 $O(mn\min(m,n))$（$2000\times1500$ 规模完全可承受；再大就用随机化 SVD）。
+$$X\approx X_k=\sum_{i\le k}\sigma_i\boldsymbol u_i\boldsymbol v_i^{\mathrm T},\qquad \lVert X-X_k\rVert_2=\sigma_{k+1}.$$
+存储三因子需要 $k(m+n+1)$ 个数；若把奇异值吸收到一侧因子，则需要 $k(m+n)$ 个数，须与 $mn$ 比较才知道是否节省。完整稠密 SVD 成本约为 $O(mn\min(m,n))$；是否可承受取决于平台与资源。随机化 SVD 适用于目标秩较小等情形，但只给近似截断，不能无条件宣称误差恰等于 $\sigma_{k+1}$。
 **为什么不用另外两个**：① 列主元 QR 能给出秩估计与一组正交基，但**基不按「能量」排序**，无法直接给出「最优 $k$ 项截断」——Eckart–Young 保证最优的是截断 SVD；② 正态方程面对的是**最小二乘求解**问题，而这里要做的是低秩分解，且形成 $X^{\mathrm T}X$ 会把条件数**平方**、还要额外算 $1500\times1500$ 的特征值分解。
-**关键前提**：做「降维 / 方差解释」之前**必须先中心化**（$X_c=X-\bar{\boldsymbol x}^{\mathrm T}$），否则第一主方向会指向均值方向，所谓的「解释方差」根本不是方差。
+**关键前提**：做 PCA 的中心化方差解释时，先令 $X_c=X-\boldsymbol1\bar{\boldsymbol x}^{\mathrm T}$；压缩原始矩阵可不中心化。未中心化的 SVD 描述二阶矩，首方向可能受均值主导，但不必恰为均值方向。若压缩中心化矩阵，重建和存储成本还应计入均值。
 
-**(2) $k$ 的确定流程（三条判据，取交集/先到先得）**
-① **噪声水平判据**：$k=\#\{i:\sigma_i\gt t\sigma_1\}$，$t\approx$ 噪声幅度 $/\sigma_1$——这是实践中最常用的（低噪场景等价于「谱的断层」判据）。**不要**用 `matrix_rank` 的默认阈值 $\max(m,n)u$：它只适合「精确矩阵数值降秩」（实测同一矩阵默认判秩 $20$、按噪声水平只有 $3$）。
-② **能量判据**：取最小的 $k$ 使 $\sum_{i\le k}\sigma_i^2/\sum_i\sigma_i^2\ge99\%$（工程常用；图像压缩里对应 PSNR 目标）。
-③ **拐点判据**：画 $\log\sigma_i$ 对 $i$ 的曲线，取曲线**陡降段之后的平台起始处**为 $k$——谱断层说明「断层后是噪声子空间」。
-④ 交叉验证（下游任务）作为兜底：$k$ 变化 $10\%$ 而下游指标不变，说明选得稳。
+**(2) $k$ 的确定流程（结合目标比较，不机械“先到先得”）**
+① **噪声水平判据**：若估计噪声矩阵的谱范数为 $\delta$，可把 $\sigma_i>c\delta$ 作为候选保留条件（$c$ 由噪声模型或验证集校准），即相对阈值 $t=c\delta/\sigma_1$。逐元素噪声幅度不等于谱范数；`matrix_rank` 默认阈值约 $\max(m,n)u$ 主要反映舍入尺度，不替代噪声估计（记录中的例子默认判秩 $20$、按噪声阈值为 $3$）。
+② **能量判据**：可按任务取最小 $k$ 使 $\sum_{i\le k}\sigma_i^2/\sum_i\sigma_i^2\ge99\%$；这对应相对 Frobenius 误差不超过 $10\%$，不等于误差 $1\%$，也不直接规定 PSNR。
+③ **拐点判据**：画 $\log\sigma_i$ 对 $i$ 的曲线，将明显断层附近作为候选截断位置；噪声也可能没有清晰平台，谱断层本身不证明其后全是噪声。
+④ **交叉验证**：比较候选 $k$ 的下游指标及对 $k$ 变化约 $10\%$ 的敏感性；若不同判据冲突，应报告重建、去噪与下游任务之间的取舍。
 
 **(3) 失败判据（≥3，可测量）**
-① 用未截断的伪逆 / 求逆得到下游结果时，输出范数比输入大 $\mathrm{cond}(X)$ 量级（$\ge10^{10}$）→ 说明噪声被放大，必须截断（未截断伪逆会放大 $1/\sigma_{\min}$）。
-② 截断后**残差能量比** $\lVert X-X_k\rVert_F/\lVert X\rVert_F$ 明显大于噪声水平（例如噪声 $1\%$ 而残差 $8\%$）→ $k$ 取得太小，把信号也砍了。
-③ $k$ 增大到某处后验证损失（或下游指标）**先变好再变坏**，且坏的那段对应 $\sigma_{k+1}$ 已低于噪声水平 → 把噪声方向当成了信号方向。
-④ `svd` 返回值里出现 $\sigma_i/\sigma_1\lt10^{-15}$ 的非零「奇异值」却把它当真 ⇒ 数值秩判断被机器精度污染；或 $\mathrm{cond}(X)\ge10^{16}$ 时任何双精度结论都不可用。
+① 若任务确实还要使用伪逆，检查噪声沿小奇异方向的输出变化；绝对放大因子是 $1/\sigma_r$，不能把有量纲的输入输出范数比直接等同于条件数。纯压缩任务不因条件数大就失败。
+② 截断后重建误差 $\lVert X-X_k\rVert_F/\lVert X\rVert_F$ 明显超过任务容差（例如容差 $1\%$、实测 $8\%$），应增大 $k$ 或调整目标；该现象本身不证明被丢弃的部分全是信号。
+③ 随 $k$ 增大，验证损失先改善后恶化，可作为过拟合噪声的警报；还应检查验证数据分布与噪声估计，不只看奇异值。
+④ 若把低于舍入或测量噪声尺度的奇异值当成可靠秩依据，判秩结论缺乏保证；$\mathrm{cond}(X)\ge10^{16}$ 并不使所有双精度量都不可用，主奇异子空间或低秩重建仍可能可靠。
 
 **(4) 验证计划**
-① **理论对账**：直接核对 $\lVert X-X_k\rVert_2=\sigma_{k+1}$ 与 $\lVert X-X_k\rVert_F=\sqrt{\sum_{i\gt k}\sigma_i^2}$（应当精确到机器精度）；
-② **构造对照**：用指定谱（如指数衰减）合成矩阵，检查实测误差曲线与理论曲线重合，并随机生成若干秩 $k$ 矩阵证明它们的误差都 $\ge\sigma_{k+1}$（Eckart–Young 的下界）；
-③ **中心化核账**：验证 $\sigma_i(X_c)=\sqrt{(n-1)\lambda_i(C)}$（$C$ 为样本协方差）与方差解释比之和为 $1$；
-④ **技术路线对照**：`svd` 与 `eigh(X_cᵀX_c)` 的结果比对——数值上应当一致，但在病态情形 $A^{\mathrm T}A$ 路线会明显更差（这是「不要在 $A^{\mathrm T}A$ 上做特征值分解」的活证据）；
+① **理论对账**：对精确截断 SVD，应有 $\lVert X-X_k\rVert_2=\sigma_{k+1}$、$\lVert X-X_k\rVert_F=\sqrt{\sum_{i>k}\sigma_i^2}$；数值比较应采用与规模、范数和算法误差相称的容差。随机化近似只检查实际误差与最优误差的差距。
+② **构造对照**：用指定谱（如指数衰减）合成矩阵，比较实测与理论误差。随机生成的秩 $k$ 候选可检验其误差是否不低于 $\sigma_{k+1}$，但有限次实验不能证明 Eckart–Young 定理。
+③ **中心化核账**：本题样本数 $m=2000$、特征数 $n=1500$，令 $C=X_c^{\mathrm T}X_c/(m-1)$，验证 $\sigma_i(X_c)=\sqrt{(m-1)\lambda_i(C)}$；保留全部主成分时方差解释比之和为 $1$，截断后的和一般小于 $1$。
+④ **技术路线对照**：比较直接 SVD 与 `eigh(X_cᵀX_c)`；精确算术下关系一致，有限精度下 Gram 矩阵路线对较小奇异值可能明显更差，不要求两条路线逐项一致。
 ⑤ 固定随机种子，报告 $\sigma_i$ 谱、$k$、能量占比、残差与下游指标四组数字，便于复现。
 
 **评分**：(1) $4$ 分（工具 + 公式 $2$、两条排除理由各 $0.5$、中心化前提 $1$）；(2) $3$ 分（三条判据各 $1$，须含阈值取法）；(3) $2$ 分（三条可测量判据）；(4) $1$ 分（至少两条对账项）。**中心化没提，(1) 上限 $2$ 分。**
@@ -300,28 +303,25 @@ $$X\approx X_k=\sum_{i\le k}\sigma_i\boldsymbol u_i\boldsymbol v_i^{\mathrm T},\
 
 **(1) 结论不成立。** 正确的关系是
 $$\boldsymbol e=\hat{\boldsymbol x}-\boldsymbol x=-A^{-1}\boldsymbol r\ \Longrightarrow\ \frac{\lVert\boldsymbol e\rVert}{\lVert\boldsymbol x\rVert}\le\mathrm{cond}(A)\,\frac{\lVert\boldsymbol r\rVert}{\lVert\boldsymbol b\rVert}\quad(\text{或}\ \lVert\boldsymbol e\rVert\le\lVert A^{-1}\rVert\lVert\boldsymbol r\rVert),$$
-即「能信几位」由 $\mathrm{cond}(A)\cdot\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$ 决定，而不是由残差本身决定。各项来源：
-- $\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$：求解器直接给出（后向误差，算法稳定的证据）；
-- $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$：**不需求逆**也能估——用 `cond(A,1)` / `cond(A,inf)`（基于 LU 的逆估计，$O(n^2)$，LAPACK `gecon`）或 $1/\lVert A^{-1}\rVert$ 的估计；**报告时必须注明用的哪个范数**（$\mathrm{cond}_1,\mathrm{cond}_2,\mathrm{cond}_\infty$ 数值可差 $n$ 倍量级，但「丢几位」的结论一致）；
-- 丢失位数 $k\approx\log_{10}\mathrm{cond}$，本例若 $\mathrm{cond}\approx10^{10}$，则 $k\approx10$：解只剩约 $6$ 位，与「精确到 15 位」相差甚远。
-**一句话**：求解器保证的是「某个邻近问题的精确解」（后向稳定），用户要的是「自家问题的近似解」（前向误差），两者之间隔着条件数（[1.2.6](../ch01/sec12.md#sec-1.2.6)、[@thm-sup-2.4.4]）。
+这个乘积给出相对误差的上界，不直接决定实际能信几位。相对残差表示仅允许右端改变时的相对扰动大小；单次小残差不证明整个算法后向稳定。条件数须使用与残差相同向量范数对应的诱导矩阵范数；大规模稀疏问题可用分解或迭代方法估计逆范数，不必显式形成逆。
+
+若条件数约为 $10^{10}$、相对残差为 $3\times10^{-15}$，则上界约为 $3\times10^{-5}$。这不足以保证 15 位，并不证明实际误差必然这么大。后向误差与前向误差的关系见[1.2.6](../ch01/sec12.md#sec-1.2.6)和[@thm-sup-2.4.4]。
 
 **(2) 三步诊断（不求逆）**
-① **估条件数**：`np.linalg.cond(A, np.inf)`（或 1-范数版、或让 LAPACK 返回逆范数估计），得到 $\mathrm{cond}$ 的量级；同时做**行均衡化**（各行除以该行绝对值和或最大元）后再估一次——若两次数值差 $10^{10}$ 倍以上，原报告里的「病态」有一半是单位没选好。
-② **算判据**：比较 $\mathrm{cond}\cdot\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$ 与目标精度（例如要求相对误差 $\le10^{-6}$）：若该乘积远大于目标，则**问题本身**就给不出这么准的解，换算法无效（病态是问题的属性）；若乘积达标，则可放心使用残差结论。
-③ **可选加固**：把参数、矩阵按需做**迭代精化**（用双精度算残差 $\boldsymbol r=\boldsymbol b-A\boldsymbol x$，再解 $A\delta\boldsymbol x=\boldsymbol r$、令 $\boldsymbol x\leftarrow\boldsymbol x+\delta\boldsymbol x$），或提高工作精度（`float128` / double-double / MPFR）；若 $\mathrm{cond}\gtrsim10^{16}$，只能**重述问题**（正则化 / 换配方 / 换模型）。
+① **估条件数**：选择与残差一致的范数，用适合稀疏矩阵的条件数估计器；比较行均衡化前后结果时，注明缩放改变了扰动模型。
+② **比较上界与目标**：将估计的 $\mathrm{cond}\,\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$ 与目标精度比较；上界过大表示此界不足以保证目标，而非证明实际误差一定过大。
+③ **改善与验证**：视情况采用迭代精化（计算残差、解修正方程并更新解）或更高工作精度；小残差宜用足够精度计算。正则化会改变原问题，应同时报告引入的偏差。
 
 **(3) 失败判据（≥3，可测量）**
-① $\mathrm{cond}(A)\cdot\lVert\boldsymbol r\rVert/\lVert\boldsymbol b\rVert$ 超过目标精度 $10$ 倍以上 → 「15 位」的结论作废（本判据直接推翻原报告）。
-② 构造已知真解 $\boldsymbol x^{*}$（取 $\boldsymbol x^{*}=\boldsymbol 1$，令 $\boldsymbol b=A\boldsymbol x^{*}$）后用同一求解器求解，实测相对误差 $\gg\mathrm{cond}\cdot u$（例如预测 $10^{-6}$ 而实测 $10^{-2}$）→ 说明还有别的问题：算法不稳定、矩阵输入有误或残差计算方式不一致。
-③ 换三种算法（直接法 / 迭代法 / 高精度参考）得到的解**相互差异**大于预测误差 $10$ 倍 → 至少两种实现中有一种不可靠，先查残差与主元。
-④ 行均衡化前后 $\mathrm{cond}$ 相差 $10^{10}$ 倍以上 → 报告里的病态判断建立在缩放不良之上，先修单位再谈精度。
-⑤ 停机判据用「相邻迭代差」时，若 $\lVert\Delta\boldsymbol x_{k+1}\rVert/\lVert\Delta\boldsymbol x_k\rVert$ 长期 $\gt0.9$ → 迭代矩阵谱半径过于接近 $1$，步数不可预测，报告里的精度不可信（呼应第一章 [1.3.5](../ch01/sec13.md#sec-1.3.5) 的收敛判据）。
+① 误差上界估计大于目标精度时，不应声称该界保证目标；这不是实际误差超标的证明。
+② 对已知解构造测试，比较实际误差、尺度化残差及条件数；偏差异常时检查算法、输入与残差计算。
+③ 与高精度参考或另一可靠方法比较，差异过大时检查两者的残差及输入表示。行均衡化前后的条件数可帮助诊断尺度，但两者对应不同扰动模型。
+④ 停机时若相邻迭代差长期下降缓慢，应检查残差与迭代行为；单凭差值比不能确定谱半径或最终误差。
 
 **(4) 验证计划**
-① **构造已知真解**：取 $\boldsymbol x^{*}=\boldsymbol 1$，算 $\boldsymbol b=A\boldsymbol x^{*}$，再用待测求解器求解，报「实测相对误差 / $\mathrm{cond}\cdot u$」的比值（稳定在这个比值的常数倍内，说明界是紧的）；
-② **多算法对照**：直接法（LU + 主元）、迭代法（预条件 GMRES）、高精度参考（`float128` 或迭代精化到收敛）三条路线互相验证；差异超预期就回到 ① 找原因；
-③ **条件数敏感性扫描**：把 $\mathrm{cond}$ 从 $10^{4}$ 扫到 $10^{16}$（例如用 Hilbert 或 Vandermonde 族），画「实测误差 vs $\mathrm{cond}\cdot u$」曲线，验证两者同量级、并标出误差超过 $100\%$ 的临界点；
+① **构造已知解**：取 $\boldsymbol x^*=\boldsymbol1$，以足够精度形成 $\boldsymbol b=A\boldsymbol x^*$，报告实际误差、残差及条件数参考量级；误差未达到上界不构成失败。
+② **多算法对照**：比较带主元的直接法、适用的迭代法及高精度参考，注明平台上 `float128` 的实际精度；迭代精化不能自动替代高精度基准。
+③ **敏感性扫描**：改变矩阵与右端，观察误差和 $\mathrm{cond}\,u$ 的关系，不预设统一的误差临界点。
 ④ **报告规范核对**：结果一行必须含「值 + 残差 + $\mathrm{cond}$ 的量级与所用范数 + 预计可靠位数」；缺范数注明的报告按不合格处理（范数影响误差界的常数，见 [1.3.6](../ch01/sec13.md#sec-1.3.6)）。
 
 **评分**：(1) $4$ 分（判断 $1$、估计式 $1.5$、两个因子的来源 $1.5$）；(2) $3$ 分（三步各 $1$，须可执行）；(3) $2$ 分（三条可测量）；(4) $1$ 分（构造真解 + 多算法对照）。**不注明范数、或把残差直接当误差，(1) 得 $0$ 分。**
@@ -334,10 +334,10 @@ $$\boldsymbol e=\hat{\boldsymbol x}-\boldsymbol x=-A^{-1}\boldsymbol r\ \Longrig
 
 | 部分 | 题量 | 分值 | 给分要点 |
 |:--|:--:|:--:|:--|
-| 一 · 概念判断 | 10 | 30 | 判断 $1$ 分 + 理由 / 反例 $2$ 分；只写对错得 $1$ 分 |
+| 一 · 概念判断 | 10 | 30 | 判断 $1$ 分 + 理由 / 反例 $2$ 分；只写对错不给分，与题前口径一致 |
 | 二 · 填空与简答 | 5 | 20 | 结果正确 $2$ 分 + 关键说明 $2$ 分；中间量缺失扣 $1$ 分 |
 | 三 · 推导计算 | 3 | 30 | 中间量 / 公式 $3$ 分 + 链条完整 $4$ 分 + 核对与收口 $3$ 分；只写结论最多 $3$ 分 |
-| 四 · 开放论述 | 2 | 20 | 方案具体 $4$ 分 + 判据可测量 $4$ 分 + 验证计划 $2$ 分 |
+| 四 · 开放论述 | 2 | 20 | 各题均为方案或推理 $4$ 分、三步流程或阈值判据 $3$ 分、失败判据 $2$ 分、验证 $1$ 分，细目按题后标准 |
 
 **段位换算**：$\ge90$ 优秀（能讲清「哪个工具、为什么、代价多少」）；$75\!-\!89$ 良好（能独立走完 QR / SVD 全流程）；$60\!-\!74$ 及格（公式会算、条件记不牢）；$<60$ 回到 [2.8](sec28.md#sup-2.8.2) 的八个陷阱逐条对照，再重做[习题集](exercises.md)同型题。**自评纪律**：① 判断理由必须包含**机制词**（平行四边形恒等式、列满秩、对称 + 幂等、$\mathrm{cond}$ 平方、正交性损失量级、截断阈值），否则按半对给 $1$ 分；② 手算题凡是**跳过 $A^{\mathrm T}\boldsymbol r=\boldsymbol 0$ 自检**或**不写中间量**的，从收口里扣 $1$ 分；③ 概念题把「$\mathrm{cond}(A)$ 很小的良态问题」与「算法要不要换」混为一谈的，按概念性错误处理（该题理由不得分）。
 

@@ -2,7 +2,7 @@
 
 > 本页属“补充篇 · 数值线性代数工具箱”，不是课堂第 2 章；课堂第 2 章见[线性方程组的解法](../course/ch02/overview.md)。
 
-本章习题按难度分四组：A 组概念判断（快速自检）、B 组推导证明（考试大题）、C 组计算与编程（动手实操）、D 组开放建模（迁移综合）。四组**均附解答或提示**（默认折叠），C 组每题另给验收标准。所有题目只使用第一章与第二章已讲的概念（外加 `numpy` / `math`），不要求后续章节的方法。
+本篇习题按难度分四组：A 组概念判断、B 组推导证明、C 组计算与编程、D 组开放建模，均附解答或提示，C 组另给验收标准。使用第一章与本补充篇的概念；带图的报告还需自行选择绘图工具。编程题的旧输出保留作比较，不是逐位验收基准；应记录随机种子、浮点类型、范数、平台和库版本。
 
 ## A 组 · 概念判断
 
@@ -18,9 +18,9 @@
 
 **本题在考**：内积与范数的分工——范数要满足什么条件才来自内积，「标准」与「正交」又为什么是两件事。
 
-**(a) 错。** 反例要在「两个范数都为 1、$\boldsymbol{x}\neq\boldsymbol{y}$、但内积不为零」的前提下找：$\boldsymbol{x}=(1,0)^{\mathrm T}$、$\boldsymbol{y}=(0,1)^{\mathrm T}$ 正交 ✓，不合用；而 $\boldsymbol{y}=(1,0)^{\mathrm T}=\boldsymbol{x}$ 会被 $\boldsymbol{x}\neq\boldsymbol{y}$ 排除。改取 $\boldsymbol{x}=(1,0)^{\mathrm T}$、$\boldsymbol{y}=(\cos\theta,\sin\theta)^{\mathrm T}$，只要 $\theta\neq90^{\circ}$，两个范数都是 1、两向量又不同，而内积 $=\cos\theta\neq0$。**范数都是 1 只说明「标准」，正交必须单独验证内积为零**（[例 2.1.3](sec21.md#sup-2.1.3) 的教训）。
+**(a) 错。** 取 $x=(1,0)^{\mathrm T}$、$y=(\cos\theta,\sin\theta)^{\mathrm T}$，例如 $\theta=60^{\circ}$，两者不同且范数均为 1，而内积为 $1/2\ne0$。“标准”只要求单位长度，“正交”还须内积为零（[例 2.1.3](sec21.md#sup-2.1.3)）。
 
-**(b) 错。** 只有满足平行四边形恒等式（2.2）的范数才来自内积（[@thm-sup-2.1.2]）。$\lVert\cdot\rVert_1$ 与 $\lVert\cdot\rVert_\infty$ 都不满足（[@ex-sup-2.1.2]），故它们**不来自任何内积**。**推论：$\lVert\cdot\rVert_1,\lVert\cdot\rVert_\infty$ 没有正交、投影、SVD 这套结构。**
+**(b) 错。** 只有满足平行四边形恒等式（2.2）的范数才来自内积（[@thm-sup-2.1.2]）。维数至少为 2 时 $\|\cdot\|_1$ 与 $\|\cdot\|_\infty$ 不满足它（[@ex-sup-2.1.2]）；仍可另选 Euclid 内积来定义正交和 SVD，但不能把它们说成由这两个范数诱导。
 
 **(c) 错。** $Q^{\mathrm T}Q=I_n$ 只说明列标准正交。$QQ^{\mathrm T}$ 是 $\mathbb{R}^m$ 上的**投影矩阵**（投影到 $C(Q)$ 上），$\operatorname{tr}(QQ^{\mathrm T})=n\lt m$，故 $QQ^{\mathrm T}\neq I_m$（[@thm-sup-2.2.5]、[2.1.4](sec21.md#sup-2.1.4) 常见错误 4）。
 
@@ -48,7 +48,7 @@
 
 **(c) 前半对、后半错。** 最小二乘解**总存在**（正态方程的右端 $A^{\mathrm T}\boldsymbol{b}\in C(A^{\mathrm T})=C(A^{\mathrm T}A)$，[@thm-sup-2.2.6]）；但**唯一 $\iff$ $A$ 列满秩**。秩亏时解成一整个集合（仿射子空间），此时「最小范数解」才唯一——由伪逆给出（[@thm-sup-2.6.3]、[例 2.6.5](sec26.md#sup-2.6.5)）。
 
-**(d) 错。** 「残差小 ≠ 误差小」。定量关系是 $\dfrac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}$（[@thm-sup-2.4.4]）；条件数大时残差可以极小而误差极大（[例 2.4.4](sec24.md#sup-2.4.4) 实测：残差 $2.5\times10^{-12}$、误差 $50\%$）。
+**(d) 错。** 对非奇异方阵且 $b\ne0$，有 $\|e\|/\|x\|\le\mathrm{cond}(A)\|r\|/\|b\|$（[@thm-sup-2.4.4]）；病态时小残差可与大误差共存。一般不相容最小二乘问题的最优残差本来可以非零，不能不加条件地套用方程组的这条界。
 
 :::
 
@@ -70,9 +70,9 @@
 
 **(b) 错。** $\det H=-1$（$H$ 的特征值是 $-1$ 与 $k-1$ 重的 $1$，[@thm-sup-2.3.3]）。**$H$ 是反射（反定向）**；$\det=+1$ 的是 Givens 旋转（[@def-sup-2.3.2]）。
 
-**(c) 错。** Householder 一次改动整个子块，**会毁掉稀疏结构**（fill-in）。稀疏矩阵应用 **Givens 旋转**（一次只改两行，[@thm-sup-2.3.4] 后的对比表）。
+**(c) 不能一概而论。** Householder 可能引起填充；Givens 只作用于两行，适合某些结构或逐行更新，但也可能引起填充。实际稀疏 QR 也广泛使用带排序的 Householder，选择取决于结构与实现，不能只凭“稀疏”二字排除它。
 
-**(d) 错（原命题不够严格）。** 只有加上「$R$ 对角元全为正」的规范化才唯一（[@thm-sup-2.3.2]）；一般地，$Q\to Q\operatorname{diag}(\pm1)$、$R\to\operatorname{diag}(\pm1)R$ 保持 $QR$ 不变。LAPACK 与 NumPy 允许负对角元，所以不同库的 $Q,R$ 可以差若干列的符号。**秩亏时更是完全不唯一。**
+**(d) 错。** 对列满秩矩阵的经济型 QR，规定 $R$ 对角元为正才唯一；否则可同时改变 $Q$ 列与 $R$ 行的符号。满 QR 中正交补的基仍可变化，秩亏时也不能照用该唯一性结论。
 
 :::
 
@@ -90,11 +90,11 @@
 
 **本题在考**：条件数、谱半径与奇异值三者的适用范围——涉及它们的关系式，大都是「在特定假设下」才成立的等式。
 
-**(a) 对。** $\mathrm{cond}(cA)=\mathrm{cond}(A)$（[@thm-sup-2.4.1] 第 3 条）——条件数对整体缩放免疫。**但要注意各行 / 各列的相对尺度会影响 $\mathrm{cond}_\infty$**（行均衡化能降低它，[例 2.4.5](sec24.md#sup-2.4.5)）：$\mathrm{cond}$ 衡量的是「列 / 行向量之间的接近平行程度」，不是元素绝对大小。
+**(a) 需限定范数和比较方式。** $\mathrm{cond}(cA)=\mathrm{cond}(A)$（$c\ne0$），但各方向的相对尺度也会影响条件数。例如 $\operatorname{diag}(1,M)$ 的两列正交，条件数仍可随 $M$ 增大。2-范数条件数是到奇异矩阵相对距离的倒数。
 
-**(b) 错。** 只有**正规**矩阵（含对称、正交、对称半正定）才有 $\rho=\lVert A\rVert_2$。反例：$N=\begin{pmatrix}1&1000\\0&1\end{pmatrix}$ 的 $\rho=1$ 而 $\lVert N\rVert_2\approx1000$；一般只有 $\rho\le\lVert A\rVert$（[2.5.1](sec25.md#sup-2.5.1)）。
+**(b) 错。** 正规矩阵保证 $\rho(A)=\|A\|_2$，但这不是取等的必要条件。反例 $N=\begin{pmatrix}1&1000\\0&1\end{pmatrix}$ 的 $\rho=1$ 而 $\|N\|_2\approx1000$；一般只有 $\rho\le\|A\|$（[2.5.1](sec25.md#sup-2.5.1)）。
 
-**(c) 对。** 对列满秩长方形矩阵，$\sigma_{\min}\gt0$，$A^{+}$ 或 $A^{\mathrm T}A$ 的谱给出 $\mathrm{cond}_2=\sigma_1/\sigma_n$（其中 $n=\min(m,n)$）。「条件数」这个概念用在长方形矩阵上时，要靠「相对于列空间的敏感度」来定义（[2.4.1](sec24.md#sup-2.4.1)、[2.6.3](sec26.md#sup-2.6.3)）。
+**(c) 对，但须定义。** 列满秩矩阵可定义 $\mathrm{cond}_2(A)=\|A\|_2\|A^+\|_2=\sigma_1/\sigma_n$，此时 $m\ge n$。它度量 $A$ 在输入空间到列空间之间的伸缩比；不能因此声称一般不相容最小二乘对 $A,b$ 的全部相对敏感性都仅由这个数给出，后者还依赖残差与数据方向。
 
 **(d) 错（不成立）。** $\rho(A)\lt1$ 只保证 $\lVert A^k\rVert\to0$（**渐近**），不保证**单调**递减——非正规矩阵存在「瞬态增长」（[例 2.5.6](sec25.md#sup-2.5.6)）。反例：$\begin{pmatrix}0.9&10\\0&0.9\end{pmatrix}$ 的 $\rho=0.9$，但 $\lVert A^1\rVert$ 可以很大。**稳妥判据：$\lVert A\rVert\lt1$ 才保证每一步收缩。**
 
@@ -127,7 +127,7 @@
 
 ::: ex B2 · 对称矩阵的谱定理
 
-证明：实对称矩阵的全部特征值为实数，且存在正交矩阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$。（本题只要求完整证明前半句与「特征向量可正交化」；后半句可用 Schur 形式 + 归纳得到。）
+证明：实对称矩阵的全部特征值为实数，且存在正交矩阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$。要求补齐“存在足够多特征向量”这一步；可用正交补不变性作归纳，不必预先使用 Schur 定理。
 
 ::: sol 解答
 
@@ -145,11 +145,11 @@ $$\overline{\boldsymbol{v}}^{\mathrm T}A^{\mathrm T}\boldsymbol{v}=\overline{\la
 
 $$\lambda_1\boldsymbol{v}_1^{\mathrm T}\boldsymbol{v}_2=(A\boldsymbol{v}_1)^{\mathrm T}\boldsymbol{v}_2=\boldsymbol{v}_1^{\mathrm T}A\boldsymbol{v}_2=\lambda_2\boldsymbol{v}_1^{\mathrm T}\boldsymbol{v}_2\ \Longrightarrow\ (\lambda_1-\lambda_2)\boldsymbol{v}_1^{\mathrm T}\boldsymbol{v}_2=0\ \Longrightarrow\ \boldsymbol{v}_1\perp\boldsymbol{v}_2 .$$
 
-**重特征值情形：** 若 $\lambda$ 有重数 $k$，其**特征子空间**维数恰为 $k$（对称矩阵可对角化——由 Schur 形式 $A=QTQ^{\mathrm T}$ 且 $A$ 对称蕴含 $T$ 对称、对称的上三角阵是对角阵）。在该子空间内任取标准正交基（Gram–Schmidt，[2.3.1](sec23.md#sup-2.3.1)）。
+**正交补不变，补齐存在性。** 已证某个特征值 $\lambda$ 为实数。由于 $A-\lambda I$ 为实矩阵，复特征向量的实部、虚部至少有一个是非零实特征向量；将其单位化为 $u$。若 $z\perp u$，则 $u^{\mathrm T}Az=(Au)^{\mathrm T}z=\lambda u^{\mathrm T}z=0$，所以 $u^\perp$ 在 $A$ 下不变。在 $u^\perp$ 的任意标准正交基下，限制算子仍由实对称的 $(n-1)\times(n-1)$ 矩阵表示；对维数归纳，得到该空间的一组标准正交特征基，加上 $u$ 即得到所需的 $V$。
 
-**拼起来：** 各特征子空间两两正交、内部标准正交，合起来有 $n$ 个标准正交向量，构成 $V$。此时 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$ ✓。
+**重特征值也包括在内。** 上述归纳得到 $n$ 个标准正交特征向量，故每个重特征值的特征子空间维数等于其代数重数；可在该空间内任选标准正交基。
 
-（**关键的一步是「对称矩阵可对角化」**——这可从 Schur 形式直接得到：任何方阵可写成 $A=QTQ^{\mathrm T}$（$Q$ 正交、$T$ 上三角），而 $A^{\mathrm T}=A$ 迫使 $T^{\mathrm T}=T$，上三角且对称者必为对角阵。）
+**与 Schur 形式的关系：** 对本题谱全实的矩阵，也可用实上三角 Schur 形式。但一般实方阵只保证实的块上三角 Schur 形式，可能含 $2\times2$ 块；不能说所有实方阵都能由实正交变换化成上三角阵。
 
 :::
 
@@ -199,13 +199,13 @@ $$AX=U\Sigma\Sigma^{+}U^{\mathrm T}\ \text{对称（对角 $\{0,1\}$、$U$ 正�
 
 $$AX_1=AX_2\quad\text{（因为二者都是到 }C(A)\text{ 的正交投影，投影到同一子空间的幂等对称矩阵唯一）}.$$
 
-于是 $X_1AX_1=X_1AX_2$（左边 $=X_1$），故 $X_1=X_1AX_2$。再取转置：$X_1^{\mathrm T}=X_2^{\mathrm T}A^{\mathrm T}X_1^{\mathrm T}$。
+同理，$X_iA$ 对称幂等，其零空间为 $N(A)$：一方面 $Az=0$ 蕴含 $X_iAz=0$，另一方面 $X_iAz=0$ 蕴含 $Az=AX_iAz=0$。因此 $X_iA$ 是到 $N(A)^\perp=C(A^{\mathrm T})$ 的正交投影，得到 $X_1A=X_2A$。
 
-也可以直接代入四条件往下算：$X_1=X_1AX_1=X_1AX_2=A^{\mathrm T}X_1^{\mathrm T}X_2$（用 $(X_1A)^{\mathrm T}=X_1A$）$=X_2^{\mathrm T}A^{\mathrm T}X_1^{\mathrm T}X_2=\ldots$，只是会越算越繁；更简洁的标准做法是利用 $AX_1=AX_2$ 与 $X_1A=X_2A$：
+现在同时使用两个投影的唯一性：
 
-$$X_1=X_1AX_1=X_1\underbrace{AX_2}_{=AX_1}=X_1AX_2=\underbrace{X_1A}_{=X_2A}X_2=X_2AX_2=X_2 .$$
+$$X_1=X_1AX_1=X_1AX_2=X_2AX_2=X_2.$$
 
-（第一步、最后一步用 $XAX=X$；第三步用 $AX_1=AX_2$；第五步用 $X_1A=X_2A$。）故唯一 ✓。
+第一、最后一步用 $X_iAX_i=X_i$，中间依次用 $AX_1=AX_2$ 与 $X_1A=X_2A$。这样不需要未完成的连乘或转置猜测，唯一性得证。
 
 :::
 
@@ -213,7 +213,7 @@ $$X_1=X_1AX_1=X_1\underbrace{AX_2}_{=AX_1}=X_1AX_2=\underbrace{X_1A}_{=X_2A}X_2=
 
 ::: ex B5 · 残差与误差的方向
 
-设 $A$ 非奇异，$\boldsymbol{x}$ 是精确解，$\hat{\boldsymbol{x}}$ 是近似解，$\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$，$\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$。证明
+设 $A$ 非奇异，$b\ne0$，$x$ 是精确解，$\hat x$ 是近似解，$r=b-A\hat x$，$e=\hat x-x$。统一使用同一向量范数及其诱导矩阵范数，证明
 
 $$\text{(i)}\quad\lVert\boldsymbol{r}\rVert\le\lVert A\rVert\,\lVert\boldsymbol{e}\rVert,\qquad
 \text{(ii)}\quad\frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\mathrm{cond}(A)\cdot\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert},$$
@@ -230,18 +230,13 @@ $$\lVert\boldsymbol{r}\rVert=\lVert A\boldsymbol{e}\rVert\le\lVert A\rVert\lVert
 
 $$\frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\lVert A^{-1}\rVert\lVert\boldsymbol{r}\rVert\cdot\frac{\lVert A\rVert}{\lVert\boldsymbol{b}\rVert}=\mathrm{cond}(A)\cdot\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\ ✓$$
 
-**方向不对称的原因：** （i）是「**误差小 ⟹ 残差小**」，放缩只用 $\lVert A\rVert$，系数有界；而（ii）是「**残差小 ⟹ 误差小**」，放缩里出现了 $\lVert A^{-1}\rVert$——**它可以是任意大**。
+**方向与尺度。** 固定 $A$ 时，两条不等式的系数都是有限的；在不同矩阵之间，$\|A\|$ 与 $\|A^{-1}\|$ 都可能很大，不能把前者一概称为“有界”、后者称为“无界”。真正尺度不变的比较是相对残差乘条件数。求解器报告小残差只说明近似满足方程；若相对残差为 $10^{-16}$、条件数为 $10^{12}$，上述精确残差界给出相对解误差不超过 $10^{-4}$，并不说误差恰等于这个数。
 
-$$\text{(i) 的系数}=\lVert A\rVert\quad(\text{有界}),\qquad
-\text{(ii) 的系数}=\lVert A^{-1}\rVert\quad(\text{可无界}) .$$
+**补充（换成近似解作分母）。** 记 $\beta=\mathrm{cond}(A)\|r\|/\|b\|$。由（ii）已有 $\|e\|/\|x\|\le\beta$，无需修正。若 $\beta<1$，则 $\|\hat x\|\ge\|x\|-\|e\|\ge(1-\beta)\|x\|$，所以
 
-**这就是为什么残差不能当误差的代理指标：** 求解器给出的是（i）方向的保证（「我把方程解得很好」），用户想要的是（ii）方向的保证（「我的解很准」）；两者之间恰好隔着一个 $\mathrm{cond}(A)$。**当 $\mathrm{cond}(A)\approx10^{12}$ 时，残差 $10^{-16}$ 只保证误差 $\le10^{-4}$。**
+$$\frac{\|e\|}{\|\hat x\|}\le\frac{\beta}{1-\beta}.$$
 
-**补充（条件化的反向界）：** 若额外假设 $\mathrm{cond}(A)\cdot\dfrac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\lt1$，则可从 $\boldsymbol{x}=\hat{\boldsymbol{x}}-\boldsymbol{e}$ 出发得到带修正因子的版本
-
-$$\frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\frac{\mathrm{cond}(A)\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert}{1-\mathrm{cond}(A)\cdot\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert},$$
-
-但**这个修正版的实用价值远低于（ii）**——因为分母要求条件数已经足够小，而那正是「不需要担心」的场景。**记住（ii）就够：残差要乘上 $\mathrm{cond}(A)$ 才是误差的界。**
+分母修正来自参考向量由真解换为近似解，不是原界失效；条件 $\beta<1$ 也不等价于条件数本身小。
 
 详见 [@thm-sup-2.4.4] 与 [例 2.4.4](sec24.md#sup-2.4.4)（那里实测了残差 $2.5\times10^{-12}$ 而误差 $50\%$ 的极端情形）。
 
@@ -251,7 +246,7 @@ $$\frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\frac{\mathrm{
 
 ::: ex B6 · Eckart–Young 的 Frobenius 版本
 
-证明（2.35）：$\displaystyle\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_F=\sqrt{\sigma_{k+1}^2+\cdots+\sigma_r^2}$，最小值由 $A_k$ 达到。（提示：用奇异值的 Weyl 不等式 $\lvert\sigma_i(A)-\sigma_i(B)\rvert\le\lVert A-B\rVert_2$，以及 $\lVert\cdot\rVert_2\le\lVert\cdot\rVert_F$ 的方向。）
+证明（2.35）：$\displaystyle\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_F=\sqrt{\sigma_{k+1}^2+\cdots+\sigma_r^2}$，最小值由 $A_k$ 达到。提示：展开 $\|A-B\|_F^2$，使用 von Neumann 迹不等式；逐个奇异值的谱范数误差界不足以直接得到平方和界。
 
 ::: sol 解答
 
@@ -259,19 +254,18 @@ $$\frac{\lVert\boldsymbol{e}\rVert}{\lVert\boldsymbol{x}\rVert}\le\frac{\mathrm{
 
 $$\lVert A-A_k\rVert_F^2=\sum_{i\gt k}\sigma_i^2=\sigma_{k+1}^2+\cdots+\sigma_r^2 .$$
 
-**下界（任何 $\operatorname{rank}B\le k$ 都不更好）：** 设 $\operatorname{rank}B\le k$，则 $B$ 至多有 $k$ 个非零奇异值，即 $\sigma_{k+1}(B)=\cdots=\sigma_n(B)=0$。由 Weyl 不等式（谱范数版，即 [@thm-sup-2.5.6] 的「一」应用到 $A^{\mathrm T}A$ 与 $B^{\mathrm T}B$ 的平方根）：
+**下界。** 记 $p=\min(m,n)$，$a_i=\sigma_i(A)$、$b_i=\sigma_i(B)$，均降序排列。迹不等式（[@ex-sup-2.6.4]）给出
 
-$$\lvert\sigma_i(A)-\sigma_i(B)\rvert\le\lVert A-B\rVert_2\qquad(i=1,\dots,n) .$$
+$$\begin{aligned}
+\|A-B\|_F^2
+&=\sum_{i=1}^p a_i^2+\sum_{i=1}^p b_i^2-2\operatorname{tr}(A^{\mathrm T}B)\\
+&\ge\sum_{i=1}^p(a_i-b_i)^2
+\ge\sum_{i>k}a_i^2,
+\end{aligned}$$
 
-于是对 $i\gt k$：$\sigma_i(A)=\lvert\sigma_i(A)-\underbrace{\sigma_i(B)}_{0}\rvert\le\lVert A-B\rVert_2$。这对**每个** $i\gt k$ 成立，故
+最后一步用 $\operatorname{rank}B\le k$，故 $b_i=0$（$i>k$）。与上界合起来即得结论。这个平方和不等式由迹不等式推出，不是把 $|a_i-b_i|\le\|A-B\|_2$ 对 $i$ 相加；对 $A^{\mathrm T}A$、$B^{\mathrm T}B$ 使用 Weyl 再开方也不能直接得到所需形式。
 
-$$\lVert A-B\rVert_F^2=\sum_{i=1}^{n}\sigma_i(A-B)^2\ \ge\ \sum_{i=1}^{n}\bigl(\sigma_i(A)-\sigma_i(B)\bigr)^2\ \ge\ \sum_{i\gt k}\sigma_i(A)^2 .$$
-
-（第一个不等号用「奇异值的 $\ell^2$ 距离不超过矩阵的 F-范数」这一 Sylvester 型不等式：$\sum_i(\sigma_i(A)-\sigma_i(B))^2\le\lVert A-B\rVert_F^2$，它是 von Neumann 迹不等式（[@ex-sup-2.6.4]）的推论。）
-
-两边开方即得下界，与上界重合 ✓。**等号成立条件：** 需要 $B$ 的奇异向量与 $A$ 在 $i\le k$ 上对齐——这正是 $A_k$。
-
-（注：$\lVert A-B\rVert_F\ge\lVert A-B\rVert_2$，所以 Frobenius 版的下界比谱范数版弱，但结论中的**最小值恰好是同一个 $A_k$ 达到**——这体现了 $A_k$ 同时最优于两个范数。）
+两种范数的最优误差值不同，但同一个 $A_k$ 都能达到最小值。F-范数的尾部平方和界通常强于仅保留 $\sigma_{k+1}$ 的下界；最优矩阵的唯一性须按范数与边界谱间隙分别讨论（见 [2.6.7](sec26.md#sup-2.6.7)）。
 
 :::
 
@@ -374,13 +368,9 @@ $\boldsymbol{v}^{\mathrm T}\boldsymbol{v}=2+1+1=4$，故 $H_1=I-\frac12\boldsymb
 $$H_1=I-\frac12\begin{pmatrix}2&\sqrt2&\sqrt2\\\sqrt2&1&1\\\sqrt2&1&1\end{pmatrix}
 =\begin{pmatrix}0&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt2}\\-\frac{1}{\sqrt2}&\frac12&-\frac12\\-\frac{1}{\sqrt2}&-\frac12&\frac12\end{pmatrix}.$$
 
-$$H_1A=\begin{pmatrix}0&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt2}\\-\frac{1}{\sqrt2}&\frac12&-\frac12\\-\frac{1}{\sqrt2}&-\frac12&\frac12\end{pmatrix}\begin{pmatrix}0&1\\1&1\\1&0\end{pmatrix}
-=\begin{pmatrix}-\sqrt2&-\frac{1}{\sqrt2}\\\frac12&\frac12\\-\frac12&-\frac12\end{pmatrix}.$$
+$$H_1A=\begin{pmatrix}-\sqrt2&-1/\sqrt2\\0&(1-\sqrt2)/2\\0&-(1+\sqrt2)/2\end{pmatrix}.$$
 
-第 2 步：对 $\boldsymbol{x}=(\frac12,-\frac12)^{\mathrm T}$ 消元。$\lVert\boldsymbol{x}\rVert=\frac{1}{\sqrt2}$，$x_1=\frac12\gt0$ 故 $\alpha=-\frac{1}{\sqrt2}$，
-
-$$\boldsymbol{v}_2=\Bigl(\frac12+\frac{1}{\sqrt2},\ -\frac12\Bigr)^{\mathrm T},\qquad
-H_2=\begin{pmatrix}1&0&0\\0&\cdot&\cdot\\0&\cdot&\cdot\end{pmatrix}\ \text{（只作用在后两行）}.$$
+第二列从第二行起为 $\boldsymbol z=((1-\sqrt2)/2,-(1+\sqrt2)/2)^{\mathrm T}$，其长度为 $\sqrt6/2$。按 [2.3.4](sec23.md#sup-2.3.4) 取 $\alpha=\sqrt6/2$、$\boldsymbol v_2=\boldsymbol z-\alpha(1,0)^{\mathrm T}$，令 $H_2=\operatorname{diag}(1,I_2-2\boldsymbol v_2\boldsymbol v_2^{\mathrm T}/(\boldsymbol v_2^{\mathrm T}\boldsymbol v_2))$，则 $H_2H_1A$ 的第二列下方元素为零。取 $Q=H_1H_2$ 的前两列及 $R$ 的前两行，得到下面的结果。
 
 数值结果（NumPy `np.linalg.qr` 内部同样用 Householder，与手算同一算法）：
 
@@ -419,12 +409,9 @@ $$A=\begin{pmatrix}1&1\\1&1.0001\\1&1.0002\\1&1.0003\end{pmatrix},\qquad\boldsym
 
 **(1) 正态方程。** 记设计点 $x_i=1+10^{-4}(i-1)$（$i=1,\dots,4$）。
 
-$$A^{\mathrm T}A=\begin{pmatrix}4&\sum x_i\\\sum x_i&\sum x_i^2\end{pmatrix},\qquad
-\sum x_i=4.0006,\qquad\sum x_i^2\approx4.0012,$$
+$$A^{\mathrm T}A=\begin{pmatrix}4&4.0006\\4.0006&4.00120014\end{pmatrix},\qquad A^{\mathrm T}\boldsymbol b=\begin{pmatrix}10\\10.002\end{pmatrix}.$$
 
-$$A^{\mathrm T}\boldsymbol{b}=\begin{pmatrix}\sum b_i\\\sum x_ib_i\end{pmatrix}=\begin{pmatrix}10\\10.0020\end{pmatrix}.$$
-
-用行列式公式算条件数：$\det(A^{\mathrm T}A)=n\sum x_i^2-(\sum x_i)^2=4\times4.0012-4.0006^2\approx2\times10^{-4}$，非常接近退化。
+这里必须保留平方和中的小项：$\det(A^{\mathrm T}A)=4(4.00120014)-(4.0006)^2=2\times10^{-7}$。过早把 $4.00120014$ 舍入为 $4.0012$ 会严重扭曲行列式；$\mathrm{cond}_2(A^{\mathrm T}A)=\mathrm{cond}_2(A)^2$，其数值估计见下表。
 
 **（2）数值结果（本节运行环境）——结果出人意料：**
 
@@ -456,13 +443,11 @@ d=1e-06  cond(A)=1.789e+06  cond(A^T A)=3.199e+12
 
 **① 「正确答案」本身就是 $(-9999,10000)$ 这样的大数，不是 $(1,1)$。** 原因在于：这四个设计点几乎在同一条直线上，而 $\boldsymbol{b}=(1,2,3,4)$ **本身就精确落在这条直线上**：$x_i=1+10^{-4}(i-1)$ 而 $b_i=i$，故 $b_i=10^4(x_i-1)+1$，即真解是 $c_0=1-10^4$、$c_1=10^4$，也就是 $(-9999,10000)$ ✓。**这个系数之所以量级巨大，是因为「截距」这个参数在这个问题上极度敏感**——设计点的 $x$ 只跨 $3\times10^{-4}$，要表示 $b$ 跨 $3$ 的变化，斜率必须是 $10^4$ 量级。**系数大 ≠ 算错了。**
 
-**② $\mathrm{cond}(A)=1.8\times10^{4}$ 时正态方程已经吃亏**（$\mathrm{cond}(A^{\mathrm T}A)=3.2\times10^{8}$，误差 $2.4\times10^{-4}$——相对于 $10^{4}$ 的系数是 $2.4\times10^{-8}$ 的相对误差，尚可接受）；**$\mathrm{cond}(A)=1.8\times10^{6}$ 时正态方程显著失守**：它给出 $-1000086$ 而正确答案是 $-999999$，**误差 $87$，即相对误差 $9\times10^{-5}$**，而 QR 精确到 $5\times10^{-5}$（相对于 $10^{6}$ 是 $5\times10^{-11}$）。**正态方程比 QR 差约 6 个数量级**——正好是 $\mathrm{cond}(A)$ 的平方因子（$\mathrm{cond}=1.8\times10^{6}$，$\sqrt{\mathrm{cond}}\approx1.3\times10^{3}$……精确地说，两者误差之比 $\approx87/5\times10^{-5}=1.7\times10^{6}\approx\mathrm{cond}(A)$ ✓，与「正态方程多付一个 $\mathrm{cond}$」的理论一致）。
+**② 与真解比较。** $d=10^{-4}$ 时旧表中法方程系数误差约 $2.4\times10^{-4}$，相对误差约 $2.4\times10^{-8}$；$d=10^{-6}$ 时约为 $87$，相对误差约 $9\times10^{-5}$。后一行 QR 的绝对误差约 $5\times10^{-5}$，相对误差约 $5\times10^{-11}$。两种误差之比约 $87/(5\times10^{-5})=1.7\times10^6$，本例接近 $\mathrm{cond}(A)$，但不能由误差界推断每次实验的比值必然如此。
 
-**③ 分水岭：** $\mathrm{cond}(A^{\mathrm T}A)=u^{-1/2}$ 即 $\mathrm{cond}(A)=u^{-1/4}\approx10^{4}$ 时正态方程开始可见地吃亏；$\mathrm{cond}(A^{\mathrm T}A)=u^{-1}$ 即 $\mathrm{cond}(A)\approx10^{8}$ 时彻底失效。本例的 $d=10^{-4}$（$\mathrm{cond}(A)=1.8\times10^{4}$）与 $d=10^{-6}$（$1.8\times10^{6}$）恰好跨过了第一个门槛。
+**③ 风险判断：** 本例缩小设计点间距后，正态方程的误差明显增大；但 $\mathrm{cond}^2u$ 只是误差分析的风险量级，不是所有矩阵开始吃亏或彻底失效的固定门槛。报告应比较实际误差、残差与目标容差。
 
-**本题的教训（两条）：** ① **不要用「系数是否是 $O(1)$」判断解是否合理**——要看 $\boldsymbol{b}$ 与 $A$ 的关系，理性地算一遍真解；② **正态方程与 QR 的差距是一个 $\mathrm{cond}(A)$**，在 $\mathrm{cond}\gtrsim10^{4}$ 就开始显现、$\gtrsim10^{8}$ 时彻底崩坏。
-
-**验收标准：** 复现上表两行；把 $d$ 从 $10^{-3}$ 扫到 $10^{-7}$，画「正态方程误差 / QR 误差」随 $d$ 的曲线，验证该比值以 $\mathrm{cond}(A)$ 的速度增长；并用 `np.linalg.cond(A.T@A) == np.linalg.cond(A)**2`（近似）自检。
+**验收标准：** 复现两行结果，扫描不同间距，比较两种方法的误差与条件数量级；病态时不同平台的结果可能不同，不能要求误差比必然等于条件数。
 
 :::
 
@@ -509,7 +494,7 @@ rho = 5.618034  ||A||2 = 5.618034
 
 **核对：** 全部特征值在 $[2,6]$ ✓（含端点 $2.381966$ 与 $5.618034$，与 $\lambda=4\pm2\cos(k\pi/5)$ 的解析式一致）；$\rho(A)=\lVert A\rVert_2=5.618034$ **取等**——因为 $A$ 对称（对称矩阵的 $\rho=\lVert A\rVert_2$，[2.5.1](sec25.md#sup-2.5.1)）。
 
-**验收标准：** 输出特征值全在 $[2,6]$；$\rho=\lVert A\rVert_2$（对称矩阵必取等）；把对角线元素改成 $4,3,3,4$（破坏对称），观察 $\rho\lt\lVert A\rVert_2$ 严格成立。
+**验收标准：** 输出特征值全在 $[2,6]$；对称矩阵满足 $\rho=\lVert A\rVert_2$。若要观察不等式严格成立，需改变某个非对角元而不对称地改变其对应位置，仅改变对角元不会破坏对称性。
 
 :::
 
@@ -576,9 +561,9 @@ k=10  ||A-Ak||_F=1.5947e-04
 k=20  ||A-Ak||_F=1.4262e-04
 ```
 
-**肘点在 $k=5$**：$\sigma_5=1.0$ 与 $\sigma_6=2.55\times10^{-5}$ 之间有 $\mathbf{3.9\times10^{4}}$ 倍的落差（`σ5/σ6=39267`），恰对应「真实秩 $=5$」。**更关键的是 $k=5$ 时的误差量级**：$1.69\times10^{-4}$，而按 $m\times n=3\times10^{4}$ 个元素、每个噪声 $10^{-6}$ 估计的噪声总能量是 $10^{-6}\sqrt{30000}=1.73\times10^{-4}$——**两者精确吻合**。这说明 $k\ge5$ 后残余的「误差」已经不是矩阵的结构信息，而是纯噪声。
+**肘点在 $k=5$ 附近。** 旧表中 $\sigma_5/\sigma_6$ 约为 $3.9\times10^4$，有清晰间隙。独立零均值、标准差为 $10^{-6}$ 的 $mn$ 个噪声元素，其 F-范数平方的期望为 $mn\times10^{-12}$，因此 $10^{-6}\sqrt{mn}\approx1.73\times10^{-4}$ 是均方根尺度，不是每次噪声范数的精确值。表中残差 $1.69\times10^{-4}$ 与它接近，但不能因此宣称残差完全是纯噪声；信号子空间也会受到扰动。
 
-**为什么 $k\gt5$ 时误差还略有下降？** 因为 $k=6,7,\dots$ 的截断把部分噪声方向也去掉了——但**这是在拟合噪声**（把噪声方向当信号保留会降低误差、但损害泛化）。**判据：一旦误差降到噪声水平、且继续增大 $k$ 收益甚微，就应该停止。** 本例的正确答案是 $k=5$。
+**为什么 $k>5$ 时误差还下降？** $A_k$ 在拟合带噪矩阵，增大 $k$ 会保留更多噪声方向，因而重建带噪数据的残差继续减小。它不自动意味着对干净信号更准确。合成实验可额外比较与干净矩阵的误差；对真实数据，$k=5$ 是由本例谱间隙与噪声尺度支持的选择，不是普适最优秩。
 
 **验收标准：** 输出显示 $\sigma_5/\sigma_6\gtrsim10^{4}$（清晰的谱间隙）；$k=5$ 处的 $\lVert A-A_k\rVert_F$ 与理论噪声水平 $10^{-6}\sqrt{mn}$ 相对误差 $<20\%$；画出的曲线在 $k=5$ 处有明显拐点；把噪声去掉（`+ 1e-6*...` 整项删去）后 $\sigma_6$ 应立即降到机器精度量级（$\sim10^{-14}$）。
 
@@ -631,7 +616,7 @@ k=11 Rayleigh=4.8793852278 误差=1.379e-08 实测比值=0.2955
 k=12 Rayleigh=4.8793852375 误差=4.076e-09 实测比值=0.2955
 ```
 
-**解读：** 比值单调**上升**并稳定在 $0.2955$，与 $\lvert\lambda_2/\lambda_1\rvert^2=0.29556$ **吻合到 4 位** ✓。**注意早期比值偏小（$0.10$，比理论值还快）**——这是「渐近式 $O((\lambda_2/\lambda_1)^{2k})$ 只在高阶分量完全衰减后才成立」的表现：$\boldsymbol{x}_0=(1,1,1)/\sqrt3$ 含较多 $\lambda_3$ 分量，前几步这部分误差衰减得更快（速度是 $\lvert\lambda_3/\lambda_1\rvert^2\approx0.09$），因此显得「比理论快」。**报告里应指出这一点**，不要误以为理论错了。
+**解读：** 旧表的比值趋近 $0.29556$。早期较小的比值可由第三特征分量衰减更快解释；大 $O$ 界并不是早期失效，而是仅给上界，不能要求每一步误差比相等。要使渐近比恰为 $|\lambda_2/\lambda_1|^2$，初值还须含非零的第二特征方向分量；若该分量为零，实际收敛可能更快。
 
 **(2) Courant–Fischer 估算 $\lambda_2$：**
 
@@ -646,7 +631,7 @@ print(f"max over 2-subspaces of min R = {best:.10f}  (真值 λ2={w[1]:.10f})")
 
 **实测输出：** `max over 2-subspaces of min R = 2.6527036442`，而 $\lambda_2=2.6527036447$——**吻合到 10 位** ✓（理论保证 $\le\lambda_2$，实测略小的差 $\sim5\times10^{-10}$ 来自随机采样未命中最优子空间）。
 
-**验收标准：** (1) 的实测比值最终稳定在 $0.2956\pm5\%$；(2) 的估算值与真值 $\lambda_2$ 相对误差 $<10^{-8}$。**报告要点：** 解释 (1) 中「早期比值偏小」的原因（$\lambda_3$ 分量衰减更快）；解释 (2) 中「取最大」逼近 $\lambda_2$ 的依据（[@thm-sup-2.5.5] 的 Courant–Fischer），以及**为什么不能**用 2 维子空间上的最大值去估 $\lambda_3$（提示：$\lambda_3$ 需要 3 维子空间，且它是 $k=3$ 情形下的 $\min\max$）。
+**验收标准：** (1) 在误差尚未降到舍入水平时，比值应趋近 $0.2956$，并解释早期其他特征分量的影响；(2) 随机子空间给出 $\lambda_2$ 的下侧近似，报告随采样次数变化的差距，不将固定 $10^{-8}$ 精度当作随机搜索的必然保证。本题代码按降序编号；$\lambda_3$ 是最小特征值，不能在使用升序 Courant–Fischer 公式时仍把它当作“第 3 大”。
 
 :::
 
@@ -669,24 +654,24 @@ print(f"max over 2-subspaces of min R = {best:.10f}  (真值 λ2={w[1]:.10f})")
 
 | 假设 | 特征症状 | 区分方法 |
 |:--|:--|:--|
-| **设计矩阵本身病态**（Vandermonde 的典型） | $\mathrm{cond}(A)$ 很大且无谱间隙 | 看奇异值谱：平滑衰减、无断层 |
-| **数值秩亏**（列近似相关） | 有清晰谱间隙（$\sigma_k/\sigma_{k+1}\gg1$） | 看 $\sigma_i$ 曲线找断层 |
-| **算法放大了病态**（用了正态方程） | 残差**很小**但系数很大 | 比较 $\mathrm{cond}(A)$ 与 $\mathrm{cond}(A^{\mathrm T}A)$，看是否差 $\mathrm{cond}$ 倍 |
+| **设计矩阵本身病态** | 小奇异值使某些系数组合敏感 | 看完整奇异值谱、单位与参数化，不要求必有或必无谱间隙 |
+| **阈值下的数值秩亏** | 小奇异值低于可分辨尺度 | 根据噪声模型与阈值比较，有清晰间隙时判定更可靠 |
+| **算法引入较大后向误差** | 与更稳定方法出现超出容差的差异 | 比较 QR/SVD、尺度化残差及精度对照；小残差与大系数本身不足以归因 |
 
 **(2) 诊断流程（三步）：**
 
-1. **算 $\mathrm{cond}(A)$ 与 $\mathrm{cond}(A^{\mathrm T}A)$**：若后者 $\approx$ 前者平方且 $\mathrm{cond}(A)\gtrsim10^{8}$，**先怪算法**（正态方程），换 QR 重算；
-2. **画奇异值谱 $\log\sigma_i$ vs $i$**：找「断层」——断层后是噪声子空间，前面的才是信号；
-3. **算残差 $\lVert\boldsymbol{r}\rVert$ 与 $\mathrm{cond}(A)\lVert\boldsymbol{r}\rVert/\lVert\boldsymbol{b}\rVert$**：若后者远大于可接受的系数误差，说明**问题本身**就给不出更准的解——这时换算法无用，必须改问题。
+1. **先用 QR/SVD 求解并估计条件数。** 列满秩时，精确算术下 $\mathrm{cond}_2(A^{\mathrm T}A)=\mathrm{cond}_2(A)^2$，这一恒等式对所有这样的矩阵都成立，不是识别算法故障的实验特征；也不必为诊断额外形成法方程。
+2. **把奇异值谱与噪声模型对照。** 有间隙可作为选秩线索，但不能仅由“断层”证明其后全为噪声；观测噪声在 $b$ 中的方向也很重要。
+3. **检查最小二乘的最优性与预测效果。** 记录 $r=b-A\hat x$、$A^{\mathrm T}r$、解范数及数据拟合。含噪不相容最小二乘不能直接套用非奇异方阵的 $\mathrm{cond}(A)\|r\|/\|b\|$ 解误差界，更不能把一个偏大的上界当作误差必大的下界。已知合成真解时另测系数误差；真实数据可用留出数据、噪声扰动或高精度对照来分辨来源。
 
 **(3) 两种修复方案：**
 
 | 方案 | 做法 | 代价 | 适用 |
 |:--|:--|:--|:--|
-| **换 QR / SVD** | 用 `np.linalg.lstsq`（内部 SVD/QR） | 计算量略增（约 2 倍）；**不改问题** | 「算法坏、问题还好」（$\mathrm{cond}\lesssim10^{8}$） |
+| **换 QR / SVD** | 用 `np.linalg.lstsq` 等稳定求解器 | 代价依矩阵尺寸、结构与实现而定；不改变未正则化问题 | 避免显式法方程造成的额外误差，仍须评估数据敏感性 |
 | **Tikhonov 正则化** | 解 $\min\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert^2+\lambda\lVert\boldsymbol{x}\rVert^2$，即 $(A^{\mathrm T}A+\lambda I)\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$ | 需要选 $\lambda$（用 L 曲线或交叉验证）；**引入偏差** | 「问题本身病态」，需要稳定解 |
 
-**报告要点：** 关键洞察是「**先判断是问题病态还是算法不稳定**」（[1.2.6](../ch01/sec12.md#sec-1.2.6)、[2.4](sec24.md)）——若 $\mathrm{cond}(A)$ 本身就只有 $10^{4}$，那么负系数和离谱量级纯粹是正态方程的锅，换 `lstsq` 就好；若 $\mathrm{cond}(A)\approx10^{12}$，那必须正则化，因为任何算法都只能给出 $\mathrm{cond}\cdot u$ 量级的精度。
+**报告要点：** 负系数或大系数本身不能证明算法错了，也可能来自模型、坐标、数据噪声或真实趋势（见 C3）。条件数是最坏放大尺度，不规定实际误差必须达到 $\mathrm{cond}\,u$，也不给出普适的正则化门槛。应先确定哪些参数或预测量需要准确，再比较输入噪声、计算误差与允许偏差。
 
 **开放点：** 讨论「$1\%$ 噪声 + $\mathrm{cond}=10^{12}$ 时，数据里究竟有多少信息可用于估计 20 个系数」（提示：Shannon 式论证——有效信息量 $\approx$ 谱高于噪声水平的方向数）。**这是 [2.6.4](sec26.md#sup-2.6.4) 数值秩讨论的直接应用。**
 
@@ -696,13 +681,15 @@ print(f"max over 2-subspaces of min R = {best:.10f}  (真值 λ2={w[1]:.10f})")
 
 ::: ex D2 · Tikhonov 正则化与 L 曲线
 
-对 C5 第 (2) 问的秩亏 / 病态问题（或自选一个真实病态问题），实现 Tikhonov 正则化：
+对 C5 第 (2) 问的矩阵，另取 $x_{\mathrm{true}}=\boldsymbol1$，构造 $b=Ax_{\mathrm{true}}+10^{-4}\xi$（$\xi$ 的各分量为标准正态随机数并记录种子）；也可使用下面给出的 Vandermonde 完整示例，或自选真实病态问题。实现 $\lambda>0$ 时的 Tikhonov 正则化：
 
 $$\boldsymbol{x}_\lambda=(A^{\mathrm T}A+\lambda I)^{-1}A^{\mathrm T}\boldsymbol{b},$$
 
 并画出 **L 曲线**（横轴 $\log\lVert A\boldsymbol{x}_\lambda-\boldsymbol{b}\rVert$、纵轴 $\log\lVert\boldsymbol{x}_\lambda\rVert$，参数 $\lambda$），用拐点选 $\lambda$。
 
 ::: sol 提示与参考
+
+**滤波公式从何而来？** 最小化 $\|Ax-b\|_2^2+\lambda\|x\|_2^2$，梯度为零给出 $(A^{\mathrm T}A+\lambda I)x=A^{\mathrm T}b$；$\lambda>0$ 使系数矩阵正定。换到 SVD 坐标后每个分量解 $(\sigma_i^2+\lambda)y_i=\sigma_i u_i^{\mathrm T}b$，因此 $x_\lambda=\sum_i[\sigma_i/(\sigma_i^2+\lambda)](u_i^{\mathrm T}b)v_i$。题面中的逆是数学表示，程序用该滤波式或增广最小二乘，不需显式求逆。
 
 ```python
 import numpy as np
@@ -728,9 +715,9 @@ for lam in np.logspace(-14, 2, 17):
 
 **预期现象与分析要点：**
 
-1. **$\lambda\to0$ 端**（未正则化）：残差最小，但**解范数爆炸**（$\lVert\boldsymbol{x}\rVert$ 可达 $10^{8}$），与真解误差巨大——**过拟合噪声**；
+1. **$\lambda\to0^+$ 端：** 对固定矩阵，解趋于 $A^+b$，未必无界；若存在很小的非零奇异值且噪声在对应方向有分量，其极限范数可很大。不要把示例中的某个大范数当作所有问题的必然现象。
 2. **$\lambda\to\infty$ 端**：解范数趋于零（$\boldsymbol{x}_\lambda\to\boldsymbol{0}$），但残差趋于 $\lVert\boldsymbol{b}\rVert$——**欠拟合**；
-3. **L 曲线拐点**：残差与解范数的权衡最优点。**预期 $\lambda_{\text{opt}}\approx\sigma_i^2$：取「信号 / 噪声分界」处的那个 $\sigma^2$**（这里是 $\lambda\sim10^{-6}\sim10^{-4}$）；
+3. **L 曲线拐点：** 是平衡残差与解范数的一种启发式选择，可能不明显或不唯一，不能保证与真解误差最小处相同。滤波转折在 $\sigma_i^2\approx\lambda$，但真正的信号与噪声分界还依赖 $u_i^{\mathrm T}b$，不预设本例最优参数区间。
 4. **滤波因子 $s_i/(s_i^2+\lambda)$ 的解读**：$\sigma_i\gg\sqrt\lambda$ 时因子 $\approx1/\sigma_i$（正常求逆）；$\sigma_i\ll\sqrt\lambda$ 时因子 $\approx\sigma_i/\lambda\to0$（**抑制**）。**正则化就是「对小的奇异值方向按大小平滑衰减」**——对比硬阈值截断 SVD（[2.6.4](sec26.md#sup-2.6.4) 思考题）的「一刀切」。
 
 **报告要点：** 画 L 曲线并标出拐点；比较「拐点处的 $\lambda$」「硬阈值 SVD 的最优 $k$」「真解误差最小处的 $\lambda$」三者是否接近；讨论当噪声水平变化时 L 曲线拐点如何移动。**开放点：** 为什么「残差最小」不等于「解最准」（[@thm-sup-2.4.4]、[例 2.4.4](sec24.md#sup-2.4.4)）？正则化正是用「接受更大的残差」换取「更小的解误差」——**这是偏差–方差权衡（bias–variance tradeoff）在数值线性代数里的形态。**
@@ -746,7 +733,7 @@ for lam in np.logspace(-14, 2, 17):
 (2) `my_mgs(A)`——用 MGS 做 QR；
 (3) `my_svd_via_eig(A)`——用 $A^{\mathrm T}A$ 的特征值分解来构造 SVD。
 
-然后回答：**在什么条件数范围内，这三个实现的 $Q^{\mathrm T}Q$ 与 $I$ 的偏差、以及 $A=QR$ 的残差都还在 $10^{-13}$ 以内？分别在哪个量级开始失守？为什么 (3) 最差？**
+对 $m\ge n$ 的列满秩输入，分别测量 QR 的重建相对残差与列正交性；对 SVD 教学构造，分别测量重建相对残差、$U^{\mathrm T}U-I$、$V^{\mathrm T}V-I$ 和奇异值相对误差。记录哪些指标超过 $10^{-13}$，不要把这些指标混成一条曲线，也不预设普适的条件数失效阈值。
 
 ::: sol 提示与参考
 
@@ -755,7 +742,7 @@ import numpy as np
 def my_qr_house(A):
     m, n = A.shape; R = A.astype(float).copy(); Q = np.eye(m)
     for k in range(min(m-1, n)):
-        x = R[k:, k]; v = x - (-np.sign(x[0])*np.linalg.norm(x))*np.eye(1, len(x), 0).ravel()
+        x = R[k:, k]; v = x - (-(1.0 if x[0] >= 0 else -1.0)*np.linalg.norm(x))*np.eye(1, len(x), 0).ravel()
         nv = np.linalg.norm(v)
         if nv < 1e-300: continue
         v /= nv
@@ -806,10 +793,10 @@ for n in [6, 8, 10, 12, 14]:
 **预期结论：**
 
 1. **`my_qr_house` 在全部测试范围内偏差 $\sim10^{-15}$**，与 `np.linalg.qr` 同级——因为它的每一步都是正交变换；
-2. **`my_mgs` 在 $\mathrm{cond}\lesssim10^{8}$ 时也好，之后按 $\mathrm{cond}\cdot u$ 增长**（$n=14$ 时 $4.7\times10^{-6}$，与 $\mathrm{cond}\cdot u=3.8\times10^{-5}$ 同量级）；
-3. **`my_svd_via_eig` 在 $\mathrm{cond}\gtrsim10^{9}$ 时直接给出 `nan`**，失效方式比「误差变大」更粗暴：因为 $\sigma_{\min}=\sqrt{\lambda_{\min}(A^{\mathrm T}A)}$ 在 $A^{\mathrm T}A$ 的 $\lambda_{\min}$ 已被舍入成 $0$（甚至负数、被 `clip` 成 $0$）后，$\boldsymbol{u}_i=A\boldsymbol{v}_i/\sigma_i$ 里出现了**除以零**。**这是「不要用 $A^{\mathrm T}A$ 算 SVD」（[2.6.7](sec26.md#sup-2.6.7) 常见错误 2）最直观的证据**——$\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$ 不是「精度差一点」，而是「信息被彻底抹掉」。
+2. **MGS 的正交性须看实际容差。** 旧表在条件数约 $10^4$ 时已约为 $1.47\times10^{-13}$，不能再称“$10^8$ 以下都满足 $10^{-13}$”。$\mathrm{cond}\,u$ 只是带条件与常数的参考尺度。
+3. **通过 $A^{\mathrm T}A$ 构造的失败首先可能出现在小奇异值与左向量正交性上。** 只要所有 $s_i$ 非零，令 $U=AV\operatorname{diag}(1/s_i)$ 会使重建乘积近似抵消这些倒数，故即使 $s_i$ 不准确，重建残差仍可很小。当 $s_i$ 被舍入为零，除法才出现非有限值；脚本保留这一失败机制用于观察，不把 `clip` 后的零当作可靠数值秩判定。
 
-**验收标准：** 三列的失效点分别为「不失效 / $\sim10^{8}$ / $\sim10^{9}$（且以 NaN 形式）」；报告里画出三条曲线（横轴 $\log_{10}\mathrm{cond}$、纵轴 $\log_{10}$ 误差），与理论斜率 $1$、$1$、$2$ 对照。**开放点：** 讨论「$A^{\mathrm T}A$ 的信息论损失」——形成 $A^{\mathrm T}A$ 不仅平方了条件数，还在元素级别上**不可逆地**丢掉了信息（先打印 `np.linalg.matrix_rank(A)` 与 `np.linalg.matrix_rank(A.T@A)`，观察后者比前者小；再用 `np.linalg.matrix_rank(A.T@A, tol=...)` 说明这个「秩」强烈依赖阈值）。
+**验收标准：** 报告各指标、范数及非有限值出现的位置，以 `np.linalg.svd` 为对照，不要求在固定条件数上出现 NaN，也不要求三条不同指标具有指定斜率。Householder 的零首分量按正号处理，不能用 `sign(0)=0` 直接套反射公式；本代码已采用这一约定。改变 `matrix_rank` 阈值时，还需说明比较的是哪个分辨尺度。
 
 :::
 
@@ -828,10 +815,13 @@ for n in [6, 8, 10, 12, 14]:
 
 **流程骨架：**
 
+先准备二维实数组，且处理后的 $X_c$ 非零：PCA 时每行是样本，每列是特征；灰度图像压缩则保留像素矩阵。下面的 `do_pca` 明确选择任务，不能用“是否二维”来区分二者。PCA 若保存压缩结果，还须保存特征均值，重建时把均值加回。
+
 ```python
 import numpy as np
 X = np.load("your_data.npy")           # 或 plt.imread(...) 读图像
-Xc = X - X.mean(axis=0) if X.ndim == 2 else X   # PCA 要中心化；图像压缩不中心化
+do_pca = True                       # 灰度图像压缩时设为 False
+Xc = X - X.mean(axis=0) if do_pca else X
 U, S, Vt = np.linalg.svd(Xc, full_matrices=False)
 
 # (1) 谱
@@ -840,7 +830,7 @@ print("累计能量 90%/95%/99% 所需 k:",
       [int(np.searchsorted(np.cumsum(S**2)/np.sum(S**2), q)+1) for q in (0.9, 0.95, 0.99)])
 
 # (2) 压缩曲线
-for k in [1, 2, 5, 10, 20, 50]:
+for k in sorted({min(j, len(S)) for j in [1, 2, 5, 10, 20, 50]}):
     Xk = (U[:, :k]*S[:k]) @ Vt[:k]
     print(f"k={k:3d} rel_err={np.linalg.norm(Xc-Xk)/np.linalg.norm(Xc):.5f} "
           f"storage={k*(Xc.shape[0]+Xc.shape[1])/Xc.size:.1%}")
@@ -848,8 +838,9 @@ for k in [1, 2, 5, 10, 20, 50]:
 # (4) 噪声测试
 for level in [0.001, 0.01, 0.1]:
     rng = np.random.default_rng(0)
-    sigma1 = np.linalg.svd(Xc, compute_uv=False)[0]
-    Xn = Xc + level*sigma1*rng.normal(size=Xc.shape)
+    Xn = Xc + level*np.linalg.norm(Xc, 'fro')*rng.normal(size=Xc.shape)/np.sqrt(Xc.size)
+    if do_pca:
+        Xn -= Xn.mean(axis=0)        # 带噪数据也按同一 PCA 约定中心化
     sn = np.linalg.svd(Xn, compute_uv=False)
     print(f"噪声 {level:.1%}: 数值秩(阈值 1e-10σ1) = {(sn > 1e-10*sn[0]).sum()} "
           f"（原始 {(S > 1e-10*S[0]).sum()}）")
@@ -857,12 +848,12 @@ for level in [0.001, 0.01, 0.1]:
 
 **报告要点：**
 
-1. **谱的形状决定一切**：真实图像通常「快速衰减 + 长尾（噪声）」；真实多元数据通常「少量大奇异值 + 缓降」。**肘点就是「信号 / 噪声」的分界**；
-2. **PCA 的前提是中心化**：不中心化做 SVD，第一主成分会指向**均值方向**——这是最常见的错误（[2.6.6](sec26.md#sup-2.6.6)、[2.6.7](sec26.md#sup-2.6.7) 常见错误 6）。**报告里必须写明是否中心化、为什么**；
-3. **主成分的「物理含义」需要领域知识**：数值上它只是「方差最大的方向」，工程含义要靠自己解释（例如图像的第一主成分通常是「整体亮度」、第二是「明暗对比」）；
-4. **(4) 的结论应体现「噪声污染长尾」**：加噪后小奇异值被抬高到噪声水平（谱从「陡降后趋零」变成「陡降后平台」），**数值秩显著增加**——这就是为什么数值秩判定必须用噪声水平作阈值（[2.6.4](sec26.md#sup-2.6.4) 思考题、[实验三](sec27.md#sup-2.7.3)）。
+1. **谱形状是线索，不是噪声标签。** 肘点可以提示候选秩，但长尾也可能包含真实弱信号，需结合领域知识、噪声模型和验收目标。
+2. **PCA 先中心化。** 未中心化的 SVD 最大化二阶矩而非方差，均值可能影响首方向，但首方向不必恰好指向均值。报告须说明是否中心化以及是否标准化各列。
+3. **物理解释不能只靠大小排序。** 结合载荷向量、数据单位与样本投影解释主方向，不能预设“第一项必为亮度、第二项必为对比度”。
+4. **把噪声百分比定义清楚。** 上面代码令逐元素噪声标准差为 `level * norm(Xc, 'fro') / sqrt(Xc.size)`，因此中心化前 $\mathbb E\|E\|_F^2=\mathrm{level}^2\|X_c\|_F^2$。它是 F-范数均方根的相对水平，不是 $\|E\|_2/\|X_c\|_2$。加噪往往抬高小奇异值，但具体秩变化仍依赖原谱与阈值，不预设每次一定显著增加。
 
-**开放点：** 讨论「如果我只有 100 个样本却有 5000 个特征（$p\gg n$），SVD 还能用吗？奇异值谱会是什么形状？」（提示：$X$ 的秩最多 $n-1$，故只有 $n-1$ 个非零奇异值——**这是「高维小样本」问题的本质，也是降维的必要性所在**；随机化 SVD 是这一场景的标准工具。）
+**开放点：** 100 个样本、5000 个特征时，中心化矩阵秩至多为 $n-1=99$，故非零奇异值至多有 99 个，不保证恰好 99 个。经济型 SVD 仍可用，是否改用随机化方法取决于所需秩、精度和成本，不能仅由 $p\gg n$ 决定。
 
 :::
 

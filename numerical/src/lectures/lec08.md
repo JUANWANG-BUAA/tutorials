@@ -1,6 +1,6 @@
 # 第 8 讲（10-12）：不动点迭代的唯一性、压缩收敛、收敛阶与牛顿法
 
-> 课堂实录精编。本讲**无课件、全程板书**（与[第 7 讲](lec07.md)、[第 9 讲](lec09.md)相同），
+> 课堂内容精编（据板书关键帧及自动转写整理，录音未连续听校；引语不作为逐字实录）。本讲**无课件、全程板书**（与[第 7 讲](lec07.md)、[第 9 讲](lec09.md)相同），
 > 承接第 7 讲末尾引入的不动点形式 $f(x)=0\iff x=\varphi(x)$ 与存在性——本讲把「**唯一**」
 > 「**收敛**」「**有多快**」一次补齐，再把**牛顿法**当作不动点框架下「设计迭代函数」的答案讲出来。
 >
@@ -12,7 +12,7 @@
 > 本讲公式以**教师摄像头板书关键帧**为唯一权威：平台语音识别与本地 whisper 转写都错得厉害
 > （「不动点」被写成「浮动阶级」，「二阶收敛」被写成「二倍收入」），**不要按转写字面引用**；
 > 原始转写与板书关键帧存档于 `_sources/numerical/transcripts/`（不随书发布）。本页只有两条线：
-> **〔课堂〕**是板书与录音里确实出现的内容，**〔教材〕**是颜书 4.1.2–4.1.5 的对应条目；
+> **〔课堂〕**标记按现有板书与转写记录归入课堂的内容，不表示口述已逐字核实；**〔教材〕**是颜书 4.1.2–4.1.5 的对应条目；
 > 理论细节与数值实验由[正文 4.1.2–4.1.4](../course/ch04/sec41.md#sec-4.1.2) 承载，
 > 本页负责「老师实际怎么讲」。
 
@@ -42,7 +42,7 @@
 | **后验误差估计** | $\lvert x_k-s\rvert\le\dfrac{L}{1-L}\lvert x_k-x_{k-1}\rvert$——停机判据的来源：步差要除以 $1-L$ 才是误差 |
 | **局部收敛** | 只要 $\lvert\varphi'(s)\rvert\lt1$，就存在 $\delta\gt0$：初值取进 $(s-\delta,s+\delta)$ 必收敛（不需要全局压缩） |
 | **收敛阶（定义）** | $\lim\dfrac{\lvert e_{k+1}\rvert}{\lvert e_k\rvert^p}=C$；$p=1,\,0\lt C\lt1$ 线性；$p=2$ 平方（有效数字翻倍） |
-| **定理三（收敛阶）** | $\varphi'(s)=\cdots=\varphi^{(m-1)}(s)=0,\ \varphi^{(m)}(s)\neq0$ ⟹ $m$ 阶收敛，且极限值为 $\dfrac{\varphi^{(m)}(s)}{m!}$ |
+| **定理三（收敛阶）** | $m\ge2$，$\varphi\in C^m$ 且 $\varphi'(s)=\cdots=\varphi^{(m-1)}(s)=0,\ \varphi^{(m)}(s)\neq0$ ⟹ 非有限终止迭代为 $m$ 阶收敛；有符号误差比极限为 $\dfrac{\varphi^{(m)}(s)}{m!}$，绝对误差比极限取其绝对值 |
 | **Newton 设计** | 把 $f=0$ 写成 $x=x+\lambda(x)f(x)$；令 $\varphi'(s)=1+\lambda(s)f'(s)=0$ 得 $\lambda(x)=-\dfrac1{f'(x)}$ |
 | **Newton 导数** | $\varphi'(x)=\dfrac{f(x)f''(x)}{[f'(x)]^2}$，单根处 $\varphi'(s)=0$、在 $C^2$ 单根邻域可证 $|e_{k+1}|\le C|e_k|^2$，故**至少二阶**；$f''(s)\ne0$ 时通常恰二阶 |
 | **重根退化** | $m$ 重根时 $f'(s)=0$，牛顿法退化为**线性**收敛，$\varphi'(s)=1-\dfrac1m$（$m=2$ 时 $\frac12$，$m=3$ 时 $\frac23$）——正文 4.1.6 修正 Newton 的动机 |
@@ -244,8 +244,7 @@ $\frac{(1/2)^k}{1-1/2}\lvert x_1-x_0\rvert=2\cdot(1/2)^k\cdot0.0986\le10^{-4}$�
 
 $$\lvert\varphi(x)-s\rvert=\lvert\varphi(x)-\varphi(s)\rvert\le L\lvert x-s\rvert\lt\lvert x-s\rvert\lt\delta.$$
 
-左边说明 $\varphi$ 把邻域映回邻域 $\varphi((s-\delta,s+\delta))\subseteq(s-\delta,s+\delta)$（自映射回归），
-右边说明在邻域内压缩——定理一、二的两条条件在**小邻域**里复活，收敛照旧。$\blacksquare$
+左边说明 $\varphi$ 把邻域映回邻域 $\varphi((s-\delta,s+\delta))\subseteq(s-\delta,s+\delta)$（自映射回归）。这里控制的是任一点到根 $s$ 的距离，并未证明邻域内任意两点之间都压缩；但沿迭代递推已有 $|x_k-s|\le L^k|x_0-s|\to0$，足以直接证明收敛。$x=s$ 时不等式另由不动点性质成立。$\blacksquare$
 :::
 
 ::: intuition 全局压缩是「奢侈版」，局部收敛是「够用版」
@@ -267,11 +266,11 @@ $p=1$ 且 $0\lt C\lt1$ 为**线性收敛**；$p=2$ 为**平方收敛**。然后�
 （板书标「定理 m」的条件块，与[第 9 讲 §二](lec09.md)复盘的「定理三」同一条）：
 
 ::: thm[core] 定理三 · 收敛阶〔课堂〕
-设 $s=\varphi(s)$ 是不动点，$\varphi$ 在 $s$ 的某邻域内有 $m$ 阶连续导数，且
+设整数 $m\ge2$，$s=\varphi(s)$ 是不动点，$\varphi$ 在 $s$ 的某邻域内有 $m$ 阶连续导数，且
 
 $$\varphi'(s)=\varphi''(s)=\cdots=\varphi^{(m-1)}(s)=0,\qquad\varphi^{(m)}(s)\neq0,$$
 
-则存在 $\delta\gt0$，对 $x_0\in(s-\delta,s+\delta)$ 迭代 (F) 收敛到 $s$，且为 **$m$ 阶收敛**：
+则存在 $\delta\gt0$，对 $x_0\in(s-\delta,s+\delta)$ 迭代 (F) 收敛到 $s$；若不在有限步到达 $s$，则为 **$m$ 阶收敛**（有限终止时此后的误差比为 $0/0$，不再用比值定义）：
 
 $$\lim_{k\to\infty}\frac{x_{k+1}-s}{(x_k-s)^m}=\frac{\varphi^{(m)}(s)}{m!}.$$
 :::
@@ -287,7 +286,7 @@ $$x_{k+1}-s=\varphi(x_k)-\varphi(s)=\frac{\varphi^{(m)}(\xi_k)}{m!}(x_k-s)^m,
 
 $$\lvert x_{k+1}-s\rvert\le\frac{M_m}{m!}\lvert x_k-s\rvert^m,\qquad M_m=\max\lvert\varphi^{(m)}\rvert\ \text{于邻域}.$$
 
-先取 $\delta$ 使 $\frac{M_m}{m!}\delta^{m-1}\le\rho\lt1$（把邻域收缩成自映射 + 压缩），再套局部收敛。$\blacksquare$
+先在一个闭邻域上固定导数上界 $M_m$，再取更小的 $\delta$ 使 $\frac{M_m}{m!}\delta^{m-1}\le\rho\lt1$。于是 $|e_{k+1}|\le\rho|e_k|$，迭代留在邻域并趋于根；再取上面的极限便没有预先假设收敛的问题。$m=1$ 时必须另加 $|\varphi'(s)|<1$，不能照搬此处缩小 $\delta$ 的论证。$\blacksquare$
 :::
 
 ::: intuition 「阶」是误差的幂次，不是步数
@@ -385,6 +384,8 @@ $m=2$ 时 $\varphi'(s)=\frac12$，$m=3$ 时 $\frac23$——**落在 $(0,1)$ 内�
 $f(x)=(x-1)^2\,\mathrm e^{x}$ 在 $s=1$ 有二重根。按公式 $\varphi'(s)=1-\frac12=\frac12$，
 牛顿法误差每步约减半——从 $10^{-2}$ 到 $10^{-10}$ 实测要 27 步；同函数用修正 Newton
 （$m=2$ 已知）只要 3 步。**掉一档阶，慢一个数量级还多**。
+
+编者说明：上述步数比较保留原整理记录，但未给出精确初值、误差判据及计步约定，本页不能独立确认“27 步 / 3 步”；可确认的理论结论是普通 Newton 的渐近因子为 $1/2$，已知重数的修正 Newton 至少二阶。
 :::
 
 ## 九、下一讲预告与「定理 5」 {#lec08-S10}

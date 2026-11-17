@@ -2,12 +2,12 @@
 
 > **本节属“补充篇 · 数值线性代数工具箱”**：2.x 是补充篇内部编号，不是课堂第 2 章的节号。课堂第 2 章是[线性方程组的解法](../course/ch02/overview.md)。
 
-前四节把矩阵当作「算子」「方程组」「投影工具」，这一节换视角：**矩阵的谱（特征值集合）刻画它的本质行为**——条件数回答「解被放大多少」（2.4），谱半径 $\rho(A)$ 回答「迭代收不收敛、多快」，SVD（2.6）与 QR 迭代也都建立在谱上。本节重点是特征值的**扰动敏感性**：[1.2.6](../ch01/sec12.md#sec-1.2.6) 中 conditioning 与 stability 的区分在此重演，且结论反直觉——对称矩阵温和，非正规矩阵「开方敏感」。路线：谱半径及其上界 → Gerschgorin 圆盘（不算特征值也能定位它们）→ 对称情形（Rayleigh 商与 Courant–Fischer）→ 非正规情形的定量警告。
+前四节把矩阵当作算子、方程组与投影工具，本节转向谱，即特征值集合。条件数描述解对数据的敏感性，迭代矩阵的谱半径描述误差是否最终衰减；二者不能互相替代。路线是谱半径与范数上界、Gerschgorin 圆盘、对称矩阵的 Rayleigh 商与变分原理，最后比较对称与缺陷非正规矩阵的扰动行为。
 
 ::: note 符号约定（与第 3 章的差别，务必看清）
 **本节 $\lambda_1\le\lambda_2\le\cdots\le\lambda_n$（升序）**——因为 Rayleigh 商、Courant–Fischer、Weyl 不等式的标准写法都从这里出发，$\lambda_1$ 是**最小**、$\lambda_n$ 是**最大**。
 **第 3 章与课件用降序** $\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots\ge\lvert\lambda_n\rvert$，那里 $\lambda_1$ 是**模最大**（幂法求的那个）。
-两处律一读就会串号：看到 $\lambda_1=\max R(\boldsymbol x)$ 时是本节约定，看到「幂法收敛到 $\lambda_1$」时是第 3 章约定。第 3 章的对应内容见 [3.1 幂法](../course/ch03/sec31.md)。
+两处约定不可混用：本节对称谱理论中 $\lambda_1=\min R(\boldsymbol x)$；幂法部分另按模降序编号，$\lambda_1$ 是主特征值。第 3 章的对应内容见 [3.1 幂法](../course/ch03/sec31.md)。
 :::
 
 <a id="sup-2.5.1"></a>
@@ -19,7 +19,7 @@
 
 $$A\boldsymbol{v}=\lambda\boldsymbol{v},\qquad \boldsymbol{v}\neq\boldsymbol{0}.$$
 
-$\lambda$ 可以是负数（方向反过来）、复数（带一点旋转）、零（把向量压扁到零）。**全部特征值合起来就是矩阵的「指纹」**：行列式 $=\prod\lambda_i$（体积缩放）、迹 $=\sum\lambda_i$、可逆性（是否 $\lambda_i\neq0$）、迭代收敛（是否 $\lvert\lambda_i\rvert\lt1$）、稳定性（看特征值的位置），统统由这份指纹决定。而指纹里最常用的一个数，就是**谱半径** $\rho(A)=\max_i\lvert\lambda_i\rvert$。
+$\lambda$ 可以为负或零；实矩阵还可有复特征值，此时特征向量在复空间中，“方向不变”应理解为复数倍关系，不能当成实平面内只拉伸。谱给出行列式 $\prod_i\lambda_i$、迹 $\sum_i\lambda_i$、可逆性及定常迭代的渐近收敛判据，但不能单独刻画非正规矩阵的有限步放大。谱中最常用的一个数是谱半径 $\rho(A)=\max_i|\lambda_i|$。
 :::
 
 ::: def 定义 2.5.1 · 特征值、谱与谱半径 {#def-sup-2.5.1}
@@ -34,6 +34,8 @@ $$\rho(A)=\max_{\lambda\in\sigma(A)}\lvert\lambda\rvert . \tag{2.26}$$
 $\lambda$ 是特征值 $\iff$ $\det(A-\lambda I)=0$（**特征多项式**为 0）。
 :::
 
+本节称实方阵 $A$ 为**正规矩阵**（normal matrix），若 $A^{\mathrm T}A=AA^{\mathrm T}$；对复矩阵须把转置换成共轭转置。对称阵与正交阵都是正规阵，但一般非对称阵未必非正规。下面的 Jordan 块既非正规又不可对角化；不能把它的开方敏感性推广到所有非对称矩阵。
+
 ::: thm 定理 2.5.1（新增） · 基本性质 {#thm-sup-2.5.1}
 设 $A\in\mathbb{R}^{n\times n}$，$\lambda_1,\dots,\lambda_n$（含重数）为它的特征值，则
 
@@ -47,7 +49,7 @@ $\lambda$ 是特征值 $\iff$ $\det(A-\lambda I)=0$（**特征多项式**为 0�
 ::: proof 证明
 **1：** $A$ 的特征多项式 $p(\lambda)=\det(A-\lambda I)=(-1)^n(\lambda-\lambda_1)\cdots(\lambda-\lambda_n)$。比较两边 $\lambda^{n-1}$ 的系数得 $\operatorname{tr}A=\sum\lambda_i$（因为 $\det(A-\lambda I)$ 展开中 $\lambda^{n-1}$ 项来自「取对角元 $a_{ii}-\lambda$、其余取常数项」），取 $\lambda=0$ 得 $\det A=\prod\lambda_i$。
 
-**2、3、4：** $A\boldsymbol{v}=\lambda\boldsymbol{v}\Rightarrow A^{\mathrm T}$ 的（左）特征向量满足 $\boldsymbol{v}^{\mathrm T}A=\lambda\boldsymbol{v}^{\mathrm T}$，故 $\lambda$ 也是 $A^{\mathrm T}$ 的特征值；$A\boldsymbol{v}=\lambda\boldsymbol{v}\Rightarrow A^{-1}\boldsymbol{v}=\lambda^{-1}\boldsymbol{v}$（$A$ 可逆时 $\lambda\neq0$）；归纳得 $A^m\boldsymbol{v}=\lambda^m\boldsymbol{v}$。
+**2、3、4：** $\det(A^{\mathrm T}-\lambda I)=\det(A-\lambda I)$，故转置不改变特征值；可逆时 $A\boldsymbol v=\lambda\boldsymbol v$ 蕴含 $A^{-1}\boldsymbol v=\lambda^{-1}\boldsymbol v$。矩阵幂的结论对三角化后的对角元取幂即得，也计入重数。
 
 **5：** 见 [1.3.4](../ch01/sec13.md#sec-1.3.4) 已用到的谱定理；完整证明见[习题 B2](exercises.md)（要点：实对称矩阵的任一特征值必为实数——在 $A\boldsymbol{v}=\lambda\boldsymbol{v}$ 两边左乘 $\overline{\boldsymbol{v}}^{\mathrm T}$ 得 $\lambda\lVert\boldsymbol{v}\rVert^2=\overline{\boldsymbol{v}}^{\mathrm T}A\boldsymbol{v}$，其共轭转置给出 $\overline{\lambda}\lVert\boldsymbol{v}\rVert^2=\boldsymbol{v}^{\mathrm T}A^{\mathrm T}\overline{\boldsymbol{v}}$，由 $A=A^{\mathrm T}$ 得 $\lambda=\overline{\lambda}$）。
 
@@ -74,7 +76,7 @@ for _ in range(3):
     print(f"rho={max(abs(np.linalg.eigvals(M))):.4f}  "
           f"||A||2={np.linalg.norm(M,2):.4f}  ||A||inf={np.linalg.norm(M,np.inf):.4f}  "
           f"||A||1={np.linalg.norm(M,1):.4f}  ||A||F={np.linalg.norm(M,'fro'):.4f}")
-```text
+```
 
 ```text
 rho=1.6564  ||A||2=1.8582  ||A||inf=2.8008  ||A||1=3.0298  ||A||F=2.4343
@@ -84,10 +86,12 @@ rho=1.3385  ||A||2=2.8698  ||A||inf=3.7301  ||A||1=4.4696  ||A||F=3.3676
 
 三行里 $\rho(A)$ 都严格小于每一个范数，而且 $\rho(A)\le\lVert A\rVert_2\le\lVert A\rVert_F$ 与 $\lVert A\rVert_2\le\sqrt{\lVert A\rVert_1\lVert A\rVert_\infty}$ 也都成立（[习题 B6](../ch01/exercises.md) 已证）✓。
 
-**为什么拿 $\rho\le\lVert A\rVert_2$ 当最快的估计？** 因为 $\lVert A\rVert_2$ 能**直接算出来**（靠 SVD 或幂法迭代），而 $\rho(A)$ 原则上要算出全部特征值；反过来，只要 $\lVert A\rVert_2\lt1$，立刻就能断定 $\rho\lt1$、迭代收敛——**根本不用算特征值**。这就是「用范数做收敛判据」最大的便利。
+**怎样便宜地判断收敛？** 若只需充分条件，可先计算最大行和或最大列和：任一个小于 1，就有 $\rho(A)<1$。2-范数也能提供这样的判据，但精确计算通常需 SVD，并不总比求特征值便宜；幂法也可用于估计主特征值，不能说谱半径必须先求出全部特征值。
 :::
 
 :::
+
+**谱半径为什么出现在迭代里？** 对定常迭代 $x^{(k+1)}=Hx^{(k)}+c$，若 $x^*$ 为不动点，则 $e^{(k+1)}=He^{(k)}$，所以 $e^{(k)}=H^ke^{(0)}$。对任意初值收敛等价于 $H^k\to0$，又等价于 $\rho(H)<1$。必要性来自特征方向：若 $|\lambda|\ge1$，该方向不衰减。充分性可看每个 Jordan 块：$(\lambda I+N)^k=\sum_{j=0}^{s-1}\binom{k}{j}\lambda^{k-j}N^j$；当 $|\lambda|<1$，指数衰减最终压过有限次多项式因子，$\lambda=0$ 的块则在有限步后为零。因此谱半径控制渐近行为，却不保证每步范数下降。
 
 <a id="sup-2.5.2"></a>
 
@@ -167,13 +171,11 @@ $$A=\begin{pmatrix}10&-1&2\\0&4&1\\-2&1&5\end{pmatrix}$$
 | 2 | $\lvert-1\rvert+\lvert1\rvert=2$ | $[2,\ 6]$ |
 | 3 | $\lvert2\rvert+\lvert1\rvert=3$ | $[2,\ 8]$ |
 
-**收紧后的围栏：** 定理严格给出的是**两个并集的交**：$\sigma(A)\subseteq\bigl(\text{行圆盘的并}\bigr)\cap\bigl(\text{列圆盘的并}\bigr)=[2,13]\cap[2,12]=[2,12]$。至于逐盘配对取交（$[8,12]$、$[3,5]$、$[2,8]$），那只是**启发式收紧**，并不是定理的结论——用的时候要当心：$[8,12]$ 与 $[2,8]$ 在 $8$ 处**相切**，按连通性条款它们其实连成了一块（连通性只对**同一版本**的 $n$ 个圆盘适用）。
-
-**老实说：** 列版本的三个圆盘连成一条链，严格讲并不存在孤立分量；不过相切是「刀锋」情形——任何微小扰动都会把链断开，所以不妨把它当作一种极限情形下的直觉。数值验证（NumPy）：特征值为 $9.0687$、$6.2778$、$3.6535$——$9.0687$ **确实独占** $[8,12]$，另两个落在 $[2,8]$ 内，与直觉一致。
+**收紧后的围栏：** 定理给出复平面中行圆盘并集与列圆盘并集的交集，而不是各同编号圆盘逐一配对取交。两组圆盘的实轴截面分别为 $[2,13]$ 和 $[2,12]$；仅对实特征值，才可进一步说其落在 $[2,12]$。两组圆盘各自均连通，不能从孤立圆盘计数断言某盘单独含一个特征值。
 
 **非奇异性：** 原点 $0$ 不在任何行圆盘内（最靠左的区间是 $[2,8]$），故 $A$ 非奇异。
 
-**真值（NumPy）：** $\sigma(A)=\{3.6535,\ 6.2778,\ 9.0687\}$。逐条核对：$9.0687\in[8,12]$ ✓；$6.2778\in[2,8]$ ✓；$3.6535\in[3,5]$ ✓；一个特征值落在孤立圆盘、两个落在连通区域 ✓。
+**数值近似（NumPy）：** $\sigma(A)\approx\{3.6535,\ 6.2778,\ 9.0687\}$；这些近似值均落在行、列圆盘并集中，但不能反过来把圆盘截面当作特征值必为实数的证明。
 
 **顺带一提：** $A$ 其实还是**严格对角占优**的——第 1 行 $\lvert10\rvert\gt3$ ✓，第 2 行 $\lvert4\rvert\gt1$ ✓，第 3 行 $\lvert5\rvert\gt3$ ✓，三行都满足 $\lvert a_{ii}\rvert\gt r_i$，所以「$A$ 非奇异」这个结论直接由此也能得到。
 :::
@@ -185,7 +187,7 @@ $$A=\begin{pmatrix}10&-1&2\\0&4&1\\-2&1&5\end{pmatrix}$$
 ## 2.5.3 幂法与 Rayleigh 商（预告路线图第三章）
 
 ::: intuition 直觉 · 反复乘，最大的特征值会「浮出水面」
-把一个向量按 $A$ 的特征向量展开：$\boldsymbol{x}=\sum_i c_i\boldsymbol{v}_i$。然后反复乘 $A$：
+先假设 $A$ 可对角化，且初始向量在主特征向量方向的系数非零。把向量按特征向量展开：$\boldsymbol{x}=\sum_i c_i\boldsymbol{v}_i$。然后反复乘 $A$：
 
 $$A^k\boldsymbol{x}=\sum_ic_i\lambda_i^k\boldsymbol{v}_i=\lambda_1^k\Bigl[c_1\boldsymbol{v}_1+\sum_{i\gt1}c_i\Bigl(\frac{\lambda_i}{\lambda_1}\Bigr)^k\boldsymbol{v}_i\Bigr].$$
 
@@ -196,7 +198,7 @@ $$A^k\boldsymbol{x}=\sum_ic_i\lambda_i^k\boldsymbol{v}_i=\lambda_1^k\Bigl[c_1\bo
 
 ::: method 算法 2.5.1 · 幂法（power method）+ Rayleigh 商
 
-**输入**：$A\in\mathbb{R}^{n\times n}$，初始向量 $\boldsymbol{x}_0$（$\boldsymbol{u}_1^{\mathrm T}\boldsymbol{x}_0\neq0$），步数 $k_{\max}$；**输出**：$\lambda_1$ 的近似 $R(\boldsymbol{x}_k)$ 与特征向量近似 $\boldsymbol{x}_k$；**假设**：$\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert$（主特征值单占）；**复杂度**：每步一次矩阵–向量乘 $O(n^2)$（$A$ 稀疏时 $O(\mathrm{nnz})$），共 $O(k_{\max}n^2)$。
+**输入**：实对称 $A$，初始单位向量 $\boldsymbol{x}_0$ 满足 $\boldsymbol{u}_1^{\mathrm T}\boldsymbol{x}_0\ne0$；**假设**：$|\lambda_1|>|\lambda_2|$；**输出**：主特征值及特征向量方向的近似。每步稠密矩阵–向量乘法需 $O(n^2)$，稀疏时可用 $O(\mathrm{nnz})$。
 
 ```text
 x = 任意非零向量，规范化：x = x / ||x||
@@ -204,18 +206,18 @@ repeat:
     y = A @ x                     # 一次矩阵-向量乘法
     x_new = y / ||y||             # 规范化（防止溢出/下溢）
     lambda = x_new' @ A @ x_new   # Rayleigh 商 ← 更准的特征值估计
-    if ||x_new - x|| < tol: break
+    if ||A @ x_new - lambda * x_new|| < tol: return lambda, x_new
     x = x_new
 return lambda, x
 ```
 
-**为什么用 Rayleigh 商，而不是 $\lVert\boldsymbol{y}\rVert$ 这类比值？** 因为 $\lVert y\rVert/\lVert x\rVert$ 只有 $\lvert\lambda_1\rvert$ 的**一阶**精度（误差 $O(\lvert\lambda_2/\lambda_1\rvert^k)$），而 Rayleigh 商 $R(\boldsymbol{x})=\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}/\boldsymbol{x}^{\mathrm T}\boldsymbol{x}$ 的精度是**二阶**（误差 $O(\lvert\lambda_2/\lambda_1\rvert^{2k})$）——**到达同样的精度，所需步数减半**。这是 Rayleigh 商最实际的用途。
+对称矩阵的 Rayleigh 商在特征向量处具有二阶精度（见下方定理），还能保留负特征值的符号。范数比只给特征值的模；在对称情形它也可能具有二阶精度，不能笼统断言需要两倍步数。
 :::
 
 ::: thm 定理 2.5.3（新增） · 幂法收敛速度与 Rayleigh 商精度 {#thm-sup-2.5.3}
 设 $A$ 对称，特征值满足 $\lvert\lambda_1\rvert\gt\lvert\lambda_2\rvert\ge\cdots\ge\lvert\lambda_n\rvert$，对应的标准正交特征向量为 $\boldsymbol{u}_1,\dots,\boldsymbol{u}_n$。设初值 $\boldsymbol{x}_0$ 满足 $\boldsymbol{u}_1^{\mathrm T}\boldsymbol{x}_0\neq0$，$\boldsymbol{x}_k=A^k\boldsymbol{x}_0/\lVert A^k\boldsymbol{x}_0\rVert$。则
 
-$$\lVert\boldsymbol{x}_k-\boldsymbol{u}_1\rVert_2=O\!\left(\left\lvert\frac{\lambda_2}{\lambda_1}\right\rvert^{k}\right),\qquad
+$$\min_{s\in\{-1,1\}}\lVert\boldsymbol{x}_k-s\boldsymbol{u}_1\rVert_2=O\!\left(\left\lvert\frac{\lambda_2}{\lambda_1}\right\rvert^{k}\right),\qquad
 \lvert R(\boldsymbol{x}_k)-\lambda_1\rvert=O\!\left(\left\lvert\frac{\lambda_2}{\lambda_1}\right\rvert^{2k}\right),$$
 
 其中 $R(\boldsymbol{x})=\dfrac{\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$ 为 **Rayleigh 商**。
@@ -226,7 +228,7 @@ $$\lVert\boldsymbol{x}_k-\boldsymbol{u}_1\rVert_2=O\!\left(\left\lvert\frac{\lam
 $$A^k\boldsymbol{x}_0=\sum_ic_i\lambda_i^k\boldsymbol{u}_i=\lambda_1^k\Bigl[c_1\boldsymbol{u}_1+\sum_{i\ge2}c_i\Bigl(\frac{\lambda_i}{\lambda_1}\Bigr)^k\boldsymbol{u}_i\Bigr]
 =\lambda_1^k\bigl(c_1\boldsymbol{u}_1+\boldsymbol{\eta}_k\bigr),$$
 
-其中 $\lVert\boldsymbol{\eta}_k\rVert=O(\lvert\lambda_2/\lambda_1\rvert^k)$。规范化后 $\boldsymbol{x}_k=(\boldsymbol{u}_1+c_1^{-1}\boldsymbol{\eta}_k)/\lVert\cdot\rVert$，故方向误差为一阶量 $O(\lvert\lambda_2/\lambda_1\rvert^k)$。
+其中 $\lVert\boldsymbol\eta_k\rVert=O(|\lambda_2/\lambda_1|^k)$。规范化后方向趋于 $\operatorname{sgn}(\lambda_1^kc_1)\boldsymbol u_1$；若主特征值为负，符号会交替，因此向量误差应取两种符号中的较小者。
 
 **Rayleigh 商的部分**：设 $\boldsymbol{x}=\boldsymbol{u}_1+\boldsymbol{\delta}$、$\boldsymbol{\delta}\perp\boldsymbol{u}_1$。则
 
@@ -264,7 +266,7 @@ for k in range(1, 13):
     prev = abs(r - w[0])
     if k in (1,2,3,5,8,12):
         print(f"k={k:2d} Rayleigh={r:.10f} 误差={abs(r-w[0]):.3e}{ratio}")
-```text
+```
 
 ```text
 k= 1 Rayleigh=6.5000000000 误差=1.691e-01
@@ -279,7 +281,7 @@ k=12 Rayleigh=6.6690789932 误差=9.509e-08
 
 **结论：** 实测比值 $0.26\sim0.27$，与理论值 $0.2717$ **吻合** ✓。**这就是「收敛速度 $=(\lambda_2/\lambda_1)^2$」的直接证据。**
 
-**对比一下：** 如果不用 Rayleigh 商，而用 $\lVert A\boldsymbol{x}_k\rVert$ 当估计，比值会是 $0.5212$（一阶），达到同样精度需要**大约两倍的步数**。这正是 [@thm-sup-2.5.3] 的实用价值。
+**对比一下：** 本例对称正定，$\lVert A\boldsymbol{x}_k\rVert_2$ 作为特征值模的估计也具有二阶方向误差；$0.5212$ 对应向量方向误差的渐近比，而不是此估计的误差比。
 
 **反幂法（预告）：** 把 $A$ 换成 $(A-\mu I)^{-1}$，主特征值就变成 $1/(\lambda^{*}-\mu)$——**迭代会收敛到最接近 $\mu$ 的那个特征值**，速度由 $\lvert(\lambda_i-\mu)/(\lambda_j-\mu)\rvert$ 决定。这既是「已知近似值、反过来求精确特征值」的标准技巧（$\mu$ 取 Rayleigh 商时，精度还能再升到三阶），也是[第三章](../ch01/sec11.md#roadmap) 3.1.2 的内容。
 :::
@@ -290,7 +292,7 @@ k=12 Rayleigh=6.6690789932 误差=9.509e-08
 
 ## 2.5.4 对称谱理论：Rayleigh 商与 Courant–Fischer
 
-对称矩阵在数值分析里享有「特权」：它的谱全是实数，可以正交对角化，条件数等于奇异值之比而且**不需要求逆**，扰动敏感性温和。也就是说，对称特征值问题属于「总能算得又准又稳」的那一类。为什么对称矩阵的世界特别美好？根源在于：**它的特征值可以被一个优化问题刻画**，而刻画的核心工具就是 **Rayleigh 商**。下面先把 Rayleigh 商的变分性质讲清楚，再用 Courant–Fischer 定理把全部特征值一次性纳入同一个框架。
+对称矩阵能正交对角化，特征值全实，并有适用于对称扰动的 Weyl 绝对误差界。这里的“温和”指特征值的绝对敏感性，不保证近零特征值的相对误差小，也不保证重特征值对应的某一根特征向量稳定。下面用 Rayleigh 商与 Courant–Fischer 定理刻画特征值，再据此证明扰动界。
 
 ::: def 定义 2.5.2 · Rayleigh 商 {#def-sup-2.5.2}
 设 $A\in\mathbb{R}^{n\times n}$ 对称、$\boldsymbol{x}\neq\boldsymbol{0}$，称
@@ -301,7 +303,7 @@ $$R(\boldsymbol{x})=\frac{\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}}{\boldsymbol
 :::
 
 ::: intuition 直觉 · Rayleigh 商是「在某个方向上测出的特征值」
-把 $\boldsymbol{x}$ 归一化以后，$R(\boldsymbol{x})$ 就是 $A$ 在方向 $\boldsymbol{x}$ 上的「平均拉伸倍数」：它一定落在 $\lambda_{\min}$ 与 $\lambda_{\max}$ 之间，而当 $\boldsymbol{x}$ 恰好是特征向量时，$R(\boldsymbol{x})=\lambda$——分毫不差。**Courant–Fischer 定理说的就是：把所有方向都试一遍，最小值是 $\lambda_{\min}$，最大值是 $\lambda_{\max}$。** 更漂亮的是，夹在中间的那些特征值也有变分刻画——「先在 $k$ 维子空间上取最小，再在所有 $k$ 维子空间上取最大」，得到的就是 $\lambda_k$。这条定理是把特征值问题变成**优化问题**的桥梁，也是现代特征值算法（Lanczos、Arnoldi、子空间迭代）的全部理论基础。
+把 $\boldsymbol x$ 归一化后，$R(\boldsymbol x)$ 是特征值按方向分量平方加权的平均值。它落在 $\lambda_{\min}$ 与 $\lambda_{\max}$ 之间，特征向量处等于对应特征值。Courant–Fischer 还刻画中间特征值：升序编号时，先在 $k$ 维子空间取最大值，再对所有这样的子空间取最小值，得到 $\lambda_k$；等价地可在 $n-k+1$ 维子空间先取最小、再取最大。这是将特征值问题与优化联系起来的桥梁。
 :::
 
 ::: thm 定理 2.5.4（新增） · 对称矩阵 Rayleigh 商的变分性质 {#thm-sup-2.5.4}
@@ -321,7 +323,7 @@ $$\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}=\sum_{i,j}k_ik_j\boldsymbol{u}_i^{\m
 
 $$R(\boldsymbol{x})=\frac{\sum_i\lambda_ik_i^2}{\sum_ik_i^2} .$$
 
-**一旦看出它是加权平均，结论就自动出来了：** $R(\boldsymbol{x})$ 是以 $k_i^2/(\sum_jk_j^2)$ 为权的 $\lambda_i$ 的加权平均，必然落在 $[\lambda_1,\lambda_n]$ 内。等号出现在下界，当且仅当全部权重都集中到 $\lambda_1$ 上，即 $\boldsymbol{x}\in\operatorname{span}\{\boldsymbol{u}_1\}$；上界的情形同理。
+**加权平均：** $R(\boldsymbol x)$ 以 $k_i^2/\sum_jk_j^2$ 为权，故落在 $[\lambda_1,\lambda_n]$。取下界当且仅当非零权重只对应最小特征值，即 $\boldsymbol x$ 属于最小特征值的整个特征子空间；上界同理，包括重特征值的情形。
 :::
 
 :::
@@ -335,12 +337,12 @@ $$\lambda_k=\min_{\dim\mathcal{S}=k}\ \max_{\boldsymbol{0}\neq\boldsymbol{x}\in\
 其中 $\mathcal{S},\mathcal{T}$ 取遍 $\mathbb{R}^n$ 的相应维数子空间。
 
 ::: proof 证明（第一等式）
-**先证 $\ge$（取特定的 $k$ 维子空间）。** 令 $\mathcal{S}_0=\operatorname{span}\{\boldsymbol{u}_1,\dots,\boldsymbol{u}_k\}$。对任意 $\boldsymbol{x}\in\mathcal{S}_0$、$\boldsymbol{x}=\sum_{i\le k}k_i\boldsymbol{u}_i$，有 $R(\boldsymbol{x})\le\lambda_k$（加权平均的权只落在 $\lambda_1,\dots,\lambda_k$ 上）。故
+**先证 $\le$（取特定的 $k$ 维子空间）。** 令 $\mathcal S_0=\operatorname{span}\{\boldsymbol u_1,\dots,\boldsymbol u_k\}$。对任意非零 $\boldsymbol x\in\mathcal S_0$，有 $R(\boldsymbol x)\le\lambda_k$。
 
 $$\max_{\boldsymbol{x}\in\mathcal{S}_0}R(\boldsymbol{x})=\lambda_k\qquad(\text{取}\ \boldsymbol{x}=\boldsymbol{u}_k\ \text{达到})\quad\Longrightarrow\quad
 \min_{\dim\mathcal{S}=k}\max_{\boldsymbol{x}\in\mathcal{S}}R(\boldsymbol{x})\le\lambda_k .$$
 
-**再证 $\le$（维数计数）。** 设 $\mathcal{S}$ 是任意 $k$ 维子空间，令 $\mathcal{T}=\operatorname{span}\{\boldsymbol{u}_k,\dots,\boldsymbol{u}_n\}$，$\dim\mathcal{T}=n-k+1$。由维数公式
+**再证 $\ge$（维数计数）。** 设 $\mathcal S$ 是任意 $k$ 维子空间，令 $\mathcal T=\operatorname{span}\{\boldsymbol u_k,\dots,\boldsymbol u_n\}$，$\dim\mathcal T=n-k+1$。由维数公式
 
 $$\dim(\mathcal{S}\cap\mathcal{T})\ge\dim\mathcal{S}+\dim\mathcal{T}-n=k+(n-k+1)-n=1,$$
 
@@ -380,7 +382,7 @@ for _ in range(200000):
     Q, _ = np.linalg.qr(rng.normal(size=(3, 2)))      # 随机 2 维子空间的正交基
     best = max(best, np.linalg.eigvalsh(Q.T @ A @ Q)[0])   # 该子空间上的 min R
 print(f"max over 2-dim subspaces of min R = {best:.8f}  (理论 λ2={w[1]:.8f})")
-```text
+```
 
 ```text
 随机方向: min R=1.26795245  max R=4.73203903
@@ -391,7 +393,7 @@ max over 2-dim subspaces of min R = 3.00000000  (理论 λ2=3.00000000)
 **从结果里读出三件事：**
 
 1. 随机方向上的极值只是**逼近** $\lambda_{\min},\lambda_{\max}$（差 $\sim10^{-5}$）：20 万次随机采样并没有命中精确的特征方向——变分原理的本质是**优化**，随机撒点只不过是一种近似的优化方式。
-2. 第二项**精确等于** $\lambda_2=3$：取等的子空间是 $\mathcal{S}=\operatorname{span}\{\boldsymbol{u}_2,\boldsymbol{u}_3\}$（其上 $\min R=\lambda_2$）；而任何 2 维子空间都与 $\operatorname{span}\{\boldsymbol{u}_1,\boldsymbol{u}_2\}$ 有非零交（维数公式 $2+2\gt3$），在该交集上 $R\le\lambda_2$，故 $\max$ 不可能超过 $\lambda_2$。**这就是 Courant–Fischer 的取等构造在起作用。**
+2. 第二项在显示位数内等于 $\lambda_2=3$，不代表有限次随机采样精确命中最优子空间。理论取等构造是 $\mathcal S=\operatorname{span}\{u_2,u_3\}$，其上 $\min R=\lambda_2$；任意二维子空间都与 $\operatorname{span}\{u_1,u_2\}$ 有非零交，故其 $\min R\le\lambda_2$。随机搜索提供下侧近似，证明则来自这个维数论证。
 3. **实用含义：** 求 $\lambda_2$ 可以「在 2 维子空间上做 Rayleigh 商最小化」——这就是 **Lanczos 算法 / 子空间迭代**的基本思想，也是 [习题 C6](exercises.md) 的动手内容。
 :::
 
@@ -411,11 +413,11 @@ max over 2-dim subspaces of min R = 3.00000000  (理论 λ2=3.00000000)
 
 **为什么会开方？** 把 $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 扰动成 $\begin{pmatrix}1&1\\t&1\end{pmatrix}$，特征方程是 $(1-\lambda)^2=t$，于是 $\lambda=1\pm\sqrt{t}$。**重根处的特征多项式是「平方」形态，解出来自然带根号。** 重数越高越糟：$k$ 重特征值遇上 $O(\varepsilon)$ 量级的扰动，可以移动 $O(\varepsilon^{1/k})$。
 
-**工程含义：** 别指望用数值方法算准重特征值——**重特征值问题是固有病态的**（[1.2.6](../ch01/sec12.md#sec-1.2.6) 的 conditioning 概念）。反过来，**对称矩阵即使有重特征值也照样温和**：它的特征值由 Rayleigh 商的极值刻画（[@thm-sup-2.5.4]），而极值对扰动的响应是 Lipschitz 的——扰动有多大，极值最多也就变多大。
+**工程含义：** 这个缺陷 Jordan 块的重特征值对某些扰动高度敏感，稳定算法也无法消除输入问题本身的敏感性。反过来，对称矩阵即使有重特征值，特征值仍满足 Weyl 的线性扰动界；特征向量或重特征值附近的子空间则需另外分析（[@thm-sup-2.5.4]）。
 :::
 
 ::: thm 定理 2.5.6（新增） · 特征值扰动界（两个极端情形） {#thm-sup-2.5.6}
-**（一）对称情形（Weyl 不等式）：** 设 $A,E\in\mathbb{R}^{n\times n}$ 对称，特征值分别按升序为 $\lambda_1\le\cdots\le\lambda_n$ 与 $\mu_1\le\cdots\le\mu_n$，则对每个 $i$，
+**（一）对称情形（Weyl 不等式）：** 设 $A,E\in\mathbb R^{n\times n}$ 对称，$\lambda_1\le\cdots\le\lambda_n$ 是 $A$ 的特征值，$\mu_1\le\cdots\le\mu_n$ 是 $A+E$ 的特征值，则对每个 $i$，
 
 $$\lvert\lambda_i-\mu_i\rvert\le\lVert E\rVert_2 .$$
 
@@ -425,9 +427,9 @@ $$\lvert\lambda_i-\mu_i\rvert\le\lVert E\rVert_2 .$$
 
 $$\min_{\lambda\in\sigma(A)}\lvert\lambda-\mu\rvert\le\lVert V\rVert_2\,\lVert V^{-1}\rVert_2\,\lVert E\rVert_2=\mathrm{cond}_2(V)\,\lVert E\rVert_2 .$$
 
-**放大因子就是特征向量矩阵 $V$ 的条件数。** 对称矩阵的 $V$ 可以取成正交矩阵（此时 $\mathrm{cond}_2(V)=1$），界便退化为「扰动的一倍」——这正是情形（一）的来源。而**非正规矩阵的特征向量矩阵 $V$ 可以病态到极点**，能把 $O(\varepsilon)$ 的扰动放大成巨大的特征值移动。
+**放大因子是所选特征向量矩阵 $V$ 的条件数。** 正规矩阵可以选酉特征向量矩阵，使该数为 1。Bauer–Fike 只保证扰动谱中的每一点靠近原谱的某一点，不直接给出按编号的一一匹配；对称扰动下的有序匹配由（一）的变分证明保证。
 
-**（三）重特征值情形（无一般界！）** 若 $A$ 有 $k$ 重特征值且非正规（Jordan 块），扰动 $\lVert E\rVert=\varepsilon$ 可使特征值移动 $O(\varepsilon^{1/k})$——**这是无界的放大因子（$\varepsilon^{1/k}/\varepsilon=\varepsilon^{1/k-1}\to\infty$）**，且**任何算法都无法改善**。
+**（三）缺陷 Jordan 块（一般不能有统一线性界）。** 一个大小为 $k>1$ 的 Jordan 块可在 $\|E\|_2=\varepsilon$ 的特定扰动下产生 $\varepsilon^{1/k}$ 量级的移动。因此线性放大率可随 $\varepsilon\to0$ 无界；这仍是一个非线性扰动尺度，不是“没有任何界”，也不适用于所有非正规重特征值。
 
 ::: proof 证明
 **（一）Weyl 不等式。** 用 Courant–Fischer（[@thm-sup-2.5.5]）：
@@ -477,7 +479,7 @@ S = np.array([[1.,0],[0,2.]])
 for t in [1e-2,1e-8,1e-16]:
     B = S + np.array([[0.,t],[t,0]])
     print(f"  t={t:.0e}  特征值={np.round(np.linalg.eigvalsh(B),14)}  (移动量 ~t)")
-```text
+```
 
 ```text
 == (1) Jordan 块（非正规）==
@@ -492,11 +494,11 @@ for t in [1e-2,1e-8,1e-16]:
   t=1e-16  特征值=[1. 2.]
 ```
 
-**（1）的读法：** 移动量精确等于 $\sqrt{t}$。$t=10^{-2}$ 时移动 $10^{-1}$、$t=10^{-12}$ 时移动 $10^{-6}$——**扰动缩小了 10 个数量级，误差才从 $10^{-1}$ 压到 $10^{-6}$（只缩了 5 个数量级）**，这就是「开方」的含义。$t=10^{-16}$ 时（$\sqrt{t}=10^{-8}$）双精度仍能分辨 $1\pm10^{-8}$（$1$ 附近的机器精度是 $2\times10^{-16}$），所以这一行依然正确；若取 $t=10^{-20}$，$1\pm10^{-10}$ 就再也算不出来了——**在重特征值附近，双精度只能保证约 8 位有效数字**（精度是 $\sqrt{u}$ 而不是 $u$）。
+**（1）的读法：** 精确数学问题中移动量为 $\sqrt t$：$t=10^{-2}$ 时为 $10^{-1}$，$t=10^{-12}$ 时为 $10^{-6}$。表中 $t=10^{-16}$ 的数值输出没有分辨出理论上的 $1\pm10^{-8}$；可表示这两个数不代表该特征值算法必定能算出它们。对扰动规模约为机器精度的此 Jordan 块，最坏方向的敏感性约为 $\sqrt u$，并非所有重特征值或所有扰动都有相同表现。
 
 **（2）的读法：** 特征值精确为 $1.5\pm\sqrt{0.25+t^2}$，移动量约 $t^2$——**比 $t$ 还小一个数量级**（$t=10^{-2}$ 时只移动 $10^{-4}$，见表中 $0.99990001$）。$t=10^{-8}$ 与 $10^{-16}$ 时，移动量（$\sim10^{-16}$ 与 $\sim10^{-32}$）已经低于机器精度，**完全测不出来**——**对称矩阵的特征值对扰动极其稳健**。
 
-**工程结论：** ① 对称特征值问题（结构力学、协方差矩阵、量子力学）总能算得很准；② **非对称 / 非正规矩阵的重特征值问题（如流体稳定性、某些控制问题）在数值上极难处理**——这不是算法不行，是问题本身病态；③ 实践中应**尽量避免**让矩阵既非正规又带重特征值，或者改用 Schur 形式 / 奇异值（$\sigma_i=\sqrt{\lambda_i(A^{\mathrm T}A)}$ 总在**对称**矩阵上算，原理上更稳）。
+**工程结论：** 对称结构有利于控制特征值的绝对误差，但小特征值的相对精度、特征向量的谱间隙仍须单独考察。缺陷非正规问题则可能对输入高度敏感。Schur 形式有助于稳定表示和计算原特征值问题，却不会消除其敏感性；改求奇异值回答的是另一个问题，不能替代特征值。计算奇异值通常直接对 $A$ 做 SVD，而不显式形成 $A^{\mathrm T}A$。
 :::
 
 :::
@@ -537,24 +539,25 @@ $$N^k=\begin{pmatrix}1&k\cdot1000\\0&1\end{pmatrix},\qquad \lVert N^k\rVert_2\ap
 | Rayleigh 商 | $R(\boldsymbol{x})=\boldsymbol{x}^{\mathrm T}A\boldsymbol{x}/\boldsymbol{x}^{\mathrm T}\boldsymbol{x}$（$A$ 对称） |
 | 变分刻画 | $\lambda_1=\min R$，$\lambda_n=\max R$；Courant–Fischer 给全部中间特征值 |
 | 幂法收敛 | 向量误差 $O(\lvert\lambda_2/\lambda_1\rvert^k)$；Rayleigh 商误差 $O(\lvert\lambda_2/\lambda_1\rvert^{2k})$ |
-| 对称扰动 | $\lvert\lambda_i(A+E)-\lambda_i(A)\rvert\le\lVert E\rVert_2$（Weyl） |
-| 一般扰动 | $\le\mathrm{cond}_2(V)\lVert E\rVert_2$（Bauer–Fike） |
-| 重特征值 | 非正规 $k$ 重：移动 $O(\lVert E\rVert^{1/k})$——**固有病态** |
+| 对称扰动 | $|\lambda_i(A+E)-\lambda_i(A)|\le\|E\|_2$（$A,E$ 对称，Weyl） |
+| 一般扰动 | $\min_{\lambda\in\sigma(A)}|\mu-\lambda|\le\mathrm{cond}_2(V)\|E\|_2$（$A=V\Lambda V^{-1}$ 可对角化） |
+| 缺陷重特征值 | 大小为 $k$ 的 Jordan 块可有 $O(\|E\|^{1/k})$ 的移动 |
 
 :::
 
 ::: think[core] 常见错误清单 · 自查六条
-1. **拿 $\lVert A\rVert$ 当 $\rho(A)$。** $\rho\le\lVert A\rVert$ 是**不等式**，在非正规矩阵上两者可以差几个数量级（例 2.5.6 的 $1$ 对 $1000$）。用 $\rho$ 判收敛时还要记住：$\rho\lt1$ 只是渐近结论，**有限步内误差可能先涨**——稳妥的判据是 $\lVert A\rVert\lt1$。（这正是课堂上「迭代收敛判定选 $\lVert G\rVert\lt1$ 而非 $\rho(G)\lt1$」的原因，见[第 3 讲精编](../lectures/lec03.md)定理后的预告与[第 4 讲](../lectures/lec04.md)的收敛定理；$\lVert A\rVert_2=\sigma_1$ 的公式见 [2.6](sec26.md#sup-2.6.2)。）
-2. **以为重特征值也能算准。** 非正规矩阵的 $k$ 重特征值遇上 $O(\varepsilon)$ 扰动会移动 $O(\varepsilon^{1/k})$：双精度下 $k=2$ 只剩约 8 位有效数字，$k=4$ 只剩约 4 位。**这是问题的固有属性**，换个算法没用（[1.2.6](../ch01/sec12.md#sec-1.2.6)）。
+1. **拿 $\lVert A\rVert$ 当 $\rho(A)$。** $\rho\le\|A\|$ 是不等式；$\rho(H)<1$ 保证定常线性迭代对任意初值渐近收敛，$\|H\|<1$ 则是所选范数下每步收缩的充分条件。相关范数判据可查[第 3 讲整理稿](../lectures/lec03.md#lec03-S3)和[第 4 讲](../lectures/lec04.md)；两讲原录音待核，不能把本节的瞬态增长分析归为课堂原话。
+2. **以为所有重特征值都同样敏感或同样稳定。** 特定缺陷 Jordan 块可在 $O(\varepsilon)$ 扰动下移动 $O(\varepsilon^{1/k})$；对称矩阵的重特征值则满足 Weyl 的线性扰动界。
 3. **把 Gerschgorin 圆盘当精确值。** 它给出的是**包含区间**；只有对角占优时圆心才接近特征值。若圆盘相交，只能断定「这个连通区里有多少个特征值」，无法把它们一一配到具体位置上。
-4. **忘记 Gerschgorin 的列版本。** 行、列两个版本的**交集**能给出更紧的围栏（例 2.5.2 的 $[8,12]$ 就是取交的收获）。对 $A^{\mathrm T}$ 用行版本，即得列版本。
-5. **幂法中不做规范化。** $A^k\boldsymbol{x}$ 的模长按 $\lvert\lambda_1\rvert^k$ 增长或衰减，会溢出 / 下溢。**每步都要归一化**（除以范数）。同样地，提精度要用 Rayleigh 商，而不是 $\lVert A\boldsymbol{x}\rVert/\lVert\boldsymbol{x}\rVert$。
-6. **以为特征值都是实的。** 实矩阵也可以有复特征值（旋转矩阵就是！）；只有对称矩阵才保证特征值全实。算非对称矩阵时要用 `np.linalg.eigvals`（复）而不是 `np.linalg.eigvalsh`（假定对称）——**错误地假定对称会静默给出错误结果**。
+4. **忘记 Gerschgorin 的列版本。** 行圆盘并集与列圆盘并集取交可以收紧围栏；例 2.5.2 对实特征值的整体围栏是 $[2,12]$，不是只取第一列圆盘的 $[8,12]$。
+5. **幂法不归一化，或把估计量的收敛阶混淆。** 归一化防止溢出和下溢；对称情形 Rayleigh 商保留符号且具有二阶方向误差，范数比只给模，但也可能具有二阶精度。
+6. **以为实矩阵的特征值全实。** 对称性是保证谱全实的充分条件，不是必要条件。非对称矩阵应使用 `np.linalg.eigvals`，不能因输出看似实数而调用假定对称的 `eigvalsh`。
 :::
 
 ::: preview 课程预告 · 本节之后
-- **SVD 就是对称谱定理在长方形矩阵上的推广**：$\sigma_i(A)=\sqrt{\lambda_i(A^{\mathrm T}A)}$ 在**对称半正定**矩阵上算，因此总是良态的——[2.6](sec26.md)；
+- **SVD 与对称谱定理的联系**：$\sigma_i(A)=\sqrt{\lambda_i(A^{\mathrm T}A)}$；但显式形成 $A^{\mathrm T}A$ 会放大小奇异值的相对计算困难，实践通常直接对 $A$ 做 SVD——[2.6](sec26.md)；
 - **幂法 / 反幂法 / QR 方法 / Jacobi 方法求特征值**：原书第 3 章 3.1–3.3 节（课堂已于[第 6 讲](../lectures/lec06.md)开篇，并在[第 7 讲](../lectures/lec07.md)展开规范化幂法、反幂法与位移反幂法；本节的 Rayleigh 商正是幂法提取特征值的工具）；
 - **谱半径决定迭代收敛速度**：原书第 2 章 2.4 节与[第 2 章](../course/ch02/overview.md)（$\rho(H)\lt1$ 是 Jacobi / Gauss–Seidel / SOR 收敛的判据，课堂实录见[第 5 讲](../lectures/lec05.md)、[第 6 讲](../lectures/lec06.md)）；
+以上课堂链接只用于定位既有记录：第 5、7 讲目前仅有整理稿，原录音待核；第 6 讲原始 ASR 尚未经听校，不把其转写措辞视为已核实原话。
 - **条件数与谱的关系**：$\mathrm{cond}_2(A)=\sigma_1/\sigma_r$（[2.4](sec24.md)），而 $\sigma$ 来自对称矩阵的谱——两节在这里汇合。
 :::

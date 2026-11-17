@@ -1,6 +1,6 @@
 # 入学诊断自测
 
-这一页只回答一个问题：**这份教程你该从哪里开始读？** 下面 12 道题请在 15 分钟内独立做完，做完后逐题对照答案统计得分，再按下面的「去向建议」选择阅读路线。题目只考**先修**与**第一章核心结论**，不出偏题。
+这一页帮助判断：**进入第一章或补充篇前，哪些基础需要补读？** 下面 12 道题覆盖先修、第一章核心结论与补充篇预备概念，建议先在 15 分钟内尝试，再逐题对照答案；限时内没做完的题也可继续作答。总分只是阅读建议，不替代七章正文的学习。
 
 ::: note 怎么用这份自测
 - **闭卷**作答：先写答案，再看解析；看解析时重点核对「我错在哪一步」，而不是「猜对了几个」。
@@ -31,7 +31,7 @@ $$\cos\theta=\frac{4}{3\sqrt5}\approx0.596285,\qquad\theta\approx53.40^{\circ}.$
 ::: sol 答案
 $\lvert\boldsymbol{x}^{\mathrm T}\boldsymbol{y}\rvert\le\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2$，等号成立当且仅当 $\boldsymbol{x},\boldsymbol{y}$ **线性相关**。
 
-作用：展开 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_2^2=\lVert\boldsymbol{x}\rVert_2^2+2\boldsymbol{x}^{\mathrm T}\boldsymbol{y}+\lVert\boldsymbol{y}\rVert_2^2$ 后，交叉项 $2\boldsymbol{x}^{\mathrm T}\boldsymbol{y}\le2\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2$ 恰好补成完全平方 $(\lVert\boldsymbol{x}\rVert_2+\lVert\boldsymbol{y}\rVert_2)^2$。**没有它，三角不等式证不出来**——这正是定理 1.3.1 的 2-范数部分的关键一步。
+作用：展开 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_2^2=\lVert\boldsymbol{x}\rVert_2^2+2\boldsymbol{x}^{\mathrm T}\boldsymbol{y}+\lVert\boldsymbol{y}\rVert_2^2$ 后，交叉项 $2\boldsymbol{x}^{\mathrm T}\boldsymbol{y}\le2\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2$ 恰好补成完全平方 $(\lVert\boldsymbol{x}\rVert_2+\lVert\boldsymbol{y}\rVert_2)^2$。两边非负，开方得到三角不等式；这是定理 1.3.1 所采用证明的关键一步。
 :::
 
 :::
@@ -87,7 +87,7 @@ $$\varepsilon(u)\approx4\times0.005+2\times0.005=0.03,\qquad\varepsilon_{\mathrm
 
 $u=0.300\times10^1$（$m=1$）：$n=2$ 时 $\tfrac12\times10^{-1}=0.05\ge0.03$ ✓，$n=3$ 时 $0.005\lt0.03$ ✗，故有 **2 位**有效数字。
 
-**关键提醒：** $a^2-b^2$ 属于「相近数相减」这一危险结构：一旦 $a$ 与 $b$ 相近，两个平方数就几乎相等。本例 $4.00-1.00$ 尚不致命；若换成 $a=1.01,b=1.00$，有效数字就会大量流失——此时应改写为 $u=(a-b)(a+b)$。见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
+**关键提醒：** 若 $a,b$ 很接近，$a^2-b^2$ 对输入扰动的相对敏感性会明显增大。改写为 $(a-b)(a+b)$ 可避免“先平方、再相减”造成的额外舍入损失，却不能恢复输入数据已丢失的信息。本例还可直接对区间验证：上端 $2.005^2-0.995^2=3.03$，下端 $1.995^2-1.005^2=2.97$，故 $0.03$ 恰也是严格误差限，两位有效数字的判断成立。见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
 :::
 
 :::
@@ -108,12 +108,12 @@ $\lVert A\rVert_F$ **不**从属于任何向量范数：任何算子范数满足
 
 ::: ex B4 · 稳定性判断
 
-一个算法给出线性递推 $y_n=\dfrac1n-\beta y_{n-1}$。当 $\lvert\beta\rvert=3$ 时，若要算 $y_{100}$，应当从哪个方向递推？为什么？
+一个计算问题的目标序列满足 $y_n=\dfrac1n-\beta y_{n-1}$，$|\beta|=3$。若要计算 $y_{100}$，为什么不宜直接从近似的 $y_0$ 正向递推？若改作反向递推，还缺少什么信息？
 
 ::: sol 答案
-误差满足 $\delta_n=-\beta\delta_{n-1}$，即 $\lvert\delta_n\rvert=3^n\lvert\delta_0\rvert$——正向递推每步**放大 3 倍**，$3^{100}$ 是天文数字，绝不能正向算。
+若只计初值扰动并忽略后续舍入，误差满足 $\delta_n=-\beta\delta_{n-1}$，即 $\lvert\delta_n\rvert=3^n\lvert\delta_0\rvert$，所以初值误差每步放大 3 倍。除非已有足够严格的初值与舍入误差控制，否则直接正向计算 $y_{100}$ 很难可靠；每步新增的舍入还会继续被后续递推放大。
 
-**应反向**：把关系改写为 $y_{n-1}=\dfrac{1}{\beta n}-\dfrac{1}{\beta}y_n$，此时每步误差**缩小**为 $1/3$，稳定。代价是要先知道 $y_{100}$ 的近似值——用积分估计式（夹逼）把它定下来。方法见 [1.2.4](ch01/sec12.md#sec-1.2.4) 原则 (1)。
+**可考虑反向**：$y_{n-1}=\dfrac{1}{\beta n}-\dfrac{1}{\beta}y_n$，初值扰动每步缩为 $1/3$。为得到 $y_{100}$，须在更远的 $N>100$ 处建立可证明的近似初值及误差界，再反推至 100。仅有递推式无法确定目标序列，不能凭空指定远端值；正文的积分例能利用积分夹逼提供这项额外信息。见 [1.2.4](ch01/sec12.md#sec-1.2.4) 原则 (1)。
 :::
 
 :::
@@ -125,7 +125,7 @@ $\lVert A\rVert_F$ **不**从属于任何向量范数：任何算子范数满足
 $\boldsymbol{q}_1=(1,1,0)^{\mathrm T}/\sqrt2$ 与 $\boldsymbol{q}_2=(1,-1,1)^{\mathrm T}/\sqrt3$ 是否正交？$\{\boldsymbol{q}_1,\boldsymbol{q}_2\}$ 能否扩充成 $\mathbb{R}^3$ 的标准正交基？
 
 ::: sol 答案
-$\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_2=\dfrac{1}{2\sqrt3}\bigl[(1)(1)+(1)(-1)+(0)(1)\bigr]=0$，故**正交**；又 $\lVert\boldsymbol{q}_1\rVert_2=\lVert\boldsymbol{q}_2\rVert_2=1$，故它们是标准正交组。
+$\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_2=\dfrac{1}{\sqrt6}\bigl[(1)(1)+(1)(-1)+(0)(1)\bigr]=0$，故**正交**；又 $\lVert\boldsymbol{q}_1\rVert_2=\lVert\boldsymbol{q}_2\rVert_2=1$，故它们是标准正交组。
 
 两个线性无关的向量总能扩充成基，再用 Gram–Schmidt 正交化——取 $\boldsymbol{q}_3$ 为与二者都正交的单位向量即可。手算：$\boldsymbol{q}_3=(1,-1,-2)^{\mathrm T}/\sqrt6$，验证 $\boldsymbol{q}_1^{\mathrm T}\boldsymbol{q}_3=(1-1+0)/\sqrt{12}=0$、$\boldsymbol{q}_2^{\mathrm T}\boldsymbol{q}_3=(1+1-2)/\sqrt{18}=0$。这正是 [2.3](supplement/sec23.md) 的操作。
 :::
@@ -163,9 +163,9 @@ $A\boldsymbol{x}=(2-2,\ 4-4,\ 2-1)^{\mathrm T}=(0,0,1)^{\mathrm T}\neq\boldsymbo
 ::: sol 答案
 $A=U\Sigma V^{\mathrm T}$，其中 $U\in\mathbb{R}^{m\times m}$、$V\in\mathbb{R}^{n\times n}$ 为**正交矩阵**，$\Sigma\in\mathbb{R}^{m\times n}$ 为非负对角阵（对角元 $\sigma_1\ge\cdots\ge\sigma_r\gt0$，$r=\operatorname{rank}A$）。
 
-$$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\ (\text{可逆时}).$$
+$$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\sigma_1/\sigma_n\quad(A\text{ 为非奇异 }n\text{ 阶方阵}).$$
 
-**若这两问答不出**，说明补充篇最大的新工具你还没建立起来，务必按顺序读完 [2.6](supplement/sec26.md) 之前的全部小节。
+零矩阵的谱范数为零；奇异方阵的条件数记为 $\infty$。一般长方形矩阵的广义条件数须另说明约定。**这题答不出不表示先修不合格**：SVD 是补充篇要学的新工具，可沿 [2.1](supplement/sec21.md)–[2.6](supplement/sec26.md) 建立它，不必在学习前就会。
 :::
 
 :::
@@ -174,7 +174,7 @@ $$\lVert A\rVert_2=\sigma_1,\qquad \mathrm{cond}_2(A)=\frac{\sigma_1}{\sigma_r}\
 
 | 得分 | 路线 | 说明 |
 |:--:|:--|:--|
-| **10–12 分** | 快速通道 | 先读[概念地图](preface-map.md)与[补充篇导览](supplement/overview.md)，然后直接进 [补充篇 2.1](supplement/sec21.md)；第一章只在遇到具体工具时回查（例如 B3 答错就回 [1.3](ch01/sec13.md)）。 |
+| **10–12 分** | 快速通道 | 若 A、B 组全对且目标是读补充篇，可先看[概念地图](preface-map.md)与[补充篇导览](supplement/overview.md)，再进 [2.1](supplement/sec21.md)；否则先补对应错题。若首次学习七章主线，仍按目录读正文。 |
 | **7–9 分** | 标准路线 | 按目录顺序读：先把第一章的 [1.2](ch01/sec12.md)、[1.3](ch01/sec13.md) 两节速读一遍，并做习题集的 A、B 组，再进补充篇。 |
 | **4–6 分** | 夯实路线 | 从 [1.1](ch01/sec11.md) 起逐节通读，每节末的「小结与常见错误」全做一遍，第一章习题集的 A、B 组全刷一遍，再进补充篇。 |
 | **0–3 分** | 先补先修 | 先过一遍下面的[先修工具箱](entry-test.md#先修工具箱)，对照《高等代数》《数学分析》复习线性相关、特征值与 Taylor 展开，然后回本教程。 |
@@ -191,19 +191,19 @@ C1–C3 → [2.1](supplement/sec21.md)、[2.2](supplement/sec22.md)；C4 → [2.
 
 ::: method 六条先修事实
 
-**① Taylor 公式（带余项）。** 若 $f$ 在 $a$ 的邻域有 $n+1$ 阶导数，
+**① Taylor 公式（带余项）。** 若 $f\in C^{n+1}$ 于包含 $a,x$ 的区间，
 
 $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1},\qquad\xi\ \text{介于}\ a,x\ \text{之间}.$$
 
 这是全部**误差传播公式**的来源（[1.2.3](ch01/sec12.md#sec-1.2.3)），也是 [2.5](supplement/sec25.md) 中特征值一阶扰动（Rayleigh 商）的来源。
 
-**② 极限与 $O$ 记号。** $T(n)=O(g(n))$ 表示存在常数 $C$ 使 $T(n)\le Cg(n)$（$n$ 足够大）。它只刻画**增长的阶**、忽略常数因子。用法与陷阱见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
+**② 极限与 $O$ 记号。** $T(n)=O(g(n))$ 表示存在常数 $C>0$ 使 $|T(n)|\le C|g(n)|$（$n$ 足够大）。它只给量级上界，不表示一定同阶；例如线性函数也属于 $O(n^2)$。误差分析还常取 $h\to0$，此时 $O(h^p)$ 控制小步长下的误差。用法见 [1.2.4](ch01/sec12.md#sec-1.2.4)。
 
-**③ 内积与正交（为补充篇预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。多一个视角：$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta$，所以「正交」就是夹角 $90^{\circ}$。[2.1](supplement/sec21.md) 把内积公理化。
+**③ 内积与正交（为补充篇预备）。** $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，$\lVert\boldsymbol{x}\rVert_2=\sqrt{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}$；$\boldsymbol{x}\perp\boldsymbol{y}\iff\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$。两向量均非零时，内积还等于长度之积乘夹角余弦，此时正交对应夹角 $90^\circ$；零向量也与所有向量正交，但不定义夹角。[2.1](supplement/sec21.md) 把内积公理化。
 
 **④ 线性相关、基与秩。** 一组向量线性无关，指 $\sum k_i\boldsymbol{v}_i=\boldsymbol{0}$ 只有零解；$\operatorname{rank}A$ 是 $A$ 的极大线性无关列数，它与 $A\boldsymbol{x}=\boldsymbol{0}$ 的解空间维数互补：$\operatorname{rank}A+\dim N(A)=n$。这条**秩定理**是 [2.2](supplement/sec22.md) 的主角。
 
-**⑤ 特征值与对称矩阵。** $\lambda$ 是 $A$ 的特征值 $\iff\det(A-\lambda I)=0$，对应特征向量满足 $A\boldsymbol{v}=\lambda\boldsymbol{v}$。**实对称矩阵必可正交对角化**：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且全部特征值为实数。这条结论在 [1.3.4](ch01/sec13.md#sec-1.3.4) 证 $\lVert A\rVert_2$ 时已经用到，在 [2.5](supplement/sec25.md) 会用得更彻底。
+**⑤ 特征值与对称矩阵。** 对方阵，$\lambda$ 是特征值当且仅当 $\det(A-\lambda I)=0$，对应特征向量须非零并满足 $A\boldsymbol v=\lambda\boldsymbol v$。实对称矩阵必可正交对角化：存在正交阵 $V$ 使 $V^{\mathrm T}AV=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，且特征值全为实数。这是 [1.3.4](ch01/sec13.md#sec-1.3.4) 计算谱范数与 [2.5](supplement/sec25.md) 谱理论的基础。
 
 **⑥ 正定矩阵。** 对称矩阵 $A$ 正定 $\iff$ 全部特征值 $\gt0$ $\iff$ 各阶顺序主子式 $\gt0$（Sylvester 判据）。若 $A$ 列满秩，则 $A^{\mathrm T}A$ 正定——这是 [2.2](supplement/sec22.md) 投影公式 $A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$ 成立的前提（$A^{\mathrm T}A$ 可逆）。
 

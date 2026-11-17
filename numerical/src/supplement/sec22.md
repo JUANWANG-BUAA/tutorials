@@ -15,9 +15,9 @@
 把 $A\boldsymbol{x}=\boldsymbol{b}$ 想成一条**流水线**：输入 $\boldsymbol{x}\in\mathbb{R}^n$ 进去，输出 $\boldsymbol{b}\in\mathbb{R}^m$ 出来。
 
 - **输入侧**分成两块：能被送到输出的那部分（**行空间**），和进去就被「吃掉」、直接变零的那部分（**零空间**）。这两块**正交**，合起来正好是整个输入空间。
-- **输出侧**也分成两块：能被送到的那些点（**列空间**），和永远到不了的那些点（**左零空间**）。这两块同样**正交**，合起来是整个输出空间。
+- **输出侧**也分成两块：能被送到的向量构成**列空间**；与所有可达向量正交的方向构成**左零空间**。一般不可达向量不一定属于左零空间，而是可达分量与左零分量之和。
 
-于是整条流水线的信息，被压缩成四个数（维数）：$r,\ n-r,\ r,\ m-r$。所谓「四个基本子空间」，说到底就是这四个数。
+四个子空间的维数依次为 $r,\ n-r,\ r,\ m-r$。维数只说明各块有多大，具体方向还要由基向量描述，不能用这四个数代替子空间本身。
 :::
 
 ::: def 定义 2.2.1 · 四个基本子空间 {#def-sup-2.2.1}
@@ -29,6 +29,8 @@ $$\text{列空间：}\quad C(A)=\{A\boldsymbol{x}:\boldsymbol{x}\in\mathbb{R}^n\
 $$\text{行空间：}\quad C(A^{\mathrm T})=\{A^{\mathrm T}\boldsymbol{y}:\boldsymbol{y}\in\mathbb{R}^m\}\subseteq\mathbb{R}^n,\qquad
 \text{左零空间：}\quad N(A^{\mathrm T})=\{\boldsymbol{y}\in\mathbb{R}^m:A^{\mathrm T}\boldsymbol{y}=\boldsymbol{0}\}\subseteq\mathbb{R}^m .$$
 :::
+
+这里 $\operatorname{span}$ 表示所有线性组合构成的集合；子空间对加法与数乘封闭，并包含零向量。对 $\mathbb R^d$ 的子空间 $\mathcal S$，记 $\mathcal S^\perp=\{\boldsymbol y:\boldsymbol y^{\mathrm T}\boldsymbol s=0\text{ 对所有 }\boldsymbol s\in\mathcal S\}$，称为正交补，2.2.2 会给出一般内积下的定义。记号 $\mathcal S\oplus\mathcal T$ 表示每个向量都能唯一写成两子空间中向量之和；若两子空间还互相正交，就称为正交直和。
 
 ::: thm 定理 2.2.1（新增） · 秩定理与维数公式 {#thm-sup-2.2.1}
 设 $A\in\mathbb{R}^{m\times n}$，则
@@ -74,7 +76,7 @@ $$\boldsymbol{v}^{\mathrm T}\boldsymbol{x}=(A^{\mathrm T}\boldsymbol{y})^{\mathr
 
 $$\boldsymbol{b}=\underbrace{\boldsymbol{p}}_{\in C(A)}+\underbrace{\boldsymbol{e}}_{\in N(A^{\mathrm T})},\qquad \boldsymbol{p}\perp\boldsymbol{e} . \tag{2.9}$$
 
-这一步分解是下面投影与最小二乘的全部基础：**$A\boldsymbol{x}=\boldsymbol{b}$ 有解 ⟺ $\boldsymbol{b}\in C(A)$（即 $\boldsymbol{e}=\boldsymbol{0}$）；无解时，能做的只剩让 $\boldsymbol{e}$ 尽量小——而（2.9）说明，「垂直的那个 $\boldsymbol{e}$」是最短的。**
+这一步分解是下面投影与最小二乘的基础：$A\boldsymbol{x}=\boldsymbol{b}$ 有解当且仅当 $\boldsymbol{b}\in C(A)$，也就是 $\boldsymbol{e}=\boldsymbol{0}$。无解时，$\boldsymbol b$ 的左零分量 $\boldsymbol e$ 无法由改变 $\boldsymbol x$ 消除；选择 $A\boldsymbol x=\boldsymbol p$ 能使残差只剩这一分量，因而最短。最近性的严格证明见定理 2.2.4。
 
 ::: ex 例 2.2.1（新增） · 四个子空间的基与维数 {#ex-sup-2.2.1}
 设 $A\in\mathbb{R}^{3\times4}$，
@@ -211,11 +213,13 @@ $$\lVert\boldsymbol{x}-\boldsymbol{s}\rVert^2=(1-t)^2+(1-t)^2+1=2(1-t)^2+1\ \ge1
 （2.10）要求先有 $\mathcal{S}$ 的标准正交基。可实际拿到手的，往往只是 $\mathcal{S}$ 的**任意**一组生成向量（矩阵 $A$ 的列），未必正交。投影矩阵要解决的就是这件事：不先正交化，也能直接把投影写出来。
 
 ::: intuition 直觉 · 用「斜」的基算出「正」的投影
-设 $\mathcal{S}=C(A)$。$A$ 的列 $\boldsymbol{a}_1,\dots,\boldsymbol{a}_k$ 通常**不正交**，但投影照样写得出来。要算的 $\boldsymbol{p}$ 一定在列空间里，就把它写成 $\boldsymbol{p}=A\hat{\boldsymbol{x}}$，再让余项与 $C(A)$ 垂直：$A^{\mathrm T}(\boldsymbol{b}-A\hat{\boldsymbol{x}})=\boldsymbol{0}$。展开就是 $A^{\mathrm T}A\hat{\boldsymbol{x}}=A^{\mathrm T}\boldsymbol{b}$，于是
+设 $\mathcal{S}=C(A)$，并先假设 $A$ 的列线性无关。投影可写成 $\boldsymbol p=A\hat{\boldsymbol x}$，余项与列空间垂直给出 $A^{\mathrm T}(\boldsymbol b-A\hat{\boldsymbol x})=0$。列满秩保证 $A^{\mathrm T}A$ 可逆，于是
 
 $$\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b},\qquad \boldsymbol{p}=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}=P\boldsymbol{b}.$$
 
 **「先解一个 $k$ 阶小方程组（$A^{\mathrm T}A$ 是 $k\times k$、$k$ 为列数），再乘回去」**——投影的全部机制就这一句话。其中的 $P$ 就是投影矩阵。
+
+这是代数表达式，不是要求程序先求逆。实际计算 $\boldsymbol p$ 时，应解系数方程再乘 $A$；若 $m$ 很大，更不应为了一个投影向量形成整个 $m\times m$ 的 $P$。已有列标准正交基 $Q$ 时，公式简化为 $P=QQ^{\mathrm T}$、$\boldsymbol p=Q(Q^{\mathrm T}\boldsymbol b)$；下一节会用 QR 稳定地构造这个 $Q$。
 :::
 
 ::: thm 定理 2.2.5（新增） · 投影矩阵与它的三条性质 {#thm-sup-2.2.5}
@@ -244,7 +248,7 @@ $$P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}\in\mathbb{R}^{m\times m}, \tag{2.11}$$
 
 **性质 3：** 由 $P^2=P$，$P(\boldsymbol{v})=\lambda\boldsymbol{v}\Rightarrow\lambda^2=\lambda\Rightarrow\lambda\in\{0,1\}$。$P$ 可对角化（对称），故 $\operatorname{tr}P=\operatorname{rank}P=$ 非零特征值个数 $=\ \dim C(A)=n$。范数：对任意 $\boldsymbol{b}$，$\lVert P\boldsymbol{b}\rVert\le\lVert\boldsymbol{b}\rVert$（因为 $\lVert\boldsymbol{b}\rVert^2=\lVert P\boldsymbol{b}\rVert^2+\lVert\boldsymbol{b}-P\boldsymbol{b}\rVert^2$，勾股），且取 $\boldsymbol{b}\in C(A)$ 时 $\lVert P\boldsymbol{b}\rVert=\lVert\boldsymbol{b}\rVert$，故 $\lVert P\rVert_2=1$（$P\neq O$）。
 
-**反之：** 若实矩阵 $S$ 满足 $S^{\mathrm T}=S=S^2$，记它的列空间为 $\mathcal{S}=C(S)$，则 $S$ 在 $\mathcal{S}$ 上恒等（$S\boldsymbol{s}=\boldsymbol{s}$）、在 $\mathcal{S}^{\perp}$ 上为零（由对称性，$\boldsymbol{y}\perp C(S)\Rightarrow S\boldsymbol{y}\in C(S)$ 且 $\boldsymbol{y}^{\mathrm T}S\boldsymbol{y}=0\Rightarrow S\boldsymbol{y}=\boldsymbol{0}$），故 $S$ 正是 $\mathcal{S}$ 上的正交投影。
+**反之：** 若实矩阵 $S$ 满足 $S^{\mathrm T}=S=S^2$，记 $\mathcal{S}=C(S)$。对 $\boldsymbol s=S\boldsymbol z$，有 $S\boldsymbol s=S^2\boldsymbol z=\boldsymbol s$。若 $\boldsymbol y\perp C(S)$，则对任意 $\boldsymbol z$ 有 $\boldsymbol z^{\mathrm T}S\boldsymbol y=(S\boldsymbol z)^{\mathrm T}\boldsymbol y=0$，故 $S\boldsymbol y=0$。因此 $S$ 保留 $\mathcal S$ 分量、消去 $\mathcal S^\perp$ 分量，正是正交投影。
 :::
 
 :::
@@ -297,6 +301,8 @@ $$\lVert A\hat{\boldsymbol{x}}-\boldsymbol{b}\rVert_2=\min_{\boldsymbol{x}\in\ma
 $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$ 称为**残差**（residual）。
 :::
 
+上式中的 $\boldsymbol a_i^{\mathrm T}$ 表示 $A$ 的第 $i$ 行。最小化残差范数与最小化它的平方等价，因为平方函数在非负数上严格递增。做直线拟合时，未知量是直线系数，不是数据点的横坐标；设计矩阵把系数映成各观测位置的预测值，残差记录预测与观测的差异。
+
 ::: thm 定理 2.2.6（新增） · 正态方程与最小二乘解的刻画 {#thm-sup-2.2.6}
 设 $A\in\mathbb{R}^{m\times n}$、$\boldsymbol{b}\in\mathbb{R}^m$。
 
@@ -310,7 +316,7 @@ $$\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b},\qquad
 A\hat{\boldsymbol{x}}=P\boldsymbol{b},\qquad
 \boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}=(I-P)\boldsymbol{b}\in N(A^{\mathrm T});$$
 
-3. 最小残差值的平方为 $\lVert\boldsymbol{r}\rVert_2^2=\boldsymbol{b}^{\mathrm T}(I-P)\boldsymbol{b}=\lVert\boldsymbol{b}\rVert_2^2-\lVert A\hat{\boldsymbol{x}}\rVert_2^2$（勾股分解）。
+3. 当 $A$ 列满秩、$P$ 如（2.11）定义时，最小残差平方为 $\lVert\boldsymbol r\rVert_2^2=\boldsymbol b^{\mathrm T}(I-P)\boldsymbol b=\lVert\boldsymbol b\rVert_2^2-\lVert A\hat{\boldsymbol x}\rVert_2^2$。秩亏时仍有后一勾股公式，但须用列空间的投影而非（2.11）。
 
 ::: proof 证明
 **（1）必要性：** 设 $\hat{\boldsymbol{x}}$ 最小化 $f(\boldsymbol{x})=\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2$。$f$ 是可微的凸二次函数，在极小点梯度为零：
@@ -331,18 +337,20 @@ $$\operatorname{rank}(A^{\mathrm T}A)=\operatorname{rank}A\qquad\text{（两个�
 
 **唯一性：** $A$ 列满秩 $\Rightarrow A^{\mathrm T}A$ 非奇异（[@thm-sup-2.2.5] 证明第一段）$\Rightarrow$ 解唯一。
 
+**秩亏时哪些量仍然唯一？** 最近点 $\boldsymbol p$ 与残差 $\boldsymbol r=\boldsymbol b-\boldsymbol p$ 始终唯一，但系数不唯一：若 $\hat{\boldsymbol x}$ 是一个最小二乘解，则全部解恰为 $\hat{\boldsymbol x}+N(A)$。这是因为加上零空间向量不改变 $A\hat{\boldsymbol x}$；反过来，两个最小二乘解必须映到同一个最近点，所以其差在 $N(A)$ 中。若还要求系数的 2-范数最小，就应选行空间 $C(A^{\mathrm T})$ 中的那一个，详见 [SVD 与伪逆](sec26.md)。
+
 **（3）** 由 $\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{r}$、$\boldsymbol{p}\perp\boldsymbol{r}$ 的勾股分解与 $\boldsymbol{p}=P\boldsymbol{b}$。
 :::
 
 :::
 
-::: method 最小二乘的三种解法（本次只铺路，[第三章](../ch01/sec11.md#roadmap)细讲）
+::: method 最小二乘的三种解法（以下比较 $m\ge n$ 的稠密问题）
 
 | 方法 | 方程 / 公式 | 复杂度 | 数值稳定性 |
 |:--|:--|:--:|:--|
 | **正态方程** | 解 $(A^{\mathrm T}A)\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$ | $mn^2+\frac13n^3$ | **差**：把 $\mathrm{cond}$ 平方了 |
-| **QR 分解** | $A=QR$，解 $R\boldsymbol{x}=(Q^{\mathrm T}\boldsymbol{b})$ 的前 $n$ 行 | $2mn^2$ | **好**（[2.3.5](sec23.md#sup-2.3.5)） |
-| **SVD** | $\boldsymbol{x}=V\Sigma^{+}U^{\mathrm T}\boldsymbol{b}$ | $\sim 2mn^2+11n^3$ | **最好**，且秩亏也能处理（[2.6.4](sec26.md#sup-2.6.4)） |
+| **QR 分解** | 瘦 QR 下解 $R\boldsymbol{x}=Q^{\mathrm T}\boldsymbol{b}$；全 QR 下取 $\bar Q^{\mathrm T}\boldsymbol b$ 前 $n$ 个分量 | 主要项 $2mn^2-\frac23n^3$ | 避免形成 $A^{\mathrm T}A$，见 [2.3.6](sec23.md#sup-2.3.6) |
+| **SVD** | $\boldsymbol{x}=V\Sigma^{+}U^{\mathrm T}\boldsymbol{b}$（最小范数解） | 取决于所需奇异向量与算法，常为 $O(mn^2+n^3)$ | 也可处理秩亏与截断，见 [2.6](sec26.md) |
 
 正态方程公式最简单、手算最方便，但它在浮点下会把问题的条件数**平方**——这是本章最重要的实用结论之一；[2.3.5](sec23.md#sup-2.3.5) 与 [2.7.2](sec27.md#sup-2.7.2) 实验二会用数值把它钉死。
 :::
@@ -383,11 +391,11 @@ $$A^{\mathrm T}\boldsymbol{r}=\begin{pmatrix}1&1&1&1\\0&1&2&3\end{pmatrix}\begin
 最后把「内积可以换」落到实处：换了内积，投影和最小二乘也就跟着换——这件事在统计与工程里每天都在发生。
 
 ::: intuition 直觉 · 换内积 = 换「距离的度量」 = 换「谁说了算」
-普通最小二乘对每个观测**一视同仁**（残差平方等权）。可要是某个观测精度高一倍（方差小 4 倍），它就该「更说了算」——办法就是给残差**加权**。加权最小二乘的几何解释非常干净：它就是在**加权内积** $\langle\boldsymbol{x},\boldsymbol{y}\rangle_W=\boldsymbol{x}^{\mathrm T}W\boldsymbol{y}$ 之下做**正交投影**。**换内积 ⟹ 换「垂直」的定义 ⟹ 换投影 ⟹ 换最优解**，公式结构完全一样。
+普通最小二乘把各残差平方等权相加。若不同观测具有不同的不确定性，可以在模型中指定权重，让某些偏差受到更大惩罚。若误差互不相关、方差为 $\sigma_i^2>0$，常取 $w_i=1/\sigma_i^2$；标准差减半对应权重增至四倍。存在相关误差时，常用正定协方差矩阵的逆作为 $W$。这些统计解释依赖误差模型；数学上的加权最小二乘只要求 $W$ 对称正定。它等价于在 $\langle\boldsymbol{x},\boldsymbol{y}\rangle_W=\boldsymbol{x}^{\mathrm T}W\boldsymbol{y}$ 下作正交投影。
 :::
 
-::: note 课堂对照（2026 秋·庞刚）
-「换内积 = 换几何」在课堂上出现过预告：[第 2 讲精编](../lectures/lec02.md)里讲范数等价性时老师点评「换个距离，这事就简单」——死磕欧氏距离解决不了的问题，换一种度量常常就豁然开朗。本节的加权最小二乘正是这句话的兑现：换一把尺子（内积），投影与最优解随之而变，公式结构却不变。
+::: note 课堂对照（2026 秋·庞刚；整理稿，原录音待核）
+[第 2 讲整理稿](../lectures/lec02.md)在范数等价性的讨论处记有老师点评：「换个距离，这事就简单」。这里只把它作为更换度量的相关提示；加权最小二乘的模型、推导和统计条件由本节说明，不据此认定为老师在该讲系统讲授的内容。
 :::
 
 ::: thm 定理 2.2.7（新增） · 加权最小二乘 {#thm-sup-2.2.7}
@@ -423,15 +431,17 @@ $$A^{\mathrm T}W\boldsymbol{b}=\begin{pmatrix}\sum_iw_iy_i\\\sum_iw_ix_iy_i\end{
 
 解 $2\times2$ 系统（$\det=22\times23-15^2=506-225=281$）：
 
-$$\hat{\boldsymbol{x}}_W=\frac{1}{281}\begin{pmatrix}23&-15\\-15&22\end{pmatrix}\begin{pmatrix}36\\36\end{pmatrix}=\frac{36}{281}\begin{pmatrix}8\\7\end{pmatrix}=\begin{pmatrix}1.0249\\0.8968\end{pmatrix}.$$
+$$\hat{\boldsymbol{x}}_W=\frac{1}{281}\begin{pmatrix}23&-15\\-15&22\end{pmatrix}\begin{pmatrix}36\\36\end{pmatrix}=\frac{36}{281}\begin{pmatrix}8\\7\end{pmatrix}\approx\begin{pmatrix}1.0249\\0.8968\end{pmatrix}.$$
 
-**对照：** 不加权（例 2.2.4）得 $y=0.9+0.9x$；加权得 $y\approx1.0249+0.8968x$。**权重把直线「拉向」可靠的前两点**（它们 $y$ 的平均值为 $1.5$，而整体平均为 $2.25$，故截距升高到 $1.0249$），代价是对后两点的拟合变差。
+**对照：** 不加权（例 2.2.4）得 $y=0.9+0.9x$；加权得 $y\approx1.0249+0.8968x$。前两点的残差平方和从 $0.1^2+0.2^2=0.05$ 降到 $(7^2+22^2)/281^2\approx0.00675$；后两点的残差平方和从 $0.65$ 增到 $(230^2+80^2)/281^2\approx0.771$。权重确实使拟合更偏向前两点，但截距变化由全部加权方程共同决定，不能仅用两组纵坐标的平均值解释。
 
 **验证加权正交条件：** $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}_W$。预测值 $(1.0249,\ 1.9217,\ 2.8185,\ 3.7153)^{\mathrm T}$，残差 $(-0.0249,\ 0.0783,\ -0.8185,\ 0.2847)^{\mathrm T}$。
 
-$$A^{\mathrm T}W\boldsymbol{r}=\begin{pmatrix}\sum_iw_ir_i\\\sum_iw_ix_ir_i\end{pmatrix}=\begin{pmatrix}-0.2491+0.7829-0.8185+0.2847\\0+0.7829-1.6370+0.8541\end{pmatrix}=\begin{pmatrix}0\\0\end{pmatrix}\ \checkmark$$
+精确残差为 $\boldsymbol r=(-7,22,-230,80)^{\mathrm T}/281$，所以
 
-（数值上用 NumPy 复核：$A^{\mathrm T}W\boldsymbol{r}$ 的两个分量均 $\sim10^{-16}$，即机器精度。）
+$$A^{\mathrm T}W\boldsymbol{r}=\frac1{281}\begin{pmatrix}-70+220-230+80\\0+220-460+240\end{pmatrix}=\begin{pmatrix}0\\0\end{pmatrix}.$$
+
+用上面四位小数的预测值回算时，只能得到接近零的结果，不能把舍入后的等式写成精确等式。浮点程序的末位残差还会随实现与舍入而变；这里用有理数核对正交条件，不预设必须出现某个机器精度量级。
 
 **结论：** 加权最小二乘**不改公式结构，只改内积**——这正是「内积是几何的源头」这一直觉的兑现。[第五章](../ch01/sec11.md#roadmap)的预条件迭代法、加权内积下的 Rayleigh 商（[2.5.4](sec25.md#sup-2.5.4)）走的也都是这条路。
 :::
@@ -451,7 +461,7 @@ $$A^{\mathrm T}W\boldsymbol{r}=\begin{pmatrix}\sum_iw_ir_i\\\sum_iw_ix_ir_i\end{
 | 正交补 | $C(A^{\mathrm T})=N(A)^{\perp}$；$C(A)=N(A^{\mathrm T})^{\perp}$ |
 | 正交分解 | $\mathbb{R}^m=C(A)\oplus N(A^{\mathrm T})$：$\boldsymbol{b}=\boldsymbol{p}+\boldsymbol{e}$，$\boldsymbol{p}\perp\boldsymbol{e}$ |
 | 投影（正交基） | $\boldsymbol{p}=\sum_i\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\boldsymbol{q}_i$ |
-| 投影矩阵 | $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$；$P^{\mathrm T}=P$，$P^2=P$，$\operatorname{tr}P=r$，$\lVert P\rVert_2=1$ |
+| 投影矩阵 | $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$（$A$ 列满秩）；$P^{\mathrm T}=P$，$P^2=P$，$\operatorname{tr}P=r$；$P\ne O$ 时 $\lVert P\rVert_2=1$ |
 | 最小二乘 | 正态方程 $A^{\mathrm T}A\boldsymbol{x}=A^{\mathrm T}\boldsymbol{b}$；$\hat{\boldsymbol{x}}=(A^{\mathrm T}A)^{-1}A^{\mathrm T}\boldsymbol{b}$（列满秩） |
 | 残差性质 | $\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}\in N(A^{\mathrm T})$，即 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$（**免费自检**） |
 | 加权版 | $\hat{\boldsymbol{x}}=(A^{\mathrm T}WA)^{-1}A^{\mathrm T}W\boldsymbol{b}$ |

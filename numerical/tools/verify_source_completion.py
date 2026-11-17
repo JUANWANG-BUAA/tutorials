@@ -111,7 +111,7 @@ def test_adaptive_runnable_example() -> None:
     for actual,row in zip(trials,rows):
         for value,printed in zip(actual[:3],row[:3]):recovery.close_to_printed(value,printed)
         assert actual[3] == ('是' in row[3])
-    recovery.close_to_printed(nodes[-1][1],re.search(r'y\(1\)\\approx([\d.]+)',text)[1])
+    recovery.close_to_printed(nodes[-1][1],re.search(r'y_N\\approx([\d.]+)',text)[1])
     assert abs(nodes[-1][1]-math.e)<5e-6
     # A constant exact solution produces zero estimated error; endpoint is clipped.
     constant,_=ns['adaptive_rk4'](lambda t,y:0,0.,3.,.73,1.)

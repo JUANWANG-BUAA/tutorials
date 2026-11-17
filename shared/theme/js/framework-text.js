@@ -92,15 +92,15 @@
    *
    * 数据由 tools/build_glossary.py 从各书已有的索引页（速查背记卡 / 术语索引）
    * 在**构建后**生成 book/glossary.json，本模块只负责取用：
-   *   · 每页每个术语只挂第一处（多了就是噪声），且同一文本节点只挂一条；
-   *   · 出现次数 >12 次的词说明本页到处在用，不再标注；
+   *   · 默认每页每词一处、每文本节点一条，出现次数 >12 的词不标注；
+   *   · glossary options 可调整页内数量、节点数量、频次限制与直接定义链接；
    *   · 跳过公式、代码、链接、标题、已有标注的地方；
    *   · 提示里给「一句话」+（若有）「最容易漏」+ 跳到定义处的链接；
    *   · 无数据 / 无 JS / 打印 → 正文原样，不受影响。
    * ------------------------------------------------------------------ */
   var TERM_MAX_PER_PAGE = 40;
   var TERM_TOO_FREQUENT = 12;
-  var TERM_SKIP_SELECTOR = "pre, code, a, svg, h1, h2, h3, h4, h5, h6, script, style, .katex, .term, .box-tag, .page-toc, #page-rail, #term-popover, summary, button";
+  var TERM_SKIP_SELECTOR = "pre, code, a, svg, math, mjx-container, .MathJax, h1, h2, h3, h4, h5, h6, script, style, .katex, .term, .box-tag, .page-toc, #page-rail, #term-popover, summary, button, input, textarea, select, [contenteditable]:not([contenteditable='false'])";
   var termPopover = null;
   var termHideTimer = 0;
   var activeTerm = null;
@@ -134,7 +134,7 @@
     return nodes;
   }
 
-  function isWordChar(ch) { return Boolean(ch) && /[0-9A-Za-z]/.test(ch); }
+  function isWordChar(ch) { return Boolean(ch) && /[0-9A-Za-z_]/.test(ch); }
 
   function ensureTermPopover() {
     if (termPopover) return termPopover;
@@ -146,11 +146,17 @@
     termPopover.hidden = true;
     termPopover.addEventListener("mouseenter", function () { window.clearTimeout(termHideTimer); });
     termPopover.addEventListener("mouseleave", function () {
-      if (!termPopover.contains(document.activeElement)) hideTermPopover();
+      if (!termPopover.contains(document.activeElement) && document.activeElement !== activeTerm) hideTermPopover();
     });
     termPopover.addEventListener("focusin", function () { window.clearTimeout(termHideTimer); });
     termPopover.addEventListener("focusout", function (event) {
-      if (!termPopover.contains(event.relatedTarget)) hideTermPopover();
+      if (!termPopover.contains(event.relatedTarget) && event.relatedTarget !== activeTerm) hideTermPopover();
+    });
+    termPopover.addEventListener("keydown", function (event) {
+      if (event.key === "Tab" && event.shiftKey && activeTerm && document.activeElement === termPopover.querySelector("a")) {
+        event.preventDefault();
+        activeTerm.focus({ preventScroll: true });
+      }
     });
     document.body.appendChild(termPopover);
     document.addEventListener("keydown", function (event) {
@@ -169,13 +175,26 @@
     });
     window.addEventListener("scroll", hideTermPopover, { passive: true });
     window.addEventListener("resize", hideTermPopover, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", hideTermPopover, { passive: true });
+      window.visualViewport.addEventListener("scroll", hideTermPopover, { passive: true });
+    }
     return termPopover;
   }
 
   function hideTermPopover() {
+    window.clearTimeout(termHideTimer);
     if (termPopover) termPopover.hidden = true;
     if (activeTerm) activeTerm.setAttribute("aria-expanded", "false");
     activeTerm = null;
+  }
+
+  function setTermHtml(element, html) {
+    element.innerHTML = html;
+    element.querySelectorAll("a[href]").forEach(function (link) {
+      var href = link.getAttribute("href");
+      if (href && !/^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(href)) link.href = bookRelativeUrl(href);
+    });
   }
 
   function showTermPopover(span, entry) {
@@ -200,7 +219,7 @@
 
     var def = document.createElement("div");
     def.className = "term-popover-def";
-    def.innerHTML = entry.def;                     /* 已在构建期净化（只保留行内标记）*/
+    setTermHtml(def, entry.def);                    /* 构建时保留行内标记和书内链接 */
     popover.appendChild(def);
 
     if (entry.extra) {
@@ -210,7 +229,7 @@
       label.textContent = "最容易漏";
       extra.appendChild(label);
       var text = document.createElement("div");
-      text.innerHTML = entry.extra;
+      setTermHtml(text, entry.extra);
       extra.appendChild(text);
       popover.appendChild(extra);
     }
@@ -223,32 +242,43 @@
       popover.appendChild(link);
     }
 
+    var viewport = window.visualViewport;
+    var viewportLeft = viewport ? viewport.offsetLeft : 0;
+    var viewportTop = viewport ? viewport.offsetTop : 0;
+    var viewportWidth = viewport ? viewport.width : document.documentElement.clientWidth;
+    var viewportHeight = viewport ? viewport.height : window.innerHeight;
+    popover.style.maxWidth = Math.max(0, viewportWidth - 16) + "px";
+    popover.style.maxHeight = Math.max(0, viewportHeight - 16) + "px";
+    popover.scrollTop = 0;
     popover.hidden = false;
     var spanBox = span.getBoundingClientRect();
     var width = popover.offsetWidth;
     var height = popover.offsetHeight;
-    var left = Math.max(12, Math.min(spanBox.left + spanBox.width / 2 - width / 2, window.innerWidth - width - 12));
+    var left = Math.max(viewportLeft + 8, Math.min(spanBox.left + spanBox.width / 2 - width / 2, viewportLeft + viewportWidth - width - 8));
     var above = spanBox.top - height - 10;
-    var top = above > 8 ? above : Math.max(8, Math.min(spanBox.bottom + 10, window.innerHeight - height - 8));
+    var top = above >= viewportTop + 8 ? above : Math.max(viewportTop + 8, Math.min(spanBox.bottom + 10, viewportTop + viewportHeight - height - 8));
     popover.style.left = Math.round(left) + "px";
     popover.style.top = Math.round(top) + "px";
   }
 
-  function bindTerm(span, entry) {
+  function bindTerm(span, entry, directLink) {
     span.setAttribute("aria-haspopup", "dialog");
     span.setAttribute("aria-controls", "term-popover");
     span.setAttribute("aria-expanded", "false");
     var open = function () { window.clearTimeout(termHideTimer); showTermPopover(span, entry); };
     var close = function () { termHideTimer = window.setTimeout(function () {
-      if (!termPopover || !termPopover.contains(document.activeElement)) hideTermPopover();
+      if (activeTerm === span && (!termPopover || !termPopover.contains(document.activeElement)) && document.activeElement !== span) hideTermPopover();
     }, 160); };
     span.addEventListener("mouseenter", open);
     span.addEventListener("mouseleave", close);
     span.addEventListener("focus", function () { if (!suppressTermFocus) open(); });
     span.addEventListener("blur", close);
-    span.addEventListener("click", function (event) { event.preventDefault(); open(); });
+    if (!directLink) span.addEventListener("click", function (event) { event.preventDefault(); open(); });
     span.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" || event.key === " ") {
+      var enterCard = event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey && activeTerm === span);
+      var activate = !directLink && (event.key === "Enter" || event.key === " ");
+      if (enterCard || activate) {
+        if (enterCard && !entry.href) return;
         event.preventDefault(); event.stopPropagation(); open();
         var link = termPopover.querySelector("a");
         if (link) link.focus({ preventScroll: true });
@@ -260,41 +290,79 @@
   function applyTermTips(main, data) {
     var entries = data.terms || [];
     if (!entries.length) return;
+    var options = data.options || {};
+    var maxPerPage = Number.isInteger(options.maxPerPage) && options.maxPerPage >= 0 ? options.maxPerPage : TERM_MAX_PER_PAGE;
+    var maxPerTextNode = Number.isInteger(options.maxPerTextNode) && options.maxPerTextNode >= 0 ? options.maxPerTextNode : 1;
+    var frequencyLimit = Number.isInteger(options.frequencyLimit) && options.frequencyLimit >= 0 ? options.frequencyLimit : TERM_TOO_FREQUENT;
+    if (!maxPerPage || !maxPerTextNode) return;
     var nodes = collectTermTextNodes(main);
     if (!nodes.length) return;
-    var pageText = nodes.map(function (n) { return n.nodeValue; }).join("\u0000");
-    // 长名优先：先匹配「极大无关组」再匹配「无关组」
+    var pageText = frequencyLimit ? nodes.map(function (n) { return n.nodeValue; }).join("\u0000") : "";
+    // 长名优先；频次不合适的别名不占用该术语的每页名额。
     var index = [];
     entries.forEach(function (entry) {
-      (entry.terms || []).forEach(function (name) { index.push({ name: name, entry: entry }); });
+      (entry.terms || []).forEach(function (name) {
+        if (!name) return;
+        if (frequencyLimit) {
+          var count = 0, from = 0, found;
+          while ((found = pageText.indexOf(name, from)) !== -1) {
+            count++;
+            if (count > frequencyLimit) return;
+            from = found + name.length;
+          }
+        }
+        index.push({ name: name, entry: entry });
+      });
     });
     index.sort(function (a, b) { return b.name.length - a.name.length; });
 
-    var used = {}, placed = 0;
+    var used = new Set(), placed = 0;
     nodes.forEach(function (node) {
-      if (placed >= TERM_MAX_PER_PAGE) return;
+      if (placed >= maxPerPage) return;
       var value = node.nodeValue;
-      for (var i = 0; i < index.length; i++) {
-        var item = index[i];
-        var key = item.entry.terms[0];
-        if (used[key]) continue;
-        var pos = value.indexOf(item.name);
-        if (pos < 0) continue;
-        if (isWordChar(value.charAt(pos - 1)) || isWordChar(value.charAt(pos + item.name.length))) continue;
-        used[key] = 1;
-        if (pageText.split(item.name).length - 1 > TERM_TOO_FREQUENT) continue;
-        var span = document.createElement("span");
+      var matches = [];
+      index.forEach(function (item) {
+        if (used.has(item.entry.terms[0])) return;
+        var from = 0, pos;
+        while ((pos = value.indexOf(item.name, from)) !== -1) {
+          from = pos + item.name.length;
+          if (isWordChar(value.charAt(pos - 1)) || isWordChar(value.charAt(from))) continue;
+          matches.push({ pos: pos, item: item });
+          if (maxPerTextNode === 1) break; // 默认节点只取每个别名的第一处。
+        }
+      });
+      // 默认保留旧版“节点内最长词优先”；多词模式按正文顺序，同起点取长词。
+      if (maxPerTextNode > 1) matches.sort(function (a, b) {
+        return a.pos - b.pos || b.item.name.length - a.item.name.length;
+      });
+      var fragment = document.createDocumentFragment();
+      var offset = 0, nodePlaced = 0;
+      matches.forEach(function (match) {
+        var item = match.item;
+        if (nodePlaced >= maxPerTextNode || placed >= maxPerPage || used.has(item.entry.terms[0]) || match.pos < offset) return;
+        fragment.appendChild(document.createTextNode(value.slice(offset, match.pos)));
+        var directLink = options.directLinks === true && Boolean(item.entry.href);
+        var span = document.createElement(directLink ? "a" : "span");
         span.className = "term";
-        span.tabIndex = 0;
-        span.setAttribute("role", "button");
-        span.setAttribute("aria-label", "术语：" + item.name + "，回车查看释义");
+        if (directLink) {
+          span.href = bookRelativeUrl(item.entry.href);
+          span.setAttribute("aria-label", "术语：" + item.name + "，查看定义；向下键查看释义");
+        } else {
+          span.tabIndex = 0;
+          span.setAttribute("role", "button");
+          span.setAttribute("aria-label", "术语：" + item.name + "，回车查看释义");
+        }
         span.textContent = item.name;
-        var rest = node.splitText(pos);
-        rest.nodeValue = rest.nodeValue.slice(item.name.length);
-        node.parentNode.insertBefore(span, rest);
-        bindTerm(span, item.entry);
+        fragment.appendChild(span);
+        bindTerm(span, item.entry, directLink);
+        used.add(item.entry.terms[0]);
+        offset = match.pos + item.name.length;
+        nodePlaced++;
         placed++;
-        break;                       /* 一个文本节点只挂一条，避免行内堆满 */
+      });
+      if (nodePlaced) {
+        fragment.appendChild(document.createTextNode(value.slice(offset)));
+        node.parentNode.replaceChild(fragment, node);
       }
     });
   }

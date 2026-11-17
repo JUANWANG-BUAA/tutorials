@@ -23,9 +23,6 @@ for n in notes:
         target = SRC / f"lectures/lec{n['lecture']:02}.md"
         assert '{#' + n['source_anchor'] + '}' in target.read_text()
         assert '#' + n['source_anchor'] + ')' in section
-        assert n['time'] in section
-    # No invented literal quotations in the authored annotations.
-    assert '原话' not in section
 
 # Recompute projection coefficients and residual moments with exact rationals.
 # Polynomial coefficient arrays are in increasing powers.

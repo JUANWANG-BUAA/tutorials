@@ -449,15 +449,17 @@ html:has(#mdbook-searchbar:focus-within) .fore-edge-tabs{display:none!important}
 
 
 /* ======================================================================== *
- * §12  术语悬挂提示（数据由 tools/build_glossary.py 生成，行为见 framework.js）
+ * §12  术语悬挂提示（数据由 tools/build_glossary.py 生成，行为见 framework-text.js）
  * ------------------------------------------------------------------------
- * 术语只挂一处、只画一条虚线；提示里给一句话 + 最容易漏 + 跳定义。
+ * 默认每词只挂一处；各书可配置密度与直接链接。提示保留释义和定义入口。
  * 打印时既无提示也无虚线（纸面上没有悬浮），正文仍是原来的字。
  * ======================================================================== */
 .term{
   border-bottom:1px dashed color-mix(in srgb,var(--ink-2) 42%,transparent);
   cursor:help;
 }
+a.term{color:inherit;text-decoration:none;cursor:pointer}
+.term:focus-visible,.term-popover-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .term:hover,.term:focus-visible{
   color:var(--accent-text);
   border-bottom-color:var(--accent);
@@ -466,6 +468,10 @@ html:has(#mdbook-searchbar:focus-within) .fore-edge-tabs{display:none!important}
   position:fixed;z-index:130;
   box-sizing:border-box;
   width:min(360px,calc(100vw - var(--space-6)));
+  max-height:calc(100vh - 16px);
+  max-height:calc(100dvh - 16px);
+  overflow:auto;overscroll-behavior:contain;overflow-wrap:anywhere;
+  scroll-behavior:auto;
   padding:var(--space-3) 14px 11px;
   border:1px solid var(--line-strong);border-radius:var(--radius-sm);
   background:var(--paper);color:var(--ink);
@@ -473,7 +479,7 @@ html:has(#mdbook-searchbar:focus-within) .fore-edge-tabs{display:none!important}
   font-family:var(--sans);font-size:var(--fs-md);line-height:1.6;
 }
 .term-popover[hidden]{display:none}
-.term-popover-head{display:flex;align-items:baseline;gap:var(--space-2);margin:0 0 6px}
+.term-popover-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--space-2);margin:0 0 6px}
 .term-popover-head b{font:700 13.5px/1.4 var(--serif-display);letter-spacing:.01em}
 .term-popover-en{color:var(--muted);font:var(--fs-xs)/1.4 var(--mono)}
 .term-popover-def .katex{font-size:1em}
@@ -509,8 +515,6 @@ html.katex-alt .content .katex:not(.katex-display .katex):hover{
   border-radius:3px;
 }
 
-/* Definition cards stay readable on short screens and browser zoom. */
-.term-popover{max-height:calc(100dvh - 16px);overflow-y:auto;overscroll-behavior:contain}
 
 /* Reading actions expose their destination before readers leave the page. */
 .reader-skip-link{position:fixed;top:8px;left:16px;z-index:10000;padding:10px 16px;background:var(--ink);color:var(--paper);transform:translateY(-160%);font:14px/1.6 var(--sans)}

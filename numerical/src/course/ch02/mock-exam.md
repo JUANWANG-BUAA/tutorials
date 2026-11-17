@@ -13,12 +13,12 @@
 ## 二、推导与证明（每题 10 分，共 30 分）
 
 5. 设 $A$ 严格对角占优。证明 Jacobi 迭代矩阵 $G_J$ 的谱半径 $\rho(G_J)<1$。（取 $A=D+L+U$，先写出正确的 $G_J$；注意区分行占优与列占优）
-6. 证明 $\mathrm{cond}(A)\,\lVert\delta b\rVert/\lVert b\rVert\ge\lVert\delta x\rVert/\lVert x\rVert$（右端项扰动的误差界）。
+6. 设 $A$ 非奇异、$b\ne0$，$Ax=b$、$A(x+\delta x)=b+\delta b$，所用矩阵范数从属于向量范数。证明 $\mathrm{cond}(A)\,\lVert\delta b\rVert/\lVert b\rVert\ge\lVert\delta x\rVert/\lVert x\rVert$（右端项扰动的误差界）。
 7. SOR 迭代矩阵 $G_\omega$ 满足 $\det G_\omega=(1-\omega)^n$。据此证明 SOR 收敛必有 $0<\omega<2$。
 
 ## 三、计算与编程（每题 10 分，共 30 分）
 
-8. 用列主元 Gauss 消去解方程组 $A=\begin{pmatrix}0&2&1\\2&2&3\\4&6&5\end{pmatrix}$，$b=(2,3,8)^{\mathrm T}$。先说明顺序消出会发生什么，再给出列主元的完整过程与解。
+8. 用列主元 Gauss 消去解方程组 $A=\begin{pmatrix}0&2&1\\2&2&3\\4&6&5\end{pmatrix}$，$b=(2,3,8)^{\mathrm T}$。先说明顺序消元会发生什么，再给出列主元的完整过程与解。
 9. 对 $A=\begin{pmatrix}4&1\\1&3\end{pmatrix}$ 作 Doolittle 分解，写出 $L,U$；再用**追赶法的三对角递推**（把 $A$ 看成带宽 1 的三对角）解 $Ax=(1,2)^{\mathrm T}$，并比较两种方法的运算量。
 10. 对 $A=\begin{pmatrix}4&1&0\\1&4&1\\0&1&4\end{pmatrix}$ 求 Jacobi、Gauss–Seidel 的迭代矩阵与谱半径，判断收敛性并说明哪个更快。
 
@@ -68,6 +68,7 @@ $$
 回代得 $\boldsymbol x=(1/2,1,0)^{\mathrm T}$。
 
 9. $L=\begin{pmatrix}1&0\\1/4&1\end{pmatrix}$，$U=\begin{pmatrix}4&1\\0&11/4\end{pmatrix}$。前代得 $\boldsymbol y=(1,7/4)^{\mathrm T}$，回代得 $\boldsymbol x=(1/11,7/11)^{\mathrm T}$。追赶递推给出同样的两个主元 $4,11/4$。对这个二阶例子运算基本相同；推广到三对角大系统，利用带状零元才使追赶法降为 $O(n)$。
+按追赶记号，取 $\beta_1=4$、$\ell_2=1/4$、$\beta_2=3-\ell_2=11/4$；修正右端 $\tilde d_1=1$、$\tilde d_2=2-\ell_2\tilde d_1=7/4$，再用 $x_2=\tilde d_2/\beta_2=7/11$、$x_1=(\tilde d_1-x_2)/\beta_1=1/11$ 回扫。
 
 10. 两个迭代矩阵为
 $$
@@ -93,4 +94,6 @@ $G_J$ 的特征值为 $0,\pm\sqrt2/4$，$G_{GS}$ 的特征值为 $0,0,1/8$。两
 | 第 4、5、7、10 题 | [2.4](sec24.md)、[2.4.2–2.4.4](sec24b.md)、[第 5 讲](../../lectures/lec05.md)、[第 6 讲](../../lectures/lec06.md) |
 | 第 8、9 题 | [2.1](sec21.md)、[2.2](sec22.md)、[第 4 讲](../../lectures/lec04.md) |
 | 第 11 题 | [2.2](sec22.md)（带状与追赶法）、[2.4](sec24.md)（迭代法引论） |
+
+表中的课堂链接是来源记录：第 3–5 讲目前据整理稿，原录音待核；第 6 讲转写未经听校。解题与评分以正文的数学条件及本页推导为准，不把参考答案当作老师原话。
 :::

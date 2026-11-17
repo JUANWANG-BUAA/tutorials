@@ -56,6 +56,8 @@
 - **[术语索引（中英对照）](src/review/glossary.md)**：列出术语的中英文、简释和定义位置，也收录同义说法；
 - **[七章学习路径](src/review/study-paths.md)**：按跟课、系统学习、考前复习、补先修和深入学习安排入口，并给出跟课循环与两小时复习建议。
 
+正文中带虚线的术语可悬停或用键盘聚焦，查看简释与适用条件；点击术语或卡片里的“看定义”可跳到正文，按 Esc 可关闭卡片。触屏直接点术语跳转。
+
 ### 特训 · 竞技与考场
 
 特训部分提供限时判断题与整卷练习。计分用于记录表现，具体薄弱点还要根据错题中的条件、步骤和解释来判断。
@@ -95,7 +97,7 @@ bash build.sh serve            # 完整站点预览 http://127.0.0.1:8000/
 bash check.sh                  # 与 CI 相同的质量检查
 ```
 
-仅预览本书时可在本目录运行 `mdbook build .` 或 `mdbook serve --open`；中文搜索与术语数据需由根目录 `build.sh` 生成。KaTeX 包装器在预处理阶段保护波浪号，无需另跑已移除的 `fix_tilde.py`。
+只预览本书且需要术语卡片时，在本目录依次运行 `mdbook build .`、`python3 ../tools/build_glossary.py .`，再用 `python3 -m http.server 8000 --directory book` 打开生成页面。修改正文后需重新执行前两步。`mdbook serve --open` 不运行构建后的术语数据生成步骤；中文搜索与完整站点资源仍由根目录 `build.sh` 生成。
 
 完整检查范围与浏览器依赖见 [质量检查与内容审校](../docs/quality-gates.md)。
 

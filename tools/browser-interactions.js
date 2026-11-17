@@ -81,6 +81,41 @@ async (hostPage) => {
   await page.keyboard.press('Escape');
   check(await page.locator('#term-popover').isHidden() && await term.evaluate(el => el === document.activeElement), 'closing a term returns focus without reopening it');
 
+  await visit('numerical/ch01/sec12.html');
+  const numericalTerm = page.locator('main a.term').filter({ hasText: '截断误差' }).first();
+  await numericalTerm.waitFor();
+  const numericalHref = await numericalTerm.getAttribute('href');
+  await numericalTerm.hover();
+  const termCard = page.locator('#term-popover');
+  check(await termCard.isVisible() && (await termCard.locator('.term-popover-def').innerText()).trim().length > 20,
+    'numerical terms show a substantive hover explanation');
+  check(await termCard.evaluate(el => {
+    const r = el.getBoundingClientRect();
+    return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight;
+  }), 'the numerical term card fits the mobile viewport');
+  check(await termCard.locator('.term-popover-link').getAttribute('href') === numericalHref,
+    'the term and its card point to the same definition');
+  await numericalTerm.focus();
+  await page.keyboard.press('Tab');
+  check(await termCard.locator('.term-popover-link').evaluate(el => el === document.activeElement),
+    'keyboard users can enter the numerical term card');
+  await page.keyboard.press('Escape');
+  check(await termCard.isHidden() && await numericalTerm.evaluate(el => el === document.activeElement),
+    'closing a numerical term card restores focus');
+  await numericalTerm.click();
+  check(await page.evaluate(href => location.href === new URL(href, location.href).href &&
+    Boolean(document.getElementById(decodeURIComponent(new URL(href, location.href).hash.slice(1)))), numericalHref),
+    'clicking a numerical term reaches its definition');
+
+  await visit('numerical/course/ch04/sec41.html');
+  const residualTerm = page.locator('main a.term').filter({ hasText: '残差' }).first();
+  await residualTerm.waitFor();
+  await residualTerm.hover();
+  check(await page.locator('#term-popover .term-popover-def a').evaluate(el => {
+    const target = new URL(el.href);
+    return target.pathname === location.pathname && target.hash === '#sec-4.1.1' && Boolean(document.getElementById('sec-4.1.1'));
+  }), 'links inside a numerical term card resolve from the book root');
+
   await visit('matrix/ch01/sec11.html');
 
   check(await page.evaluate(() => {

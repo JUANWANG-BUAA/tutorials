@@ -2,7 +2,7 @@
 
 > 本页属“补充篇 · 数值线性代数工具箱”，不是课堂第 2 章；课堂第 2 章见[线性方程组的解法](../course/ch02/overview.md)。
 
-第二章共 6 条知识目标、6 条技能目标、3 条素养目标。用法同第一章：逐条自问「能不能」；**答不上来的条目，按表中该行的「依据与习题」回到对应小节重读，再把那几道题做一遍**。本章目标**全部以第一章的范数与条件数为先修**——K8.x 依赖 K1.6、K1.7，先修链条见[学习目标](../preface-objectives.md)。
+补充篇共 6 条知识目标、6 条技能目标、3 条素养目标。逐条自问「能不能」；答不上来的条目，按该行的「依据与习题」回到对应小节重读，再做相关题目。这里的 K8.x、S8.x、A8.x 是学习目标索引编号，不是课堂章号。先修以第一章的范数为主；条件数在本篇进一步展开，先修链条见[学习目标](../preface-objectives.md)。
 
 ::: note 配套复习材料
 默写不出来的条目，先查[公式与结论卡](../review/formula-cards.md)与[术语索引](../review/glossary.md)；分不清「残差 vs 误差」「特征值 vs 奇异值」这类概念时，查[易混对照卡](../review/contrast-cards.md)。
@@ -13,10 +13,10 @@
 | 目标 | 达标检验 | 依据与习题 |
 |:--|:--|:--|
 | K8.1 内积与正交 | 任取一个二元函数，能当场验证它是否为内积；能用平行四边形恒等式判断一个范数是否来自内积；能默写正交矩阵的**至少六条**等价刻画 | [@def-sup-2.1.1]、[@thm-sup-2.1.2]、[@thm-sup-2.1.5]；习题 A1、B1 |
-| K8.2 四个子空间与投影 | 能写出四个基本子空间的定义与两对正交补，并说明秩定理；能写出正交投影矩阵 $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$，并证明它的三条性质 | [@thm-sup-2.2.1]、[@thm-sup-2.2.2]、[@thm-sup-2.2.5]；习题 A2、B3 |
-| K8.3 正交化与 QR | 能合上书复述 Gram–Schmidt 与 Householder 的构造；能说出 QR 唯一性成立的条件；能逐一说出四种方法（经典 / 修正 Gram–Schmidt、Householder、Givens）的正交性损失量级 | [@thm-sup-2.3.1]、[@thm-sup-2.3.3]、[@thm-sup-2.3.2]；习题 A3、C2 |
+| K8.2 四个子空间与投影 | 能写出四个基本子空间的定义与两对正交补，并说明秩定理；$A$ 列满秩时能写出正交投影矩阵 $P=A(A^{\mathrm T}A)^{-1}A^{\mathrm T}$，并证明它的三条性质；秩亏时改用 $AA^+$ | [@thm-sup-2.2.1]、[@thm-sup-2.2.2]、[@thm-sup-2.2.5]；习题 A2、B3 |
+| K8.3 正交化与 QR | 能复述 Gram–Schmidt 与 Householder 构造；能说出列满秩的薄 QR 在 $R$ 对角元为正时唯一；能解释经典 / 修正 Gram–Schmidt、Householder、Givens 的条件性正交误差估计 | [@thm-sup-2.3.1]、[@thm-sup-2.3.3]、[@thm-sup-2.3.2]；习题 A3、C2 |
 | K8.4 条件数与扰动 | 能独立推导右端扰动界与系数扰动界，说明系数扰动界为何要求 $\mathrm{cond}\rho_A\lt1$；能解释「残差 ≠ 误差」 | [@thm-sup-2.4.2]、[@thm-sup-2.4.3]、[@thm-sup-2.4.4]；习题 B5、D1 |
-| K8.5 谱与对称谱 | 能陈述 $\rho\le\lVert A\rVert$、Gerschgorin 圆盘定理、Rayleigh 商与 Courant–Fischer 极小极大原理；能说清「对称 $O(\varepsilon)$ vs 重特征值 $O(\varepsilon^{1/k})$」的原因 | [@thm-sup-2.5.1]–[@thm-sup-2.5.6]；习题 A4(b)(d)、C4、C6 |
+| K8.5 谱与对称谱 | 能陈述 $\rho\le\lVert A\rVert$、Gerschgorin 圆盘定理、实对称矩阵的 Rayleigh 商与 Courant–Fischer 原理；区分对称扰动的 $O(\varepsilon)$ 界、可对角化情形与缺陷 Jordan 块可能出现的 $O(\varepsilon^{1/k})$ 分裂 | [@thm-sup-2.5.1]–[@thm-sup-2.5.6]；习题 A4(b)(d)、C4、C6 |
 | K8.6 SVD 与低秩 | 能陈述 SVD 的两种几何读法、$U/V$ 的列与四个基本子空间的关系、伪逆的定义、Eckart–Young 定理与数值秩的定义 | [@thm-sup-2.6.1]、[@thm-sup-2.6.2]、[@thm-sup-2.6.3]、[@thm-sup-2.6.4]；习题 A4(c)、B6、C1 |
 
 ## S · 技能目标
@@ -26,7 +26,7 @@
 | S8.1 Gram–Schmidt 手算 | 能对给定的三个向量手工正交化并写出 $Q,R$；能判断秩亏时该怎样截断 | [@ex-sup-2.3.1]；习题 C2(1) |
 | S8.2 Householder 手算 | 能对 $3\times3$ 矩阵手写一个 Householder 向量与 $HA$；能说明该向量符号选择的理由 | [@ex-sup-2.3.3]、[@ex-sup-2.3.4]；习题 C2(2) |
 | S8.3 QR 解最小二乘 | 能推导用 QR 解最小二乘的步骤；能说明 QR 为何优于正态方程，并给出量化的误差对比 | [@thm-sup-2.3.5]、[2.3.6](sec23.md#sup-2.3.6)；习题 C3 |
-| S8.4 条件数估算与预测 | 能估算给定矩阵的 $\mathrm{cond}$，据此预测解会损失的有效数字位数 $k\approx\log_{10}\mathrm{cond}$，并用 Hilbert 矩阵实验验证这一预测 | [@ex-sup-2.4.2]；习题 C3(3) |
+| S8.4 条件数估算与预测 | 能估算给定矩阵的 $\mathrm{cond}$，将 $k\approx\log_{10}\mathrm{cond}$ 解释为最坏情形位数损失的量级而非实际损失，结合输入与计算精度用 Hilbert 矩阵实验比较 | [@ex-sup-2.4.2]；习题 C3(3) |
 | S8.5 Gerschgorin 与幂法 | 能用 Gerschgorin 圆盘给出特征值的围栏；能用幂法 + Rayleigh 商求主特征值，并报告实测收敛比 | [@ex-sup-2.5.2]、[@ex-sup-2.5.3]；习题 C4、C6(1) |
 | S8.6 SVD 应用 | 能用 SVD 算数值秩、条件数与伪逆；做秩 $k$ 截断并与 $\sigma_{k+1}$ 对照；用真实矩阵完成一次低秩压缩或 PCA | [@ex-sup-2.6.5]、[@ex-sup-2.6.6]；习题 C5、D2、D4 |
 

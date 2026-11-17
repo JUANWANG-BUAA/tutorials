@@ -10,7 +10,7 @@
 
 ### A.1.1 六个等价公式的误差放大因子（[1.1.3](../ch01/sec11.md#sec-1.1.3) 的定量复现）
 
-设 $t=\sqrt2$，$a=1.4$，则输入误差 $e=t-a=0.0142136$，相对误差 $\varepsilon=e/t\approx1.005\%$。六个公式在 $t=\sqrt2$ 处恒等，依据是三条代数事实（可用二项展开自证）：
+设 $t=\sqrt2$，$a=1.4$，则输入误差 $e=t-a\approx0.0142136$，相对误差 $\varepsilon=e/t\approx1.005\%$。六个公式只在指定输入 $t=\sqrt2$ 处取相同值，并非关于任意 $t$ 的恒等式。相等的依据是三条代数事实：
 
 $$(\sqrt2+1)(\sqrt2-1)=1,\qquad(\sqrt2-1)^2=3-2\sqrt2,\qquad(\sqrt2-1)^6=99-70\sqrt2 .$$
 
@@ -39,19 +39,21 @@ $$\kappa=\left\lvert\frac{t\,f'(t)}{f(t)}\right\rvert .$$
 
 ### A.1.2 有效数字与相对误差的换算界都不可再改进（[定理 1.2.1](../ch01/sec12.md#thm-1.2.1) 的补全）
 
+本节沿用所引定理的约定：有效数字由绝对误差 $|x-a|\le\tfrac12 10^{m-n}$ 判断，且 $\varepsilon_{\mathrm r}(a)=|x-a|/|a|$ **以近似值为分母**，其中 $|a|=0.a_1a_2\cdots\times10^m$。它不同于 A.1.1 以真值为分母的相对误差；下面的常数不能不加转换就用于 $|x-a|/|x|$。例如 $a=5.00$、$x=5.005$ 时，两个相对误差分别为 $0.005/5$ 与 $0.005/5.005$，只有前者在下面的正向界取等。
+
 **正向界 $\dfrac{1}{2a_1}\times10^{1-n}$ 取得等号。**取 $a=5.00$（规格化 $0.500\times10^1$，$a_1=5$，$m=1$，$k=3$），$x=5.005$。则 $\varepsilon(a)=0.005=\tfrac12\times10^{1-3}$（$a$ 恰有 3 位有效数字），而
 
 $$\varepsilon_{\mathrm r}(a)=\frac{0.005}{5.00}=0.001=\frac{1}{2a_1}\times10^{1-3}=\frac{1}{10}\times10^{-2},$$
 
 等号成立。故常数 $\dfrac{1}{2a_1}$ 不可放宽。
 
-**逆向界 $\dfrac{1}{2(a_1+1)}\times10^{1-n}$ 也卡在临界上。**取 $a=9.9$（$0.99\times10^1$，$a_1=9$，$m=1$），$n=2$ 时界为 $\dfrac{1}{2\times10}\times10^{-1}=0.005$。取 $x=9.96$：
+**逆向界 $\dfrac{1}{2(a_1+1)}\times10^{1-n}$ 同样不能普遍放宽。**固定首位 $a_1$ 和位数 $n$，令
 
-$$\varepsilon_{\mathrm r}(a)=\frac{0.06}{9.9}\approx0.00606\ \gt\ 0.005,\qquad\varepsilon(a)=0.06\ \gt\ \tfrac12\times10^{1-2}=0.05,$$
+$$a_\delta=(a_1+1-\delta)10^{m-1},\qquad |x-a_\delta|=\tfrac12\times10^{m-n}+\eta,$$
 
-第 2 位有效数字已经失守。也就是说：相对误差限只要比逆向界**再大一点**，就可能不足 $n$ 位——常数 $a_1+1$ 不可再小。
+其中 $0<\delta<1$、$\eta>0$。实际误差已超过 $n$ 位有效数字的要求，但让 $\delta,\eta\to0$ 时，以近似值为分母的相对误差趋近 $\dfrac{1}{2(a_1+1)}\times10^{1-n}$。因此，只要把这个充分条件的常数放宽，就能找到不满足 $n$ 位要求的例子。
 
-**组合起来读：**最坏情形 $a_1=1$ 时，正向界 $\tfrac12\times10^{1-n}$ 与逆向界 $\tfrac1{40}\times10^{1-n}$ 相差 $20$ 倍。「由有效数字推相对误差」（正向）与「由相对误差倒推有效数字」（逆向）必须用各自的常数，不能共用。
+**组合起来读：**固定同一个首位 $a_1$，正向界与逆向充分界之比为 $(a_1+1)/a_1$，最多为 $2$。由有效数字推相对误差，与由相对误差倒推有效数字，使用的是不同的界。
 
 <a id="app-a-1-3"></a>
 
@@ -65,9 +67,11 @@ $$\delta_n=-5\,\delta_{n-1}+\rho_n .$$
 
 对 $n$ 展开此式（$\delta_n=-5\delta_{n-1}+\rho_n$ 逐层代入）：
 
-$$\lvert\delta_n\rvert\ \le\ 5^n\lvert\delta_0\rvert+\rho\,(1+5+\cdots+5^{n-1})=5^n\lvert\delta_0\rVert+\rho\,\frac{5^n-1}{4}\ \approx\ 5^n\Bigl(\lvert\delta_0\rvert+\frac{\rho}{4}\Bigr).$$
+$$\lvert\delta_n\rvert\ \le\ 5^n\lvert\delta_0\rvert+\rho\,(1+5+\cdots+5^{n-1})=5^n\lvert\delta_0\rvert+\rho\,\frac{5^n-1}{4}\ \approx\ 5^n\Bigl(\lvert\delta_0\rvert+\frac{\rho}{4}\Bigr).$$
 
 取 $\lvert\delta_0\rvert=\lvert\ln(6/5)-0.1823\rvert=2.16\times10^{-5}$、$n=100$、$5^{100}\approx7.9\times10^{69}$：界约 $10^{65}$。反向递推的系数 $1/5$ 把同一公式变成**压缩**，起点误差 $1.6\times10^{-4}$ 传到 $y_0$ 只剩 $1.6\times10^{-4}/5^{100}$——机器精度之下。
+
+这里衰减到机器精度以下的只是**起点误差的贡献**，不是反向递推的总误差。若反向每步另有绝对误差 $\tilde\rho_n$，且 $|\tilde\rho_n|\le\tilde\rho$，则 $\delta_{n-1}=-\delta_n/5+\tilde\rho_n$；从 $N$ 递推到 $0$ 后有 $|\delta_0|\le5^{-N}|\delta_N|+\frac54\tilde\rho(1-5^{-N})$。压缩递推抑制旧误差，但仍有新舍入积累形成的误差底限。
 
 **（二）$y_n$ 的交错级数（反向递推起点的精确化）。**在 $[0,1]$ 上 $\lvert x/5\rvert\le\tfrac15\lt1$，几何级数一致收敛，可逐项积分：
 
@@ -81,7 +85,11 @@ y_n=\sum_{j=0}^{\infty}\frac{(-1)^j}{5^{j+1}(n+j+1)} .$$
 
 对照正文用的区间估计 $\frac{1}{6(n+1)}\lt y_n\lt\frac{1}{5(n+1)}$：$n=100$ 时区间为 $[0.0016502,\ 0.0019802]$，中点 $0.0018152$，真值 $0.0016528$ **紧贴区间左端**——中点估计的误差 $1.62\times10^{-4}$ 几乎用尽了「半宽度 $1.65\times10^{-4}$」的预算。这个粗糙的界已经做到了它能做到的极限；想要更准的起点，交错级数本身就可以：第 $j+1$ 项约为 $5^{-(j+1)}/(n+1)$，**想要起点误差多小就取多少项**——取 $7$ 项达绝对误差 $10^{-7}$，取 $12$ 项（手算量）达 $10^{-10}$，比「区间中点」细六个数量级。
 
-**（三）渐近行为。**级数首项给出 $y_n\approx\dfrac{1}{5(n+1)}\sim\dfrac{1}{5n}$：被积函数在 $x\approx1$ 处最大、分母 $\approx6$ 而非 $5$，修正项 $-\dfrac{1}{25(n+2)}$ 正是它。
+**（三）渐近行为。**固定 $j$ 时，交错级数的每一项都约为 $(-1)^j/(5^{j+1}n)$，不能只保留首项就断言 $y_n\sim1/(5n)$：后续各项虽按几何比例变小，却与首项同为 $1/n$ 量级。分部积分更直接：
+
+$$y_n=\frac{1}{6(n+1)}+\frac{1}{n+1}\int_0^1\frac{x^{n+1}}{(5+x)^2}\,dx.$$
+
+剩余积分位于 $0$ 与 $1/[25(n+2)]$ 之间，因此 $y_n=\dfrac{1}{6(n+1)}+O(n^{-2})\sim\dfrac1{6n}$。
 
 <a id="app-a-1-4"></a>
 
@@ -98,13 +106,12 @@ y_n=\sum_{j=0}^{\infty}\frac{(-1)^j}{5^{j+1}(n+j+1)} .$$
 
 所以 $\sqrt n$、$n$ 这些因子不是估计的粗糙，而是**这组范数的真实距离**。
 
-**（二）等价性是有限维的专利。**在无穷维序列空间取
+**（二）无穷维时范数不一定等价。**为了在同一个空间比较，取所有只有有限个非零分量的序列，定义通常的 $1$-范数与 $2$-范数。令
 
-$$\boldsymbol{x}=\Bigl(1,\ \tfrac12,\ \tfrac13,\ \cdots\Bigr):\qquad
-\lVert\boldsymbol{x}\rVert_2^2=\sum_{k\ge1}\frac{1}{k^2}\lt\infty,\qquad
-\lVert\boldsymbol{x}\rVert_1=\sum_{k\ge1}\frac1k=\infty .$$
+$$\boldsymbol{x}^{(n)}=(\underbrace{1/n,\ldots,1/n}_{n\text{ 项}},0,0,\ldots),\qquad
+\lVert\boldsymbol{x}^{(n)}\rVert_1=1,\qquad\lVert\boldsymbol{x}^{(n)}\rVert_2=\frac1{\sqrt n}\to0.$$
 
-同一个向量，一种范数有限、另一种无穷大——「换范数不改变收敛」在无穷维**失效**。数值 PDE 里对微分算子做有限元 / 差分离散，本质是「用 $n$ 维空间逼近无穷维」：维数 $n$ 增大时，等价常数（如 $\sqrt n$）随之恶化。「收敛结论与范数无关，但界的常数随 $n$ 增长」——这是离散化误差分析里天天打交道的事实，也是泛函分析选择在无穷维单独建立一套理论的原因。
+同一列向量按 $2$-范数收敛到零，按 $1$-范数却不收敛到零，所以不能在这个无穷维空间找到统一的范数等价常数。另一个相关现象是 $(1,1/2,1/3,\ldots)$ 属于 $\ell^2$ 而不属于 $\ell^1$；这里不应把无穷大称为一个范数值。数值 PDE 的离散维数 $n$ 增长时，也要留意有限维范数等价常数（如 $\sqrt n$）是否随 $n$ 增长。
 
 <a id="app-a-2"></a>
 
@@ -123,7 +130,7 @@ $$\langle\boldsymbol{x},\boldsymbol{y}\rangle:=\frac14\Bigl(\lVert\boldsymbol{x}
 **第一步：符号与倍乘的基本事实。**
 
 - $\langle\boldsymbol{x},\boldsymbol{x}\rangle=\frac14\lVert2\boldsymbol{x}\rVert^2=\lVert\boldsymbol{x}\rVert^2$（正定性与「诱导范数还原」一次到位：这里 $\lVert2\boldsymbol{x}\rVert^2=4\lVert\boldsymbol{x}\rVert^2$ 用了范数齐次性）；
-- $\langle\boldsymbol{y},\boldsymbol{x}\rangle=\langle\boldsymbol{x},\boldsymbol{y}\rangle$（交换只对调两个平方项）；$\langle\boldsymbol{0},\boldsymbol{y}\rangle=0$；$\langle-\boldsymbol{x},\boldsymbol{y}\rangle=-\langle\boldsymbol{x},\boldsymbol{y}\rangle$。
+- $\langle\boldsymbol{y},\boldsymbol{x}\rangle=\langle\boldsymbol{x},\boldsymbol{y}\rangle$（和项不变，差项由 $\|\boldsymbol y-\boldsymbol x\|=\|\boldsymbol x-\boldsymbol y\|$ 保持不变）；$\langle\boldsymbol{0},\boldsymbol{y}\rangle=0$；$\langle-\boldsymbol{x},\boldsymbol{y}\rangle=-\langle\boldsymbol{x},\boldsymbol{y}\rangle$。
 
 **第二步（关键恒等式）：**对任意 $\boldsymbol{x},\boldsymbol{z},\boldsymbol{y}$，
 
@@ -142,7 +149,7 @@ $$\langle\boldsymbol{u},\boldsymbol{y}\rangle+\langle\boldsymbol{v},\boldsymbol{
 
 **第五步（齐次性）。**加法已得，$\langle k\boldsymbol{x},\boldsymbol{y}\rangle=k\langle\boldsymbol{x},\boldsymbol{y}\rangle$ 对正整数 $k$ 归纳成立；负号由第一步；对有理数 $\frac pq$：$q\,\langle\frac pq\boldsymbol{x},\boldsymbol{y}\rangle=\langle p\boldsymbol{x},\boldsymbol{y}\rangle=p\langle\boldsymbol{x},\boldsymbol{y}\rangle$，两边除以 $q$。对实数 $t$：取有理数 $r_m\to t$，只需证 $\boldsymbol{w}\to\boldsymbol{0}$ 时 $\langle\boldsymbol{w},\boldsymbol{y}\rangle\to0$。由定义与三角不等式，
 
-$$\lvert\langle\boldsymbol{w},\boldsymbol{y}\rangle\rvert\le\frac14\bigl(\lVert\boldsymbol{w}+\boldsymbol{y}\rVert+\lVert\boldsymbol{w}-\boldsymbol{y}\rVert\bigr)\cdot\bigl\lvert\lVert\boldsymbol{w}+\boldsymbol{y}\rVert-\lVert\boldsymbol{w}-\boldsymbol{y}\rVert\bigr\lvert\le\frac14\cdot2(\lVert\boldsymbol{w}\rVert+\lVert\boldsymbol{y}\rVert)\cdot2\lVert\boldsymbol{w}\rVert=\lVert\boldsymbol{y}\rVert\,\lVert\boldsymbol{w}\rVert(\lVert\boldsymbol{w}\rVert+\lVert\boldsymbol{y}\rVert)\to0 ,$$
+$$\lvert\langle\boldsymbol{w},\boldsymbol{y}\rangle\rvert\le\frac14\bigl(\lVert\boldsymbol{w}+\boldsymbol{y}\rVert+\lVert\boldsymbol{w}-\boldsymbol{y}\rVert\bigr)\cdot\bigl\lvert\lVert\boldsymbol{w}+\boldsymbol{y}\rVert-\lVert\boldsymbol{w}-\boldsymbol{y}\rVert\bigr\rvert\le\frac14\cdot2(\lVert\boldsymbol{w}\rVert+\lVert\boldsymbol{y}\rVert)\cdot2\lVert\boldsymbol{w}\rVert=\lVert\boldsymbol{w}\rVert(\lVert\boldsymbol{w}\rVert+\lVert\boldsymbol{y}\rVert)\to0 ,$$
 
 而 $\lVert(t-r_m)\boldsymbol{x}\rVert=|t-r_m|\,\lVert\boldsymbol{x}\rVert\to0$。故 $\langle t\boldsymbol{x},\boldsymbol{y}\rangle=\lim_m r_m\langle\boldsymbol{x},\boldsymbol{y}\rangle=t\langle\boldsymbol{x},\boldsymbol{y}\rangle$。∎
 
@@ -153,7 +160,7 @@ $$\lvert\langle\boldsymbol{w},\boldsymbol{y}\rangle\rvert\le\frac14\bigl(\lVert\
 ### A.2.2 残差与误差的向下界（[定理 2.4.4](../supplement/sec24.md#thm-sup-2.4.4) 的补充证明）
 
 ::: thm 命题 A.2 · 残差与误差的向下界
-设 $A$ 非奇异，$\hat{\boldsymbol{x}}$ 为近似解，$\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$，$\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$。若 $\lVert\boldsymbol{e}\rVert\lt\lVert\hat{\boldsymbol{x}}\rVert$，记 $\alpha=\lVert\boldsymbol{e}\rVert/\lVert\hat{\boldsymbol{x}}\rVert$，则
+设 $A$ 非奇异，$\boldsymbol b\ne\boldsymbol0$，向量范数与所用从属矩阵范数配套。设 $\hat{\boldsymbol{x}}$ 为近似解，$\boldsymbol{r}=\boldsymbol{b}-A\hat{\boldsymbol{x}}$，$\boldsymbol{e}=\hat{\boldsymbol{x}}-\boldsymbol{x}$。若 $\lVert\boldsymbol{e}\rVert\lt\lVert\hat{\boldsymbol{x}}\rVert$，记 $\alpha=\lVert\boldsymbol{e}\rVert/\lVert\hat{\boldsymbol{x}}\rVert$，则
 
 $$\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\ \le\ \mathrm{cond}(A)\cdot\frac{\alpha}{1-\alpha} .$$
 
@@ -167,7 +174,7 @@ $$\frac{\lVert\boldsymbol{r}\rVert}{\lVert\boldsymbol{b}\rVert}\le\frac{\lVert A
 **两个附注。**
 
 1. **可计算性。** 虽然分母使用近似解，但分子 $\|\boldsymbol e\|$ 仍依赖未知真解，所以 $\alpha$ 不能直接由近似解算出。条件 $\alpha<1$ 是此界的前提；例如已另行证明 $\|\boldsymbol e\|<\|\boldsymbol x\|/2$ 时，可以由反三角不等式推出它。
-2. **与上界合起来读。**上界（2.23）说「残差被 $\mathrm{cond}$ 放大成误差」，本命题说「误差也顶多被 $\mathrm{cond}$ 压成残差」：二者互相控制在 $\mathrm{cond}$ 因子内。条件数小时，相对残差与相对误差能互相给出较紧的界；条件数大时也可能碰巧得到小误差，不能把条件数小当作解准确的必要条件。
+2. **与上界合起来读。**记 $\beta=\|\boldsymbol r\|/\|\boldsymbol b\|$、$K=\mathrm{cond}(A)$，本命题等价于 $\alpha\ge\beta/(K+\beta)$，因此给出了误差的下界。若改用真解作分母，标准双边界为 $\beta/K\le\|\boldsymbol e\|/\|\boldsymbol x\|\le K\beta$。条件数小时，相对残差与相对误差能互相给出较紧的界；条件数大时也可能碰巧得到小误差，不能把条件数小当作解准确的必要条件。
 
 <a id="app-a-2-3"></a>
 
@@ -190,23 +197,16 @@ $$(a_ib_{\pi(j)}+a_jb_{\pi(i)})-(a_ib_{\pi(i)}+a_jb_{\pi(j)})=(a_i-a_j)\,\bigl(b
 ::: lem 引理 A.3.2 · Birkhoff 定理
 $n\times n$ **双随机矩阵**（每行、每列元素之和都为 $1$ 的非负矩阵）都是置换矩阵的凸组合：$P=\sum_{\pi}w_\pi\Pi_\pi$，$w_\pi\ge0$，$\sum w_\pi=1$。
 
-::: proof 证明（循环剥离归纳）
-对非零元个数归纳。若
- 的每行恰有一个非零元，则该元必为 $1$（行和为 $1$），各列同理， 
- 已是置换矩阵。否则存在某行 $i_1$ 含至少两个正元；因行和为 $1$，其中每个正元 $p_{i_1j_1}\lt1$。列 $j_1$ 的和也为 $1$，而 $p_{i_1j_1}\lt1$，故列 $j_1$ 必含另一个正元 $p_{i_2j_1}$（$i_2\neq i_1$）。行 $i_2$ 若只有 $j_1$ 这一个正元，则 $p_{i_2j_1}=1$，列 $j_1$ 的和将超过 $1$——矛盾，故行 $i_2$ 含另一个正列 $j_2\neq j_1$。如此「行→列→行」交替行走，行只有有限多个，必有某行第二次被踏访，截出回路：得到互异的 $i_1,\dots,i_p$ 与互异的 $j_1,\dots,j_p$，使
+::: proof 证明（先找正元匹配，再归纳剥离）
+把 $p_{ij}>0$ 看成第 $i$ 行与第 $j$ 列之间有一条边。对任意 $k$ 个行指标的集合 $R$，记与它们相连的列集合为 $N(R)$。这些行的元素之和为 $k$，而每一列的总和为 $1$，因此 $|N(R)|\ge|R|$。
 
-$$p_{i_kj_k}\gt0\quad\text{且}\quad p_{i_{k+1}j_k}\gt0\qquad(k=1,\dots,p,\ i_{p+1}:=i_1).$$
+先证明这一性质保证存在覆盖所有行、列的正元匹配，对矩阵阶数归纳。若每个非空真子集 $R$ 都满足 $|N(R)|\ge|R|+1$，任选一条正元边，删去它所在的行与列；剩余任意行集合删列后仍至少有同样多的相邻列，归纳可得其余匹配。否则存在非空真子集 $R$ 满足 $|N(R)|=|R|$。$R$ 与 $N(R)$ 构成的子图保持同一性质；对其余行的任意子集 $S$，由 $|N(R\cup S)|\ge|R|+|S|$ 可知，$S$ 在 $N(R)$ 以外至少还有 $|S|$ 个相邻列。两边分别用归纳假设匹配，再合并。$1$ 阶情形直接成立。
 
-令 $\theta=\min\{p_{i_{k+1}j_k}\}\in(0,1]$（若 $\theta=1$，环上这些位置全为 $1$， 
- 在这些行列上已是置换块，剩余行列仍双随机，化为更小规模）。设 $\Pi$ 为环上「移位」置换：$\Pi_{i_{k+1}j_k}=1$。则
+设所得匹配对应置换矩阵 $\Pi$，取其匹配位置中的最小值 $\theta>0$。若 $\theta=1$，所有匹配元均为 $1$，由行列和可知 $P=\Pi$。若 $\theta<1$，令
 
-$$P=\theta\,\Pi+(1-\theta)\,Q,\qquad Q=\frac{P-\theta\Pi}{1-\theta}$$
+$$Q=\frac{P-\theta\Pi}{1-\theta},\qquad P=\theta\Pi+(1-\theta)Q.$$
 
-- $Q\ge0$：$\Pi$ 的非零元全落在环上 $p_{i_{k+1}j_k}\ge\theta$ 的位置，减法不出现负元；
-- $Q$ 双随机：环上的行（列）减掉 $\theta$ 后和为 $1-\theta$，除以 $1-\theta$ 恰为 $1$；环外的行（列）不动；
-- 至少一个环上元素被减到零，故 $Q$ 的非零元严格减少。
-
-归纳终止于置换矩阵，回代即得凸组合表示。
+$\Pi$ 的每个 $1$ 都位于 $P$ 中不小于 $\theta$ 的位置，故 $Q\ge0$；每行每列各减去一个 $\theta$，再除以 $1-\theta$，故 $Q$ 仍为双随机矩阵。至少一个正元变为零，所以按正元个数归纳，对 $Q$ 重复这一过程最终得到置换矩阵，再回代即得 $P$ 的凸组合。
 :::
 :::
 
@@ -236,7 +236,7 @@ $$\lVert S-T\rVert_F^2\ \ge\ \min_{\pi}\ \sum_{i=1}^n\bigl(\lambda_i-\mu_{\pi(i)
 且右端最优配对就是「降序对降序」。
 
 ::: proof 证明
-$\lVert S-T\rVert_F^2=\operatorname{tr}(S-T)^2=\sum_i\lambda_i^2+\sum_i\mu_i^2-2\operatorname{tr}(ST)$。用引理 A.3.3 压掉交叉项，再用引理 A.3.1（$\max_\pi\sum\lambda_i\mu_{\pi(i)}=\sum\lambda_i\mu_i$，即逆序使 $\sum\lambda_i\mu_{\pi(i)}$ 最大）：
+$\lVert S-T\rVert_F^2=\operatorname{tr}(S-T)^2=\sum_i\lambda_i^2+\sum_i\mu_i^2-2\operatorname{tr}(ST)$。用引理 A.3.3 控制交叉项，再用引理 A.3.1：同序配对使 $\sum\lambda_i\mu_{\pi(i)}$ 最大，因此
 
 $$\lVert S-T\rVert_F^2\ \ge\ \sum_i\lambda_i^2+\sum_i\mu_i^2-2\sum_i\lambda_i\mu_i=\sum_i(\lambda_i-\mu_i)^2,$$
 
@@ -256,12 +256,12 @@ $$\lVert S-T\rVert_F^2\ \ge\ \sum_i\lambda_i^2+\sum_i\mu_i^2-2\sum_i\lambda_i\mu
 
 $$S=\begin{pmatrix}O&A\\A^{\mathrm T}&O\end{pmatrix},\qquad T=\begin{pmatrix}O&B\\B^{\mathrm T}&O\end{pmatrix}\in\mathbb{R}^{(m+n)\times(m+n)} .$$
 
-**（一）$S$ 对称，且特征值恰为 $\pm\sigma_i(A)$。**取 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$（SVD 的配对关系，[定理 2.6.1](../supplement/sec26.md#thm-sup-2.6.1)），则
+**（一）$S$ 对称，且特征值包含 $\pm\sigma_i(A)$。**取奇异向量对 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$、$A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i$（[定理 2.6.1](../supplement/sec26.md#thm-sup-2.6.1)），则
 
-$$S\begin{pmatrix}\boldsymbol{v}_i\\ \boldsymbol{u}_i\end{pmatrix}=\begin{pmatrix}A\boldsymbol{u}_i\\ A^{\mathrm T}\boldsymbol{v}_i\end{pmatrix}=\sigma_i\begin{pmatrix}\boldsymbol{v}_i\\ \boldsymbol{u}_i\end{pmatrix},\qquad
-S\begin{pmatrix}\boldsymbol{v}_i\\ -\boldsymbol{u}_i\end{pmatrix}=-\sigma_i\begin{pmatrix}\boldsymbol{v}_i\\ -\boldsymbol{u}_i\end{pmatrix}$$
+$$S\frac1{\sqrt2}\begin{pmatrix}\boldsymbol{u}_i\\ \boldsymbol{v}_i\end{pmatrix}=\sigma_i\frac1{\sqrt2}\begin{pmatrix}\boldsymbol{u}_i\\ \boldsymbol{v}_i\end{pmatrix},\qquad
+S\frac1{\sqrt2}\begin{pmatrix}\boldsymbol{u}_i\\ -\boldsymbol{v}_i\end{pmatrix}=-\sigma_i\frac1{\sqrt2}\begin{pmatrix}\boldsymbol{u}_i\\ -\boldsymbol{v}_i\end{pmatrix}.$$
 
-（其中用到配对的第二式 $A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i$）。这 $2n$ 个向量标准正交，再补上零空间方向（特征值 $0$），共 $m+n$ 个——特征值恰为 $\sigma_1,\dots,\sigma_n,-\sigma_n,\dots,-\sigma_1$ 再补 $m-n$ 个 $0$，降序排列为 $\sigma_1\ge\cdots\ge\sigma_n\ge0\ge-\sigma_n\ge\cdots\ge-\sigma_1$（插入的 $0$ 与 $\sigma_n=0$ 或 $-\sigma_n=0$ 合并即可，不影响下文求和）。
+这 $2n$ 个向量标准正交；把左奇异向量组补成 $\mathbb R^m$ 的标准正交基，再取补入的 $\boldsymbol{u}_{n+1},\dots,\boldsymbol{u}_m$，它们满足 $A^{\mathrm T}\boldsymbol{u}_j=0$。对应的 $\binom{\boldsymbol{u}_j}{\boldsymbol0}$ 是零特征向量，与前面的向量正交。因此特征值为 $\sigma_1,\dots,\sigma_n,-\sigma_n,\dots,-\sigma_1$，再补 $m-n$ 个 $0$；其中 $\sigma_i=0$ 时零特征值按重数保留。
 
 **（二）套用对称迹不等式。**$\operatorname{tr}(ST)=2\operatorname{tr}(A^{\mathrm T}B)$（分块直接展开），$S,T$ 的特征值降序逐项相乘：
 
@@ -271,19 +271,19 @@ $$\operatorname{tr}(ST)\ \overset{\text{A.3.3}}{\le}\ \sum_{i\le n}\sigma_i(A)\s
 :::
 :::
 
-**取等条件**（正文实验的观察）：$A,B$ 的左右奇异子空间两两重合（$W=U_A^{\mathrm T}U_B$ 与 $Z=V_B^{\mathrm T}V_A$ 同时为恒等）。特例 $B=A^{\mathrm T}$：$\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum\sigma_i^2$ 取等。
+**取等的一个充分条件**：$A,B$ 可用相同的左右奇异向量且奇异值按相同顺序配对。特例 $B=A$ 时，$\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum\sigma_i^2$，确实取等。
 
 <a id="app-a-2-5"></a>
 
 ### A.2.5 Eckart–Young–Mirsky：Frobenius 情形完整证明（[定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4) 的补全）
 
 ::: thm 定理 A.5 · Eckart–Young–Mirsky（Frobenius 情形）
-$\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_F=\sqrt{\sigma_{k+1}^2+\cdots+\sigma_r^2}$，由截断 SVD（2.33）取到。
+设 $A\in\mathbb R^{m\times n}$ 的秩为 $r$，非零奇异值为 $\sigma_1\ge\cdots\ge\sigma_r>0$，$0\le k\le r$ 为整数。则 $\min_{\operatorname{rank}B\le k}\lVert A-B\rVert_F=\sqrt{\sigma_{k+1}^2+\cdots+\sigma_r^2}$，由截断 SVD（2.33）取到；$k=r$ 时空和为零。
 
 ::: proof 证明
 上界方向（$B=A_k$ 达到）正文已算：$A-A_k$ 的奇异值恰为 $\sigma_{k+1},\dots,\sigma_r$，Frobenius 范数平方 $=\sum_{i\gt k}\sigma_i^2$。只证**下界**：任何 $\operatorname{rank}B\le k$ 都不更优。
 
-取 A.2.4 的膨胀 $S,T$（$A\mapsto S$，$B\mapsto T$）。$T$ 的特征值：$\tau_1\ge\cdots\ge\tau_k\gt0=\tau_{k+1}=\cdots$（$B$ 至多 $k$ 个非零奇异值），降序排列为 $\tau_1,\dots,\tau_n$（$\tau_i=0,\ i\gt k$）接 $-\tau_n,\dots,-\tau_1$。由推论 A.3.4 与「降序配降序」：
+不妨设 $m\ge n$（否则同时转置 $A,B$，秩与 Frobenius 范数均不变），并把 $\sigma_{r+1},\ldots,\sigma_n$ 补为零。取 A.2.4 的膨胀 $S,T$（$A\mapsto S$，$B\mapsto T$）。记 $B$ 的奇异值为 $\tau_1\ge\cdots\ge\tau_n\ge0$；由于 $\operatorname{rank}B\le k$，$j>k$ 时 $\tau_j=0$。$T$ 的降序谱由 $\tau_1,\dots,\tau_n$、$m-n$ 个零及 $-\tau_n,\dots,-\tau_1$ 组成。由推论 A.3.4 与「降序配降序」：
 
 $$2\lVert A-B\rVert_F^2=\lVert S-T\rVert_F^2\ \ge\ \min_{\pi}\sum_i\bigl(\lambda_i(S)-\lambda_{\pi(i)}(T)\bigr)^2=\sum_i\bigl(\lambda_i(S)-\lambda_i(T)\bigr)^2 .$$
 
@@ -307,19 +307,19 @@ $$\lVert A-B\rVert_F^2\ \ge\ \sum_{j\gt k}\sigma_j^2 .$$
 $A,E$ 对称，特征值升序 $\lambda_1\le\cdots\le\lambda_n$，$\mu_1\le\cdots\le\mu_n$（$\mu$ 为 $A+E$ 的），则 $\lvert\lambda_i-\mu_i\rvert\le\lVert E\rVert_2$。
 
 ::: proof 证明
-只证 $\mu_i\le\lambda_i+\lVert E\rVert_2$（另一半对 $-E$ 同理）。由 Courant–Fischer（[定理 2.5.5](../supplement/sec25.md#thm-sup-2.5.5) 的 max-min 形式，对升序特征值写开）：
+只证 $\mu_i\le\lambda_i+\lVert E\rVert_2$（另一半对 $-E$ 同理）。对升序特征值，Courant–Fischer 的 min-max 形式（[定理 2.5.5](../supplement/sec25.md#thm-sup-2.5.5)）是
 
-$$\mu_i=\min_{\dim\mathcal{S}=n-i+1}\ \max_{\boldsymbol{0}\neq\boldsymbol{x}\in\mathcal{S}}\frac{\boldsymbol{x}^{\mathrm T}(A+E)\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}} .$$
+$$\mu_i=\min_{\dim\mathcal{S}=i}\ \max_{\boldsymbol{0}\neq\boldsymbol{x}\in\mathcal{S}}\frac{\boldsymbol{x}^{\mathrm T}(A+E)\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}} .$$
 
-**关键是把 $\min$ 换成取等子空间 $\mathcal{S}_0$ 的代入：**取 $\mathcal{S}_0=\operatorname{span}\{\boldsymbol{u}_i,\boldsymbol{u}_{i+1},\dots,\boldsymbol{u}_n\}$（$A$ 的第 $i$ 到第 $n$ 个特征向量，$\dim=n-i+1$），则
+**关键是把 $\min$ 换成一个允许的子空间的值：**取 $\mathcal{S}_0=\operatorname{span}\{\boldsymbol{u}_1,\dots,\boldsymbol{u}_i\}$（$A$ 的前 $i$ 个特征向量，$\dim\mathcal{S}_0=i$），则
 
-$$\mu_i\ \le\ \max_{\boldsymbol{x}\in\mathcal{S}_0}R_{A+E}(\boldsymbol{x})\ =\ \max_{\boldsymbol{x}\in\mathcal{S}_0}\Bigl(R_A(\boldsymbol{x})+\frac{\boldsymbol{x}^{\mathrm T}E\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}\Bigr)\ \le\ \max_{\boldsymbol{x}\in\mathcal{S}_0}R_A(\boldsymbol{x})+\lVert E\rVert_2=\lambda_i+\lVert E\rVert_2 ,$$
+$$\mu_i\ \le\ \max_{\boldsymbol{0}\ne\boldsymbol{x}\in\mathcal{S}_0}R_{A+E}(\boldsymbol{x})\ =\ \max_{\boldsymbol{0}\ne\boldsymbol{x}\in\mathcal{S}_0}\Bigl(R_A(\boldsymbol{x})+\frac{\boldsymbol{x}^{\mathrm T}E\boldsymbol{x}}{\boldsymbol{x}^{\mathrm T}\boldsymbol{x}}\Bigr)\ \le\ \max_{\boldsymbol{0}\ne\boldsymbol{x}\in\mathcal{S}_0}R_A(\boldsymbol{x})+\lVert E\rVert_2=\lambda_i+\lVert E\rVert_2 ,$$
 
-最后一步：$\mathcal{S}_0$ 上 $R_A$ 的最大值是 $\lambda_i$（权只落在 $\lambda_i,\dots,\lambda_n$ 上，且 $\boldsymbol{x}=\boldsymbol{u}_i$ 达到）；扰动项的上界 $\sup_{\boldsymbol{x}\neq0}\lvert\boldsymbol{x}^{\mathrm T}E\boldsymbol{x}\rvert/\boldsymbol{x}^{\mathrm T}\boldsymbol{x}=\max(\lambda_{\max}(E),-\lambda_{\min}(E))\le\lVert E\rVert_2$。反向：$\lambda_i=\lambda_i((A+E)+(-E))\le\mu_i+\lVert E\rVert_2$。
+最后一步：$\mathcal{S}_0$ 上 $R_A$ 的最大值是 $\lambda_i$（权只落在 $\lambda_1,\dots,\lambda_i$ 上，且 $\boldsymbol{x}=\boldsymbol{u}_i$ 达到）；扰动项由 $\lvert\boldsymbol{x}^{\mathrm T}E\boldsymbol{x}\rvert\le\lVert E\rVert_2\lVert\boldsymbol{x}\rVert_2^2$ 控制。反向：$\lambda_i=\lambda_i((A+E)+(-E))\le\mu_i+\lVert E\rVert_2$。
 :::
 :::
 
-**两个附注。**① 一般形式的 Weyl 不等式 $\lambda_{i+j-1}(A+B)\le\lambda_i(A)+\lambda_j(B)$（$i+j-1\le n$）用同一论证（$\mathcal{S}_0$ 取 $A$ 的前 $i-1$ 大与 $B$ 的前 $j-1$ 大的补空间交集，维数计数同 [定理 2.6.4](../supplement/sec26.md#thm-sup-2.6.4) 的证明）。② 证明里「把 min 换成特定子空间」这一步在正文被一笔带过，正是它使放缩合法：$\min$ 的下标换成任何一个允许的 $\mathcal{S}$，都不改变「$\le$」方向。
+**两个附注。**① 对升序特征值，更一般的 Weyl 不等式是 $\lambda_{i+j-1}(A+B)\ge\lambda_i(A)+\lambda_j(B)$（$i+j-1\le n$）。证明时取 $A$ 中对应 $\lambda_i,\ldots,\lambda_n$ 的特征子空间和 $B$ 中对应 $\lambda_j,\ldots,\lambda_n$ 的特征子空间：它们的交集维数至少为 $n-i-j+2$。交集中每个非零向量的 Rayleigh 商分别不小于 $\lambda_i(A)$ 和 $\lambda_j(B)$；再用升序特征值的 max-min 形式即可。② 在上面的证明中，最小值不大于任何一个允许子空间上的最大值，因此代入 $\mathcal{S}_0$ 后不等号方向是 $\le$。
 
 <a id="app-a-2-7"></a>
 
@@ -331,31 +331,35 @@ $$\mu_i\ \le\ \max_{\boldsymbol{x}\in\mathcal{S}_0}R_{A+E}(\boldsymbol{x})\ =\ \
 ::: proof 证明
 「$\ge$」：$\rho(A)^k=\rho(A^k)\le\lVert A^k\rVert$（[2.5.1](../supplement/sec25.md#sup-2.5.1) 后的注），故 $\rho(A)\le\liminf_k\lVert A^k\rVert^{1/k}$。
 
-「$\le$」：取 $A$ 的 Jordan 标准形 $A=PJP^{-1}$。任给 $s\gt\rho(A)$，取 $D=\operatorname{diag}(1,\ s^{-1},\ s^{-2},\dots,s^{-(n-1)})$，则 $J_s=D^{-1}JD$ 与 $J$ 相似，且**非对角元被压缩**：$(J_s)_{ij}=s^{\,i-j}J_{ij}$，约当块的每个上移位元乘上 $s^{-1}$。再取 $\tilde s$ 使 $\rho(A)\lt\tilde s\lt s$，估计 $J_s^k$ 的元素：二项展开 $(\Lambda+s^{-1}N)^k$ 的每一项是 $k$ 个因子的乘积，每个因子或为对角元 $\lambda_i$（模 $\le\rho(A)\le\tilde s$），或为上移位元 $s^{-1}$（与 $k$ 无关的常数）。非零乘积中移位因子至多 $n-1$ 个（$N$ 的幂零性），组合数 $\binom{k}{q}\le k^{\,n-1}$，移位因子与 $\tilde s^{-(n-1)}$ 一并并入与 $k$ 无关的常数 $C$，得
+「$\le$」：在复数域取 $A$ 的 Jordan 标准形 $A=PJP^{-1}$；实矩阵也可在复数域完成估计，再用有限维范数等价回到原范数。任给 $s>\rho(A)$，选 $\rho(A)<\tilde s<s$。每个 Jordan 块写成 $J_\lambda=\lambda I+N$，其中 $N$ 的超对角元为 $1$，且对块大小 $d$ 有 $N^d=0$。由于 $\lambda I$ 与 $N$ 可交换，
 
-$$\lvert(J_s^k)_{ij}\rvert\ \le\ C\,k^{\,n-1}\,\tilde s^{\,k} .$$
+$$J_\lambda^k=\sum_{q=0}^{\min(k,d-1)}\binom{k}{q}\lambda^{k-q}N^q.$$
+
+这里 $q\le n-1$，$\binom{k}{q}\le k^q$，且 $|\lambda|^{k-q}\le\tilde s^{k-q}$。将有限个 $\tilde s^{-q}$ 与块范数并入常数，可得（$k\ge1$）
+
+$$\lVert J^k\rVert\le Ck^{n-1}\tilde s^k.$$
 
 故
 
-$$\lVert A^k\rVert\le\lVert P D\rVert\,\lVert J_s^k\rVert\,\lVert D^{-1}P^{-1}\rVert\le C'\,k^{\,n-1}s^{\,k},\qquad
-\lVert A^k\rVert^{1/k}\le C'^{1/k}\,k^{(n-1)/k}\,s\ \xrightarrow{k\to\infty}\ s .$$
+$$\lVert A^k\rVert\le C'k^{n-1}\tilde s^k\le C'k^{n-1}s^k,\qquad
+\lVert A^k\rVert^{1/k}\le C'^{1/k}k^{(n-1)/k}s\ \xrightarrow{k\to\infty}\ s .$$
 
 令 $s\downarrow\rho(A)$ 即得。
 :::
 :::
 
-**（二）对角化情形的瞬态增长界。**$B=V\Lambda V^{-1}$，则对一切 $k$：
+**（二）对角化情形的瞬态增长界。**以下使用 $2$-范数及其条件数。若 $B=V\Lambda V^{-1}$，则对一切 $k$：
 
 $$\frac{\rho(B)^k}{\operatorname{cond}(V)}\ \le\ \lVert B^k\rVert\ \le\ \operatorname{cond}(V)\,\rho(B)^k$$
 
-（右端：$\lVert V\Lambda^kV^{-1}\rVert\le\lVert V\rVert\lVert\Lambda^k\rVert\lVert V^{-1}\rVert$；左端：把 $\rho^k=\lVert\Lambda^k\rVert=\lVert V^{-1}B^kV\rVert$ 反向放缩）。**非正规性（$\operatorname{cond}(V)$ 大）正是瞬态增长的上限来源**。
+（右端：$\lVert V\Lambda^kV^{-1}\rVert_2\le\lVert V\rVert_2\lVert\Lambda^k\rVert_2\lVert V^{-1}\rVert_2$；左端：由 $\rho(B)^k=\lVert\Lambda^k\rVert_2=\lVert V^{-1}B^kV\rVert_2$ 反向放缩。）$\operatorname{cond}_2(V)$ 大时，这个上界允许较大的瞬态增长；但特征向量可以重新缩放，不能仅凭某个 $V$ 的条件数判断矩阵是否非正规。
 
-**（三）$2\times2$ 的精确算例。**$B=\begin{pmatrix}\lambda&M\\0&\lambda\end{pmatrix}$（$\lvert\lambda\rvert\lt1$）：
+**（三）$2\times2$ 的精确算例。**设 $B=\begin{pmatrix}\lambda&M\\0&\lambda\end{pmatrix}$，其中 $0<\lvert\lambda\rvert<1$，$M$ 为实数。则对正整数 $k$，
 
 $$B^k=\begin{pmatrix}\lambda^k&Mk\lambda^{k-1}\\0&\lambda^k\end{pmatrix},\qquad
-\lVert B^k\rVert_2\ \ge\ Mk\lvert\lambda\rvert^{k-1},$$
+\lVert B^k\rVert_2\ \ge\ \lvert M\rvert k\lvert\lambda\rvert^{k-1}.$$
 
-右端在 $k^*\approx-1/\ln\lvert\lambda\rvert$ 处达峰，峰值 $\approx\dfrac{M}{e\,\lvert\ln\lvert\lambda\rvert\rvert}$——**随 $M$ 线性增长**。取 $\lambda=0.99$、$M=1000$：峰值 $\approx\dfrac{1000}{e\times0.0101}\approx3.7\times10^{4}$，出现在 $k^*\approx99$ 步——迭代先放大三万七千倍，再开始收敛。「$\rho\lt1$ ⟹ 收敛」没有说谎，但**前一百步的灾难它一个字都没提**；这就是 [例 2.5.6](../supplement/sec25.md#ex-sup-2.5.6) 结论「实用判据取 $\lVert H\rVert\lt1$」的定量版。
+把右端暂看成 $k$ 的连续函数，其峰值出现在 $k^*=-1/\ln\lvert\lambda\rvert$，大小为 $\lvert M\rvert/(e\lvert\lambda\rvert\,\lvert\ln\lvert\lambda\rvert\rvert)$；实际整数步取其附近即可。令 $\lambda=0.99$、$M=1000$，在约第 $99$ 步，这个下界约为 $3.7\times10^4$。虽然 $\rho(B)<1$ 保证 $B^k\to0$，初始扰动仍可能先被大幅放大。若 $\lambda=0$，则 $B^2=0$，不适用上面的对数计算。[例 2.5.6](../supplement/sec25.md#ex-sup-2.5.6) 用从属范数小于 $1$ 给出更容易检查的充分条件。
 
 <a id="app-a-2-8"></a>
 
@@ -379,7 +383,7 @@ $$\frac{u^2}{v}\ \ge\ \frac{u^2}{(m+M)u-mM}\ \ge\ \min_{u\in[m,M]}\frac{u^2}{(m+
 :::
 :::
 
-**应用：最速下降解 $A\boldsymbol{x}=\boldsymbol{b}$ 的收敛率。**迭代 $\boldsymbol{x}_{k+1}=\boldsymbol{x}_k+\alpha_k\boldsymbol{r}_k$（$\boldsymbol{r}_k=\boldsymbol{b}-A\boldsymbol{x}_k=-A\boldsymbol{e}_k$），精确线搜索 $\alpha_k=\dfrac{\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k}{\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k}$。令 $\tilde{\boldsymbol{e}}=A^{1/2}\boldsymbol{e}_k$（$\lVert\boldsymbol{e}_k\rVert_A=\lVert\tilde{\boldsymbol{e}}_k\rVert_2$，$\boldsymbol{r}_k=A^{1/2}\tilde{\boldsymbol{e}}_k$），展开：
+**应用：最速下降解 $A\boldsymbol{x}=\boldsymbol{b}$ 的收敛率。**迭代 $\boldsymbol{x}_{k+1}=\boldsymbol{x}_k+\alpha_k\boldsymbol{r}_k$（$\boldsymbol{r}_k=\boldsymbol{b}-A\boldsymbol{x}_k=-A\boldsymbol{e}_k$），精确线搜索 $\alpha_k=\dfrac{\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k}{\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k}$；若残差已为零，迭代就已到达精确解。令 $\tilde{\boldsymbol{e}}_k=A^{1/2}\boldsymbol{e}_k$（$\lVert\boldsymbol{e}_k\rVert_A=\lVert\tilde{\boldsymbol{e}}_k\rVert_2$，$\boldsymbol{r}_k=-A^{1/2}\tilde{\boldsymbol{e}}_k$），展开：
 
 $$\lVert\boldsymbol{e}_{k+1}\rVert_A^2=\lVert\boldsymbol{e}_k\rVert_A^2-2\alpha_k\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k+\alpha_k^2\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k\ \Big|_{\alpha=\alpha_k}=\lVert\boldsymbol{e}_k\rVert_A^2-\frac{(\boldsymbol{r}_k^{\mathrm T}\boldsymbol{r}_k)^2}{\boldsymbol{r}_k^{\mathrm T}A\boldsymbol{r}_k},$$
 

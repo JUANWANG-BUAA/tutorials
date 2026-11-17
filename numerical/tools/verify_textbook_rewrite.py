@@ -44,7 +44,7 @@ def check_water_and_six_expressions() -> None:
         target.extend(mp.mpf(c.strip()) for c in line.strip('|').split('|')[1:])
     target_depth = int(re.search(r'T\((\d+)\)\\approx', text)[1])
     actual = temperature[0] + (temperature[1]-temperature[0])*(target_depth-depth[0])/(depth[1]-depth[0])
-    line = next(line for line in text.splitlines() if line.startswith('$$T('))
+    line = next(line for line in text.splitlines() if line.startswith(f'$$T({target_depth})'))
     shown = re.findall(r'\\approx(\d+\.\d+)', line)[-1]
     recovery.close_to_printed(actual, shown)
     s = sp.Symbol('s')

@@ -1,8 +1,8 @@
 # 术语索引 · 中英对照
 
-按主题分组。中文列是你在书里会看到的中文术语，英文列是英文对照（读英文教材、查库文档、看论文时用），「一句话」列给白话解释，出处列是**定义出现的准确位置**——不是页码，是可点击的编号。查概念时先在这里定位，再跳过去读定义。
+按主题分组。中文列列出书中术语，英文列供阅读英文教材、库文档与论文时对照；“一句话”列帮助辨认对象，出处列指向定义或讲解入口。查到名称后，请沿链接核对完整定义与条件，不要把白话解释当作定理。
 
-> 本页逐条索引**第一章 + 补充篇（矩阵工具箱）**；老师主线第 2–7 章的课堂口径与标准术语对照集中在[易混对照卡 §17](contrast-cards.md#17--课堂口径--标准术语统一对照)，各讲页另收口误/同音词。
+> 本页索引**七章正文 + 补充篇（矩阵工具箱）**，按概念主题分组；第九节集中补充插值、积分、微分与常微分方程术语。老师主线第 2–7 章的课堂口径与标准术语对照另见[易混对照卡 §17](contrast-cards.md#17--课堂口径--标准术语统一对照)，各讲页另收口误/同音词。
 
 ::: note 这一页只回答「叫什么、在哪」——公式在别处
 **这一页不放公式**，只给术语名、英文、一句白话解释和定义位置。要查公式与结论去[公式与结论卡](formula-cards.md)；要辨析易混概念去[易混对照卡](contrast-cards.md)。
@@ -16,42 +16,42 @@
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
-| 模型误差 | model error | 数学模型与所描述的实际问题之间的差 | [@def-1.2.1] |
-| 观测误差 | observation error | 观测数据与真实数据的差 | [@def-1.2.2] |
-| 截断误差（方法误差） | truncation error | 也叫方法误差：无穷过程截成有限步造成的差 | [@def-1.2.3] |
-| 舍入误差（计算误差） | rounding / roundoff error | 也叫计算误差：有限字长存不下数造成的差 | [@def-1.2.4] |
-| 绝对误差 / 误差限 | absolute error / error bound | 近似值与真值之差（绝对误差），以及该差绝对值的上界（误差限） | [@def-1.2.5] |
-| 相对误差 / 相对误差限 | relative error / bound | 误差占近似值的比例（相对误差），以及该比例的上界（相对误差限） | [@def-1.2.6] |
-| 有效数字 | significant digits | 从首位非零数字数起、敢担保的位数 | [@def-1.2.7] |
-| 算法 | algorithm | 从输入算出解的一个有限基本运算序列 | [@def-1.2.8] |
-| 数值稳定性 | numerical stability | 算法能控制舍入误差的传播、不把它放大 | [@def-1.2.9] |
-| 浮点数集 | floating-point set | 字长有限时可精确表示的数集 | [@def-1.2.10] |
-| 机器精度 | machine epsilon | 1 附近相邻浮点数之间「一步能迈多大」的相对刻度 | [@def-1.2.10] |
-| 单位舍入误差 | unit roundoff | 每次浮点运算相对误差的上界，双精度约 $10^{-16}$ | [@def-1.2.10] |
-| 向前误差 | forward error | 结果离真值多远 | [@def-1.2.11] |
-| 向后误差 | backward error | 把计算结果看作精确解所需的最小输入扰动 | [@def-1.2.11] |
-| 向后稳定 | backward stable | 算法的向后误差与机器舍入同量级 | [1.2.6](../ch01/sec12.md#sec-1.2.6) |
-| 条件数（函数） | condition number | 函数层面的敏感度：输入相对扰动传到输出的放大倍数 | [1.2.6](../ch01/sec12.md#sec-1.2.6) |
-| 灾难性抵消 | catastrophic cancellation | 相近数相减导致有效数字大量丢失 | [@ex-1.2.7] |
-| 大 $O$ 记号 | big-O notation | 刻画计算量随规模增长的阶，忽略常数因子 | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
+| 模型误差 | model error | 用数学模型代替实际问题时产生的偏差，例如忽略阻力。即使方程求解完全准确，这部分偏差仍然存在 | [@def-1.2.1] |
+| 观测误差 | observation error | 测量或观测所得数据与真实数据的偏差；它作为输入误差进入后续计算，不能靠增加运算位数消除 | [@def-1.2.2] |
+| 截断误差 / 方法误差 | truncation error | 用有限计算代替无穷过程或精确数学运算产生的偏差，例如截断级数、用差分代替导数。它在精确算术下仍存在，与有限字长造成的舍入误差不同 | [@def-1.2.3] |
+| 舍入误差 / 计算误差 | rounding / roundoff error | 精确数不能由有限字长表示，或运算结果被舍入时产生的偏差。它会随算法传播，增加计算步数不一定提高最终精度 | [@def-1.2.4] |
+| 绝对误差 / 误差限 | absolute error / error bound | 本书绝对误差指真值减近似值，是可正可负的差；误差限是该差绝对值的上界。真值未知时，通常能报告的是有依据的误差限，而非真实误差 | [@def-1.2.5] |
+| 相对误差 / 相对误差限 | relative error / bound | 相对误差以非零真值为分母；本书实用相对误差限以非零近似值为分母，二者在误差小时近似对应，但后者不是前者的无条件严格上界 | [@def-1.2.6] |
+| 有效数字 | significant digits | 从近似值的首位非零数字起计数，按误差限判定其中可靠的位数。写出的位数不等于有效位数；再次舍入后须计入新误差并重新判定 | [@def-1.2.7] |
+| 算法 | algorithm | 从输入得到输出的一组明确、可执行的基本运算规则。比较数值算法时，要同时考虑运算代价、误差传播与停止准则 | [@def-1.2.8] |
+| 数值稳定性 | numerical stability | 算法对输入和计算过程中的小扰动不过度放大，使误差传播可控。它是算法的性质；即使算法稳定，病态问题的结果仍可能对输入误差敏感 | [@def-1.2.9] |
+| 浮点数集 | floating-point set | 在给定基数、尾数位数和指数范围下可以精确表示的有限数集。数轴上的间距随数的尺度变化，超过范围还会出现上溢或下溢 | [@def-1.2.10] |
+| 机器精度 | machine epsilon | 本书指 1 与其后相邻浮点数的间距，反映该格式在 1 附近的相对分辨率。就近舍入时，单位舍入误差为它的一半，使用软件常量时须核对约定 | [@def-1.2.10] |
+| 单位舍入误差 | unit roundoff | 就近舍入、无溢出或下溢影响时的单次相对舍入误差上界；双精度约 $10^{-16}$ | [@def-1.2.10] |
+| 向前误差 | forward error | 计算结果与原问题精确解之间的差，可用绝对或相对尺度衡量。它直接回答结果有多准，但估计时通常还需要问题的敏感性信息 | [@def-1.2.11] |
+| 向后误差 | backward error | 使计算结果成为某个邻近问题精确解所需的最小输入扰动。扰动允许改哪些数据、按什么范数衡量，都是定义的一部分 | [@def-1.2.11] |
+| 向后稳定 | backward stable | 算法的输出可看成输入只受机器舍入量级扰动后的精确解。它不保证向前误差也同样小，后者还受问题条件数影响 | [1.2.6](../ch01/sec12.md#sec-1.2.6) |
+| 条件数 | condition number | 在指定误差尺度下衡量问题对输入扰动的敏感性。函数版描述函数值的局部变化；[矩阵条件数](../course/ch02/sec23.md#def-2.3.1)以矩阵范数与逆矩阵范数的乘积衡量线性求解的敏感性。条件数大不等于算法不稳定 | [1.2.6](../ch01/sec12.md#sec-1.2.6) · [矩阵版](../course/ch02/sec23.md#def-2.3.1) |
+| 灾难性抵消 | catastrophic cancellation | 相近数相减后结果很小，使操作数已有误差相对于结果被显著放大，可靠有效数字可能大量丢失。常需改写等价表达式，而非只检查减法本身的舍入 | [@ex-1.2.7] |
+| 大 O 记号 | big-O notation | 给出指定极限下的量级上界，可用于计算量增长或误差随步长缩小，并不表示上下界同阶 | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
 | 计算复杂性 | computational complexity | 达到给定精度所需的时间与空间 | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
 
 ## 二 · 范数
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
-| 向量范数 | vector norm | 满足正定、齐次、三角不等式的「长度」 | [@def-1.3.1] |
-| 1-范数 / 2-范数 / ∞-范数 | 1-, 2-, ∞-norm | 绝对值之和（1-范数）/ 欧氏长度（2-范数）/ 最大分量（∞-范数） | [@thm-1.3.1] |
+| 向量范数 | vector norm | 满足正定性、绝对齐次性和三角不等式的长度度量。选定范数后才能一致地谈误差大小、收敛和条件数；不同范数强调的分量特征不同 | [@def-1.3.1] |
+| 1-范数 / 2-范数 / ∞-范数 | 1-, 2-, ∞-norm | 向量分量绝对值之和 / 欧氏长度 / 最大分量绝对值；矩阵的同名范数另按从属定义计算 | [@thm-1.3.1] |
 | 欧几里得范数 | Euclidean norm | 和 2-范数指同一个东西，也叫欧氏范数 | [@thm-1.3.1] |
-| $p$-范数 | $p$-norm | 一族范数，1、2、∞ 都是它的特例 | [@thm-1.3.2] |
-| 范数等价 | equivalence of norms | 任意两种范数互相双向夹住，收敛结论不变 | [@thm-1.3.3] |
+| p-范数 | p-norm | 对有限维向量，先把分量绝对值取同一幂次求和，再开相应次方；幂次至少为 1 时得到范数。1、2-范数是常用特例，极限给出最大分量绝对值的 ∞-范数 | [@thm-1.3.2] |
+| 范数等价 | equivalence of norms | 固定有限维空间中，两种范数可互相用常数夹住；收敛性不变，比较常数可依赖维数 | [@thm-1.3.3] |
 | 矩阵范数 | matrix norm | 满足四公理的矩阵「大小」；比向量范数多一条次可乘性 | [@def-1.3.2] |
 | 次可乘性 | submultiplicativity | 矩阵乘积的范数不超过范数之积（只保证 $\le$ 方向） | [@def-1.3.2] |
-| 相容性（适配） | compatible | 两种叫法指同一个东西：矩阵范数与向量范数配对时成立的那条不等式 | [@def-1.3.3] |
-| 从属范数 / 算子范数 | subordinate / operator norm | 两种叫法指同一个东西：由向量范数诱导出的矩阵范数，即最大拉伸倍数 | [@thm-1.3.4] |
-| 列范数 / 行范数 | column-sum / row-sum norm | 矩阵 1-范数按列和算（列范数），∞-范数按行和算（行范数） | [@thm-1.3.5] |
-| 谱范数 | spectral norm | 谱范数、2-范数、最大奇异值指同一个东西 | [@thm-1.3.5] |
-| Frobenius 范数（Euclid 范数） | Frobenius norm | 和 Euclid 范数指同一个东西：全部元素平方和开方；相容但**不**从属 | [@def-1.3.4] |
+| 相容性 | compatible | 在范数中，指矩阵作用后的向量长度不超过矩阵范数与原向量长度之积；相容不必是从属。[线性多步法的相容性](../course/ch07/sec73.md#def-7.3.4)指格式与微分方程的匹配，是另一个概念 | [@def-1.3.3] · [多步法](../course/ch07/sec73.md#def-7.3.4) |
+| 从属范数 / 算子范数 | subordinate / operator norm | 给定向量范数后，以矩阵对非零向量的最大相对拉伸倍数定义的矩阵范数。它自动与原向量范数相容，可直接控制矩阵乘法对误差的放大 | [@thm-1.3.4] |
+| 列范数 / 行范数 | column-sum / row-sum norm | 矩阵 1-范数取各列元素绝对值之和的最大值，∞-范数取各行绝对值之和的最大值。不是先把整张矩阵所有元素相加，也不是取某一列或某一行 | [@thm-1.3.5] |
+| 谱范数 | spectral norm | 矩阵在欧氏长度下的最大拉伸倍数，等于矩阵 2-范数及最大奇异值。一般不等于谱半径；后者只观察特征值的模 | [@thm-1.3.5] |
+| Frobenius 范数 / Euclid 范数 | Frobenius norm | 和 Euclid 范数指同一个东西：全部元素平方和开方；相容但**不**从属 | [@def-1.3.4] |
 | 反三角不等式 | reverse triangle inequality | 两个向量长度之差，不超过它们作差所得向量的长度 | [1.3.1](../ch01/sec13.md#sec-1.3.1) |
 | 谱半径 | spectral radius | 矩阵特征值模的最大值；不超过任一相容范数 | [@def-sup-2.5.1] |
 | Neumann 级数 | Neumann series | 矩阵版的等比级数：矩阵范数小于 1 时，逆矩阵可按它展开 | [@thm-1.3.7] |
@@ -61,14 +61,14 @@
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
 | 内积 / 内积空间 | inner product / inner product space | 内积是满足对称、线性、正定的二元函数；装上内积的向量空间叫内积空间 | [@def-sup-2.1.1] |
-| 加权内积 | weighted inner product | 用正定矩阵加权的内积 | [@ex-sup-2.1.1] |
-| 诱导范数 | induced norm | 由内积定义的范数 | [@thm-sup-2.1.1] |
-| 平行四边形恒等式 | parallelogram identity | 判定一个范数是否来自内积的判据 | [@thm-sup-2.1.2] |
-| 极化恒等式 | polarization identity | 由范数反算内积 | [@thm-sup-2.1.2] |
+| 加权内积 | weighted inner product | 在向量内积中用对称正定矩阵调整不同方向的权重。正定性保证非零向量与自身的内积为正；随意取权矩阵不一定得到内积 | [@ex-sup-2.1.1] |
+| 诱导范数 | induced norm | 由向量与自身的内积取平方根得到的长度，因此自动满足范数公理。这里是内积诱导向量范数，与由向量范数诱导矩阵算子范数的过程不同 | [@thm-sup-2.1.1] |
+| 平行四边形恒等式 | parallelogram identity | 两个向量和与差的长度平方之和，等于各自长度平方之和的两倍。范数满足该恒等式，当且仅当它可由内积诱导 | [@thm-sup-2.1.2] |
+| 极化恒等式 | polarization identity | 从向量和、差的范数平方恢复内积的恒等式。使用前须确认该范数来自内积；实空间与复空间的表达式不同 | [@thm-sup-2.1.2] |
 | 正交 | orthogonal | 两个向量正交，指它们的内积为零 | [@def-sup-2.1.2] |
 | 标准正交组 / 标准正交基 | orthonormal set / basis | 组内向量两两正交且都是单位向量；若这组向量还构成基，就称标准正交基 | [@def-sup-2.1.2] |
-| 正交矩阵 | orthogonal matrix | 列向量标准正交的方阵；保内积、保范数，条件数为 1 | [@def-sup-2.1.3] |
-| 正交变换 | orthogonal transformation | 用正交矩阵做的变换，不放大误差 | [@thm-sup-2.1.6] |
+| 正交矩阵 | orthogonal matrix | 列向量标准正交的实方阵；保 Euclid 内积与 2-范数，2-范数条件数为 1 | [@def-sup-2.1.3] |
+| 正交变换 | orthogonal transformation | 用正交矩阵作变换，精确运算不放大 2-范数误差；浮点实现仍会新增舍入 | [@thm-sup-2.1.6] |
 | 正交不变性 | orthogonal invariance | 左乘正交阵不改变 2-范数与 F-范数 | [@thm-sup-2.1.6] |
 | Parseval 恒等式 | Parseval's identity | 标准正交基下，范数的**平方**等于各坐标平方和 | [@thm-sup-2.1.4] |
 
@@ -83,87 +83,87 @@
 | 秩定理 | rank–nullity theorem | 矩阵的秩与零空间维数之和等于它的列数 | [@thm-sup-2.2.1] |
 | 正交补 | orthogonal complement | 与子空间中每个向量都正交的向量全体 | [@def-sup-2.2.2] |
 | 正交分解 | orthogonal decomposition | 全空间写成列空间与左零空间的直和 | [@thm-sup-2.2.3] |
-| 投影矩阵 | projection matrix | 把向量投到列空间的矩阵；它既对称又幂等 | [@thm-sup-2.2.5] |
+| 投影矩阵 | projection matrix | 本节主要指正交投影矩阵，既对称又幂等；一般投影仅要求幂等 | [@thm-sup-2.2.5] |
 | 斜投影 | oblique projection | 幂等但不对称的投影，残差不再垂直于目标子空间 | [@thm-sup-2.2.5] |
-| 最小二乘 | least squares | 让残差 2-范数最小的解 | [@def-sup-2.2.3] |
-| 正态方程 | normal equations | 最小二乘解所满足的方程组 | [@thm-sup-2.2.6] |
-| 加权最小二乘 | weighted least squares | 换一个内积重新做最小二乘，公式结构不变 | [@thm-sup-2.2.7] |
-| 残差 | residual | 右端向量减去算得的像 | [@thm-sup-2.4.4] |
+| 最小二乘 | least squares | 在线性系统不相容或数据带噪时，选择使残差 2-范数最小的解，而非要求每个方程精确成立。曲线拟合中对应采样点残差平方和最小；设计矩阵列满秩时系数解唯一 | [5.6.4](../course/ch05/sec55.md#sec-5.6.4) · [矩阵视角](../supplement/sec22.md#def-sup-2.2.3) |
+| 正态方程 | normal equations | 也称法方程，由残差与系数矩阵每一列正交得到，是线性最小二乘解的充要条件。列满秩时有唯一解，但直接形成系数矩阵的 Gram 矩阵可能加重病态性 | [@thm-sup-2.2.6] |
+| 加权最小二乘 | weighted least squares | 用正定权矩阵衡量残差的平方大小，再使其最小；不同权重改变各方向误差在目标中的代价。它相当于换一个内积做投影，并不总与未加权拟合给出同一解 | [@thm-sup-2.2.7] |
+| 残差 | residual | 近似解代回方程后衡量不满足方程程度的量。线性方程组常取右端向量减去矩阵作用所得向量；[求根](../course/ch04/sec41.md#sec-4.1.1)时常取函数值。残差可直接计算，但问题敏感时残差小不能单独保证解准确 | [@thm-sup-2.4.4] · [求根](../course/ch04/sec41.md#sec-4.1.1) |
 
 ## 五 · 分解与正交化
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
 | 经典 Gram–Schmidt | classical Gram–Schmidt (CGS) | 用**原始**列算系数；正交性损失大 | [@thm-sup-2.3.1] |
-| 修正 Gram–Schmidt | modified Gram–Schmidt (MGS) | 用**当前**列算系数；稳定性好一个条件数 | [2.3.3](../supplement/sec23.md#sup-2.3.3) |
-| QR 分解 | QR factorization | 拆成一个正交阵乘一个上三角阵 | [@thm-sup-2.3.2] |
-| Householder 反射（初等反射矩阵） | Householder reflection | 也叫初等反射矩阵：镜像变换，一次消掉一整列 | [@def-sup-2.3.1] |
+| 修正 Gram–Schmidt | modified Gram–Schmidt (MGS) | 用更新后的当前列算系数，通常比经典版本少一个条件数因子的正交性损失 | [2.3.3](../supplement/sec23.md#sup-2.3.3) |
+| QR 分解 | QR factorization | 矩阵写成列标准正交的因子乘上三角因子；全 QR 的正交因子为方阵 | [@thm-sup-2.3.2] |
+| Householder 反射 / 初等反射矩阵 | Householder reflection | 关于一个过原点超平面的镜像变换，保持欧氏长度。选取反射向量后可一次消去当前列对角线下的一串元素，用于构造 QR 分解，而非把整列都变成零 | [@def-sup-2.3.1] |
 | 反射向量 | Householder vector | 确定镜面的法向量；符号的选择是为避免相近数相减 | [@def-sup-2.3.1] |
 | Givens 旋转 | Givens rotation | 平面旋转，一次只消一个元素；保定向 | [@def-sup-2.3.2] |
 | 列主元 QR | column-pivoted QR | 按列范数选主元的 QR，顺带给出秩的估计 | [@thm-sup-2.3.2] |
 | 全 QR | full QR | 把瘦 QR 的 $Q$ 补足成一个正交方阵 | [@thm-sup-2.3.2] |
-| 奇异值分解 | singular value decomposition (SVD) | 正交 – 对角 – 正交的分解 | [@thm-sup-2.6.1] |
-| 奇异值 | singular value | $A^{\mathrm T}A$ 特征值的非负平方根，降序排列 | [@thm-sup-2.6.1] |
-| 瘦 / 满 SVD | economy / full SVD | 只留秩那么多列的叫瘦 SVD，$U,V$ 都是方阵的叫满 SVD | [2.6.1](../supplement/sec26.md#sup-2.6.1) |
+| 奇异值分解 | singular value decomposition (SVD) | 将实矩阵分成左正交因子、非负对角形因子和右正交因子转置的乘积，长方矩阵也适用。奇异值描述拉伸大小，可用于秩判断、最小二乘和低秩逼近 | [@thm-sup-2.6.1] |
+| 奇异值 | singular value | 矩阵拉伸量的非负度量，降序共列行数、列数较小者那么多个；可由 Gram 矩阵特征值开方得到，宽矩阵须去掉维数额外带来的零 | [@thm-sup-2.6.1] |
+| 瘦 / 满 SVD | economy / full SVD | 本书瘦 SVD 只保留秩那么多列；软件的经济型接口可能保留含零奇异值的列。满 SVD 的两正交因子均为方阵 | [2.6.1](../supplement/sec26.md#sup-2.6.1) |
 | Moore–Penrose 伪逆 | pseudoinverse | 非零奇异值取倒数、零保持零得到的广义逆 | [@def-sup-2.6.1] |
 | Penrose 四条件 | Penrose conditions | 唯一刻画伪逆的四条等式 | [@thm-sup-2.6.3] |
 | Eckart–Young 定理 | Eckart–Young theorem | 截断 SVD 是 2-范数与 F-范数下的**最优**秩 $k$ 逼近 | [@thm-sup-2.6.4] |
 | 低秩逼近 | low-rank approximation | 截断 SVD：前 $k$ 项外积之和 | [@thm-sup-2.6.4] |
 | 数值秩 | numerical rank | 按阈值数非零奇异值的个数；该阈值须按噪声水平选取 | [2.6.4](../supplement/sec26.md#sup-2.6.4) |
 | 核范数 | nuclear norm | 奇异值之和 | [@ex-sup-2.6.4] |
-| 主成分分析 | principal component analysis (PCA) | 用 SVD 找出数据方差最大的方向 | [2.6.6](../supplement/sec26.md#sup-2.6.6) |
+| 主成分分析 | principal component analysis (PCA) | 对中心化数据用 SVD 找出样本方差最大的方向 | [2.6.6](../supplement/sec26.md#sup-2.6.6) |
 | 填充 | fill-in | 稀疏矩阵分解时新产生的非零元 | [2.3.5](../supplement/sec23.md#sup-2.3.5) |
 
 ## 六 · 条件数与谱
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
-| 条件数（矩阵） | condition number | 矩阵范数与其逆矩阵范数之积；衡量矩阵问题的固有敏感度 | [@def-sup-2.4.1] |
-| 谱条件数 | spectral condition number | 2-范数下的条件数，等于首末奇异值之比 | [@def-sup-2.4.1] |
-| 成分条件数 / Skeel 条件数 | componentwise / Skeel condition number | 两种叫法指同一个东西：元素扰动下的正确度量，用绝对值矩阵定义 | [2.4.4](../supplement/sec24.md#sup-2.4.4) |
-| 特征值 / 特征向量 | eigenvalue / eigenvector | $A$ 只做伸缩的方向（特征向量），及伸缩的倍数（特征值） | [@def-sup-2.5.1] |
+| 条件数（矩阵） | condition number | 非奇异方阵的范数与逆矩阵范数之积；描述相应线性求解问题对扰动的最坏情形敏感性 | [@def-sup-2.4.1] |
+| 谱条件数 | spectral condition number | 2-范数下的条件数，非奇异方阵为最大与最小奇异值之比，奇异时为无穷大 | [@def-sup-2.4.1] |
+| 成分条件数 / Skeel 条件数 | componentwise / Skeel condition number | 成分条件分析按元素相对扰动衡量敏感性；Skeel 条件数是其中一种度量，不代表所有成分条件数 | [2.4.4](../supplement/sec24.md#sup-2.4.4) |
+| 特征值 / 特征向量 | eigenvalue / eigenvector | 非零特征向量被矩阵映成自身的标量倍；特征值可为复数，未必是实空间中的伸缩方向 | [@def-sup-2.5.1] |
 | 谱 | spectrum | 全部特征值的集合 | [@def-sup-2.5.1] |
-| Gerschgorin 圆盘 | Gerschgorin disk | 由对角元与同行非对角元之和围出的圆盘，特征值都落在其中 | [@thm-sup-2.5.2] |
-| 严格对角占优 | strictly diagonally dominant | 对角元大于同行其余元素绝对值之和，则矩阵**非奇异** | [@thm-sup-2.5.2] |
+| Gerschgorin 圆盘 | Gerschgorin disk | 以各对角元为圆心、同行其余元素绝对值之和为半径的复平面圆盘；全部特征值落在这些圆盘的并集中 | [@thm-sup-2.5.2] |
+| 严格对角占优 | strictly diagonally dominant | 每个对角元的绝对值大于同行其余元素绝对值之和；方阵满足此条件即非奇异 | [@thm-sup-2.5.2] |
 | Rayleigh 商 | Rayleigh quotient | 二次型与向量范数平方之比；矩阵对称时，它给出特征值的上下界 | [@def-sup-2.5.2] |
 | Courant–Fischer 极小极大原理 | Courant–Fischer min-max | 全部特征值的变分刻画 | [@thm-sup-2.5.5] |
-| 幂法 | power method | 迭代求按模最大的特征值的方法 | [@thm-sup-2.5.3] |
-| 反幂法 | inverse iteration | 求最接近给定 $\mu$ 的特征值 | [2.5.3](../supplement/sec25.md#sup-2.5.3) |
+| 幂法 | power method | 反复乘矩阵并归一化，提取按模占优的特征方向。基本收敛结论要求主特征值按模严格分离且初值含相应分量；等模主特征值可能使方向不收敛 | [3.1.1](../course/ch03/sec31.md#sec-3.1.1) |
+| 反幂法 | inverse iteration | 对非奇异位移矩阵反复求解线性系统，放大离位移最近的特征方向。收敛仍需目标按距离严格分离且初值有相应分量；实际不显式形成逆矩阵 | [3.1.2](../course/ch03/sec31.md#sec-3.1.2) |
 | Weyl 不等式 | Weyl's inequality | 对称矩阵特征值的绝对扰动界 | [@thm-sup-2.5.6] |
-| Bauer–Fike 定理 | Bauer–Fike theorem | 一般矩阵的谱扰动界，含特征向量矩阵的条件数 | [@thm-sup-2.5.6] |
-| 非正规矩阵 | nonnormal matrix | 特征向量不正交；它的特征值对扰动可开方敏感 | [@ex-sup-2.5.6] |
-| 伪谱 | pseudospectrum | 非正规矩阵「近似特征值」构成的集合 | [@ex-sup-2.5.6] |
+| Bauer–Fike 定理 | Bauer–Fike theorem | 可对角化矩阵的谱扰动包含界，含特征向量矩阵的条件数，不保证逐一配对 | [@thm-sup-2.5.6] |
+| 非正规矩阵 | nonnormal matrix | 矩阵与其转置（复数时为共轭转置）不交换，不能正交或酉对角化；缺陷块可产生分数次幂扰动敏感性 | [@ex-sup-2.5.6] |
+| 伪谱 | pseudospectrum | 给定扰动容限内，受扰矩阵可能出现的特征值集合；正规矩阵同样有伪谱 | [@ex-sup-2.5.6] |
 
 ## 七 · 算法与复杂度（含课堂术语）
 
 | 中文 | English | 一句话 | 出处 |
 |:--|:--|:--|:--|
-| 秦九韶法（Horner 格式） | Horner's method | 也叫 Horner 格式：把多项式求值降到线性复杂度 | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
-| 高斯消去法 | Gaussian elimination | 初等行变换化成上三角再回代 | [第 3 讲](../lectures/lec03.md) |
-| 列主元高斯消去法 | Gaussian elimination with partial pivoting | 每步选绝对值最大的主元，使乘数不超过 1 | [第 3 讲](../lectures/lec03.md) |
-| 回代 / 前代 | backward / forward substitution | 回代解上三角方程组，前代解下三角方程组 | [第 4 讲](../lectures/lec04.md) |
-| LU 分解（Doolittle） | LU factorization | 也叫 Doolittle 分解：一次分解，反复用于不同右端 | [第 4 讲](../lectures/lec04.md) |
-| 追赶法 | Thomas algorithm | 三对角方程组的线性复杂度解法 | [第 4 讲](../lectures/lec04.md) |
-| 矩阵分裂 | matrix splitting | 把矩阵拆成「好求逆的部分」与剩余部分 | [第 4 讲](../lectures/lec04.md) |
-| 迭代矩阵 | iteration matrix | 迭代格式的系数矩阵；迭代收敛当且仅当它的谱半径小于 1 | [第 5 讲](../lectures/lec05.md) |
-| 谱半径判据 | spectral radius criterion | 迭代收敛的**充要条件**：迭代矩阵的谱半径小于 1 | [第 5 讲](../lectures/lec05.md) |
-| 先验 / 后验误差估计 | a priori / a posteriori estimate | 先验估计用初值，后验估计用相邻迭代差 | [第 5 讲](../lectures/lec05.md) |
-| Jacobi 迭代 | Jacobi iteration | 按对角 / 非对角分裂 | [第 5 讲](../lectures/lec05.md) |
-| Gauss–Seidel 迭代 | Gauss–Seidel iteration | 按上 / 下三角分裂，新分量立刻投入使用 | [第 5 讲](../lectures/lec05.md) |
-| 逐次超松弛法 | successive over-relaxation (SOR) | 用松弛因子加权；取 1 退化为 Gauss–Seidel | [第 6 讲](../lectures/lec06.md) |
-| 松弛因子 | relaxation parameter | SOR 的参数；落在 $(0,2)$ 之外**必不收敛** | [第 6 讲](../lectures/lec06.md) |
-| Ostrowski 定理 | Ostrowski's theorem | 对称正定时 SOR 的收敛范围放宽到 $(0,2)$ | [第 6 讲](../lectures/lec06.md) |
-| 幂法 | power method | 每步「先单位化再乘 $A$」，迭代出按模最大的特征值及其特征向量 | [第 7 讲](../lectures/lec07.md) |
-| 反幂法 | inverse power method | 对 $A^{-1}$ 用幂法求按模最小的特征值；实际每步解 $Au_{k+1}=y_k$ | [第 7 讲](../lectures/lec07.md) |
-| 位移反幂法 | shifted inverse iteration | 对 $A-pI$ 用反幂法，求最接近已知近似 $p$ 的特征值，结果再加回 $p$ | [第 7 讲](../lectures/lec07.md) |
-| 二分法 | bisection method | 连续函数两端异号即折半定位；误差随区间长 $(b-a)/2^n$ 下降 | [第 7 讲](../lectures/lec07.md) |
-| 不动点迭代 | fixed-point iteration | 把 $f(x)=0$ 改写为 $x=\varphi(x)$ 后迭代，极限即不动点 | [第 7 讲（引入）](../lectures/lec07.md) · [第 8 讲（理论）](../lectures/lec08.md) |
-| 压缩映射 | contraction mapping | $\lvert\varphi'\rvert\le L\lt1$；与「自映射」一起保证收敛到唯一不动点 | [第 8 讲](../lectures/lec08.md) |
+| 秦九韶法 / Horner 格式 | Horner's method | 也叫 Horner 格式：把多项式求值降到线性复杂度 | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
+| 高斯消去法 | Gaussian elimination | 用初等行变换逐列消去主元下方元素，把方程组化为上三角后回代。顺序消去需要非零主元；主元过小还会放大舍入误差，因此常需选主元 | [2.1.1](../course/ch02/sec21.md#sec-2.1.1) |
+| 列主元高斯消去法 | Gaussian elimination with partial pivoting | 在当前列未消元部分选绝对值最大的元素并交换行，精确运算下使消元乘数的绝对值不超过 1。它降低小主元的风险，但不消除原方程组的病态性 | [2.1.2](../course/ch02/sec21.md#sec-2.1.2) |
+| 回代 / 前代 | backward / forward substitution | 回代从最后一个未知量开始解上三角方程组，前代从第一个未知量开始解下三角方程组。对角元非零时逐项唯一求解，是三角分解后处理不同右端的步骤 | [2.2.1](../course/ch02/sec22.md#sec-2.2.1) |
+| LU 分解（Doolittle） | LU factorization | 将矩阵写成下三角与上三角因子的乘积；Doolittle 约定下三角因子的对角元为 1。分解一次后可对不同右端反复前代、回代；选主元时还须记录行置换 | [2.2.1](../course/ch02/sec22.md#sec-2.2.1) |
+| 追赶法 | Thomas algorithm | 利用三对角结构进行消去与回代，只需线性运算量和存储量。使用无选主元版本时须保证递推分母非零，不能对任意三对角矩阵无条件套用 | [2.2.4](../course/ch02/sec22.md#sec-2.2.4) |
+| 矩阵分裂 | matrix splitting | 将系数矩阵分为一个容易求解的可逆部分与剩余部分，据此构造线性定常迭代。容易计算不等于收敛，还需检查相应迭代矩阵 | [2.4.1](../course/ch02/sec24.md#sec-2.4.1) |
+| 迭代矩阵 | iteration matrix | 线性定常迭代的系数矩阵；对所有初值收敛当且仅当它的谱半径小于 1 | [第 5 讲](../lectures/lec05.md) |
+| 谱半径判据 | spectral radius criterion | 线性定常迭代对所有初值收敛的充要条件；不保证每一步误差都缩小 | [第 5 讲](../lectures/lec05.md) |
+| 先验 / 后验误差估计 | a priori / a posteriori estimate | 先验估计依赖计算前已知的信息；后验估计使用已算出的近似解、相邻差或残差等，并须有有效误差界 | [第 5 讲](../lectures/lec05.md) |
+| Jacobi 迭代 | Jacobi iteration | 每一轮用上一轮的全部分量计算新分量，相当于用对角部分解耦各方程。新分量在本轮不立即使用，便于并行；收敛仍要检查迭代矩阵 | [2.4.2](../course/ch02/sec24b.md#sec-2.4.2) |
+| Gauss–Seidel 迭代 | Gauss–Seidel iteration | 按顺序更新分量，本轮已得到的新分量立刻代入后续方程。它利用下三角求解，不是 Jacobi 的同一更新规则，收敛性也须单独判断 | [2.4.3](../course/ch02/sec24b.md#sec-2.4.3) |
+| 逐次超松弛法 | successive over-relaxation (SOR) | 将 Gauss–Seidel 的逐分量修正乘以松弛因子，再更新近似解。因子为 1 时退化为 Gauss–Seidel；参数可加快或破坏收敛，不能只凭名称认为超松弛总更快 | [2.4.4](../course/ch02/sec24b.md#sec-2.4.4) |
+| 松弛因子 | relaxation parameter | SOR 中控制每次修正幅度的实参数。标准 SOR 收敛的必要条件是参数在 0 与 2 之间；一般矩阵仅满足这个范围还不够，对称正定情形才有相应充分性 | [2.4.4](../course/ch02/sec24b.md#sec-2.4.4) |
+| Ostrowski 定理 | Ostrowski's theorem | 对称正定系数矩阵的 SOR 迭代，在松弛因子处于 0 与 2 之间时收敛。对称正定是这里的关键前提，不能把参数范围直接推广为一般矩阵的充分条件 | [对称正定情形](../course/ch02/sec24b.md#class-06-sor-spd) |
+| 幂法 | power method | 每步归一化并乘矩阵；主特征值按模严格占优、初值含主分量等条件下提取主特征方向。归一化在乘法前后皆可，须核对更新式 | [第 7 讲整理稿，原录音待核](../lectures/lec07.md) · [正文](../course/ch03/sec31.md) |
+| 反幂法 | inverse power method | 对非奇异矩阵的逆作用作幂迭代，求按模最小且严格分离的特征方向；实际解线性系统，不显式求逆，初值仍须含目标分量 | [第 7 讲整理稿，原录音待核](../lectures/lec07.md) · [正文](../course/ch03/sec31.md) |
+| 位移反幂法 | shifted inverse iteration | 对非奇异的位移矩阵作反幂迭代；严格分离且初值有相应分量时，趋向离位移最近的特征值方向 | [第 7 讲](../lectures/lec07.md) |
+| 二分法 | bisection method | 对区间上连续且两端异号的实函数，反复保留异号的半区间来包住至少一个根。区间长每步减半，可直接给出误差保证；偶重根附近未必能找到异号端点 | [4.1.1](../course/ch04/sec41.md#sec-4.1.1) |
+| 不动点迭代 | fixed-point iteration | 将求根问题改写为等价的不动点方程，再反复把当前近似代入迭代函数。不同改写的收敛表现可完全不同；收敛且迭代函数在极限处连续时，极限才满足不动点方程 | [4.1.2](../course/ch04/sec41.md#sec-4.1.2) |
+| 压缩映射 | contraction mapping | 映射使任意两点的距离至多变为原来的某个固定小于 1 的倍数。在闭区间上再满足映回自身，即保证唯一不动点及任意区间内初值的收敛；一维导数绝对值一致小于 1 是常用判据 | [4.1.2](../course/ch04/sec41.md#sec-4.1.2) |
 | Krylov 子空间方法 | Krylov subspace method | GMRES 等大规模迭代解法 | [第 4 讲](../lectures/lec04.md) |
 
 ## 八 · 记法速查
 
-只列**纯记法约定**；符号的含义见前七节或[符号表](../preface-notation.md)。
+只列**纯记法约定**；符号的含义见本页术语表或[符号表](../preface-notation.md)。
 
 | 记号 | 读法 / 含义 | 出处 |
 |:--|:--|:--|
@@ -174,9 +174,76 @@
 | $u$、$\mathrm{eps}$ | 单位舍入误差、机器精度（前者是后者的一半） | [符号表](../preface-notation.md) |
 | $m_{ik}$ | 高斯消去的消元乘数 | [第 3 讲](../lectures/lec03.md) |
 | $\omega$ | SOR 的松弛因子 | [第 6 讲](../lectures/lec06.md) |
-| $u_k$、$y_k$ | 幂法中的迭代向量、其单位化向量 | [第 7 讲](../lectures/lec07.md) |
+| $u_k$、$y_k$ | 幂法的原始迭代向量与归一化向量，具体对应须看所在页的更新式，不按字母固定判断 | [第 7 讲](../lectures/lec07.md) |
 | $p$ | 位移反幂法中的位移量（目标特征值的已知近似） | [第 7 讲](../lectures/lec07.md) |
 
 ::: note 讲座页的记号差异
-课堂精编为忠实还原创课板书，有三处与正文不同：向量写作斜体 $x$、误差限用 $\varepsilon_x$、$P$ 兼作分裂剩余与特征向量矩阵（$D$ 兼作常数与对角块）。完整登记见[课堂精编导览](../lectures/overview.md#notation-diff)。
+课堂来源页沿用记录中的局部记号，有三处与正文不同：向量写作斜体 $x$、误差限用 $\varepsilon_x$、$P$ 兼作分裂剩余与特征向量矩阵（$D$ 兼作常数与对角块）。见[来源页记号说明](../lectures/overview.md#notation-diff)。这些页面是整理记录，不是逐字实录；第 1–5、7 讲原录音待核，其余现有 ASR 未经连续听校，不宜仅凭表内措辞认定课堂原话。
 :::
+
+## 九 · 七章主线补充：求根、插值、积分与微分方程
+
+本节沿用四列表格；最小二乘、条件数等已有名称仍在前文原条目补充，不重复列出。截断误差按求积、差分和时间推进分别说明，使用时应核对所在语境。
+
+| 中文 | English | 一句话 | 出处 |
+|:--|:--|:--|:--|
+| 收敛阶 | order of convergence | 用相邻迭代误差的渐近幂次关系描述接近解的速度，区别线性、超线性与二次收敛。它是接近极限后的性质，不保证任意初值都收敛 | [4.1.3](../course/ch04/sec41.md#sec-4.1.3) |
+| Newton 法 / 牛顿法 | Newton's method | 在当前点用切线近似函数，再取切线的零点作为下一次近似。简单根附近、函数足够光滑且初值足够接近时通常二次收敛；导数为零或初值过远时可能失败 | [4.1.5](../course/ch04/sec41b.md#sec-4.1.5) |
+| 割线法 | secant method | 用最近两个近似点的割线斜率代替 Newton 法中的导数，避免直接求导。需要两个初值且分母非零；简单根附近满足条件时超线性收敛，但不自动保持根的包围区间 | [4.1.7](../course/ch04/sec41b.md#sec-4.1.7) |
+| Jacobi 特征值算法 | Jacobi eigenvalue algorithm | 对实对称矩阵反复作平面旋转相似变换，消去选中的非对角元，逐步得到特征值与正交特征向量。它不同于解线性方程组的 Jacobi 迭代 | [3.2](../course/ch03/sec32.md#sec-3.2) |
+| QR 方法 | QR algorithm | 反复进行 QR 分解并交换两因子的乘积顺序，构造与原矩阵相似的矩阵序列以求特征值。实际算法先化为 Hessenberg 形并配合位移；实矩阵可能保留代表共轭复根的二阶块 | [3.3.3](../course/ch03/sec33.md#sec-3.3.3) |
+| 插值 / 代数插值 | interpolation / polynomial interpolation | 在给定节点精确满足数据值的近似问题；代数插值选择多项式。互异的节点可唯一确定次数不超过节点数减一的多项式，但唯一性不保证高次插值准确或数值稳定 | [5.1.1](../course/ch05/sec51.md#sec-5.1.1) |
+| 插值多项式 | interpolation polynomial | 在全部给定节点取指定函数值的多项式；节点互异且次数上限等于节点数减一时存在唯一。Lagrange 与 Newton 是同一多项式的不同表示，不是两个不同的精确插值结果 | [定义](../course/ch05/sec51.md#def-5.1.1) |
+| Lagrange 插值 / 拉格朗日插值 | Lagrange interpolation | 用在一个节点取 1、其余节点取 0 的基函数，将各节点值加权组合成插值多项式。它直接满足插值条件，但增加节点会改变原有基函数 | [5.1.1](../course/ch05/sec51.md#sec-5.1.1) |
+| 差商 / 均差 | divided difference | 从函数值差除以节点跨度开始，递归构成高阶数据差值，用作 Newton 插值的系数。节点不必等距；重复节点时需用导数作延拓，不能直接除以零 | [定义](../course/ch05/sec51.md#def-5.1.3) |
+| Newton 插值 / 牛顿插值 | Newton interpolation | 用逐次累乘的节点因子作基，以差商为系数表示插值多项式。新增节点时只需增加一项并计算新增差商，旧节点条件保持不变 | [差商与构造](../course/ch05/sec51.md#def-5.1.3) |
+| 插值余项 | interpolation remainder | 目标函数与精确插值多项式之间的差，用来估计节点之间的逼近误差。经典导数形式要求相应阶数的连续导数，且不包含观测值误差和浮点求值误差 | [余项定理](../course/ch05/sec51.md#thm-5.1) |
+| Hermite 插值 / 埃尔米特插值 | Hermite interpolation | 同时满足节点函数值及指定导数值的插值。次数上限按全部独立条件计数；每个互异节点都给函数值与一阶导数时，需要的系数个数是节点数的两倍 | [定义](../course/ch05/sec52.md#def-5.2.1) |
+| 样条函数 | spline function | 在各子区间使用低次多项式，并在连接点要求一定阶数导数连续的分段函数。本书的三次样条要求函数及前两阶导数连续，避免用一个全局高次多项式连接全部节点 | [定义](../course/ch05/sec53.md#def-5.3.1) |
+| 三次样条插值 | cubic spline interpolation | 用每段次数不超过三次、整体二阶连续可微的函数通过给定节点。仅有插值和内节点光滑条件还差两个自由度，须补充适当端点条件才能唯一确定 | [5.3.2](../course/ch05/sec53.md#sec-5.3.2) |
+| 自然边界 / 自然样条 | natural boundary conditions / natural spline | 三次样条两端的二阶导数都取零的边界条件，以及由此确定的样条。它不要求端点斜率为零，也不意味着被插值的原函数两端二阶导数确实为零 | [样条边界条件](../course/ch05/sec53.md#sec-5.3.2) |
+| 三弯矩法 | moment method for cubic splines | 以各节点的样条二阶导数为未知量，由一阶导数连续性列出方程组，再恢复各段三次多项式。自然或固支边界下可化为三对角求解，边界条件也须进入方程 | [5.3.4](../course/ch05/sec53.md#sec-5.3.4) |
+| 三角插值 | trigonometric interpolation | 用正弦、余弦或等价的复指数函数组合满足周期采样数据。基函数和节点配置须配套，周期端点不能当成两个独立的相位节点重复计数 | [5.4.1](../course/ch05/sec54.md#sec-5.4.1) |
+| 快速 Fourier 变换 / FFT | fast Fourier transform | 利用离散 Fourier 变换中的对称与递归结构，把典型变换的运算量从平方级降到线性对数级。它是计算同一离散变换的快速算法，不是另一种连续 Fourier 变换 | [5.4.2](../course/ch05/sec54.md#sec-5.4.2) |
+| 正交多项式系 | orthogonal polynomial system | 在指定积分区间和权函数下，不同次数的多项式两两内积为零，且每个多项式的次数等于其序号。区间与权函数都是正交性的条件，不能换权后直接沿用 | [定义](../course/ch05/sec55.md#def-5.5.3) |
+| 最佳平方逼近 | best mean-square approximation | 在选定的有限维函数空间内，使带权平方误差积分最小。最优误差与整个近似空间正交，通常不逐点通过目标函数；离散化为采样残差平方和即得到最小二乘拟合 | [5.6](../course/ch05/sec55.md#sec-5.6) |
+| 数值积分 / 数值求积 | numerical integration / quadrature | 用有限个节点上的函数值及相应权重近似定积分。选公式时要考虑函数光滑性、节点是否可自由选择和误差要求，不只是比较采样点数 | [定义](../course/ch06/sec61.md#def-6.1.1) |
+| 求积节点 / 求积系数 | quadrature nodes / quadrature weights | 求积节点是采样位置，求积系数是各函数值在加权和中的系数；两者一起确定求积公式。固定区间与节点后，插值型公式的系数与被积函数无关，但未必全为正 | [定义](../course/ch06/sec61.md#def-6.1.1) |
+| 代数精度 | degree of exactness | 求积公式对所有不超过某一次数的多项式都精确，而对至少一个更高一次多项式不精确时，该次数称为代数精度。它不是误差随网格步长缩小的收敛阶 | [定义](../course/ch06/sec61.md#def-6.1.2) |
+| 求积截断误差 / 求积余项 | quadrature truncation error / remainder | 真积分减去以准确节点值计算的求积和，衡量公式本身的近似误差。它与节点值误差、求和舍入分开分析；导数型余项需要相应光滑性 | [定义](../course/ch06/sec61.md#def-6.1.1) |
+| 插值型求积公式 | interpolatory quadrature | 先对节点值作插值，再把插值多项式精确积分得到的公式；每个权等于相应 Lagrange 基函数的积分。节点互异时，它至少能精确积分次数不超过节点数减一的多项式 | [定义](../course/ch06/sec61.md#def-6.2.1) |
+| Newton–Cotes 公式 / 牛顿–柯特斯公式 | Newton–Cotes quadrature | 本书指等距且包含区间两端点的插值型求积公式，梯形和 Simpson 公式是低阶特例。不断提高全局次数不保证收敛，高阶公式还可能出现负权与扰动放大 | [定义](../course/ch06/sec61.md#def-6.3.1) |
+| 梯形公式 | trapezoidal rule | 用连接两端函数值的直线代替曲线，再积分，等价于端点函数值平均乘区间长度。代数精度为 1；函数二阶连续可微时，固定区间的复化误差为二阶 | [Newton–Cotes 特例](../course/ch06/sec61.md#sec-6.3) |
+| Simpson 公式 / 辛普森公式 | Simpson's rule | 用两端点和中点的二次插值多项式近似积分，三点权重比例为一比四比一。虽然插值次数为二，代数精度为三；标准等距复化形式要求小区间数为偶数 | [Newton–Cotes 特例](../course/ch06/sec61.md#sec-6.3) |
+| 复化求积法 | composite quadrature | 将积分区间分成小区间，在每段重复使用同一个低阶求积公式再求和。提高精度靠细分网格而非不断升高全局插值次数；总误差须累加各段余项 | [6.5](../course/ch06/sec65.md#sec-6.5) |
+| 复化梯形公式 | composite trapezoidal rule | 在各小区间用梯形公式并合并公共节点，内部节点的函数值被相邻两段共同使用。固定区间且二阶导数连续时，总截断误差为二阶，不能与单段余项的步长幂次混淆 | [6.5.1](../course/ch06/sec65.md#sec-6.5.1) |
+| 复化 Simpson 公式 | composite Simpson's rule | 对成对的等距小区间应用 Simpson 公式再求和，因此网格小区间数须为偶数。四阶导数连续时，总截断误差为四阶；网格减半的误差估计还需进入渐近区间 | [6.5.1](../course/ch06/sec65.md#sec-6.5.1) |
+| Richardson 外推 | Richardson extrapolation | 已知近似值随步长的误差展开时，组合不同步长结果以消去主误差项。它要求展开和主阶假设成立，不能消除数据噪声或舍入误差，也不能无条件用于不光滑函数 | [6.6.1](../course/ch06/sec66.md#sec-6.6.1) |
+| Romberg 积分 | Romberg integration | 从逐次减半网格的复化梯形结果出发，反复外推消去偶次步长误差项的求积方法。较高阶改善依赖相应光滑性及误差展开，不能只凭外推表相邻数接近便认定准确 | [6.6.2](../course/ch06/sec66.md#sec-6.6.2) |
+| Gauss 型求积公式 / 高斯求积 | Gaussian quadrature | 同时选择节点和权，使给定权函数下的求积公式达到最高多项式精确性；用若干节点可精确到节点数两倍减一次。节点是相应正交多项式的零点，改变区间或权函数就要相应调整 | [定义与一般理论](../course/ch06/sec67.md#sec-6.7.1) |
+| Gauss–Legendre 求积 | Gauss–Legendre quadrature | 对标准区间负一到一、权函数为常数 1 的积分，使用 Legendre 多项式零点作节点的 Gauss 公式。用于其他有限区间时，节点映射与积分尺度因子必须同时变换 | [6.7.2](../course/ch06/sec67.md#sec-6.7.2) |
+| 数值微分 | numerical differentiation | 用邻近函数值近似导数，适合只有采样数据或求值程序的情形。差商会放大数据噪声，因此步长越小不一定越准确，需平衡截断误差与求值误差 | [附录 D.1](../appendix/numerical-diff.md#sec-appD-diff) |
+| 向前差商 / 后向差商 | forward / backward difference quotient | 分别用当前点与右侧点、或当前点与左侧点的函数值差除以步长近似一阶导数。邻域二阶连续可微时是一阶近似，在边界只能单侧取值时有用 | [附录 D.1](../appendix/numerical-diff.md#sec-appD-diff) |
+| 中心差商 | central difference quotient | 用中心两侧等距点的函数值差除以两倍步长近似一阶导数。三阶导数连续时截断误差为二阶，但需要两侧节点，并仍会按步长倒数放大函数值误差 | [附录 D.1](../appendix/numerical-diff.md#sec-appD-diff) |
+| 二阶中心差分 / 二阶差分 | second central difference | 将两侧等距函数值相加再减去中心值的两倍，除以步长平方后近似二阶导数。四阶导数连续时是二阶精度；“二阶导数”与“二阶精度”是不同概念，数据误差还会被步长平方的倒数放大 | [附录 D.1](../appendix/numerical-diff.md#sec-appD-diff) |
+| 差分截断误差 | finite-difference truncation error | 准确导数减去以准确函数值计算的差分近似，仅衡量离散公式造成的误差。二阶中心差分在四阶连续可微条件下为步长平方量级，不能把这个结论套给任意不光滑数据 | [附录 D.1](../appendix/numerical-diff.md#sec-appD-diff) |
+| 常微分方程初值问题 | initial value problem for an ODE | 已知导数与时间、未知函数值的关系，再给出起始时刻的函数值，求后续轨迹。右端连续且对未知量满足适当 Lipschitz 条件时可保证存在唯一性；局部条件通常只先给局部解 | [定义](../course/ch07/sec71.md#def-7.1.1) |
+| 单步法 | one-step method | 从当前节点的近似解出发计算下一节点，不需要保存多个历史解值。Runge–Kutta 虽在一步内计算多个斜率，仍是单步法；“单步”不表示只算一次函数 | [7.2.1](../course/ch07/sec71.md#sec-7.2.1) |
+| 显式法 / 隐式法 | explicit / implicit method | 显式法可由已知量直接算出下一步；隐式法的方程还包含待求的新值，通常每步要解代数方程。隐式不自动意味着任意步长稳定，还要检查具体格式的稳定域和求解误差 | [定义](../course/ch07/sec71.md#def-7.2.1) |
+| Euler 法 / 显式 Euler 法 / 欧拉法 | forward Euler method | 用当前时刻的斜率乘步长推进解，几何上沿当前切线走一步。光滑且误差传播受控时整体一阶、单步局部误差二阶；衰减问题中步长过大也可能数值发散 | [7.2.1](../course/ch07/sec71.md#sec-7.2.1) |
+| 后退 Euler 法 / 隐式 Euler 法 | backward Euler method | 用下一时刻、下一未知解值处的斜率推进，因此每步要解方程。整体一阶且 A-稳定、L-稳定，常用于刚性衰减问题；大步长仍可能不满足精度要求 | [7.2.1](../course/ch07/sec71.md#sec-7.2.1) |
+| 梯形法（常微分方程） | trapezoidal method for ODEs | 用本步起点与终点两个斜率的平均推进，其中终点斜率依赖待求解，故为隐式二阶法。它 A-稳定但不 L-稳定，对很快衰减的模式可能保留数值振荡 | [7.2.1](../course/ch07/sec71.md#sec-7.2.1) |
+| 改进 Euler 法 | improved Euler method / Heun's method | 先用显式 Euler 预测终点，再把起点斜率与预测点斜率平均，校正一次。它是显式二级二阶 Runge–Kutta 法，并不等于精确解出了隐式梯形方程 | [7.2.1](../course/ch07/sec71.md#sec-7.2.1) |
+| Runge–Kutta 方法 / 龙格–库塔方法 / RK 方法 | Runge–Kutta methods | 在一步内构造多个阶段斜率，再加权推进解的单步方法。级数是阶段数，阶数是精度指标；增加阶段不自动同量提高阶数，系数须满足相应阶条件 | [7.2.2](../course/ch07/sec71.md#sec-7.2.2) |
+| 局部截断误差（常简称局部误差） | local truncation error | 单步法指从精确解出发走一步后，精确值减数值值的差；多步法的格式缺陷则把各历史精确值代入后取左端减右端。本书均不除以步长；高阶方法的缺陷通常比全局误差高一阶，比较文献须核对方向与归一化 | [定义](../course/ch07/sec71.md#def-7.1.2) · [多步法](../course/ch07/sec73.md) |
+| 整体截断误差（也称全局误差、整体误差） | global truncation error / global error | 精确解与逐步计算所得数值解在当前节点的差，包含此前各步误差的传播和累积。在固定区间上，要由局部误差推出全局阶数，还需稳定性、光滑性及足够准确的初值 | [定义](../course/ch07/sec71.md#def-7.1.2) |
+| 线性多步法 | linear multistep method | 用若干历史节点的解值和斜率构成线性关系来计算新值，Adams 类方法是典型例子。它需要启动值；形式阶数高仍不足以保证收敛，还需零稳定性 | [7.3.1](../course/ch07/sec73.md#sec-7.3.1) |
+| 相容性（常微分方程） | consistency | 线性多步格式与微分方程至少一阶匹配，使常数项和一次项满足相应系数条件。它控制局部离散是否逼近原方程，不等于前文矩阵范数的相容性，也不能单独保证收敛 | [定义](../course/ch07/sec73.md#def-7.3.4) |
+| 根条件 / 零稳定性 | root condition / zero-stability | 线性多步法的第一特征多项式所有根模不大于 1，且单位圆上的根都是单根。它防止启动或局部扰动在细网格上失控；与相容性结合并满足适当条件，才得到收敛 | [定义](../course/ch07/sec73.md#def-7.3.5) |
+| 绝对稳定性 / 绝对稳定区域 | absolute stability / absolute stability region | 将方法用于线性测试方程，考察步长与方程系数的乘积落在哪些位置时数值扰动衰减。这是格式与步长共同决定的性质，不是一般算法数值稳定性的同义词 | [7.3.4](../course/ch07/sec73.md#sec-7.3.4) |
+| 自适应步长 | adaptive step-size control | 利用局部误差估计决定是否接受当前步，并调整后续步长；误差过大时缩步重算。一步与两个半步的比较是常用估计方式，但控制局部容差不等于保证全局误差同样小 | [误差估计与自动步长](../course/ch07/sec74.md#method-7.4-adaptive) |
+| 刚性问题 / 刚性 | stiffness / stiff problem | 解的慢变化允许较大精度步长，但快速衰减模式迫使显式法为稳定性采用很小步长的情形。快慢尺度分离是典型机制，是否刚性还与积分区间、容差和所用方法有关 | [7.5.2](../course/ch07/sec74.md#sec-7.5.2) |
+| 刚性比 | stiffness ratio | 对特征值实部全负的常系数系统，本书以最大、最小衰减率之比衡量快慢尺度分离。比值很大提示典型刚性，却不能单独给出步数，或普遍判定非线性问题的刚性 | [定义](../course/ch07/sec74.md#def-7.5.2) |
+| A-稳定 | A-stability | 方法的绝对稳定域包含整个左半平面，因此对实部为负的标量线性测试方程任意正步长都稳定。它不保证任意非线性问题大步长准确，也不自动强烈阻尼快速衰减模式 | [定义](../course/ch07/sec74.md#def-7.5.3) |
+| L-稳定 | L-stability | 在 A-稳定基础上，稳定函数对负实轴上越来越快的衰减模式趋于零，从而强烈抑制快模态。后退 Euler 具有此性质，梯形法虽 A-稳定却不具有 | [刚性问题与稳定性](../course/ch07/sec74.md#def-7.5.3) |
+

@@ -6,13 +6,13 @@
 
 | 编号 | 目标 | 自检标准 | ✓ |
 |:--|:--|:--|:--|
-| K3.1 | 写出幂法的迭代式 | $\boldsymbol y_{k+1}=A\boldsymbol y_k/\lVert A\boldsymbol y_k\rVert$ 或 $A\boldsymbol y_k$ 后单位化 | ☐ |
+| K3.1 | 写出幂法的迭代式 | 给非零初值，每步先算 $w=A\boldsymbol y_k$；仅在 $w\ne0$ 时令 $\boldsymbol y_{k+1}=w/\lVert w\rVert$ | ☐ |
 | K3.2 | 说明幂法收敛到谁 | 在本节可对角化假设下，主特征值严格按模最大且初值主展开系数非零；负主值时只保证方向收敛 | ☐ |
 | K3.3 | 写出反幂法与位移反幂法 | 先检查 $A$ 或 $A-pI$ 可逆；每步解方程并复用分解，明确目标谱间隙与初值条件 | ☐ |
-| K3.4 | 说明 2-范数的作用 | $\lVert\boldsymbol y_k\rVert_2=1$ 归一化后 $y_k^{\mathrm T}Ay_k\to\lambda_1$ | ☐ |
+| K3.4 | 说明 2-范数的作用 | 在幂法谱间隙和初始主分量条件下，$\lVert\boldsymbol y_k\rVert_2=1$ 时可用 $y_k^{\mathrm T}Ay_k\to\lambda_1$；完整 Rayleigh 商无需单位化 | ☐ |
 | K3.5 | 说明 QR 方法的构造 | 写出 $A_k=Q_kR_k$ 与 $A_{k+1}=Q_k^{\mathrm T}A_kQ_k$，并给出相似性不保证收敛的反例 | ☐ |
-| K3.6 | 写出 Jacobi 旋转的消元条件与算法 | $\cot2\varphi=(a_{pp}-a_{qq})/(2a_{pq})$；每次消去模最大的非对角元，累积旋转矩阵的列为特征向量 | ☐ |
-| K3.7 | 说出 QR 方法的两步加速 | 先 Householder 拟上三角化（$O(n^2)$/步），再用双步位移 + 降阶 | ☐ |
+| K3.6 | 写出 Jacobi 旋转的消元条件与算法 | 对实对称矩阵，采用 $U_{pq}=-\sin\varphi$、$A_1=U^{\mathrm T}AU$ 时，$a_{pq}\ne0$ 对应 $\cot2\varphi=(a_{pp}-a_{qq})/(2a_{pq})$；选最大模非对角元消去并累积旋转 | ☐ |
+| K3.7 | 说出 QR 方法的两步加速 | 一次 $O(n^3)$ 的 Householder 上 Hessenberg 化，使后续结构化 QR 每步为 $O(n^2)$；再用双步位移与降阶 | ☐ |
 
 ## S · 技能
 

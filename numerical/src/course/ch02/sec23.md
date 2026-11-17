@@ -71,11 +71,16 @@ $$
 :::
 
 ::: proof 证明
+先确认扰动后的方程确实有唯一解。写成 $A+\Delta A=A(I+A^{-1}\Delta A)$；假设保证 $\|A^{-1}\Delta A\|\le\|A^{-1}\|\|\Delta A\|<1$，由第一章的可逆性判据，$I+A^{-1}\Delta A$ 可逆，所以 $A+\Delta A$ 可逆。
 由 $(A+\Delta A)(\boldsymbol x+\Delta\boldsymbol x)=\boldsymbol b+\Delta\boldsymbol b$ 减去 $A\boldsymbol x=\boldsymbol b$，得
 $$
 \Delta\boldsymbol x=A^{-1}\Delta\boldsymbol b-A^{-1}\Delta A\,\boldsymbol x-A^{-1}\Delta A\,\Delta\boldsymbol x.
 $$
-取范数，把最后一项移到左边，用 $\lVert\boldsymbol b\rVert\le\lVert A\rVert\lVert\boldsymbol x\rVert$ 放缩，即得。$\blacksquare$
+记 $t=\|A^{-1}\|\|\Delta A\|<1$，取范数并移项得
+$$ (1-t)\|\Delta\boldsymbol x\|\le\|A^{-1}\|\|\Delta\boldsymbol b\|+t\|\boldsymbol x\|.$$
+因为 $\boldsymbol b\ne0$ 且 $A$ 可逆，$\boldsymbol x\ne0$，可以除以 $\|\boldsymbol x\|$。第一项用
+$$\frac{\|A^{-1}\|\|\Delta\boldsymbol b\|}{\|\boldsymbol x\|}=\|A^{-1}\|\frac{\|\boldsymbol b\|}{\|\boldsymbol x\|}\rho_b\le\mathrm{cond}(A)\rho_b,$$
+而 $t=\mathrm{cond}(A)\rho_A$，再除以正数 $1-t$ 即得结论。$\blacksquare$
 :::
 
 ::: note 读法 · 条件数把「输入扰动」放大成「输出扰动」的上界
@@ -179,6 +184,8 @@ $$
 
 希望变换后的矩阵更适合所选迭代法。例如对称正定问题中，改善相应条件数可改善共轭梯度法的收敛界。每步还要解一次 $M\boldsymbol y=\boldsymbol c$，因此应比较总求解时间，不能只比较迭代次数。一般非对称问题中，特征值的位置和特征向量之间的关系也会影响收敛。
 
+例如 $A=\operatorname{diag}(1,1000)$，取 $M=A$，变换后就是 $I\boldsymbol x=M^{-1}\boldsymbol b$；解 $M\boldsymbol y=\boldsymbol c$ 只需逐分量相除，因此这里得到单位矩阵确实便宜。若一般稠密问题也照搬 $M=A$，每次应用预条件便等于求解原问题，就没有省下工作。这个对比说明，预条件同时要求“变换有效”和“应用便宜”，不是只追求变换后矩阵接近 $I$。
+
 预条件的目的，是让等价方程组更适合所用的求解算法。预条件矩阵还必须便于求解，否则节省的迭代工作可能被每步的额外计算抵消。
 :::
 
@@ -191,7 +198,7 @@ $$
 \underbrace{AM^{-1}\boldsymbol y=\boldsymbol b,\ \boldsymbol x=M^{-1}\boldsymbol y}_{\text{右预条件}} .
 $$
 
-**左预条件**改变残差（对上原始残差），**右预条件**保持残差不变但改变未知量。实际求解器一般用**分裂预条件** $M=M_1M_2$（$M_1,M_2$ 各为一侧），兼顾两者。$M=I$ 时退化为原方程。
+左预条件方程的残差为 $M^{-1}(\boldsymbol b-A\boldsymbol x)$，右预条件方程的残差则等于原方程残差 $\boldsymbol b-A\boldsymbol x$，但未知量变为 $\boldsymbol y$。也可采用分裂预条件 $M=M_1M_2$，分别作用于两侧。$M=I$ 时退化为原方程。
 :::
 
 ::: method 预条件的五类
@@ -251,18 +258,18 @@ $$A=\begin{pmatrix}1&0\\0&10^{-4}\end{pmatrix},\qquad \boldsymbol b=\begin{pmatr
 | 概念 | 一句话 | 本节出现位置 | 将在何处深入 |
 |:--|:--|:--|:--|
 | 条件数 | $\lVert A\rVert\lVert A^{-1}\rVert\ge1$，把输入相对扰动放大成输出相对扰动的上界 | [@def-2.3.1] | [1.2.6](../../ch01/sec12.md#sec-1.2.6) 函数版条件数；[1.3.6](../../ch01/sec13.md#sec-1.3.6) 矩阵版推导 |
-| $\mathrm{cond}_2$ | $\sigma_{\max}/\sigma_{\min}$；SPD 时才等于 $\max\lvert\lambda_i\rvert/\min\lvert\lambda_i\rvert$ | [@def-2.3.1] | [补充篇 2.4](../../supplement/sec24.md) Skeel 与成分条件数 |
+| $\mathrm{cond}_2$ | $\sigma_{\max}/\sigma_{\min}$；实对称矩阵可用特征值绝对值的最大、最小值之比 | [@def-2.3.1] | [补充篇 2.4](../../supplement/sec24.md) Skeel 与成分条件数 |
 | 扰动界 | $\dfrac{\lVert\Delta\boldsymbol x\rVert}{\lVert\boldsymbol x\rVert}\le\dfrac{\mathrm{cond}(A)}{1-\mathrm{cond}(A)\rho_A}(\rho_A+\rho_b)$ | [@thm-2.6] | [2.4.1](sec24.md#sec-2.4.1) 迭代法停机判据的误差语言 |
 | 残差 $\ne$ 误差 | $\boldsymbol e=A^{-1}\boldsymbol r$，$\dfrac{\lVert\boldsymbol e\rVert}{\lVert\boldsymbol x\rVert}\le\mathrm{cond}(A)\dfrac{\lVert\boldsymbol r\rVert}{\lVert\boldsymbol b\rVert}$ | [2.3.2](#sec-2.3.2) | [例 2.3.1](#ex-2.3.1) 同残差误差差一万倍 |
 | 行均衡化 | 每行除以行内最大元，拆穿量纲造成的假病态 | [例 5](#ex-2.3-textbook5) | [补充篇 2.4](../../supplement/sec24.md) 行缩放反例 |
 :::
 
 ::: think 本节常见错误
-1. **把条件数当特征值之比。**只有实对称（一般地，正规）矩阵才有 $\mathrm{cond}_2=\max\lvert\lambda_i\rvert/\min\lvert\lambda_i\rvert$；一般矩阵必须先取绝对值再取极值——$\operatorname{diag}(-10,1)$ 的条件数是 $10$，不是 $0.1$。
+1. **把条件数当特征值之比。**只有实对称（一般地，正规）矩阵才有 $\mathrm{cond}_2=\max\lvert\lambda_i\rvert/\min\lvert\lambda_i\rvert$；对一般矩阵应使用奇异值。即使实对称，也要先取绝对值再取极值：$\operatorname{diag}(-10,1)$ 的条件数是 $10$，不是 $0.1$。
 2. **残差小就当误差小。**$\boldsymbol e=A^{-1}\boldsymbol r$，条件数大时两者可以差几个数量级（[例 2.3.1](#ex-2.3.1)）。
 3. **条件数大就断言“无解”。**$\operatorname{diag}(1,10^{-20})$ 的条件数 $10^{20}$，仍有唯一解 $(1,1)^{\mathrm T}$；能否算准取决于输入误差、工作精度与算法。
-4. **量纲悬殊不均衡化就判病态。**先做行（列）均衡化再算条件数（[例 5](#ex-2.3-textbook5)），否则治的是假象。
-5. **以为换算法能治百态。**病态是问题的属性：$\mathrm{cond}$ 不变，稳定算法也只能把误差控制在 $\mathrm{cond}\times u$ 量级。
+4. **只凭未经缩放的条件数判断数据质量。**行列尺度可能影响条件数；应结合变量单位、数据误差及缩放后的问题一同分析。
+5. **以为换算法能消除病态。**原矩阵的条件数不因更换求解算法而改变；稳定算法可以减少计算引入的额外误差，但不能消除输入数据的敏感性。
 :::
 
 <a id="sec-2.3-exercises"></a>

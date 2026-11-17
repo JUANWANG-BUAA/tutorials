@@ -3,7 +3,7 @@
 GPS 定位把第一章的误差分类、误差传播和矩阵范数连在了一起：测得的距离带有误差，卫星几何决定这些误差怎样传入位置与钟差估计。本页用四颗卫星的简化模型计算这一过程，并区分几何精度因子 GDOP 与矩阵条件数。
 
 ::: intuition 直觉 · GPS 在解一个什么方程
-卫星告诉你「我到你有多远」——这个距离称为伪距，你据此反推自己的坐标。四颗卫星给出四个观测，要估计的量是三个位置分量和接收机钟差。方程数够了，还须检查线性化后的几何矩阵是否非奇异。如果卫星方向过于集中，几何矩阵可能接近奇异，同样的测距扰动会造成更大的解误差。
+卫星广播轨道信息和信号发射时间，接收机把信号传播时间换算为距离。由于接收机时钟偏差和传播过程中的误差，这个观测量并不等于准确的几何距离，称为**伪距**。四颗卫星给出四个观测，要估计的量是三个位置分量和接收机钟差。方程数够了，还须检查线性化后的几何矩阵是否非奇异。如果卫星方向过于集中，几何矩阵可能接近奇异，同样的测距扰动会造成更大的解误差。
 :::
 
 ## 一、定位方程与线性化
@@ -12,7 +12,12 @@ GPS 定位把第一章的误差分类、误差传播和矩阵范数连在了一�
 
 $$\rho_i=\lVert\boldsymbol{p}-\boldsymbol{s}_i\rVert_2+d+\eta_i\qquad(i=1,2,3,4), \tag{A.1}$$
 
-其中 $\eta_i$ 是测距噪声，来源包括电离层延迟、多径、接收机噪声等。这是一个非线性方程组，要先在近似位置 $\boldsymbol{p}_0$（例如上一次定位结果）处把它线性化：记 $\Delta\boldsymbol{p}=\boldsymbol{p}-\boldsymbol{p}_0$、$\boldsymbol{u}_i=\dfrac{\boldsymbol{p}_0-\boldsymbol{s}_i}{\lVert\boldsymbol{p}_0-\boldsymbol{s}_i\rVert_2}$ 为**单位视线向量**，则
+其中 $\eta_i$ 是测距噪声，来源包括电离层延迟、多径、接收机噪声等。距离是位置的非线性函数；为了把它近似成线性方程，选一个接收机的近似位置 $\boldsymbol{p}_0$，记位置修正为 $\Delta\boldsymbol{p}=\boldsymbol{p}-\boldsymbol{p}_0$。只要 $\boldsymbol{p}_0\ne\boldsymbol{s}_i$，距离函数在此处可微，其梯度为
+
+$$\boldsymbol{u}_i=\frac{\boldsymbol{p}_0-\boldsymbol{s}_i}{\lVert\boldsymbol{p}_0-\boldsymbol{s}_i\rVert_2},\qquad
+\lVert\boldsymbol{p}-\boldsymbol{s}_i\rVert_2\approx\lVert\boldsymbol{p}_0-\boldsymbol{s}_i\rVert_2+\boldsymbol{u}_i^{\mathrm T}\Delta\boldsymbol{p}.$$
+
+这里 $\boldsymbol{u}_i$ 是单位视线向量；它的第 $j$ 个分量来自距离对位置分量 $p_j$ 的偏导数 $(p_{0j}-s_{ij})/\lVert\boldsymbol{p}_0-\boldsymbol{s}_i\rVert_2$。近似式取多元 Taylor 展开的一阶项。把它代入（A.1），再减去近似位置到卫星的距离，就得到
 
 $$\Delta\rho_i\approx\boldsymbol{u}_i^{\mathrm T}\Delta\boldsymbol{p}+d+\eta_i,\qquad G\begin{pmatrix}\widehat{\Delta\boldsymbol{p}}\\\hat d\end{pmatrix}=\Delta\boldsymbol{\rho}, \tag{A.2}$$
 
@@ -42,8 +47,8 @@ $$\delta\boldsymbol\xi=G^{-1}\delta\boldsymbol\rho,\qquad
 \|\delta\boldsymbol\xi\|_2\le\|G^{-1}\|_2\|\delta\boldsymbol\rho\|_2.$$
 这是给定右端扰动的绝对误差界；[2.4](../supplement/sec24.md) 的相对条件数还包含 $\|G\|_2$。
 
-若四个测距误差均为零均值、不相关且标准差同为 $\sigma_\rho$，则线性化估计误差的协方差为
-$$\operatorname{Cov}(\delta\boldsymbol\xi)=\sigma_\rho^2Q,\qquad Q=(G^{\mathrm T}G)^{-1}.$$
+若四个测距误差均为零均值、不相关且标准差同为 $\sigma_\rho$，则 $\operatorname{Cov}(\delta\boldsymbol\rho)=\sigma_\rho^2I$：协方差矩阵的对角元是各分量的方差，非对角元是两个误差分量乘积的平均值。由 $\delta\boldsymbol\xi=G^{-1}\delta\boldsymbol\rho$，线性变换后的协方差为
+$$\operatorname{Cov}(\delta\boldsymbol\xi)=G^{-1}(\sigma_\rho^2I)(G^{-1})^{\mathrm T}=\sigma_\rho^2Q,\qquad Q=(G^{\mathrm T}G)^{-1}.$$
 于是几何精度因子定义为
 $$\mathrm{GDOP}=\sqrt{\operatorname{tr}Q},\quad
 \mathrm{PDOP}=\sqrt{Q_{11}+Q_{22}+Q_{33}},\quad

@@ -20,14 +20,16 @@
 
 这三条性质分别保证：只有零向量的范数为零；向量乘以常数后，范数按常数的绝对值缩放；两个向量相加后的范数，不超过各自范数之和。最后一条常用于估计总误差。
 
+据[第 2 讲整理稿](../lectures/lec02.md#lec02-S4)，老师引入范数时说：“不要被这个词吓住，它实际上就是距离/长度。”原录音尚未核对。严格地区分：范数 $\|\boldsymbol x\|$ 度量的是一个向量的大小；两点 $\boldsymbol x,\boldsymbol y$ 之间对应的距离是 $\|\boldsymbol x-\boldsymbol y\|$。例如开头的 $0.05$ 正是以欧氏范数计算两个结果之差的长度。
+
 由公理还能直接得到**反三角不等式**（后文多次使用）：$\lVert\boldsymbol{x}\rVert-\lVert\boldsymbol{y}\rVert\le\lVert\boldsymbol{x}-\boldsymbol{y}\rVert$。推导：$\lVert\boldsymbol{x}\rVert=\lVert(\boldsymbol{x}-\boldsymbol{y})+\boldsymbol{y}\rVert\le\lVert\boldsymbol{x}-\boldsymbol{y}\rVert+\lVert\boldsymbol{y}\rVert$，移项即得。
 
 ::: ex 例 1.3.1 · 范数公理的必要性 {#ex-1.3.1}
 设 $n\ge2$，判断下列 $\mathbb{R}^n$ 上的函数是否为向量范数：(1) $N_1(\boldsymbol{x})=\max_i\lvert x_i\rvert$ 的**平方**；(2) $N_2(\boldsymbol{x})=\lvert x_1\rvert$；(3) $N_3(\boldsymbol{x})=\sum_{i=1}^n \lvert x_i\rvert$。
 
 ::: proof 解
-**(1) 不是**：正定性满足，但一次齐次性不成立：$N_1(2\boldsymbol x)=4N_1(\boldsymbol x)\ne2N_1(\boldsymbol x)$（$\boldsymbol x\ne0$）。三角不等式也失效——$\boldsymbol{x}=\boldsymbol{y}=(1,0)^{\mathrm T}$：$N_1(\boldsymbol{x}+\boldsymbol{y})=N_1(2,0)=4\gt1+1=2$。因此平方后的函数不满足范数公理。
-**(2) 不是**：正定性失效——$\boldsymbol{x}=(0,5)$ 非零但 $N_2(\boldsymbol{x})=0$。只看一个分量就丢掉了其他方向的信息。
+**(1) 不是**：正定性满足，但一次齐次性不成立：$N_1(2\boldsymbol x)=4N_1(\boldsymbol x)\ne2N_1(\boldsymbol x)$（$\boldsymbol x\ne0$）。三角不等式也失效——取 $\boldsymbol{x}=\boldsymbol{y}=(1,0,\ldots,0)^{\mathrm T}$：$N_1(\boldsymbol{x}+\boldsymbol{y})=4>1+1=2$。
+**(2) 不是**：正定性失效——$\boldsymbol{x}=(0,5,0,\ldots,0)^{\mathrm T}$ 非零但 $N_2(\boldsymbol{x})=0$。只看一个分量就丢掉了其他方向的信息。
 **(3) 是**：正是下文的 $\lVert\cdot\rVert_1$，见[@thm-1.3.1] 的证明。
 :::
 
@@ -106,7 +108,7 @@ $\lVert\cdot\rVert_1$ 称为 **1-范数**；$\lVert\cdot\rVert_2$ 称为 **2-范
 <text fill="var(--fig-gold)" x="276" y="107">同一个 x</text>
 <text fill="var(--muted)" x="196" y="150">θ</text>
 </svg>
-<figcaption>图 1-1 · 三种范数的单位球 $\{\boldsymbol{x}:\lVert\boldsymbol{x}\rVert_p=1\}$：正方形（∞）、圆（2）、菱形（1）。同一个 $\boldsymbol{x}$，三种「长度」读数不同（$\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1$），在固定的有限维空间中，这些范数给出相同的收敛概念；不同向量之间的大小排序则可能随范数改变。</figcaption>
+<figcaption>图 1-1 · 三种范数的单位球面 $\{\boldsymbol{x}:\lVert\boldsymbol{x}\rVert_p=1\}$：正方形边界（∞）、圆周（2）、菱形边界（1）。同一个 $\boldsymbol{x}$，三种「长度」读数不同（$\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1$）；固定有限维空间里，范数给出相同的收敛概念，但向量之间的大小排序可能随范数改变。</figcaption>
 </figure>
 
 这三种范数其实是同一个 $p$-范数家族的特例——$p$-范数的一般形式是
@@ -133,11 +135,11 @@ $$\lVert\boldsymbol{x}\rVert_p=\left(\sum_i\lvert x_i\rvert^p\right)^{1/p}\le\le
 
 $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_p\le\lVert\boldsymbol{x}\rVert_p+\lVert\boldsymbol{y}\rVert_p .$$
 
-证明分两步。**第一步（Hölder 不等式）**：设 $p\gt1$，$q$ 满足 $\frac1p+\frac1q=1$，则 $\sum_i\lvert a_i b_i\rvert\le\bigl(\sum_i\lvert a_i\rvert^p\bigr)^{1/p}\bigl(\sum_i\lvert b_i\rvert^q\bigr)^{1/q}$。它来自 Young 不等式 $st\le\frac{s^p}{p}+\frac{t^q}{q}$（由 $\ln$ 的凹性或对 $s^p/p+t^q/q-st$ 求极小值得到）：把 $\lvert a_i\rvert/\lVert\boldsymbol{a}\rVert_p$、$\lvert b_i\rvert/\lVert\boldsymbol{b}\rVert_q$ 代入 Young 并对 $i$ 求和即得。**第二步**：
+证明分两步。**第一步（Hölder 不等式）**：设 $p>1$，$q$ 满足 $\frac1p+\frac1q=1$，则 $\sum_i\lvert a_i b_i\rvert\le\bigl(\sum_i\lvert a_i\rvert^p\bigr)^{1/p}\bigl(\sum_i\lvert b_i\rvert^q\bigr)^{1/q}$。任一向量为零时结论直接成立；否则用 Young 不等式 $st\le\frac{s^p}{p}+\frac{t^q}{q}$（可由 $\ln$ 的凹性证明），将 $\lvert a_i\rvert/\lVert\boldsymbol{a}\rVert_p$、$\lvert b_i\rvert/\lVert\boldsymbol{b}\rVert_q$ 代入并对 $i$ 求和。**第二步**：
 
 $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_p^p=\sum_i\lvert x_i+y_i\rvert^{p-1}\lvert x_i+y_i\rvert\le\sum_i\lvert x_i+y_i\rvert^{p-1}\lvert x_i\rvert+\sum_i\lvert x_i+y_i\rvert^{p-1}\lvert y_i\rvert,$$
 
-对右边两个和分别用 Hölder（$q=p/(p-1)$），提出公因子 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_p^{p-1}$ 后移项。$p=1$ 即定理 1.3.1 的证明。∎
+对右边两个和分别用 Hölder（$q=p/(p-1)$），提出公因子 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_p^{p-1}$。若 $\boldsymbol{x}+\boldsymbol{y}\ne0$，两边除以这个因子即得结论；等于零时三角不等式直接成立。$p=1$ 即定理 1.3.1 的证明。∎
 :::
 
 同一个向量可以用不同范数度量。换用范数后，数值一般会改变；一个向量序列是否趋于零，会不会也随之改变？下面的定理说明，在固定的有限维空间中，这种收敛性不变。
@@ -231,7 +233,7 @@ $$\lVert A\boldsymbol{x}\rVert\le\lVert A\rVert\,\lVert\boldsymbol{x}\rVert,$$
 定义一种矩阵范数时，最好让它与某个向量范数相容；同一问题里两种范数并用，则必须相容。下述定理给出由向量范数**制造**相容矩阵范数的标准方法。
 
 ::: intuition 直觉 · 算子范数 = 「矩阵最多能把向量拉长几倍」
-怎么由一个向量范数造出一个矩阵范数？问一个最自然的问题就够了：**把 $\boldsymbol{x}$ 限制在单位球面上走一圈，$A\boldsymbol{x}$ 的长度最大是多少？**这个最大值就是 $\lVert A\rVert$——矩阵 $A$ 的**最大拉伸倍数**。把 $A$ 作用在整个单位球上，得到一个椭球，$\lVert A\rVert$ 就是椭球的最长半轴。
+怎么由一个向量范数造出一个矩阵范数？问一个自然的问题：**把 $\boldsymbol{x}$ 限制在单位球面上，$A\boldsymbol{x}$ 的长度最大是多少？**这个最大值就是从属范数 $\lVert A\rVert$。对欧几里得 $2$-范数，单位球经 $A$ 变为椭球（$A$ 奇异时可能退化），最大拉伸倍数是其最长半轴；换成 $1$-范数或 $\infty$-范数时，单位球不是圆球，不能把像都叫椭球。
 
 这样一来相容性 $\lVert A\boldsymbol{x}\rVert\le\lVert A\rVert\,\lVert\boldsymbol{x}\rVert$ 几乎是同义反复：任何向量的拉伸倍数，当然不超过「最大拉伸倍数」。而 $\lVert A\rVert$ 小，意味着 $A$ 把一切向量都往短里压——这正是 1.3.5「扰动不放大」判据的几何来源。
 :::
@@ -273,8 +275,10 @@ $$\lVert AB\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert A(B\boldsymbol{x})\r
 
 $$\lVert A\boldsymbol{x}\rVert_p\le\lVert A\rVert_p\,\lVert\boldsymbol{x}\rVert_p,\qquad A\in\mathbb{R}^{n\times n},\ \boldsymbol{x}\in\mathbb{R}^n .$$
 
+据[第 2 讲整理稿](../lectures/lec02.md#lec02-S6)，老师强调：“这个关系后面会经常用。”整理稿把这部分记在约 83:00–96:00，原录音及时间尚未核对。它的用法可以先看一个误差估计：若输入误差满足 $\|\boldsymbol e\|_p\le0.01$，而 $\|A\|_p=3$，那么变换后的误差满足 $\|A\boldsymbol e\|_p\le0.03$。这个不等式给的是上界，实际误差的范数可以更小。
+
 ::: note 推论 · 单位矩阵的任何算子范数都等于 1
-$\lVert I\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert I\boldsymbol{x}\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert\boldsymbol{x}\rVert=1$。这条一行小推论在 1.3.4 是「F-范数不是算子范数」的关键依据，在定理 1.3.6 的证明里也要用到。
+$\lVert I\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert I\boldsymbol{x}\rVert=\max_{\lVert\boldsymbol{x}\rVert=1}\lVert\boldsymbol{x}\rVert=1$。当 $n\ge2$ 时，这条推论可用来说明 1.3.4 的 F-范数不是算子范数；定理 1.3.6 的证明也要用到它。
 :::
 
 <a id="sec-1.3.4"></a>
@@ -366,7 +370,7 @@ $$\lVert AB\rVert_F^2=\sum_{j=1}^{n}\lVert A\boldsymbol{b}_j\rVert_2^2\le\lVert 
 
 $$\lVert A\boldsymbol{x}\rVert_2^2=\sum_{i=1}^{n}\left(\sum_{j=1}^{n}a_{ij}x_j\right)^2\le\sum_{i=1}^{n}\left(\sum_{j=1}^{n}a_{ij}^2\right)\left(\sum_{j=1}^{n}x_j^2\right)=\lVert A\rVert_F^2\,\lVert\boldsymbol{x}\rVert_2^2 .$$
 
-**(c) $\lVert\cdot\rVert_F$ 不从属于任何向量范数（不是算子范数）**：任何算子范数都满足 $\lVert I\rVert=1$（见 1.3.3 的推论），而对 $n\ge2$，$\lVert I\rVert_F=\sqrt{n}\neq1$。
+**(c) 当 $n\ge2$ 时，$\lVert\cdot\rVert_F$ 不从属于任何向量范数**：任何算子范数都满足 $\lVert I\rVert=1$（见 1.3.3 的推论），而 $\lVert I\rVert_F=\sqrt{n}\neq1$。$n=1$ 时两者都退化为绝对值。
 
 :::
 
@@ -434,7 +438,7 @@ $$\bigl\lVert(I\pm A)^{-1}\bigr\rVert\le\frac{1}{1-\lVert A\rVert} .$$
 
 $$\boldsymbol{v}=\mp A\boldsymbol{v} .$$
 
-两边取范数——这里的向量范数取与所用矩阵范数相容的那一个（存在性见[习题 B4](exercises.md)；若矩阵范数本身就是算子范数，直接用它从属的向量范数）：
+两边取范数。若原矩阵范数不是算子范数，也可构造与它相容的向量范数：取第一个标准单位向量 $\boldsymbol e_1$，定义 $N(\boldsymbol x)=\lVert\boldsymbol x\boldsymbol e_1^{\mathrm T}\rVert$。这个映射保留向量加法和数乘，且 $\boldsymbol x\boldsymbol e_1^{\mathrm T}=O$ 当且仅当 $\boldsymbol x=\boldsymbol0$，所以 $N$ 是向量范数；再由矩阵范数的次可乘性，$N(A\boldsymbol x)\le\lVert A\rVert N(\boldsymbol x)$。若矩阵范数本身是算子范数，直接用其从属的向量范数即可：
 
 $$\lVert\boldsymbol{v}\rVert=\lVert A\boldsymbol{v}\rVert\le\lVert A\rVert\,\lVert\boldsymbol{v}\rVert .$$
 
@@ -563,7 +567,7 @@ True
 18.735127456931128
 ```
 
-**核对点：**① $\lVert B\rVert_2$ 与 $\sigma_{\max}(B)$ 在机器精度内一致（$2.8039574\cdots$）；② 显式等价不等式成立；③ 手工乘出 $\lVert B\rVert_\infty\lVert B^{-1}\rVert_\infty$ 与 `np.linalg.cond` 一致。**报告要求：**把随机种子换掉重跑，确认三条结论对一切矩阵成立；再构造一个 $\mathrm{cond}\approx10^{10}$ 的矩阵（例如 $B = \mathrm{diag}(1,10^{-1},\cdots,10^{-9})$ 的正交相似阵），预测并验证解 $B\boldsymbol{x}=\boldsymbol{b}$ 时丢几位有效数字。
+**核对点：**① $\lVert B\rVert_2$ 与 $\sigma_{\max}(B)$ 在机器精度内一致；② 例中的范数不等式成立；③ 可手工乘出 $\lVert B\rVert_\infty\lVert B^{-1}\rVert_\infty$，与 `np.linalg.cond` 比较。换随机种子只能增加算例，不能代替对所有矩阵的证明。再构造一个 $\mathrm{cond}_2\approx10^{10}$ 的矩阵，例如 $\operatorname{diag}(1,10^{-1},\ldots,10^{-10})$ 的正交相似矩阵；改变右端及其扰动方向，观察解的误差，比较结果与条件数给出的最坏情况上界。
 
 <a id="sec-1.3.7"></a>
 
@@ -579,15 +583,15 @@ True
 | $\lVert A\rVert_1$ | $\max_j\sum_i\lvert a_{ij}\rvert$ | $\lVert\cdot\rVert_1$ | **列**和取大 |
 | $\lVert A\rVert_2$ | $\sqrt{\lambda_{\max}(A^{\mathrm T}A)}=\sigma_{\max}(A)$ | $\lVert\cdot\rVert_2$ | 算 $A^{\mathrm T}A$ 开方 |
 | $\lVert A\rVert_\infty$ | $\max_i\sum_j\lvert a_{ij}\rvert$ | $\lVert\cdot\rVert_\infty$ | **行**和取大 |
-| $\lVert A\rVert_F$ | $\bigl(\sum_{i,j}a_{ij}^2\bigr)^{1/2}$ | **不**从属任何范数 | 平方和开方 |
+| $\lVert A\rVert_F$ | $\bigl(\sum_{i,j}a_{ij}^2\bigr)^{1/2}$ | $n\ge2$ 时不从属 | 平方和开方 |
 
 相容性：$\lVert A\boldsymbol{x}\rVert_p\le\lVert A\rVert_p\lVert\boldsymbol{x}\rVert_p$；等价性：$\lVert\boldsymbol{x}\rVert_\infty\le\lVert\boldsymbol{x}\rVert_2\le\lVert\boldsymbol{x}\rVert_1\le n\lVert\boldsymbol{x}\rVert_\infty$；定理 1.3.6（下述逆范数界限于算子范数）：$\lVert A\rVert\lt1\Rightarrow I\pm A$ 非奇异、$\lVert(I\pm A)^{-1}\rVert\le(1-\lVert A\rVert)^{-1}$；Neumann：$\sum A^k=(I-A)^{-1}$。
 :::
 
 ::: think[core] 常见错误清单 · 自查六条
 1. **把 $\lVert AB\rVert=\lVert A\rVert\lVert B\rVert$ 当等式。**公理只保证 $\le$（次可乘性），一般会严格小于。
-2. **把 $\lVert A\rVert_F$ 当算子范数。**$\lVert I\rVert_F=\sqrt n\neq1$ 立刻露馅；F-范数相容但**不从属**。
-3. **把 $\lVert A\rVert_2$ 写成 $\lambda_{\max}(A)$。**正确公式是 $\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$；只有对称半正定矩阵才有 $\lVert A\rVert_2=\lambda_{\max}(A)$。反例：$A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$，$\lambda_{\max}(A)=0$ 但 $\lVert A\rVert_2=1$。
+2. **把 $\lVert A\rVert_F$ 当算子范数。**当 $n\ge2$ 时，$\lVert I\rVert_F=\sqrt n\neq1$；F-范数与向量 $2$-范数相容，但不从属于任何向量范数。
+3. **把 $\lVert A\rVert_2$ 写成 $\lambda_{\max}(A)$。**正确公式是 $\sqrt{\lambda_{\max}(A^{\mathrm T}A)}$；对实对称矩阵，它等于特征值的最大绝对值，对称半正定时才必定等于最大特征值。反例：$A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$，特征值均为 $0$ 但 $\lVert A\rVert_2=1$。
 4. **行列混淆。**矩阵 1-范数是列和、∞-范数是行和；与向量 1-范数、∞-范数同名不同物，靠「从属」关系记才不会翻车。
 5. **以为换范数会改变收敛结论。**等价定理保证「收敛 / 发散」与范数无关；会被改变的是误差**界的大小**与停机的**步数**——报结果必须注明范数。
 6. **对非方阵套用 $\lVert A\rVert_1$「列和」公式而不检查定义。**从属范数定义对 $A\in\mathbb{R}^{m\times n}$ 同样成立（$\lVert A\rVert:\mathbb{R}^{m\times n}\to\mathbb{R}$），定理 1.3.5 的三条公式对长方形矩阵逐字成立；而矩阵范数四公理中的乘法结构（条件 4）只在两个矩阵可乘时才会用到。

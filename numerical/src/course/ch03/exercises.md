@@ -87,7 +87,7 @@ $$\mu_i=\frac{1}{\lambda_i+6},\qquad i=1,\dots,n .$$
 $$\boldsymbol u_k=A\boldsymbol u_{k-1},\qquad
 \beta_k=\frac{\boldsymbol v^{\mathrm T}\boldsymbol u_k}{\boldsymbol v^{\mathrm T}\boldsymbol u_{k-1}},\qquad k=1,2,\cdots$$
 
-产生的序列 $\{\beta_k\}$ 收敛于 ________。
+在分母非零的各步上，序列 $\{\beta_k\}$ 收敛于 ________。说明为什么充分大的 $k$ 时分母必非零。
 
 :::
 
@@ -112,14 +112,14 @@ $$\boldsymbol v^{\mathrm T}\boldsymbol u_k=\sum_{i=1}^{n}c_i(\boldsymbol v^{\mat
 $$\beta_k=\frac{\sum_i c_i(\boldsymbol v^{\mathrm T}\boldsymbol x_i)\lambda_i^{k}}{\sum_i c_i(\boldsymbol v^{\mathrm T}\boldsymbol x_i)\lambda_i^{k-1}}
 =\lambda_1\cdot\frac{c_1(\boldsymbol v^{\mathrm T}\boldsymbol x_1)+\sum_{i\ge2}c_i(\boldsymbol v^{\mathrm T}\boldsymbol x_i)\left(\frac{\lambda_i}{\lambda_1}\right)^{k}}{c_1(\boldsymbol v^{\mathrm T}\boldsymbol x_1)+\sum_{i\ge2}c_i(\boldsymbol v^{\mathrm T}\boldsymbol x_i)\left(\frac{\lambda_i}{\lambda_1}\right)^{k-1}} .$$
 
-**第四步：取极限。** 因 $\lvert\lambda_i/\lambda_1\rvert\lt1\ (i\ge2)$，所有 $\left(\frac{\lambda_i}{\lambda_1}\right)^{k}\to0$。又 $c_1\neq0$、$\boldsymbol v^{\mathrm T}\boldsymbol x_1\neq0$，分子分母的常数项都非零，故
+**第四步：取极限。** 因 $\lvert\lambda_i/\lambda_1\rvert\lt1\ (i\ge2)$，所有 $\left(\frac{\lambda_i}{\lambda_1}\right)^{k}\to0$。又 $c_1\neq0$、$\boldsymbol v^{\mathrm T}\boldsymbol x_1\neq0$，缩放后的分母趋于非零常数，因此充分大的 $k$ 时原分母必非零，故
 
 $$\beta_k\longrightarrow\lambda_1\cdot\frac{c_1\boldsymbol v^{\mathrm T}\boldsymbol x_1}{c_1\boldsymbol v^{\mathrm T}\boldsymbol x_1}=\lambda_1 .\qquad\blacksquare$$
 
 **这题的三个「为什么」**（每一个都是题设条件的用途，答题时要写出来）：
 1. **为什么要 $n$ 个线性无关特征向量**：保证 $\boldsymbol u_0$ 能按 $\{\boldsymbol x_i\}$ 展开、且 $\boldsymbol u_k$ 有闭式表达；
-2. **为什么要 $c_1\neq0$**：否则分子分母的常数项同时为 0，$\beta_k$ 收敛到 $\lambda_2$（甚至更后面的特征值）；
-3. **为什么要 $\boldsymbol v^{\mathrm T}\boldsymbol x_1\neq0$**：$\boldsymbol v$ 是「探测方向」，若它与 $\boldsymbol x_1$ 正交，则 $\boldsymbol v^{\mathrm T}\boldsymbol u_k$ 里 $\lambda_1$ 的成分被消掉，商收敛到下一个特征值。
+2. **为什么要 $c_1\neq0$**：否则主项消失，不能保证商趋于 $\lambda_1$；剩余项若另有唯一占优且未被探测方向消去，才可得到其对应特征值；
+3. **为什么要 $\boldsymbol v^{\mathrm T}\boldsymbol x_1\neq0$**：$\boldsymbol v$ 是「探测方向」，若它与 $\boldsymbol x_1$ 正交，则 $\boldsymbol v^{\mathrm T}\boldsymbol u_k$ 里 $\lambda_1$ 的成分被消掉，同样不能保证所得极限为主特征值。
 
 **与正文的联系**：这就是[3.1.1 幂法](sec31.md#sec-3.1.1) 的「规范化技巧」的理论依据。直接形成 $A^k\boldsymbol u_0$ 可能溢出或下溢，因而通常逐步相乘并归一化；归一化只改变方向的尺度，但若把商中的两个向量各自归一化，就必须补回尺度因子；不能直接对两个单位向量取商后仍断言极限是 $\lambda_1$。例如用单位向量 $y_{k-1}$，比值 $v^{\mathrm T}Ay_{k-1}/(v^{\mathrm T}y_{k-1})$ 才保留原商。
 
@@ -286,10 +286,10 @@ $T-2I$ 奇异，不能执行该位移下的线性求解。取 $\sigma=2.1$ 时�
 ## 入门练习
 
 ::: ex 3.A · 幂法一步
-设 $A=\operatorname{diag}(2,1)$，$u_0=(1,1)^{\mathrm T}$。按先 2-范数单位化、再乘 $A$ 算 $y_0,u_1$。分量比怎样变化？谱间隙对应的收敛比是多少？
+设 $A=\operatorname{diag}(2,1)$，$u_0=(1,1)^{\mathrm T}$。按先 2-范数单位化、再乘 $A$ 算 $y_0,u_1,y_1,u_2,\beta_1,\beta_2$，其中 $\beta_k=y_{k-1}^{\mathrm T}u_k$。分量比怎样变化？谱间隙对应的收敛比是多少？再把初值分别换成 $(1,8)^{\mathrm T}$ 与 $(0,1)^{\mathrm T}$，说明归一化能否消除初值的影响。
 :::
 ::: sol 参考解答
-$y_0=(1,1)^{\mathrm T}/\sqrt2$，$u_1=(2,1)^{\mathrm T}/\sqrt2$。第一与第二分量之比从 1 变为 2，正在趋向第一特征方向。次方向的相对衰减因子为 $q=1/2$。
+$y_0=(1,1)^{\mathrm T}/\sqrt2$，$u_1=(2,1)^{\mathrm T}/\sqrt2$，$y_1=(2,1)^{\mathrm T}/\sqrt5$，$u_2=(4,1)^{\mathrm T}/\sqrt5$；$\beta_1=3/2$、$\beta_2=9/5$。第一与第二分量之比从 $1$ 变为 $2$、再变为 $4$，正在趋向第一特征方向。次方向的相对衰减因子为 $q=1/2$。初值 $(1,8)^{\mathrm T}$ 的次主分量与主分量之比为 $8\cdot2^{-k}$，比原初值多做三步才达到同样的比例；初值 $(0,1)^{\mathrm T}$ 则始终留在第二特征方向。归一化改变长度，不改变这些比例，也不会创造缺失的第一分量。
 :::
 
 ::: ex 3.B · 何时能省略 Rayleigh 商的分母
@@ -300,10 +300,10 @@ $y_0=(1,1)^{\mathrm T}/\sqrt2$，$u_1=(2,1)^{\mathrm T}/\sqrt2$。第一与第�
 :::
 
 ::: ex 3.C · 反幂法一步
-对 $A=\begin{pmatrix}4&1\\1&3\end{pmatrix}$、位移 $p=2.9$，每步解什么系统？为什么不显式求逆？
+对 $A=\begin{pmatrix}4&1\\1&3\end{pmatrix}$、位移 $p=2.9$，每步解什么系统？为什么不显式求逆？求精确特征值，判断该位移选择哪个目标；若以 $(1,0)^{\mathrm T}$ 为初值，写出第一次求解的结果和目标唯一最近的距离比较。
 :::
 ::: sol 参考解答
-解 $\begin{pmatrix}1.1&1\\1&0.1\end{pmatrix}u_{k+1}=y_k$ 后单位化，系数矩阵行列式为 $-0.89\ne0$。固定分解可复用于每一步，避免显式逆的额外开销与稀疏性损失；收敛还需目标严格最近及初值分量条件。
+解 $\begin{pmatrix}1.1&1\\1&0.1\end{pmatrix}u_{k+1}=y_k$ 后单位化，系数矩阵行列式为 $-0.89\ne0$。固定分解可复用于每一步，避免显式逆的额外开销与稀疏性损失。由 $\lambda^2-7\lambda+11=0$ 得特征值 $(7\pm\sqrt5)/2$；离 $2.9$ 的距离分别为 $(\sqrt5-1.2)/2\approx0.518034$ 与 $(\sqrt5+1.2)/2\approx1.718034$，所以选择较小特征值 $(7-\sqrt5)/2\approx2.381966$。此时初值已是单位向量，第一次解得 $u_1=(-10/89,100/89)^{\mathrm T}$，归一化为 $y_1=(-1,10)^{\mathrm T}/\sqrt{101}$。初值不与目标特征向量正交，满足分量条件；方向误差的渐近比率约为 $0.518034/1.718034$，验收时仍应检查原矩阵的特征对残差。
 :::
 
 ::: ex 3.D · 判断

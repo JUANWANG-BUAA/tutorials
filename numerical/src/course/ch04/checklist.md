@@ -4,13 +4,14 @@
 
 | 编号 | 目标 | 自检标准 | ✓ |
 |:--|:--|:--|:--|
-| K4.1 | 写出压缩映射不动点定理 | 自映射 + $\lVert\varphi'\rVert\le L<1$ ⟹ 存在唯一解且任意初值收敛 | ☐ |
+| K4.1 | 写出压缩映射不动点定理 | 在闭区间 $[a,b]$ 上连续且自映射，内部可导并有 $|\varphi'|\le L<1$，则存在唯一不动点，任意区间内初值均收敛 | ☐ |
 | K4.2 | 写出 Newton 法 | $x_{k+1}=x_k-\dfrac{f(x_k)}{f'(x_k)}$ | ☐ |
 | K4.3 | 说明 Newton 至少二阶 | 在 $C^2$ 单根邻域用 Taylor 证明误差平方界；不能从单根推出 $f''(s)\ne0$ | ☐ |
 | K4.4 | 说明重根掉阶 | $m$ 重根时 $\varphi'(s)=1-\dfrac1m$，阶降为 1 | ☐ |
-| K4.5 | 写出割线法 | $x_{k+1}=x_k-\dfrac{f(x_k)(x_k-x_{k-1})}{f(x_k)-f(x_{k-1})}$，阶 1.618 | ☐ |
+| K4.5 | 写出割线法 | $x_{k+1}=x_k-\dfrac{f(x_k)(x_k-x_{k-1})}{f(x_k)-f(x_{k-1})}$；在正文所述非退化单根及局部条件下阶为 1.618 | ☐ |
 | K4.6 | 写出 Newton 全局收敛四条件 | 端点异号、$f''$ 不变号、$f'\ne0$、$x_0\in[a,b]$ 且 $f(x_0)f''(x_0)>0$ | ☐ |
-| K4.7 | 写出非线性方程组的 Newton 法 | $J(\boldsymbol x^{(k)})\Delta\boldsymbol x=-F(\boldsymbol x^{(k)})$，$\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta\boldsymbol x$；$J$ 非奇异且初值足够近时平方收敛 | ☐ |
+| K4.7 | 写出非线性方程组的 Newton 法 | $J(\boldsymbol x^{(k)})\Delta\boldsymbol x=-F(\boldsymbol x^{(k)})$，$\boldsymbol x^{(k+1)}=\boldsymbol x^{(k)}+\Delta\boldsymbol x$；根处 $J$ 非奇异、附近 $J$ 为 Lipschitz 且初值足够近时至少二阶 | ☐ |
+| K4.8 | 说明单点割线法的初始化与边界 | 固定点 $c$ 与移动初值 $x_1\ne c$ 必须分别给出，且更新分母非零；$f(c)\ne0$、简单根 $s$ 附近的局部因子为 $1-f'(s)(c-s)/f(c)$，其模小于 1 才可用局部收敛判据 | ☐ |
 
 ## S · 技能
 
@@ -21,7 +22,7 @@
 | S4.3 | 选初值 | 能验证自映射与压缩，或 Newton 的区间四条件，再用误差界选停止阈值 | ☐ |
 | S4.4 | 判重根 | 能用 $f(x)=0,\ f'(x)=0$ 判别并给出修正 Newton 公式 | ☐ |
 | S4.5 | 设计迭代函数 | 给一个方程，能设计两个不同 $\varphi$ 并比较收敛速度 | ☐ |
-| S4.6 | 做一步方程组 Newton | 给 $2\times2$ 方程组，能写出 Jacobi 矩阵并算一步 Newton 修正 | ☐ |
+| S4.6 | 做一步方程组 Newton | 给 $2\times2$ 方程组，能写出 Jacobian 矩阵并算一步 Newton 修正 | ☐ |
 
 ## A · 态度
 

@@ -54,20 +54,20 @@ $$\boldsymbol{u}_i=\frac{A\boldsymbol{v}_i}{\sigma_i}\in\mathbb{R}^m .$$
 $$\boldsymbol{u}_i^{\mathrm T}\boldsymbol{u}_j=\frac{\boldsymbol{v}_i^{\mathrm T}A^{\mathrm T}A\boldsymbol{v}_j}{\sigma_i\sigma_j}
 =\frac{\lambda_j\boldsymbol{v}_i^{\mathrm T}\boldsymbol{v}_j}{\sigma_i\sigma_j}=\frac{\lambda_j\delta_{ij}}{\sigma_i\sigma_j}=\delta_{ij} .$$
 
-**第三步：补全 $U$。** 把标准正交组 $\{\boldsymbol{u}_1,\dots,\boldsymbol{u}_r\}$ 扩充为 $\mathbb{R}^m$ 的标准正交基（Gram–Schmidt，[2.3.1](sec23.md#sup-2.3.1)），得 $U=[\boldsymbol{u}_1,\dots,\boldsymbol{u}_m]$ 正交。则对 $i\le r$，$A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$；而对 $i\gt r$，$A^{\mathrm T}A\boldsymbol{v}_i=\boldsymbol{0}$ 给出
+**第三步：补全 $U$。** 先考虑 $m\ge n$。把 $\{\boldsymbol u_1,\dots,\boldsymbol u_r\}$ 扩充为 $\mathbb R^m$ 的标准正交基，得正交矩阵 $U$。对 $i\le r$，$A\boldsymbol v_i=\sigma_i\boldsymbol u_i$；对 $i>r$，$A^{\mathrm T}A\boldsymbol v_i=0$ 给出
 
 $$\lVert A\boldsymbol{v}_i\rVert_2^2=\boldsymbol{v}_i^{\mathrm T}A^{\mathrm T}A\boldsymbol{v}_i=0\ \Longrightarrow\ A\boldsymbol{v}_i=\boldsymbol{0}=\sigma_i\boldsymbol{u}_i .$$
 
-于是对**所有** $i=1,\dots,n$ 都有 $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i$，写成矩阵形式即 $AV=U\Sigma$，两边右乘 $V^{\mathrm T}$ 得（2.29）。
+当 $m\ge n$ 时，对 $i=1,\dots,n$ 有 $A\boldsymbol v_i=\sigma_i\boldsymbol u_i$，因此 $AV=U\Sigma$，右乘 $V^{\mathrm T}$ 即得（2.29）。当 $m<n$ 时，对 $A^{\mathrm T}$ 应用同一构造并转置即可；此时不能把不存在的 $\boldsymbol u_i$ 写到 $i=n$。
 
-**关键观察：构造 $U$ 的方式是「被动」的。** 我们**没有**去解 $AA^{\mathrm T}$ 的特征值问题，而是从 $A^{\mathrm T}A$ 的特征向量 $\boldsymbol{v}_i$ 出发，用 $\boldsymbol{u}_i=A\boldsymbol{v}_i/\sigma_i$ 把 $\boldsymbol{u}_i$ 顺手算出来。这比分别解两个特征值问题省事得多，数值上也更稳——$\boldsymbol{u}_i$ 和 $\sigma_i$ 都来自 $A^{\mathrm T}A$ 的信息，不必另起炉灶。
+这是存在性证明，不是推荐的浮点算法。显式形成 $A^{\mathrm T}A$ 可能使小奇异值的信息丢失；实际计算通常直接对 $A$ 作双对角化，再求 SVD。
 :::
 
 :::
 
 ::: note[skip] 三种情形，一个公式
 
-- **「瘦」SVD（经济型）：** 只保留非零的奇异值，以及 $U$、$V$ 各自的前 $r$ 列，得 $A=U_r\Sigma_rV_r^{\mathrm T}$（$U_r$ 为 $m\times r$、$\Sigma_r$ 为 $r\times r$、$V_r$ 为 $n\times r$，$r=\operatorname{rank}A$——注意这里的下标 $r$ 指**秩**，与上文结构形式里表示「前 $n$ 列」的 $U_1,\Sigma_1$ 是两套记号）。存储最省，工程上用的就是它。
+- **紧致 SVD：** 只保留 $r$ 个非零奇异值，得到 $A=U_r\Sigma_rV_r^{\mathrm T}$，三者尺寸分别为 $m\times r$、$r\times r$、$n\times r$。它不同于库函数的经济型 SVD：`full_matrices=False` 通常保留 $p=\min(m,n)$ 列（或行），即使其中含零奇异值，也不会自动截到秩 $r$。
 - **「满」SVD：** 如（2.29），$U,V$ 都是方阵、正交。理论推导用它。
 - **秩亏 / 长方形：** 若 $r\lt n$，$\Sigma$ 的对角元从 $\sigma_{r+1}$ 起全为零；若 $m\lt n$，把 $A^{\mathrm T}$ 的 SVD 转置就得到 $A$ 的 SVD（$A=U\Sigma V^{\mathrm T}$ 依然成立，只是 $\Sigma$ 变成「矮」的）。
 :::
@@ -184,7 +184,7 @@ $A^{\mathrm T}A=\begin{pmatrix}1&2&3\\2&4&6\end{pmatrix}\begin{pmatrix}1&2\\2&4\
 
 $$\sigma_1=\sqrt{70}\approx8.3666,\qquad\sigma_2=0 .$$
 
-$\lambda_1=70$ 的特征向量：$(14-70)v_1+28v_2=0\Rightarrow v_1=v_2/\sqrt2$ 方向，$\boldsymbol{v}_1=\frac{1}{\sqrt5}(1,2)^{\mathrm T}$（注意**恰好是列方向**）；$\boldsymbol{v}_2=\frac{1}{\sqrt5}(2,-1)^{\mathrm T}$。
+$\lambda_1=70$ 的特征向量满足 $-56v_1+28v_2=0$，即 $v_2=2v_1$。取 $\boldsymbol v_1=(1,2)^{\mathrm T}/\sqrt5$，与之正交的 $\boldsymbol v_2=(2,-1)^{\mathrm T}/\sqrt5$。
 
 $$\boldsymbol{u}_1=\frac{A\boldsymbol{v}_1}{\sigma_1}=\frac{1}{\sqrt{70}}\cdot\frac{1}{\sqrt5}\begin{pmatrix}1+4\\2+8\\3+12\end{pmatrix}=\frac{1}{\sqrt{70}}\cdot\frac{5}{\sqrt5}\begin{pmatrix}1\\2\\3\end{pmatrix}=\frac{1}{\sqrt{14}}\begin{pmatrix}1\\2\\3\end{pmatrix}.$$
 
@@ -222,13 +222,11 @@ $$\lVert A\rVert_2=\sigma_1,\qquad \lVert A\rVert_F=\sqrt{\sigma_1^2+\cdots+\sig
 
 **行空间：** 同法对 $A^{\mathrm T}=V\Sigma^{\mathrm T}U^{\mathrm T}$ 得 $C(A^{\mathrm T})=\operatorname{span}\{\boldsymbol{v}_1,\dots,\boldsymbol{v}_r\}$。
 
-**零空间：** $A\boldsymbol{v}_i=\sigma_i\boldsymbol{u}_i=\boldsymbol{0}$ 对 $i\gt r$ 成立，故 $\boldsymbol{v}_{r+1},\dots,\boldsymbol{v}_n\in N(A)$；又 $\dim N(A)=n-r$（[@thm-sup-2.2.1]），故它们构成标准正交基。
+**零空间：** $i=r+1,\dots,n$ 时 $A\boldsymbol v_i=0$；这些向量共有 $n-r$ 个，构成 $N(A)$ 的标准正交基。**左零空间：** 同理，$i=r+1,\dots,m$ 时 $A^{\mathrm T}\boldsymbol u_i=0$，它们构成 $N(A^{\mathrm T})$ 的标准正交基。矩形矩阵两侧的零空间维数可以不同。
 
-**左零空间：** $A^{\mathrm T}\boldsymbol{u}_i=\sigma_i\boldsymbol{v}_i=\boldsymbol{0}$（$i\gt r$），同法。
+**（2.30）：** $\lVert A\rVert_2=\sigma_1$ 由 [@thm-1.3.5] 与 $\lambda_{\max}(A^{\mathrm T}A)=\sigma_1^2$；$\lVert A\rVert_F^2=\operatorname{tr}(A^{\mathrm T}A)=\sum_i\sigma_i^2$；条件数由 [@thm-sup-2.4.1] 第 4 条。[第 3 讲整理稿](../lectures/lec03.md#lec03-S2)记录矩阵 2-范数留作自学，原录音待核；这里的 SVD 推导是正文补充，不是课堂原话。
 
-**（2.30）：** $\lVert A\rVert_2=\sigma_1$ 由 [@thm-1.3.5] 与 $\lambda_{\max}(A^{\mathrm T}A)=\sigma_1^2$（课堂[第 3 讲](../lectures/lec03.md)讲矩阵范数时把 2-范数留作自学——这一式就是那处留白的兑现）；$\lVert A\rVert_F^2=\operatorname{tr}(A^{\mathrm T}A)=\sum_i\lambda_i(A^{\mathrm T}A)=\sum_i\sigma_i^2$；条件数由 [@thm-sup-2.4.1] 第 4 条。
-
-**这张表就是 2.2 节「四个基本子空间」问题的完整答案**——而且它比手算行简化**稳定得多**（行简化在病态矩阵上会丢有效数字，SVD 不会）。**实践判据：要四个基本子空间，用 SVD；只想知道秩，用列主元 QR 省点代价即可。**
+SVD 给出标准正交基，但不意味着病态问题不会丢数字。若某些奇异值与输入误差同量级，对应的秩和子空间本身就可能不确定；应报告阈值并检查谱间隙。列主元 QR 也可用于较便宜的数值秩估计，但普通列主元策略不对所有矩阵提供同样强的秩揭示保证。
 :::
 
 :::
@@ -309,7 +307,7 @@ for m, n in [(5, 4), (4, 5)]:
 |tr(A^T B)| = 0.839841  ≤  Σσ_i(A)σ_i(B) = 19.541253
 ```
 
-**注意两者的差距很大**（$7.0$ 对 $26.3$）：随机矩阵的 $\lvert\operatorname{tr}(A^{\mathrm T}B)\rvert$ 通常远小于这个上界，因为取等要求 $A,B$ 的**左右奇异子空间完全对齐**（取等条件的讨论见[附录 A.2.4](../appendix/derivations.md#app-a-2-4)）。特例 $B=A^{\mathrm T}$：$\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum\sigma_i^2$ 恰好取等——（2.31）是**紧界**。
+**注意两者的差距很大**（$7.0$ 对 $26.3$）：随机矩阵的左右奇异方向通常并不对齐。特例取 $B=A$，则 $\operatorname{tr}(A^{\mathrm T}A)=\lVert A\rVert_F^2=\sum_i\sigma_i^2$，恰好取等，因此（2.31）是紧界。
 :::
 
 :::
@@ -350,11 +348,9 @@ $$\hat{\boldsymbol{x}}=\arg\min\Bigl\{\lVert\boldsymbol{x}\rVert_2:\boldsymbol{x
 
 **（4）：** 在 SVD 坐标下令 $\boldsymbol{y}=V^{\mathrm T}\boldsymbol{x}$、$\boldsymbol{c}=U^{\mathrm T}\boldsymbol{b}$，则 $\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2=\lVert\Sigma\boldsymbol{y}-\boldsymbol{c}\rVert_2$、$\lVert\boldsymbol{x}\rVert_2=\lVert\boldsymbol{y}\rVert_2$（这就是正交不变性），问题就此完全解耦成逐个分量：
 
-$$(\sigma_iy_i-c_i)^2\qquad(i=1,\dots,n) .$$
+$$\sum_{i=1}^{\min(m,n)}(\sigma_i y_i-c_i)^2+\sum_{i=n+1}^{m}c_i^2,$$
 
-- 若 $\sigma_i\gt0$（$i\le r$）：取 $y_i=c_i/\sigma_i$ 使该项为零（最优）；
-- 若 $\sigma_i=0$：该项为 $c_i^2$，与 $y_i$ 无关，最小范数要求取 $y_i=0$；
-- 若 $i\gt n$（$m\gt n$ 时的多余行）：不影响。
+其中第二项只在 $m>n$ 时出现。对 $i\le r$，取 $y_i=c_i/\sigma_i$；其余与残差无关的 $y_i$ 是自由分量，最小范数要求它们为零。若 $m>n$，多余的输出分量 $c_i$ 无法由 $\Sigma y$ 改变；若 $n>m$，多余的输入分量则同样取零。
 
 故最优解 $\boldsymbol{y}=\Sigma^{+}\boldsymbol{c}$，即 $\boldsymbol{x}=V\Sigma^{+}U^{\mathrm T}\boldsymbol{b}=A^{+}\boldsymbol{b}$，且在每个「自由」分量上都取了零（**这正是最小范数条件**）。
 
@@ -395,7 +391,7 @@ A^{\mathrm T}\boldsymbol{r}=\begin{pmatrix}0.5714+0.2857-0.8571\\1.1429+0.5714-1
 
 $$\begin{pmatrix}14&28\\28&56\end{pmatrix}\boldsymbol{x}=\begin{pmatrix}6\\12\end{pmatrix}\ \Longleftrightarrow\ x_1+2x_2=\frac37 ,$$
 
-**一条直线**——最小二乘解不唯一。取此直线上的另一点 $x_2=0\Rightarrow x_1=3/7$，得 $\boldsymbol{x}'=(3/7,0)^{\mathrm T}$：残差同样是 $3/7$（**同为最小二乘解**），但 $\lVert\boldsymbol{x}'\rVert_2=0.4286\gt\lVert\hat{\boldsymbol{x}}\rVert_2=0.1917$。**伪逆给出的是这条直线上离原点最近的点** ✓（$\hat{\boldsymbol{x}}$ 沿 $(1,2)$ 方向，正是直线的法方向）。
+**一条直线**——最小二乘解不唯一。取此直线上的另一点 $\boldsymbol x'=(3/7,0)^{\mathrm T}$，它有相同的残差，残差平方为 $3/7$；但 $\|\boldsymbol x'\|_2=3/7>\|\hat{\boldsymbol x}\|_2\approx0.1917$。伪逆给出的点沿 $(1,2)$ 方向，与解直线的方向正交，故离原点最近。
 
 **这个例子重要在哪里：** $A$ 的列相关（第 2 列 $=2\times$第 1 列），最小二乘解因此成为**一条直线**。`np.linalg.lstsq` 与 `np.linalg.pinv` 默认返回这条直线上**最小范数**的那一点；而直接消元解正态方程，得到的是直线上**任意**一点（取到哪一点取决于主元选择）——**这就是伪逆与正态方程在秩亏问题上的本质区别**。
 :::
@@ -406,10 +402,10 @@ $$\begin{pmatrix}14&28\\28&56\end{pmatrix}\boldsymbol{x}=\begin{pmatrix}6\\12\en
 真实数据里没有「精确为零的奇异值」，只有「相对很小的奇异值」。`np.linalg.pinv(A, rcond=t)` 会把满足 $\sigma_i\le t\cdot\sigma_1$ 的奇异值直接当作零。**$t$ 该怎么选？** 常用准则有三条：
 
 1. **机器精度准则：** $t=\max(m,n)\cdot u$（LAPACK 默认 $u$ 的若干倍）。适合**矩阵本身精确、只是数值上降秩**的情形。
-2. **噪声水平准则：** 若数据带噪声（真实场景大多如此），$t\approx$ 噪声幅度 $/\sigma_1$。**这才是实践中更常见的情形**：低于噪声水平的那些奇异值，对应的方向携带的只是噪声，不该被放大——**截断伪逆做的就是「去掉噪声子空间」，这是正则化的雏形**。
-3. **能量准则：** 保留前 $k$ 个使 $\sum_{i\le k}\sigma_i^2/\sum_i\sigma_i^2\ge99\%$ 的奇异值（工程常用）。
+2. **噪声水平准则：** 若已知矩阵噪声的谱范数界 $\|E\|_2\le\delta$，可用绝对阈值约 $\delta$，即相对阈值 $t\approx\delta/\sigma_1$。低于这一尺度的奇异值难以与矩阵误差区分，但不能断言其方向只有噪声；恢复信号子空间还需要谱间隙等条件。每个元素的噪声标准差不等于整个矩阵的谱范数。
+3. **能量准则：** 保留前 $k$ 项使 $\sum_{i\le k}\sigma_i^2/\sum_i\sigma_i^2\ge99\%$，适合控制压缩的相对 F-范数误差，却不能单独决定逆问题的安全截断点。
 
-**注意：不截断的伪逆可能给出荒谬的结果。** 若最小的非零奇异值 $\sigma_r$ 相对 $\sigma_1$ 很小，$1/\sigma_r$ 就会把 $\boldsymbol{b}$ 中对应方向的分量放大 $\sigma_1/\sigma_r=\mathrm{cond}(A)$ 倍——**和直接求逆一样危险**。这就是非截断不可的原因，也是 Tikhonov 正则化（[习题 D2](exercises.md)）的动机。
+**为什么小奇异值危险？** 在 $u_i$ 方向上的右端噪声 $\delta c_i$，求逆后变成 $v_i$ 方向的 $\delta c_i/\sigma_i$，绝对放大率为 $1/\sigma_i$，不是条件数本身。相对误差界才会出现 $\sigma_1/\sigma_r$。是否截断应结合噪声与目标精度决定，并非所有小非零奇异值都必须丢弃。
 :::
 
 <a id="sup-2.6.5"></a>
@@ -423,7 +419,7 @@ $$A=\sum_{i=1}^{r}\sigma_i\boldsymbol{u}_i\boldsymbol{v}_i^{\mathrm{T}} .$$
 
 每一项 $\sigma_i\boldsymbol{u}_i\boldsymbol{v}_i^{\mathrm{T}}$ 都是一个秩 1 矩阵，**贡献大小由 $\sigma_i$ 度量**。于是要找「秩 $k$ 的最佳逼近」，最自然的做法就是**保留最大的 $k$ 项、砍掉其余的**。Eckart–Young 定理断言：**这个自然做法恰好就是最优的**——不存在别的秩 $k$ 矩阵比它更接近 $A$；而且误差**精确等于**被砍掉的第一个奇异值。
 
-**这就是 SVD 在数据科学里占据统治地位的理论根据**：凡是「用低维结构近似高维数据」的任务（压缩、去噪、降维、推荐），最优答案都是截断 SVD。
+这里的最优性有明确范围：对一个已知完整矩阵，在不加其他约束的秩限制下，按谱范数或 Frobenius 范数衡量误差。带缺失数据的推荐、带权拟合、非负约束或不同噪声模型不自动归结为同一个最优化问题。
 :::
 
 ::: thm 定理 2.6.4（新增） · Eckart–Young–Mirsky 定理 {#thm-sup-2.6.4}
@@ -454,6 +450,12 @@ $$\lVert A-B\rVert_2^2\ge\lVert(A-B)\boldsymbol{x}\rVert_2^2=\lVert A\boldsymbol
 （最后一步用了 $\sigma_i\ge\sigma_{k+1}$（$i\le k+1$），以及 $\lVert\boldsymbol{x}\rVert_2^2=\sum c_i^2=1$。）故 $\lVert A-B\rVert_2\ge\sigma_{k+1}$。上下界合起来即得（2.34）。
 
 **Frobenius 情形**（（2.35））的证法走另一条路（对称化膨胀 + Hoffman–Wielandt 不等式），见 [习题 B6](exercises.md) 与[附录 A.2.5](../appendix/derivations.md#app-a-2-5)。
+
+也可直接用前面的迹不等式补齐 F-范数证明。记 $p=\min(m,n)$，任意秩不超过 $k$ 的 $B$ 只有前 $k$ 个奇异值可能非零，则
+
+$$\|A-B\|_F^2=\|A\|_F^2+\|B\|_F^2-2\operatorname{tr}(A^{\mathrm T}B)\ge\sum_{i=1}^{p}(\sigma_i(A)-\sigma_i(B))^2\ge\sum_{i>k}\sigma_i(A)^2.$$
+
+截断矩阵达到此下界。对非奇异方阵取 $k=n-1$，就得到 $\min_{\det B=0}\|A-B\|_2=\sigma_n$，除以 $\|A\|_2=\sigma_1$ 后，其相对距离为 $1/\mathrm{cond}_2(A)$；这补齐了 2.4 节“离奇异有多远”的解释。
 
 **这个证明值得记住：** 只用一次「维数计数」，加上一个 Courant–Fischer 型的二次型估计，就把「最优低秩逼近」这件看起来非用优化理论不可的事彻底解决了。**这是线性代数结构力量的又一次展示。**
 :::
@@ -516,9 +518,7 @@ for k in [3, 5]:
 
 Eckart–Young 说截断 SVD 是最优的，那么它到底怎么用？先看最直观的一类：压缩。
 
-$A_k$ 的存储代价是 $k(m+n)$ 个数（$k$ 个 $\sigma_i$ + $U$ 的 $k$ 列 + $V$ 的 $k$ 列），而原矩阵需要 $mn$ 个数。**压缩比**
-
-$$\frac{k(m+n)}{mn}.$$
+$A_k$ 的直接因子存储需 $k(m+n+1)$ 个数：$U$、$V$ 的各 $k$ 列以及 $k$ 个奇异值；原矩阵需 $mn$ 个数。若把奇异值吸收到某个因子中，可存为 $k(m+n)$ 个数，下表采用后一种计数。存储占比为 $k(m+n)/(mn)$。
 
 **本章实测（合成图像，$120\times120$，包含几个二维正弦叠加与一条亮带）：**
 
@@ -531,19 +531,19 @@ $$\frac{k(m+n)}{mn}.$$
 | 8 | 13.3% | 0.1122 | 0.1029 | 33.5 dB |
 | 12 | 20.0% | 0.0152 | 0.0140 | 50.8 dB |
 
-**读表：** 只花 $20\%$ 的存储就达到 $50.8$ dB（肉眼几乎看不出差别），用 $13\%$ 达到 $33.5$ dB（一般图像压缩的水平）。**注意 $k=3\to5$ 的收益很小**（$27.1\to28.7$），因为 $\sigma_4,\sigma_5$ 彼此接近（表里 $\sigma_4$–$\sigma_7\approx10.1$ 三个近似相等——图像中那条亮带是低秩的，只贡献少数几个奇异值）；**$k=8\to12$ 收益巨大**（$33.5\to50.8$），因为这里跨过了一段奇异值陡降区。**这条「奇异值谱的形状」，就是「这张图能压到什么程度」的答案。**
+**读表：** 旧表给出 $k=12$ 时存储占比 $20\%$、PSNR 为 $50.8$ dB，$k=3\to5$ 与 $k=8\to12$ 的收益不同。一般应由尾部平方和解释这种变化，不能把某几个奇异值分别归属于某个图像部件：多个矩阵项叠加后的奇异值并不逐项相加。本表与对应脚本的既有记录缺少环境说明，数值应以实际复现为准，不据此断言肉眼质量或通用图像压缩水平。
 :::
 
 ::: method 应用二 · PCA（主成分分析）
 
-第二个应用面向数据分析。给定数据中心化后的数据矩阵 $X\in\mathbb{R}^{n\times d}$（$n$ 个样本、$d$ 个特征，每列均值为零），PCA 要做的事很直接：把样本投影到「方差最大的几个方向」上。步骤只有四步：
+给定中心化数据矩阵 $X\in\mathbb R^{n\times d}$（$n>1$ 个样本、$d$ 个特征，每列均值为零），PCA（principal component analysis，主成分分析）寻找投影方差最大的单位方向。对方向 $v$，投影样本为 $Xv$，样本方差为 $\|Xv\|_2^2/(n-1)=v^{\mathrm T}Cv$，因此 Rayleigh 商的最大化给出首主方向，之后在正交补中依次求解。
 
-1. 算协方差矩阵 $C=\dfrac{1}{n-1}X^{\mathrm T}X$（对称半正定）；
+1. 记协方差矩阵 $C=X^{\mathrm T}X/(n-1)$；它用于说明原理，不必显式形成；
 2. 对 $X$ 做 SVD：$X=U\Sigma V^{\mathrm T}$；
 3. **主方向 = $V$ 的列**（即 $C$ 的特征向量）；**主成分方差 = $\sigma_i^2/(n-1)$**（$C$ 的特征值）；
 4. 取前 $k$ 列降维：$\boldsymbol{z}=V_k^{\mathrm T}\boldsymbol{x}\in\mathbb{R}^k$，方差解释比 $=\sum_{i\le k}\sigma_i^2/\sum_i\sigma_i^2$。
 
-**为什么用 SVD，而不直接对 $C$ 做特征值分解？** 因为 $\mathrm{cond}(X^{\mathrm T}X)=\mathrm{cond}(X)^2$：**对协方差矩阵做特征值分解，等于把条件数平方**（[2.4.4](sec24.md#sup-2.4.4) 已经讲过的老问题）。SVD 直接在 $X$ 上算，误差只经过 $\mathrm{cond}(X)$ 一次。**这正是「正态方程 vs QR」之争在统计领域的翻版。**
+**为什么直接对 $X$ 做 SVD？** 列满秩时 $\mathrm{cond}_2(X^{\mathrm T}X)=\mathrm{cond}_2(X)^2$，显式形成协方差矩阵会增加小奇异值的计算困难。秩亏时二者通常的条件数均为无穷，不能继续套用有限条件数的位数估算。直接 SVD 可避免这一步，但不保证每个小奇异值都有高相对精度。数据单位也会影响主方向；若先标准化各特征，回答的是不同的方差优化问题。
 
 **本章实测（$400$ 个二维样本，真实协方差 $\begin{pmatrix}3&2\\2&2\end{pmatrix}$，其理论特征值 $4.5616/0.4384$）：** 样本协方差 $\begin{pmatrix}3.0504&2.0862\\2.0862&2.0822\end{pmatrix}$，其特征值 $4.7080/0.4247$（采样波动，与理论值同量级）；主方向 $\approx(-0.783,-0.622)$（对应 $3$ 号种子下的样本方向），第一主成分解释 $91.7\%$ 的方差。
 
@@ -555,8 +555,8 @@ $$\frac{k(m+n)}{mn}.$$
 同一个「截断奇异值」操作，在不同场景有不同的名字：
 
 1. **压缩：** 保留前 $k$ 个奇异值 → 用少量参数重建矩阵（图像、视频、模型权重）。
-2. **去噪：** 数据 $=$ 低秩信号 $+$ 小噪声。若噪声幅度 $\ll\sigma_k$，则 $A_k$ 恰好是信号的估计。**截断点选在「奇异值谱的拐点」。**
-3. **正则化 / 求解病态问题：** 截断伪逆 $A_k^{+}=\sum_{i\le k}\boldsymbol{v}_i\boldsymbol{u}_i^{\mathrm T}/\sigma_i$ 直接把「小奇异值方向被放大」这个病根砍掉。**这是 Tikhonov 正则化的一种（硬阈值版本）。**
+2. **去噪：** 若 $A=L+E$，信号 $L$ 的秩为 $k$ 且 $\|E\|_2\le\delta$，截断的最优性给出 $\|A-A_k\|_2\le\|A-L\|_2\le\delta$，故 $\|A_k-L\|_2\le2\delta$。这是矩阵误差保证，不表示 $A_k=L$；稳定恢复奇异方向还需信号与噪声间的谱间隙。
+3. **正则化 / 求解病态问题：** 截断伪逆 $A_k^{+}=\sum_{i\le k}\boldsymbol v_i\boldsymbol u_i^{\mathrm T}/\sigma_i$ 丢弃小奇异值方向。这是截断 SVD 正则化，与采用平滑滤波的 Tikhonov 正则化不同，见[习题 D2](exercises.md)。
 
 **三者的共同点：都由奇异值的大小决定信谁、不信谁。** 这就是 SVD 成为数据科学核心工具的深层原因——它提供了一个**有原则的「取舍」框架**。
 :::
@@ -584,12 +584,12 @@ $$\frac{k(m+n)}{mn}.$$
 
 ::: think[core] 常见错误清单 · 自查七条
 1. **把奇异值当特征值。** $\sigma_i(A)=\lvert\lambda_i(A)\rvert$ 一般不成立（只有对称 / 正规矩阵才有 $\sigma_i=\lvert\lambda_i\rvert$）。反例：$A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 的 $\lambda_i=0$ 而 $\sigma_1=1$。**奇异值总非负、总有 $\min(m,n)$ 个；特征值可负可复。**
-2. **对 $A^{\mathrm T}A$ 做特征值分解来「算 SVD」。** 数学上可行，但 $\mathrm{cond}(A^{\mathrm T}A)=\mathrm{cond}(A)^2$——**要白白丢掉一半有效数字**。实现里永远用 `np.linalg.svd(A)`（Golub–Kahan 双对角化，直接作用在 $A$ 上），不要用 `eigh(A.T@A)`。
-3. **不截断伪逆就算病态问题。** 未截断的 $A^{+}$ 会把 $1/\sigma_{\min}$ 放大 $\mathrm{cond}(A)$ 倍（[@thm-sup-2.6.3]），与直接求逆一样危险。**必须设 `rcond`，或者用 Tikhonov / 截断 SVD。**
+2. **把存在性证明当计算方案。** 列满秩时形成 $A^{\mathrm T}A$ 会平方 2-范数条件数，可能损失小奇异值信息，但不是固定损失一半位数。一般直接调用 `np.linalg.svd(A)`。
+3. **不考察噪声就求小奇异值的倒数。** 绝对放大率为 $1/\sigma_i$；截断 SVD 或 Tikhonov 可以降低噪声放大，同时会引入偏差，阈值须按任务选择。
 4. **把 `np.linalg.matrix_rank` 的默认阈值当真理。** 这个函数的默认阈值是 $\max(m,n)\cdot\mathrm{eps}\cdot\sigma_1$，只适合「精确矩阵数值降秩」；**真实带噪数据的秩判定必须按噪声水平设阈值**（[2.6.4](#sup-2.6.4) 的思考题）。
-5. **以为 SVD 唯一。** $A=U\Sigma V^{\mathrm T}$ 中，若某个奇异值有重数（或为零），$U,V$ 的对应列可任意旋转——**唯一的只有奇异值（及其重数）**。比较两个 SVD 前要理解这一点（类似 QR 的符号不确定，但更强）。
-6. **在数据中心化之前做 PCA。** PCA 的「方差最大方向」依赖均值已扣除；**不中心化就做 SVD，第一主方向会指向均值方向**——这是初学者最常见的错误（这时所谓的「解释方差」根本不是方差）。
-7. **以为 $A_k$ 是唯一的秩 $k$ 最优逼近。** Eckart–Young 保证 $A_k$ 的**误差**最小；当 $\sigma_k=\sigma_{k+1}$ 时，最优的**矩阵本身**不唯一（可取 $k$ 维奇异子空间内的任意正交基组合）。而最优误差总是 $\lVert A-A_k\rVert_2=\sigma_{k+1}$（[2.6.4](#sup-2.6.4)）。
+5. **以为 SVD 的向量唯一。** 单个奇异向量可成对反号；重的正奇异值块中，左右向量须作相同正交旋转才能保持乘积；左右零空间的基则可独立选择。
+6. **把未中心化的 SVD 当作方差 PCA。** 未中心化时得到的是二阶矩方向，均值项可能主导，但首方向不必恰好沿均值。中心化后再谈解释方差。
+7. **以为两种范数下最优矩阵的唯一性相同。** 当 $0<k<r$ 且 $\sigma_k>\sigma_{k+1}$ 时，F-范数最佳秩 $k$ 逼近唯一；边界重值时不唯一。谱范数下即使有间隙也可能不唯一，例如 $A=\operatorname{diag}(3,1)$ 的 $\operatorname{diag}(c,0)$ 在 $2\le c\le4$ 时误差均为 1。
 :::
 
 ::: preview 课程预告 · 本节之后

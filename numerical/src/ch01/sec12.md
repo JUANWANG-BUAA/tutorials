@@ -88,7 +88,7 @@ $$\varepsilon(a)=\varepsilon(b)=0.5\ \text{mm},\qquad
 \varepsilon_{\mathrm r}(a)=\frac{0.5}{312}\approx0.16\%,\qquad
 \varepsilon_{\mathrm r}(b)=\frac{0.5}{24}\approx2.08\% .$$
 
-$$311.5\ \text{mm}\lt x\lt312.5\ \text{mm},\qquad 23.5\ \text{mm}\lt y\lt24.5\ \text{mm}.$$
+$$311.5\ \text{mm}\le x\le312.5\ \text{mm},\qquad 23.5\ \text{mm}\le y\le24.5\ \text{mm}.$$
 
 两次测量的**绝对**误差限相同，**相对**误差限却相差 13 倍——量短杆时读数的相对「质量」更差。这正是相对误差所刻画的「误差在原数中所占的比例」。
 :::
@@ -151,7 +151,7 @@ $$\varepsilon_{\mathrm r}(a)=\frac{\varepsilon(a)}{\lvert a\rvert}\le\frac{1}{2a
 ::: proof 证明
 **正方向。**由 $a_1\ge1$ 得 $\lvert a\rvert = 0.a_1a_2\cdots\times10^m\ \ge\ 0.1\times10^m = 10^{m-1}$，于是
 
-$$\varepsilon_{\mathrm r}(a)=\frac{\tfrac12\times10^{m-n}}{\lvert a\rvert}\le\frac{\tfrac12\times10^{m-n}}{10^{m-1}}=\frac12\times10^{1-n} .$$
+$$\varepsilon_{\mathrm r}(a)=\frac{\varepsilon(a)}{\lvert a\rvert}\le\frac{\tfrac12\times10^{m-n}}{10^{m-1}}=\frac12\times10^{1-n} .$$
 
 **更强的版本：**由 $\lvert a\rvert \ge a_1\times10^{m-1}$ 得 $\varepsilon_{\mathrm r}\le\tfrac{1}{2a_1}\times10^{1-n}$。
 
@@ -202,6 +202,39 @@ $a=0.31416\times10^1$（$m=1$）。实际误差 $\lvert\pi-3.1416\rvert \approx 
 设 $u=f(x)$ 存在足够高阶的导数，$a$ 是自变量 $x$ 的近似值，则 $\tilde u=f(a)$ 是函数值 $u=f(x)$ 的近似值。本小节回答：**自变量的误差 $e(a)$ 如何决定函数值的误差 $e(\tilde u)$？**
 
 在 $a$ 附近，函数图像可以用切线近似。输入变化 $x-a$ 时，函数值约变化 $f'(a)(x-a)$。因此，导数可以用来估计小的输入误差对函数值的影响。这里比较的是绝对误差；若输入和输出的单位不同，导数的数值还会随单位改变。
+
+例如，计算 $f(x)=x^2$，输入近似值为 $a=2$，记 $e=x-a$。展开可得
+
+$$x^2-a^2=(2+e)^2-4=4e+e^2.$$
+
+下图换用 $a=1$、$e=0.5$，把曲线与切线之间的差别画出来：
+
+<figure class="fig-sm">
+<svg viewBox="0 0 500 335" role="img" aria-labelledby="tangent-title tangent-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="tangent-title">用切线估计函数值变化</title>
+<desc id="tangent-desc">曲线为 x 的平方，切线在 x 等于一处相切。输入增加零点五时，切线高度增加一；曲线比切线再高零点二五。</desc>
+<g fill="none" stroke="var(--fig-neutral)" stroke-width="1.4">
+<path d="M60 38V280H305"/><path d="M56 46l4-8 4 8M297 276l8 4-8 4"/>
+<path d="M60 200H186V280M249 100V280" stroke-dasharray="5 5" opacity="0.65"/>
+</g>
+<path d="M60 280Q167.1 280 274.2 48.8" fill="none" stroke="var(--fig-blue)" stroke-width="3"/>
+<path d="M141.9 256L267.9 96" fill="none" stroke="var(--fig-gold)" stroke-width="2.5"/>
+<g fill="var(--fig-blue)"><circle cx="186" cy="200" r="4.5"/><circle cx="249" cy="100" r="4.5"/></g>
+<circle cx="249" cy="120" r="4" fill="var(--fig-gold)"/>
+<path d="M260 120v80m-4-80h8m-8 80h8" fill="none" stroke="var(--fig-gold)" stroke-width="2"/>
+<path d="M260 100v20m-4-20h8m-8 20h8" fill="none" stroke="var(--fig-blue)" stroke-width="2"/>
+<g fill="var(--ink)" font-size="18">
+<text x="43" y="34">y</text><text x="312" y="285">x</text>
+<text x="10" y="205">f(a)</text><text x="166" y="305">a=1</text><text x="222" y="305">a+e=1.5</text>
+<text x="283" y="56" fill="var(--fig-blue)">曲线 f(x)=x²</text>
+<text x="283" y="110" fill="var(--fig-blue)">高阶项：0.25</text>
+<text x="283" y="163" fill="var(--fig-gold)">切线的变化：1</text>
+</g>
+</svg>
+<figcaption>蓝点在曲线上，金点在切线上；两点的高度差是二阶项 0.25。</figcaption>
+</figure>
+
+回到 $a=2$ 的算例。若 $|e|\le0.01$，一次项给出的误差大小估计为 $4\times0.01=0.04$；把二次项也计入，则严格有 $|x^2-a^2|\le0.0401$。下面用 Taylor 展开把这一计算推广到一般函数。
 
 ### 一元情形
 
@@ -284,7 +317,7 @@ $$|xy-ab|\le|b|\varepsilon_a+|a|\varepsilon_b+\varepsilon_a\varepsilon_b.$$
 $$\left|\frac xy-\frac ab\right|
 \le\frac{|b|\varepsilon_a+|a|\varepsilon_b}{|b|(|b|-\varepsilon_b)}.$$
 
-当 $\varepsilon_b/|b|$ 很小时，这个式子才近似为表中的除法公式。判断除法是否敏感，应看分母的不确定性相对于分母有多大，不能只看分母的绝对值是否很小。
+当 $\varepsilon_b/|b|$ 很小时，这个式子才近似为表中的除法公式。[第 2 讲整理稿](../lectures/lec02.md#lec02-S3)记下课堂口诀“小数不放分母”，提醒计算者检查分母的误差；原录音及具体时间尚未核对。就输入误差传播而言，真正要比较的是分母的不确定性与分母自身的大小，不能只看它的绝对值。例如，分母 $10^{-8}$ 若是准确给定的，就没有由分母不确定性引起的误差；分母 $1$ 若允许上下变动 $0.1$，则已经有 $10\%$ 的相对不确定性。
 :::
 
 ::: ex 例 1.2.5 · 混合运算的误差限 {#ex-1.2.5}
@@ -295,17 +328,16 @@ $$\left|\frac xy-\frac ab\right|
 
 $$p=2.31+1.93\times2.24=6.6332 .$$
 
-先用乘法公式再用加法公式（误差限一律相加）：
+先用乘法的一阶公式，再把加法的误差限计入：
 
 $$\varepsilon(bc)\approx\lvert b\rvert\,\varepsilon(c)+\lvert c\rvert\,\varepsilon(b)=0.005\times(1.93+2.24)=0.02085,$$
 
-$$\varepsilon(p)=\varepsilon(a)+\varepsilon(bc)=0.005+0.02085=0.02585 .$$
+$$\varepsilon(p)\approx0.005+0.02085=0.02585,\qquad
+\varepsilon_{\mathrm r}(p)\approx\frac{0.02585}{6.6332}\approx0.39\%.$$
 
-$$\varepsilon_{\mathrm r}(p)=\frac{0.02585}{6.6332}\approx0.39\% .$$
+这是忽略乘积项后的一阶估计。若要严格界住误差，把 $0.005^2=0.000025$ 加回去，可取 $\varepsilon(p)=0.025875$。
 
-判断有效数字：$p=0.66332\times10^1$（$m=1$），检验 $n=2$：$\tfrac12\times10^{1-2}=0.05\ge0.02585$ ✓；$n=3$：$0.005\lt0.02585$ ✗。故 $p=6.6332$ **能有两位有效数字**（即只有 $6.6$ 两位可靠，应写 $p\approx6.6$）。
-
-**注：**三个三位有效数字的输入，运算后只剩两位——乘法与加法各吃掉约一位。这不是「算错」，而是误差传播的必然。
+$p=0.66332\times10^1$，故 $m=1$。这个严格误差限小于两位有效数字要求的 $0.05$，但大于三位要求的 $0.005$，所以它保证 $p=6.6332$ 至少有两位有效数字，不能保证三位。报告时可保留 $6.6332$ 并附误差限；若把它舍入成 $6.6$，还需把舍入造成的 $0.0332$ 计入新的误差限。
 :::
 
 :::
@@ -315,14 +347,19 @@ $$\varepsilon_{\mathrm r}(p)=\frac{0.02585}{6.6332}\approx0.39\% .$$
 
 ::: proof 解
 
-$$\tilde u=\frac{\cos 0.871}{1.30}\approx\frac{0.64483}{1.30}\approx0.49543 .$$
+$$\tilde u=\frac{\cos 0.871}{1.30}\approx\frac{0.64406}{1.30}\approx0.49543 .$$
 
-由 (1.1)，$\partial f/\partial x=-\cos y/x^2$，$\partial f/\partial y=-\sin y/x$，代入近似值（$\sin0.871\approx0.76436$）：
+由 (1.1)，$\partial f/\partial x=-\cos y/x^2$，$\partial f/\partial y=-\sin y/x$，代入近似值（$\sin0.871\approx0.76497$）：
 
 $$\varepsilon(\tilde u)\approx\frac{\cos 0.871}{1.30^2}\times0.005+\frac{\sin 0.871}{1.30}\times0.0005
 \approx0.0019+0.0003=0.0022\lt0.005 .$$
 
-$\tilde u=0.49543=0.49543\times10^0$（$m=0$）：$n=2$ 时 $\tfrac12\times10^{-2}=0.005\ge0.0022$ ✓，$n=3$ 时 $0.0005\lt0.0022$ ✗。故 $\tilde u$ 能有**两位**有效数字（应写 $\tilde u\approx0.50$）。
+$\tilde u=0.49543\cdots=0.49543\cdots\times10^0$（$m=0$）。上面是**一阶估计**，要保证有效数字还需严格误差界。题设给出 $1.295\le x\le1.305$、$0.8705\le y\le0.8715$；在这个范围内，$\cos y/x$ 对 $x$ 和 $y$ 都递减，因此
+
+$$\frac{\cos0.8715}{1.305}\le f(x,y)\le\frac{\cos0.8705}{1.295},\qquad
+0.49324<f(x,y)<0.49765.$$
+
+与 $\tilde u=\cos0.871/1.30$ 比较，可取严格误差限 $0.00222$，小于两位有效数字要求的 $0.005$。区间端点与 $\tilde u$ 的差超过三位要求的 $0.0005$，所以题设保证两位，但不保证三位。如果另把近似值舍入成 $0.50$，必须重新计算误差：区间下端与 $0.50$ 相差约 $0.00676$，已超过两位所要求的 $0.005$，不能直接沿用原保证。
 :::
 
 :::
@@ -336,21 +373,21 @@ $w=a-b=0.001$。由减法公式：
 $$\varepsilon(w)=\varepsilon(a)+\varepsilon(b)=0.001,\qquad
 \varepsilon_{\mathrm r}(w)=\frac{\varepsilon(a)+\varepsilon(b)}{\lvert a-b\rvert}=\frac{0.001}{0.001}=100\% .$$
 
-结果的绝对误差限与结果本身同数量级——$w=0.001$ 连**一位**有效数字都保不住（真值可以是 $0$ 与 $0.002$ 之间的任何数）。两个输入各有 4 位有效数字，一步减法之后全部蒸发。这就是「相近数相减」的危害，改写方案见 [1.2.4](#sec-1.2.4) 设计原则 (3)。
+结果的绝对误差限与结果本身同数量级——仅用给定误差限，得到的真值区间是 $[0,0.002]$，因此 $w=0.001$ 连**一位**有效数字都不能保证。如果进一步利用第一个真值恰是 $\sqrt2$，区间还可以收窄；但只凭两个 $0.0005$ 的误差限，不能作此收窄。两个输入各有 4 位有效数字，而这个误差界不能保证差值的一位有效数字。这就是「相近数相减」的风险，改写方案见 [1.2.4](#sec-1.2.4) 设计原则 (3)。
 :::
 
 :::
 
 ::: think 思考 · 带符号的误差公式长什么样？
-表中公式全部用误差限 $\varepsilon\ge0$ 书写。若改用**带符号**的误差 $e$，则乘法的精确关系是（推导）：
+前面的表使用误差限。若保留误差的符号，乘法有精确关系
 
-$$e(ab)=xy-ab=(a+e(a))(b+e(b))-ab=b\,e(a)+a\,e(b)+e(a)\,e(b),$$
+$$e(ab)=xy-ab=(a+e(a))(b+e(b))-ab=b\,e(a)+a\,e(b)+e(a)e(b).$$
 
-除以 $ab$ 得精确的相对误差关系：
+相对误差还要看选哪个分母。按本节的定义 $e_{\mathrm r}(a)=(x-a)/x$，在 $x,y\ne0$ 时，$a=x(1-e_{\mathrm r}(a))$、$b=y(1-e_{\mathrm r}(b))$，因此
 
-$$e_{\mathrm r}(ab)=e_{\mathrm r}(a)+e_{\mathrm r}(b)+e_{\mathrm r}(a)\,e_{\mathrm r}(b).$$
+$$e_{\mathrm r}(ab)=1-\frac{ab}{xy}=e_{\mathrm r}(a)+e_{\mathrm r}(b)-e_{\mathrm r}(a)e_{\mathrm r}(b).$$
 
-当误差限很小时，略去乘积项即回到表中公式。加减法的带符号版本则是**精确**的：$e(a\pm b)=e(a)\pm e(b)$；误差限公式里的「+」来自放缩 $\lvert e(a)-e(b)\rvert\le\lvert e(a)\rvert+\lvert e(b)\rvert$，是个最坏情形估计。
+如果改以近似值为分母，记 $r_a=(x-a)/a$、$r_b=(y-b)/b$，则 $(xy-ab)/(ab)=r_a+r_b+r_ar_b$。两种写法的乘积项符号不同，一阶项相同。加减法的带符号关系 $e(a\pm b)=e(a)\pm e(b)$ 则是精确的；误差限相加来自三角不等式。
 :::
 
 ### 方法近似的误差：两个积分
@@ -387,7 +424,16 @@ $$I\approx1-\frac13+\frac1{10}-\frac1{42}=\frac{26}{35}\approx0.7429,
 
 $$J(a)=\int_a^\infty e^{-x^2}\,dx,\qquad a>0,$$
 
-利用 $(e^{-x^2})'=-2xe^{-x^2}$ 连续作两次分部积分，得到
+被积函数本身没有初等原函数。为利用 $(e^{-x^2})'=-2xe^{-x^2}$，先把 $e^{-x^2}\,dx$ 写成 $-\dfrac1{2x}\,d(e^{-x^2})$；$x\ge a>0$ 保证这里可以除以 $x$。第一次分部积分得到
+
+$$J(a)=\frac{e^{-a^2}}{2a}-\frac12\int_a^\infty\frac{e^{-x^2}}{x^2}\,dx.$$
+
+对剩余积分再用同样的方法，把 $e^{-x^2}x^{-2}\,dx$ 写成 $-\dfrac1{2x^3}\,d(e^{-x^2})$，得到
+
+$$\int_a^\infty\frac{e^{-x^2}}{x^2}\,dx
+=\frac{e^{-a^2}}{2a^3}-\frac32\int_a^\infty\frac{e^{-x^2}}{x^4}\,dx.$$
+
+将它代回第一次的结果，便有
 
 $$J(a)=\frac{e^{-a^2}}{2a}-\frac{e^{-a^2}}{4a^3}+R(a),
 \qquad R(a)=\frac34\int_a^\infty\frac{e^{-x^2}}{x^4}\,dx.$$
@@ -397,6 +443,8 @@ $$J(a)=\frac{e^{-a^2}}{2a}-\frac{e^{-a^2}}{4a^3}+R(a),
 $$0<R(a)\le\frac{3e^{-a^2}}{8a^5}.$$
 
 例如，取 $a=5$，前两项给出 $J(5)\approx e^{-25}(1/10-1/500)$，余项不超过 $3e^{-25}/25000$。继续分部积分可以得到更多项，但这是关于大 $a$ 的渐近展开，不能据此断言对固定 $a$ 一直增加项数就会一直更准确；每次截断都应检查余项。
+
+据[第 1 讲整理稿](../lectures/lec01.md#lec01-S8)，老师在这个例子旁说：“分析学的问题多一半靠分部积分。”原录音与具体时间尚未核对。在这里，分部积分的作用是把原积分拆成可计算的边界项和带有更高次 $x$ 分母的余项，从而既能算近似值，也能估计误差；这并不意味着所有积分都适合用同一种方法处理。
 
 <a id="sec-1.2.4"></a>
 
@@ -507,7 +555,7 @@ $$\frac{1}{6(n+1)}\lt y_n\lt\frac{1}{5(n+1)} .$$
 
 $$\begin{cases}y_{100}\approx0.001815,\\ y_{n-1}=\dfrac{1}{5n}-\dfrac15 y_n\quad(n=100,\ 99,\ \cdots,\ 1).\end{cases}$$
 
-每步误差**缩小为 1/5**：$\lvert\delta_{n-1}\rvert=\lvert\delta_n\rvert/5$。起点误差 $1.7\times10^{-4}$ 传到 $y_0$ 时只剩 $1.7\times10^{-4}/5^{100}$，加上途中新产生的舍入误差（同样每步被 5 压制），实测 $y_0$ 的误差为 $-2.8\times10^{-17}$——机器精度级别。
+暂不计反推过程中新增的舍入误差时，每步已有误差都**缩小为 1/5**：$\lvert\delta_{n-1}\rvert=\lvert\delta_n\rvert/5$。起点误差 $1.7\times10^{-4}$ 传到 $y_0$ 时只剩 $1.7\times10^{-4}/5^{100}$。每一步新产生的舍入误差则只在它产生之后的反推中衰减，最后一步产生的误差不会再被缩小；本次实测 $y_0$ 的总误差为 $-2.8\times10^{-17}$，处于机器精度量级。
 
 ::: method 递推系数怎样影响已有误差
 对常系数递推 $y_n=\alpha_n+\beta y_{n-1}$，若只考虑初值误差，并暂时把后续运算看成精确，则 $\delta_n=\beta^n\delta_0$。若第 $n$ 步还产生局部误差 $r_n$，就应写成
@@ -557,7 +605,7 @@ $$\varepsilon(z)=0.001\times(0.0005+0.0005+0.0005)=0.0000015\lt0.000005 ,$$
 故 $z=0.004550$ 至少有**三位**有效数字——从 1 位到 3 位，代价只是一次代数变形。
 
 ::: method 相近数相减的常用改写处方
-遇到相近数相减，先照下表把式子换成等价的稳定写法：
+遇到相近数相减，可尝试下列改写；还要逐项检查等式的定义域，以及实际计算中是否出现新的舍入问题：
 
 | 危险形式 | 稳定改写 | 依据 |
 |:--|:--|:--|
@@ -568,7 +616,7 @@ $$\varepsilon(z)=0.001\times(0.0005+0.0005+0.0005)=0.0000015\lt0.000005 ,$$
 | $x^k-y^k$ | $(x-y)(x^{k-1}+\cdots+y^{k-1})$ | 因式分解 |
 | $f(x)-f(y)$（一般） | 中值定理：$=f'(\xi)(x-y)$ | 化为导数求值 |
 
-这些改写的目的是减少已带误差的中间量相减。表中 Taylor 式是近似式；中值定理中的 $\xi$ 通常未知，不能直接把它当成可执行的求值公式。[习题 C3](exercises.md) 用前两个处方处理原书习题 5。
+这些改写的目的是减少已带误差的中间量相减。表中 Taylor 式是近似式；中值定理中的 $\xi$ 通常未知，不能直接把它当成可执行的求值公式。对数一行要求 $x,y>0$；若先算 $x/y$ 时比值被舍入得过于接近 $1$，仍可能损失精度，此时可考虑用专门处理小 $z$ 的 $\operatorname{log1p}(z)=\ln(1+z)$，计算 $\operatorname{log1p}((x-y)/y)$。[习题 C3](exercises.md) 用前两个处方处理原书习题 5。
 :::
 
 **一个重要的现代澄清（Sterbenz 引理）：**
@@ -663,7 +711,7 @@ print(float(np.float32(0.1)))  # 0.1 存成 float32 再读回
 
 1. **大数吃小数。**在 $10^{16}$ 附近间距是 $2$：$10^{16}+1$ 会被舍回 $10^{16}$（实测 `1e16 + 1 - 1e16 == 0.0` 为 `True`），而 $10^{16}+2$ 能存活。这正是原则 (2) 的浮点版本。
 2. **舍入有极限。**$1.0+2^{-53}$ 舍回 $1.0$（半个 ulp 之下必被吞），$1.0+2^{-52}$ 能分辨。想验证机器精度，一行代码：找最小的 $\delta\gt0$ 使 `1.0 + delta > 1.0`——得到的就是 `eps` 的量级。
-3. **十进制的「整」不是二进制的「整」。**$0.1$ 的二进制展开是循环小数 $0.000\overline{1100}\,{}_2$，永远存不准；$0.1+0.2=0.30000000000000004$。而二进制「整」的数（如 $0.5, 0.625$）完全精确。比较浮点数不要用 `==`，用 $\lvert x-y\rvert\le\varepsilon\max(\lvert x\rvert,\lvert y\rvert)$ 或 `math.isclose`。
+3. **十进制的「整」不是二进制的「整」。**$0.1$ 的二进制展开是循环小数 $0.000\overline{1100}\,{}_2$，永远存不准；$0.1+0.2=0.30000000000000004$。而二进制「整」的数（如 $0.5, 0.625$）完全精确。比较受舍入影响的结果时，可按问题选择相对和绝对容差，例如检查 $\lvert x-y\rvert\le\max(\varepsilon_{\mathrm{abs}},\varepsilon_{\mathrm{rel}}\max(\lvert x\rvert,\lvert y\rvert))$；接近零时尤其需要绝对容差。Python 的 `math.isclose` 支持这两种容差，默认绝对容差为零。对要求精确相等的浮点值，也可以使用 `==`。
 
 ::: think 求和的实现会影响结果
 下面比较手写逐项累加与 `math.fsum`：
@@ -844,7 +892,7 @@ print(f"{(t1-t0)*1e3:.0f} ms vs {(t2-t1)*1e3:.2f} ms")
 |:--|:--|
 | 误差 / 误差限 | $e=x-a$；$\lvert e\rvert\le\varepsilon$；$x=a\pm\varepsilon$ |
 | 相对误差限 | $\varepsilon_{\mathrm r}=\varepsilon(a)/\lvert a\rvert$ |
-| 有效数字 | $a=\pm0.a_1\cdots a_k\times10^m$，$\varepsilon(a)=\tfrac12\times10^{m-n}$（$n\le k$）⟹ $n$ 位 |
+| 有效数字 | $a=\pm0.a_1\cdots a_k\times10^m$，$\varepsilon(a)\le\tfrac12\times10^{m-n}$ ⟹ 至少 $n$ 位；显示位数另行说明 |
 | 有效数字 → 相对误差 | $\varepsilon_{\mathrm r}\le\frac{1}{2a_1}\times10^{1-n}\le\frac12\times10^{1-n}$ |
 | 函数求值 | $\varepsilon(u)\approx\lvert f'(a)\rvert\varepsilon(a)$；多元逐项求和（式 1.1） |
 | 四则运算 | $\varepsilon(a\pm b)=\varepsilon(a)+\varepsilon(b)$；乘除相对误差限相加；减法分母 $\lvert a-b\rvert$ |

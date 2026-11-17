@@ -17,12 +17,12 @@
 
 **A3.** 什么叫矩阵的条件数？它是算法的性质还是问题的性质？
 ::: sol
-$A$ 的条件数 $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$（或 $\lVert A\rVert_\infty\lVert A^{-1}\rVert_\infty$）度量**解对右端项扰动的敏感性**：$\dfrac{\lVert\delta x\rVert}{\lVert x\rVert}\le \mathrm{cond}(A)\,\dfrac{\lVert\delta b\rVert}{\lVert b\rVert}$。它是**问题本身（矩阵 $A$）的属性**，与用什么算法无关——算法只能控制舍入误差的传播，改不了条件数。（✓ / △ / ×）
+设 $A$ 非奇异，所用矩阵范数从属于向量范数，则 $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$。当 $b\ne0$、只扰动右端项时，$\lVert\delta x\rVert/\lVert x\rVert\le\mathrm{cond}(A)\lVert\delta b\rVert/\lVert b\rVert$。条件数描述给定范数下问题的最坏情形敏感性，不是算法属性；算法可控制额外误差，却不能改变这个给定矩阵及范数的条件数。（✓ / △ / ×）
 :::
 
 **A4.** 迭代矩阵 $G$ 是什么？迭代法收敛的充要条件是什么？
 ::: sol
-把 $Ax=b$ 改写成 $x=Gx+d$（等价地 $x=(I-G)^{-1}d$），$G$ 称为**迭代矩阵**。迭代 $x_{k+1}=Gx_k+d$ 收敛的**充要条件**是 $\rho(G)<1$，即 $G$ 的谱半径小于 1（等价地 $\lVert G\rVert<1$ 对某个范数成立，此时 $I-G$ 可逆）。（✓ / △ / ×）
+把 $Ax=b$ 改写成 $x=Gx+d$，$G$ 称为**迭代矩阵**。迭代 $x_{k+1}=Gx_k+d$ 对任意初值收敛到同一不动点的**充要条件**是 $\rho(G)<1$，即谱半径小于 1；此时 $I-G$ 可逆，解为 $(I-G)^{-1}d$。这也等价于存在某个相容的矩阵范数使 $\lVert G\rVert<1$。（✓ / △ / ×）
 :::
 
 **A5.** 严格对角占优是什么意思？它给出什么结论？
@@ -43,7 +43,7 @@ $A$ 的条件数 $\mathrm{cond}(A)=\lVert A\rVert\lVert A^{-1}\rVert$（或 $\lV
 
 $$\lVert x^*-\tilde x\rVert\le\lVert A^{-1}\rVert\lVert\boldsymbol r\rVert,$$
 
-即**相对误差 $\le\mathrm{cond}(A)\,\times\,$ 相对残差**。关键推论：残差小**不能**保证解准——当 $\mathrm{cond}(A)$ 很大时，残差很小也可能有很大误差。（✓ / △ / ×）
+当 $A$ 非奇异、$b\ne0$ 且采用同一从属范数时，$\lVert x^*-\tilde x\rVert/\lVert x^*\rVert\le\mathrm{cond}(A)\lVert r\rVert/\lVert b\rVert$。残差小须相对于 $\lVert b\rVert$ 来说；条件数很大时，相对残差小仍未必保证相对解误差小。（✓ / △ / ×）
 :::
 
 **B3.** 追赶法为什么是 $O(n)$？它的适用前提是什么？
@@ -61,7 +61,7 @@ $$\lVert x^*-\tilde x\rVert\le\lVert A^{-1}\rVert\lVert\boldsymbol r\rVert,$$
 4. **验证**：计算残差，并结合条件数或其他误差界判断能保留多少有效数字；使用迭代法时还应报告停止条件。（✓ / △ / ×）
 :::
 
-**C2.** 老师反复强调「算法评价三要素」，是哪三个？
+**C2.** 第 1 讲整理稿把算法评价概括为哪三个方面？
 ::: sol
-**算得准**（稳定性与收敛性）、**算得快**（时间复杂度）、**用得省**（存储量）。三者一般不可兼得：稠密 LU 准但 $O(n^3)$，迭代 $O(n^2)$ 每次但要迭代很多次且可能不收敛，带状方法 $O(n)$ 却只对特定结构成立。选算法就是在三者之间按问题结构取舍。（✓ / △ / ×）
+算得准（稳定性与收敛性）、算得快（时间复杂度）、用得省（存储量），选算法时须按结构与精度要求权衡。稠密 LU 分解为 $O(n^3)$；稠密定常迭代每步通常 $O(n^2)$，总成本还取决于步数与收敛性；固定带宽的带状方法可利用结构达到关于 $n$ 的线性成本。依据[第 1 讲整理稿](../../lectures/lec01.md#lec01-S4)，原录音待核；这些是复习概括，不作为逐字引语。（✓ / △ / ×）
 :::

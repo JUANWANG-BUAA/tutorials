@@ -5,7 +5,7 @@
 :::
 
 
-> 课堂实录精编。本讲**无课件、全程板书**（课件流整段「无视频信号」），承接
+> 课堂整理稿精编，不是已听校的实录，引号内也不保证逐字。本讲据现有整理记录**无课件、全程板书**（课件流整段「无视频信号」），承接
 > [第 6 讲](lec06.md)末尾留下的问题——「求按模最大的特征值及其特征向量」——
 > 主线四段：**幂法的收敛性**——实矩阵按模严格最大的特征值必为实数（共轭特征值
 > 反证），$A^ku_0$ 中非主特征分量相对衰减，但绝对量仍大且 $\lambda_1^k$ 会溢出，
@@ -170,7 +170,7 @@ $$\Bigl\lVert\frac{u}{\lVert u\rVert}\Bigr\rVert
 **算法**（板书框出）：
 
 $$\begin{cases}
-u_0\ \text{任取（非零）}\\[2pt]
+u_0\ne0\ \text{且主展开系数 }\alpha_1\ne0\ \text{（在本节特征向量基假设下）}\\[2pt]
 y_k=\dfrac{u_k}{\lVert u_k\rVert}\\[4pt]
 u_{k+1}=A\,y_k
 \end{cases}\qquad k=0,1,2,\dots$$
@@ -206,8 +206,8 @@ $$y_k=\frac{u_k}{\lVert u_k\rVert}=\frac{A^ku_0}{\lVert A^ku_0\rVert}
 （第二、三步把标量 $\lambda_1^k$ 按范数齐次性提到分母，得 $|\lambda_1|^k$。）
 令 $k\to\infty$，括号中除第一项外全部趋零，于是
 
-$$\boxed{\ y_k\ \longrightarrow\ \Bigl(\frac{\lambda_1}{|\lambda_1|}\Bigr)^{k}
-\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\ }$$
+$$\boxed{\ \Bigl\|y_k-\Bigl(\frac{\lambda_1}{|\lambda_1|}\Bigr)^k
+\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\Bigr\|\ \longrightarrow\ 0\ }$$
 
 分两种情形：
 
@@ -216,8 +216,7 @@ $$\boxed{\ y_k\ \longrightarrow\ \Bigl(\frac{\lambda_1}{|\lambda_1|}\Bigr)^{k}
 | $\lambda_1\gt0$ | $1$ | $y_k\to\dfrac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}$，即 $x_1$ 的单位向量 |
 | $\lambda_1\lt0$ | $(-1)^k$ | $(-1)^k y_k\to\dfrac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}$，**符号交替** |
 
-$\lambda_1\lt0$ 时迭代值不断变号，「但说白了，它还是你的特征向量，只不过在迭代过程中
-符号一直在变来变去」——不影响迭代值仍是 $x_1$ 的单位向量。
+$\lambda_1\lt0$ 时迭代值不断变号，但方向趋于主特征方向；有限步的 $y_k$ 一般还不是精确特征向量。
 
 ::: note 归一化的副产品
 每步单位化还有一层「防溢出」之外的用处：**所有迭代值都被限制在单位球面上**，
@@ -292,27 +291,27 @@ $y_k^{\mathrm T}y_k=1$，比值化简得干净；若取 $\infty$-范数，「你
 
 $$\textbf{算法（幂法）}\qquad
 \begin{cases}
-u_0\ \text{任取}\\
+u_0\ne0,\quad\alpha_1\ne0\ \text{（在特征向量基展开下）}\\
 y_k=u_k/\lVert u_k\rVert &\text{范数任取}\\
 u_{k+1}=Ay_k
 \end{cases}$$
 
-**定理**（板书总结，原文照录）：
+**定理**（按整理稿所记板书重述，并补全所需假设；非原文逐字照录）：
 
 $$\textbf{定理}\quad A\ \text{是实矩阵},\quad
 |\lambda_1|\gt|\lambda_2|\ge\cdots\ge|\lambda_n|,\quad(\lambda_i\ \text{实});$$
 
-则任取非零 $u_0=\sum_i\alpha_ix_i$（分解存在但**不必知道**），按上式迭代，有
+再假设 $x_1,\ldots,x_n$ 构成特征向量基，且 $u_0=\sum_i\alpha_ix_i$ 中 $\alpha_1\ne0$（实际不必求这些系数），按上式迭代，有
 
 $$(\mathrm i)\quad y_k\to\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\ (\lambda_1\gt0),\qquad
-y_k\to(-1)^k\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\ (\lambda_1\lt0);$$
+(-1)^ky_k\to\frac{\alpha_1x_1}{\lVert\alpha_1x_1\rVert}\ (\lambda_1\lt0);$$
 
 $$(\mathrm{ii})\quad \text{取 2-范数时}\quad y_k^{\mathrm T}Ay_k\to\lambda_1 .$$
 
-「虽然 $u_0$ 是任取的、$\alpha_i$ 是任意的，但是不影响我最后得到的结论。」
+整理稿保存的教师措辞为「虽然 $u_0$ 是任取的、$\alpha_i$ 是任意的，但是不影响我最后得到的结论」。严格地说须排除 $\alpha_1=0$，例如 $A=\operatorname{diag}(2,1)$、$u_0=(0,1)^{\mathrm T}$ 就永远不会得到主方向。
 
 **$\infty$-范数下的补充**（老师说算法要「稍微换一下」）：若改取 $\infty$-范数，
-特征向量的极限不变（单位化只是把长度拉回 1，与范数种类无关），但特征值的提取公式
+特征方向的极限不变，但单位代表向量随范数变化；特征值的提取公式
 需相应改动——「如果你不用这个二范数，就改用这个……最后出来的就是你要的那个绝对
 值最大的特征值」，细节留给同学自行验算。
 下面把另外两种目标——「模最小」与「最接近已知值」——也化归到幂法。
@@ -324,7 +323,7 @@ $|\lambda_1|\lt|\lambda_i|\ (\forall i\ge2)$。怎么算？
 
 **思路**：仍想用已经设计好的幂法——「其实我们只需要把刚刚那个东西稍微变形一下」。
 
-关键观察：$|\lambda_1|$ 最小 $\Rightarrow\lambda_1\neq0\Rightarrow A$ **可逆**，而 $A^{-1}$
+关键前提：还须另假设 $\lambda_1\ne0$，才能由它的模严格最小推出所有特征值非零、$A$ **可逆**。模最小本身不排除零特征值。此时 $A^{-1}$
 的特征值是
 
 $$\frac{1}{\lambda_1},\ \frac{1}{\lambda_2},\ \dots,\ \frac{1}{\lambda_n}
@@ -344,9 +343,7 @@ $\lambda_1^{-1}x_1=A^{-1}x_1$，即 $x_1$ 是 $A^{-1}$ 关于 $1/\lambda_1$ 的�
 
 $$y_k=\frac{u_k}{\lVert u_k\rVert},\qquad u_k=A^{-1}y_{k-1}\quad(\text{板书记法}),$$
 
-得到的「模最大特征值」是 $1/\lambda_1$，特征向量仍是 $x_1$（板书把极限写成
-$y_k\to\dfrac{(1/\lambda_1)x_1}{\lVert x_1\rVert}$，并同样分 $1/\lambda_1\gt0$ 与
-$1/\lambda_1\lt0$ 两支）。**要的是 $\lambda_1$，所以最后必须再取一次倒数逆回去**：
+得到的「模最大特征值」是 $1/\lambda_1$，特征方向仍是 $x_1$，正负交替取决于 $1/\lambda_1$ 的符号。整理稿曾把板书极限记为 $y_k\to(1/\lambda_1)x_1/\lVert x_1\rVert$，其长度一般不为 1，不能直接作为单位化向量的极限；应按第四节的公式处理初始系数与符号。**要的是 $\lambda_1$，所以最后再取倒数**：
 
 $$\boxed{\ \lambda_1=\frac{1}{\ \text{幂法算出的值}\ }\ }$$
 
@@ -368,6 +365,8 @@ $$A\,u_{k+1}=y_k,$$
 能级 $\lambda_k$，但用解析/半解析方法（如渐近展开）只能得到**近似值** $p$，它满足
 
 $$|\lambda_k-p|\lt|\lambda_i-p|\qquad(\forall i\neq k),$$
+
+还须 $p$ 不恰等于任何特征值，以保证 $A-pI$ 可逆；初始向量在目标方向的分量须非零。若 $p=\lambda_k$，已知精确特征值，应求其零空间，而不能再调用逆迭代。
 
 即 $p$ 离 $\lambda_k$ **最近**。「我虽然没办法把 $\lambda_k$ 真实地算出来，但是我可以
 算出一个和它足够接近的特征根。」
@@ -436,6 +435,7 @@ $$f(x)\ \text{连续},\quad f(a)f(b)\lt0\ \Longrightarrow\ \exists\,\xi\in[a,b]:
 - **折半**：取中点 $c=\dfrac{a+b}{2}$，比较符号（板书分两支写出）
   - $f(a)f(c)\lt0$ $\Rightarrow$ $\xi\in[a,c]$，取 $[a_1,b_1]=[a,c]$；
   - $f(c)f(b)\lt0$ $\Rightarrow$ $\xi\in[c,b]$，取 $[a_1,b_1]=[c,b]$；
+  - 若 $f(c)=0$，已找到根，立即停止。
 - 对新区间重复折半，得 $[a_0,b_0]\supset[a_1,b_1]\supset[a_2,b_2]\supset\cdots$，
   每步区间长度减半（板书末行：$\xi\in[a_n,b_n]$，「逐次二分」）：
 
@@ -508,8 +508,8 @@ $$F(\xi)=0\ \Longleftrightarrow\ \xi-\varphi(\xi)=0\ \Longleftrightarrow\ \xi=\v
 6. **反幂法解方程组的代价**：课堂只说「用 LU 分解或迭代法解 $Au_{k+1}=y_k$」，
    未讨论 $A$ 的分解可**预先算一次**并复用（这是反幂法实用化的关键），亦未提
    $A-pI$ 病态时的精度问题。
-7. **转录空白**：00:47–00:52 为课间休息（转写多为环境噪声），据上下文此段无板书。
-8. **板书核对**：本页公式全部对照板书关键帧（1920×1080 教师摄像头画面）逐条核对，
+7. **转录空白**：原整理稿将约第 47–52 分钟标为课间休息，并称转写多为环境噪声；目前未找到原始转写，不能独立核实该段有无板书。
+8. **板书核对记录的边界**：原整理稿称公式曾逐条对照板书关键帧（1920×1080 教师摄像头画面）；本轮未据原件复核，保留以下时刻作回查线索，不能当作本轮已完成核对的声明。
    主要参照时刻：① 01:53–08:16 展开式；② 08:16–14:00 实数性证明；③ 19:30–29:00
    算法框与 $y_k$ 的极限；④ 36:00–44:00 的 $\lVert\cdot\rVert=\lVert\cdot\rVert_2$
    与 $\infty$-范数两行；⑤ 55:00–58:00 定理；⑥ 58:00–1:07:00 反幂法（含单独框出的

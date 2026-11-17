@@ -40,6 +40,8 @@ SOURCES = {
     "numerical": {
         "page": "review/glossary.html",
         "columns": {"term": ["中文"], "en": ["English"], "def": ["一句话"], "origin": ["出处"]},
+        # 数值教材允许在同一段内标注多个概念；常见词也保留首次入口。
+        "options": {"maxPerPage": 120, "maxPerTextNode": 3, "frequencyLimit": 0, "directLinks": True},
     },
     "robot": {
         "page": "preface-index.html",
@@ -76,13 +78,15 @@ TABLE = re.compile(r"<table>.*?</table>", re.S)
 HEADING = re.compile(r'<h([1-6])[^>]*id="([^"]+)"', re.I)
 # 术语别名：中日韩、字母数字、连字符、加号（如「2-范数」），长度 2–12
 TERM_OK = re.compile(r"^[\u3400-\u9fff\w+\-·]{2,12}$")
+# 数值教材保留带空格的完整术语，例如「Jacobi 迭代」，不把「迭代」单独标成该术语。
+NUMERICAL_TERM_OK = re.compile(r"^[\u3400-\u9fff\w+\-·–∞][\u3400-\u9fff\w+\-·–∞ ]{1,39}$")
 
 
 def strip_tags(fragment: str) -> str:
     return html.unescape(TAG.sub("", fragment)).strip()
 
 
-def aliases(raw_html: str):
+def aliases(raw_html: str, *, whole_phrases: bool = False):
     """把一个术语单元格拆成若干可匹配的别名。
 
     「数域 $F$」→ 数域；「极大无关组 / 秩」→ 极大无关组、秩；
@@ -92,11 +96,12 @@ def aliases(raw_html: str):
     out = []
     for part in re.split(r"[/、·|]", text):
         part = part.strip("：:，,。. ")
-        # 「数域 $F$」这类单元格：取空格前的部分作为正文可匹配的别名
-        candidates = [part] + part.split()
+        # 数值教材的组合术语必须完整匹配；其他教材保持既有拆词规则。
+        candidates = [part] if whole_phrases else [part] + part.split()
         for candidate in candidates:
             candidate = candidate.strip("$，,。.")
-            if TERM_OK.match(candidate) and candidate not in out:
+            pattern = NUMERICAL_TERM_OK if whole_phrases else TERM_OK
+            if pattern.match(candidate) and candidate not in out:
                 out.append(candidate)
     return out
 
@@ -201,7 +206,7 @@ def build(book_dir: str) -> int:
             if len(cols) <= max(index["term"], index["def"]):
                 continue
             rows_total += 1
-            names = aliases(cols[index["term"]])
+            names = aliases(cols[index["term"]], whole_phrases=(slug == "numerical"))
             if not names:
                 skipped += 1
                 continue

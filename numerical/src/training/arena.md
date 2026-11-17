@@ -4,10 +4,11 @@
 课堂中的“算特征值必须取 2-范数”专指省略分母的 $y^{\mathrm T}Ay$ 写法。一般的 Rayleigh 商是 $y^{\mathrm T}Ay/(y^{\mathrm T}y)$，对任意非零 $y$ 都可用，与采用哪种范数归一化无关；仅当 $\lVert y\rVert_2=1$ 才可省略分母。不能把课堂简写当成对其他提取方式的否定。主特征值为负时，归一化向量还可能正负交替，应说方向收敛。完整公式与复算表见[幂法正文](../course/ch03/sec31.md)。
 :::
 
+本页保留课堂强调及出处，但“一句话结论”只用于检索，不能代替适用条件。答题时先判断讨论的是所有初值还是某个初值、指定范数还是存在某个范数、局部收敛还是区间内保证；相应限定已放入题面和解析。闯关分数只反映本题库表现，不据此推断期末范围。
+**课堂来源的边界。** 本页的出处链接指向已有讲座整理页，不表示每句归纳都经过录音听校。第 1–5、7 讲目前只有整理稿，所保留引语原录音待核；第 6、8–11 讲的原始 ASR 转写未经听校，具体字句仍须回听确认。第 11 讲的数学公式按该页所记录的板书依据整理，不能拿 ASR 字面当公式证据。本页新增的条件说明和计算推导均属编者讲解，不是补录的课堂原话。
 
-> **练和赛的地方。** 复习层解决「记和查」，这里解决「**在压力下还答得对**」——把老师
-> 反复强调的必考点做成**限时、计分、连击、分关解锁**的答题场，答错的题自动进错题本，
-> 直到你把它清空。目标很直白：**把这些题做到条件反射，考场才不会临时卡壳。**
+
+> 本页把课堂反复讨论的概念做成限时、计分、连击和分关练习。答错后先读解析，写清漏掉的条件，再回错题本复做；只记选项字母不能说明已经理解。
 
 ::: method[core] 怎么玩（30 秒读完）
 
@@ -22,9 +23,7 @@
 | 📕 错题本 | 答错自动收录（存在浏览器本地），随时回来重刷；**答对即自动移出** |
 | ⌨️ 键盘 | <kbd>1</kbd>–<kbd>9</kbd> 选选项，<kbd>Enter</kbd> 下一题 |
 
-**为什么这样设计**：考试丢分多半不是「不会」，而是**概念混淆**（必要 vs 充分、线性 vs 二阶、
-特征向量 vs 特征值）与**记串**（范数取错、顺序反了）。所以这里的题专门盯**易混点**，
-用「答错进错题本 + 连击清零」制造一点代价，逼你把分辨标准想起来，而不是靠模糊印象蒙对。
+**练习重点**：区分必要与充分、局部与区间收敛、特征向量与特征值，以及不同范数和记号的适用条件。限时成绩用于发现需要回读的概念，不用于预测真实考试成绩。
 
 :::
 
@@ -43,52 +42,53 @@
 
 ## 必考点总表（老师课堂反复强调）
 
-这张表是题库的**出处**，也是考前最后一小时该扫的清单。每条都能在对应讲座页的「老师强调」
-一节找到原话。
+这张表按课堂强调组织题库，出处用于回查原话；表内结论是带适用条件的学习归纳，并非逐字引文。讲座页「老师强调」中的课堂原话仍按来源保留。
+表中的“保证”均带数学前提。例如 $\|A\|<1$ 只是判 $I\pm A$ 可逆的一条充分路线，不是可逆性的必要条件；相近数相减也不是每次都不准确，风险在于输入或前序运算误差相对于小结果被放大。
 
 | 模块 | 必考点（一句话结论） | 出处 |
 |:--|:--|:--|
-| 误差 | 判断递推是否稳定，**只看舍入误差放大因子是否 $>1$**，不看递推式本身 | 第 1 讲 |
+| 误差 | 对常系数标量递推，先写误差方程再看放大因子；模大于 $1$ 会放大已有误差，等于 $1$ 时还须检查逐步舍入的累积 | 第 1 讲 |
 | 误差 | **相近数相减**最危险；改写如 $a^2-b^2=(a-b)(a+b)$ | [1.2.4](../ch01/sec12.md#sec-1.2.4) |
 | 误差 | 保证至少 $n$ 位有效数字的误差限判据为 $\varepsilon(a)\le\tfrac12\times10^{m-n}$，从第一位非零数字数起 | [1.2.2](../ch01/sec12.md#sec-1.2.2) |
-| 范数 | **相容关系** $\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert$ 是后面一切的起点 | 第 2 讲 |
-| 范数 | **范数等价性只在有限维成立**（无穷维不成立） | 第 2 讲 |
+| 范数 | 相容关系 $\lVert Ax\rVert\le\lVert A\rVert\lVert x\rVert$ 与次乘性 $\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert$ 要区分；从属范数同时满足二者 | 第 2 讲 |
+| 范数 | 有限维空间上任意两范数等价；无穷维空间上不保证任意两范数都等价 | 第 2 讲 |
 | 范数 | 判 $I\pm A$ 可逆，**找到一个范数使 $\lVert A\rVert<1$ 即可，不碰行列式** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
-| 范数 | $\lVert A\rVert_1=$ 列和最大，$\lVert A\rVert_\infty=$ 行和最大；$\lVert A\rVert_F$ **不从属** | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
-| 条件数 | $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小 $\ne$ 误差小 | [补充篇 2.4](../supplement/sec24.md) |
+| 范数 | $\lVert A\rVert_1=$ 最大绝对列和，$\lVert A\rVert_\infty=$ 最大绝对行和；维数大于 $1$ 时 $\lVert A\rVert_F$ 不从属于向量范数 | [1.3.4](../ch01/sec13.md#sec-1.3.4) |
+| 条件数 | 非奇异 $A$ 在同一从属范数下 $\mathrm{cond}(A)\ge1$；$\mathrm{cond}(I)=1$；残差小不独立保证误差小 | [补充篇 2.4](../supplement/sec24.md) |
 | 线代 | 列主元的作用是**避免小主元放大舍入误差** | 第 3 讲 |
-| 线代 | Doolittle（LU）需要**各阶顺序主子式非零** | 第 4 讲 |
-| 线代 | 稀疏 / 三对角用 $O(n)$ 追赶法，**实际没人用朴素高斯消去** | 第 4 讲 |
-| 迭代 | 收敛**充要**条件 $\rho(G)<1$；实际用**充分**条件 $\lVert G\rVert<1$ | 第 5 讲 |
+| 线代 | 非奇异方阵无换行 Doolittle 分解且主元非零的充要条件是各阶顺序主子式非零 | 第 4 讲 |
+| 线代 | 三对角且消元主元非零时可用 $O(n)$ 追赶法；一般稀疏矩阵不能仅由“稀疏”推出线性成本 | 第 4 讲 |
+| 迭代 | 从任意初值收敛到唯一不动点的充要条件为 $\rho(G)<1$；指定从属范数下 $\lVert G\rVert<1$ 是充分条件 | 第 5 讲 |
 | 迭代 | 误差递推盯「**下标 $+$ 幂次 $=$ 常数**」；拆法即名字（$A=N-P$） | 第 5 讲 |
 | 迭代 | $\lVert G\rVert$ 接近 1 时，**相邻迭代值差小不能断定接近真解** | 第 5 讲 |
 | 迭代 | SOR **必要**条件 $\omega\in(0,2)$：区间外一定不收敛，区间内不保证 | 第 6 讲 |
 | 特征值 | 每步控制向量尺度，保持归一化、下标与特征值估计式配套；完整 Rayleigh 商与非零缩放无关 | 第 7 讲 |
 | 特征值 | 求**特征向量**范数任取；省略 Rayleigh 分母须作 **2-范数**单位化；保留分母则可任取范数 | 第 7 讲 |
 | 特征值 | 「**严格**按模最大」这个前提缺不得；实矩阵的它**必为实数** | 第 7 讲 |
-| 特征值 | 反幂法**不构造 $A^{-1}$**，每步解 $Au_{k+1}=y_k$；位移 $A-pI$ 求最接近 $p$ 的特征值 | 第 7 讲 |
-| 非线性 | **必要 / 充分分清**：牛顿一般定理只**局部**；四条件给**全局** | 第 9 讲 |
+| 特征值 | 反幂法不构造 $A^{-1}$，每步解 $Au_{k+1}=y_k$；位移须使 $A-pI$ 可逆，并检查唯一最近目标和初始分量 | 第 7 讲 |
+| 非线性 | Newton 的单根定理只给局部保证；区间“四条件”还要求光滑性与合适初值，并非任意初值的全局保证 | 第 9 讲 |
 | 非线性 | 不动点两条件：**自映射**管不越界、**压缩**管收敛 | 第 7 讲 |
-| 非线性 | 割线法**必须两个初值**，收敛阶**黄金比 $1.618$**（$r^2-r-1=0$） | 第 9 讲 |
-| 插值 | $n+1$ 点确定**唯一** $n$ 次插值多项式；范德蒙德矩阵**存在唯一但病态** | 第 9 讲 |
-| 插值 | 换基到**拉格朗日基**：$l_i(x_i)=1,\ l_i(x_j)=0$，系数**直接就是 $f(x_i)$** | 第 9 讲 |
-| 插值 | 埃尔米特余项：**每个节点因子平方**、分母 $(2n+2)!$——与拉格朗日余项的全部区别 | [第 11 讲](../lectures/lec11.md) |
+| 非线性 | 割线法需两个不同初值和非零差商分母；单根、足够近且非退化时通常为黄金比例阶 $1.618$ | 第 9 讲 |
+| 插值 | $n+1$ 个互异节点确定唯一的次数至多 $n$ 的插值多项式；单项式系数方程组的条件数取决于节点、尺度与基 | 第 9 讲 |
+| 插值 | 换基到拉格朗日基：$l_i(x_i)=1,\ l_i(x_j)=0\ (j\ne i)$，系数直接为 $f(x_i)$ | 第 9 讲 |
+| 插值 | 各节点同时给函数值与一阶导数、且 $f\in C^{2n+2}$ 时，Hermite 余项含平方节点因子、$(2n+2)!$ 及 $f^{(2n+2)}(\xi)$ | [第 11 讲](../lectures/lec11.md) |
 | 逼近 | 最佳平方逼近 = **正交投影**：$(f-p,\varphi_i)=0$ 对基函数逐个验证即可（教材定理 5.7） | [第 11 讲](../lectures/lec11.md) |
 | 逼近 | Gram 矩阵非奇异要**证**：$\boldsymbol c^{\mathrm T}G\boldsymbol c=\lVert\sum c_i\varphi_i\rVert^2>0$（线性无关 + 正定） | [第 11 讲](../lectures/lec11.md) |
 | 逼近 | 正交化的目的是**让 $G$ 对角**：$a_i=(f,\varphi_i)/(\varphi_i,\varphi_i)$ 各自独立算 | [第 11 讲](../lectures/lec11.md) |
 | 逼近 | 函数空间的「$1$」是**常值函数**不是数；$a$ 才是数 | [第 11 讲](../lectures/lec11.md) |
-| 逼近 | Legendre：$\int_{-1}^1L_nL_m=\dfrac{2}{2n+1}\delta_{nm}$；$\dfrac{\pi}{2}$ 是 Chebyshev（带权）的值 | [第 11 讲](../lectures/lec11.md) |
+| 逼近 | 标准归一化 $L_n(1)=1$ 下，$\int_{-1}^1L_nL_m=\dfrac{2}{2n+1}\delta_{nm}$；Chebyshev 带权范数平方为 $\pi/2$ 仅限次数非零，常数项为 $\pi$ | [第 11 讲](../lectures/lec11.md) |
 
 ## 竞技场
 
 <div id="arena-mount"></div>
 
 <p class="arena-bank-note">下面是完整题库（含答案与解析），既是竞技场的题源，也是一份可直接查阅的问答清单——<b>关掉脚本、打印出来读都没问题</b>。竞技场开启后它会被折叠以免剧透，点开即可对照。</p>
+做题前约定：除特别说明外讨论有限维实空间，$\rho(A)=\max_i|\lambda_i|$，矩阵范数与所用向量范数配套；单根指 $f(s)=0,f'(s)\ne0$。第 38–42 题进入函数内积空间：$(f,g)$ 是内积，$\|f\|^2=(f,f)$，$M=\operatorname{span}\{\varphi_0,\ldots,\varphi_n\}$ 是所有基函数线性组合组成的子空间，“最佳平方”是最小化 $\|f-p\|^2$。积分内积须有有限积分和正定性，例如连续函数配以几乎处处为正的可积权；仅写权非负还不够。第 42 题的 $\delta_{nm}$ 为 Kronecker 符号：$n=m$ 时为 $1$，否则为 $0$。
 
 <div class="arena-bank" id="arena-bank">
 <div class="arena-q" data-id="e1" data-lv="1" data-a="1" data-tag="误差与精度" data-point="有效数字判据" data-src="1.2.2 · 第 1–2 讲" data-href="../ch01/sec12.html#sec-1.2.2">
 <p class="aq-hd"><span class="aq-id">e1</span><span class="aq-tag">误差与精度 · 有效数字判据</span></p>
-<p class="aq-prompt">$a=0.0316$ 是某真值 $x$ 的近似值，绝对误差限 $\varepsilon(a)=0.00005$。$a$ 有几位有效数字？</p>
+<p class="aq-prompt">$a=0.0316$ 是某真值 $x$ 的近似值，绝对误差限 $\varepsilon(a)=0.00005$。依据此误差限，最多能保证 $a$ 有几位有效数字？</p>
 <ol class="aq-opts">
 <li>2 位</li>
 <li>3 位</li>
@@ -99,14 +99,14 @@
 </div>
 <div class="arena-q" data-id="e2" data-lv="1" data-a="2" data-tag="误差与精度" data-point="递推稳定性方向" data-src="1.2.4 · 第 1 讲" data-href="../ch01/sec12.html#sec-1.2.4">
 <p class="aq-hd"><span class="aq-id">e2</span><span class="aq-tag">误差与精度 · 递推稳定性方向</span></p>
-<p class="aq-prompt">递推 $y_n=\dfrac1n-\beta y_{n-1}$，已知 $\lvert\beta\rvert=3$。要算 $y_{100}$，应当怎样递推？</p>
+<p class="aq-prompt">递推 $y_n=\dfrac1n-\beta y_{n-1}$，已知 $\lvert\beta\rvert=3$。若能在较大指标 $N>100$ 处给出误差受控的终值估计，要算 $y_{100}$，怎样的递推方向能抑制该终值误差？</p>
 <ol class="aq-opts">
 <li>正向递推（由 $y_0$ 出发）</li>
 <li>正反向都可以，结果一样</li>
-<li>反向递推（由 $y_{100}$ 的估计出发）</li>
+<li>反向递推（由 $y_N$ 的估计出发，$N>100$）</li>
 <li>与递推方向无关</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>误差满足 $\delta_n=-\beta\delta_{n-1}$，即 $\lvert\delta_n\rvert=3^n\lvert\delta_0\rvert$——**正向每步放大 3 倍**，$3^{100}$ 天文数字。改写 $y_{n-1}=\dfrac{1}{\beta n}-\dfrac1\beta y_n$ 后误差每步缩为 $1/3$，**反向才稳定**。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>忽略每步新增舍入时，误差满足 $\delta_n=-\beta\delta_{n-1}$，正向传播放大为 $\lvert\delta_n\rvert=3^n\lvert\delta_0\rvert$。改写 $y_{n-1}=\dfrac{1}{\beta n}-\dfrac1\beta y_n$ 后，由 $N$ 反推到 $100$ 的终值误差为 $3^{-(N-100)}|\delta_N|$，新增舍入也按几何权重累积。必须有可用的远端估计及其误差控制；从 $y_{100}$ 自身起步不能帮助求出未知的 $y_{100}$。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e3" data-lv="1" data-a="0" data-tag="误差与精度" data-point="灾难性抵消" data-src="1.2.4 · 第 1 讲" data-href="../ch01/sec12.html#sec-1.2.4">
 <p class="aq-hd"><span class="aq-id">e3</span><span class="aq-tag">误差与精度 · 灾难性抵消</span></p>
@@ -117,7 +117,7 @@
 <li>一个数乘上 $10^k$</li>
 <li>把 $0.1$ 存成双精度浮点数</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>相近数相减时，高位有效数字相互抵消，相对误差被急剧放大。典型如 $a=1.01,b=1.00$ 时 $a^2-b^2$：应改写为 $(a-b)(a+b)$ 保住精度。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>相近数相减会消去高位，使输入已有误差相对于小结果变大。例如 $a=1.01,b=1.00$ 时计算 $a^2-b^2$，$(a-b)(a+b)$ 可避免先分别平方、舍入后再相减带来的额外损失；但若 $a,b$ 自身已有测量误差，改写不能恢复这些信息。相减本身不必然产生很大的舍入误差，危险在于误差相对于结果被放大。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e4" data-lv="1" data-a="2" data-tag="误差与精度" data-point="误差传播" data-src="1.2.3 · 第 1 讲" data-href="../ch01/sec12.html">
 <p class="aq-hd"><span class="aq-id">e4</span><span class="aq-tag">误差与精度 · 误差传播</span></p>
@@ -128,7 +128,7 @@
 <li>$1\%$</li>
 <li>$3\%$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\dfrac{\partial u}{\partial a}=2a=4$，$\dfrac{\partial u}{\partial b}=-2b=-2$，故 $\varepsilon(u)\approx4\times0.005+2\times0.005=0.03$，$u=3.00$，相对误差 $0.03/3=1\%$。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\dfrac{\partial u}{\partial a}=2a=4$，$\dfrac{\partial u}{\partial b}=-2b=-2$，一阶传播估计给 $\varepsilon(u)\approx4\times0.005+2\times0.005=0.03$，近似计算值为 $3.00$，所以以近似值为分母的相对误差限约为 $0.03/3=1\%$。本题还可直接检验真值范围为 $[1.995^2-1.005^2,\ 2.005^2-0.995^2]=[2.97,3.03]$；若严格以真值为分母，统一上界为 $0.03/2.97\approx1.0101\%$。题目问近似比例，故选 <b>C</b>，不要把两种分母的界当成完全相同。</p></div></details>
 </div>
 <div class="arena-q" data-id="e5" data-lv="1" data-a="1" data-tag="误差与精度" data-point="有效数字与相对误差" data-src="1.2.2 · 第 1 讲" data-href="../ch01/sec12.html#sec-1.2.2">
 <p class="aq-hd"><span class="aq-id">e5</span><span class="aq-tag">误差与精度 · 有效数字与相对误差</span></p>
@@ -139,18 +139,18 @@
 <li>$\dfrac{1}{2}\times10^{-n}$</li>
 <li>$a_1\times10^{-(n-1)}$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>有效数字越多，相对误差限越小：$n$ 位有效数字对应 $\varepsilon_{\mathrm r}\lesssim\dfrac{1}{2a_1}\times10^{-(n-1)}$（$a_1$ 为首位）。常数因子因教材而异，但**指数 $-(n-1)$ 与首位数 $a_1$ 的位置**是考点。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>按本书约定，写 $|a|=0.a_1a_2\cdots\times10^m$，则 $n$ 位有效数字保证 $\varepsilon(a)\le\tfrac12 10^{m-n}$。以近似值为分母，利用 $|a|\ge a_1 10^{m-1}$，得 $\varepsilon(a)/|a|\le\dfrac{1}{2a_1}10^{-(n-1)}$；以真值为分母时这是小相对误差下的近似尺度。首位数决定这里的上界，不表示实际误差恰好等于它。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e6" data-lv="1" data-a="0" data-tag="误差与精度" data-point="秦九韶（Horner）" data-src="1.2.6 · 第 1–2 讲" data-href="../ch01/sec12.html">
 <p class="aq-hd"><span class="aq-id">e6</span><span class="aq-tag">误差与精度 · 秦九韶（Horner）</span></p>
 <p class="aq-prompt">用秦九韶（Horner）算法求多项式的值，相比逐项求和，主要好处是</p>
 <ol class="aq-opts">
-<li>乘法次数由 $O(n^2)$ 降到 $O(n)$，且数值更稳</li>
+<li>相对每项独立连乘求幂的写法，乘法次数由 $O(n^2)$ 降到 $O(n)$，并有标准的向后误差分析</li>
 <li>能自动求出多项式的根</li>
 <li>把除法变成乘法</li>
 <li>与逐项求和完全等价，没有任何区别</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>Horner 把 $a_0+a_1x+\cdots+a_nx^n$ 改写成嵌套形式，乘法次数降到 $n$ 次（而非 $O(n^2)$），且减少了中间量的误差累积。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>Horner 将多项式改写为 $a_0+x(a_1+x(\cdots+xa_n))$，需 $n$ 次乘法、$n$ 次加法。如果逐项独立计算 $x^j$，乘法总数为 $1+\cdots+n=O(n^2)$；若复用幂，逐项法也可做到 $O(n)$。Horner 在无上溢、下溢等异常的标准模型下有向后误差保证，但在根附近等病态求值点，相对前向误差仍可能很大，不能说它无条件更准确。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e7" data-lv="1" data-a="2" data-tag="误差与精度" data-point="误差四分类" data-src="1.1 · 第 1 讲" data-href="../lectures/lec01.html">
 <p class="aq-hd"><span class="aq-id">e7</span><span class="aq-tag">误差与精度 · 误差四分类</span></p>
@@ -176,10 +176,10 @@
 </div>
 <div class="arena-q" data-id="e9" data-lv="2" data-a="1" data-tag="范数与条件数" data-point="F-范数非从属" data-src="1.3.4 · 第 2–3 讲" data-href="../ch01/sec13.html#sec-1.3.4">
 <p class="aq-hd"><span class="aq-id">e9</span><span class="aq-tag">范数与条件数 · F-范数非从属</span></p>
-<p class="aq-prompt">Frobenius 范数 $\lVert A\rVert_F$ 是否从属于某个向量范数（即是否算子范数）？</p>
+<p class="aq-prompt">对 $n>1$ 的 $n$ 阶方阵，Frobenius 范数 $\lVert A\rVert_F$ 是否从属于某个向量范数（即是否算子范数）？</p>
 <ol class="aq-opts">
 <li>是，从属于 2-范数</li>
-<li>不是——$\lVert I\rVert_F=\sqrt2\neq1$，任何算子范数都要求 $\lVert I\rVert=1$</li>
+<li>不是——$\lVert I_n\rVert_F=\sqrt n\neq1$，任何算子范数都要求 $\lVert I_n\rVert=1$</li>
 <li>是，从属于 $F$ 范数</li>
 <li>只有当 $A$ 对称时才是</li>
 </ol>
@@ -194,7 +194,7 @@
 <li>$\lVert AB\rVert=\lVert A\rVert\lVert B\rVert$ 恒成立</li>
 <li>$\lVert AB\rVert\ge\lVert A\rVert\lVert B\rVert$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>相容性即 $\lVert A\boldsymbol{x}\rVert\le\lVert A\rVert\lVert\boldsymbol{x}\rVert$，由此推出**次乘性** $\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert$。老师强调这是**后面全部内容的起点**（$\lVert A\rVert<1\Rightarrow I\pm A$ 可逆、迭代收敛定理都靠它）。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>相容性指 $\lVert Ax\rVert\le\lVert A\rVert\lVert x\rVert$，次乘性指 $\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert$。从属范数同时满足二者：由 $\|ABx\|\le\|A\|\|B\|\|x\|$ 对非零 $x$ 的比值取最大即得次乘性。不能在矩阵范数并非从属时，只凭第一条相容关系便用同样的取最大步骤识别 $\|AB\|$。老师强调这些不等式是后续可逆性与迭代估计的起点。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e11" data-lv="2" data-a="1" data-tag="范数与条件数" data-point="‖A‖＜1 可逆" data-src="1.3.4 · 第 3 讲" data-href="../ch01/sec13.html#sec-1.3.4">
 <p class="aq-hd"><span class="aq-id">e11</span><span class="aq-tag">范数与条件数 · ‖A‖＜1 可逆</span></p>
@@ -231,7 +231,7 @@
 </div>
 <div class="arena-q" data-id="e14" data-lv="2" data-a="0" data-tag="范数与条件数" data-point="算子范数定义" data-src="1.3.4 · 第 2–3 讲" data-href="../ch01/sec13.html#sec-1.3.4">
 <p class="aq-hd"><span class="aq-id">e14</span><span class="aq-tag">范数与条件数 · 算子范数定义</span></p>
-<p class="aq-prompt">矩阵的**算子范数**（从属范数）的定义是</p>
+<p class="aq-prompt">对 $n>1$ 的 $n$ 阶矩阵，给定向量范数后，矩阵的<b>算子范数</b>（从属范数）的定义是</p>
 <ol class="aq-opts">
 <li>$\lVert A\rVert=\max\limits_{\boldsymbol{x}\neq\boldsymbol{0}}\dfrac{\lVert A\boldsymbol{x}\rVert}{\lVert\boldsymbol{x}\rVert}$</li>
 <li>$\lVert A\rVert=\sum_{i,j}\lvert a_{ij}\rvert$</li>
@@ -249,7 +249,7 @@
 <li>使消去过程一定能用整数运算完成</li>
 <li>让矩阵变成三对角</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>列主元通过交换行，选绝对值最大的元素作主元，避免「除以很小的数」把舍入误差放大。复杂度仍是 $O(n^3)$，与是否选主元无关。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>列主元在当前列尚未消元的行中选绝对值最大的元素，通过换行把它放到主元位置，使当前乘子绝对值不超过 $1$。这控制了小主元导致的放大，但不能排除整个消元过程的元素增长。对稠密矩阵，复杂度仍是 $O(n^3)$。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e16" data-lv="3" data-a="2" data-tag="线性方程组与迭代法" data-point="LU 分解条件" data-src="第 4 讲" data-href="../lectures/lec04.html">
 <p class="aq-hd"><span class="aq-id">e16</span><span class="aq-tag">线性方程组与迭代法 · LU 分解条件</span></p>
@@ -275,7 +275,7 @@
 </div>
 <div class="arena-q" data-id="e18" data-lv="3" data-a="2" data-tag="线性方程组与迭代法" data-point="对角占优与收敛" data-src="第 5 讲" data-href="../lectures/lec05.html">
 <p class="aq-hd"><span class="aq-id">e18</span><span class="aq-tag">线性方程组与迭代法 · 对角占优与收敛</span></p>
-<p class="aq-prompt">若 $A$ 是**严格对角占优**矩阵，则</p>
+<p class="aq-prompt">若 $A$ 按行严格对角占优，即 $|a_{ii}|>\sum_{j\ne i}|a_{ij}|$，则</p>
 <ol class="aq-opts">
 <li>只有 Jacobi 迭代收敛，Gauss–Seidel 不保证</li>
 <li>只有 Gauss–Seidel 收敛，Jacobi 不保证</li>
@@ -286,7 +286,7 @@
 </div>
 <div class="arena-q" data-id="e19" data-lv="3" data-a="1" data-tag="线性方程组与迭代法" data-point="SOR 必要条件" data-src="第 6 讲" data-href="../lectures/lec06.html">
 <p class="aq-hd"><span class="aq-id">e19</span><span class="aq-tag">线性方程组与迭代法 · SOR 必要条件</span></p>
-<p class="aq-prompt">逐次超松弛（SOR）法收敛的**必要**条件是松弛因子满足</p>
+<p class="aq-prompt">逐次超松弛（SOR）法从任意初值收敛到唯一解的最强必要参数区间是</p>
 <ol class="aq-opts">
 <li>$\omega>0$</li>
 <li>$0<\omega<2$</li>
@@ -297,14 +297,14 @@
 </div>
 <div class="arena-q" data-id="e20" data-lv="3" data-a="0" data-tag="线性方程组与迭代法" data-point="误差估计规律" data-src="第 5 讲" data-href="../lectures/lec05.html">
 <p class="aq-hd"><span class="aq-id">e20</span><span class="aq-tag">线性方程组与迭代法 · 误差估计规律</span></p>
-<p class="aq-prompt">由迭代误差递推 $\lVert \boldsymbol{e}^{(k)}\rVert\le\lVert G\rVert^k\lVert \boldsymbol{e}^{(0)}\rVert$，老师提醒盯的规律是</p>
+<p class="aq-prompt">在已知 $q=\lVert G\rVert<1$ 时，由误差递推 $\lVert \boldsymbol{e}^{(k)}\rVert\le q^k\lVert \boldsymbol{e}^{(0)}\rVert$（$\boldsymbol e^{(k)}=\boldsymbol x^{(k)}-\boldsymbol x^*$），整理稿中“下标与幂次”的提醒对应哪个一般形式？</p>
 <ol class="aq-opts">
-<li>「下标 $+$ 幂次 $=$ 常数」——误差按 $\lVert G\rVert^k$ 收敛</li>
+<li>对 $k\ge j$，$\lVert\boldsymbol e^{(k)}\rVert\le q^{k-j}\lVert\boldsymbol e^{(j)}\rVert$，右端“误差下标 $j$ + 幂次 $k-j$ = $k$”</li>
 <li>误差与 $k$ 无关</li>
 <li>误差每步增加 $\lVert G\rVert$ 倍</li>
 <li>只要相邻两次迭代值差很小，就一定接近真解</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>误差以 $\lVert G\rVert^k$ 衰减，看递推式时盯「下标 + 幂次 = 常数」能快速写出误差界。**注意选项 D 是陷阱**：$\lVert G\rVert$ 接近 1 时，相邻迭代值差小**不能**断定接近真解。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>从 $e^{(k)}=G^{k-j}e^{(j)}$ 取范数得 $\|e^{(k)}\|\le q^{k-j}\|e^{(j)}\|$。整理稿所记“下标 + 幂次 = 常数”是在同一个目标下标 $k$ 下核对这一形式，不是说误差不随 $k$ 改变。相邻步差还须乘 $q/(1-q)$ 才给当前误差的后验界，故 $q$ 接近 $1$ 时选项 D 不成立。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e21" data-lv="3" data-a="1" data-tag="线性方程组与迭代法" data-point="矩阵分裂" data-src="第 5 讲" data-href="../lectures/lec05.html">
 <p class="aq-hd"><span class="aq-id">e21</span><span class="aq-tag">线性方程组与迭代法 · 矩阵分裂</span></p>
@@ -319,14 +319,14 @@
 </div>
 <div class="arena-q" data-id="e22" data-lv="3" data-a="2" data-tag="线性方程组与迭代法" data-point="稀疏与复杂度" data-src="第 4 讲" data-href="../lectures/lec04.html">
 <p class="aq-hd"><span class="aq-id">e22</span><span class="aq-tag">线性方程组与迭代法 · 稀疏与复杂度</span></p>
-<p class="aq-prompt">对**三对角**线性方程组，工程上主流的直接解法是</p>
+<p class="aq-prompt">对三对角线性方程组，已知无选主元消元的各步主元非零，利用结构的直接解法是</p>
 <ol class="aq-opts">
 <li>朴素高斯消去（$O(n^3)$）</li>
 <li>先算 $A^{-1}$ 再乘（$O(n^3)$）</li>
 <li>追赶法（Thomas 算法，$O(n)$）</li>
 <li>二分法</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>三对角结构下，追赶法利用稀疏性把工作量降到 $O(n)$。老师反复强调：**实际中没人用朴素高斯消去**，「稀疏 / 三对角 $O(n)$ 方法才是工程主流」。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>追赶法是利用三对角结构的消去与回代，每行只更新常数个量，时间和存储均为 $O(n)$。题设的非零主元保证可执行；严格对角占优或对称正定是常见的充分条件。一般非奇异三对角矩阵仍可能出现零主元，需要带主元的结构化求解。课堂“实际中没人用朴素高斯消去”强调不要无视结构套稠密算法，并不表示一般稀疏系统都能用追赶法。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e23" data-lv="4" data-a="2" data-tag="特征值与幂法" data-point="幂法顺序" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e23</span><span class="aq-tag">特征值与幂法 · 幂法顺序</span></p>
@@ -348,11 +348,11 @@
 <li>必须 $\infty$-范数</li>
 <li>必须 1-范数</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>保留 Rayleigh 商分母时，单位化范数可以任取。用 **2-范数**单位化可保证 $y_k^{\mathrm T}y_k=\lVert y_k\rVert_2^2=1$，$y_k^{\mathrm T}Ay_k$ 才恰好趋于 $\lambda_1$。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>保留 Rayleigh 商分母时，单位化范数可以任取。用 2-范数单位化保证 $y_k^{\mathrm T}y_k=1$，才能省略分母写成 $y_k^{\mathrm T}Ay_k$。若再满足幂法的谱与初值条件，这个商才趋于目标特征值；单位化本身不保证方向收敛，也不保证命中最大模目标。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e25" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="严格按模最大" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e25</span><span class="aq-tag">特征值与幂法 · 严格按模最大</span></p>
-<p class="aq-prompt">幂法推导的全部依据建立在哪个前提上？</p>
+<p class="aq-prompt">在可对角化、初值含目标特征分量的标准幂法推导中，保证其余分量相对衰减的关键谱条件是</p>
 <ol class="aq-opts">
 <li>存在一个按模**严格**最大的特征值：$\lvert\lambda_1\rvert>\lvert\lambda_2\rvert\ge\cdots\ge\lvert\lambda_n\rvert$</li>
 <li>$A$ 是对称矩阵</li>
@@ -363,7 +363,7 @@
 </div>
 <div class="arena-q" data-id="e26" data-lv="4" data-a="2" data-tag="特征值与幂法" data-point="反幂法实现" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e26</span><span class="aq-tag">特征值与幂法 · 反幂法实现</span></p>
-<p class="aq-prompt">反幂法求按模最小的特征值，实际计算时应当</p>
+<p class="aq-prompt">设 $A$ 可逆，按模最小特征值唯一且初值含其特征分量。反幂法实际计算时应当</p>
 <ol class="aq-opts">
 <li>先显式求出 $A^{-1}$，再套幂法</li>
 <li>用 $\det A$ 和伴随矩阵求 $A^{-1}$</li>
@@ -374,36 +374,36 @@
 </div>
 <div class="arena-q" data-id="e27" data-lv="4" data-a="1" data-tag="特征值与幂法" data-point="位移反幂法" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e27</span><span class="aq-tag">特征值与幂法 · 位移反幂法</span></p>
-<p class="aq-prompt">已知 $\lambda_k$ 的一个近似值 $p$，想精确求出 $\lambda_k$，应当对哪个矩阵用反幂法？</p>
+<p class="aq-prompt">已知 $A$ 可对角化，$p$ 不是特征值，且 $\lambda_k$ 是离 $p$ 唯一最近的特征值，初值含其特征分量。要用位移反幂法精修 $\lambda_k$，应对哪个矩阵用反幂法？</p>
 <ol class="aq-opts">
 <li>$A$ 本身</li>
 <li>$A-pI$（位移后，$p$ 最接近的那个特征值变成模最小的）</li>
 <li>$A^{-1}$</li>
 <li>$pA$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>位移法：$A-pI$ 的特征值是 $\lambda_i-p$，其中 $\lvert\lambda_k-p\rvert$ 最小。对 $A-pI$ 用反幂法求出 $\lambda_k-p$，再加回 $p$ 得 $\lambda_k$。这是量子力学能级「精修」的标准手段。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$A-pI$ 的特征值为 $\lambda_i-p$，其逆的特征值为 $1/(\lambda_i-p)$；唯一最近条件使目标逆特征值严格按模占优。每步解 $(A-pI)u_{k+1}=y_k$，固定 $p$ 时可复用一次分解。若估计的是逆特征值 $\mu$，以 $p+1/\mu$ 还原；若直接算原矩阵 Rayleigh 商，已是原特征值估计。$p$ 恰为特征值时系统奇异，等距时也无严格模优势，均不能直接套用此保证。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e28" data-lv="4" data-a="0" data-tag="特征值与幂法" data-point="谱半径与范数" data-src="补充 2.5 · 第 6–7 讲" data-href="../supplement/sec25.html">
 <p class="aq-hd"><span class="aq-id">e28</span><span class="aq-tag">特征值与幂法 · 谱半径与范数</span></p>
 <p class="aq-prompt">对任意矩阵 $A$ 与任意**算子**范数，谱半径满足</p>
 <ol class="aq-opts">
-<li>$\rho(A)\le\lVert A\rVert$（等号对正规矩阵成立）</li>
+<li>$\rho(A)\le\lVert A\rVert$；正规矩阵在算子 2-范数下取等号</li>
 <li>$\rho(A)\ge\lVert A\rVert$</li>
 <li>$\rho(A)=\lVert A\rVert$ 恒成立</li>
 <li>二者没有确定的大小关系</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\rho(A)\le\lVert A\rVert$ 对一切算子范数成立；正规矩阵（含对称、正交）取等号。这正是「$\lVert G\rVert<1$ 是收敛的**充分**条件」的由来（因为 $\rho(G)\le\lVert G\rVert$）。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$\rho(A)\le\lVert A\rVert$ 对任意从属范数成立。正规矩阵仅保证 $\rho(A)=\|A\|_2$，不能推广到任意范数。例如正交矩阵 $A=\tfrac1{\sqrt2}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$ 有 $\rho(A)=1$，但 $\|A\|_\infty=\sqrt2$。这也说明范数收缩是便于检查的充分判据，而非指定范数下的必要判据。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e29" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="二分法" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e29</span><span class="aq-tag">非线性方程与插值 · 二分法</span></p>
-<p class="aq-prompt">设 $f$ 在 $[a,b]$ 上连续且 $f(a)f(b)<0$。二分法经 $n$ 次折半后的误差限是</p>
+<p class="aq-prompt">设 $f$ 在 $[a,b]$ 上连续且 $f(a)f(b)<0$。做 $n$ 次折半后，若输出保留区间中的任一点，下列哪个量恰为当前区间长度，可直接作为通用根位置误差上界？</p>
 <ol class="aq-opts">
 <li>$\dfrac{b-a}{n}$</li>
 <li>$\dfrac{b-a}{2^n}$</li>
 <li>$\dfrac{b-a}{2n}$</li>
 <li>$(b-a)^n$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>由介值定理有根；每折半一次区间长度减半，故 $n$ 次后 $|[a_n,b_n]|=\dfrac{b-a}{2^n}$。根始终被夹在其中，误差随区间长度一起变小。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>介值定理保证保留区间内至少有一个根；$n$ 次折半后区间长度为 $(b-a)/2^n$，区间内任一点到其中某个根的距离不超过此长度。若明确输出新保留区间的中点，可再除以 $2$，得到 $(b-a)/2^{n+1}$。题目采用任一点输出，故不能把区间长度与中点误差界混为一谈。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e30" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="不动点迭代两条件" data-src="第 7 讲" data-href="../lectures/lec07.html">
 <p class="aq-hd"><span class="aq-id">e30</span><span class="aq-tag">非线性方程与插值 · 不动点迭代两条件</span></p>
@@ -418,18 +418,18 @@
 </div>
 <div class="arena-q" data-id="e31" data-lv="5" data-a="0" data-tag="非线性方程与插值" data-point="牛顿法二阶收敛" data-src="第 8 讲" data-href="../lectures/lec08.html">
 <p class="aq-hd"><span class="aq-id">e31</span><span class="aq-tag">非线性方程与插值 · 牛顿法二阶收敛</span></p>
-<p class="aq-prompt">牛顿法 $x_{k+1}=x_k-\dfrac{f(x_k)}{f'(x_k)}$ 具有（至少）二阶收敛，其根本原因是</p>
+<p class="aq-prompt">设 $f\in C^2$、$s$ 为单根，初值充分接近 $s$。Newton 法具有局部至少二阶收敛，与下列哪个迭代函数性质相对应？</p>
 <ol class="aq-opts">
 <li>对应迭代函数 $\varphi(x)=x-\dfrac{f(x)}{f'(x)}$ 在根处 $\varphi'(s)=0$</li>
 <li>它每步都做除法</li>
 <li>它用了二阶导数</li>
 <li>它与二分法等价</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>收敛阶定理说：$\varphi'(s)=\cdots=\varphi^{(m-1)}(s)=0,\ \varphi^{(m)}(s)\ne0\Rightarrow m$ 阶。牛顿法 $\varphi'(s)=\dfrac{f(s)f''(s)}{[f'(s)]^2}=0$（因 $f(s)=0$），故**至少二阶**。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>单根保证 $f'(s)\ne0$，于是 $\varphi'(s)=f(s)f''(s)/[f'(s)]^2=0$。严格的二阶误差估计可直接由 Taylor 公式得到 $e_{k+1}=f''(\xi_k)e_k^2/(2f'(x_k))$，邻域内分子有界、分母远离零，所以 $|e_{k+1}|\le C|e_k|^2$。若 $f''(s)\ne0$ 才是恰二阶；若为零可能更快，且任意远处初值仍无此保证。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e32" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="牛顿全局收敛四条件" data-src="第 9 讲" data-href="../lectures/lec09.html">
 <p class="aq-hd"><span class="aq-id">e32</span><span class="aq-tag">非线性方程与插值 · 牛顿全局收敛四条件</span></p>
-<p class="aq-prompt">牛顿法**全局收敛定理**的四条条件中，核心是「**凸性与单调性都不变**」。下列哪条**不属于**这四条？</p>
+<p class="aq-prompt">设 $f\in C^2[a,b]$、$x_0\in[a,b]$。Newton 区间收敛定理的四条条件中，核心是“凸性与单调性都不变”。下列哪条不属于这四条？</p>
 <ol class="aq-opts">
 <li>$f(a)f(b)<0$</li>
 <li>$f''(x_0)\neq0$ 且 $f''$ 在 $[a,b]$ 上变号</li>
@@ -447,29 +447,29 @@
 <li>两个（$x_0,x_1$，因为用到前两步）</li>
 <li>不需要初值</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>割线法用**差商**代替导数，公式里同时出现 $x_k$ 与 $x_{k-1}$，故**必须提供两个初值**。它比牛顿法省一次求导，代价是收敛阶从 2 降到 $1.618$。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>公式同时需要 $x_k$ 与 $x_{k-1}$，故必须提供两个不同初值，并检查函数值之差不为零。复用旧函数值时每步只新增一次函数求值，但省求导不等于总成本一定更低。黄金比例阶是单根附近、足够光滑且非退化时的局部结论，不由“两初值”本身保证。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e34" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="割线法收敛阶" data-src="第 9 讲" data-href="../lectures/lec09.html">
 <p class="aq-hd"><span class="aq-id">e34</span><span class="aq-tag">非线性方程与插值 · 割线法收敛阶</span></p>
-<p class="aq-prompt">割线法的收敛阶 $r$ 满足</p>
+<p class="aq-prompt">设 $f\in C^2$，$s$ 为单根且 $f''(s)\ne0$，两个不同初值充分接近 $s$、差商分母非零，迭代不提前命中根。通常割线法的渐近收敛阶 $r$ 满足</p>
 <ol class="aq-opts">
 <li>$r=2$（与牛顿法相同）</li>
 <li>$r^2-r-1=0$，$r=\dfrac{1+\sqrt5}{2}\approx1.618$</li>
 <li>$r=1$（线性）</li>
 <li>$r=3$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>割线法的阶是**黄金比** $1.618$，由 $r^2=r+1$ 定出——介于线性（1）与二阶（2）之间的**超线性**收敛。别按整数记。<b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>局部误差主项满足 $e_{k+1}\sim C e_ke_{k-1}$，$C=f''(s)/(2f'(s))\ne0$。若 $|e_k|$ 相对上一步呈 $r$ 阶，则把两边都用 $|e_{k-1}|$ 的幂比较，得到 $r^2=r+1$，取正根 $r=(1+\sqrt5)/2$。这是超线性但低于二阶的通常非退化情形；线性函数等退化例子不服从此渐近阶结论。<b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e35" data-lv="5" data-a="0" data-tag="非线性方程与插值" data-point="单点割线法" data-src="第 9 讲" data-href="../lectures/lec09.html">
 <p class="aq-hd"><span class="aq-id">e35</span><span class="aq-tag">非线性方程与插值 · 单点割线法</span></p>
-<p class="aq-prompt">把割线法中的 $x_{k-1}$ **钉死为固定点 $x_0$**，得到单点割线法，其收敛阶变为</p>
+<p class="aq-prompt">单点割线法固定端点 $c=x_0$，另给充分接近根的迭代初值 $x_1\ne c$。设 $f\in C^1$、$f(s)=0$、$f(c)\ne0$，局部因子 $q=1-f'(s)(s-c)/[-f(c)]$ 满足 $0<|q|<1$，其局部收敛阶为</p>
 <ol class="aq-opts">
 <li>一阶（线性收敛）</li>
 <li>仍为黄金比 $1.618$</li>
 <li>二阶</li>
 <li>不收敛</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>单点割线法每次都用固定点 $(x_0,f(x_0))$ 与当前点连线，**收敛阶降为一阶**。这是「松一步、掉一档」的又一例：牛顿（2）→ 割线（1.618）→ 单点割线（1）。<b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>迭代函数为 $\psi(x)=x-f(x)(x-c)/(f(x)-f(c))$，在根处求导得 $\psi'(s)=q$。因此 $e_{k+1}=qe_k+o(e_k)$，当 $0<|q|<1$ 时恰为线性收敛。若 $|q|>1$ 则局部排斥，$q=0$ 时需进一步分析，不能无条件说固定端点就一定线性收敛。固定端点也不能与第一个当前迭代点重合，否则原差商无定义。<b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e36" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="拉格朗日基" data-src="第 9 讲" data-href="../lectures/lec09.html">
 <p class="aq-hd"><span class="aq-id">e36</span><span class="aq-tag">非线性方程与插值 · 拉格朗日基</span></p>
@@ -480,18 +480,18 @@
 <li>$l_i(x_i)=1,\ l_i(x_j)=0\ (j\neq i)$，故第 $i$ 个插值条件只剩 $b_i=f(x_i)$</li>
 <li>系数需要解范德蒙德方程组才能确定</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>拉格朗日基是「点灯」基：在**自己的节点取 1、其他节点取 0**。代入节点 $x_i$ 时其余项全为 0，方程退化为 $b_i=f(x_i)$——**系数就是函数值**，一步不用解病态的范德蒙德方程组。<b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>节点互异使分母非零。Lagrange 基是“点灯”基：在自己的节点取 $1$、其他节点取 $0$；代入 $x_i$ 时其余项全为零，故系数直接是 $f(x_i)$。这避免显式求解单项式系数的 Vandermonde 方程组，但不自动消除节点布置不当、数据噪声或求值舍入造成的误差，Vandermonde 也不是在所有节点和尺度下都同样病态。<b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e37" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="埃尔米特余项" data-src="第 11 讲" data-href="../lectures/lec11.html">
 <p class="aq-hd"><span class="aq-id">e37</span><span class="aq-tag">非线性方程与插值 · 埃尔米特余项</span></p>
-<p class="aq-prompt">$n+1$ 个互异节点、每个节点同时给函数值与一阶导数的埃尔米特插值，其余项是</p>
+<p class="aq-prompt">$n+1$ 个互异节点同时给函数值与一阶导数，$f\in C^{2n+2}$ 于包含节点和查询点的区间。次数至多 $2n+1$ 的 Hermite 插值多项式，其余项是</p>
 <ol class="aq-opts">
 <li>$\dfrac{f^{(n+1)}(\xi)}{(n+1)!}\prod\limits_{i=0}^{n}(x-x_i)$</li>
 <li>$\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod\limits_{i=0}^{n}(x-x_i)$</li>
 <li>$\dfrac{f^{(2n+2)}(\xi)}{(2n+2)!}\prod\limits_{i=0}^{n}(x-x_i)^2$</li>
 <li>$\dfrac{f^{(2n+1)}(\xi)}{(2n+1)!}\prod\limits_{i=0}^{n}(x-x_i)^2$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>条件共 $2n+2$ 个，分母必须是 $(2n+2)!$；每个节点同时约束函数值与导数，节点因子出现**两次**——所以是平方。第 11 讲用重节点差商 $f[x_i,x_i]=f'(x_i)$ 推出这条（教材定理 5.3 走辅助函数 + Rolle，同构）。</p><p><b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>函数值与一阶导数共有 $2n+2$ 个约束，所以插值次数至多 $2n+1$。余项中的导数阶数和阶乘均为 $2n+2$；每个节点是误差的二重零点，因此因子为 $(x-x_i)^2$。其中 $\xi$ 位于包含查询点和所有节点的最小区间内，通常随查询点改变；在节点上误差直接为零。第 11 讲用重节点差商 $f[x_i,x_i]=f'(x_i)$ 讲解这条公式，教材定理 5.3 采用辅助函数与 Rolle 定理。</p><p>这些条件也保证唯一性：两个满足条件的次数至多 $2n+1$ 的多项式之差，含有全部 $n+1$ 个二重零点，因而可被次数 $2n+2$ 的 $\prod_i(x-x_i)^2$ 整除，只能恒为零。余项左端取 $f(x)-H_{2n+1}(x)$，不是相反方向。</p><p><b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e38" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="最佳平方逼近的刻画" data-src="第 11 讲" data-href="../lectures/lec11.html">
 <p class="aq-hd"><span class="aq-id">e38</span><span class="aq-tag">非线性方程与插值 · 最佳平方逼近的刻画</span></p>
@@ -502,16 +502,16 @@
 <li>$(f-p^*,f)=0$</li>
 <li>$\max\lvert f-p^*\rvert$ 在 $M$ 中最小</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>这就是投影条件（教材定理 5.7）：只需对**基函数逐个**验证内积为零，等价于对整个子空间正交。选项 A 是**插值**条件——最佳平方逼近不过点（$\sqrt{x}$ 的例子在 $x=0$ 处等于 $4/15$）；选项 D 是**最佳一致逼近**，另一套度量；选项 C 的内积对象错了。</p><p><b>答案 B</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>在给定内积下，投影条件要求 $p^*\in M$，且误差对每个基函数都正交，因而对整个 $M$ 正交。对任意 $q\in M$，有 $\|f-q\|^2=\|f-p^*\|^2+\|p^*-q\|^2$，所以它等价于最佳平方逼近（教材定理 5.7）。最佳平方逼近不要求穿过采样点，但也不是绝不能过点；$\sqrt{x}$ 在 $[0,1]$ 上的一次逼近在 $x=0$ 取 $4/15$ 就说明它不是插值。D 是最佳一致逼近，使用另一种误差度量。</p><p><b>答案 B</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e39" data-lv="5" data-a="3" data-tag="非线性方程与插值" data-point="Gram 矩阵非奇异" data-src="第 11 讲" data-href="../lectures/lec11.html">
 <p class="aq-hd"><span class="aq-id">e39</span><span class="aq-tag">非线性方程与插值 · Gram 矩阵非奇异</span></p>
-<p class="aq-prompt">法方程 $G\boldsymbol a=\boldsymbol b$，$G_{ij}=(\varphi_i,\varphi_j)$。$G$ 非奇异的原因是</p>
+<p class="aq-prompt">设 $\{\varphi_0,\ldots,\varphi_n\}$ 在给定实内积空间中线性无关，最佳平方逼近的法方程为 $G\boldsymbol a=\boldsymbol b$，$G_{ij}=(\varphi_i,\varphi_j)$、$b_i=(f,\varphi_i)$。$G$ 非奇异的原因是</p>
 <ol class="aq-opts">
 <li>凡是内积写成的矩阵都可逆</li>
 <li>$G$ 对称，对称矩阵必可逆</li>
 <li>只要 $f$ 连续，$G$ 就可逆</li>
-<li>$\{\varphi_i\}$ 线性无关 $\Rightarrow$ $\boldsymbol c^{\mathrm T}G\boldsymbol c=\lVert\sum c_i\varphi_i\rVert^2>0$（正定）</li>
+<li>对非零 $\boldsymbol c$，由 $\{\varphi_i\}$ 在该内积空间中线性无关，得 $\boldsymbol c^{\mathrm T}G\boldsymbol c=\lVert\sum c_i\varphi_i\rVert^2>0$（正定）</li>
 </ol>
 <details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>课堂反证：$G\boldsymbol c=0$ 时，第 $i$ 个方程乘 $c_i$ 再求和，得 $\lVert\sum c_i\varphi_i\rVert^2=0$，由线性无关推出 $\boldsymbol c=0$——即 $G$ 正定、非奇异。**对称推不出可逆**（零矩阵对称）；$f$ 连续只保证右端 $\boldsymbol b$ 存在，与 $G$ 无关。</p><p><b>答案 D</b>。</p></div></details>
 </div>
@@ -524,7 +524,7 @@
 <li>逼近误差 $\lVert f-p\rVert$ 变小</li>
 <li>基函数的次数降低，计算更快</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>正交化**不改变**张成的子空间，最佳逼近与误差都不变；变的是方程组的**结构**：从满秩耦合变为对角，每个系数单独由一个内积给出。这就是老师反复说的「我们最希望 $A$ 是对角阵」。内积个数并不减少（正交基仍要算 $(f,\varphi_i)$ 与 $(\varphi_i,\varphi_i)$）。</p><p><b>答案 A</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>正交化不改变子空间，因此精确的最佳逼近和误差都不变；变的是正规方程结构。正交基下只需对角内积和右端内积即可分别求系数，不必再装配完整的稠密 Gram 矩阵。但构造正交基本身也要计算内积，若比较总成本，必须把这一步算进去；所以不能无条件把“减少内积个数”作为正交化的总成本结论。</p><p><b>答案 A</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e41" data-lv="5" data-a="2" data-tag="非线性方程与插值" data-point="√x 的一次最佳平方逼近" data-src="第 11 讲 · 教材例 8" data-href="../lectures/lec11.html">
 <p class="aq-hd"><span class="aq-id">e41</span><span class="aq-tag">非线性方程与插值 · √x 的一次最佳平方逼近</span></p>
@@ -535,11 +535,11 @@
 <li>$p(x)=\dfrac{4}{15}+\dfrac45x$</li>
 <li>$p(x)=\dfrac23+\dfrac25x$</li>
 </ol>
-<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$(1,1)=1,\ (1,x)=\tfrac12,\ (x,x)=\tfrac13,\ (f,1)=\tfrac23,\ (f,x)=\tfrac25$，法方程解得 $a=\tfrac{4}{15},\ b=\tfrac45$（教材例 8 同果）。选项 A 是 $f=x^2$ 的结果（对照题）；选项 D 是换区间到 $[-1,1]$ 后 $q_1(t)=\tfrac23+\tfrac25t$ 的**中间形式**，代回 $t=2x-1$ 后仍是 C。</p><p><b>答案 C</b>。</p></div></details>
+<details class="aq-exp"><summary>解析</summary><div class="exp-body"><p>$(1,1)=1,\ (1,x)=1/2,\ (x,x)=1/3,\ (f,1)=2/3,\ (f,x)=2/5$。故 $a+b/2=2/3,\ a/2+b/3=2/5$；第二式减第一式的一半得 $b/12=1/15$，即 $b=4/5,\ a=4/15$（教材例 8 同果）。选项 A 是 $f=x^2$ 的结果；D 是变量替换 $t=2x-1$ 后 $q_1(t)=2/3+2t/5$ 的中间形式，代回才得到 C。</p><p><b>答案 C</b>。</p></div></details>
 </div>
 <div class="arena-q" data-id="e42" data-lv="5" data-a="1" data-tag="非线性方程与插值" data-point="Legendre 正交性" data-src="第 11 讲" data-href="../lectures/lec11.html">
 <p class="aq-hd"><span class="aq-id">e42</span><span class="aq-tag">非线性方程与插值 · Legendre 正交性</span></p>
-<p class="aq-prompt">Legendre 多项式系 $\{L_n\}$ 在 $[-1,1]$（权 $1$）下的正交关系是</p>
+<p class="aq-prompt">采用标准归一化 $L_n(1)=1$ 的 Legendre 多项式系，在 $[-1,1]$（权 $1$）下的正交关系是</p>
 <ol class="aq-opts">
 <li>$\displaystyle\int_{-1}^{1}L_nL_m\,dx=\delta_{nm}$</li>
 <li>$\displaystyle\int_{-1}^{1}L_nL_m\,dx=\frac{2}{2n+1}\delta_{nm}$</li>

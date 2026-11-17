@@ -2,7 +2,7 @@
 
 > **本节属“补充篇 · 数值线性代数工具箱”**：2.x 是补充篇内部编号，不是课堂第 2 章的节号。课堂第 2 章是[线性方程组的解法](../course/ch02/overview.md)。
 
-第一章把「向量有多长」公理化为范数，但长度不是几何的全部：要谈角度与「垂直」，还需要一个能同时给出长度与角度的装置——**内积**。有了内积才有正交、标准正交基，把它们按列排成方阵就得到**正交矩阵**：「不改变长度与角度的坐标变换」，也是 QR 分解、SVD 与全部稳定算法的基石。本节三步：内积公理化（2.1.1）；正交与标准正交基（2.1.2）；刻画正交矩阵（2.1.3）。
+第一章把「向量有多长」公理化为范数，但要谈角度与垂直，还需要一个同时描述两个向量关系的量——**内积**。内积给出正交和标准正交基；在 Euclid 内积下，把标准正交基按列排成方阵，就得到不改变长度与角度的**正交矩阵**。这些工具用于 QR 分解、SVD 和许多数值稳定算法。本节依次讨论内积公理（2.1.1）、正交与标准正交基（2.1.2）、正交矩阵（2.1.3）；除特别注明外，矩阵部分使用 Euclid 内积。
 
 <a id="sup-2.1.1"></a>
 
@@ -29,6 +29,14 @@ $$\lVert\boldsymbol{x}\rVert=\sqrt{\langle\boldsymbol{x},\boldsymbol{x}\rangle},
 :::
 
 **在 $\mathbb{R}^n$ 中最常用的内积**是 $\langle\boldsymbol{x},\boldsymbol{y}\rangle=\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=\sum_ix_iy_i$，称为 **Euclid 内积**，它诱导的范数就是 $\lVert\cdot\rVert_2$。但满足内积公理的远不止它一个：
+
+为什么点积能描述角度？对非零向量，Euclid 几何中的余弦定理给出
+
+$$\lVert\boldsymbol{x}-\boldsymbol{y}\rVert_2^2=\lVert\boldsymbol{x}\rVert_2^2+\lVert\boldsymbol{y}\rVert_2^2-2\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2\cos\theta.$$
+
+另一方面，展开左边得到 $\lVert\boldsymbol{x}\rVert_2^2+\lVert\boldsymbol{y}\rVert_2^2-2\boldsymbol{x}^{\mathrm T}\boldsymbol{y}$，两式比较便有 $\cos\theta=\boldsymbol{x}^{\mathrm T}\boldsymbol{y}/(\lVert\boldsymbol{x}\rVert_2\lVert\boldsymbol{y}\rVert_2)$。一般实内积也用同样的比值定义夹角；下文的 Cauchy–Schwarz 不等式保证比值落在 $[-1,1]$。零向量不定义夹角，但仍可按内积是否为零讨论正交。
+
+函数也能作为向量。例如在 $C[a,b]$（$a<b$）上定义 $\langle f,g\rangle=\int_a^b f(t)g(t)\,\mathrm dt$，对称性与线性来自积分，非零连续函数在某个小区间上有 $f(t)^2>0$，故 $\int_a^b f(t)^2\,\mathrm dt>0$。这解释了第五章为什么可以把函数逼近写成投影问题。连续性在这里也保证正定性；若改用一般平方可积函数，就要把几乎处处相等的函数视为同一个元素。
 
 ::: ex 例 2.1.1（新增） · 加权内积是一族合法的内积 {#ex-sup-2.1.1}
 设 $D=\operatorname{diag}(d_1,\dots,d_n)$，其中所有 $d_i\gt0$。定义
@@ -73,7 +81,7 @@ $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2+2\lan
 
 ### 哪些范数来自内积？——一个判别法
 
-不是每个范数都能由内积诱导：$\lVert\cdot\rVert_1,\lVert\cdot\rVert_\infty$ 就不行。判别工具是下面两条**恒等式**——一个范数究竟来自内积还是另有出处，会在它身上留下可检验的痕迹。
+不是每个范数都能由内积诱导：在维数至少为 2 的空间中，$\lVert\cdot\rVert_1,\lVert\cdot\rVert_\infty$ 就不行。判别工具是下面两条恒等式。
 
 ::: intuition 直觉 · 平行四边形恒等式在说什么
 内积空间里的范数满足初中就学过的**平行四边形法则**：两条对角线的平方和 $=$ 四条边的平方和。这条性质之所以关键，是因为内积可以用范数**反算**回来（极化恒等式）——所以「范数来自内积」和「范数满足平行四边形恒等式」是同一件事。$\lVert\cdot\rVert_1$、$\lVert\cdot\rVert_\infty$ 在 $\boldsymbol{x}=(1,0),\boldsymbol{y}=(0,1)$ 上立刻露馅：它们的「单位球」有棱角，不是椭圆。
@@ -94,7 +102,7 @@ $$\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2+2\lan
 \lVert\boldsymbol{x}-\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2-2\langle\boldsymbol{x},\boldsymbol{y}\rangle+\lVert\boldsymbol{y}\rVert^2 .$$
 两式相加即得（2.2）；相减即得（2.3）。
 
-**逆方向**（Jordan–von Neumann 定理的有限维版）：由（2.3）定义 $\langle\cdot,\cdot\rangle$，对称性显然（交换 $\boldsymbol{x},\boldsymbol{y}$ 只对调两个平方项），正定性来自范数的正定性（$\boldsymbol{y}=\boldsymbol{x}$ 代入（2.3）即得诱导范数还原：$\langle\boldsymbol{x},\boldsymbol{x}\rangle=\lVert\boldsymbol{x}\rVert^2$）。
+**逆方向**（Jordan–von Neumann 定理的有限维版）：由（2.3）定义 $\langle\cdot,\cdot\rangle$。交换 $\boldsymbol{x},\boldsymbol{y}$ 时，第一项不变，第二项因 $\lVert\boldsymbol{y}-\boldsymbol{x}\rVert=\lVert\boldsymbol{x}-\boldsymbol{y}\rVert$ 也不变，故对称性成立。正定性来自范数的正定性：取 $\boldsymbol{y}=\boldsymbol{x}$ 即得 $\langle\boldsymbol{x},\boldsymbol{x}\rangle=\lVert\boldsymbol{x}\rVert^2$，也说明诱导范数还原为原范数。
 
 线性性是真正的难关：加法要靠一条关键恒等式 $\langle\boldsymbol{x}+\boldsymbol{z},\boldsymbol{y}\rangle+\langle\boldsymbol{x}-\boldsymbol{z},\boldsymbol{y}\rangle=2\langle\boldsymbol{x},\boldsymbol{y}\rangle$（把（2.3）代入、四个平方和用（2.2）两两配对）；齐次性则按「整数归纳 → 有理数 → 实数（用范数连续性）」三段推进。完整证明见[附录 A.2.1](../appendix/derivations.md#app-a-2-1)。
 :::
@@ -111,17 +119,17 @@ $\boldsymbol{x}+\boldsymbol{y}=(1,1)^{\mathrm T}$，$\boldsymbol{x}-\boldsymbol{
 
 **1-范数：** $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert_1^2=4$，$\lVert\boldsymbol{x}-\boldsymbol{y}\rVert_1^2=4$，左端 $=8$；右端 $=2\times1+2\times1=4$。$8\neq4$，失败。
 
-**几何读法：** 内积空间里，任意两个向量张成的「平面切片」上的单位球必是椭圆（没有棱角）。$\lVert\cdot\rVert_1$ 的单位球是菱形、$\lVert\cdot\rVert_\infty$ 是正方形——**有棱角，就不是内积空间**。这也解释了为什么最小二乘、投影、SVD 这些工具天然属于 2-范数：只有 2-范数来自内积。
+**几何读法：** 内积诱导范数在二维子空间上的单位球是椭圆；$\lVert\cdot\rVert_1$ 的单位球是菱形、$\lVert\cdot\rVert_\infty$ 是正方形，因而不是内积诱导的范数。Euclid 投影与通常的 SVD 使用 2-范数；加权内积也能定义自己的正交与投影。
 :::
 
 :::
 
-::: note 课堂对照（2026 秋·庞刚）
-例 2.1.2 的「单位球有棱角就不是内积空间」，在[第 2 讲精编](../lectures/lec02.md)里有对应的板书几何直观：$\lVert\boldsymbol{x}\rVert_2=1$ 是球面、$\lVert\boldsymbol{x}\rVert_1$（三维）是正八面体、$\lVert\boldsymbol{x}\rVert_\infty$ 是立方体（盒子）——有没有棱角，一画便知。
+::: note 课堂对照（2026 秋·庞刚；整理稿，原录音待核）
+例 2.1.2 可与[第 2 讲整理稿](../lectures/lec02.md)记录的板书几何直观对照：$\lVert\boldsymbol{x}\rVert_2=1$ 是球面，三维的 $\lVert\boldsymbol{x}\rVert_1=1$ 是正八面体，$\lVert\boldsymbol{x}\rVert_\infty=1$ 是立方体（盒子）。这些图形的课堂记录可追溯到整理稿；「是否来自内积」的判别与证明是本节的数学说明，不作为老师原话。
 :::
 
 ::: think 思考 · 2-范数为什么在数值分析里「特权」这么大
-（2.1）与（2.2）划出一条明确的分界：**只有 2-范数拥有内积结构**，因此正交、投影、正交变换、奇异值这一整套几何工具也只对 2-范数开放。1-范数与 ∞-范数在**误差界**与**稀疏性**（[1.3.6](../ch01/sec13.md#sec-1.3.6)、[附录 C.6](../appendix/connections.md#app-c-6-1)）上有独特价值，但「正交化」「投影」「SVD」这些词只对 2-范数有意义。这不是偏好，而是数学结构决定的。
+标准 $p$-范数中，维数至少为 2 时只有 2-范数由内积诱导；因此通常的正交投影与 SVD 使用 Euclid 内积。加权内积也有相应的正交与投影，只是度量不同。1-范数和 ∞-范数同样可以用于最小距离问题与误差界，但其最优解不能直接套用 Euclid 正交投影公式。
 :::
 
 <a id="sup-2.1.2"></a>
@@ -141,6 +149,8 @@ $\boldsymbol{x}+\boldsymbol{y}=(1,1)^{\mathrm T}$，$\boldsymbol{x}-\boldsymbol{
 - 若 $V$ 的标准正交组含 $\dim V$ 个向量，则它是 $V$ 的**标准正交基**（orthonormal basis）。
 :::
 
+正交依赖所用内积，而不只依赖向量本身。例如 $\boldsymbol{x}=(1,1)^{\mathrm T}$、$\boldsymbol{y}=(1,-1)^{\mathrm T}$ 在 Euclid 内积下正交；若 $D=\operatorname{diag}(2,1)$，则 $\langle\boldsymbol{x},\boldsymbol{y}\rangle_D=2-1=1$，不再正交。下文用 $Q^{\mathrm T}Q=I$ 表示标准正交，特指 Euclid 内积；加权情形应写成 $Q^{\mathrm T}DQ=I$。
+
 ::: thm 定理 2.1.3（新增） · 正交组必线性无关 {#thm-sup-2.1.3}
 内积空间中任一不含零向量的正交组 $\{\boldsymbol{v}_1,\dots,\boldsymbol{v}_k\}$ 线性无关。
 
@@ -157,7 +167,7 @@ $$0=\Bigl\langle\sum_ic_i\boldsymbol{v}_i,\ \boldsymbol{v}_j\Bigr\rangle=\sum_ic
 :::
 
 ::: thm 定理 2.1.4（新增） · 勾股定理与标准正交基下的坐标 {#thm-sup-2.1.4}
-设 $\{\boldsymbol{q}_1,\dots,\boldsymbol{q}_k\}$ 是标准正交组。
+设 $\{\boldsymbol{q}_1,\dots,\boldsymbol{q}_k\}$ 是标准正交组，且 $\boldsymbol{x},\boldsymbol{y}$ 属于它张成的子空间。
 
 1. **勾股定理：** 若 $\boldsymbol{x}=\sum_i\alpha_i\boldsymbol{q}_i$，$\boldsymbol{y}=\sum_i\beta_i\boldsymbol{q}_i$ 且 $\boldsymbol{x}\perp\boldsymbol{y}$，则 $\lVert\boldsymbol{x}+\boldsymbol{y}\rVert^2=\lVert\boldsymbol{x}\rVert^2+\lVert\boldsymbol{y}\rVert^2$；
 2. **坐标公式：** $\alpha_i=\langle\boldsymbol{x},\boldsymbol{q}_i\rangle$，即 $\boldsymbol{x}=\sum_{i=1}^{k}\langle\boldsymbol{x},\boldsymbol{q}_i\rangle\boldsymbol{q}_i$；
@@ -178,7 +188,7 @@ $$\lVert\boldsymbol{x}\rVert^2=\Bigl\langle\sum_i\langle\boldsymbol{x},\boldsymb
 
 :::
 
-**（2）是最值钱的公式**：标准正交基下求坐标不需要解方程组，每个坐标就是一次内积（$O(n^3)$ 的求解退化为 $O(n^2)$ 的内积）。2.3 节的 QR 分解，本质就是**制造**这样一组基，把求解变廉价。把标准正交基按列排成方阵会得到什么？答案是**正交矩阵**——2.1.3 的主题。
+**（2）把求坐标化成了内积**：对一组已经给定的 $n$ 维标准正交基，求全部坐标只需 $n$ 次内积，成本为 $O(n^2)$；对一般基，直接分解坐标方程的成本通常为 $O(n^3)$。这里没有计入构造正交基的费用；同一组基处理多个向量时，预先构造的代价可以摊开。2.3 节的 QR 分解就是构造这种基，同时把剩下的系数关系存成上三角矩阵。把标准正交基按列排成方阵，便得到 2.1.3 的正交矩阵。
 
 ::: ex 例 2.1.3（新增） · 标准正交基下的坐标与 Parseval 核对 {#ex-sup-2.1.3}
 （1）验证
@@ -252,7 +262,7 @@ $$\boldsymbol{q}_3'=\frac{1}{\sqrt6}\begin{pmatrix}1\\-1\\-2\end{pmatrix},\qquad
 
 - 长度不变（$\lVert Q\boldsymbol{x}\rVert=\lVert\boldsymbol{x}\rVert$），距离与夹角也不变；
 - 逆变换极其便宜：$Q^{-1}=Q^{\mathrm T}$（转置不用真的算，只是换个存储顺序）；
-- **误差不被放大**：$\lVert Q\boldsymbol{x}\rVert=\lVert\boldsymbol{x}\rVert$ 意味着浮点误差经过正交变换后仍然只受机器精度支配。
+- **已有误差不被放大**：精确施加 $Q$ 时，误差向量的 2-范数不变；浮点运算本身仍会引入新的舍入误差。
 
 前两条让正交矩阵成为**最理想的坐标系**（QR 分解、SVD、特征值算法的全部中间步骤都在反复使用正交变换），第三条则是数值稳定性理论的核心（[2.3.5](sec23.md#sup-2.3.5) 会用到）。
 :::
@@ -266,7 +276,7 @@ $$Q^{\mathrm T}Q=I, \tag{2.4}$$
 :::
 
 ::: thm 定理 2.1.5（新增） · 正交矩阵的等价刻画 {#thm-sup-2.1.5}
-对 $Q\in\mathbb{R}^{n\times n}$，下列命题互相等价：
+对 $Q\in\mathbb{R}^{n\times n}$，下列第 1–8 条与第 10 条互相等价；第 9、11 条是正交矩阵的必要条件，但单独不能推出正交性：
 
 | # | 命题 | 一句话含义 |
 |:--:|:--|:--|
@@ -282,8 +292,8 @@ $$Q^{\mathrm T}Q=I, \tag{2.4}$$
 | 10 | $Q$ 的奇异值全为 $1$；$\lVert Q\rVert_2=\mathrm{cond}_2(Q)=1$ | 奇异值视角 |
 | 11 | $Q$ 的（复）特征值模全为 $1$ | 特征值视角 |
 
-::: proof 证明（挑六个关键的，其余留作[习题 B1](exercises.md)）
-**1 ⟹ 3 ⟹ 2：** 由 $Q^{\mathrm T}Q=I$ 知 $Q$ 可逆（$\det(Q^{\mathrm T}Q)=(\det Q)^2=1\neq0$），于是 $Q^{-1}=Q^{-1}I=Q^{-1}(Q^{\mathrm T}Q)=(Q^{-1}Q)Q^{\mathrm T}=Q^{\mathrm T}$，这就是 3；再由 $QQ^{\mathrm T}=Q Q^{-1}=I$ 得 2。
+::: proof 证明（关键等价关系；其余见[习题 B1](exercises.md)）
+**1 ⟹ 3 ⟹ 2：** 由 $Q^{\mathrm T}Q=I$ 得 $(\det Q)^2=1$，故 $Q$ 可逆。对等式右乘 $Q^{-1}$ 得 $Q^{\mathrm T}=Q^{-1}$，进而 $QQ^{\mathrm T}=I$。
 
 **1 ⟺ 4：** 记 $Q=[\boldsymbol{q}_1,\dots,\boldsymbol{q}_n]$，则 $(Q^{\mathrm T}Q)_{ij}=\boldsymbol{q}_i^{\mathrm T}\boldsymbol{q}_j=\delta_{ij}$，正是「两两正交且范数为 1」。
 
@@ -293,16 +303,16 @@ $$Q^{\mathrm T}Q=I, \tag{2.4}$$
 
 **7 ⟹ 1：** 由 7，$\boldsymbol{x}^{\mathrm T}Q^{\mathrm T}Q\boldsymbol{x}=\boldsymbol{x}^{\mathrm T}\boldsymbol{x}$ 对一切 $\boldsymbol{x}$，即 $\boldsymbol{x}^{\mathrm T}(Q^{\mathrm T}Q-I)\boldsymbol{x}=0$。记 $S=Q^{\mathrm T}Q-I$，它是对称阵。取 $\boldsymbol{x}$ 为 $\boldsymbol{e}_i$ 得 $s_{ii}=0$；取 $\boldsymbol{x}=\boldsymbol{e}_i+\boldsymbol{e}_j$ 得 $2s_{ij}=0$。故 $S=O$，即 $Q^{\mathrm T}Q=I$。
 
-**9：** $1=\det I=\det(Q^{\mathrm T}Q)=\det(Q^{\mathrm T})\cdot\det Q=(\det Q)^2$，故 $\lvert\det Q\rvert=1$。
+**9：** $1=\det(Q^{\mathrm T}Q)=(\det Q)^2$，故 $|\det Q|=1$。反过来不成立，例如 $\operatorname{diag}(2,1/2)$ 行列式为 1，却不保长度。
 
 **10：** $Q^{\mathrm T}Q=I$ 的特征值全是 $1$，故奇异值全为 $1$，$\lVert Q\rVert_2=\sigma_{\max}=1$、$\mathrm{cond}_2(Q)=\sigma_1/\sigma_n=1$。（用 [@thm-1.3.5] 与 [2.6.2](sec26.md#sup-2.6.2) 的奇异值刻画。）
 
-**11：** 设 $Q\boldsymbol{v}=\lambda\boldsymbol{v}$（$\boldsymbol{v}\neq\boldsymbol{0}$），取 2-范数并用 7：$\lVert\boldsymbol{v}\rVert_2=\lVert Q\boldsymbol{v}\rVert_2=\lvert\lambda\rvert\lVert\boldsymbol{v}\rVert_2$，故 $\lvert\lambda\rvert=1$。
+**11：** 设 $Q\boldsymbol v=\lambda\boldsymbol v$（$\boldsymbol v\ne0$），由保长度得 $|\lambda|=1$。反过来不成立，例如 $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 的特征值均为 1，却不是正交矩阵。
 :::
 
 :::
 
-**关于第 9 条的几何含义：** $\lvert\det Q\rvert=1$ 说明正交变换**保持体积**（第一章的 Jacobi 行列式出现在换元积分里，而正交变换的 Jacobi 行列式恰好是 $\pm1$）。再看符号：$\det Q=+1$ 对应**旋转**（保定向），$\det Q=-1$ 对应**镜像 / 反射**（反定向）——这正是两类正交变换的本质区别，也是 [2.3.3](sec23.md#sup-2.3.3) 的 Householder 反射（$\det=-1$）与 [2.3.4](sec23.md#sup-2.3.4) 的 Givens 旋转（$\det=+1$）的分界线。
+**关于第 9 条的几何含义：** $\lvert\det Q\rvert=1$ 说明正交变换保持体积，换元积分中的 Jacobi 行列式绝对值因而为 $1$。符号区分定向：$\det Q=+1$ 保定向，$\det Q=-1$ 反定向。在二维，后者就是关于一条过原点直线的反射；高维时还可能是反射与旋转的复合，不能仅凭行列式为 $-1$ 就认定为一次超平面反射。[Householder 反射](sec23.md#sup-2.3.4)的行列式为 $-1$，[Givens 旋转](sec23.md#sup-2.3.5)的行列式为 $+1$，它们是两类具体的构造。
 
 ::: ex 例 2.1.4（新增） · 二维的旋转与反射 {#ex-sup-2.1.4}
 验证平面旋转矩阵与反射矩阵都是正交矩阵，并计算各自的行列式：
@@ -346,11 +356,7 @@ $$\lVert QA\rVert_F^2=\operatorname{tr}\bigl((QA)^{\mathrm T}QA\bigr)=\operatorn
 :::
 
 ::: think 思考 · 正交变换为什么能「不放大误差」
-用浮点数执行一次正交变换，误差来自两处：变换本身的舍入（相对误差 $\sim u$，见 [1.2.5](../ch01/sec12.md#sec-1.2.5)）与**放大因子**（由 [@thm-sup-2.1.6]，放大因子 $=1$）。因此
-
-$$\lVert \widetilde{Q A}-QA\rVert_F\approx\lVert QA\rVert_F\cdot c\,u=\lVert A\rVert_F\cdot c\,u$$
-
-——**误差与矩阵大小同比例，不随变换次数累积**。对比一下：若换成非正交的变换矩阵 $S$（如一般的消元算子），放大因子是 $\mathrm{cond}(S)$，$\mathrm{cond}\gg1$ 时误差就会被放大。**这正是 2.3 节的正交化（Householder / Givens）与 2.6 节的 SVD 都坚持用正交变换的原因**，也是 QR 方法解最小二乘比正态方程稳定的原因（[2.3.5](sec23.md#sup-2.3.5)）。
+精确算术下，已有误差 $E$ 经正交变换后满足 $\|QE\|_F=\|E\|_F$。但计算 $QA$ 时仍会产生新的舍入误差；连续做多次变换时，这些新误差也会累积。稳定性分析需要估计各步误差及维数因子，而不能仅凭保范数断言总误差不增长。正交变换的优势是它不会再把已有误差按变换本身的条件数放大。
 :::
 
 <a id="sup-2.1.4"></a>
@@ -376,7 +382,7 @@ $$\lVert \widetilde{Q A}-QA\rVert_F\approx\lVert QA\rVert_F\cdot c\,u=\lVert A\r
 
 ::: think[core] 常见错误清单 · 自查五条
 1. **「范数都是 $1$」就当作标准正交。** 范数为 $1$ 只保证「标准」，「正交」必须**逐个验证内积为零**——例 2.1.3 的三个向量范数全对，但 $\boldsymbol{r}_2^{\mathrm T}\boldsymbol{r}_3=-2/\sqrt{18}\neq0$，于是坐标公式与 Parseval **同时静默失效**。判定流程：先算全部两两内积，再算范数。
-2. **把 $\lVert\cdot\rVert_1$ 或 $\lVert\cdot\rVert_\infty$ 当成内积范数。** 它们不满足平行四边形恒等式（[@ex-sup-2.1.2]），因此**没有**正交、投影、SVD 这套工具。见到「正交」二字，默认内积是 Euclid 内积。
+2. **把高维空间上的 $\lVert\cdot\rVert_1$ 或 $\lVert\cdot\rVert_\infty$ 当成内积范数。** 它们不满足平行四边形恒等式（[@ex-sup-2.1.2]）；但仍可另选 Euclid 或加权内积定义正交与投影，需说明所用度量。
 3. **以为「正交矩阵的逆要算」**。$Q^{-1}=Q^{\mathrm T}$，转置是 $O(n^2)$ 的数据搬移，不需要 $O(n^3)$ 的求逆。代码里出现 `np.linalg.inv(Q)`，基本可以断定是错的。
 4. **混淆「列正交」与「正交矩阵」。** 长方阵 $Q\in\mathbb{R}^{m\times n}$（$m\gt n$）满足 $Q^{\mathrm T}Q=I_n$，但 $QQ^{\mathrm T}\neq I_m$——它是一个 $m$ 阶投影矩阵（[2.2.4](sec22.md#sup-2.2.4)）。只有方阵才有 $Q^{-1}=Q^{\mathrm T}$。
 5. **以为内积只有 $\boldsymbol{x}^{\mathrm T}\boldsymbol{y}$ 一种。** 加权内积 $\boldsymbol{x}^{\mathrm T}D\boldsymbol{y}$（$D$ 对称正定）同样合法且常用；不同的内积给出**不同的**正交性与投影——「投影」必须说明是在哪个内积下。切换内积时，$\boldsymbol{x}^{\mathrm T}\boldsymbol{y}=0$ 不再是正交的判据。
@@ -384,6 +390,6 @@ $$\lVert \widetilde{Q A}-QA\rVert_F\approx\lVert QA\rVert_F\cdot c\,u=\lVert A\r
 
 ::: preview 课程预告 · 本节之后
 - 有了正交，就能定义**投影**（把向量「垂直地」拍到一个子空间上），进而得到最小二乘与四个基本子空间的正交补结构——[2.2](sec22.md)；
-- 有了正交矩阵，就能用**正交变换**把矩阵化为三角形（QR 分解），并证明它的误差不放大——[2.3](sec23.md)；
+- 有了正交矩阵，就能用**正交变换**把矩阵化为三角形（QR 分解），并在分析中避免放大已有误差；新产生的舍入误差仍须估计——[2.3](sec23.md)；
 - 有了内积，就可以定义**奇异值**（2.6）与 **Rayleigh 商**（2.5.4），把「矩阵有多大」「多敏感」讲成几何。
 :::

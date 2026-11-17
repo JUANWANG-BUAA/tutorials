@@ -22,11 +22,11 @@
 
 ::: ex A2 · 「减法比加法危险」辨析
 
-由 $\varepsilon(a\pm b)=\varepsilon(a)+\varepsilon(b)$ 可见，加与减的**绝对**误差限算法完全相同。为什么实践中只说「减法危险」？危险在什么条件下出现？
+加减法都可用 $\varepsilon(a)+\varepsilon(b)$ 作为绝对误差限。为什么相近数相减可能造成较大的相对误差？加法会不会出现类似情况？
 
 ::: sol 解答
 
-危险的是**相对**误差限：$\varepsilon_{\mathrm r}(a-b)=\dfrac{\varepsilon(a)+\varepsilon(b)}{\lvert a-b\rvert}$。当 $a,b$ 相近（$\lvert a-b\rvert$ 远小于 $\lvert a\rvert,\lvert b\rvert$）时分母极小，相对误差爆炸、有效数字大量丢失（极端例子见[@ex-1.2.7]：两个 4 位有效数字的数相减后连 1 位都不剩）。加法的分母 $\lvert a+b\rvert$ 通常不小于较大的操作数，故无此问题。**危险条件：两数近似相等。**绝对误差限公式对加减一视同仁，危险来自相对化。
+相对误差还要除以结果的大小：当 $a,b$ 相近时，$|a-b|$ 可能很小，输入误差在差值中所占的比例就可能很大。加法也可能发生相消：例如 $a=1.414$、$b=-1.413$，若两者的误差限都是 $0.0005$，则 $a+b=0.001$，误差限为 $0.001$，以近似结果为分母的相对误差限达到 $100\%$。风险在于结果相对于输入很小，而不是减号本身。
 
 :::
 
@@ -42,10 +42,10 @@
 
 ::: sol 解答
 
-(a) $2.1400$：5 位有效数字，$\varepsilon=\tfrac12\times10^{-4}$；$2.14$：3 位，$\varepsilon=\tfrac12\times10^{-2}$。前者更精确。**写出的尾零是有效数字声明，不能随意省略。**
+(a) 两个写法表示同一个数，作为同一真值的近似时，实际误差相同。末尾零可以用来声明测量精度，但仅凭写法不能确定误差限；若另行说明两者分别是四舍五入到所写末位的结果，才可分别取 $0.00005$ 与 $0.005$ 作为误差限。
 (b) 准确值自身的有效数字可视为无限多位（误差恒为零）。
-(c) $a=-0.100031\times10^{1}$：$\tfrac12\times10^{1-n}=0.0005=\tfrac12\times10^{-3}\Rightarrow n=4\ (\le6$ 位写出$)$，4 位；$b=0.42\times10^{-1}$：$\tfrac12\times10^{-1-n}=\tfrac12\times10^{-3}\Rightarrow n=2$，2 位（$4,2$）；$c=-0.32\times10^{-3}$：需 $\tfrac12\times10^{-3-n}=\tfrac12\times10^{-3}\Rightarrow n=0$，**没有**有效数字（误差限 $0.0005$ 已是首位有效数字 $10^{-4}$ 位半单位的 10 倍，连第一位都保不住，写法与误差限不匹配）。
-(d) $\displaystyle\int_0^1 e^{-x^2}dx=0.74682413\cdots$，4 位有效数字意味着 $a=0.7468=0.7468\times10^0$，$\varepsilon(a)=\tfrac12\times10^{0-4}=0.00005$。
+(c) $a=-0.100031\times10^{1}$：$\tfrac12\times10^{1-n}=0.0005$ 给出 $n=4$；$b=0.42\times10^{-1}$：$\tfrac12\times10^{-1-n}=0.0005$ 给出 $n=2$。对 $c=-0.32\times10^{-3}$，给定误差限大于首位的半个单位，因而不能保证第一位有效；这不等于断言它的实际误差也一定这么大。
+(d) $\displaystyle\int_0^1 e^{-x^2}dx=0.74682413\cdots$，因此满足题设的近似值与积分同量级，可取 $m=0$。四位有效数字要求误差限不超过 $\tfrac12\times10^{0-4}=0.00005$；例如四舍五入可取 $a=0.7468$，但题设本身不要求 $a$ 必须等于这个数。
 
 :::
 
@@ -62,7 +62,7 @@
 ::: sol 解答
 
 (a) **对**。取 $B=A^{\mathrm T}$：$\lVert A A^{\mathrm T}\rVert_2=\lambda_{\max}(AA^{\mathrm T})=\sigma_{\max}(A)^2=\lVert A\rVert_2^2$；或平凡地取 $B=I$。
-(b) **错**。$\lVert I\rVert_F=\sqrt n\neq1$，而任何算子范数必有 $\lVert I\rVert=1$（见 1.3.3 推论）。
+(b) **一般不对**。当 $n\ge2$ 时，$\lVert I\rVert_F=\sqrt n\neq1$，而任何算子范数必有 $\lVert I\rVert=1$（见 1.3.3 推论）。$n=1$ 时，F-范数退化为绝对值，确实是从属范数。
 (c) **对**。$A$ 对称正定时 $A^{\mathrm T}A=A^2$，特征值为 $\lambda_i^2$，$\sqrt{\lambda_{\max}(A^2)}=\lambda_{\max}(A)$。
 (d) **错**。这正是范数等价定理（[@thm-1.3.3]）：$m\lVert\boldsymbol{u}_k\rVert_\beta\le\lVert\boldsymbol{u}_k\rVert_\alpha\le M\lVert\boldsymbol{u}_k\rVert_\beta$，一侧趋于零则另一侧必趋于零。会变的是误差界的**大小**与停机**步数**，不是收敛与否。
 
@@ -131,7 +131,7 @@ $$1=\text{(数 1)}\le\lVert I\rVert=\lVert A\,A^{-1}\rVert\le\lVert A\rVert\,\lV
 
 $$\lVert\boldsymbol{x}\rVert_*:=N\bigl(\boldsymbol{x}\,\boldsymbol{b}^{\mathrm T}\bigr),\qquad\boldsymbol{x}\in\mathbb{R}^n .$$
 
-（$\boldsymbol{x}\boldsymbol{b}^{\mathrm T}$ 是把 $\boldsymbol{x}$ 复制到列方向的秩 1 矩阵，$\boldsymbol{x}=\boldsymbol{0}\iff$ 该矩阵为零矩阵。）验证三条向量范数公理：
+（$\boldsymbol{x}\boldsymbol{b}^{\mathrm T}$ 的第 $j$ 列是 $b_j\boldsymbol{x}$，故它的秩至多为 1；因 $\boldsymbol b\ne\boldsymbol0$，$\boldsymbol{x}=\boldsymbol{0}\iff$ 该矩阵为零矩阵。）验证三条向量范数公理：
 
 (1) $\lVert\boldsymbol{x}\rVert_*\ge0$；$\lVert\boldsymbol{x}\rVert_*=0\iff\boldsymbol{x}\boldsymbol{b}^{\mathrm T}=O\iff\boldsymbol{x}=\boldsymbol{0}$（因 $\boldsymbol{b}\neq\boldsymbol{0}$）。
 (2) $N(k\boldsymbol{x}\boldsymbol{b}^{\mathrm T})=N\bigl(k(\boldsymbol{x}\boldsymbol{b}^{\mathrm T})\bigr)=\lvert k\rvert N(\boldsymbol{x}\boldsymbol{b}^{\mathrm T})$。
@@ -149,19 +149,23 @@ $$\lVert A\boldsymbol{x}\rVert_*=N\bigl(A\boldsymbol{x}\boldsymbol{b}^{\mathrm T
 
 ::: ex B5 · 新增 · 相对误差的精确公式
 
-推导带符号相对误差的精确恒等式：$e_{\mathrm r}(ab)=e_{\mathrm r}(a)+e_{\mathrm r}(b)+e_{\mathrm r}(a)\,e_{\mathrm r}(b)$ 与 $e_{\mathrm r}\!\left(\dfrac ab\right)=\dfrac{e_{\mathrm r}(a)-e_{\mathrm r}(b)}{1+e_{\mathrm r}(b)}$，并据此说明教材中「乘除法相对误差限相加」在什么条件下近似成立。
+本题用近似值作分母，记 $r_a=(x-a)/a$、$r_b=(y-b)/b$，其中 $a,b,x,y\ne0$。推导乘积与商的相对变化
+
+$$r_{ab}=\frac{xy-ab}{ab},\qquad r_{a/b}=\frac{x/y-a/b}{a/b},$$
+
+并据此说明「乘除法相对误差限相加」在什么条件下近似成立。
 
 ::: sol 解答
 
-先约定带符号相对误差的记法：$e_{\mathrm r}(a)=\dfrac{x-a}{a}$（即 $x=a(1+e_{\mathrm r}(a))$）。则
+由 $x=a(1+r_a)$、$y=b(1+r_b)$，展开乘积并约去 $ab$：
 
-$$xy=a(1+e_{\mathrm r}(a))\,b(1+e_{\mathrm r}(b))=ab\bigl(1+e_{\mathrm r}(a)+e_{\mathrm r}(b)+e_{\mathrm r}(a)e_{\mathrm r}(b)\bigr),$$
+$$r_{ab}=\frac{xy-ab}{ab}=r_a+r_b+r_ar_b.$$
 
-对照 $xy=ab\,(1+e_{\mathrm r}(ab))$ 即得第一式。除法：
+对商，$\dfrac{x/y}{a/b}=\dfrac{1+r_a}{1+r_b}$，所以
 
-$$\frac{x}{y}=\frac{a}{b}\cdot\frac{1+e_{\mathrm r}(a)}{1+e_{\mathrm r}(b)}=\frac ab\left(1+\frac{e_{\mathrm r}(a)-e_{\mathrm r}(b)}{1+e_{\mathrm r}(b)}\right),$$
+$$r_{a/b}=\frac{r_a-r_b}{1+r_b}.$$
 
-得第二式。当 $\lvert e_{\mathrm r}(a)\rvert,\lvert e_{\mathrm r}(b)\rvert\ll1$ 时，乘积项与 $\dfrac{e_{\mathrm r}(b)}{1+e_{\mathrm r}(b)}\approx e_{\mathrm r}(b)$ 的修正都是高阶小量，故近似为 $\varepsilon_{\mathrm r}$ 相加。∎
+当 $|r_a|,|r_b|\ll1$ 时，乘积项与分母修正是高阶小量；取绝对值并用三角不等式，得到乘除法相对误差限相加的一阶估计。这里的分母与正文定义的真值分母不同；两种精确表达式的对照见 [1.2.3](sec12.md#sec-1.2.3) 的思考框。∎
 
 :::
 
@@ -202,15 +206,15 @@ $$\lVert A\rVert_2=7.281\le\sqrt{\lVert A\rVert_1\lVert A\rVert_\infty}=\sqrt{99
 
 ::: sol 解答
 
-(1) 四位有效数字意味着误差限恰是末位的半个单位：
+(1) 四位有效数字给出各数的允许误差限：
 
 $$\varepsilon(a)=\tfrac12\times10^{-5}=0.000005,\quad \varepsilon_{\mathrm r}(a)=\frac{0.000005}{0.01347}\approx0.037\%;$$
 
-$$\varepsilon(b)=\tfrac12\times10^{-3}=0.0005,\quad \varepsilon_{\mathrm r}(b)=\frac{0.0005}{12.341}\approx0.0041\%;$$
+$$\varepsilon(b)=\tfrac12\times10^{-2}=0.005,\quad \varepsilon_{\mathrm r}(b)=\frac{0.005}{12.341}\approx0.041\%;$$
 
 $$\varepsilon(c)=\tfrac12\times10^{-3}=0.0005,\quad \varepsilon_{\mathrm r}(c)=\frac{0.0005}{1.200}\approx0.042\%.$$
 
-注意 $c=-1.200$ 的两个尾零使其误差限比 $-1.2$ 写法小 10 倍。
+对 $b$，所写的第五位不改变题目只保证四位有效数字这一条件。对 $c$，尾零可以表达精度，但误差保证仍来自题目给定的条件。
 (2) 验收标准：程序对区间内任意真值输出 $\lvert x-a\rvert\le5\times10^{-6}$，并按规格化形式自动判定有效位数为 4；参考判据：$a=0.01347=0.1347\times10^{-1}$ 即 $m=-1$，直接检验 $\lvert x-a\rvert\le\tfrac12\times10^{m-4}=\tfrac12\times10^{-5}=5\times10^{-6}$。
 
 :::
@@ -231,7 +235,7 @@ $$\varepsilon(c)=\tfrac12\times10^{-3}=0.0005,\quad \varepsilon_{\mathrm r}(c)=\
 $$\varepsilon(\tilde u_1)\approx\frac{\varepsilon(x)}{2\sqrt{2.14}}=\frac{0.005}{2\times1.46287}\approx0.00171,\qquad
 \varepsilon_{\mathrm r}=\frac{0.00171}{1.46287}\approx0.12\% .$$
 
-$\tilde u_1=1.46287\cdots=0.146\times10^1$（$m=1$）：$n=3$ 时 $\tfrac12\times10^{-2}=0.005\ge0.00171$ ✓，$n=4$ 时 $0.0005\lt0.00171$ ✗，故 $\tilde u_1$ 能有 **3 位**有效数字（$\tilde u_1\approx1.46$）。
+$\tilde u_1=1.46287\cdots=0.146\cdots\times10^1$（$m=1$）。严格地说，由 $2.135\le x\le2.145$ 和平方根的单调性，$\sqrt{2.135}\le\sqrt x\le\sqrt{2.145}$；两端与 $\sqrt{2.14}$ 的距离都小于 $0.00171$。因此这个误差界小于三位要求的 $0.005$，但不保证四位要求的 $0.0005$。若把近似值改写成 $1.46$，区间端点与 $1.46$ 的距离仍小于 $0.005$，所以该写法也保证三位有效数字。
 
 (2) $u_2=xy-\dfrac xy$，$\tilde u_2=2.14\times(-1.231)+\dfrac{2.14}{1.231}=-2.63434+1.73842=-0.89592$。由 (1.1)，
 
@@ -244,7 +248,7 @@ $$\varepsilon(\tilde u_2)\approx\lvert-0.41865\rvert\times0.005+\lvert3.55220\rv
 
 $$\varepsilon_{\mathrm r}(\tilde u_2)=\frac{0.00387}{0.89592}\approx0.43\% .$$
 
-$\tilde u_2=-0.89592\times10^0$（$m=0$）：$n=2$ 时 $0.005\ge0.00387$ ✓，$n=3$ 时 $0.0005\lt$ ✗，故 $\tilde u_2$ 能有 **2 位**有效数字（$\tilde u_2\approx-0.90$）。验收标准：程序复算全部 8 个中间值，与教材数字逐位一致（误差 $\lt10^{-6}$）。
+$\tilde u_2=-0.89592\cdots\times10^0$（$m=0$）。上面的 $0.00387$ 是一阶估计。为保证有效数字，注意题设区间内 $f(x,y)=xy-x/y$ 对 $x$ 递减、对 $y$ 递增；代入两个相应端点可得 $-0.89980<f(x,y)<-0.89205$。因此与 $\tilde u_2$ 的误差小于 $0.00390$，满足两位要求的 $0.005$，但不能保证第三位。若把结果改写为 $-0.90$，区间上端离它约 $0.00795$，超过两位所要求的 $0.005$，不能把原近似值的误差保证直接搬过去。验收时应分别复算近似偏导数、一阶估计与端点界。
 
 :::
 
@@ -307,7 +311,7 @@ $$(\sqrt2-1)^6=(3-2\sqrt2)^3=99-70\sqrt2=\frac{1}{(\sqrt2+1)^6}=\frac{1}{(3+2\sq
 ::: sol 解答
 
 (1) 真值 $134000+240=134240$。原序（累加器先取 $0.1340\times10^6$）：按对阶规则，$40,50$ 小于累加器末位的半单位 $50$，$60,90$ 也过不了对阶，故在截断模型下全部丢失，结果停在 $0.1340\times10^6$，误差 $-240$；四舍五入模型下 60、90 会部分存活，见[实验三](sec12.md#sec-1.2.7)。**精确度最高的算法：先把小数加在一起**——$40+50+60+90=240$（精确），再 $134000+240=134240$，最后舍入得 $0.1342\times10^6$，误差仅 $-40$。
-(2) 实测（教材运行环境，n=5000）：逐项幂 279 ms，秦九韶 0.39 ms，比值约 700。验收标准：你的实测比值应在数百量级；若接近 1，检查是否把「幂每次从 1 重乘」写成了「复用上一轮的 $x^k$」（那也是 $O(n)$，见[1.2.4](sec12.md#sec-1.2.4) 的代码注释）。
+(2) 一次教材运行记录为逐项幂 279 ms、秦九韶 0.39 ms。运行时间和倍数取决于实现与环境，不应要求每台机器达到固定比值。验收时先核对逐项算法是否每次从 1 重算幂，再比较多种 $n$ 下的运算次数及实测时间；复用上一轮的 $x^k$ 也是 $O(n)$，不属于这里被比较的逐项算法。
 
 :::
 
@@ -339,7 +343,7 @@ $$y_0=\int_0^1\frac{dx}{1+4x}=\frac{\ln 5}{4}\approx0.4024 .$$
 | $7$ | 0.02768 | 0.0276860 | $-6.0\times10^{-6}$ |
 | $8$ | 0.02433 | 0.0243285 | $+1.5\times10^{-6}$ |
 
-初始误差按每步约 $\tfrac14$ 衰减（$4\times10^{-5}\to10^{-6}$ 量级），总量被新舍入噪声压在 $10^{-5}$ 附近、不再增长。验收标准：程序以 `y = 1/(4*n) - y/4` 迭代并打印误差列，误差总体呈 $\tfrac14$ 衰减趋势且不随 $n$ 累积增长；再把递推倒过来跑一遍，观察 $n$ 回退 8 步时误差放大 $4^8\approx6.5\times10^4$ 倍。
+初始误差的影响按每步 $\tfrac14$ 衰减，但每一步还会产生新的舍入误差，因此表中的**总误差**不必每步都缩小 $\tfrac14$，而是在该实验中保持在约 $10^{-5}$ 的量级。验收时分别比较精确算术下的初值误差传播和四位运算的总误差；再把递推倒过来，观察已有误差回退 8 步时会放大 $4^8\approx6.5\times10^4$ 倍。
 
 :::
 
@@ -377,27 +381,39 @@ $$y_0=\int_0^1\frac{dx}{1+4x}=\frac{\ln 5}{4}\approx0.4024 .$$
 
 ::: ex D3 · 数值代码体检器
 
-写一个函数 `audit(expr_pairs, eps)`：输入一组「数学表达式 → 计算它的可调用函数」对，自动检测三类隐患：(a) 结果量级远小于操作数量级（疑似相近数相减：$\lvert u\rvert\lt10^{-6}\max(\lvert a\rvert,\lvert b\rvert)$）；(b) 除法的分母远小于分子（$\lvert b\rvert\lt10^{-6}\lvert a\rvert$）；(c) 大小悬殊的加法（$\lvert a\rvert\gt10^{9}\lvert b\rvert$ 且 $b\neq0$）。再用它体检求根公式、方差两遍法与 $(\sqrt2-1)^6$ 的六公式，输出「危险 / 安全」清单。
+写一个函数 `audit(expr_pairs, eps)`，检查一组加、减、除的**单步运算记录**。每条记录给出名称、运算符及两个操作数；对一个多步表达式，先把需要检查的中间运算分别列出来。提示三类风险：(a) 减法结果远小于操作数（$|a-b|<\mathit{eps}\max(|a|,|b|)$）；(b) 除数远小于被除数（$|b|<\mathit{eps}|a|$，只提示尺度，不据此断定病态）；(c) 加法的两个非零操作数大小相差超过 $10^9$。用它检查求根公式、方差公式与 $(\sqrt2-1)^6$ 的有关中间步骤，并说明阈值漏报和误报的可能。
 
 ::: sol 提示与参考
 
-参考骨架：
+参考实现把每次检查的对象写明；一个黑箱可调用函数不会自动暴露其内部运算：
 
 ```python
-def audit(name, f, args, eps=1e-6):
-    a, b = args
-    u = f(*args)
-    risks = []
-    if abs(u) < eps * max(abs(a), abs(b)) and u != 0:
-        risks.append("疑似相近数相减")
-    if b != 0 and abs(b) < eps * abs(a):
-        risks.append("疑似小除数")
-    if a != 0 and abs(a) > 1e9 * abs(b) and b != 0:
-        risks.append("疑似大数吞噬小数")
-    print(f"{name:24s} u={u:+.3e}  {'; '.join(risks) or '安全'}")
+def audit(expr_pairs, eps=1e-6):
+    for name, op, a, b in expr_pairs:
+        risks = []
+        if op == "-":
+            u = a - b
+            scale = max(abs(a), abs(b))
+            if scale > 0 and abs(u) < eps * scale:
+                risks.append("疑似相消")
+        elif op == "/":
+            if b == 0:
+                print(f"{name}: 除数为零")
+                continue
+            u = a / b
+            if abs(b) < eps * abs(a):
+                risks.append("分子分母尺度悬殊，须检查误差及范围")
+        elif op == "+":
+            u = a + b
+            small, large = sorted((abs(a), abs(b)))
+            if small > 0 and large > 1e9 * small:
+                risks.append("小数可能被吞")
+        else:
+            raise ValueError(f"不支持的运算: {op}")
+        print(f"{name}: {u:+.3e}  {'; '.join(risks) or '未触发阈值'}")
 ```
 
-验收标准：对 $(\sqrt2-1)^6$ 的公式 3（$99-70\times1.4$）应报「疑似相近数相减」，对公式 6 报「安全」；报告里解释阈值 $10^{-6}$ 的选取依据（对应损失约 6 位有效数字的临界点）。
+验收时，可把 $10^8-\sqrt{10^{16}-4}$ 的减法及 $10^{18}-10^{18}$ 分别作为记录：前者相消明显，后者结果为零，也应提示。对公式 3 的 $99-70\times1.4=1$，比例为 $1/99\approx0.0101$，**不会**触发 $10^{-6}$ 阈值；这说明阈值只筛出极端情况，未触发不等于安全。公式 6 的分母相加也应作为独立一步检查。比较不同阈值，并结合输入误差讨论是否真的失去精度。
 
 :::
 
@@ -405,11 +421,11 @@ def audit(name, f, args, eps=1e-6):
 
 ::: ex D4 · 真实数据的方差：三条路线的对比
 
-找一组带真实偏移的数据（如某城市连续 30 天的气温、某股票连续收益率加常数、或你自己课程的分数），用三种方法算方差并对比：(a) 两遍法 $\dfrac1n\sum x_i^2-\bar x^2$；(b) 平移法（先减去肉眼可见的共同偏移）；(c) Welford 单遍算法。以 `statistics.variance` 或高精度 `math.fsum` 版本为基准，报告三种方法各自的相对误差，并解释结果差异。
+找一组带真实偏移的数据（如某城市连续 30 天的气温、某股票连续收益率加常数、或你自己课程的分数），用三种方法计算同一个**样本方差**并对比：(a) $\dfrac{n}{n-1}(\dfrac1n\sum x_i^2-\bar x^2)$；(b) 平移后计算；(c) Welford 单遍算法。以 `statistics.variance` 或用 `math.fsum` 计算的中心化结果为参考，报告三种方法的误差，并解释结果差异。假设数据个数 $n\ge2$。
 
 ::: sol 提示与参考
 
-Welford 递推：$\bar x_1=x_1$，$s_1=0$；$\bar x_k=\bar x_{k-1}+\dfrac{x_k-\bar x_{k-1}}{k}$，$s_k=s_{k-1}+\bigl(x_k-\bar x_{k-1}\bigr)\bigl(x_k-\bar x_k\bigr)$；方差 $=\dfrac{s_n}{n-1}$（样本方差）。预期现象：数据共同偏移 $\mu\gg$ 波动幅度时 (a) 失效（可复现教材实验二的 $0$ 输出，把偏移加大到 $10^{10}$），(b)(c) 稳定；Welford 的优点是**单遍数据流**即可用，且每一步都不构造大数。报告要点：列出偏移/波动比从 $10^0$ 扫到 $10^{10}$ 的误差曲线，标出 (a) 开始失守的临界比值并解释（$\Sigma x_i^2$ 的绝对舍入误差 $\sim n\cdot u\cdot\mu^2$ 追上方差本身）。
+Welford 递推：$\bar x_1=x_1$，$s_1=0$；$\bar x_k=\bar x_{k-1}+\dfrac{x_k-\bar x_{k-1}}{k}$，$s_k=s_{k-1}+\bigl(x_k-\bar x_{k-1}\bigr)\bigl(x_k-\bar x_k\bigr)$；样本方差为 $s_n/(n-1)$，与方法 (a) 使用同一个分母。数据的共同偏移远大于波动时，方法 (a) 可能因相近数相减而失准；平移法和 Welford 法避免直接相减两个大平方和，但精度仍应通过实验比较。可以改变共同偏移的大小，观察误差如何变化。
 
 :::
 
@@ -544,12 +560,12 @@ $$I_n=\frac1e\int_0^1x^ne^x\,dx
 
 初值 $I_0=\dfrac1e\displaystyle\int_0^1e^x\,dx=\dfrac{e-1}{e}=1-\dfrac1e=0.6321205588\cdots$。
 
-**(2) 稳定性：只看误差被乘了什么数。** 题面“$n=0,1,\ldots$”的递推范围有误：$I_{n-1}$ 要求 $n\ge1$；$n=0$ 时只能用积分定义得 $I_0=1-1/e$。 设 $I_{n-1}$ 的计算值带误差 $\delta_{n-1}$，即 $\hat I_{n-1}=I_{n-1}+\delta_{n-1}$，代入递推式：
+**(2) 稳定性：先看已有误差被乘了什么数。** 题面“$n=0,1,\ldots$”的递推范围有误：$I_{n-1}$ 要求 $n\ge1$；$n=0$ 时只能用积分定义得 $I_0=1-1/e$。先暂不计后续运算中新产生的舍入误差。设 $I_{n-1}$ 的计算值带误差 $\delta_{n-1}$，即 $\hat I_{n-1}=I_{n-1}+\delta_{n-1}$，代入递推式：
 
 $$\hat I_n=1-n\hat I_{n-1}=(1-nI_{n-1})-n\delta_{n-1}=I_n-n\delta_{n-1}
 \ \Longrightarrow\ \delta_n=-n\,\delta_{n-1},\qquad\lvert\delta_n\rvert=n!\,\lvert\delta_0\rvert .$$
 
-放大因子是 $n$（每步乘一次 $n$），$n$ 步后累计放大 $n!$——**正向递推把 $I_0$ 的舍入误差按阶乘放大，必然崩掉**。
+放大因子是 $n$（每步乘一次 $n$），$n$ 步后初值误差累计放大 $n!$。若每一步还产生舍入误差 $r_n$，则总误差满足 $\delta_n=-n\delta_{n-1}+r_n$；不能把只含初值误差的公式当成全部误差的精确表达式。
 
 反向递推把公式解成 $I_{n-1}=\dfrac{1-I_n}{n}$，同样的推导给出 $\delta_{n-1}=-\dfrac{\delta_n}{n}$，即 $\lvert\delta_{n-1}\rvert=\dfrac{\lvert\delta_n\rvert}{n}$：**误差每步缩小 $n$ 倍，反向递推是稳定的**。起点取 $I_N\approx0$（因为 $0\le I_n\le\dfrac1e\displaystyle\int_0^1x^n e\,dx=\dfrac{1}{n+1}\to0$），$N$ 取得足够大（如 $N=20$）时起点误差的影响传到 $I_0$ 已被压成 $\dfrac{1}{N!}\approx\dfrac{1}{2.4\times10^{18}}$。
 

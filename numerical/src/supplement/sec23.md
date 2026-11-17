@@ -4,6 +4,8 @@
 
 2.1 说「标准正交基下求解退化成做内积」，2.2 说「投影与最小二乘的关键是列空间的正交结构」——两句话指向同一个技术需求：**把一组线性无关的向量造成标准正交基**。最有用的产物是 **QR 分解** $A=QR$（$m\gt n$ 时 $Q$ 为列正交的长方阵，见 [@def-sup-2.1.3]）：最小二乘、特征值、SVD 共用一个稳定内核。本节给出四种正交化方法（经典与修正 Gram–Schmidt、Householder 反射、Givens 旋转），并用实测数据说明取舍标准。
 
+本节前半使用精确算术说明分解为什么成立，随后再讨论浮点实现。两件事要分开：$\lVert A-QR\rVert$ 小表示乘积能重建输入，$\lVert Q^{\mathrm T}Q-I\rVert$ 小才表示列近似标准正交；前者小并不能自动保证后者小。记 $u$ 为单位舍入误差，$\mathrm{cond}(A)$ 在本节默认指列满秩矩阵的 2-范数条件数 $\sigma_{\max}(A)/\sigma_{\min}(A)$。误差量级还隐含维数因子，不是每次运算的精确预测。
+
 <a id="sup-2.3.1"></a>
 
 ## 2.3.1 Gram–Schmidt 正交化
@@ -51,11 +53,11 @@ $$\boldsymbol{q}_k^{\mathrm T}\boldsymbol{v}=\boldsymbol{q}_k^{\mathrm T}\boldsy
 
 **$A=QR$：** 由 $\boldsymbol{v}=r_{jj}\boldsymbol{q}_j$ 与 $\boldsymbol{v}$ 的定义反解，
 
-$$\boldsymbol{a}_j=r_{jj}\boldsymbol{q}_j+r_{ij}\boldsymbol{q}_i+\cdots+r_{j-1,j}\boldsymbol{q}_{j-1},$$
+$$\boldsymbol{a}_j=\sum_{i=1}^{j-1}r_{ij}\boldsymbol{q}_i+r_{jj}\boldsymbol{q}_j,$$
 
 即 $A$ 的第 $j$ 列是 $Q$ 前 $j$ 列的线性组合，系数正好是 $R$ 的第 $j$ 列——这正是 $A=QR$。又 $r_{jj}=\lVert\boldsymbol{v}\rVert_2\gt0$。
 
-**几何含义：** $Q$ 与 $A$ 逐列张成同一个子空间，即 $C(Q)=C(A)$，但 $Q$ 的列标准正交；$R$ 记录的是「正交坐标 → 原坐标」的换算。由上面的证明还能看出更强的结构：
+**几何含义：** $Q$ 与 $A$ 的列张成同一个子空间，即 $C(Q)=C(A)$，但 $Q$ 的列标准正交。$R$ 的第 $j$ 列是原列 $\boldsymbol a_j$ 在 $Q$ 中的坐标；对一般系数 $\boldsymbol x$，$A\boldsymbol x=Q(R\boldsymbol x)$，所以 $R$ 把原列组合的系数变成正交基坐标，而回代 $R\boldsymbol x=\boldsymbol c$ 完成反向换算。证明还给出更强的结构：
 
 $$\operatorname{span}\{\boldsymbol{q}_1,\dots,\boldsymbol{q}_k\}=\operatorname{span}\{\boldsymbol{a}_1,\dots,\boldsymbol{a}_k\}\qquad(k=1,\dots,n) . \tag{2.15}$$
 
@@ -122,12 +124,14 @@ $$A=\bar Q\bar R,\qquad \bar R=\begin{pmatrix}R\\O\end{pmatrix}\in\mathbb{R}^{m\
 
 其中 $Q_\perp$ 的列在乘积中不起作用，对应的系数是零块。
 
+这里的 $Q\in\mathbb R^{m\times n}$ 称为瘦 QR（thin QR）中的列正交因子，$\bar Q\in\mathbb R^{m\times m}$ 则是全 QR 中的正交方阵。正对角规范使瘦 QR 唯一，但补空间的基 $Q_\perp$ 通常不唯一；本定理不声称全 QR 的每一列都唯一。全 QR 便于证明，实际只解最小二乘时通常不必显式形成它。
+
 ::: proof 证明（唯一性）
-设有两种分解 $A=Q_1R_1=Q_2R_2$，$Q_1^{\mathrm T}Q_1=Q_2^{\mathrm T}Q_2=I$，$R_1,R_2$ 上三角且对角元为正。由 $Q_1$ 列满秩，$Q_2^{\mathrm T}Q_1$ 是 $n\times n$ 可逆阵，且
+设有两种分解 $A=Q_1R_1=Q_2R_2$，$Q_i^{\mathrm T}Q_i=I$，$R_i$ 上三角且对角元为正。由 $Q_i=AR_i^{-1}$，两者列空间均为 $C(A)$，故 $Q_2Q_2^{\mathrm T}Q_1=Q_1$。因此
 
 $$Q_2^{\mathrm T}Q_1=R_2R_1^{-1}=:S .$$
 
-**等号左边列正交、右边上三角**（上三角阵的逆仍是上三角，乘积也是上三角），所以 $S$ 是上三角阵。又由 $Q_1=Q_2S$ 得
+右边是上三角阵（上三角阵的逆及其乘积仍上三角）。又由列空间相同得 $Q_1=Q_2S$，因此
 
 $$I=Q_1^{\mathrm T}Q_1=S^{\mathrm T}Q_2^{\mathrm T}Q_2S=S^{\mathrm T}S,$$
 
@@ -143,7 +147,7 @@ $$I=Q_1^{\mathrm T}Q_1=S^{\mathrm T}Q_2^{\mathrm T}Q_2S=S^{\mathrm T}S,$$
 
 $$AP=QR,\qquad \lvert r_{11}\rvert\ge\lvert r_{22}\rvert\ge\cdots\ge\lvert r_{nn}\rvert ,$$
 
-这样得到的 $\lvert r_{kk}\rvert$ 还能给出**秩的估计**：它相对 $\lvert r_{11}\rvert$ 骤降的位置，就是数值秩的候选。这正是 LAPACK 的 `geqp3` 与 MATLAB `qr(A,0)` 走的路径。与 SVD 的对比见 [2.6.5](sec26.md#sup-2.6.5)。
+这样得到的 $|r_{kk}|$ 相对 $|r_{11}|$ 骤降的位置可作为数值秩的候选，但不保证对所有矩阵可靠。LAPACK 的 `geqp3` 实现列主元 QR；MATLAB 中须显式请求置换输出，不能把 `qr(A,0)` 一概视为有主元分解。与 SVD 的对比见 [2.6.5](sec26.md#sup-2.6.5)。
 :::
 
 <a id="sup-2.3.3"></a>
@@ -153,12 +157,12 @@ $$AP=QR,\qquad \lvert r_{11}\rvert\ge\lvert r_{22}\rvert\ge\cdots\ge\lvert r_{nn
 算法 2.3.1（CGS）在**精确算术**下完美无缺，在**浮点**下却有一个严重缺陷：**它看起来很好，实际很差**——正是 2.1 提到的「静默失效」的第二个实例。
 
 ::: intuition 直觉 · 差别只有一个「时态」
-CGS 与修正 Gram–Schmidt（MGS）的代码只差一行：算 $r_{ij}$ 时，CGS 用**原始的** $\boldsymbol{a}_j$，MGS 用**被前几轮修正过的** $\boldsymbol{q}_j$ 当前值。
+CGS 与修正 Gram–Schmidt（MGS）的伪代码只差一行：算 $r_{ij}$ 时，CGS 用原始的 $\boldsymbol{a}_j$，MGS 用已经被前几轮修正过的当前余项 $\boldsymbol v$。
 
 $$\text{CGS:}\quad r_{ij}=\boldsymbol{q}_i^{\mathrm T}\boldsymbol{a}_j\qquad\qquad
 \text{MGS:}\quad r_{ij}=\boldsymbol{q}_i^{\mathrm T}\boldsymbol{v}\ \ (\boldsymbol{v}\ \text{是当前值})$$
 
-精确算术下两者**数学等价**（内积值逐次相同）。但在浮点下，MGS 的每次内积都作用在「已经扣掉旧分量」的向量上，**误差不会被后续步骤反复引用**；CGS 恰好相反：每个 $\boldsymbol{q}_j$ 携带的舍入误差都会被后面所有列的修正一遍遍引用，并在那些列上累积出一个 $\mathrm{cond}(A)$ 的额外因子。**一行之差，稳定性量级相差一个 $\mathrm{cond}$。**
+精确算术下两者等价：若 $\boldsymbol v=\boldsymbol a_j-\sum_{\ell<i}r_{\ell j}\boldsymbol q_\ell$，则 $\boldsymbol q_i^{\mathrm T}\boldsymbol v=\boldsymbol q_i^{\mathrm T}\boldsymbol a_j$，因为旧基两两正交。浮点下旧基只近似正交，等式中的被消去项不再精确为零，两种计算顺序因而产生不同结果。对列满秩、误差尚小的问题，典型正交性误差界分别含 $\mathrm{cond}(A)^2u$ 与 $\mathrm{cond}(A)u$；MGS 减少了这种损失，但并不消除舍入误差的传播。
 :::
 
 ::: method 算法 2.3.2 · 修正 Gram–Schmidt（MGS）
@@ -173,35 +177,35 @@ for j = 1, ..., n:
     q_j  = v / r_jj
 ```
 
-**与 CGS 的唯一差别**是：$r_{ij}$ 用当前的 $\boldsymbol{v}$（即 $\boldsymbol{q}_j$ 的当前值），而不是原始的 $\boldsymbol{a}_j$。精确算术下两者给出的 $Q,R$ **完全相同**；浮点下 MGS 的正交误差小得多。
+**与 CGS 的唯一差别**是 $r_{ij}$ 用当前的 $\boldsymbol v$，而不是原始的 $\boldsymbol a_j$。精确算术下两者的 $Q,R$ 相同；浮点下 MGS 通常更能保持正交性。
 
-**代价：** 两者 flops 几乎相同（MGS 略多），但 MGS 的**访存模式**不如 CGS 适合向量化（CGS 的内积可以一次性对所有列批量做）。历史上因此出现过「CGS + 再正交化」方案：做两遍 CGS 就能达到 MGS 的量级。现代库则直接用 Householder。
+**代价：** 上面两段伪代码的主要运算数相同。CGS 的投影系数可批量计算，更容易组织成矩阵运算；MGS 的系数依赖逐次更新的余项，存在顺序依赖。CGS 或 MGS 都可再做一遍投影并修正 $R$，称为重正交化；在适当数值满秩条件下可把正交性恢复到带维数因子的 $O(u)$，但不能用来挽救已被舍入抹去的独立方向。稠密 QR 库通常使用 Householder。
 :::
 
 ::: method 实测对照 · 正交性损失（本章运行数据）
 
-对 $n\times n$ Vandermonde 矩阵 $A=[x_i^{\,j-1}]$（$x_i$ 均匀取自 $[0.1,1]$，$\mathrm{cond}_2$ 随 $n$ 快速增大）分别用三种方法做 QR 分解，报告正交性损失 $\lVert Q^{\mathrm T}Q-I\rVert_2$：
+对 $n\times n$ Vandermonde 矩阵 $A=[x_i^{\,j-1}]$（$x_i$ 均匀取自 $[0.1,1]$，$\mathrm{cond}_2$ 随 $n$ 快速增大）分别用三种方法做 QR 分解，报告正交性损失 $\lVert Q^{\mathrm T}Q-I\rVert_2$。下表是 Python 3.13.13、NumPy 2.4.6 的一次运行；不同浮点环境下的末位可能不同。
 
 | $n$ | $\mathrm{cond}_2(A)$ | CGS | MGS | Householder |
 |:--:|:--:|:--:|:--:|:--:|
-| 6 | $1.02\times10^{4}$ | $8.8\times10^{-10}$ | $1.5\times10^{-13}$ | $1.2\times10^{-15}$ |
-| 8 | $7.40\times10^{5}$ | $2.5\times10^{-5}$ | $2.3\times10^{-11}$ | $1.3\times10^{-15}$ |
-| 10 | $5.60\times10^{7}$ | $\mathbf{1.19}$ | $8.1\times10^{-10}$ | $2.5\times10^{-15}$ |
-| 12 | $4.34\times10^{9}$ | $\mathbf{2.46}$ | $1.2\times10^{-7}$ | $2.1\times10^{-15}$ |
-| 14 | $3.42\times10^{11}$ | $\mathbf{4.48}$ | $4.7\times10^{-6}$ | $2.2\times10^{-15}$ |
-| 16 | $2.73\times10^{13}$ | $\mathbf{6.55}$ | $4.7\times10^{-4}$ | $3.0\times10^{-15}$ |
+| 6 | $1.02\times10^{4}$ | $6.21\times10^{-10}$ | $1.01\times10^{-13}$ | $6.39\times10^{-16}$ |
+| 8 | $7.40\times10^{5}$ | $1.77\times10^{-5}$ | $1.61\times10^{-11}$ | $7.22\times10^{-16}$ |
+| 10 | $5.60\times10^{7}$ | $\mathbf{0.839}$ | $5.73\times10^{-10}$ | $4.86\times10^{-16}$ |
+| 12 | $4.34\times10^{9}$ | $\mathbf{2.02}$ | $8.76\times10^{-8}$ | $1.26\times10^{-15}$ |
+| 14 | $3.42\times10^{11}$ | $\mathbf{4.01}$ | $3.32\times10^{-6}$ | $1.09\times10^{-15}$ |
+| 16 | $2.73\times10^{13}$ | $\mathbf{6.08}$ | $3.32\times10^{-4}$ | $1.53\times10^{-15}$ |
 
 三点结论：
 
-1. **Householder 永远 $\sim u$**（$10^{-15}$）：与 $\mathrm{cond}(A)$ **完全无关**。这是「每一步都用正交变换」的回报。
-2. **MGS 按 $\mathrm{cond}(A)\cdot u$ 增长**：$n=14$ 时 $\mathrm{cond}\cdot u=3.8\times10^{-5}$，实测 $4.7\times10^{-6}$；$n=16$ 时 $3.0\times10^{-3}$ 对 $4.7\times10^{-4}$——同量级 ✓。
-3. **CGS 按 $\mathrm{cond}^2(A)\cdot u$ 增长，随后饱和**：$n=10$ 时 $\mathrm{cond}^2u=3.5\times10^{-1}$、实测已到 $1.2$；$n\ge12$ 时 $\mathrm{cond}^2u\gg1$，实测停在 $O(1)\sim O(10)$——**正交性完全丧失**（$\lVert Q^{\mathrm T}Q-I\rVert_2$ 的平凡上界是 $n+1$，$n=16$ 时为 $17$）。
+1. **本表中 Householder 的正交性损失接近舍入误差量级**（约 $10^{-15}$）：在这些输入上未随条件数明显增长。其理论保证含维数因子与常规浮点假设，不是所有规模都固定为这个数。
+2. **MGS 的损失与 $\mathrm{cond}(A)\cdot u$ 比较**：$n=14$ 时 $\mathrm{cond}\cdot u=3.8\times10^{-5}$，实测 $3.3\times10^{-6}$；$n=16$ 时两者分别为 $3.0\times10^{-3}$ 和 $3.3\times10^{-4}$。前者是带维数因子的误差量级，不是精确等式。
+3. **CGS 的损失先增大，随后不再按 $\mathrm{cond}^2(A)\cdot u$ 持续增长**：$n=10$ 时 $\mathrm{cond}^2u=3.5\times10^{-1}$，实测已到 $0.839$；$n\ge12$ 时 $\mathrm{cond}^2u\gg1$，实测为 $O(1)\sim O(10)$，正交性已严重丧失。
 
 当 $\mathrm{cond}(A)^2u$ 接近 1 时，CGS 的典型正交性误差界已不能保证误差小；双精度中的 $u^{-1/2}\approx10^8$ 是风险量级，不是所有矩阵同时失效的分界。MGS 也须检查 $\mathrm{cond}(A)u$ 与实测正交性；若它接近 1，同样不能保证结果。稠密 QR 通常优先使用 Householder，需要逐列更新时可选 MGS，并按需要重正交化。
 :::
 
 ::: ex 例 2.3.2（新增） · 亲手看见 CGS 失效（数值实验） {#ex-sup-2.3.2}
-用 Python 复现上面这张表，并回答：为什么 CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert$ 会「饱和」在 $O(1)$，而 MGS 不会？
+用 Python 复现上面这张表，并回答：为什么本组输入中 CGS 的 $\lVert Q^{\mathrm T}Q-I\rVert$ 已达到 $O(1)$，而 MGS 尚未达到？
 
 ::: proof 解
 ```python
@@ -226,31 +230,33 @@ def mgs(A):                      # 修正：r_ij 用【当前】列
         R[j, j] = np.linalg.norm(Q[:, j]); Q[:, j] /= R[j, j]
     return Q, R
 
-print(f"{'n':>3} {'cond':>10} {'CGS':>11} {'MGS':>11} {'cond*u':>10} {'cond^2*u':>10}")
+print(f"{'n':>3} {'cond':>10} {'CGS':>11} {'MGS':>11} {'Householder':>11} {'cond*u':>10} {'cond^2*u':>10}")
 for n in [6, 8, 10, 12, 14, 16]:
     x = np.linspace(0.1, 1.0, n); A = np.vander(x, n, increasing=True)
     c = np.linalg.cond(A)
-    f = lambda Q: np.linalg.norm(Q.T @ Q - np.eye(n))
-    print(f"{n:3d} {c:10.2e} {f(cgs(A)[0]):11.2e} {f(mgs(A)[0]):11.2e} {c*u:10.2e} {c*c*u:10.2e}")
-```text
-
-```text
-  n       cond         CGS         MGS     cond*u   cond^2*u
-  6   1.02e+04    8.78e-10    1.47e-13    1.1e-12    1.2e-08
-  8   7.40e+05    2.51e-05    2.28e-11    8.2e-11    6.1e-05
- 10   5.60e+07    1.19e+00    8.11e-10    6.2e-09    3.5e-01
- 12   4.35e+09    2.47e+00    1.24e-07    4.8e-07    2.1e+03
- 14   3.42e+11    4.48e+00    4.70e-06    3.8e-05    1.3e+07
- 16   2.73e+13    6.55e+00    4.70e-04    3.0e-03    8.3e+10
+    f = lambda Q: np.linalg.norm(Q.T @ Q - np.eye(n), ord=2)
+    print(f"{n:3d} {c:10.2e} {f(cgs(A)[0]):11.2e} {f(mgs(A)[0]):11.2e} {f(np.linalg.qr(A)[0]):11.2e} {c*u:10.2e} {c*c*u:10.2e}")
 ```
 
-**为什么 CGS 饱和而 MGS 不饱和？**
+**范数口径：** 代码用 `ord=2` 计算矩阵 2-范数，与上表一致。若省略 `ord`，`np.linalg.norm` 对矩阵默认计算 Frobenius 范数；两者满足 $\lVert E\rVert_2\le\lVert E\rVert_F\le\sqrt n\lVert E\rVert_2$，数值不必相等。
+
+```text
+  n       cond         CGS         MGS Householder     cond*u   cond^2*u
+  6   1.02e+04    6.21e-10    1.01e-13    6.39e-16   1.13e-12   1.15e-08
+  8   7.40e+05    1.77e-05    1.61e-11    7.22e-16   8.21e-11   6.07e-05
+ 10   5.60e+07    8.39e-01    5.73e-10    4.86e-16   6.22e-09   3.48e-01
+ 12   4.34e+09    2.02e+00    8.76e-08    1.26e-15   4.82e-07   2.10e+03
+ 14   3.42e+11    4.01e+00    3.32e-06    1.09e-15   3.80e-05   1.30e+07
+ 16   2.73e+13    6.08e+00    3.32e-04    1.53e-15   3.03e-03   8.26e+10
+```
+
+**为什么本组实验中 CGS 先出现饱和？**
 
 **（i）投影使用的向量不同。** CGS 用原始列 $\boldsymbol a_j$ 计算各投影系数，MGS 每次先更新当前列再计算下一项。这会改变已有舍入误差进入后续投影的方式；在相应满秩与小误差条件下，典型分析分别给出 $O(\mathrm{cond}(A)^2u)$ 和 $O(\mathrm{cond}(A)u)$ 的正交性损失。它们是带条件和维数因子的估计，不能归结为某项误差“只被引用一次”。
 
-**（ii）「饱和」只是平凡的几何效应，不代表安全。** $\lVert Q^{\mathrm T}Q-I\rVert_2$ 的最大可能值是 $\lVert Q^{\mathrm T}Q\rVert_2+1\le\lVert Q\rVert_2^2+1$。当 CGS 算出的 $\hat Q$ 已经几乎不正交（各列趋于平行）时，$\lVert\hat Q\rVert_2$ 增长到 $\sqrt n$ 量级，这个指标就只能停在 $O(n)$——**错到顶了，再坏也坏不下去**。
+**（ii）「饱和」来自单位列的范数限制，不代表安全。** 假设计算出的各列仍近似单位长，便有 $\lVert\hat Q\rVert_F^2\approx n$，故 $\lVert\hat Q^{\mathrm T}\hat Q-I\rVert_2\le\lVert\hat Q\rVert_2^2+1\lesssim n+1$。这是上界，不是精确最大值；它只说明该指标不能无限增大。列趋于平行时，指标可达 $O(n)$，即使 $\hat Q\hat R$ 仍能较好重建 $A$，也不能再把 $\hat Q$ 当正交坐标系使用。
 
-$n=10$ 时理论值 $\mathrm{cond}^2u=0.35$ 尚小于 $1$，实测 $1.19$ 已饱和；$n\ge12$ 时理论值远大于 $1$，实测停在 $2.5\sim6.6$。所以**「不再增长」恰恰是最坏的情形**。
+在所列数据中，$n=10$ 时 $\mathrm{cond}^2u=0.35$，实测约 $1.19$；$n\ge12$ 时该量级估计已大于 $1$，不能再作为小误差近似。MGS 在此范围内尚未达到同样程度；若条件数继续增大，它也可能失去正交性，并非永远不会饱和。
 
 **验收标准：** 输出应与上表同量级（逐位因平台的 BLAS 实现而异）；把 $x$ 换成更病态的分布（如几何分布 $x_i=0.5^{\,i-1}$），观察 $\mathrm{cond}$ 与表中 CGS、MGS 两列误差是否同步增大。
 :::
@@ -320,6 +326,8 @@ $$\boldsymbol{v}=\boldsymbol{x}-\alpha\boldsymbol{e}_1=\boldsymbol{x}+\operatorn
 
 则 $H=I-2\boldsymbol{v}\boldsymbol{v}^{\mathrm T}/(\boldsymbol{v}^{\mathrm T}\boldsymbol{v})$ 满足 $H\boldsymbol{x}=\alpha\boldsymbol{e}_1$。
 
+代入验证这一步不能只靠几何图像：由 $\alpha^2=\boldsymbol x^{\mathrm T}\boldsymbol x$，有 $\boldsymbol v^{\mathrm T}\boldsymbol x=\alpha^2-\alpha x_1$，而 $\boldsymbol v^{\mathrm T}\boldsymbol v=2(\alpha^2-\alpha x_1)$。所选符号保证 $\boldsymbol v\ne0$，故 $2\boldsymbol v^{\mathrm T}\boldsymbol x/(\boldsymbol v^{\mathrm T}\boldsymbol v)=1$，于是 $H\boldsymbol x=\boldsymbol x-\boldsymbol v=\alpha\boldsymbol e_1$。
+
 **为什么这样取符号？** 若取 $\alpha=+\lVert\boldsymbol{x}\rVert$，当 $x_1\gt0$ 时 $\boldsymbol{v}$ 的首分量就是 $x_1-\lVert\boldsymbol{x}\rVert$，这是**两个相近数相减**（[1.2.4](../ch01/sec12.md#sec-1.2.4) 原则 (3)）。反过来取符号后，首分量变成 $x_1+\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert$，是同号相加，避免了首分量的相消；仍须处理一般舍入误差与浮点范围。
 :::
 
@@ -340,7 +348,7 @@ H=I-\frac{2}{80}\begin{pmatrix}64&32\\32&16\end{pmatrix}=\begin{pmatrix}1&0\\0&1
 
 **几何：** $H$ 是以 $\boldsymbol{v}=(8,4)^{\mathrm T}$（斜率 $1/2$）为法线的镜面反射，把 $(3,4)^{\mathrm T}$ 映成 $(-5,0)^{\mathrm T}$——长度不变，方向关于镜面对称。
 
-**规范化形式：** 令 $\boldsymbol{u}=\boldsymbol{v}/\lVert\boldsymbol{v}\rVert=(2/\sqrt5,\ 1/\sqrt5)^{\mathrm T}$，则 $H=I-2\boldsymbol{u}\boldsymbol{u}^{\mathrm T}=\begin{pmatrix}1-8/5&-4/5\\-4/5&1-2/5\end{pmatrix}$，与上面的结果相同 ✓。**代码里用规范化形式更稳**（避免 $\boldsymbol{v}^{\mathrm T}\boldsymbol{v}$ 上溢 / 下溢）。
+**规范化形式：** 令 $\boldsymbol{u}=\boldsymbol{v}/\lVert\boldsymbol{v}\rVert=(2/\sqrt5,\ 1/\sqrt5)^{\mathrm T}$，则 $H=I-2\boldsymbol{u}\boldsymbol{u}^{\mathrm T}=\begin{pmatrix}1-8/5&-4/5\\-4/5&1-2/5\end{pmatrix}$，与上面的结果相同。规范化使后续应用反射时不再反复除以 $\boldsymbol v^{\mathrm T}\boldsymbol v$，但计算 $\boldsymbol v$ 和它的范数本身仍需缩放保护，不能仅凭最后一次单位化就保证无溢出。
 :::
 
 :::
@@ -363,6 +371,8 @@ for k = 1, ..., n:
 ```
 
 第 $k$ 步把第 $k$ 列中第 $k+1,\dots,m$ 个元素全部化为零，同时不破坏已经产生的零。最终 $R$ 上三角，$Q$ 是 $m$ 阶正交阵（只保留前 $n$ 列，就得到「瘦」QR）。
+
+这里 $H_k$ 指在前 $k-1$ 个坐标上恒等、只在后部执行反射的 $m$ 阶矩阵。消元后得到 $H_n\cdots H_1A=\bar R$；由于每个反射都等于自己的逆，$A=H_1\cdots H_n\bar R$，所以代码必须按这个次序累积 $Q$，不能把乘积顺序倒过来。实际应用反射无需形成 $H_k$：对一个子块 $B$，只算 $B\leftarrow B-2\boldsymbol v(\boldsymbol v^{\mathrm T}B)$，代价与子块元素数成正比。伪代码用于说明结构，极大或极小输入还要在范数及反射向量构造阶段使用缩放保护。
 
 **复杂度：** 只形成 $R$ 的主要运算量约 $2mn^2-\frac23n^3$ flops；显式累积完整 $Q$ 另有开销，瘦 $Q$ 或隐式反射存储可节省资源。在无溢出等常规浮点假设下，Householder 的正交性误差通常为带维数因子的 $O(u)$，不像单次经典 Gram–Schmidt 那样直接受 $\kappa(A)$ 放大；不能把它写成任意规模下恰等于机器精度。
 :::
@@ -389,7 +399,7 @@ $2\times2$ 情形第 1 步即完成：$R=\begin{pmatrix}-5&-2.2\\0&0.4\end{pmatr
 
 ## 2.3.5 Givens 旋转
 
-Householder 一次消掉一整列，效率高，但**不局部**：它要改动整个子块 $R_{k:m,k:n}$。矩阵**稀疏**，或者只需消掉**少数几个**元素时，Householder 会把零结构破坏掉——这时该改用 Givens 旋转。
+Householder 一次消掉一整列，适合稠密矩阵。只需消掉少数元素、更新已有 QR，或希望只改动两行时，Givens 旋转更便于局部处理。稀疏矩阵是否应选 Givens 还取决于结构与填充（原来的零在变换后变成非零）；两种变换都可能引入填充，不能仅凭「稀疏」二字决定算法。
 
 ::: intuition 直觉 · 用一次平面旋转「点掉」一个元素
 想把 $(x_1,x_2)^{\mathrm T}$ 变成 $(r,0)^{\mathrm T}$？这正是 2.1 的平面旋转矩阵 $R_\theta$：取合适的 $\theta$ 就能把它「转」到 $x_1$ 轴上：
@@ -408,7 +418,7 @@ $$\begin{pmatrix}c&s\\-s&c\end{pmatrix}\begin{pmatrix}x_1\\x_2\end{pmatrix}=\beg
 
 $$r=\sqrt{x_1^2+x_2^2}\ (\text{实际用}\ \texttt{hypot}),\qquad c=\frac{x_1}{r},\qquad s=\frac{x_2}{r},$$
 
-则 $\begin{pmatrix}c&s\\-s&c\end{pmatrix}\begin{pmatrix}x_1\\x_2\end{pmatrix}=\begin{pmatrix}r\\0\end{pmatrix}$。若 $x_2=0$，取 $c=1,\ s=0$。
+则矩阵将向量映为 $(r,0)^{\mathrm T}$。若 $x_2=0$ 且直接取 $c=1,s=0$，输出为 $(x_1,0)^{\mathrm T}$，此时可令带符号的 $r=x_1$；若坚持 $r\ge0$，则按上式取 $c=\operatorname{sgn}(x_1)$。
 
 ::: proof 证明
 直接代入：$cx_1+sx_2=\dfrac{x_1^2+x_2^2}{r}=r$，$-sx_1+cx_2=\dfrac{-x_2x_1+x_1x_2}{r}=0$。正交性：$c^2+s^2=(x_1^2+x_2^2)/r^2=1$。
@@ -417,11 +427,11 @@ $$r=\sqrt{x_1^2+x_2^2}\ (\text{实际用}\ \texttt{hypot}),\qquad c=\frac{x_1}{r
 :::
 
 ::: note 算 $r$ 时不要写成 $\sqrt{x_1^2+x_2^2}$
-直接算 $x_1^2+x_2^2$，当 $\boldsymbol{x}$ 的分量接近 $10^{154}$ 时会**上溢**（超出 double 范围），接近 $10^{-160}$ 时会**下溢**成零。正确做法是用 `hypot`：
+直接算 $x_1^2+x_2^2$，当分量量级为 $10^{155}$ 时，平方已超出 double 的有限范围；量级为 $10^{-160}$ 时平方进入次正规数范围，精度显著降低，更小时还可能舍入为零。即使最终的 $r$ 可以表示，中间平方仍可能失败。正确做法是用 `hypot`：
 
 $$r=\sqrt{x_1^2+x_2^2}\ \longrightarrow\ r=\texttt{hypot}(x_1,x_2)\quad(\text{先按量级缩放再开方}) .$$
 
-Python 用 `math.hypot` / `np.hypot`，C 用 `hypot`（C99 标准）。**同理：$\lVert\boldsymbol{x}\rVert_2$ 在代码里用 `np.linalg.norm`（内部做缩放），不要手写 `np.sqrt(x @ x)`。** 这是「浮点可表示范围有限」（[1.2.5](../ch01/sec12.md#sec-1.2.5)）带来的工程细节。
+Python 可用 `math.hypot` / `np.hypot`，C 可用 `hypot`（C99）。更高维向量也应使用有缩放保护的范数实现；不能一概假设 `np.linalg.norm` 在所有版本与输入路径上都避免溢出或下溢。这是浮点可表示范围有限带来的工程细节（[1.2.5](../ch01/sec12.md#sec-1.2.5)）。
 :::
 
 ::: ex 例 2.3.5（新增） · 手算一个 Givens 旋转 {#ex-sup-2.3.5}
@@ -455,7 +465,7 @@ $2\times2$ 已上三角：$R=\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}$，$Q=G^{
 :::
 
 ::: preview 课程预告 · QR 的另一个大用途
-本节把 QR 当作「解最小二乘的稳定工具」。QR 还有一个更深刻的应用：**QR 迭代求全部特征值**（原书第 3 章 3.3 节）。核心思路正是（2.15）后面的观察——$A=QR\Rightarrow A'=RQ=Q^{\mathrm T}AQ$ 与 $A$ 相似（特征值不变），反复迭代后 $R$ 的对角元趋于特征值。**「QR 分解」与「QR 方法」是两件事，但后者完全建立在前者之上。**
+本节把 QR 用于最小二乘，它还用于[正文第三章的 QR 方法](../course/ch03/sec33.md)。对方阵做 $A_k=Q_kR_k$ 后，令 $A_{k+1}=R_kQ_k=Q_k^{\mathrm T}A_kQ_k$，每一步都保持相似关系。收敛时实矩阵一般趋向实 Schur 形，即允许 $2\times2$ 对角块的准上三角阵；不能说任意矩阵反复分解后都把特征值放在 $R_k$ 的对角线上。位移、降阶与收敛条件见正文。QR 分解是一次矩阵分解，QR 方法则是反复使用它的特征值算法。
 :::
 
 <a id="sup-2.3.6"></a>
@@ -467,9 +477,11 @@ $2\times2$ 已上三角：$R=\begin{pmatrix}5&4.8\\0&-1.4\end{pmatrix}$，$Q=G^{
 
 QR 的做法是代入 $A=QR$，利用正交不变性（[@thm-sup-2.1.6]）：
 
-$$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert QR\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert R\boldsymbol{x}-Q^{\mathrm T}\boldsymbol{b}\rVert_2^2,$$
+$$\lVert A\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert QR\boldsymbol{x}-\boldsymbol{b}\rVert_2^2=\lVert R\boldsymbol{x}-Q^{\mathrm T}\boldsymbol{b}\rVert_2^2+\lVert(I-QQ^{\mathrm T})\boldsymbol b\rVert_2^2,$$
 
 于是问题变成解一个**上三角方程组**，**从头到尾都不形成 $A^{\mathrm T}A$**：条件数保持 $\mathrm{cond}(A)$，没有被平方。
+
+这里 $Q$ 是瘦因子，不能仅以「左乘 $Q^{\mathrm T}$ 保范数」解释等式：$Q^{\mathrm T}$ 会丢掉垂直于列空间的分量。应先写 $\boldsymbol b=QQ^{\mathrm T}\boldsymbol b+(I-QQ^{\mathrm T})\boldsymbol b$，于是残差分为 $Q(R\boldsymbol x-Q^{\mathrm T}\boldsymbol b)$ 与 $-(I-QQ^{\mathrm T})\boldsymbol b$ 两个正交部分，再用勾股定理与 $\lVert Q\boldsymbol z\rVert_2=\lVert\boldsymbol z\rVert_2$。同时 $(QR)^{\mathrm T}(QR)=R^{\mathrm T}R$，故 $A$ 与 $R$ 的奇异值相同，这才是 $\mathrm{cond}_2(R)=\mathrm{cond}_2(A)$ 的依据。
 :::
 
 ::: thm 定理 2.3.5（新增） · QR 解最小二乘与误差量级 {#thm-sup-2.3.5}
@@ -526,7 +538,7 @@ $$\hat{\boldsymbol{x}}=(1,1)^{\mathrm T}.$$
 
 **核对：** $A\hat{\boldsymbol{x}}=(1,1,0)^{\mathrm T}+(1,0,1)^{\mathrm T}=(2,1,1)^{\mathrm T}=\boldsymbol{b}$——**残差为零**，这说明 $\boldsymbol{b}\in C(A)$，最小二乘解恰好就是精确解。
 
-**换一个右端：** 取 $\boldsymbol{b}=(1,1,1)^{\mathrm T}$，此时 $\boldsymbol{b}\notin C(A)$。$Q^{\mathrm T}\boldsymbol{b}=(-1.4142,\ 0.8165)^{\mathrm T}$，解得 $x_2=0.6667$、$x_1=0.6667$，即 $\hat{\boldsymbol{x}}=(0.6667,0.6667)^{\mathrm T}=\bigl(\tfrac23,\tfrac23\bigr)^{\mathrm T}$（正态方程 $\begin{pmatrix}2&1\\1&2\end{pmatrix}\boldsymbol{x}=(2,2)^{\mathrm T}$ 的解），残差 $\lVert A\hat{\boldsymbol{x}}-\boldsymbol{b}\rVert_2=0.5774=1/\sqrt3$ ✓，且 $A^{\mathrm T}\boldsymbol{r}=\boldsymbol{0}$ 成立。
+**换一个右端：** 取 $\boldsymbol b=(1,1,1)^{\mathrm T}$，此时 $\boldsymbol b\notin C(A)$。用根号形式保留精度，有 $\boldsymbol c=Q^{\mathrm T}\boldsymbol b=(-\sqrt2,2/\sqrt6)^{\mathrm T}$。第二行 $(\sqrt6/2)x_2=2/\sqrt6$ 给出 $x_2=2/3$；第一行 $-\sqrt2x_1-x_2/\sqrt2=-\sqrt2$ 给出 $x_1=2/3$。因此 $A\hat{\boldsymbol x}=(4/3,2/3,2/3)^{\mathrm T}$，$\boldsymbol r=(-1/3,1/3,1/3)^{\mathrm T}$，$\lVert\boldsymbol r\rVert_2=1/\sqrt3\approx0.5774$，且 $A^{\mathrm T}\boldsymbol r=(0,0)^{\mathrm T}$。若补上 $\boldsymbol q_\perp=(-1,1,1)^{\mathrm T}/\sqrt3$，全 QR 中的 $d=\boldsymbol q_\perp^{\mathrm T}\boldsymbol b=1/\sqrt3$，也就直接给出了无法消去的残差长度。
 :::
 
 :::
@@ -548,7 +560,7 @@ $$\hat{\boldsymbol{x}}=(1,1)^{\mathrm T}.$$
 | Givens | $c=x_1/r$，$s=x_2/r$，$r=\texttt{hypot}(x_1,x_2)$；$\det G=+1$ |
 | 正交性损失 | CGS：$\mathrm{cond}^2u$；MGS：$\mathrm{cond}\,u$；Householder / Givens：$u$ |
 | 复杂度 | GS：$2mn^2$；Householder：$2mn^2-\frac23n^3$；Givens：$3mn^2-n^3$（只求 $R$） |
-| QR 最小二乘 | $R\hat{\boldsymbol{x}}=(Q^{\mathrm T}\boldsymbol{b})_{1:n}$；$\lVert\boldsymbol{r}\rVert_2=\lVert\boldsymbol{d}\rVert_2$ |
+| QR 最小二乘 | 瘦 QR：$R\hat{\boldsymbol{x}}=Q^{\mathrm T}\boldsymbol b$；全 QR：右端取 $\bar Q^{\mathrm T}\boldsymbol b$ 的前 $n$ 个分量，余下块 $\boldsymbol d$ 满足 $\lVert\boldsymbol r\rVert_2=\lVert\boldsymbol d\rVert_2$ |
 
 :::
 
@@ -556,7 +568,7 @@ $$\hat{\boldsymbol{x}}=(1,1)^{\mathrm T}.$$
 1. **未经检查就依赖经典 Gram–Schmidt 的正交性。** 2.3.3 的实验显示病态输入可能造成严重损失；$\kappa^2u$ 是风险估计，不能替代实测 $\|Q^{\mathrm T}Q-I\|$。稠密 QR 可优先使用 Householder（`np.linalg.qr`），逐列构造可考虑 MGS 与重正交化。
 2. **MGS 写成 CGS。** 两者只差「内积用原始列还是当前列」，数学上等价，数值上差别巨大。写代码时必须**逐列就地更新**，不能先留一份原始备份再用备份算系数。
 3. **Householder 消元向量取错符号。** 若取 $\alpha=+\lVert\boldsymbol{x}\rVert$ 且 $x_1\gt0$，$\boldsymbol{v}$ 的首分量 $x_1-\lVert\boldsymbol{x}\rVert$ 是相近数相减，损失有效数字（[1.2.4](../ch01/sec12.md#sec-1.2.4)）。正确取 $\alpha=-\operatorname{sgn}(x_1)\lVert\boldsymbol{x}\rVert$，让首分量变成**相加**。
-4. **手写 $\sqrt{x_1^2+x_2^2}$ 算 Givens 的 $r$。** 会溢出 / 下溢；用 `hypot`。同理 $\lVert\boldsymbol{x}\rVert_2$ 用 `np.linalg.norm`，别手写 `sqrt(x@x)`。
+4. **手写 $\sqrt{x_1^2+x_2^2}$ 算 Givens 的 $r$。** 中间平方会溢出或下溢，应使用 `hypot`。高维范数也需要有缩放保护的实现，不能一概假定所有 `np.linalg.norm` 调用路径都有这种保护；单位化 Householder 向量之前同样要防范中间结果超出范围。
 5. **以为 QR 分解唯一。** 只有「$R$ 对角元为正」的规范形式才唯一；LAPACK 与 NumPy 允许负对角元，所以不同库给出的 $Q,R$ 可以差若干列的符号。**比较 $Q,R$ 前先统一符号**，或改为比较 $QR$ 与 $A$、$Q^{\mathrm T}Q$ 与 $I$。
 6. **用 QR 解最小二乘时把整个 $\bar Q$ 都算出来。** 如果只要解，可以只存 Householder 向量（$O(mn)$ 内存）并直接作用在 $\boldsymbol{b}$ 上，不必形成 $m\times m$ 的 $\bar Q$（$O(m^2)$ 内存）——这是大规模最小二乘的标准优化。
 7. **秩亏时仍用普通 QR 判断秩。** $A$ 秩亏或接近秩亏时，$R$ 的对角元只会出现「很小但不为零」的值，靠它判断秩并不可靠——请用**列主元 QR**（[@thm-sup-2.3.2] 后的注）或 SVD（[2.6.5](sec26.md#sup-2.6.5)）。
