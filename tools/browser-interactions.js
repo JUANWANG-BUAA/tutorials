@@ -190,6 +190,64 @@ async (hostPage) => {
   check(resumeHref.endsWith('#' + encodeURIComponent(destination)), 'continue reading resumes at the last visible section', resumeHref);
 
   await page.setViewportSize({ width: 1280, height: 800 });
+  await visit('deeplearning/lectures/lec04/sec43.html');
+  const dlReference = page.locator('main a.crossref[href="#method-4.3.1"]');
+  await dlReference.scrollIntoViewIfNeeded();
+  const dlSourceY = await page.evaluate(() => scrollY);
+  await dlReference.hover();
+  const dlPreview = page.locator('#dl-reference-preview');
+  await dlPreview.waitFor({ state: 'visible' });
+  check((await dlPreview.innerText()).includes('重参数化技巧') && await dlPreview.locator('.katex').count() > 0,
+    'reference previews show the actual target and rendered formulas');
+  await page.keyboard.press('Escape');
+  check(await dlPreview.isHidden(), 'Escape dismisses the reference preview');
+  await dlReference.click();
+  await page.waitForURL('**/sec43.html#method-4.3.1');
+  await page.locator('.dl-reading-return').click();
+  await page.waitForURL('**/sec43.html');
+  await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlSourceY);
+  check(Math.abs(await page.evaluate(() => scrollY) - dlSourceY) < 3, 'same-page reference returns to its original reading position');
+
+  await visit('deeplearning/lectures/lec01/sec15.html');
+  const dlCrossRef = page.locator('main a[href="sec14.html#thm-1.4.2"]');
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await dlCrossRef.focus();
+  await page.locator('#dl-reference-preview:not([hidden])').waitFor();
+  check((await page.locator('.dl-reference-preview__title').innerText()).includes('定理 1.4.2'),
+    'keyboard focus previews a cross-page definition');
+  const dlCrossY = await page.evaluate(() => scrollY);
+  await dlCrossRef.click();
+  await page.waitForURL('**/sec14.html#thm-1.4.2');
+  const dlNextRef = page.locator('main a[href="sec13.html"]').first();
+  await dlNextRef.scrollIntoViewIfNeeded();
+  const dlMiddleY = await page.evaluate(() => scrollY);
+  await dlNextRef.click();
+  await page.waitForURL('**/sec13.html');
+  await page.goBack();
+  await page.waitForURL('**/sec14.html#thm-1.4.2');
+  check(await page.locator('.dl-reading-return').isVisible(), 'browser back preserves the earlier return target');
+  await page.goForward();
+  await page.waitForURL('**/sec13.html');
+  await page.locator('.dl-reading-return').click();
+  await page.waitForURL('**/sec14.html#thm-1.4.2');
+  await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlMiddleY);
+  await page.locator('.dl-reading-return').click();
+  await page.waitForURL('**/sec15.html');
+  await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlCrossY);
+  check(Math.abs(await page.evaluate(() => scrollY) - dlCrossY) < 3, 'chained cross-page references return through both reading positions');
+
+  await visit('deeplearning/lectures/lec04/sec43.html');
+  const dlTerm = page.locator('main .term').first();
+  await dlTerm.focus();
+  await dlTerm.press('Enter');
+  const dlTermY = await page.evaluate(() => scrollY);
+  await page.locator('#term-popover .term-popover-link').click();
+  await page.waitForURL('**/sec42.html');
+  await page.locator('.dl-reading-return').click();
+  await page.waitForURL('**/sec43.html');
+  await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlTermY);
+  check(Math.abs(await page.evaluate(() => scrollY) - dlTermY) < 3, 'glossary definitions return to the original reading position');
+
   for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers', 'algorithms']) {
     await visit(book + '/index.html');
     check(await page.locator('html').getAttribute('data-book') === book && await page.locator('#prefs-toggle').count() === 1, book + ' initializes the shared reader');

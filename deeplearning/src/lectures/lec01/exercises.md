@@ -137,7 +137,7 @@ $$w\leftarrow 0-0.05\cdot(-20)=1,\qquad b\leftarrow 1-0.05\cdot(-5)=1.25 .$$
 
 > 依赖仅限 `numpy` 与 `torch`。每题给**可运行的验收标准**——不通过就说明对应环节没接上。
 
-**C1.** 写形状推演工具 `infer_shapes(dims, batch)`：输入层宽列表与批大小，返回每层输出形状与参数量。（依据：[方法 1.2.1](sec12.md#method-1.2.1)、[例 1.2.1](sec12.md#ex-1.2.1)）**验收标准**：① `infer_shapes([784,128,64,10], 32)` 的逐层形状为 $(32,784),(32,128),(32,64),(32,10)$；② 总参数量 `== 109386`（精确整数相等）；③ 批大小改 $256$ 后总参数量**一个数字都不变**（断言相等）；④ `[100,32,1]`、$B=64$ 时总参数量 `== 3265`。
+**C1.** 写形状推演工具 `infer_shapes(dims, batch)`：输入层宽列表与批大小，返回每层输出形状与参数量。（依据：[方法 1.2.1](sec12.md#method-1.2.1)、[例 1.2.1](sec12.md#ex-1.2.1)）**验收标准**：① `infer_shapes([784,128,64,10], 32)` 的三层输出形状为 $(32,128),(32,64),(32,10)$；输入形状 $(32,784)$ 不计入输出列表；② 总参数量 `== 109386`（精确整数相等）；③ 批大小改 $256$ 后总参数量不变；④ `[100,32,1]`、$B=64$ 时总参数量 `== 3265`。
 
 ::: sol 参考实现
 ```python
@@ -151,7 +151,7 @@ def infer_shapes(dims, batch):
         rows.append(((batch, d_out), params))
     return rows, total
 rows, total = infer_shapes([784, 128, 64, 10], 32)
-assert [r[0] for r in rows] == [(32, 784), (32, 128), (32, 64), (32, 10)]   # ①
+assert [r[0] for r in rows] == [(32, 128), (32, 64), (32, 10)]              # ①
 assert total == 109386                                                      # ②
 assert infer_shapes([784, 128, 64, 10], 256)[1] == total                    # ③ 与批大小无关
 assert infer_shapes([100, 32, 1], 64)[1] == 3265                            # ④
@@ -288,33 +288,48 @@ print("optimizer checks passed")
 :::
 
 **C5.** 组装完整训练循环：**warmup + 余弦退火 + 梯度裁剪 + 梯度累积**。（依据：[1.6.6](sec16.md)、[1.6.8](sec16.md)）
-- **验收标准**：① 调度器第 0 步为峰值的 $1/T_w$、第 $T_w$ 步为峰值、末步 $\le$ 峰值 $1\%$（读 `sched.get_last_lr()`）；② 累积 $k$ 次的更新与「等效大批 $k\times B$ 一次更新」差异 $<10^{-6}$（损失须除以累积步数）；③ `clip_grad_norm_(..., c)` 返回的**裁剪前**范数 $>c$，而裁剪后参数梯度总范数 $\le c+10^{-6}$；④ 300 步后损失下降（末 20 步均值 < 前 20 步均值）；⑤ 顺序断言：`step()` 后、`zero_grad()` 前 `p.grad` 非 `None`，`zero_grad()` 后全为 0。
+- **验收标准**：① 以首次更新为第 0 步，第 0 步学习率为峰值的 $1/T_w$，第 $T_w-1$ 步达到峰值，最后一次更新不高于峰值的 $1\%$；从优化器读取实际使用的学习率；② 累积 $k$ 次的更新与无批间依赖的「等效大批 $k\times B$ 一次更新」差异 $<10^{-6}$；③ 检查裁剪前、后梯度范数；④ 在下列固定种子的有信号回归任务上，末 20 步平均训练损失低于前 20 步；⑤ 检查 `step()` 前后梯度仍在，显式清零后梯度为 0。训练损失不要求逐步单调。
 
 ::: sol 参考实现
 ```python
+import math
 import torch, torch.nn as nn, torch.optim as optim
 torch.manual_seed(0)
 model = nn.Sequential(nn.Linear(32, 64), nn.ReLU(), nn.Linear(64, 1))
 opt = optim.AdamW(model.parameters(), lr=3e-4, weight_decay=0.01)
-total_steps, warmup, accum = 300, 30, 4
+total_steps, warmup, accum, clip = 300, 30, 4, 0.1
 def lr_factor(s):
-    warm = min(1.0, (s + 1) / warmup)                 # 前 warmup 步线性升温
-    cos = 0.5 * (1 + torch.cos(torch.tensor(min(s, total_steps) / total_steps * 3.14159)).item())
-    return warm * cos                                 # 峰值之后余弦退到接近 0
+    s = min(s, total_steps - 1)
+    if s < warmup:
+        return (s + 1) / warmup
+    progress = (s - warmup + 1) / (total_steps - warmup)
+    return 0.5 * (1 + math.cos(math.pi * progress))
 sched = optim.lr_scheduler.LambdaLR(opt, lr_lambda=lr_factor)
-history = []
+history, lrs = [], []
 for step in range(total_steps):
-    for micro in range(accum):                        # 累积 accum 个小批
-        xb, yb = torch.randn(16, 32), torch.randn(16, 1)
-        loss = nn.functional.mse_loss(model(xb), yb) / accum    # 除以 accum：与大批等价
+    lrs.append(opt.param_groups[0]["lr"])  # 这次更新实际使用的学习率
+    batch_loss = 0.0
+    for micro in range(accum):
+        xb = torch.randn(16, 32)
+        yb = 2 * xb[:, :1] - xb[:, 1:2]       # 有可学习信号；不是独立随机标签
+        loss = nn.functional.mse_loss(model(xb), yb) / accum
         loss.backward()
-    gnorm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # 返回裁剪前范数
-    opt.step(); sched.step(); opt.zero_grad()         # 顺序：step → 调度 → 清梯度
-    history.append(loss.item() * accum)
-lrs = [3e-4 * lr_factor(s) for s in (0, warmup, total_steps - 1)]
-assert abs(lrs[0] - 3e-4 / warmup) < 1e-9 and abs(lrs[1] - 3e-4) < 1e-9   # ①
-assert lrs[2] <= 0.01 * 3e-4
-def one_update(mode):                                 # ② 累积等价性
+        batch_loss += loss.item()
+    before = nn.utils.clip_grad_norm_(model.parameters(), max_norm=clip)
+    after = torch.linalg.vector_norm(torch.stack([p.grad.norm() for p in model.parameters()]))
+    if step == 0:
+        assert before > clip and after <= clip + 1e-6                         # ③
+    opt.step()
+    if step == 0:
+        assert all(p.grad is not None for p in model.parameters())            # ⑤
+    opt.zero_grad(set_to_none=False)
+    if step == 0:
+        assert all(torch.count_nonzero(p.grad) == 0 for p in model.parameters())
+    sched.step()
+    history.append(batch_loss)
+assert abs(lrs[0] - 3e-4 / warmup) < 1e-9                                  # ①
+assert abs(lrs[warmup - 1] - 3e-4) < 1e-9 and lrs[-1] <= 0.01 * 3e-4
+def one_update(mode):
     torch.manual_seed(7); m = nn.Linear(8, 4); o = optim.SGD(m.parameters(), lr=0.1)
     x = torch.randn(16, 8); y = torch.randn(16, 4)
     if mode == "batch":
@@ -322,22 +337,23 @@ def one_update(mode):                                 # ② 累积等价性
     else:
         for k in range(4):
             (nn.functional.mse_loss(m(x[k*4:(k+1)*4]), y[k*4:(k+1)*4]) / 4).backward()
-    o.step(); return m.weight.detach().clone()
-assert (one_update("batch") - one_update("accum")).abs().max().item() < 1e-6
-assert sum(history[-20:]) / 20 < sum(history[:20]) / 20                      # ④
+    o.step()
+    return torch.cat([p.detach().flatten() for p in m.parameters()])
+assert (one_update("batch") - one_update("accum")).abs().max().item() < 1e-6  # ②
+assert sum(history[-20:]) / 20 < sum(history[:20]) / 20                       # ④
 print("training-loop checks passed")
 ```
-**关键行注释**：`clip_grad_norm_` 的**返回值**是裁剪前范数，这是判断「阈值是否过小」的唯一依据（[1.6.6](sec16.md)）。累积不除以步数会让等效学习率变成 $k$ 倍。若模型含 `BatchNorm`，第 ② 条断言必然失败——BN 的统计量在 micro-batch 上算，两者不等价。
+**关键行注释**：`clip_grad_norm_` 返回裁剪前范数，还需另算裁剪后的范数。等大小微批的平均损失各除以累积步数后，与无批间依赖、无随机层的大批计算等价到浮点误差；不等大小微批须按样本数加权。`BatchNorm` 的统计量按微批计算，因此一般不与大批等价。
 :::
 
-**C6.** 写泄漏探测工具：检查「预处理在划分前拟合」与「时序随机划分」两类泄漏，并给出可证伪判据。（依据：[1.7.6 的数据泄漏清单](sec17.md)、[方法 1.7.2](sec17.md#method-1.7.2)、[1.7.7](sec17.md)）
-- **验收标准**：① 正确流程（先划分、只在训练集 `fit` 标准化器）下，把标签随机打乱后重训 200 步，验证准确率落在 $[0.35,0.65]$；② 错误流程（在**全量**数据上 `fit` 后再划分）下同一实验的准确率显著更高（断言 $>0.6$），复现出泄漏；③ 时序数据随机划分与按时间切分的得分差 $>0.05$；④ 输出检查表，逐条给出「通过 / 失败」。
+**C6.** 写泄漏检查：核对预处理拟合所用样本，并比较随机划分与按时间划分；再用训练标签置换做一个诊断对照。（依据：[1.7.6 的数据泄漏清单](sec17.md)、[方法 1.7.2](sec17.md#method-1.7.2)、[1.7.7](sec17.md)）
+- **验收标准**：① 分别记录标准化器实际拟合的样本 ID，正确流程与验证集无交集，全量拟合有交集；② 只打乱训练标签，保留输入、验证标签与划分，报告多次置换后的验证准确率及验证集多数类基线；③ 若目标是用过去预测未来，检查训练时间是否全部早于验证时间，并报告随机划分与时间划分的分数；④ 不以某个固定分数差作为泄漏存在或不存在的证明。
 
 ::: sol 参考实现
 ```python
 import numpy as np, torch, torch.nn as nn
+
 def train_eval(x_tr, y_tr, x_va, y_va, steps=200, seed=0):
-    """小网络二分类：返回验证集准确率。标签随机的正确流程下应≈0.5。"""
     torch.manual_seed(seed)
     m = nn.Sequential(nn.Linear(x_tr.shape[1], 64), nn.ReLU(), nn.Linear(64, 1))
     opt = torch.optim.AdamW(m.parameters(), lr=1e-3)
@@ -346,37 +362,57 @@ def train_eval(x_tr, y_tr, x_va, y_va, steps=200, seed=0):
         opt.zero_grad(); loss.backward(); opt.step()
     with torch.no_grad():
         return ((m(x_va) > 0).float() == y_va).float().mean().item()
-def make_data(n=300, d=20, seed=0):
-    rng = np.random.default_rng(seed)
-    x = rng.normal(0, 1, (n, d)); y = (x[:, 0] + 0.5 * x[:, 1] > 0).astype(np.float32)
-    return x.astype(np.float32), y[:, None]
-# ① 正确流程：先划分，再只用训练集 fit 标准化器；标签故意打乱
-x, y = make_data()
-perm = np.random.default_rng(1).permutation(len(y)); x, y = x[perm], y[perm]
-tr, va = slice(0, 200), slice(200, 300)
-mu, sd = x[tr].mean(0), x[tr].std(0) + 1e-8              # fit 只用训练集
-acc_ok = train_eval(torch.tensor((x[tr] - mu) / sd), torch.tensor(y[tr]),
-                    torch.tensor((x[va] - mu) / sd), torch.tensor(y[va]))
-assert 0.35 <= acc_ok <= 0.65, f"正确流程下不应高于随机水平，实得 {acc_ok}"
-# ② 错误流程：在全体上 fit（验证集统计量泄漏进训练）
-mu_all, sd_all = x.mean(0), x.std(0) + 1e-8
-acc_bad = train_eval(torch.tensor((x[tr] - mu_all) / sd_all), torch.tensor(y[tr]),
-                     torch.tensor((x[va] - mu_all) / sd_all), torch.tensor(y[va]))
-print(f"仅训练集 fit: {acc_ok:.3f}   全体 fit（泄漏）: {acc_bad:.3f}")
-# ③ 时序：随机划分 vs 按时间切分
+
+rng = np.random.default_rng(0)
+x = rng.normal(0, 1, (300, 20)).astype(np.float32)
+y = (x[:, 0] + 0.5 * x[:, 1] > 0).astype(np.float32)[:, None]
+order = rng.permutation(len(y))
+tr, va = order[:200], order[200:]
+
+def fit_standardizer(x, fit_ids):
+    fitted = x[fit_ids]
+    return fitted.mean(0), fitted.std(0) + 1e-8, set(fit_ids.tolist())
+
+mu, sd, fitted_ids = fit_standardizer(x, tr)
+mu_all, sd_all, fitted_all = fit_standardizer(x, np.arange(len(x)))
+valid_ids = set(va.tolist())
+assert not (fitted_ids & valid_ids)                         # ① 正确：无验证样本
+assert fitted_all & valid_ids                              # ① 错误：验证样本参与拟合
+print("训练集拟合与验证集交集：", len(fitted_ids & valid_ids))
+print("全量拟合与验证集交集：", len(fitted_all & valid_ids))
+
+xtr = torch.tensor((x[tr] - mu) / sd)
+xva = torch.tensor((x[va] - mu) / sd)
+yva = torch.tensor(y[va])
+normal = train_eval(xtr, torch.tensor(y[tr]), xva, yva)
+null_scores = []
+for seed in (1, 2, 3):
+    # 只置换训练标签；输入和验证集完全不变。
+    shuffled = y[tr][np.random.default_rng(seed).permutation(len(tr))]
+    null_scores.append(train_eval(xtr, torch.tensor(shuffled.copy()), xva, yva))
+majority = max(float(y[va].mean()), 1 - float(y[va].mean()))
+print("原标签准确率：", normal, "置换标签准确率：", null_scores, "验证集多数类比例：", majority)
+
+# ② 全量拟合的演示只报告结果；泄漏不保证会让分数上升。
+bad = train_eval(torch.tensor((x[tr] - mu_all) / sd_all), torch.tensor(y[tr]),
+                 torch.tensor((x[va] - mu_all) / sd_all), yva)
+print("全量拟合后的准确率：", bad)
+
+# ③ 不同时间划分对应不同的评估问题。
 t = np.arange(600)
 xs = np.stack([np.sin(t / 20), np.cos(t / 20), t / 600], 1).astype(np.float32)
 ys = (np.sin((t + 1) / 20) > 0).astype(np.float32)[:, None]
-ri = np.random.default_rng(2).permutation(600)
-acc_rand = train_eval(torch.tensor(xs[ri[:400]]), torch.tensor(ys[ri[:400]]),
-                      torch.tensor(xs[ri[400:]]), torch.tensor(ys[ri[400:]]))
-acc_time = train_eval(torch.tensor(xs[:400]), torch.tensor(ys[:400]),
-                      torch.tensor(xs[400:]), torch.tensor(ys[400:]))
-print(f"随机划分: {acc_rand:.3f}   按时间切分: {acc_time:.3f}")
-checks = {"预处理器只在训练集 fit": True, "划分方式与部署场景一致": True, "测试集封存且只用一次": True}
-print("泄漏检查表:", checks)
+ri = np.random.default_rng(2).permutation(len(t))
+random_train, random_val = ri[:400], ri[400:]
+time_train, time_val = t[:400], t[400:]
+assert t[time_train].max() < t[time_val].min()
+assert not (t[random_train].max() < t[random_val].min())
+def score(train_ids, val_ids):
+    return train_eval(torch.tensor(xs[train_ids]), torch.tensor(ys[train_ids]),
+                      torch.tensor(xs[val_ids]), torch.tensor(ys[val_ids]))
+print("随机划分：", score(random_train, random_val), "按时间划分：", score(time_train, time_val))
 ```
-**关键行注释**：第 ① 条是**可证伪判据**——随机标签下验证准确率若明显高于 $0.5$，就说明流程有泄漏，必查「划分方式、预处理拟合范围、重复样本」三项。第 ② 条是**故意的错误流程**，仅用于验证探测器有效，不要用在真实项目里。
+**怎样读结果**：验证集参与拟合是流程错误，即便这次准确率没升高也是泄漏。置换标签后结果接近基线并不能证明没有泄漏；偏离也可能来自有限样本波动，须检查更多置换、划分与重复样本。随机划分是否适合取决于部署问题：若预测未来，随机划分混入未来样本；若任务不是预测未来，时间切分并非普遍要求。两种切分分数没有必然的大小关系。
 :::
 
 ## D 组 · 开放设计（4 题）

@@ -232,4 +232,4 @@ $$\frac{\partial\mathcal L}{\partial\Delta_w}=-\beta\,\sigma(-z)\lt0,\qquad \fra
 | 19（第四部分） | [方法 5.6.6](sec56.md#method-5.6.6)、[5.6.11](sec56.md) | [习题集](exercises.md) D3 |
 | 20（第四部分） | [方法 5.7.4](sec57.md#method-5.7.4)、[例 5.7.1](sec57.md#ex-5.7.1)、[方法 5.7.5](sec57.md#method-5.7.5) | [习题集](exercises.md) D1、D4 |
 
-**最后一句**：本卷的目的不是打分，而是**把你以为会的地方暴露出来**。凡有「写得出来但讲不清机制」的题，回到对应节的 `intuition` 与[回忆卡](recall-cards.md)当天再练一遍；连续两轮仍错的条目，写进[勘误与补注](errata.md)第四节作为自己的薄弱点单独跟踪。
+本卷用于检查哪些内容还没有真正掌握。遇到「写得出来但讲不清机制」的题，当天回读对应节的 `intuition`，再用[回忆卡](recall-cards.md)练习；连续两轮仍错的条目，写进[勘误与补注](errata.md)第四节，单独跟踪。

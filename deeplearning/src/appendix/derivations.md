@@ -1,6 +1,6 @@
 # 附录 C · 补充推导与实现细节
 
-正讲为了节奏，把一些推导压成了「结论 + 直觉」。这一页把那些推导**补全到可以独立跟读**的程度，并补上几处工程实现的关键细节。**只在你需要「更严格」或「更工程」时读它。**
+正文为了控制讲述节奏，把一些推导简化为「结论 + 直觉」。这一页补全这些推导，让你可以独立跟读，也补充几处工程实现的关键细节。需要更严格的推导或更具体的实现说明时，再来查阅。
 
 ::: note 本页收录与否的判据
 收录标准是「**正文给了结论但没给完推导，且这个推导值得自己写一遍**」。过于冗长的证明（如通用逼近定理的测度论证明）不在其列，只给出处。
@@ -18,7 +18,7 @@ $$\Delta^{(l)}\triangleq\frac{\partial\mathcal L}{\partial\boldsymbol Z^{(l)}}\i
 
 $$\Delta^{(L)}=G^{(L)}\odot\phi'\bigl(\boldsymbol Z^{(L)}\bigr).$$
 
-**② 逐层回传**。由 $\boldsymbol Z^{(l+1)}=\boldsymbol A^{(l)}W^{(l+1)}+\cdots$ 得 $\dfrac{\partial\mathcal L}{\partial\boldsymbol A^{(l)}}=\Delta^{(l+1)}W^{(l+1)\mathrm T}$，再穿一次逐元素激活：
+**② 逐层回传**。由 $\boldsymbol Z^{(l+1)}=\boldsymbol A^{(l)}W^{(l+1)}+\cdots$ 得 $\dfrac{\partial\mathcal L}{\partial\boldsymbol A^{(l)}}=\Delta^{(l+1)}W^{(l+1)\mathrm T}$，再乘上逐元素激活函数的导数：
 
 $$\boxed{\ \Delta^{(l)}=\bigl(\Delta^{(l+1)}W^{(l+1)\mathrm T}\bigr)\odot\phi'\bigl(\boldsymbol Z^{(l)}\bigr)\ }\qquad l=L-1,\dots,1 .$$
 
@@ -29,7 +29,7 @@ $$\frac{\partial\mathcal L}{\partial W^{(l)}}=\boldsymbol A^{(l-1)\mathrm T}\Del
 
 **④ 为什么是「线性时间」**。前向一次、反向一次，每次每层只需两次矩阵乘（$O(Bd_{l-1}d_l)$）——总代价是参数量的常数倍。若改用逐参数数值微分，需要「参数量次前向」，在 $10^9$ 参数规模下完全不可行。
 
-> **工程要点**：反传的中间量 $\Delta^{(l)}$ 通常**不显式保存**，而是与反向计算交错产生（这就是 PyTorch 的 autograd 引擎做的事）。真正占显存的是前向激活 $\boldsymbol A^{(l)}$ —— 这也是**激活重计算**的用武之地（[9.5](../lectures/lec09/sec95.md)）。
+> **工程要点**：反传的中间量 $\Delta^{(l)}$ 通常不显式保存，而是在反向计算过程中按需产生（这就是 PyTorch 的 autograd 引擎做的事）。真正占显存的是前向激活 $\boldsymbol A^{(l)}$，因此可以用激活重计算减少这部分开销（[9.5](../lectures/lec09/sec95.md)）。
 
 ### C.2 梯度检查（grad check）的原理
 
@@ -126,7 +126,7 @@ $$\lVert\mathcal TV-\mathcal TU\rVert_\infty\le\gamma\lVert V-U\rVert_\infty$$
 $$\nabla_\theta J=\mathbb E_{\tau}\Bigl[R(\tau)\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Bigr]
 =\mathbb E\Bigl[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\underbrace{G_t}_{\text{回报-to-go}}\Bigr].$$
 
-第二行用到**因果性**：$t$ 之前动作的得分函数与 $t$ 之后的回报无关，$\mathbb E[R(\tau)\mid a_t]$ 可替换为 $G_t=\sum_{k\ge t}\gamma^{k-t}r_k$（只依赖 $a_t$ 之后的部分），这正是方差缩减的第一刀。加上基线 $b(s)$ 再做一刀（对 $b$ 的期望贡献为 0）：
+第二行用到**因果性**：$t$ 之前动作的得分函数与 $t$ 之后的回报无关，$\mathbb E[R(\tau)\mid a_t]$ 可替换为 $G_t=\sum_{k\ge t}\gamma^{k-t}r_k$（只依赖 $a_t$ 之后的部分），先通过这一步降低方差。再加入基线 $b(s)$，进一步降低方差（对 $b$ 的期望贡献为 0）：
 
 $$\nabla_\theta J=\mathbb E\Bigl[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\bigl(G_t-b(s_t)\bigr)\Bigr] .$$
 
@@ -145,7 +145,7 @@ $$\hat A_t^{\text{GAE}(\gamma,\lambda)}=\sum_{l\ge0}(\gamma\lambda)^l\delta_{t+l
 - $\lambda=0$：单步 TD（偏差大、方差小）；
 - $\lambda=1$：蒙特卡洛（偏差小、方差大）。
 
-**这就是 PPO 里那个 $\lambda$ 的全部含义**——一个偏差-方差的旋钮，与折扣 $\gamma$ 共同出现在 $\gamma\lambda$ 中。
+PPO 中的 $\lambda$ 就是用来调节这一偏差与方差的取舍，并与折扣 $\gamma$ 共同出现在 $\gamma\lambda$ 中。
 
 ### C.12 PPO 裁剪：为什么它替代了 KL 约束
 
@@ -212,8 +212,8 @@ $$m_t=(1-\beta_1)\sum_{i=0}^{t-1}\beta_1^{\,i}g_{t-i} .$$
 
 $$\boldsymbol Y=\tilde{\boldsymbol X}\,\boldsymbol W_{\text{col}},\qquad \boldsymbol W_{\text{col}}\in\mathbb R^{C_{\text{in}}K^2\times C_{\text{out}}} .$$
 
-**好处**：直接调用高度优化的 GEMM 内核（cuBLAS），工程上最容易快。
-**代价**：$\tilde{\boldsymbol X}$ 的数据量是原始输入特征的 $K^2$ 倍（相邻滑动窗口重复存储），显存与带宽放大。现代实现（cuDNN、CUTLASS）用隐式 GEMM 与分块寄存器复用避免真正落地该矩阵。
+**好处**：可以直接调用高度优化的 GEMM 内核（cuBLAS），工程上最容易获得高速度。
+**代价**：$\tilde{\boldsymbol X}$ 的数据量是原始输入特征的 $K^2$ 倍（相邻滑动窗口重复存储），显存与带宽需求也随之增加。现代实现（cuDNN、CUTLASS）用隐式 GEMM 与分块寄存器复用，避免实际存储该矩阵。
 
 ### C.17 缩放律的拟合形式与「计算最优」的推导
 
@@ -247,7 +247,7 @@ $$N^\star\propto C^{\frac{\beta}{\alpha+\beta}},\qquad D^\star\propto C^{\frac{\
 
 ::: method[core] 本页的用法
 1. **不要通读**：按需进入（正讲里遇到「推导见附录」的引用时来查）。
-2. **推一遍再对**：先自己写，再对照，差异处往往就是理解漏洞。
+2. **推一遍再对**：先自己写，再对照，差异处往往就是还没理解的地方。
 3. **改一个符号再用**：把批维去掉、把多头换成单头、把 $\lambda$ 设成 0 或 1——检验自己是否真懂公式的每一部分。
 4. **回到正文**：每条推导都在正文有对应的「直觉框」，两者对照读最有效。
 :::

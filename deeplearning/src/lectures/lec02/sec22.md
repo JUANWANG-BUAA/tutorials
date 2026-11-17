@@ -1,8 +1,8 @@
 # 2.2 RNN：沿时间展开的权值共享与 BPTT
 
-上一节把要求提出来了：**变长、保序、参数与长度无关**。现在兑现它。最朴素的想法是给网络装一块「记忆」：每读入一个输入 $\boldsymbol x_t$，就用它和上一步的记忆一起更新出一份新记忆，再据此给出这一步的输出。所有时间步用**同一组权重**做这件事——这就是循环神经网络（recurrent neural network, RNN）。
+上一节提出了三个要求：**变长、保序、参数与长度无关**。一种做法是给网络一个状态：每读入 $\boldsymbol x_t$，就用它和上一步状态更新出新状态，再据此计算输出。每个时间步复用**同一组权重**，这就是循环神经网络（recurrent neural network, RNN）。
 
-这个设计只用三行数学就写完了，但它的训练问题要用一整节来算清楚：**梯度要沿时间倒着传回去，而这条路径上全是连乘**。连乘的伸缩率由权重矩阵的谱性质决定，于是要么指数衰减（梯度消失）、要么指数增长（梯度爆炸），两者都让「长程依赖」变得几乎不可学。这一节的推导是整讲的技术地基——[2.3](sec23.md) 的门控是在改这里的结构，[2.4](sec24.md) 的注意力是在绕开这里的路径，[2.7](sec27.md) 的状态空间模型是在保住 $O(1)$ 状态的同时重写这里的递推。
+训练时，梯度要沿时间反向传递，途中经过各步状态转移的雅可比连乘。连乘可能让梯度随距离衰减或增长，使远处的依赖难以学习。[2.3](sec23.md) 的门控调整这条传播路径，[2.4](sec24.md) 的注意力让位置之间直接连接，[2.7](sec27.md) 的状态空间模型则重新设计递推，同时保留固定大小的状态。
 
 ## 2.2.1 递推的定义与形状约定 {#sec-2.2.1}
 
@@ -17,7 +17,7 @@ $$\hat{\boldsymbol y}_t=\psi\bigl(W_{hy}\boldsymbol h_t+\boldsymbol b_y\bigr),$$
 :::
 
 ::: intuition 一次只看三个符号：状态、输入、输出
-把递推式读成三个问题：**$\boldsymbol h_{t-1}$ 里存着什么**（历史摘要）、**$\boldsymbol x_t$ 带来什么**（当前证据）、**$\boldsymbol h_t$ 该丢什么留什么**（由 $W_{hh}$ 与 $\phi$ 共同决定）。注意 $\boldsymbol h_t$ 同时承担两个角色：它既是**输出层的输入**（现在要预测什么），又是**下一步的输入**（记忆里要留什么）。同一个向量被两个任务拉扯，这是 RNN 表达能力的一个先天限制——LSTM 用一条独立的细胞状态把这两个角色拆开（[2.3](sec23.md)），正是为了缓解它。
+读递推式时，可以依次看三个量：$\boldsymbol h_{t-1}$ 是历史摘要，$\boldsymbol x_t$ 提供当前输入，$W_{hh}$ 与 $\phi$ 共同决定新状态 $\boldsymbol h_t$ 保留什么。注意 $\boldsymbol h_t$ 同时承担两个角色：它既作为输出层的输入，支持当前预测，又作为下一步递推的输入，保存后续要用的信息。同一个向量必须兼顾这两个任务，这限制了 RNN 的表达能力。LSTM 用独立的细胞状态把记忆与读出分开（[2.3](sec23.md)），以缓解这一限制。
 :::
 
 ::: method 形状与参数量 {#method-2.2.1}
@@ -117,7 +117,7 @@ $$\hat{\boldsymbol y}_t=\psi\bigl(W_{hy}\boldsymbol h_t+\boldsymbol b_y\bigr),$$
 :::
 
 ::: intuition 展开视角的实用价值：调试顺序
-展开之后，很多困惑自动消失。例如「为什么 RNN 训练慢」——因为 $T$ 层网络的**反向传播必须逐层进行**，而这里的层数是序列长度；「为什么同一个词在不同位置得到同样的处理」——因为那是同一条权重；「为什么隐状态不能无限装历史」——因为所有层的中间表示都必须经过同一个 $d_h$ 维瓶颈。请把 $\boldsymbol h_t$ 记成「**前 $t$ 步的有损摘要**」：$\boldsymbol h_t$ 是 $\boldsymbol x_{1:t}$ 的确定性函数，但 $d_h$ 固定而 $t$ 可以任意大，所以它不是完整记忆，而是**按当前参数认为重要**的那部分历史。
+沿时间展开后，可以把训练与记忆问题对应到熟悉的网络结构：训练慢，是因为反向传播必须逐层进行，而这里的层数就是序列长度 $T$；不同位置能使用相同的处理方式，是因为各步共享权重；历史不能无限保存，是因为所有中间表示都经过固定的 $d_h$ 维状态。因此，$\boldsymbol h_t$ 应理解为前 $t$ 步的有损摘要。它是 $\boldsymbol x_{1:t}$ 的确定性函数，但 $d_h$ 固定、$t$ 可以任意大，留下的是当前参数所认为重要的历史，而不是完整记忆。
 :::
 
 ## 2.2.3 BPTT：梯度怎么沿时间传回去 {#sec-2.2.3}
@@ -157,7 +157,7 @@ $$\frac{\partial h_k^{(i)}}{\partial h_{k-1}^{(j)}}=\phi'(z_k^{(i)})\cdot W_{hh}
 \;\Longrightarrow\;
 J_k=\operatorname{diag}\bigl(\phi'(\boldsymbol z_k)\bigr)W_{hh}.$$
 
-注意 $\operatorname{diag}(\phi'(\boldsymbol z_k))$ 是**逐元素**调制，$W_{hh}$ 负责**跨维度**混合——两者交替出现是全部问题的根源。
+其中 $\operatorname{diag}(\phi'(\boldsymbol z_k))$ 逐元素调制梯度，$W_{hh}$ 则混合不同维度。两者在连乘中交替出现，决定了梯度沿时间传播时如何伸缩。
 
 **(2) 跨多步的雅可比 = 连乘。** 由链式法则（多元情形下逐段相乘）：
 
@@ -173,14 +173,14 @@ $$\frac{\partial \mathcal L}{\partial \boldsymbol h_t}
 =\sum_{s\ge t}\left(\prod_{k=t+1}^{s}J_k\right)^{\!\mathrm T}\frac{\partial \mathcal L_s}{\partial \boldsymbol h_s},
 \qquad\text{其中 } s=t \text{ 一项即 } \boldsymbol g_t \text{（空乘积取单位阵）},$$
 
-其中 $s=t$ 一项就是 $\boldsymbol g_t$（空乘积取单位阵）。这解释了为什么「误差**回传多远**」这个问题必须逐层考虑：远处损失的梯度要先穿过一长串 $J_k$ 才能到达 $\boldsymbol h_t$。
+远处损失的梯度要先穿过一长串 $J_k$ 才能到达 $\boldsymbol h_t$，因此分析误差能回传多远时，需要逐步考察这些雅可比。
 
 **(4) 对参数的梯度（实现里用的递推形式）。** 由 $\boldsymbol z_t=W_{hh}\boldsymbol h_{t-1}+\cdots$，有 $\partial\boldsymbol z_t/\partial W_{hh}=\boldsymbol h_{t-1}$ 的线性映射，故
 
 $$\frac{\partial\mathcal L}{\partial W_{hh}}=\sum_{t=1}^{T}\boldsymbol\delta_t\boldsymbol h_{t-1}^{\mathrm T},\qquad
 \boldsymbol\delta_t=\operatorname{diag}\bigl(\phi'(\boldsymbol z_t)\bigr)\Bigl(\underbrace{W_{hy}^{\mathrm T}\tfrac{\partial \mathcal L_t}{\partial \hat{\boldsymbol y}_t}}_{\text{本步输出带来的误差}}+W_{hh}^{\mathrm T}\boldsymbol\delta_{t+1}\Bigr).$$
 
-这个反向递推式 **就是 BPTT 的实现**：从 $t=T$ 起，每一步用「本步误差 + 下一步回传的误差」算出 $\boldsymbol\delta_t$，再累加进 $W_{hh}$ 的梯度。可以看到整个反向过程的时间复杂度是 $\mathcal O(T\,d_h^2)$，且**必须串行**（$\boldsymbol\delta_t$ 依赖 $\boldsymbol\delta_{t+1}$）。
+这就是 BPTT 的反向递推：从 $t=T$ 开始，每一步合并本步误差与下一步传回的误差，算出 $\boldsymbol\delta_t$，再累加进 $W_{hh}$ 的梯度。在这里的形状假设下，反向过程的时间复杂度为 $\mathcal O(T\,d_h^2)$；由于 $\boldsymbol\delta_t$ 依赖 $\boldsymbol\delta_{t+1}$，它必须沿时间串行计算。
 
 **(5) 范数界。** 对任意相容矩阵范数，
 
@@ -283,7 +283,7 @@ $$\boldsymbol g\leftarrow\boldsymbol g\cdot\min\!\left(1,\ \frac{c}{\lVert\bolds
 - **边界**：它只压得住**爆炸**。梯度已经衰减到 $10^{-9}$ 时，等比缩放救不回来（乘一个系数仍是 $10^{-9}$ 量级）。消失要靠门控结构（[2.3](sec23.md)）、合理的初始化与残差连接。
 :::
 
-值得说明裁剪为什么「有效但不治本」：爆炸发生在**更新之前**的瞬间，裁剪把这一步的更新尺度拉回可控范围，于是训练不会崩，但它并没有改变 $J_k$ 的连乘结构——下一次反向仍然是同一串乘积。因此裁剪是安全网，不是疗法。
+裁剪在参数更新前缩小过大的梯度，使当前更新的尺度可控；它没有改变 $J_k$ 的连乘结构，下一次反向传播仍可能出现梯度爆炸或消失。因此裁剪能限制更新幅度，却不能解决连乘本身的问题。
 
 ## 2.2.6 工程对策二：teacher forcing 与它的代价 {#sec-2.2.6}
 

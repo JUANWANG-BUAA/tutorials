@@ -48,6 +48,8 @@ SOURCES = {
     "deeplearning": {
         "page": "review/glossary.html",
         "columns": {"term": ["中文"], "en": ["English"], "def": ["一句话"], "origin": ["出处"]},
+        # 本书保留高频术语的首次提示，触屏点击仍打开释义而不是直接跳走。
+        "options": {"maxPerPage": 60, "maxPerTextNode": 2, "frequencyLimit": 0},
     },
     "linux": {
         "page": "review/glossary.html",
@@ -223,8 +225,11 @@ def build(book_dir: str) -> int:
             })
 
     out_path = os.path.join(book_dir, "book", "glossary.json")
+    result = {"page": cfg["page"], "terms": entries}
+    if "options" in cfg:
+        result["options"] = cfg["options"]
     with open(out_path, "w", encoding="utf-8") as handle:
-        json.dump({"page": cfg["page"], "terms": entries}, handle, ensure_ascii=False, separators=(",", ":"))
+        json.dump(result, handle, ensure_ascii=False, separators=(",", ":"))
     marked = mark_pages(book_dir)
     print("[glossary] %s：%d 行 → %d 条术语（跳过 %d），%.1f KB；标记页面 %d 个" % (
         slug, rows_total, len(entries), skipped, os.path.getsize(out_path) / 1024, marked))

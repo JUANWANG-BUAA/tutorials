@@ -209,4 +209,4 @@ $$a\boldsymbol v_1+a\boldsymbol v_2+b\boldsymbol v_3=2a\boldsymbol v_3+b\boldsym
 | 11、15、19 | [定理 2.8.1](sec28.md#thm-2.8.1)、[定义 2.8.4](sec28.md#def-2.8.4)、[2.8.7](sec28.md#sec-2.8.7) | [习题集](exercises.md) C6、D1 |
 | 12、16 | [例 2.2.1](sec22.md#ex-2.2.1)、[定理 2.3.1](sec23.md#thm-2.3.1)、[方法 2.2.2](sec22.md#method-2.2.2) | [习题集](exercises.md) B1、B3 |
 
-**最后一句**：本卷的目的不是打分，而是**把你以为会的地方暴露出来**。凡有「写得出来但讲不清机制」的题，回到对应节的 `intuition` 与 [回忆卡](recall-cards.md)当天再练一遍；连续两轮仍错的条目，写进[勘误与补注](errata.md)第四节的待核实条目单独跟踪。
+**最后一句**：自测除了给出分数，还要找出理解上的遗漏。凡是写得出答案、却讲不清机制的题，当天回到对应节的 `intuition` 与 [回忆卡](recall-cards.md)再练一遍；连续两轮仍错的条目，写进[勘误与补注](errata.md)第四节的待核实条目，单独跟踪。

@@ -1,0 +1,32 @@
+{
+  "generator": "tools/render_toy_videos.py",
+  "font": "/System/Library/Fonts/STHeiti Medium.ttc",
+  "resolution": [
+    1280,
+    720
+  ],
+  "fps": 12,
+  "videos": [
+    {
+      "file": "multihead-attention-handcalc.mp4",
+      "title": "多头注意力：两个词、两个头",
+      "duration_seconds": 84.02322,
+      "steps": 7,
+      "bytes": 832185,
+      "narration": "synthetic macOS say",
+      "voice": "Eddy (中文（中国大陆）)",
+      "captions": "Chinese burned-in and companion SRT"
+    },
+    {
+      "file": "vae-handcalc.mp4",
+      "title": "VAE：一次采样与损失手算",
+      "duration_seconds": 96.939887,
+      "steps": 8,
+      "bytes": 1061103,
+      "narration": "synthetic macOS say",
+      "voice": "Eddy (中文（中国大陆）)",
+      "captions": "Chinese burned-in and companion SRT"
+    }
+  ],
+  "scope": "Fixed hand-calculation examples only; no model training or external data."
+}

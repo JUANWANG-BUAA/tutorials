@@ -391,6 +391,19 @@ assert (emp[:2] - truncate(z)[0][:2]).abs().max() < 0.02                        
 ```
 :::
 
+**C7. SDPA 与 FlashAttention 前向 profiling。** 同样的注意力计算，启用融合内核后是否真的减少了显存和耗时？用 PyTorch 的 `scaled_dot_product_attention`（SDPA）比较数学后端与 FlashAttention 后端，而不是把调用 SDPA 本身当作使用 FlashAttention 的证据。（依据：[定理 2.6.4](sec26.md#thm-2.6.4)）
+
+- **输入与控制**：固定随机种子 0，$Q,K,V$ 形状均为 $(1,8,T,64)$，连续存储、FP16，非因果、无掩码、`dropout_p=0`，只测前向；取 $T=512,1024,2048,4096$，显存不足时记录 OOM，不改成伪造数值。两种后端使用相同输入；记录 GPU 型号、显存、驱动、CUDA 与 PyTorch 版本、dtype、形状和运行设置。
+- **动作**：在支持的 PyTorch 版本中用 `torch.nn.attention.sdpa_kernel` 分别只允许 `SDPBackend.MATH` 和 `SDPBackend.FLASH_ATTENTION`，禁止自动回退；若版本缺少该接口，记录版本限制。每种形状和后端分别预热至少 10 次，再用 CUDA event 测 50 次前向，计时前后同步（`torch.cuda.synchronize()`），报告每次毫秒数的中位数。测量期间不创建输入、不计入数值对照，关闭梯度；以 `torch.cuda.reset_peak_memory_stats()` 重置峰值，报告输入已分配后的基线及 `max_memory_allocated()` 峰值，差值用 MiB（$2^{20}$ 字节）表示，并说明它包含输出和临时分配，不等于设备总占用。
+- **验收**：① 对每个成功的长度列出后端、时间、基线与峰值显存和峰值增量；② 以同一组输入的 FP32 数学后端输出为参考，报告 FP16 两后端的最大绝对误差和相对 L2 误差 $\|y-y_{ref}\|_2/\|y_{ref}\|_2$（参考范数为零时只报绝对误差），检查输出有限并用 `atol=1e-2, rtol=1e-2` 的 `allclose` 对照，未通过时如实报告而非改阈值；③ 用 `torch.profiler` 的 CUDA 活动记录该次前向的算子和设备 kernel 名称，保存 trace 或表格；强制 Flash 后端成功且 profiler 中有对应 fused attention kernel 才标为已验证，名称随版本可能不同，无法辨认则标记未确认。后端不支持或抛错时保留错误原因，不能把数学后端结果标为 Flash。
+- **无 CUDA / 不支持 Flash 的分支**：记录硬件和限制；在 CPU 上以 FP32 数学后端完成 $T=512$ 的前向与显式 `softmax(Q @ K.transpose(-2,-1) / sqrt(64)) @ V` 对照，报告形状、最大绝对误差与 `allclose(atol=1e-5, rtol=1e-5)` 结果。GPU 耗时、显存和加速比标为未测，不得估填。
+
+::: sol 提示与答案
+用 `with torch.no_grad(), sdpa_kernel(SDPBackend.MATH):` 或相应的 `FLASH_ATTENTION` 上下文包住前向；对每种配置先同步并清除旧输出，再记录基线、重置峰值和测量。CUDA event 的 `elapsed_time` 单位是毫秒，记录结束 event 后同步再读取；profile 应单独运行，避免把 profiler 开销混入计时。峰值增量和延迟受分配器、实现、硬件及长度影响，不设统一加速阈值；Flash 在数学上计算同一注意力，浮点舍入顺序不同，不要求逐位相等。打印强制后端报错及 profiler 证据，比声称「调用了 SDPA 所以一定 fused」更可靠。
+:::
+
+> C 组另有上面的 C7 实验题。
+
 ## D 组 · 开放设计（4 题）
 
 > 每题四项缺一不可：**方案 + 理由 + 失败判据 + 验证计划**；判据必须可测量。

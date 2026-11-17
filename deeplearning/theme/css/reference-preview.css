@@ -1,0 +1,81 @@
+/* Book-local, read-only excerpts; all rules are scoped to this card. */
+.dl-reference-preview {
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 32em;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1em 1.1em;
+  border: 1px solid var(--line-strong, var(--fg, #333));
+  border-inline-start: 3px solid var(--accent, var(--links, #245a90));
+  border-radius: 6px;
+  background: var(--paper, var(--bg, #fff));
+  color: var(--ink, var(--fg, #222));
+  box-shadow: 0 5px 24px rgb(0 0 0 / 20%);
+  font-family: var(--sans, sans-serif);
+  font-size: 14px;
+  line-height: 1.65;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.dl-reference-preview[hidden] { display: none; }
+
+.dl-reference-preview .dl-reference-preview__label,
+.dl-reference-preview .dl-reference-preview__hint {
+  color: var(--ink-2, var(--fg, #444));
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+
+.dl-reference-preview .dl-reference-preview__title {
+  margin-block: 0.4em 0.6em;
+  font-size: 1.1em;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.dl-reference-preview .dl-reference-preview__excerpt {
+  max-height: min(22em, 48vh);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.dl-reference-preview .dl-reference-preview__excerpt > :first-child { margin-top: 0; }
+.dl-reference-preview .dl-reference-preview__excerpt > :last-child { margin-bottom: 0; }
+.dl-reference-preview .dl-reference-preview__excerpt p { margin-block: 0.55em; }
+.dl-reference-preview .dl-reference-preview__excerpt :is(ul, ol) { padding-inline-start: 1.4em; }
+.dl-reference-preview .dl-reference-preview__excerpt :is(pre, table) { max-width: 100%; font-size: 0.92em; }
+.dl-reference-preview .dl-reference-preview__excerpt pre { white-space: pre-wrap; }
+.dl-reference-preview .dl-reference-preview__excerpt table { border-collapse: collapse; }
+.dl-reference-preview .dl-reference-preview__excerpt :is(th, td) {
+  border: 1px solid var(--line, var(--fg, #777));
+  padding: 0.25em 0.4em;
+}
+.dl-reference-preview .dl-reference-preview__excerpt .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 0.6em;
+  overflow-y: hidden;
+}
+.dl-reference-preview .dl-reference-preview__hint {
+  margin-top: 0.7em;
+  padding-top: 0.5em;
+  border-top: 1px solid var(--line, var(--fg, #777));
+}
+
+@media (max-width: 600px) {
+  .dl-reference-preview { width: 30em; padding: 0.85em; }
+}
+@media (forced-colors: active) {
+  .dl-reference-preview { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .dl-reference-preview .dl-reference-preview__label,
+  .dl-reference-preview .dl-reference-preview__hint { color: CanvasText; }
+}
+
+@media print {
+  .dl-reference-preview { display: none !important; }
+}

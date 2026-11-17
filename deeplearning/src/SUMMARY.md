@@ -200,9 +200,11 @@
 
 - [练习与项目总览](exercises/overview.md)
 - [期末项目提案指南](exercises/project.md)
+- [课程文档问答与只读智能体项目](exercises/agent-project.md)
 
 # 附录 · 拓展与联系
 
 - [附录 A · 从九讲到研究选题](appendix/roadmap.md)
 - [附录 B · 开源项目与工具地图](appendix/resources.md)
 - [附录 C · 补充推导与实现细节](appendix/derivations.md)
+- [附录 D · 显存与 LoRA 参数计算器](appendix/calculators.md)

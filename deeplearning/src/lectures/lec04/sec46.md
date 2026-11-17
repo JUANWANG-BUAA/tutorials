@@ -1,13 +1,13 @@
 # 4.6 潜空间扩散与整流流
 
-[4.5](sec45.md)把扩散讲通了：训练稳、质量高、可控，唯一的短板是**采样要跑很多次网络前向**。这一个短板衍生出整整一代工程改进，本节讲其中四件事：
+[4.5](sec45.md)介绍了扩散的训练与采样：训练稳、质量高、可控，唯一的短板是采样需要多次网络前向。围绕这个问题，本节介绍四种改进：
 
 1. **换坐标系**：把扩散从像素空间搬到 **VAE 的潜空间**（LDM，latent diffusion model）。这不是近似，而是「用一次编解码换取 $6\sim64$ 倍的空间压缩」，代价是给重建误差设了一个天花板。
-2. **换主干**：把 U-Net 换成 **Transformer**（DiT，diffusion transformer），并解决「Transformer 怎么吃时间步与条件」的设计问题（adaLN-Zero）。
+2. **换主干**：把 U-Net 换成 **Transformer**（DiT，diffusion transformer），并用 adaLN-Zero 解决时间步与条件如何输入 Transformer 的问题。
 3. **换训练目标**：从「预测噪声」转向 **整流流 / 流匹配**（rectified flow / flow matching）——直接学一条把噪声搬到数据的**速度场**，并把它拉直，从而能用极少步数积分。
 4. **换解码方式**：**一致性模型**（consistency models）与 LCM 学「任意时刻的噪声图 → 原图」的一步映射，再用蒸馏把少步误差压下去。
 
-一句话概括这一节的主线：**扩散的三条出路是「更小的空间、更强的骨干、更直的路」**。
+这些改进分别减小建模空间、增强主干、缩短采样路径，或直接学习到终点的映射，以降低生成成本。
 
 ::: note[skip] 本节定位
 本节与 [4.7](sec47.md) 属于本讲的两节**拓展节**：它们建立在 [4.1](sec41.md)–[4.5](sec45.md) 打好的基础上（尤其是 [4.5](sec45.md) 的前向闭式、简化损失、CFG），面向 2023–2025 年的主流工程路线。**第一遍阅读可以只读每节的动机段、定义与结论表**，把论文与机制当作索引留在脑子里；二刷或做项目时再回来精读推导。
@@ -31,7 +31,7 @@ $$\boldsymbol z_t=\sqrt{\bar\alpha_t}\,\boldsymbol z_0+\sqrt{1-\bar\alpha_t}\,\v
 ::: intuition 为什么压缩之后扩散仍然有效——「感知压缩」这个词
 像素空间里有大量信息在**语义上与内容无关**：胶片噪声、压缩伪影、纹理的精确高频抖动。扩散在像素空间训练时，这些成分占据了模型容量与算力，却对「图像看起来表达什么」没有贡献。
 
-一个训练良好的感知压缩编码器做的事是：**把语义信息留在潜码里，把不可感知高频细节用重建误差的名义「丢掉」**（这正是它的损失里要加感知损失与对抗损失的原因——纯 MSE 的编码器会把容量浪费在模糊的平均细节上）。于是第二阶段的扩散建模的是一个**信息密度更高的分布**：同样的网络容量与同样的步数，作用在潜空间上比作用在像素上「更值」。
+训练良好的感知压缩编码器把语义信息保留在潜码中，舍去不可感知的高频细节。这也是训练时加入感知损失与对抗损失的原因：纯 MSE 会让编码器把容量花在模糊的平均细节上。第二阶段因此可以在信息更密集的潜空间分布上训练，让相同的网络容量与采样步数得到更充分的利用。
 
 **代价必须说清楚**：**潜空间编码器的重建误差是整条管线的上限**。潜码再完美，解码器也只能还原到 $\mathcal D(\mathcal E(\boldsymbol x))$ 的保真度。这个上限在细节密集的模态（小文字、细纹理、医学图像）上会直接可见，于是出现了「更小的压缩率 / 更高的通道数 / 更好的解码器」这一整条权衡——这不是实现细节，而是架构选择。
 :::
@@ -48,7 +48,7 @@ $$\text{注意力 FLOPs}\ \propto\ (h\,w)^2\cdot c,\qquad h\,w=\frac{H}{f}\cdot\
 $$\frac{N_2^2 c}{N_1^2\cdot3}=\frac{(HW/f^2)^2c}{(HW)^2\cdot3}=\frac{c}{3f^4}\ \Longrightarrow\ \text{像素侧是潜空间侧的}\ \frac{3f^4}{c}\ \text{倍}.$$
 **卷积层**：计算量 $\propto HW\cdot c^2\cdot k^2$（$k$ 为核大小），同一级上比值 $\approx (1/f^2)\cdot(c/3)^2\cdot$（通道比的不同配置），与注意力的 $f^4$ 相比要温和得多。
 
-**代入 $f=8,\ c=4$ 的常见配置**：注意力项 $3\times8^4/4=3072$ 倍——这就是「在潜空间里做注意力便宜得多」的定量来源；卷积项的倍数则小得多（约 $f^2\cdot c/3\approx21$ 倍）。**结论**：压缩对**注意力**的收益远大于对卷积的收益，因此潜空间扩散与「在低分辨率上堆注意力」天然般配（也与 DiT 的出现相互促进）。
+**代入 $f=8,\ c=4$ 的常见配置**：注意力项 $3\times8^4/4=3072$ 倍，说明潜空间可以大幅降低注意力计算成本；卷积项的倍数则小得多（约 $f^2\cdot c/3\approx21$ 倍）。因此压缩对注意力的收益远大于对卷积的收益，适合在低分辨率潜空间上使用较多注意力层，也促进了 DiT 的采用。
 :::
 
 ::: ex 例 4.6.1 · 一次完整的算力与显存估算 {#ex-4.6.1}
@@ -201,7 +201,7 @@ $$f(x_t,t)=f(x_{t'},t')\quad\text{对所有}\ t,t'\ \text{落在同一条 PF-ODE
 
 - **一致性蒸馏（CD）**：用已有的扩散模型（教师）生成的轨迹训练 $f_\theta$。损失为相邻两点输出的距离
   $$\mathcal L_{\text{CD}}=\mathbb E\Bigl[d\bigl(f_\theta(x_{t_{n+1}},t_{n+1}),\ f_{\theta^-}(\hat x_{t_n}^{\,\text{teacher}},t_n)\bigr)\Bigr],$$
-  其中 $\theta^-$ 是**目标网络的 EMA**（防止自蒸发的坍塌），$\hat x_{t_n}^{\text{teacher}}$ 由教师的一步 ODE 采样得到。
+  其中 $\theta^-$ 是目标网络的 EMA，用来防止自蒸馏坍塌；$\hat x_{t_n}^{\text{teacher}}$ 由教师的一步 ODE 采样得到。
 - **一致性训练（CT）**：不用教师，直接用「同一条前向链的两个相邻时刻」构造目标（离散时刻情形下用 $\partial f/\partial t=0$ 的 PDE 形式）。
 
 **少步生成**：从 $x_T\sim\mathcal N(0,I)$ 出发，交替「一步跳回 $\hat x_0$」与「重新加噪到下一个噪声水平」：
@@ -217,7 +217,7 @@ $$x_{t_{n+1}}\leftarrow \hat x_0+\sqrt{t_{n+1}^2-\epsilon^2}\,\varepsilon,\qquad
 - **蒸馏路线**：上限受**教师**限制（学生无法超过教师的质量），且自蒸馏容易坍塌——用一个不停在变的自己对生成目标，会像 [4.4](sec44.md) 的博弈一样出现「目标漂移」。EMA 目标网络就是为这条设的稳定器。
 - **训练路线**：不需要教师，但要构造「同一条链上的两点」，且在高噪声端（$\bar\alpha_t$ 很小）时链的曲率大，学起来更难。
 
-**为什么 4 步近似值这么多工程投入？** 因为延迟是产品化的硬约束：一次 512 步的扩散采样在单卡上要秒级，而 4 步可以把同一件事压到百毫秒级——**这直接决定了「能不能做成实时交互产品」**。这也是 GAN 为什么在 2022 年之后仍没有完全消失：它天生是「1 步」的（[4.6.5](#sec-4.6.5) 会看到两者合流）。
+**为什么要投入大量工程工作，把采样压到 4 步左右？** 延迟是产品化的硬约束：512 步扩散采样在单卡上要秒级，4 步则可以压到百毫秒级，直接影响能否用于实时交互。这也是 GAN 在 2022 年之后仍未完全消失的原因：它只需 1 步（[4.6.5](#sec-4.6.5) 会介绍两者的结合）。
 :::
 
 ## 4.6.4 整流流 / 流匹配：学一条更直的路 {#sec-4.6.4}
@@ -231,16 +231,16 @@ $$\boldsymbol v(\boldsymbol x_t,t)=\frac{d\boldsymbol x_t}{dt}=\boldsymbol x_0-\
 **训练目标（条件流匹配）**：让网络回归这个速度
 $$\mathcal L_{\text{CFM}}=\mathbb E_{t\sim\mathcal U[0,1],\,\boldsymbol x_0,\boldsymbol x_1}\Bigl[\bigl\lVert\boldsymbol v_\theta(\boldsymbol x_t,t)-(\boldsymbol x_0-\boldsymbol x_1)\bigr\rVert^2\Bigr].$$
 
-**采样**：解 ODE $\dfrac{d\boldsymbol x}{dt}=\boldsymbol v_\theta(\boldsymbol x,t)$，从 $\boldsymbol x_1\sim\mathcal N(0,I)$ 积分到 $t=0$，可用任意数值积分器（欧拉、Heun、中点法等）。
+**采样**：解 ODE $\dfrac{d\boldsymbol x}{dt}=\boldsymbol v_\theta(\boldsymbol x,t)$，按这里的插值约定从 $t=0$ 的噪声 $\boldsymbol x_1$ 积分到 $t=1$ 的数据端，可用欧拉、Heun、中点法等数值积分器。
 
 **重流化（reflow）**：用训练好的速度场把噪声—数据**配对**（$\boldsymbol x_1\to$ 采样出 $\boldsymbol x_0'=\mathrm{ODE}(\boldsymbol x_1)$），用这些新配对再训练一轮。反复若干次后，轨迹趋于直线，从而**少步积分即可复现**（论文报告 $1$–$2$ 次重流化后 1–2 步采样质量显著提升）。
 :::
 
-::: intuition 为什么「直」就等于「少步」——从积分误差看
-用欧拉法积分一个 ODE 时，单步误差与**轨迹的曲率**成正比。把两个极端摆出来：
+::: intuition 匀速直线为什么可以少步积分
+用欧拉法积分 ODE 时，单步误差取决于速度沿轨迹的变化，而不只取决于几何曲率。比较两种情况：
 
-- **弯曲轨迹**（扩散的典型形态）：路径在中间区域剧烈拐弯，欧拉法用少量大步走会明显偏离真实路径，样本崩坏。
-- **直线轨迹**（整流流的目标形态）：$d\boldsymbol x/dt$ 是常数，欧拉法用**一步**就精确到达终点（对直线而言，欧拉法与解析解完全相同）。
+- **速度变化的轨迹**：欧拉法用左端点速度近似整步运动，步长较大时可能偏离真实轨迹。
+- **匀速直线轨迹**：$d\boldsymbol x/dt$ 是常数，欧拉法用**一步**就精确到达终点。
 
 「重流化」做的事就是：**用现在的（可能弯曲的）速度场生成配对，把配对拉直之后重新回归**。它在数学上对应一个「对轨迹取期望使其变直」的迭代过程（论文把它描述为「降低轨迹的传输代价」）。
 
@@ -251,34 +251,45 @@ $$\mathcal L_{\text{CFM}}=\mathbb E_{t\sim\mathcal U[0,1],\,\boldsymbol x_0,\bol
 一维玩具例子：数据 $\boldsymbol x_0$ 恒为 $+1$（单模），噪声 $\boldsymbol x_1\sim\mathcal N(0,1)$。
 
 （a）写出整流流的**边缘速度场** $\boldsymbol v_\theta(\boldsymbol x_t,t)$ 的解析形式，验证它给出的轨迹确实是一条直线。
-（b）写出扩散（噪声预测参数化）在这个例子里对应的**轨迹形状**，并计算它在两个端点处的速度方向，说明为什么这条路径是**弯**的。
-（c）把数据改成双模 $\boldsymbol x_0\in\{+1,-1\}$ 各半，说明边缘速度场会发生什么、少步采样会坏成什么样。
+（b）写出扩散（噪声预测参数化）在这个例子里的系数路径，计算系数空间两端的切向，并区分它与样本空间中的轨迹。
+（c）把数据改成双模 $\boldsymbol x_0\in\{+1,-1\}$ 各半，求边缘速度场，并分析一步欧拉采样。
 
 ::: proof 解
 **(a) 整流流的边缘速度场。** 用直线参数化 $\boldsymbol x_t=(1-t)\boldsymbol x_1+t\boldsymbol x_0$，其中 $\boldsymbol x_1\sim\mathcal N(0,1)$、$\boldsymbol x_0\equiv1$。给定 $\boldsymbol x_t$ 可以反解出 $\boldsymbol x_1=\dfrac{\boldsymbol x_t-t}{1-t}$（$t\lt1$），于是条件速度 $\boldsymbol x_0-\boldsymbol x_1=1-\dfrac{\boldsymbol x_t-t}{1-t}$ 已经是确定值（单模，没有可平均的分支），故边缘速度场就是它：
 $$\boldsymbol v_\theta(\boldsymbol x_t,t)=\mathbb E\bigl[\boldsymbol x_0-\boldsymbol x_1\mid\boldsymbol x_t\bigr]=\frac{1-\boldsymbol x_t}{1-t}.$$
-**验证直线性**：把 $\dfrac{d\boldsymbol x}{dt}=\dfrac{1-\boldsymbol x}{1-t}$ 看作关于 $t$ 的常微分方程，解为 $\boldsymbol x_t=(1-t)C+t$（$C$ 为常数）——这正是直线族，且 $\boldsymbol x_0=1$、$\boldsymbol x_1=C$。所以**轨迹是直线** ✓。注意速度场本身仍随 $t$ 变化（$t\to1$ 时分母趋零、$|v|\to\infty$），因此**即便路径是直的，粗步长仍会有误差**——「直」减少的是**方向变化**造成的误差，不是所有误差。
+**验证直线性**：把 $\dfrac{d\boldsymbol x}{dt}=\dfrac{1-\boldsymbol x}{1-t}$ 看作关于 $t$ 的常微分方程，解为 $\boldsymbol x_t=(1-t)C+t$（$C$ 为常数）——这正是直线族，从 $t=0$ 的噪声值 $C$ 到 $t=1$ 的数据值 $1$。沿任一这样的轨迹，速度恒为 $1-C$，因此从 $t<1$ 出发的一步欧拉法精确到达终点；速度场在 $t=1$ 的表达式本身未定义，但轨迹有良好的终点极限。
 
-**(b) 扩散路径的形状：一段圆弧。** 扩散的路径是 $\boldsymbol x_t=\sqrt{\bar\alpha_t}\,\boldsymbol x_0+\sqrt{1-\bar\alpha_t}\,\varepsilon$（[4.5](sec45.md)，$\varepsilon\sim\mathcal N(0,1)$ 固定）。取 $t=0$ 对应数据、$t=1$ 对应噪声，把 $\sqrt{\bar\alpha_t}$ 参数化成 $\cos\theta_t$，则 $\sqrt{1-\bar\alpha_t}=\sin\theta_t$，路径写成
+**(b) 扩散的系数路径：一段圆弧。** 扩散的路径是 $\boldsymbol x_t=\sqrt{\bar\alpha_t}\,\boldsymbol x_0+\sqrt{1-\bar\alpha_t}\,\varepsilon$（[4.5](sec45.md)，$\varepsilon\sim\mathcal N(0,1)$ 固定）。取 $t=0$ 对应数据、$t=1$ 对应噪声，把 $\sqrt{\bar\alpha_t}$ 参数化成 $\cos\theta_t$，则 $\sqrt{1-\bar\alpha_t}=\sin\theta_t$，系数对写成
 $$\bigl(\sqrt{\bar\alpha_t},\ \sqrt{1-\bar\alpha_t}\bigr)=\bigl(\cos\theta_t,\ \sin\theta_t\bigr),\qquad \theta_t=\arccos\sqrt{\bar\alpha_t}\in[0,\tfrac{\pi}{2}],$$
-即：**在「数据分量 × 噪声分量」张成的平面坐标系里，每一个数据—噪声对的成对坐标都沿着单位圆走四分之一圈**。
+即：**系数对** $(\sqrt{\bar\alpha_t},\sqrt{1-\bar\alpha_t})$ 位于单位圆上；若调度覆盖 $\theta=0$ 到 $\pi/2$，它走过四分之一圆。这是系数空间的几何描述，不保证一维样本空间中的轨迹是圆弧。
 
-**两端点的速度方向**（沿该圆的切向）：
-- $t=0$（$\theta=0$）：方向为 $(-\sin 0,\cos 0)=(0,1)$，即**纯噪声方向**；
-- $t=1$（$\theta=\pi/2$）：方向为 $(-1,0)$，即**纯数据方向的负向**。
+**系数空间两端的切向**（以 $\theta$ 而非时间为参数）：
+- $\theta=0$：方向为 $(-\sin 0,\cos 0)=(0,1)$；
+- $\theta=\pi/2$：方向为 $(-1,0)$。
 
-用玩具调度 $\beta_t\equiv0.1$ 检验一下角度：$t=0$ 时 $\theta_0=\arccos1=0$；$t=1$ 时 $\bar\alpha_1=0.9$，$\theta_1=\arccos\sqrt{0.9}\approx\arccos0.9487\approx18.4^\circ$。也就是说：**走完「从数据到第 1 步加噪」这一段，速度方向已经转了 $18.4^\circ$**——这就是「弯」的定量体现。（$T=1000$ 的完整调度下，$\theta_T\approx\arccos\sqrt{\bar\alpha_T}\approx\arccos 0.006\approx89.7^\circ$，整条路径几乎扫过完整的四分之一圆。）
+用玩具调度 $\beta_t\equiv0.1$ 检验角度：初始 $\theta_0=0$；第一步 $\bar\alpha_1=0.9$，故 $\theta_1=\arccos\sqrt{0.9}\approx18.4^\circ$。这是离散两点之间的系数角度变化，并非对时间求导得到的端点速度。端点切向只在调度真正到达相应角度时适用。
 
-**结论**：扩散的路径是**圆弧**，速度方向从「噪声方向」连续转到「数据方向」，扫过约 $90^\circ$；整流流的路径是**直线**，方向不转。用固定步数的欧拉法积分时，单步误差与方向的转过量成正比，因此**同步数下扩散误差更大**——这就是「整流流更省步数」的机制：**不是模型更强，而是路径更直、方向变化更小**。
+**结论**：扩散插值的系数对位于圆上，而整流流训练使用直线插值；这一区别本身不能证明任意两个模型在相同步数下的误差大小。数值误差还取决于实际速度场、时间参数化与求解器。
 
-**(c) 双模数据：边缘速度场会「抹平」模态。** 现在 $\boldsymbol x_0\in\{+1,-1\}$ 各半。同一个 $\boldsymbol x_t$ 可能由两条路径产生（一条来自 $\boldsymbol x_0=+1$、一条来自 $\boldsymbol x_0=-1$），于是
-$$\boldsymbol v_\theta(\boldsymbol x_t,t)=\mathbb E\bigl[\boldsymbol x_0-\boldsymbol x_1\mid\boldsymbol x_t\bigr]$$
-是两个分支的**加权平均**。特别地，在两条路径的交汇区（$\boldsymbol x_t$ 接近 $0$ 的中间地带、对应「不知道往哪边走」的样本），平均速度指向中间，积分结果会落到 $0$ 附近——**少步采样因此产出位于两个模态之间的「模糊中间态」**。
-
-**(c) 双模数据：边缘速度场会「抹平」模态。** 当 $\boldsymbol x_0\in\{+1,-1\}$ 各半时，同一个 $\boldsymbol x_t$ 可能由两个不同的 $\boldsymbol x_0$ 生成（一个来自 $+1$ 的路径、一个来自 $-1$ 的路径）。于是
-$$\boldsymbol v_\theta(\boldsymbol x_t,t)=\mathbb E[\boldsymbol x_0-\boldsymbol x_1\mid\boldsymbol x_t]$$
-是两个分支的**加权平均**：在两条路径的交汇区（$\boldsymbol x_t\approx0$ 附近），平均速度指向「中间」，积分结果会落到 $0$ 附近——**这正是少步采样在边缘速度场下产生「模糊中间态」的机制**。重流化之所以重要：它用实际 ODE 配对（每次只跟定一个模态）重新训练，让一个新的噪声点**只对应一条**路径，边缘速度场重新变得「有一致方向」。$\blacksquare$
+**(c) 双模数据的边缘速度。** 当 $\boldsymbol x_0\in\{+1,-1\}$ 各半时，同一个 $\boldsymbol x_t$ 可由两个数据端点产生。令 $m(x,t)=\tanh\!\left(\frac{tx}{(1-t)^2}\right)$，对 $0\le t<1$，条件均值与边缘速度分别为
+$$\mathbb E[\boldsymbol x_0\mid\boldsymbol x_t=x]=m(x,t),\qquad \boldsymbol v(x,t)=\frac{m(x,t)-x}{1-t}.$$
+其中权重来自两个均值为 $\pm t$、方差为 $(1-t)^2$ 的高斯条件密度。特别地，$t=0$ 时 $m(x,0)=0$，故 $v(x,0)=-x$：从任意初始噪声出发用一步、步长为 $1$ 的欧拉法都得到 $x+v(x,0)=0$，落在两个模态之间。这是该理想速度场的特定一步离散误差，不能据此断言所有少步采样都会得到中间态。重流化用 ODE 生成的配对重新训练，以改善轨迹的直线性，但不保证任意有限训练后的速度场完全一致。$\blacksquare$
 :::
+:::
+
+::: ex 例 4.6.3 · 手算直线与弯曲轨迹的欧拉误差 {#ex-4.6.3}
+给定理想速度场，比较从 $t=0$ 到 $t=1$ 的显式欧拉积分：$x_{n+1}=x_n+h\,v(x_n,t_n)$。时间与状态均取无量纲单位，误差为数值终点与解析终点之差；向量误差另给欧氏范数。
+
+**直线。** 取 $\boldsymbol x(t)=(1+2t,-1+t)$，初值 $(1,-1)$，理想速度场 $\boldsymbol v(\boldsymbol x,t)=(2,1)$。一步取 $h=1$：
+$$\boldsymbol x^{\mathrm E}_1=(1,-1)+1\cdot(2,1)=(3,0)=\boldsymbol x(1),\qquad \lVert\boldsymbol x^{\mathrm E}_1-\boldsymbol x(1)\rVert_2=0.$$
+这里速度恒定，所以一步恰好精确；不是所有几何上为直线的非匀速轨迹都具备这个性质。
+
+**弯曲轨迹。** 取二维路径 $\boldsymbol y(t)=(t,t^2)$，初值 $(0,0)$，理想速度场 $\boldsymbol v(\boldsymbol y,t)=(1,2t)$，解析终点为 $(1,1)$。一步取 $h=1$，左端点速度为 $(1,0)$：
+$$\boldsymbol y^{\mathrm E}_1=(0,0)+1\cdot(1,0)=(1,0),\quad \boldsymbol y^{\mathrm E}_1-\boldsymbol y(1)=(0,-1),\quad \lVert\boldsymbol y^{\mathrm E}_1-\boldsymbol y(1)\rVert_2=1.$$
+改用两步、每步 $h=1/2$，逐次在左端点求速度：
+$$\boldsymbol y^{\mathrm E}_{1/2}=(0,0)+\tfrac12(1,0)=(\tfrac12,0),$$
+$$\boldsymbol y^{\mathrm E}_1=(\tfrac12,0)+\tfrac12(1,1)=(1,\tfrac12),\quad \boldsymbol y^{\mathrm E}_1-\boldsymbol y(1)=(0,-\tfrac12),\quad \lVert\boldsymbol y^{\mathrm E}_1-\boldsymbol y(1)\rVert_2=\tfrac12.$$
+本例两步的终点误差小于一步，但这只是给定轨迹和速度场的数值积分误差；实际流匹配还存在学习速度场的训练误差，不能由此推断模型质量或 DDPM 性能。
 :::
 
 ::: method SD3 / FLUX 这一代模型的配方要素 {#method-4.6.3}
@@ -292,7 +303,7 @@ $$\boldsymbol v_\theta(\boldsymbol x_t,t)=\mathbb E[\boldsymbol x_0-\boldsymbol 
 | 文本条件 | 多编码器特征拼接 + 池化向量（分别走交叉注意力与 adaLN） | [4.6.2](#def-4.6.2) |
 | 采样 | 少步 ODE 求解器 + CFG 引导 | [4.5.5](sec45.md)、[4.6.4](#sec-4.6.4) |
 
-**读表方式**：这张表里没有任何一项是本节新发明的数学，它们全是已知工具的**重新组合**。理解生成模型的前沿，多半是在理解「哪些组合在什么规模上成立」——这也是本教程反复强调「给条件与量级」的原因。
+表中各项都是已有工具的重新组合。理解这些生成模型，需要进一步看清哪些组合在什么规模下成立，因此比较时仍要给出条件与量级。
 :::
 
 ::: method 采样步数—质量—成本对照（承 [4.5.5](sec45.md)） {#method-4.6.4}
@@ -314,7 +325,7 @@ $$\boldsymbol v_\theta(\boldsymbol x_t,t)=\mathbb E[\boldsymbol x_0-\boldsymbol 
 
 ## 4.6.5 GAN 的复辟：对抗蒸馏 {#sec-4.6.5}
 
-[4.4](sec44.md)讲 GAN 退出了生成主干，但它以另一种身份回来了：**少步加速器**。核心想法是**把「预训练扩散模型的分数信息」与「判别器的真假信息」拼起来训一个一步学生**：
+[4.4](sec44.md)讨论了 GAN 作为生成主干的方法；在少步生成中，对抗训练又被用来加速扩散。具体做法是结合预训练扩散模型的得分信息与判别器的真假信号，训练一步学生模型：
 
 ::: method 对抗蒸馏的两种典型形式（要旨，细节以原论文为准） {#method-4.6.5}
 - **分数蒸馏（score distillation）**：让学生的一步输出与教师扩散模型在多个噪声水平上的「去噪目标」对齐。它本质是把教师的**多步知识**压进学生的一步映射，用**教师模型自身的分数**当监督信号。

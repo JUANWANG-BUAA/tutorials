@@ -1,10 +1,10 @@
 # 2.4 注意力机制：从压缩瓶颈到查询—键—值
 
-[2.3](sec23.md) 结束时留下了两个未解的问题：门控只是**缓解**了梯度消失，而且 LSTM / GRU **仍然逐步递推**，训练无法沿时间并行。更根本的问题是结构性的：无论门控多聪明，编码器都必须把整段输入压进**一个固定维度的向量**，再交给解码器使用。
+[2.3](sec23.md) 的门控缓解了梯度消失，但 LSTM / GRU 仍沿时间逐步递推。传统的无注意力编码器—解码器还有一个瓶颈：编码器要把整段输入压进一个固定维度的向量，再交给解码器使用。
 
-这一节正面拆掉这个瓶颈。做法朴素到近乎「不讲道理」：**不要压缩，让解码器在每一步都能回看编码器的所有位置，并按需要加权求和**。这个操作就是**注意力**（attention）。它一次解决了三件事——历史不再有损（信息保留在全部位置上）、路径长度变成 $O(1)$（任意两点直接相连）、训练可以并行（所有位置同时算）。
+注意力换了一种办法：**保留编码器各位置的输出，让解码器在每一步按需回看并加权求和**。这样不必先把整段输入压进一个定长向量。自注意力还让任意两个位置直接相连，路径长度为 $O(1)$；给定查询、键和值后，各位置的注意力计算可以并行。
 
-但注意力不是「免费的午餐」。它把「压缩瓶颈」换成了「**平方复杂度**」：$T$ 个查询与 $T$ 个键两两打分，产生一张 $T\times T$ 的分数矩阵，时间与显存都随 $T^2$ 增长。这就是 [2.6](sec26.md) 要摊薄的账，也是 [2.7](sec27.md) 各种新架构的出发点。本节的任务是把它写成干净的数学：**两种经典打分 → 查询—键—值抽象 → 缩放点积注意力 → 为什么要除以 $\sqrt{d_k}$ → 因果掩码 → 复杂度**，并讨论一个被滥用的说法：「注意力权重能当解释」。
+保留所有位置也有代价：$T$ 个查询与 $T$ 个键两两打分，得到 $T\times T$ 的分数矩阵；常规实现的时间与中间显存随 $T^2$ 增长。[2.6](sec26.md) 讨论如何降低访存开销，[2.7](sec27.md) 比较其他序列架构。先从两种打分方式走到查询—键—值、缩放点积和因果掩码，再看复杂度，以及注意力权重能否解释模型行为。
 
 ::: note 先修
 你需要会 softmax（[1.4](../lec01/sec14.md) 的两个类别那一例就够）。查询、键、值是三组向量的名字，不是新的微积分。第一遍先把下面三个数的加权平均算完，再读 Bahdanau 的公式。
@@ -45,7 +45,7 @@ $$c=0.6652\cdot 2+0.2447\cdot 5+0.0900\cdot 1=1.3304+1.2235+0.0900=2.6439 .$$
 :::
 
 ::: intuition 瓶颈不是「不够大」，而是「必须固定」
-把 $\boldsymbol c$ 想成一张写满摘要的便签：$d_h$ 决定了便签上能写多少字，而输入长度 $T$ 不受限制。信息论上这是有损压缩——存在一类输入，它们的前缀不同但末端统计量相同，任何固定维度的函数都无法区分它们。工程上的典型症状是**长句翻译丢开头**：主语出现在第 3 个词，但它要影响第 40 个词才输出的谓语，而这份信息必须熬过 37 次状态更新才能到达——正是 [2.2](sec22.md) 的连乘衰减在做的事。所以「瓶颈」有两重含义：**容量固定**（压不下）与**路径太长**（传不过去）。注意力同时对两者动手。
+**为什么称它为瓶颈？** 无论输入多长，整个序列都必须通过固定维数的 $\boldsymbol c$ 传递给解码器。直觉上，输入越长，越多细节要共享这份表示。这不是「固定维向量在数学上只能表示有限种序列」的证明：精确实数可以携带无限信息；实际模型还受到有限精度、噪声和可学习性的约束。早期信息从编码器到输出也要经过多次状态更新，可能受到 [2.2](sec22.md) 讨论的梯度衰减影响。Bahdanau 等人的注意力针对这一限制，让解码器每一步查询所有编码器状态，而不是只读最后一个状态。
 :::
 
 ## 2.4.2 两种经典打分：加性与乘性 {#sec-2.4.2}
@@ -86,7 +86,7 @@ $\tanh(W_s\boldsymbol s+W_h\boldsymbol h)$ 的结构说明：先把查询与键�
 三者的差别通常**远小于**后续超参与数据规模的影响；真正决定成败的是「有没有位置信息、有没有正确的掩码」这些结构问题（[2.4.5](#sec-2.4.5) 与 [2.6](sec26.md)）。
 :::
 
-把上面的过程抽象一次，就得到今天通用的写法：把「解码器的提问」叫**查询**（query），把「编码位置挂出的标签」叫**键**（key），把「真正被加权取走的内容」叫**值**（value）。这就是下一节的 QKV 抽象——它不是新机制，只是把同一件事写成矩阵形式。
+把上述过程统一起来，就得到查询—键—值的写法：解码器用来打分的向量叫查询（query），编码位置用于匹配的向量叫键（key），被加权求和的内容叫值（value）。下一小节用 QKV 把同一个过程写成矩阵算子。
 
 ## 2.4.3 查询—键—值：把注意力抽象成一个算子 {#sec-2.4.3}
 
@@ -110,9 +110,9 @@ softmax 定义为 $P_{ij}=e^{S_{ij}/\sqrt{d_k}}/\sum_r e^{S_{ir}/\sqrt{d_k}}$，
 ::: intuition 查字典：三路输入各司其职
 - **Q（query）**：当前位置**想找什么**。解码时它来自解码器状态（「我正要找一个动词的主语」）；自注意力里它来自当前位置的投影。
 - **K（key）**：每个位置挂出的**匹配标签**，用来被检索。$\boldsymbol Q\boldsymbol K^{\mathrm T}$ 就是在量「我想找的」与「这里有的」有多像。
-- **V（value）**：每个位置**真正被取走的内容**。权重算好后，聚合的是 $\boldsymbol V$ 而**不是** $\boldsymbol K$。**键负责指路，值负责交货**——这一条是初学者最常搞反的地方。
+- **V（value）**：每个位置真正被加权聚合的内容。权重算好后，参与求和的是 $\boldsymbol V$，不是 $\boldsymbol K$。初学时容易把两者混淆：键用于匹配和打分，值用于计算输出。
 
-自注意力带来一个关键性质：**任意两个位置之间的信息路径长度是 $O(1)$**——位置 1 与位置 $T$ 在矩阵乘里是「同时」被联系起来的。对比 RNN 的 $\mathcal O(T)$ 串行路径，这解释了为什么注意力擅长长程依赖。代价是：这份便利要用 $T^2$ 个分数换。
+对未被掩码屏蔽的一对位置，自注意力可以在一层内传递信息：路径长度为 $O(1)$；RNN 跨越 $T$ 个时间步则经过 $O(T)$ 次状态递推。路径短为长程信息交互提供了条件，并不保证模型一定学会检索，也不保证权重不会衰减。全连接注意力的代价是要计算 $T^2$ 个分数。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-attn-title fig-attn-desc">
@@ -220,7 +220,7 @@ M_{ij}=\begin{cases}0,& j\le i,\\[2pt]-\infty,& j\gt i,\end{cases}
 
 $$\operatorname{Attention}(\boldsymbol P_\pi\boldsymbol X,\boldsymbol P_\pi\boldsymbol X,\boldsymbol P_\pi\boldsymbol X)=\boldsymbol P_\pi\operatorname{Attention}(\boldsymbol X,\boldsymbol X,\boldsymbol X).$$
 
-即：**把输入的行（位置）任意重排，输出只是被同样重排，每个位置实际得到的上下文一模一样。** 因此纯注意力（不加位置编码、不加掩码）**无法区分不同的词序**。
+即：把输入的行（位置）任意重排，输出只是被同样重排，每个位置得到的上下文不变。若之后再做对位置不敏感的池化，整个模型就无法区分不同词序；取固定位置等不对称的读出方式则可能引入位置区别。
 :::
 
 ::: proof 证明
@@ -239,11 +239,11 @@ $$\operatorname{softmax}\!\Bigl(\frac{\boldsymbol P_\pi\boldsymbol S\boldsymbol 
 $$\boldsymbol P_\pi\,\boldsymbol P_{\text{attn}}\,\underbrace{\boldsymbol P_\pi^{\mathrm T}\boldsymbol P_\pi}_{=\boldsymbol I}\boldsymbol V
 =\boldsymbol P_\pi\bigl(\boldsymbol P_{\text{attn}}\boldsymbol V\bigr)=\boldsymbol P_\pi\,\boldsymbol O .$$
 
-即输出被同样的置换重排，每个查询拿到的加权组合与原来完全相同。**结论**：「狗咬人」与「人咬狗」在纯注意力看来是同一份数据的两种排列，模型没有依据区分它们——所以位置信息必须显式注入（[2.6](sec26.md)）。$\blacksquare$
+即输出被同样的置换重排，每个查询拿到的加权组合与原来完全相同。对纯注意力的输出再做位置无关池化，「狗咬人」与「人咬狗」会得到相同结果。要表达词序，需要某种打破置换对称的机制，例如位置编码或固定因果掩码（[2.6](sec26.md)）。$\blacksquare$
 :::
 
-::: intuition 等变性是把双刃剑，而掩码是「有意破坏它」
-置换等变有两个后果。**好的一面**：注意力对位置不敏感，因此对「同一个模式出现在任何位置」都能用同一套参数处理（这正是 [2.1](sec21.md) 要求的参数共享）；**坏的一面**：词序信息完全丢失。所以现代做法是**主动破坏**这种等变性——加位置编码（[2.6](sec26.md)）、加因果掩码（本节）、或引入相对位置偏置。反过来说，凡是你发现有模型偷偷丢掉了位置信息（例如手写注意力时误把 $\sqrt{d_k}$ 或位置编码漏掉），它的表现就会像「高级词袋模型」：局部词汇统计还行，语序相关的任务全崩。
+::: intuition 等变性与位置线索
+不带掩码和位置编码的自注意力共享各位置的投影参数，重排输入时，输出随之重排。位置编码、相对位置偏置或固定的因果掩码能打破这一对称性。因果掩码给出的是「哪些位置可见」的顺序信息，不等同于一般的位置编码。漏掉 $\sqrt{d_k}$ 则影响分数尺度与梯度，不会单独导致位置信息丢失。
 :::
 
 ## 2.4.6 复杂度：O(T²d) 从哪来 {#sec-2.4.6}
@@ -363,14 +363,39 @@ $$O_{2,:}=0.3302(1,2)+0.6698(3,4)\approx(2.3395,3.3395).$$
 ## 2.4.7 注意力权重能当解释吗 {#sec-2.4.7}
 
 ::: think 「权重高 = 该位置重要」为什么站不住脚
-注意力权重可视化很好看，但把它当作**因果解释**需要非常小心。四条理由：
+注意力权重可以用于可视化，但把它当作因果解释需要非常小心，原因有四条：
 
 1. **权重不是输出**：输出是 $\boldsymbol P\boldsymbol V$ 的结果。某位置权重为 $0.8$，但它的 $\boldsymbol V$ 行可能几乎为零（甚至被后续线性层投影到「无用子空间」），那它对输出的贡献仍然很小——**权重与贡献之间隔着 $\boldsymbol V$**。
-2. **残差与后续层会稀释**：Transformer 块里有残差连接，多个头与多层的结果会相加、再经 FFN 混合。某一层某个头的注意力模式被下游完全改写是很常见的（[2.5](sec25.md)）。
+2. **残差与后续层改变作用**：Transformer 块有残差连接，多个头与多层的结果经输出投影和 FFN 混合。单个头的权重不能直接代表最终预测（[2.5](sec25.md)）。
 3. **softmax 的归一化耦合**：权重之和恒为 1，所以任何一个位置权重的上升必然压低其他位置。把它读成「该位置贡献上升」在语义上就已经越界——它可能只是别的候选被削弱了。
-4. **层与头之间存在冗余**：多头设计本就鼓励不同子空间并行，很多头可以被剪掉而性能几乎不变（这类现象在开源实现里被反复报告）。**「能剪掉的头」不足以承载唯一的解释**。
+4. **不同的权重可能得到相同的加权结果**：下方算例中，两组权重差别明显，但 $\boldsymbol P\boldsymbol V$ 完全一样。有些模型还可以剪去部分注意力头而性能变化不大；这一现象不意味着所有模型的头都可安全删除。
 
-**要检验一个注意力解释，至少需要**：① 做**消融**（把该位置的键值屏蔽，看输出是否真的变化）；② 看**跨层跨头的稳定性**（换初始化重训后模式是否重现）；③ 与**梯度归因**（对输入的梯度、输入 × 梯度）对照；④ 在有明确**因果结构**的合成任务上验证（例如「必须复制第 3 个 token」这类可判定的任务）。四条都没做就下结论，属于过度解读。本书的态度是：**注意力权重是有用的调试信号，不是解释证据。**
+如何检验取决于「解释」要回答什么：可用不同随机种子重训检查模式是否稳定，比较均匀权重或梯度归因，也可对输入或内部键值做有控制的干预，再测输出变化。输入替换可能产生分布外样本；单独屏蔽键值则是内部干预，不能直接等同于改变原文的因果效应。每种方法都要说明干预对象和对照。Jain 与 Wallace（2019）的实验发现不同注意力分布可以给出相近预测；Wiegreffe 与 Pinter（2019）指出，对不同的「解释」定义应设计不同检验。两篇讨论的是具体模型与实验，不是所有注意力模型的一条无条件定理。
+:::
+
+::: ex 例 2.4.2 · 同一输出，不同权重 {#ex-2.4.2}
+一个查询对应三个标量值 $\boldsymbol v=(0,2,4)$。取两组注意力权重 $\boldsymbol p=(0.25,0.50,0.25)$ 与 $\boldsymbol p'=(0.10,0.80,0.10)$，均为正且和为 $1$。直接计算：
+
+$$\boldsymbol p\boldsymbol v^{\mathsf T}=0.25\cdot0+0.50\cdot2+0.25\cdot4=2,\qquad
+\boldsymbol p'\boldsymbol v^{\mathsf T}=0.10\cdot0+0.80\cdot2+0.10\cdot4=2.$$
+
+两组权重可分别由分数 $\log\boldsymbol p$ 与 $\log\boldsymbol p'$ 经 softmax 得到。这个算例只说明加权求和的结果不能唯一确定权重；它不声称对于任何固定的查询、键和模型，都能自由替换成任意权重。
+:::
+
+::: proof 推导 · 分数变化与输出变化
+固定一行的值向量 $\boldsymbol v_j$，记缩放后、掩码前的分数为 $s_j$，权重 $p_j=e^{s_j}/\sum_k e^{s_k}$，输出 $\boldsymbol o=\sum_k p_k\boldsymbol v_k$。由 softmax 的偏导 $\partial p_k/\partial s_j=p_k(\mathbf 1_{k=j}-p_j)$，逐项相加得到
+
+$$\frac{\partial\boldsymbol o}{\partial s_j}
+=\sum_k\boldsymbol v_k p_k(\mathbf 1_{k=j}-p_j)
+=p_j(\boldsymbol v_j-\boldsymbol o).$$
+
+因此权重 $p_j$ 大，不代表这个分数的局部变化对输出影响大：若 $\boldsymbol v_j=\boldsymbol o$，该偏导为零。这里固定了全部值向量，只改变一个分数；实际替换输入 token 时，查询、键、值以及后续层也可能变化，必须重新运行模型，不能把上式当作输入干预的完整效应。
+:::
+
+::: method 检验顺序依赖与因果掩码
+用明确答案的合成复制任务比较「长前缀中指定标记后的 token」与「固定短窗口」，按完整序列划分训练、验证和测试，避免同一序列的窗口跨集合。记录各距离上的正确率，并让无须检索远处信息的多数类或局部线索基线参与比较。
+
+再固定前缀，仅替换将来的 token；在 `eval()` 下重算整条序列。对于没有其他未来信息通路的因果模型，替换位置之前的 logits 应在数值容差内不变。这是防泄漏的必要检查，不证明模型确实使用了远处前缀。要测后者，改变目标位置的 token 并记录目标输出的变化，同时控制其他输入；若干预使样本偏离训练分布，结论只覆盖这种干预。实际音乐数据上的有限上下文对照见 [Lab 1](../../labs/lab1.md)。
 :::
 
 ## 2.4.8 代码：手写缩放点积注意力与掩码 {#sec-2.4.8}
@@ -380,17 +405,22 @@ import torch, torch.nn.functional as F
 
 def attention_manual(Q, K, V, key_padding_mask=None, causal=False):
     """Q:(B,Tq,d_k)  K:(B,Tk,d_k)  V:(B,Tk,d_v)
-       key_padding_mask:(B,Tk) bool，True 表示该键是 pad（应被屏蔽）"""
+       key_padding_mask:(B,Tk) bool，True 表示该键是 pad（应被屏蔽）。
+       causal=True 仅支持 Q、K 起点相同且长度相等的完整序列。"""
     d_k = Q.size(-1)
     S = Q @ K.transpose(-2, -1) / d_k ** 0.5        # (B,Tq,Tk)：分数
     if causal:                                       # 因果掩码：位置 i 只能看 j <= i
         Tq, Tk = S.shape[-2], S.shape[-1]
+        if Tq != Tk:
+            raise ValueError("此示例不支持带偏移的缓存解码")
         keep = torch.ones(Tq, Tk, dtype=torch.bool, device=S.device).tril()
         S = S.masked_fill(~keep, float("-inf"))      # 必须在 softmax 之前
     if key_padding_mask is not None:
         S = S.masked_fill(key_padding_mask[:, None, :], float("-inf"))
-    P = S.softmax(dim=-1)                            # 沿键维（最后一维）归一化
-    P = torch.nan_to_num(P)                          # 整行全 -inf 时 softmax 会产生 NaN
+    # 全屏蔽行先替换为有限值，softmax 后再清零；前向和反向都避免 NaN。
+    has_key = torch.isfinite(S).any(dim=-1, keepdim=True)
+    P = torch.softmax(torch.where(has_key, S, torch.zeros_like(S)), dim=-1)
+    P = torch.where(has_key, P, torch.zeros_like(P))
     return P @ V, P
 
 # ① 与 PyTorch 官方实现数值对齐（PyTorch ≥ 2.0）
@@ -401,6 +431,14 @@ out_mine, P = attention_manual(Q, K, V, causal=True)
 out_ref = F.scaled_dot_product_attention(Q, K, V, is_causal=True)
 assert torch.allclose(out_mine, out_ref, atol=1e-5), "实现与官方不一致"
 assert torch.allclose(P.triu(1), torch.zeros_like(P.triu(1))), "上三角未被掩掉"
+
+# 全部键被屏蔽时，约定该无效查询输出为零，并检查反向传播。
+qm, km, vm = [x.detach().clone().requires_grad_() for x in (Q, K, V)]
+all_pad = torch.ones(B, Tk, dtype=torch.bool)
+masked_out, masked_P = attention_manual(qm, km, vm, key_padding_mask=all_pad)
+assert torch.count_nonzero(masked_P) == 0 and torch.count_nonzero(masked_out) == 0
+masked_out.sum().backward()
+assert all(torch.isfinite(x.grad).all() for x in (qm, km, vm))
 
 # ② 验证定理 2.4.1：分数标准差随 sqrt(d_k) 增长，缩放后回到 1
 for d in (16, 64, 256, 1024):
@@ -416,7 +454,7 @@ for scale in (1.0, 3.0, 10.0):
     print(f"分数放大 ×{scale:4.1f}  平均熵={ent:.4f}（最大可能熵={torch.tensor(Tk).float().log():.4f}）")
 ```
 
-三个断言各自对应本节的一条结论：**① 形状与掩码**（对齐官方实现、确认上三角被精确置零）；**② 缩放的必要性**（第二列稳定在 $1$ 附近，证明 $\sqrt{d_k}$ 把方差与维度解耦）；**③ 饱和的后果**（分数放大后熵下降，分布趋向 one-hot，对应梯度被掐断）。
+代码对齐官方实现并检查因果掩码，还检查全屏蔽行的前向输出和反向梯度。全屏蔽行并不存在合法的概率分布；这里把它当作无效查询并约定输出为零，调用者仍须在损失中排除无效查询。`causal=True` 只处理完整序列；增量解码时查询位置有偏移，需要按绝对位置另建掩码，不能直接对一个 $1\times T$ 矩阵取下三角。随后两段实验观察点积标准差与分数缩放后的注意力熵。
 
 ::: errata 本节五个常见误解
 1. **「注意力权重可以直接当解释用」**：见 [2.4.7](#sec-2.4.7) 的四条理由。权重不是贡献，权重上升还伴随其他位置的下降。
@@ -453,6 +491,8 @@ for scale in (1.0, 3.0, 10.0):
 - Vaswani et al., *Attention Is All You Need*（2017, arXiv:1706.03762）——缩放点积注意力、多头注意力与 $\sqrt{d_k}$ 缩放的出处（[2.5](sec25.md) 会逐部件展开）。
 - Shazeer, *Fast Transformer Decoding: One Write-Head is All You Need*（2019, arXiv:1911.02150）——MQA 的原始动机（推理时 KV cache 的访存瓶颈）。
 - Ainslie et al., *GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints*（2023, arXiv:2305.13245）——GQA 的做法与「质量几乎不降」的实验口径。
+- Jain & Wallace, [*Attention is not Explanation*](https://arxiv.org/abs/1902.10186)（2019）——注意力分布与预测解释的对照实验。
+- Wiegreffe & Pinter, [*Attention is not not Explanation*](https://arxiv.org/abs/1908.04626)（2019）——不同解释定义下的检验方案。
 :::
 
-**本节小结**：注意力把「把所有历史压进一个向量」换成「**按需对所有位置加权聚合**」：$\operatorname{softmax}(\boldsymbol Q\boldsymbol K^{\mathrm T}/\sqrt{d_k})\boldsymbol V$，其中 softmax 沿键维归一、输出的每个位置是 $\boldsymbol V$ 的凸组合。$\sqrt{d_k}$ 的作用是控制 softmax 的工作点（不缩放会因点积方差 $=d_k$ 而饱和、梯度消失，与 Sigmoid 饱和同源）。自注意力带来 $O(1)$ 的路径长度与可并行训练，代价是 $O(T^2d)$ 的时间与 $O(T^2)$ 的显存；它还**置换等变**，因此位置信息必须显式注入。因果掩码把注意力改造成可用于自回归的形式。下一节把这些部件（多头、FFN、残差、Pre-LN）拼成 Transformer 的主干，并算清它的形状、参数量与 KV cache 显存。
+**本节小结**：注意力按查询加权聚合值向量，$\sqrt{d_k}$ 在常用独立性假设下控制点积方差。未掩码的自注意力是置换等变的；位置编码、固定掩码等机制可提供顺序线索。标准稠密实现的注意力计算量为 $O(T^2d)$，物化权重时显存为 $O(T^2)$；不物化完整权重矩阵的实现见 [2.6](sec26.md)。权重不是最终输出的因果解释，检验时需要说明干预对象。下一节把多头、FFN、残差与归一化拼成 Transformer 主干。
