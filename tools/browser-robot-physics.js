@@ -74,13 +74,28 @@ async (hostPage) => {
   });
   await dyn.getByRole('button', { name: '暂停', exact: true }).click();
   const values = await dyn.locator('.lab-ctl output').allTextContents();
-  const [degrees1, degrees2, d1, d2] = values.map(parseFloat);
-  const q1 = degrees1 * Math.PI / 180, q2 = degrees2 * Math.PI / 180;
-  const b11 = 200.01 + 50 * Math.cos(q2), b12 = 23.5 + 25 * Math.cos(q2), b22 = 122.5;
-  const kinetic = (b11 * d1 * d1 + 2 * b12 * d1 * d2 + b22 * d2 * d2) / 2;
-  const potential = 784.8 * Math.sin(q1) + 245.25 * Math.sin(q1 + q2);
-  check(degrees1 < 0 && d1 < 0 && Math.abs(kinetic + potential) < 3,
-    'zero-torque arm falls and conserves energy within display rounding', { values, kinetic, potential });
+  const displayed = values.map(parseFloat);
+  const halfWidths = values.map((value, index) => {
+    const decimals = value.match(/\.(\d+)/)?.[1].length ?? 0;
+    const halfUnit = 0.5 / (10 ** decimals);
+    return index < 2 ? halfUnit * Math.PI / 180 : halfUnit;
+  });
+  const energy = ([degrees1, degrees2, d1, d2]) => {
+    const q1 = degrees1 * Math.PI / 180, q2 = degrees2 * Math.PI / 180;
+    const b11 = 200.01 + 50 * Math.cos(q2), b12 = 23.5 + 25 * Math.cos(q2), b22 = 122.5;
+    const kinetic = (b11 * d1 * d1 + 2 * b12 * d1 * d2 + b22 * d2 * d2) / 2;
+    const potential = 784.8 * Math.sin(q1) + 245.25 * Math.sin(q1 + q2);
+    return kinetic + potential;
+  };
+  const energyRange = [Infinity, -Infinity];
+  for (let mask = 0; mask < 16; mask++) {
+    const state = displayed.map((value, index) => value + ((mask >> index) & 1 ? 1 : -1) * halfWidths[index]);
+    const total = energy(state);
+    energyRange[0] = Math.min(energyRange[0], total);
+    energyRange[1] = Math.max(energyRange[1], total);
+  }
+  check(displayed[0] < 0 && displayed[2] < 0 && energyRange[0] <= 0 && energyRange[1] >= 0,
+    'zero-torque arm falls and keeps zero energy inside the displayed-value rounding interval', { values, energyRange });
   check(await page.evaluate(() => !!window.robotTrailDrawn), 'free motion paints a visible multi-point end-effector trail');
   check(errors.length === 0, 'no page JavaScript errors', errors);
   await page.close();
