@@ -1,6 +1,6 @@
 /* Focused browser regression for robot transmission, sensors and passive dynamics. */
 async (hostPage) => {
-  const base = new URL(hostPage.url()).origin + '/robot/';
+  const base = new URL('robot/', hostPage.url()).href;
   const page = await hostPage.context().browser().newPage({ serviceWorkers: 'block' });
   const results = [], errors = [];
   const check = (condition, name, detail) => {

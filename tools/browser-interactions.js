@@ -84,6 +84,9 @@ async (hostPage) => {
   await visit('numerical/ch01/sec12.html');
   const numericalTerm = page.locator('main a.term').filter({ hasText: '截断误差' }).first();
   await numericalTerm.waitFor();
+  // 先完成自动滚动；页面滚动会按设计关闭已经打开的术语卡。
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+  await numericalTerm.scrollIntoViewIfNeeded();
   const numericalHref = await numericalTerm.getAttribute('href');
   await numericalTerm.hover();
   const termCard = page.locator('#term-popover');
@@ -272,7 +275,7 @@ async (hostPage) => {
   check(Math.abs(await page.evaluate(() => scrollY) - dlCrossY) < 3, 'chained cross-page references return through both reading positions');
   await visit('robot/ch05/sec5-2.html');
   const hydraulic = page.locator('[data-lab="hyd3d"]');
-  const usefulFlow = hydraulic.getByLabel('有用流量 Qₘ');
+  const usefulFlow = hydraulic.getByRole('slider', { name: '有用流量 Qₘ', exact: true });
   await usefulFlow.waitFor();
   const previousFlow = await usefulFlow.inputValue();
   await usefulFlow.press('End');
