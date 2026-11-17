@@ -17,7 +17,7 @@ $$K_r^{-1}B(\boldsymbol q)K_r^{-1}\ddot{\boldsymbol q}_m
 +K_r^{-1}F_{\mathrm v}K_r^{-1}\dot{\boldsymbol q}_m
 +K_r^{-1}\boldsymbol g(\boldsymbol q)=\boldsymbol\tau_m .\tag{7.2-1}$$
 
-![课堂幻灯片 · 12:10：分散控制把机械手看成 $n$ 个独立系统，并把耦合、重力都视为干扰](../assets/ch07/decentral-model.jpg)
+![课堂幻灯片 · 12:10：分散控制把机械手看成 n 个独立系统，并把耦合、重力都视为干扰](../assets/ch07/decentral-model.jpg)
 
 **关键的一步是拆 $B$**。把惯量矩阵写成「标称对角阵 + 位形依赖项」：
 
@@ -60,7 +60,7 @@ J_i=\bar b_i/k_{r_i}^2 .\tag{7.2-5}$$
 | **位置 + 速度反馈** | $\theta_m,\dot\theta_m$ | $C_p=K_P$，$C_v(s)=K_v(1+sT_v)/s$ | 需要阻尼、要压超调 |
 | **位置 + 速度 + 加速度反馈** | $\theta_m,\dot\theta_m,\ddot\theta_m$ | $C_p=K_P$，$C_v$ 同上，$C_A(s)=1$ | 高速、高加速度跟踪 |
 
-![课堂幻灯片 · 32:00：位置 + 速度反馈的控制结构（$C_p=K_P$，$C_v=K_v(1+sT_v)/s$，$C_A=1$）](../assets/ch07/pos-vel-loop.jpg)
+![课堂幻灯片 · 32:00：位置 + 速度反馈的控制结构（C_p = K_P，C_v = K_v(1+sT_v)/s，C_A = 1）](../assets/ch07/pos-vel-loop.jpg)
 
 **老师反复强调的一点：三套不是叠加关系，选一套即可**（00:19:42–00:21:45）：
 
@@ -105,7 +105,7 @@ $$L(s)=\frac{k_mK_Pk_{tp}(1+sT_p)}{s^2(1+sT_m)},\tag{7.2-8}$$
 
 其中 $k_m$ 是电机速度环节的静态增益，$k_{tp}$ 是位置传感器常数，$T_p$ 是 PI 的零点时间参数，$T_m$ 是电机时间常数。这里采用课件的位置 PI 结构，与前表的「位置比例 + 速度 PI」结构不同。其位置对象包含运动学积分 $1/s$，PI 又包含一个积分，所以开环共含两个原点极点；分子零点来自 PI 的比例项。
 
-![课堂幻灯片 · 23:50：位置环的根轨迹，分 $T_p<T_m$、$T_p>T_m$、$T_p\gg T_m$ 三种情况](../assets/ch07/pos-rootlocus.jpg)
+![课堂幻灯片 · 23:50：位置环的根轨迹，分 T_p<T_m、T_p>T_m、T_p≫T_m 三种情况](../assets/ch07/pos-rootlocus.jpg)
 
 **根轨迹怎么读**（老师 23:50–31:10 带着走了一遍）：
 
@@ -195,9 +195,9 @@ $$T_R=\max\left\{T_p,\ \frac{1}{\zeta\omega_n}\right\}.\tag{7.2-13}$$
 到这里，控制器算出的还是**电机转矩** $\boldsymbol\tau_m$。真实驱动器接受的是**电压**（或电流）。
 第 8 周已经把这层接口推完，这里只复述结论并把它接回 7.2.1 的 $d$。
 
-![课堂幻灯片 · 02:09:04（第 8 周）：关节空间运动方程与「确定 $n$ 个广义力分量」](../assets/ch07/joint-eom.jpg)
+![课堂幻灯片 · 02:09:04（第 8 周）：关节空间运动方程与「确定 n 个广义力分量」](../assets/ch07/joint-eom.jpg)
 
-![课堂幻灯片 · 02:09:21（第 8 周）：广义力矩由减速器与 $n$ 个电机组成的驱动系统产生](../assets/ch07/drive-model.jpg)
+![课堂幻灯片 · 02:09:21（第 8 周）：广义力矩由减速器与 n 个电机组成的驱动系统产生](../assets/ch07/drive-model.jpg)
 
 驱动系统五式（减速器 + 电机 + 功率放大器）：
 
@@ -214,7 +214,7 @@ $$\left.\begin{aligned}
 
 $$\boxed{\ \boldsymbol\tau=K_rK_tR_a^{-1}\bigl(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q}\bigr)\ }\tag{7.2-15}$$
 
-![课堂幻灯片 · 02:11:59（第 8 周）：$\boldsymbol\tau$ 与控制电压 $\boldsymbol v_c$ 的关系](../assets/ch07/tau-vc.jpg)
+![课堂幻灯片 · 02:11:59（第 8 周）：τ 与控制电压 v_c 的关系](../assets/ch07/tau-vc.jpg)
 
 **近似条件**：由 (7.2-14) 可见，$G_v\boldsymbol v_c=R_a\boldsymbol i_a+K_vK_r\dot{\boldsymbol q}$。对需要使用该近似的每个关节，都要检查电阻压降相对该关节的反电动势是否足够小，即 $|R_{a_i}i_{a_i}|\ll|k_{v_i}k_{r_i}\dot q_i|$；满足时才可近似写成
 
@@ -226,6 +226,8 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 
 **结论**：在上述逐轴近似成立、且各驱动参数矩阵为对角阵时，$\dot{\boldsymbol q}$ 与 $\boldsymbol v_c$ 近似逐轴成比例。这解释了课件中的分散驱动近似；它本身不保证含负载耦合、限幅与动态误差的整个闭环满足性能要求。
 
+![课堂幻灯片 · 02:13:29（第 8 周）：三条假设推出 G_v·v_c ≈ K_v·K_r·q̇，以及两条结论](../assets/ch07/decentral-assume.jpg)
+
 ::: thm 定理 7.2.A · 分散控制成立的两条结论（第 8 周课件 §8.2） {#thm-7.2.A}
 **结论一（模型参数的影响）**：在压降可忽略的近似式中，关节速度与电压的比例不显含连杆惯量、质量等机械手参数；但这些参数仍会影响实现该近似所需的电流和误差。
 
@@ -234,7 +236,7 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 
 若压降不能忽略，就须保留式 (7.2-15) 中的电流和速度项。电机参数矩阵在这里是对角的，反电动势项本身并不混合其他关节速度；整机动力学的耦合会使实现各关节所需的力矩依赖其他关节的状态。是否采用集中控制，要比较这种耦合与任务要求。
 
-![课堂幻灯片 · 02:14:22（第 8 周）：这种情况下计算第 $i$ 个关节的转矩需要获知所有关节的运动，因此需要集中控制](../assets/ch07/centralized-reason.jpg)
+![课堂幻灯片 · 02:14:22（第 8 周）：这种情况下计算第 i 个关节的转矩需要获知所有关节的运动，因此需要集中控制](../assets/ch07/centralized-reason.jpg)
 
 **两条工程出路**（第 8 周 02:16:29–02:17:48）：
 
@@ -243,9 +245,9 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 | ① 使用速度近似 | 压降相对反电动势足够小时，用 $\boldsymbol v_c\leftrightarrow\dot{\boldsymbol q}$ 的近似 | 可按单轴设计，再检查近似误差与耦合 |
 | ② 加电流环 | 在转矩命令与电压之间插电流内环，近似实现 $\boldsymbol i_a=G_i\boldsymbol v_c$ | 得到近似力矩接口 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$；仍须考虑电流环带宽和限幅 |
 
-![课堂幻灯片 · 02:16:01（第 8 周）：加入电流环后 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$](../assets/ch07/current-loop.jpg)
+![课堂幻灯片 · 02:16:01（第 8 周）：加入电流环后 τ = K_r·K_t·G_i·v_c](../assets/ch07/current-loop.jpg)
 
-![课堂实拍 · 02:13:30（第 8 周）：讲到 $\boldsymbol\tau$ 与 $\boldsymbol v_c$ 关系式时的讲台实拍（板书帧 b268）](../assets/ch07/board-tau-vc.jpg)
+![课堂实拍 · 02:13:30（第 8 周）：讲到 τ 与 v_c 关系式时的讲台实拍（板书帧 b268）](../assets/ch07/board-tau-vc.jpg)
 
 <a id="sec-7.2.6"></a>
 
@@ -255,7 +257,7 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 很高时，误差还没形成，输出已经落后了——课件 §8.3.2 的原话是「跟踪能力将不可避免地下降」
 （图 7.2-5）。
 
-![课堂幻灯片 · 40:30：分散前馈补偿——在反馈环外再并一条由 $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ 驱动的前馈通道](../assets/ch07/decentral-feedforward.jpg)
+![课堂幻灯片 · 40:30：分散前馈补偿——在反馈环外再并一条由 q_d、q̇_d、q̈_d 驱动的前馈通道](../assets/ch07/decentral-feedforward.jpg)
 
 **先补单轴名义对象的运动需求。** 令 $J_m=K_r^{-1}\bar B K_r^{-1}$、$q_{md}=K_rq_d$。只考虑式 (7.2-3) 左边的名义惯量与黏性摩擦，所需电机力矩为 $J_m\ddot q_{md}+F_m\dot q_{md}$；再按式 (7.2-14) 补电阻压降与反电动势，可写成一条等效电压前馈：
 
@@ -284,7 +286,7 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 +K_r^{-1}C(\boldsymbol q_d,\dot{\boldsymbol q}_d)K_r^{-1}\dot{\boldsymbol q}_{md}
 +K_r^{-1}\boldsymbol g(\boldsymbol q_d)\Bigr]\ }\tag{7.2-18}$$
 
-![课堂幻灯片 · 55:20：计算转矩前馈的完整结构——前馈作用 $R_aK_t^{-1}d_d$ 与分散反馈并联](../assets/ch07/computed-torque-ff.jpg)
+![课堂幻灯片 · 55:20：计算转矩前馈的完整结构——前馈作用 R_a·K_t⁻¹·d_d 与分散反馈并联](../assets/ch07/computed-torque-ff.jpg)
 
 它补偿的是 7.2.1 里那个 $d$（实际干扰）。之所以叫「计算转矩」，是因为它**把动力学模型反过来用**：
 这是把逆动力学用于前馈：给定期望运动，计算名义模型需要的力矩；第六章所称的正动力学则是由力矩求运动。

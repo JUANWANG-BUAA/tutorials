@@ -49,7 +49,7 @@ $$\frac{\mathrm d}{\mathrm dt}\left(\frac{\partial L}{\partial \dot{\boldsymbol 
 -\left(\frac{\partial L}{\partial \boldsymbol q}\right)^{\mathrm T}=\boldsymbol\xi.$$
 :::
 
-![课堂幻灯片 · 42:11：7.1 拉格朗日公式——$L=T-U$ 与紧凑形式](../assets/ch06/lagrange-eq.jpg)
+![课堂幻灯片 · 42:11：7.1 拉格朗日公式——L = T − U 与紧凑形式](../assets/ch06/lagrange-eq.jpg)
 
 ::: intuition 为什么可以「不画受力图」
 拉格朗日方程里的 $\dfrac{\mathrm d}{\mathrm dt}\dfrac{\partial L}{\partial \dot q_i}-\dfrac{\partial L}{\partial q_i}$

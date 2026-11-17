@@ -15,14 +15,24 @@
   /* ------------------------------------------------------------------ *
    * 公式复制 LaTeX
    *
-   * KaTeX 现在以 output = htmlAndMathml 渲染，每个公式都带
-   * <annotation encoding="application/x-tex">（原始 TeX），抄公式时直接取它。
+   * KaTeX 的 TeX 注释可内嵌，也可由 data: URI 给出；后一种避免 mdBook
+   * 把注释作为第二份公式文本加入搜索索引。启动时将 URI 还原为注释文本。
    * 只在**行间公式**上挂一个悬停浮现的按钮（行内符号不抢注意力）；
    * 按钮放在公式所在的 <p> 里做绝对定位，这样宽公式横向滚动时按钮不跟着跑。
    * ------------------------------------------------------------------ */
   function formulaTex(display) {
     var annotation = display.querySelector('annotation[encoding="application/x-tex"]');
     return annotation ? annotation.textContent.trim() : "";
+  }
+
+  function restoreFormulaAnnotations() {
+    var prefix = "data:application/x-tex,";
+    document.querySelectorAll('.katex annotation[encoding="application/x-tex"][src]').forEach(function (annotation) {
+      var src = annotation.getAttribute("src");
+      if (!src || !src.startsWith(prefix)) return;
+      annotation.textContent = decodeURIComponent(src.slice(prefix.length));
+      annotation.removeAttribute("src");
+    });
   }
 
   /* 行内公式通道：Alt/Option + 点击即复制。
@@ -61,6 +71,7 @@
   }
 
   function bootFormulaCopy() {
+    restoreFormulaAnnotations();
     if (!document.querySelector("main .katex annotation")) return;
     wireInlineFormulaCopy();
     var displays = document.querySelectorAll("main .katex-display");

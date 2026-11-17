@@ -57,11 +57,10 @@ command = "python3 tools/mathbook.py"
 # GFM 删除线（单个 ~ 即可配对！），破坏标签结构；包装器在 pulldown 解析
 # 之前把它们改写成 &#126; 实体（见 tools/katex_wrapper.py）。
 [preprocessor.katex]
-# 共享脚本（三本一份）：仓库根的 tools/katex_wrapper.py ✓ 路径相对本书根
-command = "python3 ../tools/katex_wrapper.py"
+# 共享包装器后将 TeX 注释放在 MathML 的 src 数据 URI 中，避免重复索引；
+# 页面启动时恢复注释文本，供复制功能及其他客户端使用。
+command = "python3 tools/katex_index.py"
 no-css = true
-# output = htmlAndMathml → 除视觉 HTML 外再产出一份 MathML，里面带
-# <annotation encoding="application/x-tex"> 原始 TeX：读屏可用（此前 .katex-html
-# 是 aria-hidden，公式对读屏等于空白），也让我们能给公式加「复制 LaTeX」。
+# 同时输出视觉 HTML 与供读屏使用的 MathML。
 output = "htmlAndMathml"
 after = ["mathbook"]

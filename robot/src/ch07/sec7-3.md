@@ -55,7 +55,7 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 \quad\Longrightarrow\quad
 \dot V=2\boldsymbol e^{\mathrm T}Qf(\boldsymbol e).\tag{7.3-2}$$
 
-![课堂幻灯片 · 60:40：二次型李雅普诺夫函数——$V=e^{\mathrm T}Qe$，$\dot V=2e^{\mathrm T}Qf(e)$](../assets/ch07/lyapunov.jpg)
+![课堂幻灯片 · 60:40：二次型李雅普诺夫函数——V = eᵀQe，V̇ = 2eᵀQ·f(e)](../assets/ch07/lyapunov.jpg)
 
 很多机器人系统只能得到 $\dot V\le0$，例如 $\dot V=-\dot{\boldsymbol q}^{\mathrm T}K_D\dot{\boldsymbol q}$。机械臂停在错误位置的一瞬间，速度也是零，因而 $\dot V=0$；但位置反馈随后会让它动起来。证明时必须区分“此刻不动”和“以后一直不动”。
 
@@ -76,7 +76,7 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 最简单的集中控制只补重力。它针对的是**点对点控制**：期望关节角 $\boldsymbol q_d$ 是**常数**，
 让 $\boldsymbol q$ 收敛到 $\boldsymbol q_d$（图 7.3-3）。
 
-![课堂幻灯片 · 72:00：重力补偿 PD 的李雅普诺夫函数 $V=\frac12\dot q^{\mathrm T}B(q)\dot q+\frac12\tilde q^{\mathrm T}K_P\tilde q$](../assets/ch07/gravity-pd-V.jpg)
+![课堂幻灯片 · 72:00：重力补偿 PD 的李雅普诺夫函数 V = ½·q̇ᵀB(q)q̇ + ½·q̃ᵀK_P q̃](../assets/ch07/gravity-pd-V.jpg)
 
 取误差 $\tilde{\boldsymbol q}=\boldsymbol q_d-\boldsymbol q$，构造
 
@@ -98,7 +98,7 @@ $$\dot V=\frac12\dot{\boldsymbol q}^{\mathrm T}\bigl(\dot B(\boldsymbol q)-2C(\b
 -\dot{\boldsymbol q}^{\mathrm T}F\dot{\boldsymbol q}
 +\dot{\boldsymbol q}^{\mathrm T}\bigl(\boldsymbol u-\boldsymbol g(\boldsymbol q)-K_P\tilde{\boldsymbol q}\bigr).\tag{7.3-5}$$
 
-![课堂幻灯片 · 74:50：利用 $\dot B-2C$ 的反对称性，第一项为零](../assets/ch07/gravity-pd-Vdot.jpg)
+![课堂幻灯片 · 74:50：利用 Ḃ − 2C 的反对称性，第一项为零](../assets/ch07/gravity-pd-Vdot.jpg)
 
 **第一项为零**——这正是第六章性质一（$\dot B-2C$ 反对称）的用处。取控制律
 
@@ -232,7 +232,7 @@ $\boldsymbol\eta$ 包含参数误差、未建模动态、外部扰动。**鲁棒
 的具体值，只假设它**有界**，然后设计一个控制项，使得无论 $\boldsymbol\eta$ 在界内怎么变，
 误差都收敛到一个有界集。
 
-![课堂幻灯片 · 99:10：鲁棒控制律由三部分组成——模型补偿、线性反馈、鲁棒项 $\omega$](../assets/ch07/robust-law.jpg)
+![课堂幻灯片 · 99:10：鲁棒控制律由三部分组成——模型补偿、线性反馈、鲁棒项 ω](../assets/ch07/robust-law.jpg)
 
 控制律取
 
@@ -248,7 +248,6 @@ $$\boldsymbol y=\ddot{\boldsymbol q}_d+K_D\dot{\tilde{\boldsymbol q}}+K_P\tilde{
 
 将式 (7.3-12) 代入 $\hat B\ddot q+\hat n+\eta=u$，可逐项得到
 
-![课堂幻灯片 · 104:50：滑动子空间 $z=D^{\mathrm T}Q\xi=0$——轨迹被引向滑模面，再沿它趋向原点](../assets/ch07/sliding-subspace.jpg)
 $$\ddot{\tilde q}+K_D\dot{\tilde q}+K_P\tilde q=\hat B^{-1}(\eta-\omega),\qquad
 \dot\xi=A\xi+D\hat B^{-1}(\eta-\omega).$$
 
@@ -261,6 +260,7 @@ $$\dot V=-\xi^{\mathrm T}P\xi+2z^{\mathrm T}(\eta-\omega)
 
 **几何图像**：课件用 $D^{\mathrm T}Q\xi=0$ 表示滑动子空间。本文外加力矩型写法的 $z=\hat B^{-\mathrm T}D^{\mathrm T}Q\xi$ 与它有相同的零集合，但方向一般不同；上面的导数计算说明了为什么要这样配套。课件示意的是理想切换运动，不能据图就断言有限采样、饱和执行器也精确到达并沿面滑动。
 
+![课堂幻灯片 · 104:50：滑动子空间 z = DᵀQξ = 0——轨迹被引向滑模面，再沿它趋向原点](../assets/ch07/sliding-subspace.jpg)
 
 **问题是抖振**。$\boldsymbol\omega=\rho\boldsymbol z/\|\boldsymbol z\|$ 是一个**符号函数**：
 $\boldsymbol z$ 一过零，控制量立刻反向，实际执行器跟不上，就在滑模面附近高频抖振（图 7.3-6）。
@@ -298,7 +298,7 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\bold
 $Y$ 是已知的回归矩阵，$\boldsymbol\pi$ 是未知但**常数**的动力学参数向量（质量、惯量、质心位置、
 摩擦系数……）。
 
-![课堂幻灯片 · 108:10：动力学参数线性性——$\tau=Y(q,\dot q,\ddot q)\pi$，这是自适应控制的入口](../assets/ch07/adaptive-linearity.jpg)
+![课堂幻灯片 · 108:10：动力学参数线性性——τ = Y(q, q̇, q̈)·π，这是自适应控制的入口](../assets/ch07/adaptive-linearity.jpg)
 
 **控制律的构造**（课件 §8.5.4）：
 

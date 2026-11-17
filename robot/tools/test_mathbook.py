@@ -48,6 +48,32 @@ class BoxCodeWhitespace(unittest.TestCase):
                 self.assertEqual(namespace["value"](), "first\n\n    third\n")
 
 
+class MarkdownAnchorReferences(unittest.TestCase):
+    def test_counts_only_links_to_the_actual_page(self):
+        table = mathbook.LabelTable()
+        table.path = {
+            "same": "ch01/section.html",
+            "other": "ch02/section.html",
+            "wrong": "ch03/section.html",
+            "image": "ch01/section.html",
+            "code": "ch01/section.html",
+            "fenced": "ch01/section.html",
+        }
+        content = "\n".join([
+            "[本页](#same)",
+            "[跨页](../ch02/section.md#other)",
+            "[错误页面](../ch02/section.md#wrong)",
+            "![图片](#image)",
+            "`[代码](#code)`",
+            "[外站](https://example.com/ch03/section.html#wrong)",
+            "```",
+            "[代码块](#fenced)",
+            "```",
+        ])
+        mathbook.mark_markdown_links(content, "ch01/section.md", table)
+        self.assertEqual(table.used, {"same", "other"})
+
+
 class MergedSectionNumbering(unittest.TestCase):
     @staticmethod
     def book(content):

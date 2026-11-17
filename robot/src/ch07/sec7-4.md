@@ -77,7 +77,7 @@ $$\dot{\boldsymbol q}_{\rm cmd}=J_A^{-1}(\dot{\boldsymbol x}_d+K\tilde{\boldsymb
 $$\boxed{\ \boldsymbol F=K_P(\boldsymbol x_d-\boldsymbol x),\qquad
 \boldsymbol\tau=J_A^{\mathrm T}(\boldsymbol q)\boldsymbol F\ }\tag{7.4-5}$$
 
-![课堂幻灯片 · 122:30：转置雅可比方案——操作空间误差经增益矩阵变成广义弹簧力，再由 $J_A^{\mathrm T}$ 折算成关节力矩](../assets/ch07/op-transpose.jpg)
+![课堂幻灯片 · 122:30：转置雅可比方案——操作空间误差经增益矩阵变成广义弹簧力，再由 J_Aᵀ 折算成关节力矩](../assets/ch07/op-transpose.jpg)
 
 **物理图像**：$K_P$ 等效为一个**广义虚拟弹簧**，把末端从当前位姿往期望位姿 $\boldsymbol x_d$ 拉；$J_A^{\mathrm T}$ 则实现了这一虚拟力向关节空间的分配（符合虚功原理：$\boldsymbol\tau = J_A^{\mathrm T}\boldsymbol F$）。**此方案不需要求 $J_A^{-1}$，因此在奇异位形附近数值上更为稳健**——这是其相对逆雅可比方案的核心优势。
 这里的稳健只指无需数值求逆，不代表在奇异处仍能消除任意任务误差：某些方向的虚拟力可能落入 $J_A^{\mathrm T}$ 的零空间。式 (7.4-5) 还只是弹簧项，尚未补重力或加入阻尼，不能单凭它保证动态系统收敛；下一小节补齐这两部分。
@@ -102,7 +102,7 @@ $$\boxed{\ \boldsymbol u=\boldsymbol g(\boldsymbol q)
 +J_A^{\mathrm T}(\boldsymbol q)K_P\tilde{\boldsymbol x}
 -J_A^{\mathrm T}(\boldsymbol q)K_DJ_A(\boldsymbol q)\dot{\boldsymbol q}\ }\tag{7.4-7}$$
 
-![课堂幻灯片 · 125:40：操作空间重力补偿 PD——$V$ 的导数只剩阻尼项，平衡点由 $J_A^{\mathrm T}K_P\tilde x=0$ 确定](../assets/ch07/op-gravity-pd.jpg)
+![课堂幻灯片 · 125:40：操作空间重力补偿 PD——V 的导数只剩阻尼项，平衡点由 J_AᵀK_P·x̃ = 0 确定](../assets/ch07/op-gravity-pd.jpg)
 
 这里 $K_P,K_D$ 取对称正定矩阵。目标静止时，$\dot{\tilde{\boldsymbol x}}=-J_A\dot{\boldsymbol q}$；把控制律代入动力学，再用 $\dot B-2C$ 的反对称性，得到
 
@@ -137,8 +137,8 @@ $$\boldsymbol y=J_A^{-1}(\boldsymbol q)\bigl(\ddot{\boldsymbol x}_d
 $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsymbol x}=0.\tag{7.4-12}$$
 上式要求参考在所用局部坐标图内可达、轨迹保持非奇异，模型与状态准确、力矩不饱和，并采用理想连续时间更新；取正对角增益时各任务坐标误差指数衰减。采样、延迟、测量误差或限幅存在时须重新写误差方程。欧拉角坐标奇异和机械臂的运动学奇异是两种不同问题，都不能仅靠把 $J_A^{-1}$ 换成数值伪逆就保留同一证明。
 
-![课堂幻灯片 · 126:50：操作空间逆动力学——先由 $J_A^{-1}$ 把操作空间辅助量变成关节加速度，再用逆动力学折算成力矩](../assets/ch07/op-inverse-dynamics.jpg)
 
+![课堂幻灯片 · 126:50：操作空间逆动力学——先由 J_A⁻¹ 把操作空间辅助量变成关节加速度，再用逆动力学折算成力矩](../assets/ch07/op-inverse-dynamics.jpg)
 
 **注意它与 7.4.4 的分工**：7.4.4 只补重力，适合点对点；7.4.5 对模型做更完整的补偿，适合轨迹跟踪。前者用 $J_A$ 做力的映射，后者还需 $\dot J_A$ 和逆雅可比。
 

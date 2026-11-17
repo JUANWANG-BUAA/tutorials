@@ -46,9 +46,11 @@ mdBook 预处理器协议：stdin 读 JSON，stdout 写 JSON；`supports <render
 from __future__ import annotations
 
 import json
+import os
 import posixpath
 import re
 import sys
+from urllib.parse import unquote, urlsplit
 
 try:
     from markdown_it import MarkdownIt
@@ -588,6 +590,29 @@ def render_tree(root, table: LabelTable, where: str) -> str:
 # 驱动
 # --------------------------------------------------------------------------- #
 
+def mark_markdown_links(content: str, where: str, table: LabelTable) -> None:
+    """把指向本书盒子的普通 Markdown 链接计入引用，不把图片或代码算作链接。"""
+    for _, in_fence, line in iter_lines_with_fence_state(content):
+        if in_fence or FENCE_RE.match(line):
+            continue
+        line = CODESPAN_RE.sub("", line)
+        for match in MD_LINK_RE.finditer(line):
+            if match.group(1).startswith("!"):
+                continue
+            try:
+                target = urlsplit(match.group(2))
+            except ValueError:
+                continue
+            anchor = unquote(target.fragment)
+            if target.scheme or target.netloc or anchor not in table.path:
+                continue
+            path = unquote(target.path)
+            page = posixpath.normpath(posixpath.join(posixpath.dirname(where), path)) if path else where
+            page = re.sub(r"\.md$", ".html", page)
+            if page == table.path[anchor]:
+                table.used.add(anchor)
+
+
 def process(book):
     table = LabelTable()
     try:
@@ -603,6 +628,7 @@ def process(book):
             content = ch.get("content")
             if content:
                 where = ch.get("source_path") or ch.get("path") or "?"
+                mark_markdown_links(content, where, table)
                 ch["content"] = render_tree(
                     parse_tree(content, where, table), table, where)
             walk(ch.get("sub_items") or [])
@@ -612,8 +638,8 @@ def process(book):
         for e in table.errors:
             print(f"mathbook: {e}", file=sys.stderr)
         raise SystemExit(f"mathbook: {len(table.errors)} 处错误，构建中止")
-    if orphan := sorted(set(table.full) - table.used):
-        print(f"mathbook: 提示 — {len(orphan)} 个锚点未被任何 [@ref] 引用"
+    if os.environ.get("MATHBOOK_REPORT_UNUSED") == "1" and (orphan := sorted(set(table.full) - table.used)):
+        print(f"mathbook: 提示 — {len(orphan)} 个锚点未被 [@ref] 或普通 Markdown 链接引用"
               f"（{', '.join(orphan[:5])}{'…' if len(orphan) > 5 else ''}）",
               file=sys.stderr)
 
