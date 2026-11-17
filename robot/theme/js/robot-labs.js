@@ -503,8 +503,8 @@
       var vpeak = { cubic: 1.5 * d / state.T, quintic: 1.875 * d / state.T, lspb: (1 + state.lambda) * d / state.T }[state.kind];
       var apeak = { cubic: 6 * d / (state.T * state.T), quintic: 30 * Math.sqrt(3) / 9 * d / (state.T * state.T), lspb: lspbA() }[state.kind];
       var note = {
-        cubic: "三次：v 两端为零，但 a 在 t=0 与 t=T 处跳到 ±6d/T² —— 实际机器会在起停瞬间「抖一下」。",
-        quintic: "五次：a(0) = a(T) = 0，两端加速度连续（jerk 有限），代价是峰值加速度与峰值速度更高。",
+        cubic: "三次：v 两端为零，但 a 在 t=0 与 t=T 处跳到 ±6d/T²；与静止段拼接时加速度不连续，可能激起振动。",
+        quintic: "五次：a(0) = a(T) = 0，两端加速度连续（jerk 有限）。同位移、同总时间下，峰值速度为 1.875d/T，高于三次的 1.5d/T；峰值加速度为 10√3d/(3T²)，低于三次的 6d/T²。",
         lspb: "LSPB：加速度是 ±a_max 的方波，速度是梯形。λ 越大巡航段越短；λ→1 时退化为抛物线混合（无匀速段）。"
       }[state.kind];
       var extra = state.kind === "lspb"
@@ -514,7 +514,7 @@
       var degenerate = state.kind === "lspb" && lspbDegenerate();
       readout.innerHTML = "<p><b>峰值速度</b> " + vpeak.toFixed(3) + " m/s &nbsp;·&nbsp; <b>峰值加速度</b> " + apeakTxt + " m/s²</p><p>" + note + "</p>" + extra +
         (degenerate ? "<p class='lab-warn'><b>λ = 0 是退化极限</b>：巡航速度降到 d/T，加速时长 t_b = T − d/v_c → 0，峰值加速度发散（速度阶跃），" +
-          "曲线本身退化为匀速。实际轨迹不可用，请把 λ 调到 0.05 以上。</p>" : "");
+          "曲线本身退化为匀速。请选择大于 0 的 λ，再根据设备的加速度上限判断可行性。</p>" : "");
     }
 
     draw();
@@ -738,7 +738,7 @@
     head.appendChild(el("span", "lab-tag", "交互演示"));
     head.appendChild(el("b", null, "两连杆长度偏差：秩、条件数与验证"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "名义长度 (1.00, 0.60) m，真实长度 (1.04, 0.57) m；只估两个长度偏差。蓝点是训练位形，紫点是独立验证位形。"));
+    host.appendChild(el("p", "lab-note", "名义长度 (1.00, 0.60) m，真实长度 (1.04, 0.57) m；只估两个长度偏差。蓝点是训练位形，紫点是独立验证位形。量测扰动使用固定的正弦序列，幅值 A 限定每个坐标分量的偏移，不是随机噪声的标准差。"));
     host.appendChild(controls);
     var spreadButtons = toggleGroup(controls, "位形分布", [
       { value: "wide", text: "宽分布" }, { value: "narrow", text: "集中分布" }
@@ -747,7 +747,7 @@
       state.count = Math.round(value);
       draw();
     }, function (value) { return value + " 个"; });
-    var noiseControl = slider(controls, "噪声 σ", 0, 2, .1, state.noise, function (value) {
+    var noiseControl = slider(controls, "扰动幅值 A", 0, 2, .1, state.noise, function (value) {
       state.noise = value;
       draw();
     }, function (value) { return value.toFixed(1) + " mm"; });
@@ -830,7 +830,7 @@
         var location = pixel(pointValue); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(location[0], location[1], radius, 0, 2 * Math.PI); ctx.fill();
       }
       ctx.font = "12px " + cssVar("--sans"); ctx.fillStyle = colors.ink;
-      ctx.fillText("量测位置（m）", width * .54, 20); ctx.fillText("参数修正", 16, 20);
+      ctx.fillText("量测位置（m）", width * .54, 20); ctx.fillText("参数修正（m）", 16, 20);
       frame(ctx, width * .54, 34, width - 18, height - 18, colors);
       var lineAxis = function (first, second) { ctx.strokeStyle = colors.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(first[0], first[1]); ctx.lineTo(second[0], second[1]); ctx.stroke(); };
       lineAxis([plotOrigin[0] - 1.65 * scale, plotOrigin[1]], [plotOrigin[0] + 1.65 * scale, plotOrigin[1]]);
@@ -842,20 +842,24 @@
       ctx.fillText("紫：验证真值，金：校准模型", width * .54 + 110, height - 23);
       var bars = [estimated[0], estimated[1], .04, -.03];
       var labels = ["估计 Δa₁", "估计 Δa₂", "真值 Δa₁", "真值 Δa₂"];
-      var maxBar = .06, barX = 35, barBase = height - 42, barWidth = 34;
+      var maxBar = Math.max.apply(null, [.06].concat(bars.map(function (value) { return isFinite(value) ? Math.abs(value) : 0; })));
+      var barX = 35, barBase = height / 2 - 5, barWidth = 34;
+      var maxHeight = Math.min(95, (height - 110) / 2);
+      ctx.strokeStyle = colors.line; ctx.beginPath(); ctx.moveTo(barX - 12, barBase); ctx.lineTo(barX + 4 * 46 - 4, barBase); ctx.stroke();
+      ctx.fillStyle = colors.muted; ctx.fillText("0", barX - 24, barBase + 4);
       bars.forEach(function (value, index) {
-        var x = barX + index * 46, barHeight = Math.min(95, Math.abs(value) / maxBar * 95);
+        var x = barX + index * 46, barHeight = isFinite(value) ? Math.abs(value) / maxBar * maxHeight : 0;
         ctx.fillStyle = index < 2 ? colors.blue : colors.gold;
         ctx.fillRect(x, value >= 0 ? barBase - barHeight : barBase, barWidth, barHeight);
-        ctx.fillStyle = colors.muted; ctx.fillText(labels[index], x - 8, barBase + 17);
+        ctx.fillStyle = colors.muted; ctx.fillText(labels[index], x - 8, height - 22);
         ctx.fillText(isFinite(value) ? value.toFixed(3) : "—", x + 3, value >= 0 ? barBase - barHeight - 4 : barBase + barHeight + 13);
       });
       var text = (state.spread === "wide" ? "宽分布" : "集中分布") + "，训练样本 " + state.count +
-        "，σ = " + state.noise.toFixed(1) + " mm。估计 Δa = (" +
+        "，扰动幅值 A = " + state.noise.toFixed(1) + " mm。估计 Δa = (" +
         (isFinite(estimated[0]) ? estimated[0].toFixed(4) : "—") + ", " +
         (isFinite(estimated[1]) ? estimated[1].toFixed(4) : "—") + ") m；真值 = (0.0400, −0.0300) m。秩 = " +
         solved.rank + " / 2，条件数 ≈ " + (isFinite(solved.condition) ? solved.condition.toFixed(1) : "∞") +
-        "；训练 RMS = " + (trainingRms * 1000).toFixed(3) + " mm；验证误差 = " +
+        "；训练分量 RMS = " + (trainingRms * 1000).toFixed(3) + " mm；验证误差 = " +
         (validationError * 1000).toFixed(3) + " mm。" +
         (solved.rank < 2 ? "当前数据不足以唯一估计两个参数。" :
           solved.condition > 100 ? "列近相关，噪声会被明显放大。" :

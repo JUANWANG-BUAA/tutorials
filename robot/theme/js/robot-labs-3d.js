@@ -2860,7 +2860,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "可操作度椭球：奇点就是它被压扁的那一刻"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拟人臂的位置雅可比 Jₚ 决定末端能把多大的速度「摊」到哪些方向。总关节速度模上限为 1 rad/s；椭球来自 JₚJₚᵀ 的特征方向与 √(λᵢ)：半轴越长 = 该方向上末端能出的速度越大。拖 θ₂、θ₃ 逼近两类奇点——<b>肘伸直/折回</b>（s₃=0，边界奇点）与 <b>腕点落到肩轴上</b>（a₂c₂+a₃c₂₃=0，内部奇点），单一奇点通常压扁为面；两种奇点同时发生时可退化为线。"));
+    host.appendChild(el("p", "lab-note", "拟人臂的位置雅可比 Jₚ 决定末端各方向的速度能力。关节速度向量的模上限取 1 rad/s；椭球的主轴方向由 JₚJₚᵀ 的特征向量给出，半轴长度为 √λᵢ。拖 θ₂、θ₃，观察肘伸直或折回（s₃=0）以及腕点落到肩轴上（a₂c₂+a₃c₂₃=0）时的变化。单一奇点通常压扁为面；两种奇点同时发生时可退化为线。折回奇点的边界分类还取决于杆长。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -2955,7 +2955,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "笛卡儿臂：为什么它的惯性矩阵是常数"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "关节 1 沿 z₀ 竖直移动 d₁，关节 2 沿水平方向移动 d₂。**随便拖 d₁,d₂**：下方 B 的三个数<b>一动不动</b>——因为 B 里根本没有 d₁,d₂。这不是巧合，而是「全平动关节」的直接后果：连杆不做转动，动能只是 12mḋ²，与位形无关。于是 Ḃ=0、C=O——<b>既没有离心项，也没有科氏项</b>。这是 6.3.2 平面臂的对照组：那边的复杂性全部来自「转动关节 + 位形变化」。"));
+    host.appendChild(el("p", "lab-note", "关节 1 沿 z₀ 竖直移动 d₁，关节 2 沿水平方向移动 d₂。拖动两者，观察下方惯性矩阵 B 的元素：本例连杆的运动方向固定，只作平移，动能由各部分的 ½mv² 相加得到，因此 B 不随位形改变。于是 Ḃ=0、C=0，没有离心项和科氏项；与 6.3.2 的平面转动臂比较即可看到差别。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -3032,23 +3032,29 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "平面臂动力学：B、C、g 各自在动"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖 ϑ₁,ϑ₂ 与角速度 ϑ₁,ϑ₂：下方 B 的三个元素随**位形**变（b₁₁ 里藏着 2a₁ℓ₂cosϑ₂），C 随位形与速度变，重力矩随姿态变；只有 b₂₂ 是常数。按「自由摆动」键则以**零输入力矩**做 RK4 积分——臂会自己摆下去，所有项都参与，画面上的弧线就是 B q+Cq̇+g=0 的结果。"));
+    host.appendChild(el("p", "lab-note", "拖动关节角 ϑ₁、ϑ₂ 和角速度 ϑ̇₁、ϑ̇₂：B 的 b₁₁、b₁₂ 随位形变化，b₂₂ 不变；C 随位形与速度变化，重力项 g 随姿态变化。按「自由摆动」后，程序对零输入力矩的方程 Bq̈+Cq̇+g=0 做 RK4 数值积分，画出最近 10 秒的末端轨迹；拖动滑条会重置计时与轨迹。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
-    slider(controls, "ϑ₁", -180, 180, 1, state.th1, function (v) { state.th1 = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
-    slider(controls, "ϑ₂", -180, 180, 1, state.th2, function (v) { state.th2 = v; draw(); }, function (v) { return v.toFixed(0) + "°"; });
-    slider(controls, "ϑ̇₁", -2, 2, 0.05, state.dq1, function (v) { state.dq1 = v; draw(); }, function (v) { return v.toFixed(2) + " rad/s"; });
-    slider(controls, "ϑ̇₂", -2, 2, 0.05, state.dq2, function (v) { state.dq2 = v; draw(); }, function (v) { return v.toFixed(2) + " rad/s"; });
+    function setInitial(key, value) {
+      state[key] = value;
+      state.t = 0;
+      state.trail = [];
+      draw();
+    }
+    var q1Control = slider(controls, "ϑ₁", -180, 180, 1, state.th1, function (v) { setInitial("th1", v); }, function (v) { return v.toFixed(0) + "°"; });
+    var q2Control = slider(controls, "ϑ₂", -180, 180, 1, state.th2, function (v) { setInitial("th2", v); }, function (v) { return v.toFixed(0) + "°"; });
+    var dq1Control = slider(controls, "ϑ̇₁", -2, 2, 0.05, state.dq1, function (v) { setInitial("dq1", v); }, function (v) { return v.toFixed(2) + " rad/s"; });
+    var dq2Control = slider(controls, "ϑ̇₂", -2, 2, 0.05, state.dq2, function (v) { setInitial("dq2", v); }, function (v) { return v.toFixed(2) + " rad/s"; });
     var runBtn = el("button", "lab-btn", "自由摆动（零输入力矩）");
     runBtn.type = "button";
     runBtn.addEventListener("click", function () {
       state.run = !state.run;
       runBtn.classList.toggle("on", state.run);
       runBtn.textContent = state.run ? "暂停" : "自由摆动（零输入力矩）";
-      if (!state.run) { state.t = 0; state.trail = []; }
       if (state.run && timer === null) timer = setInterval(tick, 16);
       if (!state.run && timer !== null) { clearInterval(timer); timer = null; }
+      draw();
     });
     host.appendChild(runBtn);
 
@@ -3060,7 +3066,7 @@
     readout.setAttribute("aria-live", "polite");
     host.appendChild(readout);
 
-    var view = makeView(canvas, 0.6, { span: 1.5, center: [0, 0.35, 0], az: -22, elv: 12 });
+    var view = makeView(canvas, 0.6, { span: 3.2, center: [0, 0, 0], az: -22, elv: 65 });
     view.onChange = function () { draw(); };
 
     var timer = null;
@@ -3093,7 +3099,7 @@
       var r1 = Cm[0][0] * dq1 + Cm[0][1] * dq2 + G[0];
       var r2 = Cm[1][0] * dq1 + Cm[1][1] * dq2 + G[1];
       var det = Bm[0][0] * Bm[1][1] - Bm[0][1] * Bm[1][0];
-      return [(Bm[1][1] * r1 - Bm[0][1] * r2) / det, (-Bm[1][0] * r1 + Bm[0][0] * r2) / det];
+      return [-(Bm[1][1] * r1 - Bm[0][1] * r2) / det, -(-Bm[1][0] * r1 + Bm[0][0] * r2) / det];
     }
     function deriv(y) {
       var a = accel(y[0], y[1], y[2], y[3]);
@@ -3109,6 +3115,12 @@
       var k4 = deriv(y4);
       return y.map(function (v, i) { return v + dt / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]); });
     }
+    function syncControl(control, value, min, max, digits, unit) {
+      control.input.min = Math.min(min, Math.floor(value));
+      control.input.max = Math.max(max, Math.ceil(value));
+      control.input.value = value;
+      control.out.textContent = value.toFixed(digits) + unit;
+    }
     function tick() {
       var y = [state.th1 * DEG, state.th2 * DEG, state.dq1, state.dq2];
       var dt = 1 / 120;
@@ -3116,6 +3128,12 @@
       state.th1 = y[0] / DEG; state.th2 = y[1] / DEG;
       state.dq1 = y[2]; state.dq2 = y[3];
       state.t += dt * 2;
+      state.trail.push([P.a1 * Math.cos(y[0]) + P.a2 * Math.cos(y[0] + y[1]), P.a1 * Math.sin(y[0]) + P.a2 * Math.sin(y[0] + y[1]), 0]);
+      if (state.trail.length > 600) state.trail.shift();
+      syncControl(q1Control, state.th1, -180, 180, 1, "°");
+      syncControl(q2Control, state.th2, -180, 180, 1, "°");
+      syncControl(dq1Control, state.dq1, -2, 2, 2, " rad/s");
+      syncControl(dq2Control, state.dq2, -2, 2, 2, " rad/s");
       draw();
     }
 
@@ -3149,11 +3167,11 @@
       view.line([0, 0.75, 0], [0, 0.55, 0], { color: c.red, width: 2.2 });
       view.label([0, 0.53, 0], "g", c.red, 8, 2);
 
-      /* 重力力矩箭头：在关节处画弧 + 标注大小 */
+      /* g 是方程左端的重力项；实际重力广义力为 −g。 */
       var G = gravity(q1, q2);
-      view.arc(J1, [0, 0, 1], [0, 1, 0], 0.22, 0, Math.sign(G[0]) * 0.8, { color: c.purple, width: 1.8 });
+      view.arc(J1, [1, 0, 0], [0, 1, 0], 0.22, 0, Math.sign(G[0]) * 0.8, { color: c.purple, width: 1.8 });
       view.label(J1, "g₁ = " + G[0].toFixed(1) + " N·m", c.purple, 14, 8);
-      view.arc(J2, [0, 0, 1], [0, 1, 0], 0.16, 0, Math.sign(G[1]) * 0.8, { color: c.purple, width: 1.8 });
+      view.arc(J2, [1, 0, 0], [0, 1, 0], 0.16, 0, Math.sign(G[1]) * 0.8, { color: c.purple, width: 1.8 });
       view.label(J2, "g₂ = " + G[1].toFixed(1) + " N·m", c.purple, 14, 10);
 
       /* 末端轨迹 */
@@ -3169,14 +3187,14 @@
         "<tr><td>b₁₂=b₂₁</td><td>" + Bm[0][1].toFixed(1) + "</td><td>随 ϑ₂ ⇒ 两轴耦合</td></tr>" +
         "<tr><td>b₂₂</td><td>" + Bm[1][1].toFixed(1) + "</td><td><b>常数</b>（关节 2 看不见连杆 1）</td></tr>" +
         "<tr><td>h=-m₂a₁ℓ₂s₂</td><td>" + hOf(q2).toFixed(2) + "</td><td>随 ϑ₂</td></tr>" +
-        "<tr><td>C₁₁</td><td>" + Cm[0][0].toFixed(2) + "</td><td>随 ϑ₂</td></tr>" +
-        "<tr><td>C₁₂</td><td>" + Cm[0][1].toFixed(2) + "</td><td>随 ϑ₁+ϑ₂</td></tr>" +
-        "<tr><td>C₂₁</td><td>" + Cm[1][0].toFixed(2) + "</td><td>随 ϑ₁</td></tr>" +
-        "<tr><td>g₁</td><td>" + G[0].toFixed(1) + " N·m</td><td>随姿态（重力矩）</td></tr>" +
+        "<tr><td>C₁₁</td><td>" + Cm[0][0].toFixed(2) + "</td><td>hϑ̇₂</td></tr>" +
+        "<tr><td>C₁₂</td><td>" + Cm[0][1].toFixed(2) + "</td><td>h(ϑ̇₁+ϑ̇₂)</td></tr>" +
+        "<tr><td>C₂₁</td><td>" + Cm[1][0].toFixed(2) + "</td><td>−hϑ̇₁</td></tr>" +
+        "<tr><td>g₁</td><td>" + G[0].toFixed(1) + " N·m</td><td>方程左端重力项；实际重力力矩为 −g</td></tr>" +
         "<tr><td>g₂</td><td>" + G[1].toFixed(1) + " N·m</td><td>随姿态</td></tr>" +
         "</tbody></table>";
       html += "<p class='lab-note'>" + (state.run ? "自由摆动中（t = " + state.t.toFixed(2) + " s，零输入力矩）" : "按「自由摆动」键看 τ=0 时的自由响应") +
-        "：B 的<b>位形依赖</b>让同一条轨迹在不同姿态下走得不一样，C 的<b>速度项</b>在高速段显著（离心 ϑ₂² 与科氏 ϑ₁ϑ₂），重力项量级最小但不可忽略。</p>";
+        "：B 随位形变化，影响给定加速度所需的力矩；Cq̇ 含 ϑ̇₂² 和 ϑ̇₁ϑ̇₂ 等速度项，g 随姿态变化。比较各项力矩时，须先代入同一时刻的位形、速度和加速度。</p>";
       readout.innerHTML = texLite(html);
     }
 
@@ -3440,7 +3458,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "三种传动装置：旋转怎么变成另一样东西"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "拖「输入转角」看传动结果。**齿轮副**：小齿轮（电机）带大齿轮（关节），<b>转向相反</b>、转速按半径比缩小；**滚珠丝杠**：转动变成沿轴的<b>平移</b>，位移 = 转角 × 导程 / 2π；**同步带**：两轮靠带传动，同样是旋转→旋转，但可把电机<b>远置</b>。下方给出 5.2.3 的三个折算因子：转速 ×k_r、力矩 ÷k_r、惯量 ÷k_r²。"));
+    host.appendChild(el("p", "lab-note", "拖动输入转角，比较三种传动：外啮合齿轮副使两轮反向转动；滚珠丝杠把转动变成平移，位移等于转角乘导程再除以 2π；同步带可将电机远置。旋转传动按理想无损定比计算，下表的转速和力矩为大小关系；丝杠不适用旋转关节的折算表。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -3467,21 +3485,18 @@
     var view = makeView(canvas, 0.58, { span: 1.25, center: [0, 0, 0], az: -36, elv: 24 });
     view.onChange = function () { draw(); };
 
-    /* 齿轮：齿数随半径，齿沿圆周分布 */
+    /* 齿沿圆周分布；图形为示意，不按所选减速比缩放。 */
     function gear(v, center, r, teeth, angle, color, axis) {
-      var rot = kernel.rotAxis(axis, angle);
       var toothH = r * 0.16, toothW = r * 0.13;
       for (var i = 0; i < teeth; i++) {
         var a = 2 * Math.PI * i / teeth + angle;
-        var dir = [Math.cos(a), Math.sin(a), 0];
-        var tip = kernel.addv(center, kernel.sclv(dir, r + toothH * 0.5));
-        var R = [[rot[0][0], rot[1][0], rot[2][0]], [rot[0][1], rot[1][1], rot[2][1]], [rot[0][2], rot[1][2], rot[2][2]]];
-        var local = [r + toothH * 0.2, 0, 0];
-        var off = kernel.Trot({ R: R, p: [0, 0, 0] }, local);
-        var p = kernel.addv(center, off);
-        view.box(p, [toothH * 0.5, toothW * 0.5, r * 0.7], R, { color: color });
+        var radial = kernel.rotAxis(axis, [1, 0, 0], a);
+        var tangent = kernel.crs(axis, radial);
+        var R = [[radial[0], tangent[0], axis[0]], [radial[1], tangent[1], axis[1]], [radial[2], tangent[2], axis[2]]];
+        var p = kernel.addv(center, kernel.sclv(radial, r + toothH * 0.2));
+        v.box(p, [toothH * 0.5, toothW * 0.5, r * 0.7], R, { color: color });
       }
-      view.cyl(kernel.addv(center, kernel.sclv(axis, -r * 0.55)), kernel.addv(center, kernel.sclv(axis, r * 0.55)), r * 0.82,
+      v.cyl(kernel.addv(center, kernel.sclv(axis, -r * 0.55)), kernel.addv(center, kernel.sclv(axis, r * 0.55)), r * 0.82,
         { color: color, seg: 20 });
     }
 
@@ -3495,9 +3510,8 @@
 
       if (state.mode === "gear") {
         /* 小齿轮（电机）在左，大齿轮（关节）在右，轴平行于 z */
-        var rM = 0.11, rJ = rM * kr;
-        var rm = Math.min(0.16, rM), rj = Math.min(0.26, rM * Math.min(kr, 12) / 6);
-        var cM = [-rj - rm - 0.03, 0, 0], cJ = [0, 0, 0];
+        var rm = 0.11, rj = 0.22;
+        var cM = [-rj - rm, 0, 0], cJ = [0, 0, 0];
         /* 轴线 */
         view.cyl(kernel.addv(cM, [0, 0, -0.3]), kernel.addv(cM, [0, 0, 0.16]), 0.022, { color: c.muted, seg: 8 });
         view.cyl(kernel.addv(cJ, [0, 0, -0.3]), kernel.addv(cJ, [0, 0, 0.16]), 0.022, { color: c.muted, seg: 8 });
@@ -3508,9 +3522,8 @@
         view.label(cM, "电机小齿轮 r_m", c.blue, -46, 16);
         view.label(cJ, "关节大齿轮 r", c.gold, 12, -8);
         html += "<p><b>齿轮副</b>：旋转 → 旋转，<b>转向相反</b>（外啮合）；转速比 = 半径比 = 齿数比。</p>";
-        html += "<p class='lab-note'>减速比 kᵣ=r/rₘ=" + kr + "：关节转 " + (outTh * 180 / Math.PI).toFixed(1) +
-          "°，电机转 " + state.theta.toFixed(0) + "°。<b>力矩按 1/k_r 放大、惯量按 1/k_r² 缩小</b>（5.2.3）。" +
-          (kr >= 20 ? "大减速比还让<b>非线性耦合项相对线性化</b>——这正是 5.2.3 的结论。" : "减速比还小，负载的非线性项在电机端仍占相当比重。") + "</p>";
+        html += "<p class='lab-note'>减速比 kᵣ=r/rₘ=" + kr + "：电机转 " + state.theta.toFixed(0) +
+          "°，关节转 " + (state.theta === 0 ? "0.0" : (-state.theta / kr).toFixed(1)) + "°。理想无损时关节力矩的大小为电机力矩的 kᵣ 倍；负载惯量折到电机侧除以 kᵣ²。图中轮径和齿数仅作示意，不按 kᵣ 缩放。</p>";
       } else if (state.mode === "screw") {
         /* 丝杠轴沿 x，螺母沿轴移动 */
         var L = 0.62;
@@ -3538,7 +3551,7 @@
         html += "<p><b>滚珠丝杠</b>：旋转 → <b>平移</b>，用于移动关节（棱柱关节）。</p>";
         html += "<p class='lab-note'>导程 l=" + (state.lead * 1000).toFixed(0) + " mm/圈 ⇒ 电机转 " + state.theta.toFixed(0) +
           "° 时螺母移动 " + (disp * 1000).toFixed(1) + " mm（= 转角 × 导程 / 2π）。" +
-          "滚珠把滑动摩擦变成滚动摩擦，**刚度高、间隙小**——代价是结构复杂、成本高。</p>";
+          "滚珠接触可减小摩擦，预紧可减小间隙；实际刚度和寿命还取决于载荷、安装和制造。</p>";
       } else {
         /* 同步带：两轮 + 带 */
         var r1 = 0.1, r2 = 0.2, d = 0.52;
@@ -3551,34 +3564,33 @@
         var u2 = [Math.cos(-Math.PI / 2 - ang), Math.sin(-Math.PI / 2 - ang), 0];
         view.line(kernel.addv(c1, kernel.sclv(u1, r1)), kernel.addv(c2, kernel.sclv(u1, r2)), { color: c.red, width: 3 });
         view.line(kernel.addv(c1, kernel.sclv(u2, r1)), kernel.addv(c2, kernel.sclv(u2, r2)), { color: c.red, width: 3 });
-        view.arc(c1, [0, 0, 1], [Math.cos(Math.PI / 2 + ang), Math.sin(Math.PI / 2 + ang), 0], r1,
-          Math.PI / 2 + ang, -Math.PI / 2 - ang, { color: c.red, width: 3 });
-        view.arc(c2, [0, 0, 1], [Math.cos(-Math.PI / 2 - ang), Math.sin(-Math.PI / 2 - ang), 0], r2,
+        view.arc(c1, [1, 0, 0], [0, 1, 0], r1,
+          Math.PI / 2 + ang, 3 * Math.PI / 2 - ang, { color: c.red, width: 3 });
+        view.arc(c2, [1, 0, 0], [0, 1, 0], r2,
           -Math.PI / 2 - ang, Math.PI / 2 + ang, { color: c.red, width: 3 });
         /* 轮上的辐条标出转动 */
         for (var i = 0; i < 4; i++) {
           var a1 = th + i * Math.PI / 2;
           view.line(c1, kernel.addv(c1, [Math.cos(a1) * r1 * 0.9, Math.sin(a1) * r1 * 0.9, 0.06]), { color: c.blue, width: 1.4 });
-          var a2 = -outTh + i * Math.PI / 2;
+          var a2 = outTh + i * Math.PI / 2;
           view.line(c2, kernel.addv(c2, [Math.cos(a2) * r2 * 0.9, Math.sin(a2) * r2 * 0.9, 0.06]), { color: c.gold, width: 1.4 });
         }
         view.label(c1, "主动轮（电机）", c.blue, -46, 14);
         view.label(c2, "从动轮（关节）", c.gold, 12, -8);
         html += "<p><b>同步带</b>：旋转 → 旋转，<b>同向</b>；作用是<b>把电机远置</b>（远离关节，减小惯量与结构约束）。</p>";
-        html += "<p class='lab-note'>带速相等 ⇒ R₁ω₁=R₂ω₂，从动轮转速按半径比缩放。" +
-          "带轻（高速低矩），但橡胶带<b>力矩太大就变形</b>；正时链是钢的、能扛大力矩，但重、高速会颤动——" +
-          "<b>要快要轻用带，要重耐操用链</b>（5.1.1.2）。</p>";
+        html += "<p class='lab-note'>理想无滑动时 R₁ω₁=R₂ω₂；电机转 " + state.theta.toFixed(0) + "°，从动轮同向转 " + (state.theta / kr).toFixed(1) + "°。图中轮径仅作示意，不按所选 kᵣ 缩放。同步带与链条的适用载荷、刚度和速度取决于具体型号与安装。</p>";
       }
 
       view.render(null);
 
-      html += "<table class='lab-matrix'><thead><tr><th>量</th><th>折算关系</th><th>k_r = " + kr + " 时</th></tr></thead><tbody>" +
-        "<tr><td>关节转速</td><td>÷ k_r</td><td>" + (1 / kr).toFixed(4) + " 倍</td></tr>" +
-        "<tr><td>关节力矩</td><td>× k_r</td><td>" + kr + " 倍</td></tr>" +
-        "<tr><td>负载惯量（折到电机侧）</td><td>÷ k_r²</td><td>" + (1 / (kr * kr)).toExponential(2) + " 倍</td></tr>" +
-        "</tbody></table>";
-      html += "<p class='lab-note'>这三行就是 5.2.3 的核心：<b>大减速比让电机侧的惯量与黏滞摩擦按 1/k_r² 缩小，负载力矩按 1/k_r 减小</b>。" +
-        "同一条曲线的另一面：直驱虽然省掉了传动装置的间隙与弹性，却<b>省不掉这些折算</b>——电机得直接扛负载惯量。</p>";
+      if (state.mode !== "screw") {
+        html += "<table class='lab-matrix'><thead><tr><th>量</th><th>理想定比传动的大小关系</th><th>k_r = " + kr + " 时</th></tr></thead><tbody>" +
+          "<tr><td>关节转速</td><td>÷ k_r</td><td>" + (1 / kr).toFixed(4) + " 倍</td></tr>" +
+          "<tr><td>关节力矩</td><td>× k_r</td><td>" + kr + " 倍</td></tr>" +
+          "<tr><td>负载惯量（折到电机侧）</td><td>÷ k_r²</td><td>" + (1 / (kr * kr)).toExponential(2) + " 倍</td></tr>" +
+          "</tbody></table>";
+        html += "<p class='lab-note'>在刚性定比模型中，负载侧惯量和黏滞摩擦折到电机侧除以 kᵣ²，负载力矩除以 kᵣ。直驱没有传动装置的间隙和弹性，但其他机械部件仍可能变形，电机也直接承受负载惯量。</p>";
+      }
       readout.innerHTML = html;
     }
 
@@ -3596,7 +3608,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "伺服电机里面长什么样：换向器为什么必须转"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "两台电机剖开来对比。**永磁直流（有刷）**：磁极固定在定子上，电枢绕组在转子上，靠**换向器 + 电刷**机械换向——拖动转子，看**换向器跟着转、电刷固定不动**。**无刷直流**：永磁体搬到转子上，定子是多相绕组，轴上加**位置传感器**，由电子模块按转子位置依次给相绕组通电——**没有换向器，也没有电刷**。两者的「换向装置」位置正好互换，这是 5.1.2 的关键对照。"));
+    host.appendChild(el("p", "lab-note", "两台电机剖开来对比。有刷永磁直流电机的磁极在定子、电枢绕组在转子，靠换向器和电刷机械换向；拖动转子可看到换向器跟着转，电刷固定。图中的无刷直流电机永磁体在转子、绕组在定子，电子模块根据传感器或估计的转子位置切换各相电流。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -3684,10 +3696,10 @@
         view.label([0, r * 0.98, 0], "永磁体（定子）", c.purple, 12, 0);
         view.label([0, 0, -L / 2 - 0.06], "转子电枢绕组（随转子转）", c.gold, -70, 8);
       } else {
-        /* 无刷：永磁转子（3 极）+ 多相定子绕组 + 位置传感器 + 静态整流器 */
+        /* 无刷：一对永磁极、多相定子绕组、位置传感器和电子换相模块 */
         var pole = 0.11;
-        for (i = 0; i < 3; i++) {
-          var ap = th + i * 2 * Math.PI / 3;
+        for (i = 0; i < 2; i++) {
+          var ap = th + i * Math.PI;
           var p1 = [pole * Math.cos(ap), pole * Math.sin(ap), -L / 2 + 0.03];
           var p2 = [pole * Math.cos(ap + 0.5), pole * Math.sin(ap + 0.5), -L / 2 + 0.03];
           var p3 = [p2[0], p2[1], L / 2 - 0.03];
@@ -3699,18 +3711,18 @@
         var phases = ["A", "B", "C"], phaseCol = [c.blue, c.green, c.gold];
         for (i = 0; i < 6; i++) {
           var ag = i * Math.PI / 3 + Math.PI / 6;
-          var ph = Math.floor(i / 2) % 3;
+          var ph = i % 3;
           view.box([r * 0.86 * Math.cos(ag), r * 0.86 * Math.sin(ag), 0], [0.032, 0.032, L / 2 - 0.1],
             [[Math.cos(ag), -Math.sin(ag), 0], [Math.sin(ag), Math.cos(ag), 0], [0, 0, 1]], { color: phaseCol[ph] });
         }
         /* 轴上位置传感器 */
         view.box([0, 0, L / 2 + 0.05], [0.05, 0.05, 0.025], kernel.Tid().R, { color: c.gold });
         view.label([0, 0, L / 2 + 0.1], "位置传感器（轴上）", c.gold, 12, 2);
-        /* 静态整流器 */
+        /* 电子换相模块 */
         view.box([0.42, 0, -0.18], [0.1, 0.07, 0.05], kernel.Tid().R, { color: c.ink2 });
-        view.label([0.42, 0, -0.26], "静态整流器 / 电子模块", c.ink2, -40, 4);
+        view.label([0.42, 0, -0.26], "电子换相模块 / 逆变器", c.ink2, -40, 4);
         phases.forEach(function (nm, k) {
-          view.line([0.34, 0, -0.18], [r * 0.86 * Math.cos(k * 2 * Math.PI / 3 + Math.PI / 6), r * 0.86 * Math.sin(k * 2 * Math.PI / 3 + Math.PI / 6), 0],
+          view.line([0.34, 0, -0.18], [r * 0.86 * Math.cos(k * Math.PI / 3 + Math.PI / 6), r * 0.86 * Math.sin(k * Math.PI / 3 + Math.PI / 6), 0],
             { color: phaseCol[k], width: 1.4 });
         });
         view.label([0, r * 0.98, 0], "多相定子绕组", c.ink2, 12, 0);
@@ -3721,10 +3733,10 @@
 
       var html = state.mode === "brushed"
         ? "<p><b>永磁直流（有刷）</b>：① <b>定子</b>由永磁体（铁磁陶瓷或稀土）产生磁通量；② <b>电枢</b>是绕在旋转磁心上的通电绕组；③ <b>换向器</b>按转子运动决定换向逻辑，并通过<b>电刷</b>给旋转的电枢线圈供电。</p>" +
-          "<p class='lab-note'>拖转子时注意：<b>换向器与电枢一起转，电刷固定不动</b>——机械换向就发生在这个错位里：线圈转到某个位置时，换向器把它的接点反接到另一极，于是力矩方向自动跟着反转，不用外部开关。<b>代价</b>是电刷与换向器的接触压降（电损耗）、摩擦发热与磨损、以及换向器限制的转速上限。</p>"
-        : "<p><b>无刷直流（BLDC）</b>：① <b>永磁转子</b>；② <b>多相定子绕组</b>；③ <b>静态整流器</b>——根据轴上位置传感器的信号，按转子位置生成各相绕组的馈入序列。</p>" +
-          "<p class='lab-note'>换相原理：先由位置传感器找到<b>与磁场正交的线圈</b>，磁场作用其上使转子转动；转子转过之后，电子模块让磁场依次与各相定子绕组作用，<b>电枢磁场始终与定子磁场正交</b>——与有刷电机里「电刷位于激磁磁场 π/2 角处」的工作方式相似。好处是定转子功能互换带来的四条：散热更好（绕组在定子上）、转子紧凑（无绕组，可用稀土永磁）、<b>转动惯量更小</b>（呼应六条要求第 1 条）、无电刷磨损与电损耗。</p>";
-      html += "<p class='lab-note'><b>一句话对照</b>：有刷电机里的<b>电刷 + 换向器</b>，与无刷电机里的<b>位置传感器 + 电子控制模块</b>，所起的作用是类似的——一个用机械方式换向，一个用电子方式换向。</p>";
+          "<p class='lab-note'>换向器与电枢一起转，电刷固定。线圈转过换向位置时，其接点换到另一极，线圈电流反向；电源极性不变时，这使电磁转矩继续沿原来的方向作用。电刷和换向器会产生接触电损耗、摩擦和磨损。</p>"
+        : "<p><b>无刷直流（BLDC）</b>：永磁体装在转子，多相绕组装在定子；图中的电子换相模块根据位置传感器信号控制各相电流。无位置传感器方案也可估计转子位置。</p>" +
+          "<p class='lab-note'>电子换相使定子合成磁场与转子磁场保持能够产生所需转矩的相位关系；相位随控制方式变化，不必始终正交。定子绕组便于散热，转子无绕组且没有电刷磨损；具体惯量和性能仍取决于电机设计。</p>";
+      html += "<p class='lab-note'>有刷电机用电刷和换向器机械换向；无刷电机用电子模块换相。</p>";
       readout.innerHTML = html;
     }
 
@@ -3742,7 +3754,7 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "传感器：装在哪儿，测的是什么"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "模式①把传感器摆到机械臂的真实位置：<b>本体传感器</b>测关节内部的三个量——位置（编码器，装在关节电机轴上）、速度（测速反馈）、力矩（关节应变片）；<b>外部传感器</b>测与环境的交互——腕力传感器在腕部、距离传感器（超声/激光）在腕部朝外、视觉相机在腕部或头部。模式②把关节剖开，看**增量式编码器**怎么把角位置变成数字：码盘随轴转、遮光槽让光电开关输出脉冲。"));
+    host.appendChild(el("p", "lab-note", "模式①示意传感器在机械臂上的安装：本体传感器测关节位置、速度和力矩；外部传感器可测腕部力、目标距离或图像。编码器既可装在电机轴，也可装在关节侧。模式②展示增量式编码器：码盘随轴转动，遮光槽使光电开关输出脉冲。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
@@ -3780,11 +3792,13 @@
         }
         v.poly(pts, { color: c.ink2, both: true });
       }
-      /* 两只光电开关（固定） */
-      [-1, 1].forEach(function (sgn) {
-        var y = sgn * (R + 0.05);
-        v.box([0, y, z0 + 0.002], [0.03, 0.022, 0.028], kernel.Tid().R, { color: c.gold });
-        v.line([0, y, z0 + 0.002], [0, sgn * R * 0.99, z0 + 0.002], { color: c.gold, width: 1.2, dash: [3, 3] });
+      /* 两路开关相差四分之一槽距，形成正交信号。 */
+      [0, Math.PI + Math.PI / (2 * N)].forEach(function (angle) {
+        var radial = [Math.sin(angle), Math.cos(angle), 0];
+        var center = kernel.sclv(radial, R + 0.05);
+        v.box([center[0], center[1], z0 + 0.002], [0.03, 0.022, 0.028], kernel.Tid().R, { color: c.gold });
+        var tip = kernel.sclv(radial, R * 0.99);
+        v.line([center[0], center[1], z0 + 0.002], [tip[0], tip[1], z0 + 0.002], { color: c.gold, width: 1.2, dash: [3, 3] });
       });
       /* 电机轴 */
       v.cyl([0, 0, z0 - 0.09], [0, 0, z1], 0.035, { color: c.blue, seg: 12 });
@@ -3801,8 +3815,7 @@
         view.render(null);
         readout.innerHTML = "<p><b>增量式编码器</b>：码盘固定在电机轴上，盘上开 N 条等距遮光槽；两只<b>光电开关</b>固定在机壳上，对准槽区。" +
           "轴每转过一个槽距，开关输出一个脉冲——<b>数脉冲的个数就知道转了多少</b>，再由两路信号的先后关系定出方向。这就是「角位置 → 数字」的空间实现。</p>" +
-          "<p class='lab-note'>分辨率 = 360°/N（16 槽即 22.5°/脉冲，实际靠细分到 1/1000 rad 量级）。" +
-          "代价是<b>必须知道初始位置</b>（上电找零），而绝对式编码器（磁式/光电式）直接读出绝对位置、无需归零。</p>";
+          "<p class='lab-note'>每转 N 个单路脉冲时，单路计数分辨率为 360°/N；图中 16 槽为 22.5°/脉冲。若 A、B 两路相差四分之一周期并对四个边沿计数，可得到 4N 个计数/转；实际精度还受安装和误差影响。计数掉电丢失后，需要参考位置或其他信息恢复位置；绝对式编码器可直接读取其编码范围内的位置。</p>";
         return;
       }
 
@@ -3838,10 +3851,10 @@
 
       view.render(null);
 
-      var html = "<p><b>本体传感器</b>（测关节内部的三个状态量）与<b>外部传感器</b>（测与环境交互）装在完全不同的位置：</p>";
+      var html = "<p><b>本体传感器</b>测机器人自身状态；<b>外部传感器</b>测环境或机器人与环境的交互。两类传感器可以安装在相近的位置。</p>";
       html += "<table class='lab-matrix'><thead><tr><th>传感器</th><th>装在哪</th><th>测什么</th></tr></thead><tbody>" +
-        "<tr><td>编码器 / 旋转变压器</td><td>关节电机轴上</td><td>关节位置（外环反馈，最常用）</td></tr>" +
-        "<tr><td>测速反馈</td><td>电机侧</td><td>关节速度（内环反馈，也可由编码器微分间接得到）</td></tr>" +
+        "<tr><td>编码器 / 旋转变压器</td><td>电机轴或关节侧</td><td>测量所在轴的角位置；电机侧读数需结合传动模型推算关节位置</td></tr>" +
+        "<tr><td>测速反馈</td><td>电机轴或关节侧</td><td>测量所在轴的角速度，也可由编码器位置间接求得</td></tr>" +
         "<tr><td>应变片</td><td>关节/连杆根部</td><td>关节力矩</td></tr>" +
         "<tr><td>腕力传感器</td><td>腕部（外链与末端之间）</td><td>3 力分量 + 3 力矩分量（六维）</td></tr>" +
         "<tr><td>距离传感器</td><td>腕部朝外</td><td>障碍物距离（超声传播时间 / 激光三角测量）</td></tr>" +
@@ -3866,18 +3879,18 @@
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
     head.appendChild(el("b", null, "液压驱动：缸筒、活塞，以及流量的三条去路"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "液压缸 = 缸体 + 活塞杆：<b>推动伸缩 d</b> 就是移动关节的位移（教材 §7.3 的两连杆笛卡儿臂就是它驱动的，见 6.3.1）。泵送来的体积流速 Q 并不全用来推活塞——它分成三条去路：<b>Qₘ 有用流量</b>（推活塞）、<b>Q_l 泄漏</b>（缸壁间隙漏回储液池）、<b>Q_c 压缩</b>（油液被压缩储存在缸里）。拖活塞看这三条支路如何随速度与位置变化——这正是液压与电气最本质的差别。"));
+    host.appendChild(el("p", "lab-note", "液压缸通过活塞杆驱动移动关节，d 表示活塞位移。流量平衡把供给流量 Q 分成推动活塞的 Qₘ、泄漏 Q_l 和用于压缩油液的 Q_c。分别调整这三项，比较其占比和总流量；位移滑杆只改变几何示意，本图不模拟流量随压力和时间的变化。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
     slider(controls, "活塞位移 d", 0.05, 0.55, 0.005, state.d, function (v) { state.d = v; draw(); },
       function (v) { return (v * 1000).toFixed(0) + " mm"; });
-    slider(controls, "泵流量 Q", 0.1, 1, 0.05, state.qm, function (v) { state.qm = v; draw(); },
+    slider(controls, "有用流量 Qₘ", 0.1, 1, 0.05, state.qm, function (v) { state.qm = v; draw(); },
       function (v) { return v.toFixed(2) + " L/s"; });
     slider(controls, "泄漏 Q_l", 0, 0.4, 0.01, state.leak, function (v) { state.leak = v; draw(); },
-      function (v) { return v.toFixed(2); });
+      function (v) { return v.toFixed(2) + " L/s"; });
     slider(controls, "压缩 Q_c", 0, 0.4, 0.01, state.comp, function (v) { state.comp = v; draw(); },
-      function (v) { return v.toFixed(2); });
+      function (v) { return v.toFixed(2) + " L/s"; });
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
@@ -3938,15 +3951,14 @@
 
       view.render(null);
 
-      var html = "<p><b>流速平衡</b>：分布器送出的体积流速 Q 分成三份——" +
-        "Qₘ 推活塞（有用）、Q_l 经缸壁间隙漏回储液池（<b>渗漏</b>）、Q_c 把油液压扁储存在缸里（<b>可压缩性</b>）。</p>";
-      html += "<table class='lab-matrix'><thead><tr><th>支路</th><th>当前流量</th><th>占比</th><th>物理</th></tr></thead><tbody>" +
+      var html = "<p><b>流量平衡</b>：Q = Qₘ + Q_l + Q_c = " + Q.toFixed(2) + " L/s。" +
+        "Qₘ 推动活塞，Q_l 表示渗漏，Q_c 表示用于压缩油液的流量。</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>支路</th><th>当前流量（L/s）</th><th>占比</th><th>物理</th></tr></thead><tbody>" +
         "<tr><td>Q_m 有用</td><td>" + state.qm.toFixed(2) + "</td><td>" + (qm * 100).toFixed(0) + "%</td><td>推活塞做功</td></tr>" +
         "<tr><td>Q_l 泄漏</td><td>" + state.leak.toFixed(2) + "</td><td>" + (ql * 100).toFixed(0) + "%</td><td>缸壁间隙漏回储液池，效率损失</td></tr>" +
-        "<tr><td>Q_c 压缩</td><td>" + state.comp.toFixed(2) + "</td><td>" + (qc * 100).toFixed(0) + "%</td><td>油液压缩，位置越靠后越难压缩（储能）</td></tr>" +
+        "<tr><td>Q_c 压缩</td><td>" + state.comp.toFixed(2) + "</td><td>" + (qc * 100).toFixed(0) + "%</td><td>用于压缩油液</td></tr>" +
         "</tbody></table>";
-      html += "<p class='lab-note'>这两项（渗漏与可压缩性）是液压与电气最本质的动态差别：电气侧只有电流一个方程，液压侧要拆成渗漏 + 可压缩性两项，" +
-        "而且<b>压力反馈层是液压的固有结构、拆不掉</b>（不像电流反馈那样可选）。所以液压建模的路线是「<b>照着电气再做一遍</b>」，只把差别记牢。</p>";
+      html += "<p class='lab-note'>渗漏与油液压缩是液压模型需要分别描述的效应。完整模型中，压差、流量和运动相互耦合；图中的三个流量仅作为可独立调整的示例，不是压力反馈的动态仿真。</p>";
       readout.innerHTML = html;
     }
 
@@ -3955,7 +3967,7 @@
     return draw;
   }
 
-  /* ================= 实验：ctrl3d · 关节空间 vs 操作空间：同一条直线任务走成两种样（ch07 §7.1.4 / §7.4.3） ================= */
+  /* ================= 实验：ctrl3d · 关节角插值与直线逐点逆解的路径对比（ch07 §7.1.4 / §7.4.3） ================= */
 
   function labCtrl3D(host) {
     var A2 = 0.62, A3 = 0.52;
@@ -3969,20 +3981,20 @@
 
     var head = el("div", "lab-head");
     head.appendChild(el("span", "lab-tag", "交互实验 · 3D"));
-    head.appendChild(el("b", null, "同一条笛卡尔直线任务，两种控制方案走出两种轨迹"));
+    head.appendChild(el("b", null, "同一条笛卡尔直线任务：比较两种规划路径"));
     host.appendChild(head);
-    host.appendChild(el("p", "lab-note", "虚线是末端要走的<b>直线</b>（任务定义在操作空间）。**关节空间控制**：每个关节各自插值，末端实际走成一条<b>弧线</b>——离直线有偏差；**操作空间控制**：逐点用逆雅可比反解关节角，末端<b>贴着直线走</b>。拖「任务进度」看两端重合、中段分离。这正是 7.1.4 两套方案的区别在空间上的样子，也是 7.4.3「先翻译，再关节控制」的意义所在。"));
+    host.appendChild(el("p", "lab-note", "虚线是末端的笛卡尔直线任务。关节空间方案先求起点和终点的逆运动学，再插值关节角；操作空间方案沿直线逐点求逆运动学。本图只比较两种运动学路径，不模拟反馈控制或跟踪误差。拖动任务进度，比较两条路径的端点和中段。"));
 
     var controls = el("div", "lab-controls");
     host.appendChild(controls);
-    toggleGroup(controls, "方案", [{ value: "joint", text: "关节空间控制" }, { value: "task", text: "操作空间控制" }], "joint",
+    toggleGroup(controls, "方案", [{ value: "joint", text: "关节角插值" }, { value: "task", text: "直线逐点逆解" }], "joint",
       function (v) { state.mode = v; draw(); });
     slider(controls, "任务进度 t", 0, 1, 0.01, state.t, function (v) { state.t = v; draw(); },
       function (v) { return (v * 100).toFixed(0) + "%"; });
 
     var canvas = el("canvas", "lab-canvas");
     canvas.setAttribute("role", "img");
-    canvas.setAttribute("aria-label", "关节空间与操作空间控制的笛卡尔路径跟踪对比");
+    canvas.setAttribute("aria-label", "关节角插值与笛卡尔直线逐点逆解的路径对比");
     host.appendChild(canvas);
     var readout = el("div", "lab-readout");
     readout.setAttribute("aria-live", "polite");
@@ -4076,15 +4088,13 @@
         maxTask = Math.max(maxTask, kernel.len(kernel.subv(pt, pp)));
       }
 
-      var html = "<p><b>当前方案</b>：" + (state.mode === "joint" ? "关节空间控制（各关节各自插值）" : "操作空间控制（逐点逆雅可比反解）") +
-        "；末端到任务直线的偏差 <b>" + (dev * 1000).toFixed(1) + " mm</b>。</p>";
-      html += "<table class='lab-matrix'><thead><tr><th>方案</th><th>全程最大偏差</th><th>原因</th></tr></thead><tbody>" +
-        "<tr><td>关节空间</td><td>" + (maxJoint * 1000).toFixed(1) + " mm</td><td>各关节运动不成比例，末端在笛卡尔空间走成弧线</td></tr>" +
-        "<tr><td>操作空间</td><td>" + (maxTask * 1000).toFixed(1) + " mm</td><td>逐点反解 + 逆雅可比修正，误差只来自离散与奇点附近</td></tr>" +
+      var html = "<p><b>当前方案</b>：" + (state.mode === "joint" ? "关节角插值" : "笛卡尔直线逐点逆解") +
+        "；末端到任务直线的距离 <b>" + (dev * 1000).toFixed(1) + " mm</b>。</p>";
+      html += "<table class='lab-matrix'><thead><tr><th>方案</th><th>对应点最大距离（41 个采样点）</th><th>原因</th></tr></thead><tbody>" +
+        "<tr><td>关节角插值</td><td>" + (maxJoint * 1000).toFixed(1) + " mm</td><td>正运动学是非线性的，关节角插值一般不对应末端直线</td></tr>" +
+        "<tr><td>直线逐点逆解</td><td>" + (maxTask * 1000).toFixed(1) + " mm</td><td>对每个采样点求逆运动学，再用正运动学核对</td></tr>" +
         "</tbody></table>";
-      html += "<p class='lab-note'>这就是 7.1.4 的对照在空间上的样子：**任务提在操作空间，控制动作却落在关节空间**（7.1.4）。" +
-        "关节空间控制不需要逆运动学、实时性好，代价是<b>笛卡尔直线任务走不成直线</b>；操作空间控制（7.4.3）先用逆雅可比把笛卡尔增量翻译成关节增量，" +
-        "再交给内层的关节控制执行，末端才真正贴着直线走——但它需要逆雅可比，在<b>奇点附近不可用</b>（7.4.3.2 会讲转置雅可比的替代）。</p>";
+      html += "<p class='lab-note'>两个方案都先用逆运动学确定端点；第二个方案还要为直线上的点求逆解。图中没有建立驱动器或闭环模型，因此路径差异不能直接当作实际控制精度的比较。</p>";
       readout.innerHTML = html;
     }
 

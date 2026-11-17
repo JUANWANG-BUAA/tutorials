@@ -292,15 +292,15 @@ def assign_labels(sections, table: LabelTable) -> None:
 
     编号纪律：**同一小节内不得有两个盒子同号**。数字编号对应原书内容、字母
     编号标记本教程新增，两者各自按文档顺序递增、且共用同一个「本节内不得重号」
-    的约束——同号会让「见例 2.4.C」这类引用指向不明，因此撞号与字母倒序都判为
-    构建错误。
+    的约束——同号会让「见例 2.4.C」这类引用指向不明，因此撞号与同一数字前缀内的
+    字母倒序都判为构建错误。合页后，6.1.2.A 与 6.1.3.A 属于不同编号序列。
 
     自动编号（标题里没写编号的盒子）同样落在这一约束下：它在**本节内已有的
     最大编号之后接续**，因此不会与手写编号撞车。
     """
     boxes = collect_boxes(sections)
     seen_numbers = {}      # where -> {编号: 锚点}，撞号检测
-    last_letter = {}       # where -> 上一个字母，倒序检测
+    last_letter = {}       # (where, 数字前缀) -> 上一个字母，倒序检测
     counters = {}          # where -> 本节自动编号已用到的最大数字
 
     # 预扫：记下每节已有的最大数字编号，供自动编号接续
@@ -341,13 +341,13 @@ def _check_number(where, id_, num, seen_numbers, last_letter) -> None:
     per_page[number] = id_
     tail = number.split(".")[-1]
     if not tail.isdigit():                            # 字母编号需按文档顺序递增
-        letters = last_letter.setdefault(where, {})
-        prev = letters.get("letter")
+        prefix = number.rsplit(".", 1)[0]
+        prev = last_letter.get((where, prefix))
         if prev is not None and tail <= prev:
             raise _NumberingError(
                 f"{where}: 字母编号 `{word} {number}` 出现在 `{prev}` 之后"
                 f"（同一小节的字母编号须按 A、B、C… 递增；新增内容请追加在节末）")
-        letters["letter"] = tail
+        last_letter[(where, prefix)] = tail
 
 
 class _NumberingError(Exception):

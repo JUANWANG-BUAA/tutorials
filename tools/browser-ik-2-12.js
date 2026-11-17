@@ -52,6 +52,10 @@ async (hostPage) => {
   await joint2.focus();
   await page.keyboard.press('ArrowUp');
   check(await arm.locator('#alab-t2v').textContent() === '1°', 'planar arm slider responds to keyboard arrows');
+  for (const folded of ['-180', '180']) {
+    await joint2.fill(folded);
+    check((await arm.locator('#alab-rb').textContent()).includes('折回'), `${folded}° is labeled as a folded singularity`);
+  }
 
   const noScript = await browser.newPage({ javaScriptEnabled: false });
   await noScript.setViewportSize({ width: 1440, height: 1050 });

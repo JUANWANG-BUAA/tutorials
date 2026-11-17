@@ -81,6 +81,7 @@ def main():
     assert np.max(np.abs(exact - TRUTH)) < 1e-10
     noisy = predict(TRUTH, training) + rng.normal(0, SIGMA, (60, 2))
     estimated, noisy_trace = fit(training, noisy)
+    # 每个 x、y 分量的 RMS；二维位置误差向量的 RMS 为此值的 sqrt(2) 倍。
     validation_rms = float(np.sqrt(np.mean((predict(estimated, validation) - predict(TRUTH, validation)) ** 2)))
     narrow = np.column_stack((np.linspace(-1.5, 1.5, 60), np.linspace(0.7, 0.701, 60)))
     degenerate = np.column_stack((np.linspace(-1.5, 1.5, 60), np.zeros(60)))

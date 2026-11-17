@@ -18,6 +18,8 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{
 +F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
 +\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_c$$
 
+此处沿课件将接触力记作 $\boldsymbol h_c$，与前文 $\boldsymbol h_e$ 为同一量：机器人作用于环境的力/力矩，须与几何雅可比 $J$ 使用同一坐标系、同一参考点。后文 6.6–6.7 也沿用该下标。
+
 把「力」和「运动」连在一起。沿着两个方向读，就是两个问题（01:22:51–01:23:12）：
 
 ::: def 定义 6.5.1 · 动力学正解与逆解 {#def-6.5.1}
@@ -30,7 +32,7 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{
 - **逆解是代数代入**：$\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 已知，右边全是已知量，直接算 $\boldsymbol\tau$ 即可，不需求解微分方程。
 - **正解要解微分方程**：$\boldsymbol\tau$ 已知，但 $\ddot{\boldsymbol q}$ 藏在质量矩阵后面，先解线性方程再做数值积分；一般没有闭式解，误差还会随积分累积。
 
-这与运动学正/逆问题一一对应（$\boldsymbol q\leftrightarrow\boldsymbol x$，$\boldsymbol\tau\leftrightarrow$ 运动）。这两个方向都很大，「具体方法了解一下即可」，但做仿真与控制必须明白区别（01:26:23–01:27:01）：控制里绝大多数时候用逆解，仿真里才用正解。
+正、逆动力学的关系与正、逆运动学类似：都是把同一模型沿两个方向使用，但两者的输入输出不同。运动学连接关节运动与末端位姿；动力学连接广义力与运动。老师在 01:26:23–01:27:01 说「具体方法了解一下即可」，同时指出仿真常用正解，控制常用逆解；规划时也可用逆解检查驱动能力。
 
 ![课堂幻灯片 · 84:43：动力学正解（direct dynamics）与逆解（inverse dynamics）的定义](../assets/ch06/dyn-def.jpg)
 
@@ -50,7 +52,7 @@ $$\boxed{\ \ddot{\boldsymbol q}=B^{-1}(\boldsymbol q)\bigl(\boldsymbol\tau-\bold
 
 这是正解的一步：给定状态与输入转矩，算出当前加速度。
 
-**为什么 $B^{-1}$ 一定存在。** [6.1.1](sec6-1-1.md) 已证明 $B(\boldsymbol q)$ **对称正定**（$2T=\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}>0$），故 $B^{-1}$ 存在；但 $B$ 的条件数可能很差（高减速比、轻杆重载），求逆要小心——这是仿真里「模型不准/数值爆炸」的常见来源。
+**什么时候 $B^{-1}$ 存在。** 在 [6.1.1](sec6-1.md#part-6.1.1) 的非退化假设下，任意非零关节速度都对应正动能，$B(\boldsymbol q)$ 对称正定，因而可逆。若理想化模型含无惯量的运动方向，则这个假设不成立。即使 $B$ 可逆，它仍可能病态；实际计算通常直接求解线性方程，而不是显式形成逆矩阵。
 
 得到 $\ddot{\boldsymbol q}(t_k)$ 后，用数值积分推进一个步长 $\Delta t$：
 
@@ -58,7 +60,7 @@ $$\dot{\boldsymbol q}(t_{k+1})=\dot{\boldsymbol q}(t_k)+\int_{t_k}^{t_{k+1}}\ddo
 \qquad
 \boldsymbol q(t_{k+1})=\boldsymbol q(t_k)+\int_{t_k}^{t_{k+1}}\dot{\boldsymbol q}\,\mathrm d t.$$
 
-课件明确说可用**龙格–库塔法（Runge–Kutta）**之类的数值积分（01:26:00 前后）：步长越小越准、计算量越大。把「解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ → 积分 → 更新状态」循环下去，就是给定转矩下的运动——**仿真**的内环。
+课件明确说可用**龙格–库塔法（Runge–Kutta）**等数值积分方法（01:26:00 前后）。步长影响精度和计算量，但遇到刚性系统或摩擦切换时，还需选合适的算法和误差控制；单凭缩小步长不能保证所得结果可靠。把「解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ → 积分 → 更新状态」循环下去，就能模拟给定转矩下的运动。
 
 ![课堂幻灯片 · 85:46：正解的核心式 $\ddot q=B^{-1}(q)(\tau-\tau')$ 与 $\tau'$ 的定义](../assets/ch06/dyn-qddot.jpg)
 
@@ -104,9 +106,9 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 | 动力学正解 | $O(n^2)$ |
 | 动力学逆解 | $O(n^2)$ |
 
-这里的 $n^2$ 指**「$B,C,\boldsymbol g$ 已备成 $n\times n$ 矩阵，做一次矩阵–向量乘/求值」**：逆解 $\boldsymbol\tau=B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\cdots$ 是 $O(n^2)$；正解若 $B^{-1}$ 已预先算好也是 $O(n^2)$，每步重新分解 $B$ 则再加 $O(n^3)$。
+课件给出的是数量级，没有在这一页说明具体采用的算法或是否计入模型构造。下面给一个可核算的**运算口径**，不能把它当作课件对表格的证明：如果 $B,C,\boldsymbol g$ 已经算好，一次稠密矩阵–向量乘法是 $O(n^2)$，因此按矩阵公式求逆动力学至少可按这一口径计数；如果正动力学的 $B^{-1}$ 也已算好，乘法同样是 $O(n^2)$。但 $B$ 通常随位形变化，不能默认各步都已有逆矩阵；每步对一般稠密矩阵重新分解需要 $O(n^3)$。
 
-6.4 的牛顿–欧拉递推是另一种口径：**不构造 $B,C,\boldsymbol g$**，每根杆只做常数规模运算，逆解是 $O(n)$。两者不矛盾但**不能混着比**：说「牛顿–欧拉 $O(n)$」指递推算法，说「正/逆解 $O(n^2)$」指封闭模型运算（见 [6.4.9](sec6-4.md) 的口径表）。老师在 01:26:17 口述「$N$ 个关节……都是 $N$ 方的关系」，与课件这张表一致。
+6.4 的牛顿–欧拉递推是另一种口径：对串联机械手，不显式构造 $B,C,\boldsymbol g$，每根杆做固定规模的运算，逆解为 $O(n)$。两种计数所含的计算步骤不同，不能直接把课件的 $O(n^2)$ 当成所有正、逆动力学算法的复杂度。老师在 01:26:17 口述「$N$ 个关节……都是 $N$ 方的关系」，与课件表格一致。
 
 ![课堂幻灯片 · 87:31：逆解的用途与正解/逆解的计算量（课件写 $O(n^2)$）](../assets/ch06/dyn-complexity.jpg)
 

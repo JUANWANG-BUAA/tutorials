@@ -161,11 +161,20 @@ class Homework05(unittest.TestCase):
         for temp, dist in ((0, 1.9884), (20, 2.0604), (25, 2.0784)):
             self.assertAlmostEqual((331.4 + 0.6 * temp) * t / 2, dist, places=4)
         self.assertAlmostEqual(2 * 1.5 / (331.4 + 0.6 * 20) * 1e3, 8.736, places=3)
+        true_distance = 2.0
+        measured_time = 2 * true_distance / 331.4
+        assumed_distance = measured_time * (331.4 + 0.6 * 20) / 2
+        self.assertAlmostEqual(assumed_distance - true_distance, 0.07242, places=5)
 
     def test_ex_C6_force_couple(self):
         r = [0.1, 0, -0.15]
         f_s = [0, 0, 30]
-        self.assertEqual(mat_vec(skew(r), f_s), [0, -3, 0])
+        mu_s = [0, 0, 0]
+        lever_moment = mat_vec(skew(r), f_s)
+        self.assertEqual(lever_moment, [0, -3, 0])
+        # r points from the sensor to the contact: mu_s = mu_c + r × f.
+        mu_c = [sensor - lever for sensor, lever in zip(mu_s, lever_moment)]
+        self.assertEqual(mu_c, [0, 3, 0])
 
     def test_mock16_generator_numbers(self):
         Ra, kv, Im, Fm, ki = 1.2, 0.11, 2.0e-5, 5.0e-6, 0.80

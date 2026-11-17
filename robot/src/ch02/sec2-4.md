@@ -1,6 +1,6 @@
 # 2.4 欧拉角：ZYZ 与 RPY
 
-上一节用矩阵合成旋转。这一节反过来问：怎样用三个角记录一个姿态，又怎样从矩阵把角找回来？我们比较两套明确的约定：**ZYZ 当前轴旋转**与**RPY 固定轴旋转**。学习时要区分轴序列、角的取值范围和不能唯一反解的姿态。
+上一节用旋转矩阵表示姿态。矩阵有九个元素，但姿态只有三个连续自由度，能不能用三个角来记录？本节比较两种表示：ZYZ 角和 RPY 角。给定一组三个角可以算出旋转矩阵；反过来从矩阵求角时，还要处理多解与表示奇点。
 
 <a id="sec-2.4.1"></a>
 
@@ -16,9 +16,11 @@
 - 首末轴相同：$XYX,XZX,YXY,YZY,ZXZ,ZYZ$；
 - 三轴互异：$XYZ,XZY,YXZ,YZX,ZXY,ZYX$。
 
+本节将 ZYZ 约定为绕当前轴依次旋转，将 RPY 约定为绕固定轴依次旋转；这只是两种具体约定，不能仅凭序列名称判断使用固定轴还是当前轴。
+
 每种序列都能覆盖全部姿态，但都有表示奇点。同一姿态也可能对应多组角，即使轴序列相同。**序列名本身没有说明固定轴还是当前轴**，还须声明轴的约定、角名及发生顺序。
 
-![课堂图片：最简表示与轴序列计数](../assets/ch02/euler-motivation.jpg)
+![课堂图片：用三个参数描述姿态](../assets/ch02/euler-motivation.jpg)
 
 <a id="sec-2.4.2"></a>
 
@@ -30,7 +32,7 @@
 2. 绕**新** $y'$ 轴转 $\vartheta$：$R_{y'}(\vartheta)$；
 3. 绕**新** $z''$ 轴转 $\psi$：$R_{z''}(\psi)$。
 
-![课堂图片：ZYZ 三步旋转](../assets/ch02/zyz-steps.jpg)
+![课堂图片：ZYZ 序列的第一步，绕参考系 z 轴转动](../assets/ch02/zyz-steps.jpg)
 
 三步过程中坐标架如何演化，看下图（灰虚 = 上一步的旧架）：每转一次，「当前轴」就换到刚转出来的新架上——这正是「右乘」的几何本体。
 
@@ -112,7 +114,7 @@ s_\varphi c_\vartheta c_\psi+c_\varphi s_\psi & -s_\varphi c_\vartheta s_\psi+c_
 -s_\vartheta c_\psi & s_\vartheta s_\psi & c_\vartheta
 \end{bmatrix}$$
 
-（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵；第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$。
+（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵；第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$。录播 0:10:20 的旧教程记录用「给你 $(40°,20°,\cdot)$ 的 ZYZ 角，代进这个矩阵就能算出旋转矩阵」说明正解；三个角都确定后才能算出完整矩阵。
 
 ### 示例：一组可以手算的角
 
@@ -156,7 +158,7 @@ $$d\alpha=\frac{x\,dy-y\,dx}{x^2+y^2},\qquad
 
 ## 2.4.4 ZYZ 角的逆解
 
-已知 $R=[r_{ij}]\in SO(3)$，与式 2.18 对比即可反求 $(\varphi,\vartheta,\psi)$。策略是**挑出能暴露单个角度的元素**：
+已知 $R=[r_{ij}]\in SO(3)$，与式 2.18 对比即可反求 $(\varphi,\vartheta,\psi)$。策略是**挑出能暴露单个角度的元素**。录播 0:15:55–0:17:44 的旧教程记录写道：「这前四个太长不好求，比较好求的就是第三列这一排」；从第三列入手可先定 $\varphi,\vartheta$，再回到第三行求 $\psi$。
 
 ![课堂图片：逆解——锁定第三列](../assets/ch02/zyz-inv-setup.jpg)
 
@@ -166,7 +168,9 @@ $$\varphi=\operatorname{Atan2}(r_{23},r_{13}),\qquad
 \vartheta=\operatorname{Atan2}\!\big(\sqrt{r_{13}^2+r_{23}^2},\ r_{33}\big),\qquad
 \psi=\operatorname{Atan2}(r_{32},-r_{31});$$
 
-![课堂图片：逆解两支完整公式](../assets/ch02/zyz-inv-solution.jpg)
+![课堂图片：ZYZ 逆解与选支](../assets/ch02/zyz-inv-solution.jpg)
+
+课件写“$r_{13}\ne0$ 及 $r_{23}\ne0$”，比这里需要的条件更严格：只要两者不同时为零，$\operatorname{Atan2}(r_{23},r_{13})$ 就有定义。图右缘被截断，两支完整公式以正文为准。
 
 若在 $(-\pi,0)$ 中选 $\vartheta$，则得到效果相同的第二支（原书式 2.20）
 
@@ -202,6 +206,8 @@ s_\varphi c_\vartheta & s_\varphi s_\vartheta s_\psi+c_\varphi c_\psi & s_\varph
 \end{bmatrix}$$
 
 （原书式 2.21；英文原版与课件此页角名均标反，见[勘误 E2.1](errata.md#errata-2.1)）。
+
+录播 0:18:52–0:21:53 的旧教程记录提到这一姿态矩阵的用途：「你后面如果做无人机控制，动力学模型里就有这个矩阵」。使用具体飞行器模型时，还须核对它选用的旋转顺序和坐标方向。
 
 ::: note 译注 · 两条等价说法（原书脚注）
 从 $I$ 出发，「按 $x(\psi)\to y(\vartheta)\to z(\varphi)$ 绕固定轴」与「按 $z(\varphi)\to y(\vartheta)\to x(\psi)$ 绕当前轴」终态等价。轴与角须成对倒序；一般非单位初始姿态不能直接套用这一等价（[@thm-2.3.A]、[@thm-2.3.B]）。

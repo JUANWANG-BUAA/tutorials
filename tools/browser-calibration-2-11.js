@@ -46,7 +46,7 @@ async (hostPage) => {
   await lab.getByRole('slider', { name: '训练样本数' }).fill('12');
   values = await readValues();
   check(values.count === 12 && values.condition > 100, 'more concentrated samples do not cure geometry', values);
-  await lab.getByRole('slider', { name: '噪声 σ' }).fill('1');
+  await lab.getByRole('slider', { name: '扰动幅值 A' }).fill('1');
   values = await readValues();
   check(values.noise === 1 && values.trainingRms > 0 && values.validationError > 0, 'noise updates training and validation readouts', values);
   const countSlider = lab.getByRole('slider', { name: '训练样本数' });

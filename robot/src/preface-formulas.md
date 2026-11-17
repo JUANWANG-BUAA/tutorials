@@ -1,6 +1,6 @@
 # 公式速查卡
 
-七章的核心公式、9 张 DH 参数表、3 套逆解公式——它们散在 60 余个小节里。本页把它们**按「表示 → 传递 → 反解 → 微分 → 力 → 驱动与测量 → 控制」的顺序压成一页**，每条后面给出正文出处，供做题与复习时单点查阅。
+本页按“姿态表示 → 正逆运动学 → 微分运动学 → 静力学 → 轨迹 → 驱动与测量 → 动力学与控制”归纳公式，供学过正文后查阅。具体结构的 DH 参数表与逆解分支仍须打开所链接的正文，不能用速查卡替代建系与条件检查。
 
 ::: note 怎么用这一页
 - **做题卡壳时**：按下面的分节标题定位，不用翻正文；括号里的链接跳回推导与上下文。
@@ -126,7 +126,7 @@ A_0^1=(A_1^0)^{-1}=\begin{bmatrix}R_1^{0\mathrm T}&-R_1^{0\mathrm T}\boldsymbol 
 
 连乘 $A_2^0=A_1^0A_2^1$，块为 $R_1^0R_2^1$、$o_1^0+R_1^0o_2^1$；右侧先作用，坐标系接口须相接。一般链为 $\tilde p^0=A_1^0\cdots A_n^{n-1}\tilde p^n$。见 [@thm-2.7.A]、[@ex-2.7.C]。
 
-> **两条纪律**：$A^{-1}\neq A^{\mathrm T}$（正交性只在旋转块内成立）；方向向量（自由向量）的变换只用左上块 $R$，不吃平移。
+> **两条纪律**：非零平移时 $A^{-1}\neq A^{\mathrm T}$，零平移时整体正交；方向向量（自由向量）的变换只用左上块 $R$，不吃平移。
 
 ---
 
@@ -193,7 +193,7 @@ $\Phi$ 为 $m\times p$ 标定矩阵，$\Delta\boldsymbol\xi$ 为实际可辨识�
 
 **四难点**（[@thm-2.12.A]）：非线性（解方程而非算函数）、多解、可能无解 / 无穷多解、无通用解析法。
 
-**闭合解门槛**（[@thm-2.12.B]）：球形腕（三轴交一点）或三轴平行 ⇒ 可解耦。
+**闭合解的充分条件**（[@thm-2.12.B]）：六自由度串联结构中，有三个连续转动关节轴交于一点，或有三个连续转动关节轴平行，均是闭合解的充分条件，不是必要门槛。下面的腕心解耦专指末三轴共点的球腕，不能直接用于三轴平行情形。
 
 **解耦五步**（[@method-2.12.decouple]）——这是全书最实用的一套流程：
 
@@ -310,15 +310,17 @@ $T$ 三列是基系表示的ZYZ瞬时转轴；系数一般不等于逐轴点积�
 $$\boxed{\ \boldsymbol\tau=J^{\mathrm T}(\boldsymbol q)\,F_e\ },\qquad
 F_e=\begin{bmatrix}\boldsymbol f_e\\\boldsymbol\mu_e\end{bmatrix}\in\mathbb R^6$$
 
+这里 $F_e$ 取机械臂向环境施加的广义力，$\tau$ 是忽略重力、摩擦等其他负载时的静止保持驱动力。若给的是环境施加在机械臂上的 $F_{\rm env}$，则 $\tau=-J^{\mathrm T}F_{\rm env}$。力与速度须对应同一参考点、同一表达系。
+
 由虚功原理推出：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau=\boldsymbol v_e^{\mathrm T}F_e=(J\dot{\boldsymbol q})^{\mathrm T}F_e=\dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}F_e$。**速度变换的转置就是力变换**（对偶），长方阵也成立，无需满秩。见 [@def-3.8.1]。
 
 **两坐标系间的速度 / 力变换**：
 
 $$\begin{bmatrix}\dot{\boldsymbol p}_1^0\\\boldsymbol\omega_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&-R_1^0S(\tilde{\boldsymbol p})\\0&R_1^0\end{bmatrix}\begin{bmatrix}\boldsymbol v_1\\\boldsymbol\omega_1\end{bmatrix},
 \qquad
-\begin{bmatrix}\boldsymbol f_1^0\\\boldsymbol\mu_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&0\\R_1^0S(\tilde{\boldsymbol p})&R_1^0\end{bmatrix}\begin{bmatrix}\boldsymbol f_1\\\boldsymbol\mu_1\end{bmatrix}$$
+\begin{bmatrix}\boldsymbol f_1^0\\\boldsymbol\mu_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&0\\-R_1^0S(\tilde{\boldsymbol p})&R_1^0\end{bmatrix}\begin{bmatrix}\boldsymbol f_1\\\boldsymbol\mu_1\end{bmatrix}$$
 
-右边（力）恰是左边（速度）的转置——平移块 $S(\tilde{\boldsymbol p})$ 在速度式里带负号、在力式里移位且不带负号，正是对偶的体现。
+这里 $\tilde{\boldsymbol p}$ 是从旧参考点指向新参考点的位移，用系 1 表示。令速度式矩阵为 $A$，两式同方向换系、换点时，力矩阵是 $A^{-\mathrm T}$，不是 $A^{\mathrm T}$；把力反向变回去时才用 $A^{\mathrm T}$。由 $v_{\rm new}^{\mathrm T}F_{\rm new}=v_{\rm old}^{\mathrm T}F_{\rm old}$ 可核对符号。
 
 ---
 
@@ -336,11 +338,13 @@ $$q(t)=q_i+(q_f-q_i)\Big[3\eta^2-2\eta^3\Big],\qquad \eta=\frac{t}{t_f}$$
 
 $$q(t)=q_i+(q_f-q_i)\Big[10\eta^3-15\eta^4+6\eta^5\Big]$$
 
+上面的五次规范式还要求**初终加速度都为零**；只给零初终速度不足以唯一确定五次多项式。
+
 **关键点**：固定初终位置与速度、常惯量模型下，平方力矩最优解为三次；固定加速度后可另研究平方 jerk 指标，其最优解为五次（[@thm-4.2.A]、[@def-4.2.2]）。
 
 ### F2 梯形速度曲线（LSPB，工业重点）
 
-速度梯形：起段常加速度 $\ddot q_c$、中段巡航 $\dot q_c$、末段常减速度；位置 = 直线段 + 两端抛物线。
+以下取 $t_i=0,t_f>0$、初终速度为零、非零位移且加减速对称；$\ddot q_c$ 与 $q_f-q_i$ 同号，巡航速度也取该符号。速度梯形由起段常加速度、中段巡航、末段常减速度组成；位置为直线段与两端抛物线。
 
 $$t_m=\frac{t_f}{2},\quad q_m=\frac{q_f+q_i}{2},\qquad
 \ddot q_ct_c=\frac{q_m-q_c}{t_m-t_c},\quad q_c=q_i+\tfrac12\ddot q_ct_c^2$$
@@ -374,14 +378,14 @@ $$\dot q_1=0,\qquad \dot q_k=\begin{cases}0 & \operatorname{sgn}v_k\ne\operatorn
 
 $$\underbrace{4(N-2)+6}_{4N-2\ \text{个方程}}\ \text{vs}\ \underbrace{4(N-1)}_{\text{未知数}}\ \Rightarrow\ \text{差 }2\ \Rightarrow\ \text{两个虚拟点}\ \Rightarrow\ 4(N+1)=4(N+1)$$
 
-$$\ddot\Pi_k(t)=\frac{\ddot\Pi_k(t_{k+1})}{\Delta t_k}(t_{k+1}-t)+\frac{\ddot\Pi_k(t_k)}{\Delta t_k}(t-t_k)\quad\Longrightarrow\quad A\,\boldsymbol\Pi=b$$
+$$\ddot\Pi_k(t)=\frac{\ddot\Pi_k(t_k)}{\Delta t_k}(t_{k+1}-t)+\frac{\ddot\Pi_k(t_{k+1})}{\Delta t_k}(t-t_k)\quad\Longrightarrow\quad A\,\boldsymbol\Pi=b$$
 
 $A$ 为**三对角**、**非奇异**，且只依赖 $\Delta t_k$——**对所有关节相同**（[@thm-4.2.H]）。
 
 **④ 抛物线 + 线性混合（经由点）**：
 
-$$q_{k-1,k}=\frac{q_k-q_{k-1}}{\Delta t_k},\qquad
-\ddot q_k=\frac{q_{k,k+1}-q_{k-1,k}}{\Delta t'_k},\qquad
+$$\dot q_{k-1,k}=\frac{q_k-q_{k-1}}{\Delta t_k},\qquad
+\ddot q_k=\frac{\dot q_{k,k+1}-\dot q_{k-1,k}}{\Delta t'_k},\qquad
 b_{k0}=q_k+\frac{(\dot q_{k,k+1}-\dot q_{k-1,k})\Delta t'_k}{8}$$
 
 轨迹**不经过**路径点（削角量 = 上式第二项），故称**经由点**（[@def-4.2.7]）。
@@ -395,7 +399,7 @@ n=\frac{\mathrm d^2p/\mathrm ds^2}{\|\mathrm d^2p/\mathrm ds^2\|},\qquad b=t\tim
 
 **直线**（$p_l\to p_f$）：$p(s)=p_l+\dfrac{s}{\|p_f-p_l\|}(p_f-p_l)$，$\dfrac{\mathrm d^2p}{\mathrm ds^2}=\mathbf 0$（法向无法定义）。
 
-**圆弧**（轴 $r$、轴上点 $d$、圆上点 $p_l$，$\delta=p_l-d$，退化条件 $|\delta^{\mathrm T}r|<\| \delta\|$）：
+**圆弧**（单位轴 $r$、轴上点 $d$、圆上点 $p_l$，$\delta=p_l-d$，非退化条件 $|\delta^{\mathrm T}r|<\|\delta\|$）：令 $\rho=\|p_l-c\|$，随体系的 $x'$ 轴为 $(p_l-c)/\rho$、$z'$ 轴为 $r$、$y'=z'\times x'$，$R$ 的列为这三轴在基系中的分量。
 
 $$c=d+(\delta^{\mathrm T}r)r,\qquad
 p(s)=c+R\,p'(s),\qquad
@@ -457,7 +461,7 @@ $$M(s)=\frac{k_m}{s(1+sT_m)}$$
 | **速度控制**（$k_i=0$） | $1/k_v$ | $R_aI_m/(k_vk_t)$ | $R_a/(k_vk_t)$ |
 | **力矩控制**（$Kk_i\gg R_a$） | $k_t/(k_iF_m)$ | $I_m/F_m$ | $1/F_m$ |
 
-速度控制抗干扰更好 ⇒ **独立关节控制不加电流反馈**；保护改用**死区非线性**的电流反馈（[@thm-5.2.A]、[@thm-5.2.B]）。
+在教材比较的参数与降阶条件下，速度控制特性的负载扰动增益较小，可用于独立关节设计；这**不是独立关节一律不加电流环**的结论。电流环也用于力矩控制和限流保护，死区反馈是教材讨论的一种保护结构（[@thm-5.2.A]、[@thm-5.2.B]）。
 
 ### G5 液压驱动的六条方程
 
@@ -476,7 +480,7 @@ I_{eq}=I_m+\frac{I}{k_r^2},\qquad F_{eq}=F_m+\frac{F}{k_r^2}$$
 
 ### G7 位置与速度反馈控制
 
-位置环需要 **积分**（稳态消除干扰）+ **比例**（稳定与阻尼）——纯比例给不出阻尼瞬态，原因是**前向通路有两个原点极点**（[@thm-5.2.D]）。加**测速反馈**后：干扰点附近两个回路 ⇒ 瞬态抗扰更强、带宽更宽、振荡更少（[@method-5.2.E]）。推广到齿轮耦合：用 $I_{eq},F_{eq}$ 代替 $I_m,F_m$，干扰按 $1/k_r$（[@note-5.2.1]）。
+在本节结构中，驱动对象 $M(s)$ 本身有一个原点极点；加入积分控制器后，开环才有两个原点极点。积分用于消除稳定闭环下恒定负载引起的位置偏差，PI 的比例项用于改善阻尼与稳定性（[@thm-5.2.D]）。测速内环可改善瞬态抗扰和带宽，但效果须按增益、噪声与稳定裕度检验（[@method-5.2.E]）。齿轮折算用 $I_{eq},F_{eq}$ 代替 $I_m,F_m$，负载力矩按 $1/k_r$ 折算（[@note-5.2.1]）。
 
 ### G8 编码器分辨率
 
@@ -495,7 +499,7 @@ S(r)=\begin{bmatrix}0&-r_z&r_y\\ r_z&0&-r_x\\ -r_y&r_x&0\end{bmatrix}$$
 
 $$d=\frac{vt}{2},\qquad v\approx331.4+0.6T\ (\mathrm{m/s},\ T\ \text{为摄氏温度})$$
 
-**相机投影**：$\begin{bmatrix}x_I&y_I&\lambda\end{bmatrix}^{\mathrm T}=\Omega\tilde p_c$，$\Omega=\begin{bmatrix}fa_x&0&X_0\\0&fa_Y&Y_0\\0&0&1\end{bmatrix}$；像素 $X_I=x_I/\lambda,\ Y_I=y_I/\lambda$。整体合成**相机校准矩阵** $\Xi=\Omega\Pi T_b^c$（[@def-5.4.5]、[@thm-5.4.B]）。
+**相机投影**：$[x_I,y_I,\lambda]^{\mathrm T}=\Omega p_c$，其中 $p_c=[X_c,Y_c,Z_c]^{\mathrm T}$ 为相机系三维坐标，$\Omega=\begin{bmatrix}f\alpha_x&0&X_0\\0&f\alpha_y&Y_0\\0&0&1\end{bmatrix}$；因此 $\lambda=Z_c\ne0$，像素为 $X_I=x_I/\lambda,\ Y_I=y_I/\lambda$。若输入为四维齐次坐标，须先用 $\Pi=[I_3\ 0]$；整体合成为 $\Xi=\Omega\Pi T_b^c$（[@def-5.4.5]、[相机模型](ch05/sec5-4.md#sec-5.4.3.3)）。
 
 ## H · 动力学（第 6 章，对应原书第 7 章）
 
@@ -511,21 +515,21 @@ $$T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q},\q
 B=\sum_{i=1}^{n}\Bigl[m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}J_O^{(i)}
 +m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}+J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr]$$
 
-**$B$ 三性质**：对称、正定（$\dot q^{\mathrm T}B\dot q=2T>0$）、一般随位形变。**连杆动能三块**：平动 + 交叉项（质心定义 ⇒ 为零）+ 转动；惯性张量 $\boldsymbol I_i=\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}$（连杆系里是常数）、平行轴 $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$（[6.1.1](ch06/sec6-1-1.md)）。
+**$B$ 三性质**：对称、正定（$\dot q^{\mathrm T}B\dot q=2T>0$）、一般随位形变。**连杆动能三块**：平动 + 交叉项（质心定义 ⇒ 为零）+ 转动；惯性张量 $\boldsymbol I_i=\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}$（连杆系里是常数）、平行轴 $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$（[6.1.1](ch06/sec6-1.md#part-6.1.1)）。
 
 ### H3 势能与重力项（**两种力矩别混名**）
 
 $$U=-\sum_i\bigl(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}\bigr),\qquad
 \boldsymbol g(\boldsymbol q)=\frac{\partial U}{\partial\boldsymbol q}=-\boldsymbol\tau_{\mathrm{grav}}$$
 
-$U=U(\boldsymbol q)$（与 $\dot q$ 无关）；$\boldsymbol g$ 是方程**左端**重力项，实际重力广义力是它的相反数；静止保持 $\tau=\boldsymbol g$（[6.1.2](ch06/sec6-1-2.md)、[@ex-6.1.2.A]）。
+$U=U(\boldsymbol q)$（与 $\dot q$ 无关）；$\boldsymbol g$ 是方程**左端**重力项，实际重力广义力是它的相反数；静止保持 $\tau=\boldsymbol g$（[6.1.2](ch06/sec6-1.md#part-6.1.2)、[@ex-6.1.2.A]）。
 
 ### H4 运动方程与 $h_{ijk}$
 
 $$h_{ijk}=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i},\qquad
 B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}+\boldsymbol g=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$$
 
-$h_{ijj}\dot q_j^2$ 离心、$h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ 科氏、$b_{ii}$ = 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$）（[6.1.3](ch06/sec6-1-3.md)）。
+$h_{ijj}\dot q_j^2$ 离心、$h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ 科氏、$b_{ii}$ = 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$）（[6.1.3](ch06/sec6-1.md#part-6.1.3)）。
 
 ### H5 Christoffel 符号与反对称性（两条公式两个条件）
 
@@ -534,21 +538,21 @@ $$c_{ijk}=\frac12\Bigl(\frac{\partial b_{ij}}{\partial q_k}+\frac{\partial b_{ik
 - **(7.48)**：Christoffel 选法下 $N=\dot B-2C$ **反对称** ⇒ $\forall\boldsymbol w,\ \boldsymbol w^{\mathrm T}N\boldsymbol w=0$；
 - **(7.49)**：**任意**选法下 $\dot{\boldsymbol q}^{\mathrm T}N\dot{\boldsymbol q}=0$（能量守恒）。
 
-方向：(7.48)⇒(7.49)，反向不成立（$N$ 依赖 $\dot q$）（[@thm-6.2.1]、[6.2.1](ch06/sec6-2-1.md)）。
+方向：(7.48)⇒(7.49)，反向不成立（$N$ 依赖 $\dot q$）（[@thm-6.2.1]、[6.2.1](ch06/sec6-2.md#part-6.2.1)）。
 
 ### H6 线性性与回归矩阵
 
 $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\boldsymbol\pi,\qquad
 \pi_i=\bigl[m_i,\ m_i\ell_{C_ix},\ m_i\ell_{C_iy},\ m_i\ell_{C_iz},\ \bar I_{i,xx},\ \bar I_{i,xy},\ \bar I_{i,xz},\ \bar I_{i,yy},\ \bar I_{i,yz},\ \bar I_{i,zz},\ I_{m_i}\bigr]^{\mathrm T}$$
 
-**三个数**：11（刚体/连杆）→ 13（含摩擦/关节）→ 最小参数集 $\le13n$（平面臂 25→8→5）。用途：线性最小二乘辨识、自适应控制、$Y$ 零列筛参数（[6.2.2](ch06/sec6-2-2.md)）。
+**三个数**：11（刚体/连杆）→ 13（含摩擦/关节）→ 最小参数集 $\le13n$（平面臂 25→8→5）。用途：线性最小二乘辨识、自适应控制、$Y$ 零列筛参数（[6.2.2](ch06/sec6-2.md#part-6.2.2)）。
 
 ### H7 两个算例速查（单摆与平面臂）
 
 | 模型 | 方程 |
 |:--|:--|
 | 带齿轮的摆 | $(I+I_mk_r^2)\ddot\vartheta+(F+F_mk_r^2)\dot\vartheta+mgl\sin\vartheta=\tau$——**自动折算**，与第 5 章 (5.29) 一致 |
-| 单摆质点 | $0.5\ddot q+4.905=\tau$（$m=2,l=0.5$）；保持 $4.905$ / 释放 $-9.81$ / 加速 $+2$ 需 $5.905$ |
+| 单摆质点 | $0.5\ddot q+9.81\sin q=\tau$（$m=2\,\mathrm{kg},l=0.5\,\mathrm m$，$q$ 从竖直向下量）；仅在 $q=\pi/6$ 时为 $0.5\ddot q+4.905=\tau$：保持需 $4.905\,\mathrm{N\cdot m}$，释放时 $\ddot q=-9.81\,\mathrm{rad/s^2}$，要求 $\ddot q=2\,\mathrm{rad/s^2}$ 需 $5.905\,\mathrm{N\cdot m}$ |
 | 平面臂 | $h=-m_2a_1\ell_2s_2$；$C=\begin{bmatrix}h\dot\vartheta_2&h(\dot\vartheta_1+\dot\vartheta_2)\\-h\dot\vartheta_1&0\end{bmatrix}$，$C\dot q=\begin{bmatrix}h(2\dot\vartheta_1\dot\vartheta_2+\dot\vartheta_2^2)\\-h\dot\vartheta_1^2\end{bmatrix}$；$b_{12}$ 含 $k_{r_2}I_{m_2}$（转子 2 总角速度 $\dot\vartheta_1+k_{r_2}\dot\vartheta_2$）、$b_{22}$ 常数 |
 | 笛卡儿臂 | $B$ 常数对角、$C=O$、$g_1=(m_1+m_{m_2}+m_2)g$、$g_2=0$——解耦 = 笛卡儿结构 + 轴正交 |
 
@@ -576,7 +580,7 @@ $$\boldsymbol q_m=K_r\boldsymbol q,\qquad
 
 $$\boldsymbol\tau=K_rK_tR_a^{-1}\bigl(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q}\bigr)$$
 
-**读法**：电压想产生的转矩，一部分驱动关节，一部分被**反电动势**（$\propto\dot{\boldsymbol q}$）吃掉——这一项就是耦合的来源。**加电流环**（$K_r^{-1}\boldsymbol\tau=K_t\boldsymbol i_a$、$\boldsymbol i_a=G_i\boldsymbol v_c$）后 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$，$\dot{\boldsymbol q}$ 消失（[7.2.5](ch07/sec7-2.md#sec-7.2.5)）。
+**读法**：电枢电压先扣除反电动势，再由电阻决定电流和电磁转矩；反电动势是各轴的速度相关项，**本身不等于关节间动力学耦合**。加高带宽电流环并忽略其跟踪误差时，$\boldsymbol i_a=G_i\boldsymbol v_c$，故 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$（[7.2.5](ch07/sec7-2.md#sec-7.2.5)）。
 ### I3 三条假设 ⇒ 速度源 / 力矩源（**课堂，「为什么能分散控制」的标准答案**）
 
 $$K_r\gg I,\quad R_a\ \text{元素很小},\quad \tau\ \text{较小}
@@ -638,7 +642,7 @@ $$\boldsymbol F=B_x\bigl(\ddot{\boldsymbol x}_d+K_D\dot{\boldsymbol e}_x+K_P\bol
 | 反馈量 | $\boldsymbol q,\dot{\boldsymbol q}$ | $\boldsymbol q,\dot{\boldsymbol q}$ | $\boldsymbol x,\dot{\boldsymbol x}$（多为估计） |
 | 驱动器 | **速度源**（电压控制） | **力矩源**（电流环） | **力矩源** |
 | 误差方程 | 带扰动 $d_i'$ 的单轴二阶 | 解耦二阶（模型精确时） | 同左，在 $x$ 空间 |
-| 计算量 / 适用 | 最小 / 低速轻载点位 | 大 / 高速高精重载 | 最大 / 柔顺冗余 |
+| 计算量 / 适用 | 逐轴计算；耦合扰动在可抑制范围内 | 在线计算整机模型；适合需显式补偿耦合的任务 | 还需任务模型与雅可比；适合直接规定末端运动，冗余另需分配策略；柔顺接触不由运动控制自动保证 |
 
 （对照表与选型流程见 [7.5.4](ch07/sec7-5.md#sec-7.5.4)、[@method-7.2.A]。）
 ---

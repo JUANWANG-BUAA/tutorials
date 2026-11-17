@@ -17,10 +17,10 @@
 | 题 | 给定量 | 要求的量 | 真正考的是一句话 |
 |:--|:--|:--|:--|
 | **7-8** | 移动–转动平面臂（图 7.16，PR 臂）的几何与惯性参数 | 用**递推牛顿–欧拉**算法建立动力学模型 | 当前连杆坐标系下两遍递推：**移动副取 $\boldsymbol f$ 沿关节方向、转动副取 $\boldsymbol\mu$ 沿关节轴**，转子惯量以 $k_r^2I_m$ 折算 |
-| **7-10** | 操作空间模型 (7.133) 与关节空间性质 (7.48) | 证明 $\dot B_A-2C_A$ 反对称 | $C_A$ 由 (7.131) 只定出**乘积**，必须取 (7.138) 的加权右伪逆；再用 $B_AJ_AB^{-1}=\bar J_A^{\mathrm T}$ 把关节空间性质「合同」过去 |
+| **7-10** | 操作空间模型 (7.133) 与关节空间性质 (7.48) | 证明所构造 $\dot B_A-2C_A$ 反对称 | 用 $B$ 加权右伪逆构造 $C_A$，再作合同分解；冗余时原动力学还须保留零空间速度残量 |
 
 两题的共同背景是同一台机器：7-8 就是 7.5（拉格朗日版）的**第二解法**；7-10 则是
-[6.7 操作空间动力学模型](sec6-7.md)的**性质组**，与 [6.2.1](sec6-2-1.md) 的 $\dot B-2C$ 反对称一一对应。
+[6.7 操作空间动力学模型](sec6-7.md)的**性质组**，与 [6.2.1](sec6-2.md#part-6.2.1) 的 $\dot B-2C$ 反对称一一对应。
 
 ## 约定与符号（7-8）
 
@@ -102,7 +102,7 @@ $\vartheta_2$ 自竖直向下的参考线量起，$\vartheta_2=0$ 时连杆下�
 | $d_1$ | 关节 1 位移（沿 $z_0=y_1$，导轨方向） | $\vartheta_2$ | 关节 2 转角 |
 | $m_1$ | 连杆 1 总质量（滑杆 + 安装其上的电机 2） | $m_2$ | 连杆 2 质量 |
 | $\ell_2$ | 关节 2 $\to$ 连杆 2 质心的有向距离 | $a_2$ | 关节 2 $\to$ 末端距离 |
-| $\bar I_{2zz}$ | 连杆 2 绕质心、垂直平面的惯量 | $k_{r_i},I_{m_i}$ | 减速比、转子惯量 |
+| $\bar I_{2zz}$ | 连杆 2 绕质心、垂直平面的惯量 | $k_{r_i},I_{m_i}$ | 转角/关节位移的传动系数、转子轴向惯量；$k_{r1}$ 单位为 $\mathrm{rad/m}$，$k_{r2}$ 无量纲 |
 | $g$ | 重力加速度（沿 $-x_0$） | | |
 
 矢量与旋转矩阵（教材 (7.107)–(7.114) 的记号，均写在**当前连杆坐标系**中）：
@@ -173,14 +173,14 @@ $$\ddot{\boldsymbol p}^2_{C_2}=\ddot{\boldsymbol p}^2_2
 +\boldsymbol\omega^2_2\times(\boldsymbol\omega^2_2\times\boldsymbol r^2_{2,C_2})
 =\begin{bmatrix}s_2\ddot d_1-\ell_2\dot\vartheta_2^2-gc_2\\ c_2\ddot d_1+\ell_2\ddot\vartheta_2+gs_2\\0\end{bmatrix}.$$
 
-**转子的角加速度**（(7.111)，注意换系：转子 1 的量要先从坐标系 0 转到坐标系 1）：
+**转子 2 的角加速度**：应从它的安装座连杆 1 递推，不是从转子 1 递推。本题连杆 1 只平移，$\boldsymbol\omega_1=\dot{\boldsymbol\omega}_1=0$，所以在坐标系 1 中
 
-$$\dot{\boldsymbol\omega}^1_{m_2}=\boldsymbol R^{1\mathrm T}_2\big(\boldsymbol R^0_1\dot{\boldsymbol\omega}^0_{m_1}\big)
-+k_{r2}\ddot\vartheta_2z_{m_2}+k_{r2}\dot\vartheta_2\big(\boldsymbol\omega^1_{m_1}\times z_{m_2}\big)
-=\begin{bmatrix}k_{r1}k_{r2}\dot d_1\dot\vartheta_2\\ k_{r1}\ddot d_1\\ k_{r2}\ddot\vartheta_2\end{bmatrix}.$$
+$$\dot{\boldsymbol\omega}^1_{m_2}=\dot{\boldsymbol\omega}^1_1
++k_{r2}\ddot\vartheta_2\boldsymbol z^1_{m_2}
++k_{r2}\dot\vartheta_2\boldsymbol\omega^1_1\times\boldsymbol z^1_{m_2}
+=\begin{bmatrix}0\\0\\k_{r2}\ddot\vartheta_2\end{bmatrix}.$$
 
-只有第 3 分量进入 $\tau_2$（因为 (7.114) 右乘 $z_{m_2}$，另两个分量被点乘消掉）——**这也是
-教材解答只写出 $[0,0,k_{r2}\ddot\vartheta_2]^{\mathrm T}$ 的原因**，照抄可以，但要能解释。
+转子 1 的自转不会带动电机 2 的安装座；若出现 $k_{r1}k_{r2}\dot d_1\dot\vartheta_2$ 项，说明把转子运动与连杆运动混淆了。
 
 ### 第 2 步：后向递推（力与力矩）
 
@@ -246,7 +246,7 @@ $\bar I_{2zz}=I_{\ell_2}$、$\ell_2=\ell_{C2}+a_2$ 下**逐项相同**。两种�
 3. **重力只进 $\tau_2$**：导轨水平、重力沿 $-x_0$ 垂直于导轨，移动副不需要「克服重力」的广义力；
    $\tau_2$ 中 $m_2\ell_2gs_2$ 在连杆下垂（$\vartheta_2=0$）时为零、水平（$\vartheta_2=\pi/2$）时最大。
 4. 转子惯量以 $k_r^2I_m$ 出现在对角元：关节侧写 $I+k_r^2I_m$，除以 $k_r^2$ 即得电机侧的
-   $I/k_r^2+I_m$——正是第 5 章 [5.2.3](../ch05/sec5-2-3.md) 的等效惯量折算。
+   $I/k_r^2+I_m$——正是第 5 章 [5.2.3](../ch05/sec5-2.md#part-5.2.3) 的等效惯量折算。
 
 ### 验算
 
@@ -256,7 +256,7 @@ $\bar I_{2zz}=0.02$、$k_{r1}^2I_{m1}=0.05$、$k_{r2}^2I_{m2}=0.025$、$g=9.81$�
 
 ```
 [7-8] 样例状态 d1=0.30, t2=0.70, dd1=0.50, dt2=-1.20, ddd1=2.00, ddt2=-3.00
-      闭式 tau = [7.844459978, 4.624621920] N·m
+      闭式广义力 = [7.844459978 N, 4.624621920 N·m]
       (A) 递推     vs (B) 闭式：max|d tau| = 7.105e-15
       (C) 拉格朗日 vs (B) 闭式：max|d tau| = 0.000e+00
       PASS (A) 递推 与闭式一致（<1e-09）
@@ -326,29 +326,24 @@ $$\begin{aligned}
 &+\boldsymbol J_A\boldsymbol B^{-1}\dot{\boldsymbol J}_A^{\mathrm T}\big)\boldsymbol B_A .
 \end{aligned}$$
 
-> **对照教材解答的小坑**：官方解答手册在这一式把第一项的求导位置印在第二个 $\boldsymbol J_A$ 上，与真值相差
-> $\boldsymbol B_A(\boldsymbol Y-\boldsymbol Y^{\mathrm T})\boldsymbol B_A$（$\boldsymbol Y=\boldsymbol B_A\boldsymbol J_A\boldsymbol B^{-1}\dot{\boldsymbol J}_A^{\mathrm T}\boldsymbol B_A$）。
-> 这一项**恰是反对称的**，所以手册的最终结论不受影响；但推导时应按上式写。
+> **矩阵求导检查**：第一项必须对左侧 $\boldsymbol J_A$ 求导，第三项对右侧 $\boldsymbol J_A^{\mathrm T}$ 求导。令 $\boldsymbol Y=\boldsymbol B_A\boldsymbol J_A\boldsymbol B^{-1}\dot{\boldsymbol J}_A^{\mathrm T}\boldsymbol B_A$，这两项分别为 $-\boldsymbol Y^{\mathrm T}$ 和 $-\boldsymbol Y$；不能重复写同一个。两种写法之差即使恰为反对称矩阵，也不表示它们都是正确的 $\dot{\boldsymbol B}_A$。
 
 ### 第 2 步：$\boldsymbol C_A$ 的构造（为什么必须取 (7.138)）
 
-(7.131) 只给出**乘积** $\boldsymbol C_A\dot{\boldsymbol x}_e$。由 (3.62) 的 $\dot{\boldsymbol x}_e=\boldsymbol J_A\dot{\boldsymbol q}$，
-把 (7.131) 两边用 $\dot{\boldsymbol q}$ 表示，可得矩阵恒等式
-
-$$\boldsymbol C_A\boldsymbol J_A=\boldsymbol B_A\boldsymbol J_A\boldsymbol B^{-1}\boldsymbol C
--\boldsymbol B_A\dot{\boldsymbol J}_A .$$
-
-两边右乘 $\bar{\boldsymbol J}_A$，用 (III) 得一个满足 (7.131) 的 $\boldsymbol C_A$：
+(7.131) 只给出沿实际速度的乘积，不能直接消去 $\dot{\boldsymbol q}$ 得到矩阵恒等式。先**定义**一个用于证明结构性质的矩阵：
 
 $$\boxed{\ \boldsymbol C_A=\boldsymbol B_A\boldsymbol J_A\boldsymbol B^{-1}\boldsymbol C\bar{\boldsymbol J}_A
 -\boldsymbol B_A\dot{\boldsymbol J}_A\bar{\boldsymbol J}_A\ }$$
 
-**这是「一个」解，不是「唯一」解**：若 $\boldsymbol C_A$ 是解，则对任意满足 $\boldsymbol Z\boldsymbol J_A=\boldsymbol 0$ 的
-$\boldsymbol Z$，$\boldsymbol C_A+\boldsymbol Z$ 仍是解（$\boldsymbol Z$ 的列张成 $\boldsymbol J_A$ 的左零空间，对应
-「内部运动」方向）。下面的反对称结论对**取 (7.138) 的那个解**成立，这一点与
-[作业六 7-2](homework06.md#hw6-72-pitfalls) 的教训完全平行：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol N\dot{\boldsymbol q}=0$
-是物理的、对任何 $\boldsymbol C$ 都成立；$\boldsymbol w^{\mathrm T}\boldsymbol N\boldsymbol w=0$ 对任意 $\boldsymbol w$ 成立，
-则是**选法**给的。
+非冗余时 $\bar{\boldsymbol J}_A=\boldsymbol J_A^{-1}$，它确实满足原操作空间方程。冗余时写成
+
+$$\dot{\boldsymbol q}=\bar{\boldsymbol J}_A\dot{\boldsymbol x}_e+\boldsymbol v_N,\qquad \boldsymbol J_A\boldsymbol v_N=0,$$
+
+则原速度项还包含残量
+
+$$\boldsymbol\rho_N=(\boldsymbol B_A\boldsymbol J_A\boldsymbol B^{-1}\boldsymbol C-\boldsymbol B_A\dot{\boldsymbol J}_A)\boldsymbol v_N.$$
+
+因此实际方程的速度项是 $\boldsymbol C_A\dot{\boldsymbol x}_e+\boldsymbol\rho_N$，不能无条件漏掉零空间残量。下面证明对上述构造的矩阵成立，并不宣称冗余时仅用末端状态即可闭合模型。$\boldsymbol C_A$ 的乘积表示仍有非唯一性：可加满足 $Z\dot{\boldsymbol x}_e=0$ 的矩阵；但若 $J_A$ 满行秩，$ZJ_A=0$ 只允许 $Z=0$，不能用它构造非零自由项。
 
 ### 第 3 步：分解 $\dot{\boldsymbol B}_A-2\boldsymbol C_A$
 
@@ -399,9 +394,8 @@ $$\boxed{\ \dot{\boldsymbol B}_A-2\boldsymbol C_A
   -\boldsymbol B_A\dot{\boldsymbol J}_A\dot{\boldsymbol q}$（(7.134)(7.135)），反对称性由同一论证给出。
 - **与 (7.48) 的对应**：关节空间 $\dot{\boldsymbol B}-2\boldsymbol C$ 反对称 $\leftrightarrow$ 操作空间
   $\dot{\boldsymbol B}_A-2\boldsymbol C_A$ 反对称；两者都是「能量守恒的代数表达」，前者对应
-  $\tfrac12\dot{\boldsymbol q}^{\mathrm T}\boldsymbol B\dot{\boldsymbol q}$，后者对应伪动能
-  $\tfrac12\dot{\boldsymbol x}_e^{\mathrm T}\boldsymbol B_A\dot{\boldsymbol x}_e$。正因为形式同构，
-  [7.3](../ch07/sec7-3.md) 的计算力矩律才能整套搬到操作空间（[6.7](sec6-7.md) 的结论在此收口）。
+  $\tfrac12\dot{\boldsymbol q}^{\mathrm T}\boldsymbol B\dot{\boldsymbol q}$，后者对应任务动能
+  $\tfrac12\dot{\boldsymbol x}_e^{\mathrm T}\boldsymbol B_A\dot{\boldsymbol x}_e$。非冗余时可直接用于操作空间控制的能量分析；冗余时还须处理零空间动能及残量，不能只凭反对称恒等式把全部控制结论搬过去（见 [6.7](sec6-7.md)）。
 - **奇异位形**：$\boldsymbol J_A$ 降秩时 $\boldsymbol J_A\boldsymbol B^{-1}\boldsymbol J_A^{\mathrm T}$ 奇异、
   $\boldsymbol B_A$ 无定义，结论只在**全秩位形**上成立。
 
@@ -422,10 +416,8 @@ $\boldsymbol B_A,\boldsymbol C_A,\dot{\boldsymbol B}_A$，再对 20 组随机 $(
 
 ::: think 7-10 易错点 · 四条 {#hw8-710-pitfalls}
 
-1. **用几何雅可比写操作空间模型**：位置部分一样、姿态部分不一样（$\dot{\boldsymbol\phi}\neq\boldsymbol\omega$），
-   必须用分析雅可比 $\boldsymbol J_A$；本题虽只考反对称性，但记号要写对。
-2. **随手取一个右伪逆**：$\boldsymbol C_A$ 的不唯一性决定了「反对称」不是自动成立的，必须取 (7.138) 的
-   $\boldsymbol B$ 加权右伪逆，才有 (II) 这个恒等式可用。
+1. **混淆几何速度与坐标导数**：使用位姿坐标 $\boldsymbol x_e$ 时须用分析雅可比 $\boldsymbol J_A$；若仅取末端位置，两种雅可比的位置块相同。
+2. **从乘积等式直接约去速度**：先定义这里的 $\boldsymbol B$ 加权右伪逆与 $C_A$，再证反对称性；冗余运动须保留 $\boldsymbol\rho_N$，不能声称该构造自动吸收全部零空间速度项。
 3. **把 $\bar{\boldsymbol J}_A$ 当成方阵**：冗余时 $n>r$，(III) 是 $\boldsymbol J_A\bar{\boldsymbol J}_A=\boldsymbol I_r$
    （右逆），不是 $\bar{\boldsymbol J}_A\boldsymbol J_A=\boldsymbol I_n$；写反了 (II) 就推不出来。
 4. **漏掉 $\dot{\boldsymbol J}_A$ 项**：$\boldsymbol C_A$ 的第二项 $-\boldsymbol B_A\dot{\boldsymbol J}_A\bar{\boldsymbol J}_A$

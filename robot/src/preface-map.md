@@ -1,5 +1,9 @@
 # 全书知识地图
 
+读这张地图时，可以沿着卷首的任务找问题：机械臂取出螺丝刀，移到螺栓前，对准、拧紧，再放回。第一章判断结构与系统是否合适；第二章描述目标位姿；第三章把关节速度换成工具速度，并建立静力传递关系；第四章安排路径与时间；第五章认识驱动能力和测量通道；第六章计算轨迹所需力矩，再与驱动能力核对；第七章根据实测偏差修正运动。
+
+[两连杆练习](training/two-link.md)把其中的位置运动简化成可手算的平面 2R 任务，后续各关继续复用它。这个简化不能独立控制位置与任意朝向，也不代表已经解决工具抓取或接触拧紧。下面的详细图、公式和链接用于展开这些问题；涉及原书章号时，以各段说明为准。
+
 ## 第一编 · 引言：机器人学的骨架
 
 第一章先看机器人的定义与四子系统（[1.1](ch01/sec1-1.md)），再看机械手（[1.2](ch01/sec1-2.md)）与移动底盘（[1.3](ch01/sec1-3.md)）的结构边界。部署要求分项分析（[1.4](ch01/sec1-4.md)）；建模、规划与控制把这些要求转成可计算的问题（[1.5](ch01/sec1-5.md)）。图底行按原书编号，本站七章与原书主题的对应入口见 §1.5.4。
@@ -85,9 +89,9 @@
 <rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="510" y="238"></rect><text fill="var(--fig-green)" x="610" y="263">运动学标定（最小二乘）</text>
 <!-- 行4: 逆问题 -->
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="200" x="10" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="110" y="373">逆运动学四难点</text>
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="220" x="250" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="360" y="373">解耦条件（球腕交点 / 平行）</text>
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="200" x="510" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="610" y="373">闭式解（臂 + 腕）</text>
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="150" x="750" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="825" y="373">否则：数值法 → 第 3 章</text>
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="220" x="250" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="360" y="373">闭解充分条件：三轴共点 / 平行</text>
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="200" x="510" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="610" y="373">球腕：腕心分离臂与腕</text>
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="150" x="750" y="348"></rect><text fill="var(--fig-red, #c96a5a)" x="825" y="373">数值逆解 → 第 3 章</text>
 </g>
 <g stroke="var(--muted)" stroke-width="1.4" fill="none" marker-end="url(#arr2)">
 <path d="M180,38 L220,38"></path><path d="M400,38 L440,38"></path><path d="M610,38 L650,38"></path>
@@ -113,7 +117,7 @@
 - **蓝（表示）**：同一姿态三种写法，参数越少代价越大（欧拉角奇点、角和轴不唯一）——按任务选型。
 - **金（传递）**：DH 把相邻坐标系标准化成 4 参数，正运动学从此是流水线；七种结构是七次试跑。
 - **绿（性能）**：任务在操作空间、能力在关节空间——差是冗余、边界是工作空间、误差靠标定。
-- **红（逆问题）**：解耦条件（[@thm-2.12.B]）是闭合解门槛，解释「臂 + 球形腕」的统治性设计，也为第 3 章雅可比留出必要性。
+- **红（逆问题）**：连续三转轴共点或平行是六自由度闭解的充分条件，不是必要门槛。末三轴共点的球腕可用腕心拆成臂与腕，三轴平行的结构不能直接套这条腕心公式（[@thm-2.12.B]）。
 
 
 ## 第三编 · 微分运动学和静力学：速度与力的代数
@@ -170,7 +174,7 @@
 
 ## 第四编 · 轨迹规划：让机器人按你要的方式动
 
-第四章（[章总览](ch04/overview.md)）接着第三编的「力与速度」往下走：**前三章回答「到哪去」，这一章回答「怎么去」**——把起点和终点连成一条底层伺服跟得住、又不超出物理极限的曲线。板书（老师开课前预写、全程未擦）与课件、教材的结构完全一致。
+第四章（[章总览](ch04/overview.md)）接着第三编的速度映射，回答“沿哪条路、什么时候到达”。先生成位置、速度与加速度参考，再检查关节约束；驱动力矩是否足够还需第五、六章的信息。课堂板书、课件与教材的来源对照见该章导览。
 
 <figure>
 <svg height="430" viewBox="0 0 920 430" width="920" xmlns="http://www.w3.org/2000/svg">
@@ -180,7 +184,7 @@
 <g font-size="13.5" text-anchor="middle">
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="200" x="10" y="16"></rect><text fill="var(--fig-blue)" x="110" y="41">路径 = 纯几何</text>
 <rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="220" x="240" y="16"></rect><text fill="var(--fig-blue)" x="350" y="41">轨迹 = 路径 + 时间律</text>
-<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="240" x="490" y="16"></rect><text fill="var(--fig-blue)" x="610" y="41">运动规划 = 轨迹 + 避障/优化</text>
+<rect fill="color-mix(in srgb, var(--fig-blue) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-blue) 45%, transparent)" width="240" x="490" y="16"></rect><text fill="var(--fig-blue)" x="610" y="41">运动规划：按任务与约束找方案</text>
 <rect fill="color-mix(in srgb, var(--fig-gold) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-gold) 45%, transparent)" width="140" x="760" y="16"></rect><text fill="var(--fig-gold)" x="830" y="41">伺服参考输入</text>
 <rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="150" x="10" y="120"></rect><text fill="var(--fig-green)" x="85" y="145">点对点（4.2.1）</text>
 <rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="40" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="120" x="180" y="120"></rect><text fill="var(--fig-green)" x="240" y="145">三次</text>
@@ -215,10 +219,10 @@
 
 ### 读图要领（第四编）
 
-- **蓝（概念分层）**：路径 ⊂ 轨迹 ⊂ 运动规划，各加一层（时间律、避障与优化）；轨迹规划的产出是**底层伺服的参考输入**（位置 + 速度 + 加速度）。
-- **绿（点对点）**：三次是「最小能量」的答案、五次是「要管初终加速度」的答案，**工业的答案是梯形速度曲线**——老师明说这是重点（0:48:11）。
-- **金（系列点）**：每段差 2 个条件，补法不同就是四条路线；只有样条保证**加速度连续**，工业最常用的是**抛物线 + 线性混合**。
-- **红（操作空间）**：几何路径先解析化（参数、弧长、Frenet 标架），再用标量 $s(t)$（位置）与 $\theta(t)$（姿态）把关节空间的全部武器搬过来——**两次降维**是本章最漂亮的一步。
+- **蓝（概念关系）**：路径不指定时间；轨迹加入时间律；运动规划按任务、环境和约束寻找可行方案，可包含避障和优化，三者不宜当成严格集合包含关系。
+- **绿（点对点）**：固定端点位置/速度、常惯量且忽略其他力矩时，最小平方力矩给三次；一般指定六个端点条件需至少五次。梯形速度曲线便于直接设置加速度峰值，老师强调「重点介绍混合梯形」（0:48:11）。
+- **金（系列点）**：指定或计算节点速度通常只保证速度连续；三次样条进一步约束加速度连续，抛物线混合则通常允许从经由点附近经过。是否精确插值与连续到几阶应分别核对。
+- **红（操作空间）**：固定几何路径后，位置可用标量弧长 $s(t)$ 安排进度；固定相对旋转轴后，姿态可用转角 $\theta(t)$ 安排进度，两者仍须检查关节侧可行性。
 
 ## 第五编 · 执行器与传感器：把「算出来的」变成「做得到的」
 
@@ -274,13 +278,13 @@
 
 - **蓝（功率链）**：能源 / 功放 / 发动机 / 传动四部分，是 §5.1 的骨架；标准国际单位下 $k_t=k_v$ 是电与机之间的桥。
 - **绿（建模）**：电气驱动四个方程给出两种「发电机」特性——**速度控制**（不加电流反馈，抗扰好）与**力矩控制**（加电流反馈，力矩独立于转速）；液压驱动是同一套结构的平行版本，多出**渗漏**与**可压缩性**两项。
-- **红（传动的影响）**：**$1/k_r^2$ 管惯量与摩擦、$1/k_r$ 管负载力矩与非线性**。这一框是本章与第 7 章的分界线：多轴强耦合被削弱成「可独立设计的单轴 + 干扰」，独立关节控制因此成立。
+- **红（传动的影响）**：理想折算中，负载惯量与黏性摩擦按 $1/k_r^2$、负载力矩按 $1/k_r$ 折到电机侧；大减速比可削弱负载动态的相对影响，但是否支持独立关节近似仍须核查转速、耦合扰动和误差要求。
 - **金（传感器）**：本体传感器（位置、速度）是伺服的反馈源；外部传感器（力、距离、视觉）让机器人认识环境——两者的判据是「**量的是自己还是环境**」。
 - **向右的箭头**：本章的驱动模型与反馈结构，正是第七编运动控制器（原书第 8 章）的**被控对象**；位置环 PI 与测速反馈在那里被正式设计。
 
 ## 第六编 · 动力学：从「怎么动」到「用多大力」
 
-第五编把算法落到了硬件，但还差最后一环：**要让机械手按指定轨迹动，关节到底要出多大的力矩？** 第六章（[章总览](ch06/overview.md)，对应原书第 7 章）回答这个问题。它的逻辑是一条直线：
+第五编给出了驱动与测量模型，但还没算出“要沿指定轨迹运动，关节需要多大的力矩”。第六章（[章总览](ch06/overview.md)，对应原书第 7 章）先用能量法建立方程，再学习递推计算、辨识与操作空间模型。下图先省略摩擦；其中 $h_e$ 是末端向环境施加的力，$C$ 采用 Christoffel 选法。
 
 ```text
 广义坐标 q ──→ 动能 T = ½ q̇ᵀB(q)q̇ ──┐
@@ -297,7 +301,7 @@
 
 1. **能量**（6.1）：把 $n$ 个连杆 + $n$ 个转子的动能写成二次型，把重力势能写成 $q$ 的函数；
 2. **方程**（6.1.3）：代拉格朗日方程，得到 $B\ddot q+C\dot q+g=\tau-J^{\mathrm T}h_e$，并认领每一项的物理意义；
-3. **结构**（6.2）：$\dot B-2C$ 反对称（稳定性/无源性）、$\tau=Y\pi$（辨识/自适应）——这两条是第七编运动控制律的地基。
+3. **结构**（6.2）：Christoffel 选法下 $\dot B-2C$ 反对称；任一满足同一物理速度项的 $C$ 都有沿速度的能量恒等式。参数线性式 $\tau=Y\pi$ 则用于辨识与自适应，须排除或另计已知接触力。
 
 **两个算例**：笛卡儿臂（$B$ 常数、$C=0$、解耦）与平面臂（$B(q)$、离心/科氏、重力耦合）。前者告诉你「什么情况下最简单」，后者告诉你「一般情况下复杂在哪」。
 
@@ -326,8 +330,8 @@ $$\tau=B(q)\bigl(\ddot q_d+K_D\dot e+K_P e\bigr)+C(q,\dot q)\dot q+g(q),$$
 
 $$\tau=B(q)\bigl(\ddot q_d+K_D\dot e+K_Pe\bigr)+C(q,\dot q)\dot q+g(q),$$
 
-其中 $B,C,g$ 全部来自第六编；$\dot B-2C$ 反对称则给出闭环误差系统的 Lyapunov 结构。**没有第六编，控制律只是三个矩阵符号；没有第七编，第六编的模型只是纸上的方程。**
+其中 $B,C,g$ 来自第六编。上式假设无接触、无摩擦（或已精确补偿）、模型精确、连续状态反馈且力矩未限幅；代回动力学可得线性误差方程。重力补偿 PD 的能量证明则使用 $\dot B-2C$ 的二次型消项，两条证明路线不要混在一起。
 
-**与后续的接口**：第九章力控制补上「与环境交互」那一半；第十章视觉伺服回答「操作空间的 $x$ 怎么测」；第十二章运动规划在轨迹之上加避障。
+**与后续的接口（以下为原书章号，未在本教程中单独成章）**：第 9 章力控制处理环境接触；第 10 章视觉控制讨论由图像形成反馈；第 12 章运动规划重点处理避碰。
 
 > 记号约定：本书第七章的 PD 增益写作 $K_P,K_D$（位置、速度/微分增益）；旧稿或教材偶用 $K_p,K_v$，二者同义。

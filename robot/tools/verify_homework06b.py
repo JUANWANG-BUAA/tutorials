@@ -145,9 +145,9 @@ def check_7_8(rng: np.random.Generator) -> bool:
 
     print("[7-8] 样例状态 d1=0.30, t2=0.70, dd1=0.50, dt2=-1.20, ddd1=2.00, ddt2=-3.00")
     sample = closed_form(states[0])
-    print(f"      闭式 tau = [{sample[0]:.9f}, {sample[1]:.9f}] N·m")
-    print(f"      (A) 递推 vs (B) 闭式：max|d tau| = {dev_ne:.3e}")
-    print(f"      (C) 拉格朗日 vs (B) 闭式：max|d tau| = {dev_lag:.3e}")
+    print(f"      闭式广义力 tau = [{sample[0]:.9f} N, {sample[1]:.9f} N·m]")
+    print(f"      (A) 递推 vs (B) 闭式：逐分量数值最大偏差 = {dev_ne:.3e}（单位依次为 N、N·m）")
+    print(f"      (C) 拉格朗日 vs (B) 闭式：逐分量数值最大偏差 = {dev_lag:.3e}（单位依次为 N、N·m）")
     for name, dev in (("(A) 递推", dev_ne), ("(C) 拉格朗日", dev_lag)):
         if dev < TOL:
             print(f"      PASS {name} 与闭式一致（<{TOL:g}）")

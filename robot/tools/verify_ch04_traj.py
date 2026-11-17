@@ -100,6 +100,47 @@ class Trajectory(unittest.TestCase):
         # Same-sign case: velocity is the average of the two slopes.
         self.assertAlmostEqual((1.0 + 0.5) / 2, 0.75, places=12)
 
+    def test_group3_runge_equidistant_interpolation(self):
+        def lagrange(n, x):
+            nodes = [F(-1) + F(2 * k, n - 1) for k in range(n)]
+            total = F(0)
+            for j, node in enumerate(nodes):
+                term = F(1, 1 + 25 * node * node)
+                for k, other in enumerate(nodes):
+                    if k != j:
+                        term *= (x - other) / (node - other)
+                total += term
+            return total
+
+        # Values from the figure, evaluated with exact rational arithmetic.
+        p9 = lagrange(9, F(23, 25))
+        p11 = lagrange(11, F(47, 50))
+        self.assertAlmostEqual(float(p9), -1.0, places=3)
+        self.assertAlmostEqual(float(p11), 1.959, places=3)
+        self.assertGreater(F(1, 1 + 25 * F(23, 25) ** 2) - p9, 1)
+        self.assertGreater(p11 - F(1, 1 + 25 * F(47, 50) ** 2), F(19, 10))
+
+    def test_group3_specified_and_zero_waypoint_speeds(self):
+        # Example 4.2.E: coefficients are in units of pi; second segment uses s=t-2.
+        first = [F(0), F(0), F(1), F(-1, 4)]
+        second = [F(2), F(1), F(-11, 2), F(3)]
+        self.assertEqual((cubic(2, first), dcubic(2, first)), (cubic(0, second), dcubic(0, second)))
+        self.assertEqual((cubic(1, second), dcubic(1, second)), (F(1, 2), F(-1)))
+        self.assertEqual(ddcubic(0, second) - ddcubic(2, first), -10)
+        peak = (11 - math.sqrt(85)) / 18
+        self.assertAlmostEqual(dcubic(peak, second), 0, places=12)
+        self.assertAlmostEqual((cubic(peak, second) - 2) * math.pi, 0.151, places=3)
+
+        # Example 4.2.F: stopping at the reversal removes this overshoot.
+        first_stop = [F(0), F(0), F(3, 2), F(-1, 2)]
+        second_stop = [F(2), F(0), F(-9, 2), F(3)]
+        self.assertEqual((cubic(2, first_stop), dcubic(2, first_stop)),
+                         (cubic(0, second_stop), dcubic(0, second_stop)))
+        self.assertEqual((cubic(1, second_stop), dcubic(1, second_stop)), (F(1, 2), F(0)))
+        self.assertEqual(ddcubic(0, second_stop) - ddcubic(2, first_stop), -6)
+        for n in range(101):
+            self.assertLessEqual(dcubic(F(n, 100), second_stop), 0)
+
     def test_group4_quintic_4_1(self):
         # q(t) = 1 + 15/4 t³ - 45/16 t⁴ + 9/16 t⁵
         a = [F(1), F(0), F(0), F(15, 4), F(-45, 16), F(9, 16)]
@@ -208,6 +249,29 @@ class Trajectory(unittest.TestCase):
                                    (F(1, 10), lin2, t_mid + half)):
             self.assertEqual(blend2(s_edge), lin(t_val))
             self.assertEqual(dblend2(s_edge), F(1) if lin is lin1 else F(1, 2))
+        # The centered blend extends past the nominal time interval: it must
+        # not be presented as satisfying the three nominal positions exactly.
+        first = lambda t: F(5, 2) * (t + F(1, 10)) ** 2
+        last = lambda t: F(3) - F(5, 4) * (F(41, 10) - t) ** 2
+        self.assertEqual((first(F(-1, 10)), last(F(41, 10))), (F(0), F(3)))
+        self.assertEqual((first(F(0)), blend2(F(0)), last(F(4))),
+                         (F(1, 40), F(159, 80), F(239, 80)))
+        self.assertEqual(first(F(1, 10)), lin1(F(1, 10)))
+        self.assertEqual(last(F(39, 10)), lin2(F(39, 10)))
+
+        # A separate two-LSPB construction preserves all three time constraints.
+        def unit_lspb(t):
+            if t <= F(1, 5):
+                return F(25, 18) * t ** 2
+            if t <= F(9, 5):
+                return F(5, 9) * (t - F(1, 10))
+            return 1 - F(25, 18) * (2 - t) ** 2
+
+        def exact_q(t):
+            return 2 * unit_lspb(t) if t <= 2 else 2 + unit_lspb(t - 2)
+
+        self.assertEqual(tuple(exact_q(F(t)) for t in (0, 2, 4)), (0, 2, 3))
+        self.assertEqual(F(25, 9) * F(1, 5), F(5, 9))  # matched blend/cruise velocity
 
 
 if __name__ == "__main__":

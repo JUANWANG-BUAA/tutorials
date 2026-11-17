@@ -1,6 +1,6 @@
 # 3.2 典型机械手结构的雅可比
 
-已知机械手的关节角、杆长和关节速度，怎样算出工具点此刻往哪里动、工具架绕哪根轴转？这一节对三连杆平面臂、拟人臂和斯坦福机械手分别完成这项计算：先保留中间坐标系，再求各关节的速度贡献，最后按任务选择输出。三种结构共用 §3.1 的逐列构造法；差别在于关节轴的位置、方向，以及是否存在移动关节。所有轴、位置与速度均在基坐标系表达；杆长用米，角度求导时用弧度，转动关节速度用 rad/s，移动关节速度用 m/s。以下沿用标准 DH，记 $c_i=\cos\vartheta_i,s_i=\sin\vartheta_i$；合并下标表示角度之和，例如 $s_{23}=\sin(\vartheta_2+\vartheta_3)$。对应录播 1:12:12–1:23:42。
+已知各关节角、杆长与各关节速度，如何确定工具点当前在往哪里动、工具架绕哪根轴转？本节通过三连杆平面臂、拟人臂和斯坦福机械手，详细演示如何完成这项计算：先求出各中间连杆坐标系，再算出每个关节对末端速度的贡献，最后按任务需求拼装。三种结构均采用 §3.1 的逐列构造法，主要区别在于各关节轴的相对位置、方向以及移动关节的存在。以下所有轴、位置和速度都在基坐标系中表示；杆长单位为米，角度微分用弧度，转动关节速度单位为 rad/s，移动关节为 m/s。文中沿用标准 DH 表示：$c_i=\cos\vartheta_i,s_i=\sin\vartheta_i$；下标合并表示角度之和，如 $s_{23}=\sin(\vartheta_2+\vartheta_3)$。对应录播 1:12:12–1:23:42。
 
 ::: method 方法 3.2.A · 雅可比计算的五步流程（三种结构共用）{#method-3.2.A}
 1. 按 DH 规则建立各连杆坐标系（第 2 章已练）；
@@ -10,19 +10,21 @@
 5. 按移动 / 转动列公式（[@thm-3.1.C]）逐列组装 $J$。
 :::
 
-在逐列组装 $J$ 之前，值得先单独看一眼这两种「积木列」的几何（下图）：转动列的速度来自**叉乘**，方向天然垂直于矢径；移动列的速度就是轴本身，不产生转动——所有结构的雅可比都由这两类列拼装而成。
+课堂在这一轮构造结束时强调：「以上是重点中的重点」（1:23:39）。重点是能从中间变换读取轴与位置、判断关节类型并逐列组装，而不是背下复杂机构展开后的每个三角项。
+
+在组装雅可比矩阵之前，先单独看看组成它的两类「积木列」（下图）：转动关节的速度来自**叉乘**，方向天然垂直于矢径；移动关节的速度则完全沿轴方向，不产生转动。所有机械手的雅可比，本质上都是这两类列的组合。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-jcol-t fig-jcol-d">
-<title id="fig-jcol-t">几何雅可比的两类列：转动关节与移动关节</title>
-<desc id="fig-jcol-d">左图俯视：转动关节绕指出纸面的 z 轴旋转，末端速度等于角速度叉乘矢径，方向在平面内垂直于矢径。右图侧视：移动关节沿轴平移，速度沿轴方向，角速度为零。</desc>
+<title id="fig-jcol-t">雅可比的两类积木：转动关节与移动关节</title>
+<desc id="fig-jcol-d">左图俯视：转动关节绕 z 轴旋转，末端线速度等于角速度与矢径的叉乘，方向在平面内且垂直于矢径。右图侧视：移动关节沿轴平移，线速度沿轴方向，角速度恒为零。</desc>
 <defs>
 <marker id="fjc-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/></marker>
 <marker id="fjc-b" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-blue)"/></marker>
 <marker id="fjc-n" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--fig-green)"/></marker>
 <marker id="fjc-a" markerWidth="8" markerHeight="8" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="var(--accent-text)"/></marker>
 </defs>
-<text class="diagram-text" x="460" y="30" text-anchor="middle">逐列组装的两类积木</text>
+<text class="diagram-text" x="460" y="30" text-anchor="middle">雅可比的两种基本列</text>
 <text class="diagram-text" x="240" y="60" text-anchor="middle">转动关节 i（俯视，z<tspan class="sb">i−1</tspan> 指出纸面 ⊙）</text>
 <text class="diagram-text" x="680" y="60" text-anchor="middle">移动关节 i（侧视）</text>
 <circle cx="240" cy="185" r="100" fill="none" stroke="var(--line)" stroke-dasharray="3 5"/>
@@ -35,7 +37,7 @@
 <line stroke="var(--fig-green)" stroke-width="3" marker-end="url(#fjc-n)" x1="340.6" y1="212.3" x2="358.9" y2="144.8"/>
 <text class="diagram-text" fill="var(--fig-green)" x="270" y="117">v = (z<tspan class="sb">i−1</tspan>×r)ϑ′<tspan class="sb">i</tspan></text>
 <path d="M 329.0 209.2 L 332.1 197.6 L 343.7 200.7" fill="none" stroke="var(--ink-2)" stroke-width="1.2"/>
-<text class="diagram-note" x="240" y="316" text-anchor="middle">转动列 = [ z<tspan class="sb">i−1</tspan>×(p<tspan class="sb">e</tspan>−p<tspan class="sb">i−1</tspan>) ; z<tspan class="sb">i−1</tspan> ]：速度 ⊥ 矢径（平面内），随 r 增大而增大</text>
+<text class="diagram-note" x="240" y="316" text-anchor="middle">转动列 = [ z<tspan class="sb">i−1</tspan>×(p<tspan class="sb">e</tspan>−p<tspan class="sb">i−1</tspan>) ; z<tspan class="sb">i−1</tspan> ]：速度 ⊥ 矢径</text>
 <line class="diagram-axis" x1="680" y1="270" x2="680" y2="75"/>
 <text class="diagram-text" x="680" y="88" text-anchor="middle">z<tspan class="sb">i−1</tspan></text>
 <rect class="diagram-node" x="664" y="180" width="32" height="42" rx="4"/>
@@ -45,9 +47,8 @@
 <text class="diagram-mono" x="680" y="308" text-anchor="middle">移动列 = [ z<tspan class="sb">i−1</tspan> ; 0 ]：只平移、不转动（ω = 0）</text>
 <text class="diagram-note" x="460" y="332" text-anchor="middle">「锁死其余关节、单位速度驱动第 i 关节」：全部雅可比列都由这两类积木拼成</text>
 </svg>
-<figcaption>两类雅可比列的几何（本教程绘）：**转动列**的速度项 $z_{i-1}\times(p_e-p_{i-1})$ 在俯视图里一目了然——永远垂直于矢径，离轴越远越大；**移动列**则只有平移项 $z_{i-1}$，角速度行恒为零。「锁死其余关节、单位速度驱动第 i 关节」的逐列物理图像，见 3.1 的绿框图（[@thm-3.1.C]）；2.9 节中，各结构的 $z_{i-1},p_{i-1}$ 都能从中间 $T$ 矩阵直接读出，读出后逐列套用即可。</figcaption>
+<figcaption>雅可比列的几何构成：<strong>转动列</strong>的速度项 $z_{i-1}\times(p_e-p_{i-1})$ 在俯视图里一目了然，永远垂直于矢径且离轴越远速度越大；<strong>移动列</strong>只产生平移速度 $z_{i-1}$，角速度恒为零。这种「单位速度驱动」的逐列物理图解，在 3.1 节的绿框图已有说明。在 2.9 节介绍的方法中，各结构的 $z_{i-1}$ 和 $p_{i-1}$ 都能从对应的中间 $T$ 矩阵直接读出，读出后直接套用公式即可。</figcaption>
 </figure>
-
 <a id="sec-3.2.1"></a>
 
 ## 3.2.1 三连杆平面臂
@@ -93,6 +94,8 @@ a_1c_1+a_2c_{12}+a_3c_{123}&a_2c_{12}+a_3c_{123}&a_3c_{123}\\
 
 若任务只要求位置，则只用前两行，得到 $2\times3$ 的 $J_P$。这时朝向仍可能变化，只是不再作为任务输出；§3.4 会用同一结构说明任务相关的冗余。
 
+这也对应课堂的任务选择提示（1:15:50）：「平面情形只取前两行；如需 $\omega_z$ 再加末行。」这里删去的是任务不要求的输出，不是说完整六行雅可比不能使用。
+
 ::: note 逐列读法 · 每一列是谁在出力 {#note-3.2.1.cols}
 矩阵的**行**对应操作空间的速度分量（第一行 $v_x$、第二行 $v_y$、第三行 $\omega_z$），**列**对应关节（3.1 的分工）。于是这三列可以逐列念：
 
@@ -118,6 +121,12 @@ $$\bar J=\begin{bmatrix}-1&-1&0\\2&1&1\\1&1&1\end{bmatrix},\qquad
 末端以 $1$ m/s 沿 $+y$ 移动，角速度为零。用另一条路径检查：$\dot\vartheta_{12}=0,\dot\vartheta_{123}=0$，后两杆的绝对方向瞬时不变，只有第一杆转动，带着它们一起向上平移。这里讨论的是给定位形下的瞬时速度。
 :::
 
+保持这组杆长和位形，只把第三关节速度从 0 改成 $-1$ rad/s，先预测笔尖是否会静止，再用第三列核对。
+
+::: sol 核对第三列的作用
+新增贡献为 $(0,-1,-1)^{\mathrm T}$，故平面任务速度由 $(0,1,0)^{\mathrm T}$ 变为 $(0,0,-1)^{\mathrm T}$：笔尖瞬时不移动，工具却以 $-1$ rad/s 转动。把输入代回可得 $\dot q=(1,-1,-1)^{\mathrm T}$，正是位置任务的一个非零零空间速度；§3.4 会系统求出这类速度。这里不能把笔尖静止说成完整位姿不变。
+:::
+
 ![课堂幻灯片 · 01:12:38：三连杆平面臂——DH 表与雅可比通式](../assets/ch03/planar3-dh.jpg)
 
 <a id="sec-3.2.2"></a>
@@ -140,6 +149,8 @@ A_i^{i-1}=\begin{bmatrix}c_i&-s_i&0&a_ic_i\\ s_i&c_i&0&a_is_i\\ 0&0&1&0\\ 0&0&0&
 $$z_0=[0,0,1]^{\mathrm T},\qquad z_1=z_2=[s_1,-c_1,0]^{\mathrm T}$$
 
 后两个关节轴水平，随腰角 $\vartheta_1$ 改变。
+
+老师在这里提醒：「$z_1$ 跟 $z_0$ 就不一样了——$z_1,z_2$ 平行、都是水平的」（1:18:27）。读中间旋转矩阵的第三列，正是为了避免把空间臂的所有关节轴都误设成基系竖轴。
 
 $$p_0=p_1=[0,0,0]^{\mathrm T},\quad
 p_2=[a_2c_1c_2,\ a_2s_1c_2,\ a_2s_2]^{\mathrm T},\quad
@@ -217,7 +228,7 @@ $$J_O=\begin{bmatrix}0&s_1&s_1\\0&-c_1&-c_1\\1&0&0\end{bmatrix}.$$
 
 **六个关节中只有关节 3 是移动关节**，其余五个都是转动关节（臂部：肩摆 + 肘转 + 伸缩；腕部：三轴汇交）：
 
-![课堂课件第 27 页：斯坦福机械手结构与逐列构造](../assets/ch03/stanford-struct.jpg)
+![课堂课件第 27 页 · 01:20:13：斯坦福机械手结构与逐列构造式；DH 参数见下文](../assets/ch03/stanford-struct.jpg)
 
 | $i$ | $a_i$ | $\alpha_i$ | $d_i$ | $\vartheta_i$ |
 |:--:|:--:|:--:|:--:|:--:|
@@ -229,6 +240,8 @@ $$J_O=\begin{bmatrix}0&s_1&s_1\\0&-c_1&-c_1\\1&0&0\end{bmatrix}.$$
 | 6 | 0 | 0 | $d_6$ | $\vartheta_6$ |
 
 六个相邻变换使用不同的 DH 参数，但都由同一个标准 DH 通式计算。第 3 行固定角为零、以 $d_3$ 为变量，不能把转动关节的参数表达原样套用：
+
+课堂原话是「每个都不一样，不能用通式」（1:21:25）。结合这里的 DH 表，应理解为不能沿用平面臂那种所有行参数形式相同的简化矩阵；标准 DH 通式本身仍然适用。
 
 $$A_1^0=\begin{bmatrix}c_1&0&-s_1&0\\ s_1&0&c_1&0\\ 0&-1&0&0\\ 0&0&0&1\end{bmatrix},\
 A_2^1=\begin{bmatrix}c_2&0&s_2&0\\ s_2&0&-c_2&0\\ 0&1&0&d_2\\ 0&0&0&1\end{bmatrix},\
@@ -309,7 +322,7 @@ e_z&v&0&w&z_4&z_5
 
 第 6 列说明：转动列的线速度部分可以为零，角速度部分仍为单位轴。若改为计算腕心 $p_W$ 的速度，腕部三列的线速度部分全部为零；工具点有偏置时，第 4、5 列一般会移动工具点。§3.3 会用参考点变换解释这两个雅可比之间的关系。
 
-![课堂课件第 31 页：斯坦福机械手的 6×6 几何雅可比](../assets/ch03/stanford-jac.jpg)
+![课堂课件第 31 页 · 01:23:37：斯坦福机械手的 6×6 几何雅可比](../assets/ch03/stanford-jac.jpg)
 
 ::: ex 跟算 · 伸缩与腕转动怎样抵消工具点的平移？ {#example-3.2.stanford}
 取 $d_2=0.2$ m、$d_3=0.6$ m、$d_6=0.1$ m，角度为
@@ -355,6 +368,8 @@ $$J=\begin{bmatrix}
 :::
 
 ### 怎样独立检查计算结果
+
+课堂说明了复杂表达式的实际处理方式（1:20:13）：「这个计算过程不是手推的」，而是「都是 MATLAB 来写的，表达式非常复杂，很多 sin、cos 在合成，计算量很大；实际应用中都是写代码。人手推也能做出来，但非常花时间。」符号工具负责展开，并不替代前面的建系和逐列物理判断。仓库中的 `tools/verify_ch03_jac.py` 提供中心差分检查实现。
 
 以上解析结果可以逐列用正运动学检查。用 $e_i$ 表示关节空间第 $i$ 个单位方向，将其余关节固定，分别计算 $q\pm\varepsilon_i e_i$ 的工具点位置，则
 

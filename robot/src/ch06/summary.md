@@ -22,7 +22,7 @@ $$B=\sum_{i=1}^{n}\Bigl[m_iJ_P^{(i)\mathrm T}J_P^{(i)}
 +m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}
 +J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr].$$
 
-$B$ 对称、正定、一般随位形变。
+在任意非零独立关节速度均对应正动能的非退化模型中，$B$ 对称正定，一般随位形变；若理想化模型含无质量、无惯量运动方向，只能保证半正定。
 
 ### 势能与重力矩
 
@@ -36,8 +36,8 @@ $$\boldsymbol\tau_{\mathrm{grav}}=\sum_i\bigl(m_iJ_P^{(i)\mathrm T}\boldsymbol g
 +m_{m_i}J_P^{(m_i)\mathrm T}\boldsymbol g_0\bigr)=-\boldsymbol g(\boldsymbol q).$$
 
 静止、无摩擦及其他外力时，保持输入为 $\boldsymbol\tau=\boldsymbol g$。
-若两种力矩的符号仍混淆，先做 [单摆双路径例题](sec6-1-2.md#ex-6.1.2.A)，
-再比较 [同一位形下保持、释放与加速](sec6-1-3.md#ex-6.1.3.A) 的三种输入。
+若两种力矩的符号仍混淆，先做 [单摆双路径例题](sec6-1.md#ex-6.1.2.A)，
+再比较 [同一位形下保持、释放与加速](sec6-1.md#ex-6.1.3.A) 的三种输入。
 
 ### 运动方程
 
@@ -56,7 +56,7 @@ $$\text{Christoffel 选法：}\ N=\dot B-2C\ \text{反对称}
 $$\text{任意选法：}\ \dot{\boldsymbol q}^{\mathrm T}N\dot{\boldsymbol q}=0\ \text{（能量守恒）}.$$
 
 $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\boldsymbol\pi,
-\qquad \boldsymbol\pi\ \text{每连杆 11 个参数（含摩擦 13 个）}.$$
+\qquad \boldsymbol\pi\ \text{每组名义上 11 个惯性参数，含摩擦 13 个；无接触时适用}.$$
 
 ### 两个算例
 
@@ -73,10 +73,10 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 |:--|:--|:--|
 | [6.4 牛顿–欧拉递推](sec6-4.md) | 逐杆列方程，向外递推运动量、向内递推力/力矩 | 六类递推式（$\omega,\dot\omega,\dot p,\ddot p,\ddot p_C,\dot\omega_m$）、$\tau_i$ 投影、$O(n)$ |
 | [6.5 正解与逆解](sec6-5.md) | 正解解 $B\ddot q=\tau-\tau'$（要数值积分），逆解只代入 | 正解用于仿真、逆解用于控制与轨迹校验 |
-| [6.6 轨迹的动态标度](sec6-6.md) | 力矩超限时拉长时间，轨迹形状不变 | $q=\bar q(r(t))$、$\tau_s=c^2\bar\tau_s$ |
-| [6.7 操作空间动力学](sec6-7.md) | 把关节空间模型搬到末端位姿 | $\ddot x_e=J_A\ddot q+\dot J_A\dot q$、$B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$、$\tau=J_A^{\mathrm T}\tau_x$ |
+| [6.6 轨迹的动态标度](sec6-6.md) | 保持路径，改变时间并重新检查力矩限制 | $q=\bar q(r(t))$；线性标度下动态分量按 $c^2$ 缩放，重力不变 |
+| [6.7 操作空间动力学](sec6-7.md) | 由关节动力学得到末端加速度与广义力的关系 | $\ddot x_e=J_A\ddot q+\dot J_A\dot q$；满行秩时可定义 $B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ |
 
-**与两条路线的接口**：6.4 用递推重算同一组 $B,C,g$；6.5 把「给定运动求力」与「给定力求运动」分开；
+**与两条路线的接口**：6.4 用递推计算给定状态和加速度所需的力矩，不必显式构造 $B,C,g$；6.5 把「给定运动求力」与「给定力求运动」分开；
 6.6 用逆解检查规划可行性；6.7 把模型交给第七章的操作空间控制。四节合起来回答一个问题：
 **本章的模型怎样用于仿真、规划与控制。**
 
@@ -107,6 +107,8 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\bo
 $\dot B-2C$ 的反对称性（Lyapunov 稳定性）、$\boldsymbol g$ 的显式表达（重力补偿）。
 如果这一章只记了公式而没理解这三条，第七编会变成「背控制律」。
 
+带着模型进入第七章前，再问一个具体问题：机械臂拿起螺丝刀后，实际负载与计算时的质量不同，仍只按原轨迹计算前馈力矩，关节会不会落后？已经有第五章的位置与速度测量，怎样把这些偏差变成修正力矩，又怎样判断修正后的运动稳定？
+
 ## 常见错误总表
 
 | # | 错误 | 纠正 |
@@ -115,8 +117,8 @@ $\dot B-2C$ 的反对称性（Lyapunov 稳定性）、$\boldsymbol g$ 的显式�
 | 2 | 势能写成 $\dot q$ 的函数 | $U=U(q)$，与速度无关 |
 | 3 | 把 $b_{ii}$ 当成连杆 $i$ 自己的惯量 | 是「锁住其他关节时关节 $i$ 看到的惯量」，含后面所有连杆 |
 | 4 | $C$ 当成唯一 | 只有 $C\dot q$ 唯一；Christoffel 选法只是其中一种 |
-| 5 | 把 $\dot q^{\mathrm T}N\dot q=0$ 当成 $N$ 反对称 | 前者对任意 $C$ 成立，后者只对 Christoffel 选法 |
-| 6 | 11 / 13 / 最小参数集混用 | 11 刚体参数；13 含摩擦；最小集更小 |
+| 5 | 把 $\dot q^{\mathrm T}N\dot q=0$ 当成 $N$ 反对称 | 前者对任意合法 $C$ 成立；Christoffel 选法保证后者，但并非唯一可能选法 |
+| 6 | 11 / 13 / 最小参数集混用 | 11 为原点惯量等惯性参数分组；13 含摩擦；平面臂 8 参数表达仍可约简为 5 个独立惯性组合 |
 | 7 | 平面臂 $b_{12}$ 漏 $k_{r_2}I_{m_2}$ | 转子 2 的总角速度含 $\dot\vartheta_1$ |
 | 8 | 末端力符号搞反 | $\boldsymbol h_e$ 是末端对环境；执行器需额外 $+J^{\mathrm T}\boldsymbol h_e$ |
 | 9 | 笛卡儿臂也套 Christoffel | $B$ 常数 ⇒ $C=0$，不必算 |

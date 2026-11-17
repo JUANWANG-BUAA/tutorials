@@ -9,23 +9,17 @@
 
 ## 7.3.1 为什么需要集中控制
 
-7.2 的所有方案都建立在同一个前提上：**耦合与重力可以塞进 $d$，靠反馈压住**。这个前提在两种
-工况下失效（课件 §8.5 开头，图 7.3-1）：
+**集中控制的起因**：7.2 中的分散控制方法本质上将关节间的动力学耦合视为外部干扰，并试图依靠局部反馈控制器的鲁棒性进行压制。然而在以下两种工况中，这一策略面临局限：
 
-1. **大操作速度 / 大加速度**：$C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}$ 与
-   $\Delta B\ddot{\boldsymbol q}$ 随速度平方增长，$d$ 不再是「小扰动」；
-2. **直接驱动**（$K_r=I$）：没有大减速比把耦合按 $1/k_r^2$、$1/k_r$ 缩小，耦合原封不动地
-   落在控制器面前。
+1. **高动态运行**：当操作速度或加速度较大时，非线性耦合项（如 $C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}$ 和 $\Delta B\ddot{\boldsymbol q}$）随运动状态剧烈变化，导致此时的耦合效应可能超出分散控制器的抑制能力。
+2. **特殊结构**：如无大传动比减速器的直接驱动系统，缺乏足够的减速比来将电机侧的惯量效应放大，从而无法有效减弱关节间的耦合。
+
+**集中控制的本质**：不再将耦合项视为待抑制的干扰，而是利用机械手的完整动力学模型进行显式计算，并将这些耦合项直接在控制律中进行补偿。控制器不再是分散的 $n$ 个独立回路，而是基于整机动力学的多输入多输出整体设计。
 
 ![课堂幻灯片 · 57:50：集中控制——用机械手动力学模型的具体信息补偿非线性耦合项](../assets/ch07/centralized-intro.jpg)
 
-**集中控制的定义**：不再把关节间耦合当干扰，而是**用整机动力学模型算出耦合项，主动补偿掉**。
-控制器因此是「多输入多输出」的一个整体，而不是 $n$ 个独立回路。
-
-::: note 「集中」是信息依赖，不是算法口味
-想补偿 $C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}$，就必须知道**全部关节**的
-$\boldsymbol q,\dot{\boldsymbol q}$；想补偿 $\Delta B\ddot{\boldsymbol q}$，就必须知道全部关节的
-加速度。这个计算天然是「集中」的——**不是设计者偏好集中，是耦合项本身把信息绑在一起**。
+::: note 「集中」意味着信息聚合
+为了按整机模型补偿耦合，控制器需要相关关节的状态信息；具体需要哪些测量量取决于控制律。例如本节的逆动力学控制使用实测 $\boldsymbol q,\dot{\boldsymbol q}$ 和期望加速度，并不要求实测关节加速度。模型准确时才能精确对消耦合项。
 :::
 
 集中控制的四种方法，按「用模型用到什么程度」排列：
@@ -40,6 +34,11 @@ $\boldsymbol q,\dot{\boldsymbol q}$；想补偿 $\Delta B\ddot{\boldsymbol q}$�
 <a id="sec-7.3.2"></a>
 
 ## 7.3.2 李雅普诺夫稳定性：够用的版本
+
+::: note 核心辨析：重力补偿 PD vs 逆动力学控制
+重力补偿 PD 只补偿重力项；本节对固定目标 $q_d$ 给出的稳定性证明使用了 $\dot q_d=0$。它也可用于时变参考，但不能直接套用该证明。逆动力学控制使用完整模型跟踪时变轨迹，精确对消以模型准确等条件为前提。
+:::
+
 
 把机械臂停在目标位置附近，轻轻偏离一点，再放开。我们希望它能回到目标，也希望这种判断有证明。本节用一个类似能量的函数 $V$，检查闭环运动是否会持续消耗偏差对应的能量。这里的函数不一定就是实际物理能量。录播 00:58:00 至 01:10:40 介绍了这个工具。
 
@@ -92,7 +91,8 @@ $$\dot V=\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\ddot{\boldsymbol q}
 +\frac12\dot{\boldsymbol q}^{\mathrm T}\dot B(\boldsymbol q)\dot{\boldsymbol q}
 -\dot{\boldsymbol q}^{\mathrm T}K_P\tilde{\boldsymbol q}.\tag{7.3-4}$$
 
-用动力学方程解出 $B\ddot{\boldsymbol q}$ 代进去：
+本节令 $\boldsymbol u=\boldsymbol\tau$ 为关节侧指令、$F=F_{\mathrm v}$ 为黏性摩擦矩阵，暂不包含库仑/静摩擦；否则光滑模型和不变集的讨论必须重写。全章误差统一为「期望减实际」。转动轴的力矩型 PD 增益单位分别为 $\mathrm{N\cdot m/rad}$ 与 $\mathrm{N\cdot m\cdot s/rad}$；它们不同于下一节加速度指令内的增益。现在用动力学方程解出 $B\ddot{\boldsymbol q}$，代入 $\dot V$：
+
 
 $$\dot V=\frac12\dot{\boldsymbol q}^{\mathrm T}\bigl(\dot B(\boldsymbol q)-2C(\boldsymbol q,\dot{\boldsymbol q})\bigr)\dot{\boldsymbol q}
 -\dot{\boldsymbol q}^{\mathrm T}F\dot{\boldsymbol q}
@@ -114,9 +114,9 @@ $$\dot V=-\dot{\boldsymbol q}^{\mathrm T}(F+K_D)\dot{\boldsymbol q}\le0.\tag{7.3
 
 **三个必须记住的限制**：
 
-1. **只对点对点有效**。推导里用了 $\dot{\boldsymbol q}_d=0$；跟踪时 $\boldsymbol q_d(t)$ 不是常数，
+1. **本证明只适用于固定目标**。推导里用了 $\dot{\boldsymbol q}_d=0$；跟踪时 $\boldsymbol q_d(t)$ 不是常数，
    $\dot{\tilde{\boldsymbol q}}\neq-\dot{\boldsymbol q}$，(7.3-4) 多出 $\tilde{\boldsymbol q}^{\mathrm T}K_P\dot{\boldsymbol q}_d$
-   一项，不能沿用这个证明。下一节给出用于跟踪的逆动力学控制。
+   一项，不能沿用这个证明。控制律可用于时变参考，但要另行分析跟踪误差；下一节给出逆动力学控制。
 2. **$\boldsymbol g$ 必须用实测 $\boldsymbol q$**。用 $\boldsymbol q_d$ 算等于开环补偿，位形偏差时补错。
 3. **它只补了重力**。$B\ddot{\boldsymbol q}$ 与 $C\dot{\boldsymbol q}$ 没补，速度一高就露馅。
 
@@ -153,15 +153,52 @@ $$\ddot{\boldsymbol q}=\ddot{\boldsymbol q}_d+K_D\dot{\tilde{\boldsymbol q}}+K_P
 \quad\Longrightarrow\quad
 \boxed{\ \ddot{\tilde{\boldsymbol q}}+K_D\dot{\tilde{\boldsymbol q}}+K_P\tilde{\boldsymbol q}=0\ }\tag{7.3-10}$$
 
-**一个 $n$ 自由度、强耦合、非线性的机械手，误差方程变成了 $n$ 个互不耦合的线性二阶系统**。
-只要 $K_P,K_D$ 正定，$\tilde{\boldsymbol q}\to0$ 且指数收敛。这是本章最漂亮的一行。
+若模型精确、驱动能实现所求力矩，且 $K_P,K_D$ 取正对角阵，则各轴误差方程互不耦合，每轴都是稳定的二阶系统，误差指数收敛。若增益是一般正定矩阵，不能直接说各轴互不耦合。
+
+回到第六章的均匀两连杆，看看这里的误差究竟改变了哪一项。仍在竖直平面内，两杆各长 $1\,\mathrm m$、质量均为 $1\,\mathrm{kg}$，质心惯量各为 $1/12\,\mathrm{kg\cdot m^2}$；$q_1$ 相对固定 $x$ 轴、$q_2$ 相对第一杆逆时针量起。沿用无接触、无摩擦、忽略转子与传动惯量的模型，令关节侧指令 $\tau=\boldsymbol u$。它的模型是
+
+$$B(q)=\begin{bmatrix}5/3+\cos q_2&1/3+\tfrac12\cos q_2\\1/3+\tfrac12\cos q_2&1/3\end{bmatrix}\,\mathrm{kg\cdot m^2},$$
+
+$$\boldsymbol g(q)=(1\,\mathrm{kg})(9.81\,\mathrm{m/s^2})(1\,\mathrm m)
+\begin{bmatrix}\tfrac32\cos q_1+\tfrac12\cos(q_1+q_2)\\\tfrac12\cos(q_1+q_2)\end{bmatrix},$$
+
+$$C(q,\dot q)\dot q=(1\,\mathrm{kg\cdot m^2})
+\begin{bmatrix}-\tfrac12\sin q_2(2\dot q_1\dot q_2+\dot q_2^2)\\\tfrac12\sin q_2\dot q_1^2\end{bmatrix}.$$
+
+其中速度项的单位也是 $\mathrm{N\cdot m}$。现在用实际测得的 $q,\dot q$ 算模型，定义 $e=q_d-q$，即上式中的 $\tilde{\boldsymbol q}$。若实际位置落后，$e$ 为正；控制器不是只按计划好的轨迹算一遍力矩，而是每一时刻根据这个误差重新算。取 $K_P=25I\,\mathrm{s^{-2}}$、$K_D=10I\,\mathrm{s^{-1}}$，使 $\ddot q_d+K_D\dot e+K_Pe$ 的单位为 $\mathrm{rad/s^2}$。
+
+例如某时刻实际 $q=q_A=(0,\pi/2)$、$\dot q=0$，而期望 $q_d=q_A+(0.01,0)\,\mathrm{rad}$、$\dot q_d=\ddot q_d=0$。这时 $e=(0.01,0)\,\mathrm{rad}$、$\dot e=0$，反馈要求的加速度为 $(0.25,0)\,\mathrm{rad/s^2}$，因此
+
+$$\tau=\begin{bmatrix}5/3&1/3\\1/3&1/3\end{bmatrix}\,(0.25,0)^{\mathrm T}
++\begin{bmatrix}14.715\\0\end{bmatrix}
+\approx\begin{bmatrix}15.132\\0.0833\end{bmatrix}\,\mathrm{N\cdot m}.$$
+
+矩阵的单位是 $\mathrm{kg\cdot m^2}$，加速度列的单位是 $\mathrm{rad/s^2}$。相比只保持 $q_A$ 的 $(14.715,0)\,\mathrm{N\cdot m}$，新增力矩让第一关节追赶；第二关节也得到耦合补偿，并不是误差为零就不出力。
+
+把同一个控制律完整代回实际对象，消项过程是
+
+$$\begin{aligned}
+B(q)\ddot q+C(q,\dot q)\dot q+\boldsymbol g(q)
+&=B(q)(\ddot q_d+10\dot e+25e)+C(q,\dot q)\dot q+\boldsymbol g(q),\\
+B(q)(\ddot q-\ddot q_d-10\dot e-25e)&=0,\\
+\ddot e+10\dot e+25e&=0.
+\end{aligned}$$
+
+由于 $B$ 正定可逆，两通道各自的特征方程为
+
+$$\lambda^2+(10\,\mathrm{s^{-1}})\lambda+25\,\mathrm{s^{-2}}=0,
+\qquad \lambda_1=\lambda_2=-5\,\mathrm{s^{-1}}.$$
+
+每个通道都是临界阻尼，$e_i(t)=(a_i+b_it)e^{-5t}$（这里 $t$ 以秒计，常数由初始误差决定）。非零初始误差会逐渐衰减，不会在施加控制律的一瞬间消失；只有初始位置和速度误差都为零，理想模型才一直保持零误差。
+
+这一结论假设**模型精确、无接触无摩擦、状态准确可得、理想连续时间更新且力矩不饱和**，也就是没有有限采样、延迟或执行器动态造成的偏差。数字控制器实际按周期采样，不能仅凭连续时间特征根就断言离散闭环有同样的响应。若实际质量不同、出现接触或力矩被限幅，上面的等号便不能逐项成立；需要先写出剩下的项，再讨论误差，而不能继续照用 $-5$ 的特征根。
 
 **它与 7.2.7 计算转矩前馈的差别，只在「用谁的状态」**：
 
 | | 计算转矩前馈 | 逆动力学控制 |
 |:--|:--|:--|
 | 模型自变量 | $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$ | $\boldsymbol q,\dot{\boldsymbol q}$ |
-| 非线性对消 | 近似（跟踪误差小时才准） | 精确（大范围） |
+| 非线性对消 | 近似（跟踪误差小时才准） | 模型精确且力矩可实现时精确 |
 | 计算 | 可离线预算 | 每周期在线算 $B,\boldsymbol n$ |
 | 本质 | 前馈 | 反馈线性化 |
 
@@ -171,10 +208,8 @@ $$\ddot{\boldsymbol q}=\ddot{\boldsymbol q}_d+K_D\dot{\tilde{\boldsymbol q}}+K_P
    误差方程右边多出不确定性项（见 7.3.5）。
 2. **必须实时算整机模型**。$B$ 与 $\boldsymbol n$ 每周期都要算，$O(n^2)$ 甚至 $O(n^3)$；
    用牛顿–欧拉递推可降到 $O(n)$（第六章 6.4），但仍是重计算。
-3. **采样要快**。「连续时间精确对消」在离散实现里变成「用上一拍的状态算这一拍的力矩」，
-   采样太慢等效为时滞，对消失效。
-4. **忽略了执行器动态**。模型里没有电机电感、电流环、减速器柔度；高速时这些「未建模动态」
-   会跳出来。
+3. **采样与延迟须分析**。采样控制在采样时刻用当前状态计算力矩，并保持到下一次更新；计算和通信还可能增加延迟，但不是必然「上一拍算这一拍」。即使没有额外延迟，保持期间状态变化也会破坏连续时间逐点对消，须检查离散闭环。
+4. **未建模动态的影响**：该模型仅考虑了刚体动力学，而忽略了电机的电感、电流环动态、以及减速器可能存在的柔性等因素。在高速运动时，这些被忽略的「未建模动态」会对控制性能产生显著影响，导致理想的非线性对消失效。
 
 ::: note 为什么说它是「反馈线性化」
 $\boldsymbol u$ 的表达式里显式含有实测的 $\boldsymbol q,\dot{\boldsymbol q}$，所以消掉非线性靠的是
@@ -207,22 +242,30 @@ $$\boxed{\ \boldsymbol u=\hat B(\boldsymbol q)\boldsymbol y+\hat{\boldsymbol n}(
 $$\boldsymbol y=\ddot{\boldsymbol q}_d+K_D\dot{\tilde{\boldsymbol q}}+K_P\tilde{\boldsymbol q},
 \qquad
 \boldsymbol\omega=\frac{\rho}{\|\boldsymbol z\|}\boldsymbol z,\qquad
-\boldsymbol z=D^{\mathrm T}Q\boldsymbol\xi,\tag{7.3-13}$$
+\boldsymbol z=\hat B^{-\mathrm T}D^{\mathrm T}Q\boldsymbol\xi,\qquad D=\begin{bmatrix}0\\I\end{bmatrix}.\tag{7.3-13}$$
 
-其中 $\boldsymbol\xi=[\tilde{\boldsymbol q}^{\mathrm T},\dot{\tilde{\boldsymbol q}}^{\mathrm T}]^{\mathrm T}$
-是误差状态，$Q$ 是李雅普诺夫函数里的正定矩阵，$D$ 选出「需要鲁棒压制」的状态组合，
-$\rho$ 是**不确定项的上界**（$\rho\ge\|\boldsymbol\eta\|$）。
+这里 $\boldsymbol\xi=[\tilde{\boldsymbol q}^{\mathrm T},\dot{\tilde{\boldsymbol q}}^{\mathrm T}]^{\mathrm T}$，令 $A=\begin{bmatrix}0&I\\-K_P&-K_D\end{bmatrix}$ 为 Hurwitz 矩阵，选 $P\succ0$，由 $A^{\mathrm T}Q+QA=-P$ 求 $Q\succ0$。$\hat B$ 须可逆。式 (7.3-11) 的 $\eta$ 与这里的 $\omega$ 都是力矩型量，因此 $z$ 必须包含惯量逆的转置；不能把加速度型补偿的方向公式直接用于外加力矩。
 
-**几何图像**：$\boldsymbol z=D^{\mathrm T}Q\boldsymbol\xi=0$ 是一个**滑动子空间**（图 7.3-5）。
-控制项 $\boldsymbol\omega$ 在子空间外把状态往子空间里推，进入子空间后沿它滑向原点。$\rho$ 越大，
-推得越狠；不确定越大，$\rho$ 必须越大。
+将式 (7.3-12) 代入 $\hat B\ddot q+\hat n+\eta=u$，可逐项得到
 
 ![课堂幻灯片 · 104:50：滑动子空间 $z=D^{\mathrm T}Q\xi=0$——轨迹被引向滑模面，再沿它趋向原点](../assets/ch07/sliding-subspace.jpg)
+$$\ddot{\tilde q}+K_D\dot{\tilde q}+K_P\tilde q=\hat B^{-1}(\eta-\omega),\qquad
+\dot\xi=A\xi+D\hat B^{-1}(\eta-\omega).$$
+
+取 $V=\xi^{\mathrm T}Q\xi$，则
+
+$$\dot V=-\xi^{\mathrm T}P\xi+2z^{\mathrm T}(\eta-\omega)
+\le-\xi^{\mathrm T}P\xi+2\|z\|(\|\eta\|-\rho).$$
+
+因此必须在所分析工作域内建立有效的界 $\rho\ge\|\eta\|$。由于 $\eta$ 还可能含实际加速度，不能只凭「参数误差有界」就断言已有可用的力矩界；需结合运动与驱动范围检查。理想不连续律在 $z=0$ 按集合值解释，不能直接除以零。若解存在、轨迹留在界有效的区域且力矩可实现，上式给出误差衰减的依据。
+
+**几何图像**：课件用 $D^{\mathrm T}Q\xi=0$ 表示滑动子空间。本文外加力矩型写法的 $z=\hat B^{-\mathrm T}D^{\mathrm T}Q\xi$ 与它有相同的零集合，但方向一般不同；上面的导数计算说明了为什么要这样配套。课件示意的是理想切换运动，不能据图就断言有限采样、饱和执行器也精确到达并沿面滑动。
+
 
 **问题是抖振**。$\boldsymbol\omega=\rho\boldsymbol z/\|\boldsymbol z\|$ 是一个**符号函数**：
 $\boldsymbol z$ 一过零，控制量立刻反向，实际执行器跟不上，就在滑模面附近高频抖振（图 7.3-6）。
 
-![课堂幻灯片 · 105:40：边界层——在 $\|z\|<\varepsilon$ 内把符号函数换成线性函数，消除抖振但只剩有界误差](../assets/ch07/boundary-layer.jpg)
+![课堂幻灯片 · 105:40：边界层——在 ‖z‖ < ε 内用线性项替代归一化切换项，以减轻抖振；结论改为误差有界](../assets/ch07/boundary-layer.jpg)
 
 **工程修正**：在滑模面附近设一个**边界层** $\varepsilon$：
 
@@ -232,8 +275,11 @@ $$\boldsymbol\omega=
 \dfrac{\rho}{\varepsilon}\boldsymbol z, & \|\boldsymbol z\|<\varepsilon.
 \end{cases}\tag{7.3-14}$$
 
-代价是：**误差不再收敛到零，只收敛到边界层内**；$\varepsilon$ 越小误差越小，但抖振越明显。
-这是「渐近稳定」与「无抖振」之间的硬取舍。
+边界层内有 $2z^{\mathrm T}(\eta-\omega)\le2\rho(r-r^2/\varepsilon)\le\rho\varepsilon/2$，其中 $r=\|z\|<\varepsilon$。若 $\rho$ 为有限常数上界，则
+
+$$\dot V\le-\lambda_{\min}(P)\|\xi\|^2+\rho\varepsilon/2.$$
+
+这给出最终有界的估计，而不是保证误差恰好落在 $\|z\|<\varepsilon$ 或必定非零。由 $\lambda_{\min}(Q)\|\xi\|^2\le V\le\lambda_{\max}(Q)\|\xi\|^2$ 可把估计换成状态范数界；该界还取决于增益和不确定性大小，不能把 $\varepsilon$ 直接当成位置误差。较小的边界层通常减小理论残差界，但会增大局部斜率、增加对噪声和采样的敏感性；平滑切换也不保证真实系统完全没有抖振。
 
 ::: think 鲁棒控制的一句话
 **「一年四季穿同一件衣服」**——老师 01:29:28 的原话。控制器只有一套，设计时把温度（参数）变化的
@@ -260,7 +306,10 @@ $Y$ 是已知的回归矩阵，$\boldsymbol\pi$ 是未知但**常数**的动力�
    $$\dot{\boldsymbol q}_r=\dot{\boldsymbol q}_d+\Lambda\tilde{\boldsymbol q},\qquad
    \boldsymbol\sigma=\dot{\boldsymbol q}_r-\dot{\boldsymbol q}
    =\dot{\tilde{\boldsymbol q}}+\Lambda\tilde{\boldsymbol q},\qquad \Lambda\succ0.\tag{7.3-16}$$
-2. 用 $\dot{\boldsymbol q}_r,\ddot{\boldsymbol q}_r$ 代替真实速度/加速度，构造回归矩阵：
+2. 为看清参数消去过程，先考虑不含摩擦的模型，构造满足
+   $$Y(\boldsymbol q,\dot{\boldsymbol q},\dot{\boldsymbol q}_r,\ddot{\boldsymbol q}_r)\boldsymbol\pi
+   =B\ddot{\boldsymbol q}_r+C\dot{\boldsymbol q}_r+\boldsymbol g$$
+   的回归矩阵，取控制律
    $$\boldsymbol u=Y(\boldsymbol q,\dot{\boldsymbol q},\dot{\boldsymbol q}_r,\ddot{\boldsymbol q}_r)
    \hat{\boldsymbol\pi}+K_D\boldsymbol\sigma.\tag{7.3-17}$$
 3. 参数**在线更新**：
@@ -270,25 +319,69 @@ $Y$ 是已知的回归矩阵，$\boldsymbol\pi$ 是未知但**常数**的动力�
 
 ![课堂幻灯片 · 114:10：自适应控制的李雅普诺夫函数与参数更新律](../assets/ch07/adaptive-lyapunov.jpg)
 
-取
+用 $\tilde{\boldsymbol\pi}=\hat{\boldsymbol\pi}-\boldsymbol\pi$ 表示参数估计误差。由 $\boldsymbol\sigma=\dot{\boldsymbol q}_r-\dot{\boldsymbol q}$，结合动力学方程和控制律，得
 
-$$V=\frac12\boldsymbol\sigma^{\mathrm T}B(\boldsymbol q)\boldsymbol\sigma
-+\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\tilde{\boldsymbol q}
-+\frac12\tilde{\boldsymbol\pi}^{\mathrm T}K_\pi\tilde{\boldsymbol\pi},\qquad
-\tilde{\boldsymbol\pi}=\hat{\boldsymbol\pi}-\boldsymbol\pi,\tag{7.3-19}$$
+$$B\dot{\boldsymbol\sigma}+C\boldsymbol\sigma
+=-Y\tilde{\boldsymbol\pi}-K_D\boldsymbol\sigma.$$
 
-求导并用 $\dot B-2C$ 的反对称性，得
+取李雅普诺夫函数
 
-$$\dot V=-\boldsymbol\sigma^{\mathrm T}F\boldsymbol\sigma
--\tilde{\boldsymbol q}^{\mathrm T}K_D\tilde{\boldsymbol q}
--\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\Lambda\tilde{\boldsymbol q}
-+\tilde{\boldsymbol\pi}^{\mathrm T}\bigl(K_\pi\dot{\hat{\boldsymbol\pi}}-Y^{\mathrm T}\boldsymbol\sigma\bigr).\tag{7.3-20}$$
+$$V=\frac12\boldsymbol\sigma^{\mathrm T}B\boldsymbol\sigma
++\frac12\tilde{\boldsymbol\pi}^{\mathrm T}K_\pi\tilde{\boldsymbol\pi},
+\qquad K_D,K_\pi\succ0.\tag{7.3-19}$$
 
-**最后一项被更新律 (7.3-18) 消掉**，于是 $\dot V\le0$。由拉萨尔原理可证：
-$\boldsymbol\sigma\to0$、$\tilde{\boldsymbol q}\to0$、$\dot{\tilde{\boldsymbol q}}\to0$——
-**跟踪误差全局收敛**。
+利用 $\dot B-2C$ 的结构性质，并注意真实参数 $\boldsymbol\pi$ 为常数，逐项求导得到
 
-![课堂幻灯片 · 117:40：自适应控制律的三部分——$Y\hat\pi$ 模型补偿、$K_D\sigma$ 稳定化、$\hat\pi$ 在线更新](../assets/ch07/adaptive-structure.jpg)
+$$\dot V=-\boldsymbol\sigma^{\mathrm T}K_D\boldsymbol\sigma
++\tilde{\boldsymbol\pi}^{\mathrm T}(K_\pi\dot{\hat{\boldsymbol\pi}}-Y^{\mathrm T}\boldsymbol\sigma).\tag{7.3-20}$$
+
+更新律 (7.3-18) 恰好消去第二项，所以 $\dot V=-\boldsymbol\sigma^{\mathrm T}K_D\boldsymbol\sigma\le0$。在惯量一致正定、参考轨迹及闭环信号满足有界性等常用条件下，利用 Barbalat 引理可得 $\boldsymbol\sigma\to0$；再由 $\dot{\tilde{\boldsymbol q}}+\Lambda\tilde{\boldsymbol q}=\boldsymbol\sigma$ 得跟踪误差趋于零。
+
+**把课件保留的摩擦和位置误差项也写出来。** 课件 §8.5.4（第 9 周原帧 `s0664.jpg`、`s0667.jpg`–`s0671.jpg`、`s0679.jpg`–`s0697.jpg`）还给出下面一条推导。它与上面的简化证明相容，但不能只贴截图、略去中间的消项。
+
+先假定模型参数已知，令
+
+$$\boldsymbol u=B\ddot{\boldsymbol q}_r+C\dot{\boldsymbol q}_r+F\dot{\boldsymbol q}_r+\boldsymbol g+K_D\boldsymbol\sigma.$$
+
+代入含黏性摩擦的对象，得到
+
+$$B\dot{\boldsymbol\sigma}+C\boldsymbol\sigma+(F+K_D)\boldsymbol\sigma=0.$$
+
+按课件的整定取 $\Lambda,K_D$ 为正对角阵，$F\succeq0$，在动能型项之外加入位置误差项：
+
+$$V_c=\frac12\boldsymbol\sigma^{\mathrm T}B\boldsymbol\sigma
++\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\tilde{\boldsymbol q}.$$
+
+这相当于课件候选函数中的 $M=2\Lambda K_D$。利用 $\dot B-2C$，再把 $\boldsymbol\sigma=\dot{\tilde{\boldsymbol q}}+\Lambda\tilde{\boldsymbol q}$ 展开，得
+
+$$\begin{aligned}
+\dot V_c&=-\boldsymbol\sigma^{\mathrm T}(F+K_D)\boldsymbol\sigma
++2\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\dot{\tilde{\boldsymbol q}}\\
+&=-\boldsymbol\sigma^{\mathrm T}F\boldsymbol\sigma
+-\dot{\tilde{\boldsymbol q}}^{\mathrm T}K_D\dot{\tilde{\boldsymbol q}}
+-\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\Lambda\tilde{\boldsymbol q}.
+\end{aligned}$$
+
+第二行的关键是交叉项抵消，而不是丢掉摩擦或位置误差。若增益只是任意正定矩阵，不能未经检查就沿用 $M=2\Lambda K_D$，因为该乘积未必对称。
+
+参数未知时，把 $F\dot{\boldsymbol q}_r$ 也纳入回归项，使 $Y\boldsymbol\pi=B\ddot{\boldsymbol q}_r+C\dot{\boldsymbol q}_r+F\dot{\boldsymbol q}_r+\boldsymbol g$，仍用 (7.3-17) 和 (7.3-18)。此时误差方程右端多出 $-Y\tilde{\boldsymbol\pi}$，而
+
+$$V_a=V_c+\frac12\tilde{\boldsymbol\pi}^{\mathrm T}K_\pi\tilde{\boldsymbol\pi}$$
+
+的导数为
+
+$$\begin{aligned}
+\dot V_a={}&-\boldsymbol\sigma^{\mathrm T}F\boldsymbol\sigma
+-\dot{\tilde{\boldsymbol q}}^{\mathrm T}K_D\dot{\tilde{\boldsymbol q}}
+-\tilde{\boldsymbol q}^{\mathrm T}\Lambda K_D\Lambda\tilde{\boldsymbol q}\\
+&+\tilde{\boldsymbol\pi}^{\mathrm T}(K_\pi\dot{\hat{\boldsymbol\pi}}-Y^{\mathrm T}\boldsymbol\sigma).
+\end{aligned}$$
+
+更新律恰好消去最后一行，留下三个非正项。这里用的是未知但固定的参数，因而 $\dot{\tilde{\boldsymbol\pi}}=\dot{\hat{\boldsymbol\pi}}$；结合前述有界性条件才能得到跟踪收敛。这个含摩擦的回归矩阵与前面的无摩擦矩阵结构不同，实际实现时须选定一套模型，不能只给无摩擦的 $Y$ 套上含摩擦的导数结论。
+
+课件最后还区分了**直接自适应**与**间接自适应**：这里在线调整 $\hat{\boldsymbol\pi}$，是为了让控制律满足跟踪目标，不是先保证识别出真实参数再据此设计控制器。因此，即使某时刻 $Y(\hat{\boldsymbol\pi}-\boldsymbol\pi)=0$，也不能反推 $\hat{\boldsymbol\pi}=\boldsymbol\pi$；回归矩阵可能有非零零空间，参数收敛还取决于其结构以及期望、实际轨迹提供的激励。这正是下面「跟踪收敛不等于参数辨识成功」的原因。
+
+![课堂幻灯片 · 117:40：自适应控制律的三部分——Y·π̂ 模型补偿、K_D·σ 稳定化、π̂ 在线更新](../assets/ch07/adaptive-structure.jpg)
 
 **必须说清的三件事**：
 
@@ -299,37 +392,30 @@ $\boldsymbol\sigma\to0$、$\tilde{\boldsymbol q}\to0$、$\dot{\tilde{\boldsymbol
    （由期望轨迹与误差算出），不是实测 $\ddot{\boldsymbol q}$——这是这套设计最实用的一点。
 3. **计算量比逆动力学更大**：每周期要算 $Y$、更新 $\hat{\boldsymbol\pi}$、再算控制律。
 
-::: think 鲁棒 vs 自适应
-**鲁棒 = 一年四季穿同一件衣服**：一套固定控制器，考虑最坏情况，保证能活，但不舒服。
-**自适应 = 换季换衣服**：控制器随参数在线调整，跟踪更准，但需要持续激励、计算更重，
-且参数估计可能漂移。工程上先问：**参数变化是「有界未知」还是「慢变可估」？** 前者鲁棒，
-后者自适应。
+::: think 鲁棒与自适应各依赖什么
+这里的鲁棒控制利用不确定项的已知上界设计补偿；加入边界层后的结论是误差进入有界区域。自适应控制利用已知的参数线性模型在线调整参数估计。对本节理想的固定未知参数模型，跟踪误差收敛不等于参数估计收敛到真值；要进一步保证参数收敛，还需持续激励等条件。两种方法对模型和扰动的假设不同，不能仅凭“参数变化快慢”断定该选哪一种。
 :::
-
 <a id="sec-7.3.7"></a>
 
 ## 7.3.7 实现要点与小结
 
 **四条实现约束**（对逆动力学/鲁棒/自适应都成立）：
 
-1. **模型要在线算**。$B,\boldsymbol n,Y$ 每周期都要算；用牛顿–欧拉递推降到 $O(n)$。
-2. **必须有限幅**。控制律无上界，误差大时算出的 $\boldsymbol u$ 会超过电机能力；限幅后
-   「精确对消」失效，鲁棒/自适应的假设也要相应放宽。
-3. **采样要够快**。模型对消的精度随采样周期下降；一般要求控制周期比最快闭环极点快 10 倍以上。
-4. **参数要先辨识**。$\hat{\boldsymbol\pi}$ 的初值越准，自适应/鲁棒的瞬态越小。
+1. **按所选算法评估计算量**。逆动力学可用牛顿–欧拉递推计算；显式构造 $B$ 或整个回归矩阵 $Y$ 的成本不能一律写成 $O(n)$。
+2. **检查限幅**。误差大时所求 $u$ 可能超过驱动能力；限幅后精确误差方程及鲁棒/自适应证明不再原样成立，不能只把原假设「放宽」就保留结论。
+3. **检查离散实现**。采样、保持和延迟共同改变闭环；「采样频率高于闭环带宽约十倍」至多是起始经验，不能代替离散稳定性分析，也不能保证周期缩短时误差单调下降。
+4. **区分参数假设**。自适应推导允许未知的固定参数，但不自动涵盖突变负载或持续变化的参数；初值与不确定界应按实际对象设置，不能保证初值越准所有瞬态指标都单调改善。
 
-- **一句话主线**：**重力补偿 PD（只补 $\boldsymbol g$）→ 逆动力学（全补，模型精确）→
-  鲁棒（全补 + 误差界）→ 自适应（全补 + 参数在线估）**，四步是「模型越用越多、假设越来越弱」。
+- **一句话主线**：重力补偿 PD 只补偿 $\boldsymbol g$；逆动力学使用整机模型；鲁棒控制还利用不确定性上界，自适应控制在线更新参数估计。
 - **一个工具**：李雅普诺夫函数 + 拉萨尔原理；核心技巧是用 $\dot B-2C$ 的反对称性消掉交叉项。
-- **一个取舍**：模型用得越多，性能越好，但对模型/算力/采样的要求越高。
+- **一个取舍**：模型、扰动上界、参数线性结构与计算能力分别限制不同控制律的适用范围。
 
 ::: think 常见错误清单
 1. **重力补偿 PD 拿来做轨迹跟踪**：它的稳定性证明用了 $\dot{\boldsymbol q}_d=0$，跟踪时证不出来。
 2. **逆动力学里把 $\boldsymbol q$ 写成 $\boldsymbol q_d$**：一写就退回前馈，不再是反馈线性化。
-3. **鲁棒项无限加大 $\rho$**：$\rho$ 超过实际不确定界只会加剧抖振，不会更稳。
-4. **忘了边界层的代价**：加边界层后误差只到「有界」，不是零；答辩/报告里不能写成渐近收敛。
-5. **以为自适应能辨识出真参数**：更新律只保证跟踪误差收敛，参数可能漂移；需要持续激励
-   才可能辨识。
+3. **鲁棒项无限加大 $\rho$**：界必须足够覆盖不确定性，但更大补偿还受抖振、噪声和饱和约束，不能据此保证实际闭环更稳定。
+4. **忘了边界层的代价**：一般只能保证最终有界，不能无条件宣称渐近收敛；但这也不表示每条轨迹的最终误差必定非零。
+5. **以为自适应一定辨识真参数**：理想证明给出参数估计有界和跟踪收敛；真值收敛还需可辨识性与持续激励。噪声和未建模扰动下还可能出现参数漂移，不能混作理想定理结论。
 6. **忽略限幅**：限幅是逆动力学最常见的失效原因，也是鲁棒/自适应证明里最容易被忽略的假设。
 :::
 

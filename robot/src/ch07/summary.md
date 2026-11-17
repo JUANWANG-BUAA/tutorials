@@ -23,8 +23,7 @@ $$K_r^{-1}\bar B K_r^{-1}\ddot{\boldsymbol q}_m+F_m\dot{\boldsymbol q}_m+d=\bold
 d=K_r^{-1}\Delta B K_r^{-1}\ddot{\boldsymbol q}_m
 +K_r^{-1}C K_r^{-1}\dot{\boldsymbol q}_m+K_r^{-1}\boldsymbol g \tag{7.2-3,7.2-4}$$
 
-**一句话**：把 $B$ 拆成「标称对角阵 $\bar B$ + 位形依赖 $\Delta B$」，耦合、重力、库仑摩擦全塞进
-$d$，剩下 $n$ 个线性定常单轴系统。
+**一句话**：把 $B$ 拆成标称对角阵 $\bar B$ 与偏差 $\Delta B$，再把惯量偏差、速度耦合和重力并入 $d$。上式保留折算黏性摩擦；若考虑库仑摩擦，还须将其计入扰动。
 
 ### 分散控制：三种控制器与根轨迹
 
@@ -32,7 +31,7 @@ $$C_p=K_P,\qquad C_v(s)=K_v\frac{1+sT_v}{s},\qquad C_A=1,
 \qquad C(s)=K_c\frac{1+sT_c}{s}\ (\text{PI}) \tag{7.2-6}$$
 
 $$L(s)=\frac{k_mK_Pk_{tp}(1+sT_p)}{s^2(1+sT_m)},\qquad
-T_p<T_m\ \text{不稳定},\quad T_p>T_m\ \text{稳定},\quad T_p\gg T_m\ \text{更快} \tag{7.2-8}$$
+T_p<T_m\ \text{不稳定},\quad T_p>T_m\ \text{稳定}\quad(\text{正参数模型}). \tag{7.2-8}$$
 
 $$X_R=K_Pk_{tp},\qquad T_R=\max\left\{T_p,\frac{1}{\zeta\omega_n}\right\} \tag{7.2-12,7.2-13}$$
 
@@ -45,17 +44,16 @@ $$\boldsymbol q_m=K_r\boldsymbol q,\quad
 
 $$\boldsymbol\tau=K_rK_tR_a^{-1}(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q}) \tag{7.2-15}$$
 
-$$\text{三条假设（}K_r\gg I,\ R_a\to0,\ \tau\ \text{小）}
-\Longrightarrow G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q} \tag{7.2-16}$$
+$$|R_{a_i}i_{a_i}|\ll|k_{v_i}k_{r_i}\dot q_i|\quad\text{（每个需近似的关节）}
+\quad\Longrightarrow\quad G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}. \tag{7.2-16}$$
 
-$$\text{加电流环：}\ \boldsymbol\tau=K_rK_tG_i\boldsymbol v_c \tag{7.2-17}$$
+$$\text{理想电流环：}\ \boldsymbol\tau=K_rK_tG_i\boldsymbol v_c.$$
 
-**一句话**：$\tau$ 与 $v_c$ 之间隔着 $K_vK_r\dot{\boldsymbol q}$——有它就得整机一起算；
-用电流环消掉它才是力矩源；用三条假设忽略它就掉进速度源。
+电阻压降足够小时，电压近似决定速度；电流内环则可近似按指令控制电机力矩。整机动力学中的耦合是否需要补偿，仍取决于任务与实际参数。
 
 ### 前馈：计算转矩前馈
 
-$$\boldsymbol v_{c,\rm ff}=R_aK_t^{-1}\Bigl[
+$$\boldsymbol v_{c,\rm ff}=G_v^{-1}R_aK_t^{-1}\Bigl[
 K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 +K_r^{-1}C(\boldsymbol q_d,\dot{\boldsymbol q}_d)K_r^{-1}\dot{\boldsymbol q}_{md}
 +K_r^{-1}\boldsymbol g(\boldsymbol q_d)\Bigr] \tag{7.2-18}$$
@@ -84,7 +82,7 @@ $$\boldsymbol u=\hat B\boldsymbol y+\hat{\boldsymbol n}+\boldsymbol\omega,\qquad
 \boldsymbol y=\ddot{\boldsymbol q}_d+K_D\dot{\tilde{\boldsymbol q}}+K_P\tilde{\boldsymbol q},
 \qquad
 \boldsymbol\omega=\frac{\rho}{\|\boldsymbol z\|}\boldsymbol z,\quad
-\boldsymbol z=D^{\mathrm T}Q\boldsymbol\xi \tag{7.3-12,7.3-13}$$
+\boldsymbol z=\hat B^{-\mathrm T}D^{\mathrm T}Q\boldsymbol\xi,\quad D=[0;I] \tag{7.3-12,7.3-13}$$
 
 $$\text{边界层：}\ \boldsymbol\omega=
 \begin{cases}
@@ -92,7 +90,7 @@ $$\text{边界层：}\ \boldsymbol\omega=
 (\rho/\varepsilon)\boldsymbol z, & \|\boldsymbol z\|<\varepsilon
 \end{cases} \tag{7.3-14}$$
 
-**一句话**：模型补偿 + 线性反馈 + 鲁棒项；滑动子空间 $z=0$，边界层把「抖振」换成「有界误差」。
+**一句话**：模型补偿 + 线性反馈 + 力矩型鲁棒项。$Q$ 解 $A^{\mathrm T}Q+QA=-P$；$\rho$ 须覆盖力矩不确定界。本文 $z=0$ 与课件 $D^{\mathrm T}Q\xi=0$ 是相同零集合，但补偿方向的惯量因子不可省。边界层一般只给最终有界保证，不保证误差必定非零；完整推导见 [7.3.5](sec7-3.md#sec-7.3.5)。
 
 ### 集中控制 · 自适应
 
@@ -112,36 +110,33 @@ $$\boldsymbol u=Y(\boldsymbol q,\dot{\boldsymbol q},\dot{\boldsymbol q}_r,\ddot{
 $$\boldsymbol x=\begin{bmatrix}\boldsymbol p\\\boldsymbol\phi\end{bmatrix},\quad
 \dot{\boldsymbol x}=J_A\dot{\boldsymbol q},\quad
 B_x\ddot{\boldsymbol x}+C_x\dot{\boldsymbol x}+\boldsymbol g_x
-=\boldsymbol\tau_x-\boldsymbol h_e \tag{7.4-1,7.4-3}$$
+=\boldsymbol\tau_x-\boldsymbol h_A,\quad \boldsymbol h_A=T_A^{\mathrm T}\boldsymbol h_e,\ J=T_AJ_A \tag{7.4-1,7.4-3}$$
 
 $$\text{转置雅可比：}\ \boldsymbol F=K_P(\boldsymbol x_d-\boldsymbol x),\quad
 \boldsymbol\tau=J_A^{\mathrm T}\boldsymbol F \tag{7.4-5}$$
 
 $$\text{重力补偿 PD：}\ \boldsymbol u=\boldsymbol g+J_A^{\mathrm T}K_P\tilde{\boldsymbol x}
-+J_A^{\mathrm T}K_DJ_A\dot{\boldsymbol q} \tag{7.4-7}$$
+-J_A^{\mathrm T}K_DJ_A\dot{\boldsymbol q}. \tag{7.4-7}$$
 
 $$\text{逆动力学：}\ \boldsymbol y=J_A^{-1}\bigl(\ddot{\boldsymbol x}_d+K_D\dot{\tilde{\boldsymbol x}}
 +K_P\tilde{\boldsymbol x}-\dot J_A\dot{\boldsymbol q}\bigr),\quad
 \boldsymbol u=B\boldsymbol y+\boldsymbol n \tag{7.4-11}$$
 
-### 九种方案的误差量级（快轨迹）
+### 课堂仿真的末端位置误差量级（快轨迹）
 
 | 方案 | 误差量级 | 方案 | 误差量级 |
 |:--|:--|:--|:--|
-| A 位置 + 速度（分散） | $\sim0.2$ rad | F 重力补偿 PD（集中） | 跟踪不如 C/D |
-| C A + 分散前馈 | $<0.01$ rad | G 逆动力学 | $\sim10^{-4}$ rad |
-| E C + 计算转矩前馈 | $\sim0.005$ rad | H 鲁棒 / I 自适应 | $10^{-3}$–$10^{-4}$ rad |
+| A 位置 + 速度（分散） | 约 $0.2\,\mathrm m$ | F 重力补偿 PD + 速度前馈（集中） | 本例跟踪不如 C/D |
+| C A + 分散前馈 | $10^{-2}\,\mathrm m$ | G 逆动力学 | 精确模型下 $10^{-4}\,\mathrm m$ |
+| E 计算转矩前馈 | 约 $0.005\,\mathrm m$ | H 鲁棒 / J 自适应 | $10^{-3}$–$10^{-4}\,\mathrm m$ |
+
+原图纵轴为末端 $\tilde x,\tilde y$，不是关节角误差；原方案标签从 H 跳至 J，自适应不能改标为 I。这些量级只属于课堂所示工况，不能作为其他机器人的选型阈值；比较条件见 [7.5](sec7-5.md)。
 
 ## 三句话总结
 
-1. **分散 = 把耦合当干扰，集中 = 把耦合算出来抵消。** 分散的合法性来自驱动（大减速比 + 小电枢
-   电阻 + 小转矩 ⇒ $\dot q\propto v_c$）；集中的合法性来自模型（$B,C,\boldsymbol g$ 可算）。
-   选哪条先看驱动器是电压源还是电流源。
-2. **模型用得越深，误差越小，代价越大。** 纯反馈 $\sim0.2$ rad → 加前馈 $\sim0.01$ →
-   逆动力学 $10^{-4}$；但逆动力学要在线算整机模型、要准参数、要快采样，模型一不准就退回
-   $10^{-3}$，于是需要鲁棒/自适应。
-3. **稳定性证明只有一个套路**：构造 $V=\frac12\dot q^{\mathrm T}B\dot q+\frac12e^{\mathrm T}K_Pe$，
-   求导，用 $\dot B-2C$ 反对称消交叉项；$\dot V\le0$ 后用拉萨尔原理补最后一步。
+1. **分散与集中**：分散控制将剩余耦合视作扰动，集中控制利用多关节模型或状态设计控制律。能否达到精度和稳定性要求，要结合驱动与负载检查。
+2. **反馈与前馈**：前馈用模型预估力矩，反馈依据实测误差修正。模型、轨迹和执行器条件改变时，不能直接套用某次仿真的误差排序。
+3. **稳定性证明**：重力补偿 PD 可用动能加位置误差二次型构造 $V$，并利用 $\dot B-2C$ 消去交叉项。$\dot V\le0$ 后还须检查不变集及有界性，见 [7.3](sec7-3.md)。
 
 ## 知识地图（本章在全书中的位置）
 
@@ -158,8 +153,8 @@ $$\text{逆动力学：}\ \boldsymbol y=J_A^{-1}\bigl(\ddot{\boldsymbol x}_d+K_D
                                             └─ 7.5 九种方案比较与选型
                                                   │
                                                   ↓
-                                    第 8 章 力控制（h_e 不能丢）
-                                    第 9 章 视觉伺服（x 从哪来）
+                                    原书第 9 章 力控制（h_e 不能丢）
+                                    原书第 10 章 视觉伺服（x 从哪来）
 ```
 
 ## 常见错误总表
@@ -167,30 +162,30 @@ $$\text{逆动力学：}\ \boldsymbol y=J_A^{-1}\bigl(\ddot{\boldsymbol x}_d+K_D
 | # | 错误 | 纠正 |
 |:--|:--|:--|
 | 1 | 把「关节空间控制」与「分散控制」当成同一件事 | 前者是**空间**分类，后者是**架构**分类；关节空间里也能用集中控制 |
-| 2 | 把三种单轴控制器串起来 | 位置/速度/加速度三套 PI **选一套**，其余置 1 |
-| 3 | 以为 $K_P$ 越大越好 | $K_P$ 压低干扰增益，但也压低阻尼比；超过电机时间常数允许范围就振荡 |
+| 2 | 把位置、速度、加速度各设计成独立 PID 并直接叠加 | 先确定控制结构，按所选环节设计和整定；多环伺服也可以分层设计 |
+| 3 | 以为 $K_P$ 越大越好 | 必须检查完整频率响应、采样、噪声和饱和；不能由干扰抑制因子单独判断稳定性 |
 | 4 | 把 $T_p<T_m$ 当归一化问题 | 那是**结构不稳定**，调 $K_P$ 救不了 |
 | 5 | 用期望值算反馈环里的重力 | 反馈用**实测** $\boldsymbol q$；只有前馈用 $\boldsymbol q_d$ |
-| 6 | 重力补偿 PD 拿来做轨迹跟踪 | 它的证明用了 $\dot q_d=0$，只能点对点 |
+| 6 | 将重力补偿 PD 的点对点证明直接用于任意轨迹 | 该证明用了 $\dot q_d=0$；轨迹跟踪须另行分析误差 |
 | 7 | 逆动力学里把 $\boldsymbol q$ 写成 $\boldsymbol q_d$ | 一写就退回前馈，不再是反馈线性化 |
 | 8 | 鲁棒项无限加大 $\rho$ | $\rho$ 超过实际不确定界只会加剧抖振 |
-| 9 | 加边界层后还宣称渐近收敛 | 边界层只保证**有界误差**，不是零 |
-| 10 | 以为自适应能辨识真参数 | 更新律只保证跟踪收敛，参数可能漂移 |
-| 11 | 用几何雅可比写操作空间模型 | 姿态部分要分析雅可比 $J_A$（$\dot\phi\neq\omega$） |
+| 9 | 加边界层后无条件宣称渐近收敛 | 一般只保证最终有界，但并不表示最终误差必定非零 |
+| 10 | 以为自适应一定辨识真参数 | 理想固定参数模型下估计有界；真值收敛另需可辨识性与持续激励 |
+| 11 | 混用两种雅可比及其共轭力 | 分析坐标速度配 $J_A$ 与 $h_A$；几何速度配 $J$ 与几何力/力矩 |
 | 12 | 冗余机械手硬求 $J_A^{-1}$ | $n>6$ 时非方阵，必须伪逆 + 零空间 |
 | 13 | 选方案从「哪个先进」出发 | 先看驱动器（电压源/电流源）与误差预算 |
 
 ## 学完自检
 
-::: think 十二问自检（能答十问即可进入第八章）
+::: think 十二问自检（答完后核对条件，再进入原书后续主题）
 1. 控制问题与动力学正问题的区别是什么？
 2. 分散控制把什么塞进 $d$？$d$ 里至少包含哪三项？
 3. 位置环开环传递函数是什么？$T_p<T_m$ 为什么不稳定？
 4. 干扰抑制因子与收敛时间怎么算？$K_P$ 的取舍是什么？
-5. 驱动五式与三条假设推出什么？为什么它能证明「可以分散」？
-6. 重力补偿 PD 的李雅普诺夫函数是什么？为什么它只能做点对点？
+5. 驱动五式在什么逐轴条件下给出电压—速度近似？它为什么不单独证明整机闭环稳定？
+6. 重力补偿 PD 的李雅普诺夫函数是什么？本节的固定目标证明为什么不能直接用于轨迹跟踪？
 7. 逆动力学控制的误差方程是什么？它与计算转矩前馈的区别在哪？
-8. 鲁棒控制的滑动子空间与边界层各起什么作用？为什么加边界层后误差不为零？
+8. 鲁棒控制的滑动子空间与边界层各起什么作用？为什么加边界层后一般只能保证误差有界？
 9. 自适应控制的 $\sigma$、控制律、更新律是什么？它保证什么、不保证什么？
 10. 操作空间的转置雅可比方案与逆雅可比方案各有什么优缺点？
 11. 九种方案的误差量级相对关系是什么？
@@ -202,5 +197,7 @@ $$\text{逆动力学：}\ \boldsymbol y=J_A^{-1}\bigl(\ddot{\boldsymbol x}_d+K_D
 - **向前**（第 2–6 章）：逆运动学给 $\boldsymbol q_d$；$J,J_A$ 与奇点；轨迹给
   $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$；驱动器模型与两种发电机特性；
   $B,C,\boldsymbol g$ 与 $\boldsymbol\tau=Y\pi$。
-- **向后**（第 8–9 章）：力控制把 $-\boldsymbol h_e$ 从「扔掉」变成「控制对象」；视觉伺服回答
-  「$\boldsymbol x$ 怎么测」，补上 7.4 的短板。
+- **向后**（原书第 9–10 章）：力控制将末端交互力 $\boldsymbol h_e$ 纳入控制目标；视觉伺服回答
+  「$\boldsymbol x$ 怎么测」，补上 7.4 的测量问题。本教程目前止于第七章，这里指向原书后续主题。
+
+回到卷首的任务：自由空间中的取放和对准，可以用本书的位姿、速度、规划、驱动、动力学与反馈逐项分析；螺丝刀接触螺栓后，怎样限制接触力、怎样判断拧紧完成？这是原书力控制需要继续回答的问题，不能靠减小位置误差代替。先做[跨章回访](../training/two-link.md#mission-revisit)，检查自己能否分清位置教学模型、完整工具姿态与接触任务的边界。

@@ -115,7 +115,7 @@
 | 术语 | 英文 | 一句话含义 | 出处 |
 |:--|:--|:--|:--|
 | 逆运动学 | inverse kinematics | 由末端位姿求关节变量；非线性、多解、可能无解 | [@thm-2.12.A] |
-| 闭合解 | closed-form solution | 存在解析表达式的解；门槛是解耦条件 | [@thm-2.12.B] |
+| 闭合解 | closed-form solution | 可用有限解析表达式给出的解；连续三转轴共点或平行是六自由度结构的充分条件，不是必要条件 | [@thm-2.12.B] |
 | 腕心 | wrist centre $\boldsymbol p_w$ | 球腕三轴交点；$\boldsymbol p_w=\boldsymbol p_e-d_6\boldsymbol a_e$ | [@method-2.12.decouple] |
 | 肘上 / 肘下 | elbow-up / elbow-down | 平面臂逆解的两支，来自 $s_2$ 的符号 | [2.12.2](ch02/sec2-12.md#sec-2.12.2) |
 | 外移长度 | $d_6$ | 腕心到末端原点的距离，沿接近向量 | [@method-2.12.decouple] |
@@ -154,7 +154,7 @@
 | 末端广义力 | $F_e=[\boldsymbol f_e;\boldsymbol\mu_e]$ | 3 平动力 + 3 转动力矩 | [@def-3.8.1] |
 | 运动静力学对偶 | kinematic-static duality | $\boldsymbol\tau=J^{\mathrm T}F_e$；速度变换的转置即力变换 | [@def-3.8.1] |
 | 虚功原理 | principle of virtual work | 静态平衡时系统总虚功为零——$\boldsymbol\tau=J^{\mathrm T}F_e$ 的推导依据 | [@def-3.8.1] |
-| 可操作椭球 | manipulability ellipsoid | 由 $w(q)$ 刻画末端各方向的运动 / 施力能力；**课程不讲** | [3.8.3](ch03/sec3-8.md#sec-3.8.3) |
+| 可操作椭球 | manipulability ellipsoid | 单位关节速度球经 $J$ 映出的方向性速度集合；标量 $w(q)$ 只概括其体积，不包含各轴方向与长度 | [3.8.3](ch03/sec3-8.md#sec-3.8.3) |
 
 ## 七、轨迹规划（4.1–4.3）
 
@@ -162,7 +162,7 @@
 |:--|:--|:--|:--|
 | 路径 | path | 纯几何描述：经过哪些点、连成什么形状 | [@def-4.1.1] |
 | 轨迹 | trajectory | 指定了**时间律**的路径（每点的速度 / 加速度） | [@def-4.1.2] |
-| 运动规划 | motion planning | 轨迹规划 + 避障 + 优化（动态过程，含动力学） | [@def-4.1.3] |
+| 运动规划 | motion planning | 根据任务、环境和约束寻找可行运动，可包含路径搜索、时间安排与优化，不要求每题都做最优化 | [@def-4.1.3] |
 | 运动律 | motion law | 表征从初始位姿到最终位姿过渡过程的函数 | [@thm-4.1.A] |
 | 三次多项式 | cubic polynomial | 4 系数 / 4 约束；最小能量解的形式 | [@def-4.2.1] |
 | 五次多项式 | quintic polynomial | 6 系数 / 6 约束；可指定初终加速度 | [@def-4.2.2] |
@@ -195,7 +195,7 @@
 | 圆柱齿轮 spur gears | 改变旋转轴与作用点，旋转 → 旋转 | [@method-5.1.C] |
 | 丝杠 lead screws | 旋转 → 平移，用于移动关节；常预装滚珠丝杠减小摩擦 | [@method-5.1.C] |
 | 同步带 / 正时链 timing belts and chains | 把发动机远置的传动；带快（轻）、链重（耐大力矩） | [@method-5.1.C] |
-| 直接驱动 direct drive | 不加减速器直连关节；无间隙弹性但控制复杂 | [@def-5.1.4] |
+| 直接驱动 direct drive | 不加减速器直连关节，避免减速器引入的回差与弹性；并非实机完全无弹性 | [@def-5.1.4] |
 | 伺服发动机 servomotor | 能起伺服作用的发动机（电动 / 液压 / 气动） | [@def-5.1.5] |
 | 伺服电机 electric servomotor | 机器人上用得最多的发动机；分永磁直流与无刷直流 | [@def-5.1.7] |
 | 无刷直流伺服电机 brushless DC servomotor | 永磁转子 + 多相定子 + 静态整流器；靠位置传感器换相 | [@def-5.1.8] |
@@ -241,22 +241,22 @@
 | 拉格朗日方程 Lagrange equations | $\frac{d}{dt}(\partial L/\partial\dot q_i)-\partial L/\partial q_i=\xi_i$；约束力自动消失 | [@def-6.1.1] |
 | 广义力 generalized force | 右端四件套：$\tau_i$、粘滞摩擦、库仑摩擦、$-J^{\mathrm T}h_e$ | [6.1](ch06/sec6-1.md) |
 | 正动力学 / 逆动力学 | 给力求运动（解微分方程）/ 给运动求力（代入公式） | [章导览](ch06/overview.md) |
-| 惯性张量 inertia tensor | $\int S^{\mathrm T}(r)S(r)\rho\,dV$；对称 6 分量；连杆系里是常数 | [6.1.1](ch06/sec6-1-1.md) |
-| 平行轴定理 | $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$ | [6.1.1](ch06/sec6-1-1.md) |
-| 惯性矩阵 $B(q)$ | $T=\frac12\dot q^{\mathrm T}B\dot q$ 的矩阵；对称、正定、随位形变 | [6.1.1](ch06/sec6-1-1.md) |
-| 自惯量 $b_{ii}$ | 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$） | [6.1.3](ch06/sec6-1-3.md) |
-| 离心项 / 科氏项 | $h_{ijj}\dot q_j^2$（同关节速度平方）/ $h_{ijk}\dot q_j\dot q_k$（$j\neq k$ 交叉） | [6.1.3](ch06/sec6-1-3.md) |
-| 重力项 $\boldsymbol g(q)$ | $\partial U/\partial q$，方程左端项；实际重力广义力为 $-\boldsymbol g$ | [6.1.2](ch06/sec6-1-2.md) |
-| $h_{ijk}$ 系数 | $\partial b_{ij}/\partial q_k-\frac12\partial b_{jk}/\partial q_i$；$C\dot q$ 的生成元 | [6.1.3](ch06/sec6-1-3.md) |
-| Christoffel 符号（第一类） | $c_{ijk}=\frac12(\partial_kb_{ij}+\partial_jb_{ik}-\partial_ib_{jk})$；使 $N$ 反对称的选法 | [6.2.1](ch06/sec6-2-1.md) |
+| 惯性张量 inertia tensor | $\int S^{\mathrm T}(r)S(r)\rho\,dV$；对称 6 分量；连杆系里是常数 | [6.1.1](ch06/sec6-1.md#part-6.1.1) |
+| 平行轴定理 | $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$ | [6.1.1](ch06/sec6-1.md#part-6.1.1) |
+| 惯性矩阵 $B(q)$ | $T=\frac12\dot q^{\mathrm T}B\dot q$ 的矩阵；对称、正定、随位形变 | [6.1.1](ch06/sec6-1.md#part-6.1.1) |
+| 自惯量 $b_{ii}$ | 锁住其他关节时关节 $i$ 的等效惯量（含下游全部 + $k_{r_i}^2I_{m_i}$） | [6.1.3](ch06/sec6-1.md#part-6.1.3) |
+| 离心项 / 科氏项 | $h_{ijj}\dot q_j^2$（同关节速度平方）/ $h_{ijk}\dot q_j\dot q_k$（$j\neq k$ 交叉） | [6.1.3](ch06/sec6-1.md#part-6.1.3) |
+| 重力项 $\boldsymbol g(q)$ | $\partial U/\partial q$，方程左端项；实际重力广义力为 $-\boldsymbol g$ | [6.1.2](ch06/sec6-1.md#part-6.1.2) |
+| $h_{ijk}$ 系数 | $\partial b_{ij}/\partial q_k-\frac12\partial b_{jk}/\partial q_i$；$C\dot q$ 的生成元 | [6.1.3](ch06/sec6-1.md#part-6.1.3) |
+| Christoffel 符号（第一类） | $c_{ijk}=\frac12(\partial_kb_{ij}+\partial_jb_{ik}-\partial_ib_{jk})$；使 $N$ 反对称的选法 | [6.2.1](ch06/sec6-2.md#part-6.2.1) |
 | 反对称性 skew-symmetry | (7.48)：Christoffel 选法下 $N=\dot B-2C$ 反对称；(7.49)：任意选法下 $\dot q^{\mathrm T}N\dot q=0$ | [@thm-6.2.1] |
-| 无源性 passivity | 惯性/科氏项沿自身速度方向不做净功——能量只在关节间搬运 | [6.2.1](ch06/sec6-2-1.md) |
-| 扩展连杆 augmented link | 连杆 $i$ + 转子 $i+1$ 合并的建模单元（转子装在前一连杆上） | [6.2.2](ch06/sec6-2-2.md) |
-| 动力学参数 $\pi$ | 每连杆 11 个刚体参数（质量、一阶矩 3、张量 6、转子惯量）；含摩擦 13 | [6.2.2](ch06/sec6-2-2.md) |
-| 回归矩阵 regressor $Y$ | $\tau=Y(q,\dot q,\ddot q)\pi$ 的系数矩阵；对参数线性 ⇒ 最小二乘辨识 | [6.2.2](ch06/sec6-2-2.md) |
-| 最小参数集 | 结构决定的可辨识参数组合（平面臂 25→8→5） | [6.2.2](ch06/sec6-2-2.md) |
+| 无源性 passivity | 惯性/科氏项沿自身速度方向不做净功——能量只在关节间搬运 | [6.2.1](ch06/sec6-2.md#part-6.2.1) |
+| 扩展连杆 augmented link | 连杆 $i$ + 转子 $i+1$ 合并的建模单元（转子装在前一连杆上） | [6.2.2](ch06/sec6-2.md#part-6.2.2) |
+| 动力学参数 $\pi$ | 每连杆 11 个刚体参数（质量、一阶矩 3、张量 6、转子惯量）；含摩擦 13 | [6.2.2](ch06/sec6-2.md#part-6.2.2) |
+| 回归矩阵 regressor $Y$ | $\tau=Y(q,\dot q,\ddot q)\pi$ 的系数矩阵；对参数线性 ⇒ 最小二乘辨识 | [6.2.2](ch06/sec6-2.md#part-6.2.2) |
+| 最小参数集 | 结构决定的可辨识参数组合（平面臂 25→8→5） | [6.2.2](ch06/sec6-2.md#part-6.2.2) |
 
-## 十、运动控制（7.1–7.4，对应原书 8.1–8.2）
+## 十、运动控制（7.1–7.5，对应原书 8.1–8.7）
 
 | 术语 | 一句话含义 | 首次出现 |
 |:--|:--|:--|
@@ -292,7 +292,7 @@
 | 右乘 / 左乘 | 绕当前轴（动系）/ 绕固定轴（定系） |
 | 移动关节 / 转动关节 | 平动（$q_i=d_i$）/ 转动（$q_i=\vartheta_i$） |
 | 开式链 / 闭式链 | 无回路（可直接数自由度）/ 有回路（须扣约束） |
-| 精度 / 分辨率 | 本课程只讲前者；后者是编码器等硬件指标 |
+| 精度 / 分辨率 | 精度描述相对目标的偏差；分辨率描述编码器等器件能区分的最小增量，本书两者均讨论 |
 | 奇点 / 病态 | 前者是任务雅可比的实际降秩；后者是在固定度量下某些奇异值很小、反解对相应方向敏感，可在满秩时发生 |
 | 表示奇点 / 运动学奇点 | 前者是姿态参数化退化，如欧拉角表示奇点；后者是所选任务的实际速度映射降秩 |
 | 路径点 / 经由点 | 前者必须**到达**；后者只从**附近经过**（抛物线混合的削角） |
@@ -313,5 +313,5 @@
 | $Y$ / $\pi$ | 回归矩阵，依赖 $q,\dot q,\ddot q$，每次重算 / 常参数向量，换负载才变 |
 | 关节空间 / 操作空间（方案） | 闭环 $\boldsymbol q$、$\boldsymbol x$ 开环 / 闭环 $\boldsymbol x$，但要测得出 $\boldsymbol x$ |
 | 分散控制 / 集中控制 | 单轴独立设计（耦合当扰动）/ 整机模型统一设计（显式抵消耦合）——按**工况**选，不按先进程度 |
-| 计算力矩（控制）/ 计算力矩前馈（课件题名「计算转矩前馈」） | 前馈用**实测** $\boldsymbol q,\dot{\boldsymbol q}$（精确对消）/ 用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d$（可离线预算） |
+| 计算力矩（控制）/ 计算力矩前馈（课件题名「计算转矩前馈」） | 控制用**实测** $\boldsymbol q,\dot{\boldsymbol q}$（模型精确时对消）/ 前馈用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$（可离线预算） |
 | 电压控制 / 电流控制 | $\dot{\boldsymbol q}\propto\boldsymbol v_c$（速度源，宜分散）/ $\boldsymbol\tau\propto\boldsymbol v_c$（力矩源，宜集中） |

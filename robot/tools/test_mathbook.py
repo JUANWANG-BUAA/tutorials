@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Regression checks for code whitespace inside nested teaching boxes."""
+"""Regression checks for the teaching-box preprocessor."""
+from contextlib import redirect_stderr
 from html.parser import HTMLParser
+from io import StringIO
 import re
 import unittest
 
@@ -44,6 +46,42 @@ class BoxCodeWhitespace(unittest.TestCase):
                 namespace = {}
                 exec(compile(displayed, "displayed-code", "exec"), namespace)
                 self.assertEqual(namespace["value"](), "first\n\n    third\n")
+
+
+class MergedSectionNumbering(unittest.TestCase):
+    @staticmethod
+    def book(content):
+        return {"sections": [{"Chapter": {
+            "name": "6.1 拉格朗日公式", "path": "ch06/sec6-1.md",
+            "source_path": "ch06/sec6-1.md", "number": [6, 1],
+            "content": content, "sub_items": [],
+        }}]}
+
+    def test_each_subsection_has_its_own_letter_sequence(self):
+        book = self.book(
+            "::: ex 例 6.1.2.A · 势能 {#first}\n正文\n:::\n\n"
+            "::: ex 例 6.1.3.A · 力矩 {#second}\n正文\n:::\n\n"
+            "::: ex 例 6.1.3.B · 运动 {#third}\n正文\n:::\n\n"
+            "见 [@first] 和 [@second]。\n"
+        )
+        mathbook.process(book)
+        rendered = book["sections"][0]["Chapter"]["content"]
+        self.assertIn('href="#first">例 6.1.2.A</a>', rendered)
+        self.assertIn('href="#second">例 6.1.3.A</a>', rendered)
+
+    def test_duplicate_and_reversed_numbers_still_fail(self):
+        for labels, expected in (
+            (("6.1.2.A", "6.1.2.A"), "撞号"),
+            (("6.1.3.B", "6.1.3.A"), "递增"),
+        ):
+            with self.subTest(labels=labels), redirect_stderr(StringIO()) as errors:
+                book = self.book(
+                    f"::: ex 例 {labels[0]} · 先 {{#first}}\n正文\n:::\n\n"
+                    f"::: thm 定理 {labels[1]} · 后 {{#second}}\n正文\n:::\n"
+                )
+                with self.assertRaises(SystemExit):
+                    mathbook.process(book)
+                self.assertIn(expected, errors.getvalue())
 
 
 if __name__ == "__main__":

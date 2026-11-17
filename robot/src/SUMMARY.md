@@ -14,12 +14,8 @@
 
 - [入学诊断：你该从哪一章开始](entry-test.md)
 
-# 复习层
+# 贯穿练习
 
-- [公式速查卡](preface-formulas.md)
-- [易混对照卡](preface-contrast.md)
-- [术语索引](preface-index.md)
-- [易错点总表](preface-pitfalls.md)
 - [两连杆练习：从运动学到控制](training/two-link.md)
 
 # 第一章 · 引言（第 1 周录播）
@@ -81,7 +77,7 @@
   - [勘误与补注（对照原书与课件）](ch03/errata.md)
   - [习题集](ch03/exercises.md)
   - [学习目标自检表](ch03/checklist.md)
-  - [闭卷回忆卡（30 张检索练习卡）](ch03/recall-cards.md)
+  - [闭卷回忆卡（33 张检索练习卡）](ch03/recall-cards.md)
   - [综合自测卷（110 分钟 · 满分 100）](ch03/mock-exam.md)
 
 # 第四章 · 轨迹规划（第 4 周录播）
@@ -100,29 +96,16 @@
   - [勘误与补注（对照原书、课件与板书）](ch04/errata.md)
   - [习题集](ch04/exercises.md)
   - [学习目标自检表](ch04/checklist.md)
-  - [闭卷回忆卡（28 张检索练习卡）](ch04/recall-cards.md)
+  - [闭卷回忆卡（33 张检索练习卡）](ch04/recall-cards.md)
   - [综合自测卷（90 分钟 · 满分 100）](ch04/mock-exam.md)
 
 # 第五章 · 执行器与传感器（第 6 周录播）
 
 - [第五章 · 执行器与传感器](ch05/overview.md)
   - [5.1 关节执行系统](ch05/sec5-1.md)
-  - [5.1.1 传动装置](ch05/sec5-1-1.md)
-  - [5.1.2 伺服发动机](ch05/sec5-1-2.md)
-  - [5.1.3 功率放大器](ch05/sec5-1-3.md)
-  - [5.1.4 能源](ch05/sec5-1-4.md)
   - [5.2 驱动](ch05/sec5-2.md)
-  - [5.2.1 电气驱动](ch05/sec5-2-1.md)
-  - [5.2.2 液压驱动](ch05/sec5-2-2.md)
-  - [5.2.3 传动装置影响](ch05/sec5-2-3.md)
-  - [5.2.4 位置控制](ch05/sec5-2-4.md)
   - [5.3 本体传感器](ch05/sec5-3.md)
-  - [5.3.1 位置传感器](ch05/sec5-3-1.md)
-  - [5.3.2 速度传感器](ch05/sec5-3-2.md)
   - [5.4 外部传感器](ch05/sec5-4.md)
-  - [5.4.1 力传感器](ch05/sec5-4-1.md)
-  - [5.4.2 距离传感器](ch05/sec5-4-2.md)
-  - [5.4.3 视觉传感器](ch05/sec5-4-3.md)
 
 - [作业五：教材习题 5.1 / 5.6 / 5.7（附详细解答与验算）](ch05/homework05.md)
 
@@ -137,13 +120,8 @@
 
 - [第六章 · 动力学（对应原书第 7 章）](ch06/overview.md)
   - [6.1 拉格朗日公式](ch06/sec6-1.md)
-  - [6.1.1 动能计算](ch06/sec6-1-1.md)
-  - [6.1.2 势能计算](ch06/sec6-1-2.md)
-  - [6.1.3 运动方程](ch06/sec6-1-3.md)
-  - [6.2.1 Ḃ−2C 的反对称性](ch06/sec6-2-1.md)
-  - [6.2.2 动力学参数的线性性](ch06/sec6-2-2.md)
-  - [6.3.1 两连杆笛卡儿臂](ch06/sec6-3-1.md)
-  - [6.3.2 两连杆平面臂](ch06/sec6-3-2.md)
+  - [6.2 动力学方程的性质](ch06/sec6-2.md)
+  - [6.3 两连杆机械臂算例](ch06/sec6-3.md)
   - [6.4 牛顿–欧拉递推](ch06/sec6-4.md)
   - [6.5 动力学正解与逆解](ch06/sec6-5.md)
   - [6.6 轨迹的动态标度](ch06/sec6-6.md)
@@ -157,7 +135,7 @@
   - [勘误与补注（对照教材、课件与转写）](ch06/errata.md)
   - [习题集](ch06/exercises.md)
   - [学习目标自检表](ch06/checklist.md)
-  - [闭卷回忆卡（24 张检索练习卡）](ch06/recall-cards.md)
+  - [闭卷回忆卡（28 张检索练习卡）](ch06/recall-cards.md)
   - [综合自测卷（90 分钟 · 满分 100）](ch06/mock-exam.md)
 
 # 第七章 · 运动控制（第 8–9 周录播）
@@ -176,7 +154,14 @@
   - [习题集](ch07/exercises.md)
   - [学习目标自检表](ch07/checklist.md)
   - [闭卷回忆卡（20 张检索练习卡）](ch07/recall-cards.md)
-  - [综合自测卷（90 分钟 · 满分 100）](ch07/mock-exam.md)
+  - [综合自测卷（90 分钟 · 满分 110）](ch07/mock-exam.md)
+
+# 复习与查阅
+
+- [公式速查卡](preface-formulas.md)
+- [易混对照卡](preface-contrast.md)
+- [术语索引](preface-index.md)
+- [易错点总表](preface-pitfalls.md)
 
 # 特训 · 竞技与考场
 

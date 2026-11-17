@@ -270,6 +270,21 @@ async (hostPage) => {
   await page.waitForURL('**/sec15.html');
   await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlCrossY);
   check(Math.abs(await page.evaluate(() => scrollY) - dlCrossY) < 3, 'chained cross-page references return through both reading positions');
+  await visit('robot/ch05/sec5-2.html');
+  const hydraulic = page.locator('[data-lab="hyd3d"]');
+  const usefulFlow = hydraulic.getByLabel('有用流量 Qₘ');
+  await usefulFlow.waitFor();
+  const previousFlow = await usefulFlow.inputValue();
+  await usefulFlow.press('End');
+  const flow = await hydraulic.locator('.lab-readout').evaluate(el => {
+    const total = Number(el.querySelector('p').textContent.match(/=\s*([\d.]+)\s*L\/s/)[1]);
+    const branches = [...el.querySelectorAll('tbody tr')].map(row => Number(row.cells[1].textContent));
+    return { total, branches };
+  });
+  check(Number(previousFlow) !== Number(await usefulFlow.inputValue()) &&
+    Math.abs(flow.total - flow.branches.reduce((a, b) => a + b, 0)) < 1e-9 &&
+    Math.abs(flow.branches[0] - Number(await usefulFlow.inputValue())) < 1e-9,
+  'hydraulic flow control and displayed balance agree', flow);
 
   await visit('deeplearning/lectures/lec04/sec43.html');
   const dlTerm = page.locator('main .term').first();
@@ -282,6 +297,14 @@ async (hostPage) => {
   await page.waitForURL('**/sec43.html');
   await page.waitForFunction(y => Math.abs(scrollY - y) < 3, dlTermY);
   check(Math.abs(await page.evaluate(() => scrollY) - dlTermY) < 3, 'glossary definitions return to the original reading position');
+  await visit('robot/ch07/sec7-1.html');
+  const paths = page.locator('[data-lab="ctrl3d"]');
+  await paths.locator('.lab-readout table').waitFor();
+  const distances = await paths.locator('tbody tr').evaluateAll(rows => rows.map(row => parseFloat(row.cells[1].textContent)));
+  check(distances[0] > 0 && distances[1] < 0.1, 'joint interpolation bends while pointwise inverse kinematics follows the straight path', distances);
+  await paths.getByRole('button', { name: '直线逐点逆解', exact: true }).click();
+  const taskDistance = await paths.locator('.lab-readout p').first().innerText();
+  check(/距离\s*0\.0 mm/.test(taskDistance), 'switching to the straight-path solution updates the current distance', taskDistance);
 
   for (const book of ['robot', 'matrix', 'numerical', 'deeplearning', 'linux', 'agent-systems', 'distributed', 'compilers', 'algorithms']) {
     await visit(book + '/index.html');

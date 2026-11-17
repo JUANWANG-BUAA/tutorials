@@ -12,7 +12,7 @@ $$\boldsymbol p^0=\boldsymbol o_1^0+R_1^0\boldsymbol p^1.$$
 
 ![课堂幻灯片：同一点在两套坐标系中的坐标与原点偏移](../assets/ch02/homogeneous-setup.jpg)
 
-**读图顺序**：从 $O_0$ 沿原点偏移走到 $O_1$，再沿 $O_1P$ 走到 $P$。计算时先用 $R_1^0$ 把后一个向量的分量换成系 0 的表示，再与同样用系 0 表示的 $\boldsymbol o_1^0$ 相加。这是在换坐标，并没有把点搬走；若把同一矩阵当作主动运动，必须另外声明固定坐标系和施加对象。
+**读图顺序**：从 $O_0$ 沿原点偏移走到 $O_1$，再沿 $O_1P$ 走到 $P$。计算时先用 $R_1^0$ 把后一个向量的分量换成系 0 的表示，再与同样用系 0 表示的 $\boldsymbol o_1^0$ 相加。录播 0:32:27 的旧教程记录强调「把所有的量都描述在同一个坐标系」。这是在换坐标，并没有把点搬走；若把同一矩阵当作主动运动，必须另外声明固定坐标系和施加对象。
 
 反过来，先减去原点偏移，再用转置旋转：
 
@@ -73,7 +73,7 @@ $$(R,\boldsymbol o)(S,\boldsymbol t)=(RS,\ \boldsymbol o+R\boldsymbol t).$$
 
 $$A_0^1=(A_1^0)^{-1}=\begin{bmatrix}(R_1^0)^{\mathrm T}&-(R_1^0)^{\mathrm T}\boldsymbol o_1^0\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}.$$
 
-逆的平移是 $-R^{\mathrm T}\boldsymbol o$，它用**系 1** 表示，通常不等于用系 0 表示的 $-\boldsymbol o$。这不是完整矩阵转置；利用旋转块的正交性，求逆仍然很便于计算。
+逆的平移是 $-R^{\mathrm T}\boldsymbol o$，它用**系 1** 表示，通常不等于用系 0 表示的 $-\boldsymbol o$。这不是完整矩阵转置；求逆时仍可利用旋转块的正交性。
 
 ::: proof 验证 · 分块相乘与正交性的充要条件（本编补充）
 令 $B=\begin{bmatrix}R^{\mathrm T}&-R^{\mathrm T}\boldsymbol o\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}$。有
@@ -100,6 +100,8 @@ $$\tilde{\boldsymbol p}^0=A_1^0A_2^1\cdots A_n^{n-1}\tilde{\boldsymbol p}^n.$$
 $$A_2^0=A_1^0A_2^1=\begin{bmatrix}R_1^0R_2^1&\boldsymbol o_1^0+R_1^0\boldsymbol o_2^1\\\boldsymbol0^{\mathrm T}&1\end{bmatrix}.$$
 
 旋转与平移都由这一次矩阵乘法得到。交换次序通常改变数值，而且 $A_2^1A_1^0$ 的坐标系接口不相接，不能把它解释成同一个 $2\to0$ 换系链。
+
+录播 0:38:53，老师留了逐级展开并验证两段变换的练习；0:39:01–0:39:15 的旧教程记录给出动机：「式子太长不方便，先写成矩阵的形式，去矩阵重上重去（做矩阵乘法）」。上面的分块式正好显示，矩阵连乘替读者保存了每段旋转对后续平移的作用。
 :::
 
 <figure>
@@ -210,6 +212,8 @@ $$\widehat\xi_s=\dot A A^{-1}=\begin{bmatrix}\dot R R^{\mathrm T}&\dot{\boldsymb
 $$A(t)=\begin{bmatrix}\cos t&-\sin t&0&1-\cos t\\\sin t&\cos t&0&-\sin t\\0&0&1&0\\0&0&0&1\end{bmatrix}.$$
 
 在 $t=\pi/2$ 时原点位置 $(1,-1,0)$、速度 $(1,0,0)$，与 $\boldsymbol v_s$ 不同。它仍是纯转，非零的 v 来自旋转轴偏离原点；若再沿轴以恒定速度平移，才得到有轴向进给的螺旋运动。$\omega=0$ 时则是纯平移。本节先掌握有限变换；第 3 章讨论的 $(\dot{\boldsymbol p},\omega)$ 与这里的 twist 须按定义换算，不能仅因为都是六个数就等同。
+
+仍绕这根偏置轴，若把角速度加倍到 2 rad/s，先预测转到同一姿态所需的时间及原点速度，再代入核对：到达 $(1,-1,0)$ 的时刻改为 $t=\pi/4$ s，此时 $\dot{\boldsymbol o}=(2,0,0)$ m/s，而 $\boldsymbol v_s=(0,-2,0)$ m/s。轨迹形状不变，速度加倍；这也再次区分了空间速度的平移分量与原点线速度。
 :::
 
 <a id="sec-2.7"></a>

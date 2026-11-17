@@ -2,8 +2,7 @@
 
 > 录播 01:58:34–02:10:12（课件 §8.6，**全部是课堂内容**）。前三节都在**关节空间**里设计控制器：
 > 先由逆运动学把任务翻译成 $\boldsymbol q_d$，再控制 $\boldsymbol q$ 跟踪它。这一节换一种做法：
-> **不翻译，直接在末端位姿 $\boldsymbol x$ 的空间里闭环**。好处是任务误差直接可控，代价是要算
-> 雅可比、要处理奇异与冗余。
+> **直接在末端位姿的控制空间里闭环**。任务误差直接进入反馈，不必先把整条位姿参考转换成关节位置参考；但仍需雅可比映射，而且由正运动学估计末端状态时，标定误差并不会自动消失。奇异位形与冗余自由度也仍须处理。
 
 <a id="sec-7.4.1"></a>
 
@@ -20,12 +19,9 @@ x_d（任务） ──→ 操作空间控制器 ──→ F（末端等效力）
      └──────────────── x（由 q 正运动学算出） ←──────────────────────┘
 ```
 
-**优点**：任务误差（末端位置/姿态）直接进入反馈，不被逆运动学「藏起来」；冗余机械手可以在
-零空间里做避障、避奇异、优化，而不影响末端任务。
+**优点**：任务误差直接进入反馈。对于冗余机械手（$n>6$），还可以利用额外自由度实现避障或避开关节限位等子任务，但必须通过零空间投影，确保这些子任务不会干扰末端任务。
 
-**代价**：$\boldsymbol x$ 通常不能直接测，只能由 $\boldsymbol q$ 正算；要算 $J_A$ 及其导数与逆；
-奇异位形附近 $J_A$ 病态。这些在 7.4.6 展开。
-
+**代价**：至少需要雅可比及可靠的末端状态；是否需要完整动力学取决于控制律。末端状态若由关节位置经正运动学估计，模型与关节标定误差也会进入闭环。
 <a id="sec-7.4.2"></a>
 
 ## 7.4.2 操作空间动力学模型
@@ -37,7 +33,8 @@ $$\boldsymbol x=\begin{bmatrix}\boldsymbol p\\ \boldsymbol\phi\end{bmatrix}
 \dot{\boldsymbol x}=J_A(\boldsymbol q)\dot{\boldsymbol q},\tag{7.4-1}$$
 
 $J_A$ 是**分析雅可比**，不是第三章的几何雅可比 $J$：姿态部分 $\dot{\boldsymbol\phi}$ 是欧拉角
-导数，不是角速度（[3.6 分析雅可比](../ch03/sec3-6.md)）。对时间再求导：
+导数，不是角速度（[3.6 分析雅可比](../ch03/sec3-6.md)）。本节所有位置、姿态及其参考均在同一固定基坐标系和同一欧拉角约定下表示，位置单位为 $\mathrm m$、姿态单位为 $\mathrm{rad}$。欧拉角差只在同一无奇异、无跨周期跳变的局部坐标图内使用，不能将相差 $2\pi$ 的表示直接当作很大的实际姿态误差。因位置与姿态量纲不同，$K_P,K_D$ 的各分块必须按共轭力的单位设置。对式 (7.4-1) 求时间导数得：
+
 
 $$\ddot{\boldsymbol x}=J_A\ddot{\boldsymbol q}+\dot J_A\dot{\boldsymbol q}.\tag{7.4-2}$$
 
@@ -46,19 +43,17 @@ $$\ddot{\boldsymbol x}=J_A\ddot{\boldsymbol q}+\dot J_A\dot{\boldsymbol q}.\tag{
 
 $$\boxed{\ B_x(\boldsymbol q)\ddot{\boldsymbol x}
 +C_x(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol x}
-+\boldsymbol g_x(\boldsymbol q)=\boldsymbol\tau_x-\boldsymbol h_e\ }\tag{7.4-3}$$
++\boldsymbol g_x(\boldsymbol q)=\boldsymbol\tau_x-\boldsymbol h_A\ }\tag{7.4-3}$$
 
-$B_x,C_x,\boldsymbol g_x$ 由 $B,C,\boldsymbol g$ 与 $J_A$ 组合而成，$\boldsymbol\tau_x$ 是折算到
-操作空间的等效力，$\boldsymbol h_e$ 是末端与环境的作用力（自由运动时为零，力控制时是要控的量）。
+$B_x,C_x,\boldsymbol g_x$ 由 $B,C,\boldsymbol g$ 与 $J_A$ 组合而成，$\boldsymbol\tau_x$ 是与位姿坐标速度 $\dot{\boldsymbol x}$ 共轭的广义力。若 $\boldsymbol h_e$ 是末端施加给环境的几何力/力矩，$J=T_AJ_A$，则与 $\dot{\boldsymbol x}$ 共轭的接触广义力是 $\boldsymbol h_A=T_A^{\mathrm T}\boldsymbol h_e$，不是未经变换的 $\boldsymbol h_e$。自由运动时两者均为零。
 
 **三处要留意**：
 
-1. **(7.4-3) 与关节空间模型「形式上完全一样」**——这不是巧合。正因如此，7.3 的所有方法都能照搬：
-   把 $B,C,\boldsymbol g$ 换成 $B_x,C_x,\boldsymbol g_x$，把 $\boldsymbol q$ 换成 $\boldsymbol x$。
-2. **$B_x$ 依赖 $J_A$ 的可逆性**。$J_A$ 奇异时 $B_x$ 无定义/病态——这是操作空间方法在奇异位形
-   附近失效的根源（[3.3 奇点](../ch03/sec3-3.md)）。
-3. **冗余时 $J_A$ 不是方阵**，$J_A^{-1}$ 不存在，要用伪逆，模型写成「动力学 + 零空间投影」形式
-   （[3.4 冗余分析](../ch03/sec3-4.md)）。
+1. **形式对应有前提**：本节先讨论 $J_A$ 可逆的非冗余情况，以及精确模型和力矩执行。不能只因外形相似就忽略坐标、力的共轭关系与驱动限制。
+2. **$B_x$ 的存在**：$B$ 正定且 $J_A$ 满行秩时，$B_x=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ 存在。奇异时该逆不存在，接近奇异时可能病态。
+3. **冗余时**，$J_A$ 不必是方阵；满行秩仍可定义上述 $B_x$，但末端坐标不足以确定全部关节状态，还须处理零空间动力学，见 [6.7](../ch06/sec6-7.md)。
+
+在这些坐标和模型假设下，操作空间方程与关节空间方程形式对应，因此可以把 7.3 的设计思路迁移过来：把状态 $\boldsymbol q$ 换成 $\boldsymbol x$，动力学项换成 $B_x,C_x,\boldsymbol g_x$，再按所选坐标检查各项的定义与稳定性条件。下面分别用重力补偿 PD 与逆动力学说明这种迁移；“形式相同”不意味着可以忽略奇异和零空间。
 
 <a id="sec-7.4.3"></a>
 
@@ -68,13 +63,11 @@ $B_x,C_x,\boldsymbol g_x$ 由 $B,C,\boldsymbol g$ 与 $J_A$ 组合而成，$\bol
 
 ### 7.4.3.1 逆雅可比方案：先翻译，再关节控制
 
-先用逆运动学把 $\boldsymbol x_d$ 翻成 $\boldsymbol q_d$，再用前三节的关节空间控制器。数学上等价于
+逆雅可比方案先把末端误差转换成关节空间的修正量，再交给关节控制器。设 $J_A$ 为可逆方阵，$\tilde{\boldsymbol x}=\boldsymbol x_d-\boldsymbol x$，一个局部速度指令的例子是
 
-$$\boldsymbol\tau=J_A^{-\mathrm T}\bigl[K_P(\boldsymbol x_d-\boldsymbol x)
-+K_D(\dot{\boldsymbol x}_d-\dot{\boldsymbol x})\bigr],\tag{7.4-4}$$
+$$\dot{\boldsymbol q}_{\rm cmd}=J_A^{-1}(\dot{\boldsymbol x}_d+K\tilde{\boldsymbol x}),\qquad K\succ0.\tag{7.4-4}$$
 
-但实现上要算 $J_A^{-1}$，奇异与冗余都躲不开。**它没有真正绕开逆运动学**，只是把逆解放进了
-反馈回路。
+若关节速度能准确跟踪该指令，且运动学模型准确，则 $\dot{\tilde{\boldsymbol x}}=-K\tilde{\boldsymbol x}$。实际还需要关节伺服把速度指令转换为驱动力矩；不能把逆雅可比乘以末端误差直接写成关节力矩。奇异位形附近逆矩阵病态，冗余时还要规定如何分配关节速度。
 
 ### 7.4.3.2 转置雅可比方案：把误差变成「弹簧力」
 
@@ -86,9 +79,9 @@ $$\boxed{\ \boldsymbol F=K_P(\boldsymbol x_d-\boldsymbol x),\qquad
 
 ![课堂幻灯片 · 122:30：转置雅可比方案——操作空间误差经增益矩阵变成广义弹簧力，再由 $J_A^{\mathrm T}$ 折算成关节力矩](../assets/ch07/op-transpose.jpg)
 
-**物理图像**：$K_P$ 是一个**广义弹簧**，把末端往 $\boldsymbol x_d$ 拉；$J_A^{\mathrm T}$ 把末端的力
-「分配」到各关节（[3.8 静力学](../ch03/sec3-8.md) 的 $\boldsymbol\tau=J^{\mathrm T}\boldsymbol h$
-同源）。**不需要求 $J_A^{-1}$**，奇异位形附近也能算——这是它相对逆雅可比方案的最大优势。
+**物理图像**：$K_P$ 等效为一个**广义虚拟弹簧**，把末端从当前位姿往期望位姿 $\boldsymbol x_d$ 拉；$J_A^{\mathrm T}$ 则实现了这一虚拟力向关节空间的分配（符合虚功原理：$\boldsymbol\tau = J_A^{\mathrm T}\boldsymbol F$）。**此方案不需要求 $J_A^{-1}$，因此在奇异位形附近数值上更为稳健**——这是其相对逆雅可比方案的核心优势。
+这里的稳健只指无需数值求逆，不代表在奇异处仍能消除任意任务误差：某些方向的虚拟力可能落入 $J_A^{\mathrm T}$ 的零空间。式 (7.4-5) 还只是弹簧项，尚未补重力或加入阻尼，不能单凭它保证动态系统收敛；下一小节补齐这两部分。
+
 
 **代价**：弹簧力只保证「往目标拉」，不保证「沿最短路径」；刚度矩阵 $K_P$ 的设计要考虑各向异性
 （位置与姿态的量纲不同），否则会出现「位置到了、姿态还差很多」的耦合。
@@ -107,22 +100,22 @@ $$V=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}
 
 $$\boxed{\ \boldsymbol u=\boldsymbol g(\boldsymbol q)
 +J_A^{\mathrm T}(\boldsymbol q)K_P\tilde{\boldsymbol x}
-+J_A^{\mathrm T}(\boldsymbol q)K_DJ_A(\boldsymbol q)\dot{\boldsymbol q}\ }\tag{7.4-7}$$
+-J_A^{\mathrm T}(\boldsymbol q)K_DJ_A(\boldsymbol q)\dot{\boldsymbol q}\ }\tag{7.4-7}$$
 
 ![课堂幻灯片 · 125:40：操作空间重力补偿 PD——$V$ 的导数只剩阻尼项，平衡点由 $J_A^{\mathrm T}K_P\tilde x=0$ 确定](../assets/ch07/op-gravity-pd.jpg)
 
-求导并用 $\dot B-2C$ 的反对称性，得
+这里 $K_P,K_D$ 取对称正定矩阵。目标静止时，$\dot{\tilde{\boldsymbol x}}=-J_A\dot{\boldsymbol q}$；把控制律代入动力学，再用 $\dot B-2C$ 的反对称性，得到
 
 $$\dot V=-\dot{\boldsymbol q}^{\mathrm T}F\dot{\boldsymbol q}
 -\dot{\boldsymbol q}^{\mathrm T}J_A^{\mathrm T}K_DJ_A\dot{\boldsymbol q}\le0.\tag{7.4-8}$$
 
-由拉萨尔原理，$\dot{\boldsymbol q}\to0$，代回闭环方程得
+负号表示阻尼：末端正在向某方向运动时，速度反馈要施加相反方向的力。若取正号，不能得到上面的耗散式。课件 125:40 的框图也在速度反馈处使用减号。
+
+若闭环轨迹有界、模型满足拉萨尔原理的条件，且阻尼足以使最大不变集中的速度为零，则平衡点满足
 
 $$J_A^{\mathrm T}(\boldsymbol q)K_P\tilde{\boldsymbol x}=0.\tag{7.4-9}$$
 
-**$J_A$ 满秩时**，$J_A^{\mathrm T}$ 列满秩，只有 $\tilde{\boldsymbol x}=0$ 满足——末端收敛到目标。
-**$J_A$ 奇异或冗余时**，(7.4-9) 有非零解，末端可能停在「弹簧力被雅可比零空间吃掉」的位置，
-这是操作空间 PD 在奇异/冗余下失效的数学根源。
+当 $J_A$ 满行秩时，$J_A^{\mathrm T}$ 列满秩，因此平衡点有 $\tilde{\boldsymbol x}=0$。冗余本身不破坏这一结论；但任务空间阻尼可能无法耗散零空间运动，需单独分析。奇异时 $J_A^{\mathrm T}$ 可能存在非零零空间，非零末端误差也可能满足平衡条件。
 
 <a id="sec-7.4.5"></a>
 
@@ -142,16 +135,17 @@ $$\boldsymbol y=J_A^{-1}(\boldsymbol q)\bigl(\ddot{\boldsymbol x}_d
 代回关节空间方程得
 
 $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsymbol x}=0.\tag{7.4-12}$$
+上式要求参考在所用局部坐标图内可达、轨迹保持非奇异，模型与状态准确、力矩不饱和，并采用理想连续时间更新；取正对角增益时各任务坐标误差指数衰减。采样、延迟、测量误差或限幅存在时须重新写误差方程。欧拉角坐标奇异和机械臂的运动学奇异是两种不同问题，都不能仅靠把 $J_A^{-1}$ 换成数值伪逆就保留同一证明。
 
 ![课堂幻灯片 · 126:50：操作空间逆动力学——先由 $J_A^{-1}$ 把操作空间辅助量变成关节加速度，再用逆动力学折算成力矩](../assets/ch07/op-inverse-dynamics.jpg)
 
-**注意它与 7.4.4 的分工**：7.4.4 只补重力，适合点对点；7.4.5 全补模型，适合高速跟踪。
-两者都需要 $J_A$ 及其导数，区别只在「补多少」。
+
+**注意它与 7.4.4 的分工**：7.4.4 只补重力，适合点对点；7.4.5 对模型做更完整的补偿，适合轨迹跟踪。前者用 $J_A$ 做力的映射，后者还需 $\dot J_A$ 和逆雅可比。
 
 **这个方案有三个硬约束**：
 
-1. **$J_A$ 必须可逆**：非冗余（$n=6$）且非奇异；冗余时要用伪逆 + 零空间项。
-2. **要算 $\dot J_A\dot{\boldsymbol q}$**：这一项是操作空间的「离心/科氏」项，高速时不能丢。
+1. **$J_A$ 必须可逆**：所选任务维数与关节数相同且非奇异；冗余时需要另行选择伪逆与零空间运动。
+2. **要算 $\dot J_A\dot{\boldsymbol q}$**：这是对速度映射求导产生的运动学加速度项，不是关节动力学中的 $C\dot q$，不能把两者混作同一个科氏项。
 3. **$B_x$ 不一定显式算**：可以像 (7.4-11) 这样先算 $\boldsymbol y$ 再乘 $B$，避免构造 $B_x$；
    但 $J_A^{-1}$ 的数值条件仍然决定成败。
 
@@ -163,16 +157,13 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 
 | # | 问题 | 后果 | 对策 |
 |:--|:--|:--|:--|
-| 1 | $\boldsymbol x$ 不能直接测 | 反馈量由 $\boldsymbol q$ 正算，误差被运动学放大 | 视觉/激光跟踪（第十章） |
+| 1 | $\boldsymbol x$ 测量或估计有误差 | 正运动学估计受关节和标定误差影响 | 改进标定或使用视觉、激光跟踪 |
 | 2 | $J_A$ 奇异 | $J_A^{-1}$ 不存在，$B_x$ 病态，力矩爆 | 阻尼最小二乘、奇异回避（第三章） |
 | 3 | 冗余（$n>6$） | $J_A$ 非方阵，逆不唯一 | 伪逆 + 零空间投影 |
-| 4 | 计算量大 | 要算 $J_A,\dot J_A,J_A^{-1},B_x,C_x,\boldsymbol g_x$ | 递推算法、降采样 |
+| 4 | 计算量随方案而变 | 转置方案需计算 $J_A$；逆雅可比方案还需解速度映射，逆动力学方案还需动力学模型与 $\dot J_A\dot q$ | 按所选控制律评估计算周期；可用递推算法，不必对所有方案都显式构造 $B_x,C_x,\boldsymbol g_x$ |
 | 5 | 姿态误差定义敏感 | 欧拉角万向锁、大角度误差不「小」 | 四元数/旋转矩阵误差 |
 
-**一条常被忽略的工程判断**：关节空间方案的误差是「**关节跟得上、末端跟不上**」，标定好之后是
-**系统性、可预测**的；操作空间方案的误差是「**末端测不准**」，**随机、与位形相关**。所以精度要求高、
-工作空间固定、标定充分时，关节空间反而更稳；末端需要柔顺、经常换工作空间、或要与环境接触时，
-操作空间（及力控）才值得上。
+选择方案时要区分两类误差：关节反馈无法直接纠正运动学模型造成的末端偏差；操作空间反馈若依靠正运动学估计末端，同样会受到该模型误差影响。外部测量可以补充信息，但它也有标定、延迟与噪声，须结合任务精度和测量条件比较。
 
 ::: note 操作空间不是「更高级」
 课件原话（127:50）：「操作空间控制器设计总是要求计算机械手雅可比矩阵，导致机械手的操作空间控制
@@ -192,12 +183,11 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 - **一个判据**：$\boldsymbol x$ 的信息质量决定这套方案的实际上限。
 
 ::: think 常见错误清单
-1. **用几何雅可比写操作空间模型**：位置部分一样，姿态部分不一样——$\dot{\boldsymbol\phi}\neq
-   \boldsymbol\omega$，必须用分析雅可比 $J_A$。
+1. **混用两种雅可比和力的定义**：姿态坐标导数 $\dot{\boldsymbol\phi}$ 一般不等于角速度 $\boldsymbol\omega$。使用 $\dot{\boldsymbol x}=[\dot{\boldsymbol p};\dot{\boldsymbol\phi}]$ 时要用分析雅可比及其共轭广义力；也可以用几何雅可比，但须相应改用线速度、角速度和几何力/力矩。
 2. **把 $B_x$ 当常数**：它随 $J_A$ 与 $\boldsymbol q$ 变，奇异处病态。
 3. **以为操作空间一定更准**：若 $\boldsymbol x$ 由 $\boldsymbol q$ 算出，误差照样被带进来，
    并且会被 $J$ 放大。
-4. **忽略 $\dot J_A\dot{\boldsymbol q}$ 项**：它对应离心/科氏型速度耦合，高速时不能丢。
+4. **忽略 $\dot J_A\dot{\boldsymbol q}$ 项**：它来自时变雅可比的求导，不是 $C\dot q$ 的替代项；省略后任务加速度对消不再精确。
 5. **冗余时硬求逆**：$n>6$ 时 $J_A$ 非方阵，必须伪逆 + 零空间。
 6. **把 $\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol F$ 写成 $J_A\boldsymbol F$**：转置方向由虚功原理
    决定，写反了力矩方向就错。
@@ -205,7 +195,7 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 
 ::: think 默写点 · 合上书再写
 1. 写出操作空间模型 (7.4-3)，说明它与关节空间模型的形式对应。
-2. 说明为什么必须用分析雅可比而不是几何雅可比。
+2. 分别说明何时使用分析雅可比与几何雅可比，以及与它们对应的速度、广义力如何配套。
 3. 写出转置雅可比方案与逆雅可比方案，各说明一个优缺点。
 4. 写出操作空间重力补偿 PD 的 $V$ 与 $\dot V$，说明平衡点为什么由 $J_A^{\mathrm T}K_P\tilde x=0$ 确定。
 5. 写出操作空间逆动力学，指出它与 7.4.4 的分工。

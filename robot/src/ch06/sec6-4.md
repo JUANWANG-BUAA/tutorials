@@ -53,15 +53,15 @@ $$\boldsymbol\mu_\Omega=\int_{V_B}\boldsymbol g_0\times(\boldsymbol p_\Omega-\bo
 **④ 两条定理。** 动量定理与动量矩定理把运动与力接起来：
 
 $$\boldsymbol f=\frac{\mathrm d\boldsymbol l}{\mathrm d t},\qquad
-\boldsymbol\mu_\Omega=\frac{\mathrm d\boldsymbol k_\Omega}{\mathrm d t}.$$
+\boldsymbol\mu_\Omega=\frac{\mathrm d\boldsymbol k_\Omega}{\mathrm d t}+\dot{\boldsymbol p}_\Omega\times\boldsymbol l.$$
 
-对**质量恒定**的刚体，且 $\Omega$ 取**固定点或质心** $C$ 时：
+这里角动量用各微元的绝对速度定义。参考点移动时必须保留 $\dot{\boldsymbol p}_\Omega\times\boldsymbol l$；固定点处它为零，取质心时也因 $\boldsymbol l=m\dot{\boldsymbol p}_C$ 而为零。对质量恒定的刚体，取质心 $C$，得到
 
 $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
-\boldsymbol\mu_\Omega=\boldsymbol I_\Omega\dot{\boldsymbol\omega}
-+\boldsymbol\omega\times(\boldsymbol I_\Omega\boldsymbol\omega).$$
+\boldsymbol\mu_C=\boldsymbol I_C\dot{\boldsymbol\omega}
++\boldsymbol\omega\times(\boldsymbol I_C\boldsymbol\omega).$$
 
-后一式就是**欧拉方程（Euler equation）**，右边第二项 $\boldsymbol\omega\times(\boldsymbol I\boldsymbol\omega)$ 是转动坐标系带来的**陀螺项**；前提是参考点固定或取在质心，换成别的动点还要多一项（00:33:52–00:35:50）。
+后一式是**欧拉方程（Euler equation）**。若取刚体上固定在惯性空间中的点 $O$，同样可用 $\boldsymbol I_O$ 写出该形式；任意空间固定点不一定是刚体的固定点，不能直接照搬。陀螺项来自惯性张量方向随刚体转动（00:33:52–00:35:50）。
 
 ![课堂板书 · 43:30：老师在黑板前讲单连杆的牛顿方程，黑板保留力/力矩平衡的手写推导](../assets/ch06/ne-board-balance.jpg)
 
@@ -69,7 +69,7 @@ $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
 
 把结论用到「连杆 $i$」上。课件先约定记号，再用一张表把 **18 个变量**一次列清（00:38:42–00:40:52）——整节的字典。
 
-三个约定先说清楚。**其一，扩展连杆**：课件把「连杆 $i$ 本体 + 装在连杆 $i$ 上的关节 $i+1$ 电机」合称**扩展连杆 $i$**，质量记 $m_i$、惯性张量记 $\bar{\boldsymbol I}_i$；转子还会相对连杆 $i$ 自转，所以**绕轴**转动惯量 $I_{m_{i+1}}$ 与减速比 $k_{r,i+1}$ 单独出现。**其二，电机归属**：归前一个或后一个关节都行，「两种约定都行，但一本书里要统一」（00:39:19–00:39:45），本页按「归后一个」。**其三，关节变量**：转动关节记 $q_i,\dot q_i,\ddot q_i$（角量），移动关节记 $d_i,\dot d_i,\ddot d_i$（线量）；$\boldsymbol z_{i-1}$ 是关节 $i$ 的轴线单位向量，$\boldsymbol z_{m_i}$ 是转子轴单位向量，$k_{r_i}$ 是减速比，$I_{m_i}$ 是转子绕自身轴的转动惯量。
+三个约定先说清楚。**其一，扩展连杆**：课件把「连杆 $i$ 本体 + 装在连杆 $i$ 上的关节 $i+1$ 电机」合称**扩展连杆 $i$**，质量记 $m_i$、相对其质心的锁转惯性张量记 $\bar{\boldsymbol I}_i$。假定转子质心在转轴上且转子轴对称；它相对安装座的自转仍要单独计入。末端连杆没有下一个转子，相关项取零。**其二，电机归属**：归前一个或后一个关节都行，「两种约定都行，但一本书里要统一」（00:39:19–00:39:45），本页把电机 $i+1$ 的锁转部分归入连杆 $i$，把电机 $i$ 的驱动广义力归入关节 $i$。**其三，关节变量**：转动关节用角度 $q_i$，移动关节用位移 $d_i$；下式转子项中的 $q_i$ 泛指对应关节变量，移动关节应代 $d_i$。$\boldsymbol z_{i-1}$、$\boldsymbol z_{m_i}$ 分别为关节轴、转子轴单位向量；转动关节 $k_{r_i}$ 无量纲，旋转—直线传动的 $k_{r_i}$ 为 $\mathrm{rad/m}$；$I_{m_i}$ 为未折算的转子轴向惯量。
 
 | 符号 | 含义 | 符号 | 含义 |
 |:--|:--|:--|:--|
@@ -83,7 +83,7 @@ $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
 | $\boldsymbol\omega_i$ | 连杆的角速度 | $-\boldsymbol\mu_{i+1}$ | 连杆 $i+1$ 对连杆 $i$ 关于坐标系 $i$ 原点的力矩 |
 | $\boldsymbol\omega_{m_i}$ | 转子的角速度 | $\ddot{\boldsymbol p}_{C_i}$ | 质心 $C_i$ 的线加速度 |
 
-**注意两个参考点不同**：$\boldsymbol\mu_i$ 关于 $O_{i-1}$，$\boldsymbol\mu_{i+1}$ 关于 $O_i$。力矩是自由矢量，换参考点不改变它本身，但**力对质心的矩**要用各自的力臂补上——这正是下面欧拉方程里 $\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}$ 与 $\boldsymbol f_{i+1}\times\boldsymbol r_{i,C_i}$ 的来源。
+**注意两个参考点不同**：$\boldsymbol\mu_i$ 关于 $O_{i-1}$，$\boldsymbol\mu_{i+1}$ 关于 $O_i$。纯力偶矩可自由平移，但包含合力贡献的主矩一般随参考点改变。把界面力系移到质心时，分别补上 $\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}$ 与 $-\boldsymbol f_{i+1}\times\boldsymbol r_{i,C_i}$，才得到下面的欧拉方程。
 
 ![课堂幻灯片 · 37:21：7.5 牛顿–欧拉公式——变量定义与单连杆受力图](../assets/ch06/ne-variables.jpg)
 
@@ -108,13 +108,13 @@ $$\boldsymbol\mu_i+\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}
 
 课件没有停在 $\mathrm d/\mathrm d t$ 的形式，而是把右边两项展开成真正用于递推的式子（00:44:00–00:49:00）：好处是把「惯性张量随位形变」换成「连杆系里的常数」，并把陀螺项、转子项显式写出。
 
-**① 惯性张量的换系。** 与 [6.1.1](sec6-1-1.md) 完全一样：
+**① 惯性张量的换系。** 与 [6.1.1](sec6-1.md#part-6.1.1) 完全一样：
 
 $$\bar{\boldsymbol I}_i=\boldsymbol R_i\bar{\boldsymbol I}_i^i\boldsymbol R_i^{\mathrm T},$$
 
 其中 $\boldsymbol R_i$ 是坐标系 $i$ 到基坐标系的旋转矩阵，$\bar{\boldsymbol I}_i^i$ 是**连杆系里的常数矩阵**——建模只存常数张量，运行时用 $R$ 变换。
 
-**② 对角动量求导。** 把上式代进去，用 $\dot{\boldsymbol R}_i=S(\boldsymbol\omega_i)\boldsymbol R_i$、$\dot{\boldsymbol R}_i^{\mathrm T}=-\boldsymbol R_i^{\mathrm T}S(\boldsymbol\omega_i)$（$S(\cdot)$ 是叉乘反对称矩阵，$S(\boldsymbol a)\boldsymbol b=\boldsymbol a\times\boldsymbol b$，同 [6.1.1](sec6-1-1.md)）：
+**② 对角动量求导。** 把上式代进去，用 $\dot{\boldsymbol R}_i=S(\boldsymbol\omega_i)\boldsymbol R_i$、$\dot{\boldsymbol R}_i^{\mathrm T}=-\boldsymbol R_i^{\mathrm T}S(\boldsymbol\omega_i)$（$S(\cdot)$ 是叉乘反对称矩阵，$S(\boldsymbol a)\boldsymbol b=\boldsymbol a\times\boldsymbol b$，同 [6.1.1](sec6-1.md#part-6.1.1)）：
 
 $$\begin{aligned}
 \frac{\mathrm d}{\mathrm d t}\bigl(\bar{\boldsymbol I}_i\boldsymbol\omega_i\bigr)
@@ -147,7 +147,7 @@ $$\boxed{\ \begin{aligned}
 +k_{r,i+1}\dot q_{i+1}I_{m_{i+1}}\,\boldsymbol\omega_i\times\boldsymbol z_{m_{i+1}}
 \end{aligned}\ }$$
 
-右边四项按物理意义分别是**惯性力矩**、**陀螺力矩**、**转子惯性力矩**、**转子陀螺力矩**。陀螺项来自「惯性张量在基座系里不是常数」，与 [6.1.3](sec6-1-3.md) 中 $\dot B\dot{\boldsymbol q}$ 的速度耦合项同类：拉格朗日形式收进 $C\dot{\boldsymbol q}$，牛顿–欧拉形式逐杆出现。
+右边四项按物理意义分别是**惯性力矩**、**陀螺力矩**、**转子惯性力矩**、**转子陀螺力矩**。陀螺项来自「惯性张量在基座系里不是常数」，与 [6.1.3](sec6-1.md#part-6.1.3) 中 $\dot B\dot{\boldsymbol q}$ 的速度耦合项同类：拉格朗日形式收进 $C\dot{\boldsymbol q}$，牛顿–欧拉形式逐杆出现。
 
 ## 6.4.5 关节广义力：把力/力矩投影到关节轴
 
@@ -237,7 +237,7 @@ $$\dot{\boldsymbol\omega}_{m_i}=\dot{\boldsymbol\omega}_{i-1}
 
 ![课堂幻灯片 · 65:48：前向递推的完整公式表（课件把 $\ddot{\boldsymbol p}_0-\boldsymbol g_0$ 作为初值）](../assets/ch06/ne-forward.jpg)
 
-其中 $2\dot d\,\boldsymbol\omega\times\boldsymbol z$ 单独说一句：它是**科氏加速度（Coriolis acceleration）**——一根杆一边以 $\boldsymbol\omega$ 转动、一边沿轴以 $\dot d$ 伸缩，点的速度是「转动牵连 + 沿轴相对速度」，对时间求导的交叉项就是它；转动关节无相对平动，故无此项。反之 $\boldsymbol\omega\times(\boldsymbol\omega\times\boldsymbol r)$ 是**向心加速度**（常称离心项）。这两个名字在 [6.1.3](sec6-1-3.md) 的 $h_{ijk}$ 里都出现过：$h_{ijj}\dot q_j^2$ 对应离心、$h_{ijk}\dot q_j\dot q_k$ 对应科氏；牛顿–欧拉法不给它们分组，而让它们逐杆逐项出现在递推里。
+其中 $2\dot d\,\boldsymbol\omega\times\boldsymbol z$ 单独说一句：它是**科氏加速度（Coriolis acceleration）**——一根杆一边以 $\boldsymbol\omega$ 转动、一边沿轴以 $\dot d$ 伸缩，点的速度是「转动牵连 + 沿轴相对速度」，对时间求导的交叉项就是它；转动关节无相对平动，故无此项。反之 $\boldsymbol\omega\times(\boldsymbol\omega\times\boldsymbol r)$ 是**向心加速度**（常称离心项）。这两个名字在 [6.1.3](sec6-1.md#part-6.1.3) 的 $h_{ijk}$ 里都出现过：$h_{ijj}\dot q_j^2$ 对应离心、$h_{ijk}\dot q_j\dot q_k$ 对应科氏；牛顿–欧拉法不给它们分组，而让它们逐杆逐项出现在递推里。
 
 ## 6.4.7 向内（后向）递推：力、力矩与关节力矩
 
@@ -274,9 +274,9 @@ $$\begin{aligned}
 | **A（课件采用，推荐）** | $\ddot{\boldsymbol p}_0-\boldsymbol g_0=-\boldsymbol g_0$ | $\boldsymbol f_i=\boldsymbol f_{i+1}+m_i\ddot{\boldsymbol p}_{C_i}$ | 每个 $\ddot{\boldsymbol p}_{C_i}$ 里天然含 $-\boldsymbol g_0$，**自动含重力** |
 | **B（显式加）** | $\boldsymbol 0$ | $\boldsymbol f_i-\boldsymbol f_{i+1}+m_i\boldsymbol g_0=m_i\ddot{\boldsymbol p}_{C_i}$ | 初值不吸收重力，方程里补 $m_i\boldsymbol g_0$ |
 
-做法 A 等价于「让整个机器人处在一个以 $-\boldsymbol g_0$ 加速的参考系里」，重力变成惯性力。老师说这一步是「把重力挂到加速度上」，后面「$mg$ 这一项就可以直接用、不考虑它」（01:07:46–01:08:22）。两种做法只能选一种，混用会让重力算两遍；手算时在纸角写一行「$\ddot{\boldsymbol p}_0=-\boldsymbol g_0$，牛顿方程不加 $mg$」。无论哪种，**欧拉方程都没有重力矩**。
+做法 A 是代数上的有效加速度记账：将所有物理线加速度替换为 $\ddot p-\boldsymbol g_0$ 后，牛顿方程的重力项并入惯性项，不是在声称基座真的加速。老师把这一步称为「把重力挂到加速度上」，后面「$mg$ 这一项就可以直接用、不考虑它」（01:07:46–01:08:22）。两种做法只能选一种，混用会让重力算两遍；手算时标明「有效基座加速度 $=-\boldsymbol g_0$，牛顿递推不再显式加 $mg$」。两种做法的质心欧拉方程都没有重力矩。
 
-**末端力的记账方式。** 有接触时把末端力/力矩作为后向递推的起点 $\boldsymbol h_e$（自由运动取零），它与 [6.1.3](sec6-1-3.md) 右端的 $-J^{\mathrm T}\boldsymbol h_e$ 是同一外力的两种记法：拉格朗日法折回关节空间，牛顿–欧拉法留在末端让递推传回去。符号与参考点课件未展开，做题时按题目约定统一（见节末待核）。
+**末端力的记账方式。** $\boldsymbol h_e$ 表示机器人对环境的力/力矩，在基座系表达，力矩参考点取 $O_n$；相应几何雅可比也取 $O_n$。因此把 $\boldsymbol f_{n+1},\boldsymbol\mu_{n+1}$ 作为后向递推初值，会给所需执行器力矩增加 $+J^{\mathrm T}\boldsymbol h_e$，与 [6.1.3](sec6-1.md#part-6.1.3) 的右端 $-J^{\mathrm T}\boldsymbol h_e$ 完全一致。若接触点不在 $O_n$，先按力臂把力矩移到 $O_n$，不能只旋转力向量。
 
 ## 6.4.8 两遍循环：算法、计算结构与复杂度
 
@@ -319,7 +319,7 @@ for i = n, …, 1:
 
 **为什么是 $O(n)$。** 两遍循环里每根杆只做**常数规模**的 $3\times3$ / $3\times1$ 运算（叉乘、矩阵乘向量、投影），既没有 $n\times n$ 求逆，也没有随 $n$ 增长的求和；计算量随 $n$ **线性**增长。这正是老师说的「每个方程并不长，矩阵运算少一些，计算速度会快一些」（01:15:10–01:15:26）。
 
-**换到当前连杆系。** 上面为对照课堂推导把向量都写在基座系。实际实现时课件把向量乘 $\boldsymbol R_i^{i-1\mathrm T}$ 换到**当前连杆系**（课件 §7.5.2 末），好处是 $\bar{\boldsymbol I}_i^i$、$\boldsymbol r_{i,C_i}^i$ 都成为常数、可预先算好，代价是每步多一次旋转——与 [6.1.1](sec6-1-1.md) 同一招；换系后即教材 (7.107)–(7.114)。
+**换到当前连杆系。** 上面为对照课堂推导把向量都写在基座系。实际实现时课件把向量乘 $\boldsymbol R_i^{i-1\mathrm T}$ 换到**当前连杆系**（课件 §7.5.2 末），好处是 $\bar{\boldsymbol I}_i^i$、$\boldsymbol r_{i,C_i}^i$ 都成为常数、可预先算好，代价是每步多一次旋转——与 [6.1.1](sec6-1.md#part-6.1.1) 同一招；换系后即教材 (7.107)–(7.114)。
 
 ## 6.4.9 与拉格朗日法的关系：好推难算 vs 难推好算
 
@@ -337,17 +337,62 @@ for i = n, …, 1:
 
 **两者结果完全一致。** 两种方式得到的方程「表现形式虽然不一样，计算量也不太一样，但实际上是统一的、完全一样」（01:22:36–01:22:59）：把递推展开，正是同一个 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g$。所以「要快」用牛顿–欧拉，「要结构、要设计控制器」用拉格朗日——这也是老师说「大部分论文基于拉格朗日方程」的原因（01:24:28–01:24:35）。
 
-**复杂度要声明口径。** 课件 §7.6 的「计算复杂度」页（s05251，01:27:31）记**正解 $O(n^2)$、逆解 $O(n^2)$**，并说「两种方法都是 $N$ 方的关系」；这与牛顿–欧拉**递推**的 $O(n)$ 不矛盾，只是口径不同：
+**复杂度要声明口径。** 课件 §7.6 的「计算复杂度」页（s05251，01:27:31）记**正解 $O(n^2)$、逆解 $O(n^2)$**，并说「两种方法都是 $N$ 方的关系」。课件没有注明是否包括模型构造和矩阵分解，不能据此断言所有算法都是二次复杂度。
 
 | 口径 | 计算量 | 来由 |
 |:--|:--|:--|
-| 牛顿–欧拉**递推** | $O(n)$ | 每杆常数规模运算，两遍循环（6.4.8） |
-| **封闭模型**数值求值 | $O(n^2)$ | $B$ 有 $n^2$ 个元素，$C\dot q$ 与 $\boldsymbol g$ 也至少 $O(n^2)$；课件上表即此口径 |
-| **符号展开**再代数值 | $O(n^3)$ | 符号构造量（文献口径） |
+| 串联机械手的牛顿–欧拉逆动力学递推 | $O(n)$ | 每杆常数规模运算，两遍循环（6.4.8） |
+| 已有 $B,C,\boldsymbol g$ 时的矩阵逆动力学 | $O(n^2)$ | 稠密矩阵–向量乘法；不含构造这些矩阵的代价 |
+| 每步分解一般稠密 $B$ 后求正动力学 | $O(n^3)$ | 重新分解矩阵的代价；不能把求解当成已有逆矩阵的一次乘法 |
 
-比较复杂度时**先声明口径**，不要把 $O(n)$ 与 $O(n^2)$ 混比。
+符号展开的项数还依机构和表达方式变化，不给统一阶数。详细口径见 [6.5.5](sec6-5.md)。
 
-**算例路标。** 老师随后用教材例 7.2 的两连杆平面臂演示完整递推（01:15:30–01:23:20，课件 §7.5.3）：初始条件 $\ddot{\boldsymbol p}_0^0-\boldsymbol g_0^0=[0,\ g,\ 0]^{\mathrm T}$、$\boldsymbol\omega_0^0=\dot{\boldsymbol\omega}_0^0=\boldsymbol 0$、$\boldsymbol h_e=\boldsymbol 0$，向量都在当前连杆系表达，旋转矩阵与 $\boldsymbol r_{i,C_i}$ 为常数；逐杆算完前向、后向得 $\tau_1,\tau_2$，与 [6.3.2](sec6-3-2.md) 的式 (7.82) 是**同一个模型**。中间结果较长，本页不展开。
+**算例路标。** 老师随后用教材例 7.2 的两连杆平面臂演示递推（01:15:30–01:23:20，课件 §7.5.3）：有效基座加速度为 $[0,g,0]^{\mathrm T}$，基座角速度、角加速度和末端接触均为零。向量在当前连杆系表达，$\boldsymbol r_{i,C_i}^i$ 与锁转惯性张量是常数；相邻连杆的旋转矩阵仍随关节角变化，不能全部预存为常数。逐杆递推给出的 $\tau_1,\tau_2$ 与 [6.3.2](sec6-3.md#part-6.3.2) 是同一模型；另见[作业 7-8](homework06b.md)的完整 PR 臂递推示例。
+
+### 两连杆算例：把两遍递推实际算完
+
+课件 §7.5.3 从初始条件一直算到两关节力矩（第 8 周 `s04682`–`s04831`）。下面先用无转子特例把中间步骤展开，随后说明怎样接回完整模型。$m_i$、$I_i$ 分别是连杆质量和绕质心的平面转动惯量，$l_i$ 是近端关节到质心的距离，$a_1$ 是两关节间距。$q_2$ 为相对第一杆的角度，$q_1$ 从水平轴量起。这里的 $l_i$ 与 [6.3.2](sec6-3.md#part-6.3.2) 一致；原递推课件把连杆系原点取在远端，质心相对远端的有向坐标仍记作 $l_{C_i}$，所以原图的近端至质心距离为 $a_i+l_{C_i}$，对应下面的 $l_i$。两者不能不换参考点就直接代数值。
+
+**先向外算加速度。** 记 $R(q_2)$ 为把第二杆系分量变到第一杆系的平面旋转矩阵，$s_1=\sin q_1$、$c_1=\cos q_1$。重力已吸收到基座有效加速度 $[0,g]^{\mathrm T}$ 中。第一杆质心和远端关节的有效加速度，在第一杆系中分别为
+
+$$\boldsymbol A_1=
+\begin{bmatrix}-l_1\dot q_1^2+gs_1\\l_1\ddot q_1+gc_1\end{bmatrix},\qquad
+\boldsymbol A_{O_1}=
+\begin{bmatrix}-a_1\dot q_1^2+gs_1\\a_1\ddot q_1+gc_1\end{bmatrix}.$$
+
+第二杆的角速度、角加速度分别为 $\omega_2=\dot q_1+\dot q_2$、$\alpha_2=\ddot q_1+\ddot q_2$。因此第二杆质心的有效加速度，在第二杆系中为
+
+$$\boldsymbol A_2=R(q_2)^{\mathrm T}\boldsymbol A_{O_1}
++\begin{bmatrix}-l_2(\dot q_1+\dot q_2)^2\\l_2(\ddot q_1+\ddot q_2)\end{bmatrix}.$$
+
+这里先旋转上一杆传来的加速度，再加上本杆质心相对近端关节的向心、切向加速度；不能直接把两个坐标系中的列向量相加。这些 $\boldsymbol A_i$ 都是“真实质心加速度减重力”，不是只含运动的真实加速度。
+
+**再向内算力和力矩。** 令 $\boldsymbol F_i$ 是近端关节作用于连杆 $i$ 的力，在本杆系中表达，$F_{iy}$ 为其第二分量。末端无载荷，从第二杆开始：
+
+$$\boldsymbol F_2=m_2\boldsymbol A_2,\qquad
+\tau_2=I_2\alpha_2+l_2F_{2y}.$$
+
+第二杆施加给第一杆的是反作用力；移到平衡方程右边后，第一关节所需的支承力为
+
+$$\boldsymbol F_1=m_1\boldsymbol A_1+R(q_2)\boldsymbol F_2.$$
+
+把力矩统一取到第一关节，得到
+
+$$\tau_1=I_1\ddot q_1+l_1m_1A_{1y}
++\tau_2+a_1\bigl(R(q_2)\boldsymbol F_2\bigr)_y.$$
+
+四项分别是第一杆绕质心的惯性矩、第一杆质心力的矩、第二关节传来的力矩，以及第二杆支承力对第一关节的矩。最后一项的力臂是 $a_1$，不是 $l_1$；漏掉它就丢掉了杆间耦合。这里已通过有效加速度计入重力，不能再加一遍重力矩。
+
+例如展开第二关节力矩，便能直接与拉格朗日结果核对：
+
+$$\tau_2=(I_2+m_2l_2^2)(\ddot q_1+\ddot q_2)
++m_2a_1l_2\cos q_2\,\ddot q_1
++m_2a_1l_2\sin q_2\,\dot q_1^2
++m_2gl_2\cos(q_1+q_2).$$
+
+其中 $\dot q_1^2$ 项来自旋转上一杆的向心加速度。第二关节即使自身没有加速度，也会受第一杆运动和重力影响。这正是两遍递推必须保留相邻杆传递量的原因。
+
+**接回课件的转子项。** 原课件不是无转子模型：`s04755` 给出第一转子角加速度 $k_{r_1}\ddot q_1$，`s04775` 给出第二转子角加速度 $\ddot q_1+k_{r_2}\ddot q_2$，因此后者不能只保留自身关节加速度。完整计算时，按 6.4 前述扩展连杆规则计入随第一杆运动的第二转子质量与锁转惯量；后向欧拉递推还须保留第二转子相对自转的角动量项，并在两个关节的轴投影中分别计入各自转子惯性矩。原课件 `s04809`–`s04831` 展开的 $k_rI_m$ 耦合项和 $k_r^2I_m$ 对角项，正是由这两处共同产生；完整表达见 [6.3.2](sec6-3.md#part-6.3.2)。上面的无转子计算用于看清力臂和坐标转换，不能直接替代课件的含转子力矩。
 
 一句话收束：牛顿–欧拉法不显式给出 $B,C$，更像「运行时的引擎」而不是「设计时的语言」；考试手算（6.3.2）、参数辨识（6.2.2）、理论分析归拉格朗日，控制器内环与仿真归牛顿–欧拉。
 
@@ -365,7 +410,7 @@ for i = n, …, 1:
 5. **递推方向搞反**：运动量 $i=1\to n$，力 $i=n\to1$，反了算不出来。
 6. **漏转子项**：欧拉方程是「关节 $i+1$ 的电机」$k_{r,i+1},I_{m_{i+1}}$，$\tau_i$ 投影式是「关节 $i$ 的电机」$k_{r_i},I_{m_i}$，下标不要混。
 7. **把牛顿–欧拉的 $\tau$ 当作 $B,C,\boldsymbol g$**：它只给力矩，不显式给矩阵。
-8. **末端力符号**：有接触时 $\boldsymbol h_e$ 的符号/参考点要与 6.1.3 统一（待核）。
+8. **末端力符号**：$\boldsymbol h_e$ 是机器人对环境的力/力矩，须与末端雅可比使用同一坐标系和参考点；环境反力为其相反数。
 
 ### 默写点 · 合上书再写
 
@@ -376,7 +421,7 @@ for i = n, …, 1:
 5. 牛顿–欧拉法为什么是 $O(n)$？它与拉格朗日法各自的优缺点是什么？
 
 ::: note 待核（本节）
-1. **转子项的 $k_r$ 幂次与 $I_m$ 的约定**：课件把转子项写成 $k_{r,i+1}$ **一次幂**，而 [6.1.1](sec6-1-1.md) 的转子动能里是 $k_r^2I_m$（$B$ 的对角元）。两者是否只差「$I_m$ 是否已折算到关节侧」的记号约定，课堂未说明；**待核**教材 (7.113) 与例 7.2 的用法。本页按课件原样转录，做题时以老师记号为准。
+1. **转子项的 $k_r$ 幂次**：这里 $I_m$ 均为转子侧惯量，无需另作记号假设。连杆 $i$ 的角动量附加项为 $k_{r,i+1}\dot q_{i+1}I_{m_{i+1}}\boldsymbol z_{m_{i+1}}$，故对 $\ddot q_{i+1}$ 一次；关节 $i$ 的投影式另乘 $k_{r_i}$，而转子角加速度本身含 $k_{r_i}\ddot q_i$，两者合成 $k_{r_i}^2I_{m_i}\ddot q_i$。这与动能路线的对角元一致，不是幂次冲突。
 2. **式号与内容的逐条对应**：式号表按课件结构图自上而下整理，逐条与教材印刷版对照**待核**。
-3. **末端力 $\boldsymbol h_e$ 的符号与参考点**：课件未在课堂展开，**待核**；与 6.1.3 的 $-J^{\mathrm T}\boldsymbol h_e$ 是否同号取决于题目的力方向约定。
+3. **课件原始末端力定义**：本页已明确采用与 6.1.3 一致的方向和参考点；课件未展开的原始记号仍需对照原稿，不能把本页统一约定当作课件逐字定义。
 :::

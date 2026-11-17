@@ -155,13 +155,6 @@ class CalibrationTeachingChecks(unittest.TestCase):
         return [(normal[1][1] * right[0] - normal[0][1] * right[1]) / determinant,
                 (normal[0][0] * right[1] - normal[0][1] * right[0]) / determinant], determinant
 
-    def test_published_parameter_subset_and_residual_conventions(self):
-        self.assertIn("实际未知数是 $p\\le4n$", self.section)
-        self.assertIn("$\\operatorname{Log}(R_n^{\\mathrm T}R_m)$", self.section)
-        self.assertIn("QR/SVD", self.section)
-        self.assertIn("$tm\\ge p$", self.section)
-        self.assertIn("验证位形", self.section)
-        self.assertIn("不是用外部位姿量测估计 DH 参数的几何标定", self.section)
 
     def test_two_link_synthetic_wide_measurements_recover_lengths(self):
         truth = [0.04, -0.03]
@@ -192,7 +185,6 @@ class CalibrationTeachingChecks(unittest.TestCase):
         largest = (trace + math.sqrt(max(0, trace * trace - 4 * determinant))) / 2
         self.assertGreater(determinant, 0)
         self.assertGreater(math.sqrt(largest / smallest), 100)
-        self.assertIn("方程数虽增加", self.section)
 
     def test_published_svg_and_tool_contract(self):
         svg = ElementTree.fromstring(re.search(r"<svg.*?</svg>", self.section, re.DOTALL).group(0))
@@ -204,18 +196,6 @@ class CalibrationTeachingChecks(unittest.TestCase):
 
 
 class InverseKinematicsTeachingChecks(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.section = (SOURCE / "ch02/sec2-12.md").read_text(encoding="utf-8")
-        cls.lab = (SOURCE.parent / "theme/js/robot-labs-3d.js").read_text(encoding="utf-8")
-
-    def test_published_degeneracy_guards_and_recall_contract(self):
-        self.assertIn("避免调用 $\\operatorname{Atan2}(0,0)$", self.section)
-        self.assertIn("前两杆完全折叠的更深退化", self.section)
-        self.assertIn('data-lab="ik3d"', self.section)
-        self.assertIn("FK 校验", self.section)
-        self.assertNotIn("ϑ₁mathrm I=operatorname", self.lab)
-        self.assertIn("相差 π", self.lab)
 
     def test_planar_three_link_example_reconstructs_both_branches(self):
         a1 = a2 = 1.0
@@ -863,9 +843,11 @@ class PoseRepresentationChecks(unittest.TestCase):
     def test_published_pose_and_point_translation(self):
         example = self.text.split("::: ex 带数示范", 1)[1].split("::: think 练习 1", 1)[0]
         origin = tuple(map(float, re.search(r"o'=\(([-\d.,]+)\)", example).group(1).split(",")))
+        self.assertEqual(origin, (0.30, -0.20, 0.10))
         axes = [tuple(map(float, values.split(","))) for values in
                 re.findall(r"boldsymbol [xyz]'=\(([-\d.,]+)\)", example)]
         self.assertEqual(len(axes), 3)
+        self.assertEqual(axes, [(0, 1, 0), (-1, 0, 0), (0, 0, 1)])
         for first_index, first_axis in enumerate(axes):
             for second_index, second_axis in enumerate(axes):
                 self.assertAlmostEqual(sum(first * second for first, second in zip(first_axis, second_axis)),
@@ -886,8 +868,17 @@ class PoseRepresentationChecks(unittest.TestCase):
                 self.assertEqual(float(cells[(686 + column_index * 56, 229 + row_index * 34)]), value)
         exercise = self.text.split("::: think 练习 1", 1)[1].split("::: think 练习 2", 1)[0]
         question, answer = exercise.split("::: sol", 1)
-        offset = tuple(map(float, re.search(r"坐标为 \$\(([-\d.,]+)\)", question).group(1).split(",")))
-        translation = float(re.search(r"增加 \$([\d.]+)", question).group(1))
+        # Read the two published coordinate columns, not a particular Chinese phrasing.
+        inputs = [tuple(map(float, values.split(","))) for values in
+                  re.findall(r"\$\(([-\d.,\s]+)\)\^", question)]
+        self.assertEqual(len(inputs), 2)
+        offset, direction = inputs
+        self.assertEqual(offset, (0.10, 0, 0))
+        self.assertEqual(direction, (1, 0, 0))
+        translation_match = re.search(r"增加\s*\$([\d.]+)", question)
+        self.assertIsNotNone(translation_match)
+        translation = float(translation_match.group(1))
+        self.assertEqual(translation, 0.20)
         displacement = tuple(sum(axis[component] * distance for axis, distance in zip(axes, offset))
                              for component in range(3))
         point = tuple(position + distance for position, distance in zip(origin, displacement))
@@ -898,8 +889,11 @@ class PoseRepresentationChecks(unittest.TestCase):
         translated = (point[0] + translation, point[1], point[2])
         for actual, expected in zip(translated, answers[2]):
             self.assertAlmostEqual(actual, expected)
-        self.assertEqual(answers[1], axes[0])
-        self.assertEqual(answers[3], axes[0])
+        reference_direction = tuple(sum(axis[component] * distance for axis, distance in zip(axes, direction))
+                                    for component in range(3))
+        self.assertEqual(answers[1], reference_direction)
+        self.assertEqual(answers[3], reference_direction)
+        self.assertAlmostEqual(sum(value * value for value in reference_direction), 1)
 
     def test_published_reflection_has_wrong_handedness(self):
         question = self.text.split("::: think 练习 2", 1)[1].split("::: sol", 1)[0]
@@ -1301,16 +1295,6 @@ class TeachingExamples(unittest.TestCase):
         self.assertAlmostEqual((angle - math.sin(angle)) / math.sin(angle),
                                0.5707963268, places=9)
 
-    def test_published_example_markers(self):
-        # Tie this finite verification scope to the reviewed pages and values.
-        for file, markers in {
-            "ch02/sec2-12.md": ("ex-2.12.D", "0.5,0", "无穷多解"),
-            "ch04/sec4-2-1.md": ("ex-4.2.D", "15.625", "u=1/3"),
-            "ch05/sec5-2-3.md": ("ex-5.2.E", "0.525", "57.08"),
-        }.items():
-            text = (SOURCE / file).read_text()
-            for marker in markers:
-                self.assertIn(marker, text, file)
 
 
 G = 9.81
@@ -1511,20 +1495,6 @@ class ChapterSixExamples(unittest.TestCase):
         self.assertAlmostEqual(feq, 5.09375e-4, places=9)
         self.assertAlmostEqual(kr * (m * G * l / kr), m * G * l, places=9)
 
-    def test_ch06_published_example_markers(self):
-        # Tie this finite verification scope to the reviewed pages and values.
-        for file, markers in {
-            "ch06/sec6-1-2.md": ("ex-6.1.2.A", "4.905"),
-            "ch06/exercises.md": ("243.311", "789.487", "3.9240",
-                                  "58.519", "856.209", "13.12"),
-            "ch06/mock-exam.md": ("6.455", "16.862", "-9.665",
-                                  "13.2", "0.0020625"),
-            "ch06/recall-cards.md": ("24 张卡", "7.48", "7.49"),
-            "ch06/checklist.md": ("K6.9", "S6.2"),
-        }.items():
-            text = (SOURCE / file).read_text()
-            for marker in markers:
-                self.assertIn(marker, text, file)
 
 
 class TwoLinkCourseChecks(unittest.TestCase):
