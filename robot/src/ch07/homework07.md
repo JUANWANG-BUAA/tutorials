@@ -227,9 +227,9 @@ u = B*y + C*dq + F*dq + g;               % 内环对消
 | $\mathrm{rms}\,e_i$ | $4.70\times10^{-4}\,\mathrm{rad}$ | $2.42\times10^{-4}\,\mathrm{rad}$ |
 | $\max\|u_i\|$ | $1709\,\mathrm{N\cdot m}$ | $836\,\mathrm{N\cdot m}$ |
 
-![关节跟踪：$q$ 与 $q_d$ 几乎重合](../assets/ch07/hw07/fig1_tracking.png)
+![关节跟踪：q 与 q_d 几乎重合](../assets/ch07/hw07/fig1_tracking.png)
 
-![跟踪误差（量级 $10^{-4}\,\mathrm{rad}$）](../assets/ch07/hw07/fig2_error.png)
+![跟踪误差（量级 10⁻⁴ rad）](../assets/ch07/hw07/fig2_error.png)
 
 ![关节控制力矩（加减速段尖峰）](../assets/ch07/hw07/fig3_torque.png)
 

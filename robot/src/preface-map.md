@@ -246,7 +246,7 @@
 <rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="230" x="470" y="125"></rect><text fill="var(--fig-green)" x="585" y="151">两种发电机特性（5.2.1）</text>
 <rect fill="color-mix(in srgb, var(--fig-green) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-green) 45%, transparent)" width="200" x="720" y="125"></rect><text fill="var(--fig-green)" x="820" y="151">位置控制 PI（5.2.4）</text>
 <!-- 第三行：传动影响与解耦 -->
-<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="290" x="10" y="234"></rect><text fill="var(--fig-red, #c96a5a)" x="155" y="260">减速比折算：$1/k_r^2$ 管惯量、$1/k_r$ 管力矩</text>
+<rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="290" x="10" y="234"></rect><text fill="var(--fig-red, #c96a5a)" x="155" y="260">减速比折算：1/k_r² 管惯量、1/k_r 管力矩</text>
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="330" x="330" y="234"></rect><text fill="var(--fig-red, #c96a5a)" x="495" y="260">多轴强耦合 → 单轴 + 干扰（5.2.3）</text>
 <rect fill="color-mix(in srgb, var(--fig-red, #c96a5a) 14%, transparent)" height="42" rx="9" stroke="color-mix(in srgb, var(--fig-red, #c96a5a) 45%, transparent)" width="230" x="690" y="234"></rect><text fill="var(--fig-red, #c96a5a)" x="805" y="260">独立关节控制</text>
 <!-- 第四行：传感器 -->

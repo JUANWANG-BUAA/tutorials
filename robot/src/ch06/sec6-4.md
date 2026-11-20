@@ -217,7 +217,7 @@ $$\ddot{\boldsymbol p}_i=\begin{cases}
 +\boldsymbol\omega_i\times(\boldsymbol\omega_i\times\boldsymbol r_{i-1,i}), & \text{旋转关节}
 \end{cases}$$
 
-![课堂幻灯片 · 57:58：角加速度与线加速度的递推（移动关节多出科氏项 $2\dot d_i\omega_i\times z_{i-1}$）](../assets/ch06/ne-accelerations.jpg)
+![课堂幻灯片 · 57:58：角加速度与线加速度的递推（移动关节多出科氏项 2ḋ_i·ω_i × z_(i−1)）](../assets/ch06/ne-accelerations.jpg)
 
 **⑤ 质心加速度**（把原点加速度搬到质心，再加一段刚体转动加速度）：
 
@@ -235,7 +235,7 @@ $$\dot{\boldsymbol\omega}_{m_i}=\dot{\boldsymbol\omega}_{i-1}
 
 **六式为什么这样分组。** 六个式子其实是同一个模式：**继承第 $i-1$ 杆的量 + 关节 $i$ 自身的贡献 + 随速度出现的耦合项**。①③ 是角量、②④ 是线量、⑤⑥ 把前两组结果搬到质心与转子轴上，所以只需记住 ①③④，其余按同一模式套。
 
-![课堂幻灯片 · 65:48：前向递推的完整公式表（课件把 $\ddot{\boldsymbol p}_0-\boldsymbol g_0$ 作为初值）](../assets/ch06/ne-forward.jpg)
+![课堂幻灯片 · 65:48：前向递推的完整公式表（课件把 p̈_0 − g_0 作为初值）](../assets/ch06/ne-forward.jpg)
 
 其中 $2\dot d\,\boldsymbol\omega\times\boldsymbol z$ 单独说一句：它是**科氏加速度（Coriolis acceleration）**——一根杆一边以 $\boldsymbol\omega$ 转动、一边沿轴以 $\dot d$ 伸缩，点的速度是「转动牵连 + 沿轴相对速度」，对时间求导的交叉项就是它；转动关节无相对平动，故无此项。反之 $\boldsymbol\omega\times(\boldsymbol\omega\times\boldsymbol r)$ 是**向心加速度**（常称离心项）。这两个名字在 [6.1.3](sec6-1.md#part-6.1.3) 的 $h_{ijk}$ 里都出现过：$h_{ijj}\dot q_j^2$ 对应离心、$h_{ijk}\dot q_j\dot q_k$ 对应科氏；牛顿–欧拉法不给它们分组，而让它们逐杆逐项出现在递推里。
 

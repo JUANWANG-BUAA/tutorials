@@ -62,7 +62,7 @@ $$\dot{\boldsymbol q}(t_{k+1})=\dot{\boldsymbol q}(t_k)+\int_{t_k}^{t_{k+1}}\ddo
 
 课件明确说可用**龙格–库塔法（Runge–Kutta）**等数值积分方法（01:26:00 前后）。步长影响精度和计算量，但遇到刚性系统或摩擦切换时，还需选合适的算法和误差控制；单凭缩小步长不能保证所得结果可靠。把「解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ → 积分 → 更新状态」循环下去，就能模拟给定转矩下的运动。
 
-![课堂幻灯片 · 85:46：正解的核心式 $\ddot q=B^{-1}(q)(\tau-\tau')$ 与 $\tau'$ 的定义](../assets/ch06/dyn-qddot.jpg)
+![课堂幻灯片 · 85:46：正解的核心式 q̈ = B⁻¹(q)(τ − τ′) 与 τ′ 的定义](../assets/ch06/dyn-qddot.jpg)
 
 ![课堂幻灯片 · 86:10：由加速度做数值积分，推进到下一时刻的位置与速度](../assets/ch06/dyn-integration.jpg)
 
@@ -95,7 +95,7 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 
 需要矩阵时可用 $n$ 次递推把它「采」出来，代价是 $n$ 倍逆解计算量——两者并不互斥。
 
-![课堂幻灯片 · 87:03：用牛顿–欧拉递推、令 $\dot q=0$、$\ddot q=e_i$ 求 $B(q)$ 的列](../assets/ch06/dyn-B-ne.jpg)
+![课堂幻灯片 · 87:03：用牛顿–欧拉递推、令 q̇ = 0、q̈ = e_i 求 B(q) 的列](../assets/ch06/dyn-B-ne.jpg)
 
 ## 6.5.5 计算量：课件口径与递推口径
 
@@ -110,7 +110,7 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 
 6.4 的牛顿–欧拉递推是另一种口径：对串联机械手，不显式构造 $B,C,\boldsymbol g$，每根杆做固定规模的运算，逆解为 $O(n)$。两种计数所含的计算步骤不同，不能直接把课件的 $O(n^2)$ 当成所有正、逆动力学算法的复杂度。老师在 01:26:17 口述「$N$ 个关节……都是 $N$ 方的关系」，与课件表格一致。
 
-![课堂幻灯片 · 87:31：逆解的用途与正解/逆解的计算量（课件写 $O(n^2)$）](../assets/ch06/dyn-complexity.jpg)
+![课堂幻灯片 · 87:31：逆解的用途与正解/逆解的计算量（课件写 O(n²)）](../assets/ch06/dyn-complexity.jpg)
 
 ![课堂实况 · 84:30：老师在投影前讲拉格朗日法与牛顿–欧拉法的对比，本节由此转入正/逆解](../assets/ch06/dyn-board-compare.jpg)
 

@@ -38,7 +38,7 @@ $$\ddot{\boldsymbol q}=\dot r^2\,\bar{\boldsymbol q}''(r)+\ddot r\,\bar{\boldsym
 
 其中 $\bar{\boldsymbol q}'=\mathrm d\bar{\boldsymbol q}/\mathrm d r$、$\bar{\boldsymbol q}''=\mathrm d^2\bar{\boldsymbol q}/\mathrm d r^2$。第一项是「路径二阶导数 × 速度平方」（弯曲/向心效应），第二项是「路径切向 × 切向加速度」；**时间标度的全部信息就藏在 $\dot r,\ddot r$ 里。**
 
-![课堂幻灯片 · 92:04：时间标度函数 $r(t)$ 与轨迹重参数化 $q(t)=\bar q(r(t))$](../assets/ch06/dynscale-def.jpg)
+![课堂幻灯片 · 92:04：时间标度函数 r(t) 与轨迹重参数化 q(t) = q̄(r(t))](../assets/ch06/dynscale-def.jpg)
 
 ## 6.6.3 代入动力学方程
 
@@ -104,7 +104,7 @@ $$r(t)=\frac{t}{T}\quad\Longleftrightarrow\quad c=\frac{1}{T},
 
 总力矩还要加回重力。假设某关节某位置的重力矩为 $10\ \mathrm{N\cdot m}$，原动态分量为 $-8\ \mathrm{N\cdot m}$，原总力矩是 $2\ \mathrm{N\cdot m}$；时间拉长两倍后，动态分量变成 $-2\ \mathrm{N\cdot m}$，总力矩反而增至 $8\ \mathrm{N\cdot m}$。这是因为原来的动态项抵消了部分重力。
 
-![课堂幻灯片 · 95:27：简单线性标度 $r(t)=ct$ 给出 $\tau_s(t)=c^2\bar\tau_s(ct)$](../assets/ch06/dynscale-linear.jpg)
+![课堂幻灯片 · 95:27：简单线性标度 r(t) = ct 给出 τ_s(t) = c²·τ̄_s(ct)](../assets/ch06/dynscale-linear.jpg)
 
 **怎么选 $T$（或 $c$）**（01:33:48–01:34:01）：先用逆动力学沿原轨迹计算每个关节的动态分量与重力分量，再选择候选 $T$，逐点检查 $\boldsymbol\tau(t)=\boldsymbol g(\bar{\boldsymbol q}(t/T))+\bar{\boldsymbol\tau}_s(t/T)/T^2$ 是否满足各关节的力矩限制。忽略重力时，$T=\sqrt{|\bar\tau_s|_{\max}/\tau_{\max}}$ 可给出单个关节的估计；有重力时不能直接套用。若某处静态保持力矩已超限，单靠无限放慢也不能保证该处可行。
 

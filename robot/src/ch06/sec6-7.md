@@ -51,7 +51,7 @@ $$\boxed{\ \ddot{\boldsymbol x}_e=J_A(\boldsymbol q)\ddot{\boldsymbol q}
 
 多出来的 $\dot J_A\dot{\boldsymbol q}$ 是雅可比随位形变化产生的项；**做操作空间动力学时不能漏**。
 
-![课堂幻灯片 · 110:28：几何雅可比、分析雅可比、$T_A$ 与 $\ddot x_e=J_A\ddot q+\dot J_A\dot q$](../assets/ch06/opspace-jacobians.jpg)
+![课堂幻灯片 · 110:28：几何雅可比、分析雅可比、T_A 与 ẍ_e = J_A·q̈ + J̇_A·q̇](../assets/ch06/opspace-jacobians.jpg)
 
 ## 6.7.3 从关节空间推到操作空间
 
@@ -129,7 +129,7 @@ $$\tfrac12\dot{\boldsymbol x}_e^{\mathrm T}B_A\dot{\boldsymbol x}_e
 | $\boldsymbol\gamma_A$ | $\boldsymbol\tau$ | 广义力（由关节力矩等效到末端） |
 | $\boldsymbol h_A$ | $\boldsymbol h_c$ | 末端接触力（经 $T_A^{\mathrm T}$ 变换） |
 
-![课堂幻灯片 · 110:55：操作空间方程 $B_A\ddot x_e+C_A\dot x_e+g_A=\gamma_A-h_A$ 与三个矩阵的定义](../assets/ch06/opspace-BA.jpg)
+![课堂幻灯片 · 110:55：操作空间方程 B_A·ẍ_e + C_A·ẋ_e + g_A = γ_A − h_A 与三个矩阵的定义](../assets/ch06/opspace-BA.jpg)
 
 三点补充。**其一，几何雅可比版本**：若用 $J$ 与 $\boldsymbol v_e$ 替换 $J_A,\dot{\boldsymbol x}_e,\ddot{\boldsymbol x}_e$，可得同形式的 $B_x\dot{\boldsymbol v}_e+C_x\boldsymbol v_e+\boldsymbol g_x=\boldsymbol\gamma_e-\boldsymbol h_e$。**其二，$C_A$ 的选法**：这里定义的是乘积 $C_A\dot{\boldsymbol x}_e$，矩阵本身并不唯一。**其三，奇点**：$J_A$ 必须满行秩；接近降秩时，$J_AB^{-1}J_A^{\mathrm T}$ 可能病态，失去秩后不能再求上面的逆。老师在 01:52:43 也指出，奇点或退化需要另外处理。
 
@@ -147,7 +147,7 @@ $$\boldsymbol\tau=J_A^{\mathrm T}(\boldsymbol q)\boldsymbol\gamma_A.$$
 
 ![课堂幻灯片 · 111:55：操作空间模型与关节空间模型一一对应，只是通过雅可比做了转换](../assets/ch06/opspace-summary.jpg)
 
-![课堂幻灯片 · 112:43：冗余机械手 $\tau$ 不唯一（零空间优化）与奇点/退化的数值处理](../assets/ch06/opspace-redundant.jpg)
+![课堂幻灯片 · 112:43：冗余机械手 τ 不唯一（零空间优化）与奇点/退化的数值处理](../assets/ch06/opspace-redundant.jpg)
 
 ![课堂实况 · 107:00：老师在投影前讲操作空间的提出背景与关键思想](../assets/ch06/opspace-board.jpg)
 
