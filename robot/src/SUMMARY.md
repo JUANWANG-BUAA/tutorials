@@ -174,6 +174,8 @@
   - [勘误与来源说明](ch08/errata.md)
   - [习题集（自编，不代表课程布置）](ch08/exercises.md)
   - [学习目标自检表](ch08/checklist.md)
+  - [闭卷回忆卡（20 张检索练习卡）](ch08/recall-cards.md)
+  - [综合自测卷（90 分钟 · 满分 100）](ch08/mock-exam.md)
 
 # 第九编 · 视觉伺服（第 11 周录播）
 
