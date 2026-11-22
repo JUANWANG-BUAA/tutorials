@@ -35,7 +35,7 @@ $$J_A(q)=\frac{\partial k}{\partial q},\qquad
 
 ## 3.6.2 从ZYZ合成推导 $\omega_e=T\dot{\boldsymbol\varphi}_e$
 
-### 第一步：三次转动分别绕哪根轴
+### 3.6.2.1 第一步：三次转动分别绕哪根轴
 
 第一个角 $\varphi$ 绕基系 $z$ 轴；第二个角 $\vartheta$ 绕转过 $\varphi$ 后的 $y'$ 轴；第三个角 $\psi$ 绕再转过 $\vartheta$ 后的 $z''$ 轴。把三个单位轴都写在基系中：
 
@@ -49,7 +49,7 @@ $$z''=R_z(\varphi)R_y(\vartheta)\begin{bmatrix}0\\0\\1\end{bmatrix}
 
 $s_\alpha,c_\alpha$ 分别简写 $\sin\alpha,\cos\alpha$。最后一次绕 $z''$ 自转不会改变 $z''$ 自身，因此这根轴不依赖 $\psi$。
 
-### 第二步：为什么三个贡献可以相加
+### 3.6.2.2 第二步：为什么三个贡献可以相加
 
 令 $A=R_z(\varphi),B=R_y(\vartheta),C=R_z(\psi)$，于是 $R=ABC$。乘积求导，再右乘 $R^{\mathrm T}=C^{\mathrm T}B^{\mathrm T}A^{\mathrm T}$：
 
@@ -83,9 +83,7 @@ $$\boxed{\omega_e=z\dot\varphi+y'\dot\vartheta+z''\dot\psi
 
 $T\in\mathbb R^{3\times3}$ 的列是三个瞬时转轴的单位方向，矩阵本身无量纲。上面的证明解释了“贡献相加”的来源，不能把三个有限旋转的角度直接当向量相加。
 
-![课件第58页 · 02:20:50：ZYZ的三根瞬时轴及其在基系中的方向](../assets/ch03/analytic-euler.jpg)
-
-### 第三步：系数为什么不等于向轴投影
+### 3.6.2.3 第三步：系数为什么不等于向轴投影
 
 $T$ 给出用三根转轴合成 $\omega_e$ 的系数；若三根轴不是正交基，系数不能通过逐轴点积获得。点积实际给出
 
@@ -97,7 +95,7 @@ T^{\mathrm T}T=\begin{bmatrix}1&0&c_\vartheta\\0&1&0\\c_\vartheta&0&1\end{bmatri
 
 老师在 2:21:05 用线性代数作类比：「同一个向量可以表示在不同坐标系——空间可以正交也可以不正交。」这个类比解释了为何需要换算矩阵；三根轴能否构成基，仍要按上面的线性无关条件判断，不能仅检查它们是否两两不平行。
 
-### 跟算：同一个角速度的两套数值
+### 3.6.2.4 跟算：同一个角速度的两套数值
 
 取 $\varphi=0,\vartheta=60^\circ$，任意 $\psi$，并给定 $\dot{\boldsymbol\varphi}_e=(1,2,3)^{\mathrm T}$ rad/s。先写矩阵，再逐行相乘：
 
@@ -113,7 +111,7 @@ $$T=\begin{bmatrix}0&0&\sqrt3/2\\0&1&0\\1&0&1/2\end{bmatrix},\qquad
 
 ## 3.6.3 反向换算、表示奇点与两种雅可比
 
-### 逐步求 $T^{-1}$，看见分母从哪里来
+### 3.6.3.1 逐步求 $T^{-1}$，看见分母从哪里来
 
 把 $\omega_e=T\dot{\boldsymbol\varphi}_e$ 展开：
 
@@ -140,7 +138,7 @@ $$\det T=\det\begin{bmatrix}-s_\varphi&c_\varphi s_\vartheta\\c_\varphi&s_\varph
 
 例如 $\varphi=0,\vartheta=0$ 时 $T\dot{\boldsymbol\varphi}_e=(0,\dot\vartheta,\dot\varphi+\dot\psi)^{\mathrm T}$：有限速率无法给出沿 $x$ 的角速度；给定沿 $z$ 的角速度，又只能确定 $\dot\varphi+\dot\psi$。这里固定了这一组欧拉角代表；换一个奇点处的参数代表并不能建立覆盖附近所有姿态的光滑三维坐标。
 
-### 实验：是角速度变大，还是参数速率变大
+### 3.6.3.2 实验：是角速度变大，还是参数速率变大
 
 先预测：保持 $\varphi=0$、固定 $\omega_e=(1,0,0)^{\mathrm T}$ rad/s，让 $\vartheta$ 从 $90^\circ$ 降到 $1^\circ$，哪个量会变大？由上式
 
@@ -159,7 +157,7 @@ $$\dot{\boldsymbol\varphi}_e=(-\cot\vartheta,0,1/\sin\vartheta)^{\mathrm T}.$$
 
 **读数之后解释**：固定角速率时，即使端点处 $T$ 降秩，正向合成仍有定义；固定角速度时，端点处显示“无唯一逆换算”，不能拿很大的数或零冒充逆解。靠近端点的大速率相互抵消后，仍可能合成很小的物理角速度。
 
-### 两种雅可比怎样连接
+### 3.6.3.3 两种雅可比怎样连接
 
 ::: thm 定理 3.6.A · 两种雅可比的关系 {#thm-3.6.A}
 在选定的光滑欧拉角分支内，定义 $T_A\in\mathbb R^{6\times6}$：
@@ -174,10 +172,6 @@ $$\boxed{J=T_AJ_A},\qquad
 
 块矩阵左上是 $I_3$，保留相同的线速度；右下是 $T$，换算姿态速度。$T_A$ 可逆时左乘不改变秩，所以 $\operatorname{rank}J_A=\operatorname{rank}J$。
 :::
-
-![课件第 59 页 · 02:22:27：角速度合成矩阵 T、欧拉角表示奇点与角速度的物理含义](../assets/ch03/analytic-relation.jpg)
-
-![课件第 62 页：几何雅可比与分析雅可比的关系，以及平面运动的特例](../assets/ch03/analytic-jacobian-relation.png)
 
 **表示奇点不等于机构奇点。** $s_\vartheta=0$ 说明这个ZYZ坐标图失去局部可逆性，不能用 $T_A^{-1}J$ 定义通用的逆换算；几何雅可比是否降秩，要独立看机构及所选任务。不能据此宣布 $J$ 也失效。
 
@@ -213,7 +207,7 @@ $$R_B=R_x(\pi/2)R_y(\pi/2)
 $R_x(\pi)=\operatorname{diag}(1,-1,-1)$、$R_y(\pi)=\operatorname{diag}(-1,1,-1)$，两种乘积恰好都为 $\operatorname{diag}(-1,-1,1)=R_z(\pi)$。两方案的角速度积分也都为 $(\pi,\pi,0)^{\mathrm T}$。某些特殊旋转可以交换，并不推翻原书 $90^\circ$ 反例：只需存在积分相同、终态不同的两段运动，就足以说明分量积分不能一般地确定姿态。
 :::
 
-### 平面臂为何有一致的特例
+### 3.6.4.1 平面臂为何有一致的特例
 
 对于[§3.2.1](sec3-2.md#sec-3.2.1)的3R平面臂，选任务坐标 $x=(p_x,p_y,\alpha)^{\mathrm T}$，其中 $\alpha=q_1+q_2+q_3$ 是绕固定 $z$ 轴的单个方向角。于是 $\dot\alpha=\dot q_1+\dot q_2+\dot q_3=\omega_z$。这个 $3\times n$ 分析雅可比就等于完整几何雅可比的第1、2、6行。
 
@@ -259,8 +253,34 @@ J_{\rm planar}\begin{bmatrix}1\\-1\\2\end{bmatrix}
 :::
 :::
 
-## 3.6 小结与下一节
+## 3.6 小结与常见错误
 
 $\omega_e$ 是角速度在基系的分量，$\dot{\boldsymbol\varphi}_e$ 是姿态坐标导数；用 $T$ 合成，不能一般地用逐轴投影取系数。局部光滑且 $\sin\vartheta\ne0$ 时，$J_A=T_A^{-1}J$；ZYZ表示奇点与几何任务降秩须分别判断。角速度可以按时间积分，但只保留三个分量积分会丢掉旋转顺序。
+**下一节**：把位姿坐标误差 $e=x_d-x_e$ 引入求解。由于 $\dot x_e=J_A\dot q$，误差导数会自然出现 $J_A$；若改用角速度形式的姿态误差，则需要相应的另一套误差方程，不能把两种速度直接互换。
 
-下一节把位姿坐标误差 $e=x_d-x_e$ 引入求解。由于 $\dot x_e=J_A\dot q$，误差导数会自然出现 $J_A$；若改用角速度形式的姿态误差，则需要相应的另一套误差方程，不能把两种速度直接互换。
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $\omega_e=z\dot\varphi+y'\dot\vartheta+z''\dot\psi=T(\boldsymbol\varphi_e)\dot{\boldsymbol\varphi}_e$ | ZYZ、基系表达 | rad/s | $T$ 的列是三根瞬时轴；合成系数 ≠ 逐轴点积（$T^{\mathrm T}\omega=T^{\mathrm T}T\dot{\boldsymbol\varphi}$） |
+| $T^{-1}=\begin{bmatrix}-c_\varphi\cot\vartheta&-s_\varphi\cot\vartheta&1\\-s_\varphi&c_\varphi&0\\c_\varphi/s_\vartheta&s_\varphi/s_\vartheta&0\end{bmatrix}$ | $s_\vartheta\ne0$ | — | $\det T=-s_\vartheta$；$\vartheta=0,\pi$ 为表示奇点，角速度本身并不变大 |
+| $J=T_AJ_A$，$J_A=T_A^{-1}J$（$T_A=\operatorname{diag}(I_3,T)$） | 光滑分支内 | — | 两种雅可比秩相等；表示奇点 ≠ 机构奇点（反例：$J_O=I_3$ 而 $\vartheta=0$） |
+| $\int\omega\,dt$ 不能恢复姿态（教材例 3.3） | 分段固定轴 | rad | 顺序信息丢失；须积分解 $\dot R=S(\omega)R$ 或用有限旋转合成 |
+| 平面臂 $J_{\rm planar}$ = 几何雅可比第 1、2、6 行 | 单固定转轴 + 方向角任务 | — | 是降维特例，不是把 ZYZ 三轴并成一根 |
+
+::: think 常见错误清单 · 自查三条
+1. 把 $\omega_e$ 的分量当欧拉角速率（或反过来）：两者经 $T$ 换算，一般不等；跟算里 $2.5\ne\dot\varphi=1$ 就是反例。
+2. 用 $T^{\mathrm T}\omega_e$ 取系数：三轴一般非正交，须解 $T^{-1}\omega_e$；$\vartheta=\pi/2$ 时两者才碰巧一致。
+3. 由「ZYZ 表示奇异」断言机构奇异：表示奇点与机构奇点是两回事，须独立检查任务雅可比的秩。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导与自算例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 2:17:32–2:24:12）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 02:20:50 | [analytic-euler.jpg](../assets/ch03/analytic-euler.jpg) | ZYZ 三根瞬时轴及其基系方向 | 三步推导完整给出，含每根轴的表达坐标系 |
+| 02:22:27 | [analytic-relation.jpg](../assets/ch03/analytic-relation.jpg) | 角速度合成矩阵 $T$、表示奇点与角速度含义 | $T$、$T^{-1}$ 与 $\det T$ 推导完整给出，配速率/角速度对照实验 |
+| — | [analytic-jacobian-relation.png](../assets/ch03/analytic-jacobian-relation.png) | 两种雅可比的关系与平面特例 | 定理 3.6.A + 表示奇点 ≠ 机构奇点反例 + 平面臂特例完整给出 |
+:::
