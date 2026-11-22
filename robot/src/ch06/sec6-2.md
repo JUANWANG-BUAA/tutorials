@@ -6,8 +6,8 @@
 
 ## 6.2.1 $\dot B-2C$ 的反对称性
 
-> 录播 01:22:30–01:30:20。这是动力学模型的**第一条结构性质**。它看起来只是一个矩阵恒等式，
-> 实际上是能量守恒在动力学方程里的代数影子——原书第 8 章的稳定性证明、自适应控制的无源性分析都要用它。
+这是动力学模型的**第一条结构性质**。它看起来只是一个矩阵恒等式，
+实际上是能量守恒在动力学方程里的代数影子——原书第 8 章的稳定性证明、自适应控制的无源性分析都要用它。
 
 ### 6.2.1.1 先解决「$C$ 不唯一」
 
@@ -40,8 +40,6 @@ $c_{ijk}$ 称为**第一类 Christoffel 符号**（Christoffel symbols of the fi
 $b_{ij}=b_{ji}$ 立刻有
 
 $$c_{ijk}=c_{ikj}.$$
-
-![课堂幻灯片 · 82:36：C 的一般元素与第一类 Christoffel 符号](../assets/ch06/skew.jpg)
 
 ### 6.2.1.2 $N=\dot B-2C$ 反对称
 
@@ -79,8 +77,6 @@ $$\boxed{\ \boldsymbol w^{\mathrm T}N(\boldsymbol q,\dot{\boldsymbol q})\boldsym
 
 （因为标量的转置等于自身：$\boldsymbol w^{\mathrm T}N\boldsymbol w=(\boldsymbol w^{\mathrm T}N\boldsymbol w)^{\mathrm T}
 =\boldsymbol w^{\mathrm T}N^{\mathrm T}\boldsymbol w=-\boldsymbol w^{\mathrm T}N\boldsymbol w$，故为零。）
-
-![课堂幻灯片 · 86:30：N(q, q̇) = Ḃ − 2C 的反对称性与 wᵀNw = 0](../assets/ch06/christoffel.jpg)
 
 ### 6.2.1.3 两个命题要分清
 
@@ -149,8 +145,8 @@ $$\frac12\frac{\mathrm d}{\mathrm dt}\bigl(\dot{\boldsymbol q}^{\mathrm T}B\dot{
 
 ## 6.2.2 动力学参数的线性性
 
-> 录播 01:30:20–01:54:30（其后为课间与答疑）。这是动力学模型的**第二条结构性质**，也是参数辨识与
-> 自适应控制的入口：**力矩对一组「动力学参数」是线性的**，于是可以把辨识写成线性最小二乘。
+这是动力学模型的**第二条结构性质**，也是参数辨识与
+自适应控制的入口：**力矩对一组「动力学参数」是线性的**，于是可以把辨识写成线性最小二乘。
 
 ### 6.2.2.1 为什么要「扩展连杆」
 
@@ -208,8 +204,6 @@ m_i,\quad h_{ix},\quad h_{iy},\quad h_{iz},\quad
 
 固定几何尺寸、传动关系和重力后，每项都是“常参数 × 运动学系数”。这里的 $\widehat{\boldsymbol I}_i$ 和 $\boldsymbol h_i$ 是选作回归变量的惯性参数；不能再把 $\widehat{\boldsymbol I}_i$ 展开成含未知质心的乘积后，仍声称对 $m_i,\boldsymbol\ell_{C_i}$ 分别线性。
 
-![课堂幻灯片 · 110:07：动力学参数的线性性——质量、一阶矩与惯性张量](../assets/ch06/linearity-tau.jpg)
-
 ### 6.2.2.3 从拉格朗日函数到回归矩阵
 
 按上述方式分组：第 $j$ 组包含扩展连杆 $j$ 的锁转能量，以及转子 $j$ 的自转附加动能。把各组相加后，拉格朗日函数写成
@@ -245,10 +239,6 @@ $$\boxed{\ \boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol
 
 例如第 $i$ 行增加 $\dot q_i$ 和 $\operatorname{sgn}\dot q_i$ 两列，分别乘 $F_{v_i},F_{s_i}$；零速度静摩擦仍需另建模型。有接触且 $\boldsymbol h_e$ 已知时，先从 $\boldsymbol\tau$ 减去 $J^{\mathrm T}\boldsymbol h_e$。$\boldsymbol\pi$ 为 $p\times1$ 常参数向量，$Y$ 为 $n\times p$ 回归矩阵。
 
-![课堂幻灯片 · 95:15：扩展连杆的动能与 11 个动力学参数](../assets/ch06/linearity.jpg)
-
-![课堂幻灯片 · 114:27：τ = Y(q, q̇, q̈)·π，Y 为回归矩阵](../assets/ch06/regressor.jpg)
-
 ### 6.2.2.4 参数的个数与「最小参数集」
 
 - 在本节轴对称转子、已知传动比且无接触的模型中，每组名义上有 **13 个**参数：11 个惯性参数加黏滞、库仑摩擦系数。
@@ -264,7 +254,7 @@ $$\boxed{\ \boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol
 3. **参数筛选**：$Y$ 的零列/相关列直接告诉你「哪些参数根本不可辨识」，避免白费力气去测。
 :::
 
-### 第 8 周续讲：怎样实际辨识参数
+### 6.2.2.5 怎样实际辨识参数
 
 第 8 周开头的课件 §7.4（`s00344`–`s00835`）接着讲了辨识流程。上面的块上三角结构允许先考察末关节：沿轨迹采集末关节数据，用 $\tau_n=\boldsymbol y_{nn}^{\mathrm T}\boldsymbol\pi_n$ 估计可辨识的末端参数组合，再向基座方向处理。每个 $\boldsymbol\pi_i$ 都是参数向量，单个时刻的一条标量方程不够，仍须堆叠多个时刻并检查秩。
 
@@ -276,7 +266,7 @@ $$\boxed{\ \boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol
 
 同页还给出未知末端有效负载的处理：将刚性安装的负载看成最后一根连杆的结构修正，重新辨识修正后连杆的等效惯性参数。这不等于把负载重力误算成一个无关的常接触力，也不意味着能单独区分所有负载参数与原末杆参数。
 
-### 6.2.2.5 小结与常见错误
+### 6.2.2.6 小结与常见错误
 
 - **一句话**：将扩展连杆锁转参数与转子自转参数分组，能量和广义力对参数线性；无接触时，把摩擦参数并入可写成 $\boldsymbol\tau=Y\boldsymbol\pi$。
 - **三个数**：本节模型每组名义上 11 个惯性参数、加摩擦共 13 个；具体机构的独立参数组合可能更少。
@@ -294,4 +284,28 @@ $$\boxed{\ \boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol
 2. 说明为什么动能对参数是线性的（举两项为例）。
 3. 写出 $\tau=Y\pi$ 的维度与 $Y$ 的依赖变量。
 4. 参数辨识为什么能化成线性最小二乘？
+:::
+
+**下一节**：[6.3 两连杆动力学算例](sec6-3.md) 把本节与 6.1 的全部公式落到一台具体的两连杆臂上——位形相关的 $B$、非零的 $C$、重力项与回归矩阵都在那里第一次手算成型。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $c_{ijk}=\frac12(\partial_k b_{ij}+\partial_j b_{ik}-\partial_i b_{jk})$ | Christoffel 选法 | — | 三项指标位置；$c_{ijk}=c_{ikj}$ |
+| $N=\dot B-2C$，$N^{\mathrm T}=-N$，$\boldsymbol w^{\mathrm T}N\boldsymbol w=0$ | Christoffel 选法的 $C$ | — | (A) 对任意 $w$；(B) 只对 $w=\dot q$；(B) 不蕴含 (A) |
+| $\boldsymbol\pi_i=[m_i,\ h_i^{\mathrm T},\ \widehat I_i\text{ 的 6 分量},\ I_{m_i}]^{\mathrm T}$（11 个） | 扩展连杆分组、轴对称转子 | kg、kg·m、kg·m² | 转子 $i+1$ 的锁转量归扩展连杆 $i$，自转项归第 $i$ 组 |
+| $\boldsymbol\tau=Y(q,\dot q,\ddot q)\boldsymbol\pi$ | 无接触、摩擦并入参数 | N·m / N | $Y$ 每次采样重算；辨识须查满列秩与激励 |
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导与证明；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:22:30–01:54:30）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 82:36 | [skew.jpg](../assets/ch06/skew.jpg) | $C$ 的一般元素与第一类 Christoffel 符号 | 完整推导给出，含 $C$ 不唯一的反例与重配对 |
+| 86:30 | [christoffel.jpg](../assets/ch06/christoffel.jpg) | $N=\dot B-2C$ 反对称与 $w^{\mathrm T}Nw=0$ | 两种陈述 (A)/(B) 分清并分别证明 |
+| 110:07 | [linearity-tau.jpg](../assets/ch06/linearity-tau.jpg) | 参数线性性——质量、一阶矩、惯性张量 | 扩展连杆推导完整给出，含边界项说明 |
+| 95:15 | [linearity.jpg](../assets/ch06/linearity.jpg) | 扩展连杆动能与 11 个参数 | 参数表逐项读法完整给出 |
+| 114:27 | [regressor.jpg](../assets/ch06/regressor.jpg) | $\tau=Y\pi$ 与回归矩阵 | 块上三角结构 + 实际辨识流程（6.2.2.5）完整给出 |
 :::

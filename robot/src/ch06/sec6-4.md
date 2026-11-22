@@ -1,8 +1,8 @@
 # 6.4 牛顿–欧拉递推
 
-> 录播 00:04:30–01:30:00。课件 **§7.5「牛顿–欧拉公式」**，对应教材 **§7.4**，本书编为 6.4；
-> 主体 6.4.1–6.4.8 对应 00:16–01:15，与拉格朗日法的对比补引 01:23–01:30。
-> 本节回答：只对每根杆列牛顿方程与欧拉方程，怎样用两遍递推算出 $\boldsymbol\tau$；它为什么更快、又为什么更难推。
+课件 **§7.5「牛顿–欧拉公式」**，对应教材 **§7.4**，本书编为 6.4；
+主体 6.4.1–6.4.8 对应录播 00:16–01:15，与拉格朗日法的对比补引 01:23–01:30。
+本节回答：只对每根杆列牛顿方程与欧拉方程，怎样用两遍递推算出 $\boldsymbol\tau$；它为什么更快、又为什么更难推。
 
 ::: note 来源与边界（本节）
 - **编号错位**：本讲课件把「动力学参数辨识」编为 §7.4、「牛顿–欧拉公式」编为 §7.5，与教材顺序相反；教材 §7.4 才是牛顿–欧拉方法。本书按教材对应关系编为 **6.4**，正文引用教材式号 (7.107)–(7.114)，与课件结构图一致。读课件时不要按编号对章节。
@@ -27,8 +27,6 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{
 ## 6.4.2 预备知识：动量、角动量与力系简化
 
 全部理论基础只有两条：**动量定理**与**动量矩定理**。老师用 00:16–00:37 约二十分钟铺垫（课件 §7.5「预备知识」）。
-
-![课堂板书 · 36:00：老师在黑板前讲动量与角动量，黑板保留手写推导，右侧投影为 7.5 预备知识](../assets/ch06/ne-board-momentum.jpg)
 
 **① 动量。** 质量微元 $\rho\,\mathrm dV$ 的动量为 $\dot{\boldsymbol p}\,\rho\,\mathrm dV$，对刚体积分只剩质心速度：
 
@@ -63,8 +61,6 @@ $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
 
 后一式是**欧拉方程（Euler equation）**。若取刚体上固定在惯性空间中的点 $O$，同样可用 $\boldsymbol I_O$ 写出该形式；任意空间固定点不一定是刚体的固定点，不能直接照搬。陀螺项来自惯性张量方向随刚体转动（00:33:52–00:35:50）。
 
-![课堂板书 · 43:30：老师在黑板前讲单连杆的牛顿方程，黑板保留力/力矩平衡的手写推导](../assets/ch06/ne-board-balance.jpg)
-
 ## 6.4.3 单连杆的牛顿–欧拉方程
 
 把结论用到「连杆 $i$」上。课件先约定记号，再用一张表把 **18 个变量**一次列清（00:38:42–00:40:52）——整节的字典。
@@ -85,8 +81,6 @@ $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
 
 **注意两个参考点不同**：$\boldsymbol\mu_i$ 关于 $O_{i-1}$，$\boldsymbol\mu_{i+1}$ 关于 $O_i$。纯力偶矩可自由平移，但包含合力贡献的主矩一般随参考点改变。把界面力系移到质心时，分别补上 $\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}$ 与 $-\boldsymbol f_{i+1}\times\boldsymbol r_{i,C_i}$，才得到下面的欧拉方程。
 
-![课堂幻灯片 · 37:21：7.5 牛顿–欧拉公式——变量定义与单连杆受力图](../assets/ch06/ne-variables.jpg)
-
 **牛顿方程**（对质心平移，取合力 = 质量 × 质心加速度）：
 
 $$\boldsymbol f_i-\boldsymbol f_{i+1}+m_i\boldsymbol g_0=m_i\ddot{\boldsymbol p}_{C_i}.$$
@@ -101,8 +95,6 @@ $$\boldsymbol\mu_i+\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}
 左边四项依次是：上一杆的力矩 $\boldsymbol\mu_i$、其力 $\boldsymbol f_i$ 对 $C_i$ 的矩、下一杆的反力矩 $-\boldsymbol\mu_{i+1}$、其反作用力对 $C_i$ 的矩。右边是**连杆 + 转子**对 $C_i$ 的角动量：连杆用 $\bar{\boldsymbol I}_i\boldsymbol\omega_i$，转子用 $k_{r,i+1}\dot q_{i+1}I_{m_{i+1}}\boldsymbol z_{m_{i+1}}$（只绕自身轴自转）。
 
 **为什么重力不在欧拉方程里**：重力 $m_i\boldsymbol g_0$ 作用在质心，对 $C_i$ 的力臂为零，不产生力矩；所以牛顿方程写 $+m_i\boldsymbol g_0$，欧拉方程不写（课件在公式页下方专门标注）。
-
-![课堂幻灯片 · 42:23：单连杆的牛顿方程与欧拉方程（含转子角动量项）](../assets/ch06/ne-link-equations.jpg)
 
 ## 6.4.4 欧拉方程的展开：惯性张量、陀螺项与转子项
 
@@ -166,8 +158,6 @@ $$\boxed{\ \boldsymbol\tau_i=\begin{cases}
 
 这就是教材式 **(7.114)**：关节 $i$ 的轴线过 $O_{i-1}$，而 $\boldsymbol\mu_i$ 已把**关节 $i$ 之后所有杆**的力与力矩汇总到 $O_{i-1}$，投影到轴线正是电机要克服的总力矩。
 
-![课堂幻灯片 · 54:03：关节广义力——力/力矩沿关节轴投影，再加转子惯性转矩](../assets/ch06/ne-joint-tau.jpg)
-
 ## 6.4.6 向外（前向）递推：连杆运动量
 
 第一遍递推（00:56:30–01:04:00）。**已知** $\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 与基座运动量，**要求**每根连杆的 $\boldsymbol\omega_i,\dot{\boldsymbol\omega}_i,\ddot{\boldsymbol p}_i,\ddot{\boldsymbol p}_{C_i},\dot{\boldsymbol\omega}_{m_i}$。
@@ -193,9 +183,7 @@ $$\dot{\boldsymbol p}_i=\begin{cases}
 \dot{\boldsymbol p}_{i-1}+\boldsymbol\omega_i\times\boldsymbol r_{i-1,i}, & \text{旋转关节}
 \end{cases}$$
 
-转角量与线量的递推，课件把它们并排放在两页上（下面两张图）。
-
-![课堂幻灯片 · 55:43：角速度与线速度的递推（移动关节/旋转关节分列）](../assets/ch06/ne-velocities.jpg)
+转角量与线量的递推，课件把它们并排放在两页上。
 
 **③ 角加速度**（对 ① 求导；旋转关节多出「进动」项 $\dot q_i\boldsymbol\omega_{i-1}\times\boldsymbol z_{i-1}$）：
 
@@ -217,8 +205,6 @@ $$\ddot{\boldsymbol p}_i=\begin{cases}
 +\boldsymbol\omega_i\times(\boldsymbol\omega_i\times\boldsymbol r_{i-1,i}), & \text{旋转关节}
 \end{cases}$$
 
-![课堂幻灯片 · 57:58：角加速度与线加速度的递推（移动关节多出科氏项 2ḋ_i·ω_i × z_(i−1)）](../assets/ch06/ne-accelerations.jpg)
-
 **⑤ 质心加速度**（把原点加速度搬到质心，再加一段刚体转动加速度）：
 
 $$\ddot{\boldsymbol p}_{C_i}=\ddot{\boldsymbol p}_i
@@ -231,11 +217,7 @@ $$\dot{\boldsymbol\omega}_{m_i}=\dot{\boldsymbol\omega}_{i-1}
 +k_{r_i}\ddot q_i\boldsymbol z_{m_i}
 +k_{r_i}\dot q_i\,\boldsymbol\omega_{i-1}\times\boldsymbol z_{m_i}.$$
 
-![课堂幻灯片 · 59:01：质心加速度与转子角加速度](../assets/ch06/ne-centroid-acc.jpg)
-
 **六式为什么这样分组。** 六个式子其实是同一个模式：**继承第 $i-1$ 杆的量 + 关节 $i$ 自身的贡献 + 随速度出现的耦合项**。①③ 是角量、②④ 是线量、⑤⑥ 把前两组结果搬到质心与转子轴上，所以只需记住 ①③④，其余按同一模式套。
-
-![课堂幻灯片 · 65:48：前向递推的完整公式表（课件把 p̈_0 − g_0 作为初值）](../assets/ch06/ne-forward.jpg)
 
 其中 $2\dot d\,\boldsymbol\omega\times\boldsymbol z$ 单独说一句：它是**科氏加速度（Coriolis acceleration）**——一根杆一边以 $\boldsymbol\omega$ 转动、一边沿轴以 $\dot d$ 伸缩，点的速度是「转动牵连 + 沿轴相对速度」，对时间求导的交叉项就是它；转动关节无相对平动，故无此项。反之 $\boldsymbol\omega\times(\boldsymbol\omega\times\boldsymbol r)$ 是**向心加速度**（常称离心项）。这两个名字在 [6.1.3](sec6-1.md#part-6.1.3) 的 $h_{ijk}$ 里都出现过：$h_{ijj}\dot q_j^2$ 对应离心、$h_{ijk}\dot q_j\dot q_k$ 对应科氏；牛顿–欧拉法不给它们分组，而让它们逐杆逐项出现在递推里。
 
@@ -264,8 +246,6 @@ $$\begin{aligned}
 \end{aligned}$$
 
 **③ 关节力矩**：再用 6.4.5 的投影式，得到 $\tau_i$（教材式 (7.114)）。
-
-![课堂幻灯片 · 68:38：后向递推——力、力矩与关节广义力](../assets/ch06/ne-backward.jpg)
 
 **重力项的两种处理**（本节最容易出错的地方）：
 
@@ -306,8 +286,6 @@ for i = n, …, 1:
 
 方向由方程结构决定：**运动量向外（$i=1\to n$），力向内（$i=n\to 1$）**——第 $i$ 根杆的运动量只依赖第 $i-1$ 根，力/力矩却依赖第 $i+1$ 根。
 
-![课堂幻灯片 · 72:10：牛顿–欧拉递推算法的计算结构（式 (7.107)–(7.114)）](../assets/ch06/ne-structure.jpg)
-
 **计算结构。** 课件把两遍循环画成框图（左：前向，自上而下；右：后向，自下而上；最右投影出 $\tau_i$），标注的式号 (7.107)–(7.114) 是教材式号：
 
 | 式号 | 内容 | 式号 | 内容 |
@@ -333,8 +311,6 @@ for i = n, …, 1:
 | 擅长 | 分析、控制设计、参数辨识、柔性等复杂效应 | 实时逆动力学、仿真内环 |
 | 结构性质 | $B$ 对称正定、$\dot B-2C$ 反对称、$\tau=Y\pi$ | 不显式给出 $B,C,\boldsymbol g$ |
 
-![课堂幻灯片 · 83:25：拉格朗日法与牛顿–欧拉法的对比——好推难算 / 难推好算](../assets/ch06/ne-compare.jpg)
-
 **两者结果完全一致。** 两种方式得到的方程「表现形式虽然不一样，计算量也不太一样，但实际上是统一的、完全一样」（01:22:36–01:22:59）：把递推展开，正是同一个 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g$。所以「要快」用牛顿–欧拉，「要结构、要设计控制器」用拉格朗日——这也是老师说「大部分论文基于拉格朗日方程」的原因（01:24:28–01:24:35）。
 
 **复杂度要声明口径。** 课件 §7.6 的「计算复杂度」页（s05251，01:27:31）记**正解 $O(n^2)$、逆解 $O(n^2)$**，并说「两种方法都是 $N$ 方的关系」。课件没有注明是否包括模型构造和矩阵分解，不能据此断言所有算法都是二次复杂度。
@@ -349,7 +325,7 @@ for i = n, …, 1:
 
 **算例路标。** 老师随后用教材例 7.2 的两连杆平面臂演示递推（01:15:30–01:23:20，课件 §7.5.3）：有效基座加速度为 $[0,g,0]^{\mathrm T}$，基座角速度、角加速度和末端接触均为零。向量在当前连杆系表达，$\boldsymbol r_{i,C_i}^i$ 与锁转惯性张量是常数；相邻连杆的旋转矩阵仍随关节角变化，不能全部预存为常数。逐杆递推给出的 $\tau_1,\tau_2$ 与 [6.3.2](sec6-3.md#part-6.3.2) 是同一模型；另见[作业 7-8](homework06b.md)的完整 PR 臂递推示例。
 
-### 两连杆算例：把两遍递推实际算完
+### 6.4.9.1 两连杆算例：把两遍递推实际算完
 
 课件 §7.5.3 从初始条件一直算到两关节力矩（第 8 周 `s04682`–`s04831`）。下面先用无转子特例把中间步骤展开，随后说明怎样接回完整模型。$m_i$、$I_i$ 分别是连杆质量和绕质心的平面转动惯量，$l_i$ 是近端关节到质心的距离，$a_1$ 是两关节间距。$q_2$ 为相对第一杆的角度，$q_1$ 从水平轴量起。这里的 $l_i$ 与 [6.3.2](sec6-3.md#part-6.3.2) 一致；原递推课件把连杆系原点取在远端，质心相对远端的有向坐标仍记作 $l_{C_i}$，所以原图的近端至质心距离为 $a_i+l_{C_i}$，对应下面的 $l_i$。两者不能不换参考点就直接代数值。
 
@@ -401,8 +377,19 @@ $$\tau_2=(I_2+m_2l_2^2)(\ddot q_1+\ddot q_2)
 - **一句话**：牛顿–欧拉法 = **单杆的牛顿方程与欧拉方程 + 两遍递推 + 关节轴投影**；向外算运动，向内算力，重力用 $\ddot{\boldsymbol p}_0=-\boldsymbol g_0$ 吸收。
 - **三个关键**：$\boldsymbol\mu_i$ 与 $\boldsymbol\mu_{i+1}$ 的参考点不同；移动关节多出 $\dot d$、$\ddot d$、$2\dot d\boldsymbol\omega\times\boldsymbol z$；转子项 $k_rI_m$ 不要漏。
 - **一个结论**：$O(n)$ 比拉格朗日「构造 $B,C,\boldsymbol g$」快，但不显式给出这些矩阵。
+- **下一节**：[6.5 动力学正解与逆解](sec6-5.md) 把递推装进两个标准问题——由力矩求运动、由运动求力矩，并交代计算量口径。
 
-### 常见错误清单
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 牛顿：$\boldsymbol f_i-\boldsymbol f_{i+1}+m_i\boldsymbol g_0=m_i\ddot{\boldsymbol p}_{C_i}$ | 界面力约定（$\boldsymbol f_i$=杆 $i-1$ 对杆 $i$） | N | 重力在质心、对 $C_i$ 无力矩，欧拉方程不含它 |
+| 欧拉：$\boldsymbol\mu_i+\boldsymbol f_i\times\boldsymbol r_{i-1,C_i}-\boldsymbol\mu_{i+1}-\boldsymbol f_{i+1}\times\boldsymbol r_{i,C_i}=\bar{\boldsymbol I}_i\dot{\boldsymbol\omega}_i+\boldsymbol\omega_i\times(\bar{\boldsymbol I}_i\boldsymbol\omega_i)+$转子两项 | 主矩参考点不同（$\mu_i$ 对 $O_{i-1}$、$\mu_{i+1}$ 对 $O_i$） | N·m | 陀螺项来自换系求导；转子 $k_{r,i+1}I_{m_{i+1}}$ 别漏 |
+| 前向：$\ddot{\boldsymbol p}_0=-\boldsymbol g_0$（有效加速度吸收重力）；六式递推 | 两法只能选一 | m/s² | 混用会重力算两遍；移动关节多 $2\dot d_i\omega_i\times z_{i-1}$ |
+| 投影：$\tau_i=\boldsymbol\mu_i^{\mathrm T}\boldsymbol z_{i-1}+k_{r_i}I_{m_i}\dot{\boldsymbol\omega}_{m_i}^{\mathrm T}\boldsymbol z_{m_i}$（R）/ $\boldsymbol f_i^{\mathrm T}\boldsymbol z_{i-1}+\cdots$（P） | 教材式 (7.114) | N·m / N | 转子下标 $i$ 与欧拉方程里的 $i+1$ 不同 |
+| 复杂度：递推逆动力学 $O(n)$；已有 $B,C,g$ 的矩阵式 $O(n^2)$ | 口径须声明 | — | 课件页的 $O(n^2)$ 未注明口径，不能照抄 |
+
+::: think 常见错误清单
 
 1. **力臂用错参考点**：$\boldsymbol\mu_i$ 关于 $O_{i-1}$、$\boldsymbol\mu_{i+1}$ 关于 $O_i$；写欧拉方程要把力对 $C_i$ 的矩补齐。
 2. **重力算两遍、漏掉或加错位置**：用 $\ddot{\boldsymbol p}_0=-\boldsymbol g_0$ 就不要再在牛顿方程加 $m_i\boldsymbol g_0$；欧拉方程里也不要加 $m_i\boldsymbol g_0$ 的矩（重力过质心，对 $C_i$ 无力矩）。
@@ -411,17 +398,39 @@ $$\tau_2=(I_2+m_2l_2^2)(\ddot q_1+\ddot q_2)
 6. **漏转子项**：欧拉方程是「关节 $i+1$ 的电机」$k_{r,i+1},I_{m_{i+1}}$，$\tau_i$ 投影式是「关节 $i$ 的电机」$k_{r_i},I_{m_i}$，下标不要混。
 7. **把牛顿–欧拉的 $\tau$ 当作 $B,C,\boldsymbol g$**：它只给力矩，不显式给矩阵。
 8. **末端力符号**：$\boldsymbol h_e$ 是机器人对环境的力/力矩，须与末端雅可比使用同一坐标系和参考点；环境反力为其相反数。
+:::
 
-### 默写点 · 合上书再写
+::: think 默写点 · 合上书再写
 
 1. 写出单连杆的牛顿方程与欧拉方程（含转子角动量项），并说明重力为什么不出现在欧拉方程里。
 2. 写出前向递推六式（角速度、线速度、角加速度、线加速度、质心加速度、转子角加速度），移动/旋转关节分别写。
 3. 写出后向递推的 $\boldsymbol f_i$、$\boldsymbol\mu_i$ 与 $\tau_i$ 三式。
 4. 重力项有哪两种处理？为什么 $\ddot{\boldsymbol p}_0=-\boldsymbol g_0$ 能「自动含重力」？
 5. 牛顿–欧拉法为什么是 $O(n)$？它与拉格朗日法各自的优缺点是什么？
+:::
 
 ::: note 待核（本节）
 1. **转子项的 $k_r$ 幂次**：这里 $I_m$ 均为转子侧惯量，无需另作记号假设。连杆 $i$ 的角动量附加项为 $k_{r,i+1}\dot q_{i+1}I_{m_{i+1}}\boldsymbol z_{m_{i+1}}$，故对 $\ddot q_{i+1}$ 一次；关节 $i$ 的投影式另乘 $k_{r_i}$，而转子角加速度本身含 $k_{r_i}\ddot q_i$，两者合成 $k_{r_i}^2I_{m_i}\ddot q_i$。这与动能路线的对角元一致，不是幂次冲突。
 2. **式号与内容的逐条对应**：式号表按课件结构图自上而下整理，逐条与教材印刷版对照**待核**。
 3. **课件原始末端力定义**：本页已明确采用与 6.1.3 一致的方向和参考点；课件未展开的原始记号仍需对照原稿，不能把本页统一约定当作课件逐字定义。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导、算法与两连杆手算；下列课件页与板书保留以备核对，**不构成正文的替代**（对应录播 00:04:30–01:30:00）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 36:00 板书 | [ne-board-momentum.jpg](../assets/ch06/ne-board-momentum.jpg) | 动量与角动量的手写推导 | ①②③④ 四块完整文字推导替代 |
+| 43:30 板书 | [ne-board-balance.jpg](../assets/ch06/ne-board-balance.jpg) | 单连杆力/力矩平衡手写推导 | 牛顿/欧拉方程完整推导替代 |
+| 37:21 | [ne-variables.jpg](../assets/ch06/ne-variables.jpg) | 变量定义与单连杆受力图 | 18 变量符号表 + 三个约定完整给出 |
+| 42:23 | [ne-link-equations.jpg](../assets/ch06/ne-link-equations.jpg) | 单连杆牛顿/欧拉方程（含转子项） | 完整方程 + 重力为何不在欧拉方程的说明 |
+| 54:03 | [ne-joint-tau.jpg](../assets/ch06/ne-joint-tau.jpg) | 关节广义力投影 | 投影式 (7.114) 完整给出 |
+| 55:43 | [ne-velocities.jpg](../assets/ch06/ne-velocities.jpg) | 角速度/线速度递推 | ①② 式分关节完整给出 |
+| 57:58 | [ne-accelerations.jpg](../assets/ch06/ne-accelerations.jpg) | 角加速度/线加速度递推 | ③④ 式完整给出，科氏项单独讲解 |
+| 59:01 | [ne-centroid-acc.jpg](../assets/ch06/ne-centroid-acc.jpg) | 质心加速度与转子角加速度 | ⑤⑥ 式完整给出 |
+| 65:48 | [ne-forward.jpg](../assets/ch06/ne-forward.jpg) | 前向递推完整公式表 | 六式汇总与「分组模式」说明替代 |
+| 68:38 | [ne-backward.jpg](../assets/ch06/ne-backward.jpg) | 后向递推 | ①②③ 三步 + 重力两法对照表替代 |
+| 72:10 | [ne-structure.jpg](../assets/ch06/ne-structure.jpg) | 递推算法计算结构 | 伪代码 + 式号表 (7.107)–(7.114) 替代 |
+| 83:25 | [ne-compare.jpg](../assets/ch06/ne-compare.jpg) | 两法对比 | 五维对照表 + 复杂度口径三行表替代 |
 :::

@@ -4,14 +4,14 @@
 
 <a id="part-6.1"></a>
 
-## 拉格朗日公式
+## 6.1.0 引入：从力到能量的推导路线
 
-> 录播 00:33:00–00:49:30（含例 7.1）。本节回答两个问题：**为什么用能量列方程**，以及
-> **广义力到底包含哪些东西**。前者决定方法的适用面，后者决定方程右端写不写得对。
+本节回答两个问题：**为什么用能量列方程**，以及
+**广义力到底包含哪些东西**。前者决定方法的适用面，后者决定方程右端写不写得对。
 
 <a id="611-从力换到能量"></a>
 
-### 从「力」换到「能量」
+### 6.1.0.1 从「力」换到「能量」
 
 牛顿–欧拉路线要逐杆画受力图、消内部约束力；拉格朗日路线只做两件事：**写动能 $T$、写势能 $U$**，
 然后代一个固定的微分公式。对 $n$ 自由度开链机械手，取关节变量
@@ -49,8 +49,6 @@ $$\frac{\mathrm d}{\mathrm dt}\left(\frac{\partial L}{\partial \dot{\boldsymbol 
 -\left(\frac{\partial L}{\partial \boldsymbol q}\right)^{\mathrm T}=\boldsymbol\xi.$$
 :::
 
-![课堂幻灯片 · 42:11：7.1 拉格朗日公式——L = T − U 与紧凑形式](../assets/ch06/lagrange-eq.jpg)
-
 ::: intuition 为什么可以「不画受力图」
 拉格朗日方程里的 $\dfrac{\mathrm d}{\mathrm dt}\dfrac{\partial L}{\partial \dot q_i}-\dfrac{\partial L}{\partial q_i}$
 已经把**所有保守力**（重力、弹簧力）自动装进去了——它们藏在 $U$ 里。理想约束力（关节反力、连杆内力）
@@ -61,7 +59,7 @@ $$\frac{\mathrm d}{\mathrm dt}\left(\frac{\partial L}{\partial \dot{\boldsymbol 
 <a id="612-广义力-ξiξi-的四个来源"></a>
 <a id="part-6.1.generalized-force"></a>
 
-### 广义力 $\xi_i$ 的四个来源
+### 6.1.0.2 广义力 $\xi_i$ 的四个来源
 
 对开链机械手，右端通常由四部分组成：
 
@@ -84,7 +82,7 @@ $$\xi_i=\tau_i-\bigl(F_{\mathrm v}\dot{\boldsymbol q}\bigr)_i-\bigl(F_{\mathrm s
 <a id="613-例-71带齿轮的摆老师逐行推的第一道题"></a>
 <a id="part-6.1.pendulum"></a>
 
-### 例 7.1：带齿轮的摆（老师逐行推的第一道题）
+### 6.1.0.3 例 7.1：带齿轮的摆
 
 > 教材例 7.1（对应图 5.8 的摆）。这道题把「动能 + 势能 + 广义力」的完整流程走了一遍，
 > 也是后面所有多连杆推导的模板。
@@ -128,8 +126,6 @@ $$\boxed{\ \bigl(I+I_m k_r^2\bigr)\ddot\vartheta+\bigl(F+F_m k_r^2\bigr)\dot\var
 这与第 5 章把转子量折算到关节侧得到的方程一致（原书式 (5.29)）——**拉格朗日法自动给出「折算」**，
 不需要再单独推一遍减速器的惯量/摩擦折算。
 
-![课堂幻灯片 · 42:11：7.1 拉格朗日公式与例 7.1（带齿轮的摆）](../assets/ch06/example-pendulum.jpg)
-
 ::: think 老师在这道题上强调的三件事
 1. **转子的动能也要算**：$T$ 里两项，第二项 $I_m k_r^2\dot\vartheta^2$ 不是可选项。忽略转子惯量，
    高速启停时力矩会明显偏小。
@@ -149,7 +145,7 @@ $$\boxed{\ \bigl(I+I_m k_r^2\bigr)\ddot\vartheta+\bigl(F+F_m k_r^2\bigr)\dot\var
 
 <a id="614-拉格朗日法与牛顿欧拉法的分工"></a>
 
-### 拉格朗日法与牛顿–欧拉法的分工
+### 6.1.0.4 拉格朗日法与牛顿–欧拉法的分工
 
 | 维度 | 拉格朗日法 | 牛顿–欧拉法 |
 |:--|:--|:--|
@@ -165,7 +161,7 @@ $$\boxed{\ \bigl(I+I_m k_r^2\bigr)\ddot\vartheta+\bigl(F+F_m k_r^2\bigr)\dot\var
 <a id="615-小结与常见错误"></a>
 <a id="part-6.1.intro-summary"></a>
 
-### 小结与常见错误
+### 6.1.0.5 小结与常见错误
 
 - **一句话**：拉格朗日法 = 「写两个标量（$T,U$） + 代一个公式」，约束力自动消失，非保守力补右端。
 - **三步流程**：选广义坐标 $\to$ 写 $T,U$ $\to$ 代 $\dfrac{\mathrm d}{\mathrm dt}\dfrac{\partial L}{\partial\dot q}-\dfrac{\partial L}{\partial q}=\xi$。
@@ -191,9 +187,9 @@ $$\boxed{\ \bigl(I+I_m k_r^2\bigr)\ddot\vartheta+\bigl(F+F_m k_r^2\bigr)\dot\var
 
 ## 6.1.1 动能计算
 
-> 录播 00:49:30–01:09:10。本节的任务只有一个：把 $n$ 连杆 + $n$ 个转子的总动能，写成
-> 关节速度的二次型 $\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}$，
-> 并认出 $B$ 就是**惯性矩阵**。所有结构性质（对称、正定、随位形变）都从这一步来。
+本节的任务只有一个：把 $n$ 连杆 + $n$ 个转子的总动能，写成
+关节速度的二次型 $\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}$，
+并认出 $B$ 就是**惯性矩阵**。所有结构性质（对称、正定、随位形变）都从这一步来。
 
 ### 6.1.1.1 总动能 = 连杆 + 转子
 
@@ -261,8 +257,6 @@ $$\boldsymbol I_i=\int_{V_i}S^{\mathrm T}(\boldsymbol r_i)S(\boldsymbol r_i)\rho
 $$T_i=\frac12 m_i\dot{\boldsymbol p}_i^{\mathrm T}\dot{\boldsymbol p}_i
 +\frac12\boldsymbol\omega_i^{\mathrm T}\boldsymbol I_i\boldsymbol\omega_i.$$
 
-![课堂幻灯片 · 27:37：惯性张量的 3×3 矩阵形式与平行轴定理](../assets/ch06/inertia-tensor.jpg)
-
 ::: note 惯性张量的两件事（老师专门停在这里讲）
 1. **参考系**：$\boldsymbol I_i$ 是相对**质心**、在**基坐标系**中表达的惯性张量，随机械手位形变化；
    若改到固连在连杆 $i$ 的坐标系（DH 系）中表达，它是**常数矩阵** $\boldsymbol I_i^i$，两者关系为
@@ -273,8 +267,6 @@ $$T_i=\frac12 m_i\dot{\boldsymbol p}_i^{\mathrm T}\dot{\boldsymbol p}_i
    板书的写法是 $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$，
    其中 $\boldsymbol p_C$ 是质心相对新原点的位置。
 :::
-
-![课堂幻灯片 · 25:57：惯性张量的定义（绕任意直线的转动惯量 I_r = ∫ d²(p)·ρ dV）](../assets/ch06/inertia-def.jpg)
 
 ### 6.1.1.3 用雅可比把质心速度写成 $\dot{\boldsymbol q}$
 
@@ -329,8 +321,6 @@ $\boldsymbol\omega_{m_i}=J_O^{(m_i)}\dot{\boldsymbol q}$，其列在 $j=i$ 处�
 $$T_{m_i}=\frac12 m_{m_i}\dot{\boldsymbol q}^{\mathrm T}J_P^{(m_i)\mathrm T}J_P^{(m_i)}\dot{\boldsymbol q}
 +\frac12\dot{\boldsymbol q}^{\mathrm T}J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\dot{\boldsymbol q}.$$
 
-![课堂幻灯片 · 66:20：转子的动能、雅可比与减速比](../assets/ch06/kinetic-rotor.jpg)
-
 ### 6.1.1.5 总动能与惯性矩阵
 
 把连杆与转子的贡献相加，利用 $T=\frac12\sum_i\sum_j b_{ij}(\boldsymbol q)\dot q_i\dot q_j$：
@@ -347,10 +337,6 @@ m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^
 1. **对称**：$B=B^{\mathrm T}$；
 2. **正定**：通常假设各独立关节速度非零时总动能严格为正，即 $\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}=2T>0$（$\dot{\boldsymbol q}\neq0$）；若理想化模型存在无质量、无转动惯量的运动方向，则只能保证半正定；
 3. **一般随位形变化**：$B=B(\boldsymbol q)$，某些特殊结构中可以是常数。
-
-![课堂幻灯片 · 36:20：连杆动能的三块分解与 T = ½·q̇ᵀBq̇](../assets/ch06/kinetic-link.jpg)
-
-![课堂幻灯片 · 68:23：总动能、惯性矩阵 B(q) 的完整表达式](../assets/ch06/inertia-matrix.jpg)
 
 ::: think 老师强调的三个「技巧点」
 1. **叉乘写成矩阵**：$\boldsymbol\omega\times\boldsymbol r=S(\boldsymbol\omega)\boldsymbol r=-S(\boldsymbol r)\boldsymbol\omega$。
@@ -386,10 +372,8 @@ m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^
 
 ## 6.1.2 势能计算
 
-> 录播 01:09:10–01:15:30。这一节很短，但有一个关键结论：**势能只依赖位形 $\boldsymbol q$，不依赖速度 $\dot{\boldsymbol q}$**。
-> 后面拉格朗日方程里「$\partial U/\partial\dot q=0$」、重力项只出现在 $\partial U/\partial q$ 中，都靠这一条。
-
-![课堂幻灯片 · 32:33：预备知识——动能与势能](../assets/ch06/energy-intro.jpg)
+这一节很短，但有一个关键结论：**势能只依赖位形 $\boldsymbol q$，不依赖速度 $\dot{\boldsymbol q}$**。
+后面拉格朗日方程里「$\partial U/\partial\dot q=0$」、重力项只出现在 $\partial U/\partial q$ 中，都靠这一条。
 
 ### 6.1.2.1 只算重力
 
@@ -488,8 +472,6 @@ $\alpha=-\pi/3$ 时仍得 $4.905\ \mathrm{N\cdot m}$，实际重力广义力仍�
 :::
 :::
 
-![课堂幻灯片 · 69:13：势能只由重力贡献，且只依赖 q](../assets/ch06/potential.jpg)
-
 ### 6.1.2.4 小结与常见错误
 
 - **一句话**：$U=-\sum(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i})$，
@@ -508,9 +490,9 @@ $\alpha=-\pi/3$ 时仍得 $4.905\ \mathrm{N\cdot m}$，实际重力广义力仍�
 
 ## 6.1.3 运动方程
 
-> 录播 01:15:30–01:22:30。把 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}$ 与 $U=U(\boldsymbol q)$
-> 代进拉格朗日方程，就得到**关节空间动力学模型**。这一节要把方程的每一项「叫出名字」，
-> 因为原书第 8 章的控制律就是逐项补偿这些名字。
+把 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}$ 与 $U=U(\boldsymbol q)$
+代进拉格朗日方程，就得到**关节空间动力学模型**。这一节要把方程的每一项「叫出名字」，
+因为原书第 8 章的控制律就是逐项补偿这些名字。
 
 ### 6.1.3.1 代入拉格朗日方程
 
@@ -574,10 +556,6 @@ $$\boxed{\ B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol
 
 这就是全章要推的「那一行公式」。后面 6.2 的两条性质、6.3 的两个算例，都是在补全或检验它。
 
-![课堂幻灯片 · 75:27：非保守力（驱动、粘滞摩擦、静摩擦、末端力）如何进入方程](../assets/ch06/eom-forces.jpg)
-
-![课堂幻灯片 · 76:25：完整运动方程的紧凑矩阵形式](../assets/ch06/eom-compact.jpg)
-
 ### 6.1.3.4 每一项的物理意义
 
 | 项 | 名称 | 物理意义 |
@@ -628,7 +606,7 @@ $\tau=0.5\times(-2)+4.905=3.905\ \mathrm{N\cdot m}$。
 :::
 :::
 
-### 6.1.3.5 老师强调的两个「伏笔」
+### 6.1.3.5 两个「伏笔」
 
 ::: think 本节埋下的两个问题（6.2 回答）
 1. **$C$ 不唯一**：只要满足 $\sum_j c_{ij}\dot q_j=\sum_{j,k}h_{ijk}\dot q_k\dot q_j$，$C$ 可以有无数组。
@@ -654,4 +632,34 @@ $\tau=0.5\times(-2)+4.905=3.905\ \mathrm{N\cdot m}$。
 2. 写出 $h_{ijk}$ 的定义，并解释 $b_{ii}$、$b_{ij}$、$h_{ijj}$、$h_{ijk}$、$g_i$ 的物理意义。
 3. 写出含摩擦与末端力的完整方程。
 4. 为什么 $C$ 不唯一？这会带来什么后果？
+:::
+
+**下一节**：[6.2 动力学模型的结构性质](sec6-2.md) 给「那一行公式」补上两条结构定理——反对称性与参数线性性；6.3 再用两连杆把每一项实际算出来。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $L=T-U$；$\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}-\frac{\partial L}{\partial q_i}=\xi_i$ | 理想约束、$U=U(q)$ | 视 $q_i$ | 约束力自动消失靠理想约束假设；非保守力必须进 $\xi_i$ |
+| $\xi_i=\tau_i-(F_{\mathrm v}\dot q)_i-(F_{\mathrm s}\operatorname{sgn}\dot q)_i-(J^{\mathrm T}h_e)_i$ | 开链、$h_e$=末端向环境施加 | N·m / N | 末端力方向约定先统一；静摩擦另建 |
+| $T=\frac12\dot q^{\mathrm T}B(q)\dot q$，$B=\sum_i(m_iJ_P^{\mathrm T}J_P+J_O^{\mathrm T}RI^iR^{\mathrm T}J_O+\text{转子两块})$ | 刚性传动 | kg·m² / kg | $J_P^{(i)}$ 只取到连杆 $i$；转子项系数 $k_r^2$ |
+| $U=-\sum_i(m_i g_0^{\mathrm T}p_i+m_{m_i} g_0^{\mathrm T}p_{m_i})$；$\boldsymbol g(q)=\partial U/\partial q$ | $g_0$ 依坐标轴向 | J、N·m | $\boldsymbol g$ 是方程左端项，实际重力广义力为 $-\boldsymbol g$ |
+| $B\ddot q+C\dot q+g=\tau-J^{\mathrm T}h_e$（+ 摩擦项） | 全章主方程 | — | $h_{ijk}=\partial b_{ij}/\partial q_k-\frac12\partial b_{jk}/\partial q_i$ 的 $1/2$；$C$ 不唯一 |
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导与自算例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:33:00–01:22:30）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 42:11 | [lagrange-eq.jpg](../assets/ch06/lagrange-eq.jpg) | 拉格朗日公式与紧凑形式 | 定义 6.1.1 完整给出，含质点投影推导 |
+| 42:11 | [example-pendulum.jpg](../assets/ch06/example-pendulum.jpg) | 例 7.1（带齿轮的摆） | 完整推导 + 课堂强调三件事 + 减速比数值练习 |
+| 27:37 | [inertia-tensor.jpg](../assets/ch06/inertia-tensor.jpg) | 惯性张量矩阵形式与平行轴定理 | 定义完整给出；参考系与平行轴两件事在 note 盒展开 |
+| 25:57 | [inertia-def.jpg](../assets/ch06/inertia-def.jpg) | 惯性张量定义（绕任意直线） | 正文按积分定义给出，符号约定与板书一致 |
+| 66:20 | [kinetic-rotor.jpg](../assets/ch06/kinetic-rotor.jpg) | 转子动能、雅可比与减速比 | 完整推导；移动关节 $k_r$ 量纲坑已注明 |
+| 36:20 | [kinetic-link.jpg](../assets/ch06/kinetic-link.jpg) | 连杆动能三块分解 | 平动/交叉/转动三块逐步推导，交叉项归零由质心定义给出 |
+| 68:23 | [inertia-matrix.jpg](../assets/ch06/inertia-matrix.jpg) | 总动能与 $B(q)$ 完整表达式 | 四块求和式 + 三条性质完整给出 |
+| 69:13 | [potential.jpg](../assets/ch06/potential.jpg) | 势能只依赖 q | 推导 + 符号双路径核对例题 |
+| 75:27 | [eom-forces.jpg](../assets/ch06/eom-forces.jpg) | 非保守力如何进入方程 | 四来源表 + 符号约定 note 完整给出 |
+| 76:25 | [eom-compact.jpg](../assets/ch06/eom-compact.jpg) | 紧凑矩阵形式 | 主方程完整给出；「那一行公式」的每一项在 6.1.3.4 逐项命名 |
 :::

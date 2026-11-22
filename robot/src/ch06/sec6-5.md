@@ -1,8 +1,8 @@
 # 6.5 动力学正解与逆解
 
-> 录播 01:20:24–01:28:15。课件 **§7.6「动力学正解与逆解问题」**（01:21:04 起），本书编为 6.5；
-> 01:20:24 起老师先接着 6.4 把两种方法对比完，再转入这一对问题。
-> 本节回答：**给了力，机器人怎么动**（正解，仿真用）；**要它这样动，需要多大力**（逆解，控制与轨迹规划用）。
+课件 **§7.6「动力学正解与逆解问题」**（录播 01:20:24–01:28:15，01:21:04 起），本书编为 6.5；
+01:20:24 起老师先接着 6.4 把两种方法对比完，再转入这一对问题。
+本节回答：**给了力，机器人怎么动**（正解，仿真用）；**要它这样动，需要多大力**（逆解，控制与轨迹规划用）。
 
 ::: note 来源、边界与待核（本节）
 - **教材对应**：教材第 7 章在牛顿–欧拉之后讨论同一对问题；课件这一节没有再标教材式号，具体节号与式号**待核**。
@@ -34,8 +34,6 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{
 
 正、逆动力学的关系与正、逆运动学类似：都是把同一模型沿两个方向使用，但两者的输入输出不同。运动学连接关节运动与末端位姿；动力学连接广义力与运动。老师在 01:26:23–01:27:01 说「具体方法了解一下即可」，同时指出仿真常用正解，控制常用逆解；规划时也可用逆解检查驱动能力。
 
-![课堂幻灯片 · 84:43：动力学正解（direct dynamics）与逆解（inverse dynamics）的定义](../assets/ch06/dyn-def.jpg)
-
 ## 6.5.2 正解：解出加速度，再数值积分
 
 把运动方程移项。记
@@ -61,10 +59,6 @@ $$\dot{\boldsymbol q}(t_{k+1})=\dot{\boldsymbol q}(t_k)+\int_{t_k}^{t_{k+1}}\ddo
 \boldsymbol q(t_{k+1})=\boldsymbol q(t_k)+\int_{t_k}^{t_{k+1}}\dot{\boldsymbol q}\,\mathrm d t.$$
 
 课件明确说可用**龙格–库塔法（Runge–Kutta）**等数值积分方法（01:26:00 前后）。步长影响精度和计算量，但遇到刚性系统或摩擦切换时，还需选合适的算法和误差控制；单凭缩小步长不能保证所得结果可靠。把「解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ → 积分 → 更新状态」循环下去，就能模拟给定转矩下的运动。
-
-![课堂幻灯片 · 85:46：正解的核心式 q̈ = B⁻¹(q)(τ − τ′) 与 τ′ 的定义](../assets/ch06/dyn-qddot.jpg)
-
-![课堂幻灯片 · 86:10：由加速度做数值积分，推进到下一时刻的位置与速度](../assets/ch06/dyn-integration.jpg)
 
 ## 6.5.3 逆解：给定运动，直接算转矩
 
@@ -95,8 +89,6 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 
 需要矩阵时可用 $n$ 次递推把它「采」出来，代价是 $n$ 倍逆解计算量——两者并不互斥。
 
-![课堂幻灯片 · 87:03：用牛顿–欧拉递推、令 q̇ = 0、q̈ = e_i 求 B(q) 的列](../assets/ch06/dyn-B-ne.jpg)
-
 ## 6.5.5 计算量：课件口径与递推口径
 
 课件 §7.6 末尾给出（01:27:31）：
@@ -110,16 +102,22 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 
 6.4 的牛顿–欧拉递推是另一种口径：对串联机械手，不显式构造 $B,C,\boldsymbol g$，每根杆做固定规模的运算，逆解为 $O(n)$。两种计数所含的计算步骤不同，不能直接把课件的 $O(n^2)$ 当成所有正、逆动力学算法的复杂度。老师在 01:26:17 口述「$N$ 个关节……都是 $N$ 方的关系」，与课件表格一致。
 
-![课堂幻灯片 · 87:31：逆解的用途与正解/逆解的计算量（课件写 O(n²)）](../assets/ch06/dyn-complexity.jpg)
-
-![课堂实况 · 84:30：老师在投影前讲拉格朗日法与牛顿–欧拉法的对比，本节由此转入正/逆解](../assets/ch06/dyn-board-compare.jpg)
-
 ## 6.5.6 小结与常见错误
 
 - **一句话**：正解 = 解 $B\ddot{\boldsymbol q}=\boldsymbol\tau-\boldsymbol\tau'$ + 数值积分，逆解 = 把 $\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q}$ 代进方程算 $\boldsymbol\tau$；前者「以力求运动」（仿真），后者「以运动求力」（控制、规划）。
 - **两种算法**：拉格朗日封闭式（好推难算）、牛顿–欧拉递推（难推好算，$O(n)$）。
+- **下一节**：[6.6 轨迹的动态标度](sec6-6.md) 用逆解做可行性检查后发现超限时，怎样只改时间、不改路径地把力矩压回可行域。
 
-### 常见错误清单
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 正解：$\ddot{\boldsymbol q}=B^{-1}(\boldsymbol q)(\boldsymbol\tau-\boldsymbol\tau')$，$\boldsymbol\tau'=C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+\boldsymbol g+J^{\mathrm T}\boldsymbol h_c$ | $B$ 对称正定（非退化） | rad/s² | 正解还须数值积分，只算 $\ddot q$ 只是一步；$B$ 可逆仍可能病态 |
+| 逆解：$\boldsymbol\tau=B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+\boldsymbol g+J^{\mathrm T}\boldsymbol h_c$ | 轨迹已知 | N·m / N | 有接触别漏 $J^{\mathrm T}\boldsymbol h_c$；代数代入，不解微分方程 |
+| 采 $B$ 的列：$\ddot{\boldsymbol q}=\boldsymbol e_i$、$\dot{\boldsymbol q}=0$、$\boldsymbol g_0=0$ 跑一次递推得第 $i$ 列 | 无摩擦无接触 | kg·m² | 代价 $n$ 倍逆解；与显式构造不互斥 |
+| 复杂度：矩阵式 $O(n^2)$（已算好模型）、递推逆解 $O(n)$、重分解 $O(n^3)$ | 口径须声明 | — | 先问「在说模型还是算法」再引用 |
+
+::: think 常见错误清单
 
 1. **把正解当「代公式」**：正解要先解线性方程再积分，只算 $\ddot{\boldsymbol q}$ 只算一步。
 2. **逆解漏掉末端力**：$\boldsymbol\tau$ 含 $J^{\mathrm T}\boldsymbol h_c$，有接触必须加。
@@ -127,11 +125,27 @@ $$\boxed{\ \boldsymbol\tau=B(\boldsymbol q)\ddot{\boldsymbol q}
 4. **以为 $B^{-1}$ 一定好算**：$B$ 可逆但可能病态，高减速比/轻杆尤其要查条件数。
 5. **把 $O(n^2)$ 与 $O(n)$ 混着说**：先问「在说封闭模型还是递推算法」。
 6. **把正/逆动力学与正/逆运动学混淆**：前者是力↔运动，后者是关节角↔末端位姿。
+:::
 
-### 默写点 · 合上书再写
+::: think 默写点 · 合上书再写
 
 1. 写出正解与逆解的定义（已知什么、求什么），说明哪个要解微分方程。
 2. 写出 $\ddot{\boldsymbol q}=B^{-1}(\boldsymbol\tau-\boldsymbol\tau')$ 与 $\boldsymbol\tau'$ 的完整表达式。
 3. 正解为何要数值积分？常用什么方法？
 4. 牛顿–欧拉递推如何求 $B(\boldsymbol q)$ 的列？
 5. 课件写正/逆解各 $O(n^2)$、递推逆解 $O(n)$——这两种说法分别在说什么？
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部定义、公式与口径分析；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:20:24–01:28:15）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 84:43 | [dyn-def.jpg](../assets/ch06/dyn-def.jpg) | 正解与逆解的定义 | 定义 6.5.1 完整给出，含难度对比与用途 |
+| 85:46 | [dyn-qddot.jpg](../assets/ch06/dyn-qddot.jpg) | 正解核心式与 $\tau'$ 定义 | 完整公式 + $B^{-1}$ 存在性与病态说明 |
+| 86:10 | [dyn-integration.jpg](../assets/ch06/dyn-integration.jpg) | 数值积分推进 | 积分式 + RK 提示与步长边界说明 |
+| 87:03 | [dyn-B-ne.jpg](../assets/ch06/dyn-B-ne.jpg) | 用递推采 $B$ 的列 | 四步流程完整给出 |
+| 87:31 | [dyn-complexity.jpg](../assets/ch06/dyn-complexity.jpg) | 计算量（课件写 $O(n^2)$） | 6.5.5 双口径表替代，含 $O(n^3)$ 分解口径 |
+| 84:30 板书 | [dyn-board-compare.jpg](../assets/ch06/dyn-board-compare.jpg) | 两法对比实况 | 6.4.9 对照表已覆盖，本节只作转场说明 |
+:::

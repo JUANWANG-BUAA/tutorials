@@ -1,8 +1,7 @@
 # 6.7 操作空间动力学模型
 
-> 录播 01:36:48–01:53:19。课件 **§7.8「操作空间动力学模型」**（标题 01:36:48），本书编为 6.7；
-> 01:38:48–01:44:28 为课间，讲解主体 01:44:28–01:53:19。
-> 本节回答：把自变量从关节角 $\boldsymbol q$ 换成末端位姿 $\boldsymbol x_e$，方程长什么样、与关节空间什么关系、代价在哪。
+课件 **§7.8「操作空间动力学模型」**（录播 01:36:48–01:53:19，01:38:48–01:44:28 为课间，讲解主体 01:44:28–01:53:19），本书编为 6.7；
+本节回答：把自变量从关节角 $\boldsymbol q$ 换成末端位姿 $\boldsymbol x_e$，方程长什么样、与关节空间什么关系、代价在哪。
 
 ::: note 来源与边界（本节）
 - **教材对应**：教材第 7 章未把操作空间动力学单列一节（通常归入原书第 8 章运动控制或第 9 章力控制），本页以课件为准。
@@ -19,8 +18,6 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{
 它完整、紧凑，但**不直观**：我们真正关心的是末端的位置、姿态、速度、受力，而不是七个关节角。动机有两点（01:44:28–01:47:29）：**任务关联度高**——打磨、抓取、装配的指标都写在末端（位置误差、接触力）；**关节多时不直观**——「哪个方向是靠近工件」很难一眼看出，而操作空间可直接描述末端的运动与力。
 
 做法是将关节空间方程转换到操作空间：用末端位姿 $\boldsymbol x_e$（位置与姿态坐标）描述运动，两空间由分析雅可比关联，$\dot{\boldsymbol x}_e=J_A(\boldsymbol q)\dot{\boldsymbol q}$。先考虑任务维数等于关节数、且 $J_A$ 可逆的情形：此时在选定的逆运动学分支上，末端状态能够确定关节状态。冗余机械手还需要描述不改变末端位姿的关节运动，不能只用末端坐标闭合整个动力学模型；老师在 01:47:31–01:48:18 也提到了这部分运动。
-
-![课堂幻灯片 · 102:53：操作空间的提出背景与关键思想](../assets/ch06/opspace-background.jpg)
 
 ## 6.7.2 两个雅可比：几何雅可比与分析雅可比
 
@@ -50,8 +47,6 @@ $$\boxed{\ \ddot{\boldsymbol x}_e=J_A(\boldsymbol q)\ddot{\boldsymbol q}
 +\dot J_A(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}\ }$$
 
 多出来的 $\dot J_A\dot{\boldsymbol q}$ 是雅可比随位形变化产生的项；**做操作空间动力学时不能漏**。
-
-![课堂幻灯片 · 110:28：几何雅可比、分析雅可比、T_A 与 ẍ_e = J_A·q̈ + J̇_A·q̇](../assets/ch06/opspace-jacobians.jpg)
 
 ## 6.7.3 从关节空间推到操作空间
 
@@ -129,8 +124,6 @@ $$\tfrac12\dot{\boldsymbol x}_e^{\mathrm T}B_A\dot{\boldsymbol x}_e
 | $\boldsymbol\gamma_A$ | $\boldsymbol\tau$ | 广义力（由关节力矩等效到末端） |
 | $\boldsymbol h_A$ | $\boldsymbol h_c$ | 末端接触力（经 $T_A^{\mathrm T}$ 变换） |
 
-![课堂幻灯片 · 110:55：操作空间方程 B_A·ẍ_e + C_A·ẋ_e + g_A = γ_A − h_A 与三个矩阵的定义](../assets/ch06/opspace-BA.jpg)
-
 三点补充。**其一，几何雅可比版本**：若用 $J$ 与 $\boldsymbol v_e$ 替换 $J_A,\dot{\boldsymbol x}_e,\ddot{\boldsymbol x}_e$，可得同形式的 $B_x\dot{\boldsymbol v}_e+C_x\boldsymbol v_e+\boldsymbol g_x=\boldsymbol\gamma_e-\boldsymbol h_e$。**其二，$C_A$ 的选法**：这里定义的是乘积 $C_A\dot{\boldsymbol x}_e$，矩阵本身并不唯一。**其三，奇点**：$J_A$ 必须满行秩；接近降秩时，$J_AB^{-1}J_A^{\mathrm T}$ 可能病态，失去秩后不能再求上面的逆。老师在 01:52:43 也指出，奇点或退化需要另外处理。
 
 **冗余时为什么不能只看 $\boldsymbol x_e$？** 设两移动关节的任务为 $x=q_1$，$J_A=[1\ 0]$，$B=\operatorname{diag}(1+(q_2/L)^2,1)\ \mathrm{kg}$，其中 $L=1\ \mathrm m$。于是 $B_A=[1+(q_2/L)^2]\ \mathrm{kg}$：即使末端位置相同，不同 $q_2$ 也给出不同任务惯量。满行秩足以保证逆矩阵存在，却不保证 $B_A$ 只由 $x$ 决定。零空间速度也可能影响末端加速度；即使 $\dot x_e=0$，由 $\dot q$ 构成的速度残量仍未必为零，不能直接写成有限矩阵乘 $\dot x_e$。冗余时须保留关节状态与零空间贡献，或另行规定消除冗余的方式。
@@ -145,18 +138,23 @@ $$\boldsymbol\tau=J_A^{\mathrm T}(\boldsymbol q)\boldsymbol\gamma_A.$$
 
 **冗余与奇点。** 任务维数为 $m$ 而关节数 $n>m$ 时，可能存在不改变末端瞬时运动的关节速度，额外自由度可用于避障或远离限位。零空间控制力矩也会影响关节运动，其对末端的影响取决于动力学投影方式，不能简单并入上面假设的 $J_A^{\mathrm T}\boldsymbol\gamma_A$。奇点处 $J_A$ 降秩，式中逆矩阵不再存在；阻尼、伪逆或切换任务是可能的处理方式，但得到的是修改后的模型或控制律。
 
-![课堂幻灯片 · 111:55：操作空间模型与关节空间模型一一对应，只是通过雅可比做了转换](../assets/ch06/opspace-summary.jpg)
-
-![课堂幻灯片 · 112:43：冗余机械手 τ 不唯一（零空间优化）与奇点/退化的数值处理](../assets/ch06/opspace-redundant.jpg)
-
-![课堂实况 · 107:00：老师在投影前讲操作空间的提出背景与关键思想](../assets/ch06/opspace-board.jpg)
-
 ## 6.7.6 小结与常见错误
 
 - **一句话**：将关节动力学与分析雅可比结合，可得到末端加速度和广义力的关系；$B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ 要求 $B$ 正定、$J_A$ 满行秩。将系数只写成末端状态的函数，还需要能由末端状态确定关节状态。
 - **两个雅可比**：几何 $J$ 对 $[\dot{\boldsymbol p}_e;\boldsymbol\omega_e]$，分析 $J_A$ 对 $[\dot{\boldsymbol p}_e;\dot{\boldsymbol\phi}_e]$，$J=T_AJ_A$。冗余时还须保留关节或零空间状态。
+- **下一章**：[第七章 运动控制](../ch07/sec7-1.md) 拿着本章的 $B,C,\boldsymbol g$（关节空间）与本章的 $B_A,C_A,\boldsymbol g_A$（操作空间）设计控制律——计算力矩控制补偿的就是这几个矩阵的每一项。
 
-### 常见错误清单
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $\ddot{\boldsymbol x}_e=J_A\ddot{\boldsymbol q}+\dot J_A\dot{\boldsymbol q}$ | 光滑分支、$T_A$ 非奇异 | 视任务 | $\dot J_A\dot q$ 不能漏；欧拉角导数 ≠ 角速度 |
+| $B_A\ddot{\boldsymbol x}_e+C_A\dot{\boldsymbol x}_e+\boldsymbol g_A=\boldsymbol\gamma_A-\boldsymbol h_A$ | 非冗余、$J_A$ 可逆 | 视任务 | $B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ 不是直接投影 |
+| $B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$；$C_A\dot{\boldsymbol x}_e=B_AJ_AB^{-1}C\dot q-B_A\dot J_A\dot q$；$\boldsymbol g_A=B_AJ_AB^{-1}\boldsymbol g$ | $B$ 正定、$J_A$ 满行秩 | — | 非冗余方可写成 $B_A=J_A^{-\mathrm T}BJ_A^{-1}$；$C_A$ 选法不唯一 |
+| $\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol\gamma_A$（功率共轭） | 同一坐标系与参考点 | N·m | 转置方向别写反；冗余时零空间力矩另计 |
+| 冗余警示：$B_A$ 未必只是 $x$ 的函数 | $J_A$ 满行秩即可逆 | — | 例：$B_A=[1+(q_2/L)^2]$ 随冗余关节变；须保留关节状态或零空间 |
+
+::: think 常见错误清单
 
 1. **把 $J_A$ 当 $J$**：$\dot{\boldsymbol x}_e$ 的姿态导数是欧拉角导数，不是角速度，两者差 $T_A$。
 2. **漏掉 $\dot J_A\dot{\boldsymbol q}$**：$\ddot{\boldsymbol x}_e=J_A\ddot{\boldsymbol q}+\dot J_A\dot{\boldsymbol q}$ 第二项不能省。
@@ -165,15 +163,31 @@ $$\boldsymbol\tau=J_A^{\mathrm T}(\boldsymbol q)\boldsymbol\gamma_A.$$
 5. **在奇点硬算 $B_A$**：$J_A$ 降秩时不能求该逆矩阵；接近奇点时还应检查数值病态。
 6. **把 $\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol\gamma_A$ 写成 $\boldsymbol\gamma_A=J_A^{\mathrm T}\boldsymbol\tau$**：转置反了，量纲也不对。
 7. **以为操作空间一定更好**：描述直观，但依赖雅可比、奇点更脆弱；关节空间模型仍是控制器设计的基础。
+:::
 
-### 默写点 · 合上书再写
+::: think 默写点 · 合上书再写
 
 1. 写出几何雅可比与分析雅可比的定义与关系 $J=T_AJ_A$。
 2. 写出 $\dot{\boldsymbol x}_e=J_A\dot{\boldsymbol q}$、$\ddot{\boldsymbol x}_e=J_A\ddot{\boldsymbol q}+\dot J_A\dot{\boldsymbol q}$。
 3. 从 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_c$ 推到操作空间方程，并写出 $B_A,C_A,\boldsymbol g_A$ 的定义。
 4. 操作空间模型何时失效？冗余机械手怎样利用零空间？
+:::
 
 ::: note 待核（本节）
 1. **$T_A$ 的措辞**：课件称 $T_A$ 为「两个雅可比矩阵行列式的变换矩阵」，此说**待核**（从上下文看它是把 $\dot{\boldsymbol x}_e$ 换成 $\boldsymbol v_e$ 的变换矩阵，与「行列式」无关）。
 2. **与教材的对应**：教材第 7 章是否单列此节**待核**；若在原书第 8/9 章出现，节号与式号一并核对。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导、对照表与冗余反例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:44:28–01:53:19）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 102:53 | [opspace-background.jpg](../assets/ch06/opspace-background.jpg) | 操作空间的提出背景 | 6.7.1 两点动机 + 冗余边界完整重写 |
+| 110:28 | [opspace-jacobians.jpg](../assets/ch06/opspace-jacobians.jpg) | 两个雅可比与 $T_A$、分析加速度 | 完整推导替代；「欧拉角导数不是角速度」的课堂强调保留 |
+| 110:55 | [opspace-BA.jpg](../assets/ch06/opspace-BA.jpg) | 操作空间方程与三个矩阵的定义 | 三步推导 + 非冗余写法 + 「伪动能」辨析替代 |
+| 111:55 | [opspace-summary.jpg](../assets/ch06/opspace-summary.jpg) | 两空间一一对应 | 五行对照表替代 |
+| 112:43 | [opspace-redundant.jpg](../assets/ch06/opspace-redundant.jpg) | 冗余与奇点处理 | 冗余反例（$B_A$ 随 $q_2$ 变）+ 正逆解与零空间说明替代 |
+| 107:00 实况 | [opspace-board.jpg](../assets/ch06/opspace-board.jpg) | 老师投影前讲解实况 | 内容已入正文，图不再单独承载信息 |
 :::
