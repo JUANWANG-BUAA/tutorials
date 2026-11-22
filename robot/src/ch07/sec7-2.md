@@ -1,8 +1,8 @@
 # 7.2 分散（独立关节）控制
 
-> 录播 00:09:46–00:55:30（课件 §8.3–§8.4，**全部是课堂内容**）。这一节回答三个问题：
-> **凭什么可以把 $n$ 个关节拆开、各管各的？拆开以后每个关节用什么控制器？这些控制器为什么能压住
-> 耦合与重力？** 最后落到两张工程上真正会用的图：位置环的根轨迹，与加速度环的重构滤波器。
+课件 §8.3–§8.4，**全部是课堂内容**（录播 00:09:46–00:55:30）。这一节回答三个问题：
+**凭什么可以把 $n$ 个关节拆开、各管各的？拆开以后每个关节用什么控制器？这些控制器为什么能压住
+耦合与重力？** 最后落到两张工程上真正会用的图：位置环的根轨迹，与加速度环的重构滤波器。
 
 <a id="sec-7.2.1"></a>
 
@@ -16,8 +16,6 @@ $$K_r^{-1}B(\boldsymbol q)K_r^{-1}\ddot{\boldsymbol q}_m
 +K_r^{-1}C(\boldsymbol q,\dot{\boldsymbol q})K_r^{-1}\dot{\boldsymbol q}_m
 +K_r^{-1}F_{\mathrm v}K_r^{-1}\dot{\boldsymbol q}_m
 +K_r^{-1}\boldsymbol g(\boldsymbol q)=\boldsymbol\tau_m .\tag{7.2-1}$$
-
-![课堂幻灯片 · 12:10：分散控制把机械手看成 n 个独立系统，并把耦合、重力都视为干扰](../assets/ch07/decentral-model.jpg)
 
 **关键的一步是拆 $B$**。把惯量矩阵写成「标称对角阵 + 位形依赖项」：
 
@@ -60,8 +58,6 @@ J_i=\bar b_i/k_{r_i}^2 .\tag{7.2-5}$$
 | **位置 + 速度反馈** | $\theta_m,\dot\theta_m$ | $C_p=K_P$，$C_v(s)=K_v(1+sT_v)/s$ | 需要阻尼、要压超调 |
 | **位置 + 速度 + 加速度反馈** | $\theta_m,\dot\theta_m,\ddot\theta_m$ | $C_p=K_P$，$C_v$ 同上，$C_A(s)=1$ | 高速、高加速度跟踪 |
 
-![课堂幻灯片 · 32:00：位置 + 速度反馈的控制结构（C_p = K_P，C_v = K_v(1+sT_v)/s，C_A = 1）](../assets/ch07/pos-vel-loop.jpg)
-
 **老师反复强调的一点：三套不是叠加关系，选一套即可**（00:19:42–00:21:45）：
 
 > 「这三个呢，是单独对于这个机器人的关节的控制来说，**只需要一个就行**……设计位置的时候，
@@ -81,9 +77,7 @@ PI 可用于选定的反馈环节，并非上表所有方块都必须是 PI：�
 :::
 
 **加速度反馈为什么要单独说**：加速度计贵、噪声大，工业上通常不直接测，而是用**一阶滤波器从速度
-信号重构**（图 7.2-2，课件 39:10）：
-
-![课堂幻灯片 · 39:10：加速度由速度信号经一阶滤波器重构，避免直接测量](../assets/ch07/pos-vel-acc.jpg)
+信号重构**（课件 39:10）：
 
 $$\hat{\ddot\theta}_m(s)=\frac{s}{1+sT_a}\dot\theta_m(s).\tag{7.2-7}$$
 
@@ -104,8 +98,6 @@ $$\hat{\ddot\theta}_m(s)=\frac{s}{1+sT_a}\dot\theta_m(s).\tag{7.2-7}$$
 $$L(s)=\frac{k_mK_Pk_{tp}(1+sT_p)}{s^2(1+sT_m)},\tag{7.2-8}$$
 
 其中 $k_m$ 是电机速度环节的静态增益，$k_{tp}$ 是位置传感器常数，$T_p$ 是 PI 的零点时间参数，$T_m$ 是电机时间常数。这里采用课件的位置 PI 结构，与前表的「位置比例 + 速度 PI」结构不同。其位置对象包含运动学积分 $1/s$，PI 又包含一个积分，所以开环共含两个原点极点；分子零点来自 PI 的比例项。
-
-![课堂幻灯片 · 23:50：位置环的根轨迹，分 T_p<T_m、T_p>T_m、T_p≫T_m 三种情况](../assets/ch07/pos-rootlocus.jpg)
 
 **根轨迹怎么读**（老师 23:50–31:10 带着走了一遍）：
 
@@ -164,8 +156,6 @@ $$\frac{\Theta_m(s)}{D(s)}
 =-\frac{\dfrac{sR_a}{k_tK_Pk_{tp}(1+sT_p)}}
 {1+\dfrac{s^2(1+sT_m)}{k_mK_Pk_{tp}(1+sT_p)}} .\tag{7.2-11}$$
 
-![课堂幻灯片 · 31:10：位置环的干扰/输出传递函数与干扰抑制因子](../assets/ch07/pos-disturbance.jpg)
-
 低频段（$s\to0$）分子有一个 $s$，所以**常值干扰的稳态输出为零**——这是积分的作用；中频段的衰减
 由**干扰抑制因子**
 
@@ -195,10 +185,6 @@ $$T_R=\max\left\{T_p,\ \frac{1}{\zeta\omega_n}\right\}.\tag{7.2-13}$$
 到这里，控制器算出的还是**电机转矩** $\boldsymbol\tau_m$。真实驱动器接受的是**电压**（或电流）。
 第 8 周已经把这层接口推完，这里只复述结论并把它接回 7.2.1 的 $d$。
 
-![课堂幻灯片 · 02:09:04（第 8 周）：关节空间运动方程与「确定 n 个广义力分量」](../assets/ch07/joint-eom.jpg)
-
-![课堂幻灯片 · 02:09:21（第 8 周）：广义力矩由减速器与 n 个电机组成的驱动系统产生](../assets/ch07/drive-model.jpg)
-
 驱动系统五式（减速器 + 电机 + 功率放大器）：
 
 $$\left.\begin{aligned}
@@ -214,8 +200,6 @@ $$\left.\begin{aligned}
 
 $$\boxed{\ \boldsymbol\tau=K_rK_tR_a^{-1}\bigl(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q}\bigr)\ }\tag{7.2-15}$$
 
-![课堂幻灯片 · 02:11:59（第 8 周）：τ 与控制电压 v_c 的关系](../assets/ch07/tau-vc.jpg)
-
 **近似条件**：由 (7.2-14) 可见，$G_v\boldsymbol v_c=R_a\boldsymbol i_a+K_vK_r\dot{\boldsymbol q}$。对需要使用该近似的每个关节，都要检查电阻压降相对该关节的反电动势是否足够小，即 $|R_{a_i}i_{a_i}|\ll|k_{v_i}k_{r_i}\dot q_i|$；满足时才可近似写成
 
 $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
@@ -226,8 +210,6 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 
 **结论**：在上述逐轴近似成立、且各驱动参数矩阵为对角阵时，$\dot{\boldsymbol q}$ 与 $\boldsymbol v_c$ 近似逐轴成比例。这解释了课件中的分散驱动近似；它本身不保证含负载耦合、限幅与动态误差的整个闭环满足性能要求。
 
-![课堂幻灯片 · 02:13:29（第 8 周）：三条假设推出 G_v·v_c ≈ K_v·K_r·q̇，以及两条结论](../assets/ch07/decentral-assume.jpg)
-
 ::: thm 定理 7.2.A · 分散控制成立的两条结论（第 8 周课件 §8.2） {#thm-7.2.A}
 **结论一（模型参数的影响）**：在压降可忽略的近似式中，关节速度与电压的比例不显含连杆惯量、质量等机械手参数；但这些参数仍会影响实现该近似所需的电流和误差。
 
@@ -236,8 +218,6 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 
 若压降不能忽略，就须保留式 (7.2-15) 中的电流和速度项。电机参数矩阵在这里是对角的，反电动势项本身并不混合其他关节速度；整机动力学的耦合会使实现各关节所需的力矩依赖其他关节的状态。是否采用集中控制，要比较这种耦合与任务要求。
 
-![课堂幻灯片 · 02:14:22（第 8 周）：这种情况下计算第 i 个关节的转矩需要获知所有关节的运动，因此需要集中控制](../assets/ch07/centralized-reason.jpg)
-
 **两条工程出路**（第 8 周 02:16:29–02:17:48）：
 
 | 出路 | 做法 | 结果 |
@@ -245,19 +225,12 @@ $$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}
 | ① 使用速度近似 | 压降相对反电动势足够小时，用 $\boldsymbol v_c\leftrightarrow\dot{\boldsymbol q}$ 的近似 | 可按单轴设计，再检查近似误差与耦合 |
 | ② 加电流环 | 在转矩命令与电压之间插电流内环，近似实现 $\boldsymbol i_a=G_i\boldsymbol v_c$ | 得到近似力矩接口 $\boldsymbol\tau=K_rK_tG_i\boldsymbol v_c$；仍须考虑电流环带宽和限幅 |
 
-![课堂幻灯片 · 02:16:01（第 8 周）：加入电流环后 τ = K_r·K_t·G_i·v_c](../assets/ch07/current-loop.jpg)
-
-![课堂实拍 · 02:13:30（第 8 周）：讲到 τ 与 v_c 关系式时的讲台实拍（板书帧 b268）](../assets/ch07/board-tau-vc.jpg)
-
 <a id="sec-7.2.6"></a>
 
 ## 7.2.6 分散前馈补偿：给「跟不上」加一条旁路
 
 分散反馈有一个绕不过去的短板：**它只看误差，不看接下来要多大的加速度**。当轨迹的速度、加速度
-很高时，误差还没形成，输出已经落后了——课件 §8.3.2 的原话是「跟踪能力将不可避免地下降」
-（图 7.2-5）。
-
-![课堂幻灯片 · 40:30：分散前馈补偿——在反馈环外再并一条由 q_d、q̇_d、q̈_d 驱动的前馈通道](../assets/ch07/decentral-feedforward.jpg)
+很高时，误差还没形成，输出已经落后了——课件 §8.3.2 的原话是「跟踪能力将不可避免地下降」。
 
 **先补单轴名义对象的运动需求。** 令 $J_m=K_r^{-1}\bar B K_r^{-1}$、$q_{md}=K_rq_d$。只考虑式 (7.2-3) 左边的名义惯量与黏性摩擦，所需电机力矩为 $J_m\ddot q_{md}+F_m\dot q_{md}$；再按式 (7.2-14) 补电阻压降与反电动势，可写成一条等效电压前馈：
 
@@ -286,8 +259,6 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 +K_r^{-1}C(\boldsymbol q_d,\dot{\boldsymbol q}_d)K_r^{-1}\dot{\boldsymbol q}_{md}
 +K_r^{-1}\boldsymbol g(\boldsymbol q_d)\Bigr]\ }\tag{7.2-18}$$
 
-![课堂幻灯片 · 55:20：计算转矩前馈的完整结构——前馈作用 R_a·K_t⁻¹·d_d 与分散反馈并联](../assets/ch07/computed-torque-ff.jpg)
-
 它补偿的是 7.2.1 里那个 $d$（实际干扰）。之所以叫「计算转矩」，是因为它**把动力学模型反过来用**：
 这是把逆动力学用于前馈：给定期望运动，计算名义模型需要的力矩；第六章所称的正动力学则是由力矩求运动。
 
@@ -312,6 +283,18 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 - **三笔账**：耦合折算账（$1/k_r^2$、$1/k_r$）、干扰抑制账（$X_R=K_Pk_{tp}$、$T_R=\max\{T_p,1/(\zeta\omega_n)\}$）、
   电压—速度账（$G_v\boldsymbol v_c\approx K_vK_r\dot{\boldsymbol q}$）。
 - **一个判据**：不能只看电压—力矩关系里是否含 $\dot{\boldsymbol q}$；反电动势是逐轴的。应检查剩余动力学耦合能否被单轴闭环抑制，以及驱动接口是否能实现所选控制律。
+- **下一节**：[7.3 集中控制](sec7-3.md) 把整机模型请回来——重力补偿 PD、逆动力学、鲁棒与自适应，一条比一条多用模型。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 拆分 (7.2-3)：$K_r^{-1}\bar BK_r^{-1}\ddot q_m+F_m\dot q_m+d=\tau_m$，$J_i=\bar b_i/k_{r_i}^2$ | $\bar B$ 常数对角标称；$d$ 含 $\Delta B\ddot q_m$、$C\dot q$、重力 | N·m | $d$ 不是小量，须按工况核算；库仑摩擦并入 $d$ |
+| 三方案：$C_p=K_P$ / $+C_v=K_v(1+sT_v)/s$ / $+C_A=1$ | 三套**选一**，不叠加 | — | 不是每个方块各配 PID；积分消常值扰动需防饱和 |
+| 位置环 (7.2-8)：$L(s)=\frac{k_mK_Pk_{tp}(1+sT_p)}{s^2(1+sT_m)}$ | 位置 PI 结构 | — | Routh 给 $T_p>T_m$；$T_p\le T_m$ 是结构不稳定，调增益救不了 |
+| 干扰抑制：$X_R=K_Pk_{tp}$，$T_R=\max\{T_p,1/(\zeta\omega_n)\}$ | 估计式依赖近似 | — | $K_P$ 增大压干扰但损阻尼；不是所有频段都 $1/K_P$ |
+| 驱动接口 (7.2-15)：$\boldsymbol\tau=K_rK_tR_a^{-1}(G_v\boldsymbol v_c-K_vK_r\dot{\boldsymbol q})$ | 五式驱动模型 | N·m、V | 电压—速度近似须逐轴查压降 $\ll$ 反电动势；静止时不成立 |
+| PD 整定 (7.2-10)：$K_{P_i}=J_i\omega_n^2$，$K_{D_i}=2\zeta J_i\omega_n-F_i$ | 单轴力矩 PD 口径 | N·m/rad | 忽略 $F_i$ 才得 $2\zeta J\omega_n$；与三阶 PI 根轨迹是两套口径 |
 
 ::: method 判别流程（工程上怎么用这一节） {#method-7.2.A}
 给定一台机械手，要决定用分散还是集中：
@@ -340,4 +323,26 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 4. 写出干扰抑制因子 $X_R$ 与收敛时间 $T_R$，说明 $K_P$ 的取舍。
 5. 写出驱动五式并推出 (7.2-15)；说明三条假设各自消掉了什么。
 6. 写出分散前馈与计算转矩前馈的表达式，说明两者与逆动力学控制的区别。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导、传递函数与设计公式；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:09:46–00:55:30 与第 8 周 02:09–02:17）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 12:10 | [decentral-model.jpg](../assets/ch07/decentral-model.jpg) | 分散近似：把耦合、重力视为干扰 | 式 (7.2-1)–(7.2-4) 完整推导替代 |
+| 32:00 | [pos-vel-loop.jpg](../assets/ch07/pos-vel-loop.jpg) | 位置+速度反馈控制结构 | 三方案表给出 $C_p,C_v,C_A$；框图结构按表复原 |
+| 39:10 | [pos-vel-acc.jpg](../assets/ch07/pos-vel-acc.jpg) | 加速度重构滤波器 | 式 (7.2-7) + 噪声边界分析替代 |
+| 23:50 | [pos-rootlocus.jpg](../assets/ch07/pos-rootlocus.jpg) | 位置环根轨迹三情形 | Routh 判据 $T_p>T_m$ + 渐近线交点 (7.2-9) 替代 |
+| 31:10 | [pos-disturbance.jpg](../assets/ch07/pos-disturbance.jpg) | 干扰/输出传递函数 | 式 (7.2-11)–(7.2-13) 完整给出 |
+| 02:09:04 | [joint-eom.jpg](../assets/ch07/joint-eom.jpg) | 关节空间运动方程（第 8 周） | 式 (7.2-14)–(7.2-15) 完整推导替代 |
+| 02:09:21 | [drive-model.jpg](../assets/ch07/drive-model.jpg) | 驱动系统组成 | 五式驱动模型完整给出 |
+| 02:11:59 | [tau-vc.jpg](../assets/ch07/tau-vc.jpg) | $\tau$ 与 $v_c$ 关系 | (7.2-15) + 近似条件逐轴表述替代 |
+| 02:13:29 | [decentral-assume.jpg](../assets/ch07/decentral-assume.jpg) | 三条假设与两条结论 | 定理 7.2.A 完整给出 |
+| 02:14:22 | [centralized-reason.jpg](../assets/ch07/centralized-reason.jpg) | 压降不可忽略时需集中控制 | 正文给出耦合比较与两条件说明 |
+| 02:16:01 | [current-loop.jpg](../assets/ch07/current-loop.jpg) | 电流环后的力矩接口 | 两条工程出路表替代 |
+| 02:13:30 实拍 | [board-tau-vc.jpg](../assets/ch07/board-tau-vc.jpg) | 讲台实拍（板书帧 b268） | 内容已入正文，图不再单独承载信息 |
+| 40:30 | [decentral-feedforward.jpg](../assets/ch07/decentral-feedforward.jpg) | 分散前馈补偿结构 | 式 (7.2-17) + 物理分工说明替代 |
+| 55:20 | [computed-torque-ff.jpg](../assets/ch07/computed-torque-ff.jpg) | 计算转矩前馈完整结构 | 式 (7.2-18) + 与逆动力学控制辨析替代 |
 :::

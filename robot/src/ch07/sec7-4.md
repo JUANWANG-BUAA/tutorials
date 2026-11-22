@@ -1,8 +1,8 @@
 # 7.4 操作空间控制
 
-> 录播 01:58:34–02:10:12（课件 §8.6，**全部是课堂内容**）。前三节都在**关节空间**里设计控制器：
-> 先由逆运动学把任务翻译成 $\boldsymbol q_d$，再控制 $\boldsymbol q$ 跟踪它。这一节换一种做法：
-> **直接在末端位姿的控制空间里闭环**。任务误差直接进入反馈，不必先把整条位姿参考转换成关节位置参考；但仍需雅可比映射，而且由正运动学估计末端状态时，标定误差并不会自动消失。奇异位形与冗余自由度也仍须处理。
+课件 §8.6，**全部是课堂内容**（录播 01:58:34–02:10:12）。前三节都在**关节空间**里设计控制器：
+先由逆运动学把任务翻译成 $\boldsymbol q_d$，再控制 $\boldsymbol q$ 跟踪它。这一节换一种做法：
+**直接在末端位姿的控制空间里闭环**。任务误差直接进入反馈，不必先把整条位姿参考转换成关节位置参考；但仍需雅可比映射，而且由正运动学估计末端状态时，标定误差并不会自动消失。奇异位形与冗余自由度也仍须处理。
 
 <a id="sec-7.4.1"></a>
 
@@ -77,8 +77,6 @@ $$\dot{\boldsymbol q}_{\rm cmd}=J_A^{-1}(\dot{\boldsymbol x}_d+K\tilde{\boldsymb
 $$\boxed{\ \boldsymbol F=K_P(\boldsymbol x_d-\boldsymbol x),\qquad
 \boldsymbol\tau=J_A^{\mathrm T}(\boldsymbol q)\boldsymbol F\ }\tag{7.4-5}$$
 
-![课堂幻灯片 · 122:30：转置雅可比方案——操作空间误差经增益矩阵变成广义弹簧力，再由 J_Aᵀ 折算成关节力矩](../assets/ch07/op-transpose.jpg)
-
 **物理图像**：$K_P$ 等效为一个**广义虚拟弹簧**，把末端从当前位姿往期望位姿 $\boldsymbol x_d$ 拉；$J_A^{\mathrm T}$ 则实现了这一虚拟力向关节空间的分配（符合虚功原理：$\boldsymbol\tau = J_A^{\mathrm T}\boldsymbol F$）。**此方案不需要求 $J_A^{-1}$，因此在奇异位形附近数值上更为稳健**——这是其相对逆雅可比方案的核心优势。
 这里的稳健只指无需数值求逆，不代表在奇异处仍能消除任意任务误差：某些方向的虚拟力可能落入 $J_A^{\mathrm T}$ 的零空间。式 (7.4-5) 还只是弹簧项，尚未补重力或加入阻尼，不能单凭它保证动态系统收敛；下一小节补齐这两部分。
 
@@ -101,8 +99,6 @@ $$V=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}
 $$\boxed{\ \boldsymbol u=\boldsymbol g(\boldsymbol q)
 +J_A^{\mathrm T}(\boldsymbol q)K_P\tilde{\boldsymbol x}
 -J_A^{\mathrm T}(\boldsymbol q)K_DJ_A(\boldsymbol q)\dot{\boldsymbol q}\ }\tag{7.4-7}$$
-
-![课堂幻灯片 · 125:40：操作空间重力补偿 PD——V 的导数只剩阻尼项，平衡点由 J_AᵀK_P·x̃ = 0 确定](../assets/ch07/op-gravity-pd.jpg)
 
 这里 $K_P,K_D$ 取对称正定矩阵。目标静止时，$\dot{\tilde{\boldsymbol x}}=-J_A\dot{\boldsymbol q}$；把控制律代入动力学，再用 $\dot B-2C$ 的反对称性，得到
 
@@ -136,9 +132,6 @@ $$\boldsymbol y=J_A^{-1}(\boldsymbol q)\bigl(\ddot{\boldsymbol x}_d
 
 $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsymbol x}=0.\tag{7.4-12}$$
 上式要求参考在所用局部坐标图内可达、轨迹保持非奇异，模型与状态准确、力矩不饱和，并采用理想连续时间更新；取正对角增益时各任务坐标误差指数衰减。采样、延迟、测量误差或限幅存在时须重新写误差方程。欧拉角坐标奇异和机械臂的运动学奇异是两种不同问题，都不能仅靠把 $J_A^{-1}$ 换成数值伪逆就保留同一证明。
-
-
-![课堂幻灯片 · 126:50：操作空间逆动力学——先由 J_A⁻¹ 把操作空间辅助量变成关节加速度，再用逆动力学折算成力矩](../assets/ch07/op-inverse-dynamics.jpg)
 
 **注意它与 7.4.4 的分工**：7.4.4 只补重力，适合点对点；7.4.5 对模型做更完整的补偿，适合轨迹跟踪。前者用 $J_A$ 做力的映射，后者还需 $\dot J_A$ 和逆雅可比。
 
@@ -181,6 +174,16 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 - **两条实现路线**：逆雅可比（先翻译，再关节控制）与转置雅可比（误差 → 弹簧力 → $J_A^{\mathrm T}$）；
   前者要 $J_A^{-1}$，后者不要，但后者不保证最短路径。
 - **一个判据**：$\boldsymbol x$ 的信息质量决定这套方案的实际上限。
+- **下一节**：[7.5 九种方案的仿真比较与选型](sec7-5.md) 把本章所有控制律放到同一台两连杆臂上量出差距。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 模型 (7.4-3)：$B_x\ddot{\boldsymbol x}+C_x\dot{\boldsymbol x}+\boldsymbol g_x=\boldsymbol\tau_x-\boldsymbol h_A$ | $B$ 正定、$J_A$ 满行秩；$B_x=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ | 混合（m/rad 分块） | 接触力须共轭变换 $\boldsymbol h_A=T_A^{\mathrm T}\boldsymbol h_e$；冗余时末端坐标不能闭合模型 |
+| 转置方案 (7.4-5)：$\boldsymbol F=K_P\tilde{\boldsymbol x}$，$\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol F$ | 弹簧项；奇异附近数值稳健 | N、N·m | 无求逆 ≠ 能消任意误差；$J_A^{\mathrm T}$ 零空间方向的误差拉不动 |
+| 操作空间重力补偿 PD (7.4-7)：$\boldsymbol u=\boldsymbol g+J_A^{\mathrm T}K_P\tilde{\boldsymbol x}-J_A^{\mathrm T}K_DJ_A\dot{\boldsymbol q}$ | 固定目标、拉萨尔条件 | N·m | 平衡点由 $J_A^{\mathrm T}K_P\tilde x=0$ 定；奇异时非零误差也可满足 |
+| 操作空间逆动力学 (7.4-11)：$\boldsymbol y=J_A^{-1}(\ddot{\boldsymbol x}_d+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsymbol x}-\dot J_A\dot{\boldsymbol q})$ | $J_A$ 可逆、模型精确 | rad/s² | $\dot J_A\dot q$ 是运动学加速度，不是 $C\dot q$；欧拉角奇异与机构奇异分开判 |
 
 ::: think 常见错误清单
 1. **混用两种雅可比和力的定义**：姿态坐标导数 $\dot{\boldsymbol\phi}$ 一般不等于角速度 $\boldsymbol\omega$。使用 $\dot{\boldsymbol x}=[\dot{\boldsymbol p};\dot{\boldsymbol\phi}]$ 时要用分析雅可比及其共轭广义力；也可以用几何雅可比，但须相应改用线速度、角速度和几何力/力矩。
@@ -200,4 +203,15 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 4. 写出操作空间重力补偿 PD 的 $V$ 与 $\dot V$，说明平衡点为什么由 $J_A^{\mathrm T}K_P\tilde x=0$ 确定。
 5. 写出操作空间逆动力学，指出它与 7.4.4 的分工。
 6. 列出操作空间控制的五条代价与各自的对策。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导与对照表；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:58:34–02:10:12）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 122:30 | [op-transpose.jpg](../assets/ch07/op-transpose.jpg) | 转置雅可比方案结构 | 式 (7.4-5) + 弹簧物理图像 + 零空间边界替代 |
+| 125:40 | [op-gravity-pd.jpg](../assets/ch07/op-gravity-pd.jpg) | 操作空间重力补偿 PD | (7.4-6)–(7.4-9) 完整推导 + 平衡点条件替代 |
+| 126:50 | [op-inverse-dynamics.jpg](../assets/ch07/op-inverse-dynamics.jpg) | 操作空间逆动力学 | (7.4-10)–(7.4-12) + 三个硬约束替代 |
 :::

@@ -1,6 +1,6 @@
 # 7.1 控制问题与控制体系
 
-> 录播 01:55:58–02:10:20（第 8 周，课件 §8.1–§8.2 前半）。本节先回答四个问题：**控制在控什么？任务是哪一类？任务提在哪、控制动作落在哪？有哪两大类架构？** 具体控制律从 7.2 起；其中课堂内容与本书推导说明配合阅读。
+本节先回答四个问题：**控制在控什么？任务是哪一类？任务提在哪、控制动作落在哪？有哪两大类架构？** 具体控制律从 7.2 起（录播 01:55:58–02:10:20，课件 §8.1–§8.2 前半）。
 
 <a id="sec-7.1.1"></a>
 
@@ -56,15 +56,12 @@ $\boldsymbol\tau$……你要是在关节空间规划的，那就（让）所有
 课件用三个虚线框列出「对控制问题产生很大影响」的因素，老师口述时把「控制技术及执行方式」拆开
 数成了四个（02:04:19–02:04:35）。四个因素合起来，就是本章所有方案的选择依据：
 
-![课堂幻灯片 · 02:02:35：影响控制问题的三个因素（控制技术及执行方式、机械手设计、关节驱动系统）](../assets/ch07/control-factors.jpg)
-
 | 因素 | 课件/老师原话 | 对控制方案的影响 |
 |:--|:--|:--|
 | **控制技术及执行方式** | 「在硬件/软件实现时，操作空间轨迹跟踪控制的需求与点对点控制的需求有所不同，点对点控制中只关注到达的最终位置」 | 点对点以终点为主要目标，但中间仍须避障并满足速度、力矩等约束；轨迹跟踪还要控制全程偏差 |
 | **机械手的机械设计** | 「笛卡儿机械手的控制问题与拟人型机械手完全不同」 | 6.3.1 的理想笛卡儿臂惯量常数、速度耦合为零；拟人臂的惯量和耦合通常随位形变化 |
 | **关节驱动系统** | 「若由具有高传动比减速齿轮的电动机驱动，齿轮可以使系统动态过程线性化，但是会出现关节摩擦、弹力、齿轮隙等限制」 | 大减速比可减弱电机侧折算耦合，是否足以采用分散控制仍须检查；摩擦与齿隙影响低速性能 |
 | **（口述补充）控制目的与指标** | 「你得满足稳态的要求、超调量、调节时间……」 | 决定需要多大稳态精度、怎样整定反馈及是否采用积分 |
-
 机械结构和驱动参数共同决定耦合的大小。对 6.3.1 的理想笛卡儿臂，常惯量与正交移动轴使建模较简单，但控制器仍需整定；转动机械臂的惯量、重力项可能随位形变化，是否需要补偿取决于任务精度和驱动条件。
 
 <a id="sec-7.1.4"></a>
@@ -76,13 +73,67 @@ $\boldsymbol\tau$……你要是在关节空间规划的，那就（让）所有
 > 「在机械手的控制问题中，**任务要求通常是在操作空间中提出来**的，而**控制动作是在关节空间中
 > 实现**的。这就导致了两种不同控制方案的提出，分别称为**关节空间控制方案**和**操作空间控制方案**。」
 
-![课堂幻灯片 · 02:02:39：任务在操作空间提出、控制动作在关节空间实现](../assets/ch07/twospaces.jpg)
-
 为什么必须这样？因为**执行器长在关节上**（电机只能出力矩），而**任务长在末端上**（要抓的东西
 在世界上，不在关节里）。两套方案，就是把这个错位补上的两种办法：
 
 - **关节空间方案**：把任务**翻译**成关节运动（逆运动学），然后在关节空间闭环；
 - **操作空间方案**：把控制器**搬到**操作空间（用操作空间动力学模型），直接在 $x$ 空间闭环。
+
+<figure>
+<svg class="figure-svg" viewBox="0 0 920 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-71-loops-t fig-71-loops-d">
+<title id="fig-71-loops-t">两套控制方案的框图：关节空间与操作空间</title>
+<desc id="fig-71-loops-d">上面板：关节空间方案，期望位姿先经逆运动学变成关节期望，与反馈关节量比较后进控制器与执行器，机械手输出实际关节运动与末端位姿；反馈闭环在关节量上，末端段开环。下面板：操作空间方案，期望位姿直接与反馈末端位姿比较，控制器输出经雅可比转置折算成关节力矩；闭环在末端位姿上。</desc>
+<defs><marker id="f71-m" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--muted)"/></marker></defs>
+<text class="diagram-text" x="460" y="30" text-anchor="middle">同一套读法：前向通道从左到右，反馈从右回到比较点取负；闭环量用同色标出</text>
+<g class="diagram-node">
+<rect x="24" y="58" width="88" height="40" rx="8"/>
+<rect x="140" y="58" width="96" height="40" rx="8"/>
+<rect x="300" y="58" width="76" height="40" rx="8"/>
+<rect x="430" y="58" width="76" height="40" rx="8"/>
+<rect x="560" y="58" width="76" height="40" rx="8"/>
+<rect x="690" y="58" width="90" height="40" rx="8"/>
+<rect x="300" y="150" width="76" height="40" rx="8"/>
+</g>
+<g class="diagram-text" text-anchor="middle">
+<text x="68" y="82">x<tspan class="sb">d</tspan></text><text x="188" y="82">逆运动学</text>
+<text x="338" y="82">控制器</text><text x="468" y="82">执行器</text>
+<text x="598" y="82">机械手</text><text x="735" y="82">x<tspan class="sb">e</tspan></text>
+<text x="338" y="174">传感器</text>
+</g>
+<text class="diagram-text" fill="var(--accent-text)" x="240" y="82" text-anchor="middle">q<tspan class="sb">d</tspan></text>
+<text class="diagram-text" fill="var(--accent-text)" x="436" y="120" text-anchor="middle">τ</text>
+<text class="diagram-text" fill="var(--accent-text)" x="672" y="120" text-anchor="middle">q（闭环量）</text>
+<g fill="none" stroke="var(--line-strong)" stroke-width="1.6" marker-end="url(#f71-m)">
+<path d="M112 78 H136"/><path d="M236 78 H296"/><path d="M376 78 H426"/><path d="M506 78 H556"/><path d="M636 78 H686"/>
+<path d="M735 98 V174 H380"/><path d="M300 170 H236 V98"/>
+</g>
+<circle cx="258" cy="78" r="3" fill="var(--ink)"/>
+<text class="diagram-note" x="460" y="212" text-anchor="middle">上：关节空间方案——闭环在 q，x_d→x_e 段除逆运动学外开环</text>
+<g class="diagram-node">
+<rect x="24" y="252" width="88" height="40" rx="8"/>
+<rect x="260" y="252" width="76" height="40" rx="8"/>
+<rect x="390" y="252" width="76" height="40" rx="8"/>
+<rect x="520" y="252" width="76" height="40" rx="8"/>
+<rect x="650" y="252" width="90" height="40" rx="8"/>
+<rect x="390" y="344" width="76" height="40" rx="8"/>
+</g>
+<g class="diagram-text" text-anchor="middle">
+<text x="68" y="276">x<tspan class="sb">d</tspan></text>
+<text x="298" y="276">控制器</text><text x="428" y="276">J<tspan class="sp">T</tspan> 折算</text>
+<text x="558" y="276">执行器</text><text x="695" y="276">机械手</text>
+<text x="428" y="368">测量/估计</text>
+</g>
+<text class="diagram-text" fill="var(--accent-text)" x="222" y="276" text-anchor="middle">x̃ = x<tspan class="sb">d</tspan> − x<tspan class="sb">e</tspan></text>
+<text class="diagram-text" fill="var(--accent-text)" x="486" y="240" text-anchor="middle">F（末端广义力）</text>
+<text class="diagram-text" fill="var(--accent-text)" x="626" y="314" text-anchor="middle">x<tspan class="sb">e</tspan>（闭环量，常由 q 算出）</text>
+<g fill="none" stroke="var(--line-strong)" stroke-width="1.6" marker-end="url(#f71-m)">
+<path d="M112 272 H256"/><path d="M336 272 H386"/><path d="M466 272 H516"/><path d="M596 272 H646"/>
+<path d="M695 292 V364 H470"/><path d="M390 364 H262 V292"/>
+</g>
+<text class="diagram-note" x="460" y="408" text-anchor="middle">下：操作空间方案——闭环在 x_e，无逆运动学环节；x_e 多数由 q 经正运动学间接得到（优点「只是潜在的」）</text>
+</svg>
+<figcaption>两套控制方案框图（本教程绘，对照课件 02:05:04 与 02:06:32）：上——关节空间方案，逆运动学翻译任务、闭环在关节量 $\boldsymbol q$；下——操作空间方案，控制器直接吃末端误差、输出经 $J^{\mathrm T}$ 折回关节力矩。两张图的读法一致：彩标注闭环量，灰为前向通道；$\boldsymbol x_d\to\boldsymbol x_e$ 段有没有独立反馈，是两图唯一的结构差别。</figcaption>
+</figure>
 
 <a id="sec-7.1.4.1"></a>
 
@@ -91,9 +142,7 @@ $\boldsymbol\tau$……你要是在关节空间规划的，那就（让）所有
 先把期望位姿 $\boldsymbol x_d$ 用**逆运动学**解成关节期望 $\boldsymbol q_d$，再让实际关节运动
 $\boldsymbol q$ 跟踪 $\boldsymbol q_d$——闭环发生在关节空间，$n$ 个关节各有一个反馈通道。
 
-![课堂幻灯片 · 02:05:04：关节空间控制方案框图（逆运动学把 x_d 变成 q_d，反馈 q）](../assets/ch07/joint-space-loop.jpg)
-
-**框图这样读**（本章两张框图都用同一套读法）：
+**框图这样读**（上图的上面板；本章框图都用同一套读法）：
 
 1. **前向通道**：$\boldsymbol x_d$ →〔逆运动学〕→ $\boldsymbol q_d$ →〔比较点〕→ 控制器 → 执行器 → 驱动 → 机械手 → $\boldsymbol x_e$；
 2. **反馈通道**：从机械手引出 $\boldsymbol q$，经**传感器**回到比较点取负号——**闭环量是 $\boldsymbol q$**；
@@ -117,9 +166,7 @@ $\boldsymbol q$ 跟踪 $\boldsymbol q_d$——闭环发生在关节空间，$n$ 
 ### 7.1.4.2 操作空间控制方案
 
 不翻译了。直接以末端位姿 $\boldsymbol x_e$ 为被控量做闭环，控制器输出的是末端广义力
-$\boldsymbol F$（再经 $J^{\mathrm T}$ 折回关节）。
-
-![课堂幻灯片 · 02:06:32：操作空间控制方案框图（反馈 x_e，无逆运动学环节）](../assets/ch07/op-space-loop.jpg)
+$\boldsymbol F$（再经 $J^{\mathrm T}$ 折回关节）——上图的下面板。
 
 课件给的评价是「一优一劣」，而且**优的那条打了折**：「操作空间控制方案采用**整体方法**，会带来
 **更高的计算复杂性**。该方案的优点是**可以直接影响操作空间变量**。但操作空间变量的**直接测量
@@ -216,6 +263,15 @@ $\boldsymbol v_c$**（或电流环的指令）。老师把这件事当成 §8.2 
   于是有「关节/操作空间」两套方案；按要不要整机模型，又有「分散/集中」两大类。
 - **三个坐标**：空间 × 架构 × 工况（低速小转矩/高速大转矩）——本章所有方法都在这个三维格子里占位。
 - **一条判据**：闭环通道里有什么量、信息质量如何，决定方案的真正优劣。
+- **下一节**：[7.2 分散（独立关节）控制](sec7-2.md) 先走分散那条路——把耦合当扰动丢掉的单轴设计，以及它成立的条件。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 被控对象 (7.1)：$B\ddot q+C\dot q+F_{\mathrm v}\dot q+F_{\mathrm s}\operatorname{sgn}\dot q+\boldsymbol g=\boldsymbol\tau$ | 自由空间（无 $-J^{\mathrm T}h_e$ 项） | N·m / N | 环境交互是第九章的正题；本章把接触当不存在 |
+| 两套方案判别：闭环量 $\boldsymbol q$（关节空间）vs $\boldsymbol x_e$（操作空间） | — | — | 与分散/集中是不同维度的分类；操作空间的「优点只是潜在的」 |
+| 分散/集中判别：各关节独立设计 vs 整机统一设计 | 驱动条件决定可行性 | — | 「解耦」要检验：折算后剩多少耦合、反馈压不压得住 |
 
 ::: think 常见错误清单
 1. **把「关节空间控制」当成「分散控制」**：两者是**不同维度**的分类——关节空间方案里也能用集中控制，
@@ -234,4 +290,16 @@ $\boldsymbol v_c$**（或电流环的指令）。老师把这件事当成 §8.2 
 3. 画出操作空间控制框图，说明「优点只是潜在的」是什么意思。
 4. 写出分散控制与集中控制的四条对照（设计对象、耦合处理、常见手段、本课程位置）。
 5. 说出影响控制问题的四个因素，并各举一个对控制方案的影响。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部对照与自绘框图；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:55:58–02:10:20）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 02:02:35 | [control-factors.jpg](../assets/ch07/control-factors.jpg) | 影响控制问题的三因素框图 | 四因素表完整重写（口述拆出的第四项单列） |
+| 02:02:39 | [twospaces.jpg](../assets/ch07/twospaces.jpg) | 任务在操作空间提出、控制动作在关节空间实现 | 核心命题引文 + 「执行器长在关节上」的解释替代 |
+| 02:05:04 | [joint-space-loop.jpg](../assets/ch07/joint-space-loop.jpg) | 关节空间控制方案框图 | 自绘双面板框图上面板替代，读法三步保留 |
+| 02:06:32 | [op-space-loop.jpg](../assets/ch07/op-space-loop.jpg) | 操作空间控制方案框图 | 自绘双面板框图下面板替代；「优点只是潜在的」辨析保留 |
 :::

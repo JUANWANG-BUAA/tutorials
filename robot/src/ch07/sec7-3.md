@@ -1,9 +1,9 @@
 # 7.3 集中控制
 
-> 录播 00:56:32–01:58:20（课件 §8.5，**全部是课堂内容**）。这一节是本章最长、理论密度最高的
-> 一段：先说明为什么分散控制不够用，再补一段**李雅普诺夫稳定性**的最小预备知识，然后依次给出
-> 四种集中控制律——**重力补偿 PD、逆动力学、鲁棒、自适应**。它们的关系是一条线：
-> 从「只补重力」到「全补模型」，再到「模型不准时怎么办」。
+课件 §8.5，**全部是课堂内容**（录播 00:56:32–01:58:20）。这一节是本章最长、理论密度最高的
+一段：先说明为什么分散控制不够用，再补一段**李雅普诺夫稳定性**的最小预备知识，然后依次给出
+四种集中控制律——**重力补偿 PD、逆动力学、鲁棒、自适应**。它们的关系是一条线：
+从「只补重力」到「全补模型」，再到「模型不准时怎么办」。
 
 <a id="sec-7.3.1"></a>
 
@@ -15,8 +15,6 @@
 2. **特殊结构**：如无大传动比减速器的直接驱动系统，缺乏足够的减速比来将电机侧的惯量效应放大，从而无法有效减弱关节间的耦合。
 
 **集中控制的本质**：不再将耦合项视为待抑制的干扰，而是利用机械手的完整动力学模型进行显式计算，并将这些耦合项直接在控制律中进行补偿。控制器不再是分散的 $n$ 个独立回路，而是基于整机动力学的多输入多输出整体设计。
-
-![课堂幻灯片 · 57:50：集中控制——用机械手动力学模型的具体信息补偿非线性耦合项](../assets/ch07/centralized-intro.jpg)
 
 ::: note 「集中」意味着信息聚合
 为了按整机模型补偿耦合，控制器需要相关关节的状态信息；具体需要哪些测量量取决于控制律。例如本节的逆动力学控制使用实测 $\boldsymbol q,\dot{\boldsymbol q}$ 和期望加速度，并不要求实测关节加速度。模型准确时才能精确对消耦合项。
@@ -55,8 +53,6 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 \quad\Longrightarrow\quad
 \dot V=2\boldsymbol e^{\mathrm T}Qf(\boldsymbol e).\tag{7.3-2}$$
 
-![课堂幻灯片 · 60:40：二次型李雅普诺夫函数——V = eᵀQe，V̇ = 2eᵀQ·f(e)](../assets/ch07/lyapunov.jpg)
-
 很多机器人系统只能得到 $\dot V\le0$，例如 $\dot V=-\dot{\boldsymbol q}^{\mathrm T}K_D\dot{\boldsymbol q}$。机械臂停在错误位置的一瞬间，速度也是零，因而 $\dot V=0$；但位置反馈随后会让它动起来。证明时必须区分“此刻不动”和“以后一直不动”。
 
 拉萨尔不变性原理处理这个区别。在自治系统的紧致正向不变集上，若 $\dot V\le0$，轨迹趋向 $\dot V=0$ 集合内的最大不变集。对下面的重力补偿 PD，可按以下步骤检查：
@@ -74,9 +70,7 @@ $$V(\boldsymbol e)=\boldsymbol e^{\mathrm T}Q\boldsymbol e,\qquad Q=Q^{\mathrm T
 ## 7.3.3 重力补偿 PD：只补最大的那一项
 
 最简单的集中控制只补重力。它针对的是**点对点控制**：期望关节角 $\boldsymbol q_d$ 是**常数**，
-让 $\boldsymbol q$ 收敛到 $\boldsymbol q_d$（图 7.3-3）。
-
-![课堂幻灯片 · 72:00：重力补偿 PD 的李雅普诺夫函数 V = ½·q̇ᵀB(q)q̇ + ½·q̃ᵀK_P q̃](../assets/ch07/gravity-pd-V.jpg)
+让 $\boldsymbol q$ 收敛到 $\boldsymbol q_d$。
 
 取误差 $\tilde{\boldsymbol q}=\boldsymbol q_d-\boldsymbol q$，构造
 
@@ -97,8 +91,6 @@ $$\dot V=\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\ddot{\boldsymbol q}
 $$\dot V=\frac12\dot{\boldsymbol q}^{\mathrm T}\bigl(\dot B(\boldsymbol q)-2C(\boldsymbol q,\dot{\boldsymbol q})\bigr)\dot{\boldsymbol q}
 -\dot{\boldsymbol q}^{\mathrm T}F\dot{\boldsymbol q}
 +\dot{\boldsymbol q}^{\mathrm T}\bigl(\boldsymbol u-\boldsymbol g(\boldsymbol q)-K_P\tilde{\boldsymbol q}\bigr).\tag{7.3-5}$$
-
-![课堂幻灯片 · 74:50：利用 Ḃ − 2C 的反对称性，第一项为零](../assets/ch07/gravity-pd-Vdot.jpg)
 
 **第一项为零**——这正是第六章性质一（$\dot B-2C$ 反对称）的用处。取控制律
 
@@ -144,8 +136,6 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+\boldsymbol n(\boldsymbol q,\dot{\boldsym
 $$\boxed{\ \boldsymbol u=B(\boldsymbol q)\bigl(\ddot{\boldsymbol q}_d
 +K_D\dot{\tilde{\boldsymbol q}}+K_P\tilde{\boldsymbol q}\bigr)
 +\boldsymbol n(\boldsymbol q,\dot{\boldsymbol q})\ }\tag{7.3-9}$$
-
-![课堂幻灯片 · 84:50：逆动力学控制的两个回路——内环非线性补偿与解耦，外环稳定化线性控制](../assets/ch07/inverse-dynamics.jpg)
 
 代入 (7.3-8)，$B$ 可逆（第六章性质一：对称正定），得
 
@@ -232,8 +222,6 @@ $\boldsymbol\eta$ 包含参数误差、未建模动态、外部扰动。**鲁棒
 的具体值，只假设它**有界**，然后设计一个控制项，使得无论 $\boldsymbol\eta$ 在界内怎么变，
 误差都收敛到一个有界集。
 
-![课堂幻灯片 · 99:10：鲁棒控制律由三部分组成——模型补偿、线性反馈、鲁棒项 ω](../assets/ch07/robust-law.jpg)
-
 控制律取
 
 $$\boxed{\ \boldsymbol u=\hat B(\boldsymbol q)\boldsymbol y+\hat{\boldsymbol n}(\boldsymbol q,\dot{\boldsymbol q})
@@ -260,12 +248,8 @@ $$\dot V=-\xi^{\mathrm T}P\xi+2z^{\mathrm T}(\eta-\omega)
 
 **几何图像**：课件用 $D^{\mathrm T}Q\xi=0$ 表示滑动子空间。本文外加力矩型写法的 $z=\hat B^{-\mathrm T}D^{\mathrm T}Q\xi$ 与它有相同的零集合，但方向一般不同；上面的导数计算说明了为什么要这样配套。课件示意的是理想切换运动，不能据图就断言有限采样、饱和执行器也精确到达并沿面滑动。
 
-![课堂幻灯片 · 104:50：滑动子空间 z = DᵀQξ = 0——轨迹被引向滑模面，再沿它趋向原点](../assets/ch07/sliding-subspace.jpg)
-
 **问题是抖振**。$\boldsymbol\omega=\rho\boldsymbol z/\|\boldsymbol z\|$ 是一个**符号函数**：
-$\boldsymbol z$ 一过零，控制量立刻反向，实际执行器跟不上，就在滑模面附近高频抖振（图 7.3-6）。
-
-![课堂幻灯片 · 105:40：边界层——在 ‖z‖ < ε 内用线性项替代归一化切换项，以减轻抖振；结论改为误差有界](../assets/ch07/boundary-layer.jpg)
+$\boldsymbol z$ 一过零，控制量立刻反向，实际执行器跟不上，就在滑模面附近高频抖振。
 
 **工程修正**：在滑模面附近设一个**边界层** $\varepsilon$：
 
@@ -298,8 +282,6 @@ $$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\bold
 $Y$ 是已知的回归矩阵，$\boldsymbol\pi$ 是未知但**常数**的动力学参数向量（质量、惯量、质心位置、
 摩擦系数……）。
 
-![课堂幻灯片 · 108:10：动力学参数线性性——τ = Y(q, q̇, q̈)·π，这是自适应控制的入口](../assets/ch07/adaptive-linearity.jpg)
-
 **控制律的构造**（课件 §8.5.4）：
 
 1. 定义**修正速度**与**修正误差**：
@@ -316,8 +298,6 @@ $Y$ 是已知的回归矩阵，$\boldsymbol\pi$ 是未知但**常数**的动力�
    $$\boxed{\ \dot{\hat{\boldsymbol\pi}}
    =K_\pi^{-1}Y^{\mathrm T}(\boldsymbol q,\dot{\boldsymbol q},\dot{\boldsymbol q}_r,\ddot{\boldsymbol q}_r)
    \boldsymbol\sigma\ }\tag{7.3-18}$$
-
-![课堂幻灯片 · 114:10：自适应控制的李雅普诺夫函数与参数更新律](../assets/ch07/adaptive-lyapunov.jpg)
 
 用 $\tilde{\boldsymbol\pi}=\hat{\boldsymbol\pi}-\boldsymbol\pi$ 表示参数估计误差。由 $\boldsymbol\sigma=\dot{\boldsymbol q}_r-\dot{\boldsymbol q}$，结合动力学方程和控制律，得
 
@@ -381,8 +361,6 @@ $$\begin{aligned}
 
 课件最后还区分了**直接自适应**与**间接自适应**：这里在线调整 $\hat{\boldsymbol\pi}$，是为了让控制律满足跟踪目标，不是先保证识别出真实参数再据此设计控制器。因此，即使某时刻 $Y(\hat{\boldsymbol\pi}-\boldsymbol\pi)=0$，也不能反推 $\hat{\boldsymbol\pi}=\boldsymbol\pi$；回归矩阵可能有非零零空间，参数收敛还取决于其结构以及期望、实际轨迹提供的激励。这正是下面「跟踪收敛不等于参数辨识成功」的原因。
 
-![课堂幻灯片 · 117:40：自适应控制律的三部分——Y·π̂ 模型补偿、K_D·σ 稳定化、π̂ 在线更新](../assets/ch07/adaptive-structure.jpg)
-
 **必须说清的三件事**：
 
 1. **参数估计不一定收敛到真值**。更新律只保证 $\boldsymbol\sigma\to0$，不保证
@@ -397,7 +375,7 @@ $$\begin{aligned}
 :::
 <a id="sec-7.3.7"></a>
 
-## 7.3.7 实现要点与小结
+## 7.3.7 小结与常见错误
 
 **四条实现约束**（对逆动力学/鲁棒/自适应都成立）：
 
@@ -409,6 +387,21 @@ $$\begin{aligned}
 - **一句话主线**：重力补偿 PD 只补偿 $\boldsymbol g$；逆动力学使用整机模型；鲁棒控制还利用不确定性上界，自适应控制在线更新参数估计。
 - **一个工具**：李雅普诺夫函数 + 拉萨尔原理；核心技巧是用 $\dot B-2C$ 的反对称性消掉交叉项。
 - **一个取舍**：模型、扰动上界、参数线性结构与计算能力分别限制不同控制律的适用范围。
+- **下一节**：[7.4 操作空间控制](sec7-4.md) 把集中控制搬到末端——用第六编 6.7 的 $B_A,C_A,\boldsymbol g_A$ 直接闭 $x$ 的环；[7.5](sec7-5.md) 再把九种方案放到同一台两连杆臂上比一比。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| 重力补偿 PD (7.3-6)：$\boldsymbol u=\boldsymbol g(\boldsymbol q)+K_P\tilde q-K_D\dot q$；$\dot V=-\dot q^{\mathrm T}(F+K_D)\dot q$ | **固定目标**、模型精确、无限幅；证明用拉萨尔原理 | N·m | $\boldsymbol g$ 用实测 $q$；跟踪时证明不适用 |
+| 逆动力学 (7.3-9)：$\boldsymbol u=B(q)(\ddot q_d+K_D\dot{\tilde q}+K_P\tilde q)+\boldsymbol n(q,\dot q)$ | 模型精确、力矩可实现 | N·m | 误差方程 $\ddot{\tilde q}+K_D\dot{\tilde q}+K_P\tilde q=0$；与计算转矩前馈差在「用谁的状态」 |
+| 鲁棒 (7.3-12)：$\boldsymbol u=\hat B y+\hat{\boldsymbol n}+\boldsymbol\omega$，$\boldsymbol\omega=\rho\boldsymbol z/\|\boldsymbol z\|$，$\boldsymbol z=\hat B^{-\mathrm T}D^{\mathrm T}Q\xi$ | $\|\eta\|\le\rho$ 在工作域内成立 | N·m | $z$ 须含 $\hat B^{-\mathrm T}$（力矩型）；边界层只给最终有界 |
+| 自适应 (7.3-17)–(7.3-18)：$\boldsymbol u=Y\hat{\boldsymbol\pi}+K_D\boldsymbol\sigma$，$\dot{\hat{\boldsymbol\pi}}=K_\pi^{-1}Y^{\mathrm T}\boldsymbol\sigma$，$\boldsymbol\sigma=\dot{\tilde q}+\Lambda\tilde q$ | 参数线性性、参数固定、有界性条件 | N·m | 不需实测加速度；$\hat{\boldsymbol\pi}$ 有界即可，收敛真值需激励 |
+| 四法梯度：只补 $g$ → 全模型 → +不确定界 → +在线估计 | 模型用量递增 | — | 各法假设不同，不能混用证明 |
+
+::: note 主线 · 两连杆（第八关 · 用反馈修正偏差）
+第七关算出了保持与加速两张力矩账单；本关（[两连杆第八关](../training/two-link.md#mission-feedback)）把 7.3.4 的控制律代回同一台臂的动力学方程消项，得误差方程 $\ddot e+K_D\dot e+K_Pe=0$，并检查扰动下的稳态误差——§7.3.4 的两连杆带数例就是本关的完整过程。至此两连杆主线的八个关卡走完：位置（第一关）→ 速度（第二关）→ 奇点（第三关）→ 力（第四关）→ 轨迹（第五关）→ 传动（第六关）→ 动力学（第七关）→ 反馈（本关），全部公式都是同一台 2R 臂在不同章节里的「再出场」。
+:::
 
 ::: think 常见错误清单
 1. **重力补偿 PD 拿来做轨迹跟踪**：它的稳定性证明用了 $\dot{\boldsymbol q}_d=0$，跟踪时证不出来。
@@ -425,4 +418,23 @@ $$\begin{aligned}
 3. 写出鲁棒控制律的三部分，解释滑动子空间与边界层的作用。
 4. 写出自适应控制的 $\boldsymbol\sigma$、控制律与参数更新律，说明为什么不需要测加速度。
 5. 说明自适应控制能保证什么、不能保证什么。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部推导、数值例与两种证明；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:56:32–01:58:20）。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 57:50 | [centralized-intro.jpg](../assets/ch07/centralized-intro.jpg) | 集中控制的定位 | 四法梯度表 + 本质说明替代 |
+| 60:40 | [lyapunov.jpg](../assets/ch07/lyapunov.jpg) | 二次型李雅普诺夫函数 | (7.3-1)–(7.3-2) + 拉萨尔三步替代 |
+| 72:00 | [gravity-pd-V.jpg](../assets/ch07/gravity-pd-V.jpg) | 重力补偿 PD 的 $V$ | (7.3-3)–(7.3-4) 完整推导替代 |
+| 74:50 | [gravity-pd-Vdot.jpg](../assets/ch07/gravity-pd-Vdot.jpg) | $\dot B-2C$ 消项 | (7.3-5)–(7.3-7) + 不变集论证替代 |
+| 84:50 | [inverse-dynamics.jpg](../assets/ch07/inverse-dynamics.jpg) | 逆动力学双回路 | 两步思路 + 误差方程 + 两连杆带数例替代 |
+| 99:10 | [robust-law.jpg](../assets/ch07/robust-law.jpg) | 鲁棒控制律三部分 | (7.3-11)–(7.3-13) 完整推导，含 $z$ 的力矩型修正 |
+| 104:50 | [sliding-subspace.jpg](../assets/ch07/sliding-subspace.jpg) | 滑动子空间示意 | 正文几何说明 + 理想切换边界注明 |
+| 105:40 | [boundary-layer.jpg](../assets/ch07/boundary-layer.jpg) | 边界层 | (7.3-14) + 最终有界估计替代 |
+| 108:10 | [adaptive-linearity.jpg](../assets/ch07/adaptive-linearity.jpg) | 参数线性性 | (7.3-15) + 与 6.2.2 互链替代 |
+| 114:10 | [adaptive-lyapunov.jpg](../assets/ch07/adaptive-lyapunov.jpg) | 自适应李雅普诺夫证明 | (7.3-16)–(7.3-20) + 含摩擦扩展证明替代 |
+| 117:40 | [adaptive-structure.jpg](../assets/ch07/adaptive-structure.jpg) | 自适应控制律三部分 | 控制律结构 + 三件必说清的事替代 |
 :::
