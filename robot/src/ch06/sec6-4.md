@@ -53,7 +53,7 @@ $$\boldsymbol\mu_\Omega=\int_{V_B}\boldsymbol g_0\times(\boldsymbol p_\Omega-\bo
 $$\boldsymbol f=\frac{\mathrm d\boldsymbol l}{\mathrm d t},\qquad
 \boldsymbol\mu_\Omega=\frac{\mathrm d\boldsymbol k_\Omega}{\mathrm d t}+\dot{\boldsymbol p}_\Omega\times\boldsymbol l.$$
 
-这里角动量用各微元的绝对速度定义。参考点移动时必须保留 $\dot{\boldsymbol p}_\Omega\times\boldsymbol l$；固定点处它为零，取质心时也因 $\boldsymbol l=m\dot{\boldsymbol p}_C$ 而为零。对质量恒定的刚体，取质心 $C$，得到
+这里角动量用各微元的绝对速度定义。参考点移动时必须保留 $\dot{\boldsymbol p}_\Omega\times\boldsymbol l$；固定点处它为零，取质心时也因 $\boldsymbol l=m\dot{\boldsymbol p}_C$ 而为零。课件在预备知识页专门注明：**这两条等式对所有机械系统都成立，甚至对变质量系统也是如此**——刚体假设是其后的一步简化，不是定理的前提。对质量恒定的刚体，取质心 $C$，得到
 
 $$\boldsymbol f=m\ddot{\boldsymbol p}_C,\qquad
 \boldsymbol\mu_C=\boldsymbol I_C\dot{\boldsymbol\omega}

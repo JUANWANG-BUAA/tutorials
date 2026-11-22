@@ -107,6 +107,8 @@ $$T_ms^3+s^2+aT_ps+a=0.$$
 
 三阶 Routh 判据要求系数为正且 $aT_p>T_ma$，即 $T_p>T_m$。因此 $T_p<T_m$ 时闭环不稳定；$T_p=T_m$ 是临界情形，不能当作渐近稳定。老师在 23:50–31:10 用课件根轨迹比较了三种情况：$T_p<T_m$、$T_p>T_m$ 与 $T_p\gg T_m$。
 
+课件把这三种情形的根轨迹并排画出，其定性形状（此处只陈述课件图上的定性读法，逐点的极点位置以特征方程为准）：$T_p<T_m$ 时两支分支始终留在右半平面，增益再大也不稳定，这就是上表说的「结构不稳定，调增益救不了」；$T_p>T_m$ 时分支随增益增大越过虚轴进入左半平面，存在使闭环稳定的增益区间；$T_p\gg T_m$ 时两支在原点附近弯向左半平面、相互靠近，主导闭环响应的是这一对复极点。
+
 两条无穷远渐近线的实轴交点为
 
 $$\sigma_a=\frac{1/T_p-1/T_m}{2}>-\frac{1}{2T_m}\qquad(T_p>0).\tag{7.2-9}$$
@@ -334,7 +336,7 @@ K_r^{-1}\Delta B(\boldsymbol q_d)K_r^{-1}\ddot{\boldsymbol q}_{md}
 | 12:10 | [decentral-model.jpg](../assets/ch07/decentral-model.jpg) | 分散近似：把耦合、重力视为干扰 | 式 (7.2-1)–(7.2-4) 完整推导替代 |
 | 32:00 | [pos-vel-loop.jpg](../assets/ch07/pos-vel-loop.jpg) | 位置+速度反馈控制结构 | 三方案表给出 $C_p,C_v,C_A$；框图结构按表复原 |
 | 39:10 | [pos-vel-acc.jpg](../assets/ch07/pos-vel-acc.jpg) | 加速度重构滤波器 | 式 (7.2-7) + 噪声边界分析替代 |
-| 23:50 | [pos-rootlocus.jpg](../assets/ch07/pos-rootlocus.jpg) | 位置环根轨迹三情形 | Routh 判据 $T_p>T_m$ + 渐近线交点 (7.2-9) 替代 |
+| 23:50 | [pos-rootlocus.jpg](../assets/ch07/pos-rootlocus.jpg) | 位置环根轨迹三情形 | Routh 判据 $T_p>T_m$ + 渐近线交点 (7.2-9) 替代；三情形定性形状已写入 7.2.3 |
 | 31:10 | [pos-disturbance.jpg](../assets/ch07/pos-disturbance.jpg) | 干扰/输出传递函数 | 式 (7.2-11)–(7.2-13) 完整给出 |
 | 02:09:04 | [joint-eom.jpg](../assets/ch07/joint-eom.jpg) | 关节空间运动方程（第 8 周） | 式 (7.2-14)–(7.2-15) 完整推导替代 |
 | 02:09:21 | [drive-model.jpg](../assets/ch07/drive-model.jpg) | 驱动系统组成 | 五式驱动模型完整给出 |

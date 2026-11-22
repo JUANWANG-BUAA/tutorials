@@ -110,7 +110,7 @@ s_\varphi c_\vartheta c_\psi+c_\varphi s_\psi & -s_\varphi c_\vartheta s_\psi+c_
 -s_\vartheta c_\psi & s_\vartheta s_\psi & c_\vartheta
 \end{bmatrix}$$
 
-（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵；第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$——三个角都确定后才能算出完整矩阵。
+（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵——录播 0:10:20 的旧教程记录用「给你 $(40°,20°,\cdot)$ 的 ZYZ 角，代进这个矩阵就能算出旋转矩阵」说明这一点。第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$——三个角都确定后才能算出完整矩阵。
 
 ### 2.4.2.1 示例：一组可以手算的角
 
