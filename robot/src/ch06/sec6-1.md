@@ -650,7 +650,7 @@ $\tau=0.5\times(-2)+4.905=3.905\ \mathrm{N\cdot m}$。
 
 ::: think 本节的课堂幻灯片（源料对照）
 
-本节正文已给出全部推导与自算例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:33:00–01:22:30）。
+本节正文已给出全部推导与自算例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:33:00–01:22:30；子节起播：6.1.1 起 00:49:30、6.1.2 起 01:09:10、6.1.3 起 01:15:30）。
 
 | 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
 |:--|:--|:--|:--|
@@ -660,6 +660,7 @@ $\tau=0.5\times(-2)+4.905=3.905\ \mathrm{N\cdot m}$。
 | 25:57 | [inertia-def.jpg](../assets/ch06/inertia-def.jpg) | 惯性张量定义（绕任意直线） | 正文按积分定义给出，符号约定与板书一致 |
 | 66:20 | [kinetic-rotor.jpg](../assets/ch06/kinetic-rotor.jpg) | 转子动能、雅可比与减速比 | 完整推导；移动关节 $k_r$ 量纲坑已注明 |
 | 36:20 | [kinetic-link.jpg](../assets/ch06/kinetic-link.jpg) | 连杆动能三块分解 | 平动/交叉/转动三块逐步推导，交叉项归零由质心定义给出 |
+| 32:33 | [energy-intro.jpg](../assets/ch06/energy-intro.jpg) | 预备知识——动能与势能的引入 | 6.1.1/6.1.2 的定义完整覆盖 |
 | 68:23 | [inertia-matrix.jpg](../assets/ch06/inertia-matrix.jpg) | 总动能与 $B(q)$ 完整表达式 | 四块求和式 + 三条性质完整给出 |
 | 69:13 | [potential.jpg](../assets/ch06/potential.jpg) | 势能只依赖 q | 推导 + 符号双路径核对例题 |
 | 75:27 | [eom-forces.jpg](../assets/ch06/eom-forces.jpg) | 非保守力如何进入方程 | 四来源表 + 符号约定 note 完整给出 |

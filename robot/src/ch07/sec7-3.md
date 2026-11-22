@@ -124,7 +124,7 @@ $$B(\boldsymbol q)\ddot{\boldsymbol q}+\boldsymbol n(\boldsymbol q,\dot{\boldsym
 =C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
 +F\dot{\boldsymbol q}+\boldsymbol g(\boldsymbol q).\tag{7.3-8}$$
 
-**思路分两步**（课件 §8.5.2，图 7.3-4）：
+**思路分两步**（课件 §8.5.2）：
 
 1. **非线性补偿**：令 $\boldsymbol u=B(\boldsymbol q)\boldsymbol y+\boldsymbol n(\boldsymbol q,\dot{\boldsymbol q})$，
    代回得 $\ddot{\boldsymbol q}=\boldsymbol y$——原来的非线性对象变成了 $n$ 个双积分器；
