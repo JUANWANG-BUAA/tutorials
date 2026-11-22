@@ -52,7 +52,7 @@
 <a id="errata-2.4"></a>
 
 ::: errata E2.4 · DH 约定与「改进 DH」的辨析（补注，非错误）
-本书标准 DH 取关节 $i$ 沿 $z_{i-1}$，四因子依次为 $\operatorname{Rot}_z(\vartheta_i)\operatorname{Trans}_z(d_i)\operatorname{Trans}_x(a_i)\operatorname{Rot}_x(\alpha_i)$。常见改进约定把 x 方向的固定变换放到前面，且可能将杆长、扭角标为 $i-1$；须核对整套定义，不能只换下标。不同选系的 $T_n^0$ 未必相同；统一物理基座、工具与关节零位，并同步串接矩阵后，$T_e^b$ 才一致。见[§2.8 特殊情形](sec2-8.md#note-2.8.dh-cases)。
+本教程标准 DH 取关节 $i$ 沿 $z_{i-1}$，四因子依次为 $\operatorname{Rot}_z(\vartheta_i)\operatorname{Trans}_z(d_i)\operatorname{Trans}_x(a_i)\operatorname{Rot}_x(\alpha_i)$。常见改进约定把 x 方向的固定变换放到前面，且可能将杆长、扭角标为 $i-1$；须核对整套定义，不能只换下标。不同选系的 $T_n^0$ 未必相同；统一物理基座、工具与关节零位，并同步串接矩阵后，$T_e^b$ 才一致。见[§2.8 特殊情形](sec2-8.md#note-2.8.dh-cases)。
 :::
 
 ::: errata E2.6 · Pieper 闭解条件补注（[2.12.3](sec2-12.md#sec-2.12.3) 文献注） {#errata-2.6}

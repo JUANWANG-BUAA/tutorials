@@ -209,7 +209,7 @@ $$\ddot{\tilde{\boldsymbol x}}+K_D\dot{\tilde{\boldsymbol x}}+K_P\tilde{\boldsym
 
 本节正文已给出全部推导与对照表；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:58:34–02:10:12）。
 
-| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+| 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
 | 122:30 | [op-transpose.jpg](../assets/ch07/op-transpose.jpg) | 转置雅可比方案结构 | 式 (7.4-5) + 弹簧物理图像 + 零空间边界替代 |
 | 125:40 | [op-gravity-pd.jpg](../assets/ch07/op-gravity-pd.jpg) | 操作空间重力补偿 PD | (7.4-6)–(7.4-9) 完整推导 + 平衡点条件替代 |

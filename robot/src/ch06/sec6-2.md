@@ -301,7 +301,7 @@ $$\boxed{\ \boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol
 
 本节正文已给出全部推导与证明；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:22:30–01:54:30，其后为课间与答疑）。
 
-| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+| 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
 | 82:36 | [skew.jpg](../assets/ch06/skew.jpg) | $C$ 的一般元素与第一类 Christoffel 符号 | 完整推导给出，含 $C$ 不唯一的反例与重配对 |
 | 86:30 | [christoffel.jpg](../assets/ch06/christoffel.jpg) | $N=\dot B-2C$ 反对称与 $w^{\mathrm T}Nw=0$ | 两种陈述 (A)/(B) 分清并分别证明 |

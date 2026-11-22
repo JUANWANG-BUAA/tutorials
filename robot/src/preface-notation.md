@@ -15,7 +15,7 @@
 | ITS | intelligent transportation systems | 智能交通系统 | 1.4.3 |
 | LWR | light weight robot | 轻质机器人 | 1.4.2 |
 | NASA / DARPA | — | 美国国家航空航天局 / 国防先进研究项目局 | 1.4.3 |
-| ZYZ / RPY | — | Z–Y–Z 欧拉角（当前轴时序）/ 滚转—俯仰—偏航（本书固定轴时序为 x→y→z） | 2.4 |
+| ZYZ / RPY | — | Z–Y–Z 欧拉角（当前轴时序）/ 滚转—俯仰—偏航（本教程固定轴时序为 x→y→z） | 2.4 |
 | DH | Denavit–Hartenberg | DH 建系法 / DH 参数 | 2.8 |
 | IK | inverse kinematics | 逆运动学 | 2.12 |
 
@@ -123,7 +123,7 @@
 
 ## 第六章、第七章记号（动力学与控制）
 
-第六章的 $B,C,\boldsymbol g$、$h_{ijk}$、$Y,\boldsymbol\pi$ 见 [6.1.3](ch06/sec6-1.md#part-6.1.3)、[6.2.2](ch06/sec6-2.md#part-6.2.2)；操作空间那一套（$B_A,C_A,\boldsymbol g_A,\boldsymbol\gamma_A$）见 [6.7](ch06/sec6-7.md)。下表只列**第七章新引入**的符号（首见节号为本书编号；矩阵记号均为逐轴对角阵，标量版首见第五章对应节）。
+第六章的 $B,C,\boldsymbol g$、$h_{ijk}$、$Y,\boldsymbol\pi$ 见 [6.1.3](ch06/sec6-1.md#part-6.1.3)、[6.2.2](ch06/sec6-2.md#part-6.2.2)；操作空间那一套（$B_A,C_A,\boldsymbol g_A,\boldsymbol\gamma_A$）见 [6.7](ch06/sec6-7.md)。下表只列**第七章新引入**的符号（首见节号为本教程编号；矩阵记号均为逐轴对角阵，标量版首见第五章对应节）。
 
 | 符号 | 含义 | 首见 |
 |:--|:--|:--|

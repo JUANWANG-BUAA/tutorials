@@ -728,7 +728,7 @@ $$\Omega_m=G C_v\left[K_r(R-\Theta_m)-\Omega_m\right],\qquad \Theta_m=\frac{\Ome
 
 本节正文已给出全部方程、框图与推导；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:03:28–01:44:57）。
 
-| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+| 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
 | 01:03:28 | [drives-intro.jpg](../assets/ch05/drives-intro.jpg) | 驱动建模的方法论 | 5.2.0 引言完整重写 |
 | 01:05:27 | [electric-drive-block.jpg](../assets/ch05/electric-drive-block.jpg) | 电气驱动四个方程 | 5.2.1.1 逐条推导替代 |

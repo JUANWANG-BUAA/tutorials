@@ -184,7 +184,7 @@ $$R=R_z(\varphi-\psi)R_y(\pi),$$
 
 ## 2.4.5 RPY 角：绕固定轴的左乘序列
 
-航空航海领域常用**滚转（roll）—俯仰（pitch）—偏航（yaw）**角。本书三个角为 $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^T$：$\varphi$ 是偏航、$\vartheta$ 是俯仰、$\psi$ 是滚转（原书图 2.9）。从 $I$ 出发，实际发生顺序是绕固定 $x$ 轴转 $\psi$、固定 $y$ 轴转 $\vartheta$、固定 $z$ 轴转 $\varphi$。这里的参考轴方向保持不变，不是随飞行器转动的本体轴。按 [@thm-2.3.B] 逐次左乘，得到下式；同一个乘积也称当前轴 ZYX 序列（课件定义页的角名标签沿袭英文原版而标反，见[勘误 E2.1](errata.md#errata-2.1)；以本节正文为准）：
+航空航海领域常用**滚转（roll）—俯仰（pitch）—偏航（yaw）**角。本教程三个角为 $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^T$：$\varphi$ 是偏航、$\vartheta$ 是俯仰、$\psi$ 是滚转（原书图 2.9）。从 $I$ 出发，实际发生顺序是绕固定 $x$ 轴转 $\psi$、固定 $y$ 轴转 $\vartheta$、固定 $z$ 轴转 $\varphi$。这里的参考轴方向保持不变，不是随飞行器转动的本体轴。按 [@thm-2.3.B] 逐次左乘，得到下式；同一个乘积也称当前轴 ZYX 序列（课件定义页的角名标签沿袭英文原版而标反，见[勘误 E2.1](errata.md#errata-2.1)；以本节正文为准）：
 
 $$R(\boldsymbol\phi)=R_z(\varphi)\,R_y(\vartheta)\,R_x(\psi)
 =\begin{bmatrix}
@@ -303,7 +303,7 @@ ZYZ 的 $\vartheta=0.01°$，其 $\varphi$ 反解的输入半径是多少？若�
 
 本节正文已给出全部公式与自绘图；下列课堂图片是推导的原始出处，保留以备核对，**不构成正文的替代**。录播时间由正文引语汇总：约 0:10:20–0:21:53。
 
-| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+| 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
 | — | [euler-motivation.jpg](../assets/ch02/euler-motivation.jpg) | 用三个参数描述姿态的动机 | §2.4.1 以参数计数与 12 种可行序列重写，图不进正文 |
 | 约 0:10 | [zyz-steps.jpg](../assets/ch02/zyz-steps.jpg) | ZYZ 第一步示意 | 自绘图（三面板坐标架演化）替代，覆盖全部三步 |

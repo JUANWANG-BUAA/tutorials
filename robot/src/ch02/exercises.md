@@ -34,7 +34,7 @@
 
 ::: sol 解答
 
-(a) 相邻同轴旋转可合并，至多剩两转；$XXX$ 只剩一个有效角。相邻不同轴的序列共 $3\times2\times2=12$ 种，均可覆盖姿态但有表示奇点。(b) $XXZ$ 不可行，其余三种可行；序列名不能单独决定轴约定。本书 ZYZ 指当前轴 $z(\varphi)\to y(\vartheta)\to z(\psi)$；RPY 指固定轴 $x(\psi)\to y(\vartheta)\to z(\varphi)$，等价于从 $I$ 出发的当前轴 ZYX 时序。
+(a) 相邻同轴旋转可合并，至多剩两转；$XXX$ 只剩一个有效角。相邻不同轴的序列共 $3\times2\times2=12$ 种，均可覆盖姿态但有表示奇点。(b) $XXZ$ 不可行，其余三种可行；序列名不能单独决定轴约定。本教程 ZYZ 指当前轴 $z(\varphi)\to y(\vartheta)\to z(\psi)$；RPY 指固定轴 $x(\psi)\to y(\vartheta)\to z(\varphi)$，等价于从 $I$ 出发的当前轴 ZYX 时序。
 
 :::
 
@@ -42,7 +42,7 @@
 
 ::: ex A3 · 右乘还是左乘？ {#exercise-2.A3}
 
-写出下列旋转序列的乘积并说明依据：(a) 从 $I$ 出发，绕当前 $z$ 转 $\varphi$、新的 $y$ 转 $\vartheta$、新的 $z$ 转 $\psi$（ZYZ）；(b) 从 $I$ 出发，绕固定 $x$ 转 $\psi$、固定 $y$ 转 $\vartheta$、固定 $z$ 转 $\varphi$（本书 RPY）；(c) 从一般 $R_0$ 出发，分别绕固定轴、当前轴先 $y(\alpha)$ 后 $z(\beta)$；(d) 已知相邻系姿态 $R_1^0,R_2^1,R_3^2$，求 $R_3^0$。
+写出下列旋转序列的乘积并说明依据：(a) 从 $I$ 出发，绕当前 $z$ 转 $\varphi$、新的 $y$ 转 $\vartheta$、新的 $z$ 转 $\psi$（ZYZ）；(b) 从 $I$ 出发，绕固定 $x$ 转 $\psi$、固定 $y$ 转 $\vartheta$、固定 $z$ 转 $\varphi$（本教程 RPY）；(c) 从一般 $R_0$ 出发，分别绕固定轴、当前轴先 $y(\alpha)$ 后 $z(\beta)$；(d) 已知相邻系姿态 $R_1^0,R_2^1,R_3^2$，求 $R_3^0$。
 
 ::: sol 解答
 
