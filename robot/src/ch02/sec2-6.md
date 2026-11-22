@@ -80,7 +80,7 @@ $$\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1\qquad(\text{原书式 }2.32)$$
 
 ## 2.6.2 正解、逆解与乘法
 
-### 正解：单位四元数到旋转矩阵
+### 2.6.2.1 正解：单位四元数到旋转矩阵
 
 以下公式假设 $\eta^2+\|\boldsymbol\epsilon\|^2=1$。已确认输入表示旋转、仅因数值误差略偏离单位长度时，可以先归一化；零输入必须拒绝。给定单位四元数，旋转矩阵为（原书式 2.33）
 
@@ -104,7 +104,7 @@ $$R=(2\eta^2-1)I+2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T}+2\eta\,
 逐元素展开：对角线 $=2\eta^2-1+2\epsilon_i^2=2(\eta^2+\epsilon_i^2)-1$；非对角 $(i,j)=2\epsilon_i\epsilon_j+2\eta\,S(\boldsymbol\epsilon)_{ij}$，而 $S(\boldsymbol\epsilon)_{xy}=-\epsilon_z$ 等——即式 2.33 的九个元素。□
 :::
 
-### 逆解：先求平方，再从最大分量提取
+### 2.6.2.2 逆解：先求平方，再从最大分量提取
 
 由紧凑形式可直接得到
 
@@ -163,7 +163,7 @@ r_{21}-r_{12}&r_{13}+r_{31}&r_{23}+r_{32}&1-r_{11}-r_{22}+r_{33}
 
 <a id="lab-2.6"></a>
 
-### 操作：看见双重覆盖，也检查反解是否重建
+### 2.6.2.3 操作：看见双重覆盖，也检查反解是否重建
 
 演示默认加载例 2.6.B 的**精确矩阵**。先预测：把四元数整体反号，哪些数会变、哪些几何量应保持不变？
 
@@ -190,7 +190,7 @@ $$Q^{-1}=\{\eta,-\boldsymbol\epsilon\}\quad\Longleftrightarrow\quad R^{-1}=R^T .
 
 （把 $\{\eta,-\boldsymbol\epsilon\}$ 代入式 2.33：$\boldsymbol\epsilon\to-\boldsymbol\epsilon$ 使反对称件反号、对称件不变，恰好逐元素转置。）
 
-### 乘法：右侧旋转先施加
+### 2.6.2.4 乘法：右侧旋转先施加
 
 在本文 Hamilton、主动列向量约定下，四元数乘法满足 **$R(Q_1\otimes Q_2)=R_1R_2$**。作用到点时，**先施加右侧的 $R_2$，再施加左侧的 $R_1$**。若题目按时间说“先 $R_1$，后 $R_2$”，结果应为 $Q_2\otimes Q_1$。原书式 2.37 为
 
@@ -236,9 +236,9 @@ $\boldsymbol u=0$ 时单独取 $\exp(0)=(1,\boldsymbol0)$，也等于上式的�
 
 <a id="sec-2.6.3"></a>
 
-## 2.6.3 连续跟踪与姿态插值（本编补充）
+## 2.6.3 连续跟踪与姿态插值
 
-### 相邻姿态先对齐符号
+### 2.6.3.1 相邻姿态先对齐符号
 
 从每一帧矩阵独立提取四元数，可能先得到 $q$，下一帧却选中接近 $-q$ 的代表。姿态没有跳变，四个参数却会跳变。**单位球面光滑不等于提取算法会自动选到连续代表**。
 
@@ -251,7 +251,7 @@ q_{190}=(\cos95^\circ,0,0,\sin95^\circ).$$
 
 二者点积为 $\cos10^\circ>0$。若每帧强制 $\eta\ge0$，第二个代表会被翻成 $-q_{190}$，两帧点积反而变负。连续跟踪时应保留符号历史；数值积分后还要检查单位长度，不能把四元数表示本身当作稳定性的保证。
 
-### SLERP：沿单位球面插值
+### 2.6.3.2 SLERP：沿单位球面插值
 
 对单位端点先按上述规则对齐符号，令 $d=q_0^{\mathrm T}q_1\in[0,1]$、$\Omega=\arccos d$。在 $0<\Omega\le\pi/2$ 时，
 
@@ -305,6 +305,18 @@ $Q_1\otimes Q_2$ 对应 $R_1R_2$，右侧的 $Q_2$ 先作用。插值先将负�
 - **一条主线**：半角打包与单位约束 → 矩阵正解 → 最大分量提取与重建 → Hamilton 乘法/共轭逆 → 符号对齐与球面插值。原书式 2.34–2.35 的分量符号法不能直接用于所有精确半圈。
 - **参数与边界**：同步反号的参数合并，但 Q/−Q 双重覆盖保留；半圈须另定符号与选择稳定提取支路。
 - **一个取舍**：4 参数受单位约束；计算方便，但符号选取与提取分支仍需明确。
+
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $\eta=\cos\frac\vartheta2$，$\boldsymbol\epsilon=\sin\frac\vartheta2\boldsymbol r$ | 输入为角轴对 | rad | 半角打包合并同步反号；$\vartheta\to\vartheta+2\pi$ 得 $-Q$ |
+| $\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1$ | 单位四元数定义 | — | 零四元数没有方向，不可归一化 |
+| $R=(2\eta^2-1)I+2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T}+2\eta S(\boldsymbol\epsilon)$ | 单位四元数，Hamilton 约定、标量在前 | 无量纲 | 换软件先核对分量顺序 |
+| $\eta=\frac12\sqrt{\operatorname{tr}R+1}$，$\epsilon_i=\frac12\operatorname{sgn}(\cdot)\sqrt{\cdots}$ | $\eta>0$；精确半圈失效 | — | 例 2.6.B 的半圈反例；须改用 $H=4qq^{\mathrm T}$ 最大分量法 |
+| $Q^{-1}=\{\eta,-\boldsymbol\epsilon\}$ | 单位四元数 | — | 共轭即逆仅对单位四元数成立 |
+| $Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}$ | Hamilton 乘法 | — | 对应 $R_1R_2$，**右侧先作用**；叉积项使其不可交换 |
+| $q(s)=\frac{\sin((1-s)\Omega)}{\sin\Omega}q_0+\frac{\sin(s\Omega)}{\sin\Omega}q_1$ | 先按点积符号对齐，$0<\Omega\le\pi/2$ | — | 物理转角为 $2\Omega$；$d=1$ 时不能除以 $\sin\Omega$ |
 
 ::: think 常见错误清单 · 自查四条
 1. 未核对 Hamilton/其他乘法口径、标量在前/在后的顺序，就直接交换四个数或复制公式。

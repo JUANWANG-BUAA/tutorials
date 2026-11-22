@@ -20,8 +20,6 @@
 
 每种序列都能覆盖全部姿态，但都有表示奇点。同一姿态也可能对应多组角，即使轴序列相同。**序列名本身没有说明固定轴还是当前轴**，还须声明轴的约定、角名及发生顺序。
 
-![课堂图片：用三个参数描述姿态](../assets/ch02/euler-motivation.jpg)
-
 <a id="sec-2.4.2"></a>
 
 ## 2.4.2 ZYZ 角：右乘合成与正解
@@ -31,8 +29,6 @@
 1. 绕参考系 $z$ 轴转 $\varphi$：$R_z(\varphi)$；
 2. 绕**新** $y'$ 轴转 $\vartheta$：$R_{y'}(\vartheta)$；
 3. 绕**新** $z''$ 轴转 $\psi$：$R_{z''}(\psi)$。
-
-![课堂图片：ZYZ 序列的第一步，绕参考系 z 轴转动](../assets/ch02/zyz-steps.jpg)
 
 三步过程中坐标架如何演化，看下图（灰虚 = 上一步的旧架）：每转一次，「当前轴」就换到刚转出来的新架上——这正是「右乘」的几何本体。
 
@@ -114,9 +110,9 @@ s_\varphi c_\vartheta c_\psi+c_\varphi s_\psi & -s_\varphi c_\vartheta s_\psi+c_
 -s_\vartheta c_\psi & s_\vartheta s_\psi & c_\vartheta
 \end{bmatrix}$$
 
-（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵；第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$。录播 0:10:20 的旧教程记录用「给你 $(40°,20°,\cdot)$ 的 ZYZ 角，代进这个矩阵就能算出旋转矩阵」说明正解；三个角都确定后才能算出完整矩阵。
+（原书式 2.18）。这里 $c_\alpha=\cos\alpha,s_\alpha=\sin\alpha$。正解就是代入三个角算矩阵；第三列是工具 $z$ 轴在固定系中的方向，不含最后自转角 $\psi$——三个角都确定后才能算出完整矩阵。
 
-### 示例：一组可以手算的角
+### 2.4.2.1 示例：一组可以手算的角
 
 取 $(\varphi,\vartheta,\psi)=(90°,90°,0°)$：
 
@@ -150,17 +146,13 @@ $$d\alpha=\frac{x\,dy-y\,dx}{x^2+y^2},\qquad
 | ZYZ 的 $\psi$ | $(-r_{31},r_{32})$ | $\lvert\sin\vartheta\rvert$ |
 | RPY 的 $\varphi,\psi$ 主支 | $(r_{11},r_{21})$、$(r_{33},r_{32})$ | $\lvert\cos\vartheta\rvert$ |
 
-例如 ZYZ 在 $\vartheta=1°$ 时，后两个角的输入半径约为 0.01745，局部最坏角度敏感度约为 $57.3$；$\vartheta=0.01°$ 时约为 $5729.6$。它们**接近奇点但尚非精确奇点**。Atan2 保留象限信息，却消不掉表示本身的病态。
-
-![课堂图片：双变量反正切；本文统一使用 Atan2(y,x) 实参顺序](../assets/ch02/atan2-def.jpg)
+例如 ZYZ 在 $\vartheta=1°$ 时，后两个角的输入半径约为 0.01745，局部最坏角度敏感度约为 $57.3$；$\vartheta=0.01°$ 时约为 $5729.6$。它们**接近奇点但尚非精确奇点**。Atan2 保留象限信息，却消不掉表示本身的病态。全书统一按 $\operatorname{Atan2}(y,x)$ 的实参顺序书写。
 
 <a id="sec-2.4.4"></a>
 
 ## 2.4.4 ZYZ 角的逆解
 
-已知 $R=[r_{ij}]\in SO(3)$，与式 2.18 对比即可反求 $(\varphi,\vartheta,\psi)$。策略是**挑出能暴露单个角度的元素**。录播 0:15:55–0:17:44 的旧教程记录写道：「这前四个太长不好求，比较好求的就是第三列这一排」；从第三列入手可先定 $\varphi,\vartheta$，再回到第三行求 $\psi$。
-
-![课堂图片：逆解——锁定第三列](../assets/ch02/zyz-inv-setup.jpg)
+已知 $R=[r_{ij}]\in SO(3)$，与式 2.18 对比即可反求 $(\varphi,\vartheta,\psi)$。策略是**挑出能暴露单个角度的元素**：九个元素里，第三列这一排比较好求——它只含 $\varphi,\vartheta$，由此可先定 $\varphi,\vartheta$，再回到第三行求 $\psi$（老师 0:15:55–0:17:44 的选列理由：「这前四个太长不好求，比较好求的就是第三列这一排」）。
 
 求解分三步走：① 第三列的 $[1,3]$、$[2,3]$ 只含 $\varphi,\vartheta$（$r_{23}=s_\varphi s_\vartheta,\ r_{13}=c_\varphi s_\vartheta$），由此定出 $\varphi$；② 用平方和消去 $\varphi$，再配合 $[3,3]=c_\vartheta$ 定出 $\vartheta$（取 $s_\vartheta>0$ 即 $\vartheta\in(0,\pi)$）；③ 最后用 $[3,1]$、$[3,2]$ 定出 $\psi$。以下设 $s_\vartheta\ne0$（即 $r_{13},r_{23}$ 不全为零；$s_\vartheta=0$ 的退化情形见下方定理 2.4.B）。第一支解为（原书式 2.19）
 
@@ -168,9 +160,7 @@ $$\varphi=\operatorname{Atan2}(r_{23},r_{13}),\qquad
 \vartheta=\operatorname{Atan2}\!\big(\sqrt{r_{13}^2+r_{23}^2},\ r_{33}\big),\qquad
 \psi=\operatorname{Atan2}(r_{32},-r_{31});$$
 
-![课堂图片：ZYZ 逆解与选支](../assets/ch02/zyz-inv-solution.jpg)
-
-课件写“$r_{13}\ne0$ 及 $r_{23}\ne0$”，比这里需要的条件更严格：只要两者不同时为零，$\operatorname{Atan2}(r_{23},r_{13})$ 就有定义。图右缘被截断，两支完整公式以正文为准。
+课件这一页写“$r_{13}\ne0$ 及 $r_{23}\ne0$”，比这里需要的条件更严格：只要两者不同时为零，$\operatorname{Atan2}(r_{23},r_{13})$ 就有定义；课件图右缘被截断，两支完整公式以正文为准。
 
 若在 $(-\pi,0)$ 中选 $\vartheta$，则得到效果相同的第二支（原书式 2.20）
 
@@ -194,9 +184,7 @@ $$R=R_z(\varphi-\psi)R_y(\pi),$$
 
 ## 2.4.5 RPY 角：绕固定轴的左乘序列
 
-航空航海领域常用**滚转（roll）—俯仰（pitch）—偏航（yaw）**角。本书三个角为 $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^T$：$\varphi$ 是偏航、$\vartheta$ 是俯仰、$\psi$ 是滚转（原书图 2.9）。从 $I$ 出发，实际发生顺序是绕固定 $x$ 轴转 $\psi$、固定 $y$ 轴转 $\vartheta$、固定 $z$ 轴转 $\varphi$。这里的参考轴方向保持不变，不是随飞行器转动的本体轴。按 [@thm-2.3.B] 逐次左乘，得到下式；同一个乘积也称当前轴 ZYX 序列：
-
-![课堂图片：RPY 定义（角名标签沿袭英文原版而误标，见勘误 E2.1）](../assets/ch02/rpy-def.jpg)
+航空航海领域常用**滚转（roll）—俯仰（pitch）—偏航（yaw）**角。本书三个角为 $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^T$：$\varphi$ 是偏航、$\vartheta$ 是俯仰、$\psi$ 是滚转（原书图 2.9）。从 $I$ 出发，实际发生顺序是绕固定 $x$ 轴转 $\psi$、固定 $y$ 轴转 $\vartheta$、固定 $z$ 轴转 $\varphi$。这里的参考轴方向保持不变，不是随飞行器转动的本体轴。按 [@thm-2.3.B] 逐次左乘，得到下式；同一个乘积也称当前轴 ZYX 序列（课件定义页的角名标签沿袭英文原版而标反，见[勘误 E2.1](errata.md#errata-2.1)；以本节正文为准）：
 
 $$R(\boldsymbol\phi)=R_z(\varphi)\,R_y(\vartheta)\,R_x(\psi)
 =\begin{bmatrix}
@@ -213,8 +201,6 @@ s_\varphi c_\vartheta & s_\varphi s_\vartheta s_\psi+c_\varphi c_\psi & s_\varph
 从 $I$ 出发，「按 $x(\psi)\to y(\vartheta)\to z(\varphi)$ 绕固定轴」与「按 $z(\varphi)\to y(\vartheta)\to x(\psi)$ 绕当前轴」终态等价。轴与角须成对倒序；一般非单位初始姿态不能直接套用这一等价（[@thm-2.3.A]、[@thm-2.3.B]）。
 :::
 
-![课堂图片：RPY 合成矩阵](../assets/ch02/rpy-matrix.jpg)
-
 **逆解**与 ZYZ 同法（原书式 2.22–2.23）：$\vartheta\in(-\pi/2,\pi/2)$ 时
 
 $$\varphi=\operatorname{Atan2}(r_{21},r_{11}),\qquad
@@ -229,7 +215,7 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 
 这里 **$-r_{31}$ 保持不变**。第二支的 $\vartheta$ 可加 $2\pi$ 归到 $(\pi/2,3\pi/2)$；等价角组为 $(\varphi+\pi,\pi-\vartheta,\psi+\pi)$，再按周期选代表。
 
-### 两端奇点要分清和与差
+### 2.4.5.1 两端奇点要分清和与差
 
 - $\vartheta=+\pi/2$ 时，$R=R_z(\varphi-\psi)R_y(\pi/2)$，只能确定**差**；
 - $\vartheta=-\pi/2$ 时，$R=R_z(\varphi+\psi)R_y(-\pi/2)$，只能确定**和**。
@@ -267,7 +253,7 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 
 ## 2.4.6 独立练习与闭卷检查
 
-### 练习 1：符号、两支与重建
+### 2.4.6.1 练习 1：符号、两支与重建
 
 对 RPY 的 $(30°,30°,-30°)$，求第一列，写出第二支角组，并解释第二支 $\vartheta$ 的 Atan2 为什么不能连 $-r_{31}$ 一起变号。
 
@@ -275,7 +261,7 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 第一列为 $(3/4,\sqrt3/4,-1/2)^{\mathrm T}$。第二支可取 $(-150°,150°,150°)$。因为 $r_{31}=-\sin\vartheta$，第二支要求正弦仍为 $1/2$、余弦取负。若把 $-r_{31}$ 也变号，就得到正弦 $-1/2$，无法重建原姿态。
 :::
 
-### 练习 2：四个奇点与象限
+### 2.4.6.2 练习 2：四个奇点与象限
 
 不看正文，分别写出 ZYZ 在 $0,\pi$、RPY 在 $+\pi/2,-\pi/2$ 时能确定的组合。再算 $\operatorname{Atan2}(1,-1)$，并解释 $\operatorname{Atan2}(0,0)$ 能否给几何角。
 
@@ -283,7 +269,7 @@ $$\varphi=\operatorname{Atan2}(-r_{21},-r_{11}),\qquad
 依次为 $\varphi+\psi,\varphi-\psi,\varphi-\psi,\varphi+\psi$。$\operatorname{Atan2}(1,-1)=135°$；不能只算 $\arctan(-1)=-45°$。原点没有方向，软件返回值不能充当唯一几何解。
 :::
 
-### 练习 3：近奇点是否已经无解？
+### 2.4.6.3 练习 3：近奇点是否已经无解？
 
 ZYZ 的 $\vartheta=0.01°$，其 $\varphi$ 反解的输入半径是多少？若输入向量有模长 $10^{-8}$ 的微小扰动，角度误差的一阶最坏量级约是多少？
 
@@ -293,9 +279,37 @@ ZYZ 的 $\vartheta=0.01°$，其 $\varphi$ 反解的输入半径是多少？若�
 
 ## 2.4 小结与常见错误
 
-- 正解先声明轴与时序，再按左乘或右乘逐步合成；三个角相同不保证不同序列的姿态相同。
-- 逆解先选分支，检查输入半径，再用 Atan2 保留象限，最后把所得角代回原矩阵。
-- ZYZ 的 $\sin\vartheta=0$、RPY 的 $\cos\vartheta=0$ 是表示奇点。要分清精确奇点、近奇点敏感和角度跨周期跳变。
-- Atan2 不能消除表示奇点；$\arccos$ 在事先选定主支上可以使用，不能靠单个余弦判断完整象限。
+- **一条主线**：正解先声明轴与时序，再按左乘或右乘逐步合成；逆解先选分支、检查输入半径，再用 Atan2 保留象限，最后把所得角代回原矩阵。
+- **选表示**：ZYZ 的 $\sin\vartheta=0$、RPY 的 $\cos\vartheta=0$ 是表示奇点，且奇点取决于表示（例 2.4.C 的同一矩阵在 ZYZ 正常、在 RPY 退化）；同一姿态可有多组角。
+- **下一节**：改用“绕哪根轴、转多少角”描述同一个旋转，并继续检查它的边界与不唯一性。
 
-下一节改用“绕哪根轴、转多少角”描述同一个旋转，并继续检查它的边界与不唯一性。
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $R=R_z(\varphi)R_{y'}(\vartheta)R_{z''}(\psi)$ | ZYZ：从 $I$ 出发绕**当前轴**右乘 | rad / 无量纲 | 第三列不含 $\psi$；序列名不说明固定轴还是当前轴 |
+| $R=R_z(\varphi)R_y(\vartheta)R_x(\psi)$ | RPY：绕**固定轴**左乘 | rad / 无量纲 | 课件页角名标签标反（勘误 E2.1），以正文为准 |
+| $\varphi=\operatorname{Atan2}(r_{23},r_{13})$，$\vartheta=\operatorname{Atan2}(\sqrt{r_{13}^2+r_{23}^2},r_{33})$，$\psi=\operatorname{Atan2}(r_{32},-r_{31})$ | ZYZ 第一支，$r_{13},r_{23}$ 不全为零 | rad | 第二支只变 $\sqrt{\cdot}$ 的符号，$r_{33}$ 不变号 |
+| $\varphi=\operatorname{Atan2}(r_{21},r_{11})$，$\vartheta=\operatorname{Atan2}(-r_{31},\sqrt{r_{11}^2+r_{21}^2})$，$\psi=\operatorname{Atan2}(r_{32},r_{33})$ | RPY 第一支，$\cos\vartheta>0$ | rad | 第二支 $-r_{31}$ 保持不变 |
+| ZYZ 奇点：$\vartheta=0$ 定 $\varphi+\psi$；$\vartheta=\pi$ 定 $\varphi-\psi$ | 首末转轴共线 | — | 是表示退化，不是转动自由度消失；近奇点敏感但不无解 |
+
+::: think 常见错误清单 · 自查三条
+1. 把「三个角相同」当成「姿态相同」：不同序列（或固定轴/当前轴约定不同）给出不同矩阵，须连轴与时序一起声明。
+2. 逆解第二支连 $r_{33}$（或 $-r_{31}$）一起变号：变号后重建的不是原姿态，代回检查能当场抓住。
+3. 用 $\arccos$ 直接出角就收工：单余弦丢象限且近 $\pm1$ 病态；$\operatorname{Atan2}(0,0)$ 的软件返回值不能当几何角。
+:::
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部公式与自绘图；下列课堂图片是推导的原始出处，保留以备核对，**不构成正文的替代**。录播时间由正文引语汇总：约 0:10:20–0:21:53。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| — | [euler-motivation.jpg](../assets/ch02/euler-motivation.jpg) | 用三个参数描述姿态的动机 | §2.4.1 以参数计数与 12 种可行序列重写，图不进正文 |
+| 约 0:10 | [zyz-steps.jpg](../assets/ch02/zyz-steps.jpg) | ZYZ 第一步示意 | 自绘图（三面板坐标架演化）替代，覆盖全部三步 |
+| — | [atan2-def.jpg](../assets/ch02/atan2-def.jpg) | 双变量反正切定义 | 定理 2.4.A 给出定义、微分与输入半径边界；全书统一 $\operatorname{Atan2}(y,x)$ 顺序 |
+| 0:15:55–0:17:44 | [zyz-inv-setup.jpg](../assets/ch02/zyz-inv-setup.jpg) | 逆解从第三列入手 | §2.4.4 完整写出三步逆解；选列理由保留在正文 |
+| 约 0:16 | [zyz-inv-solution.jpg](../assets/ch02/zyz-inv-solution.jpg) | ZYZ 逆解两支公式 | 正文式 (2.19)–(2.20) 为准；课件条件更严格且图右缘截断（[勘误](errata.md)） |
+| — | [rpy-def.jpg](../assets/ch02/rpy-def.jpg) | RPY 定义 | 该页角名标签标反（勘误 E2.1）；正文按修正后定义给出 |
+| — | [rpy-matrix.jpg](../assets/ch02/rpy-matrix.jpg) | RPY 合成矩阵 | 正文按原书式 (2.21) 完整写出 |
+:::

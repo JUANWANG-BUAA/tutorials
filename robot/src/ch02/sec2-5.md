@@ -16,8 +16,6 @@
 
 我们已经会写绕坐标轴的基本旋转。原书图 2.10 给出一种**辅助构造**：先把轴与整个待转物体一起转到辅助姿态，使轴对齐 $z$；绕固定 $z$ 转所需角度；再撤销前两次对齐动作。录播 0:25:05–0:25:51 的旧教程记录强调「这一次都是绕固定坐标转，是一次左乘」；每一步按 [@thm-2.3.B] 逐次左乘。
 
-![课堂图片：五步序列与 α、β 的消去](../assets/ch02/axisangle-derivation.jpg)
-
 1. 绕 $z$ 转 $-\alpha$，再绕 $y$ 转 $-\beta$：把 $\boldsymbol r$ 转到与 $z$ 一致；
 2. 在已对齐的辅助姿态中绕**固定 $z$** 转 $\vartheta$；
 3. 绕 $y$ 转 $\beta$，再绕 $z$ 转 $\alpha$：把轴转回 $\boldsymbol r$ 的初始指向。
@@ -76,8 +74,6 @@ $$\sin\alpha=\frac{r_y}{\sqrt{r_x^2+r_y^2}},\quad \cos\alpha=\frac{r_x}{\sqrt{r_
 </figure>
 
 把它们代入式 2.24，$\alpha,\beta$ 全部消去，便得到只依赖 $(\vartheta,\boldsymbol r)$ 的显式矩阵（原书式 2.25，即 **Rodrigues 公式**）。原书把这一步推导留作习题 2.4，本编在下方**直接给出完整推导**；[2.5.3](#sec-2.5.3) 还会交代它的泰勒级数来历。
-
-![课堂图片：角轴矩阵与同步反号性质；图片右侧被裁切，完整矩阵见下式](../assets/ch02/axisangle-matrix.jpg)
 
 $$R(\vartheta,\boldsymbol r)=\begin{bmatrix}
 r_x^2(1-c_\vartheta)+c_\vartheta & r_xr_y(1-c_\vartheta)-r_zs_\vartheta & r_xr_z(1-c_\vartheta)+r_ys_\vartheta\\
@@ -198,7 +194,7 @@ R(1,2,3)^{\mathrm T}=(3,1,2)^{\mathrm T}.$$
 
 <a id="lab-2.5"></a>
 
-### 操作：净旋转与五步辅助构造
+### 2.5.2.1 操作：净旋转与五步辅助构造
 
 先预测：若把角度改为 $0^\circ$，无论轴指向哪里，最终矩阵都应是什么？再操作：
 
@@ -221,7 +217,7 @@ $B=(R+I)/2$ 的对角为 $(1/2,1/2,0)$。全部取正会给 $(1,1,0)/\sqrt2$，�
 
 <a id="sec-2.5.3"></a>
 
-## 2.5.3 李代数 so(3)：指数映射与对数映射（本编补充）
+## 2.5.3 李代数 so(3)：指数映射与对数映射
 
 [2.5.1](#sec-2.5.1) 用五步合成推出了 Rodrigues 公式，[2.5.2](#sec-2.5.2) 反解出了 $(\vartheta,\boldsymbol r)$。本小节把同一旋转写成**矩阵指数**，并在选定分支后反求旋转对数。第 3 章的角速度、[2.6](sec2-6.md) 的四元数半角、[2.7](sec2-7.md) 的螺旋运动都将复用这套语言。
 
@@ -357,7 +353,7 @@ $\dot R(0)$ 是非零对称矩阵，后一个矩阵才反对称。原差商 $(R(
 :::
 :::
 
-### 应用：从任意首姿态到末姿态
+### 2.5.3.1 应用：从任意首姿态到末姿态
 
 给定 $R_0,R_1\in SO(3)$，先在**初始工具系**表达相对旋转 $\Delta=R_0^{\mathrm T}R_1$，选一个对数 $A=\operatorname{Log}\Delta=\vartheta S(\boldsymbol r)$，再令
 
@@ -365,7 +361,7 @@ $$R(s)=R_0\exp(sA),\qquad 0\le s\le1.$$
 
 这样 $R(0)=R_0$、$R(1)=R_1$，每个中间矩阵仍是合法旋转。若 $s=t/T$，即以固定角速度 $\vartheta/T$ 绕固定的物理轴转；$\boldsymbol r$ 是该轴在初始工具系的分量，固定系方向为 $R_0\boldsymbol r$。主角小于 $\pi$ 时选到最短转动，等于 $\pi$ 时两条方向相反的等长路径都合法，必须明确选路。直接把两个任意旋转向量逐项插值不自动等于这条相对旋转路径。
 
-旧教程记录老师说「这种方式在规划或者其他方面是有优（势）的」。上面的相对旋转插值给出了一个具体用途：选定旋转轴和时间律，就能逐时生成两端之间的姿态；半圈选路仍需另行决定。
+上面的相对旋转插值给出了一个具体用途：选定旋转轴和时间律，就能逐时生成两端之间的姿态；半圈选路仍需另行决定。
 
 ::: think 练习 3 · 插值一半是否仍从单位阵出发？ {#practice-2.5.interpolate}
 取 $R_0=R_z(90^\circ)$、$R_1=R_z(180^\circ)$。求 $\Delta$、$R(1/2)$ 和固定系中的转轴；解释为什么 $\exp(\tfrac12\operatorname{Log}R_1)$ 不是本题的一半姿态。
@@ -406,6 +402,17 @@ $\vartheta=0$：$R=I$，轴任意而主旋转向量为零。$\vartheta=\pi$：�
 - **李代数**：$\phi=\vartheta\boldsymbol r\in\mathbb R^3$，$S(\phi)\in so(3)$，$\exp(S(\phi))=R$。$\boldsymbol\omega$ 是向量，$S(\boldsymbol\omega)=\dot R R^{\mathrm T}$ 才是李代数矩阵。
 - **边界**：零角的轴任意但主旋转向量为零；半圈轴有整体正负两选，交叉项决定相对符号；任意角的正解都有效。不限制分支时有无限多种等价对数。
 
+核心公式速查：
+
+| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+|:--|:--|:--|:--|
+| $R_z(\alpha)R_y(\beta)R_z(\vartheta)R_y(-\beta)R_z(-\alpha)$ | 五步辅助构造，时序右起、逐次左乘 | rad | $\beta$ 从 $+z$ 量起，是极角不是仰角；$\boldsymbol r=\pm\boldsymbol z$ 时另用约定 |
+| $R(\vartheta,\boldsymbol r)=c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$ | $\|\boldsymbol r\|=1$、右手定则 | rad / 无量纲 | 校验：$\boldsymbol r=\boldsymbol z$ 退化为 $R_z$，$\vartheta=0$ 退化为 $I$ |
+| $\cos\vartheta=(\operatorname{tr}R-1)/2$；$\boldsymbol r=\frac{1}{2\sin\vartheta}[r_{32}-r_{23},\,r_{13}-r_{31},\,r_{21}-r_{12}]^{\mathrm T}$ | $R\in SO(3)$，$\sin\vartheta\ne0$ | rad | 先验 $R^{\mathrm T}R\approx I$；半圈须用主元法，对角线只给绝对值 |
+| $\exp(\vartheta S(\boldsymbol r))=I+\sin\vartheta\,S+(1-\cos\vartheta)\,S^2$ | $\|\boldsymbol r\|=1$；$S^2=\boldsymbol r\boldsymbol r^{\mathrm T}-I$，$S^3=-S$ | rad | $\exp$ 单值但非单射；不限制分支时对数无限多 |
+| $\operatorname{Log}R=\frac{\vartheta}{2\sin\vartheta}(R-R^{\mathrm T})$ | 选定主支 $0<\vartheta<\pi$ | rad | 必须声明分支；零角 $\operatorname{Log}I=0$ 平滑延拓 |
+| $R(s)=R_0\exp(s\operatorname{Log}(R_0^{\mathrm T}R_1))$ | $R_0,R_1\in SO(3)$，$A$ 在初始工具系表达 | — | 相对旋转 $\Delta=R_0^{\mathrm T}R_1$，不是对两个旋转向量逐项插值 |
+
 ::: think 常见错误清单 · 自查三条
 1. 五步时序应逐次左乘；$\beta$ 从 $+z$ 量起。第 3 步只是辅助状态的固定 $z$ 旋转，不能与五步净效果混为一谈。
 2. 先查 $R^{\mathrm T}R\approx I$ 与 $\det R\approx1$；单位轴只是附加自检。半圈时不能对三个对角项各取正平方根就结束。
@@ -413,3 +420,13 @@ $\vartheta=0$：$R=I$，轴任意而主旋转向量为零。$\vartheta=\pi$：�
 :::
 
 下一节 [2.6 单位四元数](sec2-6.md) 将把半角与单位轴打包。先记住：打包会消去同步反号的重复参数，却仍需处理四元数整体正负号。
+
+::: think 本节的课堂幻灯片（源料对照）
+
+本节正文已给出全部公式、完整推导与自绘图；下列课堂图片是原始出处，保留以备核对，**不构成正文的替代**。
+
+| 时间点 | 幻灯片 | 提供了什么 | 本书如何处理 |
+|:--|:--|:--|:--|
+| 0:25:05–0:25:51 前后 | [axisangle-derivation.jpg](../assets/ch02/axisangle-derivation.jpg) | 五步序列与 $\alpha,\beta$ 的消去 | 正文按原书图 2.10 辅助构造重写并自绘 α/β/五步图；「都是绕固定坐标转，是一次左乘」的引语保留在正文 |
+| — | [axisangle-matrix.jpg](../assets/ch02/axisangle-matrix.jpg) | 角轴矩阵与同步反号性质（图右侧被裁切） | 正文给出完整矩阵（原书式 2.25），并补出教材留作习题的完整推导（[@pf-2.5.rodrigues]）；同步反号见定理 2.5.A |
+:::
