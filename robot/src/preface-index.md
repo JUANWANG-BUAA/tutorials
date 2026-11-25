@@ -1,6 +1,6 @@
 # 术语索引
 
-按**主题**归组的术语表（十节、约 215 个术语 + 30 余组易混对照）：每个词给出一句话定义 + 首次出现的锚点。全文搜索能告诉你「哪些页面提到了这个词」，本页告诉你「这个词是哪一节的哪一个概念」——两者互补。
+按**主题**归组的术语表（十一节、约 230 个术语 + 35 余组易混对照）：每个词给出一句话定义 + 首次出现的锚点。全文搜索能告诉你「哪些页面提到了这个词」，本页告诉你「这个词是哪一节的哪一个概念」——两者互补。
 
 ::: note 怎么用这一页
 - **读正文遇到生词**：搜不到或搜出一堆无关命中时，来这里定位「它是谁定义的」。
@@ -279,6 +279,25 @@
 | 分析雅可比 $J_A$ | $\dot{\boldsymbol x}=J_A\dot{\boldsymbol q}$ 中的雅可比；姿态部分是欧拉角导数而非角速度 | [3.6](ch03/sec3-6.md)、[7.4.2](ch07/sec7-4.md#sec-7.4.2) |
 | 方案比较 | 分散/集中/操作空间按反馈量、驱动器、误差方程、计算量、适用工况对照 | [7.5.4](ch07/sec7-5.md#sec-7.5.4) |
 
+## 十一、移动机器人建模（10.1–10.6，对应原书第 11 章前半）
+
+| 术语 | 英文 | 一句话含义 | 出处 |
+|:--|:--|:--|:--|
+| 移动机器人系统三要素 | Perception / Planning / Control | 感知建图与定位、全局/局部规划、运动/动力学控制构成闭环 | [@def-10.1.1] |
+| 外参 / 内参 | Extrinsics / Intrinsics | 传感器相对车体系位姿（$T_S^B$）与传感器自身测量参数 | [10.2.1](ch10/sec10-2.md#sec-10.2.1) |
+| 广义位形 $SE(2)$ | Planar Pose | 平面刚体的 $(x,y,\theta)$ 位姿，$T_B^W(\theta)\in SE(2)$ | [10.2.2](ch10/sec10-2.md#sec-10.2.2) |
+| 完整约束 | Holonomic Constraint | 可写成 $h_j(q)=0$ 的位形方程，减少可达空间维数 | [@def-10.3.1] |
+| Pfaffian 约束 | Pfaffian Constraint | 对速度线性的约束 $A^{\mathrm T}(q)\dot q=0$，按可积与否分完整与非完整 | [@def-10.3.2] |
+| 无漂移仿射系统 | Driftless System | $\dot q=G(q)u$；输入 $u=0$ 时 $\dot q=0$、位形保持静止 | [10.3.4](ch10/sec10-3.md#sec-10.3.4) |
+| 李括号 | Lie Bracket | $[g_1,g_2]=\frac{\partial g_2}{\partial q}g_1-\frac{\partial g_1}{\partial q}g_2$，刻画沿两向量场交替绕小回环的新运动方向 | [@def-10.4.1] |
+| 对合性与对合闭包 | Involutive / Involutive Closure | 对李括号运算封闭的分布 $\Delta$，以及由生成元反复取括号得到的最小对合分布 $\bar\Delta$ | [@def-10.4.2] |
+| Frobenius 定理 | Frobenius Theorem | 分布可积（受约束完整）$\iff$ 分布对合（$\dim\bar\Delta=m$） | [@thm-10.4.1] |
+| Chow 定理（可控性秩条件） | Chow's Theorem | 无漂移系统局部/全局可控 $\iff \dim\bar\Delta(q)=n$（完全非完整） | [@thm-10.4.2] |
+| 独轮车 / 差速模型 | Unicycle / Differential Drive | $(v,\omega)$ 与左右轮速 $(\omega_R,\omega_L)$ 构成一一线性映射的两自由度平面底盘 | [10.5.1](ch10/sec10-5.md#sec-10.5.1)、[10.5.2](ch10/sec10-5.md#sec-10.5.2) |
+| 阿克曼/两轮车模型 | Bicycle Model | 用前轮偏角 $\phi$（$\dot\phi$ 控制）简化四轮车体，分后驱（$\dot\theta=\frac{v}{l}\tan\phi$）与前驱（$\dot\theta=\frac{v}{l}\sin\phi$） | [10.5.3](ch10/sec10-5.md#sec-10.5.3)、[10.5.4](ch10/sec10-5.md#sec-10.5.4) |
+| $(2,n)$-链式系统 | $(2,n)$-Chained Form | 通过状态与输入变换化成的积分链 $\dot z_1=v_1,\dot z_2=v_2,\dot z_3=z_2 v_1,\dots$ | [10.6.1](ch10/sec10-6.md#sec-10.6.1) |
+| 带约束 Euler-Lagrange 方程 | Constrained Euler-Lagrange | 加入拉格朗日乘子约束力项 $A^{\mathrm T}(q)\lambda$ 与执行器映射 $B(q)\tau$ 的动力学方程 | [10.6.3](ch10/sec10-6.md#sec-10.6.3) |
+
 ## 附 · 易混术语对照
 
 | 这两者常被混淆 | 区别 |
@@ -315,3 +334,7 @@
 | 分散控制 / 集中控制 | 单轴独立设计（耦合当扰动）/ 整机模型统一设计（显式抵消耦合）——按**工况**选，不按先进程度 |
 | 计算力矩（控制）/ 计算力矩前馈（课件题名「计算转矩前馈」） | 控制用**实测** $\boldsymbol q,\dot{\boldsymbol q}$（模型精确时对消）/ 前馈用**期望** $\boldsymbol q_d,\dot{\boldsymbol q}_d,\ddot{\boldsymbol q}_d$（可离线预算） |
 | 电压控制 / 电流控制 | $\dot{\boldsymbol q}\propto\boldsymbol v_c$（速度源，宜分散）/ $\boldsymbol\tau\propto\boldsymbol v_c$（力矩源，宜集中） |
+| 完整约束 / 非完整约束 | 可积分成 $h(q)=0$ 并缩减可达位形维数 / 对速度不可积，限制瞬时速度却不阻止到达任意位形 |
+| 无漂移系统 / 有漂移系统 | $u=0\implies\dot q=0$（如一阶运动学 $\dot q=G(q)u$）/ $u=0$ 仍可能 $\dot q\neq 0$（如引入速度状态的二阶动力学） |
+| 后轮驱动两轮车 / 前轮驱动两轮车 | 后轴速度 $v$ 沿车身，$v_{\text{后}}=v$、$\dot\theta=\frac{v}{l}\tan\phi$ / 前轮速度 $v$ 沿舵角 $\phi$，$v_{\text{前}}=v$、$\dot\theta=\frac{v}{l}\sin\phi$ |
+| 约束矩阵 $A^T\dot q=0$ / $A\dot q=0$ | 运动学篇习惯把行向量写为 $A^T(q)\in\mathbb R^{k\times n}$ / 动力学篇常把 $A(q)\in\mathbb R^{k\times n}$ 写在前、广义约束力作 $A^T\lambda$ |

@@ -224,6 +224,7 @@
 | [学习目标自检表](src/ch07/checklist.md) | 待审 |
 | [闭卷回忆卡（20 张检索练习卡）](src/ch07/recall-cards.md) | 待审 |
 | [综合自测卷（90 分钟 · 满分 110）](src/ch07/mock-exam.md) | 待审 |
+| [第十章 · 移动机器人建模（第 12 周录播）](src/ch10/overview.md) | 2026-11-25 编入（6 节 + 作业十 + 章末 6 件 + `verify_homework10.py`） |
 | [必考点竞技场](src/training/arena.md) | 待审 |
 | [考场冲刺 · 综合自测卷](src/training/exam-sprint.md) | 待审 |
 

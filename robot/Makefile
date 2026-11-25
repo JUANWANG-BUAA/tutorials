@@ -15,6 +15,7 @@ verify:
 	python3 tools/verify_homework08.py
 	python3 tools/verify_ch08_force.py
 	python3 tools/verify_homework09.py
+	python3 tools/verify_homework10.py
 	node tools/check_labs3d_math.mjs
 	python3 tools/check_book.py
 

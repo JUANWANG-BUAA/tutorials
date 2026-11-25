@@ -645,6 +645,39 @@ $$\boldsymbol F=B_x\bigl(\ddot{\boldsymbol x}_d+K_D\dot{\boldsymbol e}_x+K_P\bol
 | 计算量 / 适用 | 逐轴计算；耦合扰动在可抑制范围内 | 在线计算整机模型；适合需显式补偿耦合的任务 | 还需任务模型与雅可比；适合直接规定末端运动，冗余另需分配策略；柔顺接触不由运动控制自动保证 |
 
 （对照表与选型流程见 [7.5.4](ch07/sec7-5.md#sec-7.5.4)、[@method-7.2.A]。）
+
+---
+
+## J · 移动机器人建模（第 10 章，对应原书第 11 章前半）
+
+### J1 $SE(2)$ 位姿与无侧滑 Pfaffian 约束
+
+| 要算什么 | 公式 | 出处 |
+|:--|:--|:--|
+| 平面刚体速度变换 | $\begin{bmatrix}\dot x\\ \dot y\end{bmatrix}=R_B^W(\theta)\begin{bmatrix}v_x^B\\ v_y^B\end{bmatrix}$，$\begin{bmatrix}v_x^B\\ v_y^B\end{bmatrix}=R_W^B(\theta)\begin{bmatrix}\dot x\\ \dot y\end{bmatrix}$ | [10.2.2](ch10/sec10-2.md#sec-10.2.2) |
+| 无侧滑 Pfaffian 约束 | $\dot x\sin\theta-\dot y\cos\theta=0 \iff A^{\mathrm T}(q)\dot q=0$ | [10.3.2](ch10/sec10-3.md#sec-10.3.2) |
+| 无漂移仿射模型 | $\dot q=\sum_{i=1}^m g_i(q)u_i=G(q)u$，其中 $A^{\mathrm T}(q)G(q)=0$ | [10.3.4](ch10/sec10-3.md#sec-10.3.4) |
+
+### J2 李括号、Frobenius 定理与 Chow 定理
+
+| 要算什么 | 公式 | 出处 |
+|:--|:--|:--|
+| 李括号计算式 | $[g_1,g_2](q)=\dfrac{\partial g_2}{\partial q}g_1(q)-\dfrac{\partial g_1}{\partial q}g_2(q)$ | [@def-10.4.1] |
+| 四步小回环净位移 | $q(4\varepsilon)-q(0)=\varepsilon^2[g_1,g_2](q_0)+O(\varepsilon^3)$ | [10.4.2](ch10/sec10-4.md#sec-10.4.2) |
+| Frobenius / Chow 判据 | 对合完整 $\iff \dim\bar\Delta=m$；完全非完整 $\iff \dim\bar\Delta=n\iff$ 无漂移系统可控 | [@thm-10.4.1]、[@thm-10.4.2] |
+
+### J3 典型车体与链式变换
+
+| 要算什么 | 公式 | 出处 |
+|:--|:--|:--|
+| 独轮车模型 | $\dot q=\begin{bmatrix}\cos\theta&0\\ \sin\theta&0\\ 0&1\end{bmatrix}\begin{bmatrix}v\\ \omega\end{bmatrix}$；$g_3=[g_1,g_2]=\begin{bmatrix}\sin\theta\\ -\cos\theta\\ 0\end{bmatrix}$，$\det([g_1,g_2,g_3])=+1$ | [10.5.1](ch10/sec10-5.md#sec-10.5.1) |
+| 差速驱动等效映射 | $v=\dfrac{r(\omega_R+\omega_L)}{2}$，$\omega=\dfrac{r(\omega_R-\omega_L)}{d}$ | [10.5.2](ch10/sec10-5.md#sec-10.5.2) |
+| 后轮驱动两轮车 | $\dot q=\begin{bmatrix}\cos\theta&0\\ \sin\theta&0\\ \frac{1}{l}\tan\phi&0\\ 0&1\end{bmatrix}\begin{bmatrix}v\\ \dot\phi\end{bmatrix}$，$\det([g_1,g_2,g_3,g_4])=\dfrac{1}{l^2\cos^4\phi}$ | [10.5.3](ch10/sec10-5.md#sec-10.5.3) |
+| 前轮驱动两轮车 | $\dot q=\begin{bmatrix}\cos\phi\cos\theta&0\\ \cos\phi\sin\theta&0\\ \frac{1}{l}\sin\phi&0\\ 0&1\end{bmatrix}\begin{bmatrix}v\\ \dot\phi\end{bmatrix}$ | [10.5.4](ch10/sec10-5.md#sec-10.5.4) |
+| $(2,n)$-链式标准形 | $\dot z_1=v_1,\ \dot z_2=v_2,\ \dot z_3=z_2 v_1,\ \dots,\ \dot z_n=z_{n-1}v_1$ | [10.6.1](ch10/sec10-6.md#sec-10.6.1) |
+| 独轮车链式变换 | $z_1=\theta,\ z_2=x\cos\theta+y\sin\theta,\ z_3=x\sin\theta-y\cos\theta$；$\omega=v_1,\ v=v_2+z_3 v_1$ | [10.6.2](ch10/sec10-6.md#sec-10.6.2) |
+| 带约束 Euler-Lagrange | $M(q)\ddot q+C(q,\dot q)\dot q+g(q)=B(q)\tau+A^{\mathrm T}(q)\lambda$，$A(q)\dot q=0$ | [10.6.3](ch10/sec10-6.md#sec-10.6.3) |
+
 ---
 
 ## 附 · 一张纸的「最小必背集」
