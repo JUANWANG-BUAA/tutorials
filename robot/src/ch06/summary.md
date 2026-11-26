@@ -1,150 +1,74 @@
 # 第六章总结 · 动力学
 
-> 这一章只做了一件事：**把「要多大的力矩」写成关节变量的显式函数**。
-> 从 $L=T-U$ 出发，经过动能/势能、拉格朗日方程、两条结构性质、两个算例，
-> 最后落在 $B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-> +\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$ 这一行上。
-> 下面把这一行拆成「记住什么、怎么用、容易错在哪」。
+> 本章建立关节空间与操作空间的刚体动力学模型，回答两类工程问题：**已知运动求所需关节驱动力矩（逆动力学）** 与 **已知驱动力矩积分预测后续运动（正动力学）**。全章的主干结论集中在能量构造、一条主方程、两条代数结构性质、两个两连杆算例以及 $O(n)$ 递推引擎上。
 
-## 一页公式
+## 一页核心公式
 
-### 拉格朗日
+### 1. 拉格朗日能量构造与关节空间主方程（6.1）
 
-$$L=T-U,\qquad
-\frac{\mathrm d}{\mathrm dt}\Bigl(\frac{\partial L}{\partial\dot q_i}\Bigr)-\frac{\partial L}{\partial q_i}=\xi_i.$$
+$$\mathcal L = T - U,\qquad \frac{\mathrm d}{\mathrm dt}\!\left(\frac{\partial\mathcal L}{\partial\dot q_i}\right)-\frac{\partial\mathcal L}{\partial q_i}=\xi_i,\qquad T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q},$$
 
-### 动能
+$$B(\boldsymbol q) = \sum_{i=1}^{n}\Bigl(m_{\ell_i}J_P^{(\ell_i)\mathrm T}J_P^{(\ell_i)} + J_O^{(\ell_i)\mathrm T}\boldsymbol R_i\boldsymbol I_{\ell_i}^i\boldsymbol R_i^{\mathrm T}J_O^{(\ell_i)} + m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)} + J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr),$$
 
-$$T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q},$$
+$$U(\boldsymbol q) = -\sum_{i=1}^{n}\bigl(m_{\ell_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{\ell_i}+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}\bigr),\qquad \boldsymbol g(\boldsymbol q)=\left(\frac{\partial U}{\partial\boldsymbol q}\right)^{\mathrm T} = -\boldsymbol\tau_{\mathrm{grav}}.$$
 
-$$B=\sum_{i=1}^{n}\Bigl[m_iJ_P^{(i)\mathrm T}J_P^{(i)}
-+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}J_O^{(i)}
-+m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}
-+J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr].$$
+代入并移项整理得到完整封闭运动方程：
 
-在任意非零独立关节速度均对应正动能的非退化模型中，$B$ 对称正定，一般随位形变；若理想化模型含无质量、无惯量运动方向，只能保证半正定。
+$$\boxed{\ B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})+\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e\ }$$
 
-### 势能与重力矩
+- **符号约定核对**：$\boldsymbol h_e$ 为末端施于环境的广义力；$\boldsymbol g(\boldsymbol q)$ 放在左端代表静平衡所需补偿输入（静止无外力时输入 $\boldsymbol\tau=\boldsymbol g$），参见[单摆双路径例题](sec6-1.md#ex-6.1.2.A)与[三工况力矩对比](sec6-1.md#ex-6.1.3.A)。
 
-$$U=-\sum_{i=1}^{n}\bigl(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i
-+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}\bigr),\qquad
-\boldsymbol g(\boldsymbol q)=\frac{\partial U}{\partial\boldsymbol q}.$$
+### 2. 两条控制与辨识关键结构性质（6.2）
 
-左端重力项与实际重力广义力的关系为
+- **第一类 Christoffel 符号与反对称性**：
 
-$$\boldsymbol\tau_{\mathrm{grav}}=\sum_i\bigl(m_iJ_P^{(i)\mathrm T}\boldsymbol g_0
-+m_{m_i}J_P^{(m_i)\mathrm T}\boldsymbol g_0\bigr)=-\boldsymbol g(\boldsymbol q).$$
+$$c_{ijk}(\boldsymbol q)=\frac12\!\left(\frac{\partial b_{ij}}{\partial q_k}+\frac{\partial b_{ik}}{\partial q_j}-\frac{\partial b_{jk}}{\partial q_i}\right),\qquad c_{ij}=\sum_{k=1}^n c_{ijk}\dot q_k.$$
 
-静止、无摩擦及其他外力时，保持输入为 $\boldsymbol\tau=\boldsymbol g$。
-若两种力矩的符号仍混淆，先做 [单摆双路径例题](sec6-1.md#ex-6.1.2.A)，
-再比较 [同一位形下保持、释放与加速](sec6-1.md#ex-6.1.3.A) 的三种输入。
+  Christoffel 选法保证 $N=\dot B-2C$ 对一切 $\boldsymbol w$ 严格反对称（$\boldsymbol w^{\mathrm T}N\boldsymbol w=0$）；任意满足相同 $C\dot{\boldsymbol q}$ 乘积的合法矩阵仅保证沿运动方向 $\dot{\boldsymbol q}^{\mathrm T}N\dot{\boldsymbol q}=0$（能量守恒），不能反推反对称。
 
-### 运动方程
+- **惯性参数线性化**：借扩展连杆相对关节原点的锁转惯量、一阶矩与转子自转惯量构建每组 11 维（加两项摩擦共 13 维）参数 $\boldsymbol\pi$，无接触时形成块上三角线性回归方程 $\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\boldsymbol\pi$，可用线性最小二乘与奇异值分析求最小可辨识参数集。
 
-$$B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}
-+F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}+\boldsymbol g
-=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e,$$
+### 3. 两个两连杆对照算例（6.3）
 
-$$h_{ijk}=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i},\qquad
-\sum_jc_{ij}\dot q_j=\sum_{j,k}h_{ijk}\dot q_k\dot q_j.$$
-
-### 两条结构性质
-
-$$\text{Christoffel 选法：}\ N=\dot B-2C\ \text{反对称}
-\ \Longleftrightarrow\ \forall\boldsymbol w,\ \boldsymbol w^{\mathrm T}N\boldsymbol w=0;$$
-
-$$\text{任意选法：}\ \dot{\boldsymbol q}^{\mathrm T}N\dot{\boldsymbol q}=0\ \text{（能量守恒）}.$$
-
-$$\boldsymbol\tau=Y(\boldsymbol q,\dot{\boldsymbol q},\ddot{\boldsymbol q})\,\boldsymbol\pi,
-\qquad \boldsymbol\pi\ \text{每组名义上 11 个惯性参数，含摩擦 13 个；无接触时适用}.$$
-
-### 两个算例
-
-| | 笛卡儿臂 | 平面臂 |
+| 对照指标 | 正交笛卡儿臂（PR/PP） | 平面 2R 转动臂 |
 |:--|:--|:--|
-| $B$ | 常数对角 | $B(\vartheta_2)$，非对角 |
-| $C$ | $O$ | $h=-m_2a_1\ell_2s_2$ 生成 |
-| $g$ | $g_1=(m_1+m_{m_2}+m_2)g,\ g_2=0$ | 两项，含 $c_1,c_{12}$ |
-| 耦合 | 无 | 有（$b_{12},C$） |
+| 惯性矩阵 $B$ | 常数对角阵 | $B(\vartheta_2)$ 非对角且随构型变；$b_{22}$ 常值；$b_{12}$ 含 $k_{r_2}I_{m_2}$ |
+| 速度耦合 $C$ | $O$（无离心/科氏项） | 由 $h=-m_2a_1\ell_2s_2$ 生成完整离心与科氏耦合 |
+| 解耦与线性化 | 完全解耦（平动 + 轴正交缺一不可） | 强耦合；22 个名义惯性参数可缩为 8 参数（最小独立 5 组合） |
 
-## 6.4–6.7 速览（第 8 周补入）
+### 4. 牛顿–欧拉递推及工程衍生专题（6.4–6.7）
 
-| 节 | 一句话 | 必记 |
-|:--|:--|:--|
-| [6.4 牛顿–欧拉递推](sec6-4.md) | 逐杆列方程，向外递推运动量、向内递推力/力矩 | 六类递推式（$\omega,\dot\omega,\dot p,\ddot p,\ddot p_C,\dot\omega_m$）、$\tau_i$ 投影、$O(n)$ |
-| [6.5 正解与逆解](sec6-5.md) | 正解解 $B\ddot q=\tau-\tau'$（要数值积分），逆解只代入 | 正解用于仿真、逆解用于控制与轨迹校验 |
-| [6.6 轨迹的动态标度](sec6-6.md) | 保持路径，改变时间并重新检查力矩限制 | $q=\bar q(r(t))$；线性标度下动态分量按 $c^2$ 缩放，重力不变 |
-| [6.7 操作空间动力学](sec6-7.md) | 由关节动力学得到末端加速度与广义力的关系 | $\ddot x_e=J_A\ddot q+\dot J_A\dot q$；满行秩时可定义 $B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ |
+- **牛顿–欧拉 $O(n)$ 两遍递推（6.4）**：先取虚拟基座线加速度 $\ddot{\boldsymbol p}_0=-\boldsymbol g_0$（不重复显式加重力）从 $i=1\to n$ 向外递推连杆与转子运动量，再自 $i=n\to 1$ 由牛顿/欧拉平衡与轴投影式算出 $\boldsymbol f_i,\boldsymbol\mu_i,\tau_i$（$\boldsymbol\mu_i$ 对 $O_{i-1}$ 而 $\boldsymbol\mu_{i+1}$ 对 $O_i$）。
+- **正解与逆解（6.5）**：逆解直接代数或递推求力矩；正解求解 $\ddot{\boldsymbol q}=B^{-1}(\boldsymbol\tau-\boldsymbol\tau')$ 并数值积分，可利用 $\operatorname{RNE}$ 分别置 $\ddot{\boldsymbol q}=\boldsymbol 0$ 与 $\boldsymbol e_j$ 采样组阵 $B$。
+- **动态标度（6.6 选学）**：沿原轨迹做时间映射 $\boldsymbol q=\bar{\boldsymbol q}(r(t))$，拉长总时长 $T$ 倍时（$r=t/T$）动态分量缩放 $1/T^2$，重力项不变。
+- **操作空间模型（6.7 选学）**：$J_A$ 满行秩下 $B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$，满足 $\boldsymbol\tau=J_A^{\mathrm T}\boldsymbol\gamma_A$；冗余自由度存在零空间内部动能（任务空间二次型为伪动能）且 $B_A$ 仍可能依赖内部构型。
 
-**与两条路线的接口**：6.4 用递推计算给定状态和加速度所需的力矩，不必显式构造 $B,C,g$；6.5 把「给定运动求力」与「给定力求运动」分开；
-6.6 用逆解检查规划可行性；6.7 把模型交给第七章的操作空间控制。四节合起来回答一个问题：
-**本章的模型怎样用于仿真、规划与控制。**
-
-## 三句话总结
-
-1. **动力学 = 能量 + 拉格朗日方程**：写出 $T=\frac12\dot q^{\mathrm T}B\dot q$ 与 $U(q)$，
-   代公式就得到关于 $q$ 的二阶微分方程；约束力自动消失，非保守力补右端。
-2. **两条结构性质比公式本身更重要**：$\dot B-2C$ 反对称（能量/无源性），$\tau=Y\pi$ 线性
-   （参数辨识/自适应）；前者管稳定性，后者管「模型从哪来」。
-3. **算例是检验理解的唯一标准**：笛卡儿臂的「解耦」与平面臂的「耦合」是同一套公式的两个极端；
-   能手算平面臂的 $B,C,g$，这一章才算真正会了。
-
-## 知识地图（本章在全书中的位置）
+## 知识衔接与自检要点
 
 ```text
-第 2 章 运动学 ──→ 第 3 章 微分运动学/静力学 ──→ 第 5 章 执行器与传感器
-        │                    │                          │
-        └────────────┬───────┴──────────────┬───────────┘
-                     ↓                      ↓
-              第 6 章 动力学（本章）   第 4 章 轨迹规划（参考输入）
-                     │
-                     ├─ 前馈：τ_ff = B q̈_d + C q̇_d + g（计算力矩）
-                     ├─ 参数辨识：τ = Yπ → 最小二乘
-                     └─ 第七编 运动控制（原书第 8 章）：反馈 + 前馈补偿
+第 2–3 章（几何运动学与雅可比） + 第 5 章（执行器折算与摩擦）
+                   │
+                   ▼
+          第 6 章 动力学模型（B, C, g；O(n) RNE；τ = Yπ）
+                   │
+      ┌────────────┼────────────┐
+      ▼            ▼            ▼
+  前馈/计算力矩  Lyapunov 稳定   自适应参数辨识
+  （7.3–7.4 节） （Ḃ-2C 反对称）  （最小二乘与自适应律）
 ```
 
-**下一编[第七章 · 运动控制](../ch07/overview.md)（原书第 8 章）会反复用到本章的三样东西**：$B$ 的正定性（控制器增益设计）、
-$\dot B-2C$ 的反对称性（Lyapunov 稳定性）、$\boldsymbol g$ 的显式表达（重力补偿）。
-如果这一章只记了公式而没理解这三条，第七编会变成「背控制律」。
+在进入[第七章 · 运动控制](../ch07/overview.md)前确认三点物理直觉：当机械臂末端换持未知载荷时，由于质量矩与惯量同时改变，$B,C,\boldsymbol g$ 全数失准，下一章将利用第 5 章位置/速度测量设计关节空间反馈与[自适应控制](../ch07/sec7-4.md)，并结合本章的 $\dot B-2C$ 反对称性证明跟踪误差收敛。
 
-带着模型进入第七章前，再问一个具体问题：机械臂拿起螺丝刀后，实际负载与计算时的质量不同，仍只按原轨迹计算前馈力矩，关节会不会落后？已经有第五章的位置与速度测量，怎样把这些偏差变成修正力矩，又怎样判断修正后的运动稳定？
+## 全章常见错误排查表
 
-## 常见错误总表
-
-| # | 错误 | 纠正 |
+| # | 高频误区 | 正确基准 |
 |:--|:--|:--|
-| 1 | 漏掉转子动能 $k_r^2I_m$ | 转子角速度是 $k_r\dot q$，平方后进动能 |
-| 2 | 势能写成 $\dot q$ 的函数 | $U=U(q)$，与速度无关 |
-| 3 | 把 $b_{ii}$ 当成连杆 $i$ 自己的惯量 | 是「锁住其他关节时关节 $i$ 看到的惯量」，含后面所有连杆 |
-| 4 | $C$ 当成唯一 | 只有 $C\dot q$ 唯一；Christoffel 选法只是其中一种 |
-| 5 | 把 $\dot q^{\mathrm T}N\dot q=0$ 当成 $N$ 反对称 | 前者对任意合法 $C$ 成立；Christoffel 选法保证后者，但并非唯一可能选法 |
-| 6 | 11 / 13 / 最小参数集混用 | 11 为原点惯量等惯性参数分组；13 含摩擦；平面臂 8 参数表达仍可约简为 5 个独立惯性组合 |
-| 7 | 平面臂 $b_{12}$ 漏 $k_{r_2}I_{m_2}$ | 转子 2 的总角速度含 $\dot\vartheta_1$ |
-| 8 | 末端力符号搞反 | $\boldsymbol h_e$ 是末端对环境；执行器需额外 $+J^{\mathrm T}\boldsymbol h_e$ |
-| 9 | 笛卡儿臂也套 Christoffel | $B$ 常数 ⇒ $C=0$，不必算 |
-| 10 | 忘记 $Y$ 依赖 $\ddot q$ | 回归矩阵的自变量是 $q,\dot q,\ddot q$ |
+| 1 | 漏算电机转子 $k_r^2I_m$（尤其平面臂 $b_{12}$ 中的 $k_{r_2}I_{m_2}$） | 转子角速度含连杆牵连转速 $\boldsymbol\omega_{i-1}$ 叠加自转 $k_{r_i}\dot q_i\boldsymbol z_{m_i}$ |
+| 2 | 混淆重力补偿项 $\boldsymbol g$ 与实际重力 $\boldsymbol\tau_{\mathrm{grav}}$ | 左端重力项 $\boldsymbol g=\partial U/\partial\boldsymbol q$；静止悬停输入 $\boldsymbol\tau=\boldsymbol g=-\boldsymbol\tau_{\mathrm{grav}}$ |
+| 3 | 以为 $\dot{\boldsymbol q}^{\mathrm T}(\dot B-2C)\dot{\boldsymbol q}=0$ 等价于 $\dot B-2C$ 反对称 | 前者恒成立仅反映能量守恒，后者仅对 Christoffel 等特定选法对任意 $\boldsymbol w$ 成立 |
+| 4 | 把 $b_{ii}$ 误解为仅连杆 $i$ 自身转动惯量 | $b_{ii}$ 是锁死其余关节后驱动轴 $i$ 看到的下游全质量等效惯量 |
+| 5 | 牛顿–欧拉里参考点混用或重力加两遍 | $\boldsymbol\mu_i$ 对 $O_{i-1}$、$\boldsymbol\mu_{i+1}$ 对 $O_i$ 需补力臂；设 $\ddot{\boldsymbol p}_0=-\boldsymbol g_0$ 即已含重力 |
+| 6 | 混淆 11 / 13 / 最小参数集口径 | 每组名义 11 惯性参数，含摩擦 13 参数；平面臂 8 参数仍可归并为 5 独立组合 |
+| 7 | 认为“放慢动作总能降低总力矩需求” | 动态分量按 $1/T^2$ 降低，但重力不变；若动态项原与重力相抵，放慢反而增大净力矩 |
 
-## 学完自检
-
-::: think 十问自检（能答八问即可进入原书第 8 章）
-1. 拉格朗日方程为什么不需要画受力图？约束力去哪了？
-2. 写出 $T_i$ 的三块分解，并说明交叉项为什么为零。
-3. 惯性张量在基座系与连杆系中有什么区别？平行轴定理怎么写？
-4. $B$ 的三条性质是什么？各自由什么保证？
-5. 写出 $h_{ijk}$ 与 $C$ 的关系；$C$ 为什么不唯一？
-6. 证明 $\dot B-2C$ 反对称；说明 $\dot q^{\mathrm T}N\dot q=0$ 为什么对任意 $C$ 成立。
-7. 「11 个参数」与「13 个参数」各包含什么？
-8. 笛卡儿臂为什么解耦？平面臂为什么不解耦？
-9. 写出平面臂的 $B(q)$、$C$、$g$，并解释 $b_{22}$ 为什么是常数。
-10. 末端力如何进方程？$J^{\mathrm T}$ 的物理意义是什么？
-:::
-
-## 与前后章的接口
-
-- **向前**（第 3、4、5 章）：雅可比 $J_P,J_O$ 来自第 3 章；轨迹规划的 $q_d,\dot q_d,\ddot q_d$
-  是动力学的输入（第 4 章）；执行器的力矩/摩擦模型来自第 5 章。
-- **向后**（原书第 8 章及以后）：运动控制的「计算力矩法」直接用本章的 $B,C,g$；
-  力控制用 $J^{\mathrm T}$ 把末端力折回关节；自适应控制用 $\tau=Y\pi$ 的线性性。
-- **实验**：`tools/verify_homework06.py` 复算了作业 7-2 / 7-6 / 7-7 的关键数值，
-  `tools/verify_homework06b.py` 复算作业六·补的 7-8（三条路线互校）与 7-10（$\dot B_A-2C_A$ 反对称），
-  两者都可作为修改公式后的回归测试。
+- **配套数值核验脚本**：`tools/verify_homework06.py` 覆盖作业 7-2、7-6、7-7；`tools/verify_homework06b.py` 覆盖作业 7-8 三路线互校与 7-10 操作空间反对称性。

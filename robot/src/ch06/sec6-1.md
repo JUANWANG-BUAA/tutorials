@@ -1,668 +1,339 @@
 # 6.1 拉格朗日公式
 
-本页导航：[拉格朗日公式](#part-6.1) · [动能计算](#part-6.1.1) · [势能计算](#part-6.1.2) · [运动方程](#part-6.1.3)。
+牛顿第二定律要求对每根连杆画出完整的受力图，连杆之间的约束反力和内力矩必须显式列出，再联立消元。自由度升高后，矢量投影和约束消元迅速变得繁琐。
+
+**拉格朗日法（Lagrangian formulation）** 从系统动能和势能这两个标量出发。凡理想约束（理想铰链、刚性连接）在虚位移上所做虚功为零，约束内力从一开始就不会进入方程。本节先建立基本方程并借助单摆核对传动折算，再推导一般开链机器人的动能矩阵 $B(\boldsymbol q)$、势能梯度 $\boldsymbol g(\boldsymbol q)$ 与完整运动方程。
+
+本节要点导航：[拉格朗日方程与广义力](#part-6.1) · [动能与惯性矩阵](#part-6.1.1) · [势能与重力矩](#part-6.1.2) · [关节空间运动方程](#part-6.1.3)。
 
 <a id="part-6.1"></a>
-
-## 6.1.0 引入：从力到能量的推导路线
-
-本节回答两个问题：**为什么用能量列方程**，以及
-**广义力到底包含哪些东西**。前者决定方法的适用面，后者决定方程右端写不写得对。
-
 <a id="611-从力换到能量"></a>
 
-### 6.1.0.1 从「力」换到「能量」
+## 6.1.1 拉格朗日方程与广义力
 
-牛顿–欧拉路线要逐杆画受力图、消内部约束力；拉格朗日路线只做两件事：**写动能 $T$、写势能 $U$**，
-然后代一个固定的微分公式。对 $n$ 自由度开链机械手，取关节变量
-
-$$\boldsymbol q=[q_1,\ q_2,\ \dots,\ q_n]^{\mathrm T}$$
-
-为**广义坐标**（generalized coordinates）。它们能完全确定各连杆的位置，因而也确定整个系统的能量。
-
-先用一个质点看公式从哪里来。质点质量为 $m$，受约束沿固定的光滑曲线运动，位置写为 $\boldsymbol r(q)$，$q$ 是独立坐标。假设势能只依赖位置，除保守力外还受力 $\boldsymbol F$；理想约束力 $\boldsymbol N$ 与允许的虚位移垂直。牛顿方程沿曲线切向 $\boldsymbol r_q=\partial\boldsymbol r/\partial q$ 投影：
-
-$$m\ddot{\boldsymbol r}\cdot\boldsymbol r_q=\boldsymbol F\cdot\boldsymbol r_q-\frac{\partial U}{\partial q},\qquad \boldsymbol N\cdot\boldsymbol r_q=0.$$
-
-右端第一项是与 $q$ 对应的广义力 $\xi$：位移 $\delta\boldsymbol r=\boldsymbol r_q\delta q$ 时，$\boldsymbol F\cdot\delta\boldsymbol r=\xi\,\delta q$。现在把左端改写成动能的导数。由 $\dot{\boldsymbol r}=\boldsymbol r_q\dot q$ 和 $T=\tfrac12m\dot{\boldsymbol r}\cdot\dot{\boldsymbol r}$，记 $\boldsymbol r_{qq}=\partial^2\boldsymbol r/\partial q^2$，则
-
-$$\frac{\partial T}{\partial\dot q}=m\dot{\boldsymbol r}\cdot\boldsymbol r_q,\qquad
-\frac{\mathrm d}{\mathrm dt}\frac{\partial T}{\partial\dot q}
-=m\ddot{\boldsymbol r}\cdot\boldsymbol r_q+m\dot{\boldsymbol r}\cdot\boldsymbol r_{qq}\dot q,\qquad
-\frac{\partial T}{\partial q}=m\dot{\boldsymbol r}\cdot\boldsymbol r_{qq}\dot q.$$
-
-后两项相减，正好留下牛顿方程中的切向惯性项 $m\ddot{\boldsymbol r}\cdot\boldsymbol r_q$。把 $\partial U/\partial q$ 移到左端，令 $L=T-U$，就得到下面的方程。对多个质点分别投影并求和，可以推广到多个独立广义坐标；这里使用了理想约束及 $U$ 不依赖速度的假设。关节摩擦等不满足理想约束的力仍须记入广义力。
+对拥有 $n$ 个自由度的机械系统，选取一组彼此独立的**广义坐标** $\boldsymbol q=[q_1,\dots,q_n]^{\mathrm T}\in\mathbb R^n$（对开链串联机械臂，直接取各关节变量 $\vartheta_i$ 或 $d_i$）。系统的机械能由标量动能 $T(\boldsymbol q,\dot{\boldsymbol q})$ 与标量势能 $U(\boldsymbol q)$ 刻画。
 
 ::: def 定义 6.1.1 · 拉格朗日函数与拉格朗日方程 {#def-6.1.1}
-机械系统的**拉格朗日函数**定义为动能与势能之差
+系统的**拉格朗日函数**定义为动能与势能之差：
 
-$$L(\boldsymbol q,\dot{\boldsymbol q})=T(\boldsymbol q,\dot{\boldsymbol q})-U(\boldsymbol q).$$
+$$\mathcal L(\boldsymbol q,\dot{\boldsymbol q}) = T(\boldsymbol q,\dot{\boldsymbol q}) - U(\boldsymbol q).$$
 
-**拉格朗日方程**为
+当系统所受约束均为理想完整约束时，第 $i$ 个广义坐标满足**第二类拉格朗日方程**：
 
-$$\frac{\mathrm d}{\mathrm dt}\left(\frac{\partial L}{\partial \dot q_i}\right)-\frac{\partial L}{\partial q_i}=\xi_i,
-\qquad i=1,\dots,n,$$
+$$\frac{\mathrm d}{\mathrm dt}\!\left(\frac{\partial\mathcal L}{\partial\dot q_i}\right) - \frac{\partial\mathcal L}{\partial q_i} = \xi_i,\qquad i=1,\dots,n,$$
 
-其中 $\xi_i$ 是与广义坐标 $q_i$ 对应的**广义力**。写成向量形式：
+写为列向量紧凑形式：
 
-$$\frac{\mathrm d}{\mathrm dt}\left(\frac{\partial L}{\partial \dot{\boldsymbol q}}\right)^{\mathrm T}
--\left(\frac{\partial L}{\partial \boldsymbol q}\right)^{\mathrm T}=\boldsymbol\xi.$$
+$$\frac{\mathrm d}{\mathrm dt}\!\left(\frac{\partial\mathcal L}{\partial\dot{\boldsymbol q}}\right)^{\mathrm T} - \left(\frac{\partial\mathcal L}{\partial\boldsymbol q}\right)^{\mathrm T} = \boldsymbol\xi.$$
+
+其中 $\boldsymbol\xi\in\mathbb R^n$ 为对应广义坐标 $\boldsymbol q$ 的**非保守广义力**向量（转动关节取力矩 $\mathrm{N\cdot m}$，移动关节取力 $\mathrm N$）。
 :::
 
-::: intuition 为什么可以「不画受力图」
-拉格朗日方程里的 $\dfrac{\mathrm d}{\mathrm dt}\dfrac{\partial L}{\partial \dot q_i}-\dfrac{\partial L}{\partial q_i}$
-已经把**所有保守力**（重力、弹簧力）自动装进去了——它们藏在 $U$ 里。理想约束力（关节反力、连杆内力）
-不做虚功，因此**根本不需要出现在方程里**。这就是能量法最省事的地方：**约束越复杂，越划算**。
-代价是：非保守力（执行器力矩、摩擦、末端接触力）必须自己作为 $\xi_i$ 补到右端。
-:::
+> **直观检验（单质点回推牛顿方程）**：对一维质量为 $m$、势能仅来自弹簧 $U(x)=\frac12kx^2$ 的质点，$\mathcal L=\frac12m\dot x^2-\frac12kx^2$。代入定义式得 $\frac{\mathrm d}{\mathrm dt}(m\dot x)-(-kx)=m\ddot x+kx=\xi$，其中弹簧弹性力被自动归入 $-\partial\mathcal L/\partial x=+\partial U/\partial x$ 这一侧，右端 $\xi$ 仅留外加驱动力与阻尼力。
 
 <a id="612-广义力-ξiξi-的四个来源"></a>
 <a id="part-6.1.generalized-force"></a>
 
-### 6.1.0.2 广义力 $\xi_i$ 的四个来源
+### 非保守广义力的四个来源
 
-对开链机械手，右端通常由四部分组成：
+广义力 $\xi_i$ 由虚功原理 $\delta W_{\mathrm{nc}}=\sum_{i=1}^n \xi_i\,\delta q_i$ 唯一确定。对于开链机械臂，约束反力和保守重力已被方程左侧自动吸收，右端 $\boldsymbol\xi$ 只包含四类非保守效应：
 
-$$\xi_i=\tau_i-\bigl(F_{\mathrm v}\dot{\boldsymbol q}\bigr)_i-\bigl(F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}\bigr)_i
--\bigl(J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e\bigr)_i.$$
+| 序号 | 来源 | 在右端 $\boldsymbol\xi$ 中的贡献 | 说明与边界 |
+|:--|:--|:--|:--|
+| 1 | 关节执行器驱动 | $+\boldsymbol\tau$ | 已按[第 5 章](../ch05/sec5-2.md)刚性传动折算到关节侧（转动关节 $\tau_i=k_{r_i}\tau_{m_i}$） |
+| 2 | 粘滞摩擦阻力 | $-F_{\mathrm v}\dot{\boldsymbol q}$ | 与速度反向成正比，$F_{\mathrm v}=\operatorname{diag}(F_{v1},\dots,F_{vn})$ 含折算后电机端阻力 |
+| 3 | 滑动库仑摩擦 | $-F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})$ | 仅描述 $\dot q_i\neq 0$ 时的恒幅滑动干摩擦；零速静摩擦需另建粘滑模型 |
+| 4 | 末端接触反力 | $-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e$ | **约定**：$\boldsymbol h_e$ 为末端执行器**施加给环境**的广义力，环境反作用为 $-\boldsymbol h_e$ |
 
-| 来源 | 符号 | 说明 |
-|:--|:--|:--|
-| 关节执行器力矩 | $\boldsymbol\tau$ | 电机经减速器作用在关节上的驱动力矩（移动关节则为力） |
-| 粘滞摩擦 | $F_{\mathrm v}\dot{\boldsymbol q}$ | $F_{\mathrm v}$ 为 $n\times n$ 对角矩阵，与速度成正比 |
-| 库仑摩擦 | $F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}$ | $F_{\mathrm s}$ 为对角矩阵；此项描述滑动时与速度方向相反的摩擦，零速度下的静摩擦需另行建模 |
-| 末端接触力 | $J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e$ | $\boldsymbol h_e$ 为末端执行器施加在环境上的力/力矩，经雅可比转置折回关节 |
+综上，广义力向量写为
 
-::: note 符号约定（后面各节统一）
-- $\boldsymbol h_e$ 的方向：**末端执行器作用在环境上的力**。环境反作用于末端的力记为 $\boldsymbol f_{\mathrm{env}}=-\boldsymbol h_e$，它贡献 $+J^{\mathrm T}\boldsymbol f_{\mathrm{env}}$；本教程沿用教材约定，右端写成 $\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$（执行器力矩的一部分用来平衡接触力）。
-- 移动关节的 $\tau_i$ 是力不是力矩，$q_i$ 是位移不是角度；公式形式不变。
-- 摩擦项在建模阶段常先省略（难以精确建模），但在控制实验里必须补，否则低速爬行与稳态误差会很明显。
-:::
+$$\boldsymbol\xi = \boldsymbol\tau - F_{\mathrm v}\dot{\boldsymbol q} - F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q}) - J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e.$$
 
 <a id="613-例-71带齿轮的摆老师逐行推的第一道题"></a>
 <a id="part-6.1.pendulum"></a>
 
-### 6.1.0.3 例 7.1：带齿轮的摆
+::: ex 例 6.1.1 · 带齿轮的单摆（原书例 7.1）
+一单摆的质量为 $m$，质心距铰点 $O$ 的距离为 $l$，连杆绕 $O$ 的转动惯量为 $I$，转角 $\vartheta$ 自竖直下垂位置逆时针度量。驱动电机通过减速比 $k_r$（刚性无背隙）驱动关节：转子转动惯量为 $I_m$、转子粘滞摩擦系数为 $F_m$、关节自身粘滞摩擦系数为 $F$，电机输出转矩为 $\tau_m$，关节侧等效驱动力矩为 $\tau=k_r\tau_m$。试用拉格朗日方程导出系统运动方程。
 
-> 教材例 7.1（对应图 5.8 的摆）。这是老师在课上逐行推的第一道题：单连杆的「动能 + 势能 + 广义力」
-> 流程在这里走通一遍，后面所有多连杆推导都是把这一流程重复使用——把它当作模板学会，
-> 再往下看 6.2 的多连杆版本。
+::: sol 解
+1. **动能**：连杆角速度为 $\dot\vartheta$，刚性传动下转子角速度为 $\omega_m = k_r\dot\vartheta$，故总动能为
 
-**系统**：摆杆质量为 $m$，质心到铰点 $O$ 的距离为 $l$，绕 $O$ 转动，转角 $\vartheta$（下垂位置为 $\vartheta=0$），杆相对 $O$ 的转动惯量为 $I$；
-电机转子经减速比 $k_r$ 驱动，转子惯量 $I_m$，转子粘滞摩擦系数 $F_m$，关节粘滞摩擦系数 $F$。假设传动刚性、理想无损，$\tau=k_r\tau_m$ 为关节侧驱动力矩。
+$$T = \frac12 I\dot\vartheta^2 + \frac12 I_m(k_r\dot\vartheta)^2 = \frac12(I + k_r^2I_m)\dot\vartheta^2.$$
 
-**动能**：摆杆与转子都随关节转动。转子的角速度是 $k_r\dot\vartheta$（刚性传动，无打滑），故
+2. **势能**：以下垂位置 $\vartheta=0$ 为零势能参考面，质心高度升高 $l(1-\cos\vartheta)$，则
 
-$$T=\frac12 I\dot\vartheta^2+\frac12 I_m k_r^2\dot\vartheta^2
-=\frac12\bigl(I+I_m k_r^2\bigr)\dot\vartheta^2.$$
+$$U = mgl(1-\cos\vartheta).$$
 
-**势能**：以垂下位置为零势能点，质心升高 $l(1-\cos\vartheta)$：
+3. **求导代入**：取 $\mathcal L=T-U$，计算偏导与时间导数
 
-$$U=mgl\,(1-\cos\vartheta).$$
+$$\frac{\mathrm d}{\mathrm dt}\!\left(\frac{\partial\mathcal L}{\partial\dot\vartheta}\right) = (I+k_r^2I_m)\ddot\vartheta,\qquad -\frac{\partial\mathcal L}{\partial\vartheta} = mgl\sin\vartheta.$$
 
-**拉格朗日函数**：
+4. **广义力（按虚功折算）**：微小虚位移 $\delta\vartheta$ 对应转子虚转角 $\delta\vartheta_m=k_r\delta\vartheta$，非保守力虚功为
 
-$$L=T-U=\frac12\bigl(I+I_m k_r^2\bigr)\dot\vartheta^2-mgl\,(1-\cos\vartheta).$$
+$$\delta W_{\mathrm{nc}} = \tau_m\,\delta\vartheta_m - F_m\dot\vartheta_m\,\delta\vartheta_m - F\dot\vartheta\,\delta\vartheta = \bigl(\tau - (F+k_r^2F_m)\dot\vartheta\bigr)\delta\vartheta.$$
 
-**代方程**：
+令左端等于广义力 $\xi$ 并整理阻尼项，得到完整关节侧运动方程：
 
-$$\frac{\partial L}{\partial\dot\vartheta}=\bigl(I+I_m k_r^2\bigr)\dot\vartheta,\qquad
-\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot\vartheta}=\bigl(I+I_m k_r^2\bigr)\ddot\vartheta,$$
+$$\boxed{\ (I + k_r^2I_m)\ddot\vartheta + (F + k_r^2F_m)\dot\vartheta + mgl\sin\vartheta = \tau\ }$$
 
-$$\frac{\partial L}{\partial\vartheta}=-mgl\sin\vartheta.$$
-
-因此
-
-$$\bigl(I+I_m k_r^2\bigr)\ddot\vartheta+mgl\sin\vartheta=\xi.$$
-
-**广义力**：执行器力矩 $\tau$，减去关节粘滞摩擦 $F\dot\vartheta$，再减去折算到关节侧的转子摩擦
-$F_m k_r^2\dot\vartheta$：
-
-$$\xi=\tau-F\dot\vartheta-F_m k_r^2\dot\vartheta.$$
-
-**完整方程**：
-
-$$\boxed{\ \bigl(I+I_m k_r^2\bigr)\ddot\vartheta+\bigl(F+F_m k_r^2\bigr)\dot\vartheta+mgl\sin\vartheta=\tau\ }$$
-
-这与第 5 章把转子量折算到关节侧得到的方程一致（原书式 (5.29)）——**拉格朗日法自动给出「折算」**，
-不需要再单独推一遍减速器的惯量/摩擦折算。
-
-::: think 老师在这道题上强调的三件事
-1. **转子的动能也要算**：$T$ 里两项，第二项 $I_m k_r^2\dot\vartheta^2$ 不是可选项。忽略转子惯量，
-   高速启停时力矩会明显偏小。
-2. **广义力要「折算到关节侧」**：$F_m k_r^2\dot\vartheta$ 的 $k_r^2$ 来自 $\omega_m=k_r\dot\vartheta$，
-   与动能里转子项的系数同源；不要漏平方。
-3. **非线性只来自重力**：$\sin\vartheta$ 是唯一的非线性项；惯量与摩擦都是线性的。
-   多连杆时非线性会多得多（$B(q)$、离心/科氏项），但「先写能量、再代公式」的流程不变。
+这与[第 5 章 5.2 节](../ch05/sec5-2.md)用牛顿力矩平衡直接折算传动比得到的结果完全一致：能量法自动把 $k_r^2$ 倍的惯量与阻尼折算系数带入模型，且揭示了单连杆唯一非线性来源于重力项 $\sin\vartheta$。
+:::
 :::
 
-::: think 试一试 · 减速比翻倍，力矩也翻四倍吗？
-忽略摩擦，取摆杆惯量 $I=0.4\ \mathrm{kg\,m^2}$、转子惯量 $I_m=0.002\ \mathrm{kg\,m^2}$。在 $\vartheta=0$、$\dot\vartheta=0$ 时，要产生 $\ddot\vartheta=1\ \mathrm{rad/s^2}$。分别计算 $k_r=10$ 和 $k_r=20$ 时关节侧所需力矩。
+::: think 思考与核算 · 减速比翻倍，所需驱动力矩翻四倍吗？
+设摆杆惯量 $I=0.4\ \mathrm{kg\cdot m^2}$、转子惯量 $I_m=0.002\ \mathrm{kg\cdot m^2}$，忽略摩擦，在下垂位置 $\vartheta=0,\dot\vartheta=0$ 处产生 $\ddot\vartheta=1\ \mathrm{rad/s^2}$。求 $k_r=10$ 与 $k_r=20$ 时关节侧所需力矩 $\tau$，并计算 $k_r=10$ 时电机转子惯量在总等效惯量中的占比。
 
-::: sol 核对
-此时重力矩和摩擦为零，$\tau=(I+I_mk_r^2)\ddot\vartheta$。两种减速比下折算惯量依次为 $0.4+0.002\times100=0.6$ 和 $0.4+0.002\times400=1.2\ \mathrm{kg\,m^2}$，所需力矩分别为 $0.6$ 和 $1.2\ \mathrm{N\,m}$。转子惯量项翻四倍，连同不变的摆杆惯量计算后，总力矩只翻两倍。
+::: sol 答案
+- $k_r=10$ 时：$I_{\mathrm{eq}} = 0.4 + 0.002\times100 = 0.6\ \mathrm{kg\cdot m^2}$，$\tau = 0.6\ \mathrm{N\cdot m}$；转子惯量占比为 $0.2/0.6 = 1/3$。
+- $k_r=20$ 时：$I_{\mathrm{eq}} = 0.4 + 0.002\times400 = 1.2\ \mathrm{kg\cdot m^2}$，$\tau = 1.2\ \mathrm{N\cdot m}$。
+
+仅转子项扩大四倍，连杆本体惯量保持不变，因此总等效惯量与关节侧驱动力矩翻了两倍（但在 $k_r\gg1$ 时，转子项常主导总惯量）。
 :::
 :::
 
 <a id="614-拉格朗日法与牛顿欧拉法的分工"></a>
 
-### 6.1.0.4 拉格朗日法与牛顿–欧拉法的分工
+### 两种建模路线的工程分工
 
-| 维度 | 拉格朗日法 | 牛顿–欧拉法 |
+| 比较维度 | 拉格朗日法（6.1–6.3） | 牛顿–欧拉法（6.4） |
 |:--|:--|:--|
-| 出发点 | 标量能量 $T,U$ | 逐杆受力图 + 牛顿/欧拉方程 |
-| 参考系 | 能量是标量；计算质心速度和惯性张量时仍须统一坐标系 | 须选定坐标系，并在各杆坐标系间变换 |
-| 中间量 | 只有 $T,U$ | 关节反力、连杆内力（要消去） |
-| 适合 | 手工推导、少自由度、教学 | 递推计算、多自由度、实时 $O(n)$ |
-| 复杂度 | 展开后项数多，易漏项 | 递推结构清晰，程序化容易 |
+| 出发量 | 标量能量 $T(\boldsymbol q,\dot{\boldsymbol q})$、$U(\boldsymbol q)$ | 逐杆牛顿–欧拉矢量方程 |
+| 约束内力 | 虚功自动消去，不显式出现 | 显式传递并最终投影消元 |
+| 输出形态 | 闭合矩阵方程（显式给出 $B,C,\boldsymbol g$） | 数值递推结果 $\boldsymbol\tau$（不直接暴露 $B,C$） |
+| 适用场景 | 理论推导、结构性质分析、控制律设计、低自由度手算 | 编程仿真与 $O(n)$ 实时逆动力学计算 |
 
-> 本章用拉格朗日法推公式（**为了看懂结构**），实际软件多用牛顿–欧拉递推（**为了算得快**）。
-> 两者给出同一个 $B,C,g$；原书第 8 章的控制律只关心最终形式，不关心用哪种方法推出来。
+两类方法针对同一刚体机械臂必定给出完全一致的输入-运动关系，控制律所需的是方程本身的结构与数值。
 
 <a id="615-小结与常见错误"></a>
 <a id="part-6.1.intro-summary"></a>
-
-### 6.1.0.5 小结与常见错误
-
-- **一句话**：拉格朗日法 = 「写两个标量（$T,U$） + 代一个公式」，约束力自动消失，非保守力补右端。
-- **三步流程**：选广义坐标 $\to$ 写 $T,U$ $\to$ 代 $\dfrac{\mathrm d}{\mathrm dt}\dfrac{\partial L}{\partial\dot q}-\dfrac{\partial L}{\partial q}=\xi$。
-- **右端四件套**：$\tau$、粘滞摩擦、库仑摩擦、$J^{\mathrm T}h_e$。
-
-::: think 常见错误清单
-1. **漏掉转子动能**：尤其是大减速比时 $I_m k_r^2$ 可能比连杆惯量还大。
-2. **势能零点选错导致符号反**：$U=mgl(1-\cos\vartheta)$ 的零点在垂下位置；若选水平位置为零，
-   表达式会多一个常数，但**不影响运动方程**（常数求导为零）——符号错在 $\partial U/\partial q$ 上才致命。
-3. **把 $\xi$ 写成 $\tau$**：摩擦与末端力都算广义力，不能只写电机力矩。
-4. **对 $\dot q$ 与 $q$ 的偏导混淆**：$\partial L/\partial\dot q$ 是先对速度求偏导、再对时间求全导；
-   $\partial L/\partial q$ 只对位置求偏导。
-:::
-
-::: think 默写点 · 合上书再写
-1. 写出拉格朗日函数与拉格朗日方程（标量形式与向量形式）。
-2. 写出带齿轮的摆的 $T,U,L$ 与最终运动方程。
-3. 广义力的四个来源各是什么？末端力为什么要乘 $J^{\mathrm T}$？
-4. 拉格朗日法与牛顿–欧拉法各适合什么场合？
-:::
-
 <a id="part-6.1.1"></a>
 
-## 6.1.1 动能计算
+## 6.1.2 动能与关节空间惯性矩阵
 
-本节的任务只有一个：把 $n$ 连杆 + $n$ 个转子的总动能，写成
-关节速度的二次型 $\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}$，
-并认出 $B$ 就是**惯性矩阵**。所有结构性质（对称、正定、随位形变）都从这一步来。
+将单连杆方法推广到 $n$ 自由度机械臂时，总动能等于全部连杆（记作下标 $i$）与各驱动电机转子（记作下标 $m_i$）动能之和：
 
-### 6.1.1.1 总动能 = 连杆 + 转子
+$$T = \sum_{i=1}^{n}\bigl(T_{\ell_i} + T_{m_i}\bigr).$$
 
-对 $n$ 个刚性连杆的机械手，总动能是各连杆动能与各关节电机转子动能之和：
+### 连杆 $i$ 的柯尼希分解与惯性张量
 
-$$T=\sum_{i=1}^{n}\bigl(T_i+T_{m_i}\bigr),$$
+考察刚体连杆 $i$ 的微元 $\mathrm dm=\rho\,\mathrm dV$。设在基坐标系下质心位置为 $\boldsymbol p_{\ell_i}$、角速度为 $\boldsymbol\omega_i$，微元相对质心的位置矢量为 $\boldsymbol r=\boldsymbol p-\boldsymbol p_{\ell_i}$，则微元速度为 $\dot{\boldsymbol p}=\dot{\boldsymbol p}_{\ell_i}+\boldsymbol\omega_i\times\boldsymbol r$。对整根连杆积分动能：
 
-其中 $T_i$ 是连杆 $i$ 的动能，$T_{m_i}$ 是驱动关节 $i$ 的转子动能（连杆 0 固定，不贡献）。
+$$\begin{aligned}
+T_{\ell_i}
+&= \frac12\int_{V_{\ell_i}} \|\dot{\boldsymbol p}_{\ell_i}+\boldsymbol\omega_i\times\boldsymbol r\|^2 \rho\,\mathrm dV \\
+&= \frac12\left(\int_{V_{\ell_i}}\rho\,\mathrm dV\right)\dot{\boldsymbol p}_{\ell_i}^{\mathrm T}\dot{\boldsymbol p}_{\ell_i}
+   + \dot{\boldsymbol p}_{\ell_i}^{\mathrm T}\!\left(\boldsymbol\omega_i\times\int_{V_{\ell_i}}\boldsymbol r\rho\,\mathrm dV\right)
+   + \frac12\int_{V_{\ell_i}} (\boldsymbol\omega_i\times\boldsymbol r)^{\mathrm T}(\boldsymbol\omega_i\times\boldsymbol r)\rho\,\mathrm dV.
+\end{aligned}$$
 
-### 6.1.1.2 连杆动能：平动 + 转动
+由质心定义，$\int_{V_{\ell_i}}\boldsymbol r\,\rho\,\mathrm dV=\boldsymbol 0$，**中间交叉项严格为零**（前提是参考点恰好取在质心；若改取关节原点等非质心点，交叉项将保留一阶矩）。利用叉乘矩阵 $S(\boldsymbol r)\boldsymbol\omega_i = -\boldsymbol\omega_i\times\boldsymbol r$ 整理第三项，得到平动加转动的经典结构：
 
-连杆 $i$ 上体积微元 $\mathrm dV$ 的质量为 $\rho\,\mathrm dV$（$\rho$ 为密度），其位置记为 $\boldsymbol p_i^*$。
-连杆动能是
+$$T_{\ell_i} = \frac12 m_{\ell_i}\dot{\boldsymbol p}_{\ell_i}^{\mathrm T}\dot{\boldsymbol p}_{\ell_i} + \frac12\boldsymbol\omega_i^{\mathrm T}\boldsymbol I_{\ell_i}\boldsymbol\omega_i,$$
 
-$$T_i=\frac12\int_{V_i}\dot{\boldsymbol p}_i^{*\mathrm T}\dot{\boldsymbol p}_i^*\,\rho\,\mathrm dV.$$
+其中惯性张量定义为对称半正定矩阵（非退化刚体为正定）：
 
-把微元位置写成「质心位置 + 相对质心的矢径」：
+$$\boldsymbol I_{\ell_i} = \int_{V_{\ell_i}} S^{\mathrm T}(\boldsymbol r)S(\boldsymbol r)\rho\,\mathrm dV = \begin{bmatrix}I_{xx}&-I_{xy}&-I_{xz}\\-I_{xy}&I_{yy}&-I_{yz}\\-I_{xz}&-I_{yz}&I_{zz}\end{bmatrix}.$$
 
-$$\boldsymbol r_i=[r_{ix},r_{iy},r_{iz}]^{\mathrm T}=\boldsymbol p_i^*-\boldsymbol p_i,\qquad
-\boldsymbol p_i=\frac{1}{m_i}\int_{V_i}\boldsymbol p_i^*\rho\,\mathrm dV,$$
+::: note 坐标变换与平行轴定理
+1. **惯性张量随连杆旋转**：若基座系直接积分 $\boldsymbol I_{\ell_i}$，它会随关节角 $\boldsymbol q$ 改变。在固连于连杆 $i$、原点位于质心 $\ell_i$ 的局部系中，惯性张量 $\boldsymbol I_{\ell_i}^i$ 为**常对称矩阵**；借助旋转矩阵 $\boldsymbol R_i(\boldsymbol q)$ 转换至基座系：
 
-其中 $m_i$ 是连杆质量，$\boldsymbol p_i$ 是质心位置。对时间求导，并用角速度 $\boldsymbol\omega_i$ 表示
-刚体上一点的线速度：
+$$\boldsymbol I_{\ell_i} = \boldsymbol R_i\boldsymbol I_{\ell_i}^i\boldsymbol R_i^{\mathrm T}.$$
 
-$$\dot{\boldsymbol p}_i^*=\dot{\boldsymbol p}_i+\boldsymbol\omega_i\times\boldsymbol r_i
-=\dot{\boldsymbol p}_i+S(\boldsymbol\omega_i)\boldsymbol r_i,$$
+2. **平行轴定理（Steiner 定理）**：当转动参考点从质心 $C$ 平移到与质心相距 $\boldsymbol r$ 的任意点 $O$ 时，相对 $O$ 点的惯性张量为
 
-这里 $S(\cdot)$ 是**叉乘的反对称矩阵**：
+$$\boldsymbol I_O = \boldsymbol I_C + m\bigl(\|\boldsymbol r\|^2\boldsymbol E_3 - \boldsymbol r\boldsymbol r^{\mathrm T}\bigr),$$
 
-$$S(\boldsymbol a)=\begin{bmatrix}0&-a_z&a_y\\ a_z&0&-a_x\\ -a_y&a_x&0\end{bmatrix},
-\qquad S(\boldsymbol a)\boldsymbol b=\boldsymbol a\times\boldsymbol b.$$
-
-把速度代回积分，动能自然分成三块：
-
-**① 平动项**
-
-$$\frac12\int_{V_i}\dot{\boldsymbol p}_i^{\mathrm T}\dot{\boldsymbol p}_i\,\rho\,\mathrm dV
-=\frac12 m_i\dot{\boldsymbol p}_i^{\mathrm T}\dot{\boldsymbol p}_i.$$
-
-**② 交叉项（平动 × 转动）**
-
-$$\int_{V_i}\dot{\boldsymbol p}_i^{\mathrm T}S(\boldsymbol\omega_i)\boldsymbol r_i\,\rho\,\mathrm dV
-=\dot{\boldsymbol p}_i^{\mathrm T}S(\boldsymbol\omega_i)\int_{V_i}(\boldsymbol p_i^*-\boldsymbol p_i)\rho\,\mathrm dV=0,$$
-
-因为按质心定义 $\int\boldsymbol p_i^*\rho\,\mathrm dV=\boldsymbol p_i\int\rho\,\mathrm dV$，括号里的积分为零。
-**质心系的最大好处就是这一项自动消失。**
-
-**③ 转动项**
-
-$$\frac12\int_{V_i}\boldsymbol r_i^{\mathrm T}S^{\mathrm T}(\boldsymbol\omega_i)S(\boldsymbol\omega_i)\boldsymbol r_i\,\rho\,\mathrm dV
-=\frac12\boldsymbol\omega_i^{\mathrm T}\boldsymbol I_i\boldsymbol\omega_i,$$
-
-其中用到 $S(\boldsymbol\omega)\boldsymbol r=-S(\boldsymbol r)\boldsymbol\omega$（叉乘反交换），以及**惯性张量**
-
-$$\boldsymbol I_i=\int_{V_i}S^{\mathrm T}(\boldsymbol r_i)S(\boldsymbol r_i)\rho\,\mathrm dV
-=\begin{bmatrix}
-\displaystyle\int(r_{iy}^2+r_{iz}^2)\rho\,\mathrm dV&-\displaystyle\int r_{ix}r_{iy}\rho\,\mathrm dV&-\displaystyle\int r_{ix}r_{iz}\rho\,\mathrm dV\\[2mm]
-*&\displaystyle\int(r_{ix}^2+r_{iz}^2)\rho\,\mathrm dV&-\displaystyle\int r_{iy}r_{iz}\rho\,\mathrm dV\\[2mm]
-*&*&\displaystyle\int(r_{ix}^2+r_{iy}^2)\rho\,\mathrm dV
-\end{bmatrix}.$$
-
-它是一个**对称矩阵**，对角元是绕三个坐标轴的转动惯量，非对角元是惯性积的负值。
-因此
-
-$$T_i=\frac12 m_i\dot{\boldsymbol p}_i^{\mathrm T}\dot{\boldsymbol p}_i
-+\frac12\boldsymbol\omega_i^{\mathrm T}\boldsymbol I_i\boldsymbol\omega_i.$$
-
-::: note 惯性张量的两件事（老师专门停在这里讲）
-1. **参考系**：$\boldsymbol I_i$ 是相对**质心**、在**基坐标系**中表达的惯性张量，随机械手位形变化；
-   若改到固连在连杆 $i$ 的坐标系（DH 系）中表达，它是**常数矩阵** $\boldsymbol I_i^i$，两者关系为
-   $$\boldsymbol I_i=\boldsymbol R_i\,\boldsymbol I_i^i\,\boldsymbol R_i^{\mathrm T}.$$
-   这就是为什么建模时总把惯性张量写在连杆系里——**常数**，不用每步重算。
-2. **平行轴定理**：若参考点从质心 $C$ 平移到 $O$，则
-   $$\boldsymbol I_O=\boldsymbol I_C+m\,S^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C).$$
-   板书的写法是 $\boldsymbol I_O=\boldsymbol I_C+mS^{\mathrm T}(\boldsymbol p_C)S(\boldsymbol p_C)$，
-   其中 $\boldsymbol p_C$ 是质心相对新原点的位置。
+标量一维形式即为 $I_O = I_C + md^2$。对长度为 $l$、质量为 $m$ 的均匀细杆，$I_C=\frac{1}{12}ml^2$，绕端点的转动惯量为 $\frac{1}{12}ml^2+m(l/2)^2=\frac13ml^2$。
 :::
 
-### 6.1.1.3 用雅可比把质心速度写成 $\dot{\boldsymbol q}$
+### 引入几何雅可比
 
-质心线速度与连杆角速度都是关节速度的线性组合：
+借用[第 3 章](../ch03/sec3-1.md)连杆 $i$ 质心的平动雅可比 $J_P^{(\ell_i)}$ 与连杆角速度雅可比 $J_O^{(\ell_i)}$（各仅对第 $1\dots i$ 个关节有非零列）：
 
-$$\dot{\boldsymbol p}_i=J_P^{(i)}(\boldsymbol q)\dot{\boldsymbol q},\qquad
-\boldsymbol\omega_i=J_O^{(i)}(\boldsymbol q)\dot{\boldsymbol q}.$$
+$$\dot{\boldsymbol p}_{\ell_i} = J_P^{(\ell_i)}(\boldsymbol q)\dot{\boldsymbol q},\qquad \boldsymbol\omega_i = J_O^{(\ell_i)}(\boldsymbol q)\dot{\boldsymbol q}.$$
 
-其中 $J_P^{(i)}$、$J_O^{(i)}$ 是**只取到连杆 $i$** 的雅可比矩阵（第 $i$ 列之后全为零）：
+连杆 $i$ 的动能完全写为关于 $\dot{\boldsymbol q}$ 的二次型：
 
-$$J_P^{(i)}=\bigl[j_{P1}^{(i)}\ \cdots\ j_{Pi}^{(i)}\ 0\ \cdots\ 0\bigr],\qquad
-J_O^{(i)}=\bigl[j_{O1}^{(i)}\ \cdots\ j_{Oi}^{(i)}\ 0\ \cdots\ 0\bigr],$$
+$$T_{\ell_i} = \frac12\dot{\boldsymbol q}^{\mathrm T}\Bigl(m_{\ell_i}J_P^{(\ell_i)\mathrm T}J_P^{(\ell_i)} + J_O^{(\ell_i)\mathrm T}\boldsymbol R_i\boldsymbol I_{\ell_i}^i\boldsymbol R_i^{\mathrm T}J_O^{(\ell_i)}\Bigr)\dot{\boldsymbol q}.$$
 
-其列按第 3 章的几何法给出：
+### 电机转子动能的建模约定
 
-$$j_{Pj}^{(i)}=\begin{cases}
-\boldsymbol z_{j-1},&\text{移动关节}\\[1mm]
-\boldsymbol z_{j-1}\times(\boldsymbol p_i-\boldsymbol p_{j-1}),&\text{转动关节}
-\end{cases}
-\qquad
-j_{Oj}^{(i)}=\begin{cases}
-\boldsymbol 0,&\text{移动关节}\\[1mm]
-\boldsymbol z_{j-1},&\text{转动关节}
-\end{cases}$$
+驱动第 $i$ 个关节的电机定子通常安装在上一根连杆 $i-1$ 上。记转子质心线速度为 $\dot{\boldsymbol p}_{m_i}=J_P^{(m_i)}\dot{\boldsymbol q}$，设转子自转轴单位向量为 $\boldsymbol z_{m_i}$、传动比为 $k_{r_i}$，则转子总角速度等于安装座（连杆 $i-1$）角速度与自身相对转速叠加：
 
-（$\boldsymbol p_{j-1}$ 是坐标系 $j-1$ 原点的位置，$\boldsymbol z_{j-1}$ 是 $z_{j-1}$ 轴单位向量。）
+$$\boldsymbol\omega_{m_i} = \boldsymbol\omega_{i-1} + k_{r_i}\dot q_i\boldsymbol z_{m_i} = J_O^{(m_i)}(\boldsymbol q)\dot{\boldsymbol q}.$$
 
-代入 $T_i$ 得
+相应矩阵 $J_O^{(m_i)}$ 前 $i-1$ 列与 $J_O^{(\ell_{i-1})}$ 相同，第 $i$ 列等于 $k_{r_i}\boldsymbol z_{m_i}$，第 $i+1\dots n$ 列全为零。
 
-$$T_i=\frac12 m_i\dot{\boldsymbol q}^{\mathrm T}J_P^{(i)\mathrm T}J_P^{(i)}\dot{\boldsymbol q}
-+\frac12\dot{\boldsymbol q}^{\mathrm T}J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}J_O^{(i)}\dot{\boldsymbol q}.$$
-
-### 6.1.1.4 转子动能与减速比
-
-转子 $i$ 的动能与连杆同构：
-
-$$T_{m_i}=\frac12 m_{m_i}\dot{\boldsymbol p}_{m_i}^{\mathrm T}\dot{\boldsymbol p}_{m_i}
-+\frac12\boldsymbol\omega_{m_i}^{\mathrm T}\boldsymbol I_{m_i}\boldsymbol\omega_{m_i}.$$
-
-先看**转动关节**：刚性传动下，转子相对其安装座的转角 $\vartheta_{m_i}$ 与关节角 $q_i$ 满足
-
-$$k_{r_i}\dot q_i=\dot\vartheta_{m_i}\qquad\Longrightarrow\qquad
-\boldsymbol\omega_{m_i}=\boldsymbol\omega_{i-1}+k_{r_i}\dot q_i\,\boldsymbol z_{m_i},$$
-
-其中 $k_{r_i}$ 是有符号的电机转角与关节转角之比，$\boldsymbol z_{m_i}$ 是转子轴单位向量。前一项是安装座随上游连杆一起转动的角速度，后一项是转子相对安装座的转动，两项都在同一坐标系中表达。对于丝杠驱动的移动关节，$q_i$ 是长度，转角与位移的比例系数具有 $\mathrm{rad/m}$ 的量纲，不能直接把它当作无量纲齿轮减速比。
-转子的线速度同样写成雅可比形式
-$\dot{\boldsymbol p}_{m_i}=J_P^{(m_i)}\dot{\boldsymbol q}$，角速度写成
-$\boldsymbol\omega_{m_i}=J_O^{(m_i)}\dot{\boldsymbol q}$，其列在 $j=i$ 处多出 $k_{r_i}\boldsymbol z_{m_i}$。
-
-于是
-
-$$T_{m_i}=\frac12 m_{m_i}\dot{\boldsymbol q}^{\mathrm T}J_P^{(m_i)\mathrm T}J_P^{(m_i)}\dot{\boldsymbol q}
-+\frac12\dot{\boldsymbol q}^{\mathrm T}J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\dot{\boldsymbol q}.$$
-
-### 6.1.1.5 总动能与惯性矩阵
-
-把连杆与转子的贡献相加，利用 $T=\frac12\sum_i\sum_j b_{ij}(\boldsymbol q)\dot q_i\dot q_j$：
-
-$$\boxed{\ T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}\ }$$
-
-$$B(\boldsymbol q)=\sum_{i=1}^{n}\Bigl[
-m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}J_O^{(i)}
-+m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}+J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}
-\Bigr].$$
-
-**$B(\boldsymbol q)$ 的三条性质**（板书在公式下方逐条标注）：
-
-1. **对称**：$B=B^{\mathrm T}$；
-2. **正定**：通常假设各独立关节速度非零时总动能严格为正，即 $\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}=2T>0$（$\dot{\boldsymbol q}\neq0$）；若理想化模型存在无质量、无转动惯量的运动方向，则只能保证半正定；
-3. **一般随位形变化**：$B=B(\boldsymbol q)$，某些特殊结构中可以是常数。
-
-::: think 老师强调的三个「技巧点」
-1. **叉乘写成矩阵**：$\boldsymbol\omega\times\boldsymbol r=S(\boldsymbol\omega)\boldsymbol r=-S(\boldsymbol r)\boldsymbol\omega$。
-   后者把 $\boldsymbol\omega$ 提到积分外，是得到 $\boldsymbol I_i$ 的关键一步——**没有这个反交换，
-   转动项就积不出惯性张量**。
-2. **质心系消交叉项**：交叉项为零不是「忽略」，而是质心定义直接给出来的恒等式。
-3. **惯性张量写在连杆系里是常数**：$\boldsymbol I_i=\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}$，
-   建模时只需存 6 个独立分量（对称矩阵），运行时用 $R$ 变换。
+::: note 移动关节中的 $k_{r_i}$ 量纲陷阱
+转动关节下，减速比 $k_{r_i}=\dot\vartheta_{m_i}/\dot\vartheta_i$ **无量纲**。若第 $i$ 关节由丝杠等旋转–直线机构驱动的移动关节（$\dot\vartheta_{m_i}=k_{r_i}\dot d_i$），$k_{r_i}$ 的单位为 $\mathrm{rad/m}$。此时公式形式 $I_{m_i}k_{r_i}^2\dot d_i^2$ 保持不变，量纲为 $(\mathrm{kg\cdot m^2})(\mathrm{rad/m})^2(\mathrm{m/s})^2=\mathrm{J}$，代表线性等效质量，切勿当成无量纲比值。
 :::
 
-### 6.1.1.6 小结与常见错误
+### 关节空间惯性矩阵 $B(\boldsymbol q)$ 及其三条性质
 
-- **一句话**：连杆动能 = 平动 $\frac12m\dot p^{\mathrm T}\dot p$ + 转动 $\frac12\omega^{\mathrm T}I\omega$；
-  用雅可比把 $\dot p,\omega$ 换成 $\dot q$，再对 $i$ 求和，就得到 $T=\frac12\dot q^{\mathrm T}B\dot q$。
-- **$B$ 的组成**：四块——连杆平动、连杆转动、转子平动、转子转动；每块都是 $J^{\mathrm T}MJ$ 型，其中 $M$ 为质量或惯性张量。
-- **$B$ 的三性质**：对称、正定、随位形变。
+把所有连杆与转子的动能相加，得到整个机械臂的总动能：
 
-::: think 常见错误清单
-1. **把 $J_P^{(i)}$ 写成整机雅可比**：只能取到连杆 $i$，第 $i$ 列之后必须为零，否则会把后面关节的速度算进来。
-2. **忘记 $\boldsymbol R_i\boldsymbol I_i^i\boldsymbol R_i^{\mathrm T}$ 的变换**：直接把连杆系的惯量当基座系用。
-3. **转子项漏掉 $k_r^2$**：$\omega_m=k_r\dot q$，平方后进动能，系数是 $k_r^2$。
-4. **把 $B$ 当常数**：除笛卡儿结构等特例外，$B$ 随 $q$ 变；后面 $\dot B$ 项就是由此而来。
-:::
+$$\boxed{\ T(\boldsymbol q,\dot{\boldsymbol q}) = \frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}\ }$$
 
-::: think 默写点 · 合上书再写
-1. 写出 $T_i$ 的平动项、交叉项、转动项，并说明交叉项为什么为零。
-2. 写出惯性张量 $\boldsymbol I_i$ 的定义与平行轴定理。
-3. 写出 $B(\boldsymbol q)$ 的四块贡献与三条性质。
-4. 转子的角速度如何用关节速度表示？减速比出现在哪几处？
-:::
+其中 $n\times n$ **关节空间惯性矩阵（manipulator inertia matrix）**为
+
+$$B(\boldsymbol q) = \sum_{i=1}^{n}\Bigl(m_{\ell_i}J_P^{(\ell_i)\mathrm T}J_P^{(\ell_i)} + J_O^{(\ell_i)\mathrm T}\boldsymbol R_i\boldsymbol I_{\ell_i}^i\boldsymbol R_i^{\mathrm T}J_O^{(\ell_i)} + m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)} + J_O^{(m_i)\mathrm T}\boldsymbol R_{m_i}\boldsymbol I_{m_i}^{m_i}\boldsymbol R_{m_i}^{\mathrm T}J_O^{(m_i)}\Bigr).$$
+
+对非退化刚体模型（任意非零独立关节速度均激发至少一个刚体部件的非零平动或转动速度），$B(\boldsymbol q)$ 恒满足三条关键性质：
+
+1. **对称性（Symmetric）**：由转置累加形式直接得 $B^{\mathrm T}(\boldsymbol q)=B(\boldsymbol q)$。
+2. **正定性（Positive Definite）**：任意 $\dot{\boldsymbol q}\neq\boldsymbol 0$ 均有 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}>0$，因此 $B(\boldsymbol q)\succ 0$，且逆矩阵 $B^{-1}(\boldsymbol q)$ 在全工作空间存在（注：若教学理想模型忽略某个独立关节驱动部件的质量与惯量，则可能退化为半正定）。
+3. **位形相关性（Configuration-dependent）**：对于含转动关节的串联机械臂，雅可比与旋转矩阵依赖 $\boldsymbol q$，使 $B=B(\boldsymbol q)$ 一般非常数矩阵。
 
 <a id="part-6.1.2"></a>
 
-## 6.1.2 势能计算
+## 6.1.3 势能、重力项与符号约定
 
-这一节很短，但有一个关键结论：**势能只依赖位形 $\boldsymbol q$，不依赖速度 $\dot{\boldsymbol q}$**。
-后面拉格朗日方程里「$\partial U/\partial\dot q=0$」、重力项只出现在 $\partial U/\partial q$ 中，都靠这一条。
+对刚体系统（忽略连杆与传动柔性变形时），势能仅来自重力。沿基坐标系重力加速度矢量 $\boldsymbol g_0$ 累加全部连杆和电机转子的重力势能：
 
-### 6.1.2.1 只算重力
+$$U(\boldsymbol q) = -\sum_{i=1}^{n}\bigl(m_{\ell_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{\ell_i}(\boldsymbol q) + m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}(\boldsymbol q)\bigr).$$
 
-对刚性连杆，势能来自重力（弹性、磁力等暂不考虑）：
+注意两条根本性质：
+- $U(\boldsymbol q)$ **只依赖广义坐标 $\boldsymbol q$**，与广义速度 $\dot{\boldsymbol q}$ 无关（$\partial U/\partial\dot{\boldsymbol q}=\boldsymbol 0$）。
+- $U$ 添加任意常参考零点不影响梯度 $\partial U/\partial\boldsymbol q$。
 
-$$U=\sum_{i=1}^{n}\bigl(U_i+U_{m_i}\bigr),$$
+用链式法则对 $q_i$ 求偏导并引入平动雅可比 $\partial\boldsymbol p/\partial q_i = \boldsymbol J_{P,i}$（雅可比第 $i$ 列），定义动力学方程**左端**的**重力补偿项**：
 
-$$U_i=-\int_{V_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_i^*\,\rho\,\mathrm dV
-=-m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i,\qquad
-U_{m_i}=-m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i},$$
+$$\boxed{\ g_i(\boldsymbol q) = \frac{\partial U(\boldsymbol q)}{\partial q_i} = -\sum_{j=1}^{n}\Bigl(m_{\ell_j}\boldsymbol g_0^{\mathrm T}\boldsymbol j_{P,i}^{(\ell_j)}(\boldsymbol q) + m_{m_j}\boldsymbol g_0^{\mathrm T}\boldsymbol j_{P,i}^{(m_j)}(\boldsymbol q)\Bigr)\ }$$
 
-其中 $\boldsymbol g_0$ 是基坐标系中的重力加速度向量。若 $z$ 轴竖直向上，则
+写成列向量即 $\boldsymbol g(\boldsymbol q) = \bigl(\partial U/\partial\boldsymbol q\bigr)^{\mathrm T}$。
 
-$$\boldsymbol g_0=[0,\ 0,\ -g]^{\mathrm T},\qquad g=9.81\ \mathrm{m/s^2}.$$
+::: note 必分清的符号：左端重力项 $\boldsymbol g(\boldsymbol q)$ vs 实际重力广义力 $\boldsymbol\tau_{\mathrm{grav}}$
+从物理虚功上看，重力本身是 $\boldsymbol F_{g}=m\boldsymbol g_0$，它施加到各关节上的**实际重力广义力**是
 
-于是
+$$\boldsymbol\tau_{\mathrm{grav}} = \sum_{j=1}^n\bigl(m_{\ell_j}J_P^{(\ell_j)\mathrm T}\boldsymbol g_0 + m_{m_j}J_P^{(m_j)\mathrm T}\boldsymbol g_0\bigr) = -\boldsymbol g(\boldsymbol q).$$
 
-$$\boxed{\ U(\boldsymbol q)=-\sum_{i=1}^{n}\bigl(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i(\boldsymbol q)
-+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i}(\boldsymbol q)\bigr)\ }$$
+两者恰好互为相反数：
+- 若把重力放在动力学方程**左端**与惯性项并列：$B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g(\boldsymbol q)=\boldsymbol\tau$，静止保持（$\ddot{\boldsymbol q}=\dot{\boldsymbol q}=\boldsymbol 0$）时执行器输出为 $\boldsymbol\tau = \boldsymbol g(\boldsymbol q)$；
+- 若把实际重力看作作用在系统上的外广义力放回右端，则等价写作 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}=\boldsymbol\tau+\boldsymbol\tau_{\mathrm{grav}}$。
 
-### 6.1.2.2 为什么只依赖 $\boldsymbol q$
-
-质心位置 $\boldsymbol p_i$ 与转子质心位置 $\boldsymbol p_{m_i}$ 都是**位形**的函数（由正运动学给出），
-与速度无关。因此
-
-$$U=U(\boldsymbol q),\qquad \frac{\partial U}{\partial\dot{\boldsymbol q}}=\boldsymbol 0.$$
-
-这一条会直接简化拉格朗日方程：$\dfrac{\partial L}{\partial\dot q_i}=\dfrac{\partial T}{\partial\dot q_i}$；
-对位置求偏导时仍要保留动能的位形依赖：
-
-$$\frac{\partial L}{\partial q_i}=\frac{\partial T}{\partial q_i}-\frac{\partial U}{\partial q_i}.$$
-
-因此势能从第二项进入方程；一般机械手的 $T$ 也随位形变化，不能把第一项省掉。
-
-### 6.1.2.3 势能的梯度就是重力矩
-
-把 $U$ 对 $q_i$ 求偏导，用链式法则：
-
-$$\frac{\partial U}{\partial q_i}
-=-\sum_{j=1}^{n}\Bigl(m_j\boldsymbol g_0^{\mathrm T}\frac{\partial\boldsymbol p_j}{\partial q_i}
-+m_{m_j}\boldsymbol g_0^{\mathrm T}\frac{\partial\boldsymbol p_{m_j}}{\partial q_i}\Bigr).$$
-
-而 $\dfrac{\partial\boldsymbol p_j}{\partial q_i}=j_{Pi}^{(j)}$（质心位置雅可比第 $i$ 列），所以
-
-$$\frac{\partial U}{\partial q_i}
-=-\sum_{j=1}^{n}\Bigl(m_j\boldsymbol g_0^{\mathrm T}j_{Pi}^{(j)}
-+m_{m_j}\boldsymbol g_0^{\mathrm T}j_{Pi}^{(m_j)}\Bigr)
-\triangleq g_i(\boldsymbol q).$$
-
-写成列向量：
-
-$$\boxed{\ \boldsymbol g(\boldsymbol q)=\frac{\partial U}{\partial\boldsymbol q}
-=-\sum_{j=1}^{n}\Bigl(m_jJ_P^{(j)\mathrm T}\boldsymbol g_0
-+m_{m_j}J_P^{(m_j)\mathrm T}\boldsymbol g_0\Bigr)\ }$$
-
-::: intuition 先说清「谁在施力」，再判断正负号
-重力实际施加的广义力为
-$\boldsymbol\tau_{\mathrm{grav}}=\sum_j(m_jJ_P^{(j)\mathrm T}\boldsymbol g_0+m_{m_j}J_P^{(m_j)\mathrm T}\boldsymbol g_0)$。
-它与势能梯度方向相反：$\boldsymbol\tau_{\mathrm{grav}}=-\partial U/\partial\boldsymbol q$。
-本教程动力学方程把重力移到左端，故采用
-$B\ddot q+C\dot q+\boldsymbol g=\tau$、$\boldsymbol g=-\boldsymbol\tau_{\mathrm{grav}}$。
-
-因此，本节所谓「重力矩」$\boldsymbol g$ 是方程左端的**重力项**；静止、无其他外力时，电机必须施加
-$\tau=\boldsymbol g$ 才能平衡实际重力。不要把两个方向相反的量都不加区分地叫作「重力产生的力矩」。
+工程中常在控制律里写“前馈 $+\hat{\boldsymbol g}(\boldsymbol q)$”，正是因为执行器需要出正力矩去**抵消**实际重力，因此必须对齐符号：$\boldsymbol g(\boldsymbol q)+\boldsymbol\tau_{\mathrm{grav}}=\boldsymbol 0$。
 :::
 
-::: ex 例 6.1.2.A · 一个单摆，两条路径核对符号 {#ex-6.1.2.A}
-质点质量 $m=2\ \mathrm{kg}$，到铰点距离 $l=0.5\ \mathrm m$，忽略杆与转子质量。
-取 $z$ 向上、摆角 $q$ 从竖直垂下方向向 $+x$ 增大，则
-$\boldsymbol p=(l\sin q,0,-l\cos q)^{\mathrm T}$。求 $q=\pi/6$ 时的重力项和保持力矩。
+::: ex 例 6.1.2.A · 单摆双路径符号核对 {#ex-6.1.2.A}
+设单点质量 $m=2\ \mathrm{kg}$ 摆球挂于距铰点 $l=0.5\ \mathrm m$ 处（忽略杆与转子）。取基坐标系 $+z$ 竖直向上，$\boldsymbol g_0=[0,0,-g]^{\mathrm T}$（$g=9.81\ \mathrm{m/s^2}$），摆角 $q$ 自竖直向下方向朝 $+x$ 逆时针增大，质心位置 $\boldsymbol p(q)=[l\sin q,\,0,\,-l\cos q]^{\mathrm T}$。求 $q=\pi/6$ 处的左端重力项 $g(q)$、实际重力广义力 $\tau_{\mathrm{grav}}$ 以及静止保持力矩 $\tau$。
 
 ::: sol 解
-**势能路径**：以垂下位置为零点，$U=mgl(1-\cos q)$，
-故 $g(q)=mgl\sin q=4.905\ \mathrm{N\cdot m}$。
+- **路径 A（势能求导）**：取 $\boldsymbol p=[l\sin q,0,-l\cos q]^{\mathrm T}$，加常数使 $q=0$ 处势能为零得 $U(q)=mgl(1-\cos q)$。求偏导：
 
-**力与雅可比路径**：$J_P=(l\cos q,0,l\sin q)^{\mathrm T}$，
-重力 $m\boldsymbol g_0=(0,0,-mg)^{\mathrm T}$，故
-$\tau_{\mathrm{grav}}=J_P^{\mathrm T}m\boldsymbol g_0=-mgl\sin q=-4.905\ \mathrm{N\cdot m}$。
-电机保持力矩为 $\tau=+4.905\ \mathrm{N\cdot m}$，与实际重力相抵。
+$$g(q)=\frac{\partial U}{\partial q}=mgl\sin q\implies g(\pi/6)=2\times 9.81\times 0.5\times\frac12 = +4.905\ \mathrm{N\cdot m}.$$
 
-两条路径必须满足 $g+\tau_{\mathrm{grav}}=0$。若不相抵，先查重力向量和角度正向；
-势能加减常数不影响梯度，不能靠改势能零点修复符号。
+静止保持所需电机输出 $\tau = g(\pi/6) = +4.905\ \mathrm{N\cdot m}$。
+- **路径 B（力与雅可比）**：质心平动雅可比 $J_P=\frac{\partial\boldsymbol p}{\partial q}=[l\cos q,\,0,\,l\sin q]^{\mathrm T}$，重力矢量 $m\boldsymbol g_0=[0,\,0,\,-mg]^{\mathrm T}$，则实际重力广义力：
+
+$$\tau_{\mathrm{grav}} = J_P^{\mathrm T}(m\boldsymbol g_0) = -mgl\sin q = -4.905\ \mathrm{N\cdot m}.$$
+
+两条路径恒满足 $g+\tau_{\mathrm{grav}}=0$。势能加减常数不会改变梯度；若出现两者同号，必定是坐标系或角度正向定义不一致。
 :::
 :::
 
-::: think 迁移练习 · 换一个角度定义
-若改用 $\alpha=q-\pi/2$（从水平向右方向向上量角），同一质心写成
-$\boldsymbol p=(l\cos\alpha,0,l\sin\alpha)^{\mathrm T}$。
-求左端重力项 $g_\alpha$，并在 $\alpha=-\pi/3$ 核对上例。
+::: think 迁移自检 · 改用水平基准定义角度
+若改从 $+x$ 轴（水平向右）向上量取角度 $\alpha = q-\pi/2$，质心坐标写为 $\boldsymbol p(\alpha)=[l\cos\alpha,\,0,\,l\sin\alpha]^{\mathrm T}$。写出势能梯度重力项 $g_\alpha(\alpha)$，并在同一物理位置 $\alpha=-\pi/3$ 处核对保持力矩数值。
 
-::: sol 核对与回读
-$U=mgl\sin\alpha+\text{常数}$，所以 $g_\alpha=mgl\cos\alpha$。
-$\alpha=-\pi/3$ 时仍得 $4.905\ \mathrm{N\cdot m}$，实际重力广义力仍为其相反数。
-若写成正弦，回到质心高度表达式再求导；若两路径同号，回读上面的「谁在施力」。
-能独立完成两种角度定义后，再到 [运动方程](sec6-1.md#part-6.1.3) 把重力项放回完整模型。
+::: sol 答案
+$U(\alpha)=mgl\sin\alpha+\text{常数}$，故 $g_\alpha(\alpha)=\partial U/\partial\alpha = mgl\cos\alpha$。在 $\alpha=-\pi/3$ 处得 $g_\alpha(-\pi/3)=2\times9.81\times0.5\times\cos(-\pi/3)=+4.905\ \mathrm{N\cdot m}$，实际重力广义力仍为 $-4.905\ \mathrm{N\cdot m}$——换坐标定义只改变函数解析形式，不改变物理力矩大小与方向。
 :::
-:::
-
-### 6.1.2.4 小结与常见错误
-
-- **一句话**：$U=-\sum(m_i\boldsymbol g_0^{\mathrm T}\boldsymbol p_i+m_{m_i}\boldsymbol g_0^{\mathrm T}\boldsymbol p_{m_i})$，
-  只依赖 $\boldsymbol q$；它的梯度就是重力矩。
-- **两条推论**：$\partial U/\partial\dot q=0$；运动方程中的重力项 $\boldsymbol g(\boldsymbol q)=\partial U/\partial q$。
-
-::: think 常见错误清单
-1. **把势能写成速度的函数**：$U$ 与 $\dot q$ 无关；若写了，说明把动能项混进来了。
-2. **重力方向与坐标轴不一致**：$\boldsymbol g_0$ 的符号取决于 $z$ 轴朝向；平面臂若取 $y$ 竖直，
-   $\boldsymbol g_0=[0,-g,0]^{\mathrm T}$，不是 $[0,0,-g]^{\mathrm T}$。
-3. **重力矩符号反**：先用手算单摆检验——摆角增大时左端重力项应为正还是负，
-   取决于角度定义；符号错了，后面的控制前馈会整体反向。
 :::
 
 <a id="part-6.1.3"></a>
 
-## 6.1.3 运动方程
+## 6.1.4 关节空间运动方程
 
-把 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}$ 与 $U=U(\boldsymbol q)$
-代进拉格朗日方程，就得到**关节空间动力学模型**。这一节要把方程的每一项「叫出名字」，
-因为原书第 8 章的控制律就是逐项补偿这些名字。
+将 $T(\boldsymbol q,\dot{\boldsymbol q})=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}$ 与 $U(\boldsymbol q)$ 写入拉格朗日函数 $\mathcal L = \frac12\sum_{j,k}b_{jk}(\boldsymbol q)\dot q_j\dot q_k - U(\boldsymbol q)$，逐项求导计算左端第 $i$ 分量。
 
-### 6.1.3.1 代入拉格朗日方程
+1. **先求速度偏导及时间全导数**（利用 $B$ 对称，$b_{ij}=b_{ji}$）：
 
-$$L(\boldsymbol q,\dot{\boldsymbol q})=T(\boldsymbol q,\dot{\boldsymbol q})-U(\boldsymbol q)
-=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}-U(\boldsymbol q).$$
+$$\frac{\partial\mathcal L}{\partial\dot q_i} = \sum_{j=1}^{n}b_{ij}(\boldsymbol q)\dot q_j \implies \frac{\mathrm d}{\mathrm dt}\!\left(\frac{\partial\mathcal L}{\partial\dot q_i}\right) = \sum_{j=1}^{n}b_{ij}(\boldsymbol q)\ddot q_j + \sum_{j=1}^{n}\sum_{k=1}^{n}\frac{\partial b_{ij}}{\partial q_k}\dot q_k\dot q_j.$$
 
-先算速度项：
+2. **再求位置偏导**（$U$ 与速度无关，只对 $B(\boldsymbol q)$ 与 $U(\boldsymbol q)$ 求导）：
 
-$$\frac{\partial L}{\partial\dot q_i}=\frac{\partial T}{\partial\dot q_i}
-=\sum_{j=1}^{n}b_{ij}(\boldsymbol q)\dot q_j
-\qquad\Longrightarrow\qquad
-\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}
-=\sum_{j=1}^{n}b_{ij}\ddot q_j+\sum_{j=1}^{n}\sum_{k=1}^{n}\frac{\partial b_{ij}}{\partial q_k}\dot q_k\dot q_j.$$
+$$\frac{\partial\mathcal L}{\partial q_i} = \frac12\sum_{j=1}^{n}\sum_{k=1}^{n}\frac{\partial b_{jk}}{\partial q_i}\dot q_k\dot q_j - \frac{\partial U}{\partial q_i}.$$
 
-再算位置项（$U$ 不含 $\dot q$）：
+两式相减，记三指标系数
 
-$$\frac{\partial L}{\partial q_i}=\frac{\partial T}{\partial q_i}-\frac{\partial U}{\partial q_i}
-=\frac12\sum_{j=1}^{n}\sum_{k=1}^{n}\frac{\partial b_{jk}}{\partial q_i}\dot q_k\dot q_j
--\frac{\partial U}{\partial q_i}.$$
+$$h_{ijk}(\boldsymbol q) = \frac{\partial b_{ij}}{\partial q_k} - \frac12\frac{\partial b_{jk}}{\partial q_i},$$
 
-两式相减：
+并将 $g_i(\boldsymbol q)=\partial U/\partial q_i$ 记为左端重力项，即得各关节分量的动力学方程：
 
-$$\sum_{j=1}^{n}b_{ij}\ddot q_j
-+\sum_{j=1}^{n}\sum_{k=1}^{n}\Bigl(\frac{\partial b_{ij}}{\partial q_k}
--\frac12\frac{\partial b_{jk}}{\partial q_i}\Bigr)\dot q_k\dot q_j
-+\frac{\partial U}{\partial q_i}=\xi_i.$$
+$$\boxed{\ \sum_{j=1}^{n}b_{ij}(\boldsymbol q)\ddot q_j + \sum_{j=1}^{n}\sum_{k=1}^{n}h_{ijk}(\boldsymbol q)\dot q_k\dot q_j + g_i(\boldsymbol q) = \xi_i,\qquad i=1,\dots,n\ }$$
 
-### 6.1.3.2 分量形式与 $h_{ijk}$
+### 紧凑矩阵形式与各项命名
 
-定义
+构造 $n\times n$ 矩阵 $C(\boldsymbol q,\dot{\boldsymbol q})$，使其满足速度二次项映射
 
-$$h_{ijk}(\boldsymbol q)=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i},$$
+$$\sum_{j=1}^{n}c_{ij}(\boldsymbol q,\dot{\boldsymbol q})\dot q_j = \sum_{j=1}^{n}\sum_{k=1}^{n}h_{ijk}(\boldsymbol q)\dot q_k\dot q_j.$$
 
-则
+再将右端广义力中的摩擦阻力移至方程左端，得到全章最核心的**关节空间封闭运动方程**：
 
-$$\boxed{\ \sum_{j=1}^{n}b_{ij}(\boldsymbol q)\ddot q_j
-+\sum_{j=1}^{n}\sum_{k=1}^{n}h_{ijk}(\boldsymbol q)\dot q_k\dot q_j
-+g_i(\boldsymbol q)=\xi_i,\qquad i=1,\dots,n\ }$$
+$$\boxed{\ B(\boldsymbol q)\ddot{\boldsymbol q} + C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q} + F_{\mathrm v}\dot{\boldsymbol q} + F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q}) + \boldsymbol g(\boldsymbol q) = \boldsymbol\tau - J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e\ }$$
 
-其中 $g_i=\partial U/\partial q_i$ 是方程左端的重力项，其相反数才是重力实际施加的广义力（见 [6.1.2](sec6-1.md#part-6.1.2)）。
-
-### 6.1.3.3 矩阵形式
-
-把速度二次项收进矩阵 $C(\boldsymbol q,\dot{\boldsymbol q})$，要求其元素满足
-
-$$\sum_{j=1}^{n}c_{ij}(\boldsymbol q,\dot{\boldsymbol q})\dot q_j
-=\sum_{j=1}^{n}\sum_{k=1}^{n}h_{ijk}(\boldsymbol q)\dot q_k\dot q_j.$$
-
-于是
-
-$$\boxed{\ B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-+\boldsymbol g(\boldsymbol q)=\boldsymbol\xi\ }$$
-
-再把驱动、摩擦与末端接触对应的广义力写出来。令 $\boldsymbol\tau\in\mathbb R^n$ 为驱动广义力，$F_{\mathrm v}$、$F_{\mathrm s}$ 为各关节的粘滞与库仑摩擦系数矩阵；$J$ 为末端几何雅可比，$\boldsymbol h_e$ 为末端施加给环境的力与力矩。环境对机器人的作用方向相反，因此其关节广义力为 $-J^{\mathrm T}\boldsymbol h_e$。将摩擦阻力移到左侧，得到
-
-$$\boxed{\ B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}
-+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})
-+\boldsymbol g(\boldsymbol q)=\boldsymbol\tau-J^{\mathrm T}(\boldsymbol q)\boldsymbol h_e\ }$$
-
-对于转动关节，广义力的单位是 $\mathrm{N\cdot m}$；对于移动关节，单位是 $\mathrm N$。式中的 $F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})$ 是滑动时的简化库仑摩擦模型，零速度下的静摩擦需要另行建模，不能只靠取 $\operatorname{sgn}(0)=0$ 描述。
-
-这就是全章要推的「那一行公式」。后面 6.2 的两条性质、6.3 的两个算例，都是在补全或检验它。
-
-### 6.1.3.4 每一项的物理意义
-
-| 项 | 名称 | 物理意义 |
+| 数学项 | 物理名称 | 意义与读法 |
 |:--|:--|:--|
-| $b_{ii}\ddot q_i$ | 自惯量项 | 其他关节加速度为零时，关节 $i$ 的加速度产生的惯性广义力；锁住其他关节时 $b_{ii}$ 为该自由度的等效惯量 |
-| $b_{ij}\ddot q_j\ (i\neq j)$ | 耦合惯量项 | 关节 $j$ 的加速度在关节 $i$ 上引起的惯性广义力 |
-| $h_{ijj}\dot q_j^2$ | 离心项 | 与关节 $j$ 速度平方有关的广义力；$h_{iii}=\tfrac12\partial b_{ii}/\partial q_i$，仅在该偏导为零时消失 |
-| $h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ | 科氏项 | 与两个关节速度乘积有关的广义力 |
-| $g_i(\boldsymbol q)$ | 重力项 | 当前位形下平衡重力所需的广义力；实际重力广义力为 $-g_i$ |
-| $(F_{\mathrm v}\dot{\boldsymbol q})_i$ | 粘滞摩擦 | 阻力大小与速度成正比，速度为零时该项为零 |
-| $(F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q})_i$ | 库仑摩擦 | 滑动时阻力方向与速度相反，零速度处需要另行描述静摩擦 | 
-| $J^{\mathrm T}\boldsymbol h_e$ | 末端接触力 | 末端力/力矩经雅可比转置折回关节 |
+| $b_{ii}\ddot q_i$ | 自惯量项 | 其余关节加速度为零时，使关节 $i$ 产生单位加速度所需的等效惯量（物理上是锁死其余关节后驱动轴感受到的惯量，含下游连杆及转子） |
+| $b_{ij}\ddot q_j\ (i\neq j)$ | 耦合惯量项 | 关节 $j$ 的加速度通过连杆结构传递到关节 $i$ 的惯性耦合效应 |
+| $h_{ijj}\dot q_j^2$ | 离心项 | 仅由单关节速度平方引起的径向/等效离心力矩；对角元 $h_{iii}=\frac12\frac{\partial b_{ii}}{\partial q_i}$ 只在 $b_{ii}$ 不依赖 $q_i$ 时才为零 |
+| $h_{ijk}\dot q_j\dot q_k\ (j\neq k)$ | 科氏项 | 不同关节同时运动引起的速度乘积耦合效应（来自运动过程中惯量随位形变化的时间导数与能量位置偏导之合） |
+| $g_i(\boldsymbol q)$ | 左端重力项 | 静止平衡重力所需给出的广义力；实际重力作用力为 $-g_i(\boldsymbol q)$ |
+| $F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}(\dot{\boldsymbol q})$ | 摩擦损耗项 | 粘滞摩擦与滑动库仑摩擦；阻碍运动故在左端取正号 |
+| $-J^{\mathrm T}\boldsymbol h_e$ | 接触外力折算项 | 末端输出到环境的力/力矩 $\boldsymbol h_e$ 在关节侧的反作用需求，即执行器必须额外补偿 $+J^{\mathrm T}\boldsymbol h_e$ |
 
-::: note 「锁住其他关节」是什么意思
-$b_{ii}$ 的含义来自 $T=\frac12\dot q^{\mathrm T}B\dot q$：若只有转动关节 $i$ 以 $1\ \mathrm{rad/s}$ 转动，其余关节锁死，动能为 $\frac12b_{ii}(1\ \mathrm{rad/s})^2$。因此 $b_{ii}$ 是这一运动方式对应的等效转动惯量，而不是连杆 $i$ 自己的惯量。后续连杆和转子的运动也可能贡献动能；若关节 $i$ 是移动关节，$b_{ii}$ 对应等效质量。
-:::
-
-::: intuition 为什么会有离心项和科氏项
-想象一个人握着哑铃转圈：手臂伸得越长，绕身体转动的惯量越大。即使转速不变，维持圆周运动也需要径向力，这有助于理解速度平方项；如果手臂同时伸缩和转动，还会出现与伸缩速度、转动速度乘积有关的科氏项。严格计算时，速度二次项既来自对 $B\dot q$ 求时间导数中的 $\dot B\dot q$，也来自位置偏导数 $-\partial T/\partial q_i$；两者合并才得到上面的 $h_{ijk}$。
-:::
-
-::: ex 例 6.1.3.A · 同一位置，保持、自由下落、主动加速需要多少力矩 {#ex-6.1.3.A}
-沿用 [势能节的质点单摆](sec6-1.md#ex-6.1.2.A)：$m=2\ \mathrm{kg}$、$l=0.5\ \mathrm m$，
-$q=\pi/6$、当前 $\dot q=0$。忽略摩擦与末端接触，求 (a) 静止保持；(b) 关闭电机；(c) 要求 $\ddot q=2\ \mathrm{rad/s^2}$ 时的结果。
+::: ex 例 6.1.3.A · 同一位形下保持、释放与加速的力矩对比 {#ex-6.1.3.A}
+沿用 [例 6.1.2.A](sec6-1.md#ex-6.1.2.A) 中的单自由度摆（$m=2\ \mathrm{kg}$，$l=0.5\ \mathrm m$，忽略杆与转子质量及摩擦）。当摆恰好处于 $q=\pi/6$ 且瞬时速度 $\dot q=0$ 时，分别计算：(a) 静止悬停所需输入力矩 $\tau$；(b) 关闭电机 ($\tau=0$) 瞬间的角加速度 $\ddot q$；(c) 施加主动加速 $\ddot q=2\ \mathrm{rad/s^2}$ 所需力矩 $\tau$。
 
 ::: sol 解
-先把模型压缩为一个标量：$B=ml^2=0.5\ \mathrm{kg\cdot m^2}$ 为常数，$C=0$，
-$g=mgl\sin q=4.905\ \mathrm{N\cdot m}$，所以
+此时 $B=ml^2=0.5\ \mathrm{kg\cdot m^2}$ 为常数，$C=0$，重力项 $g(\pi/6)=+4.905\ \mathrm{N\cdot m}$，于是瞬间方程为
 
-$$0.5\ddot q+4.905=\tau.$$
+$$0.5\,\ddot q + 4.905 = \tau.$$
 
-(a) 保持要求 $\ddot q=0$，故 $\tau=4.905\ \mathrm{N\cdot m}$。
-(b) 关闭电机是 $\tau=0$，故 $\ddot q=-9.81\ \mathrm{rad/s^2}$，负号表示朝垂下位置加速。
-(c) 所需力矩 $\tau=0.5\times2+4.905=5.905\ \mathrm{N\cdot m}$，其中 $4.905$ 用于抵消重力，$1$ 用于加速。
+- (a) 静止保持要求 $\ddot q=0$，故 $\tau = 4.905\ \mathrm{N\cdot m}$。
+- (b) 关闭电机即 $\tau=0$，得 $\ddot q = -4.905/0.5 = -9.81\ \mathrm{rad/s^2}$（向下垂方向回摆加速）。
+- (c) 主动加速 $\ddot q=2\ \mathrm{rad/s^2}$ 时，$\tau = 0.5\times2 + 4.905 = 5.905\ \mathrm{N\cdot m}$（$4.905$ 平衡重力，$1.0$ 产生角加速度）。
 
-**现在速度为零只会消掉速度项，不能自动消掉加速度项。** 静止保持与自由释放在这一瞬间可以有相同的 $q,\dot q$，但因输入不同，加速度不同。
+**核心教训**：瞬时速度 $\dot q=0$ 只消去速度耦合项与粘滞摩擦，**不能自动消去惯量加速项 $B\ddot q$**。保持静止与自由释放瞬间处于同一相点 $(q,\dot q)=(\pi/6,0)$，但控制输入不同导致加速度截然不同。
 :::
 :::
 
-::: think 迁移练习 · 加速方向改了，力矩必须反向吗
-若同一位形要求 $\ddot q=-2\ \mathrm{rad/s^2}$，力矩是多少？为什么它仍可为正？
-
-::: sol 核对
-$\tau=0.5\times(-2)+4.905=3.905\ \mathrm{N\cdot m}$。
-电机向正方向拉，但它的力矩小于保持所需值，重力合力矩仍为负，所以摆向负方向加速。
-若认为「负加速度必配负电机力矩」，回读本节矩阵方程，把 $-g$ 放到右侧看净力矩；
-若把 $\dot q=0$ 误作 $\ddot q=0$，重做例题 (a)、(b) 的对比。
+::: think 延伸核对 · 若要求负向加速度 $\ddot q=-2\ \mathrm{rad/s^2}$，电机输出力矩一定是负的吗？
+::: sol 答案
+代入同一瞬时方程得 $\tau = 0.5\times(-2) + 4.905 = +3.905\ \mathrm{N\cdot m} > 0$。此时电机仍在向 $+q$ 方向托举，只是托举力矩小于平衡重力所需的 $4.905\ \mathrm{N\cdot m}$，净力矩指向下垂方向，从而控制受控减速/可控回摆。
 :::
 :::
 
-### 6.1.3.5 两个「伏笔」
-
-::: think 本节埋下的两个问题（6.2 回答）
-老师在课上把这两点作为「伏笔」专门强调：本节结论看似完整，这两处留的道理要到 6.2 才能说清。
-1. **$C$ 不唯一**：只要满足 $\sum_j c_{ij}\dot q_j=\sum_{j,k}h_{ijk}\dot q_k\dot q_j$，$C$ 可以有无数组。
-   不同的 $C$ 会改变 $\dot B-2C$ 的对称性——这正是 [6.2.1](sec6-2.md#part-6.2.1) 要讲的。
-2. **$h_{ijk}$ 的结构**：它由 $B$ 的偏导数得到；重力项 $\boldsymbol g$ 则由势能 $U$ 求偏导得到。给定 $B$ 与 $U$ 后，可以分别求导并组合出速度项和重力项。
+::: note 本节留下的一个悬念：$C(\boldsymbol q,\dot{\boldsymbol q})$ 并不唯一
+由分量式进入矩阵形式时，只要求乘积向量 $C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}$ 的结果等于 $\sum_{j,k}h_{ijk}\dot q_k\dot q_j$。当自由度 $n\ge 2$ 时，有无数个矩阵 $C$ 在右乘 $\dot{\boldsymbol q}$ 后给出同一力矩向量。不同选法是否都满足能量守恒与稳定性所需的性质？这正是下一节 [6.2.1](sec6-2.md#part-6.2.1) 的核心问题。
 :::
 
-### 6.1.3.6 小结与常见错误
+## 本节小结
 
-- **一句话**：$B\ddot q+C\dot q+\boldsymbol g=\boldsymbol\tau-J^{\mathrm T}h_e$，外加摩擦项。
-- **三块**：惯性（$B\ddot q$）、速度耦合（$C\dot q$）、重力（$g$）；摩擦与末端力是外延。
-- **一个关键结构**：$C$ 的元素来自 $B$ 的偏导，因此 $C$ 不唯一。
+- **拉格朗日建模三步法**：选取广义坐标 $\boldsymbol q$ $\to$ 计算总动能 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q}$ 与势能 $U(\boldsymbol q)$ $\to$ 代入方程得左端惯性/速度耦合/重力项，右端填入非保守虚功广义力。
+- **主方程与核心速查**：
 
-::: think 常见错误清单
-1. **把 $C\dot q$ 写成 $C$ 乘 $\dot q$ 但 $C$ 里漏了 $\dot q$**：$C$ 本身是 $q,\dot q$ 的函数，$C\dot q$ 才是力矩。
-2. **$h_{ijk}$ 的系数 $1/2$ 漏掉**：第二项是 $-\frac12\partial b_{jk}/\partial q_i$，不是 $-\partial b_{jk}/\partial q_i$。
-3. **摩擦项符号**：摩擦总是**阻碍**运动，故在左端取正、移到右端取负；$\operatorname{sgn}\dot q$ 在 $\dot q=0$ 处不连续。
-4. **末端力方向**：$h_e$ 是末端作用在环境上的力；环境反力则符号相反。写控制律时先统一约定。
-:::
+| 名称 | 公式 | 注意事项 |
+|:--|:--|:--|
+| 关节空间主方程 | $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}+F_{\mathrm s}\operatorname{sgn}\dot{\boldsymbol q}+\boldsymbol g=\boldsymbol\tau-J^{\mathrm T}\boldsymbol h_e$ | $\boldsymbol h_e$ 为末端施于环境的力；转动关节 $\tau_i$ 单位 $\mathrm{N\cdot m}$，移动关节为 $\mathrm N$ |
+| 惯性矩阵 $B(\boldsymbol q)$ | 对称正定（非退化下）且随位形变化 | 包含连杆平动/转动与转子平动/转动共四块贡献，转动关节 $k_r$ 无量纲，移动关节 $k_r$ 单位 $\mathrm{rad/m}$ |
+| 左端重力项 $\boldsymbol g(\boldsymbol q)$ | $\boldsymbol g=(\partial U/\partial\boldsymbol q)^{\mathrm T}=-\boldsymbol\tau_{\mathrm{grav}}$ | 与实际重力广义力差一负号；静止悬停时电机出 $\boldsymbol\tau=\boldsymbol g$ |
+| 速度系数 $h_{ijk}$ | $h_{ijk}=\frac{\partial b_{ij}}{\partial q_k}-\frac12\frac{\partial b_{jk}}{\partial q_i}$ | 第二项含 $1/2$ 系数；$h_{ijj}$ 为离心系数，$h_{ijk}(j\neq k)$ 为科氏系数 |
 
-::: think 默写点 · 合上书再写
-1. 从 $L=T-U$ 推到 $B\ddot q+C\dot q+g=\xi$ 的完整步骤。
-2. 写出 $h_{ijk}$ 的定义，并解释 $b_{ii}$、$b_{ij}$、$h_{ijj}$、$h_{ijk}$、$g_i$ 的物理意义。
-3. 写出含摩擦与末端力的完整方程。
-4. 为什么 $C$ 不唯一？这会带来什么后果？
-:::
-
-**下一节**：[6.2 动力学模型的结构性质](sec6-2.md) 给「那一行公式」补上两条结构定理——反对称性与参数线性性；6.3 再用两连杆把每一项实际算出来。
-
-核心公式速查：
-
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| $L=T-U$；$\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}-\frac{\partial L}{\partial q_i}=\xi_i$ | 理想约束、$U=U(q)$ | 视 $q_i$ | 约束力自动消失靠理想约束假设；非保守力必须进 $\xi_i$ |
-| $\xi_i=\tau_i-(F_{\mathrm v}\dot q)_i-(F_{\mathrm s}\operatorname{sgn}\dot q)_i-(J^{\mathrm T}h_e)_i$ | 开链、$h_e$=末端向环境施加 | N·m / N | 末端力方向约定先统一；静摩擦另建 |
-| $T=\frac12\dot q^{\mathrm T}B(q)\dot q$，$B=\sum_i(m_iJ_P^{\mathrm T}J_P+J_O^{\mathrm T}RI^iR^{\mathrm T}J_O+\text{转子两块})$ | 刚性传动 | kg·m² / kg | $J_P^{(i)}$ 只取到连杆 $i$；转子项系数 $k_r^2$ |
-| $U=-\sum_i(m_i g_0^{\mathrm T}p_i+m_{m_i} g_0^{\mathrm T}p_{m_i})$；$\boldsymbol g(q)=\partial U/\partial q$ | $g_0$ 依坐标轴向 | J、N·m | $\boldsymbol g$ 是方程左端项，实际重力广义力为 $-\boldsymbol g$ |
-| $B\ddot q+C\dot q+g=\tau-J^{\mathrm T}h_e$（+ 摩擦项） | 全章主方程 | — | $h_{ijk}=\partial b_{ij}/\partial q_k-\frac12\partial b_{jk}/\partial q_i$ 的 $1/2$；$C$ 不唯一 |
+**下一节**：[6.2 动力学模型的结构性质](sec6-2.md)揭示控制稳定性依赖的 $\dot B-2C$ 反对称性，以及参数辨识依赖的 $\boldsymbol\tau=Y\boldsymbol\pi$ 线性回归结构。
 
 ::: think 本节的课堂幻灯片（源料对照）
 
-本节正文已给出全部推导与自算例；下列课件页保留以备核对，**不构成正文的替代**（对应录播 00:33:00–01:22:30；子节起播：6.1.1 起 00:49:30、6.1.2 起 01:09:10、6.1.3 起 01:15:30）。
-
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 42:11 | [lagrange-eq.jpg](../assets/ch06/lagrange-eq.jpg) | 拉格朗日公式与紧凑形式 | 定义 6.1.1 完整给出，含质点投影推导 |
-| 42:11 | [example-pendulum.jpg](../assets/ch06/example-pendulum.jpg) | 例 7.1（带齿轮的摆） | 完整推导 + 课堂强调三件事 + 减速比数值练习 |
-| 27:37 | [inertia-tensor.jpg](../assets/ch06/inertia-tensor.jpg) | 惯性张量矩阵形式与平行轴定理 | 定义完整给出；参考系与平行轴两件事在 note 盒展开 |
-| 25:57 | [inertia-def.jpg](../assets/ch06/inertia-def.jpg) | 惯性张量定义（绕任意直线） | 正文按积分定义给出，符号约定与板书一致 |
-| 66:20 | [kinetic-rotor.jpg](../assets/ch06/kinetic-rotor.jpg) | 转子动能、雅可比与减速比 | 完整推导；移动关节 $k_r$ 量纲坑已注明 |
-| 36:20 | [kinetic-link.jpg](../assets/ch06/kinetic-link.jpg) | 连杆动能三块分解 | 平动/交叉/转动三块逐步推导，交叉项归零由质心定义给出 |
-| 32:33 | [energy-intro.jpg](../assets/ch06/energy-intro.jpg) | 预备知识——动能与势能的引入 | 6.1.1/6.1.2 的定义完整覆盖 |
-| 68:23 | [inertia-matrix.jpg](../assets/ch06/inertia-matrix.jpg) | 总动能与 $B(q)$ 完整表达式 | 四块求和式 + 三条性质完整给出 |
-| 69:13 | [potential.jpg](../assets/ch06/potential.jpg) | 势能只依赖 q | 推导 + 符号双路径核对例题 |
-| 75:27 | [eom-forces.jpg](../assets/ch06/eom-forces.jpg) | 非保守力如何进入方程 | 四来源表 + 符号约定 note 完整给出 |
-| 76:25 | [eom-compact.jpg](../assets/ch06/eom-compact.jpg) | 紧凑矩阵形式 | 主方程完整给出；「那一行公式」的每一项在 6.1.3.4 逐项命名 |
+| 25:57 | [inertia-def.jpg](../assets/ch06/inertia-def.jpg) | 惯性张量矩阵与积分定义 | 已整合入 6.1.2 惯性张量定义式 |
+| 27:37 | [inertia-tensor.jpg](../assets/ch06/inertia-tensor.jpg) | 坐标变换与平行轴定理 | 已整合入 6.1.2 坐标变换与平行轴注记 |
+| 32:33 | [energy-intro.jpg](../assets/ch06/energy-intro.jpg) | 动能与势能引入 | 已按 6.1.2–6.1.3 能量定义展开 |
+| 36:20 | [kinetic-link.jpg](../assets/ch06/kinetic-link.jpg) | 连杆动能三块分解 | 完整推导柯尼希分解与交叉项归零证明 |
+| 42:11 | [lagrange-eq.jpg](../assets/ch06/lagrange-eq.jpg) | 拉格朗日方程与紧凑形式 | 由定义 6.1.1 完整给出 |
+| 42:11 | [example-pendulum.jpg](../assets/ch06/example-pendulum.jpg) | 例 7.1 带齿轮的摆 | 例 6.1.1 完整推导 + 减速比占比检验 |
+| 66:20 | [kinetic-rotor.jpg](../assets/ch06/kinetic-rotor.jpg) | 转子动能与减速比 | 整合入 6.1.2 转子建模与 $k_r$ 量纲陷阱 |
+| 68:23 | [inertia-matrix.jpg](../assets/ch06/inertia-matrix.jpg) | 总动能与 $B(\boldsymbol q)$ 求和式 | 完整给出四块求和式及对称正定三条性质 |
+| 69:13 | [potential.jpg](../assets/ch06/potential.jpg) | 势能梯度与重力项 | 例 6.1.2.A 双路径核对正负号 |
+| 75:27 | [eom-forces.jpg](../assets/ch06/eom-forces.jpg) | 非保守广义力进入方式 | 四来源表格完整展开 |
+| 76:25 | [eom-compact.jpg](../assets/ch06/eom-compact.jpg) | 紧凑运动方程与物理命名 | 6.1.4 逐项命名 + 例 6.1.3.A 工况对比 |
 :::

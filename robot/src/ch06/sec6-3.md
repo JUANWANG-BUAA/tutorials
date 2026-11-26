@@ -1,402 +1,187 @@
 # 6.3 两连杆动力学算例
 
-本页导航：[两连杆笛卡儿臂](#part-6.3.1) · [两连杆平面臂](#part-6.3.2)。
+前两节已经建立动力学一般理论与结构性质，但只有落在具体机构上才能直观看见惯性矩阵 $B(\boldsymbol q)$ 何时随位形改变、离心与科氏项如何产生、转动关节与移动关节的耦合究竟差在哪里。
+
+本节构造两个两自由度对照组：先看双移动关节正交**笛卡儿臂**的彻底解耦特性，再完整手算**平面 2R 转动臂**的 $B(\boldsymbol q)$、Christoffel 矩阵 $C$、重力项 $\boldsymbol g$ 以及 8 参数线性化表达式（对应原书 §7.3）。
+
+本节导航：[两连杆笛卡儿臂](#part-6.3.1) · [两连杆平面臂](#part-6.3.2)。
 
 <a id="part-6.3.1"></a>
 
 ## 6.3.1 两连杆笛卡儿臂
 
-> 录播 01:23:20–01:23:45（课件切换），配合教材 §7.3.1。这是全章最简单的算例：**惯性矩阵是常数、
-> 速度耦合项为零、两轴完全解耦**。它存在的意义是给平面臂（6.3.2）做「对照组」——
-> 让你看清哪些复杂性来自「转动关节」，哪些来自「位形变化」。
+### 构型描述与雅可比
 
-### 6.3.1.1 结构与广义坐标
+考察原书图 7.3 的正交 PR/PP 结构（双移动关节）：关节 1 沿竖直基座 $+z$ 轴平移 $d_1$，关节 2 沿水平正交 $+x$ 轴平移 $d_2$，故广义坐标 $\boldsymbol q=[d_1,\,d_2]^{\mathrm T}$。两连杆质量为 $m_1,m_2$；转子质量为 $m_{m_1},m_{m_2}$，转子轴沿对应运动轴、质心在轴上，转动惯量为 $I_{m_1},I_{m_2}$；若采用丝杠或齿条等旋转–直线传动且 $\dot\vartheta_{m_i}=k_{r_i}\dot d_i$，传动比 $k_{r_i}$ 的单位为 $\mathrm{rad/m}$。
 
-两连杆笛卡儿臂（教材图 7.3）：关节 1 沿 $z_0$ 方向移动 $d_1$，关节 2 沿与 $z_0$ 垂直的方向移动 $d_2$。
-取
+计算各刚体的几何雅可比：
+- **连杆平动与转动**：两根杆仅做平动，无转动，故 $J_O^{(1)}=J_O^{(2)}=0$，质心平动雅可比为
 
-$$\boldsymbol q=[d_1,\ d_2]^{\mathrm T}.$$
+$$J_P^{(1)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix},\qquad J_P^{(2)}=\begin{bmatrix}0&1\\0&0\\1&0\end{bmatrix}.$$
 
-设两连杆质量为 $m_1,m_2$，两转子质量为 $m_{m_1},m_{m_2}$，绕各自轴的转动惯量为 $I_{m_1},I_{m_2}$。采用刚性丝杠或其他旋转—直线传动，记 $\dot\theta_{m_i}=k_{r_i}\dot d_i$，则 $k_{r_i}$ 的单位为 $\mathrm{rad/m}$，不是无量纲的齿轮减速比。取两关节轴分别沿基系 $+z$、$+x$；转子轴与相应关节轴平行，转子质心位于该轴上。转子 1 的安装座固定，转子 2 的安装座随连杆 1 平移。
+- **电机转子**：转子 1 安装于固定基座（$J_P^{(m_1)}=0$），仅绕 $z$ 轴自转；转子 2 安装于连杆 1 上，随关节 1 竖直平动并绕 $x$ 轴自转：
 
-### 6.3.1.2 雅可比与惯性矩阵
+$$J_P^{(m_2)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix},\qquad J_O^{(m_1)}=\begin{bmatrix}0&0\\0&0\\k_{r_1}&0\end{bmatrix},\qquad J_O^{(m_2)}=\begin{bmatrix}0&k_{r_2}\\0&0\\0&0\end{bmatrix}.$$
 
-移动关节的平动雅可比列为 $\boldsymbol z_{j-1}$，因此
+### 惯性矩阵、重力项与完全解耦方程
 
-$$J_P^{(1)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix},\qquad
-J_P^{(2)}=\begin{bmatrix}0&1\\0&0\\1&0\end{bmatrix}.$$
+因为两移动轴正交，连杆 2 质心速度平方满足 $\|\dot{\boldsymbol p}_2\|^2=\dot d_1^2+\dot d_2^2$，交叉项为零。汇总所有动能：
 
-两个连杆都**不做转动**（$\boldsymbol\omega_1=\boldsymbol\omega_2=\boldsymbol 0$），所以 $J_O^{(1)}=J_O^{(2)}=0$。转子 1 绕 $z$ 轴、转子 2 绕 $x$ 轴转，其角速度雅可比为
+$$T = \frac12\bigl(m_1+m_{m_2}+m_2+k_{r_1}^2I_{m_1}\bigr)\dot d_1^2 + \frac12\bigl(m_2+k_{r_2}^2I_{m_2}\bigr)\dot d_2^2 = \frac12\dot{\boldsymbol q}^{\mathrm T}B\dot{\boldsymbol q},$$
 
-$$J_O^{(m_1)}=\begin{bmatrix}0&0\\0&0\\k_{r_1}&0\end{bmatrix},\qquad
-J_O^{(m_2)}=\begin{bmatrix}0&k_{r_2}\\0&0\\0&0\end{bmatrix}.$$
+得到常数对角惯性矩阵：
 
-转子 1 的质心固定；转子 2 的质心只随第一轴平移。因此
+$$B = \begin{bmatrix}m_1+m_{m_2}+k_{r_1}^2I_{m_1}+m_2&0\\0&m_2+k_{r_2}^2I_{m_2}\end{bmatrix}.$$
 
-$$J_P^{(m_1)}=0,\qquad J_P^{(m_2)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix}.$$
+因为 $B$ 与 $\boldsymbol q$ 无关，所有位置偏导数为零，故 $\dot B=0$ 且按 Christoffel 选法取 $C=O$（无离心力和科氏力）。再取 $\boldsymbol g_0=[0,0,-g]^{\mathrm T}$，计算势能 $U=(m_1+m_{m_2}+m_2)gd_1$（外加常数），求偏导得
 
-两轴正交，连杆 2 的质心速度平方为 $\dot d_1^2+\dot d_2^2$，没有交叉项。把连杆平动和转子平动、自转动能相加：
+$$g_1 = (m_1+m_{m_2}+m_2)g,\qquad g_2 = 0.$$
 
-$$T=\tfrac12(m_1+m_{m_2}+m_2)\dot d_1^2+\tfrac12m_2\dot d_2^2
-+\tfrac12I_{m_1}k_{r_1}^2\dot d_1^2+\tfrac12I_{m_2}k_{r_2}^2\dot d_2^2.$$
+无摩擦、无末端接触时的运动方程为两道彼此独立的一维牛顿方程：
 
-与 $T=\tfrac12\dot q^{\mathrm T}B\dot q$ 比较，或代入 [6.1.1](sec6-1.md#part-6.1.1) 的总惯量式，得到
+$$\bigl(m_1+m_{m_2}+k_{r_1}^2I_{m_1}+m_2\bigr)\ddot d_1 + (m_1+m_{m_2}+m_2)g = \tau_1,$$
 
-$$B=\begin{bmatrix}
-m_1+m_{m_2}+k_{r_1}^2I_{m_1}+m_2&0\\
-0&m_2+k_{r_2}^2I_{m_2}
-\end{bmatrix}.$$
+$$\bigl(m_2+k_{r_2}^2I_{m_2}\bigr)\ddot d_2 = \tau_2.$$
 
-**关键观察**：$B$ 不含 $d_1,d_2$，所以 $\dot B=0$、速度二次项 $C\dot q=0$。按 [6.2.1](sec6-2.md#part-6.2.1) 的 Christoffel 选法，$C=0$；其他满足同一速度项的矩阵表示不必逐元素为零。这里没有离心项，也没有科氏项。
-
-### 6.3.1.3 重力项
-
-取 $\boldsymbol g_0=[0,0,-g]^{\mathrm T}$（$z$ 竖直向上），用 $g_i=\partial U/\partial q_i$：
-
-$$g_1=(m_1+m_{m_2}+m_2)g,\qquad g_2=0.$$
-
-物理上：关节 1 竖直运动，要托起「连杆 1 + 转子 2 + 连杆 2」的总重量；关节 2 水平运动，重力不做功。
-
-### 6.3.1.4 运动方程
-
-无摩擦、无末端接触力时：
-
-$$\bigl(m_1+m_{m_2}+k_{r_1}^2I_{m_1}+m_2\bigr)\ddot d_1+(m_1+m_{m_2}+m_2)g=\tau_1,$$
-
-$$\bigl(m_2+k_{r_2}^2I_{m_2}\bigr)\ddot d_2=\tau_2.$$
-
-**两个方程完全解耦**：$\tau_1$ 只影响 $d_1$，$\tau_2$ 只影响 $d_2$。这就是笛卡儿结构的「礼物」——
-每个关节可以独立设计控制器，不必考虑耦合。
-
-::: note 解耦的两个条件（缺一不可）
-教材特别提醒：解耦不只是「笛卡儿结构」的功劳，还依赖**两关节轴正交**这一几何条件。
-若关节 2 的轴与关节 1 的轴成 $\pi/4$（习题 7.1），$B$ 就不再是对角阵，两轴出现耦合。
-换句话说：**结构决定 $B$ 是否随位形变，几何决定 $B$ 是否对角**。
+::: note 为什么正交笛卡儿臂能解耦？——两条条件缺一不可
+1. **构型决定常数性（无转动关节）**：只有平动使得惯性矩阵不依赖位形，从而消去 $C\dot{\boldsymbol q}$；
+2. **几何决定对角性（关节轴互相正交）**：若两移动轴夹角 $\alpha\neq\pi/2$（如原书习题 7.1 取 $\alpha=\pi/4$），即使全是移动关节仍使 $b_{12}=m_2\cos\alpha\neq 0$，两轴在加速度项上仍存在耦合。
 :::
 
-::: intuition 动手实验 · 拖动 $d_1,d_2$，看 $B$ 纹丝不动（3D）
-拖动 $d_1,d_2$，下方 $b_{11},b_{22},b_{12}$ 保持不变。本例两根连杆只沿固定方向平移：把各连杆和转子的动能相加，得到的 $B$ 不含位置。于是 $\dot B=0$、$C=O$，没有离心项和科氏项；重力只对竖直运动做功，所以 $g_2=0$。与 [6.3.2](sec6-3.md#part-6.3.2) 的平面转动臂比较，看看位形变化如何进入惯性矩阵。
+::: intuition 动手实验 · 拖动 $d_1,d_2$，观察常数惯性矩阵（3D）
+拖动两移动关节位置 $d_1,d_2$，可观测到 $b_{11},b_{22}$ 始终保持常数且交叉项 $b_{12}\equiv 0$；与下一节平面 2R 臂对比，即可直观看出转动关节如何引入位形耦合。
 
 <div class="lab" data-lab="cart3d"></div>
-:::
-
-### 6.3.1.5 小结与常见错误
-
-- **一句话**：笛卡儿臂的两个关节都只平动，$B$ 为常数对角阵，$C=0$，$g_2=0$，两轴解耦。
-- **三条性质**：$B$ 常数（$\dot B=0$）、$C=0$、$B$ 对角（轴正交时）。
-- **一个对照**：平面臂（6.3.2）的 $B$ 随 $\vartheta_2$ 变、$C\neq0$、$B$ 非对角——差别全部来自转动关节。
-
-::: think 常见错误清单
-1. **忘记转子的 $k_r^2I_m$**：它进的是 $B$ 的对角元，漏了会让 $\ddot d$ 的系数偏小。
-2. **把 $g_1$ 写成 $m_1g$**：关节 1 要托起的是它上面所有质量，包括转子 2 与连杆 2。
-3. **以为「笛卡儿」就一定解耦**：轴不正交时 $B$ 非对角（习题 7.1）。
-4. **在 $C$ 上硬算**：$B$ 常数时速度二次项为零；按本章 Christoffel 选法 $C=0$，不必逐项求导。
 :::
 
 <a id="part-6.3.2"></a>
 
 ## 6.3.2 两连杆平面臂
 
-第二章用这类机械臂算位置，第三章算速度与静力。现在给杆加上质量，要求第一关节从静止开始加速，第二关节的相对角度保持不变。第二关节是否就不需要出力？先保留自己的判断，读到惯性矩阵的非对角元时再核对。
+### 先用均匀细杆数值热身：保持与加速两张力矩账单
 
-先把这个问题算出一组数，再展开教材的完整转子模型。沿用[两连杆练习](../training/two-link.md#mission-load)的角度：$q_1$ 从固定 $x$ 轴逆时针量起，$q_2$ 相对第一杆逆时针量起；下文教材记号 $\vartheta_i=q_i$。这次明确把运动平面放在竖直方向，$x$ 向右、$y$ 向上，重力向下。两根均匀细杆各长 $1\,\mathrm m$、质量各为 $1\,\mathrm{kg}$，质心距各自关节 $0.5\,\mathrm m$，质心转动惯量均为 $mL^2/12=1/12\,\mathrm{kg\cdot m^2}$，取 $g_0=9.81\,\mathrm{m/s^2}$。撤掉第三、五章静力题的末端接触力，忽略摩擦、转子质量与转动惯量以及传动惯量；以下 $\tau$ 都是**关节侧**驱动力矩，不是减速器前的电机力矩。
+取竖直平面内的两连杆 2R 机械臂（$+x$ 向右、$+y$ 向上、重力加速度 $g_0=9.81\ \mathrm{m/s^2}$ 向下），关节角记作 $q_1$（从 $+x$ 逆时针）与 $q_2$（相对第一杆逆时针）。先采用[两连杆训练第七关](../training/two-link.md#mission-load)的简化均匀细杆参数：杆长各 $1\,\mathrm m$、质量各 $1\,\mathrm{kg}$、质心距各自关节 $0.5\,\mathrm m$、绕各自质心转动惯量 $I_1=I_2=\frac{1}{12}mL^2=\frac{1}{12}\ \mathrm{kg\cdot m^2}$，暂忽略摩擦、转子质量与惯量。考察位形 $\boldsymbol q_A=(0,\pi/2)$：
 
-在 $q_A=(0,\pi/2)$ 静止，先要多大保持力矩？两杆质心高度为
+1. **静态重力补偿**：两质心高度为 $y_{c1}=\frac12\sin q_1$ 与 $y_{c2}=\sin q_1+\frac12\sin(q_1+q_2)$，总势能 $U=(1\,\mathrm{kg})g_0\bigl[\frac32\sin q_1+\frac12\sin(q_1+q_2)\bigr]\mathrm m$，求梯度得左端重力项
 
-$$y_{c1}=\frac12\sin q_1\,\mathrm m,\qquad
-y_{c2}=\left[\sin q_1+\frac12\sin(q_1+q_2)\right]\,\mathrm m.$$
+$$\boldsymbol g(\boldsymbol q) = \frac{\partial U}{\partial\boldsymbol q} = 9.81\begin{bmatrix}\frac32\cos q_1+\frac12\cos(q_1+q_2)\\\frac12\cos(q_1+q_2)\end{bmatrix}\ \mathrm{N\cdot m} \implies \boldsymbol g(\boldsymbol q_A) = \begin{bmatrix}14.715\\0\end{bmatrix}\ \mathrm{N\cdot m}.$$
 
-因此势能与重力补偿项是
+第 1 关节水平托起两个质心（力臂 $0.5\,\mathrm m$ 与 $1\,\mathrm m$），保持需 $14.715\,\mathrm{N\cdot m}$；第 2 杆质心恰好在关节 2 正上方，力臂为零。若第 1 关节电机上限仅 $12\,\mathrm{N\cdot m}$，则**即使将速度降到零，也无法静止悬停在 $\boldsymbol q_A$**。
 
-$$U=(1\,\mathrm{kg})g_0\left[\frac32\sin q_1+\frac12\sin(q_1+q_2)\right]\mathrm m,$$
+2. **从静止起步加速 $\ddot{\boldsymbol q}=(1,0)^{\mathrm T}\ \mathrm{rad/s^2}$**：利用平动与转动动能写出总动能 $T=\frac12\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q}$，整理系数得
 
-$$\boldsymbol g(q)=\frac{\partial U}{\partial q}
-=(1\,\mathrm{kg})g_0(1\,\mathrm m)
-\begin{bmatrix}\frac32\cos q_1+\frac12\cos(q_1+q_2)\\\frac12\cos(q_1+q_2)\end{bmatrix},\qquad
-\boldsymbol g(q_A)=\begin{bmatrix}14.715\\0\end{bmatrix}\,\mathrm{N\cdot m}.$$
+$$B(\boldsymbol q) = \begin{bmatrix}\frac53+\cos q_2 & \frac13+\frac12\cos q_2\\ \frac13+\frac12\cos q_2 & \frac13\end{bmatrix}\ \mathrm{kg\cdot m^2} \implies B(\boldsymbol q_A)=\begin{bmatrix}5/3&1/3\\1/3&1/3\end{bmatrix}\ \mathrm{kg\cdot m^2}.$$
 
-这里 $\boldsymbol g$ 在动力学方程左端，实际重力广义力是 $-\boldsymbol g$。从力臂也能核对：第一关节托住两个质心，水平力臂分别为 $0.5$、$1\,\mathrm m$，故保持力矩为 $9.81(0.5+1)=14.715\,\mathrm{N\cdot m}$；第二杆质心在第二关节正上方，重力对它的力矩为零。
+此时初速度 $\dot{\boldsymbol q}=\boldsymbol 0$ 使 $C\dot{\boldsymbol q}=\boldsymbol 0$，代入方程得所需关节侧力矩：
 
-再要求从静止产生 $\ddot q=(1,0)\,\mathrm{rad/s^2}$。把质心平动和杆自转的动能都算上，不能把均匀杆当作端点上的质点：
+$$\boldsymbol\tau = B(\boldsymbol q_A)\begin{bmatrix}1\\0\end{bmatrix} + \boldsymbol g(\boldsymbol q_A) = \begin{bmatrix}5/3+14.715\\1/3\end{bmatrix}\approx\begin{bmatrix}16.382\\0.333\end{bmatrix}\ \mathrm{N\cdot m}.$$
+
+尽管第 2 关节被要求 $\ddot q_2=0$，仍必须主动输出 $b_{21}\ddot q_1 = \frac13\ \mathrm{N\cdot m}$ 来平衡第一杆加速度引发的惯性耦合。
+
+下面保留完整连杆与电机转子（教材 §7.3.2 记号 $\vartheta_i=q_i$），系统推导一般两连杆平面臂动力学（将下文参数令 $a_i=1,\,\ell_i=0.5,\,m_i=1,\,I_i=1/12$ 及 $m_{m_i}=I_{m_i}=0$ 即可完全还原上述算例）。
+
+### 完整结构参数与雅可比矩阵
+
+考察在垂直平面内运动的两转动关节臂（原书图 7.4）：广义坐标 $\boldsymbol q=[\vartheta_1,\vartheta_2]^{\mathrm T}$，采用简写 $s_1=\sin\vartheta_1,\,c_1=\cos\vartheta_1,\,s_{12}=\sin(\vartheta_1+\vartheta_2),\,c_{12}=\cos(\vartheta_1+\vartheta_2)$。两杆长度 $a_1,a_2$，质心距各自轴 $\ell_1,\ell_2$，质量 $m_1,m_2$，绕各自质心轴转动惯量 $I_1,I_2$；两电机转子质心分别位于轴 1、轴 2 上（$\boldsymbol p_{m_i}=\boldsymbol p_{i-1}$），质量 $m_{m_1},m_{m_2}$，轴向惯量 $I_{m_1},I_{m_2}$，减速比 $k_{r_1},k_{r_2}$。
+
+两连杆及两转子的几何雅可比依次为：
+
+$$J_P^{(1)}=\begin{bmatrix}-\ell_1s_1&0\\ \ell_1c_1&0\\0&0\end{bmatrix},\qquad J_P^{(2)}=\begin{bmatrix}-a_1s_1-\ell_2s_{12}&-\ell_2s_{12}\\ a_1c_1+\ell_2c_{12}&\ell_2c_{12}\\0&0\end{bmatrix},$$
+
+$$J_O^{(1)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix},\qquad J_O^{(2)}=\begin{bmatrix}0&0\\0&0\\1&1\end{bmatrix},$$
+
+$$J_P^{(m_1)}=0,\qquad J_P^{(m_2)}=\begin{bmatrix}-a_1s_1&0\\ a_1c_1&0\\0&0\end{bmatrix},\qquad J_O^{(m_1)}=\begin{bmatrix}0&0\\0&0\\k_{r_1}&0\end{bmatrix},\qquad J_O^{(m_2)}=\begin{bmatrix}0&0\\0&0\\1&k_{r_2}\end{bmatrix}.$$
+
+**关键细节**：转子 2 装在连杆 1 上，其绝对角速度等于连杆 1 角速度叠加相对转子自转，即 $\omega_{m_2}=\dot\vartheta_1+k_{r_2}\dot\vartheta_2$，所以 $J_O^{(m_2)}$ 的 $(3,1)$ 分量为 $1$ 而非 $0$。
+
+### 惯性矩阵 $B(\boldsymbol q)$ 逐项推导
+
+代入 6.1.2 节 $B(\boldsymbol q)$ 求和公式得对称正定阵 $B(\boldsymbol q)=\begin{bmatrix}b_{11}(\vartheta_2)&b_{12}(\vartheta_2)\\b_{12}(\vartheta_2)&b_{22}\end{bmatrix}$：
 
 $$\begin{aligned}
-v_{c1}^2&=\tfrac14\dot q_1^2\,\mathrm{m^2},\\
-v_{c2}^2&=\left[\dot q_1^2+\tfrac14(\dot q_1+\dot q_2)^2
-+\cos q_2\,\dot q_1(\dot q_1+\dot q_2)\right]\mathrm{m^2},\\
-T&=\tfrac12m_1v_{c1}^2+\tfrac12I_1\dot q_1^2
-+\tfrac12m_2v_{c2}^2+\tfrac12I_2(\dot q_1+\dot q_2)^2
-=\tfrac12\dot q^{\mathrm T}B(q)\dot q.
+b_{11}(\vartheta_2) &= I_1+m_1\ell_1^2+k_{r_1}^2I_{m_1} + I_2+m_2(a_1^2+\ell_2^2+2a_1\ell_2c_2) + I_{m_2}+m_{m_2}a_1^2, \\
+b_{12}(\vartheta_2) &= I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}, \\
+b_{22} &= I_2+m_2\ell_2^2+k_{r_2}^2I_{m_2}.
 \end{aligned}$$
 
-整理 $\dot q_1^2$、$\dot q_1\dot q_2$、$\dot q_2^2$ 的系数，得到
-
-$$B(q)=\begin{bmatrix}
-\frac53+\cos q_2&\frac13+\frac12\cos q_2\\
-\frac13+\frac12\cos q_2&\frac13
-\end{bmatrix}\,\mathrm{kg\cdot m^2},\qquad
-B(q_A)=\begin{bmatrix}\frac53&\frac13\\\frac13&\frac13\end{bmatrix}\,\mathrm{kg\cdot m^2}.$$
-
-初速度为零，所以此刻 $C(q_A,0)\dot q=0$。代入 $B\ddot q+C\dot q+\boldsymbol g=\tau$，有
-
-$$\tau=B(q_A)\begin{bmatrix}1\\0\end{bmatrix}\,\mathrm{rad/s^2}
-+\boldsymbol g(q_A)
-=\begin{bmatrix}5/3+14.715\\1/3\end{bmatrix}\,\mathrm{N\cdot m}
-\approx\begin{bmatrix}16.382\\0.333\end{bmatrix}\,\mathrm{N\cdot m}.$$
-
-第二关节没有相对加速度，却要提供 $b_{21}\ddot q_1=1/3\,\mathrm{N\cdot m}$ 的耦合力矩。若第一关节最多只能出 $12\,\mathrm{N\cdot m}$，把动作放慢也不能在 $q_A$ 静止保持，因为仅重力补偿就需要 $14.715\,\mathrm{N\cdot m}$；这不排除利用动态运动经过该位形。
-
-下面不换推导方法，而是把刚才略去的转子项加回来。将完整模型中的 $a_i=1\,\mathrm m$、$\ell_i=0.5\,\mathrm m$、$m_i=1\,\mathrm{kg}$、$I_i=1/12\,\mathrm{kg\cdot m^2}$，并令 $m_{m_i}=I_{m_i}=0$，就回到上面的均匀杆特例；不是把减速比设为零。教材例 7.2 则采用另一组质量、惯量与驱动参数，原数据在后文单列，不能把这里的 $1\,\mathrm{kg}$ 代入那组仿真结论。
-
-这是全章**唯一一个手算完整 $B,C,g$ 的例子**，也是考试与作业的主战场：
-位形相关的惯性矩阵、离心项、科氏项、重力项、Christoffel 符号、回归矩阵，全部在这里第一次落地（教材 §7.3.2 + 例 7.2）。
-
-### 6.3.2.1 结构与参数
-
-两连杆平面臂（教材图 7.4）：两个转动关节都在垂直平面内，关节 1 固定在基座，关节 2 装在连杆 1 末端。
-取
-
-$$\boldsymbol q=[\vartheta_1,\ \vartheta_2]^{\mathrm T}.$$
-
-| 符号 | 含义 |
-|:--|:--|
-| $a_1,a_2$ | 两连杆长度 |
-| $\ell_1,\ell_2$ | 两连杆质心到各自关节轴的距离 |
-| $m_1,m_2$ | 两连杆质量 |
-| $m_{m_1},m_{m_2}$ | 两转子质量 |
-| $I_1,I_2$ | 两连杆相对各自质心的转动惯量 |
-| $I_{m_1},I_{m_2}$ | 两转子绕自身轴的转动惯量 |
-| $k_{r_1},k_{r_2}$ | 两关节减速比 |
-
-假设转子质心在关节轴上（$\boldsymbol p_{m_i}=\boldsymbol p_{i-1}$，$\boldsymbol z_{m_i}=\boldsymbol z_{i-1}$）。
-
-### 6.3.2.2 雅可比
-
-平面臂的角速度都沿 $z_0$ 轴，所需的只是惯性张量沿该轴的分量 $I_i=I_{i,zz}$；绕 $z_0$ 转动不会改变这一轴向分量，但不意味着整个惯性张量不变。平动雅可比：
-
-$$J_P^{(1)}=\begin{bmatrix}-\ell_1s_1&0\\ \ell_1c_1&0\\0&0\end{bmatrix},\qquad
-J_P^{(2)}=\begin{bmatrix}-a_1s_1-\ell_2s_{12}&-\ell_2s_{12}\\
-a_1c_1+\ell_2c_{12}&\ell_2c_{12}\\0&0\end{bmatrix},$$
-
-转动雅可比：
-
-$$J_O^{(1)}=\begin{bmatrix}0&0\\0&0\\1&0\end{bmatrix},\qquad
-J_O^{(2)}=\begin{bmatrix}0&0\\0&0\\1&1\end{bmatrix}.$$
-
-转子的平动雅可比与角速度雅可比：
-
-$$J_P^{(m_1)}=0,\qquad J_P^{(m_2)}=\begin{bmatrix}-a_1s_1&0\\ a_1c_1&0\\0&0\end{bmatrix},$$
-
-$$J_O^{(m_1)}=\begin{bmatrix}0&0\\0&0\\k_{r_1}&0\end{bmatrix},\qquad
-J_O^{(m_2)}=\begin{bmatrix}0&0\\0&0\\1&k_{r_2}\end{bmatrix}.$$
-
-注意 $J_O^{(m_2)}$ 的 $(3,1)$ 元是 $1$ 而不是 $0$：转子 2 的绝对角速度是「连杆 1 的角速度 + 自身相对角速度」，
-即 $\omega_{m_2}=\dot\vartheta_1+k_{r_2}\dot\vartheta_2$。**这一项会在 $B$ 的非对角元里留下 $k_{r_2}I_{m_2}$。**
-
-（记号 $s_1=\sin\vartheta_1$，$c_1=\cos\vartheta_1$，$s_{12}=\sin(\vartheta_1+\vartheta_2)$，$c_{12}=\cos(\vartheta_1+\vartheta_2)$。）
-
-### 6.3.2.3 惯性矩阵 $B(\boldsymbol q)$
-
-代入 $B=\sum_i\bigl(m_iJ_P^{(i)\mathrm T}J_P^{(i)}+J_O^{(i)\mathrm T}I_iJ_O^{(i)}
-+m_{m_i}J_P^{(m_i)\mathrm T}J_P^{(m_i)}+J_O^{(m_i)\mathrm T}I_{m_i}J_O^{(m_i)}\bigr)$，得
-
-$$B(\boldsymbol q)=\begin{bmatrix}b_{11}(\vartheta_2)&b_{12}(\vartheta_2)\\b_{21}(\vartheta_2)&b_{22}\end{bmatrix},$$
-
-$$b_{11}=I_1+m_1\ell_1^2+k_{r_1}^2I_{m_1}+I_2+m_2\bigl(a_1^2+\ell_2^2+2a_1\ell_2c_2\bigr)+I_{m_2}+m_{m_2}a_1^2,$$
-
-$$b_{12}=b_{21}=I_2+m_2\bigl(\ell_2^2+a_1\ell_2c_2\bigr)+k_{r_2}I_{m_2},$$
-
-$$b_{22}=I_2+m_2\ell_2^2+k_{r_2}^2I_{m_2}.$$
-
-::: note 逐项读法 · $b_{11}$ 的七项各是谁 {#note-6.3.2.3.b11}
-$b_{11}$ 是「关节 1 单独以角速度 $\dot\vartheta_1$ 运动时，整个系统折算到关节 1 上的等效惯量」。七块可以逐块认领（$k_{r_i}$ 为减速比，$I_{m_i},m_{m_i}$ 为转子 $i$ 的惯量与质量）：
-
-| 项 | 归属 | 为什么在这里 |
-|:--|:--|:--|
-| $I_1$ | 连杆 1 绕自身质心 | 连杆 1 绕关节 1 转动时的自转惯量 |
-| $m_1\ell_1^2$ | 连杆 1 的平动 | 质心离轴 $\ell_1$，平动折算成 $\;m_1\ell_1^2$（平行轴定理） |
-| $k_{r_1}^2I_{m_1}$ | 转子 1 折算 | 转子自转角速度是 $k_{r_1}\dot\vartheta_1$，惯量按转速平方折算 |
-| $I_2$ | 连杆 2 自转 | 连杆 2 也跟着转 $\dot\vartheta_1$（它挂在关节 1 的下游） |
-| $m_2\bigl(a_1^2+\ell_2^2+2a_1\ell_2c_2\bigr)$ | 连杆 2 的平动 | **位形依赖项**在这里：连杆 2 的质心到轴 1 的距离平方是 $a_1^2+\ell_2^2+2a_1\ell_2\cos\vartheta_2$——臂伸直（$c_2=1$）时最大，折叠（$c_2=-1$）时最小。这就是「$B$ 随位形变」的物理来源 |
-| $I_{m_2}$ | 转子 2 自转 | 转子 2 的自转惯量直接折到关节 1 上（比例 1） |
-| $m_{m_2}a_1^2$ | 转子 2 的平动 | 转子 2 装在连杆 1 末端、离轴 1 有 $a_1$，故按 $m_{m_2}a_1^2$ 折算 |
-
-同理，$b_{12}$ 的四项是「连杆 2 与转子 2 对关节 1 的反作用项」：$I_2$ 与 $m_2(\ell_2^2+a_1\ell_2c_2)$ 来自连杆 2（$c_2$ 使它随位形变），$k_{r_2}I_{m_2}$ 来自转子 2 的总角速度 $\dot\vartheta_1+k_{r_2}\dot\vartheta_2$ 中的交叉项（见下框）；$b_{22}$ 只有连杆 2 与转子 2 的三项——**关节 2 看不见连杆 1**，所以它与 $\vartheta_1$ 无关，是常数。
+::: note $b_{11}$ 的七项来源与 $b_{22}$ 常数的物理含义 {#note-6.3.2.3.b11}
+- **$b_{11}$ 锁住 $\vartheta_2$ 时关节 1 的等效惯量**：
+  1. $I_1+m_1\ell_1^2$：连杆 1 绕关节 1 的转动惯量（平行轴定理）；
+  2. $k_{r_1}^2I_{m_1}$：转子 1 经减速比平方折算后的惯量；
+  3. $m_{m_2}a_1^2$：转子 2 随杆 1 末端圆周平动的贡献；
+  4. $I_{m_2}$：转子 2 因 $\vartheta_2$ 锁死被迫以 $\dot\vartheta_1$ 同步转动的自转惯量；
+  5. $I_2+m_2(a_1^2+\ell_2^2+2a_1\ell_2c_2)$：连杆 2 绕质心转动加其质心绕关节 1 转动（余弦定理 $\|\boldsymbol p_{\ell_2}\|^2=a_1^2+\ell_2^2+2a_1\ell_2c_2$）的总惯量。
+- **$b_{12}$ 中的 $k_{r_2}I_{m_2}$**：来自转子 2 角速度平方 $(\dot\vartheta_1+k_{r_2}\dot\vartheta_2)^2$ 的交叉项，绝非笔误。
+- **$b_{22}$ 为何是常数**：锁住 $\vartheta_1$ 时，只有连杆 2 和转子 2 绕关节 2 旋转，两者到关节 2 的几何分布恒定，故 $b_{22}$ 不随位形变。
 :::
 
-**与笛卡儿臂的三个差别**：
+### Christoffel 符号与速度耦合矩阵 $C$
 
-1. $b_{11},b_{12}$ 依赖 $\vartheta_2$（通过 $c_2$）——惯性矩阵**随位形变**；
-2. $b_{12}\neq0$——两轴**耦合**；
-3. $b_{22}$ 是常数——它由连杆 2 与转子 2 的参数决定，不随位形变化。因此，当 $\ddot\vartheta_2$ 分段恒定时，$b_{22}\ddot\vartheta_2$ 也分段恒定。例 7.2 中「关节 2 的惯性力矩分段恒定」的概括要区分自惯性项与完整惯性项：后者还包含 $b_{21}(\vartheta_2)\ddot\vartheta_1$，不能只由 $b_{22}$ 为常数推出。
+观察 $B$ 仅依赖 $\vartheta_2$（全部对 $\vartheta_1$ 偏导均为零）：
 
-::: note $k_{r_2}I_{m_2}$ 这一项的来源（老师专门解释）
-它来自转子 2 的**总角速度** $\omega_{m_2}=\dot\vartheta_1+k_{r_2}\dot\vartheta_2$，而不是仅仅 $k_{r_2}\dot\vartheta_2$。
-展开 $\frac12I_{m_2}\omega_{m_2}^2$ 会出现交叉项 $I_{m_2}\dot\vartheta_1(k_{r_2}\dot\vartheta_2)$，这就是 $b_{12}$ 里的
-$k_{r_2}I_{m_2}$。**高减速比时**这一项相对 $k_{r_2}^2I_{m_2}$ 可以忽略（$1/k_{r_2}$ 量级），
-简化模型里转子惯量只留在对角元上——这是第 5 章「减速比把负载折算到关节侧」的同一逻辑。
+$$\frac{\partial b_{11}}{\partial\vartheta_2} = -2m_2a_1\ell_2s_2 = 2h,\qquad \frac{\partial b_{12}}{\partial\vartheta_2} = -m_2a_1\ell_2s_2 = h,\qquad \text{其中 } h \triangleq -m_2a_1\ell_2s_2.$$
+
+利用 $c_{ijk}=\frac12(\partial_k b_{ij}+\partial_j b_{ik}-\partial_i b_{jk})$ 逐个计算 8 个三指标系数，非零项仅剩三组（包含一对对称指标）：
+
+$$c_{112} = c_{121} = \frac12\frac{\partial b_{11}}{\partial\vartheta_2} = h,\qquad c_{122} = \frac{\partial b_{12}}{\partial\vartheta_2}-\frac12\frac{\partial b_{22}}{\partial\vartheta_1} = h,\qquad c_{211} = -\frac12\frac{\partial b_{11}}{\partial\vartheta_2} = -h.$$
+
+将 $c_{ij}=\sum_{k=1}^2 c_{ijk}\dot\vartheta_k$ 写成矩阵，并左乘 $\dot{\boldsymbol q}$ 验证各项含义：
+
+$$C(\boldsymbol q,\dot{\boldsymbol q}) = \begin{bmatrix}h\dot\vartheta_2 & h(\dot\vartheta_1+\dot\vartheta_2)\\ -h\dot\vartheta_1 & 0\end{bmatrix} \implies C\dot{\boldsymbol q} = \begin{bmatrix}2h\dot\vartheta_1\dot\vartheta_2 + h\dot\vartheta_2^2\\ -h\dot\vartheta_1^2\end{bmatrix}.$$
+
+::: note 离心项与科氏项辨认 {#note-6.3.2.4.C}
+- **关节 1 方程中的 $h\dot\vartheta_2^2$** 与 **关节 2 方程中的 $-h\dot\vartheta_1^2$**：均为单关节速度平方引起的**离心项**（注意第 1 关节存在对 $\vartheta_2$ 的离心耦合，而 $\dot\vartheta_1^2$ 在关节 1 上系数为零）；
+- **关节 1 方程中的 $2h\dot\vartheta_1\dot\vartheta_2$**：两关节同时转动时产生的交叉**科氏项**（直接用反对称阵验证：$\dot B-2C=\begin{bmatrix}0&-2h\dot\vartheta_1-h\dot\vartheta_2\\2h\dot\vartheta_1+h\dot\vartheta_2&0\end{bmatrix}$ 严格反对称）。
 :::
 
-### 6.3.2.4 Christoffel 符号与 $C$
+### 重力项与完整运动方程
 
-由 $B$ 的表达式，记
+取重力 $\boldsymbol g_0=[0,-g,0]^{\mathrm T}$，对高度求导得左端重力项：
 
-$$h=-m_2a_1\ell_2s_2,$$
+$$g_1(\boldsymbol q) = (m_1\ell_1+m_{m_2}a_1+m_2a_1)gc_1 + m_2\ell_2gc_{12},\qquad g_2(\boldsymbol q) = m_2\ell_2gc_{12}.$$
 
-则非零的 Christoffel 符号为
-
-$$c_{112}=c_{121}=\frac12\frac{\partial b_{11}}{\partial\vartheta_2}=-m_2a_1\ell_2s_2=h,$$
-
-$$c_{122}=\frac{\partial b_{12}}{\partial\vartheta_2}-\frac12\frac{\partial b_{22}}{\partial\vartheta_1}=h,$$
-
-$$c_{211}=\frac{\partial b_{21}}{\partial\vartheta_1}-\frac12\frac{\partial b_{11}}{\partial\vartheta_2}=-h,$$
-
-其余 $c_{111}=c_{212}=c_{221}=c_{222}=0$。于是
-
-$$C(\boldsymbol q,\dot{\boldsymbol q})=\begin{bmatrix}
-h\dot\vartheta_2&h(\dot\vartheta_1+\dot\vartheta_2)\\
--h\dot\vartheta_1&0
-\end{bmatrix}.$$
-
-::: note 逐项读法 · 哪些是离心、哪些是科氏 {#note-6.3.2.4.C}
-$C$ 的四个元素里藏着两种**本质不同的**速度二次项，判据是「自己与自己的速度相乘」还是「两个关节的速度相乘」：
-
-| 元素 | 形如 | 类别 | 物理 |
-|:--|:--|:--:|:--|
-| $C_{11}=h\dot\vartheta_2$ | 单个速度的**一次方**（但作用在关节 1 上） | —— | 来自连杆 2 平动惯量随 $\vartheta_2$ 的变化；转子的常数交叉惯量 $k_{r_2}I_{m_2}$ 对位形求导为零，不产生这一项 |
-| $C_{12}=h(\dot\vartheta_1+\dot\vartheta_2)$ | 同上 | —— | 关节 1 的速度项中，$\dot\vartheta_1$ 与 $\dot\vartheta_2$ 都进得来 |
-| $C_{21}=-h\dot\vartheta_1$ | 单个速度 | —— | 关节 2 的速度项 |
-| $C_{22}=0$ | —— | —— | 关节 2 不产生 $\dot\vartheta_2^2$ 项 |
-
-真正的分类要看 $C\dot{\boldsymbol q}$ 的两个分量：$(\,C\dot{\boldsymbol q}\,)_1=h\bigl(2\dot\vartheta_1\dot\vartheta_2+\dot\vartheta_2^2\bigr)$ 里，**$\dot\vartheta_2^2$ 是离心项**，**$2\dot\vartheta_1\dot\vartheta_2$ 是科氏项**；$(\,C\dot{\boldsymbol q}\,)_2=-h\dot\vartheta_1^2$ 则是离心项。平方速度项与两种速度的乘积要在乘完 $\dot{\boldsymbol q}$ 后辨认，不能只看 $C$ 的某个元素。这里的 $C$ 一般**不对称**；结构性质要求反对称的是 $\dot B-2C$，不是要求 $C$ 对称。离心项也可以作用在另一个关节上，例如第一分量中的 $h\dot\vartheta_2^2$。
-:::
-
-$C\dot{\boldsymbol q}$ 的分量：
-
-$$\bigl(C\dot{\boldsymbol q}\bigr)_1=h\dot\vartheta_2\dot\vartheta_1+h(\dot\vartheta_1+\dot\vartheta_2)\dot\vartheta_2
-=h\bigl(2\dot\vartheta_1\dot\vartheta_2+\dot\vartheta_2^2\bigr),$$
-
-$$\bigl(C\dot{\boldsymbol q}\bigr)_2=-h\dot\vartheta_1^2.$$
-
-对照式 (7.82)：关节 1 的速度项是 $-2m_2a_1\ell_2s_2\dot\vartheta_1\dot\vartheta_2-m_2a_1\ell_2s_2\dot\vartheta_2^2$，
-关节 2 是 $+m_2a_1\ell_2s_2\dot\vartheta_1^2$，与 $h=-m_2a_1\ell_2s_2$ 的代入一致。
-
-**反对称性验证**：
-
-$$\dot B=\begin{bmatrix}2h\dot\vartheta_2&h\dot\vartheta_2\\h\dot\vartheta_2&0\end{bmatrix},\qquad
-N=\dot B-2C=\begin{bmatrix}0&-2h\dot\vartheta_1-h\dot\vartheta_2\\2h\dot\vartheta_1+h\dot\vartheta_2&0\end{bmatrix},$$
-
-确实反对称——这是 [6.2.1](sec6-2.md#part-6.2.1) 的具体例证。
-
-### 6.3.2.5 重力项与完整方程
-
-平面臂取 $y$ 轴竖直向上，$\boldsymbol g_0=[0,-g,0]^{\mathrm T}$。由 $g_i=\partial U/\partial q_i$：
-
-$$g_1=\bigl(m_1\ell_1+m_{m_2}a_1+m_2a_1\bigr)g\cos\vartheta_1+m_2\ell_2g\cos(\vartheta_1+\vartheta_2),$$
-
-$$g_2=m_2\ell_2g\cos(\vartheta_1+\vartheta_2).$$
-
-无摩擦、无末端接触力时，完整方程（教材式 (7.82)）：
+略去摩擦与末端接触力时，平面 2R 机械臂的封闭运动方程（原书式 (7.82)）为：
 
 $$\begin{aligned}
-&\bigl[I_1+m_1\ell_1^2+k_{r_1}^2I_{m_1}+I_2+m_2(a_1^2+\ell_2^2+2a_1\ell_2c_2)+I_{m_2}+m_{m_2}a_1^2\bigr]\ddot\vartheta_1\\
-&\quad+\bigl[I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}\bigr]\ddot\vartheta_2
--2m_2a_1\ell_2s_2\dot\vartheta_1\dot\vartheta_2-m_2a_1\ell_2s_2\dot\vartheta_2^2\\
-&\quad+\bigl(m_1\ell_1+m_{m_2}a_1+m_2a_1\bigr)gc_1+m_2\ell_2gc_{12}=\tau_1,
+\bigl(I_1+m_1\ell_1^2+k_{r_1}^2I_{m_1}+I_2+m_2(a_1^2+\ell_2^2+2a_1\ell_2c_2)+I_{m_2}+m_{m_2}a_1^2\bigr)\ddot\vartheta_1 & \\
++\bigl(I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}\bigr)\ddot\vartheta_2 - 2m_2a_1\ell_2s_2\dot\vartheta_1\dot\vartheta_2 - m_2a_1\ell_2s_2\dot\vartheta_2^2 & \\
++(m_1\ell_1+m_{m_2}a_1+m_2a_1)gc_1 + m_2\ell_2gc_{12} &= \tau_1, \\[4pt]
+\bigl(I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}\bigr)\ddot\vartheta_1 + \bigl(I_2+m_2\ell_2^2+k_{r_2}^2I_{m_2}\bigr)\ddot\vartheta_2 & \\
++m_2a_1\ell_2s_2\dot\vartheta_1^2 + m_2\ell_2gc_{12} &= \tau_2.
 \end{aligned}$$
 
-$$\begin{aligned}
-&\bigl[I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}\bigr]\ddot\vartheta_1
-+\bigl[I_2+m_2\ell_2^2+k_{r_2}^2I_{m_2}\bigr]\ddot\vartheta_2\\
-&\quad+m_2a_1\ell_2s_2\dot\vartheta_1^2+m_2\ell_2gc_{12}=\tau_2.
-\end{aligned}$$
+::: think 原书例 7.2 仿真要点 · 各分量如何消长
+在教材例 7.2 参数（$a_1=a_2=1\ \mathrm m$，$\ell_1=\ell_2=0.5\ \mathrm m$，$m_1=m_2=50\ \mathrm{kg}$，$I_1=I_2=10\ \mathrm{kg\cdot m^2}$，$k_{r_1}=k_{r_2}=100$，$m_{m_1}=m_{m_2}=5\ \mathrm{kg}$，$I_{m_1}=I_{m_2}=0.01\ \mathrm{kg\cdot m^2}$）下，沿梯形速度曲线由肘下垂 $(0.2,0)\ \mathrm m$ 位形令两轴同转 $\pi/2$（耗时 $0.5\ \mathrm s$）：
+1. **高减速比下转子主惯量凸显**：$k_{r_1}^2I_{m_1}=100\ \mathrm{kg\cdot m^2}$，远大于连杆 1 自身惯量，且由于 $b_{11}$ 随 $\vartheta_2$ 变，关节 1 自惯性力矩在匀加减速段仍连续波动；
+2. **关节 2 自惯性分段常值**：$b_{22}$ 为常数使得 $b_{22}\ddot\vartheta_2$ 在三段梯形加速度上分段恒定（但完整的 $(B\ddot q)_2$ 还需叠加上非常数的 $b_{21}(\vartheta_2)\ddot\vartheta_1$）；
+3. **高速段速度耦合显著，低速段重力托底**：高速中段离心/科氏项明显，低速起止端由重力矩决定保持下限。
+:::
 
-### 6.3.2.6 例 7.2：各项力矩的相对大小
+### 8 参数线性回归形式
 
-教材例 7.2 给出一组「两连杆完全相同」的数据：
+依据 [6.2.2](sec6-2.md#part-6.2.2) 扩展连杆与原点锁转惯量规则，将平面臂每杆系原点取在各杆远端（则扩展连杆 1 质心距末端 $O_1$ 为 $\ell_{C_1}=m_1(\ell_1-a_1)/(m_1+m_{m_2})$，扩展连杆 2 质心距末端 $O_2$ 为 $\ell_{C_2}=\ell_2-a_2$），可将平面运动方程压缩为 $\boldsymbol\tau=Y\boldsymbol\pi$（共 8 个结构参数，较 22 个名义参数大幅缩减；进一步合并线性相关列后最小独立惯性组合仅 5 个）：
 
-$$a_1=a_2=1\ \mathrm m,\quad \ell_1=\ell_2=0.5\ \mathrm m,\quad m_1=m_2=50\ \mathrm{kg},\quad I_1=I_2=10\ \mathrm{kg\cdot m^2},$$
+$$\boldsymbol\pi = \begin{bmatrix}m_1+m_{m_2} & m_1(\ell_1-a_1) & \widehat I_{1,zz} & I_{m_1} & m_2 & m_2(\ell_2-a_2) & \widehat I_{2,zz} & I_{m_2}\end{bmatrix}^{\mathrm T},$$
 
-$$k_{r_1}=k_{r_2}=100,\quad m_{m_1}=m_{m_2}=5\ \mathrm{kg},\quad I_{m_1}=I_{m_2}=0.01\ \mathrm{kg\cdot m^2}.$$
+其中 $\widehat I_{i,zz}=\bar I_i+m_i^{\mathrm{aug}}\ell_{C_i}^2$。注意线性化要求用一阶矩和原点锁转惯量，不能把质心坐标、未知质量、质心惯量拆成独立未知参数去套线性回归。
 
-初始位形使末端在 $(0.2,0)$ m（肘下垂），两关节各转 $\pi/2$，用时 $0.5$ s，速度梯形曲线。
-仿真结果（教材图 7.5–7.7）给出四条可读的结论：
-
-1. **关节 1 的惯性力矩**随加速度变化（因为 $b_{11}$ 随 $\vartheta_2$ 变，且 $\ddot\vartheta_1$ 本身在变）；
-2. **关节 2 的自惯性项分段恒定**：$b_{22}$ 是常数，梯形速度轨迹使 $\ddot\vartheta_2$ 分段恒定，因而 $b_{22}\ddot\vartheta_2$ 随加速度分段变化。课堂图示中「关节 2 的惯性力矩分段恒定」不能推广成完整的 $(B\ddot q)_2$ 恒定；若保留耦合惯性项，还要加上 $b_{21}(\vartheta_2)\ddot\vartheta_1$；
-3. **离心/科氏项**在高速段明显，方向与符号由 $h=-m_2a_1\ell_2s_2$ 决定；
-4. **重力项**量级最小但不可忽略，尤其在低速保持阶段。
-
-### 6.3.2.7 参数向量与回归矩阵（8 个参数）
-
-对平面臂，按 [6.2.2](sec6-2.md#part-6.2.2) 的扩展连杆法，可取 8 个参数：
-
-$$\boldsymbol\pi=[\pi_1,\dots,\pi_8]^{\mathrm T},\qquad
-\begin{aligned}
-\pi_1&=m_1+m_{m_2},&
-\pi_2&=m_1(\ell_1-a_1),&
-\pi_3&=\widehat I_{1,zz},&
-\pi_4&=I_{m_1},\\
-\pi_5&=m_2,&
-\pi_6&=m_2(\ell_2-a_2),&
-\pi_7&=\widehat I_{2,zz},&
-\pi_8&=I_{m_2},
-\end{aligned}$$
-
-回归矩阵 $Y$ 为 $2\times8$，其系数由已知几何、减速比、重力及 $\vartheta,\dot\vartheta,\ddot\vartheta$ 决定。这里采用与 [6.2.2](sec6-2.md#part-6.2.2) 一致的**原点锁转惯量**：$\widehat I_{i,zz}=\bar I_i+m_i^{\rm aug}\ell_{C_i}^2$，$\bar I_i$ 为扩展连杆的质心锁转惯量，$m_1^{\rm aug}=m_1+m_{m_2}$、$m_2^{\rm aug}=m_2$。连杆系原点取各杆末端，则 $\ell_{C_1}=m_1(\ell_1-a_1)/(m_1+m_{m_2})$、$\ell_{C_2}=\ell_2-a_2$。不能把质心惯量、未知质量和未知质心坐标分别当作彼此独立的线性参数；原点惯量与一阶矩才给出线性回归式。这是对教材式 (7.83) 记号作的参数重组，物理模型不变。
-两组共 22 个名义惯性参数可利用平面结构缩减；上面的 8 参数表达还不是最小参数集，进一步可合并为 5 个独立组合（习题 7.4）。摩擦参数不包含在这组计数内。
-
-::: intuition 动手实验 · $B$、$C$、$g$ 各自在动（3D）
-拖动 $\vartheta_1,\vartheta_2$ 和角速度，看各项随什么变化：$b_{11}$ 的位形项含 $2m_2a_1\ell_2\cos\vartheta_2$，$b_{12}$ 含 $m_2a_1\ell_2\cos\vartheta_2$，$b_{22}$ 为常数；$C$ 随位形与速度变，方程左端的重力项 $g_1,g_2$ 随姿态变，实际重力广义力为 $-g$。按「自由摆动」键，以零输入力矩对 $B\ddot q+C\dot q+g=0$ 做 RK4 数值积分，观察末端轨迹。这与例 7.2 中比较各力矩分量的思路相同。
+::: intuition 动手实验 · 观测平面臂 $B,C,\boldsymbol g$ 的动态变化（3D）
+拖动关节角与速度观察惯性矩阵各元、速度耦合项和重力项的实时曲线；点击「自由摆动」以零输入对 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g=\boldsymbol 0$ 做四阶 Runge–Kutta 积分，观察两杆之间的能量交换与重力摆动。
 
 <div class="lab" data-lab="dyn3d"></div>
 :::
 
-### 6.3.2.8 小结与常见错误
+## 本节小结
 
-- **一句话**：平面臂的 $B(q)$ 随 $\vartheta_2$ 变、非对角、$b_{22}$ 常数；$C$ 由 $h=-m_2a_1\ell_2s_2$ 生成；
-  $g$ 有两项，第二项只含 $\cos(\vartheta_1+\vartheta_2)$。
-- **三个「第一次」**：第一次出现位形相关惯量、第一次出现离心/科氏项、第一次出现重力耦合。
-- **一个对照**：与笛卡儿臂比，全部复杂性都来自「转动关节 + 位形变化」。
-
-::: think 常见错误清单
-1. **$b_{12}$ 漏掉 $k_{r_2}I_{m_2}$**：它来自转子 2 的总角速度，不是笔误。
-2. **$c_{122}$ 写成 $\partial b_{12}/\partial\vartheta_2$ 就完事**：还要减 $\frac12\partial b_{22}/\partial\vartheta_1$，
-   虽然本例中后者为零，但公式不能省。
-3. **$C\dot q$ 的符号**：$h=-m_2a_1\ell_2s_2$ 带负号；先定 $h$，再代 $C$，最后与式 (7.82) 逐项对。
-4. **重力方向**：平面臂取 $y$ 竖直，$\boldsymbol g_0=[0,-g,0]^{\mathrm T}$；若取 $z$ 竖直，$g$ 的表达式整体换轴。
-5. **以为 $b_{22}$ 也随位形变**：$b_{22}=I_2+m_2\ell_2^2+k_{r_2}^2I_{m_2}$ 是常数，所以梯形速度轨迹中的自惯性项 $b_{22}\ddot\vartheta_2$ 分段恒定；完整惯性力矩还包含 $b_{21}\ddot\vartheta_1$，不一定分段恒定。
-:::
-
-::: think 默写点 · 合上书再写
-1. 写出两连杆平面臂的 $J_P^{(1)},J_P^{(2)},J_O^{(1)},J_O^{(2)}$。
-2. 写出 $b_{11},b_{12},b_{22}$，并说明每一项的来源。
-3. 写出 $h$、非零 Christoffel 符号与 $C$。
-4. 写出 $g_1,g_2$ 与完整运动方程。
-5. 验证 $N=\dot B-2C$ 反对称。
-:::
-
-核心公式速查：
-
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| 笛卡儿臂：$B=\operatorname{diag}(m_1+m_{m_2}+k_{r_1}^2I_{m_1}+m_2,\ m_2+k_{r_2}^2I_{m_2})$，$C=0$，$g_2=0$ | 两移动关节、轴正交 | kg / kg·m² | $g_1$ 托起的是它上游全部质量；解耦还需轴正交 |
-| $b_{11}=I_1+m_1\ell_1^2+k_{r_1}^2I_{m_1}+I_2+m_2(a_1^2+\ell_2^2+2a_1\ell_2c_2)+I_{m_2}+m_{m_2}a_1^2$ | 转子质心在轴上 | kg·m² | 七项逐项认领（[@note-6.3.2.3.b11]）；位形项在 $2a_1\ell_2c_2$ |
-| $b_{12}=b_{21}=I_2+m_2(\ell_2^2+a_1\ell_2c_2)+k_{r_2}I_{m_2}$ | 同上 | kg·m² | $k_{r_2}I_{m_2}$ 来自转子 2 总角速度的交叉项，不是笔误 |
-| $C=\begin{bmatrix}h\dot\vartheta_2&h(\dot\vartheta_1+\dot\vartheta_2)\\-h\dot\vartheta_1&0\end{bmatrix}$，$h=-m_2a_1\ell_2s_2$ | Christoffel 选法 | kg·m² | 离心/科氏在 $C\dot q$ 乘完后辨认；反对称的是 $\dot B-2C$ 不是 $C$ |
-| $g_1=(m_1\ell_1+m_{m_2}a_1+m_2a_1)gc_1+m_2\ell_2gc_{12}$，$g_2=m_2\ell_2gc_{12}$ | $y$ 竖直向上 | N·m | 重力轴向换了整组换；左端 $g$ 与实际重力广义力差一负号 |
-
-::: note 主线 · 两连杆（第七关 · 慢下来，也可能举不住）
-上一关（[§5.2.3](../ch05/sec5-2.md)）用减速比把力矩折算到电机侧；本关（[两连杆第七关](../training/two-link.md#mission-load)）给 2R 臂加上质量：§6.3.2 开头的带数算例（保持力矩 $14.715$、加速多出 $1/3$、$12\,\mathrm{N\cdot m}$ 保持不住）就是本关的完整账单；下一关（[§7.3](../ch07/sec7-3.md) 集中控制）讨论模型不准时怎样用反馈补。
-:::
+- **两算例对照本质**：笛卡儿正交臂给出常数对角 $B$ 与 $C=0$（完全解耦）；平面 2R 臂则全面展示位形相关的 $B(\vartheta_2)$、交叉自转项 $k_{r_2}I_{m_2}$、对称平分 Christoffel 矩阵 $C$ 以及双角关联重力矩 $\boldsymbol g$。
+- **主线任务**：完成[两连杆训练第七关](../training/two-link.md#mission-load)静止与加速账单后，即可带入模型不确定性问题，进入[第七章 7.3 节](../ch07/sec7-3.md)设计集中式补偿与反馈控制。
 
 ::: think 本节的课堂幻灯片（源料对照）
 
-本节正文已给出全部推导、带数算例与交互实验；下列课件页保留以备核对，**不构成正文的替代**（对应录播 01:23:45–02:17:20）。
-
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 123:20 | [cartesian.jpg](../assets/ch06/cartesian.jpg) | 笛卡儿臂惯性矩阵与解耦方程 | 完整推导 + 解耦两条件 note 替代 |
-| 123:41 | [planar.jpg](../assets/ch06/planar.jpg) | 两连杆平面臂（教材图 7.4） | 结构与参数表完整给出；符号表替代 |
-| 132:24 | [planar-B.jpg](../assets/ch06/planar-B.jpg) | $B(q)$ 与 Christoffel 符号计算 | 逐项认领表 + $C$ 的离心/科氏辨认表替代 |
-| 136:55 | [planar-torque.jpg](../assets/ch06/planar-torque.jpg) | 例 7.2 各力矩分量时程 | 四条可读结论 + 「自惯性 vs 完整惯性」辨析完整给出 |
+| 123:20 | [cartesian.jpg](../assets/ch06/cartesian.jpg) | 笛卡儿臂惯性矩阵与解耦方程 | 6.3.1 完整推导 + 解耦两条件说明 |
+| 123:41 | [planar.jpg](../assets/ch06/planar.jpg) | 两连杆平面臂（图 7.4） | 6.3.2 几何与转子雅可比完整列出 |
+| 132:24 | [planar-B.jpg](../assets/ch06/planar-B.jpg) | 平面臂 $B(\boldsymbol q)$ 与 Christoffel 符号 | 逐项来源注记 + 离心/科氏辨认 |
+| 136:55 | [planar-torque.jpg](../assets/ch06/planar-torque.jpg) | 例 7.2 仿真分量时程 | 总结四段力学规律并区分自惯性/耦合惯性 |
 :::
