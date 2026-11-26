@@ -1,37 +1,23 @@
 # 2.6 单位四元数
 
-[2.5](sec2-5.md) 用单位轴和转角描述姿态。本节的**单位四元数**（unit quaternion，又称欧拉参数）将半角与轴打包：同步反号的两组角轴参数会映到同一个四元数，零角时也不再需要指定轴。但它仍保留 $Q\sim-Q$ 的双重覆盖，半圈提取需选择稳定支路；不能把换表示理解为消除全部不唯一。
-
-::: note 本节定位（教材补充 · 课程未授）
-本节对应原书 §2.6，先修内容是旋转矩阵与角轴。第 2 周录播未展开本节；旧教程记录在 RPY 奇点处提及「卫星等全姿态机动飞行器改用四元数」（0:21:26）。学习重点是：把四元数变回可检查的矩阵、从半圈矩阵正确提取四元数、读对乘法顺序，以及保持相邻时刻的符号连续。课程覆盖范围见[范围声明](../preface-scope.md)。
-:::
+> **本节定位**：`补充·精简`（原书 §2.6，课外核心补充） ｜ 采用 **Hamilton 约定、标量在前**存储格式，建立角轴半角打包的单位四元数 $Q=\{\eta,\boldsymbol\epsilon\}\in S^3$；证明 $Q$ 消除同步反号但保留 $Q\sim -Q$ 双重覆盖；给出精确半圈失效反例（勘误 E2.7）与 $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$ 最大对角主元全局稳定提取法；推导 Hamilton 乘法与符号对齐后的球面线性插值（SLERP）。
 
 <a id="sec-2.6.1"></a>
 
-## 2.6.1 定义与单位约束
+## 2.6.1 定义、单位约束与双重覆盖
 
-::: def 定义 2.6.1 · 单位四元数 {#def-2.6.1}
-**单位四元数**（欧拉参数）定义为四元组 $Q=\{\eta,\boldsymbol\epsilon\}$，其中
-
-$$\eta=\cos\frac{\vartheta}{2},\qquad \boldsymbol\epsilon=\sin\frac{\vartheta}{2}\,\boldsymbol r\qquad(\text{原书式 }2.30\text{–}2.31)$$
-
-$\eta$ 称**标量部分**，$\boldsymbol\epsilon=[\epsilon_x\ \epsilon_y\ \epsilon_z]^T$ 称**向量部分**，二者受单位约束
-
-$$\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1\qquad(\text{原书式 }2.32)$$
-
-本文采用 **Hamilton 乘法、标量在前**的存储顺序 $q=(\eta,\epsilon_x,\epsilon_y,\epsilon_z)$，并沿用主动列向量约定 $p_{\rm new}=R(q)p$。软件可能把标量放在最后，调用前必须核对顺序；不能直接照抄四个数。
-
-四个参数受一个单位约束，位于 $\mathbb R^4$ 中的三维单位球面 $S^3$，局部独立参数为 3；它仍是带约束的四参数表示，并通过 $q\sim-q$ 双重覆盖 $SO(3)$。零四元数没有方向，也不能归一化成单位四元数。
+::: def 定义 2.6.1 · 单位四元数（欧拉参数） {#def-2.6.1}
+将角轴参数 $(\vartheta,\boldsymbol r)$ 按半角打包为**单位四元数** $Q=\{\eta,\boldsymbol\epsilon\}$（采用 **Hamilton 乘法、标量在前**列存储 $\boldsymbol q=[\eta,\epsilon_x,\epsilon_y,\epsilon_z]^{\mathrm T}$，并保持主动列向量约定 $\boldsymbol p_{\rm new}=R(\boldsymbol q)\boldsymbol p$；原书式 2.30–2.32）：
+$$\eta = \cos\frac{\vartheta}{2},\qquad
+\boldsymbol\epsilon = \sin\frac{\vartheta}{2}\,\boldsymbol r = \begin{bmatrix}\epsilon_x\\ \epsilon_y\\ \epsilon_z\end{bmatrix},\qquad
+\eta^2 + \epsilon_x^2 + \epsilon_y^2 + \epsilon_z^2 = 1.$$
+$4$ 个参数受 $1$ 条单位模长约束落在四维空间的三维单位球面 $S^3\subset\mathbb R^4$ 上，局部独立参数为 $3$。零四元数 $\{0,\boldsymbol 0\}$ 无旋转意义，严禁归一化。与其他程序交互时须先核对标量在前还是在后及乘法约定。
 :::
 
-::: thm 原理 2.6.A · 四元数修掉了哪些缺陷 {#thm-2.6.A}
-关键差别在**半角打包**：代入 $-\vartheta$ 与 $-\boldsymbol r$，得 $\cos\frac{-\vartheta}{2}=\cos\frac{\vartheta}{2}$、$\sin\frac{-\vartheta}{2}(-\boldsymbol r)=\sin\frac{\vartheta}{2}\boldsymbol r$——**同一结果**。
-1. **合并同步反号的参数组**：$(\vartheta,\boldsymbol r)$ 与 $(-\vartheta,-\boldsymbol r)$ 映到同一个 Q。这是原书式 2.26 所列重复参数的消除，不意味着所有重复表示都消失。
-2. **仍保留 $Q\sim-Q$**：转角加 $2\pi$ 使四元数整体反号，旋转不变。非半圈处可取 $\eta>0$ 定符号；半圈 $\eta=0$ 时还需额外约定，不能仅靠 $\eta\ge0$ 选出唯一代表。
-3. **提取算法仍需分支**：零角可用单位四元数代表，半圈也有合法四元数，但含除法的提取公式必须避开小分母；下一部分分别检查其适用范围。
+::: thm 定理 2.6.A · 半角打包合并的参数与保留的覆盖 {#thm-2.6.A}
+1. **合并同步反号**：将 $(-\vartheta,-\boldsymbol r)$ 代入半角式，$\cos(-\vartheta/2)=\cos(\vartheta/2)$ 且 $\sin(-\vartheta/2)(-\boldsymbol r)=\sin(\vartheta/2)\boldsymbol r$，两组冗余参数映为**同一个**四元数 $Q$；零角时给出唯一单位元 $\{1,\boldsymbol 0\}$，无需指定转轴。
+2. **保留 $Q\sim -Q$ 双重覆盖**：转角增加 $2\pi$ 使半角增加 $\pi$，故 $Q$ 与 $-Q$（$S^3$ 上对径点）表示**同一物理旋转**，转角加 $4\pi$ 才回到 $Q$。非半圈处可取 $\eta>0$ 选代表；半圈 $\eta=0$ 时仍需额外规则选路。
 :::
-
-下图区分同步反号的参数合并与仍保留的 Q/−Q 双重覆盖。非半圈可由标量部分符号选代表，半圈边界还需额外约定。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-26-title fig-26-desc">
@@ -73,256 +59,136 @@ $$\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1\qquad(\text{原书式 }2.32)$$
 </g>
 <text class="diagram-note" x="460" y="320" text-anchor="middle">同步反号合并成同一个 Q；增加 2π 得到 −Q；增加 4π 才回到 Q。</text>
 </svg>
-<figcaption>本教程绘：同步反号的角轴参数映到同一个 Q；转角加 $2\pi$ 则仍给出 Q 与 −Q 两个代表。非半圈取 $\eta>0$ 可定符号，半圈必须另作约定。</figcaption>
+<figcaption>角轴参数合并与单位四元数 $Q\sim -Q$ 对径点双重覆盖关系（本教程绘）。</figcaption>
 </figure>
 
 <a id="sec-2.6.2"></a>
 
-## 2.6.2 正解、逆解与乘法
+## 2.6.2 正解、全局稳定提取算法与 Hamilton 乘法
 
-### 2.6.2.1 正解：单位四元数到旋转矩阵
+### 2.6.2.1 正解矩阵（原书式 2.33）
 
-以下公式假设 $\eta^2+\|\boldsymbol\epsilon\|^2=1$。已确认输入表示旋转、仅因数值误差略偏离单位长度时，可以先归一化；零输入必须拒绝。给定单位四元数，旋转矩阵为（原书式 2.33）
-
+设 $\eta^2+\|\boldsymbol\epsilon\|^2=1$，单位四元数对应的旋转矩阵为：
 $$R(\eta,\boldsymbol\epsilon)=\begin{bmatrix}
 2(\eta^2+\epsilon_x^2)-1 & 2(\epsilon_x\epsilon_y-\eta\epsilon_z) & 2(\epsilon_x\epsilon_z+\eta\epsilon_y)\\
 2(\epsilon_x\epsilon_y+\eta\epsilon_z) & 2(\eta^2+\epsilon_y^2)-1 & 2(\epsilon_y\epsilon_z-\eta\epsilon_x)\\
 2(\epsilon_x\epsilon_z-\eta\epsilon_y) & 2(\epsilon_y\epsilon_z+\eta\epsilon_x) & 2(\eta^2+\epsilon_z^2)-1
-\end{bmatrix}$$
+\end{bmatrix}.$$
 
-::: proof 证明 · 式 2.33 是 Rodrigues 紧凑形式的半角改写（本编补充）
-把 $\eta=\cos\frac\vartheta2$、$\boldsymbol\epsilon=\sin\frac\vartheta2\,\boldsymbol r$ 代入 [2.5.1](sec2-5.md#sec-2.5.1) 的紧凑形式 $R=c_\vartheta I+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$。用倍角公式 $c_\vartheta=2\eta^2-1=1-2\sin^2\frac\vartheta2$、$s_\vartheta=2\sin\frac\vartheta2\cos\frac\vartheta2$，三项逐个改写：
-
-$$c_\vartheta I=(2\eta^2-1)I,\qquad
-(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}=2\sin^2\tfrac\vartheta2\ \boldsymbol r\boldsymbol r^{\mathrm T}=2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T},\qquad
-s_\vartheta S(\boldsymbol r)=2\sin\tfrac\vartheta2\cos\tfrac\vartheta2\ S(\boldsymbol r)=2\eta\,S(\boldsymbol\epsilon).$$
-
-（$S(\boldsymbol\epsilon)=\sin\frac\vartheta2\,S(\boldsymbol r)$——$S(\cdot)$ 对参数线性。）合并得**四元数紧凑形式**
-
-$$R=(2\eta^2-1)I+2\,\boldsymbol\epsilon\,\boldsymbol\epsilon^{\mathrm T}+2\eta\,S(\boldsymbol\epsilon),$$
-
-逐元素展开：对角线 $=2\eta^2-1+2\epsilon_i^2=2(\eta^2+\epsilon_i^2)-1$；非对角 $(i,j)=2\epsilon_i\epsilon_j+2\eta\,S(\boldsymbol\epsilon)_{ij}$，而 $S(\boldsymbol\epsilon)_{xy}=-\epsilon_z$ 等——即式 2.33 的九个元素。□
+::: proof 证明 · 半角二倍角代换与共轭逆
+将 $\eta=\cos\frac{\vartheta}{2}$、$\boldsymbol\epsilon=\sin\frac{\vartheta}{2}\boldsymbol r$ 代入 Rodrigues 紧凑形式 $R=c_\vartheta I_3+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}+s_\vartheta S(\boldsymbol r)$。利用二倍角公式 $c_\vartheta=2\eta^2-1=1-2\sin^2\frac{\vartheta}{2}$ 与 $s_\vartheta=2\sin\frac{\vartheta}{2}\cos\frac{\vartheta}{2}$，以及 $S(\boldsymbol\epsilon)=\sin\frac{\vartheta}{2}S(\boldsymbol r)$ 的线性性，三项依次化为：
+$$c_\vartheta I_3=(2\eta^2-1)I_3,\qquad
+(1-c_\vartheta)\boldsymbol r\boldsymbol r^{\mathrm T}=2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T},\qquad
+s_\vartheta S(\boldsymbol r)=2\eta S(\boldsymbol\epsilon).$$
+合并得四元数紧凑表达式：
+$$R=(2\eta^2-1)I_3 + 2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T} + 2\eta S(\boldsymbol\epsilon).$$
+逐元素展开即得式 (2.33)。将 $\boldsymbol\epsilon$ 替换为 $-\boldsymbol\epsilon$ 使反对称部分反号、对称部分不变，故共轭即逆（原书式 2.36）：$Q^{-1}=\bar Q=\{\eta,-\boldsymbol\epsilon\}\iff R(Q^{-1})=R^{\mathrm T}(Q)$。□
 :::
 
-### 2.6.2.2 逆解：先求平方，再从最大分量提取
+### 2.6.2.2 逆解提取：原书半圈失效反例与 $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$ 稳定算法
 
-由紧凑形式可直接得到
-
-$$\operatorname{tr}R=4\eta^2-1,\qquad
-r_{ii}=2\eta^2-1+2\epsilon_i^2,\qquad
-R-R^{\mathrm T}=4\eta S(\boldsymbol\epsilon).$$
-
-因此，在**选取 $\eta>0$** 时，原书式 2.34–2.35 的分量符号法为
-
-$$\eta=\tfrac12\sqrt{\operatorname{tr}R+1},\qquad
-\boldsymbol\epsilon=\tfrac12\begin{bmatrix}
+由紧凑式可得 $\operatorname{tr}R=4\eta^2-1$、$r_{ii}=2\eta^2-1+2\epsilon_i^2$ 与 $R-R^{\mathrm T}=4\eta S(\boldsymbol\epsilon)$。因此仅在 $\eta>0$ 时，原书式 (2.34)–(2.35) 的反对称差定符号公式有效（原书约定 $\operatorname{sgn}(0)=+1$）：
+$$\eta=\frac{1}{2}\sqrt{\operatorname{tr}R+1},\qquad
+\boldsymbol\epsilon=\frac{1}{2}\begin{bmatrix}
 \operatorname{sgn}(r_{32}-r_{23})\sqrt{1+r_{11}-r_{22}-r_{33}}\\
 \operatorname{sgn}(r_{13}-r_{31})\sqrt{1-r_{11}+r_{22}-r_{33}}\\
 \operatorname{sgn}(r_{21}-r_{12})\sqrt{1-r_{11}-r_{22}+r_{33}}
 \end{bmatrix}.$$
 
-这里沿用原书 $\operatorname{sgn}(0)=+1$ 的约定。对 $\eta>0$，反对称部分确实给出每个 $\epsilon_i$ 的符号；但在**精确半圈 $\eta=0$** 时，反对称部分全零，不能再由它确定各分量的相对符号。逐个把零符号取正不能修复这个问题。
-
-::: ex 例 2.6.B · 原书分量符号公式的半圈反例 {#ex-2.6.B}
-取
-
-$$R_\pi=\begin{bmatrix}0&-1&0\\-1&0&0\\0&0&-1\end{bmatrix},\qquad
-\boldsymbol r=(1,-1,0)^{\mathrm T}/\sqrt2.$$
-
-这是绕该轴转半圈的合法旋转，正确四元数可取 $q=(0,1/\sqrt2,-1/\sqrt2,0)$ 或其整体相反数。原书符号法却把三个反对称差都读成 0，给出
-
-$$q_{\rm sign}=(0,1/\sqrt2,1/\sqrt2,0),\qquad
-R(q_{\rm sign})=\begin{bmatrix}0&1&0\\1&0&0\\0&0&-1\end{bmatrix}\ne R_\pi.$$
-
-两者不是整体反号，不能代表同一个姿态。原书“式 2.34–2.35 无奇点”的说明在此边界不足以支持直接使用，见[勘误 E2.7](errata.md#errata-2.7)。
+::: ex 例 2.6.B · 原书符号公式在精确半圈的失效反例（勘误 E2.7） {#ex-2.6.B}
+取 $R_\pi=\begin{bmatrix}0&-1&0\\-1&0&0\\0&0&-1\end{bmatrix}$（绕轴 $\frac{1}{\sqrt 2}(1,-1,0)^{\mathrm T}$ 旋转 $\pi$）。真解为 $\pm(0,\frac{1}{\sqrt 2},-\frac{1}{\sqrt 2},0)^{\mathrm T}$。但因 $\eta=0\implies R_\pi-R_\pi^{\mathrm T}=O$，原书符号式将三个反对称差均判为 $+1$，给出：
+$$\boldsymbol q_{\rm sign}=(0,\tfrac{1}{\sqrt 2},\tfrac{1}{\sqrt 2},0)^{\mathrm T},\qquad
+R(\boldsymbol q_{\rm sign})=\begin{bmatrix}0&1&0\\1&0&0\\0&0&-1\end{bmatrix}\neq R_\pi,$$
+重建非对角元素误差达 $2$（见 [勘误 E2.7](errata.md#errata-2.7)）。
 :::
 
-::: method 稳定提取：选最大的四元数分量 {#method-2.6.extract}
-先确认 $R^{\mathrm T}R\approx I$、$\det R\approx1$。令 $q=(\eta,\epsilon_x,\epsilon_y,\epsilon_z)^{\mathrm T}$，由正解构造
-
+::: method 稳定提取算法 · $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$ 最大对角主元法 {#method-2.6.extract}
+先检验输入矩阵满足 $R^{\mathrm T}R\approx I_3,\ \det R\approx +1$。由正解元素构造 $4\times 4$ 对称矩阵 $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$（下标 $0\text{–}3$ 依次对应 $\eta,\epsilon_x,\epsilon_y,\epsilon_z$）：
 $$H=\begin{bmatrix}
 1+r_{11}+r_{22}+r_{33}&r_{32}-r_{23}&r_{13}-r_{31}&r_{21}-r_{12}\\
 r_{32}-r_{23}&1+r_{11}-r_{22}-r_{33}&r_{12}+r_{21}&r_{13}+r_{31}\\
 r_{13}-r_{31}&r_{12}+r_{21}&1-r_{11}+r_{22}-r_{33}&r_{23}+r_{32}\\
 r_{21}-r_{12}&r_{13}+r_{31}&r_{23}+r_{32}&1-r_{11}-r_{22}+r_{33}
-\end{bmatrix}=4qq^{\mathrm T}.$$
+\end{bmatrix}.$$
+1. 因 $\operatorname{tr}H=4$，最大对角元 $H_{kk}\ge 1$，取主元 $q_k=\frac{1}{2}\sqrt{H_{kk}}\ge\frac{1}{2}$（绝对避开小分母）；
+2. 由对称非对角交叉项同列恢复其余三分量：$q_i=\frac{H_{ik}}{4q_k}$（$i\neq k$）；
+3. 检验 $\|\boldsymbol q\|=1$ 并回代 $R(\boldsymbol q)$ 验证重构残差。
 
-例如 $H_{01}=r_{32}-r_{23}=4\eta\epsilon_x$，$H_{12}=r_{12}+r_{21}=4\epsilon_x\epsilon_y$。$H$ 用 **0–3 下标**对应四元数分量；$R$ 仍用 1–3 下标。
-
-1. 取最大对角元 $H_{kk}$；
-2. 设 $q_k=\tfrac12\sqrt{H_{kk}}>0$；
-3. 用该列恢复其余分量：$q_i=H_{ik}/(4q_k)$；
-4. 检查单位长度并重建矩阵，不能只归一化就宣称输入合法。
-
-因为 $\sum H_{ii}=4$，最大项至少 1，所以选出的 $q_k\ge1/2$，分母不接近零。这个分支法在零角、半圈及一般姿态都能使用；半圈时向量分量间的**对称交叉项**仍保留相对符号。
-
-本节默认保留“最大分量取正”的代表。如要 $\eta\ge0$，在 $\eta<0$ 时整体反号；$\eta=0$ 时仍需额外规则。选择最大项发生切换时，代表可能整体变号，后面的连续跟踪还要做符号对齐。含噪矩阵若不满足旋转条件，应先单独处理，不在这里悄悄修正。
+对例 2.6.B，$H$ 对角元为 $(0,2,2,0)$，取 $k=1\implies q_1=1/\sqrt 2$，由 $H_{21}=r_{12}+r_{21}=-2$ 恢复 $q_2=-1/\sqrt 2$，精确还原 $R_\pi$。
 :::
-
-对例 2.6.B，$H$ 的对角为 $(0,2,2,0)$；取 $k=1$，$q_1=1/\sqrt2$，再由 $H_{21}=-2$ 得 $q_2=-1/\sqrt2$。交叉项给出了原符号法丢失的负号。
 
 <a id="lab-2.6"></a>
 
-### 2.6.2.3 操作：看见双重覆盖，也检查反解是否重建
-
-演示默认加载例 2.6.B 的**精确矩阵**。先预测：把四元数整体反号，哪些数会变、哪些几何量应保持不变？
-
-1. 比较最大分量提取与原书分量符号法的重建残差。前者应重建原矩阵，后者在这个精确反例中失败。
-2. 切换 Q 与 −Q，核对四个数一起反号，但画面、矩阵和点的像保持不变。
-3. 调节轴或角度后，输入改由角轴生成。固定轴，比较 $0^\circ$、$360^\circ$、$720^\circ$：姿态相同，四元数依次为 $+1,-1,+1$。
-4. 试 $179.99^\circ$ 与 $180.01^\circ$，观察生成四元数的标量部分连续越过 0。再载入“精确半圈反例”，不要依靠浮点数中偶然残留的极小反对称差来定符号。
-5. 把轴输入全设为 0，观察错误；按“重置四元数与视角”恢复默认反例、符号、控件与相机。
-
 <div class="lab" data-lab="quaternion3d" hidden></div>
 
-没有脚本时，可用上面的精确矩阵和下面三份练习完成核对。
-
-::: think 练习 1 · 零角、半圈与四参数的顺序 {#practice-2.6.extract}
-$R=I$ 时最大分量法选哪个分量？对例 2.6.B，若把向量部分按“全部非负”恢复，错在哪里？最后把正确四元数从标量在前换写成标量在后。
+::: think 练习 1 · 零角提取、半圈符号与存储次序 {#practice-2.6.extract}
+对 $R=I_3$，$H$ 最大主元法选中哪个分量？在例 2.6.B 中若只对对角元开正根错在哪里？将正确四元数从「标量在前」改写为「标量在后」。
 
 ::: sol 核对
-$I$ 给出 $\operatorname{diag}H=(4,0,0,0)$，可取 $q=(1,0,0,0)$。半圈的对角项只给绝对值，必须用 $H_{21}=-2$ 恢复相对负号。标量在前为 $(0,1/\sqrt2,-1/\sqrt2,0)$；标量在后为 $(1/\sqrt2,-1/\sqrt2,0,0)$。四个数的次序改变，不代表换了姿态。
+$R=I_3$ 时 $\operatorname{diag}H=(4,0,0,0)$，取 $k=0$ 得 $\boldsymbol q=(1,0,0,0)^{\mathrm T}$。半圈只取对角正根会丢失 $H_{21}=-2$ 携带的负号。标量在前为 $(0,1/\sqrt 2,-1/\sqrt 2,0)$，标量在后为 $(1/\sqrt 2,-1/\sqrt 2,0,0)$（同一物理姿态）。
 :::
 :::
-逆四元数由转置关系给出（原书式 2.36）：
 
-$$Q^{-1}=\{\eta,-\boldsymbol\epsilon\}\quad\Longleftrightarrow\quad R^{-1}=R^T .$$
+### 2.6.2.4 Hamilton 乘法：右侧旋转先作用
 
-（把 $\{\eta,-\boldsymbol\epsilon\}$ 代入式 2.33：$\boldsymbol\epsilon\to-\boldsymbol\epsilon$ 使反对称件反号、对称件不变，恰好逐元素转置。）
+按 Hamilton 规则（虚单位 $i^2=j^2=k^2=ijk=-1$），两个单位四元数的乘积满足 $R(Q_1\otimes Q_2)=R_1 R_2$（作用到列向量时**右侧 $Q_2$ 先作用**；原书式 2.37）：
+$$Q_1\otimes Q_2=\bigl\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\quad \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\bigr\}.$$
+若物理指令按时间先后为「先施加 $R_1$，再绕固定轴施加 $R_2$」，合成四元数为 $Q_2\otimes Q_1$；因叉积 $\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2$ 反对称，四元数乘法一般不可交换。利用纯向量四元数夹乘 $(0,R(Q)\boldsymbol p)=Q\otimes(0,\boldsymbol p)\otimes Q^{-1}$ 与指数关系 $Q=\exp((0,\frac{\vartheta}{2}\boldsymbol r))$（对纯向量四元数 $U=(0,\boldsymbol u)$ 有 $U^2=(-\|\boldsymbol u\|^2,\boldsymbol 0)$，从而 $\exp((0,\boldsymbol u))=(\cos\|\boldsymbol u\|,\ \sin\|\boldsymbol u\|\frac{\boldsymbol u}{\|\boldsymbol u\|})$），也可与 [§2.5.3](sec2-5.md#sec-2.5.3) 的指数表示一一对照。
 
-### 2.6.2.4 乘法：右侧旋转先施加
-
-在本文 Hamilton、主动列向量约定下，四元数乘法满足 **$R(Q_1\otimes Q_2)=R_1R_2$**。作用到点时，**先施加右侧的 $R_2$，再施加左侧的 $R_1$**。若题目按时间说“先 $R_1$，后 $R_2$”，结果应为 $Q_2\otimes Q_1$。原书式 2.37 为
-
-$$Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^T\boldsymbol\epsilon_2,\ \ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}.$$
-
-::: note 乘法公式从哪来——「标量 + 向量」的数（本编补充）
-四元数是形如 $\eta+\epsilon_x i+\epsilon_y j+\epsilon_z k$ 的数：标量加三个虚部，虚单位满足 $i^2=j^2=k^2=ijk=-1$（等价地 $ij=k,\ jk=i,\ ki=j$，反序差一负号）。按分配律相乘，再把标量与向量部分分别收集，得到
-
-$$(a,\boldsymbol u)\otimes(b,\boldsymbol v)=\big(ab-\boldsymbol u\cdot\boldsymbol v,\ \ a\boldsymbol v+b\boldsymbol u+\boldsymbol u\times\boldsymbol v\big).$$
-
-式 2.37 就是这个乘法规则。交换顺序会使叉积项反号，因而**一般不可交换**；同轴等特殊情形可以交换，不能写成任意两次乘法都不相等。共轭 $\bar Q=\{\eta,-\boldsymbol\epsilon\}$ 满足 $Q\otimes\bar Q=\{\eta^2+\|\boldsymbol\epsilon\|^2,\boldsymbol0\}$；对单位四元数结果为 $\{1,\boldsymbol0\}$，所以共轭就是逆。由纯向量四元数 $(0,p)$ 的夹乘 $Q\otimes(0,p)\otimes Q^{-1}=(0,R(Q)p)$ 也可检查合成顺序：先夹乘 $Q_2$，再夹乘 $Q_1$，合并就是 $Q_1\otimes Q_2$。
+::: ex 例 2.6.C · 两个 90° 旋转的 Hamilton 乘法顺序 {#ex-2.6.C}
+令 $Q_x=(\frac{1}{\sqrt 2},\frac{1}{\sqrt 2},0,0)$、$Q_z=(\frac{1}{\sqrt 2},0,0,\frac{1}{\sqrt 2})$。直接计算得：
+$$Q_z\otimes Q_x = \bigl(\tfrac{1}{2},\ \tfrac{1}{2},\ \tfrac{1}{2},\ \tfrac{1}{2}\bigr),\qquad
+Q_x\otimes Q_z = \bigl(\tfrac{1}{2},\ \tfrac{1}{2},\ -\tfrac{1}{2},\ \tfrac{1}{2}\bigr).$$
+前者对应 $R_z(90^\circ)R_x(90^\circ)$（先绕固定 $x$ 后绕固定 $z$，将 $(0,1,0)^{\mathrm T}$ 映至 $(0,0,1)^{\mathrm T}$）；后者对应 $R_x(90^\circ)R_z(90^\circ)$（将 $(0,1,0)^{\mathrm T}$ 映至 $(-1,0,0)^{\mathrm T}$）。
 :::
 
-::: ex 例 2.6.C · 两个 90° 旋转，顺序不能省略 {#ex-2.6.C}
-令 $Q_x=(\tfrac1{\sqrt2},\tfrac1{\sqrt2},0,0)$、$Q_z=(\tfrac1{\sqrt2},0,0,\tfrac1{\sqrt2})$，分别表示绕固定 $x,z$ 转 $90^\circ$。
-
-$$Q_z\otimes Q_x=(\tfrac12,\tfrac12,\tfrac12,\tfrac12),\qquad
-Q_x\otimes Q_z=(\tfrac12,\tfrac12,-\tfrac12,\tfrac12).$$
-
-第一式对应 $R_z(90^\circ)R_x(90^\circ)$，先 $x$ 后 $z$，将 $p=(0,1,0)^{\mathrm T}$ 送到 $(0,0,1)^{\mathrm T}$；交换顺序则将同一点送到 $(-1,0,0)^{\mathrm T}$。四元数中的叉积符号与矩阵时序相互核对。
-:::
-
-::: think 练习 2 · 逆、乘法和点的像 {#practice-2.6.product}
-先绕固定 $z$ 转 $90^\circ$，再绕固定 $x$ 转 $90^\circ$。用例 2.6.C 的符号写出合成四元数和逆四元数，并求 $p=(0,1,0)^{\mathrm T}$ 的像；最后验证逆变换把点带回去。
+::: think 练习 2 · 乘法次序与逆检验 {#practice-2.6.product}
+先绕固定 $z$ 转 $90^\circ$，再绕固定 $x$ 转 $90^\circ$。写出合成四元数、逆四元数与等效旋转矩阵，并验证点 $(0,1,0)^{\mathrm T}$ 正逆变换闭环。
 
 ::: sol 核对
-按时间顺序应写 $Q_x\otimes Q_z=(1,1,-1,1)/2$，逆为 $(1,-1,1,-1)/2$。合成矩阵为
-
-$$R_x(90^\circ)R_z(90^\circ)=\begin{bmatrix}0&-1&0\\0&0&-1\\1&0&0\end{bmatrix}.$$
-
-第二列给出 $Rp=(-1,0,0)^{\mathrm T}$，再乘 $R^{\mathrm T}$ 回到 $(0,1,0)^{\mathrm T}$。若写 $Q_z\otimes Q_x$，结果会变成 $(0,0,1)^{\mathrm T}$。
+合成四元数为 $Q_x\otimes Q_z=(\frac12,\frac12,-\frac12,\frac12)$，逆为 $(\frac12,-\frac12,\frac12,-\frac12)$。等效矩阵 $R_x(90^\circ)R_z(90^\circ)=\begin{bmatrix}0&-1&0\\0&0&-1\\1&0&0\end{bmatrix}$ 将 $(0,1,0)^{\mathrm T}$ 送至 $(-1,0,0)^{\mathrm T}$，左乘 $R^{\mathrm T}$ 精确返回 $(0,1,0)^{\mathrm T}$。
 :::
 :::
-
-::: note 用 2.5.3 的语言读四元数（本编补充）
-令纯向量四元数 $U=(0,\boldsymbol u)$。由乘法规则，$U^2=(-\|\boldsymbol u\|^2,\boldsymbol0)$，所以指数级数的偶次项合成余弦、奇次项合成正弦。当 $\boldsymbol u\ne0$ 时，
-
-$$\exp\big((0,\boldsymbol u)\big)=\Big(\cos|\boldsymbol u|,\ \ \sin|\boldsymbol u|\,\frac{\boldsymbol u}{|\boldsymbol u|}\Big),$$
-
-$\boldsymbol u=0$ 时单独取 $\exp(0)=(1,\boldsymbol0)$，也等于上式的连续极限。于是 $Q=\exp((0,\tfrac\vartheta2\boldsymbol r))=(\cos(\vartheta/2),\sin(\vartheta/2)\boldsymbol r)$。转角增加 $2\pi$ 时，四元数整体反号；增加 $4\pi$ 才回到原四元数，而物理姿态每增加 $2\pi$ 就已重复。这里用的是四元数自身的幂，不是叉积矩阵的“三循环”。
-:::
-
 
 <a id="sec-2.6.3"></a>
 
-## 2.6.3 连续跟踪与姿态插值
+## 2.6.3 连续符号对齐与球面线性插值（SLERP）
 
-### 2.6.3.1 相邻姿态先对齐符号
+从每帧旋转矩阵独立提取四元数时，代表可能因主元切换在 $\boldsymbol q$ 与 $-\boldsymbol q$ 间跳变。插值或连续跟踪前，必须先算四维内积 $d=\boldsymbol q_0^{\mathrm T}\boldsymbol q_1$：若 $d<0$，则令 $\boldsymbol q_1\leftarrow -\boldsymbol q_1,\ d\leftarrow -d$ 以选择同半球较近代表。置 $\Omega=\arccos d\in[0,\pi/2]$（对应物理转角 $2\Omega$）：
+- 当 $d=1$（端点相同）时直接返回 $\boldsymbol q_0$（不可除以 $\sin\Omega=0$）；
+- 当 $0<\Omega\le\pi/2$ 时，沿大圆弧的**球面线性插值（SLERP）**为：
+  $$\boldsymbol q(s) = \frac{\sin\bigl((1-s)\Omega\bigr)}{\sin\Omega}\boldsymbol q_0 + \frac{\sin(s\Omega)}{\sin\Omega}\boldsymbol q_1, \qquad 0\le s\le 1.$$
+$s$ 线性变化时，刚体以恒定角速度走两点间的最短姿态弧线，等价于 [§2.5.3](sec2-5.md#sec-2.5.3) 的相对指数插值 $R_0\exp(s\operatorname{Log}(R_0^{\mathrm T}R_1))$。
 
-从每一帧矩阵独立提取四元数，可能先得到 $q$，下一帧却选中接近 $-q$ 的代表。姿态没有跳变，四个参数却会跳变。**单位球面光滑不等于提取算法会自动选到连续代表**。
-
-对已归一化的相邻四元数，计算四维点积 $d=q_{\rm prev}^{\mathrm T}q_{\rm new}$：若 $d<0$，将 $q_{\rm new}$ 整体反号。这会选到离上一代表更近的符号。$d=0$ 对应物理上的半圈差，两条最短路径同样长，必须按任务选路；若采样间转动太大，仅凭两个姿态也无法恢复实际转过几圈。
-
-例如固定 $z$ 轴从 $170^\circ$ 转到 $190^\circ$，连续表示为
-
-$$q_{170}=(\cos85^\circ,0,0,\sin85^\circ),\quad
-q_{190}=(\cos95^\circ,0,0,\sin95^\circ).$$
-
-二者点积为 $\cos10^\circ>0$。若每帧强制 $\eta\ge0$，第二个代表会被翻成 $-q_{190}$，两帧点积反而变负。连续跟踪时应保留符号历史；数值积分后还要检查单位长度，不能把四元数表示本身当作稳定性的保证。
-
-### 2.6.3.2 SLERP：沿单位球面插值
-
-对单位端点先按上述规则对齐符号，令 $d=q_0^{\mathrm T}q_1\in[0,1]$、$\Omega=\arccos d$。在 $0<\Omega\le\pi/2$ 时，
-
-$$q(s)=\frac{\sin((1-s)\Omega)}{\sin\Omega}q_0+
-\frac{\sin(s\Omega)}{\sin\Omega}q_1,\qquad 0\le s\le1.$$
-
-这叫**球面线性插值**（SLERP）。球面角为 $\Omega$，物理转角为 $2\Omega$；$s$ 随时间线性增长时，对应绕固定轴以恒角速度走最短姿态路径，和 [§2.5 的相对旋转插值](sec2-5.md#sec-2.5.3) 表达同一条选定路径。
-
-当 $d=1$ 时端点相同，直接取常量 $q_0$，不能除以 $\sin\Omega=0$；非常接近 1 时可用归一化线性插值近似，**它一般不严格恒角速度**。$d=0$ 时物理转角是 $\pi$，两种符号对应两条等长路径，选定后再插。实现中应将点积限制到合法区间，但不能用截断掩盖非单位输入。
-
-::: think 练习 3 · 同一姿态为什么会插值出零？ {#practice-2.6.interpolate}
-取 $q_0=(1,0,0,0)$、$q_1=(-1,0,0,0)$。直接做四个分量的线性插值，在 $s=1/2$ 得到什么？正确的姿态路径是什么？再求上面 $170^\circ\to190^\circ$ 的中点姿态。
+::: think 练习 3 · 对径点线性插值零四元数陷阱 {#practice-2.6.interpolate}
+对 $\boldsymbol q_0=(1,0,0,0)^{\mathrm T}$ 与 $\boldsymbol q_1=(-1,0,0,0)^{\mathrm T}$ 直接作四分量线性插值在 $s=1/2$ 处得到什么？若绕固定 $+z$ 从 $170^\circ$ 转至 $190^\circ$，写出保持连续符号的历史代表及 SLERP 中点。
 
 ::: sol 核对
-直接线性插值得到零四元数，不能归一化。两端其实是同一姿态；先将 $q_1$ 反号，与 $q_0$ 对齐后，路径保持单位姿态不动。
-
-$170^\circ\to190^\circ$ 的连续端点点积为 $\cos10^\circ$，SLERP 中点为 $(0,0,0,1)$，即 $R_z(180^\circ)$。若没有先纠正人为的相反符号，就可能沿另一条长路径插值；连续表示的标量部分经过 0 是正常的。
+直接线性插值在 $s=1/2$ 得零四元数 $\boldsymbol 0$（无法归一化）；先对齐内积符号将 $\boldsymbol q_1$ 取反后轨迹恒为单位姿态。从 $170^\circ$ 至 $190^\circ$ 应保留 $\boldsymbol q_{170}=(\cos 85^\circ,0,0,\sin 85^\circ)^{\mathrm T}$ 与 $\boldsymbol q_{190}=(\cos 95^\circ,0,0,\sin 95^\circ)^{\mathrm T}$（内积 $\cos 10^\circ>0$），不可机械强制 $\eta\ge 0$；中点为 $(0,0,0,1)^{\mathrm T}$ 即 $R_z(180^\circ)$。
 :::
 :::
 
 <a id="sec-2.6"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
-
-不看正文与速查卡，先写出下面几条，再展开核对。
-
-1. 写出 $(\vartheta,\boldsymbol r)\to(\eta,\boldsymbol\epsilon)$ 的换算与单位约束。
-2. 四元数的独立参数是几个？为什么？
-3. 半角打包合并了哪些参数？它是否消除了全部不唯一性？
-4. 为什么精确半圈不能用反对称差逐个定符号？如何选择稳定提取分支？
-5. $Q_1\otimes Q_2$ 谁先作用？SLERP 前为何要先比较四维点积？
+::: think 默写点 · 合上书再写 {#sec-2.6-recall}
+1. 写出 $(\vartheta,\boldsymbol r)\to\{\eta,\boldsymbol\epsilon\}$ 转换、单位约束与四元数紧凑正解公式。
+2. 说明原书分量符号法在何处失效，以及 $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$ 最大主元法为何全局稳定。
+3. 说明 Hamilton 乘法 $Q_1\otimes Q_2$ 的作用次序与 SLERP 前点积符号对齐规则。
 
 ::: sol 核对
-
-$\eta=\cos\frac{\vartheta}{2}$、$\boldsymbol\epsilon=\sin\frac{\vartheta}{2}\boldsymbol r$；约束 $\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1$。
-
-3 个（4 参数 − 1 约束），与最简表示的要求不矛盾。
-
-同步反号的角轴参数映到同一个 Q；零角可直接用单位四元数代表。Q 与 −Q 仍表示同一姿态，半圈提取须避开小分母，不能把某一支公式当成处处可直接计算。
-
-半圈时 $R-R^{\mathrm T}=0$，分量相对符号要从对称交叉项读出。构造 $H=4qq^{\mathrm T}$，选最大对角元，再由其所在列恢复其他分量。
-
-$Q_1\otimes Q_2$ 对应 $R_1R_2$，右侧的 $Q_2$ 先作用。插值先将负点积的端点整体反号，避免把同一或相近姿态的相反代表当作远端点；半圈差另定路径。
-
+1. $\eta=\cos(\vartheta/2),\ \boldsymbol\epsilon=\sin(\vartheta/2)\boldsymbol r$，$\eta^2+\|\boldsymbol\epsilon\|^2=1$；$R=(2\eta^2-1)I_3+2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T}+2\eta S(\boldsymbol\epsilon)$。
+2. 精确半圈 $\eta=0$ 时 $R-R^{\mathrm T}=O$，符号法丢失相对负号；$H$ 必有 $H_{kk}\ge 1$，同列交叉项 $q_i=H_{ik}/(4q_k)$ 保留完整符号。
+3. $R(Q_1\otimes Q_2)=R_1 R_2$（右侧先作用）；若 $\boldsymbol q_0^{\mathrm T}\boldsymbol q_1<0$ 先取反 $\boldsymbol q_1$ 再插值。
 :::
-
 :::
 
 ## 2.6 小结与常见错误
 
-- **一条主线**：半角打包与单位约束 → 矩阵正解 → 最大分量提取与重建 → Hamilton 乘法/共轭逆 → 符号对齐与球面插值。原书式 2.34–2.35 的分量符号法不能直接用于所有精确半圈。
-- **参数与边界**：同步反号的参数合并，但 Q/−Q 双重覆盖保留；半圈须另定符号与选择稳定提取支路。
-- **一个取舍**：4 参数受单位约束；计算方便，但符号选取与提取分支仍需明确。
+**主线**：单位四元数以半角消去角轴的同步反号重复性，但留有 $Q\sim -Q$ 双重覆盖；提取采用 $H=4\boldsymbol q\boldsymbol q^{\mathrm T}$ 最大主元法彻底规避半圈退化，合成遵循 Hamilton 右侧先作用，插值先对齐内积符号。
 
-核心公式速查：
-
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| $\eta=\cos\frac\vartheta2$，$\boldsymbol\epsilon=\sin\frac\vartheta2\boldsymbol r$ | 输入为角轴对 | rad | 半角打包合并同步反号；$\vartheta\to\vartheta+2\pi$ 得 $-Q$ |
-| $\eta^2+\epsilon_x^2+\epsilon_y^2+\epsilon_z^2=1$ | 单位四元数定义 | — | 零四元数没有方向，不可归一化 |
-| $R=(2\eta^2-1)I+2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T}+2\eta S(\boldsymbol\epsilon)$ | 单位四元数，Hamilton 约定、标量在前 | 无量纲 | 换软件先核对分量顺序 |
-| $\eta=\frac12\sqrt{\operatorname{tr}R+1}$，$\epsilon_i=\frac12\operatorname{sgn}(\cdot)\sqrt{\cdots}$ | $\eta>0$；精确半圈失效 | — | 例 2.6.B 的半圈反例；须改用 $H=4qq^{\mathrm T}$ 最大分量法 |
-| $Q^{-1}=\{\eta,-\boldsymbol\epsilon\}$ | 单位四元数 | — | 共轭即逆仅对单位四元数成立 |
-| $Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}$ | Hamilton 乘法 | — | 对应 $R_1R_2$，**右侧先作用**；叉积项使其不可交换 |
-| $q(s)=\frac{\sin((1-s)\Omega)}{\sin\Omega}q_0+\frac{\sin(s\Omega)}{\sin\Omega}q_1$ | 先按点积符号对齐，$0<\Omega\le\pi/2$ | — | 物理转角为 $2\Omega$；$d=1$ 时不能除以 $\sin\Omega$ |
-
-::: think 常见错误清单 · 自查四条
-1. 未核对 Hamilton/其他乘法口径、标量在前/在后的顺序，就直接交换四个数或复制公式。
-2. 把分量符号法的三个零都取正，当成精确半圈的合法补救；或写“先 Q₁ 后 Q₂”却算 Q₁⊗Q₂。
-3. 认为 $\eta\ge0$ 保证全局唯一且连续；或不对齐符号就直接插值 q 与 −q。
-4. 忘记单位约束，甚至把零四元数也拿去归一化；符号连续和数值稳定性仍需单独检查。
-:::
-
-下一节 [2.7 齐次变换](sec2-7.md) 加入平移，把完整位姿写成一个矩阵。这里的单位四元数描述指向，不包含平移。
+| 公式 | 条件与假设 | 易错点 |
+|:--|:--|:--|
+| $Q=\{\cos\frac{\vartheta}{2},\sin\frac{\vartheta}{2}\boldsymbol r\},\ \eta^2+\|\boldsymbol\epsilon\|^2=1$ | Hamilton 约定、标量在前 | 零四元数禁止归一化；不同软件标量顺序可能不同 |
+| $R=(2\eta^2-1)I_3+2\boldsymbol\epsilon\boldsymbol\epsilon^{\mathrm T}+2\eta S(\boldsymbol\epsilon)$ | 单位四元数 | 原书式 (2.34)-(2.35) 在 $\eta=0$ 半圈处失效（E2.7） |
+| $q_k=\frac12\sqrt{H_{kk}},\ q_i=H_{ik}/(4q_k)$ | $R\in SO(3)$，$H_{kk}=\max_j H_{jj}\ge 1$ | 提取后发生主元切换时需做连续符号对齐 |
+| $Q_1\otimes Q_2=\{\eta_1\eta_2-\boldsymbol\epsilon_1^{\mathrm T}\boldsymbol\epsilon_2,\ \eta_1\boldsymbol\epsilon_2+\eta_2\boldsymbol\epsilon_1+\boldsymbol\epsilon_1\times\boldsymbol\epsilon_2\}$ | $R(Q_1\otimes Q_2)=R_1 R_2$ | 误按时间从左到右乘；SLERP 未对齐内积致插出零四元数 |

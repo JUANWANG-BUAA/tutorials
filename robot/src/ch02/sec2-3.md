@@ -1,74 +1,66 @@
 # 2.3 旋转矩阵的合成
 
-上一节能算出一次旋转。现在让工具先绕 $y$ 轴转 $90^\circ$，再绕 $z$ 轴转 $90^\circ$：第二次的 $z$ 是固定在工作台上的轴，还是随工具一起转过的轴？两种指令得到的终态可能不同。
-
-本节用矩阵、三轴方向和分步演示核对连续旋转。原书对应 §2.3，印刷页 45–48。坐标系均为右手系，角度按右手定则取正；这里只处理朝向，不处理偏置转轴引起的位置变化。
+> **本节定位**：`核心必考` ｜ 建立多坐标系级联换算链 $R_n^0=R_1^0 R_2^1\cdots R_n^{n-1}$，严格证明**当前轴右乘**与**固定轴左乘**的更新规则及其相似变换换系关系，界定非单位初始姿态边界与旋转乘法不可交换性。原书对应 §2.3。
 
 <a id="sec-2.3.1"></a>
 
-## 2.3.1 乘积顺序与参考坐标系
+## 2.3.1 级联换算、当前轴右乘与固定轴左乘
 
-### 2.3.1.1 坐标换算视角
+设三个共原点坐标系 $0,1,2$，其中 $R_j^i$ 表示坐标系 $j$ 相对坐标系 $i$ 的姿态矩阵。由 [@thm-2.2.A]，对空间任意点均有 $\boldsymbol p^1=R_2^1\boldsymbol p^2$ 与 $\boldsymbol p^0=R_1^0\boldsymbol p^1$，代入得 $\boldsymbol p^0=R_1^0 R_2^1\boldsymbol p^2$。因该等式对一切 $\boldsymbol p^2\in\mathbb R^3$ 成立，推广至 $n$ 级连杆即得级联公式与逆关系（原书式 2.12–2.16）：
 
-设 $\boldsymbol p^i$ 为同一点在坐标系 $i$ 中的坐标，$R_j^i$ 为坐标系 $j$ 相对于坐标系 $i$ 的姿态矩阵，其三列依次是 $j$ 系三轴在 $i$ 系中的坐标。对于三个共原点的坐标系 $0,1,2$（原书式 2.12–2.15），坐标的级联换算满足：
+$$R_2^0 = R_1^0 R_2^1, \qquad R_n^0 = R_1^0 R_2^1\cdots R_n^{n-1}, \qquad R_i^j = (R_j^i)^{-1} = (R_j^i)^{\mathrm T}.$$
 
-$$\boldsymbol p^1=R_2^1\boldsymbol p^2,\qquad \boldsymbol p^0=R_1^0\boldsymbol p^1\ \Rightarrow\ \boldsymbol p^0=R_1^0R_2^1\boldsymbol p^2\ \Rightarrow\ \boxed{R_2^0=R_1^0R_2^1}$$
+在连续转动过程中，设刚体当前姿态为 $R$（初始姿态 $R_0$ 未必为 $I_3$）。新增旋转若在**当前工具坐标系**下描述，记为 $B$；若在**固定参考坐标系**下描述，记为 $S$。
 
-从输入 $\boldsymbol p^2$ 读起：先经右边的 $R_2^1$ 换到系 1，再经左边的 $R_1^0$ 换到系 0。等式对任意输入向量都成立，才能得到最后的矩阵等式；只验证一个向量不足以证明两个姿态相同。
-
-### 2.3.1.2 连续旋转的乘法规则
-
-令 $R$ 表示工具当前相对于固定系的姿态，初始姿态 $R_0$ 不一定是单位阵。新增转动若在工具当前坐标系下描述，记为 $B$；若在固定参考系下描述，记为 $S$。
-
-::: thm 原理 2.3.A · 相对当前轴右乘 {#thm-2.3.A}
-若新增转动 $B$ 相对当前工具系描述，姿态更新为 $R_{\rm new}=RB$。例如先绕当前 $y$、再绕新的 $z$ 轴转 $\alpha,\beta$，得到 $R_0R_y(\alpha)R_z(\beta)$。从 $R_0=I$ 出发，连续换算得到
-
-$$R_2^0=R_1^0R_2^1,\qquad R_n^0=R_1^0R_2^1\cdots R_n^{n-1}.$$
-
-逆向换算的上下标对调（原书式 2.16）：$R_1^0=(R_0^1)^{-1}=(R_0^1)^{\mathrm T}$。
+::: thm 定理 2.3.A · 相对当前轴右乘 {#thm-2.3.A}
+若新增旋转 $B$ 相对当前工具坐标系描述，则新姿态矩阵为**右乘**更新：
+$$R_{\rm new} = R\,B.$$
+从一般初始姿态 $R_0$ 出发，依次绕当前轴施加 $M_1\to M_2$，终态为 $R_{\rm final}=R_0 M_1 M_2$。
 :::
 
-::: thm 原理 2.3.B · 相对固定轴左乘 {#thm-2.3.B}
-若新增转动 $S$ 相对固定参考系描述，姿态更新为 $R_{\rm new}=SR$。从 $R_0$ 出发，先绕固定 $y$、再绕固定 $z$ 轴转 $\alpha,\beta$，得到 $R_z(\beta)R_y(\alpha)R_0$：新因子从左侧接入。
+::: thm 定理 2.3.B · 相对固定轴左乘 {#thm-2.3.B}
+若新增旋转 $S$ 相对固定参考坐标系描述，则新姿态矩阵为**左乘**更新：
+$$R_{\rm new} = S\,R.$$
+从一般初始姿态 $R_0$ 出发，依次绕固定轴施加 $M_1\to M_2$，终态为 $R_{\rm final}=M_2 M_1 R_0$（新因子从左侧接入）。
 :::
 
-::: proof 为什么顺序不同？
-设 $\boldsymbol u$ 为工具上一向量在当前工具系中的坐标，在固定系中表示为 $R\boldsymbol u$。
-若相对固定系施加转动 $S$，转后该向量变为 $S(R\boldsymbol u)=(SR)\boldsymbol u$，故新姿态为 $SR$。
-若相对当前工具系施加转动 $B$，先用 $B\boldsymbol u$ 表示转后向量在原工具系中的坐标，再用 $R(B\boldsymbol u)=(RB)\boldsymbol u$ 换到固定系，故新姿态为 $RB$。
+::: proof 证明 · 右乘、左乘规则与相似变换换系关系
+设 $\boldsymbol u$ 为固连在刚体上某向量在当前工具系下的坐标，则在固定参考系下的坐标为 $R\boldsymbol u$。
+1. 若相对固定参考系施加旋转 $S$，固定系下新坐标变为 $S(R\boldsymbol u)=(SR)\boldsymbol u$，故新姿态矩阵为 $R_{\rm new}=SR$。
+2. 若相对当前工具系施加旋转 $B$，旋转后该向量在**原工具系**下坐标变为 $B\boldsymbol u$，再经转动前姿态 $R$ 换算回固定系得 $R(B\boldsymbol u)=(RB)\boldsymbol u$，故新姿态矩阵为 $R_{\rm new}=RB$。
 
-描述同一次实际转动时，两个增量满足 $B=R^{\mathrm T}SR$，因此 $RB=SR$；这里 $R$ 取转动前的姿态。不能把同一个数值的 $R_y(\alpha)$ 不经换算就同时当作固定轴和当前轴指令。原书式 2.17 的虚拟分解 $R\,R^{-1}SR=SR$ 正是这一换算，最后一步不表示物体恢复了转动前的姿态。
+当 $S$ 与 $B$ 描述同一次物理旋转时，两式相等要求 $RB=SR$，从而两者满足相似变换换系公式（其中 $R$ 为转动前的姿态）：
+$$B = R^{\mathrm T} S R \quad\Longleftrightarrow\quad S = R B R^{\mathrm T}.$$
+原书式 (2.17) 所写的分解 $R(R^{-1}SR)=SR$ 表达的正是该相似变换换系关系，并不表示刚体先退回原位再重新旋转。
 :::
 
-从初始姿态 $I$ 出发，固定轴依次做 $A,B$ 和当前轴依次做 $B,A$ 都得到 $BA$。倒序的是完整的轴与角度配对。若初始姿态为一般的 $R_0$，两者分别是 $BAR_0$ 与 $R_0BA$，不保证相等；ZYZ 与 RPY 也不能仅凭一个右乘、一个左乘就直接互换同一组角。
+| 转轴参考基准 | 单步更新（当前姿态 $R$） | 从 $R_0$ 依次施加 $M_1\to M_2$ | 典型应用 |
+|:--|:--|:--|:--|
+| 当前运动系（动轴） | **右乘**：$R_{\rm new}=R\,B$ | $R_{\rm final}=R_0 M_1 M_2$ | ZYZ 欧拉角、标准 DH 四步连乘 |
+| 固定参考系（定轴） | **左乘**：$R_{\rm new}=S\,R$ | $R_{\rm final}=M_2 M_1 R_0$ | RPY 欧拉角、角轴五步构造 |
 
-对于 $0\to1\to2\to3$ 的坐标系链，旋转矩阵级联遵循 $R_3^0=R_1^0R_2^1R_3^2$，这也是机器人正运动学的旋转部分。录播 0:30:07 的旧教程记录用「从 3 的指向到 0 的指向」提示这一链：确切说，是把系 3 的向量坐标逐级换算到系 0。各系原点不同时，朝向仍按此合成，点的位置还要计入平移。矩阵的列给出动系轴在固定系中的方向余弦，行则给出固定系轴在动系中的方向余弦。
+**初态境界辨析**：从**单位初始姿态 $R_0=I_3$** 出发，绕固定轴依次施加 $A\to B$ 得 $BA$，绕当前轴依次施加 $B\to A$ 亦得 $BA$，即从 $I_3$ 出发时「固定轴序列」与「轴和角成对倒序的当前轴序列」终态相同；但当初始姿态为一般 $R_0\neq I_3$ 时，固定轴方案给 $BA R_0$、当前轴倒序方案给 $R_0 BA$，二者一般不等。各系原点不重合时，姿态链仍按此相乘，位置平移见 [§2.7 齐次变换](sec2-7.md)。
 
 <a id="sec-2.3.2"></a>
 
 ## 2.3.2 旋转的不可交换性
 
-::: ex 例 2.3（原书）· 交换两次旋转的顺序 {#ex-book-2.3}
-一般情况下，交换两次旋转的顺序会改变终态，即 $AB\ne BA$。原书图 2.6、2.7 分别给出当前轴与固定轴的例子。“一般不同”不等于每一对都不同：同轴转动满足 $R_z(\alpha)R_z(\beta)=R_z(\alpha+\beta)=R_z(\beta)R_z(\alpha)$；某次角度为零时也会相等。
+::: ex 例 2.3（原书）· 旋转合成一般不可交换 {#ex-book-2.3}
+矩阵乘法一般不满足交换律（$AB\neq BA$），故连续旋转的发生次序通常不可互换。特例例外包括同轴连续旋转 $R_z(\alpha)R_z(\beta)=R_z(\alpha+\beta)$、零角旋转以及特定 $180^\circ$ 对称轴旋转。同时，因向量加法可交换而旋转不可交换，**严禁用角度三元组逐分量相加代替旋转合成**。
 :::
 
-下面用同一对 $90^\circ$ 转动比较两种顺序。
-
-::: ex 例 2.3.C · 90°+90° 数值验证（本教程补） {#ex-2.3.C}
-从 $I$ 出发，取 $\alpha=90^\circ$ 为 $y$ 轴指令，$\beta=90^\circ$ 为 $z$ 轴指令。代入 [§2.2 的基本矩阵](sec2-2.md#sec-2.2.2)：
-
+::: ex 例 2.3.C · $90^\circ+90^\circ$ 顺序交换数值与三轴校验 {#ex-2.3.C}
+从 $R_0=I_3$ 出发，取 $\alpha=90^\circ$（绕 $y$ 轴）、$\beta=90^\circ$（绕 $z$ 轴）。代入基本旋转矩阵得：
 $$R_A=R_z(\beta)R_y(\alpha)=\begin{bmatrix}0&-1&0\\0&0&1\\-1&0&0\end{bmatrix},\qquad
 R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 
-| 指令（按实际发生顺序） | 乘积 | 转后三轴在固定系中的方向 |
-|---|---|---|
-| 固定 $y\to z$；或当前 $z\to y'$ | $R_A=R_zR_y$ | $x_2=-z_0,\ y_2=-x_0,\ z_2=+y_0$ |
-| 固定 $z\to y$；或当前 $y\to z'$ | $R_B=R_yR_z$ | $x_2=+y_0,\ y_2=+z_0,\ z_2=+x_0$ |
+| 旋转指令（按实际发生顺序） | 乘积表达式 | 终态工具三轴在固定系中的方向 |
+|:--|:--|:--|
+| 固定轴先 $y$ 后 $z$；或当前轴先 $z$ 后 $y'$ | $R_A=R_z(90^\circ)R_y(90^\circ)$ | $\boldsymbol x_2=-\boldsymbol z_0,\ \boldsymbol y_2=-\boldsymbol x_0,\ \boldsymbol z_2=+\boldsymbol y_0$ |
+| 固定轴先 $z$ 后 $y$；或当前轴先 $y$ 后 $z'$ | $R_B=R_y(90^\circ)R_z(90^\circ)$ | $\boldsymbol x_2=+\boldsymbol y_0,\ \boldsymbol y_2=+\boldsymbol z_0,\ \boldsymbol z_2=+\boldsymbol x_0$ |
 
-只看第一列已经能发现差别：$R_A(1,0,0)^{\mathrm T}=(0,0,-1)^{\mathrm T}$，而 $R_B(1,0,0)^{\mathrm T}=(0,1,0)^{\mathrm T}$。三列及矩阵都由同一组转动得出，可用下面的图与演示交叉检查。
+仅查第 $1$ 列即可见差异：$R_A\boldsymbol e_x=(0,0,-1)^{\mathrm T}\neq R_B\boldsymbol e_x=(0,1,0)^{\mathrm T}$。注意：验证两矩阵相等必须核对全部三列；仅凭某一测试向量在两矩阵下像相同（如 $I_3\boldsymbol e_x=R_x(90^\circ)\boldsymbol e_x$）不足以判定姿态一致。
 :::
-
-下面的三幅图使用同一投影：蓝、绿、金依次标本体 $x,y,z$ 轴，灰虚线标固定系。读右两图时，可用上表逐根核对方向；屏幕上的投影夹角不等于真实三维夹角。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-23-title fig-23-desc">
@@ -83,7 +75,6 @@ R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 <text class="diagram-text" x="150" y="36" text-anchor="middle">初始姿态</text>
 <text class="diagram-text" x="470" y="36" text-anchor="middle">先 y 后 z（固定轴）</text>
 <text class="diagram-text" x="790" y="36" text-anchor="middle">先 z 后 y（固定轴）</text>
-<!-- panel 0 -->
 <g fill="var(--paper-soft)" stroke="var(--line-strong)" stroke-width="1" stroke-linejoin="round">
 <polygon points="150,215 129.3,203 129.3,157 150,169"/>
 <polygon points="150,215 194.2,227 194.2,181 150,169"/>
@@ -96,7 +87,6 @@ R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 <text class="diagram-text" fill="var(--fig-green)" x="112" y="202" text-anchor="end">y</text>
 <text class="diagram-text" fill="var(--fig-gold)" x="150" y="148" text-anchor="middle">z</text>
 <text class="diagram-note" x="150" y="272" text-anchor="middle">体系 x y z 与固定系重合</text>
-<!-- panel A -->
 <g stroke="var(--muted)" stroke-width="1.1" stroke-dasharray="3 4" marker-end="url(#f23-m)">
 <line x1="470" y1="215" x2="492" y2="221"/>
 <line x1="470" y1="215" x2="460" y2="209"/>
@@ -116,7 +106,6 @@ R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 <text class="diagram-text" fill="var(--fig-blue)" x="470" y="290" text-anchor="middle">x</text>
 <text class="diagram-text" fill="var(--fig-green)" x="406" y="196" text-anchor="end">y</text>
 <text class="diagram-text" fill="var(--fig-gold)" x="449" y="191" text-anchor="end">z</text>
-<!-- panel B -->
 <g stroke="var(--muted)" stroke-width="1.1" stroke-dasharray="3 4" marker-end="url(#f23-m)">
 <line x1="790" y1="215" x2="812" y2="221"/>
 <line x1="790" y1="215" x2="780" y2="209"/>
@@ -136,7 +125,6 @@ R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 <text class="diagram-text" fill="var(--fig-blue)" x="756" y="196" text-anchor="end">x</text>
 <text class="diagram-text" fill="var(--fig-green)" x="790" y="148" text-anchor="middle">y</text>
 <text class="diagram-text" fill="var(--fig-gold)" x="854" y="240">z</text>
-<!-- contrasts -->
 <text fill="var(--fig-red)" font-size="26" font-weight="700" x="310" y="222" text-anchor="middle">≠</text>
 <text fill="var(--fig-red)" font-size="26" font-weight="700" x="630" y="222" text-anchor="middle">≠</text>
 <text class="diagram-mono" x="470" y="312" text-anchor="middle">R = Rz(90°)·Ry(90°)</text>
@@ -144,82 +132,45 @@ R_B=R_y(\alpha)R_z(\beta)=\begin{bmatrix}0&0&1\\1&0&0\\0&1&0\end{bmatrix}.$$
 <text class="diagram-text" x="460" y="356" text-anchor="middle">同样的两次旋转，交换顺序 → 终态姿态不同：旋转不可交换</text>
 <text class="diagram-note" x="460" y="382" text-anchor="middle">灰虚线 = 固定轴；彩色 = 工具轴。两例均从单位姿态出发。</text>
 </svg>
-<figcaption>例 2.3 的几何（本教程绘）：彩色轴都是完成两步后的工具轴，按上表可逐一核对。两例从 $I$ 出发，绕固定轴「先 y 后 z」与「先 z 后 y」给出不同终态。其中 $R_A$ 也可由当前轴「先 z 后新 y」得到；倒序时，轴与角必须一起倒序。</figcaption>
+<figcaption>例 2.3 几何对照（本教程绘）：彩色轴表示终态工具三轴方向。</figcaption>
 </figure>
 
 <a id="practice-2.3.composition"></a>
 
-### 2.3.2.1 动手核对：第二步到底绕哪根轴？
+### 2.3.2.1 交互实验：分步验证当前轴右乘与固定轴左乘
 
-先预测，再操作下方演示：
-
-1. 保持默认 $\alpha=\beta=90^\circ$、初始 $I$、固定轴「先 y 后 z」。把步数调到 0、1、2，分别核对 $I$、$R_y(90^\circ)$、$R_A$；第二步红色转轴应沿固定 $+z_0$。
-2. 改成当前轴，仍先 y 后 z。第二步的转轴现在沿固定 $+x_0$：第一步已把工具的 $z$ 轴转到那里。检查终态是否变成 $R_B$，再把顺序改为先 z 后 y，看是否回到 $R_A$。
-3. 把初始姿态切为 $R_x(45^\circ)$。观察「改用另一轴约定并倒序」的终态差，解释为何不再保证为零。最后设 $\alpha=0$ 或两角均为 $180^\circ$，检查交换两步后的终态差。
+可在下方 3D 实验台依次核对：(1) 初始 $I_3$ 下固定轴「先 $y$ 后 $z$」各步矩阵；(2) 切换为当前轴后观察第二步物理转轴如何随第一步转动而改变；(3) 切换非单位初始姿态 $R_0=R_x(45^\circ)$ 验证 $BA R_0\neq R_0 BA$。
 
 <div class="lab" data-lab="composition3d" hidden></div>
 
-无脚本时，上面的完整矩阵与轴方向表仍可独立使用。画布是投影示意，精确三维方向以读数为准；拖动视角不会改变矩阵。
-
-::: ex 练习 · 初始姿态不能丢
-令 $R_0=R_x(90^\circ)$。方案 A：绕固定 $y$、固定 $z$ 各转 $90^\circ$；方案 B：绕当前 $z$、新的当前 $y$ 各转 $90^\circ$。两方案终态相同吗？各自的工具 $x$ 轴最后朝哪里？
-
-::: sol 核对
-记 $M=R_z(90^\circ)R_y(90^\circ)=R_A$。方案 A 为 $MR_0$，方案 B 为 $R_0M$，不能把两端的 $R_0$ 消掉。因为 $R_0\boldsymbol e_x=\boldsymbol e_x$、$M\boldsymbol e_x=-\boldsymbol e_z$，A 的 $x$ 轴朝 $-z_0$；B 的 $x$ 轴为 $R_0(-\boldsymbol e_z)=+\boldsymbol e_y$。两终态不同。若从 $I$ 出发，二者才都简化为 $M$；某些特殊 $R_0$ 也可能与 $M$ 可交换。
-:::
-:::
-
-::: ex 练习 · 「一般不交换」的边界
-判断并给出理由：(a) 同轴两次旋转可交换；(b) 不同轴就一定不可交换；(c) 两矩阵对一个测试向量作用相同，就表示同一姿态。
+::: ex 练习 · 非单位初始姿态与交换律边界
+1. 令 $R_0=R_x(90^\circ)$。方案 A：绕固定 $y$、固定 $z$ 各转 $90^\circ$；方案 B：绕当前 $z$、新的当前 $y$ 各转 $90^\circ$。判断两终态是否相同，并分别求工具 $x$ 轴在固定系中的方向。
+2. 判定并说明理由：(a) 同轴连续旋转可交换；(b) 只要两角非零且不同轴就必然不可交换；(c) 若两个旋转矩阵把 $\boldsymbol e_x$ 映至同一向量，则两矩阵相等。
 
 ::: sol 核对
-(a) 对，例如 $R_z(\alpha)R_z(\beta)=R_z(\alpha+\beta)$，两角相加与顺序无关。
-
-(b) 错。零角给单位阵；即使两角都非零，也有 $R_y(180^\circ)R_z(180^\circ)=R_z(180^\circ)R_y(180^\circ)=\operatorname{diag}(1,-1,-1)=R_x(180^\circ)$。不可交换的意思是不能对任意两旋转都使用交换律。
-
-(c) 错。$I$ 与 $R_x(90^\circ)$ 都保持 $\boldsymbol e_x$ 不变，却把 $\boldsymbol e_y$ 分别变成 $\boldsymbol e_y$ 与 $\boldsymbol e_z$。比较三列可直接检查整个矩阵；一个向量足以给出不相等的反例，不足以证明相等。
+1. 记 $M=R_z(90^\circ)R_y(90^\circ)=R_A$。方案 A 得 $MR_0$，工具 $x$ 轴为 $MR_0\boldsymbol e_x=M\boldsymbol e_x=-\boldsymbol e_z$；方案 B 得 $R_0 M$，工具 $x$ 轴为 $R_0(M\boldsymbol e_x)=R_x(90^\circ)(-\boldsymbol e_z)=+\boldsymbol e_y$，二者不同。
+2. (a) 对，$R_z(\alpha)R_z(\beta)=R_z(\alpha+\beta)$；(b) 错，例如 $R_y(180^\circ)R_z(180^\circ)=R_z(180^\circ)R_y(180^\circ)=\operatorname{diag}(1,-1,-1)=R_x(180^\circ)$；(c) 错，$I_3$ 与 $R_x(90^\circ)$ 均保持 $\boldsymbol e_x$ 不变但 $\boldsymbol e_y$ 像不同。
 :::
 :::
 
 <a id="sec-2.3"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
+::: think 课后默写与核对 {#sec-2.3-recall}
+1. 当前姿态为 $R$ 时，相对当前工具系增量 $B$ 与相对固定参考系增量 $S$ 分别怎样左／右乘更新？同一物理转动下 $B$ 与 $S$ 满足什么换算？
+2. 为什么从一般初始姿态 $R_0\neq I_3$ 出发时，「固定轴先 $A$ 后 $B$」不等于「当前轴先 $B$ 后 $A$」？
 
-不看正文，先写出下面三条，再展开核对。
-
-1. 当前姿态为 $R$，新增当前系转动 $B$ 或固定系转动 $S$，分别怎样更新？
-2. 从 $I$ 出发，固定轴先 $y(\alpha)$ 后 $z(\beta)$，怎样改为当前轴序列得到同一终态？一般 $R_0$ 呢？
-3. 把姿态写成三个角的列，逐分量相加就等于合成旋转吗？
-
-::: sol 核对
-
-当前系转动右乘：$R_{\rm new}=RB$；固定系转动左乘：$R_{\rm new}=SR$。
-
-从 $I$ 出发，当前轴先 $z(\beta)$ 后新的 $y(\alpha)$，与题中固定轴序列都得到 $R_z(\beta)R_y(\alpha)$。一般初始姿态时，二者为 $R_z(\beta)R_y(\alpha)R_0$ 与 $R_0R_z(\beta)R_y(\alpha)$，不保证相同。
-
-三个数当然可以逐分量相加，但得到的三元组一般不表示两次旋转的合成。合成须按轴的约定乘旋转矩阵；两个三元组相加可交换，旋转合成一般不可交换。选定连续、避开奇点的角度分支后也可作局部插值，但不能把它当成全局姿态空间的向量运算；三角表示见下一节。
-
+::: sol 课后默写核对
+1. $R_{\rm new}=RB$（当前轴右乘）、$R_{\rm new}=SR$（固定轴左乘）；$B=R^{\mathrm T}SR$。
+2. 前者给出 $BA R_0$，后者给出 $R_0 BA$，一般 $R_0$ 不与 $BA$ 可交换。
 :::
-
 :::
 
 ## 2.3 小结与常见错误
 
-- **一条主线**：坐标换算链确定乘积；新增转动按当前轴右乘、固定轴左乘；再用具体向量或三列核对结果。
-- **逆序等价的条件**：从 $I$ 出发，固定轴序列与轴角成对倒序的当前轴序列终态相同；一般 $R_0$ 不能直接省略。
-- **下一节**：用三个角参数化姿态。每遇到一套角，先写轴、角和发生顺序，再写矩阵。
+**主线**：坐标级联链给出 $R_n^0=R_1^0 R_2^1\cdots R_n^{n-1}$；连续更新遵循当前轴右乘 $RB$、固定轴左乘 $SR$，同一次转动在两系矩阵间由相似变换 $B=R^{\mathrm T}SR$ 联系。
 
-核心公式速查：
-
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| $R_2^0=R_1^0R_2^1$ | 三个共原点坐标系的级联换算 | 无量纲 | 乘积顺序由换算链决定，不能随意倒序 |
-| $R_{\rm new}=RB$ | $B$ 在**当前工具系**中描述 | 无量纲 | 换系描述同一转动须换算 $B=R^{\mathrm T}SR$（$R$ 取转动前姿态） |
-| $R_{\rm new}=SR$ | $S$ 在**固定参考系**中描述 | 无量纲 | 把同一个数值矩阵同时当两种指令是常见错误 |
-| $R_1^0=(R_0^1)^{\mathrm T}$ | 旋转矩阵正交、$\det=1$ | 无量纲 | 一般齐次变换（含平移块）求逆另用分块公式（[§2.7](sec2-7.md)） |
-
-::: think 常见错误清单 · 自查三条
-1. 用角度三元组相加代替旋转合成，或把「一般不交换」误读成「任何两旋转都不交换」。
-2. 只背「先转在右边」，漏问转轴在哪个系中描述，或漏掉初始姿态 $R_0$。
-3. 把 $R^{-1}=R^{\mathrm T}$ 推广到任意矩阵。它对所有正交矩阵成立；[2.7](sec2-7.md) 的一般齐次变换含平移块，求逆须另用分块公式。
-:::
+| 公式 | 条件与假设 | 易错点 |
+|:--|:--|:--|
+| $R_2^0=R_1^0R_2^1,\ R_i^j=(R_j^i)^{\mathrm T}$ | 共原点坐标系链，列向量表达 | 级联乘法顺序写反或上下标未对齐 |
+| $R_{\rm new}=RB,\ R_{\rm new}=SR$ | $B$ 相对当前系，$S$ 相对固定系 | 遗漏初始姿态 $R_0$；不经换系将同一矩阵同时作固定/当前指令 |
+| $B=R^{\mathrm T}SR$ | $R$ 为施加增量前的当前姿态 | 误将原书虚拟分解 $RR^{-1}SR$ 理解为物体退回原位 |

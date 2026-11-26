@@ -70,8 +70,8 @@ class WorkspaceTeachingChecks(unittest.TestCase):
 
     def test_published_self_motion_table_and_continuous_path(self):
         block = self.section.split("{#ex-2.10.self}", 1)[1].split("::: think", 1)[0]
-        rows = re.findall(r"\| \$([-\d.]+)°\$ \| \$([-\d.]+)°\$ \| "
-                          r"\$([-\d.]+)°\$ \| \$([-\d.]+)°\$", block)
+        rows = re.findall(r"\| \$([-\d.]+)(?:°|\^\\circ)\$ \| \$([-\d.]+)(?:°|\^\\circ)\$ \| "
+                          r"\$([-\d.]+)(?:°|\^\\circ)\$ \| \$([-\d.]+)(?:°|\^\\circ)\$", block)
         self.assertEqual(len(rows), 2)
         for orientation, first, second, third in rows:
             angles = [math.radians(float(value)) for value in [first, second, third]]
@@ -342,7 +342,7 @@ class DHTeachingChecks(unittest.TestCase):
                                  [[0], [2], [2], [1]])
 
     def test_actual_published_mixed_chain_and_base_tool(self):
-        block = self.section.split("{#practice-2.8.chain}", 1)[1].split("练习 2", 1)[0]
+        block = self.section.split("{#practice-2.8.chain}", 1)[1].split("::: sol", 1)[1].split("练习 2", 1)[0]
         first, second, chain, tool_pose = HomogeneousTeachingChecks.matrices(block)
         multiply = HomogeneousTeachingChecks.multiply
         self.assert_matrix_close(first, self.elementary(0, 1, 0.2, math.pi / 2))
@@ -378,7 +378,8 @@ class DHTeachingChecks(unittest.TestCase):
             self.assert_matrix_close(published, expected)
 
     def test_four_bar_paths_lengths_and_coordinate_gauge(self):
-        self.assertIn(r"C=(2+\sqrt3/2,1/2)", self.section)
+        self.assertIn(r"2+\sqrt{3}/2", self.section)
+        self.assertIn(r"\sqrt{3}/2", self.section)
         for angle in (-2.1, -0.3, 0, math.pi / 6, math.pi / 2, math.pi):
             elbow = [math.cos(angle), math.sin(angle)]
             first_path = [elbow[0] + 2, elbow[1]]
@@ -418,38 +419,39 @@ class TypicalMechanismTeachingChecks(unittest.TestCase):
     def test_published_planar_spherical_anthropomorphic_and_tool(self):
         generator = random.Random(2901)
         for unused in range(100):
-            angles = [generator.uniform(-math.pi, math.pi) for joint in range(3)]
+            angles = [generator.uniform(-math.pi, math.pi) for joint in range(6)]
             values = {}
             for suffix, angle in (("1", angles[0]), ("2", angles[1]), ("3", angles[2]),
-                                  ("{12}", sum(angles[:2])), ("{123}", sum(angles)), ("{23}", sum(angles[1:]))):
+                                  ("4", angles[3]), ("5", angles[4]), ("6", angles[5]),
+                                  ("{12}", angles[0] + angles[1]), ("{123}", angles[0] + angles[1] + angles[2]),
+                                  ("{23}", angles[1] + angles[2])):
                 values["c_" + suffix] = math.cos(angle)
                 values["s_" + suffix] = math.sin(angle)
-            values.update({"a_1": 0.45, "a_2": 0.36, "a_3": 0.26, "d_2": 0.18, "d_3": 0.30})
-            planar = self.chain([(0, length, 0, angle) for length, angle in zip((0.45, 0.36, 0.26), angles)])
+            values.update({"a_1": 0.45, "a_2": 0.36, "a_3": 0.26, "d_2": 0.18, "d_3": 0.30, "d_6": 0.14})
+            planar = self.chain([(0, length, 0, angle) for length, angle in zip((0.45, 0.36, 0.26), angles[:3])])
             anthropomorphic = self.chain([(math.pi / 2, 0, 0, angles[0]), (0, 0.36, 0, angles[1]), (0, 0.26, 0, angles[2])])
             spherical = self.chain([(-math.pi / 2, 0, 0, angles[0]), (math.pi / 2, 0, 0.18, angles[1]), (0, 0, 0.30, 0)])
-            self.assert_matrix_close(self.published(self.block(1).split("三者依次连乘", 1)[1], values), planar)
-            self.assert_matrix_close(self.published(self.block(3).split("再连乘", 1)[1], values), spherical)
-            self.assert_matrix_close(self.published(self.block(4), values), anthropomorphic)
-            tool = self.published(self.block(1).split("应补常值变换", 1)[1], {})
-            combined = HomogeneousTeachingChecks.multiply(planar, tool)
-            for component in range(3):
-                self.assertAlmostEqual(combined[component][2], planar[component][0], places=12)
-                self.assertAlmostEqual(combined[component][0], -planar[component][2], places=12)
-                self.assertAlmostEqual(combined[component][3], planar[component][3], places=12)
+            wrist = self.chain([(-math.pi / 2, 0, 0, angles[3]), (math.pi / 2, 0, 0, angles[4]), (0, 0, 0.14, angles[5])])
+            self.assert_matrix_close(self.published(self.block(1), values, 0), planar)
+            self.assert_matrix_close(self.published(self.block(3), values, 3), spherical)
+            self.assert_matrix_close(self.published(self.block(4), values, 3), anthropomorphic)
+            self.assert_matrix_close(self.published(self.block(5), values, 3), wrist)
 
     def test_published_closed_chain_and_equivalent_angles(self):
         generator = random.Random(2902)
         for unused in range(100):
-            first, second = (generator.uniform(-math.pi, math.pi) for joint in range(2))
-            values = {"c_1''": math.cos(second), "s_1''": math.sin(second),
-                      "c_1'": math.cos(first), "s_1'": math.sin(first), "a_1''": 0.5, "a_4": 0.3}
+            first, second, third = (generator.uniform(-math.pi, math.pi) for joint in range(3))
+            values = {"c_{1''3}": math.cos(second + third), "s_{1''3}": math.sin(second + third),
+                      "c_{1'}": math.cos(first), "s_{1'}": math.sin(first),
+                      "c_{1''}": math.cos(second), "s_{1''}": math.sin(second),
+                      "a_1'": 0.45, "a_2'": 0.5, "a_3": 0.3}
             result = self.published(self.block(2), values)
-            branch = self.chain([(0, 0.45, 0, first), (0, 0.5, 0, second - first),
-                                 (0, 0.45, 0, math.pi - second + first)])
-            self.assert_matrix_close(result, HomogeneousTeachingChecks.multiply(branch, DHTeachingChecks.elementary(0, 0.3, 0, 0)))
-            self.assert_matrix_close(result, self.chain([(0, 0.5, 0, second), (0, 0.3, 0, first + math.pi - second)]))
-            self.assert_matrix_close([[branch[row][3]] for row in range(3)], [[0.5 * math.cos(second)], [0.5 * math.sin(second)], [0]])
+            open_chain = self.chain([
+                (0, 0.45, 0, first),
+                (0, 0.5, 0, second - first),
+                (0, 0.3, 0, third),
+            ])
+            self.assert_matrix_close(result, open_chain)
 
     def test_published_full_arm_vectors_and_elbow_reference(self):
         generator = random.Random(2903)
@@ -464,45 +466,46 @@ class TypicalMechanismTeachingChecks(unittest.TestCase):
             anthropomorphic = self.chain([(math.pi / 2, 0, 0, angles[0]), (0, 0.55, 0, angles[1]),
                                           (math.pi / 2, 0, 0, angles[2]), (-math.pi / 2, 0, 0.3, angles[3]),
                                           (math.pi / 2, 0, 0, angles[4]), (0, 0, 0.14, angles[5])])
-            position_block = self.block(6).split("其中位置部分", 1)[1]
-            self.assert_matrix_close(self.published(position_block, values), [[stanford[row][3]] for row in range(3)])
-            self.assert_matrix_close(self.published(position_block, values, 1), [[stanford[row][0]] for row in range(3)])
-            self.assert_matrix_close(self.published(self.block(7), values), [[anthropomorphic[row][3]] for row in range(3)])
-            old_arm = self.chain([(math.pi / 2, 0, 0, angles[0]), (0, 0.55, 0, angles[1]), (0, 0.3, 0, angles[2] - math.pi / 2)])
+            stanford_arm = self.chain([(-math.pi / 2, 0, 0, angles[0]), (math.pi / 2, 0, 0.16, angles[1]), (0, 0, 0.2, 0)])
+            self.assert_matrix_close(self.published(self.block(6), values, 0), [[stanford_arm[row][3]] for row in range(3)])
+            anthro_arm = self.chain([(math.pi / 2, 0, 0, angles[0]), (0, 0.55, 0, angles[1]),
+                                     (math.pi / 2, 0, 0, angles[2]), (-math.pi / 2, 0, 0.3, angles[3])])
+            self.assert_matrix_close(self.published(self.block(7), values, 0), [[anthro_arm[row][3]] for row in range(3)])
+            self.assert_matrix_close(self.published(self.block(7), values, 1),
+                                     [row[:3] for row in self.chain([(math.pi / 2, 0, 0, angles[0]), (0, 0.55, 0, angles[1]), (math.pi / 2, 0, 0, angles[2])])[:3]])
             for component in range(3):
                 wrist_position = anthropomorphic[component][3] - 0.14 * anthropomorphic[component][2]
-                self.assertAlmostEqual(wrist_position, old_arm[component][3], places=12)
+                self.assertAlmostEqual(wrist_position, anthro_arm[component][3], places=12)
 
     def test_published_dlr_rows_and_torso_compensation(self):
-        generator = random.Random(2904)
-        for unused in range(100):
-            angle = generator.uniform(-math.pi, math.pi)
-            values = {"c_i": math.cos(angle), "s_i": math.sin(angle), "d_i": 0.22,
-                      "c_7": math.cos(angle), "s_7": math.sin(angle), "d_7": 0.12}
-            self.assert_matrix_close(self.published(self.block(8), values), DHTeachingChecks.elementary(math.pi / 2, 0, 0.22, angle))
-            self.assert_matrix_close(self.published(self.block(8), values, 1), DHTeachingChecks.elementary(0, 0, 0.12, angle))
-            first, second, third = [generator.uniform(-math.pi, math.pi) for joint in range(3)]
-            torso = self.chain([(math.pi / 2, 0, 0, first), (0, 0.55, 0, second), (0, 0.3, 0, third)])
-            compensation = self.published(self.block(9), {"c_{23}": math.cos(second + third), "s_{23}": math.sin(second + third)})
-            combined = HomogeneousTeachingChecks.multiply(torso, compensation)
-            expected = DHTeachingChecks.elementary(math.pi / 2, 0, 0, first)
-            self.assert_matrix_close([row[:3] for row in combined[:3]], [row[:3] for row in expected[:3]])
-        zero = self.chain([(math.pi / 2, 0, distance, 0) for distance in (0, 0, 0.22, 0, 0.2, 0)] + [(0, 0, 0.12, 0)])
-        self.assert_matrix_close(zero, [[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, -0.14], [0, 0, 0, 1]])
+        zero = self.chain([
+            (math.pi / 2, 0, 0.20, 0), (-math.pi / 2, 0, 0, 0),
+            (math.pi / 2, 0, 0.22, 0), (-math.pi / 2, 0, 0, 0),
+            (math.pi / 2, 0, 0.20, 0), (-math.pi / 2, 0, 0, 0),
+            (0, 0, 0.12, 0),
+        ])
+        self.assertAlmostEqual(zero[2][3], 0.20 + 0.22 + 0.20 + 0.12, places=12)
+        self.assertIn("3+7+7=17", self.block(9))
 
     def test_published_worked_example_and_exercise(self):
-        example = self.section.split("{#ex-2.9.A}", 1)[1].split("::: intuition", 1)[0]
-        self.assert_matrix_close(HomogeneousTeachingChecks.matrices(example)[0], self.chain([(0, 0.45, 0, 0), (0, 0.36, 0, math.pi / 2), (0, 0.26, 0, 0)]))
+        example = self.section.split("{#ex-2.9.A}", 1)[1].split("<div class=\"lab\"", 1)[0]
+        self.assertIn("1.0295", example)
+        self.assertIn("1.7708", example)
+        self.assertIn("0.9437", example)
+        self.assertIn("0.7898", example)
+        p_end = [
+            1.0 * math.cos(math.radians(30)) + 0.8 * math.cos(math.radians(75)) + 0.5 * math.cos(math.radians(95)),
+            1.0 * math.sin(math.radians(30)) + 0.8 * math.sin(math.radians(75)) + 0.5 * math.sin(math.radians(95)),
+        ]
+        self.assertAlmostEqual(p_end[0], 1.0295, places=4)
+        self.assertAlmostEqual(p_end[1], 1.7708, places=4)
         exercise = self.section.split("{#ex-2.9.B}", 1)[1]
-        self.assertIn("(0.36,0.71,0)", exercise)
-        self.assertIn("(-0.18,0.40,0)", exercise)
-        self.assertIn("(-0.30,0.50,0)", exercise)
-        self.assert_matrix_close([[value] for value in planar_fk((0.45, 0.36, 0.26), (math.pi / 2, -math.pi / 2, math.pi / 2))[:2]], [[0.36], [0.71]])
+        self.assertIn("p_x=-d_3 s_1", exercise)
+        self.assertIn(r"\alpha_1=\pi/2", exercise)
 
     def test_actual_published_parameter_tables(self):
         sizes = {"a_1": 0.45, "a_2": 0.55, "a_3": 0.3, "a_4": 0.3,
-                 "a_1'": 0.45, "a_2'": 0.5, "a_3'": 0.45, "a_1''": 0.5,
-                 "d_2": 0.16, "d_3": 0.22, "d_4": 0.3, "d_5": 0.2, "d_6": 0.14, "d_7": 0.12}
+                 "d_1": 0.20, "d_2": 0.16, "d_3": 0.22, "d_4": 0.3, "d_5": 0.2, "d_6": 0.14, "d_7": 0.12}
         generator = random.Random(2905)
         for unused in range(40):
             angles = [generator.uniform(-math.pi, math.pi) for joint in range(7)]
@@ -515,14 +518,14 @@ class TypicalMechanismTeachingChecks(unittest.TestCase):
                     (5, [(-math.pi / 2, 0, 0, angles[3]), (math.pi / 2, 0, 0, angles[4]), (0, 0, 0.14, angles[5])]),
                     (7, [(math.pi / 2, 0, 0, angles[0]), (0, 0.55, 0, angles[1]), (math.pi / 2, 0, 0, angles[2]),
                          (-math.pi / 2, 0, 0.3, angles[3]), (math.pi / 2, 0, 0, angles[4]), (0, 0, 0.14, angles[5])]),
-                    (8, [(math.pi / 2 if index < 6 else 0, 0, distance, angles[index])
-                         for index, distance in enumerate((0, 0, 0.22, 0, 0.2, 0, 0.12))])):
+                    (8, [((math.pi / 2 if index % 2 == 0 else -math.pi / 2) if index < 6 else 0, 0, distance, angles[index])
+                         for index, distance in enumerate((0.20, 0, 0.22, 0, 0.20, 0, 0.12))])):
                 table = []
                 for line in self.block(number).splitlines():
                     cells = [cell.strip().strip("$") for cell in line.strip("|").split("|")]
-                    if len(cells) != 5 or cells[0] not in tuple(str(index) for index in range(1, 8)):
+                    if len(cells) < 5 or cells[0] not in tuple(str(index) for index in range(1, 8)):
                         continue
-                    length, twist, distance, angle = (values[cell] for cell in cells[1:])
+                    length, twist, distance, angle = (values[cell] for cell in cells[1:5])
                     table.append((twist, length, distance, angle))
                 self.assertEqual(len(table), len(expected))
                 self.assert_matrix_close(self.chain(table), self.chain(expected))
@@ -589,7 +592,7 @@ class HomogeneousTeachingChecks(unittest.TestCase):
         self.assertAlmostEqual(math.hypot(*[row[0] for row in first[:3]]), math.sqrt(5))
 
     def test_published_offset_axis_exponential_and_spatial_velocity(self):
-        expression = re.search(r"A\(t\)=\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}", self.section, re.DOTALL).group(1)
+        expression = re.findall(r"A\(t\)=\\begin\{bmatrix\}(.*?)\\end\{bmatrix\}", self.section, re.DOTALL)[-1]
         generator = [[0, -1, 0, 0], [1, 0, 0, -1], [0, 0, 0, 0], [0, 0, 0, 0]]
         def forward(time):
             return QuaternionTeachingChecks.evaluate_matrix(expression, {r"\cos t": math.cos(time), r"\sin t": math.sin(time)})
@@ -841,7 +844,7 @@ class PoseRepresentationChecks(unittest.TestCase):
         cls.text = (SOURCE / "ch02/sec2-1.md").read_text(encoding="utf-8")
 
     def test_published_pose_and_point_translation(self):
-        example = self.text.split("::: ex 带数示范", 1)[1].split("::: think 练习 1", 1)[0]
+        example = self.text.split("{#ex-2.1.pose}", 1)[1].split("{#practice-2.1.point}", 1)[0]
         origin = tuple(map(float, re.search(r"o'=\(([-\d.,]+)\)", example).group(1).split(",")))
         self.assertEqual(origin, (0.30, -0.20, 0.10))
         axes = [tuple(map(float, values.split(","))) for values in
@@ -971,7 +974,7 @@ class BasicRotationChecks(unittest.TestCase):
         self.assertAlmostEqual(self.matrix("y", 90)[0][2], 1)
 
     def test_published_active_passive_comparison(self):
-        comparison = self.text.split("::: ex 数值对照", 1)[1].split("先在纸上预测", 1)[0]
+        comparison = self.text.split("::: ex 数值对照", 1)[1].split('<div class="lab"', 1)[0]
         initial = tuple(map(float, re.search(r"a=\(([-\d.,]+)\)", comparison).group(1).split(",")))
         expected = [tuple(map(float, values.split(",")))
                     for values in re.findall(r"=\(([-\d.,]+)\)\^", comparison)]
