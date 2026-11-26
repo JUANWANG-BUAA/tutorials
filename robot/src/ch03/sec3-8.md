@@ -1,42 +1,39 @@
 # 3.8 静力学
 
-末端执行器顶住工件时，为保持静力平衡，各关节需要输出多大的力矩？前面用雅可比 $J$ 把关节速度映射到末端速度；这里从虚功出发，会得到末端广义力与关节力矩的关系 $\tau=J^{\mathrm T}F_e$。我们还要留意力的方向、坐标系和力矩参考点。录播 0:03:02–0:19:28（开课即讲）+ 2:27:09–2:27:52（末段）。
+前七节用几何雅可比 $J(\boldsymbol q)$ 将关节速度映向末端执行器六维广义速度。当机械臂末端顶住工件表面或承受外部接触载荷并处于静态平衡时，各关节电机必须输出多大的力或力矩才能抵抗外部作用？本节依据虚功原理与瞬时功率守恒，证明驱动关节力矩完全由**同一几何雅可比的转置 $J^{\mathrm T}(\boldsymbol q)$** 确定，而不涉及矩阵求逆，也不要求机械臂非奇异或方阵（对应原书 §3.8）。
 
 <a id="sec-3.8.1"></a>
 
-## 3.8.1 运动静力学对偶与 $\tau=J^{\mathrm T}F_e$
+## 3.8.1 运动静力学对偶：虚功原理与 $\boldsymbol\tau=J^{\mathrm T}\boldsymbol F_e$
 
-老师在开课导论里就直接给出了结论（0:17:41–0:19:23）：「关节需要输出的力矩，按静态平衡，等于**几何雅可比的转置**再乘以末端执行器所受到的六维力（三个平动的力 + 三个转动的矩）。物理意义就是：末端受力和矩时，为保持机械臂静态平衡，每个关节电机要输出什么样的力矩。」他同时交代，这个结论的推导「基于虚功原理和能量守恒」。
+::: def 定义 3.8.1 · 末端广义力与关节广义力 {#def-3.8.1}
+将末端执行器**施加给环境**的三维力 $\boldsymbol f_e\in\mathbb R^3$（单位 $\mathrm N$）与关于末端参考点的三维力矩 $\boldsymbol\mu_e\in\mathbb R^3$（单位 $\mathrm{N\cdot m}$）堆叠为六维末端广义力：
 
-::: def 定义 3.8.1 · 末端广义力与关节力矩 {#def-3.8.1}
-$$F_e=\begin{bmatrix}f_e\\ \mu_e\end{bmatrix}\in\mathbb R^6\qquad(3\ \text{平动力}+3\ \text{转动力矩}),\qquad
-\tau=[\tau_1,\dots,\tau_n]^{\mathrm T}$$
-转动关节的 $\tau_i$ 是驱动力矩（N·m），移动关节的 $\tau_i$ 是驱动力（N）；统称关节广义力。$f_e$ 的单位为 N，$\mu_e$ 为 N·m，后者关于指定工具点取矩。不同类型的 $\tau_i$ 不能不加权直接比较大小。
+$$\boldsymbol F_e = \begin{bmatrix}\boldsymbol f_e\\ \boldsymbol\mu_e\end{bmatrix}\in\mathbb R^6\qquad\text{（或记作 }\boldsymbol\gamma\text{、}\boldsymbol h_e\text{）},$$
 
+环境反作用于机械臂末端执行器的广义力则为 $\boldsymbol F_{\mathrm{env}}=-\boldsymbol F_e$。相应关节广义力向量 $\boldsymbol\tau=[\tau_1,\dots,\tau_n]^{\mathrm T}\in\mathbb R^n$（转动关节取力矩 $\mathrm{N\cdot m}$，移动关节取推力 $\mathrm N$）。$\boldsymbol F_e$ 必须与几何雅可比 $J(\boldsymbol q)$ 在**同一基坐标系与同一末端参考点**下表达。
 
-以下统一约定 $F_e$ 为**机械臂向环境施加**的末端广义力；环境作用在机械臂上的反作用广义力为 $F_{\mathrm{env}}=-F_e$。$F_e$ 与 $J$ 均在基坐标系表示，力矩参考点取末端原点。忽略重力、摩擦等其他负载时，静力平衡关系（**运动静力学对偶**）为：
+忽略重力、摩擦及加速度惯性项时，静态平衡状态下的**运动静力学对偶关系**为
 
-$$\boxed{\ \tau=J^{\mathrm T}(q)\,F_e\ }$$
+$$\boxed{\ \boldsymbol\tau = J^{\mathrm T}(\boldsymbol q)\,\boldsymbol F_e\ }$$
+
+若改记 $\boldsymbol F_{\mathrm{env}}$ 为环境加在末端上的力，则平衡输出反号为 $\boldsymbol\tau = -J^{\mathrm T}(\boldsymbol q)\boldsymbol F_{\mathrm{env}}$。
 :::
 
-::: proof 推导（虚功原理，对照 2:27:09–2:27:52 课件页）
-设关节虚位移 $\mathrm dq$，对应末端的虚平移与无穷小虚转角堆叠为 $\mathrm dx_e=J\,\mathrm dq$；后者不是欧拉角增量。
+::: proof 证明（虚功原理与功率守恒两条等价途径）
+1. **虚功原理推导**：令关节产生任意无穷小虚位移 $\delta\boldsymbol q\in\mathbb R^n$，引起末端平动微元与无穷小虚转角向量 $\delta\boldsymbol x_e = J(\boldsymbol q)\delta\boldsymbol q$（其中转动微元对应物理刚体转角向量，而非有限欧拉角增量）。静态平衡要求一切理想约束反力不做虚功、外加主动力总虚功恒为零：
+   - 关节执行器做虚功：$\delta W_\tau = \boldsymbol\tau^{\mathrm T}\delta\boldsymbol q$；
+   - 环境反力做虚功：$\delta W_{\mathrm{env}} = \boldsymbol F_{\mathrm{env}}^{\mathrm T}\delta\boldsymbol x_e = -\boldsymbol F_e^{\mathrm T}J(\boldsymbol q)\delta\boldsymbol q$。
+   由 $\delta W_\tau + \delta W_{\mathrm{env}} = (\boldsymbol\tau^{\mathrm T} - \boldsymbol F_e^{\mathrm T}J(\boldsymbol q))\delta\boldsymbol q = 0$ 对一切 $\delta\boldsymbol q\in\mathbb R^n$ 成立，必然有系数为零 $\boldsymbol\tau^{\mathrm T}=\boldsymbol F_e^{\mathrm T}J(\boldsymbol q)$，转置即得 $\boldsymbol\tau=J^{\mathrm T}(\boldsymbol q)\boldsymbol F_e$。
 
-- 关节驱动力矩的虚功：$\mathrm dW_\tau=\tau^{\mathrm T}\mathrm dq$；
-- 环境反作用力的虚功：$\mathrm dW_{\mathrm{env}}=F_{\mathrm{env}}^{\mathrm T}J\,\mathrm dq=-F_e^{\mathrm T}J\,\mathrm dq$。
+2. **瞬时功率守恒解释**：静平衡的无损刚体链在任意测试虚速度 $\dot{\boldsymbol q}$ 下两端功率必须精确相等：
 
-静态平衡时**总虚功为零**：
-
-$$\mathrm dW_\tau+\mathrm dW_{\mathrm{env}}=(\tau^{\mathrm T}-F_e^{\mathrm T}J)\,\mathrm dq=0.$$
-
-对任意 $\mathrm dq$ 成立，故 $\tau^{\mathrm T}=F_e^{\mathrm T}J$，取转置得 $\tau=J^{\mathrm T}F_e$。若把符号用于环境施加的力，则应写成 $\tau=-J^{\mathrm T}F_{\mathrm{env}}$。□
+$$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau = \boldsymbol v_e^{\mathrm T}\boldsymbol F_e = (J\dot{\boldsymbol q})^{\mathrm T}\boldsymbol F_e = \dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}\boldsymbol F_e \implies \boldsymbol\tau = J^{\mathrm T}\boldsymbol F_e.$$
 :::
 
-::: intuition 为什么是 $J^{\mathrm T}$ 而不是 $J^{-1}$ / $J^\dagger$
-速度关系 $v_e=J\dot q$ 从 $n$ 维关节速度得到6维末端速度。要求对应的关节力矩时，利用两端功率相等：$\dot q^{\mathrm T}\tau=v_e^{\mathrm T}F_e=(J\dot q)^{\mathrm T}F_e=\dot q^{\mathrm T}J^{\mathrm T}F_e$。这对任意 $\dot q$ 成立，因而 $\tau=J^{\mathrm T}F_e$。这里用的是转置，不是逆；$J$ 为长方阵或降秩时，这个关系仍然成立。
+::: intuition 为什么传力用转置 $J^{\mathrm T}$ 而不是逆阵 $J^{-1}$ 或伪逆 $J^\dagger$？
+$J$ 把关节速度映成末端速度，是向前（关节 $\to$ 任务）的映射；借助功率内积的伴随对偶关系，末端广义力向关节侧的平衡折算必然沿着反向对偶算子 $J^{\mathrm T}$ 传递。正因只做转置而无需逆矩阵，**该公式对任何冗余臂（$n>r$）乃至降秩奇点（$\operatorname{rank}J<r$）均严格有效**。但须铭记它是纯静力学关系；一旦存在连杆重力或高速运动，必须进入[第 6 章动力学方程](../ch06/sec6-1.md#part-6.1.3)计入 $B\ddot{\boldsymbol q}+C\dot{\boldsymbol q}+\boldsymbol g$。
 :::
-
-下图将两条关系放在一起：上行用 $J$ 从关节速度求末端速度，下行用 $J^{\mathrm T}$ 从末端广义力求关节力矩；中间的功率等式连接了它们。
 
 <figure>
 <svg class="figure-svg" viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig-38-title fig-38-desc">
@@ -77,129 +74,71 @@ $$\mathrm dW_\tau+\mathrm dW_{\mathrm{env}}=(\tau^{\mathrm T}-F_e^{\mathrm T}J)\
 <figcaption>运动静力学对偶（本教程绘）：由 $v_e=J\dot q$ 和功率等式 $\dot q^{\mathrm T}\tau=v_e^{\mathrm T}F_e$，得到 $\tau=J^{\mathrm T}F_e$。推导不要求 $J$ 是方阵或满秩。</figcaption>
 </figure>
 
-老师对它的定位很清楚：「主要是记住这个公式就可以」（0:25:53）；在导论里说：「其实我们可以不讲 PPT，大家就记住这些内容就可以了」（0:19:21）。使用公式时，如果速度和力分别用不同坐标系表示，还要先处理坐标变换。
+::: ex 例 3.8.A · 两连杆平面臂顶住工件时的关节平衡力矩
+沿用 [例 3.1.D](sec3-1.md#ex-3.1.D) 杆长各 $1\,\mathrm m$ 的 2R 臂在 $\boldsymbol q=[0,\pi/2]^{\mathrm T}$（第一杆沿 $+x$ 轴、第二杆竖直向上），仅截取 $v_x,v_y,\omega_z$ 有效三行：
 
-::: ex 跟算 · 顶住工件时两个关节各出多少力矩？
-沿用 §3.1.D 的两杆各 1 m、$q=(0,\pi/2)$，只保留平面速度的 $v_x,v_y,\omega_z$ 三行：
+$$\bar J = \begin{bmatrix}-1&-1\\1&0\\1&1\end{bmatrix}.$$
 
-$$\bar J=\begin{bmatrix}-1&-1\\1&0\\1&1\end{bmatrix}.$$
+若机械臂在工具点向环境施加平动力 $\boldsymbol f=(0,10)^{\mathrm T}\,\mathrm N$ 及逆时针纯力矩 $\mu_z=2\,\mathrm{N\cdot m}$，平衡所需关节输出为
 
-希望机械臂在工具点向环境施加 $f=(0,10)$ N 和逆时针力矩 $\mu_z=2$ N·m，忽略其他负载。求平衡所需驱动力矩：
+$$\boldsymbol\tau = \bar J^{\mathrm T}\begin{bmatrix}0\\10\\2\end{bmatrix} = \begin{bmatrix}12\\2\end{bmatrix}\,\mathrm{N\cdot m}.$$
 
-$$\tau=\bar J^{\mathrm T}\begin{bmatrix}0\\10\\2\end{bmatrix}
-=\begin{bmatrix}12\\2\end{bmatrix}\ \mathrm{N\cdot m}.$$
-
-第一关节有 1 m 的水平力臂，向上的力贡献 10 N·m；第二关节到工具点的矢径竖直，该力不贡献力矩。末端力矩则对两个关节各贡献 2 N·m。环境实际作用在机械臂上的力和矩与这里的输入反号。
-
-若保持同一向上作用力、撤去末端力矩，即 $\mu_z=0$，则 $\tau=(10,0)^{\mathrm T}\,\mathrm{N\cdot m}$。第五章会把这组关节侧力矩折算到电机侧；那里仍先忽略杆的重量、惯量和摩擦。
-
-再回到原例的 $\mu_z=2\,\mathrm{N\cdot m}$，只把力改为 $f=(10,0)$ N，先预测关节力矩的正负，再相乘。结果为 $\tau=(-8,-8)^{\mathrm T}$ N·m：向右的力对两关节都贡献 $-10$ N·m，再各加 2 N·m。若用虚速度 $\dot q=(1,-1)$ rad/s 核对，原例与这一组负载的两端功率分别为 10 W 和 0 W；这只是检验映射的虚速度，并非说静止时实际有这些功率。
+物理核对：关节 1 水平力臂 $1\,\mathrm m$，竖直力贡献 $10\,\mathrm{N\cdot m}$；关节 2 矢径竖直，该力力臂为零，仅分担末端纯力矩 $2\,\mathrm{N\cdot m}$。若撤去纯力矩（$\mu_z=0$），则直接得 $\boldsymbol\tau=(10,0)^{\mathrm T}\,\mathrm{N\cdot m}$。若保持 $\mu_z=2\,\mathrm{N\cdot m}$ 而将推力改为水平向右 $\boldsymbol f=(10,0)^{\mathrm T}\,\mathrm N$，则得 $\boldsymbol\tau=(-8,-8)^{\mathrm T}\,\mathrm{N\cdot m}$（向右推力同时在两关节造成 $-10\,\mathrm{N\cdot m}$ 负担）。以测试虚速度 $\dot{\boldsymbol q}=(1,-1)^{\mathrm T}\,\mathrm{rad/s}$ 检验两组载荷的两端功率，分别恒为 $10\,\mathrm W$ 与 $0\,\mathrm W$。
 :::
 
 <a id="sec-3.8.2"></a>
 
-## 3.8.2 两坐标系间的速度与力变换
+## 3.8.2 两坐标系间的速度与力变换（$A_v$ 与 $A_v^{-\mathrm T}$ 对偶）
 
-上面用 $J$ 和 $J^{\mathrm T}$ 联系了关节与末端。现在还要同时处理表达基和力矩参考点。为明确符号，设刚体上两点为 $A,B$，$\tilde p$ 为从 $A$ 指向 $B$ 的位移、用坐标系 1 表示，$R_1^0$ 将系 1 分量变到基系 0。右侧 $v_1,\omega_1$ 是以 $A$ 为参考点的速度，$f_1,\mu_1$ 是以 $A$ 为力矩参考点的同一广义力；左侧改用点 $B$ 和基系分量，分别记为 $\dot p_1^0,\omega_1^0,f_1^0,\mu_1^0$。这是教材式 (3.112)–(3.116) 在本节两点记号下的改写：
+实际工程中，腕部力/力矩传感器读数常定义在传感器随动系 $\{1\}$（参考点 $A$）上，而规划或控制需要在基坐标系 $\{0\}$（参考点 $B$）表达。设 $\tilde{\boldsymbol p}$ 为由 $A$ 指向 $B$ 的位移矢量在 $\{1\}$ 系下的坐标，$\boldsymbol R_1^0$ 将 $\{1\}$ 系分量旋转到 $\{0\}$ 系。由刚体两点速度公式 $\dot{\boldsymbol p}_1^0 = \boldsymbol R_1^0\boldsymbol v_1 - \boldsymbol R_1^0 S(\tilde{\boldsymbol p})\boldsymbol\omega_1$ 及功率不变条件 $(A_v\boldsymbol\xi^1)^{\mathrm T}\boldsymbol F^0 = (\boldsymbol\xi^1)^{\mathrm T}\boldsymbol F^1 \implies A_F = A_v^{-\mathrm T}$，导出同方向（$\{1\}\to\{0\}$）的变换对（原书式 (3.112)–(3.116)）：
 
-$$\begin{bmatrix}\dot p_1^0\\ \omega_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&-R_1^0S(\tilde p)\\ 0&R_1^0\end{bmatrix}\begin{bmatrix}v_1\\ \omega_1\end{bmatrix},
-\qquad
-\begin{bmatrix}f_1^0\\ \mu_1^0\end{bmatrix}=\begin{bmatrix}R_1^0&0\\ -R_1^0S(\tilde p)&R_1^0\end{bmatrix}\begin{bmatrix}f_1\\ \mu_1\end{bmatrix}$$
+$$\begin{bmatrix}\dot{\boldsymbol p}_1^0\\ \boldsymbol\omega_1^0\end{bmatrix} = \underbrace{\begin{bmatrix}\boldsymbol R_1^0 & -\boldsymbol R_1^0 S(\tilde{\boldsymbol p})\\ O & \boldsymbol R_1^0\end{bmatrix}}_{A_v}\begin{bmatrix}\boldsymbol v_1\\ \boldsymbol\omega_1\end{bmatrix},\qquad
+\begin{bmatrix}\boldsymbol f_1^0\\ \boldsymbol\mu_1^0\end{bmatrix} = \underbrace{\begin{bmatrix}\boldsymbol R_1^0 & O\\ -\boldsymbol R_1^0 S(\tilde{\boldsymbol p}) & \boldsymbol R_1^0\end{bmatrix}}_{A_F = A_v^{-\mathrm T}}\begin{bmatrix}\boldsymbol f_1\\ \boldsymbol\mu_1\end{bmatrix}.$$
 
-记左侧速度变换矩阵为 $A$，则右侧力变换矩阵是 $A^{-\mathrm T}$，不是 $A^{\mathrm T}$。这是因为两式都从坐标系 1 的表示变到坐标系 0：要保持功率不变，力必须按速度变换的逆转置变换。反过来，若将力从坐标系 0 变回坐标系 1，使用的才是 $A^{\mathrm T}$。平移项在速度和力矩的变换中分别产生耦合；可与 [3.1.3](sec3-1.md#sec-3.1.3) 的 $J^u$ 对照，那里只改变表达坐标系的旋转块。
+- **记号与方向铁律**：同从 $\{1\}$ 变至 $\{0\}$ 时，力矩阵是速度矩阵的**逆转置 $A_v^{-\mathrm T}$**（左下角保留负号 $-\boldsymbol R_1^0 S(\tilde{\boldsymbol p})\boldsymbol f_1$）；若是把基系力反变回局部系 $\{1\}$，才使用 $A_v^{\mathrm T}$。只做表达基旋转而不变参考点（$\tilde{\boldsymbol p}=\boldsymbol 0$）时退化为 3.1.3 节块对角旋转变换。
 
-速度来自 $v_B^0=R_1^0v_A^1+\omega^0\times(R_1^0\tilde p)$；力矩来自 $\mu_B^0=R_1^0\mu_A^1-(R_1^0\tilde p)\times f^0$。两式都在改参考点，不能只旋转分量而漏掉耦合项。特别是上式力变换的左下块为负号：它由同方向的逆转置关系确定。
-
-::: ex 跟算 · 挪动参考点，功率能否保持不变？
-先不旋转表达基，取 $R_1^0=I$、$\tilde p=(0.1,0,0)^{\mathrm T}$ m，点 $A$ 的速度为零，$\omega_1=(0,0,2)^{\mathrm T}$ rad/s，$f_1=(0,10,0)^{\mathrm T}$ N、$\mu_1=(0,0,1)^{\mathrm T}$ N·m。点 $B$ 的线速度为 $(0,0.2,0)^{\mathrm T}$ m/s，关于 $B$ 的力矩为 $\mu_1^0=(0,0,0)^{\mathrm T}$ N·m。两端功率均为 2 W：在 $A$ 是 $0+2\times1$，在 $B$ 是 $0.2\times10+0$。
-
-把位移长度改为 0.2 m，其余输入保持不变，先猜力矩是否仍为零。核对：$v_B^0=(0,0.4,0)^{\mathrm T}$ m/s，$\mu_B^0=(0,0,-1)^{\mathrm T}$ N·m，功率为 $0.4\times10+2\times(-1)=2$ W。力矩可以反号，但功率不因参考点改变而改变。若误用正号，第一组会算出 2 N·m 的力矩和 6 W 的功率，立即与输入的 2 W 冲突。
+::: ex 例 3.8.B · 改变力矩参考点时的功率不变性检验
+设 $\boldsymbol R_1^0=I_3$、参考点平移 $\tilde{\boldsymbol p}=[0.1,0,0]^{\mathrm T}\,\mathrm m$，点 $A$ 线速度为零、角速度 $\boldsymbol\omega_1=[0,0,2]^{\mathrm T}\,\mathrm{rad/s}$，广义力 $\boldsymbol f_1=[0,10,0]^{\mathrm T}\,\mathrm N$、$\boldsymbol\mu_1=[0,0,1]^{\mathrm T}\,\mathrm{N\cdot m}$。算得点 $B$ 线速度为 $\boldsymbol\omega_1\times\tilde{\boldsymbol p}=[0,0.2,0]^{\mathrm T}\,\mathrm{m/s}$，关于 $B$ 的力矩 $\boldsymbol\mu_1^0 = \boldsymbol\mu_1 - \tilde{\boldsymbol p}\times\boldsymbol f_1 = [0,0,1]^{\mathrm T} - [0,0,1]^{\mathrm T}=\boldsymbol 0$，两端功率均为 $2\,\mathrm W$（在 $A$ 为 $2\times 1$，在 $B$ 为 $0.2\times 10$）。若将平移改为 $\tilde{\boldsymbol p}=[0.2,0,0]^{\mathrm T}\,\mathrm m$，则线速度倍增至 $0.4\,\mathrm{m/s}$ 且 $\boldsymbol\mu_1^0=[0,0,-1]^{\mathrm T}\,\mathrm{N\cdot m}$，两端功率仍为 $0.4\times 10 + 2\times(-1) = 2\,\mathrm W$。
 :::
-
-老师应用提示（2:27:34）：「最后还有一个任务：在（不同）姿态坐标系与基坐标系之间做表示的转换，后面大家应用的时候要考虑一下。」传感器、工件和工具可能使用不同坐标系；计算平衡时，要让力与速度使用相互配套的坐标表示和参考点。
 
 <a id="sec-3.8.3"></a>
 
-## 3.8.3 闭链与可操作椭球（了解）
+## 3.8.3 四大子空间对偶、力椭球与闭链（了解·精简）
 
-本节最后两块内容只作了解，知道「有这一块」即可：
+1. **子空间对偶**：速度与静力映射构成线性代数四大基本子空间的正交补关系：
 
-- **闭链静力学**（课件图示，2:27:25）：多机器人 / 闭链结构里，力的分配需要额外约束（内力不可任意指定）。本节只点明「有这一块」，细节留到后续章节；
-- **可操作椭球**（了解，2:26:01 老师明确「不讲」）：「跟手术机器人手臂的**灵巧性**设计相关」——它由 $w(q)=\sqrt{\det(JJ^{\mathrm T})}$ 与速度 / 力椭球刻画末端在各方向上的运动 / 施力能力，也可在 [3.5.1](sec3-5.md#sec-3.5.1) 的可操作度 $\dot q_0$ 里作为优化目标。教材上有对应内容，自学。
+$$\mathcal N(J^{\mathrm T}) = \mathcal R(J)^\perp,\qquad \mathcal R(J^{\mathrm T}) = \mathcal N(J)^\perp.$$
 
-### 3.8.3.1 用二维例子分清速度椭圆与力集合
+   处于奇点时，落在不可实现速度方向 $\mathcal N(J^{\mathrm T})$ 的末端接触力直接被刚体连杆与轴承约束反力承担（$\boldsymbol\tau=J^{\mathrm T}\boldsymbol F_e=\boldsymbol 0$）；存在冗余时，零空间自运动力矩正交于平衡所需力矩 $\mathcal R(J^{\mathrm T})$，不做虚功。
 
-这里不增加闭链的求解要求，只把“速度 / 力椭球”的条件说清楚。选定纯平移二维任务，所有力均采用前面的“机械臂向环境施加”约定。若 $J$ 行满秩，约束总关节力矩 $\|\tau\|_2\le T$，由 $\tau=J^{\mathrm T}f$ 得
+2. **速度椭球与力椭球的主轴反比律**：在行满秩纯平移/统一尺度任务下，约束关节力矩范数 $\|\boldsymbol\tau\|_2\le T$ 导出**力椭球（force manipulability ellipsoid）** $\boldsymbol f^{\mathrm T}(JJ^{\mathrm T})\boldsymbol f\le T^2$，其主半轴长为 **$T/\sigma_i$**——与速度椭球半轴 $Q\sigma_i$ 主轴方向重合但大小严格成反比（越容易快速运动的方向，静态出力臂越长从而承受力上限越低）。
 
-$$f^{\mathrm T}JJ^{\mathrm T}f\le T^2.$$
-
-它与速度集合不同：在 $\|\dot q\|_2\le Q$ 下，速度椭圆的半轴为 $Q\sigma_i$；力集合在同一任务方向上的半轴为 $T/\sigma_i$。需要行满秩，才能把力集合称为有界椭球；混合平动 / 转动任务或混合关节单位时，还须先规定特征长度、关节尺度或权重，不能把牛顿与牛顿米直接放进同一个未加权范数比较。
-
-::: ex 跟算 · 速度容易产生的方向，施力也容易吗？
-给定当前局部位置雅可比 $J=\operatorname{diag}(2,0.5)$ m/rad，两个关节都是转动关节。取 $Q=1$ rad/s、$T=1$ N·m，约束分别是总速度范数与总力矩范数，而不是每个关节单独限幅。
-
-速度椭圆半轴为 2 和 0.5 m/s。力集合则满足
-
-$$4f_x^2+0.25f_y^2\le1,$$
-
-其中 $f_x,f_y$ 按 N 代入，两个半轴为 0.5 和 2 N。若分别施加 $(1,0)$ N 与 $(0,1)$ N，所需力矩为 $(2,0)$ N·m 与 $(0,0.5)$ N·m，前者超过总力矩上限，后者未超过。这是在同一参考点、同一位形和同一尺度下比较：较大的速度半轴对应较小的力半轴。
-
-现在把第二个系数从 0.5 降为 0，先预测两个集合各怎样退化，再核对：速度只能沿 $x$ 方向，$v_y=0$；力集合成为条带 $|f_x|\le0.5$ N，$f_y$ 在这个理想模型中不受关节力矩范数约束。因为 $J^{\mathrm T}(0,f_y)^{\mathrm T}=0$，该方向不能沿用有限的倒数半轴，力集合也不再是有界椭圆。“无界”不意味着真实机构能承受无限力；结构强度、接触和其他负载均不在此模型中。
+::: ex 例 3.8.C · 速度半轴与力半轴的倒数关系检验
+设平面平移局部雅可比 $J=\operatorname{diag}(2,0.5)\,\mathrm{m/rad}$，欧氏总限幅 $Q=1\,\mathrm{rad/s}$、$T=1\,\mathrm{N\cdot m}$。速度椭圆半轴分别为 $2$ 与 $0.5\,\mathrm{m/s}$；力集合由 $4f_x^2+0.25f_y^2\le 1$ 界定，对应半轴倒数为 $0.5\,\mathrm N$ 与 $2\,\mathrm N$。沿易于快动的 $+x$ 方向施加 $1\,\mathrm N$ 力需 $2\,\mathrm{N\cdot m}$ 超出总限幅，而沿不易快动的 $+y$ 方向施加 $1\,\mathrm N$ 力仅需 $0.5\,\mathrm{N\cdot m}$。当第二分量退化至 $0$ 时，力集合退化为条带 $|f_x|\le 0.5\,\mathrm N$（仅理想刚体承载 $f_y$ 方向负荷，有限半轴公式不再适用）。
 :::
+
+3. **闭链静力学**：含有闭环运动链或多臂协同抓取同一物体时，存在不改变物体合力矩的内力张紧自由度，需额外结合闭链几何约束和内力分配模型（第 8 章力控制进一步展开）。
 
 <a id="sec-3.8"></a>
 
-::: think 默写点 · 合上书再写（主动回忆）
+## 本节小结
 
-先独立写出下面三条，再展开核对。
+- **核心必考一条式**：$\boldsymbol\tau = J^{\mathrm T}(\boldsymbol q)\boldsymbol F_e$，由虚功原理和功率守恒保证，不要求 $J$ 为方阵或满秩；注意 $\boldsymbol F_e$ 表示机械臂向环境施加的力，与 $J$ 同坐标同参考点。
 
-1. 用虚功原理推出 $\boldsymbol\tau=J^{\mathrm T}F_e$。
-2. 为什么力变换是 $J^{\mathrm T}$ 而不是 $J^{-1}$ 或 $J^\dagger$？
-3. 两坐标系间的速度变换与力变换是什么关系？
-
-::: sol 核对
-
-取 $F_e$ 为机械臂向环境施加的力，环境反作用力为 $-F_e$。由 $\mathrm dx_e=J\mathrm dq$，总虚功为 $(\tau^{\mathrm T}-F_e^{\mathrm T}J)\mathrm dq=0$，对任意虚位移成立，故 $\tau^{\mathrm T}=F_e^{\mathrm T}J$，即 $\boldsymbol\tau=J^{\mathrm T}F_e$。
-
-因为能量必须守恒：$\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau=\boldsymbol v_e^{\mathrm T}F_e=(J\dot{\boldsymbol q})^{\mathrm T}F_e=\dot{\boldsymbol q}^{\mathrm T}J^{\mathrm T}F_e$，对任意 $\dot{\boldsymbol q}$ 成立。**无需方阵、无需满秩**——这正是对偶比求逆更普适之处。
-
-若速度由坐标系 1 变到坐标系 0 的矩阵为 $A$，同方向的力变换为 $A^{-\mathrm T}$；反方向的力变换才是 $A^{\mathrm T}$。两者保证功率在变换前后相同。
-
-:::
-
-:::
-
-## 3.8 小结与常见错误
-
-- 由虚功原理得到 $\tau=J^{\mathrm T}F_e$：给定机械臂向环境施加的末端广义力，可求静力平衡所需的关节力矩。
-- 变换坐标表示时，同方向的速度和力分别使用 $A$ 与 $A^{-\mathrm T}$；闭链静力学与可操作椭球在本节只作了解。
-- **下一章**：[第四章 轨迹规划](../ch04/sec4-1.md) 回到运动侧，给关节与末端的运动安排时间——本节算出的关节力矩，正是检验那些轨迹是否「出得起」的依据（第五、六章补齐驱动与动力学后闭环）。
-
-核心公式速查：
-
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
+| 公式 | 适用条件 | 单位/量纲 | 易错点 |
 |:--|:--|:--|:--|
-| $\tau=J^{\mathrm T}(q)F_e$ | 静力平衡（虚功原理）；$F_e$ 为机械臂向环境施加、参考点=末端原点、与 $J$ 同在基系 | N·m（R）/ N（P） | 无需方阵满秩；环境反作用力 $F_{\mathrm{env}}=-F_e$ 别代错号 |
-| 功率恒等 $\dot q^{\mathrm T}\tau=v_e^{\mathrm T}F_e$ | 同一坐标系、同一参考点 | W | 虚速度检验两端功率是查符号的工具，不是实际功率 |
-| $\begin{bmatrix}f^0\\\mu^0\end{bmatrix}=\begin{bmatrix}R&0\\-RS(\tilde p)&R\end{bmatrix}\begin{bmatrix}f\\\mu\end{bmatrix}$ | 同一刚体换参考点/表达基 | N、N·m | 力变换是速度变换的**逆转置** $A^{-\mathrm T}$，不是 $A^{\mathrm T}$；左下块负号 |
-| 力集合半轴 $T/\sigma_i$（速度椭圆 $Q\sigma_i$） | $J$ 行满秩、统一的加权尺度 | N | 混合平动/转动任务须先定特征长度，不能把 N 与 N·m 放进同一范数 |
+| $\boldsymbol\tau=J^{\mathrm T}(\boldsymbol q)\boldsymbol F_e$ | 静态平衡、理想刚体（忽略重力与惯性） | $\mathrm{N\cdot m}$（R）/ $\mathrm N$（P） | 切勿误用 $J^{-1}$ 传力；环境反作用力 $\boldsymbol F_{\mathrm{env}}=-\boldsymbol F_e$ 符号勿反 |
+| $\dot{\boldsymbol q}^{\mathrm T}\boldsymbol\tau = \boldsymbol v_e^{\mathrm T}\boldsymbol F_e$ | 同一坐标系、同一末端参考点 | $\mathrm W$ | 功率检验只用于核对方向与符号，并非静态真耗功 |
+| $A_F = A_v^{-\mathrm T} = \begin{bmatrix}\boldsymbol R_1^0&O\\-\boldsymbol R_1^0S(\tilde{\boldsymbol p})&\boldsymbol R_1^0\end{bmatrix}$ | $\{1\}\to\{0\}$ 同时换基并平移参考点 | $\mathrm N,\ \mathrm{N\cdot m}$ | 力变换取速度变换的逆转置（左下块负号），不可与 $A_v^{\mathrm T}$ 混淆 |
 
 ::: note 主线 · 两连杆（第四关 · 力与功率）
-第二关的 $J_p$ 在本关换了用途：对 $q_A=(0,\pi/2)$ 施加末端力 $F=(0,10)\,\mathrm N$，由 $\tau=J_p^{\mathrm T}F$ 得两关节力矩 $(10,0)\,\mathrm{N\cdot m}$，并用虚速度核对两端功率——[两连杆第四关](../training/two-link.md#mission-force)，本节跟算已完整算了一遍；下一关（[§4.2.1](../ch04/sec4-2-1.md) 三次时间律）回到运动侧，为换肘姿安排时间。
-:::
-
-::: think 常见错误清单 · 自查三条
-1. 用 $J^{-1}$ 或 $J^\dagger$ 传力——力变换是 $J^{\mathrm T}$（对偶），不是求逆；$J$ 是长方阵时同样成立；
-2. 忘记力的坐标系或力矩参考点——$F_e$ 与 $J$ 必须使用配套的表示；传感器测得的力，要按 [3.8.2](#sec-3.8.2) 的关系变换到合适的坐标系和参考点；
-3. 把 $\tau=J^{\mathrm T}F_e$ 用在动态 / 高速情形——它只是**静力**平衡式；一旦含惯性、科氏力，就必须回到动力学方程（见后续动力学章节）。
+沿用例 3.8.A 在 $\boldsymbol q_A=(0,\pi/2)$ 对末端施加 $\boldsymbol F=(0,10)^{\mathrm T}\,\mathrm N$（无末端力矩），算得关节力矩 $\boldsymbol\tau=(10,0)^{\mathrm T}\,\mathrm{N\cdot m}$ 并利用虚速度核对两端功率一致（见[两连杆训练第四关](../training/two-link.md#mission-force)）；[第四章 4.2.1 节](../ch04/sec4-2-1.md)将回到运动学轨迹层安排起停与三次时间律，第五、六章再补全电机折算与完整动力学。
 :::
 
 ::: think 本节的课堂幻灯片（源料对照）
 
-本节正文已给出全部推导、跟算与自绘对偶图；下列课件页保留以备核对，**不构成正文的替代**（对应录播 0:03:02–0:19:28 与 2:27:09–2:27:52）。
-
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 02:27:31 | [virtual-work.jpg](../assets/ch03/virtual-work.jpg) | 虚功原理 ⇒ 关节力矩与末端力的对偶 | 虚功推导、功率恒等式与符号约定完整给出；自绘对偶图替代 |
-| — | [velocity-force-frames.png](../assets/ch03/velocity-force-frames.png) | 同一刚体两个固连坐标系的换算 | 3.8.2 两点记号改写（教材式 3.112–3.116）+ 功率不变跟算完整给出 |
+| 02:27:31 | [virtual-work.jpg](../assets/ch03/virtual-work.jpg) | 虚功原理与静力学对偶 | 定义 3.8.1、双途径证明及对偶图完整覆盖 |
+| — | [velocity-force-frames.png](../assets/ch03/velocity-force-frames.png) | 刚体双坐标系力与速度变换 | 3.8.2 严格推导 $A_v$ 与 $A_v^{-\mathrm T}$ 及功率不变跟算 |
 :::
