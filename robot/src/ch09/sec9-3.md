@@ -1,272 +1,175 @@
 # 9.3 位姿估计（一）：PnP 问题与解析解
 
-> 录播 00:39–01:15（课件 §10.3、§10.3.1，**全部是课堂内容**）。这一节是本章最硬的一段：
-> 从图像上看到的几个点，反推出目标相对相机的位姿。老师 00:40–00:42 先把问题定性——这和逆运动学
-> 是同一类问题，解析法像逆运动学的解析解，数值法像数值解。
+在基于位置的视觉伺服（PBVS）中，控制律需要目标相对于相机的三维齐次变换矩阵 $T^c_o\in SE(3)$，而单目相机只给出图像上的二维特征点。正如第 2 章由末端位姿反求关节角的逆运动学一样，本节解决如何从 $n$ 对「目标系已知 3D 坐标 $\leftrightarrow$ 图像实测 2D 投影」反解 $T^c_o$（即 **Perspective-$n$-Point, PnP** 问题），重点推导工程最常见的共面四点平面单应线性解析解与含噪环境下的 $SO(3)$ 正交投影修正。
 
 <a id="sec-9.3.1"></a>
 
-## 9.3.1 问题是什么
+## 9.3.1 透视投影方程与 PnP 多解歧义
 
+设目标坐标系 $\{o\}$ 固连在刚体目标上，其上 $n$ 个特征点在目标系中的已知几何坐标为 $\boldsymbol r^o_{o,i}=[r_{x,i},\ r_{y,i},\ r_{z,i}]^{\mathrm T}\in\mathbb R^3$。相机内参 $\Omega$ 已知时，实测像素坐标预先换算为无量纲归一化坐标 $\boldsymbol s_i=[X_i,\ Y_i]^{\mathrm T}$，由正面透视投影方程（教材 (10.6)）建立：
 
-约定两个坐标系：
+$$\boxed{\ \lambda_i\,\tilde{\boldsymbol s}_i = \Pi\,T^c_o\,\tilde{\boldsymbol r}^o_{o,i}\ },\qquad
+T^c_o=\begin{bmatrix}R^c_o & \boldsymbol o^c_o \\ \mathbf 0^{\mathrm T} & 1\end{bmatrix},\quad
+\tilde{\boldsymbol s}_i=\begin{bmatrix}X_i\\Y_i\\1\end{bmatrix},\quad
+\Pi=\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&1&0\end{bmatrix}. \tag{9.3-1}$$
 
-- **相机系** $c$，原点 $O_c$，轴 $x_c,y_c,z_c$，其中 $z_c$ 是光轴；
-- **目标系** $o$，原点 $O_o$，固连在目标上（目标本身是刚体）。
+其中未知正标量 $\lambda_i=z_{c,i}>0$ 为第 $i$ 个特征点在相机系中的深度，$R^c_o=[\boldsymbol r_1\ \boldsymbol r_2\ \boldsymbol r_3]\in SO(3)$ 为旋转矩阵，$\boldsymbol o^c_o=[o_x,\ o_y,\ o_z]^{\mathrm T}$ 为目标原点在相机系中的位置。
 
-要解的是目标相对相机的位姿，记作
+**采用归一化坐标的核心优势**：方程 (9.3-1) **不再显含任何相机内参**（$\alpha_x,\alpha_y,X_0,Y_0$ 已被预处理吸收），使位姿估计成为纯粹的欧氏投影几何问题。
 
-$$T^c_o=\begin{bmatrix}R^c_o & o^c_o\\[2pt]0^{\mathrm T} & 1\end{bmatrix},$$
+由于单目图像丢失了每个特征点沿视线的深度信息 $\lambda_i$，已知对数 $n$ 与特征共面性直接决定解析解是否唯一：
 
-其中 $R^c_o$ 是 $3\times3$ 旋转矩阵（$o$ 系坐标到 $c$ 系坐标），$o^c_o\in\mathbb R^3$ 是目标原点在
-相机系下的位置；角标上标表示「表达在哪个系里」，下标表示「相对谁」。
-
-**特征向量**：目标上若干已知点在图像上的投影位置。取归一化图像坐标
-
-$$s_i=\begin{bmatrix}X_i\\Y_i\end{bmatrix},\qquad
-X_i=\frac{x_{c,i}}{z_{c,i}},\quad Y_i=\frac{y_{c,i}}{z_{c,i}}，$$
-
-其中 $(x_{c,i},y_{c,i},z_{c,i})$ 是第 $i$ 个点在**相机系**里的坐标。(x,y) 为像素坐标，归一化坐标要靠
-相机内参换算（第五章 (5.44)–(5.45)）。
-
-**目标点的已知量**：点在**目标系**里的位置 $r^o_{o,i}$，来自 CAD 模型或已知几何。
-
-投影关系（教材 (10.6)）写成齐次形式
-
-$$\boxed{\ \lambda_i\,\tilde s_i=\Pi\,T^c_o\,\tilde r^o_{o,i}\ },\qquad
-\tilde s_i=\begin{bmatrix}X_i\\Y_i\\1\end{bmatrix},\quad
-\Pi=\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&1&0\end{bmatrix},\quad \lambda_i=z_{c,i}>0.\tag{9.3-1}$$
-
-读法：左边是投影点的齐次坐标乘一个正尺度因子 $\lambda_i$（就是深度），右边是「目标点先变到相机系，
-再取前三维」。
-
-> **归一化坐标的好处**（老师 00:43–00:44）：这样写出来的方程里**不含相机内参**。内参只出现在
-> 「像素坐标 → 归一化坐标」这一步。所以只要内参已知，后面的位姿估计与相机本身的焦距、主点无关。
-
-**PnP 问题**（Perspective-n-Point）：已知 $n$ 对对应点（目标系坐标 + 图像坐标），求 $T^c_o$。
-这个方程组有 12 个未知数（$R$ 的 9 个 + $o$ 的 3 个），但**解不唯一**。教材给出解的个数：
-
-| 点数与配置 | 解的个数 |
-|:--|:--|
-| 3 点不共线（P3P） | **4** 个 |
-| 4 点、5 点不共面 | **至少 2** 个 |
-| 4 点共面且无三点共线 | **唯一** |
-| $\ge6$ 点不共面 | **唯一** |
-
-老师 00:57–00:59 用一句话概括：「取三个点有四个解；取六个点以上才有一个唯一的解」。多解来自「同一条
-投影射线上的深度模糊」——单目相机天然丢了一维深度。
-
-**共面情形**是实际中最常见的：抓取、插入、装配，目标往往是一块平板或一个平面件。教材下面就专门处理
-这一情形，解析式也简洁得多。
+| 特征点配置 | 解析解个数 | 几何与代数原因 |
+|:--|:--|:--|
+| $3$ 点不共线（P3P） | 最多 $4$ 个正深度解 | 余弦定理消元得四次方程，存在深度翻折多解 |
+| $4$ 点或 $5$ 点不共面 | 至少 $2$ 个 | 仍可能出现二次曲面退化产生多解 |
+| **$4$ 点共面且无三点共线** | **唯一** | 降维为 $3\times 3$ 平面单应 $H$，$SO(3)$ 正交性锁定尺度与符号 |
+| **$\ge 6$ 点不共面（一般位置）** | **唯一** | $2n\ge 12$ 个线性方程配合正交约束唯一确定 |
 
 <a id="sec-9.3.2"></a>
 
-## 9.3.2 共面情形：把三维问题降成二维
+## 9.3.2 共面四点 PnP：平面单应与反对称消尺度
 
-**第一步：目标平面与目标系的一个坐标面重合。** 不失一般性设目标平面就是 $z_o=0$，于是所有目标点的
-目标系坐标的第三个分量为零。
+工业装配零件或标定靶标的特征点大多位于同一平面上。不失一般性，将目标系 $\{o\}$ 的坐标平面 $z_o=0$ 置于该特征平面，使所有特征点满足 $r_{z,i}=0$，$\tilde{\boldsymbol r}^o_{o,i}=[r_{x,i},\ r_{y,i},\ 0,\ 1]^{\mathrm T}$。展开式 (9.3-1) 右端：
 
-把 (9.3-1) 的右边展开。记 $R^c_o$ 的三列为 $r_1,r_2,r_3$，则
+$$\Pi\,T^c_o\,\tilde{\boldsymbol r}^o_{o,i}
+= \begin{bmatrix}\boldsymbol r_1 & \boldsymbol r_2 & \boldsymbol r_3 & \boldsymbol o^c_o\end{bmatrix}
+\begin{bmatrix}r_{x,i}\\r_{y,i}\\0\\1\end{bmatrix}
+= \begin{bmatrix}\boldsymbol r_1 & \boldsymbol r_2 & \boldsymbol o^c_o\end{bmatrix}
+\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix}.$$
 
-$$\Pi T^c_o\tilde r^o_{o,i}
-=\begin{bmatrix}
-r_{1x}r_{x,i}+r_{2x}r_{y,i}+o_x\\
-r_{1y}r_{x,i}+r_{2y}r_{y,i}+o_y\\
-r_{3x}r_{x,i}+r_{3y}r_{y,i}+o_z
-\end{bmatrix}.$$
+旋转矩阵第三列 $\boldsymbol r_3$ 与 $0$ 相乘自动消去，三维投影方程自然降维为 $3\times 3$ **平面单应（planar homography）**方程：
 
-**关键一步**：左端是 $\lambda_i\tilde s_i$，第三分量是 $\lambda_i$；右端第三分量不含 $\lambda_i$。
-于是可以提出一个**公共的齐次尺度**，把 $\lambda_i$ 吸收进去：
+$$\boxed{\ \lambda_i\,\tilde{\boldsymbol s}_i = H\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix},\qquad
+H=\begin{bmatrix}\boldsymbol r_1 & \boldsymbol r_2 & \boldsymbol o^c_o\end{bmatrix}\in\mathbb R^{3\times 3}.\ } \tag{9.3-2}$$
 
-$$\boxed{\ \lambda_i\,\tilde s_i=H\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix},
-\qquad H=\begin{bmatrix}r_1&r_2&o^c_o\end{bmatrix}\ }\tag{9.3-2}$$
+暂时省去的第三列 $\boldsymbol r_3$ 并不是丢失，待求得前两列后直接由右手法则 $\boldsymbol r_3=\boldsymbol r_1\times\boldsymbol r_2$ 补回。
 
-这就是**平面单应（planar homography）**：一个 $3\times3$ 矩阵，把目标平面上的点映射到图像平面。
-（教材把 $H$ 称作 homography，$r_1,r_2$ 是 $R^c_o$ 的第一、二列。）
+::: thm 定理 9.3.1 · 共面四点 PnP 线性求解定理 {#thm-9.3.1}
+设平面 $z_o=0$ 上有 $n=4$ 个无三点共线的已知特征点。对式 (9.3-2) 两边左乘像点反对称矩阵 $S(\tilde{\boldsymbol s}_i)$（利用 $S(\boldsymbol v)\boldsymbol v=\boldsymbol v\times\boldsymbol v=\mathbf 0$ 消去各点独立深度 $\lambda_i$），得关于列拉直向量 $\boldsymbol h=[\boldsymbol r_1^{\mathrm T},\ \boldsymbol r_2^{\mathrm T},\ \boldsymbol o_o^{c\mathrm T}]^{\mathrm T}\in\mathbb R^9$ 的线性齐次方程组 $A(\boldsymbol s)\boldsymbol h=\mathbf 0$，其中 $A(\boldsymbol s)\in\mathbb R^{12\times 9}$ 恒有 $\operatorname{rank}A=8$。取其一维零空间基向量 $\boldsymbol h=[\boldsymbol h_1^{\mathrm T},\ \boldsymbol h_2^{\mathrm T},\ \boldsymbol h_3^{\mathrm T}]^{\mathrm T}$，位姿各列唯一恢复为：
 
-老师 01:01:06–01:02:40 把 $H$ 的构成讲了一遍：$R$ 本来是 $3\times3$，三列分别是目标系三个坐标轴
-单位向量在相机系上的投影；因为目标点都在 $z_o=0$ 平面上，**第三列用不上**，于是「把它给去掉」，
-只剩三列摞成 $3\times3$ 的 $H$，九个未知量。他还补了一个容易被误解的点：$r_3$ 并不是不用求了，
-而是「把这两个求出来之后，$r_1$ 叉乘 $r_2$ 就给 $r_3$ 了」——暂时不求而已。
+$$\boldsymbol r_1=\zeta\boldsymbol h_1,\qquad \boldsymbol r_2=\zeta\boldsymbol h_2,\qquad \boldsymbol o^c_o=\zeta\boldsymbol h_3,\qquad
+|\zeta|=\frac{1}{\|\boldsymbol h_1\|}=\frac{1}{\|\boldsymbol h_2\|}, \tag{9.3-6,9.3-7}$$
 
-**第二步：用反对称矩阵消掉尺度。** 引入斜对称矩阵
+其中 $\zeta$ 的符号按物理可见性「目标位于相机前方」（$o_z=(\zeta\boldsymbol h_3)_z>0$ 或各点 $\lambda_i>0$）选取，旋转阵第三列由
 
-$$S(\tilde v)=\begin{bmatrix}0&-v_3&v_2\\v_3&0&-v_1\\-v_2&v_1&0\end{bmatrix},
-\qquad S(\tilde v)\tilde v=0 .$$
+$$\boldsymbol r_3=\boldsymbol r_1\times\boldsymbol r_2 \tag{9.3-8}$$
 
-对任何向量 $\tilde v$ 都成立。于是把 (9.3-2) 两边左乘 $S(\tilde s_i)$：左端变成
-$S(\tilde s_i)\lambda_i\tilde s_i=0$，右端得
+唯一补出。
+:::
 
-$$S(\tilde s_i)\,H\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix}=0.\tag{9.3-3}$$
-
-
-
-老师 01:00 讲这一步时说得很直白：「为什么要乘这个反对称矩阵？它的好处就是把 $\lambda$ 给消了」——
-本来每个点带一个未知尺度 $\lambda_i$，一乘就全没了，剩下的方程对 $H$ 是**线性的**。
-
-**第三步：写成矩阵形式。** 把 $H$ 的三列竖着摞成 $9\times1$ 向量 $h$，展开 (9.3-3)：
-
-$$\boxed{\ A_i(s_i)h=0,\qquad
-A_i(s_i)=\begin{bmatrix}
-r_{x,i}S(\tilde s_i)\ \big|\ r_{y,i}S(\tilde s_i)\ \big|\ S(\tilde s_i)
-\end{bmatrix}\ }\tag{9.3-4}$$
-
-（$r_{x,i},r_{y,i}$ 是 $r^o_{o,i}$ 的两个非零分量。）四个点摞起来就是 12 个方程、9 个未知数：
-
-$$A(s)h=0,\qquad A(s)=\begin{bmatrix}A_1(s_1)\\A_2(s_2)\\A_3(s_3)\\A_4(s_4)\end{bmatrix}.\tag{9.3-5}$$
-
-由于 $\operatorname{rank}S(\cdot)\le2$，每点只贡献两条独立方程，四点足够。老师 01:04 说：「12 个方程，
-9 个位置量；可以证明矩阵 $A$ 的秩是 8」——所以解空间是一维的，$h$ **只确定到一个尺度因子**。
-
-**第四步：从 $h$ 还原 $H$。** 记 $h_i$ 为 $h$ 的第 $i$ 段（3 维），则存在实数 $\zeta\ne0$ 使
-
-$$r_1=\zeta h_1,\qquad r_2=\zeta h_2,\qquad o^c_o=\zeta h_3 .\tag{9.3-6}$$
-
-$|\zeta|$ 由 $r_1,r_2$ 是单位向量确定：$1=\|\zeta h_1\|=|\zeta|\,\|h_1\|$，故
-
-$$|\zeta|=\frac{1}{\|h_1\|}=\frac{1}{\|h_2\|}.\tag{9.3-7}$$
-
-$\zeta$ 的**符号**由「目标在相机前方」确定：取使 $\lambda_i=z_{c,i}>0$ 的那个符号（老师 01:06 说
-「方向可以通过这个来确定它的正负号」）。
-
-$r_3$ 不在 $H$ 里，但由旋转矩阵的正交性直接给出：
-
-$$r_3=r_1\times r_2.\tag{9.3-8}$$
+::: proof 证明：四步解析消元与尺度确定
+1. **消去每点未知深度 $\lambda_i$**：定义向量 $\tilde{\boldsymbol v}=[v_1,v_2,v_3]^{\mathrm T}$ 的叉乘反对称矩阵
+$$S(\tilde{\boldsymbol v})=\begin{bmatrix}0&-v_3&v_2\\v_3&0&-v_1\\-v_2&v_1&0\end{bmatrix},\qquad S(\tilde{\boldsymbol v})\tilde{\boldsymbol v}=\mathbf 0.$$
+对式 (9.3-2) 左乘 $S(\tilde{\boldsymbol s}_i)$，左端 $\lambda_i S(\tilde{\boldsymbol s}_i)\tilde{\boldsymbol s}_i=\mathbf 0$，从而一举消去随点变化的深度因子 $\lambda_i$：
+$$S(\tilde{\boldsymbol s}_i)\,H\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix}=S(\tilde{\boldsymbol s}_i)\bigl(r_{x,i}\boldsymbol r_1+r_{y,i}\boldsymbol r_2+\boldsymbol o^c_o\bigr)=\mathbf 0. \tag{9.3-3}$$
+（消去 $\lambda_i$ 并非丢弃深度信息：各点的相对深度比已保留在 $\boldsymbol h$ 各分量及整体比例的线性耦合中。）
+2. **组装线性齐次方程组**：将 $H$ 按列堆叠为 $\boldsymbol h\in\mathbb R^9$，单点方程改写为：
+$$\boxed{\ A_i(\boldsymbol s_i)\boldsymbol h=\mathbf 0,\qquad A_i(\boldsymbol s_i)=\begin{bmatrix}r_{x,i}S(\tilde{\boldsymbol s}_i) & r_{y,i}S(\tilde{\boldsymbol s}_i) & S(\tilde{\boldsymbol s}_i)\end{bmatrix}\in\mathbb R^{3\times 9}.\ } \tag{9.3-4}$$
+注意 $S(\tilde{\boldsymbol s}_i)$ 第 3 行等于 $-X_i\times(\text{第 1 行})-Y_i\times(\text{第 2 行})$，故 $\operatorname{rank}S(\tilde{\boldsymbol s}_i)=2$，每点实际提供 $2$ 条独立方程。将 4 个无三点共线的点纵向堆叠：
+$$A(\boldsymbol s)\boldsymbol h=\mathbf 0,\qquad A(\boldsymbol s)=\begin{bmatrix}A_1(\boldsymbol s_1)\\A_2(\boldsymbol s_2)\\A_3(\boldsymbol s_3)\\A_4(\boldsymbol s_4)\end{bmatrix}\in\mathbb R^{12\times 9}, \tag{9.3-5}$$
+共含 $8$ 条独立约束（$\operatorname{rank}A=8$），其零空间 $\mathcal N(A)$ 为一维子空间。求解 $A=U_A\Sigma_A V_A^{\mathrm T}$ 中最小奇异值 $\sigma_9$ 对应的右奇异向量即可得到归一化零空间基向量 $\boldsymbol h$（有噪声或 $n>4$ 时仍为总最小二乘解）。
+3. **定尺度与定符号**：因 $\boldsymbol r_1,\boldsymbol r_2\in SO(3)$ 前两列均为单位向量，故 $|\zeta|=1/\|\boldsymbol h_1\|=1/\|\boldsymbol h_2\|$（含噪时可取 $2/(\|\boldsymbol h_1\|+\|\boldsymbol h_2\|)$ 对称平均）。由于数值 SVD 返回的奇异向量符号任意，**绝不可在代码中硬编码 $\zeta$ 正负号**，必须依据「点在相机光轴前方（$z_{c,i}>0$）」确定符号，最后计算 $\boldsymbol r_3=\boldsymbol r_1\times\boldsymbol r_2$ 构成 $Q=[\boldsymbol r_1\ \boldsymbol r_2\ \boldsymbol r_3]$。
+:::
 
 <a id="sec-9.3.3"></a>
 
-## 9.3.3 噪声下 $Q$ 不一定是旋转矩阵
+## 9.3.3 噪声下的最近旋转矩阵投影
 
-有测量噪声时，(9.3-5) 求出的 $r_1,r_2$ 带着误差，$Q=[r_1\ r_2\ r_3]$ 未必严格正交、行列式也未必为 1。
-教材的处理是：找**离 $Q$ 最近的旋转矩阵**，即在 $R$ 为旋转阵的约束下最小化 Frobenius 范数
+当像点坐标存在测量噪声或内参有偏差时，式 (9.3-6)–(9.3-8) 求出的 $\boldsymbol r_1,\boldsymbol r_2$ 未必严格等长正交，拼接矩阵 $Q=[\boldsymbol r_1\ \boldsymbol r_2\ \boldsymbol r_3]$ 一般不再满足 $R^{\mathrm T}R=I_3$ 与 $\det R=+1$。工程上须在 $SO(3)$ 上寻找 Frobenius 范数意义下距 $Q$ 最近的合法旋转矩阵（教材 Problem 10.3）：
 
-$$\|R^c_o-Q\|_F=\sqrt{\operatorname{Tr}\bigl((R^c_o-Q)(R^c_o-Q)\bigr)}.\tag{9.3-9}$$
+::: thm 定理 9.3.2 · Frobenius 范数下的最近旋转矩阵投影 {#thm-9.3.2}
+给定矩阵 $Q\in\mathbb R^{3\times 3}$，设其奇异值分解为 $Q=U\Sigma V^{\mathrm T}$（$U,V\in O(3)$，$\sigma_1\ge\sigma_2\ge\sigma_3\ge 0$）。优化问题
 
-关键等价关系（教材 Problem 10.3 的提示）：
+$$\min_{R\in SO(3)}\|R^c_o-Q\|_F = \min_{R\in SO(3)}\sqrt{\operatorname{Tr}\bigl((R^c_o-Q)^{\mathrm T}(R^c_o-Q)\bigr)} \tag{9.3-9}$$
 
-$$\min_R\|R-Q\|_F^2\ \Longleftrightarrow\ \max_R\operatorname{Tr}(R^{\mathrm T}Q),$$
+等价于最大化 $\operatorname{Tr}(R^{\mathrm T}Q)$，其全局最优解为：
 
-因为 $\operatorname{Tr}(R^{\mathrm T}R)=3$ 是常数。设 $Q=U\Sigma V^{\mathrm T}$ 为奇异值分解，则解为
+$$\boxed{\ R^c_o=U\begin{bmatrix}1&0&0\\0&1&0\\0&0&\sigma\end{bmatrix}V^{\mathrm T},\qquad \sigma=\det(UV^{\mathrm T})\in\{+1,-1\}.\ } \tag{9.3-10}$$
+:::
 
-$$\boxed{\ R^c_o=U\begin{bmatrix}1&0&0\\0&1&0\\0&0&\sigma\end{bmatrix}V^{\mathrm T},
-\qquad \sigma=\det(UV^{\mathrm T})\ }\tag{9.3-10}$$
-
-取 $\sigma=\det(UV^{\mathrm T})$ 保证 $\det R^c_o=1$（老师 01:08 说「这个是用一个 $U$ 分解来解」，
-并指出「矩阵分析里的这个可以直接算」）。
+::: proof 证明：迹循环与奇异值上界
+展开 $\|R-Q\|_F^2 = \operatorname{Tr}(R^{\mathrm T}R)+\operatorname{Tr}(Q^{\mathrm T}Q)-2\operatorname{Tr}(R^{\mathrm T}Q)$。因 $R\in SO(3)$ 恒有 $\operatorname{Tr}(R^{\mathrm T}R)=3$，故最小化 Frobenius 范数等价于最大化 $\operatorname{Tr}(R^{\mathrm T}Q)$。代入 $Q=U\Sigma V^{\mathrm T}$ 并利用迹循环不变性：
+$$\operatorname{Tr}(R^{\mathrm T}Q)=\operatorname{Tr}(V^{\mathrm T}R^{\mathrm T}U\Sigma)=\operatorname{Tr}(W\Sigma)=\sum_{k=1}^3 w_{kk}\sigma_k,$$
+其中正交阵 $W=V^{\mathrm T}R^{\mathrm T}U\in O(3)$ 满足 $|w_{kk}|\le 1$ 且 $\det W = \det(UV^{\mathrm T})\equiv \sigma$。当 $\sigma=+1$ 时取 $W=I_3$；当 $\sigma=-1$ 时须反号最小奇异值 $\sigma_3$ 项，即取 $W=\operatorname{diag}(1,1,-1)$。两种情形统一为 $W=\operatorname{diag}(1,1,\sigma)$，解出 $R=U\operatorname{diag}(1,1,\sigma)V^{\mathrm T}$ 且 $\det R=\det(UV^{\mathrm T})\sigma=\sigma^2=+1$。
+:::
 
 <a id="sec-9.3.4"></a>
 
-## 9.3.4 算一遍：教材例 10.1
+## 9.3.4 算例核对：教材例 10.1
 
+设正方形平面板边长 $l=0.1\,\mathrm m$，四个顶点在目标系 $z_o=0$ 中的坐标为：
 
-目标是边长 $l=0.1\,\mathrm m$ 的正方形，四个特征点在目标系里的坐标
+$$\boldsymbol r^o_{o,1}=\begin{bmatrix}0\\0\\0\end{bmatrix},\quad
+\boldsymbol r^o_{o,2}=\begin{bmatrix}0.1\\0\\0\end{bmatrix},\quad
+\boldsymbol r^o_{o,3}=\begin{bmatrix}0.1\\0.1\\0\end{bmatrix},\quad
+\boldsymbol r^o_{o,4}=\begin{bmatrix}0\\0.1\\0\end{bmatrix}\,\mathrm m.$$
 
-$$r^o_{o,1}=[0\ 0\ 0]^{\mathrm T},\quad
-r^o_{o,2}=[0.1\ 0\ 0]^{\mathrm T},\quad
-r^o_{o,3}=[0.1\ 0.1\ 0]^{\mathrm T},\quad
-r^o_{o,4}=[0\ 0.1\ 0]^{\mathrm T}\ (\mathrm m).$$
+给定真实位姿（按英文原书数值校核，参见[勘误](errata.md)）：
 
-给定位姿（教材原页数值）：
+$$R^c_o=R_y(\pi/4)=\begin{bmatrix}0.7071&0&0.7071\\0&1&0\\-0.7071&0&0.7071\end{bmatrix},\qquad
+\boldsymbol o^c_o=\begin{bmatrix}0\\0\\0.5\end{bmatrix}\,\mathrm m.$$
 
-$$R^c_o=R_y(\pi/4)=\begin{bmatrix}0.7071&0&0.7071\\0&1&0\\-0.7071&0&0.7071\end{bmatrix},
-\qquad o^c_o=\begin{bmatrix}0\\0\\0.5\end{bmatrix}\mathrm m .$$
+1. **正向透视投影验证**：以 $P_2$ 为例，先换算相机系坐标 $\boldsymbol r^c_2 = R^c_o[0.1,0,0]^{\mathrm T}+\boldsymbol o^c_o = [0.07071,\ 0,\ 0.42929]^{\mathrm T}\,\mathrm m$，故归一化投影 $X_2=0.07071/0.42929=0.1647,\ Y_2=0$。四点归一化像点依次为：
 
-用 (9.3-1) 正算（老师 01:11–01:12 讲的就是这一步），得四个点的归一化坐标
+$$\boldsymbol s_1=\begin{bmatrix}0\\0\end{bmatrix},\quad
+\boldsymbol s_2=\begin{bmatrix}0.1647\\0\end{bmatrix},\quad
+\boldsymbol s_3=\begin{bmatrix}0.1647\\0.2329\end{bmatrix},\quad
+\boldsymbol s_4=\begin{bmatrix}0\\0.2\end{bmatrix}.$$
 
-$$s_1=\begin{bmatrix}0\\0\end{bmatrix},\quad
-s_2=\begin{bmatrix}0.1647\\0\end{bmatrix},\quad
-s_3=\begin{bmatrix}0.1647\\0.2329\end{bmatrix},\quad
-s_4=\begin{bmatrix}0\\0.2\end{bmatrix}.$$
+2. **反向线性解析还原**：代入式 (9.3-4)–(9.3-5) 组装 $12\times 9$ 矩阵 $A(\boldsymbol s)$（测得 $\operatorname{rank}A=8$），对零空间右奇异向量按列重排得：
 
-**抽出来看一条**：$P_2$ 在目标系是 $[0.1,0,0]^{\mathrm T}$，变到相机系
+$$[\boldsymbol h_1\ \ \boldsymbol h_2\ \ \boldsymbol h_3]=\begin{bmatrix}-0.4714&0&0\\0&-0.6667&0\\0.4714&0&-0.3333\end{bmatrix}.$$
 
-$$R^c_o[0.1\ 0\ 0]^{\mathrm T}+o^c_o=[0.07071,\ 0,\ -0.07071]^{\mathrm T}+[0,0,0.5]^{\mathrm T}
-=[0.07071,\ 0,\ 0.42929]^{\mathrm T},$$
+由式 (9.3-7) 得 $|\zeta|=1/\|\boldsymbol h_1\|=1/0.6667=1.5$；因深度 $o_z=(\zeta\boldsymbol h_3)_z=-0.3333\,\zeta>0$，取 $\zeta=-1.5$。代回式 (9.3-6) 得 $\boldsymbol r_1=[0.7071,0,-0.7071]^{\mathrm T}$、$\boldsymbol r_2=[0,1,0]^{\mathrm T}$、$\boldsymbol o^c_o=[0,0,0.5]^{\mathrm T}$，再算 $\boldsymbol r_3=\boldsymbol r_1\times\boldsymbol r_2=[0.7071,0,0.7071]^{\mathrm T}$，精确恢复原位姿（无噪时 $Q$ 本身正交，式 (9.3-10) 退化为恒等映射）。
 
-于是 $X_2=0.07071/0.42929=0.1647$，$Y_2=0$。✓
-
-**反过来解**：把这四个点的坐标（目标系 + 图像系）代入 (9.3-4)–(9.3-5)，用 SVD 求 $A$ 的零空间右奇异向量，
-得到（教材原页数值，按列读的 $h$ 摞成的 $3\times3$ 矩阵）
-
-$$h=\begin{bmatrix}
--0.4714&0&0\\
-0&-0.6667&0\\
-0.4714&0&-0.3333
-\end{bmatrix}.$$
-
-由 (9.3-7) 得 $|\zeta|=1/\|h_1\|=1/0.6667=1.5$，符号由「目标在前方」取 $\zeta=-1.5$。代回 (9.3-6)：
-
-$$r_1=\zeta h_1=[0.7071,\ 0,\ -0.7071]^{\mathrm T},\quad
-r_2=\zeta h_2=[0,\ 1,\ 0]^{\mathrm T},\quad
-o^c_o=\zeta h_3=[0,\ 0,\ 0.5]^{\mathrm T},$$
-
-与给定位姿逐项吻合；$r_3=r_1\times r_2=[0.7071,0,0.7071]^{\mathrm T}$，$Q$ 本身就正交，所以
-(9.3-10) 这一步在这里是恒等变换（教材原页也说明「因为图像坐标测量没有噪声，$Q$ 与所求旋转阵
-数值上一致，不需要任何近似解」）。
-
-::: note 教材这一处的一处印刷出入
-教材把上面那个 $3\times3$ 矩阵标为「$\zeta H$」，但按它自己随后「取 $\zeta=-1.5$ 即得精确解」的
-说法，把该矩阵乘以 $-1.5$ 才得到真正的 $H=[r_1\ r_2\ o^c_o]$。也就是说，印刷出的矩阵其实是
-**解出的零空间向量** $h$（按列摞成 $3\times3$），而不是 $\zeta H$。按 (9.3-6) 的定义读，
-$\zeta h_1,\zeta h_2,\zeta h_3$ 才是 $r_1,r_2,o^c_o$，数值自洽。详见[第九章勘误](errata.md)。
+::: note 教材印刷记号辨析
+英文教材与中译本在例 10.1 中将上述零空间向量列排矩阵错印为「$\zeta H$」，紧接着又写「取 $\zeta=-1.5$ 得精确解」。按式 (9.3-6) 记号对照可知，原书印出的 $3\times 3$ 矩阵实为尚未乘以尺度因子的**零空间基向量 $[\boldsymbol h_1\ \boldsymbol h_2\ \boldsymbol h_3]$**，乘以 $-1.5$ 后方为真实单应矩阵 $H=[\boldsymbol r_1\ \boldsymbol r_2\ \boldsymbol o^c_o]$（详见[勘误](errata.md)）。
 :::
 
 <a id="sec-9.3.5"></a>
 
-## 9.3.5 非共面情形：直接线性变换
+## 9.3.5 非共面直接线性变换（DLT）
 
-若目标点不共面，(9.3-2) 的降维不成立，但 (9.3-3) 仍然可用——只是不再有「第三个分量为零」可利用。
-直接写 (9.3-3) 的一般形式（教材 (10.13)）：
+若特征点不共面（$r_{z,i}$ 不全为零），则无法消去 $\boldsymbol r_3$，须直接对 $3\times 4$ 位姿块 $[R^c_o\ \boldsymbol o^c_o]$ 左乘反对称矩阵消尺度，得到非共面**直接线性变换（DLT）**方程（教材 (10.13)）：
 
-$$S(\tilde s_i)\begin{bmatrix}R^c_o&o^c_o\end{bmatrix}\tilde r^o_{o,i}=0 .\tag{9.3-11}$$
+$$S(\tilde{\boldsymbol s}_i)\begin{bmatrix}R^c_o&\boldsymbol o^c_o\end{bmatrix}\tilde{\boldsymbol r}^o_{o,i}=\mathbf 0. \tag{9.3-11}$$
 
-由于 $\operatorname{rank}S\le2$，每个点仍只给两条独立方程。$n$ 个点给 $2n$ 个方程。六个不共面点给
-12 个方程、12 个未知数；教材指出此时系数矩阵的**秩是 11**，所以解仍差一个尺度因子（老师 00:58
-说「取六个点以上才有一个唯一的解」，但严格说唯一性还要靠 $R$ 的正交约束把尺度定下来）。
-
-有噪声时方程组满秩、只有零解，须改用 $n>6$ 的最小二乘。
+每个点提供 $2$ 条独立约束，$n=6$ 个一般位置不共面点给出 $12$ 个方程与 $12$ 个未知量，系数矩阵秩为 $11$，仍需借助旋转矩阵正交单位性锁定全局尺度与符号；有噪声时取 $n>6$ 点作 SVD 最小二乘求解，并按式 (9.3-10) 投影回 $SO(3)$。
 
 <a id="sec-9.3.6"></a>
 
-## 9.3.6 从相机系换到别的系
+## 9.3.6 坐标系输出接口转换
 
-$T^c_o$ 只给出目标相对**相机**的位姿。实际任务往往要的是目标相对**机座**或相对**末端**的位姿：
+线性解输出的 $T^c_o$ 描述目标相对相机系位姿；控制时按配置乘以外参转换为相对机座或末端位姿：
 
-- **眼到手**（相机固定）：$T^b_o=T^b_c\,T^c_o$，其中 $T^b_c$ 是相机外参；
-- **眼在手**（相机装在末端）：$T^e_o=T^e_c\,T^c_o$，其中 $T^e_c$ 是相机相对末端的安装位姿。
-
-老师 01:14–01:15 讲的就是这段：「我们很多是相对于机座坐标系的……再乘以对应的坐标变换阵就行了」。
+- **眼到手**：$T^b_o=T^b_c\,T^c_o$；
+- **眼在手**：$T^e_o=T^e_c\,T^c_o$。
 
 <a id="sec-9.3.7"></a>
 
 ## 9.3 小结与常见错误
 
-1. **建模**：$n$ 对对应点给出 (9.3-1)；这是 PnP 问题，多解由单目的深度模糊造成。
-2. **共面情形**最常用：$z_o=0$ 时降成平面单应 (9.3-2)。
-3. **反对称矩阵 $S$ 消尺度**，把方程变成对 $H$ 的线性方程 (9.3-4)；四点、12 方程、9 未知数、
-   秩 8，解到一个尺度 $\zeta$。
-4. **旋转阵的正交性定尺度与符号**，$r_3=r_1\times r_2$；噪声下用 SVD 求最近旋转阵 (9.3-10)。
-5. **输出换系**：$T^b_o=T^b_cT^c_o$ 或 $T^e_o=T^e_cT^c_o$。
+1. **归一化消除内参**：式 (9.3-1) 通过 $\tilde{\boldsymbol s}=\Omega^{-1}\tilde{\boldsymbol c}$ 剥离相机内参；单目深度模糊导致 3 点 4 解、4/5 点不共面至少 2 解、4 点共面无三点共线及 $\ge 6$ 点不共面解唯一。
+2. **反对称消尺度**：左乘 $S(\tilde{\boldsymbol s}_i)$ 利用 $\boldsymbol v\times\boldsymbol v=\mathbf 0$ 消去 $\lambda_i$，化非线性透视为齐次线性系统 $A\boldsymbol h=\mathbf 0$（共面 4 点 $\operatorname{rank}A=8$）。
+3. **定尺、定号与正交化**：$|\zeta|=1/\|\boldsymbol h_1\|$，**符号必须由 $z_{c,i}>0$ 判定而绝不硬编码**；含噪时由 SVD 最近旋转矩阵投影 (9.3-10) 返回 $SO(3)$。
 
 <a id="sec-9.3.check"></a>
 <details>
 <summary>检查理解：为什么反对称矩阵能把未知尺度消掉？</summary>
 
-因为对任意向量 $\tilde v$ 都有 $S(\tilde v)\tilde v=0$。左乘 $S(\tilde s_i)$ 之后，左端
-$\lambda_i S(\tilde s_i)\tilde s_i$ 自动为零，$\lambda_i$ 这个每点各不相同的未知尺度就此消失，
-剩下的是对 $H$ 的线性齐次方程。注意消掉的是**尺度**，不是**信息**：方程变少了，但每点的深度信息
-本就在齐次表达里，换成用 $H$ 的尺度来承担。
+因对任何向量 $\tilde{\boldsymbol v}$ 均有 $S(\tilde{\boldsymbol v})\tilde{\boldsymbol v}=\tilde{\boldsymbol v}\times\tilde{\boldsymbol v}=\mathbf 0$，左乘 $S(\tilde{\boldsymbol s}_i)$ 直接消去了每点各异的标量因子 $\lambda_i$。消去的是每点孤立尺度，深度比例信息已转为齐次单应矩阵 $H$ 各列比例与整体缩放因子 $\zeta$，最终由正交列模长为 $1$ 与目标位于光轴前方唯一恢复。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| PnP 方程：$\lambda_i\tilde s_i=\Pi T^c_o\tilde r^o_{o,i}$ | $n$ 对对应点、$\lambda_i=z_{c,i}>0$ | m、rad | 归一化坐标不含内参；内参只在像素→归一化一步 |
-| 平面单应：$\lambda_i\tilde s_i=H[r_{x,i},r_{y,i},1]^{\mathrm T}$，$H=[r_1\ r_2\ o^c_o]$ | 目标平面 $z_o=0$ | — | 3 点 4 解、4/5 点至少 2 解、4 点共面唯一、≥6 点不共面唯一 |
-| 消尺度：$S(\tilde s_i)H[\cdots]=0$，$A(s)h=0$ | $S(\tilde v)\tilde v=0$；四点 12 方程秩 8 | — | 消掉的是尺度不是信息；$h$ 只差一个尺度 $\zeta$ |
-| 还原：$|\zeta|=1/\|h_1\|$，符号由「目标在前方」定，$r_3=r_1\times r_2$ | 噪声时 $Q$ 用 SVD 近旋转阵 (9.3-10) | — | 教材印刷「$\zeta H$」实为零空间向量 $h$（勘误） |
+| 条目 | 公式 | 条件与易错点 |
+|:--|:--|:--|
+| 透视投影方程 | $\lambda_i\tilde{\boldsymbol s}_i=\Pi T^c_o\tilde{\boldsymbol r}^o_{o,i}$ | $\lambda_i=z_{c,i}>0$，归一化坐标不含内参 |
+| 共面单应与线性系 | $\lambda_i\tilde{\boldsymbol s}_i=H[r_{x,i},r_{y,i},1]^{\mathrm T}$，$A_i\boldsymbol h=\mathbf 0$ | 共面 $z_o=0$；四点 12 方程秩 8 |
+| 尺度与第三列恢复 | $\boldsymbol r_{1,2}=\zeta\boldsymbol h_{1,2},\ \boldsymbol o^c_o=\zeta\boldsymbol h_3$，$|\zeta|=1/\|\boldsymbol h_1\|$，$\boldsymbol r_3=\boldsymbol r_1\times\boldsymbol r_2$ | $\zeta$ 符号由 $o_z>0$ 定，不可硬编码 |
+| SVD 最近旋转阵 | $R^c_o=U\operatorname{diag}(1,1,\det(UV^{\mathrm T}))V^{\mathrm T}$ | 噪声下 $Q=U\Sigma V^{\mathrm T}$ 投影至 $SO(3)$ |
 
 ::: think 本节的课堂幻灯片（源料对照）
 
@@ -275,6 +178,6 @@ $\lambda_i S(\tilde s_i)\tilde s_i$ 自动为零，$\lambda_i$ 这个每点各�
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
 | 55:10 | [pnp-setup.jpg](../assets/ch09/pnp-setup.jpg) | 眼在手相机的目标系/相机系定义 | 正文 9.3.1 展开 |
-| 63:10 | [pnp-skew.jpg](../assets/ch09/pnp-skew.jpg) | 斜对称矩阵消尺度 | 正文 9.3.2 完整推导（老师「把 λ 消了」引语保留） |
-| 72:20 | [pnp-example.jpg](../assets/ch09/pnp-example.jpg) | 例 10.1 平面目标四特征点 | 正文 9.3.4 正算 + 反解逐项核对 |
+| 63:10 | [pnp-skew.jpg](../assets/ch09/pnp-skew.jpg) | 斜对称矩阵消尺度 | 正文 9.3.2 完整推导 |
+| 72:20 | [pnp-example.jpg](../assets/ch09/pnp-example.jpg) | 例 10.1 平面目标四特征点 | 正文 9.3.4 正算与反解逐项核对 |
 :::

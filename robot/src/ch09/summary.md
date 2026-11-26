@@ -1,69 +1,53 @@
 # 第九章总结 · 视觉伺服
 
-视觉伺服把「相机拍到的图像」变成「末端该往哪走」的误差。这一章的难点不在线性控制律，而在
-「图像 → 特征 → 位姿 → 误差」这条链条上的前两段。
+视觉伺服把相机观测的二维像素反馈变为驱动机械手运动的实时调节误差。全章围绕「**图像提取 → 特征映射与位姿估计 → 标定支撑 → 闭环控制**」四环节建立完整的单目视觉伺服理论与实现框架。
 
-## 一条链条
+## 一条主线
 
-$$\text{图像}\ \xrightarrow{\ \S9.2\ }\ \text{特征参数}\ \xrightarrow{\ \S9.3–9.5\ }\ \text{位姿或位姿变化率}
-\ \xrightarrow{\ \S9.8–9.9\ }\ \text{控制量}$$
+$$\text{图像阵列} \;\xrightarrow{\;\S9.2\;}\; \text{归一化特征}\ \boldsymbol s \;\xrightarrow{\;\S9.3\text{–}9.5\;}\; \text{位姿}\ T^c_o\ \text{或交互矩阵}\ L_s \;\xrightarrow{\;\S9.7\text{–}9.9\;}\; \text{控制律}\ \boldsymbol u\ \text{或}\ \dot{\boldsymbol q}_r$$
 
-外加一段前置：相机内参与外参（§9.6）。每段的主要结论：
-
-| 段 | 关键结论 | 主要限制 |
+| 章节模块 | 核心方法与结论 | 适用前提与关键局限 |
 |:--|:--|:--|
-| 图像处理 | 分割（区域法／边缘法）+ 解释（图像矩） | 分割依赖前景背景灰度可分 |
-| 位姿估计（解析） | 共面目标降为平面单应；反对称矩阵消尺度；SVD 求最近旋转阵 | 共面解唯一性有条件；噪声下要迭代 |
-| 位姿估计（微分） | 交互矩阵把「相机怎么动」映射到「图像怎么动」 | 单点零空间维数 4（单目深度盲） |
-| 位姿估计（数值） | $\dot e_s+K_se_s=0$，指数收敛 | 用伪逆时降级为「稳定但非渐近稳定」 |
-| 标定 | 内参未知时三阶段：像素单应 → 正交等长约束 → 恢复位姿 | 教材原法只是概念性的 |
-| 伺服控制 | 位置式（估位姿）与图像式（直接用特征误差） | 前者怕目标出视野，后者怕相机轨迹不可预测 |
+| **[9.1](sec9-1.md) 视觉与控制分类** | 区分 look-and-move 开环抓拍与实时闭环伺服；界定 PBVS / IBVS 与眼在手 / 眼到手变换链 | 被控量须经视觉算法二次加工；眼到手易遭连杆遮挡 |
+| **[9.2](sec9-2.md) 投影与图像基础** | $\lambda\tilde{\boldsymbol s}=\Pi T^c_o\tilde{\boldsymbol r}^o$，$\tilde{\boldsymbol c}=\Omega\tilde{\boldsymbol s}$；阈值分割（双峰谷值）、Sobel/Laplacian 边缘、图像矩 | 了解层面；阈值法失效时改用边缘法 |
+| **[9.3](sec9-3.md) PnP 解析解** | 共面四点降为单应 $H=[\boldsymbol r_1\ \boldsymbol r_2\ \boldsymbol o^c_o]$，左乘 $S(\tilde{\boldsymbol s}_i)$ 消 $\lambda_i$ 得 $\operatorname{rank}A=8$ 线性解；SVD 求最近 $SO(3)$ 旋转阵 | 须由深度 $z_{c,i}>0$ 定 $\zeta$ 符号（不可硬编码）；3 点 4 解，4 点共面及 $\ge 6$ 点不共面唯一 |
+| **[9.4](sec9-4.md) 交互矩阵与零空间** | $\boldsymbol v^c_{c,o}=\boldsymbol v^c_o+\Gamma(\boldsymbol o^c_{c,o})\boldsymbol v^c_c$；$L_s=J_s\Gamma$ 将相机绝对速度映射至 $\dot{\boldsymbol s}$；单点 $L_p\in\mathbb R^{2\times 6}$ 与线段特征 | 平动前三列带 $1/z_c$，后三列旋转项纯几何；单点 $L_p$ 有 4 维零空间（含沿视线平移/自转） |
+| **[9.5](sec9-5.md) 数值位姿估计** | 位姿雅可比 $J_{A_s}=L_s\Gamma(-\boldsymbol o)\operatorname{diag}(I_3,T_A^{-1})$；$\dot{\tilde{\boldsymbol x}}=J_{A_s}^{-1}K_s\boldsymbol e_s$（等价 GN / LM） | 可逆时 $\dot{\boldsymbol e}_s+K_s\boldsymbol e_s=\mathbf 0$ 指数收敛；$k>m$ 伪逆可能卡在 $\mathcal N(L_s^{\mathrm T})$ 降级为仅稳定 |
+| **[9.6](sec9-6.md) 相机标定** | 内参已知用 PnP 求外参；内参未知用 $k\ge 3$ 不同倾斜姿态求 $B=\Omega^{-\mathrm T}\Omega^{-1}$ 闭式解 | 教材三阶段线性解仅具概念性；工程用张氏平面标定+畸变 LM 非线性优化 |
+| **[9.7](sec9-7.md)–[9.10](sec9-10.md) 伺服比较与控制律** | PBVS 与 IBVS 的重力补偿 PD（LaSalle 证稳）及速度分解（内外环带宽 $\ge 5$ 倍分离） | PBVS 怕出视野且标定误差在反馈路径；IBVS 强鲁棒但存在相机后退（$\Delta\alpha\to\pi$ 失稳） |
 
-## 两类伺服
+## 两类伺服核心对比
 
-分岔点是**误差定义在哪里**：
-
-- **位置式**：先估 $T^c_o$，再算位姿误差 $x=[o^d_c;\varphi^d_c]$，做操作空间伺服；
-- **图像式**：不做位姿估计，直接用 $e_s=s_d-s$。
-
-由此带出的差别（§9.7）：
-
-| | 位置式 | 图像式 |
+| 评价维度 | 基于位置的视觉伺服（PBVS） | 基于图像的视觉伺服（IBVS） |
 |:--|:--|:--|
-| 要不要物体几何（单目） | 必须 | 原则上不需要 |
-| 标定误差落在 | **反馈路径**（抗扰低→敏感） | **前向路径**（抗扰高→不敏感） |
-| 主要风险 | 目标出视野 → 反馈断开 | 相机轨迹不可预测 → 撞障碍／超关节限位 |
-| 能指定什么瞬态 | 操作空间变量 | 图像特征 |
+| 反馈误差空间 | 三维操作空间 $\boldsymbol x=[\boldsymbol o^{d\mathrm T}_c,\ \boldsymbol\varphi^{d\mathrm T}_c]^{\mathrm T}$（源于 $T^d_c=T^d_o(T^c_o)^{-1}$） | 二维图像特征空间 $\boldsymbol e_s=\boldsymbol s_d-\boldsymbol s$ |
+| 标定误差所在环路 | **反馈路径**（低抗扰 → 高度敏感，产生稳态偏差） | **前向路径**（高抗扰 → 鲁棒，示教下稳态无偏） |
+| 单目物体几何先验 | **必须已知**（PnP 所需） | **原则上不需要**（示教拍图即可；仅需深度近似 $\hat z_c$） |
+| 速度分解路径表现 | 位置等权对角 $K$ 下相机原点走**完美直线**（$0\%$ 后退） | 像面特征走直线，但三维相机发生**Chaumette 后退**（C 约 $300\%$，D 约 $50\%$） |
 
-## 两个必须记住的定性结论（§9.10）
+## 核心公式速览
 
-1. **位置式速度分解的相机原点走直线**。因为 $K$ 是对角阵且位置分量权重相同，误差在固定系里线性
-   衰减，相机原点沿初始点与期望点之间的线段运动。
-2. **图像式会出现相机后退**。特征点要求在像平面内走直线，而绕光轴旋转对应圆弧；这个约束迫使
-   相机先退后进。期望旋转越接近 $\pi$，后退越远，$\to\pi$ 时距离发散、系统失稳。
+1. **共面四点 PnP 与最近旋转阵投影**（[§9.3](sec9-3.md)）：
 
-## 常用公式
+$$A_i(\boldsymbol s_i)\boldsymbol h=\mathbf 0,\quad
+A_i(\boldsymbol s_i)=\begin{bmatrix}r_{x,i}S(\tilde{\boldsymbol s}_i) & r_{y,i}S(\tilde{\boldsymbol s}_i) & S(\tilde{\boldsymbol s}_i)\end{bmatrix},\quad
+|\zeta|=\frac{1}{\|\boldsymbol h_1\|},\quad
+R^c_o=U\operatorname{diag}\bigl(1,\ 1,\ \det(UV^{\mathrm T})\bigr)V^{\mathrm T}.$$
 
-单点交互矩阵（(9.4-7)）：
+2. **单点特征相互作用矩阵与旋量转换阵**（[§9.4](sec9-4.md)）：
 
-$$L_s(s,z_c)=\frac1{z_c}\begin{bmatrix}
--1/z_c & 0 & X/z_c & XY & -(1+X^2) & Y\\
-0 & -1/z_c & Y/z_c & 1+Y^2 & -XY & -X
-\end{bmatrix}$$
+$$L_p(\boldsymbol s,z_c)=\begin{bmatrix}
+-\dfrac{1}{z_c} & 0 & \dfrac{X}{z_c} & XY & -(1+X^2) & Y \\[6pt]
+0 & -\dfrac{1}{z_c} & \dfrac{Y}{z_c} & 1+Y^2 & -XY & -X
+\end{bmatrix},\qquad
+\Gamma(\boldsymbol o)=\begin{bmatrix}-I_3 & S(\boldsymbol o)\\ O & -I_3\end{bmatrix}.$$
 
-平面 PnP 的线性方程（(9.3-4)）与尺度（(9.3-7)）：
+3. **两类速度分解外环与相机后退极限**（[§9.8](sec9-8.md)–[§9.9](sec9-9.md)）：
 
-$$A_i(s_i)h=0,\qquad A_i(s_i)=\begin{bmatrix}r_{x,i}S(\tilde s_i)&r_{y,i}S(\tilde s_i)&S(\tilde s_i)\end{bmatrix},
-\qquad |\zeta|=\frac1{\|h_1\|}$$
+$$\text{PBVS：}\ \dot{\boldsymbol q}_r=J_{A_d}^{-1}K\boldsymbol x\implies\dot{\boldsymbol x}+K\boldsymbol x=\mathbf 0;\qquad
+\text{IBVS：}\ \boldsymbol v_c^{\,r}=L_s^+(\boldsymbol s,\hat{\boldsymbol z}_c)K_s\boldsymbol e_s,\qquad
+z_{\mathrm{mid}}=\frac{z_0}{\cos(\Delta\alpha/2)}.$$
 
-最近旋转阵（(9.3-10)）：
+勘误细节、教材印误对照与仿真边界补充见[勘误与补注](errata.md)；作业求解与验算见[作业九](homework09.md)与 `robot/tools/verify_homework09.py`。
 
-$$R^c_o=U\operatorname{diag}(1,1,\det(UV^{\mathrm T}))V^{\mathrm T},\qquad Q=UV\Sigma V^{\mathrm T}$$
-
-## 记号
-
-$c$ 相机系、$o$ 目标系、$b$ 机座系、$e$ 末端系；上标「表达在哪个系」、下标「相对谁」。
-$s$ 特征向量，$L_s$ 交互矩阵，$J_s$ 图像雅可比，$S(\cdot)$ 斜对称矩阵，$T_A(\cdot)$ 欧拉角导数与
-角速度的换算阵。
-
-课堂语义整理、教材订正与数据不自洽之处见[勘误与来源说明](errata.md)。
+全 章 完

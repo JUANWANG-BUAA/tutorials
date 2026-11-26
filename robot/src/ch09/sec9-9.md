@@ -1,159 +1,104 @@
-# 9.9 基于图像的视觉伺服
+# 9.9 基于图像的视觉伺服（IBVS）
 
-> 录播 02:03–02:05（课件 §10.8、§10.8.1、§10.8.2，**全部是课堂内容**）。位置式要先算位姿；
-> 图像式跳过这一步，误差直接定义在图像平面。控制律的结构与 §9.8 **完全平行**，只是把 $x$ 换成
-> $e_s$、把 $J_{A_d}$ 换成 $J_L$。
+与 [§9.8](sec9-8.md) 的 PBVS 平行，基于图像的视觉伺服（IBVS）彻底跳过三维位姿反演，直接用图像特征偏差 $\boldsymbol e_s=\boldsymbol s_d-\boldsymbol s$ 构造闭环反馈。结构上只需将位置式的 $(\boldsymbol x,\ J_{A_d})$ 替换为 $(\boldsymbol e_s,\ J_L)$，但其物理特性、深度估计需求与三维相机运动轨迹却呈现出截然不同的风险特征——最典型的即**伪逆局部极小值**与 **Chaumette 相机后退**。
 
 <a id="sec-9.9.1"></a>
 
-## 9.9.1 任务直接定义在图像空间
+## 9.9.1 图像特征误差定义与期望特征获取
 
-图像式的任务不再用期望位姿表达，而是直接规定特征向量的期望值：
+IBVS 将控制误差直接定义在 $k$ 维归一化图像特征空间（教材 (10.80)）：
 
-$$\boxed{\ e_s=s_d-s\ }\tag{9.9-1}$$
+$$\boxed{\ \boldsymbol e_s = \boldsymbol s_d - \boldsymbol s \in \mathbb R^k.\ } \tag{9.9-1}$$
 
-其中 $s_d$ 是期望特征向量。它有两种取法（教材 §10.8）：
-
-- 用透视变换从期望位姿**算**出来；
-- 把相机**摆到期望位姿直接拍**一张。
-
-后一种更可靠，因为它避开了模型误差。老师 02:03:17 讲两者的差别时说的正是这一点：「方法是一样，
-只不过**期望值和测量值就不一样**，期望值、测量值是图像的（特征），不再是实体的它的位置误差」。
-
-**特征怎么选**：可以取目标上 $n$ 个点的坐标（$s\in\mathbb R^{2n}$），$n\ge4$ 且无三点共线（共面情形）
-或 $n\ge6$（非共面情形）；若操作空间维数 $m<6$（如 SCARA 的 $m=4$），点数可以减少。
-
-::: note 一个重要区别
-位置式需要**物体几何**（特征点在目标系里的坐标）才能估位姿；图像式不需要，因为误差里根本没有位姿。
-这正是 §9.7.5 那张表的来源。
-:::
+（文献亦常记 $\boldsymbol s_d$ 为 $\boldsymbol s^*$，取相反符号 $\boldsymbol e=\boldsymbol s-\boldsymbol s^*$ 时相应速度律反号，完全等价。）期望特征 $\boldsymbol s_d$ 可由透视模型从期望位姿提前计算，或在工业现场采用**示教拍摄（teach-by-showing）**：人工将机械臂引导至期望抓取位姿直接拍取一帧图像记录特征（无需物体几何模型也不受内/外参建模偏差影响）。为保证控制自由度完备，6 自由度机械手通常需取 $n\ge 4$ 个共面无三点共线点（或 $n\ge 6$ 个不共面点）；对 $m=4$ 的 SCARA 臂则取两点（$k=4$）或一条线段（$k=4$）即可。
 
 <a id="sec-9.9.2"></a>
 
-## 9.9.2 PD + 重力补偿
+## 9.9.2 IBVS 重力补偿 PD 控制律与稳定性证明
 
-**第一步：写李雅普诺夫函数。** 与第七章的套路一样，取
+假设目标相对基座静止（$\dot{\boldsymbol s}_d=\mathbf 0$）且相机系与末端系重合（$\boldsymbol v^c_c=\begin{bmatrix}R_c^{\mathrm T}&O\\O&R_c^{\mathrm T}\end{bmatrix}J(\boldsymbol q)\dot{\boldsymbol q}$），结合 $\dot{\boldsymbol s}=L_s(\boldsymbol s,\boldsymbol z_c)\boldsymbol v^c_c$ 得到图像误差微分映射（教材 (10.82)–(10.83)）：
 
-$$V(\dot q,e_s)=\frac12\dot q^{\mathrm T}B(q)\dot q+\frac12 e_s^{\mathrm T}K_{P_s}e_s>0 ,\tag{9.9-2}$$
+$$\dot{\boldsymbol e}_s = -\dot{\boldsymbol s} = -J_L(\boldsymbol s,\ \boldsymbol z_c,\ \boldsymbol q)\,\dot{\boldsymbol q},\qquad
+\boxed{\ J_L(\boldsymbol s,\ \boldsymbol z_c,\ \boldsymbol q) = L_s(\boldsymbol s,\ \boldsymbol z_c)\begin{bmatrix}R_c^{\mathrm T}&O\\O&R_c^{\mathrm T}\end{bmatrix}J(\boldsymbol q).\ } \tag{9.9-3}$$
 
-其中 $K_{P_s}$ 是 $k\times k$ 对称正定阵（$k$ 是特征参数的个数）。
+其中 $J_L\in\mathbb R^{k\times n}$ 称为融合了机械臂几何雅可比与相互作用矩阵的**图像雅可比**。
 
-**第二步：求误差导数。** 目标固定在机座系时 $s_d$ 是常数，故 $\dot e_s=-\dot s$。由 (9.4-1) 与
-(9.4-3)，把 $\dot s$ 用**相机速度**展开并把相机系与末端系重合代进去，得（教材 (10.82)、(10.83)）
+::: thm 定理 9.9.1 · IBVS 重力补偿 PD 控制律与稳定性 {#thm-9.9.1}
+在含正定粘滞阻尼 $F_{\mathrm v}\succ 0$ 的刚体动力学模型下，采用 IBVS 重力补偿 PD 控制律（教材 (10.84)）：
 
-$$\dot e_s=-J_L(s,z_c,q)\,\dot q,
-\qquad
-\boxed{\ J_L(s,z_c,q)=L_s(s,z_c)\begin{bmatrix}R_c^{\mathrm T}&0\\0&R_c^{\mathrm T}\end{bmatrix}J(q)\ }\tag{9.9-3}$$
+$$\boxed{\ \boldsymbol u = \boldsymbol g(\boldsymbol q) + J_L^{\mathrm T}(\boldsymbol s,\ \boldsymbol z_c,\ \boldsymbol q)\bigl(K_{P_s}\boldsymbol e_s - K_{D_s}J_L(\boldsymbol s,\ \boldsymbol z_c,\ \boldsymbol q)\dot{\boldsymbol q}\bigr),\ } \tag{9.9-4}$$
 
-$J_L$ 就是**图像雅可比**（在 §9.4 里记作 $J_s$，教材在图像式这一节称它 $J_L$）。
+其中 $K_{P_s},\ K_{D_s}\in\mathbb R^{k\times k}$ 对称正定。若特征深度 $\boldsymbol z_c$ 精确已知且沿轨迹相互作用矩阵 $L_s$ 与几何雅可比 $J(\boldsymbol q)$ 均满秩，则平衡点 $(\boldsymbol e_s,\ \dot{\boldsymbol q})=(\mathbf 0,\ \mathbf 0)$ **局部渐近稳定**。
+:::
 
-**第三步：求 $\dot V$ 并设计控制律。** 用第六章的动力学方程与 $\dot B-2C$ 反对称性，得（教材 (10.81)）
+::: proof 证明：Lyapunov + LaSalle 证明
+取正定备选函数（教材 (10.81)）：
+$$V(\dot{\boldsymbol q},\ \boldsymbol e_s) = \frac{1}{2}\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q} + \frac{1}{2}\boldsymbol e_s^{\mathrm T}K_{P_s}\boldsymbol e_s > 0.$$
+沿系统轨迹求导，并应用 $\dot B-2C$ 反对称性消去哥氏力耦合项：
+$$\dot V = \dot{\boldsymbol q}^{\mathrm T}(\boldsymbol u-\boldsymbol g-F_{\mathrm v}\dot{\boldsymbol q}) - \dot{\boldsymbol q}^{\mathrm T}J_L^{\mathrm T}K_{P_s}\boldsymbol e_s.$$
+将控制律 (9.9-4) 代入精确消去比例项，仅余负半定耗散项（教材 (10.85)）：
+$$\dot V = -\dot{\boldsymbol q}^{\mathrm T}F_{\mathrm v}\dot{\boldsymbol q} - \dot{\boldsymbol q}^{\ T}J_L^{\mathrm T}K_{D_s}J_L\dot{\boldsymbol q} \le 0.$$
+令 $\dot V\equiv 0$ 得最大不变集上恒有 $\dot{\boldsymbol q}\equiv\mathbf 0\implies\ddot{\boldsymbol q}\equiv\mathbf 0$，代回闭环方程给出静态条件 $J_L^{\mathrm T}K_{P_s}\boldsymbol e_s=\mathbf 0$。当 $L_s$ 与 $J(\boldsymbol q)$ 满秩使得 $J_L$ 满行秩（$J_L^{\mathrm T}$ 列满秩）且 $K_{P_s}\succ 0$ 时，唯一解为 $\boldsymbol e_s=\mathbf 0$，由 LaSalle 原理即证局部渐近稳定。
+:::
 
-$$\dot V=-\dot q^{\mathrm T}F\dot q+\dot q^{\mathrm T}\bigl(u-\boldsymbol g(q)\bigr)+\dot e_s^{\mathrm T}K_{P_s}e_s .$$
-
-取控制律（教材 (10.84)）
-
-$$\boxed{\ u=\boldsymbol g(q)+J_L^{\mathrm T}(s,z_c,q)\bigl(K_{P_s}e_s-K_{D_s}J_L(s,z_c,q)\dot q\bigr)\ }\tag{9.9-4}$$
-
-（$K_{D_s}$ 对称正定），代入后各项整理得（教材 (10.85)）
-
-$$\dot V=-\dot q^{\mathrm T}F\dot q-\dot q^{\mathrm T}J_L^{\mathrm T}K_{D_s}J_L\dot q\le0 .\tag{9.9-5}$$
-
-**第四步：平衡点。** $\dot V=0$ 要求 $\dot q=0$；再要求一直保持在该集合内，代回闭环方程得
-
-$$J_L^{\mathrm T}K_{P_s}e_s=0.\tag{9.9-6}$$
-
-由 (9.9-3) 与雅可比的性质，若**交互矩阵与几何雅可比都满秩**，则 $e_s=0$——这正是要的结果。
-
-::: note 这套推导有一个隐藏的额外要求
-控制律 (9.9-4) 不只需要实测的 $s$，还需要 $z_c$（各特征点的深度）。而「精确的 $z_c$」恰恰是
-单目视觉拿不到的东西。教材坦白说：有些场合 $z_c$ 可以近似已知（例如相机相对目标的运动在某个平面内），
-否则就用估计值（初值或期望位姿下的值）——但那等于用了一个**估计的**交互矩阵 $\tilde L_s$，
-此时稳定性证明会复杂得多。
-
-老师 02:04:03 提到这一节时说「这里面就有（交互）矩阵，还有（图像）雅可比矩阵等等这些带进去，
-这些具体就不看了，并不难」；02:04:13 又补了一句：「你如果对重力补偿很熟，对刚才讲过的（交互）
-矩阵、（图像）雅可比矩阵等等这些（都）用清楚的话，这种（是）自然而然（的事）」——意思是这套推导
-在第七章的重力补偿 PD 已经熟的情况下是照搬。
+::: note 隐藏的先验门槛：单目深度 $\boldsymbol z_c$ 的近似估计
+虽然 IBVS 省去了完整物体三维位姿估计，但相互作用矩阵 $L_s(\boldsymbol s,\boldsymbol z_c)$ 的平动前三列仍显含每个特征点的当前深度 $z_{c,i}$。单目相机无法直接测深，工程上常假设目标处于已知近似高度平面、在线采用深度观测器，或直接代入常值估计 $\hat z_c$（例如期望位姿深度 $z_d$）构成近似矩阵 $\tilde L_s=L_s(\boldsymbol s,\hat{\boldsymbol z}_c)$。IBVS 对适度深度估计误差具备一定容忍度（只要 $L_s\tilde L_s^+$ 特征值实部仍正即可稳定收敛），但严格稳定性分析大为复杂且大深度误差将扭曲相机三维轨迹。
 :::
 
 <a id="sec-9.9.3"></a>
 
-## 9.9.3 速度分解控制
+## 9.9.3 IBVS 速度分解控制与局部极小值
 
-同样因为「视觉慢、电机快」，图像式也用内外环分离（教材 (10.87)）：
+为解决「视觉慢、电机快」采样冲突，IBVS 同样采用内外环级联分离（内环带宽 $\ge 5$ 倍外环使 $\boldsymbol q\approx\boldsymbol q_r$）。图像式速度分解外环（教材 (10.87)）写为：
 
-$$\boxed{\ \dot q_r=J_L^{-1}(s,z_c,q_r)\,K_s\,e_s\ }\tag{9.9-7}$$
+$$\boxed{\ \dot{\boldsymbol q}_r = J_L^{-1}(\boldsymbol s,\ \boldsymbol z_c,\ \boldsymbol q_r)\,K_s\,\boldsymbol e_s \quad\Longrightarrow\quad \dot{\boldsymbol e}_s + K_s\,\boldsymbol e_s = \mathbf 0.\ } \tag{9.9-7,9.9-8}$$
 
-代入 (9.9-3) 得
+更稳健的双层解耦写法将视觉特征逆与机械臂逆运动学分离（教材 (10.89)–(10.90)）：
 
-$$\boxed{\ \dot e_s+K_s e_s=0\ }\tag{9.9-8}$$
+$$\boldsymbol v_c^{\,r} = L_s^+(\boldsymbol s,\ \hat{\boldsymbol z}_c)\,K_s\,(\boldsymbol s_d-\boldsymbol s) = -\lambda\,L_s^+(\boldsymbol s,\ \hat{\boldsymbol z}_c)(\boldsymbol s-\boldsymbol s^*),\qquad
+\dot{\boldsymbol q}_r = J^{-1}(\boldsymbol q)\begin{bmatrix}R_c&O\\O&R_c\end{bmatrix}\boldsymbol v_c^{\,r}.$$
 
-$K_s$ 正定时误差指数收敛，收敛速度由 $K_s$ 的特征值决定。$e_s\to0$ 即特征参数达到期望值，
-也就保证了相对位姿达到期望。
+当特征参数多于操作自由度（$k>m$）而采用左伪逆 $L_s^+=(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}$ 时，构造 Lyapunov 函数 $V(\boldsymbol e_s)=\frac12\boldsymbol e_s^{\mathrm T}K_s\boldsymbol e_s$ 求导得：
 
+$$\dot V = -\boldsymbol e_s^{\mathrm T}K_s L_s(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s\boldsymbol e_s \le 0.$$
 
-
-**分两步算更好**（教材 (10.89)、(10.90)）：
-
-$$v_c^{\,r}=L_s^{-1}(s,z_c)\,K_s e_s,\qquad
-\dot q_r=J^{-1}(q)\begin{bmatrix}R_c&0\\0&R_c\end{bmatrix}v_c^{\,r}.$$
-
-这样把**交互矩阵的奇异**与**机械臂运动学的奇异**分开处理：远离运动学奇异时，$L_s$ 的奇异可以用
-「取更多特征（$k>m$）＋最小二乘」来对付。
-
-**用伪逆时结论同样要降级**（教材 (10.91)）：
-
-$$v_c^{\,r}=(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s e_s,$$
-
-此时取 $V(e_s)=\frac12e_s^{\mathrm T}K_se_s$，沿 (9.9-3) 求导得
-
-$$\dot V=-e_s^{\mathrm T}K_sL_s(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_se_s,$$
-
-同样只是**半负定**（$L_s^{\mathrm T}$ 的零空间非空），所以系统**稳定但非渐近稳定**，可能出现
-$e_s\ne0$ 而 $K_se_s\in N(L_s^{\mathrm T})$ 的「卡住」情形。
+由于 $L_s^{\mathrm T}$ 存在非平凡零空间 $\mathcal N(L_s^{\mathrm T})$，当存在非零特征误差满足 $K_s\boldsymbol e_s\in\mathcal N(L_s^{\mathrm T})$ 时，$\boldsymbol v_c^{\,r}=\mathbf 0$ 且 $\dot V=0$——控制器将**卡在非零残差的局部极小值处**，稳定性从渐近稳定降级为**仅李雅普诺夫稳定（有界但不一定收敛到零）**。
 
 <a id="sec-9.9.4"></a>
 
-## 9.9.4 特征轨迹与相机轨迹
+## 9.9.4 特征直线轨迹与 Chaumette 相机退缩机制
 
-教材 §10.8.2 末尾对比了两种轨迹：若 $K_s$ 取对角阵且各元素相同，则**特征点在像平面上走直线段**；
-但由于图像特征到操作空间的映射是非线性的，**相应的相机运动事先难以预测**。
+在速度分解控制 (9.9-8) 中若取各向同性增益 $K_s=\lambda I_k$，各特征误差分量同步按 $e^{-\lambda t}$ 指数衰减，因此**所有图像特征点在像平面上严格沿直线段运动**（几乎不可能飞出像面边界）。
 
-这正是 §9.7.3 说的图像式的缺点：图像平面上看着「规规矩矩走直线」，实际的三维运动却可能绕远、
-可能撞障碍物、可能顶到关节限位。老师 02:05:13 讲到这附近时说「（交互矩阵）还有（奇异性的）问题
-我们就不说了」——这一块课上只点了名，没有展开。
+然而，像平面直线的几何代价却落在三维相机运动上——最著名的反直觉病态现象即为 **Chaumette 相机退缩（Camera Retreat）**：设想目标与相机仅需绕光轴 $z_c$ 相对旋转角 $\Delta\alpha$，对称两点距光轴物理半径为 $r$、初终深度均为 $z_0$（故像面初终半径均为 $\rho=r/z_0$）。纯绕光轴旋转本应让像点沿圆弧转动，而 IBVS 强迫像点沿连接初终点的**弦线**收缩，弦中点到像面中心距离缩至 $\rho_{\mathrm{mid}}=\rho\cos(\Delta\alpha/2)$。因刚体物理半径 $r$ 不变，像面收缩唯一等价于相机沿光轴反向远离目标，使中点时刻深度胀大至：
+
+$$\boxed{\ z_{\mathrm{mid}} = \frac{r}{\rho_{\mathrm{mid}}} = \frac{z_0}{\cos(\Delta\alpha/2)}.\ }$$
+
+当转角较小时相机轻微「先退后进」；**一旦期望转角 $\Delta\alpha\to\pi$**，$\cos(\Delta\alpha/2)\to 0$，所需中间退缩深度 $z_{\mathrm{mid}}\to\infty$，导致相机剧烈后退撞向机械极限或引发系统失稳。
 
 <a id="sec-9.9.5"></a>
 
 ## 9.9 小结与常见错误
 
-1. 图像式**不做位姿估计**，误差直接是图像特征误差 $e_s=s_d-s$；不需要物体几何。
-2. PD + 重力补偿 (9.9-4) 与位置式平行，把 $x\to e_s$、$J_{A_d}\to J_L$ 即可；稳定条件是交互矩阵与
-   几何雅可比都满秩。
-3. 速度分解 (9.9-7) 给出线性的误差方程 (9.9-8)；用伪逆时降级为「稳定但非渐近稳定」。
-4. 隐含要求 $z_c$；用估计值会让稳定性论证复杂化。
-5. 特征轨迹可以是直线，但**相机轨迹不可预测**。
+1. **与 PBVS 完整对偶**：IBVS 跳过位姿估计直接定义图像误差 $\boldsymbol e_s=\boldsymbol s_d-\boldsymbol s$，用 $(J_L,\ \boldsymbol e_s)$ 平行替换 $(J_{A_d},\ \boldsymbol x)$ 即可完成 PD 与速度分解设计。
+2. **深度隐含依赖**：单目下仍需提供交互矩阵平动列中的深度估计 $\hat{\boldsymbol z}_c$（常用期望深度 $z_d$ 近似）。
+3. **伪逆卡住与相机后退**：$k>m$ 伪逆仅保稳定非渐近稳定；$K_s=\lambda I$ 虽保证像面直线轨迹保视野，却会在大角度绕光轴旋转时引发严重 Chaumette 相机后退（$\Delta\alpha\to\pi$ 时失稳）。
 
 <a id="sec-9.9.check"></a>
 <details>
 <summary>检查理解：图像式不需要物体几何，那么它凭什么知道「到位了」？</summary>
 
-它不需要知道物体在哪儿，只需要**图像看起来对**。$e_s\to0$ 表示当前图像与期望图像一致，这本身就是
-任务规定的判据。
-
-代价是判据的物理含义变了：特征一致不等于位姿一致（单目多解，见 §9.3）。另外，若目标在视野里
-「看着对」但其实是另一个物体或另一个姿态，图像式无从分辨——它没有用几何信息去分辨。
+图像式把任务目标定义为「使当前观测特征重现期望示教图像特征 $\boldsymbol s_d$」。只要 $\boldsymbol e_s=\boldsymbol s_d-\boldsymbol s\to\mathbf 0$，相机即认为视觉对准完成；但其代价是不直接求解三维位姿，一方面需要足够多特征点避免单目多解歧义，另一方面若初值偏离过大可能落入局部极小或走上碰撞障碍的三维绕行路径。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| IBVS 误差：$e_s=s_d-s$ | 特征在视野内 | 像素 | 不需要物体几何（单目也如此） |
-| PD + 重力补偿：与 9.8.2 同构，误差换成 $e_s$ | $\dot e_s=L_s v^c_c+\ldots$ | — | 相机轨迹不可预测（可能后退、奇异） |
-| 速度分解：外环图像误差 → 特征速度参考 → $J_s$（或 $L_s$）映射 | 与 9.8.3 同构 | rad/s | 特征轨迹可指定，相机轨迹不可指定 |
+| 条目 | 公式 | 易错点 |
+|:--|:--|:--|
+| IBVS 误差导数与图像雅可比 | $\dot{\boldsymbol e}_s=-J_L\dot{\boldsymbol q}$，$J_L=L_s\begin{bmatrix}R_c^{\mathrm T}&O\\O&R_c^{\mathrm T}\end{bmatrix}J(\boldsymbol q)$ | 单目需代深度估计 $\hat{\boldsymbol z}_c$ 构造 $\tilde L_s$ |
+| IBVS 重力补偿 PD | $\boldsymbol u=\boldsymbol g+J_L^{\mathrm T}(K_{P_s}\boldsymbol e_s-K_{D_s}J_L\dot{\boldsymbol q})$ | 渐近稳定需 $L_s$ 与 $J$ 满秩且深度精确 |
+| IBVS 速度分解外环与后退公式 | $\boldsymbol v_c^{\,r}=L_s^+K_s(\boldsymbol s_d-\boldsymbol s)$；$z_{\mathrm{mid}}=\dfrac{z_0}{\cos(\Delta\alpha/2)}$ | $k>m$ 伪逆可能卡在 $\mathcal N(L_s^{\mathrm T})$；$\Delta\alpha\to\pi$ 后退发散 |
 
 ::: think 本节的课堂幻灯片（源料对照）
 
@@ -161,5 +106,5 @@ $e_s\ne0$ 而 $K_se_s\in N(L_s^{\mathrm T})$ 的「卡住」情形。
 
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 125:00 | [ibvs-resolved-velocity.jpg](../assets/ch09/ibvs-resolved-velocity.jpg) | 基于图像的速度分解 | 正文 9.9.3 展开 |
+| 125:00 | [ibvs-resolved-velocity.jpg](../assets/ch09/ibvs-resolved-velocity.jpg) | 基于图像的速度分解 | 正文 9.9.3–9.9.4 完整推导与 Chaumette 退缩展开 |
 :::

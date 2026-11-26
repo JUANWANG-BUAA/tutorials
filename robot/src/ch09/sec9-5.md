@@ -1,177 +1,105 @@
 # 9.5 位姿估计（三）：数值算法解
 
-> 录播 01:28–01:35（课件 §10.3.3，**全部是课堂内容**）。§9.3 的解析解要在特定条件下才唯一，噪声下
-> 还要迭代。这一节给一个**通用**的办法：给一个位姿初值，迭代着让它收敛到真值。老师 01:28–01:29
-> 说得很准：「把它求出来之后……我们与运动学的时候巧合，所以我们今天求它不好求」——难点在于**参数化**。
+[§9.3](sec9-3.md) 的平面 PnP 解析解依赖共面假设且在含噪或一般非共面情形下处理繁琐。本节利用 [§9.4](sec9-4.md) 建立的微分线性映射，在最小独立位姿参数化下构造连续时间误差调节跟踪算法（及其离散等价 Gauss–Newton 与 Levenberg–Marquardt 迭代），并分析超定伪逆下的稳定性降级现象。
 
 <a id="sec-9.5.1"></a>
 
-## 9.5.1 位姿怎么参数化
+## 9.5.1 位姿最小参数化与位姿雅可比
 
-要迭代，就得把位姿写成少量坐标。用最小的一组坐标：
+为避免对冗余矩阵元素施加以正交单位约束，选取**最小独立坐标向量**参数化目标相对相机的位姿（教材 (10.31)）：
 
-$$\boxed{\ x^c_o=\begin{bmatrix}o^c_o\\ \varphi^c_o\end{bmatrix}\ }\tag{9.5-1}$$
+$$\boxed{\ \boldsymbol x^c_o = \begin{bmatrix}\boldsymbol o^c_o \\ \boldsymbol\varphi^c_o\end{bmatrix}\in\mathbb R^m.\ } \tag{9.5-1}$$
 
-$o^c_o\in\mathbb R^3$ 是位置，$\varphi^c_o$ 是姿态。姿态的选法有讲究：若用欧拉角，则 $\varphi^c_o$
-是从 $R^c_o$ 里取出的三个角。这种选法的**维数会随机构而变**——老师 01:28 举了教材例 10.3 的 SCARA：
-相机固定在末端、$z_c$ 竖直向下，目标是一块与像平面平行的平板，$z_o$ 与 $z_c$ 平行且同向。这种几何下
-目标相对相机的位姿只有一个绕 $z_c$ 的转角 $\alpha$ 是有意义的，因此 $m=4$：
+其中 $\boldsymbol o^c_o\in\mathbb R^3$ 为目标原点位置，$\boldsymbol\varphi^c_o$ 为欧拉角姿态向量；维数 $m$ 取决于任务自由度：一般三维刚体为 $m=6$；在 SCARA 机械手例 10.3 中（光轴 $z_c$ 与平面目标法向 $z_o$ 平行且同向），仅允许三维平移及绕 $z_c$ 轴单角旋转 $\alpha$，此时 $m=4$，$\boldsymbol x^c_o=[o_x,\ o_y,\ o_z,\ \alpha]^{\mathrm T}\in\mathbb R^4$。
 
-$$x^c_o=\begin{bmatrix}o^c_o\\ \alpha\end{bmatrix}\in\mathbb R^4 .\tag{9.5-2}$$
+求时间导数时，由于欧拉角变化率 $\dot{\boldsymbol\varphi}^c_o$ 与物理角速度之间存在转换阵 $T_A(\boldsymbol\varphi^c_o)$（见 [§3.6](../ch03/sec3-6.md)；教材 (10.32) 记作 $\dot{\boldsymbol\varphi}^c_o=T_A\boldsymbol\omega^c_{c,o}$，SCARA 单轴转角下 $T_A=1$），反解得旋量速度表达为 $\boldsymbol v^c_{c,o}=\begin{bmatrix}I_3&O\\O&T_A^{-1}(\boldsymbol\varphi^c_o)\end{bmatrix}\dot{\boldsymbol x}^c_o$（令 $T_{\mathrm{ang}}=T_A^{-1}$）。代回式 (9.4-1)(9.4-4) 即得**位姿雅可比** $J_{A_s}\in\mathbb R^{k\times m}$（教材 (10.35)，角色与第 3 章机械臂分析雅可比 $J_A$ 完全同构）：
 
-老师 01:29 说这个例子「与运动学的时候巧合」——SCARA 的操作空间维数也是 4。
-
-**速度与参数导数的关系**。位置部分的导数就是速度；姿态部分要小心：**欧拉角的导数不等于角速度**。
-教材用矩阵 $T_A(\varphi^c_o)$ 把这一层写出来（教材 (10.32)）：
-
-$$\begin{bmatrix}\dot o^c_o\\\dot\varphi^c_o\end{bmatrix}
-=
-\begin{bmatrix}I_3&0\\0&T_A(\varphi^c_o)\end{bmatrix}v^c_o .\tag{9.5-3}$$
-
-在 SCARA 的例子里，$\dot\alpha$ 恰好就是相对角速度在 $z_c$ 上的分量，而其余两个角速度分量为零，
-所以 $T_A$ 是 $4\times4$ 单位阵。老师 01:30 讲了为什么这层不能省：「欧拉角的导数和角速度之间还有
-一个矩阵的关系……本质上就是因为角度它比这个位置要稍微复杂一些」。
-
-把 (9.5-3) 代入 (9.4-1)，得到与图像雅可比同构的**位姿雅可比**：
-
-$$\dot s=J_{A_s}(s,x^c_o)\,\dot x^c_o,
-\qquad
-\boxed{\ J_{A_s}(s,x^c_o)=L_s(s,z_c)\,\Gamma(-o^c_{c,o})\,T_A(\varphi^c_o)\ }\tag{9.5-4}$$
-
-它与机械臂的分析雅可比是同一个角色：把操作空间速度与关节空间速度联系起来（教材 (10.35) 后面一句
-明说「与机械臂分析雅可比有类似的意义」）。
+$$\dot{\boldsymbol s} = J_{A_s}(\boldsymbol s,\ \boldsymbol x^c_o)\,\dot{\boldsymbol x}^c_o,\qquad
+\boxed{\ J_{A_s}(\boldsymbol s,\ \boldsymbol x^c_o) = L_s(\boldsymbol s,\ \boldsymbol z_c)\,\Gamma(-\boldsymbol o^c_{c,o})\begin{bmatrix}I_3&O\\O&T_A^{-1}(\boldsymbol\varphi^c_o)\end{bmatrix}.\ } \tag{9.5-4}$$
 
 <a id="sec-9.5.2"></a>
 
-## 9.5.2 迭代算法
+## 9.5.2 连续时间追踪律、奇异拆分与 GN / LM 迭代
 
-设当前对位姿的估计是 $\tilde x^c_o$，由它**正算**出图像上应该看到的特征向量 $\tilde s(\tilde x^c_o)$。
-误差定义为
+设相机实测当前帧图像特征向量为 $\boldsymbol s$（在针对单帧做数值估计的迭代过程中 $\boldsymbol s$ 保持不变，故 $\dot{\boldsymbol s}=\mathbf 0$），当前估计位姿 $\tilde{\boldsymbol x}^c_o$ 经针孔投影模型正算出的预测特征向量为 $\tilde{\boldsymbol s}(\tilde{\boldsymbol x}^c_o)$。定义重投影图像误差：
 
-$$e_s=s-\tilde s(\tilde x^c_o),\tag{9.5-5}$$
+$$\boldsymbol e_s = \boldsymbol s - \tilde{\boldsymbol s}(\tilde{\boldsymbol x}^c_o)\in\mathbb R^k. \tag{9.5-5}$$
 
-其中 $s$ 是相机**实测**的特征向量。
+对时间求导得误差动力学 $\dot{\boldsymbol e}_s = -J_{A_s}(\tilde{\boldsymbol s},\tilde{\boldsymbol x}^c_o)\,\dot{\tilde{\boldsymbol x}}^c_o$。当特征维数与位姿自由度相等（$k=m$）且 $J_{A_s}$ 非奇异时，选取追踪更新律（教材 (10.38)）：
 
-老师 01:31 强调了这个定义的一个要点：做数值积分时，$s$（实测值）在一次积分期间是**常数**，变的只有
-$\tilde s$。于是对 (9.5-5) 求导：
+$$\boxed{\ \dot{\tilde{\boldsymbol x}}^c_o = J_{A_s}^{-1}(\tilde{\boldsymbol s},\ \tilde{\boldsymbol x}^c_o)\,K_s\,\boldsymbol e_s\ }\qquad \bigl(K_s\succ 0\bigr), \tag{9.5-8}$$
 
-$$\dot e_s=-J_{A_s}(s,\tilde x^c_o)\,\dot{\tilde x}^c_o .\tag{9.5-6}$$
+代回立即消去雅可比，得到解耦的自治线性误差系统：
 
-**为什么想到这一步**：目标是让误差趋于零。若能设计 $\dot{\tilde x}$ 使 $\dot e_s=-K_s e_s$，那么
+$$\dot{\boldsymbol e}_s + K_s\,\boldsymbol e_s = \mathbf 0. \tag{9.5-7}$$
 
-$$\dot e_s+K_s e_s=0\tag{9.5-7}$$
+当增益阵 $K_s$ 正定时，图像特征误差 $\boldsymbol e_s(t)$ 以 $K_s$ 特征值决定的速率**指数收敛于零**。只要初值 $\tilde{\boldsymbol x}^c_o(0)$ 位于真实位姿的吸引域内，投影残差归零即对应估计位姿收敛至真值（注意：因单目投影多解歧义，初值若落在虚假极小或另一解吸引域内，可能收敛至错误分支）。
 
-是一个稳定的线性系统，$K_s$ 正定时误差指数收敛。把它和 (9.5-6) 对照，取
-
-$$\boxed{\ \dot{\tilde x}^c_o=J_{A_s}^{-1}(s,\tilde x^c_o)\,K_s\,e_s\ }\tag{9.5-8}$$
-
-即得。老师 01:31–01:33：「我们就可以求出来这个 $F_{CEO}$ 的估计值……通过估计 $s$ 然后就可以估计出这个
-$F_{CEO}$ 来」，并在 01:33:27 给出收敛性的判据：「如果 $P$ 是正定矩阵，那么你这个误差是指数收敛的，
-（收敛）速度就决定于这个 $K_s$ 的设计」。
-
-::: note 这一步和第七章的控制律是同一个套路
-取 $\dot{\tilde x}=J^{-1}K e$ 使误差方程变成 $\dot e+K e=0$，与第七章「设计 $\boldsymbol y$ 使误差方程
-成为稳定的线性系统」是同一个想法。差别只在被控对象：第七章是机械臂，这里是位姿估计器。
+::: method 数值位姿估计的两项工程实施要点
+1. **奇异拆分两步计算（教材 (10.40)–(10.41)）**：为隔离欧拉角表示奇异（$T_A$）与特征几何奇异（$L_s$），工程常拆为两步执行：
+$$\boldsymbol v^c_{c,o} = \Gamma(\tilde{\boldsymbol o}^c_{c,o})\,L_s^{-1}K_s\boldsymbol e_s,\qquad
+\dot{\tilde{\boldsymbol x}}^c_o = \begin{bmatrix}I_3&O\\O&T_A(\tilde{\boldsymbol\varphi}^c_o)\end{bmatrix}\boldsymbol v^c_{c,o}.$$
+2. **视觉跟踪与 Gauss–Newton / LM 等价性**：记目标函数 $E(\tilde{\boldsymbol x})=\frac12\|\boldsymbol s-\tilde{\boldsymbol s}(\tilde{\boldsymbol x})\|^2$，梯度 $\nabla E=-J_{A_s}^{\mathrm T}\boldsymbol e_s$，忽略残差二阶导后的 **Gauss–Newton (GN)** 步 $\Delta\tilde{\boldsymbol x}=(J_{A_s}^{\mathrm T}J_{A_s})^{-1}J_{A_s}^{\mathrm T}\boldsymbol e_s$ 恰等于上式取 $\Delta t\,K_s=I$ 时的前向欧拉步；若在 $J_{A_s}$ 病态或初值较远时加入阻尼因子 $\mu>0$，即得到更稳健的 **Levenberg–Marquardt (LM)** 格式 $\Delta\tilde{\boldsymbol x}=(J_{A_s}^{\mathrm T}J_{A_s}+\mu I_m)^{-1}J_{A_s}^{\mathrm T}\boldsymbol e_s$。
 :::
-
-**误差为零 $\Rightarrow$ 位姿估计正确**。这一点是整个算法成立的前提：$e_s=0$ 表示「当前估计的位姿
-投影出来的特征和实测一致」。但要注意 $e_s=0$ 只保证**投影一致**，多解情形下（§9.3）仍可能有多个位姿
-给出同样的投影。老师 01:31 说「误差为零就是位姿正确」，在初值靠近真值的前提下成立；初值选错可能
-收敛到另一个解。
-
-**奇异与初值**。$J_{A_s}$ 不可逆时 (9.5-8) 失效。老师 01:34:47–01:35:09 提到两点：一是**奇异处理**——
-把计算拆成两步（教材 (10.40)、(10.41)），先算 $\dot v^c_{c,o}=\Gamma(o^c_{c,o})L_s^{-1}K_s e_s$，再算
-$\dot{\tilde x}^c_o=T_A^{-1}(\varphi^c_o)\dot v^c_{c,o}$，这样把「$T_A$ 的表示奇异」和「$L_s$ 的奇异」
-分开处理；他说这一步「这你了解就行了」。二是**初值**——算法是「视觉跟踪」型用法，上一帧的估计作为
-这一帧的初值，§9.5.6 再说。
 
 <a id="sec-9.5.3"></a>
 
-## 9.5.3 特征多于维数时：伪逆与「卡住」
+## 9.5.3 超定特征（$k>m$）下的伪逆降级
 
-若取的点数多于最小需要，$k>m$，$L_s$ 是 $k\times6$ 超定矩阵，不能求逆，改用左伪逆（教材 (10.42)）：
+为避开 3 点奇异并抑制测量噪声而取 $k>m$（如 4 点 $k=8>6$）时，改用左伪逆 $L_s^+=(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}$ 构造迭代律（教材 (10.42)）：
 
-$$\dot v^c_{c,o}=\Gamma(o^c_{c,o})\,(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s e_s .\tag{9.5-9}$$
+$$\boldsymbol v^c_{c,o} = \Gamma(\tilde{\boldsymbol o}^c_{c,o})\,(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s\,\boldsymbol e_s. \tag{9.5-9}$$
 
-这时结论要**降级**。用直接李雅普诺夫法，取 $V(e_s)=\frac12 e_s^{\mathrm T}K_s e_s>0$，沿 (9.5-6) 求导得
+构造正定 Lyapunov 备选函数 $V(\boldsymbol e_s)=\frac12\boldsymbol e_s^{\mathrm T}K_s\boldsymbol e_s>0$（$K_s=K_s^{\mathrm T}\succ 0$），沿误差系统 $\dot{\boldsymbol e}_s=-L_s(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s\boldsymbol e_s$ 求导：
 
-$$\dot V=-e_s^{\mathrm T}K_s L_s(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s e_s .$$
+$$\dot V(\boldsymbol e_s) = -\boldsymbol e_s^{\mathrm T}K_s L_s(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}K_s\boldsymbol e_s \le 0.$$
 
-由于 $L_s^{\mathrm T}$ 列数多于行数，其零空间非空，上式**只是半负定**。教材据此明确写下：闭环**稳定
-但非渐近稳定**——误差有界，但可能出现 $e_s\ne0$ 而 $K_s e_s\in N(L_s^{\mathrm T})$ 的情形，算法就
-「卡住」了。老师 01:35 用了「有可能被卡死在某个地方」这句话，并说「具体的这个我们不管，这个太细了」。
-
-> 这是一个必须记住的差别：$\dot e_s+K_se_s=0$（方阵可逆）给出**渐近**收敛；换成伪逆后只有**稳定**。
-> 教材用的是李雅普诺夫「直接法」，所以结论保守但可靠。
+由于 $L_s^{\mathrm T}\in\mathbb R^{m\times k}$ 列多行少，其零空间 $\mathcal N(L_s^{\mathrm T})$ 维数至少为 $k-m>0$。只要出现非零残差满足 $K_s\boldsymbol e_s\in\mathcal N(L_s^{\mathrm T})$（即 $L_s^{\mathrm T}K_s\boldsymbol e_s=\mathbf 0$），便有 $\dot V=0$ 且更新步长归零——算法将**卡在非零残差的局部极小值处**。因此，改用伪逆后闭环稳定性从方阵可逆下的**指数渐近稳定**降级为仅能保证**李雅普诺夫意义下稳定（有界但非渐近稳定）**。
 
 <a id="sec-9.5.4"></a>
 
-## 9.5.4 例 10.2：一个点的零空间
+## 9.5.4 单点零空间（例 10.2）对特征选取的约束
 
-$2\times6$ 的 $L_s$ 秩为 2，零空间维数 4。教材例 10.2 指出零空间里有两个可以直接看出来的方向：
-
-$$v_1=[X\ Y\ 1\ 0\ 0\ 0]^{\mathrm T}\quad(\text{沿视线平移}),\qquad
-v_2=[0\ 0\ 0\ X\ Y\ 1]^{\mathrm T}\quad(\text{绕视线旋转}).$$
-
-沿视线推远相机，这个点在像平面上的投影不动；绕视线转一圈，投影也不动。
-
-**这一点直接决定了特征怎么选**：多取点、或者取线段（多出长度与角度两个约束），都是为了让 $k>m$，
-让零空间在数值上不再「自由」。老师在 01:25:36 与 01:28:00 从「点不够用」这一侧讲了同一件事：
-「一个点…很多时候它求不出来」「点少…可能解不出（唯一的）解，所以你可以多取一些点」。
+如 [§9.4.5](sec9-4.md#sec-9.4.5) 所证，单点特征（$2\times 6$）存在 4 维零空间（包含沿视线方向平移 $\boldsymbol v_1=[X,Y,1,0,0,0]^{\mathrm T}$ 与绕视线旋转 $\boldsymbol v_2=[0,0,0,X,Y,1]^{\mathrm T}$）。因此在数值求解位姿时，所选特征维数 $k$ 必须不低于操作空间自由度 $m$ 且特征分布应避开共线、共圆等退化构型，或直接采用带长度与角度信息的线段特征，以尽量消去零空间盲区。
 
 <a id="sec-9.5.5"></a>
 
-## 9.5.5 例 10.3 的仿真结果
+## 9.5.5 例 10.3 的 SCARA 视觉跟踪仿真结果
 
-
-教材对例 10.3 做了仿真：初值与真值差一段距离，迭代过程中「刚才的误差刚开始怎么样，逐渐就收敛到零了」。
-老师 01:36–01:37 描述得更具体：「刚开始在图像上……逐渐、逐渐根据误差就收敛到上去，其实就是这么一个
-过程，是一个动态的过程」，并指出最后画出的是**位置曲线和方向曲线**。
+教材例 10.3 对 SCARA 机械手（$m=4$，平面目标）实施上述数值位姿估计跟踪：在控制周期 $T_s=0.04\,\mathrm s$ 内，取欧拉积分步长 $\Delta t=1\,\mathrm{ms}$、增益 $K_s=160I_4$，即使存在初始位置与偏角偏差，重投影特征误差 $\boldsymbol e_s$ 在约 $0.03\,\mathrm s$ 内即迅速指数收敛至零，准确还原出目标位置与姿态（具体四步手算与 400 步数值验算见[作业九 10.4](homework09.md)）。
 
 <a id="sec-9.5.6"></a>
 
-## 9.5.6 这个算法的用武之地
+## 9.5.6 适用场景：视觉跟踪模式与两种奇异
 
-老师 01:34:37–01:35:09 在课上补的是**起点问题**：「图像交互矩阵没有（初）值，然后我们前面讲的
-机器人它也有（初）值，所以把这两个（初）值给它分开，就用了两步的计算方式」——这句是说位姿估计器的
-初值与机械臂运动的初值要分别处理，处理办法就是前面提到的两步拆分。
+教材 §10.3.3 强调了该数值算法的适用前提与局限：
 
-另外两点是**教材 §10.3.3 末尾的说明**（课堂未展开）：
-
-1. **它是「视觉跟踪」型算法**。教材说得很清楚：这类方法的精度、收敛速度、计算量都取决于**初值**
-   $\tilde x^c_o(0)$ 是否接近真值；所以实际用的是「上一帧的估计作为这一帧的初值」，采样周期 $T$ 取
-   图像的帧周期。
-2. **奇异性绕不开**。$J_{A_s}$ 的奇异既有 $T_A$ 的**表示奇异**（欧拉角表示本身的问题），也有
-   $L_s$ 的**奇异**（特征选择带来的）。教材说后者「更关键，因为它取决于特征参数的选择」。
+1. **视觉跟踪（visual tracking）初值链**：算法的精度与收敛速度高度依赖初值 $\tilde{\boldsymbol x}^c_o(0)$ 靠近真值；因此在连续视频流视觉伺服中，以上一帧收敛后的位姿估计作为当前帧迭代初值，既缩减步数，又借运动连续性锁住正确解分支而避免跳入 PnP 多解歧义；
+2. **区分两类奇异**：$J_{A_s}$ 的奇异源于欧拉角表示奇异（$T_A$）或交互矩阵奇异（$L_s$），后者取决于所选图像特征点/线构型，在规划特征集合时应重点回避退化几何。
 
 <a id="sec-9.5.7"></a>
 
 ## 9.5 小结与常见错误
 
-1. 位姿要用**最小坐标组**参数化；SCARA 情形 $m=4$，欧拉角导数与角速度之间差一个 $T_A$。
-2. 位姿雅可比 $J_{A_s}=L_s\Gamma(-o^c_{c,o})T_A$ 把参数速度与图像速度联系起来。
-3. 迭代律 $\dot{\tilde x}=J_{A_s}^{-1}K_se_s$ 使误差方程成为 $\dot e_s+K_se_s=0$，误差指数收敛。
-4. 用伪逆（$k>m$）时结论降级为**稳定但非渐近稳定**，可能卡在 $K_se_s\in N(L_s^{\mathrm T})$ 处。
-5. 这是**视觉跟踪**算法：上一帧估计作初值，精度与收敛速度都依赖初值。
+1. **最小参数化**：$m=6$（一般刚体）或 $m=4$（SCARA），须用 $T_A$ 连接欧拉角变化率与物理角速度。
+2. **方阵可逆 vs 超定伪逆**：方阵非奇异时 $\dot{\boldsymbol e}_s+K_s\boldsymbol e_s=\mathbf 0$ 保证指数渐近收敛；$k>m$ 采用左伪逆时可能因 $K_s\boldsymbol e_s\in\mathcal N(L_s^{\mathrm T})$ 卡住，仅保证有界稳定。
+3. **连续帧视觉跟踪**：用上一帧估计值作下一帧初值，保证收敛速度与单峰分支跟踪。
 
 <a id="sec-9.5.check"></a>
 <details>
 <summary>检查理解：为什么数值迭代解出的位姿算「收敛了」，仍要小心多解？</summary>
 
-因为算法的收敛判据是**投影一致** $e_s\to0$，即「当前位姿的投影与实测吻合」。而单目投影对深度是
-多值的（§9.3 的 PnP 多解），沿零空间方向的运动不改变投影。若初值落在错误的解的吸引域里，算法会
-收敛到那个解，且误差同样为零。
-
-所以实践中要靠「上一帧估计作初值 + 运动连续性」来保证解的连续切换，而不是靠误差判据本身。
+迭代收敛的直接判据是重投影图像残差 $\boldsymbol e_s\to\mathbf 0$（预测像点与实测像点一致），而单目投影在深度不足或点数不够时本质上具有多解性（如 PnP 4 点/3 点歧义）。若初始位姿落在虚假解的吸引域内，算法也会以误差归零收敛到错误位姿。工程上靠特征充足且不共线，以及连续视频帧间利用上一帧位姿作初值的「视觉跟踪」模式保证不跳分支。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| 数值迭代：$e_k=s(\hat T_k)-s_d$，$\hat T_{k+1}=\hat T_k\exp(\lambda J_s^+ e_k)$ | 位姿参数化 + 图像雅可比伪逆 | — | 与 9.3 解析解互补：无需共面假设，但每步要重估特征 |
-| 特征多于维数：$J_s\in\mathbb R^{2n\times6}$ 用伪逆 | $n>3$ 特征 | — | 伪逆给最小二乘意义下的位姿更新；例 10.2 单点有零空间 |
+| 条目 | 公式 | 易错点 |
+|:--|:--|:--|
+| 位姿雅可比 | $J_{A_s}=L_s(\boldsymbol s,\boldsymbol z_c)\Gamma(-\boldsymbol o^c_{c,o})\begin{bmatrix}I_3&O\\O&T_A^{-1}(\boldsymbol\varphi^c_o)\end{bmatrix}$ | 注意逆向映射 $T_A^{-1}$ 把欧拉角导数变为物理角速度 |
+| 可逆追踪更新律 | $\dot{\tilde{\boldsymbol x}}^c_o=J_{A_s}^{-1}K_s\boldsymbol e_s\implies\dot{\boldsymbol e}_s+K_s\boldsymbol e_s=\mathbf 0$ | 迭代时 $\boldsymbol s$ 固定，只对预测 $\tilde{\boldsymbol s}(\tilde{\boldsymbol x}^c_o)$ 求导 |
+| 超定伪逆 / LM | $\Delta\tilde{\boldsymbol x}=(J_{A_s}^{\mathrm T}J_{A_s}+\mu I_m)^{-1}J_{A_s}^{\mathrm T}\boldsymbol e_s$ | $k>m$ 伪逆降级为稳定非渐近稳定，可能卡在 $\mathcal N(L_s^{\mathrm T})$ |
 
 ::: think 本节的课堂幻灯片（源料对照）
 

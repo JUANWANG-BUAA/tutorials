@@ -1,173 +1,106 @@
-# 9.8 基于位置的视觉伺服
+# 9.8 基于位置的视觉伺服（PBVS）
 
-> 录播 01:56–02:03（课件 §10.7、§10.7.1、§10.7.2，**全部是课堂内容**）。这一节把位置式的两
-> 种实现走完：**PD + 重力补偿**，以及**速度分解（resolved-velocity）**。两者的差别不只是控制律形式，
-> 还差在「视觉测量慢、电机控制快」这个现实约束怎么处理。
+本节围绕位置式视觉伺服（PBVS）实现两套经典控制律：**重力补偿 PD 控制律**与**速度分解（Resolved-Velocity）控制律**，前者在力矩层级给出严格的 Lyapunov + LaSalle 渐近稳定性保证，后者通过**内外环级联分离**解决「视觉更新慢、电机控制快」的工程采样冲突，并使相机原点走出可预测的三维直线。
 
 <a id="sec-9.8.1"></a>
 
-## 9.8.1 误差怎么定义
+## 9.8.1 操作空间位姿误差定义
 
-视觉测量实时给出 $T^c_o$，从中取出独立坐标 $x^c_o$。期望位姿用 $T^d_o$ 给出（上标 $d$ 表示期望），
-从中取出 $x^d_o$。
+设目标相对相机的期望位姿为 $T^d_o$（常量目标前提下，期望相机相对基座位姿 $T^d=T^c(T^d_c)^{-1}$ 亦为常阵且必须落在机械臂灵巧工作空间内，教材 (10.70)），实时视觉估计输出当前目标相对相机的齐次位姿 $T^c_o$。首先计算当前相机系 $\{c\}$ 相对期望相机系 $\{d\}$ 的位姿变换（教材 (10.68)）：
 
-注意：**操作空间误差 $x$ 不是 $x^d_o-x^c_o$**。教材 (10.68) 先算出相机当前位姿相对期望位姿的变换
+$$T^d_c = T^d_o\,(T^c_o)^{-1} = \begin{bmatrix}R^d_c & \boldsymbol o^d_c \\ \mathbf 0^{\mathrm T} & 1\end{bmatrix}.$$
 
-$$T^d_c=T^d_o\,(T^c_o)^{-1}=\begin{bmatrix}R^d_c&o^d_c\\0^{\mathrm T}&1\end{bmatrix},$$
+从中抽取描述相对姿态的最小欧拉角向量 $\boldsymbol\varphi^d_c$，定义 PBVS 操作空间误差向量（教材 (10.69)）：
 
-再从 $R^d_c$ 中取出欧拉角 $\varphi^d_c$，定义
+$$\boxed{\ \boldsymbol x = \begin{bmatrix}\boldsymbol o^d_c \\ \boldsymbol\varphi^d_c\end{bmatrix} \in \mathbb R^m.\ } \tag{9.8-1}$$
 
-$$\boxed{\ x=\begin{bmatrix}o^d_c\\\varphi^d_c\end{bmatrix}\ }\tag{9.8-1}$$
-
-（教材 (10.69)）。这个向量**不依赖物体的位姿**，只表示相机当前位姿与期望位姿之间的差。
-
-控制目标是让 $x\to0$。
-
-::: note 一个可行性前提
-期望的相机位姿（相对机座）$T^d=T^c(T^d_c)^{-1}$ 必须落在机械手的**灵巧工作空间**内，否则目标不可达
-（教材 (10.70)）。物体固定在机座系时 $T^d$ 是常数。
-:::
+**关键注意**：误差 $\boldsymbol x$ **并不等于** 两个坐标向量的直接相减 $\boldsymbol x^d_o-\boldsymbol x^c_o$（特别是位置偏差已在期望系 $d$ 中经过方向对齐，且三维旋转群不能直接线性相减）。该定义与物体在基座系下的绝对位置无关，当 $\boldsymbol x\to\mathbf 0$ 时即实现 $T^c_o\to T^d_o$。
 
 <a id="sec-9.8.2"></a>
 
-## 9.8.2 PD + 重力补偿
+## 9.8.2 重力补偿 PD 控制律与稳定性证明
 
-**第一步：写出误差的导数。** 对 (9.8-1) 的位置部分求导（教材 (10.71)）：
+假设末端系与相机系重合（$\boldsymbol v_c=J(\boldsymbol q)\dot{\boldsymbol q}$）且目标相对基座静止，按教材式 (10.71)–(10.73) 的符号约定，误差向量的时间微分映射记为：
 
-$$\dot o^d_c=R_d^{\mathrm T}\dot o_c,$$
+$$\dot{\boldsymbol x} = -\begin{bmatrix}I_3&O\\O&T_A^{-1}(\boldsymbol\varphi^d_c)\end{bmatrix}
+\begin{bmatrix}R_d^{\mathrm T}&O\\O&R_d^{\mathrm T}\end{bmatrix}\boldsymbol v_c
+= -J_{A_d}(\boldsymbol q,\ \boldsymbol x)\,\dot{\boldsymbol q}, \tag{9.8-2}$$
 
-对姿态部分，因 $\varphi^d_c$ 由 $R^d_c$ 的欧拉角取出，
+其中 PBVS 操作空间分析雅可比为：
 
-$$\dot\varphi^d_c=T_A^{-1}(\varphi^d_c)\,\omega^d_d
-=T_A^{-1}(\varphi^d_c)\,R_d^{\mathrm T}\omega_c .$$
+$$\boxed{\ J_{A_d}(\boldsymbol q,\ \boldsymbol x) = \begin{bmatrix}I_3&O\\O&T_A^{-1}(\boldsymbol\varphi^d_c)\end{bmatrix}\begin{bmatrix}R_d^{\mathrm T}&O\\O&R_d^{\mathrm T}\end{bmatrix}J(\boldsymbol q).\ } \tag{9.8-3}$$
 
-两式合起来（教材 (10.71)）：
+> **几何求导口径辨析**：若按 $\boldsymbol o^d_c=R_d^{\mathrm T}(\boldsymbol o_c-\boldsymbol o_d)$ 对基座系速度 $\boldsymbol v_c$ 直接求导，结果不带外层负号；若改写于相机系速度 $\boldsymbol v_c^c$，位置块旋转为 $R_d^{\mathrm T}R_c=R^d_c$。教材 (10.71) 中的负号相当于将误差反定义为 $\boldsymbol e=-\boldsymbol x$。两种写法仅差常线性变换，闭环极点完全相同，只需在控制律与仿真（[§9.10](sec9-10.md)/[作业九](homework09.md)）中保持 $\dot{\boldsymbol x}=-J_{A_d}\dot{\boldsymbol q}$ 正负号自洽即可（详见[勘误](errata.md)）。
 
-$$\boxed{\ \dot x=-T_A^{-1}(\varphi^d_c)\begin{bmatrix}R_d^{\mathrm T}&0\\0&R_d^{\mathrm T}\end{bmatrix}v_c\ }\tag{9.8-2}$$
+::: thm 定理 9.8.1 · PBVS 重力补偿 PD 控制律与渐近稳定性 {#thm-9.8.1}
+考虑无外力、含正定粘滞阻尼 $F_{\mathrm v}\succ 0$ 的刚体机械臂动力学 $B(\boldsymbol q)\ddot{\boldsymbol q}+C(\boldsymbol q,\dot{\boldsymbol q})\dot{\boldsymbol q}+F_{\mathrm v}\dot{\boldsymbol q}+\boldsymbol g(\boldsymbol q)=\boldsymbol u$。采用 PBVS 控制律（教材 (10.74)）：
 
-其中 $v_c$ 是相机的速度（平移 + 角速度）。
+$$\boxed{\ \boldsymbol u = \boldsymbol g(\boldsymbol q) + J_{A_d}^{\mathrm T}(\boldsymbol q,\ \boldsymbol x)\bigl(K_P\,\boldsymbol x - K_D\,J_{A_d}(\boldsymbol q,\ \boldsymbol x)\dot{\boldsymbol q}\bigr),\ } \tag{9.8-4}$$
 
-**第二步：接到机械手上。** 眼在手时末端系与相机系重合，故 $v_c=J(q)\dot q$。代入得
+其中 $K_P,\ K_D$ 为对称正定增益矩阵。若机械手始终处于 $J_{A_d}$ 满行秩的非奇异工作区，则平衡点 $(\boldsymbol x,\ \dot{\boldsymbol q})=(\mathbf 0,\ \mathbf 0)$ **局部渐近稳定**。
+:::
 
-$$\dot x=-J_{A_d}(q,x)\,\dot q,
-\qquad
-\boxed{\ J_{A_d}(q,x)=T_A^{-1}(\varphi^d_c)\begin{bmatrix}R_d^{\mathrm T}&0\\0&R_d^{\mathrm T}\end{bmatrix}J(q)\ }\tag{9.8-3}$$
+::: proof 证明：Lyapunov 能量函数与 LaSalle 不变集原理
+构造「动能 + 人工势能」正定备选函数：
+$$V(\dot{\boldsymbol q},\ \boldsymbol x) = \frac{1}{2}\dot{\boldsymbol q}^{\mathrm T}B(\boldsymbol q)\dot{\boldsymbol q} + \frac{1}{2}\boldsymbol x^{\mathrm T}K_P\,\boldsymbol x > 0.$$
+沿闭环轨迹对时间求导，并代入 $B\ddot{\boldsymbol q}=\boldsymbol u-C\dot{\boldsymbol q}-F_{\mathrm v}\dot{\boldsymbol q}-\boldsymbol g$ 与 $\dot{\boldsymbol x}=-J_{A_d}\dot{\boldsymbol q}$：
+$$\dot V = \dot{\boldsymbol q}^{\mathrm T}(\boldsymbol u-\boldsymbol g-F_{\mathrm v}\dot{\boldsymbol q}) + \frac{1}{2}\dot{\boldsymbol q}^{\mathrm T}(\dot B-2C)\dot{\boldsymbol q} - \dot{\boldsymbol q}^{\mathrm T}J_{A_d}^{\mathrm T}K_P\boldsymbol x.$$
+由第 6 章斜对称守恒性 $\dot{\boldsymbol q}^{\mathrm T}(\dot B-2C)\dot{\boldsymbol q}\equiv 0$，代入控制律 (9.8-4) 恰好精确抵消势能交叉项 $\dot{\boldsymbol q}^{\mathrm T}J_{A_d}^{\mathrm T}K_P\boldsymbol x$，剩余纯耗散项：
+$$\dot V = -\dot{\boldsymbol q}^{\mathrm T}F_{\mathrm v}\dot{\boldsymbol q} - \dot{\boldsymbol q}^{\mathrm T}J_{A_d}^{\mathrm T}K_D J_{A_d}\dot{\boldsymbol q} \le 0.$$
+（注：工程中将微分反馈简化为纯关节阻尼 $-K_D\dot{\boldsymbol q}$ 亦同理成立。）在 $\dot V\equiv 0$ 的最大不变集中必有 $\dot{\boldsymbol q}\equiv\mathbf 0\implies\ddot{\boldsymbol q}\equiv\mathbf 0$，代回闭环动力学得静态平衡方程 $J_{A_d}^{\mathrm T}K_P\boldsymbol x=\mathbf 0$。因 $J_{A_d}$ 满行秩（$J_{A_d}^{\mathrm T}$ 列满秩）且 $K_P\succ 0$，唯一解为 $\boldsymbol x=\mathbf 0$，由 LaSalle 原理即证渐近稳定。
+:::
 
-$J_{A_d}$ 就是机械臂在操作空间的**分析雅可比**（教材 (10.73)）。
-
-**第三步：设计控制律。** 教材 (10.74)：
-
-$$\boxed{\ u=\boldsymbol g(q)+J_{A_d}^{\mathrm T}(q,x)\bigl(K_P\,x-K_D\,J_{A_d}(q,x)\dot q\bigr)\ }\tag{9.8-4}$$
-
-与第七章 (8.110) 的操作空间重力补偿 PD **结构完全相同**，只有两点不同：
-
-1. 误差换成了 $x$（相机相对期望位姿的偏差），不是 $x_d-x$；
-2. 雅可比换成了 $J_{A_d}$，其中含 $T_A^{-1}$ 与 $R_d^{\mathrm T}$——它们把**角速度**与**欧拉角导数**
-   的差别、以及**期望系**与**当前系**的差别都算了进去。
-
-
-
-**第四步：稳定性。** 取李雅普诺夫函数
-
-$$V(\dot q,x)=\frac12\dot q^{\mathrm T}B(q)\dot q+\frac12 x^{\mathrm T}K_P x>0 ,$$
-
-在 $K_P,K_D$ 对称正定、模型光滑、力矩不限幅等常设下，利用第六章的 $\dot B-2C$ 反对称性可以证得
-$\dot V\le0$，进而用拉萨尔原理得平衡点的渐近稳定。**具体推导步骤与第七章 7.3.3 相同**——
-这里不重复展开，只需把 $x$ 换回去逐项对照。
-
-教材还有一处实用提示：控制律 (9.8-4) 需要 $x^c_o$ 的估计以及 $q,\dot q$ 的测量；其中的**微分项也
-可以直接取 $-K_D\dot q$**，即不必算 $J_{A_d}\dot q$。
-
+**PD 方案的动态缺点**：尽管平衡点渐近稳定，由于闭环惯性 $B(\boldsymbol q)$ 与雅可比 $J_{A_d}$ 均随构型耦合变化，即使增益 $K_P,K_D$ 固定，不同起始构型下的瞬态空间轨迹也会大幅改变。
 
 <a id="sec-9.8.3"></a>
 
-## 9.8.3 速度分解控制：对付「视觉慢、电机快」
+## 9.8.3 速度分解控制与内外环级联分离
 
-**问题**（老师 02:00:00–02:01:05 讲得很清楚）：视觉测量的计算频率比运动控制**小很多**，是**秒级**的；
-运动控制则可能是 **50 Hz 甚至上百赫兹**。如果两者用同一个频率、都等外环给指令，运动控制就被拖慢，
-「控制性能变差」。教材给出更严格的量化：视觉测量频率**低于或等于相机帧率**，对 CCD 相机尤其如此，
-比机械臂运动控制的典型频率**至少低一个数量级**（**这是教材的说法**，老师课上讲的是「秒级 vs 50 Hz」）。
+将低频视觉信号直接闭环至电机力矩（式 (9.8-4)）在数字实现中面临严重的带宽冲突：**相机采图与 PnP 位姿计算周期较长**（受相机帧率制约，通常为 $25\sim 30\,\mathrm{Hz}$ 或秒级处理延时，比运动控制低至少一个数量级），而**电机底层关节/速度控制环刷新极快**（$50\,\mathrm{Hz}$ 至数百赫兹以上）。若强行在同一低频节拍下直接给电机发力矩指令，为避免采样滞后导致剧烈振荡，必须压低控制增益，使响应极慢、抗扰很差。
 
-因此若直接按 (9.8-4) 做数字实现，为保持闭环稳定，控制增益必须取得**比运动控制小得多**，结果是收敛
-速度和抗扰能力都很差。
+**速度分解控制（Resolved-Velocity Control）**利用级联内外环彻底化解上述矛盾（教材 (10.76)）：
 
-**办法**：假设机械手本身带一个**高增益的**关节空间（或操作空间）运动控制器，把它当成理想的定位
-装置。于是
+1. **高速内环（运动控制）**：保留原有高带宽关节位置/速度控制器不作任何修改，实时跟踪参考关节位置 $\boldsymbol q_r(t)$，使其近似表现为一个理想运动学定位器 $\boldsymbol q(t)\approx\boldsymbol q_r(t)$；
+2. **慢速外环（视觉伺服）**：仅依据当前操作空间误差生成参考关节速度并积分得 $\boldsymbol q_r(t)$（式 (9.8-5)–(9.8-6)）：
 
-$$q(t)\approx q_r(t),\tag{9.8-5}$$
+$$\boxed{\ \dot{\boldsymbol q}_r = J_{A_d}^{-1}(\boldsymbol q_r,\ \boldsymbol x)\,K\,\boldsymbol x\ }\qquad \bigl(K\succ 0\bigr). \tag{9.8-6}$$
 
-$q_r(t)$ 是我们给出的关节参考。于是视觉伺服不必直接输出力矩，只要**算出 $q_r(t)$** 使操作空间误差
-按 (9.8-3) 收敛即可。取
+在理想内环跟踪 $\dot{\boldsymbol q}\approx\dot{\boldsymbol q}_r$ 下代入式 (9.8-2)，精确消去非线性雅可比，得到解耦的**线性定常误差动力学**：
 
-$$\boxed{\ \dot q_r=J_{A_d}^{-1}(q_r,x)\,K\,x\ }\tag{9.8-6}$$
+$$\boxed{\ \dot{\boldsymbol x} + K\,\boldsymbol x = \mathbf 0.\ } \tag{9.8-7}$$
 
-代入 (9.8-3)（用 $q(t)\approx q_r(t)$），得到线性方程
-
-$$\boxed{\ \dot x+K\,x=0\ }\tag{9.8-7}$$
-
-$K$ 正定时，$x$ 指数收敛，收敛速度由 $K$ 的特征值决定。这叫**操作空间的速度分解控制**（resolved-velocity
-control）：由操作空间误差算出关节参考速度，再积分出 $q_r(t)$。
-
-
-
-**轨迹形状**（教材 §10.7.2 末尾）：若 $K$ 取对角阵且位置部分各分量增益相同，则相机原点走的是连接初始
-位置与期望位置的**直线段**。姿态轨迹则取决于欧拉角的具体选法。
-
-::: note 为什么「事先知道相机轨迹」在这里特别重要
-位置式本来就可能因目标出视野而丢失反馈。若控制律能保证相机的运动轨迹是一条可预测的直线，就可以
-**事先判断**目标会不会出视野，必要时改成先退后进的路径。教材明确点了这一条。
-:::
+**几何与瞬态优势**：只要 $K$ 正定，误差 $\boldsymbol x(t)=e^{-Kt}\boldsymbol x(0)$ 按选定增益严格**指数收敛**，瞬态时间常数完全脱离动力学耦合与初值构型。进一步，若取对角阵 $K$ 且三个位置通道增益相同（$K=\operatorname{diag}\{k_p,k_p,k_p,\dots\}$），三个位置误差以同一速率衰减，从而保证**相机原点在三维空间中沿初始点到期望点的完美直线段运动**——使工程人员能事先预测并校核路径遮挡或碰撞。
 
 <a id="sec-9.8.4"></a>
 
-## 9.8.4 内外环分离：老师补充的工程说法
+## 9.8.4 内外环级联带宽原则（$\ge 5$ 倍分离准则）
 
-老师 02:00–02:02 用了一个更贴近工程的口径来讲上面这套做法。视觉测量是秒级的，运动控制是
-50 Hz 甚至上百赫兹。如果内外环用同一个频率，就等于把快速的部分也拖慢了。
-
-解决办法是把回路**拆开**：
-
-1. **外环（视觉）**：由图像生成期望的关节角 $q_r$（或期望关节速度）；
-2. **内环（运动控制）**：高带宽地跟踪 $q_r$，这一部分的参数**完全不变**，还是原来那套运动控制器。
-
-老师 02:02 说这跟无人机控制、自动驾驶里的级联结构是同一回事：位置环生成期望速度，速度环生成期望
-姿态，姿态环生成期望角速度，角速度再转成电机量；**每一环的快慢不一样，内环至少要比外环快 5 倍
-以上**，整个系统才能定得住。
-
-老师 02:02 还点了一句：「只不过视觉更难，他就在最外层生成一个 $q_r$，然后再跟踪 $q_r$」。
-换句话说，**视觉伺服只是把级联结构的最外环换成了视觉**，里面的运动控制部分一点没改。
+与无人机或自动驾驶的多级串级控制结构相同，「视觉外环输出参考 $\boldsymbol q_r(t)\to$ 原生高带宽运动内环快速跟踪 $\boldsymbol q_r(t)$」得以等效退化为纯运动学模型 $\boldsymbol q\approx\boldsymbol q_r$ 的工程前提是：**内环控制带宽至少要比视觉外环带宽快 $5$ 倍以上**，且内环在一个视觉采样周期内应能基本完成参考增量调节，整个级联系统方能保持稳定与设计动态性能。
 
 <a id="sec-9.8.5"></a>
 
 ## 9.8 小结与常见错误
 
-1. 误差 $x$ 由 $T^d_c=T^d_o(T^c_o)^{-1}$ 定义，**不是**两个位姿向量之差。
-2. PD + 重力补偿 (9.8-4) 与第七章操作空间控制同构，换的是误差与雅可比；稳定性证明步骤相同。
-3. **速度分解控制**把「视觉慢」与「电机快」解耦：外环由视觉算 $q_r$，内环原样不动；
-   误差方程变成线性的 (9.8-7)，指数收敛。
-4. 误差落在**反馈路径**，因此对标定误差敏感（§9.7.4）。
-5. 工程口径：**级联内外环**，内环至少比外环快 5 倍。
+1. **误差定义严格性**：PBVS 误差 $\boldsymbol x=[\boldsymbol o^{d\mathrm T}_c,\ \boldsymbol\varphi^{d\mathrm T}_c]^{\mathrm T}$ 由 $T^d_c=T^d_o(T^c_o)^{-1}$ 提取，**不可**用欧拉坐标直接相减；期望位姿还必须落在机械臂灵巧工作空间内。
+2. **PD vs 速度分解**：PD+重力补偿在全动力学下渐近稳定但瞬态耦合；速度分解通过内外环分离将误差方程化简为定常线性 $\dot{\boldsymbol x}+K\boldsymbol x=\mathbf 0$，$K$ 对角等权时原点轨迹为完美直线。
+3. **带宽分离硬条件**：内环须至少比视觉外环快 $5$ 倍以上；且两种方案均无法免除「目标移出视野断开反馈」的固有风险。
 
 <a id="sec-9.8.check"></a>
 <details>
 <summary>检查理解：速度分解控制解决了什么，没解决什么？</summary>
 
-**解决**了增益被迫调小的问题。视觉帧率低，若把视觉直接闭环到力矩，稳定所允许的增益就受视觉更新
-周期限制，性能差。速度分解把快的那部分交给原有运动控制器（当作理想定位器），视觉环只负责给
-参考，于是 (9.8-7) 的收敛速度只由 $K$ 决定，不再被视觉帧率绑住。
-
-**没解决**目标出视野的问题——误差仍在反馈路径上，视野一丢照样断反馈。这是位置式的固有问题，
-教材在 §10.6 就已指出。
+**解决了**因视觉采样周期长迫使增益大幅下调、以及重力补偿 PD 随构型变化导致的动力学耦合问题：将快动态封在原有高速关节控制内环中（内环带宽 $\ge 5$ 倍外环），视觉外环仅按线性系统 $\dot{\boldsymbol x}+K\boldsymbol x=\mathbf 0$ 设定指数瞬态并可令相机走直线。
+**没解决**位置式固有的两项短板：标定与 PnP 估计误差仍处在反馈回路上导致稳态偏移，且过渡途中特征点一旦走出相机视野仍会因丢失反馈而失稳。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| PBVS 误差：$x=[o^d_c;\varphi^d_c]$（由 $\hat T^c_o$ 与期望位姿） | 实时位姿估计 | m、rad | 标定/估计误差在反馈路径上 |
-| PD + 重力补偿：$u=\boldsymbol g(q)+J^{\mathrm T}(K_Px_d\text{ 误差项}-K_D\dot q)$ 类 | 沿用 7.3 结构、误差换到操作空间 | N·m | 与 7.4.4 同构；$x$ 由估计给出 |
-| 速度分解：外环 $J_A\dot q_{\rm ref}=\dot x_{\rm ref}$（视觉慢），内环关节速度跟踪（电机快） | 内外环带宽分离 | rad/s | 外环按视觉采样频率设计；「视觉慢、电机快」的工程口径 |
+| 条目 | 公式 | 易错点 |
+|:--|:--|:--|
+| PBVS 误差与导数 | $T^d_c=T^d_o(T^c_o)^{-1}$，$\dot{\boldsymbol x}=-J_{A_d}\dot{\boldsymbol q}$ | $\boldsymbol x$ 不可写成 $\boldsymbol x^d_o-\boldsymbol x^c_o$ |
+| PBVS 重力补偿 PD | $\boldsymbol u=\boldsymbol g+J_{A_d}^{\mathrm T}(K_P\boldsymbol x-K_D J_{A_d}\dot{\boldsymbol q})$ | 与第 7 章同构，$J_{A_d}$ 须满行秩 |
+| PBVS 速度分解外环 | $\dot{\boldsymbol q}_r=J_{A_d}^{-1}K\boldsymbol x\implies \dot{\boldsymbol x}+K\boldsymbol x=\mathbf 0$ | $K$ 位置同权对角时相机走直线；内环带宽 $\ge 5$ 倍外环 |
 
 ::: think 本节的课堂幻灯片（源料对照）
 
@@ -175,7 +108,7 @@ control）：由操作空间误差算出关节参考速度，再积分出 $q_r(t
 
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 119:10 | [pbvs-block.jpg](../assets/ch09/pbvs-block.jpg) | PBVS 重力补偿 PD 框图 | 正文 9.8.2 结构说明替代 |
-| 118:30 | [pbvs-pd.jpg](../assets/ch09/pbvs-pd.jpg) | 误差定义与雅可比读法 | 正文 9.8.2 展开 |
-| 121:30 | [pbvs-resolved-velocity.jpg](../assets/ch09/pbvs-resolved-velocity.jpg) | 速度分解框图 | 正文 9.8.3 展开（老师「内外环」工程说法保留在 9.8.4） |
+| 119:10 | [pbvs-block.jpg](../assets/ch09/pbvs-block.jpg) | PBVS 重力补偿 PD 框图 | 正文 9.8.2 结构说明展开 |
+| 118:30 | [pbvs-pd.jpg](../assets/ch09/pbvs-pd.jpg) | 误差定义与雅可比读法 | 正文 9.8.1–9.8.2 展开 |
+| 121:30 | [pbvs-resolved-velocity.jpg](../assets/ch09/pbvs-resolved-velocity.jpg) | 速度分解框图 | 正文 9.8.3–9.8.4 级联内外环展开 |
 :::

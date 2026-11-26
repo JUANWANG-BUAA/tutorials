@@ -1,137 +1,93 @@
 # 9.6 相机标定
 
-> 录播 01:42–01:49（课件 §10.5，**全部是课堂内容**）。这一节解决一个前置问题：前面所有公式都
-> 默认「归一化坐标」和「相机外参」是已知的，可它们恰恰是不知道的。
+[§9.3](sec9-3.md)–[§9.5](sec9-5.md) 的全部位姿估计与控制推导均假定相机**内参矩阵 $\Omega$** 与**外参位姿（$T^b_c$ 或 $T^e_c$）**事先已知。本节阐明如何利用已知几何标定板在线性或非线性框架下同时确定内参与外参（属于工程前置基础，了解主线）。
 
 <a id="sec-9.6.1"></a>
 
-## 9.6.1 标定的对象
+## 9.6.1 标定参数的两类对象
 
-**内参（intrinsic parameters）**：矩阵 $\Omega$（第五章 (5.41)），描述像素坐标与归一化坐标的关系，
-包含焦距 $\alpha_x,\alpha_y$、主点 $(X_0,Y_0)$，以及像素与归一化坐标之间的仿射修正项。
-
-**外参（extrinsic parameters）**：相机系相对机座系（眼到手）或相对末端系（眼在手）的位姿，
-即 $T^b_c$ 或 $T^e_c$。
-
-老师说得很直接（01:42–01:43）：内参、外参第五章讲过；**外参表示的是相机坐标系相对于机坐标系
-（眼到手）或者相对于末端执行器（眼在手）的位置变化**。
+- **内参（intrinsic parameters）**：决定相机成像光学与传感器像素采样映射的内参矩阵 $\Omega\in\mathbb R^{3\times 3}$（见 [§9.2.1](sec9-2.md#sec-9.2.1) 与 [§5.4](../ch05/sec5-4.md) (5.41)），包含焦距像素等效比 $\alpha_x,\alpha_y$（或 $f\alpha_x,f\alpha_y$）以及像平面主点偏置 $(X_0,Y_0)$；
+- **外参（extrinsic parameters）**：描述相机坐标系 $\{c\}$ 相对于机器人基座系（眼到手 $T^b_c$）或末端执行器系（眼在手 $T^e_c$）的刚体安装齐次变换。
 
 <a id="sec-9.6.2"></a>
 
-## 9.6.2 内参已知：直接借 PnP 求外参
+## 9.6.2 内参已知时由共面 PnP 直接反解外参
 
-如果内参已经标定好，归一化坐标可以算出来，那么 §9.3 的共面 PnP 算法可以直接拿来求外参。
-由 (9.3-6) 已求出 $T^c_o$（目标相对相机），再由链式法则
+当相机已完成出厂内参标定（$\Omega$ 已知）时，可先通过 $\tilde{\boldsymbol s}_i=\Omega^{-1}\tilde{\boldsymbol c}_i$ 将实测角点像素坐标换算为归一化图像坐标，再把特征几何位置精确已知的平面标定靶摆放至相对基座（或末端）已知的位姿 $T^b_o$（或 $T^e_o$）。利用 [§9.3](sec9-3.md) 的共面 PnP 解析求解 $T^c_o$ 后，直接由齐次变换链反解外参：
 
-$$\boxed{\ T^b_o=T^b_c\,T^c_o\ }\tag{9.6-1}$$
-
-（眼到手）或
-
-$$\boxed{\ T^e_o=T^e_c\,T^c_o\ }\tag{9.6-2}$$
-
-（眼在手）。若标定板相对机座或末端的位姿 $T^b_o$（或 $T^e_o$）已知，反解即可：
-
-$$T^b_c=T^b_o\,(T^c_o)^{-1},\qquad T^e_c=T^e_o\,(T^c_o)^{-1}.\tag{9.6-3}$$
+$$\boxed{\ T^b_c = T^b_o\,(T^c_o)^{-1}\ \text{（眼到手）},\qquad T^e_c = T^e_o\,(T^c_o)^{-1}\ \text{（眼在手）}.\ } \tag{9.6-3}$$
 
 <a id="sec-9.6.3"></a>
 
-## 9.6.3 内参未知：三阶段法
+## 9.6.3 内参未知时的三阶段线性标定法
 
-内参未知时，§9.3 的推导要用**像素坐标**代替归一化坐标。写成齐次形式
+若内参 $\Omega$ 同样未知，无法提前算出归一化坐标 $\tilde{\boldsymbol s}_i$，只能直接对**像素齐次坐标** $\tilde{\boldsymbol c}_i=[X_{I,i},\ Y_{I,i},\ 1]^{\mathrm T}=\Omega\tilde{\boldsymbol s}_i$ 建立共面投影模型（结合式 (9.3-2)）：
 
-$$S(c_i)\,H'\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix}=0,
-\qquad c_i=\begin{bmatrix}X_{I,i}\\Y_{I,i}\end{bmatrix},\tag{9.6-4}$$
+$$\lambda_i\,\tilde{\boldsymbol c}_i = H'\begin{bmatrix}r_{x,i}\\r_{y,i}\\1\end{bmatrix},\qquad
+\boxed{\ H' = \Omega H = \Omega\begin{bmatrix}\boldsymbol r_1 & \boldsymbol r_2 & \boldsymbol o^c_o\end{bmatrix}\in\mathbb R^{3\times 3}.\ } \tag{9.6-5}$$
 
-与 (9.3-3) 形式相同，只是 $H'$ 换成了 $H'$，且 $H'$ 与 $H$ 的关系是
+由此分三阶段在线性代数框架下同时求解 $\Omega$ 与各姿态下的外参（教材 §10.5）：
 
-$$\boxed{\ H'=\Omega H\ }\tag{9.6-5}$$
+::: thm 定理 9.6.1 · 三阶段线性平面标定与内参闭式提取 {#thm-9.6.1}
+对同一已知尺寸平面标定板拍摄 $k\ge 3$ 幅不同倾斜姿态的图像（每幅提取 $n\ge 4$ 个无三点共线角点）：
 
-因为像素坐标与归一化坐标之间只差一个 $\Omega$。于是 **阶段一**照样能算出平面单应 $H'$（差一个尺度
-因子 $\zeta$），$n\ge4$ 个点即可。
+1. **阶段一（逐幅求解像素单应 $\hat H'_j$）**：对第 $j$ 幅图直接以像素坐标 $\tilde{\boldsymbol c}_i$ 代入消尺度方程 $S(\tilde{\boldsymbol c}_i)\hat H'_j[r_{x,i},r_{y,i},1]^{\mathrm T}=\mathbf 0$ (9.6-4)，求得仅差全局尺度因子 $\zeta_j$ 的像素单应矩阵 $\hat H'_j=[\boldsymbol h'_{1,j}\ \boldsymbol h'_{2,j}\ \boldsymbol h'_{3,j}]$，满足 $\zeta_j\hat H'_j=\Omega[\boldsymbol r_{1,j}\ \boldsymbol r_{2,j}\ \boldsymbol o^c_{o,j}]$；
+2. **阶段二（利用旋转矩阵正交等长约束求解 $B=\Omega^{-\mathrm T}\Omega^{-1}$）**：由 $\boldsymbol r_1=\zeta\Omega^{-1}\boldsymbol h'_1,\ \boldsymbol r_2=\zeta\Omega^{-1}\boldsymbol h'_2$，施加正交性 $\boldsymbol r_1^{\mathrm T}\boldsymbol r_2=0$ 与等长性 $\boldsymbol r_1^{\mathrm T}\boldsymbol r_1=\boldsymbol r_2^{\mathrm T}\boldsymbol r_2=1$，消去 $\zeta^2$ 后得关于对称矩阵 $B=\Omega^{-\mathrm T}\Omega^{-1}$ 的两条线性约束（教材 (10.61)）：
 
-**阶段二：由 $H'$ 求 $\Omega$。** 这是整个标定里最巧的一步。由 (9.6-5) 与 $H=[r_1\ r_2\ o^c_o]$，
+$$\boxed{\ \boldsymbol h_1'^{\mathrm T} B\,\boldsymbol h'_2 = 0,\qquad
+\boldsymbol h_1'^{\mathrm T} B\,\boldsymbol h'_1 = \boldsymbol h_2'^{\mathrm T} B\,\boldsymbol h'_2.\ } \tag{9.6-6}$$
 
-$$\zeta\begin{bmatrix}h'_1&h'_2&h'_3\end{bmatrix}
-=\Omega\begin{bmatrix}r_1&r_2&o^c_o\end{bmatrix},$$
+零斜切假设下对称矩阵 $B$ 的显式结构为：
 
-其中 $h'_i$ 是 $H'$ 的第 $i$ 列。先由前两列解出 $r_1,r_2$，再对它们施加**旋转阵的正交性与单位范数**
-约束，得到两个标量方程：
+$$B = \Omega^{-\mathrm T}\Omega^{-1} = \begin{bmatrix}
+\dfrac{1}{\alpha_x^2} & 0 & -\dfrac{X_0}{\alpha_x^2} \\[6pt]
+0 & \dfrac{1}{\alpha_y^2} & -\dfrac{Y_0}{\alpha_y^2} \\[6pt]
+-\dfrac{X_0}{\alpha_x^2} & -\dfrac{Y_0}{\alpha_y^2} & 1 + \dfrac{X_0^2}{\alpha_x^2} + \dfrac{Y_0^2}{\alpha_y^2}
+\end{bmatrix}. \tag{9.6-8}$$
 
-$$h_1^{\mathrm T}\Omega^{-\mathrm T}\Omega^{-1}h_2=0,
-\qquad
-h_1^{\mathrm T}\Omega^{-\mathrm T}\Omega^{-1}h_1
-=h_2^{\mathrm T}\Omega^{-\mathrm T}\Omega^{-1}h_2 .\tag{9.6-6}$$
+将 $B$ 的 $6$ 个独立对称元素拉直为向量 $\boldsymbol b=[b_{11},\ b_{12},\ b_{22},\ b_{13},\ b_{23},\ b_{33}]^{\mathrm T}\in\mathbb R^6$，汇总 $k$ 个姿态的 $2k$ 条线性方程组成 $A'\boldsymbol b=\mathbf 0$ (9.6-7)。当使用 **$k\ge 3$ 个互不平行倾斜姿态**（$2k\ge 6$ 条独立约束；纯平移不增加新约束）时，由 SVD 求得 $\boldsymbol b$（对应真实矩阵的缩放倍数 $\gamma B$），按闭式公式提取内参（已按原书代数校验修正排印错位）：
 
-第一式说的是 $r_1\perp r_2$，第二式说的是两者等长。这两个方程对 $\Omega$ 的元素是**线性的**，可写成
+$$X_0 = -\frac{b_{13}}{b_{11}},\quad
+Y_0 = -\frac{b_{23}}{b_{22}},\quad
+\gamma = b_{33} - \frac{b_{13}^2}{b_{11}} - \frac{b_{23}^2}{b_{22}},\quad
+\alpha_x = \sqrt{\frac{\gamma}{b_{11}}},\quad
+\alpha_y = \sqrt{\frac{\gamma}{b_{22}}}. \tag{9.6-9}$$
 
-$$A'b=0,\qquad b=[b_{11}\ b_{12}\ b_{22}\ b_{13}\ b_{23}\ b_{33}]^{\mathrm T},\tag{9.6-7}$$
-
-其中 $b_{ij}$ 是对称矩阵 $B=\Omega^{-\mathrm T}\Omega^{-1}$ 的元素：
-
-$$B=\Omega^{-\mathrm T}\Omega^{-1}=\begin{bmatrix}
-0 & -X_0/\alpha_x^2 & 1/\alpha_x^2\\
-1/\alpha_x^2 & -Y_0/\alpha_y^2 & *\\
-* & * & 1+X_0^2/\alpha_x^2+Y_0^2/\alpha_y^2
-\end{bmatrix}.\tag{9.6-8}$$
-
-把标定板**摆 $k$ 个不同姿态**，每个姿态给两个方程，共 $2k$ 个。$k\ge3$ 时解唯一（仍差一个尺度
-$\gamma$）。从 $\gamma B$ 读出内参：
-
-$$X_0=-\frac{b_{13}}{b_{11}},\qquad Y_0=-\frac{b_{23}}{b_{22}},\qquad
-\alpha_x=\sqrt{\frac{\gamma}{b_{11}}},\qquad \alpha_y=\sqrt{\frac{\gamma}{b_{22}}},\qquad
-\gamma=b_{13}+b_{23}+b_{33}.\tag{9.6-9}$$
-
-**阶段三**：有了 $\Omega$，由 (9.6-5) 恢复 $H$（取 $k$ 个姿态中的任意一个），再走 §9.3 的流程求出
-$T^c_o$，最后用 (9.6-3) 求外参。
-
+3. **阶段三（还原归一化单应与外参）**：利用已求得的内参矩阵 $\Omega$ 计算 $H_j=\Omega^{-1}\hat H'_j$，再按 [§9.3](sec9-3.md) 定理 9.3.1–9.3.2 求出第 $j$ 幅图对应的位姿 $T^c_{o,j}$，最后由式 (9.6-3) 求出外参 $T^b_c$ 或 $T^e_c$。
+:::
 
 <a id="sec-9.6.4"></a>
 
-## 9.6.4 这套方法的定位
+## 9.6.4 工程实践：从概念线性解到张氏平面标定
 
-教材对这个方法有一句很坦率的评价（§10.5 末尾）：「上面给出的方法只是概念性的，因为它在存在测量
-噪声或镜头畸变时不能给出令人满意的结果，尤其是对内参而言」；改进办法是采用考虑镜头畸变的模型
-并配合非线性优化。
+教材 §10.5 末尾明确指出：上述纯线性三阶段法**只是概念性的**，因为在真实相机中同时存在像素测量噪声以及广角/标准镜头的**径向与切向畸变**，仅靠纯线性解法无法得到满意的标定精度（尤其是内参焦距与主点对噪声高度敏感）。
 
-实际标定用什么？老师 01:48:32 给出答案：**张氏标定**——用一些标定板（棋盘格等角点位置可精确
-测出的图案），按上述思路标定相机参数；他说这套方法「现在还在（同行）规范」「引用都是几万次」。
-
-> **年份的口径**：老师 01:48:50 报的年份转写成了「02.13年」，听不出是 2001、2002 还是别的。
-> 按公开发表的文献，张氏标定出自 **Zhang, IEEE TPAMI, 2000**（即 2000 年发表）。本教程正文不引用
-> 老师报的那个模糊年份，只记「张氏标定」这个名字与方法；年份差异见[勘误](errata.md)。
-
-老师 01:49:25 强调了一句：「这是一个必不可少的一个步骤」（转写作「比不可少」）——没有标定，前面
-§9.3–§9.5 的所有公式都用不上。
+工程标准方案是以棋盘格、圆点阵等高精度标定靶标配合**张氏平面标定法（Z. Zhang, IEEE TPAMI, 2000）**：先以上述三阶段闭式线性解作为良好初值，随后构建纳入镜头畸变系数的非线性最小二乘重投影误差目标函数，利用 **Levenberg–Marquardt（LM）** 迭代联合优化全部内参、畸变参数与各帧外参，是完成后续一切单目位姿估计与视觉伺服不可或缺的前置步骤。
 
 <a id="sec-9.6.5"></a>
 
 ## 9.6 小结与常见错误
 
-1. 标定要估**内参** $\Omega$（焦距、主点）与**外参**（相机相对机座或末端的位姿）。
-2. 内参已知时，PnP 的结果直接换算出外参 (9.6-3)。
-3. 内参未知时三步走：像素坐标下求 $H'=\Omega H$ → 用旋转阵的正交与等长约束解出 $\Omega$ →
-   恢复 $H$ 求位姿再求外参。
-4. 同一块标定板要摆**至少三个不同姿态**，否则解不出 $\Omega$。
-5. 教材自己说这套推导是概念性的；实际用张氏标定加非线性优化处理噪声与畸变。
+1. **内参已知求外参**：直接 $\tilde{\boldsymbol s}_i=\Omega^{-1}\tilde{\boldsymbol c}_i$ 后套用共面 PnP 与式 (9.6-3)。
+2. **三阶段线性标定逻辑**：像素单应 $H'=\Omega H$ → 正交等长两条方程定 $B=\Omega^{-\mathrm T}\Omega^{-1}$ → 回代求位姿与外参。
+3. **多姿态不可简化为纯平移**：每个姿态只提供 $2$ 条方程，至少需要 **$k\ge 3$ 个不同倾斜姿态**方能定出 $B$（且不可仅作纯平移运动）。
+4. **工程闭环步骤**：线性解仅作初值，实际标定须由张氏标定配合非线性畸变优化完成。
 
 <a id="sec-9.6.check"></a>
 <details>
-<summary>检查理解：为什么标定板要摆好几个不同姿态？</summary>
+<summary>检查理解：为什么标定板必须倾斜摆拍至少 3 个不同姿态，只拍一两张或只平移不行？</summary>
 
-因为每个姿态只给出关于 $\Omega$ 的**两个**标量方程（正交、等长），一个姿态的信息量远远不够。
-摆 $k$ 个姿态得到 $2k$ 个方程，要解出 $\Omega$ 的 5 个独立元素（$X_0,Y_0,\alpha_x,\alpha_y$ 加上尺度
-$\gamma$），至少要 $k\ge3$。
-
-姿态还必须**有差别**：若标定板只是平移不动、姿态不变，各姿态给出的方程会重复，解不出 $\Omega$。
+每个单应姿态通过 $\boldsymbol r_1\perp\boldsymbol r_2$ 与 $\|\boldsymbol r_1\|=\|\boldsymbol r_2\|$ 仅提供关于对称矩阵 $B$（含 $5$ 个独立比例自由度：$\alpha_x,\alpha_y,X_0,Y_0$ 与 $b_{12}$ 或整体缩放 $\gamma$）的 **$2$ 条**标量线性约束，因此至少需要 $k\ge 3$ 组姿态获得 $2k\ge 6$ 条方程才能解出唯一一维零空间。同时，若标定板仅在像面内平移而不改变旋转姿态，各幅图单应矩阵的前两列仅在平移或整体比例上有冗余关联，所列方程线性相关，同样无法唯一求解 $\Omega$。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| 内参已知：外参由 PnP 直接求 | 标定板角点精确可测 | — | 与 9.3 的 PnP 同一条链 |
-| 内参未知：三阶段法（多幅标定板位姿） | 棋盘格图案 | — | 内参 $\Omega$、投影 $\Pi$ 与位姿联合估计；pdftotext 易转置矩阵，须回原页核对 |
+| 条目 | 公式 | 易错点 |
+|:--|:--|:--|
+| 内参已知外参反解 | $T^b_c=T^b_o(T^c_o)^{-1},\quad T^e_c=T^e_o(T^c_o)^{-1}$ | 上下标不可写反（确保中间相机系消去） |
+| 像素单应与正交约束 | $H'=\Omega H$；$\boldsymbol h_1'^{\mathrm T}B\boldsymbol h'_2=0$，$\boldsymbol h_1'^{\mathrm T}B\boldsymbol h'_1=\boldsymbol h_2'^{\mathrm T}B\boldsymbol h'_2$ | $B=\Omega^{-\mathrm T}\Omega^{-1}$ 为对称阵，$k\ge 3$ 非平行倾斜姿态 |
+| 内参尺度 $\gamma$ 提取 | $\gamma = b_{33} - \dfrac{b_{13}^2}{b_{11}} - \dfrac{b_{23}^2}{b_{22}}$ | 勿漏除主点平方项（即非简单相加 $b_{13}+b_{23}+b_{33}$） |
 
 ::: think 本节的课堂幻灯片（源料对照）
 
@@ -139,5 +95,5 @@ $\gamma$），至少要 $k\ge3$。
 
 | 时间点 | 幻灯片 | 提供了什么 | 本教程如何处理 |
 |:--|:--|:--|:--|
-| 105:50 | [calib-plane.jpg](../assets/ch09/calib-plane.jpg) | 棋盘格标定板 | 正文 9.6.3 三阶段法展开 |
+| 105:50 | [calib-plane.jpg](../assets/ch09/calib-plane.jpg) | 棋盘格标定板 | 正文 9.6.3–9.6.4 三阶段线性标定与张氏标定展开 |
 :::

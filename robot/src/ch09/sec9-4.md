@@ -1,218 +1,150 @@
-# 9.4 位姿估计（二）：相互作用矩阵
+# 9.4 位姿估计（二）：图像雅可比与相互作用矩阵
 
-> 录播 01:15–01:28（课件 §10.3.2，**全部是课堂内容**）。上一节解的是「位置与姿态」这个静态问题；
-> 这一节转成微分问题。好处是**微分问题是线性的**，可以用矩阵一次写清，而且数值积分就能把位姿
-> 迭代出来（§9.5）。
+静态 PnP 方程在非共面或含噪情况下非线性程度高，且迭代求解位姿或直接在图像平面构造控制律都需要一阶速度关系。本节将透视投影方程对时间求导，确立**相对速度**映射到特征变化率的**图像雅可比 $J_s$**，进而分解出以**相机绝对运动**为输入的**相互作用矩阵 $L_s$**，逐行推导单点与线段相互作用矩阵，并揭示单目视觉 4 维零空间的深度盲区本质。
 
 <a id="sec-9.4.1"></a>
 
-## 9.4.1 从静态方程到速度方程
+## 9.4.1 从静态位姿到微分映射：图像雅可比
 
-目标动起来，特征向量 $s$ 就随时间变，可以写图像平面的速度 $\dot s$。目标相对相机的运动由**相对
-速度**刻画（教材 (10.16)）：
+设目标相对相机的线速度与角速度均表达在当前相机系 $\{c\}$ 中，构成 6 维**相对旋量速度**（教材 (10.16)）：
 
-$$v^c_{c,o}=\begin{bmatrix}\dot o^c_{c,o}\\ R_c^{\mathrm T}(\omega^o-\omega^c)\end{bmatrix},$$
+$$\boldsymbol v^c_{c,o}=\begin{bmatrix}\dot{\boldsymbol o}^c_{c,o}\\[2pt] R_c^{\mathrm T}(\boldsymbol\omega^o-\boldsymbol\omega^c)\end{bmatrix}\in\mathbb R^6,$$
 
-其中 $R_c$ 是相机系相对机座系的旋转，$\omega^o,\omega^c$ 分别是目标系与相机系的角速度，
-$o^c_{c,o}$ 是目标原点在相机系里的位置。
+其中 $\boldsymbol o^c_{c,o}=R_c^{\mathrm T}(\boldsymbol o_o-\boldsymbol o_c)$ 为目标原点在相机系下的位置，$\boldsymbol\omega^o,\boldsymbol\omega^c$ 分别为目标与相机在基座系中的角速度。对 $k$ 维图像特征向量 $\boldsymbol s\in\mathbb R^k$ 求时间导数，其与相对旋量速度严格满足线性映射（教材 (10.17)）：
 
-图像速度与相对速度之间是**线性**关系（教材 (10.17)）：
+$$\boxed{\ \dot{\boldsymbol s}=J_s(\boldsymbol s,\ T^c_o)\,\boldsymbol v^c_{c,o}\ }\qquad \bigl(J_s\in\mathbb R^{k\times 6}\bigr). \tag{9.4-1}$$
 
-$$\boxed{\ \dot s=J_s(s,T^c_o)\,v^c_{c,o}\ }\tag{9.4-1}$$
-
-$J_s$ 叫**图像雅可比**，$k\times6$（$k$ 是特征参数的个数，$s\in\mathbb R^k$）。它是线性的，但系数
-依赖于当前的 $s$ 和 $T^c_o$——**不是常数矩阵**。
-
-老师 01:16 强调了这一步的价值：「因为速度映射是线性的」——和逆运动学一样，微分问题比位置问题容易，
-而且微分问题的解可以通过数值积分反过来得到位置（§9.5 就是这么做的）。
+其中 $J_s$ 称为**图像雅可比（image Jacobian）**。需注意 $J_s$ 关于速度 $\boldsymbol v^c_{c,o}$ 线性，但其矩阵元素显式依赖于当前特征 $\boldsymbol s$ 与位姿 $T^c_o$（并非恒常阵）。
 
 <a id="sec-9.4.2"></a>
 
-## 9.4.2 为什么要拆成「相互作用矩阵」
+## 9.4.2 图像雅可比与相互作用矩阵的严格转换
 
+实际机器人在大多数作业中面对的是固定目标，而由控制器直接驱动相机运动；将目标运动与相机运动拆分，引入在当前相机系表达的两个**绝对旋量速度**：
 
-直接用 (9.4-1) 有个麻烦：$v^c_{c,o}$ 是**相对**速度，可实际控制的是**相机**的速度（目标通常固定）。
-老师 01:19 讲了这个拆分的动机：「目标也可以动，图像坐标系也可以动，两个都有速度……直接算比较复杂，
-我们希望能简单，要么这个步骤，要么就是这个步骤」，于是定义两个**绝对速度**：
+$$\boldsymbol v^c_c=\begin{bmatrix}R_c^{\mathrm T}\dot{\boldsymbol o}_c\\[2pt] R_c^{\mathrm T}\boldsymbol\omega^c\end{bmatrix},\qquad
+\boldsymbol v^c_o=\begin{bmatrix}R_c^{\mathrm T}\dot{\boldsymbol o}_o\\[2pt] R_c^{\mathrm T}\boldsymbol\omega^o\end{bmatrix}.$$
 
-$$v^c_c=\begin{bmatrix}R_c^{\mathrm T}\dot o_c\\R_c^{\mathrm T}\omega^c\end{bmatrix},
-\qquad
-v^c_o=\begin{bmatrix}R_c^{\mathrm T}\dot o_o\\R_c^{\mathrm T}\omega^o\end{bmatrix}.$$
+对 $\boldsymbol o^c_{c,o}=R_c^{\mathrm T}(\boldsymbol o_o-\boldsymbol o_c)$ 求时间导数，代入旋转矩阵导数 $\dot R_c=R_c S(R_c^{\mathrm T}\boldsymbol\omega^c)\implies \dot R_c^{\mathrm T}=-S(R_c^{\mathrm T}\boldsymbol\omega^c)R_c^{\mathrm T}$ 得：
 
-把 $v^c_{c,o}$ 写成两者的组合（教材 (10.18)）：
+$$\dot{\boldsymbol o}^c_{c,o} = R_c^{\mathrm T}\dot{\boldsymbol o}_o - R_c^{\mathrm T}\dot{\boldsymbol o}_c - S(R_c^{\mathrm T}\boldsymbol\omega^c)R_c^{\mathrm T}(\boldsymbol o_o-\boldsymbol o_c)
+= R_c^{\mathrm T}\dot{\boldsymbol o}_o - R_c^{\mathrm T}\dot{\boldsymbol o}_c + S(\boldsymbol o^c_{c,o})R_c^{\mathrm T}\boldsymbol\omega^c.$$
 
-$$v^c_{c,o}=v^c_o+\Gamma(o^c_{c,o})\,v^c_c,
-\qquad
-\Gamma(\cdot)=\begin{bmatrix}-I_3&0\\0&S(\cdot)\end{bmatrix}.\tag{9.4-2}$$
+联合角速度差 $R_c^{\mathrm T}(\boldsymbol\omega^o-\boldsymbol\omega^c)$，得到严格的速度合成关系（教材 (10.18)）：
 
-代回 (9.4-1)，得到
+$$\boldsymbol v^c_{c,o} = \boldsymbol v^c_o + \Gamma(\boldsymbol o^c_{c,o})\,\boldsymbol v^c_c,\qquad
+\Gamma(\boldsymbol o) = \begin{bmatrix}-I_3 & S(\boldsymbol o)\\ O & -I_3\end{bmatrix}\in\mathbb R^{6\times 6}. \tag{9.4-2}$$
 
-$$\dot s=J_s\,v^c_o+L_s\,v^c_c,
-\qquad
-\boxed{\ L_s=J_s(s,T^c_o)\,\Gamma(o^c_{c,o})\ }\tag{9.4-3}$$
+直接分块矩阵乘法可验证 $\Gamma(\boldsymbol o)$ 处处可逆，且其逆阵为 $\Gamma(\boldsymbol o)^{-1}=\begin{bmatrix}-I_3 & -S(\boldsymbol o)\\ O & -I_3\end{bmatrix}=\Gamma(-\boldsymbol o)$。（注意 $3\times 3$ 反对称矩阵 $S(\boldsymbol o)$ 本身奇异不可逆，不可误写为 $S^{-1}$。）
 
-$L_s$ 叫**相互作用矩阵**，同样是 $k\times6$。
+::: def 定义 9.4.1 · 相互作用矩阵 {#def-9.4.1}
+将式 (9.4-2) 代入式 (9.4-1) 得 $\dot{\boldsymbol s} = J_s\boldsymbol v^c_o + L_s\boldsymbol v^c_c$，其中**相互作用矩阵（interaction matrix）** $L_s\in\mathbb R^{k\times 6}$ 定义为：
 
-::: note 相互作用矩阵到底在做什么
-由 (9.4-3)，当目标**固定不动**时 $v^c_o=0$，于是
+$$\boxed{\ L_s = J_s(\boldsymbol s,\ T^c_o)\,\Gamma(\boldsymbol o^c_{c,o})\ \iff\ J_s(\boldsymbol s,\ T^c_o) = L_s\,\Gamma(-\boldsymbol o^c_{c,o}).\ } \tag{9.4-3,9.4-4}$$
 
-$$\dot s=L_s\,v^c_c .$$
+当目标在基座系中**静止不动**（$\boldsymbol v^c_o=\mathbf 0$）时，退化为：
 
-所以 $L_s$ 就是：**目标固定时，相机怎么动，图像上的点就怎么动**。这是它与图像雅可比的区别——
-$J_s$ 描述的是**目标相对相机**的运动，$L_s$ 描述的是**相机自身**的运动。
+$$\dot{\boldsymbol s} = L_s\,\boldsymbol v^c_c.$$
+:::
 
-为什么这个区分有用？老师 01:21–01:23 讲得很实际：目标是固定的（或可当作固定的），真正要设计的是
-「相机怎么动才能让误差收敛」。用 $L_s$ 写出来的控制律不需要知道目标的绝对运动。
-
-两个矩阵可以互相换算（教材 (10.21)）：
-
-$$J_s(s,T^c_o)=L_s\,\Gamma(-o^c_{c,o}),\qquad \Gamma(-o)=\Gamma(o)^{-1}.\tag{9.4-4}$$
-
-（$\Gamma(o)^{-1}=[[-I_3,0],[0,-S(o)]]=\Gamma(-o)$，因为 $3\times3$ 斜对称矩阵满足 $S(o)^{-1}=-S(o)$。）
-
+::: note $J_s$ 与 $L_s$ 的本质区别
+- **输入对象不同**：$J_s$ 的输入是**目标相对相机的运动** $\boldsymbol v^c_{c,o}$；$L_s$ 的输入是**相机自身在相机系的运动** $\boldsymbol v^c_c$（前提是目标固定）；
+- **代数关系**：二者通过处处可逆的伴随变换阵 $\Gamma(\pm\boldsymbol o^c_{c,o})$ 相互转换，矩阵秩完全相等。后续视觉控制直接驱动相机，因此控制律普遍基于 $L_s$ 写出；且单点 $L_s$ 仅显含当前图像坐标 $(X,Y)$ 与深度 $z_c$，闭式形式极其简洁。
 :::
 
 <a id="sec-9.4.3"></a>
 
-## 9.4.3 一个点的相互作用矩阵：推导
+## 9.4.3 单点特征相互作用矩阵的逐行推导
 
-取目标上一个点 $P$，它在相机系里的坐标记 $r^c=[x_c\ y_c\ z_c]^{\mathrm T}$，深度 $z_c>0$。
-特征向量取归一化坐标 $s=[X\ Y]^{\mathrm T}$，$X=x_c/z_c$、$Y=y_c/z_c$。
+::: thm 定理 9.4.2 · 单点特征相互作用矩阵公式 {#thm-9.4.2}
+设固定空间点 $P$ 在相机系下的坐标为 $\boldsymbol r^c=[x_c,\ y_c,\ z_c]^{\mathrm T}$（$z_c>0$），归一化图像特征为 $\boldsymbol s=[X,\ Y]^{\mathrm T}=[x_c/z_c,\ y_c/z_c]^{\mathrm T}$。当相机以相机系旋量速度 $\boldsymbol v^c_c=[v_x,v_y,v_z,\omega_x,\omega_y,\omega_z]^{\mathrm T}$ 运动时，$\dot{\boldsymbol s}=L_p(\boldsymbol s,z_c)\,\boldsymbol v^c_c$，其中：
 
-**第一步：求 $s$ 对 $r^c$ 的偏导。** 由 $X=x_c/z_c$，
-
-$$\frac{\partial X}{\partial x_c}=\frac1{z_c},\quad
-\frac{\partial X}{\partial y_c}=0,\quad
-\frac{\partial X}{\partial z_c}=-\frac{x_c}{z_c^2}=-\frac{X}{z_c},$$
-
-$Y$ 同理。于是（教材 (10.25)）
-
-$$\frac{\partial s}{\partial r^c}=\frac1{z_c}\begin{bmatrix}1&0&-X\\0&1&-Y\end{bmatrix}.\tag{9.4-5}$$
-
-**第二步：求 $\dot r^c$。** 目标点 $P$ 固定在机座系里，位置 $\boldsymbol p$ 是常量；相机在动。
-由 $r^c=R_c(\boldsymbol p-\boldsymbol o_c)$ 求导（教材 (10.22)、(10.26)）：
-
-$$\dot r^c=-R_c^{\mathrm T}\dot o_c+S(r^c)\,R_c^{\mathrm T}\omega^c
-=\begin{bmatrix}-I_3&S(r^c)\end{bmatrix}v^c_c .\tag{9.4-6}$$
-
-**第三步：相乘。** $\dot s=\frac{\partial s}{\partial r^c}\dot r^c$。逐行算：
-
-第一行，$\frac1{z_c}[1,\ 0,\ -X]$ 乘 (9.4-6) 的平移块得 $[-1,0,X]$；乘旋转块时
-
-$$[1,\ 0,\ -X]\,S(r^c)=[1,0,-X]\begin{bmatrix}0&-z_c&y_c\\z_c&0&-x_c\\-y_c&x_c&0\end{bmatrix}
-=[Xy_c,\ -z_c-Xx_c,\ y_c],$$
-
-除以 $z_c$ 并用 $x_c/z_c=X$、$y_c/z_c=Y$ 化简，得 $[XY,\ -(1+X^2),\ Y]$。
-第二行同理，得 $[0,-1,Y]$ 与 $[1+Y^2,\ -XY,\ -X]$。
-
-合起来（教材 (10.27)）：
-
-$$\boxed{\ L_s(s,z_c)=\frac1{z_c}
-\begin{bmatrix}
--1/z_c & 0 & X/z_c & XY & -(1+X^2) & Y\\[2pt]
-0 & -1/z_c & Y/z_c & 1+Y^2 & -XY & -X
-\end{bmatrix}\ }\tag{9.4-7}$$
-
-值得停下来看一眼这个矩阵的**结构**：前三列是平移项，带 $1/z_c$；后三列是旋转项，是纯几何量
-（$XY$、$1+X^2$、$Y$……），**不含深度**。直观地说：相机转一个小角度，图像上点移动多少，只看它
-在画面里的位置；相机平移一小段，图像上点移动多少，还要看它有多远。
-
-::: note 一处容易记错的细节
-(9.4-7) 的第一行第三项是 $+X/z_c$（不是 $-X$），第二行第三项是 $+Y/z_c$。平移块整体是 $-I_3$
-的负号带来的，所以是「$-1/z_c$、$0$、$+X/z_c$」这样交错的形状，不是简单的 $\pm X$。
+$$\boxed{\ L_p(\boldsymbol s,z_c) = \begin{bmatrix}
+-\dfrac{1}{z_c} & 0 & \dfrac{X}{z_c} & XY & -(1+X^2) & Y \\[8pt]
+0 & -\dfrac{1}{z_c} & \dfrac{Y}{z_c} & 1+Y^2 & -XY & -X
+\end{bmatrix} \in \mathbb R^{2\times 6}.\ } \tag{9.4-7}$$
 :::
 
-老师 01:24 说这个矩阵「依赖于向量 $s$ 的分量和向量 $r^c$ 的唯一分量 $z_c$」——即深度。
+::: proof 证明：链式法则三步展开
+1. **投影雅可比 $\dfrac{\partial\boldsymbol s}{\partial\boldsymbol r^c}$**：由 $X=x_c/z_c,\ Y=y_c/z_c$ 求偏导，得（教材 (10.25)）：
+$$\frac{\partial\boldsymbol s}{\partial\boldsymbol r^c} = \frac{1}{z_c}\begin{bmatrix}1 & 0 & -X\\ 0 & 1 & -Y\end{bmatrix}. \tag{9.4-5}$$
+2. **固定点在相机系中的速度 $\dot{\boldsymbol r}^c$**：目标点基座坐标 $\boldsymbol p$ 为常向量（$\dot{\boldsymbol p}=\mathbf 0$），其在相机系坐标为 $\boldsymbol r^c = R_c^{\mathrm T}(\boldsymbol p-\boldsymbol o_c)$。对时间求导并令 $\boldsymbol v_c^{\mathrm{lin}}=R_c^{\mathrm T}\dot{\boldsymbol o}_c,\ \boldsymbol\omega_c^c=R_c^{\mathrm T}\boldsymbol\omega^c$：
+$$\dot{\boldsymbol r}^c = -R_c^{\mathrm T}\dot{\boldsymbol o}_c - S(\boldsymbol\omega_c^c)\boldsymbol r^c = -\boldsymbol v_c^{\mathrm{lin}} + S(\boldsymbol r^c)\boldsymbol\omega_c^c = \begin{bmatrix}-I_3 & S(\boldsymbol r^c)\end{bmatrix}\boldsymbol v^c_c. \tag{9.4-6}$$
+3. **两阵相乘并消元**：计算 $\dot{\boldsymbol s}=\frac{\partial\boldsymbol s}{\partial\boldsymbol r^c}\begin{bmatrix}-I_3 & S(\boldsymbol r^c)\end{bmatrix}\boldsymbol v^c_c$：
+   - 第一行平动块为 $\frac{1}{z_c}[1,0,-X](-I_3)=\begin{bmatrix}-1/z_c & 0 & X/z_c\end{bmatrix}$；转动块为 $\frac{1}{z_c}[1,0,-X]\begin{bmatrix}0&-z_c&y_c\\z_c&0&-x_c\\-y_c&x_c&0\end{bmatrix}=\frac{1}{z_c}[Xy_c,\ -z_c-Xx_c,\ y_c]=[XY,\ -(1+X^2),\ Y]$；
+   - 第二行平动块为 $\frac{1}{z_c}[0,1,-Y](-I_3)=\begin{bmatrix}0 & -1/z_c & Y/z_c\end{bmatrix}$；转动块为 $\frac{1}{z_c}[z_c+Yy_c,\ -Yx_c,\ -x_c]=[1+Y^2,\ -XY,\ -X]$。
+
+合并两行即得式 (9.4-7)。
+:::
+
+::: note 符号与结构自检（避免三处常见错写）
+1. **矩阵外无公共因子 $1/z_c$**：$-1/z_c$ 与 $X/z_c$ 已在平动前三列内，切勿在矩阵外再乘一次 $1/z_c$；
+2. **旋转后三列完全不含深度 $z_c$**：只有相机平移列带 $1/z_c$（目标越远像点位移越小），而绕光心纯旋转导致的视场角变化与深度无关；
+3. **第三列为正号 $+X/z_c,\ +Y/z_c$**：源于 $-I_3$ 与 $-X,-Y$ 负负得正；直观对应当相机沿 $+z_c$ 前进接近物体（$v_z>0$）时，第一象限特征点（$X>0,Y>0$）向画面外围径向扩张（$\dot X>0,\dot Y>0$）。
+:::
 
 <a id="sec-9.4.4"></a>
 
-## 9.4.4 一组点与一条线段
+## 9.4.4 多点堆叠与线段特征相互作用矩阵
 
+单个点仅提供 $2$ 条方程而相机运动有 $6$ 个自由度，实际系统需组合多项特征：
 
-**一组点**：$n$ 个点的特征向量摞起来，$s\in\mathbb R^{2n}$，相互作用矩阵按行摞起来（教材）：
+1. **多点特征**：取 $n$ 个特征点 $\boldsymbol s=[\boldsymbol s_1^{\mathrm T},\dots,\boldsymbol s_n^{\mathrm T}]^{\mathrm T}\in\mathbb R^{2n}$，对应深度向量 $\boldsymbol z_c=[z_{c,1},\dots,z_{c,n}]^{\mathrm T}$，直接按行纵向堆叠：
 
-$$L_s(s,z_c)=\begin{bmatrix}L_{s_1}(s_1,z_{c,1})\\\vdots\\L_{s_n}(s_n,z_{c,n})\end{bmatrix},
-\qquad z_c=[z_{c,1}\ \dots\ z_{c,n}]^{\mathrm T}.\tag{9.4-8}$$
+$$L_s(\boldsymbol s,\ \boldsymbol z_c)=\begin{bmatrix}L_{p,1}(\boldsymbol s_1,z_{c,1})\\ \vdots \\ L_{p,n}(\boldsymbol s_n,z_{c,n})\end{bmatrix}\in\mathbb R^{2n\times 6}. \tag{9.4-8}$$
 
-老师 01:25–01:27 讲了这一条的实际用法：「一个点往往不够……还可以用多个点求多个点的相互作用矩阵，
-每个点都是这样，那你把多个点合起来就可以求出来；还可以用线段的方式」。
+2. **线段特征（4 维）**：以目标两点在归一化平面的投影 $\boldsymbol s_1=[X_1,Y_1]^{\mathrm T},\ \boldsymbol s_2=[X_2,Y_2]^{\mathrm T}$（记 $\Delta X=X_2-X_1,\ \Delta Y=Y_2-Y_1$）构造中点、长度与倾角向量（教材 (10.28)）：
 
-**线段**：端点 $P_1,P_2$ 在图像上的投影连线仍然是一条线段，用四个参数描述（教材 (10.28)）：
+$$\boxed{\ \boldsymbol s = \begin{bmatrix}\bar x\\ \bar y\\ L\\ \alpha\end{bmatrix}
+= \begin{bmatrix}\dfrac{X_1+X_2}{2}\\[6pt]\dfrac{Y_1+Y_2}{2}\\[6pt]\sqrt{\Delta X^2+\Delta Y^2}\\[4pt]\operatorname{Atan2}(\Delta Y,\ \Delta X)\end{bmatrix}.\ } \tag{9.4-9}$$
 
-$$\boxed{\ s=\begin{bmatrix}\bar x\\ \bar y\\ L\\ \alpha\end{bmatrix}
-=\begin{bmatrix}
-(X_1+X_2)/2\\
-(Y_1+Y_2)/2\\
-\sqrt{\Delta X^2+\Delta Y^2}\\
-\tan^{-1}(\Delta Y/\Delta X)
-\end{bmatrix}\ }\tag{9.4-9}$$
+由链式法则得 $4\times 6$ 线段相互作用矩阵 $L_s=\dfrac{\partial\boldsymbol s}{\partial\boldsymbol s_1}L_{p,1}+\dfrac{\partial\boldsymbol s}{\partial\boldsymbol s_2}L_{p,2}$，偏导分块为：
 
-其中 $\Delta X=X_2-X_1$、$\Delta Y=Y_2-Y_1$，即中点坐标、长度与倾角。
+$$\frac{\partial\boldsymbol s}{\partial\boldsymbol s_1}=\begin{bmatrix}1/2&0\\0&1/2\\-\Delta X/L&-\Delta Y/L\\\Delta Y/L^2&-\Delta X/L^2\end{bmatrix},\qquad
+\frac{\partial\boldsymbol s}{\partial\boldsymbol s_2}=\begin{bmatrix}1/2&0\\0&1/2\\\Delta X/L&\Delta Y/L\\-\Delta Y/L^2&\Delta X/L^2\end{bmatrix}.$$
 
-线段的相互作用矩阵由链式法则给出（教材）：$L_s=\frac{\partial s}{\partial s_1}L_{s_1}+\frac{\partial s}{\partial s_2}L_{s_2}$，
-其中
-
-$$\frac{\partial s}{\partial s_1}=\begin{bmatrix}1/2&0\\0&1/2\\-\Delta X/L&-\Delta Y/L\\\Delta Y/L^2&-\Delta X/L^2\end{bmatrix},
-\qquad
-\frac{\partial s}{\partial s_2}=\begin{bmatrix}1/2&0\\0&1/2\\\Delta X/L&\Delta Y/L\\-\Delta Y/L^2&\Delta X/L^2\end{bmatrix}.$$
-
-老师 01:26 特别指出线段相比单点的好处：**线段还带进了长度和角度两个量**，对单目视觉来说这是额外的
-约束；这也是教材 10.5–10.11 的习题几乎都用线段 $P_1P_2$ 的原因。
+线段特征额外提供尺度 $L$（对深度敏感）与角度 $\alpha$（对绕光轴旋转敏感）两条直观约束，是 SCARA（$m=4$）视觉伺服习题的核心特征。
 
 <a id="sec-9.4.5"></a>
 
-## 9.4.5 一个点够不够：零空间
+## 9.4.5 单点零空间（教材例 10.2）与超定最小二乘
 
-$L_s$ 一般是 $k\times6$。$k=2$（单点）时 $L_s$ 是 $2\times6$，秩为 2，**零空间维数为 4**。
+单点相互作用矩阵 $L_p\in\mathbb R^{2\times 6}$ 由前两列 $-I_2/z_c$ 可见恒有 $\operatorname{rank}L_p=2$，故其**右零空间维数为 $6-2=4$**。教材例 10.2 给出其中两个最直观的正交相机运动方向（另有 2 个横向平移与俯仰/偏航角速度互相抵消的耦合方向共同张成 $4$ 维零空间）：
 
-教材例 10.2 把零空间里两个能直接看出来的方向写了出来：沿视线方向的平移速度
-$v_1=[X\ Y\ 1\ 0\ 0\ 0]^{\mathrm T}$，以及绕视线旋转的速度
-$v_2=[0\ 0\ 0\ X\ Y\ 1]^{\mathrm T}$。这两个运动**都不改变图像上这个点的位置**——沿视线推远、
-绕视线转圈，这个点看着没动。
+$$\boldsymbol v_1=\begin{bmatrix}X&Y&1&0&0&0\end{bmatrix}^{\mathrm T}\quad\text{（沿视线射线径向平移）},\qquad
+\boldsymbol v_2=\begin{bmatrix}0&0&0&X&Y&1\end{bmatrix}^{\mathrm T}\quad\text{（绕视线射线轴自转）}.$$
 
-这就是单目视觉的根本困难：**图像看不出的运动，正是零空间里的那些**。
+直接代入式 (9.4-7) 验算即可得 $L_p\boldsymbol v_1=\mathbf 0$ 与 $L_p\boldsymbol v_2=\mathbf 0$：相机沿目标点视线推进或绕该视线自转时，图像平面上的单点投影纹丝不动。这从微分层面解释了单目视觉「至少需多个不共线特征点（工程常取 $n\ge 4$）消去零空间歧义并抑制噪声」的原因。
 
-老师 01:25:36 从另一个角度讲了同一件事：「但是一个点，很多时候它求不出来…这一个点（的）数是不够的，
-所以还可以用多个点」；01:28:00 接着说「你觉得点少，那你就可能解不出（唯一的）解，所以你可以多取一些点。
-这个相当于就是告诉你要取多少个点，能把这个解给它解出来」。
+当特征数 $k>6$（超定方程）时，需改用左伪逆求最小二乘速度解（教材 (10.30)）：
 
-把 $k$ 取得比最小所需多，可以缓解这个问题（也顺带抑制测量噪声）。但 $k>m$ 时 (9.4-1) 变成
-**超定**方程，需要用最小二乘：教材 (10.30) 给出
+$$\boldsymbol v^c_{c,o} = \Gamma(\boldsymbol o^c_{c,o})\,(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}\,\dot{\boldsymbol s}.$$
 
-$$v^c_{c,o}=\Gamma(o^c_{c,o})\,(L_s^{\mathrm T}L_s)^{-1}L_s^{\mathrm T}\dot s ,$$
-
-即用左伪逆代替逆。老师 01:27:46 也提到了这一点：「你取的点比这个 $m$ 的倍数多，那你就可以用最小二乘法」。
+但同时由于 $\dim\mathcal N(L_s^{\mathrm T})=k-\operatorname{rank}L_s>0$，转置零空间非空将为后续迭代与 IBVS 控制律埋下「局部极小值卡住」的隐患。
 
 <a id="sec-9.4.6"></a>
 
 ## 9.4 小结与常见错误
 
-1. 图像雅可比 $J_s$ 把**相对**运动映射到图像速度，线性但系数随位姿变。
-2. 拆成绝对速度后得到**相互作用矩阵** $L_s$：目标固定时，相机速度 → 图像速度。
-3. 单点的 $L_s$ 是 $2\times6$，只依赖 $s$ 与深度 $z_c$；平移项带 $1/z_c$，旋转项是纯几何量。
-4. 多点可摞成大矩阵；线段特征 $(\bar x,\bar y,L,\alpha)$ 额外带进长度与角度。
-5. 单点零空间维数 4：沿视线平移与绕视线旋转都不改变投影。
+1. **概念区分**：$J_s$ 映射目标相对相机速度 $\boldsymbol v^c_{c,o}$，$L_s=J_s\Gamma(\boldsymbol o^c_{c,o})$ 在目标固定时映射相机速度 $\boldsymbol v^c_c$；$\Gamma(\boldsymbol o)=\begin{bmatrix}-I_3&S(\boldsymbol o)\\O&-I_3\end{bmatrix}$ 且 $\Gamma(\boldsymbol o)^{-1}=\Gamma(-\boldsymbol o)$。
+2. **单点 $L_p$ 结构**：$2\times 6$ 矩阵中仅前三列平移项含 $1/z_c$，后三列旋转项只与 $(X,Y)$ 有关；第三列为 $+X/z_c,+Y/z_c$。
+3. **零空间本质**：单点矩阵秩 2 零空间 4 维（含沿视线平移与绕视线自转），多点特征消除运动盲区但超过自由度数后转置零空间可能诱发局部极小。
 
 <a id="sec-9.4.check"></a>
 <details>
-<summary>检查理解：图像雅可比和交互矩阵到底差在哪？</summary>
+<summary>检查理解：图像雅可比和相互作用矩阵到底差在哪？</summary>
 
-输入不同。$J_s$ 的输入是**目标相对相机**的速度 $v^c_{c,o}$；$L_s$ 的输入是**相机自身**的速度
-$v^c_c$，前提是目标固定。两个矩阵互为可逆变换 $J_s=L_s\Gamma(-o^c_{c,o})$，秩相同。
-
-实用上的差别：控制相机时我们能直接给的是相机的速度（或关节速度），目标多半固定，所以控制律里
-自然出现的是 $L_s$。另外 $L_s$ 的闭式比 $J_s$ 简单——单点情形它只依赖深度 $z_c$ 和图像坐标，
-不依赖目标相对相机的完整位姿。
+两者只差输入旋量所代表的物理运动：$J_s$ 的输入是目标相对相机的相对速度 $\boldsymbol v^c_{c,o}$，$L_s$ 的输入是相机自身速度 $\boldsymbol v^c_c$（在目标固定假设下）。二者通过处处可逆阵 $\Gamma(\pm\boldsymbol o^c_{c,o})$ 严格等价变换，秩相同。控制相机时一般目标静止且我们直接控制相机运动，故控制律普遍写成 $L_s$，且其单点表达式不显含完整位姿 $T^c_o$、仅含图像坐标与深度 $z_c$。
 
 </details>
 
-核心公式速查：
+**核心公式速查**：
 
-| 公式 | 条件与假设 | 单位/量纲 | 易错点 |
-|:--|:--|:--|:--|
-| 交互矩阵定义：$\dot s=L_s v^c_c$（目标固定） | 相机自身速度、目标固定 | 1/m（位置特征） | $L_s$ 描述相机速度→图像速度；$J_s=L_s\Gamma(-o^c_{c,o})$ 描述目标相对速度 |
-| 单点特征：$L_s$ 各行由 $[X,Y,1]$ 与 $z$ 组成 | 归一化坐标、深度 $z$ | 1/m | 深度不可观时交互矩阵不确定——这是 PBVS/IBVS 共同的信息缺口 |
-| 一个点的零空间：特征少于自由度时不唯一 | 单点、6 维运动 | — | 至少需要不共线多点；线段特征的矩阵见 9.4.4 |
+| 条目 | 公式 | 易错点 |
+|:--|:--|:--|
+| 相对与绝对旋量转换 | $\Gamma(\boldsymbol o)=\begin{bmatrix}-I_3&S(\boldsymbol o)\\O&-I_3\end{bmatrix}$，$\Gamma^{-1}(\boldsymbol o)=\Gamma(-\boldsymbol o)$ | 上右块是 $S(\boldsymbol o)$，下左块是 $O$；不可写 $S^{-1}$ |
+| 相互作用矩阵关系 | $\dot{\boldsymbol s}=J_s\boldsymbol v^c_o+L_s\boldsymbol v^c_c$，$L_s=J_s\Gamma(\boldsymbol o^c_{c,o})$ | 目标固定（$\boldsymbol v^c_o=\mathbf 0$）时 $\dot{\boldsymbol s}=L_s\boldsymbol v^c_c$ |
+| 单点相互作用矩阵 | $L_p=\begin{bmatrix}-1/z_c&0&X/z_c&XY&-(1+X^2)&Y\\0&-1/z_c&Y/z_c&1+Y^2&-XY&-X\end{bmatrix}$ | 矩阵外**无**公因子 $1/z_c$；后三列不含 $z_c$ |
 
 ::: think 本节的课堂幻灯片（源料对照）
 
