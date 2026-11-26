@@ -23,7 +23,7 @@
 
 | 符号 | 含义 |
 |:--|:--|
-| $\boldsymbol q=[x\ y\ \theta]^T$ | 平面移动底盘的位形（位置 + 朝向，1.3.3） |
+| $\boldsymbol q=[x\ y\ \theta]^{\mathrm T}$ | 平面移动底盘的位形（位置 + 朝向，1.3.3、10.2） |
 | $\boldsymbol e(t)=\boldsymbol q_d(t)-\boldsymbol q(t)$ | 轨迹误差（反馈控制的修正信号，1.5.3） |
 
 ## 第二章记号
@@ -38,7 +38,7 @@
 | $\hat\omega$ / $S^\vee$ | 装帽（向量 → 反对称阵）/ 摘帽（反对称阵 → 向量），一一对应 | 2.5 |
 | $\exp(\vartheta S(\boldsymbol r))$ / $\log R$ | 指数映射（= Rodrigues 公式）/ 对数映射（= 角和轴逆解） | 2.5 |
 | $R_x,R_y,R_z$ | 绕坐标轴的基本旋转矩阵 | 2.2 |
-| $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^T$ | 欧拉角 / RPY 参数三元组；可作局部坐标与插值，但分量相加一般不等于旋转合成 | 2.4 |
+| $\boldsymbol\phi=[\varphi\ \vartheta\ \psi]^{\mathrm T}$ | 欧拉角 / RPY 参数三元组；可作局部坐标与插值，但分量相加一般不等于旋转合成 | 2.4 |
 | $\operatorname{Atan2}(y,x)$ | 双变量反正切（分子在前，象限由 $x,y$ 符号定） | 2.4 |
 | $(\vartheta,\boldsymbol r)$ | 角和轴表示（4 参数 − 1 约束） | 2.5 |
 | $Q=\{\eta,\boldsymbol\epsilon\}$ | 单位四元数（标量部分 + 向量部分，4 参数 − 1 约束） | 2.6 |
@@ -142,14 +142,17 @@
 | $B_x,C_x,\boldsymbol g_x$（= 课件 $B_A,C_A,\boldsymbol g_A$） | 操作空间有效惯量 / 速度耦合 / 重力项；$B_A=(J_AB^{-1}J_A^{\mathrm T})^{-1}$ | 7.4.2（来源 [6.7](ch06/sec6-7.md)） |
 | $\boldsymbol F$ | 操作空间控制力（教材写法，等价于 $\boldsymbol\tau_x$） | 7.4.3 |
 | $\boldsymbol e_x$ | 操作空间误差 $\boldsymbol x_d-\boldsymbol x$（姿态部分另有取法，见 7.4.3 的注） | 7.4.3 |
-| $\boldsymbol h_e$ | 末端与环境的作用力（第九章的主角，本章按零处理） | 7.1.2 |
+| $\boldsymbol h_e$ | 末端对环境施加的作用力（第八章的主角，对应原书第 9 章；第七章按零处理） | 7.1.2 / 8.1 |
 
-## 后续章节预注册的记号（预告）
+## 第八至十章增补核心记号
 
-| 符号 | 含义 | 启用章节 |
+第八至十章（力控制、视觉伺服、移动机器人建模）在延续前文矩阵/向量口径基础上新增以下核心记号（详表见各章总览与符号说明）：
+
+| 符号 | 含义 | 首见 |
 |:--|:--|:--|
-| $\boldsymbol{\gamma}(t)$ | 移动机器人控制输入 | 第 11 章 |
-| $\boldsymbol\xi$ | 移动机器人位形 | 第 11 章 |
+| $\boldsymbol h_e,\,\boldsymbol h_A,\,K_e,\,M_d,\,S_f,\,S_v$ | 机器人对环境的广义接触力、分析坐标力、环境刚度、目标阻抗惯量、力/速度选择矩阵 | [8.1](ch08/sec8-1.md)–[8.5](ch08/sec8-5.md) |
+| $\boldsymbol s,\,L_p(\boldsymbol s,z_c),\,\Omega,\,K_{\mathrm{int}},\,J_{A_s}$ | 归一化/像素图像特征、相互作用矩阵、内参矩阵、图像雅可比 | [9.2](ch09/sec9-2.md)–[9.6](ch09/sec9-6.md) |
+| $q=(x,y,\theta)^{\mathrm T},\,A^{\mathrm T}\dot q=0,\,G(q),[g_i,g_j],\,(v,\omega)$ | 移动平台平面位形、Pfaffian 无侧滑约束、零空间基与李括号 | [10.2](ch10/sec10-2.md)–[10.5](ch10/sec10-5.md) |
 
 ::: note 三处约定
 1. 本教程常用粗体表示向量，矩阵也沿用 $R,J,B,C$ 等大写字母；不能只靠是否粗体判断维数，应以定义与乘法形状为准；

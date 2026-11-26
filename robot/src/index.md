@@ -3,17 +3,16 @@
 <h1>机器人控制技术</h1>
 <div class="subtitle">从一台两连杆机械臂开始，学习怎样计算姿势、安排运动，并纠正实际运动中的偏差。</div>
 <div class="cover-chips">
-<span>7 章 · 65 节正文</span>
+<span>10 章 · 71 节正文</span>
 <span>分层习题 · 附解答</span>
 <span>6 组交互演示</span>
-<span>教材、课件与录播对照</span>
+<span>讲义与教材体系对照</span>
 </div>
 <details class="cover-details">
 <summary>查看章节范围与资料说明</summary>
 <div class="meta">
-覆盖原书 §1.1–§1.5、§2.1–§2.12、§3.1–§3.8、§4.1–§4.3、§5.1–§5.4、§7.1–§7.8（本教程第六章）与 §8.1–§8.7（本教程第七章）。<br>
-依据 <b>Siciliano / Sciavicco / Villani / Oriolo《机器人学：建模、规划与控制》</b>整理扩充；课堂范围、教材补充与尚未逐段复核的来源边界见<a href="preface-scope.md">范围声明</a>，不以旧稿标签判定考试范围。<br>
-第一章整理日期 2026-09-14 · 第二章整合第 2 周录播与课堂讲解 · 第三章整合第 3 周录播与教材 · 第四章整合第 4 周录播、课件与板书 · 第五章整合第 6 周录播、课件与板书 · 第六章（原书第 7 章）整合第 7、8 周录播与课件；第七章（原书第 8 章）整合第 8、9 周录播与课件。中文版 OCR 与课件问题分章收入勘误页。
+覆盖 Siciliano / Sciavicco / Villani / Oriolo《机器人学：建模、规划与控制》§1.1–§1.5、§2.1–§2.12、§3.1–§3.8、§4.1–§4.3、§5.1–§5.4、§7.1–§7.8（第六章）、§8.1–§8.7（第七章）、§9.1–§9.7（第八章）、§10.1–§10.10（第九章）与 §11.1–§11.4（第十章）。<br>
+各章按“定义—定理/证明—算例/数值验算”重构并补充推导；章节边界、编号约定与勘误对照分别见<a href="preface-scope.md">范围声明</a>及各章勘误页。
 </div>
 </details>
 
@@ -30,28 +29,31 @@
 
 ## 从哪里开始
 
-- **系统入门**：先看[阅读方法与七章安排](preface.md)；先修不确定时做[入学诊断](entry-test.md)，读完一章后完成相应的两连杆练习。
-- **跟课与作业**：在下方进入对应章节，按章导览中的录播时间学习，再做左侧目录里的作业详解与习题。
+- **系统入门**：先看[阅读方法与全书安排](preface.md)；先修不确定时做[入学诊断](entry-test.md)，读完一章后完成相应的两连杆练习。
+- **精读与演练**：在下方进入对应章节，按每节导读与例题推导推进，再做左侧目录里的作业详解与分层习题。
 - **期末复习**：先闭卷做[综合训练](training/arena.md)，按错题链接回读；再用各章回忆卡检验，而不只是重看公式。
 
 **复习节奏建议**：学完当天先闭卷回忆，约 1 天、3 天、1 周后再抽查；不会的题回读后重新做，会的题也在下次混合抽查。间隔可按个人情况调整，纸笔记录即可。
 
 <section class="book-contents" aria-label="目录">
-<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">7 章 · 65 节</span></div>
+<div class="bc-head"><span class="bc-kicker">CONTENTS / 目录</span><span class="bc-meta">10 章 · 71 节</span></div>
 <div class="bc-list">
 <a class="bc-row" href="ch01/overview.md"><span class="bc-no">01</span><span class="bc-title">第一章 · 引言</span><span class="bc-count">5 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch02/overview.md"><span class="bc-no">02</span><span class="bc-title">第二章 · 运动学</span><span class="bc-count">12 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch03/overview.md"><span class="bc-no">03</span><span class="bc-title">第三章 · 微分运动学和静力学</span><span class="bc-count">8 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch04/overview.md"><span class="bc-no">04</span><span class="bc-title">第四章 · 轨迹规划</span><span class="bc-count">6 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
-<a class="bc-row" href="ch05/overview.md"><span class="bc-no">05</span><span class="bc-title">第五章 · 执行器与传感器</span><span class="bc-count">17 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
-<a class="bc-row" href="ch06/overview.md"><span class="bc-no">06</span><span class="bc-title">第六章 · 动力学</span><span class="bc-count">12 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch05/overview.md"><span class="bc-no">05</span><span class="bc-title">第五章 · 执行器与传感器</span><span class="bc-count">4 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch06/overview.md"><span class="bc-no">06</span><span class="bc-title">第六章 · 动力学</span><span class="bc-count">7 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 <a class="bc-row" href="ch07/overview.md"><span class="bc-no">07</span><span class="bc-title">第七章 · 运动控制</span><span class="bc-count">5 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch08/overview.md"><span class="bc-no">08</span><span class="bc-title">第八章 · 力控制</span><span class="bc-count">8 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch09/overview.md"><span class="bc-no">09</span><span class="bc-title">第九章 · 视觉伺服</span><span class="bc-count">10 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
+<a class="bc-row" href="ch10/overview.md"><span class="bc-no">10</span><span class="bc-title">第十章 · 移动机器人建模</span><span class="bc-count">6 节</span><span class="bc-arrow" aria-hidden="true">↗</span></a>
 </div>
 <p class="bc-note">左侧目录是完整导航；页首搜索支持全文检索。</p>
 </section>
 
 <footer class="book-colophon">
   <span class="colophon-kicker">COLOPHON / 题记</span>
-  <span class="colophon-main">依据 Siciliano 等《机器人学：建模、规划与控制》整理扩充；图版与公式由 SVG / KaTeX 生成。</span>
-  <span class="colophon-meta">MDBOOK · 2026-10</span>
+  <span class="colophon-main">依据 Siciliano 等《机器人学：建模、规划与控制》重构与扩充；图版与公式由 SVG / KaTeX 生成。</span>
+  <span class="colophon-meta">MDBOOK · 2026-11</span>
 </footer>

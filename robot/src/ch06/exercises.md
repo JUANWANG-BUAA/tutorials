@@ -378,7 +378,7 @@ $$\dot q^{\mathrm T}(C\dot q)=0.5\times(-2.34375)+(-0.25)\times(-3.125)=-0.3906\
 
 ::: ex D1 · 混合动力学模型：物理先验和学习项怎么分工
 
-老师在开场的「AI 困境」幻灯片里给了 $\dot x=f_{\text{physics}}(x,u)+f_{\text{learned}}(x,u)$（[章导览](overview.md)）。写 500 字以内：$f_{\text{physics}}$ 与 $f_{\text{learned}}$ 各擅长什么？本章的拉格朗日模型在混合框架里能扮演哪三种角色？什么情形下「纯学习」会失败而「先验 + 残差」能成功？
+混合动力学常写为 $\dot x=f_{\text{physics}}(x,u)+f_{\text{learned}}(x,u)$。写 500 字以内说明：$f_{\text{physics}}$ 与 $f_{\text{learned}}$ 各擅长什么？本章的拉格朗日模型在混合框架里能扮演哪三种角色？什么情形下「纯学习」会失败而「先验 + 残差」能成功？
 
 ::: sol 解答要点（开放题，按判据给分）
 

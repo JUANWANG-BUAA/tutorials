@@ -18,7 +18,7 @@
 
 ::: sol 解答
 
-(a) 行 $\leftrightarrow$ 操作空间速度的六个分量（$v_x,v_y,v_z,\omega_x,\omega_y,\omega_z$，前 3 行 $J_P$ 线速度、后 3 行 $J_O$ 角速度）；列 $\leftrightarrow$ 关节（第 $i$ 列 = 关节 $i$ 的单位速度作用）（录播 0:21:46）。(b) **其余关节全部锁死、只以单位速度驱动关节 $i$ 时，末端产生的六维速度**——$v_e=J\dot q$ 展开后 $J_i\dot q_i$ 即该项贡献（1:00:52）。(c) $J$ 的每一列由 $z_{i-1},p_{i-1},p_e$ 组成，这些量全从 $T_i^0(q)$ 读取——$q$ 变则 $J$ 变（[@def-3.1.1]）。
+(a) 行 $\leftrightarrow$ 操作空间速度的六个分量（$v_x,v_y,v_z,\omega_x,\omega_y,\omega_z$，前 3 行 $J_P$ 线速度、后 3 行 $J_O$ 角速度）；列 $\leftrightarrow$ 关节（第 $i$ 列 = 关节 $i$ 的单位速度作用）。(b) **其余关节全部锁死、只以单位速度驱动关节 $i$ 时，末端产生的六维速度**——$\boldsymbol v_e=J\dot{\boldsymbol q}$ 展开后 $J_i\dot q_i$ 即该项贡献。(c) $J$ 的每一列由 $\boldsymbol z_{i-1},\boldsymbol p_{i-1},\boldsymbol p_e$ 组成，这些量全从 $T_i^0(\boldsymbol q)$ 读取——$\boldsymbol q$ 变则 $J$ 变（[@def-3.1.1]）。
 
 :::
 

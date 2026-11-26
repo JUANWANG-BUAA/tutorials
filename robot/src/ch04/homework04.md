@@ -1,15 +1,14 @@
 # 作业四：教材习题 4.1 / 4.5 / 4.6（附详细解答与验算）
 
-::: note 作业信息（据录播）
-- **题号**：教材第 4 章习题 **4.1、4.5、4.6**（课件末页「作业：习题 4.1/4.5/4.6」，02:26:08）；
+::: note 作业要求
+- **题号**：教材第 4 章习题 **4.1、4.5、4.6**；
 - **原文**（教材 p.189 / 原书 Problems 4.1, 4.5, 4.6）：
   > **4.1** Compute the joint trajectory from $q(0)=1$ to $q(2)=4$ with null initial and final velocities and accelerations.
   > **4.5** Given the values for the joint variable: $q(0)=0$, $q(2)=2$, and $q(4)=3$, compute the cubic interpolating spline with null initial and final velocities and accelerations.
   > **4.6** Given the values for the joint variable: $q(0)=0$, $q(2)=2$, and $q(4)=3$, find the interpolating polynomial with linear segments and parabolic blends with null initial and final velocities.
-- **提交**：一周内。
 :::
 
-![课堂幻灯片 · 02:26:08：作业页「习题 4.1 / 4.5 / 4.6」](../assets/ch04/homework.jpg)
+![作业四题单页：习题 4.1 / 4.5 / 4.6](../assets/ch04/homework.jpg)
 
 三道题是同一条主线上的三级台阶：**4.1** 是点对点（[4.2.1](sec4-2-1.md)），用五次多项式满足 6 个边界条件；**4.5** 与 **4.6** 用同一组路径点，分别演示「系列点」的两条路线——**三次样条**（[4.2.2.3](sec4-2-2.md#sec-4.2.2.3)，加速度连续）与**线性 + 抛物线混合**（[4.2.2.4](sec4-2-2.md#sec-4.2.2.4)，经由点）。
 

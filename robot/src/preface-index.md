@@ -261,7 +261,7 @@
 | 术语 | 一句话含义 | 首次出现 |
 |:--|:--|:--|
 | 控制问题 control problem | 设计广义力 $\boldsymbol\tau(t)$ 的时程，使状态量跟踪期望并满足瞬态/稳态指标（超调、调节时间、稳态误差） | [7.1.1](ch07/sec7-1.md#sec-7.1.1) |
-| 自由空间运动控制 / 环境交互控制 | 与环境不接触、只控运动 / 末端受环境约束、还要控接触力（属第九章） | [7.1.2](ch07/sec7-1.md#sec-7.1.2) |
+| 自由空间运动控制 / 环境交互控制 | 与环境不接触、只控运动 / 末端受环境约束、还要控接触力（属[第八章](ch08/overview.md)，对应原书第 9 章） | [7.1.2](ch07/sec7-1.md#sec-7.1.2) |
 | 关节空间控制方案 | 逆运动学把 $\boldsymbol x_d$ 变成 $\boldsymbol q_d$，闭环 $\boldsymbol q$；$\boldsymbol x$ 通道**开环** | [7.1.4.1](ch07/sec7-1.md#sec-7.1.4.1) |
 | 操作空间控制方案 | 直接在 $\boldsymbol x$ 空间闭环、不经逆解；$\boldsymbol x$ 难直接测量 ⇒ 优点只是潜在的 | [7.1.4.2](ch07/sec7-1.md#sec-7.1.4.2) |
 | 分散控制 decentralized | 逐关节独立设计，耦合当扰动（解耦控制），常用 PID 类线性方法 | [7.1.5](ch07/sec7-1.md#sec-7.1.5) |
@@ -337,4 +337,4 @@
 | 完整约束 / 非完整约束 | 可积分成 $h(q)=0$ 并缩减可达位形维数 / 对速度不可积，限制瞬时速度却不阻止到达任意位形 |
 | 无漂移系统 / 有漂移系统 | $u=0\implies\dot q=0$（如一阶运动学 $\dot q=G(q)u$）/ $u=0$ 仍可能 $\dot q\neq 0$（如引入速度状态的二阶动力学） |
 | 后轮驱动两轮车 / 前轮驱动两轮车 | 后轴速度 $v$ 沿车身，$v_{\text{后}}=v$、$\dot\theta=\frac{v}{l}\tan\phi$ / 前轮速度 $v$ 沿舵角 $\phi$，$v_{\text{前}}=v$、$\dot\theta=\frac{v}{l}\sin\phi$ |
-| 约束矩阵 $A^T\dot q=0$ / $A\dot q=0$ | 运动学篇习惯把行向量写为 $A^T(q)\in\mathbb R^{k\times n}$ / 动力学篇常把 $A(q)\in\mathbb R^{k\times n}$ 写在前、广义约束力作 $A^T\lambda$ |
+| 约束矩阵 $A^{\mathrm T}\dot q=0$ / $A\dot q=0$ | 运动学篇习惯把行向量写为 $A^{\mathrm T}(q)\in\mathbb R^{k\times n}$ / 动力学篇常把 $A(q)\in\mathbb R^{k\times n}$ 写在前、广义约束力作 $A^{\mathrm T}\lambda$ |
